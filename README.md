@@ -15,7 +15,7 @@ by signing off your contributions, you acknowledge that you can and do license y
 ## Branches organization:
 * ***master*** - is the main branch. This is the branch we release from.
 * ***Feature branches*** are used to develop new features
-* ***Release 1.0*** is where we are collecting features for the first official release. Features should merge here for testing before we release. In the future, bugfixes and small features will merge directly to master, but anything big enough to require extended testing may get a release branch.
+* ***Release 3.0*** is where we are collecting features for the first official release. Features should merge here for testing before we release. In the future, bugfixes and small features will merge directly to master, but anything big enough to require extended testing may get a release branch.
 
 ## How to contribute:
 * fork the repository. If you are not used to Github, please check out [fork a repository](http://help.github.com/fork-a-repo).
