@@ -82,6 +82,62 @@ function locale_helper($lang_locale)
 {
     return new \LightnCandy\SafeString(str_replace("_", "-", substr(lang_locale, 0, strcspn(lang_locale, "."))));
 }
+
+function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
+{
+    return new \LightnCandy\SafeString(sprintf($string,
+	    $guest_title, 
+	    $forum_name, 
+	    $scripturl . '?action=login', 
+	    'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
+	    $scripturl . '?action=signup'
+	));
+}
+
+function isSelected($current_val, $val) 
+{
+	
+    return new \LightnCandy\SafeString($current_val == $val ? 'selected="selected' : '');
+}
+
+function langName($lang) {
+	return  str_replace('-utf8', '', $language['name']);
+}
+
+
+function render_page($content) {
+	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance;
+
+	$data = Array(
+		'content' => $content,
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+		'settings' => $settings,
+		'maintenance' => $maintenance,
+		'modSettings' => $modSettings,
+		'copyright' => theme_copyright(),
+		'loadtime' => sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries'])
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/layouts/default.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
+	
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'partials' => Array(
+	    	'menu' => file_get_contents(__DIR__ .  "/partials/menu.hbs")
+	    ),
+	    'helpers' => Array(
+	    	'locale' => 'locale_helper',
+	        'login_helper' => 'login_helper',
+	        'isSelected',
+	        'langName'
+	    )
+	));
+}
     
 /**
  * The main sub template above the content.
@@ -117,26 +173,6 @@ function template_html_above()
 }
 
 
-function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
-{
-    return new \LightnCandy\SafeString(sprintf($string,
-	    $guest_title, 
-	    $forum_name, 
-	    $scripturl . '?action=login', 
-	    'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
-	    $scripturl . '?action=signup'
-	));
-}
-
-function isSelected($current_val, $val) 
-{
-	
-    return new \LightnCandy\SafeString($current_val == $val ? 'selected="selected' : '');
-}
-
-function langName($lang) {
-	return  str_replace('-utf8', '', $language['name']);
-}
 
 /**
  * The upper part of the main template layer. This is the stuff that shows above the main forum content.
@@ -151,8 +187,7 @@ function template_body_above()
 		'scripturl' => $scripturl,
 		'settings' => $settings,
 		'maintenance' => $maintenance,
-		'modSettings' => $modSettings,
-		'menu' => template_menu()
+		'modSettings' => $modSettings
 	);
 	
 	$template = file_get_contents(__DIR__ .  "/layouts/body_above.hbs");
@@ -162,6 +197,9 @@ function template_body_above()
 
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'partials' => Array(
+	    	'menu' => file_get_contents(__DIR__ .  "/partials/menu.hbs")
+	    ),
 	    'helpers' => Array(
 	        'login_helper' => 'login_helper',
 	        'isSelected',
@@ -220,68 +258,6 @@ function template_html_below()
 </html>';
 }
 
-/**
- * Show the menu up top. Something like [home] [help] [profile] [logout]...
- */
-function template_menu()
-{
-	global $context;
-
-	echo '
-					<ul class="dropmenu menu_nav">';
-
-	// Note: Menu markup has been cleaned up to remove unnecessary spans and classes.
-	foreach ($context['menu_buttons'] as $act => $button)
-	{
-		echo '
-						<li class="button_', $act, '', !empty($button['sub_buttons']) ? ' subsections"' : '"', '>
-							<a', $button['active_button'] ? ' class="active"' : '', ' href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>
-								', $button['icon'], '<span class="textmenu">', $button['title'], '</span>
-							</a>';
-
-		if (!empty($button['sub_buttons']))
-		{
-			echo '
-							<ul>';
-
-			foreach ($button['sub_buttons'] as $childbutton)
-			{
-				echo '
-								<li', !empty($childbutton['sub_buttons']) ? ' class="subsections"' : '', '>
-									<a href="', $childbutton['href'], '"', isset($childbutton['target']) ? ' target="' . $childbutton['target'] . '"' : '', '>
-										', $childbutton['title'], '
-									</a>';
-				// 3rd level menus :)
-				if (!empty($childbutton['sub_buttons']))
-				{
-					echo '
-									<ul>';
-
-					foreach ($childbutton['sub_buttons'] as $grandchildbutton)
-						echo '
-										<li>
-											<a href="', $grandchildbutton['href'], '"', isset($grandchildbutton['target']) ? ' target="' . $grandchildbutton['target'] . '"' : '', '>
-												', $grandchildbutton['title'], '
-											</a>
-										</li>';
-
-					echo '
-									</ul>';
-				}
-
-				echo '
-								</li>';
-			}
-				echo '
-							</ul>';
-		}
-		echo '
-						</li>';
-	}
-
-	echo '
-					</ul>';
-}
 
 /**
  * Generate a strip of buttons.
