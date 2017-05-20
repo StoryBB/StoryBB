@@ -99,4 +99,7 @@ $txt['mboards_move'] = 'move';
 
 $txt['mboards_no_cats'] = 'There are currently no categories or boards configured.';
 
+$txt['board_in_character'] = 'Board is "in character"?';
+$txt['board_in_character_desc'] = 'If a board is "in character", only characters may post.';
+
 ?>

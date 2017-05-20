@@ -42,5 +42,11 @@ $txt['alert_paidsubs_expiring'] = 'Your subscription to <a href="{scripturl}?act
 $txt['alert_buddy_buddy_request'] = '{member_link} added you as their buddy';
 $txt['alert_birthday_msg'] = '{happy_birthday}';
 $txt['alerts_none'] = 'You have no alerts.';
+$txt['alert_msg_quotechr'] = '{char_link} quoted {your_chr} in the post {msg_msg}';
+$txt['alert_msg_mentionchr'] = '{your_chr} mentioned {char_link} in the post {msg_msg}';
+$txt['alert_msg_likechr'] = '{member_link} liked {your_chr}\'s post {msg_msg}';
+$txt['alert_member_char_sheet_approvalchr'] = '{char_link}\'s character sheet is awaiting approval.';
+$txt['alert_member_char_sheet_approvedchr'] = '{your_chr}\'s character sheet was approved.';
+
 
 ?>

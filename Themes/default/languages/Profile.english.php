@@ -13,6 +13,8 @@ $txt['website_title'] = 'Website title';
 $txt['website_url'] = 'Website URL';
 $txt['signature'] = 'Signature';
 $txt['profile_posts'] = 'Posts';
+$txt['immersive_mode'] = 'Enable immersive mode:';
+$txt['immersive_mode_desc'] = 'In immersive mode, you can only see the areas of the forum your character could see.';
 $txt['change_profile'] = 'Change profile';
 $txt['preview_signature'] = 'Preview signature';
 $txt['current_signature'] = 'Current signature';
@@ -243,6 +245,11 @@ $txt['profileAction'] = 'Actions';
 $txt['deleteAccount'] = 'Delete this account';
 $txt['profileSendIm'] = 'Send personal message';
 $txt['profile_sendpm_short'] = 'Send PM';
+
+$txt['merge_char_account'] = 'Merge account';
+$txt['merge_char_account_desc'] = 'From here you can merge this account into another, moving all the characters and posts across.';
+$txt['merge_char_from'] = 'Which account do you want to merge this one into?';
+$txt['merge_are_you_sure'] = 'Are you sure you want to merge all the posts and characters from %1$s into %2$s\'s account?';
 
 $txt['profileBanUser'] = 'Ban this user';
 
@@ -523,6 +530,15 @@ $txt['trackEdit_action_email_address'] = 'Email Address';
 $txt['trackEdit_action_id_group'] = 'Primary Membergroup';
 $txt['trackEdit_action_additional_groups'] = 'Additional Membergroups';
 
+$txt['trackEdit_action_char_signature'] = '%1$s - signature';
+$txt['trackEdit_action_char_age'] = '%1$s - age';
+$txt['trackEdit_action_char_character_name'] = '%1$s - character name';
+$txt['trackEdit_action_char_avatar'] = '%1$s - avatar';
+$txt['trackEdit_action_char_main_char_group'] = '%1$s - primary group';
+$txt['trackEdit_action_char_char_groups'] = '%1$s - additional groups';
+$txt['trackEdit_action_char_char_title'] = '%1$s - custom title';
+$txt['trackEdit_action_char_retired'] = '%1$s - retired';
+
 $txt['trackGroupRequests'] = 'Group Requests';
 $txt['trackGroupRequests_title'] = 'Group Requests for %1$s';
 $txt['requested_group'] = 'Requested Group';
@@ -569,5 +585,63 @@ $txt['theme_opt_display'] = 'Board and topic display';
 $txt['theme_opt_posting'] = 'Posting';
 $txt['theme_opt_moderation'] = 'Moderation';
 $txt['theme_opt_personal_messages'] = 'Personal Messages';
+
+$txt['posting_as'] = 'Posting as %s:';
+$txt['you_are_posting_as'] = 'You are posting as: %s';
+$txt['my_characters'] = 'My Characters';
+
+$txt['char_create'] = 'Create Character';
+$txt['char_name'] = 'Character Name:';
+$txt['date_created'] = 'Date Created:';
+$txt['switch_chars'] = 'switch';
+$txt['change_theme'] = 'change';
+
+$txt['move_char_account'] = 'Move to another account';
+$txt['move_char_action'] = 'Move character';
+$txt['move_char_account_desc'] = 'From here you can migrate this character into another account, moving all the posts across.';
+$txt['move_char_to'] = 'Which account do you want to merge this one into?';
+$txt['move_are_you_sure'] = 'Are you sure you want to move %1$s (plus all the posts) into %2$s\'s account?';
+
+$txt['cannot_move_main'] = 'You cannot move your OOC profile to another account.';
+$txt['cannot_move_self'] = 'You cannot move one of your characters back to yourself.';
+$txt['cannot_move_not_found'] = 'Sorry, the account to move to could not be found.';
+$txt['cannot_move_char_not_found'] = 'Sorry, the character you\'re trying to move could not be found.';
+$txt['cannot_move_online'] = 'Sorry, the character you\'re trying to move is currently online and cannot be moved.';
+$txt['move_success'] = 'The character, %1$s, was successfully moved into this account.';
+
+$txt['cannot_merge_admin'] = 'You cannot merge from an admin account, only to an admin account.';
+$txt['cannot_merge_self'] = 'You cannot merge from your own account into another.';
+$txt['cannot_merge_not_found'] = 'Sorry, the account to merge into could not be found.';
+$txt['cannot_merge_no_same'] = 'Sorry, you can\'t merge an account onto itself.';
+$txt['cannot_merge_no_exist'] = 'Sorry, one of the accounts you\'re trying to merge doesn\'t exist.';
+$txt['cannot_merge_no_main'] = 'Sorry, there is a problem with the accounts you\'re trying to merge, no OOC character is present.';
+$txt['merge_success'] = 'The characters from %1$s were successfully merged into this account.';
+
+$txt['char_editing_error'] = 'This character could not be updated because:';
+$txt['char_error_character_must_have_name'] = 'Your character must have a name.';
+$txt['char_error_duplicate_character_name'] = 'Your character cannot have the same name as another character.';
+$txt['char_error_avatar_must_be_real_url'] = 'Your avatar must have a proper URL, beginning with http:// or https://.';
+$txt['char_error_avatar_link_invalid'] = 'That link doesn\'t point to an avatar.';
+$txt['char_error_avatar_oversize'] = 'That avatar is too big - it is %1$sx%2$s pixels but the maximum size is %3$sx%4$s pixels.';
+$txt['max_avatar_size'] = 'Maximum size: %1$sx%2$s pixels';
+
+$txt['char_retired'] = 'Retired';
+$txt['char_retire_char'] = 'Retire Character';
+$txt['char_unretire_char'] = 'Unretire Character';
+
+$txt['switch_to_char'] = 'Switch to this character';
+$txt['switch_to_char_menu'] = 'Reattribute to...';
+$txt['edit_char'] = 'Edit this character';
+$txt['delete_char'] = 'Delete this character';
+$txt['are_you_sure_delete_char'] = 'Are you sure you want to delete this character?';
+$txt['this_character_cannot_delete_posts'] = 'This character cannot be deleted; they have made one or more posts.';
+$txt['this_character_cannot_delete_main'] = 'This character is a main character, it cannot be deleted.';
+$txt['this_character_cannot_delete_active_self'] = 'You are currently posting as this character.';
+$txt['this_character_cannot_delete_active'] = 'This character\'s account is currently using this character; it cannot be deleted.';
+$txt['showPosts_help_char'] = 'This section allows you to view all posts made by this character. Note that you can only see posts made in areas you currently have access to.';
+$txt['showPosts_char'] = 'Character Posts';
+$txt['showTopics_char'] = 'Character Topics';
+$txt['char_profile'] = 'Character Profile';
+$txt['char_stats'] = 'Character Stats';
 
 ?>

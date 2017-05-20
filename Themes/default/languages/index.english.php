@@ -47,6 +47,7 @@ $txt['time_pm'] = 'pm';
 
 $txt['admin'] = 'Admin';
 $txt['moderate'] = 'Moderate';
+$txt['chars_menu_title'] = 'Characters';
 
 $txt['save'] = 'Save';
 $txt['upload'] = 'Upload';
