@@ -3,7 +3,7 @@
         <ul class="floatleft" id="top_info">
     		<li>
     			<a href="{{scripturl}}?action=profile" {{#if context.self_profile}} class="active"{{/if}} id="profile_menu_top" onclick="return false;">
-    				{{#if context.user.avatar}}{{context.user.avatar.image}}{{/if}}
+    				{{#if context.user.avatar}}{{{context.user.avatar.image}}}{{/if}}
     				{{context.user.name}}</a>
     			<div id="profile_menu" class="top_menu"></div>
     		</li>
@@ -92,7 +92,30 @@
 					</div>
 				</div>
 				<div id="main_menu">{{menu}}</div>
-				{{linktree}}
+				{{#if context.linktree}}
+				<div class="navigate_section">
+					<ul>
+					{{#if context.user.is_logged}}
+					<li class="unread_links">
+						<a href="{{scripturl}}?action=unread" title="{{txt.unread_since_visit}}">{{txt.view_unread_category}}</a>
+						<a href="{{scripturl}}?action=unreadreplies" title="{{txt.show_unread_replies}}">{{txt.unread_replies}}</a>
+					</li>
+					{{/if}}
+					{{#each context.linktree}}
+					<li {{#if @last}}class="last"{{/if}}>
+					    {{#unless @first}}<span class="dividers">{{#if context.right_to_left}}&#9668;{{else}}&#9658;{{/if}} </span>{{/unless}}
+					    {{extra_before}}
+					    {{#if url}}
+					    	<a href="{{url}}"><span>{{name}}</span></a>
+					    {{else}}
+					        <span>{{name}}</span>
+					    {{/if}}
+					    {{extra_after}}
+					</li>
+					{{/each}}
+					</ul>
+				</div>
+				{{/if}}
 			</div>
 	    </div>
 	    <div id="content_section">
