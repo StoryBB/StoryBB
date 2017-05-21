@@ -29,7 +29,7 @@
 			<tbody>
 				{{#unless context.members}}
 				<tr>
-					<td colspan="', $context['colspan'], '" class="windowbg">{{txt.search_no_results}}</td>
+					<td colspan="{{context.colspan}}" class="windowbg">{{txt.search_no_results}}</td>
 				</tr>
 				{{/unless}}
 				{{#each context.members}}
