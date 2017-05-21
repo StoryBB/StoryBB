@@ -2352,7 +2352,7 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 	// Figure out what the template function is named.
 	$theme_function = 'template_' . $sub_template_name;
 	if (function_exists($theme_function))
-		$theme_function();
+		$result = $theme_function();
 	elseif ($fatal === false)
 		fatal_lang_error('theme_template_error', 'template', array((string) $sub_template_name));
 	elseif ($fatal !== 'ignore')
@@ -2364,7 +2364,10 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 		echo '
 <div class="warningbox">---- ', $sub_template_name, ' ends ----</div>';
 	}
+	
+	return $result;
 }
+
 
 /**
  * Add a CSS file for output later

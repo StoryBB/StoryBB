@@ -2888,7 +2888,8 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	}
 	if ($do_footer)
 	{
-		loadSubTemplate(isset($context['sub_template']) ? $context['sub_template'] : 'main');
+		$content = loadSubTemplate(isset($context['sub_template']) ? $context['sub_template'] : 'main');
+		render_page($content); //found in index.template.php, this renders the layout around the page
 
 		// Anything special to put out?
 		if (!empty($context['insert_after_template']) && !isset($_REQUEST['xml']))
@@ -3288,8 +3289,6 @@ function template_header()
 	$showed_banned = false;
 	foreach ($context['template_layers'] as $layer)
 	{
-		loadSubTemplate($layer . '_above', true);
-
 		// May seem contrived, but this is done in case the body and main layer aren't there...
 		if (in_array($layer, array('body', 'main')) && allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
 		{
@@ -3403,8 +3402,6 @@ function template_footer()
 	$context['load_time'] = comma_format(round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3));
 	$context['load_queries'] = $db_count;
 
-	foreach (array_reverse($context['template_layers']) as $layer)
-		loadSubTemplate($layer . '_below', true);
 }
 
 /**

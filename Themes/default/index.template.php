@@ -137,6 +137,9 @@ function render_page($content) {
 	        'langName'
 	    )
 	));
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	echo $renderer($data);
 }
     
 /**

@@ -1,0 +1,3 @@
+{{#each button_strip}}
+<a class="button button_strip_{{@key}} {{#if active}} active{{/if}} {{class}}" {{#if url}}href="{{url}}"{{/if}} {{custom}}> {{$txt.[text]}}</a>
+{{/each}}
