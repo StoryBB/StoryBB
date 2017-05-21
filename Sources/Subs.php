@@ -3387,7 +3387,7 @@ function theme_copyright()
 		return;
 
 	// Put in the version...
-	printf($forum_copyright, $forum_version, $software_year);
+	return sprintf($forum_copyright, $forum_version, $software_year);
 }
 
 /**
