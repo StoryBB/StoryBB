@@ -38,7 +38,7 @@ var atwhoConfig = {
 				method: 'GET',
 				data: {
 					search: query,
-					suggest_type: 'member'
+					suggest_type: 'rawcharacter'
 				},
 				success: function (data) {
 					var members = $(data).find('smf > items > item');

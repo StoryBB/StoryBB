@@ -59,7 +59,7 @@ function template_main()
 					</select>
 				</dd>
 				<dt class="righttext"><label for="userspec">',
-					$txt['by_user'], ':</label>
+					$txt['search_by_character'], ':</label>
 				</dt>
 				<dd>
 					<input id="userspec" type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40" class="input_text">
@@ -220,7 +220,7 @@ function template_main()
 			sSessionId: smf_session_id,
 			sSessionVar: smf_session_var,
 			sControlId: \'userspec\',
-			sSearchType: \'member\',
+			sSearchType: \'rawcharacter\',
 			bItemList: false
 		});
 	</script>';
