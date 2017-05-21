@@ -407,6 +407,18 @@ function updateMemberData($members, $data)
 		$parameters
 	);
 
+	// If we're updating the real name (aka display name), sync this
+	// to the main/OOC character.
+	if (isset($data['real_name']))
+	{
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}characters
+			SET character_name = {string:p_real_name}
+			WHERE ' . $condition,
+			$parameters
+		);
+	}
+
 	updateStats('postgroups', $members, array_keys($data));
 
 	// Clear any caching?
@@ -426,6 +438,49 @@ function updateMemberData($members, $data)
 			cache_put_data('user_settings-' . $member, null, 60);
 		}
 	}
+}
+
+function updateCharacterData($char_id, $data)
+{
+	global $smcFunc;
+
+	$setString = '';
+	$condition = 'id_character = {int:id_character}';
+	$parameters = ['id_character' => $char_id];
+	foreach ($data as $var => $val)
+	{
+		$type = 'string';
+		if (in_array($var, ['id_theme', 'posts', 'last_active', 'retired']))
+			$type = 'int';
+
+		// Doing an increment?
+		if ($type == 'int' && ($val === '+' || $val === '-'))
+		{
+			$val = $var . ' ' . $val . ' 1';
+			$type = 'raw';
+		}
+
+		// Ensure posts don't overflow or underflow.
+		if (in_array($var, ['posts']))
+		{
+			if (preg_match('~^' . $var . ' (\+ |- |\+ -)([\d]+)~', $val, $match))
+			{
+				if ($match[1] != '+ ')
+					$val = 'CASE WHEN ' . $var . ' <= ' . abs($match[2]) . ' THEN 0 ELSE ' . $val . ' END';
+				$type = 'raw';
+			}
+		}
+
+		$setString .= ' ' . $var . ' = {' . $type . ':p_' . $var . '},';
+		$parameters['p_' . $var] = $val;
+	}
+
+	$smcFunc['db_query']('', '
+		UPDATE {db_prefix}characters
+		SET' . substr($setString, 0, -1) . '
+		WHERE ' . $condition,
+		$parameters
+	);
 }
 
 /**
@@ -1155,6 +1210,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'before' => '<div class="centertext">',
 				'after' => '</div>',
 				'block_level' => true,
+			),
+			array(
+				'tag' => 'character',
+				'type' => 'unparsed_equals',
+				'before' => '<a href="' . $scripturl . '?action=characters;char=$1" class="mention" data-mention="$1">@',
+				'after' => '</a>',
 			),
 			array(
 				'tag' => 'code',
@@ -3994,7 +4055,8 @@ function setupMenuContext()
 		addInlineJavaScript('
 	var user_menus = new smc_PopupMenu();
 	user_menus.add("profile", "' . $scripturl . '?action=profile;area=popup");
-	user_menus.add("alerts", "' . $scripturl . '?action=profile;area=alerts_popup;u='. $context['user']['id'] .'");', true);
+	user_menus.add("alerts", "' . $scripturl . '?action=profile;area=alerts_popup;u='. $context['user']['id'] .'");
+	user_menus.add("characters", "' . $scripturl . '?action=profile;area=characters_popup");', true);
 		if ($context['allow_pm'])
 			addInlineJavaScript('
 	user_menus.add("pm", "' . $scripturl . '?action=pm;sa=popup");', true);
@@ -4116,6 +4178,13 @@ function setupMenuContext()
 					),
 				),
 			),
+			'characters' => array(
+				'title' => $txt['chars_menu_title'],
+				'icon' => 'mlist',
+				'href' => $scripturl . '?action=characters',
+				'show' => $context['allow_memberlist'],
+				'sub_buttons' => array(),
+			),
 			'mlist' => array(
 				'title' => $txt['members_title'],
 				'href' => $scripturl . '?action=mlist',
@@ -4151,6 +4220,15 @@ function setupMenuContext()
 				'is_last' => !$context['right_to_left'],
 			),
 		);
+
+		foreach (get_main_menu_groups() as $id => $group_name)
+		{
+			$temp_buttons['characters']['sub_buttons']['group' . $id] = [
+				'title' => $group_name,
+				'href' => $scripturl . '?action=characters;sa=sheets;group=' . $id,
+				'show' => true,
+			];
+		}
 
 		// Allow editing menu buttons easily.
 		call_integration_hook('integrate_menu_buttons', array(&$buttons));
@@ -5912,6 +5990,30 @@ function build_regex($strings, $delim = null)
 		mb_internal_encoding($current_encoding);
 
 	return $regexes;
+}
+
+function get_main_menu_groups()
+{
+	global $smcFunc;
+	if (($groups = cache_get_data('char_main_menu_groups', 300)) === null)
+	{
+		$groups = [];
+		$request = $smcFunc['db_query']('', '
+			SELECT mg.id_group, mg.group_name
+			FROM {db_prefix}membergroups AS mg
+			INNER JOIN {db_prefix}characters AS chars ON (chars.main_char_group = mg.id_group)
+			WHERE chars.char_sheet != 0
+			GROUP BY mg.id_group
+			ORDER BY mg.badge_order, mg.group_name');
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$groups[$row['id_group']] = $row['group_name'];
+		}
+		$smcFunc['db_free_result']($request);
+
+		cache_put_data('char_main_menu_groups', $groups, 300);
+	}
+	return $groups;
 }
 
 ?>

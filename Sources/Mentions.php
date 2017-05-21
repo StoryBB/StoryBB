@@ -36,29 +36,41 @@ class Mentions
 
 		$request = $smcFunc['db_query']('', '
 			SELECT mem.id_member, mem.real_name, mem.email_address, mem.id_group, mem.id_post_group, mem.additional_groups,
-				mem.lngfile, ment.id_member AS id_mentioned_by, ment.real_name AS mentioned_by_name
+				mem.lngfile, ment.id_member AS id_mentioned_by, ment.real_name AS mentioned_by_name,
+				m.id_character AS dest_chr, chars.character_name AS dest_chr_name, chars.is_main AS dest_is_main,
+				m.mentioned_chr AS source_chr, chars_ment.character_name AS source_chr_name, chars_ment.is_main AS source_is_main,
+				chars.retired
 			FROM {db_prefix}mentions AS m
+				INNER JOIN {db_prefix}characters AS chars ON (chars.id_character = m.mentioned_chr)
+				INNER JOIN {db_prefix}characters AS chars_ment ON (chars_ment.id_character = m.id_character)
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_mentioned)
 				INNER JOIN {db_prefix}members AS ment ON (ment.id_member = m.id_member)
 			WHERE content_type = {string:type}
 				AND content_id = {int:id}' . (!empty($members) ? '
-				AND mem.id_member IN ({array_int:members})' : ''),
+				AND chars.id_character IN ({array_int:members})' : ''),
 			array(
 				'type' => $content_type,
 				'id' => $content_id,
-				'members' => (array) $members,
+				'members' => $members,
 			)
 		);
 		$members = array();
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$members[$row['id_member']] = array(
-				'id' => $row['id_member'],
+			$members[$row['dest_chr']] = array(
+				'id_member' => $row['id_member'],
+				'dest_chr' => $row['dest_chr'],
+				'dest_character_name' => $row['dest_chr_name'],
+				'dest_is_main' => $row['dest_is_main'],
+				'retired_chr' => $row['retired'],
 				'real_name' => $row['real_name'],
 				'email_address' => $row['email_address'],
 				'groups' => array_unique(array_merge(array($row['id_group'], $row['id_post_group']), explode(',', $row['additional_groups']))),
 				'mentioned_by' => array(
 					'id' => $row['id_mentioned_by'],
 					'name' => $row['mentioned_by_name'],
+					'source_chr' => $row['source_chr'],
+					'source_chr_name' => $row['source_chr_name'],
+					'source_is_main' => $row['source_is_main'],
 				),
 				'lngfile' => $row['lngfile'],
 			);
@@ -77,7 +89,7 @@ class Mentions
 	 * @param array $members An array of members who have been mentioned
 	 * @param int $id_member The ID of the member who mentioned them
 	 */
-	public static function insertMentions($content_type, $content_id, array $members, $id_member)
+	public static function insertMentions($content_type, $content_id, array $members, $id_member, $id_character)
 	{
 		global $smcFunc;
 
@@ -86,8 +98,8 @@ class Mentions
 		foreach ($members as $member)
 			$smcFunc['db_insert']('ignore',
 				'{db_prefix}mentions',
-				array('content_id' => 'int', 'content_type' => 'string', 'id_member' => 'int', 'id_mentioned' => 'int', 'time' => 'int'),
-				array((int) $content_id, $content_type, $id_member, $member['id'], time()),
+				array('content_id' => 'int', 'content_type' => 'string', 'id_member' => 'int', 'id_mentioned' => 'int', 'id_character' => 'int', 'mentioned_chr' => 'int', 'time' => 'int'),
+				array((int) $content_id, $content_type, $id_member, $member['id_member'], $id_character, $member['id_character'], time()),
 				array('content_id', 'content_type', 'id_mentioned')
 			);
 	}
@@ -104,7 +116,12 @@ class Mentions
 	public static function getBody($body, array $members)
 	{
 		foreach ($members as $member)
-			$body = str_ireplace(static::$char . $member['real_name'], '[member=' . $member['id'] . ']' . $member['real_name'] . '[/member]', $body);
+		{
+			if ($member['is_main'])
+				$body = str_ireplace(static::$char . $member['character_name'], '[member=' . $member['id_character'] . ']' . $member['character_name'] . '[/member]', $body);
+			else
+				$body = str_ireplace(static::$char . $member['character_name'], '[character=' . $member['id_character'] . ']' . $member['character_name'] . '[/character]', $body);
+		}
 
 		return $body;
 	}
@@ -127,10 +144,11 @@ class Mentions
 			return array();
 
 		$request = $smcFunc['db_query']('', '
-			SELECT id_member, real_name
-			FROM {db_prefix}members
-			WHERE real_name IN ({array_string:names})
-			ORDER BY LENGTH(real_name) DESC
+			SELECT chars.id_character, chars.id_member, chars.character_name,
+				chars.is_main, chars.retired
+			FROM {db_prefix}characters AS chars
+			WHERE character_name IN ({array_string:names})
+			ORDER BY LENGTH(character_name) DESC
 			LIMIT {int:count}',
 			array(
 				'names' => $possible_names,
@@ -140,13 +158,10 @@ class Mentions
 		$members = array();
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			if (stripos($body, static::$char . $row['real_name']) === false)
+			if (stripos($body, static::$char . $row['character_name']) === false)
 				continue;
 
-			$members[$row['id_member']] = array(
-				'id' => $row['id_member'],
-				'real_name' => $row['real_name'],
-			);
+			$members[$row['id_character']] = $row;
 		}
 		$smcFunc['db_free_result']($request);
 

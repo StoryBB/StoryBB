@@ -204,7 +204,7 @@ function MembergroupMembers()
 	// Load up the group details.
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group AS id, group_name AS name, CASE WHEN min_posts = {int:min_posts} THEN 1 ELSE 0 END AS assignable, hidden, online_color,
-			icons, description, CASE WHEN min_posts != {int:min_posts} THEN 1 ELSE 0 END AS is_post_group, group_type
+			is_character, icons, description, CASE WHEN min_posts != {int:min_posts} THEN 1 ELSE 0 END AS is_post_group, group_type
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:id_group}
 		LIMIT 1',
@@ -274,8 +274,16 @@ function MembergroupMembers()
 		foreach ($_REQUEST['rem'] as $key => $group)
 			$_REQUEST['rem'][$key] = (int) $group;
 
-		require_once($sourcedir . '/Subs-Membergroups.php');
-		removeMembersFromGroups($_REQUEST['rem'], $_REQUEST['group'], true);
+		if ($context['group']['is_character'])
+		{
+			require_once($sourcedir . '/Subs-Membergroups.php');
+			removeCharactersFromGroups($_REQUEST['rem'], $_REQUEST['group']);
+		}
+		else
+		{
+			require_once($sourcedir . '/Subs-Membergroups.php');
+			removeMembersFromGroups($_REQUEST['rem'], $_REQUEST['group'], true);
+		}
 	}
 	// Must be adding new members to the group...
 	elseif (isset($_REQUEST['add']) && (!empty($_REQUEST['toAdd']) || !empty($_REQUEST['member_add'])) && $context['group']['assignable'])
@@ -297,6 +305,26 @@ function MembergroupMembers()
 
 			if (strlen($member_names[$index]) == 0)
 				unset($member_names[$index]);
+		}
+
+		// If this is a character group we need to intercept it.
+		if ($context['group']['is_character'])
+		{
+			$character_ids = array();
+			if (!empty($_REQUEST['member_add']))
+			{
+				foreach ($_REQUEST['member_add'] as $id)
+				{
+					$val = explode(';char=', $id);
+					if (isset($val[1]) && $val[1] > 1)
+						$character_ids[] = (int) $val[1];
+				}
+				$_REQUEST['member_add'] = array();
+			}
+			if (!empty($character_ids)) {
+				require_once($sourcedir . '/Subs-Membergroups.php');
+				addCharactersToGroup($character_ids, $_REQUEST['group']);
+			}
 		}
 
 		// Any passed by ID?
@@ -371,16 +399,29 @@ function MembergroupMembers()
 
 	$context['sort_direction'] = isset($_REQUEST['desc']) ? 'down' : 'up';
 
-	// The where on the query is interesting. Non-moderators should only see people who are in this group as primary.
-	if ($context['group']['can_moderate'])
-		$where = $context['group']['is_post_group'] ? 'id_post_group = {int:group}' : 'id_group = {int:group} OR FIND_IN_SET({int:group}, additional_groups) != 0';
+// Depending on whether this group is a character group or not...
+	// we might have different queries...
+	if ($context['group']['is_character'])
+	{
+		// The where on the query is interesting. Non-moderators should only see people who are in this group as primary.
+		if ($context['group']['can_moderate'])
+			$where = 'main_char_group = {int:group} OR FIND_IN_SET({int:group}, char_groups) != 0';
+		else
+			$where = 'main_char_group = {int:group}';
+	}
 	else
-		$where = $context['group']['is_post_group'] ? 'id_post_group = {int:group}' : 'id_group = {int:group}';
+	{
+		// The where on the query is interesting. Non-moderators should only see people who are in this group as primary.
+		if ($context['group']['can_moderate'])
+			$where = $context['group']['is_post_group'] ? 'id_post_group = {int:group}' : 'id_group = {int:group} OR FIND_IN_SET({int:group}, additional_groups) != 0';
+		else
+			$where = $context['group']['is_post_group'] ? 'id_post_group = {int:group}' : 'id_group = {int:group}';
+	}
 
 	// Count members of the group.
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
-		FROM {db_prefix}members
+		FROM ' . ($context['group']['is_character'] ? '{db_prefix}characters' : '{db_prefix}members') . '
 		WHERE ' . $where,
 		array(
 			'group' => $_REQUEST['group'],
@@ -396,19 +437,37 @@ function MembergroupMembers()
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 
 	// Load up all members of this group.
-	$request = $smcFunc['db_query']('', '
-		SELECT id_member, member_name, real_name, email_address, member_ip, date_registered, last_login,
-			posts, is_activated, real_name
-		FROM {db_prefix}members
-		WHERE ' . $where . '
-		ORDER BY ' . $querySort . ' ' . ($context['sort_direction'] == 'down' ? 'DESC' : 'ASC') . '
-		LIMIT {int:start}, {int:max}',
-		array(
-			'group' => $_REQUEST['group'],
-			'start' => $context['start'],
-			'max' => $modSettings['defaultMaxMembers'],
-		)
-	);
+	if ($context['group']['is_character'])
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT mem.id_member, member_name, real_name, email_address, member_ip, date_registered, last_login,
+				chars.posts, is_activated, real_name, id_character, character_name
+			FROM {db_prefix}members AS mem
+				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member)
+			WHERE ' . $where . '
+			ORDER BY ' . $querySort . ' ' . ($context['sort_direction'] == 'down' ? 'DESC' : 'ASC') . '
+			LIMIT {int:start}, {int:max}',
+			array(
+				'group' => $_REQUEST['group'],
+				'start' => $context['start'],
+				'max' => $modSettings['defaultMaxMembers'],
+			)
+		);
+	} else {
+		$request = $smcFunc['db_query']('', '
+			SELECT id_member, member_name, real_name, email_address, member_ip, date_registered, last_login,
+				posts, is_activated, real_name
+			FROM {db_prefix}members
+			WHERE ' . $where . '
+			ORDER BY ' . $querySort . ' ' . ($context['sort_direction'] == 'down' ? 'DESC' : 'ASC') . '
+			LIMIT {int:start}, {int:max}',
+			array(
+				'group' => $_REQUEST['group'],
+				'start' => $context['start'],
+				'max' => $modSettings['defaultMaxMembers'],
+			)
+		);
+	}
 	$context['members'] = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -422,6 +481,8 @@ function MembergroupMembers()
 		$context['members'][] = array(
 			'id' => $row['id_member'],
 			'name' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
+			'id_character' => !empty($row['id_character']) ? $row['id_character'] : 0,
+			'character' => !empty($row['id_character']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>' : '',
 			'email' => $row['email_address'],
 			'ip' => '<a href="' . $scripturl . '?action=trackip;searchip=' . $row['member_ip'] . '">' . $row['member_ip'] . '</a>',
 			'registered' => timeformat($row['date_registered']),

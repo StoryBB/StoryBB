@@ -1736,6 +1736,40 @@ function MaintainRecountPosts()
 	}
 	$smcFunc['db_free_result']($request);
 
+	// Now to fix the post counts for characters.
+	$request = $smcFunc['db_query']('', '
+		SELECT /*!40001 SQL_NO_CACHE */ m.id_character, COUNT(m.id_character) AS posts
+		FROM ({db_prefix}messages AS m, {db_prefix}boards AS b)
+		WHERE m.id_character != {int:zero}
+			AND b.count_posts = {int:zero}
+			AND m.id_board = b.id_board ' . (!empty($modSettings['recycle_enable']) ? '
+			AND b.id_board != {int:recycle}' : '') . '
+		GROUP BY m.id_character
+		LIMIT {int:start}, {int:number}',
+		array(
+			'start' => $_REQUEST['start'],
+			'number' => $increment,
+			'recycle' => $modSettings['recycle_board'],
+			'zero' => 0,
+		)
+	);
+	$total_rows = $smcFunc['db_num_rows']($request);
+
+	// Update the post count for this group
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}characters
+			SET posts = {int:posts}
+			WHERE id_character = {int:row}',
+			array(
+				'row' => $row['id_character'],
+				'posts' => $row['posts'],
+			)
+		);
+	}
+	$smcFunc['db_free_result']($request);
+
 	// Continue?
 	if ($total_rows == $increment)
 	{
@@ -1797,6 +1831,58 @@ function MaintainRecountPosts()
 				WHERE id_member = {int:row}',
 				array(
 					'row' => $row['id_member'],
+					'zero' => 0,
+				)
+			);
+		}
+		$smcFunc['db_free_result']($request);
+	}
+
+	// now to redo the deliquents on the post count front for characters
+	$createTemporaryChar = $smcFunc['db_query']('', '
+		CREATE TEMPORARY TABLE {db_prefix}tmp_maint_recountcharposts (
+			id_character int(10) unsigned NOT NULL default {string:string_zero},
+			PRIMARY KEY (id_member)
+		)
+		SELECT m.id_character
+		FROM ({db_prefix}messages AS m,{db_prefix}boards AS b)
+		WHERE m.id_character != {int:zero}
+			AND b.count_posts = {int:zero}
+			AND m.id_board = b.id_board ' . (!empty($modSettings['recycle_enable']) ? '
+			AND b.id_board != {int:recycle}' : '') . '
+		GROUP BY m.id_character',
+		array(
+			'zero' => 0,
+			'string_zero' => '0',
+			'db_error_skip' => true,
+			'recycle' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
+		)
+	) !== false;
+
+	if ($createTemporaryChar)
+	{
+		// outer join the characters table on the temporary table finding the members that have a post count but no posts in the message table
+		$request = $smcFunc['db_query']('', '
+			SELECT chars.id_character, chars.posts
+			FROM {db_prefix}characters AS chars
+			LEFT OUTER JOIN {db_prefix}tmp_maint_recountcharposts AS res
+			ON res.id_character = chars.id_character
+			WHERE res.id_character IS null
+				AND chars.posts != {int:zero}',
+			array(
+				'zero' => 0,
+			)
+		);
+
+		// set the post count to zero for any delinquents we may have found
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}characters
+				SET posts = {int:zero}
+				WHERE id_character = {int:row}',
+				array(
+					'row' => $row['id_character'],
 					'zero' => 0,
 				)
 			);

@@ -141,6 +141,36 @@ function ModifyProfile($post_errors = array())
 					),
 					'select' => 'summary',
 				),
+				'characters_popup' => array(
+					'function' => 'characters_popup',
+					'file' => 'Profile-Chars.php',
+					'permission' => array(
+						'own' => 'is_not_guest',
+						'any' => array(),
+					),
+					'enabled' => $context['user']['is_owner'],
+					'select' => 'summary',
+				),
+				'char_switch' => array(
+					'function' => 'char_switch',
+					'file' => 'Profile-Chars.php',
+					'permission' => array(
+						'own' => 'is_not_guest',
+						'any' => array(),
+					),
+					'enabled' => $context['user']['is_owner'],
+					'select' => 'summary',
+				),
+				'char_switch_redir' => array(
+					'function' => 'char_switch_redir',
+					'file' => 'Profile-Chars.php',
+					'permission' => array(
+						'own' => 'is_not_guest',
+						'any' => array(),
+					),
+					'enabled' => $context['user']['is_owner'],
+					'select' => 'summary',
+				),
 				'statistics' => array(
 					'label' => $txt['statPanel'],
 					'file' => 'Profile-View.php',
@@ -225,6 +255,31 @@ function ModifyProfile($post_errors = array())
 						'own' => array('profile_warning_own', 'profile_warning_any', 'issue_warning', 'moderate_forum'),
 						'any' => array('profile_warning_any', 'issue_warning', 'moderate_forum'),
 					),
+				),
+			),
+		),
+		'chars' => array(
+			'title' => 'Characters',
+			'areas' => array(
+				'characters' => array(
+					'file' => 'Profile-Chars.php',
+					'function' => 'character_profile',
+					'enabled' => true,
+					'permission' => array(
+						'own' => 'is_not_guest',
+						'any' => 'profile_view',
+					),
+				),
+				'char_create' => array(
+					'label' => $txt['char_create'],
+					'file' => 'Profile-Chars.php',
+					'function' => 'char_create',
+					'enabled' => true,
+					'permission' => array(
+						'own' => 'is_not_guest',
+						'any' => [],
+					),
+					'icon' => 'char_avatar char_unknown',
 				),
 			),
 		),
@@ -420,9 +475,53 @@ function ModifyProfile($post_errors = array())
 						'any' => array('moderate_forum'),
 					),
 				),
+				'merge_acct' => array(
+					'label' => $txt['merge_char_account'],
+					'function' => 'char_merge_account',
+					'permission' => array(
+						'own' => [],
+						'any' => array('admin_forum'),
+					),
+					'icon' => 'merge',
+				),
 			),
 		),
 	);
+
+	addInlineCss('
+span.char_avatar { width: 25px; height: 25px; background-size: contain !important; background-position: 50% 50%; }
+span.char_unknown { background-image: url(' . $modSettings['avatar_url'] . '/default.png); }');
+
+	$char_sheet_override = allowedTo('admin_forum') || $context['user']['is_owner'];
+	// Now we need to add the user's characters to the profile menu, "creatively".
+	if (!empty($cur_profile['characters'])) {
+		foreach ($cur_profile['characters'] as $id_character => $character) {
+			if (!empty($character['avatar'])) {
+				addInlineCss('
+span.character_' . $id_character . ' { background-image: url(' . $character['avatar'] . '); background-size: cover }');
+			}
+			$profile_areas['chars']['areas']['character_' . $id_character] = array(
+				'function' => 'character_profile',
+				'file' => 'Profile-Chars.php',
+				'label' => $character['character_name'],
+				'icon' => !empty($character['avatar']) ? 'char_avatar character_' . $id_character : 'char_avatar char_unknown',
+				'enabled' => true,
+				'permission' => array(
+					'own' => 'is_not_guest',
+					'any' => [],
+				),
+				'select' => 'characters',
+				'custom_url' => $scripturl . '?action=profile;area=characters;char=' . $id_character,
+				'subsections' => array(
+					'profile' => array($txt['char_profile'], array('is_not_guest', 'profile_view')),
+					'sheet' => array($txt['char_sheet'], !empty($character['char_sheet']) || $char_sheet_override ? array('is_not_guest', 'profile_view') : array('admin_forum'), 'enabled' => empty($character['is_main'])),
+					'posts' => array($txt['showPosts_char'], array('is_not_guest', 'profile_view')),
+					'topics' => array($txt['showTopics_char'], array('is_not_guest', 'profile_view')),
+					'stats' => array($txt['char_stats'], array('is_not_guest', 'profile_view')),
+				),
+			);
+		}
+	}
 
 	// Let them modify profile areas easily.
 	call_integration_hook('integrate_pre_profile_areas', array(&$profile_areas));

@@ -38,6 +38,7 @@ function ModifyMembergroups()
 		'index' => array('MembergroupIndex', 'manage_membergroups'),
 		'members' => array('MembergroupMembers', 'manage_membergroups', 'Groups.php'),
 		'settings' => array('ModifyMembergroupsettings', 'admin_forum'),
+		'badges' => array('MembergroupBadges', 'admin_forum'),
 	);
 
 	// Default to sub action 'index' or 'settings' depending on permissions.
@@ -124,6 +125,17 @@ function MembergroupIndex()
 				'sort' => array(
 					'default' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, mg.group_name',
 					'reverse' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, mg.group_name DESC',
+				),
+			),
+			'level' => array(
+				'header' => array(
+					'value' => $txt['char_group_level'],
+				),
+				'data' => array(
+					'function' => function($rowData) use ($txt)
+					{
+						return empty($rowData['is_character']) ? $txt['char_group_level_acct'] : $txt['char_group_level_char'];
+					},
 				),
 			),
 			'icons' => array(
@@ -316,11 +328,11 @@ function AddMembergroup()
 			'{db_prefix}membergroups',
 			array(
 				'description' => 'string', 'group_name' => 'string-80', 'min_posts' => 'int',
-				'icons' => 'string', 'online_color' => 'string', 'group_type' => 'int',
+				'icons' => 'string', 'online_color' => 'string', 'group_type' => 'int', 'is_character' => 'int',
 			),
 			array(
 				'', $smcFunc['htmlspecialchars']($_POST['group_name'], ENT_QUOTES), ($postCountBasedGroup ? (int) $_POST['min_posts'] : '-1'),
-				'1#icon.png', '', $_POST['group_type'],
+				'1#icon.png', '', $_POST['group_type'], !empty($_POST['group_level']) ? 1 : 0,
 			),
 			array('id_group'),
 			1
@@ -1028,7 +1040,7 @@ function EditMembergroup()
 
 	// Fetch the current group information.
 	$request = $smcFunc['db_query']('', '
-		SELECT group_name, description, min_posts, online_color, max_messages, icons, group_type, hidden, id_parent, tfa_required
+		SELECT group_name, is_character, description, min_posts, online_color, max_messages, icons, group_type, hidden, id_parent, tfa_required
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:current_group}
 		LIMIT 1',
@@ -1046,6 +1058,7 @@ function EditMembergroup()
 	$context['group'] = array(
 		'id' => $_REQUEST['group'],
 		'name' => $row['group_name'],
+		'is_character' => $row['is_character'],
 		'description' => $smcFunc['htmlspecialchars']($row['description'], ENT_QUOTES),
 		'editable_name' => $row['group_name'],
 		'color' => $row['online_color'],

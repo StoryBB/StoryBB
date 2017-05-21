@@ -157,6 +157,7 @@ function Display()
 			t.num_replies, t.num_views, t.locked, ms.subject, t.is_sticky, t.id_poll,
 			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.id_redirect_topic,
 			COALESCE(mem.real_name, ms.poster_name) AS topic_started_name, ms.poster_time AS topic_started_time,
+			IFNULL(chars.character_name, IFNULL(mem.real_name, ms.poster_name)) AS topic_started_name,
 			' . ($user_info['is_guest'] ? 't.id_last_msg + 1' : 'COALESCE(lt.id_msg, lmr.id_msg, -1) + 1') . ' AS new_from
 			' . (!empty($board_info['recycle']) ? ', id_previous_board, id_previous_topic' : '') . '
 			' . (!empty($topic_selects) ? (', ' . implode(', ', $topic_selects)) : '') . '
@@ -166,6 +167,7 @@ function Display()
 			LEFT JOIN {db_prefix}members AS mem on (mem.id_member = ms.id_member)' . ($user_info['is_guest'] ? '' : '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = {int:current_topic} AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})') . '
+			LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = ms.id_character)
 			' . (!empty($topic_tables) ? implode("\n\t", $topic_tables) : '') . '
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
@@ -380,11 +382,13 @@ function Display()
 		// Search for members who have this topic set in their GET data.
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				lo.id_member, lo.log_time, mem.real_name, mem.member_name, mem.show_online,
-				mg.online_color, mg.id_group, mg.group_name
+				lo.id_member, lo.log_time, chars.id_character, IFNULL(chars.character_name, mem.real_name) AS real_name, mem.member_name, mem.show_online,
+				IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, mg.id_group, mg.group_name
 			FROM {db_prefix}log_online AS lo
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lo.id_member)
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:reg_id_group} THEN mem.id_post_group ELSE mem.id_group END)
+				LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
+				LEFT JOIN {db_prefix}membergroups AS cg ON (cg.id_group = chars.main_char_group)
 			WHERE INSTR(lo.url, {string:in_url_string}) > 0 OR lo.session = {string:session}',
 			array(
 				'reg_id_group' => 0,
@@ -398,9 +402,9 @@ function Display()
 				continue;
 
 			if (!empty($row['online_color']))
-				$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" style="color: ' . $row['online_color'] . ';">' . $row['real_name'] . '</a>';
+				$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . (!empty($row['id_character']) ? ';area=characters;char=' . $row['id_character'] : '') . '" style="color: ' . $row['online_color'] . ';">' . $row['real_name'] . '</a>';
 			else
-				$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+				$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . (!empty($row['id_character']) ? ';area=characters;char=' . $row['id_character'] : '') . '">' . $row['real_name'] . '</a>';
 
 			$is_buddy = in_array($row['id_member'], $user_info['buddies']);
 			if ($is_buddy)
@@ -1052,6 +1056,7 @@ function Display()
 
 		$msg_parameters = array(
 			'message_list' => $messages,
+			'message_list' => $messages,
 			'new_from' => $context['topicinfo']['new_from'],
 		);
 		$msg_selects = array();
@@ -1064,7 +1069,7 @@ function Display()
 			SELECT
 				id_msg, icon, subject, poster_time, poster_ip, id_member, modified_time, modified_name, modified_reason, body,
 				smileys_enabled, poster_name, poster_email, approved, likes,
-				id_msg_modified < {int:new_from} AS is_read
+				id_msg_modified < {int:new_from} AS is_read, id_character
 				' . (!empty($msg_selects) ? (', ' . implode(', ', $msg_selects)) : '') . '
 			FROM {db_prefix}messages
 				' . (!empty($msg_tables) ? implode("\n\t", $msg_tables) : '') . '
@@ -1363,6 +1368,7 @@ function prepareDisplayContext($reset = false)
 {
 	global $settings, $txt, $modSettings, $scripturl, $options, $user_info, $smcFunc;
 	global $memberContext, $context, $messages_request, $topic, $board_info, $sourcedir;
+	global $user_profile;
 
 	static $counter = null;
 
@@ -1460,6 +1466,7 @@ function prepareDisplayContext($reset = false)
 	$output = array(
 		'attachment' => loadAttachmentContext($message['id_msg'], $context['loaded_attachments']),
 		'id' => $message['id_msg'],
+		'id_character' => $message['id_character'],
 		'href' => $scripturl . '?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'],
 		'link' => '<a href="' . $scripturl . '?msg=' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',
 		'member' => &$memberContext[$message['id_member']],
@@ -1487,6 +1494,109 @@ function prepareDisplayContext($reset = false)
 		'can_see_ip' => allowedTo('moderate_forum') || ($message['id_member'] == $user_info['id'] && !empty($user_info['id'])),
 		'css_class' => $message['approved'] ? 'windowbg' : 'approvebg',
 	);
+
+	// Getting the poster is a little tricky. Start with whatever we have
+	// for the account as a whole and see if we can make a character out of it.
+	$output['member'] = $memberContext[$message['id_member']];
+	if (!empty($memberContext[$message['id_member']]['id']))
+	{
+		if (!empty($output['member']['characters'][$message['id_character']]))
+		{
+			$character = $output['member']['characters'][$message['id_character']];
+			if (!empty($character['char_sheet']))
+			{
+				$output['member']['char_sheet_url'] = $scripturl . '?action=profile;u=' . $message['id_member'] . ';area=characters;char=' . $output['id_character'] . ';sa=sheet';
+			}
+			if (!empty($character['avatar']))
+			{
+				$output['member']['avatar'] = [
+					'name' => $character['avatar'],
+					'image' => '<img class="avatar" src="' . $character['avatar'] . '" alt="">',
+					'href' => $character['avatar'],
+					'url' => $character['avatar'],
+				];
+			}
+			else
+			{
+				$output['member']['avatar'] = [
+					'name' => '',
+					'image' => '<img class="avatar" src="' . $modSettings['avatar_url'] . '/default.png" alt="">',
+					'href' => $modSettings['avatar_url'] . '/default.png',
+					'url' => $modSettings['avatar_url'] . '/default.png',
+				];
+			}
+			// We need to fix display of badges and everything - for reasons
+			// of online behaviour we can't trust what we might have now.
+			// In any case this lets us handle multiple badges.
+			if (!empty($character['is_main']))
+			{
+				// We use the main account groups for this.
+				$group_list = array_merge(
+					[$user_profile[$message['id_member']]['id_group']],
+					!empty($user_profile[$message['id_member']]['additional_groups']) ? explode(',', $user_profile[$message['id_member']]['additional_groups']) : []
+				);
+			}
+			else
+			{
+				// We use the character's group(s)
+				$group_list = array_merge(
+					[$character['main_char_group']],
+					!empty($character['char_groups']) ? explode(',', $character['char_groups']) : []
+				);
+			}
+			$group_info = get_labels_and_badges($group_list);
+			$output['member']['username_color'] = '<span ' . (!empty($group_info['color']) ? 'style="color:' . $group_info['color'] . ';"' : '') . '>' . $character['character_name'] . '</span>';
+			$output['member']['name_color'] = '<span ' . (!empty($group_info['color']) ? 'style="color:' . $group_info['color'] . ';"' : '') . '>' . $character['character_name'] . '</span>';
+			$output['member']['group'] = $group_info['title'];
+			$output['member']['group_color'] = $group_info['color'];
+			$output['member']['group_icons'] = $group_info['badges'];
+			$output['member']['link_color'] = '<a href="' . $scripturl . '?action=profile;u=' . $message['id_member'] . ';area=characters;char=' . $output['id_character'] . '"' . (!empty($group_info['color']) ? ' style="color:' . $group_info['color'] . ';"' : '') . '>' . $character['character_name'] . '</a>';
+
+			$output['member']['href'] = $scripturl . '?action=profile;u=' . $message['id_member'] . ';area=characters;char=' . $output['id_character'];
+			$output['member']['link'] = '<a href="' . $scripturl . '?action=profile;u=' . $message['id_member'] . ';area=characters;char=' . $output['id_character'] . '">' . $character['character_name'] . '</a>';
+			$output['member']['signature'] = $character['sig_parsed'];
+			$output['member']['posts'] = comma_format($character['posts']);
+			$is_online = $message['id_character'] == $output['member']['current_character'];
+			$output['member']['online'] = [
+				'is_online' => $is_online,
+				'text' => $smcFunc['htmlspecialchars']($txt[$is_online ? 'online' : 'offline']),
+				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], $smcFunc['htmlspecialchars']($character['character_name'])),
+				'href' => $scripturl . '?action=pm;sa=send;u=' . $message['id_member'],
+				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $message['id_member'] . '">' . $txt[$is_online ? 'online' : 'offline'] . '</a>',
+				'label' => $txt[$is_online ? 'online' : 'offline']
+			];
+
+			$output['member']['title'] = !empty($character['char_title']) ? parse_bbc($character['char_title'], false) : '';
+		}
+	}
+
+	// Now we indicate whether we can potentially migrate this to another character.
+	// But that requires us having characters to migrate to, and follow the OOC/IC rules.
+	$output['can_switch_char'] = false;
+	if ($board_info['in_character'])
+	{
+		if (!empty($output['member']['characters'])) {
+			$output['possible_characters'] = [];
+			foreach ($output['member']['characters'] as $char_id => $char) {
+				// We can't switch to the character that already posted it.
+				if ($char_id == $message['id_character']) {
+					continue;
+				}
+				// You can't switch it to a main character.
+				if ($char['is_main']) {
+					continue;
+				}
+				$output['possible_characters'][$char_id] = $char['character_name'];
+			}
+			if (!empty($output['possible_characters'])) {
+				asort($output['possible_characters']);
+			}
+		}
+		$output['can_switch_char'] = !empty($output['possible_characters']) && $output['can_modify'];
+		if (!$output['can_switch_char']) {
+			unset ($output['possible_characters']);
+		}
+	}
 
 	// Does the file contains any attachments? if so, change the icon.
 	if (!empty($output['attachment']))

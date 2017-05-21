@@ -110,6 +110,14 @@ function template_registration_form()
 						<dd>
 							<input type="text" name="email" id="smf_autov_reserve1" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['email']) ? $context['email'] : '', '" class="input_text">
 						</dd>
+						<dt><strong><label for="real_name_box">', $txt['char_register_nickname'], ':</label></strong></dt>
+						<dd>
+							<input type="text" id="real_name_box" name="real_name" size="30" tabindex="', $context['tabindex']++, '" maxlength="200" value="', isset($context['real_name']) ? $context['real_name'] : '', '" class="input_text">
+						</dd>
+						<dt><strong><label for="first_char_box">', $txt['char_register_charname'], ':</label></strong></dt>
+						<dd>
+							<input type="text" id="first_char_box" name="first_char" size="30" tabindex="', $context['tabindex']++, '" maxlength="200" value="', isset($context['first_char']) ? $context['first_char'] : '', '" class="input_text">
+						</dd>
 					</dl>
 					<dl class="register_form" id="password1_group">
 						<dt><strong><label for="smf_autov_pwmain">', ucwords($txt['choose_pass']), ':</label></strong></dt>

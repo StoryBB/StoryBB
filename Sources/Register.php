@@ -189,9 +189,10 @@ function Register($reg_errors = array())
 	else
 		$context['visual_verification'] = false;
 
-
 	$context += array(
 		'username' => isset($_POST['user']) ? $smcFunc['htmlspecialchars']($_POST['user']) : '',
+		'real_name' => isset($_POST['real_name']) ? $smcFunc['htmlspecialchars']($_POST['real_name']) : '',
+		'first_char' => isset($_POST['first_char']) ? $smcFunc['htmlspecialchars']($_POST['first_char']) : '',
 		'email' => isset($_POST['email']) ? $smcFunc['htmlspecialchars']($_POST['email']) : '',
 		'notify_announcements' => !empty($_POST['notify_announcements']) ? 1 : 0,
 	);
@@ -280,6 +281,7 @@ function Register2()
 	// Collect all extra registration fields someone might have filled in.
 	$possible_strings = array(
 		'birthdate',
+		'first_char',
 		'time_format',
 		'buddy_list',
 		'pm_ignore_list',
@@ -315,7 +317,7 @@ function Register2()
 	require_once($sourcedir . '/Subs-Members.php');
 
 	// Validation... even if we're not a mall.
-	if (isset($_POST['real_name']) && (allowedTo('profile_displayed_name') || allowedTo('moderate_forum')))
+	if (isset($_POST['real_name']))
 	{
 		$_POST['real_name'] = trim(preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $_POST['real_name']));
 		if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && $smcFunc['strlen']($_POST['real_name']) < 60)

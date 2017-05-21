@@ -315,6 +315,7 @@ function smf_main()
 		'quotefast' => array('Post.php', 'QuoteFast'),
 		'quickmod' => array('MessageIndex.php', 'QuickModeration'),
 		'quickmod2' => array('Display.php', 'QuickInTopicModeration'),
+		'reattributepost' => array('Profile-Chars.php', 'ReattributePost'),
 		'recent' => array('Recent.php', 'RecentPosts'),
 		'reminder' => array('Reminder.php', 'RemindMe'),
 		'removepoll' => array('Poll.php', 'RemovePoll'),

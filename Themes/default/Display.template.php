@@ -581,6 +581,13 @@ function template_single_post($message)
 								<li class="profile">
 									<ol class="profile_icons">';
 
+			// Link to the character sheet
+			if (!empty($message['member']['char_sheet_url']))
+			{
+				echo '
+										<li><a href="', $message['member']['char_sheet_url'], '" target="_blank" class="new_win">', ($settings['use_image_buttons'] ? '<span class="generic_icons package_ops centericon" title="' . $txt['char_sheet'] . '"></span>' : $txt['char_sheet']), '</a></li>';
+			}
+
 			// Don't show an icon if they haven't specified a website.
 			if (!empty($message['member']['website']['url']) && !isset($context['disabled_fields']['website']))
 				echo '
@@ -871,6 +878,24 @@ function template_single_post($message)
 		elseif ($message['can_remove'] && ($context['topic_first_message'] != $message['id']))
 			echo '
 											<li><a href="', $scripturl, '?action=deletemsg;topic=', $context['current_topic'], '.', $context['start'], ';msg=', $message['id'], ';', $context['session_var'], '=', $context['session_id'], '" data-confirm="', $txt['remove_message_question'], '" class="you_sure"><span class="generic_icons remove_button"></span>', $txt['remove'], '</a></li>';
+
+		// What about if we want to post to multiple characters?
+		if ($message['can_switch_char'])
+		{
+			echo '
+											<li>
+												<a href="#" onclick="return false">
+													<span class="generic_icons people"></span> ', $txt['switch_to_char_menu'], '
+												</a>
+												<ul>';
+			foreach ($message['possible_characters'] as $char_id => $char_name) {
+				echo '
+													<li><a href=" ', $scripturl, '?action=reattributepost;topic=', $context['current_topic'], ';msg=', $message['id'], ';char=', $char_id, ';', $context['session_var'], '=', $context['session_id'], '">', $char_name, '</a></li>';
+			}
+			echo '
+												</ul>
+											</li>';
+		}
 
 		// What about splitting it off the rest of the topic?
 		if ($context['can_split'] && !empty($context['real_num_replies']))

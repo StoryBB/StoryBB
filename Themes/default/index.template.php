@@ -177,7 +177,7 @@ function template_html_above()
  */
 function template_body_above()
 {
-	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance;
+	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $user_info;
 
 	// Wrapper div now echoes permanently for better layout options. h1 a is now target for "Go up" links.
 	echo '
@@ -195,6 +195,11 @@ function template_body_above()
 						echo $context['user']['avatar']['image'];
 					echo $context['user']['name'], '</a>
 				<div id="profile_menu" class="top_menu"></div>
+			</li>
+			<li>
+				<a href="' . $scripturl . '?action=profile;area=characters" id="characters_menu_top" onclick="return false;">
+				' . sprintf($txt['posting_as'], $user_info['character_name']) . ' &#9660;</a>
+				<div id="characters_menu" class="top_menu"></div>
 			</li>';
 
 		// Secondly, PMs if we're doing them

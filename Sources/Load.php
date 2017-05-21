@@ -433,9 +433,11 @@ function loadUserSettings()
 		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
 		{
 			$request = $smcFunc['db_query']('', '
-				SELECT mem.*, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
+				SELECT mem.*, chars.id_character, chars.character_name, chars.avatar AS char_avatar, chars.signature AS char_signature,
+					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
 				FROM {db_prefix}members AS mem
 					LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = {int:id_member})
+					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
 				WHERE mem.id_member = {int:id_member}
 				LIMIT 1',
 				array(
@@ -443,6 +445,7 @@ function loadUserSettings()
 				)
 			);
 			$user_settings = $smcFunc['db_fetch_assoc']($request);
+			$user_settings['id_theme'] = $user_settings['char_theme'];
 			$smcFunc['db_free_result']($request);
 
 			if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
@@ -687,6 +690,12 @@ function loadUserSettings()
 	// Set up the $user_info array.
 	$user_info += array(
 		'id' => $id_member,
+		'id_character' => isset($user_settings['id_character']) ? (int) $user_settings['id_character'] : 0,
+		'character_name' => isset($user_settings['character_name']) ? $user_settings['character_name'] : (isset($user_settings['real_name']) ? $user_settings['real_name'] : ''),
+		'char_avatar' => isset($user_settings['char_avatar']) ? $user_settings['char_avatar'] : '',
+		'char_signature' => isset($user_settings['char_signature']) ? $user_settings['char_signature'] : '',
+		'char_is_main' => !empty($user_settings['is_main']),
+		'immersive_mode' => !empty($user_settings['immersive_mode']),
 		'username' => $username,
 		'name' => isset($user_settings['real_name']) ? $user_settings['real_name'] : '',
 		'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
@@ -855,7 +864,7 @@ function loadBoard()
 				c.id_cat, b.name AS bname, b.description, b.num_topics, b.member_groups, b.deny_member_groups,
 				b.id_parent, c.name AS cname, COALESCE(mg.id_group, 0) AS id_moderator_group, mg.group_name,
 				COALESCE(mem.id_member, 0) AS id_moderator,
-				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level,
+				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.in_character,
 				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect,
 				b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
@@ -903,6 +912,7 @@ function loadBoard()
 				'profile' => $row['id_profile'],
 				'redirect' => $row['redirect'],
 				'recycle' => !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $board,
+				'in_character' => !empty($row['in_character']),
 				'posts_count' => empty($row['count_posts']),
 				'cur_topic_approved' => empty($topic) || $row['approved'],
 				'cur_topic_starter' => empty($topic) ? 0 : $row['id_member_started'],
@@ -1158,6 +1168,48 @@ function loadPermissions()
 	if (!empty($modSettings['permission_enable_deny']))
 		$user_info['permissions'] = array_diff($user_info['permissions'], $removals);
 
+	// And if this is an OOC board, we might have to remove some permissions.
+	$disable_posting = !empty($board_info['in_character']) && $user_info['char_is_main'];
+	if ($disable_posting)
+	{
+		$user_info['permissions'] = array_diff($user_info['permissions'], array(
+			'moderate_board',
+			'approve_posts',
+			'post_new',
+			'post_unapproved_topics',
+			'post_unapproved_replies_own',
+			'post_unapproved_replies_any',
+			'post_reply_own',
+			'post_reply_any',
+			'post_draft',
+			'post_attachment',
+			'modify_own',
+			'modify_any',
+			'modify_replies',
+			'delete_own',
+			'delete_any',
+			'delete_replies',
+			'merge_any',
+			'split_any',
+			'lock_own',
+			'lock_any',
+			'remove_own',
+			'remove_any',
+			'poll_vote',
+			'poll_post',
+			'poll_add_own',
+			'poll_add_any',
+			'poll_edit_own',
+			'poll_edit_any',
+			'poll_lock_own',
+			'poll_lock_any',
+			'poll_remove_own',
+			'poll_remove_any',
+			'post_unapproved_attachments',
+			'post_attachment',
+		));
+	}
+
 	if (isset($cache_groups) && !empty($board) && $modSettings['cache_enable'] >= 2)
 		cache_put_data('permissions:' . $cache_groups . ':' . $board, array($user_info['permissions'], null), 240);
 
@@ -1238,18 +1290,25 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
-			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)';
+			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
+			LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
+			LEFT JOIN {db_prefix}membergroups AS cg ON (chars.main_char_group = cg.id_group)';
 
 	// We add or replace according the the set
 	switch ($set)
 	{
 		case 'normal':
-			$select_columns .= ', mem.buddy_list,  mem.additional_groups';
+			$select_columns .= ', mem.buddy_list,  mem.additional_groups, lo.id_character AS online_character, chars.is_main,
+			chars.main_char_group, chars.char_groups, cg.online_color AS char_group_color,
+			COALESCE(cg.group_name, {string:blank_string}) AS character_group, chars.char_sheet, mem.immersive_mode';
 			break;
 		case 'profile':
 			$select_columns .= ', mem.additional_groups, mem.id_theme, mem.pm_ignore_list, mem.pm_receive_from,
 			mem.time_format, mem.timezone, mem.secret_question, mem.smiley_set, mem.tfa_secret,
-			mem.total_time_logged_in, lo.url, mem.ignore_boards, mem.password_salt, mem.pm_prefs, mem.buddy_list, mem.alerts';
+			mem.total_time_logged_in, lo.url, mem.ignore_boards, mem.password_salt, mem.pm_prefs, mem.buddy_list, mem.alerts,
+			lo.id_character AS online_character, chars.is_main, chars.main_char_group, chars.char_groups,
+			cg.online_color AS char_group_color, COALESCE(cg.group_name, {string:blank_string}) AS character_group,
+			chars.char_sheet, mem.immersive_mode';
 			break;
 		case 'minimal':
 			$select_columns = '
@@ -1300,6 +1359,75 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 
 	if (!empty($new_loaded_ids) && $set !== 'minimal')
 	{
+		foreach ($new_loaded_ids as $new_id)
+		{
+			// We might need to juggle the colours around - but only for
+			// non main characters. Main will inherit the account so no
+			// changes required. This is to fix things like who's online
+			// colour; we'll have to fix icon display elsewhere separately.
+			if (empty($user_profile[$new_id]['is_main']))
+			{
+				$user_profile[$new_id]['member_group_color'] = $user_profile[$new_id]['char_group_color'];
+				$user_profile[$new_id]['member_group'] = $user_profile[$new_id]['character_group'];
+			}
+		}
+		$request = $smcFunc['db_query']('', '
+			SELECT id_member, id_character, character_name, avatar, signature, id_theme, posts, age, date_created,
+				last_active, is_main, main_char_group, char_groups, char_sheet, char_title, retired
+			FROM {db_prefix}characters
+			WHERE id_member IN ({array_int:loaded_ids})
+			ORDER BY NULL',
+			array(
+				'loaded_ids' => $new_loaded_ids,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			// Take care of proxying avatar if required, do this here for maximum reach
+			if ($image_proxy_enabled && !empty($row['avatar']) && stripos($row['avatar'], 'http://') !== false)
+				$row['avatar'] = $boardurl . '/proxy.php?request=' . urlencode($row['avatar']) . '&hash=' . md5($row['avatar'] . $image_proxy_secret);
+
+			$user_profile[$row['id_member']]['characters'][$row['id_character']] = array(
+				'id_character' => $row['id_character'],
+				'character_name' => $row['character_name'],
+				'character_url' => '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'],
+				'avatar' => $row['avatar'],
+				'signature' => $row['signature'],
+				'sig_parsed' => !empty($row['signature']) ? parse_bbc($row['signature'], true, 'sig_char_' . $row['id_character']) : '',
+				'id_theme' => $row['id_theme'],
+				'posts' => $row['posts'],
+				'age' => $row['age'],
+				'date_created' => $row['date_created'],
+				'last_active' => $row['last_active'],
+				'is_main' => $row['is_main'],
+				'main_char_group' => $row['main_char_group'],
+				'char_groups' => $row['char_groups'],
+				'char_sheet' => $row['char_sheet'],
+				'char_title' => $row['char_title'],
+				'retired' => $row['retired'],
+			);
+			if ($row['is_main'])
+			{
+				$user_profile[$row['id_member']]['main_char'] = $row['id_character'];
+				if (!empty($row['avatar']))
+				{
+					$user_profile[$row['id_member']]['avatar'] = $row['avatar'];
+				}
+			}
+		}
+		$smcFunc['db_free_result']($request);
+
+		foreach ($user_profile as $id_member => $member)
+		{
+			if (!isset($member['characters'])) {
+				$user_profile[$id_member]['characters'] = array();
+			} else {
+				uasort($user_profile[$id_member]['characters'], function ($a, $b) {
+					return $a['is_main'] ? -1 : ($a['character_name'] > $b['character_name'] ? 1 : ($a['character_name'] < $a['character_name'] ? -1 : 0));
+				});
+			}
+		}
+
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member, variable, value
 			FROM {db_prefix}themes
@@ -1441,6 +1569,8 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'show_email' => !$user_info['is_guest'] && ($user_info['id'] == $profile['id_member'] || allowedTo('moderate_forum')),
 		'registered' => empty($profile['date_registered']) ? $txt['not_applicable'] : timeformat($profile['date_registered']),
 		'registered_timestamp' => empty($profile['date_registered']) ? 0 : forum_time(true, $profile['date_registered']),
+		'characters' => !empty($profile['characters']) ? $profile['characters'] : array(),
+		'current_character' => !empty($profile['online_character']) ? $profile['online_character'] : 0,
 	);
 
 	// If the set isn't minimal then load the monstrous array.
@@ -3509,6 +3639,98 @@ function set_avatar_data($data = array())
 			'href' => '',
 			'url' => '',
 		);
+}
+
+function get_char_membergroup_data()
+{
+	global $smcFunc, $settings, $context;
+	static $groups = null;
+
+	if ($groups !== null)
+		return $groups;
+
+	// We will want to get all the membergroups since potentially we're doing display
+	// of multiple per character. We need to fetch them in the order laid down
+	// by admins for display purposes and we will need to cache it.
+	if (($groups = cache_get_data('char_membergroups', 300)) === null)
+	{
+		$groups = [];
+		$request = $smcFunc['db_query']('', '
+			SELECT id_group, group_name, online_color, icons, is_character
+			FROM {db_prefix}membergroups
+			WHERE hidden != 2
+			ORDER BY badge_order');
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$row['parsed_icons'] = '';
+			if (!empty($row['icons']))
+			{
+				list($qty, $badge) = explode('#', $row['icons']);
+				if ($qty > 0)
+				{
+					if (file_exists($settings['actual_theme_dir'] . '/images/membericons/' . $badge))
+						$group_icon_url = $settings['images_url'] . '/membericons/' . $badge;
+					elseif (file_exists($settings['default_images_url'] . '/membericons/' . $badge))
+						$group_icon_url = $settings['default_images_url'] . '/membericons/' . $badge;
+					else
+						$group_icon_url = '';
+
+					if (!empty($group_icon_url))
+					{
+						$row['parsed_icons'] = str_repeat('<img src="' . str_replace('$language', $context['user']['language'], $group_icon_url) . '" alt="*">', $qty);
+					}
+				}
+			}
+
+			$groups[$row['id_group']] = $row;
+		}
+
+		$smcFunc['db_free_result']($request);
+		cache_put_data('char_membergroups', $groups, 300);
+	}
+
+	return $groups;
+}
+
+function get_labels_and_badges($group_list)
+{
+	global $settings, $context;
+
+	$group_title = null;
+	$group_color = '';
+	$groups = get_char_membergroup_data();
+	$group_limit = 2;
+
+	$badges = '';
+	$combined_badges = [];
+	$badges_done = 0;
+	foreach ($group_list as $id_group) {
+		if (empty($groups[$id_group]))
+			continue;
+
+		if ($group_title === null) {
+			$group_title = $groups[$id_group]['group_name'];
+			$group_color = $groups[$id_group]['online_color'];
+		}
+
+		if (empty($groups[$id_group]['parsed_icons']))
+			continue;
+
+		$badges .= '<div>' . $groups[$id_group]['parsed_icons'] . '</div>';
+		$combined_badges[] = '<div class="char_group_title"' . (!empty($groups[$id_group]['online_color']) ? ' style="color:' . $groups[$id_group]['online_color'] . '"' : '') . '>' . $groups[$id_group]['group_name'] . '</div><div class="char_group_badges">' . $groups[$id_group]['parsed_icons'] . '</div>';
+
+		$badges_done++;
+		if ($badges_done >= $group_limit) {
+			break;
+		}
+	}
+
+	return [
+		'title' => $group_title,
+		'color' => $group_color,
+		'badges' => $badges,
+		'combined_badges' => $combined_badges,
+	];
 }
 
 ?>

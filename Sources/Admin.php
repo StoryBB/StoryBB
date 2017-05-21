@@ -290,6 +290,7 @@ function AdminMain()
 						'index' => array($txt['membergroups_edit_groups'], 'manage_membergroups'),
 						'add' => array($txt['membergroups_new_group'], 'manage_membergroups'),
 						'settings' => array($txt['settings'], 'admin_forum'),
+						'badges' => array($txt['badges'], 'admin_forum'),
 					),
 				),
 				'permissions' => array(
@@ -352,6 +353,28 @@ function AdminMain()
 						'settings' => array($txt['settings']),
 					),
 				),
+			),
+		),
+		'characters' => array(
+			'title' => $txt['chars_menu_title'],
+			'permission' => array('admin_forum'),
+			'areas' => array(
+				'templates' => array(
+					'label' => $txt['char_templates'],
+					'file' => 'Admin-Chars.php',
+					'function' => 'CharacterTemplates',
+					'icon' => 'quick_edit_button',
+					'permission' => array('admin_forum'),
+					'subsections' => array(),
+				),
+				'sheets' => [
+					'label' => $txt['char_sheet_admin'],
+					'file' => 'Admin-Chars.php',
+					'function' => 'CharacterSheets',
+					'icon' => 'package_ops',
+					'permission' => array('admin_forum'),
+					'subsections' => array(),
+				],
 			),
 		),
 		'maintenance' => array(
