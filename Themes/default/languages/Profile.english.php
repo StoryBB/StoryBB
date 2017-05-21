@@ -586,7 +586,6 @@ $txt['theme_opt_posting'] = 'Posting';
 $txt['theme_opt_moderation'] = 'Moderation';
 $txt['theme_opt_personal_messages'] = 'Personal Messages';
 
-$txt['posting_as'] = 'Posting as %s:';
 $txt['you_are_posting_as'] = 'You are posting as: %s';
 $txt['my_characters'] = 'My Characters';
 
@@ -595,6 +594,15 @@ $txt['char_name'] = 'Character Name:';
 $txt['date_created'] = 'Date Created:';
 $txt['switch_chars'] = 'switch';
 $txt['change_theme'] = 'change';
+$txt['char_theme'] = 'Theme';
+
+$txt['avatar_link'] = 'Avatar link:';
+$txt['avatar_preview'] = 'Avatar preview:';
+$txt['no_avatar_yet'] = 'You don\'t have an avatar yet, add the link above';
+
+$txt['save_changes'] = 'Save changes';
+$txt['character_updated_you'] = 'Your character, %s, has been updated.';
+$txt['character_updated_else'] = 'The character, %s, has been updated.';
 
 $txt['move_char_account'] = 'Move to another account';
 $txt['move_char_action'] = 'Move character';
@@ -643,5 +651,34 @@ $txt['showPosts_char'] = 'Character Posts';
 $txt['showTopics_char'] = 'Character Topics';
 $txt['char_profile'] = 'Character Profile';
 $txt['char_stats'] = 'Character Stats';
+
+$txt['char_templates_sel'] = 'Choose template:';
+$txt['you_can_add_later'] = 'You can change your character sheet later, and you can add an avatar and signature later from your character\'s profile.';
+
+$txt['main_char'] = 'OOC account';
+$txt['main_char_desc'] = 'This is your \'main\' account, and should be used for posting in the Out Of Character (OOC) areas.';
+$txt['char_created'] = 'Character created at: %s';
+$txt['char_sheet'] = 'Character Sheet';
+$txt['char_sheet_none_short'] = 'No character sheet';
+$txt['char_sheet_link'] = 'sheet';
+$txt['char_sheet_none'] = 'This character does not have a character sheet yet.';
+$txt['char_sheet_not_approved'] = 'This character sheet has not been approved by an administrator yet.';
+$txt['char_sheet_waiting_approval'] = '(Currently waiting for approval)';
+$txt['char_sheet_send_for_approval'] = 'Send For Approval';
+$txt['char_sheet_edit'] = 'Edit Sheet';
+$txt['char_sheet_history'] = 'Edit History';
+$txt['char_sheet_approve'] = 'Approve';
+$txt['char_sheet_approve_are_you_sure'] = 'Are you sure you want to approve this character sheet?';
+$txt['char_sheet_reject_are_you_sure'] = 'Are you sure you want to reject this character sheet?';
+$txt['char_sheet_compare'] = 'Compare to Last Approved';
+$txt['char_sheet_current_version'] = 'Current Version';
+$txt['char_sheet_last_approved_version'] = 'Last Approved Version';
+$txt['char_sheet_comments'] = 'Comments';
+$txt['char_sheet_add_comment'] = 'Add Comment';
+$txt['char_sheet_was_approved'] = '<a href="%s">This version</a> of the character sheet was approved.';
+$txt['char_sheet_updated'] = 'Character sheet was updated - %1$s';
+$txt['char_sheet_approved_on'] = '(approved %1$s by %2$s)';
+$txt['char_sheet_click_to_expand'] = '<a href="#" class="click_expand">show more</a>';
+$txt['char_sheet_click_to_collapse'] = '<a href="#" class="click_collapse">show less</a>';
 
 ?>
