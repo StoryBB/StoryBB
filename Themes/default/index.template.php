@@ -104,6 +104,10 @@ function langName($lang) {
 	return  str_replace('-utf8', '', $language['name']);
 }
 
+function get_text($key) {
+	global $txt;
+	return $txt[$key];
+}
 
 function render_page($content) {
 	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance;

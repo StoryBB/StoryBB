@@ -41,35 +41,14 @@ function template_main()
 	    	'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs")
 	    ),
 	    'helpers' => Array(
-	    	'custom_fields' => 'custom_fields_helper'
+	    	'custom_fields' => 'custom_fields_helper',
+	    	'text' => 'get_text' //comes from index
 	    )
 	));
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
-
-
-	// Assuming there are members loop through each one displaying their data.
-	if (!empty($context['members']))
-	{
-		foreach ($context['members'] as $member)
-		{
-
-		// Show custom fields marked to be shown here
-		if (!empty($context['custom_profile_fields']['columns']))
-		{
-			foreach ($context['custom_profile_fields']['columns'] as $key => $column)
-				echo '
-					<td class="righttext">', $member['options'][$key], '</td>';
-		}
-
-		echo '
-				</tr>';
-		}
-	}
-
-
 }
 
 /**
