@@ -154,7 +154,7 @@ function template_summary()
 
 	// Display the basic information about the user
 	echo '
-	<div id="profileview" class="roundframe flow_auto noup">
+	<div id="profileview" class="roundframe flow_auto">
 		<div id="basicinfo">';
 
 	// Are there any custom profile fields for above the name?
@@ -177,9 +177,11 @@ function template_summary()
 
 	echo '
 			<div class="username clear">
-				<h4>', $context['member']['name'], '<span class="position">', (!empty($context['member']['group']) ? $context['member']['group'] : $context['member']['post_group']), '</span></h4>
+				<h4>', $context['member']['name'], '</h4>
 			</div>
-			', $context['member']['avatar']['image'];
+			', $context['member']['avatar']['image'], '
+			<div class="badges">', $context['member']['badges'], '</div>
+			<div class="position">', (!empty($context['member']['group']) ? $context['member']['group'] : ''), '</div>';
 
 	// Are there any custom profile fields for below the avatar?
 	if (!empty($context['print_custom_fields']['below_avatar']))
@@ -268,7 +270,7 @@ function template_summary()
 
 	echo '
 		<div id="detailedinfo">
-			<dl class="settings">';
+			<dl>';
 
 	if ($context['user']['is_owner'] || $context['user']['is_admin'])
 		echo '
@@ -308,7 +310,7 @@ function template_summary()
 	if (!empty($context['print_custom_fields']['standard']))
 	{
 		echo '
-				<dl class="settings">';
+				<dl>';
 
 		foreach ($context['print_custom_fields']['standard'] as $field)
 			if (!empty($field['output_html']))
@@ -321,7 +323,7 @@ function template_summary()
 	}
 
 	echo '
-				<dl class="settings noborder">';
+				<dl class="noborder">';
 
 	// Can they view/issue a warning?
 	if ($context['can_view_warning'] && $context['member']['warning'])
@@ -329,7 +331,7 @@ function template_summary()
 		echo '
 					<dt>', $txt['profile_warning_level'], ': </dt>
 					<dd>
-						<a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=', ($context['can_issue_warning'] && !$context['user']['is_owner'] ? 'issuewarning' : 'viewwarning'), '">', $context['member']['warning'], '%</a>';
+						<a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=', ($context['can_issue_warning'] && !$context['user']['is_owner'] ? 'issuewarning' : 'viewwarning') , '">', $context['member']['warning'], '%</a>';
 
 		// Can we provide information on what this means?
 		if (!empty($context['warning_status']))
@@ -347,7 +349,7 @@ function template_summary()
 		// If the person looking at the summary has permission, and the account isn't activated, give the viewer the ability to do it themselves.
 		if (!empty($context['activate_message']))
 			echo '
-					<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="', $context['activate_link'], '"', ($context['activate_type'] == 4 ? ' class="you_sure" data-confirm="' . $txt['profileConfirm'] . '"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
+					<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="', $context['activate_link'], '"', ($context['activate_type'] == 4 ? ' class="you_sure" data-confirm="'. $txt['profileConfirm'] .'"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
 
 		// If the current member is banned, show a message and possibly a link to the ban.
 		if (!empty($context['member']['bans']))
@@ -441,6 +443,40 @@ function template_summary()
 		echo '
 					</ul>
 				</div>';
+	}
+
+	if (!empty($context['member']['characters']) && count($context['member']['characters']) > 1)
+	{
+		echo '
+				<div class="character_list">
+					<h5 id="user_char_list">', $txt['my_characters'], ':</h5>
+				</div>
+				<ul class="characters">';
+		foreach ($context['member']['characters'] as $char)
+		{
+			if ($char['is_main'])
+				continue;
+
+			echo '
+					<li>
+						<div class="char_avatar">
+							', !empty($char['avatar']) ? '<img src="' . $char['avatar'] . '" alt="">' : '<img src="' . $modSettings['avatar_url'] . '/default.png" alt="">', '
+						</div>
+						<div class="char_name">
+							<a href="', $scripturl, $char['character_url'], '">', $char['character_name'], '</a>
+							', !empty($char['retired']) ? '(' . $txt['char_retired'] . ')' : '', '
+							<div class="char_created">
+								', sprintf($txt['char_created'], timeformat($char['date_created'])), '
+							</div>
+						</div>
+						<div class="char_group">
+							', $char['display_group'], '
+							<div class="char_created">&nbsp;</div>
+						</div>
+					</li>';
+		}
+		echo '
+				</ul>';
 	}
 
 	echo '

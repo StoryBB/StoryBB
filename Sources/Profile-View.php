@@ -206,6 +206,7 @@ function summary($memID)
 		unset ($_SESSION['merge_success']);
 	}
 
+	$cur_profile = $user_profile[$memID];
 	$main_char = $cur_profile['characters'][$cur_profile['main_char']];
 	$context['member']['signature'] = $main_char['sig_parsed'];
 	$user_groups = [];
