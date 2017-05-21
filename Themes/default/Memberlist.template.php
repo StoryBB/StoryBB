@@ -88,5 +88,4 @@ function template_search()
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
 }
-
 ?>
