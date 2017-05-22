@@ -60,16 +60,16 @@
 					<dl class="stats">
 					    {{#each .}}
 					        <dt>
-							{{link}}
+							{{{link}}}
 						</dt>
-						<dd class="statsbar">';
+						<dd class="statsbar">
 
 			             {{#if percent}}
 			                <div class="bar" style="width: {{percent}}%">
 								<span class="righttext">{{num}}</span>
 							</div>
 			             {{else}}
-				            <div class="bar empty"><span class="righttext">{{num}}</span></div>';
+				            <div class="bar empty"><span class="righttext">{{num}}</span></div>
 			            {{/if}}
 			            </dd>
 						{{/each}}
@@ -98,7 +98,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			{{#each context.yearly}}
+        	{{#each context.yearly}}
 			<tr class="windowbg" id="year_{{@key}}">
 				<th class="lefttext">
 					<img id="year_img_{{@key}}" src="{{settings.images_url}}/selected_open.png" alt="*"> <a href="#year_{{@key}}" id="year_link_{{@key}}">{{year}}</a>
@@ -111,7 +111,7 @@
 				<th>{{hits}}</th>
 				{{/if}}
 			</tr>
-    			{{each months}}
+    			{{#each months}}
     			<tr class="windowbg" id="tr_month_', $month['id'], '">
 					<th class="stats_month">
 						<img src="{{settings.images_url}}/{{#if expanded}} selected_open.png{{else}}selected.png{{/if}}" alt="" id="img_{{id}}"> <a id="m{{id}}" href="{{href}}" onclick="return doingExpandCollapse;">{{month}} {{year}}</a>
@@ -126,14 +126,14 @@
     			</tr>
         			{{#if expanded}}
             			{{#each days}}
-            			<tr class="windowbg" id="tr_day_', $day['year'], '-', $day['month'], '-', $day['day'], '">
-        					<td class="stats_day">', $day['year'], '-', $day['month'], '-', $day['day'], '</td>
-        					<td>', $day['new_topics'], '</td>
-        					<td>', $day['new_posts'], '</td>
-        					<td>', $day['new_members'], '</td>
-        					<td>', $day['most_members_online'], '</td>
+            			<tr class="windowbg" id="tr_day_{{year}}-{{month}}-{{day}}">
+        					<td class="stats_day">{{year}}-{{month}}-{{day}}</td>
+        					<td>{{new_topics}}</td>
+        					<td>{{new_posts}}</td>
+        					<td>{{new_members}}</td>
+        					<td>{{most_members_online}}</td>
         					{{#if modSettings.hitStats}}
-            				<td>', $day['hits'], '</td>
+            				<td>{{hits}}</td>
             				{{/if}}
             			</tr>
             			{{/each}}{{!-- days --}}
@@ -164,9 +164,7 @@
 			sDayRowIdPrefix: \'tr_day_\',
 
 			aCollapsedYears: [
-			    {{#each context.collapsed_years}}
-			    	\'', $year, '\'', $id != count($context['collapsed_years']) - 1 ? ',' : ''
-			    {{/each}}
+			    {{#each context.collapsed_years}}'{{year}}' {{#unless @last}},{{/unless}}{{/each}}
 			    ],
 
 			aDataCells: [
@@ -174,8 +172,10 @@
 				\'new_topics\',
 				\'new_posts\',
 				\'new_members\',
-				\'most_members_online\'', empty($modSettings['hitStats']) ? '' : ',
-				\'hits\'', '
+				\'most_members_online\''
+				{{#if modSettings.hitStats}}
+				,\'hits\''
+				{{/if}}
 			]
 		});
 	</script>'
