@@ -1486,6 +1486,26 @@ function AdminAccount()
 				array('id_member'),
 				1
 			);
+
+			$incontext['character_id'] = $smcFunc['db_insert']('',
+				$db_prefix . 'characters',
+				array(
+					'id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
+					'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
+					'date_created' => 'int', 'last_active' => 'int', 'is_main' => 'int',
+					'main_char_group' => 'int', 'char_groups' => 'string', 'char_sheet' => 'int',
+					'char_title' => 'string', 'retired' => 'int',
+				),
+				array(
+					$incontext['member_id'], stripslashes($_POST['username']), '',
+					'', 0, 0, '',
+					time(), 0, 1,
+					0, '', 0,
+					'', 0,
+				),
+				array('id_character'),
+				1
+			);
 		}
 
 		// If we're here we're good.
