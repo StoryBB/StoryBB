@@ -2415,6 +2415,7 @@ function CharacterList()
 
 	isAllowedTo('view_mlist');
 	loadTemplate('Profile-Chars');
+	loadLanguage('Profile');
 
 	$context['page_title'] = $txt['chars_menu_title'];
 	$context['sub_template'] = 'character_list';
