@@ -178,7 +178,7 @@ function template_manual()
 	    ),
 	    'helpers' => Array(
 	    	'getLangSuffix',
-	    	'txtTemplate'
+	    	'txtTemplate' => 'textTemplate'
 	    )
 	));
 	

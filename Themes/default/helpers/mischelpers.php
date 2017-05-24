@@ -17,7 +17,7 @@ function get_text(...$key) {
 }
 
 function textTemplate($template, ...$args) {
-	return sprintf($template, ...$args)
+	return  new \LightnCandy\SafeString(sprintf($template, ...$args));
 }
 
 
