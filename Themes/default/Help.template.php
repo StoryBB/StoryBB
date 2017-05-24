@@ -19,27 +19,27 @@ use LightnCandy\LightnCandy;
 function template_popup()
 {
 	global $context, $settings, $txt, $modSettings;
-
-	// Since this is a popup of its own we need to start the html, etc.
-	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="', $context['character_set'], '">
-		<meta name="robots" content="noindex">
-		<title>', $context['page_title'], '</title>
-		<link rel="stylesheet" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css', $modSettings['browser_cache'] ,'">
-		<script src="', $settings['default_theme_url'], '/scripts/script.js', $modSettings['browser_cache'] ,'"></script>
-	</head>
-	<body id="help_popup">
-		<div class="windowbg description">
-			', $context['help_text'], '<br>
-			<br>
-			<a href="javascript:self.close();">', $txt['close_window'], '</a>
-		</div>
-	</body>
-</html>';
+	$data = Array(
+		'context' => $context,
+		'settings' => $settings,
+		'txt' => $txt,
+		'modsettings' => $modSettings
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/layouts/help_popup.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
+	
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'helpers' => Array(
+	    )
+	));
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	echo $renderer($data);
 }
-
 /**
  * The template for the popup for finding members
  */
