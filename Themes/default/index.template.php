@@ -116,7 +116,7 @@ function render_page($content) {
 		'maintenance' => $maintenance,
 		'modSettings' => $modSettings,
 		'copyright' => theme_copyright(),
-		'loadtime' => sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries'])
+		'loadtime' => !empty($modSettings['timeLoadPageEnable']) ? sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries']) : ''
 	);
 	
 	$template = file_get_contents(__DIR__ .  "/layouts/default.hbs");
