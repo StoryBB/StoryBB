@@ -1,5 +1,7 @@
+
 <?php
 require(__DIR__ . '/../../vendor/autoload.php');
+require_once(__DIR__ . '/helpers/logichelpers.php');
 use LightnCandy\LightnCandy;
 /**
  * Simple Machines Forum (SMF)
@@ -94,20 +96,12 @@ function login_helper($string, $guest_title, $forum_name, $scripturl, $login)
 	));
 }
 
-function isSelected($current_val, $val) 
-{
-	
-    return new \LightnCandy\SafeString($current_val == $val ? 'selected="selected' : '');
-}
+
 
 function langName($lang) {
 	return  str_replace('-utf8', '', $language['name']);
 }
 
-function get_text($key) {
-	global $txt;
-	return $txt[$key];
-}
 
 function render_page($content) {
 	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance;
@@ -146,124 +140,6 @@ function render_page($content) {
 	echo $renderer($data);
 }
     
-/**
- * The main sub template above the content.
- */
-function template_html_above()
-{
-	global $context, $settings, $scripturl, $txt, $modSettings, $mbname;
-	
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'settings' => $settings
-	);
-	
-	$template = file_get_contents(__DIR__ .  "/layouts/html_above.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	        'locale' => 'locale_helper',
-	     /*   'css' => 'template_css',
-	        'js' => 'template_js'*/
-	    )
-	));
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	echo $renderer($data);
-}
-
-
-
-/**
- * The upper part of the main template layer. This is the stuff that shows above the main forum content.
- */
-function template_body_above()
-{
-	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance;
-
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'settings' => $settings,
-		'maintenance' => $maintenance,
-		'modSettings' => $modSettings
-	);
-	
-	$template = file_get_contents(__DIR__ .  "/layouts/body_above.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'partials' => Array(
-	    	'menu' => file_get_contents(__DIR__ .  "/partials/menu.hbs")
-	    ),
-	    'helpers' => Array(
-	        'login_helper' => 'login_helper',
-	        'isSelected',
-	        'langName'
-	     /*   'css' => 'template_css',
-	        'js' => 'template_js'*/
-	    )
-	));
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	echo $renderer($data);
-
-}
-
-/**
- * The stuff shown immediately below the main content, including the footer
- */
-function template_body_below()
-{
-	global $context, $txt, $scripturl, $modSettings;
-	
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'settings' => $settings,
-		'modSettings' => $modSettings,
-		'copyright' => theme_copyright(),
-		'loadtime' => sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries'])
-	);
-	
-	$template = file_get_contents(__DIR__ .  "/layouts/body_below.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	echo $renderer($data);
-}
-
-/**
- * This shows any deferred JavaScript and closes out the HTML
- */
-function template_html_below()
-{
-	echo '
-</body>
-</html>';
-}
 
 
 /**

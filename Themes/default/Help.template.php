@@ -1,4 +1,7 @@
 <?php
+require(__DIR__ . '/../../vendor/autoload.php');
+require_once(__DIR__ . '/helpers/mischelpers.php');
+use LightnCandy\LightnCandy;
 /**
  * Simple Machines Forum (SMF)
  *
@@ -146,34 +149,41 @@ function template_find_members()
 </html>';
 }
 
+function getLangSuffix($lang) {
+	return ($lang != 'en' ? '/' . $lang : '');
+}
+
 /**
  * The main help page
  */
 function template_manual()
 {
 	global $context, $scripturl, $txt;
-
-	echo '
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['manual_smf_user_help'], '</h3>
-			</div>
-			<div id="help_container">
-				<div id="helpmain" class="windowbg2">
-					<p>', sprintf($txt['manual_welcome'], $context['forum_name_html_safe']), '</p>
-					<p>', $txt['manual_introduction'], '</p>
-					<ul>';
-
-	foreach ($context['manual_sections'] as $section_id => $wiki_id)
-	{
-		echo '
-						<li><a href="', $context['wiki_url'], '/', $context['wiki_prefix'], $wiki_id, ($txt['lang_dictionary'] != 'en' ? '/' . $txt['lang_dictionary'] : ''), '" target="_blank" class="new_win">', $txt['manual_section_' . $section_id . '_title'], '</a> - ', $txt['manual_section_' . $section_id . '_desc'], '</li>';
+	$data = Array(
+		'context' => $context,
+		'scripturl' => $scripturl,
+		'txt' => $txt,
+		'creditsURL' => $scripturl . '?action=credits'
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/help_manual.hbs");
+	if (!$template) {
+		die('Template did not load!');
 	}
-
-	echo '
-					</ul>
-					<p>', sprintf($txt['manual_docs_and_credits'], $context['wiki_url'], $scripturl . '?action=credits'), '</p>
-				</div>
-			</div>';
+	
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'partials' => Array(
+	    	'menu' => file_get_contents(__DIR__ .  "/partials/menu.hbs")
+	    ),
+	    'helpers' => Array(
+	    	'getLangSuffix',
+	    	'txtTemplate'
+	    )
+	));
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
