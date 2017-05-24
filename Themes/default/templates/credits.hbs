@@ -1,0 +1,96 @@
+<div class="main_section" id="credits">
+		<div class="cat_bar">
+			<h3 class="catbg">{{txt.credits}}</h3>
+		</div>
+		{{! The most important part - the credits :P.}}
+		{{#each context.credits}}
+			{{#if pretext}}
+			<div class="windowbg noup">
+				<p>{{pretext}}</p>
+			</div>
+			{{/if}}
+
+			{{#if title}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{title}}</h3>
+			</div>
+			{{/if}}
+
+			<div class="windowbg2 noup">
+				<dl>
+					{{#each groups}}
+						{{#if title}}
+						<dt>
+							<strong>{{title}}</strong>
+						</dt>
+						{{/if}}
+						<dd>
+							{{{implode_and members}}}
+						</dd>
+					{{/each}}
+				</dl>
+				{{#if posttext}}
+					<p class="posttext">{{posttext}}</p>
+				{{/if}}
+			</div>
+		{{/each}}
+		
+		{{#if (or context.credits_modifications context.copyrights.mods)}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{txt.credits_modifications}}</h3>
+			</div>
+			<div class="windowbg noup">
+				{{#each context.credits_modifications}}
+					{{.}}<br>
+				{{/each}}
+				{{#each context.copyrights.mods}}
+					{{.}}<br>
+				{{/each}}
+			</div>
+		{{/if}}
+
+		{{! Other software and graphics }}
+		{{#if context.credits_software_graphics}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{txt.credits_software_graphics}}</h3>
+			</div>
+			<div class="windowbg noup">
+				{{#if context.credits_software_graphics.graphics}}
+					<dl>
+						<dt><strong>{{txt.credits_graphics}}</strong></dt>
+						{{#each context.credits_software_graphics.graphics}}
+							<dd>{{{.}}}</dd>
+						{{/each}}
+					</dl>
+				{{/if}}
+
+				{{#if context.credits_software_graphics.software}}
+					<dl>
+						<dt><strong>{{txt.credits_software}}</strong></dt>
+						{{#each context.credits_software_graphics.software}}
+							<dd>{{{.}}}</dd>
+						{{/each}}
+					</dl>
+				{{/if}}
+
+				{{#if context.credits_software_graphics.fonts}}
+					<dl>
+						<dt><strong>{{txt.credits_fonts}}</strong></dt>
+						{{#each context.credits_software_graphics.fonts}}
+							<dd>{{{.}}}</dd>
+						{{/each}}
+					</dl>
+				{{/if}}
+			</div>
+		{{/if}}
+
+		{{! How about Modifications, we all love em }}
+		<div class="cat_bar">
+			<h3 class="catbg">{{txt.credits_forum}} {{txt.credits_copyright}}</h3>
+		</div>
+
+		{{! SMF itself }}
+		<div class="windowbg noup">
+			{{{context.copyrights.smf}}}
+		</div>
+</div>

@@ -1,4 +1,8 @@
 <?php
+require(__DIR__ . '/../../vendor/autoload.php');
+require(__DIR__ . '/helpers/logichelpers.php');
+require(__DIR__ . '/helpers/stringhelpers.php');
+use LightnCandy\LightnCandy;
 /**
  * Simple Machines Forum (SMF)
  *
@@ -125,131 +129,30 @@ function template_credits()
 {
 	global $context, $txt;
 
-	// The most important part - the credits :P.
-	echo '
-	<div class="main_section" id="credits">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['credits'], '</h3>
-		</div>';
+	$data = [
+		'context' => $context,
+		'txt' => $txt,
+	];
 
-	foreach ($context['credits'] as $section)
-	{
-		if (isset($section['pretext']))
-		echo '
-		<div class="windowbg noup">
-			<p>', $section['pretext'], '</p>
-		</div>';
-
-		if (isset($section['title']))
-		echo '
-		<div class="cat_bar">
-			<h3 class="catbg">', $section['title'], '</h3>
-		</div>';
-
-		echo '
-		<div class="windowbg2 noup">
-			<dl>';
-
-		foreach ($section['groups'] as $group)
-		{
-			if (isset($group['title']))
-				echo '
-				<dt>
-					<strong>', $group['title'], '</strong>
-				</dt>
-				<dd>';
-
-			// Try to make this read nicely.
-			if (count($group['members']) <= 2)
-				echo implode(' ' . $txt['credits_and'] . ' ', $group['members']);
-			else
-			{
-				$last_peep = array_pop($group['members']);
-				echo implode(', ', $group['members']), ' ', $txt['credits_and'], ' ', $last_peep;
-			}
-
-			echo '
-				</dd>';
-		}
-
-		echo '
-			</dl>';
-
-		if (isset($section['posttext']))
-			echo '
-				<p class="posttext">', $section['posttext'], '</p>';
-
-		echo '
-		</div>';
+	$template = file_get_contents(__DIR__ .  "/templates/credits.hbs");
+	if (!$template) {
+		die('Member template did not load!');
 	}
 
-	// Other software and graphics
-	if (!empty($context['credits_software_graphics']))
-	{
-		echo '
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['credits_software_graphics'], '</h3>
-		</div>
-		<div class="windowbg noup">';
-
-		if (!empty($context['credits_software_graphics']['graphics']))
-			echo '
-			<dl>
-				<dt><strong>', $txt['credits_graphics'], '</strong></dt>
-				<dd>', implode('</dd><dd>', $context['credits_software_graphics']['graphics']), '</dd>
-			</dl>';
-
-		if (!empty($context['credits_software_graphics']['software']))
-			echo '
-			<dl>
-				<dt><strong>', $txt['credits_software'], '</strong></dt>
-				<dd>', implode('</dd><dd>', $context['credits_software_graphics']['software']), '</dd>
-			</dl>';
-
-		if (!empty($context['credits_software_graphics']['fonts']))
-			echo '
-			<dl>
-				<dt><strong>', $txt['credits_fonts'], '</strong></dt>
-				<dd>', implode('</dd><dd>', $context['credits_software_graphics']['fonts']), '</dd>
-			</dl>';
-		echo '
-		</div>';
-	}
-
-	// How about Modifications, we all love em
-	if (!empty($context['credits_modifications']) || !empty($context['copyrights']['mods']))
-	{
-		echo '
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['credits_modifications'], '</h3>
-		</div>
-		<div class="windowbg noup">';
-
-		// Display the credits.
-		if (!empty($context['credits_modifications']))
-			echo '
-			', implode('
-			<br>', $context['credits_modifications']);
-
-		// Legacy.
-		if (!empty($context['copyrights']['mods']))
-			echo (empty($context['credits_modifications']) ? '<br>' : ''),
-			implode('
-			<br>', $context['copyrights']['mods']);
-
-		echo '
-		</div>';
-	}
-
-	// SMF itself
-	echo '
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['credits_forum'], ' ', $txt['credits_copyright'], '</h3>
-		</div>
-		<div class="windowbg noup">
-			', $context['copyrights']['smf'], '
-		</div>
-	</div>';
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'partials' => Array(
+			'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs")
+		),
+		'helpers' => [
+			'or' => 'logichelper_or',
+			'implode_and' => 'implode_and',
+		],
+	]);
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 ?>
