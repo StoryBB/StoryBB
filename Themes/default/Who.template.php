@@ -141,9 +141,6 @@ function template_credits()
 
 	$phpStr = LightnCandy::compile($template, [
 		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-		'partials' => Array(
-			'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs")
-		),
 		'helpers' => [
 			'or' => 'logichelper_or',
 			'implode_and' => 'implode_and',
