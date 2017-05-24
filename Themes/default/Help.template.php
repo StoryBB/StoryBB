@@ -42,6 +42,7 @@ function template_popup()
 }
 /**
  * The template for the popup for finding members
+ * @todo Is this used?
  */
 function template_find_members()
 {
@@ -192,22 +193,26 @@ function template_manual()
 function template_terms()
 {
 	global $txt, $context, $modSettings;
-
-	if (!empty($modSettings['requireAgreement']))
-		echo '
-			<div class="cat_bar">
-				<h3 class="catbg">
-					', $txt['terms_and_rules'], ' - ', $context['forum_name_html_safe'], '
-				</h3>
-			</div>
-			<div class="roundframe">
-				', $context['agreement'], '
-			</div>';
-	else
-		echo '
-			<div class="noticebox">
-				', $txt['agreement_disabled'], '
-			</div>';
+		$data = Array(
+		'context' => $context,
+		'modSettings' => $modSettings,
+		'txt' => $txt
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/help_terms.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
+	
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'partials' => Array(),
+	    'helpers' => Array(
+	    )
+	));
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 ?>
