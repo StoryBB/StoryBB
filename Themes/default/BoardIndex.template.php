@@ -1,5 +1,5 @@
 <?php
-require(__DIR__ . '/../../vendor/autoload.php');
+
 use LightnCandy\LightnCandy;
 require(__DIR__ . '/helpers/logichelpers.php');
 /**

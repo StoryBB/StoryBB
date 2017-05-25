@@ -45,6 +45,7 @@ if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/c
 	$cachedir = $boarddir . '/cache';
 
 // Without those we can't go anywhere
+require_once($boarddir . '/vendor/autoload.php');
 require_once($sourcedir . '/QueryString.php');
 require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Subs-Auth.php');
