@@ -83,7 +83,7 @@ function template_init()
 
 function locale_helper($lang_locale) 
 {
-    return new \LightnCandy\SafeString(str_replace("_", "-", substr(lang_locale, 0, strcspn(lang_locale, "."))));
+    return new \LightnCandy\SafeString(str_replace("_", "-", substr($lang_locale, 0, strcspn($lang_locale, "."))));
 }
 
 function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
