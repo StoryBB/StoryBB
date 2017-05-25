@@ -1,5 +1,8 @@
 {
     "require": {
         "zordius/lightncandy": "dev-master"
+    },
+    "config": {
+        "preferred-install": "dist"
     }
 }
