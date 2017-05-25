@@ -1,7 +1,7 @@
 <?php
 
 use LightnCandy\LightnCandy;
-require(__DIR__ . '/helpers/logichelpers.php');
+require_once(__DIR__ . '/helpers/logichelpers.php');
 /**
  * Simple Machines Forum (SMF)
  *

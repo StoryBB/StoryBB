@@ -1,6 +1,6 @@
 <?php
-require(__DIR__ . '/helpers/logichelpers.php');
-require(__DIR__ . '/helpers/stringhelpers.php');
+require_once(__DIR__ . '/helpers/logichelpers.php');
+require_once(__DIR__ . '/helpers/stringhelpers.php');
 use LightnCandy\LightnCandy;
 /**
  * Simple Machines Forum (SMF)
