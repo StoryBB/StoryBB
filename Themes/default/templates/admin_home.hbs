@@ -1,0 +1,86 @@
+		<div id="admincenter">
+			<div id="update_section"></div>
+			<div id="admin_main_section">
+				<div id="live_news" class="floatleft">
+					<div class="cat_bar">
+						<h3 class="catbg">
+							<a href="{{scripturl}}?action=helpadmin;help=live_news" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="{{txt.help}}"></span></a> {{txt.live}}
+						</h3>
+					</div>
+					<div class="windowbg nopadding">
+						<div id="smfAnnouncements">{{txt.lfyi}}</div>
+					</div>
+				</div>
+				<div id="supportVersionsTable" class="floatright">
+					<div class="cat_bar">
+						<h3 class="catbg">
+							<a href="{{scripturl}}?action=admin;area=credits">{{txt.support_title}}</a>
+						</h3>
+					</div>
+					<div class="windowbg nopadding">
+						<div id="version_details" class="padding">
+							<strong>{{txt.support_versions}}:</strong><br>
+							{{txt.support_versions_forum}}:
+							<em id="yourVersion">{{context.forum_version}}</em><br>
+							{{txt.support_versions_current}}:
+							<em id="smfVersion">??</em><br>
+							{{#if context.can_admin}}<a href="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=version">{{txt.version_check_more}}</a>{{/if}}
+							<br><br>
+							
+							{{! Display all the members who can administrate the forum. }}
+							<strong>{{txt.administrators}}:</strong>
+							{{implode context.administrators}}
+							{{! If we have lots of admins... don't show them all. }}
+							{{#if context.more_admins_link}}
+								({{{context.more_admins_link}}})
+							{{/if}}
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{{! Output the sections of the admin page }}
+			{{#each admin_menu.sections}}
+				<fieldset id="group_{{@key}}" class="windowbg admin_group">
+					<legend>{{title}}</legend>
+
+					{{#each areas}}
+						{{#unless (eq @key "index")}}
+							{{#if icon_file}}
+								<a href="{{url}}" class="admin_group{{#if inactive}} inactive{{/if}}"><img class="large_admin_menu_icon_file" src="{{icon_file}}" alt="">{{label}}</a>
+							{{else}}
+								<a href="{{url}}"><span class="large_{{icon_class}}{{#if inactive}} inactive{{/if}}"></span>{{label}}</a>
+							{{/if}}
+						{{/unless}}
+					{{/each}}
+				</fieldset>
+			{{/each}}
+		</div>
+
+		{{! The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization. }}
+		<script src="{{scripturl}}?action=viewsmfile;filename=current-version.js"></script>
+		<script src="{{scripturl}}?action=viewsmfile;filename=latest-news.js"></script>
+		<script>
+			var oAdminIndex = new smf_AdminIndex({
+				sSelf: 'oAdminCenter',
+
+				sAnnouncementTemplate: '<dl>%content%</dl>',
+				sAnnouncementMessageTemplate: '' +
+					'<dt><a href="%href%">%subject%</a> ' + {{{json txt.on}}} + ' %time%</dt>' +
+					'<dd>%message%</dd>',
+				sAnnouncementContainerId: 'smfAnnouncements',
+
+				sSmfVersionContainerId: 'smfVersion',
+				sYourVersionContainerId: 'yourVersion',
+
+				sUpdateNotificationContainerId: 'update_section',
+				sUpdateNotificationDefaultTitle: {{{json txt.update_available}}},
+				sUpdateNotificationDefaultMessage: {{{json txt.update_message}}},
+				sUpdateNotificationTemplate: '' +
+					'<h3 id="update_title">%title%</h3>' +
+					'<div id="update_message" class="smalltext">%message%</div>',
+				sUpdateNotificationLink: smf_scripturl + '?action=admin;area=packages;pgdownload;auto;package=%package%;{{context.session_var}}={{contextsession_id}}'
+
+			});
+		</script>

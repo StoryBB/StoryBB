@@ -23,7 +23,13 @@
 // Handle the JavaScript surrounding the admin and moderation center.
 function smf_AdminIndex(oOptions)
 {
-	this.opt = oOptions;
+	var defaults = {
+		bLoadAnnouncements: true,
+		bLoadVersions: true,
+		bLoadUpdateNotification: true,
+		sVersionOutdatedTemplate: '<span class="alert">%currentVersion%</span>'
+	};
+	this.opt = $.extend({}, defaults, oOptions || {});
 	this.init();
 }
 

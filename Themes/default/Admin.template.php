@@ -7,6 +7,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 /**
  * This is the administration center home.
  */
@@ -14,140 +16,33 @@ function template_admin()
 {
 	global $context, $settings, $scripturl, $txt, $modSettings;
 
-	// Welcome message for the admin.
-	echo '
-					<div id="admincenter">';
+	$data = [
+		'context' => $context,
+		'txt' => $txt,
+		'settings' => $settings,
+		'scripturl' => $scripturl,
+		'modSettings' => $modSettings,
+		'admin_menu' => $context[$context['admin_menu_name']],
+	];
 
-	// Is there an update available?
-	echo '
-						<div id="update_section"></div>';
-
-	echo '
-						<div id="admin_main_section">';
-
-	// Display the "live news" from simplemachines.org.
-	echo '
-							<div id="live_news" class="floatleft">
-								<div class="cat_bar">
-									<h3 class="catbg">
-										<a href="', $scripturl, '?action=helpadmin;help=live_news" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a> ', $txt['live'], '
-									</h3>
-								</div>
-								<div class="windowbg nopadding">
-									<div id="smfAnnouncements">', $txt['lfyi'], '</div>
-								</div>
-							</div>';
-
-	// Show the user version information from their server.
-	echo '
-							<div id="supportVersionsTable" class="floatright">
-								<div class="cat_bar">
-									<h3 class="catbg">
-										<a href="', $scripturl, '?action=admin;area=credits">', $txt['support_title'], '</a>
-									</h3>
-								</div>
-								<div class="windowbg nopadding">
-									<div id="version_details" class="padding">
-										<strong>', $txt['support_versions'], ':</strong><br>
-										', $txt['support_versions_forum'], ':
-										<em id="yourVersion">', $context['forum_version'], '</em><br>
-										', $txt['support_versions_current'], ':
-										<em id="smfVersion">??</em><br>
-										', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>';
-
-	// Display all the members who can administrate the forum.
-	echo '
-										<br>
-										<strong>', $txt['administrators'], ':</strong>
-										', implode(', ', $context['administrators']);
-	// If we have lots of admins... don't show them all.
-	if (!empty($context['more_admins_link']))
-		echo '
-							(', $context['more_admins_link'], ')';
-
-	echo '
-									</div>
-								</div>
-							</div>
-						</div>';
-
-	foreach ($context[$context['admin_menu_name']]['sections'] as $area_id => $area)
-	{
-		echo '
-						<fieldset id="group_', $area_id, '" class="windowbg admin_group">
-							<legend>', $area['title'], '</legend>';
-
-		foreach ($area['areas'] as $item_id => $item)
-		{
-			// No point showing the 'home' page here, we're already on it!
-			if ($area_id == 'forum' && $item_id == 'index')
-				continue;
-
-			$url = isset($item['url']) ? $item['url'] : $scripturl . '?action=admin;area=' . $item_id . (!empty($context[$context['admin_menu_name']]['extra_parameters']) ? $context[$context['admin_menu_name']]['extra_parameters'] : '');
-			if (!empty($item['icon_file']))
-				echo '
-							<a href="', $url, '" class="admin_group', !empty($item['inactive']) ? ' inactive' : '', '"><img class="large_admin_menu_icon_file" src="', $item['icon_file'], '" alt="">', $item['label'], '</a>';
-			else
-				echo '
-							<a href="', $url, '"><span class="large_', $item['icon_class'], !empty($item['inactive']) ? ' inactive' : '', '"></span>', $item['label'], '</a>';
-		}
-
-		echo '
-						</fieldset>';
+	$template = file_get_contents(__DIR__ .  "/templates/admin_home.hbs");
+	if (!$template) {
+		die('Admin home template did not load!');
 	}
 
-	echo '
-					</div>';
-
-	// The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization.
-	if (empty($modSettings['disable_smf_js']))
-		echo '
-					<script src="', $scripturl, '?action=viewsmfile;filename=current-version.js"></script>
-					<script src="', $scripturl, '?action=viewsmfile;filename=latest-news.js"></script>';
-
-	// This sets the announcements and current versions themselves ;).
-	echo '
-					<script>
-						var oAdminIndex = new smf_AdminIndex({
-							sSelf: \'oAdminCenter\',
-
-							bLoadAnnouncements: true,
-							sAnnouncementTemplate: ', JavaScriptEscape('
-								<dl>
-									%content%
-								</dl>
-							'), ',
-							sAnnouncementMessageTemplate: ', JavaScriptEscape('
-								<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
-								<dd>
-									%message%
-								</dd>
-							'), ',
-							sAnnouncementContainerId: \'smfAnnouncements\',
-
-							bLoadVersions: true,
-							sSmfVersionContainerId: \'smfVersion\',
-							sYourVersionContainerId: \'yourVersion\',
-							sVersionOutdatedTemplate: ', JavaScriptEscape('
-								<span class="alert">%currentVersion%</span>
-							'), ',
-
-							bLoadUpdateNotification: true,
-							sUpdateNotificationContainerId: \'update_section\',
-							sUpdateNotificationDefaultTitle: ', JavaScriptEscape($txt['update_available']), ',
-							sUpdateNotificationDefaultMessage: ', JavaScriptEscape($txt['update_message']), ',
-							sUpdateNotificationTemplate: ', JavaScriptEscape('
-								<h3 id="update_title">
-									%title%
-								</h3>
-								<div id="update_message" class="smalltext">
-									%message%
-								</div>
-							'), ',
-							sUpdateNotificationLink: smf_scripturl + ', JavaScriptEscape('?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_var'] . '=' . $context['session_id']), '
-
-						});
-					</script>';
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [
+			'implode_comma' => 'implode_comma',
+			'eq' => 'logichelper_eq',
+			'and' => 'logichelper_and',
+			'json' => 'stringhelper_json',
+		],
+	]);
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**

@@ -116,6 +116,8 @@ function createMenu($menuData, $menuOptions = array())
 						// Does it have a custom URL?
 						if (isset($area['custom_url']))
 							$menu_context['sections'][$section_id]['areas'][$area_id]['url'] = $area['custom_url'];
+						else
+							$menu_context['sections'][$section_id]['areas'][$area_id]['url'] = $scripturl . '?action=admin;area=' . $area_id . (!empty($menu_context['extra_parameters']) ? $menu_context['extra_parameters'] : '');
 
 						// Does this area have its own icon?
 						if (isset($area['icon']) && file_exists($settings['theme_dir'] . '/images/admin/' . $area['icon']))

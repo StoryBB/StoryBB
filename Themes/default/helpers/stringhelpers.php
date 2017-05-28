@@ -10,6 +10,17 @@
  */
 
 /**
+ * Given an array of strings, combine them with commas, e.g. "X, Y, Z".
+ *
+ * @param $array Array of strings to implode with commas
+ * @return string Combined string
+ */
+function implode_comma($array)
+{
+	return implode(', ', $array);
+}
+
+/**
  * Given an array of strings, combine them in a 'more readable' way,
  * e.g. "X and Y", "X, Y and Z"
  *
@@ -31,6 +42,17 @@ function implode_and($array)
 		// And this should have an Oxford comma because @RaceProUK said so.
 		return implode(', ', $array) . ', ' . $txt['credits_and'] . ' ' . $last;
 	}
+}
+
+/**
+ * Output a given string as JSON.
+ *
+ * @param mixed $data Data to export as JSON
+ * @return string JSON-encoded data
+ */
+function stringhelper_json($data)
+{
+	return json_encode($data);
 }
 
 ?>
