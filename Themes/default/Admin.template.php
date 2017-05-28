@@ -52,136 +52,30 @@ function template_credits()
 {
 	global $context, $settings, $scripturl, $txt;
 
-	// Show the user version information from their server.
-	echo '
+	$data = [
+		'context' => $context,
+		'txt' => $txt,
+		'settings' => $settings,
+		'scripturl' => $scripturl,
+	];
 
-					<div id="admincenter">
-						<div id="support_credits" class="roundframe">
-							<div class="sub_bar">
-								<h3 class="subbg">
-									', $txt['support_title'], ' <img src="', $settings['images_url'], '/smflogo.png" id="credits_logo" alt="">
-								</h3>
-							</div>
-							<div class="padding">
-								<strong>', $txt['support_versions'], ':</strong><br>
-									', $txt['support_versions_forum'], ':
-								<em id="yourVersion">', $context['forum_version'], '</em>', $context['can_admin'] ? ' <a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>
-									', $txt['support_versions_current'], ':
-								<em id="smfVersion">??</em><br>';
-
-	// Display all the variables we have server information for.
-	foreach ($context['current_versions'] as $version)
-	{
-		echo '
-									', $version['title'], ':
-								<em>', $version['version'], '</em>';
-
-		// more details for this item, show them a link
-		if ($context['can_admin'] && isset($version['more']))
-			echo
-								' <a href="', $scripturl, $version['more'], ';', $context['session_var'], '=', $context['session_id'], '">', $txt['version_check_more'], '</a>';
-		echo '
-								<br>';
+	$template = file_get_contents(__DIR__ .  "/templates/admin_credits.hbs");
+	if (!$template) {
+		die('Admin home template did not load!');
 	}
 
-	echo '
-							</div>';
-
-	// Point the admin to common support resources.
-	echo '
-							<div id="support_resources" class="sub_bar">
-								<h3 class="subbg">
-									', $txt['support_resources'], '
-								</h3>
-							</div>
-							<div class="padding">
-								<p>', $txt['support_resources_p1'], '</p>
-								<p>', $txt['support_resources_p2'], '</p>
-							</div>';
-
-	// The most important part - the credits :P.
-	echo '
-							<div id="credits_sections" class="sub_bar">
-								<h3 class="subbg">
-									', $txt['admin_credits'], '
-								</h3>
-							</div>
-							<div class="padding">';
-
-	foreach ($context['credits'] as $section)
-	{
-		if (isset($section['pretext']))
-			echo '
-								<p>', $section['pretext'], '</p><hr>';
-
-		echo '
-								<dl>';
-
-		foreach ($section['groups'] as $group)
-		{
-			if (isset($group['title']))
-				echo '
-									<dt>
-										<strong>', $group['title'], ':</strong>
-									</dt>';
-
-			echo '
-									<dd>', implode(', ', $group['members']), '</dd>';
-		}
-
-		echo '
-								</dl>';
-
-		if (isset($section['posttext']))
-			echo '
-								<hr>
-								<p>', $section['posttext'], '</p>';
-	}
-
-	echo '
-							</div>
-						</div>
-					</div>';
-
-	// This makes all the support information available to the support script...
-	echo '
-						<script>
-							var smfSupportVersions = {};
-
-							smfSupportVersions.forum = "', $context['forum_version'], '";';
-
-	// Don't worry, none of this is logged, it's just used to give information that might be of use.
-	foreach ($context['current_versions'] as $variable => $version)
-		echo '
-							smfSupportVersions.', $variable, ' = "', $version['version'], '";';
-
-	// Now we just have to include the script and wait ;).
-	echo '
-						</script>
-						<script src="', $scripturl, '?action=viewsmfile;filename=current-version.js"></script>
-						<script src="', $scripturl, '?action=viewsmfile;filename=latest-news.js"></script>';
-
-	// This sets the latest support stuff.
-	echo '
-						<script>
-							function smfCurrentVersion()
-							{
-								var smfVer, yourVer;
-
-								if (!window.smfVersion)
-									return;
-
-								smfVer = document.getElementById("smfVersion");
-								yourVer = document.getElementById("yourVersion");
-
-								setInnerHTML(smfVer, window.smfVersion);
-
-								var currentVersion = getInnerHTML(yourVer);
-								if (currentVersion != window.smfVersion)
-									setInnerHTML(yourVer, "<span class=\"alert\">" + currentVersion + "</span>");
-							}
-							addLoadEvent(smfCurrentVersion)
-						</script>';
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [
+			'implode_comma' => 'implode_comma',
+			'and' => 'logichelper_and',
+			'json' => 'stringhelper_json',
+		],
+	]);
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
