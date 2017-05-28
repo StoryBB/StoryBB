@@ -32,3 +32,5 @@ function implode_and($array)
 		return implode(', ', $array) . ', ' . $txt['credits_and'] . ' ' . $last;
 	}
 }
+
+?>
