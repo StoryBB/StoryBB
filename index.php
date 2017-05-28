@@ -49,6 +49,11 @@ require_once($sourcedir . '/Subs-Auth.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 
+// Template helpers
+require_once(__DIR__ . '/Themes/default/helpers/logichelpers.php');
+require_once(__DIR__ . '/Themes/default/helpers/mischelpers.php');
+require_once(__DIR__ . '/Themes/default/helpers/stringhelpers.php');
+
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)
 	display_maintenance_message();

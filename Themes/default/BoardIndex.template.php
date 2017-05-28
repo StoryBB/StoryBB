@@ -1,7 +1,7 @@
 <?php
 
 use LightnCandy\LightnCandy;
-require_once(__DIR__ . '/helpers/logichelpers.php');
+
 /**
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
