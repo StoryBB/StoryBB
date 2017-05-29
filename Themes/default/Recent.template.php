@@ -7,6 +7,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 /**
  * Template for showing recent posts
  */
@@ -14,63 +16,23 @@ function template_recent()
 {
 	global $context, $txt, $scripturl;
 
-	echo '
-	<div id="recent" class="main_section">
-		<div class="cat_bar">
-			<h3 class="catbg">
-				<span class="xx"></span>',$txt['recent_posts'],'
-			</h3>
-		</div>
-		<div class="pagesection">', $context['page_index'], '</div>';
-
-	if (empty($context['posts']))
-	{
-		echo '
-			<div class="windowbg">', $txt['no_messages'], '</div>';
+	$data = Array(
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/recent_posts.hbs");
+	if (!$template) {
+		die('Template did not load!');
 	}
-
-	foreach ($context['posts'] as $post)
-	{
-		echo '
-			<div class="', $post['css_class'], '">
-					<div class="counter">', $post['counter'], '</div>
-					<div class="topic_details">
-						<h5>', $post['board']['link'], ' / ', $post['link'], '</h5>
-						<span class="smalltext">', $txt['last_poster'], ' <strong>', $post['poster']['link'], ' </strong> - ', $post['time'], '</span>
-					</div>
-					<div class="list_posts">', $post['message'], '</div>';
-
-		if ($post['can_reply'] || $post['can_quote'] || $post['can_delete'])
-			echo '
-					<ul class="quickbuttons">';
-
-		// If they *can* reply?
-		if ($post['can_reply'])
-			echo '
-						<li><a href="', $scripturl, '?action=post;topic=', $post['topic'], '.', $post['start'], '"><span class="generic_icons reply_button"></span>', $txt['reply'], '</a></li>';
-
-		// If they *can* quote?
-		if ($post['can_quote'])
-			echo '
-						<li><a href="', $scripturl, '?action=post;topic=', $post['topic'], '.', $post['start'], ';quote=', $post['id'], '"><span class="generic_icons quote"></span>', $txt['quote_action'], '</a></li>';
-
-		// How about... even... remove it entirely?!
-		if ($post['can_delete'])
-			echo '
-						<li><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';recent;', $context['session_var'], '=', $context['session_id'], '" data-confirm="', $txt['remove_message'], '" class="you_sure"><span class="generic_icons remove_button"></span>', $txt['remove'], '</a></li>';
-
-		if ($post['can_reply'] || $post['can_quote'] || $post['can_delete'])
-			echo '
-					</ul>';
-
-		echo '
-			</div>';
-
-	}
-
-	echo '
-		<div class="pagesection">', $context['page_index'], '</div>
-	</div>';
+	
+	$phpStr = LightnCandy::compile($template, Array(
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	));
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**

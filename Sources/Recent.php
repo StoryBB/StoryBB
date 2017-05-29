@@ -447,6 +447,8 @@ function RecentPosts()
 
 		// And some cannot be quoted...
 		$context['posts'][$counter]['can_quote'] = $context['posts'][$counter]['can_reply'] && $quote_enabled;
+
+		$context['posts'][$counter]['has_actions'] = $context['posts'][$counter]['can_reply'] || $context['posts'][$counter]['can_quote'] || $context['posts'][$counter]['can_delete'];
 	}
 
 	// Allow last minute changes.
