@@ -3,7 +3,7 @@
 /**
  * This file contains those functions pertaining to posting, and other such
  * operations, including sending emails, ims, blocking spam, preparsing posts,
- * spell checking, and the post box.
+ * and the post box.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
