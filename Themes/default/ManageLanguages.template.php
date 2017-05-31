@@ -170,18 +170,6 @@ function template_modify_language_entries()
 							<input type="text" name="locale" id="locale" size="20" value="', $context['primary_settings']['locale'], '"', (empty($context['file_entries']) ? '' : ' disabled'), ' class="input_text">
 						</dd>
 						<dt>
-							<label for="dictionary">', $txt['languages_dictionary'], ':</label>
-						</dt>
-						<dd>
-							<input type="text" name="dictionary" id="dictionary" size="20" value="', $context['primary_settings']['dictionary'], '"', (empty($context['file_entries']) ? '' : ' disabled'), ' class="input_text">
-						</dd>
-						<dt>
-							<label for="spelling">', $txt['languages_spelling'], ':</label>
-						</dt>
-						<dd>
-							<input type="text" name="spelling" id="spelling" size="20" value="', $context['primary_settings']['spelling'], '"', (empty($context['file_entries']) ? '' : ' disabled'), ' class="input_text">
-						</dd>
-						<dt>
 							<label for="rtl">', $txt['languages_rtl'], ':</label>
 						</dt>
 						<dd>

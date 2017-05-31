@@ -6,14 +6,8 @@ global $forum_copyright, $webmaster_email, $scripturl, $context, $boardurl;
 // Native name, please use full HTML entities to write your language's name.
 $txt['native_name'] = 'English';
 
-// Locale (strftime, pspell_new) and spelling. (pspell_new, can be left as '' normally.)
-// For more information see:
-//   - https://php.net/function.pspell-new
-//   - https://php.net/function.setlocale
-// Again, SPELLING SHOULD BE '' 99% OF THE TIME!!  Please read this!
+// Locale (strftime)
 $txt['lang_locale'] = 'en_US';
-$txt['lang_dictionary'] = 'en';
-$txt['lang_spelling'] = 'american';
 
 // Ensure you remember to use uppercase for character set strings.
 $txt['lang_character_set'] = 'ISO-8859-1';
