@@ -1981,7 +1981,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'findmember',
 		'helpadmin',
 		'printpage',
-		'spellcheck',
 	);
 
 	// Parent action => array of areas
