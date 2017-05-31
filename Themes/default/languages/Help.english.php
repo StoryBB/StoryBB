@@ -389,7 +389,6 @@ $helptxt['edit_wait_time'] = 'The number of seconds allowed for a post to be edi
 $helptxt['edit_disable_time'] = 'The number of minutes allowed to pass before a user can no longer edit a post they have made. Set to 0 disable. <br><br><em>Note: This will not affect any user who has permission to edit other people\'s posts.</em>';
 $helptxt['preview_characters'] = 'This setting sets the number of available characters for the first and last message topic preview.';
 $helptxt['posts_require_captcha'] = 'This setting will force users to pass anti-spam bot verification each time they make a post to a board. Only users with a post count below the number set will need to enter the code - this should help combat automated spamming scripts.';
-$helptxt['enableSpellChecking'] = 'Enable spell checking. You MUST have the pspell or enchant library installed on your server and your PHP configuration set up to use the installed library. Your server ' . ((function_exists('pspell_new') || function_exists('enchant_broker_init')) ? 'DOES' : 'DOES NOT') . ' appear to have this set up.';
 $helptxt['disable_wysiwyg'] = 'This setting disallows all users from using the WYSIWYG (&quot;What You See Is What You Get&quot;) editor on the post page.';
 $helptxt['lastActive'] = 'Set the number of minutes to show people are active in X number of minutes on the board index. Default is 15 minutes.';
 
@@ -527,7 +526,7 @@ $helptxt['posts_and_topics'] = '
 	<ul class="normallist">
 		<li>
 			<strong>Post Settings</strong><br>
-			Modify the settings related to the posting of messages and the way messages are shown. You can also enable the spell check here.
+			Modify the settings related to the posting of messages and the way messages are shown.
 		</li><li>
 			<strong>Bulletin Board Code</strong><br>
 			Enable the code that shows forum messages in the right layout. Also adjust which codes are allowed and which aren\'t.
