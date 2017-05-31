@@ -102,7 +102,6 @@ $txt['search_adjust_query'] = 'Adjust Search Parameters';
 $txt['search_warning_ignored_word'] = 'The following term has been ignored in your search because too short';
 $txt['search_warning_ignored_words'] = 'The following terms have been ignored in your search because too short';
 $txt['search_adjust_submit'] = 'Revise Search';
-$txt['search_did_you_mean'] = 'You may have meant to search for';
 
 $txt['search_example'] = '<em>e.g.</em> Orwell "Animal Farm" -movie';
 
