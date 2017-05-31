@@ -601,8 +601,6 @@ $txt['quick_mod_selected'] = 'With the selected options do';
 $txt['quick_mod_go'] = 'Go';
 $txt['quickmod_confirm'] = 'Are you sure you want to do this?';
 
-$txt['spell_check'] = 'Spell Check';
-
 $txt['quick_reply'] = 'Quick Reply';
 $txt['quick_reply_desc'] = 'With <em>Quick-Reply</em> you can write a post when viewing a topic without loading a new page. You can still use bulletin board code and smileys as you would in a normal post.';
 $txt['quick_reply_warning'] = 'Warning! This topic is currently locked, only admins and moderators can reply.';
