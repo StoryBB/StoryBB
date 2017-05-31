@@ -2918,8 +2918,6 @@ function profileLoadSignatureData()
 	elseif ($context['signature_limits']['max_image_width'] || $context['signature_limits']['max_image_height'])
 		$context['signature_warning'] = sprintf($txt['profile_error_signature_max_image_' . ($context['signature_limits']['max_image_width'] ? 'width' : 'height')], $context['signature_limits'][$context['signature_limits']['max_image_width'] ? 'max_image_width' : 'max_image_height']);
 
-	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && (function_exists('pspell_new') || (function_exists('enchant_broker_init') && ($txt['lang_charset'] == 'UTF-8' || function_exists('iconv'))));
-
 	if (empty($context['do_preview']))
 		$context['member']['signature'] = empty($cur_profile['signature']) ? '' : str_replace(array('<br>', '<', '>', '"', '\''), array("\n", '&lt;', '&gt;', '&quot;', '&#039;'), $cur_profile['signature']);
 	else
@@ -2941,10 +2939,6 @@ function profileLoadSignatureData()
 		$context['member']['signature_preview'] = parse_bbc($signature, true, 'sig' . $memberContext[$context['id_member']]);
 		$context['member']['signature'] = $_POST['signature'];
 	}
-
-	// Load the spell checker?
-	if ($context['show_spellchecking'])
-		loadJavaScriptFile('spellcheck.js', array('defer' => false), 'smf_spellcheck');
 
 	return true;
 }

@@ -1090,7 +1090,7 @@ function template_send()
 			</div>';
 	}
 
-	// Send, Preview, spellcheck buttons.
+	// Send, Preview buttons.
 	echo '
 			<hr>
 			<span id="post_confirm_strip" class="righttext">

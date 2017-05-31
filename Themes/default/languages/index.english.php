@@ -6,14 +6,8 @@ global $forum_copyright, $webmaster_email, $scripturl, $context, $boardurl;
 // Native name, please use full HTML entities to write your language's name.
 $txt['native_name'] = 'English';
 
-// Locale (strftime, pspell_new) and spelling. (pspell_new, can be left as '' normally.)
-// For more information see:
-//   - https://php.net/function.pspell-new
-//   - https://php.net/function.setlocale
-// Again, SPELLING SHOULD BE '' 99% OF THE TIME!!  Please read this!
+// Locale (strftime)
 $txt['lang_locale'] = 'en_US';
-$txt['lang_dictionary'] = 'en';
-$txt['lang_spelling'] = 'american';
 
 // Ensure you remember to use uppercase for character set strings.
 $txt['lang_character_set'] = 'ISO-8859-1';
@@ -606,8 +600,6 @@ $txt['quick_mod_markunread'] = 'Mark selected unread';
 $txt['quick_mod_selected'] = 'With the selected options do';
 $txt['quick_mod_go'] = 'Go';
 $txt['quickmod_confirm'] = 'Are you sure you want to do this?';
-
-$txt['spell_check'] = 'Spell Check';
 
 $txt['quick_reply'] = 'Quick Reply';
 $txt['quick_reply_desc'] = 'With <em>Quick-Reply</em> you can write a post when viewing a topic without loading a new page. You can still use bulletin board code and smileys as you would in a normal post.';

@@ -952,8 +952,6 @@ function ModifyLanguage()
 		$replace_array = array(
 			'~\$txt\[\'lang_character_set\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_character_set\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['character_set']) . '\';',
 			'~\$txt\[\'lang_locale\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_locale\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['locale']) . '\';',
-			'~\$txt\[\'lang_dictionary\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_dictionary\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['dictionary']) . '\';',
-			'~\$txt\[\'lang_spelling\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_spelling\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['spelling']) . '\';',
 			'~\$txt\[\'lang_rtl\'\]\s=\s[A-Za-z0-9]+;~' => '$txt[\'lang_rtl\'] = ' . (!empty($_POST['rtl']) ? 'true' : 'false') . ';',
 		);
 		$current_data = preg_replace(array_keys($replace_array), array_values($replace_array), $current_data);
@@ -973,8 +971,6 @@ function ModifyLanguage()
 		'name' => $smcFunc['ucwords'](strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
 		'character_set' => $txt['lang_character_set'],
 		'locale' => $txt['lang_locale'],
-		'dictionary' => $txt['lang_dictionary'],
-		'spelling' => $txt['lang_spelling'],
 		'rtl' => $txt['lang_rtl'],
 	);
 
@@ -1042,7 +1038,7 @@ function ModifyLanguage()
 		foreach ($entries as $entryKey => $entryValue)
 		{
 			// Ignore some things we set separately.
-			$ignore_files = array('lang_character_set', 'lang_locale', 'lang_dictionary', 'lang_spelling', 'lang_rtl');
+			$ignore_files = array('lang_character_set', 'lang_locale', 'lang_rtl');
 			if (in_array($entryKey, $ignore_files))
 				continue;
 
