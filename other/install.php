@@ -2114,10 +2114,7 @@ function template_database_settings()
 	<script>
 		function toggleDBInput()
 		{
-			if (document.getElementById(\'db_type_input\').value == \'postgresql\')
-				document.getElementById(\'db_name_info_warning\').style.display = \'none\';
-			else
-				document.getElementById(\'db_name_info_warning\').style.display = \'\';
+			$("#db_name_info_warning").toggle($("#db_type_input").val() != "postgresql");
 		}
 		toggleDBInput();
 	</script>';
