@@ -26,18 +26,3 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 {
 	$('#' + this.sUniqueId).data("sceditor").InsertText(sText.replace(/<br \/>/gi, ''), bClear);
 }
-
-// Start up the spellchecker!
-smc_Editor.prototype.spellCheckStart = function()
-{
-	if (!spellCheck)
-		return false;
-
-	$('#' + this.sUniqueId).data("sceditor").storeLastState();
-	// If we're in HTML mode we need to get the non-HTML text.
-	$('#' + this.sUniqueId).data("sceditor").setTextMode();
-
-	spellCheck(false, this.opt.sUniqueId);
-
-	return true;
-}

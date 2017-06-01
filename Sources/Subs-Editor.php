@@ -1597,18 +1597,6 @@ function create_control_richedit($editorOptions)
 			loadJavaScriptFile($scripturl . '?action=loadeditorlocale', array('external' => true), 'sceditor_language');
 
 		$context['shortcuts_text'] = $txt['shortcuts' . (!empty($context['drafts_save']) ? '_drafts' : '') . (stripos($_SERVER['HTTP_USER_AGENT'], 'Macintosh') !== false ? '_mac' : (isBrowser('is_firefox') ? '_firefox' : ''))];
-		$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && (function_exists('pspell_new') || (function_exists('enchant_broker_init') && ($txt['lang_charset'] == 'UTF-8' || function_exists('iconv'))));
-		if ($context['show_spellchecking'])
-		{
-			loadJavaScriptFile('spellcheck.js', array(), 'smf_spellcheck');
-
-			// Some hidden information is needed in order to make the spell checking work.
-			if (!isset($_REQUEST['xml']))
-				$context['insert_after_template'] .= '
-		<form name="spell_form" id="spell_form" method="post" accept-charset="' . $context['character_set'] . '" target="spellWindow" action="' . $scripturl . '?action=spellcheck">
-			<input type="hidden" name="spellstring" value="">
-		</form>';
-		}
 	}
 
 	// Start off the editor...

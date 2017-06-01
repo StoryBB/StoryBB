@@ -230,7 +230,7 @@ function template_results()
 {
 	global $context, $settings, $options, $txt, $scripturl, $message;
 
-	if (isset($context['did_you_mean']) || empty($context['topics']) || !empty($context['search_ignored']))
+	if (empty($context['topics']) || !empty($context['search_ignored']))
 	{
 		echo '
 	<div id="search_results">
@@ -240,11 +240,6 @@ function template_results()
 			</h3>
 		</div>
 		<div class="roundframe">';
-
-		// Did they make any typos or mistakes, perhaps?
-		if (isset($context['did_you_mean']))
-			echo '
-			<p>', $txt['search_did_you_mean'], ' <a href="', $scripturl, '?action=search2;params=', $context['did_you_mean_params'], '">', $context['did_you_mean'], '</a>.</p>';
 
 		if (!empty($context['search_ignored']))
 			echo '
