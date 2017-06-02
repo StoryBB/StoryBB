@@ -24,7 +24,7 @@ global $smcFunc, $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir
 $time_start = microtime();
 
 // Just being safe...
-foreach (array('db_character_set', 'cachedir') as $variable)
+foreach (array('cachedir') as $variable)
 	if (isset($GLOBALS[$variable]))
 		unset($GLOBALS[$variable]);
 

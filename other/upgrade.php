@@ -421,7 +421,7 @@ function redirectLocation($location, $addForm = true)
 // Load all essential data and connect to the DB as this is pre SSI.php
 function loadEssentialData()
 {
-	global $db_server, $db_user, $db_passwd, $db_name, $db_connection, $db_prefix, $db_character_set, $db_type;
+	global $db_server, $db_user, $db_passwd, $db_name, $db_connection, $db_prefix, $db_type;
 	global $modSettings, $sourcedir, $smcFunc;
 
 	// Do the non-SSI stuff...
@@ -464,12 +464,12 @@ function loadEssentialData()
 		if ($db_connection === null)
 			die('Unable to connect to database - please check username and password are correct in Settings.php');
 
-		if ($db_type == 'mysql' && isset($db_character_set) && preg_match('~^\w+$~', $db_character_set) === 1)
+		if ($db_type == 'mysql')
 			$smcFunc['db_query']('', '
 			SET NAMES {string:db_character_set}',
 			array(
 				'db_error_skip' => true,
-				'db_character_set' => $db_character_set,
+				'db_character_set' => 'UTF-8',
 			)
 		);
 
@@ -1572,7 +1572,7 @@ function fixRelativePath($path)
 function parse_sql($filename)
 {
 	global $db_prefix, $db_collation, $boarddir, $boardurl, $command_line, $file_steps, $step_progress, $custom_warning;
-	global $upcontext, $support_js, $is_debug, $smcFunc, $databases, $db_type, $db_character_set;
+	global $upcontext, $support_js, $is_debug, $smcFunc, $databases, $db_type;
 
 /*
 	Failure allowed on:
@@ -1629,8 +1629,7 @@ function parse_sql($filename)
 	$last_step = '';
 
 	// Make sure all newly created tables will have the proper characters set; this approach is used throughout upgrade_2-1_mysql.php
-	if (isset($db_character_set) && $db_character_set === 'utf8')
-		$lines = str_replace(') ENGINE=MyISAM;', ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;', $lines);
+	$lines = str_replace(') ENGINE=MyISAM;', ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;', $lines);
 
 	// Count the total number of steps within this file - for progress.
 	$file_steps = substr_count(implode('', $lines), '---#');

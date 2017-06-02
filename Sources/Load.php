@@ -18,17 +18,16 @@ if (!defined('SMF'))
  */
 function reloadSettings()
 {
-	global $modSettings, $boarddir, $smcFunc, $txt, $db_character_set;
+	global $modSettings, $boarddir, $smcFunc, $txt;
 	global $cache_enable, $sourcedir, $context;
 
 	// Most database systems have not set UTF-8 as their default input charset.
-	if (!empty($db_character_set))
-		$smcFunc['db_query']('', '
-			SET NAMES {string:db_character_set}',
-			array(
-				'db_character_set' => $db_character_set,
-			)
-		);
+	$smcFunc['db_query']('', '
+		SET NAMES {string:db_character_set}',
+		array(
+			'db_character_set' => 'UTF-8',
+		)
+	);
 
 	// We need some caching support, maybe.
 	loadCacheAccelerator();

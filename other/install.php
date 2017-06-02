@@ -60,7 +60,7 @@ $databases = array(
 			
 			list ($charcode) = pg_fetch_row($request);
 			
-			if ($charcode == 'UTF8')			
+			if ($charcode == 'UTF8')
 				return true;
 			else
 				return false;
@@ -949,7 +949,7 @@ function ForumSettings()
 		require(dirname(__FILE__) . '/Settings.php');
 
 		// UTF-8 requires a setting to override the language charset.
-		if ((!empty($databases[$db_type]['utf8_support']) && !empty($databases[$db_type]['utf8_required'])) || (empty($databases[$db_type]['utf8_required']) && !empty($databases[$db_type]['utf8_support']) && isset($_POST['utf8'])))
+		if ((!empty($databases[$db_type]['utf8_support']) && !empty($databases[$db_type]['utf8_required'])) || (empty($databases[$db_type]['utf8_required']) && !empty($databases[$db_type]['utf8_support'])))
 		{
 			if (!$databases[$db_type]['utf8_support']())
 			{
@@ -962,9 +962,6 @@ function ForumSettings()
 				$incontext['error'] = sprintf($txt['error_utf8_version'], $databases[$db_type]['utf8_version']);
 				return false;
 			}
-			else
-				// Set the character set here.
-				updateSettingsFile(array('db_character_set' => 'utf8'));
 		}
 
 		// Good, skip on.
@@ -977,7 +974,7 @@ function ForumSettings()
 // Step one: Do the SQL thang.
 function DatabasePopulation()
 {
-	global $db_character_set, $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl;
+	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl;
 
 	$incontext['sub_template'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -1016,8 +1013,8 @@ function DatabasePopulation()
 	}
 	$modSettings['disableQueryCheck'] = true;
 
-	// If doing UTF8, select it. PostgreSQL requires passing it as a string...
-	if (!empty($db_character_set) && $db_character_set == 'utf8' && !empty($databases[$db_type]['utf8_support']))
+	// We're doing UTF8, select it. PostgreSQL requires passing it as a string...
+	if (!empty($databases[$db_type]['utf8_support']))
 		$smcFunc['db_query']('', '
 			SET NAMES {string:utf8}',
 			array(
@@ -1290,7 +1287,7 @@ function DatabasePopulation()
 // Ask for the administrator login information.
 function AdminAccount()
 {
-	global $txt, $db_type, $db_connection, $smcFunc, $incontext, $db_prefix, $db_passwd, $sourcedir, $db_character_set;
+	global $txt, $db_type, $db_connection, $smcFunc, $incontext, $db_prefix, $db_passwd, $sourcedir;
 
 	$incontext['sub_template'] = 'admin_account';
 	$incontext['page_title'] = $txt['user_settings'];
@@ -1309,7 +1306,7 @@ function AdminAccount()
 	require_once($sourcedir . '/Subs.php');
 
 	// We need this to properly hash the password for Admin
-	$smcFunc['strtolower'] = $db_character_set != 'utf8' && $txt['lang_character_set'] != 'UTF-8' ? 'strtolower' : function($string) {
+	$smcFunc['strtolower'] = function($string) {
 			global $sourcedir;
 			if (function_exists('mb_strtolower'))
 				return mb_strtolower($string, 'UTF-8');
@@ -1468,7 +1465,7 @@ function AdminAccount()
 function DeleteInstall()
 {
 	global $txt, $incontext;
-	global $smcFunc, $db_character_set, $context, $cookiename;
+	global $smcFunc, $context, $cookiename;
 	global $current_smf_version, $databases, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
 
 	$incontext['page_title'] = $txt['congratulations'];
@@ -1491,11 +1488,11 @@ function DeleteInstall()
 	if (!empty($incontext['account_existed']))
 		$incontext['warning'] = $incontext['account_existed'];
 
-	if (!empty($db_character_set) && !empty($databases[$db_type]['utf8_support']))
+	if (!empty($databases[$db_type]['utf8_support']))
 		$smcFunc['db_query']('', '
 			SET NAMES {string:db_character_set}',
 			array(
-				'db_character_set' => $db_character_set,
+				'db_character_set' => 'UTF-8',
 				'db_error_skip' => true,
 			)
 		);
@@ -1564,8 +1561,7 @@ function DeleteInstall()
 	updateStats('topic');
 
 	// This function is needed to do the updateStats('subject') call.
-	$smcFunc['strtolower'] = $db_character_set != 'utf8' && $txt['lang_character_set'] != 'UTF-8' ? 'strtolower' :
-		function($string){
+	$smcFunc['strtolower'] = function($string){
 			global $sourcedir;
 			if (function_exists('mb_strtolower'))
 				return mb_strtolower($string, 'UTF-8');
@@ -1583,7 +1579,7 @@ function DeleteInstall()
 			'db_error_skip' => true,
 		)
 	);
-	$context['utf8'] = $db_character_set === 'utf8' || $txt['lang_character_set'] === 'UTF-8';
+	$context['utf8'] = true; // @todo remove
 	if ($smcFunc['db_num_rows']($request) > 0)
 		updateStats('subject', 1, htmlspecialchars($txt['default_topic_subject']));
 	$smcFunc['db_free_result']($request);
@@ -2185,15 +2181,6 @@ function template_forum_settings()
 					<label for="dbsession_check">', $txt['install_settings_dbsession_title'], '</label>
 					<br>
 					<div class="smalltext block">', $incontext['test_dbsession'] ? $txt['install_settings_dbsession_info1'] : $txt['install_settings_dbsession_info2'], '</div>
-				</td>
-			</tr>
-			<tr>
-				<td class="textbox" style="vertical-align: top;">', $txt['install_settings_utf8'], ':</td>
-				<td>
-					<input type="checkbox" name="utf8" id="utf8_check"', $incontext['utf8_default'] ? ' checked' : '', ' class="input_check"', $incontext['utf8_required'] ? ' disabled' : '', ' />&nbsp;
-					<label for="utf8_check">', $txt['install_settings_utf8_title'], '</label>
-					<br>
-					<div class="smalltext block">', $txt['install_settings_utf8_info'], '</div>
 				</td>
 			</tr>
 			<tr>
