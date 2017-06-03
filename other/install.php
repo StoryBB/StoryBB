@@ -36,8 +36,6 @@ $databases = array(
 		'utf8_support' => function() {
 			return true;
 		},
-		'utf8_version' => '5.0.3',
-		'utf8_version_check' => 'return mysqli_get_server_info($db_connection);',
 		'utf8_default' => true,
 		'utf8_required' => true,
 		'alter_support' => true,
@@ -65,8 +63,6 @@ $databases = array(
 			else
 				return false;
 		},
-		'utf8_version' => '8.0',
-		'utf8_version_check' => '$request = pg_query(\'SELECT version()\'); list ($version) = pg_fetch_row($request); list($pgl, $version) = explode(" ", $version); return $version;',
 		'validate_prefix' => function(&$value) {
 			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
 
@@ -954,12 +950,6 @@ function ForumSettings()
 			if (!$databases[$db_type]['utf8_support']())
 			{
 				$incontext['error'] = sprintf($txt['error_utf8_support']);
-				return false;
-			}
-				
-			if (!empty($databases[$db_type]['utf8_version_check']) && version_compare($databases[$db_type]['utf8_version'], preg_replace('~\-.+?$~', '', eval($databases[$db_type]['utf8_version_check'])), '>'))
-			{
-				$incontext['error'] = sprintf($txt['error_utf8_version'], $databases[$db_type]['utf8_version']);
 				return false;
 			}
 		}
