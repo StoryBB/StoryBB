@@ -36,8 +36,6 @@ $databases = array(
 		'utf8_support' => function() {
 			return true;
 		},
-		'utf8_default' => true,
-		'utf8_required' => true,
 		'alter_support' => true,
 		'validate_prefix' => function(&$value) {
 			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
@@ -51,8 +49,6 @@ $databases = array(
 		'version_check' => '$request = pg_query(\'SELECT version()\'); list ($version) = pg_fetch_row($request); list($pgl, $version) = explode(" ", $version); return $version;',
 		'supported' => function_exists('pg_connect'),
 		'always_has_db' => true,
-		'utf8_default' => true,
-		'utf8_required' => true,
 		'utf8_support' => function() {
 			$request = pg_query('SHOW SERVER_ENCODING');
 			
@@ -907,8 +903,6 @@ function ForumSettings()
 
 	// Check if the database sessions will even work.
 	$incontext['test_dbsession'] = (ini_get('session.auto_start') != 1);
-	$incontext['utf8_default'] = $databases[$db_type]['utf8_default'];
-	$incontext['utf8_required'] = $databases[$db_type]['utf8_required'];
 
 	$incontext['continue'] = 1;
 
@@ -945,13 +939,10 @@ function ForumSettings()
 		require(dirname(__FILE__) . '/Settings.php');
 
 		// UTF-8 requires a setting to override the language charset.
-		if ((!empty($databases[$db_type]['utf8_support']) && !empty($databases[$db_type]['utf8_required'])) || (empty($databases[$db_type]['utf8_required']) && !empty($databases[$db_type]['utf8_support'])))
+		if (!$databases[$db_type]['utf8_support']())
 		{
-			if (!$databases[$db_type]['utf8_support']())
-			{
-				$incontext['error'] = sprintf($txt['error_utf8_support']);
-				return false;
-			}
+			$incontext['error'] = sprintf($txt['error_utf8_support']);
+			return false;
 		}
 
 		// Good, skip on.
@@ -1004,14 +995,13 @@ function DatabasePopulation()
 	$modSettings['disableQueryCheck'] = true;
 
 	// We're doing UTF8, select it. PostgreSQL requires passing it as a string...
-	if (!empty($databases[$db_type]['utf8_support']))
-		$smcFunc['db_query']('', '
-			SET NAMES {string:utf8}',
-			array(
-				'db_error_skip' => true,
-				'utf8' => 'utf8',
-			)
-		);
+	$smcFunc['db_query']('', '
+		SET NAMES {string:utf8}',
+		array(
+			'db_error_skip' => true,
+			'utf8' => 'utf8',
+		)
+	);
 
 	// Windows likes to leave the trailing slash, which yields to C:\path\to\SMF\/attachments...
 	if (substr(__DIR__, -1) == '\\')
@@ -1062,12 +1052,9 @@ function DatabasePopulation()
 		$replaces['{$engine}'] = $has_innodb ? 'InnoDB' : 'MyISAM';
 		$replaces['{$memory}'] = (!$has_innodb && in_array('MEMORY', $engines)) ? 'MEMORY' : $replaces['{$engine}'];
 
-		// If the UTF-8 setting was enabled, add it to the table definitions.
-		if (!empty($databases[$db_type]['utf8_support']) && (!empty($databases[$db_type]['utf8_required']) || isset($_POST['utf8'])))
-		{
-			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
-			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
-		}
+		// We're using UTF-8 setting, so add it to the table definitions.
+		$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+		$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
 
 		// One last thing - if we don't have InnoDB, we can't do transactions...
 		if (!$has_innodb)
@@ -1166,10 +1153,6 @@ function DatabasePopulation()
 		else
 			$incontext['sql_results'][$key] = sprintf($txt['db_populate_' . $key], $number);
 	}
-
-	// Make sure UTF will be used globally.
-	if ((!empty($databases[$db_type]['utf8_support']) && !empty($databases[$db_type]['utf8_required'])) || (empty($databases[$db_type]['utf8_required']) && !empty($databases[$db_type]['utf8_support']) && isset($_POST['utf8'])))
-		$newSettings[] = array('global_character_set', 'UTF-8');
 
 	// Maybe we can auto-detect better cookie settings?
 	preg_match('~^http[s]?://([^\.]+?)([^/]*?)(/.*)?$~', $boardurl, $matches);
@@ -1478,14 +1461,13 @@ function DeleteInstall()
 	if (!empty($incontext['account_existed']))
 		$incontext['warning'] = $incontext['account_existed'];
 
-	if (!empty($databases[$db_type]['utf8_support']))
-		$smcFunc['db_query']('', '
-			SET NAMES {string:db_character_set}',
-			array(
-				'db_character_set' => 'UTF-8',
-				'db_error_skip' => true,
-			)
-		);
+	$smcFunc['db_query']('', '
+		SET NAMES {string:db_character_set}',
+		array(
+			'db_character_set' => 'UTF-8',
+			'db_error_skip' => true,
+		)
+	);
 
 	// As track stats is by default enabled let's add some activity.
 	$smcFunc['db_insert']('ignore',
