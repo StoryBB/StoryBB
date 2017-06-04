@@ -95,7 +95,7 @@ $incontext['steps'] = array(
 );
 
 // Default title...
-$incontext['page_title'] = $txt['smf_installer'];
+$incontext['page_title'] = $txt['storybb_installer'];
 
 // What step are we on?
 $incontext['current_step'] = isset($_GET['step']) ? (int) $_GET['step'] : 0;
@@ -1731,7 +1731,7 @@ function template_install_above()
 	<head>
 		<meta charset="UTF-8">
 		<meta name="robots" content="noindex">
-		<title>', $txt['smf_installer'], '</title>
+		<title>', $txt['storybb_installer'], '</title>
 		<link rel="stylesheet" href="Themes/default/css/index.css?alp21">
 		<link rel="stylesheet" href="Themes/default/css/install.css?alp21">
 		', $txt['lang_rtl'] == true ? '<link rel="stylesheet" href="Themes/default/css/rtl.css?alp21">' : '', '
@@ -1741,7 +1741,7 @@ function template_install_above()
 	</head>
 	<body><div id="footerfix">
 		<div id="header">
-			<h1 class="forumtitle">', $txt['smf_installer'], '</h1>
+			<h1 class="forumtitle">', $txt['storybb_installer'], '</h1>
 			<img id="smflogo" src="Themes/default/images/smflogo.png" alt="Simple Machines Forum" title="Simple Machines Forum">
 		</div>
 		<div id="wrapper">
