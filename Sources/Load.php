@@ -2133,7 +2133,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'smf_smileys_url' => '"' . $modSettings['smileys_url'] . '"',
 		'smf_scripturl' => '"' . $scripturl . '"',
 		'smf_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',
-		'smf_charset' => '"UTF-8"',
 		'smf_session_id' => '"' . $context['session_id'] . '"',
 		'smf_session_var' => '"' . $context['session_var'] . '"',
 		'smf_member_id' => $context['user']['id'],
