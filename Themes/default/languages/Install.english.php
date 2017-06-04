@@ -2,7 +2,6 @@
 // Version: 3.0 Alpha 1; Install
 
 // These should be the same as those in index.language.php.
-$txt['lang_character_set'] = 'ISO-8859-1';
 $txt['lang_rtl'] = false;
 
 $txt['install_step_welcome'] = 'Welcome';

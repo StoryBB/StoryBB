@@ -617,7 +617,6 @@ function scheduled_daily_digest()
 		loadLanguage('EmailTemplates', $lang);
 		$langtxt[$lang] = array(
 			'subject' => $txt['digest_subject_' . ($is_weekly ? 'weekly' : 'daily')],
-			'char_set' => $txt['lang_character_set'],
 			'intro' => sprintf($txt['digest_intro_' . ($is_weekly ? 'weekly' : 'daily')], $mbname),
 			'new_topics' => $txt['digest_new_topics'],
 			'topic_lines' => $txt['digest_new_topics_line'],
@@ -649,9 +648,6 @@ function scheduled_daily_digest()
 		// Did they not elect to choose this?
 		if ($frequency == 4 && !$is_weekly || $frequency == 3 && $is_weekly || $notify_types == 4)
 			continue;
-
-		// Right character set!
-		$context['character_set'] = empty($modSettings['global_character_set']) ? $langtxt[$lang]['char_set'] : $modSettings['global_character_set'];
 
 		// Do the start stuff!
 		$email = array(
@@ -1197,7 +1193,6 @@ function loadEssentialThemeData()
 	loadLanguage('index+Modifications');
 
 	// Just in case it wasn't already set elsewhere.
-	$context['character_set'] = empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set'];
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
 
 	// Tell fatal_lang_error() to not reload the theme.

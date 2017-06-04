@@ -151,7 +151,7 @@ function template_generic_menu_tabs(&$menu_context)
 	{
 		echo '
 					<div class="cat_bar">', (function_exists('template_admin_quick_search') ? '
-						<form action="' . $scripturl . '?action=admin;area=search" method="post" accept-charset="' . $context['character_set'] . '">' : ''), '
+						<form action="' . $scripturl . '?action=admin;area=search" method="post" accept-charset="UTF-8">' : ''), '
 							<h3 class="catbg">';
 
 		// The function is in Admin.template.php, but since this template is used elsewhere too better check if the function is available

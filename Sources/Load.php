@@ -2066,7 +2066,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$user_info['time_format'] = $txt['time_format'];
 
 	// Set the character set from the template.
-	$context['character_set'] = empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set'];
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
 
 	// Guests may still need a name.
@@ -2134,7 +2133,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'smf_smileys_url' => '"' . $modSettings['smileys_url'] . '"',
 		'smf_scripturl' => '"' . $scripturl . '"',
 		'smf_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',
-		'smf_charset' => '"' . $context['character_set'] . '"',
+		'smf_charset' => '"UTF-8"',
 		'smf_session_id' => '"' . $context['session_id'] . '"',
 		'smf_session_var' => '"' . $context['session_var'] . '"',
 		'smf_member_id' => $context['user']['id'],
@@ -2642,8 +2641,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				$found = true;
 
 				// setlocale is required for basename() & pathinfo() to work properly on the selected language
-				if (!empty($txt['lang_locale']) && !empty($modSettings['global_character_set']))
-					setlocale(LC_CTYPE, $txt['lang_locale'] . '.' . $modSettings['global_character_set']);
+				if (!empty($txt['lang_locale']))
+					setlocale(LC_CTYPE, $txt['lang_locale'] . '.utf8', $txt['lang_locale'] . '.UTF-8');
 				
 				break;
 			}
@@ -2922,7 +2921,7 @@ function censorText(&$text, $force = false)
 			for ($i = 0, $n = count($censor_vulgar); $i < $n; $i++)
 			{
 				$censor_vulgar[$i] = str_replace(array('\\\\\\*', '\\*', '&', '\''), array('[*]', '[^\s]*?', '&amp;', '&#039;'), preg_quote($censor_vulgar[$i], '/'));
-				$censor_vulgar[$i] = '/(?<=^|\W)' . $censor_vulgar[$i] . '(?=$|\W)/' . (empty($modSettings['censorIgnoreCase']) ? '' : 'i') . ((empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set']) === 'UTF-8' ? 'u' : '');
+				$censor_vulgar[$i] = '/(?<=^|\W)' . $censor_vulgar[$i] . '(?=$|\W)/u' . (empty($modSettings['censorIgnoreCase']) ? '' : 'i');
 
 				// @todo I'm thinking the old way is some kind of bug and this is actually fixing it.
 				//if (strpos($censor_vulgar[$i], '\'') !== false)
@@ -2985,7 +2984,7 @@ function template_include($filename, $once = false)
 			ob_start();
 
 		if (isset($_GET['debug']))
-			header('Content-Type: application/xhtml+xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+			header('Content-Type: application/xhtml+xml; charset=UTF-8');
 
 		// Don't cache error pages!!
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
@@ -3003,10 +3002,8 @@ function template_include($filename, $once = false)
 		// First, let's get the doctype and language information out of the way.
 		echo '<!DOCTYPE html>
 <html', !empty($context['right_to_left']) ? ' dir="rtl"' : '', '>
-	<head>';
-		if (isset($context['character_set']))
-			echo '
-		<meta charset="', $context['character_set'], '">';
+	<head>
+		<meta charset="UTF-8">';
 
 		if (!empty($maintenance) && !allowedTo('admin_forum'))
 			echo '

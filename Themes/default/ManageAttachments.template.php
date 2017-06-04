@@ -62,7 +62,7 @@ function template_maintenance()
 			<h3 class="catbg">', $txt['attachment_integrity_check'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 				<p>', $txt['attachment_integrity_check_desc'], '</p>
 				<input type="submit" name="repair" value="', $txt['attachment_check_now'], '" class="button_submit">
 			</form>
@@ -71,7 +71,7 @@ function template_maintenance()
 			<h3 class="catbg">', $txt['attachment_pruning'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="', $context['character_set'], '" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');">
+			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');">
 				<dl class="settings">
 					<dt>', $txt['attachment_remove_old'], '</dt>
 					<dd><input type="number" name="age" value="25" size="4" class="input_text"> ', $txt['days_word'], '</dd>
@@ -83,7 +83,7 @@ function template_maintenance()
 					<input type="hidden" name="sa" value="byAge">
 				</dl>
 			</form>
-			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="', $context['character_set'], '" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
+			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
 				<dl class="settings">
 					<dt>', $txt['attachment_remove_size'], '</dt>
 					<dd><input type="number" name="size" id="size" value="100" size="4" class="input_text"> ', $txt['kilobyte'], '</dd>
@@ -95,7 +95,7 @@ function template_maintenance()
 					<input type="hidden" name="sa" value="bySize">
 				</dl>
 			</form>
-			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="', $context['character_set'], '" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
+			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(\'', $txt['attachment_pruning_warning'], '\');" style="margin: 0 0 2ex 0;">
 				<dl class="settings">
 					<dt>', $txt['attachment_manager_avatars_older'], '</dt>
 					<dd><input type="number" name="age" value="45" size="4" class="input_text"> ', $txt['days_word'], '</dd>
@@ -119,7 +119,7 @@ function template_maintenance()
 
 	echo '
 			<div class="windowbg2 noup">
-				<form action="', $scripturl, '?action=admin;area=manageattachments;sa=transfer" method="post" accept-charset="', $context['character_set'], '">
+				<form action="', $scripturl, '?action=admin;area=manageattachments;sa=transfer" method="post" accept-charset="UTF-8">
 					<p>', $txt['attachment_transfer_desc'], '</p>
 					<dl class="settings">
 						<dt>', $txt['attachment_transfer_from'], '</dt>
@@ -225,7 +225,7 @@ function template_attachment_repair()
 	{
 		echo '
 	<div id="manage_attachments">
-		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;fixErrors=1;step=0;substep=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=manageattachments;sa=repair;fixErrors=1;step=0;substep=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['repair_attachments'], '</h3>
 			</div>

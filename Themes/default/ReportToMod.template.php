@@ -46,7 +46,7 @@ function template_main()
 
 	echo '
 	<div id="report_form">
-		<form action="', $context['submit_url'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $context['submit_url'], '" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="', $context['report_type'], '" value="', $context['reported_item'], '">
 				<div class="cat_bar">
 					<h3 class="catbg">', $context['page_title'], '</h3>

@@ -84,7 +84,7 @@ function template_html_above()
 	echo '<!DOCTYPE html>
 	<html', $context['right_to_left'] ? ' dir="rtl"' : '', !empty($txt['lang_locale']) ? ' lang="' . str_replace("_", "-", substr($txt['lang_locale'], 0, strcspn($txt['lang_locale'], "."))) . '"' : '', '>
 <head>
-	<meta charset="', $context['character_set'], '">';
+	<meta charset="UTF-8">';
 
 	// You don't need to manually load index.css, this will be set up for you. You can, of course, add
 	// any other files you want, after template_css() has been run. Note that RTL will also be loaded for you.
@@ -250,7 +250,7 @@ function template_body_above()
 	if ($context['allow_search'])
 	{
 		echo '
-		<form id="search_form" class="floatright" action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '">
+		<form id="search_form" class="floatright" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 			<input type="search" name="search" value="" class="input_text">&nbsp;';
 
 		// Using the quick search dropdown?
