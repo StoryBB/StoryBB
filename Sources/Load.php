@@ -25,7 +25,7 @@ function reloadSettings()
 	$smcFunc['db_query']('', '
 		SET NAMES {string:db_character_set}',
 		array(
-			'db_character_set' => 'UTF-8',
+			'db_character_set' => 'utf8',
 		)
 	);
 
