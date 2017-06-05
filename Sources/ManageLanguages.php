@@ -561,14 +561,6 @@ function ModifyLanguages()
 					},
 				),
 			),
-			'character_set' => array(
-				'header' => array(
-					'value' => $txt['languages_character_set'],
-				),
-				'data' => array(
-					'db_htmlsafe' => 'char_set',
-				),
-			),
 			'count' => array(
 				'header' => array(
 					'value' => $txt['languages_users'],
@@ -673,7 +665,6 @@ function list_getLanguages()
 		$languages[$lang['filename']] = array(
 			'id' => $lang['filename'],
 			'count' => 0,
-			'char_set' => $txt['lang_character_set'],
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
 			'name' => $smcFunc['ucwords'](strtr($lang['filename'], array('_' => ' ', '-utf8' => ''))),
@@ -950,7 +941,6 @@ function ModifyLanguage()
 		$current_data = implode('', file($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php'));
 		// These are the replacements. old => new
 		$replace_array = array(
-			'~\$txt\[\'lang_character_set\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_character_set\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['character_set']) . '\';',
 			'~\$txt\[\'lang_locale\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_locale\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['locale']) . '\';',
 			'~\$txt\[\'lang_rtl\'\]\s=\s[A-Za-z0-9]+;~' => '$txt[\'lang_rtl\'] = ' . (!empty($_POST['rtl']) ? 'true' : 'false') . ';',
 		);
@@ -969,7 +959,6 @@ function ModifyLanguage()
 	// Setup the primary settings context.
 	$context['primary_settings'] = array(
 		'name' => $smcFunc['ucwords'](strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
-		'character_set' => $txt['lang_character_set'],
 		'locale' => $txt['lang_locale'],
 		'rtl' => $txt['lang_rtl'],
 	);
@@ -1038,7 +1027,7 @@ function ModifyLanguage()
 		foreach ($entries as $entryKey => $entryValue)
 		{
 			// Ignore some things we set separately.
-			$ignore_files = array('lang_character_set', 'lang_locale', 'lang_rtl');
+			$ignore_files = array('lang_locale', 'lang_rtl');
 			if (in_array($entryKey, $ignore_files))
 				continue;
 

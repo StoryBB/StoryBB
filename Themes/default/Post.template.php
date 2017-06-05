@@ -62,7 +62,7 @@ function template_main()
 	// End of the javascript, start the form and display the link tree.
 	echo '
 		</script>
-		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="', $context['character_set'], '" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['post_box_name'], '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
+		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['post_box_name'], '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
 
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
@@ -912,7 +912,7 @@ function template_quotefast()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
-		<meta charset="', $context['character_set'], '">
+		<meta charset="UTF-8">
 		<title>', $txt['retrieving_quote'], '</title>
 		<script src="', $settings['default_theme_url'], '/scripts/script.js', $modSettings['browser_cache'] ,'"></script>
 	</head>
@@ -965,7 +965,7 @@ function template_announce()
 
 	echo '
 	<div id="announcement">
-		<form action="', $scripturl, '?action=announce;sa=send" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=announce;sa=send" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['announce_title'], '</h3>
 			</div>
@@ -1013,7 +1013,7 @@ function template_announcement_send()
 
 	echo '
 	<div id="announcement">
-		<form action="' . $scripturl . '?action=announce;sa=send" method="post" accept-charset="', $context['character_set'], '" name="autoSubmit" id="autoSubmit">
+		<form action="' . $scripturl . '?action=announce;sa=send" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<div class="windowbg2">
 				<p>', $txt['announce_sending'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
 				<div class="progress_bar">

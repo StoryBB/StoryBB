@@ -90,7 +90,7 @@ function db_packages_init()
  */
 function smf_db_create_table($table_name, $columns, $indexes = array(), $parameters = array(), $if_exists = 'ignore', $error = 'fatal')
 {
-	global $reservedTables, $smcFunc, $db_package_log, $db_prefix, $db_character_set;
+	global $reservedTables, $smcFunc, $db_package_log, $db_prefix;
 
 	static $engines = array();
 
@@ -167,8 +167,7 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 	}
 
 	$table_query .= ') ENGINE=' . $parameters['engine'];
-	if (!empty($db_character_set) && $db_character_set == 'utf8')
-		$table_query .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+	$table_query .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
 
 	// Create the table!
 	$smcFunc['db_query']('', $table_query,

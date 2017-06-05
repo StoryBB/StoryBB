@@ -15,7 +15,7 @@ function template_main()
 	global $context, $txt, $scripturl, $modSettings;
 
 	echo '
-	<form action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '" name="searchform" id="searchform">
+	<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<div class="cat_bar">
 			<h3 class="catbg">
 				<span class="generic_icons filter"></span>', $txt['set_parameters'], '
@@ -246,7 +246,7 @@ function template_results()
 			<p>', $txt['search_warning_ignored_word' . (count($context['search_ignored']) == 1 ? '' : 's')], ': ', implode(', ', $context['search_ignored']), '</p>';
 
 		echo '
-			<form action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 				<dl class="settings">
 					<dt class="righttext">
 						<strong>', $txt['search_for'], ':</strong>
@@ -281,7 +281,7 @@ function template_results()
 		// Quick moderation set to checkboxes? Oh, how fun :/.
 		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
 			echo '
-	<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="', $context['character_set'], '" name="topicForm">';
+	<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="topicForm">';
 
 	echo '
 		<div class="cat_bar">

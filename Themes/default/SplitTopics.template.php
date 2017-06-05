@@ -16,7 +16,7 @@ function template_ask()
 
 	echo '
 	<div id="split_topics">
-		<form action="', $scripturl, '?action=splittopics;sa=execute;topic=', $context['current_topic'], '.0" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=splittopics;sa=execute;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="at" value="', $context['message']['id'], '">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['split'], '</h3>
@@ -85,7 +85,7 @@ function template_select()
 
 	echo '
 	<div id="split_topics">
-		<form action="', $scripturl, '?action=splittopics;sa=splitSelection;board=', $context['current_board'], '.0" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=splittopics;sa=splitSelection;board=', $context['current_board'], '.0" method="post" accept-charset="UTF-8">
 			<div id="not_selected" class="floatleft">
 				<div class="cat_bar">
 					<h3 class="catbg">', $txt['split'], ' - ', $txt['select_split_posts'], '</h3>

@@ -9,8 +9,6 @@ $txt['native_name'] = 'English';
 // Locale (strftime)
 $txt['lang_locale'] = 'en_US';
 
-// Ensure you remember to use uppercase for character set strings.
-$txt['lang_character_set'] = 'ISO-8859-1';
 // Character set and right to left?
 $txt['lang_rtl'] = false;
 // Number format.

@@ -16,7 +16,7 @@ function template_report_type()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=reports" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=reports" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['generate_reports_type'], '</h3>
 			</div>
@@ -143,7 +143,7 @@ function template_print_above()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
-		<meta charset="', $context['character_set'], '">
+		<meta charset="UTF-8">
 		<title>', $context['page_title'], '</title>
 		<link rel="stylesheet" href="', $settings['default_theme_url'], '/css/report.css', $modSettings['browser_cache'], '">
 	</head>
