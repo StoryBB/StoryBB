@@ -193,18 +193,6 @@ function AdminMain()
 						'drafts' => array($txt['manage_drafts']),
 					),
 				),
-				'managecalendar' => array(
-					'label' => $txt['manage_calendar'],
-					'file' => 'ManageCalendar.php',
-					'function' => 'ManageCalendar',
-					'icon' => 'calendar',
-					'permission' => array('admin_forum'),
-					'inactive' => empty($modSettings['cal_enabled']),
-					'subsections' => empty($modSettings['cal_enabled']) ? array() : array(
-						'holidays' => array($txt['manage_holidays'], 'admin_forum'),
-						'settings' => array($txt['calendar_settings'], 'admin_forum'),
-					),
-				),
 				'managesearch' => array(
 					'label' => $txt['manage_search'],
 					'file' => 'ManageSearch.php',
@@ -675,13 +663,13 @@ function AdminSearchInternal()
 
 	// Load a lot of language files.
 	$language_files = array(
-		'Help', 'ManageMail', 'ManageSettings', 'ManageCalendar', 'ManageBoards', 'ManagePaid', 'ManagePermissions', 'Search',
+		'Help', 'ManageMail', 'ManageSettings', 'ManageBoards', 'ManagePaid', 'ManagePermissions', 'Search',
 		'Login', 'ManageSmileys', 'Drafts',
 	);
 
 	// All the files we need to include.
 	$include_files = array(
-		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageCalendar', 'ManageMail', 'ManagePaid', 'ManagePermissions',
+		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManagePaid', 'ManagePermissions',
 		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
 	);
 
@@ -699,7 +687,6 @@ function AdminSearchInternal()
 		// Mod authors if you want to be "real freaking good" then add any setting pages for your mod BELOW this line!
 		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
 		array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
-		array('ModifyCalendarSettings', 'area=managecalendar;sa=settings'),
 		array('EditBoardSettings', 'area=manageboards;sa=settings'),
 		array('ModifyMailSettings', 'area=mailqueue;sa=settings'),
 		array('ModifyNewsSettings', 'area=news;sa=settings'),
