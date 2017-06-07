@@ -1509,7 +1509,6 @@ function convertSettingstoOptions()
 
 	// Format: new_setting -> old_setting_name.
 	$values = array(
-		'calendar_start_day' => 'cal_startmonday',
 		'view_newest_first' => 'viewNewestFirst',
 		'view_newest_pm_first' => 'viewNewestFirst',
 	);
@@ -2972,9 +2971,6 @@ function serialize_to_json()
 				$serialized_settings = array(
 					'attachment_basedirectories',
 					'attachmentUploadDir',
-					'cal_today_birthday',
-					'cal_today_event',
-					'cal_today_holiday',
 					'displayFields',
 					'last_attachments_directory',
 					'memberlist_cache',
