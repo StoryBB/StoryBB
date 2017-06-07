@@ -185,18 +185,6 @@ $helptxt['smileys'] = '<strong>Smiley Center</strong><br>
 	get confusing for your users using different sets.<br><br>
 
 	You are also able to edit message icons from here, if you have them enabled on the settings page.';
-$helptxt['calendar'] = '<strong>Manage Calendar</strong><br>
-	Here you can modify the current calendar settings as well as add and remove holidays that appear on the calendar.';
-$helptxt['cal_export'] = 'Exports a text file in the iCal format for importing into other calendar applications';
-$helptxt['cal_highlight_events'] = 'This setting allows you to highlight events on the Mini Calendars, Main Calendar, both places, or disable event highlighting.';
-$helptxt['cal_highlight_holidays'] = 'This setting allows you to highlight holidays on the Mini Calendars, Main Calendar, both places, or disable event highlighting.';
-$helptxt['cal_highlight_birthdays'] = 'This setting allows you to highlight birthdays on the Mini Calendars, Main Calendar, both places, or disable event highlighting.';
-$helptxt['cal_disable_prev_next'] = 'If this setting is checked, the three month blocks on the left hand side of the page will be disabled.';
-$helptxt['cal_display_type'] = 'This setting allows you to change the display type of the calendar.<br><br><strong>Comfortable:</strong> makes the rows of the calendar big.<br><strong>Compact:</strong> makes the rows of the calendar small.';
-$helptxt['cal_week_links'] = 'If this setting is checked, links will be added alongside each week in the calendar.';
-$helptxt['cal_prev_next_links'] = 'If this setting is checked, previous month and next month links will be added to the top of each month for easy navigation.';
-$helptxt['cal_short_months'] = 'If this setting is checked, month names within the calendar will be shortened.<br><br><strong>Enabled:</strong> ' . $txt['months_short'][1] . ' 1<br><strong>Disabled:</strong> ' . $txt['months_titles'][1] . ' 1';
-$helptxt['cal_short_days'] = 'If this setting is checked, day names within the calendar will be shortened.<br><br><strong>Enabled:</strong> ' . $txt['days_short'][1] . '<br><strong>Disbaled:</strong> ' . $txt['days'][1];
 
 $helptxt['serversettings'] = '<strong>Server Settings</strong><br>
 	Here you can perform some core configuration for your forum. This page includes the database and url settings, as well as other
@@ -311,19 +299,6 @@ $helptxt['use_subdirectories_for_attachments'] = 'Create new directories.';
 $helptxt['max_image_height'] = 'As with the maximum width, this setting indicates the maximum height a posted image can be.';
 $helptxt['avatar_paranoid'] = 'Selecting this setting will enable very strict security checks on avatars. <strong>Warning!</strong> These extensive checks can fail on valid images too. It is strongly recommended to only use this setting together with avatar re-encoding, in order to have SMF try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if re-encoding of avatars is not enabled, all avatars failing checks will be rejected.';
 $helptxt['avatar_reencode'] = 'Selecting this setting will enable trying to re-encode the uploaded avatars. Image re-encoding offers better security. Note, however, that image re-encoding also renders all animated images static. <br> This feature is only possible if the GD module is installed on your server.';
-$helptxt['cal_enabled'] = 'The calendar can be used for showing birthdays, or for showing important events happening in your community.<br><br>
-		<strong>Show days as link to \'Post Event\'</strong>:<br>This will allow members to post events for that day, when they click on that date<br>
-		<strong>Max days in advance on board index</strong>:<br>If this is set to 7, the next week\'s worth of events will be shown.<br>
-		<strong>Show holidays on board index</strong>:<br>Show today\'s holidays in a calendar bar on the board index.<br>
-		<strong>Show birthdays on board index</strong>:<br>Show today\'s birthdays in a calendar bar on the board index.<br>
-		<strong>Show events on board index</strong>:<br>Show today\'s events in a calendar bar on the board index.<br>
-		<strong>Default Board to Post In</strong>:<br>What\'s the default board to post events in?<br>
-		<strong>Allow events not linked to posts</strong>:<br>Allow members to post events without requiring them to be linked with a post in a board.<br>
-		<strong>Minimum year</strong>:<br>Select the &quot;first&quot; year on the calendar list.<br>
-		<strong>Maximum year</strong>:<br>Select the &quot;last&quot; year on the calendar list<br>
-		<strong>Allow events to span multiple days</strong>:<br>Select this to allow events to span multiple days.<br>
-		<strong>Max number of days an event can span</strong>:<br>Select the maximum number of days that an event can span.<br><br>
-		Remember that usage of the calendar (posting events, viewing events, etc.) is controlled by permissions set on the permissions page.';
 $helptxt['localCookies'] = 'SMF uses cookies to store login information on the client computer.
 	Cookies can be stored globally (myserver.com) or locally (myserver.com/path/to/forum).<br><br>
 	Try this setting if you\'re experiencing problems with users getting logged out automatically.<hr>
@@ -333,7 +308,7 @@ $helptxt['localCookies'] = 'SMF uses cookies to store login information on the c
 $helptxt['enableBBC'] = 'Selecting this setting will allow your members to use Bulletin Board Code (BBC) throughout the forum, allowing users to format their posts with images, type formatting, and more.';
 $helptxt['time_offset'] = 'Not all forum administrators want their forum to use the same time zone as the server upon which it is hosted. Use this setting to specify the time difference (in hours) between the server time and the time to be used for the forum. Negative and decimal values are permitted.';
 $helptxt['default_timezone'] = 'The server time zone tells PHP where your server is located. You should ensure that this is set correctly, preferably to the country/city in which the server is located. You can find out more information on the <a href="https://php.net/manual/en/timezones.php" target="_blank">PHP Site</a>.';
-$helptxt['timezone_priority_countries'] = 'This setting lets you push the time zones for a certain country or countries to the top of the list of selectabled time zones that is shown when users are configuring their profiles, creating calendar events, etc.<br><br>For example, if many of your forum\'s members live in New Zealand or Fiji, you may enter "NZ,FJ" to make it easier for them to find the most relevant time zones quickly.<br><br>You can find the complete list of ISO country codes by searching the Internet for "<a href="//www.google.com/search?q=iso+3166-1+alpha-2" target="_blank">ISO 3166-1 alpha-2</a>".';
+$helptxt['timezone_priority_countries'] = 'This setting lets you push the time zones for a certain country or countries to the top of the list of selectabled time zones that is shown when users are configuring their profiles, etc.<br><br>For example, if many of your forum\'s members live in New Zealand or Fiji, you may enter "NZ,FJ" to make it easier for them to find the most relevant time zones quickly.<br><br>You can find the complete list of ISO country codes by searching the Internet for "<a href="//www.google.com/search?q=iso+3166-1+alpha-2" target="_blank">ISO 3166-1 alpha-2</a>".';
 $helptxt['spamWaitTime'] = 'Here you can select the amount of time that must pass between postings. This can be used to stop people from "spamming" your forum by limiting how often they can post.';
 
 $helptxt['enablePostHTML'] = 'This will allow the posting of some basic HTML tags:
@@ -491,8 +466,6 @@ $helptxt['membergroups'] = 'In SMF there are two types of groups that your membe
 		<li><strong>Post Groups:</strong> Unlike regular groups post based groups cannot be assigned. Instead, members are automatically assigned to a post based group when they reach the minimum number of posts required to be in that group.</li>
 	</ul>';
 
-$helptxt['calendar_how_edit'] = 'You can edit these events by clicking on the red asterisk (*) next to their names.';
-
 $helptxt['maintenance_backup'] = 'This area allows you to save a copy of all the posts, settings, members, and other information in your forum to a very large file.<br><br>It is recommended that you do this often, perhaps weekly, for safety and security.';
 $helptxt['maintenance_rot'] = 'This allows you to <strong>completely</strong> and <strong>irrevocably</strong> remove old topics. It is recommended that you try to make a backup first, just in case you remove something you didn\'t mean to.<br><br><strong>Use this setting with care.</strong>';
 $helptxt['maintenance_members'] = 'This allows you to <strong>completely</strong> and <strong>irrevocably</strong> remove member accounts from your forum. It is <strong>highly</strong> recommended that you try to make a backup first, just in case you remove something you didn\'t mean to.<br><br><strong>Use this setting with care.</strong>';
@@ -606,7 +579,6 @@ $helptxt['custom_mask'] = 'The input mask is important for your forum\'s securit
 $helptxt['topic_move_any'] = 'If checked, users will be allowed to move topics to any board they can see. Otherwise, they will only be able to move them to boards where they can post new topics.';
 
 $helptxt['alert_pm_new'] = 'Notifications of new personal messages do not appear in the Alerts pane, but appear in the "My Messages" list instead.';
-$helptxt['alert_event_new'] = 'This will send out an alert or email as requested if there is a new calendar event added. However, if that event is posted and a topic is added, you will not get an alert for the event if you\'re already following that board - the alert from following the board would cover this.';
 
 $helptxt['force_ssl'] = '<b>Test SSL and HTTPS on your server properly before enabling this, it may cause your forum to become inaccessible.</b> Enable maintenance mode if you are unable to access the forum after enabling this';
 $helptxt['image_proxy_enabled'] = 'Required for embedding external images when in full SSL';
