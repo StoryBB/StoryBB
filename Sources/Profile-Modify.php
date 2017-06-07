@@ -1912,9 +1912,6 @@ function alert_configuration($memID)
 			'buddy_request'  => array('alert' => 'yes', 'email' => 'never'),
 			'birthday'  => array('alert' => 'yes', 'email' => 'yes'),
 		),
-		'calendar' => array(
-			'event_new' => array('alert' => 'yes', 'email' => 'yes', 'help' => 'alert_event_new'),
-		),
 		'paidsubs' => array(
 			'paidsubs_expiring' => array('alert' => 'yes', 'email' => 'yes'),
 		),
@@ -1944,10 +1941,6 @@ function alert_configuration($memID)
 			)),
 		),
 	);
-
-	// There are certain things that are disabled at the group level.
-	if (empty($modSettings['cal_enabled']))
-		unset($alert_types['calendar']);
 
 	// Disable paid subscriptions at group level if they're disabled
 	if (empty($modSettings['paid_enabled']))
