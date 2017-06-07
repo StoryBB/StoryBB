@@ -3922,24 +3922,10 @@ function setupMenuContext()
 	$context['allow_admin'] = allowedTo(array('admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_attachments', 'manage_smileys'));
 
 	$context['allow_memberlist'] = allowedTo('view_mlist');
-	$context['allow_calendar'] = allowedTo('calendar_view') && !empty($modSettings['cal_enabled']);
 	$context['allow_moderation_center'] = $context['user']['can_mod'];
 	$context['allow_pm'] = allowedTo('pm_read');
 
 	$cacheTime = $modSettings['lastActive'] * 60;
-
-	// Initial "can you post an event in the calendar" option - but this might have been set in the calendar already.
-	if (!isset($context['allow_calendar_event']))
-	{
-		$context['allow_calendar_event'] = $context['allow_calendar'] && allowedTo('calendar_post');
-
-		// If you don't allow events not linked to posts and you're not an admin, we have more work to do...
-		if ($context['allow_calendar'] && $context['allow_calendar_event'] && empty($modSettings['cal_allow_unlinked']) && !$user_info['is_admin'])
-		{
-			$boards_can_post = boardsAllowedTo('post_new');
-			$context['allow_calendar_event'] &= !empty($boards_can_post);
-		}
-	}
 
 	// There is some menu stuff we need to do if we're coming at this from a non-guest perspective.
 	if (!$context['user']['is_guest'])
@@ -4049,24 +4035,6 @@ function setupMenuContext()
 						'show' => allowedTo('moderate_forum'),
 						'is_last' => true,
 					)
-				),
-			),
-			'calendar' => array(
-				'title' => $txt['calendar'],
-				'href' => $scripturl . '?action=calendar',
-				'show' => $context['allow_calendar'],
-				'sub_buttons' => array(
-					'view' => array(
-						'title' => $txt['calendar_menu'],
-						'href' => $scripturl . '?action=calendar',
-						'show' => $context['allow_calendar_event'],
-					),
-					'post' => array(
-						'title' => $txt['calendar_post_event'],
-						'href' => $scripturl . '?action=calendar;sa=post',
-						'show' => $context['allow_calendar_event'],
-						'is_last' => true,
-					),
 				),
 			),
 			'mlist' => array(
