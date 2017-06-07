@@ -111,7 +111,6 @@ $txt['version_check_more'] = '(more detailed)';
 
 $txt['lfyi'] = 'You are unable to connect to simplemachines.org\'s latest news file.';
 
-$txt['manage_calendar'] = 'Calendar';
 $txt['manage_search'] = 'Search';
 
 $txt['smileys_manage'] = 'Smileys and Message Icons';
@@ -680,8 +679,6 @@ $txt['log_ban_hits'] = 'Log ban hits in the error log?';
 
 $txt['boardsEdit'] = 'Modify Boards';
 $txt['mboards_new_cat'] = 'Create new category';
-$txt['manage_holidays'] = 'Manage Holidays';
-$txt['calendar_settings'] = 'Calendar Settings';
 $txt['search_weights'] = 'Weights';
 $txt['search_method'] = 'Search Method';
 
