@@ -741,7 +741,7 @@ function template_calendar_top($calendar_data)
 	if ($context['calendar_view'] == 'view_list')
 	{
 		echo '
-			<form action="', $scripturl, '?action=calendar;viewlist" id="calendar_range" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=calendar;viewlist" id="calendar_range" method="post" accept-charset="UTF-8">
 				<input type="text" name="start_date" id="start_date" maxlength="10" value="', $calendar_data['start_date'], '" tabindex="', $context['tabindex']++, '" class="input_text date_input start" data-type="date">
 				<span>', strtolower($txt['to']), '</span>
 				<input type="text" name="end_date" id="end_date" maxlength="10" value="', $calendar_data['end_date'], '" tabindex="', $context['tabindex']++, '" class="input_text date_input end" data-type="date">
@@ -751,7 +751,7 @@ function template_calendar_top($calendar_data)
 	else
 	{
 		echo'
-			<form action="', $scripturl, '?action=calendar" id="calendar_navigation" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=calendar" id="calendar_navigation" method="post" accept-charset="UTF-8">
 				<select name="month" id="input_month">';
 
 				// Show a select box with all the months.
@@ -788,7 +788,7 @@ function template_event_post()
 	global $context, $txt, $scripturl, $modSettings;
 
 	echo '
-		<form action="', $scripturl, '?action=calendar;sa=post" method="post" name="postevent" accept-charset="', $context['character_set'], '" onsubmit="submitonce(this);smc_saveEntities(\'postevent\', [\'evtitle\']);" style="margin: 0;">';
+		<form action="', $scripturl, '?action=calendar;sa=post" method="post" name="postevent" accept-charset="UTF-8" onsubmit="submitonce(this);smc_saveEntities(\'postevent\', [\'evtitle\']);" style="margin: 0;">';
 
 	if (!empty($context['event']['new']))
 		echo '<input type="hidden" name="eventid" value="', $context['event']['eventid'], '">';

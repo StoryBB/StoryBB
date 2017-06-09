@@ -149,8 +149,6 @@ function template_control_richedit_buttons($editor_id)
 		$tempTab++;
 	elseif ($editor_context['preview_type'])
 		$tempTab++;
-	elseif ($context['show_spellchecking'])
-		$tempTab++;
 
 	$tempTab++;
 	$context['tabindex'] = $tempTab;
@@ -164,10 +162,6 @@ function template_control_richedit_buttons($editor_id)
 		echo '
 		<input type="submit" name="save_draft" value="', $txt['draft_save'], '" tabindex="', --$tempTab, '" onclick="return confirm(' . JavaScriptEscape($txt['draft_save_note']) . ') && submitThisOnce(this);" accesskey="d" class="button_submit">
 		<input type="hidden" id="id_draft" name="id_draft" value="', empty($context['id_draft']) ? 0 : $context['id_draft'], '">';
-
-	if ($context['show_spellchecking'])
-		echo '
-		<input type="button" value="', $txt['spell_check'], '" tabindex="', --$tempTab, '" onclick="oEditorHandle_', $editor_id, '.spellCheckStart();" class="button_submit">';
 
 	if ($editor_context['preview_type'])
 		echo '

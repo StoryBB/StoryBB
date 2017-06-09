@@ -62,7 +62,7 @@ function template_main()
 	// End of the javascript, start the form and display the link tree.
 	echo '
 		</script>
-		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="', $context['character_set'], '" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['post_box_name'], '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
+		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['post_box_name'], '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
 
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
@@ -903,83 +903,6 @@ function template_main()
 }
 
 /**
- * The template for the spellchecker.
- */
-function template_spellcheck()
-{
-	global $context, $settings, $txt, $modSettings;
-
-	// The style information that makes the spellchecker look... like the forum hopefully!
-	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="', $context['character_set'], '">
-		<title>', $txt['spell_check'], '</title>
-		<link rel="stylesheet" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css', $modSettings['browser_cache'] ,'">
-		<style>
-			body, td
-			{
-				font-size: small;
-				margin: 0;
-				background: #f0f0f0;
-				color: #000;
-				padding: 10px;
-			}
-			.highlight
-			{
-				color: red;
-				font-weight: bold;
-			}
-			#spellview
-			{
-				border-style: outset;
-				border: 1px solid black;
-				padding: 5px;
-				width: 95%;
-				height: 314px;
-				overflow: auto;
-				background: #ffffff;
-			}';
-
-	// As you may expect - we need a lot of javascript for this... load it form the separate files.
-	echo '
-		</style>
-		<script>
-			var spell_formname = window.opener.spell_formname;
-			var spell_fieldname = window.opener.spell_fieldname;
-		</script>
-		<script src="', $settings['default_theme_url'], '/scripts/spellcheck.js', $modSettings['browser_cache'] ,'"></script>
-		<script src="', $settings['default_theme_url'], '/scripts/script.js', $modSettings['browser_cache'] ,'"></script>
-		<script>
-			', $context['spell_js'], '
-		</script>
-	</head>
-	<body onload="nextWord(false);">
-		<form action="#" method="post" accept-charset="', $context['character_set'], '" name="spellingForm" id="spellingForm" onsubmit="return false;" style="margin: 0;">
-			<div id="spellview">&nbsp;</div>
-			<table width="100%"><tr class="windowbg">
-				<td style="width: 50%; vertical-align: top">
-					', $txt['spellcheck_change_to'], '<br>
-					<input type="text" name="changeto" style="width: 98%;" class="input_text">
-				</td>
-				<td style="width: 50%">
-					', $txt['spellcheck_suggest'], '<br>
-					<select name="suggestions" style="width: 98%;" size="5" onclick="if (this.selectedIndex != -1) this.form.changeto.value = this.options[this.selectedIndex].text;" ondblclick="replaceWord();">
-					</select>
-				</td>
-			</tr></table>
-			<div class="righttext" style="padding: 4px;">
-				<input type="button" name="change" value="', $txt['spellcheck_change'], '" onclick="replaceWord();" class="button_submit">
-				<input type="button" name="changeall" value="', $txt['spellcheck_change_all'], '" onclick="replaceAll();" class="button_submit">
-				<input type="button" name="ignore" value="', $txt['spellcheck_ignore'], '" onclick="nextWord(false);" class="button_submit">
-				<input type="button" name="ignoreall" value="', $txt['spellcheck_ignore_all'], '" onclick="nextWord(true);" class="button_submit">
-			</div>
-		</form>
-	</body>
-</html>';
-}
-
-/**
  * The template for the AJAX quote feature
  */
 function template_quotefast()
@@ -989,7 +912,7 @@ function template_quotefast()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
-		<meta charset="', $context['character_set'], '">
+		<meta charset="UTF-8">
 		<title>', $txt['retrieving_quote'], '</title>
 		<script src="', $settings['default_theme_url'], '/scripts/script.js', $modSettings['browser_cache'] ,'"></script>
 	</head>
@@ -1042,7 +965,7 @@ function template_announce()
 
 	echo '
 	<div id="announcement">
-		<form action="', $scripturl, '?action=announce;sa=send" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=announce;sa=send" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['announce_title'], '</h3>
 			</div>
@@ -1090,7 +1013,7 @@ function template_announcement_send()
 
 	echo '
 	<div id="announcement">
-		<form action="' . $scripturl . '?action=announce;sa=send" method="post" accept-charset="', $context['character_set'], '" name="autoSubmit" id="autoSubmit">
+		<form action="' . $scripturl . '?action=announce;sa=send" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<div class="windowbg2">
 				<p>', $txt['announce_sending'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
 				<div class="progress_bar">

@@ -805,17 +805,8 @@ function un_htmlspecialchars($string)
 	global $context;
 	static $translation = array();
 
-	// Determine the character set... Default to UTF-8
-	if (empty($context['character_set']))
-		$charset = 'UTF-8';
-	// Use ISO-8859-1 in place of non-supported ISO-8859 charsets...
-	elseif (strpos($context['character_set'], 'ISO-8859-') !== false && !in_array($context['character_set'], array('ISO-8859-5', 'ISO-8859-15')))
-		$charset = 'ISO-8859-1';
-	else
-		$charset = $context['character_set'];
-
 	if (empty($translation))
-		$translation = array_flip(get_html_translation_table(HTML_SPECIALCHARS, ENT_QUOTES, $charset)) + array('&#039;' => '\'', '&#39;' => '\'', '&nbsp;' => ' ');
+		$translation = array_flip(get_html_translation_table(HTML_SPECIALCHARS, ENT_QUOTES, 'UTF-8')) + array('&#039;' => '\'', '&#39;' => '\'', '&nbsp;' => ' ');
 
 	return strtr($string, $translation);
 }
@@ -924,10 +915,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	// Don't waste cycles
 	if ($message === '')
 		return '';
-
-	// Just in case it wasn't determined yet whether UTF-8 is enabled.
-	if (!isset($context['utf8']))
-		$context['utf8'] = (empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set']) === 'UTF-8';
 
 	// Clean up any cut/paste issues we may have
 	$message = sanitizeMSCutPaste($message);
@@ -1958,7 +1945,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						)?
 						';
 
-						$data = preg_replace_callback('~' . $url_regex . '~xi' . ($context['utf8'] ? 'u' : ''), function ($matches) {
+						$data = preg_replace_callback('~' . $url_regex . '~xiu', function ($matches) {
 							$url = array_shift($matches);
 
 							$scheme = parse_url($url, PHP_URL_SCHEME);
@@ -2005,7 +1992,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 							\.(?=$|[^\p{L}\p{M}\p{N}\-])
 						)';
 
-						$data = preg_replace('~' . $email_regex . '~xi' . ($context['utf8'] ? 'u' : ''), '[email]$0[/email]', $data);
+						$data = preg_replace('~' . $email_regex . '~xiu', '[email]$0[/email]', $data);
 					}
 				}
 			}
@@ -2685,7 +2672,7 @@ function parsesmileys(&$message)
 		}
 
 		// The non-breaking-space is a complex thing...
-		$non_breaking_space = $context['utf8'] ? '\x{A0}' : '\xA0';
+		$non_breaking_space = '\x{A0}';
 
 		// This smiley regex makes sure it doesn't parse smileys within code tags (so [url=mailto:David@bla.com] doesn't parse the :D smiley)
 		$smileyPregReplacements = array();
@@ -2707,7 +2694,7 @@ function parsesmileys(&$message)
 			}
 		}
 
-		$smileyPregSearch = '~(?<=[>:\?\.\s' . $non_breaking_space . '[\]()*\\\;]|(?<![a-zA-Z0-9])\(|^)(' . implode('|', $searchParts) . ')(?=[^[:alpha:]0-9]|$)~' . ($context['utf8'] ? 'u' : '');
+		$smileyPregSearch = '~(?<=[>:\?\.\s' . $non_breaking_space . '[\]()*\\\;]|(?<![a-zA-Z0-9])\(|^)(' . implode('|', $searchParts) . ')(?=[^[:alpha:]0-9]|$)~u';
 	}
 
 	// Replace away!
@@ -2773,22 +2760,6 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	// Keep that debug in their for template debugging!
 	elseif (isset($_GET['debug']))
 		$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\\??/', $scripturl . '?debug;', $setLocation);
-
-	if (!empty($modSettings['queryless_urls']) && (empty($context['server']['is_cgi']) || ini_get('cgi.fix_pathinfo') == 1 || @get_cfg_var('cgi.fix_pathinfo') == 1) && (!empty($context['server']['is_apache']) || !empty($context['server']['is_lighttpd']) || !empty($context['server']['is_litespeed'])))
-	{
-		if (defined('SID') && SID != '')
-			$setLocation = preg_replace_callback('~^' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#]+?)(#[^"]*?)?$~',
-				function ($m) use ($scripturl)
-				{
-					return $scripturl . '/' . strtr("$m[1]", '&;=', '//,') . '.html?' . SID. (isset($m[2]) ? "$m[2]" : "");
-				}, $setLocation);
-		else
-			$setLocation = preg_replace_callback('~^' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?$~',
-				function ($m) use ($scripturl)
-				{
-					return $scripturl . '/' . strtr("$m[1]", '&;=', '//,') . '.html' . (isset($m[2]) ? "$m[2]" : "");
-				}, $setLocation);
-	}
 
 	// Maybe integrations want to change where we are heading?
 	call_integration_hook('integrate_redirect', array(&$setLocation, &$refresh, &$permanent));
@@ -3247,10 +3218,10 @@ function template_header()
 		if (!isset($_REQUEST['xml']) && isset($_GET['debug']) && !isBrowser('ie'))
 			header('Content-Type: application/xhtml+xml');
 		elseif (!isset($_REQUEST['xml']))
-			header('Content-Type: text/html; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+			header('Content-Type: text/html; charset=UTF-8');
 	}
 
-	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 
 	// We need to splice this in after the body layer, or after the main layer for older stuff.
 	if ($context['in_maintenance'] && $context['user']['is_admin'])
@@ -3869,7 +3840,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	global $smcFunc, $context;
 
 	// Step 1: Remove entities/things we don't consider words:
-	$words = preg_replace('~(?:[\x0B\0' . ($context['utf8'] ? '\x{A0}' : '\xA0') . '\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~' . ($context['utf8'] ? 'u' : ''), ' ', strtr($text, array('<br>' => ' ')));
+	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, array('<br>' => ' ')));
 
 	// Step 2: Entities we left to letters, where applicable, lowercase.
 	$words = un_htmlspecialchars($smcFunc['strtolower']($words));
@@ -4690,19 +4661,6 @@ function sanitizeMSCutPaste($string)
 		"\xe2\x80\x94",	// em dash
 	);
 
-	// windows 1252 / iso equivalents
-	$findchars_iso = array(
-		chr(130),
-		chr(132),
-		chr(133),
-		chr(145),
-		chr(146),
-		chr(147),
-		chr(148),
-		chr(150),
-		chr(151),
-	);
-
 	// safe replacements
 	$replacechars = array(
 		',',	// &sbquo;
@@ -4716,12 +4674,7 @@ function sanitizeMSCutPaste($string)
 		'--',	// &mdash;
 	);
 
-	if ($context['utf8'])
-		$string = str_replace($findchars_utf8, $replacechars, $string);
-	else
-		$string = str_replace($findchars_iso, $replacechars, $string);
-
-	return $string;
+	return str_replace($findchars_utf8, $replacechars, $string);
 }
 
 /**
@@ -4751,37 +4704,22 @@ function replaceEntities__callback($matches)
 	if (in_array($num, array(0x22, 0x26, 0x27, 0x3C, 0x3E)))
 		return '&#' . $num . ';';
 
-	if (empty($context['utf8']))
-	{
-		// no control characters
-		if ($num < 0x20)
-			return '';
-		// text is text
-		elseif ($num < 0x80)
-			return chr($num);
-		// all others get html-ised
-		else
-			return '&#' . $matches[2] . ';';
-	}
+	// <0x20 are control characters, 0x20 is a space, > 0x10FFFF is past the end of the utf8 character set
+	// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text)
+	if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF))
+		return '';
+	// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and punctuation
+	elseif ($num < 0x80)
+		return chr($num);
+	// <0x800 (2048)
+	elseif ($num < 0x800)
+		return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+	// < 0x10000 (65536)
+	elseif ($num < 0x10000)
+		return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+	// <= 0x10FFFF (1114111)
 	else
-	{
-		// <0x20 are control characters, 0x20 is a space, > 0x10FFFF is past the end of the utf8 character set
-		// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text)
-		if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF))
-			return '';
-		// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and punctuation
-		elseif ($num < 0x80)
-			return chr($num);
-		// <0x800 (2048)
-		elseif ($num < 0x800)
-			return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
-		// < 0x10000 (65536)
-		elseif ($num < 0x10000)
-			return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
-		// <= 0x10FFFF (1114111)
-		else
-			return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
-	}
+		return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
 }
 
 /**

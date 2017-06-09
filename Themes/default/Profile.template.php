@@ -566,7 +566,7 @@ function template_showAlerts()
 	{
 		// Start the form.
 		echo '
-		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=showalerts;save" method="post" accept-charset="', $context['character_set'], '" id="mark_all">
+		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=showalerts;save" method="post" accept-charset="UTF-8" id="mark_all">
 			<table id="alerts" class="table_grid">';
 
 		foreach ($context['alerts'] as $id => $alert)
@@ -747,7 +747,7 @@ function template_editBuddies()
 
 	// Add a new buddy?
 	echo '
-	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies" method="post" accept-charset="', $context['character_set'], '">
+	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies" method="post" accept-charset="UTF-8">
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['buddy_add'], '</h3>
 		</div>
@@ -847,7 +847,7 @@ function template_editIgnoreList()
 
 	// Add to the ignore list?
 	echo '
-	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore" method="post" accept-charset="', $context['character_set'], '">
+	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore" method="post" accept-charset="UTF-8">
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['ignore_add'], '</h3>
 		</div>
@@ -954,7 +954,7 @@ function template_trackIP()
 			<h3 class="catbg">', $txt['trackIP'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $context['base_url'], '" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $context['base_url'], '" method="post" accept-charset="UTF-8">
 				<dl class="settings">
 					<dt>
 						<label for="searchip"><strong>', $txt['enter_ip'], ':</strong></label>
@@ -1127,7 +1127,7 @@ function template_showPermissions()
 
 		// Board permission section.
 		echo '
-			<form action="' . $scripturl . '?action=profile;u=', $context['id_member'], ';area=permissions#board_permissions" method="post" accept-charset="', $context['character_set'], '">
+			<form action="' . $scripturl . '?action=profile;u=', $context['id_member'], ';area=permissions#board_permissions" method="post" accept-charset="UTF-8">
 				<div class="cat_bar">
 					<h3 class="catbg">
 						<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
@@ -1350,7 +1350,7 @@ function template_edit_options()
 	$url = $context['require_password'] && !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($url, array('http://' => 'https://')) : $url;
 
 	echo '
-		<form action="', $url, '" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator" enctype="multipart/form-data"', ($context['menu_item_selected'] == 'account' ? ' autocomplete="off"' : ''), '>
+		<form action="', $url, '" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data"', ($context['menu_item_selected'] == 'account' ? ' autocomplete="off"' : ''), '>
 			<div style="position:absolute; top:-100px;"><input type="text" id="autocompleteFakeName"/><input type="password" id="autocompleteFakePassword"/></div>
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">';
@@ -1551,11 +1551,6 @@ function template_edit_options()
 				<input type="hidden" name="sa" value="', $context['menu_item_selected'], '">
 			</div>
 		</form>';
-
-	// Any final spellchecking stuff?
-	if (!empty($context['show_spellchecking']))
-		echo '
-		<form name="spell_form" id="spell_form" method="post" accept-charset="', $context['character_set'], '" target="spellWindow" action="', $scripturl, '?action=spellcheck"><input type="hidden" name="spellstring" value=""></form>';
 }
 
 /**
@@ -1765,7 +1760,7 @@ function template_alert_configuration()
 			</h3>
 		</div>
 		<p class="information">', (empty($context['description']) ? $txt['alert_prefs_desc'] : $context['description']), '</p>
-		<form action="', $scripturl, '?', $context['action'], '" id="admin_form_wrapper" method="post" accept-charset="', $context['character_set'], '" id="notify_options" class="flow_hidden">
+		<form action="', $scripturl, '?', $context['action'], '" id="admin_form_wrapper" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					', $txt['notification_general'], '
@@ -1952,7 +1947,7 @@ function template_groupMembership()
 
 	// The main containing header.
 	echo '
-		<form action="', $scripturl, '?action=profile;area=groupmembership;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+		<form action="', $scripturl, '?action=profile;area=groupmembership;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">
 					', $txt['profile'], '
@@ -2095,7 +2090,7 @@ function template_ignoreboards()
 	global $context, $txt, $scripturl;
 	// The main containing header.
 	echo '
-	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<div class="cat_bar">
 			<h3 class="catbg profile_hd">
 				', $txt['profile'], '
@@ -2290,7 +2285,7 @@ function template_issueWarning()
 	</script>';
 
 	echo '
-	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="', $context['character_set'], '">
+	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="UTF-8">
 		<div class="cat_bar">
 			<h3 class="catbg profile_hd">
 				', $context['user']['is_owner'] ? $txt['profile_warning_level'] : $txt['profile_issue_warning'], '
@@ -2460,7 +2455,7 @@ function template_deleteAccount()
 
 	// The main containing header.
 	echo '
-		<form action="', $scripturl, '?action=profile;area=deleteaccount;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+		<form action="', $scripturl, '?action=profile;area=deleteaccount;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">
 					', $txt['deleteAccount'], '
@@ -2709,14 +2704,7 @@ function template_profile_signature_modify()
 	echo '
 							<dt>
 								<strong>', $txt['signature'], ':</strong><br>
-								<span class="smalltext">', $txt['sig_info'], '</span><br>
-								<br>';
-
-	if ($context['show_spellchecking'])
-		echo '
-								<input type="button" value="', $txt['spell_check'], '" onclick="spellCheck(\'creator\', \'signature\');" class="button_submit">';
-
-		echo '
+								<span class="smalltext">', $txt['sig_info'], '</span>
 							</dt>
 							<dd>
 								<textarea class="editor" onkeyup="calcCharLeft();" id="signature" name="signature" rows="5" cols="50" style="min-width: 50%; max-width: 99%;">', $context['member']['signature'], '</textarea><br>';

@@ -30,7 +30,7 @@ function template_main()
 		</div>';
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;sa=admin" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=theme;sa=admin" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">',
 					$txt['settings'], '
@@ -129,7 +129,7 @@ function template_main()
 		echo '
 				<fieldset>
 					<legend>', $txt['theme_install_file'], '</legend>
-					<form action="', $scripturl, '?action=admin;area=theme;sa=install;do=file" method="post" accept-charset="', $context['character_set'], '" enctype="multipart/form-data" class="padding">
+					<form action="', $scripturl, '?action=admin;area=theme;sa=install;do=file" method="post" accept-charset="UTF-8" enctype="multipart/form-data" class="padding">
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 						<input type="hidden" name="', $context['admin-t-file_token_var'], '" value="', $context['admin-t-file_token'], '">
 						<input type="file" name="theme_gz" id="theme_gz" value="theme_gz" size="40" onchange="this.form.copy.disabled = this.value != \'\'; this.form.theme_dir.disabled = this.value != \'\';" class="input_file">
@@ -141,7 +141,7 @@ function template_main()
 		echo '
 				<fieldset>
 					<legend>', $txt['theme_install_new'], '</legend>
-					<form action="', $scripturl, '?action=admin;area=theme;sa=install;do=copy" method="post" accept-charset="', $context['character_set'], '" class="padding">
+					<form action="', $scripturl, '?action=admin;area=theme;sa=install;do=copy" method="post" accept-charset="UTF-8" class="padding">
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 						<input type="hidden" name="', $context['admin-t-copy_token_var'], '" value="', $context['admin-t-copy_token'], '">
 						<input type="text" name="copy" id="copy" value="', $context['new_theme_name'], '" size="40" class="input_text">
@@ -154,7 +154,7 @@ function template_main()
 	echo '
 				<fieldset>
 					<legend>', $txt['theme_install_dir'], '</legend>
-					<form action="', $scripturl, '?action=admin;area=theme;sa=install;do=dir" method="post" accept-charset="', $context['character_set'], '" class="padding">
+					<form action="', $scripturl, '?action=admin;area=theme;sa=install;do=dir" method="post" accept-charset="UTF-8" class="padding">
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 						<input type="hidden" name="', $context['admin-t-dir_token_var'], '" value="', $context['admin-t-dir_token'], '">
 						<input type="text" name="theme_dir" id="theme_dir" value="', $context['new_theme_dir'], '" size="40" style="width: 40%;" class="input_text">
@@ -202,7 +202,7 @@ function template_list_themes()
 		<div class="information">
 			', $txt['themeadmin_list_tip'], '
 		</div>
-		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=theme;', $context['session_var'], '=', $context['session_id'], ';sa=list" method="post" accept-charset="', $context['character_set'], '">
+		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=theme;', $context['session_var'], '=', $context['session_id'], ';sa=list" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['theme_settings'], '</h3>
 			</div>
@@ -332,7 +332,7 @@ function template_set_options()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';sa=reset" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';sa=reset" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="who" value="', $context['theme_options_reset'] ? 1 : 0, '">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['theme_options_title'], ' - ', $context['theme_settings']['name'], '</h3>
@@ -472,7 +472,7 @@ function template_set_settings()
 
 	echo '
 	<div id="admin_form_wrapper">
-		<form action="', $scripturl, '?action=admin;area=theme;sa=list;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=theme;sa=list;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					<a href="', $scripturl, '?action=helpadmin;help=theme_settings" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a> ', $txt['theme_settings'], ' - ', $context['theme_settings']['name'], '
@@ -722,7 +722,7 @@ function template_pick()
 
 	echo '
 	<div id="pick_theme">
-		<form action="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">';
+		<form action="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">';
 
 	// Just go through each theme and show its information - thumbnail, etc.
 	foreach ($context['available_themes'] as $theme)
@@ -1108,7 +1108,7 @@ function template_edit_style()
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="', $context['character_set'], '" name="stylesheetForm" id="stylesheetForm">
+		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8" name="stylesheetForm" id="stylesheetForm">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>
@@ -1161,7 +1161,7 @@ function template_edit_template()
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>
@@ -1219,7 +1219,7 @@ function template_edit_file()
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['theme_edit'], ' - ', $context['edit_filename'], '</h3>
 			</div>

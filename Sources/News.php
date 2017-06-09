@@ -286,16 +286,16 @@ function ShowXmlFeed()
 		ob_start();
 
 	if ($xml_format == 'smf' || isset($_REQUEST['debug']))
-		header('Content-Type: text/xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+		header('Content-Type: text/xml; charset=UTF-8');
 	elseif ($xml_format == 'rss' || $xml_format == 'rss2')
-		header('Content-Type: application/rss+xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+		header('Content-Type: application/rss+xml; charset=UTF-8');
 	elseif ($xml_format == 'atom')
-		header('Content-Type: application/atom+xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+		header('Content-Type: application/atom+xml; charset=UTF-8');
 	elseif ($xml_format == 'rdf')
-		header('Content-Type: ' . (isBrowser('ie') ? 'text/xml' : 'application/rdf+xml') . '; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+		header('Content-Type: ' . (isBrowser('ie') ? 'text/xml' : 'application/rdf+xml') . '; charset=UTF-8');
 
 	// First, output the xml header.
-	echo '<?xml version="1.0" encoding="', $context['character_set'], '"?' . '>';
+	echo '<?xml version="1.0" encoding="UTF-8"?' . '>';
 
 	// Are we outputting an rss feed or one with more information?
 	if ($xml_format == 'rss' || $xml_format == 'rss2')
@@ -439,13 +439,6 @@ function fix_possible_url($val)
 
 	call_integration_hook('integrate_fix_url', array(&$val));
 
-	if (empty($modSettings['queryless_urls']) || ($context['server']['is_cgi'] && ini_get('cgi.fix_pathinfo') == 0 && @get_cfg_var('cgi.fix_pathinfo') == 0) || (!$context['server']['is_apache'] && !$context['server']['is_lighttpd']))
-		return $val;
-
-	$val = preg_replace_callback('~\b' . preg_quote($scripturl, '~') . '\?((?:board|topic)=[^#"]+)(#[^"]*)?$~', function($m) use ($scripturl)
-		{
-			return $scripturl . '/' . strtr("$m[1]", '&;=', '//,') . '.html' . (isset($m[2]) ? $m[2] : "");
-		}, $val);
 	return $val;
 }
 

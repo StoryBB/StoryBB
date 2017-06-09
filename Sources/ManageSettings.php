@@ -173,7 +173,6 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'minimize_files'),
 		'',
 			// SEO stuff
-			array('check', 'queryless_urls', 'subtext' => '<strong>' . $txt['queryless_urls_note'] . '</strong>'),
 			array('text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50),
 		'',
 			// Number formatting, timezones.

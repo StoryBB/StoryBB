@@ -337,9 +337,6 @@ function Display()
 	// Create a previous next string if the selected theme has it as a selected option.
 	$context['previous_next'] = $modSettings['enablePreviousNext'] ? '<a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=prev#new">' . $txt['previous_next_back'] . '</a> - <a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=next#new">' . $txt['previous_next_forward'] . '</a>' : '';
 
-	// Check if spellchecking is both enabled and actually working. (for quick reply.)
-	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && (function_exists('pspell_new') || (function_exists('enchant_broker_init') && ($txt['lang_charset'] == 'UTF-8' || function_exists('iconv'))));
-
 	// Do we need to show the visual verification image?
 	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
@@ -1328,10 +1325,6 @@ function Display()
 	if ($context['drafts_autosave'])
 		loadJavaScriptFile('drafts.js', array('defer' => false), 'smf_drafts');
 
-	// Spellcheck
-	if ($context['show_spellchecking'])
-		loadJavaScriptFile('spellcheck.js', array('defer' => false), 'smf_spellcheck');
-
 	// topic.js
 	loadJavaScriptFile('topic.js', array('defer' => false), 'smf_topic');
 
@@ -1539,8 +1532,6 @@ function Download()
 	global $txt, $modSettings, $user_info, $context, $topic, $smcFunc;
 
 	// Some defaults that we need.
-	$context['character_set'] = empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'ISO-8859-1' : $txt['lang_character_set']) : $modSettings['global_character_set'];
-	$context['utf8'] = $context['character_set'] === 'UTF-8';
 	$context['no_last_modified'] = true;
 
 	// Prevent a preview image from being displayed twice.
@@ -1617,7 +1608,7 @@ function Download()
 	if (!file_exists($filename))
 	{
 		header((preg_match('~HTTP/1\.[01]~i', $_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0') . ' 404 Not Found');
-		header('Content-Type: text/plain; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+		header('Content-Type: text/plain; charset=UTF-8');
 
 		// We need to die like this *before* we send any anti-caching headers as below.
 		die('File not found.');
@@ -1675,21 +1666,20 @@ function Download()
 	}
 
 	// Convert the file to UTF-8, cuz most browsers dig that.
-	$utf8name = !$context['utf8'] && function_exists('iconv') ? iconv($context['character_set'], 'UTF-8', $real_filename) : (!$context['utf8'] && function_exists('mb_convert_encoding') ? mb_convert_encoding($real_filename, 'UTF-8', $context['character_set']) : $real_filename);
 	$disposition = !isset($_REQUEST['image']) ? 'attachment' : 'inline';
 
 	// Different browsers like different standards...
 	if (isBrowser('firefox'))
-		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $utf8name)));
+		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $real_filename)));
 
 	elseif (isBrowser('opera'))
-		header('Content-Disposition: ' . $disposition . '; filename="' . preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $utf8name) . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $real_filename) . '"');
 
 	elseif (isBrowser('ie'))
-		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $utf8name)) . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $real_filename)) . '"');
 
 	else
-		header('Content-Disposition: ' . $disposition . '; filename="' . $utf8name . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . $real_filename . '"');
 
 	// If this has an "image extension" - but isn't actually an image - then ensure it isn't cached cause of silly IE.
 	if (!isset($_REQUEST['image']) && in_array($file_ext, array('gif', 'jpg', 'bmp', 'png', 'jpeg', 'tiff')))

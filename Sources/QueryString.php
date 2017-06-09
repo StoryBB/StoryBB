@@ -574,7 +574,7 @@ function cleanXml($string)
 	global $context;
 
 	// https://www.w3.org/TR/2000/REC-xml-20001006#NT-Char
-	return preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19' . ($context['utf8'] ? '\x{FFFE}\x{FFFF}' : '') . ']~' . ($context['utf8'] ? 'u' : ''), '', $string);
+	return preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19\x{FFFE}\x{FFFF}]~u', '', $string);
 }
 
 /**
@@ -628,22 +628,6 @@ function ob_sessrewrite($buffer)
 	// Debugging templates, are we?
 	elseif (isset($_GET['debug']))
 		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '\\??/', '"' . $scripturl . '?debug;', $buffer);
-
-	// This should work even in 4.2.x, just not CGI without cgi.fix_pathinfo.
-	if (!empty($modSettings['queryless_urls']) && (!$context['server']['is_cgi'] || ini_get('cgi.fix_pathinfo') == 1 || @get_cfg_var('cgi.fix_pathinfo') == 1) && ($context['server']['is_apache'] || $context['server']['is_lighttpd'] || $context['server']['is_litespeed']))
-	{
-		// Let's do something special for session ids!
-		if (defined('SID') && SID != '')
-			$buffer = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#"]+?)(#[^"]*?)?"~', function($m)
-			{
-				global $scripturl; return '"' . $scripturl . "/" . strtr("$m[1]", '&;=', '//,') . ".html?" . SID . (isset($m[2]) ? $m[2] : "") . '"';
-			}, $buffer);
-		else
-			$buffer = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?"~', function($m)
-			{
-				global $scripturl; return '"' . $scripturl . '/' . strtr("$m[1]", '&;=', '//,') . '.html' . (isset($m[2]) ? $m[2] : "") . '"';
-			}, $buffer);
-	}
 
 	// Return the changed buffer.
 	return $buffer;

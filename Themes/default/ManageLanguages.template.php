@@ -42,7 +42,7 @@ function template_download_language()
 	// Provide something of an introduction...
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=languages;sa=downloadlang;did=', $context['download_id'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=languages;sa=downloadlang;did=', $context['download_id'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					', $txt['languages_download'], '
@@ -131,7 +131,7 @@ function template_modify_language_entries()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					', $txt['edit_languages'], '
@@ -158,28 +158,10 @@ function template_modify_language_entries()
 					<legend>', $context['primary_settings']['name'], '</legend>
 					<dl class="settings">
 						<dt>
-							<label for="character_set">', $txt['languages_character_set'], ':</label>
-						</dt>
-						<dd>
-							<input type="text" name="character_set" id="character_set" size="20" value="', $context['primary_settings']['character_set'], '"', (empty($context['file_entries']) ? '' : ' disabled'), ' class="input_text">
-						</dd>
-						<dt>
 							<label for="locale">', $txt['languages_locale'], ':</label>
 						</dt>
 						<dd>
 							<input type="text" name="locale" id="locale" size="20" value="', $context['primary_settings']['locale'], '"', (empty($context['file_entries']) ? '' : ' disabled'), ' class="input_text">
-						</dd>
-						<dt>
-							<label for="dictionary">', $txt['languages_dictionary'], ':</label>
-						</dt>
-						<dd>
-							<input type="text" name="dictionary" id="dictionary" size="20" value="', $context['primary_settings']['dictionary'], '"', (empty($context['file_entries']) ? '' : ' disabled'), ' class="input_text">
-						</dd>
-						<dt>
-							<label for="spelling">', $txt['languages_spelling'], ':</label>
-						</dt>
-						<dd>
-							<input type="text" name="spelling" id="spelling" size="20" value="', $context['primary_settings']['spelling'], '"', (empty($context['file_entries']) ? '' : ' disabled'), ' class="input_text">
 						</dd>
 						<dt>
 							<label for="rtl">', $txt['languages_rtl'], ':</label>
@@ -205,7 +187,7 @@ function template_modify_language_entries()
 			</div>
 		</form>
 
-		<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], ';entries" id="entry_form" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], ';entries" id="entry_form" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					', $txt['edit_language_entries'], '
@@ -322,7 +304,7 @@ function template_add_language()
 
 	echo '
 	<div id="admincenter">
-		<form id="admin_form_wrapper"action="', $scripturl, '?action=admin;area=languages;sa=add;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form id="admin_form_wrapper"action="', $scripturl, '?action=admin;area=languages;sa=add;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					', $txt['add_language'], '

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html {{#if context.right_to_left}}dir="rtl" {{/if}}{{#if txt.lang_locale}} lang="{{locale txt.lang_locale}}"{{/if}}>
 <head>
-	<meta charset="{{context.character_set}}">
+	<meta charset="UTF-8">
 	{{#each context.css_files}}
 	    <link rel="stylesheet" href="{{fileUrl}}">
 	{{/each}}

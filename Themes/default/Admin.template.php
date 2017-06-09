@@ -367,7 +367,7 @@ function template_edit_censored()
 	// First section is for adding/removing words from the censored list.
 	echo '
 					<div id="admincenter">
-						<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=postsettings;sa=censor" method="post" accept-charset="', $context['character_set'], '">
+						<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=postsettings;sa=censor" method="post" accept-charset="UTF-8">
 							<div id="section_header" class="cat_bar">
 								<h3 class="catbg">
 									', $txt['admin_censored_words'], '
@@ -470,7 +470,7 @@ function template_not_done()
 							</div>';
 
 	echo '
-							<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="', $context['character_set'], '" name="autoSubmit" id="autoSubmit">
+							<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 								<input type="submit" name="cont" value="', $txt['not_done_continue'], '" class="button_submit">
 								', $context['continue_post_data'], '
 							</form>
@@ -518,7 +518,7 @@ function template_show_settings()
 
 	echo '
 					<div id="admincenter">
-						<form id="admin_form_wrapper" action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '"', !empty($context['force_form_onsubmit']) ? ' onsubmit="' . $context['force_form_onsubmit'] . '"' : '', '>';
+						<form id="admin_form_wrapper" action="', $context['post_url'], '" method="post" accept-charset="UTF-8"', !empty($context['force_form_onsubmit']) ? ' onsubmit="' . $context['force_form_onsubmit'] . '"' : '', '>';
 
 	// Is there a custom title?
 	if (isset($context['settings_title']))
@@ -848,7 +848,7 @@ function template_edit_profile_field()
 
 	echo '
 					<div id="admincenter">
-						<form action="', $scripturl, '?action=admin;area=featuresettings;sa=profileedit;fid=', $context['fid'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+						<form action="', $scripturl, '?action=admin;area=featuresettings;sa=profileedit;fid=', $context['fid'], ';', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 							<div id="section_header" class="cat_bar">
 								<h3 class="catbg">', $context['page_title'], '</h3>
 							</div>
@@ -1064,7 +1064,7 @@ function template_admin_search_results()
 
 	echo '
 						<div id="section_header" class="cat_bar">
-							<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="', $context['character_set'], '">
+							<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8">
 								<h3 class="catbg">
 									<span id="quick_search" class="floatright">
 										<input type="search" name="search_term" value="', $context['search_term'], '" class="input_text">
@@ -1374,7 +1374,7 @@ function template_clean_cache_button_below()
 						<h3 class="catbg">', $txt['maintain_cache'], '</h3>
 					</div>
 					<div class="windowbg2 noup">
-						<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="', $context['character_set'], '">
+						<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="UTF-8">
 							<p>', $txt['maintain_cache_info'], '</p>
 							<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit"></span>
 							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">

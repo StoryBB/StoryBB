@@ -48,7 +48,7 @@ function template_find_members()
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
 		<title>', $txt['find_members'], '</title>
-		<meta charset="', $context['character_set'], '">
+		<meta charset="UTF-8">
 		<meta name="robots" content="noindex">
 		<link rel="stylesheet" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css', $modSettings['browser_cache'] ,'">
 		<script src="', $settings['default_theme_url'], '/scripts/script.js', $modSettings['browser_cache'] ,'"></script>
@@ -75,7 +75,7 @@ function template_find_members()
 		</script>
 	</head>
 	<body id="help_popup">
-		<form action="', $scripturl, '?action=findmember;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '" class="padding description">
+		<form action="', $scripturl, '?action=findmember;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8" class="padding description">
 			<div class="roundframe">
 				<div class="cat_bar">
 					<h3 class="catbg">', $txt['find_members'], '</h3>
