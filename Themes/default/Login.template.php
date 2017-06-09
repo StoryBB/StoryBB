@@ -1,4 +1,5 @@
 <?php
+use LightnCandy\LightnCandy;
 /**
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
@@ -13,103 +14,30 @@
 function template_login()
 {
 	global $context, $settings, $scripturl, $modSettings, $txt;
+	
+	$data = Array(
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+		'settings' => $settings,
+		'modSettings' => $modSettings,
+		'ajax_nonssl' => !empty($context['from_ajax']) && (empty($modSettings['force_ssl']) || $modSettings['force_ssl'] == 2)
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/login_main.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
 
-	echo '
-		<div class="login">
-			<div class="cat_bar">
-				<h3 class="catbg">
-					<img src="', $settings['images_url'], '/icons/login_hd.png" alt="" class="icon"> ', $txt['login'], '
-				</h3>
-			</div>
-			<div class="roundframe noup">
-				<form class="login" action="', $context['login_url'], '" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8">';
-
-	// Did they make a mistake last time?
-	if (!empty($context['login_errors']))
-		echo '
-					<div class="errorbox">', implode('<br>', $context['login_errors']), '</div><br>';
-
-	// Or perhaps there's some special description for this time?
-	if (isset($context['description']))
-		echo '
-					<div class="information">', $context['description'], '</div>';
-
-	// Now just get the basic information - username, password, etc.
-	echo '
-					<dl>
-						<dt>', $txt['username'], ':</dt>
-						<dd><input type="text" id="', !empty($context['from_ajax']) ? 'ajax_' : '', 'loginuser" name="user" size="20" value="', $context['default_username'], '" class="input_text"></dd>
-						<dt>', $txt['password'], ':</dt>
-						<dd><input type="password" id="', !empty($context['from_ajax']) ? 'ajax_' : '', 'loginpass" name="passwrd" value="', $context['default_password'], '" size="20" class="input_password"></dd>
-					</dl>
-					<dl>
-						<dt>', $txt['mins_logged_in'], ':</dt>
-						<dd><input type="number" name="cookielength" size="4" maxlength="4" value="', $modSettings['cookieTime'], '"', $context['never_expire'] ? ' disabled' : '', ' class="input_text" min="1"></dd>
-						<dt>', $txt['always_logged_in'], ':</dt>
-						<dd><input type="checkbox" name="cookieneverexp"', $context['never_expire'] ? ' checked' : '', ' class="input_check" onclick="this.form.cookielength.disabled = this.checked;"></dd>';
-	// If they have deleted their account, give them a chance to change their mind.
-	if (isset($context['login_show_undelete']))
-		echo '
-						<dt class="alert">', $txt['undelete_account'], ':</dt>
-						<dd><input type="checkbox" name="undelete" class="input_check"></dd>';
-	echo '
-					</dl>
-					<p><input type="submit" value="', $txt['login'], '" class="button_submit"></p>
-					<p class="smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
-					<input type="hidden" name="hash_passwrd" value="">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-					<input type="hidden" name="', $context['login_token_var'], '" value="', $context['login_token'], '">
-					<script>
-						setTimeout(function() {
-							document.getElementById("', !empty($context['from_ajax']) ? 'ajax_' : '', isset($context['default_username']) && $context['default_username'] != '' ? 'loginpass' : 'loginuser', '").focus();
-						}, 150);';
-	if (!empty($context['from_ajax']) && (empty($modSettings['force_ssl']) || $modSettings['force_ssl'] == 2))
-		echo '
-						form = $("#frmLogin");
-						form.submit(function(e) {
-							e.preventDefault();
-							e.stopPropagation();
-
-							$.ajax({
-								url: form.prop("action"),
-								method: "POST",
-								data: form.serialize(),
-								success: function(data) {
-									if (data.indexOf("<bo" + "dy") > -1) {
-										document.open();
-										document.write(data);
-										document.close();
-									}
-									else
-										form.parent().html($(data).find(".roundframe").html());
-								},
-								error: function(xhr) {
-									var data = xhr.responseText;
-									if (data.indexOf("<bo" + "dy") > -1) {
-										document.open();
-										document.write(data);
-										document.close();
-									}
-									else
-										form.parent().html($(data).filter("#fatal_error").html());
-								}
-							});
-
-							return false;
-						});';
-
-	echo '
-					</script>
-				</form>';
-
-	// It is a long story as to why we have this when we're clearly not going to use it.
-	if (!empty($context['from_ajax']))
-		echo '
-					<br>
-					<a href="javascript:self.close();"></a>';
-	echo '
-			</div>
-		</div>';
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'helpers' => Array(
+	    )
+	));
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
