@@ -1,4 +1,5 @@
 <?php
+use LightnCandy\LightnCandy;
 /**
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
@@ -13,33 +14,35 @@
 function template_registration_agreement()
 {
 	global $context, $scripturl, $txt;
+	
+	$data = Array(
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/register_agreement.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
 
-	echo '
-		<form action="', $scripturl, '?action=signup" method="post" accept-charset="UTF-8" id="registration">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['registration_agreement'], '</h3>
-			</div>
-			<div class="roundframe noup">
-				<p>', $context['agreement'], '</p>
-			</div>
-			<div id="confirm_buttons">';
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'helpers' => Array(
+	    )
+	));
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
+}
 
-	// Age restriction in effect?
-	if ($context['show_coppa'])
-		echo '
-				<input type="submit" name="accept_agreement" value="', $context['coppa_agree_above'], '" class="button_submit"><br><br>
-				<input type="submit" name="accept_agreement_coppa" value="', $context['coppa_agree_below'], '" class="button_submit">';
-	else
-		echo '
-				<input type="submit" name="accept_agreement" value="', $txt['agreement_agree'], '" class="button_submit">';
-
-	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			<input type="hidden" name="', $context['register_token_var'], '" value="', $context['register_token'], '">
-			</div>
-			<input type="hidden" name="step" value="1">
-		</form>';
-
+function gen_tabIndexes($start){
+	$i = 0;
+	while(true) {
+		echo "DEBUG: " . $i;
+        yield $i++; 
+	}
 }
 
 /**
@@ -48,275 +51,66 @@ function template_registration_agreement()
 function template_registration_form()
 {
 	global $context, $scripturl, $txt, $modSettings;
-
-	echo '
-		<script>
-			function verifyAgree()
-			{
-				if (currentAuthMethod == \'passwd\' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
-				{
-					alert("', $txt['register_passwords_differ_js'], '");
-					return false;
-				}
-
-				return true;
-			}
-
-			var currentAuthMethod = \'passwd\';
-		</script>';
-
-	// Any errors?
-	if (!empty($context['registration_errors']))
-	{
-		echo '
-		<div class="errorbox">
-			<span>', $txt['registration_errors_occurred'], '</span>
-			<ul>';
-
-		// Cycle through each error and display an error message.
-		foreach ($context['registration_errors'] as $error)
-			echo '
-				<li>', $error, '</li>';
-
-		echo '
-			</ul>
-		</div>';
+	
+	//Preprocessing: sometimes we're given eval strings to make options for custom fields.
+	//WE REALLY SHOULDN'T DO THIS.
+	//But for now:
+	foreach ($context['profile_fields'] as $key => $field) {
+		if ($field['type'] == 'select' && !is_array($field['options'])) {
+			$field['options'] = eval($field['options']);
+		}
+	}
+		
+	$data = Array(
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+		'modSettings' => $modSettings,
+		'verification_visual' => Array(
+			'verify_context' => $context['controls']['verification'][0],
+			'verify_id' => 0,
+			'txt' => $txt,
+			'hinput_name' => $_SESSION[$verify_id . '_vv']['empty_field'],
+			'quick_reply' => false
+		)
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/register_form.hbs");
+	if (!$template) {
+		die('Template did not load!');
 	}
 
-	echo '
-		<form action="', !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl, '?action=signup2" method="post" accept-charset="UTF-8" name="registration" id="registration" onsubmit="return verifyAgree();">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['registration_form'], '</h3>
-			</div>
-			<div class="title_bar title_top">
-				<h3 class="titlebg">', $txt['required_info'], '</h3>
-			</div>
-			<div class="roundframe noup">
-				<fieldset>
-					<dl class="register_form">
-						<dt><strong><label for="smf_autov_username">', $txt['username'], ':</label></strong></dt>
-						<dd>
-							<input type="text" name="user" id="smf_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" class="input_text">
-							<span id="smf_autov_username_div" style="display: none;">
-								<a id="smf_autov_username_link" href="#">
-									<span id="smf_autov_username_img" class="generic_icons check"></span>
-								</a>
-							</span>
-						</dd>
-						<dt><strong><label for="smf_autov_reserve1">', $txt['user_email_address'], ':</label></strong></dt>
-						<dd>
-							<input type="text" name="email" id="smf_autov_reserve1" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['email']) ? $context['email'] : '', '" class="input_text">
-						</dd>
-					</dl>
-					<dl class="register_form" id="password1_group">
-						<dt><strong><label for="smf_autov_pwmain">', ucwords($txt['choose_pass']), ':</label></strong></dt>
-						<dd>
-							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '" class="input_password">
-							<span id="smf_autov_pwmain_div" style="display: none;">
-								<span id="smf_autov_pwmain_img" class="generic_icons invalid"></span>
-							</span>
-						</dd>
-					</dl>
-					<dl class="register_form" id="password2_group">
-						<dt><strong><label for="smf_autov_pwverify">', ucwords($txt['verify_pass']), ':</label></strong></dt>
-						<dd>
-							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '" class="input_password">
-							<span id="smf_autov_pwverify_div" style="display: none;">
-								<span id="smf_autov_pwverify_img" class="generic_icons valid"></span>
-							</span>
-						</dd>
-					</dl>
-					<dl class="register_form" id="notify_announcements">
-						<dt><strong><label for="notify_announcements">', $txt['notify_announcements'], ':</label></strong></dt>
-						<dd>
-							<input type="checkbox" name="notify_announcements" id="notify_announcements" tabindex="', $context['tabindex']++, '"', $context['notify_announcements'] ? ' checked="checked"' : '', ' class="input_check" />
-						</dd>
-					</dl>';
-
-	// If there is any field marked as required, show it here!
-	if (!empty($context['custom_fields_required']) && !empty($context['custom_fields']))
-	{
-		echo '
-
-					<dl class="register_form">';
-
-		foreach ($context['custom_fields'] as $field)
-			if ($field['show_reg'] > 1)
-				echo '
-						<dt>
-							<strong', !empty($field['is_error']) ? ' class="red"' : '', '>', $field['name'], ':</strong>
-							<span class="smalltext">', $field['desc'], '</span>
-						</dt>
-						<dd>', str_replace('name="', 'tabindex="' . $context['tabindex']++ . '" name="', $field['input_html']), '</dd>';
-
-		echo '
-					</dl>';
-	}
-
-	echo '
-				</fieldset>
-			</div>';
-
-	// If we have either of these, show the extra group.
-	if (!empty($context['profile_fields']) || !empty($context['custom_fields']))
-	{
-		echo '
-			<div class="title_bar title_top">
-				<h3 class="titlebg">', $txt['additional_information'], '</h3>
-			</div>
-			<div class="roundframe noup">
-				<fieldset>
-					<dl class="register_form" id="custom_group">';
-	}
-
-	if (!empty($context['profile_fields']))
-	{
-		// Any fields we particularly want?
-		foreach ($context['profile_fields'] as $key => $field)
-		{
-			if ($field['type'] == 'callback')
-			{
-				if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	    'partials' => Array(
+	    	'visual_verification_control' => file_get_contents(__DIR__ .  "/partials/visual_verification_control.hbs")
+	    ),
+	    'helpers' => Array(
+	    	'or' => logichelper_or,
+	    	'and' => logichelper_and,
+	    	'eq' => logichelper_eq,
+	    	'not' => logichelper_not,
+	    	'profile_callback_helper' => function ($field) {
+	            if ($field['type'] == 'callback')
 				{
-					$callback_func = 'template_profile_' . $field['callback_func'];
-					$callback_func();
-				}
-			}
-			else
-			{
-					echo '
-						<dt>
-							<strong', !empty($field['is_error']) ? ' class="red"' : '', '>', $field['label'], ':</strong>';
-
-				// Does it have any subtext to show?
-				if (!empty($field['subtext']))
-					echo '
-							<span class="smalltext">', $field['subtext'], '</span>';
-
-				echo '
-						</dt>
-						<dd>';
-
-				// Want to put something infront of the box?
-				if (!empty($field['preinput']))
-					echo '
-							', $field['preinput'];
-
-				// What type of data are we showing?
-				if ($field['type'] == 'label')
-					echo '
-							', $field['value'];
-
-				// Maybe it's a text box - very likely!
-				elseif (in_array($field['type'], array('int', 'float', 'text', 'password')))
-					echo '
-							<input type="', $field['type'] == 'password' ? 'password' : 'text', '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '" tabindex="', $context['tabindex']++, '" ', $field['input_attr'], ' class="input_', $field['type'] == 'password' ? 'password' : 'text', '">';
-
-				// You "checking" me out? ;)
-				elseif ($field['type'] == 'check')
-					echo '
-							<input type="hidden" name="', $key, '" value="0"><input type="checkbox" name="', $key, '" id="', $key, '"', !empty($field['value']) ? ' checked' : '', ' value="1" tabindex="', $context['tabindex']++, '" class="input_check" ', $field['input_attr'], '>';
-
-				// Always fun - select boxes!
-				elseif ($field['type'] == 'select')
-				{
-					echo '
-							<select name="', $key, '" id="', $key, '" tabindex="', $context['tabindex']++, '">';
-
-					if (isset($field['options']))
+					if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
 					{
-						// Is this some code to generate the options?
-						if (!is_array($field['options']))
-							$field['options'] = eval($field['options']);
-						// Assuming we now have some!
-						if (is_array($field['options']))
-							foreach ($field['options'] as $value => $name)
-								echo '
-								<option value="', $value, '"', $value == $field['value'] ? ' selected' : '', '>', $name, '</option>';
+						$callback_func = 'template_profile_' . $field['callback_func'];
+						$callback_func();
 					}
-
-					echo '
-							</select>';
 				}
-
-				// Something to end with?
-				if (!empty($field['postinput']))
-					echo '
-							', $field['postinput'];
-
-				echo '
-						</dd>';
-			}
-		}
-	}
-
-	// Are there any custom fields?
-	if (!empty($context['custom_fields']))
-	{
-		foreach ($context['custom_fields'] as $field)
-		{
-			if ($field['show_reg'] < 2)
-				echo '
-						<dt>
-							<strong', !empty($field['is_error']) ? ' class="red"' : '', '>', $field['name'], ':</strong>
-							<span class="smalltext">', $field['desc'], '</span>
-						</dt>
-						<dd>', $field['input_html'], '</dd>';
-		}
-	}
-
-	// If we have either of these, close the list like a proper gent.
-	if (!empty($context['profile_fields']) || !empty($context['custom_fields']))
-	{
-		echo '
-					</dl>
-				</fieldset>
-			</div>';
-	}
-
-	if ($context['visual_verification'])
-	{
-		echo '
-			<div class="title_bar title_top">
-				<h3 class="titlebg">', $txt['verification'], '</h3>
-			</div>
-			<div class="roundframe noup">
-				<fieldset class="centertext">
-					', template_control_verification($context['visual_verification_id'], 'all'), '
-				</fieldset>
-			</div>';
-	}
-
-	echo '
-			<div id="confirm_buttons" class="flow_auto">';
-
-	// Age restriction in effect?
-	if (!$context['require_agreement'] && $context['show_coppa'])
-		echo '
-				<input type="submit" name="accept_agreement" value="', $context['coppa_agree_above'], '" class="button_submit"><br><br>
-				<input type="submit" name="accept_agreement_coppa" value="', $context['coppa_agree_below'], '" class="button_submit">';
-	else
-		echo '
-				<input type="submit" name="regSubmit" value="', $txt['register'], '" tabindex="', $context['tabindex']++, '" class="button_submit">';
-	echo '
-			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			<input type="hidden" name="', $context['register_token_var'], '" value="', $context['register_token'], '">
-			<input type="hidden" name="step" value="2">
-		</form>
-		<script>
-			var regTextStrings = {
-				"username_valid": "', $txt['registration_username_available'], '",
-				"username_invalid": "', $txt['registration_username_unavailable'], '",
-				"username_check": "', $txt['registration_username_check'], '",
-				"password_short": "', $txt['registration_password_short'], '",
-				"password_reserved": "', $txt['registration_password_reserved'], '",
-				"password_numbercase": "', $txt['registration_password_numbercase'], '",
-				"password_no_match": "', $txt['registration_password_no_match'], '",
-				"password_valid": "', $txt['registration_password_valid'], '"
-			};
-			var verificationHandle = new smfRegister("registration", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
-		</script>';
+	        },
+	        'field_isText' => function($type) {
+	        	return in_array($type, array('int', 'float', 'text', 'password'));
+	        },
+	        'getTabindex' => gen_tabIndexes,
+	        'template_control_verification' => template_control_verification
+	    )
+	));
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
