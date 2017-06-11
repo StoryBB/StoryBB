@@ -34,7 +34,7 @@
 					<dl class="register_form">
 						<dt><strong><label for="smf_autov_username">{{txt.username}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="user" id="smf_autov_username" size="30" tabindex="{{getTabindex}}" maxlength="25" value="{{context.username}}" class="input_text">
+							<input type="text" name="user" id="smf_autov_username" size="30" maxlength="25" value="{{context.username}}" class="input_text">
 							<span id="smf_autov_username_div" style="display: none;">
 								<a id="smf_autov_username_link" href="#">
 									<span id="smf_autov_username_img" class="generic_icons check"></span>
@@ -43,13 +43,13 @@
 						</dd>
 						<dt><strong><label for="smf_autov_reserve1">{{txt.user_email_address}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="email" id="smf_autov_reserve1" size="30" tabindex="{{getTabindex}}" value="{{context.email}}" class="input_text">
+							<input type="text" name="email" id="smf_autov_reserve1" size="30" value="{{context.email}}" class="input_text">
 						</dd>
 					</dl>
 					<dl class="register_form" id="password1_group">
 						<dt><strong><label for="smf_autov_pwmain">{{txt.choose_pass}}:</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="3" class="input_password">
+							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" class="input_password">
 							<span id="smf_autov_pwmain_div" style="display: none;">
 								<span id="smf_autov_pwmain_img" class="generic_icons invalid"></span>
 							</span>
@@ -58,7 +58,7 @@
 					<dl class="register_form" id="password2_group">
 						<dt><strong><label for="smf_autov_pwverify">{{txt.verify_pass}}:</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="4" class="input_password">
+							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" class="input_password">
 							<span id="smf_autov_pwverify_div" style="display: none;">
 								<span id="smf_autov_pwverify_img" class="generic_icons valid"></span>
 							</span>
@@ -67,7 +67,7 @@
 					<dl class="register_form" id="notify_announcements">
 						<dt><strong><label for="notify_announcements">{{txt.notify_announcements}}:</label></strong></dt>
 						<dd>
-							<input type="checkbox" name="notify_announcements" id="notify_announcements" tabindex="5" {{#if context.notify_announcements}}checked="checked"{{/if}} class="input_check" />
+							<input type="checkbox" name="notify_announcements" id="notify_announcements" {{#if context.notify_announcements}}checked="checked"{{/if}} class="input_check" />
 						</dd>
 					</dl>
 					{{#if context.custom_fields_required}}
