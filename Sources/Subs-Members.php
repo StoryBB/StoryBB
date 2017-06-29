@@ -400,11 +400,6 @@ function deleteMembers($users, $check_not_admin = false)
 		);
 	$smcFunc['db_free_result']($request);
 
-	// Make sure no member's birthday is still sticking in the calendar...
-	updateSettings(array(
-		'calendar_updated' => time(),
-	));
-
 	// Integration rocks!
 	call_integration_hook('integrate_delete_members', array($users));
 

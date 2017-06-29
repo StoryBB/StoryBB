@@ -1483,20 +1483,6 @@ function MergeExecute($topics = array())
 		)
 	);
 
-	// Adjust all calendar events to point to the new topic.
-	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}calendar
-		SET
-			id_topic = {int:id_topic},
-			id_board = {int:target_board}
-		WHERE id_topic IN ({array_int:deleted_topics})',
-		array(
-			'deleted_topics' => $deleted_topics,
-			'id_topic' => $id_topic,
-			'target_board' => $target_board,
-		)
-	);
-
 	// Merge log topic entries.
 	// The unwatch setting comes from the oldest topic
 	$request = $smcFunc['db_query']('', '

@@ -98,7 +98,6 @@ $txt['whoallow_manageboards'] = 'Editing the board and category settings.';
 $txt['whoallow_admin'] = 'Viewing the <a href="' . $scripturl . '?action=admin">administration center</a>.';
 $txt['whoallow_ban'] = 'Editing the ban list.';
 $txt['whoallow_boardrecount'] = 'Recounting the forum totals.';
-$txt['whoallow_calendar'] = 'Viewing the <a href="' . $scripturl . '?action=calendar">calendar</a>.';
 $txt['whoallow_editnews'] = 'Editing the news.';
 $txt['whoallow_mailing'] = 'Sending a forum email.';
 $txt['whoallow_maintain'] = 'Performing routine forum maintenance.';

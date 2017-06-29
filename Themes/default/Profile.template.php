@@ -1654,9 +1654,7 @@ function template_profile_theme_settings()
 		}
 
 		// Is this disabled?
-		if ($setting['id'] == 'calendar_start_day' && empty($modSettings['cal_enabled']))
-			continue;
-		elseif (($setting['id'] == 'topics_per_page' || $setting['id'] == 'messages_per_page') && !empty($modSettings['disableCustomPerPage']))
+		if (($setting['id'] == 'topics_per_page' || $setting['id'] == 'messages_per_page') && !empty($modSettings['disableCustomPerPage']))
 			continue;
 		elseif ($setting['id'] == 'show_no_censored' && empty($modSettings['allow_no_censored']))
 			continue;
