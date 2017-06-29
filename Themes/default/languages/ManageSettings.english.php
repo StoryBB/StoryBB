@@ -333,18 +333,6 @@ $txt['lang_file_not_writable'] = '<strong>Warning:</strong> The primary language
 $txt['lang_entries_not_writable'] = '<strong>Warning:</strong> The language file you wish to edit (%1$s) is not writable. You must make this writable before you can make any changes.';
 $txt['languages_ltr'] = 'Right to Left';
 
-$txt['add_language'] = 'Add Language';
-$txt['add_language_smf'] = 'Download from Simple Machines';
-$txt['add_language_smf_browse'] = 'Type name of language to search for or leave blank to search for all.';
-$txt['add_language_smf_install'] = 'Install';
-$txt['add_language_found_title'] = 'Found Languages';
-$txt['add_language_smf_found'] = 'The following languages were found. Click the install link next to the language you wish to install. You will then be taken to the package manager to install.';
-$txt['add_language_error_no_response'] = 'The Simple Machines site is not responding. Please try again later.';
-$txt['add_language_error_no_files'] = 'No files could be found.';
-$txt['add_language_smf_desc'] = 'Description';
-$txt['add_language_smf_utf8'] = 'UTF-8';
-$txt['add_language_smf_version'] = 'Version';
-
 $txt['edit_language_entries_primary'] = 'Below are the primary language settings for this language pack.';
 $txt['edit_language_entries'] = 'Edit Language Entries';
 $txt['edit_language_entries_file'] = 'Select entries to edit';

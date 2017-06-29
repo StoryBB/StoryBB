@@ -3995,11 +3995,6 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=admin;area=featuresettings',
 						'show' => allowedTo('admin_forum'),
 					),
-					'packages' => array(
-						'title' => $txt['package'],
-						'href' => $scripturl . '?action=admin;area=packages',
-						'show' => allowedTo('admin_forum'),
-					),
 					'errorlog' => array(
 						'title' => $txt['errlog'],
 						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',

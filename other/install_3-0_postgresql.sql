@@ -686,42 +686,6 @@ CREATE INDEX {$db_prefix}log_online_log_time ON {$db_prefix}log_online (log_time
 CREATE INDEX {$db_prefix}log_online_id_member ON {$db_prefix}log_online (id_member);
 
 #
-# Sequence for table `log_packages`
-#
-
-CREATE SEQUENCE {$db_prefix}log_packages_seq;
-
-#
-# Table structure for table `log_packages`
-#
-
-CREATE TABLE {$db_prefix}log_packages (
-  id_install int default nextval('{$db_prefix}log_packages_seq'),
-  filename varchar(255) NOT NULL DEFAULT '',
-  package_id varchar(255) NOT NULL DEFAULT '',
-  name varchar(255) NOT NULL DEFAULT '',
-  version varchar(255) NOT NULL DEFAULT '',
-  id_member_installed int NOT NULL default '0',
-  member_installed varchar(255) NOT NULL,
-  time_installed int NOT NULL default '0',
-  id_member_removed int NOT NULL default '0',
-  member_removed varchar(255) NOT NULL,
-  time_removed int NOT NULL default '0',
-  install_state smallint NOT NULL default '1',
-  failed_steps text NOT NULL,
-  themes_installed varchar(255) NOT NULL DEFAULT '',
-  db_changes text NOT NULL,
-  credits varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (id_install)
-);
-
-#
-# Indexes for table `log_packages`
-#
-
-CREATE INDEX {$db_prefix}log_packages_filename ON {$db_prefix}log_packages (filename varchar_pattern_ops);
-
-#
 # Table structure for table `log_polls`
 #
 
@@ -2510,7 +2474,6 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('requireAgreement', '1'),
 	('unapprovedMembers', '0'),
 	('default_personal_text', ''),
-	('package_make_backups', '1'),
 	('databaseSession_enable', '{$databaseSession_enable}'),
 	('databaseSession_loose', '1'),
 	('databaseSession_lifetime', '2880'),

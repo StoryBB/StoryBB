@@ -517,7 +517,6 @@ function ConvertEntities()
 		'members',
 		'message_icons',
 		'messages',
-		'package_servers',
 		'personal_messages',
 		'pm_recipients',
 		'polls',

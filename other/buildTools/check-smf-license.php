@@ -16,8 +16,6 @@ $ignoreFiles = array(
 	'\./avatars/[A-Za-z0-9]+/index\.php',
 	'\./cache/index\.php',
 	'\./custom_avatar/index\.php',
-	'\./Packages/index\.php',
-	'\./Packages/backups/index\.php',
 	'\./Smileys/[A-Za-z0-9]+/index\.php',
 	'\./Smileys/index\.php',
 	'\./Sources/index\.php',

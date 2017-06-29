@@ -698,11 +698,6 @@ $txt['permissions_boards'] = 'Board Permissions';
 $txt['permissions_profiles'] = 'Edit Profiles';
 $txt['permissions_post_moderation'] = 'Post Moderation';
 
-$txt['browse_packages'] = 'Browse Packages';
-$txt['download_packages'] = 'Add Packages';
-$txt['installed_packages'] = 'Installed Packages';
-$txt['package_file_perms'] = 'File Permissions';
-$txt['package_settings'] = 'Options';
 $txt['themeadmin_admin_title'] = 'Manage and Install';
 $txt['themeadmin_list_title'] = 'Theme Settings';
 $txt['themeadmin_reset_title'] = 'Member Options';

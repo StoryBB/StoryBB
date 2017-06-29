@@ -87,7 +87,6 @@ $txt['whoadmin_editagreement'] = 'Editing the registration agreement.';
 $txt['whoadmin_featuresettings'] = 'Editing forum features and options.';
 $txt['whoadmin_modlog'] = 'Viewing the moderator log.';
 $txt['whoadmin_serversettings'] = 'Editing the forum settings.';
-$txt['whoadmin_packageget'] = 'Getting packages.';
 $txt['whoadmin_packages'] = 'Viewing the package manager.';
 $txt['whoadmin_permissions'] = 'Editing the forum permissions.';
 $txt['whoadmin_pgdownload'] = 'Downloading a package.';

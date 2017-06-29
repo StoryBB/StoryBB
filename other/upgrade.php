@@ -902,7 +902,7 @@ function checkLogin()
 // Step 1: Do the maintenance and backup.
 function UpgradeOptions()
 {
-	global $db_prefix, $command_line, $modSettings, $is_debug, $smcFunc, $packagesdir, $tasksdir, $language;
+	global $db_prefix, $command_line, $modSettings, $is_debug, $smcFunc, $tasksdir, $language;
 	global $boarddir, $boardurl, $sourcedir, $maintenance, $cachedir, $upcontext, $db_type, $db_server, $db_last_error;
 
 	$upcontext['sub_template'] = 'upgrade_options';
@@ -1079,10 +1079,6 @@ function UpgradeOptions()
 				$changes['db_port'] = '\'\'';
 		}
 	}
-
-	// Maybe we haven't had this option yet?
-	if (empty($packagesdir))
-		$changes['packagesdir'] = '\'' . fixRelativePath($boarddir) . '/Packages\'';
 
 	// Add support for $tasksdir var.
 	if (empty($tasksdir))
@@ -2916,7 +2912,6 @@ function serialize_to_json()
 		'background_tasks' => array('id_task', 'task_data'),
 		'log_actions' => array('id_action', 'extra'),
 		'log_online' => array('session', 'url'),
-		'log_packages' => array('id_install', 'db_changes', 'failed_steps', 'credits'),
 		'log_spider_hits' => array('id_hit', 'url'),
 		'log_subscribed' => array('id_sublog', 'pending_details'),
 		'pm_rules' => array('id_rule', 'criteria', 'actions'),
