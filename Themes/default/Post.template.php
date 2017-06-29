@@ -54,15 +54,10 @@ function template_main()
 				setOuterHTML(document.getElementById(\'pollMoreOptions\'), ', JavaScriptEscape('<dt><label for="options-'), ' + pollOptionId + ', JavaScriptEscape('">' . $txt['option'] . ' '), ' + pollOptionNum + ', JavaScriptEscape('</label>:</dt><dd><input type="text" name="options['), ' + pollOptionId + ', JavaScriptEscape(']" id="options-'), ' + pollOptionId + ', JavaScriptEscape('" value="" size="80" maxlength="255" tabindex="'), ' + pollTabIndex + ', JavaScriptEscape('" class="input_text"></dd><p id="pollMoreOptions"></p>'), ');
 			}';
 
-	// If we are making a calendar event we want to ensure we show the current days in a month etc... this is done here.
-	if ($context['make_event'])
-		echo '
-			var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];';
-
 	// End of the javascript, start the form and display the link tree.
 	echo '
 		</script>
-		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['post_box_name'], '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
+		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(\'' . $txt['js_post_will_require_approval'] . '\');'), 'submitonce(this);smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['post_box_name'], '\', \'guestname\', \'question\'], \'options\');" enctype="multipart/form-data">';
 
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
@@ -76,10 +71,6 @@ function template_main()
 					', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
 				</div>
 			</div><br>';
-
-	if ($context['make_event'] && (!$context['event']['new'] || !empty($context['current_board'])))
-		echo '
-			<input type="hidden" name="eventid" value="', $context['event']['id'], '">';
 
 	// Start the main table.
 	echo '
@@ -149,87 +140,6 @@ function template_main()
 
 	echo '
 					</dl>';
-
-	// Are you posting a calendar event?
-	if ($context['make_event'])
-	{
-		echo '
-					<hr class="clear">
-					<div id="post_event">
-						<fieldset id="event_main">
-							<legend><span', isset($context['post_error']['no_event']) ? ' class="error"' : '', '>', $txt['calendar_event_title'], '</span></legend>
-							<input type="hidden" name="calendar" value="1">
-							<div class="event_options_left" id="event_title">
-								<div>
-									<input type="text" id="evtitle" name="evtitle" maxlength="255" size="55" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="input_text">
-								</div>
-							</div>';
-
-			// If this is a new event let the user specify which board they want the linked post to be put into.
-			if ($context['event']['new'] && $context['is_new_post'])
-			{
-				echo '
-							<div class="event_options_right" id="event_board">
-								<div>
-									<span class="label">', $txt['calendar_post_in'], '</span>
-									<select name="board">';
-				foreach ($context['event']['categories'] as $category)
-				{
-					echo '
-										<optgroup label="', $category['name'], '">';
-					foreach ($category['boards'] as $board)
-						echo '
-											<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '&nbsp;</option>';
-					echo '
-										</optgroup>';
-				}
-				echo '
-									</select>
-								</div>
-							</div>';
-			}
-
-			// Note to theme writers: The JavaScripts expect the input fields for the start and end dates & times to be contained in a wrapper element with the id "event_time_input"
-			echo '
-						</fieldset>
-						<fieldset id="event_options">
-							<legend>', $txt['calendar_event_options'], '</legend>
-							<div class="event_options_left" id="event_time_input">
-								<div>
-									<span class="label">', $txt['start'], '</span>
-									<input type="text" name="start_date" id="start_date" maxlength="10" value="', $context['event']['start_date'], '" tabindex="', $context['tabindex']++, '" class="input_text date_input start" data-type="date">
-									<input type="text" name="start_time" id="start_time" maxlength="11" value="', $context['event']['start_time'], '" tabindex="', $context['tabindex']++, '" class="input_text time_input start" data-type="time"', !empty($context['event']['allday']) ? ' disabled' : '', '>
-								</div>
-								<div>
-									<span class="label">', $txt['end'], '</span>
-									<input type="text" name="end_date" id="end_date" maxlength="10" value="', $context['event']['end_date'], '" tabindex="', $context['tabindex']++, '" class="input_text date_input end" data-type="date"', $modSettings['cal_maxspan'] == 1 ? ' disabled' : '', '>
-									<input type="text" name="end_time" id="end_time" maxlength="11" value="', $context['event']['end_time'], '" tabindex="', $context['tabindex']++, '" class="input_text time_input end" data-type="time"', !empty($context['event']['allday']) ? ' disabled' : '', '>
-								</div>
-							</div>
-							<div class="event_options_right" id="event_time_options">
-								<div id="event_allday">
-									<label for="allday"><span class="label">', $txt['calendar_allday'], '</span></label>
-									<input type="checkbox" name="allday" id="allday"', !empty($context['event']['allday']) ? ' checked' : '', ' tabindex="', $context['tabindex']++, '">
-								</div>
-								<div id="event_timezone">
-									<span class="label">', $txt['calendar_timezone'], '</span>
-									<select name="tz" id="tz"', !empty($context['event']['allday']) ? ' disabled' : '', '>';
-
-			foreach ($context['all_timezones'] as $tz => $tzname)
-				echo '
-										<option value="', $tz, '"', $tz == $context['event']['tz'] ? ' selected' : '', '>', $tzname, '</option>';
-
-			echo '
-									</select>
-								</div>
-							</div>
-							<div>
-								<span class="label">', $txt['location'], '</span>
-								<input type="text" name="event_location" id="event_location" maxlength="255" value="', $context['event']['location'], '" tabindex="', $context['tabindex']++, '" class="input_text">
-							</div>
-						</fieldset>
-					</div>';
-	}
 
 	// If this is a poll then display all the poll options!
 	if ($context['make_poll'])
@@ -539,11 +449,6 @@ function template_main()
 					<span id="post_confirm_buttons">
 						', template_control_richedit_buttons($context['post_box_name']);
 
-	// Option to delete an event if user is editing one.
-	if ($context['make_event'] && !$context['event']['new'])
-		echo '
-						<input type="submit" name="deleteevent" value="', $txt['event_delete'], '" data-confirm="', $txt['event_delete_confirm'] ,'" class="button_submit you_sure">';
-
 	echo '
 					</span>
 				</div>
@@ -584,10 +489,9 @@ function template_main()
 					}
 					// @todo Currently not sending poll options and option checkboxes.
 					var x = new Array();
-					var textFields = [\'subject\', ', JavaScriptEscape($context['post_box_name']), ', ', JavaScriptEscape($context['session_var']), ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\'];
+					var textFields = [\'subject\', ', JavaScriptEscape($context['post_box_name']), ', ', JavaScriptEscape($context['session_var']), ', \'icon\', \'guestname\', \'email\', \'question\', \'topic\'];
 					var numericFields = [
 						\'board\', \'topic\', \'last_msg\',
-						\'eventid\', \'calendar\', \'year\', \'month\', \'day\',
 						\'poll_max_votes\', \'poll_expire\', \'poll_change_vote\', \'poll_hide\'
 					];
 					var checkboxFields = [

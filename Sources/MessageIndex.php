@@ -1311,9 +1311,6 @@ function QuickModeration()
 
 	updateStats('topic');
 	updateStats('message');
-	updateSettings(array(
-		'calendar_updated' => time(),
-	));
 
 	if (!empty($affectedBoards))
 		updateLastMessages(array_keys($affectedBoards));

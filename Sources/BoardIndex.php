@@ -66,31 +66,6 @@ function BoardIndex()
 			);
 	}
 
-	// Load the calendar?
-	if (!empty($modSettings['cal_enabled']) && allowedTo('calendar_view'))
-	{
-		// Retrieve the calendar data (events, birthdays, holidays).
-		$eventOptions = array(
-			'include_holidays' => $modSettings['cal_showholidays'] > 1,
-			'include_birthdays' => $modSettings['cal_showbdays'] > 1,
-			'include_events' => $modSettings['cal_showevents'] > 1,
-			'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
-		);
-		$context += cache_quick_get('calendar_index_offset_' . ($user_info['time_offset'] + $modSettings['time_offset']), 'Subs-Calendar.php', 'cache_getRecentEvents', array($eventOptions));
-
-		// Whether one or multiple days are shown on the board index.
-		$context['calendar_only_today'] = $modSettings['cal_days_for_index'] == 1;
-
-		// This is used to show the "how-do-I-edit" help.
-		$context['calendar_can_edit'] = allowedTo('calendar_edit_any');
-
-		if ($context['show_calendar'])
-			$context['info_center'][] = array(
-				'tpl' => 'calendar',
-				'txt' => $context['calendar_only_today'] ? 'calendar_today' : 'calendar_upcoming',
-			);
-	}
-
 	// And stats.
 	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
 	if ($settings['show_stats_index'])

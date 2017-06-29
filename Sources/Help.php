@@ -59,7 +59,6 @@ function HelpIndex()
 		'bbc' => 'Bulletin_board_code',
 		'personal_messages' => 'Personal_messages',
 		'memberlist' => 'Memberlist',
-		'calendar' => 'Calendar',
 		'features' => 'Features',
 	);
 

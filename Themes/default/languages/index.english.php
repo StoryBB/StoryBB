@@ -489,41 +489,9 @@ $txt['go_down'] = 'Go Down';
 
 $forum_copyright = '<a href="' . $scripturl . '?action=credits" title="License" target="_blank" class="new_win">%1$s &copy; %2$s</a>, <a href="http://www.simplemachines.org" title="Simple Machines" target="_blank" class="new_win">Simple Machines</a>';
 
-$txt['birthdays'] = 'Birthdays:';
-$txt['events'] = 'Events:';
-$txt['birthdays_upcoming'] = 'Upcoming Birthdays:';
-$txt['events_upcoming'] = 'Upcoming Events:';
-// Prompt for holidays in the calendar, leave blank to just display the holiday's name.
-$txt['calendar_prompt'] = 'Holidays:';
 $txt['calendar_month'] = 'Month';
 $txt['calendar_year'] = 'Year';
 $txt['calendar_day'] = 'Day';
-$txt['calendar_event_title'] = 'Event Title';
-$txt['calendar_event_options'] = 'Event Options';
-$txt['calendar_post_in'] = 'Post in';
-$txt['calendar_edit'] = 'Edit Event';
-$txt['calendar_export'] = 'Export Event';
-$txt['calendar_view_week'] = 'View Week';
-$txt['event_delete_confirm'] = 'Delete this event?';
-$txt['event_delete'] = 'Delete Event';
-$txt['calendar_post_event'] = 'Post Event';
-$txt['calendar'] = 'Calendar';
-$txt['calendar_link'] = 'Link to Calendar';
-$txt['calendar_upcoming'] = 'Upcoming Calendar';
-$txt['calendar_today'] = 'Today\'s Calendar';
-$txt['calendar_week'] = 'Week';
-$txt['calendar_week_title'] = 'Week %1$d of %2$d';
-// %1$s is the month, %2$s is the day, %3$s is the year. Change to suit your language.
-$txt['calendar_week_beginning'] = 'Week beginning %1$s %2$s, %3$s';
-$txt['calendar_numb_days'] = 'Number of Days';
-$txt['calendar_how_edit'] = 'how do you edit these events?';
-$txt['calendar_link_event'] = 'Link Event To Post';
-$txt['calendar_confirm_delete'] = 'Are you sure you want to delete this event?';
-$txt['calendar_linked_events'] = 'Linked Events';
-$txt['calendar_click_all'] = 'click to see all %1$s';
-$txt['calendar_allday'] = 'All day';
-$txt['calendar_timezone'] = 'Time zone';
-$txt['calendar_list'] = 'List';
 
 $txt['movetopic_change_subject'] = 'Change the topic\'s subject';
 $txt['movetopic_new_subject'] = 'New subject';
@@ -790,7 +758,6 @@ $txt['mc_unapproved_poststopics'] = 'Unapproved Posts and Topics';
 $txt['mc_reported_posts'] = 'Reported Posts';
 $txt['mc_reported_members'] = 'Reported Members';
 $txt['modlog_view'] = 'Moderation Log';
-$txt['calendar_menu'] = 'View Calendar';
 
 // @todo Send email strings - should move?
 $txt['send_email'] = 'Send Email';

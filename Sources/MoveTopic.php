@@ -637,15 +637,6 @@ function moveTopics($topics, $toBoard)
 			'topics' => $topics,
 		)
 	);
-	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}calendar
-		SET id_board = {int:id_board}
-		WHERE id_topic IN ({array_int:topics})',
-		array(
-			'id_board' => $toBoard,
-			'topics' => $topics,
-		)
-	);
 
 	// Mark target board as seen, if it was already marked as seen before.
 	$request = $smcFunc['db_query']('', '
@@ -686,9 +677,6 @@ function moveTopics($topics, $toBoard)
 	// Update 'em pesky stats.
 	updateStats('topic');
 	updateStats('message');
-	updateSettings(array(
-		'calendar_updated' => time(),
-	));
 }
 
 /**
