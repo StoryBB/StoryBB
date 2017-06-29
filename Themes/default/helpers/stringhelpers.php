@@ -21,7 +21,7 @@ function implode_comma($array)
 }
 
 function array2js($array) {
-	return "['" . implode("','", $array) . "']";
+	return new \LightnCandy\SafeString("['" . implode("','", $array) . "']");
 }
 
 /**
