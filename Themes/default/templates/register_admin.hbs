@@ -54,7 +54,7 @@
 							<strong{{#if is_error}}class="red"{{/if}}>{{name}}:</strong>
 							<span class="smalltext">{{desc}}</span>
 						</dt>
-						<dd>', str_replace('name="', 'tabindex="' . $context['tabindex']++ . '" name="', $field['input_html']), '</dd>
+						<dd>{{{field.input_html}}}</dd>
         {{/each}}
     {{/if}}
 						<dt>
