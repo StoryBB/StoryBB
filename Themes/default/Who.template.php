@@ -1,13 +1,10 @@
 <?php
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 /**
@@ -20,7 +17,7 @@ function template_main()
 	// Display the table header and linktree.
 	echo '
 	<div class="main_section" id="whos_online">
-		<form action="', $scripturl, '?action=who" method="post" id="whoFilter" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=who" method="post" id="whoFilter" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['who_title'], '</h3>
 			</div>

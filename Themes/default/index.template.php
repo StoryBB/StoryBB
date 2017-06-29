@@ -1,13 +1,10 @@
 <?php
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 /*	This template is, perhaps, the most important template in the theme. It
@@ -45,7 +42,7 @@ function template_init()
 	/* $context, $options and $txt may be available for use, but may not be fully populated yet. */
 
 	// The version this template/theme is for. This should probably be the version of SMF it was created for.
-	$settings['theme_version'] = '2.1';
+	$settings['theme_version'] = '3.0';
 
 	// Use plain buttons - as opposed to text buttons?
 	$settings['use_buttons'] = true;
@@ -87,7 +84,7 @@ function template_html_above()
 	echo '<!DOCTYPE html>
 	<html', $context['right_to_left'] ? ' dir="rtl"' : '', !empty($txt['lang_locale']) ? ' lang="' . str_replace("_", "-", substr($txt['lang_locale'], 0, strcspn($txt['lang_locale'], "."))) . '"' : '', '>
 <head>
-	<meta charset="', $context['character_set'], '">';
+	<meta charset="UTF-8">';
 
 	// You don't need to manually load index.css, this will be set up for you. You can, of course, add
 	// any other files you want, after template_css() has been run. Note that RTL will also be loaded for you.
@@ -253,7 +250,7 @@ function template_body_above()
 	if ($context['allow_search'])
 	{
 		echo '
-		<form id="search_form" class="floatright" action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '">
+		<form id="search_form" class="floatright" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 			<input type="search" name="search" value="" class="input_text">&nbsp;';
 
 		// Using the quick search dropdown?

@@ -1,13 +1,10 @@
 <?php
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 /**
@@ -25,7 +22,7 @@ function template_login()
 				</h3>
 			</div>
 			<div class="roundframe noup">
-				<form class="login" action="', $context['login_url'], '" name="frmLogin" id="frmLogin" method="post" accept-charset="', $context['character_set'], '">';
+				<form class="login" action="', $context['login_url'], '" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8">';
 
 	// Did they make a mistake last time?
 	if (!empty($context['login_errors']))
@@ -194,7 +191,7 @@ function template_kick_guest()
 
 	// This isn't that much... just like normal login but with a message at the top.
 	echo '
-	<form action="', $context['login_url'], '" method="post" accept-charset="', $context['character_set'], '" name="frmLogin" id="frmLogin">
+	<form action="', $context['login_url'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin">
 		<div class="login">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['warning'], '</h3>
@@ -254,7 +251,7 @@ function template_maintenance()
 
 	// Display the administrator's message at the top.
 	echo '
-<form action="', $context['login_url'], '" method="post" accept-charset="', $context['character_set'], '">
+<form action="', $context['login_url'], '" method="post" accept-charset="UTF-8">
 	<div class="login" id="maintenance_mode">
 		<div class="cat_bar">
 			<h3 class="catbg">', $context['title'], '</h3>
@@ -296,7 +293,7 @@ function template_admin_login()
 
 	// Since this should redirect to whatever they were doing, send all the get data.
 	echo '
-<form action="', !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl, $context['get_data'], '" method="post" accept-charset="', $context['character_set'], '" name="frmLogin" id="frmLogin">
+<form action="', !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin">
 	<div class="login" id="admin_login">
 		<div class="cat_bar">
 			<h3 class="catbg">
@@ -340,7 +337,7 @@ function template_retry_activate()
 
 	// Just ask them for their code so they can try it again...
 	echo '
-		<form action="', $scripturl, '?action=activate;u=', $context['member_id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=activate;u=', $context['member_id'], '" method="post" accept-charset="UTF-8">
 			<div class="title_bar">
 				<h3 class="titlebg">', $context['page_title'], '</h3>
 			</div>
@@ -371,7 +368,7 @@ function template_resend()
 
 	// Just ask them for their code so they can try it again...
 	echo '
-		<form action="', $scripturl, '?action=activate;sa=resend" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=activate;sa=resend" method="post" accept-charset="UTF-8">
 			<div class="title_bar">
 				<h3 class="titlebg">', $context['page_title'], '</h3>
 			</div>

@@ -1,13 +1,10 @@
 <?php
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 /**
@@ -152,8 +149,6 @@ function template_control_richedit_buttons($editor_id)
 		$tempTab++;
 	elseif ($editor_context['preview_type'])
 		$tempTab++;
-	elseif ($context['show_spellchecking'])
-		$tempTab++;
 
 	$tempTab++;
 	$context['tabindex'] = $tempTab;
@@ -167,10 +162,6 @@ function template_control_richedit_buttons($editor_id)
 		echo '
 		<input type="submit" name="save_draft" value="', $txt['draft_save'], '" tabindex="', --$tempTab, '" onclick="return confirm(' . JavaScriptEscape($txt['draft_save_note']) . ') && submitThisOnce(this);" accesskey="d" class="button_submit">
 		<input type="hidden" id="id_draft" name="id_draft" value="', empty($context['id_draft']) ? 0 : $context['id_draft'], '">';
-
-	if ($context['show_spellchecking'])
-		echo '
-		<input type="button" value="', $txt['spell_check'], '" tabindex="', --$tempTab, '" onclick="oEditorHandle_', $editor_id, '.spellCheckStart();" class="button_submit">';
 
 	if ($editor_context['preview_type'])
 		echo '

@@ -3,14 +3,11 @@
 /**
  * This file contains database functionality specifically designed for packages (mods) to utilize.
  *
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 if (!defined('SMF'))
@@ -93,7 +90,7 @@ function db_packages_init()
  */
 function smf_db_create_table($table_name, $columns, $indexes = array(), $parameters = array(), $if_exists = 'ignore', $error = 'fatal')
 {
-	global $reservedTables, $smcFunc, $db_package_log, $db_prefix, $db_character_set;
+	global $reservedTables, $smcFunc, $db_package_log, $db_prefix;
 
 	static $engines = array();
 
@@ -170,8 +167,7 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 	}
 
 	$table_query .= ') ENGINE=' . $parameters['engine'];
-	if (!empty($db_character_set) && $db_character_set == 'utf8')
-		$table_query .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+	$table_query .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
 
 	// Create the table!
 	$smcFunc['db_query']('', $table_query,

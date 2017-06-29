@@ -1,14 +1,11 @@
 <?php
 
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 // Don't do anything if SMF is already loaded.
@@ -24,14 +21,10 @@ global $db_type, $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_er
 global $db_connection, $modSettings, $context, $sc, $user_info, $topic, $board, $txt;
 global $smcFunc, $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
 
-// Remember the current configuration so it can be set back.
-$ssi_magic_quotes_runtime = function_exists('get_magic_quotes_gpc') && get_magic_quotes_runtime();
-if (function_exists('set_magic_quotes_runtime'))
-	@set_magic_quotes_runtime(0);
 $time_start = microtime();
 
 // Just being safe...
-foreach (array('db_character_set', 'cachedir') as $variable)
+foreach (array('cachedir') as $variable)
 	if (isset($GLOBALS[$variable]))
 		unset($GLOBALS[$variable]);
 
@@ -97,7 +90,7 @@ if (isset($_REQUEST['context']))
 	die('No direct access...');
 
 // Gzip output? (because it must be boolean and true, this can't be hacked.)
-if (isset($ssi_gzip) && $ssi_gzip === true && ini_get('zlib.output_compression') != '1' && ini_get('output_handler') != 'ob_gzhandler' && version_compare(PHP_VERSION, '4.2.0', '>='))
+if (isset($ssi_gzip) && $ssi_gzip === true && ini_get('zlib.output_compression') != '1' && ini_get('output_handler') != 'ob_gzhandler')
 	ob_start('ob_gzhandler');
 else
 	$modSettings['enableCompressedOutput'] = '0';
@@ -143,7 +136,7 @@ loadTheme(isset($ssi_theme) ? (int) $ssi_theme : 0);
 
 // @todo: probably not the best place, but somewhere it should be set...
 if (!headers_sent())
-	header('Content-Type: text/html; charset=' . (empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'ISO-8859-1' : $txt['lang_character_set']) : $modSettings['global_character_set']));
+	header('Content-Type: text/html; charset=UTF-8');
 
 // Take care of any banning that needs to be done.
 if (isset($_REQUEST['ssi_ban']) || (isset($ssi_ban) && $ssi_ban === true))
@@ -193,8 +186,6 @@ if (basename($_SERVER['PHP_SELF']) == 'SSI.php')
 unset($_GET['ssi_function']);
 
 error_reporting($ssi_error_reporting);
-if (function_exists('set_magic_quotes_runtime'))
-	@set_magic_quotes_runtime($ssi_magic_quotes_runtime);
 
 return true;
 
@@ -1194,7 +1185,7 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 	createToken('login');
 
 	echo '
-		<form action="', $scripturl, '?action=login2" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8">
 			<table style="border: none" class="ssi_table">
 				<tr>
 					<td style="text-align: right; border-spacing: 1"><label for="user">', $txt['username'], ':</label>&nbsp;</td>
@@ -1349,7 +1340,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	if ($allow_view_results)
 	{
 		echo '
-		<form class="ssi_poll" action="', $boardurl, '/SSI.php?ssi_function=pollVote" method="post" accept-charset="', $context['character_set'], '">
+		<form class="ssi_poll" action="', $boardurl, '/SSI.php?ssi_function=pollVote" method="post" accept-charset="UTF-8">
 			<strong>', $return['question'], '</strong><br>
 			', !empty($return['allowed_warning']) ? $return['allowed_warning'] . '<br>' : '';
 
@@ -1517,7 +1508,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 	if ($return['allow_vote'])
 	{
 		echo '
-			<form class="ssi_poll" action="', $boardurl, '/SSI.php?ssi_function=pollVote" method="post" accept-charset="', $context['character_set'], '">
+			<form class="ssi_poll" action="', $boardurl, '/SSI.php?ssi_function=pollVote" method="post" accept-charset="UTF-8">
 				<strong>', $return['question'], '</strong><br>
 				', !empty($return['allowed_warning']) ? $return['allowed_warning'] . '<br>' : '';
 
@@ -1692,7 +1683,7 @@ function ssi_quickSearch($output_method = 'echo')
 		return $scripturl . '?action=search';
 
 	echo '
-		<form action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="advanced" value="0"><input type="text" name="ssi_search" size="30" class="input_text"> <input type="submit" value="', $txt['search'], '" class="button_submit">
 		</form>';
 }

@@ -44,7 +44,6 @@ Themes/default/scripts/minified_deferred.js
 # Logs and databases #
 ######################
 *.log
-*.sql
 *.sqlite
 *.session
 

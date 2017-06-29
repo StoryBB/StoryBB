@@ -1,5 +1,5 @@
 <?php
-// Version: 2.1 Beta 3; Help
+// Version: 3.0 Alpha 1; Help
 
 global $helptxt;
 
@@ -249,8 +249,6 @@ $helptxt['pollMode'] = 'This selects whether polls are enabled or not. If polls 
 		can allow and disallow those permissions. Remember this if polls are not working.';
 $helptxt['enableCompressedOutput'] = 'This setting will compress output in order to lower bandwidth consumption, but it requires
 		zlib to be installed.';
-$helptxt['disableTemplateEval'] = 'By default, templates are evaluated instead of just included. This helps with showing more useful debug information in case a template contains an error.<br><br>
-		On large forums however, this customized inclusion process may be significantly slower. Therefore, advanced users may wish to disable it.';
 $helptxt['httponlyCookies'] = 'Cookies won\'t be accessible by scripting languages, such as JavaScript. This setting can help to reduce identity theft through XSS attacks. This can cause issues with third party scripts but should be on wherever possible.';
 $helptxt['databaseSession_enable'] = 'This setting makes use of the database for session storage - it is best for load balanced servers, but helps with all timeout issues and can make the forum faster.';
 $helptxt['databaseSession_loose'] = 'Turning this on will decrease the bandwidth your forum uses, and make it so clicking back will not reload the page - the downside is that the (new) icons won\'t update, among other things. (unless you click to that page instead of going back to it).';
@@ -391,7 +389,6 @@ $helptxt['edit_wait_time'] = 'The number of seconds allowed for a post to be edi
 $helptxt['edit_disable_time'] = 'The number of minutes allowed to pass before a user can no longer edit a post they have made. Set to 0 disable. <br><br><em>Note: This will not affect any user who has permission to edit other people\'s posts.</em>';
 $helptxt['preview_characters'] = 'This setting sets the number of available characters for the first and last message topic preview.';
 $helptxt['posts_require_captcha'] = 'This setting will force users to pass anti-spam bot verification each time they make a post to a board. Only users with a post count below the number set will need to enter the code - this should help combat automated spamming scripts.';
-$helptxt['enableSpellChecking'] = 'Enable spell checking. You MUST have the pspell or enchant library installed on your server and your PHP configuration set up to use the installed library. Your server ' . ((function_exists('pspell_new') || function_exists('enchant_broker_init')) ? 'DOES' : 'DOES NOT') . ' appear to have this set up.';
 $helptxt['disable_wysiwyg'] = 'This setting disallows all users from using the WYSIWYG (&quot;What You See Is What You Get&quot;) editor on the post page.';
 $helptxt['lastActive'] = 'Set the number of minutes to show people are active in X number of minutes on the board index. Default is 15 minutes.';
 
@@ -409,7 +406,6 @@ $helptxt['enableParticipation'] = 'This shows a little icon on the topics the us
 $helptxt['db_persist'] = 'This keeps the connection active to increase performance. If you aren\'t on a dedicated server, this may cause you problems with your host.';
 $helptxt['ssi_db_user'] = 'Optional setting to use a different database user and password when you are using SSI.php.';
 
-$helptxt['queryless_urls'] = 'This changes the format of URLs a little so search engines will like them better. They will look like index.php/topic,1.0.html.<br><br>This feature will ' . (isset($_SERVER['SERVER_SOFTWARE']) && (strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false || strpos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) ? '' : 'not') . ' work on your server.';
 $helptxt['minimize_files'] = 'This option will minimize all css and js files that are loaded everytime, everywhere for every user, reducing the requests calls to your server. New files are re-created everyday, if you want to re-create them just clean your forum\'s cache.';
 $helptxt['countChildPosts'] = 'Checking this setting means that posts and topics in a board\'s sub-board will count toward its totals on the index page.<br><br>This will make things notably slower, but means that a parent with no posts in it won\'t show \'0\'.';
 $helptxt['allow_ignore_boards'] = 'Checking this setting will allow users to select boards they wish to ignore.';
@@ -529,7 +525,7 @@ $helptxt['posts_and_topics'] = '
 	<ul class="normallist">
 		<li>
 			<strong>Post Settings</strong><br>
-			Modify the settings related to the posting of messages and the way messages are shown. You can also enable the spell check here.
+			Modify the settings related to the posting of messages and the way messages are shown.
 		</li><li>
 			<strong>Bulletin Board Code</strong><br>
 			Enable the code that shows forum messages in the right layout. Also adjust which codes are allowed and which aren\'t.

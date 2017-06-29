@@ -1,13 +1,10 @@
 <?php
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 /**
@@ -30,7 +27,7 @@ function template_maintain_database()
 			<h3 class="catbg">', $txt['maintain_optimize'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_optimize_info'], '</p>
 				<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -46,7 +43,7 @@ function template_maintain_database()
 			<h3 class="catbg">', $txt[$context['convert_to'] . '_title'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertmsgbody" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertmsgbody" method="post" accept-charset="UTF-8">
 				<p>', $txt['mediumtext_introduction'], '</p>',
 				$context['convert_to_suggest'] ? '<p class="infobox">' . $txt['convert_to_suggest_text'] . '</p>' : '', '
 				<input type="submit" name="evaluate_conversion" value="', $txt['maintain_run_now'], '" class="button_submit">
@@ -64,7 +61,7 @@ function template_maintain_database()
 			<h3 class="catbg">', $txt['utf8_title'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertutf8" method="post" accept-charset="UTF-8">
 				<p>', $txt['utf8_introduction'], '</p>
 				', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext' ? '<div class="errorbox">' . $txt['utf8_cannot_convert_fulltext'] . '</div>' : '', '
 				<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit" ', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext' ? 'disabled' : '', '/><br class="clear_right">
@@ -82,7 +79,7 @@ function template_maintain_database()
 			<h3 class="catbg">', $txt['entity_convert_title'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities" method="post" accept-charset="UTF-8">
 				<p>', $txt['entity_convert_introduction'], '</p>
 				<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -118,7 +115,7 @@ function template_maintain_routine()
 			<h3 class="catbg">', $txt['maintain_version'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=version" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=version" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_version_info'], '
 					<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -129,7 +126,7 @@ function template_maintain_routine()
 			<h3 class="catbg">', $txt['maintain_errors'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=repairboards" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=repairboards" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_errors_info'], '
 					<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -141,7 +138,7 @@ function template_maintain_routine()
 			<h3 class="catbg">', $txt['maintain_recount'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_recount_info'], '
 					<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -153,7 +150,7 @@ function template_maintain_routine()
 			<h3 class="catbg">', $txt['maintain_logs'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=logs" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=logs" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_logs_info'], '
 					<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -165,7 +162,7 @@ function template_maintain_routine()
 			<h3 class="catbg">', $txt['maintain_cache'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_cache_info'], '
 					<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -249,7 +246,7 @@ function template_maintain_members()
 			<h3 class="catbg">', $txt['maintain_reattribute_posts'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="UTF-8">
 				<p><strong>', $txt['reattribute_guest_posts'], '</strong></p>
 				<dl class="settings">
 					<dt>
@@ -289,7 +286,7 @@ function template_maintain_members()
 			</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="', $context['character_set'], '" id="membersForm">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
 				<p><a id="membersLink"></a>', $txt['maintain_members_since1'], '
 				<select name="del_type">
 					<option value="activated" selected>', $txt['maintain_members_activated'], '</option>
@@ -315,7 +312,7 @@ function template_maintain_members()
 			<h3 class="catbg">', $txt['maintain_recountposts'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="', $context['character_set'], '" id="membersRecountForm">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8" id="membersRecountForm">
 				<p>', $txt['maintain_recountposts_info'], '</p>
 				<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -385,7 +382,7 @@ function template_maintain_topics()
 		</div>
 		<div class="windowbg2 noup">
 			<div class="flow_auto">
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=pruneold" method="post" accept-charset="', $context['character_set'], '">';
+				<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=pruneold" method="post" accept-charset="UTF-8">';
 
 	// The otherwise hidden "choose which boards to prune".
 	echo '
@@ -447,7 +444,7 @@ function template_maintain_topics()
 			<h3 class="catbg">', $txt['maintain_old_drafts'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=olddrafts" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=olddrafts" method="post" accept-charset="UTF-8">
 				<p>', $txt['maintain_old_drafts_days'], '&nbsp;<input type="number" name="draftdays" value="', (!empty($modSettings['drafts_keep_days']) ? $modSettings['drafts_keep_days'] : 30), '" size="3">&nbsp;', $txt['days_word'], '</p>
 				<input type="submit" value="', $txt['maintain_old_remove'], '" data-confirm="', $txt['maintain_old_drafts_confirm'], '" class="button_submit you_sure">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -458,7 +455,7 @@ function template_maintain_topics()
 			<h3 class="catbg">', $txt['move_topics_maintenance'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
 				<p><label for="id_board_from">', $txt['move_topics_from'], ' </label>
 				<select name="id_board_from" id="id_board_from">
 					<option disabled>(', $txt['move_topics_select_board'], ')</option>';
@@ -560,7 +557,7 @@ function template_convert_entities()
 		</div>
 		<div class="windowbg">
 			<p>', $txt['entity_convert_introduction'], '</p>
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
 			<input type="submit" value="', $txt['entity_convert_proceed'], '" class="button_submit">
 			</form>
 		</div>
@@ -599,7 +596,7 @@ function template_convert_msgbody()
 			<p class="infobox">', $txt['convert_to_text'], '</p>';
 
 	echo '
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertmsgbody" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertmsgbody" method="post" accept-charset="UTF-8">
 			<hr>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="', $context['admin-maint_token_var'], '" value="', $context['admin-maint_token'], '">

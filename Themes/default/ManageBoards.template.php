@@ -1,13 +1,10 @@
 <?php
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 /**
@@ -51,7 +48,7 @@ function template_main()
 
 		// Boards table header.
 		echo '
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=newboard;cat=', $category['id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=manageboards;sa=newboard;cat=', $category['id'], '" method="post" accept-charset="UTF-8">
 				<ul id="category_', $category['id'], '" class="nolist">';
 
 		if (!empty($category['move_link']))
@@ -113,7 +110,7 @@ function template_modify_category()
 	// Print table header.
 	echo '
 	<div id="manage_boards">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="cat" value="', $context['category']['id'], '">
 				<div class="cat_bar">
 					<h3 class="catbg">
@@ -216,7 +213,7 @@ function template_confirm_category_delete()
 	// Print table header.
 	echo '
 	<div id="manage_boards" class="roundframe">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="cat" value="', $context['category']['id'], '">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['mboards_delete_cat'], '</h3>
@@ -269,7 +266,7 @@ function template_modify_board()
 	// The main table header.
 	echo '
 	<div id="manage_boards">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=board2" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=manageboards;sa=board2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="boardid" value="', $context['board']['id'], '">
 			<div class="cat_bar">
 				<h3 class="catbg">
@@ -707,7 +704,7 @@ function template_confirm_board_delete()
 	// Print table header.
 	echo '
 	<div id="manage_boards" class="roundframe">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=board2" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=manageboards;sa=board2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="boardid" value="', $context['board']['id'], '">
 
 			<div class="cat_bar">

@@ -1,5 +1,5 @@
 <?php
-// Version: 2.1 Beta 3; Post
+// Version: 3.0 Alpha 1; Post
 
 global $context;
 
@@ -107,14 +107,6 @@ $txt['poll_do_change_vote'] = 'Allow users to change vote';
 $txt['poll_too_many_votes'] = 'You selected too many options. For this poll, you may only select %1$s options.';
 $txt['poll_add_option'] = 'Add Option';
 $txt['poll_guest_vote'] = 'Allow guests to vote';
-
-$txt['spellcheck_done'] = 'Spell checking complete.';
-$txt['spellcheck_change_to'] = 'Change To:';
-$txt['spellcheck_suggest'] = 'Suggestions:';
-$txt['spellcheck_change'] = 'Change';
-$txt['spellcheck_change_all'] = 'Change All';
-$txt['spellcheck_ignore'] = 'Ignore';
-$txt['spellcheck_ignore_all'] = 'Ignore All';
 
 $txt['more_attachments'] = 'more attachments';
 // Don't use entities in the below string.

@@ -1,13 +1,10 @@
 <?php
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 /**
@@ -18,7 +15,7 @@ function template_main()
 	global $context, $txt, $scripturl, $modSettings;
 
 	echo '
-	<form action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '" name="searchform" id="searchform">
+	<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<div class="cat_bar">
 			<h3 class="catbg">
 				<span class="generic_icons filter"></span>', $txt['set_parameters'], '
@@ -233,7 +230,7 @@ function template_results()
 {
 	global $context, $settings, $options, $txt, $scripturl, $message;
 
-	if (isset($context['did_you_mean']) || empty($context['topics']) || !empty($context['search_ignored']))
+	if (empty($context['topics']) || !empty($context['search_ignored']))
 	{
 		echo '
 	<div id="search_results">
@@ -244,17 +241,12 @@ function template_results()
 		</div>
 		<div class="roundframe">';
 
-		// Did they make any typos or mistakes, perhaps?
-		if (isset($context['did_you_mean']))
-			echo '
-			<p>', $txt['search_did_you_mean'], ' <a href="', $scripturl, '?action=search2;params=', $context['did_you_mean_params'], '">', $context['did_you_mean'], '</a>.</p>';
-
 		if (!empty($context['search_ignored']))
 			echo '
 			<p>', $txt['search_warning_ignored_word' . (count($context['search_ignored']) == 1 ? '' : 's')], ': ', implode(', ', $context['search_ignored']), '</p>';
 
 		echo '
-			<form action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 				<dl class="settings">
 					<dt class="righttext">
 						<strong>', $txt['search_for'], ':</strong>
@@ -289,7 +281,7 @@ function template_results()
 		// Quick moderation set to checkboxes? Oh, how fun :/.
 		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
 			echo '
-	<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="', $context['character_set'], '" name="topicForm">';
+	<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="topicForm">';
 
 	echo '
 		<div class="cat_bar">

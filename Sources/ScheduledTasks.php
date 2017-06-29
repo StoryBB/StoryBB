@@ -3,14 +3,11 @@
 /**
  * This file is automatically called and handles all manner of scheduled things.
  *
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 if (!defined('SMF'))
@@ -620,7 +617,6 @@ function scheduled_daily_digest()
 		loadLanguage('EmailTemplates', $lang);
 		$langtxt[$lang] = array(
 			'subject' => $txt['digest_subject_' . ($is_weekly ? 'weekly' : 'daily')],
-			'char_set' => $txt['lang_character_set'],
 			'intro' => sprintf($txt['digest_intro_' . ($is_weekly ? 'weekly' : 'daily')], $mbname),
 			'new_topics' => $txt['digest_new_topics'],
 			'topic_lines' => $txt['digest_new_topics_line'],
@@ -652,9 +648,6 @@ function scheduled_daily_digest()
 		// Did they not elect to choose this?
 		if ($frequency == 4 && !$is_weekly || $frequency == 3 && $is_weekly || $notify_types == 4)
 			continue;
-
-		// Right character set!
-		$context['character_set'] = empty($modSettings['global_character_set']) ? $langtxt[$lang]['char_set'] : $modSettings['global_character_set'];
 
 		// Do the start stuff!
 		$email = array(
@@ -1200,8 +1193,6 @@ function loadEssentialThemeData()
 	loadLanguage('index+Modifications');
 
 	// Just in case it wasn't already set elsewhere.
-	$context['character_set'] = empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set'];
-	$context['utf8'] = $context['character_set'] === 'UTF-8';
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
 
 	// Tell fatal_lang_error() to not reload the theme.

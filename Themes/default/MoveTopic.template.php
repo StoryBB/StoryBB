@@ -1,13 +1,10 @@
 <?php
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 /**
@@ -19,7 +16,7 @@ function template_move()
 
 	echo '
 	<div id="move_topic" class="lower_padding">
-		<form action="', $scripturl, '?action=movetopic2;current_board=' . $context['current_board'] . ';topic=', $context['current_topic'], '.0" method="post" accept-charset="', $context['character_set'], '" onsubmit="submitonce(this);">
+		<form action="', $scripturl, '?action=movetopic2;current_board=' . $context['current_board'] . ';topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8" onsubmit="submitonce(this);">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['move_topic'], '</h3>
 			</div>
@@ -194,7 +191,7 @@ function template_merge()
 	if (isset($context['merge_categories']))
 	{
 		echo '
-					<form action="' . $scripturl . '?action=mergetopics;from=' . $context['origin_topic'] . ';targetboard=' . $context['target_board'] . ';board=' . $context['current_board'] . '.0" method="post" accept-charset="', $context['character_set'], '" id="mergeSelectBoard">
+					<form action="' . $scripturl . '?action=mergetopics;from=' . $context['origin_topic'] . ';targetboard=' . $context['target_board'] . ';board=' . $context['current_board'] . '.0" method="post" accept-charset="UTF-8" id="mergeSelectBoard">
 						', $txt['target_below'], ' (', $txt['board'], ':&nbsp;
 						<select name="targetboard" onchange="this.form.submit();">';
 		foreach ($context['merge_categories'] as $cat)
@@ -228,7 +225,7 @@ function template_merge()
 	if (!empty($context['topics']))
 	{
 		echo '
-			<form action="', $scripturl, '?action=mergetopics;sa=options" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $scripturl, '?action=mergetopics;sa=options" method="post" accept-charset="UTF-8">
 				<div class="pagesection">
 					', $context['page_index'], '
 				</div>
@@ -291,7 +288,7 @@ function template_merge_extra_options()
 
 	echo '
 	<div id="merge_topics">
-		<form action="', $scripturl, '?action=mergetopics;sa=execute;" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=mergetopics;sa=execute;" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['merge_topic_list'], '</h3>
 			</div>

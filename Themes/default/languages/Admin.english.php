@@ -1,5 +1,5 @@
 <?php
-// Version: 2.1 Beta 3; Admin
+// Version: 3.0 Alpha 1; Admin
 
 global $settings, $scripturl;
 
@@ -571,8 +571,6 @@ $txt['manage_drafts'] = 'Drafts';
 $txt['removeNestedQuotes'] = 'Remove nested quotes when quoting';
 $txt['enableEmbeddedFlash'] = 'Embed flash into posts';
 $txt['enableEmbeddedFlash_warning'] = 'may be a security risk!';
-$txt['enableSpellChecking'] = 'Enable spell checking';
-$txt['enableSpellChecking_warning'] = 'this does not work on all servers.';
 $txt['disable_wysiwyg'] = 'Disable WYSIWYG editor';
 $txt['max_messageLength'] = 'Maximum allowed post size';
 $txt['max_messageLength_zero'] = '0 for no max.';

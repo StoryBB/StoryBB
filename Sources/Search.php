@@ -3,14 +3,11 @@
 /**
  * Handle all of the searching from here.
  *
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 if (!defined('SMF'))
@@ -19,7 +16,7 @@ if (!defined('SMF'))
 // This defines two version types for checking the API's are compatible with this version of SMF.
 $GLOBALS['search_versions'] = array(
 	// This is the forum version but is repeated due to some people rewriting $forum_version.
-	'forum_version' => 'SMF 2.1 Beta 3',
+	'forum_version' => 'StoryBB Alpha 1',
 	// This is the minimum version of SMF that an API could have been written for to work. (strtr to stop accidentally updating version on release)
 	'search_version' => strtr('SMF 2+1=Alpha=1', array('+' => '.', '=' => ' ')),
 );
@@ -642,7 +639,7 @@ function PlushSearch2()
 	}
 
 	// Change non-word characters into spaces.
-	$stripped_query = preg_replace('~(?:[\x0B\0' . ($context['utf8'] ? '\x{A0}' : '\xA0') . '\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~' . ($context['utf8'] ? 'u' : ''), ' ', $search_params['search']);
+	$stripped_query = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', $search_params['search']);
 
 	// Make the query lower case. It's gonna be case insensitive anyway.
 	$stripped_query = un_htmlspecialchars($smcFunc['strtolower']($stripped_query));
@@ -658,7 +655,7 @@ function PlushSearch2()
 	$phraseArray = $matches[2];
 
 	// Remove the phrase parts and extract the words.
-	$wordArray = preg_replace('~(?:^|\s)(?:[-]?)"(?:[^"]+)"(?:$|\s)~' . ($context['utf8'] ? 'u' : ''), ' ', $search_params['search']);
+	$wordArray = preg_replace('~(?:^|\s)(?:[-]?)"(?:[^"]+)"(?:$|\s)~u', ' ', $search_params['search']);
 	$wordArray = explode(' ',  $smcFunc['htmlspecialchars'](un_htmlspecialchars($wordArray), ENT_QUOTES));
 
 	// A minus sign in front of a word excludes the word.... so...
@@ -801,102 +798,6 @@ function PlushSearch2()
 		}
 	}
 
-	// *** Spell checking
-	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && (function_exists('pspell_new') || (function_exists('enchant_broker_init') && ($txt['lang_charset'] == 'UTF-8' || function_exists('iconv'))));
-	if ($context['show_spellchecking'])
-	{
-		require_once($sourcedir . '/Subs-Post.php');
-
-		// Don't hardcode spellchecking functions!
-		$link = spell_init();
-
-		$did_you_mean = array('search' => array(), 'display' => array());
-		$found_misspelling = false;
-		foreach ($searchArray as $word)
-		{
-			if (empty($link))
-				continue;
-
-			// Don't check phrases.
-			if (preg_match('~^\w+$~', $word) === 0)
-			{
-				$did_you_mean['search'][] = '"' . $word . '"';
-				$did_you_mean['display'][] = '&quot;' . $smcFunc['htmlspecialchars']($word) . '&quot;';
-				continue;
-			}
-			// For some strange reason spell check can crash PHP on decimals.
-			elseif (preg_match('~\d~', $word) === 1)
-			{
-				$did_you_mean['search'][] = $word;
-				$did_you_mean['display'][] = $smcFunc['htmlspecialchars']($word);
-				continue;
-			}
-			elseif (spell_check($link, $word))
-			{
-				$did_you_mean['search'][] = $word;
-				$did_you_mean['display'][] = $smcFunc['htmlspecialchars']($word);
-				continue;
-			}
-
-			$suggestions = spell_suggest($link, $word);
-			foreach ($suggestions as $i => $s)
-			{
-				// Search is case insensitive.
-				if ($smcFunc['strtolower']($s) == $smcFunc['strtolower']($word))
-					unset($suggestions[$i]);
-				// Plus, don't suggest something the user thinks is rude!
-				elseif ($suggestions[$i] != censorText($s))
-					unset($suggestions[$i]);
-			}
-
-			// Anything found?  If so, correct it!
-			if (!empty($suggestions))
-			{
-				$suggestions = array_values($suggestions);
-				$did_you_mean['search'][] = $suggestions[0];
-				$did_you_mean['display'][] = '<em><strong>' . $smcFunc['htmlspecialchars']($suggestions[0]) . '</strong></em>';
-				$found_misspelling = true;
-			}
-			else
-			{
-				$did_you_mean['search'][] = $word;
-				$did_you_mean['display'][] = $smcFunc['htmlspecialchars']($word);
-			}
-		}
-
-		if ($found_misspelling)
-		{
-			// Don't spell check excluded words, but add them still...
-			$temp_excluded = array('search' => array(), 'display' => array());
-			foreach ($excludedWords as $word)
-			{
-				if (preg_match('~^\w+$~', $word) == 0)
-				{
-					$temp_excluded['search'][] = '-"' . $word . '"';
-					$temp_excluded['display'][] = '-&quot;' . $smcFunc['htmlspecialchars']($word) . '&quot;';
-				}
-				else
-				{
-					$temp_excluded['search'][] = '-' . $word;
-					$temp_excluded['display'][] = '-' . $smcFunc['htmlspecialchars']($word);
-				}
-			}
-
-			$did_you_mean['search'] = array_merge($did_you_mean['search'], $temp_excluded['search']);
-			$did_you_mean['display'] = array_merge($did_you_mean['display'], $temp_excluded['display']);
-
-			$temp_params = $search_params;
-			$temp_params['search'] = implode(' ', $did_you_mean['search']);
-			if (isset($temp_params['brd']))
-				$temp_params['brd'] = implode(',', $temp_params['brd']);
-			$context['params'] = array();
-			foreach ($temp_params as $k => $v)
-				$context['did_you_mean_params'][] = $k . '|\'|' . $v;
-			$context['did_you_mean_params'] = base64_encode(implode('|"|', $context['did_you_mean_params']));
-			$context['did_you_mean'] = implode(' ', $did_you_mean['display']);
-		}
-	}
-
 	// Let the user adjust the search query, should they wish?
 	$context['search_params'] = $search_params;
 	if (isset($context['search_params']['search']))
@@ -931,7 +832,7 @@ function PlushSearch2()
 
 	// *** Encode all search params
 
-	// All search params have been checked, let's compile them to a single string... made less simple by PHP 4.3.9 and below.
+	// All search params have been checked, let's compile them to a single string...
 	$temp_params = $search_params;
 	if (isset($temp_params['brd']))
 		$temp_params['brd'] = implode(',', $temp_params['brd']);
@@ -1945,9 +1846,9 @@ function prepareSearchContext($reset = false)
 				$message['body'] = un_htmlspecialchars(strtr($message['body'], array('&nbsp;' => ' ', '<br>' => "\n", '&#91;' => '[', '&#93;' => ']', '&#58;' => ':', '&#64;' => '@')));
 
 				if (empty($modSettings['search_method']) || $force_partial_word)
-					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?|^)(' . $matchString . ')(.{0,' . $charLimit . '}[\s\W]|[^\s\W]{0,' . $charLimit . '})/is' . ($context['utf8'] ? 'u' : ''), $message['body'], $matches);
+					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?|^)(' . $matchString . ')(.{0,' . $charLimit . '}[\s\W]|[^\s\W]{0,' . $charLimit . '})/isu', $message['body'], $matches);
 				else
-					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?[\s\W]|^)(' . $matchString . ')([\s\W].{0,' . $charLimit . '}[\s\W]|[\s\W][^\s\W]{0,' . $charLimit . '})/is' . ($context['utf8'] ? 'u' : ''), $message['body'], $matches);
+					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?[\s\W]|^)(' . $matchString . ')([\s\W].{0,' . $charLimit . '}[\s\W]|[\s\W][^\s\W]{0,' . $charLimit . '})/isu', $message['body'], $matches);
 
 				$message['body'] = '';
 				foreach ($matches[0] as $index => $match)
@@ -2102,11 +2003,11 @@ function prepareSearchContext($reset = false)
 		$query = trim($query, "\*+");
 		$query = strtr($smcFunc['htmlspecialchars']($query), array('\\\'' => '\''));
 
-		$body_highlighted = preg_replace_callback('/((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '/') . ')/i' . ($context['utf8'] ? 'u' : ''), function ($m)
+		$body_highlighted = preg_replace_callback('/((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '/') . ')/iu', function ($m)
 		{
 			return isset($m[2]) && "$m[2]" == "$m[1]" ? stripslashes("$m[1]") : "<strong class=\"highlight\">$m[1]</strong>";
 		}, $body_highlighted);
-		$subject_highlighted = preg_replace('/(' . preg_quote($query, '/') . ')/i' . ($context['utf8'] ? 'u' : ''), '<strong class="highlight">$1</strong>', $subject_highlighted);
+		$subject_highlighted = preg_replace('/(' . preg_quote($query, '/') . ')/iu', '<strong class="highlight">$1</strong>', $subject_highlighted);
 	}
 
 	$output['matches'][] = array(

@@ -3,14 +3,11 @@
 /**
  * This file contains all the administration settings for topics and posts.
  *
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 if (!defined('SMF'))
@@ -185,20 +182,11 @@ function ModifyPostSettings($return_config = false)
 {
 	global $context, $txt, $modSettings, $scripturl, $sourcedir, $smcFunc, $db_type;
 
-	// Make an inline conditional a little shorter...
-	$can_spell_check = false;
-	if (function_exists('pspell_new'))
-		$can_spell_check = true;
-	elseif (function_exists('enchant_broker_init') && ($txt['lang_charset'] == 'UTF-8' || function_exists('iconv')))
-		$can_spell_check = true;
-
 	// All the settings...
 	$config_vars = array(
 			// Simple post options...
 			array('check', 'removeNestedQuotes'),
 			array('check', 'enableEmbeddedFlash', 'subtext' => $txt['enableEmbeddedFlash_warning']),
-			// Note show the warning as red if: pspell not installed and (enchant not installed or not using UTF-8 and iconv not installed)
-			array('check', 'enableSpellChecking', 'subtext' => ($can_spell_check ? $txt['enableSpellChecking_warning'] : ('<span class="alert">' . $txt['enableSpellChecking_warning'] . '</span>'))),
 			array('check', 'disable_wysiwyg'),
 			array('check', 'additional_options_collapsable'),
 		'',

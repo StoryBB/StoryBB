@@ -3,16 +3,13 @@
 /**
  * This file contains those functions pertaining to posting, and other such
  * operations, including sending emails, ims, blocking spam, preparsing posts,
- * spell checking, and the post box.
+ * and the post box.
  *
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 if (!defined('SMF'))
@@ -103,7 +100,7 @@ function preparsecode(&$message, $previewing = false)
 	$message = implode('', $parts);
 
 	// The regular expression non breaking space has many versions.
-	$non_breaking_space = $context['utf8'] ? '\x{A0}' : '\xA0';
+	$non_breaking_space = '\x{A0}';
 
 	fixTags($message);
 
@@ -153,25 +150,25 @@ function preparsecode(&$message, $previewing = false)
 
 	$mistake_fixes = array(
 		// Find [table]s not followed by [tr].
-		'~\[table\](?![\s' . $non_breaking_space . ']*\[tr\])~s' . ($context['utf8'] ? 'u' : '') => '[table][tr]',
+		'~\[table\](?![\s' . $non_breaking_space . ']*\[tr\])~su' => '[table][tr]',
 		// Find [tr]s not followed by [td].
-		'~\[tr\](?![\s' . $non_breaking_space . ']*\[td\])~s' . ($context['utf8'] ? 'u' : '') => '[tr][td]',
+		'~\[tr\](?![\s' . $non_breaking_space . ']*\[td\])~su' => '[tr][td]',
 		// Find [/td]s not followed by something valid.
-		'~\[/td\](?![\s' . $non_breaking_space . ']*(?:\[td\]|\[/tr\]|\[/table\]))~s' . ($context['utf8'] ? 'u' : '') => '[/td][/tr]',
+		'~\[/td\](?![\s' . $non_breaking_space . ']*(?:\[td\]|\[/tr\]|\[/table\]))~su' => '[/td][/tr]',
 		// Find [/tr]s not followed by something valid.
-		'~\[/tr\](?![\s' . $non_breaking_space . ']*(?:\[tr\]|\[/table\]))~s' . ($context['utf8'] ? 'u' : '') => '[/tr][/table]',
+		'~\[/tr\](?![\s' . $non_breaking_space . ']*(?:\[tr\]|\[/table\]))~su' => '[/tr][/table]',
 		// Find [/td]s incorrectly followed by [/table].
-		'~\[/td\][\s' . $non_breaking_space . ']*\[/table\]~s' . ($context['utf8'] ? 'u' : '') => '[/td][/tr][/table]',
+		'~\[/td\][\s' . $non_breaking_space . ']*\[/table\]~su' => '[/td][/tr][/table]',
 		// Find [table]s, [tr]s, and [/td]s (possibly correctly) followed by [td].
-		'~\[(table|tr|/td)\]([\s' . $non_breaking_space . ']*)\[td\]~s' . ($context['utf8'] ? 'u' : '') => '[$1]$2[_td_]',
+		'~\[(table|tr|/td)\]([\s' . $non_breaking_space . ']*)\[td\]~su' => '[$1]$2[_td_]',
 		// Now, any [td]s left should have a [tr] before them.
 		'~\[td\]~s' => '[tr][td]',
 		// Look for [tr]s which are correctly placed.
-		'~\[(table|/tr)\]([\s' . $non_breaking_space . ']*)\[tr\]~s' . ($context['utf8'] ? 'u' : '') => '[$1]$2[_tr_]',
+		'~\[(table|/tr)\]([\s' . $non_breaking_space . ']*)\[tr\]~su' => '[$1]$2[_tr_]',
 		// Any remaining [tr]s should have a [table] before them.
 		'~\[tr\]~s' => '[table][tr]',
 		// Look for [/td]s followed by [/tr].
-		'~\[/td\]([\s' . $non_breaking_space . ']*)\[/tr\]~s' . ($context['utf8'] ? 'u' : '') => '[/td]$1[_/tr_]',
+		'~\[/td\]([\s' . $non_breaking_space . ']*)\[/tr\]~su' => '[/td]$1[_/tr_]',
 		// Any remaining [/tr]s should have a [/td].
 		'~\[/tr\]~s' => '[/td][/tr]',
 		// Look for properly opened [li]s which aren't closed.
@@ -179,14 +176,14 @@ function preparsecode(&$message, $previewing = false)
 		'~\[li\]([^\[\]]+?)\[/list\]~s' => '[_li_]$1[_/li_][/list]',
 		'~\[li\]([^\[\]]+?)$~s' => '[li]$1[/li]',
 		// Lists - find correctly closed items/lists.
-		'~\[/li\]([\s' . $non_breaking_space . ']*)\[/list\]~s' . ($context['utf8'] ? 'u' : '') => '[_/li_]$1[/list]',
+		'~\[/li\]([\s' . $non_breaking_space . ']*)\[/list\]~su' => '[_/li_]$1[/list]',
 		// Find list items closed and then opened.
-		'~\[/li\]([\s' . $non_breaking_space . ']*)\[li\]~s' . ($context['utf8'] ? 'u' : '') => '[_/li_]$1[_li_]',
+		'~\[/li\]([\s' . $non_breaking_space . ']*)\[li\]~su' => '[_/li_]$1[_li_]',
 		// Now, find any [list]s or [/li]s followed by [li].
-		'~\[(list(?: [^\]]*?)?|/li)\]([\s' . $non_breaking_space . ']*)\[li\]~s' . ($context['utf8'] ? 'u' : '') => '[$1]$2[_li_]',
+		'~\[(list(?: [^\]]*?)?|/li)\]([\s' . $non_breaking_space . ']*)\[li\]~su' => '[$1]$2[_li_]',
 		// Allow for sub lists.
-		'~\[/li\]([\s' . $non_breaking_space . ']*)\[list\]~' . ($context['utf8'] ? 'u' : '') => '[_/li_]$1[list]',
-		'~\[/list\]([\s' . $non_breaking_space . ']*)\[li\]~' . ($context['utf8'] ? 'u' : '') => '[/list]$1[_li_]',
+		'~\[/li\]([\s' . $non_breaking_space . ']*)\[list\]~u' => '[_/li_]$1[list]',
+		'~\[/list\]([\s' . $non_breaking_space . ']*)\[li\]~u' => '[/list]$1[_li_]',
 		// Any remaining [li]s weren't inside a [list].
 		'~\[li\]~' => '[list][li]',
 		// Any remaining [/li]s weren't before a [/list].
@@ -224,9 +221,9 @@ function preparsecode(&$message, $previewing = false)
 
 	// Restore white space entities
 	if (!$previewing)
-		$message = strtr($message, array('  ' => '&nbsp; ', "\n" => '<br>', $context['utf8'] ? "\xC2\xA0" : "\xA0" => '&nbsp;'));
+		$message = strtr($message, array('  ' => '&nbsp; ', "\n" => '<br>', "\xC2\xA0" => '&nbsp;'));
 	else
-		$message = strtr($message, array('  ' => '&nbsp; ', $context['utf8'] ? "\xC2\xA0" : "\xA0" => '&nbsp;'));
+		$message = strtr($message, array('  ' => '&nbsp; ', "\xC2\xA0" => '&nbsp;'));
 
 	// Now let's quickly clean up things that will slow our parser (which are common in posted code.)
 	$message = strtr($message, array('[]' => '&#91;]', '[&#039;' => '&#91;&#039;'));
@@ -1200,7 +1197,7 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 {
 	global $context;
 
-	$charset = $custom_charset !== null ? $custom_charset : $context['character_set'];
+	$charset = $custom_charset !== null ? $custom_charset : 'UTF-8';
 
 	// This is the fun part....
 	if (preg_match_all('~&#(\d{3,8});~', $string, $matches) !== 0 && !$hotmail_fix)
@@ -1220,14 +1217,6 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 			}, $string);
 		else
 		{
-			// Try to convert the string to UTF-8.
-			if (!$context['utf8'] && function_exists('iconv'))
-			{
-				$newstring = @iconv($context['character_set'], 'UTF-8', $string);
-				if ($newstring)
-					$string = $newstring;
-			}
-
 			$string = preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $string);
 
 			// Unicode, baby.
@@ -1236,15 +1225,8 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 	}
 
 	// Convert all special characters to HTML entities...just for Hotmail :-\
-	if ($hotmail_fix && ($context['utf8'] || function_exists('iconv') || $context['character_set'] === 'ISO-8859-1'))
+	if ($hotmail_fix)
 	{
-		if (!$context['utf8'] && function_exists('iconv'))
-		{
-			$newstring = @iconv($context['character_set'], 'UTF-8', $string);
-			if ($newstring)
-				$string = $newstring;
-		}
-
 		$entityConvert = function($m)
 		{
 			$c = $m[1];
@@ -1481,89 +1463,6 @@ function server_parse($message, $socket, $code, &$response = null)
 	}
 
 	return true;
-}
-
-/**
- * Spell checks the post for typos ;).
- * It uses the pspell or enchant library, one of which MUST be installed.
- * It has problems with internationalization.
- * It is accessed via ?action=spellcheck.
- */
-function SpellCheck()
-{
-	global $txt, $context, $smcFunc;
-
-	// A list of "words" we know about but pspell doesn't.
-	$known_words = array('smf', 'php', 'mysql', 'www', 'gif', 'jpeg', 'png', 'http', 'smfisawesome', 'grandia', 'terranigma', 'rpgs');
-
-	loadLanguage('Post');
-	loadTemplate('Post');
-
-	// Create a pspell or enchant dictionary resource
-	$dict = spell_init();
-
-	if (!isset($_POST['spellstring']) || !$dict)
-		die;
-
-	// Construct a bit of Javascript code.
-	$context['spell_js'] = '
-		var txt = {"done": "' . $txt['spellcheck_done'] . '"};
-		var mispstr = window.opener.spellCheckGetText(spell_fieldname);
-		var misps = Array(';
-
-	// Get all the words (Javascript already separated them).
-	$alphas = explode("\n", strtr($_POST['spellstring'], array("\r" => '')));
-
-	$found_words = false;
-	for ($i = 0, $n = count($alphas); $i < $n; $i++)
-	{
-		// Words are sent like 'word|offset_begin|offset_end'.
-		$check_word = explode('|', $alphas[$i]);
-
-		// If the word is a known word, or spelled right...
-		if (in_array($smcFunc['strtolower']($check_word[0]), $known_words) || spell_check($dict, $check_word[0]) || !isset($check_word[2]))
-			continue;
-
-		// Find the word, and move up the "last occurrence" to here.
-		$found_words = true;
-
-		// Add on the javascript for this misspelling.
-		$context['spell_js'] .= '
-			new misp("' . strtr($check_word[0], array('\\' => '\\\\', '"' => '\\"', '<' => '', '&gt;' => '')) . '", ' . (int) $check_word[1] . ', ' . (int) $check_word[2] . ', [';
-
-		// If there are suggestions, add them in...
-		$suggestions = spell_suggest($dict, $check_word[0]);
-		if (!empty($suggestions))
-		{
-			// But first check they aren't going to be censored - no naughty words!
-			foreach ($suggestions as $k => $word)
-				if ($suggestions[$k] != censorText($word))
-					unset($suggestions[$k]);
-
-			if (!empty($suggestions))
-				$context['spell_js'] .= '"' . implode('", "', $suggestions) . '"';
-		}
-
-		$context['spell_js'] .= ']),';
-	}
-
-	// If words were found, take off the last comma.
-	if ($found_words)
-		$context['spell_js'] = substr($context['spell_js'], 0, -1);
-
-	$context['spell_js'] .= '
-		);';
-
-	// And instruct the template system to just show the spellcheck sub template.
-	$context['template_layers'] = array();
-	$context['sub_template'] = 'spellcheck';
-
-	// Free resources for enchant...
-	if (isset($context['enchant_broker']))
-	{
-		enchant_broker_free_dict($dict);
-		enchant_broker_free($context['enchant_broker']);
-	}
 }
 
 /**
@@ -2817,156 +2716,6 @@ function user_info_callback($matches)
 	}
 
 	return $use_ref ? $ref : $matches[0];
-}
-
-
-/**
- * spell_init()
- *
- * Sets up a dictionary resource handle. Tries enchant first then falls through to pspell.
- *
- * @return resource|bool An enchant or pspell dictionary resource handle or false if the dictionary couldn't be loaded
- */
-function spell_init()
-{
-	global $context, $txt;
-
-	// Check for UTF-8 and strip ".utf8" off the lang_locale string for enchant
-	$context['spell_utf8'] = ($txt['lang_character_set'] == 'UTF-8');
-	$lang_locale = str_replace('.utf8', '', $txt['lang_locale']);
-
-	// Try enchant first since PSpell is (supposedly) deprecated as of PHP 5.3
-	// enchant only does UTF-8, so we need iconv if you aren't using UTF-8
-	if (function_exists('enchant_broker_init') && ($context['spell_utf8'] || function_exists('iconv')))
-	{
-		// We'll need this to free resources later...
-		$context['enchant_broker'] = enchant_broker_init();
-
-		// Try locale first, then general...
-		if (!empty($lang_locale) && enchant_broker_dict_exists($context['enchant_broker'], $lang_locale))
-		{
-			$enchant_link = enchant_broker_request_dict($context['enchant_broker'], $lang_locale);
-		}
-		elseif (enchant_broker_dict_exists($context['enchant_broker'], $txt['lang_dictionary']))
-		{
-			$enchant_link = enchant_broker_request_dict($context['enchant_broker'], $txt['lang_dictionary']);
-		}
-
-		// Success
-		if ($enchant_link)
-		{
-			$context['provider'] = 'enchant';
-			return $enchant_link;
-		}
-		else
-		{
-			// Free up any resources used...
-			@enchant_broker_free($context['enchant_broker']);
-		}
-	}
-
-	// Fall through to pspell if enchant didn't work
-	if (function_exists('pspell_new'))
-	{
-		// Okay, this looks funny, but it actually fixes a weird bug.
-		ob_start();
-		$old = error_reporting(0);
-
-		// See, first, some windows machines don't load pspell properly on the first try.  Dumb, but this is a workaround.
-		pspell_new('en');
-
-		// Next, the dictionary in question may not exist. So, we try it... but...
-		$pspell_link = pspell_new($txt['lang_dictionary'], $txt['lang_spelling'], '', strtr($context['character_set'], array('iso-' => 'iso', 'ISO-' => 'iso')), PSPELL_FAST | PSPELL_RUN_TOGETHER);
-
-		// Most people don't have anything but English installed... So we use English as a last resort.
-		if (!$pspell_link)
-			$pspell_link = pspell_new('en', '', '', '', PSPELL_FAST | PSPELL_RUN_TOGETHER);
-
-		error_reporting($old);
-		ob_end_clean();
-
-		// If we have pspell, exit now...
-		if ($pspell_link)
-		{
-			$context['provider'] = 'pspell';
-			return $pspell_link;
-		}
-	}
-
-	// If we get this far, we're doomed
-	return false;
-}
-
-/**
- * spell_check()
- *
- * Determines whether or not the specified word is spelled correctly
- *
- * @param resource $dict An enchant or pspell dictionary resource set up by {@link spell_init()}
- * @param string $word A word to check the spelling of
- * @return bool Whether or not the specified word is spelled properly
- */
-function spell_check($dict, $word)
-{
-	global $context, $txt;
-
-	// Enchant or pspell?
-	if ($context['provider'] == 'enchant')
-	{
-		// This is a bit tricky here...
-		if (!$context['spell_utf8'])
-		{
-			// Convert the word to UTF-8 with iconv
-			$word = iconv($txt['lang_character_set'], 'UTF-8', $word);
-		}
-		return enchant_dict_check($dict, $word);
-	}
-	elseif ($context['provider'] == 'pspell')
-	{
-		return pspell_check($dict, $word);
-	}
-}
-
-/**
- * spell_suggest()
- *
- * Returns an array of suggested replacements for the specified word
- *
- * @param resource $dict An enchant or pspell dictioary resource
- * @param string $word A misspelled word
- * @return array An array of suggested replacements for the misspelled word
- */
-function spell_suggest($dict, $word)
-{
-	global $context, $txt;
-
-	if ($context['provider'] == 'enchant')
-	{
-		// If we're not using UTF-8, we need iconv to handle some stuff...
-		if (!$context['spell_utf8'])
-		{
-			// Convert the word to UTF-8 before getting suggestions
-			$word = iconv($txt['lang_character_set'], 'UTF-8', $word);
-			$suggestions = enchant_dict_suggest($dict, $word);
-
-			// Go through the suggestions and convert them back to the proper character set
-			foreach ($suggestions as $index => $suggestion)
-			{
-				// //TRANSLIT makes it use similar-looking characters for incompatible ones...
-				$suggestions[$index] = iconv('UTF-8', $txt['lang_character_set'] . '//TRANSLIT', $suggestion);
-			}
-
-			return $suggestions;
-		}
-		else
-		{
-			return enchant_dict_suggest($dict, $word);
-		}
-	}
-	elseif ($context['provider'] == 'pspell')
-	{
-		return pspell_suggest($dict, $word);
-	}
 }
 
 ?>

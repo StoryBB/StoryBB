@@ -4,14 +4,11 @@
  * This file is the file which all subscription gateways should call
  * when a payment has been received - it sorts out the user status.
  *
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 // Start things rolling by getting SMF alive...
@@ -30,7 +27,7 @@ loadLanguage('ManagePaid');
 // If there's literally nothing coming in, let's take flight!
 if (empty($_POST))
 {
-	header('Content-Type: text/html; charset=' . (empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'ISO-8859-1' : $txt['lang_character_set']) : $modSettings['global_character_set']));
+	header('Content-Type: text/html; charset=UTF-8');
 	die($txt['paid_no_data']);
 }
 

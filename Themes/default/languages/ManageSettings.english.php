@@ -1,5 +1,5 @@
 <?php
-// Version: 2.1 Beta 3; ManageSettings
+// Version: 3.0 Alpha 1; ManageSettings
 
 global $scripturl;
 
@@ -31,7 +31,6 @@ $txt['lastActive'] = 'User online time threshold';
 $txt['trackStats'] = 'Track daily statistics';
 $txt['hitStats'] = 'Track daily page views (must have stats enabled)';
 $txt['enableCompressedOutput'] = 'Enable compressed output';
-$txt['disableTemplateEval'] = 'Disable evaluation of templates';
 $txt['databaseSession_enable'] = 'Use database driven sessions';
 $txt['databaseSession_loose'] = 'Allow browsers to go back to cached pages';
 $txt['databaseSession_lifetime'] = 'Seconds before an unused session timeout';
@@ -66,9 +65,7 @@ $txt['jquery_custom'] = 'Custom url to the jQuery Library';
 $txt['jquery_local'] = 'Local';
 $txt['jquery_cdn'] = 'Google CDN';
 $txt['jquery_auto'] = 'Auto';
-$txt['queryless_urls'] = 'Search engine friendly URLs';
 $txt['minimize_files'] = 'Minimize css and JavaScript files';
-$txt['queryless_urls_note'] = 'Apache/Lighttpd only';
 $txt['enableReportPM'] = 'Enable reporting of personal messages';
 $txt['max_pm_recipients'] = 'Maximum number of recipients allowed in a personal message';
 $txt['max_pm_recipients_note'] = '(0 for no limit, admins are exempt)';
@@ -329,7 +326,6 @@ $txt['standard_profile_field_timezone'] = 'Timezone';
 $txt['languages_lang_name'] = 'Language Name';
 $txt['languages_locale'] = 'Locale';
 $txt['languages_default'] = 'Default';
-$txt['languages_character_set'] = 'Character Set';
 $txt['languages_users'] = 'Users';
 $txt['language_settings_writable'] = 'Warning: Settings.php is not writable so the default language setting cannot be saved.';
 $txt['edit_languages'] = 'Edit Languages';
@@ -352,9 +348,6 @@ $txt['add_language_smf_version'] = 'Version';
 $txt['edit_language_entries_primary'] = 'Below are the primary language settings for this language pack.';
 $txt['edit_language_entries'] = 'Edit Language Entries';
 $txt['edit_language_entries_file'] = 'Select entries to edit';
-$txt['languages_dictionary'] = 'Dictionary';
-$txt['languages_spelling'] = 'Spelling';
-$txt['languages_for_pspell'] = 'This is for <a href="https://php.net/function.pspell-new" target="_blank" class="new_win">pSpell</a> - if installed';
 $txt['languages_rtl'] = 'Enable &quot;Right to Left&quot; Mode';
 
 $txt['lang_file_desc_index'] = 'General Strings';

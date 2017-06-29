@@ -1,13 +1,10 @@
 <?php
 /**
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
+ * @version 3.0 Alpha 1
  */
 
 /**
@@ -147,7 +144,7 @@ function template_search()
 
 	// Start the submission form for the search!
 	echo '
-	<form action="', $scripturl, '?action=mlist;sa=search" method="post" accept-charset="', $context['character_set'], '">
+	<form action="', $scripturl, '?action=mlist;sa=search" method="post" accept-charset="UTF-8">
 		<div id="memberlist">
 			<div class="pagesection">
 				', template_button_strip($context['memberlist_buttons'], 'right'), '
