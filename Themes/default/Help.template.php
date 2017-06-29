@@ -19,10 +19,12 @@ function template_popup()
 		'context' => $context,
 		'settings' => $settings,
 		'txt' => $txt,
-		'modsettings' => $modSettings
+		'modsettings' => $modSettings,
+		'id' => 'help_popup',
+		'content' => $context['help_text']
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/layouts/help_popup.hbs");
+	$template = file_get_contents(__DIR__ .  "/layouts/popup.hbs");
 	if (!$template) {
 		die('Template did not load!');
 	}
