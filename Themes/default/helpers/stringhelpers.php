@@ -20,6 +20,10 @@ function implode_comma($array)
 	return implode(', ', $array);
 }
 
+function array2js($array) {
+	return "['" . implode("','", $array) . "']";
+}
+
 /**
  * Given an array of strings, combine them in a 'more readable' way,
  * e.g. "X and Y", "X, Y and Z"

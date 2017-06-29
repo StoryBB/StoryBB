@@ -5,7 +5,7 @@
 				</h3>
 			</div>
 			<div class="roundframe noup">
-				<form class="login" action="', {{context.login_url}}" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8">
+				<form class="login" action="{{context.login_url}}" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8">
 				    {{#if context.login_errors}}
 				    <div class="errorbox">{{#each context.login_errors}}{{.}}<br/>{{/each}}</div><br>
 				    {{/if}}
