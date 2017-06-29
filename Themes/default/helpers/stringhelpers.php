@@ -55,4 +55,9 @@ function stringhelper_json($data)
 	return json_encode($data);
 }
 
+function concat(...$items)
+{
+	return implode($items);
+}
+
 ?>

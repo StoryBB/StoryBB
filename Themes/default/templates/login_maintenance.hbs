@@ -1,0 +1,31 @@
+<form action="{{context.login_url}}" method="post" accept-charset="UTF-8">
+	<div class="login" id="maintenance_mode">
+		<div class="cat_bar">
+			<h3 class="catbg">{{context.title}}</h3>
+		</div>
+		<div class="information">
+			<img class="floatleft" src="{{settings.images_url}}/construction.png" width="40" height="40" alt="{{txt.in_maintain_mode}}">
+			{{context.description}}<br class="clear">
+		</div>
+		<div class="title_bar">
+			<h4 class="titlebg">{{txt.admin_login}}</h4>
+		</div>
+		<div class="roundframe">
+			<dl>
+				<dt>{{txt.username}}:</dt>
+				<dd><input type="text" name="user" size="20" class="input_text"></dd>
+				<dt>{{txt.password}}:</dt>
+				<dd><input type="password" name="passwrd" size="20" class="input_password"></dd>
+				<dt>{{txt.mins_logged_in}}:</dt>
+				<dd><input type="text" name="cookielength" size="4" maxlength="4" value="{{modSettings.cookieTime}}" class="input_text"></dd>
+				<dt>{{txt.always_logged_in}}:</dt>
+				<dd><input type="checkbox" name="cookieneverexp" class="input_check"></dd>
+			</dl>
+			<input type="submit" value="{{txt.login}}" class="button_submit">
+			<br class="clear">
+		</div>
+		<input type="hidden" name="hash_passwrd" value="">
+		<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+		<input type="hidden" name="{{context.login_token_var}}" value="{{context.login_token}}">
+	</div>
+</form>

@@ -46,68 +46,29 @@ function template_login()
 function template_login_tfa()
 {
 	global $context, $scripturl, $modSettings, $txt;
+		
+	$data = Array(
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+		'modSettings' => $modSettings,
+		'SESSION' => $_SESSION
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/login_tfa.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
 
-	echo '
-		<div class="login">
-			<div class="cat_bar">
-				<h3 class="catbg">
-					', $txt['tfa_profile_label'], '
-				</h3>
-			</div>
-			<div class="roundframe noup">';
-	if (!empty($context['tfa_error']) || !empty($context['tfa_backup_error']))
-		echo '
-				<div class="error">', $txt['tfa_' . (!empty($context['tfa_error']) ? 'code_' : 'backup_') . 'invalid'], '</div>';
-	echo '
-				<form action="', $context['tfa_url'], '" method="post" id="frmTfa">
-					<div id="tfaCode">
-						', $txt['tfa_login_desc'], '<br>
-						<div>
-							<strong>', $txt['tfa_code'], ':</strong>
-							<input type="text" class="input_text" name="tfa_code" style="width: 150px;" value="', !empty($context['tfa_value']) ? $context['tfa_value'] : '', '">
-							<input type="submit" class="button_submit" name="submit" value="', $txt['login'], '" style="float: none; margin: 0;"><br />
-						</div><br />
-						<div><input type="checkbox" value="1" name="tfa_preserve" id="tfa_preserve"/><label for="tfa_preserve">&nbsp;', $txt['tfa_preserve'], '</label></div>
-						<hr />
-						<input type="button" class="button_submit" name="backup" value="', $txt['tfa_backup'], '" style="float: none; margin: 0;">
-					</div>
-					<div id="tfaBackup" style="display: none;">
-						', $txt['tfa_backup_desc'], '<br>
-						<strong>', $txt['tfa_backup_code'], ': </strong>
-						<input type="text" class="input_text" name="tfa_backup" style="width: 150px;" value="', !empty($context['tfa_backup']) ? $context['tfa_backup'] : '', '">
-						<input type="submit" class="button_submit" name="submit" value="', $txt['login'], '">
-					</div>
-				</form>
-				<script>
-						form = $("#frmTfa");';
-	if (!empty($context['from_ajax']))
-		echo '
-						form.submit(function(e) {
-							// If we are submitting backup code, let normal workflow follow since it redirects a couple times into a different page
-							if (form.find("input[name=tfa_backup]:first").val().length > 0)
-								return true;
-
-							e.preventDefault();
-							e.stopPropagation();
-
-							$.post(form.prop("action"), form.serialize(), function(data) {
-								if (data.indexOf("<bo" + "dy") > -1)
-									document.location = ', JavaScriptEscape(!empty($_SESSION['login_url']) ? $_SESSION['login_url'] : $scripturl), ';
-								else {
-									form.parent().html($(data).find(".roundframe").html());
-								}
-							});
-
-							return false;
-						});';
-	echo '
-						form.find("input[name=backup]").click(function(e) {
-							$("#tfaBackup").show();
-							$("#tfaCode").hide();
-						});
-				</script>
-			</div>
-		</div>';
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'helpers' => Array(
+	    )
+	));
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -116,58 +77,30 @@ function template_login_tfa()
 function template_kick_guest()
 {
 	global $context, $settings, $scripturl, $modSettings, $txt;
+	
+	$data = Array(
+		'context' => $context,
+		'settings' => $settings,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+		'modSettings' => $modSettings
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/login_kick_guest.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
 
-	// This isn't that much... just like normal login but with a message at the top.
-	echo '
-	<form action="', $context['login_url'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin">
-		<div class="login">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['warning'], '</h3>
-			</div>';
-
-	// Show the message or default message.
-	echo '
-			<p class="information centertext">
-				', empty($context['kick_message']) ? $txt['only_members_can_access'] : $context['kick_message'], '<br>';
-
-
-	if ($context['can_register'])
-		echo sprintf($txt['login_below_or_register'], $scripturl . '?action=signup', $context['forum_name_html_safe']);
-	else
-		echo $txt['login_below'];
-
-	// And now the login information.
-	echo '
-			<div class="cat_bar">
-				<h3 class="catbg">
-					<img src="', $settings['images_url'], '/icons/login_hd.png" alt="" class="icon"> ', $txt['login'], '
-				</h3>
-			</div>
-			<div class="roundframe noup">
-				<dl>
-					<dt>', $txt['username'], ':</dt>
-					<dd><input type="text" name="user" size="20" class="input_text"></dd>
-					<dt>', $txt['password'], ':</dt>
-					<dd><input type="password" name="passwrd" size="20" class="input_password"></dd>
-					<dt>', $txt['mins_logged_in'], ':</dt>
-					<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $modSettings['cookieTime'], '" class="input_text"></dd>
-					<dt>', $txt['always_logged_in'], ':</dt>
-					<dd><input type="checkbox" name="cookieneverexp" class="input_check" onclick="this.form.cookielength.disabled = this.checked;"></dd>
-				</dl>
-				<p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit"></p>
-				<p class="centertext smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
-			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			<input type="hidden" name="', $context['login_token_var'], '" value="', $context['login_token'], '">
-			<input type="hidden" name="hash_passwrd" value="">
-		</div>
-	</form>';
-
-	// Do the focus thing...
-	echo '
-		<script>
-			document.forms.frmLogin.user.focus();
-		</script>';
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'helpers' => Array(
+	    	'template' => textTemplate
+	    )
+	));
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -176,40 +109,30 @@ function template_kick_guest()
 function template_maintenance()
 {
 	global $context, $settings, $txt, $modSettings;
+		
+	$data = Array(
+		'context' => $context,
+		'settings' => $settings,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+		'modSettings' => $modSettings
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/login_maintenance.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
 
-	// Display the administrator's message at the top.
-	echo '
-<form action="', $context['login_url'], '" method="post" accept-charset="UTF-8">
-	<div class="login" id="maintenance_mode">
-		<div class="cat_bar">
-			<h3 class="catbg">', $context['title'], '</h3>
-		</div>
-		<div class="information">
-			<img class="floatleft" src="', $settings['images_url'], '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '">
-			', $context['description'], '<br class="clear">
-		</div>
-		<div class="title_bar">
-			<h4 class="titlebg">', $txt['admin_login'], '</h4>
-		</div>
-		<div class="roundframe">
-			<dl>
-				<dt>', $txt['username'], ':</dt>
-				<dd><input type="text" name="user" size="20" class="input_text"></dd>
-				<dt>', $txt['password'], ':</dt>
-				<dd><input type="password" name="passwrd" size="20" class="input_password"></dd>
-				<dt>', $txt['mins_logged_in'], ':</dt>
-				<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $modSettings['cookieTime'], '" class="input_text"></dd>
-				<dt>', $txt['always_logged_in'], ':</dt>
-				<dd><input type="checkbox" name="cookieneverexp" class="input_check"></dd>
-			</dl>
-			<input type="submit" value="', $txt['login'], '" class="button_submit">
-			<br class="clear">
-		</div>
-		<input type="hidden" name="hash_passwrd" value="">
-		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		<input type="hidden" name="', $context['login_token_var'], '" value="', $context['login_token'], '">
-	</div>
-</form>';
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'helpers' => Array(
+	    	'template' => textTemplate
+	    )
+	));
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -218,42 +141,31 @@ function template_maintenance()
 function template_admin_login()
 {
 	global $context, $settings, $scripturl, $txt, $modSettings;
+		
+	$data = Array(
+		'context' => $context,
+		'settings' => $settings,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+		'modSettings' => $modSettings,
+		'action' => !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/login_admin.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
 
-	// Since this should redirect to whatever they were doing, send all the get data.
-	echo '
-<form action="', !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin">
-	<div class="login" id="admin_login">
-		<div class="cat_bar">
-			<h3 class="catbg">
-				<img src="', $settings['images_url'], '/icons/login_hd.png" alt="" class="icon"> ', $txt['login'], '
-			</h3>
-		</div>
-		<div class="roundframe centertext noup">';
-
-	if (!empty($context['incorrect_password']))
-		echo '
-			<div class="error">', $txt['admin_incorrect_password'], '</div>';
-
-	echo '
-			<strong>', $txt['password'], ':</strong>
-			<input type="password" name="', $context['sessionCheckType'], '_pass" size="24" class="input_password">
-			<a href="', $scripturl, '?action=helpadmin;help=securityDisable_why" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a><br>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			<input type="hidden" name="', $context['admin-login_token_var'], '" value="', $context['admin-login_token'], '">
-			<input type="submit" style="margin-top: 1em;" value="', $txt['login'], '" class="button_submit">';
-
-	// Make sure to output all the old post data.
-	echo $context['post_data'], '
-		</div>
-	</div>
-	<input type="hidden" name="', $context['sessionCheckType'], '_hash_pass" value="">
-</form>';
-
-	// Focus on the password box.
-	echo '
-<script>
-	document.forms.frmLogin.', $context['sessionCheckType'], '_pass.focus();
-</script>';
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'helpers' => Array(
+	    	'template' => textTemplate
+	    )
+	));
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -261,30 +173,30 @@ function template_admin_login()
  */
 function template_retry_activate()
 {
+	//login_manual_activate
 	global $context, $txt, $scripturl;
+			
+	$data = Array(
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/login_manual_activate.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
 
-	// Just ask them for their code so they can try it again...
-	echo '
-		<form action="', $scripturl, '?action=activate;u=', $context['member_id'], '" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3 class="titlebg">', $context['page_title'], '</h3>
-			</div>
-			<div class="roundframe">';
-
-	// You didn't even have an ID?
-	if (empty($context['member_id']))
-		echo '
-				<dl>
-					<dt>', $txt['invalid_activation_username'], ':</dt>
-					<dd><input type="text" name="user" size="30" class="input_text"></dd>';
-
-	echo '
-					<dt>', $txt['invalid_activation_retry'], ':</dt>
-					<dd><input type="text" name="code" size="30" class="input_text"></dd>
-				</dl>
-				<p><input type="submit" value="', $txt['invalid_activation_submit'], '" class="button_submit"></p>
-			</div>
-		</form>';
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'helpers' => Array(
+	    	'template' => textTemplate
+	    )
+	));
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -294,37 +206,27 @@ function template_resend()
 {
 	global $context, $txt, $scripturl;
 
-	// Just ask them for their code so they can try it again...
-	echo '
-		<form action="', $scripturl, '?action=activate;sa=resend" method="post" accept-charset="UTF-8">
-			<div class="title_bar">
-				<h3 class="titlebg">', $context['page_title'], '</h3>
-			</div>
-			<div class="roundframe">
-				<dl>
-					<dt>', $txt['invalid_activation_username'], ':</dt>
-					<dd><input type="text" name="user" size="40" value="', $context['default_username'], '" class="input_text"></dd>
-				</dl>
-				<p>', $txt['invalid_activation_new'], '</p>
-				<dl>
-					<dt>', $txt['invalid_activation_new_email'], ':</dt>
-					<dd><input type="text" name="new_email" size="40" class="input_text"></dd>
-					<dt>', $txt['invalid_activation_password'], ':</dt>
-					<dd><input type="password" name="passwd" size="30" class="input_password"></dd>
-				</dl>';
+	$data = Array(
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl
+	);
+	
+	$template = file_get_contents(__DIR__ .  "/templates/login_resend.hbs");
+	if (!$template) {
+		die('Template did not load!');
+	}
 
-	if ($context['can_activate'])
-		echo '
-				<p>', $txt['invalid_activation_known'], '</p>
-				<dl>
-					<dt>', $txt['invalid_activation_retry'], ':</dt>
-					<dd><input type="text" name="code" size="30" class="input_text"></dd>
-				</dl>';
-
-	echo '
-				<p><input type="submit" value="', $txt['invalid_activation_resend'], '" class="button_submit"></p>
-			</div>
-		</form>';
+	$phpStr = LightnCandy::compile($template, Array(
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'helpers' => Array(
+	    	'template' => textTemplate
+	    )
+	));
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 ?>
