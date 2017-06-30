@@ -341,7 +341,7 @@ function template_main()
 	}
 
 	// Show breadcrumbs at the bottom too.
-	theme_linktree();
+	//theme_linktree();
 
 	if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']) && $context['can_move'])
 		echo '
