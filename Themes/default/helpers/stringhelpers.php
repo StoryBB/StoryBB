@@ -64,4 +64,21 @@ function concat(...$items)
 	return implode($items);
 }
 
+function JSEscape($string)
+{
+	global $scripturl;
+
+	return '\'' . strtr($string, array(
+		"\r" => '',
+		"\n" => '\\n',
+		"\t" => '\\t',
+		'\\' => '\\\\',
+		'\'' => '\\\'',
+		'</' => '<\' + \'/',
+		'<script' => '<scri\'+\'pt',
+		'<body>' => '<bo\'+\'dy>',
+		'<a href' => '<a hr\'+\'ef',
+		$scripturl => '\' + smf_scripturl + \'',
+	)) . '\'';
+}
 ?>

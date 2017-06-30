@@ -43,7 +43,12 @@ function template_button_strip_helper($button_strip,$direction,$strip_options)
 
 function template_boardindex_outer_above()
 {
-	template_newsfader();
+	return template_newsfader();
+}
+
+function include_ic_partial($template) {
+	$func = 'template_ic_block_' . $template;
+	return $func();
 }
 
 /**
@@ -119,7 +124,7 @@ function template_main()
  */
 function template_boardindex_outer_below()
 {
-	template_info_center();
+	return template_info_center();
 }
 
 /**
@@ -128,66 +133,33 @@ function template_boardindex_outer_below()
 function template_info_center()
 {
 	global $context, $options, $txt;
-
+	
+	//early-exit:
 	if (empty($context['info_center']))
 		return;
+	
+	$data = Array(
+        'context' => $context,
+        'txt' => $txt,
+        'options' => $options
+    );
+    
+    $template = file_get_contents(__DIR__."/templates/board_info_center.hbs");
+    if (!$template) {
+        die('Template did not load!');
+    }
 
-	// Here's where the "Info Center" starts...
-	echo '
-	<div class="roundframe" id="info_center">
-		<div class="title_bar">
-			<h3 class="titlebg">
-				<span class="toggle_up floatright" id="upshrink_ic" title="', $txt['hide_infocenter'], '" style="display: none;"></span>
-				<a href="#" id="upshrink_link">', sprintf($txt['info_center_title'], $context['forum_name_html_safe']), '</a>
-			</h3>
-		</div>
-		<div id="upshrinkHeaderIC"', empty($options['collapse_header_ic']) ? '' : ' style="display: none;"', '>';
+    $phpStr = LightnCandy::compile($template, Array(
+        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+        'helpers' => Array(
+        	'partial_helper' => include_ic_partial,
+        	'JavaScriptEscape' => JSEscape,
+        	'textTemplate' => textTemplate
+        )
+    ));
 
-	foreach ($context['info_center'] as $block)
-	{
-		$func = 'template_ic_block_' . $block['tpl'];
-		$func();
-	}
-
-	echo '
-		</div>
-	</div>';
-
-	// Info center collapse object.
-	echo '
-	<script>
-		var oInfoCenterToggle = new smc_Toggle({
-			bToggleEnabled: true,
-			bCurrentlyCollapsed: ', empty($options['collapse_header_ic']) ? 'false' : 'true', ',
-			aSwappableContainers: [
-				\'upshrinkHeaderIC\'
-			],
-			aSwapImages: [
-				{
-					sId: \'upshrink_ic\',
-					altExpanded: ', JavaScriptEscape($txt['hide_infocenter']), ',
-					altCollapsed: ', JavaScriptEscape($txt['show_infocenter']), '
-				}
-			],
-			aSwapLinks: [
-				{
-					sId: \'upshrink_link\',
-					msgExpanded: ', JavaScriptEscape(sprintf($txt['info_center_title'], $context['forum_name_html_safe'])), ',
-					msgCollapsed: ', JavaScriptEscape(sprintf($txt['info_center_title'], $context['forum_name_html_safe'])), '
-				}
-			],
-			oThemeOptions: {
-				bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
-				sOptionName: \'collapse_header_ic\',
-				sSessionId: smf_session_id,
-				sSessionVar: smf_session_var,
-			},
-			oCookieOptions: {
-				bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
-				sCookieName: \'upshrinkIC\'
-			}
-		});
-	</script>';
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -196,53 +168,30 @@ function template_info_center()
 function template_ic_block_recent()
 {
 	global $context, $scripturl, $settings, $txt;
+	
+	$data = Array(
+        'context' => $context,
+        'txt' => $txt,
+        'scripturl' => $scripturl,
+        'settings' => $settings
+    );
+    
+    $template = file_get_contents(__DIR__."/templates/board_ic_recent.hbs");
+    if (!$template) {
+        die('Template did not load!');
+    }
 
-	// This is the "Recent Posts" bar.
-	echo '
-			<div class="sub_bar">
-				<h4 class="subbg">
-					<a href="', $scripturl, '?action=recent"><span class="xx"></span>', $txt['recent_posts'], '</a>
-				</h4>
-			</div>
-			<div id="recent_posts_content">';
+    $phpStr = LightnCandy::compile($template, Array(
+        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+        'helpers' => Array(
+        	'partial_helper' => include_ic_partial,
+        	'JavaScriptEscape' => JSEscape,
+        	'textTemplate' => textTemplate
+        )
+    ));
 
-	// Only show one post.
-	if ($settings['number_recent_posts'] == 1)
-	{
-		// latest_post has link, href, time, subject, short_subject (shortened with...), and topic. (its id.)
-		echo '
-				<p id="infocenter_onepost" class="inline">
-					<a href="', $scripturl, '?action=recent">', $txt['recent_view'], '</a>&nbsp;&quot;', sprintf($txt['is_recent_updated'], '&quot;' . $context['latest_post']['link'], '&quot;'), ' (', $context['latest_post']['time'], ')<br>
-				</p>';
-	}
-	// Show lots of posts.
-	elseif (!empty($context['latest_posts']))
-	{
-		echo '
-				<table id="ic_recentposts">
-					<tr class="windowbg">
-						<th class="recentpost">', $txt['message'], '</th>
-						<th class="recentposter">', $txt['author'], '</th>
-						<th class="recentboard">', $txt['board'], '</th>
-						<th class="recenttime">', $txt['date'], '</th>
-					</tr>';
-
-		/* Each post in latest_posts has:
-				board (with an id, name, and link.), topic (the topic's id.), poster (with id, name, and link.),
-				subject, short_subject (shortened with...), time, link, and href. */
-		foreach ($context['latest_posts'] as $post)
-			echo '
-					<tr class="windowbg">
-						<td class="recentpost"><strong>', $post['link'], '</strong></td>
-						<td class="recentposter">', $post['poster']['link'], '</td>
-						<td class="recentboard">', $post['board']['link'], '</td>
-						<td class="recenttime">', $post['time'], '</td>
-					</tr>';
-		echo '
-				</table>';
-	}
-	echo '
-			</div>';
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
