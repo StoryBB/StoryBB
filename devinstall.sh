@@ -34,4 +34,5 @@ else
 fi
 
 # Give install instructions
-echo "Now please visit localhost/install.php to finish installation"
+echo "Now please visit localhost in your web browser to finish installation"
+echo "Note: if  you are using c9, don't forget to hit 'run project' first"
