@@ -1,3 +1,12 @@
+echo "Running developer setup. NOTE: This only supports Debian systems."
+
+# Ensure PHP is installed and up to date
+if [ php -v >/dev/null 2>&1 ]; then 
+    echo "PHP already installed"
+else
+    sudo apt-get install -y php7.0 ||  echo "ERROR! Please install PHP 7.0 manually"
+fi
+
 # Copy files up a directory
 cp ./other/install.php ./install.php
 cp ./other/install.php ./Settings.php
@@ -12,7 +21,7 @@ touch db_last_error.php
 chmod -R a+rwx ./*
 
 # install Composer
-php composerInstaller
+php composerInstaller || echo "ERROR: Please install Composer manually using the steps located at https://getcomposer.org/doc/00-intro.md"
 
 #install dependencies with Composer
 composer install
@@ -21,7 +30,7 @@ composer install
 if [ -f /etc/init.d/mysql* ]; then
     echo "MySQL already installed"
 else 
-    sudo apt-get install -y mysql-server
+    sudo apt-get install -y mysql-server || echo "ERROR! Please install mysql manually"
 fi
 
 # Give install instructions
