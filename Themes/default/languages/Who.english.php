@@ -124,8 +124,9 @@ $txt['who_poll'] = 'Posting a new poll in <a href="' . $scripturl . '?board=%1$d
 
 // Credits text
 $txt['credits'] = 'Credits';
-$txt['credits_intro'] = 'Simple Machines wants to thank everyone who helped make SMF 2.1 what it is today; shaping and directing our project, all through the thick and the thin. It wouldn\'t have been possible without you. This includes our users and especially Charter Members - thanks for installing and using our software as well as providing valuable feedback, bug reports, and opinions.';
-$txt['credits_team'] = 'The Team';
+//$txt['credits_intro'] = 'Simple Machines wants to thank everyone who helped make SMF 2.1 what it is today; shaping and directing our project, all through the thick and the thin. It wouldn\'t have been possible without you. This includes our users and especially Charter Members - thanks for installing and using our software as well as providing valuable feedback, bug reports, and opinions.';
+$txt['credits_intro'] = 'The SockDrawer would like to extend a thanks to everyone who helped make StoryBB what it is today. We would also like to extend a special thank you to Simple Machines and the contributors who helped make them great. Without SMF, there would not be a StoryBB today.';
+$txt['credits_team'] = 'The SockDevs';
 $txt['credits_special'] = 'Special Thanks';
 $txt['credits_and'] = 'and';
 $txt['credits_anyone'] = 'And for anyone we may have missed, thank you!';
@@ -136,21 +137,15 @@ $txt['credits_software_graphics'] = 'Software/Graphics';
 $txt['credits_software'] = 'Software';
 $txt['credits_graphics'] = 'Graphics';
 $txt['credits_fonts'] = 'Fonts';
-$txt['credits_groups_pm'] = 'Project Manager';
+$txt['credits_groups_found'] = 'Founding Members';
 $txt['credits_groups_dev'] = 'Developers';
-$txt['credits_groups_support'] = 'Support Specialists';
-$txt['credits_groups_customize'] = 'Customizers';
-$txt['credits_groups_docs'] = 'Documentation Writers';
-$txt['credits_groups_marketing'] = 'Marketing';
-$txt['credits_groups_internationalizers'] = 'Localizers';
-$txt['credits_groups_servers'] = 'Servers Administrators';
-$txt['credits_groups_site'] = 'Site Administrators';
+$txt['credits_groups_ba'] = 'Business Users/Beta Testers';
 $txt['credits_license'] = 'License';
 $txt['credits_version'] = 'Version';
 // Replace "English" with the name of this language pack in the string below.
 $txt['credits_groups_translation'] = 'English Translation';
 $txt['credits_groups_translators'] = 'Language Translators';
-$txt['credits_translators_message'] = 'Thank you for your efforts which make it possible for people all around the world to use SMF.';
+$txt['credits_translators_message'] = 'Thank you for your efforts which make it possible for people all around the world to use StoryBB and SMF.';
 $txt['credits_groups_consultants'] = 'Consulting Developers';
 $txt['credits_groups_beta'] = 'Beta Testers';
 $txt['credits_beta_message'] = 'The invaluable few who tirelessly find bugs, provide feedback, and drive the developers crazier.';
