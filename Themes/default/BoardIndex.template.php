@@ -195,57 +195,6 @@ function template_ic_block_recent()
 }
 
 /**
- * The calendar section of the info center
- */
-function template_ic_block_calendar()
-{
-	global $context, $scripturl, $txt, $settings;
-
-	// Show information about events, birthdays, and holidays on the calendar.
-	echo '
-			<div class="sub_bar">
-				<h4 class="subbg">
-					<a href="', $scripturl, '?action=calendar' . '"><span class="generic_icons calendar"></span> ', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '</a>
-				</h4>
-			</div>';
-
-	// Holidays like "Christmas", "Chanukah", and "We Love [Unknown] Day" :P.
-	if (!empty($context['calendar_holidays']))
-		echo '
-				<p class="inline holiday"><span>', $txt['calendar_prompt'], '</span> ', implode(', ', $context['calendar_holidays']), '</p>';
-
-	// People's birthdays. Like mine. And yours, I guess. Kidding.
-	if (!empty($context['calendar_birthdays']))
-	{
-		echo '
-				<p class="inline">
-					<span class="birthday">', $context['calendar_only_today'] ? $txt['birthdays'] : $txt['birthdays_upcoming'], '</span>';
-		// Each member in calendar_birthdays has: id, name (person), age (if they have one set?), is_last. (last in list?), and is_today (birthday is today?)
-		foreach ($context['calendar_birthdays'] as $member)
-			echo '
-					<a href="', $scripturl, '?action=profile;u=', $member['id'], '">', $member['is_today'] ? '<strong class="fix_rtl_names">' : '', $member['name'], $member['is_today'] ? '</strong>' : '', isset($member['age']) ? ' (' . $member['age'] . ')' : '', '</a>', $member['is_last'] ? '' : ', ';
-		echo '
-				</p>';
-	}
-
-	// Events like community get-togethers.
-	if (!empty($context['calendar_events']))
-	{
-		echo '
-				<p class="inline">
-					<span class="event">', $context['calendar_only_today'] ? $txt['events'] : $txt['events_upcoming'], '</span> ';
-
-		// Each event in calendar_events should have:
-		//		title, href, is_last, can_edit (are they allowed?), modify_href, and is_today.
-		foreach ($context['calendar_events'] as $event)
-			echo '
-					', $event['can_edit'] ? '<a href="' . $event['modify_href'] . '" title="' . $txt['calendar_edit'] . '"><span class="generic_icons calendar_modify"></span></a> ' : '', $event['href'] == '' ? '' : '<a href="' . $event['href'] . '">', $event['is_today'] ? '<strong>' . $event['title'] . '</strong>' : $event['title'], $event['href'] == '' ? '' : '</a>', $event['is_last'] ? '<br>' : ', ';
-		echo '
-				</p>';
-	}
-}
-
-/**
  * The stats section of the info center
  */
 function template_ic_block_stats()

@@ -29,8 +29,6 @@ if (!defined('SMF'))
  * through the querystring it will set the report_type sub-template to
  * force the user to choose which type.
  * When generating a report chooses which sub_template to use.
- * Depends on the cal_enabled setting, and many of the other cal_
- * settings.
  * Will call the relevant report generation function.
  * If generating report will call finishTables before returning.
  * Accessed through ?action=admin;area=reports.
@@ -675,13 +673,6 @@ function GroupPermissionsReport()
 
 	// Certain permissions should not really be shown.
 	$disabled_permissions = array();
-	if (empty($modSettings['cal_enabled']))
-	{
-		$disabled_permissions[] = 'calendar_view';
-		$disabled_permissions[] = 'calendar_post';
-		$disabled_permissions[] = 'calendar_edit_own';
-		$disabled_permissions[] = 'calendar_edit_any';
-	}
 	if (empty($modSettings['warning_settings']) || $modSettings['warning_settings'][0] == 0)
 		$disabled_permissions[] = 'issue_warning';
 

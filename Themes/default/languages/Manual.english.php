@@ -19,7 +19,6 @@ $txt['manual_section_posting_title'] = 'Posting';
 $txt['manual_section_bbc_title'] = 'Bulletin Board Code (BBC)';
 $txt['manual_section_personal_messages_title'] = 'Personal Messages';
 $txt['manual_section_memberlist_title'] = 'Memberlist';
-$txt['manual_section_calendar_title'] = 'Calendar';
 $txt['manual_section_features_title'] = 'Features';
 
 $txt['manual_section_registering_desc'] = 'Many forums require users to register to gain full access.';
@@ -30,7 +29,6 @@ $txt['manual_section_posting_desc'] = 'The whole point of a forum, posting allow
 $txt['manual_section_bbc_desc'] = 'Posts can be spiced up with a little BBC.';
 $txt['manual_section_personal_messages_desc'] = 'Users can send personal messages to each other.';
 $txt['manual_section_memberlist_desc'] = 'The memberlist shows all the members of a forum.';
-$txt['manual_section_calendar_desc'] = 'Users can keep track of events, holidays, and birthdays with the calendar.';
 $txt['manual_section_features_desc'] = 'Here is a list of the most popular features in SMF.';
 
 $txt['agreement_disabled'] = 'Registration agreement disabled';

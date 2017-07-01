@@ -536,83 +536,6 @@ function Display()
 		cache_put_data('response_prefix', $context['response_prefix'], 600);
 	}
 
-	// If we want to show event information in the topic, prepare the data.
-	if (allowedTo('calendar_view') && !empty($modSettings['cal_showInTopic']) && !empty($modSettings['cal_enabled']))
-	{
-		require_once($sourcedir . '/Subs-Calendar.php');
-
-		// Any calendar information for this topic?
-		$request = $smcFunc['db_query']('', '
-			SELECT cal.id_event, cal.start_date, cal.end_date, cal.title, cal.id_member, mem.real_name, cal.start_time, cal.end_time, cal.timezone, cal.location
-			FROM {db_prefix}calendar AS cal
-				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = cal.id_member)
-			WHERE cal.id_topic = {int:current_topic}
-			ORDER BY start_date',
-			array(
-				'current_topic' => $topic,
-			)
-		);
-		$context['linked_calendar_events'] = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-		{
-			// Get the various time and date properties for this event
-			list($start, $end, $allday, $span, $tz, $tz_abbrev) = buildEventDatetimes($row);
-
-			// Sanity check
-			if (!empty($start['error_count']) || !empty($start['warning_count']) || !empty($end['error_count']) || !empty($end['warning_count']))
-				continue;
-
-			$linked_calendar_event = array(
-				'id' => $row['id_event'],
-				'title' => $row['title'],
-				'can_edit' => allowedTo('calendar_edit_any') || ($row['id_member'] == $user_info['id'] && allowedTo('calendar_edit_own')),
-				'modify_href' => $scripturl . '?action=post;msg=' . $context['topicinfo']['id_first_msg'] . ';topic=' . $topic . '.0;calendar;eventid=' . $row['id_event'] . ';' . $context['session_var'] . '=' . $context['session_id'],
-				'can_export' => allowedTo('calendar_edit_any') || ($row['id_member'] == $user_info['id'] && allowedTo('calendar_edit_own')),
-				'export_href' => $scripturl . '?action=calendar;sa=ical;eventid=' . $row['id_event'] . ';' . $context['session_var'] . '=' . $context['session_id'],
-				'year' => $start['year'],
-				'month' => $start['month'],
-				'day' => $start['day'],
-				'hour' => !$allday ? $start['hour'] : null,
-				'minute' => !$allday ? $start['minute'] : null,
-				'second' => !$allday ? $start['second'] : null,
-				'start_date' => $row['start_date'],
-				'start_date_local' => $start['date_local'],
-				'start_date_orig' => $start['date_orig'],
-				'start_time' => !$allday ? $row['start_time'] : null,
-				'start_time_local' => !$allday ? $start['time_local'] : null,
-				'start_time_orig' => !$allday ? $start['time_orig'] : null,
-				'start_timestamp' => $start['timestamp'],
-				'start_iso_gmdate' => $start['iso_gmdate'],
-				'end_year' => $end['year'],
-				'end_month' => $end['month'],
-				'end_day' => $end['day'],
-				'end_hour' => !$allday ? $end['hour'] : null,
-				'end_minute' => !$allday ? $end['minute'] : null,
-				'end_second' => !$allday ? $end['second'] : null,
-				'end_date' => $row['end_date'],
-				'end_date_local' => $end['date_local'],
-				'end_date_orig' => $end['date_orig'],
-				'end_time' => !$allday ? $row['end_time'] : null,
-				'end_time_local' => !$allday ? $end['time_local'] : null,
-				'end_time_orig' => !$allday ? $end['time_orig'] : null,
-				'end_timestamp' => $end['timestamp'],
-				'end_iso_gmdate' => $end['iso_gmdate'],
-				'allday' => $allday,
-				'tz' => !$allday ? $tz : null,
-				'tz_abbrev' => !$allday ? $tz_abbrev : null,
-				'span' => $span,
-				'location' => $row['location'],
-				'is_last' => false
-			);
-
-			$context['linked_calendar_events'][] = $linked_calendar_event;
-		}
-		$smcFunc['db_free_result']($request);
-
-		if (!empty($context['linked_calendar_events']))
-			$context['linked_calendar_events'][count($context['linked_calendar_events']) - 1]['is_last'] = true;
-	}
-
 	// Create the poll info if it exists.
 	if ($context['is_poll'])
 	{
@@ -1108,7 +1031,6 @@ function Display()
 		'can_sticky' => 'make_sticky',
 		'can_merge' => 'merge_any',
 		'can_split' => 'split_any',
-		'calendar_post' => 'calendar_post',
 		'can_send_pm' => 'pm_send',
 		'can_report_moderator' => 'report_any',
 		'can_moderate_forum' => 'moderate_forum',
@@ -1153,7 +1075,6 @@ function Display()
 
 	// Cleanup all the permissions with extra stuff...
 	$context['can_mark_notify'] = !$context['user']['is_guest'];
-	$context['calendar_post'] &= !empty($modSettings['cal_enabled']);
 	$context['can_add_poll'] &= $modSettings['pollMode'] == '1' && $context['topicinfo']['id_poll'] <= 0;
 	$context['can_remove_poll'] &= $modSettings['pollMode'] == '1' && $context['topicinfo']['id_poll'] > 0;
 	$context['can_reply'] &= empty($context['topicinfo']['locked']) || allowedTo('moderate_board');
@@ -1200,9 +1121,6 @@ function Display()
 
 		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time();
 	}
-
-	// You can't link an existing topic to the calendar unless you can modify the first post...
-	$context['calendar_post'] &= allowedTo('modify_any') || (allowedTo('modify_own') && $context['user']['started']);
 
 	// Load up the "double post" sequencing magic.
 	checkSubmitOnce('register');
@@ -1300,9 +1218,6 @@ function Display()
 
 	if ($context['can_merge'])
 		$context['mod_buttons']['merge'] = array('text' => 'merge', 'image' => 'merge.png', 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']);
-
-	if ($context['calendar_post'])
-		$context['mod_buttons']['calendar'] = array('text' => 'calendar_link', 'image' => 'linktocal.png', 'url' => $scripturl . '?action=post;calendar;msg=' . $context['topic_first_message'] . ';topic=' . $context['current_topic'] . '.0');
 
 	// Restore topic. eh?  No monkey business.
 	if ($context['can_restore_topic'])

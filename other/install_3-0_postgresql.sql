@@ -292,62 +292,6 @@ CREATE INDEX {$db_prefix}boards_id_msg_updated ON {$db_prefix}boards (id_msg_upd
 CREATE INDEX {$db_prefix}boards_member_groups ON {$db_prefix}boards (member_groups varchar_pattern_ops);
 
 #
-# Sequence for table `calendar`
-#
-
-CREATE SEQUENCE {$db_prefix}calendar_seq;
-
-#
-# Table structure for table `calendar`
-#
-
-CREATE TABLE {$db_prefix}calendar (
-  id_event smallint default nextval('{$db_prefix}calendar_seq'),
-  start_date date NOT NULL default '0001-01-01',
-  end_date date NOT NULL default '0001-01-01',
-  id_board smallint NOT NULL default '0',
-  id_topic int NOT NULL default '0',
-  title varchar(255) NOT NULL default '',
-  id_member int NOT NULL default '0',
-  start_time time,
-  end_time time,
-  timezone varchar(80),
-  location VARCHAR(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (id_event)
-);
-
-#
-# Indexes for table `calendar`
-#
-
-CREATE INDEX {$db_prefix}calendar_start_date ON {$db_prefix}calendar (start_date);
-CREATE INDEX {$db_prefix}calendar_end_date ON {$db_prefix}calendar (end_date);
-CREATE INDEX {$db_prefix}calendar_topic ON {$db_prefix}calendar (id_topic, id_member);
-
-#
-# Sequence for table `calendar_holidays`
-#
-
-CREATE SEQUENCE {$db_prefix}calendar_holidays_seq;
-
-#
-# Table structure for table `calendar_holidays`
-#
-
-CREATE TABLE {$db_prefix}calendar_holidays (
-  id_holiday smallint default nextval('{$db_prefix}calendar_holidays_seq'),
-  event_date date NOT NULL default '0001-01-01',
-  title varchar(255) NOT NULL default '',
-  PRIMARY KEY (id_holiday)
-);
-
-#
-# Indexes for table `calendar_holidays`
-#
-
-CREATE INDEX {$db_prefix}calendar_holidays_event_date ON {$db_prefix}calendar_holidays (event_date);
-
-#
 # Sequence for table `categories`
 #
 
@@ -2078,132 +2022,6 @@ VALUES (1, 1, 1, 1, 1, '{$default_board_name}', '{$default_board_description}', 
 # --------------------------------------------------------
 
 #
-# Dumping data for table `calendar_holidays`
-#
-
-INSERT INTO {$db_prefix}calendar_holidays
-	(title, event_date)
-VALUES ('New Year''s', '0004-01-01'),
-	('Christmas', '0004-12-25'),
-	('Valentine''s Day', '0004-02-14'),
-	('St. Patrick''s Day', '0004-03-17'),
-	('April Fools', '0004-04-01'),
-	('Earth Day', '0004-04-22'),
-	('United Nations Day', '0004-10-24'),
-	('Halloween', '0004-10-31'),
-	('Mother''s Day', '2010-05-09'),
-	('Mother''s Day', '2011-05-08'),
-	('Mother''s Day', '2012-05-13'),
-	('Mother''s Day', '2013-05-12'),
-	('Mother''s Day', '2014-05-11'),
-	('Mother''s Day', '2015-05-10'),
-	('Mother''s Day', '2016-05-08'),
-	('Mother''s Day', '2017-05-14'),
-	('Mother''s Day', '2018-05-13'),
-	('Mother''s Day', '2019-05-12'),
-	('Mother''s Day', '2020-05-10'),
-	('Father''s Day', '2008-06-15'),
-	('Father''s Day', '2009-06-21'),
-	('Father''s Day', '2010-06-20'),
-	('Father''s Day', '2011-06-19'),
-	('Father''s Day', '2012-06-17'),
-	('Father''s Day', '2013-06-16'),
-	('Father''s Day', '2014-06-15'),
-	('Father''s Day', '2015-06-21'),
-	('Father''s Day', '2016-06-19'),
-	('Father''s Day', '2017-06-18'),
-	('Father''s Day', '2018-06-17'),
-	('Father''s Day', '2019-06-16'),
-	('Father''s Day', '2020-06-21'),
-	('Summer Solstice', '2010-06-21'),
-	('Summer Solstice', '2011-06-21'),
-	('Summer Solstice', '2012-06-20'),
-	('Summer Solstice', '2013-06-21'),
-	('Summer Solstice', '2014-06-21'),
-	('Summer Solstice', '2015-06-21'),
-	('Summer Solstice', '2016-06-20'),
-	('Summer Solstice', '2017-06-20'),
-	('Summer Solstice', '2018-06-21'),
-	('Summer Solstice', '2019-06-21'),
-	('Summer Solstice', '2020-06-20'),
-	('Vernal Equinox', '2010-03-20'),
-	('Vernal Equinox', '2011-03-20'),
-	('Vernal Equinox', '2012-03-20'),
-	('Vernal Equinox', '2013-03-20'),
-	('Vernal Equinox', '2014-03-20'),
-	('Vernal Equinox', '2015-03-20'),
-	('Vernal Equinox', '2016-03-19'),
-	('Vernal Equinox', '2017-03-20'),
-	('Vernal Equinox', '2018-03-20'),
-	('Vernal Equinox', '2019-03-20'),
-	('Vernal Equinox', '2020-03-19'),
-	('Winter Solstice', '2010-12-21'),
-	('Winter Solstice', '2011-12-22'),
-	('Winter Solstice', '2012-12-21'),
-	('Winter Solstice', '2013-12-21'),
-	('Winter Solstice', '2014-12-21'),
-	('Winter Solstice', '2015-12-21'),
-	('Winter Solstice', '2016-12-21'),
-	('Winter Solstice', '2017-12-21'),
-	('Winter Solstice', '2018-12-21'),
-	('Winter Solstice', '2019-12-21'),
-	('Winter Solstice', '2020-12-21'),
-	('Autumnal Equinox', '2010-09-22'),
-	('Autumnal Equinox', '2011-09-23'),
-	('Autumnal Equinox', '2012-09-22'),
-	('Autumnal Equinox', '2013-09-22'),
-	('Autumnal Equinox', '2014-09-22'),
-	('Autumnal Equinox', '2015-09-23'),
-	('Autumnal Equinox', '2016-09-22'),
-	('Autumnal Equinox', '2017-09-22'),
-	('Autumnal Equinox', '2018-09-22'),
-	('Autumnal Equinox', '2019-09-23'),
-	('Autumnal Equinox', '2020-09-22');
-
-INSERT INTO {$db_prefix}calendar_holidays
-	(title, event_date)
-VALUES ('Independence Day', '0004-07-04'),
-	('Cinco de Mayo', '0004-05-05'),
-	('Flag Day', '0004-06-14'),
-	('Veterans Day', '0004-11-11'),
-	('Groundhog Day', '0004-02-02'),
-	('Thanksgiving', '2010-11-25'),
-	('Thanksgiving', '2011-11-24'),
-	('Thanksgiving', '2012-11-22'),
-	('Thanksgiving', '2013-11-28'),
-	('Thanksgiving', '2014-11-27'),
-	('Thanksgiving', '2015-11-26'),
-	('Thanksgiving', '2016-11-24'),
-	('Thanksgiving', '2017-11-23'),
-	('Thanksgiving', '2018-11-22'),
-	('Thanksgiving', '2019-11-28'),
-	('Thanksgiving', '2020-11-26'),
-	('Memorial Day', '2010-05-31'),
-	('Memorial Day', '2011-05-30'),
-	('Memorial Day', '2012-05-28'),
-	('Memorial Day', '2013-05-27'),
-	('Memorial Day', '2014-05-26'),
-	('Memorial Day', '2015-05-25'),
-	('Memorial Day', '2016-05-30'),
-	('Memorial Day', '2017-05-29'),
-	('Memorial Day', '2018-05-28'),
-	('Memorial Day', '2019-05-27'),
-	('Memorial Day', '2020-05-25'),
-	('Labor Day', '2010-09-06'),
-	('Labor Day', '2011-09-05'),
-	('Labor Day', '2012-09-03'),
-	('Labor Day', '2013-09-02'),
-	('Labor Day', '2014-09-01'),
-	('Labor Day', '2015-09-07'),
-	('Labor Day', '2016-09-05'),
-	('Labor Day', '2017-09-04'),
-	('Labor Day', '2018-09-03'),
-	('Labor Day', '2019-09-02'),
-	('Labor Day', '2020-09-07'),
-	('D-Day', '0004-06-06');
-# --------------------------------------------------------
-
-#
 # Dumping data for table `categories`
 #
 
@@ -2298,7 +2116,6 @@ VALUES (1, 'default'), (2, 'no_polls'), (3, 'reply_only'), (4, 'read_only');
 INSERT INTO {$db_prefix}permissions
 	(id_group, permission)
 VALUES (-1, 'search_posts'),
-	(-1, 'calendar_view'),
 	(-1, 'view_stats'),
 	(0, 'view_mlist'),
 	(0, 'search_posts'),
@@ -2306,7 +2123,6 @@ VALUES (-1, 'search_posts'),
 	(0, 'pm_read'),
 	(0, 'pm_send'),
 	(0, 'pm_draft'),
-	(0, 'calendar_view'),
 	(0, 'view_stats'),
 	(0, 'who_view'),
 	(0, 'profile_identity_own'),
@@ -2328,7 +2144,6 @@ VALUES (-1, 'search_posts'),
 	(2, 'pm_read'),
 	(2, 'pm_send'),
 	(2, 'pm_draft'),
-	(2, 'calendar_view'),
 	(2, 'view_stats'),
 	(2, 'who_view'),
 	(2, 'profile_identity_own'),
@@ -2345,8 +2160,6 @@ VALUES (-1, 'search_posts'),
 	(2, 'profile_remote_avatar'),
 	(2, 'send_email_to_members'),
 	(2, 'profile_title_own'),
-	(2, 'calendar_post'),
-	(2, 'calendar_edit_any'),
 	(2, 'access_mod_center');
 # --------------------------------------------------------
 
@@ -2414,25 +2227,6 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('max_image_width', '0'),
 	('max_image_height', '0'),
 	('onlineEnable', '0'),
-	('cal_enabled', '0'),
-	('cal_showInTopic', '1'),
-	('cal_maxyear', '2030'),
-	('cal_minyear', '2008'),
-	('cal_daysaslink', '0'),
-	('cal_defaultboard', ''),
-	('cal_showholidays', '1'),
-	('cal_showbdays', '1'),
-	('cal_showevents', '1'),
-	('cal_maxspan', '0'),
-	('cal_highlight_events', '3'),
-	('cal_highlight_holidays', '3'),
-	('cal_highlight_birthdays', '3'),
-	('cal_disable_prev_next', '0'),
-	('cal_display_type', '0'),
-	('cal_week_links', '2'),
-	('cal_prev_next_links', '1'),
-	('cal_short_days', '0'),
-	('cal_short_months', '0'),
 	('smtp_host', ''),
 	('smtp_port', '25'),
 	('smtp_username', ''),
