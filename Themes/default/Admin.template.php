@@ -48,7 +48,7 @@ function template_admin()
 /**
  * Show some support information and credits to those who helped make this.
  */
-function template_credits()
+function template_support()
 {
 	global $context, $settings, $scripturl, $txt;
 
@@ -59,7 +59,7 @@ function template_credits()
 		'scripturl' => $scripturl,
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/admin_credits.hbs");
+	$template = file_get_contents(__DIR__ .  "/templates/admin_support.hbs");
 	if (!$template) {
 		die('Admin home template did not load!');
 	}

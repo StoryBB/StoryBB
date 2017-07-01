@@ -42,34 +42,4 @@ function template_main()
 	return $renderer($data);
 }
 
-/**
- * This displays a nice credits page
- */
-function template_credits()
-{
-	global $context, $txt;
-
-	$data = [
-		'context' => $context,
-		'txt' => $txt,
-	];
-
-	$template = file_get_contents(__DIR__ .  "/templates/credits.hbs");
-	if (!$template) {
-		die('Member template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-		'helpers' => [
-			'or' => 'logichelper_or',
-			'implode_and' => 'implode_and',
-		],
-	]);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
 ?>

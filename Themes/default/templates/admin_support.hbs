@@ -36,34 +36,6 @@
 					<p>{{{txt.support_resources_p1}}}</p>
 					<p>{{{txt.support_resources_p2}}}</p>
 				</div>
-
-				{{! The most important part - the credits :P. }}
-				<div id="credits_sections" class="sub_bar">
-					<h3 class="subbg">
-						{{txt.admin_credits}}
-					</h3>
-				</div>
-				<div class="padding">
-					{{#each context.credits}}
-						{{#if pretext}}
-							<p>{{pretext}}</p><hr>
-						{{/if}}
-						<dl>
-							{{#each groups}}
-								{{#if title}}
-									<dt>
-										<strong>{{title}}:</strong>
-									</dt>
-								{{/if}}
-								<dd>{{{implode_comma members}}}</dd>
-							{{/each}}
-						</dl>
-						{{#if posttext}}
-							<hr>
-							<p>{{posttext}}</p>
-						{{/if}}
-					{{/each}}
-				</div>
 			</div>
 		</div>
 

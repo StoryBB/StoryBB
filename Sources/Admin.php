@@ -49,8 +49,8 @@ function AdminMain()
 					'function' => 'AdminHome',
 					'icon' => 'administration',
 				),
-				'credits' => array(
-					'label' => $txt['support_credits_title'],
+				'support' => array(
+					'label' => $txt['support_title'],
 					'function' => 'AdminHome',
 					'icon' => 'support',
 				),
@@ -517,10 +517,6 @@ function AdminHome()
 		$context['more_admins_link'] = '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
 	}
 
-	// Load the credits stuff.
-	require_once($sourcedir . '/Who.php');
-	Credits(true);
-
 	// This makes it easier to get the latest news with your time format.
 	$context['time_format'] = urlencode($user_info['time_format']);
 	$context['forum_version'] = $forum_version;
@@ -542,9 +538,9 @@ function AdminHome()
 
 	$context['can_admin'] = allowedTo('admin_forum');
 
-	$context['sub_template'] = $context['admin_area'] == 'credits' ? 'credits' : 'admin';
-	$context['page_title'] = $context['admin_area'] == 'credits' ? $txt['support_credits_title'] : $txt['admin_center'];
-	if ($context['admin_area'] != 'credits')
+	$context['sub_template'] = $context['admin_area'] == 'support' ? 'support' : 'admin';
+	$context['page_title'] = $context['admin_area'] == 'support' ? $txt['support_title'] : $txt['admin_center'];
+	if ($context['admin_area'] != 'support')
 		$context[$context['admin_menu_name']]['tab_data'] = array(
 			'title' => $txt['admin_center'],
 			'help' => '',

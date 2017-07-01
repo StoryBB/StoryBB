@@ -28,7 +28,6 @@ $txt['whospider_reminder'] = 'Viewing the reminder page.';
 $txt['whoall_activate'] = 'Activating their account.';
 $txt['whoall_buddy'] = 'Modifying their buddy list.';
 $txt['whoall_coppa'] = 'Filling out parent/guardian consent form.';
-$txt['whoall_credits'] = 'Viewing credits page.';
 $txt['whoall_emailuser'] = 'Sending email to another member.';
 $txt['whoall_groups'] = 'Viewing the member groups page.';
 $txt['whoall_help'] = 'Viewing the <a href="' . $scripturl . '?action=help">help page</a>.';
@@ -121,38 +120,5 @@ $txt['who_viewownprofile'] = 'Viewing <a href="' . $scripturl . '?action=profile
 $txt['who_profile'] = 'Editing the profile of <a href="' . $scripturl . '?action=profile;u=%1$d">%2$s</a>.';
 $txt['who_post'] = 'Posting a new topic in <a href="' . $scripturl . '?board=%1$d.0">%2$s</a>.';
 $txt['who_poll'] = 'Posting a new poll in <a href="' . $scripturl . '?board=%1$d.0">%2$s</a>.';
-
-// Credits text
-$txt['credits'] = 'Credits';
-//$txt['credits_intro'] = 'Simple Machines wants to thank everyone who helped make SMF 2.1 what it is today; shaping and directing our project, all through the thick and the thin. It wouldn\'t have been possible without you. This includes our users and especially Charter Members - thanks for installing and using our software as well as providing valuable feedback, bug reports, and opinions.';
-$txt['credits_intro'] = 'The SockDrawer would like to extend a thanks to everyone who helped make StoryBB what it is today. We would also like to extend a special thank you to Simple Machines and the contributors who helped make them great. Without SMF, there would not be a StoryBB today.';
-$txt['credits_team'] = 'The SockDevs';
-$txt['credits_special'] = 'Special Thanks';
-$txt['credits_and'] = 'and';
-$txt['credits_anyone'] = 'And for anyone we may have missed, thank you!';
-$txt['credits_copyright'] = 'Copyright';
-$txt['credits_forum'] = 'Forum';
-$txt['credits_modifications'] = 'Modifications';
-$txt['credits_software_graphics'] = 'Software/Graphics';
-$txt['credits_software'] = 'Software';
-$txt['credits_graphics'] = 'Graphics';
-$txt['credits_fonts'] = 'Fonts';
-$txt['credits_groups_found'] = 'Founding Members';
-$txt['credits_groups_dev'] = 'Developers';
-$txt['credits_groups_ba'] = 'Business Users/Beta Testers';
-$txt['credits_license'] = 'License';
-$txt['credits_version'] = 'Version';
-// Replace "English" with the name of this language pack in the string below.
-$txt['credits_groups_translation'] = 'English Translation';
-$txt['credits_groups_translators'] = 'Language Translators';
-$txt['credits_translators_message'] = 'Thank you for your efforts which make it possible for people all around the world to use StoryBB and SMF.';
-$txt['credits_groups_consultants'] = 'Consulting Developers';
-$txt['credits_groups_beta'] = 'Beta Testers';
-$txt['credits_beta_message'] = 'The invaluable few who tirelessly find bugs, provide feedback, and drive the developers crazier.';
-$txt['credits_groups_founder'] = 'Founding Father of SMF';
-$txt['credits_groups_orignal_pm'] = 'Original Project Managers';
-
-// List of people who have made more than a token contribution to this translation. (blank for English)
-$txt['translation_credits'] = array();
 
 ?>

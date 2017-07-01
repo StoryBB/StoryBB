@@ -280,7 +280,6 @@ function smf_main()
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
 		'calendar' => array('Calendar.php', 'CalendarMain'),
 		'coppa' => array('Register.php', 'CoppaForm'),
-		'credits' => array('Who.php', 'Credits'),
 		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 		'dlattach' => array('ShowAttachments.php', 'showAttachment'),
 		'editpoll' => array('Poll.php', 'EditPoll'),
