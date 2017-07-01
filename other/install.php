@@ -1283,11 +1283,7 @@ function AdminAccount()
 
 	// We need this to properly hash the password for Admin
 	$smcFunc['strtolower'] = function($string) {
-			global $sourcedir;
-			if (function_exists('mb_strtolower'))
-				return mb_strtolower($string, 'UTF-8');
-			require_once($sourcedir . '/Subs-Charset.php');
-			return utf8_strtolower($string);
+			return mb_strtolower($string, 'UTF-8');
 		};
 
 	if (!isset($_POST['username']))
@@ -1540,11 +1536,7 @@ function DeleteInstall()
 
 	// This function is needed to do the updateStats('subject') call.
 	$smcFunc['strtolower'] = function($string){
-			global $sourcedir;
-			if (function_exists('mb_strtolower'))
-				return mb_strtolower($string, 'UTF-8');
-			require_once($sourcedir . '/Subs-Charset.php');
-			return utf8_strtolower($string);
+			return mb_strtolower($string, 'UTF-8');
 		};
 
 	$request = $smcFunc['db_query']('', '
