@@ -41,6 +41,10 @@ require_once(dirname(__FILE__) . '/Settings.php');
 if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
 	$cachedir = $boarddir . '/cache';
 
+// Some of our nice fallbacks
+require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+
 // Without those we can't go anywhere
 require_once($sourcedir . '/QueryString.php');
 require_once($sourcedir . '/Subs.php');
