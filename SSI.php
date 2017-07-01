@@ -51,6 +51,9 @@ if ($maintenance == 2 && (!isset($ssi_maintenance_off) || $ssi_maintenance_off !
 if (substr($sourcedir, 0, 1) == '.' && substr($sourcedir, 1, 1) != '.')
 	$sourcedir = dirname(__FILE__) . substr($sourcedir, 1);
 
+require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+
 // Load the important includes.
 require_once($sourcedir . '/QueryString.php');
 require_once($sourcedir . '/Session.php');

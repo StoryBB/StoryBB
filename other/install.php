@@ -1260,7 +1260,7 @@ function DatabasePopulation()
 // Ask for the administrator login information.
 function AdminAccount()
 {
-	global $txt, $db_type, $db_connection, $smcFunc, $incontext, $db_prefix, $db_passwd, $sourcedir;
+	global $txt, $db_type, $db_connection, $smcFunc, $incontext, $db_prefix, $db_passwd, $boarddir, $sourcedir;
 
 	$incontext['sub_template'] = 'admin_account';
 	$incontext['page_title'] = $txt['user_settings'];
@@ -1273,6 +1273,9 @@ function AdminAccount()
 	// Need this to check whether we need the database password.
 	require(dirname(__FILE__) . '/Settings.php');
 	load_database();
+
+	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 
 	require_once($sourcedir . '/Subs-Auth.php');
 
@@ -1439,7 +1442,7 @@ function DeleteInstall()
 {
 	global $txt, $incontext;
 	global $smcFunc, $context, $cookiename;
-	global $current_smf_version, $databases, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
+	global $current_smf_version, $databases, $boarddir, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['sub_template'] = 'delete_install';
@@ -1449,6 +1452,9 @@ function DeleteInstall()
 	load_database();
 
 	chdir(dirname(__FILE__));
+
+	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 
 	require_once($sourcedir . '/Errors.php');
 	require_once($sourcedir . '/Logging.php');
