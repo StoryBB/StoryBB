@@ -99,7 +99,14 @@ function langName($lang) {
 
 
 function render_page($content) {
-	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance;
+	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count;
+
+	// Show the load time?  (only makes sense for the footer.)
+	// This is not really the correct place for this, ideally it needs to happen
+	// as late as possible, but we don't have a flow where this really works yet.
+	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
+	$context['load_time'] = comma_format(round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3));
+	$context['load_queries'] = $db_count;
 
 	$data = Array(
 		'content' => $content,
