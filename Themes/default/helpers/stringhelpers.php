@@ -81,4 +81,5 @@ function JSEscape($string)
 		$scripturl => '\' + smf_scripturl + \'',
 	)) . '\'';
 }
+
 ?>
