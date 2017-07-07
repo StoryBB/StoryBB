@@ -1962,7 +1962,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$simpleActions = array(
 		'findmember',
 		'helpadmin',
-		'printpage',
 	);
 
 	// Parent action => array of areas
