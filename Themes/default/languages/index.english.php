@@ -356,10 +356,6 @@ $txt['latest_post'] = 'Latest Post';
 
 $txt['total_boards'] = 'Total Boards';
 
-$txt['print_page'] = 'Print Page';
-$txt['print_page_text'] = 'Text only';
-$txt['print_page_images'] = 'Text with Images';
-
 $txt['valid_email'] = 'This must be a valid email address.';
 
 $txt['info_center_title'] = '%1$s - Info Center';
