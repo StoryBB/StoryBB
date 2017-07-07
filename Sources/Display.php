@@ -1088,8 +1088,6 @@ function Display()
 	$context['can_unwatch'] = !$user_info['is_guest'];
 	$context['can_set_notify'] = !$user_info['is_guest'];
 
-	$context['can_print'] = empty($modSettings['disable_print_topic']);
-
 	// Start this off for quick moderation - it will be or'd for each post.
 	$context['can_remove_post'] = allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']);
 
@@ -1173,9 +1171,6 @@ function Display()
 
 	if ($context['can_mark_unread'])
 		$context['normal_buttons']['mark_unread'] = array('text' => 'mark_unread', 'image' => 'markunread.png', 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']);
-
-	if ($context['can_print'])
-		$context['normal_buttons']['print'] = array('text' => 'print', 'image' => 'print.png', 'custom' => 'rel="nofollow"', 'url' => $scripturl . '?action=printpage;topic=' . $context['current_topic'] . '.0');
 
 	if ($context['can_set_notify'])
 		$context['normal_buttons']['notify'] = array(
