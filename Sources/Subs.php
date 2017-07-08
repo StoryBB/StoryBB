@@ -1702,39 +1702,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		$cache_t = microtime();
 	}
 
-	if ($smileys === 'print')
-	{
-		// [glow], [shadow], and [move] can't really be printed.
-		$disabled['glow'] = true;
-		$disabled['shadow'] = true;
-		$disabled['move'] = true;
-
-		// Colors can't well be displayed... supposed to be black and white.
-		$disabled['color'] = true;
-		$disabled['black'] = true;
-		$disabled['blue'] = true;
-		$disabled['white'] = true;
-		$disabled['red'] = true;
-		$disabled['green'] = true;
-		$disabled['me'] = true;
-
-		// Color coding doesn't make sense.
-		$disabled['php'] = true;
-
-		// Links are useless on paper... just show the link.
-		$disabled['ftp'] = true;
-		$disabled['url'] = true;
-		$disabled['iurl'] = true;
-		$disabled['email'] = true;
-		$disabled['flash'] = true;
-
-		// @todo Change maybe?
-		if (!isset($_GET['images']))
-			$disabled['img'] = true;
-
-		// @todo Interface/setting to add more?
-	}
-
 	$open_tags = array();
 	$message = strtr($message, array("\n" => '<br>'));
 
