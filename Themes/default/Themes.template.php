@@ -125,18 +125,6 @@ function template_main()
 
 	if ($context['can_create_new'])
 	{
-		// From a file.
-		echo '
-				<fieldset>
-					<legend>', $txt['theme_install_file'], '</legend>
-					<form action="', $scripturl, '?action=admin;area=theme;sa=install;do=file" method="post" accept-charset="UTF-8" enctype="multipart/form-data" class="padding">
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-						<input type="hidden" name="', $context['admin-t-file_token_var'], '" value="', $context['admin-t-file_token'], '">
-						<input type="file" name="theme_gz" id="theme_gz" value="theme_gz" size="40" onchange="this.form.copy.disabled = this.value != \'\'; this.form.theme_dir.disabled = this.value != \'\';" class="input_file">
-						<input type="submit" name="save_file" value="' . $txt['upload'] . '" class="button_submit">
-					</form>
-				</fieldset>';
-
 		// Copied from the default.
 		echo '
 				<fieldset>

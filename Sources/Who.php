@@ -787,41 +787,6 @@ function Credits($in_admin = false)
 		),
 	);
 
-	// Support for mods that use the <credits> tag via the package manager
-	$context['credits_modifications'] = array();
-	if (($mods = cache_get_data('mods_credits', 86400)) === null)
-	{
-		$mods = array();
-		$request = $smcFunc['db_query']('substring', '
-			SELECT version, name, credits
-			FROM {db_prefix}log_packages
-			WHERE install_state = {int:installed_mods}
-				AND credits != {string:empty}
-				AND SUBSTRING(filename, 1, 9) != {string:patch_name}',
-			array(
-				'installed_mods' => 1,
-				'patch_name' => 'smf_patch',
-				'empty' => '',
-			)
-		);
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-		{
-			$credit_info = smf_json_decode($row['credits'], true);
-
-			$copyright = empty($credit_info['copyright']) ? '' : $txt['credits_copyright'] . ' &copy; ' . $smcFunc['htmlspecialchars']($credit_info['copyright']);
-			$license = empty($credit_info['license']) ? '' : $txt['credits_license'] . ': ' . (!empty($credit_info['licenseurl']) ? '<a href="'. $smcFunc['htmlspecialchars']($credit_info['licenseurl']) .'">'. $smcFunc['htmlspecialchars']($credit_info['license']) .'</a>' : $smcFunc['htmlspecialchars']($credit_info['license']));
-			$version = $txt['credits_version'] . ' ' . $row['version'];
-			$title = (empty($credit_info['title']) ? $row['name'] : $smcFunc['htmlspecialchars']($credit_info['title'])) . ': ' . $version;
-
-			// build this one out and stash it away
-			$mod_name = empty($credit_info['url']) ? $title : '<a href="' . $credit_info['url'] . '">' . $title . '</a>';
-			$mods[] = $mod_name . (!empty($license) ? ' | ' . $license  : '') . (!empty($copyright) ? ' | ' . $copyright  : '');
-		}
-		cache_put_data('mods_credits', $mods, 86400);
-	}
-	$context['credits_modifications'] = $mods;
-
 	$context['copyrights'] = array(
 		'smf' => sprintf($forum_copyright, $forum_version, $software_year),
 		/* Modification Authors:  You may add a copyright statement to this array for your mods.

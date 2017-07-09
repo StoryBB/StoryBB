@@ -214,7 +214,7 @@ function template_credits()
 	}
 
 	// How about Modifications, we all love em
-	if (!empty($context['credits_modifications']) || !empty($context['copyrights']['mods']))
+	if (!empty($context['copyrights']['mods']))
 	{
 		echo '
 		<div class="cat_bar">
@@ -222,16 +222,8 @@ function template_credits()
 		</div>
 		<div class="windowbg noup">';
 
-		// Display the credits.
-		if (!empty($context['credits_modifications']))
-			echo '
-			', implode('
-			<br>', $context['credits_modifications']);
-
-		// Legacy.
 		if (!empty($context['copyrights']['mods']))
-			echo (empty($context['credits_modifications']) ? '<br>' : ''),
-			implode('
+			echo implode('
 			<br>', $context['copyrights']['mods']);
 
 		echo '
