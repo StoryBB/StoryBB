@@ -131,7 +131,6 @@ function template_post()
 	echo '
 		<caption name="guestname" class="', isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) || isset($context['post_error']['bad_name']) ? 'error' : '', '" />
 		<caption name="email" class="', isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? 'error' : '', '" />
-		<caption name="evtitle" class="', isset($context['post_error']['no_event']) ? 'error' : '', '" />
 		<caption name="subject" class="', isset($context['post_error']['no_subject']) ? 'error' : '', '" />
 		<caption name="question" class="', isset($context['post_error']['no_question']) ? 'error' : '', '" />', isset($context['post_error']['no_message']) || isset($context['post_error']['long_message']) ? '
 		<post_error />' : '', '

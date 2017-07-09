@@ -15,17 +15,6 @@ function template_options()
 	global $context, $txt;
 
 	$context['theme_options'] = array(
-		$txt['theme_opt_calendar'],
-		array(
-			'id' => 'calendar_start_day',
-			'label' => $txt['calendar_start_day'],
-			'options' => array(
-				0 => $txt['days'][0],
-				1 => $txt['days'][1],
-				6 => $txt['days'][6],
-			),
-			'default' => true,
-		),
 		$txt['theme_opt_display'],
 		array(
 			'id' => 'show_children',

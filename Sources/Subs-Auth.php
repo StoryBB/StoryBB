@@ -513,8 +513,7 @@ function RequestMembers()
 	$_REQUEST['search'] = trim($smcFunc['strtolower']($_REQUEST['search']));
 	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));
 
-	if (function_exists('iconv'))
-		header('Content-Type: text/plain; charset=UTF-8');
+	header('Content-Type: text/plain; charset=UTF-8');
 
 	$request = $smcFunc['db_query']('', '
 		SELECT real_name

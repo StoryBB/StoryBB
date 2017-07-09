@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html {{#if context.right_to_left}}dir="rtl" {{/if}}{{#if txt.lang_locale}} lang="{{locale txt.lang_locale}}"{{/if}}>
+<head>
+	<meta charset="{{context.character_set}}">
+	{{#each context.css_files}}
+	    <link rel="stylesheet" href="{{fileUrl}}">
+	{{/each}}
+    
+    {{#if context.javascript_vars}}
+    <script>
+    {{#each context.javascript_vars}}
+        {{#if .}}
+            {{{@key}}}={{{.}}}
+        {{else}}
+            {{{@key}}}
+        {{/if}}
+    {{/each}}
+    </script>
+    {{/if}}
+    
+    {{#each context.javascript_files}}
+        <script src="{{fileUrl}}" {{#if options.async}}async="async"{{/if}}></script>
+    {{/each}}
+    <script src="{{settings.theme_url}}/scripts/minified.js"></script>
+    
+    <script>
+        {{#each context.javascript_inline.standard}}{{{.}}}{{/each}}
+    </script>
+
+	<title>{{context.page_title_html_safe}}</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{{#each context.meta_tags}}
+	    <meta {{#if name}}name="{{name}}"{{else}}property="{{property}}"{{/if}}  content="{{content}}">
+	{{/each}}
+	
+	<!-- Theme color; feel free to override -->
+	<meta name="theme-color" content="#557EA0">
+	
+	{{#if context.robot_no_index}}<meta name="robots" content="noindex">{{/if}}
+	{{#if context.canonical_url}}<link rel="canonical" href="{{context.canonical_url}}">{{/if}}
+	<link rel="help" href="{{scripturl}}?action=help">
+	<link rel="contents" href="{{scripturl}}">
+	{{#if context.allow_search}}<link rel="search" href="{{scripturl}}?action=search">{{/if}}
+	
+	<link rel="alternate feed" type="application/rss+xml" title="{{context.forum_name_html_safe}} - {{txt.rss}}" href="{{scripturl}}?action=.xml;type=rss2{{#if context.current_board}};board={{context.current_board}}{{/if}}">
+	<link rel="alternate feed" type="application/atom+xml" title="{{context.forum_name_html_safe}} - {{txt.atom}}" href="{{scripturl}}?action=.xml;type=atom{{#if context.current_board}};board={{context.current_board}}{{/if}}">
+	
+	{{#if context.links.next}}<link rel="next" href="{{context.links.next}}">{{/if}}
+	{{#if context.links.prev}}<link rel="perv" href="{{context.links.prev}}">{{/if}}
+	{{#if context.current_board}}<link rel="index" href="{{scripturl}}?board={{context.current_board}}.0">{{/if}}
+	{{context.html_headers}}
+	</head>
+	{{!-- 
+	I apologise for the next line. -Yami
+	--}}
+<body id="{{context.browser_body_id}}" class="action_{{#if context.current_action}}{{context.current_action}}{{else}}{{#if context.current_board}}messageindex{{else}}{{#if context.current_topic}}display{{else}}home{{/if}}{{/if}}{{/if}}{{#if context.current_board}}board_{{context.current_board}}{{/if}}">
+<div id="footerfix">

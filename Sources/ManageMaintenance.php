@@ -508,8 +508,6 @@ function ConvertEntities()
 		'ban_groups',
 		'ban_items',
 		'boards',
-		'calendar',
-		'calendar_holidays',
 		'categories',
 		'log_errors',
 		'log_search_subjects',

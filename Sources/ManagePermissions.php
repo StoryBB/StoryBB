@@ -1103,7 +1103,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 	// Restrictive - ie. guests.
 	$groupLevels['global']['restrict'] = array(
 		'search_posts',
-		'calendar_view',
 		'view_stats',
 		'who_view',
 		'profile_identity_own',
@@ -1152,8 +1151,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 
 	// Moderator - ie. moderators :P.  They can do what standard can, and more.
 	$groupLevels['global']['moderator'] = array_merge($groupLevels['global']['standard'], array(
-		'calendar_post',
-		'calendar_edit_own',
 		'access_mod_center',
 		'issue_warning',
 	));
@@ -1184,7 +1181,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'admin_forum',
 		'manage_permissions',
 		'edit_news',
-		'calendar_edit_any',
 		'profile_identity_any',
 		'profile_extra_any',
 		'profile_signature_any',
@@ -1418,7 +1414,6 @@ function loadAllPermissions()
 		'membergroup' => array(
 			'general',
 			'pm',
-			'calendar',
 			'maintenance',
 			'member_admin',
 			'profile',
@@ -1452,9 +1447,6 @@ function loadAllPermissions()
 			'pm_read' => array(false, 'pm'),
 			'pm_send' => array(false, 'pm'),
 			'pm_draft' => array(false, 'pm'),
-			'calendar_view' => array(false, 'calendar'),
-			'calendar_post' => array(false, 'calendar'),
-			'calendar_edit' => array(true, 'calendar'),
 			'admin_forum' => array(false, 'maintenance'),
 			'manage_boards' => array(false, 'maintenance'),
 			'manage_attachments' => array(false, 'maintenance'),
@@ -1523,7 +1515,6 @@ function loadAllPermissions()
 	// All permission groups that will be shown in the left column on classic view.
 	$leftPermissionGroups = array(
 		'general',
-		'calendar',
 		'maintenance',
 		'member_admin',
 		'topic',
@@ -1536,12 +1527,7 @@ function loadAllPermissions()
 	// Some permissions are hidden if features are off.
 	$hiddenPermissions = array();
 	$relabelPermissions = array(); // Permissions to apply a different label to.
-	if (empty($modSettings['cal_enabled']))
-	{
-		$hiddenPermissions[] = 'calendar_view';
-		$hiddenPermissions[] = 'calendar_post';
-		$hiddenPermissions[] = 'calendar_edit';
-	}
+
 	if ($modSettings['warning_settings'][0] == 0)
 	{
 		$hiddenPermissions[] = 'issue_warning';
@@ -2215,7 +2201,6 @@ function loadIllegalGuestPermissions()
 		'admin_forum',
 		'announce_topic',
 		'approve_posts',
-		'calendar_edit',
 		'delete',
 		'delete_replies',
 		'edit_news',

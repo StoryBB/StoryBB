@@ -519,13 +519,6 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		)
 	);
 	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}calendar
-		WHERE id_topic IN ({array_int:topics})',
-		array(
-			'topics' => $topics,
-		)
-	);
-	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}log_topics
 		WHERE id_topic IN ({array_int:topics})',
 		array(
@@ -560,9 +553,6 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	// Update the totals...
 	updateStats('message');
 	updateStats('topic');
-	updateSettings(array(
-		'calendar_updated' => time(),
-	));
 
 	require_once($sourcedir . '/Subs-Post.php');
 	$updates = array();
@@ -988,9 +978,6 @@ function removeMessage($message, $decreasePostCount = true)
 	// Update the pesky statistics.
 	updateStats('message');
 	updateStats('topic');
-	updateSettings(array(
-		'calendar_updated' => time(),
-	));
 
 	// And now to update the last message of each board we messed with.
 	require_once($sourcedir . '/Subs-Post.php');
