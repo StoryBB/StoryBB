@@ -21,10 +21,8 @@ $txt['theme_confirmed_enabling'] = 'The theme was successfully enabled.';
 $txt['theme_confirmed_removing'] = 'The theme was successfully removed.';
 
 $txt['theme_install'] = 'Install a New Theme';
-$txt['theme_install_file'] = 'From an archive (e.g. .zip, .tar.gz)';
 $txt['theme_install_dir'] = 'From a directory on the server';
 $txt['theme_install_error'] = 'That theme directory doesn\'t exist, or doesn\'t contain a theme.';
-$txt['theme_install_write_error'] = 'The Themes directory must be writable to continue.';
 $txt['theme_install_go'] = 'Install';
 $txt['theme_install_new'] = 'Create a copy of Default named';
 $txt['theme_install_new_confirm'] = 'Are you sure you want to install this new theme?';
