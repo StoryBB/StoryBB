@@ -7,11 +7,7 @@
  * @version 3.0 Alpha 1
  */
 
-// @todo
-/*	This template file contains only the sub template fatal_error. It is
-	shown when an error occurs, and should show at least a back button and
-	$context['error_message'].
-*/
+use LightnCandy\LightnCandy;
 
 /**
  * THis displays a fatal error message
@@ -19,33 +15,25 @@
 function template_fatal_error()
 {
 	global $context, $txt;
+	
+	$data = [
+		'context' => $context,
+		'txt' => $txt
+	];
 
-	if (!empty($context['simple_action']))
-		echo '
-		<strong>
-			', $context['error_title'], '
-		</strong><br>
-		<div ', $context['error_code'], 'class="padding">', $context['error_message'], '</div>';
-	else
-	{
-		echo '
-	<div id="fatal_error">
-		<div class="cat_bar">
-			<h3 class="catbg">
-				', $context['error_title'], '
-			</h3>
-		</div>
-		<div class="windowbg noup">
-			<div ', $context['error_code'], 'class="padding">', $context['error_message'], '</div>
-		</div>
-	</div>';
-
-		// Show a back button (using javascript.)
-		echo '
-	<div class="centertext">
-		<a class="button_link" style="float:none" href="javascript:document.location=document.referrer">', $txt['back'], '</a>
-	</div>';
+	$template = file_get_contents(__DIR__ .  "/templates/error_fatal.hbs");
+	if (!$template) {
+		die('Fatal error template did not load!');
 	}
+
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [],
+	]);
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -238,25 +226,26 @@ function template_show_file()
 function template_attachment_errors()
 {
 	global $context, $scripturl, $txt;
+	
+	$data = [
+		'context' => $context,
+		'scripturl' => $scripturl,
+		'txt' => $txt
+	];
 
-	echo '
-	<div>
-		<div class="cat_bar">
-			<h3 class="catbg">
-				', $context['error_title'], '
-			</h3>
-		</div>
-		<div class="windowbg">
-			<div class="padding">
-				<div class="noticebox">',
-					$context['error_message'], '
-				</div>',
-				!empty($context['back_link']) ? ('<a class="button_link" href="' . $scripturl . $context['back_link'] . '">' . $txt['back'] . '</a>') : '',
-				'<span style="float: right; margin:.5em;"></span>
-				<a class="button_link" href="', $scripturl, $context['redirect_link'], '">', $txt['continue'], '</a>
-			</div>
-		</div>
-	</div>';
+	$template = file_get_contents(__DIR__ .  "/templates/error_attachment.hbs");
+	if (!$template) {
+		die('Attachment error template did not load!');
+	}
+
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [],
+	]);
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 ?>
