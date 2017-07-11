@@ -9,7 +9,7 @@ fi
 
 # Copy files up a directory
 cp ./other/install.php ./install.php
-cp ./other/install.php ./Settings.php
+cp ./other/Settings.php ./Settings.php
 cp ./other/install_3-0_mysql.sql ./install_3-0_mysql.sql
 cp ./other/composerInstaller ./composerInstaller
 
