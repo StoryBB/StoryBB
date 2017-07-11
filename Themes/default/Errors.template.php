@@ -194,30 +194,29 @@ function template_error_log()
 function template_show_file()
 {
 	global $context, $settings, $modSettings;
+	
+	$data = [
+		'context' => $context,
+		'settings' => $settings,
+		'modSettings' => $modSettings
+	];
 
-	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="UTF-8">
-		<title>', $context['file_data']['file'], '</title>
-		<link rel="stylesheet" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css', $modSettings['browser_cache'], '">
-	</head>
-	<body>
-		<table class="errorfile_table">';
-	foreach ($context['file_data']['contents'] as $index => $line)
-	{
-		$line_num = $index + $context['file_data']['min'];
-		$is_target = $line_num == $context['file_data']['target'];
-		echo '
-			<tr>
-				<td class="righttext', $is_target ? ' current">==&gt;' : '">', $line_num, ':</td>
-				<td style="white-space: nowrap;', $is_target ? ' border: 1px solid black;border-width: 1px 1px 1px 0;' : '', '">', $line, '</td>
-			</tr>';
+	$template = file_get_contents(__DIR__ .  "/templates/error_show_file.hbs");
+	if (!$template) {
+		die('Error show file template did not load!');
 	}
-	echo '
-		</table>
-	</body>
-</html>';
+
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [
+			'eq' => 'logichelper_eq',
+			'add' => 'numerichelper_add',
+		],
+	]);
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
