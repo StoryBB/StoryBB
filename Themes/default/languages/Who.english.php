@@ -72,7 +72,6 @@ $txt['whotopic_movetopic'] = 'Moving the topic &quot;<a href="' . $scripturl . '
 $txt['whotopic_movetopic2'] = 'Moving the topic &quot;<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>&quot; to another board.';
 $txt['whotopic_post'] = 'Posting in <a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>.';
 $txt['whotopic_post2'] = 'Posting in <a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>.';
-$txt['whotopic_printpage'] = 'Printing the topic &quot;<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>&quot;.';
 $txt['whotopic_quickmod2'] = 'Moderating the topic <a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>.';
 $txt['whotopic_removepoll'] = 'Removing the poll in &quot;<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>&quot;.';
 $txt['whotopic_removetopic2'] = 'Removing the topic <a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>.';
@@ -86,7 +85,6 @@ $txt['whoadmin_editagreement'] = 'Editing the registration agreement.';
 $txt['whoadmin_featuresettings'] = 'Editing forum features and options.';
 $txt['whoadmin_modlog'] = 'Viewing the moderator log.';
 $txt['whoadmin_serversettings'] = 'Editing the forum settings.';
-$txt['whoadmin_packageget'] = 'Getting packages.';
 $txt['whoadmin_packages'] = 'Viewing the package manager.';
 $txt['whoadmin_permissions'] = 'Editing the forum permissions.';
 $txt['whoadmin_pgdownload'] = 'Downloading a package.';

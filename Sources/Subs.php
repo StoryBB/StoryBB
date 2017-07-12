@@ -1702,39 +1702,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		$cache_t = microtime();
 	}
 
-	if ($smileys === 'print')
-	{
-		// [glow], [shadow], and [move] can't really be printed.
-		$disabled['glow'] = true;
-		$disabled['shadow'] = true;
-		$disabled['move'] = true;
-
-		// Colors can't well be displayed... supposed to be black and white.
-		$disabled['color'] = true;
-		$disabled['black'] = true;
-		$disabled['blue'] = true;
-		$disabled['white'] = true;
-		$disabled['red'] = true;
-		$disabled['green'] = true;
-		$disabled['me'] = true;
-
-		// Color coding doesn't make sense.
-		$disabled['php'] = true;
-
-		// Links are useless on paper... just show the link.
-		$disabled['ftp'] = true;
-		$disabled['url'] = true;
-		$disabled['iurl'] = true;
-		$disabled['email'] = true;
-		$disabled['flash'] = true;
-
-		// @todo Change maybe?
-		if (!isset($_GET['images']))
-			$disabled['img'] = true;
-
-		// @todo Interface/setting to add more?
-	}
-
 	$open_tags = array();
 	$message = strtr($message, array("\n" => '<br>'));
 
@@ -3973,11 +3940,6 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=admin;area=featuresettings',
 						'show' => allowedTo('admin_forum'),
 					),
-					'packages' => array(
-						'title' => $txt['package'],
-						'href' => $scripturl . '?action=admin;area=packages',
-						'show' => allowedTo('admin_forum'),
-					),
 					'errorlog' => array(
 						'title' => $txt['errlog'],
 						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
@@ -5671,43 +5633,32 @@ function build_regex($strings, $delim = null)
 {
 	global $smcFunc;
 
-	// The mb_* functions are faster than the $smcFunc ones, but may not be available
-	if (function_exists('mb_internal_encoding') && function_exists('mb_detect_encoding') && function_exists('mb_strlen') && function_exists('mb_substr'))
+	if (($string_encoding = mb_detect_encoding(implode(' ', $strings))) !== false)
 	{
-		if (($string_encoding = mb_detect_encoding(implode(' ', $strings))) !== false)
-		{
-			$current_encoding = mb_internal_encoding();
-			mb_internal_encoding($string_encoding);
-		}
-
-		$strlen = 'mb_strlen';
-		$substr = 'mb_substr';
-	}
-	else
-	{
-		$strlen = $smcFunc['strlen'];
-		$substr = $smcFunc['substr'];
+		// Save the current encoding just in case.
+		$current_encoding = mb_internal_encoding();
+		mb_internal_encoding($string_encoding);
 	}
 
 	// This recursive function creates the index array from the strings
-	$add_string_to_index = function ($string, $index) use (&$strlen, &$substr, &$add_string_to_index)
+	$add_string_to_index = function ($string, $index) use (&$add_string_to_index)
 	{
 		static $depth = 0;
 		$depth++;
 
-		$first = $substr($string, 0, 1);
+		$first = mb_substr($string, 0, 1);
 
 		if (empty($index[$first]))
 			$index[$first] = array();
 
-		if ($strlen($string) > 1)
+		if (mb_strlen($string) > 1)
 		{
 			// Sanity check on recursion
 			if ($depth > 99)
-				$index[$first][$substr($string, 1)] = '';
+				$index[$first][mb_substr($string, 1)] = '';
 
 			else
-				$index[$first] = $add_string_to_index($substr($string, 1), $index[$first]);
+				$index[$first] = $add_string_to_index(mb_substr($string, 1), $index[$first]);
 		}
 		else
 			$index[$first][''] = '';
@@ -5717,7 +5668,7 @@ function build_regex($strings, $delim = null)
 	};
 
 	// This recursive function turns the index array into a regular expression
-	$index_to_regex = function (&$index, $delim) use (&$strlen, &$index_to_regex)
+	$index_to_regex = function (&$index, $delim) use (&$index_to_regex)
 	{
 		static $depth = 0;
 		$depth++;
@@ -5752,7 +5703,7 @@ function build_regex($strings, $delim = null)
 				$regex[$new_key] = $key_regex . $sub_regex;
 			else
 			{
-				if (($length += strlen($key_regex) + 1) < $max_length || empty($regex))
+				if (($length += mb_strlen($key_regex) + 1) < $max_length || empty($regex))
 				{
 					$regex[$new_key] = $key_regex . $sub_regex;
 					unset($index[$key]);
@@ -5763,9 +5714,9 @@ function build_regex($strings, $delim = null)
 		}
 
 		// Sort by key length and then alphabetically
-		uksort($regex, function($k1, $k2) use (&$strlen) {
-			$l1 = $strlen($k1);
-			$l2 = $strlen($k2);
+		uksort($regex, function($k1, $k2) {
+			$l1 = mb_strlen($k1);
+			$l2 = mb_strlen($k2);
 
 			if ($l1 == $l2)
 				return strcmp($k1, $k2) > 0 ? 1 : -1;

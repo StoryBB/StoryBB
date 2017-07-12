@@ -41,6 +41,10 @@ require_once(dirname(__FILE__) . '/Settings.php');
 if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
 	$cachedir = $boarddir . '/cache';
 
+// Some of our nice fallbacks
+require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+
 // Without those we can't go anywhere
 require_once($boarddir . '/vendor/autoload.php');
 require_once($sourcedir . '/QueryString.php');
@@ -311,7 +315,6 @@ function smf_main()
 		'pm' => array('PersonalMessage.php', 'MessageMain'),
 		'post' => array('Post.php', 'Post'),
 		'post2' => array('Post.php', 'Post2'),
-		'printpage' => array('Printpage.php', 'PrintTopic'),
 		'profile' => array('Profile.php', 'ModifyProfile'),
 		'quotefast' => array('Post.php', 'QuoteFast'),
 		'quickmod' => array('MessageIndex.php', 'QuickModeration'),

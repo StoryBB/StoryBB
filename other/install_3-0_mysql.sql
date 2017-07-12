@@ -396,31 +396,6 @@ CREATE TABLE {$db_prefix}log_online (
 ) ENGINE={$memory};
 
 #
-# Table structure for table `log_packages`
-#
-
-CREATE TABLE {$db_prefix}log_packages (
-  id_install INT(10) AUTO_INCREMENT,
-  filename VARCHAR(255) NOT NULL DEFAULT '',
-  package_id VARCHAR(255) NOT NULL DEFAULT '',
-  name VARCHAR(255) NOT NULL DEFAULT '',
-  version VARCHAR(255) NOT NULL DEFAULT '',
-  id_member_installed MEDIUMINT NOT NULL DEFAULT '0',
-  member_installed VARCHAR(255) NOT NULL DEFAULT '',
-  time_installed INT(10) NOT NULL DEFAULT '0',
-  id_member_removed MEDIUMINT NOT NULL DEFAULT '0',
-  member_removed VARCHAR(255) NOT NULL DEFAULT '',
-  time_removed INT(10) NOT NULL DEFAULT '0',
-  install_state TINYINT NOT NULL DEFAULT '1',
-  failed_steps TEXT NOT NULL,
-  themes_installed VARCHAR(255) NOT NULL DEFAULT '',
-  db_changes TEXT NOT NULL,
-  credits VARCHAR(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (id_install),
-  INDEX idx_filename (filename(15))
-) ENGINE={$engine};
-
-#
 # Table structure for table `log_polls`
 #
 
@@ -1777,7 +1752,6 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('requireAgreement', '1'),
 	('unapprovedMembers', '0'),
 	('default_personal_text', ''),
-	('package_make_backups', '1'),
 	('databaseSession_enable', '{$databaseSession_enable}'),
 	('databaseSession_loose', '1'),
 	('databaseSession_lifetime', '2880'),

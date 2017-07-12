@@ -1,8 +1,7 @@
 {
     "require": {
-        "zordius/lightncandy": "dev-master"
-    },
-    "config": {
-        "preferred-install": "dist"
+        "zordius/lightncandy": "dev-master",
+        "symfony/polyfill-iconv": "~1.0",
+        "symfony/polyfill-mbstring": "~1.0"
     }
 }

@@ -279,7 +279,6 @@ function ModifyTopicSettings($return_config = false)
 			array('int', 'oldTopicDays', 'postinput' => $txt['manageposts_days'], 'subtext' => $txt['zero_to_disable']),
 			array('int', 'defaultMaxTopics', 'postinput' => $txt['manageposts_topics']),
 			array('int', 'defaultMaxMessages', 'postinput' => $txt['manageposts_posts']),
-			array('check', 'disable_print_topic'),
 		'',
 			// All, next/prev...
 			array('int', 'enableAllMessages', 'postinput' => $txt['manageposts_posts'], 'subtext' => $txt['enableAllMessages_zero']),

@@ -171,11 +171,6 @@ $boarddir = dirname(__FILE__);
  */
 $sourcedir = dirname(__FILE__) . '/Sources';
 /**
- * Path to the Packages directory.
- * @var string
- */
-$packagesdir = dirname(__FILE__) . '/Packages';
-/**
  * Path to the tasks directory.
  * @var string
  */

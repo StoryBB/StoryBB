@@ -70,6 +70,9 @@ if (!FROM_CLI)
 		obExit_cron();
 }
 
+require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+
 // Load the most important includes. In general, a background should be loading its own dependencies.
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');

@@ -171,24 +171,10 @@ function reloadSettings()
 		},
 		'strtolower' => function($string) use ($sourcedir)
 		{
-			if (!function_exists('mb_strtolower'))
-			{
-				require_once($sourcedir . '/Subs-Charset.php');
-				return utf8_strtolower($string);
-			}
-
 			return mb_strtolower($string, 'UTF-8');
 		},
 		'strtoupper' => function($string)
 		{
-			global $sourcedir;
-
-			if (!function_exists('mb_strtolower'))
-			{
-				require_once($sourcedir . '/Subs-Charset.php');
-				return utf8_strtoupper($string);
-			}
-
 			return mb_strtoupper($string, 'UTF-8');
 		},
 		'truncate' => function($string, $length) use ($ent_check, $ent_list, &$smcFunc)
@@ -1976,7 +1962,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$simpleActions = array(
 		'findmember',
 		'helpadmin',
-		'printpage',
 	);
 
 	// Parent action => array of areas

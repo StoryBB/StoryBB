@@ -66,19 +66,6 @@ function AdminMain()
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
-				'packages' => array(
-					'label' => $txt['package'],
-					'file' => 'Packages.php',
-					'function' => 'Packages',
-					'permission' => array('admin_forum'),
-					'icon' => 'packages',
-					'subsections' => array(
-						'browse' => array($txt['browse_packages']),
-						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
-						'perms' => array($txt['package_file_perms']),
-						'options' => array($txt['package_settings']),
-					),
-				),
 				'search' => array(
 					'function' => 'AdminSearch',
 					'permission' => array('admin_forum'),
@@ -126,7 +113,6 @@ function AdminMain()
 					'icon' => 'languages',
 					'subsections' => array(
 						'edit' => array($txt['language_edit']),
-						'add' => array($txt['language_add']),
 						'settings' => array($txt['language_settings']),
 					),
 				),

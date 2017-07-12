@@ -1239,7 +1239,6 @@ function ThemeInstall()
 	loadTemplate('Themes');
 
 	$subActions = array(
-		'file' => 'InstallFile',
 		'copy' => 'InstallCopy',
 		'dir' => 'InstallDir',
 	);
@@ -1274,80 +1273,6 @@ function ThemeInstall()
 	// Nope, show a nice error.
 	else
 		fatal_lang_error('theme_install_no_action', false);
-}
-
-/**
- * Installs a theme from a theme package.
- *
- * Stores the theme files on a temp dir, on success it renames the dir to the new theme's name. Ends execution with fatal_lang_error() on any error.
- * @return array The newly created theme's info.
- */
-function InstallFile()
-{
-	global $themedir, $themeurl, $context;
-
-	// Set a temp dir for dumping all required files on it.
-	$dirtemp = $themedir . '/temp';
-
-	// Make sure the temp dir doesn't already exist
-	if (file_exists($dirtemp))
-		remove_dir($dirtemp);
-
-	// Create the temp dir.
-	mkdir($dirtemp, 0777);
-
-	// Hopefully the temp directory is writable, or we might have a problem.
-	if (!is_writable($dirtemp))
-	{
-		// Lets give it a try.
-		smf_chmod($dirtemp, '0755');
-
-		// How about now?
-		if (!is_writable($dirtemp))
-			fatal_lang_error('theme_install_write_error', 'critical');
-	}
-
-	// This happens when the admin session is gone and the user has to login again.
-	if (!isset($_FILES) || !isset($_FILES['theme_gz']) || empty($_FILES['theme_gz']))
-		redirectexit('action=admin;area=theme;sa=admin;' . $context['session_var'] . '=' . $context['session_id']);
-
-	// Another error check layer, something went wrong with the upload.
-	if (isset($_FILES['theme_gz']['error']) && $_FILES['theme_gz']['error'] != 0)
-		fatal_lang_error('theme_install_error_file_' . $_FILES['theme_gz']['error'], false);
-
-	// Get the theme's name.
-	$name = pathinfo($_FILES['theme_gz']['name'], PATHINFO_FILENAME);
-	$name = preg_replace(array('/\s/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), $name);
-
-	// Start setting some vars.
-	$context['to_install'] = array(
-		'theme_dir' => $themedir . '/' . $name,
-		'theme_url' => $themeurl . '/' . $name,
-		'images_url' => $themeurl . '/' . $name . '/images',
-		'name' => $name,
-	);
-
-	// Extract the file on the proper themes dir.
-	$extracted = read_tgz_file($_FILES['theme_gz']['tmp_name'], $dirtemp, false, true);
-
-	if ($extracted)
-	{
-		// Read its info form the XML file.
-		$theme_info = get_theme_info($dirtemp);
-		$context['to_install'] += $theme_info;
-
-		// Install the theme. theme_install() will return the new installed ID.
-		$context['to_install']['id'] = theme_install($context['to_install']);
-
-		// Rename the temp dir to the actual theme name.
-		rename($dirtemp, $context['to_install']['theme_dir']);
-
-		// return all the info.
-		return $context['to_install'];
-	}
-
-	else
-		fatal_lang_error('theme_install_error_title', false);
 }
 
 /**
