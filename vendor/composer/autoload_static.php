@@ -4,9 +4,19 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1d5f062fd6aa4fdb913a9781285e2854
+class ComposerStaticInit4e8efefe5603bb645d50291d5899e030
 {
+    public static $files = array (
+        'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Iconv\\' => 23,
+        ),
         'L' => 
         array (
             'LightnCandy\\' => 12,
@@ -14,6 +24,14 @@ class ComposerStaticInit1d5f062fd6aa4fdb913a9781285e2854
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Polyfill\\Iconv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-iconv',
+        ),
         'LightnCandy\\' => 
         array (
             0 => __DIR__ . '/..' . '/zordius/lightncandy/src',
@@ -23,8 +41,8 @@ class ComposerStaticInit1d5f062fd6aa4fdb913a9781285e2854
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1d5f062fd6aa4fdb913a9781285e2854::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1d5f062fd6aa4fdb913a9781285e2854::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit4e8efefe5603bb645d50291d5899e030::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit4e8efefe5603bb645d50291d5899e030::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }
