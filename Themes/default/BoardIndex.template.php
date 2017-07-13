@@ -36,11 +36,6 @@ function comma_format_helper($number, $override_decimal_count)
 	return new \LightnCandy\SafeString(comma_format($number, $override_decimal_count));
 }
 
-function template_button_strip_helper($button_strip,$direction,$strip_options)
-{
-	return new \LightnCandy\SafeString(template_button_strip($button_strip,$direction,$strip_options));
-}
-
 function template_boardindex_outer_above()
 {
 	return template_newsfader();
@@ -103,12 +98,14 @@ function template_main()
     }
 
     $phpStr = LightnCandy::compile($template, Array(
-        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	    'partials' => Array(
+	    	'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs")
+	    ),
         'helpers' => Array(
         	'approvals' => 'approval_helper',
         	'link_moderators' => 'moderators_helper',
         	'comma_format' => 'comma_format_helper',
-        	'template_button_strip' => 'template_button_strip_helper',
         	'or' => 'logichelper_or',
         	'and' => 'logichelper_and',
         	'gt' => 'logichelper_gt'

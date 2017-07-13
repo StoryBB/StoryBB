@@ -1,3 +1,5 @@
-{{#each button_strip}}
-<a class="button button_strip_{{@key}} {{#if active}} active{{/if}} {{class}}" {{#if url}}href="{{url}}"{{/if}} {{custom}}> {{text text}}</a>
-{{/each}}
+<div class="buttonlist{{#if direction}} float{{direction}}{{/if}}">
+    {{#each button_strip}}
+        <a class="button button_strip_{{@key}}{{#if active}} active{{/if}}{{class}}" {{#if url}}href="{{url}}"{{/if}} {{{custom}}}>{{lookup ../txt text}}</a>
+    {{/each}}
+</div>

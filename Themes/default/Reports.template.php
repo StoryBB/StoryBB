@@ -7,41 +7,34 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 /**
  * Choose which type of report to run?
  */
 function template_report_type()
 {
 	global $context, $scripturl, $txt;
+	
+	$data = [
+		'context' => $context,
+		'scripturl' => $scripturl,
+		'txt' => $txt
+	];
 
-	echo '
-	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=reports" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['generate_reports_type'], '</h3>
-			</div>
-			<div class="windowbg2 noup">
-				<dl class="settings">';
-
-	// Go through each type of report they can run.
-	foreach ($context['report_types'] as $type)
-	{
-		if (isset($type['description']))
-			echo '
-					<dt>', $type['description'], '</dt>';
-		echo '
-					<dd>
-						<input type="radio" id="rt_', $type['id'], '" name="rt" value="', $type['id'], '"', $type['is_first'] ? ' checked' : '', ' class="input_radio">
-						<strong><label for="rt_', $type['id'], '">', $type['title'], '</label></strong>
-					</dd>';
+	$template = file_get_contents(__DIR__ .  "/templates/report_type.hbs");
+	if (!$template) {
+		die('Select report type template did not load!');
 	}
-		echo '
-				</dl>
-				<input type="submit" name="continue" value="', $txt['generate_reports_continue'], '" class="button_submit">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			</div>
-		</form>
-	</div>';
+
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [],
+	]);
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -50,87 +43,31 @@ function template_report_type()
 function template_main()
 {
 	global $context, $txt;
+	
+	$data = [
+		'context' => $context,
+		'txt' => $txt
+	];
 
-	echo '
-	<div id="admincenter">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['results'], '</h3>
-		</div>
-		<div id="report_buttons">';
-
-	if (!empty($context['report_buttons']))
-		template_button_strip($context['report_buttons'], 'right');
-
-	echo '
-		</div>';
-
-	// Go through each table!
-	foreach ($context['tables'] as $table)
-	{
-		echo '
-		<table class="table_grid report_results">';
-
-		if (!empty($table['title']))
-			echo '
-			<thead>
-				<tr class="title_bar">
-					<th scope="col" colspan="', $table['column_count'], '">', $table['title'], '</th>
-				</tr>
-			</thead>
-			<tbody>';
-
-		// Now do each row!
-		$row_number = 0;
-		foreach ($table['data'] as $row)
-		{
-			if ($row_number == 0 && !empty($table['shading']['top']))
-				echo '
-				<tr class="windowbg table_caption">';
-			else
-				echo '
-				<tr class="', !empty($row[0]['separator']) ? 'title_bar' : 'windowbg', '">';
-
-			// Now do each column.
-			$column_number = 0;
-
-			foreach ($row as $data)
-			{
-				// If this is a special separator, skip over!
-				if (!empty($data['separator']) && $column_number == 0)
-				{
-					echo '
-					<td colspan="', $table['column_count'], '" class="smalltext">
-						', $data['v'], ':
-					</td>';
-					break;
-				}
-
-				// Shaded?
-				if ($column_number == 0 && !empty($table['shading']['left']))
-					echo '
-					<td class="table_caption ', $table['align']['shaded'], 'text"', $table['width']['shaded'] != 'auto' ? ' width="' . $table['width']['shaded'] . '"' : '', '>
-						', $data['v'] == $table['default_value'] ? '' : ($data['v'] . (empty($data['v']) ? '' : ':')), '
-					</td>';
-				else
-					echo '
-					<td class="smalltext centertext" ', $table['width']['normal'] != 'auto' ? ' width="' . $table['width']['normal'] . '"' : '', !empty($data['style']) ? ' style="' . $data['style'] . '"' : '', '>
-						', $data['v'], '
-					</td>';
-
-				$column_number++;
-			}
-
-			echo '
-				</tr>';
-
-			$row_number++;
-		}
-		echo '
-			</tbody>
-		</table>';
+	$template = file_get_contents(__DIR__ .  "/templates/report.hbs");
+	if (!$template) {
+		die('Report template did not load!');
 	}
-	echo '
-	</div>';
+
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	    'partials' => Array(
+	    	'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs")
+	    ),
+		'helpers' => [
+			'eq' => 'logichelper_eq',
+			'and' => 'logichelper_and',
+		],
+	]);
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**

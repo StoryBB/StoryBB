@@ -82,5 +82,5 @@
     {{/each}} {{! close each context.categories on line 2}}
 </div>
 {{#if context.user.is_logged}}
-    {{#if context.categories}}<div class="mark_read">{{template_button_strip context.mark_read_button "right"}}</div>{{/if}}
+    {{#if context.categories}}<div class="mark_read">{{>button_strip button_strip=context.mark_read_button txt=txt direction="right"}}</div>{{/if}}
 {{/if}}
