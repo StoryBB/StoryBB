@@ -185,7 +185,11 @@
     
     <div id="footer">
     	<ul>
-    		<li class="floatright"><a href="{{$scripturl}}?action=help">{{txt.help}}</a>{{#if modSettings.requireAgreement}}| <a href="{{scripturl}}?action=help;sa=rules">{{txt.terms_and_rules}}</a>{{/if}} | <a href="#top_section">{{txt.go_up}} &#9650;</a></li>
+    		<li class="floatright">
+    		    <a href="{{$scripturl}}?action=help">{{txt.help}}</a>
+    		    {{#if modSettings.requireAgreement}}| <a href="{{scripturl}}?action=help;sa=rules">{{txt.terms_and_rules}}</a>{{/if}}
+    		    | <a href="#top_section">{{txt.go_up}} &#9650;</a>
+		    </li>
     		<li class="copyright">{{{copyright}}}</li>
     	</ul>
     	{{#if context.show_load_time}}
