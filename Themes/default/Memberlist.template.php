@@ -61,8 +61,7 @@ function template_search()
 	$data = Array(
 		'context' => $context,
 		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'settings' => $settings
+		'scripturl' => $scripturl
 	);
 	
 	$template = file_get_contents(__DIR__ .  "/templates/memberlist_search.hbs");
