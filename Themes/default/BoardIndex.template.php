@@ -151,7 +151,7 @@ function template_info_center()
         'helpers' => Array(
         	'partial_helper' => include_ic_partial,
         	'JavaScriptEscape' => JSEscape,
-        	'textTemplate' => textTemplate
+        	'textTemplate' => 'textTemplate'
         )
     ));
 
@@ -183,7 +183,7 @@ function template_ic_block_recent()
         'helpers' => Array(
         	'partial_helper' => include_ic_partial,
         	'JavaScriptEscape' => JSEscape,
-        	'textTemplate' => textTemplate
+        	'textTemplate' => 'textTemplate'
         )
     ));
 

@@ -31,8 +31,7 @@ function template_login()
 
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
+	    'helpers' => []
 	));
 	
 	//var_dump($context['meta_tags']);die();
@@ -62,8 +61,7 @@ function template_login_tfa()
 
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
+	    'helpers' => []
 	));
 	
 	//var_dump($context['meta_tags']);die();
@@ -93,9 +91,9 @@ function template_kick_guest()
 
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    	'template' => textTemplate
-	    )
+	    'helpers' => [
+	    	'template' => 'textTemplate'
+	    ]
 	));
 	
 	//var_dump($context['meta_tags']);die();
@@ -125,9 +123,9 @@ function template_maintenance()
 
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    	'template' => textTemplate
-	    )
+	    'helpers' => [
+	    	'template' => 'textTemplate'
+	    ]
 	));
 	
 	//var_dump($context['meta_tags']);die();
@@ -158,9 +156,9 @@ function template_admin_login()
 
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    	'template' => textTemplate
-	    )
+	    'helpers' => [
+	    	'template' => 'textTemplate'
+	    ]
 	));
 	
 	//var_dump($context['meta_tags']);die();
@@ -189,9 +187,9 @@ function template_retry_activate()
 
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    	'template' => textTemplate
-	    )
+	    'helpers' => [
+	    	'template' => 'textTemplate'
+	    ]
 	));
 	
 	//var_dump($context['meta_tags']);die();
@@ -219,9 +217,9 @@ function template_resend()
 
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    	'template' => textTemplate
-	    )
+	    'helpers' => [
+	    	'template' => 'textTemplate'
+	    ]
 	));
 	
 	//var_dump($context['meta_tags']);die();
