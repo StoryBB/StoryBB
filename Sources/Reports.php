@@ -86,9 +86,9 @@ function ReportsMain()
 		'main' => array(
 			'layers' => null,
 		),
-		'print' => array(
-			'layers' => array('print'),
-		),
+		//'print' => array(
+		//	'layers' => array('print'),
+		//),
 	);
 
 	// Specific template? Use that instead of main!
@@ -107,7 +107,7 @@ function ReportsMain()
 	// Build the reports button array.
 	$context['report_buttons'] = array(
 		'generate_reports' => array('text' => 'generate_reports', 'image' => 'print.png', 'url' => $scripturl . '?action=admin;area=reports', 'active' => true),
-		'print' => array('text' => 'print', 'image' => 'print.png', 'url' => $scripturl . '?action=admin;area=reports;rt=' . $context['report_type'] . ';st=print', 'custom' => 'target="_blank"'),
+		//'print' => array('text' => 'print', 'image' => 'print.png', 'url' => $scripturl . '?action=admin;area=reports;rt=' . $context['report_type'] . ';st=print', 'custom' => 'target="_blank"'),
 	);
 
 	// Allow mods to add additional buttons here
