@@ -1,0 +1,44 @@
+<div id="preview_section"{{#unless context.preview_message}} style="display: none;"{{/unless}}>
+	<div class="cat_bar">
+		<h3 class="catbg">
+			<span>{{txt.preview}}</span>
+		</h3>
+	</div>
+	<div class="windowbg noup">
+		<div class="post" id="preview_body">
+			{{#if context.preview_message}}{{context.preview_message}}{{else}}<br>{{/if}}
+		</div>
+	</div>
+</div>
+<div id="report_form">
+	<form action="{{context.submit_url}}" method="post" accept-charset="UTF-8">
+		<input type="hidden" name="{{context.report_type}}" value="{{context.reported_item}}">
+		<div class="cat_bar">
+			<h3 class="catbg">{{context.page_title}}</h3>
+		</div>
+		<div class="windowbg noup">
+			{{#if context.post_errors}}
+				<div id="error_box" class="errorbox">
+					<ul id="error_list">
+						{{#each context.post_errors}}
+							<li id="error_{{@key}}" class="error">{{.}}</li>
+						{{/each}}
+					</ul>
+					<div style="display:none" id="error_box" class="errorbox"></div>
+				</div>
+			{{/if}}
+			<p class="noticebox">{{context.notice}}</p>
+			<dl class="settings" id="report_post">
+				<dt>
+					<label for="report_comment">{{txt.enter_comment}}</label>:
+				</dt>
+				<dd>
+					<textarea type="text" id="report_comment" name="comment" rows="5">{{context.comment_body}}</textarea>
+				</dd>
+			</dl>
+			<input type="submit" name="preview" value="{{txt.preview}}" class="button_submit">
+			<input type="submit" name="save" value="{{txt.rtm10}}" style="margin-left: 1ex;" class="button_submit">
+			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+		</div>
+	</form>
+</div>

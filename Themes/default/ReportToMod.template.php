@@ -22,77 +22,33 @@
 		sc: the session id, or $context['session_id'].
 */
 
+use LightnCandy\LightnCandy;
+
 /**
  * The main "report this to the moderator" page
  */
 function template_main()
 {
 	global $context, $txt;
+	
+	$data = [
+		'context' => $context,
+		'txt' => $txt
+	];
 
-	// Want to see your master piece?
-	echo '
-	<div id="preview_section"', isset($context['preview_message']) ? '' : ' style="display: none;"', '>
-		<div class="cat_bar">
-			<h3 class="catbg">
-				<span>', $txt['preview'], '</span>
-			</h3>
-		</div>
-		<div class="windowbg noup">
-			<div class="post" id="preview_body">
-				', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
-			</div>
-		</div>
-	</div>';
-
-	echo '
-	<div id="report_form">
-		<form action="', $context['submit_url'], '" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="', $context['report_type'], '" value="', $context['reported_item'], '">
-				<div class="cat_bar">
-					<h3 class="catbg">', $context['page_title'], '</h3>
-				</div>
-				<div class="windowbg noup">';
-
-	if (!empty($context['post_errors']))
-	{
-		echo '
-					<div id="error_box" class="errorbox">
-						<ul id="error_list">';
-
-		foreach ($context['post_errors'] as $key => $error)
-			echo '
-							<li id="error_', $key, '" class="error">', $error, '</li>';
-
-		echo '
-						</ul>';
+	$template = file_get_contents(__DIR__ .  "/templates/reporttomod.hbs");
+	if (!$template) {
+		die('Report to moderator template did not load!');
 	}
-	else
-		echo '
-						<div style="display:none" id="error_box" class="errorbox">';
 
-	echo '
-					</div>';
-
-	echo '
-					<p class="noticebox">', $context['notice'], '</p>
-					<dl class="settings" id="report_post">';
-
-	echo '
-						<dt>
-							<label for="report_comment">', $txt['enter_comment'], '</label>:
-						</dt>
-						<dd>
-							<textarea type="text" id="report_comment" name="comment" rows="5">', $context['comment_body'], '</textarea>
-						</dd>';
-
-	echo '
-					</dl>
-					<input type="submit" name="preview" value="', $txt['preview'], '" class="button_submit">
-					<input type="submit" name="save" value="', $txt['rtm10'], '" style="margin-left: 1ex;" class="button_submit">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				</div>
-		</form>
-	</div>';
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [],
+	]);
+	
+	//var_dump($context['meta_tags']);die();
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 ?>
