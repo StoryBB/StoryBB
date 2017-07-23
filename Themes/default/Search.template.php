@@ -278,19 +278,15 @@ function template_results()
 
 	if ($context['compact'])
 	{
-		// Quick moderation set to checkboxes? Oh, how fun :/.
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
-			echo '
+		// Quick moderation.
+		echo '
 	<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="topicForm">';
 
 	echo '
 		<div class="cat_bar">
 			<h3 class="catbg">
-				<span class="floatright">';
-					if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
-					echo '
-							<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check">';
-				echo '
+				<span class="floatright">
+					<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check">
 				</span>
 				<span class="generic_icons filter"></span>&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
 			</h3>
@@ -321,44 +317,10 @@ function template_results()
 						<div class="counter">', $message['counter'], '</div>
 						<h5>', $topic['board']['link'], ' / <a href="', $scripturl, '?topic=', $topic['id'], '.msg', $message['id'], '#msg', $message['id'], '">', $message['subject_highlighted'], '</a></h5>
 						<span class="smalltext">&#171;&nbsp;',$txt['by'], '&nbsp;<strong>', $message['member']['link'], '</strong>&nbsp;', $txt['on'], '&nbsp;<em>', $message['time'], '</em>&nbsp;&#187;</span>
+					</div>
+					<div class="floatright">
+						<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check">
 					</div>';
-
-				if (!empty($options['display_quick_mod']))
-				{
-					echo '
-					<div class="floatright">';
-
-					if ($options['display_quick_mod'] == 1)
-					{
-						echo '
-						<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check">';
-					}
-					else
-					{
-						if ($topic['quick_mod']['remove'])
-							echo '
-						<a href="', $scripturl, '?action=quickmod;board=' . $topic['board']['id'] . '.0;actions%5B', $topic['id'], '%5D=remove;', $context['session_var'], '=', $context['session_id'], '" class="you_sure"><span class="generic_icons delete" title="', $txt['remove_topic'], '"></span></a>';
-
-						if ($topic['quick_mod']['lock'])
-							echo '
-						<a href="', $scripturl, '?action=quickmod;board=' . $topic['board']['id'] . '.0;actions%5B', $topic['id'], '%5D=lock;', $context['session_var'], '=', $context['session_id'], '" class="you_sure"><span class="generic_icons lock" title="', $topic['is_locked'] ? $txt['set_unlock'] : $txt['set_lock'], '"></span></a>';
-
-						if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
-							echo '
-						<br>';
-
-						if ($topic['quick_mod']['sticky'])
-							echo '
-						<a href="', $scripturl, '?action=quickmod;board=' . $topic['board']['id'] . '.0;actions%5B', $topic['id'], '%5D=sticky;', $context['session_var'], '=', $context['session_id'], '" class="you_sure"><span class="generic_icons sticky" title="', $topic['is_sticky'] ? $txt['set_nonsticky'] : $txt['set_sticky'], '"></span></a>';
-
-						if ($topic['quick_mod']['move'])
-							echo '
-						<a href="', $scripturl, '?action=movetopic;topic=', $topic['id'], '.0"><span class="generic_icons move" title="', $txt['move_topic'], '"></span></a>';
-					}
-
-					echo '
-					</div>';
-				}
 
 				if ($message['body_highlighted'] != '')
 					echo '
@@ -377,7 +339,7 @@ function template_results()
 			<span>', $context['page_index'], '</span>
 		</div>';
 
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']))
+		if (!empty($context['topics']))
 		{
 			echo '
 			<div style="padding: 4px;">
@@ -405,8 +367,7 @@ function template_results()
 		}
 
 
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']))
-			echo '
+		echo '
 			<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 		</form>';
 
@@ -475,7 +436,7 @@ function template_results()
 		<div class="smalltext righttext" id="search_jump_to">&nbsp;</div>
 		<script>';
 
-	if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']) && $context['can_move'])
+	if (!empty($context['topics']) && $context['can_move'])
 		echo '
 				if (typeof(window.XMLHttpRequest) != "undefined")
 					aJumpTo[aJumpTo.length] = new JumpTo({
