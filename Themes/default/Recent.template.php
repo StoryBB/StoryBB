@@ -83,8 +83,7 @@ function template_unread()
 	echo '
 	<div id="recent" class="main_content">';
 
-	if ($context['showCheckboxes'])
-		echo '
+	echo '
 		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0;">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="qaction" value="markread">
@@ -114,8 +113,7 @@ function template_unread()
 					</div>';
 
 		// Show a "select all" box for quick moderation?
-		if ($context['showCheckboxes'])
-			echo '
+		echo '
 					<div class="moderation">
 						<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check">
 					</div>';
@@ -170,13 +168,12 @@ function template_unread()
 							', sprintf($txt['last_post_topic'], '<a href="' . $topic['last_post']['href'] . '">' . $topic['last_post']['time'] . '</a>', $topic['last_post']['member']['link']), '
 						</div>';
 
-			if ($context['showCheckboxes'])
-				echo '
+			echo '
 						<div class="moderation">
 							<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check">
 						</div>';
 
-				echo '
+			echo '
 					</div>';
 		}
 
@@ -203,8 +200,7 @@ function template_unread()
 				</h3>
 			</div>';
 
-	if ($context['showCheckboxes'])
-		echo '
+	echo '
 		</form>';
 
 	echo '
@@ -224,8 +220,7 @@ function template_replies()
 	echo '
 	<div id="recent">';
 
-	if ($context['showCheckboxes'])
-		echo '
+	echo '
 		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0;">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="qaction" value="markread">
@@ -255,8 +250,7 @@ function template_replies()
 					</div>';
 
 		// Show a "select all" box for quick moderation?
-		if ($context['showCheckboxes'])
-				echo '
+		echo '
 					<div class="moderation">
 						<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');" class="input_check">
 					</div>';
@@ -311,8 +305,7 @@ function template_replies()
 								', sprintf($txt['last_post_topic'], '<a href="' . $topic['last_post']['href'] . '">' . $topic['last_post']['time'] . '</a>', $topic['last_post']['member']['link']), '
 							</div>';
 
-			if ($context['showCheckboxes'])
-				echo '
+			echo '
 							<div class="moderation">
 								<input type="checkbox" name="topics[]" value="', $topic['id'], '" class="input_check">
 							</div>';
@@ -337,8 +330,7 @@ function template_replies()
 				</h3>
 			</div>';
 
-	if ($context['showCheckboxes'])
-		echo '
+	echo '
 		</form>';
 
 	echo '
