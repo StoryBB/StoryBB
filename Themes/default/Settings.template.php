@@ -96,17 +96,6 @@ function template_options()
 			'label'  => $txt['drafts_show_saved_enabled'],
 			'default' => true,
 		),
-		$txt['theme_opt_moderation'],
-		array(
-			'id' => 'display_quick_mod',
-			'label' => $txt['display_quick_mod'],
-			'options' => array(
-				0 => $txt['display_quick_mod_none'],
-				1 => $txt['display_quick_mod_check'],
-				2 => $txt['display_quick_mod_image'],
-			),
-			'default' => true,
-		),
 		$txt['theme_opt_personal_messages'],
 		array(
 			'id' => 'popup_messages',
