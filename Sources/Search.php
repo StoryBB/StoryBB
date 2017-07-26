@@ -1631,16 +1631,13 @@ function PlushSearch2()
 		$boards_can = boardsAllowedTo(array('post_reply_own', 'post_reply_any'), true, false);
 
 		// How's about some quick moderation?
-		if (!empty($options['display_quick_mod']))
-		{
-			$boards_can = array_merge($boards_can, boardsAllowedTo(array('lock_any', 'lock_own', 'make_sticky', 'move_any', 'move_own', 'remove_any', 'remove_own', 'merge_any'), true, false));
+		$boards_can = array_merge($boards_can, boardsAllowedTo(array('lock_any', 'lock_own', 'make_sticky', 'move_any', 'move_own', 'remove_any', 'remove_own', 'merge_any'), true, false));
 
-			$context['can_lock'] = in_array(0, $boards_can['lock_any']);
-			$context['can_sticky'] = in_array(0, $boards_can['make_sticky']);
-			$context['can_move'] = in_array(0, $boards_can['move_any']);
-			$context['can_remove'] = in_array(0, $boards_can['remove_any']);
-			$context['can_merge'] = in_array(0, $boards_can['merge_any']);
-		}
+		$context['can_lock'] = in_array(0, $boards_can['lock_any']);
+		$context['can_sticky'] = in_array(0, $boards_can['make_sticky']);
+		$context['can_move'] = in_array(0, $boards_can['move_any']);
+		$context['can_remove'] = in_array(0, $boards_can['remove_any']);
+		$context['can_merge'] = in_array(0, $boards_can['merge_any']);
 
 		// What messages are we using?
 		$msg_list = array_keys($context['topics']);
@@ -1972,29 +1969,26 @@ function prepareSearchContext($reset = false)
 	$body_highlighted = $message['body'];
 	$subject_highlighted = $message['subject'];
 
-	if (!empty($options['display_quick_mod']))
-	{
-		$started = $output['first_post']['member']['id'] == $user_info['id'];
+	$started = $output['first_post']['member']['id'] == $user_info['id'];
 
-		$output['quick_mod'] = array(
-			'lock' => in_array(0, $boards_can['lock_any']) || in_array($output['board']['id'], $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($output['board']['id'], $boards_can['lock_own']))),
-			'sticky' => (in_array(0, $boards_can['make_sticky']) || in_array($output['board']['id'], $boards_can['make_sticky'])),
-			'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
-			'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
-			'restore' => $context['can_restore_perm'] && ($modSettings['recycle_board'] == $output['board']['id']),
-		);
+	$output['quick_mod'] = array(
+		'lock' => in_array(0, $boards_can['lock_any']) || in_array($output['board']['id'], $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($output['board']['id'], $boards_can['lock_own']))),
+		'sticky' => (in_array(0, $boards_can['make_sticky']) || in_array($output['board']['id'], $boards_can['make_sticky'])),
+		'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
+		'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
+		'restore' => $context['can_restore_perm'] && ($modSettings['recycle_board'] == $output['board']['id']),
+	);
 
-		$context['can_lock'] |= $output['quick_mod']['lock'];
-		$context['can_sticky'] |= $output['quick_mod']['sticky'];
-		$context['can_move'] |= $output['quick_mod']['move'];
-		$context['can_remove'] |= $output['quick_mod']['remove'];
-		$context['can_merge'] |= in_array($output['board']['id'], $boards_can['merge_any']);
-		$context['can_restore'] |= $output['quick_mod']['restore'];
-		$context['can_markread'] = $context['user']['is_logged'];
+	$context['can_lock'] |= $output['quick_mod']['lock'];
+	$context['can_sticky'] |= $output['quick_mod']['sticky'];
+	$context['can_move'] |= $output['quick_mod']['move'];
+	$context['can_remove'] |= $output['quick_mod']['remove'];
+	$context['can_merge'] |= in_array($output['board']['id'], $boards_can['merge_any']);
+	$context['can_restore'] |= $output['quick_mod']['restore'];
+	$context['can_markread'] = $context['user']['is_logged'];
 
-		$context['qmod_actions'] = array('remove', 'lock', 'sticky', 'move', 'merge', 'restore', 'markread');
-		call_integration_hook('integrate_quick_mod_actions_search');
-	}
+	$context['qmod_actions'] = array('remove', 'lock', 'sticky', 'move', 'merge', 'restore', 'markread');
+	call_integration_hook('integrate_quick_mod_actions_search');
 
 	foreach ($context['key_words'] as $query)
 	{

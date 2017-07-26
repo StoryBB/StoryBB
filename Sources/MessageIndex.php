@@ -564,7 +564,7 @@ function MessageIndex()
 	);
 
 	// Is Quick Moderation active/needed?
-	if (!empty($options['display_quick_mod']) && !empty($context['topics']))
+	if (!empty($context['topics']))
 	{
 		$context['can_markread'] = $context['user']['is_logged'];
 		$context['can_lock'] = allowedTo('lock_any');
@@ -606,14 +606,10 @@ function MessageIndex()
 		}
 
 		// Can we use quick moderation checkboxes?
-		if ($options['display_quick_mod'] == 1)
-			$context['can_quick_mod'] = $context['user']['is_logged'] || $context['can_approve'] || $context['can_remove'] || $context['can_lock'] || $context['can_sticky'] || $context['can_move'] || $context['can_merge'] || $context['can_restore'];
-		// Or the icons?
-		else
-			$context['can_quick_mod'] = $context['can_remove'] || $context['can_lock'] || $context['can_sticky'] || $context['can_move'];
+		$context['can_quick_mod'] = $context['user']['is_logged'] || $context['can_approve'] || $context['can_remove'] || $context['can_lock'] || $context['can_sticky'] || $context['can_move'] || $context['can_merge'] || $context['can_restore'];
 	}
 
-	if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1)
+	if (!empty($context['can_quick_mod']))
 	{
 		$context['qmod_actions'] = array('approve', 'remove', 'lock', 'sticky', 'move', 'merge', 'restore', 'markread');
 		call_integration_hook('integrate_quick_mod_actions');
