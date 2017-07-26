@@ -472,8 +472,6 @@ function UnreadTopics()
 		die;
 	}
 
-	$context['showCheckboxes'] = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1;
-
 	$context['showing_all_topics'] = isset($_GET['all']);
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
@@ -1391,12 +1389,11 @@ function UnreadTopics()
 			'markread' => array('text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'image' => 'markread.png', 'custom' => 'data-confirm="'.  $txt['are_sure_mark_read'] .'"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_var'] . '=' . $context['session_id']),
 		);
 
-		if ($context['showCheckboxes'])
-			$context['recent_buttons']['markselectread'] = array(
-				'text' => 'quick_mod_markread',
-				'image' => 'markselectedread.png',
-				'url' => 'javascript:document.quickModForm.submit();',
-			);
+		$context['recent_buttons']['markselectread'] = array(
+			'text' => 'quick_mod_markread',
+			'image' => 'markselectedread.png',
+			'url' => 'javascript:document.quickModForm.submit();',
+		);
 
 		if (!empty($context['topics']) && !$context['showing_all_topics'])
 			$context['recent_buttons']['readall'] = array('text' => 'unread_topics_all', 'image' => 'markreadall.png', 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'active' => true);
@@ -1407,12 +1404,11 @@ function UnreadTopics()
 			'markread' => array('text' => 'mark_as_read', 'image' => 'markread.png', 'custom' => 'data-confirm="'. $txt['are_sure_mark_read']  .'"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=unreadreplies;topics=' . $context['topics_to_mark'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		);
 
-		if ($context['showCheckboxes'])
-			$context['recent_buttons']['markselectread'] = array(
-				'text' => 'quick_mod_markread',
-				'image' => 'markselectedread.png',
-				'url' => 'javascript:document.quickModForm.submit();',
-			);
+		$context['recent_buttons']['markselectread'] = array(
+			'text' => 'quick_mod_markread',
+			'image' => 'markselectedread.png',
+			'url' => 'javascript:document.quickModForm.submit();',
+		);
 	}
 
 	// Allow mods to add additional buttons here
