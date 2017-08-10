@@ -28,5 +28,10 @@ function textTemplate($template, ...$args) {
 	return  new \LightnCandy\SafeString(sprintf($template, ...$args));
 }
 
+function breakRow($index, $perRow, $sep) {
+	if ($index % $perRow === 0) return $sep;
+	return "";
+}
+
 
 ?>
