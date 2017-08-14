@@ -92,7 +92,8 @@ function template_kick_guest()
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
 	    'helpers' => [
-	    	'template' => 'textTemplate'
+	    	'template' => textTemplate,
+	    	'concat' => concat
 	    ]
 	));
 	
