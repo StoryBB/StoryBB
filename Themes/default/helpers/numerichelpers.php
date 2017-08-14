@@ -49,4 +49,8 @@ function numericshelper_div($arg1, $arg2)
 	return $arg1 / $arg2;
 }
 
+function comma($item) {
+	return comma_format($tem);
+}
+
 ?>

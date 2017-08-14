@@ -63,7 +63,7 @@ function template_newsfader()
             'options' => $options
         );
 
-        $template = file_get_contents(__DIR__ . "/layouts/newsfader.hbs");
+        $template = file_get_contents(__DIR__ . "/templates/newsfader.hbs");
         if (!$template) {
             die('Template did not load!');
         }
@@ -92,7 +92,7 @@ function template_main()
         'scripturl' => $scripturl
     );
     
-    $template = file_get_contents(__DIR__."/layouts/main.hbs");
+    $template = file_get_contents(__DIR__."/templates/board_main.hbs");
     if (!$template) {
         die('Template did not load!');
     }
@@ -134,7 +134,7 @@ function template_info_center()
 	//early-exit:
 	if (empty($context['info_center']))
 		return;
-	
+
 	$data = Array(
         'context' => $context,
         'txt' => $txt,
@@ -173,7 +173,7 @@ function template_ic_block_recent()
         'settings' => $settings
     );
     
-    $template = file_get_contents(__DIR__."/templates/board_ic_recent.hbs");
+    $template = file_get_contents(__DIR__."/partials/board_ic_recent.hbs");
     if (!$template) {
         die('Template did not load!');
     }
@@ -197,19 +197,26 @@ function template_ic_block_recent()
 function template_ic_block_stats()
 {
 	global $scripturl, $txt, $context, $settings;
+	$data = Array(
+        'context' => $context,
+        'txt' => $txt,
+        'scripturl' => $scripturl,
+        'settings' => $settings
+    );
+    
+    $template = file_get_contents(__DIR__."/partials/board_ic_stats.hbs");
+    if (!$template) {
+        die('Template did not load!');
+    }
 
-	// Show statistical style information...
-	echo '
-			<div class="sub_bar">
-				<h4 class="subbg">
-					<a href="', $scripturl, '?action=stats" title="', $txt['more_stats'], '"><span class="generic_icons stats"></span> ', $txt['forum_stats'], '</a>
-				</h4>
-			</div>
-			<p class="inline">
-				', $context['common_stats']['boardindex_total_posts'], '', !empty($settings['show_latest_member']) ? ' - ' . $txt['latest_member'] . ': <strong> ' . $context['common_stats']['latest_member']['link'] . '</strong>' : '', '<br>
-				', (!empty($context['latest_post']) ? $txt['latest_post'] . ': <strong>&quot;' . $context['latest_post']['link'] . '&quot;</strong>  (' . $context['latest_post']['time'] . ')<br>' : ''), '
-				<a href="', $scripturl, '?action=recent">', $txt['recent_view'], '</a>
-			</p>';
+    $phpStr = LightnCandy::compile($template, Array(
+        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+        'helpers' => Array(
+        )
+    ));
+
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -218,47 +225,33 @@ function template_ic_block_stats()
 function template_ic_block_online()
 {
 	global $context, $scripturl, $txt, $modSettings, $settings;
-	// "Users online" - in order of activity.
-	echo '
-			<div class="sub_bar">
-				<h4 class="subbg">
-					', $context['show_who'] ? '<a href="' . $scripturl . '?action=who">' : '', '<span class="generic_icons people"></span> ', $txt['online_users'], '', $context['show_who'] ? '</a>' : '', '
-				</h4>
-			</div>
-			<p class="inline">
-				', $context['show_who'] ? '<a href="' . $scripturl . '?action=who">' : '', '<strong>', $txt['online'], ': </strong>', comma_format($context['num_guests']), ' ', $context['num_guests'] == 1 ? $txt['guest'] : $txt['guests'], ', ', comma_format($context['num_users_online']), ' ', $context['num_users_online'] == 1 ? $txt['user'] : $txt['users'];
+	
+	$data = Array(
+        'context' => $context,
+        'scripturl' => $scripturl,
+        'txt' => $txt,
+        'modSettings' => $modSettings,
+        'settings' => $settings,
+        'bracketList' => $bracketList
+    );
+    
+    $template = file_get_contents(__DIR__."/partials/board_ic_online.hbs");
+    if (!$template) {
+        die('Template did not load!');
+    }
 
-	// Handle hidden users and buddies.
-	$bracketList = array();
-	if ($context['show_buddies'])
-		$bracketList[] = comma_format($context['num_buddies']) . ' ' . ($context['num_buddies'] == 1 ? $txt['buddy'] : $txt['buddies']);
-	if (!empty($context['num_spiders']))
-		$bracketList[] = comma_format($context['num_spiders']) . ' ' . ($context['num_spiders'] == 1 ? $txt['spider'] : $txt['spiders']);
-	if (!empty($context['num_users_hidden']))
-		$bracketList[] = comma_format($context['num_users_hidden']) . ' ' . ($context['num_spiders'] == 1 ? $txt['hidden'] : $txt['hidden_s']);
+    $phpStr = LightnCandy::compile($template, Array(
+        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+        'helpers' => Array(
+        	'and' => logichelper_and,
+        	'eq' => logichelper_eq,
+        	'implode' => implode_sep,
+        	'textTemplate' => textTemplate
+        )
+    ));
 
-	if (!empty($bracketList))
-		echo ' (' . implode(', ', $bracketList) . ')';
-
-	echo $context['show_who'] ? '</a>' : '', '
-
-				&nbsp;-&nbsp;', $txt['most_online_today'], ': <strong>', comma_format($modSettings['mostOnlineToday']), '</strong>&nbsp;-&nbsp;
-				', $txt['most_online_ever'], ': ', comma_format($modSettings['mostOnline']), ' (', timeformat($modSettings['mostDate']), ')<br>';
-
-	// Assuming there ARE users online... each user in users_online has an id, username, name, group, href, and link.
-	if (!empty($context['users_online']))
-	{
-		echo '
-				', sprintf($txt['users_active'], $modSettings['lastActive']), ': ', implode(', ', $context['list_users_online']);
-
-		// Showing membergroups?
-		if (!empty($settings['show_group_key']) && !empty($context['membergroups']))
-			echo '
-				<span class="membergroups">' . implode(',&nbsp;', $context['membergroups']) . '</span>';
-	}
-
-	echo '
-			</p>';
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 ?>
