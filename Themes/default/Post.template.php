@@ -33,7 +33,8 @@ function template_main()
 		'modSettings' => $modSettings,
 		'ignored_posts' => $ignored_posts,
 		'counter' =>  empty($counter) ? 0 : $counter,
-		'editor_context' => &$context['controls']['richedit'][context.post_box_name]
+		'editor_context' => &$context['controls']['richedit'][context.post_box_name],
+		'verify_context' => &$context['controls']['verification'][context.visual_verification_id]
 	];
 
 	$template = file_get_contents(__DIR__ .  "/templates/post_main.hbs");
@@ -63,7 +64,9 @@ function template_main()
 			'implode_sep' => implode_sep
 		],
 		'partials' => [
-			'control_richedit' => file_get_contents(__DIR__ .  "/partials/control_richedit.hbs")
+			'control_richedit' => file_get_contents(__DIR__ .  "/partials/control_richedit.hbs"),
+			'control_visual_verification' => file_get_contents(__DIR__ .  "/partials/control_visual_verification.hbs"),
+			'control_richedit_buttons' => file_get_contents(__DIR__ .  "/partials/control_richedit_buttons.hbs")
 		]
 	]);
 	$renderer = LightnCandy::prepare($phpStr);
