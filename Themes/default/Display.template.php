@@ -74,16 +74,8 @@ function template_main()
 		]
 	]);
 	
-	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
-
-
-	$context['ignoredMsgs'] = array();
-	$context['removableMessageIDs'] = array();
-
-	// Show the lower breadcrumbs.
-//	theme_linktree();
 
 }
 
