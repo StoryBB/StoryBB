@@ -153,7 +153,7 @@
 	var oInTopicModeration = new InTopicModeration({
 					sSelf: 'oInTopicModeration',
 					sCheckboxContainerMask: 'in_topic_mod_check_',
-					aMessageIds: [{{(implode context.removableMessageIDs)}}],
+					aMessageIds: [{{(concat context.removableMessageIDs)}}],
 					sSessionId: smf_session_id,
 					sSessionVar: smf_session_var,
 					sButtonStrip: 'moderationbuttons',
@@ -177,7 +177,7 @@
 	var oInTopicModerationMobile = new InTopicModeration({
 					sSelf: 'oInTopicModerationMobile',
 					sCheckboxContainerMask: 'in_topic_mod_check_',
-					aMessageIds: [{{(implode context.removableMessageIDs)}}],
+					aMessageIds: [{{(concat context.removableMessageIDs)}}],
 					sSessionId: smf_session_id,
 					sSessionVar: smf_session_var,
 					sButtonStrip: 'moderationbuttons_mobile',
@@ -260,5 +260,5 @@
 				sItemBackgroundHover: "#e0e0f0"
 			});
 		}
-	{{#if context.ignoredMsgs}}ignore_toggles({{(implode context.ignoredMsgs)}}], {{(JSEscape txt.show_ignore_user_post)}});{{/if}}
+	{{#if context.ignoredMsgs}}ignore_toggles({{(concat context.ignoredMsgs)}}], {{(JSEscape txt.show_ignore_user_post)}});{{/if}}
 </script>

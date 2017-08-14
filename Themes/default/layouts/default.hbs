@@ -163,9 +163,9 @@
     					    {{#unless @first}}<span class="dividers">{{#if context.right_to_left}}&#9668;{{else}}&#9658;{{/if}} </span>{{/unless}}
     					    {{extra_before}}
     					    {{#if url}}
-    					    	<a href="{{url}}"><span>{{name}}</span></a>
+    					    	<a href="{{url}}"><span>{{{name}}}</span></a>
     					    {{else}}
-    					        <span>{{name}}</span>
+    					        <span>{{{name}}}</span>
     					    {{/if}}
     					    {{extra_after}}
     					</li>
