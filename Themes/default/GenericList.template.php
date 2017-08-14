@@ -1,5 +1,7 @@
 <?php
 
+use LightnCandy\LightnCandy;
+
 /**
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
@@ -45,12 +47,15 @@ function template_show_list($list_id = null)
 	}
 	
 	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
+	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
 	    'partials' => Array(
 	    	'list_additional_rows' => file_get_contents(__DIR__ .  "/partials/list_additional_rows.hbs")
 	    ),
 	    'helpers' => Array(
-	    	'concat' => concat
+	    	'concat' => concat,
+	    	'gt' => logichelper_gt,
+	    	'and' => logichelper_and,
+	    	
 	    )
 	));
 	

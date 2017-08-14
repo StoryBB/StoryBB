@@ -37,10 +37,17 @@
 <table class="table_grid" ', !empty($cur_list['width']) ? ' style="width:' . $cur_list['width'] . '"' : '', '>';
 {{#if (gt $header_count 2)}}
 	<thead>
-		<tr class="title_bar">';
-
+		<tr class="title_bar">
 {{#each cur_list.headers}}
-			<th scope="col" id="header_{{list_id}}_{{id}}"{{#if class}} class="{{class}}"{{/if}}{{#if style}}style="{{style}}"{{/if}}{{#if colspan}} colspan="{{colspan}}"><a href="{{href}}" rel="nofollow">{{#if label}}{{label}}{{else}}&nbsp;{{/if}}{{#if href}}{{#if sort_image}}<span class="generic_icons sort_{{sort_image}}"></span>{{/if}}</a>{{/if}}</th>
+			<th scope="col" id="header_{{list_id}}_{{id}}"
+			{{#if class}} class="{{class}}"{{/if}}
+			{{#if style}}style="{{style}}"{{/if}}
+			{{#if colspan}} colspan="{{colspan}}">{{/if}}
+			<a href="{{href}}" rel="nofollow">
+				{{#if label}}{{label}}{{else}}&nbsp;{{/if}}
+				{{#if (and href sort_image)}}<span class="generic_icons sort_{{sort_image}}"></span>{{/if}}
+				</a>
+			</th>
 {{/each}}
     	</tr>
 	</thead>
@@ -54,9 +61,9 @@
     {{/if}}
 {{/unless}}
 {{#each cur_list.rows}}
-        <tr class="windowbg {{class}}" {{#if style}} style="{{style}}" id="list_{{list_id}}_{{@key}}">
+        <tr class="windowbg {{class}}" {{#if style}} style="{{style}}"{{/if}} id="list_{{list_id}}_{{@key}}">
     {{#each data}}
-            <td{{#if class}} class="{{class}}"{{/if}}{{if style}} style="{{style}}">{{value}}</td>
+            <td{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}>{{value}}</td>
     {{/each}}
         </tr>
 {{/each}}
@@ -67,7 +74,7 @@
     {{#if cur_list.items_per_page}}
 			<div class="flow_auto">
 				<div class="floatleft">
-					<div class="pagesection">', $cur_list['page_index'], '</div>
+					<div class="pagesection">{{cur_list.page_index}}</div>
 				</div>
 				
 				{{#if cur_list.additional_rows.below_column_headers}}
@@ -94,7 +101,7 @@
 	</form>
 {{/if}}
 {{#if cur_list.list_menu.show_on}}
-	 {{>create_list_menu_bottom cur_list.list_menu}}
+	 {{!--{{>create_list_menu_bottom cur_list.list_menu}}--}}
 {{/if}}
 {{#if cur_list.javascript}}
 	<script>
