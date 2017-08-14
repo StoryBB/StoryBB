@@ -20,6 +20,11 @@ function implode_comma($array)
 	return implode(', ', $array);
 }
 
+function implode_sep($array, $sep)
+{
+	return implode($sep, $array);
+}
+
 function array2js($array) {
 	return new \LightnCandy\SafeString("['" . implode("','", $array) . "']");
 }

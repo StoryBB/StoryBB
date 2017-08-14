@@ -1,0 +1,70 @@
+<textarea class="editor" name="{{editor_id}}" id="{{editor_id}}" cols="600" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" 
+style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if (or context.post_error.no_message context.post_error.long_message)}}border: 1px solid red;{{/if}}"{{#if context.editor.required}} required{{/if}}>{{{editor_context.value}}}</textarea>
+		<div id="{{editor_id}}_resizer" class="richedit_resize"></div>
+		<input type="hidden" name="{{editor_id}}_mode" id="{{editor_id}}_mode" value="0">
+		<script>
+			$(document).ready(function() {
+				{{{context.bbcodes_handlers}}}
+
+				$("#{{editor_id}}").sceditor({
+					{{#if (neq editor_id 'quickReply')}}autofocus : true,{{/if}}
+					style: "{{settings.default_theme_url}}/css/jquery.sceditor.default.css",
+					emoticonsCompat: true,{{#if editor_context.locale}}
+					locale: '{{editor_context.locale}}'{{/if}}{{#if context.right_to_left}}
+					rtl: true,{{/if}}
+					colors: "black,red,yellow,pink,green,orange,purple,blue,beige,brown,teal,navy,maroon,limegreen,white",
+					plugins: "bbcode",
+					parserOptions: {
+						quoteType: $.sceditor.BBCodeParser.QuoteType.auto
+					}
+					{{#if (or context.smileys.postform (and context.smileys.popup editor_context.disable_smiley_box smileyContainer))}}
+					,
+					emoticons:
+					{
+					    {{!-- key is a location, value is a row of smileys --}}
+					    {{#each context.smileys}}
+                        {{#if (eq @key postform)}}
+                        dropdown:
+                        {
+                        {{else}}
+                        popup:
+                        {
+                        {{/if}}
+                        {{!-- iterate over the row --}}
+                        {{#each this.[0].smileys}}
+                            "{{jsEscape code}}":"{{../../settings.smileys_url}}/{{filename}}"{{#unless isLast}},{{/unless}}
+                        {{/each}}
+                        {{#unless this.[0].smileys}}
+                            "0":'', {{!-- allows empty rows --}}
+                        {{/unless}}
+                        }{{#unless isLast}},{{/unless}}
+                        {{/each}}
+                    }
+                    {{else}}
+                    emoticons:
+					{},
+					emoticonsEnabled:false
+					{{/if}}
+					{{#if (and context.show_bbc bbcContainer)}}
+					,
+					toolbar: "{{#each context.bbc_toolbar}}{{implode_sep . '|'}}{{breakRow @index (getNumItems context.bbc_tags) '||'}}{{/each}}",
+					{{else}}
+					,
+					toolbar: "",
+					{{/if}}
+                });
+				$("#{{editor_id}}").data("sceditor").createPermanentDropDown();{{#unless editor_context.rich_active}}
+				$("#{{editor_id}}").data("sceditor").toggleSourceMode();{{/unless}}{{#if (or context.post_error.no_message context.post_error.long_message)}}
+				$(".sceditor-container").find("textarea").each(function() {$(this).css({border: "1px solid red"})});
+				$(".sceditor-container").find("iframe").each(function() {$(this).css({border: "1px solid red"})});{{/if}}
+			});
+			var oEditorHandle_{{editor_id}} = new smc_Editor({
+					sUniqueId: '{{editor_id}}',
+					sEditWidth: '{{jsEscape editor_context.width}}',
+					sEditHeight: '{{jsEscape editor_context.height}}',
+					bRichEditOff: {{#if modSettings.disable_wysiwyg}}true{{else}}false{{/if}},
+					oSmileyBox: null,
+					oBBCBox: null
+				});
+				smf_editorArray[smf_editorArray.length] = oEditorHandle_{{editor_id}};
+			</script>

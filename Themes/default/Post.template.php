@@ -32,7 +32,8 @@ function template_main()
 		'scripturl' => $scripturl,
 		'modSettings' => $modSettings,
 		'ignored_posts' => $ignored_posts,
-		'counter' =>  empty($counter) ? 0 : $counter
+		'counter' =>  empty($counter) ? 0 : $counter,
+		'editor_context' => &$context['controls']['richedit'][context.post_box_name]
 	];
 
 	$template = file_get_contents(__DIR__ .  "/templates/post_main.hbs");
@@ -57,7 +58,9 @@ function template_main()
 			'formatKb' => function($size) {
 				return comma_format(round(max($size, 1028) / 1028), 0);
 			},
-			'sizeLimit' => function() { return $modSettings.attachmentSizeLimit * 1028; }
+			'sizeLimit' => function() { return $modSettings.attachmentSizeLimit * 1028; },
+			'getNumItems' => getNumItems,
+			'implode_sep' => implode_sep
 		],
 		'partials' => [
 			'control_richedit' => file_get_contents(__DIR__ .  "/partials/control_richedit.hbs")
