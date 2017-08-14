@@ -14,7 +14,7 @@ use LightnCandy\LightnCandy;
  */
 function template_main()
 {
-	global $context, $options, $txt, $scripturl, $modSettings, $counter;
+	global $context, $options, $txt, $scripturl, $modSettings, $counter, $settings;
 	
 		$ignored_posts = array();
 		foreach ($context['previous_posts'] as $post)
@@ -31,6 +31,7 @@ function template_main()
 		'txt' => $txt,
 		'scripturl' => $scripturl,
 		'modSettings' => $modSettings,
+		'settings' => $settings,
 		'ignored_posts' => $ignored_posts,
 		'counter' =>  empty($counter) ? 0 : $counter,
 		'editor_context' => &$context['controls']['richedit'][context.post_box_name],
@@ -133,46 +134,26 @@ function template_quotefast()
 function template_announce()
 {
 	global $context, $txt, $scripturl;
+	$data = [
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl
+	];
 
-	echo '
-	<div id="announcement">
-		<form action="', $scripturl, '?action=announce;sa=send" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['announce_title'], '</h3>
-			</div>
-			<div class="information">
-				', $txt['announce_desc'], '
-			</div>
-			<div class="windowbg2">
-				<p>
-					', $txt['announce_this_topic'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0">', $context['topic_subject'], '</a>
-				</p>
-				<ul>';
+	$template = file_get_contents(__DIR__ .  "/templates/post_announce.hbs");
+	if (!$template) {
+		die('Post announce template did not load!');
+	}
 
-	foreach ($context['groups'] as $group)
-		echo '
-					<li>
-						<label for="who_', $group['id'], '"><input type="checkbox" name="who[', $group['id'], ']" id="who_', $group['id'], '" value="', $group['id'], '" checked class="input_check"> ', $group['name'], '</label> <em>(', $group['member_count'], ')</em>
-					</li>';
-
-	echo '
-					<li>
-						<label for="checkall"><input type="checkbox" id="checkall" class="input_check" onclick="invertAll(this, this.form);" checked> <em>', $txt['check_all'], '</em></label>
-					</li>
-				</ul>
-				<hr>
-				<div id="confirm_buttons">
-					<input type="submit" value="', $txt['post'], '" class="button_submit">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-					<input type="hidden" name="topic" value="', $context['current_topic'], '">
-					<input type="hidden" name="move" value="', $context['move'], '">
-					<input type="hidden" name="goback" value="', $context['go_back'], '">
-				</div>
-				<br class="clear_right">
-			</div>
-		</form>
-	</div>
-	<br>';
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [
+		],
+		'partials' => [
+		]
+	]);
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -181,48 +162,26 @@ function template_announce()
 function template_announcement_send()
 {
 	global $context, $txt, $scripturl;
+		$data = [
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl
+	];
 
-	echo '
-	<div id="announcement">
-		<form action="' . $scripturl . '?action=announce;sa=send" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
-			<div class="windowbg2">
-				<p>', $txt['announce_sending'], ' <a href="', $scripturl, '?topic=', $context['current_topic'], '.0" target="_blank" class="new_win">', $context['topic_subject'], '</a></p>
-				<div class="progress_bar">
-					<div class="full_bar">', $context['percentage_done'], '% ', $txt['announce_done'], '</div>
-					<div class="green_percent" style="width: ', $context['percentage_done'], '%;">&nbsp;</div>
-				</div>
-				<hr>
-				<div id="confirm_buttons">
-					<input type="submit" name="b" value="', $txt['announce_continue'], '" class="button_submit">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-					<input type="hidden" name="topic" value="', $context['current_topic'], '">
-					<input type="hidden" name="move" value="', $context['move'], '">
-					<input type="hidden" name="goback" value="', $context['go_back'], '">
-					<input type="hidden" name="start" value="', $context['start'], '">
-					<input type="hidden" name="membergroups" value="', $context['membergroups'], '">
-				</div>
-				<br class="clear_right">
-			</div>
-		</form>
-	</div>
-	<br>
-		<script>
-			var countdown = 2;
-			doAutoSubmit();
+	$template = file_get_contents(__DIR__ .  "/templates/post_announce_send.hbs");
+	if (!$template) {
+		die('template did not load!');
+	}
 
-			function doAutoSubmit()
-			{
-				if (countdown == 0)
-					document.forms.autoSubmit.submit();
-				else if (countdown == -1)
-					return;
-
-				document.forms.autoSubmit.b.value = "', $txt['announce_continue'], ' (" + countdown + ")";
-				countdown--;
-
-				setTimeout("doAutoSubmit();", 1000);
-			}
-		</script>';
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [
+		],
+		'partials' => [
+		]
+	]);
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 ?>
