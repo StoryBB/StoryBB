@@ -132,8 +132,8 @@ function template_info_center()
 	global $context, $options, $txt;
 	
 	//early-exit:
-	if (empty($context['info_center']))
-		return;
+//	if (empty($context['info_center']))
+//		return;
 
 	$data = Array(
         'context' => $context,
