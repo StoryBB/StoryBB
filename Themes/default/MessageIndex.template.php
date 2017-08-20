@@ -59,14 +59,14 @@ function template_main()
 	$phpStr = LightnCandy::compile($template, [
 		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
 		'helpers' => [
-			'eq' => logichelper_eq,
-			'and' => logichelper_and,
-			'or' => logichelper_or,
-			'textTemplate' => textTemplate,
-			'getNumItems' => getNumItems,
-			'implode_comma' => implode_comma,
-			'concat' => concat,
-			'comma' => comma,
+			'eq' => 'logichelper_eq',
+			'and' => 'logichelper_and',
+			'or' => 'logichelper_or',
+			'textTemplate' => 'textTemplate',
+			'getNumItems' => 'getNumItems',
+			'implode_comma' => 'implode_comma',
+			'concat' => 'concat',
+			'comma' => 'comma',
 			'qmod_option' => function($action) { 
 				if ($context['can_' . $action])
 					return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
