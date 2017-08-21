@@ -416,8 +416,7 @@ function template_unapproved_posts()
 			', $context['menu_separator'], '
 				<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';delete=', $item['id'], '">', $remove_button, '</a>';
 
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
-			echo '
+		echo '
 				<input type="checkbox" name="item[]" value="', $item['id'], '" checked class="input_check"> ';
 
 		echo '
@@ -428,8 +427,7 @@ function template_unapproved_posts()
 	echo '
 		<div class="pagesection">';
 
-	if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
-		echo '
+	echo '
 			<div class="floatright">
 				<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(\'', $txt['mc_unapproved_sure'], '\')) submit();">
 					<option value="0">', $txt['with_selected'], ':</option>
