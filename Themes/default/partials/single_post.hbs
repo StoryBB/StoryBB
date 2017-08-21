@@ -56,10 +56,10 @@
     		    {{#if (and ../modSettings.show_blurb member.blurb)}}
     		        <li class="blurb">{{member.blurb}}</li>
     		    {{/if}}
-    		    {{#if ../custom_fields.icons}}
+    		    {{#if custom_fields.icons}}
     		        <li class="im_icons">
     					<ol>
-    					{{#each ../custom_fields.icons}}
+    					{{#each custom_fields.icons}}
     					    <li class="custom {{col_name}}">{{{value}}}</li>
     					{{/each}}
     					</ol>
@@ -164,9 +164,9 @@
 					<div class="attachments_bot">
 						<a href="{{href}}"><img src="{{../../settings.images_url}}/icons/clip.png" class="centericon" alt="*">&nbsp;{{name}}</a> 
 						{{#if (and ../../context.can_approve (not approved))}}
-						[<a href="', $scripturl, '?action=attachapprove;sa=approve;aid=', $attachment['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $txt['approve'], '</a>]&nbsp;|&nbsp;[<a href="', $scripturl, '?action=attachapprove;sa=reject;aid=', $attachment['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $txt['delete'], '</a>] 
+						[<a href="{{../../scripturl}}?action=attachapprove;sa=approve;aid=', $attachment['id'], ';{{../../context.session_var}}={{../../context.session_id}}">{{txt.approve}}</a>]&nbsp;|&nbsp;[<a href="', {{../../scripturl}}?action=attachapprove;sa=reject;aid={{id}}, ';', $context['session_var'], '=', $context['session_id'], '">', $txt['delete'], '</a>] 
 						{{/if}}
-						<br>', $attachment['size'], ($attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] . '<br>' . sprintf($txt['attach_viewed'], $attachment['downloads']) : '<br>' . sprintf($txt['attach_downloaded'], $attachment['downloads'])), '
+						<br>{{size}}, {{#if is_image}}(concat ', ' real_width 'x' real_height '<br>' {{textTemplate ../../txt.attach_viewed downloads}}{{else}}<br>{{textTemplate ../../txt.attach_downloaded downloads}}){{/if}}
 					</div>
 				</div>
 				{{breakRow @index '5' '<br/>'}}
@@ -237,7 +237,7 @@
 				{{/if}}
 			</ul>
 		</li>
-		{{#if (and (eq ../options.display_quick_mod 1) can_remove)}}
+		{{#if can_remove}}
 		<li style="display: none;" id="in_topic_mod_check_{{id}}"></li>
 		{{/if}}
 		{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
