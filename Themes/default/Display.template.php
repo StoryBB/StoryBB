@@ -53,6 +53,7 @@ function template_main()
 			'and' => 'logichelper_and',
 			'not' => 'logichelper_not',
 			'implode' => 'implode_comma',
+			'json' => 'stringhelper_json',
 			'JSEscape' => 'JSEScape',
 			'get_text' => 'get_text',
 			'concat' => 'concat',

@@ -26,7 +26,7 @@ function implode_sep($array, $sep)
 }
 
 function array2js($array) {
-	return new \LightnCandy\SafeString("['" . implode("','", $array) . "']");
+	return new \LightnCandy\SafeString(json_encode(array_values($array)));
 }
 
 /**
