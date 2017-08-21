@@ -67,8 +67,9 @@ function template_main()
 			'implode_comma' => 'implode_comma',
 			'concat' => 'concat',
 			'comma' => 'comma',
-			'qmod_option' => function($action) { 
-				if ($context['can_' . $action])
+			'qmod_option' => function($action) {
+				global $context, $txt;
+				if (!empty($context['can_' . $action]))
 					return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
 			}
 		],
