@@ -25,6 +25,8 @@ function get_text(...$key) {
 }
 
 function textTemplate($template, ...$args) {
+	// Strip the last item off the array, it's the calling context.
+	array_pop($args);
 	return  new \LightnCandy\SafeString(sprintf($template, ...$args));
 }
 

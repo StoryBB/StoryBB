@@ -66,6 +66,8 @@ function stringhelper_json($data)
 
 function concat(...$items)
 {
+	// Strip the last item off the array, it's the calling context.
+	array_pop($items);
 	return implode($items);
 }
 
