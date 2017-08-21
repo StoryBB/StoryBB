@@ -63,7 +63,7 @@
 			</p>
 		</div>
 		{{/if}}
-		{{#if (and context.can_quick_mod options.display_quick_mod context.topics)}}
+		{{#if (and context.can_quick_mod context.topics)}}
 		<form action="{{scripturl}}?action=quickmod;board={{context.current_board}}.{{context.start}}" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">
 		{{/if}}
 		<div id="messageindex">
@@ -145,7 +145,7 @@
 				</div>
 			{{/if}}
 			</div>
-			{{#if (and context.can_quick_mod options.display_quick_mod context.topics)}}
+			{{#if (and context.can_quick_mod context.topics)}}
 			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
 			</form>
 			{{/if}}
@@ -158,7 +158,7 @@
 				<div class="pagelinks floatleft">{{{context.page_index}}}</div>
 			</div>
 	{{/unless}}
-	{{#if (and context.can_quick_mod (eq options.display_quick_mod 1) context.topics context.can_move)}}
+	{{#if (and context.can_quick_mod context.topics context.can_move)}}
 	<script>
 	if (typeof(window.XMLHttpRequest) != "undefined")
 		aJumpTo[aJumpTo.length] = new JumpTo({
