@@ -79,11 +79,11 @@
 				var oDraftAutoSave = new smf_DraftAutoSave({
 					sSelf: 'oDraftAutoSave',
 					sLastNote: 'draft_lastautosave',
-					sLastID: 'id_draft'{{#if context.post_box_name}}
-					sSceditorID: '{{context.post_box_name}}'{{/if}}
+					sLastID: 'id_draft',{{#if context.post_box_name}}
+					sSceditorID: '{{context.post_box_name}}',{{/if}}
 					sType: 'quick',
 					iBoard: '{{#if context.current_board}}{{context.current_board}}{{else}}0{{/if}}',
-					iFreq: '{{#if modSettings.masterAutoSaveDraftsDelay}}{{modSettings.masterAutoSaveDraftsDelay}} * 1000{{else}}60000{{/if}}
+					iFreq: {{#if modSettings.masterAutoSaveDraftsDelay}}{{modSettings.masterAutoSaveDraftsDelay}} * 1000{{else}}60000{{/if}}
 				});
 			</script>
 			{{/if}}
