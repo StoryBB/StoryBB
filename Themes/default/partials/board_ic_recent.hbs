@@ -1,9 +1,9 @@
 		<div class="sub_bar">
-				<h4 class="subbg">
-					<a href="{{scripturl}}?action=recent"><span class="xx"></span>{{txt.recent_posts}}</a>
-				</h4>
-			</div>
-			<div id="recent_posts_content">
+			<h4 class="subbg">
+				<a href="{{scripturl}}?action=recent"><span class="xx"></span>{{txt.recent_posts}}</a>
+			</h4>
+		</div>
+		<div id="recent_posts_content">
 	    {{#if eq(settings.number_recent_posts 1)}}
 	    <p id="infocenter_onepost" class="inline">
 			<a href="{{scripturl}}?action=recent">{{txt.recent_view}}</a>&nbsp;&quot;{{textTemplate txt.is_recent_updated context.latest_post.link context.latest_post.time}}<br>
@@ -19,10 +19,10 @@
     			</tr>
     			{{#each context.latest_posts}}
     			<tr class="windowbg">
-						<td class="recentpost"><strong>{{link}}</strong></td>
-						<td class="recentposter">{{poster.link}}</td>
-						<td class="recentboard">{{board.link}}</td>
-						<td class="recenttime">{{time}}</td>
+						<td class="recentpost"><strong>{{{link}}}</strong></td>
+						<td class="recentposter">{{{poster.link}}}</td>
+						<td class="recentboard">{{{board.link}}}</td>
+						<td class="recenttime">{{{time}}}</td>
 					</tr>
     			{{/each}}
     		</table>

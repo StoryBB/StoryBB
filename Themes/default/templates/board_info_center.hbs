@@ -1,44 +1,44 @@
 <div class="roundframe" id="info_center">
-		<div class="title_bar">
-			<h3 class="titlebg">
-				<span class="toggle_up floatright" id="upshrink_ic" title="{{txt.hide_infocenter}}" style="display: none;"></span>
-				<a href="#" id="upshrink_link">{{textTemplate txt.info_center_title context.forum_name_html_safe}}</a>
-			</h3>
-		</div>
-		<div id="upshrinkHeaderIC"{{#unless options.collapse_header_ic}} style="display: none;"{{/unless}}>
-		    {{#each context.info_center}}{{{partial_helper .}}}{{/each}}
-		</div>
+	<div class="title_bar">
+		<h3 class="titlebg">
+			<span class="toggle_up floatright" id="upshrink_ic" title="{{txt.hide_infocenter}}" style="display: none;"></span>
+			<a href="#" id="upshrink_link">{{textTemplate txt.info_center_title context.forum_name_html_safe}}</a>
+		</h3>
 	</div>
-	<script>
-		var oInfoCenterToggle = new smc_Toggle({
-			bToggleEnabled: true,
-			bCurrentlyCollapsed: {{#if $options.collapse_header_ic}}true{{else}}false{{/if}}
-			aSwappableContainers: [
-				\'upshrinkHeaderIC\'
-			],
-			aSwapImages: [
-				{
-					sId: \'upshrink_ic\',
-					altExpanded: {{JavaScriptEscape txt.hide_infocenter}},
-					altCollapsed: {{JavaScriptEscape txt.show_infocenter}},
-				}
-			],
-			aSwapLinks: [
-				{
-					sId: \'upshrink_link\',
-					msgExpanded: {{JavaScriptEscape (textTemplate txt.info_center_title context.forum_name_html_safe)}},
-					msgCollapsed: {{JavaScriptEscape (textTemplate txt.info_center_title context.forum_name_html_safe)}},
-				}
-			],
-			oThemeOptions: {
-				bUseThemeSettings: {{#if context.user.is_guest}}false{{else}}true{{/if}},
-				sOptionName: \'collapse_header_ic\',
-				sSessionId: smf_session_id,
-				sSessionVar: smf_session_var,
-			},
-			oCookieOptions: {
-				bUseCookie: {{#if context.user.is_guest}}true{{else}}false{{/if}},
-				sCookieName: \'upshrinkIC\'
+	<div id="upshrinkHeaderIC"{{#if options.collapse_header_ic}} style="display: none;"{{/if}}>
+	    {{#each context.info_center}}{{{partial_helper .}}}{{/each}}
+	</div>
+</div>
+<script>
+	var oInfoCenterToggle = new smc_Toggle({
+		bToggleEnabled: true,
+		bCurrentlyCollapsed: {{#if $options.collapse_header_ic}}true{{else}}false{{/if}}
+		aSwappableContainers: [
+			\'upshrinkHeaderIC\'
+		],
+		aSwapImages: [
+			{
+				sId: \'upshrink_ic\',
+				altExpanded: {{JavaScriptEscape txt.hide_infocenter}},
+				altCollapsed: {{JavaScriptEscape txt.show_infocenter}},
 			}
-		});
-	</script>
+		],
+		aSwapLinks: [
+			{
+				sId: \'upshrink_link\',
+				msgExpanded: {{JavaScriptEscape (textTemplate txt.info_center_title context.forum_name_html_safe)}},
+				msgCollapsed: {{JavaScriptEscape (textTemplate txt.info_center_title context.forum_name_html_safe)}},
+			}
+		],
+		oThemeOptions: {
+			bUseThemeSettings: {{#if context.user.is_guest}}false{{else}}true{{/if}},
+			sOptionName: \'collapse_header_ic\',
+			sSessionId: smf_session_id,
+			sSessionVar: smf_session_var,
+		},
+		oCookieOptions: {
+			bUseCookie: {{#if context.user.is_guest}}true{{else}}false{{/if}},
+			sCookieName: \'upshrinkIC\'
+		}
+	});
+</script>

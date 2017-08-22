@@ -31,7 +31,7 @@ function moderators_helper($link_moderators, $txt_moderator, $txt_moderators)
 	return new \LightnCandy\SafeString($moderators_string);
 }
 
-function comma_format_helper($number, $override_decimal_count)
+function comma_format_helper($number, $override_decimal_count = false)
 {
 	return new \LightnCandy\SafeString(comma_format($number, $override_decimal_count));
 }
@@ -42,7 +42,7 @@ function template_boardindex_outer_above()
 }
 
 function include_ic_partial($template) {
-	$func = 'template_ic_block_' . $template;
+    $func = 'template_ic_block_' . $template;
 	return $func();
 }
 
@@ -84,12 +84,14 @@ function template_newsfader()
  */
 function template_main()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt, $scripturl, $options, $settings;
 
     $data = Array(
         'context' => $context,
         'txt' => $txt,
-        'scripturl' => $scripturl
+        'scripturl' => $scripturl,
+        'options' => $options,
+        'settings' => $settings,
     );
     
     $template = file_get_contents(__DIR__."/templates/board_main.hbs");
@@ -100,7 +102,8 @@ function template_main()
     $phpStr = LightnCandy::compile($template, Array(
         'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
 	    'partials' => Array(
-	    	'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs")
+	    	'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs"),
+            'board_info_center' => file_get_contents(__DIR__ . "/templates/board_info_center.hbs")
 	    ),
         'helpers' => Array(
         	'approvals' => 'approval_helper',
@@ -108,7 +111,9 @@ function template_main()
         	'comma_format' => 'comma_format_helper',
         	'or' => 'logichelper_or',
         	'and' => 'logichelper_and',
-        	'gt' => 'logichelper_gt'
+        	'gt' => 'logichelper_gt',
+            'textTemplate' => 'textTemplate',
+            'partial_helper' => 'include_ic_partial'
         )
     ));
 
@@ -129,7 +134,7 @@ function template_boardindex_outer_below()
  */
 function template_info_center()
 {
-	global $context, $options, $txt;
+	global $context, $options, $txt, $settings, $modSettings;
 	
 	//early-exit:
 //	if (empty($context['info_center']))
@@ -138,7 +143,9 @@ function template_info_center()
 	$data = Array(
         'context' => $context,
         'txt' => $txt,
-        'options' => $options
+        'options' => $options,
+        'settings' => $settings,
+        'modSettings' => $modSettings,
     );
     
     $template = file_get_contents(__DIR__."/templates/board_info_center.hbs");
@@ -149,8 +156,8 @@ function template_info_center()
     $phpStr = LightnCandy::compile($template, Array(
         'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
         'helpers' => Array(
-        	'partial_helper' => include_ic_partial,
-        	'JavaScriptEscape' => JSEscape,
+        	'partial_helper' => 'include_ic_partial',
+        	'JavaScriptEscape' => 'JSEscape',
         	'textTemplate' => 'textTemplate'
         )
     ));
@@ -181,8 +188,8 @@ function template_ic_block_recent()
     $phpStr = LightnCandy::compile($template, Array(
         'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
         'helpers' => Array(
-        	'partial_helper' => include_ic_partial,
-        	'JavaScriptEscape' => JSEscape,
+        	'partial_helper' => 'include_ic_partial',
+        	'JavaScriptEscape' => 'JSEscape',
         	'textTemplate' => 'textTemplate'
         )
     ));
@@ -226,14 +233,13 @@ function template_ic_block_online()
 {
 	global $context, $scripturl, $txt, $modSettings, $settings;
 	
-	$data = Array(
+	$data = [
         'context' => $context,
         'scripturl' => $scripturl,
         'txt' => $txt,
         'modSettings' => $modSettings,
         'settings' => $settings,
-        'bracketList' => $bracketList
-    );
+    ];
     
     $template = file_get_contents(__DIR__."/partials/board_ic_online.hbs");
     if (!$template) {
@@ -243,10 +249,11 @@ function template_ic_block_online()
     $phpStr = LightnCandy::compile($template, Array(
         'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
         'helpers' => Array(
-        	'and' => logichelper_and,
-        	'eq' => logichelper_eq,
-        	'implode' => implode_sep,
-        	'textTemplate' => textTemplate
+        	'and' => 'logichelper_and',
+        	'eq' => 'logichelper_eq',
+        	'implode' => 'implode_sep',
+        	'textTemplate' => 'textTemplate',
+            'comma_format' => 'comma_format_helper'
         )
     ));
 
