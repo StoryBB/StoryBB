@@ -64,6 +64,10 @@ function stringhelper_json($data)
 	return json_encode($data);
 }
 
+function stringhelper_string_json($data) {
+	return json_encode((string) $data);
+}
+
 function concat(...$items)
 {
 	// Strip the last item off the array, it's the calling context.

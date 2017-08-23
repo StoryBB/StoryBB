@@ -114,7 +114,8 @@ function template_main()
         	'gt' => 'logichelper_gt',
             'textTemplate' => 'textTemplate',
             'partial_helper' => 'include_ic_partial',
-            'json' => 'stringhelper_json'
+            'json' => 'stringhelper_json',
+            'jsontext' => 'stringhelper_string_json'
         )
     ));
 
