@@ -14,8 +14,8 @@
 	<p>{{txt.started_by}} {{context.topic_poster_name}}, {{context.topic_started_time}}</p>
 	{{!-- Next/prev--}}
 	<span class="nextlinks floatright">{{{context.previous_next}}}</span>
-	{{#if settings.display_who_viewing}}
-	    <p>{{viewing}} {{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{tst.guests}}{{else}}{{txt.guest}}{{/if}}{{txt.who_viewing_topic}}</p>
+	{{#if viewing}}
+	    <p>{{{viewing}}} {{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}}{{txt.who_viewing_topic}}</p>
 	{{/if}}
 </div>{{!-- Show the anchor for the top and for the first message. If the first message is new, say so. --}}
 <a id="msg{{context.first_message}}"></a>{{#if context.first_new_message}}<a id="new"></a>{{/if}}
