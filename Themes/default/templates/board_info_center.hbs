@@ -12,33 +12,33 @@
 <script>
 	var oInfoCenterToggle = new smc_Toggle({
 		bToggleEnabled: true,
-		bCurrentlyCollapsed: {{#if $options.collapse_header_ic}}true{{else}}false{{/if}}
+		bCurrentlyCollapsed: {{#if options.collapse_header_ic}}true{{else}}false{{/if}},
 		aSwappableContainers: [
-			\'upshrinkHeaderIC\'
+			'upshrinkHeaderIC'
 		],
 		aSwapImages: [
 			{
-				sId: \'upshrink_ic\',
-				altExpanded: {{JavaScriptEscape txt.hide_infocenter}},
-				altCollapsed: {{JavaScriptEscape txt.show_infocenter}},
+				sId: 'upshrink_ic',
+				altExpanded: {{{json txt.hide_infocenter}}},
+				altCollapsed: {{{json txt.show_infocenter}}},
 			}
 		],
 		aSwapLinks: [
 			{
-				sId: \'upshrink_link\',
-				msgExpanded: {{JavaScriptEscape (textTemplate txt.info_center_title context.forum_name_html_safe)}},
-				msgCollapsed: {{JavaScriptEscape (textTemplate txt.info_center_title context.forum_name_html_safe)}},
+				sId: 'upshrink_link',
+				msgExpanded: {{{json (textTemplate txt.info_center_title context.forum_name_html_safe)}}},
+				msgCollapsed: {{{json (textTemplate txt.info_center_title context.forum_name_html_safe)}}},
 			}
 		],
 		oThemeOptions: {
 			bUseThemeSettings: {{#if context.user.is_guest}}false{{else}}true{{/if}},
-			sOptionName: \'collapse_header_ic\',
+			sOptionName: 'collapse_header_ic',
 			sSessionId: smf_session_id,
 			sSessionVar: smf_session_var,
 		},
 		oCookieOptions: {
 			bUseCookie: {{#if context.user.is_guest}}true{{else}}false{{/if}},
-			sCookieName: \'upshrinkIC\'
+			sCookieName: 'upshrinkIC'
 		}
 	});
 </script>

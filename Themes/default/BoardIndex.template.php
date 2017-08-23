@@ -113,7 +113,8 @@ function template_main()
         	'and' => 'logichelper_and',
         	'gt' => 'logichelper_gt',
             'textTemplate' => 'textTemplate',
-            'partial_helper' => 'include_ic_partial'
+            'partial_helper' => 'include_ic_partial',
+            'json' => 'stringhelper_json'
         )
     ));
 
