@@ -127,44 +127,7 @@ function template_main()
  */
 function template_boardindex_outer_below()
 {
-	return template_info_center();
-}
-
-/**
- * Displays the info center
- */
-function template_info_center()
-{
-	global $context, $options, $txt, $settings, $modSettings;
-	
-	//early-exit:
-//	if (empty($context['info_center']))
-//		return;
-
-	$data = Array(
-        'context' => $context,
-        'txt' => $txt,
-        'options' => $options,
-        'settings' => $settings,
-        'modSettings' => $modSettings,
-    );
-    
-    $template = file_get_contents(__DIR__."/templates/board_info_center.hbs");
-    if (!$template) {
-        die('Template did not load!');
-    }
-
-    $phpStr = LightnCandy::compile($template, Array(
-        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-        'helpers' => Array(
-        	'partial_helper' => 'include_ic_partial',
-        	'JavaScriptEscape' => 'JSEscape',
-        	'textTemplate' => 'textTemplate'
-        )
-    ));
-
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
+    // @todo remove this
 }
 
 /**
