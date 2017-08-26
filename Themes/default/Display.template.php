@@ -88,12 +88,5 @@ function getLikeText($count) {
 	$base .= (isset($txt[$base . $count])) ? $count : 'n';
 	return sprintf($txt[$base], $scripturl . '?action=likes;sa=view;ltype=msg;like=' . $id . ';' . $context['session_var'] . '=' . $context['session_id'], comma_format($count));
 }
-/**
- * The template for displaying the quick reply box.
- */
-function template_quickreply()
-{
-	global $context, $modSettings, $scripturl, $options, $txt;
-}
 
 ?>
