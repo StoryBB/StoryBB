@@ -68,11 +68,11 @@
 		{{/if}}
 		<div id="messageindex">
 		{{#if settings.display_who_viewing}}
-		<div class="information">';
+		<div class="information">
 			{{#if (eq settings.display_who_viewing 1)}}
 				{{#if (eq (getNumItems context.view_members) 1)}}{{txt.who_member}}{{else}}{{txt.members}}{{/if}}
 			{{else}}
-				{{#if context.view_members_list}}{{implode_comma context.view_members_list}}{{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}}0{{txt.members}}{{/if}}
+				{{#if context.view_members_list}}{{{implode_comma context.view_members_list}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}}0{{txt.members}}{{/if}}
 			{{/if}}
 			{{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}} {{txt.who_viewing_board}}
 			</div>
