@@ -933,140 +933,27 @@ function template_statPanel()
 {
 	global $context, $txt;
 
-	// First, show a few text statistics such as post/topic count.
-	echo '
-	<div id="profileview" class="roundframe">
-		<div id="generalstats">
-			<dl class="stats">
-				<dt>', $txt['statPanel_total_time_online'], ':</dt>
-				<dd>', $context['time_logged_in'], '</dd>
-				<dt>', $txt['statPanel_total_posts'], ':</dt>
-				<dd>', $context['num_posts'], ' ', $txt['statPanel_posts'], '</dd>
-				<dt>', $txt['statPanel_total_topics'], ':</dt>
-				<dd>', $context['num_topics'], ' ', $txt['statPanel_topics'], '</dd>
-				<dt>', $txt['statPanel_users_polls'], ':</dt>
-				<dd>', $context['num_polls'], ' ', $txt['statPanel_polls'], '</dd>
-				<dt>', $txt['statPanel_users_votes'], ':</dt>
-				<dd>', $context['num_votes'], ' ', $txt['statPanel_votes'], '</dd>
-			</dl>
-		</div>';
+    $data = Array(
+        'context' => $context,
+        'txt' => $txt,
+    );
+    
+    $template = file_get_contents(__DIR__."/templates/profile_stats.hbs");
+    if (!$template) {
+        die('Template did not load!');
+    }
 
-	// This next section draws a graph showing what times of day they post the most.
-	echo '
-		<div id="activitytime" class="flow_hidden">
-			<div class="title_bar">
-				<h3 class="titlebg">
-					<span class="generic_icons history"></span> ', $txt['statPanel_activityTime'], '
-				</h3>
-			</div>';
+    $phpStr = LightnCandy::compile($template, Array(
+        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+        'helpers' => Array(
+        	'inverted_percent' => function($pc) { return 100 - $pc; },
+        	'pie_percent' => function($pc) { return (int) $pc / 5 * 20; },
+        	'textTemplate' => 'textTemplate',
+        )
+    ));
 
-	// If they haven't post at all, don't draw the graph.
-	if (empty($context['posts_by_time']))
-		echo '
-			<p class="centertext padding">', $txt['statPanel_noPosts'], '</p>';
-	// Otherwise do!
-	else
-	{
-		echo '
-			<ul class="activity_stats flow_hidden">';
-
-		// The labels.
-		foreach ($context['posts_by_time'] as $time_of_day)
-		{
-			echo '
-				<li', $time_of_day['is_last'] ? ' class="last"' : '', '>
-					<div class="bar" style="padding-top: ', ((int) (100 - $time_of_day['relative_percent'])), 'px;" title="', sprintf($txt['statPanel_activityTime_posts'], $time_of_day['posts'], $time_of_day['posts_percent']), '">
-						<div style="height: ', (int) $time_of_day['relative_percent'], 'px;">
-							<span>', sprintf($txt['statPanel_activityTime_posts'], $time_of_day['posts'], $time_of_day['posts_percent']), '</span>
-						</div>
-					</div>
-					<span class="stats_hour">', $time_of_day['hour_format'], '</span>
-				</li>';
-		}
-
-		echo '
-
-			</ul>';
-	}
-
-	echo '
-		</div>';
-
-	// Two columns with the most popular boards by posts and activity (activity = users posts / total posts).
-	echo '
-		<div class="flow_hidden">
-			<div class="half_content">
-				<div class="title_bar">
-					<h3 class="titlebg">
-						<span class="generic_icons replies"></span> ', $txt['statPanel_topBoards'], '
-					</h3>
-				</div>';
-
-	if (empty($context['popular_boards']))
-		echo '
-				<p class="centertext padding">', $txt['statPanel_noPosts'], '</p>';
-
-	else
-	{
-		echo '
-				<dl class="stats">';
-
-		// Draw a bar for every board.
-		foreach ($context['popular_boards'] as $board)
-		{
-			echo '
-					<dt>', $board['link'], '</dt>
-					<dd>
-						<div class="profile_pie" style="background-position: -', ((int) ($board['posts_percent'] / 5) * 20), 'px 0;" title="', sprintf($txt['statPanel_topBoards_memberposts'], $board['posts'], $board['total_posts_member'], $board['posts_percent']), '">
-							', sprintf($txt['statPanel_topBoards_memberposts'], $board['posts'], $board['total_posts_member'], $board['posts_percent']), '
-						</div>
-						', empty($context['hide_num_posts']) ? $board['posts'] : '', '
-					</dd>';
-		}
-
-		echo '
-				</dl>';
-	}
-	echo '
-			</div>';
-	echo '
-			<div class="half_content">
-				<div class="title_bar">
-					<h3 class="titlebg">
-						<span class="generic_icons replies"></span> ', $txt['statPanel_topBoardsActivity'], '
-					</h3>
-				</div>';
-
-	if (empty($context['board_activity']))
-		echo '
-				<p class="centertext padding">', $txt['statPanel_noPosts'], '</p>';
-	else
-	{
-		echo '
-				<dl class="stats">';
-
-		// Draw a bar for every board.
-		foreach ($context['board_activity'] as $activity)
-		{
-			echo '
-					<dt>', $activity['link'], '</dt>
-					<dd>
-						<div class="profile_pie" style="background-position: -', ((int) ($activity['percent'] / 5) * 20), 'px 0;" title="', sprintf($txt['statPanel_topBoards_posts'], $activity['posts'], $activity['total_posts'], $activity['posts_percent']), '">
-							', sprintf($txt['statPanel_topBoards_posts'], $activity['posts'], $activity['total_posts'], $activity['posts_percent']), '
-						</div>
-						', $activity['percent'], '%
-					</dd>';
-		}
-
-		echo '
-				</dl>';
-	}
-	echo '
-			</div>
-		</div>';
-
-	echo '
-	</div>';
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
