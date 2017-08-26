@@ -95,4 +95,5 @@ function template_quickreply()
 {
 	global $context, $modSettings, $scripturl, $options, $txt;
 }
+
 ?>
