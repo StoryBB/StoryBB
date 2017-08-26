@@ -1543,19 +1543,6 @@ function getMessageIcons($board_id)
 }
 
 /**
- * Compatibility function - used in 1.1 for showing a post box.
- *
- * @param string $msg The message
- * @return string The HTML for an editor
- */
-function theme_postbox($msg)
-{
-	global $context;
-
-	return template_control_richedit($context['post_box_name']);
-}
-
-/**
  * Creates a box that can be used for richedit stuff like BBC, Smileys etc.
  * @param array $editorOptions Various options for the editor
  */
