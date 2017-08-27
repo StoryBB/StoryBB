@@ -16,74 +16,6 @@ if (!defined('SMF'))
 
 /**
  * !!!Compatibility!!!
- * Since we changed the editor we don't need it any more, but let's keep it if any mod wants to use it
- * Convert only the BBC that can be edited in HTML mode for the editor.
- *
- * @param string $text The text with bbcode in it
- * @param boolean $compat_mode Whether to actually convert the text
- * @return string The text
- */
-function bbc_to_html($text, $compat_mode = false)
-{
-	global $modSettings;
-
-	if (!$compat_mode)
-		return $text;
-
-	// Turn line breaks back into br's.
-	$text = strtr($text, array("\r" => '', "\n" => '<br>'));
-
-	// Prevent conversion of all bbcode inside these bbcodes.
-	// @todo Tie in with bbc permissions ?
-	foreach (array('code', 'php', 'nobbc') as $code)
-	{
-		if (strpos($text, '[' . $code) !== false)
-		{
-			$parts = preg_split('~(\[/' . $code . '\]|\[' . $code . '(?:=[^\]]+)?\])~i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-			// Only mess with stuff inside tags.
-			for ($i = 0, $n = count($parts); $i < $n; $i++)
-			{
-				// Value of 2 means we're inside the tag.
-				if ($i % 4 == 2)
-					$parts[$i] = strtr($parts[$i], array('[' => '&#91;', ']' => '&#93;', "'" => "'"));
-			}
-			// Put our humpty dumpty message back together again.
-			$text = implode('', $parts);
-		}
-	}
-
-	// What tags do we allow?
-	$allowed_tags = array('b', 'u', 'i', 's', 'hr', 'list', 'li', 'font', 'size', 'color', 'img', 'left', 'center', 'right', 'url', 'email', 'ftp', 'sub', 'sup');
-
-	$text = parse_bbc($text, true, '', $allowed_tags);
-
-	// Fix for having a line break then a thingy.
-	$text = strtr($text, array('<br><div' => '<div', "\n" => '', "\r" => ''));
-
-	// Note that IE doesn't understand spans really - make them something "legacy"
-	$working_html = array(
-		'~<del>(.+?)</del>~i' => '<strike>$1</strike>',
-		'~<span\sclass="bbc_u">(.+?)</span>~i' => '<u>$1</u>',
-		'~<span\sstyle="color:\s*([#\d\w]+);" class="bbc_color">(.+?)</span>~i' => '<font color="$1">$2</font>',
-		'~<span\sstyle="font-family:\s*([#\d\w\s]+);" class="bbc_font">(.+?)</span>~i' => '<font face="$1">$2</font>',
-		'~<div\sstyle="text-align:\s*(left|right);">(.+?)</div>~i' => '<p align="$1">$2</p>',
-	);
-	$text = preg_replace(array_keys($working_html), array_values($working_html), $text);
-
-	// Parse unique ID's and disable javascript into the smileys - using the double space.
-	$i = 1;
-	$text = preg_replace_callback('~(?:\s|&nbsp;)?<(img\ssrc="' . preg_quote($modSettings['smileys_url'], '~') . '/[^<>]+?/([^<>]+?)"\s*)[^<>]*?class="smiley">~',
-		function($m) use (&$i)
-		{
-			return '<' . stripslashes($m[1]) . 'alt="" title="" onresizestart="return false;" id="smiley_' . $i++ . '_' . $m[2] . '" style="padding: 0 3px 0 3px;">';
-		}, $text);
-
-	return $text;
-}
-
-/**
- * !!!Compatibility!!!
  * This is no more needed, but to avoid break mods let's keep it
  * Run it it shouldn't even hurt either, so let's not bother remove it
  *
@@ -1121,7 +1053,9 @@ function legalise_bbc($text)
 		$lastlen = strlen($text = preg_replace($backToBackPattern, '', $text));
 
 	// Need to sort the tags my name length.
-	uksort($valid_tags, 'sort_array_length');
+	uksort($valid_tags, function ($a, $b) {
+		return strlen($a) < strlen($b) ? 1 : (strlen($a) == strlen($b) ? 0 : -1);
+	});
 
 	// These inline tags can compete with each other regarding style.
 	$competing_tags = array(
@@ -1408,18 +1342,6 @@ function legalise_bbc($text)
 		$lastlen = strlen($text = preg_replace($backToBackPattern, '', $text));
 
 	return $text;
-}
-
-/**
- * !!!Compatibility!!!
- * A help function for legalise_bbc for sorting arrays based on length.
- * @param string $a A string
- * @param string $b Another string
- * @return int 1 if $a is shorter than $b, -1 otherwise
- */
-function sort_array_length($a, $b)
-{
-	return strlen($a) < strlen($b) ? 1 : -1;
 }
 
 /**
