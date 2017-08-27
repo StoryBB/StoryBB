@@ -34,7 +34,7 @@
     {{>list_additional_rows cur_list.additional_rows.above_column_headers}}
     </div>
 {{/if}}
-<table class="table_grid" ', !empty($cur_list['width']) ? ' style="width:' . $cur_list['width'] . '"' : '', '>';
+<table class="table_grid" {{#if cur_list.width}} style="width:{{cur_list.width}}{{/if}}">
 {{#if (gt $header_count 2)}}
 	<thead>
 		<tr class="title_bar">
@@ -63,7 +63,7 @@
 {{#each cur_list.rows}}
         <tr class="windowbg {{class}}" {{#if style}} style="{{style}}"{{/if}} id="list_{{list_id}}_{{@key}}">
     {{#each data}}
-            <td{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}>{{value}}</td>
+            <td{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}>{{{value}}}</td>
     {{/each}}
         </tr>
 {{/each}}
@@ -84,10 +84,10 @@
 	
 	{{/if}}
 {{/if}}
-		</div>
 {{#if cur_list.additional_rows.bottom_of_list}}
     {{>list_additional_rows cur_list.additional_rows.bottom_of_list}}
 {{/if}}
+		</div>
 {{#if cur_list.form}}
 
 {{/if}}
@@ -96,7 +96,7 @@
 		<input type="hidden" name="{{@key}}" value="{{.}}">
 	{{/each}}
 	{{#if cur_list.form.token}}
-		<input type="hidden" name="{{lookup context (concat cur_list.form.token '_token_var')}}" value="{{lookup context (concat cur_list.form.token 'token')}}">
+		<input type="hidden" name="{{token_var cur_list.form.token}}" value="{{ltoken cur_list.form.token}}">
 	{{/if}}
 	</form>
 {{/if}}
@@ -105,6 +105,6 @@
 {{/if}}
 {{#if cur_list.javascript}}
 	<script>
-		{{cur_list.javascript}}
+		{{{cur_list.javascript}}}
 	</script>
 {{/if}}

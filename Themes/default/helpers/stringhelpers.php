@@ -93,4 +93,14 @@ function JSEscape($string)
 	)) . '\'';
 }
 
+function retrieve_context_token($string) {
+	global $context;
+	return isset($context[$string . '_token']) ? $context[$string . '_token'] : '';
+}
+
+function retrieve_context_token_var($string) {
+	global $context;
+	return isset($context[$string . '_token_var']) ? $context[$string . '_token_var'] : '';
+}
+
 ?>
