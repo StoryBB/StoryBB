@@ -110,7 +110,6 @@ $txt['cannot_profile_title_any'] = 'You cannot edit people\'s custom titles.';
 $txt['cannot_profile_extra_own'] = 'Sorry, but you don\'t have the necessary permissions to edit your profile data.';
 $txt['cannot_profile_identity_own'] = 'You can\'t change your identity at the current moment.';
 $txt['cannot_profile_title_own'] = 'You are not allowed to change your custom title.';
-$txt['cannot_profile_server_avatar'] = 'You are not permitted to use a server stored avatar.';
 $txt['cannot_profile_upload_avatar'] = 'You do not have permission to upload an avatar.';
 $txt['cannot_profile_remote_avatar'] = 'You don\'t have the privilege of using a remote avatar.';
 $txt['cannot_profile_view'] = 'Many apologies, but you can\'t view just any profile.';

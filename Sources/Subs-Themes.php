@@ -289,7 +289,7 @@ function theme_install($to_install = array())
 
 		// Got something, lets figure it out what to do next.
 		if (!empty($to_update) && !empty($to_update['version']))
-			switch (compareVersions($context['to_install']['version'], $to_update['version']))
+			switch (version_compare($context['to_install']['version'], $to_update['version']))
 			{
 				case 1: // Got a newer version, update the old entry.
 					$smcFunc['db_query']('', '

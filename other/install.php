@@ -478,7 +478,6 @@ function CheckFilesWritable()
 
 	$writable_files = array(
 		'attachments',
-		'avatars',
 		'custom_avatar',
 		'cache',
 		'Smileys',

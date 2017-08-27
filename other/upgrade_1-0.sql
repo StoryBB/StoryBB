@@ -1878,7 +1878,6 @@ VALUES
 INSERT IGNORE INTO {$db_prefix}settings
 	(variable, value)
 VALUES
-	('avatar_allow_server_stored', '1'),
 	('avatar_check_size', '0'),
 	('avatar_action_too_large', 'option_user_resize'),
 	('avatar_resize_upload', '1'),
@@ -1918,8 +1917,6 @@ upgrade_query("
 		('max_messageLength', '" . (empty($GLOBALS['MaxMessLen']) ? 10000 : $GLOBALS['MaxMessLen']) . "'),
 		('max_signatureLength', '" . @$GLOBALS['MaxSigLen'] . "'),
 		('spamWaitTime', '" . @$GLOBALS['timeout'] . "'),
-		('avatar_directory', '" . (isset($GLOBALS['facesdir']) ? fixRelativePath($GLOBALS['facesdir']) : fixRelativePath('./avatars')) . "'),
-		('avatar_url', '" . @$GLOBALS['facesurl'] . "'),
 		('avatar_max_height_external', '" . @$GLOBALS['userpic_height'] . "'),
 		('avatar_max_width_external', '" . @$GLOBALS['userpic_width'] . "'),
 		('avatar_max_height_upload', '" . @$GLOBALS['userpic_height'] . "'),
