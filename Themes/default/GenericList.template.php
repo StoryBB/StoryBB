@@ -52,9 +52,11 @@ function template_show_list($list_id = null)
 	    	'list_additional_rows' => file_get_contents(__DIR__ .  "/partials/list_additional_rows.hbs")
 	    ),
 	    'helpers' => Array(
-	    	'concat' => concat,
-	    	'gt' => logichelper_gt,
-	    	'and' => logichelper_and,
+	    	'concat' => 'concat',
+	    	'gt' => 'logichelper_gt',
+	    	'and' => 'logichelper_and',
+	    	'token' => 'retrieve_context_token',
+	    	'token_var' => 'retrieve_context_token_var',
 	    	
 	    )
 	));

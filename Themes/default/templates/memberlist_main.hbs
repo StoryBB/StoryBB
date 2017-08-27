@@ -35,7 +35,7 @@
 					<tr class="windowbg" {{#if sort_letter}} id="letter{{sort_letter}}"{{/if}}>
 					<td class="centertext">
 						{{#if context.can_send_pm}}<a href="{{online.href}}" title="{{online.text}}">{{/if}}
-						{{#if settings.use_image_buttons}}<span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{online.text}}"></span>{{/if}}
+						<span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{online.text}}"></span>
 						{{{online.label}}}{{#if context.can_send_pm}}</a>{{/if}}
 					</td>
 					<td class="lefttext">{{{link}}}</td>

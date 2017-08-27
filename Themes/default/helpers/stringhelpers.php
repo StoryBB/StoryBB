@@ -26,7 +26,7 @@ function implode_sep($array, $sep)
 }
 
 function array2js($array) {
-	return new \LightnCandy\SafeString("['" . implode("','", $array) . "']");
+	return new \LightnCandy\SafeString(json_encode(array_values($array)));
 }
 
 /**
@@ -64,8 +64,14 @@ function stringhelper_json($data)
 	return json_encode($data);
 }
 
+function stringhelper_string_json($data) {
+	return json_encode((string) $data);
+}
+
 function concat(...$items)
 {
+	// Strip the last item off the array, it's the calling context.
+	array_pop($items);
 	return implode($items);
 }
 
@@ -85,6 +91,16 @@ function JSEscape($string)
 		'<a href' => '<a hr\'+\'ef',
 		$scripturl => '\' + smf_scripturl + \'',
 	)) . '\'';
+}
+
+function retrieve_context_token($string) {
+	global $context;
+	return isset($context[$string . '_token']) ? $context[$string . '_token'] : '';
+}
+
+function retrieve_context_token_var($string) {
+	global $context;
+	return isset($context[$string . '_token_var']) ? $context[$string . '_token_var'] : '';
 }
 
 ?>

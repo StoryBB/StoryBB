@@ -1932,7 +1932,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['javascript_vars'] = array();
 
 	$context['login_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl) . '?action=login2';
-	$context['menu_separator'] = !empty($settings['use_image_buttons']) ? ' ' : ' | ';
+	$context['menu_separator'] = ' ';
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
 	$context['forum_name'] = $mbname;
@@ -2036,11 +2036,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$required_files = implode('+', array_merge($templates, array('Modifications')));
 		loadLanguage($required_files, '', false);
 
-		// Custom template layers?
-		if (isset($settings['theme_layers']))
-			$context['template_layers'] = explode(',', $settings['theme_layers']);
-		else
-			$context['template_layers'] = array('html', 'body');
+		$context['template_layers'] = [];
 	}
 
 	// Initialize the theme.
@@ -2099,10 +2095,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 				loadCSSFile('rtl' . $context['theme_variant'] . '.css', array(), 'smf_rtl' . $context['theme_variant']);
 		}
 	}
-
-	// Let's be compatible with old themes!
-	if (!function_exists('template_html_above') && in_array('html', $context['template_layers']))
-		$context['template_layers'] = array('main');
 
 	$context['tabindex'] = 1;
 
@@ -2319,6 +2311,8 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 function loadSubTemplate($sub_template_name, $fatal = false)
 {
 	global $context, $txt, $db_show_debug;
+
+	$result = '';
 
 	if ($db_show_debug === true)
 		$context['debug']['sub_templates'][] = $sub_template_name;

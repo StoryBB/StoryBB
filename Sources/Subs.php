@@ -857,39 +857,6 @@ function forum_time($use_user_offset = true, $timestamp = null)
 }
 
 /**
- * Calculates all the possible permutations (orders) of array.
- * should not be called on huge arrays (bigger than like 10 elements.)
- * returns an array containing each permutation.
- *
- * @deprecated since 2.1
- * @param array $array An array
- * @return array An array containing each permutation
- */
-function permute($array)
-{
-	$orders = array($array);
-
-	$n = count($array);
-	$p = range(0, $n);
-	for ($i = 1; $i < $n; null)
-	{
-		$p[$i]--;
-		$j = $i % 2 != 0 ? $p[$i] : 0;
-
-		$temp = $array[$i];
-		$array[$i] = $array[$j];
-		$array[$j] = $temp;
-
-		for ($i = 1; $p[$i] == 0; $i++)
-			$p[$i] = 1;
-
-		$orders[] = $array;
-	}
-
-	return $orders;
-}
-
-/**
  * Parse bulletin board code in a string, as well as smileys optionally.
  *
  * - only parses bbc tags which are not disabled in disabledBBC.
@@ -2808,7 +2775,35 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	}
 	if ($do_footer)
 	{
-		$content = loadSubTemplate(isset($context['sub_template']) ? $context['sub_template'] : 'main');
+		$content = '';
+		$render_templates = [];
+		// Add the before layers.
+		if (empty($context['template_layers']))
+		{
+			$context['template_layers'] = [];
+		}
+		foreach ($context['template_layers'] as $layer) {
+			$render_templates[] = $layer . '_above';
+		}
+
+		// Add the inner part
+		if (empty($context['sub_template']))
+		{
+			$render_templates[] = 'main';
+		}
+		else
+		{
+			$render_templates = array_merge($render_templates, (array) $context['sub_template']);
+		}
+
+		// Add the after layers
+		foreach (array_reverse($context['template_layers']) as $layer) {
+			$render_templates[] = $layer . '_below';
+		}
+
+		foreach ($render_templates as $sub_template) {
+			$content .= loadSubTemplate($sub_template);
+		}
 		render_page($content); //found in index.template.php, this renders the layout around the page
 
 		// Anything special to put out?
@@ -3858,9 +3853,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
 	if (function_exists('template_create_button') && !$force_use)
 		return template_create_button($name, $alt, $label = '', $custom = '');
 
-	if (!$settings['use_image_buttons'])
-		return $txt[$alt];
-	elseif (!empty($settings['use_buttons']))
+	if (!empty($settings['use_buttons']))
 		return '<span class="generic_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
 	else
 		return '<img src="' . $settings['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';

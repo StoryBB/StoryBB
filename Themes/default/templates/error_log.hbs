@@ -20,7 +20,7 @@
 				{{#each context.error_types}}
 					{{#unless (eq @index 0)}}&nbsp;|&nbsp;{{/unless}}
 					{{#if this.is_selected}}<img src="{{../settings.images_url}}/selected.png" alt="">{{/if}}
-					<a href="{{this.url}}" {{#if this.is_selected}}style="font-weight: bold;"{{/if}} title="{{this.description}}">{{this.label}}</a>
+					<a href="{{this.url}}" {{#if this.is_selected}}style="font-weight: bold;"{{/if}} title="{{this.description}}">{{{this.label}}}</a>
 				{{/each}}
 			</td>
 		</tr>

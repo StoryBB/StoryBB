@@ -117,6 +117,7 @@ function is_not_guest($message = '')
 	loadLanguage('Login');
 
 	// Apparently we're not in a position to handle this now. Let's go to a safer location for now.
+	// @todo this might need reworking
 	if (empty($context['template_layers']))
 	{
 		$_SESSION['login_url'] = $scripturl . '?' . $_SERVER['QUERY_STRING'];

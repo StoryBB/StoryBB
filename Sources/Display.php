@@ -504,8 +504,8 @@ function Display()
 	}
 
 	// Information about the current topic...
-	$context['is_locked'] = $context['topicinfo']['locked'];
-	$context['is_sticky'] = $context['topicinfo']['is_sticky'];
+	$context['is_locked'] = (bool) $context['topicinfo']['locked'];
+	$context['is_sticky'] = (bool) $context['topicinfo']['is_sticky'];
 	$context['is_approved'] = $context['topicinfo']['approved'];
 	$context['is_poll'] = $context['topicinfo']['id_poll'] > 0 && $modSettings['pollMode'] == '1' && allowedTo('poll_view');
 

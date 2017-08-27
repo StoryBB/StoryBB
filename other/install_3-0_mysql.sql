@@ -1894,7 +1894,6 @@ VALUES (1, 'name', '{$default_theme_name}'),
 	(1, 'number_recent_posts', '0'),
 	(1, 'show_stats_index', '1'),
 	(1, 'newsfader_time', '3000'),
-	(1, 'use_image_buttons', '1'),
 	(1, 'enable_news', '1'),
 	(1, 'drafts_show_saved_enabled', '1');
 

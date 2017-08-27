@@ -339,10 +339,6 @@ $txt['topics_per_page'] = 'Topics to display per page:';
 $txt['messages_per_page'] = 'Messages to display per page:';
 $txt['per_page_default'] = 'forum default';
 $txt['use_editor_quick_reply'] = 'Use full editor in Quick Reply';
-$txt['display_quick_mod'] = 'Show quick-moderation as';
-$txt['display_quick_mod_none'] = 'don\'t show';
-$txt['display_quick_mod_check'] = 'checkboxes';
-$txt['display_quick_mod_image'] = 'icons';
 
 $txt['whois_title'] = 'Look up IP on a regional whois-server';
 $txt['whois_afrinic'] = 'AfriNIC (Africa)';
@@ -563,7 +559,6 @@ $txt['tfa_wait'] = 'Please wait for about 2 minutes before attempting to log in 
 
 $txt['theme_opt_display'] = 'Board and topic display';
 $txt['theme_opt_posting'] = 'Posting';
-$txt['theme_opt_moderation'] = 'Moderation';
 $txt['theme_opt_personal_messages'] = 'Personal Messages';
 
 ?>

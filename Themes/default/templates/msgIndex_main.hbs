@@ -32,16 +32,16 @@
 					</p>
 				</div>
 				<div class="lastpost lpr_border">
-				    {{#if last_post.id}}
-				    <p>{{last_post.last_post_message}}</p>
-				    {{/if}}
-			    </div>
-			    {{#if children}}
-			    <div id="board_{{id}}_children" class="children">
-            		<p><strong>{{../txt.sub_boards}}</strong>: {{child_boards .}}</p>
-            	</div>
-            	{{/if}}
-            </div>
+					{{#if last_post.id}}
+					<p>{{last_post.last_post_message}}</p>
+					{{/if}}
+				</div>
+				{{#if children}}
+				<div id="board_{{id}}_children" class="children">
+					<p><strong>{{../txt.sub_boards}}</strong>: {{child_boards .}}</p>
+				</div>
+				{{/if}}
+			</div>
 		{{/each}}
 		</div>
 {{/if}}
@@ -50,137 +50,115 @@
 			<a class="button mobile_act">{{txt.mobile_action}}</a>
 		</div>
 		<div class="pagesection">
-    		{{context.menu_separator}}<a href="#bot" class="topbottom floatleft">{{txt.go_down}}</a>
-    		<div class="pagelinks floatleft">{{{context.page_index}}}</div>
-    		{{>button_strip context.normal_buttons 'right'}}
-    	</div>
-    	{{#if (or context.description context.moderators)}}
-    	<div id="description_board" class="generic_list_wrapper">
-    		<h3>{{context.name}}</h3>
-    		<p>
-		    {{context.description}}&nbsp;
-		    {{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}:{{implode_comma context.link_moderators}}.
-		    </p>
-        </div>
-    	{{/if}}
-    	{{#if (and context.can_quick_mod options.display_quick_mod context.topics)}}
-    	<form action="{{scripturl}}?action=quickmod;board={{context.current_board}}.{{context.start}}" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">
-    	{{/if}}
-    	<div id="messageindex">
-    	{{#if settings.display_who_viewing}}
-    	<div class="information">';
+			{{context.menu_separator}}<a href="#bot" class="topbottom floatleft">{{txt.go_down}}</a>
+			<div class="pagelinks floatleft">{{{context.page_index}}}</div>
+			{{>button_strip button_strip=context.normal_buttons direction='right'}}
+		</div>
+		{{#if (or context.description context.moderators)}}
+		<div id="description_board" class="generic_list_wrapper">
+			<h3>{{context.name}}</h3>
+			<p>
+			{{context.description}}&nbsp;
+			{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}:{{implode_comma context.link_moderators}}.
+			</p>
+		</div>
+		{{/if}}
+		{{#if (and context.can_quick_mod context.topics)}}
+		<form action="{{scripturl}}?action=quickmod;board={{context.current_board}}.{{context.start}}" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">
+		{{/if}}
+		<div id="messageindex">
+		{{#if settings.display_who_viewing}}
+		<div class="information">
 			{{#if (eq settings.display_who_viewing 1)}}
 				{{#if (eq (getNumItems context.view_members) 1)}}{{txt.who_member}}{{else}}{{txt.members}}{{/if}}
 			{{else}}
-			    {{#if context.view_members_list}}{{implode_comma context.view_members_list}}{{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}}0{{txt.members}}{{/if}}
+				{{#if context.view_members_list}}{{{implode_comma context.view_members_list}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}}0{{txt.members}}{{/if}}
 			{{/if}}
-            {{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}} {{txt.who_viewing_board}}
+			{{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}} {{txt.who_viewing_board}}
 			</div>
-    	{{/if}}
-    	<div class="title_bar" id="topic_header">
-    	{{#if context.topics}}
-    	    <div class="board_icon">&nbsp;</div>
+		{{/if}}
+		<div class="title_bar" id="topic_header">
+		{{#if context.topics}}
+			<div class="board_icon">&nbsp;</div>
 			<div class="info">{{{context.topics_headers.subject}}} / {{{context.topics_headers.starter}}}</div>
 			<div class="board_stats centertext">{{{context.topics_headers.replies}}} / {{{context.topics_headers.views}}}</div>
 			<div class="lastpost">{{{context.topics_headers.last_post}}}</div>
-    	{{/if}}
-    	{{#if context.can_quick_mod}}
-    	{{#if options.display_quick_mod)}}
-    		<div class="moderation"><input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');" class="input_check"></div>
-    	{{else}}
-    	    <div class="moderation">&nbsp;</div>
-    	{{/if}}
-    	{{else}} {{!-- no topics --}}
-    	<h3 class="titlebg">{{txt.topic_alert_none}}</h3>
-    	{{/if}}
-    	</div>
-    	{{#if context.unapproved_posts_message}}
-    	<div class="information">
+			{{#if context.can_quick_mod}}
+				<div class="moderation"><input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');" class="input_check"></div>
+			{{/if}}
+		{{else}}
+		{{!-- no topics --}}
+		<h3 class="titlebg">{{txt.topic_alert_none}}</h3>
+		{{/if}}
+		</div>
+		{{#if context.unapproved_posts_message}}
+		<div class="information">
 			<span class="alert">!</span> {{context.unapproved_posts_message}}
 		</div>
 		{{/if}}
 		<div id="topic_container">
-		    {{#each context.topics}}
-		    <div class="{{css_class}}">
+			{{#each context.topics}}
+			<div class="{{css_class}}">
 				<div class="board_icon">
 					<img src="{{first_post.icon_url}}" alt="">
 					{{#if is_posted_in}}<img class="posted" src="{{../settings.images_url}}/icons/profile_sm.png" alt="">{{/if}}
 				</div>
-					<div class="info{{#if ../context.can_quick_mod}} info_block{{/if}}">
-						<div {{#if quick_mod.modify}}id="topic_{{first_post.id}}"  ondblclick="oQuickModifyTopic.modify_topic('{{id}}', '{{first_post.id}}');"{{/if}}>
-						    <div class="icons floatright">
-						        {{#if is_watched}}<span class="generic_icons watch" title="{{../txt.watching_this_topic}}"></span>{{/if}}
-						        {{#if is_locked}}<span class="generic_icons lock"></span>{{/if}}
-						        {{#if is_sticky}}<span class="generic_icons sticky"></span>{{/if}}
-						        {{#if is_redirect}}<span class="generic_icons move"></span>{{/if}}
-						        {{#if is_poll}}<span class="generic_icons poll"></span>{{/if}}
-						      </div>
-						      <div class="message_index_title">
-								{{#if (and new ../context.user.is_logged)}}<a href="{{new_href}}" id="newicon{{first_post.id}}"><span class="new_posts">{{../txt.new}}</span></a>{{/if}}
-								<span class="preview{{#if is_sticky}} bold_text{{/if}}" title="{{#if ../modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}">
-									<span id="msg_{{first_post.id}}">{{{first_post.link}}}{{#unless approved}}&nbsp;<em>({{../txt.awaiting_approval}})</em>{{/unless}}</span>
-								</span>
-							</div>
-							<p class="floatleft">{{../txt.started_by}} {{{first_post.member.link}}}</p>
-							{{#if pages}}<span id="pages{{first_post.id}}" class="topic_pages">&nbsp;{{pages}}</span>{{/if}}
-							<br class="clear">
+				<div class="info{{#if ../context.can_quick_mod}} info_block{{/if}}">
+					<div {{#if quick_mod.modify}}id="topic_{{first_post.id}}"  ondblclick="oQuickModifyTopic.modify_topic('{{id}}', '{{first_post.id}}');"{{/if}}>
+						<div class="icons floatright">
+							{{#if is_watched}}<span class="generic_icons watch" title="{{../txt.watching_this_topic}}"></span>{{/if}}
+							{{#if is_locked}}<span class="generic_icons lock"></span>{{/if}}
+							{{#if is_sticky}}<span class="generic_icons sticky"></span>{{/if}}
+							{{#if is_redirect}}<span class="generic_icons move"></span>{{/if}}
+							{{#if is_poll}}<span class="generic_icons poll"></span>{{/if}}
+						  </div>
+						  <div class="message_index_title">
+							{{#if (and new ../context.user.is_logged)}}<a href="{{new_href}}" id="newicon{{first_post.id}}"><span class="new_posts">{{../txt.new}}</span></a>{{/if}}
+							<span class="preview{{#if is_sticky}} bold_text{{/if}}" title="{{#if ../modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}">
+								<span id="msg_{{first_post.id}}">{{{first_post.link}}}{{#unless approved}}&nbsp;<em>({{../txt.awaiting_approval}})</em>{{/unless}}</span>
+							</span>
 						</div>
+						<p class="floatleft">{{../txt.started_by}} {{{first_post.member.link}}}</p>
+						{{#if pages}}<span id="pages{{first_post.id}}" class="topic_pages">&nbsp;{{pages}}</span>{{/if}}
+						<br class="clear">
 					</div>
-					<div class="board_stats centertext"><p>{{replies}} {{../txt.replies}}<br>{{views}} {{../txt.views}}</p></div>
-					<div class="lastpost">
-						<p>{{textTemplate 'last_post_topic' (concat '<a href="' last_post.href '">' last_post.time '</a>' last_post.member.link)}}</p>
-					</div> 
-					{{#if ../context.can_quick_mod}}
-					<div class="moderation">
-					    {{#if (eq ../options.display_quick_mod 1)}}
-					    <input type="checkbox" name="topics[]" value="{{id}}" class="input_check">
-					    {{else}}
-					    {{#if quick_mod.remove}}
-					    <a href="{{../scripturl}}?action=quickmod;board{{../context.current_board}}.{{../context.start}};actions%5B{{id}}%5D=remove;{{../context.session_var}}={{../context.session_id}}" class="you_sure"><span class="generic_icons delete" title="{{../txt.remove_topic}}"></span></a>
-					    {{/if}}
-					    {{#if quick_mod.lock}}
-					    <a href="{{../scripturl}}?action=quickmod;board{{../context.current_board}}.{{../context.start}};actions%5B{{id}}%5D=lock;{{../context.session_var}}={{../context.session_id}}" class="you_sure"><span class="generic_icons lock" title="{{#if is_locked}}{{../txt.set_unlock}}{{else}}{{../txt.set_lock}}{{/if}}"></span></a>
-					    {{/if}}
-					    {{#if (or quick_mod.remove quick_mod.lock)}}
-					    <br>
-					    {{/if}}
-					    {{#if quick_mod.sticky}}
-					    <a href="{{../scripturl}}?action=quickmod;board{{../context.current_board}}.{{../context.start}};actions%5B{{id}}%5D=sticky;{{../context.session_var}}={{../context.session_id}}" class="you_sure"><span class="generic_icons sticky" title="{{#if is_sticky}}{{../txt.set_nonsticky}}{{else}}{{../txt.set_sticky}}{{/if}}"></span></a>
-					    {{/if}}
-					    {{#if quick_mod.move}}
-					    <a href="{{../scripturl}}?action=quickmod;board{{../context.current_board}}.{{../context.start}};topic={{id}}.0"><span class="generic_icons move" title="{{../txt.move_topic}}"></span></a>
-					    {{/if}}
-					    </div>
-					    {{/if}}
-					{{/if}}
-					</div>
-		    {{/each}}
-		    </div>
-		    {{#if (and context.can_quick_mod (eq options.display_quick_mod 1) context.topics)}}
-		    <div class="righttext" id="quick_actions">
+				</div>
+				<div class="board_stats centertext"><p>{{replies}} {{../txt.replies}}<br>{{views}} {{../txt.views}}</p></div>
+				<div class="lastpost">
+					<p>{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}</p>
+				</div> 
+				{{#if ../context.can_quick_mod}}
+				<div class="moderation">
+					<input type="checkbox" name="topics[]" value="{{id}}" class="input_check">
+				</div>
+				{{/if}}
+			{{/each}}
+			</div>
+			{{#if (and context.can_quick_mod context.topics)}}
+				<div class="righttext" id="quick_actions">
 					<select class="qaction" name="qaction"{{#if context.can_move}} onchange="this.form.move_to.disabled = (this.options[this.selectedIndex].value != 'move');"{{/if}}>
 						<option value="">--------</option>
-						{{#each context.qmod_actions}}{{qmod_option .}}{{/each}}
+						{{#each context.qmod_actions}}{{{qmod_option .}}}{{/each}}
 					</select>
 					{{#if context.can_move}}<span id="quick_mod_jump_to">&nbsp;</span>{{/if}}
 					<input type="submit" value="{{txt.quick_mod_go}}" onclick="return document.forms.quickModForm.qaction.value != '' &amp;&amp; confirm('{{txt.quickmod_confirm}}');" class="button_submit qaction">
 				</div>
-		    {{/if}}
-		    </div>
-		    {{#if (and context.can_quick_mod options.display_quick_mod context.topics)}}
-		    <input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{/if}}
+			</div>
+			{{#if (and context.can_quick_mod context.topics)}}
+			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
 			</form>
-		    {{/if}}
-		    <div class="mobile_buttons floatright">
+			{{/if}}
+			<div class="mobile_buttons floatright">
 				<a class="button mobile_act">{{txt.mobile_action}}</a>
 			</div>
 			<div class="pagesection">
-				{{>button_strip context.normal_buttons 'right'}}
+				{{>button_strip button_strip=context.normal_buttons direction='right'}}
 				{{context.menu_separator}}<a href="#main_content_section" class="topbottom floatleft" id="bot">{{txt.go_up}}</a>
 				<div class="pagelinks floatleft">{{{context.page_index}}}</div>
 			</div>
 	{{/unless}}
-	{{#if (and context.can_quick_mod (eq options.display_quick_mod 1) context.topics context.can_move)}}
+	{{#if (and context.can_quick_mod context.topics context.can_move)}}
 	<script>
 	if (typeof(window.XMLHttpRequest) != "undefined")
 		aJumpTo[aJumpTo.length] = new JumpTo({
