@@ -2808,7 +2808,35 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	}
 	if ($do_footer)
 	{
-		$content = loadSubTemplate(isset($context['sub_template']) ? $context['sub_template'] : 'main');
+		$content = '';
+		$render_templates = [];
+		// Add the before layers.
+		if (empty($context['template_layers']))
+		{
+			$context['template_layers'] = [];
+		}
+		foreach ($context['template_layers'] as $layer) {
+			$render_templates[] = $layer . '_above';
+		}
+
+		// Add the inner part
+		if (empty($context['sub_template']))
+		{
+			$render_templates[] = 'main';
+		}
+		else
+		{
+			$render_templates = array_merge($render_templates, (array) $context['sub_template']);
+		}
+
+		// Add the after layers
+		foreach (array_reverse($context['template_layers']) as $layer) {
+			$render_templates[] = $layer . '_below';
+		}
+
+		foreach ($render_templates as $sub_template) {
+			$content .= loadSubTemplate($sub_template);
+		}
 		render_page($content); //found in index.template.php, this renders the layout around the page
 
 		// Anything special to put out?
