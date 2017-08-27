@@ -1491,13 +1491,13 @@ function loadMemberContext($user, $display_custom_fields = false)
 			// So it's stored in the member table?
 			if (!empty($profile['avatar']))
 			{
-				$image = (stristr($profile['avatar'], 'http://') || stristr($profile['avatar'], 'https://')) ? $profile['avatar'] : $modSettings['avatar_url'] . '/' . $profile['avatar'];
+				$image = (stristr($profile['avatar'], 'http://') || stristr($profile['avatar'], 'https://')) ? $profile['avatar'] : '';
 			}
 			elseif (!empty($profile['filename']))
 				$image = $modSettings['custom_avatar_url'] . '/' . $profile['filename'];
 			// Right... no avatar...use the default one
 			else
-				$image = $modSettings['avatar_url'] . '/default.png';
+				$image = $settings['images_url'] . '/default.png';
 		}
 		if (!empty($image))
 			$memberContext[$user]['avatar'] = array(
@@ -1862,7 +1862,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 			// And just a few mod settings :).
 			$modSettings['smileys_url'] = strtr($modSettings['smileys_url'], array($oldurl => $boardurl));
-			$modSettings['avatar_url'] = strtr($modSettings['avatar_url'], array($oldurl => $boardurl));
 
 			// Clean up after loadBoard().
 			if (isset($board_info['moderators']))
@@ -3395,7 +3394,7 @@ function clean_cache($type = '')
  */
 function set_avatar_data($data = array())
 {
-	global $modSettings, $boardurl, $smcFunc, $image_proxy_enabled, $image_proxy_secret;
+	global $modSettings, $boardurl, $smcFunc, $image_proxy_enabled, $image_proxy_secret, $settings;
 
 	// Come on!
 	if (empty($data))
@@ -3439,7 +3438,7 @@ function set_avatar_data($data = array())
 
 				// Just a plain external url.
 				else
-					$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : $modSettings['avatar_url'] . '/' . $data['avatar'];
+					$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : '';
 			}
 		}
 
@@ -3449,7 +3448,7 @@ function set_avatar_data($data = array())
 
 		// Right... no avatar... use our default image.
 		else
-			$image = $modSettings['avatar_url'] . '/default.png';
+			$image = $settings['images_url'] . '/default.png';
 	}
 
 	call_integration_hook('integrate_set_avatar_data', array(&$image, &$data));
