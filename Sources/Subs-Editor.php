@@ -2205,7 +2205,6 @@ function AutoSuggestHandler($checkRegistered = null)
 	$searchTypes = array(
 		'member' => 'Member',
 		'membergroups' => 'MemberGroups',
-		'versions' => 'SMFVersions',
 	);
 
 	call_integration_hook('integrate_autosuggest', array(&$searchTypes));
@@ -2324,63 +2323,6 @@ function AutoSuggest_Search_MemberGroups()
 		);
 	}
 	$smcFunc['db_free_result']($request);
-
-	return $xml_data;
-}
-
-/**
- * Provides a list of possible SMF versions to use in emulation
- *
- * @return array An array of data for displaying the suggestions
- */
-function AutoSuggest_Search_SMFVersions()
-{
-	global $smcFunc;
-
-	$xml_data = array(
-		'items' => array(
-			'identifier' => 'item',
-			'children' => array(),
-		),
-	);
-
-	// First try and get it from the database.
-	$versions = array();
-	$request = $smcFunc['db_query']('', '
-		SELECT data
-		FROM {db_prefix}admin_info_files
-		WHERE filename = {string:latest_versions}
-			AND path = {string:path}',
-		array(
-			'latest_versions' => 'latest-versions.txt',
-			'path' => '/smf/',
-		)
-	);
-	if (($smcFunc['db_num_rows']($request) > 0) && ($row = $smcFunc['db_fetch_assoc']($request)) && !empty($row['data']))
-	{
-		// The file can be either Windows or Linux line endings, but let's ensure we clean it as best we can.
-		$possible_versions = explode("\n", $row['data']);
-		foreach ($possible_versions as $ver)
-		{
-			$ver = trim($ver);
-			if (strpos($ver, 'SMF') === 0)
-				$versions[] = $ver;
-		}
-	}
-	$smcFunc['db_free_result']($request);
-
-	// Just in case we don't have ANYthing.
-	if (empty($versions))
-		$versions = array('SMF 2.0');
-
-	foreach ($versions as $id => $version)
-		if (strpos($version, strtoupper($_REQUEST['search'])) !== false)
-			$xml_data['items']['children'][] = array(
-				'attributes' => array(
-					'id' => $id,
-				),
-				'value' => $version,
-			);
 
 	return $xml_data;
 }
