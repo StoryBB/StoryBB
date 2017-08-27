@@ -75,7 +75,7 @@ function template_newsfader()
         ));
 
 		$renderer = LightnCandy::prepare($phpStr);
-		echo $renderer($data);
+		return $renderer($data);
 	}
 }
 
