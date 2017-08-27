@@ -89,6 +89,7 @@ function template_registration_form()
 	    	'or' => logichelper_or,
 	    	'and' => logichelper_and,
 	    	'eq' => logichelper_eq,
+	    	'lt' => logichelper_lt,
 	    	'not' => logichelper_not,
 	    	'profile_callback_helper' => function ($field) {
 	            if ($field['type'] == 'callback')
@@ -99,6 +100,9 @@ function template_registration_form()
 						$callback_func();
 					}
 				}
+	        },
+	        'makeHTTPS' => function($url) { 
+	        	return strtr($url, array('http://' => 'https://'));
 	        },
 	        'field_isText' => function($type) {
 	        	return in_array($type, array('int', 'float', 'text', 'password'));
