@@ -251,7 +251,7 @@ function ManageAttachmentSettings($return_config = false)
 /**
  * This allows to show/change avatar settings.
  * Called by index.php?action=admin;area=manageattachments;sa=avatars.
- * Show/set permissions for permissions: 'profile_server_avatar',
+ * Show/set permissions for permissions:
  * 	'profile_upload_avatar' and 'profile_remote_avatar'.
  *
  * @param bool $return_config Whether to return the config_vars array (used for admin search)
@@ -266,17 +266,9 @@ function ManageAvatarSettings($return_config = false)
 	// Perform a test to see if the GD module or ImageMagick are installed.
 	$testImg = get_extension_funcs('gd') || class_exists('Imagick');
 
-	$context['valid_avatar_dir'] = is_dir($modSettings['avatar_directory']);
 	$context['valid_custom_avatar_dir'] = !empty($modSettings['custom_avatar_dir']) && is_dir($modSettings['custom_avatar_dir']) && is_writable($modSettings['custom_avatar_dir']);
 
 	$config_vars = array(
-		// Server stored avatars!
-		array('title', 'avatar_server_stored'),
-			array('warning', empty($testImg) ? 'avatar_img_enc_warning' : ''),
-			array('permissions', 'profile_server_avatar', 0, $txt['avatar_server_stored_groups']),
-			array('warning', !$context['valid_avatar_dir'] ? 'avatar_directory_wrong' : ''),
-			array('text', 'avatar_directory', 40, 'invalid' => !$context['valid_avatar_dir']),
-			array('text', 'avatar_url', 40),
 		// External avatars?
 		array('title', 'avatar_external'),
 			array('permissions', 'profile_remote_avatar', 0, $txt['avatar_external_url_groups']),
@@ -350,12 +342,6 @@ function ManageAvatarSettings($return_config = false)
 
 		if (empty($_POST['custom_avatar_url']))
 			$_POST['custom_avatar_url'] = $boardurl . '/custom_avatar';
-
-		if (empty($_POST['avatar_directory']))
-			$_POST['avatar_directory'] = $boarddir . '/avatars';
-
-		if (empty($_POST['avatar_url']))
-			$_POST['avatar_url'] = $boardurl . '/avatars';
 
 		call_integration_hook('integrate_save_avatar_settings');
 

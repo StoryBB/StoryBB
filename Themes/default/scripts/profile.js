@@ -156,57 +156,6 @@ function ajax_getSignaturePreview (showPreview)
 	return false;
 }
 
-function changeSel(selected)
-{
-	if (cat.selectedIndex == -1)
-		return;
-
-	if (cat.options[cat.selectedIndex].value.indexOf("/") > 0)
-	{
-		var i;
-		var count = 0;
-
-		file.style.display = "inline";
-		file.disabled = false;
-
-		for (i = file.length; i >= 0; i = i - 1)
-			file.options[i] = null;
-
-		for (i = 0; i < files.length; i++)
-			if (files[i].indexOf(cat.options[cat.selectedIndex].value) == 0)
-			{
-				var filename = files[i].substr(files[i].indexOf("/") + 1);
-				var showFilename = filename.substr(0, filename.lastIndexOf("."));
-				showFilename = showFilename.replace(/[_]/g, " ");
-
-				file.options[count] = new Option(showFilename, files[i]);
-
-				if (filename == selected)
-				{
-					if (file.options.defaultSelected)
-						file.options[count].defaultSelected = true;
-					else
-						file.options[count].selected = true;
-				}
-
-				count++;
-			}
-
-		if (file.selectedIndex == -1 && file.options[0])
-			file.options[0].selected = true;
-
-		showAvatar();
-	}
-	else
-	{
-		file.style.display = "none";
-		file.disabled = true;
-		document.getElementById("avatar").src = avatardir + cat.options[cat.selectedIndex].value;
-		document.getElementById("avatar").style.width = "";
-		document.getElementById("avatar").style.height = "";
-	}
-}
-
 function showAvatar()
 {
 	if (file.selectedIndex == -1)

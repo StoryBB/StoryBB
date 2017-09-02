@@ -2986,12 +2986,9 @@ function setupThemeContext($forceload = false)
 		// Full URL?
 		elseif (strpos($user_info['avatar']['url'], 'http://') === 0 || strpos($user_info['avatar']['url'], 'https://') === 0)
 			$context['user']['avatar']['href'] = $user_info['avatar']['url'];
-		// Otherwise we assume it's server stored.
-		elseif ($user_info['avatar']['url'] != '')
-			$context['user']['avatar']['href'] = $modSettings['avatar_url'] . '/' . $smcFunc['htmlspecialchars']($user_info['avatar']['url']);
 		// No avatar at all? Fine, we have a big fat default avatar ;)
 		else
-			$context['user']['avatar']['href'] = $modSettings['avatar_url'] . '/default.png';
+			$context['user']['avatar']['href'] = $settings['images_url'] . '/default.png';
 
 		if (!empty($context['user']['avatar']))
 			$context['user']['avatar']['image'] = '<img src="' . $context['user']['avatar']['href'] . '" alt="" class="avatar">';

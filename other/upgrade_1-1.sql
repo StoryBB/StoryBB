@@ -915,22 +915,6 @@ unset($_GET['m']);
 --- Converting avatar permissions...
 /******************************************************************************/
 
----# Converting server stored setting...
----{
-if (!empty($modSettings['avatar_allow_server_stored']))
-{
-	// Create permissions for existing membergroups.
-	upgrade_query("
-		INSERT INTO {$db_prefix}permissions
-			(ID_GROUP, permission)
-		SELECT IF(ID_GROUP = 1, 0, ID_GROUP), 'profile_server_avatar'
-		FROM {$db_prefix}membergroups
-		WHERE ID_GROUP != 3
-			AND minPosts = -1");
-}
----}
----#
-
 ---# Converting avatar upload setting...
 ---{
 // Do the same, but for uploading avatars.
@@ -959,7 +943,7 @@ CHANGE COLUMN ID_MEMBER ID_MEMBER mediumint(8) unsigned NOT NULL default '0';
 
 ---# Updating settings...
 DELETE FROM {$db_prefix}settings
-WHERE variable IN ('avatar_allow_external_url', 'avatar_check_size', 'avatar_allow_upload', 'avatar_allow_server_stored');
+WHERE variable IN ('avatar_allow_external_url', 'avatar_check_size', 'avatar_allow_upload');
 ---#
 
 /******************************************************************************/

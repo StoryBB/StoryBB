@@ -113,7 +113,6 @@ $txt['group_perms_name_profile_extra_any'] = 'Edit any additional options';
 $txt['group_perms_name_profile_extra_own'] = 'Edit own additional options';
 $txt['group_perms_name_profile_identity_any'] = 'Edit any account settings';
 $txt['group_perms_name_profile_identity_own'] = 'Edit own account settings';
-$txt['group_perms_name_profile_server_avatar'] = 'Select a server avatar';
 $txt['group_perms_name_profile_upload_avatar'] = 'Upload an avatar';
 $txt['group_perms_name_profile_remote_avatar'] = 'Choose a remote avatar';
 $txt['group_perms_name_profile_remove_any'] = 'Delete any account';

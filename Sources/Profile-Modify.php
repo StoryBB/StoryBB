@@ -1700,89 +1700,6 @@ function forumProfile($memID)
 }
 
 /**
- * Recursive function to retrieve server-stored avatar files
- *
- * @param string $directory The directory to look for files in
- * @param int $level How many levels we should go in the directory
- * @return array An array of information about the files and directories found
- */
-function getAvatars($directory, $level)
-{
-	global $context, $txt, $modSettings, $smcFunc;
-
-	$result = array();
-
-	// Open the directory..
-	$dir = dir($modSettings['avatar_directory'] . (!empty($directory) ? '/' : '') . $directory);
-	$dirs = array();
-	$files = array();
-
-	if (!$dir)
-		return array();
-
-	while ($line = $dir->read())
-	{
-		if (in_array($line, array('.', '..', 'blank.png', 'index.php')))
-			continue;
-
-		if (is_dir($modSettings['avatar_directory'] . '/' . $directory . (!empty($directory) ? '/' : '') . $line))
-			$dirs[] = $line;
-		else
-			$files[] = $line;
-	}
-	$dir->close();
-
-	// Sort the results...
-	natcasesort($dirs);
-	natcasesort($files);
-
-	if ($level == 0)
-	{
-		$result[] = array(
-			'filename' => 'blank.png',
-			'checked' => in_array($context['member']['avatar']['server_pic'], array('', 'blank.png')),
-			'name' => $txt['no_pic'],
-			'is_dir' => false
-		);
-	}
-
-	foreach ($dirs as $line)
-	{
-		$tmp = getAvatars($directory . (!empty($directory) ? '/' : '') . $line, $level + 1);
-		if (!empty($tmp))
-			$result[] = array(
-				'filename' => $smcFunc['htmlspecialchars']($line),
-				'checked' => strpos($context['member']['avatar']['server_pic'], $line . '/') !== false,
-				'name' => '[' . $smcFunc['htmlspecialchars'](str_replace('_', ' ', $line)) . ']',
-				'is_dir' => true,
-				'files' => $tmp
-		);
-		unset($tmp);
-	}
-
-	foreach ($files as $line)
-	{
-		$filename = substr($line, 0, (strlen($line) - strlen(strrchr($line, '.'))));
-		$extension = substr(strrchr($line, '.'), 1);
-
-		// Make sure it is an image.
-		if (strcasecmp($extension, 'gif') != 0 && strcasecmp($extension, 'jpg') != 0 && strcasecmp($extension, 'jpeg') != 0 && strcasecmp($extension, 'png') != 0 && strcasecmp($extension, 'bmp') != 0)
-			continue;
-
-		$result[] = array(
-			'filename' => $smcFunc['htmlspecialchars']($line),
-			'checked' => $line == $context['member']['avatar']['server_pic'],
-			'name' => $smcFunc['htmlspecialchars'](str_replace('_', ' ', $filename)),
-			'is_dir' => false
-		);
-		if ($level == 1)
-			$context['avatar_list'][] = $directory . '/' . $line;
-	}
-
-	return $result;
-}
-
-/**
  * Handles the "Look and Layout" section of the profile
  *
  * @param int $memID The ID of the member
@@ -2945,13 +2862,10 @@ function profileLoadAvatarData()
 {
 	global $context, $cur_profile, $modSettings, $scripturl;
 
-	$context['avatar_url'] = $modSettings['avatar_url'];
-
 	// Default context.
 	$context['member']['avatar'] += array(
 		'custom' => stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://') ? $cur_profile['avatar'] : 'http://',
 		'selection' => $cur_profile['avatar'] == '' || (stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://')) ? '' : $cur_profile['avatar'],
-		'allow_server_stored' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_server_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
 		'allow_upload' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
 		'allow_external' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
 		'allow_gravatar' => !empty($modSettings['gravatarEnabled']) || !empty($modSettings['gravatarOverride']),
@@ -2982,12 +2896,6 @@ function profileLoadAvatarData()
 			'server_pic' => 'blank.png',
 			'external' => $cur_profile['avatar_original']
 		);
-	elseif ($cur_profile['avatar'] != '' && file_exists($modSettings['avatar_directory'] . '/' . $cur_profile['avatar']) && $context['member']['avatar']['allow_server_stored'])
-		$context['member']['avatar'] += array(
-			'choice' => 'server_stored',
-			'server_pic' => $cur_profile['avatar'] == '' ? 'blank.png' : $cur_profile['avatar'],
-			'external' => 'http://'
-		);
 	else
 		$context['member']['avatar'] += array(
 			'choice' => 'none',
@@ -2995,18 +2903,9 @@ function profileLoadAvatarData()
 			'external' => 'http://'
 		);
 
-	// Get a list of all the avatars.
-	if ($context['member']['avatar']['allow_server_stored'])
-	{
-		$context['avatar_list'] = array();
-		$context['avatars'] = is_dir($modSettings['avatar_directory']) ? getAvatars('', 0) : array();
-	}
-	else
-		$context['avatars'] = array();
-
 	// Second level selected avatar...
 	$context['avatar_selected'] = substr(strrchr($context['member']['avatar']['server_pic'], '/'), 1);
-	return !empty($context['member']['avatar']['allow_server_stored']) || !empty($context['member']['avatar']['allow_external']) || !empty($context['member']['avatar']['allow_upload']) || !empty($context['member']['avatar']['allow_gravatar']);
+	return !empty($context['member']['avatar']['allow_external']) || !empty($context['member']['avatar']['allow_upload']) || !empty($context['member']['avatar']['allow_gravatar']);
 }
 
 /**
@@ -3117,7 +3016,7 @@ function profileSaveGroups(&$value)
  * The avatar is incredibly complicated, what with the options... and what not.
  * @todo argh, the avatar here. Take this out of here!
  *
- * @param string &$value What kind of avatar we're expecting. Can be 'none', 'server_stored', 'gravatar', 'external' or 'upload'
+ * @param string &$value What kind of avatar we're expecting. Can be 'none', 'gravatar', 'external' or 'upload'
  * @return bool|string False if success (or if memID is empty and password authentication failed), otherwise a string indicating what error occurred
  */
 function profileSaveAvatarData(&$value)
@@ -3169,20 +3068,6 @@ function profileSaveAvatarData(&$value)
 		removeAttachments(array('id_member' => $memID));
 	}
 
-	// An avatar from the server-stored galleries.
-	elseif ($value == 'server_stored' && allowedTo('profile_server_avatar'))
-	{
-		$profile_vars['avatar'] = strtr(empty($_POST['file']) ? (empty($_POST['cat']) ? '' : $_POST['cat']) : $_POST['file'], array('&amp;' => '&'));
-		$profile_vars['avatar'] = preg_match('~^([\w _!@%*=\-#()\[\]&.,]+/)?[\w _!@%*=\-#()\[\]&.,]+$~', $profile_vars['avatar']) != 0 && preg_match('/\.\./', $profile_vars['avatar']) == 0 && file_exists($modSettings['avatar_directory'] . '/' . $profile_vars['avatar']) ? ($profile_vars['avatar'] == 'blank.png' ? '' : $profile_vars['avatar']) : '';
-
-		// Clear current profile...
-		$cur_profile['id_attach'] = 0;
-		$cur_profile['attachment_type'] = 0;
-		$cur_profile['filename'] = '';
-
-		// Get rid of their old avatar. (if uploaded.)
-		removeAttachments(array('id_member' => $memID));
-	}
 	elseif ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
 	{
 		// One wasn't specified, or it's not allowed to use extra email addresses, or it's not a valid one, reset to default Gravatar.
