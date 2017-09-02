@@ -178,7 +178,7 @@ function ShowXmlFeed()
 	}
 
 	// Show in rss or proprietary format?
-	$xml_format = isset($_GET['type']) && in_array($_GET['type'], array('smf', 'rss', 'rss2', 'atom', 'rdf')) ? $_GET['type'] : 'rss2';
+	$xml_format = isset($_GET['type']) && in_array($_GET['type'], array('rss', 'rss2', 'atom')) ? $_GET['type'] : 'rss2';
 
 	// @todo Birthdays?
 
@@ -226,22 +226,11 @@ function ShowXmlFeed()
 		'rss' => array(),
 		'rss2' => array('atom' => 'http://www.w3.org/2005/Atom'),
 		'atom' => array('' => 'http://www.w3.org/2005/Atom'),
-		'rdf' => array(
-			'' => 'http://purl.org/rss/1.0/',
-			'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-			'dc' => 'http://purl.org/dc/elements/1.1/',
-		),
-		'smf' => array(
-			'' => 'http://www.simplemachines.org/xml/' . $_GET['sa'],
-			'smf' => 'http://www.simplemachines.org/',
-		),
 	);
 	$extraFeedTags = array(
 		'rss' => array(),
 		'rss2' => array(),
 		'atom' => array(),
-		'rdf' => array(),
-		'smf' => array(),
 	);
 
 	// Allow mods to specify any keys that need special handling
@@ -285,14 +274,10 @@ function ShowXmlFeed()
 	else
 		ob_start();
 
-	if ($xml_format == 'smf' || isset($_REQUEST['debug']))
-		header('Content-Type: text/xml; charset=UTF-8');
-	elseif ($xml_format == 'rss' || $xml_format == 'rss2')
+	if ($xml_format == 'rss' || $xml_format == 'rss2')
 		header('Content-Type: application/rss+xml; charset=UTF-8');
 	elseif ($xml_format == 'atom')
 		header('Content-Type: application/atom+xml; charset=UTF-8');
-	elseif ($xml_format == 'rdf')
-		header('Content-Type: ' . (isBrowser('ie') ? 'text/xml' : 'application/rdf+xml') . '; charset=UTF-8');
 
 	// First, output the xml header.
 	echo '<?xml version="1.0" encoding="UTF-8"?' . '>';
@@ -369,56 +354,6 @@ function ShowXmlFeed()
 		echo '
 </feed>';
 	}
-	elseif ($xml_format == 'rdf')
-	{
-		echo '
-<rdf:RDF', $ns_string, '>
-	<channel rdf:about="', $scripturl, '">
-		<title>', $feed_meta['title'], '</title>
-		<link>', $feed_meta['source'], '</link>
-		<description>', $feed_meta['desc'], '</description>';
-
-		echo $extraFeedTags_string;
-
-		echo '
-		<items>
-			<rdf:Seq>';
-
-		foreach ($xml_data as $item)
-		{
-			$link = array_filter($item['content'], function ($e) { return ($e['tag'] == 'link'); });
-			$link = array_pop($link);
-
-			echo '
-				<rdf:li rdf:resource="', $link['content'], '" />';
-		}
-
-		echo '
-			</rdf:Seq>
-		</items>
-	</channel>
-';
-
-		dumpTags($xml_data, 1, null, $xml_format, $forceCdataKeys, $nsKeys);
-
-		echo '
-</rdf:RDF>';
-	}
-	// Otherwise, we're using our proprietary formats - they give more data, though.
-	else
-	{
-		echo '
-<smf:xml-feed xml:lang="', strtr($txt['lang_locale'], '_', '-'), '"', $ns_string, '>';
-
-		// Hard to imagine anyone wanting to add these for the proprietary format, but just in case...
-		echo $extraFeedTags_string;
-
-		// Dump out that associative array.  Indent properly.... and use the right names for the base elements.
-		dumpTags($xml_data, 1, $subActions[$_GET['sa']][1], $xml_format, $forceCdataKeys, $nsKeys);
-
-		echo '
-</smf:xml-feed>';
-}
 
 	obExit(false);
 }
@@ -618,7 +553,7 @@ function dumpTags($data, $i, $tag = null, $xml_format = '', $forceCdataKeys = ar
  * The array will be generated to match the format.
  * @todo get the list of members from Subs-Members.
  *
- * @param string $xml_format The format to use. Can be 'atom', 'rdf', 'rss', 'rss2' or 'smf'
+ * @param string $xml_format The format to use. Can be 'atom', 'rss', 'rss2'
  * @return array An array of arrays of feed items. Each array has keys corresponding to the appropriate tags for the specified format.
  */
 function getXmlMembers($xml_format)
@@ -674,25 +609,6 @@ function getXmlMembers($xml_format)
 					),
 				),
 			);
-		elseif ($xml_format == 'rdf')
-			$data[] = array(
-				'tag' => 'item',
-				'attributes' => array('rdf:about' => $scripturl . '?action=profile;u=' . $row['id_member']),
-				'content' => array(
-					array(
-						'tag' => 'dc:format',
-						'content' => 'text/html',
-					),
-					array(
-						'tag' => 'title',
-						'content' => $row['real_name'],
-					),
-					array(
-						'tag' => 'link',
-						'content' => $scripturl . '?action=profile;u=' . $row['id_member'],
-					),
-				),
-			);
 		elseif ($xml_format == 'atom')
 			$data[] = array(
 				'tag' => 'entry',
@@ -723,29 +639,6 @@ function getXmlMembers($xml_format)
 					),
 				),
 			);
-		// More logical format for the data, but harder to apply.
-		else
-			$data[] = array(
-				'tag' => 'member',
-				'content' => array(
-					array(
-						'tag' => 'name',
-						'content' => $row['real_name'],
-					),
-					array(
-						'tag' => 'time',
-						'content' => $smcFunc['htmlspecialchars'](strip_tags(timeformat($row['date_registered']))),
-					),
-					array(
-						'tag' => 'id',
-						'content' => $row['id_member'],
-					),
-					array(
-						'tag' => 'link',
-						'content' => $scripturl . '?action=profile;u=' . $row['id_member'],
-					),
-				),
-			);
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -758,7 +651,7 @@ function getXmlMembers($xml_format)
  * The returned array will be generated to match the xml_format.
  * @todo does not belong here
  *
- * @param $xml_format The XML format. Can be 'atom', 'rdf', 'rss', 'rss2' or 'smf'.
+ * @param $xml_format The XML format. Can be 'atom', rss', 'rss2'.
  * @return array An array of arrays of topic data for the feed. Each array has keys corresponding to the tags for the specified format.
  */
 function getXmlNews($xml_format)
@@ -932,31 +825,6 @@ function getXmlNews($xml_format)
 				),
 			);
 		}
-		elseif ($xml_format == 'rdf')
-		{
-			$data[] = array(
-				'tag' => 'item',
-				'attributes' => array('rdf:about' => $scripturl . '?topic=' . $row['id_topic'] . '.0'),
-				'content' => array(
-					array(
-						'tag' => 'dc:format',
-						'content' => 'text/html',
-					),
-					array(
-						'tag' => 'title',
-						'content' => $row['subject'],
-					),
-					array(
-						'tag' => 'link',
-						'content' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-					),
-					array(
-						'tag' => 'description',
-						'content' => $row['body'],
-					),
-				),
-			);
-		}
 		elseif ($xml_format == 'atom')
 		{
 			// Only one attachment allowed
@@ -1033,116 +901,6 @@ function getXmlNews($xml_format)
 				),
 			);
 		}
-		// The biggest difference here is more information.
-		else
-		{
-			$attachments = array();
-			if (!empty($loaded_attachments))
-			{
-				foreach ($loaded_attachments as $attachment)
-				{
-					$attachments[] = array(
-						'tag' => 'attachment',
-						'content' => array(
-							array(
-								'tag' => 'id',
-								'content' => $attachment['id_attach'],
-							),
-							array(
-								'tag' => 'name',
-								'content' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($attachment['filename'])),
-							),
-							array(
-								'tag' => 'downloads',
-								'content' => $attachment['downloads'],
-							),
-							array(
-								'tag' => 'size',
-								'content' => ($attachment['filesize'] < 1024000) ? round($attachment['filesize'] / 1024, 2) . ' ' . $txt['kilobyte'] : round($attachment['filesize'] / 1024 / 1024, 2) . ' ' . $txt['megabyte'],
-							),
-							array(
-								'tag' => 'byte_size',
-								'content' => $attachment['filesize'],
-							),
-							array(
-								'tag' => 'link',
-								'content' => $scripturl . '?action=dlattach;topic=' . $attachment['topic'] . '.0;attach=' . $attachment['id_attach'],
-							),
-						)
-					);
-				}
-			}
-			else
-				$attachments = null;
-
-			$data[] = array(
-				'tag' => 'article',
-				'content' => array(
-					array(
-						'tag' => 'time',
-						'content' => $smcFunc['htmlspecialchars'](strip_tags(timeformat($row['poster_time']))),
-					),
-					array(
-						'tag' => 'id',
-						'content' => $row['id_topic'],
-					),
-					array(
-						'tag' => 'subject',
-						'content' => $row['subject'],
-					),
-					array(
-						'tag' => 'body',
-						'content' => $row['body'],
-					),
-					array(
-						'tag' => 'poster',
-						'content' => array(
-							array(
-								'tag' => 'name',
-								'content' => $row['poster_name'],
-							),
-							array(
-								'tag' => 'id',
-								'content' => $row['id_member'],
-							),
-							array(
-								'tag' => 'link',
-								'content' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
-							),
-						)
-					),
-					array(
-						'tag' => 'topic',
-						'content' => $row['id_topic'],
-					),
-					array(
-						'tag' => 'board',
-						'content' => array(
-							array(
-								'tag' => 'name',
-								'content' => $row['bname'],
-							),
-							array(
-								'tag' => 'id',
-								'content' => $row['id_board'],
-							),
-							array(
-								'tag' => 'link',
-								'content' => $scripturl . '?board=' . $row['id_board'] . '.0',
-							),
-						),
-					),
-					array(
-						'tag' => 'link',
-						'content' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
-					),
-					array(
-						'tag' => 'attachments',
-						'content' => $attachments,
-					),
-				),
-			);
-		}
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -1154,7 +912,7 @@ function getXmlNews($xml_format)
  * The returned array will be generated to match the xml_format.
  * @todo does not belong here.
  *
- * @param string $xml_format The XML format. Can be 'atom', 'rdf', 'rss', 'rss2' or 'smf'
+ * @param string $xml_format The XML format. Can be 'atom', 'rss', 'rss2'
  * @return array An array of arrays containing data for the feed. Each array has keys corresponding to the appropriate tags for the specified format.
  */
 function getXmlRecent($xml_format)
@@ -1348,31 +1106,6 @@ function getXmlRecent($xml_format)
 				),
 			);
 		}
-		elseif ($xml_format == 'rdf')
-		{
-			$data[] = array(
-				'tag' => 'item',
-				'attributes' => array('rdf:about' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg']),
-				'content' => array(
-					array(
-						'tag' => 'dc:format',
-						'content' => 'text/html',
-					),
-					array(
-						'tag' => 'title',
-						'content' => $row['subject'],
-					),
-					array(
-						'tag' => 'link',
-						'content' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-					),
-					array(
-						'tag' => 'description',
-						'content' => $row['body'],
-					),
-				),
-			);
-		}
 		elseif ($xml_format == 'atom')
 		{
 			// Only one attachment allowed
@@ -1449,146 +1182,6 @@ function getXmlRecent($xml_format)
 				),
 			);
 		}
-		// A lot of information here.  Should be enough to please the rss-ers.
-		else
-		{
-			$attachments = array();
-			if (!empty($loaded_attachments))
-			{
-				foreach ($loaded_attachments as $attachment)
-				{
-					$attachments[] = array(
-						'tag' => 'attachment',
-						'content' => array(
-							array(
-								'tag' => 'id',
-								'content' => $attachment['id_attach'],
-							),
-							array(
-								'tag' => 'name',
-								'content' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($attachment['filename'])),
-							),
-							array(
-								'tag' => 'downloads',
-								'content' => $attachment['downloads'],
-							),
-							array(
-								'tag' => 'size',
-								'content' => ($attachment['filesize'] < 1024000) ? round($attachment['filesize'] / 1024, 2) . ' ' . $txt['kilobyte'] : round($attachment['filesize'] / 1024 / 1024, 2) . ' ' . $txt['megabyte'],
-							),
-							array(
-								'tag' => 'byte_size',
-								'content' => $attachment['filesize'],
-							),
-							array(
-								'tag' => 'link',
-								'content' => $scripturl . '?action=dlattach;topic=' . $attachment['topic'] . '.0;attach=' . $attachment['id_attach'],
-							),
-						)
-					);
-				}
-			}
-			else
-				$attachments = null;
-
-			$data[] = array(
-				'tag' => 'recent-post',
-				'content' => array(
-					array(
-						'tag' => 'time',
-						'content' => $smcFunc['htmlspecialchars'](strip_tags(timeformat($row['poster_time']))),
-					),
-					array(
-						'tag' => 'id',
-						'content' => $row['id_msg'],
-					),
-					array(
-						'tag' => 'subject',
-						'content' => $row['subject'],
-					),
-					array(
-						'tag' => 'body',
-						'content' => $row['body'],
-					),
-					array(
-						'tag' => 'starter',
-						'content' => array(
-							array(
-								'tag' => 'name',
-								'content' => $row['first_poster_name'],
-							),
-							array(
-								'tag' => 'id',
-								'content' => $row['id_first_member'],
-							),
-							array(
-								'tag' => 'link',
-								'content' => !empty($row['id_first_member']) ? $scripturl . '?action=profile;u=' . $row['id_first_member'] : '',
-							),
-						),
-					),
-					array(
-						'tag' => 'poster',
-						'content' => array(
-							array(
-								'tag' => 'name',
-								'content' => $row['poster_name'],
-							),
-							array(
-								'tag' => 'id',
-								'content' => $row['id_member'],
-							),
-							array(
-								'tag' => 'link',
-								'content' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
-							),
-						),
-					),
-					array(
-						'tag' => 'topic',
-						'content' => array(
-							array(
-								'tag' => 'subject',
-								'content' => $row['first_subject'],
-							),
-							array(
-								'tag' => 'id',
-								'content' => $row['id_topic'],
-							),
-							array(
-								'tag' => 'link',
-								'content' => $scripturl . '?topic=' . $row['id_topic'] . '.new#new',
-							),
-						),
-					),
-					array(
-						'tag' => 'board',
-						'content' => array(
-							array(
-								'tag' => 'name',
-								'content' => $row['bname'],
-							),
-							array(
-								'tag' => 'id',
-								'content' => $row['id_board'],
-							),
-							array(
-								'tag' => 'link',
-								'content' => $scripturl . '?board=' . $row['id_board'] . '.0',
-							),
-						),
-					),
-					array(
-						'tag' => 'link',
-						'content' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-					),
-					array(
-						'tag' => 'attachments',
-						'content' => $attachments,
-					),
-				),
-			);
-		}
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -1600,7 +1193,7 @@ function getXmlRecent($xml_format)
  * which will be generated to match the xml_format.
  * @todo refactor.
  *
- * @param $xml_format The XML format. Can be 'atom', 'rdf', 'rss', 'rss2' or 'smf'
+ * @param $xml_format The XML format. Can be 'atom', 'rss', 'rss2'
  * @return array An array profile data
  */
 function getXmlProfile($xml_format)
@@ -1658,31 +1251,6 @@ function getXmlProfile($xml_format)
 			)
 		);
 	}
-	elseif ($xml_format == 'rdf')
-	{
-		$data[] = array(
-			'tag' => 'item',
-			'attributes' => array('rdf:about' => $scripturl . '?action=profile;u=' . $profile['id']),
-			'content' => array(
-				array(
-					'tag' => 'dc:format',
-					'content' => 'text/html',
-				),
-				array(
-					'tag' => 'title',
-					'content' => $profile['name'],
-				),
-				array(
-					'tag' => 'link',
-					'content' => $scripturl . '?action=profile;u=' . $profile['id'],
-				),
-				array(
-					'tag' => 'description',
-					'content' => isset($profile['group']) ? $profile['group'] : $profile['post_group'],
-				),
-			)
-		);
-	}
 	elseif ($xml_format == 'atom')
 	{
 		$data[] = array(
@@ -1736,101 +1304,6 @@ function getXmlProfile($xml_format)
 				),
 			)
 		);
-	}
-	else
-	{
-		$data = array(
-			array(
-				'tag' => 'username',
-				'content' => $user_info['is_admin'] || $user_info['id'] == $profile['id'] ? $profile['username'] : null,
-			),
-			array(
-				'tag' => 'name',
-				'content' => $profile['name'],
-			),
-			array(
-				'tag' => 'link',
-				'content' => $scripturl . '?action=profile;u=' . $profile['id'],
-			),
-			array(
-				'tag' => 'posts',
-				'content' => $profile['posts'],
-			),
-			array(
-				'tag' => 'post-group',
-				'content' => $profile['post_group'],
-			),
-			array(
-				'tag' => 'language',
-				'content' => $profile['language'],
-			),
-			array(
-				'tag' => 'last-login',
-				'content' => gmdate('D, d M Y H:i:s \G\M\T', $user_profile[$profile['id']]['last_login']),
-			),
-			array(
-				'tag' => 'registered',
-				'content' => gmdate('D, d M Y H:i:s \G\M\T', $user_profile[$profile['id']]['date_registered']),
-			),
-			array(
-				'tag' => 'gender',
-				'content' => !empty($profile['gender']['name']) ? $profile['gender']['name'] : null,
-			),
-			array(
-				'tag' => 'avatar',
-				'content' => !empty($profile['avatar']['url']) ? $profile['avatar']['url'] : null,
-			),
-			array(
-				'tag' => 'online',
-				'content' => !empty($profile['online']['is_online']) ? '' : null,
-			),
-			array(
-				'tag' => 'signature',
-				'content' => !empty($profile['signature']) ? $profile['signature'] : null,
-			),
-			array(
-				'tag' => 'blurb',
-				'content' => !empty($profile['blurb']) ? $profile['blurb'] : null,
-			),
-			array(
-				'tag' => 'title',
-				'content' => !empty($profile['title']) ? $profile['title'] : null,
-			),
-			array(
-				'tag' => 'position',
-				'content' => !empty($profile['group']) ? $profile['group'] : null,
-			),
-			array(
-				'tag' => 'email',
-				'content' => !empty($profile['show_email']) ? $profile['show_email'] : null,
-			),
-			array(
-				'tag' => 'website',
-				'content' => empty($profile['website']['url']) ? null : array(
-					array(
-						'tag' => 'title',
-						'content' => !empty($profile['website']['title']) ? $profile['website']['title'] : null,
-					),
-					array(
-						'tag' => 'link',
-						'content' => $profile['website']['url'],
-					),
-				),
-			),
-		);
-
-		if (!empty($profile['birth_date']) && substr($profile['birth_date'], 0, 4) != '0000')
-		{
-			list ($birth_year, $birth_month, $birth_day) = sscanf($profile['birth_date'], '%d-%d-%d');
-			$datearray = getdate(forum_time());
-			$age = $datearray['year'] - $birth_year - (($datearray['mon'] > $birth_month || ($datearray['mon'] == $birth_month && $datearray['mday'] >= $birth_day)) ? 0 : 1);
-
-			$data[] = array(
-				'tag' => 'age',
-				'content' => $age,
-			);
-
-		}
 	}
 
 	// Save some memory.
