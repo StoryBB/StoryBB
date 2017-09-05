@@ -46,23 +46,23 @@ function template_main()
 	$phpStr = LightnCandy::compile($template, [
 		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
 		'helpers' => [
-			'browser' => isBrowser,
-			'jsEscape' => JavaScriptEscape,
-			'textTemplate' => textTemplate,
-			'concat' => concat,
+			'browser' => 'isBrowser',
+			'jsEscape' => 'JavaScriptEscape',
+			'textTemplate' => 'textTemplate',
+			'concat' => 'concat',
 			'numeric' => function($x) { return is_numeric($x);},
-			'neq' => logichelper_ne,
-			'eq' => logichelper_eq,
-			'or' => logichelper_or,
-			'and' => logichelper_and,
-			'gt' => logichelper_gt,
-			'not' => logichelper_not,
+			'neq' => 'logichelper_ne',
+			'eq' => 'logichelper_eq',
+			'or' => 'logichelper_or',
+			'and' => 'logichelper_and',
+			'gt' => 'logichelper_gt',
+			'not' => 'logichelper_not',
 			'formatKb' => function($size) {
 				return comma_format(round(max($size, 1028) / 1028), 0);
 			},
 			'sizeLimit' => function() { return $modSettings.attachmentSizeLimit * 1028; },
-			'getNumItems' => getNumItems,
-			'implode_sep' => implode_sep
+			'getNumItems' => 'getNumItems',
+			'implode_sep' => 'implode_sep'
 		],
 		'partials' => [
 			'control_richedit' => file_get_contents(__DIR__ .  "/partials/control_richedit.hbs"),
