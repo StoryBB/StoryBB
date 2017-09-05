@@ -1134,8 +1134,7 @@ function loadPermissions()
 	}
 
 	// Remove all the permissions they shouldn't have ;).
-	if (!empty($modSettings['permission_enable_deny']))
-		$user_info['permissions'] = array_diff($user_info['permissions'], $removals);
+	$user_info['permissions'] = array_diff($user_info['permissions'], $removals);
 
 	if (isset($cache_groups) && !empty($board) && $modSettings['cache_enable'] >= 2)
 		cache_put_data('permissions:' . $cache_groups . ':' . $board, array($user_info['permissions'], null), 240);

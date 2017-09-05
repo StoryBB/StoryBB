@@ -812,19 +812,19 @@ function ModifyMembergroup()
 								$context['hidden_perms'][] = array(
 									$permissionType,
 									$perm['own']['id'],
-									$curPerm['own']['select'] == 'deny' && !empty($modSettings['permission_enable_deny']) ? 'deny' : $curPerm['own']['select'],
+									$curPerm['own']['select'],
 								);
 								$context['hidden_perms'][] = array(
 									$permissionType,
 									$perm['any']['id'],
-									$curPerm['any']['select'] == 'deny' && !empty($modSettings['permission_enable_deny']) ? 'deny' : $curPerm['any']['select'],
+									$curPerm['any']['select'],
 								);
 							}
 							else
 								$context['hidden_perms'][] = array(
 									$permissionType,
 									$perm['id'],
-									$curPerm['select'] == 'deny' && !empty($modSettings['permission_enable_deny']) ? 'deny' : $curPerm['select'],
+									$curPerm['select'],
 								);
 						}
 				}
@@ -975,11 +975,6 @@ function GeneralPermissionSettings($return_config = false)
 	// All the setting variables
 	$config_vars = array(
 		array('title', 'settings'),
-			// Inline permissions.
-			array('permissions', 'manage_permissions'),
-		'',
-			// A few useful settings
-			array('check', 'permission_enable_deny', 0, $txt['permission_settings_enable_deny'], 'help' => 'permissions_deny'),
 			array('check', 'permission_enable_postgroups', 0, $txt['permission_settings_enable_postgroups'], 'help' => 'permissions_postgroups'),
 	);
 
@@ -1004,25 +999,6 @@ function GeneralPermissionSettings($return_config = false)
 		checkSession();
 		call_integration_hook('integrate_save_permission_settings');
 		saveDBSettings($config_vars);
-
-		// Clear all deny permissions...if we want that.
-		if (empty($modSettings['permission_enable_deny']))
-		{
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}permissions
-				WHERE add_deny = {int:denied}',
-				array(
-					'denied' => 0,
-				)
-			);
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}board_permissions
-				WHERE add_deny = {int:denied}',
-				array(
-					'denied' => 0,
-				)
-			);
-		}
 
 		// Make sure there are no postgroup based permissions left.
 		if (empty($modSettings['permission_enable_postgroups']))

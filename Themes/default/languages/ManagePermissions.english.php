@@ -280,11 +280,8 @@ $txt['permissionhelp_post_attachment'] = 'Attachments are files that are attache
 $txt['permissionicon'] = '';
 
 $txt['permission_settings_title'] = 'Permission Settings';
-$txt['groups_manage_permissions'] = 'Membergroups allowed to manage permissions';
 $txt['permission_settings_submit'] = 'Save';
-$txt['permission_settings_enable_deny'] = 'Enable the option to deny permissions';
-// Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
-$txt['permission_disable_deny_warning'] = 'Turning off this option will update \\\'Deny\\\'-permissions to \\\'Disallow\\\'.';
+
 $txt['permission_by_board_desc'] = 'Here you can set which permissions profile a board uses. You can create new permission profiles from the &quot;Edit Profiles&quot; menu.';
 $txt['permission_settings_desc'] = 'Here you can set who has permission to change permissions, as well as how sophisticated the permission system should be.';
 $txt['permission_settings_enable_postgroups'] = 'Enable permissions for post count based groups';

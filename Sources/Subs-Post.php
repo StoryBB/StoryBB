@@ -938,9 +938,6 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	require_once($sourcedir . '/Subs-Members.php');
 	$pmReadGroups = groupsAllowedTo('pm_read');
 
-	if (empty($modSettings['permission_enable_deny']))
-		$pmReadGroups['denied'] = array();
-
 	// Load their alert preferences
 	require_once($sourcedir . '/Subs-Notify.php');
 	$notifyPrefs = getNotifyPrefs($all_to, array('pm_new', 'pm_reply', 'pm_notify'), true);
