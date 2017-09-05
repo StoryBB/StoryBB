@@ -1146,25 +1146,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				{
 					if (!isset($disabled['code']))
 					{
-						$php_parts = preg_split('~(&lt;\?php|\?&gt;)~', $data, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-						for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)
-						{
-							// Do PHP code coloring?
-							if ($php_parts[$php_i] != '&lt;?php')
-								continue;
-
-							$php_string = '';
-							while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != '?&gt;')
-							{
-								$php_string .= $php_parts[$php_i];
-								$php_parts[$php_i++] = '';
-							}
-							$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);
-						}
-
-						// Fix the PHP code stuff...
-						$data = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode('', $php_parts));
+						$data = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", $data);
 						$data = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data);
 
 						// Recent Opera bug requiring temporary fix. &nsbp; is needed before </code> to avoid broken selection.
@@ -1183,25 +1165,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				{
 					if (!isset($disabled['code']))
 					{
-						$php_parts = preg_split('~(&lt;\?php|\?&gt;)~', $data[0], -1, PREG_SPLIT_DELIM_CAPTURE);
-
-						for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)
-						{
-							// Do PHP code coloring?
-							if ($php_parts[$php_i] != '&lt;?php')
-								continue;
-
-							$php_string = '';
-							while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != '?&gt;')
-							{
-								$php_string .= $php_parts[$php_i];
-								$php_parts[$php_i++] = '';
-							}
-							$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);
-						}
-
-						// Fix the PHP code stuff...
-						$data[0] = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode('', $php_parts));
+						$data[0] = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", $data);
 						$data[0] = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data[0]);
 
 						// Recent Opera bug requiring temporary fix. &nsbp; is needed before </code> to avoid broken selection.
