@@ -270,9 +270,11 @@ function ModifyTopicSettings($return_config = false)
 {
 	global $context, $txt, $sourcedir, $scripturl;
 
+	loadLanguage('ManageSettings');
+
 	// Here are all the topic settings.
 	$config_vars = array(
-			// Some simple bools...
+			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
 			array('check', 'enableParticipation'),
 		'',
 			// Pagination etc...

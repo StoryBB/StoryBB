@@ -147,9 +147,6 @@ function ModifyBasicSettings($return_config = false)
 	global $txt, $scripturl, $context, $modSettings;
 
 	$config_vars = array(
-			// Big Options... polls, sticky, bbc....
-			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
-		'',
 			// Basic stuff, titles, flash, permissions...
 			array('check', 'allow_guestAccess'),
 			array('check', 'enable_buddylist'),
