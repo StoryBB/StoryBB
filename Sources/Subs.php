@@ -1429,23 +1429,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'content' => '$1',
 			),
 			array(
-				'tag' => 'php',
-				'type' => 'unparsed_content',
-				'content' => '<span class="phpcode">$1</span>',
-				'validate' => isset($disabled['php']) ? null : function (&$tag, &$data, $disabled)
-				{
-					if (!isset($disabled['php']))
-					{
-						$add_begin = substr(trim($data), 0, 5) != '&lt;?';
-						$data = highlight_php_code($add_begin ? '&lt;?php ' . $data . '?&gt;' : $data);
-						if ($add_begin)
-							$data = preg_replace(array('~^(.+?)&lt;\?.{0,40}?php(?:&nbsp;|\s)~', '~\?&gt;((?:</(font|span)>)*)$~'), '$1', $data, 2);
-					}
-				},
-				'block_level' => false,
-				'disabled_content' => '$1',
-			),
-			array(
 				'tag' => 'pre',
 				'before' => '<pre>',
 				'after' => '</pre>',
@@ -2647,7 +2630,7 @@ function parsesmileys(&$message)
  *
  * Uses PHP's highlight_string() to highlight PHP syntax
  * does special handling to keep the tabs in the code available.
- * used to parse PHP code from inside [code] and [php] tags.
+ * used to parse PHP code from inside [code] tags.
  *
  * @param string $code The code
  * @return string The code with highlighted HTML.
