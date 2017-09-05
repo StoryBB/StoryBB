@@ -1565,18 +1565,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'disabled_after' => '',
 			),
 			array(
-				'tag' => 'time',
-				'type' => 'unparsed_content',
-				'content' => '$1',
-				'validate' => function (&$tag, &$data, $disabled)
-				{
-					if (is_numeric($data))
-						$data = timeformat($data);
-					else
-						$tag['content'] = '[time]$1[/time]';
-				},
-			),
-			array(
 				'tag' => 'tr',
 				'before' => '<tr>',
 				'after' => '</tr>',
