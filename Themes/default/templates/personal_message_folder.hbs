@@ -1,0 +1,322 @@
+	<script>
+		var allLabels = {};
+		var currentLabels = {};
+		function loadLabelChoices()
+		{
+			var listing = document.forms.pmFolder.elements;
+			var theSelect = document.forms.pmFolder.pm_action;
+			var add, remove, toAdd = {length: 0}, toRemove = {length: 0};
+
+			if (theSelect.childNodes.length == 0)
+				return;
+
+			// This is done this way for internationalization reasons.
+			if (!('-1' in allLabels))
+			{
+				for (var o = 0; o < theSelect.options.length; o++)
+					if (theSelect.options[o].value.substr(0, 4) == "rem_")
+						allLabels[theSelect.options[o].value.substr(4)] = theSelect.options[o].text;
+			}
+
+			for (var i = 0; i < listing.length; i++)
+			{
+				if (listing[i].name != "pms[]" || !listing[i].checked)
+					continue;
+
+				var alreadyThere = [], x;
+				for (x in currentLabels[listing[i].value])
+				{
+					if (!(x in toRemove))
+					{
+						toRemove[x] = allLabels[x];
+						toRemove.length++;
+					}
+					alreadyThere[x] = allLabels[x];
+				}
+
+				for (x in allLabels)
+				{
+					if (!(x in alreadyThere))
+					{
+						toAdd[x] = allLabels[x];
+						toAdd.length++;
+					}
+				}
+			}
+
+			while (theSelect.options.length > 2)
+				theSelect.options[2] = null;
+
+			if (toAdd.length != 0)
+			{
+				theSelect.options[theSelect.options.length] = new Option("{{txt.pm_msg_label_apply}}", "");
+				setInnerHTML(theSelect.options[theSelect.options.length - 1], {{txt.pm_msg_label_apply}}");
+				theSelect.options[theSelect.options.length - 1].disabled = true;
+
+				for (i in toAdd)
+				{
+					if (i != "length")
+						theSelect.options[theSelect.options.length] = new Option(toAdd[i], "add_" + i);
+				}
+			}
+
+			if (toRemove.length != 0)
+			{
+				theSelect.options[theSelect.options.length] = new Option("{{txt.pm_msg_label_remove}}", "");
+				setInnerHTML(theSelect.options[theSelect.options.length - 1], "{{txt.pm_msg_label_remove}}");
+				theSelect.options[theSelect.options.length - 1].disabled = true;
+
+				for (i in toRemove)
+				{
+					if (i != "length")
+						theSelect.options[theSelect.options.length] = new Option(toRemove[i], "rem_" + i);
+				}
+			}
+		}
+	</script>
+	<form class="flow_hidden" action="{{scripturl}}?action=pm;sa=pmactions;{{#if (eq context.display_mode 2)}}conversation;{{/if}}f={{context.folder}};start={{context.start}}{{#if (neq context.current_label_id -1)}};l={{context.current_label_id}}{{/if}}" method="post" accept-charset="UTF-8" name="pmFolder">
+	    {{#if (neq context.display_mode 1)}}
+	    {{>pm_subjects}}
+	    <div class="clear_right"><br></div>
+    	<div class="cat_bar">
+				<h3 class="catbg">
+					<span id="author">{{txt.author}}</span>
+					<span id="topic_title">{{#if (eq context.display_mode 0)}}{{txt.messages}}{{else}}{{txt.conversations}}{{/if}}</span>
+				</h3>
+			</div>
+		<div class="clear_right"><br></div>
+	    {{/if}}
+	    {{#if (eq context.display_mode 2)}}
+	    <div class="pagesection">
+	        {{>button_strip context.conversation_buttons direction='right'}}
+	   </div>
+	    {{/if}}
+	    {{#if context.messages}}
+	    {{#if (neq context.display_mode 1)}}
+	    <div class="cat_bar">
+					<h3 class="catbg">
+						<span id="author">{{txt.author}}</span>
+						<span id="topic_title">{{#if (eq context.display_mode 0)}}{{txt.messages}}{{else}}{{txt.conversations}}{{/if}}</span>
+					</h3>
+				</div>
+		{{/if}}
+	    {{#if (eq context.display_mode 2)}}
+	    <div class="pagesection">
+	    	{{>button_strip context.conversation_buttons direction='right'}}
+	    </div>
+	    {{/if}}
+	    {{#each context.messages}}
+	    <div class="windowbg">
+			<div class="poster">
+				{{#if custom_fields.above_member}}
+				<div class="custom_fields_above_member">
+					<ul class="nolist">
+						{{#each custom_fields.above_member}}
+							<li class="custom {{col_name}}">{{value}}</li>
+						{{/each}}
+					</ul>
+				</div>
+				{{/if}}
+				<h4>
+					<a id="msg{{id}}"></a>
+					{{#if ../modSettings.onlineEnable}}{{#unless member.is_guest}}<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{{member.link}}}{{/unless}}{{/if}}
+				</h4>
+				<ul class="user_info">
+					{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
+					<li class="avatar">
+						<a href="{{../scripturl}}?action=profile;u={{member.id}}">{{{member.avatar.image}}}</a>
+					</li>
+					{{/if}}
+					{{#if custom_fields.below_avatar}}
+					<div class="custom_fields_above_member">
+						<ul class="nolist">
+							{{#each custom_fields.below_avatar}}
+								<li class="custom {{col_name}}">{{value}}</li>
+							{{/each}}
+						</ul>
+					</div>
+					{{/if}}
+					{{#unless member.is_guest}}<li class="icons">{{{member.group_icons}}}</li>{{/unless}}
+					{{#if member.group}}<li class="membergroup">{{{member.group}}}</li>{{/if}}
+					{{#if member.title}}<li class="title">{{member.title}}</li>{{/if}}
+					{{#unless member.is_guest}}
+						{{#unless ../modSettings.hide_post_group}}{{#if member.post_group}}<li class="postgroup">{{member.post_group}}</li>{{/if}}{{/unless}}
+						{{#unless ../context.disabled_fields.posts}}<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>{{/unless}}
+						{{#if (and ../modSettings.show_blurb member.blurb)}}<li class="blurb">{{member.blurb}}</li>{{/if}}
+						{{#if custom_fields.icons}}
+						<li class="im_icons">
+							<ol>
+								{{#each custom_fields.icons}}
+								<li class="custom {{col_name}}">{{value}}</li>
+								{{/each}}
+							</ol>
+						</li
+						{{/if}}
+					{{/unless}}
+					{{#if (and ../context.can_moderate_forum member.ip)}}
+						<li class="poster_ip"><a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile{{/if}};area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}">{{member.ip}}</a> <a href="{{../scripturl}}?action=helpadmin;help=see_admin_ip" onclick="return reqOverlayDiv(this.href);" class="help">(?)</a></li>
+					{{else}}
+					{{#if can_see_ip}}
+						<li class="poster_ip"><a href="{{../scripturl}}?action=helpadmin;help=see_member_ip" onclick="return reqOverlayDiv(this.href);" class="help">{{member.ip}}</a></li>
+					{{else}}
+						<li class="poster_ip"><a href="{{../scripturl}}?action=helpadmin;help=see_member_ip" onclick="return reqOverlayDiv(this.href);" class="help">{{txt.logged}}</a></li>
+					{{/if}}
+					{{/if}}
+					{{#if member.show_profile_buttons}}
+					<li class="profile">
+						<ol class="profile_icons">
+							{{#if member.can_view_profile}}
+								<li><a href="{{member.href}}"><img src="{{../settings.images_url}}/icons/profile_sm.png" alt="{{txt.view_profile}}" title="{{txt.view_profile}}"></a></li>
+							{{/if}}
+							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
+									<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" class="new_win"><span class="generic_icons www centericon" title="{{member.website.title}}"></span></a></li>
+							{{/if}}
+							{{#if member.show_email}}
+								<li><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{txt.email}}"></span></a></li>
+							{{/if}}
+							{{#if ../context.can_send_pm}}
+								<li><a href="{{../scripturl}}action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}">
+									<span class="generic_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}"></span></a></li>
+							{{/if}}
+						</ol>
+					</li>
+					{{/if}}
+					{{#if custom_fields.standard}}
+					<li class="im_icons">
+						<ol>
+							{{#each custom_fields.standard}}
+							<li class="custom {{col_name}}">{{value}}</li>
+							{{/each}}
+						</ol>
+					</li>
+					{{/if}}
+					{{#if member.can_see_warning}}
+					<li class="warning">{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
+					<span class="generic_icons warning_{{member.warning_status}}"></span>{{#if ../context.can_issue_warning}}</a>{{/if}}
+					<span class="warn_{{member.warning_status}}">{{get_text (concat 'warn_' member.warning_status)}}</span></li>
+					{{/if}}
+					{{#if custom_fields.bottom_poster}}
+					<li class="im_icons">
+						<ol>
+							{{#each custom_fields.bottom_poster}}
+							<li class="custom {{col_name}}">{{value}}</li>
+							{{/each}}
+						</ol>
+					</li>
+				{{/if}}
+				</ul>
+			</div>
+			<div class="postarea">
+				<div class="flow_hidden">
+					<div class="keyinfo">
+						<h5 id="subject_{{id}}">
+						{{subject}}
+						</h5>
+						<span class="smalltext">&#171; <strong> {{../txt.sent_to}}:</strong>
+						{{{implode recipients.to}}}
+						{{#if (and (not recipients.to) (neq ../context.folder "sent"))}}({{../txt.pm_undisclosed_recipients}}){{/if}}
+						<strong> {{../txt.on}}:</strong> {{time}} &#187;</span>
+						{{#if recipients.bcc}}
+						<br><span class="smalltext">&#171; <strong>{{../txt.pm_bcc}}:</strong> {{{implode recipients.bcc}}} &#187;</span>
+						{{/if}}
+						{{#if is_replied_to}}
+						<br><span class="smalltext">&#171; {{#if (eq ../context.folder 'sent')}}{{../txt.pm_sent_is_replied_to}}{{else}}{{../txt.pm_is_replied_to}}{{/if}} &#187;</span>
+						{{/if}}
+					</div>
+				</div>
+				<div class="post">
+					<div class="inner" id="msg_{{id}}">{{{body}}}</div>
+					{{#if (or can_report ../context.can_send_pm)}}
+					<div class="under_message">
+						{{#if can_report}}
+						<a href="{{../scripturl}}?action=pm;sa=report;l={{../context.current_label_id}};pmsg={{id}}" class="floatright">{{../txt.pm_report_to_admin}}</a>
+						{{/if}}
+						<ul class="quickbuttons">
+							{{#if ../context.can_send_pm}}
+								{{#unless member.is_guest}}
+									{{#if (gt number_recipients 1)}}
+										<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u=all"><span class="generic_icons reply_all_button"></span>{{txt.reply_to_all}}</a></li>
+									{{/if}}
+									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}"><span class="generic_icons reply_button"></span>{{txt.reply}}</a></li>
+									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote{{#unless (eq ../context.folder 'sent')}};u={{member.id}}{{/unless}}"><span class="generic_icons quote"></span>{{txt.quote_action}}</a></li>
+								{{else}}
+								<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote"><span class="generic_icons quote"></span>{{txt.reply_quote}}</a></li>
+								{{/unless}}
+								<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{../context.session_var}}={{../context.session_id}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="generic_icons remove_button"></span>{{txt.delete}}</a></li>
+								{{#unless ../context.display_mode}}
+								<li><input type="checkbox" name="pms[]" id="deletedisplay{{id}}" value="{{id}}" onclick="document.getElementById('deletelisting{{id}}').checked = this.checked;" class="input_check"></li>
+								{{/unless}}
+							{{/if}}
+						</ul>
+					</div>
+					{{/if}}
+					{{#if custom_fields.above_signature}}
+					<div class="custom_fields_above_signature">
+						<ul class="nolist">
+							{{#each custom_fields.above_signature}}
+							<li class="custom {{col_name}}">{{value}}</li>
+							{{/each}}
+						</ul>
+					</div>
+					{{/if}}
+					{{#if (and member.signature (not ../options.show_no_signatures) context.signatures_enabled)}}
+					<div class="signature">{{{member.signature}}}</div>
+					{{/if}}
+					{{#if custom_fields.below_signature}}
+					<div class="custom_fields_below_signature">
+						<ul class="nolist">
+							{{#each custom_fields.below_signature}}
+							<li class="custom {{col_name}}">{{value}}</li>
+							{{/each}}
+						</ul>
+					</div>
+					{{/if}}
+					{{#if (and (neq ../context.folder 'sent') ../context.currently_using_labels (neq ../context.display_mode 2))}}
+					<div class="labels righttext flow_auto">
+						<select name="pm_actions[{{id}}]" onchange="if (this.options[this.selectedIndex].value) form.submit();">
+							<option value="">{{../txt.pm_msg_label_title}}:</option>
+							<option value="" disabled>---------------</option>
+						{{#unless fully_labelled}}
+							<option value="" disabled>{{../txt.pm_msg_label_apply}}:</option>
+						{{#each ../context.labels}}
+							{{#unless (hasKey ../labels id)}}
+							<option value="{{id}}">&nbsp;{{name}}</option>
+							{{/unless}}
+						{{/each}}
+						{{/unless}}
+						{{#if (or (gt labels 1) (not labels.[-1]))}}
+							<option value="" disabled>{{../txt.pm_msg_label_remove}}:</option>
+							{{#each labels}}
+							<option value="{{id}}">&nbsp;{{name}}</option>
+							{{/each}}
+						{{/if}}
+						</select>
+						<noscript>
+							<input type="submit" value="{{../txt.pm_apply}}" class="button_submit" style="float: none">
+						</noscript>
+					{{/if}}
+					</div>
+				</div>
+			</div>
+			<div class="moderatorbar">
+			</div>
+		</div>
+	    {{/each}}
+	{{#unless context.display_mode}}
+	    <div class="pagesection">
+		<div class="floatleft">{{{context.page_index}}}</div>
+		<div class="floatright"><input type="submit" name="del_selected" value="{{txt.quickmod_delete_selected}}" style="font-weight: normal;" onclick="if (!confirm('{{txt.delete_selected_confirm}}')) return false;" class="button_submit"></div>	</div>
+    {{/unless}}
+    {{#if (and (eq context.display_mode 2) context.conversation_buttons)}}
+    <div class="pagesection">
+    	{{>button_strip button_strip=context.conversation_buttons direction='right'}}
+    </div>
+    {{/if}}
+    <br>
+    {{/if}}
+    {{#if (eq display_mode 1)}}
+    	{{>pm_subjects}}
+    	<br>
+    {{/if}}
+    <input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+</form>

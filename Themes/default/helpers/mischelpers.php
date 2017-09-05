@@ -43,5 +43,9 @@ function dump($item) {
 	return var_dump($item);
 }
 
+function hasKey($arr, $key) {
+	return in_array($arr, $key);
+}
+
 
 ?>
