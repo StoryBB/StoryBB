@@ -16,28 +16,28 @@ function template_pm_above()
 {
 	global $context, $txt;
 
-	echo '
-	<div id="personal_messages">';
+	$data = [
+		'context' => $context,
+		'txt' => $txt
+	];
 
-	// Show the capacity bar, if available.
-	if (!empty($context['limit_bar']))
-		echo '
-		<div class="cat_bar">
-			<h3 class="catbg">
-				<span class="floatleft">', $txt['pm_capacity'], ':</span>
-				<span class="floatleft capacity_bar">
-					<span class="', $context['limit_bar']['percent'] > 85 ? 'full' : ($context['limit_bar']['percent'] > 40 ? 'filled' : 'empty'), '" style="width: ', $context['limit_bar']['percent'] / 10, 'em;"></span>
-				</span>
-				<span class="floatright', $context['limit_bar']['percent'] > 90 ? ' alert' : '', '">', $context['limit_bar']['text'], '</span>
-			</h3>
-		</div>';
+	$template = file_get_contents(__DIR__ .  "/partials/pm_above.hbs");
+	if (!$template) {
+		die('PM main template did not load!');
+	}
 
-	// Message sent? Show a small indication.
-	if (isset($context['pm_sent']))
-		echo '
-		<div class="infobox">
-			', $txt['pm_sent'], '
-		</div>';
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+		'helpers' => [
+			'gt' => 'logichelper_gt',
+			'div' => 'numericshelper_div',
+		],
+		'partials' => [
+		]
+	]);
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
