@@ -580,7 +580,6 @@ $txt['preview_characters_units'] = 'characters';
 $txt['message_index_preview_first'] = 'When using post previews, show the text of the first post';
 $txt['message_index_preview_first_desc'] = 'Leave un-checked to show the text of the last post instead';
 $txt['show_user_images'] = 'Show user avatars in message view';
-$txt['show_blurb'] = 'Show personal text in message view';
 $txt['hide_post_group'] = 'Hide post group titles for grouped members';
 $txt['hide_post_group_desc'] = 'Enabling this will not display a member\'s post group title on the message view if they are assigned to a non-post based group.';
 $txt['subject_toggle'] = 'Show subjects in topics.';

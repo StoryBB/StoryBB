@@ -338,21 +338,6 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_password',
 			'is_dummy' => true,
 		),
-		'personal_text' => array(
-			'type' => 'text',
-			'label' => $txt['personal_text'],
-			'log_change' => true,
-			'input_attr' => array('maxlength="50"'),
-			'size' => 50,
-			'permission' => 'profile_blurb',
-			'input_validate' => function(&$value) use ($smcFunc)
-			{
-				if ($smcFunc['strlen']($value) > 50)
-					return 'personal_text_too_long';
-
-				return true;
-			},
-		),
 		// This does ALL the pm settings
 		'pm_prefs' => array(
 			'type' => 'callback',
@@ -1692,7 +1677,7 @@ function forumProfile($memID)
 
 	setupProfileContext(
 		array(
-			'avatar_choice', 'hr', 'personal_text', 'hr',
+			'avatar_choice', 'hr',
 			'bday1', 'usertitle', 'signature', 'hr',
 			'website_title', 'website_url',
 		)

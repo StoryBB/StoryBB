@@ -546,7 +546,6 @@ function dumpTags($data, $i, $tag = null, $xml_format = '', $forceCdataKeys = ar
 		'position',
 		'language',
 		'gender',
-		'blurb',
 	);
 	if ($xml_format != 'atom')
 		$keysToCdata[] = 'category';
@@ -1787,10 +1786,6 @@ function getXmlProfile($xml_format)
 			array(
 				'tag' => 'signature',
 				'content' => !empty($profile['signature']) ? $profile['signature'] : null,
-			),
-			array(
-				'tag' => 'blurb',
-				'content' => !empty($profile['blurb']) ? $profile['blurb'] : null,
 			),
 			array(
 				'tag' => 'title',

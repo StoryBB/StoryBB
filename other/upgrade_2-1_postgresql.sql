@@ -133,7 +133,7 @@ INSERT INTO {$db_prefix}settings (variable, value) VALUES ('defaultMaxListItems'
 
 ---# Enable some settings we ripped from Theme settings
 ---{
-	$ripped_settings = array('show_modify', 'show_user_images', 'show_blurb', 'show_profile_buttons', 'subject_toggle', 'hide_post_group');
+	$ripped_settings = array('show_modify', 'show_user_images', 'show_profile_buttons', 'subject_toggle', 'hide_post_group');
 
 	$request = $smcFunc['db_query']('', '
 		SELECT variable, value
@@ -1359,7 +1359,7 @@ WHERE variable IN ('enableStickyTopics', 'guest_hideContacts', 'notify_new_regis
 
 ---# Cleaning up old theme settings.
 DELETE FROM {$db_prefix}themes
-WHERE variable IN ('show_board_desc', 'no_new_reply_warning', 'display_quick_reply', 'show_mark_read', 'show_member_bar', 'linktree_link', 'show_bbc', 'additional_options_collapsable', 'subject_toggle', 'show_modify', 'show_profile_buttons', 'show_user_images', 'show_blurb', 'show_gender', 'hide_post_group', 'drafts_autosave_enabled', 'forum_width');
+WHERE variable IN ('show_board_desc', 'no_new_reply_warning', 'display_quick_reply', 'show_mark_read', 'show_member_bar', 'linktree_link', 'show_bbc', 'additional_options_collapsable', 'subject_toggle', 'show_modify', 'show_profile_buttons', 'show_user_images', 'show_gender', 'hide_post_group', 'drafts_autosave_enabled', 'forum_width');
 ---#
 
 ---# Adding new "httponlyCookies" setting
@@ -1558,7 +1558,6 @@ $request = upgrade_query("
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$inserts[] = "($row[id_group], 'profile_blurb_own', $row[add_deny])";
 		$inserts[] = "($row[id_group], 'profile_displayed_name_own', $row[add_deny])";
 		$inserts[] = "($row[id_group], 'profile_forum_own', $row[add_deny])";
 		$inserts[] = "($row[id_group], 'profile_website_own', $row[add_deny])";

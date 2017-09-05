@@ -1404,7 +1404,7 @@ function AdminAccount()
 				array(
 					'member_name' => 'string-25', 'real_name' => 'string-25', 'passwd' => 'string', 'email_address' => 'string',
 					'id_group' => 'int', 'posts' => 'int', 'date_registered' => 'int',
-					'password_salt' => 'string', 'lngfile' => 'string', 'personal_text' => 'string', 'avatar' => 'string',
+					'password_salt' => 'string', 'lngfile' => 'string', 'avatar' => 'string',
 					'member_ip' => 'inet', 'member_ip2' => 'inet', 'buddy_list' => 'string', 'pm_ignore_list' => 'string',
 					'website_title' => 'string', 'website_url' => 'string',
 					'signature' => 'string', 'usertitle' => 'string', 'secret_question' => 'string',
@@ -1413,7 +1413,7 @@ function AdminAccount()
 				array(
 					stripslashes($_POST['username']), stripslashes($_POST['username']), $_POST['password1'], stripslashes($_POST['email']),
 					1, 0, time(),
-					$incontext['member_salt'], '', '', '',
+					$incontext['member_salt'], '', '',
 					$ip, $ip, '', '',
 					'', '',
 					'', '', '',

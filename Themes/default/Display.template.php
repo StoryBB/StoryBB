@@ -480,11 +480,6 @@ function template_single_post($message)
 			echo '
 								<li class="postcount">', $txt['member_postcount'], ': ', $message['member']['posts'], '</li>';
 
-		// Show their personal text?
-		if (!empty($modSettings['show_blurb']) && !empty($message['member']['blurb']))
-			echo '
-								<li class="blurb">', $message['member']['blurb'], '</li>';
-
 		// Any custom fields to show as icons?
 		if (!empty($message['custom_fields']['icons']))
 		{

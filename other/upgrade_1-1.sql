@@ -2198,12 +2198,6 @@ $textfield_updates = array(
 	),
 	array(
 		'table' => 'members',
-		'column' => 'personalText',
-		'type' => 'tinytext',
-		'null_allowed' => false,
-	),
-	array(
-		'table' => 'members',
 		'column' => 'websiteTitle',
 		'type' => 'tinytext',
 		'null_allowed' => false,

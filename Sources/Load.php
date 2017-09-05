@@ -1206,7 +1206,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	// Used by default
 	$select_columns = '
 			COALESCE(lo.log_time, 0) AS is_online, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
-			mem.signature, mem.personal_text, mem.avatar, mem.id_member, mem.member_name,
+			mem.signature, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.date_registered, mem.website_title, mem.website_url,
 			mem.birthdate, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.id_post_group, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
 			mg.online_color AS member_group_color, COALESCE(mg.group_name, {string:blank_string}) AS member_group,
@@ -1389,7 +1389,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 	// Censor everything.
 	censorText($profile['signature']);
-	censorText($profile['personal_text']);
 
 	// Set things up to be used before hand.
 	$profile['signature'] = str_replace(array("\n", "\r"), array('<br>', ''), $profile['signature']);
@@ -1437,7 +1436,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'is_reverse_buddy' => in_array($user_info['id'], $buddy_list),
 			'buddies' => $buddy_list,
 			'title' => !empty($modSettings['titlesEnable']) ? $profile['usertitle'] : '',
-			'blurb' => $profile['personal_text'],
 			'website' => array(
 				'title' => $profile['website_title'],
 				'url' => $profile['website_url'],

@@ -293,11 +293,6 @@ function template_folder()
 					echo '
 				<li class="postcount">', $txt['member_postcount'], ': ', $message['member']['posts'], '</li>';
 
-				// Show their personal text?
-				if (!empty($modSettings['show_blurb']) && $message['member']['blurb'] != '')
-					echo '
-				<li class="blurb">', $message['member']['blurb'], '</li>';
-
 				// Any custom fields to show as icons?
 				if (!empty($message['custom_fields']['icons']))
 				{

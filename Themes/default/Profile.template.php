@@ -289,11 +289,6 @@ function template_summary()
 				<dt>', $txt['custom_title'], ': </dt>
 				<dd>', $context['member']['title'], '</dd>';
 
-	if (!empty($context['member']['blurb']))
-		echo '
-				<dt>', $txt['personal_text'], ': </dt>
-				<dd>', $context['member']['blurb'], '</dd>';
-
 	echo '
 				<dt>', $txt['age'], ':</dt>
 				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? ' &nbsp; <img src="' . $settings['images_url'] . '/cake.png" alt="">' : ''), '</dd>';

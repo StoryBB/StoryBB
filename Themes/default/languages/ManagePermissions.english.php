@@ -47,10 +47,6 @@ $txt['permissionname_profile_website'] = 'Edit website';
 $txt['permissionhelp_profile_website'] = 'Allow the member to edit the website fields in their profile';
 $txt['permissionname_profile_website_own'] = 'Own profile';
 $txt['permissionname_profile_website_any'] = 'Any profile';
-$txt['permissionname_profile_blurb'] = 'Edit personal text';
-$txt['permissionhelp_profile_blurb'] = 'Allow the member to edit the personal text field in their profile';
-$txt['permissionname_profile_blurb_own'] = 'Own profile';
-$txt['permissionname_profile_blurb_any'] = 'Any profile';
 $txt['permissions_profile_copy_from'] = 'Copy Permissions From';
 
 $txt['permissions_includes_inherited'] = 'Inherited Groups';
