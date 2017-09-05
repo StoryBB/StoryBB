@@ -15,7 +15,6 @@ $txt['setting_smileys_dir'] = 'Absolute path to all smiley sets';
 $txt['setting_smileys_dir_wrong'] = 'The path to all smiley sets is wrong. This will prevent smileys from working';
 $txt['setting_messageIcons_enable'] = 'Enable customized message icons';
 $txt['setting_messageIcons_enable_note'] = '(otherwise, the default message icons will be used.)';
-$txt['groups_manage_smileys'] = 'Groups allowed to manage smileys and message icons';
 
 $txt['smiley_sets_name'] = 'Name';
 $txt['smiley_sets_url'] = 'URL';
