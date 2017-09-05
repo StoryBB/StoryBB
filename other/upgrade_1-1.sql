@@ -300,7 +300,7 @@ upgrade_query("
 
 ---# Cleaning old values from "settings"...
 DELETE FROM {$db_prefix}settings
-WHERE variable IN ('modlog_enabled', 'localCookies', 'globalCookies', 'send_welcomeEmail', 'search_method', 'notify_new_registration', 'removeNestedQuotes', 'smiley_enable', 'smiley_sets_enable')
+WHERE variable IN ('modlog_enabled', 'localCookies', 'globalCookies', 'send_welcomeEmail', 'search_method', 'notify_new_registration', 'removeNestedQuotes', 'smiley_sets_enable')
 	AND value = '0';
 
 DELETE FROM {$db_prefix}settings
