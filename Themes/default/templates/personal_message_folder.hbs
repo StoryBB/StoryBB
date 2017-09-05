@@ -78,13 +78,6 @@
 	    {{#if (neq context.display_mode 1)}}
 	    {{>pm_subjects}}
 	    <div class="clear_right"><br></div>
-    	<div class="cat_bar">
-				<h3 class="catbg">
-					<span id="author">{{txt.author}}</span>
-					<span id="topic_title">{{#if (eq context.display_mode 0)}}{{txt.messages}}{{else}}{{txt.conversations}}{{/if}}</span>
-				</h3>
-			</div>
-		<div class="clear_right"><br></div>
 	    {{/if}}
 	    {{#if (eq context.display_mode 2)}}
 	    <div class="pagesection">
