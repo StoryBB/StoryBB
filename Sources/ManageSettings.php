@@ -147,7 +147,7 @@ function ModifyBasicSettings($return_config = false)
 	global $txt, $scripturl, $context, $modSettings;
 
 	$config_vars = array(
-			// Basic stuff, titles, flash, permissions...
+			// Basic stuff, titles, permissions...
 			array('check', 'allow_guestAccess'),
 			array('check', 'enable_buddylist'),
 			array('check', 'allow_hideOnline'),

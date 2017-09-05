@@ -337,14 +337,6 @@ function fixTags(&$message)
 			'embeddedUrl' => true,
 			'hasEqualSign' => true,
 		),
-		// [flash]http://...[/flash]
-		array(
-			'tag' => 'flash',
-			'protocols' => array('http', 'https'),
-			'embeddedUrl' => false,
-			'hasEqualSign' => false,
-			'hasExtra' => true,
-		),
 	);
 
 	// Fix each type of tag.

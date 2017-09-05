@@ -186,7 +186,6 @@ function ModifyPostSettings($return_config = false)
 	$config_vars = array(
 			// Simple post options...
 			array('check', 'removeNestedQuotes'),
-			array('check', 'enableEmbeddedFlash', 'subtext' => $txt['enableEmbeddedFlash_warning']),
 			array('check', 'disable_wysiwyg'),
 			array('check', 'additional_options_collapsable'),
 		'',
