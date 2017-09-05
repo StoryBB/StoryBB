@@ -2195,9 +2195,6 @@ dl {
 	display: block;
 	margin-bottom: 4px;
 }
-#avatar_server_stored div {
-	float: left;
-}
 #avatar_upload {
 	overflow: auto;
 }

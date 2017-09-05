@@ -49,78 +49,15 @@ function matchPackageVersion($version, $versions)
 			list ($lower, $upper) = explode('-', $for);
 
 			// Compare the version against lower and upper bounds.
-			if (compareVersions($version, $lower) > -1 && compareVersions($version, $upper) < 1)
+			if (version_compare($version, $lower) > -1 && version_compare($version, $upper) < 1)
 				return true;
 		}
 		// Otherwise check if they are equal...
-		elseif (compareVersions($version, $for) === 0)
+		elseif (version_compare($version, $for) === 0)
 			return true;
 	}
 
 	return false;
-}
-
-/**
- * Compares two versions and determines if one is newer, older or the same, returns
- * - (-1) if version1 is lower than version2
- * - (0) if version1 is equal to version2
- * - (1) if version1 is higher than version2
- *
- * @param string $version1 The first version
- * @param string $version2 The second version
- * @return int -1 if version2 is greater than version1, 0 if they're equal, 1 if version1 is greater than version2
- */
-function compareVersions($version1, $version2)
-{
-	static $categories;
-
-	$versions = array();
-	foreach (array(1 => $version1, $version2) as $id => $version)
-	{
-		// Clean the version and extract the version parts.
-		$clean = str_replace(array(' ', '2.0rc1-1'), array('', '2.0rc1.1'), strtolower($version));
-		preg_match('~(\d+)(?:\.(\d+|))?(?:\.)?(\d+|)(?:(alpha|beta|rc)(\d+|)(?:\.)?(\d+|))?(?:(dev))?(\d+|)~', $clean, $parts);
-
-		// Build an array of parts.
-		$versions[$id] = array(
-			'major' => !empty($parts[1]) ? (int) $parts[1] : 0,
-			'minor' => !empty($parts[2]) ? (int) $parts[2] : 0,
-			'patch' => !empty($parts[3]) ? (int) $parts[3] : 0,
-			'type' => empty($parts[4]) ? 'stable' : $parts[4],
-			'type_major' => !empty($parts[6]) ? (int) $parts[5] : 0,
-			'type_minor' => !empty($parts[6]) ? (int) $parts[6] : 0,
-			'dev' => !empty($parts[7]),
-		);
-	}
-
-	// Are they the same, perhaps?
-	if ($versions[1] === $versions[2])
-		return 0;
-
-	// Get version numbering categories...
-	if (!isset($categories))
-		$categories = array_keys($versions[1]);
-
-	// Loop through each category.
-	foreach ($categories as $category)
-	{
-		// Is there something for us to calculate?
-		if ($versions[1][$category] !== $versions[2][$category])
-		{
-			// Dev builds are a problematic exception.
-			// (stable) dev < (stable) but (unstable) dev = (unstable)
-			if ($category == 'type')
-				return $versions[1][$category] > $versions[2][$category] ? ($versions[1]['dev'] ? -1 : 1) : ($versions[2]['dev'] ? 1 : -1);
-			elseif ($category == 'dev')
-				return $versions[1]['dev'] ? ($versions[2]['type'] == 'stable' ? -1 : 0) : ($versions[1]['type'] == 'stable' ? 1 : 0);
-			// Otherwise a simple comparison.
-			else
-				return $versions[1][$category] > $versions[2][$category] ? 1 : -1;
-		}
-	}
-
-	// They are the same!
-	return 0;
 }
 
 /**

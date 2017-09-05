@@ -63,7 +63,6 @@ Third Party Software and Graphics;
 
 Graphics
 Fugue Icons | © 2012 Yusuke Kamiyamane | These icons are licensed under a Creative Commons Attribution 3.0 License
-Oxygen Icons | These icons are licensed under CC BY-SA 3.0
 Crystal Project Icons | These icons are licensed under the GNU Lesser General Public License
 
 Software
