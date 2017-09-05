@@ -260,7 +260,6 @@ function AdminMain()
 					'subsections' => array(
 						'index' => array($txt['membergroups_edit_groups'], 'manage_membergroups'),
 						'add' => array($txt['membergroups_new_group'], 'manage_membergroups'),
-						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
 				'permissions' => array(
