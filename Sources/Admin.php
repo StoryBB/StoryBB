@@ -186,7 +186,6 @@ function AdminMain()
 					'icon' => 'search',
 					'permission' => array('admin_forum'),
 					'subsections' => array(
-						'weights' => array($txt['search_weights']),
 						'method' => array($txt['search_method']),
 						'settings' => array($txt['settings']),
 					),

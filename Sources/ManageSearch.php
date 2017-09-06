@@ -37,7 +37,6 @@ function ManageSearch()
 
 	$subActions = array(
 		'settings' => 'EditSearchSettings',
-		'weights' => 'EditWeights',
 		'method' => 'EditSearchMethod',
 		'createfulltext' => 'EditSearchMethod',
 		'removecustom' => 'EditSearchMethod',
@@ -46,7 +45,7 @@ function ManageSearch()
 	);
 
 	// Default the sub-action to 'edit search settings'.
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'weights';
+	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'method';
 
 	$context['sub_action'] = $_REQUEST['sa'];
 
@@ -56,9 +55,6 @@ function ManageSearch()
 		'help' => 'search',
 		'description' => $txt['search_settings_desc'],
 		'tabs' => array(
-			'weights' => array(
-				'description' => $txt['search_weights_desc'],
-			),
 			'method' => array(
 				'description' => $txt['search_method_desc'],
 			),
@@ -138,55 +134,6 @@ function EditSearchSettings($return_config = false)
 	createToken('admin-mp');
 
 	prepareDBSettingContext($config_vars);
-}
-
-/**
- * Edit the relative weight of the search factors.
- * Called by ?action=admin;area=managesearch;sa=weights.
- * Requires the admin_forum permission.
- *
- * @uses ManageSearch template, 'modify_weights' sub-template.
- */
-function EditWeights()
-{
-	global $txt, $context, $modSettings;
-
-	$context['page_title'] = $txt['search_weights_title'];
-	$context['sub_template'] = 'modify_weights';
-
-	$factors = array(
-		'search_weight_frequency',
-		'search_weight_age',
-		'search_weight_length',
-		'search_weight_subject',
-		'search_weight_first_message',
-		'search_weight_sticky',
-	);
-
-	call_integration_hook('integrate_modify_search_weights', array(&$factors));
-
-	// A form was submitted.
-	if (isset($_POST['save']))
-	{
-		checkSession();
-		validateToken('admin-msw');
-
-		call_integration_hook('integrate_save_search_weights');
-
-		$changes = array();
-		foreach ($factors as $factor)
-			$changes[$factor] = (int) $_POST[$factor];
-		updateSettings($changes);
-	}
-
-	$context['relative_weights'] = array('total' => 0);
-	foreach ($factors as $factor)
-		$context['relative_weights']['total'] += isset($modSettings[$factor]) ? $modSettings[$factor] : 0;
-
-	foreach ($factors as $factor)
-		$context['relative_weights'][$factor] = round(100 * (isset($modSettings[$factor]) ? $modSettings[$factor] : 0) / $context['relative_weights']['total'], 1);
-
-	createToken('admin-msw');
 }
 
 /**

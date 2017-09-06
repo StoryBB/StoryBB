@@ -671,7 +671,6 @@ $txt['log_ban_hits'] = 'Log ban hits in the error log?';
 
 $txt['boardsEdit'] = 'Modify Boards';
 $txt['mboards_new_cat'] = 'Create new category';
-$txt['search_weights'] = 'Weights';
 $txt['search_method'] = 'Search Method';
 
 $txt['smiley_sets'] = 'Smiley Sets';
