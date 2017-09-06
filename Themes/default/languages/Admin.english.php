@@ -610,7 +610,6 @@ $txt['database_settings'] = 'Database';
 $txt['cookies_sessions_settings'] = 'Cookies and Sessions';
 $txt['security_settings'] = 'Security';
 $txt['caching_settings'] = 'Caching';
-$txt['load_balancing_settings'] = 'Load Balancing';
 $txt['phpinfo_settings'] = 'PHP Info';
 $txt['phpinfo_localsettings'] = 'Local Settings';
 $txt['phpinfo_defaultsettings'] = 'Default Settings';
