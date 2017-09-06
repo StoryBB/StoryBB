@@ -85,8 +85,6 @@ function EditSearchSettings($return_config = false)
 
 	// What are we editing anyway?
 	$config_vars = array(
-			// Permission...
-			array('permissions', 'search_posts'),
 			// Some simple settings.
 			array('int', 'search_results_per_page'),
 			array('int', 'search_max_results', 'subtext' => $txt['search_max_results_disable']),

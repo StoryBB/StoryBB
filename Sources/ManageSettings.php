@@ -359,8 +359,6 @@ function ModifyLikesSettings($return_config = false)
 
 	$config_vars = array(
 		array('check', 'enable_likes'),
-		array('permissions', 'likes_view'),
-		array('permissions', 'likes_like'),
 	);
 
 	call_integration_hook('integrate_likes_settings', array(&$config_vars));
@@ -399,7 +397,6 @@ function ModifyMentionsSettings($return_config = false)
 
 	$config_vars = array(
 		array('check', 'enable_mentions'),
-		array('permissions', 'mention'),
 	);
 
 	call_integration_hook('integrate_mentions_settings', array(&$config_vars));
@@ -457,7 +454,6 @@ function ModifyWarningSettings($return_config = false)
 				array('int', 'warning_mute', 'subtext' => $txt['setting_warning_mute_note'] . ' ' . $txt['zero_to_disable']),
 				'rem1' => array('int', 'user_limit', 'subtext' => $txt['setting_user_limit_note']),
 				'rem2' => array('int', 'warning_decrement', 'subtext' => $txt['setting_warning_decrement_note'] . ' ' . $txt['zero_to_disable']),
-				array('permissions', 'view_warning'),
 		);
 
 	call_integration_hook('integrate_warning_settings', array(&$config_vars));
