@@ -38,10 +38,6 @@ function template_main()
 			<h2 class="display_title"><span id="top_subject">', $context['subject'], '</span>', ($context['is_locked']) ? ' <span class="generic_icons lock"></span>' : '', ($context['is_sticky']) ? ' <span class="generic_icons sticky"></span>' : '', '</h2>
 			<p>',$txt['started_by'], ' ', $context['topic_poster_name'], ', ', $context['topic_started_time'], '</p>';
 
-	// Next - Prev
-	echo '
-		<span class="nextlinks floatright">', $context['previous_next'], '</span>';
-
 	if (!empty($settings['display_who_viewing']))
 	{
 		echo '

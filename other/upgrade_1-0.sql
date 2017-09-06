@@ -1796,7 +1796,6 @@ VALUES
 	('todayMod', '1'),
 	('karmaMode', '0'),
 	('karmaTimeRestrictAdmins', '1'),
-	('enablePreviousNext', '1'),
 	('pollMode', '1'),
 	('enableVBStyleLogin', '1'),
 	('enableCompressedOutput', '1'),

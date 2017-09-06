@@ -599,7 +599,6 @@ $txt['defaultMaxMessages'] = 'Number of posts per page in a topic page';
 $txt['enableAllMessages'] = 'Max topic size to show &quot;All&quot; posts';
 $txt['enableAllMessages_zero'] = '0 to never show &quot;All&quot;';
 $txt['disableCustomPerPage'] = 'Disable user defined topic/message count per page';
-$txt['enablePreviousNext'] = 'Enable previous/next topic links';
 
 $txt['not_done_title'] = 'Not done yet';
 $txt['not_done_reason'] = 'To avoid overloading your server, the process has been temporarily paused. It should automatically continue in a few seconds. If it doesn\'t, please click continue below.';

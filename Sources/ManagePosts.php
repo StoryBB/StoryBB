@@ -284,7 +284,6 @@ function ModifyTopicSettings($return_config = false)
 			// All, next/prev...
 			array('int', 'enableAllMessages', 'postinput' => $txt['manageposts_posts'], 'subtext' => $txt['enableAllMessages_zero']),
 			array('check', 'disableCustomPerPage'),
-			array('check', 'enablePreviousNext'),
 		'',
 			// Topic related settings (show gender icon/avatars etc...)
 			array('check', 'subject_toggle'),
