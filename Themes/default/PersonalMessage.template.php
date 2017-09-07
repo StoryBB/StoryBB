@@ -431,7 +431,7 @@ function template_search_results()
  */
 function template_send()
 {
-	global $context, $options, $scripturl, $modSettings, $txt;
+	global $context, $options, $scripturl, $settings, $modSettings, $txt;
 
 	$data = [
 		'context' => $context,
@@ -439,6 +439,7 @@ function template_send()
 		'txt' => $txt,
 		'scripturl' => $scripturl,
 		'modSettings' => $modSettings,
+		'settings' => $settings,
 		'bccLinkTemplate' => '<a href="#" id="bcc_link">' . $txt['make_bcc'] . '</a> <a href="' . $scripturl . '?action=helpadmin;help=pm_bcc" onclick="return reqOverlayDiv(this.href);">(?)</a>'
 	];
 
