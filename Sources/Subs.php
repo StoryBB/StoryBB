@@ -2802,7 +2802,11 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		}
 
 		foreach ($render_templates as $sub_template) {
+			// Super hacky way to render all the layers in the right place.
+			ob_start();
 			$content .= loadSubTemplate($sub_template);
+			$buffer = ob_get_clean();
+			$content .= $buffer;
 		}
 		render_page($content); //found in index.template.php, this renders the layout around the page
 
