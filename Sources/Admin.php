@@ -186,7 +186,6 @@ function AdminMain()
 					'icon' => 'search',
 					'permission' => array('admin_forum'),
 					'subsections' => array(
-						'weights' => array($txt['search_weights']),
 						'method' => array($txt['search_method']),
 						'settings' => array($txt['settings']),
 					),
@@ -199,9 +198,9 @@ function AdminMain()
 					'permission' => array('manage_smileys'),
 					'subsections' => array(
 						'editsets' => array($txt['smiley_sets']),
-						'addsmiley' => array($txt['smileys_add'], 'enabled' => !empty($modSettings['smiley_enable'])),
-						'editsmileys' => array($txt['smileys_edit'], 'enabled' => !empty($modSettings['smiley_enable'])),
-						'setorder' => array($txt['smileys_set_order'], 'enabled' => !empty($modSettings['smiley_enable'])),
+						'addsmiley' => array($txt['smileys_add']),
+						'editsmileys' => array($txt['smileys_edit']),
+						'setorder' => array($txt['smileys_set_order']),
 						'editicons' => array($txt['icons_edit_message_icons'], 'enabled' => !empty($modSettings['messageIcons_enable'])),
 						'settings' => array($txt['settings']),
 					),
@@ -260,7 +259,6 @@ function AdminMain()
 					'subsections' => array(
 						'index' => array($txt['membergroups_edit_groups'], 'manage_membergroups'),
 						'add' => array($txt['membergroups_new_group'], 'manage_membergroups'),
-						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
 				'permissions' => array(
@@ -340,7 +338,6 @@ function AdminMain()
 						'cookie' => array($txt['cookies_sessions_settings']),
 						'security' => array($txt['security_settings']),
 						'cache' => array($txt['caching_settings']),
-						'loads' => array($txt['load_balancing_settings']),
 						'phpinfo' => array($txt['phpinfo_settings']),
 					),
 				),

@@ -1465,7 +1465,6 @@ function convertSettingsToTheme()
 		'show_bbc' => isset($GLOBALS['showyabbcbutt']) ? $GLOBALS['showyabbcbutt'] : @$GLOBALS['showbbcbutt'],
 		'show_modify' => @$GLOBALS['showmodify'],
 		'show_user_images' => @$GLOBALS['showuserpic'],
-		'show_blurb' => @$GLOBALS['showusertext'],
 		'show_gender' => @$GLOBALS['showgenderimage'],
 		'show_newsfader' => @$GLOBALS['shownewsfader'],
 		'display_recent_bar' => @$GLOBALS['Show_RecentBar'],

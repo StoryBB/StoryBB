@@ -146,22 +146,12 @@ function ModifyBasicSettings($return_config = false)
 {
 	global $txt, $scripturl, $context, $modSettings;
 
-	// We need to know if personal text is enabled, and if it's in the registration fields option.
-	// If admins have set it up as an on-registration thing, they can't set a default value (because it'll never be used)
-	$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
-	$reg_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : array();
-	$can_personal_text = !in_array('personal_text', $disabled_fields) && !in_array('personal_text', $reg_fields);
-
 	$config_vars = array(
-			// Big Options... polls, sticky, bbc....
-			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
-		'',
-			// Basic stuff, titles, flash, permissions...
+			// Basic stuff, titles, permissions...
 			array('check', 'allow_guestAccess'),
 			array('check', 'enable_buddylist'),
 			array('check', 'allow_hideOnline'),
 			array('check', 'titlesEnable'),
-			array('text', 'default_personal_text', 'subtext' => $txt['default_personal_text_note'], 'disabled' => !$can_personal_text),
 			array('check', 'topic_move_any'),
 			array('int', 'defaultMaxListItems', 'step' => 1, 'min' => 1, 'max' => 999),
 		'',
@@ -369,8 +359,6 @@ function ModifyLikesSettings($return_config = false)
 
 	$config_vars = array(
 		array('check', 'enable_likes'),
-		array('permissions', 'likes_view'),
-		array('permissions', 'likes_like'),
 	);
 
 	call_integration_hook('integrate_likes_settings', array(&$config_vars));
@@ -409,7 +397,6 @@ function ModifyMentionsSettings($return_config = false)
 
 	$config_vars = array(
 		array('check', 'enable_mentions'),
-		array('permissions', 'mention'),
 	);
 
 	call_integration_hook('integrate_mentions_settings', array(&$config_vars));
@@ -467,7 +454,6 @@ function ModifyWarningSettings($return_config = false)
 				array('int', 'warning_mute', 'subtext' => $txt['setting_warning_mute_note'] . ' ' . $txt['zero_to_disable']),
 				'rem1' => array('int', 'user_limit', 'subtext' => $txt['setting_user_limit_note']),
 				'rem2' => array('int', 'warning_decrement', 'subtext' => $txt['setting_warning_decrement_note'] . ' ' . $txt['zero_to_disable']),
-				array('permissions', 'view_warning'),
 		);
 
 	call_integration_hook('integrate_warning_settings', array(&$config_vars));
@@ -1260,7 +1246,7 @@ function ShowCustomProfiles()
 	$context['sub_template'] = 'show_custom_profile';
 
 	// What about standard fields they can tweak?
-	$standard_fields = array('website', 'personal_text', 'timezone', 'posts', 'warning_status');
+	$standard_fields = array('website', 'timezone', 'posts', 'warning_status');
 	// What fields can't you put on the registration page?
 	$context['fields_no_registration'] = array('posts', 'warning_status');
 
@@ -1534,7 +1520,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 
 	if ($standardFields)
 	{
-		$standard_fields = array('website', 'personal_text', 'timezone', 'posts', 'warning_status');
+		$standard_fields = array('website', 'timezone', 'posts', 'warning_status');
 		$fields_no_registration = array('posts', 'warning_status');
 		$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
 		$registration_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : array();

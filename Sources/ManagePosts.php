@@ -186,7 +186,6 @@ function ModifyPostSettings($return_config = false)
 	$config_vars = array(
 			// Simple post options...
 			array('check', 'removeNestedQuotes'),
-			array('check', 'enableEmbeddedFlash', 'subtext' => $txt['enableEmbeddedFlash_warning']),
 			array('check', 'disable_wysiwyg'),
 			array('check', 'additional_options_collapsable'),
 		'',
@@ -270,9 +269,11 @@ function ModifyTopicSettings($return_config = false)
 {
 	global $context, $txt, $sourcedir, $scripturl;
 
+	loadLanguage('ManageSettings');
+
 	// Here are all the topic settings.
 	$config_vars = array(
-			// Some simple bools...
+			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
 			array('check', 'enableParticipation'),
 		'',
 			// Pagination etc...
@@ -283,14 +284,12 @@ function ModifyTopicSettings($return_config = false)
 			// All, next/prev...
 			array('int', 'enableAllMessages', 'postinput' => $txt['manageposts_posts'], 'subtext' => $txt['enableAllMessages_zero']),
 			array('check', 'disableCustomPerPage'),
-			array('check', 'enablePreviousNext'),
 		'',
 			// Topic related settings (show gender icon/avatars etc...)
 			array('check', 'subject_toggle'),
 			array('check', 'show_modify'),
 			array('check', 'show_profile_buttons'),
 			array('check', 'show_user_images'),
-			array('check', 'show_blurb'),
 			array('check', 'hide_post_group', 'subtext' => $txt['hide_post_group_desc']),
 		'',
 			// First & Last message preview lengths

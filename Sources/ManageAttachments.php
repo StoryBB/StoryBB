@@ -271,7 +271,6 @@ function ManageAvatarSettings($return_config = false)
 	$config_vars = array(
 		// External avatars?
 		array('title', 'avatar_external'),
-			array('permissions', 'profile_remote_avatar', 0, $txt['avatar_external_url_groups']),
 			array('check', 'avatar_download_external', 0, 'onchange' => 'fUpdateStatus();'),
 			array('text', 'avatar_max_width_external', 'subtext' => $txt['zero_for_no_limit'], 6),
 			array('text', 'avatar_max_height_external', 'subtext' => $txt['zero_for_no_limit'], 6),
@@ -284,7 +283,6 @@ function ManageAvatarSettings($return_config = false)
 			),
 		// Uploadable avatars?
 		array('title', 'avatar_upload'),
-			array('permissions', 'profile_upload_avatar', 0, $txt['avatar_upload_groups']),
 			array('text', 'avatar_max_width_upload', 'subtext' => $txt['zero_for_no_limit'], 6),
 			array('text', 'avatar_max_height_upload', 'subtext' => $txt['zero_for_no_limit'], 6),
 			array('check', 'avatar_resize_upload', 'subtext' => $txt['avatar_resize_upload_note']),

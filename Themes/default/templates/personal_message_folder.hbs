@@ -135,7 +135,6 @@
 					{{#unless member.is_guest}}
 						{{#unless ../modSettings.hide_post_group}}{{#if member.post_group}}<li class="postgroup">{{member.post_group}}</li>{{/if}}{{/unless}}
 						{{#unless ../context.disabled_fields.posts}}<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>{{/unless}}
-						{{#if (and ../modSettings.show_blurb member.blurb)}}<li class="blurb">{{member.blurb}}</li>{{/if}}
 						{{#if custom_fields.icons}}
 						<li class="im_icons">
 							<ol>
