@@ -440,11 +440,13 @@ function template_news_lists()
 {
 	global $context, $txt;
 
-	if (!empty($context['saved_successful']))
-		echo '
-					<div class="infobox">', $txt['settings_saved'], '</div>';
+	$return = '';
 
-	template_show_list('news_lists');
+	if (!empty($context['saved_successful']))
+		$return = '
+					<div class="infobox">' . $txt['settings_saved'] . '</div>';
+
+	return $return . template_show_list('news_lists');
 }
 
 ?>
