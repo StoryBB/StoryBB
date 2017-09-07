@@ -125,12 +125,6 @@ function preparsecode(&$message, $previewing = false)
 		}
 	}
 
-	// Let's look at the time tags...
-	$message = preg_replace_callback('~\[time(?:=(absolute))*\](.+?)\[/time\]~i', function($m) use ($modSettings, $user_info)
-	{
-		return "[time]" . (is_numeric("$m[2]") || @strtotime("$m[2]") == 0 ? "$m[2]" : strtotime("$m[2]") - ("$m[1]" == "absolute" ? 0 : (($modSettings["time_offset"] + $user_info["time_offset"]) * 3600))) . "[/time]";
-	}, $message);
-
 	// Change the color specific tags to [color=the color].
 	$message = preg_replace('~\[(black|blue|green|red|white)\]~', '[color=$1]', $message); // First do the opening tags.
 	$message = preg_replace('~\[/(black|blue|green|red|white)\]~', '[/color]', $message); // And now do the closing tags
@@ -260,12 +254,6 @@ function un_preparsecode($message)
 		return "[html]" . strtr($smcFunc['htmlspecialchars']("$m[1]", ENT_QUOTES), array("\\&quot;" => "&quot;", "&amp;#13;" => "<br>", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]")) . "[/html]";
 	}, $message);
 
-	// Attempt to un-parse the time to something less awful.
-	$message = preg_replace_callback('~\[time\](\d{0,10})\[/time\]~i', function($m)
-	{
-		return "[time]" . timeformat("$m[1]", false) . "[/time]";
-	}, $message);
-
 	if (!empty($code_tags))
 		$message = str_replace(array_keys($code_tags), array_values($code_tags), $message);
 
@@ -336,14 +324,6 @@ function fixTags(&$message)
 			'protocols' => array('ftp', 'ftps'),
 			'embeddedUrl' => true,
 			'hasEqualSign' => true,
-		),
-		// [flash]http://...[/flash]
-		array(
-			'tag' => 'flash',
-			'protocols' => array('http', 'https'),
-			'embeddedUrl' => false,
-			'hasEqualSign' => false,
-			'hasExtra' => true,
 		),
 	);
 
@@ -957,9 +937,6 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	// Load the groups that are allowed to read PMs.
 	require_once($sourcedir . '/Subs-Members.php');
 	$pmReadGroups = groupsAllowedTo('pm_read');
-
-	if (empty($modSettings['permission_enable_deny']))
-		$pmReadGroups['denied'] = array();
 
 	// Load their alert preferences
 	require_once($sourcedir . '/Subs-Notify.php');

@@ -585,7 +585,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'member_ip2' => $regOptions['interface'] == 'admin' ? '127.0.0.1' : $_SERVER['BAN_CHECK_IP'],
 		'validation_code' => $validation_code,
 		'real_name' => $regOptions['username'],
-		'personal_text' => $modSettings['default_personal_text'],
 		'id_theme' => 0,
 		'id_post_group' => 4,
 		'lngfile' => '',

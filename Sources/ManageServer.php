@@ -96,7 +96,6 @@ function ModifySettings()
 		'cookie' => 'ModifyCookieSettings',
 		'security' => 'ModifyGeneralSecuritySettings',
 		'cache' => 'ModifyCacheSettings',
-		'loads' => 'ModifyLoadBalancingSettings',
 		'phpinfo' => 'ShowPHPinfoSettings',
 	);
 
@@ -520,112 +519,6 @@ function ModifyCacheSettings($return_config = false)
 
 	// Prepare the template.
 	prepareServerSettingsContext($config_vars);
-}
-
-/**
- * Allows to edit load balancing settings.
- *
- * @param bool $return_config Whether or not to return the config_vars array
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyLoadBalancingSettings($return_config = false)
-{
-	global $txt, $scripturl, $context, $modSettings;
-
-	// Setup a warning message, but disabled by default.
-	$disabled = true;
-	$context['settings_message'] = $txt['loadavg_disabled_conf'];
-
-	if (stripos(PHP_OS, 'win') === 0)
-	{
-		$context['settings_message'] = $txt['loadavg_disabled_windows'];
-		if (isset($_GET['save']))
-			$_SESSION['adm-save'] = $txt['loadavg_disabled_windows'];
-	}
-	elseif (stripos(PHP_OS, 'darwin') === 0)
-	{
-		$context['settings_message'] = $txt['loadavg_disabled_osx'];
-		if (isset($_GET['save']))
-			$_SESSION['adm-save'] = $txt['loadavg_disabled_osx'];
-	}
-	else
-	{
-		$modSettings['load_average'] = @file_get_contents('/proc/loadavg');
-		if (!empty($modSettings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $modSettings['load_average'], $matches) !== 0)
-			$modSettings['load_average'] = (float) $matches[1];
-		elseif (($modSettings['load_average'] = @`uptime`) !== null && preg_match('~load averages?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $modSettings['load_average'], $matches) !== 0)
-			$modSettings['load_average'] = (float) $matches[1];
-		else
-			unset($modSettings['load_average']);
-
-		if (!empty($modSettings['load_average']) || $modSettings['load_average'] === 0.0)
-		{
-			$context['settings_message'] = sprintf($txt['loadavg_warning'], $modSettings['load_average']);
-			$disabled = false;
-		}
-	}
-
-	// Start with a simple checkbox.
-	$config_vars = array(
-		array('check', 'loadavg_enable', 'disabled' => $disabled),
-	);
-
-	// Set the default values for each option.
-	$default_values = array(
-		'loadavg_auto_opt' => 1.0,
-		'loadavg_search' => 2.5,
-		'loadavg_allunread' => 2.0,
-		'loadavg_unreadreplies' => 3.5,
-		'loadavg_show_posts' => 2.0,
-		'loadavg_userstats' => 10.0,
-		'loadavg_bbc' => 30.0,
-		'loadavg_forum' => 40.0,
-	);
-
-	// Loop through the settings.
-	foreach ($default_values as $name => $value)
-	{
-		// Use the default value if the setting isn't set yet.
-		$value = !isset($modSettings[$name]) ? $value : $modSettings[$name];
-		$config_vars[] = array('float', $name, 'value' => $value, 'disabled' => $disabled);
-	}
-
-	call_integration_hook('integrate_loadavg_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=loads;save';
-	$context['settings_title'] = $txt['load_balancing_settings'];
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		// Stupidity is not allowed.
-		foreach ($_POST as $key => $value)
-		{
-			if (strpos($key, 'loadavg') === 0 || $key === 'loadavg_enable' || !in_array($key, array_keys($default_values)))
-				continue;
-			else
-				$_POST[$key] = (float) $value;
-
-			if ($key == 'loadavg_auto_opt' && $value <= 1)
-				$_POST['loadavg_auto_opt'] = 1.0;
-			elseif ($key == 'loadavg_forum' && $value < 10)
-				$_POST['loadavg_forum'] = 10.0;
-			elseif ($value < 2)
-				$_POST[$key] = 2.0;
-		}
-
-		call_integration_hook('integrate_save_loadavg_settings');
-
-		saveDBSettings($config_vars);
-		if (!isset($_SESSION['adm-save']))
-			$_SESSION['adm-save'] = true;
-		redirectexit('action=admin;area=serversettings;sa=loads;' . $context['session_var'] . '=' . $context['session_id']);
-	}
-
-	prepareDBSettingContext($config_vars);
 }
 
 /**

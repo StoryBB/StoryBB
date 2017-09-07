@@ -42,17 +42,9 @@ function template_permission_index()
 				<thead>
 					<tr class="title_bar">
 						<th>', $txt['membergroups_name'], '</th>
-						<th class="small_table">', $txt['membergroups_members_top'], '</th>';
-
-			if (empty($modSettings['permission_enable_deny']))
-				echo '
-						<th class="small_table">', $txt['membergroups_permissions'], '</th>';
-			else
-				echo '
+						<th class="small_table">', $txt['membergroups_members_top'], '</th>
 						<th class="small_table">', $txt['permissions_allowed'], '</th>
-						<th class="small_table">', $txt['permissions_denied'], '</th>';
-
-			echo '
+						<th class="small_table">', $txt['permissions_denied'], '</th>
 						<th class="small_table">', $context['can_modify'] ? $txt['permissions_modify'] : $txt['permissions_view'], '</th>
 						<th class="table_icon centercol">
 							', $context['can_modify'] ? '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form, \'group\');">' : '', '
@@ -77,11 +69,7 @@ function template_permission_index()
 						</td>
 						<td>', $group['can_search'] ? $group['link'] : $group['num_members'], '</td>';
 
-		if (empty($modSettings['permission_enable_deny']))
-			echo '
-						<td>', $group['num_permissions']['allowed'], '</td>';
-		else
-			echo '
+		echo '
 						<td ', $group['id'] == 1 ? ' style="font-style: italic;"' : '', '>', $group['num_permissions']['allowed'], '</td>
 						<td ', $group['id'] == 1 || $group['id'] == -1 ? ' style="font-style: italic;"' : (!empty($group['num_permissions']['denied']) ? ' class="red"' : ''), '>', $group['num_permissions']['denied'], '</td>';
 
@@ -141,11 +129,8 @@ function template_permission_index()
 						<dt>
 							<select name="add_remove">
 								<option value="add">', $txt['permissions_add'], '...</option>
-								<option value="clear">', $txt['permissions_remove'], '...</option>';
-		if (!empty($modSettings['permission_enable_deny']))
-			echo '
-								<option value="deny">', $txt['permissions_deny'], '...</option>';
-		echo '
+								<option value="clear">', $txt['permissions_remove'], '...</option>
+								<option value="deny">', $txt['permissions_deny'], '...</option>
 							</select>
 						</dt>
 						<dd style="overflow:auto;">
@@ -481,7 +466,7 @@ function template_modify_group()
 	<div id="admincenter">
 		<form id="permissions" action="', $scripturl, '?action=admin;area=permissions;sa=modify2;group=', $context['group']['id'], ';pid=', $context['profile']['id'], '" method="post" accept-charset="UTF-8" name="permissionForm" onsubmit="return warnAboutDeny();">';
 
-	if (!empty($modSettings['permission_enable_deny']) && $context['group']['id'] != -1)
+	if ($context['group']['id'] != -1)
 		echo '
 			<div class="information">
 				', $txt['permissions_option_desc'], '
@@ -599,27 +584,21 @@ function template_modify_group_display($type)
 						// Guests can't do their own thing.
 						if ($context['group']['id'] != -1)
 						{
-							if (empty($modSettings['permission_enable_deny']))
-								echo '
-								<input type="checkbox" name="perm[', $permission_type['id'], '][', $permission['own']['id'], ']"', $permission['own']['select'] == 'on' ? ' checked="checked"' : '', ' value="on" id="', $permission['own']['id'], '_on" class="input_check" ', $disable_field, '/>';
-							else
-							{
-								echo '
+							echo '
 								<select name="perm[', $permission_type['id'], '][', $permission['own']['id'], ']" ', $disable_field, '>';
 
-								foreach (array('on', 'off', 'deny') as $c)
+							foreach (array('on', 'off', 'deny') as $c)
 									echo '
 									<option ', $permission['own']['select'] == $c ? ' selected' : '', ' value="', $c, '">', $txt['permissions_option_' . $c], '</option>';
 							echo '
 								</select>';
-							}
 
 						echo '
 							</td>
 							<td>';
 						}
 
-						if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
+						if ($context['group']['id'] == -1)
 							echo '
 								<input type="checkbox" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select'] == 'on' ? ' checked="checked"' : '', ' value="on" class="input_check" ', $disable_field, '/>';
 						else
@@ -641,7 +620,7 @@ function template_modify_group_display($type)
 							</td>
 							<td>';
 
-						if (empty($modSettings['permission_enable_deny']) || $context['group']['id'] == -1)
+						if ($context['group']['id'] == -1)
 							echo '
 								<input type="checkbox" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'on' ? ' checked="checked"' : '', ' value="on" class="input_check" ', $disable_field, '/>';
 						else
@@ -680,12 +659,7 @@ function template_inline_permissions()
 	// This looks really weird, but it keeps things nested properly...
 	echo '
 											<fieldset id="', $context['current_permission'], '">
-												<legend><a href="javascript:void(0);" onclick="document.getElementById(\'', $context['current_permission'], '\').style.display = \'none\';document.getElementById(\'', $context['current_permission'], '_groups_link\').style.display = \'block\'; return false;" class="toggle_up"> ', $txt['avatar_select_permission'], '</a></legend>';
-	if (empty($modSettings['permission_enable_deny']))
-		echo '
-												<ul>';
-	else
-		echo '
+												<legend><a href="javascript:void(0);" onclick="document.getElementById(\'', $context['current_permission'], '\').style.display = \'none\';document.getElementById(\'', $context['current_permission'], '_groups_link\').style.display = \'block\'; return false;" class="toggle_up"> ', $txt['avatar_select_permission'], '</a></legend>
 												<div class="information">', $txt['permissions_option_desc'], '</div>
 												<dl class="settings">
 													<dt>
@@ -697,46 +671,19 @@ function template_inline_permissions()
 													</dd>';
 	foreach ($context['member_groups'] as $group)
 	{
-		if (!empty($modSettings['permission_enable_deny']))
-			echo '
-													<dt>';
-		else
-			echo '
-													<li>';
-
-		if (empty($modSettings['permission_enable_deny']))
-			echo '
-														<input type="checkbox" name="', $context['current_permission'], '[', $group['id'], ']" value="on"', $group['status'] == 'on' ? ' checked' : '', ' class="input_check">';
-		else
-			echo '
+		echo '
+													<dt>
 														<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="on"', $group['status'] == 'on' ? ' checked' : '', ' class="input_radio"></span>
 														<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="off"', $group['status'] == 'off' ? ' checked' : '', ' class="input_radio"></span>
-														<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="deny"', $group['status'] == 'deny' ? ' checked' : '', ' class="input_radio"></span>';
-
-		if (!empty($modSettings['permission_enable_deny']))
-			echo '
+														<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="deny"', $group['status'] == 'deny' ? ' checked' : '', ' class="input_radio"></span>
 													</dt>
 													<dd>
 														<span', $group['is_postgroup'] ? ' style="font-style: italic;"' : '', '>', $group['name'], '</span>
 													</dd>';
-		else
-			echo '
-														<span', $group['is_postgroup'] ? ' style="font-style: italic;"' : '', '>', $group['name'], '</span>
-													</li>';
 	}
 
-	if (empty($modSettings['permission_enable_deny']))
-		echo '
-													<li>
-														<input type="checkbox" class="input_check" onclick="invertAll(this, this.form, \''. $context['current_permission'] . '[\');">
-														<span>', $txt['check_all'], '</span>
-													</li>
-												</ul>';
-	else
-		echo '
-												</dl>';
-
 	echo '
+												</dl>
 											</fieldset>
 
 											<a href="javascript:void(0);" onclick="document.getElementById(\'', $context['current_permission'], '\').style.display = \'block\'; document.getElementById(\'', $context['current_permission'], '_groups_link\').style.display = \'none\'; return false;" id="', $context['current_permission'], '_groups_link" style="display: none;" class="toggle_down"> ', $txt['avatar_select_permission'], '</a>
@@ -774,8 +721,7 @@ function template_postmod_permissions()
 	if (!empty($modSettings['postmod_active']))
 	{
 		// Got advanced permissions - if so warn!
-		if (!empty($modSettings['permission_enable_deny']))
-			echo '
+		echo '
 							<div class="information">', $txt['permissions_post_moderation_deny_note'], '</div>';
 
 		echo '

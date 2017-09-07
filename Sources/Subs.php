@@ -964,9 +964,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				$disabled[trim($tag)] = true;
 		}
 
-		if (empty($modSettings['enableEmbeddedFlash']))
-			$disabled['flash'] = true;
-
 		/* The following bbc are formatted as an array, with keys as follows:
 
 			tag: the tag's name - should be lowercase!
@@ -1149,25 +1146,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				{
 					if (!isset($disabled['code']))
 					{
-						$php_parts = preg_split('~(&lt;\?php|\?&gt;)~', $data, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-						for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)
-						{
-							// Do PHP code coloring?
-							if ($php_parts[$php_i] != '&lt;?php')
-								continue;
-
-							$php_string = '';
-							while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != '?&gt;')
-							{
-								$php_string .= $php_parts[$php_i];
-								$php_parts[$php_i++] = '';
-							}
-							$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);
-						}
-
-						// Fix the PHP code stuff...
-						$data = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode('', $php_parts));
+						$data = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", $data);
 						$data = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data);
 
 						// Recent Opera bug requiring temporary fix. &nsbp; is needed before </code> to avoid broken selection.
@@ -1186,25 +1165,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				{
 					if (!isset($disabled['code']))
 					{
-						$php_parts = preg_split('~(&lt;\?php|\?&gt;)~', $data[0], -1, PREG_SPLIT_DELIM_CAPTURE);
-
-						for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)
-						{
-							// Do PHP code coloring?
-							if ($php_parts[$php_i] != '&lt;?php')
-								continue;
-
-							$php_string = '';
-							while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != '?&gt;')
-							{
-								$php_string .= $php_parts[$php_i];
-								$php_parts[$php_i++] = '';
-							}
-							$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);
-						}
-
-						// Fix the PHP code stuff...
-						$data[0] = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", implode('', $php_parts));
+						$data[0] = str_replace("<pre style=\"display: inline;\">\t</pre>", "\t", $data);
 						$data[0] = str_replace("\t", "<span style=\"white-space: pre;\">\t</span>", $data[0]);
 
 						// Recent Opera bug requiring temporary fix. &nsbp; is needed before </code> to avoid broken selection.
@@ -1239,21 +1200,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				// @todo Should this respect guest_hideContacts?
 				'disallow_children' => array('email', 'ftp', 'url', 'iurl'),
 				'disabled_after' => ' ($1)',
-			),
-			array(
-				'tag' => 'flash',
-				'type' => 'unparsed_commas_content',
-				'test' => '\d+,\d+\]',
-				'content' => '<embed type="application/x-shockwave-flash" src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never">',
-				'validate' => function (&$tag, &$data, $disabled)
-				{
-					if (isset($disabled['url']))
-						$tag['content'] = '$1';
-					$scheme = parse_url($data[0], PHP_URL_SCHEME);
-					if (empty($scheme))
-						$data[0] = '//' . ltrim($data[0], ':/');
-				},
-				'disabled_content' => '<a href="$1" target="_blank" class="new_win">$1</a>',
 			),
 			array(
 				'tag' => 'float',
@@ -1447,23 +1393,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'content' => '$1',
 			),
 			array(
-				'tag' => 'php',
-				'type' => 'unparsed_content',
-				'content' => '<span class="phpcode">$1</span>',
-				'validate' => isset($disabled['php']) ? null : function (&$tag, &$data, $disabled)
-				{
-					if (!isset($disabled['php']))
-					{
-						$add_begin = substr(trim($data), 0, 5) != '&lt;?';
-						$data = highlight_php_code($add_begin ? '&lt;?php ' . $data . '?&gt;' : $data);
-						if ($add_begin)
-							$data = preg_replace(array('~^(.+?)&lt;\?.{0,40}?php(?:&nbsp;|\s)~', '~\?&gt;((?:</(font|span)>)*)$~'), '$1', $data, 2);
-					}
-				},
-				'block_level' => false,
-				'disabled_content' => '$1',
-			),
-			array(
 				'tag' => 'pre',
 				'before' => '<pre>',
 				'after' => '</pre>',
@@ -1581,18 +1510,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'block_level' => true,
 				'disabled_before' => '',
 				'disabled_after' => '',
-			),
-			array(
-				'tag' => 'time',
-				'type' => 'unparsed_content',
-				'content' => '$1',
-				'validate' => function (&$tag, &$data, $disabled)
-				{
-					if (is_numeric($data))
-						$data = timeformat($data);
-					else
-						$tag['content'] = '[time]$1[/time]';
-				},
 			),
 			array(
 				'tag' => 'tr',
@@ -2436,7 +2353,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$message = substr($message, 0, $pos) . "\n" . $tag['content'] . "\n" . substr($message, $pos2 + 1);
 			$pos += strlen($tag['content']) - 1 + 2;
 		}
-		// This one is sorta ugly... :/.  Unfortunately, it's needed for flash.
+		// This one is sorta ugly... :/
 		elseif ($tag['type'] == 'unparsed_commas_content')
 		{
 			$pos2 = strpos($message, ']', $pos1);
@@ -2583,7 +2500,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
  * Parse smileys in the passed message.
  *
  * The smiley parsing function which makes pretty faces appear :).
- * If custom smiley sets are turned off by smiley_enable, the default set of smileys will be used.
  * These are specifically not parsed in code tags [url=mailto:Dad@blah.com]
  * Caches the smileys from the database or array in memory.
  * Doesn't return anything, but rather modifies message directly.
@@ -2602,41 +2518,31 @@ function parsesmileys(&$message)
 	// If smileyPregSearch hasn't been set, do it now.
 	if (empty($smileyPregSearch))
 	{
-		// Use the default smileys if it is disabled. (better for "portability" of smileys.)
-		if (empty($modSettings['smiley_enable']))
+		// Load the smileys in reverse order by length so they don't get parsed wrong.
+		if (($temp = cache_get_data('parsing_smileys', 480)) == null)
 		{
-			$smileysfrom = array('>:D', ':D', '::)', '>:(', ':))', ':)', ';)', ';D', ':(', ':o', '8)', ':P', '???', ':-[', ':-X', ':-*', ':\'(', ':-\\', '^-^', 'O0', 'C:-)', '0:)');
-			$smileysto = array('evil.gif', 'cheesy.gif', 'rolleyes.gif', 'angry.gif', 'laugh.gif', 'smiley.gif', 'wink.gif', 'grin.gif', 'sad.gif', 'shocked.gif', 'cool.gif', 'tongue.gif', 'huh.gif', 'embarrassed.gif', 'lipsrsealed.gif', 'kiss.gif', 'cry.gif', 'undecided.gif', 'azn.gif', 'afro.gif', 'police.gif', 'angel.gif');
-			$smileysdescs = array('', $txt['icon_cheesy'], $txt['icon_rolleyes'], $txt['icon_angry'], '', $txt['icon_smiley'], $txt['icon_wink'], $txt['icon_grin'], $txt['icon_sad'], $txt['icon_shocked'], $txt['icon_cool'], $txt['icon_tongue'], $txt['icon_huh'], $txt['icon_embarrassed'], $txt['icon_lips'], $txt['icon_kiss'], $txt['icon_cry'], $txt['icon_undecided'], '', '', '', '');
+			$result = $smcFunc['db_query']('', '
+				SELECT code, filename, description
+				FROM {db_prefix}smileys
+				ORDER BY LENGTH(code) DESC',
+				array(
+				)
+			);
+			$smileysfrom = array();
+			$smileysto = array();
+			$smileysdescs = array();
+			while ($row = $smcFunc['db_fetch_assoc']($result))
+			{
+				$smileysfrom[] = $row['code'];
+				$smileysto[] = $smcFunc['htmlspecialchars']($row['filename']);
+				$smileysdescs[] = $row['description'];
+			}
+			$smcFunc['db_free_result']($result);
+
+			cache_put_data('parsing_smileys', array($smileysfrom, $smileysto, $smileysdescs), 480);
 		}
 		else
-		{
-			// Load the smileys in reverse order by length so they don't get parsed wrong.
-			if (($temp = cache_get_data('parsing_smileys', 480)) == null)
-			{
-				$result = $smcFunc['db_query']('', '
-					SELECT code, filename, description
-					FROM {db_prefix}smileys
-					ORDER BY LENGTH(code) DESC',
-					array(
-					)
-				);
-				$smileysfrom = array();
-				$smileysto = array();
-				$smileysdescs = array();
-				while ($row = $smcFunc['db_fetch_assoc']($result))
-				{
-					$smileysfrom[] = $row['code'];
-					$smileysto[] = $smcFunc['htmlspecialchars']($row['filename']);
-					$smileysdescs[] = $row['description'];
-				}
-				$smcFunc['db_free_result']($result);
-
-				cache_put_data('parsing_smileys', array($smileysfrom, $smileysto, $smileysdescs), 480);
-			}
-			else
-				list ($smileysfrom, $smileysto, $smileysdescs) = $temp;
-		}
+			list ($smileysfrom, $smileysto, $smileysdescs) = $temp;
 
 		// The non-breaking-space is a complex thing...
 		$non_breaking_space = '\x{A0}';
@@ -2670,33 +2576,6 @@ function parsesmileys(&$message)
 		{
 			return $smileyPregReplacements[$matches[1]];
 		}, $message);
-}
-
-/**
- * Highlight any code.
- *
- * Uses PHP's highlight_string() to highlight PHP syntax
- * does special handling to keep the tabs in the code available.
- * used to parse PHP code from inside [code] and [php] tags.
- *
- * @param string $code The code
- * @return string The code with highlighted HTML.
- */
-function highlight_php_code($code)
-{
-	// Remove special characters.
-	$code = un_htmlspecialchars(strtr($code, array('<br />' => "\n", '<br>' => "\n", "\t" => 'SMF_TAB();', '&#91;' => '[')));
-
-	$oldlevel = error_reporting(0);
-
-	$buffer = str_replace(array("\n", "\r"), '', @highlight_string($code, true));
-
-	error_reporting($oldlevel);
-
-	// Yes, I know this is kludging it, but this is the best way to preserve tabs from PHP :P.
-	$buffer = preg_replace('~SMF_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<pre style="display: inline;">' . "\t" . '</pre>', $buffer);
-
-	return strtr($buffer, array('\'' => '&#039;', '<code>' => '', '</code>' => ''));
 }
 
 /**

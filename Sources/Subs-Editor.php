@@ -35,7 +35,7 @@ function bbc_to_html($text, $compat_mode = false)
 
 	// Prevent conversion of all bbcode inside these bbcodes.
 	// @todo Tie in with bbc permissions ?
-	foreach (array('code', 'php', 'nobbc') as $code)
+	foreach (array('code', 'nobbc') as $code)
 	{
 		if (strpos($text, '[' . $code) !== false)
 		{
@@ -137,49 +137,30 @@ function html_to_bbc($text)
 	preg_match_all('~<img\s+[^<>]*?id="*smiley_\d+_([^<>]+?)[\s"/>]\s*[^<>]*?/*>(?:\s)?~i', $text, $matches);
 	if (!empty($matches[0]))
 	{
-		// Easy if it's not custom.
-		if (empty($modSettings['smiley_enable']))
+		// Load all the smileys.
+		$names = array();
+		foreach ($matches[1] as $file)
+			$names[] = $file;
+		$names = array_unique($names);
+
+		if (!empty($names))
 		{
-			$smileysfrom = array('>:D', ':D', '::)', '>:(', ':)', ';)', ';D', ':(', ':o', '8)', ':P', '???', ':-[', ':-X', ':-*', ':\'(', ':-\\', '^-^', 'O0', 'C:-)', '0:)');
-			$smileysto = array('evil.gif', 'cheesy.gif', 'rolleyes.gif', 'angry.gif', 'smiley.gif', 'wink.gif', 'grin.gif', 'sad.gif', 'shocked.gif', 'cool.gif', 'tongue.gif', 'huh.gif', 'embarrassed.gif', 'lipsrsealed.gif', 'kiss.gif', 'cry.gif', 'undecided.gif', 'azn.gif', 'afro.gif', 'police.gif', 'angel.gif');
+			$request = $smcFunc['db_query']('', '
+				SELECT code, filename
+				FROM {db_prefix}smileys
+				WHERE filename IN ({array_string:smiley_filenames})',
+				array(
+					'smiley_filenames' => $names,
+				)
+			);
+			$mappings = array();
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+				$mappings[$row['filename']] = $smcFunc['htmlspecialchars']($row['code']);
+			$smcFunc['db_free_result']($request);
 
 			foreach ($matches[1] as $k => $file)
-			{
-				$found = array_search($file, $smileysto);
-				// Note the weirdness here is to stop double spaces between smileys.
-				if ($found)
-					$matches[1][$k] = '-[]-smf_smily_start#|#' . $smcFunc['htmlspecialchars']($smileysfrom[$found]) . '-[]-smf_smily_end#|#';
-				else
-					$matches[1][$k] = '';
-			}
-		}
-		else
-		{
-			// Load all the smileys.
-			$names = array();
-			foreach ($matches[1] as $file)
-				$names[] = $file;
-			$names = array_unique($names);
-
-			if (!empty($names))
-			{
-				$request = $smcFunc['db_query']('', '
-					SELECT code, filename
-					FROM {db_prefix}smileys
-					WHERE filename IN ({array_string:smiley_filenames})',
-					array(
-						'smiley_filenames' => $names,
-					)
-				);
-				$mappings = array();
-				while ($row = $smcFunc['db_fetch_assoc']($request))
-					$mappings[$row['filename']] = $smcFunc['htmlspecialchars']($row['code']);
-				$smcFunc['db_free_result']($request);
-
-				foreach ($matches[1] as $k => $file)
-					if (isset($mappings[$file]))
-						$matches[1][$k] = '-[]-smf_smily_start#|#' . $mappings[$file] . '-[]-smf_smily_end#|#';
-			}
+				if (isset($mappings[$file]))
+					$matches[1][$k] = '-[]-smf_smily_start#|#' . $mappings[$file] . '-[]-smf_smily_end#|#';
 		}
 
 		// Replace the tags!
@@ -1050,10 +1031,6 @@ function legalise_bbc($text)
 	// A list of tags that's disabled by the admin.
 	$disabled = empty($modSettings['disabledBBC']) ? array() : array_flip(explode(',', strtolower($modSettings['disabledBBC'])));
 
-	// Add flash if it's disabled as embedded tag.
-	if (empty($modSettings['enableEmbeddedFlash']))
-		$disabled['flash'] = true;
-
 	// Get a list of all the tags that are not disabled.
 	$all_tags = parse_bbc(false);
 	$valid_tags = array();
@@ -1677,10 +1654,6 @@ function create_control_richedit($editorOptions)
 			),
 			array(),
 			array(
-				'code' => 'flash',
-				'description' => $editortxt['flash']
-			),
-			array(
 				'code' => 'image',
 				'description' => $editortxt['image']
 			),
@@ -1763,8 +1736,6 @@ function create_control_richedit($editorOptions)
 		$disabled_tags = array();
 		if (!empty($modSettings['disabledBBC']))
 			$disabled_tags = explode(',', $modSettings['disabledBBC']);
-		if (empty($modSettings['enableEmbeddedFlash']))
-			$disabled_tags[] = 'flash';
 
 		foreach ($disabled_tags as $tag)
 		{
@@ -1859,129 +1830,38 @@ function create_control_richedit($editorOptions)
 			'popup' => array(),
 		);
 
-		// Load smileys - don't bother to run a query if we're not using the database's ones anyhow.
-		if (empty($modSettings['smiley_enable']) && $user_info['smiley_set'] != 'none')
-			$context['smileys']['postform'][] = array(
-				'smileys' => array(
-					array(
-						'code' => ':)',
-						'filename' => 'smiley.gif',
-						'description' => $txt['icon_smiley'],
-					),
-					array(
-						'code' => ';)',
-						'filename' => 'wink.gif',
-						'description' => $txt['icon_wink'],
-					),
-					array(
-						'code' => ':D',
-						'filename' => 'cheesy.gif',
-						'description' => $txt['icon_cheesy'],
-					),
-					array(
-						'code' => ';D',
-						'filename' => 'grin.gif',
-						'description' => $txt['icon_grin']
-					),
-					array(
-						'code' => '>:(',
-						'filename' => 'angry.gif',
-						'description' => $txt['icon_angry'],
-					),
-					array(
-						'code' => ':(',
-						'filename' => 'sad.gif',
-						'description' => $txt['icon_sad'],
-					),
-					array(
-						'code' => ':o',
-						'filename' => 'shocked.gif',
-						'description' => $txt['icon_shocked'],
-					),
-					array(
-						'code' => '8)',
-						'filename' => 'cool.gif',
-						'description' => $txt['icon_cool'],
-					),
-					array(
-						'code' => '???',
-						'filename' => 'huh.gif',
-						'description' => $txt['icon_huh'],
-					),
-					array(
-						'code' => '::)',
-						'filename' => 'rolleyes.gif',
-						'description' => $txt['icon_rolleyes'],
-					),
-					array(
-						'code' => ':P',
-						'filename' => 'tongue.gif',
-						'description' => $txt['icon_tongue'],
-					),
-					array(
-						'code' => ':-[',
-						'filename' => 'embarrassed.gif',
-						'description' => $txt['icon_embarrassed'],
-					),
-					array(
-						'code' => ':-X',
-						'filename' => 'lipsrsealed.gif',
-						'description' => $txt['icon_lips'],
-					),
-					array(
-						'code' => ':-\\',
-						'filename' => 'undecided.gif',
-						'description' => $txt['icon_undecided'],
-					),
-					array(
-						'code' => ':-*',
-						'filename' => 'kiss.gif',
-						'description' => $txt['icon_kiss'],
-					),
-					array(
-						'code' => ':\'(',
-						'filename' => 'cry.gif',
-						'description' => $txt['icon_cry'],
-						'isLast' => true,
-					),
-				),
-				'isLast' => true,
-			);
-		elseif ($user_info['smiley_set'] != 'none')
+		if (($temp = cache_get_data('posting_smileys', 480)) == null)
 		{
-			if (($temp = cache_get_data('posting_smileys', 480)) == null)
+			$request = $smcFunc['db_query']('', '
+				SELECT code, filename, description, smiley_row, hidden
+				FROM {db_prefix}smileys
+				WHERE hidden IN (0, 2)
+				ORDER BY smiley_row, smiley_order',
+				array(
+				)
+			);
+			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
-				$request = $smcFunc['db_query']('', '
-					SELECT code, filename, description, smiley_row, hidden
-					FROM {db_prefix}smileys
-					WHERE hidden IN (0, 2)
-					ORDER BY smiley_row, smiley_order',
-					array(
-					)
-				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
-				{
-					$row['filename'] = $smcFunc['htmlspecialchars']($row['filename']);
-					$row['description'] = $smcFunc['htmlspecialchars']($row['description']);
+				$row['filename'] = $smcFunc['htmlspecialchars']($row['filename']);
+				$row['description'] = $smcFunc['htmlspecialchars']($row['description']);
 
-					$context['smileys'][empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
-				}
-				$smcFunc['db_free_result']($request);
-
-				foreach ($context['smileys'] as $section => $smileyRows)
-				{
-					foreach ($smileyRows as $rowIndex => $smileys)
-						$context['smileys'][$section][$rowIndex]['smileys'][count($smileys['smileys']) - 1]['isLast'] = true;
-
-					if (!empty($smileyRows))
-						$context['smileys'][$section][count($smileyRows) - 1]['isLast'] = true;
-				}
-
-				cache_put_data('posting_smileys', $context['smileys'], 480);
+				$context['smileys'][empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
 			}
-			else
-				$context['smileys'] = $temp;
+			$smcFunc['db_free_result']($request);
+
+			foreach ($context['smileys'] as $section => $smileyRows)
+			{
+				foreach ($smileyRows as $rowIndex => $smileys)
+					$context['smileys'][$section][$rowIndex]['smileys'][count($smileys['smileys']) - 1]['isLast'] = true;
+
+				if (!empty($smileyRows))
+					$context['smileys'][$section][count($smileyRows) - 1]['isLast'] = true;
+			}
+
+			cache_put_data('posting_smileys', $context['smileys'], 480);
 		}
+		else
+			$context['smileys'] = $temp;
 	}
 
 	// Set a flag so the sub template knows what to do...

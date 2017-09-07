@@ -38,14 +38,6 @@ function ManageSmileys()
 		'settings' => 'EditSmileySettings',
 	);
 
-	// If customized smileys is disabled don't show the setting page
-	if (empty($modSettings['smiley_enable']))
-	{
-		unset($subActions['addsmiley']);
-		unset($subActions['editsmileys']);
-		unset($subActions['setorder']);
-		unset($subActions['modifysmiley']);
-	}
 	if (empty($modSettings['messageIcons_enable']))
 	{
 		unset($subActions['editicon']);
@@ -89,12 +81,6 @@ function ManageSmileys()
 	// Some settings may not be enabled, disallow these from the tabs as appropriate.
 	if (empty($modSettings['messageIcons_enable']))
 		$context[$context['admin_menu_name']]['tab_data']['tabs']['editicons']['disabled'] = true;
-	if (empty($modSettings['smiley_enable']))
-	{
-		$context[$context['admin_menu_name']]['tab_data']['tabs']['addsmiley']['disabled'] = true;
-		$context[$context['admin_menu_name']]['tab_data']['tabs']['editsmileys']['disabled'] = true;
-		$context[$context['admin_menu_name']]['tab_data']['tabs']['setorder']['disabled'] = true;
-	}
 
 	call_integration_hook('integrate_manage_smileys', array(&$subActions));
 
@@ -127,12 +113,8 @@ function EditSmileySettings($return_config = false)
 	// All the settings for the page...
 	$config_vars = array(
 		array('title', 'settings'),
-			// Inline permissions.
-			array('permissions', 'manage_smileys'),
-		'',
 			array('select', 'smiley_sets_default', $smiley_context),
 			array('check', 'smiley_sets_enable'),
-			array('check', 'smiley_enable', 'subtext' => $txt['smileys_enable_note']),
 			array('text', 'smileys_url', 40),
 			array('warning', !is_dir($context['smileys_dir']) ? 'setting_smileys_dir_wrong' : ''),
 			array('text', 'smileys_dir', 'invalid' => !$context['smileys_dir_found'], 40),
@@ -311,7 +293,7 @@ function EditSmileySets()
 			$context['current_set']['is_new'] = false;
 
 			// Calculate whether there are any smileys in the directory that can be imported.
-			if (!empty($modSettings['smiley_enable']) && !empty($modSettings['smileys_dir']) && is_dir($modSettings['smileys_dir'] . '/' . $context['current_set']['path']))
+			if (!empty($modSettings['smileys_dir']) && is_dir($modSettings['smileys_dir'] . '/' . $context['current_set']['path']))
 			{
 				$smileys = array();
 				$dir = dir($modSettings['smileys_dir'] . '/' . $context['current_set']['path']);

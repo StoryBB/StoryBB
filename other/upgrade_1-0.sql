@@ -948,7 +948,6 @@ CHANGE COLUMN realName realName tinytext NOT NULL default '',
 CHANGE COLUMN emailAddress emailAddress tinytext NOT NULL default '',
 CHANGE COLUMN dateRegistered dateRegistered int(10) unsigned NOT NULL default '0',
 CHANGE COLUMN passwd passwd varchar(64) NOT NULL default '',
-CHANGE COLUMN personalText personalText tinytext NOT NULL default '',
 CHANGE COLUMN websiteTitle websiteTitle tinytext NOT NULL default '';
 ---#
 
@@ -1797,7 +1796,6 @@ VALUES
 	('todayMod', '1'),
 	('karmaMode', '0'),
 	('karmaTimeRestrictAdmins', '1'),
-	('enablePreviousNext', '1'),
 	('pollMode', '1'),
 	('enableVBStyleLogin', '1'),
 	('enableCompressedOutput', '1'),
@@ -1866,7 +1864,6 @@ VALUES
 	('theme_allow', '1'),
 	('theme_default', '1'),
 	('theme_guests', '1'),
-	('enableEmbeddedFlash', '0'),
 	('xmlnews_enable', '1'),
 	('xmlnews_maxlen', '255'),
 	('hotTopicPosts', '15'),
@@ -1940,7 +1937,6 @@ VALUES
 	('censorIgnoreCase', '1'),
 	('cal_days_for_index', '7'),
 	('unapprovedMembers', '0'),
-	('default_personalText', ''),
 	('attachmentPostLimit', '192'),
 	('attachmentNumPerPostLimit', '4'),
 	('package_make_backups', '1'),

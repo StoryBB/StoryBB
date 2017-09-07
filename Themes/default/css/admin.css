@@ -481,11 +481,6 @@ fieldset.qa_fieldset {
 }
 
 /* Styles for the manage search section. */
-span.search_weight {
-	width: 40px;
-	padding: 0 0.5em;
-	text-align: right;
-}
 .search_settings {
 	width: 47%;
 }

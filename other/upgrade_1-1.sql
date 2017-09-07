@@ -300,7 +300,7 @@ upgrade_query("
 
 ---# Cleaning old values from "settings"...
 DELETE FROM {$db_prefix}settings
-WHERE variable IN ('modlog_enabled', 'localCookies', 'globalCookies', 'send_welcomeEmail', 'search_method', 'notify_new_registration', 'removeNestedQuotes', 'smiley_enable', 'smiley_sets_enable')
+WHERE variable IN ('modlog_enabled', 'localCookies', 'globalCookies', 'send_welcomeEmail', 'search_method', 'notify_new_registration', 'removeNestedQuotes', 'smiley_sets_enable')
 	AND value = '0';
 
 DELETE FROM {$db_prefix}settings
@@ -1303,39 +1303,6 @@ if (@$modSettings['smfVersion'] < '1.1')
 ---}
 ---#
 
----# Upgrading "deny"-permissions...
----{
-if (!isset($modSettings['permission_enable_deny']))
-{
-	// Only disable if no deny permissions are used.
-	$request = upgrade_query("
-		SELECT permission
-		FROM {$db_prefix}permissions
-		WHERE addDeny = 0
-		LIMIT 1");
-	$disable_deny_permissions = smf_mysql_num_rows($request) == 0;
-	smf_mysql_free_result($request);
-
-	// Still wanna disable deny permissions? Check board permissions.
-	if ($disable_deny_permissions)
-	{
-		$request = upgrade_query("
-			SELECT permission
-			FROM {$db_prefix}board_permissions
-			WHERE addDeny = 0
-			LIMIT 1");
-		$disable_deny_permissions &= smf_mysql_num_rows($request) == 0;
-		smf_mysql_free_result($request);
-	}
-
-	$request = upgrade_query("
-		INSERT INTO {$db_prefix}settings
-			(variable, value)
-		VALUES ('permission_enable_deny', '" . ($disable_deny_permissions ? '0' : '1') . "')");
-}
----}
----#
-
 ---# Upgrading post based group permissions...
 ---{
 if (!isset($modSettings['permission_enable_postgroups']))
@@ -2193,12 +2160,6 @@ $textfield_updates = array(
 	array(
 		'table' => 'members',
 		'column' => 'emailAddress',
-		'type' => 'tinytext',
-		'null_allowed' => false,
-	),
-	array(
-		'table' => 'members',
-		'column' => 'personalText',
 		'type' => 'tinytext',
 		'null_allowed' => false,
 	),

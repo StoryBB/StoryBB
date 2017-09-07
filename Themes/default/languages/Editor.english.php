@@ -53,6 +53,5 @@ $editortxt['Print'] = 'Print';
 $editortxt['Preformatted Text'] = 'Preformatted Text';
 $editortxt['View source'] = 'View source';
 $editortxt['Pre'] = 'Preformatted text';
-$editortxt['flash'] = 'Insert Flash';
 
 ?>

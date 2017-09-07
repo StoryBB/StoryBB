@@ -652,10 +652,6 @@ tr.windowbg2 th.stats_month, tr.windowbg2 td.stats_day {
 	padding: 0 0 0 13px;
 }
 
-span.search_weight {
-	text-align: left;
-}
-
 /* Manage Bans */
 .ban_restriction {
 	margin: 0.2em 2.2em 0.2em 0;
