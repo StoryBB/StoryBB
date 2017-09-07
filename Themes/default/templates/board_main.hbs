@@ -11,7 +11,8 @@
                         {{{this.link}}}
                     </h3>
                     {{#if this.description}}<div class="desc">{{this.description}}</div>{{/if}}
-                    <div id="category_{{this.id}}_boards" {{#if this.css_class}}{{{this.css_class}}}{{/if}}></div>
+                </div>
+                <div id="category_{{this.id}}_boards" {{#if this.css_class}}{{{this.css_class}}}{{/if}}>
                     {{!
                         Each board in each category's boards has:
             			new (is it new?), id, name, description, moderators (see below), link_moderators (just a list.),
