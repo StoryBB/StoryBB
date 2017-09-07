@@ -16,13 +16,16 @@ function template_main()
 {
 	global $context, $options, $txt, $scripturl, $modSettings, $counter, $settings;
 	
-		$ignored_posts = array();
+	$ignored_posts = array();
+	if (!empty($context['previous_posts']))
+	{
 		foreach ($context['previous_posts'] as $post)
 		{
 			$ignoring = false;
 			if (!empty($post['is_ignored']))
 				$ignored_posts[] = $ignoring = $post['id'];
 		}
+	}
 				
 	
 	$data = [
@@ -34,8 +37,8 @@ function template_main()
 		'settings' => $settings,
 		'ignored_posts' => $ignored_posts,
 		'counter' =>  empty($counter) ? 0 : $counter,
-		'editor_context' => &$context['controls']['richedit'][context.post_box_name],
-		'verify_context' => &$context['controls']['verification'][context.visual_verification_id]
+		'editor_context' => &$context['controls']['richedit'][$context['post_box_name']],
+		'verify_context' => !empty($context['visual_verification_id']) ? $context['controls']['verification'][$context['visual_verification_id']] : false,
 	];
 
 	$template = file_get_contents(__DIR__ .  "/templates/post_main.hbs");
@@ -60,7 +63,7 @@ function template_main()
 			'formatKb' => function($size) {
 				return comma_format(round(max($size, 1028) / 1028), 0);
 			},
-			'sizeLimit' => function() { return $modSettings.attachmentSizeLimit * 1028; },
+			'sizeLimit' => function() { global $modSettings; return $modSettings['attachmentSizeLimit'] * 1028; },
 			'getNumItems' => 'getNumItems',
 			'implode_sep' => 'implode_sep'
 		],
