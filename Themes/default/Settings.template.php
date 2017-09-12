@@ -17,11 +17,6 @@ function template_options()
 	$context['theme_options'] = array(
 		$txt['theme_opt_display'],
 		array(
-			'id' => 'show_children',
-			'label' => $txt['show_children'],
-			'default' => true,
-		),
-		array(
 			'id' => 'topics_per_page',
 			'label' => $txt['topics_per_page'],
 			'options' => array(
