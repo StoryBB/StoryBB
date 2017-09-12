@@ -93,11 +93,6 @@ function template_options()
 		),
 		$txt['theme_opt_personal_messages'],
 		array(
-			'id' => 'popup_messages',
-			'label' => $txt['popup_messages'],
-			'default' => true,
-		),
-		array(
 			'id' => 'view_newest_pm_first',
 			'label' => $txt['recent_pms_at_top'],
 			'default' => true,

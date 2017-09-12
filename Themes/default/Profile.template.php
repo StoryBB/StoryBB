@@ -1206,13 +1206,6 @@ function template_profile_pm_settings()
 												<option value="3"', !empty($context['receive_from']) && $context['receive_from'] > 2 ? ' selected' : '', '>', $txt['pm_receive_from_admins'], '</option>
 										</select>
 								</dd>
-								<dt>
-										<label for="popup_messages">', $txt['popup_messages'], '</label>
-								</dt>
-								<dd>
-										<input type="hidden" name="default_options[popup_messages]" value="0">
-										<input type="checkbox" name="default_options[popup_messages]" id="popup_messages" value="1"', !empty($context['member']['options']['popup_messages']) ? ' checked' : '', ' class="input_check">
-								</dd>
 						</dl>
 						<hr>
 						<dl class="settings">

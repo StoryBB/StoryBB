@@ -488,7 +488,6 @@ $txt['pm_receive_from_ignore'] = 'All members, except those on my ignore list';
 $txt['pm_receive_from_admins'] = 'Administrators only';
 $txt['pm_receive_from_buddies'] = 'Buddies and Administrators only';
 
-$txt['popup_messages'] = 'Show a popup when I receive new messages.';
 $txt['pm_remove_inbox_label'] = 'Remove the inbox label when applying another label';
 
 $txt['tracking'] = 'Tracking';

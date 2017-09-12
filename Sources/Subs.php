@@ -2826,11 +2826,6 @@ function setupThemeContext($forceload = false)
 		$context['user']['unread_messages'] = &$user_info['unread_messages'];
 		$context['user']['alerts'] = &$user_info['alerts'];
 
-		// Personal message popup...
-		if ($user_info['unread_messages'] > (isset($_SESSION['unread_messages']) ? $_SESSION['unread_messages'] : 0))
-			$context['user']['popup_messages'] = true;
-		else
-			$context['user']['popup_messages'] = false;
 		$_SESSION['unread_messages'] = $user_info['unread_messages'];
 
 		if (allowedTo('moderate_forum'))
@@ -2872,7 +2867,6 @@ function setupThemeContext($forceload = false)
 		$context['user']['unread_messages'] = 0;
 		$context['user']['avatar'] = array();
 		$context['user']['total_time_logged_in'] = array('days' => 0, 'hours' => 0, 'minutes' => 0);
-		$context['user']['popup_messages'] = false;
 
 		if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1)
 			$txt['welcome_guest'] .= $txt['welcome_guest_activate'];
@@ -2887,20 +2881,6 @@ function setupThemeContext($forceload = false)
 
 	// This is here because old index templates might still use it.
 	$context['show_news'] = !empty($settings['enable_news']);
-
-	// This is done to allow theme authors to customize it as they want.
-	$context['show_pm_popup'] = $context['user']['popup_messages'] && !empty($options['popup_messages']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'pm');
-
-	// 2.1+: Add the PM popup here instead. Theme authors can still override it simply by editing/removing the 'fPmPopup' in the array.
-	if ($context['show_pm_popup'])
-		addInlineJavaScript('
-		jQuery(document).ready(function($) {
-			new smc_Popup({
-				heading: ' . JavaScriptEscape($txt['show_personal_messages_heading']) . ',
-				content: ' . JavaScriptEscape(sprintf($txt['show_personal_messages'], $context['user']['unread_messages'], $scripturl . '?action=pm')) . ',
-				icon_class: \'generic_icons mail_new\'
-			});
-		});');
 
 	// Add a generic "Are you sure?" confirmation message.
 	addInlineJavaScript('
