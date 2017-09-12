@@ -490,10 +490,6 @@ $txt['pm_receive_from_buddies'] = 'Buddies and Administrators only';
 
 $txt['popup_messages'] = 'Show a popup when I receive new messages.';
 $txt['pm_remove_inbox_label'] = 'Remove the inbox label when applying another label';
-$txt['pm_display_mode'] = 'Display personal messages';
-$txt['pm_display_mode_all'] = 'All at once';
-$txt['pm_display_mode_one'] = 'One at a time';
-$txt['pm_display_mode_linked'] = 'As a conversation';
 
 $txt['tracking'] = 'Tracking';
 $txt['tracking_description'] = 'This section allows you to review certain profile actions performed on this member\'s profile as well as track their IP address and login history.';

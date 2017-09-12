@@ -345,7 +345,6 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'pm_read',
 			'preload' => function() use (&$context, $cur_profile)
 			{
-				$context['display_mode'] = $cur_profile['pm_prefs'] & 3;
 				$context['receive_from'] = !empty($cur_profile['pm_receive_from']) ? $cur_profile['pm_receive_from'] : 0;
 
 				return true;

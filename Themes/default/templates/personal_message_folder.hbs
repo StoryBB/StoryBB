@@ -74,30 +74,28 @@
 			}
 		}
 	</script>
-	<form class="flow_hidden" action="{{scripturl}}?action=pm;sa=pmactions;{{#if (eq context.display_mode 2)}}conversation;{{/if}}f={{context.folder}};start={{context.start}}{{#if (neq context.current_label_id -1)}};l={{context.current_label_id}}{{/if}}" method="post" accept-charset="UTF-8" name="pmFolder">
-	    {{#if (neq context.display_mode 1)}}
+	<form class="flow_hidden" action="{{scripturl}}?action=pm;sa=pmactions;conversation;f={{context.folder}};start={{context.start}}{{#if (neq context.current_label_id -1)}};l={{context.current_label_id}}{{/if}}" method="post" accept-charset="UTF-8" name="pmFolder">
+
 	    {{>pm_subjects}}
 	    <div class="clear_right"><br></div>
-	    {{/if}}
-	    {{#if (eq context.display_mode 2)}}
+
 	    <div class="pagesection">
 	        {{>button_strip context.conversation_buttons direction='right'}}
-	   </div>
-	    {{/if}}
+	    </div>
+
 	    {{#if context.messages}}
-	    {{#if (neq context.display_mode 1)}}
+
 	    <div class="cat_bar">
-					<h3 class="catbg">
-						<span id="author">{{txt.author}}</span>
-						<span id="topic_title">{{#if (eq context.display_mode 0)}}{{txt.messages}}{{else}}{{txt.conversations}}{{/if}}</span>
-					</h3>
-				</div>
-		{{/if}}
-	    {{#if (eq context.display_mode 2)}}
+			<h3 class="catbg">
+				<span id="author">{{txt.author}}</span>
+				<span id="topic_title">{{txt.conversations}}</span>
+			</h3>
+		</div>
+
 	    <div class="pagesection">
 	    	{{>button_strip context.conversation_buttons direction='right'}}
 	    </div>
-	    {{/if}}
+
 	    {{#each context.messages}}
 	    <div class="windowbg">
 			<div class="poster">
@@ -234,9 +232,6 @@
 								<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote"><span class="generic_icons quote"></span>{{../txt.reply_quote}}</a></li>
 								{{/unless}}
 								<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{../context.session_var}}={{../context.session_id}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="generic_icons remove_button"></span>{{../txt.delete}}</a></li>
-								{{#unless ../context.display_mode}}
-								<li><input type="checkbox" name="pms[]" id="deletedisplay{{id}}" value="{{id}}" onclick="document.getElementById('deletelisting{{id}}').checked = this.checked;" class="input_check"></li>
-								{{/unless}}
 							{{/if}}
 						</ul>
 					</div>
@@ -262,52 +257,19 @@
 						</ul>
 					</div>
 					{{/if}}
-					{{#if (and (neq ../context.folder 'sent') ../context.currently_using_labels (neq ../context.display_mode 2))}}
-					<div class="labels righttext flow_auto">
-						<select name="pm_actions[{{id}}]" onchange="if (this.options[this.selectedIndex].value) form.submit();">
-							<option value="">{{../txt.pm_msg_label_title}}:</option>
-							<option value="" disabled>---------------</option>
-						{{#unless fully_labelled}}
-							<option value="" disabled>{{../txt.pm_msg_label_apply}}:</option>
-						{{#each ../context.labels}}
-							{{#unless (hasKey ../labels id)}}
-							<option value="{{id}}">&nbsp;{{name}}</option>
-							{{/unless}}
-						{{/each}}
-						{{/unless}}
-						{{#if (or (gt labels 1) (not labels.[-1]))}}
-							<option value="" disabled>{{../txt.pm_msg_label_remove}}:</option>
-							{{#each labels}}
-							<option value="{{id}}">&nbsp;{{name}}</option>
-							{{/each}}
-						{{/if}}
-						</select>
-						<noscript>
-							<input type="submit" value="{{../txt.pm_apply}}" class="button_submit" style="float: none">
-						</noscript>
-					{{/if}}
-					</div>
 				</div>
 			</div>
 			<div class="moderatorbar">
 			</div>
 		</div>
 	    {{/each}}
-	{{#unless context.display_mode}}
-	    <div class="pagesection">
-		<div class="floatleft">{{{context.page_index}}}</div>
-		<div class="floatright"><input type="submit" name="del_selected" value="{{txt.quickmod_delete_selected}}" style="font-weight: normal;" onclick="if (!confirm('{{txt.delete_selected_confirm}}')) return false;" class="button_submit"></div>	</div>
-    {{/unless}}
-    {{#if (and (eq context.display_mode 2) context.conversation_buttons)}}
+
+    {{#if context.conversation_buttons}}
     <div class="pagesection">
     	{{>button_strip button_strip=context.conversation_buttons direction='right'}}
     </div>
     {{/if}}
     <br>
-    {{/if}}
-    {{#if (eq display_mode 1)}}
-    	{{>pm_subjects}}
-    	<br>
     {{/if}}
     <input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
 </form>
