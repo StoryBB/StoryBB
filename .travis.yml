@@ -1,12 +1,9 @@
 sudo: required
 language: php
 php:
-- 7.0
-- 7.1
-matrix:
-  include:
-  - php: hhvm
-    dist: trusty
+  - 7.0
+  - 7.1
+
 script:
 - sudo add-apt-repository ppa:git-core/ppa -y
 - sudo apt-get update
