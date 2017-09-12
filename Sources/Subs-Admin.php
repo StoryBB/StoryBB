@@ -26,6 +26,24 @@ function getServerVersions($checkFor)
 
 	$versions = array();
 
+	if (in_array('php', $checkFor))
+		$versions['php'] = array('title' => $txt['support_versions_php'], 'version' => PHP_VERSION, 'more' => '?action=admin;area=serversettings;sa=phpinfo');
+
+	if (in_array('server', $checkFor))
+		$versions['server'] = array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']);
+
+	// Now lets check for the Database.
+	if (in_array('db_server', $checkFor))
+	{
+		db_extend();
+		if (!isset($db_connection) || $db_connection === false)
+			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
+		else
+		{
+			$versions['db_server'] = array('title' => $txt['support_versions_db'], 'version' => $smcFunc['db_get_engine']() . ' ' . $smcFunc['db_get_version']());
+		}
+	}
+
 	// Is GD available?  If it is, we should show version information for it too.
 	if (in_array('gd', $checkFor) && function_exists('gd_info'))
 	{
@@ -54,22 +72,6 @@ function getServerVersions($checkFor)
 		$versions['imagemagick'] = array('title' => $txt['support_versions_imagemagick'], 'version' => $im_version . ' (' . $extension_version . ')');
 	}
 
-	// Now lets check for the Database.
-	if (in_array('db_server', $checkFor))
-	{
-		db_extend();
-		if (!isset($db_connection) || $db_connection === false)
-			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
-		else
-		{
-			$versions['db_engine'] = array('title' => sprintf($txt['support_versions_db_engine'], $smcFunc['db_title']), 'version' => '');
-			$versions['db_engine']['version'] = $smcFunc['db_get_engine']();
-
-			$versions['db_server'] = array('title' => sprintf($txt['support_versions_db'], $smcFunc['db_title']), 'version' => '');
-			$versions['db_server']['version'] = $smcFunc['db_get_version']();
-		}
-	}
-
 	// If we're using memcache we need the server info.
 	if (empty($memcached) && function_exists('memcache_get') && isset($modSettings['cache_memcached']) && trim($modSettings['cache_memcached']) != '')
 		get_memcached_server();
@@ -83,12 +85,6 @@ function getServerVersions($checkFor)
 		$versions['memcache'] = array('title' => 'Memcached', 'version' => empty($memcached) ? '???' : memcache_get_version($memcached));
 	if (in_array('xcache', $checkFor) && function_exists('xcache_set'))
 		$versions['xcache'] = array('title' => 'XCache', 'version' => XCACHE_VERSION);
-
-	if (in_array('php', $checkFor))
-		$versions['php'] = array('title' => 'PHP', 'version' => PHP_VERSION, 'more' => '?action=admin;area=serversettings;sa=phpinfo');
-
-	if (in_array('server', $checkFor))
-		$versions['server'] = array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']);
 
 	return $versions;
 }

@@ -23,9 +23,14 @@
 							{{txt.support_versions_forum}}:
 							<em id="yourVersion">{{context.forum_version}}</em><br>
 							{{txt.support_versions_current}}:
-							<em id="smfVersion">??</em><br>
-							{{#if context.can_admin}}<a href="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=version">{{txt.version_check_more}}</a>{{/if}}
-							<br><br>
+							<em id="smfVersion">??</em>
+							{{#if context.can_admin}}<a href="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=version">{{txt.version_check_more}}</a>{{/if}}<br><br>
+
+							{{#each context.current_versions}}
+							{{title}}: <em>{{version}}</em><br>
+							{{/each}}
+
+							<br>
 							
 							{{! Display all the members who can administrate the forum. }}
 							<strong>{{txt.administrators}}:</strong>

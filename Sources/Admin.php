@@ -49,11 +49,6 @@ function AdminMain()
 					'function' => 'AdminHome',
 					'icon' => 'administration',
 				),
-				'support' => array(
-					'label' => $txt['support_title'],
-					'function' => 'AdminHome',
-					'icon' => 'support',
-				),
 				'news' => array(
 					'label' => $txt['news_title'],
 					'file' => 'ManageNews.php',
@@ -509,7 +504,7 @@ function AdminHome()
 
 	$context['can_admin'] = allowedTo('admin_forum');
 
-	$context['sub_template'] = $context['admin_area'] == 'support' ? 'support' : 'admin';
+	$context['sub_template'] = 'admin';
 	$context['page_title'] = $context['admin_area'] == 'support' ? $txt['support_title'] : $txt['admin_center'];
 	if ($context['admin_area'] != 'support')
 		$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -519,24 +514,7 @@ function AdminHome()
 						' . sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']),
 		);
 
-	// Lastly, fill in the blanks in the support resources paragraphs.
-	$txt['support_resources_p1'] = sprintf($txt['support_resources_p1'],
-		'https://wiki.simplemachines.org/',
-		'https://wiki.simplemachines.org/smf/features2',
-		'https://wiki.simplemachines.org/smf/options2',
-		'https://wiki.simplemachines.org/smf/themes2',
-		'https://wiki.simplemachines.org/smf/packages2'
-	);
-	$txt['support_resources_p2'] = sprintf($txt['support_resources_p2'],
-		'https://www.simplemachines.org/community/',
-		'https://www.simplemachines.org/redirect/english_support',
-		'https://www.simplemachines.org/redirect/international_support_boards',
-		'https://www.simplemachines.org/redirect/smf_support',
-		'https://www.simplemachines.org/redirect/customize_support'
-	);
-
-	if ($context['admin_area'] == 'admin')
-		loadJavaScriptFile('admin.js', array('defer' => false), 'smf_admin');
+	loadJavaScriptFile('admin.js', array('defer' => false), 'smf_admin');
 }
 
 /**

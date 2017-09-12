@@ -296,15 +296,11 @@ $txt['support_title'] = 'Support Information';
 $txt['support_versions_current'] = 'Current SMF version';
 $txt['support_versions_forum'] = 'Forum version';
 $txt['support_versions_php'] = 'PHP version';
-$txt['support_versions_db'] = '%1$s version';
-$txt['support_versions_db_engine'] = '%1$s engine';
+$txt['support_versions_db'] = 'Database version';
 $txt['support_versions_server'] = 'Server version';
 $txt['support_versions_gd'] = 'GD version';
 $txt['support_versions_imagemagick'] = 'ImageMagick version';
 $txt['support_versions'] = 'Version Information';
-$txt['support_resources'] = 'Support Resources';
-$txt['support_resources_p1'] = 'Our <a href="%1$s">Online Manual</a> provides the main documentation for SMF. The SMF Online Manual has many documents to help answer support questions and explain <a href="%2$s">Features</a>, <a href="%3$s">Settings</a>, <a href="%4$s">Themes</a>, <a href="%5$s">Packages</a>, etc. The Online Manual documents each area of SMF thoroughly and should answer most questions quickly.';
-$txt['support_resources_p2'] = 'If you can\'t find the answers to your questions in the Online Manual, you may want to search our <a href="%1$s">Support Community</a> or ask for assistance in either our <a href="%2$s">English</a> or one of our many <a href="%3$s">international support boards</a>. The SMF Support Community can be used for <a href="%4$s">support</a>, <a href="%5$s">customization</a>, and many other things such as discussing SMF, finding a host, and discussing administrative issues with other forum administrators.';
 
 $txt['membergroups_members'] = 'Regular Members';
 $txt['membergroups_guests'] = 'Guests';
