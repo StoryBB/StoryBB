@@ -105,7 +105,7 @@
 				<div class="custom_fields_above_member">
 					<ul class="nolist">
 						{{#each custom_fields.above_member}}
-							<li class="custom {{col_name}}">{{value}}</li>
+							<li class="custom {{col_name}}">{{{value}}}</li>
 						{{/each}}
 					</ul>
 				</div>
@@ -124,7 +124,7 @@
 					<div class="custom_fields_above_member">
 						<ul class="nolist">
 							{{#each custom_fields.below_avatar}}
-								<li class="custom {{col_name}}">{{value}}</li>
+								<li class="custom {{col_name}}">{{{value}}}</li>
 							{{/each}}
 						</ul>
 					</div>
@@ -138,7 +138,7 @@
 						<li class="im_icons">
 							<ol>
 								{{#each custom_fields.icons}}
-								<li class="custom {{col_name}}">{{value}}</li>
+								<li class="custom {{col_name}}">{{{value}}}</li>
 								{{/each}}
 							</ol>
 						</li
@@ -176,7 +176,7 @@
 					<li class="im_icons">
 						<ol>
 							{{#each custom_fields.standard}}
-							<li class="custom {{col_name}}">{{value}}</li>
+							<li class="custom {{col_name}}">{{{value}}}</li>
 							{{/each}}
 						</ol>
 					</li>
@@ -190,7 +190,7 @@
 					<li class="im_icons">
 						<ol>
 							{{#each custom_fields.bottom_poster}}
-							<li class="custom {{col_name}}">{{value}}</li>
+							<li class="custom {{col_name}}">{{{value}}}</li>
 							{{/each}}
 						</ol>
 					</li>
@@ -206,7 +206,7 @@
 						<span class="smalltext">&#171; <strong> {{../txt.sent_to}}:</strong>
 						{{{implode recipients.to}}}
 						{{#if (and (not recipients.to) (neq ../context.folder "sent"))}}({{../txt.pm_undisclosed_recipients}}){{/if}}
-						<strong> {{../txt.on}}:</strong> {{time}} &#187;</span>
+						<strong> {{../txt.on}}:</strong> {{{time}}} &#187;</span>
 						{{#if recipients.bcc}}
 						<br><span class="smalltext">&#171; <strong>{{../txt.pm_bcc}}:</strong> {{{implode recipients.bcc}}} &#187;</span>
 						{{/if}}
@@ -226,14 +226,14 @@
 							{{#if ../context.can_send_pm}}
 								{{#unless member.is_guest}}
 									{{#if (gt number_recipients 1)}}
-										<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u=all"><span class="generic_icons reply_all_button"></span>{{txt.reply_to_all}}</a></li>
+										<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u=all"><span class="generic_icons reply_all_button"></span>{{../txt.reply_to_all}}</a></li>
 									{{/if}}
-									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}"><span class="generic_icons reply_button"></span>{{txt.reply}}</a></li>
-									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote{{#unless (eq ../context.folder 'sent')}};u={{member.id}}{{/unless}}"><span class="generic_icons quote"></span>{{txt.quote_action}}</a></li>
+									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}"><span class="generic_icons reply_button"></span>{{../txt.reply}}</a></li>
+									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote{{#unless (eq ../context.folder 'sent')}};u={{member.id}}{{/unless}}"><span class="generic_icons quote"></span>{{../txt.quote_action}}</a></li>
 								{{else}}
-								<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote"><span class="generic_icons quote"></span>{{txt.reply_quote}}</a></li>
+								<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote"><span class="generic_icons quote"></span>{{../txt.reply_quote}}</a></li>
 								{{/unless}}
-								<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{../context.session_var}}={{../context.session_id}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="generic_icons remove_button"></span>{{txt.delete}}</a></li>
+								<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{../context.session_var}}={{../context.session_id}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="generic_icons remove_button"></span>{{../txt.delete}}</a></li>
 								{{#unless ../context.display_mode}}
 								<li><input type="checkbox" name="pms[]" id="deletedisplay{{id}}" value="{{id}}" onclick="document.getElementById('deletelisting{{id}}').checked = this.checked;" class="input_check"></li>
 								{{/unless}}
@@ -245,7 +245,7 @@
 					<div class="custom_fields_above_signature">
 						<ul class="nolist">
 							{{#each custom_fields.above_signature}}
-							<li class="custom {{col_name}}">{{value}}</li>
+							<li class="custom {{col_name}}">{{{value}}}</li>
 							{{/each}}
 						</ul>
 					</div>
@@ -257,7 +257,7 @@
 					<div class="custom_fields_below_signature">
 						<ul class="nolist">
 							{{#each custom_fields.below_signature}}
-							<li class="custom {{col_name}}">{{value}}</li>
+							<li class="custom {{col_name}}">{{{value}}}</li>
 							{{/each}}
 						</ul>
 					</div>
