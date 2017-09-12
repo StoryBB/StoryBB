@@ -92,8 +92,6 @@ $txt['theme_forum_default_desc'] = 'This is the default theme, which means your 
 
 $txt['profileConfirm'] = 'Do you really want to delete this member?';
 
-$txt['custom_title'] = 'Custom Title';
-
 $txt['lastLoggedIn'] = 'Last Active';
 
 $txt['alert_prefs'] = 'Notification Preferences';
@@ -509,7 +507,6 @@ $txt['trackEdit_after'] = 'Value After';
 $txt['trackEdit_applicator'] = 'Changed By';
 
 $txt['trackEdit_action_real_name'] = 'Member Name';
-$txt['trackEdit_action_usertitle'] = 'Custom Title';
 $txt['trackEdit_action_member_name'] = 'Username';
 $txt['trackEdit_action_email_address'] = 'Email Address';
 $txt['trackEdit_action_id_group'] = 'Primary Membergroup';

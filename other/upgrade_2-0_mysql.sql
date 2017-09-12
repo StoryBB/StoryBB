@@ -2476,7 +2476,6 @@ $nameChanges = array(
 		'aim' => 'aim aim varchar(255) NOT NULL default \'\'',
 		'msn' => 'msn msn varchar(255) NOT NULL default \'\'',
 		'avatar' => 'avatar avatar varchar(255) NOT NULL default \'\'',
-		'usertitle' => 'usertitle usertitle varchar(255) NOT NULL default \'\'',
 		'member_ip' => 'member_ip member_ip varchar(255) NOT NULL default \'\'',
 		'member_ip2' => 'member_ip2 member_ip2 varchar(255) NOT NULL default \'\'',
 		'secret_question' => 'secret_question secret_question varchar(255) NOT NULL default \'\'',

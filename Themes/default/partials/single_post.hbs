@@ -43,9 +43,6 @@
     		{{#if member.group}}
     		<li class="membergroup">{{member.group}}</li>
     		{{/if}}
-    		{{#if member.title}}
-    		<li class="membergroup">{{member.title}}</li>
-    		{{/if}}
     		{{#if (not member.is_guest)}}
     		    {{#if (and member.post_group (or (not ../modSettings.hide_post_group) (not member.group)))}}
     		        <li class="postgroup">{{member.post_group}}</li>

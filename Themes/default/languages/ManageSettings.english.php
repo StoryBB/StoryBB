@@ -15,7 +15,6 @@ $txt['polls_as_topics'] = 'Show existing polls as topics';
 $txt['allow_guestAccess'] = 'Allow guests to browse the forum';
 $txt['userLanguage'] = 'Enable user-selectable language support';
 $txt['allow_hideOnline'] = 'Allow non-administrators to hide their online status';
-$txt['titlesEnable'] = 'Enable custom titles';
 $txt['enable_buddylist'] = 'Enable buddy/ignore lists';
 $txt['time_format'] = 'Default time format';
 $txt['setting_time_offset'] = 'Overall time offset';

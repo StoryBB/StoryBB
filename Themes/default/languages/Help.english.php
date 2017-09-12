@@ -215,8 +215,6 @@ $helptxt['userLanguage'] = 'Turning this setting on will allow users to select w
 $helptxt['trackStats'] = 'Stats:<br>This will allow users to see the latest posts and the most popular topics on your forum.
 		It will also show several statistics, like the most members online, new members, and new topics.<hr>
 		Page views:<br>Adds another column to the stats page with the number of pageviews on your forum.';
-$helptxt['titlesEnable'] = 'Switching Custom Titles on will allow members with the relevant permission to create a special title for themselves.
-		This will be shown underneath the name.<br><em>For example:</em><br>Jeff<br>Cool Guy';
 $helptxt['onlineEnable'] = 'This will show an image to indicate whether the member is online or offline';
 $helptxt['todayMod'] = 'This will show &quot;Today&quot; or &quot;Yesterday&quot; instead of the date.<br><br>
 		<strong>Examples:</strong><br><br>

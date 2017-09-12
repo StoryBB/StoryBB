@@ -595,7 +595,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'time_format' => '',
 		'signature' => '',
 		'avatar' => '',
-		'usertitle' => '',
 		'secret_question' => '',
 		'secret_answer' => '',
 		'additional_groups' => '',

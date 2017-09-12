@@ -533,22 +533,6 @@ function loadProfileFields($force_reload = false)
 				return true;
 			},
 		),
-		'usertitle' => array(
-			'type' => 'text',
-			'label' => $txt['custom_title'],
-			'log_change' => true,
-			'input_attr' => array('maxlength="50"'),
-			'size' => 50,
-			'permission' => 'profile_title',
-			'enabled' => !empty($modSettings['titlesEnable']),
-			'input_validate' => function(&$value) use ($smcFunc)
-			{
-				if ($smcFunc['strlen']($value) > 50)
-					return 'user_title_too_long';
-
-				return true;
-			},
-		),
 		'website_title' => array(
 			'type' => 'text',
 			'label' => $txt['website_title'],
@@ -1678,7 +1662,7 @@ function forumProfile($memID)
 	setupProfileContext(
 		array(
 			'avatar_choice', 'hr',
-			'bday1', 'usertitle', 'signature', 'hr',
+			'bday1', 'signature', 'hr',
 			'website_title', 'website_url',
 		)
 	);

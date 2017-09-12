@@ -149,7 +149,6 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'enable_likes'),
 			array('check', 'enable_buddylist'),
 			array('check', 'allow_hideOnline'),
-			array('check', 'titlesEnable'),
 			array('check', 'topic_move_any'),
 			array('int', 'defaultMaxListItems', 'step' => 1, 'min' => 1, 'max' => 999),
 		'',

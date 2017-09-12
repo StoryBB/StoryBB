@@ -117,11 +117,6 @@
 					<dd><a href="mailto:{{{context.member.email}}}">{{{context.member.email}}}</a></dd>
 				{{/if}}
 
-				{{#if (and modSettings.titlesEnable context.member.title)}}
-					<dt>{{{txt.custom_title}}}</dt>
-					<dd>{{{context.member.title}}}</dd>
-				{{/if}}
-
 				<dt>{{{txt.age}}}</dt>
 				<dd>
 					{{{context.member.age}}}
