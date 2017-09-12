@@ -242,9 +242,6 @@ $txt['userlog_enabled'] = 'Enable the profile edits log';
 $txt['mailqueue_title'] = 'Mail';
 
 $txt['db_error_send'] = 'Send emails on database connection error';
-$txt['db_persist'] = 'Use a persistent connection';
-$txt['ssi_db_user'] = 'Database username to use in SSI mode';
-$txt['ssi_db_passwd'] = 'Database password to use in SSI mode';
 
 $txt['default_language'] = 'Default forum language';
 

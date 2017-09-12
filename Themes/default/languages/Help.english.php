@@ -371,9 +371,6 @@ $helptxt['autoFixDatabase'] = 'This will automatically fix broken tables and res
 
 $helptxt['enableParticipation'] = 'This shows a little icon on the topics the user has posted in.';
 
-$helptxt['db_persist'] = 'This keeps the connection active to increase performance. If you aren\'t on a dedicated server, this may cause you problems with your host.';
-$helptxt['ssi_db_user'] = 'Optional setting to use a different database user and password when you are using SSI.php.';
-
 $helptxt['minimize_files'] = 'This option will minimize all css and js files that are loaded everytime, everywhere for every user, reducing the requests calls to your server. New files are re-created everyday, if you want to re-create them just clean your forum\'s cache.';
 $helptxt['countChildPosts'] = 'Checking this setting means that posts and topics in a board\'s sub-board will count toward its totals on the index page.<br><br>This will make things notably slower, but means that a parent with no posts in it won\'t show \'0\'.';
 $helptxt['allow_ignore_boards'] = 'Checking this setting will allow users to select boards they wish to ignore.';

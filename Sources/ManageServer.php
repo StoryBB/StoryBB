@@ -217,10 +217,7 @@ function ModifyDatabaseSettings($return_config = false)
 		OR an empty string for a horizontal rule.
 		OR a string for a titled section. */
 	$config_vars = array(
-		array('db_persist', $txt['db_persist'], 'file', 'check', null, 'db_persist'),
 		array('db_error_send', $txt['db_error_send'], 'file', 'check'),
-		array('ssi_db_user', $txt['ssi_db_user'], 'file', 'text', null, 'ssi_db_user'),
-		array('ssi_db_passwd', $txt['ssi_db_passwd'], 'file', 'password'),
 		'',
 		array('autoFixDatabase', $txt['autoFixDatabase'], 'db', 'check', false, 'autoFixDatabase')
 	);
