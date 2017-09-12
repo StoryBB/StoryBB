@@ -90,7 +90,6 @@ function AdminMain()
 						'layout' => array($txt['mods_cat_layout']),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle']),
-						'likes' => array($txt['likes']),
 						'mentions' => array($txt['mentions']),
 						'alerts' => array($txt['notifications']),
 					),

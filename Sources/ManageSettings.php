@@ -59,7 +59,6 @@ function ModifyFeatureSettings()
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
-		'likes' => 'ModifyLikesSettings',
 		'mentions' => 'ModifyMentionsSettings',
 		'alerts' => 'ModifyAlertsSettings',
 	);
@@ -84,8 +83,6 @@ function ModifyFeatureSettings()
 			),
 			'profile' => array(
 				'description' => $txt['custom_profile_desc'],
-			),
-			'likes' => array(
 			),
 			'mentions' => array(
 			),
@@ -149,6 +146,7 @@ function ModifyBasicSettings($return_config = false)
 	$config_vars = array(
 			// Basic stuff, titles, permissions...
 			array('check', 'allow_guestAccess'),
+			array('check', 'enable_likes'),
 			array('check', 'enable_buddylist'),
 			array('check', 'allow_hideOnline'),
 			array('check', 'titlesEnable'),
@@ -342,44 +340,6 @@ function ModifyLayoutSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=layout';
 	$context['settings_title'] = $txt['mods_cat_layout'];
-
-	prepareDBSettingContext($config_vars);
-}
-
-/**
- * Config array for changing like settings
- * Accessed  from ?action=admin;area=featuresettings;sa=likes;
- *
- * @param bool $return_config Whether or not to return the config_vars array
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyLikesSettings($return_config = false)
-{
-	global $txt, $scripturl, $context;
-
-	$config_vars = array(
-		array('check', 'enable_likes'),
-	);
-
-	call_integration_hook('integrate_likes_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		call_integration_hook('integrate_save_likes_settings');
-
-		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
-		redirectexit('action=admin;area=featuresettings;sa=likes');
-	}
-
-	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=likes';
-	$context['settings_title'] = $txt['likes'];
 
 	prepareDBSettingContext($config_vars);
 }
