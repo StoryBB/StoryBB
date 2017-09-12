@@ -1791,7 +1791,6 @@ INSERT IGNORE INTO {$db_prefix}settings
 VALUES
 	('news', ''),
 	('compactTopicPagesContiguous', '5'),
-	('compactTopicPagesEnable', '1'),
 	('enableStickyTopics', '1'),
 	('todayMod', '1'),
 	('karmaMode', '0'),

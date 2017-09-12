@@ -71,7 +71,6 @@ $txt['pm_posts_verification'] = 'Post count under which users must pass verifica
 $txt['pm_posts_verification_note'] = '(0 for no limit, admins are exempt)';
 $txt['pm_posts_per_hour'] = 'Number of personal messages a user may send in an hour';
 $txt['pm_posts_per_hour_note'] = '(0 for no limit, moderators are exempt)';
-$txt['compactTopicPagesEnable'] = 'Limit number of displayed page links';
 $txt['contiguous_page_display'] = 'Contiguous pages to display';
 $txt['to_display'] = 'to display';
 $txt['todayMod'] = 'Enable shorthand date display';
