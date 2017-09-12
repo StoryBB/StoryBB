@@ -25,9 +25,7 @@
 		<tr class="windowbg{{#if is_unread}} unread_pm{{/if}}">
 			<td class="table_icon">
 			<script>
-				currentLabels[{{id}}] = {
-				    {{#each labels}}{{#unless (eq @index 0)}},{{/unless}}{{id}}: "{{name}}"{{/each}}
-				};
+				currentLabels[{{id}}] = {{{json labels}}};
 			</script>
 			{{#if is_replied_to}}<span class="generic_icons replied" title="{{txt.pm_replied}}"></span>{{else}}<span class="generic_icons im_off" title="{{txt.pm_read}}"></span>{{/if}}</td>
 			<td>{{{time}}}</td>

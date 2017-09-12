@@ -31,6 +31,7 @@ function template_pm_above()
 		'helpers' => [
 			'gt' => 'logichelper_gt',
 			'div' => 'numericshelper_div',
+			'json' => 'stringhelper_json',
 		],
 		'partials' => [
 		]
@@ -132,7 +133,8 @@ function template_folder()
 			'get_text' => 'get_text',
 			'concat' => 'concat',
 			'getNumItems' => 'getNumItems',
-			'hasKey' => 'hasKey'
+			'hasKey' => 'hasKey',
+			'json' => 'stringhelper_json',
 		],
 		'partials' => [
 			'pm_subjects' => file_get_contents(__DIR__ .  "/partials/pm_subjects.hbs"),
@@ -178,6 +180,7 @@ function template_subject_list()
 			'implode' => 'implode_comma',
 			'concat' => 'concat',
 			'getNumItems' => 'getNumItems',
+			'json' => 'stringhelper_json',
 		],
 		'partials' => [
 		]
@@ -459,7 +462,8 @@ function template_send()
 			'concat' => 'concat',
 			'getNumItems' => 'getNumItems',
 			'textTemplate' => 'textTemplate',
-			'JSEscape' => 'JSEscape'
+			'JSEscape' => 'JSEscape',
+			'json' => 'stringhelper_json',
 		],
 		'partials' => [
 			'control_richedit' => file_get_contents(__DIR__ .  "/partials/control_richedit.hbs"),
