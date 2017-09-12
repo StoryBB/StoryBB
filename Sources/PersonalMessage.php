@@ -2540,7 +2540,7 @@ function MessageActionsApply()
 			)
 		);
 
-		while ($other_pms = $smcFunc['db_query']($get_pms))
+		while ($other_pms = $smcFunc['db_fetch_assoc']($get_pms))
 		{
 			$to_label[$other_pms['id_pm']] = $to_label[$other_pms['id_pm_head']];
 		}
