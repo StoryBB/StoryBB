@@ -43,7 +43,7 @@ function template_init()
 
 	/* $context, $options and $txt may be available for use, but may not be fully populated yet. */
 
-	// The version this template/theme is for. This should probably be the version of SMF it was created for.
+	// The version this template/theme is for. This should probably be the version of StoryBB it was created for.
 	$settings['theme_version'] = '3.0';
 
 	// Use plain buttons - as opposed to text buttons?

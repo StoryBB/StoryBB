@@ -468,7 +468,7 @@ function template_show_settings()
 					// The step - only set if incrementing by something other than 1 for int or 0.1 for float
 					$step = isset($config_var['step']) ? ' step="' . $config_var['step'] . '"' : ($config_var['type'] == 'float' ? ' step="0.1"' : '');
 
-					// Minimum allowed value for this setting. SMF forces a default of 0 if not specified in the settings
+					// Minimum allowed value for this setting. StoryBB forces a default of 0 if not specified in the settings
 					$min = isset($config_var['min']) ? ' min="' . $config_var['min'] . '"' : '';
 
 					// Maximum allowed value for this setting.

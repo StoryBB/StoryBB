@@ -594,7 +594,7 @@ $topics = ssi_recentTopics(8, null, null, \'array\');
 
 foreach ($topics as $topic)
 {
-	// Uncomment the following code to get a listing of array elements that SMF provides for this function.
+	// Uncomment the following code to get a listing of array elements that StoryBB provides for this function.
 	// echo \'<pre>\', print_r($topic), \'</pre>\';
 
 	echo \'

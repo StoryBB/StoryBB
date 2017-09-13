@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This, as you have probably guessed, is the crux on which SMF functions.
+ * This, as you have probably guessed, is the crux on which StoryBB functions.
  * Everything should start here, so all the setup and security is done
  * properly.  The most interesting part of this file is the action array in
  * the smf_main() function.  It is formatted as so:
@@ -63,7 +63,7 @@ require_once(__DIR__ . '/Themes/default/helpers/stringhelpers.php');
 if (!empty($maintenance) && $maintenance == 2)
 	display_maintenance_message();
 
-// Create a variable to store some SMF specific functions in.
+// Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();
 
 // Initiate the database connection and define some database functions to use.

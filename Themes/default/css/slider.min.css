@@ -68,7 +68,7 @@
 .sy-pager li a:hover,.sy-pager li a:focus{opacity:.6}
 .sy-filler{width:100%;padding-top: 2px !important}
 .sy-filler.ready{-moz-transition:padding 600ms ease;-o-transition:padding 600ms ease;-webkit-transition:padding 600ms ease;transition:padding 600ms ease}
-/* SMF extra */
+/* StoryBB extra */
 #smf_slider {overflow: hidden;}
 .sy-box{margin:0 0 10px}
 .sy-slide > img.smiley {display: inline-block}

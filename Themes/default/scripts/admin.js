@@ -48,7 +48,7 @@ smf_AdminIndex.prototype.loadAdminIndex = function ()
 	if (this.opt.bLoadAnnouncements)
 		this.setAnnouncements();
 
-	// Load the current SMF and your SMF version numbers.
+	// Load the current StoryBB and your StoryBB version numbers.
 	if (this.opt.bLoadVersions)
 		this.showCurrentVersion();
 

@@ -8,7 +8,7 @@
  * @version 3.0 Alpha 1
  */
 
-// Don't do anything if SMF is already loaded.
+// Don't do anything if StoryBB is already loaded.
 if (defined('SMF'))
 	return true;
 
@@ -38,7 +38,7 @@ if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/c
 $ssi_error_reporting = error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
 /* Set this to one of three values depending on what you want to happen in the case of a fatal error.
 	false:	Default, will just load the error sub template and die - not putting any theme layers around it.
-	true:	Will load the error sub template AND put the SMF layers around it (Not useful if on total custom pages).
+	true:	Will load the error sub template AND put the StoryBB layers around it (Not useful if on total custom pages).
 	string:	Name of a callback function to call in the event of an error to allow you to define your own methods. Will die after function returns.
 */
 $ssi_on_error_method = false;
@@ -65,7 +65,7 @@ require_once($sourcedir . '/Security.php');
 require_once($sourcedir . '/Class-BrowserDetect.php');
 require_once($sourcedir . '/Subs-Auth.php');
 
-// Create a variable to store some SMF specific functions in.
+// Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();
 
 // Initiate the database connection and define some database functions to use.
