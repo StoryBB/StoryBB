@@ -18,7 +18,6 @@ $txt['mc_unapproved_posts'] = 'Unapproved Posts';
 $txt['mc_watched_users'] = 'Recent Watched Members';
 $txt['mc_watched_topics'] = 'Watched Topics';
 $txt['mc_scratch_board'] = 'Moderator Scratch Board';
-$txt['mc_latest_news'] = 'Simple Machines Latest News';
 $txt['mc_recent_reports'] = 'Recent Topic Reports';
 $txt['mc_recent_user_reports'] = 'Recent Profile Reports';
 $txt['mc_warnings'] = 'Warnings';

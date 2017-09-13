@@ -100,7 +100,7 @@ $txt['attachment_file_size'] = 'File Size';
 $txt['attachmentdir_size_not_set'] = 'No maximum directory size is currently set';
 $txt['attachmentdir_files_not_set'] = 'No directory file limit is currently set';
 $txt['attachment_delete_admin'] = '[attachment deleted by admin]';
-$txt['live'] = 'Live from Simple Machines...';
+$txt['live'] = 'News from StoryBB';
 $txt['remove_all'] = 'Clear Log';
 $txt['approve_new_members'] = 'Admin must approve all new members';
 $txt['agreement_not_writable'] = 'Warning - agreement.txt is not writable, any changes you make will NOT be saved.';
@@ -225,7 +225,7 @@ $txt['maintain_done'] = 'The maintenance task \'%1$s\' was executed successfully
 $txt['maintain_no_errors'] = 'Congratulations, no errors were found. Thanks for checking.';
 
 $txt['maintain_tasks'] = 'Scheduled Tasks';
-$txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by SMF.';
+$txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by StoryBB.';
 
 $txt['scheduled_log'] = 'Task Log';
 $txt['scheduled_log_desc'] = 'This log shows all the scheduled tasks that have been run on your forum.';
@@ -290,7 +290,7 @@ $txt['confirm_delete_members'] = 'Are you sure you want to delete the selected m
 
 $txt['support_title'] = 'Support';
 $txt['support_title'] = 'Support Information';
-$txt['support_versions_current'] = 'Current SMF version';
+$txt['support_versions_current'] = 'Current StoryBB version';
 $txt['support_versions_forum'] = 'Forum version';
 $txt['support_versions_php'] = 'PHP version';
 $txt['support_versions_db'] = 'Database version';
@@ -402,7 +402,7 @@ $txt['max_image_width'] = 'Max display width of posted or attached images';
 $txt['max_image_height'] = 'Max display height of posted or attached images';
 
 $txt['automanage_attachments'] = 'Choose the method for the management of the attachment directories';
-$txt['attachments_normal'] = '(Manual) SMF default behavior';
+$txt['attachments_normal'] = '(Manual) StoryBB default behavior';
 $txt['attachments_auto_years'] = '(Auto) Subdivide by years';
 $txt['attachments_auto_months'] = '(Auto) Subdivide by years and months';
 $txt['attachments_auto_days'] = '(Auto) Subdivide by years, months and days';
@@ -522,7 +522,7 @@ $txt['logs'] = 'Logs';
 $txt['generate_reports'] = 'Reports';
 
 $txt['update_available'] = 'Update Available';
-$txt['update_message'] = 'You\'re using an outdated version of SMF, which contains some bugs which have since been fixed.
+$txt['update_message'] = 'You\'re using an outdated version of StoryBB, which contains some bugs which have since been fixed.
 	It is recommended that you <a href="#" id="update-link">update your forum</a> to the latest version as soon as possible. It only takes a minute!';
 
 $txt['manageposts'] = 'Posts and Topics';
@@ -605,7 +605,7 @@ $txt['phpinfo_defaultsettings'] = 'Default Settings';
 $txt['phpinfo_itemsettings'] = 'Settings';
 
 $txt['language_configuration'] = 'Languages';
-$txt['language_description'] = 'This section allows you to edit languages installed on your forum, download new ones from the Simple Machines website. You may also edit language-related settings here.';
+$txt['language_description'] = 'This section allows you to edit languages installed on your forum, download new ones from the StoryBB website. You may also edit language-related settings here.';
 $txt['language_edit'] = 'Edit Languages';
 $txt['language_add'] = 'Add Language';
 $txt['language_settings'] = 'Settings';

@@ -56,7 +56,7 @@ $txt['paypal_sandbox_email'] = 'Paypal sandbox email address';
 $txt['paypal_sandbox_email_desc'] = 'Can be left blank if test mode is disabled or not using PayPal.';
 
 $txt['paid_note'] = '<strong class="alert">Note:</strong><br>
-SMF currently supports <strong>PayPal</strong> as the installed payment method.<br>
+StoryBB currently supports <strong>PayPal</strong> as the installed payment method.<br>
 	&nbsp;&nbsp;&bull;&nbsp;&nbsp;It is not necessary to enable IPN in your PayPal account; but if you do, the forum will receive payment notifications for all payments made to your account, and this will generate Paid Subscriptions errors for payments that are not subscription related.<br>
 	&nbsp;&nbsp;&bull;&nbsp;&nbsp;You must have a business or premier account to use recurring payments.<br>
 	&nbsp;&nbsp;&bull;&nbsp;&nbsp;You must provide your primary PayPal email address for validation purposes.<br><br>
