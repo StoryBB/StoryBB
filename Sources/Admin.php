@@ -581,7 +581,6 @@ function AdminSearch()
 	// What can we search for?
 	$subActions = array(
 		'internal' => 'AdminSearchInternal',
-		'online' => 'AdminSearchOM',
 		'member' => 'AdminSearchMember',
 	);
 
@@ -634,7 +633,6 @@ function AdminSearchInternal()
 		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
 		array('ModifyBBCSettings', 'area=featuresettings;sa=bbc'),
 		array('ModifyLayoutSettings', 'area=featuresettings;sa=layout'),
-		array('ModifyLikesSettings', 'area=featuresettings;sa=likes'),
 		array('ModifyMentionsSettings', 'area=featuresettings;sa=mentions'),
 		array('ModifySignatureSettings', 'area=featuresettings;sa=sig'),
 		array('ModifyAntispamSettings', 'area=antispam'),
@@ -765,64 +763,6 @@ function AdminSearchMember()
 	$_POST['types'] = '';
 
 	ViewMembers();
-}
-
-/**
- * This file allows the user to search the SM online manual for a little of help.
- */
-function AdminSearchOM()
-{
-	global $context, $sourcedir;
-
-	$context['doc_apiurl'] = 'https://wiki.simplemachines.org/api.php';
-	$context['doc_scripturl'] = 'https://wiki.simplemachines.org/smf/';
-
-	// Set all the parameters search might expect.
-	$postVars = explode(' ', $context['search_term']);
-
-	// Encode the search data.
-	foreach ($postVars as $k => $v)
-		$postVars[$k] = urlencode($v);
-
-	// This is what we will send.
-	$postVars = implode('+', $postVars);
-
-	// Get the results from the doc site.
-	require_once($sourcedir . '/Subs-Package.php');
-	// Demo URL:
-	// https://wiki.simplemachines.org/api.php?action=query&list=search&srprop=timestamp|snippet&format=xml&srwhat=text&srsearch=template+eval
-	$search_results = fetch_web_data($context['doc_apiurl'] . '?action=query&list=search&srprop=timestamp|snippet&format=xml&srwhat=text&srsearch=' . $postVars);
-
-	// If we didn't get any xml back we are in trouble - perhaps the doc site is overloaded?
-	if (!$search_results || preg_match('~<' . '\?xml\sversion="\d+\.\d+"\?' . '>\s*(<api>.+?</api>)~is', $search_results, $matches) != true)
-		fatal_lang_error('cannot_connect_doc_site');
-
-	$search_results = $matches[1];
-
-	// Otherwise we simply walk through the XML and stick it in context for display.
-	$context['search_results'] = array();
-	require_once($sourcedir . '/Class-Package.php');
-
-	// Get the results loaded into an array for processing!
-	$results = new xmlArray($search_results, false);
-
-	// Move through the api layer.
-	if (!$results->exists('api'))
-		fatal_lang_error('cannot_connect_doc_site');
-
-	// Are there actually some results?
-	if ($results->exists('api/query/search/p'))
-	{
-		$relevance = 0;
-		foreach ($results->set('api/query/search/p') as $result)
-		{
-			$context['search_results'][$result->fetch('@title')] = array(
-				'title' => $result->fetch('@title'),
-				'relevance' => $relevance++,
-				'snippet' => str_replace('class=\'searchmatch\'', 'class="highlight"', un_htmlspecialchars($result->fetch('@snippet'))),
-			);
-		}
-	}
 }
 
 /**

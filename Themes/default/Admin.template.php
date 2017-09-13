@@ -845,33 +845,16 @@ function template_admin_search_results()
 						<ol class="search_results">';
 		foreach ($context['search_results'] as $result)
 		{
-			// Is it a result from the online manual?
-			if ($context['search_type'] == 'online')
-			{
-				echo '
-							<li>
-								<p>
-									<a href="', $context['doc_scripturl'], str_replace(' ', '_', $result['title']), '" target="_blank" class="new_win"><strong>', $result['title'], '</strong></a>
-								</p>
-								<p class="double_height">
-									', $result['snippet'], '
-								</p>
-							</li>';
-			}
-			// Otherwise it's... not!
-			else
-			{
-				echo '
+			echo '
 							<li>
 								<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
 
-				if ($result['help'])
-					echo '
+			if ($result['help'])
+				echo '
 								<p class="double_height">', $result['help'], '</p>';
 
-				echo '
+			echo '
 							</li>';
-			}
 		}
 		echo '
 						</ol>';
@@ -1153,7 +1136,6 @@ function template_admin_quick_search()
 									<select name="search_type">
 										<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
 										<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
-										<option value="online"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'online' ? ' selected' : ''), '>', $txt['admin_search_type_online'], '</option>
 									</select>
 									<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '" class="button_submit">
 								</span>';

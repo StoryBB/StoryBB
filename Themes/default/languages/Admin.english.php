@@ -636,7 +636,6 @@ $txt['mailqueue_settings'] = 'Settings';
 $txt['admin_search'] = 'Quick Search';
 $txt['admin_search_type_internal'] = 'Task/Setting';
 $txt['admin_search_type_member'] = 'Member';
-$txt['admin_search_type_online'] = 'Online Manual';
 $txt['admin_search_go'] = 'Go';
 $txt['admin_search_results'] = 'Search Results';
 $txt['admin_search_results_desc'] = 'Results for search: &quot;%1$s&quot;';
