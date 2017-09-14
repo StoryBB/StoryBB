@@ -55,11 +55,15 @@ function template_registration_form()
 	//Preprocessing: sometimes we're given eval strings to make options for custom fields.
 	//WE REALLY SHOULDN'T DO THIS.
 	//But for now:
-	foreach ($context['profile_fields'] as $key => $field) {
-		if ($field['type'] == 'select' && !is_array($field['options'])) {
-			$field['options'] = eval($field['options']);
+	if (!empty($context['profile_fields'])) {
+		foreach ($context['profile_fields'] as $key => $field) {
+			if ($field['type'] == 'select' && !is_array($field['options'])) {
+				$field['options'] = eval($field['options']);
+			}
 		}
 	}
+
+	$verify_id = $context['visual_verification_id'];
 		
 	$data = Array(
 		'context' => $context,
@@ -67,8 +71,8 @@ function template_registration_form()
 		'scripturl' => $scripturl,
 		'modSettings' => $modSettings,
 		'verification_visual' => Array(
-			'verify_context' => $context['controls']['verification'][0],
-			'verify_id' => 0,
+			'verify_context' => $context['controls']['verification'][$verify_id],
+			'verify_id' => $verify_id,
 			'txt' => $txt,
 			'hinput_name' => $_SESSION[$verify_id . '_vv']['empty_field'],
 			'quick_reply' => false
@@ -83,14 +87,14 @@ function template_registration_form()
 	$phpStr = LightnCandy::compile($template, Array(
 	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
 	    'partials' => Array(
-	    	'visual_verification_control' => file_get_contents(__DIR__ .  "/partials/visual_verification_control.hbs")
+	    	'visual_verification_control' => file_get_contents(__DIR__ .  "/partials/control_visual_verification.hbs")
 	    ),
 	    'helpers' => Array(
-	    	'or' => logichelper_or,
-	    	'and' => logichelper_and,
-	    	'eq' => logichelper_eq,
-	    	'lt' => logichelper_lt,
-	    	'not' => logichelper_not,
+	    	'or' => 'logichelper_or',
+	    	'and' => 'logichelper_and',
+	    	'eq' => 'logichelper_eq',
+	    	'lt' => 'logichelper_lt',
+	    	'not' => 'logichelper_not',
 	    	'profile_callback_helper' => function ($field) {
 	            if ($field['type'] == 'callback')
 				{
@@ -107,7 +111,7 @@ function template_registration_form()
 	        'field_isText' => function($type) {
 	        	return in_array($type, array('int', 'float', 'text', 'password'));
 	        },
-	        'template_control_verification' => template_control_verification
+	        'template_control_verification' => 'template_control_verification'
 	    )
 	));
 	

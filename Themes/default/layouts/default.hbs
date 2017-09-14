@@ -10,9 +10,9 @@
     <script>
     {{#each context.javascript_vars}}
         {{#if .}}
-            {{{@key}}}={{{.}}}
+            {{{@key}}}={{{.}}};
         {{else}}
-            {{{@key}}}
+            {{{@key}}}="";
         {{/if}}
     {{/each}}
     </script>
@@ -48,7 +48,7 @@
 	{{#if context.links.next}}<link rel="next" href="{{context.links.next}}">{{/if}}
 	{{#if context.links.prev}}<link rel="perv" href="{{context.links.prev}}">{{/if}}
 	{{#if context.current_board}}<link rel="index" href="{{scripturl}}?board={{context.current_board}}.0">{{/if}}
-	{{context.html_headers}}
+	{{{context.html_headers}}}
 	</head>
 	{{!-- 
 	I apologise for the next line. -Yami

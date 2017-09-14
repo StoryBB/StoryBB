@@ -1,7 +1,7 @@
 <script>
 			function verifyAgree()
 			{
-				if (currentAuthMethod == \'passwd\' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
+				if (currentAuthMethod == 'passwd' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
 				{
 					alert("{{txt.register_passwords_differ_js}}");
 					return false;
@@ -10,7 +10,7 @@
 				return true;
 			}
 
-			var currentAuthMethod = \'passwd\';
+			var currentAuthMethod = 'passwd';
 		</script>
 		{{#if context.registration_errors}}
 		<div class="errorbox">
@@ -134,7 +134,6 @@
 			</div>
 			<div class="roundframe noup">
 				<fieldset class="centertext">
-				{{template_control_verification context.visual_verification_id "all"}}
 				{{>visual_verification_control verification_visual}}
 				</fieldset>
 			</div>
