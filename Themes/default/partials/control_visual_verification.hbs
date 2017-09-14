@@ -2,7 +2,7 @@
 	{{txt.visual_verification_hidden}}:
 	<input type="text" name="{{hinput_name}}" autocomplete="off" size="30" value="">
 </div>
-{{#if context.use_graphic_library}}
+{{#if use_graphic_library}}
 <img src="{{verify_context.image_href}}" alt="{{txt.visual_verification_description}}" id="verification_image_{{verify_id}}">
 {{else}}
 <img src="{{verify_context.image_href}};letter=1" alt="{{txt.visual_verification_description}}" id="verification_image_{{verify_id}}_1">

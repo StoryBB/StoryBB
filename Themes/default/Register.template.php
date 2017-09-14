@@ -71,6 +71,7 @@ function template_registration_form()
 		'scripturl' => $scripturl,
 		'modSettings' => $modSettings,
 		'verification_visual' => Array(
+			'use_graphic_library' => $context['use_graphic_library'],
 			'verify_context' => $context['controls']['verification'][$verify_id],
 			'verify_id' => $verify_id,
 			'txt' => $txt,
