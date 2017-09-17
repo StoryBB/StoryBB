@@ -2395,6 +2395,9 @@ function compileTemplate($template, $options = []) {
 			array_pop($items); // Strip the last item off the array, it's the calling context.
 			return implode($items);
 		},
+		'getNumItems' => function($items) {
+			return count($items);
+		}
 	];
 	$phpStr = LightnCandy::compile($template, [
 		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL),

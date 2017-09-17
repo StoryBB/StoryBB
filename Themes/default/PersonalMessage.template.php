@@ -114,7 +114,6 @@ function template_folder()
 		'helpers' => [
 			'implode' => 'implode_comma',
 			'get_text' => 'get_text',
-			'getNumItems' => 'getNumItems',
 			'hasKey' => 'hasKey',
 			'json' => 'stringhelper_json',
 		],
@@ -148,7 +147,6 @@ function template_subject_list()
 	$phpStr = compileTemplate($template, [
 		'helpers' => [
 			'implode' => 'implode_comma',
-			'getNumItems' => 'getNumItems',
 			'json' => 'stringhelper_json',
 		],
 	]);
@@ -418,7 +416,6 @@ function template_send()
 	$phpStr = compileTemplate($template, [
 		'helpers' => [
 			'implode' => 'implode_sep',
-			'getNumItems' => 'getNumItems',
 			'JSEscape' => 'JSEscape',
 			'json' => 'stringhelper_json',
 		],

@@ -55,7 +55,6 @@ function template_main()
 
 	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'getNumItems' => 'getNumItems',
 			'implode_comma' => 'implode_comma',
 			'comma' => 'comma',
 			'qmod_option' => function($action) {

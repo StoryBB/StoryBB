@@ -35,10 +35,6 @@ function breakRow($index, $perRow, $sep) {
 	return "";
 }
 
-function getNumItems($items) {
-	return count($items);
-}
-
 function dump($item) {
 	return var_dump($item);
 }

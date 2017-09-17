@@ -48,7 +48,6 @@ function template_main()
 			'JSEscape' => 'JSEScape',
 			'get_text' => 'get_text',
 			'breakRow' => 'breakRow',
-			'getNumItems' => 'getNumItems',
 			'getLikeText' => 'getLikeText'
 		]
 	]);

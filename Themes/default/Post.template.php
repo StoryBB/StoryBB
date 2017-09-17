@@ -52,7 +52,6 @@ function template_main()
 				return comma_format(round(max($size, 1024) / 1024), 0);
 			},
 			'sizeLimit' => function() { global $modSettings; return $modSettings['attachmentSizeLimit'] * 1024; },
-			'getNumItems' => 'getNumItems',
 			'implode_sep' => 'implode_sep'
 		]
 	]);
