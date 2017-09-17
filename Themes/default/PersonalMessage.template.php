@@ -23,11 +23,7 @@ function template_pm_above()
 
 	$template = loadTemplatePartial('pm_above');
 
-	$phpStr = compileTemplate($template, [
-		'helpers' => [
-			'json' => 'stringhelper_json',
-		],
-	]);
+	$phpStr = compileTemplate($template);
 	
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
@@ -114,7 +110,6 @@ function template_folder()
 			'implode' => 'implode_comma',
 			'get_text' => 'get_text',
 			'hasKey' => 'hasKey',
-			'json' => 'stringhelper_json',
 		],
 	]);
 	
@@ -146,7 +141,6 @@ function template_subject_list()
 	$phpStr = compileTemplate($template, [
 		'helpers' => [
 			'implode' => 'implode_comma',
-			'json' => 'stringhelper_json',
 		],
 	]);
 	
@@ -416,7 +410,6 @@ function template_send()
 		'helpers' => [
 			'implode' => 'implode_sep',
 			'JSEscape' => 'JSEscape',
-			'json' => 'stringhelper_json',
 		],
 	]);
 	

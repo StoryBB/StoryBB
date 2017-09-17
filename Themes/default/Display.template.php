@@ -44,7 +44,6 @@ function template_main()
 	$phpStr = compileTemplate($template, [
 		'helpers' => [
 			'implode' => 'implode_comma',
-			'json' => 'stringhelper_json',
 			'JSEscape' => 'JSEScape',
 			'get_text' => 'get_text',
 			'breakRow' => 'breakRow',

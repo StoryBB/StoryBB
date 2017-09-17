@@ -53,17 +53,6 @@ function implode_and($array)
 	}
 }
 
-/**
- * Output a given string as JSON.
- *
- * @param mixed $data Data to export as JSON
- * @return string JSON-encoded data
- */
-function stringhelper_json($data)
-{
-	return json_encode($data);
-}
-
 function stringhelper_string_json($data) {
 	return json_encode((string) $data);
 }

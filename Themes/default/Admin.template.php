@@ -30,7 +30,6 @@ function template_admin()
 	$phpStr = compileTemplate($template, [
 		'helpers' => [
 			'implode_comma' => 'implode_comma',
-			'json' => 'stringhelper_json',
 		],
 	]);
 	

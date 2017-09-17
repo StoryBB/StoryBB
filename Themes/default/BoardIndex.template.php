@@ -69,7 +69,6 @@ function template_main()
             'link_moderators' => 'moderators_helper',
             'comma_format' => 'comma_format_helper',
             'partial_helper' => 'include_ic_partial',
-            'json' => 'stringhelper_json',
             'jsontext' => 'stringhelper_string_json'
         ]
     ]);

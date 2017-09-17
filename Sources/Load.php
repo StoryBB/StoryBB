@@ -2403,6 +2403,8 @@ function compileTemplate($template, $options = []) {
 		'mul' => function($a, $b) { return $a * $b; },
 		'div' => function($a, $b) { return $a / $b; },
 		'comma' => 'comma_format',
+		'json' => function ($data) { return json_encode($data); },
+		'join' => function($array, $sep = '') { return implode($sep, $array); },
 	];
 	$default_partials = [
 		'helpicon' => loadTemplatePartial('helpicon'),
