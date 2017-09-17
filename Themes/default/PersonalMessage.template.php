@@ -25,7 +25,6 @@ function template_pm_above()
 
 	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'div' => 'numericshelper_div',
 			'json' => 'stringhelper_json',
 		],
 	]);

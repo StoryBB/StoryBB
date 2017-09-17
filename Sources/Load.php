@@ -2397,7 +2397,12 @@ function compileTemplate($template, $options = []) {
 		},
 		'getNumItems' => function($items) {
 			return count($items);
-		}
+		},
+		'add' => function($a, $b) { return $a + $b; },
+		'sub' => function($a, $b) { return $a - $b; },
+		'mul' => function($a, $b) { return $a * $b; },
+		'div' => function($a, $b) { return $a / $b; },
+		'comma' => 'comma_format',
 	];
 	$phpStr = LightnCandy::compile($template, [
 		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL),

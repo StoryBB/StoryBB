@@ -56,7 +56,6 @@ function template_main()
 	$phpStr = compileTemplate($template, [
 		'helpers' => [
 			'implode_comma' => 'implode_comma',
-			'comma' => 'comma',
 			'qmod_option' => function($action) {
 				global $context, $txt;
 				if (!empty($context['can_' . $action]))
