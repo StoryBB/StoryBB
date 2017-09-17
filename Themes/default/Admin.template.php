@@ -627,59 +627,6 @@ function template_edit_profile_field()
 }
 
 /**
- * Results page for an admin search.
- */
-function template_admin_search_results()
-{
-	global $context, $txt, $settings, $scripturl;
-
-	echo '
-						<div id="section_header" class="cat_bar">
-							<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8">
-								<h3 class="catbg">
-									<span id="quick_search" class="floatright">
-										<input type="search" name="search_term" value="', $context['search_term'], '" class="input_text">
-										<input type="hidden" name="search_type" value="', $context['search_type'], '">
-										<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '" class="button_submit">
-									</span>
-									<span class="generic_icons filter"></span>
-									<span id="quick_search_results">&nbsp;', sprintf($txt['admin_search_results_desc'], $context['search_term']), '</span>
-								</h3>
-							</form>
-						</div>
-					<div class="windowbg2 generic_list_wrapper">';
-
-	if (empty($context['search_results']))
-	{
-		echo '
-						<p class="centertext"><strong>', $txt['admin_search_results_none'], '</strong></p>';
-	}
-	else
-	{
-		echo '
-						<ol class="search_results">';
-		foreach ($context['search_results'] as $result)
-		{
-			echo '
-							<li>
-								<a href="', $result['url'], '"><strong>', $result['name'], '</strong></a> [', isset($txt['admin_search_section_' . $result['type']]) ? $txt['admin_search_section_' . $result['type']] : $result['type'], ']';
-
-			if ($result['help'])
-				echo '
-								<p class="double_height">', $result['help'], '</p>';
-
-			echo '
-							</li>';
-		}
-		echo '
-						</ol>';
-	}
-
-	echo '
-					</div>';
-}
-
-/**
  * This little beauty shows questions and answer from the captcha type feature.
  */
 function template_callback_question_answer_list()
