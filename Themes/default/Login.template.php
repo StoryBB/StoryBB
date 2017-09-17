@@ -9,31 +9,6 @@ use LightnCandy\LightnCandy;
  */
 
 /**
- * This is just the basic "login" form.
- */
-function template_login()
-{
-	global $context, $settings, $scripturl, $modSettings, $txt;
-	
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'settings' => $settings,
-		'modSettings' => $modSettings,
-		'ajax_nonssl' => !empty($context['from_ajax']) && (empty($modSettings['force_ssl']) || $modSettings['force_ssl'] == 2)
-	);
-	
-	$template = loadTemplateFile('login_main');
-
-	$phpStr = compileTemplate($template);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * TFA authentication form
  */
 function template_login_tfa()

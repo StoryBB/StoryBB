@@ -518,7 +518,6 @@ function Activate()
 		redirectexit();
 
 	loadLanguage('Login');
-	loadTemplate('Login');
 
 	if (empty($_REQUEST['u']) && empty($_POST['user']))
 	{
@@ -655,7 +654,7 @@ function Activate()
 
 	$context += array(
 		'page_title' => $txt['registration_successful'],
-		'sub_template' => 'login',
+		'sub_template' => 'login_main',
 		'default_username' => $row['member_name'],
 		'default_password' => '',
 		'never_expire' => false,
