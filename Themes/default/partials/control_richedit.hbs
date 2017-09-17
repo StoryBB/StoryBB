@@ -23,20 +23,22 @@ style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if 
 					{
 					    {{!-- key is a location, value is a row of smileys --}}
 					    {{#each context.smileys}}
-                        {{#if (eq @key postform)}}
+                        {{#if (eq @key 'postform')}}
                         dropdown:
                         {
                         {{else}}
                         popup:
                         {
                         {{/if}}
+                        {{#if (getNumItems this)}}
                         {{!-- iterate over the row --}}
                         {{#each this.[0].smileys}}
-                            "{{jsEscape code}}":"{{../../settings.smileys_url}}/{{filename}}"{{#unless isLast}},{{/unless}}
+                            {{{jsEscape code}}}:"{{../../settings.smileys_url}}/{{filename}}"{{#unless isLast}},{{/unless}}
                         {{/each}}
-                        {{#unless this.[0].smileys}}
+                        {{#unless (getNumItems this.[0].smileys)}}
                             "0":'', {{!-- allows empty rows --}}
                         {{/unless}}
+                        {{/if}}
                         }{{#unless isLast}},{{/unless}}
                         {{/each}}
                     }
