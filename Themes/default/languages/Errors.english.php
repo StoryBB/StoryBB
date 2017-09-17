@@ -203,7 +203,6 @@ $txt['remind_WaitTime_broken'] = 'Your last reminder was less than %1$d seconds 
 $txt['email_missing_data'] = 'You must enter something in both the subject and message boxes.';
 
 $txt['topic_gone'] = 'The topic or board you are looking for appears to be either missing or off limits to you.';
-$txt['theme_edit_missing'] = 'The file you are trying to edit can\'t be found.';
 
 $txt['no_dump_database'] = 'Only administrators can make database backups.';
 $txt['pm_not_yours'] = 'The personal message you\'re trying to quote is not your own or does not exist, please go back and try again.';
@@ -408,8 +407,6 @@ $txt['cannot_restore_first_post'] = 'You cannot restore the first post in a topi
 $txt['parent_topic_missing'] = 'The parent topic of the post you are trying to restore has been deleted.';
 $txt['restored_disabled'] = 'The restoration of topics has been disabled.';
 $txt['restore_not_found'] = 'The following messages could not be restored; the original topic may have been removed:<ul style="margin-top: 0px;">%1$s</ul>You will need to move these manually.';
-
-$txt['error_invalid_dir'] = 'The directory you entered is invalid.';
 
 // json errors.
 $txt['json_JSON_ERROR_DEPTH'] = 'Json decode error: The maximum stack depth has been exceeded';

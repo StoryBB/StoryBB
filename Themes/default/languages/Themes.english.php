@@ -52,8 +52,6 @@ $txt['theme_pick_variant'] = 'Select Variant';
 $txt['theme_edit'] = 'Edit Theme';
 $txt['theme_edit_style'] = 'Modify the stylesheets. (colors, fonts, etc.)';
 $txt['theme_edit_index'] = 'Modify the index template. (the main template)';
-$txt['theme_edit_no_save'] = 'This file cannot be saved because it is not writable. Please make sure the following file is 777 or has the proper permissions';
-$txt['theme_edit_save'] = 'Save Changes';
 
 $txt['theme_global_description'] = 'This is the default theme, which means your theme will change along with the administrators\' settings and the board you are viewing.';
 
@@ -101,7 +99,6 @@ $txt['themeadmin_description'] = 'Here you can modify the settings for your them
 $txt['themeadmin_admin_desc'] = 'This page allows you to change the default theme, reset members to all use a certain theme, and choose other settings related to theme selection. You are also able to install themes from here.<br><br>Don\'t forget to look at the theme settings for your themes for layout options.';
 $txt['themeadmin_list_desc'] = 'From here, you can view the list of themes you currently have installed, change their paths and settings, and uninstall them.';
 $txt['themeadmin_reset_desc'] = 'Below you will see an interface to change the current theme-specific options for all your members. You will only see those themes that have their own set of settings.';
-$txt['themeadmin_edit_desc'] = 'Modify the stylesheet and source code of your installed themes. Please consult the documentation for more information.';
 
 $txt['themeadmin_list_heading'] = 'Theme Settings Overview';
 $txt['themeadmin_list_tip'] = 'Remember, the layout settings may be different between one theme and another. Click on the theme\'s names below to set their options, change their directory or URL settings, or to find other options.';
@@ -127,24 +124,13 @@ $txt['themeadmin_reset_options_change'] = 'Change';
 $txt['themeadmin_reset_options_none'] = 'Don\'t change';
 $txt['themeadmin_reset_options_default'] = 'Default';
 
-$txt['themeadmin_edit_browse'] = 'Browse the templates and files in this theme.';
-$txt['themeadmin_edit_style'] = 'Edit this theme\'s stylesheets.';
-$txt['themeadmin_edit_copy_template'] = 'Copy a template from the theme this is based on.';
 $txt['themeadmin_edit_exists'] = 'already exists';
 $txt['themeadmin_edit_do_copy'] = 'copy';
 $txt['themeadmin_edit_copy_warning'] = 'When StoryBB needs a template or language file which is not in the current theme, it looks in the theme it is based on, or the default theme.<br>Unless you need to modify a template, it\'s better not to copy it.';
 $txt['themeadmin_edit_copy_confirm'] = 'Are you sure you want to copy this template?';
 $txt['themeadmin_edit_overwrite_confirm'] = 'Are you sure you want to copy this template over the one that already exists?\nThis will OVERWRITE any changes you\\\'ve made';
 $txt['themeadmin_edit_no_copy'] = '<em>(can\'t copy)</em>';
-$txt['themeadmin_browsing_theme'] = 'Browsing files in theme: %1$s';
 $txt['themeadmin_edit_filename'] = 'Filename';
-$txt['themeadmin_edit_modified'] = 'Last Modified';
-$txt['themeadmin_edit_size'] = 'Size';
-$txt['themeadmin_edit_bytes'] = 'B';
-$txt['themeadmin_edit_kilobytes'] = 'KB';
-$txt['themeadmin_edit_error'] = 'The file you tried to save generated the following error:';
-$txt['themeadmin_edit_on_line'] = 'Beginning on line';
-$txt['themeadmin_edit_preview'] = 'Preview';
 $txt['themeadmin_selectable'] = 'Themes that the user is able to select';
 $txt['themeadmin_themelist_link'] = 'Show the list of themes';
 
