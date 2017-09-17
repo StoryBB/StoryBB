@@ -55,6 +55,7 @@ function PlushSearch1()
 		'url' => $scripturl . '?action=search',
 		'name' => $txt['search']
 	);
+	$context['sub_template'] = 'search';
 
 	// This is hard coded maximum string length.
 	$context['search_string_limit'] = 100;
