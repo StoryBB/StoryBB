@@ -308,7 +308,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 		$context['page_title'] = $context['error_title'];
 
 	loadTemplate('Errors');
-	$context['sub_template'] = 'fatal_error';
+	$context['sub_template'] = 'error_fatal';
 
 	// If this is SSI, what do they want us to do?
 	if (SMF == 'SSI')
@@ -316,7 +316,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 		if (!empty($ssi_on_error_method) && $ssi_on_error_method !== true && is_callable($ssi_on_error_method))
 			$ssi_on_error_method();
 		elseif (empty($ssi_on_error_method) || $ssi_on_error_method !== true)
-			loadSubTemplate('fatal_error');
+			loadSubTemplate('error_fatal');
 
 		// No layers?
 		if (empty($ssi_on_error_method) || $ssi_on_error_method !== true)

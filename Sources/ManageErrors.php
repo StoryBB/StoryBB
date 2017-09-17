@@ -418,9 +418,9 @@ function ViewFile()
 		'file' => strtr($file, array('"' => '\\"')),
 	);
 
-	loadTemplate('Errors');
+	loadTemplateLayout('raw');
 	$context['template_layers'] = array();
-	$context['sub_template'] = 'show_file';
+	$context['sub_template'] = 'error_show_file';
 
 }
 
