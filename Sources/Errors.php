@@ -307,7 +307,6 @@ function setup_fatal_error_context($error_message, $error_code = null)
 	if (empty($context['page_title']))
 		$context['page_title'] = $context['error_title'];
 
-	loadTemplate('Errors');
 	$context['sub_template'] = 'error_fatal';
 
 	// If this is SSI, what do they want us to do?

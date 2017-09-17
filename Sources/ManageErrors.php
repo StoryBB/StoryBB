@@ -35,7 +35,6 @@ function ViewErrorLog()
 
 	// Templates, etc...
 	loadLanguage('ManageMaintenance');
-	loadTemplate('Errors');
 
 	// You can filter by any of the following columns:
 	$filters = array(
