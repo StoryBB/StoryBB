@@ -158,6 +158,18 @@
     	    </div>
     	    <div id="content_section">
     			<div id="main_content_section">
+                    {{#if (and context.in_maintenance context.user.is_admin)}}
+                        <div class="errorbox">
+                            <dl>
+                                <dt>
+                                    <strong id="error_serious">{{txt.forum_in_maintenance}}</strong>
+                                </dt>
+                                <dd class="error" id="error_list">
+                                    {{{textTemplate txt.maintenance_page (concat scripturl '?action=admin;area=serversettings;' context.session_var '=' context.session_id)}}}
+                                </dd>
+                            </dl>
+                        </div>
+                    {{/if}}
                     {{>status_messages}}
     			    {{{content}}}
     			</div>
