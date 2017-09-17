@@ -67,63 +67,6 @@ function template_view_versions()
 }
 
 /**
- * This is the page shown when we've temporarily paused things such as during maintenance tasks, sending newsletters, etc.
- */
-function template_not_done()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-					<div id="admincenter">
-						<div id="section_header" class="cat_bar">
-							<h3 class="catbg">
-								', $txt['not_done_title'], '
-							</h3>
-						</div>
-						<div class="windowbg2 noup">
-							', $txt['not_done_reason'];
-
-	if (!empty($context['continue_percent']))
-		echo '
-							<div class="progress_bar">
-								<div class="full_bar">', $context['continue_percent'], '%</div>
-								<div class="green_percent" style="width: ', $context['continue_percent'], '%;">&nbsp;</div>
-							</div>';
-
-	if (!empty($context['substep_enabled']))
-		echo '
-							<div class="progress_bar">
-								<div class="full_bar">', $context['substep_title'], ' (', $context['substep_continue_percent'], '%)</div>
-								<div class="blue_percent" style="width: ', $context['substep_continue_percent'], '%;">&nbsp;</div>
-							</div>';
-
-	echo '
-							<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
-								<input type="submit" name="cont" value="', $txt['not_done_continue'], '" class="button_submit">
-								', $context['continue_post_data'], '
-							</form>
-						</div>
-					</div>
-					<script>
-						var countdown = ', $context['continue_countdown'], ';
-						doAutoSubmit();
-
-						function doAutoSubmit()
-						{
-							if (countdown == 0)
-								document.forms.autoSubmit.submit();
-							else if (countdown == -1)
-								return;
-
-							document.forms.autoSubmit.cont.value = "', $txt['not_done_continue'], ' (" + countdown + ")";
-							countdown--;
-
-							setTimeout("doAutoSubmit();", 1000);
-						}
-					</script>';
-}
-
-/**
  * Template for showing settings (Of any kind really!)
  */
 function template_show_settings()
