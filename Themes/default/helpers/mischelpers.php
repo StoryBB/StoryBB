@@ -47,5 +47,4 @@ function hasKey($arr, $key) {
 	return in_array($arr, $key);
 }
 
-
 ?>

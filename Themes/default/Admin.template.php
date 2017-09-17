@@ -25,50 +25,11 @@ function template_admin()
 		'admin_menu' => $context[$context['admin_menu_name']],
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/admin_home.hbs");
-	if (!$template) {
-		die('Admin home template did not load!');
-	}
+	$template = loadTemplateFile('admin_home');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
 			'implode_comma' => 'implode_comma',
-			'eq' => 'logichelper_eq',
-			'and' => 'logichelper_and',
-			'json' => 'stringhelper_json',
-		],
-	]);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
- * Show some support information and credits to those who helped make this.
- */
-function template_support()
-{
-	global $context, $settings, $scripturl, $txt;
-
-	$data = [
-		'context' => $context,
-		'txt' => $txt,
-		'settings' => $settings,
-		'scripturl' => $scripturl,
-	];
-
-	$template = file_get_contents(__DIR__ .  "/templates/admin_support.hbs");
-	if (!$template) {
-		die('Admin home template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-		'helpers' => [
-			'implode_comma' => 'implode_comma',
-			'and' => 'logichelper_and',
 			'json' => 'stringhelper_json',
 		],
 	]);
@@ -92,15 +53,11 @@ function template_view_versions()
 		'scripturl' => $scripturl,
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/admin_versions.hbs");
-	if (!$template) {
-		die('Admin home template did not load!');
-	}
+	$template = loadTemplateFile('admin_versions');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'array2js' => array2js
+			'array2js' => 'array2js',
 		],
 	]);
 	

@@ -21,46 +21,9 @@ function template_fatal_error()
 		'txt' => $txt
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/error_fatal.hbs");
-	if (!$template) {
-		die('Fatal error template did not load!');
-	}
+	$template = loadTemplateFile('error_fatal');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-		'helpers' => [],
-	]);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
- * This template handles the error log in the admin center.
- */
-function template_error_log()
-{
-	global $context, $settings, $scripturl, $txt;
-	
-	$data = [
-		'context' => $context,
-		'settings' => $settings,
-		'scripturl' => $scripturl,
-		'txt' => $txt
-	];
-
-	$template = file_get_contents(__DIR__ .  "/templates/error_log.hbs");
-	if (!$template) {
-		die('Error log template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-		'helpers' => [
-			'eq' => 'logichelper_eq',
-		],
-	]);
+	$phpStr = compileTemplate($template);
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);
@@ -80,15 +43,10 @@ function template_show_file()
 		'modSettings' => $modSettings
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/error_show_file.hbs");
-	if (!$template) {
-		die('Error show file template did not load!');
-	}
+	$template = loadTemplateFile('error_show_file');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'eq' => 'logichelper_eq',
 			'add' => 'numerichelper_add',
 		],
 	]);
@@ -111,15 +69,9 @@ function template_attachment_errors()
 		'txt' => $txt
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/error_attachment.hbs");
-	if (!$template) {
-		die('Attachment error template did not load!');
-	}
+	$template = loadTemplateFile('error_attachment');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-		'helpers' => [],
-	]);
+	$phpStr = compileTemplate($template);
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);

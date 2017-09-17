@@ -32,11 +32,11 @@
 							<td>
 								{{#unless is_guest}}
 									<span class="contact_info floatright">
-										{{# if ../context.can_send_pm }}<a href="{{{online.href}}}" title="{{{online.text}}}">{{/if}}
+										{{#if ../context.can_send_pm}}<a href="{{{online.href}}}" title="{{{online.text}}}">{{/if}}
 											
 											<span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{online.text}}"></span>
-											{{/if}}
-										{{# if ../context.can_send_pm }}</a>{{/if}}
+
+										{{#if ../context.can_send_pm}}</a>{{/if}}
 									</span>
 								{{/unless}}
 								<span class="member{{#if is_hidden}} hidden{{/if}}">

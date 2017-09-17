@@ -51,21 +51,12 @@ function template_main()
 		'modSettings' => $modSettings
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/msgIndex_main.hbs");
-	if (!$template) {
-		die('MsgIndex main template did not load!');
-	}
+	$template = loadTemplateFile('msgIndex_main');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'eq' => 'logichelper_eq',
-			'and' => 'logichelper_and',
-			'or' => 'logichelper_or',
-			'textTemplate' => 'textTemplate',
 			'getNumItems' => 'getNumItems',
 			'implode_comma' => 'implode_comma',
-			'concat' => 'concat',
 			'comma' => 'comma',
 			'qmod_option' => function($action) {
 				global $context, $txt;
@@ -73,10 +64,6 @@ function template_main()
 					return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
 			}
 		],
-		'partials' => [
-			'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs"),
-			'topic_legend' => file_get_contents(__DIR__ .  "/partials/topic_legend.hbs"),
-		]
 	]);
 	
 	$renderer = LightnCandy::prepare($phpStr);

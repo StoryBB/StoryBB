@@ -25,7 +25,6 @@ function BoardIndex()
 	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl;
 
 	loadTemplate('BoardIndex');
-	$context['template_layers'][] = 'boardindex_outer';
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl;

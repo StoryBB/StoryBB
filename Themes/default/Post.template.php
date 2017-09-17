@@ -41,38 +41,22 @@ function template_main()
 		'verify_context' => !empty($context['visual_verification_id']) ? $context['controls']['verification'][$context['visual_verification_id']] : false,
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/post_main.hbs");
-	if (!$template) {
-		die('Display main template did not load!');
-	}
+	$template = loadTemplateFile('post_main');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
 			'browser' => 'isBrowser',
 			'jsEscape' => 'JavaScriptEscape',
-			'textTemplate' => 'textTemplate',
-			'concat' => 'concat',
 			'numeric' => function($x) { return is_numeric($x);},
-			'neq' => 'logichelper_ne',
-			'eq' => 'logichelper_eq',
-			'or' => 'logichelper_or',
-			'and' => 'logichelper_and',
-			'gt' => 'logichelper_gt',
-			'not' => 'logichelper_not',
 			'formatKb' => function($size) {
-				return comma_format(round(max($size, 1028) / 1028), 0);
+				return comma_format(round(max($size, 1024) / 1024), 0);
 			},
-			'sizeLimit' => function() { global $modSettings; return $modSettings['attachmentSizeLimit'] * 1028; },
+			'sizeLimit' => function() { global $modSettings; return $modSettings['attachmentSizeLimit'] * 1024; },
 			'getNumItems' => 'getNumItems',
 			'implode_sep' => 'implode_sep'
-		],
-		'partials' => [
-			'control_richedit' => file_get_contents(__DIR__ .  "/partials/control_richedit.hbs"),
-			'control_visual_verification' => file_get_contents(__DIR__ .  "/partials/control_visual_verification.hbs"),
-			'control_richedit_buttons' => file_get_contents(__DIR__ .  "/partials/control_richedit_buttons.hbs")
 		]
 	]);
+
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
 }
@@ -84,25 +68,16 @@ function template_quotefast()
 {
 	global $context, $settings, $txt, $modSettings;
 
-		$data = [
+	$data = [
 		'context' => $context,
 		'txt' => $txt,
 		'modSettings' => $modSettings,
 		'settings' => $settings
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/post_quotefast.hbs");
-	if (!$template) {
-		die('Display main template did not load!');
-	}
+	$template = loadTemplateFile('post_quotefast');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-		'helpers' => [
-		],
-		'partials' => [
-		]
-	]);
+	$phpStr = compileTemplate($template);
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
 }
@@ -119,18 +94,9 @@ function template_announce()
 		'scripturl' => $scripturl
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/post_announce.hbs");
-	if (!$template) {
-		die('Post announce template did not load!');
-	}
+	$template = loadTemplateFile('post_announce');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-		'helpers' => [
-		],
-		'partials' => [
-		]
-	]);
+	$phpStr = compileTemplate($template);
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
 }
@@ -147,18 +113,9 @@ function template_announcement_send()
 		'scripturl' => $scripturl
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/post_announce_send.hbs");
-	if (!$template) {
-		die('template did not load!');
-	}
+	$template = loadTemplateFile('post_announce_send');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-		'helpers' => [
-		],
-		'partials' => [
-		]
-	]);
+	$phpStr = compileTemplate($template);
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
 }

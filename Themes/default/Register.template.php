@@ -21,16 +21,9 @@ function template_registration_agreement()
 		'scripturl' => $scripturl
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/templates/register_agreement.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
+	$template = loadTemplateFile('register_agreement');
 
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
+	$phpStr = compileTemplate($template);
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);
@@ -80,22 +73,10 @@ function template_registration_form()
 		)
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/templates/register_form.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
+	$template = loadTemplateFile('register_form');
 
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-	    'partials' => Array(
-	    	'visual_verification_control' => file_get_contents(__DIR__ .  "/partials/control_visual_verification.hbs")
-	    ),
+	$phpStr = compileTemplate($template, [
 	    'helpers' => Array(
-	    	'or' => 'logichelper_or',
-	    	'and' => 'logichelper_and',
-	    	'eq' => 'logichelper_eq',
-	    	'lt' => 'logichelper_lt',
-	    	'not' => 'logichelper_not',
 	    	'profile_callback_helper' => function ($field) {
 	            if ($field['type'] == 'callback')
 				{
@@ -114,7 +95,7 @@ function template_registration_form()
 	        },
 	        'template_control_verification' => 'template_control_verification'
 	    )
-	));
+	]);
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);
@@ -141,63 +122,6 @@ function template_after()
 }
 
 /**
- * Template for giving instructions about COPPA activation.
- */
-function template_coppa()
-{
-	global $context, $txt, $scripturl;
-	
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl
-	);
-	
-	$template = file_get_contents(__DIR__ .  "/templates/register_coppa.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
- * An easily printable form for giving permission to access the forum for a minor.
- */
-function template_coppa_form()
-{
-	global $context, $txt;
-	
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt
-	);
-	
-	$template = file_get_contents(__DIR__ .  "/templates/register_coppa_form.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * Show a window containing the spoken verification code.
  */
 function template_verification_sound()
@@ -212,16 +136,9 @@ function template_verification_sound()
 		'modSettings' => $modSettings
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/layouts/popup.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
+	$template = loadTemplateLayout('popup');
 
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
+	$phpStr = compileTemplate($template);
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);
@@ -235,49 +152,10 @@ function template_verification_sound()
 		'id' => ''
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/templates/register_sound_verification.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
+	$template = loadTemplateFile('register_sound_verification');
 
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
+	$phpStr = compileTemplate($template);
 	
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
- * The template for the form allowing an admin to register a user from the admin center.
- */
-function template_admin_register()
-{
-	global $context, $scripturl, $txt, $modSettings;
-
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'modSettings' => $modSettings
-	);
-	
-	$template = file_get_contents(__DIR__ .  "/templates/register_admin.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    	'eq' => logichelper_eq,
-	    	'gt' => logichelper_gt
-	    )
-	));
-	
-	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
 }
@@ -296,46 +174,9 @@ function template_edit_agreement()
 		'editable_agreements' => count($context['editable_agreements']) > 1
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/templates/register_edit_agreement.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
+	$template = loadTemplateFile('register_edit_agreement');
 
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
- * Template for editing reserved words.
- */
-function template_edit_reserved_words()
-{
-	global $context, $scripturl, $txt;
-		
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'editable_agreements' => count($context['editable_agreements']) > 1
-	);
-	
-	$template = file_get_contents(__DIR__ .  "/templates/register_edit_reservedwords.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
+	$phpStr = compileTemplate($template);
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);

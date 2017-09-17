@@ -74,9 +74,8 @@ function RecentPosts()
 {
 	global $txt, $scripturl, $user_info, $context, $modSettings, $board, $smcFunc;
 
-	loadTemplate('Recent');
 	$context['page_title'] = $txt['recent_posts'];
-	$context['sub_template'] = 'recent';
+	$context['sub_template'] = 'recent_posts';
 
 	$context['is_redirect'] = false;
 

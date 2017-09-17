@@ -174,7 +174,7 @@ function ModifyGeneralSettings($return_config = false)
 		call_integration_hook('integrate_save_general_settings');
 
 		saveSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=serversettings;sa=general;' . $context['session_var'] . '=' . $context['session_id']);
 	}
 
@@ -238,7 +238,7 @@ function ModifyDatabaseSettings($return_config = false)
 		call_integration_hook('integrate_save_database_settings');
 
 		saveSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=serversettings;sa=database;' . $context['session_var'] . '=' . $context['session_id']);
 	}
 
@@ -360,7 +360,7 @@ function ModifyCookieSettings($return_config = false)
 			);
 		}
 
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $context['session_id']);
 	}
 
@@ -411,7 +411,7 @@ function ModifyGeneralSecuritySettings($return_config = false)
 	if (isset($_GET['save']))
 	{
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 
 		call_integration_hook('integrate_save_general_security_settings');
 
@@ -491,7 +491,7 @@ function ModifyCacheSettings($return_config = false)
 		call_integration_hook('integrate_save_cache_settings');
 
 		saveSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 
 		// We need to save the $cache_enable to $modSettings as well
 		updatesettings(array('cache_enable' => (int) $_POST['cache_enable']));
@@ -544,16 +544,6 @@ function ModifyCacheSettings($return_config = false)
 function prepareServerSettingsContext(&$config_vars)
 {
 	global $context, $modSettings, $smcFunc;
-
-	if (isset($_SESSION['adm-save']))
-	{
-		if ($_SESSION['adm-save'] === true)
-			$context['saved_successful'] = true;
-		else
-			$context['saved_failed'] = $_SESSION['adm-save'];
-
-		unset($_SESSION['adm-save']);
-	}
 
 	$context['config_vars'] = array();
 	foreach ($config_vars as $identifier => $config_var)
@@ -639,16 +629,6 @@ function prepareDBSettingContext(&$config_vars)
 	global $txt, $helptxt, $context, $modSettings, $sourcedir, $smcFunc;
 
 	loadLanguage('Help');
-
-	if (isset($_SESSION['adm-save']))
-	{
-		if ($_SESSION['adm-save'] === true)
-			$context['saved_successful'] = true;
-		else
-			$context['saved_failed'] = $_SESSION['adm-save'];
-
-		unset($_SESSION['adm-save']);
-	}
 
 	$context['config_vars'] = array();
 	$inlinePermissions = array();

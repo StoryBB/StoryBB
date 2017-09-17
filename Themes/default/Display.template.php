@@ -40,35 +40,16 @@ function template_main()
 		'modSettings' => $modSettings,
 		'viewing' => $viewing
 	];
-	$template = file_get_contents(__DIR__ .  "/templates/display_main.hbs");
-	if (!$template) {
-		die('Display main template did not load!');
-	}
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$template = loadTemplateFile('display_main');
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'eq' => 'logichelper_eq',
-			'neq' => 'logichelper_ne',
-			'or' => 'logichelper_or',
-			'and' => 'logichelper_and',
-			'not' => 'logichelper_not',
 			'implode' => 'implode_comma',
 			'json' => 'stringhelper_json',
 			'JSEscape' => 'JSEScape',
 			'get_text' => 'get_text',
-			'concat' => 'concat',
-			'textTemplate' => 'textTemplate',
 			'breakRow' => 'breakRow',
 			'getNumItems' => 'getNumItems',
 			'getLikeText' => 'getLikeText'
-		],
-		'partials' => [
-			'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs"),
-			'single_post' => file_get_contents(__DIR__ .  "/partials/single_post.hbs"),
-			'quickreply' => file_get_contents(__DIR__ .  "/partials/quick_reply.hbs"),
-			'control_richedit' => file_get_contents(__DIR__ .  "/partials/control_richedit.hbs"),
-			'control_visual_verification' => file_get_contents(__DIR__ .  "/partials/control_visual_verification.hbs"),
-			'control_richedit_buttons' => file_get_contents(__DIR__ .  "/partials/control_richedit_buttons.hbs")
 		]
 	]);
 	

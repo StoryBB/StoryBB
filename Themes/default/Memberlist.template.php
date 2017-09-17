@@ -27,21 +27,14 @@ function template_main()
 		'settings' => $settings
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/templates/memberlist_main.hbs");
-	if (!$template) {
-		die('Member template did not load!');
-	}
+	$template = loadTemplateFile('memberlist_main');
 
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-	    'partials' => Array(
-	    	'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs")
-	    ),
-	    'helpers' => Array(
+	$phpStr = compileTemplate($template, [
+	    'helpers' => [
 	    	'custom_fields' => 'custom_fields_helper',
 	    	'text' => 'get_text' //comes from index
-	    )
-	));
+	    ]
+	]);
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);
@@ -64,21 +57,14 @@ function template_search()
 		'scripturl' => $scripturl
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/templates/memberlist_search.hbs");
-	if (!$template) {
-		die('Member template did not load!');
-	}
+	$template = loadTemplateFile('memberlist_search');
 
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-	    'partials' => Array(
-	    	'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs")
-	    ),
-	    'helpers' => Array(
+	$phpStr = compileTemplate($template, [
+	    'helpers' => [
 	    	'custom_fields' => 'custom_fields_helper',
 	    	'text' => 'get_text' //comes from index
-	    )
-	));
+	    ]
+	]);
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);

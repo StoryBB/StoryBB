@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 if (!defined('SMF'))
 	die('No direct access...');
 
@@ -2289,6 +2291,118 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load Themes/default/%s.template.php!', (string) $template_name), 'template'));
 	else
 		return false;
+}
+
+/**
+ * Loads a template file.
+ *
+ * @param string $template Template name
+ * @return string Template contents
+ */
+function loadTemplateFile($template) {
+	global $settings;
+
+	$paths = [
+		$settings['theme_dir'] . '/templates',
+		$settings['default_theme_dir'] . '/templates',
+	];
+
+	foreach ($paths as $path) {
+		if (file_exists($path) && file_exists($path . '/' . $template . '.hbs')) {
+			return file_get_contents($path . '/' . $template . '.hbs');
+		}
+	}
+
+	fatal_error('Could not load template ' . $template);
+}
+
+/**
+ * Loads a template layout.
+ *
+ * @param string $partial Layout name, without root path or extension
+ * @return string Layout template contents
+ */
+function loadTemplateLayout($layout) {
+	global $settings, $context;
+
+	if ($layout === 'raw') {
+		$context['layout_loaded'] = 'raw';
+		return '{{{content}}}';
+	}
+
+	$paths = [
+		$settings['theme_dir'] . '/layouts',
+		$settings['default_theme_dir'] . '/layouts',
+	];
+
+	foreach ($paths as $path) {
+		if (file_exists($path) && file_exists($path . '/' . $layout . '.hbs')) {
+			$context['layout_loaded'] = $layout;
+			return file_get_contents($path . '/' . $layout . '.hbs');
+		}
+	}
+
+	fatal_error('Could not load layout ' . $layout);
+}
+
+/**
+ * Loads a template partial.
+ *
+ * @param string $partial Partial name, without root path or extension
+ * @return string Partial template contents
+ */
+function loadTemplatePartial($partial) {
+	global $settings;
+
+	$paths = [
+		$settings['theme_dir'] . '/partials',
+		$settings['default_theme_dir'] . '/partials',
+	];
+
+	foreach ($paths as $path) {
+		if (file_exists($path) && file_exists($path . '/' . $partial . '.hbs')) {
+			return file_get_contents($path . '/' . $partial . '.hbs');
+		}
+	}
+
+	fatal_error('Could not load partial ' . $partial);
+}
+
+/**
+ * Handles generic loading for all template behaviour where possible.
+ *
+ * @param array $cx Context array from Lightncandy
+ * @param string $name Name of the template partial
+ * @return string The partial template contents
+ */
+function loadTemplatePartialResolver($cx, $name) {
+	return loadTemplatePartial($name);
+}
+
+function compileTemplate($template, $options = []) {
+	$default_helpers = [
+		'eq' => 'logichelper_eq',
+		'neq' => 'logichelper_ne',
+		'lt' => 'logichelper_lt',
+		'gt' => 'logichelper_gt',
+		'lte' => 'logichelper_lte',
+		'gte' => 'logichelper_gte',
+		'not' => 'logichelper_not',
+		'and' => 'logichelper_and',
+		'or' => 'logichelper_or',
+		'textTemplate' => 'textTemplate',
+		'concat' => function(...$items) {
+			array_pop($items); // Strip the last item off the array, it's the calling context.
+			return implode($items);
+		},
+	];
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL),
+		'helpers' => !empty($options['helpers']) ? array_merge($default_helpers, $options['helpers']) : $default_helpers,
+		'partialresolver' => 'loadTemplatePartialResolver',
+		'partials' => !empty($options['partials']) ? $options['partials'] : [],
+	]);
+	return $phpStr;
 }
 
 /**

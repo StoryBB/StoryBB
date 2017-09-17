@@ -35,7 +35,7 @@ function Who()
 		fatal_lang_error('who_off', false);
 
 	// Load the 'Who' template.
-	loadTemplate('Who');
+	$context['sub_template'] = 'whosonline';
 	loadLanguage('Who');
 
 	// Sort out... the column sorting.

@@ -244,7 +244,7 @@ function ModifyPostSettings($return_config = false)
 		call_integration_hook('integrate_save_post_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=postsettings;sa=posts');
 	}
 
@@ -316,7 +316,7 @@ function ModifyTopicSettings($return_config = false)
 		call_integration_hook('integrate_save_topic_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=postsettings;sa=topics');
 	}
 
@@ -386,7 +386,7 @@ function ModifyDraftSettings($return_config = false)
 
 		// Save everything else and leave.
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=postsettings;sa=drafts');
 	}
 

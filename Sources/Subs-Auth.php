@@ -195,7 +195,7 @@ function KickGuest()
 	if (strpos($_SERVER['REQUEST_URL'], 'dlattach') === false)
 		$_SESSION['login_url'] = $_SERVER['REQUEST_URL'];
 
-	$context['sub_template'] = 'kick_guest';
+	$context['sub_template'] = 'login_kick_guest';
 	$context['page_title'] = $txt['login'];
 }
 
@@ -216,7 +216,7 @@ function InMaintenance()
 	header('HTTP/1.1 503 Service Temporarily Unavailable');
 
 	// Basic template stuff..
-	$context['sub_template'] = 'maintenance';
+	$context['sub_template'] = 'login_maintenance';
 	$context['title'] = $smcFunc['htmlspecialchars']($mtitle);
 	$context['description'] = &$mmessage;
 	$context['page_title'] = $txt['maintain_mode'];

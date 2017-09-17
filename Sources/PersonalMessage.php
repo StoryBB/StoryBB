@@ -376,6 +376,7 @@ function MessagePopup()
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
 	$context['sub_template'] = 'pm_popup';
+	$template = loadTemplateLayout('raw');
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 	$context['can_draft'] = allowedTo('pm_draft') && !empty($modSettings['drafts_pm_enabled']);

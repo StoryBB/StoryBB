@@ -310,7 +310,7 @@ function ModifyLanguageSettings($return_config = false)
 
 		saveSettings($config_vars);
 		if (!$settings_not_writable && !$settings_backup_fail)
-			$_SESSION['adm-save'] = true;
+			session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=languages;sa=settings');
 	}
 

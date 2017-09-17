@@ -227,7 +227,7 @@ function ModifySubscriptionSettings($return_config = false)
 		}
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 
 		redirectexit('action=admin;area=paidsubscribe;sa=settings');
 	}

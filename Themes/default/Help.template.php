@@ -24,16 +24,9 @@ function template_popup()
 		'content' => $context['help_text']
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/layouts/popup.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-	
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
+	$template = loadTemplateLayout('popup');
+
+	$phpStr = compileTemplate($template);
 	
 	$renderer = LightnCandy::prepare($phpStr);
 	echo $renderer($data);
@@ -165,21 +158,13 @@ function template_manual()
 		'creditsURL' => $scripturl . '?action=credits'
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/templates/help_manual.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-	
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'partials' => Array(
-	    	'menu' => file_get_contents(__DIR__ .  "/partials/menu.hbs")
-	    ),
-	    'helpers' => Array(
-	    	'getLangSuffix',
-	    	'txtTemplate' => 'textTemplate'
-	    )
-	));
+	$template = loadTemplateFile('help_manual');
+
+	$phpStr = compileTemplate($template, [
+	    'helpers' => [
+	    	'getLangSuffix' => 'getLangSuffix',
+	    ]
+	]);
 	
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
@@ -197,17 +182,9 @@ function template_terms()
 		'txt' => $txt
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/templates/help_terms.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-	
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'partials' => Array(),
-	    'helpers' => Array(
-	    )
-	));
+	$template = loadTemplateFile('help_terms');
+
+	$phpStr = compileTemplate($template);
 	
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);

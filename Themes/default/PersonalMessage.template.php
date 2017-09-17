@@ -21,20 +21,13 @@ function template_pm_above()
 		'txt' => $txt
 	];
 
-	$template = file_get_contents(__DIR__ .  "/partials/pm_above.hbs");
-	if (!$template) {
-		die('PM main template did not load!');
-	}
+	$template = loadTemplatePartial('pm_above');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'gt' => 'logichelper_gt',
 			'div' => 'numericshelper_div',
 			'json' => 'stringhelper_json',
 		],
-		'partials' => [
-		]
 	]);
 	
 	$renderer = LightnCandy::prepare($phpStr);
@@ -115,31 +108,16 @@ function template_folder()
 		'options' => $options,
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/personal_message_folder.hbs");
-	if (!$template) {
-		die('PM main template did not load!');
-	}
+	$template = loadTemplateFile('personal_message_folder');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'eq' => 'logichelper_eq',
-			'gt' => 'logichelper_gt',
-			'neq' => 'logichelper_ne',
-			'not' => 'logichelper_not',
-			'or' => 'logichelper_or',
-			'and' => 'logichelper_and',
 			'implode' => 'implode_comma',
 			'get_text' => 'get_text',
-			'concat' => 'concat',
 			'getNumItems' => 'getNumItems',
 			'hasKey' => 'hasKey',
 			'json' => 'stringhelper_json',
 		],
-		'partials' => [
-			'pm_subjects' => file_get_contents(__DIR__ .  "/partials/pm_subjects.hbs"),
-			'button_strip' => file_get_contents(__DIR__ .  "/partials/button_strip.hbs")
-		]
 	]);
 	
 	$renderer = LightnCandy::prepare($phpStr);
@@ -165,25 +143,14 @@ function template_subject_list()
 		'settings' => $settings,
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/personal_message.hbs");
-	if (!$template) {
-		die('PM main template did not load!');
-	}
+	$template = loadTemplateFile('personal_message');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'eq' => 'logichelper_eq',
-			'neq' => 'logichelper_ne',
-			'or' => 'logichelper_or',
-			'and' => 'logichelper_and',
 			'implode' => 'implode_comma',
-			'concat' => 'concat',
 			'getNumItems' => 'getNumItems',
 			'json' => 'stringhelper_json',
 		],
-		'partials' => [
-		]
 	]);
 	
 	$renderer = LightnCandy::prepare($phpStr);
@@ -446,29 +413,15 @@ function template_send()
 		'bccLinkTemplate' => '<a href="#" id="bcc_link">' . $txt['make_bcc'] . '</a> <a href="' . $scripturl . '?action=helpadmin;help=pm_bcc" onclick="return reqOverlayDiv(this.href);">(?)</a>'
 	];
 
-	$template = file_get_contents(__DIR__ .  "/templates/personal_message_send.hbs");
-	if (!$template) {
-		die('MsgIndex main template did not load!');
-	}
+	$template = loadTemplateFile('personal_message_send');
 
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'eq' => 'logichelper_eq',
-			'neq' => 'logichelper_ne',
-			'or' => 'logichelper_or',
-			'and' => 'logichelper_and',
 			'implode' => 'implode_sep',
-			'concat' => 'concat',
 			'getNumItems' => 'getNumItems',
-			'textTemplate' => 'textTemplate',
 			'JSEscape' => 'JSEscape',
 			'json' => 'stringhelper_json',
 		],
-		'partials' => [
-			'control_richedit' => file_get_contents(__DIR__ .  "/partials/control_richedit.hbs"),
-			'control_richedit_buttons' => file_get_contents(__DIR__ .  "/partials/control_richedit_buttons.hbs"),
-		]
 	]);
 	
 	$renderer = LightnCandy::prepare($phpStr);

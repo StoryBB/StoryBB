@@ -1092,7 +1092,7 @@ function ModifyNewsSettings($return_config = false)
 		call_integration_hook('integrate_save_news_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=news;sa=settings');
 	}
 

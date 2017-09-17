@@ -8,9 +8,6 @@ use LightnCandy\LightnCandy;
  * @version 3.0 Alpha 1
  */
 
-function getBlockText($name) {
-	return $txt['top_' . $name];
-}
 /**
  * The stats page.
  */
@@ -26,16 +23,16 @@ function template_main()
 		'modSettings' => $modSettings
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/templates/stats_main.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
+	$template = loadTemplateFile('stats_main');
 
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	    'helpers' => Array(
-	    )
-	));
+	$phpStr = compileTemplate($template, [
+		'helpers' => [
+			'getBlockText' => function ($name) {
+				global $txt;
+				return $txt['top_' . $name];
+			}
+		]
+	]);
 	
 	//var_dump($context['meta_tags']);die();
 	$renderer = LightnCandy::prepare($phpStr);

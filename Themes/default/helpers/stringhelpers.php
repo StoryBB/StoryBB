@@ -68,13 +68,6 @@ function stringhelper_string_json($data) {
 	return json_encode((string) $data);
 }
 
-function concat(...$items)
-{
-	// Strip the last item off the array, it's the calling context.
-	array_pop($items);
-	return implode($items);
-}
-
 function JSEscape($string)
 {
 	global $scripturl;

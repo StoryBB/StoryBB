@@ -41,25 +41,14 @@ function template_show_list($list_id = null)
 		'headerCount' => count($cur_list['headers'])
 	);
 	
-	$template = file_get_contents(__DIR__ .  "/partials/generic_list.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-	
-	$phpStr = LightnCandy::compile($template, Array(
-	    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-	    'partials' => Array(
-	    	'list_additional_rows' => file_get_contents(__DIR__ .  "/partials/list_additional_rows.hbs")
-	    ),
-	    'helpers' => Array(
-	    	'concat' => 'concat',
-	    	'gt' => 'logichelper_gt',
-	    	'and' => 'logichelper_and',
+	$template = loadTemplatePartial('generic_list');
+
+	$phpStr = compileTemplate($template, [
+	    'helpers' => [
 	    	'token' => 'retrieve_context_token',
-	    	'token_var' => 'retrieve_context_token_var',
-	    	
-	    )
-	));
+	    	'token_var' => 'retrieve_context_token_var',	
+	    ]
+	]);
 	
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);

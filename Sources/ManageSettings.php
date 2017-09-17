@@ -212,7 +212,7 @@ function ModifyBasicSettings($return_config = false)
 		call_integration_hook('integrate_save_basic_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 
 		writeLog();
 		redirectexit('action=admin;area=featuresettings;sa=basic');
@@ -283,7 +283,7 @@ function ModifyBBCSettings($return_config = false)
 		call_integration_hook('integrate_save_bbc_settings', array($bbcTags));
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=featuresettings;sa=bbc');
 	}
 
@@ -330,7 +330,7 @@ function ModifyLayoutSettings($return_config = false)
 		call_integration_hook('integrate_save_layout_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		writeLog();
 
 		redirectexit('action=admin;area=featuresettings;sa=layout');
@@ -370,7 +370,7 @@ function ModifyMentionsSettings($return_config = false)
 		call_integration_hook('integrate_save_mentions_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=featuresettings;sa=mentions');
 	}
 
@@ -475,7 +475,7 @@ function ModifyWarningSettings($return_config = false)
 		call_integration_hook('integrate_save_warning_settings', array(&$save_vars));
 
 		saveDBSettings($save_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=warnings');
 	}
 
@@ -759,7 +759,7 @@ function ModifyAntispamSettings($return_config = false)
 
 		// Now save.
 		saveDBSettings($save_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 
 		cache_put_data('verificationQuestions', null, 300);
 
@@ -1146,7 +1146,7 @@ function ModifySignatureSettings($return_config = false)
 		$save_vars[] = array('text', 'signature_settings');
 
 		saveDBSettings($save_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=featuresettings;sa=sig');
 	}
 
@@ -1236,7 +1236,7 @@ function ShowCustomProfiles()
 		// What we have left!
 		$changes['registration_fields'] = empty($reg_fields) ? '' : implode(',', $reg_fields);
 
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		if (!empty($changes))
 			updateSettings($changes);
 	}
@@ -1452,14 +1452,6 @@ function ShowCustomProfiles()
 		),
 	);
 	createList($listOptions);
-
-	// There are two different ways we could get to this point. To keep it simple, they both do
-	// the same basic thing.
-	if (isset($_SESSION['adm-save']))
-	{
-		$context['saved_successful'] = true;
-		unset ($_SESSION['adm-save']);
-	}
 }
 
 /**
@@ -1981,7 +1973,7 @@ function EditCustomProfiles()
 		$smcFunc['db_free_result']($request);
 
 		updateSettings(array('displayFields' => json_encode($fields)));
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=featuresettings;sa=profile');
 	}
 
@@ -2109,7 +2101,7 @@ function ModifyLogSettings($return_config = false)
 			$_POST['pruningOptions'] = '';
 
 		saveDBSettings($savevar);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=logs;sa=settings');
 	}
 
@@ -2171,7 +2163,7 @@ function ModifyGeneralModSettings($return_config = false)
 		saveDBSettings($save_vars);
 
 		// This line is to remind mod authors that it's nice to let the users know when something has been saved.
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 
 		// This line is to help mod authors do a search/add after if you want to add something here. Keyword: I LOVE TEA!
 		redirectexit('action=admin;area=modsettings;sa=general');

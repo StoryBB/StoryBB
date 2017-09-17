@@ -34,7 +34,7 @@
 							
 							{{! Display all the members who can administrate the forum. }}
 							<strong>{{txt.administrators}}:</strong>
-							{{implode context.administrators}}
+							{{{implode_comma context.administrators}}}
 							{{! If we have lots of admins... don't show them all. }}
 							{{#if context.more_admins_link}}
 								({{{context.more_admins_link}}})

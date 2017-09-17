@@ -6,26 +6,7 @@
 	    <link rel="stylesheet" href="{{fileUrl}}">
 	{{/each}}
     
-    {{#if context.javascript_vars}}
-    <script>
-    {{#each context.javascript_vars}}
-        {{#if .}}
-            {{{@key}}}={{{.}}};
-        {{else}}
-            {{{@key}}}="";
-        {{/if}}
-    {{/each}}
-    </script>
-    {{/if}}
-    
-    {{#each context.javascript_files}}
-        <script src="{{fileUrl}}" {{#if options.async}}async="async"{{/if}}></script>
-    {{/each}}
-    <script src="{{settings.theme_url}}/scripts/minified.js"></script>
-    
-    <script>
-        {{#each context.javascript_inline.standard}}{{{.}}}{{/each}}
-    </script>
+    {{{javascript deferred=0}}}
 
 	<title>{{context.page_title_html_safe}}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -177,6 +158,7 @@
     	    </div>
     	    <div id="content_section">
     			<div id="main_content_section">
+                    {{>status_messages}}
     			    {{{content}}}
     			</div>
     		</div>
@@ -196,5 +178,7 @@
     	<p>{{loadtime}}</p>
     	{{/if}}
     </div>
+
+   {{{javascript deferred=1}}}
 </body>
 </html>

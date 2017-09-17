@@ -10,32 +10,6 @@
 use LightnCandy\LightnCandy;
 
 /**
- * Template for showing recent posts
- */
-function template_recent()
-{
-	global $context, $txt, $scripturl;
-
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-	);
-	
-	$template = file_get_contents(__DIR__ .  "/templates/recent_posts.hbs");
-	if (!$template) {
-		die('Template did not load!');
-	}
-	
-	$phpStr = LightnCandy::compile($template, Array(
-		'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG,
-	));
-	
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * Template for showing unread posts
  */
 function template_unread()

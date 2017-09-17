@@ -1,8 +1,3 @@
-{{#if context.report_sent}}
-<div class="infobox">
-	{{txt.report_sent}}
-</div>
-{{/if}}
 {{#if context.becomesUnapproved}}
 <div class="noticebox">
 	{{txt.post_becomesUnapproved}}
@@ -11,7 +6,7 @@
 {{!-- New topic info --}}
 <div id="display_head" class="information">
 	<h2 class="display_title"><span id="top_subject">{{context.subject}}</span>{{#if context.is_locked}}<span class="generic_icons lock"></span>{{/if}}{{#if context.is_sticky}}<span class="generic_icons sticky"></span>{{/if}}</h2>
-	<p>{{txt.started_by}} {{context.topic_poster_name}}, {{context.topic_started_time}}</p>
+	<p>{{txt.started_by}} {{context.topic_poster_name}}, {{{context.topic_started_time}}}</p>
 	{{#if viewing}}
 	    <p>{{{viewing}}} {{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}}{{txt.who_viewing_topic}}</p>
 	{{/if}}
@@ -122,7 +117,7 @@
 <div id="display_jump_to">&nbsp;</div>
 
 {{#if context.can_reply}}
-{{>quickreply}}
+{{>quick_reply}}
 {{/if}}
 
 {{!-- small screen responsive user action pop --}}

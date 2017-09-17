@@ -238,7 +238,7 @@ function ManageAttachmentSettings($return_config = false)
 		call_integration_hook('integrate_save_attachment_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=manageattachments;sa=attachments');
 	}
 
@@ -344,7 +344,7 @@ function ManageAvatarSettings($return_config = false)
 		call_integration_hook('integrate_save_avatar_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=manageattachments;sa=avatars');
 	}
 

@@ -159,20 +159,9 @@ function template_summary()
         'settings' => $settings,
     );
     
-    $template = file_get_contents(__DIR__."/templates/profile_summary.hbs");
-    if (!$template) {
-        die('Template did not load!');
-    }
+    $template = loadTemplateFile('profile_summary');
 
-    $phpStr = LightnCandy::compile($template, Array(
-        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
-        'helpers' => Array(
-        	'not' => 'logichelper_not',
-        	'and' => 'logichelper_and',
-        	'or' => 'logichelper_or',
-        	'eq' => 'logichelper_eq',
-        )
-    ));
+    $phpStr = compileTemplate($template);
 
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
@@ -938,19 +927,14 @@ function template_statPanel()
         'txt' => $txt,
     );
     
-    $template = file_get_contents(__DIR__."/templates/profile_stats.hbs");
-    if (!$template) {
-        die('Template did not load!');
-    }
+    $template = loadTemplateFile('profile_stats');
 
-    $phpStr = LightnCandy::compile($template, Array(
-        'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL,
+    $phpStr = compileTemplate($template, [
         'helpers' => Array(
         	'inverted_percent' => function($pc) { return 100 - $pc; },
         	'pie_percent' => function($pc) { return (int) $pc / 5 * 20; },
-        	'textTemplate' => 'textTemplate',
         )
-    ));
+    ]);
 
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);

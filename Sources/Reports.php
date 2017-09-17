@@ -41,7 +41,6 @@ function ReportsMain()
 	isAllowedTo('admin_forum');
 
 	// Let's get our things running...
-	loadTemplate('Reports');
 	loadLanguage('Reports');
 
 	$context['page_title'] = $txt['generate_reports'];
@@ -90,6 +89,8 @@ function ReportsMain()
 		//	'layers' => array('print'),
 		//),
 	);
+
+	$context['sub_template'] = 'report';
 
 	// Specific template? Use that instead of main!
 	if (isset($_REQUEST['st']) && isset($reportTemplates[$_REQUEST['st']]))

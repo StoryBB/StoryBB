@@ -1043,7 +1043,7 @@ function GeneralPermissionSettings($return_config = false)
 			);
 		}
 
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=permissions;sa=settings');
 	}
 

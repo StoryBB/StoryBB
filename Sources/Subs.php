@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 if (!defined('SMF'))
 	die('No direct access...');
 
@@ -2579,7 +2581,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  */
 function obExit($header = null, $do_footer = null, $from_index = false, $from_fatal_error = false)
 {
-	global $context, $settings, $modSettings, $txt, $smcFunc;
+	global $context, $settings, $modSettings, $txt, $options, $scripturl, $smcFunc;
 	static $header_done = false, $footer_done = false, $level = 0, $has_fatal_error = false;
 
 	// Attempt to prevent a recursive loop.
@@ -2665,12 +2667,25 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 
 		foreach ($render_templates as $sub_template) {
 			// Super hacky way to render all the layers in the right place.
-			ob_start();
-			$content .= loadSubTemplate($sub_template);
-			$buffer = ob_get_clean();
-			$content .= $buffer;
+			if (function_exists('template_' . $sub_template)) {
+				ob_start();
+				$content .= loadSubTemplate($sub_template);
+				$buffer = ob_get_clean();
+				$content .= $buffer;
+			} else {
+    			$phpStr = compileTemplate(loadTemplateFile($sub_template));
+    			$renderer = LightnCandy::prepare($phpStr);
+				$content .= $renderer([
+					'context' => $context,
+					'txt' => $txt,
+					'scripturl' => $scripturl,
+					'settings' => $settings,
+					'modSettings' => $modSettings,
+					'options' => $options,
+				]);
+			}
 		}
-		render_page($content); //found in index.template.php, this renders the layout around the page
+		render_page($content); //found in Subs.php, this renders the layout around the page
 
 		// Anything special to put out?
 		if (!empty($context['insert_after_template']) && !isset($_REQUEST['xml']))
@@ -2701,6 +2716,84 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index)
 		exit;
+}
+
+function render_page($content) {
+	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count;
+
+	if (!empty($context['layout_loaded'])) {
+		echo $content;
+		return;
+	}
+
+	// Show the load time?  (only makes sense for the footer.)
+	// This is not really the correct place for this, ideally it needs to happen
+	// as late as possible, but we don't have a flow where this really works yet.
+	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
+	$context['load_time'] = comma_format(round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3));
+	$context['load_queries'] = $db_count;
+
+	$context['session_flash'] = session_flash_retrieve();
+
+	$data = Array(
+		'content' => $content,
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+		'settings' => $settings,
+		'maintenance' => $maintenance,
+		'modSettings' => $modSettings,
+		'copyright' => theme_copyright(),
+		'loadtime' => !empty($modSettings['timeLoadPageEnable']) ? sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries']) : ''
+	);
+
+	if (empty($context['layout_loaded'])) {
+		$template = loadTemplateLayout('default');
+	}
+
+	$phpStr = compileTemplate($template, [
+	    'helpers' => [
+	    	'locale' => 'locale_helper',
+	        'login_helper' => 'login_helper',
+	        'isSelected' => 'isSelected',
+	        'javascript' => 'template_javascript',
+	    ]
+	]);
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	echo $renderer($data);
+}
+
+function locale_helper($lang_locale) 
+{
+    return new \LightnCandy\SafeString(str_replace("_", "-", substr($lang_locale, 0, strcspn($lang_locale, "."))));
+}
+
+function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
+{
+    return new \LightnCandy\SafeString(sprintf($string,
+	    $guest_title, 
+	    $forum_name, 
+	    $scripturl . '?action=login', 
+	    'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
+	    $scripturl . '?action=signup'
+	));
+}
+
+function session_flash($status, $message) {
+	if (!in_array($status, ['success', 'warning', 'error'])) {
+		fatal_error('Invalid session flash');
+	}
+	$_SESSION['flash'][$status][] = $message;
+}
+
+function session_flash_retrieve() {
+	$messages = [];
+	foreach (['error', 'warning', 'success'] as $status) {
+		$messages[$status] = !empty($_SESSION['flash'][$status]) ? $_SESSION['flash'][$status] : [];
+	}
+	unset ($_SESSION['flash']);
+	return $messages;
 }
 
 /**
@@ -3168,33 +3261,38 @@ function template_javascript($do_deferred = false)
 {
 	global $context, $modSettings, $settings;
 
+	// Ugly hack for Lightncandy
+	$do_deferred = !empty($do_deferred['hash']['deferred']);
+
 	// Use this hook to minify/optimize Javascript files and vars
 	call_integration_hook('integrate_pre_javascript_output', array(&$do_deferred));
 
 	$toMinify = array();
 	$toMinifyDefer = array();
 
+	$return = '';
+
 	// Ouput the declared Javascript variables.
 	if (!empty($context['javascript_vars']) && !$do_deferred)
 	{
-		echo '
+		$return .= '
 	<script>';
 
 		foreach ($context['javascript_vars'] as $key => $value)
 		{
 			if (empty($value))
 			{
-				echo '
-		var ', $key, ';';
+				$return .= '
+		var ' . $key . ';';
 			}
 			else
 			{
-				echo '
-		var ', $key, ' = ', $value, ';';
+				$return .= '
+		var ' . $key . ' = ' . $value . ';';
 			}
 		}
 
-		echo '
+		$return .= '
 	</script>';
 	}
 
@@ -3220,8 +3318,8 @@ function template_javascript($do_deferred = false)
 		}
 
 		elseif ((!$do_deferred && empty($js_file['options']['defer'])) || ($do_deferred && !empty($js_file['options']['defer'])))
-			echo '
-	<script src="', $js_file['fileUrl'], '"', !empty($js_file['options']['async']) ? ' async="async"' : '', '></script>';
+			$return .= '
+	<script src="' . $js_file['fileUrl'] . '"' . (!empty($js_file['options']['async']) ? ' async="async"' : '') . '></script>';
 	}
 
 	if ((!$do_deferred && !empty($toMinify)) || ($do_deferred && !empty($toMinifyDefer)))
@@ -3231,12 +3329,12 @@ function template_javascript($do_deferred = false)
 		// Minify process couldn't work, print each individual files.
 		if (!empty($result) && is_array($result))
 			foreach ($result as $minFailedFile)
-				echo '
-	<script src="', $minFailedFile['fileUrl'], '"', !empty($minFailedFile['options']['async']) ? ' async="async"' : '', '></script>';
+				$return .= '
+	<script src="' . $minFailedFile['fileUrl'] . '"' . (!empty($minFailedFile['options']['async']) ? ' async="async"' : '') . '></script>';
 
 		else
-			echo '
-	<script src="', $settings['theme_url'] ,'/scripts/minified', ($do_deferred ? '_deferred' : '') ,'.js', $minSeed ,'"></script>';
+			$return .= '
+	<script src="' . $settings['theme_url'] . '/scripts/minified' . ($do_deferred ? '_deferred' : '') . '.js' . $minSeed . '"></script>';
 	}
 
 	// Inline JavaScript - Actually useful some times!
@@ -3244,28 +3342,30 @@ function template_javascript($do_deferred = false)
 	{
 		if (!empty($context['javascript_inline']['defer']) && $do_deferred)
 		{
-			echo '
+			$return .= '
 <script>';
 
 			foreach ($context['javascript_inline']['defer'] as $js_code)
-				echo $js_code;
+				$return .= $js_code;
 
-			echo '
+			$return .= '
 </script>';
 		}
 
 		if (!empty($context['javascript_inline']['standard']) && !$do_deferred)
 		{
-			echo '
+			$return .= '
 	<script>';
 
 			foreach ($context['javascript_inline']['standard'] as $js_code)
-				echo $js_code;
+				$return .= $js_code;
 
-			echo '
+			$return .= '
 	</script>';
 		}
 	}
+
+	return $return;
 }
 
 /**
