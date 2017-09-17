@@ -163,7 +163,7 @@ function SetCensor()
 	// Since the "Allow users to disable the word censor" stuff was moved from a theme setting to a global one, we need this...
 	loadLanguage('Themes');
 
-	$context['sub_template'] = 'edit_censored';
+	$context['sub_template'] = 'admin_censor_words';
 	$context['page_title'] = $txt['admin_censored_words'];
 
 	createToken('admin-censor');
