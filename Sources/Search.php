@@ -325,8 +325,11 @@ function PlushSearch2()
 
 	loadLanguage('Search');
 	if (!isset($_REQUEST['xml']))
+	{
 		loadTemplate('Search');
-	//If we're doing XML we need to use the results template regardless really.
+		$context['sub_template'] = 'search_results';
+	}
+	//If we're doing XML we need to use the results template.
 	else
 		$context['sub_template'] = 'results';
 
@@ -1639,6 +1642,7 @@ function PlushSearch2()
 		$context['can_move'] = in_array(0, $boards_can['move_any']);
 		$context['can_remove'] = in_array(0, $boards_can['remove_any']);
 		$context['can_merge'] = in_array(0, $boards_can['merge_any']);
+		$context['can_restore'] = false;
 
 		// What messages are we using?
 		$msg_list = array_keys($context['topics']);
@@ -1737,9 +1741,13 @@ function PlushSearch2()
 	foreach ($context['stable_icons'] as $icon)
 		$context['icon_sources'][$icon] = 'images_url';
 
-	$context['sub_template'] = 'results';
 	$context['page_title'] = $txt['search_results'];
-	$context['get_topics'] = 'prepareSearchContext';
+
+	$context['search_results'] = [];
+	while ($row = prepareSearchContext()) {
+		$context['search_results'][] = $row;
+	}
+
 	$context['can_restore_perm'] = allowedTo('move_any') && !empty($modSettings['recycle_enable']);
 	$context['can_restore'] = false; // We won't know until we handle the context later whether we can actually restore...
 
@@ -1977,7 +1985,7 @@ function prepareSearchContext($reset = false)
 		'sticky' => (in_array(0, $boards_can['make_sticky']) || in_array($output['board']['id'], $boards_can['make_sticky'])),
 		'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
 		'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
-		'restore' => $context['can_restore_perm'] && ($modSettings['recycle_board'] == $output['board']['id']),
+		'restore' => !empty($context['can_restore_perm']) && ($modSettings['recycle_board'] == $output['board']['id']),
 	);
 
 	$context['can_lock'] |= $output['quick_mod']['lock'];
@@ -1988,8 +1996,15 @@ function prepareSearchContext($reset = false)
 	$context['can_restore'] |= $output['quick_mod']['restore'];
 	$context['can_markread'] = $context['user']['is_logged'];
 
-	$context['qmod_actions'] = array('remove', 'lock', 'sticky', 'move', 'merge', 'restore', 'markread');
-	call_integration_hook('integrate_quick_mod_actions_search');
+	$context['qmod_actions'] = [];
+	$qmod_actions = array('remove', 'lock', 'sticky', 'move', 'merge', 'restore', 'markread');
+
+	call_integration_hook('integrate_quick_mod_actions_search', array(&$qmod_actions));
+	foreach ($qmod_actions as $qmod_action) {
+		if (!empty($context['can_' . $qmod_action])) {
+			$context['qmod_actions'][$qmod_action] = $txt['quick_mod_' . $qmod_action];
+		}
+	}
 
 	foreach ($context['key_words'] as $query)
 	{
