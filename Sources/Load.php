@@ -2404,11 +2404,15 @@ function compileTemplate($template, $options = []) {
 		'div' => function($a, $b) { return $a / $b; },
 		'comma' => 'comma_format',
 	];
+	$default_partials = [
+		'helpicon' => loadTemplatePartial('helpicon'),
+	];
+
 	$phpStr = LightnCandy::compile($template, [
 		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL),
 		'helpers' => !empty($options['helpers']) ? array_merge($default_helpers, $options['helpers']) : $default_helpers,
 		'partialresolver' => 'loadTemplatePartialResolver',
-		'partials' => !empty($options['partials']) ? $options['partials'] : [],
+		'partials' => !empty($options['partials']) ? array_merge($default_helpers, $options['helpers']) : $default_helpers,
 	]);
 	return $phpStr;
 }

@@ -1,7 +1,7 @@
 <form action="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq context.sort_direction 'down')}};desc{{/if}};start={{context.start}}{{#if context.has_filter}}{{context.filter.href}}{{/if}}" method="post" accept-charset="UTF-8">
 	<div class="cat_bar">
 		<h3 class="catbg">
-			<a href="{{scripturl}}?action=helpadmin;help=error_log" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="{{txt.help}}"></span></a>{{txt.errlog}}
+			{{> helpicon help='error_log'}} {{txt.errlog}}
 		</h3>
 	</div>
 	<div class="pagesection">
