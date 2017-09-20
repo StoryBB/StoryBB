@@ -684,9 +684,7 @@ function UnreadTopics()
 	else
 		$txt['unread_topics_visit_none'] = strtr($txt['unread_topics_visit_none'], array('?action=unread;all' => '?action=unread;all' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits']));
 
-	loadTemplate('Recent');
-	loadTemplate('MessageIndex');
-	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread_posts' : 'replies';
+	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread_posts' : 'unread_replies';
 
 	// Setup the default topic icons... for checking they exist and the like ;)
 	$context['icon_sources'] = array();
