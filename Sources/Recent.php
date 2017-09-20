@@ -686,7 +686,7 @@ function UnreadTopics()
 
 	loadTemplate('Recent');
 	loadTemplate('MessageIndex');
-	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread' : 'replies';
+	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread_posts' : 'replies';
 
 	// Setup the default topic icons... for checking they exist and the like ;)
 	$context['icon_sources'] = array();
