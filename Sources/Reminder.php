@@ -21,7 +21,6 @@ function RemindMe()
 	global $txt, $context;
 
 	loadLanguage('Profile');
-	loadTemplate('Reminder');
 
 	$context['page_title'] = $txt['authentication_reminder'];
 	$context['robot_no_index'] = true;
@@ -40,7 +39,10 @@ function RemindMe()
 
 	// Creating a one time token.
 	else
+	{
 		createToken('remind');
+		$context['sub_template'] = 'reminder_main';
+	}
 }
 
 /**
@@ -144,7 +146,7 @@ function RemindPick()
 		updateMemberData($row['id_member'], array('validation_code' => substr(md5($password), 0, 10)));
 
 		// Set up the template.
-		$context['sub_template'] = 'sent';
+		$context['sub_template'] = 'reminder_sent';
 
 		// Don't really.
 		return;
@@ -179,7 +181,7 @@ function setPassword()
 	// Fill the context array.
 	$context += array(
 		'page_title' => $txt['reminder_set_password'],
-		'sub_template' => 'set_password',
+		'sub_template' => 'reminder_set_password',
 		'code' => $_REQUEST['code'],
 		'memID' => (int) $_REQUEST['u']
 	);
@@ -315,7 +317,7 @@ function SecretAnswerInput()
 	$context['remind_type'] = '';
 	$context['secret_question'] = $row['secret_question'];
 
-	$context['sub_template'] = 'ask';
+	$context['sub_template'] = 'reminder_ask_question';
 	createToken('remind-sai');
 	loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
 }
