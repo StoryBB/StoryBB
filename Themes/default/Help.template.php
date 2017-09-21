@@ -170,24 +170,4 @@ function template_manual()
 	return $renderer($data);
 }
 
-/**
- * The rules page
- */
-function template_terms()
-{
-	global $txt, $context, $modSettings;
-		$data = Array(
-		'context' => $context,
-		'modSettings' => $modSettings,
-		'txt' => $txt
-	);
-	
-	$template = loadTemplateFile('help_terms');
-
-	$phpStr = compileTemplate($template);
-	
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
 ?>
