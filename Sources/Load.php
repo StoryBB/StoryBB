@@ -2406,6 +2406,7 @@ function compileTemplate($template, $options = []) {
 		'comma' => 'comma_format',
 		'json' => function ($data) { return json_encode($data); },
 		'join' => function($array, $sep = '') { return implode($sep, $array); },
+		'is_array' => function($var) { return is_array($var); },
 	];
 	$default_partials = [
 		'helpicon' => loadTemplatePartial('helpicon'),
