@@ -2095,6 +2095,7 @@ function AutoSuggestHandler($checkRegistered = null)
 
 	checkSession('get');
 	loadTemplate('Xml');
+	loadTemplateLayout('raw');
 
 	// Any parameters?
 	$context['search_param'] = isset($_REQUEST['search_param']) ? smf_json_decode(base64_decode($_REQUEST['search_param']), true) : array();

@@ -19,6 +19,7 @@ if (!defined('SMF'))
 function XMLhttpMain()
 {
 	loadTemplate('Xml');
+	loadTemplateLayout('raw');
 
 	$subActions = array(
 		'jumpto' =>  'GetJumpTo',

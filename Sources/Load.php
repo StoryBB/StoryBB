@@ -2007,6 +2007,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		loadLanguage('index+Modifications');
 		loadTemplate('Xml');
+		loadTemplateLayout('raw');
 		$context['template_layers'] = array();
 	}
 

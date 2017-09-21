@@ -822,6 +822,7 @@ function RegisterCheckUsername()
 
 	// This is XML!
 	loadTemplate('Xml');
+	loadTemplateLayout('raw');
 	$context['sub_template'] = 'check_username';
 	$context['checked_username'] = isset($_GET['username']) ? un_htmlspecialchars($_GET['username']) : '';
 	$context['valid_username'] = true;
