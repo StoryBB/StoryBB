@@ -68,13 +68,4 @@ function template_main()
 	return $renderer($data);
 }
 
-/**
- * Shows a legend for topic icons.
- */
-function template_topic_legend()
-{
-	global $context, $settings, $txt, $modSettings;
-
-}
-
 ?>
