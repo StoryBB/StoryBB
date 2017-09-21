@@ -32,29 +32,4 @@ function template_login_tfa()
 	return $renderer($data);
 }
 
-/**
- * This is for the security stuff - makes administrators login every so often.
- */
-function template_admin_login()
-{
-	global $context, $settings, $scripturl, $txt, $modSettings;
-		
-	$data = Array(
-		'context' => $context,
-		'settings' => $settings,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'modSettings' => $modSettings,
-		'action' => !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl
-	);
-	
-	$template = loadTemplateFile('login_admin');
-
-	$phpStr = compileTemplate($template);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
 ?>

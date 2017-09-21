@@ -232,7 +232,7 @@ function InMaintenance()
  */
 function adminLogin($type = 'admin')
 {
-	global $context, $txt, $user_settings, $user_info;
+	global $context, $txt, $user_settings, $user_info, $scripturl, $modSettings;
 
 	loadLanguage('Admin');
 	loadTemplate('Login');
@@ -268,7 +268,8 @@ function adminLogin($type = 'admin')
 		$context['post_data'] .= adminLogin_outputPostVars($k, $v);
 
 	// Now we'll use the admin_login sub template of the Login template.
-	$context['sub_template'] = 'admin_login';
+	$context['form_scripturl'] = !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl;
+	$context['sub_template'] = 'login_admin';
 
 	// And title the page something like "Login".
 	if (!isset($context['page_title']))
