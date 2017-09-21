@@ -20,7 +20,7 @@
 				<dt>{{txt.users_online}}:</dt>
 				<dd>{{context.users_online}}</dd>
 				<dt>{{txt.most_online}}:</dt>
-				<dd>{{context.most_members_online.number}} - {{context.most_members_online.date}}</dd>
+				<dd>{{context.most_members_online.number}} - {{{context.most_members_online.date}}}</dd>
 				<dt>{{txt.users_online_today}}:</dt>
 				<dd>{{context.online_today}}</dd>
 				{{#if modSettings.hitStats}}
@@ -38,7 +38,7 @@
 				<dt>{{txt.total_boards}}:</dt>
 				<dd>{{context.num_boards}}</dd>
 				<dt>{{txt.latest_member}}:</dt>
-				<dd>{{context.common_stats.latest_member.link}}</dd>
+				<dd>{{{context.common_stats.latest_member.link}}}</dd>
 				<dt>{{txt.average_online}}:</dt>
 				<dd>{{context.average_online}}</dd>
 				{{#if context.gender}}
@@ -54,26 +54,26 @@
 			<div class="half_content">
 				<div class="title_bar">
 					<h4 class="titlebg">
-						<span class="generic_icons {{@key}}"></span>{{getBlockText @key}}
+						<span class="generic_icons {{icon}}"></span>{{{title}}}
 					</h4>
 				</div>
-					<dl class="stats">
-					    {{#each .}}
-					        <dt>
-							{{{link}}}
-						</dt>
-						<dd class="statsbar">
+				<dl class="stats">
+				    {{#each data}}
+				        <dt>
+						{{{link}}}
+					</dt>
+					<dd class="statsbar">
 
-			             {{#if percent}}
-			                <div class="bar" style="width: {{percent}}%">
-								<span class="righttext">{{num}}</span>
-							</div>
-			             {{else}}
-				            <div class="bar empty"><span class="righttext">{{num}}</span></div>
-			            {{/if}}
-			            </dd>
-						{{/each}}
-					</dl>
+		             {{#if percent}}
+		                <div class="bar" style="width: {{percent}}%">
+							<span class="righttext">{{num}}</span>
+						</div>
+		             {{else}}
+			            <div class="bar empty"><span class="righttext">{{num}}</span></div>
+		            {{/if}}
+		            </dd>
+					{{/each}}
+				</dl>
 			</div>
 			{{/each}}
 			</div>
@@ -101,7 +101,7 @@
         	{{#each context.yearly}}
 			<tr class="windowbg" id="year_{{@key}}">
 				<th class="lefttext">
-					<img id="year_img_{{@key}}" src="{{settings.images_url}}/selected_open.png" alt="*"> <a href="#year_{{@key}}" id="year_link_{{@key}}">{{year}}</a>
+					<img id="year_img_{{@key}}" src="{{../settings.images_url}}/selected_open.png" alt="*"> <a href="#year_{{@key}}" id="year_link_{{@key}}">{{year}}</a>
 				</th>
 				<th>{{new_topics}}</th>
 				<th>{{new_posts}}</th>
@@ -114,7 +114,7 @@
     			{{#each months}}
     			<tr class="windowbg" id="tr_month_', $month['id'], '">
 					<th class="stats_month">
-						<img src="{{settings.images_url}}/{{#if expanded}} selected_open.png{{else}}selected.png{{/if}}" alt="" id="img_{{id}}"> <a id="m{{id}}" href="{{href}}" onclick="return doingExpandCollapse;">{{month}} {{year}}</a>
+						<img src="{{../../settings.images_url}}/{{#if expanded}}selected_open.png{{else}}selected.png{{/if}}" alt="" id="img_{{id}}"> <a id="m{{id}}" href="{{href}}" onclick="return doingExpandCollapse;">{{month}} {{year}}</a>
 					</th>
 					<th>{{new_topics}}</th>
 					<th>{{new_posts}}</th>
@@ -145,38 +145,38 @@
 	</div>
 	<script>
 		var oStatsCenter = new smf_StatsCenter({
-			sTableId: \'stats\',
+			sTableId: 'stats',
 
 			reYearPattern: /year_(\d+)/,
-			sYearImageCollapsed: \'selected.png\',
-			sYearImageExpanded: \'selected_open.png\',
-			sYearImageIdPrefix: \'year_img_\',
-			sYearLinkIdPrefix: \'year_link_\',
+			sYearImageCollapsed: 'selected.png',
+			sYearImageExpanded: 'selected_open.png',
+			sYearImageIdPrefix: 'year_img_',
+			sYearLinkIdPrefix: 'year_link_',
 
 			reMonthPattern: /tr_month_(\d+)/,
-			sMonthImageCollapsed: \'selected.png\',
-			sMonthImageExpanded: \'selected_open.png\',
-			sMonthImageIdPrefix: \'img_\',
-			sMonthLinkIdPrefix: \'m\',
+			sMonthImageCollapsed: 'selected.png',
+			sMonthImageExpanded: 'selected_open.png',
+			sMonthImageIdPrefix: 'img_',
+			sMonthLinkIdPrefix: 'm',
 
 			reDayPattern: /tr_day_(\d+-\d+-\d+)/,
-			sDayRowClassname: \'windowbg\',
-			sDayRowIdPrefix: \'tr_day_\',
+			sDayRowClassname: 'windowbg',
+			sDayRowIdPrefix: 'tr_day_',
 
 			aCollapsedYears: [
 			    {{#each context.collapsed_years}}'{{year}}' {{#unless @last}},{{/unless}}{{/each}}
 			    ],
 
 			aDataCells: [
-				\'date\',
-				\'new_topics\',
-				\'new_posts\',
-				\'new_members\',
-				\'most_members_online\''
+				'date',
+				'new_topics',
+				'new_posts',
+				'new_members',
+				'most_members_online'
 				{{#if modSettings.hitStats}}
-				,\'hits\''
+				,'hits'
 				{{/if}}
 			]
 		});
-	</script>'
+	</script>
     		{{/if}}{{!-- yearly --}}
