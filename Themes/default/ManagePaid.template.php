@@ -585,24 +585,4 @@ function template_choose_payment()
 	<br class="clear">';
 }
 
-/**
- * The "thank you" bit...
- */
-function template_paid_done()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-	<div id="paid_subscription">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['paid_done'], '</h3>
-		</div>
-		<div class="windowbg2">
-			<p>', $txt['paid_done_desc'], '</p>
-			<br>
-			<a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=subscriptions">', $txt['paid_sub_return'], '</a>
-		</div>
-	</div>';
-}
-
 ?>

@@ -843,7 +843,7 @@ function subscriptions($memID)
 			}
 		}
 
-		$context['sub_template'] = 'paid_done';
+		$context['sub_template'] = 'subscription_paid_done';
 		return;
 	}
 	// If this is confirmation then it's simpler...
