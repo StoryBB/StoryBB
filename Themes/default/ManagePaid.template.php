@@ -192,31 +192,6 @@ function template_modify_subscription()
 }
 
 /**
- * The page for deleting a subscription.
- */
-function template_delete_subscription()
-{
-	global $context, $scripturl, $txt;
-
-	echo '
-	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modify;sid=', $context['sub_id'], ';delete" method="post">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['paid_delete_subscription'], '</h3>
-			</div>
-			<div class="windowbg">
-				<p>', $txt['paid_mod_delete_warning'], '</p>
-
-				<input type="submit" name="delete_confirm" value="', $txt['paid_delete_subscription'], '" class="button_submit">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="', $context['admin-pmsd_token_var'], '" value="', $context['admin-pmsd_token'], '">
-			</div>
-		</form>
-	</div>';
-
-}
-
-/**
  * Add or edit an existing subscriber.
  */
 function template_modify_user_subscription()

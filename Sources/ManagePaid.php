@@ -405,7 +405,7 @@ function ModifySubscription()
 	$context['action_type'] = $context['sub_id'] ? (isset($_REQUEST['delete']) ? 'delete' : 'edit') : 'add';
 
 	// Setup the template.
-	$context['sub_template'] = $context['action_type'] == 'delete' ? 'delete_subscription' : 'modify_subscription';
+	$context['sub_template'] = $context['action_type'] == 'delete' ? 'subscription_delete' : 'modify_subscription';
 	$context['page_title'] = $txt['paid_' . $context['action_type'] . '_subscription'];
 
 	// Delete it?
