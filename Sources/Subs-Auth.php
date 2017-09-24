@@ -195,7 +195,7 @@ function KickGuest()
 	if (strpos($_SERVER['REQUEST_URL'], 'dlattach') === false)
 		$_SESSION['login_url'] = $_SERVER['REQUEST_URL'];
 
-	$context['sub_template'] = 'kick_guest';
+	$context['sub_template'] = 'login_kick_guest';
 	$context['page_title'] = $txt['login'];
 }
 
@@ -216,7 +216,7 @@ function InMaintenance()
 	header('HTTP/1.1 503 Service Temporarily Unavailable');
 
 	// Basic template stuff..
-	$context['sub_template'] = 'maintenance';
+	$context['sub_template'] = 'login_maintenance';
 	$context['title'] = $smcFunc['htmlspecialchars']($mtitle);
 	$context['description'] = &$mmessage;
 	$context['page_title'] = $txt['maintain_mode'];
@@ -232,7 +232,7 @@ function InMaintenance()
  */
 function adminLogin($type = 'admin')
 {
-	global $context, $txt, $user_settings, $user_info;
+	global $context, $txt, $user_settings, $user_info, $scripturl, $modSettings;
 
 	loadLanguage('Admin');
 	loadTemplate('Login');
@@ -268,7 +268,8 @@ function adminLogin($type = 'admin')
 		$context['post_data'] .= adminLogin_outputPostVars($k, $v);
 
 	// Now we'll use the admin_login sub template of the Login template.
-	$context['sub_template'] = 'admin_login';
+	$context['form_scripturl'] = !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl;
+	$context['sub_template'] = 'login_admin';
 
 	// And title the page something like "Login".
 	if (!isset($context['page_title']))

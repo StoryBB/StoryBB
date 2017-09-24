@@ -518,7 +518,6 @@ function Activate()
 		redirectexit();
 
 	loadLanguage('Login');
-	loadTemplate('Login');
 
 	if (empty($_REQUEST['u']) && empty($_POST['user']))
 	{
@@ -526,7 +525,7 @@ function Activate()
 			fatal_lang_error('no_access', false);
 
 		$context['member_id'] = 0;
-		$context['sub_template'] = 'resend';
+		$context['sub_template'] = 'login_resend';
 		$context['page_title'] = $txt['invalid_activation_resend'];
 		$context['can_activate'] = empty($modSettings['registration_method']) || $modSettings['registration_method'] == '1';
 		$context['default_username'] = isset($_GET['user']) ? $_GET['user'] : '';
@@ -550,7 +549,7 @@ function Activate()
 	// Does this user exist at all?
 	if ($smcFunc['db_num_rows']($request) == 0)
 	{
-		$context['sub_template'] = 'retry_activate';
+		$context['sub_template'] = 'login_manual_activate';
 		$context['page_title'] = $txt['invalid_userid'];
 		$context['member_id'] = 0;
 
@@ -630,7 +629,7 @@ function Activate()
 			fatal_error(sprintf($txt['registration_not_approved'], $scripturl . '?action=activate;user=' . $row['member_name']), false);
 		}
 
-		$context['sub_template'] = 'retry_activate';
+		$context['sub_template'] = 'login_manual_activate';
 		$context['page_title'] = $txt['invalid_activation_code'];
 		$context['member_id'] = $row['id_member'];
 
@@ -655,7 +654,7 @@ function Activate()
 
 	$context += array(
 		'page_title' => $txt['registration_successful'],
-		'sub_template' => 'login',
+		'sub_template' => 'login_main',
 		'default_username' => $row['member_name'],
 		'default_password' => '',
 		'never_expire' => false,
@@ -705,7 +704,7 @@ function CoppaForm()
 			// Shortcut for producing underlines.
 			$context['ul'] = '<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>';
 			$context['template_layers'] = array();
-			$context['sub_template'] = 'coppa_form';
+			$context['sub_template'] = 'register_coppa_form';
 			$context['page_title'] = $txt['coppa_form_title'];
 			$context['coppa_body'] = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}'), array($context['ul'], $context['ul'], $username), $txt['coppa_form_body']);
 		}
@@ -732,7 +731,7 @@ function CoppaForm()
 	{
 		$context += array(
 			'page_title' => $txt['coppa_title'],
-			'sub_template' => 'coppa',
+			'sub_template' => 'register_coppa',
 		);
 
 		$context['coppa'] = array(
@@ -823,6 +822,7 @@ function RegisterCheckUsername()
 
 	// This is XML!
 	loadTemplate('Xml');
+	loadTemplateLayout('raw');
 	$context['sub_template'] = 'check_username';
 	$context['checked_username'] = isset($_GET['username']) ? un_htmlspecialchars($_GET['username']) : '';
 	$context['valid_username'] = true;

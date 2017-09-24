@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 if (!defined('SMF'))
 	die('No direct access...');
 
@@ -528,8 +530,8 @@ function updateSettings($changeArray, $update = false)
  *   be a multiple of num_per_page.
  * - checks that start is not more than max_value.
  * - base_url should be the URL without any start parameter on it.
- * - uses the compactTopicPagesEnable and compactTopicPagesContiguous
- *   settings to decide how to display the menu.
+ * - uses the compactTopicPagesContiguous
+ *   setting to decide how to display the menu.
  *
  * an example is available near the function definition.
  * $pageindex = constructPageIndex($scripturl . '?board=' . $board, $_REQUEST['start'], $num_messages, $maxindex, true);
@@ -581,86 +583,69 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	$base_link = strtr($settings['page_index']['page'], array('{URL}' => $flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d'));
 	$pageindex = $settings['page_index']['extra_before'];
 
-	// Compact pages is off or on?
-	if (empty($modSettings['compactTopicPagesEnable']))
-	{
-		// Show the left arrow.
-		$pageindex .= $start == 0 ? ' ' : sprintf($base_link, $start - $num_per_page, $settings['page_index']['previous_page']);
 
-		// Show all the pages.
-		$display_page = 1;
-		for ($counter = 0; $counter < $max_value; $counter += $num_per_page)
-			$pageindex .= $start == $counter && !$start_invalid ? sprintf($settings['page_index']['current_page'], $display_page++) : sprintf($base_link, $counter, $display_page++);
+	// If they didn't enter an odd value, pretend they did.
+	$PageContiguous = (int) ($modSettings['compactTopicPagesContiguous'] - ($modSettings['compactTopicPagesContiguous'] % 2)) / 2;
 
-		// Show the right arrow.
-		$display_page = ($start + $num_per_page) > $max_value ? $max_value : ($start + $num_per_page);
-		if ($start != $counter - $max_value && !$start_invalid)
-			$pageindex .= $display_page > $counter - $num_per_page ? ' ' : sprintf($base_link, $display_page, $settings['page_index']['next_page']);
-	}
+	// Show the "prev page" link. (>prev page< 1 ... 6 7 [8] 9 10 ... 15 next page)
+	if (!empty($start) && $show_prevnext)
+		$pageindex .= sprintf($base_link, $start - $num_per_page, $settings['page_index']['previous_page']);
 	else
-	{
-		// If they didn't enter an odd value, pretend they did.
-		$PageContiguous = (int) ($modSettings['compactTopicPagesContiguous'] - ($modSettings['compactTopicPagesContiguous'] % 2)) / 2;
+		$pageindex .= '';
 
-		// Show the "prev page" link. (>prev page< 1 ... 6 7 [8] 9 10 ... 15 next page)
-		if (!empty($start) && $show_prevnext)
-			$pageindex .= sprintf($base_link, $start - $num_per_page, $settings['page_index']['previous_page']);
-		else
-			$pageindex .= '';
+	// Show the first page. (prev page >1< ... 6 7 [8] 9 10 ... 15)
+	if ($start > $num_per_page * $PageContiguous)
+		$pageindex .= sprintf($base_link, 0, '1');
 
-		// Show the first page. (prev page >1< ... 6 7 [8] 9 10 ... 15)
-		if ($start > $num_per_page * $PageContiguous)
-			$pageindex .= sprintf($base_link, 0, '1');
+	// Show the ... after the first page.  (prev page 1 >...< 6 7 [8] 9 10 ... 15 next page)
+	if ($start > $num_per_page * ($PageContiguous + 1))
+		$pageindex .= strtr($settings['page_index']['expand_pages'], array(
+			'{LINK}' => JavaScriptEscape($smcFunc['htmlspecialchars']($base_link)),
+			'{FIRST_PAGE}' => $num_per_page,
+			'{LAST_PAGE}' => $start - $num_per_page * $PageContiguous,
+			'{PER_PAGE}' => $num_per_page,
+		));
 
-		// Show the ... after the first page.  (prev page 1 >...< 6 7 [8] 9 10 ... 15 next page)
-		if ($start > $num_per_page * ($PageContiguous + 1))
-			$pageindex .= strtr($settings['page_index']['expand_pages'], array(
-				'{LINK}' => JavaScriptEscape($smcFunc['htmlspecialchars']($base_link)),
-				'{FIRST_PAGE}' => $num_per_page,
-				'{LAST_PAGE}' => $start - $num_per_page * $PageContiguous,
-				'{PER_PAGE}' => $num_per_page,
-			));
+	// Show the pages before the current one. (prev page 1 ... >6 7< [8] 9 10 ... 15 next page)
+	for ($nCont = $PageContiguous; $nCont >= 1; $nCont--)
+		if ($start >= $num_per_page * $nCont)
+		{
+			$tmpStart = $start - $num_per_page * $nCont;
+			$pageindex .= sprintf($base_link, $tmpStart, $tmpStart / $num_per_page + 1);
+		}
 
-		// Show the pages before the current one. (prev page 1 ... >6 7< [8] 9 10 ... 15 next page)
-		for ($nCont = $PageContiguous; $nCont >= 1; $nCont--)
-			if ($start >= $num_per_page * $nCont)
-			{
-				$tmpStart = $start - $num_per_page * $nCont;
-				$pageindex .= sprintf($base_link, $tmpStart, $tmpStart / $num_per_page + 1);
-			}
+	// Show the current page. (prev page 1 ... 6 7 >[8]< 9 10 ... 15 next page)
+	if (!$start_invalid)
+		$pageindex .= sprintf($settings['page_index']['current_page'], $start / $num_per_page + 1);
+	else
+		$pageindex .= sprintf($base_link, $start, $start / $num_per_page + 1);
 
-		// Show the current page. (prev page 1 ... 6 7 >[8]< 9 10 ... 15 next page)
-		if (!$start_invalid)
-			$pageindex .= sprintf($settings['page_index']['current_page'], $start / $num_per_page + 1);
-		else
-			$pageindex .= sprintf($base_link, $start, $start / $num_per_page + 1);
+	// Show the pages after the current one... (prev page 1 ... 6 7 [8] >9 10< ... 15 next page)
+	$tmpMaxPages = (int) (($max_value - 1) / $num_per_page) * $num_per_page;
+	for ($nCont = 1; $nCont <= $PageContiguous; $nCont++)
+		if ($start + $num_per_page * $nCont <= $tmpMaxPages)
+		{
+			$tmpStart = $start + $num_per_page * $nCont;
+			$pageindex .= sprintf($base_link, $tmpStart, $tmpStart / $num_per_page + 1);
+		}
 
-		// Show the pages after the current one... (prev page 1 ... 6 7 [8] >9 10< ... 15 next page)
-		$tmpMaxPages = (int) (($max_value - 1) / $num_per_page) * $num_per_page;
-		for ($nCont = 1; $nCont <= $PageContiguous; $nCont++)
-			if ($start + $num_per_page * $nCont <= $tmpMaxPages)
-			{
-				$tmpStart = $start + $num_per_page * $nCont;
-				$pageindex .= sprintf($base_link, $tmpStart, $tmpStart / $num_per_page + 1);
-			}
+	// Show the '...' part near the end. (prev page 1 ... 6 7 [8] 9 10 >...< 15 next page)
+	if ($start + $num_per_page * ($PageContiguous + 1) < $tmpMaxPages)
+		$pageindex .= strtr($settings['page_index']['expand_pages'], array(
+			'{LINK}' => JavaScriptEscape($smcFunc['htmlspecialchars']($base_link)),
+			'{FIRST_PAGE}' => $start + $num_per_page * ($PageContiguous + 1),
+			'{LAST_PAGE}' => $tmpMaxPages,
+			'{PER_PAGE}' => $num_per_page,
+		));
 
-		// Show the '...' part near the end. (prev page 1 ... 6 7 [8] 9 10 >...< 15 next page)
-		if ($start + $num_per_page * ($PageContiguous + 1) < $tmpMaxPages)
-			$pageindex .= strtr($settings['page_index']['expand_pages'], array(
-				'{LINK}' => JavaScriptEscape($smcFunc['htmlspecialchars']($base_link)),
-				'{FIRST_PAGE}' => $start + $num_per_page * ($PageContiguous + 1),
-				'{LAST_PAGE}' => $tmpMaxPages,
-				'{PER_PAGE}' => $num_per_page,
-			));
+	// Show the last number in the list. (prev page 1 ... 6 7 [8] 9 10 ... >15<  next page)
+	if ($start + $num_per_page * $PageContiguous < $tmpMaxPages)
+		$pageindex .= sprintf($base_link, $tmpMaxPages, $tmpMaxPages / $num_per_page + 1);
 
-		// Show the last number in the list. (prev page 1 ... 6 7 [8] 9 10 ... >15<  next page)
-		if ($start + $num_per_page * $PageContiguous < $tmpMaxPages)
-			$pageindex .= sprintf($base_link, $tmpMaxPages, $tmpMaxPages / $num_per_page + 1);
+	// Show the "next page" link. (prev page 1 ... 6 7 [8] 9 10 ... 15 >next page<)
+	if ($start != $tmpMaxPages && $show_prevnext)
+		$pageindex .= sprintf($base_link, $start + $num_per_page, $settings['page_index']['next_page']);
 
-		// Show the "next page" link. (prev page 1 ... 6 7 [8] 9 10 ... 15 >next page<)
-		if ($start != $tmpMaxPages && $show_prevnext)
-			$pageindex .= sprintf($base_link, $start + $num_per_page, $settings['page_index']['next_page']);
-	}
 	$pageindex .= $settings['page_index']['extra_after'];
 
 	return $pageindex;
@@ -854,39 +839,6 @@ function forum_time($use_user_offset = true, $timestamp = null)
 		return 0;
 
 	return $timestamp + ($modSettings['time_offset'] + ($use_user_offset ? $user_info['time_offset'] : 0)) * 3600;
-}
-
-/**
- * Calculates all the possible permutations (orders) of array.
- * should not be called on huge arrays (bigger than like 10 elements.)
- * returns an array containing each permutation.
- *
- * @deprecated since 2.1
- * @param array $array An array
- * @return array An array containing each permutation
- */
-function permute($array)
-{
-	$orders = array($array);
-
-	$n = count($array);
-	$p = range(0, $n);
-	for ($i = 1; $i < $n; null)
-	{
-		$p[$i]--;
-		$j = $i % 2 != 0 ? $p[$i] : 0;
-
-		$temp = $array[$i];
-		$array[$i] = $array[$j];
-		$array[$j] = $temp;
-
-		for ($i = 1; $p[$i] == 0; $i++)
-			$p[$i] = 1;
-
-		$orders[] = $array;
-	}
-
-	return $orders;
 }
 
 /**
@@ -2629,7 +2581,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  */
 function obExit($header = null, $do_footer = null, $from_index = false, $from_fatal_error = false)
 {
-	global $context, $settings, $modSettings, $txt, $smcFunc;
+	global $context, $settings, $modSettings, $txt, $options, $scripturl, $smcFunc;
 	static $header_done = false, $footer_done = false, $level = 0, $has_fatal_error = false;
 
 	// Attempt to prevent a recursive loop.
@@ -2687,7 +2639,53 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	}
 	if ($do_footer)
 	{
-		loadSubTemplate(isset($context['sub_template']) ? $context['sub_template'] : 'main');
+		$content = '';
+		$render_templates = [];
+		// Add the before layers.
+		if (empty($context['template_layers']))
+		{
+			$context['template_layers'] = [];
+		}
+		foreach ($context['template_layers'] as $layer) {
+			$render_templates[] = $layer . '_above';
+		}
+
+		// Add the inner part
+		if (empty($context['sub_template']))
+		{
+			$render_templates[] = 'main';
+		}
+		else
+		{
+			$render_templates = array_merge($render_templates, (array) $context['sub_template']);
+		}
+
+		// Add the after layers
+		foreach (array_reverse($context['template_layers']) as $layer) {
+			$render_templates[] = $layer . '_below';
+		}
+
+		foreach ($render_templates as $sub_template) {
+			// Super hacky way to render all the layers in the right place.
+			if (function_exists('template_' . $sub_template)) {
+				ob_start();
+				$content .= loadSubTemplate($sub_template);
+				$buffer = ob_get_clean();
+				$content .= $buffer;
+			} else {
+    			$phpStr = compileTemplate(loadTemplateFile($sub_template));
+    			$renderer = LightnCandy::prepare($phpStr);
+				$content .= $renderer([
+					'context' => $context,
+					'txt' => $txt,
+					'scripturl' => $scripturl,
+					'settings' => $settings,
+					'modSettings' => $modSettings,
+					'options' => $options,
+				]);
+			}
+		}
+		render_page($content); //found in Subs.php, this renders the layout around the page
 
 		// Anything special to put out?
 		if (!empty($context['insert_after_template']) && !isset($_REQUEST['xml']))
@@ -2718,6 +2716,84 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index)
 		exit;
+}
+
+function render_page($content) {
+	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count;
+
+	if (!empty($context['layout_loaded'])) {
+		echo $content;
+		return;
+	}
+
+	// Show the load time?  (only makes sense for the footer.)
+	// This is not really the correct place for this, ideally it needs to happen
+	// as late as possible, but we don't have a flow where this really works yet.
+	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
+	$context['load_time'] = comma_format(round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3));
+	$context['load_queries'] = $db_count;
+
+	$context['session_flash'] = session_flash_retrieve();
+
+	$data = Array(
+		'content' => $content,
+		'context' => $context,
+		'txt' => $txt,
+		'scripturl' => $scripturl,
+		'settings' => $settings,
+		'maintenance' => $maintenance,
+		'modSettings' => $modSettings,
+		'copyright' => theme_copyright(),
+		'loadtime' => !empty($modSettings['timeLoadPageEnable']) ? sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries']) : ''
+	);
+
+	if (empty($context['layout_loaded'])) {
+		$template = loadTemplateLayout('default');
+	}
+
+	$phpStr = compileTemplate($template, [
+	    'helpers' => [
+	    	'locale' => 'locale_helper',
+	        'login_helper' => 'login_helper',
+	        'isSelected' => 'isSelected',
+	        'javascript' => 'template_javascript',
+	    ]
+	]);
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	echo $renderer($data);
+}
+
+function locale_helper($lang_locale) 
+{
+    return new \LightnCandy\SafeString(str_replace("_", "-", substr($lang_locale, 0, strcspn($lang_locale, "."))));
+}
+
+function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
+{
+    return new \LightnCandy\SafeString(sprintf($string,
+	    $guest_title, 
+	    $forum_name, 
+	    $scripturl . '?action=login', 
+	    'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
+	    $scripturl . '?action=signup'
+	));
+}
+
+function session_flash($status, $message) {
+	if (!in_array($status, ['success', 'warning', 'error'])) {
+		fatal_error('Invalid session flash');
+	}
+	$_SESSION['flash'][$status][] = $message;
+}
+
+function session_flash_retrieve() {
+	$messages = [];
+	foreach (['error', 'warning', 'success'] as $status) {
+		$messages[$status] = !empty($_SESSION['flash'][$status]) ? $_SESSION['flash'][$status] : [];
+	}
+	unset ($_SESSION['flash']);
+	return $messages;
 }
 
 /**
@@ -2843,11 +2919,6 @@ function setupThemeContext($forceload = false)
 		$context['user']['unread_messages'] = &$user_info['unread_messages'];
 		$context['user']['alerts'] = &$user_info['alerts'];
 
-		// Personal message popup...
-		if ($user_info['unread_messages'] > (isset($_SESSION['unread_messages']) ? $_SESSION['unread_messages'] : 0))
-			$context['user']['popup_messages'] = true;
-		else
-			$context['user']['popup_messages'] = false;
 		$_SESSION['unread_messages'] = $user_info['unread_messages'];
 
 		if (allowedTo('moderate_forum'))
@@ -2889,7 +2960,6 @@ function setupThemeContext($forceload = false)
 		$context['user']['unread_messages'] = 0;
 		$context['user']['avatar'] = array();
 		$context['user']['total_time_logged_in'] = array('days' => 0, 'hours' => 0, 'minutes' => 0);
-		$context['user']['popup_messages'] = false;
 
 		if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1)
 			$txt['welcome_guest'] .= $txt['welcome_guest_activate'];
@@ -2904,20 +2974,6 @@ function setupThemeContext($forceload = false)
 
 	// This is here because old index templates might still use it.
 	$context['show_news'] = !empty($settings['enable_news']);
-
-	// This is done to allow theme authors to customize it as they want.
-	$context['show_pm_popup'] = $context['user']['popup_messages'] && !empty($options['popup_messages']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'pm');
-
-	// 2.1+: Add the PM popup here instead. Theme authors can still override it simply by editing/removing the 'fPmPopup' in the array.
-	if ($context['show_pm_popup'])
-		addInlineJavaScript('
-		jQuery(document).ready(function($) {
-			new smc_Popup({
-				heading: ' . JavaScriptEscape($txt['show_personal_messages_heading']) . ',
-				content: ' . JavaScriptEscape(sprintf($txt['show_personal_messages'], $context['user']['unread_messages'], $scripturl . '?action=pm')) . ',
-				icon_class: \'generic_icons mail_new\'
-			});
-		});');
 
 	// Add a generic "Are you sure?" confirmation message.
 	addInlineJavaScript('
@@ -3065,27 +3121,10 @@ function template_header()
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 
-	// We need to splice this in after the body layer, or after the main layer for older stuff.
-	if ($context['in_maintenance'] && $context['user']['is_admin'])
-	{
-		$position = array_search('body', $context['template_layers']);
-		if ($position === false)
-			$position = array_search('main', $context['template_layers']);
-
-		if ($position !== false)
-		{
-			$before = array_slice($context['template_layers'], 0, $position + 1);
-			$after = array_slice($context['template_layers'], $position + 1);
-			$context['template_layers'] = array_merge($before, array('maint_warning'), $after);
-		}
-	}
-
 	$checked_securityFiles = false;
 	$showed_banned = false;
 	foreach ($context['template_layers'] as $layer)
 	{
-		loadSubTemplate($layer . '_above', true);
-
 		// May seem contrived, but this is done in case the body and main layer aren't there...
 		if (in_array($layer, array('body', 'main')) && allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
 		{
@@ -3184,7 +3223,7 @@ function theme_copyright()
 		return;
 
 	// Put in the version...
-	printf($forum_copyright, $forum_version, $software_year);
+	return sprintf($forum_copyright, $forum_version, $software_year);
 }
 
 /**
@@ -3194,13 +3233,6 @@ function template_footer()
 {
 	global $context, $modSettings, $time_start, $db_count;
 
-	// Show the load time?  (only makes sense for the footer.)
-	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
-	$context['load_time'] = comma_format(round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3));
-	$context['load_queries'] = $db_count;
-
-	foreach (array_reverse($context['template_layers']) as $layer)
-		loadSubTemplate($layer . '_below', true);
 }
 
 /**
@@ -3214,33 +3246,38 @@ function template_javascript($do_deferred = false)
 {
 	global $context, $modSettings, $settings;
 
+	// Ugly hack for Lightncandy
+	$do_deferred = !empty($do_deferred['hash']['deferred']);
+
 	// Use this hook to minify/optimize Javascript files and vars
 	call_integration_hook('integrate_pre_javascript_output', array(&$do_deferred));
 
 	$toMinify = array();
 	$toMinifyDefer = array();
 
+	$return = '';
+
 	// Ouput the declared Javascript variables.
 	if (!empty($context['javascript_vars']) && !$do_deferred)
 	{
-		echo '
+		$return .= '
 	<script>';
 
 		foreach ($context['javascript_vars'] as $key => $value)
 		{
 			if (empty($value))
 			{
-				echo '
-		var ', $key, ';';
+				$return .= '
+		var ' . $key . ';';
 			}
 			else
 			{
-				echo '
-		var ', $key, ' = ', $value, ';';
+				$return .= '
+		var ' . $key . ' = ' . $value . ';';
 			}
 		}
 
-		echo '
+		$return .= '
 	</script>';
 	}
 
@@ -3266,8 +3303,8 @@ function template_javascript($do_deferred = false)
 		}
 
 		elseif ((!$do_deferred && empty($js_file['options']['defer'])) || ($do_deferred && !empty($js_file['options']['defer'])))
-			echo '
-	<script src="', $js_file['fileUrl'], '"', !empty($js_file['options']['async']) ? ' async="async"' : '', '></script>';
+			$return .= '
+	<script src="' . $js_file['fileUrl'] . '"' . (!empty($js_file['options']['async']) ? ' async="async"' : '') . '></script>';
 	}
 
 	if ((!$do_deferred && !empty($toMinify)) || ($do_deferred && !empty($toMinifyDefer)))
@@ -3277,12 +3314,12 @@ function template_javascript($do_deferred = false)
 		// Minify process couldn't work, print each individual files.
 		if (!empty($result) && is_array($result))
 			foreach ($result as $minFailedFile)
-				echo '
-	<script src="', $minFailedFile['fileUrl'], '"', !empty($minFailedFile['options']['async']) ? ' async="async"' : '', '></script>';
+				$return .= '
+	<script src="' . $minFailedFile['fileUrl'] . '"' . (!empty($minFailedFile['options']['async']) ? ' async="async"' : '') . '></script>';
 
 		else
-			echo '
-	<script src="', $settings['theme_url'] ,'/scripts/minified', ($do_deferred ? '_deferred' : '') ,'.js', $minSeed ,'"></script>';
+			$return .= '
+	<script src="' . $settings['theme_url'] . '/scripts/minified' . ($do_deferred ? '_deferred' : '') . '.js' . $minSeed . '"></script>';
 	}
 
 	// Inline JavaScript - Actually useful some times!
@@ -3290,28 +3327,30 @@ function template_javascript($do_deferred = false)
 	{
 		if (!empty($context['javascript_inline']['defer']) && $do_deferred)
 		{
-			echo '
+			$return .= '
 <script>';
 
 			foreach ($context['javascript_inline']['defer'] as $js_code)
-				echo $js_code;
+				$return .= $js_code;
 
-			echo '
+			$return .= '
 </script>';
 		}
 
 		if (!empty($context['javascript_inline']['standard']) && !$do_deferred)
 		{
-			echo '
+			$return .= '
 	<script>';
 
 			foreach ($context['javascript_inline']['standard'] as $js_code)
-				echo $js_code;
+				$return .= $js_code;
 
-			echo '
+			$return .= '
 	</script>';
 		}
 	}
+
+	return $return;
 }
 
 /**
@@ -3742,9 +3781,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
 	if (function_exists('template_create_button') && !$force_use)
 		return template_create_button($name, $alt, $label = '', $custom = '');
 
-	if (!$settings['use_image_buttons'])
-		return $txt[$alt];
-	elseif (!empty($settings['use_buttons']))
+	if (!empty($settings['use_buttons']))
 		return '<span class="generic_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
 	else
 		return '<img src="' . $settings['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';

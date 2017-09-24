@@ -40,7 +40,8 @@ function smc_AutoSuggest(oOptions)
 	this.bPositionComplete = false;
 
 	// Just make sure the page is loaded before calling the init.
-	addLoadEvent(this.opt.sSelf + '.init();');
+	var that = this;
+	addLoadEvent(function () { that.init(); });
 }
 
 smc_AutoSuggest.prototype.init = function()

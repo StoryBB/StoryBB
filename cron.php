@@ -1,13 +1,13 @@
 <?php
 
 /**
- * This is a slightly strange file. It is not designed to ever be run directly from within SMF's
+ * This is a slightly strange file. It is not designed to ever be run directly from within StoryBB's
  * conventional running, but called externally to facilitate background tasks. It can be called
  * either directly or via cron, and in either case will completely ignore anything supplied
  * via command line, or $_GET, $_POST, $_COOKIE etc. because those things should never affect the
  * running of this script.
  *
- * Because of the way this runs, etc. we do need some of SMF but not everything to try to keep this
+ * Because of the way this runs, etc. we do need some of StoryBB but not everything to try to keep this
  * running a little bit faster.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
@@ -78,7 +78,7 @@ require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Subs.php');
 
-// Create a variable to store some SMF specific functions in.
+// Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();
 
 // This is our general bootstrap, a la SSI.php but with a few differences.

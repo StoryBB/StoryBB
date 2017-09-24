@@ -141,7 +141,7 @@ function getBoardIndex($boardIndexOptions)
 					'children_new' => false,
 					'topics' => $row_board['num_topics'],
 					'posts' => $row_board['num_posts'],
-					'is_redirect' => $row_board['is_redirect'],
+					'is_redirect' => !empty($row_board['is_redirect']),
 					'unapproved_topics' => $row_board['unapproved_topics'],
 					'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
 					'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),

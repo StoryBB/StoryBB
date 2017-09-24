@@ -304,7 +304,7 @@ WHERE variable IN ('modlog_enabled', 'localCookies', 'globalCookies', 'send_welc
 	AND value = '0';
 
 DELETE FROM {$db_prefix}settings
-WHERE variable IN ('allow_guestAccess', 'userLanguage', 'allow_editDisplayName', 'allow_hideOnline', 'allow_hideEmail', 'guest_hideContacts', 'titlesEnable', 'search_match_complete_words')
+WHERE variable IN ('allow_guestAccess', 'userLanguage', 'allow_editDisplayName', 'allow_hideOnline', 'allow_hideEmail', 'guest_hideContacts', 'search_match_complete_words')
 	AND value = '0';
 
 DELETE FROM {$db_prefix}settings
@@ -2202,12 +2202,6 @@ $textfield_updates = array(
 	array(
 		'table' => 'members',
 		'column' => 'avatar',
-		'type' => 'tinytext',
-		'null_allowed' => false,
-	),
-	array(
-		'table' => 'members',
-		'column' => 'usertitle',
 		'type' => 'tinytext',
 		'null_allowed' => false,
 	),

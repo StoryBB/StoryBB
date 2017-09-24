@@ -1249,32 +1249,9 @@ function smf_prepareScriptUrl(sUrl)
 	return sUrl.indexOf('?') == -1 ? sUrl + '?' : sUrl + (sUrl.charAt(sUrl.length - 1) == '?' || sUrl.charAt(sUrl.length - 1) == '&' || sUrl.charAt(sUrl.length - 1) == ';' ? '' : ';');
 }
 
-var aOnloadEvents = new Array();
 function addLoadEvent(fNewOnload)
 {
-	// If there's no event set, just set this one
-	if (typeof(fNewOnload) == 'function' && (!('onload' in window) || typeof(window.onload) != 'function'))
-		window.onload = fNewOnload;
-
-	// If there's just one event, setup the array.
-	else if (aOnloadEvents.length == 0)
-	{
-		aOnloadEvents[0] = window.onload;
-		aOnloadEvents[1] = fNewOnload;
-		window.onload = function() {
-			for (var i = 0, n = aOnloadEvents.length; i < n; i++)
-			{
-				if (typeof(aOnloadEvents[i]) == 'function')
-					aOnloadEvents[i]();
-				else if (typeof(aOnloadEvents[i]) == 'string')
-					eval(aOnloadEvents[i]);
-			}
-		}
-	}
-
-	// This isn't the first event function, add it to the list.
-	else
-		aOnloadEvents[aOnloadEvents.length] = fNewOnload;
+	$(document).ready(fNewOnload);
 }
 
 // Get the text in a code tag.

@@ -23,7 +23,7 @@ if (!defined('SMF'))
  */
 function Login()
 {
-	global $txt, $context, $scripturl, $user_info;
+	global $txt, $context, $scripturl, $user_info, $modSettings;
 
 	// You are already logged in, go take a tour of the boards
 	if (!empty($user_info['id']))
@@ -31,9 +31,8 @@ function Login()
 
 	// We need to load the Login template/language file.
 	loadLanguage('Login');
-	loadTemplate('Login');
 
-	$context['sub_template'] = 'login';
+	$context['sub_template'] = 'login_main';
 
 	if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
 	{
@@ -46,6 +45,7 @@ function Login()
 	$context['default_username'] = &$_REQUEST['u'];
 	$context['default_password'] = '';
 	$context['never_expire'] = false;
+	$context['ajax_nonssl'] = !empty($context['from_ajax']) && (empty($modSettings['force_ssl']) || $modSettings['force_ssl'] == 2);
 
 	// Add the login chain to the link tree.
 	$context['linktree'][] = array(
@@ -189,9 +189,7 @@ function Login2()
 		$modSettings['cookieTime'] = (int) $_POST['cookielength'];
 
 	loadLanguage('Login');
-	// Load the template stuff.
-	loadTemplate('Login');
-	$context['sub_template'] = 'login';
+	$context['sub_template'] = 'login_main';
 
 	// Set up the default/fallback stuff.
 	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user'])) : '';

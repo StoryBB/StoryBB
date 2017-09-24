@@ -1,0 +1,19 @@
+{{#if context.simple_action}}
+	<strong>{{context.error_title}}</strong>
+	<br>
+	<div {{{context.error_code}}} class="padding">{{context.error_message}}</div>
+{{else}}
+	<div id="fatal_error">
+		<div class="cat_bar">
+			<h3 class="catbg">
+				{{context.error_title}}
+			</h3>
+		</div>
+		<div class="windowbg noup">
+			<div {{{context.error_code}}} class="padding">{{context.error_message}}</div>
+		</div>
+	</div>
+	<div class="centertext">
+		<a class="button_link" style="float:none" href="javascript:document.location=document.referrer">{{txt.back}}</a>
+	</div>
+{{/if}}

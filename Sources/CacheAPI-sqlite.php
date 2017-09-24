@@ -134,7 +134,7 @@ class sqlite_cache extends cache_api
 	}
 
 	/**
-	 * Sets the $cachedir or uses the SMF default $cachedir..
+	 * Sets the $cachedir or uses the StoryBB default $cachedir..
 	 *
 	 * @access public
 	 *
@@ -146,7 +146,7 @@ class sqlite_cache extends cache_api
 	{
 		global $cachedir_sqlite;
 
-		// If its invalid, use SMF's.
+		// If its invalid, use StoryBB's.
 		if (is_null($dir) || !is_writable($dir))
 		{
 			$this->cachedir = $cachedir_sqlite;

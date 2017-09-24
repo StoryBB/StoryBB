@@ -370,14 +370,8 @@ else if('x' in itemHandle)
 return[itemX,itemY]}
 function smf_prepareScriptUrl(sUrl)
 {return sUrl.indexOf('?')==-1?sUrl+'?':sUrl+(sUrl.charAt(sUrl.length-1)=='?'||sUrl.charAt(sUrl.length-1)=='&'||sUrl.charAt(sUrl.length-1)==';'?'':';')}
-var aOnloadEvents=new Array();function addLoadEvent(fNewOnload)
-{if(typeof(fNewOnload)=='function'&&(!('onload' in window)||typeof(window.onload)!='function'))
-window.onload=fNewOnload;else if(aOnloadEvents.length==0)
-{aOnloadEvents[0]=window.onload;aOnloadEvents[1]=fNewOnload;window.onload=function(){for(var i=0,n=aOnloadEvents.length;i<n;i++)
-{if(typeof(aOnloadEvents[i])=='function')
-aOnloadEvents[i]();else if(typeof(aOnloadEvents[i])=='string')
-eval(aOnloadEvents[i])}}}
-else aOnloadEvents[aOnloadEvents.length]=fNewOnload}
+function addLoadEvent(fNewOnload)
+{$(document).ready(fNewOnload)}
 function smfSelectText(oCurElement,bActOnElement)
 {if(typeof(bActOnElement)=='boolean'&&bActOnElement)
 var oCodeArea=document.getElementById(oCurElement);else var oCodeArea=oCurElement.parentNode.nextSibling;if(typeof(oCodeArea)!='object'||oCodeArea==null)

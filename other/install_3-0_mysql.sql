@@ -642,7 +642,6 @@ CREATE TABLE {$db_prefix}members (
   signature TEXT NOT NULL,
   time_offset float NOT NULL DEFAULT '0',
   avatar VARCHAR(255) NOT NULL DEFAULT '',
-  usertitle VARCHAR(255) NOT NULL DEFAULT '',
   member_ip VARBINARY(16),
   member_ip2 VARBINARY(16),
   secret_question VARCHAR(255) NOT NULL DEFAULT '',
@@ -1535,7 +1534,7 @@ VALUES ('xx', 'Standard', '0'),
 
 INSERT INTO {$db_prefix}messages
 	(id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, modified_name, body, icon)
-VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'Simple Machines', 'info@simplemachines.org', '', '{$default_topic_message}', 'xx');
+VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'StoryBB', 'info@storybb.org', '', '{$default_topic_message}', 'xx');
 # --------------------------------------------------------
 
 #
@@ -1636,7 +1635,6 @@ INSERT INTO {$db_prefix}settings
 VALUES ('smfVersion', '{$smf_version}'),
 	('news', '{$default_news}'),
 	('compactTopicPagesContiguous', '5'),
-	('compactTopicPagesEnable', '1'),
 	('todayMod', '1'),
 	('pollMode', '1'),
 	('enableCompressedOutput', '{$enableCompressedOutput}'),
@@ -1662,7 +1660,6 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('allow_disableAnnounce', '1'),
 	('trackStats', '1'),
 	('userLanguage', '1'),
-	('titlesEnable', '1'),
 	('topicSummaryPosts', '15'),
 	('enableErrorLogging', '1'),
 	('log_ban_hits', '1'),
@@ -1882,7 +1879,6 @@ VALUES (1, 'name', '{$default_theme_name}'),
 	(1, 'number_recent_posts', '0'),
 	(1, 'show_stats_index', '1'),
 	(1, 'newsfader_time', '3000'),
-	(1, 'use_image_buttons', '1'),
 	(1, 'enable_news', '1'),
 	(1, 'drafts_show_saved_enabled', '1');
 

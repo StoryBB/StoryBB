@@ -287,7 +287,7 @@ function loadProfileFields($force_reload = false)
 						resetPassword($context['id_member'], $value);
 					elseif ($value !== null)
 					{
-						validateUsername($context['id_member'], trim(preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $value)));
+						validateUsername($context['id_member'], trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $value)));
 						updateMemberData($context['id_member'], array('member_name' => $value));
 
 						// Call this here so any integrated systems will know about the name change (resetPassword() takes care of this if we're letting SMF generate the password)
@@ -345,7 +345,6 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'pm_read',
 			'preload' => function() use (&$context, $cur_profile)
 			{
-				$context['display_mode'] = $cur_profile['pm_prefs'] & 3;
 				$context['receive_from'] = !empty($cur_profile['pm_receive_from']) ? $cur_profile['pm_receive_from'] : 0;
 
 				return true;
@@ -385,7 +384,7 @@ function loadProfileFields($force_reload = false)
 			'enabled' => allowedTo('profile_displayed_name_own') || allowedTo('profile_displayed_name_any') || allowedTo('moderate_forum'),
 			'input_validate' => function(&$value) use ($context, $smcFunc, $sourcedir, $cur_profile)
 			{
-				$value = trim(preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $value));
+				$value = trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $value));
 
 				if (trim($value) == '')
 					return 'no_name';
@@ -529,22 +528,6 @@ function loadProfileFields($force_reload = false)
 				$tz = smf_list_timezones();
 				if (!isset($tz[$value]))
 					return 'bad_timezone';
-
-				return true;
-			},
-		),
-		'usertitle' => array(
-			'type' => 'text',
-			'label' => $txt['custom_title'],
-			'log_change' => true,
-			'input_attr' => array('maxlength="50"'),
-			'size' => 50,
-			'permission' => 'profile_title',
-			'enabled' => !empty($modSettings['titlesEnable']),
-			'input_validate' => function(&$value) use ($smcFunc)
-			{
-				if ($smcFunc['strlen']($value) > 50)
-					return 'user_title_too_long';
 
 				return true;
 			},
@@ -1678,7 +1661,7 @@ function forumProfile($memID)
 	setupProfileContext(
 		array(
 			'avatar_choice', 'hr',
-			'bday1', 'usertitle', 'signature', 'hr',
+			'bday1', 'signature', 'hr',
 			'website_title', 'website_url',
 		)
 	);

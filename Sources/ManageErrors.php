@@ -35,7 +35,6 @@ function ViewErrorLog()
 
 	// Templates, etc...
 	loadLanguage('ManageMaintenance');
-	loadTemplate('Errors');
 
 	// You can filter by any of the following columns:
 	$filters = array(
@@ -418,9 +417,9 @@ function ViewFile()
 		'file' => strtr($file, array('"' => '\\"')),
 	);
 
-	loadTemplate('Errors');
+	loadTemplateLayout('raw');
 	$context['template_layers'] = array();
-	$context['sub_template'] = 'show_file';
+	$context['sub_template'] = 'error_show_file';
 
 }
 

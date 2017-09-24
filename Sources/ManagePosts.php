@@ -163,7 +163,7 @@ function SetCensor()
 	// Since the "Allow users to disable the word censor" stuff was moved from a theme setting to a global one, we need this...
 	loadLanguage('Themes');
 
-	$context['sub_template'] = 'edit_censored';
+	$context['sub_template'] = 'admin_censor_words';
 	$context['page_title'] = $txt['admin_censored_words'];
 
 	createToken('admin-censor');
@@ -244,7 +244,7 @@ function ModifyPostSettings($return_config = false)
 		call_integration_hook('integrate_save_post_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=postsettings;sa=posts');
 	}
 
@@ -316,7 +316,7 @@ function ModifyTopicSettings($return_config = false)
 		call_integration_hook('integrate_save_topic_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=postsettings;sa=topics');
 	}
 
@@ -386,7 +386,7 @@ function ModifyDraftSettings($return_config = false)
 
 		// Save everything else and leave.
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=postsettings;sa=drafts');
 	}
 

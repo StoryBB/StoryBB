@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This, as you have probably guessed, is the crux on which SMF functions.
+ * This, as you have probably guessed, is the crux on which StoryBB functions.
  * Everything should start here, so all the setup and security is done
  * properly.  The most interesting part of this file is the action array in
  * the smf_main() function.  It is formatted as so:
@@ -46,17 +46,23 @@ require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
 require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 
 // Without those we can't go anywhere
+require_once($boarddir . '/vendor/autoload.php');
 require_once($sourcedir . '/QueryString.php');
 require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Subs-Auth.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 
+// Template helpers
+require_once(__DIR__ . '/Themes/default/helpers/logichelpers.php');
+require_once(__DIR__ . '/Themes/default/helpers/mischelpers.php');
+require_once(__DIR__ . '/Themes/default/helpers/stringhelpers.php');
+
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)
 	display_maintenance_message();
 
-// Create a variable to store some SMF specific functions in.
+// Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();
 
 // Initiate the database connection and define some database functions to use.
@@ -277,7 +283,6 @@ function smf_main()
 		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
 		'coppa' => array('Register.php', 'CoppaForm'),
-		'credits' => array('Who.php', 'Credits'),
 		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 		'dlattach' => array('ShowAttachments.php', 'showAttachment'),
 		'editpoll' => array('Poll.php', 'EditPoll'),

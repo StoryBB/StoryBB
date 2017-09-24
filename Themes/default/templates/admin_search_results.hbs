@@ -1,0 +1,32 @@
+		{{! Results page for admin search }}
+		<div id="section_header" class="cat_bar">
+			<form action="{{scripturl}}?action=admin;area=search" method="post" accept-charset="UTF-8">
+				<h3 class="catbg">
+					<span id="quick_search" class="floatright">
+						<input type="search" name="search_term" value="{{{context.search_term}}}" class="input_text">
+						<input type="hidden" name="search_type" value="{{{context.search_type}}}">
+						<input type="submit" name="search_go" value="{{{txt.admin_search_results_again}}}" class="button_submit">
+					</span>
+					<span class="generic_icons filter"></span>
+					<span id="quick_search_results">&nbsp;{{{textTemplate txt.admin_search_results_desc context.search_term}}}</span>
+				</h3>
+			</form>
+		</div>
+		<div class="windowbg2 generic_list_wrapper">
+			{{#if context.search_results}}
+				<ol class="search_results">
+					{{#each context.search_results}}
+						<li>
+							<a href="{{{url}}}"><strong>{{{name}}}</strong></a> [{{{type_string}}}]
+							{{#if help}}
+								<p class="double_height">{{{help}}}</p>
+							{{/if}}
+						</li>
+					{{/each}}
+				</ol>
+			{{else}}
+				<p class="centertext">
+					<strong>{{{txt.admin_search_results_none}}}</strong>
+				</p>
+			{{/if}}
+		</div>

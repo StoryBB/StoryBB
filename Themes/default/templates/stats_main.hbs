@@ -1,0 +1,182 @@
+<div id="statistics" class="main_section">
+		<div class="cat_bar">
+			<h3 class="catbg">{{context.page_title}}</h3>
+		</div>
+		<div class="roundframe">
+			<div class="title_bar">
+				<h4 class="titlebg">
+					<span class="generic_icons general"></span>{{txt.general_stats}}
+				</h4>
+			</div>
+			<dl class="stats half_content nobb">
+				<dt>{{txt.total_members}}:</dt>
+				<dd>{{#if context.show_member_list}}<a href="' . $scripturl . '?action=mlist">{{context.num_members}}</a>{{else}}{{context.num_members}}{{/if}}</dd>
+				<dt>{{txt.total_posts}}:</dt>
+				<dd>{{context.num_posts}}</dd>
+				<dt>{{txt.total_topics}}:</dt>
+				<dd>{{context.num_topics}}</dd>
+				<dt>{{txt.total_cats}}:</dt>
+				<dd>{{context.num_categories}}</dd>
+				<dt>{{txt.users_online}}:</dt>
+				<dd>{{context.users_online}}</dd>
+				<dt>{{txt.most_online}}:</dt>
+				<dd>{{context.most_members_online.number}} - {{{context.most_members_online.date}}}</dd>
+				<dt>{{txt.users_online_today}}:</dt>
+				<dd>{{context.online_today}}</dd>
+				{{#if modSettings.hitStats}}
+				<dt>{{txt.num_hits}}:</dt>
+				<dd>{{context.num_hits}}</dd>
+				{{/if}}
+			</dl>
+			<dl class="stats half_content nobb">
+				<dt>{{txt.average_members}}:</dt>
+				<dd>{{context.average_members}}</dd>
+				<dt>{{txt.average_posts}}</dt>
+				<dd>{{context.average_posts}}</dd>
+				<dt>{{txt.average_topics}}:</dt>
+				<dd>{{context.average_topics}}</dd>
+				<dt>{{txt.total_boards}}:</dt>
+				<dd>{{context.num_boards}}</dd>
+				<dt>{{txt.latest_member}}:</dt>
+				<dd>{{{context.common_stats.latest_member.link}}}</dd>
+				<dt>{{txt.average_online}}:</dt>
+				<dd>{{context.average_online}}</dd>
+				{{#if context.gender}}
+				<dt>{{txt.gender_stats}}:</dt>
+				<dd>{{#each context.gender}}{{@key}}: {{.}}<br>{{/each}}</dd>
+				{{/if}}
+				{{#if modSettings.hitStats}}
+				<dt>{{txt.average_hits}}:</dt>
+				<dd>{{context.average_hits}}</dd>
+				{{/if}}
+			</dl>
+			{{#each context.stats_blocks}}
+			<div class="half_content">
+				<div class="title_bar">
+					<h4 class="titlebg">
+						<span class="generic_icons {{icon}}"></span>{{{title}}}
+					</h4>
+				</div>
+				<dl class="stats">
+				    {{#each data}}
+				        <dt>
+						{{{link}}}
+					</dt>
+					<dd class="statsbar">
+
+		             {{#if percent}}
+		                <div class="bar" style="width: {{percent}}%">
+							<span class="righttext">{{num}}</span>
+						</div>
+		             {{else}}
+			            <div class="bar empty"><span class="righttext">{{num}}</span></div>
+		            {{/if}}
+		            </dd>
+					{{/each}}
+				</dl>
+			</div>
+			{{/each}}
+			</div>
+    		<br class="clear">
+    		<div class="cat_bar">
+    			<h3 class="catbg">
+    				<span class="generic_icons history"></span>{{txt.forum_history}}
+    			</h3>
+    		</div>
+    		{{#if context.yearly}}
+    		<table id="stats" class="table_grid">
+			<thead>
+				<tr class="title_bar">
+					<th class="lefttext">{{txt.yearly_summary}}</th>
+					<th>{{txt.stats_new_topics}}</th>
+					<th>{{txt.stats_new_posts}}</th>
+					<th>{{txt.stats_new_members}}</th>
+					<th>{{txt.most_online}}</th>
+					{{#if modSettings.hitStats}}
+					<th>{{txt.page_views}}</th>
+					{{/if}}
+				</tr>
+			</thead>
+			<tbody>
+        	{{#each context.yearly}}
+			<tr class="windowbg" id="year_{{@key}}">
+				<th class="lefttext">
+					<img id="year_img_{{@key}}" src="{{../settings.images_url}}/selected_open.png" alt="*"> <a href="#year_{{@key}}" id="year_link_{{@key}}">{{year}}</a>
+				</th>
+				<th>{{new_topics}}</th>
+				<th>{{new_posts}}</th>
+				<th>{{new_members}}</th>
+				<th>{{most_members_online}}</th>
+				{{#if modSettings.hitStats}}
+				<th>{{hits}}</th>
+				{{/if}}
+			</tr>
+    			{{#each months}}
+    			<tr class="windowbg" id="tr_month_', $month['id'], '">
+					<th class="stats_month">
+						<img src="{{../../settings.images_url}}/{{#if expanded}}selected_open.png{{else}}selected.png{{/if}}" alt="" id="img_{{id}}"> <a id="m{{id}}" href="{{href}}" onclick="return doingExpandCollapse;">{{month}} {{year}}</a>
+					</th>
+					<th>{{new_topics}}</th>
+					<th>{{new_posts}}</th>
+					<th>{{new_members}}</th>
+					<th>{{most_members_online}}</th>
+					{{#if modSettings.hitStats}}
+    				<th>{{hits}}</th>
+    				{{/if}}
+    			</tr>
+        			{{#if expanded}}
+            			{{#each days}}
+            			<tr class="windowbg" id="tr_day_{{year}}-{{month}}-{{day}}">
+        					<td class="stats_day">{{year}}-{{month}}-{{day}}</td>
+        					<td>{{new_topics}}</td>
+        					<td>{{new_posts}}</td>
+        					<td>{{new_members}}</td>
+        					<td>{{most_members_online}}</td>
+        					{{#if modSettings.hitStats}}
+            				<td>{{hits}}</td>
+            				{{/if}}
+            			</tr>
+            			{{/each}}{{!-- days --}}
+        			{{/if}}{{!-- expanded --}}
+    			{{/each}} {{!-- months --}}
+			{{/each}}{{!-- yearly --}}
+			</tbody>
+		</table>
+	</div>
+	<script>
+		var oStatsCenter = new smf_StatsCenter({
+			sTableId: 'stats',
+
+			reYearPattern: /year_(\d+)/,
+			sYearImageCollapsed: 'selected.png',
+			sYearImageExpanded: 'selected_open.png',
+			sYearImageIdPrefix: 'year_img_',
+			sYearLinkIdPrefix: 'year_link_',
+
+			reMonthPattern: /tr_month_(\d+)/,
+			sMonthImageCollapsed: 'selected.png',
+			sMonthImageExpanded: 'selected_open.png',
+			sMonthImageIdPrefix: 'img_',
+			sMonthLinkIdPrefix: 'm',
+
+			reDayPattern: /tr_day_(\d+-\d+-\d+)/,
+			sDayRowClassname: 'windowbg',
+			sDayRowIdPrefix: 'tr_day_',
+
+			aCollapsedYears: [
+			    {{#each context.collapsed_years}}'{{year}}' {{#unless @last}},{{/unless}}{{/each}}
+			    ],
+
+			aDataCells: [
+				'date',
+				'new_topics',
+				'new_posts',
+				'new_members',
+				'most_members_online'
+				{{#if modSettings.hitStats}}
+				,'hits'
+				{{/if}}
+			]
+		});
+	</script>
+    		{{/if}}{{!-- yearly --}}

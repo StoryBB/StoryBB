@@ -74,9 +74,8 @@ function RecentPosts()
 {
 	global $txt, $scripturl, $user_info, $context, $modSettings, $board, $smcFunc;
 
-	loadTemplate('Recent');
 	$context['page_title'] = $txt['recent_posts'];
-	$context['sub_template'] = 'recent';
+	$context['sub_template'] = 'recent_posts';
 
 	$context['is_redirect'] = false;
 
@@ -447,6 +446,8 @@ function RecentPosts()
 
 		// And some cannot be quoted...
 		$context['posts'][$counter]['can_quote'] = $context['posts'][$counter]['can_reply'] && $quote_enabled;
+
+		$context['posts'][$counter]['has_actions'] = $context['posts'][$counter]['can_reply'] || $context['posts'][$counter]['can_quote'] || $context['posts'][$counter]['can_delete'];
 	}
 
 	// Allow last minute changes.
@@ -683,9 +684,7 @@ function UnreadTopics()
 	else
 		$txt['unread_topics_visit_none'] = strtr($txt['unread_topics_visit_none'], array('?action=unread;all' => '?action=unread;all' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits']));
 
-	loadTemplate('Recent');
-	loadTemplate('MessageIndex');
-	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread' : 'replies';
+	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread_posts' : 'unread_replies';
 
 	// Setup the default topic icons... for checking they exist and the like ;)
 	$context['icon_sources'] = array();

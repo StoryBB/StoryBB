@@ -1,0 +1,65 @@
+<table class="table_grid">
+	<thead>
+		<tr class="title_bar">
+			<th class="lefttext quarter_table" colspan="2">
+				<a href="{{scripturl}}?action=pm;f={{context.folder}};start={{context.start}};sort=date{{#if (and (eq context.sort_by 'date') (eq context.sort_direction 'up'))}};desc{{/if}}{{#if context.current_label_id}};l={{context.current_label_id}}{{/if}}">{{txt.date}}{{#if (eq context.sort_by 'date')}}<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+			</th>
+			<th class="lefttext half_table">
+				<a href="{{scripturl}}?action=pm;f={{context.folder}};start={{context.start}};sort=subject{{#if (and (eq context.sort_by 'subject') (eq context.sort_direction 'up'))}};desc{{/if}}{{#if context.current_label_id}};l={{context.current_label_id}}{{/if}}">{{txt.subject}}{{#if (eq context.sort_by 'subject')}}<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+			</th>
+			<th class="lefttext">
+				<a href="{{scripturl}}?action=pm;f={{context.folder}};start={{context.start}};sort=name{{#if (and (eq context.sort_by 'name') (eq context.sort_direction 'up'))}};desc{{/if}}{{#if context.current_label_id}};l={{context.current_label_id}}{{/if}}">{{#if (eq context.from_or_to 'from')}}{{txt.from}}{{else}}{{txt.to}}{{/if}}{{#if (eq context.sort_by 'name')}}<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+			</th>
+			<th class="centercol table_icon">
+				<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+        {{#if context.show_delete}}
+        <tr class="windowbg">
+			<td colspan="5">{{txt.pm_alert_none}}</td>
+		</tr>
+		{{/if}}
+		{{#each context.subjects}}
+		<tr class="windowbg{{#if is_unread}} unread_pm{{/if}}">
+			<td class="table_icon">
+			<script>
+				currentLabels[{{id}}] = {{{json labels}}};
+			</script>
+			{{#if is_replied_to}}<span class="generic_icons replied" title="{{txt.pm_replied}}"></span>{{else}}<span class="generic_icons im_off" title="{{txt.pm_read}}"></span>{{/if}}</td>
+			<td>{{{time}}}</td>
+			<td>{{#if (eq ../context.current_pm id)}}<img src="{{../settings.images_url}}/selected.png" alt="*">{{/if}}
+			    <a href="{{#unless (eq ../context.current_pm id)}}{{../scripturl}}?action=pm;pmid={{id}};kstart;f={{../context.folder}};start={{../context.start}};sort={{../context.sort_by}}{{#if (eq ../context.sort_direction 'up')}};{{else}};desc{{/if}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}}#msg{{id}}{{/unless}}">
+			        {{subject}}{{#if is_unread}}&nbsp;<span class="new_posts">{{../txt.new}}</span>{{/if}}</a></td>
+			<td>{{#if (eq ../context.from_or_to 'from')}}{{{member.link}}}{{else}}{{#if recipients.to}}{{implode recipients.to}}{{/if}}{{/if}}</td>
+			<td class="centercol table_icon"><input type="checkbox" name="pms[]" id="deletelisting{{id}}" value="{{id}}"{{#if is_selected}} checked{{/if}} onclick="if (document.getElementById('deletedisplay{{id}}')) document.getElementById('deletedisplay{{id}}').checked = this.checked;" class="input_check"></td>
+		</tr>
+		{{/each}}
+	</tbody>
+</table>
+<div class="pagesection">
+	<div class="floatleft">{{{context.page_index}}}</div>
+	<div class="floatright">&nbsp;
+	{{#if context.show_delete}}
+	{{#if (and context.currently_using_labels (neq context.folder 'sent'))}}
+	<select name="pm_action" onchange="if (this.options[this.selectedIndex].value) this.form.submit();" onfocus="loadLabelChoices();">
+		<option value="">{{txt.pm_sel_label_title}}:</option>
+		<option value="" disabled>---------------</option>
+		<option value="" disabled>{{txt.pm_msg_label_apply}}:</option>
+		{{#each context.labels}}
+		{{#if (eq ../context.current_label_id id)}}<option value="add_{{id}}">&nbsp;{{name}}</option>{{/if}}
+		{{/each}}
+		<option value="" disabled>{{txt.pm_msg_label_remove}}:</option>
+		{{#each context.labels}}
+		<option value="rem_{{id}}">&nbsp;{{name}}</option>
+		{{/each}}
+	</select>
+	{{/if}}
+	<noscript>
+		<input type="submit" value="{{txt.pm_apply}}" class="button_submit" style="float: none">
+	</noscript>
+	<input type="submit" name="del_selected" value="{{txt.quickmod_delete_selected}}" onclick="if (!confirm('{{txt.delete_selected_confirm}}')) return false;" class="button_submit" style="float: none">
+	{{/if}}
+	</div>
+</div>

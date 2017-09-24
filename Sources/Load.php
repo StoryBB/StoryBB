@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 if (!defined('SMF'))
 	die('No direct access...');
 
@@ -1210,7 +1212,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.birthdate, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.id_post_group, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
 			mg.online_color AS member_group_color, COALESCE(mg.group_name, {string:blank_string}) AS member_group,
 			pg.online_color AS post_group_color, COALESCE(pg.group_name, {string:blank_string}) AS post_group,
-			mem.is_activated, mem.warning, ' . (!empty($modSettings['titlesEnable']) ? 'mem.usertitle, ' : '') . '
+			mem.is_activated, mem.warning,
 			CASE WHEN mem.id_group = 0 OR mg.icons = {string:blank_string} THEN pg.icons ELSE mg.icons END AS icons';
 	$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
@@ -1434,7 +1436,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'is_buddy' => $profile['buddy'],
 			'is_reverse_buddy' => in_array($user_info['id'], $buddy_list),
 			'buddies' => $buddy_list,
-			'title' => !empty($modSettings['titlesEnable']) ? $profile['usertitle'] : '',
 			'website' => array(
 				'title' => $profile['website_title'],
 				'url' => $profile['website_url'],
@@ -1928,7 +1929,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['javascript_vars'] = array();
 
 	$context['login_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl) . '?action=login2';
-	$context['menu_separator'] = !empty($settings['use_image_buttons']) ? ' ' : ' | ';
+	$context['menu_separator'] = ' ';
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
 	$context['forum_name'] = $mbname;
@@ -2006,6 +2007,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		loadLanguage('index+Modifications');
 		loadTemplate('Xml');
+		loadTemplateLayout('raw');
 		$context['template_layers'] = array();
 	}
 
@@ -2032,11 +2034,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$required_files = implode('+', array_merge($templates, array('Modifications')));
 		loadLanguage($required_files, '', false);
 
-		// Custom template layers?
-		if (isset($settings['theme_layers']))
-			$context['template_layers'] = explode(',', $settings['theme_layers']);
-		else
-			$context['template_layers'] = array('html', 'body');
+		$context['template_layers'] = [];
 	}
 
 	// Initialize the theme.
@@ -2095,10 +2093,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 				loadCSSFile('rtl' . $context['theme_variant'] . '.css', array(), 'smf_rtl' . $context['theme_variant']);
 		}
 	}
-
-	// Let's be compatible with old themes!
-	if (!function_exists('template_html_above') && in_array('html', $context['template_layers']))
-		$context['template_layers'] = array('main');
 
 	$context['tabindex'] = 1;
 
@@ -2301,6 +2295,133 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 }
 
 /**
+ * Loads a template file.
+ *
+ * @param string $template Template name
+ * @return string Template contents
+ */
+function loadTemplateFile($template) {
+	global $settings;
+
+	$paths = [
+		$settings['theme_dir'] . '/templates',
+		$settings['default_theme_dir'] . '/templates',
+	];
+
+	foreach ($paths as $path) {
+		if (file_exists($path) && file_exists($path . '/' . $template . '.hbs')) {
+			return file_get_contents($path . '/' . $template . '.hbs');
+		}
+	}
+
+	fatal_error('Could not load template ' . $template);
+}
+
+/**
+ * Loads a template layout.
+ *
+ * @param string $partial Layout name, without root path or extension
+ * @return string Layout template contents
+ */
+function loadTemplateLayout($layout) {
+	global $settings, $context;
+
+	if ($layout === 'raw') {
+		$context['layout_loaded'] = 'raw';
+		return '{{{content}}}';
+	}
+
+	$paths = [
+		$settings['theme_dir'] . '/layouts',
+		$settings['default_theme_dir'] . '/layouts',
+	];
+
+	foreach ($paths as $path) {
+		if (file_exists($path) && file_exists($path . '/' . $layout . '.hbs')) {
+			$context['layout_loaded'] = $layout;
+			return file_get_contents($path . '/' . $layout . '.hbs');
+		}
+	}
+
+	fatal_error('Could not load layout ' . $layout);
+}
+
+/**
+ * Loads a template partial.
+ *
+ * @param string $partial Partial name, without root path or extension
+ * @return string Partial template contents
+ */
+function loadTemplatePartial($partial) {
+	global $settings;
+
+	$paths = [
+		$settings['theme_dir'] . '/partials',
+		$settings['default_theme_dir'] . '/partials',
+	];
+
+	foreach ($paths as $path) {
+		if (file_exists($path) && file_exists($path . '/' . $partial . '.hbs')) {
+			return file_get_contents($path . '/' . $partial . '.hbs');
+		}
+	}
+
+	fatal_error('Could not load partial ' . $partial);
+}
+
+/**
+ * Handles generic loading for all template behaviour where possible.
+ *
+ * @param array $cx Context array from Lightncandy
+ * @param string $name Name of the template partial
+ * @return string The partial template contents
+ */
+function loadTemplatePartialResolver($cx, $name) {
+	return loadTemplatePartial($name);
+}
+
+function compileTemplate($template, $options = []) {
+	$default_helpers = [
+		'eq' => 'logichelper_eq',
+		'neq' => 'logichelper_ne',
+		'lt' => 'logichelper_lt',
+		'gt' => 'logichelper_gt',
+		'lte' => 'logichelper_lte',
+		'gte' => 'logichelper_gte',
+		'not' => 'logichelper_not',
+		'and' => 'logichelper_and',
+		'or' => 'logichelper_or',
+		'textTemplate' => 'textTemplate',
+		'concat' => function(...$items) {
+			array_pop($items); // Strip the last item off the array, it's the calling context.
+			return implode($items);
+		},
+		'getNumItems' => function($items) {
+			return count($items);
+		},
+		'add' => function($a, $b) { return $a + $b; },
+		'sub' => function($a, $b) { return $a - $b; },
+		'mul' => function($a, $b) { return $a * $b; },
+		'div' => function($a, $b) { return $a / $b; },
+		'comma' => 'comma_format',
+		'json' => function ($data) { return json_encode($data); },
+		'join' => function($array, $sep = '') { return implode($sep, $array); },
+		'is_array' => function($var) { return is_array($var); },
+	];
+	$default_partials = [
+		'helpicon' => loadTemplatePartial('helpicon'),
+	];
+
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL),
+		'helpers' => !empty($options['helpers']) ? array_merge($default_helpers, $options['helpers']) : $default_helpers,
+		'partialresolver' => 'loadTemplatePartialResolver',
+		'partials' => !empty($options['partials']) ? array_merge($default_partials, $options['partials']) : $default_partials,
+	]);
+	return $phpStr;
+}
+
+/**
  * Load a sub-template.
  * What it does:
  * 	- loads the sub template specified by sub_template_name, which must be in an already-loaded template.
@@ -2316,13 +2437,15 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 {
 	global $context, $txt, $db_show_debug;
 
+	$result = '';
+
 	if ($db_show_debug === true)
 		$context['debug']['sub_templates'][] = $sub_template_name;
 
 	// Figure out what the template function is named.
 	$theme_function = 'template_' . $sub_template_name;
 	if (function_exists($theme_function))
-		$theme_function();
+		$result = $theme_function();
 	elseif ($fatal === false)
 		fatal_lang_error('theme_template_error', 'template', array((string) $sub_template_name));
 	elseif ($fatal !== 'ignore')
@@ -2334,7 +2457,10 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 		echo '
 <div class="warningbox">---- ', $sub_template_name, ' ends ----</div>';
 	}
+	
+	return $result;
 }
+
 
 /**
  * Add a CSS file for output later

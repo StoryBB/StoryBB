@@ -11,7 +11,7 @@
  * @version 3.0 Alpha 1
  */
 
-// Start things rolling by getting SMF alive...
+// Start things rolling by getting StoryBB alive...
 $ssi_guest_access = true;
 if (!file_exists(dirname(__FILE__) . '/SSI.php'))
 	die('Cannot find SSI.php');

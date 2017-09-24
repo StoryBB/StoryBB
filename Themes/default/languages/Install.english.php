@@ -21,7 +21,7 @@ $txt['still_writable'] = 'Your installation directory is still writable. It\'s a
 $txt['delete_installer'] = 'Click here to delete this install.php file now.';
 $txt['delete_installer_maybe'] = '<em>(doesn\'t work on all servers.)</em>';
 $txt['go_to_your_forum'] = 'Now you can see <a href="%1$s">your newly installed forum</a> and begin to use it. You should first make sure you are logged in, after which you will be able to access the administration center.';
-$txt['good_luck'] = 'Good luck!<br>Simple Machines';
+$txt['good_luck'] = 'Good luck!<br>StoryBB';
 
 $txt['install_welcome'] = 'Welcome';
 $txt['install_welcome_desc'] = 'Welcome to StoryBB. This script will guide you through the process for installing %1$s. We\'ll gather a few details about your forum over the next few steps, and after a couple of minutes your forum will be ready for use.';
@@ -31,7 +31,7 @@ $txt['user_refresh_install'] = 'Forum Refreshed';
 $txt['user_refresh_install_desc'] = 'While installing, the installer found that (with the details you provided) one or more of the tables this installer might create already existed.<br>Any missing tables in your installation have been recreated with the default data, but no data was deleted from existing tables.';
 
 $txt['default_topic_subject'] = 'Welcome to StoryBB!';
-$txt['default_topic_message'] = 'Welcome to StoryBB!<br><br>We hope you enjoy using your forum.&nbsp; If you have any problems, please feel free to [url=https://www.simplemachines.org/community/index.php]ask us for assistance[/url].<br><br>Thanks!<br>Simple Machines';
+$txt['default_topic_message'] = 'Welcome to StoryBB!<br><br>We hope you enjoy using your forum.&nbsp; If you have any problems, please feel free to [url=https://storybb.org/]ask us for assistance[/url].<br><br>Thanks!<br>StoryBB';
 $txt['default_board_name'] = 'General Discussion';
 $txt['default_board_description'] = 'Feel free to talk about anything and everything in this board.';
 $txt['default_category_name'] = 'General Category';
@@ -195,10 +195,10 @@ $txt['error_mod_security'] = 'The installer has detected the mod_security module
 $txt['error_mod_security_no_write'] = 'The installer has detected the mod_security module is installed on your web server. Mod_security will block submitted forms even before StoryBB gets a say in anything. StoryBB has a built-in security scanner that will work more effectively than mod_security and that won\'t block submitted forms.<br><br><a href="https://www.simplemachines.org/redirect/mod_security">More information about disabling mod_security</a><br><br>Alternatively, you may wish to use your ftp client to chmod .htaccess in the forum directory to be writable (777), and then refresh this page.';
 $txt['error_valid_admin_email_needed'] = 'You have not entered a valid email address for your administrator account.';
 $txt['error_valid_server_email_needed'] = 'You have not entered a valid webmaster email address.';
-$txt['error_already_installed'] = 'The installer has detected that you already have StoryBB installed. It is strongly advised that you do <strong>not</strong> try to overwrite an existing installation - continuing with installation <strong>may result in the loss or corruption of existing data</strong>.<br><br>If you wish to upgrade please visit the <a href="https://www.simplemachines.org">Simple Machines Website</a> and download the latest <em>upgrade</em> package.<br><br>If you wish to overwrite your existing installation, including all data, it\'s recommended that you delete the existing database tables and replace Settings.php and try again.';
+$txt['error_already_installed'] = 'The installer has detected that you already have StoryBB installed. It is strongly advised that you do <strong>not</strong> try to overwrite an existing installation - continuing with installation <strong>may result in the loss or corruption of existing data</strong>.<br><br>If you wish to upgrade please visit the <a href="https:/storybb.org">StoryBB website</a> and download the latest <em>upgrade</em> package.<br><br>If you wish to overwrite your existing installation, including all data, it\'s recommended that you delete the existing database tables and replace Settings.php and try again.';
 $txt['error_warning_notice'] = 'Warning!';
 $txt['error_script_outdated'] = 'This install script is out of date! The current version of StoryBB is %1$s but this install script is for %2$s.<br><br>
-	It is recommended that you visit the <a href="https://www.simplemachines.org">Simple Machines</a> website to ensure you are installing the latest version.';
+	It is recommended that you visit the <a href="https://storybb.org">StoryBB</a> website to ensure you are installing the latest version.';
 $txt['error_db_prefix_numeric'] = 'The selected database type does not support the use of numeric prefixes.';
 $txt['error_invalid_characters_username'] = 'Invalid character used in Username.';
 $txt['error_username_too_long'] = 'Username must be less than 25 characters long.';
@@ -228,10 +228,10 @@ $txt['upgrade_paused_overload'] = 'This upgrade has been paused to avoid overloa
 
 $txt['upgrade_ready_proceed'] = 'Thank you for choosing to upgrade to StoryBB %1$s. All files appear to be in place, and we\'re ready to proceed.';
 
-$txt['upgrade_error_script_js'] = 'The upgrade script cannot find script.js or it is out of date. Make sure your theme paths are correct. You can download a setting checker tool from the <a href="https://www.simplemachines.org">Simple Machines Website</a>';
+$txt['upgrade_error_script_js'] = 'The upgrade script cannot find script.js or it is out of date. Make sure your theme paths are correct. You can download a setting checker tool from the <a href="https://storybb.org">StoryBB website</a>';
 
 $txt['upgrade_warning_lots_data'] = 'This upgrade script has detected that your forum contains a lot of data which needs upgrading. This process may take quite some time depending on your server and forum size, and for very large forums (~300,000 messages) may take several hours to complete.';
-$txt['upgrade_warning_out_of_date'] = 'This upgrade script is out of date! The current version of StoryBB is <em id="smfVersion" style="white-space: nowrap;">??</em> but this upgrade script is for <em id="yourVersion" style="white-space: nowrap;">%1$s</em>.<br><br>It is recommended that you visit the <a href="https://www.simplemachines.org">Simple Machines</a> website to ensure you are upgrading to the latest version.';
+$txt['upgrade_warning_out_of_date'] = 'This upgrade script is out of date! The current version of StoryBB is <em id="smfVersion" style="white-space: nowrap;">??</em> but this upgrade script is for <em id="yourVersion" style="white-space: nowrap;">%1$s</em>.<br><br>It is recommended that you visit the <a href="https://storybb.org">StoryBB</a> website to ensure you are upgrading to the latest version.';
 
 $txt['error_ftp_no_connect'] = 'Unable to connect to FTP server with this combination of details.';
 $txt['ftp_login'] = 'Your FTP connection information';

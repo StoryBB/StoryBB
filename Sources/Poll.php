@@ -303,7 +303,7 @@ function EditPoll()
 		fatal_lang_error('no_access', false);
 
 	loadLanguage('Post');
-	loadTemplate('Poll');
+	$context['sub_template'] = 'poll';
 
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['is_edit'] = isset($_REQUEST['add']) ? 0 : 1;

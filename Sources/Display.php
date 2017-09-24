@@ -357,9 +357,6 @@ function Display()
 	// Default this topic to not marked for notifications... of course...
 	$context['is_marked_notify'] = false;
 
-	// Did we report a post to a moderator just now?
-	$context['report_sent'] = isset($_GET['reportsent']);
-
 	// Let's get nosey, who is viewing this topic?
 	if (!empty($settings['display_who_viewing']))
 	{
@@ -459,7 +456,7 @@ function Display()
 		{
 			// No limit! (actually, there is a limit, but...)
 			$context['messages_per_page'] = -1;
-			$context['page_index'] .= empty($modSettings['compactTopicPagesEnable']) ? '<strong>' . $txt['all'] . '</strong> ' : '[<strong>' . $txt['all'] . '</strong>] ';
+			$context['page_index'] .= '[<strong>' . $txt['all'] . '</strong>] ';
 
 			// Set start back to 0...
 			$_REQUEST['start'] = 0;
@@ -499,8 +496,8 @@ function Display()
 	}
 
 	// Information about the current topic...
-	$context['is_locked'] = $context['topicinfo']['locked'];
-	$context['is_sticky'] = $context['topicinfo']['is_sticky'];
+	$context['is_locked'] = (bool) $context['topicinfo']['locked'];
+	$context['is_sticky'] = (bool) $context['topicinfo']['is_sticky'];
 	$context['is_approved'] = $context['topicinfo']['approved'];
 	$context['is_poll'] = $context['topicinfo']['id_poll'] > 0 && $modSettings['pollMode'] == '1' && allowedTo('poll_view');
 

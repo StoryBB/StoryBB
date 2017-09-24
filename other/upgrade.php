@@ -1473,7 +1473,6 @@ function convertSettingsToTheme()
 		'show_profile_buttons' => @$GLOBALS['profilebutton'],
 		'show_mark_read' => @$GLOBALS['showmarkread'],
 		'newsfader_time' => @$GLOBALS['fadertime'],
-		'use_image_buttons' => empty($GLOBALS['MenuType']) ? 1 : 0,
 		'enable_news' => @$GLOBALS['enable_news'],
 		'return_to_post' => @$modSettings['returnToPost'],
 	);
@@ -3416,7 +3415,7 @@ function template_upgrade_below()
 		</div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://www.simplemachines.org/" title="Simple Machines Forum" target="_blank" class="new_win">SMF &copy; 2017, Simple Machines</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; 2017, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>

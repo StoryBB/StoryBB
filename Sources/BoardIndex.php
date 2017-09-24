@@ -25,7 +25,6 @@ function BoardIndex()
 	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl;
 
 	loadTemplate('BoardIndex');
-	$context['template_layers'][] = 'boardindex_outer';
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl;
@@ -60,19 +59,13 @@ function BoardIndex()
 		}
 
 		if (!empty($context['latest_posts']) || !empty($context['latest_post']))
-			$context['info_center'][] = array(
-				'tpl' => 'recent',
-				'txt' => 'recent_posts',
-			);
+			$context['info_center'][] = 'recent';
 	}
 
 	// And stats.
 	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
 	if ($settings['show_stats_index'])
-		$context['info_center'][] = array(
-				'tpl' => 'stats',
-				'txt' => 'forum_stats',
-			);
+		$context['info_center'][] = 'stats';
 
 	// Now the online stuff
 	require_once($sourcedir . '/Subs-MembersOnline.php');
@@ -84,10 +77,7 @@ function BoardIndex()
 	$context += getMembersOnlineStats($membersOnlineOptions);
 	$context['show_buddies'] = !empty($user_info['buddies']);
 	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
-	$context['info_center'][] = array(
-				'tpl' => 'online',
-				'txt' => 'online_users',
-			);
+	$context['info_center'][] = 'online';
 
 	// Track most online statistics? (Subs-MembersOnline.php)
 	if (!empty($modSettings['trackStats']))

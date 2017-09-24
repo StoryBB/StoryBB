@@ -17,11 +17,6 @@ function template_options()
 	$context['theme_options'] = array(
 		$txt['theme_opt_display'],
 		array(
-			'id' => 'show_children',
-			'label' => $txt['show_children'],
-			'default' => true,
-		),
-		array(
 			'id' => 'topics_per_page',
 			'label' => $txt['topics_per_page'],
 			'options' => array(
@@ -97,11 +92,6 @@ function template_options()
 			'default' => true,
 		),
 		$txt['theme_opt_personal_messages'],
-		array(
-			'id' => 'popup_messages',
-			'label' => $txt['popup_messages'],
-			'default' => true,
-		),
 		array(
 			'id' => 'view_newest_pm_first',
 			'label' => $txt['recent_pms_at_top'],

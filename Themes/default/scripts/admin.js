@@ -23,7 +23,13 @@
 // Handle the JavaScript surrounding the admin and moderation center.
 function smf_AdminIndex(oOptions)
 {
-	this.opt = oOptions;
+	var defaults = {
+		bLoadAnnouncements: true,
+		bLoadVersions: true,
+		bLoadUpdateNotification: true,
+		sVersionOutdatedTemplate: '<span class="alert">%currentVersion%</span>'
+	};
+	this.opt = $.extend({}, defaults, oOptions || {});
 	this.init();
 }
 
@@ -42,7 +48,7 @@ smf_AdminIndex.prototype.loadAdminIndex = function ()
 	if (this.opt.bLoadAnnouncements)
 		this.setAnnouncements();
 
-	// Load the current SMF and your SMF version numbers.
+	// Load the current StoryBB and your StoryBB version numbers.
 	if (this.opt.bLoadVersions)
 		this.showCurrentVersion();
 
@@ -331,11 +337,6 @@ smf_ViewVersions.prototype.determineVersions = function ()
 	setInnerHTML(document.getElementById('currentTasks'), oHighCurrent.Tasks);
 	if (oLowVersion.Tasks)
 		document.getElementById('yourTasks').className = 'alert';
-}
-
-function addNewWord()
-{
-	setOuterHTML(document.getElementById('moreCensoredWords'), '<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="30" class="input_text"> => <input type="text" name="censor_proper[]" size="30" class="input_text"><' + '/div><div id="moreCensoredWords"><' + '/div>');
 }
 
 function toggleBBCDisabled(section, disable)

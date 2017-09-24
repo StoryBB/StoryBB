@@ -1,0 +1,86 @@
+	<div class="main_section" id="whos_online">
+		<form action="{{{scripturl}}}?action=who" method="post" id="whoFilter" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3 class="catbg">{{txt.who_title}}</h3>
+			</div>
+			<div id="mlist">
+				<div class="pagesection">
+					<div class="pagelinks floatleft">{{{context.page_index}}}</div>
+					<div class="selectbox floatright" id="upper_show">{{txt.who_show1}}
+						<select name="show_top" onchange="document.forms.whoFilter.show.value = this.value; document.forms.whoFilter.submit();">
+						{{#each context.show_methods}}
+							<option value="{{@key}}"{{#if (eq @key ../context.show_by)}} selected{{/if}}>{{.}}</option>
+						{{/each}}
+						</select>
+						<noscript>
+							<input type="submit" name="submit_top" value="{{txt.go}}" class="button_submit">
+						</noscript>
+					</div>
+				</div>
+
+				<table class="table_grid">
+					<thead>
+						<tr class="title_bar">
+							<th scope="col" class="lefttext" style="width: 40%;"><a href="{{scripturl}}?action=who;start={{context.start}};show={{context.show_by}};sort=user{{#if (and (eq context.sort_direction "down") (eq context.sort_by "user"))}};asc{{/if}}" rel="nofollow">{{txt.who_user}} {{#if (eq context.sort_by "user")}}<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
+							<th scope="col" class="lefttext time" style="width: 10%;"><a href="{{scripturl}}?action=who;start={{context.start}};show={{context.show_by}};sort=time{{#if (and (eq context.sort_direction "down") (eq context.sort_by "time"))}};asc{{/if}}" rel="nofollow">{{txt.who_time}} {{#if (eq context.sort_by "time")}}<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
+							<th scope="col" class="lefttext half_table">{{txt.who_action}}</th>
+						</tr>
+					</thead>
+					<tbody>
+					{{#each context.members}}
+						<tr class="windowbg">
+							<td>
+								{{#unless is_guest}}
+									<span class="contact_info floatright">
+										{{#if ../context.can_send_pm}}<a href="{{{online.href}}}" title="{{{online.text}}}">{{/if}}
+											
+											<span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{online.text}}"></span>
+
+										{{#if ../context.can_send_pm}}</a>{{/if}}
+									</span>
+								{{/unless}}
+								<span class="member{{#if is_hidden}} hidden{{/if}}">
+									{{#if is_guest}}
+										{{name}}
+									{{else}}
+										<a href="{{{href}}}" title="{{../txt.profile_of}} {{name}}"{{#if color}} style="color: {{color}}"{{/if}}>{{name}}</a>
+									{{/if}}
+								</span>
+								{{#if ip}}
+								(<a href="{{scripturl}}?action={{#if is_guest}}trackip{{else}}profile;area=tracking;sa=ip;u={{id}}{{/if}};searchip={{ip}}">{{ip}}</a>)
+								{{/if}}
+							</td>
+							<td class="time">{{time}}</td>
+							<td>{{{action}}}</td>
+						</tr>
+					{{/each}}
+
+					{{! No members? }}
+					{{#unless context.members}}
+						<tr class="windowbg">
+							<td colspan="3">
+							{{#if (eq context.show_by "guests")}} {{txt.who_no_online_guests}} {{/if}}
+							{{#if (eq context.show_by "spiders")}} {{txt.who_no_online_spiders}} {{/if}}
+							{{#if (eq context.show_by "members")}} {{txt.who_no_online_members}} {{/if}}
+							</td>
+						</tr>
+					{{/unless}}
+					</tbody>
+				</table>
+
+				<div class="pagesection" id="lower_pagesection">
+					<div class="pagelinks floatleft">{{{context.page_index}}}</div>
+					<div class="selectbox floatright" id="upper_show">{{txt.who_show1}}
+						<select name="show" onchange="document.forms.whoFilter.submit();">
+						{{#each context.show_methods}}
+							<option value="{{@key}}"{{#if (eq @key ../context.show_by)}} selected{{/if}}>{{.}}</option>
+						{{/each}}
+						</select>
+						<noscript>
+							<input type="submit" name="submit_top" value="{{txt.go}}" class="button_submit">
+						</noscript>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>

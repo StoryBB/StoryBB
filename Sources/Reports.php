@@ -41,7 +41,6 @@ function ReportsMain()
 	isAllowedTo('admin_forum');
 
 	// Let's get our things running...
-	loadTemplate('Reports');
 	loadLanguage('Reports');
 
 	$context['page_title'] = $txt['generate_reports'];
@@ -86,10 +85,12 @@ function ReportsMain()
 		'main' => array(
 			'layers' => null,
 		),
-		'print' => array(
-			'layers' => array('print'),
-		),
+		//'print' => array(
+		//	'layers' => array('print'),
+		//),
 	);
+
+	$context['sub_template'] = 'report';
 
 	// Specific template? Use that instead of main!
 	if (isset($_REQUEST['st']) && isset($reportTemplates[$_REQUEST['st']]))
@@ -107,7 +108,7 @@ function ReportsMain()
 	// Build the reports button array.
 	$context['report_buttons'] = array(
 		'generate_reports' => array('text' => 'generate_reports', 'image' => 'print.png', 'url' => $scripturl . '?action=admin;area=reports', 'active' => true),
-		'print' => array('text' => 'print', 'image' => 'print.png', 'url' => $scripturl . '?action=admin;area=reports;rt=' . $context['report_type'] . ';st=print', 'custom' => 'target="_blank"'),
+		//'print' => array('text' => 'print', 'image' => 'print.png', 'url' => $scripturl . '?action=admin;area=reports;rt=' . $context['report_type'] . ';st=print', 'custom' => 'target="_blank"'),
 	);
 
 	// Allow mods to add additional buttons here

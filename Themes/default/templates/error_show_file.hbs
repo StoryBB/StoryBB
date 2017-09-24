@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html{{#if context.right_to_left}} dir="rtl"{{/if}}>
+	<head>
+		<meta charset="UTF-8">
+		<title>{{context.file_data.file}}</title>
+		<link rel="stylesheet" href="{{settings.theme_url}}/css/index{{context.theme_variant}}.css{{modSettings.browser_cache}}">
+	</head>
+	<body>
+		<table class="errorfile_table">
+		{{#each context.file_data.contents}}
+			<tr>
+				<td class="righttext{{#if (eq ../context.file_data.target (add @index ../context.file_data.min))}} current{{/if}}">
+					{{#if (eq ../context.file_data.target (add @index ../context.file_data.min))}}==&gt;{{/if}}{{add @index ../context.file_data.min}}
+				</td>
+				<td style="white-space: nowrap;{{#if (eq ../context.file_data.target (add @index ../context.file_data.min))}} border: 1px solid black;border-width: 1px 1px 1px 0;{{/if}}">{{{.}}}</td>
+			</tr>
+		{{/each}}
+		</table>
+	</body>
+</html>
