@@ -53,5 +53,20 @@ function template_main()
 	
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
+}
+
+//This is a helper for the like text
+function getLikeText($count) {
+	global $txt, $context;
+	
+	$base = 'likes_';
+	if ($message['likes']['you'])
+	{
+		$base = 'you_' . $base;
+		$count--;
+	}
+	$base .= (isset($txt[$base . $count])) ? $count : 'n';
+	return sprintf($txt[$base], $scripturl . '?action=likes;sa=view;ltype=msg;like=' . $id . ';' . $context['session_var'] . '=' . $context['session_id'], comma_format($count));
+}
 
 ?>
