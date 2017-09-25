@@ -43,7 +43,7 @@
 						<option value="2"{{#if context.search_params.searchtype}} selected{{/if}}>{{{txt.any_words}}}</option>
 					</select>
 				</dd>
-				<dt class="righttext"><label for="userspec">{{{txt.by_user}}}:</label>
+				<dt class="righttext"><label for="userspec">{{{txt.search_by_character}}}:</label>
 				</dt>
 				<dd>
 					<input id="userspec" type="text" name="userspec" value="{{#if context.search_params.userspec}}{{{context.search_params.userspec}}}{{else}}*{{/if}}" size="40" class="input_text">
@@ -173,7 +173,7 @@
 			sSessionId: smf_session_id,
 			sSessionVar: smf_session_var,
 			sControlId: 'userspec',
-			sSearchType: 'member',
+			sSearchType: 'rawcharacter',
 			bItemList: false
 		});
 	</script>

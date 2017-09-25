@@ -43,7 +43,6 @@ function PlushSearch1()
 	// Don't load this in XML mode.
 	if (!isset($_REQUEST['xml']))
 	{
-		loadTemplate('Search');
 		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 	}
 
@@ -326,7 +325,6 @@ function PlushSearch2()
 	loadLanguage('Search');
 	if (!isset($_REQUEST['xml']))
 	{
-		loadTemplate('Search');
 		$context['sub_template'] = 'search_results';
 	}
 	//If we're doing XML we need to use the results template.
