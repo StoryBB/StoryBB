@@ -2326,7 +2326,7 @@ function template_profile_signature_modify()
  */
 function template_profile_avatar_select()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $modSettings, $settings;
 
 	// Start with the upper menu
 	echo '
