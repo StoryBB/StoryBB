@@ -17,7 +17,7 @@
 		<h4>
 		    {{#if (and ../modSettings.onlineEnable (not member.is_guest))}}
 		        {{#if ../context.can_send_pm}}<a href="{{member.online.href}}" title="{{member.online.label}}">{{/if}}
-		        <span class="{{#if (eq member.online.is_online 1)}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{#if ../context.can_send_pm}}</a>{{/if}}
+		        <span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{#if ../context.can_send_pm}}</a>{{/if}}
 		    {{/if}}
 		    {{{member.link}}}
 		</h4>
