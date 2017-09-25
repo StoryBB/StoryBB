@@ -224,7 +224,10 @@ function summary($memID)
 	{
 		if ($char['is_main'])
 			continue;
+		else
+			$context['member']['characters'][$id_char]['is_main'] = (bool) $char['is_main'];
 
+		$context['member']['characters'][$id_char]['retired'] = (bool) $char['retired'];
 		$user_groups = [];
 		if (!empty($char['main_char_group']))
 			$user_groups[] = $char['main_char_group'];

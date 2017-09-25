@@ -2522,7 +2522,7 @@ function compileTemplate($template, $options = []) {
 		'and' => 'logichelper_and',
 		'or' => 'logichelper_or',
 		'textTemplate' => 'textTemplate',
-		'timeformat' => 'timeformat',
+		'timeformat' => function($timestamp) { return timeformat($timestamp); },
 		'concat' => function(...$items) {
 			array_pop($items); // Strip the last item off the array, it's the calling context.
 			return implode($items);
