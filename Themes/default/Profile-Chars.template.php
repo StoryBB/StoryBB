@@ -216,7 +216,7 @@ function template_edit_char()
 	echo '
 		</div>
 		<div id="detailedinfo">
-			<form id="creator" action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=edit" method="post" accept-charset="', $context['character_set'], '">';
+			<form id="creator" action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=edit" method="post" accept-charset="UTF-8">';
 
 	if ($context['character']['groups_editable'])
 	{
@@ -433,7 +433,7 @@ function template_char_create()
 	echo '
 		</div>
 		<div id="detailedinfo">
-			<form id="creator" action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=char_create" method="post" accept-charset="', $context['character_set'], '">';
+			<form id="creator" action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=char_create" method="post" accept-charset="UTF-8">';
 
 	echo '
 				<dl>
@@ -779,7 +779,7 @@ function template_char_sheet()
 			</div>
 			<div id="quickReplyOptions">
 				<div class="roundframe">
-					<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=sheet" method="post" accept-charset="', $context['character_set'], '" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);smc_saveEntities(\'postmodify\', [\'message\'], \'options\');">
+					<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=sheet" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);smc_saveEntities(\'postmodify\', [\'message\'], \'options\');">
 						', template_control_richedit('message', 'smileyBox_message', 'bbcBox_message'), '
 						<br class="clear_right">
 						<span id="post_confirm_buttons">
@@ -867,7 +867,7 @@ function template_char_sheet_edit()
 					', $txt['char_sheet'], ' - ', $context['character']['character_name'], '
 				</h3>
 			</div>
-			<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=sheet_edit" method="post" accept-charset="', $context['character_set'], '" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);smc_saveEntities(\'postmodify\', [\'message\'], \'options\');">
+			<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=sheet_edit" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);smc_saveEntities(\'postmodify\', [\'message\'], \'options\');">
 				<div id="post_area">
 					<div class="roundframe">';
 
@@ -974,7 +974,7 @@ function template_char_merge_account()
 	global $scripturl, $txt, $context;
 
 	echo '
-		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=merge_acct;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=merge_acct;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">
 					', $txt['merge_char_account'], '
@@ -1011,7 +1011,7 @@ function template_char_merge_account_confirm()
 	global $scripturl, $txt, $context;
 
 	echo '
-		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=merge_acct;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=merge_acct;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">
 					', $txt['merge_char_account'], '
@@ -1037,7 +1037,7 @@ function template_char_move_account()
 	global $scripturl, $txt, $context;
 
 	echo '
-		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=move_acct;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=move_acct;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">
 					', $txt['move_char_account'], '
@@ -1074,7 +1074,7 @@ function template_char_move_account_confirm()
 	global $scripturl, $txt, $context;
 
 	echo '
-		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=move_acct;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=move_acct;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">
 					', $txt['move_char_account'], '
