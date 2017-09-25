@@ -1912,7 +1912,6 @@ function char_merge_account($memID)
 	if ($user_profile[$memID]['id_group'] == 1 || in_array('1', explode(',', $user_profile[$memID]['additional_groups'])))
 		fatal_lang_error('cannot_merge_admin', false);
 
-	loadTemplate('Profile-Chars');
 	loadJavascriptFile('suggest.js', array('default_theme' => true, 'defer' => false), 'smf_suggest');
 	$context['page_title'] = $txt['merge_char_account'];
 
@@ -1952,7 +1951,7 @@ function char_merge_account($memID)
 
 		$context['merge_destination_id'] = $dest;
 		$context['merge_destination'] = $user_profile[$dest];
-		$context['sub_template'] = 'char_merge_account_confirm';
+		$context['sub_template'] = 'profile_character_move_account_confirm';
 	}
 }
 
@@ -2126,10 +2125,9 @@ function char_move_account()
 	if ($context['character']['is_main'])
 		fatal_lang_error('cannot_move_main', false);
 
-	loadTemplate('Profile-Chars');
 	loadJavascriptFile('suggest.js', ['default_theme' => true, 'defer' => false], 'smf_suggest');
 	$context['page_title'] = $txt['move_char_account'];
-	$context['sub_template'] = 'char_move_account';
+	$context['sub_template'] = 'profile_character_move_account';
 
 	if (isset($_POST['move_acct_id']))
 	{
