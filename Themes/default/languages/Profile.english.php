@@ -572,7 +572,6 @@ $txt['you_are_posting_as'] = 'You are posting as: %s';
 $txt['my_characters'] = 'My Characters';
 
 $txt['char_create'] = 'Create Character';
-$txt['char_name'] = 'Character Name:';
 $txt['date_created'] = 'Date Created:';
 $txt['switch_chars'] = 'switch';
 $txt['change_theme'] = 'change';
