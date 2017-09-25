@@ -13,7 +13,6 @@
 if (!defined('SMF'))
 	die('No direct access...');
 
-
 /**
  * Main dispatcher, the entrance point for all 'Manage Membergroup' actions.
  * It forwards to a function based on the given subaction, default being subaction 'index', or, without manage_membergroup
@@ -1207,6 +1206,65 @@ function EditMembergroup()
 	$context['page_title'] = $txt['membergroups_edit_group'];
 
 	createToken('admin-mmg');
+}
+
+function MembergroupBadges()
+{
+	global $smcFunc, $context, $txt, $settings;
+
+	$context['groups'] = [
+		'accounts' => [],
+		'characters' => [],
+	];
+
+	if (isset($_POST['group']) && is_array($_POST['group']))
+	{
+		checkSession();
+		$order = 1;
+		foreach ($_POST['group'] as $group) {
+			$group = (int) $group;
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}membergroups
+				SET badge_order = {int:order}
+				WHERE id_group = {int:group}',
+				[
+					'order' => $order,
+					'group' => $group,
+				]
+			);
+			$order++;
+		}
+	}
+
+	$request = $smcFunc['db_query']('', '
+		SELECT id_group, group_name, online_color, icons, is_character
+		FROM {db_prefix}membergroups
+		WHERE min_posts = -1
+			AND id_group != {int:moderator_group}
+		ORDER BY badge_order',
+		[
+			'moderator_group' => 3
+		]
+	);
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$row['parsed_icons'] = '';
+		if (!empty($row['icons']))
+		{
+			list($qty, $badge) = explode('#', $row['icons']);
+			if (!empty($qty))
+				$row['parsed_icons'] = str_repeat('<img src="' . $settings['default_images_url'] . '/membericons/' . $badge . '" alt="*">', $qty);
+		}
+		$context['groups'][$row['is_character'] ? 'characters' : 'accounts'][$row['id_group']] = $row;
+	}
+	$smcFunc['db_free_result']($request);
+
+	loadTemplate('Admin-Chars');
+	$context['page_title'] = $txt['badges'];
+	$context['sub_template'] = 'membergroup_badges';
+	loadJavascriptFile('chars-jquery-ui-1.11.4.js', ['default_theme' => true], 'chars_jquery');
+	addInlineJavascript('
+	$(\'.sortable\').sortable({handle: ".handle"});', true);
 }
 
 ?>
