@@ -8,12 +8,12 @@
  */
 
 function character_popup_row($id_character, $char) {
-	global $context, $scripturl, $txt, $user_info, $cur_profile, $modSettings;
+	global $context, $scripturl, $txt, $user_info, $cur_profile, $settings;
 	echo '
 				<li>
 					<div class="character">
 						<span class="avatar">
-							', !empty($char['avatar']) ? '<img src="' . $char['avatar'] . '" alt="" />' : '<img src="' . $modSettings['avatar_url'] . '/default.png" alt="" />', '
+							', !empty($char['avatar']) ? '<img src="' . $char['avatar'] . '" alt="" />' : '<img src="' . $settings['images_url'] . '/default.png" alt="" />', '
 						</span>
 						<a href="', $scripturl, $char['character_url'], '">', $char['character_name'], '</a>';
 	if (!empty($char['is_main']))
@@ -46,6 +46,7 @@ function template_characters_popup()
 		<div id="posting_as">', sprintf($txt['you_are_posting_as'], $user_info['character_name']), '
 		<div id="my_account" class="chars_container">
 			<ul>';
+
 	foreach ($cur_profile['characters'] as $id_character => $char)
 	{
 		if (!empty($char['is_main']))
@@ -85,7 +86,7 @@ function template_characters_popup()
 
 function template_character_profile()
 {
-	global $context, $txt, $user_profile, $scripturl, $user_info, $modSettings;
+	global $context, $txt, $user_profile, $scripturl, $user_info, $modSettings, $settings;
 
 	echo '
 	<div class="cat_bar">
@@ -105,7 +106,7 @@ function template_character_profile()
 			<img class="avatar" src="', $context['character']['avatar'], '" alt=""><br /><br />';
 	else
 		echo '
-			<img class="avatar" src="', $modSettings['avatar_url'], '/default.png" alt=""><br /><br />';
+			<img class="avatar" src="', $settings['images_url'], '/default.png" alt=""><br /><br />';
 
 	if ($context['user']['is_owner'] && $user_info['id_character'] != $context['character']['id_character'])
 	{
@@ -1189,7 +1190,7 @@ function template_character_list()
 
 function template_character_sheet_list()
 {
-	global $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $modSettings, $settings;
 
 	echo '
 		<div id="messageindex">
@@ -1205,7 +1206,7 @@ function template_character_sheet_list()
 		echo '
 				<div class="windowbg">
 					<div class="board_icon">
-						<img class="avatar_small" src="', !empty($character['avatar']) ? $character['avatar'] : $modSettings['avatar_url'] . '/default.png', '" alt="" />
+						<img class="avatar_small" src="', !empty($character['avatar']) ? $character['avatar'] : $settings['images_url'] . '/default.png', '" alt="" />
 					</div>
 					<div class="info">
 						<div>

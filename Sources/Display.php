@@ -1412,9 +1412,9 @@ function prepareDisplayContext($reset = false)
 			{
 				$output['member']['avatar'] = [
 					'name' => '',
-					'image' => '<img class="avatar" src="' . $modSettings['avatar_url'] . '/default.png" alt="">',
-					'href' => $modSettings['avatar_url'] . '/default.png',
-					'url' => $modSettings['avatar_url'] . '/default.png',
+					'image' => '<img class="avatar" src="' . $settings['images_url'] . '/default.png" alt="">',
+					'href' => $settings['images_url'] . '/default.png',
+					'url' => $settings['images_url'] . '/default.png',
 				];
 			}
 			// We need to fix display of badges and everything - for reasons

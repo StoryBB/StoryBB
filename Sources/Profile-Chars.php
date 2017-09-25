@@ -2395,7 +2395,7 @@ function get_image_size_from_string($data)
 
 function CharacterList()
 {
-	global $context, $smcFunc, $txt, $scripturl, $modSettings;
+	global $context, $smcFunc, $txt, $scripturl, $modSettings, $settings;
 	global $image_proxy_enabled, $image_proxy_secret;
 
 	$_GET['char'] = isset($_GET['char']) ? (int) $_GET['char'] : 0;
@@ -2534,7 +2534,7 @@ function CharacterList()
 			if ($image_proxy_enabled && !empty($row['avatar']) && stripos($row['avatar'], 'http://') !== false)
 				$row['avatar'] = $boardurl . '/proxy.php?request=' . urlencode($row['avatar']) . '&hash=' . md5($row['avatar'] . $image_proxy_secret);
 			elseif (empty($row['avatar']))
-				$row['avatar'] = $modSettings['avatar_url'] . '/default.png';
+				$row['avatar'] = $settings['images_url'] . '/default.png';
 
 			$groups = !empty($row['main_char_group']) ? array($row['main_char_group']) : [];
 			$groups = array_merge($groups, explode(',', $row['char_groups']));
