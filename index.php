@@ -282,6 +282,7 @@ function smf_main()
 		'announce' => array('Post.php', 'AnnounceTopic'),
 		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
+		'characters' => array('Profile-Chars.php', 'CharacterList'),
 		'coppa' => array('Register.php', 'CoppaForm'),
 		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 		'dlattach' => array('ShowAttachments.php', 'showAttachment'),
