@@ -12,9 +12,10 @@
  */
 function template_main()
 {
-	template_show_list('regular_membergroups_list');
-	echo '<br><br>';
-	template_show_list('post_count_membergroups_list');
+	$result = template_show_list('regular_membergroups_list');
+	$result .= '<br><br>';
+	$result .= template_show_list('post_count_membergroups_list');
+	return $result;
 }
 
 /**
