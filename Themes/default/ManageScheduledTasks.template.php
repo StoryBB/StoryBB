@@ -14,39 +14,42 @@ function template_view_scheduled_tasks()
 {
 	global $context, $txt;
 
+	$result = '';
+
 	// We completed some tasks?
 	if (!empty($context['tasks_were_run']))
 	{
 		if (empty($context['scheduled_errors']))
-			echo '
+			$result .= '
 	<div class="infobox">
-		', $txt['scheduled_tasks_were_run'], '
+		' . $txt['scheduled_tasks_were_run'] . '
 	</div>';
 		else
 		{
-			echo '
+			$result .= '
 	<div class="errorbox" id="errors">
 			<dl>
 				<dt>
-					<strong id="error_serious">', $txt['scheduled_tasks_were_run_errors'], '</strong>
+					<strong id="error_serious">' . $txt['scheduled_tasks_were_run_errors'] . '</strong>
 				</dt>';
 
 			foreach ($context['scheduled_errors'] as $task => $errors)
 			{
-				echo '
+				$result .= '
 				<dd class="error">
-					<strong>', isset($txt['scheduled_task_' . $task]) ? $txt['scheduled_task_' . $task] : $task, '</strong>
-					<ul><li>', implode('</li><li>', $errors), '</li></ul>
+					<strong>' . (isset($txt['scheduled_task_' . $task]) ? $txt['scheduled_task_' . $task] : $task) . '</strong>
+					<ul><li>' . implode('</li><li>', $errors) . '</li></ul>
 				</dd>';
 			}
 
-			echo '
+			$result .= '
 			</dl>
 		</div>';
 		}
 	}
 
-	template_show_list('scheduled_tasks');
+	$result .= template_show_list('scheduled_tasks');
+	return $result;
 }
 
 /**

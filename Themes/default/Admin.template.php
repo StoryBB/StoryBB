@@ -375,14 +375,16 @@ function template_show_custom_profile()
 {
 	global $context, $txt;
 
+	$result = '';
+
 	if (!empty($context['saved_successful']))
-		echo '
-					<div class="infobox">', $txt['settings_saved'], '</div>';
+		$result .= '
+					<div class="infobox">' . $txt['settings_saved'] . '</div>';
 
 	// Standard fields.
-	template_show_list('standard_profile_fields');
+	$result .= template_show_list('standard_profile_fields');
 
-	echo '
+	$result .= '
 					<script>
 						var iNumChecks = document.forms.standardProfileFields.length;
 						for (var i = 0; i < iNumChecks; i++)
@@ -391,7 +393,8 @@ function template_show_custom_profile()
 					</script><br>';
 
 	// Custom fields.
-	template_show_list('custom_profile_fields');
+	$result .= template_show_list('custom_profile_fields');
+	return $result;
 }
 
 // Edit a profile field?

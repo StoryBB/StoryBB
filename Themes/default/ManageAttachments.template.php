@@ -257,12 +257,14 @@ function template_attachment_paths()
 {
 	global $modSettings;
 
+	$result = '';
 	if (!empty($modSettings['attachment_basedirectories']))
 	{
-		template_show_list('base_paths');
+		$result .= template_show_list('base_paths');
 	}
 
-	template_show_list('attach_paths');
+	$result .= template_show_list('attach_paths');
+	return $result;
 }
 
 ?>
