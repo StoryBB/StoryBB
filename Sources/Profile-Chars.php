@@ -19,6 +19,7 @@ function characters_popup($memID)
 
 	// We only want to output our little layer here.
 	loadTemplate('Profile-Chars');
+	loadTemplateLayout('raw');
 	$context['template_layers'] = [];
 }
 
