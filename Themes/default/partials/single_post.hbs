@@ -213,7 +213,7 @@
 					<li><a href="{{../scripturl}}?action=deletemsg;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{../context.session_var}}={{../context.session_id}}" data-confirm="{{../txt.remove_message_question}}" class="you_sure"><span class="generic_icons remove_button"></span>{{../txt.remove}}</a></li>
 					{{/if}}
 					{{/if}}
-					{{#id can_switch_char}}
+					{{#if can_switch_char}}
 					<li>
 						<a href="#" onclick="return false">
 							<span class="generic_icons people"></span> {{../txt.switch_to_char_menu}}
