@@ -84,6 +84,8 @@ $txt['quick_modify'] = 'Modify Inline';
 $txt['quick_modify_message'] = 'You have successfully modified this message.';
 $txt['reason_for_edit'] = 'Reason for editing';
 
+$txt['switch_to_char_menu'] = 'Reattribute to...';
+
 $txt['choose_pass'] = 'Choose password';
 $txt['verify_pass'] = 'Verify password';
 $txt['notify_announcements'] = 'Allow the administrators to send me important news by email';

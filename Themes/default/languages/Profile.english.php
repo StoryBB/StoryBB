@@ -620,7 +620,6 @@ $txt['char_retire_char'] = 'Retire Character';
 $txt['char_unretire_char'] = 'Unretire Character';
 
 $txt['switch_to_char'] = 'Switch to this character';
-$txt['switch_to_char_menu'] = 'Reattribute to...';
 $txt['edit_char'] = 'Edit this character';
 $txt['delete_char'] = 'Delete this character';
 $txt['are_you_sure_delete_char'] = 'Are you sure you want to delete this character?';
