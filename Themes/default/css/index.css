@@ -610,9 +610,6 @@ dl.settings {
 	padding: 5px;
 }
 dl.settings dt {
-	width: 56%;
-	float: left;
-	margin: 0 0 10px 0;
 	clear: both;
 }
 dl.settings dt.windowbg {
@@ -623,10 +620,8 @@ dl.settings dt.windowbg {
 	clear: both;
 }
 dl.settings dd {
-	width: 42%;
-	float: right;
 	overflow: auto;
-	margin: 0 0 3px 0;
+	margin: 0 0 10px 30px;
 }
 dl.settings img {
 	margin: 0 10px 0 0;
@@ -1138,7 +1133,7 @@ h1.forumtitle a {
 	line-height: 50px;
 	font-size: 1.8em;
 }
-/* Tweak the SMF logo */
+/* Tweak the StoryBB logo */
 img#smflogo {
 	margin: 16px 0 0 0;
 }
@@ -2200,9 +2195,6 @@ dl {
 	display: block;
 	margin-bottom: 4px;
 }
-#avatar_server_stored div {
-	float: left;
-}
 #avatar_upload {
 	overflow: auto;
 }
@@ -2320,7 +2312,7 @@ dl {
 .ignoreboards {
 	margin: 0 2%;
 	padding: 0;
-	width: 45%;
+	width: 45%; /* todo convert to column-count: 2; */
 }
 .ignoreboards a {
 	font-weight: bold;

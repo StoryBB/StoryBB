@@ -1,4 +1,6 @@
 <?php
+
+use LightnCandy\LightnCandy;
 /**
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
@@ -13,29 +15,25 @@
 function template_popup()
 {
 	global $context, $settings, $txt, $modSettings;
+	$data = Array(
+		'context' => $context,
+		'settings' => $settings,
+		'txt' => $txt,
+		'modsettings' => $modSettings,
+		'id' => 'help_popup',
+		'content' => $context['help_text']
+	);
+	
+	$template = loadTemplateLayout('popup');
 
-	// Since this is a popup of its own we need to start the html, etc.
-	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="', $context['character_set'], '">
-		<meta name="robots" content="noindex">
-		<title>', $context['page_title'], '</title>
-		<link rel="stylesheet" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css', $modSettings['browser_cache'] ,'">
-		<script src="', $settings['default_theme_url'], '/scripts/script.js', $modSettings['browser_cache'] ,'"></script>
-	</head>
-	<body id="help_popup">
-		<div class="windowbg description">
-			', $context['help_text'], '<br>
-			<br>
-			<a href="javascript:self.close();">', $txt['close_window'], '</a>
-		</div>
-	</body>
-</html>';
+	$phpStr = compileTemplate($template);
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	echo $renderer($data);
 }
-
 /**
  * The template for the popup for finding members
+ * @todo Is this used?
  */
 function template_find_members()
 {
@@ -45,7 +43,7 @@ function template_find_members()
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
 		<title>', $txt['find_members'], '</title>
-		<meta charset="', $context['character_set'], '">
+		<meta charset="UTF-8">
 		<meta name="robots" content="noindex">
 		<link rel="stylesheet" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css', $modSettings['browser_cache'] ,'">
 		<script src="', $settings['default_theme_url'], '/scripts/script.js', $modSettings['browser_cache'] ,'"></script>
@@ -72,7 +70,7 @@ function template_find_members()
 		</script>
 	</head>
 	<body id="help_popup">
-		<form action="', $scripturl, '?action=findmember;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="', $context['character_set'], '" class="padding description">
+		<form action="', $scripturl, '?action=findmember;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8" class="padding description">
 			<div class="roundframe">
 				<div class="cat_bar">
 					<h3 class="catbg">', $txt['find_members'], '</h3>
@@ -143,58 +141,33 @@ function template_find_members()
 </html>';
 }
 
+function getLangSuffix($lang) {
+	return ($lang != 'en' ? '/' . $lang : '');
+}
+
 /**
  * The main help page
  */
 function template_manual()
 {
 	global $context, $scripturl, $txt;
+	$data = Array(
+		'context' => $context,
+		'scripturl' => $scripturl,
+		'txt' => $txt,
+		'creditsURL' => $scripturl . '?action=credits'
+	);
+	
+	$template = loadTemplateFile('help_manual');
 
-	echo '
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['manual_smf_user_help'], '</h3>
-			</div>
-			<div id="help_container">
-				<div id="helpmain" class="windowbg2">
-					<p>', sprintf($txt['manual_welcome'], $context['forum_name_html_safe']), '</p>
-					<p>', $txt['manual_introduction'], '</p>
-					<ul>';
-
-	foreach ($context['manual_sections'] as $section_id => $wiki_id)
-	{
-		echo '
-						<li><a href="', $context['wiki_url'], '/', $context['wiki_prefix'], $wiki_id, '" target="_blank" class="new_win">', $txt['manual_section_' . $section_id . '_title'], '</a> - ', $txt['manual_section_' . $section_id . '_desc'], '</li>';
-	}
-
-	echo '
-					</ul>
-					<p>', sprintf($txt['manual_docs_and_credits'], $context['wiki_url'], $scripturl . '?action=credits'), '</p>
-				</div>
-			</div>';
-}
-
-/**
- * The rules page
- */
-function template_terms()
-{
-	global $txt, $context, $modSettings;
-
-	if (!empty($modSettings['requireAgreement']))
-		echo '
-			<div class="cat_bar">
-				<h3 class="catbg">
-					', $txt['terms_and_rules'], ' - ', $context['forum_name_html_safe'], '
-				</h3>
-			</div>
-			<div class="roundframe">
-				', $context['agreement'], '
-			</div>';
-	else
-		echo '
-			<div class="noticebox">
-				', $txt['agreement_disabled'], '
-			</div>';
+	$phpStr = compileTemplate($template, [
+	    'helpers' => [
+	    	'getLangSuffix' => 'getLangSuffix',
+	    ]
+	]);
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 ?>

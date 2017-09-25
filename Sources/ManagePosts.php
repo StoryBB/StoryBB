@@ -163,7 +163,7 @@ function SetCensor()
 	// Since the "Allow users to disable the word censor" stuff was moved from a theme setting to a global one, we need this...
 	loadLanguage('Themes');
 
-	$context['sub_template'] = 'edit_censored';
+	$context['sub_template'] = 'admin_censor_words';
 	$context['page_title'] = $txt['admin_censored_words'];
 
 	createToken('admin-censor');
@@ -186,7 +186,6 @@ function ModifyPostSettings($return_config = false)
 	$config_vars = array(
 			// Simple post options...
 			array('check', 'removeNestedQuotes'),
-			array('check', 'enableEmbeddedFlash', 'subtext' => $txt['enableEmbeddedFlash_warning']),
 			array('check', 'disable_wysiwyg'),
 			array('check', 'additional_options_collapsable'),
 		'',
@@ -245,7 +244,7 @@ function ModifyPostSettings($return_config = false)
 		call_integration_hook('integrate_save_post_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=postsettings;sa=posts');
 	}
 
@@ -270,28 +269,27 @@ function ModifyTopicSettings($return_config = false)
 {
 	global $context, $txt, $sourcedir, $scripturl;
 
+	loadLanguage('ManageSettings');
+
 	// Here are all the topic settings.
 	$config_vars = array(
-			// Some simple bools...
+			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
 			array('check', 'enableParticipation'),
 		'',
 			// Pagination etc...
 			array('int', 'oldTopicDays', 'postinput' => $txt['manageposts_days'], 'subtext' => $txt['zero_to_disable']),
 			array('int', 'defaultMaxTopics', 'postinput' => $txt['manageposts_topics']),
 			array('int', 'defaultMaxMessages', 'postinput' => $txt['manageposts_posts']),
-			array('check', 'disable_print_topic'),
 		'',
 			// All, next/prev...
 			array('int', 'enableAllMessages', 'postinput' => $txt['manageposts_posts'], 'subtext' => $txt['enableAllMessages_zero']),
 			array('check', 'disableCustomPerPage'),
-			array('check', 'enablePreviousNext'),
 		'',
 			// Topic related settings (show gender icon/avatars etc...)
 			array('check', 'subject_toggle'),
 			array('check', 'show_modify'),
 			array('check', 'show_profile_buttons'),
 			array('check', 'show_user_images'),
-			array('check', 'show_blurb'),
 			array('check', 'hide_post_group', 'subtext' => $txt['hide_post_group_desc']),
 		'',
 			// First & Last message preview lengths
@@ -318,7 +316,7 @@ function ModifyTopicSettings($return_config = false)
 		call_integration_hook('integrate_save_topic_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=postsettings;sa=topics');
 	}
 
@@ -388,7 +386,7 @@ function ModifyDraftSettings($return_config = false)
 
 		// Save everything else and leave.
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=postsettings;sa=drafts');
 	}
 

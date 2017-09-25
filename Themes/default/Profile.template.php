@@ -7,6 +7,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 /**
  * Minor stuff shown above the main profile - mostly used for error messages and showing that the profile update was successful.
  */
@@ -149,337 +151,20 @@ function template_summary()
 {
 	global $context, $settings, $scripturl, $modSettings, $txt;
 
-	// Display the basic information about the user
-	echo '
-	<div id="profileview" class="roundframe flow_auto">
-		<div id="basicinfo">';
+    $data = Array(
+        'context' => $context,
+        'txt' => $txt,
+        'scripturl' => $scripturl,
+        'modSettings' => $modSettings,
+        'settings' => $settings,
+    );
+    
+    $template = loadTemplateFile('profile_summary');
 
-	// Are there any custom profile fields for above the name?
-	if (!empty($context['print_custom_fields']['above_member']))
-	{
-		echo '
-			<div class="custom_fields_above_name">
-				<ul >';
+    $phpStr = compileTemplate($template);
 
-		foreach ($context['print_custom_fields']['above_member'] as $field)
-			if (!empty($field['output_html']))
-				echo '
-					<li>', $field['output_html'], '</li>';
-
-		echo '
-				</ul>
-			</div>
-			<br>';
-	}
-
-	echo '
-			<div class="username clear">
-				<h4>', $context['member']['name'], '</h4>
-			</div>
-			', $context['member']['avatar']['image'], '
-			<div class="badges">', $context['member']['badges'], '</div>
-			<div class="position">', (!empty($context['member']['group']) ? $context['member']['group'] : ''), '</div>';
-
-	// Are there any custom profile fields for below the avatar?
-	if (!empty($context['print_custom_fields']['below_avatar']))
-	{
-		echo '
-			<div class="custom_fields_below_avatar">
-				<ul >';
-
-		foreach ($context['print_custom_fields']['below_avatar'] as $field)
-			if (!empty($field['output_html']))
-				echo '
-					<li>', $field['output_html'], '</li>';
-
-		echo '
-				</ul>
-			</div>
-			<br>';
-	}
-
-		echo '
-			<ul class="clear">';
-	// Email is only visible if it's your profile or you have the moderate_forum permission
-	if ($context['member']['show_email'])
-		echo '
-				<li><a href="mailto:', $context['member']['email'], '" title="', $context['member']['email'], '" rel="nofollow"><span class="generic_icons mail" title="' . $txt['email'] . '"></span></a></li>';
-
-	// Don't show an icon if they haven't specified a website.
-	if ($context['member']['website']['url'] !== '' && !isset($context['disabled_fields']['website']))
-		echo '
-				<li><a href="', $context['member']['website']['url'], '" title="' . $context['member']['website']['title'] . '" target="_blank" class="new_win">', ($settings['use_image_buttons'] ? '<span class="generic_icons www" title="' . $context['member']['website']['title'] . '"></span>' : $txt['www']), '</a></li>';
-
-	// Are there any custom profile fields as icons?
-	if (!empty($context['print_custom_fields']['icons']))
-	{
-		foreach ($context['print_custom_fields']['icons'] as $field)
-			if (!empty($field['output_html']))
-				echo '
-					<li class="custom_field">', $field['output_html'], '</li>';
-	}
-
-	echo '
-			</ul>
-			<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['text'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<span class="' . ($context['member']['online']['is_online'] == 1 ? 'on' : 'off') . '" title="' . $context['member']['online']['text'] . '"></span>' : $context['member']['online']['label'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['label'] . '</span>' : '';
-
-	// Can they add this member as a buddy?
-	if (!empty($context['can_have_buddy']) && !$context['user']['is_owner'])
-		echo '
-				<br><a href="', $scripturl, '?action=buddy;u=', $context['id_member'], ';', $context['session_var'], '=', $context['session_id'], '">[', $txt['buddy_' . ($context['member']['is_buddy'] ? 'remove' : 'add')], ']</a>';
-
-	echo '
-			</span>';
-
-	if (!$context['user']['is_owner'] && $context['can_send_pm'])
-		echo '
-			<a href="', $scripturl, '?action=pm;sa=send;u=', $context['id_member'], '" class="infolinks">', $txt['profile_sendpm_short'], '</a>';
-
-	echo '
-			<a href="', $scripturl, '?action=profile;area=showposts;u=', $context['id_member'], '" class="infolinks">', $txt['showPosts'], '</a>';
-
-	if ($context['user']['is_owner'] && !empty($modSettings['drafts_post_enabled']))
-		echo '
-			<a href="', $scripturl, '?action=profile;area=showdrafts;u=', $context['id_member'], '" class="infolinks">', $txt['drafts_show'], '</a>';
-
-	echo '
-			<a href="', $scripturl, '?action=profile;area=statistics;u=', $context['id_member'], '" class="infolinks">', $txt['statPanel'], '</a>';
-
-	// Are there any custom profile fields for bottom?
-	if (!empty($context['print_custom_fields']['bottom_poster']))
-	{
-		echo '
-			<div class="custom_fields_bottom">
-				<ul class="nolist">';
-
-		foreach ($context['print_custom_fields']['bottom_poster'] as $field)
-			if (!empty($field['output_html']))
-				echo '
-					<li>', $field['output_html'], '</li>';
-
-		echo '
-				</ul>
-			</div>';
-	}
-
-	echo '
-		</div>';
-
-	echo '
-		<div id="detailedinfo">
-			<dl>';
-
-	if ($context['user']['is_owner'] || $context['user']['is_admin'])
-		echo '
-				<dt>', $txt['username'], ': </dt>
-				<dd>', $context['member']['username'], '</dd>';
-
-	if (!isset($context['disabled_fields']['posts']))
-		echo '
-				<dt>', $txt['profile_posts'], ': </dt>
-				<dd>', $context['member']['posts'], ' (', $context['member']['posts_per_day'], ' ', $txt['posts_per_day'], ')</dd>';
-
-	if ($context['member']['show_email'])
-	{
-		echo '
-				<dt>', $txt['email'], ': </dt>
-				<dd><a href="mailto:', $context['member']['email'], '">', $context['member']['email'], '</a></dd>';
-	}
-
-	if (!empty($modSettings['titlesEnable']) && !empty($context['member']['title']))
-		echo '
-				<dt>', $txt['custom_title'], ': </dt>
-				<dd>', $context['member']['title'], '</dd>';
-
-	if (!empty($context['member']['blurb']))
-		echo '
-				<dt>', $txt['personal_text'], ': </dt>
-				<dd>', $context['member']['blurb'], '</dd>';
-
-	echo '
-				<dt>', $txt['age'], ':</dt>
-				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? ' &nbsp; <img src="' . $settings['images_url'] . '/cake.png" alt="">' : ''), '</dd>';
-
-	echo '
-			</dl>';
-
-	// Any custom fields for standard placement?
-	if (!empty($context['print_custom_fields']['standard']))
-	{
-		echo '
-				<dl>';
-
-		foreach ($context['print_custom_fields']['standard'] as $field)
-			if (!empty($field['output_html']))
-				echo '
-					<dt>', $field['name'], ':</dt>
-					<dd>', $field['output_html'], '</dd>';
-
-		echo '
-				</dl>';
-	}
-
-	echo '
-				<dl class="noborder">';
-
-	// Can they view/issue a warning?
-	if ($context['can_view_warning'] && $context['member']['warning'])
-	{
-		echo '
-					<dt>', $txt['profile_warning_level'], ': </dt>
-					<dd>
-						<a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=', ($context['can_issue_warning'] && !$context['user']['is_owner'] ? 'issuewarning' : 'viewwarning') , '">', $context['member']['warning'], '%</a>';
-
-		// Can we provide information on what this means?
-		if (!empty($context['warning_status']))
-			echo '
-						<span class="smalltext">(', $context['warning_status'], ')</span>';
-
-		echo '
-					</dd>';
-	}
-
-	// Is this member requiring activation and/or banned?
-	if (!empty($context['activate_message']) || !empty($context['member']['bans']))
-	{
-
-		// If the person looking at the summary has permission, and the account isn't activated, give the viewer the ability to do it themselves.
-		if (!empty($context['activate_message']))
-			echo '
-					<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="', $context['activate_link'], '"', ($context['activate_type'] == 4 ? ' class="you_sure" data-confirm="'. $txt['profileConfirm'] .'"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
-
-		// If the current member is banned, show a message and possibly a link to the ban.
-		if (!empty($context['member']['bans']))
-		{
-			echo '
-					<dt class="clear"><span class="alert">', $txt['user_is_banned'], '</span>&nbsp;[<a href="#" onclick="document.getElementById(\'ban_info\').style.display = document.getElementById(\'ban_info\').style.display == \'none\' ? \'\' : \'none\';return false;">' . $txt['view_ban'] . '</a>]</dt>
-					<dt class="clear" id="ban_info" style="display: none;">
-						<strong>', $txt['user_banned_by_following'], ':</strong>';
-
-			foreach ($context['member']['bans'] as $ban)
-				echo '
-						<br><span class="smalltext">', $ban['explanation'], '</span>';
-
-			echo '
-					</dt>';
-		}
-	}
-
-	echo '
-					<dt>', $txt['date_registered'], ': </dt>
-					<dd>', $context['member']['registered'], '</dd>';
-
-	// If the person looking is allowed, they can check the members IP address and hostname.
-	if ($context['can_see_ip'])
-	{
-		if (!empty($context['member']['ip']))
-		echo '
-					<dt>', $txt['ip'], ': </dt>
-					<dd><a href="', $scripturl, '?action=profile;area=tracking;sa=ip;searchip=', $context['member']['ip'], ';u=', $context['member']['id'], '">', $context['member']['ip'], '</a></dd>';
-
-		if (empty($modSettings['disableHostnameLookup']) && !empty($context['member']['ip']))
-			echo '
-					<dt>', $txt['hostname'], ': </dt>
-					<dd>', $context['member']['hostname'], '</dd>';
-	}
-
-	echo '
-					<dt>', $txt['local_time'], ':</dt>
-					<dd>', $context['member']['local_time'], '</dd>';
-
-	if (!empty($modSettings['userLanguage']) && !empty($context['member']['language']))
-		echo '
-					<dt>', $txt['language'], ':</dt>
-					<dd>', $context['member']['language'], '</dd>';
-
-	if ($context['member']['show_last_login'])
-		echo '
-					<dt>', $txt['lastLoggedIn'], ': </dt>
-					<dd>', $context['member']['last_login'], (!empty($context['member']['is_hidden']) ? ' (' . $txt['hidden'] . ')' : ''), '</dd>';
-
-	echo '
-				</dl>';
-
-	// Are there any custom profile fields for above the signature?
-	if (!empty($context['print_custom_fields']['above_signature']))
-	{
-		echo '
-				<div class="custom_fields_above_signature">
-					<ul class="nolist">';
-
-		foreach ($context['print_custom_fields']['above_signature'] as $field)
-			if (!empty($field['output_html']))
-				echo '
-						<li>', $field['output_html'], '</li>';
-
-		echo '
-					</ul>
-				</div>';
-	}
-
-	// Show the users signature.
-	if ($context['signature_enabled'] && !empty($context['member']['signature']))
-		echo '
-				<div class="signature">
-					<h5>', $txt['signature'], ':</h5>
-					', $context['member']['signature'], '
-				</div>';
-
-	// Are there any custom profile fields for below the signature?
-	if (!empty($context['print_custom_fields']['below_signature']))
-	{
-		echo '
-				<div class="custom_fields_below_signature">
-					<ul class="nolist">';
-
-		foreach ($context['print_custom_fields']['below_signature'] as $field)
-			if (!empty($field['output_html']))
-				echo '
-						<li>', $field['output_html'], '</li>';
-
-		echo '
-					</ul>
-				</div>';
-	}
-
-	if (!empty($context['member']['characters']) && count($context['member']['characters']) > 1)
-	{
-		echo '
-				<div class="character_list">
-					<h5 id="user_char_list">', $txt['my_characters'], ':</h5>
-				</div>
-				<ul class="characters">';
-		foreach ($context['member']['characters'] as $char)
-		{
-			if ($char['is_main'])
-				continue;
-
-			echo '
-					<li>
-						<div class="char_avatar">
-							', !empty($char['avatar']) ? '<img src="' . $char['avatar'] . '" alt="">' : '<img src="' . $modSettings['avatar_url'] . '/default.png" alt="">', '
-						</div>
-						<div class="char_name">
-							<a href="', $scripturl, $char['character_url'], '">', $char['character_name'], '</a>
-							', !empty($char['retired']) ? '(' . $txt['char_retired'] . ')' : '', '
-							<div class="char_created">
-								', sprintf($txt['char_created'], timeformat($char['date_created'])), '
-							</div>
-						</div>
-						<div class="char_group">
-							', $char['display_group'], '
-							<div class="char_created">&nbsp;</div>
-						</div>
-					</li>';
-		}
-		echo '
-				</ul>';
-	}
-
-	echo '
-		</div>
-	</div>
-<div class="clear"></div>';
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -602,7 +287,7 @@ function template_showAlerts()
 	{
 		// Start the form.
 		echo '
-		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=showalerts;save" method="post" accept-charset="', $context['character_set'], '" id="mark_all">
+		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=showalerts;save" method="post" accept-charset="UTF-8" id="mark_all">
 			<table id="alerts" class="table_grid">';
 
 		foreach ($context['alerts'] as $id => $alert)
@@ -783,7 +468,7 @@ function template_editBuddies()
 
 	// Add a new buddy?
 	echo '
-	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies" method="post" accept-charset="', $context['character_set'], '">
+	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies" method="post" accept-charset="UTF-8">
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['buddy_add'], '</h3>
 		</div>
@@ -883,7 +568,7 @@ function template_editIgnoreList()
 
 	// Add to the ignore list?
 	echo '
-	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore" method="post" accept-charset="', $context['character_set'], '">
+	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore" method="post" accept-charset="UTF-8">
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['ignore_add'], '</h3>
 		</div>
@@ -990,7 +675,7 @@ function template_trackIP()
 			<h3 class="catbg">', $txt['trackIP'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="', $context['base_url'], '" method="post" accept-charset="', $context['character_set'], '">
+			<form action="', $context['base_url'], '" method="post" accept-charset="UTF-8">
 				<dl class="settings">
 					<dt>
 						<label for="searchip"><strong>', $txt['enter_ip'], ':</strong></label>
@@ -1163,7 +848,7 @@ function template_showPermissions()
 
 		// Board permission section.
 		echo '
-			<form action="' . $scripturl . '?action=profile;u=', $context['id_member'], ';area=permissions#board_permissions" method="post" accept-charset="', $context['character_set'], '">
+			<form action="' . $scripturl . '?action=profile;u=', $context['id_member'], ';area=permissions#board_permissions" method="post" accept-charset="UTF-8">
 				<div class="cat_bar">
 					<h3 class="catbg">
 						<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
@@ -1237,140 +922,22 @@ function template_statPanel()
 {
 	global $context, $txt;
 
-	// First, show a few text statistics such as post/topic count.
-	echo '
-	<div id="profileview" class="roundframe">
-		<div id="generalstats">
-			<dl class="stats">
-				<dt>', $txt['statPanel_total_time_online'], ':</dt>
-				<dd>', $context['time_logged_in'], '</dd>
-				<dt>', $txt['statPanel_total_posts'], ':</dt>
-				<dd>', $context['num_posts'], ' ', $txt['statPanel_posts'], '</dd>
-				<dt>', $txt['statPanel_total_topics'], ':</dt>
-				<dd>', $context['num_topics'], ' ', $txt['statPanel_topics'], '</dd>
-				<dt>', $txt['statPanel_users_polls'], ':</dt>
-				<dd>', $context['num_polls'], ' ', $txt['statPanel_polls'], '</dd>
-				<dt>', $txt['statPanel_users_votes'], ':</dt>
-				<dd>', $context['num_votes'], ' ', $txt['statPanel_votes'], '</dd>
-			</dl>
-		</div>';
+    $data = Array(
+        'context' => $context,
+        'txt' => $txt,
+    );
+    
+    $template = loadTemplateFile('profile_stats');
 
-	// This next section draws a graph showing what times of day they post the most.
-	echo '
-		<div id="activitytime" class="flow_hidden">
-			<div class="title_bar">
-				<h3 class="titlebg">
-					<span class="generic_icons history"></span> ', $txt['statPanel_activityTime'], '
-				</h3>
-			</div>';
+    $phpStr = compileTemplate($template, [
+        'helpers' => Array(
+        	'inverted_percent' => function($pc) { return 100 - $pc; },
+        	'pie_percent' => function($pc) { return (int) $pc / 5 * 20; },
+        )
+    ]);
 
-	// If they haven't post at all, don't draw the graph.
-	if (empty($context['posts_by_time']))
-		echo '
-			<p class="centertext padding">', $txt['statPanel_noPosts'], '</p>';
-	// Otherwise do!
-	else
-	{
-		echo '
-			<ul class="activity_stats flow_hidden">';
-
-		// The labels.
-		foreach ($context['posts_by_time'] as $time_of_day)
-		{
-			echo '
-				<li', $time_of_day['is_last'] ? ' class="last"' : '', '>
-					<div class="bar" style="padding-top: ', ((int) (100 - $time_of_day['relative_percent'])), 'px;" title="', sprintf($txt['statPanel_activityTime_posts'], $time_of_day['posts'], $time_of_day['posts_percent']), '">
-						<div style="height: ', (int) $time_of_day['relative_percent'], 'px;">
-							<span>', sprintf($txt['statPanel_activityTime_posts'], $time_of_day['posts'], $time_of_day['posts_percent']), '</span>
-						</div>
-					</div>
-					<span class="stats_hour">', $time_of_day['hour_format'], '</span>
-				</li>';
-		}
-
-		echo '
-
-			</ul>';
-	}
-
-	echo '
-		</div>';
-
-	// Two columns with the most popular boards by posts and activity (activity = users posts / total posts).
-	echo '
-		<div class="flow_hidden">
-			<div class="half_content">
-				<div class="title_bar">
-					<h3 class="titlebg">
-						<span class="generic_icons replies"></span> ', $txt['statPanel_topBoards'], '
-					</h3>
-				</div>';
-
-	if (empty($context['popular_boards']))
-		echo '
-				<p class="centertext padding">', $txt['statPanel_noPosts'], '</p>';
-
-	else
-	{
-		echo '
-				<dl class="stats">';
-
-		// Draw a bar for every board.
-		foreach ($context['popular_boards'] as $board)
-		{
-			echo '
-					<dt>', $board['link'], '</dt>
-					<dd>
-						<div class="profile_pie" style="background-position: -', ((int) ($board['posts_percent'] / 5) * 20), 'px 0;" title="', sprintf($txt['statPanel_topBoards_memberposts'], $board['posts'], $board['total_posts_member'], $board['posts_percent']), '">
-							', sprintf($txt['statPanel_topBoards_memberposts'], $board['posts'], $board['total_posts_member'], $board['posts_percent']), '
-						</div>
-						', empty($context['hide_num_posts']) ? $board['posts'] : '', '
-					</dd>';
-		}
-
-		echo '
-				</dl>';
-	}
-	echo '
-			</div>';
-	echo '
-			<div class="half_content">
-				<div class="title_bar">
-					<h3 class="titlebg">
-						<span class="generic_icons replies"></span> ', $txt['statPanel_topBoardsActivity'], '
-					</h3>
-				</div>';
-
-	if (empty($context['board_activity']))
-		echo '
-				<p class="centertext padding">', $txt['statPanel_noPosts'], '</p>';
-	else
-	{
-		echo '
-				<dl class="stats">';
-
-		// Draw a bar for every board.
-		foreach ($context['board_activity'] as $activity)
-		{
-			echo '
-					<dt>', $activity['link'], '</dt>
-					<dd>
-						<div class="profile_pie" style="background-position: -', ((int) ($activity['percent'] / 5) * 20), 'px 0;" title="', sprintf($txt['statPanel_topBoards_posts'], $activity['posts'], $activity['total_posts'], $activity['posts_percent']), '">
-							', sprintf($txt['statPanel_topBoards_posts'], $activity['posts'], $activity['total_posts'], $activity['posts_percent']), '
-						</div>
-						', $activity['percent'], '%
-					</dd>';
-		}
-
-		echo '
-				</dl>';
-	}
-	echo '
-			</div>
-		</div>';
-
-	echo '
-	</div>';
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
@@ -1386,7 +953,7 @@ function template_edit_options()
 	$url = $context['require_password'] && !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($url, array('http://' => 'https://')) : $url;
 
 	echo '
-		<form action="', $url, '" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator" enctype="multipart/form-data"', ($context['menu_item_selected'] == 'account' ? ' autocomplete="off"' : ''), '>
+		<form action="', $url, '" method="post" accept-charset="UTF-8" name="creator" id="creator" enctype="multipart/form-data"', ($context['menu_item_selected'] == 'account' ? ' autocomplete="off"' : ''), '>
 			<div style="position:absolute; top:-100px;"><input type="text" id="autocompleteFakeName"/><input type="password" id="autocompleteFakePassword"/></div>
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">';
@@ -1598,16 +1165,6 @@ function template_profile_pm_settings()
 
 	echo '
 								<dt>
-									<label for="pm_prefs">', $txt['pm_display_mode'], ':</label>
-								</dt>
-								<dd>
-									<select name="pm_prefs" id="pm_prefs">
-										<option value="0"', $context['display_mode'] == 0 ? ' selected' : '', '>', $txt['pm_display_mode_all'], '</option>
-										<option value="1"', $context['display_mode'] == 1 ? ' selected' : '', '>', $txt['pm_display_mode_one'], '</option>
-										<option value="2"', $context['display_mode'] == 2 ? ' selected' : '', '>', $txt['pm_display_mode_linked'], '</option>
-									</select>
-								</dd>
-								<dt>
 									<label for="view_newest_pm_first">', $txt['recent_pms_at_top'], '</label>
 								</dt>
 								<dd>
@@ -1632,13 +1189,6 @@ function template_profile_pm_settings()
 	echo '
 												<option value="3"', !empty($context['receive_from']) && $context['receive_from'] > 2 ? ' selected' : '', '>', $txt['pm_receive_from_admins'], '</option>
 										</select>
-								</dd>
-								<dt>
-										<label for="popup_messages">', $txt['popup_messages'], '</label>
-								</dt>
-								<dd>
-										<input type="hidden" name="default_options[popup_messages]" value="0">
-										<input type="checkbox" name="default_options[popup_messages]" id="popup_messages" value="1"', !empty($context['member']['options']['popup_messages']) ? ' checked' : '', ' class="input_check">
 								</dd>
 						</dl>
 						<hr>
@@ -1690,9 +1240,7 @@ function template_profile_theme_settings()
 		}
 
 		// Is this disabled?
-		if ($setting['id'] == 'calendar_start_day' && empty($modSettings['cal_enabled']))
-			continue;
-		elseif (($setting['id'] == 'topics_per_page' || $setting['id'] == 'messages_per_page') && !empty($modSettings['disableCustomPerPage']))
+		if (($setting['id'] == 'topics_per_page' || $setting['id'] == 'messages_per_page') && !empty($modSettings['disableCustomPerPage']))
 			continue;
 		elseif ($setting['id'] == 'show_no_censored' && empty($modSettings['allow_no_censored']))
 			continue;
@@ -1796,7 +1344,7 @@ function template_alert_configuration()
 			</h3>
 		</div>
 		<p class="information">', (empty($context['description']) ? $txt['alert_prefs_desc'] : $context['description']), '</p>
-		<form action="', $scripturl, '?', $context['action'], '" id="admin_form_wrapper" method="post" accept-charset="', $context['character_set'], '" id="notify_options" class="flow_hidden">
+		<form action="', $scripturl, '?', $context['action'], '" id="admin_form_wrapper" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					', $txt['notification_general'], '
@@ -1983,7 +1531,7 @@ function template_groupMembership()
 
 	// The main containing header.
 	echo '
-		<form action="', $scripturl, '?action=profile;area=groupmembership;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+		<form action="', $scripturl, '?action=profile;area=groupmembership;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">
 					', $txt['profile'], '
@@ -2126,7 +1674,7 @@ function template_ignoreboards()
 	global $context, $txt, $scripturl;
 	// The main containing header.
 	echo '
-	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+	<form action="', $scripturl, '?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<div class="cat_bar">
 			<h3 class="catbg profile_hd">
 				', $txt['profile'], '
@@ -2321,7 +1869,7 @@ function template_issueWarning()
 	</script>';
 
 	echo '
-	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="', $context['character_set'], '">
+	<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=issuewarning" method="post" class="flow_hidden" accept-charset="UTF-8">
 		<div class="cat_bar">
 			<h3 class="catbg profile_hd">
 				', $context['user']['is_owner'] ? $txt['profile_warning_level'] : $txt['profile_issue_warning'], '
@@ -2491,7 +2039,7 @@ function template_deleteAccount()
 
 	// The main containing header.
 	echo '
-		<form action="', $scripturl, '?action=profile;area=deleteaccount;save" method="post" accept-charset="', $context['character_set'], '" name="creator" id="creator">
+		<form action="', $scripturl, '?action=profile;area=deleteaccount;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">
 					', $txt['deleteAccount'], '
@@ -2785,33 +2333,16 @@ function template_profile_avatar_select()
 							<dt>
 								<strong id="personal_picture"><label for="avatar_upload_box">', $txt['personal_picture'], '</label></strong>
 								', empty($modSettings['gravatarOverride']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_none" value="none"' . ($context['member']['avatar']['choice'] == 'none' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_none"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['no_avatar'] . '</label><br />' : '', '
-								', !empty($context['member']['avatar']['allow_server_stored']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_server_stored" value="server_stored"' . ($context['member']['avatar']['choice'] == 'server_stored' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_server_stored"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['choose_avatar_gallery'] . '</label><br />' : '', '
 								', !empty($context['member']['avatar']['allow_external']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"' . ($context['member']['avatar']['choice'] == 'external' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_external"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['my_own_pic'] . '</label><br />' : '', '
 								', !empty($context['member']['avatar']['allow_upload']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"' . ($context['member']['avatar']['choice'] == 'upload' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_upload"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['avatar_will_upload'] . '</label><br />' : '', '
 								', !empty($context['member']['avatar']['allow_gravatar']) ? '<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"' . ($context['member']['avatar']['choice'] == 'gravatar' ? ' checked="checked"' : '') . ' class="input_radio" /><label for="avatar_choice_gravatar"' . (isset($context['modify_error']['bad_avatar']) ? ' class="error"' : '') . '>' . $txt['use_gravatar'] . '</label>' : '', '
 							</dt>
 							<dd>';
 
-	// If users are allowed to choose avatars stored on the server show selection boxes to choice them from.
-	if (!empty($context['member']['avatar']['allow_server_stored']))
-	{
-		echo '
-								<div id="avatar_server_stored">
-									<div>
-										<select name="cat" id="cat" size="10" onchange="changeSel(\'\');" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');">';
-		// This lists all the file categories.
-		foreach ($context['avatars'] as $avatar)
-			echo '
-											<option value="', $avatar['filename'] . ($avatar['is_dir'] ? '/' : ''), '"', ($avatar['checked'] ? ' selected' : ''), '>', $avatar['name'], '</option>';
-		echo '
-										</select>
-									</div>
-									<div>
-										<select name="file" id="file" size="10" style="display: none;" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
-									</div>
-									<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.png', '" alt="Do Nothing"></div>
+	echo '
+								<div>
+									<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $settings['images_url'] . '/blank.png', '" alt="Do Nothing"></div>
 									<script>
-										var files = ["' . implode('", "', $context['avatar_list']) . '"];
 										var avatar = document.getElementById("avatar");
 										var cat = document.getElementById("cat");
 										var selavatar = "' . $context['avatar_selected'] . '";
@@ -2821,14 +2352,10 @@ function template_profile_avatar_select()
 										var maxHeight = ', !empty($modSettings['avatar_max_height_external']) ? $modSettings['avatar_max_height_external'] : 0, ';
 										var maxWidth = ', !empty($modSettings['avatar_max_width_external']) ? $modSettings['avatar_max_width_external'] : 0, ';
 
-										if (avatar.src.indexOf("blank.png") > -1)
-											changeSel(selavatar);
-										else
-											previewExternalAvatar(avatar.src)
+										previewExternalAvatar(avatar.src)
 
 									</script>
 								</div>';
-	}
 
 	// If the user can link to an off server avatar, show them a box to input the address.
 	if (!empty($context['member']['avatar']['allow_external']))
@@ -2878,7 +2405,6 @@ function template_profile_avatar_select()
 
 	echo '
 								<script>
-									', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "' . ($context['member']['avatar']['choice'] == 'server_stored' ? '' : 'none') . '";' : '', '
 									', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "' . ($context['member']['avatar']['choice'] == 'external' ? '' : 'none') . '";' : '', '
 									', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "' . ($context['member']['avatar']['choice'] == 'upload' ? '' : 'none') . '";' : '', '
 									', !empty($context['member']['avatar']['allow_gravatar']) ? 'document.getElementById("avatar_gravatar").style.display = "' . ($context['member']['avatar']['choice'] == 'gravatar' ? '' : 'none') . '";' : '', '
@@ -2887,32 +2413,22 @@ function template_profile_avatar_select()
 									{
 										switch(type.id)
 										{
-											case "avatar_choice_server_stored":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "";' : '', '
-												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
-												', !empty($context['member']['avatar']['allow_gravatar']) ? 'document.getElementById("avatar_gravatar").style.display = "none";' : '', '
-												break;
 											case "avatar_choice_external":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "";' : '', '
 												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_gravatar']) ? 'document.getElementById("avatar_gravatar").style.display = "none";' : '', '
 												break;
 											case "avatar_choice_upload":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "";' : '', '
 												', !empty($context['member']['avatar']['allow_gravatar']) ? 'document.getElementById("avatar_gravatar").style.display = "none";' : '', '
 												break;
 											case "avatar_choice_none":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_gravatar']) ? 'document.getElementById("avatar_gravatar").style.display = "none";' : '', '
 												break;
 											case "avatar_choice_gravatar":
-												', !empty($context['member']['avatar']['allow_server_stored']) ? 'document.getElementById("avatar_server_stored").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_external']) ? 'document.getElementById("avatar_external").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_upload']) ? 'document.getElementById("avatar_upload").style.display = "none";' : '', '
 												', !empty($context['member']['avatar']['allow_gravatar']) ? 'document.getElementById("avatar_gravatar").style.display = "";' : '', '

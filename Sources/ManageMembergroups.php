@@ -34,7 +34,6 @@ function ModifyMembergroups()
 		'edit' => array('EditMembergroup', 'manage_membergroups'),
 		'index' => array('MembergroupIndex', 'manage_membergroups'),
 		'members' => array('MembergroupMembers', 'manage_membergroups', 'Groups.php'),
-		'settings' => array('ModifyMembergroupsettings', 'admin_forum'),
 		'badges' => array('MembergroupBadges', 'admin_forum'),
 	);
 
@@ -1208,52 +1207,6 @@ function EditMembergroup()
 	$context['page_title'] = $txt['membergroups_edit_group'];
 
 	createToken('admin-mmg');
-}
-
-/**
- * Set some general membergroup settings and permissions.
- * Called by ?action=admin;area=membergroups;sa=settings
- * Requires the admin_forum permission (and manage_permissions for changing permissions)
- * Redirects to itself.
- *
- * @uses membergroup_settings sub template of ManageMembergroups.
- */
-function ModifyMembergroupsettings()
-{
-	global $context, $sourcedir, $scripturl, $txt;
-
-	$context['sub_template'] = 'show_settings';
-	$context['page_title'] = $txt['membergroups_settings'];
-
-	// Needed for the settings functions.
-	require_once($sourcedir . '/ManageServer.php');
-
-	// Only one thing here!
-	$config_vars = array(
-			array('permissions', 'manage_membergroups'),
-	);
-
-	call_integration_hook('integrate_modify_membergroup_settings', array(&$config_vars));
-
-	if (isset($_REQUEST['save']))
-	{
-		checkSession();
-		call_integration_hook('integrate_save_membergroup_settings');
-
-		// Yeppers, saving this...
-		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
-		redirectexit('action=admin;area=membergroups;sa=settings');
-	}
-
-	// Some simple context.
-	$context['post_url'] = $scripturl . '?action=admin;area=membergroups;save;sa=settings';
-	$context['settings_title'] = $txt['membergroups_settings'];
-
-	// We need this for the in-line permissions
-	createToken('admin-mp');
-
-	prepareDBSettingContext($config_vars);
 }
 
 ?>

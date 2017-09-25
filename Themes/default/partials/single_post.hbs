@@ -1,0 +1,284 @@
+{{#unless is_ignored}}
+<div class="{{css_class}}">
+{{#if (not (eq id ../context.first_message))}}
+    <a id="msg{{id}}"></a>{{#if first_new}}<a id="new"></a>{{/if}}
+{{/if}}
+    <div class="post_wrapper">
+        <div class="poster">
+        {{#if custom_fields.above_member}}
+            <div class="custom_fields_above_member">
+				<ul class="nolist">
+				{{#each custom_fields.above_member}}
+				    <li class="custom {{col_name}}">{{value}}</li>
+				{{/each}}
+				</ul>
+			</div>
+		{{/if}}
+		<h4>
+		    {{#if (and ../modSettings.onlineEnable (not member.is_guest))}}
+		        {{#if ../context.can_send_pm}}<a href="{{member.online.href}}" title="{{member.online.label}}">{{/if}}
+		        <span class="{{#if (eq member.online.is_online 1)}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{#if ../context.can_send_pm}}</a>{{/if}}
+		    {{/if}}
+		    {{{member.link}}}
+		</h4>
+		<ul class="user_info">
+		    {{!-- avatar --}}
+		    {{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
+	        <li class="avatar">
+				<a href="{{member.href}}">{{{member.avatar.image}}}</a>
+			</li>
+		    {{/if}}
+		    {{#if custom_fields.below_avatar}}
+            <div class="custom_fields_above_member">
+				<ul class="nolist">
+				{{#each custom_fields.below_avatar}}
+				    <li class="custom {{col_name}}">{{value}}</li>
+				{{/each}}
+				</ul>
+			</div>
+    		{{/if}}
+    		{{#if (not member.is_guest)}}
+    		<li class="icons">{{{member.group_icons}}}</li>
+    		{{/if}}
+    		{{#if member.group}}
+    		<li class="membergroup">{{member.group}}</li>
+    		{{/if}}
+    		{{#if (not member.is_guest)}}
+    		    {{#if (and member.post_group (or (not ../modSettings.hide_post_group) (not member.group)))}}
+    		        <li class="postgroup">{{member.post_group}}</li>
+    		    {{/if}}
+    		    {{#if (not ../context.disabled_fields.posts)}}
+    		        <li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>
+    		    {{/if}}
+    		    {{#if (and ../modSettings.show_blurb member.blurb)}}
+    		        <li class="blurb">{{member.blurb}}</li>
+    		    {{/if}}
+    		    {{#if custom_fields.icons}}
+    		        <li class="im_icons">
+    					<ol>
+    					{{#each custom_fields.icons}}
+    					    <li class="custom {{col_name}}">{{{value}}}</li>
+    					{{/each}}
+    					</ol>
+    				</li>
+    		    {{/if}}
+    		    {{#if member.show_profile_buttons}}
+    		        <li class="profile">
+						<ol class="profile_icons">
+						{{#if (and member.website.url (not ../context.disabled_fields.website))}}
+						    <li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" class="new_win">
+						        <span class="generic_icons www centericon" title="{{member.website.title}}"></span>
+				            </a></li>
+						{{/if}}
+						{{#if ../context.can_send_pm}}
+						    <li><a href="{{../scripturl}}?action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}">
+						        <span class="generic_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}"></span>
+						    </a></li>
+						{{/if}}
+						{{#if (and member.show_email member.email)}}
+						    <li class="email"><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{../txt.email}}"></span></a></li>
+						{{/if}}
+    					</ol>
+    				</li>
+    		    {{/if}}
+    		    {{#each custom_fields.standard}}
+    				<li class="custom {{col_name}}">{{title}}:{{value}}</li>
+    			{{/each}}
+    		{{else}}
+    		    {{#if (and member.email member.show_email)}}
+    		       <li class="email"><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{../txt.email}}"></span></a></li>
+    		    {{/if}}
+    		{{/if}}
+    		{{!-- Show the IP to this user for this post - because you can moderate? --}}
+    		{{#if (and ../context.can_moderate_forum member.ip)}}
+    		    <li class="poster_ip"><a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile;area=tracking;sa=ip;u={{member.id}};searchip='{{member.ip}}{{/if}}">{{member.ip}}</a>
+    		        <a href="{{../scripturl}}?action=helpadmin;help=see_admin_ip" onclick="return reqOverlayDiv(this.href);" class="help">(?)</a></li>
+    		{{/if}}
+    		{{!--  Or, should we show it because this is you? --}}
+    		{{#if can_see_ip}}
+    		    <li class="poster_ip"><a href="{{../scripturl}}?action=helpadmin;help=see_member_ip" onclick="return reqOverlayDiv(this.href);" class="help">{{member.ip}}</a></li>
+    		{{else}}
+    		    {{#if ../context.user.is_guest}}
+    		    <li class="poster_ip"><a href="{{../scripturl}}?action=helpadmin;help=see_member_ip" onclick="return reqOverlayDiv(this.href);" class="help">{{../txt.logged}}</a></li>
+    		    {{else}}
+    		    <li class="poster_ip">{{../txt.logged}}</li>
+    		    {{/if}}
+    		{{/if}}
+    		{{#if (and member.is_guest member.can_see_warning)}}
+    			<li class="warning">{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
+    				<span class="generic_icons warning_{{member.warning_status}}"></span> {{#if ../context.can_issue_warning}}</a>{{/if}}
+    				<span class="warn_{{member.warning_status}}">{{get_text 'warn_' member.warning_status}}</span></li>';
+    		{{/if}}
+    		{{!--  Are there any custom fields to show at the bottom of the poster info? --}}
+    		{{#each custom_fields.bottom_poster}}
+				<li class="custom {{col_name}}">{{title}}:{{value}}</li>
+			{{/each}}
+    	</ul>
+    </div>
+    <div class="postarea">
+		<div class="keyinfo">
+			{{!-- Some people don't want subject ... The div is still required or quick edit breaks... --}}
+			<div id="subject_{{id}}" class="subject_title{{#unless ../modSettings.subject_toggle}} subject_hidden{{/unless}}"><a href="{{href}}" rel="nofollow">{{{subject}}}</a></div>
+			<h5>
+				<span class="messageicon"{{#if (eq icon_url (concat ../settings.images_url '/post/xx.png'))}} style="position: absolute; z-index: -1;"{{/if}}>
+					<img src="{{icon_url}}" alt=""{{#if can_modify}}id="msg_icon_{{id}}"{{/if}}>
+				</span>
+				<a href="{{href}}" rel="nofollow" title="{{#if counter}}{{textTemplate reply_number counter ' - '}}{{/if}}{{{subject}}}" class="smalltext">{{{time}}}</a>
+
+				<span class="page_number floatright">
+					{{#if counter}} #{{counter}}{{/if}}
+				</span>
+				{{!-- Show "<< Last Edit: Time by Person >>" if this post was edited. But we need the div even if it wasn't modified! 
+				 Because we insert into it through AJAX and we don't want to stop themers moving it around if they so wish so they can put it where they want it. --}}
+				<span class="smalltext modified floatright {{#if (and ../modSettings.show_modify modified.name)}} mvisible{{/if}}" id="modified_{{id}}">
+					{{#if (and ../modSettings.show_modify modified.name)}}{{modified.last_edit_text}}{{/if}}
+				</span>
+			</h5>
+			<div id="msg_{{id}}_quick_mod"></div>
+			<div class="post">
+				{{#unless (or (neq member.id ../context.user.id) approved)}}
+				<div class="approve_post">
+					{{../txt.post_awaiting_approval}}
+				</div>
+				{{/unless}}
+				<div class="inner" data-msgid="{{id}}" id="msg_{{id}}">{{{body}}}</div>
+			</div>
+			{{#unless ../modSettings.dont_show_attach_under_post}}
+			{{#if attachment}}
+			<div id="msg_{{id}}_footer" class="attachments">
+			{{/if}}
+			{{#each attachment}}
+				<div class="attached">
+					{{#if is_image}}
+					<div class="attachments_top">
+						{{#if thumbnail.has_thumb}}<a href="{{href}};image" id="link_{{id}}" onclick="{{thumbnail.javascript}}"><img src="{{thumbnail.href}}" alt="" id="thumb_{{id}}" class="atc_img"></a>';
+						{{else}}<img src="{{href}};image" alt="" width="{{width}}" height="{{height}}" class="atc_img">
+						{{/if}}
+						</div>
+					{{/if}}
+					<div class="attachments_bot">
+						<a href="{{href}}"><img src="{{../../settings.images_url}}/icons/clip.png" class="centericon" alt="*">&nbsp;{{name}}</a> 
+						{{#if (and ../../context.can_approve (not approved))}}
+						[<a href="{{../../scripturl}}?action=attachapprove;sa=approve;aid=', $attachment['id'], ';{{../../context.session_var}}={{../../context.session_id}}">{{txt.approve}}</a>]&nbsp;|&nbsp;[<a href="', {{../../scripturl}}?action=attachapprove;sa=reject;aid={{id}}, ';', $context['session_var'], '=', $context['session_id'], '">', $txt['delete'], '</a>] 
+						{{/if}}
+						<br>{{size}}, {{#if is_image}}(concat ', ' real_width 'x' real_height '<br>' {{textTemplate ../../txt.attach_viewed downloads}}{{else}}<br>{{textTemplate ../../txt.attach_downloaded downloads}}){{/if}}
+					</div>
+				</div>
+				{{breakRow @index '5' '<br/>'}}
+			{{/each}}
+			</div>
+			{{/unless}}
+			{{!-- aything below the attachments? --}}
+			{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+			<div class="under_message">
+			{{/if}}
+			{{#if ../context.can_report_moderator}}
+			<ul class="floatright smalltext">
+				<li class="report_link"><a href="{{../scripturl}}?action=reporttm;topic={{../context.current_topic}}.{{counter}};msg={{id}}">{{../txt.report_to_mod}}</a></li>
+			</ul>
+			{{/if}}
+			{{#if ../modSettings.enable_likes}}
+			<ul class="floatleft">
+				{{#if likes.can_like}}
+					<li class="like_button" id="msg_{{id}}_likes"><a href="{{../scripturl}}?action=likes;ltype=msg;sa=like;like={{id}};{{../context.session_var}}={{../context.session_id}}" class="msg_like"><span class="generic_icons {{#if likes.you}}unlike{{else}}like{{/if}}"></span> ',{{#if likes.you}}{{../txt.unlike}}{{else}}{{../txt.like}}{{/if}}</a></li>
+				{{/if}}
+				{{#if (and likes.count ../context.can_see_likes)}}
+					<li class="like_count smalltext">{{getLikeText likes.count}}</li>
+				{{/if}}
+			</ul>
+			{{/if}}
+			{{!-- quick buttons --}}
+			{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+			<ul class="quickbuttons">
+			{{/if}}
+				{{#if ../context.can_quote}}
+				<li><a href="{{../scripturl}}?action=post;quote={{id}};topic={{../context.current_topic}}.{{../context.start}};last_msg={{../context.topic_last_message}}" onclick="return oQuickReply.quote({{id}});"><span class="generic_icons quote"></span>{{../txt.quote_action}}</a></li>
+				<li style="display:none;" id="quoteSelected_{{id}}"><a href="javascript:void(0)"><span class="generic_icons quote_selected"></span>{{../txt.quote_selected_action}}</a></li>
+				{{/if}}
+				{{#if can_modify}}
+				<li class="quick_edit"><a title="{{../txt.modify_msg}}" class="modifybutton" id="modify_button_{{id}}" onclick="oQuickModify.modifyMsg('{{id}}', '{{#if ../modSettings.toggle_subject}}true{{else}}false{{/if}}')"><span class="generic_icons quick_edit_button"></span>{{../txt.quick_edit}}</a></li>
+				{{/if}}
+				{{#if (or can_approve can_unapprove can_modify can_remove ../context.can_split ../context.can_restore_msg)}}
+				<li class="post_options">{{../txt.post_options}}
+				{{/if}}
+					<ul>
+					{{#if can_modify}}
+					<li><a href="{{../scripturl}}?action=post;msg={{id}};topic={{../context.current_topic}}.{{../context.start}}"><span class="generic_icons modify_button"></span>{{../txt.modify}}</a></li>
+					{{/if}}
+					{{#if (eq ../context.topic_first_message id)}}
+					{{#if ../context.can_delete}}
+					<li><a href="{{../scripturl}}?action=removetopic2;topic={{../context.current_topic}}.{{../context.start}};{{../context.session_var}}={{../context.session_id}}" data-confirm="{{../txt.are_sure_remove_topic}}" class="you_sure"><span class="generic_icons remove_button"></span>{{../txt.remove_topic}}</a></li>
+					{{/if}}
+					{{else}}{{#if can_remove}}
+					<li><a href="{{../scripturl}}?action=deletemsg;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{../context.session_var}}={{../context.session_id}}" data-confirm="{{../txt.remove_message_question}}" class="you_sure"><span class="generic_icons remove_button"></span>{{../txt.remove}}</a></li>
+					{{/if}}
+					{{/if}}
+					{{#id can_switch_char}}
+					<li>
+						<a href="#" onclick="return false">
+							<span class="generic_icons people"></span> {{../txt.switch_to_char_menu}}
+						</a>
+						<ul>
+							{{#each possible_characters}}
+							<li>
+								<a href="{{scripturl}}?action=reattributepost;topic={{../../context.current_topic}};msg={{../id}};char={{@key}};{{../../context.session_var}}={{../../context.session_id}}">{{{.}}}</a>
+							</li>
+							{{/each}}
+						</ul>
+					{{/if}}
+					</ul>
+				</li>
+				{{#if (and ../context.can_split ../context.real_num_replies)}}
+					<li><a href="{{../scripturl}}?action=splittopics;topic={{../context.current_topic}}.0;at={{id}}"><span class="generic_icons split_button"></span>{{../txt.split}}</a></li>
+				{{/if}}
+				{{#unless (or (not ../context.can_issue_warning) is_message_author member.is_guest)}}
+					<li><a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}};msg={{id}}"><span class="generic_icons warn_button"></span>{{../txt.issue_warning}}</a></li>
+				{{/unless}}
+				{{#if ../context.can_restore_msg}}
+					<li><a href="{{../scripturl}}?action=restoretopic;msgs={{id}};{{../context.session_var}}={{../context.session_id}}"><span class="generic_icons restore_button"></span>{{../txt.restore_message}}</a></li>
+				{{/if}}
+				{{#if can_approve}}
+					<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{../context.session_var}}={{../context.session_id}}"><span class="generic_icons approve_button"></span>{{../txt.approve}}</a></li>
+				{{/if}}
+				{{#if can_unapprove}}
+					<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{../context.session_var}}={{../context.session_id}}"><span class="generic_icons unapprove_button"></span>{{../txt.unapprove}}</a></li>
+				{{/if}}
+			</ul>
+		</li>
+		{{#if can_remove}}
+		<li style="display: none;" id="in_topic_mod_check_{{id}}"></li>
+		{{/if}}
+		{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+		</ul>
+		{{/if}}
+		{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+		</div>
+		{{/if}}
+		<div class="moderatorbar">
+			{{#if custom_fields.above_signature}}
+			<div class="custom_fields_above_signature">
+				<ul class="nolist">
+					{{#each custom_fields.above_signature}}
+					<li class="custom {{col_name}}">{{value}}</li>
+					{{/each}}
+				</ul>
+			</div>
+			{{/if}}
+			{{#if (and (not ../options.show_no_signatures) ../context.signature_enabled member.signature)}}
+			<div class="signature" id="msg_{{id}}_signature">{{{member.signature}}}</div>
+			{{/if}}
+			{{#if custom_fields.below_signature}}
+			<div class="custom_fields_above_signature">
+				<ul class="nolist">
+					{{#each custom_fields.below_signature}}
+					<li class="custom {{col_name}}">{{value}}</li>
+					{{/each}}
+				</ul>
+			</div>
+			{{/if}}
+		</div>
+	</div>
+</div>
+</div>
+<hr class="post_separator">
+{{/unless}}

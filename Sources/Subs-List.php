@@ -99,7 +99,7 @@ function createList($listOptions)
 
 	// We know the amount of columns, might be useful for the template.
 	$list_context['num_columns'] = count($listOptions['columns']);
-	$list_context['width'] = isset($listOptions['width']) ? $listOptions['width'] : '0';
+	$list_context['width'] = isset($listOptions['width']) ? $listOptions['width'] : 0;
 
 	// Get the file with the function for the item list.
 	if (isset($listOptions['get_items']['file']))

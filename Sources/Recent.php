@@ -74,9 +74,8 @@ function RecentPosts()
 {
 	global $txt, $scripturl, $user_info, $context, $modSettings, $board, $smcFunc;
 
-	loadTemplate('Recent');
 	$context['page_title'] = $txt['recent_posts'];
-	$context['sub_template'] = 'recent';
+	$context['sub_template'] = 'recent_posts';
 
 	$context['is_redirect'] = false;
 
@@ -447,6 +446,8 @@ function RecentPosts()
 
 		// And some cannot be quoted...
 		$context['posts'][$counter]['can_quote'] = $context['posts'][$counter]['can_reply'] && $quote_enabled;
+
+		$context['posts'][$counter]['has_actions'] = $context['posts'][$counter]['can_reply'] || $context['posts'][$counter]['can_quote'] || $context['posts'][$counter]['can_delete'];
 	}
 
 	// Allow last minute changes.
@@ -471,8 +472,6 @@ function UnreadTopics()
 		header('HTTP/1.1 403 Forbidden');
 		die;
 	}
-
-	$context['showCheckboxes'] = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1;
 
 	$context['showing_all_topics'] = isset($_GET['all']);
 	$context['start'] = (int) $_REQUEST['start'];
@@ -685,9 +684,7 @@ function UnreadTopics()
 	else
 		$txt['unread_topics_visit_none'] = strtr($txt['unread_topics_visit_none'], array('?action=unread;all' => '?action=unread;all' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits']));
 
-	loadTemplate('Recent');
-	loadTemplate('MessageIndex');
-	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread' : 'replies';
+	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread_posts' : 'unread_replies';
 
 	// Setup the default topic icons... for checking they exist and the like ;)
 	$context['icon_sources'] = array();
@@ -1391,12 +1388,11 @@ function UnreadTopics()
 			'markread' => array('text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'image' => 'markread.png', 'custom' => 'data-confirm="'.  $txt['are_sure_mark_read'] .'"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_var'] . '=' . $context['session_id']),
 		);
 
-		if ($context['showCheckboxes'])
-			$context['recent_buttons']['markselectread'] = array(
-				'text' => 'quick_mod_markread',
-				'image' => 'markselectedread.png',
-				'url' => 'javascript:document.quickModForm.submit();',
-			);
+		$context['recent_buttons']['markselectread'] = array(
+			'text' => 'quick_mod_markread',
+			'image' => 'markselectedread.png',
+			'url' => 'javascript:document.quickModForm.submit();',
+		);
 
 		if (!empty($context['topics']) && !$context['showing_all_topics'])
 			$context['recent_buttons']['readall'] = array('text' => 'unread_topics_all', 'image' => 'markreadall.png', 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'active' => true);
@@ -1407,12 +1403,11 @@ function UnreadTopics()
 			'markread' => array('text' => 'mark_as_read', 'image' => 'markread.png', 'custom' => 'data-confirm="'. $txt['are_sure_mark_read']  .'"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=unreadreplies;topics=' . $context['topics_to_mark'] . ';' . $context['session_var'] . '=' . $context['session_id']),
 		);
 
-		if ($context['showCheckboxes'])
-			$context['recent_buttons']['markselectread'] = array(
-				'text' => 'quick_mod_markread',
-				'image' => 'markselectedread.png',
-				'url' => 'javascript:document.quickModForm.submit();',
-			);
+		$context['recent_buttons']['markselectread'] = array(
+			'text' => 'quick_mod_markread',
+			'image' => 'markselectedread.png',
+			'url' => 'javascript:document.quickModForm.submit();',
+		);
 	}
 
 	// Allow mods to add additional buttons here

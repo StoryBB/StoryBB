@@ -59,7 +59,6 @@ function ModifyFeatureSettings()
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
-		'likes' => 'ModifyLikesSettings',
 		'mentions' => 'ModifyMentionsSettings',
 		'alerts' => 'ModifyAlertsSettings',
 	);
@@ -84,8 +83,6 @@ function ModifyFeatureSettings()
 			),
 			'profile' => array(
 				'description' => $txt['custom_profile_desc'],
-			),
-			'likes' => array(
 			),
 			'mentions' => array(
 			),
@@ -146,22 +143,12 @@ function ModifyBasicSettings($return_config = false)
 {
 	global $txt, $scripturl, $context, $modSettings;
 
-	// We need to know if personal text is enabled, and if it's in the registration fields option.
-	// If admins have set it up as an on-registration thing, they can't set a default value (because it'll never be used)
-	$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
-	$reg_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : array();
-	$can_personal_text = !in_array('personal_text', $disabled_fields) && !in_array('personal_text', $reg_fields);
-
 	$config_vars = array(
-			// Big Options... polls, sticky, bbc....
-			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
-		'',
-			// Basic stuff, titles, flash, permissions...
+			// Basic stuff, titles, permissions...
 			array('check', 'allow_guestAccess'),
+			array('check', 'enable_likes'),
 			array('check', 'enable_buddylist'),
 			array('check', 'allow_hideOnline'),
-			array('check', 'titlesEnable'),
-			array('text', 'default_personal_text', 'subtext' => $txt['default_personal_text_note'], 'disabled' => !$can_personal_text),
 			array('check', 'topic_move_any'),
 			array('int', 'defaultMaxListItems', 'step' => 1, 'min' => 1, 'max' => 999),
 		'',
@@ -173,7 +160,6 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'minimize_files'),
 		'',
 			// SEO stuff
-			array('check', 'queryless_urls', 'subtext' => '<strong>' . $txt['queryless_urls_note'] . '</strong>'),
 			array('text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50),
 		'',
 			// Number formatting, timezones.
@@ -226,7 +212,7 @@ function ModifyBasicSettings($return_config = false)
 		call_integration_hook('integrate_save_basic_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 
 		writeLog();
 		redirectexit('action=admin;area=featuresettings;sa=basic');
@@ -297,7 +283,7 @@ function ModifyBBCSettings($return_config = false)
 		call_integration_hook('integrate_save_bbc_settings', array($bbcTags));
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=featuresettings;sa=bbc');
 	}
 
@@ -320,7 +306,6 @@ function ModifyLayoutSettings($return_config = false)
 
 	$config_vars = array(
 			// Pagination stuff.
-			array('check', 'compactTopicPagesEnable'),
 			array('int', 'compactTopicPagesContiguous', null, $txt['contiguous_page_display'] . '<div class="smalltext">' . str_replace(' ', '&nbsp;', '"3" ' . $txt['to_display'] . ': <strong>1 ... 4 [5] 6 ... 9</strong>') . '<br>' . str_replace(' ', '&nbsp;', '"5" ' . $txt['to_display'] . ': <strong>1 ... 3 4 [5] 6 7 ... 9</strong>') . '</div>'),
 			array('int', 'defaultMaxMembers'),
 		'',
@@ -345,7 +330,7 @@ function ModifyLayoutSettings($return_config = false)
 		call_integration_hook('integrate_save_layout_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		writeLog();
 
 		redirectexit('action=admin;area=featuresettings;sa=layout');
@@ -353,46 +338,6 @@ function ModifyLayoutSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=layout';
 	$context['settings_title'] = $txt['mods_cat_layout'];
-
-	prepareDBSettingContext($config_vars);
-}
-
-/**
- * Config array for changing like settings
- * Accessed  from ?action=admin;area=featuresettings;sa=likes;
- *
- * @param bool $return_config Whether or not to return the config_vars array
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyLikesSettings($return_config = false)
-{
-	global $txt, $scripturl, $context;
-
-	$config_vars = array(
-		array('check', 'enable_likes'),
-		array('permissions', 'likes_view'),
-		array('permissions', 'likes_like'),
-	);
-
-	call_integration_hook('integrate_likes_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		call_integration_hook('integrate_save_likes_settings');
-
-		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
-		redirectexit('action=admin;area=featuresettings;sa=likes');
-	}
-
-	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=likes';
-	$context['settings_title'] = $txt['likes'];
 
 	prepareDBSettingContext($config_vars);
 }
@@ -410,7 +355,6 @@ function ModifyMentionsSettings($return_config = false)
 
 	$config_vars = array(
 		array('check', 'enable_mentions'),
-		array('permissions', 'mention'),
 	);
 
 	call_integration_hook('integrate_mentions_settings', array(&$config_vars));
@@ -426,7 +370,7 @@ function ModifyMentionsSettings($return_config = false)
 		call_integration_hook('integrate_save_mentions_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=featuresettings;sa=mentions');
 	}
 
@@ -468,7 +412,6 @@ function ModifyWarningSettings($return_config = false)
 				array('int', 'warning_mute', 'subtext' => $txt['setting_warning_mute_note'] . ' ' . $txt['zero_to_disable']),
 				'rem1' => array('int', 'user_limit', 'subtext' => $txt['setting_user_limit_note']),
 				'rem2' => array('int', 'warning_decrement', 'subtext' => $txt['setting_warning_decrement_note'] . ' ' . $txt['zero_to_disable']),
-				array('permissions', 'view_warning'),
 		);
 
 	call_integration_hook('integrate_warning_settings', array(&$config_vars));
@@ -532,7 +475,7 @@ function ModifyWarningSettings($return_config = false)
 		call_integration_hook('integrate_save_warning_settings', array(&$save_vars));
 
 		saveDBSettings($save_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=warnings');
 	}
 
@@ -816,7 +759,7 @@ function ModifyAntispamSettings($return_config = false)
 
 		// Now save.
 		saveDBSettings($save_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 
 		cache_put_data('verificationQuestions', null, 300);
 
@@ -1203,7 +1146,7 @@ function ModifySignatureSettings($return_config = false)
 		$save_vars[] = array('text', 'signature_settings');
 
 		saveDBSettings($save_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=featuresettings;sa=sig');
 	}
 
@@ -1261,7 +1204,7 @@ function ShowCustomProfiles()
 	$context['sub_template'] = 'show_custom_profile';
 
 	// What about standard fields they can tweak?
-	$standard_fields = array('website', 'personal_text', 'timezone', 'posts', 'warning_status');
+	$standard_fields = array('website', 'timezone', 'posts', 'warning_status');
 	// What fields can't you put on the registration page?
 	$context['fields_no_registration'] = array('posts', 'warning_status');
 
@@ -1293,7 +1236,7 @@ function ShowCustomProfiles()
 		// What we have left!
 		$changes['registration_fields'] = empty($reg_fields) ? '' : implode(',', $reg_fields);
 
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		if (!empty($changes))
 			updateSettings($changes);
 	}
@@ -1509,14 +1452,6 @@ function ShowCustomProfiles()
 		),
 	);
 	createList($listOptions);
-
-	// There are two different ways we could get to this point. To keep it simple, they both do
-	// the same basic thing.
-	if (isset($_SESSION['adm-save']))
-	{
-		$context['saved_successful'] = true;
-		unset ($_SESSION['adm-save']);
-	}
 }
 
 /**
@@ -1535,7 +1470,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 
 	if ($standardFields)
 	{
-		$standard_fields = array('website', 'personal_text', 'timezone', 'posts', 'warning_status');
+		$standard_fields = array('website', 'timezone', 'posts', 'warning_status');
 		$fields_no_registration = array('posts', 'warning_status');
 		$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
 		$registration_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : array();
@@ -2038,7 +1973,7 @@ function EditCustomProfiles()
 		$smcFunc['db_free_result']($request);
 
 		updateSettings(array('displayFields' => json_encode($fields)));
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=featuresettings;sa=profile');
 	}
 
@@ -2166,7 +2101,7 @@ function ModifyLogSettings($return_config = false)
 			$_POST['pruningOptions'] = '';
 
 		saveDBSettings($savevar);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=logs;sa=settings');
 	}
 
@@ -2228,7 +2163,7 @@ function ModifyGeneralModSettings($return_config = false)
 		saveDBSettings($save_vars);
 
 		// This line is to remind mod authors that it's nice to let the users know when something has been saved.
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 
 		// This line is to help mod authors do a search/add after if you want to add something here. Keyword: I LOVE TEA!
 		redirectexit('action=admin;area=modsettings;sa=general');

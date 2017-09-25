@@ -27,22 +27,10 @@ $txt['search_visual_verification_desc'] = 'Please enter the code in the image ab
 $txt['search_specific_topic'] = 'Searching only posts in the topic';
 
 $txt['mods_cat_search'] = 'Search';
-$txt['groups_search_posts'] = 'Membergroups with access to the search function';
 $txt['search_results_per_page'] = 'Number of search results per page';
-$txt['search_weight_frequency'] = 'Relative search weight for number of matching messages within a topic';
-$txt['search_weight_age'] = 'Relative search weight for age of last matching message';
-$txt['search_weight_length'] = 'Relative search weight for topic length';
-$txt['search_weight_subject'] = 'Relative search weight for a matching subject';
-$txt['search_weight_first_message'] = 'Relative search weight for a first message match';
-$txt['search_weight_sticky'] = 'Relative search weight for a sticky topic';
 
 $txt['search_settings_desc'] = 'Here you can changes the basic settings of the search function.';
 $txt['search_settings_title'] = 'Search Settings';
-
-$txt['search_weights_desc'] = 'Here you can change the individual components of the relevance rating. ';
-$txt['search_weights_title'] = 'Search - weights';
-$txt['search_weights_total'] = 'Total';
-$txt['search_weights_save'] = 'Save';
 
 $txt['search_method_desc'] = 'Here you can set the way search is powered.';
 $txt['search_method_title'] = 'Search - method';
@@ -88,7 +76,7 @@ $txt['search_predefined_small'] = 'Small sized index';
 $txt['search_predefined_moderate'] = 'Moderate sized index';
 $txt['search_predefined_large'] = 'Large sized index';
 $txt['search_create_index_continue'] = 'Continue';
-$txt['search_create_index_not_ready'] = 'SMF is currently creating a search index of your messages. To avoid overloading your server, the process has been temporarily paused. It should automatically continue in a few seconds. If it doesn\'t, please click continue below.';
+$txt['search_create_index_not_ready'] = 'StoryBB is currently creating a search index of your messages. To avoid overloading your server, the process has been temporarily paused. It should automatically continue in a few seconds. If it doesn\'t, please click continue below.';
 $txt['search_create_index_progress'] = 'Progress';
 $txt['search_create_index_done'] = 'Custom search index successfully created.';
 $txt['search_create_index_done_link'] = 'Continue';

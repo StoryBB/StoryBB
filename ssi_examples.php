@@ -72,11 +72,6 @@ template_ssi_above();
 					<ul>
 						<li><a href="#" onclick="showSSIBlock('ssi_login'); return false;">Welcome, Login &amp; Logout</a></li>
 					</ul>
-					<h3>Calendar</h3>
-					<ul>
-						<li><a href="#" onclick="showSSIBlock('ssi_todaysCalendar'); return false;">Today's Events</a></li>
-						<li><a href="#" onclick="showSSIBlock('ssi_recentEvents'); return false;">Recent Events</a></li>
-					</ul>
 					<h3>Miscellaneous</h3>
 					<ul>
 						<li><a href="#" onclick="showSSIBlock('ssi_boardStats'); return false;">Forum Stats</a></li>
@@ -249,42 +244,6 @@ template_ssi_above();
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return smfSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_welcome(); ?&gt;</code>
 				<h3>Result</h3>
 				<div class="ssi_result"><?php ssi_welcome(); flush(); ?></div>
-			</div>
-
-<!-- CALENDAR -->
-			<div class="ssi_preview" id="ssi_todaysCalendar">
-				<h2>Today's Calendar Function</h2>
-				<h3>Code</h3>
-				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return smfSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_todaysCalendar(); ?&gt;</code>
-				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_todaysCalendar(); flush(); ?></div>
-
-				<h2>Today's Birthdays Function</h2>
-				<h3>Code</h3>
-				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return smfSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_todaysBirthdays(); ?&gt;</code>
-				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_todaysBirthdays(); flush(); ?></div>
-
-				<h2>Today's Holidays Function</h2>
-				<h3>Code</h3>
-				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return smfSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_todaysHolidays(); ?&gt;</code>
-				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_todaysHolidays(); flush(); ?></div>
-
-				<h2>Today's Events Function</h2>
-				<h3>Code</h3>
-				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return smfSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_todaysEvents(); ?&gt;</code>
-				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_todaysEvents(); flush(); ?></div>
-			</div>
-
-			<div class="ssi_preview" id="ssi_recentEvents">
-				<h2>Recent Calendar Events Function</h2>
-
-				<h3>Code</h3>
-				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return smfSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_recentEvents(); ?&gt;</code>
-				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_recentEvents(); flush(); ?></div>
 			</div>
 
 <!-- MISCELLANEOUS -->
@@ -473,7 +432,6 @@ function template_ssi_above()
 		<script>
 			var smf_scripturl = "', $scripturl, '";
 			var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';
-			var smf_charset = "', $context['character_set'], '";
 
 			// Sets all ssi_preview class to hidden, then shows the one requested.
 			function showSSIBlock(elementID)
@@ -636,7 +594,7 @@ $topics = ssi_recentTopics(8, null, null, \'array\');
 
 foreach ($topics as $topic)
 {
-	// Uncomment the following code to get a listing of array elements that SMF provides for this function.
+	// Uncomment the following code to get a listing of array elements that StoryBB provides for this function.
 	// echo \'<pre>\', print_r($topic), \'</pre>\';
 
 	echo \'

@@ -20,7 +20,7 @@ if (!defined('SMF'))
  * - additionally handles previews of posts.
  * - @uses the Post template and language file, main sub template.
  * - requires different permissions depending on the actions, but most notably post_new, post_reply_own, and post_reply_any.
- * - shows options for the editing and posting of calendar events and attachments, as well as the posting of polls.
+ * - shows options for the editing and posting of attachments, as well as the posting of polls.
  * - accessed from ?action=post.
  *
  *  @param array $post_errors Holds any errors found while tyring to post
@@ -39,8 +39,6 @@ function Post($post_errors = array())
 	if (isset($_REQUEST['poll']) && !empty($topic) && !isset($_REQUEST['msg']))
 		unset($_REQUEST['poll']);
 
-	// Posting an event?
-	$context['make_event'] = isset($_REQUEST['calendar']);
 	$context['robot_no_index'] = true;
 
 	// Get notification preferences for later
@@ -51,7 +49,7 @@ function Post($post_errors = array())
 	$context['auto_notify'] = !empty($context['notify_prefs']['msg_auto_notify']);
 
 	// You must be posting to *some* board.
-	if (empty($board) && !$context['make_event'])
+	if (empty($board))
 		fatal_lang_error('no_board', false);
 
 	require_once($sourcedir . '/Subs-Post.php');
@@ -149,7 +147,7 @@ function Post($post_errors = array())
 	else
 	{
 		$context['becomes_approved'] = true;
-		if ((!$context['make_event'] || !empty($board)))
+		if (!empty($board))
 		{
 			if ($modSettings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
 				$context['becomes_approved'] = false;
@@ -227,160 +225,6 @@ function Post($post_errors = array())
 			array('id' => 4, 'number' => 5, 'label' => '', 'is_last' => true)
 		);
 		$context['last_choice_id'] = 4;
-	}
-
-	if ($context['make_event'])
-	{
-		// They might want to pick a board.
-		if (!isset($context['current_board']))
-			$context['current_board'] = 0;
-
-		// Start loading up the event info.
-		$context['event'] = array();
-		$context['event']['title'] = isset($_REQUEST['evtitle']) ? $smcFunc['htmlspecialchars'](stripslashes($_REQUEST['evtitle'])) : '';
-		$context['event']['location'] = isset($_REQUEST['event_location']) ? $smcFunc['htmlspecialchars'](stripslashes($_REQUEST['event_location'])) : '';
-
-		$context['event']['id'] = isset($_REQUEST['eventid']) ? (int) $_REQUEST['eventid'] : -1;
-		$context['event']['new'] = $context['event']['id'] == -1;
-
-		// Permissions check!
-		isAllowedTo('calendar_post');
-
-		// We want a fairly compact version of the time, but as close as possible to the user's settings.
-		if (preg_match('~%[HkIlMpPrRSTX](?:[^%]*%[HkIlMpPrRSTX])*~', $user_info['time_format'], $matches) == 0 || empty($matches[0]))
-			$time_string = '%k:%M';
-		else
-			$time_string = str_replace(array('%I', '%H', '%S', '%r', '%R', '%T'), array('%l', '%k', '', '%l:%M %p', '%k:%M', '%l:%M'), $matches[0]);
-
-		$js_time_string = str_replace(
-			array('%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r',      '%R',  '%S', '%T',    '%X'),
-			array('H',  'G',  'h',  'g',  'i',  'A',  'a',  'h:i:s A', 'H:i', 's',  'H:i:s', 'H:i:s'),
-			$time_string
-		);
-
-		// Editing an event?  (but NOT previewing!?)
-		if (empty($context['event']['new']) && !isset($_REQUEST['subject']))
-		{
-			// If the user doesn't have permission to edit the post in this topic, redirect them.
-			if ((empty($id_member_poster) || $id_member_poster != $user_info['id'] || !allowedTo('modify_own')) && !allowedTo('modify_any'))
-			{
-				require_once($sourcedir . '/Calendar.php');
-				return CalendarPost();
-			}
-
-			// Get the current event information.
-			require_once($sourcedir . '/Subs-Calendar.php');
-			$eventProperties = getEventProperties($context['event']['id']);
-			$context['event'] = array_merge($context['event'], $eventProperties);
-		}
-		else
-		{
-			// Get the current event information.
-			require_once($sourcedir . '/Subs-Calendar.php');
-			$eventProperties = getNewEventDatetimes();
-			$context['event'] = array_merge($context['event'], $eventProperties);
-
-			// Make sure the year and month are in the valid range.
-			if ($context['event']['month'] < 1 || $context['event']['month'] > 12)
-				fatal_lang_error('invalid_month', false);
-			if ($context['event']['year'] < $modSettings['cal_minyear'] || $context['event']['year'] > $modSettings['cal_maxyear'])
-				fatal_lang_error('invalid_year', false);
-
-			// Get a list of boards they can post in.
-			$boards = boardsAllowedTo('post_new');
-			if (empty($boards))
-				fatal_lang_error('cannot_post_new', 'user');
-
-			// Load a list of boards for this event in the context.
-			require_once($sourcedir . '/Subs-MessageIndex.php');
-			$boardListOptions = array(
-				'included_boards' => in_array(0, $boards) ? null : $boards,
-				'not_redirection' => true,
-				'use_permissions' => true,
-				'selected_board' => empty($context['current_board']) ? $modSettings['cal_defaultboard'] : $context['current_board'],
-			);
-			$context['event']['categories'] = getBoardList($boardListOptions);
-		}
-
-		// Find the last day of the month.
-		$context['event']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['event']['month'] == 12 ? 1 : $context['event']['month'] + 1, 0, $context['event']['month'] == 12 ? $context['event']['year'] + 1 : $context['event']['year']));
-
-		// An all day event? Set up some nice defaults in case the user wants to change that
-		if ($context['event']['allday'] == true)
-		{
-			$context['event']['tz'] = getUserTimezone();
-			$context['event']['start_time'] = timeformat(time(), $time_string);
-			$context['event']['end_time'] = timeformat(time() + 3600, $time_string);
-		}
-		// Otherwise, just adjust these to look nice on the input form
-		else
-		{
-			$context['event']['start_time'] = $context['event']['start_time_orig'];
-			$context['event']['end_time'] = $context['event']['end_time_orig'];
-		}
-
-		// Need this so the user can select a timezone for the event.
-		$context['all_timezones'] = smf_list_timezones($context['event']['start_date']);
-		unset($context['all_timezones']['']);
-
-		// If the event's timezone is not in SMF's standard list of time zones, prepend it to the list
-		if (!in_array($context['event']['tz'], array_keys($context['all_timezones'])))
-		{
-			$d = date_create($context['event']['start_datetime'] . ' ' . $context['event']['tz']);
-			$context['all_timezones'] = array($context['event']['tz'] => fix_tz_abbrev($context['event']['tz'], date_format($d, 'T')) . ' - ' . $context['event']['tz'] . ' [UTC' . date_format($d, 'P') . ']') + $context['all_timezones'];
-		}
-
-		loadCSSFile('jquery-ui.datepicker.css', array('defer' => false), 'smf_datepicker');
-		loadCSSFile('jquery.timepicker.css', array('defer' => false), 'smf_timepicker');
-		loadJavaScriptFile('jquery-ui.datepicker.min.js', array('defer' => true), 'smf_datepicker');
-		loadJavaScriptFile('jquery.timepicker.min.js', array('defer' => true), 'smf_timepicker');
-		loadJavaScriptFile('datepair.min.js', array('defer' => true), 'smf_datepair');
-		addInlineJavaScript('
-	$("#allday").click(function(){
-		$("#start_time").attr("disabled", this.checked);
-		$("#end_time").attr("disabled", this.checked);
-		$("#tz").attr("disabled", this.checked);
-	});
-	$("#event_time_input .date_input").datepicker({
-		dateFormat: "yy-mm-dd",
-		autoSize: true,
-		isRTL: ' . ($context['right_to_left'] ? 'true' : 'false') . ',
-		constrainInput: true,
-		showAnim: "",
-		showButtonPanel: false,
-		minDate: "' . $modSettings['cal_minyear'] . '-01-01",
-		maxDate: "' . $modSettings['cal_maxyear'] . '-12-31",
-		yearRange: "' . $modSettings['cal_minyear'] . ':' . $modSettings['cal_maxyear'] . '",
-		hideIfNoPrevNext: true,
-		monthNames: ["' . implode('", "', $txt['months_titles']) . '"],
-		monthNamesShort: ["' . implode('", "', $txt['months_short']) . '"],
-		dayNames: ["' . implode('", "', $txt['days']) . '"],
-		dayNamesShort: ["' . implode('", "', $txt['days_short']) . '"],
-		dayNamesMin: ["' . implode('", "', $txt['days_short']) . '"],
-		prevText: "' . $txt['prev_month'] . '",
-		nextText: "' . $txt['next_month'] . '",
-	});
-	$(".time_input").timepicker({
-		timeFormat: "' . $js_time_string . '",
-		showDuration: true,
-		maxTime: "23:59:59",
-	});
-	var date_entry = document.getElementById("event_time_input");
-	var date_entry_pair = new Datepair(date_entry, {
-		timeClass: "time_input",
-		dateClass: "date_input",
-		parseDate: function (el) {
-		    var utc = new Date($(el).datepicker("getDate"));
-		    return utc && new Date(utc.getTime() + (utc.getTimezoneOffset() * 60000));
-		},
-		updateDate: function (el, v) {
-		    $(el).datepicker("setDate", new Date(v.getTime() - (v.getTimezoneOffset() * 60000)));
-		}
-	});
-	', true);
-
-		$context['event']['board'] = !empty($board) ? $board : $modSettings['cal_defaultboard'];
-		$context['event']['topic'] = !empty($topic) ? $topic : 0;
 	}
 
 	// See if any new replies have come along.
@@ -1091,8 +935,6 @@ function Post($post_errors = array())
 	// What are you doing? Posting a poll, modifying, previewing, new post, or reply...
 	if (isset($_REQUEST['poll']))
 		$context['page_title'] = $txt['new_poll'];
-	elseif ($context['make_event'])
-		$context['page_title'] = $context['event']['id'] == -1 ? $txt['calendar_post_event'] : $txt['calendar_edit'];
 	elseif (isset($_REQUEST['msg']))
 		$context['page_title'] = $txt['modify_msg'];
 	elseif (isset($_REQUEST['subject'], $context['preview_subject']))
@@ -1349,7 +1191,7 @@ function Post($post_errors = array())
  * Posts or saves the message composed with Post().
  *
  * requires various permissions depending on the action.
- * handles attachment, post, and calendar saving.
+ * handles attachment and post saving.
  * sends off notifications, and allows for announcements and moderation.
  * accessed from ?action=post2.
  */
@@ -1778,8 +1620,6 @@ function Post2()
 		if ($smcFunc['htmltrim'](strip_tags(parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
-	if (isset($_POST['calendar']) && !isset($_REQUEST['deleteevent']) && $smcFunc['htmltrim']($_POST['evtitle']) === '')
-		$post_errors[] = 'no_event';
 
 	// Validate the poll...
 	if (isset($_REQUEST['poll']) && $modSettings['pollMode'] == '1')
@@ -2105,75 +1945,6 @@ function Post2()
 	// If we had a draft for this, its time to remove it since it was just posted
 	if (!empty($modSettings['drafts_post_enabled']) && !empty($_POST['id_draft']))
 		DeleteDraft($_POST['id_draft']);
-
-	// Editing or posting an event?
-	if (isset($_POST['calendar']) && (!isset($_REQUEST['eventid']) || $_REQUEST['eventid'] == -1))
-	{
-		require_once($sourcedir . '/Subs-Calendar.php');
-
-		// Make sure they can link an event to this post.
-		canLinkEvent();
-
-		// Insert the event.
-		$eventOptions = array(
-			'board' => $board,
-			'topic' => $topic,
-			'title' => $_POST['evtitle'],
-			'location' => $_POST['event_location'],
-			'member' => $user_info['id'],
-		);
-		insertEvent($eventOptions);
-	}
-	elseif (isset($_POST['calendar']))
-	{
-		$_REQUEST['eventid'] = (int) $_REQUEST['eventid'];
-
-		// Validate the post...
-		require_once($sourcedir . '/Subs-Calendar.php');
-		validateEventPost();
-
-		// If you're not allowed to edit any events, you have to be the poster.
-		if (!allowedTo('calendar_edit_any'))
-		{
-			// Get the event's poster.
-			$request = $smcFunc['db_query']('', '
-				SELECT id_member
-				FROM {db_prefix}calendar
-				WHERE id_event = {int:id_event}',
-				array(
-					'id_event' => $_REQUEST['eventid'],
-				)
-			);
-			$row2 = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
-
-			// Silly hacker, Trix are for kids. ...probably trademarked somewhere, this is FAIR USE! (parody...)
-			isAllowedTo('calendar_edit_' . ($row2['id_member'] == $user_info['id'] ? 'own' : 'any'));
-		}
-
-		// Delete it?
-		if (isset($_REQUEST['deleteevent']))
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}calendar
-				WHERE id_event = {int:id_event}',
-				array(
-					'id_event' => $_REQUEST['eventid'],
-				)
-			);
-		// ... or just update it?
-		else
-		{
-			// Set up our options
-			$eventOptions = array(
-				'board' => $board,
-				'topic' => $topic,
-				'title' => $_POST['evtitle'],
-				'location' => $_POST['event_location'],
-				'member' => $user_info['id'],
-			);
-			modifyEvent($_REQUEST['eventid'], $eventOptions);
-		}
-	}
 
 	// Marking read should be done even for editing messages....
 	// Mark all the parents read.  (since you just posted and they will be unread.)

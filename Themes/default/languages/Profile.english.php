@@ -94,8 +94,6 @@ $txt['theme_forum_default_desc'] = 'This is the default theme, which means your 
 
 $txt['profileConfirm'] = 'Do you really want to delete this member?';
 
-$txt['custom_title'] = 'Custom Title';
-
 $txt['lastLoggedIn'] = 'Last Active';
 
 $txt['alert_prefs'] = 'Notification Preferences';
@@ -158,8 +156,6 @@ $txt['alert_group_members'] = 'Members';
 $txt['alert_member_register'] = 'When a new person registers';
 $txt['alert_warn_any'] = 'When other members receive a warning';
 $txt['alert_buddy_request'] = 'When other members adds me as their buddy';
-$txt['alert_group_calendar'] = 'Calendar';
-$txt['alert_event_new'] = 'When a new event goes into the calendar';
 $txt['alert_request_group'] = 'When someone requests to join a group I moderate';
 $txt['alert_birthday'] = 'When it\'s my birthday';
 $txt['alert_member_report'] = 'When another member\'s profile is reported';
@@ -234,7 +230,7 @@ $txt['account_info'] = 'These are your account settings. This page holds all cri
 $txt['forumProfile_info'] = 'You can change your personal information on this page. This information will be displayed throughout ' . $context['forum_name_html_safe'] . '. If you aren\'t comfortable with sharing some information, simply skip it - nothing here is required.';
 $txt['theme_info'] = 'This section allows you to customize the look and layout of the forum.';
 $txt['notification'] = 'Notifications';
-$txt['notification_info'] = 'SMF allows you to be notified of replies to posts, newly posted topics, and forum announcements. You can change those settings here, or oversee the topics and boards you are currently receiving notifications for.';
+$txt['notification_info'] = 'StoryBB allows you to be notified of replies to posts, newly posted topics, and forum announcements. You can change those settings here, or oversee the topics and boards you are currently receiving notifications for.';
 $txt['groupmembership'] = 'Group Membership';
 $txt['groupMembership_info'] = 'In this section of your profile you can change which groups you belong to.';
 $txt['ignoreboards'] = 'Ignore Boards';
@@ -340,19 +336,13 @@ $txt['timeformat_easy5'] = 'DD-MM-YYYY, HH:MM:SS';
 
 $txt['poster'] = 'Poster';
 
-$txt['show_children'] = 'Show sub-boards on every page inside boards, not just the first.';
 $txt['show_no_avatars'] = 'Don\'t show users\' avatars.';
 $txt['show_no_signatures'] = 'Don\'t show users\' signatures.';
 $txt['show_no_censored'] = 'Leave words uncensored.';
 $txt['topics_per_page'] = 'Topics to display per page:';
 $txt['messages_per_page'] = 'Messages to display per page:';
 $txt['per_page_default'] = 'forum default';
-$txt['calendar_start_day'] = 'First day of the week on the calendar';
 $txt['use_editor_quick_reply'] = 'Use full editor in Quick Reply';
-$txt['display_quick_mod'] = 'Show quick-moderation as';
-$txt['display_quick_mod_none'] = 'don\'t show';
-$txt['display_quick_mod_check'] = 'checkboxes';
-$txt['display_quick_mod_image'] = 'icons';
 
 $txt['whois_title'] = 'Look up IP on a regional whois-server';
 $txt['whois_afrinic'] = 'AfriNIC (Africa)';
@@ -505,12 +495,7 @@ $txt['pm_receive_from_ignore'] = 'All members, except those on my ignore list';
 $txt['pm_receive_from_admins'] = 'Administrators only';
 $txt['pm_receive_from_buddies'] = 'Buddies and Administrators only';
 
-$txt['popup_messages'] = 'Show a popup when I receive new messages.';
 $txt['pm_remove_inbox_label'] = 'Remove the inbox label when applying another label';
-$txt['pm_display_mode'] = 'Display personal messages';
-$txt['pm_display_mode_all'] = 'All at once';
-$txt['pm_display_mode_one'] = 'One at a time';
-$txt['pm_display_mode_linked'] = 'As a conversation';
 
 $txt['tracking'] = 'Tracking';
 $txt['tracking_description'] = 'This section allows you to review certain profile actions performed on this member\'s profile as well as track their IP address and login history.';
@@ -524,7 +509,6 @@ $txt['trackEdit_after'] = 'Value After';
 $txt['trackEdit_applicator'] = 'Changed By';
 
 $txt['trackEdit_action_real_name'] = 'Member Name';
-$txt['trackEdit_action_usertitle'] = 'Custom Title';
 $txt['trackEdit_action_member_name'] = 'Username';
 $txt['trackEdit_action_email_address'] = 'Email Address';
 $txt['trackEdit_action_id_group'] = 'Primary Membergroup';
@@ -580,10 +564,8 @@ $txt['tfa_backup_code'] = 'Backup code';
 $txt['tfa_backup_desc'] = 'In case you have lost your device or authentication app, you can use the backup code provided to you when 2FA was setup. In case you have lost that as well, please contact the administrator';
 $txt['tfa_wait'] = 'Please wait for about 2 minutes before attempting to log in via 2FA again';
 
-$txt['theme_opt_calendar'] = 'Calendar';
 $txt['theme_opt_display'] = 'Board and topic display';
 $txt['theme_opt_posting'] = 'Posting';
-$txt['theme_opt_moderation'] = 'Moderation';
 $txt['theme_opt_personal_messages'] = 'Personal Messages';
 
 $txt['you_are_posting_as'] = 'You are posting as: %s';

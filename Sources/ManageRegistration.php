@@ -166,7 +166,7 @@ function AdminRegister()
 		$context['member_groups'] = array();
 
 	// Basic stuff.
-	$context['sub_template'] = 'admin_register';
+	$context['sub_template'] = 'register_admin';
 	$context['page_title'] = $txt['registration_center'];
 	createToken('admin-regc');
 	loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
@@ -273,7 +273,7 @@ function SetReserved()
 	$context['reserved_word_options']['match_name'] = $modSettings['reserveName'] == '1';
 
 	// Ready the template......
-	$context['sub_template'] = 'edit_reserved_words';
+	$context['sub_template'] = 'register_edit_reservedwords';
 	$context['page_title'] = $txt['admin_reserved_set'];
 	createToken('admin-regr');
 }
@@ -328,7 +328,7 @@ function ModifyRegistrationSettings($return_config = false)
 		call_integration_hook('integrate_save_registration_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=regcenter;sa=settings');
 	}
 

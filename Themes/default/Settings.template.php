@@ -15,23 +15,7 @@ function template_options()
 	global $context, $txt;
 
 	$context['theme_options'] = array(
-		$txt['theme_opt_calendar'],
-		array(
-			'id' => 'calendar_start_day',
-			'label' => $txt['calendar_start_day'],
-			'options' => array(
-				0 => $txt['days'][0],
-				1 => $txt['days'][1],
-				6 => $txt['days'][6],
-			),
-			'default' => true,
-		),
 		$txt['theme_opt_display'],
-		array(
-			'id' => 'show_children',
-			'label' => $txt['show_children'],
-			'default' => true,
-		),
 		array(
 			'id' => 'topics_per_page',
 			'label' => $txt['topics_per_page'],
@@ -107,23 +91,7 @@ function template_options()
 			'label'  => $txt['drafts_show_saved_enabled'],
 			'default' => true,
 		),
-		$txt['theme_opt_moderation'],
-		array(
-			'id' => 'display_quick_mod',
-			'label' => $txt['display_quick_mod'],
-			'options' => array(
-				0 => $txt['display_quick_mod_none'],
-				1 => $txt['display_quick_mod_check'],
-				2 => $txt['display_quick_mod_image'],
-			),
-			'default' => true,
-		),
 		$txt['theme_opt_personal_messages'],
-		array(
-			'id' => 'popup_messages',
-			'label' => $txt['popup_messages'],
-			'default' => true,
-		),
 		array(
 			'id' => 'view_newest_pm_first',
 			'label' => $txt['recent_pms_at_top'],

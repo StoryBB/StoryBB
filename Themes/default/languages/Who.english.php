@@ -28,7 +28,6 @@ $txt['whospider_reminder'] = 'Viewing the reminder page.';
 $txt['whoall_activate'] = 'Activating their account.';
 $txt['whoall_buddy'] = 'Modifying their buddy list.';
 $txt['whoall_coppa'] = 'Filling out parent/guardian consent form.';
-$txt['whoall_credits'] = 'Viewing credits page.';
 $txt['whoall_emailuser'] = 'Sending email to another member.';
 $txt['whoall_groups'] = 'Viewing the member groups page.';
 $txt['whoall_help'] = 'Viewing the <a href="' . $scripturl . '?action=help">help page</a>.';
@@ -73,7 +72,6 @@ $txt['whotopic_movetopic'] = 'Moving the topic &quot;<a href="' . $scripturl . '
 $txt['whotopic_movetopic2'] = 'Moving the topic &quot;<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>&quot; to another board.';
 $txt['whotopic_post'] = 'Posting in <a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>.';
 $txt['whotopic_post2'] = 'Posting in <a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>.';
-$txt['whotopic_printpage'] = 'Printing the topic &quot;<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>&quot;.';
 $txt['whotopic_quickmod2'] = 'Moderating the topic <a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>.';
 $txt['whotopic_removepoll'] = 'Removing the poll in &quot;<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>&quot;.';
 $txt['whotopic_removetopic2'] = 'Removing the topic <a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>.';
@@ -87,7 +85,6 @@ $txt['whoadmin_editagreement'] = 'Editing the registration agreement.';
 $txt['whoadmin_featuresettings'] = 'Editing forum features and options.';
 $txt['whoadmin_modlog'] = 'Viewing the moderator log.';
 $txt['whoadmin_serversettings'] = 'Editing the forum settings.';
-$txt['whoadmin_packageget'] = 'Getting packages.';
 $txt['whoadmin_packages'] = 'Viewing the package manager.';
 $txt['whoadmin_permissions'] = 'Editing the forum permissions.';
 $txt['whoadmin_pgdownload'] = 'Downloading a package.';
@@ -98,7 +95,6 @@ $txt['whoallow_manageboards'] = 'Editing the board and category settings.';
 $txt['whoallow_admin'] = 'Viewing the <a href="' . $scripturl . '?action=admin">administration center</a>.';
 $txt['whoallow_ban'] = 'Editing the ban list.';
 $txt['whoallow_boardrecount'] = 'Recounting the forum totals.';
-$txt['whoallow_calendar'] = 'Viewing the <a href="' . $scripturl . '?action=calendar">calendar</a>.';
 $txt['whoallow_editnews'] = 'Editing the news.';
 $txt['whoallow_mailing'] = 'Sending a forum email.';
 $txt['whoallow_maintain'] = 'Performing routine forum maintenance.';
@@ -121,43 +117,5 @@ $txt['who_viewownprofile'] = 'Viewing <a href="' . $scripturl . '?action=profile
 $txt['who_profile'] = 'Editing the profile of <a href="' . $scripturl . '?action=profile;u=%1$d">%2$s</a>.';
 $txt['who_post'] = 'Posting a new topic in <a href="' . $scripturl . '?board=%1$d.0">%2$s</a>.';
 $txt['who_poll'] = 'Posting a new poll in <a href="' . $scripturl . '?board=%1$d.0">%2$s</a>.';
-
-// Credits text
-$txt['credits'] = 'Credits';
-$txt['credits_intro'] = 'Simple Machines wants to thank everyone who helped make SMF 2.1 what it is today; shaping and directing our project, all through the thick and the thin. It wouldn\'t have been possible without you. This includes our users and especially Charter Members - thanks for installing and using our software as well as providing valuable feedback, bug reports, and opinions.';
-$txt['credits_team'] = 'The Team';
-$txt['credits_special'] = 'Special Thanks';
-$txt['credits_and'] = 'and';
-$txt['credits_anyone'] = 'And for anyone we may have missed, thank you!';
-$txt['credits_copyright'] = 'Copyright';
-$txt['credits_forum'] = 'Forum';
-$txt['credits_modifications'] = 'Modifications';
-$txt['credits_software_graphics'] = 'Software/Graphics';
-$txt['credits_software'] = 'Software';
-$txt['credits_graphics'] = 'Graphics';
-$txt['credits_fonts'] = 'Fonts';
-$txt['credits_groups_pm'] = 'Project Manager';
-$txt['credits_groups_dev'] = 'Developers';
-$txt['credits_groups_support'] = 'Support Specialists';
-$txt['credits_groups_customize'] = 'Customizers';
-$txt['credits_groups_docs'] = 'Documentation Writers';
-$txt['credits_groups_marketing'] = 'Marketing';
-$txt['credits_groups_internationalizers'] = 'Localizers';
-$txt['credits_groups_servers'] = 'Servers Administrators';
-$txt['credits_groups_site'] = 'Site Administrators';
-$txt['credits_license'] = 'License';
-$txt['credits_version'] = 'Version';
-// Replace "English" with the name of this language pack in the string below.
-$txt['credits_groups_translation'] = 'English Translation';
-$txt['credits_groups_translators'] = 'Language Translators';
-$txt['credits_translators_message'] = 'Thank you for your efforts which make it possible for people all around the world to use SMF.';
-$txt['credits_groups_consultants'] = 'Consulting Developers';
-$txt['credits_groups_beta'] = 'Beta Testers';
-$txt['credits_beta_message'] = 'The invaluable few who tirelessly find bugs, provide feedback, and drive the developers crazier.';
-$txt['credits_groups_founder'] = 'Founding Father of SMF';
-$txt['credits_groups_orignal_pm'] = 'Original Project Managers';
-
-// List of people who have made more than a token contribution to this translation. (blank for English)
-$txt['translation_credits'] = array();
 
 ?>

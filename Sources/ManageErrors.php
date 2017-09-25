@@ -35,7 +35,6 @@ function ViewErrorLog()
 
 	// Templates, etc...
 	loadLanguage('ManageMaintenance');
-	loadTemplate('Errors');
 
 	// You can filter by any of the following columns:
 	$filters = array(
@@ -418,10 +417,37 @@ function ViewFile()
 		'file' => strtr($file, array('"' => '\\"')),
 	);
 
-	loadTemplate('Errors');
+	loadTemplateLayout('raw');
 	$context['template_layers'] = array();
-	$context['sub_template'] = 'show_file';
+	$context['sub_template'] = 'error_show_file';
 
+}
+
+/**
+ * Highlight any code.
+ *
+ * Uses PHP's highlight_string() to highlight PHP syntax
+ * does special handling to keep the tabs in the code available.
+ * used to parse PHP code from inside [code] tags.
+ *
+ * @param string $code The code
+ * @return string The code with highlighted HTML.
+ */
+function highlight_php_code($code)
+{
+	// Remove special characters.
+	$code = un_htmlspecialchars(strtr($code, array('<br />' => "\n", '<br>' => "\n", "\t" => 'SMF_TAB();', '&#91;' => '[')));
+
+	$oldlevel = error_reporting(0);
+
+	$buffer = str_replace(array("\n", "\r"), '', @highlight_string($code, true));
+
+	error_reporting($oldlevel);
+
+	// Yes, I know this is kludging it, but this is the best way to preserve tabs from PHP :P.
+	$buffer = preg_replace('~SMF_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<pre style="display: inline;">' . "\t" . '</pre>', $buffer);
+
+	return strtr($buffer, array('\'' => '&#039;', '<code>' => '', '</code>' => ''));
 }
 
 ?>

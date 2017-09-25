@@ -8,7 +8,7 @@
  * @version 3.0 Alpha 1
  */
 
-// Don't do anything if SMF is already loaded.
+// Don't do anything if StoryBB is already loaded.
 if (defined('SMF'))
 	return true;
 
@@ -24,7 +24,7 @@ global $smcFunc, $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir
 $time_start = microtime();
 
 // Just being safe...
-foreach (array('db_character_set', 'cachedir') as $variable)
+foreach (array('cachedir') as $variable)
 	if (isset($GLOBALS[$variable]))
 		unset($GLOBALS[$variable]);
 
@@ -38,7 +38,7 @@ if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/c
 $ssi_error_reporting = error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
 /* Set this to one of three values depending on what you want to happen in the case of a fatal error.
 	false:	Default, will just load the error sub template and die - not putting any theme layers around it.
-	true:	Will load the error sub template AND put the SMF layers around it (Not useful if on total custom pages).
+	true:	Will load the error sub template AND put the StoryBB layers around it (Not useful if on total custom pages).
 	string:	Name of a callback function to call in the event of an error to allow you to define your own methods. Will die after function returns.
 */
 $ssi_on_error_method = false;
@@ -51,6 +51,9 @@ if ($maintenance == 2 && (!isset($ssi_maintenance_off) || $ssi_maintenance_off !
 if (substr($sourcedir, 0, 1) == '.' && substr($sourcedir, 1, 1) != '.')
 	$sourcedir = dirname(__FILE__) . substr($sourcedir, 1);
 
+require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+
 // Load the important includes.
 require_once($sourcedir . '/QueryString.php');
 require_once($sourcedir . '/Session.php');
@@ -62,7 +65,7 @@ require_once($sourcedir . '/Security.php');
 require_once($sourcedir . '/Class-BrowserDetect.php');
 require_once($sourcedir . '/Subs-Auth.php');
 
-// Create a variable to store some SMF specific functions in.
+// Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();
 
 // Initiate the database connection and define some database functions to use.
@@ -136,7 +139,7 @@ loadTheme(isset($ssi_theme) ? (int) $ssi_theme : 0);
 
 // @todo: probably not the best place, but somewhere it should be set...
 if (!headers_sent())
-	header('Content-Type: text/html; charset=' . (empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'ISO-8859-1' : $txt['lang_character_set']) : $modSettings['global_character_set']));
+	header('Content-Type: text/html; charset=UTF-8');
 
 // Take care of any banning that needs to be done.
 if (isset($_REQUEST['ssi_ban']) || (isset($ssi_ban) && $ssi_ban === true))
@@ -1032,7 +1035,6 @@ function ssi_queryMembers($query_where = null, $query_where_params = array(), $q
 			<tr>
 				<td style="text-align: right; vertical-align: top; white-space: nowrap">
 					', $query_members[$member]['link'], '
-					<br>', $query_members[$member]['blurb'], '
 					<br>', $query_members[$member]['avatar']['image'], '
 				</td>
 			</tr>';
@@ -1185,7 +1187,7 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 	createToken('login');
 
 	echo '
-		<form action="', $scripturl, '?action=login2" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8">
 			<table style="border: none" class="ssi_table">
 				<tr>
 					<td style="text-align: right; border-spacing: 1"><label for="user">', $txt['username'], ':</label>&nbsp;</td>
@@ -1340,7 +1342,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	if ($allow_view_results)
 	{
 		echo '
-		<form class="ssi_poll" action="', $boardurl, '/SSI.php?ssi_function=pollVote" method="post" accept-charset="', $context['character_set'], '">
+		<form class="ssi_poll" action="', $boardurl, '/SSI.php?ssi_function=pollVote" method="post" accept-charset="UTF-8">
 			<strong>', $return['question'], '</strong><br>
 			', !empty($return['allowed_warning']) ? $return['allowed_warning'] . '<br>' : '';
 
@@ -1508,7 +1510,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 	if ($return['allow_vote'])
 	{
 		echo '
-			<form class="ssi_poll" action="', $boardurl, '/SSI.php?ssi_function=pollVote" method="post" accept-charset="', $context['character_set'], '">
+			<form class="ssi_poll" action="', $boardurl, '/SSI.php?ssi_function=pollVote" method="post" accept-charset="UTF-8">
 				<strong>', $return['question'], '</strong><br>
 				', !empty($return['allowed_warning']) ? $return['allowed_warning'] . '<br>' : '';
 
@@ -1683,7 +1685,7 @@ function ssi_quickSearch($output_method = 'echo')
 		return $scripturl . '?action=search';
 
 	echo '
-		<form action="', $scripturl, '?action=search2" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="advanced" value="0"><input type="text" name="ssi_search" size="30" class="input_text"> <input type="submit" value="', $txt['search'], '" class="button_submit">
 		</form>';
 }
@@ -1706,150 +1708,6 @@ function ssi_news($output_method = 'echo')
 		return $context['random_news_line'];
 
 	echo $context['random_news_line'];
-}
-
-/**
- * Show today's birthdays.
- * @param string $output_method The output method. If 'echo', displays a list of users, otherwise returns an array of info about them.
- * @return void|array Displays a list of users or returns an array of info about them depending on output_method.
- */
-function ssi_todaysBirthdays($output_method = 'echo')
-{
-	global $scripturl, $modSettings, $user_info;
-
-	if (empty($modSettings['cal_enabled']) || !allowedTo('calendar_view') || !allowedTo('profile_view'))
-		return;
-
-	$eventOptions = array(
-		'include_birthdays' => true,
-		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
-	);
-	$return = cache_quick_get('calendar_index_offset_' . ($user_info['time_offset'] + $modSettings['time_offset']), 'Subs-Calendar.php', 'cache_getRecentEvents', array($eventOptions));
-
-	// The ssi_todaysCalendar variants all use the same hook and just pass on $eventOptions so the hooked code can distinguish different cases if necessary
-	call_integration_hook('integrate_ssi_calendar', array(&$return, $eventOptions));
-
-	if ($output_method != 'echo')
-		return $return['calendar_birthdays'];
-
-	foreach ($return['calendar_birthdays'] as $member)
-		echo '
-			<a href="', $scripturl, '?action=profile;u=', $member['id'], '"><span class="fix_rtl_names">' . $member['name'] . '</span>' . (isset($member['age']) ? ' (' . $member['age'] . ')' : '') . '</a>' . (!$member['is_last'] ? ', ' : '');
-}
-
-/**
- * Shows today's holidays.
- * @param string $output_method The output method. If 'echo', displays a list of holidays, otherwise returns an array of info about them.
- * @return void|array Displays a list of holidays or returns an array of info about them depending on output_method
- */
-function ssi_todaysHolidays($output_method = 'echo')
-{
-	global $modSettings, $user_info;
-
-	if (empty($modSettings['cal_enabled']) || !allowedTo('calendar_view'))
-		return;
-
-	$eventOptions = array(
-		'include_holidays' => true,
-		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
-	);
-	$return = cache_quick_get('calendar_index_offset_' . ($user_info['time_offset'] + $modSettings['time_offset']), 'Subs-Calendar.php', 'cache_getRecentEvents', array($eventOptions));
-
-	// The ssi_todaysCalendar variants all use the same hook and just pass on $eventOptions so the hooked code can distinguish different cases if necessary
-	call_integration_hook('integrate_ssi_calendar', array(&$return, $eventOptions));
-
-	if ($output_method != 'echo')
-		return $return['calendar_holidays'];
-
-	echo '
-		', implode(', ', $return['calendar_holidays']);
-}
-
-/**
- * @param string $output_method The output method. If 'echo', displays a list of events, otherwise returns an array of info about them.
- * @return void|array Displays a list of events or returns an array of info about them depending on output_method
- */
-function ssi_todaysEvents($output_method = 'echo')
-{
-	global $modSettings, $user_info;
-
-	if (empty($modSettings['cal_enabled']) || !allowedTo('calendar_view'))
-		return;
-
-	$eventOptions = array(
-		'include_events' => true,
-		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
-	);
-	$return = cache_quick_get('calendar_index_offset_' . ($user_info['time_offset'] + $modSettings['time_offset']), 'Subs-Calendar.php', 'cache_getRecentEvents', array($eventOptions));
-
-	// The ssi_todaysCalendar variants all use the same hook and just pass on $eventOptions so the hooked code can distinguish different cases if necessary
-	call_integration_hook('integrate_ssi_calendar', array(&$return, $eventOptions));
-
-	if ($output_method != 'echo')
-		return $return['calendar_events'];
-
-	foreach ($return['calendar_events'] as $event)
-	{
-		if ($event['can_edit'])
-			echo '
-	<a href="' . $event['modify_href'] . '" style="color: #ff0000;">*</a> ';
-		echo '
-	' . $event['link'] . (!$event['is_last'] ? ', ' : '');
-	}
-}
-
-/**
- * Shows today's calendar items (events, birthdays and holidays)
- * @param string $output_method The output method. If 'echo', displays a list of calendar items, otherwise returns an array of info about them.
- * @return void|array Displays a list of calendar items or returns an array of info about them depending on output_method
- */
-function ssi_todaysCalendar($output_method = 'echo')
-{
-	global $modSettings, $txt, $scripturl, $user_info;
-
-	if (empty($modSettings['cal_enabled']) || !allowedTo('calendar_view'))
-		return;
-
-	$eventOptions = array(
-		'include_birthdays' => allowedTo('profile_view'),
-		'include_holidays' => true,
-		'include_events' => true,
-		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
-	);
-	$return = cache_quick_get('calendar_index_offset_' . ($user_info['time_offset'] + $modSettings['time_offset']), 'Subs-Calendar.php', 'cache_getRecentEvents', array($eventOptions));
-
-	// The ssi_todaysCalendar variants all use the same hook and just pass on $eventOptions so the hooked code can distinguish different cases if necessary
-	call_integration_hook('integrate_ssi_calendar', array(&$return, $eventOptions));
-
-	if ($output_method != 'echo')
-		return $return;
-
-	if (!empty($return['calendar_holidays']))
-		echo '
-			<span class="holiday">' . $txt['calendar_prompt'] . ' ' . implode(', ', $return['calendar_holidays']) . '<br></span>';
-	if (!empty($return['calendar_birthdays']))
-	{
-		echo '
-			<span class="birthday">' . $txt['birthdays_upcoming'] . '</span> ';
-		foreach ($return['calendar_birthdays'] as $member)
-			echo '
-			<a href="', $scripturl, '?action=profile;u=', $member['id'], '"><span class="fix_rtl_names">', $member['name'], '</span>', isset($member['age']) ? ' (' . $member['age'] . ')' : '', '</a>', !$member['is_last'] ? ', ' : '';
-		echo '
-			<br>';
-	}
-	if (!empty($return['calendar_events']))
-	{
-		echo '
-			<span class="event">' . $txt['events_upcoming'] . '</span> ';
-		foreach ($return['calendar_events'] as $event)
-		{
-			if ($event['can_edit'])
-				echo '
-			<a href="' . $event['modify_href'] . '" style="color: #ff0000;">*</a> ';
-			echo '
-			' . $event['link'] . (!$event['is_last'] ? ', ' : '');
-		}
-	}
 }
 
 /**
@@ -2093,106 +1951,6 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 			echo '
 			<hr>';
 	}
-}
-
-/**
- * Show the most recent events
- * @param int $max_events The maximum number of events to show
- * @param string $output_method The output method. If 'echo', displays the events, otherwise returns an array of info about them.
- * @return void|array Displays the events or returns an array of info about them, depending on output_method.
- */
-function ssi_recentEvents($max_events = 7, $output_method = 'echo')
-{
-	global $user_info, $scripturl, $modSettings, $txt, $context, $smcFunc;
-
-	if (empty($modSettings['cal_enabled']) || !allowedTo('calendar_view'))
-		return;
-
-	// Find all events which are happening in the near future that the member can see.
-	$request = $smcFunc['db_query']('', '
-		SELECT
-			cal.id_event, cal.start_date, cal.end_date, cal.title, cal.id_member, cal.id_topic,
-			cal.start_time, cal.end_time, cal.timezone, cal.location,
-			cal.id_board, t.id_first_msg, t.approved
-		FROM {db_prefix}calendar AS cal
-			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = cal.id_board)
-			LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = cal.id_topic)
-		WHERE cal.start_date <= {date:current_date}
-			AND cal.end_date >= {date:current_date}
-			AND (cal.id_board = {int:no_board} OR {query_wanna_see_board})
-		ORDER BY cal.start_date DESC
-		LIMIT ' . $max_events,
-		array(
-			'current_date' => strftime('%Y-%m-%d', forum_time(false)),
-			'no_board' => 0,
-		)
-	);
-	$return = array();
-	$duplicates = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-	{
-		// Check if we've already come by an event linked to this same topic with the same title... and don't display it if we have.
-		if (!empty($duplicates[$row['title'] . $row['id_topic']]))
-			continue;
-
-		// Censor the title.
-		censorText($row['title']);
-
-		if ($row['start_date'] < strftime('%Y-%m-%d', forum_time(false)))
-			$date = strftime('%Y-%m-%d', forum_time(false));
-		else
-			$date = $row['start_date'];
-
-		// If the topic it is attached to is not approved then don't link it.
-		if (!empty($row['id_first_msg']) && !$row['approved'])
-			$row['id_board'] = $row['id_topic'] = $row['id_first_msg'] = 0;
-
-		$allday = (empty($row['start_time']) || empty($row['end_time']) || empty($row['timezone']) || !in_array($row['timezone'], timezone_identifiers_list(DateTimeZone::ALL_WITH_BC))) ? true : false;
-
-		$return[$date][] = array(
-			'id' => $row['id_event'],
-			'title' => $row['title'],
-			'location' => $row['location'],
-			'can_edit' => allowedTo('calendar_edit_any') || ($row['id_member'] == $user_info['id'] && allowedTo('calendar_edit_own')),
-			'modify_href' => $scripturl . '?action=' . ($row['id_board'] == 0 ? 'calendar;sa=post;' : 'post;msg=' . $row['id_first_msg'] . ';topic=' . $row['id_topic'] . '.0;calendar;') . 'eventid=' . $row['id_event'] . ';' . $context['session_var'] . '=' . $context['session_id'],
-			'href' => $row['id_board'] == 0 ? '' : $scripturl . '?topic=' . $row['id_topic'] . '.0',
-			'link' => $row['id_board'] == 0 ? $row['title'] : '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['title'] . '</a>',
-			'start_date' => $row['start_date'],
-			'end_date' => $row['end_date'],
-			'start_time' => !$allday ? $row['start_time'] : null,
-			'end_time' => !$allday ? $row['end_time'] : null,
-			'tz' => !$allday ? $row['timezone'] : null,
-			'allday' => $allday,
-			'is_last' => false
-		);
-
-		// Let's not show this one again, huh?
-		$duplicates[$row['title'] . $row['id_topic']] = true;
-	}
-	$smcFunc['db_free_result']($request);
-
-	foreach ($return as $mday => $array)
-		$return[$mday][count($array) - 1]['is_last'] = true;
-
-	// If mods want to do somthing with this list of events, let them do that now.
-	call_integration_hook('integrate_ssi_recentEvents', array(&$return));
-
-	if ($output_method != 'echo' || empty($return))
-		return $return;
-
-	// Well the output method is echo.
-	echo '
-			<span class="event">' . $txt['events'] . '</span> ';
-	foreach ($return as $mday => $array)
-		foreach ($array as $event)
-		{
-			if ($event['can_edit'])
-				echo '
-				<a href="' . $event['modify_href'] . '" style="color: #ff0000;">*</a> ';
-
-			echo '
-				' . $event['link'] . (!$event['is_last'] ? ', ' : '');
-		}
 }
 
 /**

@@ -336,9 +336,6 @@ function Display()
 		}
 	}
 
-	// Create a previous next string if the selected theme has it as a selected option.
-	$context['previous_next'] = $modSettings['enablePreviousNext'] ? '<a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=prev#new">' . $txt['previous_next_back'] . '</a> - <a href="' . $scripturl . '?topic=' . $topic . '.0;prev_next=next#new">' . $txt['previous_next_forward'] . '</a>' : '';
-
 	// Do we need to show the visual verification image?
 	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
@@ -361,9 +358,6 @@ function Display()
 
 	// Default this topic to not marked for notifications... of course...
 	$context['is_marked_notify'] = false;
-
-	// Did we report a post to a moderator just now?
-	$context['report_sent'] = isset($_GET['reportsent']);
 
 	// Let's get nosey, who is viewing this topic?
 	if (!empty($settings['display_who_viewing']))
@@ -454,8 +448,6 @@ function Display()
 	{
 		$context['links'] = array(
 			'first' => $_REQUEST['start'] >= $context['messages_per_page'] ? $scripturl . '?topic=' . $topic . '.0' : '',
-			'prev' => $_REQUEST['start'] >= $context['messages_per_page'] ? $scripturl . '?topic=' . $topic . '.' . ($_REQUEST['start'] - $context['messages_per_page']) : '',
-			'next' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? $scripturl . '?topic=' . $topic . '.' . ($_REQUEST['start'] + $context['messages_per_page']) : '',
 			'last' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? $scripturl . '?topic=' . $topic . '.' . (floor($context['total_visible_posts'] / $context['messages_per_page']) * $context['messages_per_page']) : '',
 			'up' => $scripturl . '?board=' . $board . '.0'
 		);
@@ -468,7 +460,7 @@ function Display()
 		{
 			// No limit! (actually, there is a limit, but...)
 			$context['messages_per_page'] = -1;
-			$context['page_index'] .= empty($modSettings['compactTopicPagesEnable']) ? '<strong>' . $txt['all'] . '</strong> ' : '[<strong>' . $txt['all'] . '</strong>] ';
+			$context['page_index'] .= '[<strong>' . $txt['all'] . '</strong>] ';
 
 			// Set start back to 0...
 			$_REQUEST['start'] = 0;
@@ -508,8 +500,8 @@ function Display()
 	}
 
 	// Information about the current topic...
-	$context['is_locked'] = $context['topicinfo']['locked'];
-	$context['is_sticky'] = $context['topicinfo']['is_sticky'];
+	$context['is_locked'] = (bool) $context['topicinfo']['locked'];
+	$context['is_sticky'] = (bool) $context['topicinfo']['is_sticky'];
 	$context['is_approved'] = $context['topicinfo']['approved'];
 	$context['is_poll'] = $context['topicinfo']['id_poll'] > 0 && $modSettings['pollMode'] == '1' && allowedTo('poll_view');
 
@@ -538,83 +530,6 @@ function Display()
 			loadLanguage('index');
 		}
 		cache_put_data('response_prefix', $context['response_prefix'], 600);
-	}
-
-	// If we want to show event information in the topic, prepare the data.
-	if (allowedTo('calendar_view') && !empty($modSettings['cal_showInTopic']) && !empty($modSettings['cal_enabled']))
-	{
-		require_once($sourcedir . '/Subs-Calendar.php');
-
-		// Any calendar information for this topic?
-		$request = $smcFunc['db_query']('', '
-			SELECT cal.id_event, cal.start_date, cal.end_date, cal.title, cal.id_member, mem.real_name, cal.start_time, cal.end_time, cal.timezone, cal.location
-			FROM {db_prefix}calendar AS cal
-				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = cal.id_member)
-			WHERE cal.id_topic = {int:current_topic}
-			ORDER BY start_date',
-			array(
-				'current_topic' => $topic,
-			)
-		);
-		$context['linked_calendar_events'] = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-		{
-			// Get the various time and date properties for this event
-			list($start, $end, $allday, $span, $tz, $tz_abbrev) = buildEventDatetimes($row);
-
-			// Sanity check
-			if (!empty($start['error_count']) || !empty($start['warning_count']) || !empty($end['error_count']) || !empty($end['warning_count']))
-				continue;
-
-			$linked_calendar_event = array(
-				'id' => $row['id_event'],
-				'title' => $row['title'],
-				'can_edit' => allowedTo('calendar_edit_any') || ($row['id_member'] == $user_info['id'] && allowedTo('calendar_edit_own')),
-				'modify_href' => $scripturl . '?action=post;msg=' . $context['topicinfo']['id_first_msg'] . ';topic=' . $topic . '.0;calendar;eventid=' . $row['id_event'] . ';' . $context['session_var'] . '=' . $context['session_id'],
-				'can_export' => allowedTo('calendar_edit_any') || ($row['id_member'] == $user_info['id'] && allowedTo('calendar_edit_own')),
-				'export_href' => $scripturl . '?action=calendar;sa=ical;eventid=' . $row['id_event'] . ';' . $context['session_var'] . '=' . $context['session_id'],
-				'year' => $start['year'],
-				'month' => $start['month'],
-				'day' => $start['day'],
-				'hour' => !$allday ? $start['hour'] : null,
-				'minute' => !$allday ? $start['minute'] : null,
-				'second' => !$allday ? $start['second'] : null,
-				'start_date' => $row['start_date'],
-				'start_date_local' => $start['date_local'],
-				'start_date_orig' => $start['date_orig'],
-				'start_time' => !$allday ? $row['start_time'] : null,
-				'start_time_local' => !$allday ? $start['time_local'] : null,
-				'start_time_orig' => !$allday ? $start['time_orig'] : null,
-				'start_timestamp' => $start['timestamp'],
-				'start_iso_gmdate' => $start['iso_gmdate'],
-				'end_year' => $end['year'],
-				'end_month' => $end['month'],
-				'end_day' => $end['day'],
-				'end_hour' => !$allday ? $end['hour'] : null,
-				'end_minute' => !$allday ? $end['minute'] : null,
-				'end_second' => !$allday ? $end['second'] : null,
-				'end_date' => $row['end_date'],
-				'end_date_local' => $end['date_local'],
-				'end_date_orig' => $end['date_orig'],
-				'end_time' => !$allday ? $row['end_time'] : null,
-				'end_time_local' => !$allday ? $end['time_local'] : null,
-				'end_time_orig' => !$allday ? $end['time_orig'] : null,
-				'end_timestamp' => $end['timestamp'],
-				'end_iso_gmdate' => $end['iso_gmdate'],
-				'allday' => $allday,
-				'tz' => !$allday ? $tz : null,
-				'tz_abbrev' => !$allday ? $tz_abbrev : null,
-				'span' => $span,
-				'location' => $row['location'],
-				'is_last' => false
-			);
-
-			$context['linked_calendar_events'][] = $linked_calendar_event;
-		}
-		$smcFunc['db_free_result']($request);
-
-		if (!empty($context['linked_calendar_events']))
-			$context['linked_calendar_events'][count($context['linked_calendar_events']) - 1]['is_last'] = true;
 	}
 
 	// Create the poll info if it exists.
@@ -1113,7 +1028,6 @@ function Display()
 		'can_sticky' => 'make_sticky',
 		'can_merge' => 'merge_any',
 		'can_split' => 'split_any',
-		'calendar_post' => 'calendar_post',
 		'can_send_pm' => 'pm_send',
 		'can_report_moderator' => 'report_any',
 		'can_moderate_forum' => 'moderate_forum',
@@ -1158,7 +1072,6 @@ function Display()
 
 	// Cleanup all the permissions with extra stuff...
 	$context['can_mark_notify'] = !$context['user']['is_guest'];
-	$context['calendar_post'] &= !empty($modSettings['cal_enabled']);
 	$context['can_add_poll'] &= $modSettings['pollMode'] == '1' && $context['topicinfo']['id_poll'] <= 0;
 	$context['can_remove_poll'] &= $modSettings['pollMode'] == '1' && $context['topicinfo']['id_poll'] > 0;
 	$context['can_reply'] &= empty($context['topicinfo']['locked']) || allowedTo('moderate_board');
@@ -1171,8 +1084,6 @@ function Display()
 	$context['can_mark_unread'] = !$user_info['is_guest'];
 	$context['can_unwatch'] = !$user_info['is_guest'];
 	$context['can_set_notify'] = !$user_info['is_guest'];
-
-	$context['can_print'] = empty($modSettings['disable_print_topic']);
 
 	// Start this off for quick moderation - it will be or'd for each post.
 	$context['can_remove_post'] = allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']);
@@ -1205,9 +1116,6 @@ function Display()
 
 		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time();
 	}
-
-	// You can't link an existing topic to the calendar unless you can modify the first post...
-	$context['calendar_post'] &= allowedTo('modify_any') || (allowedTo('modify_own') && $context['user']['started']);
 
 	// Load up the "double post" sequencing magic.
 	checkSubmitOnce('register');
@@ -1261,9 +1169,6 @@ function Display()
 	if ($context['can_mark_unread'])
 		$context['normal_buttons']['mark_unread'] = array('text' => 'mark_unread', 'image' => 'markunread.png', 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']);
 
-	if ($context['can_print'])
-		$context['normal_buttons']['print'] = array('text' => 'print', 'image' => 'print.png', 'custom' => 'rel="nofollow"', 'url' => $scripturl . '?action=printpage;topic=' . $context['current_topic'] . '.0');
-
 	if ($context['can_set_notify'])
 		$context['normal_buttons']['notify'] = array(
 			'text' => 'notify_topic_' . $context['topic_notification_mode'],
@@ -1305,9 +1210,6 @@ function Display()
 
 	if ($context['can_merge'])
 		$context['mod_buttons']['merge'] = array('text' => 'merge', 'image' => 'merge.png', 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']);
-
-	if ($context['calendar_post'])
-		$context['mod_buttons']['calendar'] = array('text' => 'calendar_link', 'image' => 'linktocal.png', 'url' => $scripturl . '?action=post;calendar;msg=' . $context['topic_first_message'] . ';topic=' . $context['current_topic'] . '.0');
 
 	// Restore topic. eh?  No monkey business.
 	if ($context['can_restore_topic'])
@@ -1642,8 +1544,6 @@ function Download()
 	global $txt, $modSettings, $user_info, $context, $topic, $smcFunc;
 
 	// Some defaults that we need.
-	$context['character_set'] = empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'ISO-8859-1' : $txt['lang_character_set']) : $modSettings['global_character_set'];
-	$context['utf8'] = $context['character_set'] === 'UTF-8';
 	$context['no_last_modified'] = true;
 
 	// Prevent a preview image from being displayed twice.
@@ -1720,7 +1620,7 @@ function Download()
 	if (!file_exists($filename))
 	{
 		header((preg_match('~HTTP/1\.[01]~i', $_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0') . ' 404 Not Found');
-		header('Content-Type: text/plain; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+		header('Content-Type: text/plain; charset=UTF-8');
 
 		// We need to die like this *before* we send any anti-caching headers as below.
 		die('File not found.');
@@ -1778,21 +1678,20 @@ function Download()
 	}
 
 	// Convert the file to UTF-8, cuz most browsers dig that.
-	$utf8name = !$context['utf8'] && function_exists('iconv') ? iconv($context['character_set'], 'UTF-8', $real_filename) : (!$context['utf8'] && function_exists('mb_convert_encoding') ? mb_convert_encoding($real_filename, 'UTF-8', $context['character_set']) : $real_filename);
 	$disposition = !isset($_REQUEST['image']) ? 'attachment' : 'inline';
 
 	// Different browsers like different standards...
 	if (isBrowser('firefox'))
-		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $utf8name)));
+		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $real_filename)));
 
 	elseif (isBrowser('opera'))
-		header('Content-Disposition: ' . $disposition . '; filename="' . preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $utf8name) . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $real_filename) . '"');
 
 	elseif (isBrowser('ie'))
-		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $utf8name)) . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $real_filename)) . '"');
 
 	else
-		header('Content-Disposition: ' . $disposition . '; filename="' . $utf8name . '"');
+		header('Content-Disposition: ' . $disposition . '; filename="' . $real_filename . '"');
 
 	// If this has an "image extension" - but isn't actually an image - then ensure it isn't cached cause of silly IE.
 	if (!isset($_REQUEST['image']) && in_array($file_ext, array('gif', 'jpg', 'bmp', 'png', 'jpeg', 'tiff')))

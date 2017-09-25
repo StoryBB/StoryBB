@@ -1,0 +1,16 @@
+<html {{#if context.right_to_left}}dir="rtl"{{/if}}>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="robots" content="noindex">
+		<title>{{context.page_title}}</title>
+		<link rel="stylesheet" href="{{settings.theme_url}}/css/index{{context.theme_variant}}css{{modSettings.browser_cache}}">
+		<script src="{{settings.default_theme_url}}/scripts/script.js{{modSettings.browser_cache}}"></script>
+	</head>
+	<body id="help_popup">
+		<div class="windowbg description">
+			{{{context.help_text}}}<br>
+			<br>
+			<a href="javascript:self.close();">{{txt.close_window}}</a>
+		</div>
+	</body>
+</html>

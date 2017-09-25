@@ -846,9 +846,6 @@ function EditBoardSettings($return_config = false)
 	// Here and the board settings...
 	$config_vars = array(
 		array('title', 'settings'),
-			// Inline permissions.
-			array('permissions', 'manage_boards'),
-		'',
 			// Other board settings.
 			array('check', 'countChildPosts'),
 			array('check', 'recycle_enable', 'onclick' => 'document.getElementById(\'recycle_board\').disabled = !this.checked;'),
@@ -887,7 +884,7 @@ function EditBoardSettings($return_config = false)
 		call_integration_hook('integrate_save_board_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=manageboards;sa=settings');
 	}
 

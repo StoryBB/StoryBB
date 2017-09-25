@@ -16,74 +16,6 @@ if (!defined('SMF'))
 
 /**
  * !!!Compatibility!!!
- * Since we changed the editor we don't need it any more, but let's keep it if any mod wants to use it
- * Convert only the BBC that can be edited in HTML mode for the editor.
- *
- * @param string $text The text with bbcode in it
- * @param boolean $compat_mode Whether to actually convert the text
- * @return string The text
- */
-function bbc_to_html($text, $compat_mode = false)
-{
-	global $modSettings;
-
-	if (!$compat_mode)
-		return $text;
-
-	// Turn line breaks back into br's.
-	$text = strtr($text, array("\r" => '', "\n" => '<br>'));
-
-	// Prevent conversion of all bbcode inside these bbcodes.
-	// @todo Tie in with bbc permissions ?
-	foreach (array('code', 'php', 'nobbc') as $code)
-	{
-		if (strpos($text, '[' . $code) !== false)
-		{
-			$parts = preg_split('~(\[/' . $code . '\]|\[' . $code . '(?:=[^\]]+)?\])~i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-			// Only mess with stuff inside tags.
-			for ($i = 0, $n = count($parts); $i < $n; $i++)
-			{
-				// Value of 2 means we're inside the tag.
-				if ($i % 4 == 2)
-					$parts[$i] = strtr($parts[$i], array('[' => '&#91;', ']' => '&#93;', "'" => "'"));
-			}
-			// Put our humpty dumpty message back together again.
-			$text = implode('', $parts);
-		}
-	}
-
-	// What tags do we allow?
-	$allowed_tags = array('b', 'u', 'i', 's', 'hr', 'list', 'li', 'font', 'size', 'color', 'img', 'left', 'center', 'right', 'url', 'email', 'ftp', 'sub', 'sup');
-
-	$text = parse_bbc($text, true, '', $allowed_tags);
-
-	// Fix for having a line break then a thingy.
-	$text = strtr($text, array('<br><div' => '<div', "\n" => '', "\r" => ''));
-
-	// Note that IE doesn't understand spans really - make them something "legacy"
-	$working_html = array(
-		'~<del>(.+?)</del>~i' => '<strike>$1</strike>',
-		'~<span\sclass="bbc_u">(.+?)</span>~i' => '<u>$1</u>',
-		'~<span\sstyle="color:\s*([#\d\w]+);" class="bbc_color">(.+?)</span>~i' => '<font color="$1">$2</font>',
-		'~<span\sstyle="font-family:\s*([#\d\w\s]+);" class="bbc_font">(.+?)</span>~i' => '<font face="$1">$2</font>',
-		'~<div\sstyle="text-align:\s*(left|right);">(.+?)</div>~i' => '<p align="$1">$2</p>',
-	);
-	$text = preg_replace(array_keys($working_html), array_values($working_html), $text);
-
-	// Parse unique ID's and disable javascript into the smileys - using the double space.
-	$i = 1;
-	$text = preg_replace_callback('~(?:\s|&nbsp;)?<(img\ssrc="' . preg_quote($modSettings['smileys_url'], '~') . '/[^<>]+?/([^<>]+?)"\s*)[^<>]*?class="smiley">~',
-		function($m) use (&$i)
-		{
-			return '<' . stripslashes($m[1]) . 'alt="" title="" onresizestart="return false;" id="smiley_' . $i++ . '_' . $m[2] . '" style="padding: 0 3px 0 3px;">';
-		}, $text);
-
-	return $text;
-}
-
-/**
- * !!!Compatibility!!!
  * This is no more needed, but to avoid break mods let's keep it
  * Run it it shouldn't even hurt either, so let's not bother remove it
  *
@@ -137,49 +69,30 @@ function html_to_bbc($text)
 	preg_match_all('~<img\s+[^<>]*?id="*smiley_\d+_([^<>]+?)[\s"/>]\s*[^<>]*?/*>(?:\s)?~i', $text, $matches);
 	if (!empty($matches[0]))
 	{
-		// Easy if it's not custom.
-		if (empty($modSettings['smiley_enable']))
+		// Load all the smileys.
+		$names = array();
+		foreach ($matches[1] as $file)
+			$names[] = $file;
+		$names = array_unique($names);
+
+		if (!empty($names))
 		{
-			$smileysfrom = array('>:D', ':D', '::)', '>:(', ':)', ';)', ';D', ':(', ':o', '8)', ':P', '???', ':-[', ':-X', ':-*', ':\'(', ':-\\', '^-^', 'O0', 'C:-)', '0:)');
-			$smileysto = array('evil.gif', 'cheesy.gif', 'rolleyes.gif', 'angry.gif', 'smiley.gif', 'wink.gif', 'grin.gif', 'sad.gif', 'shocked.gif', 'cool.gif', 'tongue.gif', 'huh.gif', 'embarrassed.gif', 'lipsrsealed.gif', 'kiss.gif', 'cry.gif', 'undecided.gif', 'azn.gif', 'afro.gif', 'police.gif', 'angel.gif');
+			$request = $smcFunc['db_query']('', '
+				SELECT code, filename
+				FROM {db_prefix}smileys
+				WHERE filename IN ({array_string:smiley_filenames})',
+				array(
+					'smiley_filenames' => $names,
+				)
+			);
+			$mappings = array();
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+				$mappings[$row['filename']] = $smcFunc['htmlspecialchars']($row['code']);
+			$smcFunc['db_free_result']($request);
 
 			foreach ($matches[1] as $k => $file)
-			{
-				$found = array_search($file, $smileysto);
-				// Note the weirdness here is to stop double spaces between smileys.
-				if ($found)
-					$matches[1][$k] = '-[]-smf_smily_start#|#' . $smcFunc['htmlspecialchars']($smileysfrom[$found]) . '-[]-smf_smily_end#|#';
-				else
-					$matches[1][$k] = '';
-			}
-		}
-		else
-		{
-			// Load all the smileys.
-			$names = array();
-			foreach ($matches[1] as $file)
-				$names[] = $file;
-			$names = array_unique($names);
-
-			if (!empty($names))
-			{
-				$request = $smcFunc['db_query']('', '
-					SELECT code, filename
-					FROM {db_prefix}smileys
-					WHERE filename IN ({array_string:smiley_filenames})',
-					array(
-						'smiley_filenames' => $names,
-					)
-				);
-				$mappings = array();
-				while ($row = $smcFunc['db_fetch_assoc']($request))
-					$mappings[$row['filename']] = $smcFunc['htmlspecialchars']($row['code']);
-				$smcFunc['db_free_result']($request);
-
-				foreach ($matches[1] as $k => $file)
-					if (isset($mappings[$file]))
-						$matches[1][$k] = '-[]-smf_smily_start#|#' . $mappings[$file] . '-[]-smf_smily_end#|#';
-			}
+				if (isset($mappings[$file]))
+					$matches[1][$k] = '-[]-smf_smily_start#|#' . $mappings[$file] . '-[]-smf_smily_end#|#';
 		}
 
 		// Replace the tags!
@@ -1050,10 +963,6 @@ function legalise_bbc($text)
 	// A list of tags that's disabled by the admin.
 	$disabled = empty($modSettings['disabledBBC']) ? array() : array_flip(explode(',', strtolower($modSettings['disabledBBC'])));
 
-	// Add flash if it's disabled as embedded tag.
-	if (empty($modSettings['enableEmbeddedFlash']))
-		$disabled['flash'] = true;
-
 	// Get a list of all the tags that are not disabled.
 	$all_tags = parse_bbc(false);
 	$valid_tags = array();
@@ -1121,7 +1030,9 @@ function legalise_bbc($text)
 		$lastlen = strlen($text = preg_replace($backToBackPattern, '', $text));
 
 	// Need to sort the tags my name length.
-	uksort($valid_tags, 'sort_array_length');
+	uksort($valid_tags, function ($a, $b) {
+		return strlen($a) < strlen($b) ? 1 : (strlen($a) == strlen($b) ? 0 : -1);
+	});
 
 	// These inline tags can compete with each other regarding style.
 	$competing_tags = array(
@@ -1411,18 +1322,6 @@ function legalise_bbc($text)
 }
 
 /**
- * !!!Compatibility!!!
- * A help function for legalise_bbc for sorting arrays based on length.
- * @param string $a A string
- * @param string $b Another string
- * @return int 1 if $a is shorter than $b, -1 otherwise
- */
-function sort_array_length($a, $b)
-{
-	return strlen($a) < strlen($b) ? 1 : -1;
-}
-
-/**
  * Creates the javascript code for localization of the editor (SCEditor)
  */
 function loadLocale()
@@ -1540,19 +1439,6 @@ function getMessageIcons($board_id)
 	call_integration_hook('integrate_load_message_icons', array(&$icons));
 
 	return array_values($icons);
-}
-
-/**
- * Compatibility function - used in 1.1 for showing a post box.
- *
- * @param string $msg The message
- * @return string The HTML for an editor
- */
-function theme_postbox($msg)
-{
-	global $context;
-
-	return template_control_richedit($context['post_box_name']);
 }
 
 /**
@@ -1677,10 +1563,6 @@ function create_control_richedit($editorOptions)
 			),
 			array(),
 			array(
-				'code' => 'flash',
-				'description' => $editortxt['flash']
-			),
-			array(
 				'code' => 'image',
 				'description' => $editortxt['image']
 			),
@@ -1763,8 +1645,6 @@ function create_control_richedit($editorOptions)
 		$disabled_tags = array();
 		if (!empty($modSettings['disabledBBC']))
 			$disabled_tags = explode(',', $modSettings['disabledBBC']);
-		if (empty($modSettings['enableEmbeddedFlash']))
-			$disabled_tags[] = 'flash';
 
 		foreach ($disabled_tags as $tag)
 		{
@@ -1859,129 +1739,38 @@ function create_control_richedit($editorOptions)
 			'popup' => array(),
 		);
 
-		// Load smileys - don't bother to run a query if we're not using the database's ones anyhow.
-		if (empty($modSettings['smiley_enable']) && $user_info['smiley_set'] != 'none')
-			$context['smileys']['postform'][] = array(
-				'smileys' => array(
-					array(
-						'code' => ':)',
-						'filename' => 'smiley.gif',
-						'description' => $txt['icon_smiley'],
-					),
-					array(
-						'code' => ';)',
-						'filename' => 'wink.gif',
-						'description' => $txt['icon_wink'],
-					),
-					array(
-						'code' => ':D',
-						'filename' => 'cheesy.gif',
-						'description' => $txt['icon_cheesy'],
-					),
-					array(
-						'code' => ';D',
-						'filename' => 'grin.gif',
-						'description' => $txt['icon_grin']
-					),
-					array(
-						'code' => '>:(',
-						'filename' => 'angry.gif',
-						'description' => $txt['icon_angry'],
-					),
-					array(
-						'code' => ':(',
-						'filename' => 'sad.gif',
-						'description' => $txt['icon_sad'],
-					),
-					array(
-						'code' => ':o',
-						'filename' => 'shocked.gif',
-						'description' => $txt['icon_shocked'],
-					),
-					array(
-						'code' => '8)',
-						'filename' => 'cool.gif',
-						'description' => $txt['icon_cool'],
-					),
-					array(
-						'code' => '???',
-						'filename' => 'huh.gif',
-						'description' => $txt['icon_huh'],
-					),
-					array(
-						'code' => '::)',
-						'filename' => 'rolleyes.gif',
-						'description' => $txt['icon_rolleyes'],
-					),
-					array(
-						'code' => ':P',
-						'filename' => 'tongue.gif',
-						'description' => $txt['icon_tongue'],
-					),
-					array(
-						'code' => ':-[',
-						'filename' => 'embarrassed.gif',
-						'description' => $txt['icon_embarrassed'],
-					),
-					array(
-						'code' => ':-X',
-						'filename' => 'lipsrsealed.gif',
-						'description' => $txt['icon_lips'],
-					),
-					array(
-						'code' => ':-\\',
-						'filename' => 'undecided.gif',
-						'description' => $txt['icon_undecided'],
-					),
-					array(
-						'code' => ':-*',
-						'filename' => 'kiss.gif',
-						'description' => $txt['icon_kiss'],
-					),
-					array(
-						'code' => ':\'(',
-						'filename' => 'cry.gif',
-						'description' => $txt['icon_cry'],
-						'isLast' => true,
-					),
-				),
-				'isLast' => true,
-			);
-		elseif ($user_info['smiley_set'] != 'none')
+		if (($temp = cache_get_data('posting_smileys', 480)) == null)
 		{
-			if (($temp = cache_get_data('posting_smileys', 480)) == null)
+			$request = $smcFunc['db_query']('', '
+				SELECT code, filename, description, smiley_row, hidden
+				FROM {db_prefix}smileys
+				WHERE hidden IN (0, 2)
+				ORDER BY smiley_row, smiley_order',
+				array(
+				)
+			);
+			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
-				$request = $smcFunc['db_query']('', '
-					SELECT code, filename, description, smiley_row, hidden
-					FROM {db_prefix}smileys
-					WHERE hidden IN (0, 2)
-					ORDER BY smiley_row, smiley_order',
-					array(
-					)
-				);
-				while ($row = $smcFunc['db_fetch_assoc']($request))
-				{
-					$row['filename'] = $smcFunc['htmlspecialchars']($row['filename']);
-					$row['description'] = $smcFunc['htmlspecialchars']($row['description']);
+				$row['filename'] = $smcFunc['htmlspecialchars']($row['filename']);
+				$row['description'] = $smcFunc['htmlspecialchars']($row['description']);
 
-					$context['smileys'][empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
-				}
-				$smcFunc['db_free_result']($request);
-
-				foreach ($context['smileys'] as $section => $smileyRows)
-				{
-					foreach ($smileyRows as $rowIndex => $smileys)
-						$context['smileys'][$section][$rowIndex]['smileys'][count($smileys['smileys']) - 1]['isLast'] = true;
-
-					if (!empty($smileyRows))
-						$context['smileys'][$section][count($smileyRows) - 1]['isLast'] = true;
-				}
-
-				cache_put_data('posting_smileys', $context['smileys'], 480);
+				$context['smileys'][empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
 			}
-			else
-				$context['smileys'] = $temp;
+			$smcFunc['db_free_result']($request);
+
+			foreach ($context['smileys'] as $section => $smileyRows)
+			{
+				foreach ($smileyRows as $rowIndex => $smileys)
+					$context['smileys'][$section][$rowIndex]['smileys'][count($smileys['smileys']) - 1]['isLast'] = true;
+
+				if (!empty($smileyRows))
+					$context['smileys'][$section][count($smileyRows) - 1]['isLast'] = true;
+			}
+
+			cache_put_data('posting_smileys', $context['smileys'], 480);
 		}
+		else
+			$context['smileys'] = $temp;
 	}
 
 	// Set a flag so the sub template knows what to do...
@@ -2310,6 +2099,7 @@ function AutoSuggestHandler($checkRegistered = null)
 
 	checkSession('get');
 	loadTemplate('Xml');
+	loadTemplateLayout('raw');
 
 	// Any parameters?
 	$context['search_param'] = isset($_REQUEST['search_param']) ? smf_json_decode(base64_decode($_REQUEST['search_param']), true) : array();
@@ -2418,63 +2208,6 @@ function AutoSuggest_Search_MemberGroups()
 		);
 	}
 	$smcFunc['db_free_result']($request);
-
-	return $xml_data;
-}
-
-/**
- * Provides a list of possible SMF versions to use in emulation
- *
- * @return array An array of data for displaying the suggestions
- */
-function AutoSuggest_Search_SMFVersions()
-{
-	global $smcFunc;
-
-	$xml_data = array(
-		'items' => array(
-			'identifier' => 'item',
-			'children' => array(),
-		),
-	);
-
-	// First try and get it from the database.
-	$versions = array();
-	$request = $smcFunc['db_query']('', '
-		SELECT data
-		FROM {db_prefix}admin_info_files
-		WHERE filename = {string:latest_versions}
-			AND path = {string:path}',
-		array(
-			'latest_versions' => 'latest-versions.txt',
-			'path' => '/smf/',
-		)
-	);
-	if (($smcFunc['db_num_rows']($request) > 0) && ($row = $smcFunc['db_fetch_assoc']($request)) && !empty($row['data']))
-	{
-		// The file can be either Windows or Linux line endings, but let's ensure we clean it as best we can.
-		$possible_versions = explode("\n", $row['data']);
-		foreach ($possible_versions as $ver)
-		{
-			$ver = trim($ver);
-			if (strpos($ver, 'SMF') === 0)
-				$versions[] = $ver;
-		}
-	}
-	$smcFunc['db_free_result']($request);
-
-	// Just in case we don't have ANYthing.
-	if (empty($versions))
-		$versions = array('SMF 2.0');
-
-	foreach ($versions as $id => $version)
-		if (strpos($version, strtoupper($_REQUEST['search'])) !== false)
-			$xml_data['items']['children'][] = array(
-				'attributes' => array(
-					'id' => $id,
-				),
-				'value' => $version,
-			);
 
 	return $xml_data;
 }

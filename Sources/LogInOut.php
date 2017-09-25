@@ -23,7 +23,7 @@ if (!defined('SMF'))
  */
 function Login()
 {
-	global $txt, $context, $scripturl, $user_info;
+	global $txt, $context, $scripturl, $user_info, $modSettings;
 
 	// You are already logged in, go take a tour of the boards
 	if (!empty($user_info['id']))
@@ -31,9 +31,8 @@ function Login()
 
 	// We need to load the Login template/language file.
 	loadLanguage('Login');
-	loadTemplate('Login');
 
-	$context['sub_template'] = 'login';
+	$context['sub_template'] = 'login_main';
 
 	if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
 	{
@@ -46,6 +45,7 @@ function Login()
 	$context['default_username'] = &$_REQUEST['u'];
 	$context['default_password'] = '';
 	$context['never_expire'] = false;
+	$context['ajax_nonssl'] = !empty($context['from_ajax']) && (empty($modSettings['force_ssl']) || $modSettings['force_ssl'] == 2);
 
 	// Add the login chain to the link tree.
 	$context['linktree'][] = array(
@@ -189,9 +189,7 @@ function Login2()
 		$modSettings['cookieTime'] = (int) $_POST['cookielength'];
 
 	loadLanguage('Login');
-	// Load the template stuff.
-	loadTemplate('Login');
-	$context['sub_template'] = 'login';
+	$context['sub_template'] = 'login_main';
 
 	// Set up the default/fallback stuff.
 	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user'])) : '';
@@ -339,16 +337,8 @@ function Login2()
 				$other_passwords[] = sha1($user_settings['password_salt'] . sha1($user_settings['password_salt'] . sha1($_POST['passwrd'])));
 
 			// Perhaps we converted to UTF-8 and have a valid password being hashed differently.
-			if ($context['character_set'] == 'UTF-8' && !empty($modSettings['previousCharacterSet']) && $modSettings['previousCharacterSet'] != 'utf8')
-			{
-				// Try iconv first, for no particular reason.
-				if (function_exists('iconv'))
-					$other_passwords['iconv'] = sha1(strtolower(iconv('UTF-8', $modSettings['previousCharacterSet'], $user_settings['member_name'])) . un_htmlspecialchars(iconv('UTF-8', $modSettings['previousCharacterSet'], $_POST['passwrd'])));
-
-				// Say it aint so, iconv failed!
-				if (empty($other_passwords['iconv']) && function_exists('mb_convert_encoding'))
-					$other_passwords[] = sha1(strtolower(mb_convert_encoding($user_settings['member_name'], 'UTF-8', $modSettings['previousCharacterSet'])) . un_htmlspecialchars(mb_convert_encoding($_POST['passwrd'], 'UTF-8', $modSettings['previousCharacterSet'])));
-			}
+			if (!empty($modSettings['previousCharacterSet']) && $modSettings['previousCharacterSet'] != 'utf8')
+				$other_passwords['iconv'] = sha1(strtolower(iconv('UTF-8', $modSettings['previousCharacterSet'], $user_settings['member_name'])) . un_htmlspecialchars(iconv('UTF-8', $modSettings['previousCharacterSet'], $_POST['passwrd'])));
 		}
 
 		// SMF's sha1 function can give a funny result on Linux (Not our fault!). If we've now got the real one let the old one be valid!

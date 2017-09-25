@@ -195,7 +195,7 @@ function KickGuest()
 	if (strpos($_SERVER['REQUEST_URL'], 'dlattach') === false)
 		$_SESSION['login_url'] = $_SERVER['REQUEST_URL'];
 
-	$context['sub_template'] = 'kick_guest';
+	$context['sub_template'] = 'login_kick_guest';
 	$context['page_title'] = $txt['login'];
 }
 
@@ -216,7 +216,7 @@ function InMaintenance()
 	header('HTTP/1.1 503 Service Temporarily Unavailable');
 
 	// Basic template stuff..
-	$context['sub_template'] = 'maintenance';
+	$context['sub_template'] = 'login_maintenance';
 	$context['title'] = $smcFunc['htmlspecialchars']($mtitle);
 	$context['description'] = &$mmessage;
 	$context['page_title'] = $txt['maintain_mode'];
@@ -232,7 +232,7 @@ function InMaintenance()
  */
 function adminLogin($type = 'admin')
 {
-	global $context, $txt, $user_settings, $user_info;
+	global $context, $txt, $user_settings, $user_info, $scripturl, $modSettings;
 
 	loadLanguage('Admin');
 	loadTemplate('Login');
@@ -268,7 +268,8 @@ function adminLogin($type = 'admin')
 		$context['post_data'] .= adminLogin_outputPostVars($k, $v);
 
 	// Now we'll use the admin_login sub template of the Login template.
-	$context['sub_template'] = 'admin_login';
+	$context['form_scripturl'] = !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl;
+	$context['sub_template'] = 'login_admin';
 
 	// And title the page something like "Login".
 	if (!isset($context['page_title']))
@@ -513,8 +514,7 @@ function RequestMembers()
 	$_REQUEST['search'] = trim($smcFunc['strtolower']($_REQUEST['search']));
 	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));
 
-	if (function_exists('iconv'))
-		header('Content-Type: text/plain; charset=UTF-8');
+	header('Content-Type: text/plain; charset=UTF-8');
 
 	$request = $smcFunc['db_query']('', '
 		SELECT real_name
@@ -531,13 +531,6 @@ function RequestMembers()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		if (function_exists('iconv'))
-		{
-			$utf8 = iconv($txt['lang_character_set'], 'UTF-8', $row['real_name']);
-			if ($utf8)
-				$row['real_name'] = $utf8;
-		}
-
 		$row['real_name'] = strtr($row['real_name'], array('&amp;' => '&#038;', '&lt;' => '&#060;', '&gt;' => '&#062;', '&quot;' => '&#034;'));
 
 		if (preg_match('~&#\d+;~', $row['real_name']) != 0)

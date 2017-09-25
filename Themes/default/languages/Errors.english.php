@@ -63,10 +63,6 @@ $txt['cannot_post_unapproved_attachments'] = 'You do not have permission to post
 $txt['cannot_post_unapproved_topics'] = 'You do not have permission to post unapproved topics.';
 $txt['cannot_post_unapproved_replies_own'] = 'You do not have permission to post unapproved replies to your topics.';
 $txt['cannot_post_unapproved_replies_any'] = 'You do not have permission to post unapproved replies to other users\' topics.';
-$txt['cannot_calendar_edit_any'] = 'You cannot edit calendar events.';
-$txt['cannot_calendar_edit_own'] = 'You don\'t have the privileges necessary to edit your own events.';
-$txt['cannot_calendar_post'] = 'Event posting isn\'t allowed - sorry.';
-$txt['cannot_calendar_view'] = 'Sorry, but you are not allowed to view the calendar.';
 $txt['cannot_remove_any'] = 'Sorry, but you don\'t have the privilege to remove just any topic. Check to make sure this topic wasn\'t just moved to another board.';
 $txt['cannot_remove_own'] = 'You cannot delete your own topics in this board. Check to make sure this topic wasn\'t just moved to another board.';
 $txt['cannot_edit_news'] = 'You are not allowed to edit news items on this forum.';
@@ -114,7 +110,6 @@ $txt['cannot_profile_title_any'] = 'You cannot edit people\'s custom titles.';
 $txt['cannot_profile_extra_own'] = 'Sorry, but you don\'t have the necessary permissions to edit your profile data.';
 $txt['cannot_profile_identity_own'] = 'You can\'t change your identity at the current moment.';
 $txt['cannot_profile_title_own'] = 'You are not allowed to change your custom title.';
-$txt['cannot_profile_server_avatar'] = 'You are not permitted to use a server stored avatar.';
 $txt['cannot_profile_upload_avatar'] = 'You do not have permission to upload an avatar.';
 $txt['cannot_profile_remote_avatar'] = 'You don\'t have the privilege of using a remote avatar.';
 $txt['cannot_profile_view'] = 'Many apologies, but you can\'t view just any profile.';
@@ -148,19 +143,10 @@ $txt['no_mods'] = 'No moderators found!';
 $txt['parent_not_found'] = 'Board structure corrupt: unable to find parent board';
 $txt['modify_post_time_passed'] = 'You may not modify this post as the time limit for edits has passed.';
 
-$txt['calendar_off'] = 'You cannot access the calendar right now because it is disabled.';
-$txt['calendar_export_off'] = 'You cannot export calendar events because that feature is currently disabled.';
 $txt['invalid_month'] = 'Invalid month value.';
 $txt['invalid_year'] = 'Invalid year value.';
 $txt['invalid_day'] = 'Invalid day value.';
-$txt['event_month_missing'] = 'Event month is missing.';
-$txt['event_year_missing'] = 'Event year is missing.';
-$txt['event_day_missing'] = 'Event day is missing.';
-$txt['event_title_missing'] = 'Event title is missing.';
 $txt['invalid_date'] = 'Invalid date.';
-$txt['no_event_title'] = 'No event title was entered.';
-$txt['missing_event_id'] = 'Missing event ID.';
-$txt['cant_edit_event'] = 'You do not have permission to edit this event.';
 $txt['missing_board_id'] = 'Board ID is missing.';
 $txt['missing_topic_id'] = 'Topic ID is missing.';
 $txt['topic_doesnt_exist'] = 'Topic doesn\'t exist.';
@@ -217,7 +203,6 @@ $txt['remind_WaitTime_broken'] = 'Your last reminder was less than %1$d seconds 
 $txt['email_missing_data'] = 'You must enter something in both the subject and message boxes.';
 
 $txt['topic_gone'] = 'The topic or board you are looking for appears to be either missing or off limits to you.';
-$txt['theme_edit_missing'] = 'The file you are trying to edit can\'t be found.';
 
 $txt['no_dump_database'] = 'Only administrators can make database backups.';
 $txt['pm_not_yours'] = 'The personal message you\'re trying to quote is not your own or does not exist, please go back and try again.';
@@ -235,7 +220,6 @@ $txt['error_no_name'] = 'No name was provided.';
 $txt['error_bad_name'] = 'The name you submitted cannot be used, because it is or contains a reserved name.';
 $txt['error_no_email'] = 'No email address was provided.';
 $txt['error_bad_email'] = 'An invalid email address was given.';
-$txt['error_no_event'] = 'No event name has been given.';
 $txt['error_no_subject'] = 'No subject was filled in.';
 $txt['error_no_question'] = 'No question was filled in for this poll.';
 $txt['error_no_message'] = 'The message body was left empty.';
@@ -278,20 +262,14 @@ $txt['unable_to_create_temporary'] = 'The search function was unable to create t
 
 $txt['package_no_file'] = 'Unable to find package file!';
 $txt['packageget_unable'] = 'Unable to connect to the server. Please try using <a href="%1$s" target="_blank" class="new_win">this URL</a> instead.';
-$txt['not_on_simplemachines'] = 'Sorry, packages can only be downloaded like this from the simplemachines.org server.';
 $txt['package_cant_uninstall'] = 'This package was either never installed or was already uninstalled - you can\'t uninstall it now.';
 $txt['package_cant_download'] = 'You cannot download or install new packages because the Packages directory or one of the files in it are not writable!';
-$txt['package_upload_error_nofile'] = 'You did not select a package to upload.';
-$txt['package_upload_error_failed'] = 'Could not upload package, please check directory permissions!';
-$txt['package_upload_error_exists'] = 'The file you are uploading already exists on the server. Please delete it first then try again.';
-$txt['package_upload_error_supports'] = 'The package manager currently allows only these file types: %1$s.';
-$txt['package_upload_error_broken'] = 'Package upload failed due to the following error:<br>&quot;%1$s&quot;';
 $txt['package_theme_upload_error_broken'] = 'Theme upload failed due to the following error:<br>&quot;%1$s&quot;';
 
 $txt['package_get_error_not_found'] = 'The package you are trying to install cannot be located. You may want to manually upload the package to your Packages directory.';
 $txt['package_get_error_missing_xml'] = 'The package you are attempting to install is missing the package-info.xml that must be in the root package directory.';
-$txt['package_get_error_is_zero'] = 'Although the package was downloaded to the server it appears to be empty. Please check the Packages directory, and the &quot;temp&quot; sub-directory are both writable. If you continue to experience this problem you should try extracting the package on your PC and uploading the extracted files into a subdirectory in your Packages directory and try again. For example, if the package was called shout.tar.gz you should:<br>1) Download the package to your local PC and extract it into files.<br>2) Using an FTP client create a new directory in your &quot;Packages&quot; folder, in this example you may call it "shout".<br>3) Upload all the files from the extracted package to this directory.<br>4) Go back to the package manager browse page and the package will be automatically found by SMF.';
-$txt['package_get_error_packageinfo_corrupt'] = 'SMF was unable to find any valid information within the package-info.xml file included within the Package. There may be an error with the modification, or the package may be corrupt.';
+$txt['package_get_error_is_zero'] = 'Although the package was downloaded to the server it appears to be empty. Please check the Packages directory, and the &quot;temp&quot; sub-directory are both writable. If you continue to experience this problem you should try extracting the package on your PC and uploading the extracted files into a subdirectory in your Packages directory and try again. For example, if the package was called shout.tar.gz you should:<br>1) Download the package to your local PC and extract it into files.<br>2) Using an FTP client create a new directory in your &quot;Packages&quot; folder, in this example you may call it "shout".<br>3) Upload all the files from the extracted package to this directory.<br>4) Go back to the package manager browse page and the package will be automatically found by StoryBB.';
+$txt['package_get_error_packageinfo_corrupt'] = 'StoryBB was unable to find any valid information within the package-info.xml file included within the Package. There may be an error with the modification, or the package may be corrupt.';
 $txt['package_get_error_is_theme'] = 'You can\'t install a Theme from this section, please use the <a href="{MANAGETHEMEURL}">Themes and Layout</a> management page to upload it';
 $txt['package_get_error_is_mod'] = 'You can\'t install a mod from this section, please use the <a href="{MANAGEMODURL}">Package manager</a> page to upload it';
 $txt['package_get_error_theme_not_compatible'] = 'Your theme does not show it has compatibility with %1$s. Please contact the theme author.';
@@ -340,8 +318,6 @@ $txt['profile_error_password_restricted_words'] = 'Your password must not contai
 $txt['profile_error_password_chars'] = 'Your password must contain a mix of upper and lower case letters, as well as digits.';
 $txt['profile_error_already_requested_group'] = 'You already have an outstanding request for this group!';
 $txt['profile_error_signature_not_yet_saved'] = 'The signature has not been saved.';
-$txt['profile_error_personal_text_too_long'] = 'The personal text is too long.';
-$txt['profile_error_user_title_too_long'] = 'The custom title is too long.';
 $txt['profile_error_custom_field_mail_fail'] = 'The mail validation check returned an error, you need to enter a valid email format (user@domain).';
 $txt['profile_error_custom_field_regex_fail'] = 'The regex verification returned an error, if you are unsure about what to type here, please contact the forum administrator.';
 
@@ -401,7 +377,7 @@ $txt['custom_option_regex_error'] = 'The regex you entered is not valid';
 $txt['warning_no_reason'] = 'You must enter a reason for altering the warning state of a member';
 $txt['warning_notify_blank'] = 'You selected to notify the user but did not fill in the subject/message fields';
 
-$txt['cannot_connect_doc_site'] = 'Could not connect to the Simple Machines Online Manual. Please check that your server configuration allows external internet connections and try again later.';
+$txt['cannot_connect_doc_site'] = 'Could not connect to the StoryBB Online Manual. Please check that your server configuration allows external internet connections and try again later.';
 
 $txt['movetopic_no_reason'] = 'You must enter a reason for moving the topic, or uncheck the option to \'post a redirection topic\'.';
 
@@ -414,7 +390,7 @@ $txt['error_custom_field_empty'] = 'The &quot;%1$s&quot; field cannot be left bl
 $txt['email_no_template'] = 'The email template &quot;%1$s&quot; could not be found.';
 
 $txt['search_api_missing'] = 'The search API could not be found. Please contact the admin to check they have uploaded the correct files.';
-$txt['search_api_not_compatible'] = 'The selected search API the forum is using is out of date - falling back to standard search. Please check file %1$s.';
+$txt['search_api_not_compatible'] = 'The selected search API the forum is using ia not compatible - falling back to standard search. Please check file %1$s.';
 
 // Handling hook calls
 $txt['hook_fail_loading_file'] = 'Hook call: The file at path: %s could not be loaded.';
@@ -431,8 +407,6 @@ $txt['cannot_restore_first_post'] = 'You cannot restore the first post in a topi
 $txt['parent_topic_missing'] = 'The parent topic of the post you are trying to restore has been deleted.';
 $txt['restored_disabled'] = 'The restoration of topics has been disabled.';
 $txt['restore_not_found'] = 'The following messages could not be restored; the original topic may have been removed:<ul style="margin-top: 0px;">%1$s</ul>You will need to move these manually.';
-
-$txt['error_invalid_dir'] = 'The directory you entered is invalid.';
 
 // json errors.
 $txt['json_JSON_ERROR_DEPTH'] = 'Json decode error: The maximum stack depth has been exceeded';

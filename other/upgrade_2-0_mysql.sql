@@ -212,7 +212,6 @@ $nameChanges = array(
 		'unreadMessages' => 'unreadMessages unread_messages smallint(5) NOT NULL default \'0\'',
 		'messageLabels' => 'messageLabels message_labels text NOT NULL',
 		'emailAddress' => 'emailAddress email_address varchar(255) NOT NULL default \'\'',
-		'personalText' => 'personalText personal_text varchar(255) NOT NULL default \'\'',
 		'websiteTitle' => 'websiteTitle website_title varchar(255) NOT NULL default \'\'',
 		'websiteUrl' => 'websiteUrl website_url varchar(255) NOT NULL default \'\'',
 		'ICQ' => 'ICQ icq varchar(255) NOT NULL default \'\'',
@@ -640,15 +639,6 @@ if (smf_mysql_num_rows($request) == 0)
 			('reg_verification', '" . (!empty($modSettings['visual_verification_type']) ? 1 : 0) . "')");
 }
 ---}
----#
-
----# Changing default personal text setting.
-UPDATE {$db_prefix}settings
-SET variable = 'default_personal_text'
-WHERE variable = 'default_personalText';
-
-DELETE FROM {$db_prefix}settings
-WHERE variable = 'default_personalText';
 ---#
 
 ---# Removing allow hide email setting.
@@ -2479,7 +2469,6 @@ $nameChanges = array(
 		'real_name' => 'real_name real_name varchar(255) NOT NULL default \'\'',
 		'pm_ignore_list' => 'pm_ignore_list pm_ignore_list varchar(255) NOT NULL default \'\'',
 		'email_address' => 'email_address email_address varchar(255) NOT NULL default \'\'',
-		'personal_text' => 'personal_text personal_text varchar(255) NOT NULL default \'\'',
 		'website_title' => 'website_title website_title varchar(255) NOT NULL default \'\'',
 		'website_url' => 'website_url website_url varchar(255) NOT NULL default \'\'',
 		'location' => 'location location varchar(255) NOT NULL default \'\'',
@@ -2487,7 +2476,6 @@ $nameChanges = array(
 		'aim' => 'aim aim varchar(255) NOT NULL default \'\'',
 		'msn' => 'msn msn varchar(255) NOT NULL default \'\'',
 		'avatar' => 'avatar avatar varchar(255) NOT NULL default \'\'',
-		'usertitle' => 'usertitle usertitle varchar(255) NOT NULL default \'\'',
 		'member_ip' => 'member_ip member_ip varchar(255) NOT NULL default \'\'',
 		'member_ip2' => 'member_ip2 member_ip2 varchar(255) NOT NULL default \'\'',
 		'secret_question' => 'secret_question secret_question varchar(255) NOT NULL default \'\'',

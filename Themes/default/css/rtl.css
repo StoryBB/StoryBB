@@ -162,7 +162,7 @@ h1.forumtitle {
 #siteslogan, img#smflogo {
 	float: left;
 }
-/* Tweak the SMF logo */
+/* Tweak the StoryBB logo */
 img#smflogo {
 	margin-right: 1em;
 }
@@ -650,10 +650,6 @@ tr.windowbg2 th.stats_month, tr.windowbg2 td.stats_day {
 }
 .move_links {
 	padding: 0 0 0 13px;
-}
-
-span.search_weight {
-	text-align: left;
 }
 
 /* Manage Bans */

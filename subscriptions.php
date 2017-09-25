@@ -11,7 +11,7 @@
  * @version 3.0 Alpha 1
  */
 
-// Start things rolling by getting SMF alive...
+// Start things rolling by getting StoryBB alive...
 $ssi_guest_access = true;
 if (!file_exists(dirname(__FILE__) . '/SSI.php'))
 	die('Cannot find SSI.php');
@@ -27,7 +27,7 @@ loadLanguage('ManagePaid');
 // If there's literally nothing coming in, let's take flight!
 if (empty($_POST))
 {
-	header('Content-Type: text/html; charset=' . (empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'ISO-8859-1' : $txt['lang_character_set']) : $modSettings['global_character_set']));
+	header('Content-Type: text/html; charset=UTF-8');
 	die($txt['paid_no_data']);
 }
 

@@ -59,7 +59,6 @@ function HelpIndex()
 		'bbc' => 'Bulletin_board_code',
 		'personal_messages' => 'Personal_messages',
 		'memberlist' => 'Memberlist',
-		'calendar' => 'Calendar',
 		'features' => 'Features',
 	);
 
@@ -109,7 +108,7 @@ function HelpRules()
 	$context['canonical_url'] = $scripturl . '?action=help;sa=rules';
 
 	$context['page_title'] = $txt['terms_and_rules'];
-	$context['sub_template'] = 'terms';
+	$context['sub_template'] = 'help_terms';
 }
 
 /**

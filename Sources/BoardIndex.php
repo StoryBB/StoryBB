@@ -25,7 +25,6 @@ function BoardIndex()
 	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl;
 
 	loadTemplate('BoardIndex');
-	$context['template_layers'][] = 'boardindex_outer';
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl;
@@ -60,44 +59,13 @@ function BoardIndex()
 		}
 
 		if (!empty($context['latest_posts']) || !empty($context['latest_post']))
-			$context['info_center'][] = array(
-				'tpl' => 'recent',
-				'txt' => 'recent_posts',
-			);
-	}
-
-	// Load the calendar?
-	if (!empty($modSettings['cal_enabled']) && allowedTo('calendar_view'))
-	{
-		// Retrieve the calendar data (events, birthdays, holidays).
-		$eventOptions = array(
-			'include_holidays' => $modSettings['cal_showholidays'] > 1,
-			'include_birthdays' => $modSettings['cal_showbdays'] > 1,
-			'include_events' => $modSettings['cal_showevents'] > 1,
-			'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
-		);
-		$context += cache_quick_get('calendar_index_offset_' . ($user_info['time_offset'] + $modSettings['time_offset']), 'Subs-Calendar.php', 'cache_getRecentEvents', array($eventOptions));
-
-		// Whether one or multiple days are shown on the board index.
-		$context['calendar_only_today'] = $modSettings['cal_days_for_index'] == 1;
-
-		// This is used to show the "how-do-I-edit" help.
-		$context['calendar_can_edit'] = allowedTo('calendar_edit_any');
-
-		if ($context['show_calendar'])
-			$context['info_center'][] = array(
-				'tpl' => 'calendar',
-				'txt' => $context['calendar_only_today'] ? 'calendar_today' : 'calendar_upcoming',
-			);
+			$context['info_center'][] = 'recent';
 	}
 
 	// And stats.
 	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
 	if ($settings['show_stats_index'])
-		$context['info_center'][] = array(
-				'tpl' => 'stats',
-				'txt' => 'forum_stats',
-			);
+		$context['info_center'][] = 'stats';
 
 	// Now the online stuff
 	require_once($sourcedir . '/Subs-MembersOnline.php');
@@ -109,10 +77,7 @@ function BoardIndex()
 	$context += getMembersOnlineStats($membersOnlineOptions);
 	$context['show_buddies'] = !empty($user_info['buddies']);
 	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
-	$context['info_center'][] = array(
-				'tpl' => 'online',
-				'txt' => 'online_users',
-			);
+	$context['info_center'][] = 'online';
 
 	// Track most online statistics? (Subs-MembersOnline.php)
 	if (!empty($modSettings['trackStats']))

@@ -4,13 +4,7 @@ Settings.php
 Settings_bak.php
 db_last_error.php
 cache/data*.php
-Packages/backups/*
-Packages/temp
 *.*~
-Packages/*.tgz
-Packages/*.tar.gz
-Packages/*.zip
-Packages/*/
 attachments/
 /upgrade.php
 Themes/default/css/minified.css
@@ -44,7 +38,6 @@ Themes/default/scripts/minified_deferred.js
 # Logs and databases #
 ######################
 *.log
-*.sql
 *.sqlite
 *.session
 

@@ -24,7 +24,7 @@ function ModifyProfile($post_errors = array())
 {
 	global $txt, $scripturl, $user_info, $context, $sourcedir, $user_profile, $cur_profile;
 	global $modSettings, $memberContext, $profile_vars, $post_errors, $user_settings;
-	global $db_show_debug, $smcFunc;
+	global $db_show_debug, $smcFunc, $settings;
 
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))
@@ -487,7 +487,7 @@ function ModifyProfile($post_errors = array())
 
 	addInlineCss('
 span.char_avatar { width: 25px; height: 25px; background-size: contain !important; background-position: 50% 50%; }
-span.char_unknown { background-image: url(' . $modSettings['avatar_url'] . '/default.png); }');
+span.char_unknown { background-image: url(' . $settings['images_url'] . '/default.png); }');
 
 	$char_sheet_override = allowedTo('admin_forum') || $context['user']['is_owner'];
 	// Now we need to add the user's characters to the profile menu, "creatively".
@@ -777,12 +777,6 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 			elseif (isset($profile_vars['real_name']))
 				updateSettings(array('memberlist_updated' => time()));
 
-			// If the member changed his/her birthdate, update calendar statistics.
-			if (isset($profile_vars['birthdate']) || isset($profile_vars['real_name']))
-				updateSettings(array(
-					'calendar_updated' => time(),
-				));
-
 			// Anything worth logging?
 			if (!empty($context['log_changes']) && !empty($modSettings['modlog_enabled']))
 			{
@@ -853,7 +847,8 @@ function profile_popup($memID)
 	$db_show_debug = false;
 
 	// We only want to output our little layer here.
-	$context['template_layers'] = array();
+	$template = loadTemplateLayout('raw');
+	$context['template_layers'] = [];
 
 	// This list will pull from the master list wherever possible. Hopefully it should be clear what does what.
 	$profile_items = array(
@@ -936,6 +931,7 @@ function alerts_popup($memID)
 
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
+	$template = loadTemplateLayout('raw');
 
 	$context['unread_alerts'] = array();
 	if (empty($_REQUEST['counter']) || (int) $_REQUEST['counter'] < $cur_profile['alerts'])

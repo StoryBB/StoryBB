@@ -375,7 +375,7 @@ function template_unapproved_posts()
 	// Just a big table of it all really...
 	echo '
 	<div id="modcenter">
-	<form action="', $scripturl, '?action=moderate;area=postmod;start=', $context['start'], ';sa=', $context['current_view'], '" method="post" accept-charset="', $context['character_set'], '">
+	<form action="', $scripturl, '?action=moderate;area=postmod;start=', $context['start'], ';sa=', $context['current_view'], '" method="post" accept-charset="UTF-8">
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['mc_unapproved_posts'], '</h3>
 		</div>';
@@ -416,8 +416,7 @@ function template_unapproved_posts()
 			', $context['menu_separator'], '
 				<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';delete=', $item['id'], '">', $remove_button, '</a>';
 
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
-			echo '
+		echo '
 				<input type="checkbox" name="item[]" value="', $item['id'], '" checked class="input_check"> ';
 
 		echo '
@@ -428,8 +427,7 @@ function template_unapproved_posts()
 	echo '
 		<div class="pagesection">';
 
-	if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1)
-		echo '
+	echo '
 			<div class="floatright">
 				<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(\'', $txt['mc_unapproved_sure'], '\')) submit();">
 					<option value="0">', $txt['with_selected'], ':</option>
@@ -504,7 +502,7 @@ function template_moderation_settings()
 	if (!empty($context['can_moderate_approvals']))
 	{
 		echo '
-		<form action="', $scripturl, '?action=moderate;area=settings" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=moderate;area=settings" method="post" accept-charset="UTF-8">
 			<div class="windowbg">
 				<dl class="settings">
 					<dt>
@@ -541,7 +539,7 @@ function template_show_notice()
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
 	<head>
-		<meta charset="', $context['character_set'], '">
+		<meta charset="UTF-8">
 		<title>', $context['page_title'], '</title>
 		<link rel="stylesheet" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css', $modSettings['browser_cache'], '">
 	</head>
@@ -576,7 +574,7 @@ function template_warn_template()
 
 	echo '
 	<div id="modcenter">
-		<form action="', $scripturl, '?action=moderate;area=warnings;sa=templateedit;tid=', $context['id_template'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=moderate;area=warnings;sa=templateedit;tid=', $context['id_template'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $context['page_title'], '</h3>
 			</div>

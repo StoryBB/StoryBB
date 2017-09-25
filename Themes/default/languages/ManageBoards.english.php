@@ -82,7 +82,6 @@ $txt['no_valid_parent'] = 'Board %1$s does not have a valid parent. Use the \'fi
 $txt['mboards_recycle_disabled_delete'] = 'Note: You must select an alternative recycle bin board or disable recycling before you can delete this board.';
 
 $txt['mboards_settings_desc'] = 'Edit general board and category settings.';
-$txt['groups_manage_boards'] = 'Membergroups allowed to manage boards and categories';
 $txt['mboards_settings_submit'] = 'Save';
 $txt['recycle_enable'] = 'Enable recycling of deleted topics';
 $txt['recycle_board'] = 'Board for recycled topics';

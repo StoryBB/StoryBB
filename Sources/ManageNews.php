@@ -1060,10 +1060,6 @@ function ModifyNewsSettings($return_config = false)
 
 	$config_vars = array(
 		array('title', 'settings'),
-			// Inline permissions.
-			array('permissions', 'edit_news', 'help' => ''),
-			array('permissions', 'send_mail'),
-		'',
 			// Just the remaining settings.
 			array('check', 'xmlnews_enable', 'onclick' => 'document.getElementById(\'xmlnews_maxlen\').disabled = !this.checked;'),
 			array('int', 'xmlnews_maxlen', 'subtext' => $txt['xmlnews_maxlen_note'], 10),
@@ -1096,7 +1092,7 @@ function ModifyNewsSettings($return_config = false)
 		call_integration_hook('integrate_save_news_settings');
 
 		saveDBSettings($config_vars);
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=news;sa=settings');
 	}
 

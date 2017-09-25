@@ -40,13 +40,13 @@ function db_packages_init()
 
 	// We setup an array of SMF tables we can't do auto-remove on - in case a mod writer cocks it up!
 	$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'ban_items',
-		'board_permissions', 'boards', 'calendar', 'calendar_holidays', 'categories',
+		'board_permissions', 'boards', 'categories',
 		'custom_fields', 'group_moderators', 'log_actions', 'log_activity', 'log_banned', 'log_boards',
 		'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_mark_read',
-		'log_notify', 'log_online', 'log_packages', 'log_polls', 'log_reported', 'log_reported_comments',
+		'log_notify', 'log_online', 'log_polls', 'log_reported', 'log_reported_comments',
 		'log_scheduled_tasks', 'log_search_messages', 'log_search_results', 'log_search_subjects',
 		'log_search_topics', 'log_topics', 'mail_queue', 'membergroups', 'members', 'message_icons',
-		'messages', 'moderators', 'package_servers', 'permission_profiles', 'permissions', 'personal_messages',
+		'messages', 'moderators', 'permission_profiles', 'permissions', 'personal_messages',
 		'pm_recipients', 'poll_choices', 'polls', 'scheduled_tasks', 'sessions', 'settings', 'smileys',
 		'themes', 'topics');
 	foreach ($reservedTables as $k => $table_name)

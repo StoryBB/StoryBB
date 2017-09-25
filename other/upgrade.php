@@ -28,8 +28,6 @@ $databases = array(
 		'version' => '5.0.3',
 		'version_check' => 'global $db_connection; return min(mysqli_get_server_info($db_connection), mysqli_get_client_info());',
 		'utf8_support' => true,
-		'utf8_version' => '5.0.3',
-		'utf8_version_check' => 'global $db_connection; return mysqli_get_server_info($db_connection);',
 		'alter_support' => true,
 	),
 	'postgresql' => array(
@@ -421,7 +419,7 @@ function redirectLocation($location, $addForm = true)
 // Load all essential data and connect to the DB as this is pre SSI.php
 function loadEssentialData()
 {
-	global $db_server, $db_user, $db_passwd, $db_name, $db_connection, $db_prefix, $db_character_set, $db_type;
+	global $db_server, $db_user, $db_passwd, $db_name, $db_connection, $db_prefix, $db_type;
 	global $modSettings, $sourcedir, $smcFunc;
 
 	// Do the non-SSI stuff...
@@ -464,12 +462,12 @@ function loadEssentialData()
 		if ($db_connection === null)
 			die('Unable to connect to database - please check username and password are correct in Settings.php');
 
-		if ($db_type == 'mysql' && isset($db_character_set) && preg_match('~^\w+$~', $db_character_set) === 1)
+		if ($db_type == 'mysql')
 			$smcFunc['db_query']('', '
 			SET NAMES {string:db_character_set}',
 			array(
 				'db_error_skip' => true,
-				'db_character_set' => $db_character_set,
+				'db_character_set' => 'UTF-8',
 			)
 		);
 
@@ -904,7 +902,7 @@ function checkLogin()
 // Step 1: Do the maintenance and backup.
 function UpgradeOptions()
 {
-	global $db_prefix, $command_line, $modSettings, $is_debug, $smcFunc, $packagesdir, $tasksdir, $language;
+	global $db_prefix, $command_line, $modSettings, $is_debug, $smcFunc, $tasksdir, $language;
 	global $boarddir, $boardurl, $sourcedir, $maintenance, $cachedir, $upcontext, $db_type, $db_server, $db_last_error;
 
 	$upcontext['sub_template'] = 'upgrade_options';
@@ -1081,10 +1079,6 @@ function UpgradeOptions()
 				$changes['db_port'] = '\'\'';
 		}
 	}
-
-	// Maybe we haven't had this option yet?
-	if (empty($packagesdir))
-		$changes['packagesdir'] = '\'' . fixRelativePath($boarddir) . '/Packages\'';
 
 	// Add support for $tasksdir var.
 	if (empty($tasksdir))
@@ -1471,7 +1465,6 @@ function convertSettingsToTheme()
 		'show_bbc' => isset($GLOBALS['showyabbcbutt']) ? $GLOBALS['showyabbcbutt'] : @$GLOBALS['showbbcbutt'],
 		'show_modify' => @$GLOBALS['showmodify'],
 		'show_user_images' => @$GLOBALS['showuserpic'],
-		'show_blurb' => @$GLOBALS['showusertext'],
 		'show_gender' => @$GLOBALS['showgenderimage'],
 		'show_newsfader' => @$GLOBALS['shownewsfader'],
 		'display_recent_bar' => @$GLOBALS['Show_RecentBar'],
@@ -1480,7 +1473,6 @@ function convertSettingsToTheme()
 		'show_profile_buttons' => @$GLOBALS['profilebutton'],
 		'show_mark_read' => @$GLOBALS['showmarkread'],
 		'newsfader_time' => @$GLOBALS['fadertime'],
-		'use_image_buttons' => empty($GLOBALS['MenuType']) ? 1 : 0,
 		'enable_news' => @$GLOBALS['enable_news'],
 		'return_to_post' => @$modSettings['returnToPost'],
 	);
@@ -1511,7 +1503,6 @@ function convertSettingstoOptions()
 
 	// Format: new_setting -> old_setting_name.
 	$values = array(
-		'calendar_start_day' => 'cal_startmonday',
 		'view_newest_first' => 'viewNewestFirst',
 		'view_newest_pm_first' => 'viewNewestFirst',
 	);
@@ -1572,7 +1563,7 @@ function fixRelativePath($path)
 function parse_sql($filename)
 {
 	global $db_prefix, $db_collation, $boarddir, $boardurl, $command_line, $file_steps, $step_progress, $custom_warning;
-	global $upcontext, $support_js, $is_debug, $smcFunc, $databases, $db_type, $db_character_set;
+	global $upcontext, $support_js, $is_debug, $smcFunc, $databases, $db_type;
 
 /*
 	Failure allowed on:
@@ -1629,8 +1620,7 @@ function parse_sql($filename)
 	$last_step = '';
 
 	// Make sure all newly created tables will have the proper characters set; this approach is used throughout upgrade_2-1_mysql.php
-	if (isset($db_character_set) && $db_character_set === 'utf8')
-		$lines = str_replace(') ENGINE=MyISAM;', ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;', $lines);
+	$lines = str_replace(') ENGINE=MyISAM;', ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;', $lines);
 
 	// Count the total number of steps within this file - for progress.
 	$file_steps = substr_count(implode('', $lines), '---#');
@@ -2919,7 +2909,6 @@ function serialize_to_json()
 		'background_tasks' => array('id_task', 'task_data'),
 		'log_actions' => array('id_action', 'extra'),
 		'log_online' => array('session', 'url'),
-		'log_packages' => array('id_install', 'db_changes', 'failed_steps', 'credits'),
 		'log_spider_hits' => array('id_hit', 'url'),
 		'log_subscribed' => array('id_sublog', 'pending_details'),
 		'pm_rules' => array('id_rule', 'criteria', 'actions'),
@@ -2975,9 +2964,6 @@ function serialize_to_json()
 				$serialized_settings = array(
 					'attachment_basedirectories',
 					'attachmentUploadDir',
-					'cal_today_birthday',
-					'cal_today_event',
-					'cal_today_holiday',
 					'displayFields',
 					'last_attachments_directory',
 					'memberlist_cache',
@@ -3297,7 +3283,6 @@ function template_upgrade_above()
 		<script src="', $settings['default_theme_url'], '/scripts/script.js"></script>
 		<script>
 			var smf_scripturl = \'', $upgradeurl, '\';
-			var smf_charset = \'', (empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'UTF-8' : $txt['lang_character_set']) : $modSettings['global_character_set']), '\';
 			var startPercent = ', $upcontext['overall_percent'], ';
 
 			// This function dynamically updates the step progress bar - and overall one as required.
@@ -3430,7 +3415,7 @@ function template_upgrade_below()
 		</div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://www.simplemachines.org/" title="Simple Machines Forum" target="_blank" class="new_win">SMF &copy; 2017, Simple Machines</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; 2017, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>

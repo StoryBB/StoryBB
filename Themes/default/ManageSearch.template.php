@@ -8,85 +8,6 @@
  */
 
 /**
- * Modify the search weights.
- */
-function template_modify_weights()
-{
-	global $context, $settings, $scripturl, $txt, $modSettings;
-
-	echo '
-	<div id="admincenter">
-		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=managesearch;sa=weights" method="post" accept-charset="', $context['character_set'], '">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['search_weights'], '</h3>
-			</div>
-			<div class="windowbg2 noup">
-				<dl class="settings">
-					<dt>
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_frequency" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a><label for="weight1_val">
-						', $txt['search_weight_frequency'], ':</label>
-					</dt>
-					<dd>
-						<span class="search_weight"><input type="text" name="search_weight_frequency" id="weight1_val" value="', empty($modSettings['search_weight_frequency']) ? '0' : $modSettings['search_weight_frequency'], '" onchange="calculateNewValues()" size="3" class="input_text"></span>
-						<span id="weight1" class="search_weight">', $context['relative_weights']['search_weight_frequency'], '%</span>
-					</dd>
-					<dt>
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_age" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a><label for="weight2_val">
-						', $txt['search_weight_age'], ':</label>
-					</dt>
-					<dd>
-						<span class="search_weight"><input type="text" name="search_weight_age" id="weight2_val" value="', empty($modSettings['search_weight_age']) ? '0' : $modSettings['search_weight_age'], '" onchange="calculateNewValues()" size="3" class="input_text"></span>
-						<span id="weight2" class="search_weight">', $context['relative_weights']['search_weight_age'], '%</span>
-					</dd>
-					<dt>
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_length" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a><label for="weight3_val">
-						', $txt['search_weight_length'], ':</label>
-					</dt>
-					<dd>
-						<span class="search_weight"><input type="text" name="search_weight_length" id="weight3_val" value="', empty($modSettings['search_weight_length']) ? '0' : $modSettings['search_weight_length'], '" onchange="calculateNewValues()" size="3" class="input_text"></span>
-						<span id="weight3" class="search_weight">', $context['relative_weights']['search_weight_length'], '%</span>
-					</dd>
-					<dt>
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_subject" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a><label for="weight4_val">
-						', $txt['search_weight_subject'], ':</label>
-					</dt>
-					<dd>
-						<span class="search_weight"><input type="text" name="search_weight_subject" id="weight4_val" value="', empty($modSettings['search_weight_subject']) ? '0' : $modSettings['search_weight_subject'], '" onchange="calculateNewValues()" size="3" class="input_text"></span>
-						<span id="weight4" class="search_weight">', $context['relative_weights']['search_weight_subject'], '%</span>
-					</dd>
-					<dt>
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_first_message" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a><label for="weight5_val">
-						', $txt['search_weight_first_message'], ':</label>
-					</dt>
-					<dd>
-						<span class="search_weight"><input type="text" name="search_weight_first_message" id="weight5_val" value="', empty($modSettings['search_weight_first_message']) ? '0' : $modSettings['search_weight_first_message'], '" onchange="calculateNewValues()" size="3" class="input_text"></span>
-						<span id="weight5" class="search_weight">', $context['relative_weights']['search_weight_first_message'], '%</span>
-					</dd>
-					<dt>
-						<a href="', $scripturl, '?action=helpadmin;help=search_weight_sticky" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a><label for="weight6_val">
-						', $txt['search_weight_sticky'], ':</label>
-					</dt>
-					<dd>
-						<span class="search_weight"><input type="text" name="search_weight_sticky" id="weight6_val" value="', empty($modSettings['search_weight_sticky']) ? '0' : $modSettings['search_weight_sticky'], '" onchange="calculateNewValues()" size="3" class="input_text"></span>
-						<span id="weight6" class="search_weight">', $context['relative_weights']['search_weight_sticky'], '%</span>
-					</dd>
-					<dt>
-						<strong>', $txt['search_weights_total'], '</strong>
-					</dt>
-					<dd>
-						<span id="weighttotal" class="search_weight"><strong>', $context['relative_weights']['total'], '</strong></span>
-						<span class="search_weight"><strong>100%</strong></span>
-					</dd>
-				</dl>
-				<input type="submit" name="save" value="', $txt['search_weights_save'], '" class="button_submit">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="', $context['admin-msw_token_var'], '" value="', $context['admin-msw_token'], '">
-			</div>
-		</form>
-	</div>';
-}
-
-/**
  * Select the search method.
  */
 function template_select_search_method()
@@ -101,7 +22,7 @@ function template_select_search_method()
 		<div class="information">
 			<div class="smalltext" style="font-weight: normal;"><a href="', $scripturl, '?action=helpadmin;help=search_why_use_index" onclick="return reqOverlayDiv(this.href);">', $txt['search_create_index_why'], '</a></div>
 		</div>
-		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=managesearch;sa=method" method="post" accept-charset="', $context['character_set'], '">
+		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=managesearch;sa=method" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['search_method'], '</h3>
 			</div>
@@ -224,7 +145,7 @@ function template_create_index()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" method="post" accept-charset="', $context['character_set'], '" name="create_index">
+		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" method="post" accept-charset="UTF-8" name="create_index">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['search_create_index'], '</h3>
 			</div>
@@ -257,7 +178,7 @@ function template_create_index_progress()
 	global $context, $scripturl, $txt;
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['search_create_index'], '</h3>
 			</div>
@@ -326,7 +247,7 @@ function template_spider_edit()
 	global $context, $scripturl, $txt;
 	echo '
 	<div id="admincenter">
-		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=sengines;sa=editspiders;sid=', $context['spider']['id'], '" method="post" accept-charset="', $context['character_set'], '">
+		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=sengines;sa=editspiders;sid=', $context['spider']['id'], '" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $context['page_title'], '</h3>
 			</div>
@@ -380,7 +301,7 @@ function template_show_spider_logs()
 	template_show_list('spider_logs');
 
 	echo '
-		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=sengines;sa=logs" method="post" accept-charset="', $context['character_set'], '">
+		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=sengines;sa=logs" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['spider_logs_delete'], '</h3>
 			</div>
@@ -412,7 +333,7 @@ function template_show_spider_stats()
 	template_show_list('spider_stat_list');
 
 	echo '
-		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=sengines;sa=stats" method="post" accept-charset="', $context['character_set'], '">
+		<form id="admin_form_wrapper" action="', $scripturl, '?action=admin;area=sengines;sa=stats" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['spider_logs_delete'], '</h3>
 			</div>

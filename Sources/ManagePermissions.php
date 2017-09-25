@@ -812,19 +812,19 @@ function ModifyMembergroup()
 								$context['hidden_perms'][] = array(
 									$permissionType,
 									$perm['own']['id'],
-									$curPerm['own']['select'] == 'deny' && !empty($modSettings['permission_enable_deny']) ? 'deny' : $curPerm['own']['select'],
+									$curPerm['own']['select'],
 								);
 								$context['hidden_perms'][] = array(
 									$permissionType,
 									$perm['any']['id'],
-									$curPerm['any']['select'] == 'deny' && !empty($modSettings['permission_enable_deny']) ? 'deny' : $curPerm['any']['select'],
+									$curPerm['any']['select'],
 								);
 							}
 							else
 								$context['hidden_perms'][] = array(
 									$permissionType,
 									$perm['id'],
-									$curPerm['select'] == 'deny' && !empty($modSettings['permission_enable_deny']) ? 'deny' : $curPerm['select'],
+									$curPerm['select'],
 								);
 						}
 				}
@@ -975,11 +975,6 @@ function GeneralPermissionSettings($return_config = false)
 	// All the setting variables
 	$config_vars = array(
 		array('title', 'settings'),
-			// Inline permissions.
-			array('permissions', 'manage_permissions'),
-		'',
-			// A few useful settings
-			array('check', 'permission_enable_deny', 0, $txt['permission_settings_enable_deny'], 'help' => 'permissions_deny'),
 			array('check', 'permission_enable_postgroups', 0, $txt['permission_settings_enable_postgroups'], 'help' => 'permissions_postgroups'),
 	);
 
@@ -1004,25 +999,6 @@ function GeneralPermissionSettings($return_config = false)
 		checkSession();
 		call_integration_hook('integrate_save_permission_settings');
 		saveDBSettings($config_vars);
-
-		// Clear all deny permissions...if we want that.
-		if (empty($modSettings['permission_enable_deny']))
-		{
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}permissions
-				WHERE add_deny = {int:denied}',
-				array(
-					'denied' => 0,
-				)
-			);
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}board_permissions
-				WHERE add_deny = {int:denied}',
-				array(
-					'denied' => 0,
-				)
-			);
-		}
 
 		// Make sure there are no postgroup based permissions left.
 		if (empty($modSettings['permission_enable_postgroups']))
@@ -1067,7 +1043,7 @@ function GeneralPermissionSettings($return_config = false)
 			);
 		}
 
-		$_SESSION['adm-save'] = true;
+		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=permissions;sa=settings');
 	}
 
@@ -1103,7 +1079,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 	// Restrictive - ie. guests.
 	$groupLevels['global']['restrict'] = array(
 		'search_posts',
-		'calendar_view',
 		'view_stats',
 		'who_view',
 		'profile_identity_own',
@@ -1132,7 +1107,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'profile_forum_own',
 		'profile_website_own',
 		'profile_password_own',
-		'profile_server_avatar',
 		'profile_displayed_name',
 		'profile_upload_avatar',
 		'profile_remote_avatar',
@@ -1152,8 +1126,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 
 	// Moderator - ie. moderators :P.  They can do what standard can, and more.
 	$groupLevels['global']['moderator'] = array_merge($groupLevels['global']['standard'], array(
-		'calendar_post',
-		'calendar_edit_own',
 		'access_mod_center',
 		'issue_warning',
 	));
@@ -1184,7 +1156,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'admin_forum',
 		'manage_permissions',
 		'edit_news',
-		'calendar_edit_any',
 		'profile_identity_any',
 		'profile_extra_any',
 		'profile_signature_any',
@@ -1418,7 +1389,6 @@ function loadAllPermissions()
 		'membergroup' => array(
 			'general',
 			'pm',
-			'calendar',
 			'maintenance',
 			'member_admin',
 			'profile',
@@ -1452,9 +1422,6 @@ function loadAllPermissions()
 			'pm_read' => array(false, 'pm'),
 			'pm_send' => array(false, 'pm'),
 			'pm_draft' => array(false, 'pm'),
-			'calendar_view' => array(false, 'calendar'),
-			'calendar_post' => array(false, 'calendar'),
-			'calendar_edit' => array(true, 'calendar'),
 			'admin_forum' => array(false, 'maintenance'),
 			'manage_boards' => array(false, 'maintenance'),
 			'manage_attachments' => array(false, 'maintenance'),
@@ -1473,8 +1440,6 @@ function loadAllPermissions()
 			'profile_signature' => array(true, 'profile'),
 			'profile_website' => array(true, 'profile'),
 			'profile_title' => array(true, 'profile'),
-			'profile_blurb' => array(true, 'profile'),
-			'profile_server_avatar' => array(false, 'profile'),
 			'profile_upload_avatar' => array(false, 'profile'),
 			'profile_remote_avatar' => array(false, 'profile'),
 			'report_user' => array(false, 'profile'),
@@ -1523,7 +1488,6 @@ function loadAllPermissions()
 	// All permission groups that will be shown in the left column on classic view.
 	$leftPermissionGroups = array(
 		'general',
-		'calendar',
 		'maintenance',
 		'member_admin',
 		'topic',
@@ -1536,12 +1500,7 @@ function loadAllPermissions()
 	// Some permissions are hidden if features are off.
 	$hiddenPermissions = array();
 	$relabelPermissions = array(); // Permissions to apply a different label to.
-	if (empty($modSettings['cal_enabled']))
-	{
-		$hiddenPermissions[] = 'calendar_view';
-		$hiddenPermissions[] = 'calendar_post';
-		$hiddenPermissions[] = 'calendar_edit';
-	}
+
 	if ($modSettings['warning_settings'][0] == 0)
 	{
 		$hiddenPermissions[] = 'issue_warning';
@@ -2215,7 +2174,6 @@ function loadIllegalGuestPermissions()
 		'admin_forum',
 		'announce_topic',
 		'approve_posts',
-		'calendar_edit',
 		'delete',
 		'delete_replies',
 		'edit_news',
@@ -2245,7 +2203,6 @@ function loadIllegalGuestPermissions()
 		'poll_remove',
 		'post_autosave_draft',
 		'post_draft',
-		'profile_blurb',
 		'profile_displayed_name',
 		'profile_extra',
 		'profile_forum',
@@ -2254,7 +2211,6 @@ function loadIllegalGuestPermissions()
 		'profile_password',
 		'profile_remove',
 		'profile_remote_avatar',
-		'profile_server_avatar',
 		'profile_signature',
 		'profile_title',
 		'profile_upload_avatar',

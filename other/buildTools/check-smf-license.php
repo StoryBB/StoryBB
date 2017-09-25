@@ -12,12 +12,8 @@
 $ignoreFiles = array(
 	// Index files.
 	'\./attachments/index\.php',
-	'\./avatars/index\.php',
-	'\./avatars/[A-Za-z0-9]+/index\.php',
 	'\./cache/index\.php',
 	'\./custom_avatar/index\.php',
-	'\./Packages/index\.php',
-	'\./Packages/backups/index\.php',
 	'\./Smileys/[A-Za-z0-9]+/index\.php',
 	'\./Smileys/index\.php',
 	'\./Sources/index\.php',
@@ -109,7 +105,7 @@ if (in_array($currentFile, array('./other/upgrade.php', './other/install.php')))
 	// The code is fairly well into it, just get the entire contents.
 	$upgradeFile = file_get_contents($currentFile);
 
-	if (!preg_match('~<li class="copyright"><a href="https?://www.simplemachines.org/" title="Simple Machines Forum" target="_blank" class="new_win">SMF &copy; (\d{4}), Simple Machines</a></li>~i', $upgradeFile, $upgradeResults))
+	if (!preg_match('~<li class="copyright"><a href="https?://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; (\d{4}), StoryBB project</a></li>~i', $upgradeFile, $upgradeResults))
 		die('Error: Could not locate upgrade template copyright $software_year' . "\n");
 
 	if ((int) $upgradeResults[1] != $currentSoftwareYear)

@@ -53,7 +53,7 @@ class smf_cache extends cache_api
 		$key = $this->prefix . strtr($key, ':/', '-_');
 		$cachedir = $this->cachedir;
 
-		// SMF Data returns $value and $expired.  $expired has a unix timestamp of when this expires.
+		// StoryBB Data returns $value and $expired.  $expired has a unix timestamp of when this expires.
 		if (file_exists($cachedir . '/data_' . $key . '.php') && filesize($cachedir . '/data_' . $key . '.php') > 10)
 		{
 			// Work around Zend's opcode caching (PHP 5.5+), they would cache older files for a couple of seconds
@@ -123,7 +123,7 @@ class smf_cache extends cache_api
 		if (!is_dir($cachedir))
 			return;
 
-		// Remove the files in SMF's own disk cache, if any
+		// Remove the files in StoryBB's own disk cache, if any
 		$dh = opendir($cachedir);
 		while ($file = readdir($dh))
 		{
@@ -146,7 +146,7 @@ class smf_cache extends cache_api
 		// We don't worry about $cachedir here, since the key is based on the real $cachedir.
 		parent::invalidateCache();
 
-		// Since SMF is file based, be sure to clear the statcache.
+		// Since StoryBB is file based, be sure to clear the statcache.
 		clearstatcache();
 
 		return true;
@@ -173,7 +173,7 @@ class smf_cache extends cache_api
 	}
 
 	/**
-	 * Sets the $cachedir or uses the SMF default $cachedir..
+	 * Sets the $cachedir or uses the StoryBB default $cachedir..
 	 *
 	 * @access public
 	 * @param string $dir A valid path
@@ -183,7 +183,7 @@ class smf_cache extends cache_api
 	{
 		global $cachedir;
 
-		// If its invalid, use SMF's.
+		// If its invalid, use StoryBB's.
 		if (is_null($dir) || !is_writable($dir))
 			$this->cachedir = $cachedir;
 		else

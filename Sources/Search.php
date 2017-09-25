@@ -55,6 +55,7 @@ function PlushSearch1()
 		'url' => $scripturl . '?action=search',
 		'name' => $txt['search']
 	);
+	$context['sub_template'] = 'search';
 
 	// This is hard coded maximum string length.
 	$context['search_string_limit'] = 100;
@@ -324,8 +325,11 @@ function PlushSearch2()
 
 	loadLanguage('Search');
 	if (!isset($_REQUEST['xml']))
+	{
 		loadTemplate('Search');
-	//If we're doing XML we need to use the results template regardless really.
+		$context['sub_template'] = 'search_results';
+	}
+	//If we're doing XML we need to use the results template.
 	else
 		$context['sub_template'] = 'results';
 
@@ -640,7 +644,7 @@ function PlushSearch2()
 	}
 
 	// Change non-word characters into spaces.
-	$stripped_query = preg_replace('~(?:[\x0B\0' . ($context['utf8'] ? '\x{A0}' : '\xA0') . '\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~' . ($context['utf8'] ? 'u' : ''), ' ', $search_params['search']);
+	$stripped_query = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', $search_params['search']);
 
 	// Make the query lower case. It's gonna be case insensitive anyway.
 	$stripped_query = un_htmlspecialchars($smcFunc['strtolower']($stripped_query));
@@ -656,7 +660,7 @@ function PlushSearch2()
 	$phraseArray = $matches[2];
 
 	// Remove the phrase parts and extract the words.
-	$wordArray = preg_replace('~(?:^|\s)(?:[-]?)"(?:[^"]+)"(?:$|\s)~' . ($context['utf8'] ? 'u' : ''), ' ', $search_params['search']);
+	$wordArray = preg_replace('~(?:^|\s)(?:[-]?)"(?:[^"]+)"(?:$|\s)~u', ' ', $search_params['search']);
 	$wordArray = explode(' ',  $smcFunc['htmlspecialchars'](un_htmlspecialchars($wordArray), ENT_QUOTES));
 
 	// A minus sign in front of a word excludes the word.... so...
@@ -1632,16 +1636,14 @@ function PlushSearch2()
 		$boards_can = boardsAllowedTo(array('post_reply_own', 'post_reply_any'), true, false);
 
 		// How's about some quick moderation?
-		if (!empty($options['display_quick_mod']))
-		{
-			$boards_can = array_merge($boards_can, boardsAllowedTo(array('lock_any', 'lock_own', 'make_sticky', 'move_any', 'move_own', 'remove_any', 'remove_own', 'merge_any'), true, false));
+		$boards_can = array_merge($boards_can, boardsAllowedTo(array('lock_any', 'lock_own', 'make_sticky', 'move_any', 'move_own', 'remove_any', 'remove_own', 'merge_any'), true, false));
 
-			$context['can_lock'] = in_array(0, $boards_can['lock_any']);
-			$context['can_sticky'] = in_array(0, $boards_can['make_sticky']);
-			$context['can_move'] = in_array(0, $boards_can['move_any']);
-			$context['can_remove'] = in_array(0, $boards_can['remove_any']);
-			$context['can_merge'] = in_array(0, $boards_can['merge_any']);
-		}
+		$context['can_lock'] = in_array(0, $boards_can['lock_any']);
+		$context['can_sticky'] = in_array(0, $boards_can['make_sticky']);
+		$context['can_move'] = in_array(0, $boards_can['move_any']);
+		$context['can_remove'] = in_array(0, $boards_can['remove_any']);
+		$context['can_merge'] = in_array(0, $boards_can['merge_any']);
+		$context['can_restore'] = false;
 
 		// What messages are we using?
 		$msg_list = array_keys($context['topics']);
@@ -1742,9 +1744,13 @@ function PlushSearch2()
 	foreach ($context['stable_icons'] as $icon)
 		$context['icon_sources'][$icon] = 'images_url';
 
-	$context['sub_template'] = 'results';
 	$context['page_title'] = $txt['search_results'];
-	$context['get_topics'] = 'prepareSearchContext';
+
+	$context['search_results'] = [];
+	while ($row = prepareSearchContext()) {
+		$context['search_results'][] = $row;
+	}
+
 	$context['can_restore_perm'] = allowedTo('move_any') && !empty($modSettings['recycle_enable']);
 	$context['can_restore'] = false; // We won't know until we handle the context later whether we can actually restore...
 
@@ -1849,9 +1855,9 @@ function prepareSearchContext($reset = false)
 				$message['body'] = un_htmlspecialchars(strtr($message['body'], array('&nbsp;' => ' ', '<br>' => "\n", '&#91;' => '[', '&#93;' => ']', '&#58;' => ':', '&#64;' => '@')));
 
 				if (empty($modSettings['search_method']) || $force_partial_word)
-					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?|^)(' . $matchString . ')(.{0,' . $charLimit . '}[\s\W]|[^\s\W]{0,' . $charLimit . '})/is' . ($context['utf8'] ? 'u' : ''), $message['body'], $matches);
+					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?|^)(' . $matchString . ')(.{0,' . $charLimit . '}[\s\W]|[^\s\W]{0,' . $charLimit . '})/isu', $message['body'], $matches);
 				else
-					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?[\s\W]|^)(' . $matchString . ')([\s\W].{0,' . $charLimit . '}[\s\W]|[\s\W][^\s\W]{0,' . $charLimit . '})/is' . ($context['utf8'] ? 'u' : ''), $message['body'], $matches);
+					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?[\s\W]|^)(' . $matchString . ')([\s\W].{0,' . $charLimit . '}[\s\W]|[\s\W][^\s\W]{0,' . $charLimit . '})/isu', $message['body'], $matches);
 
 				$message['body'] = '';
 				foreach ($matches[0] as $index => $match)
@@ -1975,28 +1981,32 @@ function prepareSearchContext($reset = false)
 	$body_highlighted = $message['body'];
 	$subject_highlighted = $message['subject'];
 
-	if (!empty($options['display_quick_mod']))
-	{
-		$started = $output['first_post']['member']['id'] == $user_info['id'];
+	$started = $output['first_post']['member']['id'] == $user_info['id'];
 
-		$output['quick_mod'] = array(
-			'lock' => in_array(0, $boards_can['lock_any']) || in_array($output['board']['id'], $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($output['board']['id'], $boards_can['lock_own']))),
-			'sticky' => (in_array(0, $boards_can['make_sticky']) || in_array($output['board']['id'], $boards_can['make_sticky'])),
-			'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
-			'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
-			'restore' => $context['can_restore_perm'] && ($modSettings['recycle_board'] == $output['board']['id']),
-		);
+	$output['quick_mod'] = array(
+		'lock' => in_array(0, $boards_can['lock_any']) || in_array($output['board']['id'], $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($output['board']['id'], $boards_can['lock_own']))),
+		'sticky' => (in_array(0, $boards_can['make_sticky']) || in_array($output['board']['id'], $boards_can['make_sticky'])),
+		'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
+		'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
+		'restore' => !empty($context['can_restore_perm']) && ($modSettings['recycle_board'] == $output['board']['id']),
+	);
 
-		$context['can_lock'] |= $output['quick_mod']['lock'];
-		$context['can_sticky'] |= $output['quick_mod']['sticky'];
-		$context['can_move'] |= $output['quick_mod']['move'];
-		$context['can_remove'] |= $output['quick_mod']['remove'];
-		$context['can_merge'] |= in_array($output['board']['id'], $boards_can['merge_any']);
-		$context['can_restore'] |= $output['quick_mod']['restore'];
-		$context['can_markread'] = $context['user']['is_logged'];
+	$context['can_lock'] |= $output['quick_mod']['lock'];
+	$context['can_sticky'] |= $output['quick_mod']['sticky'];
+	$context['can_move'] |= $output['quick_mod']['move'];
+	$context['can_remove'] |= $output['quick_mod']['remove'];
+	$context['can_merge'] |= in_array($output['board']['id'], $boards_can['merge_any']);
+	$context['can_restore'] |= $output['quick_mod']['restore'];
+	$context['can_markread'] = $context['user']['is_logged'];
 
-		$context['qmod_actions'] = array('remove', 'lock', 'sticky', 'move', 'merge', 'restore', 'markread');
-		call_integration_hook('integrate_quick_mod_actions_search');
+	$context['qmod_actions'] = [];
+	$qmod_actions = array('remove', 'lock', 'sticky', 'move', 'merge', 'restore', 'markread');
+
+	call_integration_hook('integrate_quick_mod_actions_search', array(&$qmod_actions));
+	foreach ($qmod_actions as $qmod_action) {
+		if (!empty($context['can_' . $qmod_action])) {
+			$context['qmod_actions'][$qmod_action] = $txt['quick_mod_' . $qmod_action];
+		}
 	}
 
 	foreach ($context['key_words'] as $query)
@@ -2006,11 +2016,11 @@ function prepareSearchContext($reset = false)
 		$query = trim($query, "\*+");
 		$query = strtr($smcFunc['htmlspecialchars']($query), array('\\\'' => '\''));
 
-		$body_highlighted = preg_replace_callback('/((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '/') . ')/i' . ($context['utf8'] ? 'u' : ''), function ($m)
+		$body_highlighted = preg_replace_callback('/((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '/') . ')/iu', function ($m)
 		{
 			return isset($m[2]) && "$m[2]" == "$m[1]" ? stripslashes("$m[1]") : "<strong class=\"highlight\">$m[1]</strong>";
 		}, $body_highlighted);
-		$subject_highlighted = preg_replace('/(' . preg_quote($query, '/') . ')/i' . ($context['utf8'] ? 'u' : ''), '<strong class="highlight">$1</strong>', $subject_highlighted);
+		$subject_highlighted = preg_replace('/(' . preg_quote($query, '/') . ')/iu', '<strong class="highlight">$1</strong>', $subject_highlighted);
 	}
 
 	$output['matches'][] = array(
@@ -2094,7 +2104,7 @@ function findSearchAPI()
 	$searchAPI = new $search_class_name();
 
 	// An invalid Search API.
-	if (!$searchAPI || !($searchAPI instanceof search_api_interface) || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()) || !matchPackageVersion($search_versions['forum_version'], $searchAPI->min_smf_version . '-' . $searchAPI->version_compatible))
+	if (!$searchAPI || !($searchAPI instanceof search_api_interface) || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()))
 	{
 		// Log the error.
 		loadLanguage('Errors');

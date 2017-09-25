@@ -300,11 +300,11 @@ upgrade_query("
 
 ---# Cleaning old values from "settings"...
 DELETE FROM {$db_prefix}settings
-WHERE variable IN ('modlog_enabled', 'localCookies', 'globalCookies', 'send_welcomeEmail', 'search_method', 'notify_new_registration', 'removeNestedQuotes', 'smiley_enable', 'smiley_sets_enable')
+WHERE variable IN ('modlog_enabled', 'localCookies', 'globalCookies', 'send_welcomeEmail', 'search_method', 'notify_new_registration', 'removeNestedQuotes', 'smiley_sets_enable')
 	AND value = '0';
 
 DELETE FROM {$db_prefix}settings
-WHERE variable IN ('allow_guestAccess', 'userLanguage', 'allow_editDisplayName', 'allow_hideOnline', 'allow_hideEmail', 'guest_hideContacts', 'titlesEnable', 'search_match_complete_words')
+WHERE variable IN ('allow_guestAccess', 'userLanguage', 'allow_editDisplayName', 'allow_hideOnline', 'allow_hideEmail', 'guest_hideContacts', 'search_match_complete_words')
 	AND value = '0';
 
 DELETE FROM {$db_prefix}settings
@@ -915,22 +915,6 @@ unset($_GET['m']);
 --- Converting avatar permissions...
 /******************************************************************************/
 
----# Converting server stored setting...
----{
-if (!empty($modSettings['avatar_allow_server_stored']))
-{
-	// Create permissions for existing membergroups.
-	upgrade_query("
-		INSERT INTO {$db_prefix}permissions
-			(ID_GROUP, permission)
-		SELECT IF(ID_GROUP = 1, 0, ID_GROUP), 'profile_server_avatar'
-		FROM {$db_prefix}membergroups
-		WHERE ID_GROUP != 3
-			AND minPosts = -1");
-}
----}
----#
-
 ---# Converting avatar upload setting...
 ---{
 // Do the same, but for uploading avatars.
@@ -959,7 +943,7 @@ CHANGE COLUMN ID_MEMBER ID_MEMBER mediumint(8) unsigned NOT NULL default '0';
 
 ---# Updating settings...
 DELETE FROM {$db_prefix}settings
-WHERE variable IN ('avatar_allow_external_url', 'avatar_check_size', 'avatar_allow_upload', 'avatar_allow_server_stored');
+WHERE variable IN ('avatar_allow_external_url', 'avatar_check_size', 'avatar_allow_upload');
 ---#
 
 /******************************************************************************/
@@ -1315,39 +1299,6 @@ if (@$modSettings['smfVersion'] < '1.1')
 		SET
 			permission = REPLACE(permission, 'delete2_own', 'delete_own'),
 			permission = REPLACE(permission, 'delete2_any', 'delete_any')");
-}
----}
----#
-
----# Upgrading "deny"-permissions...
----{
-if (!isset($modSettings['permission_enable_deny']))
-{
-	// Only disable if no deny permissions are used.
-	$request = upgrade_query("
-		SELECT permission
-		FROM {$db_prefix}permissions
-		WHERE addDeny = 0
-		LIMIT 1");
-	$disable_deny_permissions = smf_mysql_num_rows($request) == 0;
-	smf_mysql_free_result($request);
-
-	// Still wanna disable deny permissions? Check board permissions.
-	if ($disable_deny_permissions)
-	{
-		$request = upgrade_query("
-			SELECT permission
-			FROM {$db_prefix}board_permissions
-			WHERE addDeny = 0
-			LIMIT 1");
-		$disable_deny_permissions &= smf_mysql_num_rows($request) == 0;
-		smf_mysql_free_result($request);
-	}
-
-	$request = upgrade_query("
-		INSERT INTO {$db_prefix}settings
-			(variable, value)
-		VALUES ('permission_enable_deny', '" . ($disable_deny_permissions ? '0' : '1') . "')");
 }
 ---}
 ---#
@@ -2214,12 +2165,6 @@ $textfield_updates = array(
 	),
 	array(
 		'table' => 'members',
-		'column' => 'personalText',
-		'type' => 'tinytext',
-		'null_allowed' => false,
-	),
-	array(
-		'table' => 'members',
 		'column' => 'websiteTitle',
 		'type' => 'tinytext',
 		'null_allowed' => false,
@@ -2257,12 +2202,6 @@ $textfield_updates = array(
 	array(
 		'table' => 'members',
 		'column' => 'avatar',
-		'type' => 'tinytext',
-		'null_allowed' => false,
-	),
-	array(
-		'table' => 'members',
-		'column' => 'usertitle',
 		'type' => 'tinytext',
 		'null_allowed' => false,
 	),

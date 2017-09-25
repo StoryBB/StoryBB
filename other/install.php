@@ -36,10 +36,6 @@ $databases = array(
 		'utf8_support' => function() {
 			return true;
 		},
-		'utf8_version' => '5.0.3',
-		'utf8_version_check' => 'return mysqli_get_server_info($db_connection);',
-		'utf8_default' => true,
-		'utf8_required' => true,
 		'alter_support' => true,
 		'validate_prefix' => function(&$value) {
 			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
@@ -53,20 +49,16 @@ $databases = array(
 		'version_check' => '$request = pg_query(\'SELECT version()\'); list ($version) = pg_fetch_row($request); list($pgl, $version) = explode(" ", $version); return $version;',
 		'supported' => function_exists('pg_connect'),
 		'always_has_db' => true,
-		'utf8_default' => true,
-		'utf8_required' => true,
 		'utf8_support' => function() {
 			$request = pg_query('SHOW SERVER_ENCODING');
 			
 			list ($charcode) = pg_fetch_row($request);
 			
-			if ($charcode == 'UTF8')			
+			if ($charcode == 'UTF8')
 				return true;
 			else
 				return false;
 		},
-		'utf8_version' => '8.0',
-		'utf8_version_check' => '$request = pg_query(\'SELECT version()\'); list ($version) = pg_fetch_row($request); list($pgl, $version) = explode(" ", $version); return $version;',
 		'validate_prefix' => function(&$value) {
 			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
 
@@ -103,7 +95,7 @@ $incontext['steps'] = array(
 );
 
 // Default title...
-$incontext['page_title'] = $txt['smf_installer'];
+$incontext['page_title'] = $txt['storybb_installer'];
 
 // What step are we on?
 $incontext['current_step'] = isset($_GET['step']) ? (int) $_GET['step'] : 0;
@@ -280,7 +272,7 @@ function load_lang_file()
 		echo '<!DOCTYPE html>
 <html>
 	<head>
-		<title>SMF Installer: Error!</title>
+		<title>StoryBB Installer: Error!</title>
 	</head>
 	<body style="font-family: sans-serif;"><div style="width: 600px;">
 		<h1 style="font-size: 14pt;">A critical error has occurred.</h1>
@@ -375,7 +367,7 @@ function installExit($fallThrough = false)
 	global $incontext, $installurl, $txt;
 
 	// Send character set.
-	header('Content-Type: text/html; charset=' . (isset($txt['lang_character_set']) ? $txt['lang_character_set'] : 'UTF-8'));
+	header('Content-Type: text/html; charset=UTF-8');
 
 	// We usually dump our templates out.
 	if (!$fallThrough)
@@ -470,7 +462,7 @@ function Welcome()
 	if (isset($error))
 		$incontext['error'] = $txt[$error];
 
-	// Mod_security blocks everything that smells funny. Let SMF handle security.
+	// Mod_security blocks everything that smells funny. Let StoryBB handle security.
 	if (!fixModSecurity() && !isset($_GET['overmodsecurity']))
 		$incontext['error'] = $txt['error_mod_security'] . '<br><br><a href="' . $installurl . '?overmodsecurity=true">' . $txt['error_message_click'] . '</a> ' . $txt['error_message_bad_try_again'];
 
@@ -486,10 +478,8 @@ function CheckFilesWritable()
 
 	$writable_files = array(
 		'attachments',
-		'avatars',
 		'custom_avatar',
 		'cache',
-		'Packages',
 		'Smileys',
 		'Themes',
 		'agreement.txt',
@@ -911,8 +901,6 @@ function ForumSettings()
 
 	// Check if the database sessions will even work.
 	$incontext['test_dbsession'] = (ini_get('session.auto_start') != 1);
-	$incontext['utf8_default'] = $databases[$db_type]['utf8_default'];
-	$incontext['utf8_required'] = $databases[$db_type]['utf8_required'];
 
 	$incontext['continue'] = 1;
 
@@ -949,22 +937,10 @@ function ForumSettings()
 		require(dirname(__FILE__) . '/Settings.php');
 
 		// UTF-8 requires a setting to override the language charset.
-		if ((!empty($databases[$db_type]['utf8_support']) && !empty($databases[$db_type]['utf8_required'])) || (empty($databases[$db_type]['utf8_required']) && !empty($databases[$db_type]['utf8_support']) && isset($_POST['utf8'])))
+		if (!$databases[$db_type]['utf8_support']())
 		{
-			if (!$databases[$db_type]['utf8_support']())
-			{
-				$incontext['error'] = sprintf($txt['error_utf8_support']);
-				return false;
-			}
-				
-			if (!empty($databases[$db_type]['utf8_version_check']) && version_compare($databases[$db_type]['utf8_version'], preg_replace('~\-.+?$~', '', eval($databases[$db_type]['utf8_version_check'])), '>'))
-			{
-				$incontext['error'] = sprintf($txt['error_utf8_version'], $databases[$db_type]['utf8_version']);
-				return false;
-			}
-			else
-				// Set the character set here.
-				updateSettingsFile(array('db_character_set' => 'utf8'));
+			$incontext['error'] = sprintf($txt['error_utf8_support']);
+			return false;
 		}
 
 		// Good, skip on.
@@ -977,7 +953,7 @@ function ForumSettings()
 // Step one: Do the SQL thang.
 function DatabasePopulation()
 {
-	global $db_character_set, $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl;
+	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl;
 
 	$incontext['sub_template'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -1016,15 +992,14 @@ function DatabasePopulation()
 	}
 	$modSettings['disableQueryCheck'] = true;
 
-	// If doing UTF8, select it. PostgreSQL requires passing it as a string...
-	if (!empty($db_character_set) && $db_character_set == 'utf8' && !empty($databases[$db_type]['utf8_support']))
-		$smcFunc['db_query']('', '
-			SET NAMES {string:utf8}',
-			array(
-				'db_error_skip' => true,
-				'utf8' => 'utf8',
-			)
-		);
+	// We're doing UTF8, select it. PostgreSQL requires passing it as a string...
+	$smcFunc['db_query']('', '
+		SET NAMES {string:utf8}',
+		array(
+			'db_error_skip' => true,
+			'utf8' => 'utf8',
+		)
+	);
 
 	// Windows likes to leave the trailing slash, which yields to C:\path\to\SMF\/attachments...
 	if (substr(__DIR__, -1) == '\\')
@@ -1075,12 +1050,9 @@ function DatabasePopulation()
 		$replaces['{$engine}'] = $has_innodb ? 'InnoDB' : 'MyISAM';
 		$replaces['{$memory}'] = (!$has_innodb && in_array('MEMORY', $engines)) ? 'MEMORY' : $replaces['{$engine}'];
 
-		// If the UTF-8 setting was enabled, add it to the table definitions.
-		if (!empty($databases[$db_type]['utf8_support']) && (!empty($databases[$db_type]['utf8_required']) || isset($_POST['utf8'])))
-		{
-			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
-			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
-		}
+		// We're using UTF-8 setting, so add it to the table definitions.
+		$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+		$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
 
 		// One last thing - if we don't have InnoDB, we can't do transactions...
 		if (!$has_innodb)
@@ -1179,10 +1151,6 @@ function DatabasePopulation()
 		else
 			$incontext['sql_results'][$key] = sprintf($txt['db_populate_' . $key], $number);
 	}
-
-	// Make sure UTF will be used globally.
-	if ((!empty($databases[$db_type]['utf8_support']) && !empty($databases[$db_type]['utf8_required'])) || (empty($databases[$db_type]['utf8_required']) && !empty($databases[$db_type]['utf8_support']) && isset($_POST['utf8'])))
-		$newSettings[] = array('global_character_set', 'UTF-8');
 
 	// Maybe we can auto-detect better cookie settings?
 	preg_match('~^http[s]?://([^\.]+?)([^/]*?)(/.*)?$~', $boardurl, $matches);
@@ -1290,7 +1258,7 @@ function DatabasePopulation()
 // Ask for the administrator login information.
 function AdminAccount()
 {
-	global $txt, $db_type, $db_connection, $smcFunc, $incontext, $db_prefix, $db_passwd, $sourcedir, $db_character_set;
+	global $txt, $db_type, $db_connection, $smcFunc, $incontext, $db_prefix, $db_passwd, $boarddir, $sourcedir;
 
 	$incontext['sub_template'] = 'admin_account';
 	$incontext['page_title'] = $txt['user_settings'];
@@ -1304,17 +1272,16 @@ function AdminAccount()
 	require(dirname(__FILE__) . '/Settings.php');
 	load_database();
 
+	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+
 	require_once($sourcedir . '/Subs-Auth.php');
 
 	require_once($sourcedir . '/Subs.php');
 
 	// We need this to properly hash the password for Admin
-	$smcFunc['strtolower'] = $db_character_set != 'utf8' && $txt['lang_character_set'] != 'UTF-8' ? 'strtolower' : function($string) {
-			global $sourcedir;
-			if (function_exists('mb_strtolower'))
-				return mb_strtolower($string, 'UTF-8');
-			require_once($sourcedir . '/Subs-Charset.php');
-			return utf8_strtolower($string);
+	$smcFunc['strtolower'] = function($string) {
+			return mb_strtolower($string, 'UTF-8');
 		};
 
 	if (!isset($_POST['username']))
@@ -1437,19 +1404,19 @@ function AdminAccount()
 				array(
 					'member_name' => 'string-25', 'real_name' => 'string-25', 'passwd' => 'string', 'email_address' => 'string',
 					'id_group' => 'int', 'posts' => 'int', 'date_registered' => 'int',
-					'password_salt' => 'string', 'lngfile' => 'string', 'personal_text' => 'string', 'avatar' => 'string',
+					'password_salt' => 'string', 'lngfile' => 'string', 'avatar' => 'string',
 					'member_ip' => 'inet', 'member_ip2' => 'inet', 'buddy_list' => 'string', 'pm_ignore_list' => 'string',
 					'website_title' => 'string', 'website_url' => 'string',
-					'signature' => 'string', 'usertitle' => 'string', 'secret_question' => 'string',
+					'signature' => 'string', 'secret_question' => 'string',
 					'additional_groups' => 'string', 'ignore_boards' => 'string',
 				),
 				array(
 					stripslashes($_POST['username']), stripslashes($_POST['username']), $_POST['password1'], stripslashes($_POST['email']),
 					1, 0, time(),
-					$incontext['member_salt'], '', '', '',
+					$incontext['member_salt'], '', '',
 					$ip, $ip, '', '',
 					'', '',
-					'', '', '',
+					'', '',
 					'', '',
 				),
 				array('id_member'),
@@ -1488,8 +1455,8 @@ function AdminAccount()
 function DeleteInstall()
 {
 	global $txt, $incontext;
-	global $smcFunc, $db_character_set, $context, $cookiename;
-	global $current_smf_version, $databases, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
+	global $smcFunc, $context, $cookiename;
+	global $current_smf_version, $databases, $boarddir, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['sub_template'] = 'delete_install';
@@ -1499,6 +1466,9 @@ function DeleteInstall()
 	load_database();
 
 	chdir(dirname(__FILE__));
+
+	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 
 	require_once($sourcedir . '/Errors.php');
 	require_once($sourcedir . '/Logging.php');
@@ -1511,14 +1481,13 @@ function DeleteInstall()
 	if (!empty($incontext['account_existed']))
 		$incontext['warning'] = $incontext['account_existed'];
 
-	if (!empty($db_character_set) && !empty($databases[$db_type]['utf8_support']))
-		$smcFunc['db_query']('', '
-			SET NAMES {string:db_character_set}',
-			array(
-				'db_character_set' => $db_character_set,
-				'db_error_skip' => true,
-			)
-		);
+	$smcFunc['db_query']('', '
+		SET NAMES {string:db_character_set}',
+		array(
+			'db_character_set' => 'UTF-8',
+			'db_error_skip' => true,
+		)
+	);
 
 	// As track stats is by default enabled let's add some activity.
 	$smcFunc['db_insert']('ignore',
@@ -1584,13 +1553,8 @@ function DeleteInstall()
 	updateStats('topic');
 
 	// This function is needed to do the updateStats('subject') call.
-	$smcFunc['strtolower'] = $db_character_set != 'utf8' && $txt['lang_character_set'] != 'UTF-8' ? 'strtolower' :
-		function($string){
-			global $sourcedir;
-			if (function_exists('mb_strtolower'))
-				return mb_strtolower($string, 'UTF-8');
-			require_once($sourcedir . '/Subs-Charset.php');
-			return utf8_strtolower($string);
+	$smcFunc['strtolower'] = function($string){
+			return mb_strtolower($string, 'UTF-8');
 		};
 
 	$request = $smcFunc['db_query']('', '
@@ -1603,7 +1567,6 @@ function DeleteInstall()
 			'db_error_skip' => true,
 		)
 	);
-	$context['utf8'] = $db_character_set === 'utf8' || $txt['lang_character_set'] === 'UTF-8';
 	if ($smcFunc['db_num_rows']($request) > 0)
 		updateStats('subject', 1, htmlspecialchars($txt['default_topic_subject']));
 	$smcFunc['db_free_result']($request);
@@ -1725,12 +1688,12 @@ function updateDbLastError()
 	return true;
 }
 
-// Create an .htaccess file to prevent mod_security. SMF has filtering built-in.
+// Create an .htaccess file to prevent mod_security. StoryBB has filtering built-in.
 function fixModSecurity()
 {
 	$htaccess_addition = '
 <IfModule mod_security.c>
-	# Turn off mod_security filtering.  SMF is a big boy, it doesn\'t need its hands held.
+	# Turn off mod_security filtering.  StoryBB is a big boy, it doesn\'t need its hands held.
 	SecFilterEngine Off
 
 	# The below probably isn\'t needed, but better safe than sorry.
@@ -1782,9 +1745,9 @@ function template_install_above()
 	echo '<!DOCTYPE html>
 <html', $txt['lang_rtl'] == true ? ' dir="rtl"' : '', '>
 	<head>
-		<meta charset="', isset($txt['lang_character_set']) ? $txt['lang_character_set'] : 'UTF-8', '">
+		<meta charset="UTF-8">
 		<meta name="robots" content="noindex">
-		<title>', $txt['smf_installer'], '</title>
+		<title>', $txt['storybb_installer'], '</title>
 		<link rel="stylesheet" href="Themes/default/css/index.css?alp21">
 		<link rel="stylesheet" href="Themes/default/css/install.css?alp21">
 		', $txt['lang_rtl'] == true ? '<link rel="stylesheet" href="Themes/default/css/rtl.css?alp21">' : '', '
@@ -1794,7 +1757,7 @@ function template_install_above()
 	</head>
 	<body><div id="footerfix">
 		<div id="header">
-			<h1 class="forumtitle">', $txt['smf_installer'], '</h1>
+			<h1 class="forumtitle">', $txt['storybb_installer'], '</h1>
 			<img id="smflogo" src="Themes/default/images/smflogo.png" alt="Simple Machines Forum" title="Simple Machines Forum">
 		</div>
 		<div id="wrapper">
@@ -1883,7 +1846,7 @@ function template_install_below()
 		</div></div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://www.simplemachines.org/" title="Simple Machines Forum" target="_blank" class="new_win">SMF &copy; 2017, Simple Machines</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; 2017, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>
@@ -2134,10 +2097,7 @@ function template_database_settings()
 	<script>
 		function toggleDBInput()
 		{
-			if (document.getElementById(\'db_type_input\').value == \'postgresql\')
-				document.getElementById(\'db_name_info_warning\').style.display = \'none\';
-			else
-				document.getElementById(\'db_name_info_warning\').style.display = \'\';
+			$("#db_name_info_warning").toggle($("#db_type_input").val() != "postgresql");
 		}
 		toggleDBInput();
 	</script>';
@@ -2208,15 +2168,6 @@ function template_forum_settings()
 					<label for="dbsession_check">', $txt['install_settings_dbsession_title'], '</label>
 					<br>
 					<div class="smalltext block">', $incontext['test_dbsession'] ? $txt['install_settings_dbsession_info1'] : $txt['install_settings_dbsession_info2'], '</div>
-				</td>
-			</tr>
-			<tr>
-				<td class="textbox" style="vertical-align: top;">', $txt['install_settings_utf8'], ':</td>
-				<td>
-					<input type="checkbox" name="utf8" id="utf8_check"', $incontext['utf8_default'] ? ' checked' : '', ' class="input_check"', $incontext['utf8_required'] ? ' disabled' : '', ' />&nbsp;
-					<label for="utf8_check">', $txt['install_settings_utf8_title'], '</label>
-					<br>
-					<div class="smalltext block">', $txt['install_settings_utf8_info'], '</div>
 				</td>
 			</tr>
 			<tr>

@@ -21,7 +21,7 @@ function template_email_members()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=news;sa=mailingcompose" method="post" id="admin_newsletters" class="flow_hidden" accept-charset="', $context['character_set'], '">
+		<form action="', $scripturl, '?action=admin;area=news;sa=mailingcompose" method="post" id="admin_newsletters" class="flow_hidden" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['admin_newsletters'], '</h3>
 			</div>
@@ -194,7 +194,7 @@ function template_email_members_compose()
 
 	echo '
 	<div id="admincenter">
-		<form name="newsmodify" action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="', $context['character_set'], '">
+		<form name="newsmodify" action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a> ', $txt['admin_newsletters'], '
@@ -381,7 +381,7 @@ function template_email_members_send()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="', $context['character_set'], '" name="autoSubmit" id="autoSubmit">
+		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					<a href="', $scripturl, '?action=helpadmin;help=email_members" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="', $txt['help'], '"></span></a> ', $txt['admin_newsletters'], '
@@ -440,11 +440,13 @@ function template_news_lists()
 {
 	global $context, $txt;
 
-	if (!empty($context['saved_successful']))
-		echo '
-					<div class="infobox">', $txt['settings_saved'], '</div>';
+	$return = '';
 
-	template_show_list('news_lists');
+	if (!empty($context['saved_successful']))
+		$return = '
+					<div class="infobox">' . $txt['settings_saved'] . '</div>';
+
+	return $return . template_show_list('news_lists');
 }
 
 ?>

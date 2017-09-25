@@ -117,6 +117,7 @@ function is_not_guest($message = '')
 	loadLanguage('Login');
 
 	// Apparently we're not in a position to handle this now. Let's go to a safer location for now.
+	// @todo this might need reworking
 	if (empty($context['template_layers']))
 	{
 		$_SESSION['login_url'] = $scripturl . '?' . $_SERVER['QUERY_STRING'];
@@ -407,7 +408,6 @@ function banPermissions()
 	{
 		$denied_permissions = array(
 			'pm_send',
-			'calendar_post', 'calendar_edit_own', 'calendar_edit_any',
 			'poll_post',
 			'poll_add_own', 'poll_add_any',
 			'poll_edit_own', 'poll_edit_any',

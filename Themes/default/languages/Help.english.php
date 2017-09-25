@@ -83,7 +83,7 @@ $helptxt['view_members'] = '
 	</ul>';
 
 $helptxt['ban_members'] = '<strong>Ban Members</strong><br>
-	SMF provides the ability to &quot;ban&quot; users, which can be a useful course of action against users that have
+	StoryBB provides the ability to &quot;ban&quot; users, which can be a useful course of action against users that have
 	violated the trust of the forum	by spamming or trolling, etc. This allows you to exclude users that are detrimental
 	to your forum. As an admin, when you view posts made on your forum, you can see the IP address that the user had at the time of posting.
 	In the ban list, you simply type that IP address in, save, and they can no longer post from that location.<br>You can also
@@ -122,10 +122,6 @@ $helptxt['time_format'] = '<strong>Time Format</strong><br>
 	<br>
 	<em>* Does not work on Windows-based servers.</em></span>';
 
-$helptxt['live_news'] = '<strong>Live announcements</strong><br>
-	This box shows recently updated announcements from <a href="https://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>.
-	You should check here every now and then for updates, new releases, and important information from Simple Machines.';
-
 $helptxt['registrations'] = '<strong>Registration Management</strong><br>
 	This page contains all the functions that could be necessary to manage new registrations on the forum. It contains up to four
 	pages which are visible depending on your forum settings. These are:<br><br>
@@ -140,7 +136,7 @@ $helptxt['registrations'] = '<strong>Registration Management</strong><br>
 		<li>
 			<strong>Edit Registration Agreement</strong><br>
 			This page allows you to set the text for the registration agreement displayed when members sign up for your forum.
-			You can add or remove anything from the default registration agreement, which is included in SMF.<br><br>
+			You can add or remove anything from the default registration agreement, which is included in StoryBB.<br><br>
 		</li>
 		<li>
 			<strong>Set Reserved Names</strong><br>
@@ -185,18 +181,6 @@ $helptxt['smileys'] = '<strong>Smiley Center</strong><br>
 	get confusing for your users using different sets.<br><br>
 
 	You are also able to edit message icons from here, if you have them enabled on the settings page.';
-$helptxt['calendar'] = '<strong>Manage Calendar</strong><br>
-	Here you can modify the current calendar settings as well as add and remove holidays that appear on the calendar.';
-$helptxt['cal_export'] = 'Exports a text file in the iCal format for importing into other calendar applications';
-$helptxt['cal_highlight_events'] = 'This setting allows you to highlight events on the Mini Calendars, Main Calendar, both places, or disable event highlighting.';
-$helptxt['cal_highlight_holidays'] = 'This setting allows you to highlight holidays on the Mini Calendars, Main Calendar, both places, or disable event highlighting.';
-$helptxt['cal_highlight_birthdays'] = 'This setting allows you to highlight birthdays on the Mini Calendars, Main Calendar, both places, or disable event highlighting.';
-$helptxt['cal_disable_prev_next'] = 'If this setting is checked, the three month blocks on the left hand side of the page will be disabled.';
-$helptxt['cal_display_type'] = 'This setting allows you to change the display type of the calendar.<br><br><strong>Comfortable:</strong> makes the rows of the calendar big.<br><strong>Compact:</strong> makes the rows of the calendar small.';
-$helptxt['cal_week_links'] = 'If this setting is checked, links will be added alongside each week in the calendar.';
-$helptxt['cal_prev_next_links'] = 'If this setting is checked, previous month and next month links will be added to the top of each month for easy navigation.';
-$helptxt['cal_short_months'] = 'If this setting is checked, month names within the calendar will be shortened.<br><br><strong>Enabled:</strong> ' . $txt['months_short'][1] . ' 1<br><strong>Disabled:</strong> ' . $txt['months_titles'][1] . ' 1';
-$helptxt['cal_short_days'] = 'If this setting is checked, day names within the calendar will be shortened.<br><br><strong>Enabled:</strong> ' . $txt['days_short'][1] . '<br><strong>Disbaled:</strong> ' . $txt['days'][1];
 
 $helptxt['serversettings'] = '<strong>Server Settings</strong><br>
 	Here you can perform some core configuration for your forum. This page includes the database and url settings, as well as other
@@ -206,7 +190,7 @@ $helptxt['manage_files'] = '
 	<ul class="normallist">
 		<li>
 			<strong>Browse Files</strong><br>
-			Browse through all the attachments, avatars and thumbnails stored by SMF.<br><br>
+			Browse through all the attachments, avatars and thumbnails stored by StoryBB.<br><br>
 		</li><li>
 			<strong>Attachment Settings</strong><br>
 			Configure where attachments are stored and set restrictions on the types of attachments.<br><br>
@@ -227,8 +211,6 @@ $helptxt['userLanguage'] = 'Turning this setting on will allow users to select w
 $helptxt['trackStats'] = 'Stats:<br>This will allow users to see the latest posts and the most popular topics on your forum.
 		It will also show several statistics, like the most members online, new members, and new topics.<hr>
 		Page views:<br>Adds another column to the stats page with the number of pageviews on your forum.';
-$helptxt['titlesEnable'] = 'Switching Custom Titles on will allow members with the relevant permission to create a special title for themselves.
-		This will be shown underneath the name.<br><em>For example:</em><br>Jeff<br>Cool Guy';
 $helptxt['onlineEnable'] = 'This will show an image to indicate whether the member is online or offline';
 $helptxt['todayMod'] = 'This will show &quot;Today&quot; or &quot;Yesterday&quot; instead of the date.<br><br>
 		<strong>Examples:</strong><br><br>
@@ -242,7 +224,6 @@ $helptxt['todayMod'] = 'This will show &quot;Today&quot; or &quot;Yesterday&quot
 			Yesterday at 09:36:55 pm</li>
 		</ul>';
 $helptxt['disableCustomPerPage'] = 'Check this setting to stop users from customizing the amount of messages and topics to display per page on the Message Index and Topic Display page respectively.';
-$helptxt['enablePreviousNext'] = 'This will show a link to the next and previous topic.';
 $helptxt['pollMode'] = 'This selects whether polls are enabled or not. If polls are disabled, any existing polls will be hidden
 		from the topic listing. You can choose to continue to show the regular topic without their polls by selecting
 		&quot;Show Existing Polls as Topics&quot;.<br><br>To choose who can post polls, view polls, and similar, you
@@ -254,9 +235,9 @@ $helptxt['databaseSession_enable'] = 'This setting makes use of the database for
 $helptxt['databaseSession_loose'] = 'Turning this on will decrease the bandwidth your forum uses, and make it so clicking back will not reload the page - the downside is that the (new) icons won\'t update, among other things. (unless you click to that page instead of going back to it).';
 $helptxt['databaseSession_lifetime'] = 'This is the number of seconds for sessions to last after they haven\'t been accessed. If a session is not accessed for too long, it is said to have &quot;timed out&quot;. Anything higher than 2400 is recommended.';
 $helptxt['tfa_mode'] = 'You can add a second level of security to your forum by enabling <a href="https://en.wikipedia.org/wiki/Two_factor_authentication">Two Factor Authentication</a>. 2FA forces your users to add a enter a machine-generated code after the regular login. You need to configure 2FA to yourself before you are able to force it to other users!';
-$helptxt['cache_enable'] = 'SMF performs caching at a variety of levels. The higher the level of caching enabled the more CPU time will be spent retrieving cached information. If caching is available on your machine it is recommended that you try caching at level 1 first.';
-$helptxt['cache_memcached'] = 'If you are using memcached you need to provide the server details. This should be entered as a comma separated list as shown in the example below:<br><br>	&quot;server1,server2,server3:port,server4&quot;<br><br>Note that if no port is specified SMF will use port 11211 unless the host contains a slash, then it is assumed to be an alternative transport and the port will be set to 0. SMF will attempt to perform rough/random load balancing across the specified servers.';
-$helptxt['cache_cachedir'] = 'This setting is only for the smf file-based cache system. It specifies the path to the cache directory. It is recommended that you place this in /tmp/ if you are going to use this, although it will work in any directory';
+$helptxt['cache_enable'] = 'StoryBB performs caching at a variety of levels. The higher the level of caching enabled the more CPU time will be spent retrieving cached information. If caching is available on your machine it is recommended that you try caching at level 1 first.';
+$helptxt['cache_memcached'] = 'If you are using memcached you need to provide the server details. This should be entered as a comma separated list as shown in the example below:<br><br>	&quot;server1,server2,server3:port,server4&quot;<br><br>Note that if no port is specified StoryBB will use port 11211 unless the host contains a slash, then it is assumed to be an alternative transport and the port will be set to 0. StoryBB will attempt to perform rough/random load balancing across the specified servers.';
+$helptxt['cache_cachedir'] = 'This setting is only for the StoryBB file-based cache system. It specifies the path to the cache directory. It is recommended that you place this in /tmp/ if you are going to use this, although it will work in any directory';
 $helptxt['cache_sqlite_cachedir'] = 'This setting is only for the SQLite database cache system. It specifies the path to the cache directory. It is recommended that you place this in /tmp/ if you are going to use this, although it will work in any directory';
 $helptxt['xcache_adminuser'] = 'This setting is only for the xcache based cache system. It specifies a username and password required to issue a clear command. If this is not set, clearing the cache will fail and the caching system will still force it to invaliate all cached data.<br>The username and password are in cleartext. The password is a unsalted MD5. It is recommended the username and password are set to random values.<br><br>The Cache API will attempt to set these values, however it is <a href="https://xcache.lighttpd.net/wiki/InstallAdministration">recommended these be set in your php.ini</a>';
 $helptxt['enableErrorLogging'] = 'This will log any errors, like a failed login, so you can see what went wrong.';
@@ -266,10 +247,7 @@ $helptxt['allow_disableAnnounce'] = 'This will allow users to opt out of notific
 $helptxt['disallow_sendBody'] = 'This setting removes the option to receive the text of replies, posts, and personal messages in notification emails.<br><br>Often, members will reply to the notification email, which in most cases means the webmaster receives the reply.';
 $helptxt['enable_ajax_alerts'] = 'This option allows your members to receive AJAX notifications. This means that members don\'t need to refresh the page to get new notifications.<br><b>DO NOTE:</b> This option might cause a severe load at your server with many users online.';
 $helptxt['jquery_source'] = 'This will determine the source used to load the jQuery Library. <em>Auto</em> will use the CDN first and if not available fall back to the local source. <em>Local</em> will only use the local source. <em>CDN</em> will only load it from Google CDN network';
-$helptxt['compactTopicPagesEnable'] = 'This will just show a selection of the number of pages.<br><em>Example:</em>
-		&quot;3&quot; to display: 1 ... 4 [5] 6 ... 9 <br>
-		&quot;5&quot; to display: 1 ... 3 4 [5] 6 7 ... 9';
-$helptxt['timeLoadPageEnable'] = 'This will show the time in seconds SMF took to create the page at the bottom of the board.';
+$helptxt['timeLoadPageEnable'] = 'This will show the time in seconds StoryBB took to create the page at the bottom of the board.';
 $helptxt['removeNestedQuotes'] = 'This will strip nested quotes from a post when citing the post in question via a quote link.';
 $helptxt['max_image_width'] = 'This allows you to set a maximum size for posted pictures. Pictures smaller than the maximum will not be affected. This also determines how attached images are displayed when a thumbnail is clicked on.';
 $helptxt['mail_type'] = 'This setting allows you to choose either PHP\'s default settings, or to override those settings with SMTP. PHP doesn\'t support using authentication with SMTP (which many hosts now require), so if you want that you should select SMTP. Please note that SMTP can be slower, and some servers will not accept usernames and passwords.<br><br>You don\'t need to fill in the SMTP settings if this is set to PHP\'s default.';
@@ -301,30 +279,17 @@ $helptxt['attachmentEnable'] = 'This setting enables you to configure how attach
 			Existing attachments are still accessible, but no new attachments can be added, regardless of permission.
 		</li>
 	</ul>';
-$helptxt['attachment_image_paranoid'] = 'Selecting this setting will enable very strict security checks on image attachments. <strong>Warning!</strong> These extensive checks can fail on valid images too. It is strongly recommended to only use this setting together with image re-encoding, in order to have SMF try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if image re-encoding is not enabled, all attachments failing checks will be rejected.';
+$helptxt['attachment_image_paranoid'] = 'Selecting this setting will enable very strict security checks on image attachments. <strong>Warning!</strong> These extensive checks can fail on valid images too. It is strongly recommended to only use this setting together with image re-encoding, in order to have StoryBB try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if image re-encoding is not enabled, all attachments failing checks will be rejected.';
 $helptxt['attachment_image_reencode'] = 'Selecting this setting will enable trying to re-encode the uploaded image attachments. Image re-encoding offers better security. Note however that image re-encoding also renders all animated images static. <br> This feature is only possible if the GD module is installed on your server.';
 $helptxt['attachment_thumb_memory'] = 'The larger the source image (size & width x height), the higher the memory requirements are for the system to successfully create a thumbnail image.<br>Checking this setting, the system will estimate the required memory and will then request that amount. If successful, only then will it attempt to create the thumbnail.<br>This will result in fewer white page errors but may result in fewer thumbnails being created. Leaving this unchecked will always cause the system to try to create the thumbnail (with a fixed amount of memory). This may result in more white page errors.';
 $helptxt['attachmentRecodeLineEndings'] = 'The script will re-code line endings according to your server.';
-$helptxt['automanage_attachments'] = 'By default, SMF puts new attachments into a single folder. For most sites this is not a problem, but as a site grows it can be useful to have multiple folders to store attachments in.<br><br>This setting allows you to set whether you manage these folders yourself (e.g. creating a second folder and moving to it when you are ready) or whether you let SMF do it, based on criteria, such as when the current directory reaches a given size, or breaking down folders by years or even months on very busy sites.';
+$helptxt['automanage_attachments'] = 'By default, StoryBB puts new attachments into a single folder. For most sites this is not a problem, but as a site grows it can be useful to have multiple folders to store attachments in.<br><br>This setting allows you to set whether you manage these folders yourself (e.g. creating a second folder and moving to it when you are ready) or whether you let StoryBB do it, based on criteria, such as when the current directory reaches a given size, or breaking down folders by years or even months on very busy sites.';
 $helptxt['dont_show_attach_under_post'] = 'If enabled, the attachments embedded on the post won\'t appear under the post but are still subject to be deleted.';
 $helptxt['use_subdirectories_for_attachments'] = 'Create new directories.';
 $helptxt['max_image_height'] = 'As with the maximum width, this setting indicates the maximum height a posted image can be.';
-$helptxt['avatar_paranoid'] = 'Selecting this setting will enable very strict security checks on avatars. <strong>Warning!</strong> These extensive checks can fail on valid images too. It is strongly recommended to only use this setting together with avatar re-encoding, in order to have SMF try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if re-encoding of avatars is not enabled, all avatars failing checks will be rejected.';
+$helptxt['avatar_paranoid'] = 'Selecting this setting will enable very strict security checks on avatars. <strong>Warning!</strong> These extensive checks can fail on valid images too. It is strongly recommended to only use this setting together with avatar re-encoding, in order to have StoryBB try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if re-encoding of avatars is not enabled, all avatars failing checks will be rejected.';
 $helptxt['avatar_reencode'] = 'Selecting this setting will enable trying to re-encode the uploaded avatars. Image re-encoding offers better security. Note, however, that image re-encoding also renders all animated images static. <br> This feature is only possible if the GD module is installed on your server.';
-$helptxt['cal_enabled'] = 'The calendar can be used for showing birthdays, or for showing important events happening in your community.<br><br>
-		<strong>Show days as link to \'Post Event\'</strong>:<br>This will allow members to post events for that day, when they click on that date<br>
-		<strong>Max days in advance on board index</strong>:<br>If this is set to 7, the next week\'s worth of events will be shown.<br>
-		<strong>Show holidays on board index</strong>:<br>Show today\'s holidays in a calendar bar on the board index.<br>
-		<strong>Show birthdays on board index</strong>:<br>Show today\'s birthdays in a calendar bar on the board index.<br>
-		<strong>Show events on board index</strong>:<br>Show today\'s events in a calendar bar on the board index.<br>
-		<strong>Default Board to Post In</strong>:<br>What\'s the default board to post events in?<br>
-		<strong>Allow events not linked to posts</strong>:<br>Allow members to post events without requiring them to be linked with a post in a board.<br>
-		<strong>Minimum year</strong>:<br>Select the &quot;first&quot; year on the calendar list.<br>
-		<strong>Maximum year</strong>:<br>Select the &quot;last&quot; year on the calendar list<br>
-		<strong>Allow events to span multiple days</strong>:<br>Select this to allow events to span multiple days.<br>
-		<strong>Max number of days an event can span</strong>:<br>Select the maximum number of days that an event can span.<br><br>
-		Remember that usage of the calendar (posting events, viewing events, etc.) is controlled by permissions set on the permissions page.';
-$helptxt['localCookies'] = 'SMF uses cookies to store login information on the client computer.
+$helptxt['localCookies'] = 'StoryBB uses cookies to store login information on the client computer.
 	Cookies can be stored globally (myserver.com) or locally (myserver.com/path/to/forum).<br><br>
 	Try this setting if you\'re experiencing problems with users getting logged out automatically.<hr>
 	Globally stored cookies are less secure when used on a shared webserver (like Tripod).<hr>
@@ -333,7 +298,7 @@ $helptxt['localCookies'] = 'SMF uses cookies to store login information on the c
 $helptxt['enableBBC'] = 'Selecting this setting will allow your members to use Bulletin Board Code (BBC) throughout the forum, allowing users to format their posts with images, type formatting, and more.';
 $helptxt['time_offset'] = 'Not all forum administrators want their forum to use the same time zone as the server upon which it is hosted. Use this setting to specify the time difference (in hours) between the server time and the time to be used for the forum. Negative and decimal values are permitted.';
 $helptxt['default_timezone'] = 'The server time zone tells PHP where your server is located. You should ensure that this is set correctly, preferably to the country/city in which the server is located. You can find out more information on the <a href="https://php.net/manual/en/timezones.php" target="_blank">PHP Site</a>.';
-$helptxt['timezone_priority_countries'] = 'This setting lets you push the time zones for a certain country or countries to the top of the list of selectabled time zones that is shown when users are configuring their profiles, creating calendar events, etc.<br><br>For example, if many of your forum\'s members live in New Zealand or Fiji, you may enter "NZ,FJ" to make it easier for them to find the most relevant time zones quickly.<br><br>You can find the complete list of ISO country codes by searching the Internet for "<a href="//www.google.com/search?q=iso+3166-1+alpha-2" target="_blank">ISO 3166-1 alpha-2</a>".';
+$helptxt['timezone_priority_countries'] = 'This setting lets you push the time zones for a certain country or countries to the top of the list of selectabled time zones that is shown when users are configuring their profiles, etc.<br><br>For example, if many of your forum\'s members live in New Zealand or Fiji, you may enter "NZ,FJ" to make it easier for them to find the most relevant time zones quickly.<br><br>You can find the complete list of ISO country codes by searching the Internet for "<a href="//www.google.com/search?q=iso+3166-1+alpha-2" target="_blank">ISO 3166-1 alpha-2</a>".';
 $helptxt['spamWaitTime'] = 'Here you can select the amount of time that must pass between postings. This can be used to stop people from "spamming" your forum by limiting how often they can post.';
 
 $helptxt['enablePostHTML'] = 'This will allow the posting of some basic HTML tags:
@@ -348,16 +313,13 @@ $helptxt['enablePostHTML'] = 'This will allow the posting of some basic HTML tag
 $helptxt['themes'] = 'Here you can select whether the default theme can be chosen, what theme guests will use,
 	as well as other settings. Click on a theme to the right to change the settings for it.';
 $helptxt['theme_install'] = 'This allows you to install new themes. You can do this from an existing directory, by uploading an archive for the theme, or by copying the default theme.<br><br>Note that the archive or directory must have a <pre>theme_info.xml</pre> definition file.';
-$helptxt['enableEmbeddedFlash'] = 'This setting will allow your users to use Flash directly inside their posts,
-	just like images. This could pose a security risk, although few have successfully exploited it.
-	USE AT YOUR OWN RISK!';
 $helptxt['xmlnews_enable'] = 'Allows people to link to <a href="%1$s?action=.xml;sa=news" target="_blank" class="new_win">Recent news</a>
 	and similar data. It is also recommended that you limit the size of recent posts/news because some clients expect the RSS data to be truncated for display.';
 $helptxt['xmlnews_attachments'] = 'Allows links to attachments to be enclosed within your XML/RSS feeds. Turn this on if you want to use your forum as a podcasting, broadcatching, or similar content distribution platform.
 	<br><br>
 	The "view attachments" permission affects this setting. Members and guests will only see a post\'s attachments in the feed if they can also see the attachments on the post\'s web page. Keep in mind that most feed readers will access your feeds as a guest.
 	<br><br>
-	Some feed formats only allow one enclosed attachment per post. If a post has multiple attachments, SMF will enclose the largest one in these feeds.';
+	Some feed formats only allow one enclosed attachment per post. If a post has multiple attachments, StoryBB will enclose the largest one in these feeds.';
 $helptxt['globalCookies'] = 'Makes log in cookies available across subdomains. For example, if...<br>
 	your site is https://www.example.com/,<br>
 	and your forum is https://forum.example.com/,<br>
@@ -370,7 +332,7 @@ $helptxt['securityDisable_why'] = 'This is your current password. (the same one 
 $helptxt['securityDisable_moderate'] = 'This <em>disables</em> the additional password check for the moderation page. This is not recommended!';
 $helptxt['securityDisable_moderate_why'] = 'This is your current password. (the same one you use to login).<br><br>The requirement to enter this helps ensure that you want to do whatever moderation you are doing, and that it is <strong>you</strong> doing it.';
 $helptxt['frame_security'] = 'Modern browsers now understand a security header presented by servers called X-Frame-Options. By setting this option you specify how you want to allow your site to be framed inside a frameset or a iframe. Disable will not send any header and is the most unsecure, however allows the most freedom. Deny will prevent all frames completely and is the most restrictive and secure. Allowing the Same Origin will only allow your domain to issue any frames and provides a middle ground for the previous two options.';
-$helptxt['proxy_ip_header'] = 'This is the server header that will be trusted by SMF for containing the actual users IP address. Changing this setting can cause unexpected IP results on members. Please check with your server administrator, CDN provider or proxy administrator prior to changing these settings. Most providers will understand and use HTTP_X_FORWARDED_FOR. You should fill out the list of Servers sending the reverse proxy headers for security to ensure these headers only come from valid sources.';
+$helptxt['proxy_ip_header'] = 'This is the server header that will be trusted by StoryBB for containing the actual users IP address. Changing this setting can cause unexpected IP results on members. Please check with your server administrator, CDN provider or proxy administrator prior to changing these settings. Most providers will understand and use HTTP_X_FORWARDED_FOR. You should fill out the list of Servers sending the reverse proxy headers for security to ensure these headers only come from valid sources.';
 $helptxt['email_members'] = 'In this message you can use a few &quot;variables&quot;. These are:<br>
 	{$board_url} - The URL to your forum.<br>
 	{$current_time} - The current time.<br>
@@ -403,10 +365,6 @@ $helptxt['autoFixDatabase'] = 'This will automatically fix broken tables and res
 
 $helptxt['enableParticipation'] = 'This shows a little icon on the topics the user has posted in.';
 
-$helptxt['db_persist'] = 'This keeps the connection active to increase performance. If you aren\'t on a dedicated server, this may cause you problems with your host.';
-$helptxt['ssi_db_user'] = 'Optional setting to use a different database user and password when you are using SSI.php.';
-
-$helptxt['queryless_urls'] = 'This changes the format of URLs a little so search engines will like them better. They will look like index.php/topic,1.0.html.<br><br>This feature will ' . (isset($_SERVER['SERVER_SOFTWARE']) && (strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false || strpos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) ? '' : 'not') . ' work on your server.';
 $helptxt['minimize_files'] = 'This option will minimize all css and js files that are loaded everytime, everywhere for every user, reducing the requests calls to your server. New files are re-created everyday, if you want to re-create them just clean your forum\'s cache.';
 $helptxt['countChildPosts'] = 'Checking this setting means that posts and topics in a board\'s sub-board will count toward its totals on the index page.<br><br>This will make things notably slower, but means that a parent with no posts in it won\'t show \'0\'.';
 $helptxt['allow_ignore_boards'] = 'Checking this setting will allow users to select boards they wish to ignore.';
@@ -420,8 +378,6 @@ $helptxt['enableReportPM'] = 'This setting allows your users to report personal 
 $helptxt['max_pm_recipients'] = 'This setting allows you to set the maximum amount of recipients allowed in a single personal message sent by a forum member. This may be used to help stop spam abuse of the PM system. Note that users with permission to send newsletters are exempt from this restriction. Set to zero for no limit.';
 $helptxt['pm_posts_verification'] = 'This setting will force users to enter a code shown on a verification image each time they are sending a personal message. Only users with a post count below the number set will need to enter the code - this should help combat automated spamming scripts.';
 $helptxt['pm_posts_per_hour'] = 'This will limit the number of personal messages which may be sent by a user in a one hour period. This does not affect admins or moderators.';
-
-$helptxt['default_personal_text'] = 'Sets the default text a new user will have as their &quot;personal text.&quot; This setting is not available when personal text is disabled, or when users can set personal text on registration for themselves.';
 
 $helptxt['registration_method'] = 'This setting determines what method of registration is used for people wishing to join your forum. You can select from:<br><br>
 	<ul class="normallist">
@@ -451,7 +407,7 @@ $helptxt['password_strength'] = 'This setting determines the strength required f
 		<li><strong>Medium:</strong> The password must be at least eight characters long, and cannot be part of a user\'s name or email address.</li>
 		<li><strong>High:</strong> As for medium, except the password must also contain a mixture of upper and lower case letters, and at least one number.</li>
 	</ul>';
-$helptxt['enable_password_conversion'] = 'By enabling this setting, SMF will attempt to detect passwords stored in other formats and convert them to the format SMF uses. Typically this is used for forums converted to SMF, but may have other uses as well. Disabling this prevents a user from logging in using their password after a conversion and they would need to reset their password.';
+$helptxt['enable_password_conversion'] = 'By enabling this setting, StoryBB will attempt to detect passwords stored in other formats and convert them to the format StoryBB uses. Typically this is used for forums converted to StoryBB, but may have other uses as well. Disabling this prevents a user from logging in using their password after a conversion and they would need to reset their password.';
 
 $helptxt['coppaAge'] = 'The value specified in this box will determine the minimum age that new members must be in order to be granted immediate access to the forums.
 	On registration they will be prompted to confirm whether they are over this age, and if not will either have their application rejected or suspended awaiting parental approval - dependant on the type of restriction chosen.
@@ -474,7 +430,7 @@ $helptxt['meta_keywords'] = 'These keywords are sent in the output of every page
 
 $helptxt['latest_themes'] = 'This area shows a few of the latest and most popular themes from <a href="https://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>. It may not show up properly if your computer can\'t find <a href="https://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>, though.';
 
-$helptxt['secret_why_blank'] = 'For your security, your password and the answer to your secret question are encrypted so that the SMF software will never tell you, or anyone else, what they are.';
+$helptxt['secret_why_blank'] = 'For your security, your password and the answer to your secret question are encrypted so that the StoryBB software will never tell you, or anyone else, what they are.';
 $helptxt['moderator_why_missing'] = 'Since moderation is done on a board-by-board basis, you have to make members moderators from the <a href="%1$s?action=admin;area=manageboards" target="_blank" class="new_win">board management interface</a>.';
 
 $helptxt['permissions'] = 'Permissions are how you either allow groups to, or deny groups from, doing specific things.<br><br>You can modify multiple boards at once with the checkboxes, or look at the permissions for a specific group by clicking \'Modify.\'';
@@ -486,19 +442,17 @@ $helptxt['membergroup_guests'] = 'The Guests membergroup is for all users that a
 $helptxt['membergroup_regular_members'] = 'The Regular Members are all members that are logged in, but that have no primary membergroup assigned.';
 $helptxt['membergroup_administrator'] = 'The administrator can, per definition, do anything and see any board. There are no permission settings for the administrator.';
 $helptxt['membergroup_moderator'] = 'The Moderator membergroup is a special membergroup. Permissions and settings assigned to this group apply to moderators but only <em>on the boards they moderate</em>. Outside these boards they\'re just like any other member. Note that permissions for this group also apply to any group assigned to moderate a board.';
-$helptxt['membergroups'] = 'In SMF there are two types of groups that your members can be part of. These are:
+$helptxt['membergroups'] = 'In StoryBB there are two types of groups that your members can be part of. These are:
 	<ul class="normallist">
 		<li><strong>Regular Groups:</strong> A regular group is a group which members are not automatically placed. To assign a member to be in a group simply go to their profile and click &quot;Account Settings&quot;. From here you can assign them any number of regular groups to which they will be part.</li>
 		<li><strong>Post Groups:</strong> Unlike regular groups post based groups cannot be assigned. Instead, members are automatically assigned to a post based group when they reach the minimum number of posts required to be in that group.</li>
 	</ul>';
 
-$helptxt['calendar_how_edit'] = 'You can edit these events by clicking on the red asterisk (*) next to their names.';
-
 $helptxt['maintenance_backup'] = 'This area allows you to save a copy of all the posts, settings, members, and other information in your forum to a very large file.<br><br>It is recommended that you do this often, perhaps weekly, for safety and security.';
 $helptxt['maintenance_rot'] = 'This allows you to <strong>completely</strong> and <strong>irrevocably</strong> remove old topics. It is recommended that you try to make a backup first, just in case you remove something you didn\'t mean to.<br><br><strong>Use this setting with care.</strong>';
 $helptxt['maintenance_members'] = 'This allows you to <strong>completely</strong> and <strong>irrevocably</strong> remove member accounts from your forum. It is <strong>highly</strong> recommended that you try to make a backup first, just in case you remove something you didn\'t mean to.<br><br><strong>Use this setting with care.</strong>';
 
-$helptxt['avatar_server_stored'] = 'This allows your members to pick from avatars stored on your server itself. They are, generally, in the same place as SMF under the avatars directory.<br>As a tip, if you create directories in that folder, you can make &quot;categories&quot; of avatars.';
+$helptxt['avatar_server_stored'] = 'This allows your members to pick from avatars stored on your server itself. They are, generally, in the same place as StoryBB under the avatars directory.<br>As a tip, if you create directories in that folder, you can make &quot;categories&quot; of avatars.';
 $helptxt['avatar_external'] = 'With this enabled, your members can type in a URL to their own avatar. The downside of this is that, in some cases, they may use avatars that are overly large or portray images you don\'t want on your forum.';
 $helptxt['avatar_download_external'] = 'With this setting enabled, the URL given by the user is accessed to download the avatar at that location. On success, the avatar will be treated as uploadable avatar.';
 $helptxt['avatar_action_too_large'] = 'This setting therefore lets you reject images (from other sites) that are too big, or tells the user\'s browser to resize them, or to download them to your server.<br><br>If users put in very large images as their avatars and resize in the browser, it could cause very slow loading for your users - it does not actually resize the file, it just displays it smaller. So a digital photo, for example, would still be loaded in full and then resized only when displayed - so for users this could get quite slow and use a lot of bandwidth.<br><br>On the other hand, downloading them means using your bandwidth and server space, but you also ensure that images are smaller, so it should be faster for users. (Note: downloading and resizing requires either the GD library, or ImageMagick using either the Imagick or MagickWand extensions)';
@@ -507,18 +461,12 @@ $helptxt['avatar_download_png'] = 'PNGs are larger, but offer better quality com
 
 $helptxt['disableHostnameLookup'] = 'This disables host name lookups, which on some servers are very slow. Note that this will make banning less effective.';
 
-$helptxt['search_weight_frequency'] = 'Weight factors are used to determine the relevancy of a search result. Change these weight factors to match the things that are specifically important for your forum. For instance, a forum of a news site, might want a relatively high value for \'age of last matching message\'. All values are relative in relation to each other and should be positive integers.<br><br>This factor counts the amount of matching messages and divides them by the total number of messages within a topic.';
-$helptxt['search_weight_age'] = 'Weight factors are used to determine the relevancy of a search result. Change these weight factors to match the things that are specifically important for your forum. For instance, a forum of a news site, might want a relatively high value for \'age of last matching message\'. All values are relative in relation to each other and should be positive integers.<br><br>This factor rates the age of the last matching message within a topic. The more recent this message is, the higher the score.';
-$helptxt['search_weight_length'] = 'Weight factors are used to determine the relevancy of a search result. Change these weight factors to match the things that are specifically important for your forum. For instance, a forum of a news site, might want a relatively high value for \'age of last matching message\'. All values are relative in relation to each other and should be positive integers.<br><br>This factor is based on the topic size. The more messages are within the topic, the higher the score.';
-$helptxt['search_weight_subject'] = 'Weight factors are used to determine the relevancy of a search result. Change these weight factors to match the things that are specifically important for your forum. For instance, a forum of a news site, might want a relatively high value for \'age of last matching message\'. All values are relative in relation to each other and should be positive integers.<br><br>This factor looks whether a search term can be found within the subject of a topic.';
-$helptxt['search_weight_first_message'] = 'Weight factors are used to determine the relevancy of a search result. Change these weight factors to match the things that are specifically important for your forum. For instance, a forum of a news site, might want a relatively high value for \'age of last matching message\'. All values are relative in relation to each other and should be positive integers.<br><br>This factor looks whether a match can be found in the first message of a topic.';
-$helptxt['search_weight_sticky'] = 'Weight factors are used to determine the relevancy of a search result. Change these weight factors to match the things that are specifically important for your forum. For instance, a forum of a news site, might want a relatively high value for \'age of last matching message\'. All values are relative in relation to each other and should be positive integers.<br><br>This factor looks whether a topic is sticky and increases the relevancy score if it is.';
 $helptxt['search'] = 'Adjust all settings for the search function here.';
 $helptxt['search_why_use_index'] = 'A search index can greatly improve the performance of searches on your forum. Especially when the number of messages on a forum grows bigger, searching without an index can take a long time and increase the pressure on your database. If your forum is bigger than 50.000 messages, you might want to consider creating a search index to assure peak performance of your forum.<br><br>Note that a search index can take up quite some space. A fulltext index is a built-in index of MySQL. It\'s relatively compact (approximately the same size as the message table), but a lot of words aren\'t indexed and it can, in some search queries, turn out to be very slow. The custom index is often bigger (depending on your configuration it can be up to 3 times the size of the messages table) but it\'s performance is better than fulltext and relatively stable.';
 
 $helptxt['see_admin_ip'] = 'IP addresses are shown to administrators and moderators to facilitate moderation and to make it easier to track people up to no good. Remember that IP addresses may not always be identifying, and most people\'s IP addresses change periodically.<br><br>Members are also allowed to see their own IPs.';
 $helptxt['see_member_ip'] = 'Your IP address is shown only to you and moderators. Remember that this information is not identifying, and that most IPs change periodically.<br><br>You cannot see other members\' IP addresses, and they cannot see yours.';
-$helptxt['whytwoip'] = 'SMF uses various methods to detect user IP addresses. Usually these two methods result in the same address but in some cases more than one address may be detected. In this case SMF logs both addresses, and uses them both for ban checks (etc). You can click on either address to track that IP and ban if necessary.';
+$helptxt['whytwoip'] = 'StoryBB uses various methods to detect user IP addresses. Usually these two methods result in the same address but in some cases more than one address may be detected. In this case StoryBB logs both addresses, and uses them both for ban checks (etc). You can click on either address to track that IP and ban if necessary.';
 
 $helptxt['ban_cannot_post'] = 'The \'cannot post\' restriction turns the forum into read-only mode for the banned user. The user cannot create new topics, or reply to existing ones, send personal messages or vote in polls. The banned user can however still read personal messages and topics.<br><br>A warning message is shown to the users that are banned this way.';
 
@@ -607,11 +555,10 @@ $helptxt['custom_mask'] = 'The input mask is important for your forum\'s securit
 $helptxt['topic_move_any'] = 'If checked, users will be allowed to move topics to any board they can see. Otherwise, they will only be able to move them to boards where they can post new topics.';
 
 $helptxt['alert_pm_new'] = 'Notifications of new personal messages do not appear in the Alerts pane, but appear in the "My Messages" list instead.';
-$helptxt['alert_event_new'] = 'This will send out an alert or email as requested if there is a new calendar event added. However, if that event is posted and a topic is added, you will not get an alert for the event if you\'re already following that board - the alert from following the board would cover this.';
 
 $helptxt['force_ssl'] = '<b>Test SSL and HTTPS on your server properly before enabling this, it may cause your forum to become inaccessible.</b> Enable maintenance mode if you are unable to access the forum after enabling this';
 $helptxt['image_proxy_enabled'] = 'Required for embedding external images when in full SSL';
 $helptxt['image_proxy_secret'] = 'Keep this a secret, protects your forum from hotlinking images. Change it in order to render current hotlinked images useless';
-$helptxt['image_proxy_maxsize'] = 'Maximum image size that the SSL image proxy will cache: bigger images will be not be cached. Cached images are stored in your SMF cache folder, so make sure you have enough free space.';
+$helptxt['image_proxy_maxsize'] = 'Maximum image size that the SSL image proxy will cache: bigger images will be not be cached. Cached images are stored in your StoryBB cache folder, so make sure you have enough free space.';
 
 ?>

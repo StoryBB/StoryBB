@@ -542,14 +542,6 @@ $.sceditor.plugins.bbcode.bbcode.set(
 );
 
 $.sceditor.plugins.bbcode.bbcode.set(
-	'php', {
-		isInline: false,
-		format: "[php]{0}[/php]",
-		html: '<code class="php">{0}</code>'
-	}
-);
-
-$.sceditor.plugins.bbcode.bbcode.set(
 	'code', {
 		tags: {
 			code: null
@@ -557,9 +549,6 @@ $.sceditor.plugins.bbcode.bbcode.set(
 		isInline: false,
 		allowedChildren: ['#', '#newline'],
 		format: function (element, content) {
-			if ($(element[0]).hasClass('php'))
-				return '[php]' + content.replace('&#91;', '[') + '[/php]';
-
 			var from = '';
 			if ($(element).children("cite:first").length === 1)
 			{

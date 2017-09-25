@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 if (!defined('SMF'))
 	die('No direct access...');
 
@@ -18,17 +20,16 @@ if (!defined('SMF'))
  */
 function reloadSettings()
 {
-	global $modSettings, $boarddir, $smcFunc, $txt, $db_character_set;
+	global $modSettings, $boarddir, $smcFunc, $txt;
 	global $cache_enable, $sourcedir, $context;
 
 	// Most database systems have not set UTF-8 as their default input charset.
-	if (!empty($db_character_set))
-		$smcFunc['db_query']('', '
-			SET NAMES {string:db_character_set}',
-			array(
-				'db_character_set' => $db_character_set,
-			)
-		);
+	$smcFunc['db_query']('', '
+		SET NAMES {string:db_character_set}',
+		array(
+			'db_character_set' => 'utf8',
+		)
+	);
 
 	// We need some caching support, maybe.
 	loadCacheAccelerator();
@@ -68,9 +69,6 @@ function reloadSettings()
 
 	$modSettings['cache_enable'] = $cache_enable;
 
-	// UTF-8 ?
-	$utf8 = (empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set']) === 'UTF-8';
-
 	// Set a list of common functions.
 	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(#021|quot|amp|lt|gt|nbsp);';
 	$ent_check = empty($modSettings['disableEntityCheck']) ? function($string)
@@ -81,9 +79,9 @@ function reloadSettings()
 		{
 			return $string;
 		};
-	$fix_utf8mb4 = function($string) use ($utf8, $smcFunc)
+	$fix_utf8mb4 = function($string) use ($smcFunc)
 	{
-		if (!$utf8 || $smcFunc['db_mb4'])
+		if ($smcFunc['db_mb4'])
 			return $string;
 
 		$i = 0;
@@ -122,7 +120,7 @@ function reloadSettings()
 	};
 
 	// Preg_replace space characters depend on the character set in use
-	$space_chars = $utf8 ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : '\x00-\x08\x0B\x0C\x0E-\x19\xA0';
+	$space_chars = '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}';
 
 	// global array of anonymous helper functions, used mostly to properly handle multi byte strings
 	$smcFunc += array(
@@ -131,21 +129,21 @@ function reloadSettings()
 			$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
 			return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202E || $num === 0x202D ? '' : '&#' . $num . ';';
 		},
-		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'ISO-8859-1') use ($ent_check, $utf8, $fix_utf8mb4)
+		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'UTF-8') use ($ent_check, $fix_utf8mb4)
 		{
-			return $fix_utf8mb4($ent_check(htmlspecialchars($string, $quote_style, $utf8 ? 'UTF-8' : $charset)));
+			return $fix_utf8mb4($ent_check(htmlspecialchars($string, $quote_style, $charset)));
 		},
-		'htmltrim' => function($string) use ($utf8, $space_chars, $ent_check)
+		'htmltrim' => function($string) use ($space_chars, $ent_check)
 		{
-			return preg_replace('~^(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+|(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+$~' . ($utf8 ? 'u' : ''), '', $ent_check($string));
+			return preg_replace('~^(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+|(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+$~u', '', $ent_check($string));
 		},
-		'strlen' => function($string) use ($ent_list, $utf8, $ent_check)
+		'strlen' => function($string) use ($ent_list, $ent_check)
 		{
-			return strlen(preg_replace('~' . $ent_list . ($utf8 ? '|.~u' : '~'), '_', $ent_check($string)));
+			return strlen(preg_replace('~' . $ent_list . '|.~u', '_', $ent_check($string)));
 		},
-		'strpos' => function($haystack, $needle, $offset = 0) use ($utf8, $ent_check, $modSettings)
+		'strpos' => function($haystack, $needle, $offset = 0) use ($ent_check, $modSettings)
 		{
-			$haystack_arr = preg_split('~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~' . ($utf8 ? 'u' : ''), $ent_check($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+			$haystack_arr = preg_split('~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
 			if (strlen($needle) === 1)
 			{
@@ -154,7 +152,7 @@ function reloadSettings()
 			}
 			else
 			{
-				$needle_arr = preg_split('~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~' . ($utf8 ? 'u' : '') . '', $ent_check($needle), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+				$needle_arr = preg_split('~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($needle), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 				$needle_size = count($needle_arr);
 
 				$result = array_search($needle_arr[0], array_slice($haystack_arr, $offset));
@@ -168,53 +166,39 @@ function reloadSettings()
 				return false;
 			}
 		},
-		'substr' => function($string, $start, $length = null) use ($utf8, $ent_check, $modSettings)
+		'substr' => function($string, $start, $length = null) use ($ent_check, $modSettings)
 		{
-			$ent_arr = preg_split('~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~' . ($utf8 ? 'u' : '') . '', $ent_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+			$ent_arr = preg_split('~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 			return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
 		},
-		'strtolower' => $utf8 ? function($string) use ($sourcedir)
+		'strtolower' => function($string) use ($sourcedir)
 		{
-			if (!function_exists('mb_strtolower'))
-			{
-				require_once($sourcedir . '/Subs-Charset.php');
-				return utf8_strtolower($string);
-			}
-
 			return mb_strtolower($string, 'UTF-8');
-		} : 'strtolower',
-		'strtoupper' => $utf8 ? function($string)
+		},
+		'strtoupper' => function($string)
 		{
-			global $sourcedir;
-
-			if (!function_exists('mb_strtolower'))
-			{
-				require_once($sourcedir . '/Subs-Charset.php');
-				return utf8_strtoupper($string);
-			}
-
 			return mb_strtoupper($string, 'UTF-8');
-		} : 'strtoupper',
-		'truncate' => function($string, $length) use ($utf8, $ent_check, $ent_list, &$smcFunc)
+		},
+		'truncate' => function($string, $length) use ($ent_check, $ent_list, &$smcFunc)
 		{
 			$string = $ent_check($string);
-			preg_match('~^(' . $ent_list . '|.){' . $smcFunc['strlen'](substr($string, 0, $length)) . '}~' . ($utf8 ? 'u' : ''), $string, $matches);
+			preg_match('~^(' . $ent_list . '|.){' . $smcFunc['strlen'](substr($string, 0, $length)) . '}~u', $string, $matches);
 			$string = $matches[0];
 			while (strlen($string) > $length)
-				$string = preg_replace('~(?:' . $ent_list . '|.)$~' . ($utf8 ? 'u' : ''), '', $string);
+				$string = preg_replace('~(?:' . $ent_list . '|.)$~u', '', $string);
 			return $string;
 		},
-		'ucfirst' => $utf8 ? function($string) use (&$smcFunc)
+		'ucfirst' => function($string) use (&$smcFunc)
 		{
 			return $smcFunc['strtoupper']($smcFunc['substr']($string, 0, 1)) . $smcFunc['substr']($string, 1);
-		} : 'ucfirst',
-		'ucwords' => $utf8 ? function($string) use (&$smcFunc)
+		},
+		'ucwords' => function($string) use (&$smcFunc)
 		{
 			$words = preg_split('~([\s\r\n\t]+)~', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
 			for ($i = 0, $n = count($words); $i < $n; $i += 2)
 				$words[$i] = $smcFunc['ucfirst']($words[$i]);
 			return implode('', $words);
-		} : 'ucwords',
+		},
 	);
 
 	// Setting the timezone is a requirement for some functions.
@@ -1162,8 +1146,7 @@ function loadPermissions()
 	}
 
 	// Remove all the permissions they shouldn't have ;).
-	if (!empty($modSettings['permission_enable_deny']))
-		$user_info['permissions'] = array_diff($user_info['permissions'], $removals);
+	$user_info['permissions'] = array_diff($user_info['permissions'], $removals);
 
 	// And if this is an OOC board, we might have to remove some permissions.
 	$disable_posting = !empty($board_info['in_character']) && $user_info['char_is_main'];
@@ -1276,12 +1259,12 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	// Used by default
 	$select_columns = '
 			COALESCE(lo.log_time, 0) AS is_online, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
-			mem.signature, mem.personal_text, mem.avatar, mem.id_member, mem.member_name,
+			mem.signature, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.date_registered, mem.website_title, mem.website_url,
 			mem.birthdate, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.id_post_group, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
 			mg.online_color AS member_group_color, COALESCE(mg.group_name, {string:blank_string}) AS member_group,
 			pg.online_color AS post_group_color, COALESCE(pg.group_name, {string:blank_string}) AS post_group,
-			mem.is_activated, mem.warning, ' . (!empty($modSettings['titlesEnable']) ? 'mem.usertitle, ' : '') . '
+			mem.is_activated, mem.warning,
 			CASE WHEN mem.id_group = 0 OR mg.icons = {string:blank_string} THEN pg.icons ELSE mg.icons END AS icons';
 	$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
@@ -1535,7 +1518,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 	// Censor everything.
 	censorText($profile['signature']);
-	censorText($profile['personal_text']);
 
 	// Set things up to be used before hand.
 	$profile['signature'] = str_replace(array("\n", "\r"), array('<br>', ''), $profile['signature']);
@@ -1584,8 +1566,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'is_buddy' => $profile['buddy'],
 			'is_reverse_buddy' => in_array($user_info['id'], $buddy_list),
 			'buddies' => $buddy_list,
-			'title' => !empty($modSettings['titlesEnable']) ? $profile['usertitle'] : '',
-			'blurb' => $profile['personal_text'],
 			'website' => array(
 				'title' => $profile['website_title'],
 				'url' => $profile['website_url'],
@@ -1639,13 +1619,13 @@ function loadMemberContext($user, $display_custom_fields = false)
 			// So it's stored in the member table?
 			if (!empty($profile['avatar']))
 			{
-				$image = (stristr($profile['avatar'], 'http://') || stristr($profile['avatar'], 'https://')) ? $profile['avatar'] : $modSettings['avatar_url'] . '/' . $profile['avatar'];
+				$image = (stristr($profile['avatar'], 'http://') || stristr($profile['avatar'], 'https://')) ? $profile['avatar'] : '';
 			}
 			elseif (!empty($profile['filename']))
 				$image = $modSettings['custom_avatar_url'] . '/' . $profile['filename'];
 			// Right... no avatar...use the default one
 			else
-				$image = $modSettings['avatar_url'] . '/default.png';
+				$image = $settings['images_url'] . '/default.png';
 		}
 		if (!empty($image))
 			$memberContext[$user]['avatar'] = array(
@@ -2010,7 +1990,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 			// And just a few mod settings :).
 			$modSettings['smileys_url'] = strtr($modSettings['smileys_url'], array($oldurl => $boardurl));
-			$modSettings['avatar_url'] = strtr($modSettings['avatar_url'], array($oldurl => $boardurl));
 
 			// Clean up after loadBoard().
 			if (isset($board_info['moderators']))
@@ -2080,7 +2059,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['javascript_vars'] = array();
 
 	$context['login_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl) . '?action=login2';
-	$context['menu_separator'] = !empty($settings['use_image_buttons']) ? ' ' : ' | ';
+	$context['menu_separator'] = ' ';
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
 	$context['forum_name'] = $mbname;
@@ -2110,7 +2089,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$simpleActions = array(
 		'findmember',
 		'helpadmin',
-		'printpage',
 	);
 
 	// Parent action => array of areas
@@ -2159,6 +2137,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		loadLanguage('index+Modifications');
 		loadTemplate('Xml');
+		loadTemplateLayout('raw');
 		$context['template_layers'] = array();
 	}
 
@@ -2185,11 +2164,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$required_files = implode('+', array_merge($templates, array('Modifications')));
 		loadLanguage($required_files, '', false);
 
-		// Custom template layers?
-		if (isset($settings['theme_layers']))
-			$context['template_layers'] = explode(',', $settings['theme_layers']);
-		else
-			$context['template_layers'] = array('html', 'body');
+		$context['template_layers'] = [];
 	}
 
 	// Initialize the theme.
@@ -2200,8 +2175,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$user_info['time_format'] = $txt['time_format'];
 
 	// Set the character set from the template.
-	$context['character_set'] = empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set'];
-	$context['utf8'] = $context['character_set'] === 'UTF-8';
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
 
 	// Guests may still need a name.
@@ -2251,10 +2224,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 	}
 
-	// Let's be compatible with old themes!
-	if (!function_exists('template_html_above') && in_array('html', $context['template_layers']))
-		$context['template_layers'] = array('main');
-
 	$context['tabindex'] = 1;
 
 	// Compatibility.
@@ -2269,7 +2238,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'smf_smileys_url' => '"' . $modSettings['smileys_url'] . '"',
 		'smf_scripturl' => '"' . $scripturl . '"',
 		'smf_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',
-		'smf_charset' => '"' . $context['character_set'] . '"',
 		'smf_session_id' => '"' . $context['session_id'] . '"',
 		'smf_session_var' => '"' . $context['session_var'] . '"',
 		'smf_member_id' => $context['user']['id'],
@@ -2457,6 +2425,134 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
 }
 
 /**
+ * Loads a template file.
+ *
+ * @param string $template Template name
+ * @return string Template contents
+ */
+function loadTemplateFile($template) {
+	global $settings;
+
+	$paths = [
+		$settings['theme_dir'] . '/templates',
+		$settings['default_theme_dir'] . '/templates',
+	];
+
+	foreach ($paths as $path) {
+		if (file_exists($path) && file_exists($path . '/' . $template . '.hbs')) {
+			return file_get_contents($path . '/' . $template . '.hbs');
+		}
+	}
+
+	fatal_error('Could not load template ' . $template);
+}
+
+/**
+ * Loads a template layout.
+ *
+ * @param string $partial Layout name, without root path or extension
+ * @return string Layout template contents
+ */
+function loadTemplateLayout($layout) {
+	global $settings, $context;
+
+	if ($layout === 'raw') {
+		$context['layout_loaded'] = 'raw';
+		return '{{{content}}}';
+	}
+
+	$paths = [
+		$settings['theme_dir'] . '/layouts',
+		$settings['default_theme_dir'] . '/layouts',
+	];
+
+	foreach ($paths as $path) {
+		if (file_exists($path) && file_exists($path . '/' . $layout . '.hbs')) {
+			$context['layout_loaded'] = $layout;
+			return file_get_contents($path . '/' . $layout . '.hbs');
+		}
+	}
+
+	fatal_error('Could not load layout ' . $layout);
+}
+
+/**
+ * Loads a template partial.
+ *
+ * @param string $partial Partial name, without root path or extension
+ * @return string Partial template contents
+ */
+function loadTemplatePartial($partial) {
+	global $settings;
+
+	$paths = [
+		$settings['theme_dir'] . '/partials',
+		$settings['default_theme_dir'] . '/partials',
+	];
+
+	foreach ($paths as $path) {
+		if (file_exists($path) && file_exists($path . '/' . $partial . '.hbs')) {
+			return file_get_contents($path . '/' . $partial . '.hbs');
+		}
+	}
+
+	fatal_error('Could not load partial ' . $partial);
+}
+
+/**
+ * Handles generic loading for all template behaviour where possible.
+ *
+ * @param array $cx Context array from Lightncandy
+ * @param string $name Name of the template partial
+ * @return string The partial template contents
+ */
+function loadTemplatePartialResolver($cx, $name) {
+	return loadTemplatePartial($name);
+}
+
+function compileTemplate($template, $options = []) {
+	$default_helpers = [
+		'eq' => 'logichelper_eq',
+		'neq' => 'logichelper_ne',
+		'lt' => 'logichelper_lt',
+		'gt' => 'logichelper_gt',
+		'lte' => 'logichelper_lte',
+		'gte' => 'logichelper_gte',
+		'not' => 'logichelper_not',
+		'and' => 'logichelper_and',
+		'or' => 'logichelper_or',
+		'textTemplate' => 'textTemplate',
+		'timeformat' => 'timeformat',
+		'concat' => function(...$items) {
+			array_pop($items); // Strip the last item off the array, it's the calling context.
+			return implode($items);
+		},
+		'getNumItems' => function($items) {
+			return count($items);
+		},
+		'add' => function($a, $b) { return $a + $b; },
+		'sub' => function($a, $b) { return $a - $b; },
+		'mul' => function($a, $b) { return $a * $b; },
+		'div' => function($a, $b) { return $a / $b; },
+		'comma' => 'comma_format',
+		'json' => function ($data) { return json_encode($data); },
+		'join' => function($array, $sep = '') { return implode($sep, $array); },
+		'is_array' => function($var) { return is_array($var); },
+	];
+	$default_partials = [
+		'helpicon' => loadTemplatePartial('helpicon'),
+	];
+
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL),
+		'helpers' => !empty($options['helpers']) ? array_merge($default_helpers, $options['helpers']) : $default_helpers,
+		'partialresolver' => 'loadTemplatePartialResolver',
+		'partials' => !empty($options['partials']) ? array_merge($default_partials, $options['partials']) : $default_partials,
+	]);
+	return $phpStr;
+}
+
+/**
  * Load a sub-template.
  * What it does:
  * 	- loads the sub template specified by sub_template_name, which must be in an already-loaded template.
@@ -2472,13 +2568,15 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 {
 	global $context, $txt, $db_show_debug;
 
+	$result = '';
+
 	if ($db_show_debug === true)
 		$context['debug']['sub_templates'][] = $sub_template_name;
 
 	// Figure out what the template function is named.
 	$theme_function = 'template_' . $sub_template_name;
 	if (function_exists($theme_function))
-		$theme_function();
+		$result = $theme_function();
 	elseif ($fatal === false)
 		fatal_lang_error('theme_template_error', 'template', array((string) $sub_template_name));
 	elseif ($fatal !== 'ignore')
@@ -2490,7 +2588,10 @@ function loadSubTemplate($sub_template_name, $fatal = false)
 		echo '
 <div class="warningbox">---- ', $sub_template_name, ' ends ----</div>';
 	}
+	
+	return $result;
 }
+
 
 /**
  * Add a CSS file for output later
@@ -2777,8 +2878,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				$found = true;
 
 				// setlocale is required for basename() & pathinfo() to work properly on the selected language
-				if (!empty($txt['lang_locale']) && !empty($modSettings['global_character_set']))
-					setlocale(LC_CTYPE, $txt['lang_locale'] . '.' . $modSettings['global_character_set']);
+				if (!empty($txt['lang_locale']))
+					setlocale(LC_CTYPE, $txt['lang_locale'] . '.utf8', $txt['lang_locale'] . '.UTF-8');
 				
 				break;
 			}
@@ -3057,7 +3158,7 @@ function censorText(&$text, $force = false)
 			for ($i = 0, $n = count($censor_vulgar); $i < $n; $i++)
 			{
 				$censor_vulgar[$i] = str_replace(array('\\\\\\*', '\\*', '&', '\''), array('[*]', '[^\s]*?', '&amp;', '&#039;'), preg_quote($censor_vulgar[$i], '/'));
-				$censor_vulgar[$i] = '/(?<=^|\W)' . $censor_vulgar[$i] . '(?=$|\W)/' . (empty($modSettings['censorIgnoreCase']) ? '' : 'i') . ((empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set']) === 'UTF-8' ? 'u' : '');
+				$censor_vulgar[$i] = '/(?<=^|\W)' . $censor_vulgar[$i] . '(?=$|\W)/u' . (empty($modSettings['censorIgnoreCase']) ? '' : 'i');
 
 				// @todo I'm thinking the old way is some kind of bug and this is actually fixing it.
 				//if (strpos($censor_vulgar[$i], '\'') !== false)
@@ -3120,7 +3221,7 @@ function template_include($filename, $once = false)
 			ob_start();
 
 		if (isset($_GET['debug']))
-			header('Content-Type: application/xhtml+xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
+			header('Content-Type: application/xhtml+xml; charset=UTF-8');
 
 		// Don't cache error pages!!
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
@@ -3138,10 +3239,8 @@ function template_include($filename, $once = false)
 		// First, let's get the doctype and language information out of the way.
 		echo '<!DOCTYPE html>
 <html', !empty($context['right_to_left']) ? ' dir="rtl"' : '', '>
-	<head>';
-		if (isset($context['character_set']))
-			echo '
-		<meta charset="', $context['character_set'], '">';
+	<head>
+		<meta charset="UTF-8">';
 
 		if (!empty($maintenance) && !allowedTo('admin_forum'))
 			echo '
@@ -3152,117 +3251,15 @@ function template_include($filename, $once = false)
 		', $mmessage, '
 	</body>
 </html>';
-		elseif (!allowedTo('admin_forum'))
+		else
+		{
 			echo '
+		}
 		<title>', $txt['template_parse_error'], '</title>
 	</head>
 	<body>
 		<h3>', $txt['template_parse_error'], '</h3>
 		', $txt['template_parse_error_message'], '
-	</body>
-</html>';
-		else
-		{
-			require_once($sourcedir . '/Subs-Package.php');
-
-			$error = fetch_web_data($boardurl . strtr($filename, array($boarddir => '', strtr($boarddir, '\\', '/') => '')));
-			if (empty($error) && ini_get('track_errors') && !empty($php_errormsg))
-				$error = $php_errormsg;
-			if (empty($error))
-				$error = $txt['template_parse_errmsg'];
-
-			$error = strtr($error, array('<b>' => '<strong>', '</b>' => '</strong>'));
-
-			echo '
-		<title>', $txt['template_parse_error'], '</title>
-	</head>
-	<body>
-		<h3>', $txt['template_parse_error'], '</h3>
-		', sprintf($txt['template_parse_error_details'], strtr($filename, array($boarddir => '', strtr($boarddir, '\\', '/') => '')));
-
-			if (!empty($error))
-				echo '
-		<hr>
-
-		<div style="margin: 0 20px;"><pre>', strtr(strtr($error, array('<strong>' . $boarddir => '<strong>...', '<strong>' . strtr($boarddir, '\\', '/') => '<strong>...')), '\\', '/'), '</pre></div>';
-
-			// I know, I know... this is VERY COMPLICATED.  Still, it's good.
-			if (preg_match('~ <strong>(\d+)</strong><br( /)?' . '>$~i', $error, $match) != 0)
-			{
-				$data = file($filename);
-				$data2 = highlight_php_code(implode('', $data));
-				$data2 = preg_split('~\<br( /)?\>~', $data2);
-
-				// Fix the PHP code stuff...
-				if (!isBrowser('gecko'))
-					$data2 = str_replace("\t", '<span style="white-space: pre;">' . "\t" . '</span>', $data2);
-				else
-					$data2 = str_replace('<pre style="display: inline;">' . "\t" . '</pre>', "\t", $data2);
-
-				// Now we get to work around a bug in PHP where it doesn't escape <br>s!
-				$j = -1;
-				foreach ($data as $line)
-				{
-					$j++;
-
-					if (substr_count($line, '<br>') == 0)
-						continue;
-
-					$n = substr_count($line, '<br>');
-					for ($i = 0; $i < $n; $i++)
-					{
-						$data2[$j] .= '&lt;br /&gt;' . $data2[$j + $i + 1];
-						unset($data2[$j + $i + 1]);
-					}
-					$j += $n;
-				}
-				$data2 = array_values($data2);
-				array_unshift($data2, '');
-
-				echo '
-		<div style="margin: 2ex 20px; width: 96%; overflow: auto;"><pre style="margin: 0;">';
-
-				// Figure out what the color coding was before...
-				$line = max($match[1] - 9, 1);
-				$last_line = '';
-				for ($line2 = $line - 1; $line2 > 1; $line2--)
-					if (strpos($data2[$line2], '<') !== false)
-					{
-						if (preg_match('~(<[^/>]+>)[^<]*$~', $data2[$line2], $color_match) != 0)
-							$last_line = $color_match[1];
-						break;
-					}
-
-				// Show the relevant lines...
-				for ($n = min($match[1] + 4, count($data2) + 1); $line <= $n; $line++)
-				{
-					if ($line == $match[1])
-						echo '</pre><div style="background-color: #ffb0b5;"><pre style="margin: 0;">';
-
-					echo '<span style="color: black;">', sprintf('%' . strlen($n) . 's', $line), ':</span> ';
-					if (isset($data2[$line]) && $data2[$line] != '')
-						echo substr($data2[$line], 0, 2) == '</' ? preg_replace('~^</[^>]+>~', '', $data2[$line]) : $last_line . $data2[$line];
-
-					if (isset($data2[$line]) && preg_match('~(<[^/>]+>)[^<]*$~', $data2[$line], $color_match) != 0)
-					{
-						$last_line = $color_match[1];
-						echo '</', substr($last_line, 1, 4), '>';
-					}
-					elseif ($last_line != '' && strpos($data2[$line], '<') !== false)
-						$last_line = '';
-					elseif ($last_line != '' && $data2[$line] != '')
-						echo '</', substr($last_line, 1, 4), '>';
-
-					if ($line == $match[1])
-						echo '</pre></div><pre style="margin: 0;">';
-					else
-						echo "\n";
-				}
-
-				echo '</pre></div>';
-			}
-
-			echo '
 	</body>
 </html>';
 		}
@@ -3549,7 +3546,7 @@ function clean_cache($type = '')
  */
 function set_avatar_data($data = array())
 {
-	global $modSettings, $boardurl, $smcFunc, $image_proxy_enabled, $image_proxy_secret;
+	global $modSettings, $boardurl, $smcFunc, $image_proxy_enabled, $image_proxy_secret, $settings;
 
 	// Come on!
 	if (empty($data))
@@ -3593,7 +3590,7 @@ function set_avatar_data($data = array())
 
 				// Just a plain external url.
 				else
-					$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : $modSettings['avatar_url'] . '/' . $data['avatar'];
+					$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : '';
 			}
 		}
 
@@ -3603,7 +3600,7 @@ function set_avatar_data($data = array())
 
 		// Right... no avatar... use our default image.
 		else
-			$image = $modSettings['avatar_url'] . '/default.png';
+			$image = $settings['images_url'] . '/default.png';
 	}
 
 	call_integration_hook('integrate_set_avatar_data', array(&$image, &$data));

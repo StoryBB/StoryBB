@@ -40,7 +40,6 @@ $txt['admin_smfpackage'] = 'SMF Package';
 $txt['admin_logoff'] = 'End Admin Session';
 $txt['admin_maintenance'] = 'Maintenance';
 $txt['admin_image_text'] = 'Show buttons as images instead of text';
-$txt['admin_credits'] = 'Credits';
 $txt['admin_agreement'] = 'Show and require agreement letter when registering';
 $txt['admin_agreement_default'] = 'Default';
 $txt['admin_agreement_select_language'] = 'Language to edit';
@@ -48,7 +47,7 @@ $txt['admin_agreement_select_language_change'] = 'Change';
 $txt['admin_agreement_not_saved'] = 'The agreement changes have not been saved. Perhaps the file permissions on the file were not set correctly.';
 $txt['admin_delete_members'] = 'Delete Selected Members';
 $txt['admin_repair'] = 'Repair All boards and topics';
-$txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support &amp; Credits&quot; page. If the information there doesn\'t help you, feel free to <a href="https://www.simplemachines.org/community/index.php" target="_blank" class="new_win">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="generic_icons help" title="%3$s"></span> symbols for more information on the related functions.';
+$txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support&quot; page. If the information there doesn\'t help you, feel free to <a href="https://www.simplemachines.org/community/index.php" target="_blank" class="new_win">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="generic_icons help" title="%3$s"></span> symbols for more information on the related functions.';
 $txt['admin_news_desc'] = 'Please place one news item per box. BBC tags, such as <span title="Are you bold?">[b]</span>, <span title="I tall icks!!">[i]</span> and <span title="Brackets are great, no?">[u]</span> are allowed in your news, as well as smileys. Clear a news item\'s text box to remove it.';
 $txt['administrators'] = 'Forum Administrators';
 $txt['admin_reserved_desc'] = 'Reserved names will keep members from registering certain usernames or using these words in their displayed names. Choose the options you wish to use from the bottom before submitting.';
@@ -101,7 +100,7 @@ $txt['attachment_file_size'] = 'File Size';
 $txt['attachmentdir_size_not_set'] = 'No maximum directory size is currently set';
 $txt['attachmentdir_files_not_set'] = 'No directory file limit is currently set';
 $txt['attachment_delete_admin'] = '[attachment deleted by admin]';
-$txt['live'] = 'Live from Simple Machines...';
+$txt['live'] = 'News from StoryBB';
 $txt['remove_all'] = 'Clear Log';
 $txt['approve_new_members'] = 'Admin must approve all new members';
 $txt['agreement_not_writable'] = 'Warning - agreement.txt is not writable, any changes you make will NOT be saved.';
@@ -111,7 +110,6 @@ $txt['version_check_more'] = '(more detailed)';
 
 $txt['lfyi'] = 'You are unable to connect to simplemachines.org\'s latest news file.';
 
-$txt['manage_calendar'] = 'Calendar';
 $txt['manage_search'] = 'Search';
 
 $txt['smileys_manage'] = 'Smileys and Message Icons';
@@ -227,7 +225,7 @@ $txt['maintain_done'] = 'The maintenance task \'%1$s\' was executed successfully
 $txt['maintain_no_errors'] = 'Congratulations, no errors were found. Thanks for checking.';
 
 $txt['maintain_tasks'] = 'Scheduled Tasks';
-$txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by SMF.';
+$txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by StoryBB.';
 
 $txt['scheduled_log'] = 'Task Log';
 $txt['scheduled_log_desc'] = 'This log shows all the scheduled tasks that have been run on your forum.';
@@ -244,9 +242,6 @@ $txt['userlog_enabled'] = 'Enable the profile edits log';
 $txt['mailqueue_title'] = 'Mail';
 
 $txt['db_error_send'] = 'Send emails on database connection error';
-$txt['db_persist'] = 'Use a persistent connection';
-$txt['ssi_db_user'] = 'Database username to use in SSI mode';
-$txt['ssi_db_passwd'] = 'Database password to use in SSI mode';
 
 $txt['default_language'] = 'Default forum language';
 
@@ -293,20 +288,16 @@ $txt['member_part_of_these_membergroups'] = 'Member is part of these membergroup
 $txt['membergroups'] = 'Membergroups';
 $txt['confirm_delete_members'] = 'Are you sure you want to delete the selected members?';
 
-$txt['support_credits_title'] = 'Support and Credits';
+$txt['support_title'] = 'Support';
 $txt['support_title'] = 'Support Information';
-$txt['support_versions_current'] = 'Current SMF version';
+$txt['support_versions_current'] = 'Current StoryBB version';
 $txt['support_versions_forum'] = 'Forum version';
 $txt['support_versions_php'] = 'PHP version';
-$txt['support_versions_db'] = '%1$s version';
-$txt['support_versions_db_engine'] = '%1$s engine';
+$txt['support_versions_db'] = 'Database version';
 $txt['support_versions_server'] = 'Server version';
 $txt['support_versions_gd'] = 'GD version';
 $txt['support_versions_imagemagick'] = 'ImageMagick version';
 $txt['support_versions'] = 'Version Information';
-$txt['support_resources'] = 'Support Resources';
-$txt['support_resources_p1'] = 'Our <a href="%1$s">Online Manual</a> provides the main documentation for SMF. The SMF Online Manual has many documents to help answer support questions and explain <a href="%2$s">Features</a>, <a href="%3$s">Settings</a>, <a href="%4$s">Themes</a>, <a href="%5$s">Packages</a>, etc. The Online Manual documents each area of SMF thoroughly and should answer most questions quickly.';
-$txt['support_resources_p2'] = 'If you can\'t find the answers to your questions in the Online Manual, you may want to search our <a href="%1$s">Support Community</a> or ask for assistance in either our <a href="%2$s">English</a> or one of our many <a href="%3$s">international support boards</a>. The SMF Support Community can be used for <a href="%4$s">support</a>, <a href="%5$s">customization</a>, and many other things such as discussing SMF, finding a host, and discussing administrative issues with other forum administrators.';
 
 $txt['membergroups_members'] = 'Regular Members';
 $txt['membergroups_guests'] = 'Guests';
@@ -411,7 +402,7 @@ $txt['max_image_width'] = 'Max display width of posted or attached images';
 $txt['max_image_height'] = 'Max display height of posted or attached images';
 
 $txt['automanage_attachments'] = 'Choose the method for the management of the attachment directories';
-$txt['attachments_normal'] = '(Manual) SMF default behavior';
+$txt['attachments_normal'] = '(Manual) StoryBB default behavior';
 $txt['attachments_auto_years'] = '(Auto) Subdivide by years';
 $txt['attachments_auto_months'] = '(Auto) Subdivide by years and months';
 $txt['attachments_auto_days'] = '(Auto) Subdivide by years, months and days';
@@ -446,9 +437,6 @@ $txt['attachment_transfer_same_dir'] = 'You cannot select the same directory as 
 $txt['attachment_transfer_progress'] = 'Please wait. Transfer in progress.';
 
 $txt['mods_cat_avatars'] = 'Avatars';
-$txt['avatar_directory'] = 'Avatars directory';
-$txt['avatar_directory_wrong'] = 'The Avatars directory is not valid. This will cause several issues with your forum.';
-$txt['avatar_url'] = 'Avatars URL';
 $txt['avatar_max_width_external'] = 'Maximum width of external avatar';
 $txt['avatar_max_height_external'] = 'Maximum height of external avatar';
 $txt['avatar_action_too_large'] = 'If the avatar is too large...';
@@ -519,8 +507,6 @@ $txt['news_settings_desc'] = 'Here you can change the settings and permissions r
 $txt['news_settings_submit'] = 'Save';
 $txt['news_mailing_desc'] = 'From this menu you can send messages to all members who\'ve registered and entered their email addresses. You may edit the distribution list, or send messages to all. Useful for important update/news information.';
 $txt['news_error_no_news'] = 'Nothing written';
-$txt['groups_edit_news'] = 'Groups allowed to edit news items';
-$txt['groups_send_mail'] = 'Groups allowed to send out forum newsletters';
 $txt['xmlnews_enable'] = 'Enable XML/RSS news';
 $txt['xmlnews_maxlen'] = 'Maximum message length';
 $txt['xmlnews_maxlen_note'] = '(0 to disable, bad idea.)';
@@ -536,7 +522,7 @@ $txt['logs'] = 'Logs';
 $txt['generate_reports'] = 'Reports';
 
 $txt['update_available'] = 'Update Available';
-$txt['update_message'] = 'You\'re using an outdated version of SMF, which contains some bugs which have since been fixed.
+$txt['update_message'] = 'You\'re using an outdated version of StoryBB, which contains some bugs which have since been fixed.
 	It is recommended that you <a href="#" id="update-link">update your forum</a> to the latest version as soon as possible. It only takes a minute!';
 
 $txt['manageposts'] = 'Posts and Topics';
@@ -569,8 +555,6 @@ $txt['managedrafts_submit'] = 'Save';
 $txt['manage_drafts'] = 'Drafts';
 
 $txt['removeNestedQuotes'] = 'Remove nested quotes when quoting';
-$txt['enableEmbeddedFlash'] = 'Embed flash into posts';
-$txt['enableEmbeddedFlash_warning'] = 'may be a security risk!';
 $txt['disable_wysiwyg'] = 'Disable WYSIWYG editor';
 $txt['max_messageLength'] = 'Maximum allowed post size';
 $txt['max_messageLength_zero'] = '0 for no max.';
@@ -584,7 +568,6 @@ $txt['preview_characters_units'] = 'characters';
 $txt['message_index_preview_first'] = 'When using post previews, show the text of the first post';
 $txt['message_index_preview_first_desc'] = 'Leave un-checked to show the text of the last post instead';
 $txt['show_user_images'] = 'Show user avatars in message view';
-$txt['show_blurb'] = 'Show personal text in message view';
 $txt['hide_post_group'] = 'Hide post group titles for grouped members';
 $txt['hide_post_group_desc'] = 'Enabling this will not display a member\'s post group title on the message view if they are assigned to a non-post based group.';
 $txt['subject_toggle'] = 'Show subjects in topics.';
@@ -603,11 +586,9 @@ $txt['enableParticipation'] = 'Enable participation icons';
 $txt['oldTopicDays'] = 'Time before topic is warned as old on reply';
 $txt['defaultMaxTopics'] = 'Number of topics per page in the message index';
 $txt['defaultMaxMessages'] = 'Number of posts per page in a topic page';
-$txt['disable_print_topic'] = 'Disable print topic feature';
 $txt['enableAllMessages'] = 'Max topic size to show &quot;All&quot; posts';
 $txt['enableAllMessages_zero'] = '0 to never show &quot;All&quot;';
 $txt['disableCustomPerPage'] = 'Disable user defined topic/message count per page';
-$txt['enablePreviousNext'] = 'Enable previous/next topic links';
 
 $txt['not_done_title'] = 'Not done yet';
 $txt['not_done_reason'] = 'To avoid overloading your server, the process has been temporarily paused. It should automatically continue in a few seconds. If it doesn\'t, please click continue below.';
@@ -618,14 +599,13 @@ $txt['database_settings'] = 'Database';
 $txt['cookies_sessions_settings'] = 'Cookies and Sessions';
 $txt['security_settings'] = 'Security';
 $txt['caching_settings'] = 'Caching';
-$txt['load_balancing_settings'] = 'Load Balancing';
 $txt['phpinfo_settings'] = 'PHP Info';
 $txt['phpinfo_localsettings'] = 'Local Settings';
 $txt['phpinfo_defaultsettings'] = 'Default Settings';
 $txt['phpinfo_itemsettings'] = 'Settings';
 
 $txt['language_configuration'] = 'Languages';
-$txt['language_description'] = 'This section allows you to edit languages installed on your forum, download new ones from the Simple Machines website. You may also edit language-related settings here.';
+$txt['language_description'] = 'This section allows you to edit languages installed on your forum, download new ones from the StoryBB website. You may also edit language-related settings here.';
 $txt['language_edit'] = 'Edit Languages';
 $txt['language_add'] = 'Add Language';
 $txt['language_settings'] = 'Settings';
@@ -656,7 +636,6 @@ $txt['mailqueue_settings'] = 'Settings';
 $txt['admin_search'] = 'Quick Search';
 $txt['admin_search_type_internal'] = 'Task/Setting';
 $txt['admin_search_type_member'] = 'Member';
-$txt['admin_search_type_online'] = 'Online Manual';
 $txt['admin_search_go'] = 'Go';
 $txt['admin_search_results'] = 'Search Results';
 $txt['admin_search_results_desc'] = 'Results for search: &quot;%1$s&quot;';
@@ -680,9 +659,6 @@ $txt['log_ban_hits'] = 'Log ban hits in the error log?';
 
 $txt['boardsEdit'] = 'Modify Boards';
 $txt['mboards_new_cat'] = 'Create new category';
-$txt['manage_holidays'] = 'Manage Holidays';
-$txt['calendar_settings'] = 'Calendar Settings';
-$txt['search_weights'] = 'Weights';
 $txt['search_method'] = 'Search Method';
 
 $txt['smiley_sets'] = 'Smiley Sets';
@@ -698,15 +674,9 @@ $txt['permissions_boards'] = 'Board Permissions';
 $txt['permissions_profiles'] = 'Edit Profiles';
 $txt['permissions_post_moderation'] = 'Post Moderation';
 
-$txt['browse_packages'] = 'Browse Packages';
-$txt['download_packages'] = 'Add Packages';
-$txt['installed_packages'] = 'Installed Packages';
-$txt['package_file_perms'] = 'File Permissions';
-$txt['package_settings'] = 'Options';
 $txt['themeadmin_admin_title'] = 'Manage and Install';
 $txt['themeadmin_list_title'] = 'Theme Settings';
 $txt['themeadmin_reset_title'] = 'Member Options';
-$txt['themeadmin_edit_title'] = 'Modify Themes';
 $txt['admin_browse_register_new'] = 'Register new member';
 
 $txt['search_engines'] = 'Search Engines';

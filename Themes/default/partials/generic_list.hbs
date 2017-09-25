@@ -1,0 +1,110 @@
+{{{top_menu}}}
+
+{{#if cur_list.form}}
+	<form action="{{cur_list.form.href}}" method="post"{{#if cur_list.form.name}} name="{{cur_list.form.name}}"{{/if}} id="{{cur_list.form.name}}" accept-charset="UTF-8">
+{{/if}}
+
+{{#if cur_list.title}}
+	<div class="cat_bar">
+		<h3 class="catbg">
+			{{cur_list.title}}
+		</h3>
+	</div>
+{{/if}}
+
+{{#if cur_list.additional_rows.after_title}}
+    <div class="information flow_hidden">
+    {{>list_additional_rows cur_list.additional_rows.after_title}}
+    </div>
+{{/if}}
+{{#if cur_list.additional_rows.top_of_list}}
+    <div class="information flow_hidden">
+    {{>list_additional_rows cur_list.additional_rows.top_of_list}}
+    </div>
+{{/if}}
+{{#if cur_list.page_index}}
+    {{#if cur_list.items_per_page}}
+    <div class="floatleft">
+		<div class="pagesection">{{{cur_list.page_index}}}</div>
+	</div>
+    {{/if}}
+{{/if}}
+{{#if cur_list.additional_rows.above_column_headers}}
+    <div class="information flow_hidden">
+    {{>list_additional_rows cur_list.additional_rows.above_column_headers}}
+    </div>
+{{/if}}
+<table class="table_grid" {{#if cur_list.width}} style="width:{{cur_list.width}}{{/if}}">
+{{#if (gt headerCount 2)}}
+	<thead>
+		<tr class="title_bar">
+{{#each cur_list.headers}}
+			<th scope="col" id="header_{{list_id}}_{{id}}"
+			{{#if class}} class="{{class}}"{{/if}}
+			{{#if style}}style="{{style}}"{{/if}}
+			{{#if colspan}} colspan="{{colspan}}">{{/if}}
+			<a href="{{href}}" rel="nofollow">
+				{{#if label}}{{{label}}}{{else}}&nbsp;{{/if}}
+				{{#if (and href sort_image)}}<span class="generic_icons sort_{{sort_image}}"></span>{{/if}}
+				</a>
+			</th>
+{{/each}}
+    	</tr>
+	</thead>
+{{/if}}
+	<tbody>
+{{#unless cur_list.rows}}
+    {{#if cur_list.no_items_label}}
+		<tr class="windowbg">
+			<td colspan="{{cur_list.num_columns}}" class="{{#if cur_list.no_items_align}}{{cur_list.no_items_align}}{{else}}centertext{{/if}}">{{cur_list.no_items_label}}</td>
+		</tr>
+    {{/if}}
+{{/unless}}
+{{#each cur_list.rows}}
+        <tr class="windowbg {{class}}" {{#if style}} style="{{style}}"{{/if}} id="list_{{list_id}}_{{@key}}">
+    {{#each data}}
+            <td{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}>{{{value}}}</td>
+    {{/each}}
+        </tr>
+{{/each}}
+	</tbody>
+</table>
+
+{{#if cur_list.page_index}}
+    {{#if cur_list.items_per_page}}
+			<div class="flow_auto">
+				<div class="floatleft">
+					<div class="pagesection">{{{cur_list.page_index}}}</div>
+				</div>
+				
+				{{#if cur_list.additional_rows.below_column_headers}}
+                    {{>list_additional_rows cur_list.additional_rows.below_column_headers}}
+                {{/if}}
+	
+	
+	{{/if}}
+{{/if}}
+{{#if cur_list.additional_rows.bottom_of_list}}
+    {{>list_additional_rows cur_list.additional_rows.bottom_of_list}}
+{{/if}}
+		</div>
+{{#if cur_list.form}}
+
+{{/if}}
+{{#if cur_list.form}}
+	{{#each cur_list.form.hidden_fields}}
+		<input type="hidden" name="{{@key}}" value="{{.}}">
+	{{/each}}
+	{{#if cur_list.form.token}}
+		<input type="hidden" name="{{token_var cur_list.form.token}}" value="{{ltoken cur_list.form.token}}">
+	{{/if}}
+	</form>
+{{/if}}
+{{#if cur_list.list_menu.show_on}}
+	 {{!--{{>create_list_menu_bottom cur_list.list_menu}}--}}
+{{/if}}
+{{#if cur_list.javascript}}
+	<script>
+		{{{cur_list.javascript}}}
+	</script>
+{{/if}}

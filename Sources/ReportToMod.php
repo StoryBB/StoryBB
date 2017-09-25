@@ -126,7 +126,7 @@ function ReportToModerator()
 
 	// Show the inputs for the comment, etc.
 	loadLanguage('Post');
-	loadTemplate('ReportToMod');
+	$context['sub_template'] = 'reporttomod';
 
 	addInlineJavaScript('
 	var error_box = $("#error_box");
@@ -227,7 +227,7 @@ function ReportToModerator2()
  */
 function reportPost($msg, $reason)
 {
-	global $context, $smcFunc, $user_info, $topic;
+	global $context, $smcFunc, $user_info, $topic, $txt;
 
 	// Get the basic topic information, and make sure they can see it.
 	$_POST['msg'] = (int) $msg;
@@ -340,7 +340,8 @@ function reportPost($msg, $reason)
 	updateSettings(array('last_mod_report_action' => time()));
 
 	// Back to the post we reported!
-	redirectexit('reportsent;topic=' . $topic . '.msg' . $_POST['msg'] . '#msg' . $_POST['msg']);
+	session_flash('success', $txt['report_sent']);
+	redirectexit('topic=' . $topic . '.msg' . $_POST['msg'] . '#msg' . $_POST['msg']);
 }
 
 /**

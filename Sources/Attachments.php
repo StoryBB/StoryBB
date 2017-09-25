@@ -430,7 +430,7 @@ class Attachments
 			ob_start();
 
 		// Set the header.
-		header('Content-Type: application/json; charset='. $context['character_set'] .'');
+		header('Content-Type: application/json; charset=UTF-8');
 
 		echo json_encode($this->_response ? $this->_response : array());
 

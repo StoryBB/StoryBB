@@ -432,11 +432,6 @@ function deleteMembers($users, $check_not_admin = false)
 		);
 	$smcFunc['db_free_result']($request);
 
-	// Make sure no member's birthday is still sticking in the calendar...
-	updateSettings(array(
-		'calendar_updated' => time(),
-	));
-
 	// Integration rocks!
 	call_integration_hook('integrate_delete_members', array($users));
 
@@ -493,7 +488,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	}
 
 	// Spaces and other odd characters are evil...
-	$regOptions['username'] = trim(preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $regOptions['username']));
+	$regOptions['username'] = trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $regOptions['username']));
 
 	// @todo Separate the sprintf?
 	if (empty($regOptions['email']) || !filter_var($regOptions['email'], FILTER_VALIDATE_EMAIL) || strlen($regOptions['email']) > 255)
@@ -645,7 +640,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'member_ip2' => $regOptions['interface'] == 'admin' ? '127.0.0.1' : $_SERVER['BAN_CHECK_IP'],
 		'validation_code' => $validation_code,
 		'real_name' => $regOptions['username'],
-		'personal_text' => $modSettings['default_personal_text'],
 		'id_theme' => 0,
 		'id_post_group' => 4,
 		'lngfile' => '',
@@ -656,7 +650,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'time_format' => '',
 		'signature' => '',
 		'avatar' => '',
-		'usertitle' => '',
 		'secret_question' => '',
 		'secret_answer' => '',
 		'additional_groups' => '',
