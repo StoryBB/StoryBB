@@ -1919,6 +1919,7 @@ function char_merge_account($memID)
 
 	loadJavascriptFile('suggest.js', array('default_theme' => true, 'defer' => false), 'smf_suggest');
 	$context['page_title'] = $txt['merge_char_account'];
+	$context['sub_template'] = 'profile_merge_account';
 
 	if (isset($_POST['merge_acct_id']))
 	{
@@ -1956,7 +1957,7 @@ function char_merge_account($memID)
 
 		$context['merge_destination_id'] = $dest;
 		$context['merge_destination'] = $user_profile[$dest];
-		$context['sub_template'] = 'profile_character_move_account_confirm';
+		$context['sub_template'] = 'profile_merge_account_confirm';
 	}
 }
 
@@ -2170,7 +2171,7 @@ function char_move_account()
 
 		$context['move_destination_id'] = $dest;
 		$context['move_destination'] = $user_profile[$dest];
-		$context['sub_template'] = 'char_move_account_confirm';
+		$context['sub_template'] = 'profile_character_move_account_confirm';
 	}
 }
 
