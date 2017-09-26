@@ -936,32 +936,6 @@ function insert_char_sheet_js()
 	});', true);
 }
 
-function template_char_merge_account_confirm()
-{
-	global $scripturl, $txt, $context;
-
-	echo '
-		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=merge_acct;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
-			<div class="cat_bar">
-				<h3 class="catbg profile_hd">
-					', $txt['merge_char_account'], '
-				</h3>
-			</div>
-			<p class="information">', $txt['merge_char_account_desc'], '</p>
-			<div class="windowbg2">
-				<div class="alert">', $txt['deleteAccount_warning'], '</div>
-				<br>
-				<div>', sprintf($txt['merge_are_you_sure'],
-					'<a class="new_win" target="_blank" href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . '">' . $context['member']['name'] . '</a>',
-					'<a class="new_win" target="_blank" href="' . $scripturl . '?action=profile;u=' . $context['merge_destination_id'] . '">' . $context['merge_destination']['real_name'] . '</a>'
-				), '
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="merge_acct_id" value="', $context['merge_destination_id'], '">
-				<input type="submit" value="', $txt['merge_char_account'], '" class="button_submit">
-			</div>
-		</form>';
-}
-
 function template_character_list()
 {
 	global $context, $txt, $scripturl;
