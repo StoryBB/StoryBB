@@ -936,39 +936,6 @@ function insert_char_sheet_js()
 	});', true);
 }
 
-function template_char_sheet_compare()
-{
-	global $context, $txt;
-	echo '
-			<div class="cat_bar">
-				<h3 class="catbg profile_hd">
-					', $txt['char_sheet'], ' - ', $context['character']['character_name'], '
-				</h3>
-			</div>
-			<div class="modcenter">
-				<div class="half_content">
-					<div class="title_bar">
-						<h3 class="titlebg">', $txt['char_sheet_last_approved_version'], '</h3>
-					</div>
-					<div class="windowbg2">
-						<div class="modbox">
-							', parse_bbc($context['character']['original_sheet']['sheet_text'], false), '
-						</div>
-					</div>
-				</div>
-				<div class="half_content">
-					<div class="title_bar">
-						<h3 class="titlebg">', $txt['char_sheet_current_version'], '</h3>
-					</div>
-					<div class="windowbg2">
-						<div class="modbox">
-							', parse_bbc($context['character']['sheet_details']['sheet_text'], false), '
-						</div>
-					</div>
-				</div>
-			</div>';
-}
-
 function template_char_merge_account()
 {
 	global $scripturl, $txt, $context;

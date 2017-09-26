@@ -1885,8 +1885,13 @@ function char_sheet_compare()
 	$context['character']['original_sheet'] = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
+	// And parse the bbc.
+	foreach (['original_sheet', 'sheet_details'] as $sheet) {
+		$context['character'][$sheet]['sheet_text_parsed'] = parse_bbc($context['character'][$sheet]['sheet_text'], false);
+	}
+
 	$context['page_title'] = $txt['char_sheet_compare'];
-	$context['sub_template'] = 'char_sheet_compare';
+	$context['sub_template'] = 'profile_character_sheet_compare';
 }
 
 function mark_char_sheet_unapproved($char)
