@@ -2511,7 +2511,37 @@ function loadTemplatePartialResolver($cx, $name) {
 }
 
 function compileTemplate($template, $options = []) {
-	$default_helpers = [
+	global $context;
+	register_default_helpers();
+
+	$default_partials = [
+		'helpicon' => loadTemplatePartial('helpicon'),
+	];
+
+	$phpStr = LightnCandy::compile($template, [
+		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL),
+		'helpers' => !empty($options['helpers']) ? array_merge($context['_template_helpers'], $options['helpers']) : $context['_template_helpers'],
+		'partialresolver' => 'loadTemplatePartialResolver',
+		'partials' => !empty($options['partials']) ? array_merge($default_partials, $options['partials']) : $default_partials,
+	]);
+	return $phpStr;
+}
+
+function register_helper($helper_array) {
+	global $context;
+
+	if (!isset($context['_template_helpers'])) {
+		$context['_template_helpers'] = [];
+		register_default_helpers();
+	}
+
+	if (is_array($helper_array)) {
+		$context['_template_helpers'] += $helper_array;
+	}
+}
+
+function register_default_helpers() {
+	register_helper([
 		'eq' => 'logichelper_eq',
 		'neq' => 'logichelper_ne',
 		'lt' => 'logichelper_lt',
@@ -2538,18 +2568,7 @@ function compileTemplate($template, $options = []) {
 		'json' => function ($data) { return json_encode($data); },
 		'join' => function($array, $sep = '') { return implode($sep, $array); },
 		'is_array' => function($var) { return is_array($var); },
-	];
-	$default_partials = [
-		'helpicon' => loadTemplatePartial('helpicon'),
-	];
-
-	$phpStr = LightnCandy::compile($template, [
-		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL),
-		'helpers' => !empty($options['helpers']) ? array_merge($default_helpers, $options['helpers']) : $default_helpers,
-		'partialresolver' => 'loadTemplatePartialResolver',
-		'partials' => !empty($options['partials']) ? array_merge($default_partials, $options['partials']) : $default_partials,
 	]);
-	return $phpStr;
 }
 
 /**

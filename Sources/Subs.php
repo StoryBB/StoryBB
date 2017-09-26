@@ -2822,9 +2822,13 @@ function render_page($content) {
 	        'javascript' => 'template_javascript',
 	    ]
 	]);
-	
+
+	echo prepareTemplate($phpStr, $data);
+}
+
+function prepareTemplate($phpStr, $data) {
 	$renderer = LightnCandy::prepare($phpStr);
-	echo $renderer($data);
+	return $renderer($data);
 }
 
 function locale_helper($lang_locale) 

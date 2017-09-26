@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 if (!defined('SMF'))
 	die('No direct access...');
 
@@ -1775,6 +1777,30 @@ function create_control_richedit($editorOptions)
 
 	// Set a flag so the sub template knows what to do...
 	$context['show_bbc'] = !empty($modSettings['enableBBC']);
+
+	register_helper([
+		'richtexteditor' => 'control_richedit_helper',
+	]);
+}
+
+function control_richedit_helper($editor_id, $smileyContainer = null, $bbcContainer = null) {
+	global $context, $settings, $modSettings;
+
+	$data = [
+		'editor_id' => $editor_id,
+		'editor_context' => $context['controls']['richedit'][$editor_id],
+		'context' => $context,
+		'settings' => $settings,
+		'modSettings' => $modSettings,
+		'smileyContainer' => $smileyContainer,
+		'bbcContainer' => $bbcContainer,
+	];
+	$template = loadTemplatePartial('control_richedit');
+	$phpStr = compileTemplate($template);
+	return prepareTemplate($phpStr, $data);
+	
+	$renderer = LightnCandy::prepare($phpStr);
+	return $renderer($data);
 }
 
 /**
