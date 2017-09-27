@@ -17,7 +17,7 @@ style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if 
 					parserOptions: {
 						quoteType: $.sceditor.BBCodeParser.QuoteType.auto
 					}
-					{{#if (or context.smileys.postform (and context.smileys.popup editor_context.disable_smiley_box smileyContainer))}}
+					{{#if (and (or context.smileys.postform context.smileys.popup) editor_context.disable_smiley_box smileyContainer)}}
 					,
 					emoticons:
 					{
