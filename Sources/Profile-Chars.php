@@ -693,7 +693,7 @@ function char_posts()
 
 	// Some initial context.
 	$context['start'] = (int) $_REQUEST['start'];
-	$context['sub_template'] = 'char_posts';
+	$context['sub_template'] = 'profile_character_posts';
 
 	// Create the tabs for the template.
 	$context[$context['profile_menu_name']]['tab_data'] = array(
