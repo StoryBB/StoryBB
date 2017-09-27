@@ -189,7 +189,7 @@ function char_create()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
 
-	loadTemplate('Profile-Chars');
+	$context['sub_template'] = 'profile_character_create';
 	
 	$context['character'] = [
 		'character_name' => '',

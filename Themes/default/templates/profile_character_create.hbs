@@ -1,0 +1,53 @@
+	{{! The form for creating a character }}
+	<div class="cat_bar">
+		<h3 class="catbg">{{{txt.char_create}}}</h3>
+	</div>
+
+	<div id="profileview" class="roundframe flow_auto">
+		<div class="errorbox" id="profile_error"{{#unless context.form_error}} style="display:none"{{/unless}}>
+			<span>{{{txt.char_editing_error}}}</span>
+			<ul id="list_errors">
+				{{#each context.form_errors}}
+					<li>{{{.}}}</li>
+				{{/each}}
+			</ul>
+		</div>
+		<div id="basicinfo"></div>
+		<div id="detailedinfo">
+			<form id="creator" action="{{scripturl}}?action=profile;u={{context.id_member}};area=char_create" method="POST" accept-charset="UTF-8">
+				<dl>
+					<dt>{{{txt.char_name}}}</dt>
+					<dd>
+						<input type="text" name="char_name" id="char_name" size="50" value="{{{context.character.character_name}}}" maxlength="50" class="input_text">
+					</dd>
+					<dt>{{{txt.age}}}:</dt>
+					<dd>
+						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50" class="input_text">
+					</dd>
+				</dl>
+				<dl class="char_sheet_text">
+					<dt>{{{txt.char_sheet}}}</dt>
+					{{#if context.sheet_templates}}
+						<dd>
+							{{{txt.char_template_sel}}}
+							<select id="char_sheet_template">
+								<option>-- {{{txt.char_templates}}} --</option>
+								{{#each context.sheet_templates}}
+								<option value="{{@key}}">{{name}}</option>
+								{{/each}}
+							</select>
+							<a href="#" class="button" id="insert_char_template">{{{txt.char_templates_add}}}</a>
+						</dd>
+					{{/if}}
+				</dl>
+				<div class="create_char_editor">
+					{{{richtexteditor 'message' '' 'bbcBox'}}}
+				</div>
+				<br>
+				<div class="smalltext">{{{txt.you_can_add_later}}}</div>
+				<input type="hidden" name="u" value="{{context.id_member}}">
+				<input type="submit" name="create_char" class="button_submit" value="{{{txt.char_create}}}">
+				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			</form>
+		</div>
+	</div>
