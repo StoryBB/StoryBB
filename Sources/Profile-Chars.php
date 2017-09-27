@@ -1623,7 +1623,7 @@ function char_sheet_edit()
 	}
 
 	$context['page_title'] = $txt['char_sheet'] . ' - ' . $context['character']['character_name'];
-	$context['sub_template'] = 'char_sheet_edit';
+	$context['sub_template'] = 'profile_character_sheet_edit';
 }
 
 function load_char_sheet_templates()
