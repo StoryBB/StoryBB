@@ -71,7 +71,7 @@
 			{{#if (or context.smileys.posftform context.smileys.popup)}}
 			<div id="smileyBox_message"></div>
 			{{/if}}
-			{{>control_richedit editor_id=context.post_box_name smileyContainer='smileyBox_message' bbcContainer='bbcBox_message'}}
+			{{{richtexteditor context.post_box_name 'smileyBox_message' 'bbcBox_message'}}}
 			{{#if context.require_verification}}
 			<div class="post_verification">
 				<strong>{{txt.pm_visual_verification_label}}:</strong>
