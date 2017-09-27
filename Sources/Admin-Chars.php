@@ -95,8 +95,7 @@ function char_template_add()
 	$context['template_id'] = 0;
 
 	$context['page_title'] = $txt['char_templates_add'];
-	$context['sub_template'] = 'char_template_edit';
-	loadTemplate('Admin-Chars');
+	$context['sub_template'] = 'admin_character_template_edit';
 }
 
 function char_template_edit()
@@ -138,8 +137,7 @@ function char_template_edit()
 	create_control_richedit($editorOptions);
 
 	$context['page_title'] = $txt['char_templates_edit'];
-	$context['sub_template'] = 'char_template_edit';
-	loadTemplate('Admin-Chars');
+	$context['sub_template'] = 'admin_character_template_edit';
 }
 
 function char_template_save()

@@ -115,27 +115,4 @@ function template_char_templates()
 		</form>';
 }
 
-function template_char_template_edit()
-{
-	global $context, $txt, $scripturl;
-	echo '
-		<form method="post" action="', $scripturl, '?action=admin;area=templates;sa=save;', $context['session_var'], '=', $context['session_id'], '">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['char_templates'], '</h3>
-			</div>
-			<div class="windowbg2">
-				 ', $txt['char_template_name'], ' <input type="text" name="template_name" value="', $context['template_name'], '"><br><br>';
-
-	template_control_richedit('message', null, 'bbcBox');
-	echo '
-				<br>
-				<div>
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-					<input type="hidden" name="template_id" value="', $context['template_id'], '">
-					<input type="submit" value="', $txt['save'], '" class="button_submit">
-				</div>
-			</div>
-		</form>';
-}
-
 ?>
