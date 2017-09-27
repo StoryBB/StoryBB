@@ -2568,6 +2568,13 @@ function register_default_helpers() {
 		'json' => function ($data) { return json_encode($data); },
 		'join' => function($array, $sep = '') { return implode($sep, $array); },
 		'is_array' => function($var) { return is_array($var); },
+		'breakRow' => function($index, $perRow, $sep) {
+			if ($perRow == 0) {
+				return '';
+			}
+			if ($index % $perRow === 0) return $sep;
+			return '';
+		},
 	]);
 }
 

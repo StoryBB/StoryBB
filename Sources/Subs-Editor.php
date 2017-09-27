@@ -1780,13 +1780,6 @@ function create_control_richedit($editorOptions)
 
 	register_helper([
 		'richtexteditor' => 'control_richedit_helper',
-		'breakRow' => function($index, $perRow, $sep) {
-			if ($perRow == 0) {
-				return '';
-			}
-			if ($index % $perRow === 0) return $sep;
-			return '';
-		},
 	]);
 }
 

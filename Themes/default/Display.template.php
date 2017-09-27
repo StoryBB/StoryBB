@@ -46,7 +46,6 @@ function template_main()
 			'implode' => 'implode_comma',
 			'JSEscape' => 'JSEScape',
 			'get_text' => 'get_text',
-			'breakRow' => 'breakRow',
 			'getLikeText' => 'getLikeText'
 		]
 	]);
