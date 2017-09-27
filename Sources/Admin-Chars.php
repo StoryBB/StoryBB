@@ -41,7 +41,7 @@ function char_template_list()
 
 	loadTemplate('Admin-Chars');
 	$context['page_title'] = $txt['char_templates'];
-	$context['sub_template'] = 'char_templates';
+	$context['sub_template'] = 'admin_character_template_list';
 	loadJavascriptFile('chars-jquery-ui-1.11.4.js', ['default_theme' => true], 'chars_jquery');
 	addInlineJavascript('
 	$(\'.sortable\').sortable({handle: ".handle"});', true);
@@ -185,7 +185,6 @@ function char_template_save()
 function CharacterSheets()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $scripturl;
-	loadTemplate('Admin-Chars');
 	require_once($sourcedir . '/Subs-List.php');
 
 	$listOptions = [

@@ -75,44 +75,4 @@ function display_group($group)
 	$order++;
 }
 
-function template_char_templates()
-{
-	global $context, $txt, $scripturl, $settings;
-	echo '
-		<form method="post" action="', $scripturl, '?action=admin;area=templates;sa=reorder;', $context['session_var'], '=', $context['session_id'], '">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['char_templates'], '</h3>
-			</div>
-			<div class="windowbg2">';
-
-	if (!empty($context['char_templates']))
-	{
-		echo '
-				<ul class="sortable">';
-		foreach ($context['char_templates'] as $id_template => $template)
-		{
-			echo '
-					<li class="character_group">
-						<div class="group_name"><a href="', $scripturl, '?action=admin;area=templates;sa=edit;template_id=', $id_template, '">', $template['template_name'], '</a></div>
-						<img src="', $settings['default_images_url'], '/toggle.png" class="handle">
-						<input type="hidden" name="template[', $id_template, ']" value="', $id_template, '">
-					</li>';
-		}
-		echo '
-				</ul>';
-	} else {
-		echo $txt['char_templates_none'];
-	}
-
-	echo '
-			</div>
-			<div class="floatright">
-				<a href="', $scripturl, '?action=admin;area=templates;sa=add" class="button">', $txt['char_templates_add'], '</a>
-				<input type="submit" name="save" value="', $txt['save'], '" class="button_submit">
-			</div>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			<div class="clear"></div>
-		</form>';
-}
-
 ?>
