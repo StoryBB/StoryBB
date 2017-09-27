@@ -1259,9 +1259,8 @@ function MembergroupBadges()
 	}
 	$smcFunc['db_free_result']($request);
 
-	loadTemplate('Admin-Chars');
 	$context['page_title'] = $txt['badges'];
-	$context['sub_template'] = 'membergroup_badges';
+	$context['sub_template'] = 'admin_membergroups_badges';
 	loadJavascriptFile('chars-jquery-ui-1.11.4.js', ['default_theme' => true], 'chars_jquery');
 	addInlineJavascript('
 	$(\'.sortable\').sortable({handle: ".handle"});', true);

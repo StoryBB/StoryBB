@@ -39,7 +39,6 @@ function char_template_list()
 	}
 	$smcFunc['db_free_result']($request);
 
-	loadTemplate('Admin-Chars');
 	$context['page_title'] = $txt['char_templates'];
 	$context['sub_template'] = 'admin_character_template_list';
 	loadJavascriptFile('chars-jquery-ui-1.11.4.js', ['default_theme' => true], 'chars_jquery');
