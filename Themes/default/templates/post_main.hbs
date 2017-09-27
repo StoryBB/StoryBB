@@ -144,7 +144,7 @@ var icon_urls = {
 						</fieldset>
 					</div>
 					{{/if}}
-					{{>control_richedit editor_id=context.post_box_name editor_context=editor_context smileyContainer='smileyBox_message' bbcContainer='bbcBox_message'}}
+					{{{richtexteditor context.post_box_name 'smileyBox_message' 'bbcBox_message'}}}
 					{{#if (and context.editing modSettings.show_modify)}}
 					<dl>
 						<dt class="clear">

@@ -1780,6 +1780,13 @@ function create_control_richedit($editorOptions)
 
 	register_helper([
 		'richtexteditor' => 'control_richedit_helper',
+		'breakRow' => function($index, $perRow, $sep) {
+			if ($perRow == 0) {
+				return '';
+			}
+			if ($index % $perRow === 0) return $sep;
+			return '';
+		},
 	]);
 }
 
@@ -1798,9 +1805,6 @@ function control_richedit_helper($editor_id, $smileyContainer = null, $bbcContai
 	$template = loadTemplatePartial('control_richedit');
 	$phpStr = compileTemplate($template);
 	return prepareTemplate($phpStr, $data);
-	
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
 }
 
 /**
