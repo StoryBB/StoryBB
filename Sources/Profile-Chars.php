@@ -283,6 +283,15 @@ function char_create()
 	create_control_richedit($editorOptions);
 
 	load_char_sheet_templates();
+
+	addInlineJavascript('
+	var sheet_templates = ' . json_encode($context['sheet_templates']) . ';
+	$("#insert_char_template").on("click", function (e) {
+		e.preventDefault();
+		var tmpl = $("#char_sheet_template").val();
+		if (sheet_templates.hasOwnProperty(tmpl))
+			$("#message").data("sceditor").InsertText(sheet_templates[tmpl].body);
+	});', true);
 }
 
 function char_edit()
@@ -674,7 +683,7 @@ function char_theme()
 		}
 	}
 
-	$context['sub_template'] = 'char_theme';
+	$context['sub_template'] = 'profile_character_theme';
 }
 
 function char_posts()
@@ -1577,6 +1586,15 @@ function char_sheet_edit()
 	create_control_richedit($editorOptions);
 
 	load_char_sheet_templates();
+
+	addInlineJavascript('
+	var sheet_templates = ' . json_encode($context['sheet_templates']) . ';
+	$("#insert_char_template").on("click", function (e) {
+		e.preventDefault();
+		var tmpl = $("#char_sheet_template").val();
+		if (sheet_templates.hasOwnProperty(tmpl))
+			$("#message").data("sceditor").InsertText(sheet_templates[tmpl].body);
+	});', true);
 
 	// Now fetch the comments
 	$context['sheet_comments'] = [];
