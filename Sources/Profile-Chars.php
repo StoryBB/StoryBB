@@ -305,7 +305,7 @@ function char_edit()
 
 	$context['character']['title_editable'] = !empty($modSettings['titlesEnable']) && allowedTo('admin_forum');
 
-	$context['sub_template'] = 'edit_char';
+	$context['sub_template'] = 'profile_character_edit';
 	loadJavascriptFile('chars.js', array('default_theme' => true), 'chars');
 
 	$context['character']['groups_editable'] = false;
@@ -505,7 +505,7 @@ function char_edit()
 				}
 			}
 			updateCharacterData($context['character']['id_character'], $changes);
-			$_SESSION['char_updated'] = true;
+			session_flash('success', sprintf($txt[$context['user']['is_owner'] ? 'character_updated_you' : 'character_updated_else'], $context['character']['character_name']));
 			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=edit');
 		}
 
@@ -527,6 +527,7 @@ function char_edit()
 	censorText($form_value);
 	$form_value = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_value);
 	$context['character']['char_title_raw'] = un_preparsecode($context['character']['char_title']);
+	$context['character']['signature_parsed'] = parse_bbc($context['character']['signature'], true, 'sig_char_' . $context['character']['id_character']);
 
 	require_once($sourcedir . '/Subs-Editor.php');
 	$editorOptions = array(
@@ -553,9 +554,6 @@ function char_edit()
 	$("#avatar").on("blur", function() { update_preview(); });', true);
 
 	createToken('edit-char' . $context['character']['id_character'], 'post');
-
-	$context['char_updated'] = !empty($_SESSION['char_updated']);
-	unset ($_SESSION['char_updated']);
 }
 
 function char_delete()
