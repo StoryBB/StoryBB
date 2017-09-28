@@ -2575,6 +2575,14 @@ function register_default_helpers() {
 			if ($index % $perRow === 0) return $sep;
 			return '';
 		},
+		'token_var' => function($string) {
+			global $context;
+			return isset($context[$string . '_token_var']) ? $context[$string . '_token_var'] : '';
+		},
+		'token' => function($string) {
+			global $context;
+			return isset($context[$string . '_token']) ? $context[$string . '_token'] : '';
+		},
 	]);
 }
 

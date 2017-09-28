@@ -43,12 +43,7 @@ function template_show_list($list_id = null)
 	
 	$template = loadTemplatePartial('generic_list');
 
-	$phpStr = compileTemplate($template, [
-	    'helpers' => [
-	    	'token' => 'retrieve_context_token',
-	    	'token_var' => 'retrieve_context_token_var',	
-	    ]
-	]);
+	$phpStr = compileTemplate($template);
 	
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
