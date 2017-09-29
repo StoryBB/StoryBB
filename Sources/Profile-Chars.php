@@ -1314,15 +1314,22 @@ function char_sheet()
 		$smcFunc['db_free_result']($request);
 	}
 
+	if (!empty($context['character']['sheet_details']['sheet_text'])) {
+	$context['character']['sheet_details']['sheet_text'] = parse_bbc($context['character']['sheet_details']['sheet_text'], false);
+	} else {
+		$context['character']['sheet_details']['sheet_text'] = '';
+	}
+
 	$context['linktree'][] = array(
 		'name' => $txt['char_sheet'],
 		'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet;char=' . $context['character']['id_character'],
 	);
 
 	$context['page_title'] = $txt['char_sheet'] . ' - ' . $context['character']['character_name'];
-	$context['sub_template'] = 'char_sheet';
+	$context['sub_template'] = 'profile_character_sheet';
 
 	$context['sheet_buttons'] = [];
+	$context['show_sheet_comments'] = false;
 	if ($context['user']['is_owner'] || allowedTo('admin_forum'))
 	{
 		// Always have an edit button
@@ -1377,6 +1384,7 @@ function char_sheet()
 
 		// And since this is the owner or admin, we should look at comments.
 		if (!empty($context['character']['sheet_details']['sheet_text'])) {
+			$context['show_sheet_comments'] = true;
 			$context['sheet_comments'] = [];
 			// First, find the time of the last approved case.
 			$last_approved = 0;
@@ -1410,6 +1418,7 @@ function char_sheet()
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
+				$row = parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
 				$context['sheet_comments'][$row['id_comment']] = $row;
 			}
 			$smcFunc['db_free_result']($request);
