@@ -145,29 +145,6 @@ function template_alerts_all_read()
 }
 
 /**
- * This template displays a user's details without any option to edit them.
- */
-function template_summary()
-{
-	global $context, $settings, $scripturl, $modSettings, $txt;
-
-    $data = Array(
-        'context' => $context,
-        'txt' => $txt,
-        'scripturl' => $scripturl,
-        'modSettings' => $modSettings,
-        'settings' => $settings,
-    );
-    
-    $template = loadTemplateFile('profile_summary');
-
-    $phpStr = compileTemplate($template);
-
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * Template for showing all the posts of the user, in chronological order.
  */
 function template_showPosts()

@@ -23,6 +23,8 @@ function summary($memID)
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
 		fatal_lang_error('not_a_user', false, 404);
 
+	$context['sub_template'] = 'profile_summary';
+
 	// Set up the stuff and load the user.
 	$context += array(
 		'page_title' => sprintf($txt['profile_of_username'], $memberContext[$memID]['name']),
