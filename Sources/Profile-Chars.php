@@ -189,6 +189,8 @@ function char_create()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
 
+	loadLanguage('Admin');
+
 	$context['sub_template'] = 'profile_character_create';
 	
 	$context['character'] = [
@@ -1511,6 +1513,8 @@ function char_sheet_history()
 function char_sheet_edit()
 {
 	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
+
+	loadLanguage('Admin');
 
 	// First, get rid of people shouldn't have a sheet at all - the OOC characters
 	if ($context['character']['is_main'])
