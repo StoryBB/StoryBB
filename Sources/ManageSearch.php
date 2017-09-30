@@ -656,7 +656,7 @@ function CreateMessageIndex()
 	// Step 3: remove words not distinctive enough.
 	if ($context['step'] === 3)
 	{
-		$context['sub_template'] = 'create_index_done';
+		$context['sub_template'] = 'search_create_index_done';
 
 		updateSettings(array('search_index' => 'custom', 'search_custom_index_config' => json_encode($context['index_settings'])));
 		$smcFunc['db_query']('', '

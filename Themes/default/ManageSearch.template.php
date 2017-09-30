@@ -220,26 +220,6 @@ function template_create_index_progress()
 }
 
 /**
- * Done creating a search index.
- */
-function template_create_index_done()
-{
-	global $scripturl, $txt;
-	echo '
-	<div id="admincenter">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['search_create_index'], '</h3>
-		</div>
-		<div class="windowbg">
-			<p>', $txt['search_create_index_done'], '</p>
-			<p>
-				<strong><a href="', $scripturl, '?action=admin;area=managesearch;sa=method">', $txt['search_create_index_done_link'], '</a></strong>
-			</p>
-		</div>
-	</div>';
-}
-
-/**
  * Add or edit a search engine spider.
  */
 function template_spider_edit()
