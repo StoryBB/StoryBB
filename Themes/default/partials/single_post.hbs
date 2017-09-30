@@ -243,11 +243,11 @@
 				{{#if can_unapprove}}
 					<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{../context.session_var}}={{../context.session_id}}"><span class="generic_icons unapprove_button"></span>{{../txt.unapprove}}</a></li>
 				{{/if}}
+				{{#if can_remove}}
+					<li style="display: none;" id="in_topic_mod_check_{{id}}"></li>
+				{{/if}}
 			</ul>
 		</li>
-		{{#if can_remove}}
-		<li style="display: none;" id="in_topic_mod_check_{{id}}"></li>
-		{{/if}}
 		{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
 		</ul>
 		{{/if}}
