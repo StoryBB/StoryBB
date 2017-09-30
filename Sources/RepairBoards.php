@@ -32,7 +32,7 @@ function RepairBoards()
 
 	// Print out the top of the webpage.
 	$context['page_title'] = $txt['admin_repair'];
-	$context['sub_template'] = 'repair_boards';
+	$context['sub_template'] = 'admin_repair_boards';
 	$context[$context['admin_menu_name']]['current_subsection'] = 'general';
 
 	// Load the language file.
