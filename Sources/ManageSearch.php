@@ -490,7 +490,7 @@ function CreateMessageIndex()
 	// Step 1: insert all the words.
 	if ($context['step'] === 1)
 	{
-		$context['sub_template'] = 'create_index_progress';
+		$context['sub_template'] = 'search_create_index_progress';
 
 		if ($context['start'] === 0)
 		{
@@ -610,7 +610,7 @@ function CreateMessageIndex()
 		{
 			$stop_words = $context['start'] === 0 || empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
 			$stop = time() + 3;
-			$context['sub_template'] = 'create_index_progress';
+			$context['sub_template'] = 'search_create_index_progress';
 			$max_messages = ceil(60 * $modSettings['totalMessages'] / 100);
 
 			while (time() < $stop)

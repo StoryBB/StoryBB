@@ -171,55 +171,6 @@ function template_create_index()
 }
 
 /**
- * Display a progress page while creating a search index.
- */
-function template_create_index_progress()
-{
-	global $context, $scripturl, $txt;
-	echo '
-	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['search_create_index'], '</h3>
-			</div>
-			<div class="windowbg">
-				<div><p>',
-					$txt['search_create_index_not_ready'], '</p>
-					<div class="progress_bar">
-						<div class="full_bar">', $context['percentage'], '%</div>
-						<div class="green_percent" style="width: ', $context['percentage'], '%;">&nbsp;</div>
-					</div>
-				</div>
-				<hr>
-				<input type="submit" name="b" value="', $txt['search_create_index_continue'], '" class="button_submit">
-			</div>
-			<input type="hidden" name="step" value="', $context['step'], '">
-			<input type="hidden" name="start" value="', $context['start'], '">
-			<input type="hidden" name="bytes_per_word" value="', $context['index_settings']['bytes_per_word'], '">
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<script>
-		var countdown = 10;
-		doAutoSubmit();
-
-		function doAutoSubmit()
-		{
-			if (countdown == 0)
-				document.forms.autoSubmit.submit();
-			else if (countdown == -1)
-				return;
-
-			document.forms.autoSubmit.b.value = "', $txt['search_create_index_continue'], ' (" + countdown + ")";
-			countdown--;
-
-			setTimeout("doAutoSubmit();", 1000);
-		}
-	</script>';
-
-}
-
-/**
  * Add or edit a search engine spider.
  */
 function template_spider_edit()
