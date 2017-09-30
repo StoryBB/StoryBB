@@ -41,7 +41,7 @@ function char_template_list()
 
 	$context['page_title'] = $txt['char_templates'];
 	$context['sub_template'] = 'admin_character_template_list';
-	loadJavascriptFile('chars-jquery-ui-1.11.4.js', ['default_theme' => true], 'chars_jquery');
+	loadJavascriptFile('jquery-ui-1.12.1-sortable.min.js', ['default_theme' => true]);
 	addInlineJavascript('
 	$(\'.sortable\').sortable({handle: ".handle"});', true);
 }

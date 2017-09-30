@@ -4136,3 +4136,8 @@ div#char_theme_wrapper,
 	display: inline-block;
 	width: 48%;
 }
+
+.ui-sortable-handle {
+	-ms-touch-action: none;
+	touch-action: none;
+}
