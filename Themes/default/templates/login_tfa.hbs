@@ -43,7 +43,7 @@
 
 							$.post(form.prop("action"), form.serialize(), function(data) {
 								if (data.indexOf("<bo" + "dy") > -1)
-									document.location = {{#if SESSION.login_url}}{{SESSION.login_url}}{{else}}{{scripturl}}{{/if}}
+									document.location = {{{json context.login_url}}}
 								else {
 									form.parent().html($(data).find(".roundframe").html());
 								}
