@@ -60,25 +60,4 @@ function template_main()
 	return $renderer($data);
 }
 
-/**
- * The template for the AJAX quote feature
- */
-function template_quotefast()
-{
-	global $context, $settings, $txt, $modSettings;
-
-	$data = [
-		'context' => $context,
-		'txt' => $txt,
-		'modSettings' => $modSettings,
-		'settings' => $settings
-	];
-
-	$template = loadTemplateFile('post_quotefast');
-
-	$phpStr = compileTemplate($template);
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
 ?>

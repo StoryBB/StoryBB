@@ -2391,7 +2391,7 @@ function QuoteFast()
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
-	$context['sub_template'] = 'quotefast';
+	$context['sub_template'] = !isset($_REQUEST['xml']) ? 'post_quotefast' : 'quotefast';
 	if (!empty($row))
 		$can_view_post = $row['approved'] || ($row['id_member'] != 0 && $row['id_member'] == $user_info['id']) || allowedTo('approve_posts', $row['id_board']);
 
