@@ -2142,7 +2142,7 @@ function AnnouncementSelectMembergroup()
 	$context['move'] = isset($_REQUEST['move']) ? 1 : 0;
 	$context['go_back'] = isset($_REQUEST['goback']) ? 1 : 0;
 
-	$context['sub_template'] = 'announce';
+	$context['sub_template'] = 'post_announce';
 }
 
 /**
@@ -2279,7 +2279,7 @@ function AnnouncementSend()
 	$context['move'] = empty($_REQUEST['move']) ? 0 : 1;
 	$context['go_back'] = empty($_REQUEST['goback']) ? 0 : 1;
 	$context['membergroups'] = implode(',', $_POST['who']);
-	$context['sub_template'] = 'announcement_send';
+	$context['sub_template'] = 'post_announce_send';
 
 	// Go back to the correct language for the user ;).
 	if (!empty($modSettings['userLanguage']))

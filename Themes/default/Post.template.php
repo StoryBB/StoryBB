@@ -81,42 +81,4 @@ function template_quotefast()
 	return $renderer($data);
 }
 
-/**
- * The form for sending out an announcement
- */
-function template_announce()
-{
-	global $context, $txt, $scripturl;
-	$data = [
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl
-	];
-
-	$template = loadTemplateFile('post_announce');
-
-	$phpStr = compileTemplate($template);
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
- * The confirmation/progress page, displayed after the admin has clicked the button to send the announcement.
- */
-function template_announcement_send()
-{
-	global $context, $txt, $scripturl;
-		$data = [
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl
-	];
-
-	$template = loadTemplateFile('post_announce_send');
-
-	$phpStr = compileTemplate($template);
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
 ?>
