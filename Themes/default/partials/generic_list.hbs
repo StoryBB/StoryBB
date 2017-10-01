@@ -1,4 +1,6 @@
-{{{top_menu}}}
+{{#if (and cur_list.list_menu (or (eq cur_list.list_menu.show_on 'top') (eq cur_list.list_menu.show_on 'both')))}}
+	{{> generic_list_links_menu }}
+{{/if}}
 
 {{#if cur_list.form}}
 	<form action="{{cur_list.form.href}}" method="post"{{#if cur_list.form.name}} name="{{cur_list.form.name}}"{{/if}} id="{{cur_list.form.name}}" accept-charset="UTF-8">
@@ -100,9 +102,11 @@
 	{{/if}}
 	</form>
 {{/if}}
-{{#if cur_list.list_menu.show_on}}
-	 {{!--{{>create_list_menu_bottom cur_list.list_menu}}--}}
+
+{{#if (and cur_list.list_menu (or (eq cur_list.list_menu.show_on 'top') (eq cur_list.list_menu.show_on 'both')))}}
+	{{> generic_list_links_menu }}
 {{/if}}
+
 {{#if cur_list.javascript}}
 	<script>
 		{{{cur_list.javascript}}}

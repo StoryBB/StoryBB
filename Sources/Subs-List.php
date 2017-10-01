@@ -9,6 +9,8 @@
  * @version 3.0 Alpha 1
  */
 
+use LightnCandy\LightnCandy;
+
 if (!defined('SMF'))
 	die('No direct access...');
 
@@ -249,6 +251,78 @@ function createList($listOptions)
 
 	// Make sure the template is loaded.
 	loadTemplate('GenericList');
+
+	register_helper([
+		'genericlist' => 'generic_list_helper',
+	]);
+}
+
+function generic_list_helper($list_id = null)
+{
+	global $context;
+	// Get a shortcut to the current list.
+	$list_id = $list_id === null ? (!empty($context['default_list']) ? $context['default_list'] : '') : $list_id;
+	if (empty($list_id) || empty($context[$list_id]))
+		return;
+	$cur_list = &$context[$list_id];
+
+	/*
+		$cur_list['list_menu'] = array(
+			// This is the style to use.  Tabs or Buttons (Text 1 | Text 2).
+			// By default tabs are selected if not set.
+			// The main difference between tabs and buttons is that tabs get highlighted if selected.
+			// If style is set to buttons and use tabs is disabled then we change the style to old styled tabs.
+			'style' => 'tabs',
+			// The position of the tabs/buttons.  Left or Right.  By default is set to left.
+			'position' => 'left',
+			// This is used by the old styled menu.  We *need* to know the total number of columns to span.
+			'columns' => 0,
+			// This gives you the option to show tabs only at the top, bottom or both.
+			// By default they are just shown at the top.
+			'show_on' => 'top',
+			// Links.  This is the core of the array.  It has all the info that we need.
+			'links' => array(
+				'name' => array(
+					// This will tell use were to go when they click it.
+					'href' => $scripturl . '?action=theaction',
+					// The name that you want to appear for the link.
+					'label' => $txt['name'],
+					// If we use tabs instead of buttons we highlight the current tab.
+					// Must use conditions to determine if its selected or not.
+					'is_selected' => isset($_REQUEST['name']),
+				),
+			),
+		);
+	*/
+	
+	if (isset($cur_list['list_menu']) && !isset($cur_list['list_menu']['style']))
+	{
+		$cur_list['list_menu']['style'] = 'tabs';
+	}
+	if (!isset($cur_list['list_menu']['tab_direction']))
+	{
+		$cur_list['list_menu']['tab_direction'] = 'top';
+	}
+
+	$cur_list['list_menu']['links_list'] = [];
+	if (!empty($cur_list['list_menu']['links'])) {
+		foreach ($cur_list['list_menu']['links'] as $id => $link) {
+			$cur_list['list_menu']['links'][$id]['link_html'] = '<a href="' . $link['href'] . '">' . $link['label'] . '</a>';
+			$cur_list['list_menu']['links_list'][] = $cur_list['list_menu']['links'][$id]['link_html'];
+		}
+	}
+	
+	
+	$data = Array(
+		'context' => $context,
+		'cur_list' => $cur_list,
+		'headerCount' => count($cur_list['headers'])
+	);
+	
+	$template = loadTemplatePartial('generic_list');
+
+	$phpStr = compileTemplate($template);
+	return prepareTemplate($phpStr, $data);
 }
 
 ?>
