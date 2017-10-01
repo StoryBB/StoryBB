@@ -1,0 +1,9 @@
+		{{! Show the custom fields off to admins }}
+		{{{genericlist 'standard_profile_fields'}}}
+		<script>
+			var iNumChecks = document.forms.standardProfileFields.length;
+			for (var i = 0; i < iNumChecks; i++)
+				if (document.forms.standardProfileFields[i].id.indexOf('reg_') == 0)
+					document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById('active_' + document.forms.standardProfileFields[i].id.substr(4)).checked;
+		</script><br>
+		{{{genericlist 'custom_profile_fields'}}}

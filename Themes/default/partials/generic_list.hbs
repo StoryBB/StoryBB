@@ -72,19 +72,18 @@
 	</tbody>
 </table>
 
-{{#if cur_list.page_index}}
+{{#if (or cur_list.page_index cur_list.additional_rows.below_table_data)}}
     {{#if cur_list.items_per_page}}
-			<div class="flow_auto">
-				<div class="floatleft">
-					<div class="pagesection">{{{cur_list.page_index}}}</div>
-				</div>
-				
-				{{#if cur_list.additional_rows.below_column_headers}}
-                    {{>list_additional_rows cur_list.additional_rows.below_column_headers}}
-                {{/if}}
-	
-	
+		<div class="flow_auto">
+			<div class="floatleft">
+				<div class="pagesection">{{{cur_list.page_index}}}</div>
+			</div>
+			
+		</div>
 	{{/if}}
+	{{#if cur_list.additional_rows.below_table_data}}
+        {{>list_additional_rows cur_list.additional_rows.below_table_data}}
+    {{/if}}
 {{/if}}
 {{#if cur_list.additional_rows.bottom_of_list}}
     {{>list_additional_rows cur_list.additional_rows.bottom_of_list}}

@@ -1201,7 +1201,7 @@ function ShowCustomProfiles()
 	global $sourcedir;
 
 	$context['page_title'] = $txt['custom_profile_title'];
-	$context['sub_template'] = 'show_custom_profile';
+	$context['sub_template'] = 'admin_profile_fields';
 
 	// What about standard fields they can tweak?
 	$standard_fields = array('website', 'timezone', 'posts', 'warning_status');
@@ -1239,6 +1239,7 @@ function ShowCustomProfiles()
 		session_flash('success', $txt['settings_saved']);
 		if (!empty($changes))
 			updateSettings($changes);
+		redirectexit('action=admin;area=featuresettings;sa=profile');
 	}
 
 	createToken('admin-scp');
