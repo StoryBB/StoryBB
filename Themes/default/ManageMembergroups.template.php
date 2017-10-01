@@ -8,17 +8,6 @@
  */
 
 /**
- * The main page listing all the groups.
- */
-function template_main()
-{
-	$result = template_show_list('regular_membergroups_list');
-	$result .= '<br><br>';
-	$result .= template_show_list('post_count_membergroups_list');
-	return $result;
-}
-
-/**
  * Add a new membergroup.
  */
 function template_new_group()

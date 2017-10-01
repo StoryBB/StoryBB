@@ -293,6 +293,8 @@ function MembergroupIndex()
 	);
 
 	createList($listOptions);
+
+	$context['sub_template'] = 'membergroups_main';
 }
 
 /**
