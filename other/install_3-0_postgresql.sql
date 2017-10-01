@@ -330,7 +330,6 @@ CREATE TABLE {$db_prefix}characters (
   main_char_group smallint NOT NULL DEFAULT '0',
   char_groups varchar(255) NOT NULL DEFAULT '',
   char_sheet int NOT NULL DEFAULT '0',
-  char_title varchar(255) NOT NULL DEFAULT '',
   retired smallint NOT NULL DEFAULT '0',
   PRIMARY KEY (id_character),
   INDEX idx_id_member (id_member)

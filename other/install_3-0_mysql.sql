@@ -178,7 +178,6 @@ CREATE TABLE {$db_prefix}characters (
   main_char_group SMALLINT NOT NULL DEFAULT '0',
   char_groups VARCHAR(255) NOT NULL DEFAULT '',
   char_sheet INT NOT NULL DEFAULT '0',
-  char_title VARCHAR(255) NOT NULL DEFAULT '',
   retired TINYINT NOT NULL DEFAULT '0',
   PRIMARY KEY (id_character),
   INDEX idx_id_member (id_member)

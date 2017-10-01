@@ -244,12 +244,12 @@ function char_create()
 					'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int',
 					'age' => 'string', 'date_created' => 'int', 'last_active' => 'int',
 					'is_main' => 'int', 'main_char_group' => 'int', 'char_groups' => 'string',
-					'char_sheet' => 'int', 'char_title' => 'string', 'retired' => 'int'],
+					'char_sheet' => 'int', 'retired' => 'int'],
 				[$context['id_member'], $context['character']['character_name'], '',
 					'', 0, 0,
 					$context['character']['age'], time(), time(),
 					0, 0, '',
-					0, '', 0],
+					0, 0],
 				['id_character']
 			);
 			$context['character']['id_character'] = $smcFunc['db_insert_id']('{db_prefix}characters', 'id_character');
@@ -305,8 +305,6 @@ function char_edit()
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 	}
 
-	$context['character']['title_editable'] = !empty($modSettings['titlesEnable']) && allowedTo('admin_forum');
-
 	$context['sub_template'] = 'profile_character_edit';
 	loadJavascriptFile('chars.js', array('default_theme' => true), 'chars');
 
@@ -352,16 +350,6 @@ function char_edit()
 				$context['form_errors'][] = $txt['char_error_duplicate_character_name'];
 			else
 				$changes['character_name'] = $new_name;
-		}
-
-		if ($context['character']['title_editable'])
-		{
-			$new_title = isset($_POST['char_title']) ? $_POST['char_title'] : '';
-			preparsecode($new_title);
-			if ($new_title != $context['character']['char_title'])
-			{
-				$changes['char_title'] = $new_title;
-			}
 		}
 
 		if ($context['character']['groups_editable'])
@@ -528,7 +516,6 @@ function char_edit()
 	$form_value = un_preparsecode($form_value);
 	censorText($form_value);
 	$form_value = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_value);
-	$context['character']['char_title_raw'] = un_preparsecode($context['character']['char_title']);
 	$context['character']['signature_parsed'] = parse_bbc($context['character']['signature'], true, 'sig_char_' . $context['character']['id_character']);
 
 	require_once($sourcedir . '/Subs-Editor.php');
@@ -2613,7 +2600,7 @@ function CharacterSheetList()
 	$request = $smcFunc['db_query']('', '
 		SELECT chars.id_character, chars.id_member, chars.character_name,
 			chars.date_created, chars.last_active, chars.avatar, chars.posts,
-			chars.main_char_group, chars.char_groups, chars.char_title, chars.retired
+			chars.main_char_group, chars.char_groups, chars.retired
 		FROM {db_prefix}characters AS chars
 		WHERE chars.char_sheet != 0
 			AND main_char_group = {int:group}

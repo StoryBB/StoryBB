@@ -148,12 +148,7 @@ function template_character_profile()
 				<dd>', $context['character']['character_name'], '</dd>
 				<dt>', $txt['profile_posts'], ':</dt>
 				<dd>', comma_format($context['character']['posts']), $days_registered > 1 ? ' (' . $posts_per_day . ' per day)' : '', '</dd>';
-	if (!empty($context['character']['char_title']))
-	{
-		echo '
-				<dt>', $txt['custom_title'], ':</dt>
-				<dd>', parse_bbc($context['character']['char_title'], false), '</dd>';
-	}
+
 	echo '
 				<dt>', $txt['age'], ':</dt>
 				<dd>', !empty($context['character']['age']) ? $context['character']['age'] : 'N/A', '</dd>

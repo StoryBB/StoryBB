@@ -520,7 +520,6 @@ $txt['trackEdit_action_char_character_name'] = '%1$s - character name';
 $txt['trackEdit_action_char_avatar'] = '%1$s - avatar';
 $txt['trackEdit_action_char_main_char_group'] = '%1$s - primary group';
 $txt['trackEdit_action_char_char_groups'] = '%1$s - additional groups';
-$txt['trackEdit_action_char_char_title'] = '%1$s - custom title';
 $txt['trackEdit_action_char_retired'] = '%1$s - retired';
 
 $txt['trackGroupRequests'] = 'Group Requests';

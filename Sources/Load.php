@@ -1353,7 +1353,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		}
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member, id_character, character_name, avatar, signature, id_theme, posts, age, date_created,
-				last_active, is_main, main_char_group, char_groups, char_sheet, char_title, retired
+				last_active, is_main, main_char_group, char_groups, char_sheet, retired
 			FROM {db_prefix}characters
 			WHERE id_member IN ({array_int:loaded_ids})
 			ORDER BY NULL',
@@ -1383,7 +1383,6 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'main_char_group' => $row['main_char_group'],
 				'char_groups' => $row['char_groups'],
 				'char_sheet' => $row['char_sheet'],
-				'char_title' => $row['char_title'],
 				'retired' => $row['retired'],
 			);
 			if ($row['is_main'])
