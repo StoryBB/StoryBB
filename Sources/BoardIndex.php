@@ -59,7 +59,10 @@ function BoardIndex()
 		}
 
 		if (!empty($context['latest_posts']) || !empty($context['latest_post']))
+		{
 			$context['info_center'][] = 'recent';
+			$settings['number_recent_posts'] = (int) $settings['number_recent_posts'];
+		}
 	}
 
 	// And stats.

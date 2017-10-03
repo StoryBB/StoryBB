@@ -40,15 +40,15 @@
                                 <p class="board_description">{{this.description}}</p>
                                 
                                 {{! Show the "Moderators: ". Each has name, href, link, and id, but we're going to use link_moderators }}
-                                {{#if board.link_moderators}}
-                                    <p class="moderators">{{link_moderators this.link_moderators txt.moderator txt.moderators}}</p>
+                                {{#if this.link_moderators}}
+                                    <p class="moderators">{{#if (eq (getNumItems this.link_moderators) 1)}}{{{../../txt.moderator}}}{{else}}{{../../txt.moderators}}{{/if}}: {{{join this.link_moderators ', '}}}</p>
                                 {{/if}} {{! close if board.link_moderators on line 38 }}
                                 
                             </div>
                             
                             {{! Show some basic information about the number of posts, etc. }}
                             <div class="board_stats">
-                                <p>{{comma_format posts}} {{#if this.is_redirect}}{{../../txt.redirects}}{{else}}{{../../txt.posts}}<br> {{comma_format this.topics}} {{../../txt.board_topics}}{{/if}}</p>
+                                <p>{{comma posts}} {{#if this.is_redirect}}{{../../txt.redirects}}{{else}}{{../../txt.posts}}<br> {{comma this.topics}} {{../../txt.board_topics}}{{/if}}</p>
                             </div>
                             <div class="lastpost {{#if this.last_post.id}}lpr_border{{else}}hidden{{/if}}">
                                 {{#if this.last_post.id}}{{{this.last_post.last_post_message}}}{{/if}}
@@ -64,9 +64,9 @@
                                         <strong>
                                         {{/if}} {{! close if this.new on line 57 }}
                                         {{#if (eq this.is_redirect '1')}}
-                                            <span><a href="{{this.href}}" title="{{comma_format this.posts}} {{../../../txt.redirects}}{{#if this.short_description}} - {{this.short_description}}{{/if}}">{{this.name}}</a></span>
+                                            <span><a href="{{this.href}}" title="{{comma this.posts}} {{../../../txt.redirects}}{{#if this.short_description}} - {{this.short_description}}{{/if}}">{{this.name}}</a></span>
                                         {{else}}
-                                            <span><a href="{{this.href}}" {{#if this.new}}class="board_new_posts"{{/if}} title="{{#if this.new}}{{../../../txt.new_posts}}{{else}}{{../../../txt.old_posts}}{{/if}} ({{../../../txt.board_topics}}: {{comma_format this.topics}}, {{../../../txt.posts}}: {{comma_format this.posts}})">{{this.name}}</a>{{#if this.new}}<a href="{{scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma_format this.topics}}, {{txt.posts}}: {{comma_format this.posts}})"><span class="new_posts">{{txt.new}}</span></a>{{/if}}</span>
+                                            <span><a href="{{this.href}}" {{#if this.new}}class="board_new_posts"{{/if}} title="{{#if this.new}}{{../../../txt.new_posts}}{{else}}{{../../../txt.old_posts}}{{/if}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})">{{this.name}}</a>{{#if this.new}}<a href="{{scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{txt.posts}}: {{comma this.posts}})"><span class="new_posts">{{txt.new}}</span></a>{{/if}}</span>
                                         {{/if}} {{! close if this.is_redirect on line 61 }}
                                         {{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
                                             <span><a href="{{scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{context.session_var}}={{context.session_id}}" title="{{textTemplate ../../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a></span>

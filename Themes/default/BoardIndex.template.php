@@ -14,21 +14,6 @@ use LightnCandy\LightnCandy;
  * The top part of the outer layer of the boardindex
  */
 
-function moderators_helper($link_moderators, $txt_moderator, $txt_moderators)
-{
-	$moderators_string = ( count($link_moderators) == 1 ) ? $txt_moderator.":" : $txt_moderators.":";
-	foreach ( $link_moderators as $cur_moderator ) 
-	{
-		$moderators_string .= $cur_moderator;
-	}
-	return new \LightnCandy\SafeString($moderators_string);
-}
-
-function comma_format_helper($number, $override_decimal_count = false)
-{
-	return new \LightnCandy\SafeString(comma_format($number, $override_decimal_count));
-}
-
 function template_boardindex_outer_above()
 {
 
@@ -58,8 +43,6 @@ function template_main()
 
     $phpStr = compileTemplate($template, [
         'helpers' => [
-            'link_moderators' => 'moderators_helper',
-            'comma_format' => 'comma_format_helper',
             'partial_helper' => 'include_ic_partial',
             'jsontext' => 'stringhelper_string_json'
         ]
@@ -85,12 +68,7 @@ function template_ic_block_recent()
     
     $template = loadTemplatePartial('board_ic_recent');
 
-    $phpStr = compileTemplate($template, [
-        'helpers' => [
-            'partial_helper' => 'include_ic_partial',
-            'JavaScriptEscape' => 'JSEscape',
-        ]
-    ]);
+    $phpStr = compileTemplate($template);
 
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
@@ -134,12 +112,7 @@ function template_ic_block_online()
     
     $template = loadTemplatePartial('board_ic_online');
 
-    $phpStr = compileTemplate($template, [
-        'helpers' => Array(
-            'implode' => 'implode_sep',
-            'comma_format' => 'comma_format_helper'
-        )
-    ]);
+    $phpStr = compileTemplate($template);
 
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
