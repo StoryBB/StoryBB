@@ -262,8 +262,7 @@ function EditNews()
 	createList($listOptions);
 
 	// And go!
-	loadTemplate('ManageNews');
-	$context['sub_template'] = 'news_lists';
+	$context['sub_template'] = 'admin_edit_news';
 }
 
 /**
