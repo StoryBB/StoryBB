@@ -63,7 +63,7 @@
     {{/if}}
 {{/unless}}
 {{#each cur_list.rows}}
-        <tr class="windowbg {{class}}" {{#if style}} style="{{style}}"{{/if}} id="list_{{list_id}}_{{@key}}">
+        <tr class="windowbg {{class}}" {{#if style}} style="{{style}}"{{/if}} id="list_{{../cur_list.list_id}}_{{@key}}">
     {{#each data}}
             <td{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}>{{{value}}}</td>
     {{/each}}

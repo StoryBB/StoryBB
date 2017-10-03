@@ -265,6 +265,7 @@ function generic_list_helper($list_id = null)
 	if (empty($list_id) || empty($context[$list_id]))
 		return;
 	$cur_list = &$context[$list_id];
+	$cur_list['list_id'] = $list_id;
 
 	/*
 		$cur_list['list_menu'] = array(
