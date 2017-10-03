@@ -13,13 +13,6 @@ use LightnCandy\LightnCandy;
 /**
  * The top part of the outer layer of the boardindex
  */
-function approval_helper($string, $unapproved_topics, $unapproved_posts)
-{
-    return new \LightnCandy\SafeString(sprintf($string,
-    	$unapproved_topics,
-    	$unapproved_posts
-    ));
-}
 
 function moderators_helper($link_moderators, $txt_moderator, $txt_moderators)
 {
@@ -65,7 +58,6 @@ function template_main()
 
     $phpStr = compileTemplate($template, [
         'helpers' => [
-            'approvals' => 'approval_helper',
             'link_moderators' => 'moderators_helper',
             'comma_format' => 'comma_format_helper',
             'partial_helper' => 'include_ic_partial',
