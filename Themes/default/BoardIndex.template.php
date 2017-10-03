@@ -10,15 +10,6 @@ use LightnCandy\LightnCandy;
  * @version 3.0 Alpha 1
  */
 
-/**
- * The top part of the outer layer of the boardindex
- */
-
-function template_boardindex_outer_above()
-{
-
-}
-
 function include_ic_partial($template) {
     $func = 'template_ic_block_' . $template;
 	return $func();
