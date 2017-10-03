@@ -422,6 +422,7 @@ function EditBoard()
 			'theme' => 0,
 			'profile' => 1,
 			'override_theme' => 0,
+			'in_character' => 1,
 			'redirect' => '',
 			'category' => (int) $_REQUEST['cat'],
 			'no_children' => true,
@@ -646,6 +647,7 @@ function EditBoard2()
 		}
 
 		// Checkboxes....
+		$boardOptions['in_character'] = !empty($_POST['in_character']);
 		$boardOptions['posts_count'] = isset($_POST['count']);
 		$boardOptions['override_theme'] = isset($_POST['override_theme']);
 		$boardOptions['board_theme'] = (int) $_POST['boardtheme'];

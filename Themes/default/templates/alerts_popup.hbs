@@ -1,0 +1,42 @@
+		{{! The popup to show you your alerts. }}
+		{{! Unlike almost every other template, this is designed to be included into the HTML directly via $().load() }}
+		<div class="alert_bar">
+			<div class="alerts_opts block">
+				<a href="{{scripturl}}?action=profile;area=notification;sa=markread;{{context.session_var}}={{context.session_id}}" onclick="return markAlertsRead(this)">{{{txt.mark_alerts_read}}}</a>
+				<a href="{{scripturl}}?action=profile;area=notification;sa=alerts" class="floatright">{{{txt.alert_settings}}}</a>
+			</div>
+			<div class="alerts_box centertext">
+				<a href="{{scripturl}}?action=profile;area=showalerts" class="button">{{{txt.all_alerts}}}</a>
+			</div>
+		</div>
+		<div class="alerts_unread">
+
+		{{#if context.unread_alerts}}
+			{{#each context.unread_alerts}}
+				<div class="unread">
+					{{#if sender}}{{{sender.avatar.image}}}{{/if}}
+					<div class="details">
+						{{#if icon}}{{{icon}}}{{/if}}
+						<span>{{{text}}}</span> - {{{time}}}
+					</div>
+				</div>
+			{{/each}}
+		{{else}}
+			<div class="no_unread">{{{txt.alerts_no_unread}}}</div>
+		{{/if}}
+
+		</div>
+		<script>
+		function markAlertsRead(obj) {
+			ajax_indicator(true);
+			$.get(
+				obj.href,
+				function(data) {
+					ajax_indicator(false);
+					$("#alerts_menu_top span.amt").remove();
+					$("#alerts_menu div.alerts_unread").html(data);
+				}
+			);
+			return false;
+		}
+		</script>

@@ -46,7 +46,6 @@ function template_main()
 			'implode' => 'implode_comma',
 			'JSEscape' => 'JSEScape',
 			'get_text' => 'get_text',
-			'breakRow' => 'breakRow',
 			'getLikeText' => 'getLikeText'
 		]
 	]);
@@ -54,6 +53,7 @@ function template_main()
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
 }
+
 //This is a helper for the like text
 function getLikeText($count) {
 	global $txt, $context;

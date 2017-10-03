@@ -13,7 +13,6 @@
 if (!defined('SMF'))
 	die('No direct access...');
 
-
 /**
  * Main dispatcher, the entrance point for all 'Manage Membergroup' actions.
  * It forwards to a function based on the given subaction, default being subaction 'index', or, without manage_membergroup
@@ -34,6 +33,7 @@ function ModifyMembergroups()
 		'edit' => array('EditMembergroup', 'manage_membergroups'),
 		'index' => array('MembergroupIndex', 'manage_membergroups'),
 		'members' => array('MembergroupMembers', 'manage_membergroups', 'Groups.php'),
+		'badges' => array('MembergroupBadges', 'admin_forum'),
 	);
 
 	// Default to sub action 'index' or 'settings' depending on permissions.
@@ -120,6 +120,17 @@ function MembergroupIndex()
 				'sort' => array(
 					'default' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, mg.group_name',
 					'reverse' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, mg.group_name DESC',
+				),
+			),
+			'level' => array(
+				'header' => array(
+					'value' => $txt['char_group_level'],
+				),
+				'data' => array(
+					'function' => function($rowData) use ($txt)
+					{
+						return empty($rowData['is_character']) ? $txt['char_group_level_acct'] : $txt['char_group_level_char'];
+					},
 				),
 			),
 			'icons' => array(
@@ -282,6 +293,8 @@ function MembergroupIndex()
 	);
 
 	createList($listOptions);
+
+	$context['sub_template'] = 'membergroups_main';
 }
 
 /**
@@ -312,11 +325,11 @@ function AddMembergroup()
 			'{db_prefix}membergroups',
 			array(
 				'description' => 'string', 'group_name' => 'string-80', 'min_posts' => 'int',
-				'icons' => 'string', 'online_color' => 'string', 'group_type' => 'int',
+				'icons' => 'string', 'online_color' => 'string', 'group_type' => 'int', 'is_character' => 'int',
 			),
 			array(
 				'', $smcFunc['htmlspecialchars']($_POST['group_name'], ENT_QUOTES), ($postCountBasedGroup ? (int) $_POST['min_posts'] : '-1'),
-				'1#icon.png', '', $_POST['group_type'],
+				'1#icon.png', '', $_POST['group_type'], !empty($_POST['group_level']) ? 1 : 0,
 			),
 			array('id_group'),
 			1
@@ -1024,7 +1037,7 @@ function EditMembergroup()
 
 	// Fetch the current group information.
 	$request = $smcFunc['db_query']('', '
-		SELECT group_name, description, min_posts, online_color, max_messages, icons, group_type, hidden, id_parent, tfa_required
+		SELECT group_name, is_character, description, min_posts, online_color, max_messages, icons, group_type, hidden, id_parent, tfa_required
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:current_group}
 		LIMIT 1',
@@ -1042,6 +1055,7 @@ function EditMembergroup()
 	$context['group'] = array(
 		'id' => $_REQUEST['group'],
 		'name' => $row['group_name'],
+		'is_character' => $row['is_character'],
 		'description' => $smcFunc['htmlspecialchars']($row['description'], ENT_QUOTES),
 		'editable_name' => $row['group_name'],
 		'color' => $row['online_color'],
@@ -1194,6 +1208,64 @@ function EditMembergroup()
 	$context['page_title'] = $txt['membergroups_edit_group'];
 
 	createToken('admin-mmg');
+}
+
+function MembergroupBadges()
+{
+	global $smcFunc, $context, $txt, $settings;
+
+	$context['groups'] = [
+		'accounts' => [],
+		'characters' => [],
+	];
+
+	if (isset($_POST['group']) && is_array($_POST['group']))
+	{
+		checkSession();
+		$order = 1;
+		foreach ($_POST['group'] as $group) {
+			$group = (int) $group;
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}membergroups
+				SET badge_order = {int:order}
+				WHERE id_group = {int:group}',
+				[
+					'order' => $order,
+					'group' => $group,
+				]
+			);
+			$order++;
+		}
+	}
+
+	$request = $smcFunc['db_query']('', '
+		SELECT id_group, group_name, online_color, icons, is_character
+		FROM {db_prefix}membergroups
+		WHERE min_posts = -1
+			AND id_group != {int:moderator_group}
+		ORDER BY badge_order',
+		[
+			'moderator_group' => 3
+		]
+	);
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$row['parsed_icons'] = '';
+		if (!empty($row['icons']))
+		{
+			list($qty, $badge) = explode('#', $row['icons']);
+			if (!empty($qty))
+				$row['parsed_icons'] = str_repeat('<img src="' . $settings['default_images_url'] . '/membericons/' . $badge . '" alt="*">', $qty);
+		}
+		$context['groups'][$row['is_character'] ? 'characters' : 'accounts'][$row['id_group']] = $row;
+	}
+	$smcFunc['db_free_result']($request);
+
+	$context['page_title'] = $txt['badges'];
+	$context['sub_template'] = 'admin_membergroups_badges';
+	loadJavascriptFile('jquery-ui-1.12.1-sortable.min.js', ['default_theme' => true]);
+	addInlineJavascript('
+	$(\'.sortable\').sortable({handle: ".handle"});', true);
 }
 
 ?>

@@ -57,7 +57,7 @@
                             {{! Show the Child Boards: ". (there's a link_children but board the new ones) }}
                             {{#if this.children}}
                                 <div id="board_{{this.id}}_children" class="children">
-                                    <p><strong>{{txt.sub_boards}}</strong>
+                                    <p><strong>{{../../txt.sub_boards}}:</strong>
                                     {{#each this.children}}
                                         {{#if this.new}}
                                         {{! Child board has one or more new posts, bold link for child board }}

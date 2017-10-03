@@ -17,8 +17,10 @@
 
 			{{! The user's name, group, avatar }}
 			<div class="username clear">
-				<h4>{{context.member.name}}<span class="position">{{#if context.member.group}}{{context.member.group}}{{else}}{{context.member.post_group}}{{/if}}</span></h4>
+				<h4>{{context.member.name}}</h4>
 			</div>
+			<div class="badges">{{{context.member.badges}}}</div>
+			<div class="position">{{{context.member.group}}}</div>
 			{{{context.member.avatar.image}}}
 
 			{{! Are there any custom profile fields for below the avatar? }}
@@ -239,6 +241,35 @@
 						{{/each}}
 					</ul>
 				</div>
+			{{/if}}
+
+			{{! Are there any characters to display? }}
+			{{#if (and context.member.characters (gt (getNumItems context.member.characters) 1))}}
+				<div class="character_list">
+					<h5 id="user_char_list">{{{txt.my_characters}}}:</h5>
+				</div>
+				<ul class="characters">
+					{{#each context.member.characters}}
+						{{#unless is_main}}
+							<li>
+								<div class="char_avatar">
+									<img alt="" src="{{#if avatar}}{{{avatar}}}{{else}}{{../settings.images_url}}/default.png{{/if}}">
+								</div>
+								<div class="char_name">
+									<a href="{{../scripturl}}{{character_url}}">{{character_name}}</a>
+									{{#if retired}}({{{../txt.char_retired}}}){{/if}}
+									<div class="char_created">
+										{{{textTemplate ../txt.char_created (timeformat date_created)}}}
+									</div>
+								</div>
+								<div class="char_group">
+									{{{display_group}}}
+									<div class="char_created">&nbsp;</div>
+								</div>
+							</li>
+						{{/unless}}
+					{{/each}}
+				</ul>
 			{{/if}}
 		</div>
 	</div>

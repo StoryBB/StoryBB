@@ -433,20 +433,4 @@ function template_email_members_send()
 	</script>';
 }
 
-/**
- * The settings page.
- */
-function template_news_lists()
-{
-	global $context, $txt;
-
-	$return = '';
-
-	if (!empty($context['saved_successful']))
-		$return = '
-					<div class="infobox">' . $txt['settings_saved'] . '</div>';
-
-	return $return . template_show_list('news_lists');
-}
-
 ?>

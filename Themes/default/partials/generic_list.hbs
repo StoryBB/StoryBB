@@ -1,4 +1,6 @@
-{{{top_menu}}}
+{{#if (and cur_list.list_menu (or (eq cur_list.list_menu.show_on 'top') (eq cur_list.list_menu.show_on 'both')))}}
+	{{> generic_list_links_menu }}
+{{/if}}
 
 {{#if cur_list.form}}
 	<form action="{{cur_list.form.href}}" method="post"{{#if cur_list.form.name}} name="{{cur_list.form.name}}"{{/if}} id="{{cur_list.form.name}}" accept-charset="UTF-8">
@@ -61,7 +63,7 @@
     {{/if}}
 {{/unless}}
 {{#each cur_list.rows}}
-        <tr class="windowbg {{class}}" {{#if style}} style="{{style}}"{{/if}} id="list_{{list_id}}_{{@key}}">
+        <tr class="windowbg {{class}}" {{#if style}} style="{{style}}"{{/if}} id="list_{{../cur_list.list_id}}_{{@key}}">
     {{#each data}}
             <td{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}>{{{value}}}</td>
     {{/each}}
@@ -70,19 +72,18 @@
 	</tbody>
 </table>
 
-{{#if cur_list.page_index}}
+{{#if (or cur_list.page_index cur_list.additional_rows.below_table_data)}}
     {{#if cur_list.items_per_page}}
-			<div class="flow_auto">
-				<div class="floatleft">
-					<div class="pagesection">{{{cur_list.page_index}}}</div>
-				</div>
-				
-				{{#if cur_list.additional_rows.below_column_headers}}
-                    {{>list_additional_rows cur_list.additional_rows.below_column_headers}}
-                {{/if}}
-	
-	
+		<div class="flow_auto">
+			<div class="floatleft">
+				<div class="pagesection">{{{cur_list.page_index}}}</div>
+			</div>
+			
+		</div>
 	{{/if}}
+	{{#if cur_list.additional_rows.below_table_data}}
+        {{>list_additional_rows cur_list.additional_rows.below_table_data}}
+    {{/if}}
 {{/if}}
 {{#if cur_list.additional_rows.bottom_of_list}}
     {{>list_additional_rows cur_list.additional_rows.bottom_of_list}}
@@ -100,9 +101,11 @@
 	{{/if}}
 	</form>
 {{/if}}
-{{#if cur_list.list_menu.show_on}}
-	 {{!--{{>create_list_menu_bottom cur_list.list_menu}}--}}
+
+{{#if (and cur_list.list_menu (or (eq cur_list.list_menu.show_on 'top') (eq cur_list.list_menu.show_on 'both')))}}
+	{{> generic_list_links_menu }}
 {{/if}}
+
 {{#if cur_list.javascript}}
 	<script>
 		{{{cur_list.javascript}}}

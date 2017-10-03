@@ -29,10 +29,11 @@ class Likes_Notify_Background extends SMF_BackgroundTask
 		{
 			$request = $smcFunc['db_query']('', '
 				SELECT mem.id_member, mem.id_group, mem.id_post_group, mem.additional_groups, b.member_groups,
-				mem.pm_ignore_list
+					m.id_character, chars.is_main
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}members AS mem ON (m.id_member = mem.id_member)
 					INNER JOIN {db_prefix}boards AS b ON (m.id_board = b.id_board)
+					INNER JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character AND chars.retired = 0)
 				WHERE id_msg = {int:msg}',
 				array(
 					'msg' => $this->_details['content_id'],
@@ -111,12 +112,16 @@ class Likes_Notify_Background extends SMF_BackgroundTask
 		$smcFunc['db_free_result']($request);
 
 		// Issue, update, move on.
+		$extra = array();
+		if (!empty($row['id_character']) && empty($row['is_main']))
+			$extra['chars_dest'] = $row['id_character'];
+
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}user_alerts',
 			array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 			array($this->_details['time'], $author, $this->_details['sender_id'], $this->_details['sender_name'],
-				$this->_details['content_type'], $this->_details['content_id'], 'like', 0, ''),
+				$this->_details['content_type'], $this->_details['content_id'], 'like', 0, !empty($extra) ? json_encode($extra) : ''),
 			array('id_alert')
 		);
 

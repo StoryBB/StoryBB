@@ -1,0 +1,182 @@
+	{{! Editing a character }}
+	<div class="cat_bar">
+		<h3 class="catbg">{{{txt.edit_char}}}</h3>
+	</div>
+
+	<div id="profileview" class="roundframe flow_auto">
+		<div class="errorbox" id="profile_error"{{#unless context.form_errors}} style="display:none"{{/unless}}>
+			<span>{{{txt.char_editing_error}}}</span>
+			<ul id="list_errors">
+				{{#each context.form_errors}}
+				<li>{{{.}}}</li>
+				{{/each}}
+			</ul>
+		</div>
+		<div id="basicinfo">
+		</div>
+		<div id="detailedinfo">
+			<form id="creator" action="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=edit" method="post" accept-charset="UTF-8">
+
+				{{#if context.character.groups_editable}}
+				<dl>
+					<dt>
+						<strong>{{{txt.primary_membergroup}}}</strong><br>
+					</dt>
+					<dd>
+						<select name="id_group">
+							{{! // Fill the select box with all primary member groups that can be assigned to a member. }}
+							{{#each context.member_groups}}
+								{{#if can_be_primary}}
+									<option value="{{id}}"{{#if is_primary}} selected{{/if}}>{{{name}}}</option>
+								{{/if}}
+							{{/each}}
+						</select>
+					</dd>
+					<dt>
+						<strong>{{{txt.additional_membergroups}}}:</strong>
+					</dt>
+					<dd>
+						<span id="additional_groupsList">
+							<input type="hidden" name="additional_groups[]" value="0">
+							{{! // For each membergroup show a checkbox so members can be assigned to more than one group. }}
+							{{#each context.member_groups}}
+								{{#if can_be_additional}}
+									<label for="additional_groups-{{id}}"><input type="checkbox" name="additional_groups[]" value="{{id}}" id="additional_groups-{{id}}"{{#if is_additional}} checked{{/if}} class="input_check">{{{name}}}</label><br>
+								{{/if}}
+							{{/each}}
+						</span>
+						<a href="javascript:void(0);" onclick="document.getElementById('additional_groupsList').style.display = 'block'; document.getElementById('additional_groupsLink').style.display = 'none'; return false;" id="additional_groupsLink" style="display: none;" class="toggle_down">{{{txt.additional_membergroups_show}}}</a>
+						<script>
+							document.getElementById("additional_groupsList").style.display = "none";
+							document.getElementById("additional_groupsLink").style.display = "";
+						</script>
+					</dd>
+				</dl>
+				{{/if}}
+
+				<dl>
+					<dt>{{{txt.char_name}}}</dt>
+					<dd>
+						<input type="text" name="char_name" id="char_name" size="50" value="{{{context.character.character_name}}}" maxlength="50" class="input_text">
+					</dd>
+					<dt>
+						{{{txt.avatar_link}}}
+
+						{{#if modSettings.avatar_max_width_external}}
+						<div class="smalltext">{{{textTemplate txt.max_avatar_size modSettings.avatar_max_width_external modSettings.avatar_max_height_external}}}</div>
+						{{/if}}
+					</dt>
+					<dd>
+						<input type="text" name="avatar" id="avatar" size="50" value="{{{context.character.avatar}}}" maxlength="255" class="input_type">
+					</dd>
+					<dt>{{{txt.avatar_preview}}}</dt>
+					<dd id="avatar_preview"></dd>
+					<dt>{{{txt.age}}}:</dt>
+					<dd>
+						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50" class="input_text">
+					</dd>
+				</dl>
+				<div class="char_signature"></div>
+				<dl class="noborder" id="current_sig">
+					<dt>{{{txt.current_signature}}}:</dt>
+					<dd></dd>
+				</dl>
+				<div class="signature" id="current_sig_parsed">
+					{{#if context.character.signature}}{{{context.character.signature_parsed}}}{{else}}<em>{{{txt.no_signature_set}}}</em>{{/if}}
+				</div>
+				<dl></dl>
+				<dl class="noborder" id="sig_preview">
+					<dt>{{{txt.signature_preview}}}:</dt>
+					<dd></dd>
+				</dl>
+				<div class="signature" id="sig_preview_parsed"></div>
+				<dl class="noborder" id="sig_header">
+					<dt>{{{txt.signature}}}:</dt>
+					<dd></dd>
+				</dl>
+				{{{richtexteditor 'char_signature' 'smileyBox_message' 'bbcBox_message'}}}
+				
+				<div>
+					{{! Is there a limit on signatures? }}
+					{{#if context.signature_limits.max_length}}
+					<span class="smalltext">{{{textTemplate txt.max_sig_characters context.signature_limits.max_length}}} <span id="signatureLeft">{{{context.signature_limits.max_length}}}</span></span>
+					{{/if}}
+
+					<span class="floatright"><input type="button" name="preview_signature" id="preview_button" value="{{{txt.preview_signature}}}" class="button_submit"></span>
+				</div>
+
+				{{#if context.signature_warning}}
+					<span class="smalltext">{{{context.signature_warning}}}</span>
+				{{/if}}
+
+				{{#if context.signature_limits.max_length}}
+				<script>
+					var maxLength = {{{context.signature_limits.max_length}}};
+					last_signature = false;
+
+					function calcCharLeft()
+					{
+						var oldSignature = "", currentSignature = $("#char_signature").data("sceditor").getText().replace(/&#/g, '&#38;#');
+						var currentChars = 0;
+
+						if (!document.getElementById("signatureLeft"))
+							return;
+
+						// Changed since we were last here?
+						if (last_signature === currentSignature)
+							return;
+						last_signature = currentSignature;
+
+						if (oldSignature != currentSignature)
+						{
+							oldSignature = currentSignature;
+
+							var currentChars = currentSignature.replace(/\r/, "").length;
+							if (is_opera)
+								currentChars = currentSignature.replace(/\r/g, "").length;
+
+							if (currentChars > maxLength)
+								document.getElementById("signatureLeft").className = "error";
+							else
+								document.getElementById("signatureLeft").className = "";
+
+							if (currentChars > maxLength)
+								chars_ajax_getSignaturePreview(false);
+							// Only hide it if the only errors were signature errors...
+							else if (currentChars <= maxLength)
+							{
+								// Are there any errors to begin with?
+								if ($(document).has("#list_errors"))
+								{
+									// Remove any signature errors
+									$("#list_errors").remove(".sig_error");
+
+									// Show this if other errors remain
+									if (!$("#list_errors").has("li"))
+									{
+										$("#profile_error").css({display:"none"});
+										$("#profile_error").html("");
+									}
+								}
+							}
+						}
+
+						setInnerHTML(document.getElementById("signatureLeft"), maxLength - currentChars);
+					}
+					$(document).ready(function() {
+						calcCharLeft();
+						$("#preview_button").click(function() {
+							return chars_ajax_getSignaturePreview(true);
+						});
+					});
+					window.setInterval(calcCharLeft, 1000);
+				</script>
+				{{/if}}
+				<dl></dl>
+				<input type="hidden" name="u" value="{{context.id_member}}" />
+				<input type="submit" name="edit_char" class="button_submit" value="{{{txt.save_changes}}}" />
+				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}" />
+				<input type="hidden" name="{{token_var (concat 'edit-char' context.character.id_character)}}" value="{{token (concat 'edit-char' context.character.id_character)}}">
+			</form>
+		</div>
+	</div>

@@ -23,6 +23,8 @@ function summary($memID)
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
 		fatal_lang_error('not_a_user', false, 404);
 
+	$context['sub_template'] = 'profile_summary';
+
 	// Set up the stuff and load the user.
 	$context += array(
 		'page_title' => sprintf($txt['profile_of_username'], $memberContext[$memID]['name']),
@@ -197,6 +199,45 @@ function summary($memID)
 		foreach ($context['custom_fields'] as $custom)
 			$context['print_custom_fields'][$context['cust_profile_fields_placement'][$custom['placement']]][] = $custom;
 
+	if (!empty($_SESSION['merge_success']))
+	{
+		$context['profile_updated'] = $_SESSION['merge_success'];
+		unset ($_SESSION['merge_success']);
+	}
+
+	$cur_profile = $user_profile[$memID];
+	$main_char = $cur_profile['characters'][$cur_profile['main_char']];
+	$context['member']['signature'] = $main_char['sig_parsed'];
+	$user_groups = [];
+	if (!empty($main_char['main_char_group']))
+		$user_groups[] = $main_char['main_char_group'];
+	if (!empty($cur_profile['id_group']))
+		$user_groups[] = $cur_profile['id_group'];
+	if (!empty($cur_profile['additional_groups']))
+		$user_groups = array_merge($user_groups, explode(',', $cur_profile['additional_groups']));
+	if (!empty($main_char['char_groups']))
+		$user_groups = array_merge($user_groups, explode(',', $main_char['char_groups']));
+
+	$details = get_labels_and_badges($user_groups);
+	$context['member']['group'] = $details['title'];
+	$context['member']['badges'] = $details['badges'];
+
+	foreach ($context['member']['characters'] as $id_char => $char)
+	{
+		if ($char['is_main'])
+			continue;
+		else
+			$context['member']['characters'][$id_char]['is_main'] = (bool) $char['is_main'];
+
+		$context['member']['characters'][$id_char]['retired'] = (bool) $char['retired'];
+		$user_groups = [];
+		if (!empty($char['main_char_group']))
+			$user_groups[] = $char['main_char_group'];
+		if (!empty($char['char_groups']))
+			$user_groups = array_merge($user_groups, explode(',', $char['char_groups']));
+		$details = get_labels_and_badges($user_groups);
+		$context['member']['characters'][$id_char]['display_group'] = $details['title'];
+	}
 }
 
 /**
@@ -258,8 +299,13 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array())
 	$boards = array();
 	$topics = array();
 	$msgs = array();
+	$chars = array();
 	foreach ($alerts as $id_alert => $alert)
 	{
+		if (isset($alert['extra']['chars_src']))
+			$chars[$alert['extra']['chars_src']] = $txt['char_unknown'];
+		if (isset($alert['extra']['chars_dest']))
+			$chars[$alert['extra']['chars_dest']] = $txt['char_unknown'];
 		if (isset($alert['extra']['board']))
 			$boards[$alert['extra']['board']] = $txt['board_na'];
 		if (isset($alert['extra']['topic']))
@@ -316,6 +362,22 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array())
 			$msgs[$row['id_msg']] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
 	}
 
+	// Now to handle characters
+	if (!empty($chars))
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT chars.id_character, chars.id_member, chars.character_name
+			FROM {db_prefix}characters AS chars
+			WHERE id_character IN ({array_int:chars})',
+			array(
+				'chars' => array_keys($chars),
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$chars[$row['id_character']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>';
+		$smcFunc['db_free_result']($request);
+	}
+
 	// Now to go back through the alerts, reattach this extra information and then try to build the string out of it (if a hook didn't already)
 	foreach ($alerts as $id_alert => $alert)
 	{
@@ -334,11 +396,23 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array())
 			$alerts[$id_alert]['sender'] = &$memberContext[$alert['sender_id']];
 
 		$string = 'alert_' . $alert['content_type'] . '_' . $alert['content_action'];
+		if (isset($alert['extra']['chars_src']) || isset($alert['extra']['chars_dest']))
+			$string .= 'chr';
 		if (isset($txt[$string]))
 		{
 			$extra = $alerts[$id_alert]['extra'];
 			$search = array('{member_link}', '{scripturl}');
 			$repl = array(!empty($alert['sender_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $alert['sender_id'] . '">' . $alert['sender_name'] . '</a>' : $alert['sender_name'], $scripturl);
+			if (isset($alert['extra']['chars_src']))
+			{
+				$search[] = '{char_link}';
+				$repl[] = $chars[$alert['extra']['chars_src']];
+			}
+			if (isset($alert['extra']['chars_dest']))
+			{
+				$search[] = '{your_chr}';
+				$repl[] = $chars[$alert['extra']['chars_dest']];
+			}
 			foreach ($extra as $k => $v)
 			{
 				$search[] = '{' . $k . '}';
@@ -2448,6 +2522,17 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 			$action_text = $context['custom_field_titles'][$row['action']]['title'];
 		else
 			$action_text = $row['action'];
+
+		// Character related edit?
+		if (!empty($extra['id_character']))
+		{
+			if (!empty($context['member']['characters'][$extra['id_character']]))
+				$character_name = $context['member']['characters'][$extra['id_character']]['character_name'];
+			else
+				$character_name = $extra['character_name'];
+
+			$action_text = sprintf($action_text, $character_name);
+		}
 
 		// Parse BBC?
 		$parse_bbc = isset($context['custom_field_titles'][$row['action']]) && $context['custom_field_titles'][$row['action']]['parse_bbc'] ? true : false;

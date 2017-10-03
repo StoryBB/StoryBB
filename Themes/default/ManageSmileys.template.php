@@ -14,13 +14,14 @@ function template_editsets()
 {
 	global $context, $scripturl, $txt, $modSettings;
 
-	echo '
+	$result = '
 	<div id="admincenter">';
 
-	template_show_list('smiley_set_list');
+	$result .= template_show_list('smiley_set_list');
 
-	echo '
+	$result .= '
 	</div>';
+	return $result;
 }
 
 /**

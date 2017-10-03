@@ -45,8 +45,11 @@ class CreatePost_Notify_Background extends SMF_BackgroundTask
 		// Insert the post mentions
 		if (!empty($msgOptions['mentioned_members']))
 		{
-			Mentions::insertMentions('msg', $msgOptions['id'], $msgOptions['mentioned_members'], $posterOptions['id']);
-			$members = array_merge($members, array_keys($msgOptions['mentioned_members']));
+			Mentions::insertMentions('msg', $msgOptions['id'], $msgOptions['mentioned_members'], $posterOptions['id'], !empty($posterOptions['char_id']) ? $posterOptions['char_id'] : 0);
+			foreach ($msgOptions['mentioned_members'] as $member)
+			{
+				$members[] = $member['id_member'];
+			}
 		}
 
 		// Find the people interested in receiving notifications for this topic
@@ -247,7 +250,7 @@ class CreatePost_Notify_Background extends SMF_BackgroundTask
 
 			if ($prefs[$id]['msg_quote'] & 0x01)
 			{
-				$alert_rows[] = array(
+				$this_alert = array(
 					'alert_time' => time(),
 					'id_member' => $member['id_member'],
 					'id_member_started' => $posterOptions['id'],
@@ -256,11 +259,23 @@ class CreatePost_Notify_Background extends SMF_BackgroundTask
 					'content_id' => $msgOptions['id'],
 					'content_action' => 'quote',
 					'is_read' => 0,
-					'extra' => json_encode(array(
+					'extra' => array(
 						'content_subject' => $msgOptions['subject'],
 						'content_link' => $scripturl . '?msg=' . $msgOptions['id'],
-					)),
+					),
 				);
+
+				if (!empty($member['msgs']))
+				{
+					$quoted_msg = reset($member['msgs']);
+					if (!$quoted_msg['is_main'])
+					{
+						$this_alert['extra']['chars_src'] = $posterOptions['char_id'];
+						$this_alert['extra']['chars_dest'] = $quoted_msg['id_character'];
+					}
+				}
+				$this_alert['extra'] = json_encode($this_alert['extra']);
+				$alert_rows[] = $this_alert;
 
 				updateMemberData($member['id_member'], array('alerts' => '+'));
 			}
@@ -309,14 +324,14 @@ class CreatePost_Notify_Background extends SMF_BackgroundTask
 
 		// Get the messages
 		$request = $smcFunc['db_query']('', '
-			SELECT m.id_member, mem.email_address, mem.lngfile, mem.real_name
+			SELECT m.id_msg, m.id_member, chars.id_character, chars.is_main,
+				mem.email_address, mem.lngfile, mem.real_name
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
-			WHERE id_msg IN ({array_int:msgs})
-			LIMIT {int:count}',
+				INNER JOIN {db_prefix}characters AS chars ON (chars.id_character = m.id_character AND chars.retired = 0)
+			WHERE id_msg IN ({array_int:msgs})',
 			array(
-				'msgs' => array_unique($id_msgs),
-				'count' => count(array_unique($id_msgs)),
+				'msgs' => $id_msgs,
 			)
 		);
 
@@ -326,7 +341,19 @@ class CreatePost_Notify_Background extends SMF_BackgroundTask
 			if ($posterOptions['id'] == $row['id_member'])
 				continue;
 
-			$members[$row['id_member']] = $row;
+			if (!isset($members[$row['id_member']]))
+			{
+				$members[$row['id_member']] = array(
+					'id_member' => $row['id_member'],
+					'email_address' => $row['email_address'],
+					'lngfile' => $row['lngfile'],
+					'real_name' => $row['real_name'],
+				);
+			}
+			$members[$row['id_member']]['msgs'][$row['id_msg']] = array(
+				'id_character' => $row['id_character'],
+				'is_main' => $row['is_main'],
+			);
 		}
 
 		return $members;
@@ -336,8 +363,12 @@ class CreatePost_Notify_Background extends SMF_BackgroundTask
 	{
 		global $scripturl, $language, $modSettings;
 
-		foreach ($members as $id => $member)
+		foreach ($members as $id_chr => $member)
 		{
+			$id = $member['id_member'];
+			if ($member['retired_chr'])
+				continue;
+
 			if (!empty($prefs[$id]['msg_mention']))
 				$done_members[] = $id;
 			else
@@ -359,22 +390,31 @@ class CreatePost_Notify_Background extends SMF_BackgroundTask
 
 			if ($prefs[$id]['msg_mention'] & 0x01)
 			{
+				$extra = [
+					'content_subject' => $msgOptions['subject'],
+					'content_link' => $scripturl . '?msg=' . $msgOptions['id'],
+				];
+				if (!empty($member['dest_chr']))
+				{
+					$extra['chars_dest'] = $member['dest_chr'];
+				}
+				if (!empty($member['mentioned_by']['source_chr']))
+				{
+					$extra['chars_src'] = $member['mentioned_by']['source_chr'];
+				}
 				$alert_rows[] = array(
 					'alert_time' => time(),
-					'id_member' => $member['id'],
+					'id_member' => $member['id_member'],
 					'id_member_started' => $member['mentioned_by']['id'],
 					'member_name' => $member['mentioned_by']['name'],
 					'content_type' => 'msg',
 					'content_id' => $msgOptions['id'],
 					'content_action' => 'mention',
 					'is_read' => 0,
-					'extra' => json_encode(array(
-						'content_subject' => $msgOptions['subject'],
-						'content_link' => $scripturl . '?msg=' . $msgOptions['id'],
-					)),
+					'extra' => json_encode($extra),
 				);
 
-				updateMemberData($member['id'], array('alerts' => '+'));
+				updateMemberData($member['id_member'], array('alerts' => '+'));
 			}
 		}
 	}

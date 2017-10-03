@@ -339,6 +339,13 @@ function template_modify_board()
 						<textarea name="desc" rows="3" cols="35" style="width:99%;">', $context['board']['description'], '</textarea>
 					</dd>
 					<dt>
+						<strong>', $txt['board_in_character'], '</strong><br>
+						<span class="smalltext">', $txt['board_in_character_desc'], '</span><br>
+					</dt>
+					<dd>
+						<input type="checkbox" name="in_character"', $context['board']['in_character'] ? ' checked' : '', ' class="input_check">
+					</dd>
+					<dt>
 						<strong>', $txt['permission_profile'], ':</strong><br>
 						<span class="smalltext">', $context['can_manage_permissions'] ? sprintf($txt['permission_profile_desc'], $scripturl . '?action=admin;area=permissions;sa=profiles;' . $context['session_var'] . '=' . $context['session_id']) : strip_tags($txt['permission_profile_desc']), '</span>
 					</dt>

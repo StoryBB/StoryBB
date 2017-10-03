@@ -39,6 +39,7 @@ $txt['time_pm'] = 'pm';
 
 $txt['admin'] = 'Admin';
 $txt['moderate'] = 'Moderate';
+$txt['chars_menu_title'] = 'Characters';
 
 $txt['save'] = 'Save';
 $txt['upload'] = 'Upload';
@@ -59,6 +60,7 @@ $txt['author'] = 'Author';
 $txt['on'] = 'on';
 $txt['remove'] = 'Remove';
 $txt['start_new_topic'] = 'Start new topic';
+$txt['posting_as'] = 'Posting as %s:';
 
 $txt['login'] = 'Login';
 // Use numeric entities in the below string.
@@ -81,6 +83,9 @@ $txt['redirects'] = 'Redirects';
 $txt['quick_modify'] = 'Modify Inline';
 $txt['quick_modify_message'] = 'You have successfully modified this message.';
 $txt['reason_for_edit'] = 'Reason for editing';
+
+$txt['switch_to_char_menu'] = 'Reattribute to...';
+$txt['char_name'] = 'Character Name:';
 
 $txt['choose_pass'] = 'Choose password';
 $txt['verify_pass'] = 'Verify password';
@@ -839,5 +844,17 @@ $txt['notify_board_3_desc'] = 'You will receive both alerts and e-mails for this
 $txt['mobile_action'] = 'User actions';
 $txt['mobile_moderation'] = 'Moderation';
 $txt['mobile_user_menu'] = 'Mobile Main Menu';
+
+$txt['characters_none'] = 'No characters found.';
+$txt['char_no_group'] = 'Just starting out...';
+$txt['char_unknown'] = '[Unknown]';
+
+$txt['filter_characters'] = 'Filter Characters by Group';
+$txt['characters_in_no_groups'] = '(characters in no groups)';
+$txt['apply_filter'] = 'Apply Filter';
+
+$txt['no_primary_character_group'] = '(no primary character group)';
+
+$txt['search_by_character'] = 'By character';
 
 ?>

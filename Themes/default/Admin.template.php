@@ -368,32 +368,6 @@ function template_show_settings()
 	', true);
 }
 
-/**
- * Template for showing custom profile fields.
- */
-function template_show_custom_profile()
-{
-	global $context, $txt;
-
-	if (!empty($context['saved_successful']))
-		echo '
-					<div class="infobox">', $txt['settings_saved'], '</div>';
-
-	// Standard fields.
-	template_show_list('standard_profile_fields');
-
-	echo '
-					<script>
-						var iNumChecks = document.forms.standardProfileFields.length;
-						for (var i = 0; i < iNumChecks; i++)
-							if (document.forms.standardProfileFields[i].id.indexOf(\'reg_\') == 0)
-								document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById(\'active_\' + document.forms.standardProfileFields[i].id.substr(4)).checked;
-					</script><br>';
-
-	// Custom fields.
-	template_show_list('custom_profile_fields');
-}
-
 // Edit a profile field?
 function template_edit_profile_field()
 {
@@ -673,104 +647,6 @@ function template_callback_question_answer_list()
 								<dt class="qa_add_question"><a href="javascript:void(0);">[ ', $txt['setup_verification_add_more'], ' ]</a></dt>
 							</dl>
 						</fieldset>';
-	}
-}
-
-/**
- * Repairing boards.
- */
-function template_repair_boards()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-					<div id="admincenter">
-						<div id="section_header" class="cat_bar">
-							<h3 class="catbg">',
-								$context['error_search'] ? $txt['errors_list'] : $txt['errors_fixing'], '
-							</h3>
-						</div>
-						<div class="windowbg">';
-
-	// Are we actually fixing them, or is this just a prompt?
-	if ($context['error_search'])
-	{
-		if (!empty($context['to_fix']))
-		{
-			echo '
-							', $txt['errors_found'], ':
-							<ul>';
-
-			foreach ($context['repair_errors'] as $error)
-				echo '
-								<li>
-									', $error, '
-								</li>';
-
-			echo '
-							</ul>
-							<p>
-								', $txt['errors_fix'], '
-							</p>
-							<p class="padding">
-								<strong><a href="', $scripturl, '?action=admin;area=repairboards;fixErrors;', $context['session_var'], '=', $context['session_id'], '">', $txt['yes'], '</a> - <a href="', $scripturl, '?action=admin;area=maintain">', $txt['no'], '</a></strong>
-							</p>';
-		}
-		else
-			echo '
-							<p>', $txt['maintain_no_errors'], '</p>
-							<p class="padding">
-								<a href="', $scripturl, '?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
-							</p>';
-
-	}
-	else
-	{
-		if (!empty($context['redirect_to_recount']))
-		{
-			echo '
-							<p>
-								', $txt['errors_do_recount'], '
-							</p>
-							<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
-								<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-								<input type="submit" name="recount" id="recount_now" value="', $txt['errors_recount_now'], '">
-							</form>';
-		}
-		else
-		{
-			echo '
-							<p>', $txt['errors_fixed'], '</p>
-							<p class="padding">
-								<a href="', $scripturl, '?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
-							</p>';
-		}
-	}
-
-	echo '
-						</div>
-					</div>';
-
-	if (!empty($context['redirect_to_recount']))
-	{
-		echo '
-					<script>
-						var countdown = 5;
-						doAutoSubmit();
-
-						function doAutoSubmit()
-						{
-							if (countdown == 0)
-								document.forms.recount_form.submit();
-							else if (countdown == -1)
-								return;
-
-							document.forms.recount_form.recount_now.value = "', $txt['errors_recount_now'], ' (" + countdown + ")";
-							countdown--;
-
-							setTimeout("doAutoSubmit();", 1000);
-						}
-					</script>';
 	}
 }
 

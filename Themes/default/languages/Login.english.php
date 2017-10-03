@@ -31,6 +31,10 @@ $txt['only_members_can_access'] = 'Only registered members are allowed to access
 $txt['login_below'] = 'Please login below.';
 $txt['login_below_or_register'] = 'Please login below or <a href="%1$s">sign up for an account</a> with %2$s';
 
+$txt['char_register_nickname'] = 'Your nickname';
+$txt['char_register_charname'] = 'Your first character\'s name';
+$txt['no_character_added'] = 'You didn\'t add a name for your first roleplay character.';
+
 // Use numeric entities in the below two strings.
 $txt['may_change_in_profile'] = 'You may change it after you login by going to the profile page, or by visiting this page after you login:';
 $txt['your_username_is'] = 'Your username is: ';

@@ -79,95 +79,6 @@ function template_profile_popup()
 }
 
 /**
- * The "popup" showing the user's alerts
- */
-function template_alerts_popup()
-{
-	global $context, $txt, $scripturl;
-
-	// Unlike almost every other template, this is designed to be included into the HTML directly via $().load()
-	echo '
-		<div class="alert_bar">
-			<div class="alerts_opts block">
-				<a href="' . $scripturl . '?action=profile;area=notification;sa=markread;', $context['session_var'], '=', $context['session_id'], '" onclick="return markAlertsRead(this)">', $txt['mark_alerts_read'], '</a>
-				<a href="', $scripturl, '?action=profile;area=notification;sa=alerts" class="floatright">', $txt['alert_settings'], '</a>
-			</div>
-			<div class="alerts_box centertext">
-				<a href="', $scripturl, '?action=profile;area=showalerts" class="button">', $txt['all_alerts'], '</a>
-			</div>
-		</div>
-		<div class="alerts_unread">';
-
-	if (empty($context['unread_alerts']))
-	{
-		template_alerts_all_read();
-	}
-	else
-	{
-		foreach ($context['unread_alerts'] as $id_alert => $details)
-		{
-			echo '
-			<div class="unread">
-				', !empty($details['sender']) ? $details['sender']['avatar']['image'] : '', '
-				<div class="details">
-					', !empty($details['icon']) ? $details['icon'] : '', '<span>', $details['text'], '</span> - ', $details['time'], '
-				</div>
-			</div>';
-		}
-	}
-
-	echo '
-		</div>
-		<script>
-		function markAlertsRead(obj) {
-			ajax_indicator(true);
-			$.get(
-				obj.href,
-				function(data) {
-					ajax_indicator(false);
-					$("#alerts_menu_top span.amt").remove();
-					$("#alerts_menu div.alerts_unread").html(data);
-				}
-			);
-			return false;
-		}
-		</script>';
-}
-
-/**
- * A simple template to say "You don't have any unread alerts".
- */
-function template_alerts_all_read()
-{
-	global $txt;
-
-	echo '<div class="no_unread">', $txt['alerts_no_unread'], '</div>';
-}
-
-/**
- * This template displays a user's details without any option to edit them.
- */
-function template_summary()
-{
-	global $context, $settings, $scripturl, $modSettings, $txt;
-
-    $data = Array(
-        'context' => $context,
-        'txt' => $txt,
-        'scripturl' => $scripturl,
-        'modSettings' => $modSettings,
-        'settings' => $settings,
-    );
-    
-    $template = loadTemplateFile('profile_summary');
-
-    $phpStr = compileTemplate($template);
-
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * Template for showing all the posts of the user, in chronological order.
  */
 function template_showPosts()
@@ -2326,7 +2237,7 @@ function template_profile_signature_modify()
  */
 function template_profile_avatar_select()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $modSettings, $settings;
 
 	// Start with the upper menu
 	echo '
@@ -2346,7 +2257,6 @@ function template_profile_avatar_select()
 										var avatar = document.getElementById("avatar");
 										var cat = document.getElementById("cat");
 										var selavatar = "' . $context['avatar_selected'] . '";
-										var avatardir = "' . $modSettings['avatar_url'] . '/";
 										var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
 										var file = document.getElementById("file");
 										var maxHeight = ', !empty($modSettings['avatar_max_height_external']) ? $modSettings['avatar_max_height_external'] : 0, ';

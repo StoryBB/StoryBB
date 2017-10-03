@@ -43,7 +43,6 @@ function PlushSearch1()
 	// Don't load this in XML mode.
 	if (!isset($_REQUEST['xml']))
 	{
-		loadTemplate('Search');
 		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 	}
 
@@ -326,7 +325,6 @@ function PlushSearch2()
 	loadLanguage('Search');
 	if (!isset($_REQUEST['xml']))
 	{
-		loadTemplate('Search');
 		$context['sub_template'] = 'search_results';
 	}
 	//If we're doing XML we need to use the results template.
@@ -449,11 +447,12 @@ function PlushSearch2()
 
 		// Retrieve a list of possible members.
 		$request = $smcFunc['db_query']('', '
-			SELECT id_member
-			FROM {db_prefix}members
-			WHERE {raw:match_possible_users}',
+			SELECT id_character
+			FROM {db_prefix}characters
+			WHERE {raw:match_possible_users}
+			GROUP BY id_member',
 			array(
-				'match_possible_users' => 'real_name LIKE ' . implode(' OR real_name LIKE ', $realNameMatches),
+				'match_possible_users' => 'character_name LIKE ' . implode(' OR character_name LIKE ', $realNameMatches),
 			)
 		);
 		// Simply do nothing if there're too many members matching the criteria.
@@ -473,9 +472,9 @@ function PlushSearch2()
 		{
 			$memberlist = array();
 			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$memberlist[] = $row['id_member'];
+				$memberlist[] = $row['id_character'];
 			$userQuery = $smcFunc['db_quote'](
-				'(m.id_member IN ({array_int:matched_members}) OR (m.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})))',
+				'(m.id_character IN ({array_int:matched_members}) OR (m.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})))',
 				array(
 					'matched_members' => $memberlist,
 					'id_member_guest' => 0,
@@ -1676,9 +1675,9 @@ function PlushSearch2()
 				m.id_msg, m.subject, m.poster_name, m.poster_email, m.poster_time, m.id_member,
 				m.icon, m.poster_ip, m.body, m.smileys_enabled, m.modified_time, m.modified_name,
 				first_m.id_msg AS first_msg, first_m.subject AS first_subject, first_m.icon AS first_icon, first_m.poster_time AS first_poster_time,
-				first_mem.id_member AS first_member_id, COALESCE(first_mem.real_name, first_m.poster_name) AS first_member_name,
+				first_mem.id_member AS first_member_id, m.id_character, COALESCE(char_f.character_name, first_mem.real_name, first_m.poster_name) AS first_member_name,
 				last_m.id_msg AS last_msg, last_m.poster_time AS last_poster_time, last_mem.id_member AS last_member_id,
-				COALESCE(last_mem.real_name, last_m.poster_name) AS last_member_name, last_m.icon AS last_icon, last_m.subject AS last_subject,
+				COALESCE(char_l.character_name, last_mem.real_name, last_m.poster_name) AS last_member_name, last_m.icon AS last_icon, last_m.subject AS last_subject,
 				t.id_topic, t.is_sticky, t.locked, t.id_poll, t.num_replies, t.num_views,
 				b.id_board, b.name AS board_name, c.id_cat, c.name AS cat_name
 			FROM {db_prefix}messages AS m
@@ -1687,6 +1686,8 @@ function PlushSearch2()
 				INNER JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 				INNER JOIN {db_prefix}messages AS first_m ON (first_m.id_msg = t.id_first_msg)
 				INNER JOIN {db_prefix}messages AS last_m ON (last_m.id_msg = t.id_last_msg)
+				LEFT JOIN {db_prefix}characters AS char_f ON (first_m.id_character = char_f.id_character)
+				LEFT JOIN {db_prefix}characters AS char_l ON (last_m.id_character = char_l.id_character)
 				LEFT JOIN {db_prefix}members AS first_mem ON (first_mem.id_member = first_m.id_member)
 				LEFT JOIN {db_prefix}members AS last_mem ON (last_mem.id_member = first_m.id_member)
 			WHERE m.id_msg IN ({array_int:message_list})' . ($modSettings['postmod_active'] ? '
@@ -2023,7 +2024,7 @@ function prepareSearchContext($reset = false)
 	$output['matches'][] = array(
 		'id' => $message['id_msg'],
 		'attachment' => array(),
-		'member' => &$memberContext[$message['id_member']],
+		'member' => $memberContext[$message['id_member']],
 		'icon' => $message['icon'],
 		'icon_url' => $settings[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.png',
 		'subject' => $message['subject'],
@@ -2040,6 +2041,34 @@ function prepareSearchContext($reset = false)
 		'body_highlighted' => $body_highlighted,
 		'start' => 'msg' . $message['id_msg']
 	);
+
+	foreach ($output['matches'] as $match_id => $match) {
+		// Now replace the values we need into the new version.
+		if (!empty($output['matches'][$match_id]['member']['characters'][$message['id_character']])) {
+			$character = $output['matches'][$match_id]['member']['characters'][$message['id_character']];
+			if (!empty($character['avatar']))
+			{
+				$output['matches'][$match_id]['member']['avatar'] = [
+					'name' => $character['avatar'],
+					'image' => '<img class="avatar" src="' . $character['avatar'] . '" alt="">',
+					'href' => $character['avatar'],
+					'url' => $character['avatar'],
+				];
+			}
+			$output['matches'][$match_id]['member']['link'] = '<a href="' . $scripturl . '?action=profile;u=' . $message['id_member'] . ';area=characters;char=' . $message['id_character'] . '">' . $character['character_name'] . '</a>';
+			$output['matches'][$match_id]['member']['signature'] = $character['sig_parsed'];
+			$output['matches'][$match_id]['member']['posts'] = comma_format($character['posts']);
+			$is_online = $message['id_character'] == $output['matches'][$match_id]['member']['current_character'];
+			$output['matches'][$match_id]['member']['online'] = [
+				'is_online' => $is_online,
+				'text' => $smcFunc['htmlspecialchars']($txt[$is_online ? 'online' : 'offline']),
+				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], $smcFunc['htmlspecialchars']($character['character_name'])),
+				'href' => $scripturl . '?action=pm;sa=send;u=' . $message['id_member'],
+				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $message['id_member'] . '">' . $txt[$is_online ? 'online' : 'offline'] . '</a>',
+				'label' => $txt[$is_online ? 'online' : 'offline']
+			];
+		}
+	}
 	$counter++;
 
 	call_integration_hook('integrate_search_message_context', array(&$output, &$message, $counter));

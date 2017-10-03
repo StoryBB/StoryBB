@@ -233,6 +233,12 @@ function loadProfileFields($force_reload = false)
 				return true;
 			},
 		),
+		'immersive_mode' => array(
+			'type' => 'check',
+			'label' => $txt['immersive_mode'],
+			'subtext' => $txt['immersive_mode_desc'],
+			'permission' => 'profile_identity',
+		),
 		'lngfile' => array(
 			'type' => 'select',
 			'options' => function() use (&$context)
@@ -1634,6 +1640,7 @@ function account($memID)
 			'member_name', 'real_name', 'date_registered', 'posts', 'lngfile', 'hr',
 			'id_group', 'hr',
 			'email_address', 'show_online', 'hr',
+			'immersive_mode', 'hr',
 			'tfa', 'hr',
 			'passwrd1', 'passwrd2', 'hr',
 			'secret_question', 'secret_answer',
@@ -1688,7 +1695,7 @@ function theme($memID)
 
 	setupProfileContext(
 		array(
-			'id_theme', 'smiley_set', 'hr',
+			'smiley_set', 'hr',
 			'time_format', 'timezone', 'hr',
 			'theme_settings',
 		)
@@ -2731,7 +2738,8 @@ function profileLoadGroups()
 		SELECT group_name, id_group, hidden
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
-			AND min_posts = {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
+			AND min_posts = {int:min_posts}
+			AND is_character = 0' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
 		array(
@@ -2904,6 +2912,24 @@ function profileSaveGroups(&$value)
 
 		$protected_groups = array_unique($protected_groups);
 	}
+
+	// We can't have users adding anyone to character groups
+	$char_groups = [];
+	$request = $smcFunc['db_query']('', '
+		SELECT id_group
+		FROM {db_prefix}membergroups
+		WHERE is_character = 1');
+	while ($row = $smcFunc['db_fetch_row']($request))
+		$char_groups[] = $row[0];
+	$smcFunc['db_free_result']($request);
+
+	// No primary character group for you!
+	if (in_array($value, $char_groups))
+		$value = $old_profile['id_group'];
+
+	// No secondary character groups for you!
+	if (isset($_POST['additional_groups']) && is_array($_POST['additional_groups']))
+		$_POST['additional_groups'] = array_diff($_POST['additional_groups'], $char_groups);
 
 	// The account page allows the change of your id_group - but not to a protected group!
 	if (empty($protected_groups) || count(array_intersect(array((int) $value, $old_profile['id_group']), $protected_groups)) == 0)

@@ -138,6 +138,7 @@ CREATE TABLE {$db_prefix}boards (
   unapproved_topics SMALLINT NOT NULL DEFAULT '0',
   redirect VARCHAR(255) NOT NULL DEFAULT '',
   deny_member_groups VARCHAR(255) NOT NULL DEFAULT '',
+  in_character TINYINT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (id_board),
   UNIQUE idx_categories (id_cat, id_board),
   INDEX idx_id_parent (id_parent),
@@ -156,6 +157,73 @@ CREATE TABLE {$db_prefix}categories (
   description TEXT NOT NULL,
   can_collapse TINYINT NOT NULL DEFAULT '1',
   PRIMARY KEY (id_cat)
+) ENGINE={$engine};
+
+#
+# Table structure for table `characters`
+#
+
+CREATE TABLE {$db_prefix}characters (
+  id_character INT UNSIGNED AUTO_INCREMENT,
+  id_member MEDIUMINT NOT NULL DEFAULT '0',
+  character_name VARCHAR(255) NOT NULL DEFAULT '',
+  avatar VARCHAR(255) NOT NULL DEFAULT '',
+  signature TEXT NOT NULL,
+  id_theme TINYINT NOT NULL DEFAULT '0',
+  posts MEDIUMINT NOT NULL DEFAULT '0',
+  age VARCHAR(255) NOT NULL DEFAULT '',
+  date_created INT NOT NULL DEFAULT '0',
+  last_active INT NOT NULL DEFAULT '0',
+  is_main TINYINT NOT NULL DEFAULT '0',
+  main_char_group SMALLINT NOT NULL DEFAULT '0',
+  char_groups VARCHAR(255) NOT NULL DEFAULT '',
+  char_sheet INT NOT NULL DEFAULT '0',
+  retired TINYINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_character),
+  INDEX idx_id_member (id_member)
+) ENGINE={$engine};
+
+#
+# Table structure for table `character_sheet_comments`
+#
+
+CREATE TABLE {$db_prefix}character_sheet_comments (
+  id_comment INT UNSIGNED AUTO_INCREMENT,
+  id_character INT NOT NULL DEFAULT '0',
+  id_author MEDIUMINT NOT NULL DEFAULT '0',
+  time_posted INT NOT NULL DEFAULT '0',
+  sheet_comment TEXT NOT NULL,
+  PRIMARY KEY (id_comment),
+  INDEX idx_id_character_time_posted (id_character, time_posted)
+) ENGINE={$engine};
+
+#
+# Table structure for table `character_sheet_templates`
+#
+
+CREATE TABLE {$db_prefix}character_sheet_templates (
+  id_template SMALLINT UNSIGNED AUTO_INCREMENT,
+  template_name VARCHAR(100) NOT NULL DEFAULT '',
+  template TEXT NOT NULL,
+  position SMALLINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_template)
+) ENGINE={$engine};
+
+#
+# Table structure for table `character_sheet_versions`
+#
+
+CREATE TABLE {$db_prefix}character_sheet_versions (
+  id_version INT UNSIGNED AUTO_INCREMENT,
+  sheet_text MEDIUMTEXT NOT NULL,
+  id_character INT NOT NULL DEFAULT '0',
+  id_member MEDIUMINT NOT NULL DEFAULT '0',
+  created_time INT NOT NULL DEFAULT '0',
+  id_approver MEDIUMINT NOT NULL DEFAULT '0',
+  approved_time INT NOT NULL DEFAULT '0',
+  approval_state TINYINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_version),
+  INDEX idx_id_character_id_approver (id_character, id_approver)
 ) ENGINE={$engine};
 
 #
@@ -387,6 +455,7 @@ CREATE TABLE {$db_prefix}log_online (
   session VARCHAR(128) DEFAULT '',
   log_time INT(10) NOT NULL DEFAULT '0',
   id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
+  id_character INT UNSIGNED NOT NULL DEFAULT '0',
   id_spider SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   ip VARBINARY(16),
   url VARCHAR(1024) NOT NULL,
@@ -607,6 +676,8 @@ CREATE TABLE {$db_prefix}membergroups (
   hidden TINYINT NOT NULL DEFAULT '0',
   id_parent SMALLINT NOT NULL DEFAULT '-2',
   tfa_required TINYINT NOT NULL DEFAULT '0',
+  is_character TINYINT NOT NULL DEFAULT '0',
+  badge_order SMALLINT UNSIGNED DEFAULT '0',
   PRIMARY KEY (id_group),
   INDEX idx_min_posts (min_posts)
 ) ENGINE={$engine};
@@ -621,6 +692,8 @@ CREATE TABLE {$db_prefix}members (
   date_registered INT(10) UNSIGNED NOT NULL DEFAULT '0',
   posts MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   id_group SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+  current_character INT UNSIGNED NOT NULL DEFAULT '0',
+  immersive_mode INT UNSIGNED NOT NULL DEFAULT '0',
   lngfile VARCHAR(255) NOT NULL DEFAULT '',
   last_login INT(10) UNSIGNED NOT NULL DEFAULT '0',
   real_name VARCHAR(255) NOT NULL DEFAULT '',
@@ -717,6 +790,7 @@ CREATE TABLE {$db_prefix}messages (
   id_board SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   poster_time INT(10) UNSIGNED NOT NULL DEFAULT '0',
   id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
+  id_character INT UNSIGNED NOT NULL DEFAULT '0',
   id_msg_modified INT(10) UNSIGNED NOT NULL DEFAULT '0',
   subject VARCHAR(255) NOT NULL DEFAULT '',
   poster_name VARCHAR(255) NOT NULL DEFAULT '',
@@ -1120,6 +1194,8 @@ CREATE TABLE {$db_prefix}mentions (
   content_type VARCHAR(10) DEFAULT '',
   id_mentioned INT DEFAULT 0,
   id_member INT(10) UNSIGNED NOT NULL DEFAULT 0,
+  id_character INT UNSIGNED NOT NULL DEFAULT '0',
+  mentioned_chr INT UNSIGNED NOT NULL DEFAULT '0',
   `time` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (content_id, content_type, id_mentioned),
   INDEX content (content_id, content_type),

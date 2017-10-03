@@ -125,18 +125,50 @@ function deleteMembers($users, $check_not_admin = false)
 			cache_put_data('user_settings-' . $user[0], null, 60);
 	}
 
-	// Make these peoples' posts guest posts.
-	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}messages
-		SET id_member = {int:guest_id}' . (!empty($modSettings['deleteMembersRemovesEmail']) ? ',
-		poster_email = {string:blank_email}' : '') . '
+	// We need to fix the posted names of these users, so that they
+	// tie into the characters they had.
+
+	// 1. Get all the characters affected.
+	$characters = [];
+	$result = $smcFunc['db_query']('', '
+		SELECT id_character, character_name
+		FROM {db_prefix}characters
 		WHERE id_member IN ({array_int:users})',
-		array(
-			'guest_id' => 0,
-			'blank_email' => '',
+		[
 			'users' => $users,
-		)
+		]
 	);
+	while ($row = $smcFunc['db_fetch_assoc']($result))
+	{
+		$characters[$row['id_character']] = $row['character_name'];
+	}
+	$smcFunc['db_free_result']($result);
+
+	// 2. Step through each of these and update them.
+	foreach ($characters as $id_character => $character_name)
+	{
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}messages
+			SET id_character = 0,
+				poster_name = {string:character_name}
+			WHERE id_character = {int:id_character}',
+			[
+				'id_character' => $id_character,
+				'character_name' => $character_name,
+			]
+		);
+	}
+
+	// Then delete their characters.
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}characters
+		WHERE id_member IN ({array_int:users})',
+		[
+			'users' => $users,
+		]
+	);
+
+	// Make their votes into guest votes.
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}polls
 		SET id_member = {int:guest_id}
@@ -520,6 +552,29 @@ function registerMember(&$regOptions, $return_errors = false)
 
 	$smcFunc['db_free_result']($request);
 
+	// Do we have a character name.
+	if (empty($regOptions['extra_register_vars']['first_char']))
+	{
+		$reg_errors[] = ['lang', 'no_character_added', false];
+	}
+	else
+	{
+		// If we do, make sure it's unique.
+		$result = $smcFunc['db_query']('', '
+			SELECT COUNT(*)
+			FROM {db_prefix}characters
+			WHERE character_name LIKE {string:new_name}',
+			[
+				'new_name' => $regOptions['extra_register_vars']['first_char'],
+			]
+		);
+		list ($matching_names) = $smcFunc['db_fetch_row']($result);
+		$smcFunc['db_free_result']($result);
+
+		if ($matching_names)
+			$reg_errors[] = ['lang', 'char_error_duplicate_character_name', false];
+	}
+
 	// Perhaps someone else wants to check this user.
 	call_integration_hook('integrate_register_check', array(&$regOptions, &$reg_errors));
 
@@ -671,6 +726,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 	// Call an optional function to validate the users' input.
 	call_integration_hook('integrate_register', array(&$regOptions, &$theme_vars, &$knownInts, &$knownFloats));
+	unset ($regOptions['register_vars']['first_char']);
 
 	$column_names = array();
 	$values = array();
@@ -697,6 +753,49 @@ function registerMember(&$regOptions, $return_errors = false)
 		$values,
 		array('id_member'),
 		1
+	);
+
+	// So at this point we've created the account, and we're going to be creating
+	// a character. More accurately, two - one for the 'main' and one for the 'character'.
+	$smcFunc['db_insert']('',
+		'{db_prefix}characters',
+		['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
+			'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
+			'date_created' => 'int', 'last_active' => 'int', 'is_main' => 'int',
+			'main_char_group' => 'int', 'char_groups' => 'string',
+		],
+		[
+			$memberID, $regOptions['register_vars']['real_name'], '',
+			'', 0, 0, '',
+			time(), 0, 1,
+			0, '',
+		],
+		['id_character']
+	);
+	$real_account = $smcFunc['db_insert_id']('{db_prefix}characters', 'id_character');
+
+	$smcFunc['db_insert']('',
+		'{db_prefix}characters',
+		['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
+			'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
+			'date_created' => 'int', 'last_active' => 'int', 'is_main' => 'int'],
+		[
+			$memberID, $regOptions['extra_register_vars']['first_char'], '',
+			'', 0, 0, '',
+			time(), 0, 0
+		],
+		['id_character']
+	);
+
+	// Now we mark the current character into the user table.
+	$smcFunc['db_query']('', '
+		UPDATE {db_prefix}members
+		SET current_character = {int:char}
+		WHERE id_member = {int:member}',
+		[
+			'char' => $real_account,
+			'member' => $memberID,
+		]
 	);
 
 	// Call an optional function as notification of registration.

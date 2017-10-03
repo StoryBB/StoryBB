@@ -256,14 +256,14 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	if ($decreasePostCount)
 	{
 		$requestMembers = $smcFunc['db_query']('', '
-			SELECT m.id_member, COUNT(*) AS posts
+			SELECT m.id_member, m.id_character, COUNT(*) AS posts
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 			WHERE m.id_topic IN ({array_int:topics})' . (!empty($recycle_board) ? '
 				AND m.id_board != {int:recycled_board}' : '') . '
 				AND b.count_posts = {int:do_count_posts}
 				AND m.approved = {int:is_approved}
-			GROUP BY m.id_member',
+			GROUP BY m.id_member, m.id_character',
 			array(
 				'do_count_posts' => 0,
 				'recycled_board' => $recycle_board,
@@ -274,7 +274,10 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		if ($smcFunc['db_num_rows']($requestMembers) > 0)
 		{
 			while ($rowMembers = $smcFunc['db_fetch_assoc']($requestMembers))
+			{
 				updateMemberData($rowMembers['id_member'], array('posts' => 'posts - ' . $rowMembers['posts']));
+				updateCharacterData($rowMembers['id_character'], array('posts' => 'posts - ' . $rowMembers['posts']));
+			}
 		}
 		$smcFunc['db_free_result']($requestMembers);
 	}
@@ -581,7 +584,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 	$request = $smcFunc['db_query']('', '
 		SELECT
-			m.id_member, m.icon, m.poster_time, m.subject,' . (empty($modSettings['search_custom_index_config']) ? '' : ' m.body,') . '
+			m.id_member, m.id_character, m.icon, m.poster_time, m.subject,' . (empty($modSettings['search_custom_index_config']) ? '' : ' m.body,') . '
 			m.approved, t.id_topic, t.id_first_msg, t.id_last_msg, t.num_replies, t.id_board,
 			t.id_member_started AS id_member_poster,
 			b.count_posts
@@ -927,7 +930,10 @@ function removeMessage($message, $decreasePostCount = true)
 	// If the poster was registered and the board this message was on incremented
 	// the member's posts when it was posted, decrease his or her post count.
 	if (!empty($row['id_member']) && $decreasePostCount && empty($row['count_posts']) && $row['approved'])
+	{
 		updateMemberData($row['id_member'], array('posts' => '-'));
+		updateCharacterData($row['id_character'], array('posts' => '-'));
+	}
 
 	// Only remove posts if they're not recycled.
 	if (!$recycle)
@@ -1185,13 +1191,13 @@ function RestoreTopic()
 
 			if (empty($count_posts))
 			{
-				// Lets get the members that need their post count restored.
+				// Let's get the members that need their post count restored.
 				$request2 = $smcFunc['db_query']('', '
-					SELECT id_member, COUNT(id_msg) AS post_count
+					SELECT id_member, id_character, COUNT(id_msg) AS post_count
 					FROM {db_prefix}messages
 					WHERE id_topic = {int:topic}
 						AND approved = {int:is_approved}
-					GROUP BY id_member',
+					GROUP BY id_member, id_character',
 					array(
 						'topic' => $row['id_topic'],
 						'is_approved' => 1,
@@ -1199,7 +1205,10 @@ function RestoreTopic()
 				);
 
 				while ($member = $smcFunc['db_fetch_assoc']($request2))
+				{
 					updateMemberData($member['id_member'], array('posts' => 'posts + ' . $member['post_count']));
+					updateCharacterData($member['id_character'], array('posts' => 'posts + ' . $member['post_count']));
+				}
 				$smcFunc['db_free_result']($request2);
 			}
 

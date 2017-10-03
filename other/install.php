@@ -1422,6 +1422,37 @@ function AdminAccount()
 				array('id_member'),
 				1
 			);
+
+			$incontext['character_id'] = $smcFunc['db_insert']('',
+				$db_prefix . 'characters',
+				[
+					'id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
+					'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
+					'date_created' => 'int', 'last_active' => 'int', 'is_main' => 'int',
+					'main_char_group' => 'int', 'char_groups' => 'string', 'char_sheet' => 'int',
+					'retired' => 'int',
+				],
+				[
+					$incontext['member_id'], stripslashes($_POST['username']), '',
+					'', 0, 0, '',
+					time(), 0, 1,
+					0, '', 0,
+					0,
+				],
+				['id_character'],
+				1
+			);
+
+			// And update the current character.
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}members
+				SET current_character = {int:current_character}
+				WHERE id_member = {int:id_member}',
+				[
+					'current_character' => $incontext['character_id'],
+					'id_member' => $incontext['member_id'],
+				]
+			);
 		}
 
 		// If we're here we're good.

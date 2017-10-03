@@ -1,0 +1,30 @@
+			{{! Editing a character sheet }}
+			<div class="cat_bar">
+				<h3 class="catbg profile_hd">
+					{{{txt.char_sheet}}} - {{{context.character.character_name}}}
+				</h3>
+			</div>
+			<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=sheet_edit" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);smc_saveEntities('postmodify', ['message'], 'options');">
+				<div id="post_area">
+					<div class="roundframe">
+
+						{{#if context.sheet_templates}}
+							{{{txt.char_templates_sel}}}
+							<select id="char_sheet_template">
+								<option>-- {{{txt.char_templates}}} --</option>
+								{{#each context.sheet_templates}}
+								<option value="{{@key}}">{{name}}</option>
+								{{/each}}
+							</select>
+							<a href="#" class="button" id="insert_char_template">{{{txt.char_templates_add}}}</a><br><br>
+						{{/if}}
+
+						{{{richtexteditor 'message' '' 'bbcBox'}}}
+
+						<br class="clear">
+						<input type="submit" class="button_submit" value="{{{txt.save}}}">
+					</div>
+				</div>
+				<br class="clear">
+				<input type="hidden" name="{{{context.session_var}}}" value="{{{context.session_id}}}">
+			</form>

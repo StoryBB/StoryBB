@@ -1552,6 +1552,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$topicOptions['redirect_topic'] = isset($topicOptions['redirect_topic']) ? $topicOptions['redirect_topic'] : null;
 	$posterOptions['id'] = empty($posterOptions['id']) ? 0 : (int) $posterOptions['id'];
 	$posterOptions['ip'] = empty($posterOptions['ip']) ? $user_info['ip'] : $posterOptions['ip'];
+	$posterOptions['char_id'] = empty($posterOptions['char_id']) ? 0 : (int) $posterOptions['char_id'];
 
 	// Not exactly a post option but it allows hooks and/or other sources to skip sending notifications if they don't want to
 	$msgOptions['send_notifications'] = isset($msgOptions['send_notifications']) ? (bool) $msgOptions['send_notifications'] : true;
@@ -1626,13 +1627,13 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$new_topic = empty($topicOptions['id']);
 
 	$message_columns = array(
-		'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : (empty($modSettings['max_messageLength']) ? 'string' : 'string-65534')),
+		'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'id_character' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : (empty($modSettings['max_messageLength']) ? 'string' : 'string-65534')),
 		'poster_name' => 'string-255', 'poster_email' => 'string-255', 'poster_time' => 'int', 'poster_ip' => 'inet',
 		'smileys_enabled' => 'int', 'modified_name' => 'string', 'icon' => 'string-16', 'approved' => 'int',
 	);
 
 	$message_parameters = array(
-		$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $msgOptions['subject'], $msgOptions['body'],
+		$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $posterOptions['char_id'], $msgOptions['subject'], $msgOptions['body'],
 		$posterOptions['name'], $posterOptions['email'], time(), $posterOptions['ip'],
 		$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['icon'], $msgOptions['approved'],
 	);
@@ -1888,6 +1889,9 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		if ($user_info['id'] == $posterOptions['id'])
 			$user_info['posts']++;
 		updateMemberData($posterOptions['id'], array('posts' => '+'));
+	}
+	if ($msgOptions['approved'] && !empty($posterOptions['char_id']) && !empty($posterOptions['update_post_count'])) {
+		updateCharacterData($posterOptions['char_id'], ['posts' => '+']);
 	}
 
 	// They've posted, so they can make the view count go up one if they really want. (this is to keep views >= replies...)
@@ -2153,7 +2157,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	$request = $smcFunc['db_query']('', '
 		SELECT m.id_msg, m.approved, m.id_topic, m.id_board, t.id_first_msg, t.id_last_msg,
 			m.body, m.subject, COALESCE(mem.real_name, m.poster_name) AS poster_name, m.id_member,
-			t.approved AS topic_approved, b.count_posts
+			t.approved AS topic_approved, b.count_posts, m.id_character
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -2172,6 +2176,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	$notification_topics = array();
 	$notification_posts = array();
 	$member_post_changes = array();
+	$char_post_changes = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Easy...
@@ -2247,7 +2252,10 @@ function approvePosts($msgs, $approve = true, $notify = true)
 
 		// Post count for the user?
 		if ($row['id_member'] && empty($row['count_posts']))
+		{
 			$member_post_changes[$row['id_member']] = isset($member_post_changes[$row['id_member']]) ? $member_post_changes[$row['id_member']] + 1 : 1;
+			$char_post_changes[$row['id_character']] = isset($char_post_changes[$row['id_character']]) ? $char_post_changes[$row['id_character']] + 1 : 1;
+		}
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -2380,6 +2388,9 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	if (!empty($member_post_changes))
 		foreach ($member_post_changes as $id_member => $count_change)
 			updateMemberData($id_member, array('posts' => 'posts ' . ($approve ? '+' : '-') . ' ' . $count_change));
+	if (!empty($char_post_changes))
+		foreach ($char_post_changes as $id_char => $count_change)
+			updateCharacterData($id_char, array('posts' => 'posts ' . ($approve ? '+' : '-') . ' ' . $count_change));
 
 	return true;
 }

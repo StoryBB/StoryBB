@@ -129,12 +129,14 @@ function Who()
 	// Look for people online, provided they don't mind if you see they are.
 	$request = $smcFunc['db_query']('', '
 		SELECT
-			lo.log_time, lo.id_member, lo.url, lo.ip AS ip, mem.real_name,
-			lo.session, mg.online_color, COALESCE(mem.show_online, 1) AS show_online,
+			lo.log_time, lo.id_member, lo.url, lo.ip AS ip, lo.id_character, COALESCE(chars.character_name, mem.real_name) AS real_name,
+			lo.session, IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, COALESCE(mem.show_online, 1) AS show_online,
 			lo.id_spider
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (lo.id_member = mem.id_member)
-			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_member} THEN mem.id_post_group ELSE mem.id_group END)' . (!empty($conditions) ? '
+			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_member} THEN mem.id_post_group ELSE mem.id_group END)
+			LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
+			LEFT JOIN {db_prefix}membergroups AS cg ON (chars.main_char_group = cg.id_group)' . (!empty($conditions) ? '
 		WHERE ' . implode(' AND ', $conditions) : '') . '
 		ORDER BY {raw:sort_method} {raw:sort_direction}
 		LIMIT {int:offset}, {int:limit}',
@@ -158,6 +160,7 @@ function Who()
 		// Send the information to the template.
 		$context['members'][$row['session']] = array(
 			'id' => $row['id_member'],
+			'id_character' => $row['id_character'],
 			'ip' => allowedTo('moderate_forum') ? inet_dtop($row['ip']) : '',
 			// It is *going* to be today or yesterday, so why keep that information in there?
 			'time' => strtr(timeformat($row['log_time']), array($txt['today'] => '', $txt['yesterday'] => '')),
@@ -225,6 +228,14 @@ function Who()
 			$context['members'][$i] += $spiderContext[$member['id_spider']];
 		else
 			$context['members'][$i] += $memberContext[$member['id']];
+
+		if (!empty($member['id_character']) && !empty($context['members'][$i]['characters'][$member['id_character']]))
+		{
+			// Need to 'fix' a few things.
+			$character = $context['members'][$i]['characters'][$member['id_character']];
+			$context['members'][$i]['name'] = $character['character_name'];
+			$context['members'][$i]['href'] .= ';area=characters;char=' . $member['id_character'];
+		}
 	}
 
 	// Some people can't send personal messages...

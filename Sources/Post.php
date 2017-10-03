@@ -660,8 +660,9 @@ function Post($post_errors = array())
 		{
 			// Make sure they _can_ quote this post, and if so get it.
 			$request = $smcFunc['db_query']('', '
-				SELECT m.subject, COALESCE(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body
+				SELECT m.subject, COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body
 				FROM {db_prefix}messages AS m
+					LEFT JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character)
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})
 					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 				WHERE m.id_msg = {int:id_msg}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
@@ -1901,6 +1902,7 @@ function Post2()
 	);
 	$posterOptions = array(
 		'id' => $user_info['id'],
+		'char_id' => $user_info['id_character'],
 		'name' => $_POST['guestname'],
 		'email' => $_POST['email'],
 		'update_post_count' => !$user_info['is_guest'] && !isset($_REQUEST['msg']) && $board_info['posts_count'],
@@ -2140,7 +2142,7 @@ function AnnouncementSelectMembergroup()
 	$context['move'] = isset($_REQUEST['move']) ? 1 : 0;
 	$context['go_back'] = isset($_REQUEST['goback']) ? 1 : 0;
 
-	$context['sub_template'] = 'announce';
+	$context['sub_template'] = 'post_announce';
 }
 
 /**
@@ -2277,7 +2279,7 @@ function AnnouncementSend()
 	$context['move'] = empty($_REQUEST['move']) ? 0 : 1;
 	$context['go_back'] = empty($_REQUEST['goback']) ? 0 : 1;
 	$context['membergroups'] = implode(',', $_POST['who']);
-	$context['sub_template'] = 'announcement_send';
+	$context['sub_template'] = 'post_announce_send';
 
 	// Go back to the correct language for the user ;).
 	if (!empty($modSettings['userLanguage']))
@@ -2305,10 +2307,11 @@ function getTopic()
 	// If you're modifying, get only those posts before the current one. (otherwise get all.)
 	$request = $smcFunc['db_query']('', '
 		SELECT
-			COALESCE(mem.real_name, m.poster_name) AS poster_name, m.poster_time,
+			COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, m.poster_time,
 			m.body, m.smileys_enabled, m.id_msg, m.id_member
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
+			LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = m.id_character)
 		WHERE m.id_topic = {int:current_topic}' . (isset($_REQUEST['msg']) ? '
 			AND m.id_msg < {int:id_msg}' : '') . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 			AND m.approved = {int:approved}') . '
@@ -2367,9 +2370,10 @@ function QuoteFast()
 	$context['post_box_name'] = isset($_GET['pb']) ? $_GET['pb'] : '';
 
 	$request = $smcFunc['db_query']('', '
-		SELECT COALESCE(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body, m.id_topic, m.subject,
+		SELECT COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.body, m.id_topic, m.subject,
 			m.id_board, m.id_member, m.approved, m.modified_time, m.modified_name, m.modified_reason
 		FROM {db_prefix}messages AS m
+			LEFT JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character)
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -2387,7 +2391,7 @@ function QuoteFast()
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
-	$context['sub_template'] = 'quotefast';
+	$context['sub_template'] = !isset($_REQUEST['xml']) ? 'post_quotefast' : 'quotefast';
 	if (!empty($row))
 		$can_view_post = $row['approved'] || ($row['id_member'] != 0 && $row['id_member'] == $user_info['id']) || allowedTo('approve_posts', $row['id_board']);
 

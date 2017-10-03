@@ -279,6 +279,7 @@ CREATE TABLE {$db_prefix}boards (
   unapproved_topics smallint NOT NULL default '0',
   redirect varchar(255) NOT NULL default '',
   deny_member_groups varchar(255) NOT NULL default '',
+  in_character smallint NOT NULL default '0',
   PRIMARY KEY (id_board)
 );
 
@@ -309,6 +310,74 @@ CREATE TABLE {$db_prefix}categories (
   can_collapse smallint NOT NULL default '1',
   PRIMARY KEY (id_cat)
 );
+
+#
+# Table structure for table `characters`
+#
+
+CREATE TABLE {$db_prefix}characters (
+  id_character int UNSIGNED AUTO_INCREMENT,
+  id_member int NOT NULL DEFAULT '0',
+  character_name varchar(255) NOT NULL DEFAULT '',
+  avatar varchar(255) NOT NULL DEFAULT '',
+  signature text NOT NULL,
+  id_theme smallint NOT NULL DEFAULT '0',
+  posts int NOT NULL DEFAULT '0',
+  age varchar(255) NOT NULL DEFAULT '',
+  date_created int NOT NULL DEFAULT '0',
+  last_active int NOT NULL DEFAULT '0',
+  is_main smallint NOT NULL DEFAULT '0',
+  main_char_group smallint NOT NULL DEFAULT '0',
+  char_groups varchar(255) NOT NULL DEFAULT '',
+  char_sheet int NOT NULL DEFAULT '0',
+  retired smallint NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_character),
+  INDEX idx_id_member (id_member)
+) ENGINE={$engine};
+
+#
+# Table structure for table `character_sheet_comments`
+#
+
+CREATE TABLE {$db_prefix}character_sheet_comments (
+  id_comment int UNSIGNED AUTO_INCREMENT,
+  id_character int NOT NULL DEFAULT '0',
+  id_author int NOT NULL DEFAULT '0',
+  time_posted int NOT NULL DEFAULT '0',
+  sheet_comment text NOT NULL,
+  PRIMARY KEY (id_comment),
+  INDEX idx_id_character_time_posted (id_character, time_posted)
+) ENGINE={$engine};
+
+#
+# Table structure for table `character_sheet_templates`
+#
+
+CREATE TABLE {$db_prefix}character_sheet_templates (
+  id_template smalllint UNSIGNED AUTO_INCREMENT,
+  template_name varchar(100) NOT NULL DEFAULT '',
+  template text NOT NULL,
+  position smallint NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_template)
+) ENGINE={$engine};
+
+#
+# Table structure for table `character_sheet_versions`
+#
+
+CREATE TABLE {$db_prefix}character_sheet_versions (
+  id_version int UNSIGNED AUTO_INCREMENT,
+  sheet_text text NOT NULL,
+  id_character int NOT NULL DEFAULT '0',
+  id_member int NOT NULL DEFAULT '0',
+  created_time int NOT NULL DEFAULT '0',
+  id_approver int NOT NULL DEFAULT '0',
+  approved_time int NOT NULL DEFAULT '0',
+  approval_state smallint NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_version),
+  INDEX idx_id_character_id_approver (id_character, id_approver)
+) ENGINE={$engine};
+
 
 #
 # Sequence for table `custom_fields`
@@ -616,6 +685,7 @@ CREATE UNLOGGED TABLE {$db_prefix}log_online (
   session varchar(128) NOT NULL default '',
   log_time bigint NOT NULL default '0',
   id_member int NOT NULL default '0',
+  id_character INT NOT NULL DEFAULT '0',
   id_spider smallint NOT NULL default '0',
   ip inet,
   url varchar(1024) NOT NULL,
@@ -923,6 +993,8 @@ CREATE TABLE {$db_prefix}membergroups (
   hidden smallint NOT NULL default '0',
   id_parent smallint NOT NULL default '-2',
   tfa_required smallint NOT NULL default '0',
+  is_character smallint NOT NULL default '0',
+  badge_order smallint NOT NULL default '0',
   PRIMARY KEY (id_group)
 );
 
@@ -948,6 +1020,8 @@ CREATE TABLE {$db_prefix}members (
   date_registered bigint NOT NULL default '0',
   posts int NOT NULL default '0',
   id_group smallint NOT NULL default '0',
+  current_character int NOT NULL DEFAULT '0',
+  immersive_mode int NOT NULL DEFAULT '0',
   lngfile varchar(255) NOT NULL DEFAULT '',
   last_login bigint NOT NULL default '0',
   real_name varchar(255) NOT NULL  DEFAULT '',
@@ -1081,6 +1155,7 @@ CREATE TABLE {$db_prefix}messages (
   id_board smallint NOT NULL default '0',
   poster_time bigint NOT NULL default '0',
   id_member int NOT NULL default '0',
+  id_character int NOT NULL default '0',
   id_msg_modified int NOT NULL default '0',
   subject varchar(255) NOT NULL DEFAULT '',
   poster_name varchar(255) NOT NULL DEFAULT '',
@@ -1630,6 +1705,8 @@ CREATE TABLE {$db_prefix}mentions (
   content_type varchar(10) default '',
   id_mentioned int default 0,
   id_member int NOT NULL default 0,
+  id_character int NOT NULL DEFAULT '0',
+  mentioned_chr int NOT NULL DEFAULT '0',
   time int NOT NULL default 0,
   PRIMARY KEY (content_id, content_type, id_mentioned)
 );

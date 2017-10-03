@@ -3934,3 +3934,210 @@ a.button_submit {
 {
 	display: inline-block;
 }
+
+#my_characters {
+	margin-top: 10px;
+}
+
+.chars_container span.avatar {
+	width: 25px;
+	height: 25px;
+	display: inline-block;
+	text-align: center;
+}
+
+.chars_container span.avatar img {
+	max-width: 100%;
+	max-height: 100%;
+	margin-bottom: -7px;
+}
+img.avatar_small {
+	max-width: 40px;
+	max-height: 40px;
+}
+
+.chars_container li {
+	margin-top: 7px;
+}
+
+.chars_container .switch {
+	float: right;
+}
+.chars_container .switch .button {
+	padding: 0 3px;
+}
+
+/* And the profile menu can use some love */
+#profile_menu_top img.avatar, #profile_menu img.avatar {
+	display: none;
+}
+
+#current_sig_parsed, #sig_preview_parsed {
+	border: none;
+	box-shadow: none;
+	padding-top: 0;
+}
+#preview_button {
+	margin: 5px 0 0 0;
+}
+#detailedinfo #current_sig, #detailedinfo #sig_preview, #detailedinfo #sig_header {
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+#sig_preview, #sig_preview_parsed {
+	display: none;
+}
+
+.quickbuttons li ul ul {
+	right: 12em;
+	top: auto;
+	margin-right: 10px;
+}
+
+#admin_content .character_group {
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 10px;
+	background-color: rgba(255, 255, 255, 0.3);
+	margin-bottom: 10px;
+}
+
+#admin_content .character_group:last-of-type {
+	margin-bottom: 0;
+}
+
+#admin_content .character_group .group_name {
+	display: inline-block;
+	min-width: 200px;
+}
+#admin_content .character_group .group_icons {
+	display: inline-block;
+	min-width: 200px;
+}
+
+#admin_content .character_group .handle {
+	margin-top: -7px;
+	float: right;
+	cursor: ns-resize;
+}
+
+div#char_theme_wrapper,
+#char_theme_wrapper {
+	text-align: center;
+}
+
+.char_theme_container {
+	width: 280px;
+	display: inline-block;
+	margin: 10px;
+	text-align: center;
+}
+
+.char_theme_container button {
+	display: block;
+	margin: 0 auto;
+	padding: 8px;
+	height: auto;
+	line-height: 1;
+}
+
+.char_theme_container img {
+	max-width: 120px;
+	max-height: 120px;
+	margin: 0;
+	padding: 0;
+}
+
+#basicinfo .badges {
+	margin-top: 10px;
+	margin-bottom: -10px;
+}
+
+#basicinfo  div.position {
+	margin-top: 10px;
+}
+
+#detailedinfo .character_list {
+	margin-top: 12px;
+	margin-bottom: 12px;
+	padding-top: 12px;
+	border-top: 1px solid #bfbfbf;
+}
+
+#detailedinfo .char_avatar {
+	display: table-cell;
+	width: 50px;
+	height: 50px;
+	text-align: center;
+}
+
+#detailedinfo dt .smalltext {
+	font-weight: normal;
+}
+#detailedinfo .char_avatar img {
+	max-width: 50px;
+	max-height: 50px;
+}
+
+#detailedinfo .char_name {
+	width: 300px;
+}
+#detailedinfo .char_name, #detailedinfo .char_group {
+	display: table-cell;
+	padding-left: 20px;
+	vertical-align: middle;
+}
+#detailedinfo dl.char_sheet_text {
+	border-bottom: none !important;
+	margin-bottom: 0;
+}
+#detailedinfo .create_char_editor {
+	width: 75%;
+}
+
+#detailedinfo .char_created {
+	font-size: 80%;
+}
+
+#detailedinfo ul.characters li {
+	display: table;
+	margin-bottom: 6px;
+}
+
+.char_list_container {
+	text-align: center;
+}
+.char_list {
+	display: inline-block;
+	margin: 5px !important;
+}
+.char_list_name {
+	margin: 0 auto 5px auto;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.char_list_avatar {
+	margin-left: auto;
+	margin-right: auto;
+}
+#filter_opts .filter_container {
+	width: 230px;
+	display: inline-block;
+	vertical-align:top;
+	margin: 10px;
+}
+#filter_opts label input {
+	float: left;
+	margin-top: 0;
+	margin-right: 5px;
+}
+
+.char_group_container .char_group {
+	display: inline-block;
+	width: 48%;
+}
+
+.ui-sortable-handle {
+	-ms-touch-action: none;
+	touch-action: none;
+}

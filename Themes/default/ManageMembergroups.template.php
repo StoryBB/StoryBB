@@ -8,16 +8,6 @@
  */
 
 /**
- * The main page listing all the groups.
- */
-function template_main()
-{
-	template_show_list('regular_membergroups_list');
-	echo '<br><br>';
-	template_show_list('post_count_membergroups_list');
-}
-
-/**
  * Add a new membergroup.
  */
 function template_new_group()
@@ -38,6 +28,19 @@ function template_new_group()
 					<dd>
 						<input type="text" name="group_name" id="group_name_input" size="30" class="input_text">
 					</dd>';
+	if (!$context['post_group'])
+	{
+		echo '
+					<dt>
+						<label for="group_level_input"><strong>', $txt['char_group_level'], ':</strong></label>
+					</dt>
+					<dd>
+						<select name="group_level" id="group_level_input">
+							<option value="0">', $txt['char_group_level_acct'], '</option>
+							<option value="1">', $txt['char_group_level_char'], '</option>
+						</select>
+					</dd>';
+	}
 	if ($context['undefined_group'])
 	{
 		echo '
@@ -169,6 +172,13 @@ function template_edit_group()
 					<dd>
 						<input type="text" name="group_name" id="group_name_input" value="', $context['group']['editable_name'], '" size="30" class="input_text">
 					</dd>';
+
+	if (!$context['group']['is_post_group'])
+	{
+		echo '
+					<dt><strong>', $txt['char_group_level'], ':</strong></dt>
+					<dd>', !empty($context['group']['is_character']) ? $txt['char_group_level_char'] : $txt['char_group_level_acct'], '</dd>';
+	}
 
 	if ($context['group']['id'] != 3 && $context['group']['id'] != 4)
 		echo '
@@ -379,7 +389,7 @@ function template_edit_group()
 		<script>
 			function swapPostGroup(isChecked)
 			{
-				var is_moderator_group = ', $context['is_moderator_group'], ';
+				var is_moderator_group = ', $context['is_moderator_group'] ? 'true' : 'false', ';
 				var group_type = ', $context['group']['type'], ';
 				var min_posts_text = document.getElementById(\'min_posts_text\');
 				var group_desc_text = document.getElementById(\'group_desc_text\');
@@ -588,6 +598,10 @@ function template_group_members()
 					<tr class="title_bar">
 						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['name'], $context['sort_by'] == 'name' ? ' <span class="generic_icons sort_' . $context['sort_direction'] . '"></span>' : '', '</a></th>';
 
+	if ($context['group']['is_character'])
+		echo '
+						<th>', rtrim($txt['char_name'], ':'), '</th>';
+
 	if ($context['can_send_email'])
 		echo '
 						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=email', $context['sort_by'] == 'email' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['email'], $context['sort_by'] == 'email' ? ' <span class="generic_icons sort_' . $context['sort_direction'] . '"></span>' : '', '</a></th>';
@@ -607,7 +621,7 @@ function template_group_members()
 	if (empty($context['members']))
 		echo '
 					<tr class="windowbg">
-						<td colspan="6">', $txt['membergroups_members_no_members'], '</td>
+						<td colspan="', $context['group']['is_character'] ? 7 : 6, '">', $txt['membergroups_members_no_members'], '</td>
 					</tr>';
 
 	foreach ($context['members'] as $member)
@@ -615,6 +629,12 @@ function template_group_members()
 		echo '
 					<tr class="windowbg">
 						<td>', $member['name'], '</td>';
+		if (!empty($member['character']))
+			echo '
+						<td>
+							', $member['character'], '
+						</td>';
+
 		if ($context['can_send_email'])
 		{
 			echo '
@@ -628,8 +648,15 @@ function template_group_members()
 						<td>', $member['registered'], '</td>
 						<td', empty($context['group']['assignable']) ? ' colspan="2"' : '', '>', $member['posts'], '</td>';
 		if (!empty($context['group']['assignable']))
-			echo '
+		{
+			if ($context['group']['is_character'])
+				echo '
+						<td style="width: 4%"><input type="checkbox" name="rem[]" value="', $member['id_character'], '" class="input_check" /></td>';
+			else
+				echo '
 						<td style="width: 4%"><input type="checkbox" name="rem[]" value="', $member['id'], '" class="input_check" ', ($context['user']['id'] == $member['id'] && $context['group']['id'] == 1 ? 'onclick="if (this.checked) return confirm(\'' . $txt['membergroups_members_deadmin_confirm'] . '\')" ' : ''), '/></td>';
+		}
+
 		echo '
 					</tr>';
 	}
@@ -685,7 +712,8 @@ function template_group_members()
 				sSessionVar: \'', $context['session_var'], '\',
 				sSuggestId: \'to_suggest\',
 				sControlId: \'toAdd\',
-				sSearchType: \'member\',
+				sItemTemplate: \'<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \\\'_blank\\\'); return false;">%item_name%</a>&nbsp;<span class="generic_icons delete" title="%delete_text%" onclick="return %self%.deleteAddedItem(\\\'%item_id%\\\');"></span>\',
+				sSearchType: \'' . ($context['group']['is_character'] ? 'character' : 'member') . '\',
 				sPostName: \'member_add\',
 				sURLMask: \'action=profile;u=%item_id%\',
 				sTextDeleteItem: \'', $txt['autosuggest_delete_item'], '\',

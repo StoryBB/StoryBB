@@ -1,0 +1,29 @@
+		{{! The list of character templates, with sortables }}
+		<form method="post" action="{{scripturl}}?action=admin;area=templates;sa=reorder;{{context.session_var}}={{context.session_id}}">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.char_templates}}}</h3>
+			</div>
+			<div class="windowbg2">
+
+				{{#if context.char_templates}}
+					<ul class="sortable">
+					{{#each context.char_templates}}
+					<li class="character_group">
+						<div class="group_name"><a href="{{../scripturl}}?action=admin;area=templates;sa=edit;template_id={{@key}}">{{{template_name}}}</a></div>
+						<img src="{{../settings.default_images_url}}/toggle.png" class="handle">
+						<input type="hidden" name="template[{{@key}}]" value="{{@key}}">
+					</li>
+					{{/each}}
+					</ul>
+				{{else}}
+					{{{txt.char_templates_none}}}
+				{{/if}}
+
+			</div>
+			<div class="floatright">
+				<a href="{{scripturl}}?action=admin;area=templates;sa=add" class="button">{{{txt.char_templates_add}}}</a>
+				<input type="submit" name="save" value="{{{txt.save}}}" class="button_submit">
+			</div>
+			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			<div class="clear"></div>
+		</form>
