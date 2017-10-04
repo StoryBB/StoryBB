@@ -35,7 +35,6 @@ function template_main()
     $phpStr = compileTemplate($template, [
         'helpers' => [
             'partial_helper' => 'include_ic_partial',
-            'jsontext' => 'stringhelper_string_json'
         ]
     ]);
 
