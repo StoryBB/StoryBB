@@ -76,7 +76,6 @@ $txt['todayMod'] = 'Enable shorthand date display';
 $txt['today_disabled'] = 'Disabled';
 $txt['today_only'] = 'Only Today';
 $txt['yesterday_today'] = 'Today &amp; Yesterday';
-$txt['onlineEnable'] = 'Show online/offline in posts and PMs';
 $txt['defaultMaxMembers'] = 'Members per page in member list';
 $txt['timeLoadPageEnable'] = 'Display time taken to create every page';
 $txt['disableHostnameLookup'] = 'Disable hostname lookups';
