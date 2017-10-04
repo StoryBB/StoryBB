@@ -3470,6 +3470,9 @@ ul.post_options li {
 .under_message {
 	overflow: visible;
 }
+.under_message .report_link {
+	margin-left: 10px;
+}
 /* Events */
 .edit_event {
 	margin: 0 10px;

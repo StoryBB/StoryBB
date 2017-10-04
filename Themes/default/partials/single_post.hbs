@@ -89,21 +89,6 @@
     		       <li class="email"><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{../txt.email}}"></span></a></li>
     		    {{/if}}
     		{{/if}}
-    		{{!-- Show the IP to this user for this post - because you can moderate? --}}
-    		{{#if (and ../context.can_moderate_forum member.ip)}}
-    		    <li class="poster_ip"><a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile;area=tracking;sa=ip;u={{member.id}};searchip='{{member.ip}}{{/if}}">{{member.ip}}</a>
-    		        <a href="{{../scripturl}}?action=helpadmin;help=see_admin_ip" onclick="return reqOverlayDiv(this.href);" class="help">(?)</a></li>
-    		{{/if}}
-    		{{!--  Or, should we show it because this is you? --}}
-    		{{#if can_see_ip}}
-    		    <li class="poster_ip"><a href="{{../scripturl}}?action=helpadmin;help=see_member_ip" onclick="return reqOverlayDiv(this.href);" class="help">{{member.ip}}</a></li>
-    		{{else}}
-    		    {{#if ../context.user.is_guest}}
-    		    <li class="poster_ip"><a href="{{../scripturl}}?action=helpadmin;help=see_member_ip" onclick="return reqOverlayDiv(this.href);" class="help">{{../txt.logged}}</a></li>
-    		    {{else}}
-    		    <li class="poster_ip">{{../txt.logged}}</li>
-    		    {{/if}}
-    		{{/if}}
     		{{#if (and member.is_guest member.can_see_warning)}}
     			<li class="warning">{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
     				<span class="generic_icons warning_{{member.warning_status}}"></span> {{#if ../context.can_issue_warning}}</a>{{/if}}
@@ -177,6 +162,13 @@
 				<li class="report_link"><a href="{{../scripturl}}?action=reporttm;topic={{../context.current_topic}}.{{counter}};msg={{id}}">{{../txt.report_to_mod}}</a></li>
 			</ul>
 			{{/if}}
+    		{{!-- Show the IP to this user for this post - because you can moderate? --}}
+    		{{#if (and can_see_ip member.ip)}}
+    		<ul class="floatright smalltext">
+    		    <li class="poster_ip"><a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile;area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}{{/if}}">{{{../txt.ip}}}: {{member.ip}}</a></li>
+    		</ul>
+    		{{/if}}
+
 			{{#if ../modSettings.enable_likes}}
 			<ul class="floatleft">
 				{{#if likes.can_like}}
