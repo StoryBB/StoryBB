@@ -585,7 +585,6 @@ function updateSettings($changeArray, $update = false)
  *   be a multiple of num_per_page.
  * - checks that start is not more than max_value.
  * - base_url should be the URL without any start parameter on it.
- * - uses the compactTopicPagesContiguous
  *   setting to decide how to display the menu.
  *
  * an example is available near the function definition.
@@ -639,8 +638,8 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	$pageindex = $settings['page_index']['extra_before'];
 
 
-	// If they didn't enter an odd value, pretend they did.
-	$PageContiguous = (int) ($modSettings['compactTopicPagesContiguous'] - ($modSettings['compactTopicPagesContiguous'] % 2)) / 2;
+	// Number of items either side of the selected item.
+	$PageContiguous = 2;
 
 	// Show the "prev page" link. (>prev page< 1 ... 6 7 [8] 9 10 ... 15 next page)
 	if (!empty($start) && $show_prevnext)

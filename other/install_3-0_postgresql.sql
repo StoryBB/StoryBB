@@ -2227,7 +2227,6 @@ INSERT INTO {$db_prefix}settings
 	(variable, value)
 VALUES ('smfVersion', '{$smf_version}'),
 	('news', '{$default_news}'),
-	('compactTopicPagesContiguous', '5'),
 	('todayMod', '1'),
 	('pollMode', '1'),
 	('enableCompressedOutput', '{$enableCompressedOutput}'),
