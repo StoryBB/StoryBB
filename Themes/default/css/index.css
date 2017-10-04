@@ -610,7 +610,15 @@ dl.settings {
 	padding: 5px;
 }
 dl.settings dt {
+	width: 56%;
+	float: left;
+	margin: 0 0 10px 0;
 	clear: both;
+}
+dl.settings.report dt {
+	float: none;
+	width: auto;
+	margin: 0;
 }
 dl.settings dt.windowbg {
 	width: 98%;
