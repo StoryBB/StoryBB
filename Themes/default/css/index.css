@@ -628,8 +628,16 @@ dl.settings dt.windowbg {
 	clear: both;
 }
 dl.settings dd {
+	width: 42%;
+	float: right;
+	overflow: auto;
+	margin: 0 0 3px 0;
+}
+dl.settings.report dd {
 	overflow: auto;
 	margin: 0 0 10px 30px;
+	width: auto;
+	float: none;
 }
 dl.settings img {
 	margin: 0 10px 0 0;
