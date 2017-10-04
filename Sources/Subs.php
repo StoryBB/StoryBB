@@ -2781,7 +2781,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 }
 
 function render_page($content) {
-	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count, $user_info;
+	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count, $user_info, $options;
 
 	if (!empty($context['layout_loaded'])) {
 		echo $content;
@@ -2805,6 +2805,7 @@ function render_page($content) {
 		'settings' => $settings,
 		'maintenance' => $maintenance,
 		'modSettings' => $modSettings,
+		'options' => $options,
 		'user_info' => $user_info,
 		'copyright' => theme_copyright(),
 		'loadtime' => !empty($modSettings['timeLoadPageEnable']) ? sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries']) : ''

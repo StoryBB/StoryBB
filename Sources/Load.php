@@ -2587,6 +2587,19 @@ function register_default_helpers() {
 			global $context;
 			return isset($context[$string . '_token']) ? $context[$string . '_token'] : '';
 		},
+		'dynamicpartial' => function($partial) {
+			global $context, $txt, $scripturl, $settings, $modSettings, $options;
+			$template = loadTemplatePartial($partial);
+			$phpStr = compileTemplate($template);
+			return prepareTemplate($phpStr, [
+				'context' => $context,
+				'txt' => $txt,
+				'scripturl' => $scripturl,
+				'settings' => $settings,
+				'modSettings' => $modSettings,
+				'options' => $options,
+			]);
+		}
 	]);
 }
 
