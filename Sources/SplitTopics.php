@@ -112,7 +112,7 @@ function SplitIndex()
 		'id' => $_GET['at'],
 		'subject' => $_REQUEST['subname']
 	);
-	$context['sub_template'] = 'ask';
+	$context['sub_template'] = 'topic_split_ask';
 	$context['page_title'] = $txt['split'];
 }
 
