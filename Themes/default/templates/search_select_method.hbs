@@ -62,7 +62,7 @@
 						{{/if}}
 
 						<dt>
-							<input type="radio" name="search_index" value="custom"{{#if (eq modSettings.search_index 'custom')}} checked{{/if}}{{#unless context.custom_index}} onclick="alert('{{{txt.search_index_custom_warning}}}'); selectRadioByName(this.form.search_method, \'1\');"{{/if}} class="input_radio">
+							<input type="radio" name="search_index" value="custom"{{#if (eq modSettings.search_index 'custom')}} checked{{/if}}{{#unless context.custom_index}} onclick="alert('{{{txt.search_index_custom_warning}}}'); selectRadioByName(this.form.search_method, \'1\');"{{/unless}} class="input_radio">
 							{{{txt.search_index_custom}}}
 						</dt>
 						<dd>
