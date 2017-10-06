@@ -8,35 +8,6 @@
  */
 
 /**
- * A simple confirmation that things were split as expected, with links to the current board and the old and new topics.
- */
-function template_main()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-	<div id="split_topics">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['split'], '</h3>
-		</div>
-		<div class="windowbg">
-			<p>', $txt['split_successful'], '</p>
-			<ul>
-				<li>
-					<a href="', $scripturl, '?board=', $context['current_board'], '.0">', $txt['message_index'], '</a>
-				</li>
-				<li>
-					<a href="', $scripturl, '?topic=', $context['old_topic'], '.0">', $txt['origin_topic'], '</a>
-				</li>
-				<li>
-					<a href="', $scripturl, '?topic=', $context['new_topic'], '.0">', $txt['new_topic'], '</a>
-				</li>
-			</ul>
-		</div>
-	</div>';
-}
-
-/**
  * The form for selecting which posts to split.
  */
 function template_select()

@@ -174,6 +174,7 @@ function SplitExecute()
 	$context['old_topic'] = $topic;
 	$context['new_topic'] = splitTopic($topic, $messagesToBeSplit, $_POST['subname']);
 	$context['page_title'] = $txt['split'];
+	$context['sub_template'] = 'topic_split_done';
 }
 
 /**
@@ -475,6 +476,7 @@ function SplitSelectionExecute()
 	$context['old_topic'] = $topic;
 	$context['new_topic'] = splitTopic($topic, $_SESSION['split_selection'][$topic], $_POST['subname']);
 	$context['page_title'] = $txt['split'];
+	$context['sub_template'] = 'topic_split_done';
 }
 
 /**
