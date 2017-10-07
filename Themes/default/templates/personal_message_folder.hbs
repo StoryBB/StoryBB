@@ -110,7 +110,7 @@
 				{{/if}}
 				<h4>
 					<a id="msg{{id}}"></a>
-					{{#if ../modSettings.onlineEnable}}{{#unless member.is_guest}}<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{{member.link}}}{{/unless}}{{/if}}
+					{{#unless member.is_guest}}<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{{member.link}}}{{/unless}}
 				</h4>
 				<ul class="user_info">
 					{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
@@ -142,15 +142,6 @@
 						</li
 						{{/if}}
 					{{/unless}}
-					{{#if (and ../context.can_moderate_forum member.ip)}}
-						<li class="poster_ip"><a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile{{/if}};area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}">{{member.ip}}</a> <a href="{{../scripturl}}?action=helpadmin;help=see_admin_ip" onclick="return reqOverlayDiv(this.href);" class="help">(?)</a></li>
-					{{else}}
-					{{#if can_see_ip}}
-						<li class="poster_ip"><a href="{{../scripturl}}?action=helpadmin;help=see_member_ip" onclick="return reqOverlayDiv(this.href);" class="help">{{member.ip}}</a></li>
-					{{else}}
-						<li class="poster_ip"><a href="{{../scripturl}}?action=helpadmin;help=see_member_ip" onclick="return reqOverlayDiv(this.href);" class="help">{{txt.logged}}</a></li>
-					{{/if}}
-					{{/if}}
 					{{#if member.show_profile_buttons}}
 					<li class="profile">
 						<ol class="profile_icons">
@@ -217,6 +208,9 @@
 					<div class="inner" id="msg_{{id}}">{{{body}}}</div>
 					{{#if (or can_report ../context.can_send_pm)}}
 					<div class="under_message">
+						{{#if (and can_see_ip member.ip)}}
+						<a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile{{/if}};area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}">{{{../txt.ip}}}: {{member.ip}}</a>
+						{{/if}}
 						{{#if can_report}}
 						<a href="{{../scripturl}}?action=pm;sa=report;l={{../context.current_label_id}};pmsg={{id}}" class="floatright">{{../txt.pm_report_to_admin}}</a>
 						{{/if}}

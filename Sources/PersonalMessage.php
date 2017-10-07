@@ -1008,7 +1008,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 		'is_selected' => !empty($temp_pm_selected) && in_array($message['id_pm'], $temp_pm_selected),
 		'is_message_author' => $message['id_member_from'] == $user_info['id'],
 		'can_report' => !empty($modSettings['enableReportPM']),
-		'can_see_ip' => allowedTo('moderate_forum') || ($message['id_member_from'] == $user_info['id'] && !empty($user_info['id'])),
+		'can_see_ip' => allowedTo('moderate_forum'),
 	);
 
 	$counter++;

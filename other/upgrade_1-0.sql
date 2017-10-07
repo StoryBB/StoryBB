@@ -1789,7 +1789,6 @@ INSERT IGNORE INTO {$db_prefix}settings
 	(variable, value)
 VALUES
 	('news', ''),
-	('compactTopicPagesContiguous', '5'),
 	('enableStickyTopics', '1'),
 	('todayMod', '1'),
 	('karmaMode', '0'),
@@ -1823,7 +1822,6 @@ VALUES
 	('userLanguage', '1'),
 	('topicSummaryPosts', '15'),
 	('enableErrorLogging', '1'),
-	('onlineEnable', '0'),
 	('cal_holidaycolor', '000080'),
 	('cal_bdaycolor', '920AC4'),
 	('cal_eventcolor', '078907'),

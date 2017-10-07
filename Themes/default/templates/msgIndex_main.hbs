@@ -23,7 +23,7 @@
 					{{/if}}
 					<p class="board_description">{{description}}</p>
 					{{#if (or moderators moderator_groups)}}
-					<p class="moderators">{{#if (eq (getNumItems link_moderators) 1)}}{{../txt.moderator}}{{else}}{{../txt.moderators}}{{/if}}: {{implode_comma link_moderators}}</p>
+					<p class="moderators">{{#if (eq (getNumItems link_moderators) 1)}}{{../txt.moderator}}{{else}}{{../txt.moderators}}{{/if}}: {{{implode_comma link_moderators}}}</p>
 					{{/if}}
 				</div>
 				<div class="board_stats centertext">
@@ -59,7 +59,7 @@
 			<h3>{{context.name}}</h3>
 			<p>
 			{{context.description}}&nbsp;
-			{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}:{{implode_comma context.link_moderators}}.
+			{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{implode_comma context.link_moderators}}}.
 			</p>
 		</div>
 		{{/if}}

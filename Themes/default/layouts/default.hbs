@@ -147,13 +147,13 @@
     					{{#each context.linktree}}
     					<li {{#if @last}}class="last"{{/if}}>
     					    {{#unless @first}}<span class="dividers">{{#if context.right_to_left}}&#9668;{{else}}&#9658;{{/if}} </span>{{/unless}}
-    					    {{extra_before}}
+    					    {{{extra_before}}}
     					    {{#if url}}
     					    	<a href="{{url}}"><span>{{{name}}}</span></a>
     					    {{else}}
     					        <span>{{{name}}}</span>
     					    {{/if}}
-    					    {{extra_after}}
+    					    {{{extra_after}}}
     					</li>
     					{{/each}}
     					</ul>
