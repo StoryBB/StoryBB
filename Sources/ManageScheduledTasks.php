@@ -28,7 +28,6 @@ function ManageScheduledTasks()
 	isAllowedTo('admin_forum');
 
 	loadLanguage('ManageScheduledTasks');
-	loadTemplate('ManageScheduledTasks');
 
 	$subActions = array(
 		'taskedit' => 'EditTask',
@@ -74,7 +73,7 @@ function ScheduledTasks()
 
 	// Mama, setup the template first - cause it's like the most important bit, like pickle in a sandwich.
 	// ... ironically I don't like pickle. </grudge>
-	$context['sub_template'] = 'view_scheduled_tasks';
+	$context['sub_template'] = 'admin_scheduled_view';
 	$context['page_title'] = $txt['maintain_tasks'];
 
 	// Saving changes?
@@ -206,6 +205,17 @@ function ScheduledTasks()
 		unset ($_SESSION['st_error']);
 	}
 
+	// Make life easier for templates.
+	if (!empty($context['scheduled_errors']))
+	{
+		foreach ($context['scheduled_errors'] as $task_id => $errors) {
+			$context['scheduled_errors'][$task_id] = [
+				'title' => isset($txt['scheduled_task_' . $task_id]) ? $txt['scheduled_task_' . $id] : $task_id,
+				'errors' => $errors,
+			];
+		}
+	}
+
 	$listOptions = array(
 		'id' => 'scheduled_tasks',
 		'title' => $txt['maintain_tasks'],
@@ -305,7 +315,7 @@ function ScheduledTasks()
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	$context['sub_template'] = 'view_scheduled_tasks';
+	$context['sub_template'] = 'admin_scheduled_view';
 
 	$context['tasks_were_run'] = isset($_GET['done']);
 }
@@ -362,7 +372,7 @@ function EditTask()
 
 	// Just set up some lovely context stuff.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'tasks';
-	$context['sub_template'] = 'edit_scheduled_tasks';
+	$context['sub_template'] = 'admin_scheduled_edit';
 	$context['page_title'] = $txt['scheduled_task_edit'];
 	$context['server_time'] = timeformat(time(), false, 'server');
 
@@ -447,7 +457,7 @@ function EditTask()
 			'name' => isset($txt['scheduled_task_' . $row['task']]) ? $txt['scheduled_task_' . $row['task']] : $row['task'],
 			'desc' => isset($txt['scheduled_task_desc_' . $row['task']]) ? $txt['scheduled_task_desc_' . $row['task']] : '',
 			'next_time' => $row['disabled'] ? $txt['scheduled_tasks_na'] : timeformat($row['next_time'] == 0 ? time() : $row['next_time'], true, 'server'),
-			'disabled' => $row['disabled'],
+			'disabled' => (bool) $row['disabled'],
 			'offset' => $row['time_offset'],
 			'regularity' => $row['time_regularity'],
 			'offset_formatted' => date('H:i', $row['time_offset']),
