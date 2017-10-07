@@ -5,14 +5,14 @@
 			<a href="#" id="upshrink_link">{{textTemplate txt.info_center_title context.forum_name_html_safe}}</a>
 		</h3>
 	</div>
-	<div id="upshrinkHeaderIC"{{#if options.collapse_header_ic}} style="display: none;"{{/if}}>
-	    {{#each context.info_center}}{{{partial_helper .}}}{{/each}}
+	<div id="upshrinkHeaderIC"{{#if (eq options.collapse_header_ic '1')}} style="display: none;"{{/if}}>
+	    {{#each context.info_center}}{{{dynamicpartial .}}}{{/each}}
 	</div>
 </div>
 <script>
 	var oInfoCenterToggle = new smc_Toggle({
 		bToggleEnabled: true,
-		bCurrentlyCollapsed: {{#if options.collapse_header_ic}}true{{else}}false{{/if}},
+		bCurrentlyCollapsed: {{#if (eq options.collapse_header_ic '1')}}true{{else}}false{{/if}},
 		aSwappableContainers: [
 			'upshrinkHeaderIC'
 		],
@@ -26,8 +26,8 @@
 		aSwapLinks: [
 			{
 				sId: 'upshrink_link',
-				msgExpanded: {{{jsontext (textTemplate txt.info_center_title context.forum_name_html_safe)}}},
-				msgCollapsed: {{{jsontext (textTemplate txt.info_center_title context.forum_name_html_safe)}}},
+				msgExpanded: {{{json (textTemplate txt.info_center_title context.forum_name_html_safe)}}},
+				msgCollapsed: {{{json (textTemplate txt.info_center_title context.forum_name_html_safe)}}},
 			}
 		],
 		oThemeOptions: {
