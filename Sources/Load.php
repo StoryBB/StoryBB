@@ -2550,7 +2550,12 @@ function register_default_helpers() {
 		'not' => 'logichelper_not',
 		'and' => 'logichelper_and',
 		'or' => 'logichelper_or',
-		'textTemplate' => 'textTemplate',
+		'textTemplate' => function($template, ...$args) {
+			// Strip the last item off the array, it's the calling context.
+			array_pop($args);
+			$string = new \LightnCandy\SafeString(sprintf($template, ...$args));
+			return (string) $string;
+		},
 		'timeformat' => function($timestamp) { return timeformat($timestamp); },
 		'concat' => function(...$items) {
 			array_pop($items); // Strip the last item off the array, it's the calling context.
@@ -2582,6 +2587,19 @@ function register_default_helpers() {
 			global $context;
 			return isset($context[$string . '_token']) ? $context[$string . '_token'] : '';
 		},
+		'dynamicpartial' => function($partial) {
+			global $context, $txt, $scripturl, $settings, $modSettings, $options;
+			$template = loadTemplatePartial($partial);
+			$phpStr = compileTemplate($template);
+			return prepareTemplate($phpStr, [
+				'context' => $context,
+				'txt' => $txt,
+				'scripturl' => $scripturl,
+				'settings' => $settings,
+				'modSettings' => $modSettings,
+				'options' => $options,
+			]);
+		}
 	]);
 }
 

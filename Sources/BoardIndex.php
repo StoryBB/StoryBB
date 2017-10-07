@@ -24,8 +24,6 @@ function BoardIndex()
 {
 	global $txt, $user_info, $sourcedir, $modSettings, $context, $settings, $scripturl;
 
-	loadTemplate('BoardIndex');
-
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl;
 
@@ -59,13 +57,16 @@ function BoardIndex()
 		}
 
 		if (!empty($context['latest_posts']) || !empty($context['latest_post']))
-			$context['info_center'][] = 'recent';
+		{
+			$context['info_center'][] = 'board_ic_recent';
+			$settings['number_recent_posts'] = (int) $settings['number_recent_posts'];
+		}
 	}
 
 	// And stats.
 	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
 	if ($settings['show_stats_index'])
-		$context['info_center'][] = 'stats';
+		$context['info_center'][] = 'board_ic_stats';
 
 	// Now the online stuff
 	require_once($sourcedir . '/Subs-MembersOnline.php');
@@ -77,7 +78,7 @@ function BoardIndex()
 	$context += getMembersOnlineStats($membersOnlineOptions);
 	$context['show_buddies'] = !empty($user_info['buddies']);
 	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
-	$context['info_center'][] = 'online';
+	$context['info_center'][] = 'board_ic_online';
 
 	// Track most online statistics? (Subs-MembersOnline.php)
 	if (!empty($modSettings['trackStats']))
@@ -94,6 +95,8 @@ function BoardIndex()
 	$context['mark_read_button'] = array(
 		'markread' => array('text' => 'mark_as_read', 'image' => 'markread.png', 'custom' => 'data-confirm="' . $txt['are_sure_mark_read'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=all;' . $context['session_var'] . '=' . $context['session_id']),
 	);
+
+	$context['sub_template'] = 'board_main';
 
 	// Allow mods to add additional buttons here
 	call_integration_hook('integrate_mark_read_button');

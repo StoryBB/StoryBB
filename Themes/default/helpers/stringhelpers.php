@@ -53,10 +53,6 @@ function implode_and($array)
 	}
 }
 
-function stringhelper_string_json($data) {
-	return json_encode((string) $data);
-}
-
 function JSEscape($string)
 {
 	global $scripturl;
