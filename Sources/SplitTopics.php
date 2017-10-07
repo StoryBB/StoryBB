@@ -33,9 +33,7 @@ function SplitTopics()
 	// Are you allowed to split topics?
 	isAllowedTo('split_any');
 
-	// Load up the "dependencies" - the template, getMsgMemberID(), and sendNotifications().
-	if (!isset($_REQUEST['xml']))
-		loadTemplate('SplitTopics');
+	// Load up the "dependencies" - the getMsgMemberID(), and sendNotifications().
 	require_once($sourcedir . '/Subs-Boards.php');
 	require_once($sourcedir . '/Subs-Post.php');
 
@@ -221,7 +219,7 @@ function SplitSelectTopics()
 	$context['new_subject'] = $_REQUEST['subname'];
 
 	// Using the "select" sub template.
-	$context['sub_template'] = isset($_REQUEST['xml']) ? 'split' : 'select';
+	$context['sub_template'] = isset($_REQUEST['xml']) ? 'split' : 'topic_split_select_posts';
 
 	// Are we using a custom messages per page?
 	$context['messages_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
