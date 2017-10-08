@@ -678,6 +678,7 @@ function SpiderLogs()
 	// Load the template and language just incase.
 	loadLanguage('Search');
 	loadTemplate('ManageSearch');
+	$context['spider_logs_delete_confirm'] = addcslashes($txt['spider_logs_delete_confirm'], "'");
 
 	// Did they want to delete some entries?
 	if ((!empty($_POST['delete_entries']) && isset($_POST['older'])) || !empty($_POST['removeAll']))
@@ -804,8 +805,7 @@ function SpiderLogs()
 	}
 
 	$context['page_title'] = $txt['spider_logs'];
-	$context['sub_template'] = 'show_spider_logs';
-	$context['default_list'] = 'spider_logs';
+	$context['sub_template'] = 'admin_spider_logs';
 }
 
 /**
