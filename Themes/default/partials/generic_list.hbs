@@ -88,19 +88,17 @@
 {{#if cur_list.additional_rows.bottom_of_list}}
     {{>list_additional_rows cur_list.additional_rows.bottom_of_list}}
 {{/if}}
-		</div>
-{{#if cur_list.form}}
 
-{{/if}}
 {{#if cur_list.form}}
 	{{#each cur_list.form.hidden_fields}}
 		<input type="hidden" name="{{@key}}" value="{{.}}">
 	{{/each}}
 	{{#if cur_list.form.token}}
-		<input type="hidden" name="{{token_var cur_list.form.token}}" value="{{ltoken cur_list.form.token}}">
+		<input type="hidden" name="{{token_var cur_list.form.token}}" value="{{token cur_list.form.token}}">
 	{{/if}}
 	</form>
 {{/if}}
+<div class="clear"></div>
 
 {{#if (and cur_list.list_menu (or (eq cur_list.list_menu.show_on 'top') (eq cur_list.list_menu.show_on 'both')))}}
 	{{> generic_list_links_menu }}
