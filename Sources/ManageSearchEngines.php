@@ -380,7 +380,7 @@ function EditSpider()
 	// Some standard stuff.
 	$context['id_spider'] = !empty($_GET['sid']) ? (int) $_GET['sid'] : 0;
 	$context['page_title'] = $context['id_spider'] ? $txt['spiders_edit'] : $txt['spiders_add'];
-	$context['sub_template'] = 'spider_edit';
+	$context['sub_template'] = 'admin_spider_edit';
 
 	// Are we saving?
 	if (!empty($_POST['save']))
