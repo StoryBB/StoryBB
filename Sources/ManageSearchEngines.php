@@ -23,7 +23,6 @@ function SearchEngines()
 	isAllowedTo('admin_forum');
 
 	loadLanguage('Search');
-	loadTemplate('ManageSearch');
 
 	if (!empty($modSettings['spider_mode']))
 	{
@@ -380,7 +379,7 @@ function EditSpider()
 	// Some standard stuff.
 	$context['id_spider'] = !empty($_GET['sid']) ? (int) $_GET['sid'] : 0;
 	$context['page_title'] = $context['id_spider'] ? $txt['spiders_edit'] : $txt['spiders_add'];
-	$context['sub_template'] = 'spider_edit';
+	$context['sub_template'] = 'admin_spider_edit';
 
 	// Are we saving?
 	if (!empty($_POST['save']))
@@ -677,7 +676,7 @@ function SpiderLogs()
 
 	// Load the template and language just incase.
 	loadLanguage('Search');
-	loadTemplate('ManageSearch');
+	$context['spider_logs_delete_confirm'] = addcslashes($txt['spider_logs_delete_confirm'], "'");
 
 	// Did they want to delete some entries?
 	if ((!empty($_POST['delete_entries']) && isset($_POST['older'])) || !empty($_POST['removeAll']))
@@ -804,8 +803,7 @@ function SpiderLogs()
 	}
 
 	$context['page_title'] = $txt['spider_logs'];
-	$context['sub_template'] = 'show_spider_logs';
-	$context['default_list'] = 'spider_logs';
+	$context['sub_template'] = 'admin_spider_logs';
 }
 
 /**
@@ -1030,8 +1028,8 @@ function SpiderStats()
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_spider_stats';
-	$context['default_list'] = 'spider_stat_list';
+	$context['sub_template'] = 'admin_spider_stats';
+	$context['spider_logs_delete_confirm'] = addcslashes($txt['spider_logs_delete_confirm'], "'");
 }
 
 /**
