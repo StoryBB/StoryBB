@@ -1780,6 +1780,8 @@ function create_control_richedit($editorOptions)
 
 	register_helper([
 		'richtexteditor' => 'control_richedit_helper',
+		'richtextbuttons' => 'control_richedit_buttons_helper',
+		'jsEscape' => 'JSEscape',
 	]);
 }
 
@@ -1796,6 +1798,22 @@ function control_richedit_helper($editor_id, $smileyContainer = null, $bbcContai
 		'bbcContainer' => $bbcContainer,
 	];
 	$template = loadTemplatePartial('control_richedit');
+	$phpStr = compileTemplate($template);
+	return prepareTemplate($phpStr, $data);
+}
+
+function control_richedit_buttons_helper($editor_id) {
+	global $context, $settings, $modSettings, $txt;
+
+	$data = [
+		'editor_id' => $editor_id,
+		'editor_context' => $context['controls']['richedit'][$editor_id],
+		'context' => $context,
+		'settings' => $settings,
+		'modSettings' => $modSettings,
+		'txt' => $txt,
+	];
+	$template = loadTemplatePartial('control_richedit_buttons');
 	$phpStr = compileTemplate($template);
 	return prepareTemplate($phpStr, $data);
 }
