@@ -27,8 +27,6 @@ function ManageNews()
 	// First, let's do a quick permissions check for the best error message possible.
 	isAllowedTo(array('edit_news', 'send_mail', 'admin_forum'));
 
-	loadTemplate('ManageNews');
-
 	// Format: 'sub-action' => array('function', 'permission')
 	$subActions = array(
 		'editnews' => array('EditNews', 'edit_news'),
@@ -308,10 +306,11 @@ function SelectMailingMembers()
 
 	// Is there any confirm message?
 	$context['newsletter_sent'] = isset($_SESSION['newsletter_sent']) ? $_SESSION['newsletter_sent'] : '';
+	$context['newsletter_sent_msg'] = !empty($context['newsletter_sent']) ? $txt['admin_news_newsletter_' . $context['newsletter_sent']] : '';
 
 	$context['page_title'] = $txt['admin_newsletters'];
 
-	$context['sub_template'] = 'email_members';
+	$context['sub_template'] = 'newsletter_pick_users';
 
 	$context['groups'] = array();
 	$postGroups = array();
@@ -494,7 +493,7 @@ function ComposeMailing()
 
 	// Setup the template!
 	$context['page_title'] = $txt['admin_newsletters'];
-	$context['sub_template'] = 'email_members_compose';
+	$context['sub_template'] = 'newsletter_compose';
 
 	$context['subject'] = !empty($_POST['subject']) ? $_POST['subject'] : $smcFunc['htmlspecialchars']($context['forum_name'] . ': ' . $txt['subject']);
 	$context['message'] = !empty($_POST['message']) ? $_POST['message'] : $smcFunc['htmlspecialchars']($txt['message'] . "\n\n" . $txt['regards_team'] . "\n\n" . '{$board_url}');
@@ -1041,7 +1040,7 @@ function SendMailing($clean_only = false)
 	$context['percentage_done'] = round(($percentEmails + $percentMembers) * 100, 2);
 
 	$context['page_title'] = $txt['admin_newsletters'];
-	$context['sub_template'] = 'email_members_send';
+	$context['sub_template'] = 'newsletter_send';
 }
 
 /**
