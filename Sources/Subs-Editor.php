@@ -2102,6 +2102,10 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 	$_SESSION[$verificationOptions['id'] . '_vv']['count'] = empty($_SESSION[$verificationOptions['id'] . '_vv']['count']) ? 1 : $_SESSION[$verificationOptions['id'] . '_vv']['count'] + 1;
 
+	register_helper([
+		'captcha' => 'visual_verification_helper',
+	]);
+
 	// Return errors if we have them.
 	if (!empty($verification_errors))
 		return $verification_errors;
@@ -2111,6 +2115,27 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 	// Say that everything went well chaps.
 	return true;
+}
+
+function visual_verification_helper($verify_id)
+{
+	global $context, $settings, $modSettings, $txt;
+
+	$verify_context = &$context['controls']['verification'][$verify_id];
+	$verify_context['total_items'] = count($verify_context['questions']) + ($verify_context['show_visual'] || $verify_context['can_recaptcha'] ? 1 : 0);
+	$verify_context['hidden_input_name'] = $verify_context['empty_field'] ? $_SESSION[$verify_id . '_vv']['empty_field'] : '';
+
+	$data = [
+		'verify_id' => $verify_id,
+		'verify_context' => $verify_context,
+		'context' => $context,
+		'settings' => $settings,
+		'modSettings' => $modSettings,
+		'txt' => $txt,
+	];
+	$template = loadTemplatePartial('control_visual_verification');
+	$phpStr = compileTemplate($template);
+	return prepareTemplate($phpStr, $data);	
 }
 
 /**
