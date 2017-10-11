@@ -21,7 +21,7 @@ global $db_type, $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_er
 global $db_connection, $modSettings, $context, $sc, $user_info, $topic, $board, $txt;
 global $smcFunc, $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
 
-$time_start = microtime();
+$time_start = microtime(true);
 
 // Just being safe...
 foreach (array('cachedir') as $variable)

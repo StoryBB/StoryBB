@@ -410,7 +410,7 @@ function ConvertMsgBody()
 
 			$_REQUEST['start'] += $increment;
 
-			if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 3)
+			if (microtime(true) - $time_start > 3)
 			{
 				createToken('admin-convertMsg');
 				$context['continue_post_data'] = '
@@ -718,7 +718,7 @@ function OptimizeTables()
 			break;
 
 		// Continue?
-		if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 10)
+		if (microtime(true) - $time_start > 10)
 		{
 			$_REQUEST['start'] = $key;
 			$context['continue_get_data'] = '?action=admin;area=maintain;sa=database;activity=optimize;start=' . $_REQUEST['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
@@ -871,7 +871,7 @@ function AdminBoardRecount()
 
 			$_REQUEST['start'] += $increment;
 
-			if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 3)
+			if (microtime(true) - $time_start > 3)
 			{
 				createToken('admin-boardrecount');
 				$context['continue_post_data'] = '<input type="hidden" name="' . $context['admin-boardrecount_token_var'] . '" value="' . $context['admin-boardrecount_token'] . '">';
@@ -929,7 +929,7 @@ function AdminBoardRecount()
 
 			$_REQUEST['start'] += $increment;
 
-			if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 3)
+			if (microtime(true) - $time_start > 3)
 			{
 				createToken('admin-boardrecount');
 				$context['continue_post_data'] = '<input type="hidden" name="' . $context['admin-boardrecount_token_var'] . '" value="' . $context['admin-boardrecount_token'] . '">';
@@ -985,7 +985,7 @@ function AdminBoardRecount()
 
 			$_REQUEST['start'] += $increment;
 
-			if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 3)
+			if (microtime(true) - $time_start > 3)
 			{
 				createToken('admin-boardrecount');
 				$context['continue_post_data'] = '<input type="hidden" name="' . $context['admin-boardrecount_token_var'] . '" value="' . $context['admin-boardrecount_token'] . '">';
@@ -1041,7 +1041,7 @@ function AdminBoardRecount()
 
 			$_REQUEST['start'] += $increment;
 
-			if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 3)
+			if (microtime(true) - $time_start > 3)
 			{
 				createToken('admin-boardrecount');
 				$context['continue_post_data'] = '<input type="hidden" name="' . $context['admin-boardrecount_token_var'] . '" value="' . $context['admin-boardrecount_token'] . '">';
@@ -1097,7 +1097,7 @@ function AdminBoardRecount()
 
 			$_REQUEST['start'] += $increment;
 
-			if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 3)
+			if (microtime(true) - $time_start > 3)
 			{
 				createToken('admin-boardrecount');
 				$context['continue_post_data'] = '<input type="hidden" name="' . $context['admin-boardrecount_token_var'] . '" value="' . $context['admin-boardrecount_token'] . '">';
@@ -1146,7 +1146,7 @@ function AdminBoardRecount()
 			updateMemberData($row['id_member'], array('unread_messages' => $row['real_num']));
 		$smcFunc['db_free_result']($request);
 
-		if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 3)
+		if (microtime(true) - $time_start > 3)
 		{
 			createToken('admin-boardrecount');
 			$context['continue_post_data'] = '<input type="hidden" name="' . $context['admin-boardrecount_token_var'] . '" value="' . $context['admin-boardrecount_token'] . '">';
@@ -1192,7 +1192,7 @@ function AdminBoardRecount()
 
 			$_REQUEST['start'] += $increment;
 
-			if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)) > 3)
+			if (microtime(true) - $time_start > 3)
 			{
 				createToken('admin-boardrecount');
 				$context['continue_post_data'] = '<input type="hidden" name="' . $context['admin-boardrecount_token_var'] . '" value="' . $context['admin-boardrecount_token'] . '">';

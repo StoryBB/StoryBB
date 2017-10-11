@@ -1628,7 +1628,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		if (($temp = cache_get_data($cache_key, 240)) != null)
 			return $temp;
 
-		$cache_t = microtime();
+		$cache_t = microtime(true);
 	}
 
 	$open_tags = array();
@@ -2490,7 +2490,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	call_integration_hook('integrate_post_parsebbc', array(&$message, &$smileys, &$cache_id, &$parse_tags));
 
 	// Cache the output if it took some time...
-	if (isset($cache_key, $cache_t) && array_sum(explode(' ', microtime())) - array_sum(explode(' ', $cache_t)) > 0.05)
+	if (isset($cache_key, $cache_t) && microtime(true) - $cache_t > 0.05)
 		cache_put_data($cache_key, $message, 240);
 
 	// If this was a force parse revert if needed.
@@ -2791,7 +2791,7 @@ function render_page($content) {
 	// This is not really the correct place for this, ideally it needs to happen
 	// as late as possible, but we don't have a flow where this really works yet.
 	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
-	$context['load_time'] = comma_format(round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3));
+	$context['load_time'] = comma_format(round(microtime(true) - $time_start, 3));
 	$context['load_queries'] = $db_count;
 
 	$context['session_flash'] = session_flash_retrieve();
@@ -2882,7 +2882,7 @@ function url_image_size($url)
 	// Can we pull this from the cache... please please?
 	if (($temp = cache_get_data('url_image_size-' . md5($url), 240)) !== null)
 		return $temp;
-	$t = microtime();
+	$t = microtime(true);
 
 	// Get the host to pester...
 	preg_match('~^\w+://(.+?)/(.*)$~', $url, $match);
@@ -2939,7 +2939,7 @@ function url_image_size($url)
 		$size = false;
 
 	// If this took a long time, we may never have to do it again, but then again we might...
-	if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $t)) > 0.8)
+	if (microtime(true) - $t > 0.8)
 		cache_put_data('url_image_size-' . md5($url), $size, 240);
 
 	// Didn't work.
@@ -3737,7 +3737,7 @@ function host_from_ip($ip)
 
 	if (($host = cache_get_data('hostlookup-' . $ip, 600)) !== null)
 		return $host;
-	$t = microtime();
+	$t = microtime(true);
 
 	// Try the Linux host command, perhaps?
 	if (!isset($host) && (strpos(strtolower(PHP_OS), 'win') === false || strpos(strtolower(PHP_OS), 'darwin') !== false) && mt_rand(0, 1) == 1)
@@ -3773,7 +3773,7 @@ function host_from_ip($ip)
 		$host = @gethostbyaddr($ip);
 
 	// It took a long time, so let's cache it!
-	if (array_sum(explode(' ', microtime())) - array_sum(explode(' ', $t)) > 0.5)
+	if (microtime(true) - $t > 0.5)
 		cache_put_data('hostlookup-' . $ip, $host, 600);
 
 	return $host;
