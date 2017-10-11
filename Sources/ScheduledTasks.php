@@ -447,19 +447,6 @@ function scheduled_daily_maintenance()
 		consolidateSpiderStats();
 	}
 
-	// Check the database version - for some buggy MySQL version.
-	$server_version = $smcFunc['db_server_info']();
-	if (($db_type == 'mysql') && in_array(substr($server_version, 0, 6), array('5.0.50', '5.0.51')))
-		updateSettings(array('db_mysql_group_by_fix' => '1'));
-	elseif (!empty($modSettings['db_mysql_group_by_fix']))
-		$smcFunc['db_query']('', '
-			DELETE FROM {db_prefix}settings
-			WHERE variable = {string:mysql_fix}',
-			array(
-				'mysql_fix' => 'db_mysql_group_by_fix',
-			)
-		);
-
 	// Clean up some old login history information.
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}member_logins
