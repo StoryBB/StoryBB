@@ -63,14 +63,6 @@ function template_registration_form()
 		'txt' => $txt,
 		'scripturl' => $scripturl,
 		'modSettings' => $modSettings,
-		'verification_visual' => Array(
-			'use_graphic_library' => $context['use_graphic_library'],
-			'verify_context' => $context['controls']['verification'][$verify_id],
-			'verify_id' => $verify_id,
-			'txt' => $txt,
-			'hinput_name' => $_SESSION[$verify_id . '_vv']['empty_field'],
-			'quick_reply' => false
-		)
 	);
 	
 	$template = loadTemplateFile('register_form');
@@ -93,7 +85,6 @@ function template_registration_form()
 	        'field_isText' => function($type) {
 	        	return in_array($type, array('int', 'float', 'text', 'password'));
 	        },
-	        'template_control_verification' => 'template_control_verification'
 	    )
 	]);
 	

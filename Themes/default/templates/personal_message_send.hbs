@@ -75,7 +75,7 @@
 			{{#if context.require_verification}}
 			<div class="post_verification">
 				<strong>{{txt.pm_visual_verification_label}}:</strong>
-				{{!--{{>control_verification context.visual_verification_id 'all'}}--}}
+				{{{captcha context.visual_verification_id}}}
 				</div>
 			{{/if}}
 			<hr>
