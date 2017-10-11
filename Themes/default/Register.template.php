@@ -85,7 +85,6 @@ function template_registration_form()
 	        'field_isText' => function($type) {
 	        	return in_array($type, array('int', 'float', 'text', 'password'));
 	        },
-	        'template_control_verification' => 'template_control_verification'
 	    )
 	]);
 	
