@@ -304,7 +304,7 @@ var icon_urls = {
 						<span{{#if context.post_error.need_qr_verification}} class="error"{{/if}}>
 							<strong>{{txt.verification}}:</strong>
 						</span>
-						{{>control_visual_verification verify_id=context.visual_verification_id display_type='all' verify_context=verify_context}}
+						{{{captcha context.visual_verification_id}}}
 					</div>
                     {{/if}}
                     <br class="clear_right">

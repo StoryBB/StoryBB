@@ -62,7 +62,7 @@
 						{{#if context.require_verification}}
 						<div class="post_verification">
         					<strong>{{txt.verification}}:</strong>
-        					{{>control_visual_verification verify_id=context.visual_verification_id display_type='all' verify_context=verify_context}}
+        					{{{captcha context.visual_verification_id}}}
         				</div>
 						{{/if}}
     				<br class="clear_right">
