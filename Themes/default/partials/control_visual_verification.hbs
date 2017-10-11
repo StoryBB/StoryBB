@@ -1,12 +1,11 @@
 <div class="verification_widget" id="verification_control_{{verify_id}}">
-{{#if verify_context.empty_field}}
-	<div class="smalltext vv_special">
-		{{{txt.visual_verification_hidden}}}:
-		<input type="text" name="{{verify_context.hidden_input_name}}" autocomplete="off" size="30" value="">
-	</div>
-{{/if}}
+	{{#if verify_context.empty_field}}
+		<div class="smalltext vv_special">
+			{{{txt.visual_verification_hidden}}}:
+			<input type="text" name="{{verify_context.hidden_input_name}}" autocomplete="off" size="30" value="">
+		</div>
+	{{/if}}
 
-{{#if (or verify_context.show_visual verify_context.can_recaptcha)}}
 	{{#if verify_context.show_visual}}
 		<div class="verification_control">
 			{{#if context.use_graphic_library}}
@@ -34,7 +33,7 @@
 			<script type="text/javascript" src="https://www.google.com/recaptcha/api.js"></script>
 		</div>
 	{{/if}}
-{{else}}
+
 	<div class="verification_control">
 		{{#each verify_context.questions}}
 		<div class="smalltext">
@@ -43,5 +42,4 @@
 		</div>
 		{{/each}}
 	</div>
-{{/if}}
 </div>
