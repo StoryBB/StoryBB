@@ -1469,7 +1469,6 @@ function create_control_richedit($editorOptions)
 
 		// This really has some WYSIWYG stuff.
 		loadCSSFile('jquery.sceditor.css', array('force_current' => false, 'validate' => true), 'smf_jquery_sceditor');
-		loadTemplate('GenericControls');
 
 		// JS makes the editor go round
 		loadJavaScriptFile('editor.js', array(), 'smf_editor');
@@ -1832,9 +1831,6 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	// First verification means we need to set up some bits...
 	if (empty($context['controls']['verification']))
 	{
-		// The template
-		loadTemplate('GenericControls');
-
 		// Some javascript ma'am?
 		if (!empty($verificationOptions['override_visual']) || (!empty($modSettings['visual_verification_type']) && !isset($verificationOptions['override_visual'])))
 			loadJavaScriptFile('captcha.js', array(), 'smf_captcha');
