@@ -294,7 +294,7 @@ CREATE TABLE {$db_prefix}log_actions (
 #
 
 CREATE TABLE {$db_prefix}log_activity (
-  date DATE DEFAULT '0001-01-01',
+  date DATE DEFAULT '1004-01-01',
   hits MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   topics SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   posts SMALLINT UNSIGNED NOT NULL DEFAULT '0',
@@ -599,7 +599,7 @@ CREATE TABLE {$db_prefix}log_spider_stats (
   id_spider SMALLINT UNSIGNED DEFAULT '0',
   page_hits SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   last_seen INT(10) UNSIGNED NOT NULL DEFAULT '0',
-  stat_date DATE DEFAULT '0001-01-01',
+  stat_date DATE DEFAULT '1004-01-01',
   PRIMARY KEY (stat_date, id_spider)
 ) ENGINE={$engine};
 
@@ -707,7 +707,7 @@ CREATE TABLE {$db_prefix}members (
   mod_prefs VARCHAR(20) NOT NULL DEFAULT '',
   passwd VARCHAR(64) NOT NULL DEFAULT '',
   email_address VARCHAR(255) NOT NULL DEFAULT '',
-  birthdate date NOT NULL DEFAULT '0001-01-01',
+  birthdate date NOT NULL DEFAULT '1004-01-01',
   website_title VARCHAR(255) NOT NULL DEFAULT '',
   website_url VARCHAR(255) NOT NULL DEFAULT '',
   show_online TINYINT NOT NULL DEFAULT '1',

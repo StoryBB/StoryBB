@@ -469,7 +469,7 @@ CREATE INDEX {$db_prefix}log_actions_id_topic_id_log ON {$db_prefix}log_actions 
 #
 
 CREATE TABLE {$db_prefix}log_activity (
-  date date NOT NULL default '0001-01-01',
+  date date NOT NULL default '1004-01-01',
   hits int NOT NULL default '0',
   topics smallint NOT NULL default '0',
   posts smallint NOT NULL default '0',
@@ -883,7 +883,7 @@ CREATE TABLE {$db_prefix}log_spider_stats (
   id_spider smallint NOT NULL default '0',
   page_hits smallint NOT NULL default '0',
   last_seen bigint NOT NULL default '0',
-  stat_date date NOT NULL default '0001-01-01',
+  stat_date date NOT NULL default '1004-01-01',
   PRIMARY KEY (stat_date, id_spider)
 );
 
@@ -1035,7 +1035,7 @@ CREATE TABLE {$db_prefix}members (
   mod_prefs varchar(20) NOT NULL default '',
   passwd varchar(64) NOT NULL default '',
   email_address varchar(255) NOT NULL DEFAULT '',
-  birthdate date NOT NULL default '0001-01-01',
+  birthdate date NOT NULL default '1004-01-01',
   website_title varchar(255) NOT NULL DEFAULT '',
   website_url varchar(255) NOT NULL DEFAULT '',
   show_online smallint NOT NULL default '1',
