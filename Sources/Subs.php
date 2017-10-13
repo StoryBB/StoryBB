@@ -5437,6 +5437,10 @@ function set_tld_regex($update = false)
 	{
 		require_once($sourcedir . '/Subs-Package.php');
 		$tlds = fetch_web_data('https://data.iana.org/TLD/tlds-alpha-by-domain.txt');
+
+		// If the Internet Assigned Numbers Authority can't be reached, the Internet is gone. We're probably running on a server hidden in a bunker deep underground to protect it from marauding bandits roaming on the surface. We don't want to waste precious electricity on pointlessly repeating background tasks, so we'll wait until the next regularly scheduled update to see if civilization has been restored.
+		if ($tlds === false)
+			$postapocalypticNightmare = true;
 	}
 	// If we aren't updating and the regex is valid, we're done
 	elseif (!empty($modSettings['tld_regex']) && @preg_match('~' . $modSettings['tld_regex'] . '~', null) !== false)
@@ -5562,8 +5566,6 @@ function set_tld_regex($update = false)
 
 			return implode('.', $output_parts);
 		}, $tlds);
-
-		$schedule_update = false;
 	}
 	// Otherwise, use the 2012 list of gTLDs and ccTLDs for now and schedule a background update
 	else
@@ -5590,12 +5592,12 @@ function set_tld_regex($update = false)
 			'uk', 'us', 'uy', 'uz', 'va', 'vc', 've', 'vg', 'vi', 'vn', 'vu', 'wf', 'ws', 'ye',
 			'yt', 'yu', 'za', 'zm', 'zw');
 
-		$schedule_update = true;
+		// Schedule a background update, unless civilization has collapsed and/or we are having connectivity issues.
+		$schedule_update = empty($postapocalypticNightmare);
 	}
 
-	// build_regex() returns an array. We only need the first item.
+	// Get an optimized regex to match all the TLDs
 	$tld_regex = build_regex($tlds);
-	$tld_regex = array_shift($tld_regex);
 
 	// Remember the new regex in $modSettings
 	updateSettings(array('tld_regex' => $tld_regex));
@@ -5623,18 +5625,18 @@ function set_tld_regex($update = false)
  * takes to execute the simple regex. Therefore, it is only worth calling this function if the
  * resulting regex will be used more than once.
  *
- * Because PHP places an upper limit on the allowed length of a regex, very large arrays may be
- * split and returned as multiple regexes. In such cases, you will need to iterate through all
- * elements of the returned array in order to test all possible matches. (Note: if your array of
- * alternative strings is large enough to require multiple regexes to accomodate it all, it is
- * probably time to reconsider your coding choices. There is almost certainly a better way to do
- * whatever you are trying to do with these giant regexes.)
+ * Because PHP places an upper limit on the allowed length of a regex, very large arrays of $strings
+ * may not fit in a single regex. Normally, the excess strings will simply be dropped. However, if
+ * the $returnArray parameter is set to true, this function will build as many regexes as necessary
+ * to accomodate everything in $strings and return them in an array. You will need to iterate
+ * through all elements of the returned array in order to test all possible matches.
  *
  * @param array $strings An array of strings to make a regex for.
  * @param string $delim An optional delimiter character to pass to preg_quote().
- * @return array An array of one or more regular expressions to match any of the input strings.
+ * @param bool $returnArray If true, returns an array of regexes.
+ * @return string|array One or more regular expressions to match any of the input strings.
  */
-function build_regex($strings, $delim = null)
+function build_regex($strings, $delim = null, $returnArray = false)
 {
 	global $smcFunc;
 
@@ -5708,7 +5710,7 @@ function build_regex($strings, $delim = null)
 				$regex[$new_key] = $key_regex . $sub_regex;
 			else
 			{
-				if (($length += mb_strlen($key_regex) + 1) < $max_length || empty($regex))
+				if (($length += strlen($key_regex) + 1) < $max_length || empty($regex))
 				{
 					$regex[$new_key] = $key_regex . $sub_regex;
 					unset($index[$key]);
@@ -5735,19 +5737,25 @@ function build_regex($strings, $delim = null)
 
 	// Now that the functions are defined, let's do this thing
 	$index = array();
-	$regexes = array();
+	$regex = '';
 
 	foreach ($strings as $string)
 		$index = $add_string_to_index($string, $index);
 
+	if ($returnArray === true)
+	{
+		$regex = array();
 	while (!empty($index))
-		$regexes[] = '(?'.'>' . $index_to_regex($index, $delim) . ')';
+			$regex[] = '(?'.'>' . $index_to_regex($index, $delim) . ')';
+	}
+	else
+		$regex = '(?'.'>' . $index_to_regex($index, $delim) . ')';
 
 	// Restore PHP's internal character encoding to whatever it was originally
 	if (!empty($current_encoding))
 		mb_internal_encoding($current_encoding);
 
-	return $regexes;
+	return $regex;
 }
 
 function get_main_menu_groups()
