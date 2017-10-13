@@ -781,7 +781,8 @@ function SendMailing($clean_only = false)
 			foreach ($_POST['exclude_groups'] as $group => $dummy)
 				$context['recipients']['exclude_groups'][] = (int) $group;
 		}
-		else
+		// Ignore an empty string - we don't want to exclude "Regular Members" unless it's specifically selected
+		elseif ($_POST['exclude_groups'] != '')
 		{
 			$groups = explode(',', $_POST['exclude_groups']);
 			foreach ($groups as $group)
@@ -856,7 +857,7 @@ function SendMailing($clean_only = false)
 		array(
 			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '">' . $scripturl . '</a>' : $scripturl,
 			timeformat(forum_time(), false),
-			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $cleanLatestMember),
+			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $scripturl . '?action=profile;u=' . $modSettings['latestMember']),
 			$modSettings['latestMember'],
 			$cleanLatestMember
 		), $_POST['message']);
@@ -980,7 +981,7 @@ function SendMailing($clean_only = false)
 		foreach ($rows as $row)
 		{
 			// Force them to have it?
-			if (empty($context['email_force']) || empty($prefs[$row['id_member']]['announcements']))
+			if (empty($context['email_force']) && empty($prefs[$row['id_member']]['announcements']))
 				continue;
 
 			// What groups are we looking at here?
@@ -1003,7 +1004,7 @@ function SendMailing($clean_only = false)
 			$message = str_replace($from_member,
 				array(
 					$row['email_address'],
-					!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $cleanMemberName . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $row['id_member'] . ']' . $cleanMemberName . '[/url]' : $cleanMemberName),
+					!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $cleanMemberName . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $row['id_member'] . ']' . $cleanMemberName . '[/url]' : $scripturl . '?action=profile;u=' . $row['id_member']),
 					$row['id_member'],
 					$cleanMemberName,
 				), $_POST['message']);

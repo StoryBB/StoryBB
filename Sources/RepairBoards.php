@@ -118,7 +118,7 @@ function pauseRepairProcess($to_fix, $current_step_description, $max_substep = 0
 		@apache_reset_timeout();
 
 	// Errr, wait.  How much time has this taken already?
-	if (!$force && time() - array_sum(explode(' ', $time_start)) < 3)
+	if (!$force && (time() - $time_start) < 3)
 		return;
 
 	// Restore the query cache if interested.
@@ -348,7 +348,7 @@ function loadForumTests()
 				  LEFT JOIN {db_prefix}members AS m ON (m.id_member = t.id_member_started)
 				WHERE o.id_poll BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				  AND p.id_poll IS NULL
-				GROUP BY o.id_poll
+				GROUP BY o.id_poll, t.id_topic, t.id_board, t.id_member_started, m.member_name
 				  ',
 			'fix_processing' => function ($row) use ($smcFunc, $txt)
 			{
@@ -606,7 +606,7 @@ function loadForumTests()
 				$row['myid_last_msg'] = (int) $row['myid_last_msg'];
 
 				// Not really a problem?
-				if ($row['myid_first_msg'] == $row['myid_first_msg'] && $row['myid_first_msg'] == $row['myid_first_msg'] && $row['approved'] == $row['firstmsg_approved'])
+				if ($row['id_first_msg'] == $row['myid_first_msg'] && $row['id_last_msg'] == $row['myid_last_msg'] && $row['approved'] == $row['firstmsg_approved'])
 					return false;
 
 				$memberStartedID = (int) getMsgMemberID($row['myid_first_msg']);
@@ -631,7 +631,7 @@ function loadForumTests()
 			'message_function' => function ($row) use ($txt, &$context)
 			{
 				// A pretend error?
-				if ($row['myid_first_msg'] == $row['myid_first_msg'] && $row['myid_first_msg'] == $row['myid_first_msg'] && $row['approved'] == $row['firstmsg_approved'])
+				if ($row['id_first_msg'] == $row['myid_first_msg'] && $row['id_last_msg'] == $row['myid_last_msg'] && $row['approved'] == $row['firstmsg_approved'])
 					return false;
 
 				if ($row['id_first_msg'] != $row['myid_first_msg'])
@@ -1586,7 +1586,6 @@ function findForumErrors($do_fix = false)
 				array(
 				)
 			);
-			$needs_fix = false;
 
 			// Does it need a fix?
 			if (!empty($test['check_type']) && $test['check_type'] == 'count')
@@ -1814,13 +1813,6 @@ function createSalvageArea()
 		}
 
 	}
-
-	$smcFunc['db_query']('alter_table_boards', '
-		ALTER TABLE {db_prefix}boards
-		ORDER BY board_order',
-		array(
-		)
-	);
 
 	// Restore the user's language.
 	loadLanguage('Admin');

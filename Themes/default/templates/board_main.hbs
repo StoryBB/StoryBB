@@ -7,7 +7,7 @@
         {{#if (or this.boards this.is_collapsed)}}
             {{! This category contains boards, or the category is collapsed, so we need to print it }}
             <div class="main_container">
-                <div class="cat_bar" id="category_{{this.id}}">
+                <div class="cat_bar{{#if is_collapsed}} collapsed{{/if}}" id="category_{{this.id}}">
                     <h3 class="catbg">
                         {{#if this.can_collapse}}
                             <span id="category_{{this.id}}_upshrink" class="{{#if this.is_collapsed}}toggle_down{{else}}toggle_up{{/if}} floatright" data-collapsed="{{this.is_collapsed}}" title="{{#if this.is_collapsed}}{{txt.hide_category}}{{else}}{{txt.show_category}}{{/if}}" style="display:none"></span>

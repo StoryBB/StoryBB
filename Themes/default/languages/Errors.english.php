@@ -184,7 +184,7 @@ $txt['recycle_no_valid_board'] = 'No valid board selected for recycled topics';
 $txt['post_already_deleted'] = 'The topic or message has already been moved to the recycle board. Are you sure you want to delete it completely?<br>If so follow <a href="%1$s">this link</a>';
 
 $txt['login_threshold_fail'] = 'Sorry, you are out of login chances. Please come back and try again later.';
-$txt['login_threshold_brute_fail'] = 'Sorry, but you\'ve reached your login attempts threshold. Please wait 30 seconds and try again later.';
+$txt['login_threshold_brute_fail'] = 'Sorry, but you\'ve reached your login attempts threshold for account %1$s. Please wait 30 seconds and try again later.';
 
 $txt['who_off'] = 'You cannot access Who\'s Online right now because it is disabled.';
 
@@ -390,7 +390,7 @@ $txt['error_custom_field_empty'] = 'The &quot;%1$s&quot; field cannot be left bl
 $txt['email_no_template'] = 'The email template &quot;%1$s&quot; could not be found.';
 
 $txt['search_api_missing'] = 'The search API could not be found. Please contact the admin to check they have uploaded the correct files.';
-$txt['search_api_not_compatible'] = 'The selected search API the forum is using ia not compatible - falling back to standard search. Please check file %1$s.';
+$txt['search_api_not_compatible'] = 'The selected search API the forum is using is out of date - falling back to standard search. Please check file %1$s.';
 
 // Handling hook calls
 $txt['hook_fail_loading_file'] = 'Hook call: The file at path: %s could not be loaded.';
@@ -407,6 +407,8 @@ $txt['cannot_restore_first_post'] = 'You cannot restore the first post in a topi
 $txt['parent_topic_missing'] = 'The parent topic of the post you are trying to restore has been deleted.';
 $txt['restored_disabled'] = 'The restoration of topics has been disabled.';
 $txt['restore_not_found'] = 'The following messages could not be restored; the original topic may have been removed:<ul style="margin-top: 0px;">%1$s</ul>You will need to move these manually.';
+
+$txt['error_invalid_dir'] = 'The directory you entered is invalid.';
 
 // json errors.
 $txt['json_JSON_ERROR_DEPTH'] = 'Json decode error: The maximum stack depth has been exceeded';

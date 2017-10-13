@@ -838,10 +838,14 @@ function EditBoardSettings($return_config = false)
 		$recycle_boards[$row['id_board']] = $row['cat_name'] . ' - ' . $row['board_name'];
 	$smcFunc['db_free_result']($request);
 
-	require_once($sourcedir . '/Subs-Boards.php');
-	sortBoards($recycle_boards);
-
-        $recycle_boards = array('') + $recycle_boards;
+	if (!empty($recycle_boards))
+	{
+		require_once($sourcedir . '/Subs-Boards.php');
+		sortBoards($recycle_boards);
+		$recycle_boards = array('') + $recycle_boards;
+	}
+	else
+		$recycle_boards = array('');
 
 	// Here and the board settings...
 	$config_vars = array(

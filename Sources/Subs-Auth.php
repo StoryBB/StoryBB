@@ -188,7 +188,6 @@ function KickGuest()
 	global $txt, $context;
 
 	loadLanguage('Login');
-	loadTemplate('Login');
 	createToken('login');
 
 	// Never redirect to an attachment
@@ -209,7 +208,6 @@ function InMaintenance()
 	global $txt, $mtitle, $mmessage, $context, $smcFunc;
 
 	loadLanguage('Login');
-	loadTemplate('Login');
 	createToken('login');
 
 	// Send a 503 header, so search engines don't bother indexing while we're in maintenance mode.
@@ -235,7 +233,6 @@ function adminLogin($type = 'admin')
 	global $context, $txt, $user_settings, $user_info, $scripturl, $modSettings;
 
 	loadLanguage('Admin');
-	loadTemplate('Login');
 
 	// Validate what type of session check this is.
 	$types = array();

@@ -118,7 +118,8 @@ $(function() {
 			msgID : $(this).data('msgid'),
 		};
 
-		// If the button is already visible, hide it!
+		// If the button is already visible, hide it, and unbind events from it.
+		$(document).off('click', '#quoteSelected_' + oSelected.msgID + ' a');
 		$('#quoteSelected_' + oSelected.msgID).hide();
 
 		// Get any selected text.

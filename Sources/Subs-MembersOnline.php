@@ -67,7 +67,8 @@ function getMembersOnlineStats($membersOnlineOptions)
 	$request = $smcFunc['db_query']('', '
 		SELECT
 			lo.id_member, lo.log_time, lo.id_spider, chars.id_character, IFNULL(chars.character_name, mem.real_name) AS real_name, mem.member_name, mem.show_online,
-			IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, mg.id_group, mg.group_name
+			IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, mg.id_group, mg.group_name,
+			mg.hidden, mg.group_type, mg.id_parent
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lo.id_member)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:reg_mem_group} THEN mem.id_post_group ELSE mem.id_group END)
@@ -135,7 +136,10 @@ function getMembersOnlineStats($membersOnlineOptions)
 			$membersOnlineStats['online_groups'][$row['id_group']] = array(
 				'id' => $row['id_group'],
 				'name' => $row['group_name'],
-				'color' => $row['online_color']
+				'color' => $row['online_color'],
+				'hidden' => $row['hidden'],
+				'type' => $row['group_type'],
+				'parent' => $row['id_parent'],
 			);
 	}
 	$smcFunc['db_free_result']($request);

@@ -107,7 +107,7 @@ function AutoTask()
 				// Log that we did it ;)
 				if ($completed)
 				{
-					$total_time = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
+					$total_time = round(microtime(true) - $time_start, 3);
 					$smcFunc['db_insert']('',
 						'{db_prefix}log_scheduled_tasks',
 						array(
@@ -446,19 +446,6 @@ function scheduled_daily_maintenance()
 		require_once($sourcedir . '/ManageSearchEngines.php');
 		consolidateSpiderStats();
 	}
-
-	// Check the database version - for some buggy MySQL version.
-	$server_version = $smcFunc['db_server_info']();
-	if (($db_type == 'mysql') && in_array(substr($server_version, 0, 6), array('5.0.50', '5.0.51')))
-		updateSettings(array('db_mysql_group_by_fix' => '1'));
-	elseif (!empty($modSettings['db_mysql_group_by_fix']))
-		$smcFunc['db_query']('', '
-			DELETE FROM {db_prefix}settings
-			WHERE variable = {string:mysql_fix}',
-			array(
-				'mysql_fix' => 'db_mysql_group_by_fix',
-			)
-		);
 
 	// Clean up some old login history information.
 	$smcFunc['db_query']('', '
