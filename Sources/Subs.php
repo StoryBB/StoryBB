@@ -290,7 +290,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
  */
 function updateMemberData($members, $data)
 {
-	global $modSettings, $user_info, $smcFunc;
+	global $modSettings, $user_info, $smcFunc, $sourcedir;
 
 	$parameters = array();
 	if (is_array($members))
@@ -378,7 +378,24 @@ function updateMemberData($members, $data)
 			$type = 'inet';
 
 		// Doing an increment?
-		if ($type == 'int' && ($val === '+' || $val === '-'))
+		if ($var == 'alerts' && ($val === '+' || $val === '-'))
+		{
+			include_once($sourcedir . '/Profile-View.php');
+			if (is_array($members))
+			{
+				$val = 'CASE ';
+				foreach ($members as $k => $v)
+					$val .= 'WHEN id_member = ' . $v . ' THEN '. count(fetch_alerts($v, false, 0, array(), false)) . ' ';
+				$val = $val . ' END';
+				$type = 'raw';
+			}
+			else
+			{
+				$blub = fetch_alerts($members, false, 0, array(), false);
+				$val = count($blub);
+			}
+		}
+		else if ($type == 'int' && ($val === '+' || $val === '-'))
 		{
 			$val = $var . ' ' . $val . ' 1';
 			$type = 'raw';
