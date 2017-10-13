@@ -87,7 +87,7 @@ elseif (isset($_REQUEST['ssi_theme']) && (int) $_REQUEST['ssi_theme'] == (int) $
 	die('No direct access...');
 elseif (isset($_COOKIE['ssi_theme']) && (int) $_COOKIE['ssi_theme'] == (int) $ssi_theme)
 	die('No direct access...');
-elseif (isset($_REQUEST['ssi_layers'], $ssi_layers) && (@get_magic_quotes_gpc() ? stripslashes($_REQUEST['ssi_layers']) : $_REQUEST['ssi_layers']) == $ssi_layers)
+elseif (isset($_REQUEST['ssi_layers'], $ssi_layers) && ($_REQUEST['ssi_layers'] == $ssi_layers))
 	die('No direct access...');
 if (isset($_REQUEST['context']))
 	die('No direct access...');
