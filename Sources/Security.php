@@ -125,8 +125,7 @@ function is_not_guest($message = '')
 	}
 	else
 	{
-		loadTemplate('Login');
-		$context['sub_template'] = 'kick_guest';
+		$context['sub_template'] = 'login_kick_guest';
 		$context['robot_no_index'] = true;
 	}
 
