@@ -222,6 +222,23 @@ function ModifyDatabaseSettings($return_config = false)
 		array('autoFixDatabase', $txt['autoFixDatabase'], 'db', 'check', false, 'autoFixDatabase')
 	);
 
+	// Add PG Stuff
+	if ($smcFunc['db_title'] == "PostgreSQL")
+	{
+		$request = $smcFunc['db_query']('', 'SELECT cfgname FROM pg_ts_config', array());
+		$fts_language = array();
+
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$fts_language[$row['cfgname']] = $row['cfgname'];
+
+		$config_vars = array_merge ($config_vars, array(
+				'',
+				array('search_language', $txt['search_language'], 'db', 'select', $fts_language, 'pgFulltextSearch')
+			)
+		);
+	}
+
+
 	call_integration_hook('integrate_database_settings', array(&$config_vars));
 
 	if ($return_config)

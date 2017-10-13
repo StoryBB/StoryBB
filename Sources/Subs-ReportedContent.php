@@ -646,6 +646,7 @@ function editModComment($comment_id, $edited_comment)
 			'id_comment' => $comment_id,
 		)
 	);
+	return true;
 }
 
 /**
