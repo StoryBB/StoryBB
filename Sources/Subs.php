@@ -999,7 +999,7 @@ function forum_time($use_user_offset = true, $timestamp = null)
  */
 function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
 {
-	global $txt, $scripturl, $context, $modSettings, $user_info, $sourcedir;
+	global $smcFunc, $txt, $scripturl, $context, $modSettings, $user_info, $sourcedir;
 	static $bbc_codes = array(), $itemcodes = array(), $no_autolink_tags = array();
 	static $disabled;
 
@@ -1731,7 +1731,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	while ($pos !== false)
 	{
 		$last_pos = isset($last_pos) ? max($pos, $last_pos) : $pos;
-		preg_match('~\[/?(?=' . $alltags_regex . ')~', $message, $matches, PREG_OFFSET_CAPTURE, $pos + 1);
+		preg_match('~\[/?(?=' . $alltags_regex . ')~i', $message, $matches, PREG_OFFSET_CAPTURE, $pos + 1);
 		$pos = isset($matches[0][1]) ? $matches[0][1] : false;
 
 		// Failsafe.
@@ -1750,13 +1750,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			// Take care of some HTML!
 			if (!empty($modSettings['enablePostHTML']) && strpos($data, '&lt;') !== false)
 			{
-				$data = preg_replace('~&lt;a\s+href=((?:&quot;)?)((?:https?://|ftps?://|mailto:)\S+?)\\1&gt;~i', '[url=&quot;$2&quot;]', $data);
-				$data = preg_replace('~&lt;/a&gt;~i', '[/url]', $data);
+				$data = preg_replace('~&lt;a\s+href=((?:&quot;)?)((?:https?://|ftps?://|mailto:|tel:)\S+?)\\1&gt;(.*?)&lt;/a&gt;~i', '[url=&quot;$2&quot;]$3[/url]', $data);
 
 				// <br> should be empty.
 				$empty_tags = array('br', 'hr');
 				foreach ($empty_tags as $tag)
-					$data = str_replace(array('&lt;' . $tag . '&gt;', '&lt;' . $tag . '/&gt;', '&lt;' . $tag . ' /&gt;'), '[' . $tag . ' /]', $data);
+					$data = str_replace(array('&lt;' . $tag . '&gt;', '&lt;' . $tag . '/&gt;', '&lt;' . $tag . ' /&gt;'), '<' . $tag . '>', $data);
 
 				// b, u, i, s, pre... basic tags.
 				$closable_tags = array('b', 'u', 'i', 's', 'em', 'ins', 'del', 'pre', 'blockquote', 'strong');
@@ -1950,8 +1949,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						}, $data);
 					}
 
-					// Next, emails...
-					if (!isset($disabled['email']) && strpos($data, '@') !== false && strpos($data, '[email') === false)
+					// Next, emails...  Must be careful not to step on enablePostHTML logic above...
+					if (!isset($disabled['email']) && strpos($data, '@') !== false && strpos($data, '[email') === false && stripos($data, 'mailto:') === false)
 					{
 						$email_regex = '
 						# Preceded by a non-domain character or start of line
@@ -2083,7 +2082,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				// See the comment at the end of the big loop - just eating whitespace ;).
 				$whitespace_regex = '';
 				if (!empty($tag['block_level']))
-					$whitespace_regex .= '(&nbsp;|\s)*<br>';
+					$whitespace_regex .= '(&nbsp;|\s)*(<br>)?';
 				// Trim one line of whitespace after unnested tags, but all of it after nested ones
 				if (!empty($tag['trim']) && $tag['trim'] != 'inside')
 					$whitespace_regex .= empty($tag['require_parents']) ? '(&nbsp;|\s)*' : '(<br>|&nbsp;|\s)*';
@@ -2363,7 +2362,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				// Trim or eat trailing stuff... see comment at the end of the big loop.
 				$whitespace_regex = '';
 				if (!empty($tag['block_level']))
-					$whitespace_regex .= '(&nbsp;|\s)*<br>';
+					$whitespace_regex .= '(&nbsp;|\s)*(<br>)?';
 				if (!empty($tag['trim']) && $tag['trim'] != 'inside')
 					$whitespace_regex .= empty($tag['require_parents']) ? '(&nbsp;|\s)*' : '(<br>|&nbsp;|\s)*';
 				if (!empty($whitespace_regex) && preg_match('~' . $whitespace_regex . '~', substr($message, $pos), $matches) != 0)
@@ -2372,6 +2371,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				array_pop($open_tags);
 			}
 		}
+
+		// Can't read past the end of the message
+		$pos1 = min(strlen($message), $pos1);
 
 		// No type means 'parsed_content'.
 		if (!isset($tag['type']))
