@@ -123,6 +123,7 @@ $txt['apc_cache'] = 'APC';
 $txt['apcu_cache'] = 'APCu';
 $txt['memcache_cache'] = 'Memcache';
 $txt['memcached_cache'] = 'Memcached';
+$txt['postgres_cache'] = 'PostgreSQL';
 $txt['xcache_cache'] = 'XCache';
 $txt['zend_cache'] = 'Zend Platform/Performance Suite';
 $txt['cache_smf_settings'] = 'StoryBB file based caching settings';
