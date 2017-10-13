@@ -163,6 +163,9 @@ class fulltext_search extends search_api
 		$query_where = array();
 		$query_params = $search_data['params'];
 
+		if( $smcFunc['db_title'] == "PostgreSQL")
+			$modSettings['search_simple_fulltext'] = true;
+
 		if ($query_params['id_search'])
 			$query_select['id_search'] = '{int:id_search}';
 
@@ -206,7 +209,7 @@ class fulltext_search extends search_api
 			if($smcFunc['db_title'] == "PostgreSQL")
 			{
 				$language_ftx = $smcFunc['db_search_language']();
-				
+
 				$query_where[] = 'to_tsvector({string:language_ftx},body) @@ to_tsquery({string:language_ftx},{string:body_match})';
 				$query_params['language_ftx'] = $language_ftx;
 			}
@@ -240,7 +243,7 @@ class fulltext_search extends search_api
 				if($smcFunc['db_title'] == "PostgreSQL")
 				{
 					$language_ftx = $smcFunc['db_search_language']();
-					
+
 					$query_where[] = 'to_tsvector({string:language_ftx},body) @@ to_tsquery({string:language_ftx},{string:boolean_match})';
 					$query_params['language_ftx'] = $language_ftx;
 				}
