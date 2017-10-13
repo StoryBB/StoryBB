@@ -90,6 +90,7 @@ $txt['force_ssl'] = 'Forum SSL mode';
 $txt['force_ssl_off'] = 'Disable SSL';
 $txt['force_ssl_auth'] = 'Enable SSL for Authentication (Login and Register)';
 $txt['force_ssl_complete'] = 'Force SSL throughout the forum';
+$txt['search_language'] = 'Fulltext Search Language';
 
 // Like settings.
 $txt['enable_likes'] = 'Enable likes';
@@ -123,6 +124,7 @@ $txt['apc_cache'] = 'APC';
 $txt['apcu_cache'] = 'APCu';
 $txt['memcache_cache'] = 'Memcache';
 $txt['memcached_cache'] = 'Memcached';
+$txt['postgres_cache'] = 'PostgreSQL';
 $txt['xcache_cache'] = 'XCache';
 $txt['zend_cache'] = 'Zend Platform/Performance Suite';
 $txt['cache_smf_settings'] = 'StoryBB file based caching settings';
@@ -166,7 +168,7 @@ $txt['setting_image_verification_sample'] = 'Sample';
 
 // reCAPTCHA
 $txt['recaptcha_configure'] = 'reCAPTCHA Verification System';
-$txt['recaptcha_configure_desc'] = 'Configurre the reCAPTCHA Verification System. Don\'t have a key for reCAPTCHA? <a href="https://www.google.com/recaptcha/admin"> Get your reCAPTCHA key here</a>.';
+$txt['recaptcha_configure_desc'] = 'Configure the reCAPTCHA Verification System. Don\'t have a key for reCAPTCHA? <a href="https://www.google.com/recaptcha/admin"> Get your reCAPTCHA key here</a>.';
 $txt['recaptcha_enabled'] = 'Use reCAPTCHA Verification System';
 $txt['recaptcha_enable_desc'] = 'This augments the built-in visual verification';
 $txt['recaptcha_theme'] = 'reCAPTCHA Theme';

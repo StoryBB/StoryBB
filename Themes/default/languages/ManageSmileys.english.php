@@ -11,7 +11,7 @@ $txt['setting_smiley_sets_default'] = 'Default Smiley Set';
 $txt['setting_smiley_sets_enable'] = 'Enable smiley set selection by members';
 $txt['setting_smileys_url'] = 'Base URL to all smiley sets';
 $txt['setting_smileys_dir'] = 'Absolute path to all smiley sets';
-$txt['setting_smileys_dir_wrong'] = 'The path to all smiley sets is wrong. This will prevent smileys from working';
+$txt['setting_smileys_dir_wrong'] = 'The path to all smiley sets is wrong. This will prevent smileys from working.';
 $txt['setting_messageIcons_enable'] = 'Enable customized message icons';
 $txt['setting_messageIcons_enable_note'] = '(otherwise, the default message icons will be used.)';
 
@@ -25,8 +25,7 @@ $txt['smileys_add_upload'] = 'Upload new smiley';
 $txt['smileys_add_upload_choose'] = 'File to upload';
 $txt['smileys_add_upload_choose_desc'] = 'Image to be used by all smiley sets.';
 $txt['smileys_add_upload_all'] = 'Same image for all sets';
-$txt['smileys_add_upload_for1'] = 'Image for the';
-$txt['smileys_add_upload_for2'] = 'set';
+$txt['smileys_add_upload_for'] = 'Image for the %1$s set';
 
 $txt['smileys_code'] = 'Code';
 $txt['smileys_filename'] = 'Filename';

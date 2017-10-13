@@ -1169,7 +1169,7 @@ function pauseSignatureApplySettings()
 		@apache_reset_timeout();
 
 	// Have we exhausted all the time we allowed?
-	if (time() - array_sum(explode(' ', $sig_start)) < 3)
+	if (time() - $sig_start < 3)
 		return;
 
 	$context['continue_get_data'] = '?action=admin;area=featuresettings;sa=sig;apply;step=' . $_GET['step'] . ';' . $context['session_var'] . '=' . $context['session_id'];

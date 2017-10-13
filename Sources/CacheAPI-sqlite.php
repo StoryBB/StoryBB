@@ -22,7 +22,7 @@ class sqlite_cache extends cache_api
 	 */
 	private $cachedir = null;
 	private $cacheDB = null;
-	private $cacheTime = null;
+	private $cacheTime = 0;
 
 	public function __construct()
 	{

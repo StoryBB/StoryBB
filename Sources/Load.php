@@ -458,7 +458,12 @@ function loadUserSettings()
 		if (!$id_member)
 		{
 			require_once($sourcedir . '/LogInOut.php');
-			validatePasswordFlood(!empty($user_settings['id_member']) ? $user_settings['id_member'] : $id_member, !empty($user_settings['passwd_flood']) ? $user_settings['passwd_flood'] : false, $id_member != 0);
+			validatePasswordFlood(
+				!empty($user_settings['id_member']) ? $user_settings['id_member'] : $id_member,
+				!empty($user_settings['member_name']) ? $user_settings['member_name'] : '',
+				!empty($user_settings['passwd_flood']) ? $user_settings['passwd_flood'] : false,
+				$id_member != 0
+			);
 		}
 		// Validate for Two Factor Authentication
 		elseif (!empty($modSettings['tfa_mode']) && $id_member && !empty($user_settings['tfa_secret']) && (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], array('login2', 'logintfa'))))
@@ -479,7 +484,7 @@ function loadUserSettings()
 
 					list ($tfamember, $tfasecret) = $tfa_data;
 
-					if ((int) $tfamember != $id_member)
+					if (!isset($tfamember, $tfasecret) || (int) $tfamember != $id_member)
 						$tfasecret = null;
 				}
 
@@ -636,7 +641,7 @@ function loadUserSettings()
 
 			list ($id, $user, $exp, $state, $preserve) = $tfa_data;
 
-			if (!$preserve || time() > $exp)
+			if (!isset($id, $user, $exp, $state, $preserve) || !$preserve || time() > $exp)
 			{
 				$_COOKIE[$cookiename . '_tfa'] = '';
 				setTFACookie(-3600, 0, '');
@@ -840,7 +845,7 @@ function loadBoard()
 
 	if (empty($temp))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db_query']('load_board_info', '
 			SELECT
 				c.id_cat, b.name AS bname, b.description, b.num_topics, b.member_groups, b.deny_member_groups,
 				b.id_parent, c.name AS cname, COALESCE(mg.id_group, 0) AS id_moderator_group, mg.group_name,
@@ -1319,11 +1324,14 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// If the image proxy is enabled, we still want the original URL when they're editing the profile...
-			$row['avatar_original'] = $row['avatar'];
+			$row['avatar_original'] = !empty($row['avatar']) ? $row['avatar'] : '';
 
 			// Take care of proxying avatar if required, do this here for maximum reach
 			if ($image_proxy_enabled && !empty($row['avatar']) && stripos($row['avatar'], 'http://') !== false)
 				$row['avatar'] = $boardurl . '/proxy.php?request=' . urlencode($row['avatar']) . '&hash=' . md5($row['avatar'] . $image_proxy_secret);
+
+			// Keep track of the member's normal member group
+			$row['primary_group'] = $row['member_group'];
 
 			if (isset($row['member_ip']))
 				$row['member_ip'] = inet_dtop($row['member_ip']);
@@ -1569,7 +1577,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 				'title' => $profile['website_title'],
 				'url' => $profile['website_url'],
 			),
-			'birth_date' => empty($profile['birthdate']) || $profile['birthdate'] === '0001-01-01' ? '0000-00-00' : (substr($profile['birthdate'], 0, 4) === '0004' ? '0000' . substr($profile['birthdate'], 4) : $profile['birthdate']),
+			'birth_date' => empty($profile['birthdate']) ? '1004-01-01' : (substr($profile['birthdate'], 0, 4) === '0004' ? '1004' . substr($profile['birthdate'], 4) : $profile['birthdate']),
 			'signature' => $profile['signature'],
 			'real_posts' => $profile['posts'],
 			'posts' => comma_format($profile['posts']),
@@ -1590,6 +1598,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'is_banned' => isset($profile['is_activated']) ? $profile['is_activated'] >= 10 : 0,
 			'options' => $profile['options'],
 			'is_guest' => false,
+			'primary_group' => $profile['primary_group'],
 			'group' => $profile['member_group'],
 			'group_color' => $profile['member_group_color'],
 			'group_id' => $profile['id_group'],
@@ -2014,7 +2023,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			'is_mod' => &$user_info['is_mod'],
 			// A user can mod if they have permission to see the mod center, or they are a board/group/approval moderator.
 			'can_mod' => allowedTo('access_mod_center') || (!$user_info['is_guest'] && ($user_info['mod_cache']['gq'] != '0=1' || $user_info['mod_cache']['bq'] != '0=1' || ($modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap'])))),
-			'username' => $user_info['username'],
+			'name' => $user_info['username'],
 			'language' => $user_info['language'],
 			'email' => $user_info['email'],
 			'ignoreusers' => $user_info['ignoreusers'],
@@ -2030,6 +2039,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 	else
 	{
+		// What to do when there is no $user_info (e.g., an error very early in the login process)
 		$context['user'] = array(
 			'id' => -1,
 			'is_logged' => false,
@@ -2040,6 +2050,23 @@ function loadTheme($id_theme = 0, $initialize = true)
 			'language' => $language,
 			'email' => '',
 			'ignoreusers' => array(),
+		);
+		// Note we should stuff $user_info with some guest values also...
+		$user_info = array(
+			'id' => 0,
+			'is_guest' => true,
+			'is_admin' => false,
+			'is_mod' => false,
+			'username' => $txt['guest_title'],
+			'language' => $language,
+			'email' => '',
+			'smiley_set' => '',
+			'permissions' => array(),
+			'groups' => array(),
+			'ignoreusers' => array(),
+			'possibly_robot' => true,
+			'time_offset' => 0,
+			'time_format' => $modSettings['time_format'],
 		);
 	}
 
@@ -2074,6 +2101,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 	detectBrowser();
 
 	// Set the top level linktree up.
+	// Note that if we're dealing with certain very early errors (e.g., login) the linktree might not be set yet...
+	if (empty($context['linktree']))
+		$context['linktree'] = array();
 	array_unshift($context['linktree'], array(
 		'url' => $scripturl,
 		'name' => $context['forum_name_html_safe']
@@ -2741,7 +2771,7 @@ function addInlineCss($css)
 /**
  * Add a Javascript file for output later
  *
- * @param string $filename The name of the file to load
+ * @param string $fileName The name of the file to load
  * @param array $params An array of parameter info
  * Keys are the following:
  * 	- ['external'] (true/false): define if the file is a externally located file. Needs to be set to true if you are loading an external file
@@ -3369,8 +3399,8 @@ function loadDatabase()
  * Try to load up a supported caching method. This is saved in $cacheAPI if we are not overriding it.
  *
  * @param string $overrideCache Try to use a different cache method other than that defined in $cache_accelerator.
- * @param string $fallbackSMF Use the default SMF method if the accelerator fails.
- * @return object A object of $cacheAPI.
+ * @param bool $fallbackSMF Use the default SMF method if the accelerator fails.
+ * @return object|false A object of $cacheAPI, or False on failure.
 */
 function loadCacheAccelerator($overrideCache = null, $fallbackSMF = true)
 {
@@ -3494,7 +3524,7 @@ function cache_put_data($key, $value, $ttl = 120)
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
 		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'put', 's' => $value === null ? 0 : strlen(json_encode($value)));
-		$st = microtime();
+		$st = microtime(true);
 	}
 
 	// The API will handle the rest.
@@ -3505,7 +3535,7 @@ function cache_put_data($key, $value, $ttl = 120)
 		call_integration_hook('cache_put_data', array(&$key, &$value, &$ttl));
 
 	if (isset($db_show_debug) && $db_show_debug === true)
-		$cache_hits[$cache_count]['t'] = array_sum(explode(' ', microtime())) - array_sum(explode(' ', $st));
+		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
 }
 
 /**
@@ -3529,7 +3559,7 @@ function cache_get_data($key, $ttl = 120)
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
 		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'get');
-		$st = microtime();
+		$st = microtime(true);
 		$original_key = $key;
 	}
 
@@ -3538,7 +3568,7 @@ function cache_get_data($key, $ttl = 120)
 
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
-		$cache_hits[$cache_count]['t'] = array_sum(explode(' ', microtime())) - array_sum(explode(' ', $st));
+		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
 		$cache_hits[$cache_count]['s'] = isset($value) ? strlen($value) : 0;
 
 		if (empty($value))

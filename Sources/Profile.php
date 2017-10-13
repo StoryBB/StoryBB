@@ -739,11 +739,6 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 			// Whatever we've done, we have nothing else to do here...
 			redirectexit('action=profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=groupmembership' . (!empty($msg) ? ';msg=' . $msg : ''));
 		}
-		// Authentication changes?
-		elseif ($current_area == 'authentication')
-		{
-			authentication($memID, true);
-		}
 		elseif (in_array($current_area, array('account', 'forumprofile', 'theme')))
 			saveProfileFields();
 		else

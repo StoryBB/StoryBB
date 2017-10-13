@@ -72,20 +72,10 @@ function smf_db_search_query($identifier, $db_string, $db_values = array(), $con
 
 	$replacements = array(
 		'create_tmp_log_search_topics' => array(
-			'~mediumint\(\d\)~i' => 'int',
-			'~unsigned~i' => '',
 			'~ENGINE=MEMORY~i' => '',
 		),
 		'create_tmp_log_search_messages' => array(
-			'~mediumint\(\d\)~i' => 'int',
-			'~unsigned~i' => '',
 			'~ENGINE=MEMORY~i' => '',
-		),
-		'drop_tmp_log_search_topics' => array(
-			'~IF\sEXISTS~i' => '',
-		),
-		'drop_tmp_log_search_messages' => array(
-			'~IF\sEXISTS~i' => '',
 		),
 		'insert_into_log_messages_fulltext' => array(
 			'~LIKE~i' => 'iLIKE',
@@ -116,7 +106,7 @@ function smf_db_search_query($identifier, $db_string, $db_values = array(), $con
 			$db_values['db_error_skip'] = true;
 		}
 	}
-	
+
 	//fix double quotes
 	if ($identifier == 'insert_into_log_messages_fulltext')
 		$db_values = str_replace('"', "'", $db_values);
@@ -158,22 +148,24 @@ function smf_db_create_word_search($size)
 function smf_db_search_language()
 {
 	global $smcFunc, $modSettings;
-	
+
 	$language_ftx = 'english';
-	
+
 	if (!empty($modSettings['search_language']))
 		$language_ftx = $modSettings['search_language'];
 	else
 	{
 		$request = $smcFunc['db_query']('','
-			SHOW default_text_search_config',
-			array()
+			SELECT cfgname FROM pg_ts_config WHERE oid = current_setting({string:default_language})::regconfig',
+			array(
+			'default_language' => 'default_text_search_config'
+			)
 		);
 
 		if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
 		{
 			$row = $smcFunc['db_fetch_assoc']($request);
-			$language_ftx = $row['default_text_search_config'];
+			$language_ftx = $row['cfgname'];
 
 			$smcFunc['db_insert']('replace',
 				'{db_prefix}settings',
@@ -184,7 +176,7 @@ function smf_db_search_language()
 		}
 	}
 
-	return $language_ftx;	
+	return $language_ftx;
 }
 
 ?>

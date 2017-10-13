@@ -44,16 +44,16 @@ $databases = array(
 	),
 	'postgresql' => array(
 		'name' => 'PostgreSQL',
-		'version' => '9.1',
+		'version' => '9.2',
 		'function_check' => 'pg_connect',
 		'version_check' => '$request = pg_query(\'SELECT version()\'); list ($version) = pg_fetch_row($request); list($pgl, $version) = explode(" ", $version); return $version;',
 		'supported' => function_exists('pg_connect'),
 		'always_has_db' => true,
 		'utf8_support' => function() {
 			$request = pg_query('SHOW SERVER_ENCODING');
-			
+
 			list ($charcode) = pg_fetch_row($request);
-			
+
 			if ($charcode == 'UTF8')
 				return true;
 			else
@@ -177,9 +177,9 @@ function initialize_inputs()
 
 	// Add slashes, because they're not being added additionally by the fun that is Magic Quotes.
 	// @todo not suuuuure this is a good idea.
-	foreach ($_POST as $k => $v)
-		if (strpos($k, 'password') === false && strpos($k, 'db_passwd') === false)
-			$_POST[$k] = addslashes($v);
+		foreach ($_POST as $k => $v)
+			if (strpos($k, 'password') === false && strpos($k, 'db_passwd') === false)
+				$_POST[$k] = addslashes($v);
 
 	// This is really quite simple; if ?delete is on the URL, delete the installer...
 	if (isset($_GET['delete']))
@@ -314,8 +314,8 @@ function load_lang_file()
 // This handy function loads some settings and the like.
 function load_database()
 {
-	global $db_prefix, $db_connection, $sourcedir;
-	global $smcFunc, $modSettings, $db_type, $db_name, $db_user, $db_persist;
+	global $db_prefix, $db_connection, $sourcedir, $smcFunc, $modSettings;
+	global $db_server, $db_passwd, $db_type, $db_name, $db_user, $db_persist;
 
 	if (empty($sourcedir))
 		$sourcedir = dirname(__FILE__) . '/Sources';
@@ -442,7 +442,7 @@ function Welcome()
 	}
 
 	// Check the PHP version.
-	if ((!function_exists('version_compare') || version_compare($GLOBALS['required_php_version'], PHP_VERSION, '>')))
+	if ((!function_exists('version_compare') || version_compare($GLOBALS['required_php_version'], PHP_VERSION, '>=')))
 		$error = 'error_php_too_low';
 	// Make sure we have a supported database
 	elseif (empty($incontext['supported_databases']))
@@ -465,6 +465,11 @@ function Welcome()
 	// Mod_security blocks everything that smells funny. Let StoryBB handle security.
 	if (!fixModSecurity() && !isset($_GET['overmodsecurity']))
 		$incontext['error'] = $txt['error_mod_security'] . '<br><br><a href="' . $installurl . '?overmodsecurity=true">' . $txt['error_message_click'] . '</a> ' . $txt['error_message_bad_try_again'];
+
+	// Check for https stream support.
+	$supported_streams = stream_get_wrappers();
+	if (!in_array('https', $supported_streams))
+		$incontext['warning'] = $txt['install_no_https'];
 
 	return false;
 }
@@ -504,6 +509,10 @@ function CheckFilesWritable()
 
 		foreach ($writable_files as $file)
 		{
+			// Some files won't exist, try to address up front
+			if (!file_exists(dirname(__FILE__) . '/' . $file))
+				@touch(dirname(__FILE__) . '/' . $file);
+			// NOW do the writable check...
 			if (!is_writable(dirname(__FILE__) . '/' . $file))
 			{
 				@chmod(dirname(__FILE__) . '/' . $file, 0755);
@@ -669,6 +678,7 @@ function CheckFilesWritable()
 function DatabaseSettings()
 {
 	global $txt, $databases, $incontext, $smcFunc, $sourcedir;
+	global $db_server, $db_name, $db_user, $db_passwd;
 
 	$incontext['sub_template'] = 'database_settings';
 	$incontext['page_title'] = $txt['db_settings'];
@@ -904,6 +914,23 @@ function ForumSettings()
 
 	$incontext['continue'] = 1;
 
+	// Setup the SSL checkbox...
+	$incontext['ssl_chkbx_protected'] = false;
+	$incontext['ssl_chkbx_checked'] = false;
+
+	// If redirect in effect, force ssl ON
+	require_once(dirname(__FILE__) . '/Sources/Subs.php');
+	if (https_redirect_active($incontext['detected_url'])) {
+		$incontext['ssl_chkbx_protected'] = true;
+		$incontext['ssl_chkbx_checked'] = true;
+		$_POST['force_ssl'] = true;
+	}
+	// If no cert, make sure ssl stays OFF
+	if (!ssl_cert_found($incontext['detected_url'])) {
+		$incontext['ssl_chkbx_protected'] = true;
+		$incontext['ssl_chkbx_checked'] = false;
+	}
+
 	// Submitting?
 	if (isset($_POST['boardurl']))
 	{
@@ -914,12 +941,19 @@ function ForumSettings()
 		if (substr($_POST['boardurl'], 0, 7) != 'http://' && substr($_POST['boardurl'], 0, 7) != 'file://' && substr($_POST['boardurl'], 0, 8) != 'https://')
 			$_POST['boardurl'] = 'http://' . $_POST['boardurl'];
 
+		//Make sure boardurl is aligned with ssl setting
+		if (empty($_POST['force_ssl']))
+			$_POST['boardurl'] = strtr($_POST['boardurl'], array('https://' => 'http://'));
+		else
+			$_POST['boardurl'] = strtr($_POST['boardurl'], array('http://' => 'https://'));		
+
 		// Save these variables.
 		$vars = array(
 			'boardurl' => $_POST['boardurl'],
 			'boarddir' => addslashes(dirname(__FILE__)),
 			'sourcedir' => addslashes(dirname(__FILE__)) . '/Sources',
 			'cachedir' => addslashes(dirname(__FILE__)) . '/cache',
+			'tasksdir' => addslashes(dirname(__FILE__)) . '/Sources/tasks',
 			'mbname' => strtr($_POST['mbname'], array('\"' => '"')),
 			'language' => substr($_SESSION['installer_temp_lang'], 8, -4),
 			'image_proxy_secret' => substr(sha1(mt_rand()), 0, 20),
@@ -937,11 +971,11 @@ function ForumSettings()
 		require(dirname(__FILE__) . '/Settings.php');
 
 		// UTF-8 requires a setting to override the language charset.
-		if (!$databases[$db_type]['utf8_support']())
-		{
-			$incontext['error'] = sprintf($txt['error_utf8_support']);
-			return false;
-		}
+			if (!$databases[$db_type]['utf8_support']())
+			{
+				$incontext['error'] = sprintf($txt['error_utf8_support']);
+				return false;
+			}
 
 		// Good, skip on.
 		return true;
@@ -993,13 +1027,13 @@ function DatabasePopulation()
 	$modSettings['disableQueryCheck'] = true;
 
 	// We're doing UTF8, select it. PostgreSQL requires passing it as a string...
-	$smcFunc['db_query']('', '
-		SET NAMES {string:utf8}',
-		array(
-			'db_error_skip' => true,
-			'utf8' => 'utf8',
-		)
-	);
+		$smcFunc['db_query']('', '
+			SET NAMES {string:utf8}',
+			array(
+				'db_error_skip' => true,
+				'utf8' => 'utf8',
+			)
+		);
 
 	// Windows likes to leave the trailing slash, which yields to C:\path\to\SMF\/attachments...
 	if (substr(__DIR__, -1) == '\\')
@@ -1051,8 +1085,8 @@ function DatabasePopulation()
 		$replaces['{$memory}'] = (!$has_innodb && in_array('MEMORY', $engines)) ? 'MEMORY' : $replaces['{$engine}'];
 
 		// We're using UTF-8 setting, so add it to the table definitions.
-		$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
-		$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
 
 		// One last thing - if we don't have InnoDB, we can't do transactions...
 		if (!$has_innodb)
@@ -1258,7 +1292,7 @@ function DatabasePopulation()
 // Ask for the administrator login information.
 function AdminAccount()
 {
-	global $txt, $db_type, $db_connection, $smcFunc, $incontext, $db_prefix, $db_passwd, $boarddir, $sourcedir;
+	global $txt, $db_type, $smcFunc, $incontext, $db_prefix, $db_passwd, $sourcedir, $boardurl, $cachedir;
 
 	$incontext['sub_template'] = 'admin_account';
 	$incontext['page_title'] = $txt['user_settings'];
@@ -1281,7 +1315,7 @@ function AdminAccount()
 
 	// We need this to properly hash the password for Admin
 	$smcFunc['strtolower'] = function($string) {
-			return mb_strtolower($string, 'UTF-8');
+				return mb_strtolower($string, 'UTF-8');
 		};
 
 	if (!isset($_POST['username']))
@@ -1492,13 +1526,13 @@ function DeleteInstall()
 	if (!empty($incontext['account_existed']))
 		$incontext['warning'] = $incontext['account_existed'];
 
-	$smcFunc['db_query']('', '
-		SET NAMES {string:db_character_set}',
-		array(
+		$smcFunc['db_query']('', '
+			SET NAMES {string:db_character_set}',
+			array(
 			'db_character_set' => 'UTF-8',
-			'db_error_skip' => true,
-		)
-	);
+				'db_error_skip' => true,
+			)
+		);
 
 	// As track stats is by default enabled let's add some activity.
 	$smcFunc['db_insert']('ignore',
@@ -1565,7 +1599,7 @@ function DeleteInstall()
 
 	// This function is needed to do the updateStats('subject') call.
 	$smcFunc['strtolower'] = function($string){
-			return mb_strtolower($string, 'UTF-8');
+				return mb_strtolower($string, 'UTF-8');
 		};
 
 	$request = $smcFunc['db_query']('', '
@@ -1595,11 +1629,6 @@ function DeleteInstall()
 		$user_info['id'] = isset($incontext['member_id']) ? $incontext['member_id'] : 0;
 		logAction('install', array('version' => $forum_version), 'admin');
 	}
-
-	// Check if we need some stupid MySQL fix.
-	$server_version = $smcFunc['db_server_info']();
-	if (($db_type == 'mysql' || $db_type == 'mysqli') && in_array(substr($server_version, 0, 6), array('5.0.50', '5.0.51')))
-		updateSettings(array('db_mysql_group_by_fix' => '1'));
 
 	// Some final context for the template.
 	$incontext['dir_still_writable'] = is_writable(dirname(__FILE__)) && substr(__FILE__, 1, 2) != ':\\';
@@ -2184,7 +2213,8 @@ function template_forum_settings()
 			<tr>
 				<td class="textbox" style="vertical-align: top;">', $txt['force_ssl'], ':</td>
 				<td>
-					<input type="checkbox" name="force_ssl" id="force_ssl" class="input_check" />&nbsp;
+					<input type="checkbox" name="force_ssl" id="force_ssl"', $incontext['ssl_chkbx_checked'] ? ' checked' : '',
+					$incontext['ssl_chkbx_protected'] ? ' disabled' : '', ' />&nbsp;
 					<label for="force_ssl">', $txt['force_ssl_label'], '</label>
 					<br>
 					<div class="smalltext block">', $txt['force_ssl_info'], '</div>

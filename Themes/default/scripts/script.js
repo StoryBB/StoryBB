@@ -106,23 +106,23 @@ String.prototype.oCharsetConversion = {
 // Convert a string to an 8 bit representation (like in PHP).
 String.prototype.php_to8bit = function ()
 {
-	var n, sReturn = '';
+		var n, sReturn = '';
 
-	for (var i = 0, iTextLen = this.length; i < iTextLen; i++)
-	{
-		n = this.charCodeAt(i);
-		if (n < 128)
-			sReturn += String.fromCharCode(n);
-		else if (n < 2048)
-			sReturn += String.fromCharCode(192 | n >> 6) + String.fromCharCode(128 | n & 63);
-		else if (n < 65536)
-			sReturn += String.fromCharCode(224 | n >> 12) + String.fromCharCode(128 | n >> 6 & 63) + String.fromCharCode(128 | n & 63);
-		else
-			sReturn += String.fromCharCode(240 | n >> 18) + String.fromCharCode(128 | n >> 12 & 63) + String.fromCharCode(128 | n >> 6 & 63) + String.fromCharCode(128 | n & 63);
+		for (var i = 0, iTextLen = this.length; i < iTextLen; i++)
+		{
+			n = this.charCodeAt(i);
+			if (n < 128)
+				sReturn += String.fromCharCode(n);
+			else if (n < 2048)
+				sReturn += String.fromCharCode(192 | n >> 6) + String.fromCharCode(128 | n & 63);
+			else if (n < 65536)
+				sReturn += String.fromCharCode(224 | n >> 12) + String.fromCharCode(128 | n >> 6 & 63) + String.fromCharCode(128 | n & 63);
+			else
+				sReturn += String.fromCharCode(240 | n >> 18) + String.fromCharCode(128 | n >> 12 & 63) + String.fromCharCode(128 | n >> 6 & 63) + String.fromCharCode(128 | n & 63);
+		}
+
+		return sReturn;
 	}
-
-	return sReturn;
-}
 
 // Character-level replacement function.
 String.prototype.php_strtr = function (sFrom, sTo)
@@ -832,9 +832,17 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 			else
 			{
 				if (bCollapse)
+				{
+					if (this.opt.aHeader != null && this.opt.aHeader.hasClass('cat_bar'))
+						$(this.opt.aHeader).addClass('collapsed');
 					$(oContainer).slideUp();
+				}
 				else
+				{
+					if (this.opt.aHeader != null && this.opt.aHeader.hasClass('cat_bar'))
+						$(this.opt.aHeader).removeClass('collapsed');
 					$(oContainer).slideDown();
+				}
 			}
 		}
 	}
