@@ -590,6 +590,10 @@ function Display()
 			$pollinfo['has_voted'] |= $row['voted_this'] != -1;
 		}
 		$smcFunc['db_free_result']($request);
+		
+		// Got we multi choice?
+		if ($pollinfo['max_votes'] > 1)
+			$realtotal = $pollinfo['total'];
 
 		// If this is a guest we need to do our best to work out if they have voted, and what they voted for.
 		if ($user_info['is_guest'] && $pollinfo['guest_vote'] && allowedTo('poll_vote'))
@@ -964,7 +968,6 @@ function Display()
 		}
 
 		$msg_parameters = array(
-			'message_list' => $messages,
 			'message_list' => $messages,
 			'new_from' => $context['topicinfo']['new_from'],
 		);
