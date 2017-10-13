@@ -4226,9 +4226,7 @@ function setupMenuContext()
 		$context['menu_buttons']['admin']['sub_buttons']['errorlog']['title'] .= ' <span class="amt">' . $context['num_errors'] . '</span>';
 	}
 
-	/**
-	 * @todo For some reason, $context['open_member_reports'] isn't getting set
-	 */
+	// Show number of reported members
 	if (!empty($context['open_member_reports']) && allowedTo('moderate_forum'))
 	{
 		$total_mod_reports += $context['open_member_reports'];
@@ -4287,9 +4285,6 @@ function call_integration_hook($hook, $parameters = array())
 	$results = array();
 	if (empty($modSettings[$hook]))
 		return $results;
-
-	// Define some needed vars.
-	$function = false;
 
 	$functions = explode(',', $modSettings[$hook]);
 	// Loop through each function.
@@ -5069,7 +5064,7 @@ function fix_tz_abbrev($tzid, $tz_abbrev)
 
 /**
  * @param string $ip_address An IP address in IPv4, IPv6 or decimal notation
- * @return binary The IP address in binary or false
+ * @return string|false The IP address in binary or false
  */
 function inet_ptod($ip_address)
 {
@@ -5081,8 +5076,8 @@ function inet_ptod($ip_address)
 }
 
 /**
- * @param binary $bin An IP address in IPv4, IPv6 (Either string (postgresql) or binary (other databases))
- * @return string The IP address in presentation format or false on error
+ * @param string $bin An IP address in IPv4, IPv6 (Either string (postgresql) or binary (other databases))
+ * @return string|false The IP address in presentation format or false on error
  */
 function inet_dtop($bin)
 {
@@ -5453,6 +5448,10 @@ function smf_json_decode($json, $returnAsArray = false, $logIt = true)
 /**
  * Check the given String if he is a valid IPv4 or IPv6
  * return true or false
+ *
+ * @param string $IPString
+ *
+ * @return bool
  */
 function isValidIP($IPString)
 {
