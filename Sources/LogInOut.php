@@ -128,7 +128,7 @@ function Login2()
 			list ($tfamember, $tfasecret, $exp, $state, $preserve) = $tfadata;
 
 			// If we're preserving the cookie, reset it with updated salt
-			if ($preserve && time() < $exp)
+			if (isset($tfamember, $tfasecret, $exp, $state, $preserve) && $preserve && time() < $exp)
 				setTFACookie(3153600, $user_info['password_salt'], hash_salt($user_settings['tfa_backup'], $user_settings['password_salt']), true);
 			else
 				setTFACookie(-3600, 0, '');
@@ -282,7 +282,7 @@ function Login2()
 	if (!hash_verify_password($user_settings['member_name'], un_htmlspecialchars($_POST['passwrd']), $user_settings['passwd']))
 	{
 		// Let's be cautious, no hacking please. thanx.
-		validatePasswordFlood($user_settings['id_member'], $user_settings['passwd_flood']);
+		validatePasswordFlood($user_settings['id_member'], $user_settings['member_name'], $user_settings['passwd_flood']);
 
 		// Maybe we were too hasty... let's try some other authentication methods.
 		$other_passwords = array();
@@ -338,7 +338,7 @@ function Login2()
 
 			// Perhaps we converted to UTF-8 and have a valid password being hashed differently.
 			if (!empty($modSettings['previousCharacterSet']) && $modSettings['previousCharacterSet'] != 'utf8')
-				$other_passwords['iconv'] = sha1(strtolower(iconv('UTF-8', $modSettings['previousCharacterSet'], $user_settings['member_name'])) . un_htmlspecialchars(iconv('UTF-8', $modSettings['previousCharacterSet'], $_POST['passwrd'])));
+					$other_passwords['iconv'] = sha1(strtolower(iconv('UTF-8', $modSettings['previousCharacterSet'], $user_settings['member_name'])) . un_htmlspecialchars(iconv('UTF-8', $modSettings['previousCharacterSet'], $_POST['passwrd'])));
 		}
 
 		// SMF's sha1 function can give a funny result on Linux (Not our fault!). If we've now got the real one let the old one be valid!
@@ -383,7 +383,7 @@ function Login2()
 	elseif (!empty($user_settings['passwd_flood']))
 	{
 		// Let's be sure they weren't a little hacker.
-		validatePasswordFlood($user_settings['id_member'], $user_settings['passwd_flood'], true);
+		validatePasswordFlood($user_settings['id_member'], $user_settings['member_name'], $user_settings['passwd_flood'], true);
 
 		// If we got here then we can reset the flood counter.
 		updateMemberData($user_settings['id_member'], array('passwd_flood' => ''));
@@ -448,7 +448,7 @@ function LoginTFA()
 		}
 		else
 		{
-			validatePasswordFlood($member['id_member'], $member['passwd_flood'], false, true);
+			validatePasswordFlood($member['id_member'], $member['member_name'], $member['passwd_flood'], false, true);
 
 			$context['tfa_error'] = true;
 			$context['tfa_value'] = $_POST['tfa_code'];
@@ -475,7 +475,7 @@ function LoginTFA()
 		}
 		else
 		{
-			validatePasswordFlood($member['id_member'], $member['passwd_flood'], false, true);
+			validatePasswordFlood($member['id_member'], $member['member_name'], $member['passwd_flood'], false, true);
 
 			$context['tfa_backup_error'] = true;
 			$context['tfa_value'] = $_POST['tfa_code'];
@@ -688,7 +688,7 @@ function Logout($internal = false, $redirect = true)
 		list ($tfamember, $tfasecret, $exp, $state, $preserve) = $tfadata;
 
 		// If we're preserving the cookie, reset it with updated salt
-		if ($preserve && time() < $exp)
+		if (isset($tfamember, $tfasecret, $exp, $state, $preserve) && $preserve && time() < $exp)
 			setTFACookie(3153600, $user_info['id'], hash_salt($user_settings['tfa_backup'], $salt), true);
 		else
 			setTFACookie(-3600, 0, '');
@@ -789,11 +789,12 @@ function phpBB3_password_check($passwd, $passwd_hash)
  * Importantly, even if the password was right we DON'T TELL THEM!
  *
  * @param int $id_member The ID of the member
+ * @param string $member_name The name of the member.
  * @param bool|string $password_flood_value False if we don't have a flood value, otherwise a string with a timestamp and number of tries separated by a |
  * @param bool $was_correct Whether or not the password was correct
  * @param bool $tfa Whether we're validating for two-factor authentication
  */
-function validatePasswordFlood($id_member, $password_flood_value = false, $was_correct = false, $tfa = false)
+function validatePasswordFlood($id_member, $member_name, $password_flood_value = false, $was_correct = false, $tfa = false)
 {
 	global $cookiename, $sourcedir;
 

@@ -209,7 +209,7 @@ $(function()
  */
 function ModifyDatabaseSettings($return_config = false)
 {
-	global $scripturl, $context, $txt;
+	global $scripturl, $context, $txt, $smcFunc;
 
 	/* If you're writing a mod, it's a bad idea to add things here....
 		For each option:
@@ -847,7 +847,7 @@ function prepareDBSettingContext(&$config_vars)
  * - Requires the admin_forum permission.
  * - Contains arrays of the types of data to save into Settings.php.
  *
- * @param $config_vars An array of configuration variables
+ * @param array $config_vars An array of configuration variables
  */
 function saveSettings(&$config_vars)
 {
