@@ -110,7 +110,7 @@ function db_fix_prefix(&$db_prefix, $db_name)
 
 /**
  * Callback for preg_replace_callback on the query.
- * It allows to replace on the fly a few pre-defined strings, for convenience ('query_see_board', 'query_wanna_see_board'), with
+ * It allows to replace on the fly a few pre-defined strings, for convenience ('query_see_board', 'query_wanna_see_board', etc), with
  * their current values from $user_info.
  * In addition, it performs checks and sanitization on the values sent to the database.
  *
@@ -126,11 +126,8 @@ function smf_db_replacement__callback($matches)
 	if ($matches[1] === 'db_prefix')
 		return $db_prefix;
 
-	if ($matches[1] === 'query_see_board')
-		return $user_info['query_see_board'];
-
-	if ($matches[1] === 'query_wanna_see_board')
-		return $user_info['query_wanna_see_board'];
+	if (isset($user_info[$matches[1]]) && strpos($matches[1], 'query_') !== false)
+		return $user_info[$matches[1]];
 
 	if ($matches[1] === 'empty')
 		return '\'\'';
@@ -208,7 +205,7 @@ function smf_db_replacement__callback($matches)
 			else
 				smf_db_error_backtrace('Wrong value type sent to the database. Time expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
-		
+
 		case 'datetime':
 			if (preg_match('~^(\d{4})-([0-1]?\d)-([0-3]?\d) ([0-1]?\d|2[0-3]):([0-5]\d):([0-5]\d)$~', $replacement, $datetime_matches) === 1)
 				return 'to_timestamp('.
@@ -225,7 +222,7 @@ function smf_db_replacement__callback($matches)
 		break;
 
 		case 'identifier':
-			return '"' . strtr($replacement, array('`' => '', '.' => '')) . '"';
+			return '"' . strtr($replacement, array('`' => '', '.' => '"."')) . '"';
 		break;
 
 		case 'raw':
@@ -335,6 +332,13 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 		),
 		'profile_board_stats' => array(
 			'~COUNT\(\*\) \/ MAX\(b.num_posts\)~' => 'CAST(COUNT(*) AS DECIMAL) / CAST(b.num_posts AS DECIMAL)',
+		),
+	);
+
+	// Special optimizer Hints
+	$query_opt = array(
+		'load_board_info' => array(
+			'join_collapse_limit' => 1,
 		),
 	);
 
@@ -452,6 +456,26 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 			smf_db_error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR, __FILE__, __LINE__);
 	}
 
+	// Set optimize stuff
+	if (isset($query_opt[$identifier]))
+	{
+		$query_hints = $query_opt[$identifier];
+		$query_hints_set = '';
+		if (isset($query_hints['join_collapse_limit']))
+		{
+			$query_hints_set .= 'SET LOCAL join_collapse_limit = ' . $query_hints['join_collapse_limit'] . ';';
+		}
+		if (isset($query_hints['enable_seqscan']))
+		{
+			$query_hints_set .= 'SET LOCAL enable_seqscan = ' . $query_hints['enable_seqscan'] . ';';
+		}
+
+		$db_string = $query_hints_set . $db_string;
+		
+		if (isset($db_show_debug) && $db_show_debug === true && $db_cache[$db_count]['q'] != '...')
+			$db_cache[$db_count]['q'] = "\t\t" . $db_string;
+	}
+
 	$db_last_result = @pg_query($connection, $db_string);
 
 	if ($db_last_result === false && empty($db_values['db_error_skip']))
@@ -465,8 +489,12 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 }
 
 /**
- * affected_rows
- * @param resource $connection
+ * Returns the amount of affected rows for a query.
+ *
+ * @param mixed $result
+ *
+ * @return int
+ *
  */
 function smf_db_affected_rows($result = null)
 {
@@ -485,7 +513,7 @@ function smf_db_affected_rows($result = null)
  *
  * @param string $table The table (only used for Postgres)
  * @param string $field = null The specific field (not used here)
- * @param resource $connection = null The connection (if null, $db_connection is used)
+ * @param resource $connection = null The connection (if null, $db_connection is used) (not used here)
  * @return int The ID of the most recently inserted row
  */
 function smf_db_insert_id($table, $field = null, $connection = null)
@@ -581,7 +609,7 @@ function smf_db_error($db_string, $connection = null)
  * A PostgreSQL specific function for tracking the current row...
  *
  * @param resource $request A PostgreSQL result resource
- * @param int $counter The row number in the result to fetch (false to fetch the next one)
+ * @param bool|int $counter The row number in the result to fetch (false to fetch the next one)
  * @return array The contents of the row that was fetched
  */
 function smf_db_fetch_row($request, $counter = false)
@@ -603,7 +631,7 @@ function smf_db_fetch_row($request, $counter = false)
  * Get an associative array
  *
  * @param resource $request A PostgreSQL result resource
- * @param int $counter The row to get. If false, returns the next row.
+ * @param int|bool $counter The row to get. If false, returns the next row.
  * @return array An associative array of row contents
  */
 function smf_db_fetch_assoc($request, $counter = false)
@@ -656,13 +684,13 @@ function smf_db_unescape_string($string)
  * @param array $columns An array of the columns we're inserting the data into. Should contain 'column' => 'datatype' pairs
  * @param array $data The data to insert
  * @param array $keys The keys for the table
- * @param int returnmode 0 = nothing(default), 1 = last row id, 2 = all rows id as array; every mode runs only with method = ''
+ * @param int returnmode 0 = nothing(default), 1 = last row id, 2 = all rows id as array; every mode runs only with method != 'ignore'
  * @param resource $connection The connection to use (if null, $db_connection is used)
- * @return value of the first key, behavior based on returnmode
+ * @return mixed value of the first key, behavior based on returnmode. null if no data.
  */
 function smf_db_insert($method = 'replace', $table, $columns, $data, $keys, $returnmode = 0, $connection = null)
 {
-	global $db_in_transact, $smcFunc, $db_connection, $db_prefix;
+	global $smcFunc, $db_connection, $db_prefix;
 
 	$connection = $connection === null ? $db_connection : $connection;
 
@@ -678,7 +706,7 @@ function smf_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 	$table = str_replace('{db_prefix}', $db_prefix, $table);
 
 	// PostgreSQL doesn't support replace: we implement a MySQL-compatible behavior instead
-	if ($method == 'replace')
+	if ($method == 'replace' || $method == 'ignore')
 	{
 		$key_str = '';
 		$col_str = '';
@@ -715,16 +743,19 @@ function smf_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 					$key_str .= $columnName;
 					$count_pk++;
 				}
-				else //normal field
+				else if ($method == 'replace') //normal field
 				{
 					$col_str .= ($count > 0 ? ',' : '');
 					$col_str .= $columnName . ' = EXCLUDED.' . $columnName;
 					$count++;
 				}
 			}
-			$replace = ' ON CONFLICT (' . $key_str . ') DO UPDATE SET ' . $col_str;
+			if ($method == 'replace')
+				$replace = ' ON CONFLICT (' . $key_str . ') DO UPDATE SET ' . $col_str;
+			else
+				$replace = ' ON CONFLICT (' . $key_str . ') DO NOTHING';
 		}
-		else
+		else if ($method == 'replace')
 		{
 			foreach ($columns as $columnName => $type)
 			{
@@ -758,7 +789,7 @@ function smf_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 	$returning = '';
 	$with_returning = false;
 	// lets build the returning string, mysql allow only in normal mode
-	if(!empty($keys) && (count($keys) > 0) && $method == '' && $returnmode > 0)
+	if (!empty($keys) && (count($keys) > 0) && $returnmode > 0)
 	{
 		// we only take the first key
 		$returning = ' RETURNING '.$keys[0];
@@ -822,9 +853,9 @@ function smf_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 			}
 		}
 	}
-	
+
 	if ($with_returning && !empty($return_var))
-		return $return_var; 
+		return $return_var;
 }
 
 /**
