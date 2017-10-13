@@ -408,6 +408,8 @@ $txt['parent_topic_missing'] = 'The parent topic of the post you are trying to r
 $txt['restored_disabled'] = 'The restoration of topics has been disabled.';
 $txt['restore_not_found'] = 'The following messages could not be restored; the original topic may have been removed:<ul style="margin-top: 0px;">%1$s</ul>You will need to move these manually.';
 
+$txt['error_invalid_dir'] = 'The directory you entered is invalid.';
+
 // json errors.
 $txt['json_JSON_ERROR_DEPTH'] = 'Json decode error: The maximum stack depth has been exceeded';
 $txt['json_JSON_ERROR_STATE_MISMATCH'] = 'Json decode error: Invalid or malformed JSON';
