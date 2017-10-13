@@ -390,7 +390,7 @@ $txt['error_custom_field_empty'] = 'The &quot;%1$s&quot; field cannot be left bl
 $txt['email_no_template'] = 'The email template &quot;%1$s&quot; could not be found.';
 
 $txt['search_api_missing'] = 'The search API could not be found. Please contact the admin to check they have uploaded the correct files.';
-$txt['search_api_not_compatible'] = 'The selected search API the forum is using ia not compatible - falling back to standard search. Please check file %1$s.';
+$txt['search_api_not_compatible'] = 'The selected search API the forum is using is out of date - falling back to standard search. Please check file %1$s.';
 
 // Handling hook calls
 $txt['hook_fail_loading_file'] = 'Hook call: The file at path: %s could not be loaded.';
