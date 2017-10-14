@@ -10,6 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
+require_once('./vendor/autoload.php');
 use LightnCandy\LightnCandy;
 
 if (!defined('SMF'))
