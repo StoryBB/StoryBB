@@ -59,7 +59,9 @@
 			<h3>{{context.name}}</h3>
 			<p>
 			{{context.description}}&nbsp;
-			{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{implode_comma context.link_moderators}}}.
+			{{#if context.moderators}}
+				{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{implode_comma context.link_moderators}}}.
+			{{/if}}
 			</p>
 		</div>
 		{{/if}}
