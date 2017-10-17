@@ -2487,7 +2487,7 @@ function loadTemplateLayout($layout) {
 
 	if ($layout === 'raw') {
 		$context['layout_loaded'] = 'raw';
-		return '{{{content}}}';
+		$context['layout_template'] = '{{{content}}}';
 	}
 
 	$paths = [
@@ -2498,8 +2498,13 @@ function loadTemplateLayout($layout) {
 	foreach ($paths as $path) {
 		if (file_exists($path) && file_exists($path . '/' . $layout . '.hbs')) {
 			$context['layout_loaded'] = $layout;
-			return file_get_contents($path . '/' . $layout . '.hbs');
+			$context['layout_template'] = file_get_contents($path . '/' . $layout . '.hbs');
+			break;
 		}
+	}
+
+	if (!empty($context['layout_template'])) {
+		return $context['layout_template'];
 	}
 
 	fatal_error('Could not load layout ' . $layout);
