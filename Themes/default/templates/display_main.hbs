@@ -125,7 +125,7 @@
 	<div class="popup_window description">
 		<div class="popup_heading">{{txt.mobile_action}}
 		<a href="javascript:void(0);" class="generic_icons hide_popup"></a></div>
-		{{>button_strip context.normal_buttons}}
+		{{>button_strip button_strip=context.normal_buttons}}
 	</div>
 </div>
 
@@ -136,7 +136,7 @@
 		<div class="popup_heading">{{txt.mobile_moderation}}
 		<a href="javascript:void(0);" class="generic_icons hide_popup"></a></div>
 		<div id="moderationbuttons_mobile">
-			{{>button_strip context.mod_buttons 'bottom'}}
+			{{>button_strip button_strip=context.mod_buttons direction='bottom'}}
 		</div>
 	</div>
 </div>

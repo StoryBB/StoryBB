@@ -80,7 +80,7 @@
 	    <div class="clear_right"><br></div>
 
 	    <div class="pagesection">
-	        {{>button_strip context.conversation_buttons direction='right'}}
+	        {{>button_strip button_strip=context.conversation_buttons direction='right'}}
 	    </div>
 
 	    {{#if context.messages}}
@@ -93,7 +93,7 @@
 		</div>
 
 	    <div class="pagesection">
-	    	{{>button_strip context.conversation_buttons direction='right'}}
+	    	{{>button_strip button_strip=context.conversation_buttons direction='right'}}
 	    </div>
 
 	    {{#each context.messages}}
