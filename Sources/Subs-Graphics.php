@@ -1135,7 +1135,7 @@ function showLetterImage($letter)
 	$font_dir = dir($settings['default_theme_dir'] . '/fonts');
 	$font_list = array();
 	while ($entry = $font_dir->read())
-		if ($entry[0] !== '.' && is_dir($settings['default_theme_dir'] . '/fonts/' . $entry) && file_exists($settings['default_theme_dir'] . '/fonts/' . $entry . '.gdf'))
+		if ($entry[0] !== '.' && is_dir($settings['default_theme_dir'] . '/fonts/' . $entry) && file_exists($settings['default_theme_dir'] . '/fonts/' . $entry . '/' . $letter . '.png'))
 			$font_list[] = $entry;
 
 	if (empty($font_list))
