@@ -113,45 +113,6 @@ function template_after()
 }
 
 /**
- * Show a window containing the spoken verification code.
- */
-function template_verification_sound()
-{
-	global $context, $settings, $txt, $modSettings;
-	
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'settings' => $settings,
-		'modSettings' => $modSettings
-	);
-	
-	$template = loadTemplateLayout('popup');
-
-	$phpStr = compileTemplate($template);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	$content = $renderer($data);
-	
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'content' => $content,
-		'id' => ''
-	);
-	
-	$template = loadTemplateFile('register_sound_verification');
-
-	$phpStr = compileTemplate($template);
-	
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * Form for editing the agreement shown for people registering to the forum.
  */
 function template_edit_agreement()
