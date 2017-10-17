@@ -4160,3 +4160,12 @@ div#char_theme_wrapper,
 	-ms-touch-action: none;
 	touch-action: none;
 }
+
+/* If its collapsed you know what to do */
+.collapsed {
+	opacity: 0.5;
+	transition: 1s;
+}
+.collapsed:hover {
+	opacity: 1;
+}

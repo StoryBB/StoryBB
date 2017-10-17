@@ -1,5 +1,5 @@
-<script>
 {{!-- I'm sorry. --}}
+<script>
 {{#if (browser 'is_firefox')}}
 window.addEventListener("pageshow", reActivate, false);
 {{/if}}
@@ -7,26 +7,6 @@ var icon_urls = {
     {{#each context.icons}}'{{value}}':'{{url}}'{{#unless is_last}},{{/unless}}
     {{/each}}
 };
-{{#if context.make_poll}}
-	var pollOptionNum = 0, pollTabIndex;
-			var pollOptionId = {{context.last_choice_id}};
-			function addPollOption()
-			{
-				if (pollOptionNum == 0)
-				{
-					for (var i = 0, n = document.forms.postmodify.elements.length; i < n; i++)
-						if (document.forms.postmodify.elements[i].id.substr(0, 8) == 'options-')
-						{
-							pollOptionNum++;
-							pollTabIndex = document.forms.postmodify.elements[i].tabIndex;
-						}
-				}
-				pollOptionNum++
-				pollOptionId++
-
-				setOuterHTML(document.getElementById('pollMoreOptions'), '{{jsescape '<dt><label for="options-'}}' + pollOptionId + '{{jsEscape (concat '">'  txt.option)}}' + pollOptionNum + '{{jsEscape '</label>:</dt><dd><input type="text" name="options['}}' + pollOptionId + '{{jsEscape ']" id="options-'}}' + pollOptionId + '{{jsEscape '" value="" size="80" maxlength="255" tabindex="'}}' + pollTabIndex + '{{jsEscape '" class="input_text"></dd><p id="pollMoreOptions"></p>'}}');
-			};
-{{/if}}
 </script>
 <form action="{{scripturl}}?action={{{context.destination}}};{{#if context.current_board}}board={{context.current_board}}{{/if}}" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="{{#unless context.becomes_approved}}alert('{{txt.js_post_will_require_approval}}');{{/unless}}submitonce(this);smc_saveEntities('postmodify', ['subject', '{{context.post_box_name}},'guestname', 'question'], 'options');" enctype="multipart/form-data">
     <div id="preview_section"{{#unless context.preview_message}} style="display: none;"{{/unless}}>
@@ -40,216 +20,218 @@ var icon_urls = {
 		</div>
 	</div><br>
 	<div class="cat_bar">
-				<h3 class="catbg">{{context.page_title}}</h3>
-			</div>
-			<div id="post_area">
-				<div class="roundframe noup">{{#if context.current_topic}}
-					<input type="hidden" name="topic" value="{{context.current_topic}}">{{/if}}
-					<div class="{{#unless (or context.error_type (neq context.error_type 'serious'))}}noticebox{{else}}errorbox"{{/unless}}{{#unless context.post_error}} style="display: none"{{/unless}} id="errors">
-						<dl>
-							<dt>
-								<strong id="error_serious">{{txt.error_while_submitting}}</strong>
-							</dt>
-							<dd class="error" id="error_list">
-								{{#if context.post_error}}<br> {{context.post_error}}{{/if}}
-							</dd>
-						</dl>
-					</div>
-				{{#unless context.becomes_approved}}
-				<p class="information">
-					<em>{{txt.wait_for_approval}}</em>
-					<input type="hidden" name="not_approved" value="1">
-				</p>
-				{{/unless}}
-				{{#if context.locked}}
-				<p class="errorbox">
-					{{txt.topic_locked_no_reply}}
-				</p>
-				{{/if}}
-				{{#if modSettings.drafts_post_enabled}}
-				<div id="draft_section" class="infobox" {{#unless context.draft_saved}} style="display: none;"{{/unless}}>
-					{{textTemplate 'draft_saved' (concat scripturl '?action=profile;u=' context.user.id ';area=showdrafts')}}
-					{{#if modSettings.drafts_keep_days}} <strong>{{textTemplate 'draft_save_warning' modSettings.drafts_keep_days}}</strong>{{/if}}
-				</div>
-				{{/if}}
-				<dl id="post_header">
-				    {{#each context.posting_fields}}
-				    <dt class="clear{{#unless (numeric @key)}} pf_{{@key}}{{/unless}}">
-						{{{dt}}}
+		<h3 class="catbg">{{context.page_title}}</h3>
+	</div>
+	<div id="post_area">
+		<div class="roundframe noup">
+			{{#if context.current_topic}}
+				<input type="hidden" name="topic" value="{{context.current_topic}}">
+			{{/if}}
+			<div class="{{#unless (or context.error_type (neq context.error_type 'serious'))}}noticebox{{else}}errorbox{{/unless}}"{{#unless context.post_error}} style="display: none"{{/unless}} id="errors">
+				<dl>
+					<dt>
+						<strong id="error_serious">{{txt.error_while_submitting}}</strong>
 					</dt>
-					<dd{{#unless (numeric @key)}}class="pf_{{@key}}"{{/unless}}>
-					    {{{dd}}}
+					<dd class="error" id="error_list">
+						{{#if context.post_error}}<br> {{context.post_error}}{{/if}}
 					</dd>
-					{{/each}}
 				</dl>
-				{{#if context.make_poll}}
+			</div>
+			{{#unless context.becomes_approved}}
+			<p class="information">
+				<em>{{txt.wait_for_approval}}</em>
+				<input type="hidden" name="not_approved" value="1">
+			</p>
+			{{/unless}}
+			{{#if context.locked}}
+			<p class="errorbox">
+				{{txt.topic_locked_no_reply}}
+			</p>
+			{{/if}}
+			{{#if modSettings.drafts_post_enabled}}
+			<div id="draft_section" class="infobox" {{#unless context.draft_saved}} style="display: none;"{{/unless}}>
+				{{textTemplate 'draft_saved' (concat scripturl '?action=profile;u=' context.user.id ';area=showdrafts')}}
+				{{#if modSettings.drafts_keep_days}} <strong>{{textTemplate 'draft_save_warning' modSettings.drafts_keep_days}}</strong>{{/if}}
+			</div>
+			{{/if}}
+			<dl id="post_header">
+			    {{#each context.posting_fields}}
+			    <dt class="clear{{#unless (numeric @key)}} pf_{{@key}}{{/unless}}">
+					{{{dt}}}
+				</dt>
+				<dd{{#unless (numeric @key)}} class="pf_{{@key}}"{{/unless}}>
+				    {{{dd}}}
+				</dd>
+				{{/each}}
+			</dl>
+			{{#if context.make_poll}}
 				<hr class="clear">
-					<div id="edit_poll">
-						<fieldset id="poll_main">
-							<legend><span {{#if context.poll_error.no_question}} class="error"{{/if}}>{{txt.poll_question}}</span></legend>
-							<dl class="settings poll_options">
-								<dt>{{txt.poll_question}}</dt>
-								<dd><input type="text" name="question" value="{{context.question}}" size="80" class="input_text"></dd>
-								{{#each context.choices}}
-								<dt>
-									<label for="options-{{id}}">{{txt.option}} {{number}}</label>:
-								</dt>
-								<dd>
-									<input type="text" name="options[{{id}}]" id="options-{{id}}" value="{{label}}" size="80" maxlength="255" class="input_text">
-								</dd>
-								{{/each}}
-								<p id="pollMoreOptions"></p>
-							</dl>
-							<strong><a href="javascript:addPollOption(); void(0);">({{txt.poll_add_option}})</a></strong>
-						</fieldset>
-						<fieldset id="poll_options">
-							<legend>{{txt.poll_options}}</legend>
-							<dl class="settings poll_options">
-								<dt>
-									<label for="poll_max_votes">{{txt.poll_max_votes}}:</label>
-								</dt>
-								<dd>
-									<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="{{context.poll_options.max_votes}}" class="input_text">
-								</dd>
-								<dt>
-									<label for="poll_expire">{{txt.poll_run}}:</label><br>
-									<em class="smalltext">{{txt.poll_run_limit}}</em>
-								</dt>
-								<dd>
-									<input type="text" name="poll_expire" id="poll_expire" size="2" value="{{context.poll_options.expire}}" onchange="pollOptions();" maxlength="4" class="input_text"> {{txt.days_word}}
-								</dd>
-								<dt>
-									<label for="poll_change_vote">{{txt.poll_do_change_vote}}:</label>
-								</dt>
-								<dd>
-									<input type="checkbox" id="poll_change_vote" name="poll_change_vote"{{#if context.poll.change_vote}} checked{{/if}} class="input_check">
-								</dd>
-								{{#if context.poll_options.guest_vote_enabled}}
-								<dt>
-									<label for="poll_guest_vote">{{txt.poll_guest_vote}}:</label>
-								</dt>
-								<dd>
-									<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"{{#if context.poll_options.guest_vote}} checked{{/if}} class="input_check">
-								</dd>
-								{{/if}}
-								<dt>
-									{{txt.poll_results_visibility}}:
-								</dt>
-								<dd>
-									<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"{{#if (eq context.poll_options.hide 0)}} checked{{/if}} class="input_radio"> <label for="poll_results_anyone">{{txt.poll_results_anyone}}</label><br>
-									<input type="radio" name="poll_hide" id="poll_results_voted" value="1"{{#if (eq context.poll_options.hide 1)}} checked{{/if}} class="input_radio"> <label for="poll_results_voted">{{txt.poll_results_voted}}</label><br>
-									<input type="radio" name="poll_hide" id="poll_results_expire" value="2"{{#if (eq context.poll_options.hide 2)}} checked{{/if}} {{#unless context.poll_options.expire}} disabled{{/unless}} class="input_radio"> <label for="poll_results_expire">{{txt.poll_results_after}}</label>
-								</dd>
-							</dl>
-						</fieldset>
-					</div>
-					{{/if}}
-					{{{richtexteditor context.post_box_name 'smileyBox_message' 'bbcBox_message'}}}
-					{{#if (and context.editing modSettings.show_modify)}}
-					<dl>
-						<dt class="clear">
-							<span id="caption_edit_reason">{{txt.reason_for_edit}}:</span>
-						</dt>
-						<dd>
-							<input type="text" name="modify_reason"', isset($context['last_modified_reason']) ? ' value="' . $context['last_modified_reason'] . '"' : '', ' tabindex="', $context['tabindex']++, '" size="80" maxlength="80" class="input_text">
-						</dd>
-					</dl>
-					{{/if}}
-					{{#if context.last_modified}}
-					<div class="padding smalltext">
-						{{context.last_modified_text}}
-					</div>
-					{{/if}}
-					{{#if modSettings.additional_options_collapsable}}
-					<div id="postAdditionalOptionsHeader">
-						<strong><a href="#" id="postMoreExpandLink">{{#if context.can_post_attachment}}{{txt.post_additionalopt_attach}}{{else}}{{txt.post_additionalopt}}{{/if}}</a></strong>
-					</div>
-					{{/if}}
-					<div id="postAdditionalOptions">
-					    <div id="postMoreOptions" class="smalltext">
-							<ul class="post_options">
-								{{#if context.can_notify}}<li><input type="hidden" name="notify" value="0"><label for="check_notify"><input type="checkbox" name="notify" id="check_notify" {{#if (or context.notify options.auto_notify context.auto_notify)}} checked{{/if}} value="1" class="input_check"> {{txt.notify_replies}}</label></li>{{/if}}
-							    {{#if context.can_lock}}<li><input type="hidden" name="already_locked" value="{{context.already_locked}}"><input type="hidden" name="lock" value="0"><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"{{#if context.locked}} checked{{/if}} value="1" class="input_check"> {{txt.lock_topic}}</label></li>{{/if}}
-								<li><label for="check_back"><input type="checkbox" name="goback" id="check_back" {{#if (or context.back_to_topic (not options.return_to_post))}} checked{{/if}} value="1" class="input_check">{{txt.back_to_topic}}</label></li>
-								{{#if context.can_sticky}}<li><input type="hidden" name="already_sticky" value="{{context.already_sticky}}"><input type="hidden" name="sticky" value="0"><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"{{#if context.stick}} checked{{/if}} value="1" class="input_check">{{txt.sticky_after}}</label></li>{{/if}}
-								<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"{{#unless context.use_smileys}} checked{{/unless}} value="NS" class="input_check">{{txt.dont_use_smileys}}</label></li>
-								{{#if context.can_move}}<li><input type="hidden" name="move" value="0"><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" class="input_check" {{#if context.move}} checked{{/if}}>{{txt.move_after2}}</label></li>{{/if}}
-								{{#if (and context.can_announce context.is_first_post)}}<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1" class="input_check"{{#if context.announce}} checked{{/if}}> {{txt.announce_topic}}</label></li>{{/if}}
-								{{#if context.show_approval}}<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2" class="input_check" {{#if (eq context.show_approval2)}} checked{{/if}}> {{txt.approve_this_post}}</label></li>{{/if}}
-							</ul>
-						</div>
-						{{#if context.current_attachments}}
-						<dl id="postAttachment">
+				<div id="edit_poll">
+					<fieldset id="poll_main">
+						<legend><span {{#if context.poll_error.no_question}} class="error"{{/if}}>{{txt.poll_question}}</span></legend>
+						<dl class="settings poll_options">
+							<dt>{{txt.poll_question}}</dt>
+							<dd><input type="text" name="question" value="{{context.question}}" size="80" class="input_text"></dd>
+							{{#each context.choices}}
 							<dt>
-							    {{txt.attached}}:
+								<label for="options-{{id}}">{{txt.option}} {{number}}</label>:
 							</dt>
-							<dd class="smalltext" style="width: 100%;">
-								<input type="hidden" name="attach_del[]" value="0">
-								{{txt.uncheck_unwatchd_attach}}:
-							</dd>
-							{{#each context.current_attachments}}
-							<dd class="smalltext">
-								<label for="attachment_{{attachID}}"><input type="checkbox" id="attachment_{{attachID}}" name="attach_del[]" value="{{attachID}}"{{#if unchecked}} checked{{/if}} class="input_check">{{name}}{{#unless approved}}({{../txt.awaiting_approval}}){{/unless}}
-								{{#if (or modSettings.attachmentPostLimit modSettings.attachmentSizeLimit)}}{{textTemplate 'attach_kb' (formatKb size)}}{{/if}}</label>
+							<dd>
+								<input type="text" name="options[{{id}}]" id="options-{{id}}" value="{{label}}" size="80" maxlength="255" class="input_text">
 							</dd>
 							{{/each}}
-							</dl>
-							{{#if context.files_in_session_warning}}
-							    <div class="smalltext">{{context.files_in_session_warning}}</div>
+							<p id="pollMoreOptions"></p>
+						</dl>
+						<strong><a href="javascript:addPollOption(); void(0);">({{txt.poll_add_option}})</a></strong>
+					</fieldset>
+					<fieldset id="poll_options">
+						<legend>{{txt.poll_options}}</legend>
+						<dl class="settings poll_options">
+							<dt>
+								<label for="poll_max_votes">{{txt.poll_max_votes}}:</label>
+							</dt>
+							<dd>
+								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="{{context.poll_options.max_votes}}" class="input_text">
+							</dd>
+							<dt>
+								<label for="poll_expire">{{txt.poll_run}}:</label><br>
+								<em class="smalltext">{{txt.poll_run_limit}}</em>
+							</dt>
+							<dd>
+								<input type="text" name="poll_expire" id="poll_expire" size="2" value="{{context.poll_options.expire}}" onchange="pollOptions();" maxlength="4" class="input_text"> {{txt.days_word}}
+							</dd>
+							<dt>
+								<label for="poll_change_vote">{{txt.poll_do_change_vote}}:</label>
+							</dt>
+							<dd>
+								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"{{#if context.poll.change_vote}} checked{{/if}} class="input_check">
+							</dd>
+							{{#if context.poll_options.guest_vote_enabled}}
+							<dt>
+								<label for="poll_guest_vote">{{txt.poll_guest_vote}}:</label>
+							</dt>
+							<dd>
+								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"{{#if context.poll_options.guest_vote}} checked{{/if}} class="input_check">
+							</dd>
 							{{/if}}
-						{{/if}}
-						{{#if context.can_post_attachment}}
-						<div class="files" id="au-previews">
-							<div id="au-template">
-								<div class="attach-preview">
-									<img data-dz-thumbnail />
+							<dt>
+								{{txt.poll_results_visibility}}:
+							</dt>
+							<dd>
+								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"{{#if (eq context.poll_options.hide 0)}} checked{{/if}} class="input_radio"> <label for="poll_results_anyone">{{txt.poll_results_anyone}}</label><br>
+								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"{{#if (eq context.poll_options.hide 1)}} checked{{/if}} class="input_radio"> <label for="poll_results_voted">{{txt.poll_results_voted}}</label><br>
+								<input type="radio" name="poll_hide" id="poll_results_expire" value="2"{{#if (eq context.poll_options.hide 2)}} checked{{/if}} {{#unless context.poll_options.expire}} disabled{{/unless}} class="input_radio"> <label for="poll_results_expire">{{txt.poll_results_after}}</label>
+							</dd>
+						</dl>
+					</fieldset>
+				</div>
+			{{/if}}
+			{{{richtexteditor context.post_box_name 'smileyBox_message' 'bbcBox_message'}}}
+			{{#if (and context.editing modSettings.show_modify)}}
+			<dl>
+				<dt class="clear">
+					<span id="caption_edit_reason">{{txt.reason_for_edit}}:</span>
+				</dt>
+				<dd>
+					<input type="text" name="modify_reason"{{#if context.last_modified_reason}} value="{{{context.last_modified_reason}}}"{{/if}} size="80" maxlength="80" class="input_text">
+				</dd>
+			</dl>
+			{{/if}}
+			{{#if context.last_modified}}
+			<div class="padding smalltext">
+				{{context.last_modified_text}}
+			</div>
+			{{/if}}
+			{{#if modSettings.additional_options_collapsable}}
+			<div id="postAdditionalOptionsHeader">
+				<strong><a href="#" id="postMoreExpandLink">{{#if context.can_post_attachment}}{{txt.post_additionalopt_attach}}{{else}}{{txt.post_additionalopt}}{{/if}}</a></strong>
+			</div>
+			{{/if}}
+			<div id="postAdditionalOptions">
+			    <div id="postMoreOptions" class="smalltext">
+					<ul class="post_options">
+						{{#if context.can_notify}}<li><input type="hidden" name="notify" value="0"><label for="check_notify"><input type="checkbox" name="notify" id="check_notify" {{#if (or context.notify options.auto_notify context.auto_notify)}} checked{{/if}} value="1" class="input_check"> {{txt.notify_replies}}</label></li>{{/if}}
+					    {{#if context.can_lock}}<li><input type="hidden" name="already_locked" value="{{context.already_locked}}"><input type="hidden" name="lock" value="0"><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"{{#if context.locked}} checked{{/if}} value="1" class="input_check"> {{txt.lock_topic}}</label></li>{{/if}}
+						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back" {{#if (or context.back_to_topic (not options.return_to_post))}} checked{{/if}} value="1" class="input_check">{{txt.back_to_topic}}</label></li>
+						{{#if context.can_sticky}}<li><input type="hidden" name="already_sticky" value="{{context.already_sticky}}"><input type="hidden" name="sticky" value="0"><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"{{#if context.stick}} checked{{/if}} value="1" class="input_check">{{txt.sticky_after}}</label></li>{{/if}}
+						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"{{#unless context.use_smileys}} checked{{/unless}} value="NS" class="input_check">{{txt.dont_use_smileys}}</label></li>
+						{{#if context.can_move}}<li><input type="hidden" name="move" value="0"><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" class="input_check" {{#if context.move}} checked{{/if}}>{{txt.move_after2}}</label></li>{{/if}}
+						{{#if (and context.can_announce context.is_first_post)}}<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1" class="input_check"{{#if context.announce}} checked{{/if}}> {{txt.announce_topic}}</label></li>{{/if}}
+						{{#if context.show_approval}}<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2" class="input_check" {{#if (eq context.show_approval2)}} checked{{/if}}> {{txt.approve_this_post}}</label></li>{{/if}}
+					</ul>
+				</div>
+				{{#if context.current_attachments}}
+					<dl id="postAttachment">
+						<dt>
+						    {{txt.attached}}:
+						</dt>
+						<dd class="smalltext" style="width: 100%;">
+							<input type="hidden" name="attach_del[]" value="0">
+							{{txt.uncheck_unwatchd_attach}}:
+						</dd>
+						{{#each context.current_attachments}}
+						<dd class="smalltext">
+							<label for="attachment_{{attachID}}"><input type="checkbox" id="attachment_{{attachID}}" name="attach_del[]" value="{{attachID}}"{{#if unchecked}} checked{{/if}} class="input_check">{{name}}{{#unless approved}}({{../txt.awaiting_approval}}){{/unless}}
+							{{#if (or modSettings.attachmentPostLimit modSettings.attachmentSizeLimit)}}{{textTemplate 'attach_kb' (formatKb size)}}{{/if}}</label>
+						</dd>
+						{{/each}}
+					</dl>
+					{{#if context.files_in_session_warning}}
+					    <div class="smalltext">{{context.files_in_session_warning}}</div>
+					{{/if}}
+				{{/if}}
+				{{#if context.can_post_attachment}}
+					<div class="files" id="au-previews">
+						<div id="au-template">
+							<div class="attach-preview">
+								<img data-dz-thumbnail />
+							</div>
+							<div class="attach-info">
+								<div>
+									<span class="name" data-dz-name></span>
+									<span class="error" data-dz-errormessage></span>
+									<span class="size" data-dz-size></span>
+									<span class="message" data-dz-message></span>
 								</div>
-								<div class="attach-info">
-									<div>
-										<span class="name" data-dz-name></span>
-										<span class="error" data-dz-errormessage></span>
-										<span class="size" data-dz-size></span>
-										<span class="message" data-dz-message></span>
-									</div>
-									<div class="attached_BBC">
-										<input type="text" name="attachBBC" value="" readonly>
-										<div class="attached_BBC_width_height">
-											<div class="attached_BBC_width">
-												<label for="attached_BBC_width">{{txt.attached_insertwidth}}</label>
-												<input type="number" name="attached_BBC_width" min="0" value="" placeholder="auto">
-											</div>
-											<div class="attached_BBC_height">
-												<label for="attached_BBC_height">{{txt.attached_insertheight}}</label>
-												<input type="number" name="attached_BBC_height" min="0" value="" placeholder="auto">
-											</div>
+								<div class="attached_BBC">
+									<input type="text" name="attachBBC" value="" readonly>
+									<div class="attached_BBC_width_height">
+										<div class="attached_BBC_width">
+											<label for="attached_BBC_width">{{txt.attached_insertwidth}}</label>
+											<input type="number" name="attached_BBC_width" min="0" value="" placeholder="auto">
+										</div>
+										<div class="attached_BBC_height">
+											<label for="attached_BBC_height">{{txt.attached_insertheight}}</label>
+											<input type="number" name="attached_BBC_height" min="0" value="" placeholder="auto">
 										</div>
 									</div>
-									<div class="progressBar" role="progressBar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
-									<div class="attach-ui">
-										<a data-dz-remove class="button_submit cancel">{{txt.modify_cancel}}</a>
-										<a class="button_submit upload">{{txt.upload}}</a>
-									</div>
+								</div>
+								<div class="progressBar" role="progressBar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+								<div class="attach-ui">
+									<a data-dz-remove class="button_submit cancel">{{txt.modify_cancel}}</a>
+									<a class="button_submit upload">{{txt.upload}}</a>
 								</div>
 							</div>
 						</div>
-						<div id ="maxFiles_progress" class="maxFiles_progress progressBar"><span></span></div>
-						<div id ="maxFiles_progress_text"></div>
-						<dl id="postAttachment2">
-						    <dt>
-								{{txt.attach}}:
-							</dt>
-							<dd class="smalltext fallback">
-								<div id="attachUpload" class="descbox">
-									<h5>{{txt.attach_drop_zone}}</h5>
-									<a class="button_submit" id="attach-cancelAll">{{txt.attached_cancelAll}}</a>
-									<a class="button_submit" id="attach-uploadAll">{{txt.attached_uploadAll}}</a>
-									<a class="button_submit fileinput-button">{{txt.attach_add}}</a>
-									<div id="total-progress" class="progressBar" role="progressBar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
-									<div class="fallback">
-										<input type="file" multiple="multiple" name="attachment[]" id="attachment1" class="input_file fallback"> (<a href="javascript:void(0);" onclick="cleanFileInput('attachment1');">{{txt.clean_attach}}</a>)
-								{{#if modSettings.attachmentSizeLimit}}<input type="hidden" name="MAX_FILE_SIZE" value="{{sizeLimit}}">{{/if}}
-														{{#if (gt context.num_allowed_attachment 1)}}
-						<script>
+					</div>
+					<div id ="maxFiles_progress" class="maxFiles_progress progressBar"><span></span></div>
+					<div id ="maxFiles_progress_text"></div>
+					<dl id="postAttachment2">
+					    <dt>
+							{{txt.attach}}:
+						</dt>
+						<dd class="smalltext fallback">
+							<div id="attachUpload" class="descbox">
+								<h5>{{txt.attach_drop_zone}}</h5>
+								<a class="button_submit" id="attach-cancelAll">{{txt.attached_cancelAll}}</a>
+								<a class="button_submit" id="attach-uploadAll">{{txt.attached_uploadAll}}</a>
+								<a class="button_submit fileinput-button">{{txt.attach_add}}</a>
+								<div id="total-progress" class="progressBar" role="progressBar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+								<div class="fallback">
+									<input type="file" multiple="multiple" name="attachment[]" id="attachment1" class="input_file fallback"> (<a href="javascript:void(0);" onclick="cleanFileInput('attachment1');">{{txt.clean_attach}}</a>)
+									{{#if modSettings.attachmentSizeLimit}}<input type="hidden" name="MAX_FILE_SIZE" value="{{sizeLimit}}">{{/if}}
+									{{#if (gt context.num_allowed_attachment 1)}}
+										<script>
 											var allowed_attachments = {{context.num_allowed_attachments}};
 											var current_attachment = 1;
 
@@ -266,354 +248,373 @@ var icon_urls = {
 											}
 										</script>
 										<a href="#" onclick="addAttachment(); return false;">({{txt.more_attachments}})</a>
+									{{/if}}
 									</div>
 								</div>
 							</dd>
-						{{else}}
 						</dd>
-						{{/if}}
 						{{!-- {{>upload_template}} --}}
 						<dd class="smalltext">
 						    {{#if modSettings.attachmentCheckExtensions}}{{txt.allowed_types}}: {{context.allowed_extensions}}<br>{{/if}}
-						    {{#if context.attachment_restrictions}}{{txt.attach_restrictions}} {{#each context.attachment_restrictions}}{{.}},{{/each}}<br>{{/if}}
-						    {{#if (eq context.num_allowed_attachments 0)}}{{txt.attach_limit_nag}}<br>{{/if}}
-						    {{#if context.can_post_attachment_unapproved}}<span class="alert">{{txt.attachment_requires_approval}}</span><br>{{/if}}
+						    {{#if context.attachment_restrictions}}{{{txt.attach_restrictions}}} {{#each context.attachment_restrictions}}{{.}},{{/each}}<br>{{/if}}
+						    {{#if (eq context.num_allowed_attachments 0)}}{{{txt.attach_limit_nag}}}<br>{{/if}}
+						    {{#unless context.can_post_attachment_unapproved}}<span class="alert">{{txt.attachment_requires_approval}}</span><br>{{/unless}}
 						</dd>
 					</dl>
-					{{/if}}{{!-- end of attachment section --}}
-					</div>
-                    {{#if (and modSettings.draft_posts_enabled context.drafts options.drafts_show_save_enabled)}}
-                    <div id="postDraftOptionsHeader" class="title_bar title_top">
-						<h4 class="titlebg">
-							<span id="postDraftExpand" class="toggle_up floatright" style="display: none;"></span> <strong><a href="#" id="postDraftExpandLink">{{txt.draft_load}}</a></strong>
-						</h4>
-					</div>
-					<div id="postDraftOptions">
-						<dl class="settings">
-							<dt><strong>{{txt.subject}}</strong></dt>
-							<dd><strong>{{txt.draft_saved_on}}</strong></dd>
-							{{#each context.drafts}}
-							<dt{{link}}</dt>
-							<dd>{{poster_time}}</dd>
-							{{/each}}
-						</dl>
-					</div>
-                    {{/if}}
-                    {{#if context.require_verification}}
-                    <div class="post_verification">
-						<span{{#if context.post_error.need_qr_verification}} class="error"{{/if}}>
-							<strong>{{txt.verification}}:</strong>
-						</span>
-						{{>control_visual_verification verify_id=context.visual_verification_id display_type='all' verify_context=verify_context}}
-					</div>
-                    {{/if}}
-                    <br class="clear_right">
-					<span id="post_confirm_buttons">
-					    {{>control_richedit_buttons editor_id=context.post_box_name editor_context=editor_context}}
-				    </span>
-				</div>
+				{{/if}}{{!-- end of attachment section --}}
 			</div>
-			<br class="clear">
-			{{#if context.topic_last_message}}
-			<input type="hidden" name="last_msg" value="{{context.topic_last_message}}">
-			{{/if}}
-			<input type="hidden" name="additional_options" id="additional_options" value="{{#if context.show_additional_options}}1{{else}}0{{/if}}">
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-			<input type="hidden" name="seqnum" value="{{context.form_sequence_number}}">
-		</form>
-		<script>
-			var make_poll = {{#if context.make_poll}}true{{else}}false{{/if}};
-			var txt_preview_title = "{{txt.preview_title}}";
-			var txt_preview_fetch = "{{txt.preview_fetch}}";
-			var new_replies = new Array();
-			var reply_counter = {{counter}};
-			function previewPost()
+            {{#if (and modSettings.draft_posts_enabled context.drafts options.drafts_show_save_enabled)}}
+	            <div id="postDraftOptionsHeader" class="title_bar title_top">
+					<h4 class="titlebg">
+						<span id="postDraftExpand" class="toggle_up floatright" style="display: none;"></span> <strong><a href="#" id="postDraftExpandLink">{{txt.draft_load}}</a></strong>
+					</h4>
+				</div>
+				<div id="postDraftOptions">
+					<dl class="settings">
+						<dt><strong>{{txt.subject}}</strong></dt>
+						<dd><strong>{{txt.draft_saved_on}}</strong></dd>
+						{{#each context.drafts}}
+						<dt{{link}}</dt>
+						<dd>{{poster_time}}</dd>
+						{{/each}}
+					</dl>
+				</div>
+            {{/if}}
+            {{#if context.require_verification}}
+            <div class="post_verification">
+				<span{{#if context.post_error.need_qr_verification}} class="error"{{/if}}>
+					<strong>{{txt.verification}}:</strong>
+				</span>
+				{{{captcha context.visual_verification_id}}}
+			</div>
+            {{/if}}
+            <br class="clear_right">
+			<span id="post_confirm_buttons">
+			    {{{richtextbuttons context.post_box_name}}}
+		    </span>
+		</div>
+	</div>
+	<br class="clear">
+	{{#if context.topic_last_message}}
+	<input type="hidden" name="last_msg" value="{{context.topic_last_message}}">
+	{{/if}}
+	<input type="hidden" name="additional_options" id="additional_options" value="{{#if context.show_additional_options}}1{{else}}0{{/if}}">
+	<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+	<input type="hidden" name="seqnum" value="{{context.form_sequence_number}}">
+</form>
+	<script>
+		var make_poll = {{#if context.make_poll}}true{{else}}false{{/if}};
+		var txt_preview_title = "{{txt.preview_title}}";
+		var txt_preview_fetch = "{{txt.preview_fetch}}";
+		var new_replies = new Array();
+		var reply_counter = {{counter}};
+		function previewPost()
+		{
+			if (window.XMLHttpRequest)
 			{
-				if (window.XMLHttpRequest)
+				// Opera didn't support setRequestHeader() before 8.01.
+				if ('opera' in window)
 				{
-					// Opera didn't support setRequestHeader() before 8.01.
-					if ('opera' in window)
-					{
-						var test = new XMLHttpRequest();
-						if (!('setRequestHeader' in test))
-							return submitThisOnce(document.forms.postmodify);
-					}
-					// @todo Currently not sending poll options and option checkboxes.
-					var x = new Array();
-					var textFields = ['subject', '{{jsEscape context.post_box_name}}', '{{jsEscape context.session_var}}', 'icon', 'guestname', 'email', 'question', 'topic'];
-					var numericFields = [
-						'board', 'topic', 'last_msg',
-						'poll_max_votes', 'poll_expire', 'poll_change_vote', 'poll_hide'
-					];
-					var checkboxFields = [
-						'ns'
-					];
-
-					for (var i = 0, n = textFields.length; i < n; i++)
-						if (textFields[i] in document.forms.postmodify)
-						{
-							// Handle the WYSIWYG editor.
-							if (textFields[i] == '{{jsEscape context.post_box_name}}' && $("#{{context.post_box_name}}").data("sceditor") != undefined)
-								x[x.length] = textFields[i] + '=' + $("#{{context.post_box_name}}").data("sceditor").getText().replace(/&#/g, '&#38;#');
-							else
-								x[x.length] = textFields[i] + '=' + document.forms.postmodify[textFields[i]].value.replace(/&#/g, '&#38;#');
-						}
-					for (var i = 0, n = numericFields.length; i < n; i++)
-						if (numericFields[i] in document.forms.postmodify && 'value' in document.forms.postmodify[numericFields[i]])
-							x[x.length] = numericFields[i] + '=' + parseInt(document.forms.postmodify.elements[numericFields[i]].value);
-					for (var i = 0, n = checkboxFields.length; i < n; i++)
-						if (checkboxFields[i] in document.forms.postmodify && document.forms.postmodify.elements[checkboxFields[i]].checked)
-							x[x.length] = checkboxFields[i] + '=' + document.forms.postmodify.elements[checkboxFields[i]].value;
-
-					sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=post2' + (current_board ? ';board=' + current_board : '') + (make_poll ? ';poll' : '') + ';preview;xml', x.join('&'), onDocSent);
-
-					document.getElementById('preview_section').style.display = '';
-					setInnerHTML(document.getElementById('preview_subject'), txt_preview_title);
-					setInnerHTML(document.getElementById('preview_body'), txt_preview_fetch);
-
-					return false;
+					var test = new XMLHttpRequest();
+					if (!('setRequestHeader' in test))
+						return submitThisOnce(document.forms.postmodify);
 				}
+				// @todo Currently not sending poll options and option checkboxes.
+				var x = new Array();
+				var textFields = ['subject', '{{jsEscape context.post_box_name}}', '{{jsEscape context.session_var}}', 'icon', 'guestname', 'email', 'question', 'topic'];
+				var numericFields = [
+					'board', 'topic', 'last_msg',
+					'poll_max_votes', 'poll_expire', 'poll_change_vote', 'poll_hide'
+				];
+				var checkboxFields = [
+					'ns'
+				];
+
+				for (var i = 0, n = textFields.length; i < n; i++)
+					if (textFields[i] in document.forms.postmodify)
+					{
+						// Handle the WYSIWYG editor.
+						if (textFields[i] == '{{jsEscape context.post_box_name}}' && $("#{{context.post_box_name}}").data("sceditor") != undefined)
+							x[x.length] = textFields[i] + '=' + $("#{{context.post_box_name}}").data("sceditor").getText().replace(/&#/g, '&#38;#');
+						else
+							x[x.length] = textFields[i] + '=' + document.forms.postmodify[textFields[i]].value.replace(/&#/g, '&#38;#');
+					}
+				for (var i = 0, n = numericFields.length; i < n; i++)
+					if (numericFields[i] in document.forms.postmodify && 'value' in document.forms.postmodify[numericFields[i]])
+						x[x.length] = numericFields[i] + '=' + parseInt(document.forms.postmodify.elements[numericFields[i]].value);
+				for (var i = 0, n = checkboxFields.length; i < n; i++)
+					if (checkboxFields[i] in document.forms.postmodify && document.forms.postmodify.elements[checkboxFields[i]].checked)
+						x[x.length] = checkboxFields[i] + '=' + document.forms.postmodify.elements[checkboxFields[i]].value;
+
+				sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=post2' + (current_board ? ';board=' + current_board : '') + (make_poll ? ';poll' : '') + ';preview;xml', x.join('&'), onDocSent);
+
+				document.getElementById('preview_section').style.display = '';
+				setInnerHTML(document.getElementById('preview_subject'), txt_preview_title);
+				setInnerHTML(document.getElementById('preview_body'), txt_preview_fetch);
+
+				return false;
+			}
+			else
+				return submitThisOnce(document.forms.postmodify);
+		}
+		function onDocSent(XMLDoc)
+		{
+			if (!XMLDoc)
+			{
+				document.forms.postmodify.preview.onclick = new function ()
+				{
+					return true;
+				}
+				document.forms.postmodify.preview.click();
+			}
+
+			// Show the preview section.
+			var preview = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('preview')[0];
+			setInnerHTML(document.getElementById('preview_subject'), preview.getElementsByTagName('subject')[0].firstChild.nodeValue);
+
+			var bodyText = '';
+			for (var i = 0, n = preview.getElementsByTagName('body')[0].childNodes.length; i < n; i++)
+				if (preview.getElementsByTagName('body')[0].childNodes[i].nodeValue != null)
+					bodyText += preview.getElementsByTagName('body')[0].childNodes[i].nodeValue;
+
+			setInnerHTML(document.getElementById('preview_body'), bodyText);
+			document.getElementById('preview_body').className = 'windowbg';
+
+			// Show a list of errors (if any).
+			var errors = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('errors')[0];
+			var errorList = new Array();
+			for (var i = 0, numErrors = errors.getElementsByTagName('error').length; i < numErrors; i++)
+				errorList[errorList.length] = errors.getElementsByTagName('error')[i].firstChild.nodeValue;
+			document.getElementById('errors').style.display = numErrors == 0 ? 'none' : '';
+			document.getElementById('errors').className = errors.getAttribute('serious') == 1 ? 'errorbox' : 'noticebox';
+			document.getElementById('error_serious').style.display = numErrors == 0 ? 'none' : '';
+			setInnerHTML(document.getElementById('error_list'), numErrors == 0 ? '' : errorList.join('<br>'));
+
+			// Adjust the color of captions if the given data is erroneous.
+			var captions = errors.getElementsByTagName('caption');
+			for (var i = 0, numCaptions = errors.getElementsByTagName('caption').length; i < numCaptions; i++)
+				if (document.getElementById('caption_' + captions[i].getAttribute('name')))
+					document.getElementById('caption_' + captions[i].getAttribute('name')).className = captions[i].getAttribute('class');
+
+			if (errors.getElementsByTagName('post_error').length == 1)
+				document.forms.postmodify.{{context.post_box_name}}.style.border = '1px solid red';
+			else if (document.forms.postmodify.{{context.post_box_name}}.style.borderColor == 'red' || document.forms.postmodify.{{context.post_box_name}}.style.borderColor == 'red red red red')
+			{
+				if ('runtimeStyle' in document.forms.postmodify.{{context.post_box_name}})
+					document.forms.postmodify.{{context.post_box_name}}.style.borderColor = '';
 				else
-					return submitThisOnce(document.forms.postmodify);
+					document.forms.postmodify.{{context.post_box_name}}.style.border = null;
 			}
-			function onDocSent(XMLDoc)
+
+			// Set the new last message id.
+			if ('last_msg' in document.forms.postmodify)
+				document.forms.postmodify.last_msg.value = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('last_msg')[0].firstChild.nodeValue;
+
+			// Remove the new image from old-new replies!
+			for (i = 0; i < new_replies.length; i++)
+				document.getElementById('image_new_' + new_replies[i]).style.display = 'none';
+			new_replies = new Array();
+
+			var ignored_replies = new Array(), ignoring;
+			var newPosts = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('new_posts')[0] ? XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('new_posts')[0].getElementsByTagName('post') : {length: 0};
+			var numNewPosts = newPosts.length;
+			if (numNewPosts != 0)
 			{
-				if (!XMLDoc)
+				var newPostsHTML = '<span id="new_replies"><' + '/span>';
+				for (var i = 0; i < numNewPosts; i++)
 				{
-					document.forms.postmodify.preview.onclick = new function ()
-					{
-						return true;
-					}
-					document.forms.postmodify.preview.click();
+					new_replies[new_replies.length] = newPosts[i].getAttribute("id");
+
+					ignoring = false;
+					if (newPosts[i].getElementsByTagName("is_ignored")[0].firstChild.nodeValue != 0)
+						ignored_replies[ignored_replies.length] = ignoring = newPosts[i].getAttribute("id");
+
+					newPostsHTML += '<div class="windowbg' + (++reply_counter % 2 == 0 ? '2' : '') + '"><div id="msg' + newPosts[i].getAttribute("id") + '"><div class="floatleft"><h5>{{txt.posted_by}}: ' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + '</h5><span class="smalltext">&#171;&nbsp;<strong{{txt.on}}:</strong> ' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + '&nbsp;&#187;</span> <span class="new_posts" id="image_new_' + newPosts[i].getAttribute("id") + '">{{txt.new}}</span></div>';
+					{{#if context.can_quote}}
+					newPostsHTML += '<ul class="quickbuttons" id="msg_' + newPosts[i].getAttribute("id") + '_quote"><li><a href="#postmodify" onclick="return insertQuoteFast(' + newPosts[i].getAttribute("id") + ');" class="quote_button"><span>{{txt.quote}}</span><' + '/a></li></ul>';
+					{{/if}}
+					newPostsHTML += '<br class="clear">';
+
+					if (ignoring)
+						newPostsHTML += '<div id="msg_' + newPosts[i].getAttribute("id") + '_ignored_prompt" class="smalltext">{{txt.ignoring_user}}<a href="#" id="msg_' + newPosts[i].getAttribute("id") + '_ignored_link" style="display: none;">{{txt.show_ignore_user_post}}</a></div>';
+
+					newPostsHTML += '<div class="list_posts smalltext" id="msg_' + newPosts[i].getAttribute("id") + '_body">' + newPosts[i].getElementsByTagName("message")[0].firstChild.nodeValue + '<' + '/div></div></div>';
 				}
-
-				// Show the preview section.
-				var preview = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('preview')[0];
-				setInnerHTML(document.getElementById('preview_subject'), preview.getElementsByTagName('subject')[0].firstChild.nodeValue);
-
-				var bodyText = '';
-				for (var i = 0, n = preview.getElementsByTagName('body')[0].childNodes.length; i < n; i++)
-					if (preview.getElementsByTagName('body')[0].childNodes[i].nodeValue != null)
-						bodyText += preview.getElementsByTagName('body')[0].childNodes[i].nodeValue;
-
-				setInnerHTML(document.getElementById('preview_body'), bodyText);
-				document.getElementById('preview_body').className = 'windowbg';
-
-				// Show a list of errors (if any).
-				var errors = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('errors')[0];
-				var errorList = new Array();
-				for (var i = 0, numErrors = errors.getElementsByTagName('error').length; i < numErrors; i++)
-					errorList[errorList.length] = errors.getElementsByTagName('error')[i].firstChild.nodeValue;
-				document.getElementById('errors').style.display = numErrors == 0 ? 'none' : '';
-				document.getElementById('errors').className = errors.getAttribute('serious') == 1 ? 'errorbox' : 'noticebox';
-				document.getElementById('error_serious').style.display = numErrors == 0 ? 'none' : '';
-				setInnerHTML(document.getElementById('error_list'), numErrors == 0 ? '' : errorList.join('<br>'));
-
-				// Adjust the color of captions if the given data is erroneous.
-				var captions = errors.getElementsByTagName('caption');
-				for (var i = 0, numCaptions = errors.getElementsByTagName('caption').length; i < numCaptions; i++)
-					if (document.getElementById('caption_' + captions[i].getAttribute('name')))
-						document.getElementById('caption_' + captions[i].getAttribute('name')).className = captions[i].getAttribute('class');
-
-				if (errors.getElementsByTagName('post_error').length == 1)
-					document.forms.postmodify.{{context.post_box_name}}.style.border = '1px solid red';
-				else if (document.forms.postmodify.{{context.post_box_name}}.style.borderColor == 'red' || document.forms.postmodify.{{context.post_box_name}}.style.borderColor == 'red red red red')
-				{
-					if ('runtimeStyle' in document.forms.postmodify.{{context.post_box_name}})
-						document.forms.postmodify.{{context.post_box_name}}.style.borderColor = '';
-					else
-						document.forms.postmodify.{{context.post_box_name}}.style.border = null;
-				}
-
-				// Set the new last message id.
-				if ('last_msg' in document.forms.postmodify)
-					document.forms.postmodify.last_msg.value = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('last_msg')[0].firstChild.nodeValue;
-
-				// Remove the new image from old-new replies!
-				for (i = 0; i < new_replies.length; i++)
-					document.getElementById('image_new_' + new_replies[i]).style.display = 'none';
-				new_replies = new Array();
-
-				var ignored_replies = new Array(), ignoring;
-				var newPosts = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('new_posts')[0] ? XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('new_posts')[0].getElementsByTagName('post') : {length: 0};
-				var numNewPosts = newPosts.length;
-				if (numNewPosts != 0)
-				{
-					var newPostsHTML = '<span id="new_replies"><' + '/span>';
-					for (var i = 0; i < numNewPosts; i++)
-					{
-						new_replies[new_replies.length] = newPosts[i].getAttribute("id");
-
-						ignoring = false;
-						if (newPosts[i].getElementsByTagName("is_ignored")[0].firstChild.nodeValue != 0)
-							ignored_replies[ignored_replies.length] = ignoring = newPosts[i].getAttribute("id");
-
-						newPostsHTML += '<div class="windowbg' + (++reply_counter % 2 == 0 ? '2' : '') + '"><div id="msg' + newPosts[i].getAttribute("id") + '"><div class="floatleft"><h5>{{txt.posted_by}}: ' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + '</h5><span class="smalltext">&#171;&nbsp;<strong{{txt.on}}:</strong> ' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + '&nbsp;&#187;</span> <span class="new_posts" id="image_new_' + newPosts[i].getAttribute("id") + '">{{txt.new}}</span></div>';
-						{{#if context.can_quote}}
-						newPostsHTML += '<ul class="quickbuttons" id="msg_' + newPosts[i].getAttribute("id") + '_quote"><li><a href="#postmodify" onclick="return insertQuoteFast(' + newPosts[i].getAttribute("id") + ');" class="quote_button"><span>{{txt.quote}}</span><' + '/a></li></ul>';
-						{{/if}}
-						newPostsHTML += '<br class="clear">';
-
-						if (ignoring)
-							newPostsHTML += '<div id="msg_' + newPosts[i].getAttribute("id") + '_ignored_prompt" class="smalltext">{{txt.ignoring_user}}<a href="#" id="msg_' + newPosts[i].getAttribute("id") + '_ignored_link" style="display: none;">{{txt.show_ignore_user_post}}</a></div>';
-
-						newPostsHTML += '<div class="list_posts smalltext" id="msg_' + newPosts[i].getAttribute("id") + '_body">' + newPosts[i].getElementsByTagName("message")[0].firstChild.nodeValue + '<' + '/div></div></div>';
-					}
-					setOuterHTML(document.getElementById('new_replies'), newPostsHTML);
-				}
-
-				var numIgnoredReplies = ignored_replies.length;
-				if (numIgnoredReplies != 0)
-				{
-					for (var i = 0; i < numIgnoredReplies; i++)
-					{
-						aIgnoreToggles[ignored_replies[i]] = new smc_Toggle({
-							bToggleEnabled: true,
-							bCurrentlyCollapsed: true,
-							aSwappableContainers: [
-								'msg_' + ignored_replies[i] + '_body',
-								'msg_' + ignored_replies[i] + '_quote',
-							],
-							aSwapLinks: [
-								{
-									sId: 'msg_' + ignored_replies[i] + '_ignored_link',
-									msgExpanded: '',
-									msgCollapsed: '{{txt.show_ignore_user_post}}'
-								}
-							]
-						});
-					}
-				}
-
-				location.hash = '#' + 'preview_section';
-
-				if (typeof(smf_codeFix) != 'undefined')
-					smf_codeFix();
+				setOuterHTML(document.getElementById('new_replies'), newPostsHTML);
 			}
-			{{#if modSettings.additional_options_collapsable}}
-				var oSwapAdditionalOptions = new smc_Toggle({
-				bToggleEnabled: true,
-				bCurrentlyCollapsed: {{#if context.show_additional_options}}false{{else}}true{{/if}},
-				funcOnBeforeCollapse: function () {
-					document.getElementById('additional_options').value = '0';
-				},
-				funcOnBeforeExpand: function () {
-					document.getElementById('additional_options').value = '1';
-				},
-				aSwappableContainers: [
-					'postAdditionalOptions',
-				],
-				aSwapImages: [
-					{
-						sId: 'postMoreExpandLink',
-						altExpanded: '-',
-						altCollapsed: '+'
-					}
-				],
-				aSwapLinks: [
-					{
-						sId: 'postMoreExpandLink',
-						msgExpanded: '{{#if context.can_post_attachment}}{{jsEscape txt.post_additionalopt_attach}}{{else}}{{jsEscape txt.post_additionalopt}}{{/if}}',
-						msgCollapsed: '{{#if context.can_post_attachment}}{{jsEscape txt.post_additionalopt_attach}}{{else}}{{jsEscape txt.post_additionalopt}}{{/if}}'
-					}
-				]
-			});
-			{{/if}}
-			{{#if context.drafts}}
-			var oSwapDraftOptions = new smc_Toggle({
+
+			var numIgnoredReplies = ignored_replies.length;
+			if (numIgnoredReplies != 0)
+			{
+				for (var i = 0; i < numIgnoredReplies; i++)
+				{
+					aIgnoreToggles[ignored_replies[i]] = new smc_Toggle({
+						bToggleEnabled: true,
+						bCurrentlyCollapsed: true,
+						aSwappableContainers: [
+							'msg_' + ignored_replies[i] + '_body',
+							'msg_' + ignored_replies[i] + '_quote',
+						],
+						aSwapLinks: [
+							{
+								sId: 'msg_' + ignored_replies[i] + '_ignored_link',
+								msgExpanded: '',
+								msgCollapsed: '{{txt.show_ignore_user_post}}'
+							}
+						]
+					});
+				}
+			}
+
+			location.hash = '#' + 'preview_section';
+
+			if (typeof(smf_codeFix) != 'undefined')
+				smf_codeFix();
+		}
+		{{#if modSettings.additional_options_collapsable}}
+			var oSwapAdditionalOptions = new smc_Toggle({
+			bToggleEnabled: true,
+			bCurrentlyCollapsed: {{#if context.show_additional_options}}false{{else}}true{{/if}},
+			funcOnBeforeCollapse: function () {
+				document.getElementById('additional_options').value = '0';
+			},
+			funcOnBeforeExpand: function () {
+				document.getElementById('additional_options').value = '1';
+			},
+			aSwappableContainers: [
+				'postAdditionalOptions',
+			],
+			aSwapImages: [
+				{
+					sId: 'postMoreExpandLink',
+					altExpanded: '-',
+					altCollapsed: '+'
+				}
+			],
+			aSwapLinks: [
+				{
+					sId: 'postMoreExpandLink',
+					msgExpanded: {{#if context.can_post_attachment}}{{{json txt.post_additionalopt_attach}}}{{else}}{{{json txt.post_additionalopt}}}{{/if}},
+					msgCollapsed: {{#if context.can_post_attachment}}{{{json txt.post_additionalopt_attach}}}{{else}}{{{json txt.post_additionalopt}}}{{/if}}
+				}
+			]
+		});
+		{{/if}}
+		{{#if context.drafts}}
+		var oSwapDraftOptions = new smc_Toggle({
+			bToggleEnabled: true,
+			bCurrentlyCollapsed: true,
+			aSwappableContainers: [
+				'postDraftOptions',
+			],
+			aSwapImages: [
+				{
+					sId: 'postDraftExpand',
+					altExpanded: '-',
+					altCollapsed: '+'
+				}
+			],
+			aSwapLinks: [
+				{
+					sId: 'postDraftExpandLink',
+					msgExpanded: {{{json txt.draft_hide}}},
+					msgCollapsed: {{{json txt.draft_load}}}
+				}
+			]
+		});
+		{{/if}}
+		var oEditorID = "{{context.post_box_name}}";
+		var oEditorObject = oEditorHandle_{{context.post_box_name}};
+	</script>
+	{{#if context.previous_posts}}
+	<div id="recent" class="flow_hidden main_section">
+		<div class="cat_bar">
+			<h3 class="catbg">{{txt.topic_summary}}</h3>
+		</div>
+		<span id="new_replies"></span>
+		{{#each context.previous_posts}}
+		<div class="windowbg">
+			<div id="msg{{id}}">
+				<h5 class="floatleft">
+					<span>{{../txt.posted_by}}</span>&nbsp;{{{poster}}}
+				</h5>&nbsp;-&nbsp;{{{time}}}
+				{{#if ../context.can_quote}}
+				<ul class="quickbuttons" id="msg_{{id}}_quote">
+					<li style="display:none;" id="quoteSelected_{{id}}" data-msgid="{{id}}"><a href="javascript:void(0)"><span class="generic_icons quote_selected"></span>{{../txt.quote_selected_action}}</a></li>
+					<li id="post_modify"><a href="#postmodify" onclick="return insertQuoteFast({{id}});"><span class="generic_icons quote"></span>{{../txt.quote}}</a></li>
+				</ul>
+				{{/if}}
+				<br class="clear">
+				{{#if is_ignored}}
+					<div id="msg_{{id}}_ignored_prompt" class="smalltext">
+					{{../txt.ignoring_user}}
+					<a href="#" id="msg_{{id}}_ignored_link" style="display: none;">{{../txt.show_ignore_user_post}}</a>
+				</div>
+				{{/if}}
+				<div class="list_posts smalltext" id="msg_{{id}}_body" data-msgid="{{id}}">{{{message}}}</div>
+			</div>
+		</div>
+		{{/each}}
+		</div>
+		<script>
+			var aIgnoreToggles = new Array();
+			{{#each ignored_posts}}
+			aIgnoreToggles[{{.}}] = new smc_Toggle({
 				bToggleEnabled: true,
 				bCurrentlyCollapsed: true,
 				aSwappableContainers: [
-					'postDraftOptions',
-				],
-				aSwapImages: [
-					{
-						sId: 'postDraftExpand',
-						altExpanded: '-',
-						altCollapsed: '+'
-					}
+					'msg_{{.}}_body',
+					'msg_{{.}}_quote',
 				],
 				aSwapLinks: [
-					{
-						sId: 'postDraftExpandLink',
-						msgExpanded: '{{jsEscape txt.draft_hide}}',
-						msgCollapsed: '{{jsEscape txt.draft_load}}'
-					}
+						{
+							sId: 'msg_{{.}}_ignored_link',
+							msgExpanded: '',
+							msgCollapsed: '{{JSEscape ../txt.show_ignore_user_post}}'
+						}
 				]
 			});
-			{{/if}}
-			var oEditorID = "{{context.post_box_name}}";
-			var oEditorObject = oEditorHandle_{{context.post_box_name}};
-		</script>
-		{{#if context.previous_posts}}
-		<div id="recent" class="flow_hidden main_section">
-			<div class="cat_bar">
-				<h3 class="catbg">{{txt.topic_summary}}</h3>
-			</div>
-			<span id="new_replies"></span>
-			{{#each context.previous_posts}}
-			<div class="windowbg">
-				<div id="msg{{id}}">
-					<h5 class="floatleft">
-						<span>{{../txt.posted_by}}</span>&nbsp;{{poster}}
-					</h5>&nbsp;-&nbsp;{{time}}
-					{{#if ../context.can_quote}}
-					<ul class="quickbuttons" id="msg_{{id}}_quote">
-						<li style="display:none;" id="quoteSelected_{{id}}" data-msgid="{{id}}"><a href="javascript:void(0)"><span class="generic_icons quote_selected"></span>{{../txt.quote_selected_action}}</a></li>
-						<li id="post_modify"><a href="#postmodify" onclick="return insertQuoteFast({{id}});"><span class="generic_icons quote"></span>{{../txt.quote}}</a></li>
-					</ul>
-					{{/if}}
-					<br class="clear">
-					{{#if is_ignored}}
-						<div id="msg_{{id}}_ignored_prompt" class="smalltext">
-						{{../txt.ignoring_user}}
-						<a href="#" id="msg_{{id}}_ignored_link" style="display: none;">{{../txt.show_ignore_user_post}}</a>
-					</div>
-					{{/if}}
-					<div class="list_posts smalltext" id="msg_{{id}}_body" data-msgid="{{id}}">{{{message}}}</div>
-				</div>
-			</div>
 			{{/each}}
-			</div>
-			<script>
-				var aIgnoreToggles = new Array();
-				{{#each ignored_posts}}
-				aIgnoreToggles[{{.}}] = new smc_Toggle({
-					bToggleEnabled: true,
-					bCurrentlyCollapsed: true,
-					aSwappableContainers: [
-						'msg_{{.}}_body',
-						'msg_{{.}}_quote',
-					],
-					aSwapLinks: [
+			function insertQuoteFast(messageid)
+			{
+				if (window.XMLHttpRequest)
+					getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=quotefast;quote=' + messageid + ';xml;pb={{context.post_box_name}};mode=0', onDocReceived);
+				else
+					reqWin(smf_prepareScriptUrl(smf_scripturl) + 'action=quotefast;quote=' + messageid + ';pb={{context.post_box_name}};mode=0', 240, 90);
+
+				return true;
+			}
+			function onDocReceived(XMLDoc)
+			{
+				var text = '';
+
+				for (var i = 0, n = XMLDoc.getElementsByTagName('quote')[0].childNodes.length; i < n; i++)
+					text += XMLDoc.getElementsByTagName('quote')[0].childNodes[i].nodeValue;
+				$("#{{context.post_box_name}}").data("sceditor").InsertText(text);
+			}
+			function onReceiveOpener(text)
+			{
+				$("#{{context.post_box_name}}").data("sceditor").InsertText(text);
+			}
+			{{#if context.make_poll}}
+				var pollOptionNum = 0, pollTabIndex;
+				var pollOptionId = {{context.last_choice_id}};
+				function addPollOption()
+				{
+					if (pollOptionNum == 0)
+					{
+						for (var i = 0, n = document.forms.postmodify.elements.length; i < n; i++)
+							if (document.forms.postmodify.elements[i].id.substr(0, 8) == 'options-')
 							{
-								sId: 'msg_{{.}}_ignored_link',
-								msgExpanded: '',
-								msgCollapsed: '{{JSEscape ../txt.show_ignore_user_post}}'
+								pollOptionNum++;
+								pollTabIndex = document.forms.postmodify.elements[i].tabIndex;
 							}
-					]
-				});
-				{{/each}}
-				function insertQuoteFast(messageid)
-				{
-					if (window.XMLHttpRequest)
-						getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=quotefast;quote=' + messageid + ';xml;pb={{context.post_box_name}};mode=0', onDocReceived);
-					else
-						reqWin(smf_prepareScriptUrl(smf_scripturl) + 'action=quotefast;quote=' + messageid + ';pb={{context.post_box_name}};mode=0', 240, 90);
-	
-					return true;
-				}
-				function onDocReceived(XMLDoc)
-				{
-					var text = '';
-	
-					for (var i = 0, n = XMLDoc.getElementsByTagName('quote')[0].childNodes.length; i < n; i++)
-						text += XMLDoc.getElementsByTagName('quote')[0].childNodes[i].nodeValue;
-					$("#{{context.post_box_name}}").data("sceditor").InsertText(text);
-				}
-				function onReceiveOpener(text)
-				{
-					$("#{{context.post_box_name}}").data("sceditor").InsertText(text);
-				}
-			</script>
-		{{/if}}
+					}
+					pollOptionNum++
+					pollOptionId++
+
+					setOuterHTML(document.getElementById('pollMoreOptions'), '{{jsescape '<dt><label for="options-'}}' + pollOptionId + '{{jsEscape (concat '">'  txt.option)}}' + pollOptionNum + '{{jsEscape '</label>:</dt><dd><input type="text" name="options['}}' + pollOptionId + '{{jsEscape ']" id="options-'}}' + pollOptionId + '{{jsEscape '" value="" size="80" maxlength="255" tabindex="'}}' + pollTabIndex + '{{jsEscape '" class="input_text"></dd><p id="pollMoreOptions"></p>'}}');
+				};
+			{{/if}}
+		</script>
+	{{/if}}

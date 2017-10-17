@@ -92,7 +92,7 @@
 			{{#if context.require_verification}}
 				<p>
 					<strong>{{{txt.verification}}}:</strong>
-					{{>control_visual_verification verify_id=context.visual_verification_id display_type='all'}}
+					{{{captcha context.visual_verification_id}}}
 				</p>
 			{{/if}}
 

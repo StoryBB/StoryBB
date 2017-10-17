@@ -27,8 +27,6 @@ function ManageNews()
 	// First, let's do a quick permissions check for the best error message possible.
 	isAllowedTo(array('edit_news', 'send_mail', 'admin_forum'));
 
-	loadTemplate('ManageNews');
-
 	// Format: 'sub-action' => array('function', 'permission')
 	$subActions = array(
 		'editnews' => array('EditNews', 'edit_news'),
@@ -308,10 +306,11 @@ function SelectMailingMembers()
 
 	// Is there any confirm message?
 	$context['newsletter_sent'] = isset($_SESSION['newsletter_sent']) ? $_SESSION['newsletter_sent'] : '';
+	$context['newsletter_sent_msg'] = !empty($context['newsletter_sent']) ? $txt['admin_news_newsletter_' . $context['newsletter_sent']] : '';
 
 	$context['page_title'] = $txt['admin_newsletters'];
 
-	$context['sub_template'] = 'email_members';
+	$context['sub_template'] = 'newsletter_pick_users';
 
 	$context['groups'] = array();
 	$postGroups = array();
@@ -494,7 +493,7 @@ function ComposeMailing()
 
 	// Setup the template!
 	$context['page_title'] = $txt['admin_newsletters'];
-	$context['sub_template'] = 'email_members_compose';
+	$context['sub_template'] = 'newsletter_compose';
 
 	$context['subject'] = !empty($_POST['subject']) ? $_POST['subject'] : $smcFunc['htmlspecialchars']($context['forum_name'] . ': ' . $txt['subject']);
 	$context['message'] = !empty($_POST['message']) ? $_POST['message'] : $smcFunc['htmlspecialchars']($txt['message'] . "\n\n" . $txt['regards_team'] . "\n\n" . '{$board_url}');
@@ -782,7 +781,8 @@ function SendMailing($clean_only = false)
 			foreach ($_POST['exclude_groups'] as $group => $dummy)
 				$context['recipients']['exclude_groups'][] = (int) $group;
 		}
-		else
+		// Ignore an empty string - we don't want to exclude "Regular Members" unless it's specifically selected
+		elseif ($_POST['exclude_groups'] != '')
 		{
 			$groups = explode(',', $_POST['exclude_groups']);
 			foreach ($groups as $group)
@@ -857,7 +857,7 @@ function SendMailing($clean_only = false)
 		array(
 			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '">' . $scripturl . '</a>' : $scripturl,
 			timeformat(forum_time(), false),
-			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $cleanLatestMember),
+			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $scripturl . '?action=profile;u=' . $modSettings['latestMember']),
 			$modSettings['latestMember'],
 			$cleanLatestMember
 		), $_POST['message']);
@@ -981,7 +981,7 @@ function SendMailing($clean_only = false)
 		foreach ($rows as $row)
 		{
 			// Force them to have it?
-			if (empty($context['email_force']) || empty($prefs[$row['id_member']]['announcements']))
+			if (empty($context['email_force']) && empty($prefs[$row['id_member']]['announcements']))
 				continue;
 
 			// What groups are we looking at here?
@@ -1004,7 +1004,7 @@ function SendMailing($clean_only = false)
 			$message = str_replace($from_member,
 				array(
 					$row['email_address'],
-					!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $cleanMemberName . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $row['id_member'] . ']' . $cleanMemberName . '[/url]' : $cleanMemberName),
+					!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $cleanMemberName . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $row['id_member'] . ']' . $cleanMemberName . '[/url]' : $scripturl . '?action=profile;u=' . $row['id_member']),
 					$row['id_member'],
 					$cleanMemberName,
 				), $_POST['message']);
@@ -1041,7 +1041,7 @@ function SendMailing($clean_only = false)
 	$context['percentage_done'] = round(($percentEmails + $percentMembers) * 100, 2);
 
 	$context['page_title'] = $txt['admin_newsletters'];
-	$context['sub_template'] = 'email_members_send';
+	$context['sub_template'] = 'newsletter_send';
 }
 
 /**

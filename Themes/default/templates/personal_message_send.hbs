@@ -75,12 +75,12 @@
 			{{#if context.require_verification}}
 			<div class="post_verification">
 				<strong>{{txt.pm_visual_verification_label}}:</strong>
-				{{!--{{>control_verification context.visual_verification_id 'all'}}--}}
+				{{{captcha context.visual_verification_id}}}
 				</div>
 			{{/if}}
 			<hr>
 			<span id="post_confirm_strip" class="righttext">
-				{{>control_richedit_buttons editor_id=context.post_box_name smileyContainer='smileyBox_message' bbcContainer='bbcBox_message'}}
+				{{{richtextbuttons context.post_box_name}}}
 			</span>
 			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
 			<input type="hidden" name="seqnum" value="{{context.form_sequence_number}}">

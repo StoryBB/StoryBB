@@ -136,7 +136,7 @@ function Register($reg_errors = array())
 		// Try to find our selected language.
 		foreach ($context['languages'] as $key => $lang)
 		{
-			$context['languages'][$key]['name'] = strtr($lang['name'], array('-utf8' => ''));
+			$context['languages'][$key]['name'] = $lang['name'];
 
 			// Found it!
 			if ($selectedLanguage == $lang['filename'])
@@ -313,12 +313,38 @@ function Register2()
 	// Needed for isReservedName() and registerMember().
 	require_once($sourcedir . '/Subs-Members.php');
 
-	// Validation... even if we're not a mall.
+	// Maybe you want set the displayed name during registration
 	if (isset($_POST['real_name']))
 	{
-		$_POST['real_name'] = trim(preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $_POST['real_name']));
-		if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && $smcFunc['strlen']($_POST['real_name']) < 60)
-			$possible_strings[] = 'real_name';
+		// Are you already allowed to edit the displayed name?
+		if (allowedTo('profile_displayed_name') || allowedTo('moderate_forum'))
+			$canEditDisplayName = true;
+
+		// If you are a guest, will you be allowed to once you register?
+		else
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT add_deny
+				FROM {db_prefix}permissions
+				WHERE id_group = {int:id_group} AND permission = {string:permission}',
+				array(
+					'id_group' => 0,
+					'permission' => 'profile_displayed_name_own',
+				)
+			);
+			list($canEditDisplayName) = $smcFunc['db_fetch_row']($request);
+			$smcFunc['db_free_result']($request);
+		}
+
+		if ($canEditDisplayName)
+		{
+			// Sanitize it
+			$_POST['real_name'] = trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $_POST['real_name']));
+
+			// Only set it if we are sure it is good
+			if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && $smcFunc['strlen']($_POST['real_name']) < 60)
+				$possible_strings[] = 'real_name';
+		}
 	}
 
 	// Handle a string as a birthdate...
@@ -768,11 +794,11 @@ function VerificationCode()
 	elseif (isset($_REQUEST['sound']))
 	{
 		loadLanguage('Login');
-		loadTemplate('Register');
 
 		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
-		$context['sub_template'] = 'verification_sound';
-		$context['template_layers'] = array();
+		$context['sub_template'] = 'register_sound_verification';
+		register_helper(['isBrowser' => 'isBrowser']);
+		loadTemplateLayout('popup');
 
 		obExit();
 	}
@@ -789,7 +815,7 @@ function VerificationCode()
 		elseif (isset($_REQUEST['letter']))
 		{
 			$_REQUEST['letter'] = (int) $_REQUEST['letter'];
-			if ($_REQUEST['letter'] > 0 && $_REQUEST['letter'] <= strlen($code) && !showLetterImage(strtolower($code{$_REQUEST['letter'] - 1})))
+			if ($_REQUEST['letter'] > 0 && $_REQUEST['letter'] <= strlen($code) && !showLetterImage(strtoupper($code{$_REQUEST['letter'] - 1})))
 			{
 				header('Content-Type: image/gif');
 				die("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
@@ -830,7 +856,7 @@ function RegisterCheckUsername()
 	$context['valid_username'] = true;
 
 	// Clean it up like mother would.
-	$context['checked_username'] = preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $context['checked_username']);
+	$context['checked_username'] = preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $context['checked_username']);
 
 	require_once($sourcedir . '/Subs-Auth.php');
 	$errors = validateUsername(0, $context['checked_username'], true);

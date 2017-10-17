@@ -39,16 +39,17 @@ function db_packages_init()
 	}
 
 	// We setup an array of SMF tables we can't do auto-remove on - in case a mod writer cocks it up!
-	$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'ban_items',
+	$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'background_tasks', 'ban_groups', 'ban_items',
 		'board_permissions', 'boards', 'categories',
-		'custom_fields', 'group_moderators', 'log_actions', 'log_activity', 'log_banned', 'log_boards',
-		'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_mark_read',
+		'custom_fields', 'group_moderators', 'log_actions', 'log_activity', 'log_banned', 'log_boards', 'log_comments',
+		'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_mark_read', 'log_member_notices',
 		'log_notify', 'log_online', 'log_polls', 'log_reported', 'log_reported_comments',
 		'log_scheduled_tasks', 'log_search_messages', 'log_search_results', 'log_search_subjects',
-		'log_search_topics', 'log_topics', 'mail_queue', 'membergroups', 'members', 'message_icons',
-		'messages', 'moderators', 'permission_profiles', 'permissions', 'personal_messages',
-		'pm_recipients', 'poll_choices', 'polls', 'scheduled_tasks', 'sessions', 'settings', 'smileys',
-		'themes', 'topics');
+		'log_search_topics', 'log_spider_hits', 'log_spider_stats', 'log_subscribed', 'log_topics',
+		'mail_queue', 'membergroups', 'members', 'mentions', 'message_icons',
+		'messages', 'moderator_groups', 'moderators', 'permission_profiles', 'permissions', 'personal_messages',
+		'pm_labeled_messages', 'pm_labels', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls', 'scheduled_tasks', 'sessions', 'settings', 'smileys',
+		'spiders', 'subscriptions', 'themes', 'topics', 'user_alerts', 'user_alerts_prefs', 'user_drafts', 'user_likes');
 	foreach ($reservedTables as $k => $table_name)
 		$reservedTables[$k] = strtolower($db_prefix . $table_name);
 
@@ -79,6 +80,7 @@ function db_packages_init()
  *  	- 'ignore' will do nothing if the table exists. (And will return true)
  *  	- 'overwrite' will drop any existing table of the same name.
  *  	- 'error' will return false if the table already exists.
+ *  	- 'update' will update the table if the table already exists (no change of ai field and only colums with the same name keep the data)
  *
  * @param string $table_name The name of the table to create
  * @param array $columns An array of column info in the specified format
@@ -90,9 +92,11 @@ function db_packages_init()
  */
 function smf_db_create_table($table_name, $columns, $indexes = array(), $parameters = array(), $if_exists = 'ignore', $error = 'fatal')
 {
-	global $reservedTables, $smcFunc, $db_package_log, $db_prefix;
+	global $reservedTables, $smcFunc, $db_package_log, $db_prefix, $db_name;
 
 	static $engines = array();
+
+	$old_table_exists = false;
 
 	// Strip out the table name, we might not need it in some cases
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
@@ -115,6 +119,19 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 		// This is a sad day... drop the table? If not, return false (error) by default.
 		if ($if_exists == 'overwrite')
 			$smcFunc['db_drop_table']($table_name);
+		else if ($if_exists == 'update')
+		{
+			$smcFunc['db_transaction']('begin');
+			$db_trans = true;
+			$smcFunc['db_drop_table']($table_name.'_old');
+			$smcFunc['db_query']('','
+				RENAME TABLE '. $table_name .' TO ' . $table_name . '_old',
+				array(
+					'security_override' => true,
+				)
+			);
+			$old_table_exists = true;
+		}
 		else
 			return $if_exists == 'ignore';
 	}
@@ -167,7 +184,7 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 	}
 
 	$table_query .= ') ENGINE=' . $parameters['engine'];
-	$table_query .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+		$table_query .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
 
 	// Create the table!
 	$smcFunc['db_query']('', $table_query,
@@ -175,6 +192,41 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 			'security_override' => true,
 		)
 	);
+
+	// Fill the old data
+	if ($old_table_exists)
+	{	
+		$same_col = array();
+
+		$request = $smcFunc['db_query']('','
+			SELECT count(*), column_name
+			FROM information_schema.columns
+			WHERE table_name in ({string:table1},{string:table2}) AND table_schema = {string:schema}
+			GROUP BY column_name
+			HAVING count(*) > 1',
+			array (
+				'table1' => $table_name,
+				'table2' => $table_name.'_old',
+				'schema' => $db_name,
+			)
+		);
+
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$same_col[] = $row['column_name'];
+		}
+
+		$smcFunc['db_query']('','
+			INSERT INTO ' . $table_name .'('
+			. implode($same_col, ',') .
+			')
+			SELECT '. implode($same_col, ',') . '
+			FROM ' . $table_name . '_old',
+			array()
+		);
+
+		$smcFunc['db_drop_table']($table_name . '_old');
+	}
 
 	return true;
 }
@@ -308,10 +360,9 @@ function smf_db_remove_column($table_name, $column_name, $parameters = array(), 
  * @param string $table_name The name of the table this column is in
  * @param string $old_column The name of the column we want to change
  * @param array $column_info An array of info about the "new" column definition (see {@link smf_db_create_table()})
- * @param array $parameters Not used?
- * @param string $error
+ * @return bool
  */
-function smf_db_change_column($table_name, $old_column, $column_info, $parameters = array(), $error = 'fatal')
+function smf_db_change_column($table_name, $old_column, $column_info)
 {
 	global $smcFunc, $db_prefix;
 
@@ -393,8 +444,6 @@ function smf_db_add_index($table_name, $index_info, $parameters = array(), $if_e
 		else
 			$index_info['name'] = implode('_', $index_info['columns']);
 	}
-	else
-		$index_info['name'] = $index_info['name'];
 
 	// Log that we are going to want to remove this!
 	$db_package_log[] = array('remove_index', $table_name, $index_info['name']);
@@ -496,7 +545,7 @@ function smf_db_remove_index($table_name, $index_name, $parameters = array(), $e
  * @param string $type_name The data type (int, varchar, smallint, etc.)
  * @param int $type_size The size (8, 255, etc.)
  * @param boolean $reverse
- * @return An array containing the appropriate type and size for this DB type
+ * @return array An array containing the appropriate type and size for this DB type
  */
 function smf_db_calculate_type($type_name, $type_size = null, $reverse = false)
 {
@@ -543,10 +592,9 @@ function smf_db_calculate_type($type_name, $type_size = null, $reverse = false)
  * Get table structure.
  *
  * @param string $table_name The name of the table
- * @param array $parameters Not used?
- * @return An array of table structure - the name, the column info from {@link smf_db_list_columns()} and the index info from {@link smf_db_list_indexes()}
+ * @return array An array of table structure - the name, the column info from {@link smf_db_list_columns()} and the index info from {@link smf_db_list_indexes()}
  */
-function smf_db_table_structure($table_name, $parameters = array())
+function smf_db_table_structure($table_name)
 {
 	global $smcFunc, $db_prefix;
 

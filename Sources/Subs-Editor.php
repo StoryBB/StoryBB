@@ -1469,7 +1469,6 @@ function create_control_richedit($editorOptions)
 
 		// This really has some WYSIWYG stuff.
 		loadCSSFile('jquery.sceditor.css', array('force_current' => false, 'validate' => true), 'smf_jquery_sceditor');
-		loadTemplate('GenericControls');
 
 		// JS makes the editor go round
 		loadJavaScriptFile('editor.js', array(), 'smf_editor');
@@ -1780,6 +1779,8 @@ function create_control_richedit($editorOptions)
 
 	register_helper([
 		'richtexteditor' => 'control_richedit_helper',
+		'richtextbuttons' => 'control_richedit_buttons_helper',
+		'jsEscape' => 'JSEscape',
 	]);
 }
 
@@ -1800,6 +1801,22 @@ function control_richedit_helper($editor_id, $smileyContainer = null, $bbcContai
 	return prepareTemplate($phpStr, $data);
 }
 
+function control_richedit_buttons_helper($editor_id) {
+	global $context, $settings, $modSettings, $txt;
+
+	$data = [
+		'editor_id' => $editor_id,
+		'editor_context' => $context['controls']['richedit'][$editor_id],
+		'context' => $context,
+		'settings' => $settings,
+		'modSettings' => $modSettings,
+		'txt' => $txt,
+	];
+	$template = loadTemplatePartial('control_richedit_buttons');
+	$phpStr = compileTemplate($template);
+	return prepareTemplate($phpStr, $data);
+}
+
 /**
  * Create a anti-bot verification control?
  * @param array &$verificationOptions Options for the verification control
@@ -1814,9 +1831,6 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	// First verification means we need to set up some bits...
 	if (empty($context['controls']['verification']))
 	{
-		// The template
-		loadTemplate('GenericControls');
-
 		// Some javascript ma'am?
 		if (!empty($verificationOptions['override_visual']) || (!empty($modSettings['visual_verification_type']) && !isset($verificationOptions['override_visual'])))
 			loadJavaScriptFile('captcha.js', array(), 'smf_captcha');
@@ -2084,6 +2098,10 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 	$_SESSION[$verificationOptions['id'] . '_vv']['count'] = empty($_SESSION[$verificationOptions['id'] . '_vv']['count']) ? 1 : $_SESSION[$verificationOptions['id'] . '_vv']['count'] + 1;
 
+	register_helper([
+		'captcha' => 'visual_verification_helper',
+	]);
+
 	// Return errors if we have them.
 	if (!empty($verification_errors))
 		return $verification_errors;
@@ -2093,6 +2111,27 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 	// Say that everything went well chaps.
 	return true;
+}
+
+function visual_verification_helper($verify_id)
+{
+	global $context, $settings, $modSettings, $txt;
+
+	$verify_context = &$context['controls']['verification'][$verify_id];
+	$verify_context['total_items'] = count($verify_context['questions']) + ($verify_context['show_visual'] || $verify_context['can_recaptcha'] ? 1 : 0);
+	$verify_context['hidden_input_name'] = $verify_context['empty_field'] ? $_SESSION[$verify_id . '_vv']['empty_field'] : '';
+
+	$data = [
+		'verify_id' => $verify_id,
+		'verify_context' => $verify_context,
+		'context' => $context,
+		'settings' => $settings,
+		'modSettings' => $modSettings,
+		'txt' => $txt,
+	];
+	$template = loadTemplatePartial('control_visual_verification');
+	$phpStr = compileTemplate($template);
+	return prepareTemplate($phpStr, $data);	
 }
 
 /**

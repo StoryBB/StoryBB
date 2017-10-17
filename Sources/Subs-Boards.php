@@ -381,7 +381,7 @@ function MarkRead()
 			);
 			if ($smcFunc['db_num_rows']($result) > 0)
 			{
-				$logBoardInserts = '';
+				$logBoardInserts = array();
 				while ($row = $smcFunc['db_fetch_assoc']($result))
 					$logBoardInserts[] = array($modSettings['maxMsgID'], $user_info['id'], $row['id_board']);
 
@@ -644,7 +644,7 @@ function modifyBoard($board_id, &$boardOptions)
 	}
 
 	$id = $board_id;
-	call_integration_hook('integrate_modify_board', array($id, &$boardUpdates, &$boardUpdateParameters));
+	call_integration_hook('integrate_modify_board', array($id, $boardOptions, &$boardUpdates, &$boardUpdateParameters));
 
 	// Do the updates (if any).
 	if (!empty($boardUpdates))
@@ -1320,7 +1320,7 @@ function getBoardTree()
 			' . implode(', ', $boardColumns) . '
 		FROM {db_prefix}categories AS c
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)
-		WHERE {query_wanna_see_board}
+		WHERE {query_see_board}
 		ORDER BY c.cat_order, b.child_level, b.board_order',
 		$boardParameters
 	);

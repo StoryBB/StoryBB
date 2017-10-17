@@ -302,10 +302,10 @@ $helptxt['spamWaitTime'] = 'Here you can select the amount of time that must pas
 
 $helptxt['enablePostHTML'] = 'This will allow the posting of some basic HTML tags:
 	<ul class="normallist">
-		<li>&lt;b&gt;, &lt;u&gt;, &lt;i&gt;, &lt;s&gt;, &lt;em&gt;, &lt;ins&gt;, &lt;del&gt;</li>
+		<li>&lt;b&gt;, &lt;u&gt;, &lt;i&gt;, &lt;s&gt;, &lt;em&gt;, &lt;strong&gt;, &lt;ins&gt;, &lt;del&gt;</li>
 		<li>&lt;a href=&quot;&quot;&gt;</li>
 		<li>&lt;img src=&quot;&quot; alt=&quot;&quot; /&gt;</li>
-		<li>&lt;br /&gt;, &lt;hr /&gt;</li>
+		<li>&lt;br&gt;, &lt;hr&gt;</li>
 		<li>&lt;pre&gt;, &lt;blockquote&gt;</li>
 	</ul>';
 
@@ -361,6 +361,10 @@ $helptxt['customoptions'] = 'This defines the options that a user may choose fro
 	</ul>';
 
 $helptxt['autoFixDatabase'] = 'This will automatically fix broken tables and resume as if nothing happened. This can be useful, because the only way to fix it is to REPAIR the table, and this way your forum won\'t be down until you notice. It does email you when this happens.';
+$helptxt['pgFulltextSearch'] = 'This setting defines the language to use for PostgreSQL\'s fulltext search. Choose the language that most closely matches the language your forum actually uses. If your forum\'s language is not listed, or if your forum is multi-lingual, choose the "simple" option. <br>
+This setting is independent of your main SMF language settings and not related to the installed language for SMF. <br>
+When you change this setting you need to [url=' . $scripturl . '?action=admin;area=managesearch;sa=method]rebuild the fulltext search index[/url].<br>
+If a language you need is not listed, ask your database admin to install PostgreSQL language support for that language.';
 
 $helptxt['enableParticipation'] = 'This shows a little icon on the topics the user has posted in.';
 
@@ -553,9 +557,11 @@ $helptxt['topic_move_any'] = 'If checked, users will be allowed to move topics t
 
 $helptxt['alert_pm_new'] = 'Notifications of new personal messages do not appear in the Alerts pane, but appear in the "My Messages" list instead.';
 
-$helptxt['force_ssl'] = '<b>Test SSL and HTTPS on your server properly before enabling this, it may cause your forum to become inaccessible.</b> Enable maintenance mode if you are unable to access the forum after enabling this';
+$helptxt['force_ssl'] = '<strong>Test SSL and HTTPS on your server properly before enabling this, it may cause your forum to become inaccessible.</strong> Enable maintenance mode if you are unable to access the forum after enabling this.<br><br><strong>Changing this setting will update your forum\'s primary URL, as well as the URLs for your theme files and images, smileys, and avatars, setting them to either http: or https: based on your selection. Customized URLs will not be affected.</strong>';
 $helptxt['image_proxy_enabled'] = 'Required for embedding external images when in full SSL';
 $helptxt['image_proxy_secret'] = 'Keep this a secret, protects your forum from hotlinking images. Change it in order to render current hotlinked images useless';
 $helptxt['image_proxy_maxsize'] = 'Maximum image size that the SSL image proxy will cache: bigger images will be not be cached. Cached images are stored in your StoryBB cache folder, so make sure you have enough free space.';
+
+$helptxt['field_reg_require'] = 'If this field is required during registration, it will also be required on profile changes.';
 
 ?>

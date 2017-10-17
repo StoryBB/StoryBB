@@ -95,10 +95,10 @@ class ProxyServer
 		$request = $_GET['request'];
 		$cached_file = $this->getCachedPath($request);
 		$cached = json_decode(file_get_contents($cached_file), true);
-		
+
 		// Did we get an error when trying to fetch the image
 		$response = $this->checkRequest();
-		if (is_int($response)) {
+		if (!$response) {
 			// Throw a 404
 			header('HTTP/1.0 404 Not Found');
 			exit;
@@ -169,9 +169,9 @@ class ProxyServer
 
 		if (empty($response))
 			return false;
-		
+
 		if ($responseCode != 200) {
-			return $request->result('code');
+			return false;
 		}
 
 		$headers = $response['headers'];
@@ -190,7 +190,7 @@ class ProxyServer
 			'size' => $response['size'],
 			'time' => time(),
 			'body' => base64_encode($response['body']),
-		)));
+		))) === false ? 1 : null;
 	}
 }
 
