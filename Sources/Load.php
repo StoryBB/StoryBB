@@ -2649,7 +2649,7 @@ function register_default_helpers() {
 		'dynamicpartial' => function($partial) {
 			global $context, $txt, $scripturl, $settings, $modSettings, $options;
 			$template = loadTemplatePartial($partial);
-			$phpStr = compileTemplate($template);
+			$phpStr = compileTemplate($template, [], 'dynamicpartial-' . $settings['theme_id'] . '-' . $partial);
 			return prepareTemplate($phpStr, [
 				'context' => $context,
 				'txt' => $txt,
