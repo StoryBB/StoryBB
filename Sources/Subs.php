@@ -2869,11 +2869,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 function render_page($content) {
 	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count, $user_info, $options;
 
-	if (!empty($context['layout_loaded'])) {
-		echo $content;
-		return;
-	}
-
 	// Show the load time?  (only makes sense for the footer.)
 	// This is not really the correct place for this, ideally it needs to happen
 	// as late as possible, but we don't have a flow where this really works yet.
@@ -2897,11 +2892,11 @@ function render_page($content) {
 		'loadtime' => !empty($modSettings['timeLoadPageEnable']) ? sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries']) : ''
 	);
 
-	if (empty($context['layout_loaded'])) {
-		$template = loadTemplateLayout('default');
+	if (empty($context['layout_template'])) {
+		loadTemplateLayout('default');
 	}
 
-	$phpStr = compileTemplate($template, [
+	$phpStr = compileTemplate($context['layout_template'], [
 	    'helpers' => [
 	    	'locale' => 'locale_helper',
 	        'login_helper' => 'login_helper',
