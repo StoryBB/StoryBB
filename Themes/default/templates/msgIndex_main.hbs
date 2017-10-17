@@ -59,7 +59,9 @@
 			<h3>{{context.name}}</h3>
 			<p>
 			{{context.description}}&nbsp;
-			{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{implode_comma context.link_moderators}}}.
+			{{#if context.moderators}}
+				{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{implode_comma context.link_moderators}}}.
+			{{/if}}
 			</p>
 		</div>
 		{{/if}}
@@ -119,13 +121,13 @@
 							</span>
 						</div>
 						<p class="floatleft">{{../txt.started_by}} {{{first_post.member.link}}}</p>
-						{{#if pages}}<span id="pages{{first_post.id}}" class="topic_pages">&nbsp;{{pages}}</span>{{/if}}
+						{{#if pages}}<span id="pages{{first_post.id}}" class="topic_pages">&nbsp;{{{pages}}}</span>{{/if}}
 						<br class="clear">
 					</div>
 				</div>
 				<div class="board_stats centertext"><p>{{replies}} {{../txt.replies}}<br>{{views}} {{../txt.views}}</p></div>
 				<div class="lastpost">
-					<p>{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}</p>
+					<p>{{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}}</p>
 				</div> 
 				{{#if ../context.can_quick_mod}}
 				<div class="moderation">
