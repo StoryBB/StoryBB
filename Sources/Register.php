@@ -794,11 +794,11 @@ function VerificationCode()
 	elseif (isset($_REQUEST['sound']))
 	{
 		loadLanguage('Login');
-		loadTemplate('Register');
 
 		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
-		$context['sub_template'] = 'verification_sound';
-		$context['template_layers'] = array();
+		$context['sub_template'] = 'register_sound_verification';
+		register_helper(['isBrowser' => 'isBrowser']);
+		loadTemplateLayout('popup');
 
 		obExit();
 	}
