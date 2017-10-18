@@ -883,7 +883,7 @@ function profile_popup($memID)
 		array(
 			'menu' => 'edit_profile',
 			'area' => 'lists',
-			'url' => $scripturl . '?action=profile;area=lists;sa=ignore',
+			'url' => $scripturl . '?action=profile;area=lists;sa=ignore' . $context[$context['profile_menu_name']]['extra_parameters'],
 			'title' => $txt['popup_ignore'],
 		),
 		array(
