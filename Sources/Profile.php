@@ -883,7 +883,7 @@ function profile_popup($memID)
 		array(
 			'menu' => 'edit_profile',
 			'area' => 'lists',
-			'url' => $scripturl . '?action=profile;area=lists;sa=ignore',
+			'url' => $scripturl . '?action=profile;area=lists;sa=ignore' . $context[$context['profile_menu_name']]['extra_parameters'],
 			'title' => $txt['popup_ignore'],
 		),
 		array(
@@ -905,7 +905,12 @@ function profile_popup($memID)
 	{
 		if (isset($menu_context[$item['menu']]['areas'][$item['area']]))
 		{
-			$context['profile_items'][] = $item;
+			$area = $menu_context[$item['menu']]['areas'][$item['area']];
+			$context['profile_items'][] = [
+				'icon' => $area['icon'],
+				'url' => isset($item['url']) ? $item['url'] : $area['url'],
+				'title' => isset($item['title']) ? $item['title'] : $area['label'],
+			];
 		}
 	}
 }

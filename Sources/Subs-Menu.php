@@ -275,6 +275,25 @@ function createMenu($menuData, $menuOptions = array())
 		'current_subsection' => !empty($menu_context['current_subsection']) ? $menu_context['current_subsection'] : '',
 	);
 
+	foreach ($menu_context['sections'] as $section_id => $section) {
+		foreach ($section['areas'] as $area_id => $area) {
+			if (isset($area['subsections'])) {
+				foreach ($area['subsections'] as $sa => $sub) {
+					if (!isset($sub['url'])) {
+						$url = (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $area_id) . ';sa=' . $sa . $menu_context['extra_parameters'];
+						$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'][$sa]['url'] = $url;
+					}
+				}
+			}
+
+			if (!isset($area['url'])) {
+				$menu_context['sections'][$section_id]['areas'][$area_id]['url'] = $menu_context['base_url'] . ';area=' . $area_id . $menu_context['extra_parameters'];
+			} else {
+				$menu_context['sections'][$section_id]['areas'][$area_id]['url'] .= $menu_context['extra_parameters'];
+			}
+		}
+	}
+
 	return $include_data;
 }
 
