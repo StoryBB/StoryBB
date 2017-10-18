@@ -1308,6 +1308,7 @@ function AdminAccount()
 
 	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
 	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+	require_once($boarddir . '/vendor/autoload.php');
 
 	require_once($sourcedir . '/Subs-Auth.php');
 
@@ -1514,6 +1515,7 @@ function DeleteInstall()
 
 	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
 	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+	require_once($boarddir . '/vendor/autoload.php');
 
 	require_once($sourcedir . '/Errors.php');
 	require_once($sourcedir . '/Logging.php');

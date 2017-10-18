@@ -72,6 +72,7 @@ if (!FROM_CLI)
 
 require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
 require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+require_once($boarddir . '/vendor/autoload.php');
 
 // Load the most important includes. In general, a background should be loading its own dependencies.
 require_once($sourcedir . '/Errors.php');
