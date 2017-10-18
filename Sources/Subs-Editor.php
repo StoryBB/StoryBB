@@ -1797,7 +1797,7 @@ function control_richedit_helper($editor_id, $smileyContainer = null, $bbcContai
 		'bbcContainer' => $bbcContainer,
 	];
 	$template = loadTemplatePartial('control_richedit');
-	$phpStr = compileTemplate($template);
+	$phpStr = compileTemplate($template, [], 'richedit');
 	return prepareTemplate($phpStr, $data);
 }
 
@@ -1813,7 +1813,7 @@ function control_richedit_buttons_helper($editor_id) {
 		'txt' => $txt,
 	];
 	$template = loadTemplatePartial('control_richedit_buttons');
-	$phpStr = compileTemplate($template);
+	$phpStr = compileTemplate($template, [], 'richedit_buttons');
 	return prepareTemplate($phpStr, $data);
 }
 
@@ -2130,7 +2130,7 @@ function visual_verification_helper($verify_id)
 		'txt' => $txt,
 	];
 	$template = loadTemplatePartial('control_visual_verification');
-	$phpStr = compileTemplate($template);
+	$phpStr = compileTemplate($template, [], 'visual_verification');
 	return prepareTemplate($phpStr, $data);	
 }
 

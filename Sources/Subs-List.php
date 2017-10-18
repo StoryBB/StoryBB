@@ -322,7 +322,7 @@ function generic_list_helper($list_id = null)
 	
 	$template = loadTemplatePartial('generic_list');
 
-	$phpStr = compileTemplate($template);
+	$phpStr = compileTemplate($template, [], 'genericlist');
 	return prepareTemplate($phpStr, $data);
 }
 

@@ -2544,20 +2544,44 @@ function loadTemplatePartialResolver($cx, $name) {
 	return loadTemplatePartial($name);
 }
 
-function compileTemplate($template, $options = []) {
-	global $context;
+function compileTemplate($template, $options = [], $cache_id = null) {
+	global $context, $cachedir, $modSettings;
 	register_default_helpers();
+
+	//var_dump(func_get_args());
+	if (isset($cache_id) && empty($modSettings['debug_templates']))
+	{
+		// Attempt to load from cache.
+		if (file_exists($cachedir . '/template-' . $cache_id . '.php'))
+		{
+			$phpStr = @include($cachedir . '/template-' . $cache_id . '.php');
+			if (!empty($phpStr))
+			{
+				return $phpStr;
+			}
+		}
+	}
 
 	$default_partials = [
 		'helpicon' => loadTemplatePartial('helpicon'),
 	];
 
+	if (!empty($modSettings['debug_templates'])) {
+		if (!isset($options['flags'])) {
+			$options['flags'] = LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL;
+		}
+		$options['flags'] |= LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG;
+	}
+
 	$phpStr = LightnCandy::compile($template, [
-		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_ERROR_EXCEPTION | LightnCandy::FLAG_RENDER_DEBUG | LightnCandy::FLAG_RUNTIMEPARTIAL),
+		'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL),
 		'helpers' => !empty($options['helpers']) ? array_merge($context['_template_helpers'], $options['helpers']) : $context['_template_helpers'],
 		'partialresolver' => 'loadTemplatePartialResolver',
 		'partials' => !empty($options['partials']) ? array_merge($default_partials, $options['partials']) : $default_partials,
 	]);
+	if (isset($cache_id) && empty($modSettings['debug_templates'])) {
+		file_put_contents($cachedir . '/template-' . $cache_id . '.php', '<?php ' . $phpStr);
+	}
 	return $phpStr;
 }
 
@@ -2625,7 +2649,7 @@ function register_default_helpers() {
 		'dynamicpartial' => function($partial) {
 			global $context, $txt, $scripturl, $settings, $modSettings, $options;
 			$template = loadTemplatePartial($partial);
-			$phpStr = compileTemplate($template);
+			$phpStr = compileTemplate($template, [], 'dynamicpartial-' . $settings['theme_id'] . '-' . $partial);
 			return prepareTemplate($phpStr, [
 				'context' => $context,
 				'txt' => $txt,
