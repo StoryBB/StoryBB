@@ -1,4 +1,3 @@
-{{#unless is_ignored}}
 <div class="{{css_class}}">
 {{#if (not (eq id ../context.first_message))}}
     <a id="msg{{id}}"></a>{{#if first_new}}<a id="new"></a>{{/if}}
@@ -119,7 +118,13 @@
 					{{#if (and ../modSettings.show_modify modified.name)}}{{modified.last_edit_text}}{{/if}}
 				</span>
 			</h5>
-			<div id="msg_{{id}}_quick_mod"></div>
+			<div id="msg_{{id}}_quick_mod"{{#if is_ignored}} style="display:none"{{/if}}></div>
+			{{#if is_ignored}}
+				<div id="msg_{{id}}_ignored_prompt">
+					{{{../txt.ignoring_user}}}
+					<a href="#" id="msg_{{id}}_ignored_link" style="display: none;">{{{../txt.show_ignore_user_post}}}</a>
+				</div>
+			{{/if}}
 			<div class="post">
 				{{#unless (or (neq member.id ../context.user.id) approved)}}
 				<div class="approve_post">
@@ -130,21 +135,20 @@
 			</div>
 			{{#unless ../modSettings.dont_show_attach_under_post}}
 			{{#if attachment}}
-			<div id="msg_{{id}}_footer" class="attachments">
-			{{/if}}
+			<div id="msg_{{id}}_footer" class="attachments"{{#if is_ignored}} style="display:none"{{/if}}>
 			{{#each attachment}}
 				<div class="attached">
 					{{#if is_image}}
 					<div class="attachments_top">
-						{{#if thumbnail.has_thumb}}<a href="{{href}};image" id="link_{{id}}" onclick="{{thumbnail.javascript}}"><img src="{{thumbnail.href}}" alt="" id="thumb_{{id}}" class="atc_img"></a>';
+						{{#if thumbnail.has_thumb}}<a href="{{href}};image" id="link_{{id}}" onclick="{{thumbnail.javascript}}"><img src="{{thumbnail.href}}" alt="" id="thumb_{{id}}" class="atc_img"></a>
 						{{else}}<img src="{{href}};image" alt="" width="{{width}}" height="{{height}}" class="atc_img">
 						{{/if}}
-						</div>
+					</div>
 					{{/if}}
 					<div class="attachments_bot">
 						<a href="{{href}}"><img src="{{../../settings.images_url}}/icons/clip.png" class="centericon" alt="*">&nbsp;{{name}}</a> 
 						{{#if (and ../../context.can_approve (not approved))}}
-						[<a href="{{../../scripturl}}?action=attachapprove;sa=approve;aid=', $attachment['id'], ';{{../../context.session_var}}={{../../context.session_id}}">{{txt.approve}}</a>]&nbsp;|&nbsp;[<a href="', {{../../scripturl}}?action=attachapprove;sa=reject;aid={{id}}, ';', $context['session_var'], '=', $context['session_id'], '">', $txt['delete'], '</a>] 
+						[<a href="{{../../scripturl}}?action=attachapprove;sa=approve;aid=', $attachment['id'], ';{{../../context.session_var}}={{../../context.session_id}}">{{txt.approve}}</a>]&nbsp;|&nbsp;[<a href="', {{../../scripturl}}?action=attachapprove;sa=reject;aid={{id}};{{../../context.session_var}}={{../../context.session_id}}">{{{../../txt.delete}}}</a>] 
 						{{/if}}
 						<br>{{size}}, {{#if is_image}}(concat ', ' real_width 'x' real_height '<br>' {{textTemplate ../../txt.attach_viewed downloads}}{{else}}<br>{{textTemplate ../../txt.attach_downloaded downloads}}){{/if}}
 					</div>
@@ -152,6 +156,7 @@
 				{{breakRow @index '5' '<br/>'}}
 			{{/each}}
 			</div>
+			{{/if}}
 			{{/unless}}
 			{{!-- aything below the attachments? --}}
 			{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
@@ -172,7 +177,7 @@
 			{{#if ../modSettings.enable_likes}}
 			<ul class="floatleft">
 				{{#if likes.can_like}}
-					<li class="like_button" id="msg_{{id}}_likes"><a href="{{../scripturl}}?action=likes;ltype=msg;sa=like;like={{id}};{{../context.session_var}}={{../context.session_id}}" class="msg_like"><span class="generic_icons {{#if likes.you}}unlike{{else}}like{{/if}}"></span> ',{{#if likes.you}}{{../txt.unlike}}{{else}}{{../txt.like}}{{/if}}</a></li>
+					<li class="like_button" id="msg_{{id}}_likes"{{#if is_ignoring}} style="display:none"{{/if}}><a href="{{../scripturl}}?action=likes;ltype=msg;sa=like;like={{id}};{{../context.session_var}}={{../context.session_id}}" class="msg_like"><span class="generic_icons {{#if likes.you}}unlike{{else}}like{{/if}}"></span> ',{{#if likes.you}}{{../txt.unlike}}{{else}}{{../txt.like}}{{/if}}</a></li>
 				{{/if}}
 				{{#if (and likes.count ../context.can_see_likes)}}
 					<li class="like_count smalltext">{{getLikeText likes.count}}</li>
@@ -257,7 +262,7 @@
 			</div>
 			{{/if}}
 			{{#if (and (not ../options.show_no_signatures) ../context.signature_enabled member.signature)}}
-			<div class="signature" id="msg_{{id}}_signature">{{{member.signature}}}</div>
+			<div class="signature" id="msg_{{id}}_signature"{{#if is_ignoring}} style="display:none"{{/if}}>{{{member.signature}}}</div>
 			{{/if}}
 			{{#if custom_fields.below_signature}}
 			<div class="custom_fields_above_signature">
@@ -273,4 +278,3 @@
 </div>
 </div>
 <hr class="post_separator">
-{{/unless}}
