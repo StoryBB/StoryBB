@@ -51,6 +51,7 @@ function ManageMaintenance()
 				'recount' => 'AdminBoardRecount',
 				'logs' => 'MaintainEmptyUnimportantLogs',
 				'cleancache' => 'MaintainCleanCache',
+				'cleantemplatecache' => 'MaintainCleanTemplateCache',
 			),
 		),
 		'database' => array(
@@ -267,6 +268,22 @@ function MaintainCleanCache()
 	clean_cache();
 
 	$context['maintenance_finished'] = $txt['maintain_cache'];
+}
+
+/**
+ * Removes cached templates.
+ */
+function MaintainCleanTemplateCache()
+{
+	global $context, $txt;
+
+	checkSession();
+	validateToken('admin-maint');
+
+	// Just wipe the whole cache directory!
+	clean_template_cache();
+
+	$context['maintenance_finished'] = $txt['maintain_template_cache'];
 }
 
 /**
