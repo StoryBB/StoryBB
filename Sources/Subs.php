@@ -2820,9 +2820,8 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 				$buffer = ob_get_clean();
 				$content .= $buffer;
 			} else {
-    			$phpStr = compileTemplate(loadTemplateFile($sub_template));
-    			$renderer = LightnCandy::prepare($phpStr);
-				$content .= $renderer([
+    			$phpStr = compileTemplate(loadTemplateFile($sub_template), [], $settings['theme_id'] . '-' . $sub_template);
+    			$content .= prepareTemplate($phpStr, [
 					'context' => $context,
 					'txt' => $txt,
 					'scripturl' => $scripturl,
@@ -2903,12 +2902,17 @@ function render_page($content) {
 	        'isSelected' => 'isSelected',
 	        'javascript' => 'template_javascript',
 	    ]
-	]);
+	], 'layout-' . (!empty($context['layout_loaded']) ? $context['layout_loaded'] : 'default'));
 
 	echo prepareTemplate($phpStr, $data);
 }
 
 function prepareTemplate($phpStr, $data) {
+	if (is_callable($phpStr))
+	{
+		return $phpStr($data);
+	}
+
 	$renderer = LightnCandy::prepare($phpStr);
 	return $renderer($data);
 }
