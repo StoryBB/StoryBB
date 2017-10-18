@@ -53,6 +53,7 @@ if (substr($sourcedir, 0, 1) == '.' && substr($sourcedir, 1, 1) != '.')
 
 require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
 require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+require_once($boarddir . '/vendor/autoload.php');
 
 // Load the important includes.
 require_once($sourcedir . '/QueryString.php');
