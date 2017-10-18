@@ -905,7 +905,12 @@ function profile_popup($memID)
 	{
 		if (isset($menu_context[$item['menu']]['areas'][$item['area']]))
 		{
-			$context['profile_items'][] = $item;
+			$area = $menu_context[$item['menu']]['areas'][$item['area']];
+			$context['profile_items'][] = [
+				'icon' => $area['icon'],
+				'url' => isset($item['url']) ? $item['url'] : $area['url'],
+				'title' => isset($item['title']) ? $item['title'] : $area['label'],
+			];
 		}
 	}
 }

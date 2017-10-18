@@ -62,14 +62,11 @@ function template_profile_popup()
 		<div class="profile_user_links">
 			<ol>';
 
-	$menu_context = &$context[$context['profile_menu_name']];
 	foreach ($context['profile_items'] as $item)
 	{
-		$area = &$menu_context['sections'][$item['menu']]['areas'][$item['area']];
-		$item_url = (isset($item['url']) ? $item['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $item['area'])) . $menu_context['extra_parameters'];
 		echo '
 				<li>
-					', $area['icon'], '<a href="', $item_url, '">', !empty($item['title']) ? $item['title'] : $area['label'], '</a>
+					', $item['icon'], '<a href="', $item['url'], '">', $item['title'], '</a>
 				</li>';
 	}
 
