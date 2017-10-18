@@ -256,8 +256,9 @@ function ModifyProfile($post_errors = array())
 			),
 		),
 		'chars' => array(
-			'title' => 'Characters',
+			'title' => $txt['chars_menu_title'],
 			'areas' => array(
+				/* This definition doesn't seem to do anything - but it's there to make sure things work correctly! */
 				'characters' => array(
 					'file' => 'Profile-Chars.php',
 					'function' => 'character_profile',
@@ -491,8 +492,8 @@ span.char_unknown { background-image: url(' . $settings['images_url'] . '/defaul
 
 	$char_sheet_override = allowedTo('admin_forum') || $context['user']['is_owner'];
 	// Now we need to add the user's characters to the profile menu, "creatively".
-	if (!empty($cur_profile['characters'])) {
-		foreach ($cur_profile['characters'] as $id_character => $character) {
+	if (!empty($context['member']['characters'])) {
+		foreach ($context['member']['characters'] as $id_character => $character) {
 			if (!empty($character['avatar'])) {
 				addInlineCss('
 span.character_' . $id_character . ' { background-image: url(' . $character['avatar'] . '); background-size: cover }');
@@ -505,7 +506,7 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 				'enabled' => true,
 				'permission' => array(
 					'own' => 'is_not_guest',
-					'any' => [],
+					'any' => 'profile_view',
 				),
 				'select' => 'characters',
 				'custom_url' => $scripturl . '?action=profile;area=characters;char=' . $id_character,
