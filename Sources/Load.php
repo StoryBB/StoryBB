@@ -3644,6 +3644,23 @@ function clean_cache($type = '')
 }
 
 /**
+ * Cleans the template cache.
+ */
+function clean_template_cache()
+{
+	global $cachedir;
+
+	$dh = opendir($cachedir);
+	while ($file = readdir($dh))
+	{
+		if (strpos($file, 'template') === 0)
+			@unlink($cachedir . '/' . $file);
+	}
+	closedir($dh);
+	clearstatcache();
+}
+
+/**
  * Helper function to set an array of data for an user's avatar.
  *
  * Makes assumptions based on the data provided, the following keys are required:
