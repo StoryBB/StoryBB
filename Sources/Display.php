@@ -34,9 +34,6 @@ function Display()
 	if (empty($topic))
 		fatal_lang_error('no_board', false);
 
-	// Load the proper template.
-	loadTemplate('Display');
-
 	// Not only does a prefetch make things slower for the server, but it makes it impossible to know if they read it.
 	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
 	{
