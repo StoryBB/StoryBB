@@ -115,7 +115,7 @@
 				{{!-- Show "<< Last Edit: Time by Person >>" if this post was edited. But we need the div even if it wasn't modified! 
 				 Because we insert into it through AJAX and we don't want to stop themers moving it around if they so wish so they can put it where they want it. --}}
 				<span class="smalltext modified floatright {{#if (and ../modSettings.show_modify modified.name)}} mvisible{{/if}}" id="modified_{{id}}">
-					{{#if (and ../modSettings.show_modify modified.name)}}{{modified.last_edit_text}}{{/if}}
+					{{#if (and ../modSettings.show_modify modified.name)}}{{{modified.last_edit_text}}}{{/if}}
 				</span>
 			</h5>
 			<div id="msg_{{id}}_quick_mod"{{#if is_ignored}} style="display:none"{{/if}}></div>
