@@ -156,6 +156,9 @@
 	.subject_title input {
 		width: 90%;
 	}
+	.inner input[name="modify_reason"] {
+		max-width: 100%;
+	}
 
 	/* Post Section */
 	#post_header dd {
