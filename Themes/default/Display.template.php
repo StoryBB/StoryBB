@@ -43,9 +43,6 @@ function template_main()
 	$template = loadTemplateFile('display_main');
 	$phpStr = compileTemplate($template, [
 		'helpers' => [
-			'implode' => 'implode_comma',
-			'JSEscape' => 'JSEScape',
-			'get_text' => 'get_text',
 			'getLikeText' => 'getLikeText'
 		]
 	]);
