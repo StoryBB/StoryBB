@@ -1162,7 +1162,7 @@ function ViewWatchedUsers()
 	// Create the watched user list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'watch_user_list';
 }
 
@@ -1571,7 +1571,7 @@ function ViewWarningLog()
 	// Create the watched user list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'warning_list';
 }
 
@@ -1790,7 +1790,7 @@ function ViewWarningTemplates()
 	createToken('mod-wt');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'warning_template_list';
 }
 

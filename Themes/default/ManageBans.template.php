@@ -183,7 +183,7 @@ function template_ban_edit()
 	{
 		echo '
 		<br>';
-		template_show_list('ban_items');
+		echo generic_list_helper('ban_items');
 	}
 
 	echo '
