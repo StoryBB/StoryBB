@@ -321,15 +321,19 @@ function RecentPosts()
 		SELECT
 			m.id_msg, m.subject, m.smileys_enabled, m.poster_time, m.body, m.id_topic, t.id_board, b.id_cat,
 			b.name AS bname, c.name AS cname, t.num_replies, m.id_member, m2.id_member AS id_first_member,
-			COALESCE(mem2.real_name, m2.poster_name) AS first_poster_name, t.id_first_msg,
-			COALESCE(mem.real_name, m.poster_name) AS poster_name, t.id_last_msg
+			COALESCE(chars2.character_name, mem2.real_name, m2.poster_name) AS first_poster_name, t.id_first_msg,
+			chars2.id_character AS first_character_id, mem2.id_member AS first_poster_id,
+			COALESCE(chars.character_name, mem.real_name, m.poster_name) AS poster_name, t.id_last_msg,
+			chars2.id_character AS character_id, mem2.id_member AS poster_id
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			INNER JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 			INNER JOIN {db_prefix}messages AS m2 ON (m2.id_msg = t.id_first_msg)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
+			LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = m.id_character)
 			LEFT JOIN {db_prefix}members AS mem2 ON (mem2.id_member = m2.id_member)
+			LEFT JOIN {db_prefix}characters AS chars2 ON (chars2.id_character = m.id_character)
 		WHERE m.id_msg IN ({array_int:message_list})
 		ORDER BY m.id_msg DESC
 		LIMIT {int:limit}',
