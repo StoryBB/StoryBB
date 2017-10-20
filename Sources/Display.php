@@ -1250,7 +1250,7 @@ function Display()
 	$context['sub_template'] = 'display_main';
 	register_helper([
 		'getLikeText' => function($likes) {
-			global $txt, $context;
+			global $txt, $context, $scripturl;
 			
 			$base = 'likes_';
 			$count = $likes['count'];
@@ -1260,7 +1260,7 @@ function Display()
 				$count--;
 			}
 			$base .= (isset($txt[$base . $count])) ? $count : 'n';
-			return sprintf($txt[$base], $scripturl . '?action=likes;sa=view;ltype=msg;like=' . $id . ';' . $context['session_var'] . '=' . $context['session_id'], comma_format($count));
+			return sprintf($txt[$base], $scripturl . '?action=likes;sa=view;ltype=msg;like=' . $likes['id'] . ';' . $context['session_var'] . '=' . $context['session_id'], comma_format($count));
 		}
 	]);
 
@@ -1533,6 +1533,7 @@ function prepareDisplayContext($reset = false)
 	// Are likes enable?
 	if (!empty($modSettings['enable_likes']))
 		$output['likes'] = array(
+			'id' => $message['id_msg'],
 			'count' => $message['likes'],
 			'you' => in_array($message['id_msg'], $context['my_likes']),
 			'can_like' => !$context['user']['is_guest'] && $message['id_member'] != $context['user']['id'] && !empty($context['can_like']),
