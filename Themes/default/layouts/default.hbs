@@ -53,7 +53,7 @@
         			
             	{{#if context.allow_pm}}
                 	<li>
-                		<a href="{{scripturl}}?action=pm" {{#if context.self_pm}}class="active"{{/if}} id="pm_menu_top">{{txt.pm_short}} {{#if context.user.unread_messages}}<span class="amt"> {{context.user.unread_messages}}{{/if}}</span></a>
+                		<a href="{{scripturl}}?action=pm" {{#if context.self_pm}}class="active"{{/if}} id="pm_menu_top">{{txt.pm_short}} {{#if context.user.unread_messages}} <span class="amt">{{context.user.unread_messages}}</span>{{/if}}</a>
                 		<div id="pm_menu" class="top_menu scrollable"></div>
                 	</li>
             	{{/if}}
