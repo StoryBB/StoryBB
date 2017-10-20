@@ -294,7 +294,7 @@ function CharacterSheets()
 	createList($listOptions);
 
 	$context['page_title'] = $txt['char_sheet_admin'];
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'approval_queue';
 }
 

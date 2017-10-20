@@ -1115,7 +1115,7 @@ function EditSmileys()
 
 		// The list is the only thing to show, so make it the main template.
 		$context['default_list'] = 'smiley_list';
-		$context['sub_template'] = 'show_list';
+		$context['sub_template'] = 'generic_list_page';
 	}
 	// Modifying smileys.
 	elseif ($context['sub_action'] == 'modifysmiley')

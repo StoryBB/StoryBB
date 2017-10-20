@@ -295,7 +295,7 @@ function ViewModlog()
 	// Create the watched user list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'moderation_log_list';
 
 	// If a hook has changed this, respect it.

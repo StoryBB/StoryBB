@@ -522,7 +522,7 @@ function UnapprovedAttachments()
 	createToken('mod-ap');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'mc_unapproved_attach';
 
 	$context[$context['moderation_menu_name']]['tab_data'] = array(
