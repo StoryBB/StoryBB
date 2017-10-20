@@ -389,7 +389,7 @@ function ViewSubscriptions()
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'subscription_list';
 }
 
@@ -939,7 +939,7 @@ function ViewSubscribedUsers()
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'subscribed_users_list';
 }
 

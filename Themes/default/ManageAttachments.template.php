@@ -250,21 +250,4 @@ function template_attachment_repair()
 	}
 }
 
-/**
- * The page that handles managing attachment paths.
- */
-function template_attachment_paths()
-{
-	global $modSettings;
-
-	$result = '';
-	if (!empty($modSettings['attachment_basedirectories']))
-	{
-		$result .= template_show_list('base_paths');
-	}
-
-	$result .= template_show_list('attach_paths');
-	return $result;
-}
-
 ?>

@@ -34,9 +34,6 @@ function Display()
 	if (empty($topic))
 		fatal_lang_error('no_board', false);
 
-	// Load the proper template.
-	loadTemplate('Display');
-
 	// Not only does a prefetch make things slower for the server, but it makes it impossible to know if they read it.
 	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
 	{
@@ -1247,6 +1244,41 @@ function Display()
 		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'smf_atwho');
 		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'smf_caret');
 		loadJavaScriptFile('mentions.js', array('defer' => true), 'smf_mentions');
+	}
+
+	// Some convenient template setup.
+	$context['sub_template'] = 'display_main';
+	register_helper([
+		'getLikeText' => function($likes) {
+			global $txt, $context;
+			
+			$base = 'likes_';
+			$count = $likes['count'];
+			if ($likes['you'])
+			{
+				$base = 'you_' . $base;
+				$count--;
+			}
+			$base .= (isset($txt[$base . $count])) ? $count : 'n';
+			return sprintf($txt[$base], $scripturl . '?action=likes;sa=view;ltype=msg;like=' . $id . ';' . $context['session_var'] . '=' . $context['session_id'], comma_format($count));
+		}
+	]);
+
+	$context['viewing'] = '';
+	if (!empty($settings['display_who_viewing']))
+	{
+		$context['viewing'] = $settings['display_who_viewing'] == 1 ? 
+				count($context['view_members']) . ' ' . count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members']
+			:
+				empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
+	}
+	$context['messages'] = [];
+	$context['ignoredMsgs'] = [];
+	$context['removableMessageIDs'] = [];
+	while($message = $context['get_message']()) {
+		$context['messages'][] = $message;
+		if (!empty($message['is_ignored'])) $context['ignoredMsgs'][] = $message['id'];
+		if ($message['can_remove']) $context['removableMessageIDs'][] = $message['id'];
 	}
 }
 

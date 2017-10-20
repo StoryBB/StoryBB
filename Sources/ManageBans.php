@@ -276,7 +276,7 @@ function BanList()
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'ban_list';
 }
 
@@ -1852,7 +1852,7 @@ function BanBrowseTriggers()
 	createList($listOptions);
 
 	// The list is the only thing to show, so make it the default sub template.
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'ban_trigger_list';
 }
 
@@ -2081,7 +2081,7 @@ function BanLog()
 	createList($listOptions);
 
 	$context['page_title'] = $txt['ban_log'];
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'ban_log';
 }
 

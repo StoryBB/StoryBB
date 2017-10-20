@@ -147,7 +147,7 @@ function template_showPosts()
 		}
 	}
 	else
-		template_show_list('attachments');
+		echo generic_list_helper('attachments');
 
 	// No posts? Just end with a informative message.
 	if ((isset($context['attachments']) && empty($context['attachments'])) || (!isset($context['attachments']) && empty($context['posts'])))
@@ -566,7 +566,7 @@ function template_trackActivity()
 		</div>';
 
 	// Show the track user list.
-	template_show_list('track_user_list');
+	echo generic_list_helper('track_user_list');
 }
 
 /**
@@ -649,11 +649,11 @@ function template_trackIP()
 	echo '
 	<br>';
 
-	template_show_list('track_message_list');
+	echo generic_list_helper('track_message_list');
 
 	echo '<br>';
 
-	template_show_list('track_user_list');
+	echo generic_list_helper('track_user_list');
 
 	// 3rd party integrations may have added additional tracking.
 	if (!empty($context['additional_track_lists']))
@@ -662,7 +662,7 @@ function template_trackIP()
 		{
 			echo '<br>';
 
-			template_show_list($list);
+			echo generic_list_helper($list);
 		}
 	}
 }
@@ -1408,7 +1408,7 @@ function template_alert_notifications_topics()
 		<p class="information">', $txt['watched_topics_desc'], '</p>
 		<br>';
 
-	template_show_list('topic_notification_list');
+	echo generic_list_helper('topic_notification_list');
 }
 
 /**
@@ -1427,7 +1427,7 @@ function template_alert_notifications_boards()
 		<p class="information">', $txt['watched_boards_desc'], '</p>
 		<br>';
 
-	template_show_list('board_notification_list');
+	echo generic_list_helper('board_notification_list');
 }
 
 /**
@@ -1721,7 +1721,7 @@ function template_viewWarning()
 			</dl>
 		</div>';
 
-	template_show_list('view_warnings');
+	echo generic_list_helper('view_warnings');
 }
 
 // Show a lovely interface for issuing warnings.
@@ -1888,7 +1888,7 @@ function template_issueWarning()
 	</form>';
 
 	// Previous warnings?
-	template_show_list('view_warnings');
+	echo generic_list_helper('view_warnings');
 
 	echo '
 	<script>';

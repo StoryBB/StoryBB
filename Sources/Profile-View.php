@@ -1205,7 +1205,7 @@ function showUnwatched($memID)
 	// Create the request list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'unwatched_topics';
 }
 
@@ -2271,7 +2271,7 @@ function TrackLogins($memID = 0)
 	// Create the messages list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'track_logins_list';
 }
 
@@ -2432,7 +2432,7 @@ function trackEdits($memID)
 	// Create the error list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'edit_list';
 }
 
@@ -2639,7 +2639,7 @@ function trackGroupReq($memID)
 	// Create the error list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'request_list';
 }
 

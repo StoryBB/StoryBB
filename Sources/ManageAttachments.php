@@ -572,7 +572,7 @@ function BrowseFiles()
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'file_list';
 }
 
@@ -2405,7 +2405,7 @@ function ManageAttachmentPaths()
 	// Fix up our template.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'attachpaths';
 	$context['page_title'] = $txt['attach_path_manage'];
-	$context['sub_template'] = 'attachment_paths';
+	$context['sub_template'] = 'admin_attachment_paths';
 }
 
 /**
