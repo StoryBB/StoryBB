@@ -8,23 +8,6 @@
  */
 
 /**
- * Shows a list of smiley sets so you can edit them.
- */
-function template_editsets()
-{
-	global $context, $scripturl, $txt, $modSettings;
-
-	$result = '
-	<div id="admincenter">';
-
-	$result .= template_show_list('smiley_set_list');
-
-	$result .= '
-	</div>';
-	return $result;
-}
-
-/**
  * Modifying a smiley set.
  */
 function template_modifyset()

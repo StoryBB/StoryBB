@@ -457,6 +457,8 @@ function EditSmileySets()
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
+
+	$context['sub_template'] = 'admin_smiley_set_list';
 }
 
 /**
