@@ -172,7 +172,7 @@ function GroupList()
 	// Create the request list.
 	createList($listOptions);
 
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'group_lists';
 }
 
@@ -508,7 +508,7 @@ function GroupRequests()
 
 	// Set up the template stuff...
 	$context['page_title'] = $txt['mc_group_requests'];
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 
 	// Verify we can be here.
 	if ($user_info['mod_cache']['gq'] == '0=1')

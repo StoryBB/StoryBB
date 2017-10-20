@@ -2071,7 +2071,7 @@ function list_integration_hooks()
 	createList($list_options);
 
 	$context['page_title'] = $txt['hooks_title_list'];
-	$context['sub_template'] = 'show_list';
+	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'list_integration_hooks';
 }
 

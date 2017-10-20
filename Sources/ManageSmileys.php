@@ -457,6 +457,8 @@ function EditSmileySets()
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
+
+	$context['sub_template'] = 'admin_smiley_set_list';
 }
 
 /**
@@ -1115,7 +1117,7 @@ function EditSmileys()
 
 		// The list is the only thing to show, so make it the main template.
 		$context['default_list'] = 'smiley_list';
-		$context['sub_template'] = 'show_list';
+		$context['sub_template'] = 'generic_list_page';
 	}
 	// Modifying smileys.
 	elseif ($context['sub_action'] == 'modifysmiley')
@@ -1695,6 +1697,8 @@ function EditMessageIcons()
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
+	$context['default_list'] = 'message_icon_list';
+	$context['sub_template'] = 'generic_list_page';
 
 	// If we're adding/editing an icon we'll need a list of boards
 	if ($context['sub_action'] == 'editicon' || isset($_POST['add']))

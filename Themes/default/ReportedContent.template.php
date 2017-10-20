@@ -272,7 +272,7 @@ function template_viewmodreport()
 				</div>
 			<br>';
 
-	template_show_list('moderation_actions_list');
+	echo generic_list_helper('moderation_actions_list');
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -568,7 +568,7 @@ function template_viewmemberreport()
 				</div>
 			<br>';
 
-	template_show_list('moderation_actions_list');
+	echo generic_list_helper('moderation_actions_list');
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">

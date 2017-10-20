@@ -249,9 +249,6 @@ function createList($listOptions)
 	if (isset($listOptions['list_menu']))
 		$list_context['list_menu'] = $listOptions['list_menu'];
 
-	// Make sure the template is loaded.
-	loadTemplate('GenericList');
-
 	register_helper([
 		'genericlist' => 'generic_list_helper',
 	]);
