@@ -378,14 +378,6 @@ function template_setorder()
 }
 
 /**
- * Editing Message Icons
- */
-function template_editicons()
-{
-	template_show_list('message_icon_list');
-}
-
-/**
  * Editing an individual message icon
  */
 function template_editicon()

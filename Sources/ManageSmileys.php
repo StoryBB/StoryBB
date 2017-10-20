@@ -1695,6 +1695,8 @@ function EditMessageIcons()
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
+	$context['default_list'] = 'message_icon_list';
+	$context['sub_template'] = 'generic_list_page';
 
 	// If we're adding/editing an icon we'll need a list of boards
 	if ($context['sub_action'] == 'editicon' || isset($_POST['add']))
