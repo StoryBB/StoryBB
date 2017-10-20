@@ -2609,6 +2609,7 @@ function register_default_helpers() {
 		'not' => 'logichelper_not',
 		'and' => 'logichelper_and',
 		'or' => 'logichelper_or',
+		'get_text' => 'get_text',
 		'textTemplate' => function($template, ...$args) {
 			// Strip the last item off the array, it's the calling context.
 			array_pop($args);

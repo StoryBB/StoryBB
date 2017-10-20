@@ -551,6 +551,7 @@ class Likes
 		// Set everything up for display.
 		loadTemplate('Likes');
 		$context['template_layers'] = array();
+		loadTemplateLayout('raw');
 
 		// If there are any errors, process them first.
 		if ($this->_error)
