@@ -555,7 +555,12 @@ function registerMember(&$regOptions, $return_errors = false)
 	// Do we have a character name.
 	if (empty($regOptions['extra_register_vars']['first_char']))
 	{
-		$reg_errors[] = ['lang', 'no_character_added', false];
+		if (!empty($modSettings['registration_character']) && $modSettings['registration_character'] == 'required')
+			$reg_errors[] = ['lang', 'no_character_added', false];
+	}
+	elseif (empty($modSettings['registration_character']) || $modSettings['registration_character'] == 'disabled')
+	{
+		unset($regOptions['extra_register_vars']['first_char']);
 	}
 	else
 	{
@@ -774,18 +779,21 @@ function registerMember(&$regOptions, $return_errors = false)
 	);
 	$real_account = $smcFunc['db_insert_id']('{db_prefix}characters', 'id_character');
 
-	$smcFunc['db_insert']('',
-		'{db_prefix}characters',
-		['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
-			'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
-			'date_created' => 'int', 'last_active' => 'int', 'is_main' => 'int'],
-		[
-			$memberID, $regOptions['extra_register_vars']['first_char'], '',
-			'', 0, 0, '',
-			time(), 0, 0
-		],
-		['id_character']
-	);
+	if (!empty($regOptions['extra_register_vars']['first_char']))
+	{
+		$smcFunc['db_insert']('',
+			'{db_prefix}characters',
+			['id_member' => 'int', 'character_name' => 'string', 'avatar' => 'string',
+				'signature' => 'string', 'id_theme' => 'int', 'posts' => 'int', 'age' => 'string',
+				'date_created' => 'int', 'last_active' => 'int', 'is_main' => 'int'],
+			[
+				$memberID, $regOptions['extra_register_vars']['first_char'], '',
+				'', 0, 0, '',
+				time(), 0, 0
+			],
+			['id_character']
+		);
+	}
 
 	// Now we mark the current character into the user table.
 	$smcFunc['db_query']('', '
