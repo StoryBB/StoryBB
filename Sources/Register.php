@@ -323,17 +323,7 @@ function Register2()
 		// If you are a guest, will you be allowed to once you register?
 		else
 		{
-			$request = $smcFunc['db_query']('', '
-				SELECT add_deny
-				FROM {db_prefix}permissions
-				WHERE id_group = {int:id_group} AND permission = {string:permission}',
-				array(
-					'id_group' => 0,
-					'permission' => 'profile_displayed_name_own',
-				)
-			);
-			list($canEditDisplayName) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$canEditDisplayName = in_array(0, groupsAllowedTo('profile_displayed_name_own')['allowed']);
 		}
 
 		if ($canEditDisplayName)
