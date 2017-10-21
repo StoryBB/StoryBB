@@ -297,6 +297,11 @@ function ModifyRegistrationSettings($return_config = false)
 	$config_vars = array(
 			array('select', 'registration_method', array($txt['setting_registration_standard'], $txt['setting_registration_activate'], $txt['setting_registration_approval'], $txt['setting_registration_disabled'])),
 			array('check', 'send_welcomeEmail'),
+			array('select', 'registration_character', array(
+				'disabled' => $txt['setting_registration_character_disabled'],
+				'optional' => $txt['setting_registration_character_optional'],
+				'required' => $txt['setting_registration_character_required'],
+			)),
 		'',
 			array('int', 'coppaAge', 'subtext' => $txt['zero_to_disable'], 'onchange' => 'checkCoppa();', 'onkeyup' => 'checkCoppa();'),
 			array('select', 'coppaType', array($txt['setting_coppaType_reject'], $txt['setting_coppaType_approval']), 'onchange' => 'checkCoppa();'),
