@@ -141,33 +141,4 @@ function template_find_members()
 </html>';
 }
 
-function getLangSuffix($lang) {
-	return ($lang != 'en' ? '/' . $lang : '');
-}
-
-/**
- * The main help page
- */
-function template_manual()
-{
-	global $context, $scripturl, $txt;
-	$data = Array(
-		'context' => $context,
-		'scripturl' => $scripturl,
-		'txt' => $txt,
-		'creditsURL' => $scripturl . '?action=credits'
-	);
-	
-	$template = loadTemplateFile('help_manual');
-
-	$phpStr = compileTemplate($template, [
-	    'helpers' => [
-	    	'getLangSuffix' => 'getLangSuffix',
-	    ]
-	]);
-	
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
 ?>

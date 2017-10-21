@@ -70,7 +70,13 @@ function HelpIndex()
 
 	// Lastly, some minor template stuff.
 	$context['page_title'] = $txt['manual_smf_user_help'];
-	$context['sub_template'] = 'manual';
+	$context['sub_template'] = 'help_manual';
+
+	register_helper([
+		'getLangSuffix' => function($lang) {
+			return ($lang != 'en' ? '/' . $lang : '');
+		}
+	]);
 }
 
 /**
