@@ -317,7 +317,7 @@ function Register2()
 	if (isset($_POST['real_name']))
 	{
 		// Are you already allowed to edit the displayed name?
-		if (allowedTo('profile_displayed_name') || allowedTo('moderate_forum'))
+		if (allowedTo('profile_displayed_name_any') || allowedTo('moderate_forum'))
 			$canEditDisplayName = true;
 
 		// If you are a guest, will you be allowed to once you register?
