@@ -26,4 +26,20 @@ To get started, <a href="https://www.clahub.com/agreements/SockDrawer/StoryBB">s
 * If you want to send a bug fix for the version 2.1, send it to the branch ***master***
 * If you want to send a new feature for 3.0, use the branch ***release-3.0***
 
+## Requirements
+* MySQL 5.0.3 or PostgreSQL 9.2 or higher
+* PHP 7.0 or higher
+
+#### Required PHP extensions
+* cURL
+* GD
+* MySQLi if using MySQL
+* libpq (the base PostgreSQL extension) if using Postgres
+
+#### Optional PHP extensions
+* mbstring
+* iconv
+* Imagick or MagickWand for ImageMagick support
+* APC/APCu/memcache/SQLite 3/xcache/Zend SHM cache
+
 Please, feel free to play around. That's what we're doing. ;)
