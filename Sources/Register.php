@@ -208,6 +208,7 @@ function Register($reg_errors = array())
 		require_once($sourcedir . '/Subs-Members.php');
 		$context['display_edit_real_name'] = in_array(0, groupsAllowedTo('profile_displayed_name_own')['allowed']);
 	}
+	$context['display_create_character'] = !empty($modSettings['registration_character']) && in_array($modSettings['registration_character'], ['optional', 'required']);
 
 	createToken('register');
 }
