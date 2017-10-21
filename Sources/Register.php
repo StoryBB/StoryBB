@@ -199,6 +199,16 @@ function Register($reg_errors = array())
 	if (!empty($reg_errors))
 		$context['registration_errors'] = $reg_errors;
 
+	$context['display_edit_real_name'] = false;
+	if (allowedTo('profile_displayed_name_any') || allowedTo('moderate_forum'))
+		$context['display_edit_real_name'] = true;
+	// If you are a guest, will you be allowed to once you register?
+	else
+	{
+		require_once($sourcedir . '/Subs-Members.php');
+		$context['display_edit_real_name'] = in_array(0, groupsAllowedTo('profile_displayed_name_own')['allowed']);
+	}
+
 	createToken('register');
 }
 
@@ -209,6 +219,8 @@ function Register2()
 {
 	global $txt, $modSettings, $context, $sourcedir;
 	global $smcFunc, $maintenance;
+
+	require_once($sourcedir . '/Subs-Members.php');
 
 	checkSession();
 	validateToken('register');
