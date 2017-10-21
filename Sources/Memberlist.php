@@ -34,12 +34,6 @@ function Memberlist()
 	$context['listing_by'] = !empty($_GET['sa']) ? $_GET['sa'] : 'all';
 	$context['sub_template'] = 'memberlist_main';
 
-	register_helper([
-		'checkDefaultOption' => function($defaults, $item) {
-			return in_array($item, $defaults) ? 'checked' : '';
-		}
-	]);
-
 	// $subActions array format:
 	// 'subaction' => array('label', 'function', 'is_selected')
 	$subActions = array(
