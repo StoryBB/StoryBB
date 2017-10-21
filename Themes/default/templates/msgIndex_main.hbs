@@ -33,7 +33,7 @@
 				</div>
 				<div class="lastpost lpr_border">
 					{{#if last_post.id}}
-					<p>{{last_post.last_post_message}}</p>
+					<p>{{{last_post.last_post_message}}}</p>
 					{{/if}}
 				</div>
 				{{#if children}}
@@ -95,7 +95,7 @@
 		</div>
 		{{#if context.unapproved_posts_message}}
 		<div class="information">
-			<span class="alert">!</span> {{context.unapproved_posts_message}}
+			<span class="alert">!</span> {{{context.unapproved_posts_message}}}
 		</div>
 		{{/if}}
 		<div id="topic_container">
