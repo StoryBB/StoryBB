@@ -159,11 +159,11 @@ h1.forumtitle {
 	float: right;
 }
 /* float these items to the left */
-#siteslogan, img#smflogo {
+#siteslogan, img#sbblogo {
 	float: left;
 }
 /* Tweak the StoryBB logo */
-img#smflogo {
+img#sbblogo {
 	margin-right: 1em;
 }
 
