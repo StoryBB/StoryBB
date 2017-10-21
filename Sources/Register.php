@@ -199,6 +199,17 @@ function Register($reg_errors = array())
 	if (!empty($reg_errors))
 		$context['registration_errors'] = $reg_errors;
 
+	$context['display_edit_real_name'] = false;
+	if (allowedTo('profile_displayed_name_any') || allowedTo('moderate_forum'))
+		$context['display_edit_real_name'] = true;
+	// If you are a guest, will you be allowed to once you register?
+	else
+	{
+		require_once($sourcedir . '/Subs-Members.php');
+		$context['display_edit_real_name'] = in_array(0, groupsAllowedTo('profile_displayed_name_own')['allowed']);
+	}
+	$context['display_create_character'] = !empty($modSettings['registration_character']) && in_array($modSettings['registration_character'], ['optional', 'required']);
+
 	createToken('register');
 }
 
@@ -209,6 +220,8 @@ function Register2()
 {
 	global $txt, $modSettings, $context, $sourcedir;
 	global $smcFunc, $maintenance;
+
+	require_once($sourcedir . '/Subs-Members.php');
 
 	checkSession();
 	validateToken('register');
@@ -317,23 +330,13 @@ function Register2()
 	if (isset($_POST['real_name']))
 	{
 		// Are you already allowed to edit the displayed name?
-		if (allowedTo('profile_displayed_name') || allowedTo('moderate_forum'))
+		if (allowedTo('profile_displayed_name_any') || allowedTo('moderate_forum'))
 			$canEditDisplayName = true;
 
 		// If you are a guest, will you be allowed to once you register?
 		else
 		{
-			$request = $smcFunc['db_query']('', '
-				SELECT add_deny
-				FROM {db_prefix}permissions
-				WHERE id_group = {int:id_group} AND permission = {string:permission}',
-				array(
-					'id_group' => 0,
-					'permission' => 'profile_displayed_name_own',
-				)
-			);
-			list($canEditDisplayName) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$canEditDisplayName = in_array(0, groupsAllowedTo('profile_displayed_name_own')['allowed']);
 		}
 
 		if ($canEditDisplayName)

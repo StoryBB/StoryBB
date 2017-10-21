@@ -54,8 +54,8 @@
 						{{/if}}
 					</td>
 					{{/unless}}
-					{{#each context.custom_profile_fields}}
-						{{custom_fields context.custom_profile_fields options}}
+					{{#each ../context.custom_profile_fields.columns}}
+						<td class="righttext">{{{lookup ../options @key}}}</td>
 					{{/each}}
 					</tr>
 				{{/each}}
