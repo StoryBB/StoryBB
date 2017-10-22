@@ -1995,6 +1995,7 @@ function alert_markread($memID)
 
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
+	loadTemplateLayout('raw');
 	$context['sub_template'] = 'alerts_all_read';
 
 	loadLanguage('Alerts');
