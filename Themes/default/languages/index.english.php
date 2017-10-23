@@ -676,13 +676,8 @@ $txt['notifyboard_turnoff'] = 'Are you sure you do not want to receive new topic
 
 $txt['activate_code'] = 'Your activation code is';
 
-$txt['find_members'] = 'Find Members';
-$txt['find_username'] = 'Name, username, or email address';
-$txt['find_buddies'] = 'Show Buddies Only?';
-$txt['find_wildcards'] = 'Allowed Wildcards: *, ?';
 $txt['find_no_results'] = 'No results found';
 $txt['find_results'] = 'Results';
-$txt['find_close'] = 'Close';
 
 $txt['unread_since_visit'] = 'Show unread posts since last visit.';
 $txt['show_unread_replies'] = 'Show new replies to your posts.';
