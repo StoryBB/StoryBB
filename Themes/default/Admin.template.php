@@ -10,33 +10,6 @@
 use LightnCandy\LightnCandy;
 
 /**
- * Displays information about file versions installed, and compares them to current version.
- */
-function template_view_versions()
-{
-	global $context, $scripturl, $txt;
-
-	$data = [
-		'context' => $context,
-		'txt' => $txt,
-		'settings' => $settings,
-		'scripturl' => $scripturl,
-	];
-
-	$template = loadTemplateFile('admin_versions');
-
-	$phpStr = compileTemplate($template, [
-		'helpers' => [
-			'array2js' => 'array2js',
-		],
-	]);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * Template for showing settings (Of any kind really!)
  */
 function template_show_settings()
