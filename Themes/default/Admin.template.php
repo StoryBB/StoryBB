@@ -10,35 +10,6 @@
 use LightnCandy\LightnCandy;
 
 /**
- * This is the administration center home.
- */
-function template_admin()
-{
-	global $context, $settings, $scripturl, $txt, $modSettings;
-
-	$data = [
-		'context' => $context,
-		'txt' => $txt,
-		'settings' => $settings,
-		'scripturl' => $scripturl,
-		'modSettings' => $modSettings,
-		'admin_menu' => $context[$context['admin_menu_name']],
-	];
-
-	$template = loadTemplateFile('admin_home');
-
-	$phpStr = compileTemplate($template, [
-		'helpers' => [
-			'implode_comma' => 'implode_comma',
-		],
-	]);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * Displays information about file versions installed, and compares them to current version.
  */
 function template_view_versions()

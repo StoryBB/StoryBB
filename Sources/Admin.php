@@ -525,7 +525,9 @@ function AdminHome()
 
 	$context['can_admin'] = allowedTo('admin_forum');
 
-	$context['sub_template'] = 'admin';
+	// Set up for the template, like some convenient derefencing.
+	$context['admin_menu'] = $context[$context['admin_menu_name']];
+	$context['sub_template'] = 'admin_home';
 	$context['page_title'] = $context['admin_area'] == 'support' ? $txt['support_title'] : $txt['admin_center'];
 	if ($context['admin_area'] != 'support')
 		$context[$context['admin_menu_name']]['tab_data'] = array(
