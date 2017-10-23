@@ -21,7 +21,6 @@ if (!defined('SMF'))
  */
 function ShowHelp()
 {
-	loadTemplate('Help');
 	loadLanguage('Manual');
 
 	$subActions = array(
