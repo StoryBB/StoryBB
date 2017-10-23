@@ -21,7 +21,6 @@ if (!defined('SMF'))
  */
 function ShowHelp()
 {
-	loadTemplate('Help');
 	loadLanguage('Manual');
 
 	$subActions = array(
@@ -70,7 +69,13 @@ function HelpIndex()
 
 	// Lastly, some minor template stuff.
 	$context['page_title'] = $txt['manual_smf_user_help'];
-	$context['sub_template'] = 'manual';
+	$context['sub_template'] = 'help_manual';
+
+	register_helper([
+		'getLangSuffix' => function($lang) {
+			return ($lang != 'en' ? '/' . $lang : '');
+		}
+	]);
 }
 
 /**
@@ -137,17 +142,17 @@ function ShowAdminHelp()
 	if (isset($_GET['help']) && substr($_GET['help'], 0, 14) == 'permissionhelp')
 		loadLanguage('ManagePermissions');
 
-	loadTemplate('Help');
-
 	// Allow mods to load their own language file here
  	call_integration_hook('integrate_helpadmin');
 
+ 	loadTemplateLayout('popup');
+
 	// Set the page title to something relevant.
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['help'];
+	$context['popup_id'] = 'help_popup';
 
 	// Don't show any template layers, just the popup sub template.
-	$context['template_layers'] = array();
-	$context['sub_template'] = 'popup';
+	$context['sub_template'] = 'help_text';
 
 	// What help string should be used?
 	if (isset($helptxt[$_GET['help']]))
