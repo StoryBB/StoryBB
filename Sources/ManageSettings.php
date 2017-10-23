@@ -1537,7 +1537,10 @@ function EditCustomProfiles()
 	$context['fid'] = isset($_GET['fid']) ? (int) $_GET['fid'] : 0;
 	$context[$context['admin_menu_name']]['current_subsection'] = 'profile';
 	$context['page_title'] = $context['fid'] ? $txt['custom_edit_title'] : $txt['custom_add_title'];
-	$context['sub_template'] = 'edit_profile_field';
+	$context['sub_template'] = 'admin_profile_fields_edit';
+	register_helper([
+		'begins_with' => function($string, $test) { return strpos($string, $test) === 0; }
+	]);
 
 	// Load the profile language for section names.
 	loadLanguage('Profile');
