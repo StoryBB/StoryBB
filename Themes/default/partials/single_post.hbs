@@ -254,29 +254,29 @@
             {{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
 			</div>
 			{{/if}}
-			<div class="moderatorbar">
-				{{#if custom_fields.above_signature}}
-					<div class="custom_fields_above_signature">
-						<ul class="nolist">
-							{{#each custom_fields.above_signature}}
-							<li class="custom {{col_name}}">{{value}}</li>
-							{{/each}}
-						</ul>
-					</div>
-				{{/if}}
-				{{#if (and (not ../options.show_no_signatures) ../context.signature_enabled member.signature)}}
-					<div class="signature" id="msg_{{id}}_signature"{{#if is_ignoring}} style="display:none"{{/if}}>{{{member.signature}}}</div>
-				{{/if}}
-				{{#if custom_fields.below_signature}}
-					<div class="custom_fields_below_signature">
-						<ul class="nolist">
-							{{#each custom_fields.below_signature}}
-							<li class="custom {{col_name}}">{{value}}</li>
-							{{/each}}
-						</ul>
-					</div>
-				{{/if}}
-			</div>
+		</div>
+		<div class="moderatorbar">
+			{{#if custom_fields.above_signature}}
+				<div class="custom_fields_above_signature">
+					<ul class="nolist">
+						{{#each custom_fields.above_signature}}
+						<li class="custom {{col_name}}">{{value}}</li>
+						{{/each}}
+					</ul>
+				</div>
+			{{/if}}
+			{{#if (and (not ../options.show_no_signatures) ../context.signature_enabled member.signature)}}
+				<div class="signature" id="msg_{{id}}_signature"{{#if is_ignoring}} style="display:none"{{/if}}>{{{member.signature}}}</div>
+			{{/if}}
+			{{#if custom_fields.below_signature}}
+				<div class="custom_fields_below_signature">
+					<ul class="nolist">
+						{{#each custom_fields.below_signature}}
+						<li class="custom {{col_name}}">{{value}}</li>
+						{{/each}}
+					</ul>
+				</div>
+			{{/if}}
 		</div>
 	</div>
 </div>
