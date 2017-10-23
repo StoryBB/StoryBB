@@ -11,11 +11,9 @@
 					<div class="poster">
 						<ul class="user_info">
 							<h4>{{{textTemplate txt.posting_as user_info.character_name}}}</h4>
-							{{#if (and modSettings.show_user_images (not options.show_no_avatars) context.user.avatar.image)}}
 					        <li class="avatar">
-								<a href="{{context.user.href}}">{{{context.user.avatar.image}}}</a>
+								<a href="{{context.user.href}}"><img src="{{{user_info.char_avatar}}}"></a>
 							</li>
-						    {{/if}}
 			    		</ul>
 			    	</div>
 			    	<div class="postarea">
