@@ -549,32 +549,37 @@ function ModifyAntispamSettings($return_config = false)
 
 	// Firstly, figure out what languages we're dealing with, and do a little processing for the form's benefit.
 	getLanguages();
-	$context['qa_languages'] = array();
-	foreach ($context['languages'] as $lang_id => $lang)
-	{
-		$lang_id = strtr($lang_id, array('-utf8' => ''));
-		$lang['name'] = strtr($lang['name'], array('-utf8' => ''));
-		$context['qa_languages'][$lang_id] = $lang;
-	}
 
 	// Secondly, load any questions we currently have.
 	$context['question_answers'] = array();
+	foreach ($context['languages'] as $lang_id => $lang)
+	{
+		$context['question_answers'][$lang_id] = [
+			'name' => $lang['name'],
+			'questions' => [],
+		];
+	}
 	$request = $smcFunc['db_query']('', '
 		SELECT id_question, lngfile, question, answers
 		FROM {db_prefix}qanda'
 	);
+	$questions = 1;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$lang = strtr($row['lngfile'], array('-utf8' => ''));
-		$context['question_answers'][$row['id_question']] = array(
-			'lngfile' => $lang,
+		if (!isset($context['question_answers'][$lang_id]))
+		{
+			continue;
+		}
+		$context['question_answers'][$lang_id]['questions'][$row['id_question']] = [
 			'question' => $row['question'],
 			'answers' => smf_json_decode($row['answers'], true),
-		);
-		$context['qa_by_lang'][$lang][] = $row['id_question'];
+		];
+		$questions++;
 	}
+	$smcFunc['db_free_result']($request);
 
-	if (empty($context['qa_by_lang'][strtr($language, array('-utf8' => ''))]) && !empty($context['question_answers']))
+	if (empty($context['question_answers'][$language]) || empty($context['question_answers'][$language]['questions']))
 	{
 		if (empty($context['settings_insert_above']))
 			$context['settings_insert_above'] = '';
@@ -584,7 +589,7 @@ function ModifyAntispamSettings($return_config = false)
 
 	// Thirdly, push some JavaScript for the form to make it work.
 	addInlineJavaScript('
-	var nextrow = ' . (!empty($context['question_answers']) ? max(array_keys($context['question_answers'])) + 1 : 1) . ';
+	var nextrow = ' . $questions . ';
 	$(".qa_link a").click(function() {
 		var id = $(this).parent().attr("id").substring(6);
 		$("#qa_fs_" + id).show();
@@ -635,15 +640,15 @@ function ModifyAntispamSettings($return_config = false)
 			'delete' => array(),
 		);
 		$qs_per_lang = array();
-		foreach ($context['qa_languages'] as $lang_id => $dummy)
+		foreach (array_keys($context['question_answers']) as $lang_id)
 		{
 			// If we had some questions for this language before, but don't now, delete everything from that language.
-			if ((!isset($_POST['question'][$lang_id]) || !is_array($_POST['question'][$lang_id])) && !empty($context['qa_by_lang'][$lang_id]))
+			if ((!isset($_POST['question'][$lang_id]) || !is_array($_POST['question'][$lang_id])) && !empty($context['question_answers'][$lang_id]['questions']))
 				$changes['delete'] = array_merge($questions['delete'], $context['qa_by_lang'][$lang_id]);
 
 			// Now step through and see if any existing questions no longer exist.
-			if (!empty($context['qa_by_lang'][$lang_id]))
-				foreach ($context['qa_by_lang'][$lang_id] as $q_id)
+			if (!empty($context['question_answers'][$lang_id]['questions']))
+				foreach (array_keys($context['question_answers'][$lang_id]['questions']) as $q_id)
 					if (empty($_POST['question'][$lang_id][$q_id]))
 						$changes['delete'][] = $q_id;
 
@@ -660,7 +665,7 @@ function ModifyAntispamSettings($return_config = false)
 					// Check the question isn't empty (because they want to delete it?)
 					if (empty($question) || trim($question) == '')
 					{
-						if (isset($context['question_answers'][$q_id]))
+						if (isset($context['question_answers'][$lang_id]['questions'][$q_id]))
 							$changes['delete'][] = $q_id;
 						continue;
 					}
@@ -669,7 +674,7 @@ function ModifyAntispamSettings($return_config = false)
 					// Get the answers. Firstly check there actually might be some.
 					if (!isset($_POST['answer'][$lang_id][$q_id]) || !is_array($_POST['answer'][$lang_id][$q_id]))
 					{
-						if (isset($context['question_answers'][$q_id]))
+						if (isset($context['question_answers'][$lang_id]['questions'][$q_id]))
 							$changes['delete'][] = $q_id;
 						continue;
 					}
@@ -680,14 +685,14 @@ function ModifyAntispamSettings($return_config = false)
 							$answers[] = $smcFunc['htmlspecialchars'](trim($answer));
 					if (empty($answers))
 					{
-						if (isset($context['question_answers'][$q_id]))
+						if (isset($context['question_answers'][$lang_id]['questions'][$q_id]))
 							$changes['delete'][] = $q_id;
 						continue;
 					}
 					$answers = json_encode($answers);
 
 					// At this point we know we have a question and some answers. What are we doing with it?
-					if (!isset($context['question_answers'][$q_id]))
+					if (!isset($context['question_answers'][$lang_id]['questions'][$q_id]))
 					{
 						// New question. Now, we don't want to randomly consume ids, so we'll set those, rather than trusting the browser's supplied ids.
 						$changes['insert'][] = array($lang_id, $question, $answers);
@@ -695,7 +700,7 @@ function ModifyAntispamSettings($return_config = false)
 					else
 					{
 						// It's an existing question. Let's see what's changed, if anything.
-						if ($lang_id != $context['question_answers'][$q_id]['lngfile'] || $question != $context['question_answers'][$q_id]['question'] || $answers != $context['question_answers'][$q_id]['answers'])
+						if ($question != $context['question_answers'][$lang_id]['questions'][$q_id]['question'] || $answers != $context['question_answers'][$lang_id]['questions'][$q_id]['answers'])
 							$changes['replace'][$q_id] = array('lngfile' => $lang_id, 'question' => $question, 'answers' => $answers);
 					}
 

@@ -319,10 +319,8 @@ function template_callback_question_answer_list()
 {
 	global $txt, $context;
 
-	foreach ($context['languages'] as $lang_id => $lang)
+	foreach ($context['question_answers'] as $lang_id => $lang)
 	{
-		$lang_id = strtr($lang_id, array('-utf8' => ''));
-		$lang['name'] = strtr($lang['name'], array('-utf8' => ''));
 
 		echo '
 						<dt id="qa_dt_', $lang_id, '" class="qa_link">
@@ -338,10 +336,9 @@ function template_callback_question_answer_list()
 									<strong>', $txt['setup_verification_answer'], '</strong>
 								</dd>';
 
-		if (!empty($context['qa_by_lang'][$lang_id]))
-			foreach ($context['qa_by_lang'][$lang_id] as $q_id)
+		if (!empty($lang['questions']))
+			foreach ($lang['questions'] as $q_id => $question)
 			{
-				$question = $context['question_answers'][$q_id];
 				echo '
 								<dt>
 									<input type="text" name="question[', $lang_id, '][', $q_id, ']" value="', $question['question'], '" size="50" class="input_text verification_question">
