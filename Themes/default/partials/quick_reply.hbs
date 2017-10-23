@@ -12,7 +12,7 @@
 						<ul class="user_info">
 							<h4>{{{textTemplate txt.posting_as user_info.character_name}}}</h4>
 					        <li class="avatar">
-								<a href="{{context.user.href}}"><img src="{{{user_info.char_avatar}}}"></a>
+								<a href="{{context.user.href}}"><img src="{{#if user_info.char_avatar}}{{{user_info.char_avatar}}}{{else}}{{settings.images_url}}/default.png{{/if}}"></a>
 							</li>
 			    		</ul>
 			    	</div>
