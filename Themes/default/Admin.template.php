@@ -319,45 +319,13 @@ function template_callback_question_answer_list()
 {
 	global $txt, $context;
 
-	foreach ($context['question_answers'] as $lang_id => $lang)
-	{
-
-		echo '
-						<dt id="qa_dt_', $lang_id, '" class="qa_link">
-							<a href="javascript:void(0);">[ ', $lang['name'], ' ]</a>
-						</dt>
-						<fieldset id="qa_fs_', $lang_id, '" class="qa_fieldset">
-							<legend><a href="javascript:void(0);">', $lang['name'], '</a></legend>
-							<dl class="settings">
-								<dt>
-									<strong>', $txt['setup_verification_question'], '</strong>
-								</dt>
-								<dd>
-									<strong>', $txt['setup_verification_answer'], '</strong>
-								</dd>';
-
-		if (!empty($lang['questions']))
-			foreach ($lang['questions'] as $q_id => $question)
-			{
-				echo '
-								<dt>
-									<input type="text" name="question[', $lang_id, '][', $q_id, ']" value="', $question['question'], '" size="50" class="input_text verification_question">
-								</dt>
-								<dd>';
-				foreach ($question['answers'] as $answer)
-					echo '
-									<input type="text" name="answer[', $lang_id, '][', $q_id, '][]" value="', $answer, '" size="50" class="input_text verification_answer">';
-
-				echo '
-									<div class="qa_add_answer"><a href="javascript:void(0);" onclick="return addAnswer(this);">[ ', $txt['setup_verification_add_answer'], ' ]</a></div>
-								</dd>';
-			}
-
-		echo '
-								<dt class="qa_add_question"><a href="javascript:void(0);">[ ', $txt['setup_verification_add_more'], ' ]</a></dt>
-							</dl>
-						</fieldset>';
-	}
+	$template = loadTemplatePartial('admin_setting_question_answer_list');
+	$phpStr = compileTemplate($template);
+	$renderer = LightnCandy::prepare($phpStr);
+	echo $renderer([
+		'txt' => $txt,
+		'context' => $context,
+	]);
 }
 
 /**
