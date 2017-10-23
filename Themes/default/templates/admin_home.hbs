@@ -64,8 +64,6 @@
 		</div>
 
 		{{! The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization. }}
-		<script src="{{scripturl}}?action=viewsmfile;filename=current-version.js"></script>
-		<script src="{{scripturl}}?action=viewsmfile;filename=latest-news.js"></script>
 		<script>
 			var latestVersion = "{{context.json_updates.[current-version.js]}}"";
 			var news = {{{context.json_updates.[latest-news.js]}}};
