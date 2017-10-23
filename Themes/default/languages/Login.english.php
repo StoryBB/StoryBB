@@ -87,6 +87,11 @@ $txt['setting_registration_activate'] = 'Email Activation';
 $txt['setting_registration_approval'] = 'Admin Approval';
 $txt['setting_send_welcomeEmail'] = 'Send welcome email to new members';
 
+$txt['setting_registration_character'] = 'Whether users need to make characters on registration';
+$txt['setting_registration_character_disabled'] = 'No character creation on registration';
+$txt['setting_registration_character_optional'] = 'Character creation on registration is optional';
+$txt['setting_registration_character_required'] = 'New users must create a new character at sign-up';
+
 $txt['setting_coppaAge'] = 'Age below which to apply registration restrictions';
 $txt['setting_coppaType'] = 'Action to take when a user below minimum age registers';
 $txt['setting_coppaType_reject'] = 'Reject their registration';

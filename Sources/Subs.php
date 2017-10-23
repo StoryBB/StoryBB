@@ -3274,93 +3274,66 @@ function template_header()
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 
-	$checked_securityFiles = false;
-	$showed_banned = false;
-	foreach ($context['template_layers'] as $layer)
+	$show_warnings = empty($context['layout_loaded']) || $context['layout_loaded'] == 'default';
+	$show_warnings &= allowedTo('admin_forum');
+	$show_warnings &= empty($user_info['is_guest']);
+	if ($show_warnings)
 	{
-		// May seem contrived, but this is done in case the body and main layer aren't there...
-		if (in_array($layer, array('body', 'main')) && allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
+		// Check files that shouldn't be there for security reasons.
+		$securityFiles = array('install.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
+
+		// Add your own files.
+		call_integration_hook('integrate_security_files', array(&$securityFiles));
+		foreach ($securityFiles as $i => $securityFile)
 		{
-			$checked_securityFiles = true;
-
-			$securityFiles = array('install.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
-
-			// Add your own files.
-			call_integration_hook('integrate_security_files', array(&$securityFiles));
-
-			foreach ($securityFiles as $i => $securityFile)
-			{
-				if (!file_exists($boarddir . '/' . $securityFile))
-					unset($securityFiles[$i]);
-			}
-
-			// We are already checking so many files...just few more doesn't make any difference! :P
-			if (!empty($modSettings['currentAttachmentUploadDir']))
-				$path = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
-
-			else
-				$path = $modSettings['attachmentUploadDir'];
-
-			secureDirectory($path, true);
-			secureDirectory($cachedir);
-
-			// If agreement is enabled, at least the english version shall exists
-			if ($modSettings['requireAgreement'])
-				$agreement = !file_exists($boarddir . '/agreement.txt');
-
-			if (!empty($securityFiles) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)) || !empty($agreement))
-			{
-				echo '
-		<div class="errorbox">
-			<p class="alert">!!</p>
-			<h3>', empty($securityFiles) ? $txt['generic_warning'] : $txt['security_risk'], '</h3>
-			<p>';
-
-				foreach ($securityFiles as $securityFile)
-				{
-					echo '
-				', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br>';
-
-					if ($securityFile == 'Settings.php~' || $securityFile == 'Settings_bak.php~')
-						echo '
-				', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br>';
-				}
-
-				if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
-					echo '
-				<strong>', $txt['cache_writable'], '</strong><br>';
-
-				if (!empty($agreement))
-					echo '
-				<strong>', $txt['agreement_missing'], '</strong><br>';
-
-				echo '
-			</p>
-		</div>';
-			}
+			if (!file_exists($boarddir . '/' . $securityFile))
+				unset($securityFiles[$i]);
 		}
-		// If the user is banned from posting inform them of it.
-		elseif (in_array($layer, array('main', 'body')) && isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
+		if (!empty($securityFiles))
 		{
-			$showed_banned = true;
-			echo '
-				<div class="windowbg alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red;">
-					', sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
-
-			if (!empty($_SESSION['ban']['cannot_post']['reason']))
-				echo '
-					<div style="padding-left: 4ex; padding-top: 1ex;">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
-
-			if (!empty($_SESSION['ban']['expire_time']))
-				echo '
-					<div>', sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)), '</div>';
-			else
-				echo '
-					<div>', $txt['your_ban_expires_never'], '</div>';
-
-			echo '
-				</div>';
+			$warning = '<strong>' . $txt['security_risk'] . '</strong>';
+			$warning .= '<br>' . $txt['not_removed'] . ': ' . implode(', ', $securityFiles);
+			session_flash('error', $warning);
 		}
+
+		// We are already checking so many files...just few more doesn't make any difference!
+		if (!empty($modSettings['currentAttachmentUploadDir']))
+			$path = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
+		else
+			$path = $modSettings['attachmentUploadDir'];
+
+		secureDirectory($path, true);
+		secureDirectory($cachedir);
+
+		// A few other minor checks we can make.
+		if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
+		{
+			session_flash('error', $txt['cache_writable']);
+		}
+		if ($modSettings['requireAgreement'] && !file_exists($boarddir . '/agreement.txt'))
+		{
+			session_flash('error', $txt['agreement_missing']);
+		}
+	}
+
+	// Now we can warn people about being banned.
+	if (isset($_SESSION['ban']['cannot_post'])) {
+		$ban_message = sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
+
+		if (!empty($_SESSION['ban']['cannot_post']['reason']))
+		{
+			$ban_message .= '<div class="ban_reason">' . $_SESSION['ban']['cannot_post']['reason'] . '</div>';
+		}
+
+		if (!empty($_SESSION['ban']['expire_time']))
+		{
+			$ban_message .= '<div class="ban_expiry">' . sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) . '</div>';
+		}
+		else
+		{
+			$ban_message .= '<div class="ban_expiry">' . $txt['your_ban_expires_never'] . '</div>';
+		}
+		session_flash('warning', $ban_message);
 	}
 }
 

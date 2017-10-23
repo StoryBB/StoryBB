@@ -2632,6 +2632,7 @@ function register_default_helpers() {
 		'json' => function ($data) { return json_encode($data); },
 		'join' => function($array, $sep = '') { return implode($sep, $array); },
 		'is_array' => function($var) { return is_array($var); },
+		'in_array' => function($item, $array) { return in_array($item, $array); },
 		'breakRow' => function($index, $perRow, $sep) {
 			if ($perRow == 0) {
 				return '';

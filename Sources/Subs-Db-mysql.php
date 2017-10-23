@@ -168,8 +168,8 @@ function smf_db_replacement__callback($matches)
 	if ($matches[1] === 'db_prefix')
 		return $db_prefix;
 
-	if (isset($user_info[$matches[1]]) && strpos($matches[1], 'query_') !== false)
-		return $user_info[$matches[1]];
+	if (strpos($matches[1], 'query_') !== false && !isset($matches[2]))
+		return isset($user_info[$matches[1]]) ? $user_info[$matches[1]] : '0=1';
 
 	if ($matches[1] === 'empty')
 		return '\'\'';

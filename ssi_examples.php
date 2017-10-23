@@ -457,7 +457,7 @@ function template_ssi_above()
 	<body>
 		<div id="header">
 			<h1 class="forumtitle">StoryBB 3.0 Alpha 1 SSI.php Examples</h1>
-			<img id="smflogo" src="Themes/default/images/smflogo.png" alt="Simple Machines Forum" title="Simple Machines Forum">
+			<img id="sbblogo" src="Themes/default/images/StoryBB.svg" alt="StoryBB" title="StoryBB">
 		</div>
 		<div id="wrapper">
 			<div id="upper_section"><p><br></p></div>

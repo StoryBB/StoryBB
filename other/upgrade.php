@@ -3303,7 +3303,7 @@ function template_upgrade_above()
 	<div id="footerfix">
 		<div id="header">
 			<h1 class="forumtitle">', $txt['upgrade_upgrade_utility'], '</h1>
-			<img id="smflogo" src="', $settings['default_theme_url'], '/images/smflogo.png" alt="Simple Machines Forum" title="Simple Machines Forum">
+			<img id="sbblogo" src="', $settings['default_theme_url'], '/images/StoryBB.svg" alt="StoryBB" title="StoryBB">
 		</div>
 	<div id="wrapper">
 		<div id="upper_section">
