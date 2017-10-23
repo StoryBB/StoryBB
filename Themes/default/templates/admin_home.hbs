@@ -67,6 +67,8 @@
 		<script src="{{scripturl}}?action=viewsmfile;filename=current-version.js"></script>
 		<script src="{{scripturl}}?action=viewsmfile;filename=latest-news.js"></script>
 		<script>
+			var latestVersion = "{{context.json_updates.[current-version.js]}}"";
+			var news = {{{context.json_updates.[latest-news.js]}}};
 			var oAdminIndex = new smf_AdminIndex({
 				sSelf: 'oAdminCenter',
 
