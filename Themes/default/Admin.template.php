@@ -730,23 +730,4 @@ function template_clean_cache_button_below()
 					</div>';
 }
 
-/**
- * This shows the admin search form
- */
-function template_admin_quick_search()
-{
-	global $context, $txt, $scripturl;
-	if ($context['user']['is_admin'])
-		echo '
-								<span class="floatright admin_search">
-									<span class="generic_icons filter centericon"></span>
-									<input type="search" name="search_term" value="', $txt['admin_search'], '" onclick="if (this.value == \'', $txt['admin_search'], '\') this.value = \'\';" class="input_text">
-									<select name="search_type">
-										<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
-										<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
-									</select>
-									<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '" class="button_submit">
-								</span>';
-}
-
 ?>

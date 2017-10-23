@@ -30,6 +30,8 @@ function AdminMain()
 	loadJavaScriptFile('admin.js', array(), 'smf_admin');
 	loadCSSFile('admin.css', array(), 'smf_admin');
 
+	$context['show_admin_search'] = $context['user']['is_admin'];
+
 	// No indexing evil stuff.
 	$context['robot_no_index'] = true;
 
