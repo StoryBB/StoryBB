@@ -104,8 +104,6 @@ CREATE SEQUENCE {$db_prefix}admin_info_files_seq START WITH 8;
 CREATE TABLE {$db_prefix}admin_info_files (
   id_file smallint default nextval('{$db_prefix}admin_info_files_seq'),
   filename varchar(255) NOT NULL DEFAULT '',
-  path varchar(255) NOT NULL DEFAULT '',
-  parameters varchar(255) NOT NULL DEFAULT '',
   data text NOT NULL,
   filetype varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (id_file)
@@ -1728,12 +1726,10 @@ BEGIN;
 #
 
 INSERT INTO {$db_prefix}admin_info_files
-  (id_file, filename, path, parameters, data, filetype)
+  (id_file, filename, data, filetype)
 VALUES
-  (1, 'current-version.js', '/smf/', 'version=%3$s', '', 'text/javascript'),
-  (2, 'detailed-version.js', '/smf/', 'language=%1$s&version=%3$s', '', 'text/javascript'),
-  (3, 'latest-news.js', '/smf/', 'language=%1$s&format=%2$s', '', 'text/javascript'),
-  (4, 'latest-versions.txt', '/smf/', 'version=%3$s', '', 'text/plain');
+  (1, 'current-version.js', '', 'application/json'),
+  (2, 'latest-news.js',  '', 'application/json');
 # --------------------------------------------------------
 
 #
