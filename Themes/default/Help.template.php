@@ -10,28 +10,6 @@ use LightnCandy\LightnCandy;
  */
 
 /**
- * This displays a help popup thingy
- */
-function template_popup()
-{
-	global $context, $settings, $txt, $modSettings;
-	$data = Array(
-		'context' => $context,
-		'settings' => $settings,
-		'txt' => $txt,
-		'modsettings' => $modSettings,
-		'id' => 'help_popup',
-		'content' => $context['help_text']
-	);
-	
-	$template = loadTemplateLayout('popup');
-
-	$phpStr = compileTemplate($template);
-	
-	$renderer = LightnCandy::prepare($phpStr);
-	echo $renderer($data);
-}
-/**
  * The template for the popup for finding members
  * @todo Is this used?
  */
