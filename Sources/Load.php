@@ -2585,6 +2585,36 @@ function compileTemplate($template, $options = [], $cache_id = null) {
 	return $phpStr;
 }
 
+function addTemplate($name, $position = 'after', $relative = null) {
+	global $context;
+	if (!is_array($context['sub_template'])) {
+		$context['sub_template'] = [$context['sub_template']];
+	}
+
+	if ($relative !== null) {
+		$array_pos = array_search($relative, $context['sub_template']);
+		if ($array_pos === false) {
+			$relative = null;
+		}
+	}
+
+	if ($position === 'after') {
+		if ($relative === null) {
+			$context['sub_template'][] = $name;
+		} else {
+			array_splice($context['sub_template'], $array_pos, 1, [$relative, $name]);
+		}
+	}
+
+	if ($position === 'before') {
+		if ($relative === null) {
+			array_unshift($name, $context['sub_template']);
+		} else {
+			array_splice($context['sub_template'], $array_pos, 1, [$name, $relative]);
+		}
+	}
+}
+
 function register_helper($helper_array) {
 	global $context;
 
