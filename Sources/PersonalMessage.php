@@ -1112,7 +1112,7 @@ function MessageSearch()
 	}
 
 	$context['page_title'] = $txt['pm_search_title'];
-	$context['sub_template'] = 'search';
+	$context['sub_template'] = 'personal_message_search';
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
 		'name' => $txt['pm_search_bar_title'],
