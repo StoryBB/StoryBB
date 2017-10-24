@@ -60,12 +60,12 @@ smf_AdminIndex.prototype.loadAdminIndex = function ()
 
 smf_AdminIndex.prototype.setAnnouncements = function ()
 {
-	if (!('smfAnnouncements' in window) || !('length' in window.smfAnnouncements))
+	if (!('sbbAnnouncements' in window) || !('length' in window.sbbAnnouncements))
 		return;
 
 	var sMessages = '';
-	for (var i = 0; i < window.smfAnnouncements.length; i++)
-		sMessages += this.opt.sAnnouncementMessageTemplate.replace('%href%', window.smfAnnouncements[i].href).replace('%subject%', window.smfAnnouncements[i].subject).replace('%time%', window.smfAnnouncements[i].time).replace('%message%', window.smfAnnouncements[i].message);
+	for (var i = 0; i < window.sbbAnnouncements.length; i++)
+		sMessages += this.opt.sAnnouncementMessageTemplate.replace('%href%', window.sbbAnnouncements[i].href).replace('%subject%', window.sbbAnnouncements[i].subject).replace('%time%', window.sbbAnnouncements[i].time).replace('%message%', window.sbbAnnouncements[i].message);
 
 	setInnerHTML(document.getElementById(this.opt.sAnnouncementContainerId), this.opt.sAnnouncementTemplate.replace('%content%', sMessages));
 }
