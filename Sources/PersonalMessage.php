@@ -3134,7 +3134,7 @@ function ManageLabels()
 	);
 
 	$context['page_title'] = $txt['pm_manage_labels'];
-	$context['sub_template'] = 'labels';
+	$context['sub_template'] = 'personal_message_labels';
 
 	$the_labels = array();
 	$labels_to_add = array();
