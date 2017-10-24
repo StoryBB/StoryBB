@@ -909,9 +909,6 @@ function ForumSettings()
 	// Now, to put what we've learned together... and add a path.
 	$incontext['detected_url'] = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 's' : '') . '://' . $host . substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
 
-	// Check if the database sessions will even work.
-	$incontext['test_dbsession'] = (ini_get('session.auto_start') != 1);
-
 	$incontext['continue'] = 1;
 
 	// Setup the SSL checkbox...
@@ -1047,7 +1044,7 @@ function DatabasePopulation()
 		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
 		'{$enableCompressedOutput}' => isset($_POST['compress']) ? '1' : '0',
-		'{$databaseSession_enable}' => isset($_POST['dbsession']) ? '1' : '0',
+		'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
 		'{$smf_version}' => $GLOBALS['current_smf_version'],
 		'{$current_time}' => time(),
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
@@ -2201,15 +2198,6 @@ function template_forum_settings()
 					<label for="compress_check">', $txt['install_settings_compress_title'], '</label>
 					<br>
 					<div class="smalltext block">', $txt['install_settings_compress_info'], '</div>
-				</td>
-			</tr>
-			<tr>
-				<td class="textbox" style="vertical-align: top;">', $txt['install_settings_dbsession'], ':</td>
-				<td>
-					<input type="checkbox" name="dbsession" id="dbsession_check" checked class="input_check" />&nbsp;
-					<label for="dbsession_check">', $txt['install_settings_dbsession_title'], '</label>
-					<br>
-					<div class="smalltext block">', $incontext['test_dbsession'] ? $txt['install_settings_dbsession_info1'] : $txt['install_settings_dbsession_info2'], '</div>
 				</td>
 			</tr>
 			<tr>
