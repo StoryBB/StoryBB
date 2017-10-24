@@ -874,6 +874,14 @@ function MessageFolder()
 	$context['can_send_email'] = allowedTo('moderate_forum');
 	$context['sub_template'] = 'personal_message_folder';
 	$context['page_title'] = $txt['pm_inbox'];
+	
+	//This is a dirty hack. The new template system can't read the messages from a pump the way the old one could.
+	while($message = $context['get_pmessage']('message')) {
+		$context['messages'][] = $message;
+	}
+	while($message = $context['get_pmessage']('subject')) {
+		$context['subjects'][] = $message;
+	}
 
 	// Finally mark the relevant messages as read.
 	if ($context['folder'] != 'sent' && !empty($context['labels'][(int) $context['current_label_id']]['unread_messages']))
