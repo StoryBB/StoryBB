@@ -949,6 +949,22 @@ function prepareDBSettingContext(&$config_vars)
 	{
 		require_once($sourcedir . '/Subs-MessageIndex.php');
 		$context['board_list'] = getBoardList();
+
+		register_helper([
+			'repeat' => function($string, $repeat) { return $repeat > 0 ? str_repeat($string, $repeat) : ''; }
+		]);
+
+		addInlineJavascript('
+		$("legend.board_selector").closest("fieldset").hide();
+		$("a.board_selector").click(function(e) {
+			e.preventDefault();
+			$(this).hide().next("fieldset").show();
+		});
+		$("fieldset legend.board_selector a").click(function(e) {
+			e.preventDefault();
+			$(this).closest("fieldset").hide().prev("a").show();
+		});
+		', true);
 	}
 
 	// What about any BBC selection boxes?
@@ -986,12 +1002,11 @@ function prepareDBSettingContext(&$config_vars)
 		}
 
 		// Now put whatever BBC options we may have into context too!
-		$context['bbc_sections'] = array();
 		foreach ($bbcChoice as $bbc)
 		{
-			$context['bbc_sections'][$bbc] = array(
-				'title' => isset($txt['bbc_title_' . $bbc]) ? $txt['bbc_title_' . $bbc] : $txt['bbcTagsToUse_select'],
-				'disabled' => empty($modSettings['bbc_disabled_' . $bbc]) ? array() : $modSettings['bbc_disabled_' . $bbc],
+			$context['config_vars'][$bbc] += array(
+				'bbc_title' => isset($txt['bbc_title_' . $bbc]) ? $txt['bbc_title_' . $bbc] : $txt['bbcTagsToUse_select'],
+				'bbc_disabled' => empty($modSettings['bbc_disabled_' . $bbc]) ? array() : $modSettings['bbc_disabled_' . $bbc],
 				'all_selected' => empty($modSettings['bbc_disabled_' . $bbc]),
 			);
 		}
