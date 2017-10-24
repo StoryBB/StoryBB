@@ -33,8 +33,6 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = nu
 	// Will need the utility functions from here.
 	require_once($sourcedir . '/ManageServer.php');
 
-	$context['sub_template'] = 'show_settings';
-
 	// If no fallback was specified, use the first subaction.
 	$defaultAction = $defaultAction ?: key($subActions);
 
@@ -257,7 +255,6 @@ function ModifyBBCSettings($return_config = false)
 
 	// Setup the template.
 	require_once($sourcedir . '/ManageServer.php');
-	$context['sub_template'] = 'show_settings';
 	$context['page_title'] = $txt['manageposts_bbc_settings_title'];
 
 	// Make sure we check the right tags!
@@ -480,7 +477,6 @@ function ModifyWarningSettings($return_config = false)
 	// We actually store lots of these together - for efficiency.
 	list ($modSettings['warning_enable'], $modSettings['user_limit'], $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);
 
-	$context['sub_template'] = 'show_settings';
 	$context['post_url'] = $scripturl . '?action=admin;area=warnings;save';
 	$context['settings_title'] = $txt['warnings'];
 	$context['page_title'] = $txt['warnings'];
@@ -522,19 +518,16 @@ function ModifyAntispamSettings($return_config = false)
 				'pm2' => array('int', 'pm_posts_verification', 'subtext' => $txt['pm_posts_verification_note']),
 				'pm3' => array('int', 'pm_posts_per_hour', 'subtext' => $txt['pm_posts_per_hour_note']),
 			// Visual verification.
-			array('title', 'configure_verification_means'),
-			array('desc', 'configure_verification_means_desc'),
+			array('titledesc', 'configure_verification_means'),
 				'vv' => array('select', 'visual_verification_type', array($txt['setting_image_verification_off'], $txt['setting_image_verification_vsimple'], $txt['setting_image_verification_simple'], $txt['setting_image_verification_medium'], $txt['setting_image_verification_high'], $txt['setting_image_verification_extreme']), 'subtext' => $txt['setting_visual_verification_type_desc'], 'onchange' => $context['use_graphic_library'] ? 'refreshImages();' : ''),
 			// reCAPTCHA
-			array('title', 'recaptcha_configure'),
-			array('desc', 'recaptcha_configure_desc', 'class' => 'windowbg'),
+			array('titledesc', 'recaptcha_configure'),
 				array('check', 'recaptcha_enabled', 'subtext' => $txt['recaptcha_enable_desc']),
 				array('text', 'recaptcha_site_key', 'subtext' => $txt['recaptcha_site_key_desc']),
 				array('text', 'recaptcha_secret_key', 'subtext' => $txt['recaptcha_secret_key_desc']),
 				array('select', 'recaptcha_theme', array('light' => $txt['recaptcha_theme_light'], 'dark' => $txt['recaptcha_theme_dark'])),
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
-			array('title', 'setup_verification_questions'),
-			array('desc', 'setup_verification_questions_desc'),
+			array('titledesc', 'setup_verification_questions'),
 				array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
 				array('callback', 'question_answer_list'),
 	);
@@ -549,32 +542,37 @@ function ModifyAntispamSettings($return_config = false)
 
 	// Firstly, figure out what languages we're dealing with, and do a little processing for the form's benefit.
 	getLanguages();
-	$context['qa_languages'] = array();
-	foreach ($context['languages'] as $lang_id => $lang)
-	{
-		$lang_id = strtr($lang_id, array('-utf8' => ''));
-		$lang['name'] = strtr($lang['name'], array('-utf8' => ''));
-		$context['qa_languages'][$lang_id] = $lang;
-	}
 
 	// Secondly, load any questions we currently have.
 	$context['question_answers'] = array();
+	foreach ($context['languages'] as $lang_id => $lang)
+	{
+		$context['question_answers'][$lang_id] = [
+			'name' => $lang['name'],
+			'questions' => [],
+		];
+	}
 	$request = $smcFunc['db_query']('', '
 		SELECT id_question, lngfile, question, answers
 		FROM {db_prefix}qanda'
 	);
+	$questions = 1;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$lang = strtr($row['lngfile'], array('-utf8' => ''));
-		$context['question_answers'][$row['id_question']] = array(
-			'lngfile' => $lang,
+		if (!isset($context['question_answers'][$lang_id]))
+		{
+			continue;
+		}
+		$context['question_answers'][$lang_id]['questions'][$row['id_question']] = [
 			'question' => $row['question'],
 			'answers' => smf_json_decode($row['answers'], true),
-		);
-		$context['qa_by_lang'][$lang][] = $row['id_question'];
+		];
+		$questions++;
 	}
+	$smcFunc['db_free_result']($request);
 
-	if (empty($context['qa_by_lang'][strtr($language, array('-utf8' => ''))]) && !empty($context['question_answers']))
+	if (empty($context['question_answers'][$language]) || empty($context['question_answers'][$language]['questions']))
 	{
 		if (empty($context['settings_insert_above']))
 			$context['settings_insert_above'] = '';
@@ -584,7 +582,7 @@ function ModifyAntispamSettings($return_config = false)
 
 	// Thirdly, push some JavaScript for the form to make it work.
 	addInlineJavaScript('
-	var nextrow = ' . (!empty($context['question_answers']) ? max(array_keys($context['question_answers'])) + 1 : 1) . ';
+	var nextrow = ' . $questions . ';
 	$(".qa_link a").click(function() {
 		var id = $(this).parent().attr("id").substring(6);
 		$("#qa_fs_" + id).show();
@@ -635,15 +633,15 @@ function ModifyAntispamSettings($return_config = false)
 			'delete' => array(),
 		);
 		$qs_per_lang = array();
-		foreach ($context['qa_languages'] as $lang_id => $dummy)
+		foreach (array_keys($context['question_answers']) as $lang_id)
 		{
 			// If we had some questions for this language before, but don't now, delete everything from that language.
-			if ((!isset($_POST['question'][$lang_id]) || !is_array($_POST['question'][$lang_id])) && !empty($context['qa_by_lang'][$lang_id]))
+			if ((!isset($_POST['question'][$lang_id]) || !is_array($_POST['question'][$lang_id])) && !empty($context['question_answers'][$lang_id]['questions']))
 				$changes['delete'] = array_merge($questions['delete'], $context['qa_by_lang'][$lang_id]);
 
 			// Now step through and see if any existing questions no longer exist.
-			if (!empty($context['qa_by_lang'][$lang_id]))
-				foreach ($context['qa_by_lang'][$lang_id] as $q_id)
+			if (!empty($context['question_answers'][$lang_id]['questions']))
+				foreach (array_keys($context['question_answers'][$lang_id]['questions']) as $q_id)
 					if (empty($_POST['question'][$lang_id][$q_id]))
 						$changes['delete'][] = $q_id;
 
@@ -660,7 +658,7 @@ function ModifyAntispamSettings($return_config = false)
 					// Check the question isn't empty (because they want to delete it?)
 					if (empty($question) || trim($question) == '')
 					{
-						if (isset($context['question_answers'][$q_id]))
+						if (isset($context['question_answers'][$lang_id]['questions'][$q_id]))
 							$changes['delete'][] = $q_id;
 						continue;
 					}
@@ -669,7 +667,7 @@ function ModifyAntispamSettings($return_config = false)
 					// Get the answers. Firstly check there actually might be some.
 					if (!isset($_POST['answer'][$lang_id][$q_id]) || !is_array($_POST['answer'][$lang_id][$q_id]))
 					{
-						if (isset($context['question_answers'][$q_id]))
+						if (isset($context['question_answers'][$lang_id]['questions'][$q_id]))
 							$changes['delete'][] = $q_id;
 						continue;
 					}
@@ -680,14 +678,14 @@ function ModifyAntispamSettings($return_config = false)
 							$answers[] = $smcFunc['htmlspecialchars'](trim($answer));
 					if (empty($answers))
 					{
-						if (isset($context['question_answers'][$q_id]))
+						if (isset($context['question_answers'][$lang_id]['questions'][$q_id]))
 							$changes['delete'][] = $q_id;
 						continue;
 					}
 					$answers = json_encode($answers);
 
 					// At this point we know we have a question and some answers. What are we doing with it?
-					if (!isset($context['question_answers'][$q_id]))
+					if (!isset($context['question_answers'][$lang_id]['questions'][$q_id]))
 					{
 						// New question. Now, we don't want to randomly consume ids, so we'll set those, rather than trusting the browser's supplied ids.
 						$changes['insert'][] = array($lang_id, $question, $answers);
@@ -695,7 +693,7 @@ function ModifyAntispamSettings($return_config = false)
 					else
 					{
 						// It's an existing question. Let's see what's changed, if anything.
-						if ($lang_id != $context['question_answers'][$q_id]['lngfile'] || $question != $context['question_answers'][$q_id]['question'] || $answers != $context['question_answers'][$q_id]['answers'])
+						if ($question != $context['question_answers'][$lang_id]['questions'][$q_id]['question'] || $answers != $context['question_answers'][$lang_id]['questions'][$q_id]['answers'])
 							$changes['replace'][$q_id] = array('lngfile' => $lang_id, 'question' => $question, 'answers' => $answers);
 					}
 
@@ -801,7 +799,6 @@ function ModifyAntispamSettings($return_config = false)
 	$context['post_url'] = $scripturl . '?action=admin;area=antispam;save';
 	$context['settings_title'] = $txt['antispam_Settings'];
 	$context['page_title'] = $txt['antispam_title'];
-	$context['sub_template'] = 'show_settings';
 
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['antispam_title'],
@@ -847,7 +844,6 @@ function ModifySignatureSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['signature_settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Disable the max smileys option if we don't allow smileys at all!
 	$context['settings_post_javascript'] = 'document.getElementById(\'signature_max_smileys\').disabled = !document.getElementById(\'signature_allow_smileys\').checked;';
@@ -1537,7 +1533,10 @@ function EditCustomProfiles()
 	$context['fid'] = isset($_GET['fid']) ? (int) $_GET['fid'] : 0;
 	$context[$context['admin_menu_name']]['current_subsection'] = 'profile';
 	$context['page_title'] = $context['fid'] ? $txt['custom_edit_title'] : $txt['custom_add_title'];
-	$context['sub_template'] = 'edit_profile_field';
+	$context['sub_template'] = 'admin_profile_fields_edit';
+	register_helper([
+		'begins_with' => function($string, $test) { return strpos($string, $test) === 0; }
+	]);
 
 	// Load the profile language for section names.
 	loadLanguage('Profile');
@@ -1669,11 +1668,17 @@ function EditCustomProfiles()
 
 		// Everyone needs a name - even the (bracket) unknown...
 		if (trim($_POST['field_name']) == '')
-			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid'] . ';msg=need_name');
+		{
+			session_flash('error', $txt['custom_option_need_name']);
+			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid']);
+		}
 
 		// Regex you say?  Do a very basic test to see if the pattern is valid
 		if (!empty($_POST['regex']) && @preg_match($_POST['regex'], 'dummy') === false)
-			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid'] . ';msg=regex_error');
+		{
+			session_flash('error', $txt['custom_option_regex_error']);
+			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid']);
+		}
 
 		$_POST['field_name'] = $smcFunc['htmlspecialchars']($_POST['field_name']);
 		$_POST['field_desc'] = $smcFunc['htmlspecialchars']($_POST['field_desc']);
@@ -2106,7 +2111,6 @@ function ModifyLogSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=logs;save;sa=settings';
 	$context['settings_title'] = $txt['log_settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Get the actual values
 	if (!empty($modSettings['pruningOptions']))

@@ -316,7 +316,6 @@ function ModifyRegistrationSettings($return_config = false)
 		return $config_vars;
 
 	// Setup the template
-	$context['sub_template'] = 'show_settings';
 	$context['page_title'] = $txt['registration_center'];
 
 	if (isset($_GET['save']))
