@@ -1672,7 +1672,7 @@ function MessagePost()
 	loadTemplate('PersonalMessage');
 	loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'smf_pms');
 	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
-	$context['sub_template'] = 'send';
+	$context['sub_template'] = 'personal_message_send';
 
 	// Extract out the spam settings - cause it's neat.
 	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
