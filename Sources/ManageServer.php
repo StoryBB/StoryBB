@@ -157,6 +157,7 @@ function ModifyGeneralSettings($return_config = false)
 		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'text', 30),
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
+		array('debug_templates', $txt['debug_templates'], 'db', 'check', 'null', 'debug_templates'),
 		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
 		'',
 		array('force_ssl', $txt['force_ssl'], 'db', 'select', array($txt['force_ssl_off'], $txt['force_ssl_auth'], $txt['force_ssl_complete']), 'force_ssl', 'disabled' => $disable_force_ssl),
@@ -552,9 +553,6 @@ function ModifyGeneralSecuritySettings($return_config = false)
 			// Password strength.
 			array('select', 'password_strength', array($txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high'])),
 			array('check', 'enable_password_conversion'),
-		'',
-			// Reporting of personal messages?
-			array('check', 'enableReportPM'),
 		'',
 			array('select', 'frame_security', array('SAMEORIGIN' => $txt['setting_frame_security_SAMEORIGIN'], 'DENY' => $txt['setting_frame_security_DENY'], 'DISABLE' => $txt['setting_frame_security_DISABLE'])),
 		'',
