@@ -2718,9 +2718,9 @@ function MessageKillAllQuery()
 	global $txt, $context;
 
 	// Only have to set up the template....
-	$context['sub_template'] = 'ask_delete';
+	$context['sub_template'] = 'personal_message_ask_delete';
 	$context['page_title'] = $txt['delete_all'];
-	$context['delete_all'] = $_REQUEST['f'] == 'all';
+	$context['personal_message_delete_all'] = $_REQUEST['f'] == 'all';
 
 	// And set the folder name...
 	$txt['delete_all'] = str_replace('PMBOX', $context['folder'] != 'sent' ? $txt['inbox'] : $txt['sent_items'], $txt['delete_all']);
@@ -2812,7 +2812,7 @@ function MessagePrune()
 		'name' => $txt['pm_prune']
 	);
 
-	$context['sub_template'] = 'prune';
+	$context['sub_template'] = 'personal_message_prune';
 	$context['page_title'] = $txt['pm_prune'];
 }
 
