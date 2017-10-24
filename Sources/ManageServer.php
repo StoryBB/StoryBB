@@ -553,9 +553,6 @@ function ModifyGeneralSecuritySettings($return_config = false)
 			array('select', 'password_strength', array($txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high'])),
 			array('check', 'enable_password_conversion'),
 		'',
-			// Reporting of personal messages?
-			array('check', 'enableReportPM'),
-		'',
 			array('select', 'frame_security', array('SAMEORIGIN' => $txt['setting_frame_security_SAMEORIGIN'], 'DENY' => $txt['setting_frame_security_DENY'], 'DISABLE' => $txt['setting_frame_security_DISABLE'])),
 		'',
 			array('select', 'proxy_ip_header', array('disabled' => $txt['setting_proxy_ip_header_disabled'], 'autodetect' => $txt['setting_proxy_ip_header_autodetect'], 'HTTP_X_FORWARDED_FOR' => 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP' => 'HTTP_CLIENT_IP', 'HTTP_X_REAL_IP' => 'HTTP_X_REAL_IP', 'CF-Connecting-IP' => 'CF-Connecting-IP')),
