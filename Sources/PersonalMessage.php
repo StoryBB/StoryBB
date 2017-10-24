@@ -1981,7 +1981,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	if (!isset($_REQUEST['xml']))
 	{
 		$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
-		$context['sub_template'] = 'send';
+		$context['sub_template'] = 'personal_message_send';
 		loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'smf_pms');
 		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 	}
