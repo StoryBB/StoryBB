@@ -10,22 +10,6 @@
 use LightnCandy\LightnCandy;
 
 /**
- * This little beauty shows questions and answer from the captcha type feature.
- */
-function template_callback_question_answer_list()
-{
-	global $txt, $context;
-
-	$template = loadTemplatePartial('admin_setting_question_answer_list');
-	$phpStr = compileTemplate($template);
-	$renderer = LightnCandy::prepare($phpStr);
-	echo $renderer([
-		'txt' => $txt,
-		'context' => $context,
-	]);
-}
-
-/**
  * Retrieves info from the php_info function, scrubs and preps it for display
  */
 function template_php_info()
