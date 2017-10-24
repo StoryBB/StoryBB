@@ -801,6 +801,7 @@ function VerificationCode()
 		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
 		$context['sub_template'] = 'register_sound_verification';
 		register_helper(['isBrowser' => 'isBrowser']);
+		$context['popup_id'] = 'sound_verification';
 		loadTemplateLayout('popup');
 
 		obExit();
