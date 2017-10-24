@@ -10,35 +10,6 @@ use LightnCandy\LightnCandy;
  */
 
 /**
- * This is for stuff above the menu in the personal messages section
- */
-function template_pm_above()
-{
-	global $context, $txt;
-
-	$data = [
-		'context' => $context,
-		'txt' => $txt
-	];
-
-	$template = loadTemplatePartial('pm_above');
-
-	$phpStr = compileTemplate($template);
-	
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
- * Just the end of the index bar, nothing special.
- */
-function template_pm_below()
-{
-	return '</div>';
-}
-
-
-/**
  * Shows a particular folder (eg inbox or outbox), all the PMs in it, etc.
  */
 function template_folder()

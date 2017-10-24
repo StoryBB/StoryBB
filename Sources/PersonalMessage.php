@@ -33,6 +33,9 @@ function MessageMain()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	loadLanguage('PersonalMessage+Drafts');
+	
+	//Grab the partial
+	$template = loadTemplatePartial('pm_above');
 
 	if (!isset($_REQUEST['xml']))
 		loadTemplate('PersonalMessage');
@@ -359,8 +362,8 @@ function messageIndexBar($area)
 	$context['menu_item_selected'] = $current_area;
 
 	// Set the template for this area and add the profile layer.
-	if (!isset($_REQUEST['xml']))
-		$context['template_layers'][] = 'pm';
+//	if (!isset($_REQUEST['xml']))
+//		$context['template_layers'][] = 'pm';
 }
 
 /**
@@ -869,7 +872,7 @@ function MessageFolder()
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 	$context['can_send_email'] = allowedTo('moderate_forum');
-	$context['sub_template'] = 'folder';
+	$context['sub_template'] = 'personal_message_folder';
 	$context['page_title'] = $txt['pm_inbox'];
 
 	// Finally mark the relevant messages as read.
@@ -1641,7 +1644,7 @@ function MessageSearch2()
 
 	//We need a helper
 	register_helper([
-		create_button => create_button
+		'create_button' => 'create_button'
 	]);
 	
 	// Finish off the context.
