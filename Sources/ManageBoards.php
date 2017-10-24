@@ -871,7 +871,6 @@ function EditBoardSettings($return_config = false)
 	$context['page_title'] = $txt['boards_and_cats'] . ' - ' . $txt['settings'];
 
 	loadTemplate('ManageBoards');
-	$context['sub_template'] = 'show_settings';
 
 	// Add some javascript stuff for the recycle box.
 	addInlineJavaScript('

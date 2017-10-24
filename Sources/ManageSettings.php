@@ -33,8 +33,6 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = nu
 	// Will need the utility functions from here.
 	require_once($sourcedir . '/ManageServer.php');
 
-	$context['sub_template'] = 'show_settings';
-
 	// If no fallback was specified, use the first subaction.
 	$defaultAction = $defaultAction ?: key($subActions);
 
@@ -257,7 +255,6 @@ function ModifyBBCSettings($return_config = false)
 
 	// Setup the template.
 	require_once($sourcedir . '/ManageServer.php');
-	$context['sub_template'] = 'show_settings';
 	$context['page_title'] = $txt['manageposts_bbc_settings_title'];
 
 	// Make sure we check the right tags!
@@ -480,7 +477,6 @@ function ModifyWarningSettings($return_config = false)
 	// We actually store lots of these together - for efficiency.
 	list ($modSettings['warning_enable'], $modSettings['user_limit'], $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);
 
-	$context['sub_template'] = 'show_settings';
 	$context['post_url'] = $scripturl . '?action=admin;area=warnings;save';
 	$context['settings_title'] = $txt['warnings'];
 	$context['page_title'] = $txt['warnings'];
@@ -806,7 +802,6 @@ function ModifyAntispamSettings($return_config = false)
 	$context['post_url'] = $scripturl . '?action=admin;area=antispam;save';
 	$context['settings_title'] = $txt['antispam_Settings'];
 	$context['page_title'] = $txt['antispam_title'];
-	$context['sub_template'] = 'show_settings';
 
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['antispam_title'],
@@ -852,7 +847,6 @@ function ModifySignatureSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['signature_settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Disable the max smileys option if we don't allow smileys at all!
 	$context['settings_post_javascript'] = 'document.getElementById(\'signature_max_smileys\').disabled = !document.getElementById(\'signature_allow_smileys\').checked;';
@@ -2120,7 +2114,6 @@ function ModifyLogSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=logs;save;sa=settings';
 	$context['settings_title'] = $txt['log_settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Get the actual values
 	if (!empty($modSettings['pruningOptions']))

@@ -130,7 +130,6 @@ function EditSmileySettings($return_config = false)
 
 	// Setup the basics of the settings template.
 	require_once($sourcedir . '/ManageServer.php');
-	$context['sub_template'] = 'show_settings';
 
 	// Finish up the form...
 	$context['post_url'] = $scripturl . '?action=admin;area=smileys;save;sa=settings';

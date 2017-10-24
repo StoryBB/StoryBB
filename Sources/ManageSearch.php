@@ -105,7 +105,6 @@ function EditSearchSettings($return_config = false)
 		return $config_vars;
 
 	$context['page_title'] = $txt['search_settings_title'];
-	$context['sub_template'] = 'show_settings';
 
 	// We'll need this for the settings.
 	require_once($sourcedir . '/ManageServer.php');

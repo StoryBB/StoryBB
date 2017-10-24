@@ -216,7 +216,6 @@ function ModifyPostSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['manageposts_settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Are we saving them - are we??
 	if (isset($_GET['save']))
@@ -307,7 +306,6 @@ function ModifyTopicSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['manageposts_topic_settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Are we saving them - are we??
 	if (isset($_GET['save']))
@@ -361,7 +359,6 @@ function ModifyDraftSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['managedrafts_settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Saving them ?
 	if (isset($_GET['save']))
