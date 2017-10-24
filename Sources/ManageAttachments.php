@@ -244,8 +244,6 @@ function ManageAttachmentSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=attachments';
 	prepareDBSettingContext($config_vars);
-
-	$context['sub_template'] = 'show_settings';
 }
 
 /**
@@ -360,7 +358,6 @@ function ManageAvatarSettings($return_config = false)
 
 	// Add a layer for the javascript.
 	$context['template_layers'][] = 'avatar_settings';
-	$context['sub_template'] = 'show_settings';
 }
 
 /**

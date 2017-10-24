@@ -125,7 +125,6 @@ function ManageSearchEngineSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Are we saving them - are we??
 	if (isset($_GET['save']))

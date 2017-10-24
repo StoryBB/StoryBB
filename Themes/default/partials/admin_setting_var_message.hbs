@@ -1,0 +1,6 @@
+		{{> admin_setting_dt_container config_var=config_var}}
+		<dd{{#if config_var.force_div_id}} id="{{config_var.force_div_id}}_dd"{{/if}}>
+			{{{config_var.preinput}}}
+			<div{{#if config_var.name}} id="{{config_var.name}}"{{/if}}>{{{config_var.var_message}}}</div>
+			{{{config_var.postinput}}}
+		</dd>

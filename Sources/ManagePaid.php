@@ -171,7 +171,6 @@ function ModifySubscriptionSettings($return_config = false)
 
 	// Some important context stuff
 	$context['page_title'] = $txt['settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Get the final touches in place.
 	$context['post_url'] = $scripturl . '?action=admin;area=paidsubscribe;save;sa=settings';
