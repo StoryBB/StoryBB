@@ -26,7 +26,6 @@ function AdminMain()
 
 	// Load the language and templates....
 	loadLanguage('Admin');
-	loadTemplate('Admin');
 	loadJavaScriptFile('admin.js', array(), 'smf_admin');
 	loadCSSFile('admin.css', array(), 'smf_admin');
 
