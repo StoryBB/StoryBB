@@ -1007,7 +1007,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 		'is_unread' => &$context['message_unread'][$message['id_pm']],
 		'is_selected' => !empty($temp_pm_selected) && in_array($message['id_pm'], $temp_pm_selected),
 		'is_message_author' => $message['id_member_from'] == $user_info['id'],
-		'can_report' => !empty($modSettings['enableReportPM']),
+		'can_report' => true,
 		'can_see_ip' => allowedTo('moderate_forum'),
 	);
 
@@ -3429,8 +3429,7 @@ function ReportMessage()
 	global $txt, $context, $scripturl;
 	global $user_info, $language, $modSettings, $smcFunc;
 
-	// Check that this feature is even enabled!
-	if (empty($modSettings['enableReportPM']) || empty($_REQUEST['pmsg']))
+	if (empty($_REQUEST['pmsg']))
 		fatal_lang_error('no_access', false);
 
 	$pmsg = (int) $_REQUEST['pmsg'];
