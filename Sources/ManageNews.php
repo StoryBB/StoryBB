@@ -1071,7 +1071,6 @@ function ModifyNewsSettings($return_config = false)
 		return $config_vars;
 
 	$context['page_title'] = $txt['admin_edit_news'] . ' - ' . $txt['settings'];
-	$context['sub_template'] = 'show_settings';
 
 	// Needed for the settings template.
 	require_once($sourcedir . '/ManageServer.php');

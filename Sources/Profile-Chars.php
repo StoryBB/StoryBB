@@ -1561,7 +1561,7 @@ function char_sheet_edit()
 					array('id_version')
 				);
 				// Mark previous versions of the character sheet as not awaited approval.
-				mark_char_sheets_unapproved($context['character']['id_character']);
+				mark_char_sheet_unapproved($context['character']['id_character']);
 			}
 		}
 
