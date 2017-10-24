@@ -518,19 +518,16 @@ function ModifyAntispamSettings($return_config = false)
 				'pm2' => array('int', 'pm_posts_verification', 'subtext' => $txt['pm_posts_verification_note']),
 				'pm3' => array('int', 'pm_posts_per_hour', 'subtext' => $txt['pm_posts_per_hour_note']),
 			// Visual verification.
-			array('title', 'configure_verification_means'),
-			array('desc', 'configure_verification_means_desc'),
+			array('titledesc', 'configure_verification_means'),
 				'vv' => array('select', 'visual_verification_type', array($txt['setting_image_verification_off'], $txt['setting_image_verification_vsimple'], $txt['setting_image_verification_simple'], $txt['setting_image_verification_medium'], $txt['setting_image_verification_high'], $txt['setting_image_verification_extreme']), 'subtext' => $txt['setting_visual_verification_type_desc'], 'onchange' => $context['use_graphic_library'] ? 'refreshImages();' : ''),
 			// reCAPTCHA
-			array('title', 'recaptcha_configure'),
-			array('desc', 'recaptcha_configure_desc', 'class' => 'windowbg'),
+			array('titledesc', 'recaptcha_configure'),
 				array('check', 'recaptcha_enabled', 'subtext' => $txt['recaptcha_enable_desc']),
 				array('text', 'recaptcha_site_key', 'subtext' => $txt['recaptcha_site_key_desc']),
 				array('text', 'recaptcha_secret_key', 'subtext' => $txt['recaptcha_secret_key_desc']),
 				array('select', 'recaptcha_theme', array('light' => $txt['recaptcha_theme_light'], 'dark' => $txt['recaptcha_theme_dark'])),
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
-			array('title', 'setup_verification_questions'),
-			array('desc', 'setup_verification_questions_desc'),
+			array('titledesc', 'setup_verification_questions'),
 				array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
 				array('callback', 'question_answer_list'),
 	);

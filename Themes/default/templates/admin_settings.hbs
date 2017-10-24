@@ -28,8 +28,9 @@
 					{{! Headings }}
 					{{#if (eq type 'title')}}{{> admin_setting_title config_var=.}}{{/if}}
 					{{#if (eq type 'desc')}}{{> admin_setting_desc config_var=.}}{{/if}}
+					{{#if (eq type 'titledesc')}}{{> admin_setting_titledesc config_var=.}}{{/if}}
 					{{#if (eq type 'warning')}}{{> admin_setting_warning config_var=.}}{{/if}}
-					{{#if (eq type 'desc')}}{{> admin_setting_message config_var=.}}{{/if}}
+					{{#if (eq type 'message')}}{{> admin_setting_message config_var=.}}{{/if}}
 					{{! Simple input types }}
 					{{#if (eq type 'check')}}{{> admin_setting_check config_var=.}}{{/if}}
 					{{#if (eq type 'int')}}{{> admin_setting_number config_var=.}}{{/if}}
