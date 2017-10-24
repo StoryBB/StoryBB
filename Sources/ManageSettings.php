@@ -307,9 +307,6 @@ function ModifyLayoutSettings($return_config = false)
 		'',
 			// Stuff that just is everywhere - today, search, online, etc.
 			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
-		'',
-			// This is like debugging sorta.
-			array('check', 'timeLoadPageEnable'),
 	);
 
 	call_integration_hook('integrate_layout_settings', array(&$config_vars));

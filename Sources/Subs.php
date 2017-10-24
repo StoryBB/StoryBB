@@ -2868,11 +2868,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 function render_page($content) {
 	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count, $user_info, $options;
 
-	// Show the load time?  (only makes sense for the footer.)
-	// This is not really the correct place for this, ideally it needs to happen
-	// as late as possible, but we don't have a flow where this really works yet.
-	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
-	$context['load_time'] = comma_format(round(microtime(true) - $time_start, 3));
 	$context['load_queries'] = $db_count;
 
 	$context['session_flash'] = session_flash_retrieve();
@@ -2888,7 +2883,6 @@ function render_page($content) {
 		'options' => $options,
 		'user_info' => $user_info,
 		'copyright' => theme_copyright(),
-		'loadtime' => !empty($modSettings['timeLoadPageEnable']) ? sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries']) : ''
 	);
 
 	if (empty($context['layout_template'])) {
