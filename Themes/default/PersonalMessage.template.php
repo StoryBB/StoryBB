@@ -37,48 +37,6 @@ function template_pm_below()
 	return '</div>';
 }
 
-function template_pm_popup()
-{
-	global $context, $txt, $scripturl;
-
-	// Unlike almost every other template, this is designed to be included into the HTML directly via $().load()
-	echo '
-		<div class="pm_bar">
-			<div class="pm_sending block">
-				', $context['can_send_pm'] ? '<a href="' . $scripturl . '?action=pm;sa=send">' . $txt['pm_new_short'] . '</a> | ' : '', '
-				', $context['can_draft'] ? '<a href="' . $scripturl . '?action=pm;sa=showpmdrafts">' . $txt['pm_drafts_short'] . '</a>' : '', '
-				<a href="', $scripturl, '?action=pm;sa=settings" class="floatright">', $txt['pm_settings_short'], '</a>
-			</div>
-			<div class="pm_mailbox centertext">
-				<a href="', $scripturl, '?action=pm" class="button">', $txt['inbox'], '</a>
-			</div>
-		</div>
-		<div class="pm_unread">';
-
-	if (empty($context['unread_pms']))
-	{
-		echo '
-			<div class="no_unread">', $txt['pm_no_unread'], '</div>';
-	}
-	else
-	{
-		foreach ($context['unread_pms'] as $id_pm => $pm_details)
-		{
-			echo '
-			<div class="unread">
-				', !empty($pm_details['member']) ? $pm_details['member']['avatar']['image'] : '', '
-				<div class="details">
-					<div class="subject">', $pm_details['pm_link'], '</div>
-					<div class="sender">', $pm_details['replied_to_you'] ? '<span class="generic_icons replied centericon" style="margin-right: 4px" title="' . $txt['pm_you_were_replied_to'] . '"></span>' : '<span class="generic_icons im_off centericon" style="margin-right: 4px" title="' . $txt['pm_was_sent_to_you'] . '"></span>',
-					!empty($pm_details['member']) ? $pm_details['member']['link'] : $pm_details['member_from'], ' - ', $pm_details['time'], '</div>
-				</div>
-			</div>';
-		}
-	}
-
-	echo '
-		</div>';
-}
 
 /**
  * Shows a particular folder (eg inbox or outbox), all the PMs in it, etc.
