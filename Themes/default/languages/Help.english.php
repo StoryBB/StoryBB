@@ -227,6 +227,7 @@ $helptxt['pollMode'] = 'This selects whether polls are enabled or not. If polls 
 		from the topic listing. You can choose to continue to show the regular topic without their polls by selecting
 		&quot;Show Existing Polls as Topics&quot;.<br><br>To choose who can post polls, view polls, and similar, you
 		can allow and disallow those permissions. Remember this if polls are not working.';
+$helptxt['debug_templates'] = 'By default, the templates that make up the pages on StoryBB are compiled into PHP and stored on the server to make it faster. For development and debugging purposes, you might want to turn off this storage and let templates be processed only as needed.';
 $helptxt['enableCompressedOutput'] = 'This setting will compress output in order to lower bandwidth consumption, but it requires
 		zlib to be installed.';
 $helptxt['httponlyCookies'] = 'Cookies won\'t be accessible by scripting languages, such as JavaScript. This setting can help to reduce identity theft through XSS attacks. This can cause issues with third party scripts but should be on wherever possible.';

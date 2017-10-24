@@ -27,6 +27,7 @@ $txt['loginHistoryDays'] = 'Days to keep login history';
 $txt['lastActive'] = 'User online time threshold';
 $txt['trackStats'] = 'Track daily statistics';
 $txt['hitStats'] = 'Track daily page views (must have stats enabled)';
+$txt['debug_templates'] = 'Enable template debug mode';
 $txt['enableCompressedOutput'] = 'Enable compressed output';
 $txt['databaseSession_enable'] = 'Use database driven sessions';
 $txt['databaseSession_loose'] = 'Allow browsers to go back to cached pages';
