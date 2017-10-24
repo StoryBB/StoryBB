@@ -1638,9 +1638,15 @@ function MessageSearch2()
 
 	call_integration_hook('integrate_search_pm_context');
 
+
+	//We need a helper
+	register_helper([
+		create_button => create_button
+	]);
+	
 	// Finish off the context.
 	$context['page_title'] = $txt['pm_search_title'];
-	$context['sub_template'] = 'search_results';
+	$context['sub_template'] = 'personal_message_search_results';
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'search';
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
