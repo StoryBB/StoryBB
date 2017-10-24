@@ -1,5 +1,7 @@
 <?php
 
+require_once($sourcedir . '/Subs-MessageIndex.php');
+
 /**
  * This file is what shows the listing of topics in a board.
  * It's just one or two functions, but don't under estimate it ;).
@@ -38,6 +40,7 @@ function MessageIndex()
 	}
 
 	//loadTemplate('MessageIndex');
+	$context['sub_template'] = 'msgIndex_main';
 	register_helper([
 		'qmod_option' => function($action) {
 				global $context, $txt;
@@ -45,7 +48,7 @@ function MessageIndex()
 					return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
 			},
 		'child_boards' => child_boards
-		])
+		]);
 
 	if (!$user_info['is_guest'])
 	{
