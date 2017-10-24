@@ -984,7 +984,6 @@ function GeneralPermissionSettings($return_config = false)
 		return $config_vars;
 
 	$context['page_title'] = $txt['permission_settings_title'];
-	$context['sub_template'] = 'show_settings';
 
 	// Needed for the inline permission functions, and the settings template.
 	require_once($sourcedir . '/ManageServer.php');

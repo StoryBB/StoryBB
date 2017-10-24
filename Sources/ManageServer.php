@@ -88,7 +88,6 @@ function ModifySettings()
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['admin_server_settings'];
-	$context['sub_template'] = 'show_settings';
 
 	$subActions = array(
 		'general' => 'ModifyGeneralSettings',
@@ -663,7 +662,6 @@ function ModifyCacheSettings($return_config = false)
 
 	loadLanguage('ManageMaintenance');
 	createToken('admin-maint');
-	$context['template_layers'][] = 'clean_cache_button';
 
 	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=cache;save';
 	$context['settings_title'] = $txt['caching_settings'];
@@ -677,6 +675,7 @@ function ModifyCacheSettings($return_config = false)
 
 	// Prepare the template.
 	prepareServerSettingsContext($config_vars);
+	addTemplate('admin_clean_cache_button');
 }
 
 /**
@@ -777,6 +776,8 @@ function prepareServerSettingsContext(&$config_vars)
 	// Two tokens because saving these settings requires both saveSettings and saveDBSettings
 	createToken('admin-ssc');
 	createToken('admin-dbsc');
+
+	$context['sub_template'] = 'admin_settings';
 }
 
 /**
@@ -949,6 +950,22 @@ function prepareDBSettingContext(&$config_vars)
 	{
 		require_once($sourcedir . '/Subs-MessageIndex.php');
 		$context['board_list'] = getBoardList();
+
+		register_helper([
+			'repeat' => function($string, $repeat) { return $repeat > 0 ? str_repeat($string, $repeat) : ''; }
+		]);
+
+		addInlineJavascript('
+		$("legend.board_selector").closest("fieldset").hide();
+		$("a.board_selector").click(function(e) {
+			e.preventDefault();
+			$(this).hide().next("fieldset").show();
+		});
+		$("fieldset legend.board_selector a").click(function(e) {
+			e.preventDefault();
+			$(this).closest("fieldset").hide().prev("a").show();
+		});
+		', true);
 	}
 
 	// What about any BBC selection boxes?
@@ -986,12 +1003,11 @@ function prepareDBSettingContext(&$config_vars)
 		}
 
 		// Now put whatever BBC options we may have into context too!
-		$context['bbc_sections'] = array();
 		foreach ($bbcChoice as $bbc)
 		{
-			$context['bbc_sections'][$bbc] = array(
-				'title' => isset($txt['bbc_title_' . $bbc]) ? $txt['bbc_title_' . $bbc] : $txt['bbcTagsToUse_select'],
-				'disabled' => empty($modSettings['bbc_disabled_' . $bbc]) ? array() : $modSettings['bbc_disabled_' . $bbc],
+			$context['config_vars'][$bbc] += array(
+				'bbc_title' => isset($txt['bbc_title_' . $bbc]) ? $txt['bbc_title_' . $bbc] : $txt['bbcTagsToUse_select'],
+				'bbc_disabled' => empty($modSettings['bbc_disabled_' . $bbc]) ? array() : $modSettings['bbc_disabled_' . $bbc],
 				'all_selected' => empty($modSettings['bbc_disabled_' . $bbc]),
 			);
 		}
@@ -999,6 +1015,8 @@ function prepareDBSettingContext(&$config_vars)
 
 	call_integration_hook('integrate_prepare_db_settings', array(&$config_vars));
 	createToken('admin-dbsc');
+
+	$context['sub_template'] = 'admin_settings';
 }
 
 /**
@@ -1305,9 +1323,22 @@ function ShowPHPinfoSettings()
 	}
 
 	// load it in to context and display it
-	$context['pinfo'] = $pinfo;
+	$context['pinfo'] = [];
+	foreach ($pinfo as $area => $php_area)
+	{
+		$id = str_replace(' ', '_', $area);
+		$context['pinfo'][$id] = [
+			'name' => $area,
+			'2col' => [],
+			'3col' => [],
+		];
+		foreach ($php_area as $key => $setting)
+		{
+			$context['pinfo'][$id][is_array($setting) ? '3col' : '2col'][$key] = $setting;
+		}
+	}
 	$context['page_title'] = $txt['admin_server_settings'];
-	$context['sub_template'] = 'php_info';
+	$context['sub_template'] = 'admin_phpinfo';
 	return;
 }
 
