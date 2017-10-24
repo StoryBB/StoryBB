@@ -1323,9 +1323,22 @@ function ShowPHPinfoSettings()
 	}
 
 	// load it in to context and display it
-	$context['pinfo'] = $pinfo;
+	$context['pinfo'] = [];
+	foreach ($pinfo as $area => $php_area)
+	{
+		$id = str_replace(' ', '_', $area);
+		$context['pinfo'][$id] = [
+			'name' => $area,
+			'2col' => [],
+			'3col' => [],
+		];
+		foreach ($php_area as $key => $setting)
+		{
+			$context['pinfo'][$id][is_array($setting) ? '3col' : '2col'][$key] = $setting;
+		}
+	}
 	$context['page_title'] = $txt['admin_server_settings'];
-	$context['sub_template'] = 'php_info';
+	$context['sub_template'] = 'admin_phpinfo';
 	return;
 }
 
