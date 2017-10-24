@@ -1197,7 +1197,7 @@ function Post($post_errors = array())
 function Post2()
 {
 	global $board, $topic, $txt, $modSettings, $sourcedir, $context;
-	global $user_info, $board_info, $smcFunc, $settings;
+	global $user_info, $board_info, $smcFunc, $settings, $memberContext;
 
 	// Sneaking off, are we?
 	if (empty($_POST) && empty($topic))
@@ -1899,9 +1899,20 @@ function Post2()
 		'mark_as_read' => true,
 		'is_approved' => !$modSettings['postmod_active'] || empty($topic) || !empty($board_info['cur_topic_approved']),
 	);
+
+	$character_id = $user_info['id_character'];
+	if (!empty($user_info['id']) && isset($_POST['character_id']))
+	{
+		// We've elected to override for this post. Does the character belong to this user?
+		$_POST['character_id'] = (int) $_POST['character_id'];
+		loadMemberData($user_info['id']);
+		loadMemberContext($user_info['id']);
+		if (isset($memberContext[$user_info['id']]['characters'][$_POST['character_id']]))
+			$character_id = $_POST['character_id'];
+	}
 	$posterOptions = array(
 		'id' => $user_info['id'],
-		'char_id' => $user_info['id_character'],
+		'char_id' => $character_id,
 		'name' => $_POST['guestname'],
 		'email' => $_POST['email'],
 		'update_post_count' => !$user_info['is_guest'] && !isset($_REQUEST['msg']) && $board_info['posts_count'],

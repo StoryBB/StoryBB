@@ -61,6 +61,7 @@ $txt['on'] = 'on';
 $txt['remove'] = 'Remove';
 $txt['start_new_topic'] = 'Start new topic';
 $txt['posting_as'] = 'Posting as %s:';
+$txt['posting_as_generic'] = 'Posting as';
 
 $txt['login'] = 'Login';
 // Use numeric entities in the below string.

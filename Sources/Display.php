@@ -28,7 +28,8 @@ function Display()
 {
 	global $scripturl, $txt, $modSettings, $context, $settings;
 	global $options, $sourcedir, $user_info, $board_info, $topic, $board;
-	global $attachments, $messages_request, $language, $smcFunc;
+	global $attachments, $messages_request, $language, $smcFunc, $user_profile;
+	global $memberContext;
 
 	// What are you gonna display if these are empty?!
 	if (empty($topic))
@@ -793,6 +794,8 @@ function Display()
 	}
 	$smcFunc['db_free_result']($request);
 	$posters = array_unique($all_posters);
+	if (!$user_info['is_guest'] && !in_array($context['user']['id'], $posters))
+		$posters[] = $context['user']['id'];
 
 	call_integration_hook('integrate_display_message_list', array(&$messages, &$posters));
 
@@ -1084,6 +1087,36 @@ function Display()
 	$context['can_mark_unread'] = !$user_info['is_guest'];
 	$context['can_unwatch'] = !$user_info['is_guest'];
 	$context['can_set_notify'] = !$user_info['is_guest'];
+
+	// If we're posting, we need to make sure we have the character data.
+	$context['post_characters'] = [];
+	if (!$user_info['is_guest'] && $context['can_reply'])
+	{
+		if (empty($user_profile[$context['user']['id']]))
+			loadMemberData($context['user']['id']);
+		loadMemberContext($context['user']['id']);
+
+		foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
+		{
+			if ($board_info['in_character'] && $character['is_main'])
+				continue; // @todo fix in issue #188
+
+			$context['post_characters'][$char_id] = [
+				'name' => $character['character_name'],
+				'avatar' => !empty($character['avatar']) ? $character['avatar'] : $settings['images_url'] . '/default.png',
+			];
+		}
+
+		addInlineJavaScript('
+			var characters = ' . json_encode($context['post_characters']) . ';
+			$("#quickReplyOptions .character_selector").on("change", function() {
+				var char_id = $(this).val();
+				if (characters.hasOwnProperty(char_id)) {
+					$("#quickReplyOptions .poster .avatar img").attr("src", characters[char_id].avatar);
+				}
+			}).trigger("change");
+		', true);
+	}
 
 	// Start this off for quick moderation - it will be or'd for each post.
 	$context['can_remove_post'] = allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']);
