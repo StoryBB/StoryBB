@@ -1,0 +1,6 @@
+		{{> admin_setting_dt_container config_var=config_var}}
+		<dd{{#if config_var.force_div_id}} id="{{config_var.force_div_id}}_dd"{{/if}}>
+			{{{config_var.preinput}}}
+			<textarea rows="{{#if config_var.size}}{{config_var.size}}{{else}}{{#if config_var.rows}}{{config_var.rows}}{{else}}4{{/if}}{{/if}}" cols="{{#if config_var.cols}}{{config_var.cols}}{{else}}30{{/if}}" {{{config_var.javascript}}}{{#if config_var.disabled}} disabled{{/if}} name="{{config_var.name}}" id="{{config_var.name}}">{{{config_var.value}}}</textarea>
+			{{{config_var.postinput}}}
+		</dd>

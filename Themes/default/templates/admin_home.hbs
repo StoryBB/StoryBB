@@ -34,7 +34,7 @@
 							
 							{{! Display all the members who can administrate the forum. }}
 							<strong>{{txt.administrators}}:</strong>
-							{{{implode_comma context.administrators}}}
+							{{{join context.administrators ', '}}}
 							{{! If we have lots of admins... don't show them all. }}
 							{{#if context.more_admins_link}}
 								({{{context.more_admins_link}}})
@@ -46,7 +46,7 @@
 			</div>
 
 			{{! Output the sections of the admin page }}
-			{{#each admin_menu.sections}}
+			{{#each context.admin_menu.sections}}
 				<fieldset id="group_{{@key}}" class="windowbg admin_group">
 					<legend>{{title}}</legend>
 

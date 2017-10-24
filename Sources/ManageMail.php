@@ -32,7 +32,6 @@ function ManageMail()
 	require_once($sourcedir . '/ManageServer.php');
 
 	$context['page_title'] = $txt['mailqueue_title'];
-	$context['sub_template'] = 'show_settings';
 
 	$subActions = array(
 		'browse' => 'BrowseMailQueue',

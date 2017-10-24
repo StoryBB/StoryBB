@@ -1,0 +1,17 @@
+		{{> admin_setting_dt_container config_var=config_var}}
+		<dd{{#if config_var.force_div_id}} id="{{config_var.force_div_id}}_dd"{{/if}}>
+			{{{config_var.preinput}}}
+			<a href="#" class="board_selector"[ {{{txt.select_boards_from_list}}} ]</a>
+			<fieldset>
+				<legend class="board_selector"><a href="#">{{{txt.select_boards_from_list}}}</a></legend>
+				{{#each context.board_list}}
+					<strong>{{name}}</strong>
+					<ul>
+					{{#each boards}}
+						<li><label><input type="checkbox" name="{{../../config_var.name}}[{{id}}]" value="1" class="input_check"{{#if (in_array id ../../config_var.value)}} checked{{/if}}> {{{repeat '&nbsp; &nbsp;' child_level}}}{{{name}}}</label></li>
+					{{/each}}
+					</ul>
+				{{/each}}
+			</fieldset>
+			{{{config_var.postinput}}}
+		</dd>

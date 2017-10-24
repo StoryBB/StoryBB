@@ -29,7 +29,6 @@ function ManageLanguages()
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['edit_languages'];
-	$context['sub_template'] = 'show_settings';
 
 	$subActions = array(
 		'edit' => 'ModifyLanguages',
