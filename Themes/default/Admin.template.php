@@ -90,32 +90,4 @@ function template_php_info()
 					</div>';
 }
 
-/**
- *
- */
-function template_clean_cache_button_above()
-{
-}
-
-/**
- * Content shown below the clean cache button?
- */
-function template_clean_cache_button_below()
-{
-	global $txt, $scripturl, $context;
-
-	echo '
-					<div class="cat_bar">
-						<h3 class="catbg">', $txt['maintain_cache'], '</h3>
-					</div>
-					<div class="windowbg2 noup">
-						<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="UTF-8">
-							<p>', $txt['maintain_cache_info'], '</p>
-							<span><input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit"></span>
-							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-							<input type="hidden" name="', $context['admin-maint_token_var'], '" value="', $context['admin-maint_token'], '">
-						</form>
-					</div>';
-}
-
 ?>
