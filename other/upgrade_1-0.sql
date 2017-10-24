@@ -1848,7 +1848,6 @@ VALUES
 	('smtp_username', ''),
 	('smtp_password', ''),
 	('mail_type', '0'),
-	('timeLoadPageEnable', '0'),
 	('totalTopics', '1'),
 	('totalMessages', '1'),
 	('simpleSearch', '0'),
