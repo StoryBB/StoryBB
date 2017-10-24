@@ -662,7 +662,6 @@ function ModifyCacheSettings($return_config = false)
 
 	loadLanguage('ManageMaintenance');
 	createToken('admin-maint');
-	$context['template_layers'][] = 'clean_cache_button';
 
 	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=cache;save';
 	$context['settings_title'] = $txt['caching_settings'];
@@ -676,6 +675,7 @@ function ModifyCacheSettings($return_config = false)
 
 	// Prepare the template.
 	prepareServerSettingsContext($config_vars);
+	addTemplate('admin_clean_cache_button');
 }
 
 /**
