@@ -88,7 +88,6 @@ function ModifySettings()
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['admin_server_settings'];
-	$context['sub_template'] = 'show_settings';
 
 	$subActions = array(
 		'general' => 'ModifyGeneralSettings',
@@ -777,6 +776,8 @@ function prepareServerSettingsContext(&$config_vars)
 	// Two tokens because saving these settings requires both saveSettings and saveDBSettings
 	createToken('admin-ssc');
 	createToken('admin-dbsc');
+
+	$context['sub_template'] = 'admin_settings';
 }
 
 /**
@@ -1014,6 +1015,8 @@ function prepareDBSettingContext(&$config_vars)
 
 	call_integration_hook('integrate_prepare_db_settings', array(&$config_vars));
 	createToken('admin-dbsc');
+
+	$context['sub_template'] = 'admin_settings';
 }
 
 /**
