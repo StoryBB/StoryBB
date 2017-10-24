@@ -37,7 +37,15 @@ function MessageIndex()
 		redirectexit($board_info['redirect']);
 	}
 
-	loadTemplate('MessageIndex');
+	//loadTemplate('MessageIndex');
+	register_helper([
+		'qmod_option' => function($action) {
+				global $context, $txt;
+				if (!empty($context['can_' . $action]))
+					return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
+			},
+		'child_boards' => child_boards
+		])
 
 	if (!$user_info['is_guest'])
 	{
