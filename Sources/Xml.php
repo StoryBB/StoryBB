@@ -59,7 +59,11 @@ function GetJumpTo()
 			$context['jump_to'][$id_cat]['boards'][$id_board]['name'] = un_htmlspecialchars(strip_tags($board['name']));
 	}
 
-	$context['sub_template'] = 'jump_to';
+	register_helper([
+		'cleanXml' => 'cleanXml',
+	]);
+	loadTemplateLayout('xml');
+	$context['sub_template'] = 'xml_jumpto';
 }
 
 /**

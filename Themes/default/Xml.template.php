@@ -354,27 +354,6 @@ function template_results()
 }
 
 /**
- * The XML for the Jump To box
- */
-function template_jump_to()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>';
-	foreach ($context['jump_to'] as $category)
-	{
-		echo '
-	<item type="category" id="', $category['id'], '"><![CDATA[', cleanXml($category['name']), ']]></item>';
-		foreach ($category['boards'] as $board)
-			echo '
-	<item type="board" id="', $board['id'], '" childlevel="', $board['child_level'], '"><![CDATA[', cleanXml($board['name']), ']]></item>';
-	}
-	echo '
-</smf>';
-}
-
-/**
  * The XML for displaying a column of message icons and selecting one via AJAX
  */
 function template_message_icons()
