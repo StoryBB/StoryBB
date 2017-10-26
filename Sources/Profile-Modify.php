@@ -3092,12 +3092,12 @@ function profileSaveAvatarData(&$value)
 		elseif (substr($profile_vars['avatar'], 0, 7) != 'http://' && substr($profile_vars['avatar'], 0, 8) != 'https://')
 			return 'bad_avatar_invalid_url';
 		// Should we check dimensions?
-		elseif (!empty($modSettings['avatar_max_height_external']) || !empty($modSettings['avatar_max_width_external']))
+		elseif (!empty($modSettings['avatar_max_height']) || !empty($modSettings['avatar_max_width']))
 		{
 			// Now let's validate the avatar.
 			$sizes = url_image_size($profile_vars['avatar']);
 
-			if (is_array($sizes) && (($sizes[0] > $modSettings['avatar_max_width_external'] && !empty($modSettings['avatar_max_width_external'])) || ($sizes[1] > $modSettings['avatar_max_height_external'] && !empty($modSettings['avatar_max_height_external']))))
+			if (is_array($sizes) && (($sizes[0] > $modSettings['avatar_max_width'] && !empty($modSettings['avatar_max_width'])) || ($sizes[1] > $modSettings['avatar_max_height'] && !empty($modSettings['avatar_max_height']))))
 			{
 				// Houston, we have a problem. The avatar is too large!!
 				if ($modSettings['avatar_action_too_large'] == 'option_refuse')
@@ -3106,7 +3106,7 @@ function profileSaveAvatarData(&$value)
 				{
 					// @todo remove this if appropriate
 					require_once($sourcedir . '/Subs-Graphics.php');
-					if (downloadAvatar($profile_vars['avatar'], $memID, $modSettings['avatar_max_width_external'], $modSettings['avatar_max_height_external']))
+					if (downloadAvatar($profile_vars['avatar'], $memID, $modSettings['avatar_max_width'], $modSettings['avatar_max_height']))
 					{
 						$profile_vars['avatar'] = '';
 						$cur_profile['id_attach'] = $modSettings['new_avatar_data']['id'];
@@ -3145,7 +3145,7 @@ function profileSaveAvatarData(&$value)
 				return 'bad_avatar';
 			}
 			// Check whether the image is too large.
-			elseif ((!empty($modSettings['avatar_max_width_upload']) && $sizes[0] > $modSettings['avatar_max_width_upload']) || (!empty($modSettings['avatar_max_height_upload']) && $sizes[1] > $modSettings['avatar_max_height_upload']))
+			elseif ((!empty($modSettings['avatar_max_width']) && $sizes[0] > $modSettings['avatar_max_width']) || (!empty($modSettings['avatar_max_height']) && $sizes[1] > $modSettings['avatar_max_height']))
 			{
 				if (!empty($modSettings['avatar_resize_upload']))
 				{
@@ -3154,7 +3154,7 @@ function profileSaveAvatarData(&$value)
 
 					// @todo remove this require when appropriate
 					require_once($sourcedir . '/Subs-Graphics.php');
-					if (!downloadAvatar($_FILES['attachment']['tmp_name'], $memID, $modSettings['avatar_max_width_upload'], $modSettings['avatar_max_height_upload']))
+					if (!downloadAvatar($_FILES['attachment']['tmp_name'], $memID, $modSettings['avatar_max_width'], $modSettings['avatar_max_height']))
 					{
 						@unlink($_FILES['attachment']['tmp_name']);
 						return 'bad_avatar';

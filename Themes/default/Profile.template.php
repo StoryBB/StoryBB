@@ -2256,8 +2256,8 @@ function template_profile_avatar_select()
 										var selavatar = "' . $context['avatar_selected'] . '";
 										var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
 										var file = document.getElementById("file");
-										var maxHeight = ', !empty($modSettings['avatar_max_height_external']) ? $modSettings['avatar_max_height_external'] : 0, ';
-										var maxWidth = ', !empty($modSettings['avatar_max_width_external']) ? $modSettings['avatar_max_width_external'] : 0, ';
+										var maxHeight = ', !empty($modSettings['avatar_max_height']) ? $modSettings['avatar_max_height'] : 0, ';
+										var maxWidth = ', !empty($modSettings['avatar_max_width']) ? $modSettings['avatar_max_width'] : 0, ';
 
 										previewExternalAvatar(avatar.src)
 
@@ -2357,8 +2357,8 @@ function template_max_size($type)
 {
 	global $modSettings, $txt;
 
-	$w = !empty($modSettings['avatar_max_width_' . $type]) ? comma_format($modSettings['avatar_max_width_' . $type]) : 0;
-	$h = !empty($modSettings['avatar_max_height_' . $type]) ? comma_format($modSettings['avatar_max_height_' . $type]) : 0;
+	$w = !empty($modSettings['avatar_max_width']) ? comma_format($modSettings['avatar_max_width']) : 0;
+	$h = !empty($modSettings['avatar_max_height']) ? comma_format($modSettings['avatar_max_height's]) : 0;
 
 	$suffix = (!empty($w) ? 'w' : '') . (!empty($h) ? 'h' : '');
 	if (empty($suffix))

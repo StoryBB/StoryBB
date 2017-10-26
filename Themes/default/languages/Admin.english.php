@@ -437,14 +437,12 @@ $txt['attachment_transfer_same_dir'] = 'You cannot select the same directory as 
 $txt['attachment_transfer_progress'] = 'Please wait. Transfer in progress.';
 
 $txt['mods_cat_avatars'] = 'Avatars';
-$txt['avatar_max_width_external'] = 'Maximum width of external avatar';
-$txt['avatar_max_height_external'] = 'Maximum height of external avatar';
+$txt['avatar_max_width'] = 'Maximum width of avatar';
+$txt['avatar_max_height'] = 'Maximum height of avatar';
 $txt['avatar_action_too_large'] = 'If the avatar is too large...';
 $txt['option_refuse'] = 'Refuse it';
 $txt['option_css_resize'] = 'Resize it in the users\' browser';
 $txt['option_download_and_resize'] = 'Download and resize it on the server';
-$txt['avatar_max_width_upload'] = 'Maximum width of uploaded avatar';
-$txt['avatar_max_height_upload'] = 'Maximum height of uploaded avatar';
 $txt['avatar_resize_upload'] = 'Resize oversized large avatars';
 $txt['avatar_resize_upload_note'] = '(requires GD module or ImageMagick with IMagick or MagickWand extension)';
 $txt['avatar_download_png'] = 'Use PNG for resized avatars';

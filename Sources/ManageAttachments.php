@@ -268,10 +268,10 @@ function ManageAvatarSettings($return_config = false)
 
 	$config_vars = array(
 		// External avatars?
+		array('int', 'avatar_max_width', 'subtext' => $txt['zero_for_no_limit'], 'min' => 0, 'max' => 500),
+		array('int', 'avatar_max_height', 'subtext' => $txt['zero_for_no_limit'], 'min' => 0, 'max' => 500),
 		array('title', 'avatar_external'),
-			array('check', 'avatar_download_external', 0, 'onchange' => 'fUpdateStatus();'),
-			array('text', 'avatar_max_width_external', 'subtext' => $txt['zero_for_no_limit'], 6),
-			array('text', 'avatar_max_height_external', 'subtext' => $txt['zero_for_no_limit'], 6),
+			array('check', 'avatar_download_external', 0),
 			array('select', 'avatar_action_too_large',
 				array(
 					'option_refuse' => $txt['option_refuse'],
@@ -281,8 +281,6 @@ function ManageAvatarSettings($return_config = false)
 			),
 		// Uploadable avatars?
 		array('title', 'avatar_upload'),
-			array('text', 'avatar_max_width_upload', 'subtext' => $txt['zero_for_no_limit'], 6),
-			array('text', 'avatar_max_height_upload', 'subtext' => $txt['zero_for_no_limit'], 6),
 			array('check', 'avatar_resize_upload', 'subtext' => $txt['avatar_resize_upload_note']),
 			array('check', 'avatar_download_png'),
 			array('check', 'avatar_reencode'),
@@ -355,9 +353,7 @@ function ManageAvatarSettings($return_config = false)
 	// Prepare the context.
 	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=avatars';
 	prepareDBSettingContext($config_vars);
-
-	// Add a layer for the javascript.
-	$context['template_layers'][] = 'avatar_settings';
+	$context['settings_title'] = $txt['attachment_manager_avatar_settings'];
 }
 
 /**

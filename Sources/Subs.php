@@ -3127,9 +3127,9 @@ function setupThemeContext($forceload = false)
 	var smf_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');
 
 	// Now add the capping code for avatars.
-	if (!empty($modSettings['avatar_max_width_external']) && !empty($modSettings['avatar_max_height_external']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
+	if (!empty($modSettings['avatar_max_width']) && !empty($modSettings['avatar_max_height']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
 		addInlineCss('
-img.avatar { max-width: ' . $modSettings['avatar_max_width_external'] . 'px; max-height: ' . $modSettings['avatar_max_height_external'] . 'px; }');
+img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: ' . $modSettings['avatar_max_height'] . 'px; }');
 
 	// This looks weird, but it's because BoardIndex.php references the variable.
 	$context['common_stats']['latest_member'] = array(
@@ -4784,11 +4784,11 @@ function get_gravatar_url($email_address)
 			$url_params[] = 'rating=' . $modSettings['gravatarMaxRating'];
 		if (!empty($modSettings['gravatarDefault']) && in_array($modSettings['gravatarDefault'], $defaults))
 			$url_params[] = 'default=' . $modSettings['gravatarDefault'];
-		if (!empty($modSettings['avatar_max_width_external']))
-			$size_string = (int) $modSettings['avatar_max_width_external'];
-		if (!empty($modSettings['avatar_max_height_external']) && !empty($size_string))
-			if ((int) $modSettings['avatar_max_height_external'] < $size_string)
-				$size_string = $modSettings['avatar_max_height_external'];
+		if (!empty($modSettings['avatar_max_width']))
+			$size_string = (int) $modSettings['avatar_max_width'];
+		if (!empty($modSettings['avatar_max_height']) && !empty($size_string))
+			if ((int) $modSettings['avatar_max_height'] < $size_string)
+				$size_string = $modSettings['avatar_max_height'];
 
 		if (!empty($size_string))
 			$url_params[] = 's=' . $size_string;

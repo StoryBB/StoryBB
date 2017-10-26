@@ -391,16 +391,16 @@ function char_edit()
 				$size = get_avatar_url_size($new_avatar);
 				if (!$size)
 					$context['form_errors'][] = $txt['char_error_avatar_link_invalid'];
-				elseif (!empty($modSettings['avatar_max_width_external']))
+				elseif (!empty($modSettings['avatar_max_width']))
 				{
-					if ($size[0] > $modSettings['avatar_max_width_external'] || $size[1] > $modSettings['avatar_max_height_external'])
+					if ($size[0] > $modSettings['avatar_max_width'] || $size[1] > $modSettings['avatar_max_height'])
 					{
 						$txt['char_error_avatar_oversize'] = sprintf(
 							$txt['char_error_avatar_oversize'],
 							$size[0],
 							$size[1],
-							$modSettings['avatar_max_width_external'],
-							$modSettings['avatar_max_height_external']
+							$modSettings['avatar_max_width'],
+							$modSettings['avatar_max_height']
 						);
 						$context['form_errors'][] = $txt['char_error_avatar_oversize'];
 					}
@@ -2532,11 +2532,11 @@ function CharacterList()
 	$context['char_list'] = [];
 	if (!empty($context['char_count']))
 	{
-		if (!empty($modSettings['avatar_max_width_external']))
+		if (!empty($modSettings['avatar_max_width']))
 		{
 			addInlineCss('
-.char_list_avatar { width: ' . $modSettings['avatar_max_width_external'] . 'px; height: ' . $modSettings['avatar_max_height_external'] . 'px; }
-.char_list_name { max-width: ' . $modSettings['avatar_max_width_external'] . 'px; }');
+.char_list_avatar { width: ' . $modSettings['avatar_max_width'] . 'px; height: ' . $modSettings['avatar_max_height'] . 'px; }
+.char_list_name { max-width: ' . $modSettings['avatar_max_width'] . 'px; }');
 		}
 
 		$request = $smcFunc['db_query']('', '

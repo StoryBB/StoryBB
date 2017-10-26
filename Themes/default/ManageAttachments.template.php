@@ -8,32 +8,6 @@
  */
 
 /**
- * This template wraps around the simple settings page to add javascript functionality.
- */
-function template_avatar_settings_above()
-{
-}
-
-/**
- * JavaScript to be output below the simple settings page
- */
-function template_avatar_settings_below()
-{
-	echo '
-	<script>
-	var fUpdateStatus = function ()
-	{
-		document.getElementById("avatar_max_width_external").disabled = document.getElementById("avatar_download_external").checked;
-		document.getElementById("avatar_max_height_external").disabled = document.getElementById("avatar_download_external").checked;
-		document.getElementById("avatar_action_too_large").disabled = document.getElementById("avatar_download_external").checked;
-
-	}
-	addLoadEvent(fUpdateStatus);
-</script>
-';
-}
-
-/**
  * The attachment maintenance page
  */
 function template_maintenance()
