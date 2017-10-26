@@ -141,7 +141,7 @@ CREATE TABLE {$db_prefix}attachments (
   id_attach bigint default nextval('{$db_prefix}attachments_seq'),
   id_thumb bigint NOT NULL default '0',
   id_msg bigint NOT NULL default '0',
-  id_member int NOT NULL default '0',
+  id_character int NOT NULL default '0',
   id_folder smallint NOT NULL default '1',
   attachment_type smallint NOT NULL default '0',
   filename varchar(255) NOT NULL DEFAULT '',
@@ -160,7 +160,7 @@ CREATE TABLE {$db_prefix}attachments (
 # Indexes for table `attachments`
 #
 
-CREATE UNIQUE INDEX {$db_prefix}attachments_id_member ON {$db_prefix}attachments (id_member, id_attach);
+CREATE UNIQUE INDEX {$db_prefix}attachments_id_character ON {$db_prefix}attachments (id_character, id_attach);
 CREATE INDEX {$db_prefix}attachments_id_msg ON {$db_prefix}attachments (id_msg);
 CREATE INDEX {$db_prefix}attachments_attachment_type ON {$db_prefix}attachments (attachment_type);
 

@@ -478,6 +478,9 @@ function BrowseFiles()
 							return $smcFunc['htmlspecialchars']($rowData['poster_name']);
 
 						// Otherwise it must be an avatar, return the link to the owner of it.
+						elseif (!empty($rowData['character_name']))
+							return $rowData['poster_name'] . ($rowData['poster_name'] != $rowData['character_name'] ? ' (' . $rowData['character_name'] . ')' : '');
+
 						else
 							return sprintf('<a href="%1$s?action=profile;u=%2$d">%3$s</a>', $scripturl, $rowData['id_member'], $rowData['poster_name']);
 					},
@@ -587,12 +590,13 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 	if ($browse_type === 'avatars')
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				{string:blank_text} AS id_msg, COALESCE(mem.real_name, {string:not_applicable_text}) AS poster_name,
-				mem.last_login AS poster_time, 0 AS id_topic, a.id_member, a.id_attach, a.filename, a.file_hash, a.attachment_type,
+				{string:blank_text} AS id_msg, COALESCE(mem.real_name, {string:not_applicable_text}) AS poster_name, chars.character_name,
+				mem.last_login AS poster_time, 0 AS id_topic, mem.id_member, a.id_character, a.id_attach, a.filename, a.file_hash, a.attachment_type,
 				a.size, a.width, a.height, a.downloads, {string:blank_text} AS subject, 0 AS id_board
 			FROM {db_prefix}attachments AS a
-				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = a.id_member)
-			WHERE a.id_member != {int:guest_id}
+				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = a.id_character)
+				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = chars.id_member)
+			WHERE a.id_character != {int:guest_id}
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:per_page}',
 			array(
@@ -607,7 +611,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 	else
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				m.id_msg, COALESCE(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.id_topic, m.id_member,
+				m.id_msg, COALESCE(mem.real_name, m.poster_name) AS poster_name, null AS character_name, m.poster_time, m.id_topic, m.id_member,
 				a.id_attach, a.filename, a.file_hash, a.attachment_type, a.size, a.width, a.height, a.downloads, mf.subject, t.id_board
 			FROM {db_prefix}attachments AS a
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -648,9 +652,9 @@ function list_getNumFiles($browse_type)
 		$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
-		WHERE id_member != {int:guest_id_member}',
+		WHERE id_character != {int:guest_id_character}',
 		array(
-			'guest_id_member' => 0,
+			'guest_id_character' => 0,
 		)
 	);
 	else
@@ -661,7 +665,7 @@ function list_getNumFiles($browse_type)
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 				INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
 			WHERE a.attachment_type = {int:attachment_type}
-				AND a.id_member = {int:guest_id_member}',
+				AND a.id_character = {int:guest_id_member}',
 			array(
 				'attachment_type' => $browse_type === 'thumbs' ? '3' : '0',
 				'guest_id_member' => 0,
@@ -695,7 +699,7 @@ function MaintainFiles()
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
 		WHERE attachment_type = {int:attachment_type}
-			AND id_member = {int:guest_id_member}',
+			AND id_character = {int:guest_id_member}',
 		array(
 			'attachment_type' => 0,
 			'guest_id_member' => 0,
@@ -805,7 +809,7 @@ function RemoveAttachmentByAge()
 	else
 	{
 		// Remove all the old avatars.
-		removeAttachments(array('not_id_member' => 0, 'last_login' => (time() - 24 * 60 * 60 * $_POST['age'])), 'members');
+		removeAttachments(array('not_id_character' => 0, 'last_login' => (time() - 24 * 60 * 60 * $_POST['age'])), 'members');
 	}
 	redirectexit('action=admin;area=manageattachments' . (empty($_REQUEST['avatars']) ? ';sa=maintenance' : ';avatars'));
 }
@@ -956,7 +960,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 			$is_not = substr($real_type, 0, 4) == 'not_';
 			$type = $is_not ? substr($real_type, 4) : $real_type;
 
-			if (in_array($type, array('id_member', 'id_attach', 'id_msg')))
+			if (in_array($type, array('id_character', 'id_attach', 'id_msg')))
 				$new_condition[] = 'a.' . $type . ($is_not ? ' NOT' : '') . ' IN (' . (is_array($restriction) ? '{array_int:' . $real_type . '}' : '{int:' . $real_type . '}') . ')';
 			elseif ($type == 'attachment_type')
 				$new_condition[] = 'a.attachment_type = {int:' . $real_type . '}';
@@ -986,10 +990,11 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 	// Get all the attachment names and id_msg's.
 	$request = $smcFunc['db_query']('', '
 		SELECT
-			a.id_folder, a.filename, a.file_hash, a.attachment_type, a.id_attach, a.id_member' . ($query_type == 'messages' ? ', m.id_msg' : ', a.id_msg') . ',
+			a.id_folder, a.filename, a.file_hash, a.attachment_type, a.id_attach, a.id_character' . ($query_type == 'messages' ? ', m.id_msg' : ', a.id_msg') . ',
 			thumb.id_folder AS thumb_folder, COALESCE(thumb.id_attach, 0) AS id_thumb, thumb.filename AS thumb_filename, thumb.file_hash AS thumb_file_hash, thumb_parent.id_attach AS id_parent
 		FROM {db_prefix}attachments AS a' .($query_type == 'members' ? '
-			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = a.id_member)' : ($query_type == 'messages' ? '
+			INNER JOIN {db_prefix}characters AS chars ON (a.id_character = chars.id_character)
+			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = chars.id_member)' : ($query_type == 'messages' ? '
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)' : '')) . '
 			LEFT JOIN {db_prefix}attachments AS thumb ON (thumb.id_attach = a.id_thumb)
 			LEFT JOIN {db_prefix}attachments AS thumb_parent ON (thumb.attachment_type = {int:thumb_attachment_type} AND thumb_parent.id_thumb = a.id_attach)

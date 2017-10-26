@@ -34,7 +34,7 @@ CREATE TABLE {$db_prefix}attachments (
   id_attach INT UNSIGNED AUTO_INCREMENT,
   id_thumb INT UNSIGNED NOT NULL DEFAULT '0',
   id_msg INT UNSIGNED NOT NULL DEFAULT '0',
-  id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
+  id_character INT NOT NULL DEFAULT '0',
   id_folder TINYINT NOT NULL DEFAULT '1',
   attachment_type TINYINT UNSIGNED NOT NULL DEFAULT '0',
   filename VARCHAR(255) NOT NULL DEFAULT '',
@@ -47,7 +47,7 @@ CREATE TABLE {$db_prefix}attachments (
   mime_type VARCHAR(128) NOT NULL DEFAULT '',
   approved TINYINT NOT NULL DEFAULT '1',
   PRIMARY KEY (id_attach),
-  UNIQUE idx_id_member (id_member, id_attach),
+  UNIQUE idx_id_character (id_character, id_attach),
   INDEX idx_id_msg (id_msg),
   INDEX idx_attachment_type (attachment_type)
 ) ENGINE={$engine};

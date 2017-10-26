@@ -417,7 +417,7 @@ function loadUserSettings()
 				SELECT mem.*, chars.id_character, chars.character_name, chars.avatar AS char_avatar, chars.signature AS char_signature,
 					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
 				FROM {db_prefix}members AS mem
-					LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = {int:id_member})
+					LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mem.current_character)
 					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
 				WHERE mem.id_member = {int:id_member}
 				LIMIT 1',
@@ -1273,10 +1273,10 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			CASE WHEN mem.id_group = 0 OR mg.icons = {string:blank_string} THEN pg.icons ELSE mg.icons END AS icons';
 	$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
-			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
 			LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
+			LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character)
 			LEFT JOIN {db_prefix}membergroups AS cg ON (chars.main_char_group = cg.id_group)';
 
 	// We add or replace according the the set
@@ -1360,9 +1360,12 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			}
 		}
 		$request = $smcFunc['db_query']('', '
-			SELECT id_member, id_character, character_name, avatar, signature, id_theme, posts, age, date_created,
-				last_active, is_main, main_char_group, char_groups, char_sheet, retired
-			FROM {db_prefix}characters
+			SELECT chars.id_member, chars.id_character, chars.character_name, 
+				a.filename, COALESCE(a.id_attach, 0) AS id_attach, chars.avatar, chars.signature, chars.id_theme,
+				chars.posts, chars.age, chars.date_created, chars.last_active, chars.is_main,
+				chars.main_char_group, chars.char_groups, chars.char_sheet, chars.retired
+			FROM {db_prefix}characters AS chars
+			LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character)
 			WHERE id_member IN ({array_int:loaded_ids})
 			ORDER BY NULL',
 			array(
@@ -1380,6 +1383,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'character_name' => $row['character_name'],
 				'character_url' => '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'],
 				'avatar' => $row['avatar'],
+				'avatar_filename' => $row['filename'],
 				'signature' => $row['signature'],
 				'sig_parsed' => !empty($row['signature']) ? parse_bbc($row['signature'], true, 'sig_char_' . $row['id_character']) : '',
 				'id_theme' => $row['id_theme'],
@@ -1396,11 +1400,35 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			if ($row['is_main'])
 			{
 				$user_profile[$row['id_member']]['main_char'] = $row['id_character'];
+
+				$user_profile[$row['id_member']]['avatar'] = $row['avatar'];
+				$user_profile[$row['id_member']]['filename'] = $row['filename'];
+				$user_profile[$row['id_member']]['attachment_type'] = !empty($row['filename']) ? 1 : 0;
+				$user_profile[$row['id_member']]['id_attach'] = $row['id_attach'];
+			}
+			$image = '';
+			if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($row['avatar'], 'gravatar://')))
+			{
+				if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($row['avatar'], 'gravatar://') && strlen($row['avatar']) > 11)
+					$image = get_gravatar_url($smcFunc['substr']($row['avatar'], 11));
+				else
+					$image = get_gravatar_url($user_profile[$row['id_member']]['email_address']);
+			}
+			else
+			{
 				if (!empty($row['avatar']))
 				{
-					$user_profile[$row['id_member']]['avatar'] = $row['avatar'];
+					$image = (stristr($row['avatar'], 'http://') || stristr($row['avatar'], 'https://')) ? $row['avatar'] : '';
 				}
+				elseif (!empty($row['filename']))
+				{
+					$image = $modSettings['custom_avatar_url'] . '/' . $row['filename'];
+				}
+				else
+					$image = $settings['images_url'] . '/default.png';
 			}
+
+			$user_profile[$row['id_member']]['characters'][$row['id_character']]['avatar'] = $image;
 		}
 		$smcFunc['db_free_result']($request);
 
@@ -1521,7 +1549,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 	// Well, it's loaded now anyhow.
 	$dataLoaded[$user] = true;
-	$profile = $user_profile[$user];
+	$profile = &$user_profile[$user];
 
 	// Censor everything.
 	censorText($profile['signature']);
@@ -1557,6 +1585,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'registered_timestamp' => empty($profile['date_registered']) ? 0 : forum_time(true, $profile['date_registered']),
 		'characters' => !empty($profile['characters']) ? $profile['characters'] : array(),
 		'current_character' => !empty($profile['online_character']) ? $profile['online_character'] : 0,
+		'avatar' => '',
 	);
 
 	// If the set isn't minimal then load the monstrous array.
@@ -1615,6 +1644,14 @@ function loadMemberContext($user, $display_custom_fields = false)
 	// If the set isn't minimal then load their avatar as well.
 	if ($context['loadMemberContext_set'] != 'minimal')
 	{
+		// First, find their OOC character.
+		foreach ($profile['characters'] as $character) {
+			if ($character['is_main']) {
+				$profile['avatar'] = $character['avatar'];
+				$profile['filename'] = $character['avatar_filename'];
+				break;
+			}
+		}
 		if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($profile['avatar'], 'gravatar://')))
 		{
 			if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($profile['avatar'], 'gravatar://') && strlen($profile['avatar']) > 11)

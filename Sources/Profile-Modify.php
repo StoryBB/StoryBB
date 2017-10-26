@@ -3019,7 +3019,18 @@ function profileSaveAvatarData(&$value)
 	global $modSettings, $sourcedir, $smcFunc, $profile_vars, $cur_profile, $context;
 
 	$memID = $context['id_member'];
+	if (empty($context['character']['id_character']))
+	{
+		foreach ($context['member']['characters'] as $id_char => $char) {
+			if ($char['is_main']) {
+				$context['character']['id_character'] = $id_char;
+				break;
+			}
+		}
+	}
 	if (empty($memID) && !empty($context['password_auth_failed']))
+		return false;
+	if (empty($context['character']['id_character']))
 		return false;
 
 	require_once($sourcedir . '/ManageAttachments.php');
@@ -3060,7 +3071,7 @@ function profileSaveAvatarData(&$value)
 		$cur_profile['attachment_type'] = 0;
 		$cur_profile['filename'] = '';
 
-		removeAttachments(array('id_member' => $memID));
+		removeAttachments(array('id_character' => $context['character']['id_character']));
 	}
 
 	elseif ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
@@ -3072,7 +3083,7 @@ function profileSaveAvatarData(&$value)
 			$profile_vars['avatar'] = 'gravatar://' . ($_POST['gravatarEmail'] != $cur_profile['email_address'] ? $_POST['gravatarEmail'] : '');
 
 		// Get rid of their old avatar. (if uploaded.)
-		removeAttachments(array('id_member' => $memID));
+		removeAttachments(array('id_character' => $context['character']['id_character']));
 	}
 	elseif ($value == 'external' && allowedTo('profile_remote_avatar') && (stripos($_POST['userpicpersonal'], 'http://') === 0 || stripos($_POST['userpicpersonal'], 'https://') === 0) && empty($modSettings['avatar_download_external']))
 	{
@@ -3082,7 +3093,7 @@ function profileSaveAvatarData(&$value)
 		$cur_profile['filename'] = '';
 
 		// Remove any attached avatar...
-		removeAttachments(array('id_member' => $memID));
+		removeAttachments(array('id_character' => $context['character']['id_character']));
 
 		$profile_vars['avatar'] = str_replace(' ', '%20', preg_replace('~action(?:=|%3d)(?!dlattach)~i', 'action-', $_POST['userpicpersonal']));
 
@@ -3106,7 +3117,7 @@ function profileSaveAvatarData(&$value)
 				{
 					// @todo remove this if appropriate
 					require_once($sourcedir . '/Subs-Graphics.php');
-					if (downloadAvatar($profile_vars['avatar'], $memID, $modSettings['avatar_max_width'], $modSettings['avatar_max_height']))
+					if (downloadAvatar($profile_vars['avatar'], $context['character']['id_character'], $modSettings['avatar_max_width'], $modSettings['avatar_max_height']))
 					{
 						$profile_vars['avatar'] = '';
 						$cur_profile['id_attach'] = $modSettings['new_avatar_data']['id'];
@@ -3154,7 +3165,7 @@ function profileSaveAvatarData(&$value)
 
 					// @todo remove this require when appropriate
 					require_once($sourcedir . '/Subs-Graphics.php');
-					if (!downloadAvatar($_FILES['attachment']['tmp_name'], $memID, $modSettings['avatar_max_width'], $modSettings['avatar_max_height']))
+					if (!downloadAvatar($_FILES['attachment']['tmp_name'], $context['character']['id_character'], $modSettings['avatar_max_width'], $modSettings['avatar_max_height']))
 					{
 						@unlink($_FILES['attachment']['tmp_name']);
 						return 'bad_avatar';
@@ -3211,16 +3222,16 @@ function profileSaveAvatarData(&$value)
 				$file_hash = '';
 
 				// Remove previous attachments this member might have had.
-				removeAttachments(array('id_member' => $memID));
+				removeAttachments(array('id_character' => $context['character']['id_character']));
 
 				$cur_profile['id_attach'] = $smcFunc['db_insert']('',
 					'{db_prefix}attachments',
 					array(
-						'id_member' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'fileext' => 'string', 'size' => 'int',
+						'id_character' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'fileext' => 'string', 'size' => 'int',
 						'width' => 'int', 'height' => 'int', 'mime_type' => 'string', 'id_folder' => 'int',
 					),
 					array(
-						$memID, 1, $destName, $file_hash, $extension, filesize($_FILES['attachment']['tmp_name']),
+						$context['character']['id_character'], 1, $destName, $file_hash, $extension, filesize($_FILES['attachment']['tmp_name']),
 						(int) $width, (int) $height, $mime_type, $id_folder,
 					),
 					array('id_attach'),
@@ -3234,7 +3245,7 @@ function profileSaveAvatarData(&$value)
 				if (!rename($_FILES['attachment']['tmp_name'], $destinationPath))
 				{
 					// I guess a man can try.
-					removeAttachments(array('id_member' => $memID));
+					removeAttachments(array('id_character' => $memID));
 					fatal_lang_error('attach_timeout', 'critical');
 				}
 
