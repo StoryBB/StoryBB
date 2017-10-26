@@ -2895,6 +2895,7 @@ function render_page($content) {
 	        'login_helper' => 'login_helper',
 	        'isSelected' => 'isSelected',
 	        'javascript' => 'template_javascript',
+	        'css' => 'template_css',
 	    ]
 	], 'layout-' . (!empty($context['layout_loaded']) ? $context['layout_loaded'] : 'default'));
 
@@ -3486,6 +3487,7 @@ function template_css()
 
 	$toMinify = array();
 	$normal = array();
+	$return = '';
 
 	foreach ($context['css_files'] as $id => $file)
 	{
@@ -3514,19 +3516,19 @@ function template_css()
 		// Minify process couldn't work, print each individual files.
 		if (!empty($result) && is_array($result))
 			foreach ($result as $minFailedFile)
-				echo '
-	<link rel="stylesheet" href="', $minFailedFile['fileUrl'], '">';
+				$return .= '
+	<link rel="stylesheet" href="' . $minFailedFile['fileUrl'] . '">';
 
 		else
-			echo '
-	<link rel="stylesheet" href="', $settings['theme_url'] ,'/css/minified.css', $minSeed ,'">';
+			$return .= '
+	<link rel="stylesheet" href="' . $settings['theme_url'] . '/css/minified.css' . $minSeed . '">';
 	}
 
 	// Print the rest after the minified files.
 	if (!empty($normal))
 		foreach ($normal as $nf)
-			echo '
-	<link rel="stylesheet" href="', $nf ,'">';
+			$return .= '
+	<link rel="stylesheet" href="' . $nf . '">';
 
 	if ($db_show_debug === true)
 	{
@@ -3538,16 +3540,17 @@ function template_css()
 
 	if (!empty($context['css_header']))
 	{
-		echo '
+		$return .= '
 	<style>';
 
 		foreach ($context['css_header'] as $css)
-			echo $css .'
+			$return .= $css .'
 	';
 
-		echo'
+		$return .= '
 	</style>';
 	}
+	return $return;
 }
 
 /**
