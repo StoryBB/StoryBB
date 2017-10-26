@@ -414,8 +414,8 @@ function loadUserSettings()
 		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
 		{
 			$request = $smcFunc['db_query']('', '
-				SELECT mem.*, chars.id_character, chars.character_name, chars.avatar AS char_avatar, chars.signature AS char_signature,
-					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
+				SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
+					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
 				FROM {db_prefix}members AS mem
 					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
 					LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
@@ -428,6 +428,7 @@ function loadUserSettings()
 			);
 			$user_settings = $smcFunc['db_fetch_assoc']($request);
 			$user_settings['id_theme'] = $user_settings['char_theme'];
+			$user_settings['avatar'] = $user_settings['char_avatar'];
 			$smcFunc['db_free_result']($request);
 
 			if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
@@ -1234,7 +1235,7 @@ function loadPermissions()
 function loadMemberData($users, $is_name = false, $set = 'normal')
 {
 	global $user_profile, $modSettings, $board_info, $smcFunc, $context;
-	global $image_proxy_enabled, $image_proxy_secret, $boardurl;
+	global $image_proxy_enabled, $image_proxy_secret, $boardurl, $settings;
 
 	// Can't just look for no users :P.
 	if (empty($users))
@@ -1376,6 +1377,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// Take care of proxying avatar if required, do this here for maximum reach
+			$row['avatar_original'] = !empty($row['avatar']) ? $row['avatar'] : '';
 			if ($image_proxy_enabled && !empty($row['avatar']) && stripos($row['avatar'], 'http://') !== false)
 				$row['avatar'] = $boardurl . '/proxy.php?request=' . urlencode($row['avatar']) . '&hash=' . md5($row['avatar'] . $image_proxy_secret);
 
@@ -1385,6 +1387,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'character_url' => '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'],
 				'avatar' => $row['avatar'],
 				'avatar_filename' => $row['filename'],
+				'id_attach' => $row['id_attach'],
 				'signature' => $row['signature'],
 				'sig_parsed' => !empty($row['signature']) ? parse_bbc($row['signature'], true, 'sig_char_' . $row['id_character']) : '',
 				'id_theme' => $row['id_theme'],
@@ -1402,6 +1405,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			{
 				$user_profile[$row['id_member']]['main_char'] = $row['id_character'];
 
+				$user_profile[$row['id_member']]['avatar_original'] = $row['avatar_original'];
 				$user_profile[$row['id_member']]['avatar'] = $row['avatar'];
 				$user_profile[$row['id_member']]['filename'] = $row['filename'];
 				$user_profile[$row['id_member']]['attachment_type'] = !empty($row['filename']) ? 1 : 0;

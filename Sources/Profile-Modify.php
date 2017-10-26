@@ -2840,6 +2840,9 @@ function profileLoadAvatarData()
 	global $context, $cur_profile, $modSettings, $scripturl;
 
 	// Default context.
+	if (empty($context['member']['avatar']))
+		$context['member']['avatar'] = [];
+
 	$context['member']['avatar'] += array(
 		'custom' => stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://') ? $cur_profile['avatar'] : 'http://',
 		'selection' => $cur_profile['avatar'] == '' || (stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://')) ? '' : $cur_profile['avatar'],
