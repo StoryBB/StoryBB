@@ -417,8 +417,9 @@ function loadUserSettings()
 				SELECT mem.*, chars.id_character, chars.character_name, chars.avatar AS char_avatar, chars.signature AS char_signature,
 					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
 				FROM {db_prefix}members AS mem
-					LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mem.current_character)
 					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
+					LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
+					LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character)
 				WHERE mem.id_member = {int:id_member}
 				LIMIT 1',
 				array(
@@ -1649,6 +1650,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 			if ($character['is_main']) {
 				$profile['avatar'] = $character['avatar'];
 				$profile['filename'] = $character['avatar_filename'];
+				$profile['id_attach'] = $character['id_attach'];
 				break;
 			}
 		}
