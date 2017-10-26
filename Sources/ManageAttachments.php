@@ -267,9 +267,10 @@ function ManageAvatarSettings($return_config = false)
 	$context['valid_custom_avatar_dir'] = !empty($modSettings['custom_avatar_dir']) && is_dir($modSettings['custom_avatar_dir']) && is_writable($modSettings['custom_avatar_dir']);
 
 	$config_vars = array(
-		// External avatars?
+		// Avatar size?
 		array('int', 'avatar_max_width', 'subtext' => $txt['zero_for_no_limit'], 'min' => 0, 'max' => 500),
 		array('int', 'avatar_max_height', 'subtext' => $txt['zero_for_no_limit'], 'min' => 0, 'max' => 500),
+		// External avatars
 		array('title', 'avatar_external'),
 			array('check', 'avatar_download_external', 0),
 			array('select', 'avatar_action_too_large',
@@ -281,12 +282,11 @@ function ManageAvatarSettings($return_config = false)
 			),
 		// Uploadable avatars?
 		array('title', 'avatar_upload'),
-			array('check', 'avatar_resize_upload', 'subtext' => $txt['avatar_resize_upload_note']),
+			array('check', 'avatar_resize_upload', 'subtext' => $testImg ? '' : $txt['avatar_resize_upload_note']),
 			array('check', 'avatar_download_png'),
-			array('check', 'avatar_reencode'),
 		'',
-			array('warning', 'avatar_paranoid_warning'),
-			array('check', 'avatar_paranoid'),
+			array('check', 'avatar_reencode'),
+			array('check', 'avatar_paranoid', 'subtext' => $txt['avatar_paranoid_warning']),
 		'',
 			array('warning', !$context['valid_custom_avatar_dir'] ? 'custom_avatar_dir_wrong' : ''),
 			array('text', 'custom_avatar_dir', 40, 'subtext' => $txt['custom_avatar_dir_desc'], 'invalid' => !$context['valid_custom_avatar_dir']),
