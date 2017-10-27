@@ -250,17 +250,17 @@
 			sSelf: 'oPersonalMessageSend',
 			sSessionId: smf_session_id,
 			sSessionVar: smf_session_var,
-			sTextDeleteItem: '{{txt.autosuggest_delete_item}}',
+			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
 			sToControlId: 'to_control',
 			aToRecipients: [{{#each context.recipients.to}}{
-						sItemId: '{{JSEscape id}}',
-						sItemName: '{{JSEscape name}}'
+						sItemId: {{{JSEscape id}}},
+						sItemName: {{{JSEscape name}}}
 					}{{#unless (eq @index (getNumItems context.recipients.to))}},{{/unless}}
 			{{/each}}
 			],
 			aBccRecipients: [{{#each context.recipients.bcc}}{
-						sItemId: '{{JSEscape id}}',
-						sItemName: '{{JSEscape name}}'
+						sItemId: {{{JSEscape id}}},
+						sItemName: {{{JSEscape name}}}
 					}{{#unless (eq @index (getNumItems context.recipients.bcc))}},{{/unless}}
 			{{/each}}
 			],
@@ -269,7 +269,7 @@
 			sBccDivId2: 'bcc_div2',
 			sBccLinkId: 'bcc_link',
 			sBccLinkContainerId: 'bcc_link_container',
-			bBccShowByDefault: {{#unless (and context.recipients.bcc context.bcc_value)}}true{{else}}false{{/unless}},
-			sShowBccLinkTemplate: '{{JSEscape bccLinkTemplate}}'
+			bBccShowByDefault: {{#if (and context.recipients.bcc context.bcc_value)}}true{{else}}false{{/if}},
+			sShowBccLinkTemplate: {{{JSEscape bccLinkTemplate}}}
 		});
 		</script>
