@@ -7,6 +7,7 @@ cache/data*.php
 cache/template*.php
 *.*~
 attachments/
+custom_avatar/
 /upgrade.php
 Themes/default/css/minified.css
 Themes/default/scripts/minified.js

@@ -2895,6 +2895,7 @@ function render_page($content) {
 	        'login_helper' => 'login_helper',
 	        'isSelected' => 'isSelected',
 	        'javascript' => 'template_javascript',
+	        'css' => 'template_css',
 	    ]
 	], 'layout-' . (!empty($context['layout_loaded']) ? $context['layout_loaded'] : 'default'));
 
@@ -3127,9 +3128,9 @@ function setupThemeContext($forceload = false)
 	var smf_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');
 
 	// Now add the capping code for avatars.
-	if (!empty($modSettings['avatar_max_width_external']) && !empty($modSettings['avatar_max_height_external']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
+	if (!empty($modSettings['avatar_max_width']) && !empty($modSettings['avatar_max_height']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
 		addInlineCss('
-img.avatar { max-width: ' . $modSettings['avatar_max_width_external'] . 'px; max-height: ' . $modSettings['avatar_max_height_external'] . 'px; }');
+img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: ' . $modSettings['avatar_max_height'] . 'px; }');
 
 	// This looks weird, but it's because BoardIndex.php references the variable.
 	$context['common_stats']['latest_member'] = array(
@@ -3486,6 +3487,7 @@ function template_css()
 
 	$toMinify = array();
 	$normal = array();
+	$return = '';
 
 	foreach ($context['css_files'] as $id => $file)
 	{
@@ -3514,19 +3516,19 @@ function template_css()
 		// Minify process couldn't work, print each individual files.
 		if (!empty($result) && is_array($result))
 			foreach ($result as $minFailedFile)
-				echo '
-	<link rel="stylesheet" href="', $minFailedFile['fileUrl'], '">';
+				$return .= '
+	<link rel="stylesheet" href="' . $minFailedFile['fileUrl'] . '">';
 
 		else
-			echo '
-	<link rel="stylesheet" href="', $settings['theme_url'] ,'/css/minified.css', $minSeed ,'">';
+			$return .= '
+	<link rel="stylesheet" href="' . $settings['theme_url'] . '/css/minified.css' . $minSeed . '">';
 	}
 
 	// Print the rest after the minified files.
 	if (!empty($normal))
 		foreach ($normal as $nf)
-			echo '
-	<link rel="stylesheet" href="', $nf ,'">';
+			$return .= '
+	<link rel="stylesheet" href="' . $nf . '">';
 
 	if ($db_show_debug === true)
 	{
@@ -3538,16 +3540,17 @@ function template_css()
 
 	if (!empty($context['css_header']))
 	{
-		echo '
+		$return .= '
 	<style>';
 
 		foreach ($context['css_header'] as $css)
-			echo $css .'
+			$return .= $css .'
 	';
 
-		echo'
+		$return .= '
 	</style>';
 	}
+	return $return;
 }
 
 /**
@@ -4784,11 +4787,11 @@ function get_gravatar_url($email_address)
 			$url_params[] = 'rating=' . $modSettings['gravatarMaxRating'];
 		if (!empty($modSettings['gravatarDefault']) && in_array($modSettings['gravatarDefault'], $defaults))
 			$url_params[] = 'default=' . $modSettings['gravatarDefault'];
-		if (!empty($modSettings['avatar_max_width_external']))
-			$size_string = (int) $modSettings['avatar_max_width_external'];
-		if (!empty($modSettings['avatar_max_height_external']) && !empty($size_string))
-			if ((int) $modSettings['avatar_max_height_external'] < $size_string)
-				$size_string = $modSettings['avatar_max_height_external'];
+		if (!empty($modSettings['avatar_max_width']))
+			$size_string = (int) $modSettings['avatar_max_width'];
+		if (!empty($modSettings['avatar_max_height']) && !empty($size_string))
+			if ((int) $modSettings['avatar_max_height'] < $size_string)
+				$size_string = $modSettings['avatar_max_height'];
 
 		if (!empty($size_string))
 			$url_params[] = 's=' . $size_string;

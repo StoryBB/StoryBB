@@ -2840,6 +2840,9 @@ function profileLoadAvatarData()
 	global $context, $cur_profile, $modSettings, $scripturl;
 
 	// Default context.
+	if (empty($context['member']['avatar']))
+		$context['member']['avatar'] = [];
+
 	$context['member']['avatar'] += array(
 		'custom' => stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://') ? $cur_profile['avatar'] : 'http://',
 		'selection' => $cur_profile['avatar'] == '' || (stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://')) ? '' : $cur_profile['avatar'],
@@ -3019,7 +3022,18 @@ function profileSaveAvatarData(&$value)
 	global $modSettings, $sourcedir, $smcFunc, $profile_vars, $cur_profile, $context;
 
 	$memID = $context['id_member'];
+	if (empty($context['character']['id_character']))
+	{
+		foreach ($context['member']['characters'] as $id_char => $char) {
+			if ($char['is_main']) {
+				$context['character']['id_character'] = $id_char;
+				break;
+			}
+		}
+	}
 	if (empty($memID) && !empty($context['password_auth_failed']))
+		return false;
+	if (empty($context['character']['id_character']))
 		return false;
 
 	require_once($sourcedir . '/ManageAttachments.php');
@@ -3060,7 +3074,7 @@ function profileSaveAvatarData(&$value)
 		$cur_profile['attachment_type'] = 0;
 		$cur_profile['filename'] = '';
 
-		removeAttachments(array('id_member' => $memID));
+		removeAttachments(array('id_character' => $context['character']['id_character']));
 	}
 
 	elseif ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
@@ -3072,7 +3086,7 @@ function profileSaveAvatarData(&$value)
 			$profile_vars['avatar'] = 'gravatar://' . ($_POST['gravatarEmail'] != $cur_profile['email_address'] ? $_POST['gravatarEmail'] : '');
 
 		// Get rid of their old avatar. (if uploaded.)
-		removeAttachments(array('id_member' => $memID));
+		removeAttachments(array('id_character' => $context['character']['id_character']));
 	}
 	elseif ($value == 'external' && allowedTo('profile_remote_avatar') && (stripos($_POST['userpicpersonal'], 'http://') === 0 || stripos($_POST['userpicpersonal'], 'https://') === 0) && empty($modSettings['avatar_download_external']))
 	{
@@ -3082,7 +3096,7 @@ function profileSaveAvatarData(&$value)
 		$cur_profile['filename'] = '';
 
 		// Remove any attached avatar...
-		removeAttachments(array('id_member' => $memID));
+		removeAttachments(array('id_character' => $context['character']['id_character']));
 
 		$profile_vars['avatar'] = str_replace(' ', '%20', preg_replace('~action(?:=|%3d)(?!dlattach)~i', 'action-', $_POST['userpicpersonal']));
 
@@ -3092,12 +3106,12 @@ function profileSaveAvatarData(&$value)
 		elseif (substr($profile_vars['avatar'], 0, 7) != 'http://' && substr($profile_vars['avatar'], 0, 8) != 'https://')
 			return 'bad_avatar_invalid_url';
 		// Should we check dimensions?
-		elseif (!empty($modSettings['avatar_max_height_external']) || !empty($modSettings['avatar_max_width_external']))
+		elseif (!empty($modSettings['avatar_max_height']) || !empty($modSettings['avatar_max_width']))
 		{
 			// Now let's validate the avatar.
 			$sizes = url_image_size($profile_vars['avatar']);
 
-			if (is_array($sizes) && (($sizes[0] > $modSettings['avatar_max_width_external'] && !empty($modSettings['avatar_max_width_external'])) || ($sizes[1] > $modSettings['avatar_max_height_external'] && !empty($modSettings['avatar_max_height_external']))))
+			if (is_array($sizes) && (($sizes[0] > $modSettings['avatar_max_width'] && !empty($modSettings['avatar_max_width'])) || ($sizes[1] > $modSettings['avatar_max_height'] && !empty($modSettings['avatar_max_height']))))
 			{
 				// Houston, we have a problem. The avatar is too large!!
 				if ($modSettings['avatar_action_too_large'] == 'option_refuse')
@@ -3106,7 +3120,7 @@ function profileSaveAvatarData(&$value)
 				{
 					// @todo remove this if appropriate
 					require_once($sourcedir . '/Subs-Graphics.php');
-					if (downloadAvatar($profile_vars['avatar'], $memID, $modSettings['avatar_max_width_external'], $modSettings['avatar_max_height_external']))
+					if (downloadAvatar($profile_vars['avatar'], $context['character']['id_character'], $modSettings['avatar_max_width'], $modSettings['avatar_max_height']))
 					{
 						$profile_vars['avatar'] = '';
 						$cur_profile['id_attach'] = $modSettings['new_avatar_data']['id'];
@@ -3131,7 +3145,10 @@ function profileSaveAvatarData(&$value)
 
 				$new_filename = $uploadDir . '/' . getAttachmentFilename('avatar_tmp_' . $memID, false, null, true);
 				if (!move_uploaded_file($_FILES['attachment']['tmp_name'], $new_filename))
+				{
+					loadLanguage('Post');
 					fatal_lang_error('attach_timeout', 'critical');
+				}
 
 				$_FILES['attachment']['tmp_name'] = $new_filename;
 			}
@@ -3145,7 +3162,7 @@ function profileSaveAvatarData(&$value)
 				return 'bad_avatar';
 			}
 			// Check whether the image is too large.
-			elseif ((!empty($modSettings['avatar_max_width_upload']) && $sizes[0] > $modSettings['avatar_max_width_upload']) || (!empty($modSettings['avatar_max_height_upload']) && $sizes[1] > $modSettings['avatar_max_height_upload']))
+			elseif ((!empty($modSettings['avatar_max_width']) && $sizes[0] > $modSettings['avatar_max_width']) || (!empty($modSettings['avatar_max_height']) && $sizes[1] > $modSettings['avatar_max_height']))
 			{
 				if (!empty($modSettings['avatar_resize_upload']))
 				{
@@ -3154,7 +3171,7 @@ function profileSaveAvatarData(&$value)
 
 					// @todo remove this require when appropriate
 					require_once($sourcedir . '/Subs-Graphics.php');
-					if (!downloadAvatar($_FILES['attachment']['tmp_name'], $memID, $modSettings['avatar_max_width_upload'], $modSettings['avatar_max_height_upload']))
+					if (!downloadAvatar($_FILES['attachment']['tmp_name'], $context['character']['id_character'], $modSettings['avatar_max_width'], $modSettings['avatar_max_height']))
 					{
 						@unlink($_FILES['attachment']['tmp_name']);
 						return 'bad_avatar';
@@ -3206,21 +3223,21 @@ function profileSaveAvatarData(&$value)
 
 				$extension = isset($extensions[$sizes[2]]) ? $extensions[$sizes[2]] : 'bmp';
 				$mime_type = 'image/' . ($extension === 'jpg' ? 'jpeg' : ($extension === 'bmp' ? 'x-ms-bmp' : $extension));
-				$destName = 'avatar_' . $memID . '_' . time() . '.' . $extension;
+				$destName = 'avatar_' . $context['character']['id_character'] . '_' . time() . '.' . $extension;
 				list ($width, $height) = getimagesize($_FILES['attachment']['tmp_name']);
 				$file_hash = '';
 
 				// Remove previous attachments this member might have had.
-				removeAttachments(array('id_member' => $memID));
+				removeAttachments(array('id_character' => $context['character']['id_character']));
 
 				$cur_profile['id_attach'] = $smcFunc['db_insert']('',
 					'{db_prefix}attachments',
 					array(
-						'id_member' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'fileext' => 'string', 'size' => 'int',
+						'id_character' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'fileext' => 'string', 'size' => 'int',
 						'width' => 'int', 'height' => 'int', 'mime_type' => 'string', 'id_folder' => 'int',
 					),
 					array(
-						$memID, 1, $destName, $file_hash, $extension, filesize($_FILES['attachment']['tmp_name']),
+						$context['character']['id_character'], 1, $destName, $file_hash, $extension, filesize($_FILES['attachment']['tmp_name']),
 						(int) $width, (int) $height, $mime_type, $id_folder,
 					),
 					array('id_attach'),
@@ -3234,7 +3251,7 @@ function profileSaveAvatarData(&$value)
 				if (!rename($_FILES['attachment']['tmp_name'], $destinationPath))
 				{
 					// I guess a man can try.
-					removeAttachments(array('id_member' => $memID));
+					removeAttachments(array('id_character' => $memID));
 					fatal_lang_error('attach_timeout', 'critical');
 				}
 
