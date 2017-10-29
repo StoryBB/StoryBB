@@ -331,35 +331,31 @@ function char_edit()
 		'allow_gravatar' => !empty($modSettings['gravatarEnabled']) || !empty($modSettings['gravatarOverride']),
 	);
 
-	if ($context['character']['avatar_settings']['allow_gravatar'] && (stristr($context['character']['avatar'], 'gravatar://') || !empty($modSettings['gravatarOverride'])))
+	if ($context['character']['avatar_settings']['allow_gravatar'] && (stristr($context['character']['avatar_original'], 'gravatar://') || !empty($modSettings['gravatarOverride'])))
 	{
 		$context['character']['avatar_settings'] += array(
 			'choice' => 'gravatar',
-			'server_pic' => 'blank.png',
-			'external' => $context['character']['avatar'] == 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']) || !empty($modSettings['gravatarOverride']) ? $context['member']['email_address'] : substr($context['character']['avatar'], 11)
+			'external' => $context['character']['avatar_original'] == 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']) || !empty($modSettings['gravatarOverride']) ? $context['member']['email'] : substr($context['character']['avatar_original'], 11)
 		);
 		$context['character']['avatar'] = get_gravatar_url($context['character']['avatar_settings']['external']);
 	}
-	elseif ((empty($context['character']['avatar']) || $context['character']['avatar'] == $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
+	elseif ((!empty($context['character']['avatar']) && $context['character']['avatar'] != $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
 	{
 		$context['character']['avatar_settings'] += array(
 			'choice' => 'upload',
-			'server_pic' => 'blank.png',
 			'external' => 'http://'
 		);
-		$context['character']['avatar'] = empty($cur_profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $context['character']['avatar_filename'];
+		$context['character']['avatar'] = $modSettings['custom_avatar_url'] . '/' . $context['character']['avatar_filename'];
 	}
 	// Use "avatar_original" here so we show what the user entered even if the image proxy is enabled
 	elseif ((stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://')) && $context['character']['avatar_settings']['allow_external'] && $context['character']['avatar'] != $default_avatar)
 		$context['character']['avatar_settings'] += array(
 			'choice' => 'external',
-			'server_pic' => 'blank.png',
 			'external' => $context['character']['avatar_original']
 		);
 	else
 		$context['character']['avatar_settings'] += array(
 			'choice' => 'none',
-			'server_pic' => 'blank.png',
 			'external' => 'http://'
 		);
 

@@ -74,7 +74,7 @@
 							<br />
 						{{/if}}
 
-						{{#if context.character.avatar_settings.allow_external}}
+						{{#if context.character.avatar_settings.allow_upload}}
 							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"{{#if (eq context.character.avatar_settings.choice 'upload')}} checked{{/if}} class="input_radio" /><label for="avatar_choice_upload"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.avatar_will_upload}}}</label>
 							<br />
 						{{/if}}
@@ -85,15 +85,14 @@
 					</dt>
 					<dd>
 						<div>
-							<div><img id="avatar" src="{{#if (and context.character.avatar_settings.allow_external (eq context.character.avatar_settings.choice 'external'))}}{{{context.character.avatar.external}}}{{else}}{{settings.images_url}}/blank.png{{/if}}" alt="Do Nothing"></div>
+							<div><img style="display:none" id="avatar" src="{{#if context.character.avatar}}{{{context.character.avatar}}}{{else}}{{settings.images_url}}/blank.png{{/if}}" alt="Do Nothing"></div>
 							<script>
 								var avatar = document.getElementById("avatar");
-								var cat = document.getElementById("cat");
 								var selavatar = {{{json context.avatar_selected}}};
 								var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
 								var file = document.getElementById("file");
-								var maxHeight = {{#if (gt modSettings.avatar_nax_height '0')}}{{modSettings.avatar_max_height}}{{else}}0{{/if}};
-								var maxWidth = {{#if (gt modSettings.avatar_nax_width '0')}}{{modSettings.avatar_max_width}}{{else}}0{{/if}};
+								var maxHeight = {{#if (gt modSettings.avatar_max_height '0')}}{{modSettings.avatar_max_height}}{{else}}0{{/if}};
+								var maxWidth = {{#if (gt modSettings.avatar_max_width '0')}}{{modSettings.avatar_max_width}}{{else}}0{{/if}};
 
 								previewExternalAvatar(avatar.src)
 
@@ -104,7 +103,7 @@
 						{{#if context.character.avatar_settings.allow_external}}
 							<div id="avatar_external">
 								<div class="smalltext">{{{txt.avatar_by_url}}}</div>{{#if (eq modSettings.avatar_action_too_large 'option_download_and_resize')}}{{> max_avatar_size}}{{/if}}
-								<input type="text" name="userpicpersonal" size="45" value="{{{context.character.avatar_settings.external}}}" placeholder="https://" onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'external');" onchange="if (typeof(previewExternalAvatar) != 'undefined') previewExternalAvatar(this.value);" class="input_text" />
+								<input type="text" name="userpicpersonal" size="45" value="{{#if (eq context.character.avatar_settings.choice 'external')}}{{{context.character.avatar_settings.external}}}{{/if}}" placeholder="https://" onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'external');" onchange="if (typeof(previewExternalAvatar) != 'undefined') previewExternalAvatar(this.value);" class="input_text" />
 							</div>
 						{{/if}}
 
