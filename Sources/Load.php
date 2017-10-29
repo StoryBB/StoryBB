@@ -1388,6 +1388,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'avatar' => $row['avatar'],
 				'avatar_filename' => $row['filename'],
 				'id_attach' => $row['id_attach'],
+				'avatar_original' => $row['avatar_original'],
 				'signature' => $row['signature'],
 				'sig_parsed' => !empty($row['signature']) ? parse_bbc($row['signature'], true, 'sig_char_' . $row['id_character']) : '',
 				'id_theme' => $row['id_theme'],

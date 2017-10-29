@@ -298,7 +298,8 @@ function char_create()
 
 function char_edit()
 {
-	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
+	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings, $scripturl;
+	global $profile_vars, $settings;
 
 	// If they don't have permission to be here, goodbye.
 	if (!$context['character']['editable']) {
@@ -320,13 +321,68 @@ function char_edit()
 	profileLoadSignatureData();
 
 	$context['form_errors'] = [];
+	$default_avatar = $settings['images_url'] . '/default.png';
+
+	$context['character']['avatar_settings'] = array(
+		'custom' => stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://') ? $context['character']['avatar'] : 'http://',
+		'selection' => $context['character']['avatar'] == '' || (stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://')) ? '' : $context['character']['avatar'],
+		'allow_upload' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
+		'allow_external' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
+		'allow_gravatar' => !empty($modSettings['gravatarEnabled']) || !empty($modSettings['gravatarOverride']),
+	);
+
+	if ($context['character']['avatar_settings']['allow_gravatar'] && (stristr($context['character']['avatar'], 'gravatar://') || !empty($modSettings['gravatarOverride'])))
+	{
+		$context['character']['avatar_settings'] += array(
+			'choice' => 'gravatar',
+			'server_pic' => 'blank.png',
+			'external' => $context['character']['avatar'] == 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']) || !empty($modSettings['gravatarOverride']) ? $context['member']['email_address'] : substr($context['character']['avatar'], 11)
+		);
+		$context['character']['avatar'] = get_gravatar_url($context['character']['avatar_settings']['external']);
+	}
+	elseif ((empty($context['character']['avatar']) || $context['character']['avatar'] == $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
+	{
+		$context['character']['avatar_settings'] += array(
+			'choice' => 'upload',
+			'server_pic' => 'blank.png',
+			'external' => 'http://'
+		);
+		$context['character']['avatar'] = empty($cur_profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $context['character']['avatar_filename'];
+	}
+	// Use "avatar_original" here so we show what the user entered even if the image proxy is enabled
+	elseif ((stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://')) && $context['character']['avatar_settings']['allow_external'] && $context['character']['avatar'] != $default_avatar)
+		$context['character']['avatar_settings'] += array(
+			'choice' => 'external',
+			'server_pic' => 'blank.png',
+			'external' => $context['character']['avatar_original']
+		);
+	else
+		$context['character']['avatar_settings'] += array(
+			'choice' => 'none',
+			'server_pic' => 'blank.png',
+			'external' => 'http://'
+		);
+
+	$context['character']['avatar_settings']['is_url'] = (strpos($context['character']['avatar_settings']['external'], 'https://') === 0) || (strpos($context['character']['avatar_settings']['external'], 'http://') === 0);
 
 	if (isset($_POST['edit_char']))
 	{
 		validateSession();
-		validateToken('edit-char' . $context['character']['id_character'], 'post');
+		//validateToken('edit-char' . $context['character']['id_character'], 'post');
 
 		$changes = [];
+
+		$avatar_value = !empty($_POST['avatar_choice']) ? $_POST['avatar_choice'] : '';
+		$state = profileSaveAvatarData($avatar_value);
+		if ($state !== false) {
+			$context['form_errors']['bad_avatar'] = $txt['profile_error_' . $state];
+		}
+		elseif (isset($profile_vars['avatar']))
+		{
+			$context['character']['avatar'] = $profile_vars['avatar'];
+			$changes['avatar'] = $profile_vars['avatar'];
+		}
+
 		$new_name = !empty($_POST['char_name']) ? $smcFunc['htmlspecialchars'](trim($_POST['char_name']), ENT_QUOTES) : '';
 		if ($new_name == '')
 			$context['form_errors'][] = $txt['char_error_character_must_have_name'];
@@ -381,38 +437,6 @@ function char_edit()
 		$new_age = !empty($_POST['age']) ? $smcFunc['htmlspecialchars'](trim($_POST['age']), ENT_QUOTES) : '';
 		if ($new_age != $context['character']['age'])
 			$changes['age'] = $new_age;
-
-		$new_avatar = !empty($_POST['avatar']) ? trim($_POST['avatar']) : '';
-		$validatable_avatar = strpos($new_avatar, 'http') !== 0 ? 'http://' . $new_avatar : $new_avatar; // filter_var doesn't like // URLs
-		if ($new_avatar != $context['character']['avatar'])
-		{
-			if (filter_var($validatable_avatar, FILTER_VALIDATE_URL))
-			{
-				$size = get_avatar_url_size($new_avatar);
-				if (!$size)
-					$context['form_errors'][] = $txt['char_error_avatar_link_invalid'];
-				elseif (!empty($modSettings['avatar_max_width']))
-				{
-					if ($size[0] > $modSettings['avatar_max_width'] || $size[1] > $modSettings['avatar_max_height'])
-					{
-						$txt['char_error_avatar_oversize'] = sprintf(
-							$txt['char_error_avatar_oversize'],
-							$size[0],
-							$size[1],
-							$modSettings['avatar_max_width'],
-							$modSettings['avatar_max_height']
-						);
-						$context['form_errors'][] = $txt['char_error_avatar_oversize'];
-					}
-					else
-						$changes['avatar'] = $new_avatar;
-				}
-				else
-					$changes['avatar'] = $new_avatar;
-			}
-			elseif ($new_avatar != '')
-				$context['form_errors'][] = $txt['char_error_avatar_must_be_real_url'];
-		}
 
 		$new_sig = !empty($_POST['char_signature']) ? $smcFunc['htmlspecialchars']($_POST['char_signature'], ENT_QUOTES) : '';
 		$valid_sig = profileValidateSignature($new_sig);
@@ -530,17 +554,6 @@ function char_edit()
 		'required' => true,
 	);
 	create_control_richedit($editorOptions);
-
-	addInlineJavascript('
-	function update_preview() {
-		if ($("#avatar").val() == "") {
-			$("#avatar_preview").html(' . JavaScriptEscape($txt['no_avatar_yet']) . ');
-		} else {
-			$("#avatar_preview").html(\'<img src="\' + $("#avatar").val() + \'" class="avatar" alt="" />\');
-		}
-	}
-	$(document).ready(function() { update_preview(); });
-	$("#avatar").on("blur", function() { update_preview(); });', true);
 
 	createToken('edit-char' . $context['character']['id_character'], 'post');
 }

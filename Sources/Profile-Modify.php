@@ -3145,7 +3145,10 @@ function profileSaveAvatarData(&$value)
 
 				$new_filename = $uploadDir . '/' . getAttachmentFilename('avatar_tmp_' . $memID, false, null, true);
 				if (!move_uploaded_file($_FILES['attachment']['tmp_name'], $new_filename))
+				{
+					loadLanguage('Post');
 					fatal_lang_error('attach_timeout', 'critical');
+				}
 
 				$_FILES['attachment']['tmp_name'] = $new_filename;
 			}
@@ -3220,7 +3223,7 @@ function profileSaveAvatarData(&$value)
 
 				$extension = isset($extensions[$sizes[2]]) ? $extensions[$sizes[2]] : 'bmp';
 				$mime_type = 'image/' . ($extension === 'jpg' ? 'jpeg' : ($extension === 'bmp' ? 'x-ms-bmp' : $extension));
-				$destName = 'avatar_' . $memID . '_' . time() . '.' . $extension;
+				$destName = 'avatar_' . $context['character']['id_character'] . '_' . time() . '.' . $extension;
 				list ($width, $height) = getimagesize($_FILES['attachment']['tmp_name']);
 				$file_hash = '';
 
