@@ -702,31 +702,6 @@ function template_showPermissions()
 }
 
 /**
- * Template for user statistics, showing graphs and the like.
- */
-function template_statPanel()
-{
-	global $context, $txt;
-
-    $data = Array(
-        'context' => $context,
-        'txt' => $txt,
-    );
-    
-    $template = loadTemplateFile('profile_stats');
-
-    $phpStr = compileTemplate($template, [
-        'helpers' => Array(
-        	'inverted_percent' => function($pc) { return 100 - $pc; },
-        	'pie_percent' => function($pc) { return (int) $pc / 5 * 20; },
-        )
-    ]);
-
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * Template for editing profile options.
  */
 function template_edit_options()

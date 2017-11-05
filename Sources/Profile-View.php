@@ -1320,6 +1320,12 @@ function statPanel($memID)
 	if (!empty($context['load_average']) && !empty($modSettings['loadavg_userstats']) && $context['load_average'] >= $modSettings['loadavg_userstats'])
 		fatal_lang_error('loadavg_userstats_disabled', false);
 
+	$context['sub_template'] = 'profile_stats';
+	register_helper([
+		'inverted_percent' => function($pc) { return 100 - $pc; },
+		'pie_percent' => function($pc) { return (int) $pc / 5 * 20; },
+	]);
+
 	// General user statistics.
 	$timeDays = floor($user_profile[$memID]['total_time_logged_in'] / 86400);
 	$timeHours = floor(($user_profile[$memID]['total_time_logged_in'] % 86400) / 3600);
