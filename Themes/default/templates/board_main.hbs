@@ -51,6 +51,9 @@
                                 <p>{{comma posts}} {{#if this.is_redirect}}{{../../txt.redirects}}{{else}}{{../../txt.posts}}<br> {{comma this.topics}} {{../../txt.board_topics}}{{/if}}</p>
                             </div>
                             <div class="lastpost {{#if this.last_post.id}}lpr_border{{else}}hidden{{/if}}">
+                                {{#if this.last_post.id}}
+                                    {{{this.last_post.member.avatar.image}}}
+                                {{/if}}
                                 {{#if this.last_post.id}}{{{this.last_post.last_post_message}}}{{/if}}
                             </div>
                             
