@@ -1,0 +1,19 @@
+		{{! Display the user profile popup
+		This is designed to be included into the HTML directly via $().load()
+		}}
+		<div class="profile_user_avatar floatleft">
+			<a href="{{scripturl}}?action=profile;u={{context.user.id}}">{{{context.member.avatar.image}}}</a>
+		</div>
+		<div class="profile_user_info floatleft">
+			<span class="profile_username"><a href="{{scripturl}}?action=profile;u={{context.user.id}}">{{{context.user.name}}}</a></span>
+			<span class="profile_group">{{{context.member.group}}}</span>
+		</div>
+		<div class="profile_user_links">
+			<ol>
+				{{#each context.profile_items}}
+				<li>
+					{{{icon}}} <a href="{{{url}}}">{{{title}}}</a>
+				</li>
+				{{/each}}
+			</ol>
+		</div>

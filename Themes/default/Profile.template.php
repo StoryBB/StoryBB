@@ -43,39 +43,6 @@ function template_profile_below()
 }
 
 /**
- * Template for showing off the spiffy popup of the menu
- */
-function template_profile_popup()
-{
-	global $context, $scripturl;
-
-	// Unlike almost every other template, this is designed to be included into the HTML directly via $().load()
-
-	echo '
-		<div class="profile_user_avatar floatleft">
-			<a href="', $scripturl, '?action=profile;u=', $context['user']['id'], '">', $context['member']['avatar']['image'], '</a>
-		</div>
-		<div class="profile_user_info floatleft">
-			<span class="profile_username"><a href="', $scripturl, '?action=profile;u=', $context['user']['id'], '">', $context['user']['name'], '</a></span>
-			<span class="profile_group">', $context['member']['group'], '</span>
-		</div>
-		<div class="profile_user_links">
-			<ol>';
-
-	foreach ($context['profile_items'] as $item)
-	{
-		echo '
-				<li>
-					', $item['icon'], '<a href="', $item['url'], '">', $item['title'], '</a>
-				</li>';
-	}
-
-	echo '
-			</ol>
-		</div>';
-}
-
-/**
  * Template for showing all the posts of the user, in chronological order.
  */
 function template_showPosts()
