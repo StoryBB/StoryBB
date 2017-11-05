@@ -871,7 +871,7 @@ function showPosts($memID)
  */
 function showAttachments($memID)
 {
-	global $txt, $scripturl, $modSettings;
+	global $txt, $scripturl, $modSettings, $context;
 	global $sourcedir;
 
 	// OBEY permissions!
@@ -882,6 +882,7 @@ function showAttachments($memID)
 		$boardsAllowed = array(-1);
 
 	require_once($sourcedir . '/Subs-List.php');
+	$context['sub_template'] = 'profile_show_attachments';
 
 	// This is all the information required to list attachments.
 	$listOptions = array(
