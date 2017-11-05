@@ -641,7 +641,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	{
 		// This defines the formatting for the page indexes used throughout the forum.
 		$settings['page_index'] = array(
-			'extra_before' => '<span class="pages">' . $txt['pages'] . '</span>',
+			'extra_before' => '<span class="pages">{{{txt.pages}}}</span>',
 			'previous_page' => '<span class="generic_icons previous_page"></span>',
 			'current_page' => '<span class="current_page">%1$d</span> ',
 			'page' => '<a class="navPages" href="{URL}">%2$s</a> ',
@@ -652,7 +652,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	}
 
 	$base_link = strtr($settings['page_index']['page'], array('{URL}' => $flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d'));
-	$pageindex = $settings['page_index']['extra_before'];
+	$pageindex = str_replace('{{{txt.pages}}}', $txt['pages'], $settings['page_index']['extra_before']);
 
 
 	// Number of items either side of the selected item.

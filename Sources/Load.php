@@ -2204,43 +2204,33 @@ function loadTheme($id_theme = 0, $initialize = true)
 		if (isset($_REQUEST[$extra]))
 			$requiresXML = true;
 
+	loadLanguage('index+Modifications');
+	$context['template_layers'] = [];
+
 	// Output is fully XML, so no need for the index template.
 	if (isset($_REQUEST['xml']) && (in_array($context['current_action'], $xmlActions) || $requiresXML))
 	{
-		loadLanguage('index+Modifications');
 		loadTemplate('Xml');
 		loadTemplateLayout('raw');
-		$context['template_layers'] = array();
-	}
-
-	// These actions don't require the index template at all.
-	elseif (!empty($context['simple_action']))
-	{
-		loadLanguage('index+Modifications');
-		$context['template_layers'] = array();
-	}
-
-	else
-	{
-		// Custom templates to load, or just default?
-		if (isset($settings['theme_templates']))
-			$templates = explode(',', $settings['theme_templates']);
-		else
-			$templates = array('index');
-
-		// Load each template...
-		foreach ($templates as $template)
-			loadTemplate($template);
-
-		// ...and attempt to load their associated language files.
-		$required_files = implode('+', array_merge($templates, array('Modifications')));
-		loadLanguage($required_files, '', false);
-
-		$context['template_layers'] = [];
 	}
 
 	// Initialize the theme.
-	loadSubTemplate('init', 'ignore');
+	if (file_exists($settings['theme_dir'] . '/theme.json'))
+	{
+		$theme_settings = file_get_contents($settings['theme_dir'] . '/theme.json');
+		if (!empty($theme_settings))
+		{
+			$theme_json = json_decode($theme_settings, true);
+			if (!empty($theme_json) && is_array($theme_json))
+			{
+				foreach ($theme_json as $key => $value)
+				{
+					if (!isset($settings[$key]))
+						$settings[$key] = $value;
+				}
+			}
+		}
+	}
 
 	// Allow overriding the board wide time/number formats.
 	if (empty($user_settings['time_format']) && !empty($txt['time_format']))
