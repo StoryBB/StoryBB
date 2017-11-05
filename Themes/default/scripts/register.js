@@ -65,16 +65,6 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			divHandle.style.display = '';
 	}
 
-	// A button to trigger a username search?
-	function addUsernameSearchTrigger(elementID)
-	{
-		var buttonHandle = document.getElementById(elementID);
-
-		// Attach the event to this element.
-		createEventListener(buttonHandle);
-		buttonHandle.addEventListener('click', checkUsername, false);
-	}
-
 	// This function will automatically pick up all the necessary verification fields and initialise their visual status.
 	function autoSetup(formID)
 	{
@@ -105,12 +95,6 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 				// If we're happy let's add this element!
 				if (curType)
 					addVerificationField(curType, curElement.id);
-
-				// If this is the username do we also have a button to find the user?
-				if (curType == 'username' && document.getElementById(curElement.id + '_link'))
-				{
-					addUsernameSearchTrigger(curElement.id + '_link');
-				}
 			}
 		}
 
