@@ -46,9 +46,6 @@ function template_init()
 	// The version this template/theme is for. This should probably be the version of StoryBB it was created for.
 	$settings['theme_version'] = '3.0';
 
-	// Use plain buttons - as opposed to text buttons?
-	$settings['use_buttons'] = true;
-
 	// Set the following variable to true if this theme requires the optional theme strings file to be loaded.
 	$settings['require_theme_strings'] = false;
 
