@@ -1649,11 +1649,18 @@ function RepairAttachments()
 	// Got here we must be doing well - just the template! :D
 	$context['page_title'] = $txt['repair_attachments'];
 	$context[$context['admin_menu_name']]['current_subsection'] = 'maintenance';
-	$context['sub_template'] = 'attachment_repair';
 
 	// What stage are we at?
-	$context['completed'] = $fix_errors ? true : false;
-	$context['errors_found'] = !empty($to_fix) ? true : false;
+	if ($fix_errors) {
+		// We indicated we were fixing errors, and now we're done.
+		$context['sub_template'] = 'admin_attachment_repair_complete';
+	} elseif (!empty($to_fix)) {
+		// We had errors to fix.
+		$context['sub_template'] = 'admin_attachment_repair_errors_found';
+	} else {
+		// No errors
+		$context['sub_template'] = 'admin_attachment_repair_no_errors';
+	}
 
 }
 
