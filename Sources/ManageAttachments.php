@@ -713,7 +713,7 @@ function MaintainFiles()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
-		WHERE id_member != {int:guest_id_member}',
+		WHERE id_character != {int:guest_id_member}',
 		array(
 			'guest_id_member' => 0,
 		)
@@ -1435,11 +1435,11 @@ function RepairAttachments()
 			$result = $smcFunc['db_query']('', '
 				SELECT a.id_attach, a.id_folder, a.filename, a.file_hash, a.attachment_type
 				FROM {db_prefix}attachments AS a
-					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = a.id_member)
+					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = a.id_character)
 				WHERE a.id_attach BETWEEN {int:substep} AND {int:substep} + 499
-					AND a.id_member != {int:no_member}
+					AND a.id_character != {int:no_member}
 					AND a.id_msg = {int:no_msg}
-					AND mem.id_member IS NULL',
+					AND chars.id_character IS NULL',
 				array(
 					'no_member' => 0,
 					'no_msg' => 0,
@@ -1512,7 +1512,7 @@ function RepairAttachments()
 				FROM {db_prefix}attachments AS a
 					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
 				WHERE a.id_attach BETWEEN {int:substep} AND {int:substep} + 499
-					AND a.id_member = {int:no_member}
+					AND a.id_character = {int:no_member}
 					AND (a.id_msg = {int:no_msg} OR m.id_msg IS NULL)
 					AND a.id_attach NOT IN ({array_int:ignore_ids})
 					AND a.attachment_type IN ({array_int:attach_thumb})',
@@ -1546,7 +1546,7 @@ function RepairAttachments()
 				$smcFunc['db_query']('', '
 					DELETE FROM {db_prefix}attachments
 					WHERE id_attach IN ({array_int:to_remove})
-						AND id_member = {int:no_member}
+						AND id_character = {int:no_member}
 						AND attachment_type IN ({array_int:attach_thumb})',
 					array(
 						'to_remove' => $to_remove,
