@@ -568,6 +568,8 @@ function showPosts($memID)
 	elseif (isset($_GET['sa']) && $_GET['sa'] == 'unwatchedtopics')
 		return showUnwatched($memID);
 
+	$context['sub_template'] = 'profile_show_posts';
+
 	// Are we just viewing topics?
 	$context['is_topics'] = isset($_GET['sa']) && $_GET['sa'] == 'topics' ? true : false;
 
