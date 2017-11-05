@@ -43,9 +43,6 @@ function template_init()
 
 	/* $context, $options and $txt may be available for use, but may not be fully populated yet. */
 
-	// The version this template/theme is for. This should probably be the version of StoryBB it was created for.
-	$settings['theme_version'] = '3.0';
-
 	// Set the following variable to true if this theme requires the optional theme strings file to be loaded.
 	$settings['require_theme_strings'] = false;
 

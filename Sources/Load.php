@@ -2298,10 +2298,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	$context['tabindex'] = 1;
 
-	// Compatibility.
-	if (!isset($settings['theme_version']))
-		$modSettings['memberCount'] = $modSettings['totalMembers'];
-
 	// Default JS variables for use in every theme
 	$context['javascript_vars'] = array(
 		'smf_theme_url' => '"' . $settings['theme_url'] . '"',

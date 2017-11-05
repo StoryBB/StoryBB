@@ -3147,9 +3147,6 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: 
 	);
 	$context['common_stats']['boardindex_total_posts'] = sprintf($txt['boardindex_total_posts'], $context['common_stats']['total_posts'], $context['common_stats']['total_topics'], $context['common_stats']['total_members']);
 
-	if (empty($settings['theme_version']))
-		addJavaScriptVar('smf_scripturl', $scripturl);
-
 	if (!isset($context['page_title']))
 		$context['page_title'] = '';
 
