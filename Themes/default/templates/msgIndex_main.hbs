@@ -114,6 +114,7 @@
 							{{#if is_redirect}}<span class="generic_icons move"></span>{{/if}}
 							{{#if is_poll}}<span class="generic_icons poll"></span>{{/if}}
 						</div>
+						{{{first_post.member.avatar.image}}}
 						<div class="message_index_title">
 							{{#if (and new ../context.user.is_logged)}}<a href="{{new_href}}" id="newicon{{first_post.id}}"><span class="new_posts">{{../txt.new}}</span></a>{{/if}}
 							<span class="preview{{#if is_sticky}} bold_text{{/if}}" title="{{#if ../modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}">
@@ -127,6 +128,7 @@
 				</div>
 				<div class="board_stats centertext"><p>{{replies}} {{../txt.replies}}<br>{{views}} {{../txt.views}}</p></div>
 				<div class="lastpost">
+					{{{last_post.member.avatar.image}}}
 					<p>{{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}}</p>
 				</div> 
 				{{#if ../context.can_quick_mod}}
