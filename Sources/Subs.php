@@ -641,7 +641,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	{
 		// This defines the formatting for the page indexes used throughout the forum.
 		$settings['page_index'] = array(
-			'extra_before' => '<span class="pages">' . $txt['pages'] . '</span>',
+			'extra_before' => '<span class="pages">{{{txt.pages}}}</span>',
 			'previous_page' => '<span class="generic_icons previous_page"></span>',
 			'current_page' => '<span class="current_page">%1$d</span> ',
 			'page' => '<a class="navPages" href="{URL}">%2$s</a> ',
@@ -652,7 +652,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	}
 
 	$base_link = strtr($settings['page_index']['page'], array('{URL}' => $flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d'));
-	$pageindex = $settings['page_index']['extra_before'];
+	$pageindex = str_replace('{{{txt.pages}}}', $txt['pages'], $settings['page_index']['extra_before']);
 
 
 	// Number of items either side of the selected item.
@@ -3147,9 +3147,6 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: 
 	);
 	$context['common_stats']['boardindex_total_posts'] = sprintf($txt['boardindex_total_posts'], $context['common_stats']['total_posts'], $context['common_stats']['total_topics'], $context['common_stats']['total_members']);
 
-	if (empty($settings['theme_version']))
-		addJavaScriptVar('smf_scripturl', $scripturl);
-
 	if (!isset($context['page_title']))
 		$context['page_title'] = '';
 
@@ -3904,10 +3901,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
 	if (function_exists('template_create_button') && !$force_use)
 		return template_create_button($name, $alt, $label = '', $custom = '');
 
-	if (!empty($settings['use_buttons']))
-		return '<span class="generic_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
-	else
-		return '<img src="' . $settings['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
+	return '<span class="generic_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
 }
 
 /**

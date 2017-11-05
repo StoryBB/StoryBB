@@ -315,7 +315,6 @@ DELETE FROM {$db_prefix}settings
 WHERE variable IN (
 	'totalMessag',
 	'redirectMetaRefresh',
-	'memberCount',
 	'cal_today_u',
 	'approve_registration',
 	'registration_disabled',

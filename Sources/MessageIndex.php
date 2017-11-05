@@ -345,7 +345,7 @@ function MessageIndex()
 				' . ($user_info['is_guest'] ? '0' : 'COALESCE(lt.id_msg, COALESCE(lmr.id_msg, -1)) + 1') . ' AS new_from,
 				t.id_last_msg, t.approved, t.unapproved_posts, ml.poster_time AS last_poster_time, t.id_redirect_topic,
 				ml.id_msg_modified, ml.subject AS last_subject, ml.icon AS last_icon,
-				ml.poster_name AS last_member_name, ml.id_member AS last_id_member,' . (!empty($settings['avatars_on_indexes']) ? ' meml.avatar, meml.email_address, memf.avatar AS first_member_avatar, memf.email_address AS first_member_mail, COALESCE(af.id_attach, 0) AS first_member_id_attach, af.filename AS first_member_filename, af.attachment_type AS first_member_attach_type, COALESCE(al.id_attach, 0) AS last_member_id_attach, al.filename AS last_member_filename, al.attachment_type AS last_member_attach_type,' : '') . '
+				ml.poster_name AS last_member_name, ml.id_member AS last_id_member, cl.avatar, meml.email_address, cf.avatar AS first_member_avatar, memf.email_address AS first_member_mail, COALESCE(af.id_attach, 0) AS first_member_id_attach, af.filename AS first_member_filename, af.attachment_type AS first_member_attach_type, COALESCE(al.id_attach, 0) AS last_member_id_attach, al.filename AS last_member_filename, al.attachment_type AS last_member_attach_type,
 				COALESCE(cl.character_name, meml.real_name, ml.poster_name) AS last_display_name, t.id_first_msg,
 				mf.poster_time AS first_poster_time, mf.subject AS first_subject, mf.icon AS first_icon,
 				mf.poster_name AS first_member_name, mf.id_member AS first_id_member,
@@ -360,9 +360,9 @@ function MessageIndex()
 				LEFT JOIN {db_prefix}characters AS cf ON (cf.id_character = mf.id_character)
 				LEFT JOIN {db_prefix}characters AS cl ON (cl.id_character = ml.id_character)
 				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)
-				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)' . (!empty($settings['avatars_on_indexes']) ? '
+				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)
 				LEFT JOIN {db_prefix}attachments AS af ON (af.id_character = mf.id_character)
-				LEFT JOIN {db_prefix}attachments AS al ON (al.id_character = ml.id_character)' : '') . '' . ($user_info['is_guest'] ? '' : '
+				LEFT JOIN {db_prefix}attachments AS al ON (al.id_character = ml.id_character)' . ($user_info['is_guest'] ? '' : '
 				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})') . '
 				' . (!empty($message_index_tables) ? implode("\n\t\t\t\t", $message_index_tables) : '') . '
@@ -530,22 +530,20 @@ function MessageIndex()
 				'unapproved_posts' => $row['unapproved_posts'],
 				'css_class' => $colorClass,
 			));
-			if (!empty($settings['avatars_on_indexes']))
-			{
-				// Last post member avatar
-				$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data(array(
-					'avatar' => $row['avatar'],
-					'email' => $row['email_address'],
-					'filename' => !empty($row['last_member_filename']) ? $row['last_member_filename'] : '',
-				));
 
-				// First post member avatar
-				$context['topics'][$row['id_topic']]['first_post']['member']['avatar'] = set_avatar_data(array(
-					'avatar' => $row['first_member_avatar'],
-					'email' => $row['first_member_mail'],
-					'filename' => !empty($row['first_member_filename']) ? $row['first_member_filename'] : '',
-				));
-			}
+			// Last post member avatar
+			$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data(array(
+				'avatar' => $row['avatar'],
+				'email' => $row['email_address'],
+				'filename' => !empty($row['last_member_filename']) ? $row['last_member_filename'] : '',
+			));
+
+			// First post member avatar
+			$context['topics'][$row['id_topic']]['first_post']['member']['avatar'] = set_avatar_data(array(
+				'avatar' => $row['first_member_avatar'],
+				'email' => $row['first_member_mail'],
+				'filename' => !empty($row['first_member_filename']) ? $row['first_member_filename'] : '',
+			));
 		}
 		$smcFunc['db_free_result']($result);
 

@@ -52,13 +52,13 @@ function getBoardIndex($boardIndexOptions)
 			' . ($user_info['is_guest'] ? ' 1 AS is_read, 0 AS new_from,' : '
 			(CASE WHEN COALESCE(lb.id_msg, 0) >= b.id_msg_updated THEN 1 ELSE 0 END) AS is_read, COALESCE(lb.id_msg, -1) + 1 AS new_from,' . ($boardIndexOptions['include_categories'] ? '
 			c.can_collapse,' : '')) . '
-			COALESCE(mem.id_member, 0) AS id_member, mem.avatar, m.id_msg' . (!empty($settings['avatars_on_boardIndex']) ? ',  mem.email_address, mem.avatar, COALESCE(am.id_attach, 0) AS member_id_attach, am.filename AS member_filename, am.attachment_type AS member_attach_type' : '') . '
+			COALESCE(mem.id_member, 0) AS id_member, chars.avatar, m.id_msg,  mem.email_address, chars.avatar, COALESCE(am.id_attach, 0) AS member_id_attach, am.filename AS member_filename, am.attachment_type AS member_attach_type
 		FROM {db_prefix}boards AS b' . ($boardIndexOptions['include_categories'] ? '
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)' : '') . '
 			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
 			LEFT JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character)
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (!empty($settings['avatars_on_boardIndex']) ? '
-			LEFT JOIN {db_prefix}attachments AS am ON (am.id_character = m.id_character)' : '') . '' . ($user_info['is_guest'] ? '' : '
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
+			LEFT JOIN {db_prefix}attachments AS am ON (am.id_character = m.id_character)' . ($user_info['is_guest'] ? '' : '
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})') . '
 		WHERE {query_see_board}' . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
 			AND b.child_level >= {int:child_level}') : '
@@ -267,12 +267,11 @@ function getBoardIndex($boardIndexOptions)
 			'topic' => $row_board['id_topic']
 		);
 
-		if (!empty($settings['avatars_on_boardIndex']))
-			$this_last_post['member']['avatar'] = set_avatar_data(array(
-				'avatar' => $row_board['avatar'],
-				'email' => $row_board['email_address'],
-				'filename' => !empty($row['member_filename']) ? $row_board['member_filename'] : '',
-			));
+		$this_last_post['member']['avatar'] = set_avatar_data(array(
+			'avatar' => $row_board['avatar'],
+			'email' => $row_board['email_address'],
+			'filename' => !empty($row_board['member_filename']) ? $row_board['member_filename'] : '',
+		));
 
 		// Provide the href and link.
 		if ($row_board['subject'] != '')
