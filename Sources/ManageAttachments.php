@@ -32,9 +32,6 @@ function ManageAttachments()
 	// You have to be able to moderate the forum to do this.
 	isAllowedTo('manage_attachments');
 
-	// Setup the template stuff we'll probably need.
-	loadTemplate('ManageAttachments');
-
 	// If they want to delete attachment(s), delete them. (otherwise fall through..)
 	$subActions = array(
 		'attachments' => 'ManageAttachmentSettings',
@@ -690,7 +687,7 @@ function MaintainFiles()
 {
 	global $context, $modSettings, $smcFunc;
 
-	$context['sub_template'] = 'maintenance';
+	$context['sub_template'] = 'admin_attachment_maintenance';
 
 	$attach_dirs = smf_json_decode($modSettings['attachmentUploadDir'], true);
 
