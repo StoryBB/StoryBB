@@ -452,6 +452,8 @@ function showAlerts($memID)
 	// Create the pagination.
 	$context['pagination'] = constructPageIndex($scripturl . '?action=profile;area=showalerts;u=' . $memID, $start, $count, $maxIndex, false);
 
+	$context['sub_template'] = 'profile_alerts_list';
+
 	// Set some JavaScript for checking all alerts at once.
 	addInlineJavaScript('
 	$(function(){
@@ -465,13 +467,6 @@ function showAlerts($memID)
 			}
 		});
 	});', true);
-
-	// Set a nice message.
-	if (!empty($_SESSION['update_message']))
-	{
-		$context['update_message'] = $txt['profile_updated_own'];
-		unset($_SESSION['update_message']);
-	}
 
 	// Saving multiple changes?
 	if (isset($_GET['save']) && !empty($_POST['mark']))
@@ -503,7 +498,7 @@ function showAlerts($memID)
 			alert_mark($memID, $toMark, $action == 'read' ? 1 : 0);
 
 		// Set a nice update message.
-		$_SESSION['update_message'] = true;
+		session_flash('success', $txt['profile_updated_own']);
 
 		// Redirect.
 		redirectexit('action=profile;area=showalerts;u=' . $memID);
