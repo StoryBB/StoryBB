@@ -1,7 +1,5 @@
 <?php
 
-require_once($sourcedir . '/Subs-MessageIndex.php');
-
 /**
  * This file is what shows the listing of topics in a board.
  * It's just one or two functions, but don't under estimate it ;).
@@ -23,6 +21,8 @@ function MessageIndex()
 {
 	global $txt, $scripturl, $board, $modSettings, $context;
 	global $options, $settings, $board_info, $user_info, $smcFunc, $sourcedir;
+	
+	require_once($sourcedir . '/Subs-MessageIndex.php');
 
 	// If this is a redirection board head off.
 	if ($board_info['redirect'])
