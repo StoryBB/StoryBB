@@ -3503,14 +3503,6 @@ function clean_cache($type = '')
 }
 
 /**
- * Cleans the template cache.
- */
-function clean_template_cache()
-{
-	StoryBB\Template\Cache::clean();
-}
-
-/**
  * Helper function to set an array of data for an user's avatar.
  *
  * Makes assumptions based on the data provided, the following keys are required:
