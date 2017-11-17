@@ -37,12 +37,8 @@ class Template
 		self::add_helper(Template\Helper\Logic::_list());
 
 		// And the math helpers.
-		self::add_helper([
-			'add' => function($a, $b) { return $a + $b; },
-			'sub' => function($a, $b) { return $a - $b; },
-			'mul' => function($a, $b) { return $a * $b; },
-			'div' => function($a, $b) { return $a / $b; },
-		]);
+		self::add_helper(Template\Helper\Math::_list());
+
 		// And everything else.
 		self::add_helper([
 			'get_text' => 'get_text',
