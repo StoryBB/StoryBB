@@ -21,7 +21,7 @@ if (!defined('SMF'))
  */
 function AdminMain()
 {
-	global $txt, $context, $scripturl, $modSettings, $settings;
+	global $txt, $context, $scripturl, $modSettings, $setting, $smcFunc;
 	global $sourcedir, $options, $boarddir;
 
 	// Load the language and templates....
@@ -38,6 +38,22 @@ function AdminMain()
 
 	// Some preferences.
 	$context['admin_preferences'] = !empty($options['admin_preferences']) ? smf_json_decode($options['admin_preferences'], true) : array();
+	
+	//Get the json data
+	$request = $smcFunc['db_query']('substring', '
+		SELECT filename, data
+		FROM {db_prefix}admin_info_files'
+	);
+	
+	$json_files = array();
+	
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$json_files[$row['filename']] = $row['data'];
+	}
+	
+	$context['json_updates'] = $json_files;
+	
 
 	/** @var array $admin_areas Defines the menu structure for the admin center. See {@link Subs-Menu.php Subs-Menu.php} for details! */
 	$admin_areas = array(

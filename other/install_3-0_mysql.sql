@@ -8,8 +8,6 @@
 CREATE TABLE {$db_prefix}admin_info_files (
   id_file TINYINT UNSIGNED AUTO_INCREMENT,
   filename VARCHAR(255) NOT NULL DEFAULT '',
-  path VARCHAR(255) NOT NULL DEFAULT '',
-  parameters VARCHAR(255) NOT NULL DEFAULT '',
   data TEXT NOT NULL,
   filetype VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (id_file),
@@ -1211,12 +1209,10 @@ START TRANSACTION;
 #
 
 INSERT INTO {$db_prefix}admin_info_files
-  (id_file, filename, path, parameters, data, filetype)
+  (id_file, filename, data, filetype)
 VALUES
-  (1, 'current-version.js', '/smf/', 'version=%3$s', '', 'text/javascript'),
-  (2, 'detailed-version.js', '/smf/', 'language=%1$s&version=%3$s', '', 'text/javascript'),
-  (3, 'latest-news.js', '/smf/', 'language=%1$s&format=%2$s', '', 'text/javascript'),
-  (4, 'latest-versions.txt', '/smf/', 'version=%3$s', '', 'text/plain');
+  (1, 'current-version.js', '', 'application/json'),
+  (2, 'latest-news.js', '', 'application/json');
 # --------------------------------------------------------
 
 #
