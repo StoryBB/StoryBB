@@ -42,6 +42,9 @@ class Template
 		// And some string helpers.
 		self::add_helper(Template\Helper\Text::_list());
 
+		// And some array helpers too.
+		self::add_helper(Template\Helper\Arrays::_list());
+
 		// And everything else.
 		self::add_helper([
 			'timeformat' => function($timestamp) { return timeformat($timestamp); },
@@ -49,14 +52,8 @@ class Template
 				array_pop($items); // Strip the last item off the array, it's the calling context.
 				return implode($items);
 			},
-			'getNumItems' => function($items) {
-				return count($items);
-			},
 			'comma' => 'comma_format',
 			'json' => function ($data) { return json_encode($data); },
-			'join' => function($array, $sep = '') { return implode($sep, $array); },
-			'is_array' => function($var) { return is_array($var); },
-			'in_array' => function($item, $array) { return in_array($item, $array); },
 			'breakRow' => function($index, $perRow, $sep) {
 				if ($perRow == 0) {
 					return '';
