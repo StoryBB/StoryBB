@@ -32,9 +32,6 @@ function ManageAttachments()
 	// You have to be able to moderate the forum to do this.
 	isAllowedTo('manage_attachments');
 
-	// Setup the template stuff we'll probably need.
-	loadTemplate('ManageAttachments');
-
 	// If they want to delete attachment(s), delete them. (otherwise fall through..)
 	$subActions = array(
 		'attachments' => 'ManageAttachmentSettings',
@@ -267,11 +264,12 @@ function ManageAvatarSettings($return_config = false)
 	$context['valid_custom_avatar_dir'] = !empty($modSettings['custom_avatar_dir']) && is_dir($modSettings['custom_avatar_dir']) && is_writable($modSettings['custom_avatar_dir']);
 
 	$config_vars = array(
-		// External avatars?
+		// Avatar size?
+		array('int', 'avatar_max_width', 'subtext' => $txt['zero_for_no_limit'], 'min' => 0, 'max' => 500),
+		array('int', 'avatar_max_height', 'subtext' => $txt['zero_for_no_limit'], 'min' => 0, 'max' => 500),
+		// External avatars
 		array('title', 'avatar_external'),
-			array('check', 'avatar_download_external', 0, 'onchange' => 'fUpdateStatus();'),
-			array('text', 'avatar_max_width_external', 'subtext' => $txt['zero_for_no_limit'], 6),
-			array('text', 'avatar_max_height_external', 'subtext' => $txt['zero_for_no_limit'], 6),
+			array('check', 'avatar_download_external', 0),
 			array('select', 'avatar_action_too_large',
 				array(
 					'option_refuse' => $txt['option_refuse'],
@@ -281,14 +279,11 @@ function ManageAvatarSettings($return_config = false)
 			),
 		// Uploadable avatars?
 		array('title', 'avatar_upload'),
-			array('text', 'avatar_max_width_upload', 'subtext' => $txt['zero_for_no_limit'], 6),
-			array('text', 'avatar_max_height_upload', 'subtext' => $txt['zero_for_no_limit'], 6),
-			array('check', 'avatar_resize_upload', 'subtext' => $txt['avatar_resize_upload_note']),
+			array('check', 'avatar_resize_upload', 'subtext' => $testImg ? '' : $txt['avatar_resize_upload_note']),
 			array('check', 'avatar_download_png'),
-			array('check', 'avatar_reencode'),
 		'',
-			array('warning', 'avatar_paranoid_warning'),
-			array('check', 'avatar_paranoid'),
+			array('check', 'avatar_reencode'),
+			array('check', 'avatar_paranoid', 'subtext' => $txt['avatar_paranoid_warning']),
 		'',
 			array('warning', !$context['valid_custom_avatar_dir'] ? 'custom_avatar_dir_wrong' : ''),
 			array('text', 'custom_avatar_dir', 40, 'subtext' => $txt['custom_avatar_dir_desc'], 'invalid' => !$context['valid_custom_avatar_dir']),
@@ -355,9 +350,7 @@ function ManageAvatarSettings($return_config = false)
 	// Prepare the context.
 	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=avatars';
 	prepareDBSettingContext($config_vars);
-
-	// Add a layer for the javascript.
-	$context['template_layers'][] = 'avatar_settings';
+	$context['settings_title'] = $txt['attachment_manager_avatar_settings'];
 }
 
 /**
@@ -482,6 +475,9 @@ function BrowseFiles()
 							return $smcFunc['htmlspecialchars']($rowData['poster_name']);
 
 						// Otherwise it must be an avatar, return the link to the owner of it.
+						elseif (!empty($rowData['character_name']))
+							return $rowData['poster_name'] . ($rowData['poster_name'] != $rowData['character_name'] ? ' (' . $rowData['character_name'] . ')' : '');
+
 						else
 							return sprintf('<a href="%1$s?action=profile;u=%2$d">%3$s</a>', $scripturl, $rowData['id_member'], $rowData['poster_name']);
 					},
@@ -591,12 +587,13 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 	if ($browse_type === 'avatars')
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				{string:blank_text} AS id_msg, COALESCE(mem.real_name, {string:not_applicable_text}) AS poster_name,
-				mem.last_login AS poster_time, 0 AS id_topic, a.id_member, a.id_attach, a.filename, a.file_hash, a.attachment_type,
+				{string:blank_text} AS id_msg, COALESCE(mem.real_name, {string:not_applicable_text}) AS poster_name, chars.character_name,
+				mem.last_login AS poster_time, 0 AS id_topic, mem.id_member, a.id_character, a.id_attach, a.filename, a.file_hash, a.attachment_type,
 				a.size, a.width, a.height, a.downloads, {string:blank_text} AS subject, 0 AS id_board
 			FROM {db_prefix}attachments AS a
-				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = a.id_member)
-			WHERE a.id_member != {int:guest_id}
+				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = a.id_character)
+				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = chars.id_member)
+			WHERE a.id_character != {int:guest_id}
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:per_page}',
 			array(
@@ -611,7 +608,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 	else
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				m.id_msg, COALESCE(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.id_topic, m.id_member,
+				m.id_msg, COALESCE(mem.real_name, m.poster_name) AS poster_name, null AS character_name, m.poster_time, m.id_topic, m.id_member,
 				a.id_attach, a.filename, a.file_hash, a.attachment_type, a.size, a.width, a.height, a.downloads, mf.subject, t.id_board
 			FROM {db_prefix}attachments AS a
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -652,9 +649,9 @@ function list_getNumFiles($browse_type)
 		$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
-		WHERE id_member != {int:guest_id_member}',
+		WHERE id_character != {int:guest_id_character}',
 		array(
-			'guest_id_member' => 0,
+			'guest_id_character' => 0,
 		)
 	);
 	else
@@ -665,7 +662,7 @@ function list_getNumFiles($browse_type)
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 				INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
 			WHERE a.attachment_type = {int:attachment_type}
-				AND a.id_member = {int:guest_id_member}',
+				AND a.id_character = {int:guest_id_member}',
 			array(
 				'attachment_type' => $browse_type === 'thumbs' ? '3' : '0',
 				'guest_id_member' => 0,
@@ -690,7 +687,7 @@ function MaintainFiles()
 {
 	global $context, $modSettings, $smcFunc;
 
-	$context['sub_template'] = 'maintenance';
+	$context['sub_template'] = 'admin_attachment_maintenance';
 
 	$attach_dirs = smf_json_decode($modSettings['attachmentUploadDir'], true);
 
@@ -699,7 +696,7 @@ function MaintainFiles()
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
 		WHERE attachment_type = {int:attachment_type}
-			AND id_member = {int:guest_id_member}',
+			AND id_character = {int:guest_id_member}',
 		array(
 			'attachment_type' => 0,
 			'guest_id_member' => 0,
@@ -713,7 +710,7 @@ function MaintainFiles()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
-		WHERE id_member != {int:guest_id_member}',
+		WHERE id_character != {int:guest_id_member}',
 		array(
 			'guest_id_member' => 0,
 		)
@@ -809,7 +806,7 @@ function RemoveAttachmentByAge()
 	else
 	{
 		// Remove all the old avatars.
-		removeAttachments(array('not_id_member' => 0, 'last_login' => (time() - 24 * 60 * 60 * $_POST['age'])), 'members');
+		removeAttachments(array('not_id_character' => 0, 'last_login' => (time() - 24 * 60 * 60 * $_POST['age'])), 'members');
 	}
 	redirectexit('action=admin;area=manageattachments' . (empty($_REQUEST['avatars']) ? ';sa=maintenance' : ';avatars'));
 }
@@ -960,7 +957,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 			$is_not = substr($real_type, 0, 4) == 'not_';
 			$type = $is_not ? substr($real_type, 4) : $real_type;
 
-			if (in_array($type, array('id_member', 'id_attach', 'id_msg')))
+			if (in_array($type, array('id_character', 'id_attach', 'id_msg')))
 				$new_condition[] = 'a.' . $type . ($is_not ? ' NOT' : '') . ' IN (' . (is_array($restriction) ? '{array_int:' . $real_type . '}' : '{int:' . $real_type . '}') . ')';
 			elseif ($type == 'attachment_type')
 				$new_condition[] = 'a.attachment_type = {int:' . $real_type . '}';
@@ -990,10 +987,11 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 	// Get all the attachment names and id_msg's.
 	$request = $smcFunc['db_query']('', '
 		SELECT
-			a.id_folder, a.filename, a.file_hash, a.attachment_type, a.id_attach, a.id_member' . ($query_type == 'messages' ? ', m.id_msg' : ', a.id_msg') . ',
+			a.id_folder, a.filename, a.file_hash, a.attachment_type, a.id_attach, a.id_character' . ($query_type == 'messages' ? ', m.id_msg' : ', a.id_msg') . ',
 			thumb.id_folder AS thumb_folder, COALESCE(thumb.id_attach, 0) AS id_thumb, thumb.filename AS thumb_filename, thumb.file_hash AS thumb_file_hash, thumb_parent.id_attach AS id_parent
 		FROM {db_prefix}attachments AS a' .($query_type == 'members' ? '
-			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = a.id_member)' : ($query_type == 'messages' ? '
+			INNER JOIN {db_prefix}characters AS chars ON (a.id_character = chars.id_character)
+			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = chars.id_member)' : ($query_type == 'messages' ? '
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)' : '')) . '
 			LEFT JOIN {db_prefix}attachments AS thumb ON (thumb.id_attach = a.id_thumb)
 			LEFT JOIN {db_prefix}attachments AS thumb_parent ON (thumb.attachment_type = {int:thumb_attachment_type} AND thumb_parent.id_thumb = a.id_attach)
@@ -1434,11 +1432,11 @@ function RepairAttachments()
 			$result = $smcFunc['db_query']('', '
 				SELECT a.id_attach, a.id_folder, a.filename, a.file_hash, a.attachment_type
 				FROM {db_prefix}attachments AS a
-					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = a.id_member)
+					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = a.id_character)
 				WHERE a.id_attach BETWEEN {int:substep} AND {int:substep} + 499
-					AND a.id_member != {int:no_member}
+					AND a.id_character != {int:no_member}
 					AND a.id_msg = {int:no_msg}
-					AND mem.id_member IS NULL',
+					AND chars.id_character IS NULL',
 				array(
 					'no_member' => 0,
 					'no_msg' => 0,
@@ -1511,7 +1509,7 @@ function RepairAttachments()
 				FROM {db_prefix}attachments AS a
 					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
 				WHERE a.id_attach BETWEEN {int:substep} AND {int:substep} + 499
-					AND a.id_member = {int:no_member}
+					AND a.id_character = {int:no_member}
 					AND (a.id_msg = {int:no_msg} OR m.id_msg IS NULL)
 					AND a.id_attach NOT IN ({array_int:ignore_ids})
 					AND a.attachment_type IN ({array_int:attach_thumb})',
@@ -1545,7 +1543,7 @@ function RepairAttachments()
 				$smcFunc['db_query']('', '
 					DELETE FROM {db_prefix}attachments
 					WHERE id_attach IN ({array_int:to_remove})
-						AND id_member = {int:no_member}
+						AND id_character = {int:no_member}
 						AND attachment_type IN ({array_int:attach_thumb})',
 					array(
 						'to_remove' => $to_remove,
@@ -1648,11 +1646,18 @@ function RepairAttachments()
 	// Got here we must be doing well - just the template! :D
 	$context['page_title'] = $txt['repair_attachments'];
 	$context[$context['admin_menu_name']]['current_subsection'] = 'maintenance';
-	$context['sub_template'] = 'attachment_repair';
 
 	// What stage are we at?
-	$context['completed'] = $fix_errors ? true : false;
-	$context['errors_found'] = !empty($to_fix) ? true : false;
+	if ($fix_errors) {
+		// We indicated we were fixing errors, and now we're done.
+		$context['sub_template'] = 'admin_attachment_repair_complete';
+	} elseif (!empty($to_fix)) {
+		// We had errors to fix.
+		$context['sub_template'] = 'admin_attachment_repair_errors_found';
+	} else {
+		// No errors
+		$context['sub_template'] = 'admin_attachment_repair_no_errors';
+	}
 
 }
 

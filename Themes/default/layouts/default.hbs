@@ -2,10 +2,8 @@
 <html {{#if context.right_to_left}}dir="rtl" {{/if}}{{#if txt.lang_locale}} lang="{{locale txt.lang_locale}}"{{/if}}>
 <head>
 	<meta charset="UTF-8">
-	{{#each context.css_files}}
-	    <link rel="stylesheet" href="{{fileUrl}}">
-	{{/each}}
     
+    {{{css}}}
     {{{javascript deferred=0}}}
 
 	<title>{{context.page_title_html_safe}}</title>
@@ -191,9 +189,6 @@
 		    </li>
     		<li class="copyright">{{{copyright}}}</li>
     	</ul>
-    	{{#if context.show_load_time}}
-    	<p>{{loadtime}}</p>
-    	{{/if}}
     </div>
 
    {{{javascript deferred=1}}}

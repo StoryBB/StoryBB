@@ -414,11 +414,12 @@ function loadUserSettings()
 		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
 		{
 			$request = $smcFunc['db_query']('', '
-				SELECT mem.*, chars.id_character, chars.character_name, chars.avatar AS char_avatar, chars.signature AS char_signature,
-					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
+				SELECT mem.*, chars.id_character, chars.character_name, chars.signature AS char_signature,
+					chars.id_theme AS char_theme, chars.is_main, chars.main_char_group, chars.char_groups, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, mainchar.avatar AS char_avatar
 				FROM {db_prefix}members AS mem
-					LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = {int:id_member})
 					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
+					LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
+					LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character)
 				WHERE mem.id_member = {int:id_member}
 				LIMIT 1',
 				array(
@@ -427,6 +428,7 @@ function loadUserSettings()
 			);
 			$user_settings = $smcFunc['db_fetch_assoc']($request);
 			$user_settings['id_theme'] = $user_settings['char_theme'];
+			$user_settings['avatar'] = $user_settings['char_avatar'];
 			$smcFunc['db_free_result']($request);
 
 			if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
@@ -1233,7 +1235,7 @@ function loadPermissions()
 function loadMemberData($users, $is_name = false, $set = 'normal')
 {
 	global $user_profile, $modSettings, $board_info, $smcFunc, $context;
-	global $image_proxy_enabled, $image_proxy_secret, $boardurl;
+	global $image_proxy_enabled, $image_proxy_secret, $boardurl, $settings;
 
 	// Can't just look for no users :P.
 	if (empty($users))
@@ -1273,10 +1275,10 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			CASE WHEN mem.id_group = 0 OR mg.icons = {string:blank_string} THEN pg.icons ELSE mg.icons END AS icons';
 	$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
-			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
 			LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
+			LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character)
 			LEFT JOIN {db_prefix}membergroups AS cg ON (chars.main_char_group = cg.id_group)';
 
 	// We add or replace according the the set
@@ -1360,9 +1362,12 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			}
 		}
 		$request = $smcFunc['db_query']('', '
-			SELECT id_member, id_character, character_name, avatar, signature, id_theme, posts, age, date_created,
-				last_active, is_main, main_char_group, char_groups, char_sheet, retired
-			FROM {db_prefix}characters
+			SELECT chars.id_member, chars.id_character, chars.character_name, 
+				a.filename, COALESCE(a.id_attach, 0) AS id_attach, chars.avatar, chars.signature, chars.id_theme,
+				chars.posts, chars.age, chars.date_created, chars.last_active, chars.is_main,
+				chars.main_char_group, chars.char_groups, chars.char_sheet, chars.retired
+			FROM {db_prefix}characters AS chars
+			LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character)
 			WHERE id_member IN ({array_int:loaded_ids})
 			ORDER BY NULL',
 			array(
@@ -1372,6 +1377,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// Take care of proxying avatar if required, do this here for maximum reach
+			$row['avatar_original'] = !empty($row['avatar']) ? $row['avatar'] : '';
 			if ($image_proxy_enabled && !empty($row['avatar']) && stripos($row['avatar'], 'http://') !== false)
 				$row['avatar'] = $boardurl . '/proxy.php?request=' . urlencode($row['avatar']) . '&hash=' . md5($row['avatar'] . $image_proxy_secret);
 
@@ -1380,6 +1386,9 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'character_name' => $row['character_name'],
 				'character_url' => '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'],
 				'avatar' => $row['avatar'],
+				'avatar_filename' => $row['filename'],
+				'id_attach' => $row['id_attach'],
+				'avatar_original' => $row['avatar_original'],
 				'signature' => $row['signature'],
 				'sig_parsed' => !empty($row['signature']) ? parse_bbc($row['signature'], true, 'sig_char_' . $row['id_character']) : '',
 				'id_theme' => $row['id_theme'],
@@ -1396,11 +1405,36 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			if ($row['is_main'])
 			{
 				$user_profile[$row['id_member']]['main_char'] = $row['id_character'];
+
+				$user_profile[$row['id_member']]['avatar_original'] = $row['avatar_original'];
+				$user_profile[$row['id_member']]['avatar'] = $row['avatar'];
+				$user_profile[$row['id_member']]['filename'] = $row['filename'];
+				$user_profile[$row['id_member']]['attachment_type'] = !empty($row['filename']) ? 1 : 0;
+				$user_profile[$row['id_member']]['id_attach'] = $row['id_attach'];
+			}
+			$image = '';
+			if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($row['avatar'], 'gravatar://')))
+			{
+				if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($row['avatar'], 'gravatar://') && strlen($row['avatar']) > 11)
+					$image = get_gravatar_url($smcFunc['substr']($row['avatar'], 11));
+				else
+					$image = get_gravatar_url($user_profile[$row['id_member']]['email_address']);
+			}
+			else
+			{
 				if (!empty($row['avatar']))
 				{
-					$user_profile[$row['id_member']]['avatar'] = $row['avatar'];
+					$image = (stristr($row['avatar'], 'http://') || stristr($row['avatar'], 'https://')) ? $row['avatar'] : '';
 				}
+				elseif (!empty($row['filename']))
+				{
+					$image = $modSettings['custom_avatar_url'] . '/' . $row['filename'];
+				}
+				else
+					$image = $settings['images_url'] . '/default.png';
 			}
+
+			$user_profile[$row['id_member']]['characters'][$row['id_character']]['avatar'] = $image;
 		}
 		$smcFunc['db_free_result']($request);
 
@@ -1521,7 +1555,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 	// Well, it's loaded now anyhow.
 	$dataLoaded[$user] = true;
-	$profile = $user_profile[$user];
+	$profile = &$user_profile[$user];
 
 	// Censor everything.
 	censorText($profile['signature']);
@@ -1557,6 +1591,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'registered_timestamp' => empty($profile['date_registered']) ? 0 : forum_time(true, $profile['date_registered']),
 		'characters' => !empty($profile['characters']) ? $profile['characters'] : array(),
 		'current_character' => !empty($profile['online_character']) ? $profile['online_character'] : 0,
+		'avatar' => '',
 	);
 
 	// If the set isn't minimal then load the monstrous array.
@@ -1615,6 +1650,15 @@ function loadMemberContext($user, $display_custom_fields = false)
 	// If the set isn't minimal then load their avatar as well.
 	if ($context['loadMemberContext_set'] != 'minimal')
 	{
+		// First, find their OOC character.
+		foreach ($profile['characters'] as $character) {
+			if ($character['is_main']) {
+				$profile['avatar'] = $character['avatar'];
+				$profile['filename'] = $character['avatar_filename'];
+				$profile['id_attach'] = $character['id_attach'];
+				break;
+			}
+		}
 		if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($profile['avatar'], 'gravatar://')))
 		{
 			if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($profile['avatar'], 'gravatar://') && strlen($profile['avatar']) > 11)
@@ -2160,43 +2204,33 @@ function loadTheme($id_theme = 0, $initialize = true)
 		if (isset($_REQUEST[$extra]))
 			$requiresXML = true;
 
+	loadLanguage('index+Modifications');
+	$context['template_layers'] = [];
+
 	// Output is fully XML, so no need for the index template.
 	if (isset($_REQUEST['xml']) && (in_array($context['current_action'], $xmlActions) || $requiresXML))
 	{
-		loadLanguage('index+Modifications');
 		loadTemplate('Xml');
 		loadTemplateLayout('raw');
-		$context['template_layers'] = array();
-	}
-
-	// These actions don't require the index template at all.
-	elseif (!empty($context['simple_action']))
-	{
-		loadLanguage('index+Modifications');
-		$context['template_layers'] = array();
-	}
-
-	else
-	{
-		// Custom templates to load, or just default?
-		if (isset($settings['theme_templates']))
-			$templates = explode(',', $settings['theme_templates']);
-		else
-			$templates = array('index');
-
-		// Load each template...
-		foreach ($templates as $template)
-			loadTemplate($template);
-
-		// ...and attempt to load their associated language files.
-		$required_files = implode('+', array_merge($templates, array('Modifications')));
-		loadLanguage($required_files, '', false);
-
-		$context['template_layers'] = [];
 	}
 
 	// Initialize the theme.
-	loadSubTemplate('init', 'ignore');
+	if (file_exists($settings['theme_dir'] . '/theme.json'))
+	{
+		$theme_settings = file_get_contents($settings['theme_dir'] . '/theme.json');
+		if (!empty($theme_settings))
+		{
+			$theme_json = json_decode($theme_settings, true);
+			if (!empty($theme_json) && is_array($theme_json))
+			{
+				foreach ($theme_json as $key => $value)
+				{
+					if (!isset($settings[$key]))
+						$settings[$key] = $value;
+				}
+			}
+		}
+	}
 
 	// Allow overriding the board wide time/number formats.
 	if (empty($user_settings['time_format']) && !empty($txt['time_format']))
@@ -2253,10 +2287,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	$context['tabindex'] = 1;
-
-	// Compatibility.
-	if (!isset($settings['theme_version']))
-		$modSettings['memberCount'] = $modSettings['totalMembers'];
 
 	// Default JS variables for use in every theme
 	$context['javascript_vars'] = array(

@@ -141,7 +141,7 @@ CREATE TABLE {$db_prefix}attachments (
   id_attach bigint default nextval('{$db_prefix}attachments_seq'),
   id_thumb bigint NOT NULL default '0',
   id_msg bigint NOT NULL default '0',
-  id_member int NOT NULL default '0',
+  id_character int NOT NULL default '0',
   id_folder smallint NOT NULL default '1',
   attachment_type smallint NOT NULL default '0',
   filename varchar(255) NOT NULL DEFAULT '',
@@ -160,7 +160,7 @@ CREATE TABLE {$db_prefix}attachments (
 # Indexes for table `attachments`
 #
 
-CREATE UNIQUE INDEX {$db_prefix}attachments_id_member ON {$db_prefix}attachments (id_member, id_attach);
+CREATE UNIQUE INDEX {$db_prefix}attachments_id_character ON {$db_prefix}attachments (id_character, id_attach);
 CREATE INDEX {$db_prefix}attachments_id_msg ON {$db_prefix}attachments (id_msg);
 CREATE INDEX {$db_prefix}attachments_attachment_type ON {$db_prefix}attachments (attachment_type);
 
@@ -2263,7 +2263,6 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('smtp_username', ''),
   ('smtp_password', ''),
   ('mail_type', '0'),
-  ('timeLoadPageEnable', '0'),
   ('totalMembers', '0'),
   ('totalTopics', '1'),
   ('totalMessages', '1'),
@@ -2293,11 +2292,9 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('smileys_url', '{$boardurl}/Smileys'),
   ('custom_avatar_dir', '{$boarddir}/custom_avatar'),
   ('custom_avatar_url', '{$boardurl}/custom_avatar'),
-  ('avatar_max_height_external', '65'),
-  ('avatar_max_width_external', '65'),
+  ('avatar_max_width', '125'),
+  ('avatar_max_height', '125'),
   ('avatar_action_too_large', 'option_css_resize'),
-  ('avatar_max_height_upload', '65'),
-  ('avatar_max_width_upload', '65'),
   ('avatar_resize_upload', '1'),
   ('avatar_download_png', '1'),
   ('failed_login_threshold', '3'),

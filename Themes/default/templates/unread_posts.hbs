@@ -38,6 +38,7 @@
 								{{#if is_posted_in}}<img class="posted" src="{{../settings.images_url}}/icons/profile_sm.png" alt="">{{/if}}
 							</div>
 							<div class="info">
+								{{{first_post.member.avatar.image}}}
 
 								{{! // Now we handle the icons }}
 								<div class="icons floatright">
@@ -45,14 +46,16 @@
 									{{#if is_sticky}} <span class="generic_icons sticky"></span>{{/if}}
 									{{#if is_poll}} <span class="generic_icons poll"></span>{{/if}}
 								</div>
-								<div class="recent_title">
-									<a href="{{{new_href}}}" id="newicon{{{first_post.id}}}"><span class="new_posts">{{{../txt.new}}}</span></a>
-									{{#if is_sticky}}<strong>{{/if}}<span class="preview" title="{{#if modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}"><span id="msg_{{first_post.id}}">{{{first_post.link}}}</span></span>{{#if is_sticky}}</strong>{{/if}}
+								<div class="msg_container">
+									<div class="recent_title">
+										<a href="{{{new_href}}}" id="newicon{{{first_post.id}}}"><span class="new_posts">{{{../txt.new}}}</span></a>
+										{{#if is_sticky}}<strong>{{/if}}<span class="preview" title="{{#if modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}"><span id="msg_{{first_post.id}}">{{{first_post.link}}}</span></span>{{#if is_sticky}}</strong>{{/if}}
+									</div>
+									<div>
+										{{{first_post.started_by}}}
+										<small id="pages{{{first_post.id}}}">&nbsp;{{{pages}}}</small>
+									</div>
 								</div>
-								<p class="floatleft">
-									{{{first_post.started_by}}}
-								</p>
-								<small id="pages{{{first_post.id}}}">&nbsp;{{{pages}}}</small>
 							</div>
 							<div class="board_stats centertext">
 								<p>
@@ -62,6 +65,7 @@
 								</p>
 							</div>
 							<div class="lastpost">
+								{{{last_post.member.avatar.image}}}
 								{{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}}
 							</div>
 

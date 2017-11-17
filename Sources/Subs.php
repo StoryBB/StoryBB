@@ -641,7 +641,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	{
 		// This defines the formatting for the page indexes used throughout the forum.
 		$settings['page_index'] = array(
-			'extra_before' => '<span class="pages">' . $txt['pages'] . '</span>',
+			'extra_before' => '<span class="pages">{{{txt.pages}}}</span>',
 			'previous_page' => '<span class="generic_icons previous_page"></span>',
 			'current_page' => '<span class="current_page">%1$d</span> ',
 			'page' => '<a class="navPages" href="{URL}">%2$s</a> ',
@@ -652,7 +652,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	}
 
 	$base_link = strtr($settings['page_index']['page'], array('{URL}' => $flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d'));
-	$pageindex = $settings['page_index']['extra_before'];
+	$pageindex = str_replace('{{{txt.pages}}}', $txt['pages'], $settings['page_index']['extra_before']);
 
 
 	// Number of items either side of the selected item.
@@ -2868,11 +2868,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 function render_page($content) {
 	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count, $user_info, $options;
 
-	// Show the load time?  (only makes sense for the footer.)
-	// This is not really the correct place for this, ideally it needs to happen
-	// as late as possible, but we don't have a flow where this really works yet.
-	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
-	$context['load_time'] = comma_format(round(microtime(true) - $time_start, 3));
 	$context['load_queries'] = $db_count;
 
 	$context['session_flash'] = session_flash_retrieve();
@@ -2888,7 +2883,6 @@ function render_page($content) {
 		'options' => $options,
 		'user_info' => $user_info,
 		'copyright' => theme_copyright(),
-		'loadtime' => !empty($modSettings['timeLoadPageEnable']) ? sprintf($txt['page_created_full'], $context['load_time'], $context['load_queries']) : ''
 	);
 
 	if (empty($context['layout_template'])) {
@@ -2901,6 +2895,7 @@ function render_page($content) {
 	        'login_helper' => 'login_helper',
 	        'isSelected' => 'isSelected',
 	        'javascript' => 'template_javascript',
+	        'css' => 'template_css',
 	    ]
 	], 'layout-' . (!empty($context['layout_loaded']) ? $context['layout_loaded'] : 'default'));
 
@@ -3133,9 +3128,9 @@ function setupThemeContext($forceload = false)
 	var smf_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');
 
 	// Now add the capping code for avatars.
-	if (!empty($modSettings['avatar_max_width_external']) && !empty($modSettings['avatar_max_height_external']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
+	if (!empty($modSettings['avatar_max_width']) && !empty($modSettings['avatar_max_height']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
 		addInlineCss('
-img.avatar { max-width: ' . $modSettings['avatar_max_width_external'] . 'px; max-height: ' . $modSettings['avatar_max_height_external'] . 'px; }');
+img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: ' . $modSettings['avatar_max_height'] . 'px; }');
 
 	// This looks weird, but it's because BoardIndex.php references the variable.
 	$context['common_stats']['latest_member'] = array(
@@ -3151,9 +3146,6 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width_external'] . 'px; max
 		'latest_member' => $context['common_stats']['latest_member'],
 	);
 	$context['common_stats']['boardindex_total_posts'] = sprintf($txt['boardindex_total_posts'], $context['common_stats']['total_posts'], $context['common_stats']['total_topics'], $context['common_stats']['total_members']);
-
-	if (empty($settings['theme_version']))
-		addJavaScriptVar('smf_scripturl', $scripturl);
 
 	if (!isset($context['page_title']))
 		$context['page_title'] = '';
@@ -3492,6 +3484,7 @@ function template_css()
 
 	$toMinify = array();
 	$normal = array();
+	$return = '';
 
 	foreach ($context['css_files'] as $id => $file)
 	{
@@ -3520,19 +3513,19 @@ function template_css()
 		// Minify process couldn't work, print each individual files.
 		if (!empty($result) && is_array($result))
 			foreach ($result as $minFailedFile)
-				echo '
-	<link rel="stylesheet" href="', $minFailedFile['fileUrl'], '">';
+				$return .= '
+	<link rel="stylesheet" href="' . $minFailedFile['fileUrl'] . '">';
 
 		else
-			echo '
-	<link rel="stylesheet" href="', $settings['theme_url'] ,'/css/minified.css', $minSeed ,'">';
+			$return .= '
+	<link rel="stylesheet" href="' . $settings['theme_url'] . '/css/minified.css' . $minSeed . '">';
 	}
 
 	// Print the rest after the minified files.
 	if (!empty($normal))
 		foreach ($normal as $nf)
-			echo '
-	<link rel="stylesheet" href="', $nf ,'">';
+			$return .= '
+	<link rel="stylesheet" href="' . $nf . '">';
 
 	if ($db_show_debug === true)
 	{
@@ -3544,16 +3537,17 @@ function template_css()
 
 	if (!empty($context['css_header']))
 	{
-		echo '
+		$return .= '
 	<style>';
 
 		foreach ($context['css_header'] as $css)
-			echo $css .'
+			$return .= $css .'
 	';
 
-		echo'
+		$return .= '
 	</style>';
 	}
+	return $return;
 }
 
 /**
@@ -3907,10 +3901,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
 	if (function_exists('template_create_button') && !$force_use)
 		return template_create_button($name, $alt, $label = '', $custom = '');
 
-	if (!empty($settings['use_buttons']))
-		return '<span class="generic_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
-	else
-		return '<img src="' . $settings['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
+	return '<span class="generic_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
 }
 
 /**
@@ -4790,11 +4781,11 @@ function get_gravatar_url($email_address)
 			$url_params[] = 'rating=' . $modSettings['gravatarMaxRating'];
 		if (!empty($modSettings['gravatarDefault']) && in_array($modSettings['gravatarDefault'], $defaults))
 			$url_params[] = 'default=' . $modSettings['gravatarDefault'];
-		if (!empty($modSettings['avatar_max_width_external']))
-			$size_string = (int) $modSettings['avatar_max_width_external'];
-		if (!empty($modSettings['avatar_max_height_external']) && !empty($size_string))
-			if ((int) $modSettings['avatar_max_height_external'] < $size_string)
-				$size_string = $modSettings['avatar_max_height_external'];
+		if (!empty($modSettings['avatar_max_width']))
+			$size_string = (int) $modSettings['avatar_max_width'];
+		if (!empty($modSettings['avatar_max_height']) && !empty($size_string))
+			if ((int) $modSettings['avatar_max_height'] < $size_string)
+				$size_string = $modSettings['avatar_max_height'];
 
 		if (!empty($size_string))
 			$url_params[] = 's=' . $size_string;
