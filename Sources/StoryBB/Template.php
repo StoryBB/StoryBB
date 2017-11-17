@@ -287,3 +287,5 @@ class Template
 		}
 	}
 }
+
+?>
