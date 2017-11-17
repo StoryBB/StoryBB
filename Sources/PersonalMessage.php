@@ -3460,7 +3460,7 @@ function ReportMessage()
 	// If we're here, just send the user to the template, with a few useful context bits.
 	if (!isset($_POST['report']))
 	{
-		$context['sub_template'] = 'report_message';
+		$context['sub_template'] = 'personal_message_report';
 
 		// @todo I don't like being able to pick who to send it to.  Favoritism, etc. sucks.
 		// Now, get all the administrators.
@@ -3602,7 +3602,7 @@ function ReportMessage()
 			loadLanguage('PersonalMessage', '', false);
 
 		// Leave them with a template.
-		$context['sub_template'] = 'report_message_complete';
+		$context['sub_template'] = 'personal_message_report_complete';
 	}
 }
 
