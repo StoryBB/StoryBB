@@ -45,6 +45,9 @@ class Template
 		// And some array helpers too.
 		self::add_helper(Template\Helper\Arrays::_list());
 
+		// And helpers for sessions and tokens to make life easier.
+		self::add_helper(Template\Helper\Session::_list());
+
 		// And everything else.
 		self::add_helper([
 			'timeformat' => function($timestamp) { return timeformat($timestamp); },
@@ -60,14 +63,6 @@ class Template
 				}
 				if ($index % $perRow === 0) return $sep;
 				return '';
-			},
-			'token_var' => function($string) {
-				global $context;
-				return isset($context[$string . '_token_var']) ? $context[$string . '_token_var'] : '';
-			},
-			'token' => function($string) {
-				global $context;
-				return isset($context[$string . '_token']) ? $context[$string . '_token'] : '';
 			},
 			'dynamicpartial' => function($partial) {
 				global $context, $txt, $scripturl, $settings, $modSettings, $options;

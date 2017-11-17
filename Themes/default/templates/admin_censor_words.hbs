@@ -55,7 +55,7 @@
 				</div>
 
 				<input type="hidden" name="{{{context.session_var}}}" value="{{{context.session_id}}}">
-				<input type="hidden" name="{{{context.admin-censor_token_var}}}" value="{{{context.admin-censor_token}}}">
+				{{token_form 'admin-censor'}}
 			</form>
 		</div>
 		<script>
