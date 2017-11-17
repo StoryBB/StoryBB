@@ -39,15 +39,11 @@ class Template
 		// And the math helpers.
 		self::add_helper(Template\Helper\Math::_list());
 
+		// And some string helpers.
+		self::add_helper(Template\Helper\Text::_list());
+
 		// And everything else.
 		self::add_helper([
-			'get_text' => 'get_text',
-			'textTemplate' => function($template, ...$args) {
-				// Strip the last item off the array, it's the calling context.
-				array_pop($args);
-				$string = new \LightnCandy\SafeString(sprintf($template, ...$args));
-				return (string) $string;
-			},
 			'timeformat' => function($timestamp) { return timeformat($timestamp); },
 			'concat' => function(...$items) {
 				array_pop($items); // Strip the last item off the array, it's the calling context.
