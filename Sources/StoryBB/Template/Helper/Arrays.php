@@ -44,6 +44,11 @@ class Arrays
 	{
 		return count($array);
 	}
+
+	public static function array2js($array)
+	{
+		return new \LightnCandy\SafeString(json_encode(array_values($array)));
+	}
 }
 
 ?>

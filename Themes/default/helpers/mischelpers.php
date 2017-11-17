@@ -11,12 +11,11 @@
 
 function isSelected($current_val, $val) 
 {
-	
-    return new \LightnCandy\SafeString($current_val == $val ? 'selected="selected' : '');
+	return StoryBB\Template\Helper\Text::isSelected($current_val, $val);
 }
 
 function hasKey($arr, $key) {
-	return in_array($arr, $key);
+	return StoryBB\Template\Helper\Arrays::in_array($key, $arr);
 }
 
 ?>
