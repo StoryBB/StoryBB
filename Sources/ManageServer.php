@@ -673,7 +673,7 @@ function ModifyCacheSettings($return_config = false)
 
 	// Prepare the template.
 	prepareServerSettingsContext($config_vars);
-	addTemplate('admin_clean_cache_button');
+	StoryBB\Template::add('admin_clean_cache_button');
 }
 
 /**

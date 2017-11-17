@@ -2517,10 +2517,6 @@ function compileTemplate($template, $options = [], $cache_id = '') {
 	return StoryBB\Template::compile($template, $options, $cache_id);
 }
 
-function addTemplate($name, $position = 'after', $relative = null) {
-	StoryBB\Template::add($name, $position, $relative);
-}
-
 function register_helper($helper_array) {
 	StoryBB\Template::add_helper($helper_array);
 }
