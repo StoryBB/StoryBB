@@ -195,16 +195,6 @@ error_reporting($ssi_error_reporting);
 return true;
 
 /**
- * This shuts down the SSI and shows the footer.
- * @return void
- */
-function ssi_shutdown()
-{
-	if (!isset($_GET['ssi_function']) || $_GET['ssi_function'] != 'shutdown')
-		template_footer();
-}
-
-/**
  * Display a welcome message, like: Hey, User, you have 0 messages, 0 are new.
  * @param string $output_method The output method. If 'echo', will display everything. Otherwise returns an array of user info.
  * @return void|array Displays a welcome message or returns an array of user data depending on output_method.

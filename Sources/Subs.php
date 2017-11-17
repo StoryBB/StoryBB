@@ -2858,7 +2858,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		if (!$footer_done)
 		{
 			$footer_done = true;
-			template_footer();
 
 			// (since this is just debugging... it's okay that it's after </html>.)
 			if (!isset($_REQUEST['xml']))
@@ -3332,15 +3331,6 @@ function theme_copyright()
 
 	// Put in the version...
 	return sprintf($forum_copyright, $forum_version, $software_year);
-}
-
-/**
- * The template footer
- */
-function template_footer()
-{
-	global $context, $modSettings, $time_start, $db_count;
-
 }
 
 /**
