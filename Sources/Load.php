@@ -2211,7 +2211,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (isset($_REQUEST['xml']) && (in_array($context['current_action'], $xmlActions) || $requiresXML))
 	{
 		loadTemplate('Xml');
-		loadTemplateLayout('raw');
+		StoryBB\Template::set_layout('raw');
 	}
 
 	// Initialize the theme.
@@ -2490,16 +2490,6 @@ function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
  */
 function loadTemplateFile($template) {
 	return StoryBB\Template::load($template);
-}
-
-/**
- * Loads a template layout.
- *
- * @param string $partial Layout name, without root path or extension
- * @return string Layout template contents
- */
-function loadTemplateLayout($layout) {
-	StoryBB\Template::set_layout($layout);
 }
 
 /**

@@ -417,7 +417,7 @@ function ViewFile()
 		'file' => strtr($file, array('"' => '\\"')),
 	);
 
-	loadTemplateLayout('raw');
+	StoryBB\Template::set_layout('raw');
 	$context['template_layers'] = array();
 	$context['sub_template'] = 'error_show_file';
 
