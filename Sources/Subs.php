@@ -2836,8 +2836,8 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 				$buffer = ob_get_clean();
 				$content .= $buffer;
 			} else {
-    			$phpStr = compileTemplate(loadTemplateFile($sub_template), [], $settings['theme_id'] . '-' . $sub_template);
-    			$content .= prepareTemplate($phpStr, [
+				$phpStr = StoryBB\Template::compile(StoryBB\Template::load($sub_template), [], $settings['theme_id'] . '-' . $sub_template);
+    			$content .= StoryBB\Template::prepare($phpStr, [
 					'context' => $context,
 					'txt' => $txt,
 					'scripturl' => $scripturl,
@@ -2888,7 +2888,7 @@ function render_page($content) {
 
 	$context['session_flash'] = session_flash_retrieve();
 
-	$data = Array(
+	StoryBB\Template::render([
 		'content' => $content,
 		'context' => $context,
 		'txt' => $txt,
@@ -2899,33 +2899,7 @@ function render_page($content) {
 		'options' => $options,
 		'user_info' => $user_info,
 		'copyright' => theme_copyright(),
-	);
-
-	if (empty($context['layout_template'])) {
-		loadTemplateLayout('default');
-	}
-
-	$phpStr = compileTemplate($context['layout_template'], [
-	    'helpers' => [
-	    	'locale' => 'locale_helper',
-	        'login_helper' => 'login_helper',
-	        'isSelected' => 'isSelected',
-	        'javascript' => 'template_javascript',
-	        'css' => 'template_css',
-	    ]
-	], 'layout-' . (!empty($context['layout_loaded']) ? $context['layout_loaded'] : 'default'));
-
-	echo prepareTemplate($phpStr, $data);
-}
-
-function prepareTemplate($phpStr, $data) {
-	if (is_callable($phpStr))
-	{
-		return $phpStr($data);
-	}
-
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
+	]);
 }
 
 function locale_helper($lang_locale) 

@@ -1796,9 +1796,9 @@ function control_richedit_helper($editor_id, $smileyContainer = null, $bbcContai
 		'smileyContainer' => $smileyContainer,
 		'bbcContainer' => $bbcContainer,
 	];
-	$template = loadTemplatePartial('control_richedit');
-	$phpStr = compileTemplate($template, [], 'richedit');
-	return prepareTemplate($phpStr, $data);
+	$template = StoryBB\Template::load_partial('control_richedit');
+	$phpStr = StoryBB\Template::compile($template, [], 'richedit');
+	return StoryBB\Template::prepare($phpStr, $data);
 }
 
 function control_richedit_buttons_helper($editor_id) {
@@ -1812,9 +1812,9 @@ function control_richedit_buttons_helper($editor_id) {
 		'modSettings' => $modSettings,
 		'txt' => $txt,
 	];
-	$template = loadTemplatePartial('control_richedit_buttons');
-	$phpStr = compileTemplate($template, [], 'richedit_buttons');
-	return prepareTemplate($phpStr, $data);
+	$template = StoryBB\Template::load_partial('control_richedit_buttons');
+	$phpStr = StoryBB\Template::compile($template, [], 'richedit_buttons');
+	return StoryBB\Template::prepare($phpStr, $data);
 }
 
 /**
@@ -2129,9 +2129,9 @@ function visual_verification_helper($verify_id)
 		'modSettings' => $modSettings,
 		'txt' => $txt,
 	];
-	$template = loadTemplatePartial('control_visual_verification');
-	$phpStr = compileTemplate($template, [], 'visual_verification');
-	return prepareTemplate($phpStr, $data);	
+	$template = StoryBB\Template::load_partial('control_visual_verification');
+	$phpStr = StoryBB\Template::compile($template, [], 'visual_verification');
+	return StoryBB\Template::prepare($phpStr, $data);	
 }
 
 /**
