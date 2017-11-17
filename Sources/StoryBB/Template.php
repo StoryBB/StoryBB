@@ -34,17 +34,8 @@ class Template
 		}
 
 		// Add the logic helpers.
-		self::add_helper([
-			'eq' => 'logichelper_eq',
-			'neq' => 'logichelper_ne',
-			'lt' => 'logichelper_lt',
-			'gt' => 'logichelper_gt',
-			'lte' => 'logichelper_lte',
-			'gte' => 'logichelper_gte',
-			'not' => 'logichelper_not',
-			'and' => 'logichelper_and',
-			'or' => 'logichelper_or',
-		]);
+		self::add_helper(Template\Helper\Logic::_list());
+
 		// And the math helpers.
 		self::add_helper([
 			'add' => function($a, $b) { return $a + $b; },
