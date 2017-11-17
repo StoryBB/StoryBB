@@ -29,30 +29,6 @@ function array2js($array) {
 	return new \LightnCandy\SafeString(json_encode(array_values($array)));
 }
 
-/**
- * Given an array of strings, combine them in a 'more readable' way,
- * e.g. "X and Y", "X, Y and Z"
- *
- * @param $array Array of strings to nicely implode
- * @return string Combined string
- */
-function implode_and($array)
-{
-	global $txt;
-	loadLanguage('Who');
-
-	if (count($array) <= 2)
-	{
-		return implode(' ' . $txt['credits_and'] . ' ', $array);
-	}
-	else
-	{
-		$last = array_pop($array);
-		// And this should have an Oxford comma because @RaceProUK said so.
-		return implode(', ', $array) . ', ' . $txt['credits_and'] . ' ' . $last;
-	}
-}
-
 function JSEscape($string)
 {
 	global $scripturl;
