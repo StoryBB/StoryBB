@@ -354,19 +354,6 @@ function template_message_icons()
 }
 
 /**
- * The XML for instantly showing whether a username is valid on the registration page
- */
-function template_check_username()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
-	<username valid="', $context['valid_username'] ? 1 : 0, '">', cleanXml($context['checked_username']), '</username>
-</smf>';
-}
-
-/**
  * This prints XML in its most generic form.
  */
 function template_generic_xml()

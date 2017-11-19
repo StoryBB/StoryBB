@@ -853,11 +853,13 @@ function RegisterCheckUsername()
 	global $sourcedir, $context;
 
 	// This is XML!
-	loadTemplate('Xml');
-	loadTemplateLayout('raw');
-	$context['sub_template'] = 'check_username';
+	loadTemplateLayout('xml');
+	$context['sub_template'] = 'xml_check_username';
 	$context['checked_username'] = isset($_GET['username']) ? un_htmlspecialchars($_GET['username']) : '';
 	$context['valid_username'] = true;
+	register_helper([
+		'cleanXml' => 'cleanXml'
+	]);
 
 	// Clean it up like mother would.
 	$context['checked_username'] = preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $context['checked_username']);
