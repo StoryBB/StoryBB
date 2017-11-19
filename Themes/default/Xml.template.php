@@ -322,22 +322,6 @@ function template_results()
 }
 
 /**
- * The XML for displaying a column of message icons and selecting one via AJAX
- */
-function template_message_icons()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>';
-	foreach ($context['icons'] as $icon)
-		echo '
-	<icon value="', $icon['value'], '" url="', $icon['url'], '"><![CDATA[', cleanXml($icon['name']), ']]></icon>';
-	echo '
-</smf>';
-}
-
-/**
  * This prints XML in its most generic form.
  */
 function template_generic_xml()
