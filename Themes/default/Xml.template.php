@@ -8,19 +8,6 @@
  */
 
 /**
- *
- */
-function template_sendbody()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
-	<message view="', $context['view'], '">', cleanXml($context['message']), '</message>
-</smf>';
-}
-
-/**
  * The XML for handling things when you're done editing a post inline
  */
 function template_modifydone()
