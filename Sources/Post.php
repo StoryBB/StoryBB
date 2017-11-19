@@ -2369,8 +2369,6 @@ function QuoteFast()
 	global $sourcedir, $smcFunc;
 
 	loadLanguage('Post');
-	if (!isset($_REQUEST['xml']))
-		loadTemplate('Post');
 
 	include_once($sourcedir . '/Subs-Post.php');
 
@@ -2401,18 +2399,11 @@ function QuoteFast()
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
-	if (isset($_REQUEST['xml']))
-	{
-		$context['sub_template'] = 'xml_quotefast';
-		loadTemplateLayout('xml');
-		register_helper([
-			'cleanXml' => 'cleanXml',
-		]);
-	}
-	else
-	{
-		$context['sub_template'] = 'post_quotefast';
-	}
+	$context['sub_template'] = 'xml_quotefast';
+	loadTemplateLayout('xml');
+	register_helper([
+		'cleanXml' => 'cleanXml',
+	]);
 
 	if (!empty($row))
 		$can_view_post = $row['approved'] || ($row['id_member'] != 0 && $row['id_member'] == $user_info['id']) || allowedTo('approve_posts', $row['id_board']);

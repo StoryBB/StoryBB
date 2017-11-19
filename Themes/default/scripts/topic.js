@@ -233,19 +233,12 @@ QuickReply.prototype.quote = function (iMessageId, xDeprecated)
 	}
 	else
 	{
-		// Doing it the XMLhttp way?
-		if (window.XMLHttpRequest)
-		{
-			ajax_indicator(true);
-			if (this.bIsFull)
-				insertQuoteFast(iMessageId);
+		ajax_indicator(true);
+		if (this.bIsFull)
+			insertQuoteFast(iMessageId);
 
-			else
-				getXMLDocument(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';xml', this.onQuoteReceived);
-		}
-		// Or with a smart popup!
 		else
-			reqWin(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId, 240, 90);
+			getXMLDocument(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';xml', this.onQuoteReceived);
 
 		// Move the view to the quick reply box.
 		if (navigator.appName == 'Microsoft Internet Explorer')
