@@ -21,22 +21,6 @@ function template_sendbody()
 }
 
 /**
- * This defines the XML for the inline edit feature
- */
-function template_modifyfast()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
-	<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>
-	<message id="msg_', $context['message']['id'], '"><![CDATA[', cleanXml($context['message']['body']), ']]></message>
-	<reason time="', $context['message']['reason']['time'], '" name="', $context['message']['reason']['name'], '"><![CDATA[', cleanXml($context['message']['reason']['text']), ']]></reason>
-</smf>';
-
-}
-
-/**
  * The XML for handling things when you're done editing a post inline
  */
 function template_modifydone()

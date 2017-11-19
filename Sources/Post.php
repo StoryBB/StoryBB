@@ -2423,7 +2423,7 @@ function QuoteFast()
 		{
 			censorText($row['subject']);
 
-			$context['sub_template'] = 'modifyfast';
+			$context['sub_template'] = 'xml_modifyfast';
 			$context['message'] = array(
 				'id' => $_REQUEST['quote'],
 				'body' => $row['body'],
@@ -2455,7 +2455,7 @@ function QuoteFast()
 	// In case our message has been removed in the meantime.
 	elseif (isset($_REQUEST['modify']))
 	{
-		$context['sub_template'] = 'modifyfast';
+		$context['sub_template'] = 'xml_modifyfast';
 		$context['message'] = array(
 			'id' => 0,
 			'body' => '',
