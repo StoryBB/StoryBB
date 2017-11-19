@@ -49,35 +49,7 @@ class Template
 		self::add_helper(Template\Helper\Session::_list());
 
 		// And everything else.
-		self::add_helper([
-			'timeformat' => function($timestamp) { return timeformat($timestamp); },
-			'concat' => function(...$items) {
-				array_pop($items); // Strip the last item off the array, it's the calling context.
-				return implode($items);
-			},
-			'comma' => 'comma_format',
-			'json' => function ($data) { return json_encode($data); },
-			'breakRow' => function($index, $perRow, $sep) {
-				if ($perRow == 0) {
-					return '';
-				}
-				if ($index % $perRow === 0) return $sep;
-				return '';
-			},
-			'dynamicpartial' => function($partial) {
-				global $context, $txt, $scripturl, $settings, $modSettings, $options;
-				$template = \StoryBB\Template::load_partial($partial);
-				$phpStr = \StoryBB\Template::compile($template, [], 'dynamicpartial-' . $settings['theme_id'] . '-' . $partial);
-				return \StoryBB\Template::prepare($phpStr, [
-					'context' => $context,
-					'txt' => $txt,
-					'scripturl' => $scripturl,
-					'settings' => $settings,
-					'modSettings' => $modSettings,
-					'options' => $options,
-				]);
-			}
-		]);
+		self::add_helper(Template\Helper\Misc::_list());
 	}
 
 	/**

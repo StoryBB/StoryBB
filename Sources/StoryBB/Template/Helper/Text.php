@@ -18,7 +18,8 @@ class Text
 	{
 		return ([
 			'get_text' => 'StoryBB\\Template\\Helper\\Text::get_text',
-			'textTemplate' => 'StoryBB\Template\\Helper\\Text::textTemplate',
+			'textTemplate' => 'StoryBB\\Template\\Helper\\Text::textTemplate',
+			'concat' => 'StoryBB\\Template\\Helper\\Text::concat',
 		]);
 	}
 
@@ -51,6 +52,20 @@ class Text
 		array_pop($args);
 		$string = new \LightnCandy\SafeString(sprintf($template, ...$args));
 		return (string) $string;
+	}
+
+	/**
+	 * Accept an array of items and return the array as a string.
+	 * Useful for combining things in helpers for other helpers.
+	 * The last item is stripped from the array as it is Lightncandy's context.
+	 *
+	 * @param array $items A list of items to concatenate.
+	 * @return string The list of items concatenated.
+	 */
+	public static function concat(...$items)
+	{
+		array_pop($items);
+		return implode('', $items);
 	}
 
 	public static function JSEscape($string)
