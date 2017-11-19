@@ -2899,6 +2899,25 @@ h3 .collapse {
 	display: inline-block;
 	vertical-align: middle;
 }
+.lastpost img.avatar {
+	max-width: 40px;
+	max-height: 40px;
+	float: left;
+	margin-right: 10px;
+}
+.info img.avatar {
+	max-width: 40px;
+	max-height: 40px;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.info .msg_container {
+	display: inline-block;
+	vertical-align: middle;
+}
 .main_container {
 	margin-bottom: 20px;
 }

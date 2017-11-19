@@ -27,36 +27,36 @@ if (!defined('SMF'))
  * - returns whether the download and resize was successful.
  *
  * @param string $url The full path to the temporary file
- * @param int $memID The member ID
+ * @param int $charID The character ID
  * @param int $max_width The maximum allowed width for the avatar
  * @param int $max_height The maximum allowed height for the avatar
  * @return boolean Whether the download and resize was successful.
  *
  */
-function downloadAvatar($url, $memID, $max_width, $max_height)
+function downloadAvatar($url, $charID, $max_width, $max_height)
 {
 	global $modSettings, $sourcedir, $smcFunc;
 
 	$ext = !empty($modSettings['avatar_download_png']) ? 'png' : 'jpeg';
-	$destName = 'avatar_' . $memID . '_' . time() . '.' . $ext;
+	$destName = 'avatar_' . $charID . '_' . time() . '.' . $ext;
 
 	// Just making sure there is a non-zero member.
-	if (empty($memID))
+	if (empty($charID))
 		return false;
 
 	require_once($sourcedir . '/ManageAttachments.php');
-	removeAttachments(array('id_member' => $memID));
+	removeAttachments(array('id_character' => $charID));
 
 	$id_folder = 1;
 	$avatar_hash = '';
 	$attachID = $smcFunc['db_insert']('',
 		'{db_prefix}attachments',
 		array(
-			'id_member' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-255', 'fileext' => 'string-8', 'size' => 'int',
+			'id_character' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-255', 'fileext' => 'string-8', 'size' => 'int',
 			'id_folder' => 'int',
 		),
 		array(
-			$memID, 1, $destName, $avatar_hash, $ext, 1,
+			$charID, 1, $destName, $avatar_hash, $ext, 1,
 			$id_folder,
 		),
 		array('id_attach'),

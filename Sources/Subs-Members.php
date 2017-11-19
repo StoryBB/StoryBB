@@ -371,7 +371,8 @@ function deleteMembers($users, $check_not_admin = false)
 
 	// Delete avatar.
 	require_once($sourcedir . '/ManageAttachments.php');
-	removeAttachments(array('id_member' => $users));
+	//@todo get characters from users
+	//removeAttachments(array('id_member' => $users));
 
 	// It's over, no more moderation for you.
 	$smcFunc['db_query']('', '

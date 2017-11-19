@@ -2,7 +2,7 @@
 	</div>
 	<div class="cat_bar">
 		<h3 class="{{#if config_var.class}}{{config_var.class}}{{else}}catbg{{/if}}"{{#if config_var.force_div_id}} id="{{config_var.force_div_id}}"{{/if}}>
-			{{#if config_var.help}}{{> helpicon config_var.help}}{{/if}}
+			{{#if config_var.help}}{{> helpicon help=config_var.help}}{{/if}}
 			{{{config_var.label}}}
 		</h3>
 	</div>

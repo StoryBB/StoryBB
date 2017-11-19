@@ -700,7 +700,7 @@ function UnreadTopics()
 	// This part is the same for each query.
 	$select_clause = '
 				ms.subject AS first_subject, ms.poster_time AS first_poster_time, ms.id_topic, t.id_board, b.name AS bname,
-				t.num_replies, t.num_views, ms.id_member AS id_first_member, ml.id_member AS id_last_member,' . (!empty($settings['avatars_on_indexes']) ? ' meml.avatar, meml.email_address, mems.avatar AS first_poster_avatar, mems.email_address AS first_poster_email, COALESCE(af.id_attach, 0) AS first_poster_id_attach, af.filename AS first_poster_filename, af.attachment_type AS first_poster_attach_type, COALESCE(al.id_attach, 0) AS last_poster_id_attach, al.filename AS last_poster_filename, al.attachment_type AS last_poster_attach_type,' : '') . '
+				t.num_replies, t.num_views, ms.id_member AS id_first_member, ml.id_member AS id_last_member, charsl.avatar, meml.email_address, charss.avatar AS first_poster_avatar, mems.email_address AS first_poster_email, COALESCE(af.id_attach, 0) AS first_poster_id_attach, af.filename AS first_poster_filename, af.attachment_type AS first_poster_attach_type, COALESCE(al.id_attach, 0) AS last_poster_id_attach, al.filename AS last_poster_filename, al.attachment_type AS last_poster_attach_type,
 				ml.poster_time AS last_poster_time, COALESCE(charss.character_name, mems.real_name, ms.poster_name) AS first_poster_name,
 				COALESCE(charsl.character_name, meml.real_name, ml.poster_name) AS last_poster_name,
 				charss.id_character AS first_character_id, charsl.id_character AS last_character_id, ml.subject AS last_subject,
@@ -866,9 +866,9 @@ function UnreadTopics()
 				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 				LEFT JOIN {db_prefix}boards AS b ON (b.id_board = ms.id_board)
 				LEFT JOIN {db_prefix}members AS mems ON (mems.id_member = ms.id_member)
-				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)' . (!empty($settings['avatars_on_indexes']) ? '
-				LEFT JOIN {db_prefix}attachments AS af ON (af.id_member = mems.id_member)
-				LEFT JOIN {db_prefix}attachments AS al ON (al.id_member = meml.id_member)' : '') . '
+				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)
+				LEFT JOIN {db_prefix}attachments AS af ON (af.id_character = ms.id_character)
+				LEFT JOIN {db_prefix}attachments AS al ON (al.id_character = ml.id_character)
 				LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}characters AS charss ON (charss.id_character = ms.id_character)
@@ -956,9 +956,9 @@ function UnreadTopics()
 				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 				LEFT JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				LEFT JOIN {db_prefix}members AS mems ON (mems.id_member = ms.id_member)
-				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)' . (!empty($settings['avatars_on_indexes']) ? '
-				LEFT JOIN {db_prefix}attachments AS af ON (af.id_member = mems.id_member)
-				LEFT JOIN {db_prefix}attachments AS al ON (al.id_member = meml.id_member)' : '') . '' . (!empty($have_temp_table) ? '
+				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)
+				LEFT JOIN {db_prefix}attachments AS af ON (af.id_character = ms.id_character)
+				LEFT JOIN {db_prefix}attachments AS al ON (al.id_character = ml.id_character)' . (!empty($have_temp_table) ? '
 				LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)' : '
 				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member} AND lt.unwatched != 1)') . '
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})
@@ -1175,9 +1175,9 @@ function UnreadTopics()
 				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				LEFT JOIN {db_prefix}members AS mems ON (mems.id_member = ms.id_member)
-				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)' . (!empty($settings['avatars_on_indexes']) ? '
-				LEFT JOIN {db_prefix}attachments AS af ON (af.id_member = mems.id_member)
-				LEFT JOIN {db_prefix}attachments AS al ON (al.id_member = meml.id_member)' : '') . '
+				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)
+				LEFT JOIN {db_prefix}attachments AS af ON (af.id_character = ms.id_character)
+				LEFT JOIN {db_prefix}attachments AS al ON (al.id_character = ml.id_character)
 				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}characters AS charss ON (charss.id_character = ms.id_character)
@@ -1347,20 +1347,18 @@ function UnreadTopics()
 				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
 			)
 		);
-		if (!empty($settings['avatars_on_indexes']))
-		{
-			$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data(array(
-				'avatar' => $row['avatar'],
-				'email' => $row['email_address'],
-				'filename' => $row['last_poster_filename'],
-			));
 
-			$context['topics'][$row['id_topic']]['first_post']['member']['avatar'] = set_avatar_data(array(
-				'avatar' => $row['first_poster_avatar'],
-				'email' => $row['first_poster_email'],
-				'filename' => $row['first_poster_filename'],
-			));
-		}
+		$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data(array(
+			'avatar' => $row['avatar'],
+			'email' => $row['email_address'],
+			'filename' => $row['last_poster_filename'],
+		));
+
+		$context['topics'][$row['id_topic']]['first_post']['member']['avatar'] = set_avatar_data(array(
+			'avatar' => $row['first_poster_avatar'],
+			'email' => $row['first_poster_email'],
+			'filename' => $row['first_poster_filename'],
+		));
 
 		$context['topics'][$row['id_topic']]['first_post']['started_by'] = sprintf($txt['topic_started_by'], $context['topics'][$row['id_topic']]['first_post']['member']['link'], $context['topics'][$row['id_topic']]['board']['link']);
 	}

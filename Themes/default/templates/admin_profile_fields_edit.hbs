@@ -69,7 +69,7 @@
 							</select>
 						</dd>
 						<dt>
-							{{> helpicon 'field_show_enclosed'}}
+							{{> helpicon help='field_show_enclosed'}}
 							<strong><label for="enclose">{{{txt.custom_edit_enclose}}}:</label></strong><br>
 							<span class="smalltext">{{{txt.custom_edit_enclose_desc}}}</span>
 						</dt>
@@ -114,7 +114,7 @@
 							<input type="checkbox" name="bbc" id="bbc_dd"{{#if context.field.bbc}} checked{{/if}} class="input_check">
 						</dd>
 						<dt id="options_dt">
-							{{> helpicon 'customoptions'}}
+							{{> helpicon help='customoptions'}}
 							<strong><label for="options_dd">{{{txt.custom_edit_options}}}:</label></strong><br>
 							<span class="smalltext">{{{txt.custom_edit_options_desc}}}</span>
 						</dt>
@@ -141,7 +141,7 @@
 					<legend>{{{txt.custom_edit_advanced}}}</legend>
 					<dl class="settings">
 						<dt id="mask_dt">
-							{{> helpicon 'custom_mask'}}
+							{{> helpicon help='custom_mask'}}
 							<strong><label for="mask">{{{txt.custom_edit_mask}}}:</label></strong><br>
 							<span class="smalltext">{{{txt.custom_edit_mask_desc}}}</span>
 						</dt>

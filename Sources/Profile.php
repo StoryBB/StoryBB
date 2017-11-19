@@ -765,6 +765,21 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 			if (isset($profile_vars['passwd']))
 				call_integration_hook('integrate_reset_pass', array($cur_profile['member_name'], $cur_profile['member_name'], $_POST['passwrd2']));
 
+			if (isset($profile_vars['avatar'])) {
+				if (!isset($context['character']['id_character'])) {
+					foreach ($context['member']['characters'] as $id_char => $char) {
+						if ($char['is_main'])
+						{
+							$context['character']['id_character'] = $id_char;
+							break;
+						}
+					}
+				}
+				if (!empty($context['character']['id_character']))
+					updateCharacterData($context['character']['id_character'], ['avatar' => $profile_vars['avatar']]);
+
+				unset ($profile_vars['avatar']);
+			}
 			updateMemberData($memID, $profile_vars);
 
 			// What if this is the newest member?
