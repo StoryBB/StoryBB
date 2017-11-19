@@ -21,19 +21,6 @@ function template_sendbody()
 }
 
 /**
- * This defines the XML for the AJAX quote feature
- */
-function template_quotefast()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
-	<quote>', cleanXml($context['quote']['xml']), '</quote>
-</smf>';
-}
-
-/**
  * This defines the XML for the inline edit feature
  */
 function template_modifyfast()
