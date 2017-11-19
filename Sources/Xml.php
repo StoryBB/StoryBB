@@ -76,7 +76,11 @@ function ListMessageIcons()
 	require_once($sourcedir . '/Subs-Editor.php');
 	$context['icons'] = getMessageIcons($board);
 
-	$context['sub_template'] = 'message_icons';
+	register_helper([
+		'cleanXml' => 'cleanXml',
+	]);
+	loadTemplateLayout('xml');
+	$context['sub_template'] = 'xml_message_icons';
 }
 
 /**
