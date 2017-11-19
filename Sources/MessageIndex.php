@@ -21,6 +21,8 @@ function MessageIndex()
 {
 	global $txt, $scripturl, $board, $modSettings, $context;
 	global $options, $settings, $board_info, $user_info, $smcFunc, $sourcedir;
+	
+	require_once($sourcedir . '/Subs-MessageIndex.php');
 
 	// If this is a redirection board head off.
 	if ($board_info['redirect'])
@@ -37,7 +39,16 @@ function MessageIndex()
 		redirectexit($board_info['redirect']);
 	}
 
-	loadTemplate('MessageIndex');
+	//loadTemplate('MessageIndex');
+	$context['sub_template'] = 'msgIndex_main';
+	register_helper([
+		'qmod_option' => function($action) {
+				global $context, $txt;
+				if (!empty($context['can_' . $action]))
+					return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
+			},
+		'child_boards' => 'child_boards'
+		]);
 
 	if (!$user_info['is_guest'])
 	{
