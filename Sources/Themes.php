@@ -1211,7 +1211,7 @@ function PickTheme()
 	ksort($context['available_themes']);
 
 	$context['page_title'] = $txt['theme_pick'];
-	$context['sub_template'] = 'pick';
+	$context['sub_template'] = 'admin_themes_pick';
 }
 
 /**
