@@ -8,6 +8,8 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Cache;
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
@@ -15,12 +17,12 @@ if (!defined('SMF'))
  * Our Cache API class
  * @package cacheAPI
  */
-class memcache_cache extends cache_api
+class Memcached extends API
 {
 	/**
-	 * @var \Memcache The memcache instance.
+	 * @var \Memcached The memcache instance.
 	 */
-	private $memcache = null;
+	private $memcached = null;
 
 	/**
 	 * {@inheritDoc}
@@ -29,7 +31,7 @@ class memcache_cache extends cache_api
 	{
 		global $cache_memcached;
 
-		$supported = class_exists('memcache');
+		$supported = class_exists('memcached');
 
 		if ($test)
 			return $supported;
@@ -41,40 +43,49 @@ class memcache_cache extends cache_api
 	 */
 	public function connect()
 	{
-		global $db_persist, $cache_memcached;
+		global $cache_memcached;
 
 		$servers = explode(',', $cache_memcached);
-		$port = 0;
 
-		// Don't try more times than we have servers!
-		$connected = false;
-		$level = 0;
-
-		// We should keep trying if a server times out, but only for the amount of servers we have.
-		while (!$connected && $level < count($servers))
+		// memcached does not remove servers from the list upon completing the script under modes like FastCGI. So check to see if servers exist or not.
+		$this->memcached = new Memcached;
+		$currentServers = $this->memcached->getServerList();
+		foreach ($servers as $server)
 		{
-			++$level;
-			$this->memcache = new Memcache();
-			$server = trim($servers[array_rand($servers)]);
-
-			// Normal host names do not contain slashes, while e.g. unix sockets do. Assume alternative transport pipe with port 0.
 			if (strpos($server,'/') !== false)
-				$host = $server;
+				$tempServer = array($server, 0);
 			else
 			{
 				$server = explode(':', $server);
-				$host = $server[0];
-				$port = isset($server[1]) ? $server[1] : 11211;
+				$tempServer = array($server[0], isset($server[1]) ? $server[1] : 11211);
 			}
 
-			// Don't wait too long: yes, we want the server, but we might be able to run the query faster!
-			if (empty($db_persist))
-				$connected = $this->memcache->connect($host, $port);
-			else
-				$connected = $this->memcache->pconnect($host, $port);
+			// Figure out if we have this server or not
+			$foundServer = false;
+			foreach ($currentServers as $currentServer)
+			{
+				if ($tempServer[0] == $currentServer['host'] && $tempServer[1] == $currentServer['port'])
+				{
+					$foundServer = true;
+					break;
+				}
+			}
+
+			// Found it?
+			if (empty($foundServer))
+				$this->memcached->addServer($tempServer[0], $tempServer[1]);
 		}
 
-		return $connected;
+		// Best guess is this worked.
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getName()
+	{
+		return 'Memcached';
 	}
 
 	/**
@@ -84,7 +95,7 @@ class memcache_cache extends cache_api
 	{
 		$key = $this->prefix . strtr($key, ':/', '-_');
 
-		$value = $this->memcache->get($key);
+		$value = $this->memcached->get($key);
 
 		// $value should return either data or false (from failure, key not found or empty array).
 		if ($value === false)
@@ -99,15 +110,7 @@ class memcache_cache extends cache_api
 	{
 		$key = $this->prefix . strtr($key, ':/', '-_');
 
-		return $this->memcache->set($key, $value, 0, $ttl);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function quit()
-	{
-		return $this->memcache->close();
+		return $this->memcached->set($key, $value, $ttl);
 	}
 
 	/**
@@ -116,7 +119,17 @@ class memcache_cache extends cache_api
 	public function cleanCache($type = '')
 	{
 		$this->invalidateCache();
-		return $this->memcache->flush();
+
+		// Memcached accepts a delay parameter, always use 0 (instant).
+		return $this->memcached->flush(0);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function quit()
+	{
+		return $this->memcached->quit();
 	}
 
 	/**
@@ -135,7 +148,7 @@ class memcache_cache extends cache_api
 		$context['settings_post_javascript'] .= '
 			$("#cache_accelerator").change(function (e) {
 				var cache_type = e.currentTarget.value;
-				$("#cache_memcached").prop("disabled", cache_type != "memcache");
+				$("#cache_memcached").prop("disabled", cache_type != "memcached");
 			});';
 	}
 }

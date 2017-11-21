@@ -8,6 +8,8 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Cache;
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
@@ -15,7 +17,7 @@ if (!defined('SMF'))
  * Our Cache API class
  * @package cacheAPI
  */
-class smf_cache extends cache_api
+class File extends API
 {
 	/**
 	 * @var string The path to the current $cachedir directory.
@@ -31,6 +33,14 @@ class smf_cache extends cache_api
 
 		// Set our default cachedir.
 		$this->setCachedir();		
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getName()
+	{
+		return 'File';
 	}
 
 	/**

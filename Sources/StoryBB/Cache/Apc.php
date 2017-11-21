@@ -8,6 +8,8 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Cache;
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
@@ -15,7 +17,7 @@ if (!defined('SMF'))
  * Our Cache API class
  * @package cacheAPI
  */
-class apc_cache extends cache_api
+class Apc extends API
 {
 	/**
 	 * {@inheritDoc}
@@ -27,6 +29,14 @@ class apc_cache extends cache_api
 		if ($test)
 			return $supported;
 		return parent::isSupported() && $supported;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getName()
+	{
+		return 'Apc';
 	}
 
 	/**
