@@ -18,6 +18,7 @@ function isSelected($current_val, $val)
 
 function get_text(...$key) {
 	global $txt;
+
 	if (is_array($key)) {
 		array_pop($key);
 	    $key = implode('', $key);

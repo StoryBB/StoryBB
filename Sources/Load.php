@@ -2670,6 +2670,7 @@ function register_default_helpers() {
 		'or' => 'logichelper_or',
 		'get_text' => 'get_text',
 		'textTemplate' => 'textTemplate',
+		'JSEscape' => 'JSEscape',
 		'timeformat' => function($timestamp) { return timeformat($timestamp); },
 		'concat' => function(...$items) {
 			array_pop($items); // Strip the last item off the array, it's the calling context.

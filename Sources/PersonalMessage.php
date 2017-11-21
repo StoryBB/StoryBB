@@ -3620,7 +3620,7 @@ function ManageRules()
 	);
 
 	$context['page_title'] = $txt['pm_manage_rules'];
-	$context['sub_template'] = 'rules';
+	$context['sub_template'] = 'personal_message_rules';
 
 	// Load them... load them!!
 	LoadRules();
@@ -3664,12 +3664,18 @@ function ManageRules()
 	if (isset($_GET['add']))
 	{
 		$context['rid'] = isset($_GET['rid']) && isset($context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
-		$context['sub_template'] = 'add_rule';
+		$context['sub_template'] = 'personal_message_rules_add';
+		$context['criteriaTypes'] = array('mid', 'gid', 'sub', 'msg', 'bud');
 
 		// Current rule information...
 		if ($context['rid'])
 		{
 			$context['rule'] = $context['rules'][$context['rid']];
+			// Add a dummy criteria to allow expansion for none js users.
+			$context['rule']['criteria'][] = array('t' => '', 'v' => '');
+			// As with criteria - add a dummy action for "expansion".
+			$context['rule']['actions'][] = array('t' => '', 'v' => '');
+			
 			$members = array();
 			// Need to get member names!
 			foreach ($context['rule']['criteria'] as $k => $criteria)
