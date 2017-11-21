@@ -156,6 +156,19 @@ class Cache
 		closedir($dh);
 		return $apis;
 	}
+
+	public static function empty()
+	{
+		// If we can't get to the API, can't do this.
+		if (empty(self::$cacheAPI))
+			return;
+
+		// Ask the API to do the heavy lifting. cleanCache also calls invalidateCache to be sure.
+		self::$cacheAPI->cleanCache($type);
+
+		call_integration_hook('integrate_clean_cache');
+		clearstatcache();
+	}
 }
 
 ?>

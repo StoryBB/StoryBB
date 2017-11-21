@@ -3378,17 +3378,7 @@ function cache_get_data($key, $ttl = 120)
  */
 function clean_cache($type = '')
 {
-	global $cacheAPI;
-
-	// If we can't get to the API, can't do this.
-	if (empty($cacheAPI))
-		return;
-
-	// Ask the API to do the heavy lifting. cleanCache also calls invalidateCache to be sure.
-	$cacheAPI->cleanCache($type);
-
-	call_integration_hook('integrate_clean_cache');
-	clearstatcache();
+	StoryBB\Cache::empty();
 }
 
 /**
