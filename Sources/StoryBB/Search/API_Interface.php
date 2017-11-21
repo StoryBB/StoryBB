@@ -10,6 +10,9 @@
 
 namespace StoryBB\Search;
 
+if (!defined('SMF'))
+	die('Hacking attempt...');
+
 interface API_Interface
 {
 	/**
@@ -130,3 +133,5 @@ interface API_Interface
 	 */
 	public function searchQuery(array $query_params, array $searchWords, array $excludedIndexWords, array &$participants, array &$searchArray);
 }
+
+?>

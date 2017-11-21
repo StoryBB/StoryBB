@@ -10,6 +10,9 @@
 
 namespace StoryBB\Search;
 
+if (!defined('SMF'))
+	die('Hacking attempt...');
+
 /**
  * Class search_api
  */
