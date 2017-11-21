@@ -19,7 +19,7 @@ if (!defined('SMF'))
 function XMLhttpMain()
 {
 	loadTemplate('Xml');
-	loadTemplateLayout('raw');
+	StoryBB\Template::set_layout('raw');
 
 	$subActions = array(
 		'jumpto' =>  'GetJumpTo',

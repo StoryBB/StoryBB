@@ -65,6 +65,7 @@ require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
 require_once($sourcedir . '/Class-BrowserDetect.php');
 require_once($sourcedir . '/Subs-Auth.php');
+sbb_autoload();
 
 // Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();
@@ -192,16 +193,6 @@ unset($_GET['ssi_function']);
 error_reporting($ssi_error_reporting);
 
 return true;
-
-/**
- * This shuts down the SSI and shows the footer.
- * @return void
- */
-function ssi_shutdown()
-{
-	if (!isset($_GET['ssi_function']) || $_GET['ssi_function'] != 'shutdown')
-		template_footer();
-}
 
 /**
  * Display a welcome message, like: Hey, User, you have 0 messages, 0 are new.

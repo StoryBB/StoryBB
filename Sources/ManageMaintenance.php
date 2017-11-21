@@ -281,7 +281,7 @@ function MaintainCleanTemplateCache()
 	validateToken('admin-maint');
 
 	// Just wipe the whole cache directory!
-	clean_template_cache();
+	StoryBB\Template\Cache::clean();
 
 	$context['maintenance_finished'] = $txt['maintain_template_cache'];
 }
