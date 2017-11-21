@@ -184,6 +184,11 @@ function ThemeList()
 
 	if (isset($_REQUEST['th']))
 		return SetThemeSettings();
+		
+	if (isset($_GET['done']))
+		$context['done'] = $_GET['done'];
+	else
+		$context['done'] = false;
 
 	if (isset($_POST['save']))
 	{
@@ -234,7 +239,7 @@ function ThemeList()
 	$context['reset_dir'] = realpath($boarddir . '/Themes');
 	$context['reset_url'] = $boardurl . '/Themes';
 
-	$context['sub_template'] = 'list_themes';
+	$context['sub_template'] = 'admin_themes_list';
 	createToken('admin-tl');
 	createToken('admin-tr', 'request');
 	createToken('admin-tre', 'request');
