@@ -8,13 +8,16 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Search;
+
+
 if (!defined('SMF'))
 	die('No direct access...');
 
 /**
  * Standard non full index, non custom index search
  */
-class standard_search extends search_api
+class Standard extends API
 {
 	/**
 	 * {@inheritDoc}
