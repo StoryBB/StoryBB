@@ -37,8 +37,6 @@ function MessageMain()
 	//Grab the partial
 	$template = loadTemplatePartial('pm_above');
 
-	if (!isset($_REQUEST['xml']))
-		loadTemplate('PersonalMessage');
 
 	// Load up the members maximum message capacity.
 	if ($user_info['is_admin'])
@@ -1676,8 +1674,6 @@ function MessagePost()
 	isAllowedTo('pm_send');
 
 	loadLanguage('PersonalMessage');
-	// Just in case it was loaded from somewhere else.
-	loadTemplate('PersonalMessage');
 	loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'smf_pms');
 	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 	$context['sub_template'] = 'personal_message_send';
