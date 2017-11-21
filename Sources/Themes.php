@@ -147,7 +147,7 @@ function ThemeAdmin()
 
 	loadLanguage('Admin');
 	isAllowedTo('admin_forum');
-	loadTemplate('Themes');
+	$context['sub_template'] = 'admin_themes_main';
 
 	// List all installed and enabled themes.
 	get_all_themes(true);
@@ -230,8 +230,6 @@ function ThemeList()
 
 		redirectexit('action=admin;area=theme;sa=list;' . $context['session_var'] . '=' . $context['session_id']);
 	}
-
-	loadTemplate('Themes');
 
 	// Get all installed themes.
 	get_all_themes(false);
