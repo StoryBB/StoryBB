@@ -802,7 +802,7 @@ function VerificationCode()
 		$context['sub_template'] = 'register_sound_verification';
 		register_helper(['isBrowser' => 'isBrowser']);
 		$context['popup_id'] = 'sound_verification';
-		loadTemplateLayout('popup');
+		StoryBB\Template::set_layout('popup');
 
 		obExit();
 	}
@@ -854,7 +854,7 @@ function RegisterCheckUsername()
 
 	// This is XML!
 	loadTemplate('Xml');
-	loadTemplateLayout('raw');
+	StoryBB\Template::set_layout('raw');
 	$context['sub_template'] = 'check_username';
 	$context['checked_username'] = isset($_GET['username']) ? un_htmlspecialchars($_GET['username']) : '';
 	$context['valid_username'] = true;

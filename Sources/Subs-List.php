@@ -317,10 +317,9 @@ function generic_list_helper($list_id = null)
 		'headerCount' => count($cur_list['headers'])
 	);
 	
-	$template = loadTemplatePartial('generic_list');
-
-	$phpStr = compileTemplate($template, [], 'genericlist');
-	return prepareTemplate($phpStr, $data);
+	$template = StoryBB\Template::load_partial('generic_list');
+	$phpStr = StoryBB\Template::compile($template, [], 'genericlist');
+	return StoryBB\Template::prepare($phpStr, $data);
 }
 
 ?>

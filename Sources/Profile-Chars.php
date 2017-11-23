@@ -19,7 +19,7 @@ function characters_popup($memID)
 
 	// We only want to output our little layer here.
 	loadTemplate('Profile-Chars');
-	loadTemplateLayout('raw');
+	StoryBB\Template::set_layout('raw');
 	$context['template_layers'] = [];
 }
 

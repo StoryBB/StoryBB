@@ -377,7 +377,7 @@ function MessagePopup()
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
 	$context['sub_template'] = 'personal_message_popup';
-	$template = loadTemplateLayout('raw');
+	StoryBB\Template::set_layout('raw');
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 	$context['can_draft'] = allowedTo('pm_draft') && !empty($modSettings['drafts_pm_enabled']);
