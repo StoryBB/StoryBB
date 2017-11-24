@@ -44,7 +44,7 @@ class Cache
 	public static function push(string $cache_id, string $phpStr): bool {
 		global $cachedir;
 
-		if (!self::is_enabled())
+		if (empty($cache_id) || !self::is_enabled())
 		{
 			return false;
 		}
