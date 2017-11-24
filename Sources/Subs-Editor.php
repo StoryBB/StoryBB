@@ -1777,7 +1777,6 @@ function create_control_richedit($editorOptions)
 
 	register_helper([
 		'richtexteditor' => 'control_richedit_helper',
-		'richtextbuttons' => 'control_richedit_buttons_helper',
 		'jsEscape' => 'JSEscape',
 	]);
 }
@@ -1796,22 +1795,6 @@ function control_richedit_helper($editor_id, $smileyContainer = null, $bbcContai
 	];
 	$template = StoryBB\Template::load_partial('control_richedit');
 	$phpStr = StoryBB\Template::compile($template, [], 'richedit');
-	return StoryBB\Template::prepare($phpStr, $data);
-}
-
-function control_richedit_buttons_helper($editor_id) {
-	global $context, $settings, $modSettings, $txt;
-
-	$data = [
-		'editor_id' => $editor_id,
-		'editor_context' => $context['controls']['richedit'][$editor_id],
-		'context' => $context,
-		'settings' => $settings,
-		'modSettings' => $modSettings,
-		'txt' => $txt,
-	];
-	$template = StoryBB\Template::load_partial('control_richedit_buttons');
-	$phpStr = StoryBB\Template::compile($template, [], 'richedit_buttons');
 	return StoryBB\Template::prepare($phpStr, $data);
 }
 
