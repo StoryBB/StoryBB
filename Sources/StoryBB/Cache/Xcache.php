@@ -8,6 +8,8 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Cache;
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
@@ -15,7 +17,7 @@ if (!defined('SMF'))
  * Our Cache API class
  * @package cacheAPI
  */
-class xcache_cache extends cache_api
+class Xcache extends API
 {
 	/**
 	 * {@inheritDoc}
@@ -32,6 +34,14 @@ class xcache_cache extends cache_api
 			ini_set('xcache.admin.user', $modSettings['xcache_adminuser']);
 			ini_set('xcache.admin.pass', md5($modSettings['xcache_adminpass']));
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getName()
+	{
+		return 'Xcache';
 	}
 
 	/**

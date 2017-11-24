@@ -8,6 +8,8 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Search;
+
 if (!defined('SMF'))
 	die('No direct access...');
 
@@ -15,7 +17,7 @@ if (!defined('SMF'))
  * Class fulltext_search
  * Used for fulltext index searching
  */
-class fulltext_search extends search_api
+class Fulltext extends API
 {
 	/**
 	 * @var array Which words are banned

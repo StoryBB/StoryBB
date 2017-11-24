@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Cache;
+
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
@@ -17,7 +19,7 @@ if (!defined('SMF'))
  * PostgreSQL Cache API class
  * @package cacheAPI
  */
-class postgres_cache extends cache_api
+class Postgres extends API
 {
 
 	/**
@@ -52,6 +54,14 @@ class postgres_cache extends cache_api
 
 		if (pg_affected_rows($result) === 0)
 			pg_query($db_connection, 'CREATE UNLOGGED TABLE {db_prefix}cache (key text, value text, ttl bigint, PRIMARY KEY (key))');			
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getName()
+	{
+		return 'Postgres';
 	}
 
 	/**
