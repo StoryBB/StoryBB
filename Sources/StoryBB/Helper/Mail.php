@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This class handles the TLD regex processing.
+ * This class handles the mail processing.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
