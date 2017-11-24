@@ -4159,33 +4159,33 @@ function setupMenuContext()
 	if (!empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1' && !empty($context['open_mod_reports']))
 	{
 		$total_mod_reports = $context['open_mod_reports'];
-		$context['menu_buttons']['moderate']['sub_buttons']['reports']['title'] .= ' <span class="amt">' . $context['open_mod_reports'] . '</span>';
+		$context['menu_buttons']['moderate']['sub_buttons']['reports']['badge'] = $context['open_mod_reports'];
 	}
 
 	// Show how many errors there are
 	if (!empty($context['num_errors']) && allowedTo('admin_forum'))
 	{
-		$context['menu_buttons']['admin']['title'] .= ' <span class="amt">' . $context['num_errors'] . '</span>';
-		$context['menu_buttons']['admin']['sub_buttons']['errorlog']['title'] .= ' <span class="amt">' . $context['num_errors'] . '</span>';
+		$context['menu_buttons']['admin']['badge'] = $context['num_errors'];
+		$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $context['num_errors'];
 	}
 
 	// Show number of reported members
 	if (!empty($context['open_member_reports']) && allowedTo('moderate_forum'))
 	{
 		$total_mod_reports += $context['open_member_reports'];
-		$context['menu_buttons']['moderate']['sub_buttons']['reported_members']['title'] .= ' <span class="amt">' . $context['open_member_reports'] . '</span>';
+		$context['menu_buttons']['moderate']['sub_buttons']['reported_members']['badge'] = $context['open_member_reports'];
 	}
 
 	if (!empty($context['unapproved_members']))
 	{
-		$context['menu_buttons']['admin']['sub_buttons']['memberapprove']['title'] .= ' <span class="amt">' . $context['unapproved_members'] . '</span>';
-		$context['menu_buttons']['admin']['title'] .= ' <span class="amt">' . $context['unapproved_members'] . '</span>';
+		$context['menu_buttons']['admin']['sub_buttons']['memberapprove']['badge'] .= ' <span class="amt">' . $context['unapproved_members'] . '</span>';
+		$context['menu_buttons']['admin']['badge'] = $context['unapproved_members'];
 	}
 
 	// Do we have any open reports?
 	if ($total_mod_reports > 0)
 	{
-		$context['menu_buttons']['moderate']['title'] .= ' <span class="amt">' . $total_mod_reports . '</span>';
+		$context['menu_buttons']['moderate']['badge'] = $total_mod_reports;
 	}
 
 	// Not all actions are simple.
