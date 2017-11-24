@@ -326,7 +326,6 @@ function SetThemeOptions()
 			if (empty($v['theme_dir']) || (!file_exists($v['theme_dir'] . '/Settings.template.php') && empty($v['num_members'])))
 				unset($context['themes'][$k]);
 
-		loadTemplate('Themes');
 		$context['sub_template'] = 'admin_themes_reset_list';
 
 		createToken('admin-stor', 'request');
@@ -616,7 +615,6 @@ function SetThemeOptions()
 	loadTheme($old_id, false);
 	$settings = $old_settings;
 
-	loadTemplate('Themes');
 	createToken('admin-sto');
 }
 
@@ -798,8 +796,6 @@ function SetThemeSettings()
 
 	$settings = $old_settings;
 
-	loadTemplate('Themes');
-
 	// We like Kenny better than Token.
 	createToken('admin-sts');
 }
@@ -887,7 +883,6 @@ function PickTheme()
 	global $txt, $context, $modSettings, $user_info, $language, $smcFunc, $settings, $scripturl;
 
 	loadLanguage('Profile');
-	loadTemplate('Themes');
 
 	// Build the link tree.
 	$context['linktree'][] = array(
@@ -1239,7 +1234,6 @@ function ThemeInstall()
 	$themedir = $boarddir . '/Themes';
 	$themeurl = $boardurl . '/Themes';
 
-	loadTemplate('Themes');
 
 	$subActions = array(
 		'copy' => 'InstallCopy',
