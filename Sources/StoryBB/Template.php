@@ -21,6 +21,13 @@ class Template
 	private static $layout_loaded = '';
 	private static $layout_template = '';
 
+	private static $debug = [
+		'template' => [],
+		'partial' => [],
+		'cache_hit' => [],
+		'cache_miss' => [],
+	];
+
 	/**
 	 * Set up the default helpers.
 	 */
@@ -75,14 +82,15 @@ class Template
 		}
 
 		$paths = [
-			$settings['theme_dir'] . '/layouts',
-			$settings['default_theme_dir'] . '/layouts',
+			'theme' => $settings['theme_dir'] . '/layouts',
+			'default' => $settings['default_theme_dir'] . '/layouts',
 		];
 
-		foreach ($paths as $path) {
+		foreach ($paths as $source => $path) {
 			if (file_exists($path) && file_exists($path . '/' . $layout . '.hbs')) {
 				self::$layout_loaded = $layout;
 				self::$layout_template = file_get_contents($path . '/' . $layout . '.hbs');
+				self::$debug['template'][] = $layout . ' (' . $source . ' layout)';
 				break;
 			}
 		}
@@ -102,12 +110,13 @@ class Template
 		global $settings;
 
 		$paths = [
-			$settings['theme_dir'] . '/templates',
-			$settings['default_theme_dir'] . '/templates',
+			'theme' => $settings['theme_dir'] . '/templates',
+			'default' => $settings['default_theme_dir'] . '/templates',
 		];
 
-		foreach ($paths as $path) {
+		foreach ($paths as $source => $path) {
 			if (file_exists($path) && file_exists($path . '/' . $template . '.hbs')) {
+				self::$debug['template'][] = $template . ' (' . $source . ')';
 				return file_get_contents($path . '/' . $template . '.hbs');
 			}
 		}
@@ -125,12 +134,13 @@ class Template
 		global $settings;
 
 		$paths = [
-			$settings['theme_dir'] . '/partials',
-			$settings['default_theme_dir'] . '/partials',
+			'theme' => $settings['theme_dir'] . '/partials',
+			'default' => $settings['default_theme_dir'] . '/partials',
 		];
 
-		foreach ($paths as $path) {
+		foreach ($paths as $source => $path) {
 			if (file_exists($path) && file_exists($path . '/' . $partial . '.hbs')) {
+				self::$debug['partial'][$partial] = $partial . ' (' . $source . ')';
 				return file_get_contents($path . '/' . $partial . '.hbs');
 			}
 		}
@@ -141,13 +151,14 @@ class Template
 	public static function compile(string $template, array $options = [], string $cache_id = '') {
 		global $context, $cachedir, $modSettings;
 
-		self::add_default_helpers();
-
 		$phpStr = Cache::fetch($cache_id);
 		if (!empty($phpStr))
 		{
+			self::$debug['cache_hit'][] = $cache_id;
 			return $phpStr;
 		}
+
+		self::add_default_helpers();
 
 		$default_partials = [
 			'helpicon' => self::load_partial('helpicon'),
@@ -166,6 +177,11 @@ class Template
 			'partialresolver' => 'loadTemplatePartialResolver',
 			'partials' => !empty($options['partials']) ? array_merge($default_partials, $options['partials']) : $default_partials,
 		]);
+
+		if (!empty($cache_id))
+			self::$debug['cache_miss'][] = $cache_id;
+		else
+			self::$debug['cache_miss'][] = 'unknown';
 		
 		Cache::push($cache_id, $phpStr);
 
@@ -232,6 +248,11 @@ class Template
 				array_splice($context['sub_template'], $array_pos, 1, [$name, $relative]);
 			}
 		}
+	}
+
+	public static function get_debug_info()
+	{
+		return self::$debug;
 	}
 }
 

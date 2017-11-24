@@ -363,7 +363,7 @@ function scheduled_approval_notification()
 		$emaildata = loadEmailTemplate('scheduled_approval', $replacements, $current_language);
 
 		// Send the actual email.
-		sendmail($member['email'], $emaildata['subject'], $emaildata['body'], null, 'schedapp', $emaildata['is_html'], 2);
+		StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'schedapp', $emaildata['is_html'], 2);
 	}
 
 	// All went well!
@@ -711,7 +711,7 @@ function scheduled_daily_digest()
 		$email['body'] .= "\n\n" . $txt['regards_team'];
 
 		// Send it - low priority!
-		sendmail($email['email'], $email['subject'], $email['body'], null, 'digest', false, 4);
+		StoryBB\Helper\Mail::send($email['email'], $email['subject'], $email['body'], null, 'digest', false, 4);
 	}
 
 	// Clean up...
@@ -933,7 +933,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 				@apache_reset_timeout();
 		}
 		else
-			$result = smtp_mail(array($email['to']), $email['subject'], $email['body'], $email['headers']);
+			$result = StoryBB\Helper\Mail::send_smtp(array($email['to']), $email['subject'], $email['body'], $email['headers']);
 
 		// Hopefully it sent?
 		if (!$result)
@@ -1539,7 +1539,7 @@ function scheduled_paid_subscriptions()
 
 		// Send the actual email.
 		if ($notifyPrefs[$row['id_member']] & 0x02)
-			sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'paid_sub_remind', $emaildata['is_html'], 2);
+			StoryBB\Helper\Mail::send($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'paid_sub_remind', $emaildata['is_html'], 2);
 
 		if ($notifyPrefs[$row['id_member']] & 0x01)
 		{

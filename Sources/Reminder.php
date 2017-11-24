@@ -140,7 +140,7 @@ function RemindPick()
 		$emaildata = loadEmailTemplate('forgot_password', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
 		$context['description'] = $txt['reminder_sent'];
 
-		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'reminder', $emaildata['is_html'], 1);
+		StoryBB\Helper\Mail::send($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'reminder', $emaildata['is_html'], 1);
 
 		// Set the password in the database.
 		updateMemberData($row['id_member'], array('validation_code' => substr(md5($password), 0, 10)));

@@ -34,4 +34,11 @@ function JSEscape($string)
 	return StoryBB\Template\Helper\Text::JSEscape($string);
 }
 
+function textTemplate ($template, ...$args) {
+	// Strip the last item off the array, it's the calling context.
+	array_pop($args);
+	$string = new \LightnCandy\SafeString(sprintf($template, ...$args));
+	return (string) $string;
+}
+
 ?>

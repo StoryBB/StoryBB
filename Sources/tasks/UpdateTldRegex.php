@@ -23,8 +23,7 @@ class Update_TLD_Regex extends SMF_BackgroundTask
  	{
 		global $sourcedir;
 
-		require_once($sourcedir . '/Subs.php');
-		set_tld_regex(true);
+		StoryBB\Helper\TLD::set_tld_regex(true);
 
 		return true;
 	}
