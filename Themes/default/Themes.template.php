@@ -64,16 +64,7 @@ function template_set_options()
 	global $context, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';sa=reset" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="who" value="', $context['theme_options_reset'] ? 1 : 0, '">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['theme_options_title'], ' - ', $context['theme_settings']['name'], '</h3>
-			</div>
-			<div class="information noup">
-				', $context['theme_options_reset'] ? $txt['themeadmin_reset_options_info'] : $txt['theme_options_defaults'], '
-			</div>
-			<div class="windowbg2 noup">';
+	';
 	echo '
 				<dl class="settings">';
 
@@ -112,14 +103,10 @@ function template_set_options()
 		// Show the change option box ?
 		if ($context['theme_options_reset'])
 			echo '
-						<span class="floatleft"><select name="', !empty($setting['default']) ? 'default_' : '', 'options_master[', $setting['id'], ']" onchange="this.form.options_', $setting['id'], '.disabled = this.selectedIndex != 1;">
-							<option value="0" selected>', $txt['themeadmin_reset_options_none'], '</option>
-							<option value="1">', $txt['themeadmin_reset_options_change'], '</option>
-							<option value="2">', $txt['themeadmin_reset_options_default'], '</option>
-						</select>&nbsp;</span>';
+						';
 
 		echo '
-						<label for="options_', $setting['id'], '">', !$titled_section ? '<b>' : '', $setting['label'], !$titled_section ? '</b>' : '', '</label>';
+						';
 		if (isset($setting['description']))
 			echo '
 						<br><span class="smalltext">', $setting['description'], '</span>';
@@ -130,9 +117,7 @@ function template_set_options()
 		if ($setting['type'] == 'checkbox')
 		{
 			echo '
-					<dd ', $context['theme_options_reset'] ? 'style="width:40%"' : '', '>
-						<input type="hidden" name="' . (!empty($setting['default']) ? 'default_' : '') . 'options[' . $setting['id'] . ']" value="0">
-						<input type="checkbox" name="', !empty($setting['default']) ? 'default_' : '', 'options[', $setting['id'], ']" id="options_', $setting['id'], '"', !empty($setting['value']) ? ' checked' : '', $context['theme_options_reset'] ? ' disabled' : '', ' value="1" class="input_check floatleft">';
+					';
 		}
 		// how about selection lists, we all love them
 		elseif ($setting['type'] == 'list')
@@ -230,47 +215,6 @@ function template_installed()
 			</p>';
 
 	echo '
-		</div>
-	</div>';
-}
-
-/**
- * The page allowing you to copy a template from one theme to another.
- */
-function template_copy_template()
-{
-	global $context, $scripturl, $txt;
-
-	echo '
-	<div id="admincenter">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['themeadmin_edit_filename'], '</h3>
-		</div>
-		<div class="information">
-			', $txt['themeadmin_edit_copy_warning'], '
-		</div>
-		<div class="windowbg">
-			<ul class="theme_options">';
-
-	foreach ($context['available_templates'] as $template)
-	{
-		echo '
-				<li class="flow_hidden windowbg">
-					<span class="floatleft">', $template['filename'], $template['already_exists'] ? ' <span class="error">(' . $txt['themeadmin_edit_exists'] . ')</span>' : '', '</span>
-					<span class="floatright">';
-
-		if ($template['can_copy'])
-			echo '<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';', $context['session_var'], '=', $context['session_id'], ';sa=copy;template=', $template['value'], '" data-confirm="', $template['already_exists'] ? $txt['themeadmin_edit_overwrite_confirm'] : $txt['themeadmin_edit_copy_confirm'], '" class="you_sure">', $txt['themeadmin_edit_do_copy'], '</a>';
-		else
-			echo $txt['themeadmin_edit_no_copy'];
-
-		echo '
-					</span>
-				</li>';
-	}
-
-	echo '
-			</ul>
 		</div>
 	</div>';
 }

@@ -751,6 +751,8 @@ function SetThemeSettings()
 
 	$context['settings'] = $context['theme_settings'];
 	$context['theme_settings'] = $settings;
+	
+	
 
 	foreach ($context['settings'] as $i => $setting)
 	{
@@ -784,6 +786,8 @@ function SetThemeSettings()
 			);
 		}
 		$context['default_variant'] = !empty($settings['default_variant']) && isset($context['theme_variants'][$settings['default_variant']]) ? $settings['default_variant'] : $settings['theme_variants'][0];
+		
+		$context['default_variant']['thumbnail'] = $context['theme_variants'][$context['default_variant']]['thumbnail'];
 	}
 
 	// Restore the current theme.
@@ -1564,124 +1568,6 @@ function SetJavaScript()
 
 	// Don't output anything...
 	redirectexit($settings['images_url'] . '/blank.png');
-}
-
-/**
- * Makes a copy of a template file in a new location
- * @uses Themes template, copy_template sub-template.
- */
-function CopyTemplate()
-{
-	global $context, $settings;
-
-	isAllowedTo('admin_forum');
-	loadTemplate('Themes');
-
-	$context[$context['admin_menu_name']]['current_subsection'] = 'edit';
-
-	$_GET['th'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) $_GET['id'];
-
-	if (empty($_GET['th']))
-		fatal_lang_error('theme_install_invalid_id');
-
-	// Get the theme info.
-	$theme = get_single_theme($_GET['th']);
-	$context['theme_id'] = $theme['id'];
-
-	if (isset($_REQUEST['template']) && preg_match('~[\./\\\\:\0]~', $_REQUEST['template']) == 0)
-	{
-		if (file_exists($settings['default_theme_dir'] . '/' . $_REQUEST['template'] . '.template.php'))
-			$filename = $settings['default_theme_dir'] . '/' . $_REQUEST['template'] . '.template.php';
-
-		else
-			fatal_lang_error('no_access', false);
-
-		$fp = fopen($theme['theme_dir'] . '/' . $_REQUEST['template'] . '.template.php', 'w');
-		fwrite($fp, file_get_contents($filename));
-		fclose($fp);
-
-		redirectexit('action=admin;area=theme;th=' . $context['theme_id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=copy');
-	}
-	elseif (isset($_REQUEST['lang_file']) && preg_match('~^[^\./\\\\:\0]\.[^\./\\\\:\0]$~', $_REQUEST['lang_file']) != 0)
-	{
-		if (file_exists($settings['default_theme_dir'] . '/languages/' . $_REQUEST['template'] . '.php'))
-			$filename = $settings['default_theme_dir'] . '/languages/' . $_REQUEST['template'] . '.php';
-
-		else
-			fatal_lang_error('no_access', false);
-
-		$fp = fopen($theme['theme_dir'] . '/languages/' . $_REQUEST['lang_file'] . '.php', 'w');
-		fwrite($fp, file_get_contents($filename));
-		fclose($fp);
-
-		redirectexit('action=admin;area=theme;th=' . $context['theme_id'] . ';' . $context['session_var'] . '=' . $context['session_id'] . ';sa=copy');
-	}
-
-	$templates = array();
-	$lang_files = array();
-
-	$dir = dir($settings['default_theme_dir']);
-	while ($entry = $dir->read())
-	{
-		if (substr($entry, -13) == '.template.php')
-			$templates[] = substr($entry, 0, -13);
-	}
-	$dir->close();
-
-	$dir = dir($settings['default_theme_dir'] . '/languages');
-	while ($entry = $dir->read())
-	{
-		if (preg_match('~^([^\.]+\.[^\.]+)\.php$~', $entry, $matches))
-			$lang_files[] = $matches[1];
-	}
-	$dir->close();
-
-	natcasesort($templates);
-	natcasesort($lang_files);
-
-	$context['available_templates'] = array();
-	foreach ($templates as $template)
-		$context['available_templates'][$template] = array(
-			'filename' => $template . '.template.php',
-			'value' => $template,
-			'already_exists' => false,
-			'can_copy' => is_writable($theme['theme_dir']),
-		);
-	$context['available_language_files'] = array();
-	foreach ($lang_files as $file)
-		$context['available_language_files'][$file] = array(
-			'filename' => $file . '.php',
-			'value' => $file,
-			'already_exists' => false,
-			'can_copy' => file_exists($theme['theme_dir'] . '/languages') ? is_writable($theme['theme_dir'] . '/languages') : is_writable($theme['theme_dir']),
-		);
-
-	$dir = dir($theme['theme_dir']);
-	while ($entry = $dir->read())
-	{
-		if (substr($entry, -13) == '.template.php' && isset($context['available_templates'][substr($entry, 0, -13)]))
-		{
-			$context['available_templates'][substr($entry, 0, -13)]['already_exists'] = true;
-			$context['available_templates'][substr($entry, 0, -13)]['can_copy'] = is_writable($theme['theme_dir'] . '/' . $entry);
-		}
-	}
-	$dir->close();
-
-	if (file_exists($theme['theme_dir'] . '/languages'))
-	{
-		$dir = dir($theme['theme_dir'] . '/languages');
-		while ($entry = $dir->read())
-		{
-			if (preg_match('~^([^\.]+\.[^\.]+)\.php$~', $entry, $matches) && isset($context['available_language_files'][$matches[1]]))
-			{
-				$context['available_language_files'][$matches[1]]['already_exists'] = true;
-				$context['available_language_files'][$matches[1]]['can_copy'] = is_writable($theme['theme_dir'] . '/languages/' . $entry);
-			}
-		}
-		$dir->close();
-	}
-
-	$context['sub_template'] = 'copy_template';
 }
 
 ?>
