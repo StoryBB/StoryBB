@@ -34,8 +34,7 @@
 							{{/if}}
 						</div>
 						{{/unless}}
-						<div class="postarea">{{#unless options.use_editor_quick_reply}}
-							<p class="smalltext lefttext">{{{txt.quick_reply_desc}}}</p>{{/unless}}
+						<div class="postarea">
 							{{#if context.is_locked}}<p class="alert smalltext">{{txt.quick_reply_warning}}</p>{{/if}}
 							{{#if context.oldTopicError}}<p class="alert smalltext">{{textTemplate 'error_old_topic' modSettings.oldTopicDays}}</p>{{/if}}
 							{{#unless context.can_reply_approved}}<em>{{txt.wait_for_approval}}</em>{{/unless}}
