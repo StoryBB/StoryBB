@@ -55,6 +55,9 @@ class Template
 		// And helpers for sessions and tokens to make life easier.
 		self::add_helper(Template\Helper\Session::_list());
 
+		// Generic controls need some care.
+		self::add_helper(Template\Helper\Controls::_list());
+
 		// And everything else.
 		self::add_helper(Template\Helper\Misc::_list());
 	}
