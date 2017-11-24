@@ -327,7 +327,7 @@ function SetThemeOptions()
 				unset($context['themes'][$k]);
 
 		loadTemplate('Themes');
-		$context['sub_template'] = 'reset_list';
+		$context['sub_template'] = 'admin_themes_reset_list';
 
 		createToken('admin-stor', 'request');
 		return;
