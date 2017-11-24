@@ -1267,7 +1267,7 @@ function ThemeInstall()
 		// Everything went better than expected!
 		if (!empty($result))
 		{
-			$context['sub_template'] = 'installed';
+			$context['sub_template'] = 'admin_themes_installed';
 			$context['page_title'] = $txt['theme_installed'];
 			$context['installed_theme'] = $result;
 		}
