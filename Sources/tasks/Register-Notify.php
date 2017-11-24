@@ -124,7 +124,7 @@ class Register_Notify_Background extends SMF_BackgroundTask
 
 				// And do the actual sending...
 				foreach ($recipients as $id_member => $email_address)
-					sendmail($email_address, $emaildata['subject'], $emaildata['body'], null, 'newmember' . $this->_details['new_member_id'], $emaildata['is_html'], 0);
+					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'newmember' . $this->_details['new_member_id'], $emaildata['is_html'], 0);
 			}
 		}
 

@@ -8,6 +8,8 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Search;
+
 if (!defined('SMF'))
 	die('No direct access...');
 
@@ -15,7 +17,7 @@ if (!defined('SMF'))
  * Used for the "custom search index" option
  * Class custom_search
  */
-class custom_search extends search_api
+class Custom extends API
 {
 	/**
 	 * @var array Index settings

@@ -32,7 +32,7 @@ function reloadSettings()
 	);
 
 	// We need some caching support, maybe.
-	loadCacheAccelerator();
+	StoryBB\Cache::initialize();
 
 	// Try to load it from the cache first; it'll never get cached if the setting is off.
 	if (($modSettings = cache_get_data('modSettings', 90)) == null)
@@ -3284,61 +3284,6 @@ function loadDatabase()
 }
 
 /**
- * Try to load up a supported caching method. This is saved in $cacheAPI if we are not overriding it.
- *
- * @param string $overrideCache Try to use a different cache method other than that defined in $cache_accelerator.
- * @param bool $fallbackSMF Use the default SMF method if the accelerator fails.
- * @return object|false A object of $cacheAPI, or False on failure.
-*/
-function loadCacheAccelerator($overrideCache = null, $fallbackSMF = true)
-{
-	global $sourcedir, $cacheAPI, $cache_accelerator;
-
-	// Not overriding this and we have a cacheAPI, send it back.
-	if (empty($overrideCache) && is_object($cacheAPI))
-		return $cacheAPI;
-	elseif (is_null($cacheAPI))
-		$cacheAPI = false;
-
-	// Make sure our class is in session.
-	require_once($sourcedir . '/Class-CacheAPI.php');
-
-	// What accelerator we are going to try.
-	$tryAccelerator = !empty($overrideCache) ? $overrideCache : !empty($cache_accelerator) ? $cache_accelerator : 'smf';
-	$tryAccelerator = strtolower($tryAccelerator);
-
-	// Do some basic tests.
-	if (file_exists($sourcedir . '/CacheAPI-' . $tryAccelerator . '.php'))
-	{
-		require_once($sourcedir . '/CacheAPI-' . $tryAccelerator . '.php');
-
-		$cache_class_name = $tryAccelerator . '_cache';
-		$testAPI = new $cache_class_name();
-
-		// No Support?  NEXT!
-		if (!$testAPI->isSupported())
-		{
-			// Can we save ourselves?
-			if (!empty($fallbackSMF) && is_null($overrideCache) && $tryAccelerator != 'smf')
-				return loadCacheAccelerator(null, false);
-			return false;
-		}
-
-		// Connect up to the accelerator.
-		$testAPI->connect();
-
-		// Don't set this if we are overriding the cache.
-		if (is_null($overrideCache))
-		{
-			$cacheAPI = $testAPI;
-			return $cacheAPI;
-		}
-		else
-			return $testAPI;
-	}
-}
-
-/**
  * Try to retrieve a cache entry. On failure, call the appropriate function.
  *
  * @param string $key The key for this entry
@@ -3402,28 +3347,7 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  */
 function cache_put_data($key, $value, $ttl = 120)
 {
-	global $boardurl, $modSettings, $cache_enable, $cacheAPI;
-	global $cache_hits, $cache_count, $db_show_debug;
-
-	if (empty($cache_enable) || empty($cacheAPI))
-		return;
-
-	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
-	if (isset($db_show_debug) && $db_show_debug === true)
-	{
-		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'put', 's' => $value === null ? 0 : strlen(json_encode($value)));
-		$st = microtime(true);
-	}
-
-	// The API will handle the rest.
-	$value = $value === null ? null : json_encode($value);
-	$cacheAPI->putData($key, $value, $ttl);
-
-	if (function_exists('call_integration_hook'))
-		call_integration_hook('cache_put_data', array(&$key, &$value, &$ttl));
-
-	if (isset($db_show_debug) && $db_show_debug === true)
-		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
+	return StoryBB\Cache::put($key, $value, $ttl);
 }
 
 /**
@@ -3437,42 +3361,7 @@ function cache_put_data($key, $value, $ttl = 120)
  */
 function cache_get_data($key, $ttl = 120)
 {
-	global $boardurl, $modSettings, $cache_enable, $cacheAPI;
-	global $cache_hits, $cache_count, $cache_misses, $cache_count_misses, $db_show_debug;
-
-	if (empty($cache_enable) || empty($cacheAPI))
-		return;
-
-	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
-	if (isset($db_show_debug) && $db_show_debug === true)
-	{
-		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'get');
-		$st = microtime(true);
-		$original_key = $key;
-	}
-
-	// Ask the API to get the data.
-	$value = $cacheAPI->getData($key, $ttl);
-
-	if (isset($db_show_debug) && $db_show_debug === true)
-	{
-		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
-		$cache_hits[$cache_count]['s'] = isset($value) ? strlen($value) : 0;
-
-		if (empty($value))
-		{
-			if (!is_array($cache_misses))
-				$cache_misses = array();
-
-			$cache_count_misses = isset($cache_count_misses) ? $cache_count_misses + 1 : 1;
-			$cache_misses[$cache_count_misses] = array('k' => $original_key, 'd' => 'get');
-		}
-	}
-
-	if (function_exists('call_integration_hook') && isset($value))
-		call_integration_hook('cache_get_data', array(&$key, &$ttl, &$value));
-
-	return empty($value) ? null : smf_json_decode($value, true);
+	return StoryBB\Cache::get($key, $ttl);
 }
 
 /**
@@ -3489,17 +3378,7 @@ function cache_get_data($key, $ttl = 120)
  */
 function clean_cache($type = '')
 {
-	global $cacheAPI;
-
-	// If we can't get to the API, can't do this.
-	if (empty($cacheAPI))
-		return;
-
-	// Ask the API to do the heavy lifting. cleanCache also calls invalidateCache to be sure.
-	$cacheAPI->cleanCache($type);
-
-	call_integration_hook('integrate_clean_cache');
-	clearstatcache();
+	StoryBB\Cache::empty();
 }
 
 /**

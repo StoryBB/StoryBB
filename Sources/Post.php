@@ -2292,7 +2292,7 @@ function AnnouncementSend()
 
 	// For each language send a different mail - low priority...
 	foreach ($announcements as $lang => $mail)
-		sendmail($mail['recipients'], $mail['subject'], $mail['body'], null, 'ann-' . $lang, $mail['is_html'], 5);
+		StoryBB\Helper\Mail::send($mail['recipients'], $mail['subject'], $mail['body'], null, 'ann-' . $lang, $mail['is_html'], 5);
 
 	$context['percentage_done'] = round(100 * $context['start'] / $modSettings['latestMember'], 1);
 
