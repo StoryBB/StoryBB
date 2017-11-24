@@ -22,6 +22,7 @@ class Misc
 			'dynamicpartial' => 'StoryBB\\Template\\Helper\\Misc::dynamicpartial',
 			'json' => 'StoryBB\\Template\\Helper\\Misc::json',
 			'breakRow' => 'StoryBB\\Template\\Helper\\Misc::breakrow',
+			'is_numeric' => 'StoryBB\\Template\\Helper\\Misc::is_numeric',
 		]);
 	}
 
@@ -60,6 +61,10 @@ class Misc
 		}
 		if ($index % $perRow === 0) return $sep;
 		return '';
+	}
+
+	public static function is_numeric($x) {
+		return is_numeric($x);
 	}
 }
 
