@@ -555,7 +555,7 @@ function SetThemeOptions()
 	loadTemplate('Settings');
 	loadSubTemplate('options');
 
-	$context['sub_template'] = 'set_options';
+	$context['sub_template'] = 'admin_themes_options';
 	$context['page_title'] = $txt['theme_settings'];
 
 	$context['options'] = $context['theme_options'];
@@ -740,7 +740,7 @@ function SetThemeSettings()
 		redirectexit('action=admin;area=theme;sa=list;th=' . $_GET['th'] . ';' . $context['session_var'] . '=' . $context['session_id']);
 	}
 
-	$context['sub_template'] = 'set_settings';
+	$context['sub_template'] = 'admin_themes_settings';
 	$context['page_title'] = $txt['theme_settings'];
 
 	foreach ($settings as $setting => $dummy)
