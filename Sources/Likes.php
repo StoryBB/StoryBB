@@ -520,10 +520,11 @@ class Likes
 		$context['page_title'] = strip_tags(sprintf($txt[$title_base], '', comma_format($count)));
 
 		// Lastly, setting up for display.
-		loadTemplate('Likes');
 		loadLanguage('Help'); // For the close window button.
 		$context['template_layers'] = array();
-		$context['sub_template'] = 'popup';
+		StoryBB\Template::set_layout('popup');
+		$context['popup_id'] = 'likes_popup';
+		$context['sub_template'] = 'likes_popup';
 
 		// We already took care of our response so there is no need to bother with respond();
 		$this->_setResponse = false;
@@ -549,7 +550,6 @@ class Likes
 			return $this->jsonResponse();
 
 		// Set everything up for display.
-		loadTemplate('Likes');
 		$context['template_layers'] = array();
 		StoryBB\Template::set_layout('raw');
 
@@ -563,7 +563,7 @@ class Likes
 			// Is this request coming from an ajax call?
 			if ($this->_js)
 			{
-				$context['sub_template'] = 'generic';
+				$context['sub_template'] = 'likes_result';
 				$context['data'] = isset($txt[$this->_error]) ? $txt[$this->_error] : $txt['like_error'];
 			}
 
