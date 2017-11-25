@@ -1,12 +1,12 @@
 <ul id="likes">
     {{#each context.likers}}
     <li>
-		{{profile.avatar.image}}
+		{{{profile.avatar.image}}}
 		<span>
-			{{profile.link_color}}<br>
+			{{{profile.link_color}}}<br>
 			<span class="description">{{profile.group}}</span>
 		</span>
-		<span class="floatright">{{time}}</span>
+		<span class="floatright">{{{time}}}</span>
 	</li>
 	{{/each}}
 	</ul>
