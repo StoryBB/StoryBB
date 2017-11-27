@@ -1187,7 +1187,6 @@ function Post($post_errors = array())
 
 	StoryBB\Template::add_helper([
 		'browser' => 'isBrowser',
-		'jsEscape' => 'JavaScriptEscape',
 		'formatKb' => function($size) {
 			return comma_format(round(max($size, 1024) / 1024), 0);
 		},
