@@ -20,7 +20,7 @@ class Text
 			'get_text' => 'StoryBB\\Template\\Helper\\Text::get_text',
 			'textTemplate' => 'StoryBB\\Template\\Helper\\Text::textTemplate',
 			'concat' => 'StoryBB\\Template\\Helper\\Text::concat',
-			'jsEscape' => 'StoryBB\\Templates\\Helper\\Text::jsEscape',
+			'jsEscape' => 'StoryBB\\Template\\Helper\\Text::jsEscape',
 		]);
 	}
 
