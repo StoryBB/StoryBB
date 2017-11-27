@@ -19,7 +19,8 @@ class Controls
 		return ([
 			'captcha' => 'StoryBB\\Template\\Helper\\Controls::captcha',
 			'richtexteditor' => 'StoryBB\\Template\\Helper\\Controls::richtexteditor',
-			'richedit_buttons' => 'StoryBB\\Template\\Helper\\Controls::richedit_buttons',
+			'richtextbuttons' => 'StoryBB\\Template\\Helper\\Controls::richedit_buttons',
+			'genericlist' => 'StoryBB\\Template\\Helper\\Controls::genericlist',
 		]);
 	}
 
@@ -77,6 +78,25 @@ class Controls
 			'settings' => $settings,
 			'modSettings' => $modSettings,
 			'txt' => $txt,
+		]));
+	}
+
+	public static function genericlist($list_id = null)
+	{
+		global $context;
+		// Get a shortcut to the current list.
+		$list_id = $list_id === null ? (!empty($context['default_list']) ? $context['default_list'] : '') : $list_id;
+		if (empty($list_id) || empty($context[$list_id]))
+			return;
+		$cur_list = &$context[$list_id];
+		$cur_list['list_id'] = $list_id;
+		
+		$template = StoryBB\Template::load_partial('generic_list');
+		$phpStr = StoryBB\Template::compile($template, [], 'genericlist');
+		return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, [
+			'context' => $context,
+			'cur_list' => $cur_list,
+			'headerCount' => count($cur_list['headers'])
 		]));
 	}
 }
