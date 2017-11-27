@@ -1774,28 +1774,6 @@ function create_control_richedit($editorOptions)
 
 	// Set a flag so the sub template knows what to do...
 	$context['show_bbc'] = !empty($modSettings['enableBBC']);
-
-	register_helper([
-		'richtexteditor' => 'control_richedit_helper',
-		'jsEscape' => 'JSEscape',
-	]);
-}
-
-function control_richedit_helper($editor_id, $smileyContainer = null, $bbcContainer = null) {
-	global $context, $settings, $modSettings;
-
-	$data = [
-		'editor_id' => $editor_id,
-		'editor_context' => $context['controls']['richedit'][$editor_id],
-		'context' => $context,
-		'settings' => $settings,
-		'modSettings' => $modSettings,
-		'smileyContainer' => $smileyContainer,
-		'bbcContainer' => $bbcContainer,
-	];
-	$template = StoryBB\Template::load_partial('control_richedit');
-	$phpStr = StoryBB\Template::compile($template, [], 'richedit');
-	return StoryBB\Template::prepare($phpStr, $data);
 }
 
 /**

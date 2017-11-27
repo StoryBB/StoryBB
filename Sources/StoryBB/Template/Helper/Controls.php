@@ -18,6 +18,7 @@ class Controls
 	{
 		return ([
 			'captcha' => 'StoryBB\\Template\\Helper\\Controls::captcha',
+			'richtexteditor' => 'StoryBB\\Template\\Helper\\Controls::richtexteditor',
 			'richedit_buttons' => 'StoryBB\\Template\\Helper\\Controls::richedit_buttons',
 		]);
 	}
@@ -40,6 +41,25 @@ class Controls
 			'verify_context' => $verify_context,
 			'txt' => $txt,
 		]));	
+	}
+
+	public static function richtexteditor($editor_id, $smileyContainer = null, $bbcContainer = null) {
+		global $context, $settings, $modSettings;
+
+		if (empty($context['controls']['richedit'][$editor_id]))
+			return '';
+
+		$template = StoryBB\Template::load_partial('control_richedit');
+		$phpStr = StoryBB\Template::compile($template, [], 'richedit');
+		return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, [
+			'editor_id' => $editor_id,
+			'editor_context' => $context['controls']['richedit'][$editor_id],
+			'context' => $context,
+			'settings' => $settings,
+			'modSettings' => $modSettings,
+			'smileyContainer' => $smileyContainer,
+			'bbcContainer' => $bbcContainer,
+		]));
 	}
 
 	public static function richedit_buttons($editor_id) {
