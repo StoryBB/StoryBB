@@ -185,7 +185,7 @@
 							<li class="like_button" id="msg_{{id}}_likes"{{#if is_ignoring}} style="display:none"{{/if}}><a href="{{../scripturl}}?action=likes;ltype=msg;sa=like;like={{id}};{{../context.session_var}}={{../context.session_id}}" class="msg_like"><span class="generic_icons {{#if likes.you}}unlike{{else}}like{{/if}}"></span> {{#if likes.you}}{{../txt.unlike}}{{else}}{{../txt.like}}{{/if}}</a></li>
 						{{/if}}
 						{{#if (and likes.count ../context.can_see_likes)}}
-							<li class="like_count smalltext">{{{getLikeText likes}}}</li>
+							<li class="like_count smalltext"><a href="{{scripturl}}?action=likes;sa=view;ltype=msg;like={{id}};{{../context.session_var}}={{../context.session_id}}">{{{getLikeText likes}}}</a></li>
 						{{/if}}
 					</ul>
 				{{/if}}

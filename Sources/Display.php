@@ -1291,7 +1291,7 @@ function Display()
 				$count--;
 			}
 			$base .= (isset($txt[$base . $count])) ? $count : 'n';
-			return sprintf($txt[$base], $scripturl . '?action=likes;sa=view;ltype=msg;like=' . $likes['id'] . ';' . $context['session_var'] . '=' . $context['session_id'], comma_format($count));
+			return sprintf($txt[$base], comma_format($count));
 		}
 	]);
 

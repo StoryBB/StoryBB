@@ -320,7 +320,7 @@ var icon_urls = {
 				}
 				// @todo Currently not sending poll options and option checkboxes.
 				var x = new Array();
-				var textFields = ['subject', '{{jsEscape context.post_box_name}}', '{{jsEscape context.session_var}}', 'icon', 'guestname', 'email', 'question', 'topic'];
+				var textFields = ['subject', '{{context.post_box_name}}', '{{context.session_var}}', 'icon', 'guestname', 'email', 'question', 'topic'];
 				var numericFields = [
 					'board', 'topic', 'last_msg',
 					'poll_max_votes', 'poll_expire', 'poll_change_vote', 'poll_hide'
@@ -333,7 +333,7 @@ var icon_urls = {
 					if (textFields[i] in document.forms.postmodify)
 					{
 						// Handle the WYSIWYG editor.
-						if (textFields[i] == '{{jsEscape context.post_box_name}}' && $("#{{context.post_box_name}}").data("sceditor") != undefined)
+						if (textFields[i] == '{{context.post_box_name}}' && $("#{{context.post_box_name}}").data("sceditor") != undefined)
 							x[x.length] = textFields[i] + '=' + $("#{{context.post_box_name}}").data("sceditor").getText().replace(/&#/g, '&#38;#');
 						else
 							x[x.length] = textFields[i] + '=' + document.forms.postmodify[textFields[i]].value.replace(/&#/g, '&#38;#');

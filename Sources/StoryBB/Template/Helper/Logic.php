@@ -18,6 +18,7 @@ class Logic
 	{
 		return ([
 			'eq'  => 'StoryBB\\Template\\Helper\\Logic::eq',
+			'eq_coerce'  => 'StoryBB\\Template\\Helper\\Logic::eq_coerce',
 			'neq' => 'StoryBB\\Template\\Helper\\Logic::ne',
 			'lt'  => 'StoryBB\\Template\\Helper\\Logic::lt',
 			'gt'  => 'StoryBB\\Template\\Helper\\Logic::gt',
@@ -36,6 +37,15 @@ class Logic
 	public static function eq($arg1,$arg2) 
 	{
 		return $arg1 === $arg2;
+	}
+	
+	/*****
+	 * Usage: {{#if (eq arg1 arg2)}}
+	 * Returns true if arg1 === arg2, otherwise returns false
+	 */
+	public static function eq_coerce($arg1,$arg2) 
+	{
+		return $arg1 == $arg2;
 	}
 
 	/*****
