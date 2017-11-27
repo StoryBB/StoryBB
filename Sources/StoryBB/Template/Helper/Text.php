@@ -20,6 +20,7 @@ class Text
 			'get_text' => 'StoryBB\\Template\\Helper\\Text::get_text',
 			'textTemplate' => 'StoryBB\\Template\\Helper\\Text::textTemplate',
 			'concat' => 'StoryBB\\Template\\Helper\\Text::concat',
+			'jsEscape' => 'StoryBB\\Template\\Helper\\Text::jsEscape',
 		]);
 	}
 
@@ -68,7 +69,7 @@ class Text
 		return implode('', $items);
 	}
 
-	public static function JSEscape($string)
+	public static function jsEscape($string)
 	{
 		global $scripturl;
 

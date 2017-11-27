@@ -569,7 +569,7 @@ var icon_urls = {
 						{
 							sId: 'msg_{{.}}_ignored_link',
 							msgExpanded: '',
-							msgCollapsed: '{{JSEscape ../txt.show_ignore_user_post}}'
+							msgCollapsed: {{{jsEscape ../txt.show_ignore_user_post}}}
 						}
 				]
 			});
@@ -612,7 +612,7 @@ var icon_urls = {
 					pollOptionNum++
 					pollOptionId++
 
-					setOuterHTML(document.getElementById('pollMoreOptions'), '{{jsescape '<dt><label for="options-'}}' + pollOptionId + '{{jsEscape (concat '">'  txt.option)}}' + pollOptionNum + '{{jsEscape '</label>:</dt><dd><input type="text" name="options['}}' + pollOptionId + '{{jsEscape ']" id="options-'}}' + pollOptionId + '{{jsEscape '" value="" size="80" maxlength="255" tabindex="'}}' + pollTabIndex + '{{jsEscape '" class="input_text"></dd><p id="pollMoreOptions"></p>'}}');
+					setOuterHTML(document.getElementById('pollMoreOptions'), '{{jsEscape '<dt><label for="options-'}}' + pollOptionId + '{{jsEscape (concat '">'  txt.option)}}' + pollOptionNum + '{{jsEscape '</label>:</dt><dd><input type="text" name="options['}}' + pollOptionId + '{{jsEscape ']" id="options-'}}' + pollOptionId + '{{jsEscape '" value="" size="80" maxlength="255" tabindex="'}}' + pollTabIndex + '{{jsEscape '" class="input_text"></dd><p id="pollMoreOptions"></p>'}}');
 				};
 			{{/if}}
 		</script>

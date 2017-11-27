@@ -62,7 +62,7 @@
 				if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
 				{
 					if (foundCriteria)
-						joinText = document.getElementById("logic").value == 'and' ? {{{JSEscape txt.pm_readable_and}}} : {{{JSEscape txt.pm_readable_or}}};
+						joinText = document.getElementById("logic").value == 'and' ? {{{jsEscape txt.pm_readable_and}}} : {{{jsEscape txt.pm_readable_or}}};
 						else
 						joinText = '';
 					foundCriteria = true;
@@ -78,23 +78,23 @@
 
 					// What type of test is this?
 					if (curVal == "mid" && curDef)
-						text += joinText + {{{JSEscape txt.pm_readable_member}}}.replace("{MEMBER}", curDef);
+						text += joinText + {{{jsEscape txt.pm_readable_member}}}.replace("{MEMBER}", curDef);
 					else if (curVal == "gid" && curDef && groups[curDef])
-						text += joinText + {{{JSEscape txt.pm_readable_group}}}.replace("{GROUP}", groups[curDef]);
+						text += joinText + {{{jsEscape txt.pm_readable_group}}}.replace("{GROUP}", groups[curDef]);
 					else if (curVal == "sub" && curDef)
-						text += joinText + {{{JSEscape txt.pm_readable_subject}}}.replace("{SUBJECT}", curDef);
+						text += joinText + {{{jsEscape txt.pm_readable_subject}}}.replace("{SUBJECT}", curDef);
 					else if (curVal == "msg" && curDef)
-						text += joinText + {{{JSEscape txt.pm_readable_body}}}.replace("{BODY}", curDef);
+						text += joinText + {{{jsEscape txt.pm_readable_body}}}.replace("{BODY}", curDef);
 					else if (curVal == "bud" && !hadBuddy)
 					{
-						text += joinText + {{{JSEscape txt.pm_readable_buddy}}};
+						text += joinText + {{{jsEscape txt.pm_readable_buddy}}};
 						hadBuddy = true;
 					}
 				}
 				if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
 				{
 					if (foundAction)
-						joinText = {{{JSEscape txt.pm_readable_and}}};
+						joinText = {{{jsEscape txt.pm_readable_and}}};
 					else
 						joinText = "";
 					foundAction = true;
@@ -108,9 +108,9 @@
 
 					// Now pick the actions.
 					if (curVal == "lab" && curDef && labels[curDef])
-						actionText += joinText + {{{JSEscape txt.pm_readable_label}}}.replace("{LABEL}", labels[curDef]);
+						actionText += joinText + {{{jsEscape txt.pm_readable_label}}}.replace("{LABEL}", labels[curDef]);
 					else if (curVal == "del")
-						actionText += joinText + {{{JSEscape txt.pm_readable_delete}}};
+						actionText += joinText + {{{jsEscape txt.pm_readable_delete}}};
 				}
 			}
 
@@ -120,8 +120,8 @@
 			else
 			{
 				if (actionText != "")
-					text += {{{JSEscape txt.pm_readable_then}}} + actionText;
-				text = {{{JSEscape txt.pm_readable_start}}} + text + {{{JSEscape txt.pm_readable_end}}};
+					text += {{{jsEscape txt.pm_readable_then}}} + actionText;
+				text = {{{jsEscape txt.pm_readable_start}}} + text + {{{jsEscape txt.pm_readable_end}}};
 			}
 
 			// Set the actual HTML!
