@@ -110,9 +110,9 @@ class Post
 
 		if (!empty($modSettings['enable_mentions']))
 		{
-			$msgOptions['mentioned_members'] = Mentions::getMentionedMembers($msgOptions['body']);
+			$msgOptions['mentioned_members'] = \Mentions::getMentionedMembers($msgOptions['body']);
 			if (!empty($msgOptions['mentioned_members']))
-				$msgOptions['body'] = Mentions::getBody($msgOptions['body'], $msgOptions['mentioned_members']);
+				$msgOptions['body'] = \Mentions::getBody($msgOptions['body'], $msgOptions['mentioned_members']);
 		}
 
 		// It's do or die time: forget any user aborts!
@@ -502,8 +502,8 @@ class Post
 					unset($msgOptions['old_body']);
 			}
 
-			$mentions = Mentions::getMentionedMembers($msgOptions['body']);
-			$messages_columns['body'] = $msgOptions['body'] = Mentions::getBody($msgOptions['body'], $mentions);
+			$mentions = \Mentions::getMentionedMembers($msgOptions['body']);
+			$messages_columns['body'] = $msgOptions['body'] = \Mentions::getBody($msgOptions['body'], $mentions);
 
 			// Remove the poster.
 			if (isset($mentions[$user_info['id']]))
