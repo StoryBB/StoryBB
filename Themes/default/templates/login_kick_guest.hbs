@@ -5,11 +5,11 @@
 			</div>
 
 <p class="information centertext">
-				{{#if context.kick_message}}{{context.kick_message}}{{else}}{{txt.only_members_can_access}}{{/if}}<br>
+				{{#if context.kick_message}}{{{context.kick_message}}}{{else}}{{{txt.only_members_can_access}}}{{/if}}<br>
 
 
 	{{#if context.can_register}}
-		{{textTemplate txt.login_below_or_register (concat scripturl '?action=signup') context.forum_name_html_safe}}
+		{{{textTemplate txt.login_below_or_register (concat scripturl '?action=signup') context.forum_name_html_safe}}}
 	{{else}}
 		{{txt.login_below}}
     {{/if}}
