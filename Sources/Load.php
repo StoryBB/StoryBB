@@ -419,7 +419,7 @@ function loadUserSettings()
 				FROM {db_prefix}members AS mem
 					LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = mem.current_character)
 					LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
-					LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character)
+					LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
 				WHERE mem.id_member = {int:id_member}
 				LIMIT 1',
 				array(
@@ -1278,7 +1278,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
 			LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
-			LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character)
+			LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character AND a.attachment_type = 1)
 			LEFT JOIN {db_prefix}membergroups AS cg ON (chars.main_char_group = cg.id_group)';
 
 	// We add or replace according the the set
@@ -1367,7 +1367,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				chars.posts, chars.age, chars.date_created, chars.last_active, chars.is_main,
 				chars.main_char_group, chars.char_groups, chars.char_sheet, chars.retired
 			FROM {db_prefix}characters AS chars
-			LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character)
+			LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character AND a.attachment_type = 1)
 			WHERE id_member IN ({array_int:loaded_ids})
 			ORDER BY NULL',
 			array(
