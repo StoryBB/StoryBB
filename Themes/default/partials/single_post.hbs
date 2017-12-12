@@ -140,7 +140,7 @@
 				{{#if attachment}}
 					<div id="msg_{{id}}_footer" class="attachments"{{#if is_ignored}} style="display:none"{{/if}}>
 						{{#each attachment}}
-							<div class="attached">
+							<div class="attached" data-index="{{@index}}" data-breakrow="{{{breakRow @index '5' 'br'}}}">
 								{{#if is_image}}
 									<div class="attachments_top">
 										{{#if thumbnail.has_thumb}}
@@ -152,13 +152,13 @@
 								{{/if}}
 								<div class="attachments_bot">
 									<a href="{{href}}"><img src="{{../../settings.images_url}}/icons/clip.png" class="centericon" alt="*">&nbsp;{{name}}</a> 
-									{{#if (and ../../context.can_approve (not approved))}}
-									[<a href="{{../../scripturl}}?action=attachapprove;sa=approve;aid=', $attachment['id'], ';{{../../context.session_var}}={{../../context.session_id}}">{{txt.approve}}</a>]&nbsp;|&nbsp;[<a href="', {{../../scripturl}}?action=attachapprove;sa=reject;aid={{id}};{{../../context.session_var}}={{../../context.session_id}}">{{{../../txt.delete}}}</a>] 
+									{{#if (and ../../context.can_approve (not is_approved))}}
+									[<a href="{{../../scripturl}}?action=attachapprove;sa=approve;aid={{id}};{{../../context.session_var}}={{../../context.session_id}}">{{../../txt.approve}}</a>]&nbsp;|&nbsp;[<a href="{{../../scripturl}}?action=attachapprove;sa=reject;aid={{id}};{{../../context.session_var}}={{../../context.session_id}}">{{{../../txt.delete}}}</a>] 
 									{{/if}}
-									<br>{{size}}, {{#if is_image}}(concat ', ' real_width 'x' real_height '<br>' {{textTemplate ../../txt.attach_viewed downloads}}{{else}}<br>{{textTemplate ../../txt.attach_downloaded downloads}}){{/if}}
+									<br>{{size}}, {{#if is_image}}{{real_width}}x{{real_height}}<br>{{textTemplate ../../txt.attach_viewed downloads}}{{else}}<br>{{textTemplate ../../txt.attach_downloaded downloads}}{{/if}}
 								</div>
 							</div>
-							{{breakRow @index '5' '<br>'}}
+							{{{breakRow @index '5' '<br>'}}}
 						{{/each}}
 					</div>
 				{{/if}}
