@@ -1908,19 +1908,14 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 		if ($thisVerification['can_recaptcha'])
 		{
-			$reCaptcha = new \ReCaptcha\ReCaptcha($modSettings['recaptcha_secret_key']);
-
-			// Was there a reCAPTCHA response?
-			if (isset($_POST['g-recaptcha-response']))
+			// Validate this with reCaptcha.
+			$recaptcha = new StoryBB\Helper\Verification\Recaptcha($modSettings['recaptcha_secret_key']);
+			if (!$recaptcha->verify())
 			{
-				$resp = $reCaptcha->verify($_POST['g-recaptcha-response'], $user_info['ip']);
-
-				if (!$resp->isSuccess())
-					$verification_errors[] = 'wrong_verification_code';
-			}
-			else
 				$verification_errors[] = 'wrong_verification_code';
+			}
 		}
+
 		if ($thisVerification['show_visual'] && (empty($_REQUEST[$verificationOptions['id'] . '_vv']['code']) || empty($_SESSION[$verificationOptions['id'] . '_vv']['code']) || strtoupper($_REQUEST[$verificationOptions['id'] . '_vv']['code']) !== $_SESSION[$verificationOptions['id'] . '_vv']['code']))
 			$verification_errors[] = 'wrong_verification_code';
 		if ($thisVerification['number_questions'])
