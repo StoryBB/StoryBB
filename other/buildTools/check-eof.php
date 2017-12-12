@@ -25,10 +25,6 @@ $ignoreFiles = array(
 	// Minify Stuff.
 	'\./Sources/minify/[A-Za-z0-9/-]+\.php',
 
-	// ReCaptcha Stuff.
-	'\./Sources/ReCaptcha/[A-Za-z0-9]+\.php',
-	'\./Sources/ReCaptcha/RequestMethod/[A-Za-z0-9]+\.php',
-
 	// We will ignore Settings.php if this is a live dev site.
 	'\./Settings.php',
 	'\./Settings_bak.php',
