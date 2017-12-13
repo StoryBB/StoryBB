@@ -2227,25 +2227,6 @@ function template_tfasetup()
 }
 
 /**
- * Template for setting up 2FA backup code
- */
-function template_tfasetup_backup()
-{
-	global $context, $txt;
-
-	echo '
-							<div class="cat_bar">
-								<h3 class="catbg">', $txt['tfa_backup_title'], '</h3>
-							</div>
-							<div class="roundframe">
-								<div>
-									<div class="smalltext">', $txt['tfa_backup_desc'], '</div>
-									<div class="bbc_code" style="resize: none; border: none;">', $context['tfa_backup'], '</div>
-								</div>
-							</div>';
-}
-
-/**
  * Simple template for showing the 2FA area when editing a profile.
  */
 function template_profile_tfa()

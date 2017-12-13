@@ -3940,7 +3940,7 @@ function tfasetup($memID)
 				unset($_SESSION['tfa_secret']);
 
 				$context['tfa_backup'] = $backup;
-				$context['sub_template'] = 'tfasetup_backup';
+				$context['sub_template'] = 'profile_tfasetup_backup';
 
 				return;
 			}
