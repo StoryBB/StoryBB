@@ -3898,6 +3898,8 @@ function tfasetup($memID)
 {
 	global $user_info, $context, $user_settings, $sourcedir, $modSettings;
 
+	$context['sub_template'] = 'profile_tfasetup';
+
 	require_once($sourcedir . '/Class-TOTP.php');
 	require_once($sourcedir . '/Subs-Auth.php');
 
@@ -3913,6 +3915,7 @@ function tfasetup($memID)
 		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' && !isset($_REQUEST['backup']) && !isset($_REQUEST['forced']))
 		{
 			$context['from_ajax'] = true;
+			StoryBB\Template::set_layout('raw');
 			$context['template_layers'] = array();
 		}
 

@@ -2172,61 +2172,6 @@ function template_profile_smiley_pick()
 }
 
 /**
- * Template for setting up and managing Two-Factor Authentication.
- */
-function template_tfasetup()
-{
-	global $txt, $context, $scripturl, $modSettings;
-
-	echo '
-							<div class="cat_bar">
-								<h3 class="catbg">', $txt['tfa_title'], '</h3>
-							</div>
-							<div class="roundframe">
-								<div>
-		', !empty($context['tfa_backup']) ? '
-									<div class="smalltext error">' . $txt['tfa_backup_used_desc'] . '</div>' :
-			($modSettings['tfa_mode'] == 2 ? '
-									<div class="smalltext"><strong>' . $txt['tfa_forced_desc'] . '</strong></div>' : ''), '
-									<div class="smalltext">', $txt['tfa_desc'], '</div>
-									<div id="basicinfo" style="width: 60%">
-										<form action="', $scripturl, '?action=profile;area=tfasetup" method="post">
-											<div class="title_top">
-												<strong>', $txt['tfa_step1'], '</strong><br />
-												', !empty($context['tfa_pass_error']) ? '<div class="error smalltext">' . $txt['tfa_pass_invalid'] . '</div>' : '', '
-												<input type="password" name="passwd" style="width: 200px;"', !empty($context['tfa_pass_error']) ? ' class="error"' : '', !empty($context['tfa_pass_value']) ? ' value="' . $context['tfa_pass_value'] . '"' : '', '>
-											</div>
-											<div class="title_top">
-												<strong>', $txt['tfa_step2'], '</strong>
-												<div class="smalltext">', $txt['tfa_step2_desc'], '</div>
-												<div class="tfacode">', $context['tfa_secret'], '</div>
-											</div>
-											<div class="title_top">
-												<strong>', $txt['tfa_step3'], '</strong><br />
-												', !empty($context['tfa_error']) ? '<div class="error smalltext">' . $txt['tfa_code_invalid'] . '</div>' : '', '
-												<input type="text" name="tfa_code" style="width: 200px;"', !empty($context['tfa_error']) ? ' class="error"' : '', !empty($context['tfa_value']) ? ' value="' . $context['tfa_value'] . '"' : '', '>
-												<input type="submit" name="save" value="', $txt['tfa_enable'], '" class="button_submit" style="float: none;" />
-											</div>
-											<input type="hidden" name="', $context[$context['token_check'] . '_token_var'], '" value="', $context[$context['token_check'] . '_token'], '" />
-											<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-										</form>
-									</div>
-									<div id="detailedinfo" style="width: 30%;">
-										<img src="', $context['tfa_qr_url'], '" alt="" style="max-width: 120px;" />
-									</div>
-									<div class="clear"></div>';
-
-	if (!empty($context['from_ajax']))
-		echo '
-									<br>
-									<a href="javascript:self.close();"></a>';
-
-	echo '
-								</div>
-							</div>';
-}
-
-/**
  * Simple template for showing the 2FA area when editing a profile.
  */
 function template_profile_tfa()
