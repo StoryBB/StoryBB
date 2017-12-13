@@ -2296,6 +2296,8 @@ function alert_notifications_boards($memID)
 {
 	global $txt, $scripturl, $context, $sourcedir;
 
+	$context['sub_template'] = 'profile_alerts_watchedboards';
+
 	// Because of the way this stuff works, we want to do this ourselves.
 	if (isset($_POST['edit_notify_boards']) || isset($_POSt['remove_notify_boards']))
 	{

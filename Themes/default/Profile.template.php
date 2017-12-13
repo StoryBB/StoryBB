@@ -1174,25 +1174,6 @@ function template_alert_configuration()
 }
 
 /**
- * Template for showing which boards you're subscribed to
- */
-function template_alert_notifications_boards()
-{
-	global $txt;
-
-	echo '
-		<div class="cat_bar">
-			<h3 class="catbg">
-				', $txt['watched_boards'], '
-			</h3>
-		</div>
-		<p class="information">', $txt['watched_boards_desc'], '</p>
-		<br>';
-
-	echo generic_list_helper('board_notification_list');
-}
-
-/**
  * Template for choosing group membership.
  */
 function template_groupMembership()
