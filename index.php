@@ -113,7 +113,6 @@ if (!empty($modSettings['enableCompressedOutput']) && !headers_sent())
 spl_autoload_register(function ($class) use ($sourcedir)
 {
 	$classMap = array(
-		'ReCaptcha\\' => 'ReCaptcha/',
 		'MatthiasMullie\\Minify\\' => 'minify/src/',
 		'MatthiasMullie\\PathConverter\\' => 'minify/path-converter/src/',
 	);
