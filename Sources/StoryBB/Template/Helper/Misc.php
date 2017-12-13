@@ -56,10 +56,11 @@ class Misc
 	}
 
 	public static function breakrow($index, $perRow, $sep) {
+		$perRow = (int) $perRow;
 		if ($perRow == 0) {
 			return '';
 		}
-		if ($index % $perRow === 0) return $sep;
+		if ($index > 0 && $index % $perRow == 0) return $sep;
 		return '';
 	}
 
