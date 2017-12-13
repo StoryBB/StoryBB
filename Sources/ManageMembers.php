@@ -44,7 +44,6 @@ function ViewMembers()
 
 	// Load the essentials.
 	loadLanguage('ManageMembers');
-	loadTemplate('ManageMembers');
 
 	// Get counts on every type of activation - for sections and filtering alike.
 	$request = $smcFunc['db_query']('', '
@@ -650,7 +649,7 @@ function SearchMembers()
 	$smcFunc['db_free_result']($request);
 
 	$context['page_title'] = $txt['admin_members'];
-	$context['sub_template'] = 'search_members';
+	$context['sub_template'] = 'admin_member_search';
 }
 
 /**
@@ -670,7 +669,7 @@ function MembersAwaitingActivation()
 
 	// Not a lot here!
 	$context['page_title'] = $txt['admin_members'];
-	$context['sub_template'] = 'admin_browse';
+	$context['sub_template'] = 'admin_member_approval';
 	$context['browse_type'] = isset($_REQUEST['type']) ? $_REQUEST['type'] : (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? 'activate' : 'approve');
 	if (isset($context['tabs'][$context['browse_type']]))
 		$context['tabs'][$context['browse_type']]['is_selected'] = true;
