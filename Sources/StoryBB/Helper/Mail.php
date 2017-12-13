@@ -29,7 +29,7 @@ class Mail
 	 * @param bool $is_private Whether this is private
 	 * @return boolean Whether ot not the email was sent properly.
 	 */
-	function send($to, $subject, $message, $from = null, $message_id = null, $send_html = false, $priority = 3, $hotmail_fix = null, $is_private = false)
+	public static function send($to, $subject, $message, $from = null, $message_id = null, $send_html = false, $priority = 3, $hotmail_fix = null, $is_private = false)
 	{
 		global $webmaster_email, $context, $modSettings, $txt, $scripturl;
 
