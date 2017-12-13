@@ -670,7 +670,7 @@ function MembersAwaitingActivation()
 
 	// Not a lot here!
 	$context['page_title'] = $txt['admin_members'];
-	$context['sub_template'] = 'admin_browse';
+	$context['sub_template'] = 'admin_member_approval';
 	$context['browse_type'] = isset($_REQUEST['type']) ? $_REQUEST['type'] : (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? 'activate' : 'approve');
 	if (isset($context['tabs'][$context['browse_type']]))
 		$context['tabs'][$context['browse_type']]['is_selected'] = true;
