@@ -1174,26 +1174,6 @@ function template_alert_configuration()
 }
 
 /**
- * Template for showing which topics you're subscribed to
- */
-function template_alert_notifications_topics()
-{
-	global $txt;
-
-	// The main containing header.
-	echo '
-		<div class="cat_bar">
-			<h3 class="catbg">
-				', $txt['watched_topics'], '
-			</h3>
-		</div>
-		<p class="information">', $txt['watched_topics_desc'], '</p>
-		<br>';
-
-	echo generic_list_helper('topic_notification_list');
-}
-
-/**
  * Template for showing which boards you're subscribed to
  */
 function template_alert_notifications_boards()

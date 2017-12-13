@@ -2135,6 +2135,8 @@ function alert_notifications_topics($memID)
 {
 	global $txt, $scripturl, $context, $modSettings, $sourcedir;
 
+	$context['sub_template'] = 'profile_alerts_watchedtopics';
+
 	// Because of the way this stuff works, we want to do this ourselves.
 	if (isset($_POST['edit_notify_topics']) || isset($_POST['remove_notify_topics']))
 	{
