@@ -31,7 +31,6 @@ function ManageSearch()
 	isAllowedTo('admin_forum');
 
 	loadLanguage('Search');
-	loadTemplate('ManageSearch');
 
 	db_extend('search');
 
@@ -678,23 +677,21 @@ function loadSearchAPIs()
 	global $sourcedir, $txt;
 
 	$apis = array();
-	if ($dh = opendir($sourcedir))
+	if ($dh = opendir($sourcedir . '/StoryBB/Search'))
 	{
 		while (($file = readdir($dh)) !== false)
 		{
-			if (is_file($sourcedir . '/' . $file) && preg_match('~^SearchAPI-([A-Za-z\d_]+)\.php$~', $file, $matches))
+			if (is_file($sourcedir . '/' . $file) && preg_match('~^(?!API)([A-Z][a-z0-9_-]+)\.php$~', $file, $matches))
 			{
 				// Check this is definitely a valid API!
 				$fp = fopen($sourcedir . '/' . $file, 'rb');
 				$header = fread($fp, 4096);
 				fclose($fp);
 
-				if (strpos($header, '* SearchAPI-' . $matches[1] . '.php') !== false)
+				if (strpos($header, 'class ' . $matches[1] . ' extends API') !== false)
 				{
-					require_once($sourcedir . '/' . $file);
-
+					$search_class_name = '\\StoryBB\\Search\\' . $matches[1];
 					$index_name = strtolower($matches[1]);
-					$search_class_name = $index_name . '_search';
 					$searchAPI = new $search_class_name();
 
 					// No Support?  NEXT!

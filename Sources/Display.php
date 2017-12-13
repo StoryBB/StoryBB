@@ -1127,7 +1127,7 @@ function Display()
 
 	// Check if the draft functions are enabled and that they have permission to use them (for quick reply.)
 	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && allowedTo('post_draft') && $context['can_reply'];
-	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']);
+	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']) && !empty($options['drafts_autosave_enabled']) && allowedTo('post_autosave_draft');
 	if (!empty($context['drafts_save']))
 		loadLanguage('Drafts');
 
@@ -1161,7 +1161,6 @@ function Display()
 	$editorOptions = array(
 		'id' => 'quickReply',
 		'value' => '',
-		'disable_smiley_box' => empty($options['use_editor_quick_reply']),
 		'labels' => array(
 			'post_button' => $txt['post'],
 		),
@@ -1179,8 +1178,7 @@ function Display()
 	$context['post_box_name'] = $editorOptions['id'];
 
 	// Set a flag so the sub template knows what to do...
-	$context['show_bbc'] = !empty($options['use_editor_quick_reply']);
-	$modSettings['disable_wysiwyg'] = !empty($options['use_editor_quick_reply']);
+	$context['show_bbc'] = true;
 	$context['attached'] = '';
 	$context['make_poll'] = isset($_REQUEST['poll']);
 
@@ -1293,7 +1291,7 @@ function Display()
 				$count--;
 			}
 			$base .= (isset($txt[$base . $count])) ? $count : 'n';
-			return sprintf($txt[$base], $scripturl . '?action=likes;sa=view;ltype=msg;like=' . $likes['id'] . ';' . $context['session_var'] . '=' . $context['session_id'], comma_format($count));
+			return sprintf($txt[$base], comma_format($count));
 		}
 	]);
 

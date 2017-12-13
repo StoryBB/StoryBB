@@ -1995,7 +1995,7 @@ function alert_markread($memID)
 
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
-	loadTemplateLayout('raw');
+	StoryBB\Template::set_layout('raw');
 	$context['sub_template'] = 'alerts_all_read';
 
 	loadLanguage('Alerts');
@@ -3536,7 +3536,7 @@ function profileSendActivation()
 
 	// Send off the email.
 	$emaildata = loadEmailTemplate('activate_reactivate', $replacements, empty($cur_profile['lngfile']) || empty($modSettings['userLanguage']) ? $language : $cur_profile['lngfile']);
-	sendmail($profile_vars['email_address'], $emaildata['subject'], $emaildata['body'], null, 'reactivate', $emaildata['is_html'], 0);
+	StoryBB\Helper\Mail::send($profile_vars['email_address'], $emaildata['subject'], $emaildata['body'], null, 'reactivate', $emaildata['is_html'], 0);
 
 	// Log the user out.
 	$smcFunc['db_query']('', '

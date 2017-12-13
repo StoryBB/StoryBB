@@ -2096,30 +2096,25 @@ function findSearchAPI()
 	global $sourcedir, $modSettings, $search_versions, $searchAPI, $txt;
 
 	require_once($sourcedir . '/Subs-Package.php');
-	require_once($sourcedir . '/Class-SearchAPI.php');
 
 	// Search has a special database set.
 	db_extend('search');
 
-	// Load up the search API we are going to use.
-	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
-	if (!file_exists($sourcedir . '/SearchAPI-' . ucwords($modSettings['search_index']) . '.php'))
-		fatal_lang_error('search_api_missing');
-	require_once($sourcedir . '/SearchAPI-' . ucwords($modSettings['search_index']) . '.php');
-
 	// Create an instance of the search API and check it is valid for this version of SMF.
-	$search_class_name = $modSettings['search_index'] . '_search';
+	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
+	$search_class_name = '\\StoryBB\\Search\\' . ucfirst(strtolower($modSettings['search_index']));
+	if (!class_exists($search_class_name))
+		fatal_lang_error('search_api_missing');
 	$searchAPI = new $search_class_name();
 
 	// An invalid Search API.
-	if (!$searchAPI || !($searchAPI instanceof search_api_interface) || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()))
+	if (!$searchAPI || !($searchAPI instanceof \StoryBB\Search\API_Interface) || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()))
 	{
 		// Log the error.
 		loadLanguage('Errors');
 		log_error(sprintf($txt['search_api_not_compatible'], 'SearchAPI-' . ucwords($modSettings['search_index']) . '.php'), 'critical');
 
-		require_once($sourcedir . '/SearchAPI-Standard.php');
-		$searchAPI = new standard_search();
+		$searchAPI = new \StoryBB\Search\Standard();
 	}
 
 	return $searchAPI;

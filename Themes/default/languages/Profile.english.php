@@ -342,7 +342,6 @@ $txt['show_no_censored'] = 'Leave words uncensored.';
 $txt['topics_per_page'] = 'Topics to display per page:';
 $txt['messages_per_page'] = 'Messages to display per page:';
 $txt['per_page_default'] = 'forum default';
-$txt['use_editor_quick_reply'] = 'Use full editor in Quick Reply';
 
 $txt['whois_title'] = 'Look up IP on a regional whois-server';
 $txt['whois_afrinic'] = 'AfriNIC (Africa)';

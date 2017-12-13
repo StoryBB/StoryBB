@@ -268,11 +268,15 @@ function displayDebug()
 	$temp = ob_get_contents();
 	ob_clean();
 
+	$template_debug = StoryBB\Template::get_debug_info();
+
 	echo preg_replace('~</body>\s*</html>~', '', $temp), '
 <div class="smalltext" style="text-align: left; margin: 1ex;">
 	', $txt['debug_browser'], $context['browser_body_id'], ' <em>(', implode('</em>, <em>', array_reverse(array_keys($context['browser'], true))), ')</em><br>
-	', $txt['debug_templates'], count($context['debug']['templates']), ': <em>', implode('</em>, <em>', $context['debug']['templates']), '</em>.<br>
-	', $txt['debug_subtemplates'], count($context['debug']['sub_templates']), ': <em>', implode('</em>, <em>', $context['debug']['sub_templates']), '</em>.<br>
+	', $txt['debug_templates'], count($template_debug['template']), ': <em>', implode('</em>, <em>', $template_debug['template']), '</em>.<br>
+	', $txt['debug_subtemplates'], count($template_debug['partial']), ': <em>', implode('</em>, <em>', $template_debug['partial']), '</em>.<br>
+	', $txt['debug_template_cache_hits'], count($template_debug['cache_hit']) . (!empty($template_debug['cache_hit']) ? ' - ' . implode(', ', $template_debug['cache_hit']) : '') . '<br>
+	', $txt['debug_template_cache_misses'], count($template_debug['cache_miss']) . (!empty($template_debug['cache_miss']) ? ' - ' . implode(', ', $template_debug['cache_miss']) : '') . '<br>
 	', $txt['debug_language_files'], count($context['debug']['language_files']), ': <em>', implode('</em>, <em>', $context['debug']['language_files']), '</em>.<br>
 	', $txt['debug_stylesheets'], count($context['debug']['sheets']), ': <em>', implode('</em>, <em>', $context['debug']['sheets']), '</em>.<br>
 	', $txt['debug_hooks'], empty($context['debug']['hooks']) ? 0 : count($context['debug']['hooks']) . ' (<a href="javascript:void(0);" onclick="document.getElementById(\'debug_hooks\').style.display = \'inline\'; this.style.display = \'none\'; return false;">', $txt['debug_show'], '</a><span id="debug_hooks" style="display: none;"><em>' . implode('</em>, <em>', $context['debug']['hooks']), '</em></span>)', '<br>

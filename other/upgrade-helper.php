@@ -21,10 +21,9 @@ function upgrade_clean_cache()
 	global $cacheAPI, $sourcedir;
 
 	// Initialize the cache API if it does not have an instance yet.
-	require_once($sourcedir . '/Load.php');
 	if (empty($cacheAPI))
 	{
-		loadCacheAccelerator();
+		StoryBB\Cache::initialize();
 	}
 
 	// Just through back to Load.php's clean_cache function.

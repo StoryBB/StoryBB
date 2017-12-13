@@ -33,9 +33,10 @@ function MessageMain()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	loadLanguage('PersonalMessage+Drafts');
+	
+	//Grab the partial
+	$template = loadTemplatePartial('pm_above');
 
-	if (!isset($_REQUEST['xml']))
-		loadTemplate('PersonalMessage');
 
 	// Load up the members maximum message capacity.
 	if ($user_info['is_admin'])
@@ -359,8 +360,8 @@ function messageIndexBar($area)
 	$context['menu_item_selected'] = $current_area;
 
 	// Set the template for this area and add the profile layer.
-	if (!isset($_REQUEST['xml']))
-		$context['template_layers'][] = 'pm';
+//	if (!isset($_REQUEST['xml']))
+//		$context['template_layers'][] = 'pm';
 }
 
 /**
@@ -375,8 +376,8 @@ function MessagePopup()
 
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
-	$context['sub_template'] = 'pm_popup';
-	$template = loadTemplateLayout('raw');
+	$context['sub_template'] = 'personal_message_popup';
+	StoryBB\Template::set_layout('raw');
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 	$context['can_draft'] = allowedTo('pm_draft') && !empty($modSettings['drafts_pm_enabled']);
@@ -869,8 +870,16 @@ function MessageFolder()
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 	$context['can_send_email'] = allowedTo('moderate_forum');
-	$context['sub_template'] = 'folder';
+	$context['sub_template'] = 'personal_message_folder';
 	$context['page_title'] = $txt['pm_inbox'];
+	
+	//This is a dirty hack. The new template system can't read the messages from a pump the way the old one could.
+	while($message = $context['get_pmessage']('message')) {
+		$context['messages'][] = $message;
+	}
+	while($message = $context['get_pmessage']('subject')) {
+		$context['subjects'][] = $message;
+	}
 
 	// Finally mark the relevant messages as read.
 	if ($context['folder'] != 'sent' && !empty($context['labels'][(int) $context['current_label_id']]['unread_messages']))
@@ -1112,7 +1121,7 @@ function MessageSearch()
 	}
 
 	$context['page_title'] = $txt['pm_search_title'];
-	$context['sub_template'] = 'search';
+	$context['sub_template'] = 'personal_message_search';
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
 		'name' => $txt['pm_search_bar_title'],
@@ -1638,9 +1647,15 @@ function MessageSearch2()
 
 	call_integration_hook('integrate_search_pm_context');
 
+
+	//We need a helper
+	register_helper([
+		'create_button' => 'create_button'
+	]);
+	
 	// Finish off the context.
 	$context['page_title'] = $txt['pm_search_title'];
-	$context['sub_template'] = 'search_results';
+	$context['sub_template'] = 'personal_message_search_results';
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'search';
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
@@ -1659,11 +1674,9 @@ function MessagePost()
 	isAllowedTo('pm_send');
 
 	loadLanguage('PersonalMessage');
-	// Just in case it was loaded from somewhere else.
-	loadTemplate('PersonalMessage');
 	loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'smf_pms');
 	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
-	$context['sub_template'] = 'send';
+	$context['sub_template'] = 'personal_message_send';
 
 	// Extract out the spam settings - cause it's neat.
 	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
@@ -1972,7 +1985,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	if (!isset($_REQUEST['xml']))
 	{
 		$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
-		$context['sub_template'] = 'send';
+		$context['sub_template'] = 'personal_message_send';
 		loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'smf_pms');
 		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 	}
@@ -2701,9 +2714,9 @@ function MessageKillAllQuery()
 	global $txt, $context;
 
 	// Only have to set up the template....
-	$context['sub_template'] = 'ask_delete';
+	$context['sub_template'] = 'personal_message_ask_delete';
 	$context['page_title'] = $txt['delete_all'];
-	$context['delete_all'] = $_REQUEST['f'] == 'all';
+	$context['personal_message_delete_all'] = $_REQUEST['f'] == 'all';
 
 	// And set the folder name...
 	$txt['delete_all'] = str_replace('PMBOX', $context['folder'] != 'sent' ? $txt['inbox'] : $txt['sent_items'], $txt['delete_all']);
@@ -2795,7 +2808,7 @@ function MessagePrune()
 		'name' => $txt['pm_prune']
 	);
 
-	$context['sub_template'] = 'prune';
+	$context['sub_template'] = 'personal_message_prune';
 	$context['page_title'] = $txt['pm_prune'];
 }
 
@@ -3117,7 +3130,7 @@ function ManageLabels()
 	);
 
 	$context['page_title'] = $txt['pm_manage_labels'];
-	$context['sub_template'] = 'labels';
+	$context['sub_template'] = 'personal_message_labels';
 
 	$the_labels = array();
 	$labels_to_add = array();
@@ -3443,7 +3456,7 @@ function ReportMessage()
 	// If we're here, just send the user to the template, with a few useful context bits.
 	if (!isset($_POST['report']))
 	{
-		$context['sub_template'] = 'report_message';
+		$context['sub_template'] = 'personal_message_report';
 
 		// @todo I don't like being able to pick who to send it to.  Favoritism, etc. sucks.
 		// Now, get all the administrators.
@@ -3585,7 +3598,7 @@ function ReportMessage()
 			loadLanguage('PersonalMessage', '', false);
 
 		// Leave them with a template.
-		$context['sub_template'] = 'report_message_complete';
+		$context['sub_template'] = 'personal_message_report_complete';
 	}
 }
 
@@ -3603,7 +3616,7 @@ function ManageRules()
 	);
 
 	$context['page_title'] = $txt['pm_manage_rules'];
-	$context['sub_template'] = 'rules';
+	$context['sub_template'] = 'personal_message_rules';
 
 	// Load them... load them!!
 	LoadRules();
@@ -3647,12 +3660,18 @@ function ManageRules()
 	if (isset($_GET['add']))
 	{
 		$context['rid'] = isset($_GET['rid']) && isset($context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
-		$context['sub_template'] = 'add_rule';
+		$context['sub_template'] = 'personal_message_rules_add';
+		$context['criteriaTypes'] = array('mid', 'gid', 'sub', 'msg', 'bud');
 
 		// Current rule information...
 		if ($context['rid'])
 		{
 			$context['rule'] = $context['rules'][$context['rid']];
+			// Add a dummy criteria to allow expansion for none js users.
+			$context['rule']['criteria'][] = array('t' => '', 'v' => '');
+			// As with criteria - add a dummy action for "expansion".
+			$context['rule']['actions'][] = array('t' => '', 'v' => '');
+			
 			$members = array();
 			// Need to get member names!
 			foreach ($context['rule']['criteria'] as $k => $criteria)

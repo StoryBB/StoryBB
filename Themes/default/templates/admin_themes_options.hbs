@@ -1,0 +1,70 @@
+<div id="admincenter">
+		<form action="{{scripturl}}?action=admin;area=theme;th={{context.theme_settings.theme_id}};sa=reset" method="post" accept-charset="UTF-8">
+			<input type="hidden" name="who" value="{{#if context.theme_options_reset}}1{{else}}0{{/if}}">
+			<div class="cat_bar">
+				<h3 class="catbg">{{txt.theme_options_title}} - {{context.theme_settings.name}}</h3>
+			</div>
+			<div class="information noup">
+				{{#if context.theme_options_reset}}{{{txt.themeadmin_reset_options_info}}}{{else}}{{txt.theme_options_defaults}}{{/if}}
+			</div>
+			<div class="windowbg2 noup">
+			 {{#each context.options}}
+				<dl class="settings">
+				    {{#unless (is_array .)}}{{!-- if we're a string or empty instead of an array, we are a header--}}
+				    {{#unless (eq @index 0)}}
+				    <hr>
+				    {{/unless}}
+				    <dt><b>{{.}}</b></dt><dd></dd>
+				    {{else}}
+				    <dt {{#if context.theme_options_reset}}style="width:50%"{{/if}}>
+				        {{#if context.theme_options_reset}}
+				        <span class="floatleft"><select name="', !empty($setting['default']) ? 'default_' : '', 'options_master[{{id}}]" onchange="this.form.options_{{id}}.disabled = this.selectedIndex != 1;">
+							<option value="0" selected>{{../txt.themeadmin_reset_options_none}}</option>
+							<option value="1">{{../txt.themeadmin_reset_options_change}}</option>
+							<option value="2">{{../txt.themeadmin_reset_options_default}}</option>
+						</select>&nbsp;</span>
+				        {{/if}}
+				        <label for="options_{{id}}"><b>{{label}}</b></label>
+				        {{#if description}}
+				        <br><span class="smalltext">{{description}}</span>
+				        {{/if}}
+				    </dt>
+				    {{#if (eq type 'checkbox')}}
+				    <dd {{#if context.theme_options_reset}}style="width:40%"{{/if}}>
+						<input type="hidden" name="{{#if default}}default_{{/if}}options[{{id}}]" value="0">
+						<input type="checkbox" name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}"{{#if value}} checked{{/if}} value="1" class="input_check">
+					</dd>
+					{{/if}}
+					{{#if (eq type 'list')}}
+					<dd {{#if context.theme_options_reset}}style="width:40%"{{/if}}>
+						<select name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}">
+							{{#each options}}
+							<option value="{{@key}}"{{#if (eq_coerce @key ../value)}} selected{{/if}}>{{.}}</option>
+							{{/each}}
+						</select>
+					</dd>
+					{{/if}}
+					{{#if (eq type 'textarea')}}
+					<dd {{#if context.theme_options_reset}}style="width:40%"{{/if}}>
+						<textarea rows="4" style="width: 95%;" cols="40" name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}">{{value}}</textarea>
+           			</dd>
+					{{/if}}
+					{{#if (or (eq type 'text') (eq type 'url'))}}
+					<dd {{#if context.theme_options_reset}}style="width:40%"{{/if}}>
+						<input type="{{type}}" name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="{{#if size}}{{size}}{{else}}40{{/if}}" class="input_text">
+					</dd>
+					{{/if}}
+					{{#if (eq type 'number')}}
+					<dd {{#if context.theme_options_reset}}style="width:40%"{{/if}}>
+						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}" max="{{max}}" step="{{step}}"	name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="5" class="input_text">
+					</dd>
+					{{/if}}
+				    {{/unless}}
+				    </dl>
+				{{/each}}
+				<input type="submit" name="submit" value="{{txt.save}}" class="button_submit">
+				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+				<input type="hidden" name="{{context.admin-sto_token_var}}" value="{{context.admin-sto_token}}">
+			</div>
+		</form>
+	</div>

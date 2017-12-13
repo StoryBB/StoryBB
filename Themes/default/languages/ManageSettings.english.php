@@ -97,15 +97,7 @@ $txt['enable_likes'] = 'Enable likes';
 // Mention settings.
 $txt['enable_mentions'] = 'Enable mentions';
 
-$txt['caching_information'] = 'StoryBB supports caching through the use of accelerators. The currently supported accelerators include:
-<ul class="normallist">
-	<li>APC</li>
-	<li>APCu</li>
-	<li>Memcached</li>
-	<li>Zend Platform/Performance Suite (Not Zend Optimizer)</li>
-	<li>XCache</li>
-</ul>
-Caching will work best if you have PHP compiled with one of the above optimizers, or have memcached available. If you do not have any optimizer installed StoryBB will do file based caching.';
+$txt['caching_information'] = 'StoryBB supports caching through the following: APC/APCu, Memcache, Postgres, SQLitee, XCache and Zend Platform/Performance Suite, as well as an internal file-based cache.';
 $txt['detected_no_caching'] = '<strong class="alert">StoryBB has not been able to detect a compatible accelerator on your server. File based caching can be used instead.</strong>';
 $txt['detected_accelerators'] = '<strong class="success">StoryBB has detected the following accelerators: %1$s</strong>';
 

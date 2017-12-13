@@ -855,7 +855,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 			$emaildata = loadEmailTemplate($email_message, $replacements);
 
-			sendmail($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, $email_message . $memberID, $emaildata['is_html'], 0);
+			StoryBB\Helper\Mail::send($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, $email_message . $memberID, $emaildata['is_html'], 0);
 		}
 
 		// All admins are finished here.
@@ -874,7 +874,7 @@ function registerMember(&$regOptions, $return_errors = false)
 				'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
 			);
 			$emaildata = loadEmailTemplate('register_immediate', $replacements);
-			sendmail($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, 'register', $emaildata['is_html'], 0);
+			StoryBB\Helper\Mail::send($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, 'register', $emaildata['is_html'], 0);
 		}
 
 		// Send admin their notification.
@@ -903,7 +903,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 		$emaildata = loadEmailTemplate('register_' . ($regOptions['require'] == 'activation' ? 'activate' : 'coppa'), $replacements);
 
-		sendmail($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, 'reg_' . $regOptions['require'] . $memberID, $emaildata['is_html'], 0);
+		StoryBB\Helper\Mail::send($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, 'reg_' . $regOptions['require'] . $memberID, $emaildata['is_html'], 0);
 	}
 	// Must be awaiting approval.
 	else
@@ -917,7 +917,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 		$emaildata = loadEmailTemplate('register_pending', $replacements);
 
-		sendmail($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, 'reg_pending', $emaildata['is_html'], 0);
+		StoryBB\Helper\Mail::send($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, 'reg_pending', $emaildata['is_html'], 0);
 
 		// Admin gets informed here...
 		adminNotify('approval', $memberID, $regOptions['username']);

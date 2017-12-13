@@ -1,0 +1,23 @@
+<div class="pm_bar">
+			<div class="pm_sending block">
+				{{#if context.can_send_pm}}<a href="{{scripturl}}?action=pm;sa=send">{{txt.pm_new_short}}</a> | {{/if}}
+				{{#if context.can_draft}}<a href="{{scripturl}}?action=pm;sa=showpmdrafts">{{txt.pm_drafts_short}}</a>{{/if}}
+				<a href="{{scripturl}}?action=pm;sa=settings" class="floatright">{{txt.pm_settings_short}}</a>
+			</div>
+			<div class="pm_mailbox centertext">
+				<a href="{{scripturl}}?action=pm" class="button">{{txt.inbox}}</a>
+			</div>
+		</div>
+		<div class="pm_unread">
+		    {{#unless context.unread_pms}}<div class="no_unread">{{txt.pm_no_unread}}</div>{{/unless}}
+		    {{#each context.unread_pms}}
+		    <div class="unread">
+				{{#if member}}{{{member.avatar.image}}}{{/if}}
+				<div class="details">
+					<div class="subject">{{{pm_link}}}</div>
+					<div class="sender">{{#if replied_to_you}}<span class="generic_icons replied centericon" style="margin-right: 4px" title="{{txt.pm_you_were_replied_to}}"></span>{{else}}<span class="generic_icons im_off centericon" style="margin-right: 4px" title="{{txt.pm_was_sent_to_you}}"></span>{{/if}}
+					{{#if member}}{{{member.link}}}:{{member_from}} - {{time}}</div>{{/if}}
+				</div>
+			</div>
+			{{/each}}
+		</div>

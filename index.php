@@ -52,9 +52,9 @@ require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Subs-Auth.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
+sbb_autoload();
 
 // Template helpers
-require_once(__DIR__ . '/Themes/default/helpers/logichelpers.php');
 require_once(__DIR__ . '/Themes/default/helpers/mischelpers.php');
 require_once(__DIR__ . '/Themes/default/helpers/stringhelpers.php');
 
@@ -113,7 +113,6 @@ if (!empty($modSettings['enableCompressedOutput']) && !headers_sent())
 spl_autoload_register(function ($class) use ($sourcedir)
 {
 	$classMap = array(
-		'ReCaptcha\\' => 'ReCaptcha/',
 		'MatthiasMullie\\Minify\\' => 'minify/src/',
 		'MatthiasMullie\\PathConverter\\' => 'minify/path-converter/src/',
 	);

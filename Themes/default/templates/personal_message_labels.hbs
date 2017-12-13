@@ -1,0 +1,63 @@
+	<form action="{{scripturl}}?action=pm;sa=manlabels" method="post" accept-charset="UTF-8">
+		<div class="cat_bar">
+			<h3 class="catbg">{{txt.pm_manage_labels}}</h3>
+		</div>
+		<div class="information">
+			{{txt.pm_labels_desc}}
+		</div>
+		<table class="table_grid">
+		<thead>
+			<tr class="title_bar">
+				<th class="lefttext">
+					{{txt.pm_label_name}}
+				</th>
+				<th class="centertext table_icon">
+				    {{#if (gt (getNumItems context.labels) 2)}}<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);">{{/if}}
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#if (lt (getNumItems context.labels) 2)}}
+			<tr class="windowbg">
+				<td colspan="2">{{txt.pm_labels_no_exist}}</td>
+			</tr>
+			{{else}}
+			{{#each context.labels}}
+			{{#unless (eq id -1)}}
+			<tr class="windowbg">
+				<td>
+					<input type="text" name="label_name[{{id}}]" value="{{name}}" size="30" maxlength="30" class="input_text">
+				</td>
+				<td class="table_icon"><input type="checkbox" class="input_check" name="delete_label[{{id}}]"></td>
+			</tr>
+			{{/unless}}
+			{{/each}}
+			{{/if}}
+		</tbody>
+	</table>
+	 {{#if (gte (getNumItems context.labels) 2)}}
+	 <div class="padding">
+			<input type="submit" name="save" value="{{txt.save}}" class="button_submit">
+			<input type="submit" name="delete" value="{{txt.quickmod_delete_selected}}" data-confirm="{{txt.pm_labels_delete}}" class="button_submit you_sure">
+		</div>
+	{{/if}}
+	<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+	</form>
+	<br class="clear">
+	<form action="{{scripturl}}?action=pm;sa=manlabels" method="post" accept-charset="UTF-8" style="margin-top: 1ex;">
+		<div class="cat_bar">
+			<h3 class="catbg">{{txt.pm_label_add_new}}</h3>
+		</div>
+		<div class="windowbg">
+			<dl class="settings">
+				<dt>
+					<strong><label for="add_label">{{txt.pm_label_name}}</label>:</strong>
+				</dt>
+				<dd>
+					<input type="text" id="add_label" name="label" value="" size="30" maxlength="30" class="input_text">
+				</dd>
+			</dl>
+			<input type="submit" name="add" value="{{txt.pm_label_add_new}}" class="button_submit">
+		</div>
+		<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+	</form><br>

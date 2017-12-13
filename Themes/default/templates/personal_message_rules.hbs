@@ -1,0 +1,48 @@
+<form action="{{scripturl}}?action=pm;sa=manrules" method="post" accept-charset="UTF-8" name="manRules" id="manrules">
+		<div class="cat_bar">
+			<h3 class="catbg">{{txt.pm_manage_rules}}</h3>
+		</div>
+		<div class="information">
+			{{txt.pm_manage_rules_desc}}
+		</div>
+		<table class="table_grid">
+		<thead>
+			<tr class="title_bar">
+				<th class="lefttext">
+					{{txt.pm_rule_title}}
+				</th>
+				<th class="centertext table_icon">
+				    {{#if context.rules}}
+				    <input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">
+				    {{/if}}
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+		    {{#unless context.rules}}<tr class="windowbg">
+				<td colspan="2">
+					{{txt.pm_rules_none}}
+				</td>
+			</tr>
+			{{/unless}}
+			{{#each context.rules}}
+			<tr class="windowbg">
+				<td>
+					<a href="{{scripturl}}?action=pm;sa=manrules;add;rid={{id}}">{{name}}</a>
+				</td>
+				<td class="table_icon">
+					<input type="checkbox" name="delrule[{{id}}]" class="input_check">
+				</td>
+			</tr>
+			{{/each}}
+			</tbody>
+		</table>
+		<div class="righttext">
+			<a class="button_link" href="{{scripturl}}?action=pm;sa=manrules;add;rid=0">{{txt.pm_add_rule}}</a>
+			{{#if context.rules}}
+			[<a href="{{scripturl}}?action=pm;sa=manrules;apply;{{context.session_var}}={{context.session_id}}" onclick="return confirm('{{txt.pm_js_apply_rules_confirm}}');">{{txt.pm_apply_rules}}</a>]
+			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			<input type="submit" name="delselected" value="{{txt.pm_delete_selected_rule}}" data-confirm="{{txt.pm_js_delete_rule_confirm}}" class="button_submit smalltext you_sure">
+			{{/if}}
+		</div>
+	</form>

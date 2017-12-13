@@ -40,7 +40,7 @@
             </div>
             {{#if modSettings.drafts_pm_enabled}}
             <div id="draft_section" class="infobox"{{#unless context.draft_saved}} style="display: none;"{{/unless}}>
-				{{textTemplate txt.draft_pm_saved (concat scripturl '?action=pm;sa=showpmdrafts')}}
+				{{{textTemplate txt.draft_pm_saved (concat scripturl '?action=pm;sa=showpmdrafts')}}}
 				{{#if modSettings.drafts_keep_days}}<strong>{{textTemplate txt.draft_save_warning modSettings.drafts_keep_days}}</strong>{{/if}}
 			</div>
             {{/if}}
@@ -223,8 +223,8 @@
 				aSwapLinks: [
 					{
 						sId: 'postDraftExpandLink',
-						msgExpanded: {{JSEScape txt.draft_hide}},
-						msgCollapsed: {{JSEscape txt.draft_load}}
+						msgExpanded: {{jsEscape txt.draft_hide}},
+						msgCollapsed: {{jsEscape txt.draft_load}}
 					}
 				]
 			});
@@ -253,14 +253,14 @@
 			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
 			sToControlId: 'to_control',
 			aToRecipients: [{{#each context.recipients.to}}{
-						sItemId: {{{JSEscape id}}},
-						sItemName: {{{JSEscape name}}}
+						sItemId: {{{jsEscape id}}},
+						sItemName: {{{jsEscape name}}}
 					}{{#unless (eq @index (getNumItems context.recipients.to))}},{{/unless}}
 			{{/each}}
 			],
 			aBccRecipients: [{{#each context.recipients.bcc}}{
-						sItemId: {{{JSEscape id}}},
-						sItemName: {{{JSEscape name}}}
+						sItemId: {{{jsEscape id}}},
+						sItemName: {{{jsEscape name}}}
 					}{{#unless (eq @index (getNumItems context.recipients.bcc))}},{{/unless}}
 			{{/each}}
 			],
@@ -270,6 +270,6 @@
 			sBccLinkId: 'bcc_link',
 			sBccLinkContainerId: 'bcc_link_container',
 			bBccShowByDefault: {{#if (and context.recipients.bcc context.bcc_value)}}true{{else}}false{{/if}},
-			sShowBccLinkTemplate: {{{JSEscape bccLinkTemplate}}}
+			sShowBccLinkTemplate: {{{jsEscape bccLinkTemplate}}}
 		});
 		</script>

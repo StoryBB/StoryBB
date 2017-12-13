@@ -594,25 +594,24 @@ function ModifyCacheSettings($return_config = false)
 	global $context, $scripturl, $txt, $cacheAPI;
 
 	// Detect all available optimizers
-	$detected = loadCacheAPIs();
+	$detected = StoryBB\Cache::list_available();
 
 	// set our values to show what, if anything, we found
 	if (empty($detected))
 	{
-		$txt['cache_settings_message'] = $txt['detected_no_caching'];
+		$txt['cache_settings_message'] = $txt['caching_information'] . '<br><br>' . $txt['detected_no_caching'];
 		$cache_level = array($txt['cache_off']);
 		$detected['none'] = $txt['cache_off'];
 	}
 	else
 	{
-		$txt['cache_settings_message'] = sprintf($txt['detected_accelerators'], implode(', ', $detected));
+		$txt['cache_settings_message'] = $txt['caching_information'] . '<br><br>' . sprintf($txt['detected_accelerators'], implode(', ', $detected));
 		$cache_level = array($txt['cache_off'], $txt['cache_level1'], $txt['cache_level2'], $txt['cache_level3']);
 	}
 
 	// Define the variables we want to edit.
 	$config_vars = array(
 		// Only a few settings, but they are important
-		array('', $txt['cache_settings_message'], '', 'desc'),
 		array('cache_enable', $txt['cache_enable'], 'file', 'select', $cache_level, 'cache_enable'),
 		array('cache_accelerator', $txt['cache_accelerator'], 'file', 'select', $detected),
 	);
@@ -630,9 +629,8 @@ function ModifyCacheSettings($return_config = false)
 	{
 		foreach ($detected as $tryCache => $dummy)
 		{
-			$cache_class_name = $tryCache . '_cache';
+			$cache_class_name = 'StoryBB\\Cache\\' . $tryCache;
 
-			// loadCacheAPIs has already included the file, just see if we can't add the settings in.
 			if (is_callable(array($cache_class_name, 'cacheSettings')))
 			{
 				$testAPI = new $cache_class_name();
@@ -669,11 +667,11 @@ function ModifyCacheSettings($return_config = false)
 
 	// Decide what message to show.
 	if (!$context['save_disabled'])
-		$context['settings_message'] = $txt['caching_information'];
+		$context['settings_message'] = $txt['cache_settings_message'];
 
 	// Prepare the template.
 	prepareServerSettingsContext($config_vars);
-	addTemplate('admin_clean_cache_button');
+	StoryBB\Template::add('admin_clean_cache_button');
 }
 
 /**
@@ -1338,43 +1336,6 @@ function ShowPHPinfoSettings()
 	$context['page_title'] = $txt['admin_server_settings'];
 	$context['sub_template'] = 'admin_phpinfo';
 	return;
-}
-
-/**
- * Get the installed Cache API implementations.
- *
- */
-function loadCacheAPIs()
-{
-	global $sourcedir, $txt;
-
-	// Make sure our class is in session.
-	require_once($sourcedir . '/Class-CacheAPI.php');
-
-	$apis = array();
-	if ($dh = opendir($sourcedir))
-	{
-		while (($file = readdir($dh)) !== false)
-		{
-			if (is_file($sourcedir . '/' . $file) && preg_match('~^CacheAPI-([A-Za-z\d_]+)\.php$~', $file, $matches))
-			{
-				$tryCache = strtolower($matches[1]);
-
-				require_once($sourcedir . '/' . $file);
-				$cache_class_name = $tryCache . '_cache';
-				$testAPI = new $cache_class_name();
-
-				// No Support?  NEXT!
-				if (!$testAPI->isSupported(true))
-					continue;
-
-				$apis[$tryCache] = isset($txt[$tryCache . '_cache']) ? $txt[$tryCache . '_cache'] : $tryCache;
-			}
-		}
-	}
-	closedir($dh);
-
-	return $apis;
 }
 
 ?>
