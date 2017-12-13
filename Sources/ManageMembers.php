@@ -650,7 +650,7 @@ function SearchMembers()
 	$smcFunc['db_free_result']($request);
 
 	$context['page_title'] = $txt['admin_members'];
-	$context['sub_template'] = 'search_members';
+	$context['sub_template'] = 'admin_member_search';
 }
 
 /**
