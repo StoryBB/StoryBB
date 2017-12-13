@@ -569,7 +569,8 @@ function ModifyAntispamSettings($return_config = false)
 	}
 	$smcFunc['db_free_result']($request);
 
-	if (empty($context['question_answers'][$language]) || empty($context['question_answers'][$language]['questions']))
+	// If the user has insisted on questions, but hasn't put anything in for the default forum language, warn them.
+	if (!empty($modSettings['qa_verification_number']) && (empty($context['question_answers'][$language]) || empty($context['question_answers'][$language]['questions'])))
 	{
 		if (empty($context['settings_insert_above']))
 			$context['settings_insert_above'] = '';
