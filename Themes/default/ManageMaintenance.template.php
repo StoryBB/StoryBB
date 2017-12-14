@@ -331,27 +331,6 @@ function template_maintain_topics()
 }
 
 /**
- * Template for converting entities to UTF-8 characters
- */
-function template_convert_entities()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['entity_convert_title'], '</h3>
-		</div>
-		<div class="windowbg">
-			<p>', $txt['entity_convert_introduction'], '</p>
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities;start=0;', $context['session_var'], '=', $context['session_id'], '" method="post" accept-charset="UTF-8">
-			<input type="submit" value="', $txt['entity_convert_proceed'], '" class="button_submit">
-			</form>
-		</div>
-	</div>';
-}
-
-/**
  * Template for converting posts to UTF-8.
  */
 function template_convert_msgbody()
