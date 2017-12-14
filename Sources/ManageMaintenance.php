@@ -259,7 +259,7 @@ function MaintainFindFixErrors()
  */
 function MaintainCleanCache()
 {
-	global $context, $txt;
+	global $txt;
 
 	checkSession();
 	validateToken('admin-maint');
@@ -275,7 +275,7 @@ function MaintainCleanCache()
  */
 function MaintainCleanTemplateCache()
 {
-	global $context, $txt;
+	global $txt;
 
 	checkSession();
 	validateToken('admin-maint');
