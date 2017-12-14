@@ -65,7 +65,7 @@ function ManageMaintenance()
 		),
 		'members' => array(
 			'function' => 'MaintainMembers',
-			'template' => 'maintain_members',
+			'template' => 'admin_maintain_members',
 			'activities' => array(
 				'reattribute' => 'MaintainReattributePosts',
 				'purgeinactive' => 'MaintainPurgeInactiveMembers',
