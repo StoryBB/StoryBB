@@ -229,11 +229,6 @@ function MaintainTopics()
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	sortCategories($context['categories']);
-
-	if (isset($_GET['done']) && $_GET['done'] == 'purgeold')
-		$context['maintenance_finished'] = $txt['maintain_old'];
-	elseif (isset($_GET['done']) && $_GET['done'] == 'massmove')
-		$context['maintenance_finished'] = $txt['move_topics_maintenance'];
 }
 
 /**
@@ -1477,7 +1472,7 @@ function MaintainRemoveOldPosts()
  */
 function MaintainRemoveOldDrafts()
 {
-	global $sourcedir, $smcFunc;
+	global $sourcedir, $smcFunc, $txt;
 
 	validateToken('admin-maint');
 
@@ -1503,6 +1498,8 @@ function MaintainRemoveOldDrafts()
 		require_once($sourcedir . '/Drafts.php');
 		DeleteDraft($drafts, false);
 	}
+
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_old_drafts']));
 }
 
 /**
@@ -1626,7 +1623,8 @@ function MaintainMassMoveTopics()
 			{
 				cache_put_data('board-' . $id_board_from, null, 120);
 				cache_put_data('board-' . $id_board_to, null, 120);
-				redirectexit('action=admin;area=maintain;sa=topics;done=massmove');
+				session_flash('success', sprintf($txt['maintain_done'], $txt['move_topics_maintenance']));
+				redirectexit('action=admin;area=maintain;sa=topics');
 			}
 
 			// Lets move them.
@@ -1653,7 +1651,8 @@ function MaintainMassMoveTopics()
 	cache_put_data('board-' . $id_board_from, null, 120);
 	cache_put_data('board-' . $id_board_to, null, 120);
 
-	redirectexit('action=admin;area=maintain;sa=topics;done=massmove');
+	session_flash('success', sprintf($txt['maintain_done'], $txt['move_topics_maintenance']));
+	redirectexit('action=admin;area=maintain;sa=topics');
 }
 
 /**
