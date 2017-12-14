@@ -39,7 +39,7 @@
 				else if (countdown == -1)
 					return;
 
-				document.forms.autoSubmit.cont.value = {{{json txt.not_done_continue}}}} + ' (' + countdown + ')';
+				document.forms.autoSubmit.cont.value = {{{json txt.not_done_continue}}} + ' (' + countdown + ')';
 				countdown--;
 
 				setTimeout("doAutoSubmit();", 1000);
