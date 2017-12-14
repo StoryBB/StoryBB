@@ -44,7 +44,7 @@ function ManageMaintenance()
 	$subActions = array(
 		'routine' => array(
 			'function' => 'MaintainRoutine',
-			'template' => 'maintain_routine',
+			'template' => 'admin_maintain_routine',
 			'activities' => array(
 				'version' => 'VersionDetail',
 				'repair' => 'MaintainFindFixErrors',
