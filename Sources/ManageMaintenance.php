@@ -26,7 +26,6 @@ function ManageMaintenance()
 
 	// Need something to talk about?
 	loadLanguage('ManageMaintenance');
-	loadTemplate('ManageMaintenance');
 
 	// This uses admin tabs - as it should!
 	$context[$context['admin_menu_name']]['tab_data'] = array(
