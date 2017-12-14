@@ -113,7 +113,7 @@ function ManageMaintenance()
 
 	//converted to UTF-8? show a small maintenance info
 	if (isset($_GET['done']) && $_GET['done'] == 'convertutf8')
-		$context['maintenance_finished'] = $txt['utf8_title'];
+		session_flash('success', sprintf($txt['maintain_done'], $txt['utf8_title']));
 
 	// Create a maintenance token.  Kinda hard to do it any other way.
 	createToken('admin-maint');
@@ -144,9 +144,9 @@ function MaintainDatabase()
 	}
 
 	if (isset($_GET['done']) && $_GET['done'] == 'convertutf8')
-		$context['maintenance_finished'] = $txt['utf8_title'];
+		session_flash('success', sprintf($txt['maintain_done'], $txt['utf8_title']));
 	if (isset($_GET['done']) && $_GET['done'] == 'convertentities')
-		$context['maintenance_finished'] = $txt['entity_convert_title'];
+		session_flash('success', sprintf($txt['maintain_done'], $txt['entity_convert_title']));
 }
 
 /**
@@ -267,7 +267,7 @@ function MaintainCleanCache()
 	// Just wipe the whole cache directory!
 	clean_cache();
 
-	$context['maintenance_finished'] = $txt['maintain_cache'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_cache']));
 }
 
 /**
@@ -283,7 +283,7 @@ function MaintainCleanTemplateCache()
 	// Just wipe the whole cache directory!
 	StoryBB\Template\Cache::clean();
 
-	$context['maintenance_finished'] = $txt['maintain_template_cache'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_template_cache']));
 }
 
 /**
@@ -324,7 +324,7 @@ function MaintainEmptyUnimportantLogs()
 
 	updateSettings(array('search_pointer' => 0));
 
-	$context['maintenance_finished'] = $txt['maintain_logs'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_logs']));
 }
 
 /**
@@ -377,7 +377,7 @@ function ConvertMsgBody()
 			if ($column['name'] == 'body')
 				$body_type = $column['type'];
 
-		$context['maintenance_finished'] = $txt[$context['convert_to'] . '_title'];
+		session_flash('success', sprintf($txt['maintain_done'], $txt[$context['convert_to'] . '_title']));
 		$context['convert_to'] = $body_type == 'text' ? 'mediumtext' : 'text';
 		$context['convert_to_suggest'] = ($body_type != 'text' && !empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] < 65536);
 
@@ -1371,7 +1371,7 @@ function MaintainReattributePosts()
 	require_once($sourcedir . '/Subs-Members.php');
 	reattributePosts($memID, $email, $membername, !empty($_POST['posts']));
 
-	$context['maintenance_finished'] = $txt['maintain_reattribute_posts'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_reattribute_posts']));
 }
 
 /**
@@ -1457,7 +1457,7 @@ function MaintainPurgeInactiveMembers()
 		deleteMembers($members);
 	}
 
-	$context['maintenance_finished'] = $txt['maintain_members'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_members']));
 	createToken('admin-maint');
 }
 
@@ -1907,7 +1907,7 @@ function MaintainRecountPosts()
 
 	// all done
 	unset($_SESSION['total_members']);
-	$context['maintenance_finished'] = $txt['maintain_recountposts'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_recountposts']));
 	redirectexit('action=admin;area=maintain;sa=members;done=recountposts');
 }
 

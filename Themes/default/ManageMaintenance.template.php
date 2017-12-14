@@ -14,13 +14,6 @@ function template_maintain_database()
 {
 	global $context, $txt, $scripturl, $modSettings;
 
-	// If maintenance has finished tell the user.
-	if (!empty($context['maintenance_finished']))
-		echo '
-			<div class="infobox">
-				', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
-			</div>';
-
 	echo '
 	<div id="manage_maintenance">
 		<div class="cat_bar">
@@ -102,13 +95,6 @@ function template_maintain_routine()
 	// Starts off with general maintenance procedures.
 	echo '
 	<div id="manage_maintenance">';
-
-	// If maintenance has finished tell the user.
-	if (!empty($context['maintenance_finished']))
-		echo '
-			<div class="infobox">
-				', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
-			</div>';
 
 	echo '
 		<div class="cat_bar">
@@ -246,13 +232,6 @@ function template_maintain_members()
 	</script>
 	<div id="manage_maintenance">';
 
-	// If maintenance has finished tell the user.
-	if (!empty($context['maintenance_finished']))
-	echo '
-		<div class="infobox">
-			', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
-		</div>';
-
 	echo '
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['maintain_reattribute_posts'], '</h3>
@@ -353,13 +332,6 @@ function template_maintain_members()
 function template_maintain_topics()
 {
 	global $scripturl, $txt, $context, $settings, $modSettings;
-
-	// If maintenance has finished tell the user.
-	if (!empty($context['maintenance_finished']))
-		echo '
-			<div class="infobox">
-				', sprintf($txt['maintain_done'], $context['maintenance_finished']), '
-			</div>';
 
 	// Bit of javascript for showing which boards to prune in an otherwise hidden list.
 	echo '
