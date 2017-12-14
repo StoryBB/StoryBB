@@ -365,8 +365,8 @@ function char_edit()
 	{
 		loadLanguage('Errors');
 
-		validateSession();
-		//validateToken('edit-char' . $context['character']['id_character'], 'post');
+		checkSession();
+		validateToken('edit-char' . $context['character']['id_character'], 'post');
 
 		$changes = [];
 
