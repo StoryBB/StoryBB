@@ -8,49 +8,6 @@
  */
 
 /**
- * Tempalte for the database maintenance tasks.
- */
-function template_maintain_database()
-{
-	global $context, $txt, $scripturl, $modSettings;
-
-	echo '
-	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_optimize'], '</h3>
-		</div>
-		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
-				<p>', $txt['maintain_optimize_info'], '</p>
-				<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="', $context['admin-maint_token_var'], '" value="', $context['admin-maint_token'], '">
-			</form>
-		</div>';
-
-	// Show an option to convert the body column of the post table to MEDIUMTEXT or TEXT
-	if (isset($context['convert_to']))
-	{
-		echo '
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt[$context['convert_to'] . '_title'], '</h3>
-		</div>
-		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertmsgbody" method="post" accept-charset="UTF-8">
-				<p>', $txt['mediumtext_introduction'], '</p>',
-				$context['convert_to_suggest'] ? '<p class="infobox">' . $txt['convert_to_suggest_text'] . '</p>' : '', '
-				<input type="submit" name="evaluate_conversion" value="', $txt['maintain_run_now'], '" class="button_submit">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="', $context['admin-maint_token_var'], '" value="', $context['admin-maint_token'], '">
-			</form>
-		</div>';
-	}
-
-	echo '
-	</div>';
-}
-
-/**
  * Template for the member maintenance tasks.
  */
 function template_maintain_members()

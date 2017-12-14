@@ -56,7 +56,7 @@ function ManageMaintenance()
 		),
 		'database' => array(
 			'function' => 'MaintainDatabase',
-			'template' => 'maintain_database',
+			'template' => 'admin_maintain_database',
 			'activities' => array(
 				'optimize' => 'OptimizeTables',
 				'convertentities' => 'ConvertEntities',
@@ -136,6 +136,7 @@ function MaintainDatabase()
 				$body_type = $column['type'];
 
 		$context['convert_to'] = $body_type == 'text' ? 'mediumtext' : 'text';
+		$context['convert_to_title'] = $txt[$context['convert_to'] . '_title'];
 		$context['convert_to_suggest'] = ($body_type != 'text' && !empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] < 65536);
 	}
 }
