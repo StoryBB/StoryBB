@@ -189,9 +189,6 @@ function MaintainMembers()
 	}
 	$smcFunc['db_free_result']($result);
 
-	if (isset($_GET['done']) && $_GET['done'] == 'recountposts')
-		$context['maintenance_finished'] = $txt['maintain_recountposts'];
-
 	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 }
 
@@ -1908,7 +1905,7 @@ function MaintainRecountPosts()
 	// all done
 	unset($_SESSION['total_members']);
 	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_recountposts']));
-	redirectexit('action=admin;area=maintain;sa=members;done=recountposts');
+	redirectexit('action=admin;area=maintain;sa=members');
 }
 
 /**
