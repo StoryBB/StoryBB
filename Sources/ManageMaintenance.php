@@ -126,10 +126,6 @@ function MaintainDatabase()
 {
 	global $context, $db_type, $db_character_set, $modSettings, $smcFunc, $txt;
 
-	// Show some conversion options?
-	$context['convert_utf8'] = ($db_type == 'mysql') && (!isset($db_character_set) || $db_character_set !== 'utf8' || empty($modSettings['global_character_set']) || $modSettings['global_character_set'] !== 'UTF-8') && version_compare('4.1.2', preg_replace('~\-.+?$~', '', $smcFunc['db_server_info']()), '<=');
-	$context['convert_entities'] = ($db_type == 'mysql') && isset($db_character_set, $modSettings['global_character_set']) && $db_character_set === 'utf8' && $modSettings['global_character_set'] === 'UTF-8';
-
 	if ($db_type == 'mysql')
 	{
 		db_extend('packages');
@@ -142,11 +138,6 @@ function MaintainDatabase()
 		$context['convert_to'] = $body_type == 'text' ? 'mediumtext' : 'text';
 		$context['convert_to_suggest'] = ($body_type != 'text' && !empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] < 65536);
 	}
-
-	if (isset($_GET['done']) && $_GET['done'] == 'convertutf8')
-		session_flash('success', sprintf($txt['maintain_done'], $txt['utf8_title']));
-	if (isset($_GET['done']) && $_GET['done'] == 'convertentities')
-		session_flash('success', sprintf($txt['maintain_done'], $txt['entity_convert_title']));
 }
 
 /**

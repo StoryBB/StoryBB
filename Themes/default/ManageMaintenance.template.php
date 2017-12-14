@@ -46,23 +46,6 @@ function template_maintain_database()
 		</div>';
 	}
 
-	// We might want to convert entities if we're on UTF-8.
-	if ($context['convert_entities'])
-	{
-		echo '
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['entity_convert_title'], '</h3>
-		</div>
-		<div class="windowbg2 noup">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertentities" method="post" accept-charset="UTF-8">
-				<p>', $txt['entity_convert_introduction'], '</p>
-				<input type="submit" value="', $txt['maintain_run_now'], '" class="button_submit">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="', $context['admin-maint_token_var'], '" value="', $context['admin-maint_token'], '">
-			</form>
-		</div>';
-	}
-
 	echo '
 	</div>';
 }
