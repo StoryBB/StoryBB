@@ -688,7 +688,7 @@ function OptimizeTables()
 	db_extend();
 
 	$context['page_title'] = $txt['database_optimize'];
-	$context['sub_template'] = 'optimize';
+	$context['sub_template'] = 'admin_maintain_database_optimize';
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = 3;
 

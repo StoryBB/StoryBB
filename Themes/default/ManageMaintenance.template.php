@@ -331,39 +331,6 @@ function template_maintain_topics()
 }
 
 /**
- * Simple template for showing results of our optimization...
- */
-function template_optimize()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['maintain_optimize'], '</h3>
-		</div>
-		<div class="windowbg">
-			<p>
-				', $txt['database_numb_tables'], '<br>
-				', $txt['database_optimize_attempt'], '<br>';
-
-	// List each table being optimized...
-	foreach ($context['optimized_tables'] as $table)
-		echo '
-				', sprintf($txt['database_optimizing'], $table['name'], $table['data_freed']), '<br>';
-
-	// How did we go?
-	echo '
-				<br>', $context['num_tables_optimized'] == 0 ? $txt['database_already_optimized'] : $context['num_tables_optimized'] . ' ' . $txt['database_optimized'];
-
-	echo '
-			</p>
-			<p><a href="', $scripturl, '?action=admin;area=maintain">', $txt['maintain_return'], '</a></p>
-		</div>
-	</div>';
-}
-
-/**
  * Template for converting entities to UTF-8 characters
  */
 function template_convert_entities()
