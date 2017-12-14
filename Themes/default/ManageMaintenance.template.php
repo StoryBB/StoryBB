@@ -330,46 +330,4 @@ function template_maintain_topics()
 	</div>';
 }
 
-/**
- * Template for converting posts to UTF-8.
- */
-function template_convert_msgbody()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-	<div id="manage_maintenance">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt[$context['convert_to'] . '_title'], '</h3>
-		</div>
-		<div class="windowbg">
-			<p>', $txt['body_checking_introduction'], '</p>';
-	if (!empty($context['exceeding_messages']))
-	{
-		echo '
-			<p class="noticebox">', $txt['exceeding_messages'], '
-			<ul>
-				<li>
-				', implode('</li><li>', $context['exceeding_messages']), '
-				</li>
-			</ul>';
-		if (!empty($context['exceeding_messages_morethan']))
-			echo '
-			<p>', $context['exceeding_messages_morethan'], '</p>';
-	}
-	else
-		echo '
-			<p class="infobox">', $txt['convert_to_text'], '</p>';
-
-	echo '
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=convertmsgbody" method="post" accept-charset="UTF-8">
-			<hr>
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			<input type="hidden" name="', $context['admin-maint_token_var'], '" value="', $context['admin-maint_token'], '">
-			<input type="submit" name="do_conversion" value="', $txt['entity_convert_proceed'], '" class="button_submit">
-			</form>
-		</div>
-	</div>';
-}
-
 ?>

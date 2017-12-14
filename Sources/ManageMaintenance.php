@@ -422,7 +422,8 @@ function ConvertMsgBody()
 		}
 		createToken('admin-maint');
 		$context['page_title'] = $txt[$context['convert_to'] . '_title'];
-		$context['sub_template'] = 'convert_msgbody';
+		$context['convert_to_title'] = $context['page_title'];
+		$context['sub_template'] = 'admin_maintain_convertmsg';
 
 		if (!empty($id_msg_exceeding))
 		{

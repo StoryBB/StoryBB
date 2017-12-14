@@ -1,0 +1,31 @@
+	{{! Converting messages table column size }}
+	<div id="manage_maintenance">
+		<div class="cat_bar">
+			<h3 class="catbg">{{{context.convert_to_title}}}</h3>
+		</div>
+		<div class="windowbg">
+			<p>{{{txt.body_checking_introduction}}}</p>
+
+			{{#if context.exceeding_messages}}
+				<p class="noticebox">{{{txt.exceeding_messages}}}
+				<ul>
+					{{#each context.exceeding_messages}}
+					<li>{{{.}}}</li>
+					{{/each}}
+				</ul>
+
+				{{#if context.exceeding_messages_morethan}}
+					<p>{{{context.exceeding_messages_morethan}}}</p>
+				{{/if}}
+			{{else}}
+				<p class="infobox">{{{txt.convert_to_text}}}</p>
+			{{/if}}
+
+			<form action="{{scripturl}}?action=admin;area=maintain;sa=database;activity=convertmsgbody" method="post" accept-charset="UTF-8">
+			<hr>
+			{{session_form}}
+			{{token_form 'admin-maint'}}
+			<input type="submit" name="do_conversion" value="{{{txt.entity_convert_proceed}}}" class="button_submit">
+			</form>
+		</div>
+	</div>
