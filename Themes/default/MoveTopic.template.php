@@ -130,34 +130,6 @@ function template_redirect_options($type)
 }
 
 /**
- * Confirmation page shown when finished merging topics.
- */
-function template_merge_done()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-		<div id="merge_topics">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['merge'], '</h3>
-			</div>
-			<div class="windowbg">
-				<p>', $txt['merge_successful'], '</p>
-				<br>
-				<ul>
-					<li>
-						<a href="', $scripturl, '?board=', $context['target_board'], '.0">', $txt['message_index'], '</a>
-					</li>
-					<li>
-						<a href="', $scripturl, '?topic=', $context['target_topic'], '.0">', $txt['new_merged_topic'], '</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-	<br class="clear">';
-}
-
-/**
  * Merge topic page.
  */
 function template_merge()

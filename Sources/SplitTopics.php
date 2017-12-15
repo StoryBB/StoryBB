@@ -1750,7 +1750,7 @@ function MergeDone()
 	$context['target_topic'] = (int) $_GET['to'];
 
 	$context['page_title'] = $txt['merge'];
-	$context['sub_template'] = 'merge_done';
+	$context['sub_template'] = 'admin_topic_merge_done';
 }
 
 ?>
