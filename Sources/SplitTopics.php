@@ -1225,7 +1225,7 @@ function MergeExecute($topics = array())
 			$context['topics'][$id]['selected'] = $topic['id'] == $firstTopic;
 
 		$context['page_title'] = $txt['merge'];
-		$context['sub_template'] = 'merge_extra_options';
+		$context['sub_template'] = 'topic_merge_options';
 		return;
 	}
 
