@@ -976,7 +976,8 @@ function MergeIndex()
 	if (empty($context['topics']) && count($merge_boards) <= 1 && !in_array(0, $merge_boards))
 		fatal_lang_error('merge_need_more_topics');
 
-	$context['sub_template'] = 'merge';
+	StoryBB\Template::add_helper(['create_button' => 'create_button']);
+	$context['sub_template'] = 'admin_topic_merge';
 }
 
 /**
