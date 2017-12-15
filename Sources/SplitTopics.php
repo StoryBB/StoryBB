@@ -977,7 +977,7 @@ function MergeIndex()
 		fatal_lang_error('merge_need_more_topics');
 
 	StoryBB\Template::add_helper(['create_button' => 'create_button']);
-	$context['sub_template'] = 'admin_topic_merge';
+	$context['sub_template'] = 'topic_merge';
 }
 
 /**
@@ -1751,7 +1751,7 @@ function MergeDone()
 	$context['target_topic'] = (int) $_GET['to'];
 
 	$context['page_title'] = $txt['merge'];
-	$context['sub_template'] = 'admin_topic_merge_done';
+	$context['sub_template'] = 'topic_merge_done';
 }
 
 ?>
