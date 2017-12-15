@@ -214,9 +214,6 @@ function MaintainTopics()
 	$smcFunc['db_free_result']($result);
 
 	$context['split_categories'] = array_chunk($context['categories'], ceil(count($context['categories']) / 2), true);
-	StoryBB\Template::add_helper(['repeat' => function($string, $amount) {
-		return $amount == 0 ? '' : new \LightnCandy\SafeString(str_repeat($string, $amount));
-	}]);
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	sortCategories($context['categories']);
