@@ -819,9 +819,6 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
  */
 function MergeTopics()
 {
-	// Load the template....
-	loadTemplate('MoveTopic');
-
 	$subActions = array(
 		'done' => 'MergeDone',
 		'execute' => 'MergeExecute',
@@ -1143,7 +1140,6 @@ function MergeExecute($topics = array())
 	if (!empty($topics))
 	{
 		isAllowedTo('merge_any', $boards);
-		loadTemplate('MoveTopic');
 	}
 
 	// Get the boards a user is allowed to merge in.

@@ -74,8 +74,6 @@ function MoveTopic()
 		}
 	}
 
-	loadTemplate('MoveTopic');
-
 	$options = array(
 		'not_redirection' => true,
 	);
