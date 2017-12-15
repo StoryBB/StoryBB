@@ -111,7 +111,7 @@ function MoveTopic()
 		$txt['movetopic_default'] = $temp;
 	}
 
-	$context['sub_template'] = 'move';
+	$context['sub_template'] = 'topic_move';
 
 	moveTopicConcurrence();
 
