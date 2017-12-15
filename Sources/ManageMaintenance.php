@@ -26,7 +26,6 @@ function ManageMaintenance()
 
 	// Need something to talk about?
 	loadLanguage('ManageMaintenance');
-	loadTemplate('ManageMaintenance');
 
 	// This uses admin tabs - as it should!
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -44,7 +43,7 @@ function ManageMaintenance()
 	$subActions = array(
 		'routine' => array(
 			'function' => 'MaintainRoutine',
-			'template' => 'maintain_routine',
+			'template' => 'admin_maintain_routine',
 			'activities' => array(
 				'version' => 'VersionDetail',
 				'repair' => 'MaintainFindFixErrors',
@@ -56,17 +55,16 @@ function ManageMaintenance()
 		),
 		'database' => array(
 			'function' => 'MaintainDatabase',
-			'template' => 'maintain_database',
+			'template' => 'admin_maintain_database',
 			'activities' => array(
 				'optimize' => 'OptimizeTables',
-				'convertentities' => 'ConvertEntities',
 				'convertutf8' => 'ConvertUtf8',
 				'convertmsgbody' => 'ConvertMsgBody',
 			),
 		),
 		'members' => array(
 			'function' => 'MaintainMembers',
-			'template' => 'maintain_members',
+			'template' => 'admin_maintain_members',
 			'activities' => array(
 				'reattribute' => 'MaintainReattributePosts',
 				'purgeinactive' => 'MaintainPurgeInactiveMembers',
@@ -75,7 +73,7 @@ function ManageMaintenance()
 		),
 		'topics' => array(
 			'function' => 'MaintainTopics',
-			'template' => 'maintain_topics',
+			'template' => 'admin_maintain_topics',
 			'activities' => array(
 				'massmove' => 'MaintainMassMoveTopics',
 				'pruneold' => 'MaintainRemoveOldPosts',
@@ -111,10 +109,6 @@ function ManageMaintenance()
 	if (isset($activity))
 		call_helper($subActions[$subAction]['activities'][$activity]);
 
-	//converted to UTF-8? show a small maintenance info
-	if (isset($_GET['done']) && $_GET['done'] == 'convertutf8')
-		$context['maintenance_finished'] = $txt['utf8_title'];
-
 	// Create a maintenance token.  Kinda hard to do it any other way.
 	createToken('admin-maint');
 }
@@ -126,10 +120,6 @@ function MaintainDatabase()
 {
 	global $context, $db_type, $db_character_set, $modSettings, $smcFunc, $txt;
 
-	// Show some conversion options?
-	$context['convert_utf8'] = ($db_type == 'mysql') && (!isset($db_character_set) || $db_character_set !== 'utf8' || empty($modSettings['global_character_set']) || $modSettings['global_character_set'] !== 'UTF-8') && version_compare('4.1.2', preg_replace('~\-.+?$~', '', $smcFunc['db_server_info']()), '<=');
-	$context['convert_entities'] = ($db_type == 'mysql') && isset($db_character_set, $modSettings['global_character_set']) && $db_character_set === 'utf8' && $modSettings['global_character_set'] === 'UTF-8';
-
 	if ($db_type == 'mysql')
 	{
 		db_extend('packages');
@@ -140,13 +130,9 @@ function MaintainDatabase()
 				$body_type = $column['type'];
 
 		$context['convert_to'] = $body_type == 'text' ? 'mediumtext' : 'text';
+		$context['convert_to_title'] = $txt[$context['convert_to'] . '_title'];
 		$context['convert_to_suggest'] = ($body_type != 'text' && !empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] < 65536);
 	}
-
-	if (isset($_GET['done']) && $_GET['done'] == 'convertutf8')
-		$context['maintenance_finished'] = $txt['utf8_title'];
-	if (isset($_GET['done']) && $_GET['done'] == 'convertentities')
-		$context['maintenance_finished'] = $txt['entity_convert_title'];
 }
 
 /**
@@ -189,9 +175,6 @@ function MaintainMembers()
 	}
 	$smcFunc['db_free_result']($result);
 
-	if (isset($_GET['done']) && $_GET['done'] == 'recountposts')
-		$context['maintenance_finished'] = $txt['maintain_recountposts'];
-
 	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 }
 
@@ -230,13 +213,13 @@ function MaintainTopics()
 	}
 	$smcFunc['db_free_result']($result);
 
+	$context['split_categories'] = array_chunk($context['categories'], ceil(count($context['categories']) / 2), true);
+	StoryBB\Template::add_helper(['repeat' => function($string, $amount) {
+		return $amount == 0 ? '' : new \LightnCandy\SafeString(str_repeat($string, $amount));
+	}]);
+
 	require_once($sourcedir . '/Subs-Boards.php');
 	sortCategories($context['categories']);
-
-	if (isset($_GET['done']) && $_GET['done'] == 'purgeold')
-		$context['maintenance_finished'] = $txt['maintain_old'];
-	elseif (isset($_GET['done']) && $_GET['done'] == 'massmove')
-		$context['maintenance_finished'] = $txt['move_topics_maintenance'];
 }
 
 /**
@@ -259,7 +242,7 @@ function MaintainFindFixErrors()
  */
 function MaintainCleanCache()
 {
-	global $context, $txt;
+	global $txt;
 
 	checkSession();
 	validateToken('admin-maint');
@@ -267,7 +250,7 @@ function MaintainCleanCache()
 	// Just wipe the whole cache directory!
 	clean_cache();
 
-	$context['maintenance_finished'] = $txt['maintain_cache'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_cache']));
 }
 
 /**
@@ -275,7 +258,7 @@ function MaintainCleanCache()
  */
 function MaintainCleanTemplateCache()
 {
-	global $context, $txt;
+	global $txt;
 
 	checkSession();
 	validateToken('admin-maint');
@@ -283,7 +266,7 @@ function MaintainCleanTemplateCache()
 	// Just wipe the whole cache directory!
 	StoryBB\Template\Cache::clean();
 
-	$context['maintenance_finished'] = $txt['maintain_template_cache'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_template_cache']));
 }
 
 /**
@@ -324,7 +307,7 @@ function MaintainEmptyUnimportantLogs()
 
 	updateSettings(array('search_pointer' => 0));
 
-	$context['maintenance_finished'] = $txt['maintain_logs'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_logs']));
 }
 
 /**
@@ -377,7 +360,7 @@ function ConvertMsgBody()
 			if ($column['name'] == 'body')
 				$body_type = $column['type'];
 
-		$context['maintenance_finished'] = $txt[$context['convert_to'] . '_title'];
+		session_flash('success', sprintf($txt['maintain_done'], $txt[$context['convert_to'] . '_title']));
 		$context['convert_to'] = $body_type == 'text' ? 'mediumtext' : 'text';
 		$context['convert_to_suggest'] = ($body_type != 'text' && !empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] < 65536);
 
@@ -443,7 +426,8 @@ function ConvertMsgBody()
 		}
 		createToken('admin-maint');
 		$context['page_title'] = $txt[$context['convert_to'] . '_title'];
-		$context['sub_template'] = 'convert_msgbody';
+		$context['convert_to_title'] = $context['page_title'];
+		$context['sub_template'] = 'admin_maintain_convertmsg';
 
 		if (!empty($id_msg_exceeding))
 		{
@@ -472,213 +456,6 @@ function ConvertMsgBody()
 }
 
 /**
- * Converts HTML-entities to their UTF-8 character equivalents.
- * This requires the admin_forum permission.
- * Pre-condition: UTF-8 has been set as database and global character set.
- *
- * It is divided in steps of 10 seconds.
- * This action is linked from the maintenance screen (if applicable).
- * It is accessed by ?action=admin;area=maintain;sa=database;activity=convertentities.
- *
- * @uses Admin template, convert_entities sub-template.
- */
-function ConvertEntities()
-{
-	global $db_character_set, $modSettings, $context, $sourcedir, $smcFunc;
-
-	isAllowedTo('admin_forum');
-
-	// Check to see if UTF-8 is currently the default character set.
-	if ($modSettings['global_character_set'] !== 'UTF-8' || !isset($db_character_set) || $db_character_set !== 'utf8')
-		fatal_lang_error('entity_convert_only_utf8');
-
-	// Some starting values.
-	$context['table'] = empty($_REQUEST['table']) ? 0 : (int) $_REQUEST['table'];
-	$context['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-
-	$context['start_time'] = time();
-
-	$context['first_step'] = !isset($_REQUEST[$context['session_var']]);
-	$context['last_step'] = false;
-
-	// The first step is just a text screen with some explanation.
-	if ($context['first_step'])
-	{
-		validateToken('admin-maint');
-		createToken('admin-maint');
-
-		$context['sub_template'] = 'convert_entities';
-		return;
-	}
-	// Otherwise use the generic "not done" template.
-	$context['sub_template'] = 'not_done';
-	$context['continue_post_data'] = '';
-	$context['continue_countdown'] = 3;
-
-	// Now we're actually going to convert...
-	checkSession('request');
-	validateToken('admin-maint');
-	createToken('admin-maint');
-
-	// A list of tables ready for conversion.
-	$tables = array(
-		'ban_groups',
-		'ban_items',
-		'boards',
-		'categories',
-		'log_errors',
-		'log_search_subjects',
-		'membergroups',
-		'members',
-		'message_icons',
-		'messages',
-		'personal_messages',
-		'pm_recipients',
-		'polls',
-		'poll_choices',
-		'smileys',
-		'themes',
-	);
-	$context['num_tables'] = count($tables);
-
-	// Loop through all tables that need converting.
-	for (; $context['table'] < $context['num_tables']; $context['table']++)
-	{
-		$cur_table = $tables[$context['table']];
-		$primary_key = '';
-		// Make sure we keep stuff unique!
-		$primary_keys = array();
-
-		if (function_exists('apache_reset_timeout'))
-			@apache_reset_timeout();
-
-		// Get a list of text columns.
-		$columns = array();
-		$request = $smcFunc['db_query']('', '
-			SHOW FULL COLUMNS
-			FROM {db_prefix}{raw:cur_table}',
-			array(
-				'cur_table' => $cur_table,
-			)
-		);
-		while ($column_info = $smcFunc['db_fetch_assoc']($request))
-			if (strpos($column_info['Type'], 'text') !== false || strpos($column_info['Type'], 'char') !== false)
-				$columns[] = strtolower($column_info['Field']);
-
-		// Get the column with the (first) primary key.
-		$request = $smcFunc['db_query']('', '
-			SHOW KEYS
-			FROM {db_prefix}{raw:cur_table}',
-			array(
-				'cur_table' => $cur_table,
-			)
-		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-		{
-			if ($row['Key_name'] === 'PRIMARY')
-			{
-				if (empty($primary_key) || ($row['Seq_in_index'] == 1 && !in_array(strtolower($row['Column_name']), $columns)))
-					$primary_key = $row['Column_name'];
-
-				$primary_keys[] = $row['Column_name'];
-			}
-		}
-		$smcFunc['db_free_result']($request);
-
-		// No primary key, no glory.
-		// Same for columns. Just to be sure we've work to do!
-		if (empty($primary_key) || empty($columns))
-			continue;
-
-		// Get the maximum value for the primary key.
-		$request = $smcFunc['db_query']('', '
-			SELECT MAX({identifier:key})
-			FROM {db_prefix}{raw:cur_table}',
-			array(
-				'key' => $primary_key,
-				'cur_table' => $cur_table,
-			)
-		);
-		list($max_value) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
-
-		if (empty($max_value))
-			continue;
-
-		while ($context['start'] <= $max_value)
-		{
-			// Retrieve a list of rows that has at least one entity to convert.
-			$request = $smcFunc['db_query']('', '
-				SELECT {raw:primary_keys}, {raw:columns}
-				FROM {db_prefix}{raw:cur_table}
-				WHERE {raw:primary_key} BETWEEN {int:start} AND {int:start} + 499
-					AND {raw:like_compare}
-				LIMIT 500',
-				array(
-					'primary_keys' => implode(', ', $primary_keys),
-					'columns' => implode(', ', $columns),
-					'cur_table' => $cur_table,
-					'primary_key' => $primary_key,
-					'start' => $context['start'],
-					'like_compare' => '(' . implode(' LIKE \'%&#%\' OR ', $columns) . ' LIKE \'%&#%\')',
-				)
-			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			{
-				$insertion_variables = array();
-				$changes = array();
-				foreach ($row as $column_name => $column_value)
-					if ($column_name !== $primary_key && strpos($column_value, '&#') !== false)
-					{
-						$changes[] = $column_name . ' = {string:changes_' . $column_name . '}';
-						$insertion_variables['changes_' . $column_name] = preg_replace_callback('~&#(\d{1,7}|x[0-9a-fA-F]{1,6});~', 'fixchar__callback', $column_value);
-					}
-
-				$where = array();
-				foreach ($primary_keys as $key)
-				{
-					$where[] = $key . ' = {string:where_' . $key . '}';
-					$insertion_variables['where_' . $key] = $row[$key];
-				}
-
-				// Update the row.
-				if (!empty($changes))
-					$smcFunc['db_query']('', '
-						UPDATE {db_prefix}' . $cur_table . '
-						SET
-							' . implode(',
-							', $changes) . '
-						WHERE ' . implode(' AND ', $where),
-						$insertion_variables
-					);
-			}
-			$smcFunc['db_free_result']($request);
-			$context['start'] += 500;
-
-			// After ten seconds interrupt.
-			if (time() - $context['start_time'] > 10)
-			{
-				// Calculate an approximation of the percentage done.
-				$context['continue_percent'] = round(100 * ($context['table'] + ($context['start'] / $max_value)) / $context['num_tables'], 1);
-				$context['continue_get_data'] = '?action=admin;area=maintain;sa=database;activity=convertentities;table=' . $context['table'] . ';start=' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id'];
-				return;
-			}
-		}
-		$context['start'] = 0;
-	}
-
-	// Make sure all serialized strings are all right.
-	require_once($sourcedir . '/Subs-Charset.php');
-	fix_serialized_columns();
-
-	// If we're here, we must be done.
-	$context['continue_percent'] = 100;
-	$context['continue_get_data'] = '?action=admin;area=maintain;sa=database;done=convertentities';
-	$context['last_step'] = true;
-	$context['continue_countdown'] = -1;
-}
-
-/**
  * Optimizes all tables in the database and lists how much was saved.
  * It requires the admin_forum permission.
  * It shows as the maintain_forum admin area.
@@ -704,7 +481,7 @@ function OptimizeTables()
 	db_extend();
 
 	$context['page_title'] = $txt['database_optimize'];
-	$context['sub_template'] = 'optimize';
+	$context['sub_template'] = 'admin_maintain_database_optimize';
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = 3;
 
@@ -1371,7 +1148,7 @@ function MaintainReattributePosts()
 	require_once($sourcedir . '/Subs-Members.php');
 	reattributePosts($memID, $email, $membername, !empty($_POST['posts']));
 
-	$context['maintenance_finished'] = $txt['maintain_reattribute_posts'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_reattribute_posts']));
 }
 
 /**
@@ -1457,7 +1234,7 @@ function MaintainPurgeInactiveMembers()
 		deleteMembers($members);
 	}
 
-	$context['maintenance_finished'] = $txt['maintain_members'];
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_members']));
 	createToken('admin-maint');
 }
 
@@ -1480,7 +1257,7 @@ function MaintainRemoveOldPosts()
  */
 function MaintainRemoveOldDrafts()
 {
-	global $sourcedir, $smcFunc;
+	global $sourcedir, $smcFunc, $txt;
 
 	validateToken('admin-maint');
 
@@ -1506,6 +1283,8 @@ function MaintainRemoveOldDrafts()
 		require_once($sourcedir . '/Drafts.php');
 		DeleteDraft($drafts, false);
 	}
+
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_old_drafts']));
 }
 
 /**
@@ -1629,7 +1408,8 @@ function MaintainMassMoveTopics()
 			{
 				cache_put_data('board-' . $id_board_from, null, 120);
 				cache_put_data('board-' . $id_board_to, null, 120);
-				redirectexit('action=admin;area=maintain;sa=topics;done=massmove');
+				session_flash('success', sprintf($txt['maintain_done'], $txt['move_topics_maintenance']));
+				redirectexit('action=admin;area=maintain;sa=topics');
 			}
 
 			// Lets move them.
@@ -1656,7 +1436,8 @@ function MaintainMassMoveTopics()
 	cache_put_data('board-' . $id_board_from, null, 120);
 	cache_put_data('board-' . $id_board_to, null, 120);
 
-	redirectexit('action=admin;area=maintain;sa=topics;done=massmove');
+	session_flash('success', sprintf($txt['maintain_done'], $txt['move_topics_maintenance']));
+	redirectexit('action=admin;area=maintain;sa=topics');
 }
 
 /**
@@ -1907,8 +1688,8 @@ function MaintainRecountPosts()
 
 	// all done
 	unset($_SESSION['total_members']);
-	$context['maintenance_finished'] = $txt['maintain_recountposts'];
-	redirectexit('action=admin;area=maintain;sa=members;done=recountposts');
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_recountposts']));
+	redirectexit('action=admin;area=maintain;sa=members');
 }
 
 /**

@@ -1,0 +1,142 @@
+	{{! Member maintenance template }}
+	<script>
+		var warningMessage = '';
+		var membersSwap = false;
+
+		function swapMembers()
+		{
+			membersSwap = !membersSwap;
+			var membersForm = document.getElementById('membersForm');
+
+			$("#membersPanel").slideToggle(300);
+
+			document.getElementById("membersIcon").src = smf_images_url + (membersSwap ? "/selected_open.png" : "/selected.png");
+			setInnerHTML(document.getElementById("membersText"), membersSwap ? {{{json txt.maintain_members_choose}}} : {{{json txt.maintain_members_all}}});
+
+			for (var i = 0; i < membersForm.length; i++)
+			{
+				if (membersForm.elements[i].type.toLowerCase() == "checkbox")
+					membersForm.elements[i].checked = !membersSwap;
+			}
+		}
+
+		function checkAttributeValidity()
+		{
+			origText = {{{json txt.reattribute_confirm}}};
+			valid = true;
+
+			// Do all the fields!
+			if (!document.getElementById('to').value)
+				valid = false;
+			warningMessage = origText.replace(/%member_to%/, document.getElementById('to').value);
+
+			if (document.getElementById('type_email').checked)
+			{
+				if (!document.getElementById('from_email').value)
+					valid = false;
+				warningMessage = warningMessage.replace(/%type%/, {{{json txt.reattribute_confirm_email}}}).replace(/%find%/, document.getElementById('from_email').value);
+			}
+			else
+			{
+				if (!document.getElementById('from_name').value)
+					valid = false;
+				warningMessage = warningMessage.replace(/%type%/, {{{json txt.reattribute_confirm_username}}}).replace(/%find%/, document.getElementById('from_name').value);
+			}
+
+			document.getElementById('do_attribute').disabled = valid ? '' : 'disabled';
+
+			setTimeout("checkAttributeValidity();", 500);
+			return valid;
+		}
+		setTimeout("checkAttributeValidity();", 500);
+	</script>
+	<div id="manage_maintenance">
+		<div class="cat_bar">
+			<h3 class="catbg">{{{txt.maintain_reattribute_posts}}}</h3>
+		</div>
+		<div class="windowbg2 noup">
+			<form action="{{scripturl}}?action=admin;area=maintain;sa=members;activity=reattribute" method="post" accept-charset="UTF-8">
+				<p><strong>{{{txt.reattribute_guest_posts}}}</strong></p>
+				<dl class="settings">
+					<dt>
+						<label for="type_email"><input type="radio" name="type" id="type_email" value="email" checked class="input_radio">{{{txt.reattribute_email}}}</label>
+					</dt>
+					<dd>
+						<input type="text" name="from_email" id="from_email" value="" onclick="document.getElementById('type_email').checked = 'checked'; document.getElementById('from_name').value = '';">
+					</dd>
+					<dt>
+						<label for="type_name"><input type="radio" name="type" id="type_name" value="name" class="input_radio">{{{txt.reattribute_username}}}</label>
+					</dt>
+					<dd>
+						<input type="text" name="from_name" id="from_name" value="" onclick="document.getElementById('type_name').checked = 'checked'; document.getElementById('from_email').value = '';" class="input_text">
+					</dd>
+				</dl>
+				<dl class="settings">
+					<dt>
+						<label for="to"><strong>{{{txt.reattribute_current_member}}}:</strong></label>
+					</dt>
+					<dd>
+						<input type="text" name="to" id="to" value="" class="input_text">
+					</dd>
+				</dl>
+				<p class="maintain_members">
+					<input type="checkbox" name="posts" id="posts" checked class="input_check">
+					<label for="posts">{{{txt.reattribute_increase_posts}}}</label>
+				</p>
+				<input type="submit" id="do_attribute" value="{{{txt.reattribute}}}" onclick="if (!checkAttributeValidity()) return false;
+				return confirm(warningMessage);" class="button_submit">
+				{{session_form}}
+				{{token_form 'admin-maint'}}
+			</form>
+		</div>
+		<div class="cat_bar">
+			<h3 class="catbg">
+				<a href="{{scripturl}}?action=helpadmin;help=maintenance_members" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="{{{txt.help}}}"></span></a> {{{txt.maintain_members}}}
+			</h3>
+		</div>
+		<div class="windowbg2 noup">
+			<form action="{{scripturl}}?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
+				<p><a id="membersLink"></a>{{{txt.maintain_members_since1}}}
+				<select name="del_type">
+					<option value="activated" selected>{{{txt.maintain_members_activated}}}</option>
+					<option value="logged">{{{txt.maintain_members_logged_in}}}</option>
+				</select> {{{txt.maintain_members_since2}}} <input type="number" name="maxdays" value="30" size="3" class="input_text">{{{txt.maintain_members_since3}}}</p>
+
+				<p><a href="#membersLink" onclick="swapMembers();"><img src="{{{settings.images_url}}}/selected.png" alt="+" id="membersIcon"></a> <a href="#membersLink" onclick="swapMembers();" id="membersText" style="font-weight: bold;">{{{txt.maintain_members_all}}}</a></p>
+				<div style="display: none; padding: 3px" id="membersPanel">
+
+				{{#each context.membergroups}}
+					<label for="groups{{id}}"><input type="checkbox" name="groups[{{id}}]" id="groups{{id}}" checked class="input_check"> {{{name}}}</label><br>
+				{{/each}}
+
+				</div>
+				<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_members_confirm}}}" class="button_submit you_sure">
+				{{session_form}}
+				{{token_form 'admin-maint'}}
+			</form>
+		</div>
+		<div class="cat_bar">
+			<h3 class="catbg">{{{txt.maintain_recountposts}}}</h3>
+		</div>
+		<div class="windowbg2 noup">
+			<form action="{{scripturl}}?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8" id="membersRecountForm">
+				<p>{{{txt.maintain_recountposts_info}}}</p>
+				<input type="submit" value="{{{txt.maintain_run_now}}}" class="button_submit">
+				{{session_form}}
+				{{token_form 'admin-maint'}}
+			</form>
+		</div>
+	</div>
+
+	<script>
+		var oAttributeMemberSuggest = new smc_AutoSuggest({
+			sSelf: 'oAttributeMemberSuggest',
+			sSessionId: smf_session_id,
+			sSessionVar: smf_session_var,
+			sSuggestId: 'attributeMember',
+			sControlId: 'to',
+			sSearchType: 'member',
+			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
+			bItemList: false
+		});
+	</script>
