@@ -237,6 +237,9 @@ span.new_posts {
 a span.new_posts:hover {
 	text-decoration: underline;
 }
+.children span.new_posts {
+	margin-left: 5px;
+}
 
 /* Common classes to easy styling.
 ------------------------------------------------------- */
