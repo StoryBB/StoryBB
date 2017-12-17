@@ -145,7 +145,7 @@ function showAttachment()
 		if (!empty($file['id_thumb']))
 		{
 			$request = $smcFunc['db_query']('', '
-				SELECT id_folder, filename, file_hash, fileext, id_attach, attachment_type, mime_type, approved, id_member
+				SELECT id_folder, filename, file_hash, fileext, id_attach, attachment_type, mime_type, approved, id_character
 				FROM {db_prefix}attachments
 				WHERE id_attach = {int:thumb_id}
 				LIMIT 1',
