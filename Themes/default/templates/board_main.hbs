@@ -31,13 +31,13 @@
                             <div class="info">
                                 <a class="subject mobile_subject" href="{{this.href}}" id="b{{this.id}}">
                                     {{this.name}}
-                                    <p class="board_description mobile_display">{{this.description}}</p>
+                                    <p class="board_description mobile_display">{{{this.description}}}</p>
                                 </a>
                                 {{! Does board have outstanding posts for approval? }}
                                 {{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
                                     <a href="{{scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{context.session_var}}={{context.session_id}}" title="{{textTemplate ../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a>
                                 {{/if}} {{! close if (and (or)) on line 32 }}
-                                <p class="board_description">{{this.description}}</p>
+                                <p class="board_description">{{{this.description}}}</p>
                                 
                                 {{! Show the "Moderators: ". Each has name, href, link, and id, but we're going to use link_moderators }}
                                 {{#if this.link_moderators}}
