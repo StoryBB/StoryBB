@@ -2203,6 +2203,8 @@ function TrackIP($memID = 0)
 				$context['auto_whois_server'] = $whois;
 		}
 	}
+
+	$context['sub_template'] = 'profile_track_ip';
 }
 
 /**
