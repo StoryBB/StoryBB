@@ -1,0 +1,132 @@
+	{{! Additional options for merge topics notifications }}
+	<div id="merge_topics">
+		<form action="{{scripturl}}?action=mergetopics;sa=execute;" method="post" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.merge_topic_list}}}</h3>
+			</div>
+			<table class="bordercolor table_grid">
+				<thead>
+					<tr class="title_bar">
+						<th scope="col" style="width:10px;">{{{txt.merge_check}}}</th>
+						<th scope="col" class="lefttext">{{{txt.subject}}}</th>
+						<th scope="col" class="lefttext">{{{txt.started_by}}}</th>
+						<th scope="col" class="lefttext">{{{txt.last_post}}}</th>
+						<th scope="col" style="width:20px;">{{{txt.merge_include_notifications}}}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each context.topics}}
+					<tr class="windowbg">
+						<td>
+							<input type="checkbox" class="input_check" name="topics[]" value="{{id}}" checked>
+						</td>
+						<td>
+							<a href="{{scripturl}}?topic={{id}}.0" target="_blank" class="new_win">{{{subject}}}</a>
+						</td>
+						<td>
+							{{{started.link}}}<br>
+							<span class="smalltext">{{{started.time}}}</span>
+						</td>
+						<td>
+							{{{updated.link}}}<br>
+							<span class="smalltext">{{{updated.time}}}</span>
+						</td>
+						<td>
+							<input type="checkbox" class="input_check" name="notifications[]" value="{{id}}" checked>
+						</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			<br>
+			<div class="windowbg">
+				<fieldset id="merge_subject" class="merge_options">
+					<legend>{{{txt.merge_select_subject}}}</legend>
+					<select name="subject" onchange="this.form.custom_subject.style.display = (this.options[this.selectedIndex].value != 0) ? 'none': '' ;">
+						{{#each context.topics}}
+						<option value="{{id}}"{{#if selected}} selected{{/if}}>{{{subject}}}</option>
+						{{/each}}
+						<option value="0">{{{txt.merge_custom_subject}}}:</option>
+					</select>
+					<br><input type="text" name="custom_subject" size="60" id="custom_subject" class="input_text custom_subject" style="display: none;">
+					<br>
+					<label for="enforce_subject"><input type="checkbox" class="input_check" name="enforce_subject" id="enforce_subject" value="1"> {{{txt.movetopic_change_all_subjects}}}</label>
+				</fieldset>
+
+				{{! Show an option to create a redirection topic as well... }}
+				<label for="postRedirect"><input type="checkbox" name="postRedirect" id="postRedirect"{{#if context.is_approved}} checked{{/if}} onclick="{{#unless context.is_approved}}if (this.checked && !confirm('{{{txt.merge_topic_unapproved_js}}}')) return false; {{/unless}} document.getElementById('reasonArea').style.display = this.checked ? 'block' : 'none';" class="input_check"> {{{txt.post_redirection}}}.</label>
+				<fieldset id="reasonArea" style="margin-top: 1ex;{{#unless context.is_approved}}display: none;{{/unless}}">
+					<dl class="settings">
+						<dt>
+							{{{txt.merge_why}}}
+						</dt>
+						<dd>
+							<textarea name="reason">{{{txt.mergetopic_default}}}</textarea>
+						</dd>
+						<dt>
+							<label for="redirect_topic">{{{txt.mergetopic_redirect}}}</label>
+						</dt>
+						<dd>
+							<input type="checkbox" name="redirect_topic" id="redirect_topic" checked class="input_check">
+						</dd>
+
+						{{#if (eq modSettings.allow_expire_redirect '1')}}
+						<dt>
+							{{{txt.redirect_topic_expires}}}
+						</dt>
+						<dd>
+							<select name="redirect_expires">
+								<option value="0">{{{txt.never}}}</option>
+								<option value="1440">{{{txt.one_day}}}</option>
+								<option value="10080" selected>{{{txt.one_week}}}</option>
+								<option value="20160">{{{txt.two_weeks}}}</option>
+								<option value="43200">{{{txt.one_month}}}</option>
+								<option value="86400">{{{txt.two_months}}}</option>
+							</select>
+						</dd>
+						{{else}}
+						<input type="hidden" name="redirect_expires" value="0">
+						{{/if}}
+					</dl>
+				</fieldset>
+
+				{{#if (and context.boards (gt (count context.boards) 1))}}
+				<fieldset id="merge_board" class="merge_options">
+					<legend>{{{txt.merge_select_target_board}}}</legend>
+					<ul>
+
+						{{#each context.boards}}
+						<li>
+							<input type="radio" name="board" value="{{id}}"{{#if selected}} checked{{/if}} class="input_radio"> {{{name}}}
+						</li>
+						{{/each}}
+
+					</ul>
+				</fieldset>
+				{{/if}}
+
+				{{#if context.polls}}
+				<fieldset id="merge_poll" class="merge_options">
+					<legend>{{{txt.merge_select_poll}}}</legend>
+					<ul>
+						{{#each context.polls}}
+						<li>
+							<input type="radio" name="poll" value="{{id}}"{{#if selected}} checked{{/if}} class="input_radio"> {{question}} ({{{../txt.topic}}}: <a href="{{../scripturl}}?topic={{topic.id}}.0" target="_blank" class="new_win">{{{topic.subject}}}</a>)
+						</li>
+						{{/each}}
+
+						<li>
+							<input type="radio" name="poll" value="-1" class="input_radio"> ({{{txt.merge_no_poll}}})
+						</li>
+					</ul>
+				</fieldset>
+				{{/if}}
+
+				<div class="auto_flow">
+					<input type="submit" value="{{{txt.merge}}}" class="button_submit">
+					{{session_form}}
+					<input type="hidden" name="sa" value="execute">
+				</div>
+			</div>
+		</form>
+	</div>

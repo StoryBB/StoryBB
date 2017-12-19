@@ -363,8 +363,10 @@ function char_edit()
 
 	if (isset($_POST['edit_char']))
 	{
-		validateSession();
-		//validateToken('edit-char' . $context['character']['id_character'], 'post');
+		loadLanguage('Errors');
+
+		checkSession();
+		validateToken('edit-char' . $context['character']['id_character'], 'post');
 
 		$changes = [];
 

@@ -58,7 +58,7 @@
 {{#unless cur_list.rows}}
     {{#if cur_list.no_items_label}}
 		<tr class="windowbg">
-			<td colspan="{{cur_list.num_columns}}" class="{{#if cur_list.no_items_align}}{{cur_list.no_items_align}}{{else}}centertext{{/if}}">{{cur_list.no_items_label}}</td>
+			<td colspan="{{cur_list.num_columns}}" class="{{#if cur_list.no_items_align}}{{cur_list.no_items_align}}{{else}}centertext{{/if}}">{{{cur_list.no_items_label}}}</td>
 		</tr>
     {{/if}}
 {{/unless}}

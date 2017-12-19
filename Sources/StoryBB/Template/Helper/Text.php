@@ -21,6 +21,7 @@ class Text
 			'textTemplate' => 'StoryBB\\Template\\Helper\\Text::textTemplate',
 			'concat' => 'StoryBB\\Template\\Helper\\Text::concat',
 			'jsEscape' => 'StoryBB\\Template\\Helper\\Text::jsEscape',
+			'repeat' => 'StoryBB\\Template\\Helper\\Text::repeat',
 		]);
 	}
 
@@ -90,6 +91,10 @@ class Text
 	public static function isSelected($current_val, $val) 
 	{
 		return new \LightnCandy\SafeString($current_val == $val ? 'selected="selected' : '');
+	}
+
+	public static function repeat($string, $amount) {
+		return $amount == 0 ? '' : new \LightnCandy\SafeString(str_repeat($string, $amount));
 	}
 }
 

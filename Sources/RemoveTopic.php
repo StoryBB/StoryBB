@@ -158,7 +158,7 @@ function DeleteMessage()
  */
 function RemoveOldTopics2()
 {
-	global $smcFunc;
+	global $smcFunc, $txt;
 
 	isAllowedTo('admin_forum');
 	checkSession('post', 'admin');
@@ -228,7 +228,9 @@ function RemoveOldTopics2()
 	// Log an action into the moderation log.
 	logAction('pruned', array('days' => $_POST['maxdays']));
 
-	redirectexit('action=admin;area=maintain;sa=topics;done=purgeold');
+	loadLanguage('ManageMaintenance');
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_old']));
+	redirectexit('action=admin;area=maintain;sa=topics');
 }
 
 /**
