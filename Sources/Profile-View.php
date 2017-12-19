@@ -1709,7 +1709,7 @@ function trackActivity($memID)
 	$context['error_ips'] = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . $row['ip'] . ';u=' . $memID . '">' . $row['ip'] . '</a>';
+		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . inet_dtop($row['ip']) . ';u=' . $memID . '">' . inet_dtop($row['ip']) . '</a>';
 		$ips[] = inet_dtop($row['ip']);
 	}
 	$smcFunc['db_free_result']($request);
@@ -1767,6 +1767,8 @@ function trackActivity($memID)
 			$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 		$smcFunc['db_free_result']($request);
 	}
+
+	$context['sub_template'] = 'profile_track_activity';
 }
 
 /**
