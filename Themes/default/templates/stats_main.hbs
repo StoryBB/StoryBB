@@ -107,12 +107,12 @@
 				<th>{{new_posts}}</th>
 				<th>{{new_members}}</th>
 				<th>{{most_members_online}}</th>
-				{{#if modSettings.hitStats}}
+				{{#if (eq modSettings.hitStats '1')}}
 				<th>{{hits}}</th>
 				{{/if}}
 			</tr>
     			{{#each months}}
-    			<tr class="windowbg" id="tr_month_', $month['id'], '">
+    			<tr class="windowbg" id="tr_month_{{id}}">
 					<th class="stats_month">
 						<img src="{{../../settings.images_url}}/{{#if expanded}}selected_open.png{{else}}selected.png{{/if}}" alt="" id="img_{{id}}"> <a id="m{{id}}" href="{{href}}" onclick="return doingExpandCollapse;">{{month}} {{year}}</a>
 					</th>
@@ -164,7 +164,7 @@
 			sDayRowIdPrefix: 'tr_day_',
 
 			aCollapsedYears: [
-			    {{#each context.collapsed_years}}'{{year}}' {{#unless @last}},{{/unless}}{{/each}}
+			    {{#each context.collapsed_years}}'{{.}}' {{#unless @last}},{{/unless}}{{/each}}
 			    ],
 
 			aDataCells: [
@@ -173,7 +173,7 @@
 				'new_posts',
 				'new_members',
 				'most_members_online'
-				{{#if modSettings.hitStats}}
+				{{#if (eq modSettings.hitStats '1')}}
 				,'hits'
 				{{/if}}
 			]
