@@ -122,7 +122,6 @@ function ManageAttachmentSettings($return_config = false)
 	$testUM = !empty($upload_max_filesize) ? (memoryReturnBytes($upload_max_filesize) >= (isset($modSettings['attachmentSizeLimit']) ? $modSettings['attachmentSizeLimit'] * 1024 : 0)) : true;
 
 	$config_vars = array(
-		array('title', 'attachment_manager_settings'),
 			// Are attachments enabled?
 			array('select', 'attachmentEnable', array($txt['attachmentEnable_deactivate'], $txt['attachmentEnable_enable_all'], $txt['attachmentEnable_disable_new'])),
 		'',
@@ -240,6 +239,8 @@ function ManageAttachmentSettings($return_config = false)
 	}
 
 	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=attachments';
+	$context['settings_title'] = $txt['attachment_manager_settings'];
+	$context['settings_title_help'] = 'attachment_manager_settings';
 	prepareDBSettingContext($config_vars);
 }
 
