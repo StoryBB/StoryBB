@@ -1292,6 +1292,9 @@ function editBuddies($memID)
 	global $txt, $scripturl, $settings;
 	global $context, $user_profile, $memberContext, $smcFunc;
 
+	$context['show_buddy_email_address'] = allowedTo('moderate_forum');
+	$context['sub_template'] = 'profile_buddy';
+
 	// For making changes!
 	$buddiesArray = explode(',', $user_profile[$memID]['buddy_list']);
 	foreach ($buddiesArray as $k => $dummy)
@@ -1305,19 +1308,28 @@ function editBuddies($memID)
 
 		call_integration_hook('integrate_remove_buddy', array($memID));
 
-		$_SESSION['prf-save'] = $txt['could_not_remove_person'];
+		$saved = false;
 
 		// Heh, I'm lazy, do it the easy way...
 		foreach ($buddiesArray as $key => $buddy)
 			if ($buddy == (int) $_GET['remove'])
 			{
 				unset($buddiesArray[$key]);
-				$_SESSION['prf-save'] = true;
+				$saved = true;
 			}
 
 		// Make the changes.
 		$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
 		updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+
+		if ($saved)
+		{
+			session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
+		}
+		else
+		{
+			session_flash('error', $txt['could_not_remove_person']);
+		}
 
 		// Redirect off the page because we don't like all this ugly query stuff to stick in the history.
 		redirectexit('action=profile;area=lists;sa=buddies;u=' . $memID);
@@ -1341,7 +1353,7 @@ function editBuddies($memID)
 
 		call_integration_hook('integrate_add_buddies', array($memID, &$new_buddies));
 
-		$_SESSION['prf-save'] = $txt['could_not_add_person'];
+		$saved = false;
 		if (!empty($new_buddies))
 		{
 			// Now find out the id_member of the buddy.
@@ -1357,7 +1369,7 @@ function editBuddies($memID)
 			);
 
 			if ($smcFunc['db_num_rows']($request) != 0)
-				$_SESSION['prf-save'] = true;
+				$saved = true;
 
 			// Add the new member to the buddies array.
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1372,6 +1384,15 @@ function editBuddies($memID)
 			// Now update the current users buddy list.
 			$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
 			updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+
+			if ($saved)
+			{
+				session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
+			}
+			else
+			{
+				session_flash('error', $txt['could_not_add_person']);
+			}
 		}
 
 		// Back to the buddy list!
@@ -1470,15 +1491,7 @@ function editBuddies($memID)
 		}
 	}
 
-	if (isset($_SESSION['prf-save']))
-	{
-		if ($_SESSION['prf-save'] === true)
-			$context['saved_successful'] = true;
-		else
-			$context['saved_failed'] = $_SESSION['prf-save'];
-
-		unset($_SESSION['prf-save']);
-	}
+	$context['columns_colspan'] = count($context['custom_pf']) + 3 + ($context['show_buddy_email_address'] ? 1 : 0);
 
 	call_integration_hook('integrate_view_buddies', array($memID));
 }
