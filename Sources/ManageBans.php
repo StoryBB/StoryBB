@@ -30,8 +30,6 @@ function Ban()
 
 	isAllowedTo('manage_bans');
 
-	loadTemplate('ManageBans');
-
 	$subActions = array(
 		'add' => 'BanEdit',
 		'browse' => 'BanBrowseTriggers',
