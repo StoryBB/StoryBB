@@ -577,7 +577,7 @@ function BanEdit()
 	}
 
 	loadJavaScriptFile('suggest.js', array(), 'smf_suggest');
-	$context['sub_template'] = 'ban_edit';
+	$context['sub_template'] = 'admin_ban_manage';
 
 }
 
