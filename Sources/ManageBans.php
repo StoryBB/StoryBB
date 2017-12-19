@@ -30,8 +30,6 @@ function Ban()
 
 	isAllowedTo('manage_bans');
 
-	loadTemplate('ManageBans');
-
 	$subActions = array(
 		'add' => 'BanEdit',
 		'browse' => 'BanBrowseTriggers',
@@ -577,7 +575,7 @@ function BanEdit()
 	}
 
 	loadJavaScriptFile('suggest.js', array(), 'smf_suggest');
-	$context['sub_template'] = 'ban_edit';
+	$context['sub_template'] = 'admin_ban_manage';
 
 }
 
@@ -729,7 +727,17 @@ function banLoadAdditionalIPs($member_id)
 	$return = array();
 	foreach ($search_list as $key => $callable)
 		if (is_callable($callable))
-			$return[$key] = call_user_func($callable, $member_id);
+		{
+			$result = call_user_func($callable, $member_id);
+			if (!empty($result))
+			{
+				$return[$key] = $result;
+			}
+		}
+
+	foreach ($return as $key => $value)
+		if (empty($value))
+			unset ($return[$key]);
 
 	return $return;
 }
@@ -1567,7 +1575,7 @@ function BanEditTrigger()
 {
 	global $context, $smcFunc, $scripturl;
 
-	$context['sub_template'] = 'ban_edit_trigger';
+	$context['sub_template'] = 'admin_ban_trigger';
 	$context['form_url'] = $scripturl . '?action=admin;area=ban;sa=edittrigger';
 
 	$ban_group = isset($_REQUEST['bg']) ? (int) $_REQUEST['bg'] : 0;
