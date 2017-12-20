@@ -2753,7 +2753,6 @@ function showPermissions($memID)
 
 	loadLanguage('ManagePermissions');
 	loadLanguage('Admin');
-	loadTemplate('ManageMembers');
 
 	// Load all the permission profiles.
 	require_once($sourcedir . '/ManagePermissions.php');
@@ -2763,6 +2762,7 @@ function showPermissions($memID)
 	$context['member']['name'] = $user_profile[$memID]['real_name'];
 
 	$context['page_title'] = $txt['showPermissions'];
+	$context['sub_template'] = 'profile_show_permissions';
 	$board = empty($board) ? 0 : (int) $board;
 	$context['board'] = $board;
 
