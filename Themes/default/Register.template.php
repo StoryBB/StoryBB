@@ -85,27 +85,4 @@ function template_registration_form()
 	return $renderer($data);
 }
 
-/**
- * Form for editing the agreement shown for people registering to the forum.
- */
-function template_edit_agreement()
-{
-	global $context, $scripturl, $txt;
-	
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'editable_agreements' => count($context['editable_agreements']) > 1
-	);
-	
-	$template = loadTemplateFile('register_edit_agreement');
-
-	$phpStr = compileTemplate($template);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
 ?>
