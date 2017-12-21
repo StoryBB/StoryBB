@@ -83,7 +83,7 @@ function Register($reg_errors = array())
 		$current_step = 1;
 
 	// Show the user the right form.
-	$context['sub_template'] = $current_step == 1 ? 'registration_agreement' : 'registration_form';
+	$context['sub_template'] = $current_step == 1 ? 'register_agreement' : 'registration_form';
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
 	// Kinda need this.

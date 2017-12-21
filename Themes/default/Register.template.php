@@ -9,28 +9,6 @@ use LightnCandy\LightnCandy;
  */
 
 /**
- * Before showing users a registration form, show them the registration agreement.
- */
-function template_registration_agreement()
-{
-	global $context, $scripturl, $txt;
-	
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl
-	);
-	
-	$template = loadTemplateFile('register_agreement');
-
-	$phpStr = compileTemplate($template);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
-
-/**
  * Before registering - get their information.
  */
 function template_registration_form()
