@@ -1,5 +1,5 @@
 {
-	"theme_version": "3.0",
+    "theme_version": "3.0",
     "require_theme_strings": false,
     "page_index": {
         "extra_before": "<span class=\"pages\">{{{txt.pages}}}<\/span>",
@@ -10,5 +10,159 @@
         "next_page": "<span class=\"generic_icons next_page\"><\/span>",
         "extra_after": ""
     },
-    "disable_files": []
+    "disable_files": [],
+    "theme_settings": [
+        {
+            "id": "header_logo_url",
+            "label": "header_logo_url",
+            "description": "header_logo_url_desc",
+            "type": "text"
+        },
+        {
+            "id": "site_slogan",
+            "label": "site_slogan",
+            "description": "site_slogan_desc",
+            "type": "text"
+        },
+        {
+            "id": "smiley_sets_default",
+            "label": "smileys_default_set_for_theme",
+            "options": [],
+            "type": "text"
+        },
+        "",
+        {
+            "id": "enable_news",
+            "label": "enable_random_news"
+        },
+        "",
+        {
+            "id": "show_newsfader",
+            "label": "news_fader"
+        },
+        {
+            "id": "newsfader_time",
+            "label": "admin_fader_delay",
+            "type": "number"
+        },
+        {
+            "id": "number_recent_posts",
+            "label": "number_recent_posts",
+            "description": "zero_to_disable",
+            "type": "number"
+        },
+        {
+            "id": "show_stats_index",
+            "label": "show_stats_index"
+        },
+        {
+            "id": "show_latest_member",
+            "label": "latest_members"
+        },
+        {
+            "id": "show_group_key",
+            "label": "show_group_key"
+        },
+        {
+            "id": "display_who_viewing",
+            "label": "who_display_viewing",
+            "options": {
+                "0": "who_display_viewing_off",
+                "1": "who_display_viewing_numbers",
+                "2": "who_display_viewing_names"
+            },
+            "type": "number"
+        },
+        "",
+        {
+            "id": "og_image",
+            "label": "og_image",
+            "description": "og_image_desc",
+            "type": "url"
+        }
+    ],
+    "user_options": [
+        "theme_opt_display",
+        {
+            "id": "topics_per_page",
+            "label": "topics_per_page",
+            "options": {
+                "0": "per_page_default",
+                "5": 5,
+                "10": 10,
+                "25": 25,
+                "50": 50
+            },
+            "default": true
+        },
+        {
+            "id": "messages_per_page",
+            "label": "messages_per_page",
+            "options": {
+                "0": "per_page_default",
+                "5": 5,
+                "10": 10,
+                "25": 25,
+                "50": 50
+            },
+            "default": true
+        },
+        {
+            "id": "view_newest_first",
+            "label": "recent_posts_at_top",
+            "default": true
+        },
+        {
+            "id": "show_no_avatars",
+            "label": "show_no_avatars",
+            "default": true
+        },
+        {
+            "id": "show_no_signatures",
+            "label": "show_no_signatures",
+            "default": true
+        },
+        {
+            "id": "posts_apply_ignore_list",
+            "label": "posts_apply_ignore_list",
+            "default": false
+        },
+        "theme_opt_posting",
+        {
+            "id": "return_to_post",
+            "label": "return_to_post",
+            "default": true
+        },
+        {
+            "id": "auto_notify",
+            "label": "auto_notify",
+            "default": true
+        },
+        {
+            "id": "wysiwyg_default",
+            "label": "wysiwyg_default",
+            "default": false
+        },
+        {
+            "id": "drafts_autosave_enabled",
+            "label": "drafts_autosave_enabled",
+            "default": true
+        },
+        {
+            "id": "drafts_show_saved_enabled",
+            "label": "drafts_show_saved_enabled",
+            "default": true
+        },
+        "theme_opt_personal_messages",
+        {
+            "id": "view_newest_pm_first",
+            "label": "recent_pms_at_top",
+            "default": true
+        },
+        {
+            "id": "pm_remove_inbox_label",
+            "label": "pm_remove_inbox_label",
+            "default": true
+        }
+    ]
 }
