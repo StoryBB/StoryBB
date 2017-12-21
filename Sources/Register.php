@@ -516,12 +516,10 @@ function Register2()
 	// Basic template variable setup.
 	elseif (!empty($modSettings['registration_method']))
 	{
-		loadTemplate('Register');
-
 		$context += array(
 			'page_title' => $txt['register'],
 			'title' => $txt['registration_successful'],
-			'sub_template' => 'after',
+			'sub_template' => 'register_success',
 			'description' => $modSettings['registration_method'] == 2 ? $txt['approval_after_registration'] : $txt['activate_after_registration']
 		);
 	}

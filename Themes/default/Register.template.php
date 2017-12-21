@@ -86,25 +86,6 @@ function template_registration_form()
 }
 
 /**
- * After registration... all done ;).
- */
-function template_after()
-{
-	global $context;
-
-	// Not much to see here, just a quick... "you're now registered!" or what have you.
-	return '
-		<div id="registration_success">
-			<div class="cat_bar">
-				<h3 class="catbg">' . $context['title'] . '</h3>
-			</div>
-			<div class="windowbg noup">
-				<p>' . $context['description'] . '</p>
-			</div>
-		</div>';
-}
-
-/**
  * Form for editing the agreement shown for people registering to the forum.
  */
 function template_edit_agreement()
