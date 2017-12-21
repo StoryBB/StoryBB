@@ -30,14 +30,6 @@ function template_registration_agreement()
 	return $renderer($data);
 }
 
-function gen_tabIndexes($start){
-	$i = 0;
-	while(true) {
-		echo "DEBUG: " . $i;
-        yield $i++; 
-	}
-}
-
 /**
  * Before registering - get their information.
  */
