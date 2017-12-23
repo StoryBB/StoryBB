@@ -8,59 +8,6 @@ use LightnCandy\LightnCandy;
  * @version 3.0 Alpha 1
  */
 
-/**
- * Before registering - get their information.
- */
-function template_registration_form()
-{
-	global $context, $scripturl, $txt, $modSettings;
-	
-	//Preprocessing: sometimes we're given eval strings to make options for custom fields.
-	//WE REALLY SHOULDN'T DO THIS.
-	//But for now:
-	if (!empty($context['profile_fields'])) {
-		foreach ($context['profile_fields'] as $key => $field) {
-			if ($field['type'] == 'select' && !is_array($field['options'])) {
-				$field['options'] = eval($field['options']);
-			}
-		}
-	}
 
-	$verify_id = $context['visual_verification_id'];
-		
-	$data = Array(
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'modSettings' => $modSettings,
-	);
-	
-	$template = loadTemplateFile('register_form');
-
-	$phpStr = compileTemplate($template, [
-	    'helpers' => Array(
-	    	'profile_callback_helper' => function ($field) {
-	            if ($field['type'] == 'callback')
-				{
-					if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
-					{
-						$callback_func = 'template_profile_' . $field['callback_func'];
-						$callback_func();
-					}
-				}
-	        },
-	        'makeHTTPS' => function($url) { 
-	        	return strtr($url, array('http://' => 'https://'));
-	        },
-	        'field_isText' => function($type) {
-	        	return in_array($type, array('int', 'float', 'text', 'password'));
-	        },
-	    )
-	]);
-	
-	//var_dump($context['meta_tags']);die();
-	$renderer = LightnCandy::prepare($phpStr);
-	return $renderer($data);
-}
 
 ?>

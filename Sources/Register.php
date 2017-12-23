@@ -83,7 +83,7 @@ function Register($reg_errors = array())
 		$current_step = 1;
 
 	// Show the user the right form.
-	$context['sub_template'] = $current_step == 1 ? 'register_agreement' : 'registration_form';
+	$context['sub_template'] = $current_step == 1 ? 'register_agreement' : 'register_form';
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
 	// Kinda need this.
@@ -147,6 +147,35 @@ function Register($reg_errors = array())
 	// Any custom fields we want filled in?
 	require_once($sourcedir . '/Profile.php');
 	loadCustomFields(0, 'register');
+
+	// Preprocessing: sometimes we're given eval strings to make options for custom fields.
+	if (!empty($context['profile_fields'])) {
+		foreach ($context['profile_fields'] as $key => $field) {
+			if ($field['type'] == 'select' && !is_array($field['options'])) {
+				$context['profile_fields'][$key]['options'] = eval($field['options']);
+			}
+		}
+	}
+
+	register_helper([
+		'profile_callback_helper' => function ($field) {
+			var_dump($field);
+	        if ($field['type'] == 'callback')
+			{
+				if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
+				{
+					$callback_func = 'template_profile_' . $field['callback_func'];
+					$callback_func();
+				}
+			}
+		},
+		'makeHTTPS' => function($url) { 
+			return strtr($url, array('http://' => 'https://'));
+		},
+		'field_isText' => function($type) {
+			return in_array($type, array('int', 'float', 'text', 'password', 'url'));
+		}
+	]);
 
 	// Or any standard ones?
 	if (!empty($modSettings['registration_fields']))
