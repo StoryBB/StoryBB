@@ -46,7 +46,6 @@ function RegCenter()
 
 	// Loading, always loading.
 	loadLanguage('Login');
-	loadTemplate('Register');
 
 	// Next create the tabs for the template.
 	$context[$context['admin_menu_name']]['tab_data'] = array(

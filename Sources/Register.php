@@ -41,7 +41,6 @@ function Register($reg_errors = array())
 		redirectexit();
 
 	loadLanguage('Login');
-	loadTemplate('Register');
 
 	// Do we need them to agree to the registration agreement, first?
 	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
@@ -728,7 +727,6 @@ function CoppaForm()
 	global $context, $modSettings, $txt, $smcFunc;
 
 	loadLanguage('Login');
-	loadTemplate('Register');
 
 	// No User ID??
 	if (!isset($_GET['member']))
@@ -906,11 +904,8 @@ function SendActivation()
 	$context['user']['is_logged'] = false;
 	$context['user']['is_guest'] = true;
 
-	// Send them to the done-with-registration-login screen.
-	loadTemplate('Register');
-
 	$context['page_title'] = $txt['profile'];
-	$context['sub_template'] = 'after';
+	$context['sub_template'] = 'register_success';
 	$context['title'] = $txt['activate_changed_email_title'];
 	$context['description'] = $txt['activate_changed_email_desc'];
 
