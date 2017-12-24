@@ -374,9 +374,8 @@ function EditCategory2()
 function EditBoard()
 {
 	global $txt, $context, $cat_tree, $boards, $boardList;
-	global $sourcedir, $smcFunc, $modSettings;
+	global $sourcedir, $smcFunc, $modSettings, $scripturl;
 
-	loadTemplate('ManageBoards');
 	require_once($sourcedir . '/Subs-Boards.php');
 	require_once($sourcedir . '/Subs-Editor.php');
 	getBoardTree();
@@ -390,6 +389,8 @@ function EditBoard()
 	require_once($sourcedir . '/Subs-Members.php');
 	$groups = groupsAllowedTo('manage_boards', null);
 	$context['board_managers'] = $groups['allowed']; // We don't need *all* this in $context.
+
+	$context['category_allowed_tags_desc'] = str_replace('{allowed_tags}', implode(', ', $context['description_allowed_tags']), $txt['mboards_description_desc']);
 
 	// id_board must be a number....
 	$_REQUEST['boardid'] = isset($_REQUEST['boardid']) ? (int) $_REQUEST['boardid'] : 0;
@@ -445,6 +446,7 @@ function EditBoard()
 
 	// We might need this to hide links to certain areas.
 	$context['can_manage_permissions'] = allowedTo('manage_permissions');
+	$context['permission_profile_desc'] = $context['can_manage_permissions'] ? sprintf($txt['permission_profile_desc'], $scripturl . '?action=admin;area=permissions;sa=profiles;' . $context['session_var'] . '=' . $context['session_id']) : strip_tags($txt['permission_profile_desc']);
 
 	// Default membergroups.
 	$context['groups'] = array(
@@ -592,7 +594,7 @@ function EditBoard()
 
 	if (!isset($_REQUEST['delete']))
 	{
-		$context['sub_template'] = 'modify_board';
+		$context['sub_template'] = 'admin_boards_edit';
 		$context['page_title'] = $txt['boardsEdit'];
 		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 	}
