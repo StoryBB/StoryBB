@@ -42,8 +42,8 @@
 						<dd>
 							<select name="reg" id="reg">
 								<option value="0"{{#if (eq context.field.reg '0')}} selected{{/if}}>{{{txt.custom_edit_registration_disable}}}</option>
-								<option value="0"{{#if (eq context.field.reg '1')}} selected{{/if}}>{{{txt.custom_edit_registration_allow}}}</option>
-								<option value="0"{{#if (eq context.field.reg '2')}} selected{{/if}}>{{{txt.custom_edit_registration_require}}}</option>
+								<option value="1"{{#if (eq context.field.reg '1')}} selected{{/if}}>{{{txt.custom_edit_registration_allow}}}</option>
+								<option value="2"{{#if (eq context.field.reg '2')}} selected{{/if}}>{{{txt.custom_edit_registration_require}}}</option>
 							</select>
 						</dd>
 						<dt>

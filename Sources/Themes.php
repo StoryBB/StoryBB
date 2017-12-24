@@ -551,8 +551,7 @@ function SetThemeOptions()
 	loadLanguage('PersonalMessage');
 
 	// Let the theme take care of the settings.
-	loadTemplate('Settings');
-	loadSubTemplate('options');
+	$context['theme_options'] = StoryBB\Model\Theme::get_user_options();
 
 	$context['sub_template'] = 'admin_themes_options';
 	$context['page_title'] = $txt['theme_settings'];
@@ -669,8 +668,7 @@ function SetThemeSettings()
 	loadLanguage('ThemeStrings', '', false, true);
 
 	// Let the theme take care of the settings.
-	loadTemplate('Settings');
-	loadSubTemplate('settings');
+	$context['theme_settings'] = StoryBB\Model\Theme::get_theme_settings();
 
 	// Load the variants separately...
 	$settings['theme_variants'] = array();

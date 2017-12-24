@@ -2215,21 +2215,11 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Initialize the theme.
-	if (file_exists($settings['theme_dir'] . '/theme.json'))
+	$theme_settings = StoryBB\Model\Theme::get_defaults();
+	foreach ($theme_settings as $key => $value)
 	{
-		$theme_settings = file_get_contents($settings['theme_dir'] . '/theme.json');
-		if (!empty($theme_settings))
-		{
-			$theme_json = json_decode($theme_settings, true);
-			if (!empty($theme_json) && is_array($theme_json))
-			{
-				foreach ($theme_json as $key => $value)
-				{
-					if (!isset($settings[$key]))
-						$settings[$key] = $value;
-				}
-			}
-		}
+		if (!isset($settings[$key]))
+			$settings[$key] = $value;
 	}
 
 	// Allow overriding the board wide time/number formats.
