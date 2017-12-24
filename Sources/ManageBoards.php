@@ -218,7 +218,6 @@ function EditCategory()
 {
 	global $txt, $context, $cat_tree, $boardList, $boards, $smcFunc, $sourcedir;
 
-	loadTemplate('ManageBoards');
 	require_once($sourcedir . '/Subs-Boards.php');
 	require_once($sourcedir . '/Subs-Editor.php');
 	getBoardTree();
@@ -291,7 +290,7 @@ function EditCategory()
 	}
 	else
 	{
-		$context['sub_template'] = 'confirm_category_delete';
+		$context['sub_template'] = 'admin_boards_category_delete';
 		$context['page_title'] = $txt['mboards_delete_cat'];
 	}
 
@@ -599,12 +598,13 @@ function EditBoard()
 	}
 	else
 	{
-		$context['sub_template'] = 'confirm_board_delete';
+		$context['sub_template'] = 'admin_boards_delete';
 		$context['page_title'] = $txt['mboards_delete_board'];
 	}
 
 	// Create a special token.
 	createToken('admin-be-' . $_REQUEST['boardid']);
+	$context['token_check'] = 'admin-be-' . $_REQUEST['boardid'];
 
 	call_integration_hook('integrate_edit_board');
 }

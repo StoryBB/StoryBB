@@ -1,0 +1,40 @@
+	{{! Confirming of deletion of categories. }}
+	<div id="manage_boards" class="roundframe">
+		<form action="{{scripturl}}?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="UTF-8">
+			<input type="hidden" name="cat" value="{{context.category.id}}">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.mboards_delete_cat}}}</h3>
+			</div>
+			<div class="windowbg">
+				<p>{{{txt.mboards_delete_cat_contains}}}:</p>
+				<ul>
+					{{#each context.category.children}}
+					<li>{{{.}}}</li>
+					{{/each}}
+				</ul>
+			</div>
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.mboards_delete_what_do}}}</h3>
+			</div>
+			<div class="windowbg">
+				<p>
+					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" class="input_radio" checked>{{{txt.mboards_delete_option1}}}</label><br>
+					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1" class="input_radio"{{#if (eq (count context.category_order) 1)}} disabled{{/if}}>{{{txt.mboards_delete_option2}}}</label>:
+					<select name="cat_to"{{#unless (eq (count context.category_order) 1)}} disabled{{/unless}}>
+
+					{{#each context.category_order}}
+						{{#if (neq id 0)}}
+						<option value="{{id}}">{{{true_name}}}</option>
+						{{/if}}
+					{{/each}}
+
+					</select>
+				</p>
+				<input type="submit" name="delete" value="{{{txt.mboards_delete_confirm}}}" class="button_submit">
+				<input type="submit" name="cancel" value="{{{txt.mboards_delete_cancel}}}" class="button_submit">
+				<input type="hidden" name="confirmation" value="1">
+				{{session_form}}
+				{{token_form context.token_check}}
+			</div>
+		</form>
+	</div>

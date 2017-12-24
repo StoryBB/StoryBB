@@ -8,59 +8,6 @@
  */
 
 /**
- * A template to confirm if a user wishes to delete a category - and whether they want to save the boards.
- */
-function template_confirm_category_delete()
-{
-	global $context, $scripturl, $txt;
-
-	// Print table header.
-	echo '
-	<div id="manage_boards" class="roundframe">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=cat2" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="cat" value="', $context['category']['id'], '">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mboards_delete_cat'], '</h3>
-			</div>
-			<div class="windowbg">
-				<p>', $txt['mboards_delete_cat_contains'], ':</p>
-				<ul>';
-
-	foreach ($context['category']['children'] as $child)
-		echo '
-					<li>', $child, '</li>';
-
-	echo '
-				</ul>
-			</div>
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mboards_delete_what_do'], '</h3>
-			</div>
-			<div class="windowbg">
-				<p>
-					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" class="input_radio" checked>', $txt['mboards_delete_option1'], '</label><br>
-					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1" class="input_radio"', count($context['category_order']) == 1 ? ' disabled' : '', '>', $txt['mboards_delete_option2'], '</label>:
-					<select name="cat_to"', count($context['category_order']) == 1 ? ' disabled' : '', '>';
-
-	foreach ($context['category_order'] as $cat)
-		if ($cat['id'] != 0)
-			echo '
-						<option value="', $cat['id'], '">', $cat['true_name'], '</option>';
-
-	echo '
-					</select>
-				</p>
-				<input type="submit" name="delete" value="', $txt['mboards_delete_confirm'], '" class="button_submit">
-				<input type="submit" name="cancel" value="', $txt['mboards_delete_cancel'], '" class="button_submit">
-				<input type="hidden" name="confirmation" value="1">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="', $context[$context['token_check'] . '_token_var'], '" value="', $context[$context['token_check'] . '_token'], '">
-			</div>
-		</form>
-	</div>';
-}
-
-/**
  * Below is the template for adding/editing a board on the forum.
  */
 function template_modify_board()
@@ -503,60 +450,6 @@ function template_modify_board()
 		}
 		refreshOptions();
 	</script>';
-}
-
-/**
- * A template used when a user is deleting a board with child boards in it - to see what they want to do with them.
- */
-function template_confirm_board_delete()
-{
-	global $context, $scripturl, $txt;
-
-	// Print table header.
-	echo '
-	<div id="manage_boards" class="roundframe">
-		<form action="', $scripturl, '?action=admin;area=manageboards;sa=board2" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="boardid" value="', $context['board']['id'], '">
-
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mboards_delete_board'], '</h3>
-			</div>
-			<div class="windowbg">
-				<p>', $txt['mboards_delete_board_contains'], '</p>
-					<ul>';
-
-	foreach ($context['children'] as $child)
-		echo '
-						<li>', $child['node']['name'], '</li>';
-
-	echo '
-					</ul>
-			</div>
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mboards_delete_what_do'], '</h3>
-			</div>
-			<div class="windowbg">
-				<p>
-					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" class="input_radio" checked>', $txt['mboards_delete_board_option1'], '</label><br>
-					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1" class="input_radio"', empty($context['can_move_children']) ? ' disabled' : '', '>', $txt['mboards_delete_board_option2'], '</label>:
-					<select name="board_to"', empty($context['can_move_children']) ? ' disabled' : '', '>';
-
-	foreach ($context['board_order'] as $board)
-		if ($board['id'] != $context['board']['id'] && empty($board['is_child']))
-			echo '
-						<option value="', $board['id'], '">', $board['name'], '</option>';
-
-	echo '
-					</select>
-				</p>
-				<input type="submit" name="delete" value="', $txt['mboards_delete_confirm'], '" class="button_submit">
-				<input type="submit" name="cancel" value="', $txt['mboards_delete_cancel'], '" class="button_submit">
-				<input type="hidden" name="confirmation" value="1">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="', $context['admin-be-' . $context['board']['id'] . '_token_var'], '" value="', $context['admin-be-' . $context['board']['id'] . '_token'], '"
-			</div>
-		</form>
-	</div>';
 }
 
 ?>
