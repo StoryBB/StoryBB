@@ -223,6 +223,8 @@ function EditCategory()
 	require_once($sourcedir . '/Subs-Editor.php');
 	getBoardTree();
 
+	$context['category_allowed_tags_desc'] = str_replace('{allowed_tags}', implode(', ', $context['description_allowed_tags']), $txt['mboards_cat_description_desc']);
+
 	// id_cat must be a number.... if it exists.
 	$_REQUEST['cat'] = isset($_REQUEST['cat']) ? (int) $_REQUEST['cat'] : 0;
 
@@ -284,7 +286,7 @@ function EditCategory()
 	}
 	if (!isset($_REQUEST['delete']))
 	{
-		$context['sub_template'] = 'modify_category';
+		$context['sub_template'] = 'admin_boards_category_edit';
 		$context['page_title'] = $_REQUEST['sa'] == 'newcat' ? $txt['mboards_new_cat_name'] : $txt['catEdit'];
 	}
 	else
