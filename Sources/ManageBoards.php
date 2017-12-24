@@ -80,7 +80,7 @@ function ManageBoardsMain()
 {
 	global $txt, $context, $cat_tree, $boards, $boardList, $scripturl, $sourcedir, $smcFunc;
 
-	loadTemplate('ManageBoards');
+	$context['sub_template'] = 'admin_boards';
 
 	require_once($sourcedir . '/Subs-Boards.php');
 
