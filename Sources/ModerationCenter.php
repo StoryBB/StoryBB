@@ -248,7 +248,7 @@ function ModerationHome()
 	loadJavaScriptFile('admin.js', array(), 'smf_admin');
 
 	$context['page_title'] = $txt['moderation_center'];
-	$context['sub_template'] = 'moderation_center';
+	$context['sub_template'] = 'mod_home';
 
 	// Handle moderators notes.
 	ModBlockNotes();
@@ -325,7 +325,7 @@ function ModBlockWatchedUsers()
 		);
 	}
 
-	return 'watched_users';
+	return 'modcenter_watched_users';
 }
 
 /**
@@ -502,7 +502,7 @@ function ModBlockReportedPosts()
 	$cachekey = md5(json_encode($user_info['mod_cache']['bq']));
 	$context['reported_posts'] = array();
 	if ($user_info['mod_cache']['bq'] == '0=1')
-		return 'reported_posts_block';
+		return 'modcenter_reported_posts';
 
 	if (($reported_posts = cache_get_data('reported_posts_' . $cachekey, 90)) === null)
 	{
@@ -553,7 +553,7 @@ function ModBlockReportedPosts()
 		);
 	}
 
-	return 'reported_posts_block';
+	return 'modcenter_reported_posts';
 }
 
 /**
@@ -602,7 +602,7 @@ function ModBlockGroupRequests()
 	}
 	$smcFunc['db_free_result']($request);
 
-	return 'group_requests_block';
+	return 'modcenter_group_requests';
 }
 
 /**
@@ -616,7 +616,7 @@ function ModBlockReportedMembers()
 	$cachekey = md5(json_encode((int) allowedTo('moderate_forum')));
 	$context['reported_users'] = array();
 	if (!allowedTo('moderate_forum'))
-		return 'reported_users_block';
+		return 'modcenter_reported_users';
 
 	if (($reported_users = cache_get_data('reported_users_' . $cachekey, 90)) === null)
 	{
@@ -663,7 +663,7 @@ function ModBlockReportedMembers()
 		);
 	}
 
-	return 'reported_users_block';
+	return 'modcenter_reported_users';
 }
 
 /**
