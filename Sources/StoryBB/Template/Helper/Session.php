@@ -19,6 +19,7 @@ class Session
 		return ([
 			'token' => 'StoryBB\\Template\\Helper\\Session::token',
 			'token_var' => 'StoryBB\\Template\\Helper\\Session::token_var',
+			'token_url' => 'StoryBB\\Template\\Helper\\Session::token_url',
 			'token_form' => 'StoryBB\\Template\\Helper\\Session::token_form',
 			'session_id' => 'StoryBB\\Template\\Helper\\Session::session_id',
 			'session_var' => 'StoryBB\\Template\\Helper\\Session::session_var',
@@ -35,6 +36,16 @@ class Session
 	public static function token_var($string) {
 		global $context;
 		return isset($context[$string . '_token_var']) ? $context[$string . '_token_var'] : '';
+	}
+
+	public static function token_url($string) {
+		global $context;
+		if (!isset($context[$string . '_token_var'], $context[$string . '_token']))
+		{
+			return '';
+		}
+
+		return new \LightnCandy\SafeString( $context[$string . '_token_var'] . '=' . $context[$string . '_token']);
 	}
 
 	public static function token_form($string) {
