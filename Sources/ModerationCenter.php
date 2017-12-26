@@ -248,7 +248,7 @@ function ModerationHome()
 	loadJavaScriptFile('admin.js', array(), 'smf_admin');
 
 	$context['page_title'] = $txt['moderation_center'];
-	$context['sub_template'] = 'mod_home';
+	$context['sub_template'] = 'modcenter_home';
 
 	// Handle moderators notes.
 	ModBlockNotes();
