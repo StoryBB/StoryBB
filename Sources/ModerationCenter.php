@@ -932,10 +932,9 @@ function ShowNotice()
 	global $smcFunc, $txt, $context;
 
 	$context['page_title'] = $txt['show_notice'];
-	$context['sub_template'] = 'show_notice';
+	StoryBB\Template::set_layout('popup');
+	$context['sub_template'] = 'modcenter_notice_show';
 	$context['template_layers'] = array();
-
-	loadTemplate('ModerationCenter');
 
 	// @todo Assumes nothing needs permission more than accessing moderation center!
 	$id_notice = (int) $_GET['nid'];
@@ -1533,7 +1532,7 @@ function ViewWarningLog()
 
 						if (!empty($rowData['id_notice']))
 							$output .= '
-								&nbsp;<a href="' . $scripturl . '?action=moderate;area=notice;nid=' . $rowData['id_notice'] . '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="' . $txt['profile_warning_previous_notice'] . '"><span class="generic_icons filter centericon"></span></a>';
+								&nbsp;<a href="' . $scripturl . '?action=moderate;area=notice;nid=' . $rowData['id_notice'] . '" onclick="return reqOverlayDiv(this.href, \'' . $txt['show_notice'] . '\', \'warn.png\');" target="_blank" class="new_win" title="' . $txt['profile_warning_previous_notice'] . '"><span class="generic_icons filter centericon"></span></a>';
 						return $output;
 					},
 				),

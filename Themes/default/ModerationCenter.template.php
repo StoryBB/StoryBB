@@ -132,43 +132,6 @@ function template_user_watch_post_callback($post)
 }
 
 /**
- * Show a notice sent to a user.
- */
-function template_show_notice()
-{
-	global $txt, $settings, $context, $modSettings;
-
-	// We do all the HTML for this one!
-	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-	<head>
-		<meta charset="UTF-8">
-		<title>', $context['page_title'], '</title>
-		<link rel="stylesheet" href="', $settings['theme_url'], '/css/index', $context['theme_variant'], '.css', $modSettings['browser_cache'], '">
-	</head>
-	<body>
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['show_notice'], '</h3>
-		</div>
-		<div class="title_bar">
-			<h3 class="titlebg">', $txt['show_notice_subject'], ': ', $context['notice_subject'], '</h3>
-		</div>
-		<div class="windowbg">
-			<dl>
-				<dt>
-					<strong>', $txt['show_notice_text'], ':</strong>
-				</dt>
-				<dd>
-					', $context['notice_body'], '
-				</dd>
-			</dl>
-		</div>
-	</body>
-</html>';
-
-}
-
-/**
  * Add or edit a warning template.
  */
 function template_warn_template()
