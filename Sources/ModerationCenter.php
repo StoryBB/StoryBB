@@ -336,7 +336,7 @@ function ModBlockNotes()
 	global $context, $smcFunc, $scripturl, $txt, $user_info;
 
 	// Set a nice and informative message.
-	$context['report_post_action'] = !empty($_SESSION['rc_confirmation']) ? $_SESSION['rc_confirmation'] : array();
+	$context['report_post_action'] = !empty($_SESSION['rc_confirmation']) ? $txt['report_action_' . $_SESSION['rc_confirmation']] : '';
 	unset($_SESSION['rc_confirmation']);
 
 	// Are we saving a note?
