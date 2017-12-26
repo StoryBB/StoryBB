@@ -132,45 +132,6 @@ function template_user_watch_post_callback($post)
 }
 
 /**
- * The moderation settings page.
- */
-function template_moderation_settings()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-	<div id="modcenter">';
-
-	if (!empty($context['can_moderate_approvals']))
-	{
-		echo '
-		<form action="', $scripturl, '?action=moderate;area=settings" method="post" accept-charset="UTF-8">
-			<div class="windowbg">
-				<dl class="settings">
-					<dt>
-						<strong><label for="mod_notify_approval">', $txt['mc_prefs_notify_approval'], '</label>:</strong>
-					</dt>
-					<dd>
-						<input type="checkbox" id="mod_notify_approval" name="mod_notify_approval"', $context['mod_settings']['notify_approval'] ? ' checked' : '', ' class="input_check">
-					</dd>
-				</dl>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="', $context['mod-set_token_var'], '" value="', $context['mod-set_token'], '">
-				<input type="submit" name="save" value="', $txt['save'], '" class="button_submit">
-			</div>
-		</form>';
-	}
-	else
-		echo '
-		<div class="windowbg">
-			<div class="centertext">', $txt['mc_no_settings'], '</div>
-		</div>';
-
-	echo '
-	</div>';
-}
-
-/**
  * Show a notice sent to a user.
  */
 function template_show_notice()

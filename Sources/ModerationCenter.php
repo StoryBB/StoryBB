@@ -2020,7 +2020,7 @@ function ModerationSettings()
 	// Some useful context stuff.
 	loadTemplate('ModerationCenter');
 	$context['page_title'] = $txt['mc_settings'];
-	$context['sub_template'] = 'moderation_settings';
+	$context['sub_template'] = 'modcenter_settings';
 	$context[$context['moderation_menu_name']]['tab_data'] = array(
 		'title' => $txt['mc_prefs_title'],
 		'help' => '',
