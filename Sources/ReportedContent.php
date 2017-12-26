@@ -40,7 +40,7 @@ function ReportedContent()
 	if (!isset($context['report_post_action']))
 	{
 		$context['report_post_action'] = !empty($_SESSION['rc_confirmation']) ? $txt['report_action_' . $_SESSION['rc_confirmation']] : '';
-	unset($_SESSION['rc_confirmation']);
+		unset($_SESSION['rc_confirmation']);
 	}
 
 	// Set up the comforting bits...
