@@ -244,7 +244,6 @@ function ModerationHome()
 {
 	global $txt, $context, $options;
 
-	loadTemplate('ModerationCenter');
 	loadJavaScriptFile('admin.js', array(), 'smf_admin');
 
 	$context['page_title'] = $txt['moderation_center'];
@@ -673,8 +672,6 @@ function ReportedMembers()
 {
 	global $txt, $context, $scripturl, $smcFunc;
 
-	loadTemplate('ModerationCenter');
-
 	// Set an empty var for the server response.
 	$context['report_member_action'] = '';
 
@@ -907,9 +904,6 @@ function ModerateGroups()
 	if ($user_info['mod_cache']['gq'] == '0=1')
 		isAllowedTo('manage_membergroups');
 
-	// Load the group templates.
-	loadTemplate('ModerationCenter');
-
 	// Setup the subactions...
 	$subActions = array(
 		'requests' => 'GroupRequests',
@@ -965,8 +959,6 @@ function ViewWatchedUsers()
 	$context['page_title'] = $txt['mc_watched_users_title'];
 	$context['view_posts'] = isset($_GET['sa']) && $_GET['sa'] == 'post';
 	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
-
-	loadTemplate('ModerationCenter');
 
 	// Get some key settings!
 	$modSettings['warning_watch'] = empty($modSettings['warning_watch']) ? 1 : $modSettings['warning_watch'];
@@ -1401,7 +1393,6 @@ function ViewWarnings()
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) && (empty($subActions[$_REQUEST['sa']][1]) || allowedTo($subActions[$_REQUEST['sa']])) ? $_REQUEST['sa'] : 'log';
 
 	// Some of this stuff is overseas, so to speak.
-	loadTemplate('ModerationCenter');
 	loadLanguage('Profile');
 
 	// Setup the admin tabs.
@@ -2026,7 +2017,6 @@ function ModerationSettings()
 	global $context, $txt, $user_info;
 
 	// Some useful context stuff.
-	loadTemplate('ModerationCenter');
 	$context['page_title'] = $txt['mc_settings'];
 	$context['sub_template'] = 'modcenter_settings';
 	$context[$context['moderation_menu_name']]['tab_data'] = array(

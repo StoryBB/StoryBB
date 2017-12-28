@@ -22,7 +22,6 @@ function PostModerationMain()
 
 	 // @todo We'll shift these later bud.
 	loadLanguage('ModerationCenter');
-	loadTemplate('ModerationCenter');
 
 	// Probably need this...
 	require_once($sourcedir . '/ModerationCenter.php');
