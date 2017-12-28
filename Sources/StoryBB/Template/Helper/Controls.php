@@ -91,9 +91,9 @@ class Controls
 		$cur_list = &$context[$list_id];
 		$cur_list['list_id'] = $list_id;
 		
-		$template = StoryBB\Template::load_partial('generic_list');
-		$phpStr = StoryBB\Template::compile($template, [], 'genericlist');
-		return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, [
+		$template = \StoryBB\Template::load_partial('generic_list');
+		$phpStr = \StoryBB\Template::compile($template, [], 'genericlist');
+		return new \LightnCandy\SafeString(\StoryBB\Template::prepare($phpStr, [
 			'context' => $context,
 			'cur_list' => $cur_list,
 			'headerCount' => count($cur_list['headers'])
