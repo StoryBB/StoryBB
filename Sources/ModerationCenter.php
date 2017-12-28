@@ -1874,7 +1874,7 @@ function ModifyWarningTemplate()
 
 	// Standard template things.
 	$context['page_title'] = $context['is_edit'] ? $txt['mc_warning_template_modify'] : $txt['mc_warning_template_add'];
-	$context['sub_template'] = 'warn_template';
+	$context['sub_template'] = 'modcenter_warning_template_edit';
 	$context[$context['moderation_menu_name']]['current_subsection'] = 'templates';
 
 	// Defaults.
