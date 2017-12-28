@@ -305,7 +305,8 @@ function UnapprovedPosts()
 	}
 	$smcFunc['db_free_result']($request);
 
-	$context['sub_template'] = 'unapproved_posts';
+	$context['sub_template'] = 'modcenter_unapproved';
+	register_helper(['create_button' => 'create_button']);
 }
 
 /**
