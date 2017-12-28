@@ -1146,12 +1146,21 @@ function ViewWatchedUsers()
 	// If this is being viewed by posts we actually change the columns to call a template each time.
 	if ($context['view_posts'])
 	{
+		register_helper(['create_button' => 'create_button']);
 		$listOptions['columns'] = array(
 			'posts' => array(
 				'data' => array(
 					'function' => function($post)
 					{
-						return template_user_watch_post_callback($post);
+						global $scripturl, $context, $txt;
+						$template = StoryBB\Template::load_partial('modcenter_user_watch_post');
+						$phpStr = StoryBB\Template::compile($template, [], 'modcenter_user_watch_post');
+						return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, [
+							'context' => $context,
+							'scripturl' => $scripturl,
+							'txt' => $txt,
+							'post' => $post,
+						]));
 					},
 				),
 			),
