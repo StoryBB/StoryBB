@@ -125,8 +125,6 @@ function character_profile($memID)
 {
 	global $user_profile, $context, $scripturl, $modSettings, $smcFunc, $txt, $user_info;
 
-	loadTemplate('Profile-Chars');
-
 	$char_id = isset($_GET['char']) ? (int) $_GET['char'] : 0;
 	if (!isset($user_profile[$memID]['characters'][$char_id])) {
 		// character doesn't exist... bye.
