@@ -101,60 +101,6 @@ function template_character_profile()
 	</div>';
 }
 
-function template_char_sheet_history()
-{
-	global $context, $txt;
-
-	echo '
-			<div class="cat_bar">
-				<h3 class="catbg profile_hd">
-					', $txt['char_sheet'], ' - ', $context['character']['character_name'], ' - ', $txt['char_sheet_history'], '
-				</h3>
-			</div>';
-
-	foreach ($context['history_items'] as $history_key => $item)
-	{
-		switch ($history_key[10])
-		{
-			case 'S':
-				echo '
-			<div class="windowbg2" id="version', $item['id_version'], '">
-				<div class="sheet_info">
-					<span class="generic_icons modify_button"></span> ', sprintf($txt['char_sheet_updated'], timeformat($item['created_time'])), '
-					(', $txt['char_sheet_click_to_expand'], $txt['char_sheet_click_to_collapse'], ')
-					<div class="floatright">', !empty($item['id_approver']) ? sprintf($txt['char_sheet_approved_on'], timeformat($item['approved_time']), !empty($item['approver_name']) ? $item['approver_name'] : $txt['char_unknown']) : '', '</div>
-				</div>
-				<div class="clear"></div>
-				<div class="sheet"><hr>', parse_bbc($item['sheet_text'], false), '</div>
-			</div>';
-				break;
-			case 'c':
-				echo '
-			<div class="windowbg2" id="comment', $item['id_comment'], '">
-				<div>
-					<span class="generic_icons im_on"></span> <strong>', !empty($item['real_name']) ? $item['real_name'] : $txt['char_unknown'], '</strong> - ', timeformat($item['time_posted']), '
-				</div>
-				<div>', parse_bbc($item['sheet_comment'], true, 'sheet-comment-' . $item['id_comment']), '</div>
-			</div>';
-				break;
-			case 'a':
-				echo '
-			<div class="windowbg2">
-				<span class="generic_icons approve_button"></span> ', sprintf($txt['char_sheet_was_approved'], '#version' . $item), '
-			</div>';
-				break;
-		}
-	}
-
-	addInlineJavascript('
-	$(".click_collapse, .windowbg2 .sheet").hide();
-	$(".click_expand, .click_collapse").on("click", function(e) {
-		e.preventDefault();
-		$(this).closest(".windowbg2").find(".click_expand, .click_collapse, .sheet").toggle();
-	});
-	', true);
-}
-
 function template_character_list()
 {
 	global $context, $txt, $scripturl;

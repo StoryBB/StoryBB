@@ -1484,6 +1484,14 @@ function char_sheet_history()
 		{
 			$context['history_items'][$row['approved_time'] . 'a' . $row['id_version']] = $row['id_version'];
 		}
+		$row['type'] = 'sheet';
+		$row['sheet_text_parsed'] = parse_bbc($row['sheet_text'], false);
+		$row['created_time_format'] = timeformat($row['created_time']);
+		$row['approved_time_format'] = timeformat($row['approved_time']);
+		if (empty($row['approver_name']))
+		{
+			$row['approver_name'] = $txt['char_unknown'];
+		}
 		$context['history_items'][$row['created_time'] . 'S' . $row['id_version']] = $row;
 	}
 	$smcFunc['db_free_result']($request);
@@ -1501,6 +1509,9 @@ function char_sheet_history()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
+		$row['type'] = 'comment';
+		$row['sheet_comment_parsed'] = parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
+		$row['time_posted_format'] = timeformat($row['time_posted_format']);
 		$context['history_items'][$row['time_posted'] . 'c' . $row['id_comment']] = $row;
 	}
 	$smcFunc['db_free_result']($request);
@@ -1512,7 +1523,15 @@ function char_sheet_history()
 	krsort($context['history_items']);
 
 	$context['page_title'] = $txt['char_sheet_history'];
-	$context['sub_template'] = 'char_sheet_history';
+	$context['sub_template'] = 'profile_character_sheet_history';
+
+	addInlineJavascript('
+	$(".click_collapse, .windowbg2 .sheet").hide();
+	$(".click_expand, .click_collapse").on("click", function(e) {
+		e.preventDefault();
+		$(this).closest(".windowbg2").find(".click_expand, .click_collapse, .sheet").toggle();
+	});
+	', true);
 }
 
 function char_sheet_edit()
