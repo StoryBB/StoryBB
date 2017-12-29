@@ -18,9 +18,11 @@ function characters_popup($memID)
 	$db_show_debug = false;
 
 	// We only want to output our little layer here.
-	loadTemplate('Profile-Chars');
 	StoryBB\Template::set_layout('raw');
 	$context['template_layers'] = [];
+	$context['sub_template'] = 'profile_character_popup';
+
+	$context['current_characters'] = $cur_profile['characters'];
 }
 
 function char_switch($memID, $char = null, $return = false)
