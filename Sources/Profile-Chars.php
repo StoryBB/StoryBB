@@ -2482,8 +2482,9 @@ function CharacterList()
 	loadTemplate('Profile-Chars');
 	loadLanguage('Profile');
 
+	$context['filter_characters_in_no_groups'] = allowedTo('admin_forum');
 	$context['page_title'] = $txt['chars_menu_title'];
-	$context['sub_template'] = 'character_list';
+	$context['sub_template'] = 'characterlist_main';
 	$context['linktree'][] = array(
 		'name' => $txt['chars_menu_title'],
 		'url' => $scripturl . '?action=characters',
@@ -2594,6 +2595,8 @@ function CharacterList()
 			elseif (empty($row['avatar']))
 				$row['avatar'] = $settings['images_url'] . '/default.png';
 
+			$row['date_created_format'] = timeformat($row['date_created']);
+
 			$groups = !empty($row['main_char_group']) ? array($row['main_char_group']) : [];
 			$groups = array_merge($groups, explode(',', $row['char_groups']));
 			$details = get_labels_and_badges($groups);
@@ -2603,6 +2606,11 @@ function CharacterList()
 			$context['char_list'][] = $row;
 		}
 		$smcFunc['db_free_result']($request);
+	}
+
+	if (!empty($context['filter_groups']))
+	{
+		addInlineJavascript('$(\'#filter_opts_link\').trigger(\'click\');', true);
 	}
 }
 
