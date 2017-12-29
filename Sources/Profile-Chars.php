@@ -1089,7 +1089,12 @@ function char_stats()
 	global $txt, $scripturl, $context, $user_profile, $user_info, $modSettings, $smcFunc;
 
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $context['character']['character_name'];
-	$context['sub_template'] = 'char_stats';
+	$context['sub_template'] = 'profile_character_stats';
+
+	register_helper([
+		'inverted_percent' => function($pc) { return 100 - $pc; },
+		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
+	]);
 
 	// Is the load average too high to allow searching just now?
 	if (!empty($context['load_average']) && !empty($modSettings['loadavg_userstats']) && $context['load_average'] >= $modSettings['loadavg_userstats'])
