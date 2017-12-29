@@ -135,6 +135,7 @@ function character_profile($memID)
 
 	$context['character'] = $user_profile[$memID]['characters'][$char_id];
 	$context['character']['editable'] = $context['user']['is_owner'] || allowedTo('admin_forum');
+	$context['user']['can_admin'] = allowedTo('admin_forum');
 
 	$context['character']['retire_eligible'] = !$context['character']['is_main'];
 	if ($context['user']['is_owner'] && $user_info['id_character'] == $context['character']['id_character'])
@@ -185,6 +186,17 @@ function character_profile($memID)
 	);
 	list ($context['character']['theme_name']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
+
+	$context['character']['days_registered'] = (int) ((time() - $context['character']['date_created']) / (3600 * 24));
+	$context['character']['date_created_format'] = timeformat($context['character']['date_created']);
+	$context['character']['last_active_format'] = timeformat($context['character']['last_active']);
+	$context['character']['signature_parsed'] = parse_bbc($context['character']['signature'], true, 'sig_char' . $context['character']['id_character']);
+	if (empty($context['character']['date_created']) || $context['character']['days_registered'] < 1)
+		$context['character']['posts_per_day'] = $txt['not_applicable'];
+	else
+		$context['character']['posts_per_day'] = comma_format($context['character']['posts'] / $context['character']['days_registered'], 2);
+
+	$context['sub_template'] = 'profile_character_summary';
 }
 
 function char_create()
