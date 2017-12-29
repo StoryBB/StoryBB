@@ -2618,7 +2618,7 @@ function CharacterSheetList()
 		redirectexit('action=characters');
 	}
 
-	$context['sub_template'] = 'character_sheet_list';
+	$context['sub_template'] = 'characterlist_filtered';
 
 	$sort = [
 		'last_active' => [
@@ -2651,6 +2651,8 @@ function CharacterSheetList()
 	{
 		$row['group_list'] = array_merge((array) $row['main_char_group'], explode(',', $row['char_groups']));
 		$row['groups'] = get_labels_and_badges($row['group_list']);
+		$row['date_created_format'] = timeformat($row['date_created']);
+		$row['last_active_format'] = timeformat($row['last_active']);
 		$context['characters'][] = $row;
 	}
 	$smcFunc['db_free_result']($request);
