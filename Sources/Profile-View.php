@@ -1318,7 +1318,7 @@ function statPanel($memID)
 	$context['sub_template'] = 'profile_stats';
 	register_helper([
 		'inverted_percent' => function($pc) { return 100 - $pc; },
-		'pie_percent' => function($pc) { return (int) $pc / 5 * 20; },
+		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
 	]);
 
 	// General user statistics.
