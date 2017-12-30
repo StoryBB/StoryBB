@@ -4056,7 +4056,7 @@ function setupMenuContext()
 
 		foreach (get_main_menu_groups() as $id => $group_name)
 		{
-			$temp_buttons['characters']['sub_buttons']['group' . $id] = [
+			$buttons['characters']['sub_buttons']['group' . $id] = [
 				'title' => $group_name,
 				'href' => $scripturl . '?action=characters;sa=sheets;group=' . $id,
 				'show' => true,

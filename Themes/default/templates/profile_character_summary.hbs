@@ -1,0 +1,73 @@
+	{{! Character profile page. }}
+	<div class="cat_bar">
+		<h3 class="catbg">
+			{{#if context.character.avatar}}<img class="icon" style="max-width: 25px; max-height: 25px;" src="{{{context.character.avatar}}}" alt="">{{/if}}
+			{{{context.character.character_name}}}
+			{{#if (eq context.character.retired '1')}} - {{{txt.char_retired}}}{{/if}}
+		</h3>
+	</div>
+
+	<div class="errorbox" style="display:none" id="profile_error"></div>
+	<div id="profileview" class="roundframe flow_auto">
+		<div id="basicinfo">
+
+			{{#if context.character.avatar}}
+			<img class="avatar" src="{{{context.character.avatar}}}" alt=""><br><br>
+			{{else}}
+			<img class="avatar" src="{{{settings.images_url}}}/default.png" alt=""><br><br>
+			{{/if}}
+
+			{{#if (and context.user.is_owner (neq user_info.id_character context.character.id_character))}}
+			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=char_switch_redir;char={{context.character.id_character}};{{session_url}}" class="button">{{{txt.switch_to_char}}}</a><br><br>
+			{{/if}}
+
+			{{#if (and (neq context.character.is_main 1) (gt context.character.char_sheet))}}'
+			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=sheet" class="button">{{{txt.char_sheet}}}</a><br><br>
+			{{/if}}
+
+			{{#if context.character.editable}}
+			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=edit" class="button">{{{txt.edit_char}}}</a><br><br>
+			{{/if}}
+
+			{{#if (and context.character.editable context.character.retire_eligible)}}
+			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=retire;{{session_url}}" class="button">{{#if (eq context.character.retired '1')}}{{{txt.char_unretire_char}}}{{else}}{{{txt.char_retire_char}}}{{/if}}</a><br><br>
+			{{/if}}
+
+			{{#if (and context.character.editable (eq context.character.posts '0') (neq context.character.is_main 1))}}
+			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=delete;{{session_url}}" class="button" onclick="return confirm({{{jsEscape txt.are_you_sure_delete_char}}});">{{{txt.delete_char}}}</a><br><br>
+			{{/if}}
+
+			{{#if (and context.user.can_admin (neq context.character.is_main '1'))}}		
+			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=move_acct;{{session_url}}" class="button">{{{txt.move_char_action}}}</a><br><br>
+			{{/if}}
+
+		</div>
+		<div id="detailedinfo">
+			<dl>
+				<dt>{{{txt.char_name}}}</dt>
+				<dd>{{{context.character.character_name}}}</dd>
+				<dt>{{{txt.profile_posts}}}:</dt>
+				<dd>{{{comma context.character.posts}}} {{#if (gt context.character.days_registered 1)}} ({{{context.character.posts_per_day}}} {{{txt.posts_per_day}}}){{/if}}</dd>
+				<dt>{{{txt.age}}}:</dt>
+				<dd>{{#if context.character.age}}{{{context.character.age}}}{{else}}{{{txt.not_applicable}}}{{/if}}</dd>
+			</dl>
+
+			{{#if context.character.signature}}
+			<div class="char_signature">{{{context.character.signature_parsed}}}</div>
+			<dl></dl>
+			{{/if}}
+
+			<dl class="noborder">
+				<dt>{{{txt.date_created}}}</dt>
+				<dd>{{{context.character.date_created_format}}}</dd>
+				<dt>{{{txt.lastLoggedIn}}}: </dt>
+				<dd>{{#if (gt context.character.last_active 0)}}{{{context.character.last_active_format}}}{{else}}<em>{{{txt.never}}}</em>{{/if}}</dd>
+
+				{{#if context.character.editable}}
+				<dt>{{{txt.current_theme}}}:</dt>
+				<dd>{{{context.character.theme_name}}} <a class="button" href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=theme">{{{txt.change_theme}}}</a></dd>
+				{{/if}}
+
+			</dl>
+		</div>
+	</div>

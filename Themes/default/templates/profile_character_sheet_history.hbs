@@ -1,0 +1,33 @@
+		{{! History of character sheets. }}
+		<div class="cat_bar">
+			<h3 class="catbg profile_hd">
+				{{{txt.char_sheet}}} - {{{context.character.character_name}}} - {{{txt.char_sheet_history}}}
+			</h3>
+		</div>
+
+		{{#each context.history_items}}
+			{{#if (is_numeric .)}}
+				<div class="windowbg2">
+					<span class="generic_icons approve_button"></span> {{{textTemplate ../txt.char_sheet_was_approved (concat '#version' .)}}}
+				</div>
+			{{else}}
+				{{#if (eq type 'sheet')}}
+					<div class="windowbg2" id="version{{id_version}}">
+						<div class="sheet_info">
+							<span class="generic_icons modify_button"></span> {{{textTemplate ../txt.char_sheet_updated created_time_format}}}
+							({{{../txt.char_sheet_click_to_expand}}}{{{../txt.char_sheet_click_to_collapse}}})
+							<div class="floatright">{{#if (gt id_approver 0)}}{{{textTemplate ../txt.char_sheet_approved_on approved_time_format approver_name}}}{{/if}}</div>
+						</div>
+						<div class="clear"></div>
+						<div class="sheet"><hr>{{{sheet_text_parsed}}}</div>
+					</div>
+				{{else}}
+					<div class="windowbg2" id="comment{{id_comment}}">
+						<div>
+							<span class="generic_icons im_on"></span> <strong>{{#if real_name}}{{{real_name}}}{{else}}{{{../txt.char_unknown}}}{{/if}}</strong> - {{{time_posted_format}}}
+						</div>
+						<div>{{{sheet_comment_parsed}}}</div>
+					</div>
+				{{/if}}
+			{{/if}}
+		{{/each}}
