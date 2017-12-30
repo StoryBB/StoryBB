@@ -1,0 +1,17 @@
+	{{! How to display users on the watch list. }}
+	<div>
+		<div class="floatleft">
+			<strong><a href="{{scripturl}}?topic={{post.id_topic}}.{{post.id}}#msg{{post.id}}">{{{post.subject}}}</a></strong> {{{txt.mc_reportedp_by}}} <strong>{{{post.author_link}}}</strong>
+		</div>
+		<div class="floatright">
+			{{#if post.can_delete}}
+				<a href="{{scripturl}}?action=moderate;area=userwatch;sa=post;delete={{post.id}};start={{context.start}};{{session_url}}" data-confirm="{{{txt.mc_watched_users_delete_post}}}" class="you_sure">{{{create_button 'delete' 'remove_message' 'remove' ' class="centericon"'}}}</a>
+				<input type="checkbox" name="delete[]" value="{{post.id}}" class="input_check">
+			{{/if}}
+		</div>
+	</div><br>
+	<div class="smalltext">
+		&#171; {{{txt.mc_watched_users_posted}}}: {{{post.poster_time}}} &#187;
+	</div>
+	<hr>
+	{{{post.body}}}

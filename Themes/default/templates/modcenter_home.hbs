@@ -1,0 +1,5 @@
+	{{! The main moderation center. }}
+	{{> modcenter_notes}}
+	<div id="modcenter">
+		{{#each context.mod_blocks}}<div class="half_content">{{{dynamicpartial .}}}</div>{{/each}}
+	</div>

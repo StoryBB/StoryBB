@@ -36,9 +36,12 @@ function ReportedContent()
 	// We need this little rough gem.
 	require_once($sourcedir . '/Subs-ReportedContent.php');
 
-	// Do we need to show a confirmation message?
-	$context['report_post_action'] = !empty($_SESSION['rc_confirmation']) ? $_SESSION['rc_confirmation'] : array();
-	unset($_SESSION['rc_confirmation']);
+	// Do we need to show a confirmation message? (@todo is this a duplicate?)
+	if (!isset($context['report_post_action']))
+	{
+		$context['report_post_action'] = !empty($_SESSION['rc_confirmation']) ? $txt['report_action_' . $_SESSION['rc_confirmation']] : '';
+		unset($_SESSION['rc_confirmation']);
+	}
 
 	// Set up the comforting bits...
 	$context['page_title'] = $txt['mc_reported_' . $context['report_type']];
