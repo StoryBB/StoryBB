@@ -18,9 +18,11 @@ function characters_popup($memID)
 	$db_show_debug = false;
 
 	// We only want to output our little layer here.
-	loadTemplate('Profile-Chars');
 	StoryBB\Template::set_layout('raw');
 	$context['template_layers'] = [];
+	$context['sub_template'] = 'profile_character_popup';
+
+	$context['current_characters'] = $cur_profile['characters'];
 }
 
 function char_switch($memID, $char = null, $return = false)
@@ -123,8 +125,6 @@ function character_profile($memID)
 {
 	global $user_profile, $context, $scripturl, $modSettings, $smcFunc, $txt, $user_info;
 
-	loadTemplate('Profile-Chars');
-
 	$char_id = isset($_GET['char']) ? (int) $_GET['char'] : 0;
 	if (!isset($user_profile[$memID]['characters'][$char_id])) {
 		// character doesn't exist... bye.
@@ -133,6 +133,7 @@ function character_profile($memID)
 
 	$context['character'] = $user_profile[$memID]['characters'][$char_id];
 	$context['character']['editable'] = $context['user']['is_owner'] || allowedTo('admin_forum');
+	$context['user']['can_admin'] = allowedTo('admin_forum');
 
 	$context['character']['retire_eligible'] = !$context['character']['is_main'];
 	if ($context['user']['is_owner'] && $user_info['id_character'] == $context['character']['id_character'])
@@ -183,6 +184,17 @@ function character_profile($memID)
 	);
 	list ($context['character']['theme_name']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
+
+	$context['character']['days_registered'] = (int) ((time() - $context['character']['date_created']) / (3600 * 24));
+	$context['character']['date_created_format'] = timeformat($context['character']['date_created']);
+	$context['character']['last_active_format'] = timeformat($context['character']['last_active']);
+	$context['character']['signature_parsed'] = parse_bbc($context['character']['signature'], true, 'sig_char' . $context['character']['id_character']);
+	if (empty($context['character']['date_created']) || $context['character']['days_registered'] < 1)
+		$context['character']['posts_per_day'] = $txt['not_applicable'];
+	else
+		$context['character']['posts_per_day'] = comma_format($context['character']['posts'] / $context['character']['days_registered'], 2);
+
+	$context['sub_template'] = 'profile_character_summary';
 }
 
 function char_create()
@@ -1089,7 +1101,12 @@ function char_stats()
 	global $txt, $scripturl, $context, $user_profile, $user_info, $modSettings, $smcFunc;
 
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $context['character']['character_name'];
-	$context['sub_template'] = 'char_stats';
+	$context['sub_template'] = 'profile_character_stats';
+
+	register_helper([
+		'inverted_percent' => function($pc) { return 100 - $pc; },
+		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
+	]);
 
 	// Is the load average too high to allow searching just now?
 	if (!empty($context['load_average']) && !empty($modSettings['loadavg_userstats']) && $context['load_average'] >= $modSettings['loadavg_userstats'])
@@ -1477,6 +1494,14 @@ function char_sheet_history()
 		{
 			$context['history_items'][$row['approved_time'] . 'a' . $row['id_version']] = $row['id_version'];
 		}
+		$row['type'] = 'sheet';
+		$row['sheet_text_parsed'] = parse_bbc($row['sheet_text'], false);
+		$row['created_time_format'] = timeformat($row['created_time']);
+		$row['approved_time_format'] = timeformat($row['approved_time']);
+		if (empty($row['approver_name']))
+		{
+			$row['approver_name'] = $txt['char_unknown'];
+		}
 		$context['history_items'][$row['created_time'] . 'S' . $row['id_version']] = $row;
 	}
 	$smcFunc['db_free_result']($request);
@@ -1494,6 +1519,9 @@ function char_sheet_history()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
+		$row['type'] = 'comment';
+		$row['sheet_comment_parsed'] = parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
+		$row['time_posted_format'] = timeformat($row['time_posted_format']);
 		$context['history_items'][$row['time_posted'] . 'c' . $row['id_comment']] = $row;
 	}
 	$smcFunc['db_free_result']($request);
@@ -1505,7 +1533,15 @@ function char_sheet_history()
 	krsort($context['history_items']);
 
 	$context['page_title'] = $txt['char_sheet_history'];
-	$context['sub_template'] = 'char_sheet_history';
+	$context['sub_template'] = 'profile_character_sheet_history';
+
+	addInlineJavascript('
+	$(".click_collapse, .windowbg2 .sheet").hide();
+	$(".click_expand, .click_collapse").on("click", function(e) {
+		e.preventDefault();
+		$(this).closest(".windowbg2").find(".click_expand, .click_collapse, .sheet").toggle();
+	});
+	', true);
 }
 
 function char_sheet_edit()
@@ -2456,8 +2492,9 @@ function CharacterList()
 	loadTemplate('Profile-Chars');
 	loadLanguage('Profile');
 
+	$context['filter_characters_in_no_groups'] = allowedTo('admin_forum');
 	$context['page_title'] = $txt['chars_menu_title'];
-	$context['sub_template'] = 'character_list';
+	$context['sub_template'] = 'characterlist_main';
 	$context['linktree'][] = array(
 		'name' => $txt['chars_menu_title'],
 		'url' => $scripturl . '?action=characters',
@@ -2568,6 +2605,8 @@ function CharacterList()
 			elseif (empty($row['avatar']))
 				$row['avatar'] = $settings['images_url'] . '/default.png';
 
+			$row['date_created_format'] = timeformat($row['date_created']);
+
 			$groups = !empty($row['main_char_group']) ? array($row['main_char_group']) : [];
 			$groups = array_merge($groups, explode(',', $row['char_groups']));
 			$details = get_labels_and_badges($groups);
@@ -2577,6 +2616,11 @@ function CharacterList()
 			$context['char_list'][] = $row;
 		}
 		$smcFunc['db_free_result']($request);
+	}
+
+	if (!empty($context['filter_groups']))
+	{
+		addInlineJavascript('$(\'#filter_opts_link\').trigger(\'click\');', true);
 	}
 }
 
@@ -2592,7 +2636,7 @@ function CharacterSheetList()
 		redirectexit('action=characters');
 	}
 
-	$context['sub_template'] = 'character_sheet_list';
+	$context['sub_template'] = 'characterlist_filtered';
 
 	$sort = [
 		'last_active' => [
@@ -2625,6 +2669,8 @@ function CharacterSheetList()
 	{
 		$row['group_list'] = array_merge((array) $row['main_char_group'], explode(',', $row['char_groups']));
 		$row['groups'] = get_labels_and_badges($row['group_list']);
+		$row['date_created_format'] = timeformat($row['date_created']);
+		$row['last_active_format'] = timeformat($row['last_active']);
 		$context['characters'][] = $row;
 	}
 	$smcFunc['db_free_result']($request);
