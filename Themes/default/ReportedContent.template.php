@@ -8,87 +8,6 @@
  */
 
 /**
- * Lists all reported members
- */
-function template_reported_members()
-{
-	global $context, $txt, $scripturl;
-
-	echo '
-	<form id="reported_members" action="', $scripturl, '?action=moderate;area=reportedmembers;sa=show', $context['view_closed'] ? ';closed' : '', ';start=', $context['start'], '" method="post" accept-charset="UTF-8">
-		<div class="cat_bar">
-			<h3 class="catbg">
-				', $context['view_closed'] ? $txt['mc_reportedp_closed'] : $txt['mc_reportedp_active'], '
-			</h3>
-		</div>
-		<div class="pagesection">
-			<div class="pagelinks">', $context['page_index'], '</div>
-		</div>';
-
-	// Make the buttons.
-	$close_button = create_button('close', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close', $context['view_closed'] ? 'mc_reportedp_open' : 'mc_reportedp_close');
-	$details_button = create_button('details', 'mc_reportedp_details', 'mc_reportedp_details');
-	$ignore_button = create_button('ignore', 'mc_reportedp_ignore', 'mc_reportedp_ignore');
-	$unignore_button = create_button('ignore', 'mc_reportedp_unignore', 'mc_reportedp_unignore');
-	$ban_button = create_button('close', 'mc_reportedp_ban', 'mc_reportedp_ban');
-
-	foreach ($context['reports'] as $report)
-	{
-		echo '
-		<div class="generic_list_wrapper windowbg">
-			<h5>
-				<strong><a href="', $report['user']['href'], '">', $report['user']['name'], '</a></strong>
-			</h5>
-			<div class="smalltext">
-				', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], '&nbsp;-&nbsp;';
-
-		// Prepare the comments...
-		$comments = array();
-		foreach ($report['comments'] as $comment)
-			$comments[$comment['member']['id']] = $comment['member']['link'];
-
-		echo '
-				', $txt['mc_reportedp_reported_by'], ': ', implode(', ', $comments), '
-			</div>
-			<hr>
-			<ul class="quickbuttons">
-				<li><a href="', $report['report_href'], '">', $details_button, '</a></li>
-				<li><a href="', $scripturl, '?action=moderate;area=reportedmembers;sa=handle;ignore=', (int) !$report['ignore'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';', $context['mod-report-ignore_token_var'], '=', $context['mod-report-ignore_token'], '" ', (!$report['ignore'] ? ' class="you_sure"  data-confirm="' . $txt['mc_reportedp_ignore_confirm'] . '"' : ''), '>', $report['ignore'] ? $unignore_button : $ignore_button, '</a></li>
-				<li><a href="', $scripturl, '?action=moderate;area=reportedmembers;sa=handle;closed=', (int) !$report['closed'], ';rid=', $report['id'], ';start=', $context['start'], ';', $context['session_var'], '=', $context['session_id'], ';', $context['mod-report-closed_token_var'], '=', $context['mod-report-closed_token'], '">', $close_button, '</a></li>';
-
-		// Ban this user button.
-		if (!$report['closed'] && !empty($context['report_manage_bans']) && !empty($report['user']['id']))
-			echo '
-				<li><a href="', $scripturl, '?action=admin;area=ban;sa=add;u=', $report['user']['id'], ';', $context['session_var'], '=', $context['session_id'], '">', $ban_button, '</a></li>';
-
-		if (!$context['view_closed'])
-			echo '
-				<li><input type="checkbox" name="close[]" value="' . $report['id'] . '" class="input_check"></li>';
-
-			echo '
-				</ul>
-			</div>';
-	}
-
-	// Were none found?
-	if (empty($context['reports']))
-		echo '
-		<div class="windowbg2">
-			<p class="centertext">', $txt['mc_reportedp_none_found'], '</p>
-		</div>';
-
-	echo '
-		<div class="pagesection">
-			<div class="pagelinks floatleft">', $context['page_index'], '</div>
-			<div class="floatright">
-				', !$context['view_closed'] ? '<input type="submit" name="close_selected" value="' . $txt['mc_reportedp_close_selected'] . '" class="button_submit">' : '', '
-			</div>
-		</div>
-		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-	</form>';
-}
-
-/**
  * Template for viewing and managing a specific report about a user's profile
  */
 function template_viewmemberreport()
@@ -175,7 +94,7 @@ function template_viewmemberreport()
 				</div>
 			<br>';
 
-	echo generic_list_helper('moderation_actions_list');
+	echo StoryBB\Template\Helper\Controls::genericlist('moderation_actions_list');
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">

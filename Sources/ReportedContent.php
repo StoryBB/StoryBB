@@ -86,14 +86,14 @@ function ShowReports()
 	$context['view_closed'] = 0;
 
 	// Call the right template.
+	register_helper(['create_button' => 'create_button']);
 	if ($context['report_type'] == 'posts')
 	{
-		register_helper(['create_button' => 'create_button']);
 		$context['sub_template'] = 'modcenter_reportedposts';
 	}
 	else
 	{
-		$context['sub_template'] = 'reported_' . $context['report_type'];
+		$context['sub_template'] = 'modcenter_reportedmembers';
 	}
 
 	$context['start'] = (int) isset($_GET['start']) ? $_GET['start'] : 0;
