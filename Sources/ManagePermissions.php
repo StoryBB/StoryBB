@@ -1756,23 +1756,6 @@ function init_inline_permissions($permissions, $excluded_groups = array())
 }
 
 /**
- * Show a collapsible box to set a specific permission.
- * The function is called by templates to show a list of permissions settings.
- * Calls the template function template_inline_permissions().
- *
- * @param string $permission The permission to display inline
- */
-function theme_inline_permissions($permission)
-{
-	global $context;
-
-	$context['current_permission'] = $permission;
-	$context['member_groups'] = $context[$permission];
-
-	template_inline_permissions();
-}
-
-/**
  * Save the permissions of a form containing inline permissions.
  * @internal
  *

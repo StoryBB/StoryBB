@@ -324,49 +324,4 @@ function template_modify_group_display($type)
 				<br class="clear">';
 }
 
-/**
- * A form for displaying inline permissions, such as on a settings page.
- */
-function template_inline_permissions()
-{
-	global $context, $txt, $modSettings;
-
-	// This looks really weird, but it keeps things nested properly...
-	echo '
-											<fieldset id="', $context['current_permission'], '">
-												<legend><a href="javascript:void(0);" onclick="document.getElementById(\'', $context['current_permission'], '\').style.display = \'none\';document.getElementById(\'', $context['current_permission'], '_groups_link\').style.display = \'block\'; return false;" class="toggle_up"> ', $txt['avatar_select_permission'], '</a></legend>
-												<div class="information">', $txt['permissions_option_desc'], '</div>
-												<dl class="settings">
-													<dt>
-														<span class="perms"><strong>', $txt['permissions_option_on'], '</strong></span>
-														<span class="perms"><strong>', $txt['permissions_option_off'], '</strong></span>
-														<span class="perms red"><strong>', $txt['permissions_option_deny'], '</strong></span>
-													</dt>
-													<dd>
-													</dd>';
-	foreach ($context['member_groups'] as $group)
-	{
-		echo '
-													<dt>
-														<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="on"', $group['status'] == 'on' ? ' checked' : '', ' class="input_radio"></span>
-														<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="off"', $group['status'] == 'off' ? ' checked' : '', ' class="input_radio"></span>
-														<span class="perms"><input type="radio" name="', $context['current_permission'], '[', $group['id'], ']" value="deny"', $group['status'] == 'deny' ? ' checked' : '', ' class="input_radio"></span>
-													</dt>
-													<dd>
-														<span', $group['is_postgroup'] ? ' style="font-style: italic;"' : '', '>', $group['name'], '</span>
-													</dd>';
-	}
-
-	echo '
-												</dl>
-											</fieldset>
-
-											<a href="javascript:void(0);" onclick="document.getElementById(\'', $context['current_permission'], '\').style.display = \'block\'; document.getElementById(\'', $context['current_permission'], '_groups_link\').style.display = \'none\'; return false;" id="', $context['current_permission'], '_groups_link" style="display: none;" class="toggle_down"> ', $txt['avatar_select_permission'], '</a>
-
-											<script>
-												document.getElementById("', $context['current_permission'], '").style.display = "none";
-												document.getElementById("', $context['current_permission'], '_groups_link").style.display = "";
-											</script>';
-}
-
 ?>
