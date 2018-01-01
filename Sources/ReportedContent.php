@@ -86,7 +86,16 @@ function ShowReports()
 	$context['view_closed'] = 0;
 
 	// Call the right template.
-	$context['sub_template'] = 'reported_' . $context['report_type'];
+	if ($context['report_type'] == 'posts')
+	{
+		register_helper(['create_button' => 'create_button']);
+		$context['sub_template'] = 'modcenter_reportedposts';
+	}
+	else
+	{
+		$context['sub_template'] = 'reported_' . $context['report_type'];
+	}
+
 	$context['start'] = (int) isset($_GET['start']) ? $_GET['start'] : 0;
 
 	// Before anything, we need to know just how many reports do we have.
@@ -139,7 +148,15 @@ function ShowClosedReports()
 	$context['view_closed'] = 1;
 
 	// Call the right template.
-	$context['sub_template'] = 'reported_' . $context['report_type'];
+	if ($context['report_type'] == 'posts')
+	{
+		register_helper(['create_button' => 'create_button']);
+		$context['sub_template'] = 'modcenter_reportedposts';
+	}
+	else
+	{
+		$context['sub_template'] = 'reported_' . $context['report_type'];
+	}
 	$context['start'] = (int) isset($_GET['start']) ? $_GET['start'] : 0;
 
 	// Before anything, we need to know just how many reports do we have.

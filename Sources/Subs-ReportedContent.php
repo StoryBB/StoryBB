@@ -330,6 +330,16 @@ function getReports($closed = 0)
 			);
 		}
 		$smcFunc['db_free_result']($request);
+
+		foreach ($reports as $id_report => $report)
+		{
+			$reporters = [];
+			foreach ($report['comments'] as $comment)
+			{
+				$reporters[$comment['member']['id']] = $comment['member']['link'];
+			}
+			$reports[$id_report]['reporters'] = $reporters;
+		}
 	}
 
 	// Get the boards where the current user can remove any message.
