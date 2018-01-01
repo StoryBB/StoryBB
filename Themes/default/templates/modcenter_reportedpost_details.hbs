@@ -1,0 +1,79 @@
+	{{! Viewing the details of a reported post. }}
+	<div id="modcenter">
+		<form action="{{scripturl}}?action=moderate;area=reportedposts;sa=handlecomment;rid={{context.report.id}}" method="post" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3 class="catbg">
+					{{{textTemplate txt.mc_viewmodreport context.report.message_link context.report.author.link}}}
+				</h3>
+			</div>
+			<div class="title_bar">
+				<h3 class="titlebg">
+					<span class="floatleft">
+						{{{textTemplate txt.mc_modreport_summary context.report.num_reports context.report.last_updated}}}
+					</span>
+					<span class="floatright">
+						<a href="{{scripturl}}?action=moderate;area=reportedposts;sa=handle;ignore={{#if (eq context.report.ignore '1')}}0{{else}}1{{/if}};rid={{context.report.id}};{{session_url}};{{token_url 'mod-report-ignore'}}" class="button{{#if (neq context.report.ignore '1')}} you_sure{{/if}}"{{#if (neq context.report.ignore '1')}} data-confirm="{{{txt.mc_reportedp_ignore_confirm}}}"{{/if}}>{{#if (eq context.report.ignore '1')}}{{{create_button 'ignore' 'mc_reportedp_unignore' 'mc_reportedp_unignore'}}}{{else}}{{{create_button 'ignore' 'mc_reportedp_ignore' 'mc_reportedp_ignore'}}}{{/if}}</a>
+						<a href="{{scripturl}}?action=moderate;area=reportedposts;sa=handle;closed={{#if (eq context.report.closed '1')}}0{{else}}1{{/if}};rid={{context.report.id}};{{session_url}};{{token_url 'mod-report-closed'}}" class="button">{{#if (eq context.report.closed '1')}}{{{create_button 'close' 'mc_reportedp_open' 'mc_reportedp_open'}}}{{else}}{{{create_button 'close' 'mc_reportedp_close' 'mc_reportedp_close'}}}{{/if}}</a>
+					</span>
+				</h3>
+			</div>
+			<div class="windowbg2">
+				{{{context.report.body}}}
+			</div>
+			<br>
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.mc_modreport_whoreported_title}}}</h3>
+			</div>
+
+			{{#each context.report.comments}}
+			<div class="windowbg">
+				<p class="smalltext">{{{textTemplate ../txt.mc_modreport_whoreported_data member.link time}}}</p>
+				<p>{{{message}}}</p>
+			</div>
+			{{/each}}
+
+			<br>
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.mc_modreport_mod_comments}}}</h3>
+			</div>
+				<div>
+					{{#unless context.report.mod_comments}}
+					<div class="information">
+						<p class="centertext">{{{txt.mc_modreport_no_mod_comment}}}</p>
+					</div>
+					{{/unless}}
+
+					{{#each context.report.mod_comments}}
+					<div class="title_bar">
+						<h3 class="titlebg">{{{member.link}}}: <em class="smalltext">({{{time}}})</em>
+						{{#if can_edit}}
+							<span class="floatright">
+								<a href="{{scripturl}}?action=moderate;area=reportedposts;sa=editcomment;rid={{../context.report.id}};mid={{id}};{{session_url}}"  class="button">{{{../txt.mc_reportedp_comment_edit}}}</a>
+								<a href="{{scripturl}}?action=moderate;area=reportedposts;sa=handlecomment;rid={{../context.report.id}};mid={{id}};delete;{{session_url}};{{token_url 'mod-reportC-delete'}}" class="button">{{{txt.mc_reportedp_comment_delete}}}</a>
+							</span>
+						{{/if}}
+						</h3>
+					</div>
+					<div class="windowbg2">
+						<p>{{{message}}}</p>
+					</div>
+					{{/each}}
+
+					<div class="cat_bar">
+						<h3 class="catbg">
+							<span class="floatleft">
+								{{{txt.mc_reportedp_new_comment}}}
+							</span>
+						</h3>
+					</div>
+					<textarea rows="2" cols="60" style="width: 60%;" name="mod_comment"></textarea>
+					<div class="padding">
+						<input type="submit" name="add_comment" value="{{{txtmc_modreport_add_mod_comment}}}" class="button_submit">
+						{{token_form 'mod-reportC-add'}}
+					</div>
+				</div>
+			<br>
+			{{genericlist 'moderation_actions_list'}}
+			{{session_form}}
+		</form>
+	</div>

@@ -379,8 +379,9 @@ function ReportDetails()
 	}
 	else
 	{
+		register_helper(['create_button' => 'create_button']);
 		$context['page_title'] = sprintf($txt['mc_viewmodreport'], $context['report']['subject'], $context['report']['author']['name']);
-		$context['sub_template'] = 'viewmodreport';
+		$context['sub_template'] = 'modcenter_reportedpost_details';
 	}
 
 	createToken('mod-reportC-add');
