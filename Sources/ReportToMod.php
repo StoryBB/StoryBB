@@ -352,7 +352,7 @@ function reportPost($msg, $reason)
  */
 function reportUser($id_member, $reason)
 {
-	global $context, $smcFunc, $user_info;
+	global $context, $smcFunc, $user_info, $txt;
 
 	// Get the basic topic information, and make sure they can see it.
 	$_POST['u'] = (int) $id_member;
@@ -462,6 +462,7 @@ function reportUser($id_member, $reason)
 	updateSettings(array('last_mod_report_action' => time()));
 
 	// Back to the post we reported!
+	session_flash('success', $txt['report_sent']);
 	redirectexit('reportsent;action=profile;u=' . $id_member);
 }
 

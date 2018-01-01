@@ -1,12 +1,5 @@
 	{{! The notes area of the moderation center. }}
 
-	{{! Let them know the action was a success. }}
-	{{#if context.report_post_action}}
-		<div class="infobox">
-			{{{context.report_post_action}}}
-		</div>
-	{{/if}}
-
 	<div class="modnotes">
 		<form action="{{scripturl}}?action=moderate;area=index;modnote" method="post">
 			<div class="cat_bar">

@@ -1,0 +1,55 @@
+	{{! All the reported members. }}
+	<form id="reported_members" action="{{scripturl}}?action=moderate;area=reportedmembers;sa=show{{#if context.view_closed}};closed{{/if}};start={{context.start}}" method="post" accept-charset="UTF-8">
+		<div class="cat_bar">
+			<h3 class="catbg">
+				{{#if context.view_closed}}{{{txt.mc_reportedp_closed}}}{{else}}{{{txt.mc_reportedp_active}}}{{/if}}
+			</h3>
+		</div>
+
+		{{#each context.reports}}
+		<div class="generic_list_wrapper windowbg">
+			<h5>
+				<strong><a href="{{{user.href}}}">{{{user.name}}}</a></strong>
+			</h5>
+			<div class="smalltext">
+				{{{../txt.mc_reportedp_last_reported}}}: {{{last_updated}}}&nbsp;-&nbsp;
+				{{{../txt.mc_reportedp_reported_by}}}: {{{join reporters ', '}}}
+			</div>
+			<hr>
+			<ul class="quickbuttons">
+				<li><a href="{{{report_href}}}">{{{create_button 'details' 'mc_reportedp_details' 'mc_reportedp_details'}}}</a></li>
+
+				<li><a href="{{scripturl}}?action=moderate;area=reportedmembers;sa=handle;ignore={{#if (eq ignore '1')}}0{{else}}1{{/if}};rid={{id}};start={{../context.start}};{{session_url}};{{token_url 'mod-report-ignore'}}" {{#if (neq ignore '1')}} class="you_sure" data-confirm="{{{json ../txt.mc_reportedp_ignore_confirm}}}"{{/if}}>{{#if (eq ignore '1')}}{{{create_button 'ignore' 'mc_reportedp_unignore' 'mc_reportedp_unignore'}}}{{else}}{{{create_button 'ignore' 'mc_reportedp_ignore' 'mc_reportedp_ignore'}}}{{/if}}</a></li>
+
+				<li><a href="{{scripturl}}?action=moderate;area=reportedmembers;sa=handle;closed={{#if (eq closed '1')}}0{{else}}1{{/if}};rid={{id}};start={{../context.start}};{{session_url}};{{token_url 'mod-report-closed'}}">{{#if ../context.view_closed}}{{{create_button 'close' 'mc_reportedp_open' 'mc_reportedp_open'}}}{{else}}{{{create_button 'close' 'mc_reportedp_close' 'mc_reportedp_close'}}}{{/if}}</a></li>
+
+				{{#if (and (not closed) ../context.report_manage_bans (gt user.id 0))}}
+				<li><a href="{{scripturl}}?action=admin;area=ban;sa=add;u={{user.id}};{{session_url}}">{{{create_button 'close' 'mc_reportedp_ban' 'mc_reportedp_ban'}}}</a></li>
+				{{/if}}
+
+				{{#unless ../context.view_closed}}
+				<li><input type="checkbox" name="close[]" value="{{id}}" class="input_check"></li>
+				{{/unless}}
+
+				</ul>
+			</div>
+		{{/each}}
+
+		{{! Were none found? }}
+		{{#unless context.reports}}
+		<div class="windowbg2">
+			<p class="centertext">{{{txt.mc_reportedp_none_found}}}</p>
+		</div>
+		{{/unless}}
+
+		<div class="pagesection">
+			<div class="pagelinks floatleft">{{{contexxt.page_index}}}</div>
+			<div class="floatright">
+				{{#unless context.view_closed}}
+					{{token_form 'mod-report-close-all'}}
+					<input type="submit" name="close_selected" value="{{{txt.mc_reportedp_close_selected}}}" class="button_submit">
+				{{/unless}}
+			</div>
+		</div>
+		{{session_form}}
+	</form>

@@ -31,17 +31,9 @@ function ReportedContent()
 	$context['report_type'] = substr($_GET['area'], 8);
 
 	loadLanguage('ModerationCenter');
-	loadTemplate('ReportedContent');
 
 	// We need this little rough gem.
 	require_once($sourcedir . '/Subs-ReportedContent.php');
-
-	// Do we need to show a confirmation message? (@todo is this a duplicate?)
-	if (!isset($context['report_post_action']))
-	{
-		$context['report_post_action'] = !empty($_SESSION['rc_confirmation']) ? $txt['report_action_' . $_SESSION['rc_confirmation']] : '';
-		unset($_SESSION['rc_confirmation']);
-	}
 
 	// Set up the comforting bits...
 	$context['page_title'] = $txt['mc_reported_' . $context['report_type']];
@@ -93,7 +85,16 @@ function ShowReports()
 	$context['view_closed'] = 0;
 
 	// Call the right template.
-	$context['sub_template'] = 'reported_' . $context['report_type'];
+	register_helper(['create_button' => 'create_button']);
+	if ($context['report_type'] == 'posts')
+	{
+		$context['sub_template'] = 'modcenter_reportedposts';
+	}
+	else
+	{
+		$context['sub_template'] = 'modcenter_reportedmembers';
+	}
+
 	$context['start'] = (int) isset($_GET['start']) ? $_GET['start'] : 0;
 
 	// Before anything, we need to know just how many reports do we have.
@@ -123,7 +124,7 @@ function ShowReports()
 			updateReport('closed', 1, $toClose);
 
 		// Set the confirmation message.
-		$_SESSION['rc_confirmation'] = 'close_all';
+		session_flash('success', $txt['report_action_close_all']);
 
 		// Force a page refresh.
 		redirectexit($scripturl . '?action=moderate;area=reported' . $context['report_type']);
@@ -146,7 +147,15 @@ function ShowClosedReports()
 	$context['view_closed'] = 1;
 
 	// Call the right template.
-	$context['sub_template'] = 'reported_' . $context['report_type'];
+	if ($context['report_type'] == 'posts')
+	{
+		register_helper(['create_button' => 'create_button']);
+		$context['sub_template'] = 'modcenter_reportedposts';
+	}
+	else
+	{
+		$context['sub_template'] = 'reported_' . $context['report_type'];
+	}
 	$context['start'] = (int) isset($_GET['start']) ? $_GET['start'] : 0;
 
 	// Before anything, we need to know just how many reports do we have.
@@ -362,15 +371,16 @@ function ReportDetails()
 		$context[$context['moderation_menu_name']]['current_subsection'] = 'closed';
 
 	// Finally we are done :P
+	register_helper(['create_button' => 'create_button']);
 	if ($context['report_type'] == 'members')
 	{
 		$context['page_title'] = sprintf($txt['mc_viewmemberreport'], $context['report']['user']['name']);
-		$context['sub_template'] = 'viewmemberreport';
+		$context['sub_template'] = 'modcenter_reportedmember_details';
 	}
 	else
 	{
 		$context['page_title'] = sprintf($txt['mc_viewmodreport'], $context['report']['subject'], $context['report']['author']['name']);
-		$context['sub_template'] = 'viewmodreport';
+		$context['sub_template'] = 'modcenter_reportedpost_details';
 	}
 
 	createToken('mod-reportC-add');
@@ -387,7 +397,7 @@ function ReportDetails()
  */
 function HandleComment()
 {
-	global $smcFunc, $scripturl, $user_info, $context;
+	global $smcFunc, $scripturl, $user_info, $context, $txt;
 
 	// The report ID is a must.
 	if (empty($_REQUEST['rid']))
@@ -407,7 +417,7 @@ function HandleComment()
 		saveModComment($report_id, array($report_id, $new_comment, time()));
 
 		// Everything went better than expected!
-		$_SESSION['rc_confirmation'] = 'message_saved';
+		session_flash('success', $txt['report_action_message_saved']);
 	}
 
 	// Deleting a comment?
@@ -439,7 +449,7 @@ function HandleComment()
 		deleteModComment($comment_id);
 
 		// Tell them the message was deleted.
-		$_SESSION['rc_confirmation'] = 'message_deleted';
+		session_flash('success', $txt['report_action_message_deleted']);
 	}
 
 	//Redirect to prevent double submission.
@@ -475,7 +485,7 @@ function EditComment()
 
 	// Set up the comforting bits...
 	$context['page_title'] = $txt['mc_reported_posts'];
-	$context['sub_template'] = 'edit_comment';
+	$context['sub_template'] = 'modcenter_reports_comment_edit';
 
 	if (isset($_REQUEST['save']) && isset($_POST['edit_comment']) && !empty($_POST['mod_comment']))
 	{
@@ -497,7 +507,7 @@ function EditComment()
 
 		editModComment($context['comment_id'], $edited_comment);
 
-		$_SESSION['rc_confirmation'] = 'message_edited';
+		session_flash('success', $txt['report_action_message_edited']);
 
 		redirectexit($scripturl . '?action=moderate;area=reported' . $context['report_type'] . ';sa=details;rid=' . $context['report_id']);
 	}
@@ -511,7 +521,7 @@ function EditComment()
  */
 function HandleReport()
 {
-	global $scripturl, $context;
+	global $scripturl, $context, $txt;
 
 	checkSession('get');
 
@@ -537,7 +547,7 @@ function HandleReport()
 	updateReport($action, $value, $report_id);
 
 	// So, time to show a confirmation message, lets do some trickery!
-	$_SESSION['rc_confirmation'] = $message;
+	session_flash('success', $txt['report_action_' . $message]);
 
 	// Done!
 	redirectexit($scripturl . '?action=moderate;area=reported' . $context['report_type']);
