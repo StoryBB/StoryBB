@@ -415,7 +415,7 @@ function PermissionByBoard()
 		}
 	}
 
-	$context['sub_template'] = 'by_board';
+	$context['sub_template'] = 'admin_permissions_board_profiles';
 	createToken('admin-mpb');
 }
 
