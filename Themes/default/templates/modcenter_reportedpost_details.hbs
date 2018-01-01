@@ -49,7 +49,7 @@
 						{{#if can_edit}}
 							<span class="floatright">
 								<a href="{{scripturl}}?action=moderate;area=reportedposts;sa=editcomment;rid={{../context.report.id}};mid={{id}};{{session_url}}"  class="button">{{{../txt.mc_reportedp_comment_edit}}}</a>
-								<a href="{{scripturl}}?action=moderate;area=reportedposts;sa=handlecomment;rid={{../context.report.id}};mid={{id}};delete;{{session_url}};{{token_url 'mod-reportC-delete'}}" class="button">{{{txt.mc_reportedp_comment_delete}}}</a>
+								<a href="{{scripturl}}?action=moderate;area=reportedposts;sa=handlecomment;rid={{../context.report.id}};mid={{id}};delete;{{session_url}};{{token_url 'mod-reportC-delete'}}" class="button">{{{../txt.mc_reportedp_comment_delete}}}</a>
 							</span>
 						{{/if}}
 						</h3>

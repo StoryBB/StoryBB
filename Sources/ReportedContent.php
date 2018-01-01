@@ -372,14 +372,14 @@ function ReportDetails()
 		$context[$context['moderation_menu_name']]['current_subsection'] = 'closed';
 
 	// Finally we are done :P
+	register_helper(['create_button' => 'create_button']);
 	if ($context['report_type'] == 'members')
 	{
 		$context['page_title'] = sprintf($txt['mc_viewmemberreport'], $context['report']['user']['name']);
-		$context['sub_template'] = 'viewmemberreport';
+		$context['sub_template'] = 'modcenter_reportedmember_details';
 	}
 	else
 	{
-		register_helper(['create_button' => 'create_button']);
 		$context['page_title'] = sprintf($txt['mc_viewmodreport'], $context['report']['subject'], $context['report']['author']['name']);
 		$context['sub_template'] = 'modcenter_reportedpost_details';
 	}
