@@ -333,9 +333,13 @@ function PermissionIndex()
 
 	// We can modify any permission set apart from the read only, reply only and no polls ones as they are redefined.
 	$context['can_modify'] = empty($_REQUEST['pid']) || $_REQUEST['pid'] == 1 || $_REQUEST['pid'] > 4;
+	if (!$context['can_modify'])
+	{
+		session_flash('warning', sprintf($txt['permission_cannot_edit'], $scripturl . '?action=admin;area=permissions;sa=profiles'));
+	}
 
 	// Load the proper template.
-	$context['sub_template'] = 'permission_index';
+	$context['sub_template'] = 'admin_permissions';
 	createToken('admin-mpq');
 }
 
