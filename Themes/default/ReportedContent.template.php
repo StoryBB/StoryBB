@@ -193,39 +193,6 @@ function template_viewmodreport()
 }
 
 /**
- * Template for editing a mod comment.
- */
-function template_edit_comment()
-{
-	global $context, $scripturl, $txt;
-
-	echo '
-	<div id="modcenter">
-		<form action="', $scripturl, '?action=moderate;area=reported', $context['report_type'], ';sa=editcomment;mid=', $context['comment_id'], ';rid=', $context['report_id'], ';save" method="post" accept-charset="UTF-8">';
-
-	echo '
-			<br>
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mc_modreport_edit_mod_comment'], '</h3>
-			</div>
-			<div class="windowbg2">';
-
-	echo '
-				<textarea rows="6" cols="60" style="width: 60%;" name="mod_comment">', $context['comment']['body'], '</textarea>
-				<div>
-					<input type="submit" name="edit_comment" value="', $txt['mc_modreport_edit_mod_comment'], '" class="button_submit">
-				</div>
-			</div>
-			<br>';
-
-	echo '
-			<input type="hidden" name="', $context['mod-reportC-edit_token_var'], '" value="', $context['mod-reportC-edit_token'], '">
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>';
-}
-
-/**
  * Lists all reported members
  */
 function template_reported_members()

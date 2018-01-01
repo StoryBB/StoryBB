@@ -468,7 +468,7 @@ function EditComment()
 
 	// Set up the comforting bits...
 	$context['page_title'] = $txt['mc_reported_posts'];
-	$context['sub_template'] = 'edit_comment';
+	$context['sub_template'] = 'modcenter_reports_comment_edit';
 
 	if (isset($_REQUEST['save']) && isset($_POST['edit_comment']) && !empty($_POST['mod_comment']))
 	{
