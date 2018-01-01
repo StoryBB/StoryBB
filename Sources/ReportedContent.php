@@ -31,7 +31,6 @@ function ReportedContent()
 	$context['report_type'] = substr($_GET['area'], 8);
 
 	loadLanguage('ModerationCenter');
-	loadTemplate('ReportedContent');
 
 	// We need this little rough gem.
 	require_once($sourcedir . '/Subs-ReportedContent.php');
