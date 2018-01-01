@@ -2239,7 +2239,7 @@ function ModifyPostModeration()
 	checkSession('get');
 
 	$context['page_title'] = $txt['permissions_post_moderation'];
-	$context['sub_template'] = 'postmod_permissions';
+	$context['sub_template'] = 'admin_permissions_postmoderation';
 	$context['current_profile'] = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 1;
 
 	// Load all the permission profiles.
