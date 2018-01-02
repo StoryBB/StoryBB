@@ -90,6 +90,8 @@ function getBoardList($boardListOptions = array())
 
 
 function child_boards($board) {
+	global $txt;
+
 	// Sort the links into an array with new boards bold so it can be imploded.
 	$children = array();
 	/* Each child in each board's children has:
@@ -108,7 +110,7 @@ function child_boards($board) {
 		$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
 	}
 	
-	return implode(',', $children);
+	return new \LightnCandy\Safestring(implode(', ', $children));
 }
 
 ?>
