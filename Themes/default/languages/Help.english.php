@@ -567,4 +567,6 @@ $helptxt['image_proxy_maxsize'] = 'Maximum image size that the SSL image proxy w
 
 $helptxt['field_reg_require'] = 'If this field is required during registration, it will also be required on profile changes.';
 
+$helptxt['character_selector_post'] = 'If ticked, users can select which character to post as next to the post edit screen - this is in addition to the main character selection at the top of the page.';
+
 ?>

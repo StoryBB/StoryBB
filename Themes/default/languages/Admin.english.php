@@ -734,4 +734,7 @@ $txt['last_updated'] = 'Last updated';
 $txt['previously_approved'] = 'Previous approved';
 $txt['remove_from_queue'] = 'Remove from Queue';
 
+$txt['immersion'] = 'Immersion';
+$txt['character_selector_post'] = 'Show character dropdown when posting';
+
 ?>

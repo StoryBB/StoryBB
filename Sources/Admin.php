@@ -322,6 +322,14 @@ function AdminMain()
 			'title' => $txt['chars_menu_title'],
 			'permission' => array('admin_forum'),
 			'areas' => array(
+				'immersion' => array(
+					'label' => $txt['immersion'],
+					'file' => 'Admin-Chars.php',
+					'function' => 'CharacterImmersion',
+					'icon' => 'quick_edit_button',
+					'permission' => array('admin_forum'),
+					'subsections' => [],
+				),
 				'templates' => array(
 					'label' => $txt['char_templates'],
 					'file' => 'Admin-Chars.php',
