@@ -569,4 +569,7 @@ $helptxt['field_reg_require'] = 'If this field is required during registration, 
 
 $helptxt['character_selector_post'] = 'If ticked, users can select which character to post as next to the post edit screen - this is in addition to the main character selection at the top of the page.';
 
+$helptxt['characters_ic_may_post'] = 'On a forum where you have a strong sense of immersion, you might want to ensure that "characters" can only post in in-character boards and never outside. Tick this box to enforce this (except for administrators)';
+$helptxt['characters_ooc_may_post'] = 'On a forum where there is a strong divide between "in character" posts and "out of character" posts, you may wish to enforce that characters cannot post in the out of character areas - tick this box to enforce this (except for administrators)';
+
 ?>
