@@ -1096,10 +1096,12 @@ function Display()
 			loadMemberData($context['user']['id']);
 		loadMemberContext($context['user']['id']);
 
+		$context['current_avatar'] = '';
+
 		foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
 		{
-			if ($board_info['in_character'] && $character['is_main'])
-				continue; // @todo fix in issue #188
+			if ($char_id == $user_info['id_character'])
+				$context['current_avatar'] = $character['avatar'];
 
 			$context['post_characters'][$char_id] = [
 				'name' => $character['character_name'],
