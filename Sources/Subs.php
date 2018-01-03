@@ -3950,6 +3950,7 @@ function setupMenuContext()
 				),
 			),
 			'admin' => array(
+				'badge' => 0,
 				'title' => $txt['admin'],
 				'href' => $scripturl . '?action=admin',
 				'show' => $context['allow_admin'],
@@ -4055,7 +4056,7 @@ function setupMenuContext()
 
 		foreach (get_main_menu_groups() as $id => $group_name)
 		{
-			$temp_buttons['characters']['sub_buttons']['group' . $id] = [
+			$buttons['characters']['sub_buttons']['group' . $id] = [
 				'title' => $group_name,
 				'href' => $scripturl . '?action=characters;sa=sheets;group=' . $id,
 				'show' => true,
@@ -4165,7 +4166,7 @@ function setupMenuContext()
 	// Show how many errors there are
 	if (!empty($context['num_errors']) && allowedTo('admin_forum'))
 	{
-		$context['menu_buttons']['admin']['badge'] = $context['num_errors'];
+		$context['menu_buttons']['admin']['badge'] += $context['num_errors'];
 		$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $context['num_errors'];
 	}
 
@@ -4178,8 +4179,8 @@ function setupMenuContext()
 
 	if (!empty($context['unapproved_members']))
 	{
-		$context['menu_buttons']['admin']['sub_buttons']['memberapprove']['badge'] .= ' <span class="amt">' . $context['unapproved_members'] . '</span>';
-		$context['menu_buttons']['admin']['badge'] = $context['unapproved_members'];
+		$context['menu_buttons']['admin']['sub_buttons']['memberapprove']['badge'] = $context['unapproved_members'];
+		$context['menu_buttons']['admin']['badge'] += $context['unapproved_members'];
 	}
 
 	// Do we have any open reports?

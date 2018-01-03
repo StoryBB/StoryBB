@@ -41,7 +41,6 @@ function Register($reg_errors = array())
 		redirectexit();
 
 	loadLanguage('Login');
-	loadTemplate('Register');
 
 	// Do we need them to agree to the registration agreement, first?
 	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
@@ -83,7 +82,7 @@ function Register($reg_errors = array())
 		$current_step = 1;
 
 	// Show the user the right form.
-	$context['sub_template'] = $current_step == 1 ? 'registration_agreement' : 'registration_form';
+	$context['sub_template'] = $current_step == 1 ? 'register_agreement' : 'register_form';
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
 	// Kinda need this.
@@ -148,6 +147,35 @@ function Register($reg_errors = array())
 	require_once($sourcedir . '/Profile.php');
 	loadCustomFields(0, 'register');
 
+	// Preprocessing: sometimes we're given eval strings to make options for custom fields.
+	if (!empty($context['profile_fields'])) {
+		foreach ($context['profile_fields'] as $key => $field) {
+			if ($field['type'] == 'select' && !is_array($field['options'])) {
+				$context['profile_fields'][$key]['options'] = eval($field['options']);
+			}
+		}
+	}
+
+	register_helper([
+		'profile_callback_helper' => function ($field) {
+			var_dump($field);
+	        if ($field['type'] == 'callback')
+			{
+				if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
+				{
+					$callback_func = 'template_profile_' . $field['callback_func'];
+					$callback_func();
+				}
+			}
+		},
+		'makeHTTPS' => function($url) { 
+			return strtr($url, array('http://' => 'https://'));
+		},
+		'field_isText' => function($type) {
+			return in_array($type, array('int', 'float', 'text', 'password', 'url'));
+		}
+	]);
+
 	// Or any standard ones?
 	if (!empty($modSettings['registration_fields']))
 	{
@@ -160,7 +188,7 @@ function Register($reg_errors = array())
 		$context['user']['is_owner'] = true;
 
 		// Here, and here only, emulate the permissions the user would have to do this.
-		$user_info['permissions'] = array_merge($user_info['permissions'], array('profile_account_own', 'profile_extra_own', 'profile_other_own', 'profile_password_own'));
+		$user_info['permissions'] = array_merge($user_info['permissions'], array('profile_account_own', 'profile_extra_own', 'profile_other_own', 'profile_password_own', 'profile_website_own'));
 		$reg_fields = explode(',', $modSettings['registration_fields']);
 
 		// We might have had some submissions on this front - go check.
@@ -516,12 +544,10 @@ function Register2()
 	// Basic template variable setup.
 	elseif (!empty($modSettings['registration_method']))
 	{
-		loadTemplate('Register');
-
 		$context += array(
 			'page_title' => $txt['register'],
 			'title' => $txt['registration_successful'],
-			'sub_template' => 'after',
+			'sub_template' => 'register_success',
 			'description' => $modSettings['registration_method'] == 2 ? $txt['approval_after_registration'] : $txt['activate_after_registration']
 		);
 	}
@@ -701,7 +727,6 @@ function CoppaForm()
 	global $context, $modSettings, $txt, $smcFunc;
 
 	loadLanguage('Login');
-	loadTemplate('Register');
 
 	// No User ID??
 	if (!isset($_GET['member']))
@@ -879,11 +904,8 @@ function SendActivation()
 	$context['user']['is_logged'] = false;
 	$context['user']['is_guest'] = true;
 
-	// Send them to the done-with-registration-login screen.
-	loadTemplate('Register');
-
 	$context['page_title'] = $txt['profile'];
-	$context['sub_template'] = 'after';
+	$context['sub_template'] = 'register_success';
 	$context['title'] = $txt['activate_changed_email_title'];
 	$context['description'] = $txt['activate_changed_email_desc'];
 

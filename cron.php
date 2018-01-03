@@ -88,6 +88,12 @@ unset ($db_show_debug);
 loadDatabase();
 reloadSettings();
 
+// We need to init some super-default things because there's a lot of code that might accidentally rely on it.
+$user_info = [
+	'time_offset' => 0,
+	'time_format' => '%b %d, %Y, %I:%M %p',
+];
+
 // Just in case there's a problem...
 set_error_handler('smf_error_handler_cron');
 $sc = '';

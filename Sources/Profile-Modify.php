@@ -1696,8 +1696,7 @@ function theme($memID)
 {
 	global $txt, $context;
 
-	loadTemplate('Settings');
-	loadSubTemplate('options');
+	$context['theme_options'] = StoryBB\Model\Theme::get_user_options();
 
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))

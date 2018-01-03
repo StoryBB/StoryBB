@@ -39,7 +39,6 @@ function MessageIndex()
 		redirectexit($board_info['redirect']);
 	}
 
-	//loadTemplate('MessageIndex');
 	$context['sub_template'] = 'msgIndex_main';
 	register_helper([
 		'qmod_option' => function($action) {

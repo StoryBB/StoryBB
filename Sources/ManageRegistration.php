@@ -46,7 +46,6 @@ function RegCenter()
 
 	// Loading, always loading.
 	loadLanguage('Login');
-	loadTemplate('Register');
 
 	// Next create the tabs for the template.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -221,16 +220,16 @@ function EditAgreement()
 		updateSettings(array('requireAgreement' => !empty($_POST['requireAgreement'])));
 
 		if ($bytes == strlen($to_write))
-			$context['saved_successful'] = true;
+			session_flash('success', $txt['settings_saved']);
 		else
-			$context['could_not_save'] = true;
+			session_flash('error', $txt['admin_agreement_not_saved']);
 	}
 
 	$context['agreement'] = file_exists($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? $smcFunc['htmlspecialchars'](file_get_contents($boarddir . '/agreement' . $context['current_agreement'] . '.txt')) : '';
 	$context['warning'] = is_writable($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? '' : $txt['agreement_not_writable'];
 	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
 
-	$context['sub_template'] = 'edit_agreement';
+	$context['sub_template'] = 'register_edit_agreement';
 	$context['page_title'] = $txt['registration_agreement'];
 	createToken('admin-rega');
 }
