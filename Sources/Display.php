@@ -1090,23 +1090,22 @@ function Display()
 
 	// If we're posting, we need to make sure we have the character data.
 	$context['post_characters'] = [];
+
 	if (!$user_info['is_guest'] && $context['can_reply'])
 	{
 		if (empty($user_profile[$context['user']['id']]))
 			loadMemberData($context['user']['id']);
 		loadMemberContext($context['user']['id']);
 
-		$context['current_avatar'] = '';
+		// Get the current characters.
+		$context['post_characters'] = get_user_possible_characters($context['user']['id'], $board_info['id']);
 
+		// Make sure we have some avatar to work with.
+		$context['current_avatar'] = '';
 		foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
 		{
 			if ($char_id == $user_info['id_character'])
 				$context['current_avatar'] = $character['avatar'];
-
-			$context['post_characters'][$char_id] = [
-				'name' => $character['character_name'],
-				'avatar' => !empty($character['avatar']) ? $character['avatar'] : $settings['images_url'] . '/default.png',
-			];
 		}
 
 		addInlineJavaScript('
@@ -1118,6 +1117,17 @@ function Display()
 				}
 			}).trigger("change");
 		', true);
+	}
+
+	if (!$user_info['is_guest'] && $context['can_reply'] && empty($context['post_characters']))
+	{
+		if (!allowedTo('admin_forum'))
+		{
+			$context['can_reply'] = false;
+			$context['can_reply_unapproved'] = false;
+			$context['can_reply_approved'] = false;
+			$context['can_quote'] = false;
+		}
 	}
 
 	// Start this off for quick moderation - it will be or'd for each post.
@@ -1530,30 +1540,18 @@ function prepareDisplayContext($reset = false)
 
 	// Now we indicate whether we can potentially migrate this to another character.
 	// But that requires us having characters to migrate to, and follow the OOC/IC rules.
-	$output['can_switch_char'] = false;
-	if ($board_info['in_character'])
-	{
-		if (!empty($output['member']['characters'])) {
-			$output['possible_characters'] = [];
-			foreach ($output['member']['characters'] as $char_id => $char) {
-				// We can't switch to the character that already posted it.
-				if ($char_id == $message['id_character']) {
-					continue;
-				}
-				// You can't switch it to a main character.
-				if ($char['is_main']) {
-					continue;
-				}
-				$output['possible_characters'][$char_id] = $char['character_name'];
-			}
-			if (!empty($output['possible_characters'])) {
-				asort($output['possible_characters']);
-			}
+	if (!empty($output['member']['characters'])) {
+		$output['possible_characters'] = get_user_possible_characters($message['id_member'], $board_info['id']);
+		// And making sure we don't try to reassociate to the character it has already.
+		unset ($output['possible_characters'][$message['id_character']]);
+
+		if (!empty($output['possible_characters'])) {
+			asort($output['possible_characters']);
 		}
-		$output['can_switch_char'] = !empty($output['possible_characters']) && $output['can_modify'];
-		if (!$output['can_switch_char']) {
-			unset ($output['possible_characters']);
-		}
+	}
+	$output['can_switch_char'] = !empty($output['possible_characters']) && $output['can_modify'];
+	if (!$output['can_switch_char']) {
+		unset ($output['possible_characters']);
 	}
 
 	// Does the file contains any attachments? if so, change the icon.
