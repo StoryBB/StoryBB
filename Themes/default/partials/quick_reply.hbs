@@ -21,14 +21,14 @@
 									</select>
 								</li>
 								<li class="avatar">
-									<a href="{{context.user.href}}"><img src="{{#if context.current_avatar}}{{{context.current_avatar}}}{{else}}{{settings.images_url}}/default.png{{/if}}"></a>
+									<img src="{{#if context.current_avatar}}{{{context.current_avatar}}}{{else}}{{settings.images_url}}/default.png{{/if}}">
 								</li>
 							</ul>
 							{{else}}
 							<h4>{{{textTemplate txt.posting_as user_info.character_name}}}</h4>
 							<ul class="user_info">
 								<li class="avatar">
-									<a href="{{context.user.href}}"><img src="{{#if context.current_avatar}}{{{context.current_avatar}}}{{else}}{{settings.images_url}}/default.png{{/if}}"></a>
+									<img src="{{#if context.current_avatar}}{{{context.current_avatar}}}{{else}}{{settings.images_url}}/default.png{{/if}}">
 								</li>
 							</ul>
 							{{/if}}

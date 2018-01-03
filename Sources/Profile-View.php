@@ -452,6 +452,8 @@ function showAlerts($memID)
 	// Create the pagination.
 	$context['pagination'] = constructPageIndex($scripturl . '?action=profile;area=showalerts;u=' . $memID, $start, $count, $maxIndex, false);
 
+	$context['sub_template'] = 'profile_alerts_list';
+
 	// Set some JavaScript for checking all alerts at once.
 	addInlineJavaScript('
 	$(function(){
@@ -465,13 +467,6 @@ function showAlerts($memID)
 			}
 		});
 	});', true);
-
-	// Set a nice message.
-	if (!empty($_SESSION['update_message']))
-	{
-		$context['update_message'] = $txt['profile_updated_own'];
-		unset($_SESSION['update_message']);
-	}
 
 	// Saving multiple changes?
 	if (isset($_GET['save']) && !empty($_POST['mark']))
@@ -503,7 +498,7 @@ function showAlerts($memID)
 			alert_mark($memID, $toMark, $action == 'read' ? 1 : 0);
 
 		// Set a nice update message.
-		$_SESSION['update_message'] = true;
+		session_flash('success', $txt['profile_updated_own']);
 
 		// Redirect.
 		redirectexit('action=profile;area=showalerts;u=' . $memID);
@@ -567,6 +562,8 @@ function showPosts($memID)
 	// Instead, if we're dealing with unwatched topics (and the feature is enabled) use that other function.
 	elseif (isset($_GET['sa']) && $_GET['sa'] == 'unwatchedtopics')
 		return showUnwatched($memID);
+
+	$context['sub_template'] = 'profile_show_posts';
 
 	// Are we just viewing topics?
 	$context['is_topics'] = isset($_GET['sa']) && $_GET['sa'] == 'topics' ? true : false;
@@ -871,7 +868,7 @@ function showPosts($memID)
  */
 function showAttachments($memID)
 {
-	global $txt, $scripturl, $modSettings;
+	global $txt, $scripturl, $modSettings, $context;
 	global $sourcedir;
 
 	// OBEY permissions!
@@ -882,6 +879,7 @@ function showAttachments($memID)
 		$boardsAllowed = array(-1);
 
 	require_once($sourcedir . '/Subs-List.php');
+	$context['sub_template'] = 'profile_show_attachments';
 
 	// This is all the information required to list attachments.
 	$listOptions = array(
@@ -1317,6 +1315,12 @@ function statPanel($memID)
 	if (!empty($context['load_average']) && !empty($modSettings['loadavg_userstats']) && $context['load_average'] >= $modSettings['loadavg_userstats'])
 		fatal_lang_error('loadavg_userstats_disabled', false);
 
+	$context['sub_template'] = 'profile_stats';
+	register_helper([
+		'inverted_percent' => function($pc) { return 100 - $pc; },
+		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
+	]);
+
 	// General user statistics.
 	$timeDays = floor($user_profile[$memID]['total_time_logged_in'] / 86400);
 	$timeHours = floor(($user_profile[$memID]['total_time_logged_in'] % 86400) / 3600);
@@ -1705,7 +1709,7 @@ function trackActivity($memID)
 	$context['error_ips'] = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . $row['ip'] . ';u=' . $memID . '">' . $row['ip'] . '</a>';
+		$context['error_ips'][] = '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=' . inet_dtop($row['ip']) . ';u=' . $memID . '">' . inet_dtop($row['ip']) . '</a>';
 		$ips[] = inet_dtop($row['ip']);
 	}
 	$smcFunc['db_free_result']($request);
@@ -1763,6 +1767,8 @@ function trackActivity($memID)
 			$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 		$smcFunc['db_free_result']($request);
 	}
+
+	$context['sub_template'] = 'profile_track_activity';
 }
 
 /**
@@ -2197,6 +2203,8 @@ function TrackIP($memID = 0)
 				$context['auto_whois_server'] = $whois;
 		}
 	}
+
+	$context['sub_template'] = 'profile_track_ip';
 }
 
 /**
@@ -2745,7 +2753,6 @@ function showPermissions($memID)
 
 	loadLanguage('ManagePermissions');
 	loadLanguage('Admin');
-	loadTemplate('ManageMembers');
 
 	// Load all the permission profiles.
 	require_once($sourcedir . '/ManagePermissions.php');
@@ -2755,6 +2762,7 @@ function showPermissions($memID)
 	$context['member']['name'] = $user_profile[$memID]['real_name'];
 
 	$context['page_title'] = $txt['showPermissions'];
+	$context['sub_template'] = 'profile_show_permissions';
 	$board = empty($board) ? 0 : (int) $board;
 	$context['board'] = $board;
 

@@ -2489,7 +2489,6 @@ function CharacterList()
 	}
 
 	isAllowedTo('view_mlist');
-	loadTemplate('Profile-Chars');
 	loadLanguage('Profile');
 
 	$context['filter_characters_in_no_groups'] = allowedTo('admin_forum');

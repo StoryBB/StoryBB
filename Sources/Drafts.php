@@ -654,7 +654,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 		'description' => $txt['drafts_show_desc'],
 		'icon_class' => 'pm_icons inbox'
 	);
-	$context['sub_template'] = 'showDrafts';
+	$context['sub_template'] = 'profile_show_drafts';
 }
 
 /**
