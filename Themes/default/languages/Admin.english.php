@@ -734,4 +734,12 @@ $txt['last_updated'] = 'Last updated';
 $txt['previously_approved'] = 'Previous approved';
 $txt['remove_from_queue'] = 'Remove from Queue';
 
+$txt['immersion'] = 'Immersion';
+$txt['character_selector_post'] = 'Show character dropdown when posting';
+$txt['characters_ic_may_post'] = 'Characters may post in...';
+$txt['characters_ooc_may_post'] = 'Accounts (OOC characters) may post in...';
+$txt['ic_boards_only'] = 'In-character (IC) boards only';
+$txt['ooc_boards_only'] = 'Out-of-character (OOC) boards only';
+$txt['ic_and_ooc_boards'] = 'Both IC and OOC boards';
+
 ?>

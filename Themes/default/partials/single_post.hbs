@@ -222,7 +222,7 @@
 									<ul>
 										{{#each possible_characters}}
 										<li>
-											<a href="{{../scripturl}}?action=reattributepost;topic={{../../context.current_topic}};msg={{../id}};char={{@key}};{{../../context.session_var}}={{../../context.session_id}}">{{{.}}}</a>
+											<a href="{{../scripturl}}?action=reattributepost;topic={{../../context.current_topic}};msg={{../id}};char={{@key}};{{session_url}}">{{{name}}}</a>
 										</li>
 										{{/each}}
 									</ul>

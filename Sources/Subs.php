@@ -5624,4 +5624,75 @@ function get_main_menu_groups()
 	return $groups;
 }
 
+/**
+ * Gets the list of possible characters applicable to a user right now.
+ */
+function get_user_possible_characters($id_member, $board_id = 0)
+{
+	global $context, $board_info, $modSettings, $memberContext, $user_profile, $smcFunc;
+	static $boards_ic = [];
+
+	// First, some healthy defaults.
+	if (empty($modSettings['characters_ic_may_post']))
+		$modSettings['characters_ic_may_post'] = 'ic';
+	if (empty($modSettings['characters_ooc_may_post']))
+		$modSettings['characters_ooc_may_post'] = 'ooc';
+
+	$characters = [];
+
+	if (empty($user_profile[$id_member]))
+		loadMemberData($id_member);
+	if (empty($memberContext[$id_member]))
+		loadMemberContext($id_member);
+
+	if (isset($boards_ic[$board_id]))
+	{
+		$board_in_character = $boards_ic[$board_id];
+	}
+	else
+	{
+		$board_in_character = false;
+		$request = $smcFunc['db_query']('', '
+			SELECT id_board, in_character
+			FROM {db_prefix}boards');
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$boards_ic[$row['id_board']] = $row['in_character'];
+		}
+		$smcFunc['db_free_result']($request);
+
+		if (isset($boards_ic[$board_id]))
+		{
+			$board_in_character = $boards_ic[$board_id];
+		}
+	}
+
+	foreach ($memberContext[$id_member]['characters'] as $char_id => $character)
+	{
+		if ($board_in_character)
+		{
+			if ($modSettings['characters_ic_may_post'] == 'ic' && $character['is_main'] && !allowedTo('admin_forum'))
+			{
+				// IC board that requires IC only, and character is main.
+				continue;
+			}
+		}
+		else
+		{
+			if ($modSettings['characters_ooc_may_post'] == 'ooc' && !$character['is_main'] && !allowedTo('admin_forum'))
+			{
+				// OOC board that requires OOC only, and character is not main.
+				continue;
+			}
+		}
+
+		$characters[$char_id] = [
+			'name' => $character['character_name'],
+			'avatar' => !empty($character['avatar']) ? $character['avatar'] : $settings['images_url'] . '/default.png',
+		];
+	}
+
+	return $characters;
+}
+
 ?>

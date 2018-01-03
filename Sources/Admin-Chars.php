@@ -298,4 +298,51 @@ function CharacterSheets()
 	$context['default_list'] = 'approval_queue';
 }
 
+function CharacterImmersion($return_config = false)
+{
+	global $txt, $scripturl, $context, $modSettings, $smcFunc, $language, $sourcedir;
+
+	loadLanguage('Help');
+	loadLanguage('ManageSettings');
+	require_once($sourcedir . '/ManageServer.php');
+
+	$config_vars = array(
+			array('check', 'character_selector_post'),
+		'',
+			array('select', 'characters_ic_may_post', array(
+				'ic' => $txt['ic_boards_only'],
+				'icooc' => $txt['ic_and_ooc_boards'],
+			)),
+			array('select', 'characters_ooc_may_post', array(
+				'ooc' => $txt['ooc_boards_only'],
+				'icooc' => $txt['ic_and_ooc_boards'],
+			)),
+	);
+
+	call_integration_hook('integrate_immersion_settings', array(&$config_vars));
+
+	if ($return_config)
+		return $config_vars;
+
+	// Saving?
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		call_integration_hook('integrate_save_immersion_settings');
+
+		saveDBSettings($config_vars);
+		session_flash('success', $txt['settings_saved']);
+
+		writeLog();
+		redirectexit('action=admin;area=immersion');
+	}
+
+	$context['post_url'] = $scripturl . '?action=admin;area=immersion;save';
+	$context['settings_title'] = $txt['immersion'];
+	$context['page_title'] = $txt['immersion'];
+
+	prepareDBSettingContext($config_vars);
+}
+
 ?>
