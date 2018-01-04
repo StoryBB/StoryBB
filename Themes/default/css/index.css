@@ -3357,6 +3357,10 @@ img.smiley {
 #quickreplybox {
 	clear: both;
 }
+#quickReplyOptions .avatar img {
+	max-width: 125px;
+	max-height: 125px;
+}
 #quickReplyOptions .roundframe {
 	margin: 0;
 	padding: 8px 10% 12px 10%;
