@@ -2683,11 +2683,7 @@ function ReattributePost()
 	// 1. Session check, quick and easy to get out the way before we forget.
 	checkSession('get');
 
-	// 2. Check this is an 'in character' board. We don't want this working outside.
-	if (!$board_info['in_character'])
-		fatal_lang_error('no_access', false);
-
-	// 3. Get the message id and verify that it exists inside the topic in question.
+	// 2. Get the message id and verify that it exists inside the topic in question.
 	$msg = isset($_GET['msg']) ? (int) $_GET['msg'] : 0;
 	$result = $smcFunc['db_query']('', '
 		SELECT t.id_topic, t.locked, t.id_member_started, m.id_member AS id_member_posted,
@@ -2701,18 +2697,18 @@ function ReattributePost()
 		]
 	);
 
-	// 3a. Doesn't exist?
+	// 2a. Doesn't exist?
 	if ($smcFunc['db_num_rows']($result) == 0)
 		fatal_lang_error('no_access', false);
 
 	$row = $smcFunc['db_fetch_assoc']($result);
 	$smcFunc['db_free_result']($result);
 
-	// 3b. Not the topic we thought it was?
+	// 2b. Not the topic we thought it was?
 	if ($row['id_topic'] != $topic)
 		fatal_lang_error('no_access', false);
 
-	// 4. Verify we have permission. We loaded $topic's board's permissions earlier.
+	// 3. Verify we have permission. We loaded $topic's board's permissions earlier.
 	// Now verify that we have the relevant powers.
 	$is_poster = $user_info['id'] == $row['id_member_posted'];
 	$is_topic_starter = $user_info['id'] == $row['id_member_started'];
@@ -2721,25 +2717,9 @@ function ReattributePost()
 		fatal_lang_error('no_access', false);
 
 	// 4. Verify that the requested character belongs to the person we're changing to.
-	$character = isset($_GET['char']) ? (int) $_GET['char'] : 0;
-	$result = $smcFunc['db_query']('', '
-		SELECT character_name
-		FROM {db_prefix}characters
-		WHERE id_character = {int:char}
-			AND id_member = {int:member}
-			AND is_main = 0',
-		[
-			'char' => $character,
-			'member' => $row['id_member_posted'],
-		]
-	);
-	$owned_char = false;
-	if ($smcFunc['db_num_rows']($result)) {
-		list ($owned_char) = $smcFunc['db_fetch_row']($result);
-	}
-	$smcFunc['db_free_result']($result);
-
-	if (empty($owned_char))
+	// And is a valid target for such things.
+	$valid_characters = get_user_possible_characters($row['id_member_posted'], $board_info['id']);
+	if (!isset($valid_characters[$character]))
 		fatal_lang_error('no_access', false);
 
 	// 5. So we've verified the topic matches the message, the user has power
