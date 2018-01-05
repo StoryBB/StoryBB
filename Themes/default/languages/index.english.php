@@ -848,4 +848,7 @@ $txt['no_primary_character_group'] = '(no primary character group)';
 
 $txt['search_by_character'] = 'By character';
 
+$txt['in_character_board'] = 'In-Character Board';
+$txt['out_of_character_board'] = 'Out-Of-Character Board';
+
 ?>
