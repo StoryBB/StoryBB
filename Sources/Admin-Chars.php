@@ -317,6 +317,7 @@ function CharacterImmersion($return_config = false)
 				'ooc' => $txt['ooc_boards_only'],
 				'icooc' => $txt['ic_and_ooc_boards'],
 			)),
+			array('check', 'characters_admin_override'),
 	);
 
 	call_integration_hook('integrate_immersion_settings', array(&$config_vars));

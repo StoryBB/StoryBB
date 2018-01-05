@@ -41,9 +41,12 @@
 						<span class="floatleft"><a{{#if move}} class="red"{{/if}} href="{{../../scripturl}}?board={{id}}.0">{{{name}}}</a>
 							{{#if (and (eq ../../modSettings.recycle_enable '1') (eq ../../modSettings.recycle_board id))}}
 								<a href="{{../../scripturl}}?action=admin;area=manageboards;sa=settings"> <img src="{{../../settings.images_url}}/post/recycled.png" alt="{{../../txt.recycle_board}}" title="{{../../txt.recycle_board}}"></a>
-							{{/if}}
-							{{#if is_redirect}}
+							{{else}}
+								{{#if is_redirect}}
 								<img src="{{../../settings.images_url}}/new_redirect.png" alt="{{{../../txt.redirect_board_desc}}}" title="{{{../../txt.redirect_board_desc}}}">
+								{{else}}
+									<span class="in_character_note">{{#if in_character}}{{{../../txt.in_character_board}}}{{else}}{{{../../txt.out_of_character_board}}}{{/if}}</span>
+								{{/if}}
 							{{/if}}
 						</span>
 						<span class="floatright">

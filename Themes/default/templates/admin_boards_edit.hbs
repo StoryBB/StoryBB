@@ -69,7 +69,7 @@
 						<span class="smalltext">{{{txt.board_in_character_desc}}}</span><br>
 					</dt>
 					<dd>
-						<input type="checkbox" name="in_character"{{#if context.board.in_character}} checked{{/if}} class="input_check">
+						<input type="checkbox" name="in_character"{{#if (eq context.board.in_character '1')}} checked{{/if}} class="input_check">
 					</dd>
 					<dt>
 						<strong>{{{txt.permission_profile}}}:</strong><br>

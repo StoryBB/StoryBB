@@ -741,5 +741,6 @@ $txt['characters_ooc_may_post'] = 'Accounts (OOC characters) may post in...';
 $txt['ic_boards_only'] = 'In-character (IC) boards only';
 $txt['ooc_boards_only'] = 'Out-of-character (OOC) boards only';
 $txt['ic_and_ooc_boards'] = 'Both IC and OOC boards';
+$txt['characters_admin_override'] = 'Admininstrators can override the IC/OOC board rules?';
 
 ?>

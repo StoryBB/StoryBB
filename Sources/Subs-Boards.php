@@ -1337,7 +1337,7 @@ function getBoardTree()
 					'name' => $row['cat_name'],
 					'description' => $row['cat_desc'],
 					'order' => $row['cat_order'],
-					'can_collapse' => $row['can_collapse']
+					'can_collapse' => $row['can_collapse'],
 				),
 				'is_first' => empty($cat_tree),
 				'last_board_order' => $last_board_order,
