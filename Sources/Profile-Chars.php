@@ -2718,6 +2718,7 @@ function ReattributePost()
 
 	// 4. Verify that the requested character belongs to the person we're changing to.
 	// And is a valid target for such things.
+	$character = isset($_GET['char']) ? (int) $_GET['char'] : 0;
 	$valid_characters = get_user_possible_characters($row['id_member_posted'], $board_info['id']);
 	if (!isset($valid_characters[$character]))
 		fatal_lang_error('no_access', false);
