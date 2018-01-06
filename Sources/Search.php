@@ -40,11 +40,7 @@ function PlushSearch1()
 		fatal_lang_error('loadavg_search_disabled', false);
 
 	loadLanguage('Search');
-	// Don't load this in XML mode.
-	if (!isset($_REQUEST['xml']))
-	{
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
-	}
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 
 	// Check the user's permissions.
 	isAllowedTo('search_posts');
@@ -323,13 +319,7 @@ function PlushSearch2()
 	$context['search_string_limit'] = 100;
 
 	loadLanguage('Search');
-	if (!isset($_REQUEST['xml']))
-	{
-		$context['sub_template'] = 'search_results';
-	}
-	//If we're doing XML we need to use the results template.
-	else
-		$context['sub_template'] = 'results';
+	$context['sub_template'] = 'search_results';
 
 	// Are you allowed?
 	isAllowedTo('search_posts');
