@@ -141,7 +141,7 @@ QuickModifyTopic.prototype.modify_topic_done = function (XMLDoc)
 		return true;
 	}
 
-	var message = XMLDoc.getElementsByTagName("smf")[0].getElementsByTagName("message")[0];
+	var message = XMLDoc.getElementsByTagName("storybb")[0].getElementsByTagName("message")[0];
 	var subject = message.getElementsByTagName("subject")[0];
 	var error = message.getElementsByTagName("error")[0];
 

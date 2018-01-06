@@ -2733,7 +2733,7 @@ function JavaScriptModify()
 		// Topic?
 		elseif (empty($post_errors))
 		{
-			$context['sub_template'] = 'modifytopicdone';
+			$context['sub_template'] = 'xml_modifytopicdone';
 			$context['message'] = array(
 				'id' => $row['id_msg'],
 				'modified' => array(

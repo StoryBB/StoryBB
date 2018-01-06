@@ -8,36 +8,6 @@
  */
 
 /**
- * This handles things when editing a topic's subject from the messageindex.
- */
-function template_modifytopicdone()
-{
-	global $context, $txt;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
-	<message id="msg_', $context['message']['id'], '">';
-	if (empty($context['message']['errors']))
-	{
-		// Build our string of info about when and why it was modified
-		$modified = empty($context['message']['modified']['time']) ? '' : sprintf($txt['last_edit_by'], $context['message']['modified']['time'], $context['message']['modified']['name']);
-		$modified .= empty($context['message']['modified']['reason']) ? '' : sprintf($txt['last_edit_reason'], $context['message']['modified']['reason']);
-
-		echo '
-		<modified><![CDATA[', empty($modified) ? '' : cleanXml('&#171; <em>' . $modified . '</em>&#187;'), ']]></modified>';
-		if (!empty($context['message']['subject']))
-			echo '
-		<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>';
-	}
-	else
-		echo '
-		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '"><![CDATA[', cleanXml(implode('<br />', $context['message']['errors'])), ']]></error>';
-	echo '
-	</message>
-</smf>';
-}
-
-/**
  * The massive XML for previewing posts.
  */
 function template_post()
