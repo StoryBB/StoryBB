@@ -1,0 +1,19 @@
+<div id="admincenter">
+		<div class="cat_bar">
+			<h3 class="catbg">{{context.page_title}}</h3>
+		</div>
+		<div class="windowbg">
+		    {{#if context.error_message}}
+		    <p>
+				{{context.error_message}}
+			</p>
+			{{else}}
+			<p>
+				<a href="{{scripturl}}?action=admin;area=theme;sa=list;th={{context.installed_theme.id}};{{context.session_var}}={{context.session_id}}">{{context.installed_theme.name}}</a> {{#if context.installed_theme.updated}}{{txt.theme_updated_message}}{{else}}{{txt.theme_installed_message}}{{/if}}
+			</p>
+			<p>
+				<a href="{{scripturl}}?action=admin;area=theme;sa=admin;{{context.session_var}}={{context.session_id}}">{{txt.back}}</a>
+			</p>
+		    {{/if}}
+	    </div>
+</div>

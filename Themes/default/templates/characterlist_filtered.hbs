@@ -1,0 +1,38 @@
+		{{! A subset of the character list where characters have sheets already and are pre-sorted by groups. }}
+		<div id="messageindex">
+			<div class="title_bar" id="topic_header">
+				<div class="board_icon">&nbsp;</div>
+				<div class="info"><a href="{{scripturl}}?action=characters;sa=sheets;group={{context.group_id}};sort=name{{#if (and (eq context.sort_by 'name') (eq context.sort_order 'asc'))}};dir=desc{{else}};dir=asc{{/if}}">{{{txt.chars_menu_title}}}{{#if (eq context.sort_by 'name')}}<span class="generic_icons {{#if (eq context.sort_order 'desc')}}sort_down{{else}}sort_up{{/if}}"></span>{{/if}}</a></div>
+				<div class="lastpost"></div>
+				<div class="board_stats"><a href="{{scripturl}}?action=characters;sa=sheets;group={{context.group_id}};sort=last_active{{#if (and (eq context.sort_by 'last_active') (eq context.sort_order 'asc'))}};dir=desc{{else}};dir=asc{{/if}}">{{{txt.lastLoggedIn}}}{{#if (eq context.sort_by 'last_active')}}<span class="generic_icons {{#if (eq context.sort_order 'desc')}}sort_down{{else}}sort_up{{/if}}"></span>{{/if}}</a></div>
+			</div>
+			<div id="topic_container">
+				{{#each context.characters}}
+				<div class="windowbg">
+					<div class="board_icon">
+						<img class="avatar_small" src="{{#if avatar}}{{{avatar}}}{{else}}{{../settings.images_url}}/default.png{{/if}}" alt="">
+					</div>
+					<div class="info">
+						<div>
+							<div class="message_index_title">
+								<span id="char{{id_character}}">
+									<a href="{{../scripturl}}?action=profile;u={{id_member}};area=characters;char={{id_character}}">{{{character_name}}}</a>{{#if (eq retired '1')}} ({{{../txt.char_retired}}}){{/if}}
+									<a class="button" href="{{../scripturl}}?action=profile;u={{id_member}};area=characters;char={{id_character}}">{{{../txt.profile}}}</a>
+									<a class="button" href="{{../scripturl}}?action=profile;u={{id_member}};area=characters;char={{id_character}};sa=sheet">{{{../txt.char_sheet_link}}}</a>
+								</span>
+							</div>
+							<p class="floatleft">{{{../txt.date_created}}} {{{date_created_format}}}</p>
+							<br class="clear">
+						</div>
+					</div>
+					<div class="lastpost char_group_container">
+						{{#each groups.combined_badges}}
+						<div class="char_group">{{{.}}}</div>
+						{{/each}}
+					</div>
+					<div class="board_stats">{{{last_active_format}}}</div>
+				</div>
+				{{/each}}
+			</div>
+		</div>
+		<div class="clear"></div>

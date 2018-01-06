@@ -113,12 +113,12 @@
 						<dd>
 							{{preinput}}
 							{{#if (eq type "label")}}{{value}}{{/if}}
-							{{#if field_isText(type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{.}}" id="{{.}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}} class="input_type{{#if (eq type "password")}}password{{else}}text{{/if}}">{{/if}}
-							{{#if (eq type "check")}}<input type="hidden" name="{{.}}" value="0"><input type="checkbox" name="{{.}}" id="{{.}}"{{#if value}} checked{{/if}} value="1" class="input_check" {{input_attr}}>{{/if}}
+							{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}} class="input_type{{#if (eq type "password")}}password{{else}}text{{/if}}">{{/if}}
+							{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" class="input_check" {{input_attr}}>{{/if}}
 							{{#if (eq type "select")}}
-								<select name="{{.}}" id="{{.}}">
+								<select name="{{@key}}" id="{{@key}}">
 									{{#each options}}
-										<option value="{{value}}"{{#if value}} selected{{/if}}>{{.}}</option>
+										<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
 									{{/each}}
 								</select>
 							{{/if}}

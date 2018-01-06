@@ -50,16 +50,16 @@ var icon_urls = {
 			{{/if}}
 			{{#if modSettings.drafts_post_enabled}}
 			<div id="draft_section" class="infobox" {{#unless context.draft_saved}} style="display: none;"{{/unless}}>
-				{{textTemplate 'draft_saved' (concat scripturl '?action=profile;u=' context.user.id ';area=showdrafts')}}
-				{{#if modSettings.drafts_keep_days}} <strong>{{textTemplate 'draft_save_warning' modSettings.drafts_keep_days}}</strong>{{/if}}
+				{{{textTemplate txt.draft_saved (concat scripturl '?action=profile;u=' context.user.id ';area=showdrafts')}}}
+				{{#if modSettings.drafts_keep_days}} <strong>{{{textTemplate txt.draft_save_warning modSettings.drafts_keep_days}}}</strong>{{/if}}
 			</div>
 			{{/if}}
 			<dl id="post_header">
 			    {{#each context.posting_fields}}
-			    <dt class="clear{{#unless (numeric @key)}} pf_{{@key}}{{/unless}}">
+			    <dt class="clear{{#unless (is_numeric @key)}} pf_{{@key}}{{/unless}}">
 					{{{dt}}}
 				</dt>
-				<dd{{#unless (numeric @key)}} class="pf_{{@key}}"{{/unless}}>
+				<dd{{#unless (is_numeric @key)}} class="pf_{{@key}}"{{/unless}}>
 				    {{{dd}}}
 				</dd>
 				{{/each}}
@@ -307,7 +307,6 @@ var icon_urls = {
 		var txt_preview_title = "{{txt.preview_title}}";
 		var txt_preview_fetch = "{{txt.preview_fetch}}";
 		var new_replies = new Array();
-		var reply_counter = {{counter}};
 		function previewPost()
 		{
 			if (window.XMLHttpRequest)
@@ -321,7 +320,7 @@ var icon_urls = {
 				}
 				// @todo Currently not sending poll options and option checkboxes.
 				var x = new Array();
-				var textFields = ['subject', '{{jsEscape context.post_box_name}}', '{{jsEscape context.session_var}}', 'icon', 'guestname', 'email', 'question', 'topic'];
+				var textFields = ['subject', '{{context.post_box_name}}', '{{context.session_var}}', 'icon', 'guestname', 'email', 'question', 'topic'];
 				var numericFields = [
 					'board', 'topic', 'last_msg',
 					'poll_max_votes', 'poll_expire', 'poll_change_vote', 'poll_hide'
@@ -334,7 +333,7 @@ var icon_urls = {
 					if (textFields[i] in document.forms.postmodify)
 					{
 						// Handle the WYSIWYG editor.
-						if (textFields[i] == '{{jsEscape context.post_box_name}}' && $("#{{context.post_box_name}}").data("sceditor") != undefined)
+						if (textFields[i] == '{{context.post_box_name}}' && $("#{{context.post_box_name}}").data("sceditor") != undefined)
 							x[x.length] = textFields[i] + '=' + $("#{{context.post_box_name}}").data("sceditor").getText().replace(/&#/g, '&#38;#');
 						else
 							x[x.length] = textFields[i] + '=' + document.forms.postmodify[textFields[i]].value.replace(/&#/g, '&#38;#');
@@ -429,7 +428,7 @@ var icon_urls = {
 					if (newPosts[i].getElementsByTagName("is_ignored")[0].firstChild.nodeValue != 0)
 						ignored_replies[ignored_replies.length] = ignoring = newPosts[i].getAttribute("id");
 
-					newPostsHTML += '<div class="windowbg' + (++reply_counter % 2 == 0 ? '2' : '') + '"><div id="msg' + newPosts[i].getAttribute("id") + '"><div class="floatleft"><h5>{{txt.posted_by}}: ' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + '</h5><span class="smalltext">&#171;&nbsp;<strong{{txt.on}}:</strong> ' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + '&nbsp;&#187;</span> <span class="new_posts" id="image_new_' + newPosts[i].getAttribute("id") + '">{{txt.new}}</span></div>';
+					newPostsHTML += '<div class="windowbg' + '"><div id="msg' + newPosts[i].getAttribute("id") + '"><div class="floatleft"><h5>{{txt.posted_by}}: ' + newPosts[i].getElementsByTagName("poster")[0].firstChild.nodeValue + '</h5><span class="smalltext">&#171;&nbsp;<strong{{txt.on}}:</strong> ' + newPosts[i].getElementsByTagName("time")[0].firstChild.nodeValue + '&nbsp;&#187;</span> <span class="new_posts" id="image_new_' + newPosts[i].getAttribute("id") + '">{{txt.new}}</span></div>';
 					{{#if context.can_quote}}
 					newPostsHTML += '<ul class="quickbuttons" id="msg_' + newPosts[i].getAttribute("id") + '_quote"><li><a href="#postmodify" onclick="return insertQuoteFast(' + newPosts[i].getAttribute("id") + ');" class="quote_button"><span>{{txt.quote}}</span><' + '/a></li></ul>';
 					{{/if}}
@@ -558,7 +557,7 @@ var icon_urls = {
 		</div>
 		<script>
 			var aIgnoreToggles = new Array();
-			{{#each ignored_posts}}
+			{{#each context.ignored_posts}}
 			aIgnoreToggles[{{.}}] = new smc_Toggle({
 				bToggleEnabled: true,
 				bCurrentlyCollapsed: true,
@@ -570,7 +569,7 @@ var icon_urls = {
 						{
 							sId: 'msg_{{.}}_ignored_link',
 							msgExpanded: '',
-							msgCollapsed: '{{JSEscape ../txt.show_ignore_user_post}}'
+							msgCollapsed: {{{jsEscape ../txt.show_ignore_user_post}}}
 						}
 				]
 			});
@@ -609,7 +608,7 @@ var icon_urls = {
 					pollOptionNum++
 					pollOptionId++
 
-					setOuterHTML(document.getElementById('pollMoreOptions'), '{{jsescape '<dt><label for="options-'}}' + pollOptionId + '{{jsEscape (concat '">'  txt.option)}}' + pollOptionNum + '{{jsEscape '</label>:</dt><dd><input type="text" name="options['}}' + pollOptionId + '{{jsEscape ']" id="options-'}}' + pollOptionId + '{{jsEscape '" value="" size="80" maxlength="255" tabindex="'}}' + pollTabIndex + '{{jsEscape '" class="input_text"></dd><p id="pollMoreOptions"></p>'}}');
+					setOuterHTML(document.getElementById('pollMoreOptions'), '{{jsEscape '<dt><label for="options-'}}' + pollOptionId + '{{jsEscape (concat '">'  txt.option)}}' + pollOptionNum + '{{jsEscape '</label>:</dt><dd><input type="text" name="options['}}' + pollOptionId + '{{jsEscape ']" id="options-'}}' + pollOptionId + '{{jsEscape '" value="" size="80" maxlength="255" tabindex="'}}' + pollTabIndex + '{{jsEscape '" class="input_text"></dd><p id="pollMoreOptions"></p>'}}');
 				};
 			{{/if}}
 		</script>

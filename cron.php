@@ -78,6 +78,7 @@ require_once($boarddir . '/vendor/autoload.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Subs.php');
+sbb_autoload();
 
 // Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();
@@ -86,6 +87,12 @@ $smcFunc = array();
 unset ($db_show_debug);
 loadDatabase();
 reloadSettings();
+
+// We need to init some super-default things because there's a lot of code that might accidentally rely on it.
+$user_info = [
+	'time_offset' => 0,
+	'time_format' => '%b %d, %Y, %I:%M %p',
+];
 
 // Just in case there's a problem...
 set_error_handler('smf_error_handler_cron');
@@ -159,6 +166,8 @@ function fetch_task()
 		{
 			// Update the time and go back.
 			$row['claimed_time'] = time();
+			// Also, put this into the 'session' value in case the error log needs to show it.
+			$sc = 'task' . $row['id_task'];
 			return $row;
 		}
 		else

@@ -1,0 +1,36 @@
+<form action="{{scripturl}}?action=pm;sa=report;l={{context.current_label_id}}" method="post" accept-charset="UTF-8">
+		<input type="hidden" name="pmsg" value="{{context.pm_id}}">
+		<div class="cat_bar">
+			<h3 class="catbg">{{txt.pm_report_title}}</h3>
+		</div>
+		<div class="information">
+			{{txt.pm_report_desc}}
+		</div>
+		<div class="windowbg">
+			<dl class="settings">
+			    {{#if (gt context.admin_count 1)}}
+			    <dt>
+					<strong>{{txt.pm_report_admins}}:</strong>
+				</dt>
+				<dd>
+					<select name="id_admin">
+						<option value="0">{{txt.pm_report_all_admins}}</option>
+			             {{#each context.admins}}
+			             <option value="{{@key}}">{{.}}</option>
+			             {{/each}}
+			         </select>
+				</dd>
+			    {{/if}}
+			    <dt>
+					<strong>{{txt.pm_report_reason}}:</strong>
+				</dt>
+				<dd>
+					<textarea name="reason" rows="4" cols="70" style="width: 80%;"></textarea>
+				</dd>
+			</dl>
+			<div class="righttext">
+				<input type="submit" name="report" value="{{txt.pm_report_message}}" class="button_submit">
+			</div>
+		</div>
+		<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+	</form>

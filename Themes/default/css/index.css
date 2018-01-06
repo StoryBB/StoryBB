@@ -237,6 +237,9 @@ span.new_posts {
 a span.new_posts:hover {
 	text-decoration: underline;
 }
+.children span.new_posts {
+	margin-left: 5px;
+}
 
 /* Common classes to easy styling.
 ------------------------------------------------------- */
@@ -3353,6 +3356,10 @@ img.smiley {
 /* Styles for the quick reply area. */
 #quickreplybox {
 	clear: both;
+}
+#quickReplyOptions .avatar img {
+	max-width: 125px;
+	max-height: 125px;
 }
 #quickReplyOptions .roundframe {
 	margin: 0;

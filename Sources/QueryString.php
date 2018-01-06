@@ -615,20 +615,7 @@ function cleanXml($string)
  */
 function JavaScriptEscape($string)
 {
-	global $scripturl;
-
-	return '\'' . strtr($string, array(
-		"\r" => '',
-		"\n" => '\\n',
-		"\t" => '\\t',
-		'\\' => '\\\\',
-		'\'' => '\\\'',
-		'</' => '<\' + \'/',
-		'<script' => '<scri\'+\'pt',
-		'<body>' => '<bo\'+\'dy>',
-		'<a href' => '<a hr\'+\'ef',
-		$scripturl => '\' + smf_scripturl + \'',
-	)) . '\'';
+	return StoryBB\Template\Helper\Text::jsEscape($string);
 }
 
 /**

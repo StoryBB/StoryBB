@@ -1,9 +1,6 @@
 {{#if context.saved_successful}}
     <div class="infobox">{{txt.settings_saved}}</div>
 {{/if}}
-{{#if context.could_not_save}}
-    <div class="errorbox">{{txt.admin_agreement_not_saved}}</div>
-{{/if}}
 	<div id="admin_form_wrapper">
 		<div class="cat_bar">
 			<h3 class="catbg">{{txt.registration_agreement}}</h3>
@@ -13,8 +10,8 @@
 		<p class="error">{{context.warning}}</p>
 {{/if}}
 		<div class="windowbg2 noup" id="registration_agreement">
-{{#if editable_agreements}}
-    	<div class="cat_bar">
+{{#if (gt (count context.editable_agreements) 1)}}
+    		<div class="cat_bar">
 				<h3 class="catbg">{{txt.language_configuration}}</h3>
 			</div>
 			<div class="information">
@@ -34,6 +31,7 @@
 					</div>
 				</form>
 			</div>
+{{/if}}
 			<form action="{{scripturl}}?action=admin;area=regcenter" method="post" accept-charset="UTF-8">
 				<textarea cols="70" rows="20" name="agreement" id="agreement">{{context.agreement}}</textarea>
 				<p>
@@ -46,5 +44,4 @@
 				<input type="hidden" name="{{context.admin-rega_token_var}}" value="{{context.admin-rega_token}}">
 			</form>
 		</div>
-{{/if}}
 	</div>

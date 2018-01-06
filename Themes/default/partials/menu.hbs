@@ -2,21 +2,21 @@
     {{#each context.menu_buttons}}
     <li class="button_{{@key}} {{#if sub_buttons}} subsections{{/if}}">
 		<a {{#if active_button}} class="active"{{/if}} href="{{href}}" {{#if target}} target="{{target}}"{{/if}}>
-			{{{icon}}}<span class="textmenu">{{{title}}}</span>
+			{{{icon}}}<span class="textmenu">{{{title}}} {{#if badge}}<span class="amt">{{{badge}}}</span>{{/if}}</span>
 		</a>
 		{{#if sub_buttons}}
 		<ul>
 	        {{#each sub_buttons}}
 	        <li {{#if sub_buttons}} class="subsections"{{/if}}>
 				<a href="{{href}}" {{#if target}} target="{{target}}"{{/if}}>
-					{{{title}}}
+					{{{title}}} {{#if badge}}<span class="amt">{{{badge}}}</span>{{/if}}
 				</a>
 				{{#if sub_buttons}}
 		        <ul>
     	            {{#each sub_buttons}}
         	        <li>
         				<a href="{{href}}" {{#if target}} target="{{target}}"{{/if}}>
-        					{{{title}}}
+        					{{{title}}} {{#if badge}}<span class="amt">{{{badge}}}</span>{{/if}}
         				</a>
         			</li>
         			{{/each}}

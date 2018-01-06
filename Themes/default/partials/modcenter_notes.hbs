@@ -1,0 +1,31 @@
+	{{! The notes area of the moderation center. }}
+
+	<div class="modnotes">
+		<form action="{{scripturl}}?action=moderate;area=index;modnote" method="post">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.mc_notes}}}</h3>
+			</div>
+			<div class="windowbg2">
+				<div class="modbox">
+
+					{{#if context.notes}}
+						<ul class="moderation_notes">
+							{{#each context.notes}}
+								<li class="smalltext">{{#if can_delete}}<a href="{{{delete_href}}};{{token_url 'mod-modnote-del'}}" data-confirm="{{{../txt.mc_reportedp_delete_confirm}}}" class="you_sure"><span class="generic_icons delete"></span></a>{{/if}}{{{time}}} <strong>{{{author.link}}}:</strong> {{{text}}}</li>
+							{{/each}}
+						</ul>
+						<div class="pagesection notes">
+							<span class="smalltext">{{{context.page_index}}}</span>
+						</div>
+					{{/if}}
+
+					<div class="floatleft post_note">
+					<input type="text" name="new_note" placeholder="{{{txt.mc_click_add_note}}}" style="width: 95%;" class="input_text">
+					</div>
+					{{{token_form 'mod-modnote-add'}}}
+					<input type="submit" name="makenote" value="{{{txt.mc_add_note}}}" class="button_submit">
+				</div>
+			</div>
+			{{session_form}}
+		</form>
+	</div>

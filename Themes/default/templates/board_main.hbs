@@ -31,13 +31,13 @@
                             <div class="info">
                                 <a class="subject mobile_subject" href="{{this.href}}" id="b{{this.id}}">
                                     {{this.name}}
-                                    <p class="board_description mobile_display">{{this.description}}</p>
+                                    <p class="board_description mobile_display">{{{this.description}}}</p>
                                 </a>
                                 {{! Does board have outstanding posts for approval? }}
                                 {{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
                                     <a href="{{scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{context.session_var}}={{context.session_id}}" title="{{textTemplate ../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a>
                                 {{/if}} {{! close if (and (or)) on line 32 }}
-                                <p class="board_description">{{this.description}}</p>
+                                <p class="board_description">{{{this.description}}}</p>
                                 
                                 {{! Show the "Moderators: ". Each has name, href, link, and id, but we're going to use link_moderators }}
                                 {{#if this.link_moderators}}
@@ -69,7 +69,7 @@
                                         {{#if (eq this.is_redirect '1')}}
                                             <span><a href="{{this.href}}" title="{{comma this.posts}} {{../../../txt.redirects}}{{#if this.short_description}} - {{this.short_description}}{{/if}}">{{this.name}}</a></span>
                                         {{else}}
-                                            <span><a href="{{this.href}}" {{#if this.new}}class="board_new_posts"{{/if}} title="{{#if this.new}}{{../../../txt.new_posts}}{{else}}{{../../../txt.old_posts}}{{/if}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})">{{this.name}}</a>{{#if this.new}}<a href="{{scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{txt.posts}}: {{comma this.posts}})"><span class="new_posts">{{txt.new}}</span></a>{{/if}}</span>
+                                            <span><a href="{{this.href}}" {{#if this.new}}class="board_new_posts"{{/if}} title="{{#if this.new}}{{../../../txt.new_posts}}{{else}}{{../../../txt.old_posts}}{{/if}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})">{{this.name}}</a>{{#if this.new}}<a href="{{../../../scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})"><span class="new_posts">{{../../../txt.new}}</span></a>{{/if}}</span>
                                         {{/if}} {{! close if this.is_redirect on line 61 }}
                                         {{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
                                             <span><a href="{{scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{context.session_var}}={{context.session_id}}" title="{{textTemplate ../../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a></span>

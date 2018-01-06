@@ -44,7 +44,6 @@ function ViewMembers()
 
 	// Load the essentials.
 	loadLanguage('ManageMembers');
-	loadTemplate('ManageMembers');
 
 	// Get counts on every type of activation - for sections and filtering alike.
 	$request = $smcFunc['db_query']('', '
@@ -650,7 +649,7 @@ function SearchMembers()
 	$smcFunc['db_free_result']($request);
 
 	$context['page_title'] = $txt['admin_members'];
-	$context['sub_template'] = 'search_members';
+	$context['sub_template'] = 'admin_member_search';
 }
 
 /**
@@ -670,7 +669,7 @@ function MembersAwaitingActivation()
 
 	// Not a lot here!
 	$context['page_title'] = $txt['admin_members'];
-	$context['sub_template'] = 'admin_browse';
+	$context['sub_template'] = 'admin_member_approval';
 	$context['browse_type'] = isset($_REQUEST['type']) ? $_REQUEST['type'] : (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? 'activate' : 'approve');
 	if (isset($context['tabs'][$context['browse_type']]))
 		$context['tabs'][$context['browse_type']]['is_selected'] = true;
@@ -1121,7 +1120,7 @@ function AdminApprove()
 				);
 
 				$emaildata = loadEmailTemplate('admin_approve_accept', $replacements, $member['language']);
-				sendmail($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accapp' . $member['id'], $emaildata['is_html'], 0);
+				StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accapp' . $member['id'], $emaildata['is_html'], 0);
 			}
 		}
 	}
@@ -1161,7 +1160,7 @@ function AdminApprove()
 			);
 
 			$emaildata = loadEmailTemplate('admin_approve_activation', $replacements, $member['language']);
-			sendmail($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accact' . $member['id'], $emaildata['is_html'], 0);
+			StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accact' . $member['id'], $emaildata['is_html'], 0);
 		}
 	}
 	// Are we rejecting them?
@@ -1180,7 +1179,7 @@ function AdminApprove()
 				);
 
 				$emaildata = loadEmailTemplate('admin_approve_reject', $replacements, $member['language']);
-				sendmail($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accrej', $emaildata['is_html'], 1);
+				StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accrej', $emaildata['is_html'], 1);
 			}
 		}
 	}
@@ -1200,7 +1199,7 @@ function AdminApprove()
 				);
 
 				$emaildata = loadEmailTemplate('admin_approve_delete', $replacements, $member['language']);
-				sendmail($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accdel', $emaildata['is_html'], 1);
+				StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accdel', $emaildata['is_html'], 1);
 			}
 		}
 	}
@@ -1217,7 +1216,7 @@ function AdminApprove()
 			);
 
 			$emaildata = loadEmailTemplate('admin_approve_remind', $replacements, $member['language']);
-			sendmail($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accrem' . $member['id'], $emaildata['is_html'], 1);
+			StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accrem' . $member['id'], $emaildata['is_html'], 1);
 		}
 	}
 

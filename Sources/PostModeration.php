@@ -22,7 +22,6 @@ function PostModerationMain()
 
 	 // @todo We'll shift these later bud.
 	loadLanguage('ModerationCenter');
-	loadTemplate('ModerationCenter');
 
 	// Probably need this...
 	require_once($sourcedir . '/ModerationCenter.php');
@@ -305,7 +304,8 @@ function UnapprovedPosts()
 	}
 	$smcFunc['db_free_result']($request);
 
-	$context['sub_template'] = 'unapproved_posts';
+	$context['sub_template'] = 'modcenter_unapproved';
+	register_helper(['create_button' => 'create_button']);
 }
 
 /**

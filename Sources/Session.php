@@ -59,7 +59,7 @@ function loadSession()
 		// Use database sessions?
 		if (!empty($modSettings['databaseSession_enable']))
 		{
-			@ini_set('session.serialize_handler', 'php');
+			@ini_set('session.serialize_handler', 'php_serialize');
 			session_set_save_handler('sessionOpen', 'sessionClose', 'sessionRead', 'sessionWrite', 'sessionDestroy', 'sessionGC');
 			@ini_set('session.gc_probability', '1');
 		}

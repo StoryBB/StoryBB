@@ -29,7 +29,7 @@ class Likes_Notify_Background extends SMF_BackgroundTask
 		{
 			$request = $smcFunc['db_query']('', '
 				SELECT mem.id_member, mem.id_group, mem.id_post_group, mem.additional_groups, b.member_groups,
-					m.id_character, chars.is_main
+					m.id_character, chars.is_main, mem.pm_ignore_list
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}members AS mem ON (m.id_member = mem.id_member)
 					INNER JOIN {db_prefix}boards AS b ON (m.id_board = b.id_board)

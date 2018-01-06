@@ -31,10 +31,6 @@ $ignoreFiles = array(
 	// Minify Stuff.
 	'\./Sources/minify/[A-Za-z0-9/-]+\.php',
 
-	// ReCaptcha Stuff.
-	'\./Sources/ReCaptcha/[A-Za-z0-9]+\.php',
-	'\./Sources/ReCaptcha/RequestMethod/[A-Za-z0-9]+\.php',
-
 	// Language Files are ignored as they don't use the License format.
 	'./Themes/default/languages/[A-Za-z0-9]+\.english\.php',
 

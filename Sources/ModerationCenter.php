@@ -244,11 +244,10 @@ function ModerationHome()
 {
 	global $txt, $context, $options;
 
-	loadTemplate('ModerationCenter');
 	loadJavaScriptFile('admin.js', array(), 'smf_admin');
 
 	$context['page_title'] = $txt['moderation_center'];
-	$context['sub_template'] = 'moderation_center';
+	$context['sub_template'] = 'modcenter_home';
 
 	// Handle moderators notes.
 	ModBlockNotes();
@@ -325,7 +324,7 @@ function ModBlockWatchedUsers()
 		);
 	}
 
-	return 'watched_users';
+	return 'modcenter_watched_users';
 }
 
 /**
@@ -334,10 +333,6 @@ function ModBlockWatchedUsers()
 function ModBlockNotes()
 {
 	global $context, $smcFunc, $scripturl, $txt, $user_info;
-
-	// Set a nice and informative message.
-	$context['report_post_action'] = !empty($_SESSION['rc_confirmation']) ? $_SESSION['rc_confirmation'] : array();
-	unset($_SESSION['rc_confirmation']);
 
 	// Are we saving a note?
 	if (isset($_GET['modnote']) && isset($_POST['makenote']) && isset($_POST['new_note']))
@@ -368,7 +363,7 @@ function ModBlockNotes()
 		}
 
 		// Everything went better than expected!
-		$_SESSION['rc_confirmation'] = 'message_saved';
+		session_flash('success', $txt['report_action_message_saved']);
 
 		// Redirect otherwise people can resubmit.
 		redirectexit('action=moderate');
@@ -418,7 +413,7 @@ function ModBlockNotes()
 		cache_put_data('moderator_notes_total', null, 240);
 
 		// Tell them the message was deleted.
-		$_SESSION['rc_confirmation'] = 'message_deleted';
+		session_flash('success', $txt['report_action_message_deleted']);
 
 		redirectexit('action=moderate');
 	}
@@ -502,7 +497,7 @@ function ModBlockReportedPosts()
 	$cachekey = md5(json_encode($user_info['mod_cache']['bq']));
 	$context['reported_posts'] = array();
 	if ($user_info['mod_cache']['bq'] == '0=1')
-		return 'reported_posts_block';
+		return 'modcenter_reported_posts';
 
 	if (($reported_posts = cache_get_data('reported_posts_' . $cachekey, 90)) === null)
 	{
@@ -553,7 +548,7 @@ function ModBlockReportedPosts()
 		);
 	}
 
-	return 'reported_posts_block';
+	return 'modcenter_reported_posts';
 }
 
 /**
@@ -602,7 +597,7 @@ function ModBlockGroupRequests()
 	}
 	$smcFunc['db_free_result']($request);
 
-	return 'group_requests_block';
+	return 'modcenter_group_requests';
 }
 
 /**
@@ -616,7 +611,7 @@ function ModBlockReportedMembers()
 	$cachekey = md5(json_encode((int) allowedTo('moderate_forum')));
 	$context['reported_users'] = array();
 	if (!allowedTo('moderate_forum'))
-		return 'reported_users_block';
+		return 'modcenter_reported_users';
 
 	if (($reported_users = cache_get_data('reported_users_' . $cachekey, 90)) === null)
 	{
@@ -663,7 +658,7 @@ function ModBlockReportedMembers()
 		);
 	}
 
-	return 'reported_users_block';
+	return 'modcenter_reported_users';
 }
 
 /**
@@ -672,8 +667,6 @@ function ModBlockReportedMembers()
 function ReportedMembers()
 {
 	global $txt, $context, $scripturl, $smcFunc;
-
-	loadTemplate('ModerationCenter');
 
 	// Set an empty var for the server response.
 	$context['report_member_action'] = '';
@@ -907,9 +900,6 @@ function ModerateGroups()
 	if ($user_info['mod_cache']['gq'] == '0=1')
 		isAllowedTo('manage_membergroups');
 
-	// Load the group templates.
-	loadTemplate('ModerationCenter');
-
 	// Setup the subactions...
 	$subActions = array(
 		'requests' => 'GroupRequests',
@@ -932,10 +922,9 @@ function ShowNotice()
 	global $smcFunc, $txt, $context;
 
 	$context['page_title'] = $txt['show_notice'];
-	$context['sub_template'] = 'show_notice';
+	StoryBB\Template::set_layout('popup');
+	$context['sub_template'] = 'modcenter_notice_show';
 	$context['template_layers'] = array();
-
-	loadTemplate('ModerationCenter');
 
 	// @todo Assumes nothing needs permission more than accessing moderation center!
 	$id_notice = (int) $_GET['nid'];
@@ -966,8 +955,6 @@ function ViewWatchedUsers()
 	$context['page_title'] = $txt['mc_watched_users_title'];
 	$context['view_posts'] = isset($_GET['sa']) && $_GET['sa'] == 'post';
 	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
-
-	loadTemplate('ModerationCenter');
 
 	// Get some key settings!
 	$modSettings['warning_watch'] = empty($modSettings['warning_watch']) ? 1 : $modSettings['warning_watch'];
@@ -1147,12 +1134,21 @@ function ViewWatchedUsers()
 	// If this is being viewed by posts we actually change the columns to call a template each time.
 	if ($context['view_posts'])
 	{
+		register_helper(['create_button' => 'create_button']);
 		$listOptions['columns'] = array(
 			'posts' => array(
 				'data' => array(
 					'function' => function($post)
 					{
-						return template_user_watch_post_callback($post);
+						global $scripturl, $context, $txt;
+						$template = StoryBB\Template::load_partial('modcenter_user_watch_post');
+						$phpStr = StoryBB\Template::compile($template, [], 'modcenter_user_watch_post');
+						return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, [
+							'context' => $context,
+							'scripturl' => $scripturl,
+							'txt' => $txt,
+							'post' => $post,
+						]));
 					},
 				),
 			),
@@ -1393,7 +1389,6 @@ function ViewWarnings()
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) && (empty($subActions[$_REQUEST['sa']][1]) || allowedTo($subActions[$_REQUEST['sa']])) ? $_REQUEST['sa'] : 'log';
 
 	// Some of this stuff is overseas, so to speak.
-	loadTemplate('ModerationCenter');
 	loadLanguage('Profile');
 
 	// Setup the admin tabs.
@@ -1533,7 +1528,7 @@ function ViewWarningLog()
 
 						if (!empty($rowData['id_notice']))
 							$output .= '
-								&nbsp;<a href="' . $scripturl . '?action=moderate;area=notice;nid=' . $rowData['id_notice'] . '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="' . $txt['profile_warning_previous_notice'] . '"><span class="generic_icons filter centericon"></span></a>';
+								&nbsp;<a href="' . $scripturl . '?action=moderate;area=notice;nid=' . $rowData['id_notice'] . '" onclick="return reqOverlayDiv(this.href, \'' . $txt['show_notice'] . '\', \'warn.png\');" target="_blank" class="new_win" title="' . $txt['profile_warning_previous_notice'] . '"><span class="generic_icons filter centericon"></span></a>';
 						return $output;
 					},
 				),
@@ -1875,7 +1870,7 @@ function ModifyWarningTemplate()
 
 	// Standard template things.
 	$context['page_title'] = $context['is_edit'] ? $txt['mc_warning_template_modify'] : $txt['mc_warning_template_add'];
-	$context['sub_template'] = 'warn_template';
+	$context['sub_template'] = 'modcenter_warning_template_edit';
 	$context[$context['moderation_menu_name']]['current_subsection'] = 'templates';
 
 	// Defaults.
@@ -2018,9 +2013,8 @@ function ModerationSettings()
 	global $context, $txt, $user_info;
 
 	// Some useful context stuff.
-	loadTemplate('ModerationCenter');
 	$context['page_title'] = $txt['mc_settings'];
-	$context['sub_template'] = 'moderation_settings';
+	$context['sub_template'] = 'modcenter_settings';
 	$context[$context['moderation_menu_name']]['tab_data'] = array(
 		'title' => $txt['mc_prefs_title'],
 		'help' => '',

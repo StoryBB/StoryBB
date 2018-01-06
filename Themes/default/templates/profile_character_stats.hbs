@@ -1,0 +1,84 @@
+	{{! Statistics of characters. }}
+	<div id="profileview" class="roundframe">
+		<div id="generalstats">
+			<dl class="stats">
+				<dt>{{{txt.statPanel_total_posts}}}:</dt>
+				<dd>{{{context.num_posts}}} {{{txt.statPanel_posts}}}</dd>
+				<dt>{{{txt.statPanel_total_topics}}}:</dt>
+				<dd>{{{context.num_topics}}} {{{txt.statPanel_topics}}}</dd>
+			</dl>
+		</div>
+
+		{{! This next section draws a graph showing what times of day they post the most. }}
+		<div id="activitytime" class="flow_hidden">
+			<div class="title_bar">
+				<h3 class="titlebg">
+					<span class="generic_icons history"></span> {{{txt.statPanel_activityTime}}}
+				</h3>
+			</div>
+
+			{{#unless context.posts_by_time}}
+				<p class="centertext padading">{{{txt.statPanel_noPosts}}}</p>
+			{{/unless}}
+			{{#if context.posts_by_time}}
+				<ul class="activity_stats flow_hidden">
+					{{#each context.posts_by_time}}
+						<li {{#if is_last}} class="last"{{/if}}>
+							<div class="bar" style="padding-top: {{{inverted_percent relative_percent}}}px" title="{{{textTemplate ../txt.statPanel_activityTime_posts posts posts_percent}}}">
+								<div style="height: {{{relative_percent}}}px">
+									<span>{{{textTemplate ../txt.statPanel_activityTime_posts posts posts_percent}}}</span>
+								</div>
+							</div>
+							<span class="stats_hour">{{{hour_format}}}</span>
+						</li>
+					{{/each}}
+				</ul>
+			{{/if}}
+		</div>
+
+		{{! Two columns with the most popular boards by posts and activity (activity = users posts / total posts) }}
+		<div class="flow_hidden">
+			<div class="half_content">
+				<div class="title_bar">
+					<h3 class="titlebg">
+						<span class="generic_icons replies"></span> {{{txt.statPanel_topBoards}}}
+					</h3>
+				</div>
+				{{#unless context.popular_boards}}
+					<p class="centertext padding">{{{txt.statPanel_noPosts}}}</p>
+				{{/unless}}
+				{{#if context.popular_boards}}
+					<dl class="stats">
+						{{#each context.popular_boards}}
+							<dt>{{{link}}}</dt>
+							<dd>
+								<div class="profile_pie" style="background-position: -{{{pie_percent posts_percent}}}px 0" title="{{{textTemplate ../txt.statPanel_topBoards_memberposts posts total_posts_char posts_percent}}}">{{{textTemplate ../txt.statPanel_topBoards_memberposts posts total_posts_member posts_percent}}}</div>
+								{{#unless context.hide_num_posts}}{{posts}}{{/unless}}
+							</dd>
+						{{/each}}
+					</dl>
+				{{/if}}
+			</div>
+			<div class="half_content">
+				<div class="title_bar">
+					<h3 class="titlebg">
+						<span class="generic_icons replies"></span> {{{txt.statPanel_topBoardsActivity}}}
+					</h3>
+				</div>
+				{{#unless context.board_activity}}
+					<p class="centertext padding">{{{txt.statPanel_noPosts}}}</p>
+				{{/unless}}
+				{{#if context.board_activity}}
+					<dl class="stats">
+						{{#each context.board_activity}}
+							<dt>{{{link}}}</dt>
+							<dd>
+								<div class="profile_pie" style="background-position: -{{{pie_percent percent}}}px 0" title="{{{textTemplate ../txt.statPanel_topBoards_posts posts total_posts posts_percent}}}">{{{textTemplate ../txt.statPanel_topBoards_posts posts total_posts posts_percent}}}</div>
+								{{percent}}%
+							</dd>
+						{{/each}}
+					</dl>
+				{{/if}}
+			</div>
+		</div>
+	</div>

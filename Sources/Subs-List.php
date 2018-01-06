@@ -249,23 +249,8 @@ function createList($listOptions)
 	if (isset($listOptions['list_menu']))
 		$list_context['list_menu'] = $listOptions['list_menu'];
 
-	register_helper([
-		'genericlist' => 'generic_list_helper',
-	]);
-}
-
-function generic_list_helper($list_id = null)
-{
-	global $context;
-	// Get a shortcut to the current list.
-	$list_id = $list_id === null ? (!empty($context['default_list']) ? $context['default_list'] : '') : $list_id;
-	if (empty($list_id) || empty($context[$list_id]))
-		return;
-	$cur_list = &$context[$list_id];
-	$cur_list['list_id'] = $list_id;
-
 	/*
-		$cur_list['list_menu'] = array(
+		$list_context['list_menu'] = array(
 			// This is the style to use.  Tabs or Buttons (Text 1 | Text 2).
 			// By default tabs are selected if not set.
 			// The main difference between tabs and buttons is that tabs get highlighted if selected.
@@ -292,35 +277,23 @@ function generic_list_helper($list_id = null)
 			),
 		);
 	*/
-	
-	if (isset($cur_list['list_menu']) && !isset($cur_list['list_menu']['style']))
+
+	if (isset($list_context['list_menu']) && !isset($list_context['list_menu']['style']))
 	{
-		$cur_list['list_menu']['style'] = 'tabs';
+		$list_context['list_menu']['style'] = 'tabs';
 	}
-	if (!isset($cur_list['list_menu']['tab_direction']))
+	if (!isset($list_context['list_menu']['tab_direction']))
 	{
-		$cur_list['list_menu']['tab_direction'] = 'top';
+		$list_context['list_menu']['tab_direction'] = 'top';
 	}
 
-	$cur_list['list_menu']['links_list'] = [];
-	if (!empty($cur_list['list_menu']['links'])) {
-		foreach ($cur_list['list_menu']['links'] as $id => $link) {
-			$cur_list['list_menu']['links'][$id]['link_html'] = '<a href="' . $link['href'] . '">' . $link['label'] . '</a>';
-			$cur_list['list_menu']['links_list'][] = $cur_list['list_menu']['links'][$id]['link_html'];
+	$list_context['list_menu']['links_list'] = [];
+	if (!empty($list_context['list_menu']['links'])) {
+		foreach ($list_context['list_menu']['links'] as $id => $link) {
+			$list_context['list_menu']['links'][$id]['link_html'] = '<a href="' . $link['href'] . '">' . $link['label'] . '</a>';
+			$list_context['list_menu']['links_list'][] = $list_context['list_menu']['links'][$id]['link_html'];
 		}
 	}
-	
-	
-	$data = Array(
-		'context' => $context,
-		'cur_list' => $cur_list,
-		'headerCount' => count($cur_list['headers'])
-	);
-	
-	$template = loadTemplatePartial('generic_list');
-
-	$phpStr = compileTemplate($template, [], 'genericlist');
-	return prepareTemplate($phpStr, $data);
 }
 
 ?>

@@ -962,7 +962,7 @@ function Post($post_errors = array())
 
 	// Are post drafts enabled?
 	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && allowedTo('post_draft');
-	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']) && allowedTo('post_autosave_draft');
+	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']) && !empty($options['drafts_autosave_enabled']) && allowedTo('post_autosave_draft');
 
 	// Build a list of drafts that they can load in to the editor
 	if (!empty($context['drafts_save']))
@@ -1181,7 +1181,17 @@ function Post($post_errors = array())
 
 	// Finally, load the template.
 	if (!isset($_REQUEST['xml']))
-		loadTemplate('Post');
+	{
+		$context['sub_template'] = 'post_main';
+	}
+
+	StoryBB\Template::add_helper([
+		'browser' => 'isBrowser',
+		'formatKb' => function($size) {
+			return comma_format(round(max($size, 1024) / 1024), 0);
+		},
+		'sizeLimit' => function() { global $modSettings; return $modSettings['attachmentSizeLimit'] * 1024; },
+	]);
 
 	call_integration_hook('integrate_post_end');
 }
@@ -2062,7 +2072,6 @@ function AnnounceTopic()
 		fatal_lang_error('topic_gone', false);
 
 	loadLanguage('Post');
-	loadTemplate('Post');
 
 	$subActions = array(
 		'selectgroup' => 'AnnouncementSelectMembergroup',
@@ -2282,7 +2291,7 @@ function AnnouncementSend()
 
 	// For each language send a different mail - low priority...
 	foreach ($announcements as $lang => $mail)
-		sendmail($mail['recipients'], $mail['subject'], $mail['body'], null, 'ann-' . $lang, $mail['is_html'], 5);
+		StoryBB\Helper\Mail::send($mail['recipients'], $mail['subject'], $mail['body'], null, 'ann-' . $lang, $mail['is_html'], 5);
 
 	$context['percentage_done'] = round(100 * $context['start'] / $modSettings['latestMember'], 1);
 
@@ -2305,7 +2314,7 @@ function AnnouncementSend()
  */
 function getTopic()
 {
-	global $topic, $modSettings, $context, $smcFunc, $counter, $options;
+	global $topic, $modSettings, $context, $smcFunc, $options;
 
 	if (isset($_REQUEST['xml']))
 		$limit = '
@@ -2333,6 +2342,7 @@ function getTopic()
 		)
 	);
 	$context['previous_posts'] = array();
+	$context['ignored_posts'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Censor, BBC, ...
@@ -2340,16 +2350,18 @@ function getTopic()
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		// ...and store.
+		$is_ignored = !empty($modSettings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($row['id_member'], $context['user']['ignoreusers']);
 		$context['previous_posts'][] = array(
-			'counter' => $counter++,
 			'poster' => $row['poster_name'],
 			'message' => $row['body'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'id' => $row['id_msg'],
 			'is_new' => !empty($context['new_replies']),
-			'is_ignored' => !empty($modSettings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($row['id_member'], $context['user']['ignoreusers']),
+			'is_ignored' => $is_ignored,
 		);
+		if ($is_ignored)
+			$context['ignored_posts'][] = $row['id_msg'];
 
 		if (!empty($context['new_replies']))
 			$context['new_replies']--;

@@ -389,12 +389,6 @@ $txt['new_poll'] = 'New poll';
 $txt['poll_question'] = 'Question';
 $txt['poll_vote'] = 'Submit Vote';
 $txt['poll_total_voters'] = 'Total Members Voted';
-$txt['shortcuts'] = 'Shortcuts: alt+s save/post, alt+p preview';
-$txt['shortcuts_firefox'] = 'Shortcuts: shift+alt+s save/post, shift+alt+p preview';
-$txt['shortcuts_mac'] = 'Shortcuts: ⌃⌥S save/post, ⌃⌥P preview';
-$txt['shortcuts_drafts'] = ', alt+d save draft';
-$txt['shortcuts_drafts_firefox'] = ', shift+alt+d save draft';
-$txt['shortcuts_drafts_mac'] = ', ⌃⌥D save draft';
 $txt['poll_results'] = 'View results';
 $txt['poll_lock'] = 'Lock Voting';
 $txt['poll_unlock'] = 'Unlock Voting';
@@ -568,7 +562,6 @@ $txt['quick_mod_go'] = 'Go';
 $txt['quickmod_confirm'] = 'Are you sure you want to do this?';
 
 $txt['quick_reply'] = 'Quick Reply';
-$txt['quick_reply_desc'] = 'With <em>Quick-Reply</em> you can write a post when viewing a topic without loading a new page. You can still use bulletin board code and smileys as you would in a normal post.';
 $txt['quick_reply_warning'] = 'Warning! This topic is currently locked, only admins and moderators can reply.';
 $txt['quick_reply_verification'] = 'After submitting your post you will be directed to the regular post page to verify your post %1$s.';
 $txt['quick_reply_verification_guests'] = '(required for all guests)';
@@ -594,11 +587,11 @@ $txt['like_error'] = 'There was an error with your request.';
 $txt['like_disable'] = 'Likes feature is disabled.';
 $txt['not_valid_like_type'] = 'The liked type is not a valid type.';
 // Translators, if you need to make more strings to suit your language, e.g. $txt['likes_2'] = 'Two people like this', please do so.
-$txt['likes_1'] = '<a href="%1$s">%2$s person</a> likes this.';
-$txt['likes_n'] = '<a href="%1$s">%2$s people</a> like this.';
+$txt['likes_1'] = '%1$s person likes this.';
+$txt['likes_n'] = '%1$s people like this.';
 $txt['you_likes_0'] = 'You like this.';
-$txt['you_likes_1'] = 'You and <a href="%1$s">%2$s other person</a> like this.';
-$txt['you_likes_n'] = 'You and <a href="%1$s">%2$s other people</a> like this.';
+$txt['you_likes_1'] = 'You and %1$s other person like this.';
+$txt['you_likes_n'] = 'You and %1$s other people like this.';
 
 $txt['report_to_mod'] = 'Report to moderator';
 $txt['report_profile'] = 'Report profile of %1$s';
@@ -784,6 +777,7 @@ $txt['autosuggest_delete_item'] = 'Delete Item';
 // Debug related - when $db_show_debug is true.
 $txt['debug_templates'] = 'Templates: ';
 $txt['debug_subtemplates'] = 'Sub templates: ';
+$txt['debug_template_cache'] = 'Template cache';
 $txt['debug_language_files'] = 'Language files: ';
 $txt['debug_stylesheets'] = 'Style sheets: ';
 $txt['debug_files_included'] = 'Files included: ';
@@ -791,7 +785,9 @@ $txt['debug_memory_use'] = 'Memory used: ';
 $txt['debug_kb'] = 'KB.';
 $txt['debug_show'] = 'show';
 $txt['debug_cache_hits'] = 'Cache hits: ';
+$txt['debug_template_cache_hits'] = 'Template cache hits: ';
 $txt['debug_cache_misses'] = 'Cache misses: ';
+$txt['debug_template_cache_misses'] = 'Template cache misses: ';
 $txt['debug_cache_seconds_bytes'] = '%1$ss - %2$s bytes';
 $txt['debug_cache_seconds_bytes_total'] = '%1$ss for %2$s bytes';
 $txt['debug_queries_used'] = 'Queries used: %1$d.';
@@ -851,5 +847,8 @@ $txt['apply_filter'] = 'Apply Filter';
 $txt['no_primary_character_group'] = '(no primary character group)';
 
 $txt['search_by_character'] = 'By character';
+
+$txt['in_character_board'] = 'In-Character Board';
+$txt['out_of_character_board'] = 'Out-Of-Character Board';
 
 ?>

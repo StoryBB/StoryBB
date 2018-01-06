@@ -1,0 +1,82 @@
+	{{! Moving a topic to another board. }}
+	<div id="move_topic" class="lower_padding">
+		<form action="{{scripturl}}?action=movetopic2;current_board={{{context.current_board}}};topic={{{context.current_topic}}}.0" method="post" accept-charset="UTF-8" onsubmit="submitonce(this);">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.move_topic}}}</h3>
+			</div>
+			<div class="windowbg centertext">
+				<div class="move_topic">
+					<dl class="settings">
+						<dt>
+							<strong>{{{txt.move_to}}}:</strong>
+						</dt>
+						<dd>
+							<select name="toboard">
+								{{#each context.categories}}
+								<optgroup label="{{{name}}}">
+									{{#each boards}}
+									<option value="{{id}}"{{#if selected}} selected{{/if}}{{#if (eq id ../../context.current_board)}} disabled{{/if}}>{{#if (gt child_level 0)}}{{repeat '==' (sub child_level 1)}}=&gt; {{/if}}{{{name}}}</option>
+									{{/each}}
+								</optgroup>
+								{{/each}}
+							</select>
+						</dd>
+					</dl>
+					{{! Disable the reason textarea when the postRedirect checkbox is unchecked... }}
+					<label for="reset_subject"><input type="checkbox" name="reset_subject" id="reset_subject" onclick="document.getElementById('subjectArea').style.display = this.checked ? 'block' : 'none';" class="input_check"> {{{txt.movetopic_change_subject}}}.</label><br>
+   					<fieldset id="subjectArea" style="display: none;">
+						<dl class="settings">
+							<dt><strong>{{{txt.movetopic_new_subject}}}:</strong></dt>
+							<dd><input type="text" name="custom_subject" size="30" value="{{{context.subject}}}" class="input_text"></dd>
+						</dl>
+						<label for="enforce_subject"><input type="checkbox" name="enforce_subject" id="enforce_subject" class="input_check"> {{{txt.movetopic_change_all_subjects}}}.</label>
+					</fieldset>
+
+					<label for="postRedirect"><input type="checkbox" name="postRedirect" id="postRedirect"{{#if context.is_approved}} checked{{/if}} onclick="{{#unless context.is_approved}}if (this.checked && !confirm('{{{txt.move_topic_unapproved_js}}}')) return false; {{/unless}} document.getElementById('reasonArea').style.display = this.checked ? 'block' : 'none';" class="input_check"> {{{txt.post_redirection}}}.</label>
+					<fieldset id="reasonArea" style="margin-top: 1ex;{{#unless context.is_approved}}display: none;{{/unless}}">
+						<dl class="settings">
+							<dt>
+								{{{txt.move_why}}}
+							</dt>
+							<dd>
+								<textarea name="reason">{{{txt.movetopic_default}}}</textarea>
+							</dd>
+							<dt>
+								<label for="redirect_topic">{{{txt.movetopic_redirect}}}</label>
+							</dt>
+							<dd>
+								<input type="checkbox" name="redirect_topic" id="redirect_topic" checked class="input_check">
+							</dd>
+
+							{{#if (eq modSettings.allow_expire_redirect '1')}}
+							<dt>
+								{{{txt.redirect_topic_expires}}}
+							</dt>
+							<dd>
+								<select name="redirect_expires">
+									<option value="0">{{{txt.never}}}</option>
+									<option value="1440">{{{txt.one_day}}}</option>
+									<option value="10080" selected>{{{txt.one_week}}}</option>
+									<option value="20160">{{{txt.two_weeks}}}</option>
+									<option value="43200">{{{txt.one_month}}}</option>
+									<option value="86400">{{{txt.two_months}}}</option>
+								</select>
+							</dd>
+							{{else}}
+								<input type="hidden" name="redirect_expires" value="0">
+							{{/if}}
+						</dl>
+					</fieldset>
+
+					<input type="submit" value="{{{txt.move_topic}}}" onclick="return submitThisOnce(this);" class="button_submit">
+				</div>
+			</div>
+
+			{{#if context.back_to_topic}}
+			<input type="hidden" name="goback" value="1">
+			{{/if}}
+
+			{{session_form}}
+			<input type="hidden" name="seqnum" value="{{{context.form_sequence_number}}}">
+		</form>
+	</div>

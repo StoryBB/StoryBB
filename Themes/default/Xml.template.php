@@ -238,9 +238,6 @@ if (!function_exists('template_menu'))
 	function template_menu()
 	{
 	}
-	function theme_linktree()
-	{
-	}
 }
 
 /**

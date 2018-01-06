@@ -917,6 +917,7 @@ function ForumSettings()
 
 	// If redirect in effect, force ssl ON
 	require_once(dirname(__FILE__) . '/Sources/Subs.php');
+	sbb_autoload();
 	if (https_redirect_active($incontext['detected_url'])) {
 		$incontext['ssl_chkbx_protected'] = true;
 		$incontext['ssl_chkbx_checked'] = true;
@@ -1310,6 +1311,7 @@ function AdminAccount()
 	require_once($sourcedir . '/Subs-Auth.php');
 
 	require_once($sourcedir . '/Subs.php');
+	sbb_autoload();
 
 	// We need this to properly hash the password for Admin
 	$smcFunc['strtolower'] = function($string) {
@@ -1363,11 +1365,6 @@ function AdminAccount()
 		if (strlen($_POST['password1']) < 4)
 		{
 			$incontext['error'] = $txt['error_user_settings_no_password'];
-			return false;
-		}
-		if (!file_exists($sourcedir . '/Subs.php'))
-		{
-			$incontext['error'] = $txt['error_subs_missing'];
 			return false;
 		}
 

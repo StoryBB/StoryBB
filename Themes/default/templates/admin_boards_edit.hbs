@@ -1,0 +1,386 @@
+	{{! Editing a board. }}
+	<div id="manage_boards">
+		<form action="{{scripturl}}?action=admin;area=manageboards;sa=board2" method="post" accept-charset="UTF-8">
+			<input type="hidden" name="boardid" value="{{{context.board.id}}}">
+			<div class="cat_bar">
+				<h3 class="catbg">
+					{{#if context.board.is_new}}{{{txt.mboards_new_board_name}}}{{else}}{{{txt.boardsEdit}}}{{/if}}
+				</h3>
+			</div>
+			<div class="windowbg2 noup">
+				<dl class="settings">
+
+					{{! Option for choosing the category the board lives in. }}
+					<dt>
+						<strong>{{{txt.mboards_category}}}:</strong>
+					</dt>
+					<dd>
+						<select name="new_cat" onchange="if (this.form.order) {this.form.order.disabled = this.options[this.selectedIndex].value != 0; this.form.board_order.disabled = this.options[this.selectedIndex].value != 0 || this.form.order.options[this.form.order.selectedIndex].value == '';}">
+							{{#each context.categories}}
+							<option{{#if selected}} selected{{/if}} value="{{id}}">{{{name}}}</option>
+							{{/each}}
+						</select>
+					</dd>
+
+					{{! If this isn't the only board in this category let the user choose where the board is to live. }}
+					{{#if (or (and context.board.is_new (gt (count context.board_order) 0)) (gt (count context.board_order) 1))}}
+					<dt>
+						<strong>{{{txt.order}}}:</strong>
+					</dt>
+					<dd>
+
+						{{! The first select box gives the user the option to position it before, after or as a child of another board. }}
+						<select id="order" name="placement" onchange="this.form.board_order.disabled = this.options[this.selectedIndex].value == '';">
+							{{#unless context.board.is_new}}<option value="">({{{txt.mboards_unchanged}}})</option>{{/unless}}
+							<option value="after">{{{txt.mboards_order_after}}}...</option>
+							<option value="child">{{{txt.mboards_order_child_of}}}...</option>
+							<option value="before">{{{txt.mboards_order_before}}}...</option>
+						</select>';
+
+						{{! The second select box lists all the boards in the category. }}
+						<select id="board_order" name="board_order"{{#unless context.board.is_new}} disabled{{/unless}}>
+							{{#unless context.board.is_new}}<option value="">({{{txt.mboards_unchanged}}})</option>{{/unless}}
+
+							{{#each context.board_order}}
+							<option{{#if selected}} selected{{/if}} value="{{id}}">{{{name}}}</option>
+							{{/each}}
+
+						</select>
+					</dd>
+					{{/if}}
+
+					{{! Options for board name and description. }}
+					<dt>
+						<strong>{{{txt.full_name}}}:</strong><br>
+						<span class="smalltext">{{{txt.name_on_display}}}</span>
+					</dt>
+					<dd>
+						<input type="text" name="board_name" value="{{{context.board.name}}}" size="30" class="input_text">
+					</dd>
+					<dt>
+						<strong>{{{txt.mboards_description}}}:</strong><br>
+						<span class="smalltext">{{{context.category_allowed_tags_desc}}}</span>
+					</dt>
+					<dd>
+						<textarea name="desc" rows="3" cols="35" style="width:99%;">{{{context.board.description}}}</textarea>
+					</dd>
+					<dt>
+						<strong>{{{txt.board_in_character}}}</strong><br>
+						<span class="smalltext">{{{txt.board_in_character_desc}}}</span><br>
+					</dt>
+					<dd>
+						<input type="checkbox" name="in_character"{{#if (eq context.board.in_character '1')}} checked{{/if}} class="input_check">
+					</dd>
+					<dt>
+						<strong>{{{txt.permission_profile}}}:</strong><br>
+						<span class="smalltext">{{{context.permission_profile_desc}}}</span>
+					</dt>
+					<dd>
+						<select name="profile">'
+							{{#if context.board.is_new}}
+							<option value="-1">[{{{txt.permission_profile_inherit}}}]</option>
+							{{/if}}
+
+							{{#each context.profiles}}
+							<option value="{{@key}}"{{#if (eq key ../context.board.profile)}} selected{{/if}}>{{{name}}}</option>
+							{{/each}}
+						</select>
+					</dd>
+					<dt>
+						<strong>{{{txt.mboards_groups}}}:</strong><br>
+						<span class="smalltext">{{#if (neq modSettings.deny_boards_access 1)}}{{{txt.mboards_groups_desc}}}{{else}}{{{txt.boardsaccess_option_desc}}}{{/if}}</span>
+					</dt>
+					<dd>
+
+						{{#if (eq modSettings.deny_boards_access '1')}}
+						<table>
+							<tr>
+								<td></td>
+								<th>{{{txt.permissions_option_on}}}</th>
+								<th>{{{txt.permissions_option_off}}}</th>
+								<th>{{{txt.permissions_option_deny}}}</th>
+							</tr>
+						{{/if}}
+
+						{{! List all the membergroups so the user can choose who may access this board. }}
+						{{#each context.groups}}
+						{{#if (neq modSettings.deny_boards_access '1')}}
+							<label for="groups_{{id}}">
+								<input type="checkbox" name="groups[{{id}}]" value="allow" id="groups_{{id}}"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}} class="input_check">
+								<span{{#if is_post_group}} class="post_group" title="{{{../txt.mboards_groups_post_group}}}"{{/if}}{{#if (eq id '0')}} class="regular_members" title="{{{../txt.mboards_groups_regular_members}}}"{{/if}}>
+									{{{name}}}
+								</span>
+							</label><br>
+						{{else}}
+							<tr>
+								<td>
+									<label for="groups_{{id}}_a">
+										<span{{#if is_post_group}} class="post_group" title="{{{../txt.mboards_groups_post_group}}}"{{/if}}{{#if (eq id '0')}} class="regular_members" title="{{{../txt.mboards_groups_regular_members}}}"{{/if}}>
+											{{{name}}}
+										</span>
+									</label>
+								</td>
+								<td>
+									<input type="radio" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}} class="input_radio">
+								</td>
+								<td>
+									<input type="radio" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}} class="input_radio">
+								</td>
+								<td>
+									<input type="radio" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}} class="input_radio">
+								</td>
+								<td></td>
+							</tr>
+						{{/if}}
+						{{/each}}
+
+						{{#if (neq modSettings.deny_boards_access '1')}}
+							<span class="select_all_box">
+								<em>{{{txt.check_all}}}</em> <input type="checkbox" class="input_check" onclick="invertAll(this, this.form, 'groups[');">
+							</span>
+							<br><br>
+						{{else}}
+								<tr class="select_all_box">
+									<td>
+									</td>
+									<td>
+										<input type="radio" name="select_all" class="input_radio" onclick="selectAllRadio(this, this.form, 'groups', 'allow');">
+									</td>
+									<td>
+										<input type="radio" name="select_all" class="input_radio" onclick="selectAllRadio(this, this.form, 'groups', 'ignore');">
+									</td>
+									<td>
+										<input type="radio" name="select_all" class="input_radio" onclick="selectAllRadio(this, this.form, 'groups', 'deny');">
+									</td>
+									<td>
+										<em>{{{txt.check_all}}}</em>
+									</td>
+								</tr>
+							</table>
+						{{/if}}
+					</dd>
+
+					{{! Options to choose moderators, specify as announcement board and choose whether to count posts here. }}
+					<dt>
+						<strong>{{{txt.mboards_moderators}}}:</strong><br>
+						<span class="smalltext">{{{txt.mboards_moderators_desc}}}</span><br>
+					</dt>
+					<dd>
+						<input type="text" name="moderators" id="moderators" value="{{{context.board.moderator_list}}}" size="30" class="input_text">
+						<div id="moderator_container"></div>
+					</dd>
+					<dt>
+						<strong>{{{txt.mboards_moderator_groups}}}:</strong><br>
+						<span class="smalltext">{{{txt.mboards_moderator_groups_desc}}}</span><br>
+					</dt>
+					<dd>
+						<input type="text" name="moderator_groups" id="moderator_groups" value="{{{context.board.moderator_groups_list}}}" size="30" class="input_text">
+						<div id="moderator_group_container"></div>
+					</dd>
+				</dl>
+				<script>
+					$(document).ready(function () {
+						$(".select_all_box").each(function () {
+							$(this).removeClass('select_all_box');
+						});
+					});
+				</script>
+				<hr>
+
+				{{#if (and (not context.board.is_recycle) (not context.board.topics))}}
+					<dl class="settings">
+						<dt>
+							<strong{{#if context.board.topics}} style="color: gray;"{{/if}}>{{{txt.mboards_redirect}}}:</strong><br>
+							<span class="smalltext">{{{txt.mboards_redirect_desc}}}</span><br>
+						</dt>
+						<dd>
+							<input type="checkbox" id="redirect_enable" name="redirect_enable"{{#if context.board.redirect}} checked{{/if}} onclick="refreshOptions();" class="input_check">
+						</dd>
+					</dl>
+
+					<div id="redirect_address_div">
+						<dl class="settings">
+							<dt>
+								<strong>{{{txt.mboards_redirect_url}}}:</strong><br>
+								<span class="smalltext">{{{txt.mboards_redirect_url_desc}}}</span><br>
+							</dt>
+							<dd>
+								<input type="text" name="redirect_address" value="{{{context.board.redirect}}}" size="40" class="input_text">
+							</dd>
+						</dl>
+					</div>
+
+					{{#if context.board.redirect}}
+					<div id="reset_redirect_div">
+						<dl class="settings">
+							<dt>
+								<strong>{{{txt.mboards_redirect_reset}}}:</strong><br>
+								<span class="smalltext">{{{txt.mboards_redirect_reset_desc}}}</span><br>
+							</dt>
+							<dd>
+								<input type="checkbox" name="reset_redirect" class="input_check">
+								<em>({{{textTemplate txt.mboards_current_redirects context.board.posts}}})</em>
+							</dd>
+						</dl>
+					</div>
+					{{/if}}
+				{{/if}}
+
+				<div id="count_posts_div">
+					<dl class="settings">
+						<dt>
+							<strong>{{{txt.mboards_count_posts}}}:</strong><br>
+							<span class="smalltext">{{{txt.mboards_count_posts_desc}}}</span><br>
+						</dt>
+						<dd>
+							<input type="checkbox" name="count"{{#if context.board.count_posts}} checked{{/if}} class="input_check">
+						</dd>
+					</dl>
+				</div>
+
+				{{! Here the user can choose to force this board to use a theme other than the default theme for the forum. }}
+				<div id="board_theme_div">
+					<dl class="settings">
+						<dt>
+							<strong>{{{txt.mboards_theme}}}:</strong><br>
+							<span class="smalltext">{{{txt.mboards_theme_desc}}}</span><br>
+						</dt>
+						<dd>
+							<select name="boardtheme" id="boardtheme" onchange="refreshOptions();">
+								<option value="0"{{#if (eq context.board.theme 0)}} selected{{/if}}>{{{txt.mboards_theme_default}}}</option>
+								{{#each context.themes}}
+								<option value="{{id}}"{{#if (eq ../context.board.theme id)}} selected{{/if}}>{{{name}}}</option>
+								{{/each}}
+							</select>
+						</dd>
+					</dl>
+				</div>
+				<div id="override_theme_div">
+					<dl class="settings">
+						<dt>
+							<strong>{{{txt.mboards_override_theme}}}:</strong><br>
+							<span class="smalltext">{{{txt.mboards_override_theme_desc}}}</span><br>
+						</dt>
+						<dd>
+							<input type="checkbox" name="override_theme"{{#if context.board.override_theme}} checked{{/if}} class="input_check">
+						</dd>
+					</dl>
+				</div>
+
+				{{! Show any board settings added by mods using the 'integrate_edit_board' hook. }}
+				{{#if context.custom_board_settings}}
+				<hr>
+				<div id="custom_board_settings">
+					<dl class="settings">
+						{{#each context.custom_board_settings}}
+						{{#if (and dt dd)}}
+							<dt class="clear{{#unless (is_numeric @key)}} cbs_{{@key}}{{/unless}}">
+								{{{dt}}}
+							</dt>
+							<dd{{#unless (is_numeric @key)}} class="cbs_{{@key}}"{{/unless}}>
+								{{{dd}}}
+							</dd>
+						{{/if}}
+						{{/each}}
+					</dl>
+				</div>
+				{{/if}}
+
+				{{#if context.board.is_recycle}}
+				<div class="noticebox">{{{txt.mboards_recycle_disabled_delete}}}</div>
+				{{/if}}
+
+				<input type="hidden" name="rid" value="{{{context.redirect_location}}}">
+				{{session_form}}
+				{{token_form context.token_check}}
+
+				{{! If this board has no children don't bother with the next confirmation screen. }}
+				{{#if context.board.no_children}}
+				<input type="hidden" name="no_children" value="1">
+				{{/if}}
+
+				{{#if context.board.is_new}}
+					<input type="hidden" name="cur_cat" value="{{{context.board.category}}}">
+					<input type="submit" name="add" value="{{{txt.mboards_new_board}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
+				{{else}}
+					<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
+				{{/if}}
+
+				{{#if (and (not context.board.is_new) (not context.board.is_recycle))}}
+				<input type="submit" name="delete" value="{{{txt.mboards_delete_board}}}" data-confirm="{{{txt.boardConfirm}}}" class="button_submit you_sure">
+				{{/if}}
+			</div>
+		</form>
+	</div>
+
+<script>
+	var oModeratorSuggest = new smc_AutoSuggest({
+		sSelf: 'oModeratorSuggest',
+		sSessionId: smf_session_id,
+		sSessionVar: smf_session_var,
+		sSuggestId: 'moderators',
+		sControlId: 'moderators',
+		sSearchType: 'member',
+		bItemList: true,
+		sPostName: 'moderator_list',
+		sURLMask: 'action=profile;u=%item_id%',
+		sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
+		sItemListContainerId: 'moderator_container',
+		aListItems: [
+			{{#each context.board.moderators}}
+			{
+				sItemId: {{{json @key}}},
+				sItemName: {{{json .}}}
+			}{{#if (neq @key ../context.board.last_moderator_id)}},{{/if}}
+			{{/each}}
+		]
+	});
+
+	var oModeratorGroupSuggest = new smc_AutoSuggest({
+		sSelf: 'oModeratorGroupSuggest',
+		sSessionId: smf_session_id,
+		sSessionVar: smf_session_var,
+		sSuggestId: 'moderator_groups',
+		sControlId: 'moderator_groups',
+		sSearchType: 'membergroups',
+		bItemList: true,
+		sPostName: 'moderator_group_list',
+		sURLMask: 'action=groups;sa=members;group=%item_id%',
+		sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
+		sItemListContainerId: 'moderator_group_container',
+		aListItems: [
+			{{#each context.board.moderator_groups}}
+				{
+					sItemId: {{{json @key}}},
+					sItemName: {{{json .}}}
+				}{{#if (neq @key ../context.board.last_moderator_group_id)}},{{/if}}
+			{{/each}}
+			]
+		});
+
+	function refreshOptions()
+	{
+		var redirect = document.getElementById("redirect_enable");
+		var redirectEnabled = redirect ? redirect.checked : false;
+		var nonDefaultTheme = document.getElementById("boardtheme").value == 0 ? false : true;
+
+		// What to show?
+		document.getElementById("override_theme_div").style.display = redirectEnabled || !nonDefaultTheme ? "none" : "";
+		document.getElementById("board_theme_div").style.display = redirectEnabled ? "none" : "";
+		document.getElementById("count_posts_div").style.display = redirectEnabled ? "none" : "";
+
+		{{#if (and (not context.board.topics) (not context.board.is_recycle))}}
+			document.getElementById("redirect_address_div").style.display = redirectEnabled ? "" : "none";
+
+			{{#if context.board.redirect}}
+			document.getElementById("reset_redirect_div").style.display = redirectEnabled ? "" : "none";
+			{{/if}}
+		{{/if}}
+
+		{{! Include any JavaScript added by mods using the 'integrate_edit_board' hook. }}
+		{{#if context.custom_refreshOptions}}
+			{{#each context.custom_refreshOptions}}{{{.}}}{{/each}}
+		{{/if}}
+	}
+	refreshOptions();
+</script>

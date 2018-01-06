@@ -819,9 +819,6 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
  */
 function MergeTopics()
 {
-	// Load the template....
-	loadTemplate('MoveTopic');
-
 	$subActions = array(
 		'done' => 'MergeDone',
 		'execute' => 'MergeExecute',
@@ -976,7 +973,8 @@ function MergeIndex()
 	if (empty($context['topics']) && count($merge_boards) <= 1 && !in_array(0, $merge_boards))
 		fatal_lang_error('merge_need_more_topics');
 
-	$context['sub_template'] = 'merge';
+	StoryBB\Template::add_helper(['create_button' => 'create_button']);
+	$context['sub_template'] = 'topic_merge';
 }
 
 /**
@@ -1142,7 +1140,6 @@ function MergeExecute($topics = array())
 	if (!empty($topics))
 	{
 		isAllowedTo('merge_any', $boards);
-		loadTemplate('MoveTopic');
 	}
 
 	// Get the boards a user is allowed to merge in.
@@ -1224,7 +1221,7 @@ function MergeExecute($topics = array())
 			$context['topics'][$id]['selected'] = $topic['id'] == $firstTopic;
 
 		$context['page_title'] = $txt['merge'];
-		$context['sub_template'] = 'merge_extra_options';
+		$context['sub_template'] = 'topic_merge_options';
 		return;
 	}
 
@@ -1750,7 +1747,7 @@ function MergeDone()
 	$context['target_topic'] = (int) $_GET['to'];
 
 	$context['page_title'] = $txt['merge'];
-	$context['sub_template'] = 'merge_done';
+	$context['sub_template'] = 'topic_merge_done';
 }
 
 ?>

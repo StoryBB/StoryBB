@@ -648,7 +648,7 @@ function smf_db_error($db_string, $connection = null)
 		// Check for errors like 145... only fix it once every three days, and send an email. (can't use empty because it might not be set yet...)
 		if (!empty($fix_tables))
 		{
-			// Subs-Admin.php for updateSettingsFile(), Subs-Post.php for sendmail().
+			// Subs-Admin.php for updateSettingsFile()
 			require_once($sourcedir . '/Subs-Admin.php');
 			require_once($sourcedir . '/Subs-Post.php');
 
@@ -663,7 +663,7 @@ function smf_db_error($db_string, $connection = null)
 					REPAIR TABLE $table", false, false);
 
 			// And send off an email!
-			sendmail($webmaster_email, $txt['database_error'], $txt['tried_to_repair'], null, 'dberror');
+			StoryBB\Helper\Mail::send($webmaster_email, $txt['database_error'], $txt['tried_to_repair'], null, 'dberror');
 
 			$modSettings['cache_enable'] = $old_cache;
 

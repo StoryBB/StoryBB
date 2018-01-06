@@ -39,7 +39,6 @@ function MessageIndex()
 		redirectexit($board_info['redirect']);
 	}
 
-	//loadTemplate('MessageIndex');
 	$context['sub_template'] = 'msgIndex_main';
 	register_helper([
 		'qmod_option' => function($action) {
@@ -372,8 +371,8 @@ function MessageIndex()
 				LEFT JOIN {db_prefix}characters AS cl ON (cl.id_character = ml.id_character)
 				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)
 				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)
-				LEFT JOIN {db_prefix}attachments AS af ON (af.id_character = mf.id_character)
-				LEFT JOIN {db_prefix}attachments AS al ON (al.id_character = ml.id_character)' . ($user_info['is_guest'] ? '' : '
+				LEFT JOIN {db_prefix}attachments AS af ON (af.id_character = mf.id_character AND af.attachment_type = 1)
+				LEFT JOIN {db_prefix}attachments AS al ON (al.id_character = ml.id_character AND al.attachment_type = 1)' . ($user_info['is_guest'] ? '' : '
 				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})') . '
 				' . (!empty($message_index_tables) ? implode("\n\t\t\t\t", $message_index_tables) : '') . '

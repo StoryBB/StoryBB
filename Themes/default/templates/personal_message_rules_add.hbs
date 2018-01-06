@@ -1,0 +1,227 @@
+<script>
+	var criteriaNum = 0;
+	var actionNum = 0;
+	var groups = new Array()
+	var labels = new Array()
+	{{#each context.groups}}
+	groups[{{@key}}] = "{{.}}";
+	{{/each}}
+	{{#each context.labels}}
+	{{#if (neq id -1)}}
+	labels[{{id}}] = "{{name}}";
+	{{/if}}
+	{{/each}}
+	function addCriteriaOption()
+	{
+		if (criteriaNum == 0)
+		{
+			for (var i = 0; i < document.forms.addrule.elements.length; i++)
+				if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
+					criteriaNum++;
+		}
+		criteriaNum++
+
+		setOuterHTML(document.getElementById("criteriaAddHere"), '<br><select name="ruletype[' 
+		+ criteriaNum + ']" id="ruletype' + criteriaNum + '" onchange="updateRuleDef(' + criteriaNum + '); rebuildRuleDesc();"><option value="">{{txt.pm_rule_criteria_pick}}:<' 
+		+ '/option><option value="mid">{{txt.pm_rule_mid}}<' + '/option><option value="gid">{{txt.pm_rule_gid}}<' 
+		+ '/option><option value="sub">{{txt.pm_rule_sub}}<' + '/option><option value="msg">{{txt.pm_rule_msg}}<'
+		+ '/option><option value="bud">{{txt.pm_rule_bud}}<' + '/option><' + '/select>&nbsp;<span id="defdiv' + criteriaNum + '" style="display: none;"><input type="text" name="ruledef[' + criteriaNum + ']" id="ruledef' + criteriaNum 
+		+ '" onkeyup="rebuildRuleDesc();" value="" class="input_text"><' + '/span><span id="defseldiv' + criteriaNum + '" style="display: none;"><select name="ruledefgroup[' + criteriaNum + ']" id="ruledefgroup' + criteriaNum + '" onchange="rebuildRuleDesc();"><option value="' + '">{{txt.pm_rule_sel_group}}<'
+		+ '/option>{{#each context.groups}}<option value="{{@key}}">{{.}}<' + '/option>{{/each}}' +  '<' + '/select><' + '/span><span id="criteriaAddHere"><' + '/span>');
+	}
+	 function addActionOption()
+		{
+			if (actionNum == 0)
+			{
+				for (var i = 0; i < document.forms.addrule.elements.length; i++)
+					if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
+						actionNum++;
+			}
+			actionNum++
+			setOuterHTML(document.getElementById("actionAddHere"), '<br><select name="acttype[' + actionNum + ']" id="acttype' + actionNum + '" onchange="updateActionDef(' + actionNum + '); rebuildRuleDesc();"><option value="">{{txt.pm_rule_sel_action}}:<' 
+			+ '/option><option value="lab">{{txt.pm_rule_label}}<' + '/option><option value="del">{{txt.pm_rule_delete}}<'
+			+ '/option><' + '/select>&nbsp;<span id="labdiv' + actionNum + '" style="display: none;"><select name="labdef[' + actionNum + ']" id="labdef' + actionNum
+			+ '" onchange="rebuildRuleDesc();"><option value="">{{txt.pm_rule_sel_label}}<' + '/option>{{#each context.labels}}{{#if (neq id -1)}}<option value="{{id}}">{{name}}<' + '/option>{{/if}}{{/each}}'
+            + '<' + '/select><' + '/span><span id="actionAddHere"><' + '/span>');
+		}
+		
+    	// Rebuild the rule description!
+		function rebuildRuleDesc()
+		{
+			// Start with nothing.
+			var text = "";
+			var joinText = "";
+			var actionText = "";
+			var hadBuddy = false;
+			var foundCriteria = false;
+			var foundAction = false;
+			var curNum, curVal, curDef;
+
+			for (var i = 0; i < document.forms.addrule.elements.length; i++)
+			{
+				if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
+				{
+					if (foundCriteria)
+						joinText = document.getElementById("logic").value == 'and' ? {{{jsEscape txt.pm_readable_and}}} : {{{jsEscape txt.pm_readable_or}}};
+						else
+						joinText = '';
+					foundCriteria = true;
+
+					curNum = document.forms.addrule.elements[i].id.match(/\d+/);
+					curVal = document.forms.addrule.elements[i].value;
+					if (curVal == "gid")
+						curDef = document.getElementById("ruledefgroup" + curNum).value.php_htmlspecialchars();
+					else if (curVal != "bud")
+						curDef = document.getElementById("ruledef" + curNum).value.php_htmlspecialchars();
+					else
+						curDef = "";
+
+					// What type of test is this?
+					if (curVal == "mid" && curDef)
+						text += joinText + {{{jsEscape txt.pm_readable_member}}}.replace("{MEMBER}", curDef);
+					else if (curVal == "gid" && curDef && groups[curDef])
+						text += joinText + {{{jsEscape txt.pm_readable_group}}}.replace("{GROUP}", groups[curDef]);
+					else if (curVal == "sub" && curDef)
+						text += joinText + {{{jsEscape txt.pm_readable_subject}}}.replace("{SUBJECT}", curDef);
+					else if (curVal == "msg" && curDef)
+						text += joinText + {{{jsEscape txt.pm_readable_body}}}.replace("{BODY}", curDef);
+					else if (curVal == "bud" && !hadBuddy)
+					{
+						text += joinText + {{{jsEscape txt.pm_readable_buddy}}};
+						hadBuddy = true;
+					}
+				}
+				if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
+				{
+					if (foundAction)
+						joinText = {{{jsEscape txt.pm_readable_and}}};
+					else
+						joinText = "";
+					foundAction = true;
+
+					curNum = document.forms.addrule.elements[i].id.match(/\d+/);
+					curVal = document.forms.addrule.elements[i].value;
+					if (curVal == "lab")
+						curDef = document.getElementById("labdef" + curNum).value.php_htmlspecialchars();
+					else
+						curDef = "";
+
+					// Now pick the actions.
+					if (curVal == "lab" && curDef && labels[curDef])
+						actionText += joinText + {{{jsEscape txt.pm_readable_label}}}.replace("{LABEL}", labels[curDef]);
+					else if (curVal == "del")
+						actionText += joinText + {{{jsEscape txt.pm_readable_delete}}};
+				}
+			}
+
+			// If still nothing make it default!
+			if (text == "" || !foundCriteria)
+				text = "{{txt.pm_rule_not_defined}}";
+			else
+			{
+				if (actionText != "")
+					text += {{{jsEscape txt.pm_readable_then}}} + actionText;
+				text = {{{jsEscape txt.pm_readable_start}}} + text + {{{jsEscape txt.pm_readable_end}}};
+			}
+
+			// Set the actual HTML!
+			setInnerHTML(document.getElementById("ruletext"), text);
+		}
+</script>
+<form action="{{scripturl}}?action=pm;sa=manrules;save;rid={{context.rid}}" method="post" accept-charset="UTF-8" name="addrule" id="addrule" class="flow_hidden">
+		<div class="cat_bar">
+			<h3 class="catbg">{{#if (eq context.rid 0)}}{{txt.pm_add_rule}}{{else}}{{txt.pm_edit_rule}}{{/if}}</h3>
+		</div>
+		<div class="windowbg">
+			<dl class="addrules">
+				<dt class="floatleft">
+					<strong>{{txt.pm_rule_name}}:</strong><br>
+					<span class="smalltext">{{txt.pm_rule_name_desc}}</span>
+				</dt>
+				<dd class="floatleft">
+					<input type="text" name="rule_name" value="{{#if context.rule.name}}{{context.rule.name}}{{else}}{{txt.pm_rule_name_default}}{{/if}}" size="50" class="input_text">
+				</dd>
+			</dl>
+			<fieldset>
+				<legend>{{txt.pm_rule_criteria}}</legend>
+				{{#each context.rule.criteria}}
+					{{#unless t}}<div id="removeonjs1">{{/unless}}
+				<select name="ruletype[{{@key}}]" id="ruletype{{@key}}" onchange="updateRuleDef({{@key}}); rebuildRuleDesc();">
+					<option value="">{{../txt.pm_rule_criteria_pick}}:</option>
+					{{#each ../context.criteriaTypes}}
+					<option value="{{.}}"{{#if (eq ../t .)}} selected{{/if}}>{{get_text 'pm_rule_' .}}</option>
+					{{/each}}
+				</select>
+				<span id="defdiv{{@key}}" {{#unless (or (eq t 'gid') (eq t 'bud'))}} style="display: none;"{{/unless}}>
+					<input type="text" name="ruledef[{{@key}}]" id="ruledef{{@key}}" onkeyup="rebuildRuleDesc();" value="{{#if (or (eq t 'mid') (eq t 'sub') (eq t 'msg'))}}{{v}}{{/if}}" class="input_text">
+				</span>
+				<span id="defseldiv{{@key}}" {{#unless (eq t 'gid')}} style="display: none;"{{/unless}}>
+					<select name="ruledefgroup[{{@key}}]" id="ruledefgroup{{@key}}" onchange="rebuildRuleDesc();">
+						<option value="">{{../txt.pm_rule_sel_group}}</option>
+						{{#each ../context.groups}}
+						<option value="{{@key}}" {{#if (and (eq ../t 'gid') (eq ../v @key))}} selected{{/if}}>{{.}}</option>
+						{{/each}}
+					</select>
+				</span>
+				<br>
+				{{#unless t}}</div>{{/unless}}
+				{{/each}}
+				<span id="criteriaAddHere"></span><br>
+				<a href="#" onclick="addCriteriaOption(); return false;" id="addonjs1" style="display: none;">({{txt.pm_rule_criteria_add}})</a>
+				<br><br>
+				{{txt.pm_rule_logic}}:
+				<select name="rule_logic" id="logic" onchange="rebuildRuleDesc();">
+					<option value="and"{{#if (eq context.rule.logic 'and')}} selected{{/if}}>{{txt.pm_rule_logic_and}}</option>
+					<option value="or"{{#if (eq context.rule.logic 'or')}} selected{{/if}}>{{txt.pm_rule_logic_or}}</option>
+				</select>
+			</fieldset>
+			<fieldset>
+				<legend>{{txt.pm_rule_actions}}</legend>
+				{{#each context.rule.actions}}
+					{{#unless t}}<div id="removeonjs2">{{/unless}}
+				<select name="acttype[{{@key}}]" id="acttype{{@key}}" onchange="updateActionDef({{@key}}); rebuildRuleDesc();">
+					<option value="">{{../txt.pm_rule_sel_action}}:</option>
+					<option value="lab"{{#if (eq t 'lab')}} selected{{/if}}>{{../txt.pm_rule_label}}</option>
+					<option value="del"{{#if (eq t 'del')}} selected{{/if}}>{{../txt.pm_rule_delete}}</option>
+				</select>
+				<span id="labdiv{{@key}}">
+					<select name="labdef[{{@key}}]" id="labdef{{@key}}" onchange="rebuildRuleDesc();">
+						<option value="">{{../txt.pm_rule_sel_label}}</option>
+						{{#each ../context.labels}}{{#if (neq id -1)}}
+						<option value="{{id}}"{{#if (and (eq ../t 'lab') (eq ../v id))}} selected{{/if}}>{{name}}</option>
+						{{/if}}{{/each}}
+					</select>
+				{{#unless t}}</div>{{/unless}}
+				<br>
+				{{/each}}
+				<span id="actionAddHere"></span><br>
+					<a href="#" onclick="addActionOption(); return false;" id="addonjs2" style="display: none;">{{txt.pm_rule_add_action}}</a>
+				</fieldset>
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.pm_rule_description}}}</h3>
+			</div>
+			<div class="information">
+				<div id="ruletext">{{{txt.pm_rule_js_disabled}}}</div>
+			</div>
+			<div class="righttext">
+				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+				<input type="submit" name="save" value="{{txt.pm_rule_save}}" class="button_submit">
+			</div>
+		</div>
+	</form>
+	<script>
+	{{#each context.rule.criteria}}
+	updateRuleDef({{@key}});
+	{{/each}}
+	{{#each context.rule.actions}}
+	updateActionDef({{@key}});
+	{{/each}}
+	rebuildRuleDesc();
+	{{#if context.rid}}
+	document.getElementById("removeonjs1").style.display = "none";
+	document.getElementById("removeonjs2").style.display = "none";
+	{{/if}}
+	document.getElementById("addonjs1").style.display = "";
+	document.getElementById("addonjs2").style.display = "";
+	</script>
+	

@@ -1,0 +1,58 @@
+	{{! A list of users whose moderation status is 'watched'}}
+	<div class="cat_bar">
+		<h3 class="catbg">
+			<span id="watched_users_toggle" class="{{#if (eq context.admin_prefs.mcwu '1')}}toggle_down{{else}}toggle_up{{/if}} floatright" style="display: none;"></span>
+			<a href="{{scripturl}}?action=moderate;area=userwatch" id="watched_users_link">{{{txt.mc_watched_users}}}</a>
+		</h3>
+	</div>
+	<div class="windowbg2" id="watched_users_panel">
+		<div class="modbox">
+			<ul>
+
+				{{#each context.watched_users}}
+				<li>
+					<span class="smalltext">{{#if last_login}}{{{textTemplate ../txt.mc_seen link last_login}}}{{else}}{{{textTemplate ../txt.mc_seen_never link}}}{{/if}}</span>
+				</li>
+				{{/each}}
+
+				{{#unless context.watched_users}}
+				<li>
+					<strong class="smalltext">{{{txt.mc_watched_users_none}}}</strong>
+				</li>
+				{{/unless}}
+
+			</ul>
+		</div>
+	</div>
+
+	<script>
+		var oWatchedUsersToggle = new smc_Toggle({
+			bToggleEnabled: true,
+			bCurrentlyCollapsed: {{#if (eq context.admin_prefs.mcwu '1')}}true{{else}}false{{/if}},
+			aSwappableContainers: [
+				'watched_users_panel'
+			],
+			aSwapImages: [
+				{
+					sId: 'watched_users_toggle',
+					altExpanded: {{{json txt.hide}}},
+					altCollapsed: {{{json txt.show}}}
+				}
+			],
+			aSwapLinks: [
+				{
+					sId: 'watched_users_link',
+					msgExpanded: {{{json txt.mc_watched_users}}},
+					msgCollapsed: {{{json txt.mc_watched_users}}}
+				}
+			],
+			oThemeOptions: {
+				bUseThemeSettings: true,
+				sOptionName: 'admin_preferences',
+				sSessionVar: smf_session_var,
+				sSessionId: smf_session_id,
+				sThemeId: '1',
+				sAdditionalVars: ';admin_key=mcwu'
+			}
+		});
+	</script>

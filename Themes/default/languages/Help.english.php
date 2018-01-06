@@ -567,4 +567,10 @@ $helptxt['image_proxy_maxsize'] = 'Maximum image size that the SSL image proxy w
 
 $helptxt['field_reg_require'] = 'If this field is required during registration, it will also be required on profile changes.';
 
+$helptxt['character_selector_post'] = 'If ticked, users can select which character to post as next to the post edit screen - this is in addition to the main character selection at the top of the page.';
+
+$helptxt['characters_ic_may_post'] = 'On a forum where you have a strong sense of immersion, you might want to ensure that "characters" can only post in in-character boards and never outside. Tick this box to enforce this.';
+$helptxt['characters_ooc_may_post'] = 'On a forum where there is a strong divide between "in character" posts and "out of character" posts, you may wish to enforce that characters cannot post in the out of character areas - tick this box to enforce this.';
+$helptxt['characters_admin_override'] = 'By default, administrators are subject to the same rules as all other users for "in character" and "out of character" boards. Tick this option to have admins always able to post as any character on their account.';
+
 ?>

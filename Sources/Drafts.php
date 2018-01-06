@@ -654,7 +654,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 		'description' => $txt['drafts_show_desc'],
 		'icon_class' => 'pm_icons inbox'
 	);
-	$context['sub_template'] = 'showDrafts';
+	$context['sub_template'] = 'profile_show_drafts';
 }
 
 /**
@@ -829,7 +829,7 @@ function showPMDrafts($memID = -1)
 
 	// off to the template we go
 	$context['page_title'] = $txt['drafts'];
-	$context['sub_template'] = 'showPMDrafts';
+	$context['sub_template'] = 'personal_message_drafts';
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=showpmdrafts',
 		'name' => $txt['drafts'],

@@ -1,5 +1,5 @@
 		{{! When moving a character to another account, gotta ask who to move to.}}
-		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=characters;char=', $context['character']['id_character'], ';sa=move_acct;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
+		<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=move_acct;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
 			<div class="cat_bar">
 				<h3 class="catbg profile_hd">
 					{{{txt.move_char_account}}}

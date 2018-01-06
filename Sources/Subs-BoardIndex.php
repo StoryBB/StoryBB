@@ -58,7 +58,7 @@ function getBoardIndex($boardIndexOptions)
 			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
 			LEFT JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
-			LEFT JOIN {db_prefix}attachments AS am ON (am.id_character = m.id_character)' . ($user_info['is_guest'] ? '' : '
+			LEFT JOIN {db_prefix}attachments AS am ON (am.id_character = m.id_character AND am.attachment_type = 1)' . ($user_info['is_guest'] ? '' : '
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})') . '
 		WHERE {query_see_board}' . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
 			AND b.child_level >= {int:child_level}') : '

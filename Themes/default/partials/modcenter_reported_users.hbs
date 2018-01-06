@@ -1,0 +1,56 @@
+	{{! Reported users, e.g. due to their profile or signature or something. }}
+	<div class="cat_bar">
+		<h3 class="catbg">
+			<span id="reported_users_toggle" class="{{#if (eq context.admin_prefs.mcur '1')}}toggle_down{{else}}toggle_up{{/if}} floatright" style="display: none;"></span>
+			<a href="{{scripturl}}?action=moderate;area=userwatch" id="reported_users_link">{{{txt.mc_recent_user_reports}}}</a>
+		</h3>
+	</div>
+	<div class="windowbg2" id="reported_users_panel">
+		<div class="modbox">
+			<ul>
+				{{#each context.reported_users}}
+				<li>
+					<span class="smalltext">{{{user.link}}}</span>
+				</li>
+				{{/each}}
+
+				{{#unless context.reported_users}}
+				<li>
+					<strong class="smalltext">{{{txt.mc_reported_users_none}}}</strong>
+				</li>
+				{{/unless}}
+			</ul>
+		</div>
+	</div>
+
+	<script>
+		var oWatchedUsersToggle = new smc_Toggle({
+			bToggleEnabled: true,
+			bCurrentlyCollapsed: {{#if (eq context.admin_prefs.mcur '1')}}true{{else}}false{{/if}},
+			aSwappableContainers: [
+				'reported_users_panel'
+			],
+			aSwapImages: [
+				{
+					sId: 'reported_users_toggle',
+					altExpanded: {{{json txt.hide}}},
+					altCollapsed: {{{json txt.show}}}
+				}
+			],
+			aSwapLinks: [
+				{
+					sId: 'reported_users_link',
+					msgExpanded: {{{json txt.mc_recent_user_reports}}},
+					msgCollapsed: {{{json txt.mc_recent_user_reports}}}
+				}
+			],
+			oThemeOptions: {
+				bUseThemeSettings: true,
+				sOptionName: 'admin_preferences',
+				sSessionVar: smf_session_var,
+				sSessionId: smf_session_id,
+				sThemeId: '1',
+				sAdditionalVars: ';admin_key=mcur'
+			}
+		});
+	</script>

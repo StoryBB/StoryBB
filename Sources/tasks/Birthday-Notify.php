@@ -105,7 +105,7 @@ class Birthday_Notify_Background extends SMF_BackgroundTask
 					if ($pref & 0x02)
 					{
 						$emaildata = loadEmailTemplate('happy_birthday', $replacements, $lang, false);
-						sendmail($member['email'], $emaildata['subject'], $emaildata['body'], null, 'birthday', $emaildata['is_html'], 4);
+						StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'birthday', $emaildata['is_html'], 4);
 					}
 				}
 			}
