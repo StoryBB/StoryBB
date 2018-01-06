@@ -2765,7 +2765,7 @@ function ReattributePost()
 	logAction('char_reattribute', [
 		'member' => $row['id_member_posted'],
 		'old_character' => $row['old_character'],
-		'new_character' => $owned_char,
+		'new_character' => $valid_characters[$character]['name'],
 		'message' => $msg,
 	], 'moderate');
 
