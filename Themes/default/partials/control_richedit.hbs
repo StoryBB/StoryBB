@@ -56,6 +56,9 @@ style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if 
 					toolbar: "",
 					{{/if}}
                 });
+                $("#{{editor_id}}").data("sceditor").addShortcut('ctrl+enter', function () {
+                	$("#{{editor_id}}").closest("form").submit();
+                });
 				$("#{{editor_id}}").data("sceditor").createPermanentDropDown();{{#unless editor_context.rich_active}}
 				$("#{{editor_id}}").data("sceditor").toggleSourceMode();{{/unless}}{{#if (or context.post_error.no_message context.post_error.long_message)}}
 				$(".sceditor-container").find("textarea").each(function() {$(this).css({border: "1px solid red"})});
