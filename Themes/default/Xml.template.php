@@ -8,37 +8,6 @@
  */
 
 /**
- * The XML for handling things when you're done editing a post inline
- */
-function template_modifydone()
-{
-	global $context, $txt;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
-	<message id="msg_', $context['message']['id'], '">';
-	if (empty($context['message']['errors']))
-	{
-		// Build our string of info about when and why it was modified
-
-		$modified = empty($context['message']['modified']['time']) ? '' : sprintf($txt['last_edit_by'], $context['message']['modified']['time'], $context['message']['modified']['name']);
-		$modified .= empty($context['message']['modified']['reason']) ? '' : ' ' . sprintf($txt['last_edit_reason'], $context['message']['modified']['reason']);
-
-		echo '
-		<modified><![CDATA[', empty($modified) ? '' : cleanXml($modified), ']]></modified>
-		<subject is_first="', $context['message']['first_in_topic'] ? '1' : '0', '"><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>
-		<body><![CDATA[', $context['message']['body'], ']]></body>
-		<success><![CDATA[', $txt['quick_modify_message'], ']]></success>';
-	}
-	else
-		echo '
-		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '" in_body="', cleanXml($context['message']['error_in_body']) ? '1' : '0', '"><![CDATA[', implode('<br />', $context['message']['errors']), ']]></error>';
-	echo '
-	</message>
-</smf>';
-}
-
-/**
  * This handles things when editing a topic's subject from the messageindex.
  */
 function template_modifytopicdone()

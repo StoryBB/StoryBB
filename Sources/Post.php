@@ -2707,7 +2707,8 @@ function JavaScriptModify()
 
 	if (isset($_REQUEST['xml']))
 	{
-		$context['sub_template'] = 'modifydone';
+		$context['sub_template'] = 'xml_modifydone';
+		register_helper(['cleanXml' => 'cleanXml']);
 		if (empty($post_errors) && isset($msgOptions['subject']) && isset($msgOptions['body']))
 		{
 			$context['message'] = array(

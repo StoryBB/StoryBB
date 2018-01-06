@@ -1,0 +1,10 @@
+	<message id="msg_{{context.message.id}}">
+	{{#if context.message.errors}}
+		<error in_subject="{{#if context.message.error_in_subject}}1{{else}}0{{/if}}" in_body="{{#if context.message.error_in_body}}1{{else}}0{{/if}}"><![CDATA[{{{join context.message.errors '<br />'}}}]]></error>
+	{{else}}
+		<modified><![CDATA[{{#if context.message.modified.time}}{{{cleanXml (textTemplate txt.last_edit_by context.message.modified.time context.message.modified.name)}}}{{/if}} {{#if context.message.modified.reason}}{{{cleanXml (textTemplate txt.edit_reason context.message.modified.reason)}}}{{/if}}]]>></modified>
+		<subject is_first="{{#if context.message.first_in_topic}}1{{else}}0{{/if}}"><![CDATA[{{{cleanXml context.message.subject}}}]]></subject>
+		<body><![CDATA[{{{context.message.body}}}]]></body>
+		<success><![CDATA[{{{txt.quick_modify_message}}}]]></success>
+	{{/if}}
+	</message>
