@@ -62,7 +62,7 @@ function GetJumpTo()
 	register_helper([
 		'cleanXml' => 'cleanXml',
 	]);
-	loadTemplateLayout('xml');
+	StoryBB\Template::set_layout('xml');
 	$context['sub_template'] = 'xml_jumpto';
 }
 
@@ -79,7 +79,7 @@ function ListMessageIcons()
 	register_helper([
 		'cleanXml' => 'cleanXml',
 	]);
-	loadTemplateLayout('xml');
+	StoryBB\Template::set_layout('xml');
 	$context['sub_template'] = 'xml_message_icons';
 }
 

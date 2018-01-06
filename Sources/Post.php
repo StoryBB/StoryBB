@@ -2412,7 +2412,7 @@ function QuoteFast()
 	$smcFunc['db_free_result']($request);
 
 	$context['sub_template'] = 'xml_quotefast';
-	loadTemplateLayout('xml');
+	StoryBB\Template::set_layout('xml');
 	register_helper([
 		'cleanXml' => 'cleanXml',
 	]);

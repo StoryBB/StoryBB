@@ -878,7 +878,7 @@ function RegisterCheckUsername()
 	global $sourcedir, $context;
 
 	// This is XML!
-	loadTemplateLayout('xml');
+	StoryBB\Template::set_layout('xml');
 	$context['sub_template'] = 'xml_check_username';
 	$context['checked_username'] = isset($_GET['username']) ? un_htmlspecialchars($_GET['username']) : '';
 	$context['valid_username'] = true;
