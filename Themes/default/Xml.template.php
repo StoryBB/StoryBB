@@ -175,33 +175,6 @@ function template_warning()
 }
 
 /**
- * The XML for hiding/showing stats sections via AJAX
- */
-function template_stats()
-{
-	global $context, $modSettings;
-
-	if (empty($context['yearly']))
-		return;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>';
-	foreach ($context['yearly'] as $year)
-		foreach ($year['months'] as $month)
-		{
-			echo '
-	<month id="', $month['date']['year'], $month['date']['month'], '">';
-			foreach ($month['days'] as $day)
-				echo '
-		<day date="', $day['year'], '-', $day['month'], '-', $day['day'], '" new_topics="', $day['new_topics'], '" new_posts="', $day['new_posts'], '" new_members="', $day['new_members'], '" most_members_online="', $day['most_members_online'], '"', empty($modSettings['hitStats']) ? '' : ' hits="' . $day['hits'] . '"', ' />';
-			echo '
-	</month>';
-		}
-		echo '
-</smf>';
-}
-
-/**
  * The XML for selecting items to split
  */
 function template_split()
