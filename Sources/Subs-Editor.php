@@ -2099,7 +2099,7 @@ function AutoSuggestHandler($checkRegistered = null)
 	if (isset($_REQUEST['suggest_type'], $_REQUEST['search']) && isset($searchTypes[$_REQUEST['suggest_type']]))
 	{
 		$function = 'AutoSuggest_Search_' . $searchTypes[$_REQUEST['suggest_type']];
-		$context['sub_template'] = 'generic_xml';
+		$context['sub_template'] = 'xml_generic';
 		$context['xml_data'] = $function();
 	}
 }

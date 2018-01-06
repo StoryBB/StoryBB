@@ -77,7 +77,8 @@ function BoardNotify()
 				),
 			),
 		);
-		$context['sub_template'] = 'generic_xml';
+		StoryBB\Template::set_layout('raw');
+		$context['sub_template'] = 'xml_generic';
 	}
 	else
 		redirectexit('board=' . $board . '.' . $_REQUEST['start']);
@@ -182,7 +183,8 @@ function TopicNotify()
 				),
 			),
 		);
-		$context['sub_template'] = 'generic_xml';
+		StoryBB\Template::set_layout('raw');
+		$context['sub_template'] = 'xml_generic';
 	}
 	else
 		redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);

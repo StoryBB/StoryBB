@@ -99,7 +99,7 @@ function RetrievePreview()
 		'warning_preview',
 	);
 
-	$context['sub_template'] = 'generic_xml';
+	$context['sub_template'] = 'xml_generic';
 
 	if (!isset($_POST['item']) || !in_array($_POST['item'], $items))
 		return false;
