@@ -86,7 +86,7 @@ function Register($reg_errors = array())
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
 	// Kinda need this.
-	if ($context['sub_template'] == 'registration_form')
+	if ($context['sub_template'] == 'register_form')
 		loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
 
 	// Add the register chain to the link tree.
