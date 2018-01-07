@@ -27,6 +27,10 @@ function XMLhttpMain()
 		'previews' => 'RetrievePreview',
 	);
 
+	register_helper([
+		'cleanXml' => 'cleanXml',
+	]);
+
 	// Easy adding of sub actions.
 	call_integration_hook('integrate_XMLhttpMain_subActions', array(&$subActions));
 
@@ -59,9 +63,6 @@ function GetJumpTo()
 			$context['jump_to'][$id_cat]['boards'][$id_board]['name'] = un_htmlspecialchars(strip_tags($board['name']));
 	}
 
-	register_helper([
-		'cleanXml' => 'cleanXml',
-	]);
 	StoryBB\Template::set_layout('xml');
 	$context['sub_template'] = 'xml_jumpto';
 }
@@ -76,9 +77,6 @@ function ListMessageIcons()
 	require_once($sourcedir . '/Subs-Editor.php');
 	$context['icons'] = getMessageIcons($board);
 
-	register_helper([
-		'cleanXml' => 'cleanXml',
-	]);
 	StoryBB\Template::set_layout('xml');
 	$context['sub_template'] = 'xml_message_icons';
 }
@@ -161,7 +159,8 @@ function newsletterpreview()
 
 	prepareMailingForPreview();
 
-	$context['sub_template'] = 'pm';
+	StoryBB\Template::set_layout('xml');
+	$context['sub_template'] = 'xml_pm_preview';
 }
 
 /**
