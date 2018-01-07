@@ -2210,7 +2210,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Output is fully XML, so no need for the index template.
 	if (isset($_REQUEST['xml']) && (in_array($context['current_action'], $xmlActions) || $requiresXML))
 	{
-		loadTemplate('Xml');
 		StoryBB\Template::set_layout('raw');
 	}
 

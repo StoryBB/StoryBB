@@ -18,7 +18,6 @@ if (!defined('SMF'))
  */
 function XMLhttpMain()
 {
-	loadTemplate('Xml');
 	StoryBB\Template::set_layout('raw');
 
 	$subActions = array(
