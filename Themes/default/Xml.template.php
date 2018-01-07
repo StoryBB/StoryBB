@@ -55,33 +55,6 @@ function template_post()
 }
 
 /**
- * The XML for previewing a warning
- */
-function template_warning()
-{
-	global $context;
-
-	// @todo something could be removed...otherwise it can be merged again with template_post
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
-	<preview>
-		<subject><![CDATA[', $context['preview_subject'], ']]></subject>
-		<body><![CDATA[', $context['preview_message'], ']]></body>
-	</preview>
-	<errors serious="', empty($context['error_type']) || $context['error_type'] != 'serious' ? '0' : '1', '">';
-	if (!empty($context['post_error']['messages']))
-		foreach ($context['post_error']['messages'] as $message)
-			echo '
-		<error><![CDATA[', cleanXml($message), ']]></error>';
-
-	echo '
-	</errors>';
-
-	echo '
-</smf>';
-}
-
-/**
  * This is just to hold off some errors if people are stupid.
  */
 if (!function_exists('template_menu'))

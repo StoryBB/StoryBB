@@ -307,7 +307,8 @@ function warning_preview()
 	else
 		$context['post_error']['messages'][] = array('value' => $txt['cannot_issue_warning'], 'attributes' => array('type' => 'error'));
 
-	$context['sub_template'] = 'warning';
+	StoryBB\Template::set_layout('xml');
+	$context['sub_template'] = 'xml_warning_preview';
 }
 
 ?>
