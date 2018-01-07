@@ -368,7 +368,7 @@ var icon_urls = {
 			}
 
 			// Show the preview section.
-			var preview = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('preview')[0];
+			var preview = XMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('preview')[0];
 			setInnerHTML(document.getElementById('preview_subject'), preview.getElementsByTagName('subject')[0].firstChild.nodeValue);
 
 			var bodyText = '';
@@ -380,7 +380,7 @@ var icon_urls = {
 			document.getElementById('preview_body').className = 'windowbg';
 
 			// Show a list of errors (if any).
-			var errors = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('errors')[0];
+			var errors = XMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('errors')[0];
 			var errorList = new Array();
 			for (var i = 0, numErrors = errors.getElementsByTagName('error').length; i < numErrors; i++)
 				errorList[errorList.length] = errors.getElementsByTagName('error')[i].firstChild.nodeValue;
@@ -407,7 +407,7 @@ var icon_urls = {
 
 			// Set the new last message id.
 			if ('last_msg' in document.forms.postmodify)
-				document.forms.postmodify.last_msg.value = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('last_msg')[0].firstChild.nodeValue;
+				document.forms.postmodify.last_msg.value = XMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('last_msg')[0].firstChild.nodeValue;
 
 			// Remove the new image from old-new replies!
 			for (i = 0; i < new_replies.length; i++)
@@ -415,7 +415,7 @@ var icon_urls = {
 			new_replies = new Array();
 
 			var ignored_replies = new Array(), ignoring;
-			var newPosts = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('new_posts')[0] ? XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('new_posts')[0].getElementsByTagName('post') : {length: 0};
+			var newPosts = XMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('new_posts')[0] ? XMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('new_posts')[0].getElementsByTagName('post') : {length: 0};
 			var numNewPosts = newPosts.length;
 			if (numNewPosts != 0)
 			{

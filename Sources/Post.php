@@ -56,7 +56,9 @@ function Post($post_errors = array())
 
 	if (isset($_REQUEST['xml']))
 	{
-		$context['sub_template'] = 'post';
+		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::set_layout('xml');
+		$context['sub_template'] = 'xml_post_preview';
 
 		// Just in case of an earlier error...
 		$context['preview_message'] = '';
