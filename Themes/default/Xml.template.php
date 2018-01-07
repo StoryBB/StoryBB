@@ -114,35 +114,6 @@ function template_warning()
 }
 
 /**
- * The XML for selecting items to split
- */
-function template_split()
-{
-	global $context;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
-	<pageIndex section="not_selected" startFrom="', $context['not_selected']['start'], '"><![CDATA[', $context['not_selected']['page_index'], ']]></pageIndex>
-	<pageIndex section="selected" startFrom="', $context['selected']['start'], '"><![CDATA[', $context['selected']['page_index'], ']]></pageIndex>';
-	foreach ($context['changes'] as $change)
-	{
-		if ($change['type'] == 'remove')
-			echo '
-	<change id="', $change['id'], '" curAction="remove" section="', $change['section'], '" />';
-		else
-			echo '
-	<change id="', $change['id'], '" curAction="insert" section="', $change['section'], '">
-		<subject><![CDATA[', cleanXml($change['insert_value']['subject']), ']]></subject>
-		<time><![CDATA[', cleanXml($change['insert_value']['time']), ']]></time>
-		<body><![CDATA[', cleanXml($change['insert_value']['body']), ']]></body>
-		<poster><![CDATA[', cleanXml($change['insert_value']['poster']), ']]></poster>
-	</change>';
-	}
-	echo '
-</smf>';
-}
-
-/**
  * This is just to hold off some errors if people are stupid.
  */
 if (!function_exists('template_menu'))
