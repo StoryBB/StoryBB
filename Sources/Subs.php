@@ -3892,7 +3892,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
  */
 function setupMenuContext()
 {
-	global $context, $modSettings, $user_info, $txt, $scripturl, $sourcedir, $settings;
+	global $context, $modSettings, $user_info, $txt, $scripturl, $sourcedir, $settings, $smcFunc;
 
 	// Set up the menu privileges.
 	$context['allow_search'] = !empty($modSettings['allow_guestAccess']) ? allowedTo('search_posts') : (!$user_info['is_guest'] && allowedTo('search_posts'));
@@ -4164,10 +4164,22 @@ function setupMenuContext()
 	}
 
 	// Show how many errors there are
-	if (!empty($context['num_errors']) && allowedTo('admin_forum'))
+	if (allowedTo('admin_forum'))
 	{
-		$context['menu_buttons']['admin']['badge'] += $context['num_errors'];
-		$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $context['num_errors'];
+		$query = $smcFunc['db_query']('', '
+			SELECT COUNT(id_error)
+			FROM {db_prefix}log_errors',
+			array()
+		);
+
+		list($errors) = $smcFunc['db_fetch_row']($query);
+		$smcFunc['db_free_result']($query);
+
+		if ($errors)
+		{
+			$context['menu_buttons']['admin']['badge'] += $errors;
+			$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $errors;
+		}
 	}
 
 	// Show number of reported members
