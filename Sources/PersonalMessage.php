@@ -1990,7 +1990,11 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 	}
 	else
-		$context['sub_template'] = 'pm';
+	{
+		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::set_layout('xml');
+		$context['sub_template'] = 'xml_pm_preview';
+	}
 
 	$context['page_title'] = $txt['send_message'];
 

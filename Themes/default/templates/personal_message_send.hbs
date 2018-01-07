@@ -171,7 +171,7 @@
 				}
 
 				// Show the preview section.
-				var preview = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('preview')[0];
+				var preview = XMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('preview')[0];
 				setInnerHTML(document.getElementById('preview_subject'), preview.getElementsByTagName('subject')[0].firstChild.nodeValue);
 
 				var bodyText = '';
@@ -182,7 +182,7 @@
 				document.getElementById('preview_body').className = 'post';
 
 				// Show a list of errors (if any).
-				var errors = XMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('errors')[0];
+				var errors = XMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('errors')[0];
 				var errorList = new Array();
 				for (var i = 0, numErrors = errors.getElementsByTagName('error').length; i < numErrors; i++)
 					errorList[errorList.length] = errors.getElementsByTagName('error')[i].firstChild.nodeValue;

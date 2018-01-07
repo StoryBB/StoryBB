@@ -56,7 +56,7 @@ function DisplayStats()
 		if (!empty($_REQUEST['collapse']))
 			obExit(false);
 
-		$context['sub_template'] = 'stats';
+		$context['sub_template'] = 'xml_stats';
 		$context['yearly'] = array();
 
 		if (empty($month) || empty($year))

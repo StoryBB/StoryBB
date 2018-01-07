@@ -58,6 +58,9 @@ class Template
 		// Generic controls need some care.
 		self::add_helper(Template\Helper\Controls::_list());
 
+		// Generic XML needs some love too.
+		self::add_helper(Template\Helper\Xml::_list());
+
 		// And everything else.
 		self::add_helper(Template\Helper\Misc::_list());
 	}

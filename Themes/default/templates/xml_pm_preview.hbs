@@ -1,0 +1,17 @@
+	<preview>
+		<subject><![CDATA[{{{txt.preview}}} - {{#if context.preview_subject}}{{{context.preview_subject}}}{{else}}{{{txt.no_subject}}}{{/if}}]]></subject>
+		<body><![CDATA[{{{context.preview_message}}}]]></body>
+	</preview>
+	<errors serious="{{#if (eq context.error_type 'serious')}}1{{else}}0{{/if}}">
+		{{#if context.post_error.messages}}
+			{{#each context.post_error.messages}}
+			<error><![CDATA[{{{cleanXml .}}}]]></error>
+			{{/each}}
+		{{/if}}
+
+		<caption name="to" class="{{#if context.post_error.no_to}}error{{/if}}" />
+		<caption name="bbc" class="{{#if context.post_error.no_bbc}}error{{/if}}" />
+		<caption name="subject" class="{{#if context.post_error.no_subject}}error{{/if}}" />
+		<caption name="question" class="{{#if context.post_error.no_question}}error{{/if}}" />
+		{{#if (or context.post_error.no_message context.post_error.long_message)}}<post_error />{{/if}}
+	</errors>

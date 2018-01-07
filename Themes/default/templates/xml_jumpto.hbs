@@ -1,0 +1,6 @@
+	{{#each context.jump_to}}
+	<item type="category" id="{{id}}"><![CDATA[{{{cleanXml name}}}]]></item>
+	{{#each boards}}
+	<item type="board" id="{{id}}" childlevel="{{child_level}}"><![CDATA[{{{cleanXml name}}}]]></item>
+	{{/each}}
+	{{/each}}

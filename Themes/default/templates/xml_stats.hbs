@@ -1,0 +1,9 @@
+{{#each context.yearly}}
+	{{#each months}}
+		<month id="{{date.year}}{{date.month}}">
+			{{#each days}}
+				<day date="{{year}}-{{month}}-{{day}}" new_topics="{{new_topics}}" new_posts="{{new_posts}}" new_members="{{new_members}}" most_members_online="{{most_members_online}}"{{#if (eq ../../../modSettings.hitStats '1')}} hits="{{hits}}"{{/if}} />
+			{{/each}}
+		</month>
+	{{/each}}
+{{/each}}
