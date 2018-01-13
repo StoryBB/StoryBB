@@ -1703,7 +1703,7 @@ function EditMessageIcons()
 	if ($context['sub_action'] == 'editicon' || isset($_POST['add']))
 	{
 		// Force the sub_template just in case.
-		$context['sub_template'] = 'editicon';
+		$context['sub_template'] = 'admin_messageicon_edit';
 
 		$context['new_icon'] = !isset($_GET['icon']);
 
