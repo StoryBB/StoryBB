@@ -169,6 +169,7 @@ function EditSmileySets()
 
 	// Set the right tab to be selected.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsets';
+	$context['sub_template'] = 'admin_smiley_set_list';
 
 	// They must've been submitted a form.
 	if (isset($_POST['smiley_save']))
@@ -272,11 +273,12 @@ function EditSmileySets()
 
 		// Force the process to continue.
 		$context['sub_action'] = 'modifyset';
-		$context['sub_template'] = 'modifyset';
+		$context['sub_template'] = 'admin_smiley_set_edit';
 	}
 	// If we're modifying or adding a smileyset, some context info needs to be set.
 	if ($context['sub_action'] == 'modifyset')
 	{
+		$context['sub_template'] = 'admin_smiley_set_edit';
 		$_GET['set'] = !isset($_GET['set']) ? -1 : (int) $_GET['set'];
 		if ($_GET['set'] == -1 || !isset($context['smiley_sets'][$_GET['set']]))
 			$context['current_set'] = array(
@@ -456,8 +458,6 @@ function EditSmileySets()
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
-
-	$context['sub_template'] = 'admin_smiley_set_list';
 }
 
 /**
