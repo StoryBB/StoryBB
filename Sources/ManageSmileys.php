@@ -527,6 +527,8 @@ function AddSmiley()
 {
 	global $modSettings, $context, $txt, $boarddir, $smcFunc;
 
+	$context['sub_template'] = 'admin_smiley_add';
+
 	// Get a list of all known smiley sets.
 	$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
 	$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
