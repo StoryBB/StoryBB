@@ -1121,6 +1121,7 @@ function EditSmileys()
 	// Modifying smileys.
 	elseif ($context['sub_action'] == 'modifysmiley')
 	{
+		$context['sub_template'] = 'admin_smiley_edit';
 		// Get a list of all known smiley sets.
 		$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
 		$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
