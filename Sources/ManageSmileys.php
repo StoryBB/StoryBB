@@ -1710,6 +1710,8 @@ function EditMessageIcons()
 		// Get the properties of the current icon from the icon list.
 		if (!$context['new_icon'])
 			$context['icon'] = $context['icons'][$_GET['icon']];
+		else
+			$context['icon'] = ['id' => 0];
 
 		// Get a list of boards needed for assigning this icon to a specific board.
 		$boardListOptions = array(
