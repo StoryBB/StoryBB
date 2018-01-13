@@ -56,9 +56,9 @@
 
 							{{! Print the list of all the icons it can be put after... }}
 							{{#each context.icons}}
-								{{#if (neq @key ../context.icon.id)}}
+								{{#unless (eq_coerce @key ../context.icon.id)}}
 								<option value="{{@key}}"{{#if (eq_coerce ../context.icon.after @key)}} selected{{/if}}>{{{../txt.icons_location_after}}}: {{{title}}}</option>
-								{{/if}}
+								{{/unless}}
 							{{/each}}
 
 						</select>
