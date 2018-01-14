@@ -1,0 +1,114 @@
+	{{! Add an individual smiley. }}
+	<div id="admincenter">
+		<form action="{{scripturl}}?action=admin;area=smileys;sa=addsmiley" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm" enctype="multipart/form-data">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.smileys_add_method}}}</h3>
+			</div>
+			<div class="windowbg2">
+				<ul>
+					<li>
+						<label for="method-existing"><input type="radio" onclick="switchType();" name="method" id="method-existing" value="existing" checked class="input_radio"> {{{txt.smileys_add_existing}}}</label>
+					</li>
+					<li>
+						<label for="method-upload"><input type="radio" onclick="switchType();" name="method" id="method-upload" value="upload" class="input_radio"> {{{txt.smileys_add_upload}}}</label>
+					</li>
+				</ul>
+				<br>
+				<fieldset id="ex_settings">
+					<dl class="settings">
+						<dt>
+							<img src="{{{modSettings.smileys_url}}}/{{{modSettings.smiley_sets_default}}}/{{context.filesnames.0.id}}" id="preview" alt="">
+						</dt>
+						<dd>
+							{{{txt.smiley_preview_using}}}: <select name="set" onchange="updatePreview();selectMethod('existing');">
+							{{#each context.smiley_sets}}
+								<option value="{{path}}"{{#if (eq ../context.selected_set path)}} selected{{/if}}>{{{name}}}</option>
+							{{/each}}
+							</select>
+						</dd>
+						<dt>
+							<strong><label for="smiley_filename">{{{txt.smileys_filename}}}</label>: </strong>
+						</dt>
+						<dd>
+							{{#unless context.filenames}}
+							<input type="text" name="smiley_filename" id="smiley_filename" value="{{{context.current_smiley.filename}}}" onchange="selectMethod('existing');" class="input_text">
+							{{else}}
+								<select name="smiley_filename" id="smiley_filename" onchange="updatePreview();selectMethod('existing');">
+									{{#each context.filenames}}
+									<option value="{{id}}"{{#if selected}} selected{{/if}}>{{{id}}}</option>
+									{{/each}}
+								</select>
+							{{/unless}}
+
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset id="ul_settings" style="display: none;">
+					<dl class="settings">
+						<dt>
+							<strong>{{{txt.smileys_add_upload_choose}}}:</strong><br>
+							<span class="smalltext">{{{txt.smileys_add_upload_choose_desc}}}</span>
+						</dt>
+						<dd>
+							<input type="file" name="uploadSmiley" id="uploadSmiley" onchange="selectMethod('upload');" class="input_file">
+						</dd>
+						<dt>
+							<strong><label for="sameall">{{{txt.smileys_add_upload_all}}}:</label></strong>
+						</dt>
+						<dd>
+							<input type="checkbox" name="sameall" id="sameall" checked class="input_check" onclick="swapUploads(); selectMethod('upload');">
+						</dd>
+					</dl>
+				</fieldset>
+
+				<dl id="uploadMore" style="display: none;" class="settings">
+					{{#each context.smiley_sets}}
+					<dt>
+						{{{textTemplate ../txt.smileys_add_upload_for (concat '<strong>' name '</strong>')}}}:
+					</dt>
+					<dd>
+						<input type="file" name="individual_{{name}}" onchange="selectMethod('upload');" class="input_file">
+					</dd>
+					{{/each}}
+
+				</dl>
+			</div>
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.smiley_new}}}</h3>
+			</div>
+			<div class="windowbg2">
+				<dl class="settings">
+					<dt>
+						<strong><label for="smiley_code">{{{txt.smileys_code}}}</label>: </strong>
+					</dt>
+					<dd>
+						<input type="text" name="smiley_code" id="smiley_code" value="" class="input_text">
+					</dd>
+					<dt>
+						<strong><label for="smiley_description">{{{txt.smileys_description}}}</label>: </strong>
+					</dt>
+					<dd>
+						<input type="text" name="smiley_description" id="smiley_description" value="" class="input_text">
+					</dd>
+					<dt>
+						<strong><label for="smiley_location">{{{txt.smileys_location}}}</label>: </strong>
+					</dt>
+					<dd>
+						<select name="smiley_location" id="smiley_location">
+							<option value="0" selected>
+								{{{txt.smileys_location_form}}}
+							</option>
+							<option value="1">
+								{{{txt.smileys_location_hidden}}}
+							</option>
+							<option value="2">
+								{{{txt.smileys_location_popup}}}
+							</option>
+						</select>
+					</dd>
+				</dl>
+				<input type="submit" name="smiley_save" value="{{{txt.smileys_save}}}" class="button_submit">
+			</div>
+			{{session_form}}
+		</form>
+	</div>
