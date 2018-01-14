@@ -542,7 +542,7 @@ function GroupRequests()
 		if ($_POST['req_action'] == 'reason')
 		{
 			// Different sub template...
-			$context['sub_template'] = 'group_request_reason';
+			$context['sub_template'] = 'admin_membergroups_request_reason';
 			// And a limitation. We don't care that the page number bit makes no sense, as we don't need it!
 			$where .= ' AND lgr.id_request IN ({array_int:request_ids})';
 			$where_parameters['request_ids'] = $_POST['groupr'];

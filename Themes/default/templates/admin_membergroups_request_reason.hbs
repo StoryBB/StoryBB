@@ -1,0 +1,28 @@
+	{{! Allow the moderator to enter a reason to each user being rejected. }}
+	<div id="moderationcenter">
+		<form action="{{scripturl}}?action=groups;sa=requests" method="post" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.mc_groups_reason_title}}}</h3>
+			</div>
+			<div class="windowbg">
+				<dl class="settings">
+
+				{{! Loop through and print out a reason box for each... }}
+				{{#each context.group_requests}}
+					<dt>
+						<strong>{{{textTemplate ../txt.mc_groupr_reason_desc member_link group_link}}}:</strong>
+					</dt>
+					<dd>
+						<input type="hidden" name="groupr[]" value="{{id}}">
+						<textarea name="groupreason[{{id}}]" rows="3" cols="40" style="min-width: 80%; max-width: 99%;"></textarea>
+					</dd>
+				{{/each}}
+
+				</dl>
+				<input type="submit" name="go" value="{{{txt.mc_groupr_submit}}}" class="button_submit">
+				<input type="hidden" name="req_action" value="got_reason">
+				{{session_form}}
+				{{token_form 'mod-gr'}}
+			</div>
+		</form>
+	</div>

@@ -723,43 +723,4 @@ function template_group_members()
 		</script>';
 }
 
-/**
- * Allow the moderator to enter a reason to each user being rejected.
- */
-function template_group_request_reason()
-{
-	global $context, $txt, $scripturl;
-
-	// Show a welcome message to the user.
-	echo '
-	<div id="moderationcenter">
-		<form action="', $scripturl, '?action=groups;sa=requests" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['mc_groups_reason_title'], '</h3>
-			</div>
-			<div class="windowbg">
-				<dl class="settings">';
-
-	// Loop through and print out a reason box for each...
-	foreach ($context['group_requests'] as $request)
-		echo '
-					<dt>
-						<strong>', sprintf($txt['mc_groupr_reason_desc'], $request['member_link'], $request['group_link']), ':</strong>
-					</dt>
-					<dd>
-						<input type="hidden" name="groupr[]" value="', $request['id'], '">
-						<textarea name="groupreason[', $request['id'], ']" rows="3" cols="40" style="min-width: 80%; max-width: 99%;"></textarea>
-					</dd>';
-
-	echo '
-				</dl>
-				<input type="submit" name="go" value="', $txt['mc_groupr_submit'], '" class="button_submit">
-				<input type="hidden" name="req_action" value="got_reason">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="hidden" name="', $context['mod-gr_token_var'], '" value="', $context['mod-gr_token'], '">
-			</div>
-		</form>
-	</div>';
-}
-
 ?>
