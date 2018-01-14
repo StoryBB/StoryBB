@@ -1,0 +1,14 @@
+	<pageIndex section="not_selected" startFrom="{{context.not_selected.start}}"><![CDATA[{{{context.not_selected.page_index}}}]]></pageIndex>
+	<pageIndex section="selected" startFrom="{{context.selected.start}}"><![CDATA[{{{context.selected.page_index}}}]]></pageIndex>
+	{{#each context.changes}}
+		{{#if (eq type 'remove')}}
+		<change id="{{id}}" curAction="remove" section="{{section}}" />
+		{{else}}
+		<change id="{{id}}" curAction="insert" section="{{section}}">
+			<subject><![CDATA[{{{cleanXml insert_value.subject}}}]]></subject>
+			<time><![CDATA[{{{cleanXml insert_value.time}}}]]></time>
+			<body><![CDATA[{{{cleanXml insert_value.body}}}]]></body>
+			<poster><![CDATA[{{{cleanXml insert_value.poster}}}]]></poster>
+		</change>
+		{{/if}}
+	{{/each}}

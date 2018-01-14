@@ -2090,7 +2090,6 @@ function AutoSuggestHandler($checkRegistered = null)
 		return isset($searchTypes[$checkRegistered]) && function_exists('AutoSuggest_Search_' . $checkRegistered);
 
 	checkSession('get');
-	loadTemplate('Xml');
 	StoryBB\Template::set_layout('raw');
 
 	// Any parameters?
@@ -2099,7 +2098,7 @@ function AutoSuggestHandler($checkRegistered = null)
 	if (isset($_REQUEST['suggest_type'], $_REQUEST['search']) && isset($searchTypes[$_REQUEST['suggest_type']]))
 	{
 		$function = 'AutoSuggest_Search_' . $searchTypes[$_REQUEST['suggest_type']];
-		$context['sub_template'] = 'generic_xml';
+		$context['sub_template'] = 'xml_generic';
 		$context['xml_data'] = $function();
 	}
 }

@@ -446,7 +446,8 @@ function updateMemberData($members, $data)
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}characters
 			SET character_name = {string:p_real_name}
-			WHERE ' . $condition,
+			WHERE is_main = 1
+				AND ' . $condition,
 			$parameters
 		);
 	}
@@ -3892,7 +3893,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
  */
 function setupMenuContext()
 {
-	global $context, $modSettings, $user_info, $txt, $scripturl, $sourcedir, $settings;
+	global $context, $modSettings, $user_info, $txt, $scripturl, $sourcedir, $settings, $smcFunc;
 
 	// Set up the menu privileges.
 	$context['allow_search'] = !empty($modSettings['allow_guestAccess']) ? allowedTo('search_posts') : (!$user_info['is_guest'] && allowedTo('search_posts'));
@@ -4164,10 +4165,22 @@ function setupMenuContext()
 	}
 
 	// Show how many errors there are
-	if (!empty($context['num_errors']) && allowedTo('admin_forum'))
+	if (allowedTo('admin_forum'))
 	{
-		$context['menu_buttons']['admin']['badge'] += $context['num_errors'];
-		$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $context['num_errors'];
+		$query = $smcFunc['db_query']('', '
+			SELECT COUNT(id_error)
+			FROM {db_prefix}log_errors',
+			array()
+		);
+
+		list($errors) = $smcFunc['db_fetch_row']($query);
+		$smcFunc['db_free_result']($query);
+
+		if ($errors)
+		{
+			$context['menu_buttons']['admin']['badge'] += $errors;
+			$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $errors;
+		}
 	}
 
 	// Show number of reported members
@@ -5622,6 +5635,77 @@ function get_main_menu_groups()
 		cache_put_data('char_main_menu_groups', $groups, 300);
 	}
 	return $groups;
+}
+
+/**
+ * Gets the list of possible characters applicable to a user right now.
+ */
+function get_user_possible_characters($id_member, $board_id = 0)
+{
+	global $context, $board_info, $modSettings, $memberContext, $user_profile, $smcFunc;
+	static $boards_ic = [];
+
+	// First, some healthy defaults.
+	if (empty($modSettings['characters_ic_may_post']))
+		$modSettings['characters_ic_may_post'] = 'ic';
+	if (empty($modSettings['characters_ooc_may_post']))
+		$modSettings['characters_ooc_may_post'] = 'ooc';
+
+	$characters = [];
+
+	if (empty($user_profile[$id_member]))
+		loadMemberData($id_member);
+	if (empty($memberContext[$id_member]))
+		loadMemberContext($id_member);
+
+	if (isset($boards_ic[$board_id]))
+	{
+		$board_in_character = $boards_ic[$board_id];
+	}
+	else
+	{
+		$board_in_character = false;
+		$request = $smcFunc['db_query']('', '
+			SELECT id_board, in_character
+			FROM {db_prefix}boards');
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$boards_ic[$row['id_board']] = $row['in_character'];
+		}
+		$smcFunc['db_free_result']($request);
+
+		if (isset($boards_ic[$board_id]))
+		{
+			$board_in_character = $boards_ic[$board_id];
+		}
+	}
+
+	foreach ($memberContext[$id_member]['characters'] as $char_id => $character)
+	{
+		if ($board_in_character)
+		{
+			if ($modSettings['characters_ic_may_post'] == 'ic' && $character['is_main'] && (!allowedTo('admin_forum') || empty($modSettings['characters_admin_override'])))
+			{
+				// IC board that requires IC only, and character is main and (not admin or no admin override)
+				continue;
+			}
+		}
+		else
+		{
+			if ($modSettings['characters_ooc_may_post'] == 'ooc' && !$character['is_main'] && (!allowedTo('admin_forum') || empty($modSettings['characters_admin_override'])))
+			{
+				// OOC board that requires OOC only, and character is not main and (not admin or no admin override)
+				continue;
+			}
+		}
+
+		$characters[$char_id] = [
+			'name' => $character['character_name'],
+			'avatar' => !empty($character['avatar']) ? $character['avatar'] : $settings['images_url'] . '/default.png',
+		];
+	}
+
+	return $characters;
 }
 
 ?>

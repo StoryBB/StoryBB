@@ -219,7 +219,16 @@ function SplitSelectTopics()
 	$context['new_subject'] = $_REQUEST['subname'];
 
 	// Using the "select" sub template.
-	$context['sub_template'] = isset($_REQUEST['xml']) ? 'split' : 'topic_split_select_posts';
+	if (isset($_REQUEST['xml']))
+	{
+		StoryBB\Template::set_layout('xml');
+		$context['sub_template'] = 'xml_split';
+		register_helper(['cleanXml' => 'cleanXml']);
+	}
+	else
+	{
+		$context['sub_template'] = 'topic_split_select_posts';
+	}
 
 	// Are we using a custom messages per page?
 	$context['messages_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];

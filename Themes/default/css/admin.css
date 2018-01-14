@@ -411,6 +411,14 @@ tr[id^="operation_"] .table_grid {
 #manage_boards {
 	overflow: auto;
 }
+#manage_boards .in_character_note {
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding: 1px 2px;
+	font-weight: 400;
+	font-size: 0.75em;
+	margin-left: 1em;
+}
 .roundframe .windowbg, .roundframe .windowbg2 {
 	border: 0;
 	padding: 0;

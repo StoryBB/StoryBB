@@ -18,7 +18,6 @@ if (!defined('SMF'))
  */
 function XMLhttpMain()
 {
-	loadTemplate('Xml');
 	StoryBB\Template::set_layout('raw');
 
 	$subActions = array(
@@ -26,6 +25,10 @@ function XMLhttpMain()
 		'messageicons' => 'ListMessageIcons',
 		'previews' => 'RetrievePreview',
 	);
+
+	register_helper([
+		'cleanXml' => 'cleanXml',
+	]);
 
 	// Easy adding of sub actions.
 	call_integration_hook('integrate_XMLhttpMain_subActions', array(&$subActions));
@@ -59,7 +62,8 @@ function GetJumpTo()
 			$context['jump_to'][$id_cat]['boards'][$id_board]['name'] = un_htmlspecialchars(strip_tags($board['name']));
 	}
 
-	$context['sub_template'] = 'jump_to';
+	StoryBB\Template::set_layout('xml');
+	$context['sub_template'] = 'xml_jumpto';
 }
 
 /**
@@ -72,7 +76,8 @@ function ListMessageIcons()
 	require_once($sourcedir . '/Subs-Editor.php');
 	$context['icons'] = getMessageIcons($board);
 
-	$context['sub_template'] = 'message_icons';
+	StoryBB\Template::set_layout('xml');
+	$context['sub_template'] = 'xml_message_icons';
 }
 
 /**
@@ -91,7 +96,7 @@ function RetrievePreview()
 		'warning_preview',
 	);
 
-	$context['sub_template'] = 'generic_xml';
+	$context['sub_template'] = 'xml_generic';
 
 	if (!isset($_POST['item']) || !in_array($_POST['item'], $items))
 		return false;
@@ -153,7 +158,8 @@ function newsletterpreview()
 
 	prepareMailingForPreview();
 
-	$context['sub_template'] = 'pm';
+	StoryBB\Template::set_layout('xml');
+	$context['sub_template'] = 'xml_pm_preview';
 }
 
 /**
@@ -300,7 +306,8 @@ function warning_preview()
 	else
 		$context['post_error']['messages'][] = array('value' => $txt['cannot_issue_warning'], 'attributes' => array('type' => 'error'));
 
-	$context['sub_template'] = 'warning';
+	StoryBB\Template::set_layout('xml');
+	$context['sub_template'] = 'xml_warning_preview';
 }
 
 ?>

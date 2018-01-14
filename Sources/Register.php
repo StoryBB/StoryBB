@@ -86,7 +86,7 @@ function Register($reg_errors = array())
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
 	// Kinda need this.
-	if ($context['sub_template'] == 'registration_form')
+	if ($context['sub_template'] == 'register_form')
 		loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
 
 	// Add the register chain to the link tree.
@@ -878,11 +878,13 @@ function RegisterCheckUsername()
 	global $sourcedir, $context;
 
 	// This is XML!
-	loadTemplate('Xml');
-	StoryBB\Template::set_layout('raw');
-	$context['sub_template'] = 'check_username';
+	StoryBB\Template::set_layout('xml');
+	$context['sub_template'] = 'xml_check_username';
 	$context['checked_username'] = isset($_GET['username']) ? un_htmlspecialchars($_GET['username']) : '';
 	$context['valid_username'] = true;
+	register_helper([
+		'cleanXml' => 'cleanXml'
+	]);
 
 	// Clean it up like mother would.
 	$context['checked_username'] = preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $context['checked_username']);

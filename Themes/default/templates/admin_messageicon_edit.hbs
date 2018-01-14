@@ -1,0 +1,77 @@
+	{{! Editing a message icon. }}
+	<div id="admincenter">
+		<form action="{{scripturl}}?action=admin;area=smileys;sa=editicon;icon={{#if context.new_icon}}0{{else}}{{context.icon.id}}{{/if}}" method="post" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3 class="catbg">
+					{{#if context.new_icon}}{{{txt.icons_new_icon}}}{{else}}{{{txt.icons_edit_icon}}}{{/if}}
+				</h3>
+			</div>
+			<div class="windowbg2">
+				<dl class="settings">
+
+					{{#unless context.new_icon}}
+					<dt>
+						<strong>{{{txt.smiley_preview}}}: </strong>
+					</dt>
+					<dd>
+						<img src="{{{context.icon.image_url}}}" alt="{{{context.icon.title}}}">
+					</dd>
+					{{/unless}}
+
+					<dt>
+						<strong><label for="icon_filename">{{{txt.smileys_filename}}}</label>: </strong><br><span class="smalltext">{{{txt.icons_filename_all_png}}}</span>
+					</dt>
+					<dd>
+						<input type="text" name="icon_filename" id="icon_filename" value="{{#if context.icon.filename}}{{{context.icon.filename}}}.png{{/if}}" class="input_text">
+					</dd>
+					<dt>
+						<strong><label for="icon_description">{{{txt.smileys_description}}}</label>: </strong>
+					</dt>
+					<dd>
+						<input type="text" name="icon_description" id="icon_description" value="{{#if context.icon.title}}{{{context.icon.title}}}{{/if}}" class="input_text">
+					</dd>
+					<dt>
+						<strong><label for="icon_board_select">{{{txt.icons_board}}}</label>: </strong>
+					</dt>
+					<dd>
+						<select name="icon_board" id="icon_board_select">
+							<option value="0"{{#unless context.icon.board_id}} selected{{/unless}}>{{{txt.icons_edit_icons_all_boards}}}</option>
+
+							{{#each context.categories}}
+							<optgroup label="{{{name}}}">
+								{{#each boards}}
+								<option value="{{id}}"{{#if selected}} selected{{/if}}>{{#if (gt child_level 0)}}{{repeat '==' child_level}}=&gt;{{/if}} {{{name}}}</option>
+								{{/each}}
+							</optgroup>
+							{{/each}}
+
+						</select>
+					</dd>
+					<dt>
+						<strong><label for="icon_location">{{{txt.smileys_location}}}</label>: </strong>
+					</dt>
+					<dd>
+						<select name="icon_location" id="icon_location">
+							<option value="0"{{#unless context.icon.after}} selected{{/unless}}>{{{txt.icons_location_first_icon}}}</option>';
+
+							{{! Print the list of all the icons it can be put after... }}
+							{{#each context.icons}}
+								{{#unless (eq_coerce @key ../context.icon.id)}}
+								<option value="{{@key}}"{{#if (eq_coerce ../context.icon.after @key)}} selected{{/if}}>{{{../txt.icons_location_after}}}: {{{title}}}</option>
+								{{/unless}}
+							{{/each}}
+
+						</select>
+					</dd>
+				</dl>
+
+				{{#unless context.new_icon}}
+				<input type="hidden" name="icon" value="{{context.icon.id}}">
+				{{/unless}}
+
+
+				<input type="submit" name="icons_save" value="{{{txt.smileys_save}}}" class="button_submit">
+				{{session_form}}
+			</div>
+		</form>
+	</div>

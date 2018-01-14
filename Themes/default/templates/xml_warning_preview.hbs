@@ -1,0 +1,11 @@
+	<preview>
+		<subject><![CDATA[{{{context.preview_subject}}}]]></subject>
+		<body><![CDATA[{{{context.preview_message}}}]]></body>
+	</preview>
+	<errors serious="{{#if (eq context.error_type)}}1{{else}}0{{/if}}">
+		{{#if context.post_error.messages}}
+			{{#each context.post_error.messages}}
+				<error><![CDATA[{{{cleanXml .}}}]]></error>
+			{{/each}}
+		{{/if}}
+	</errors>

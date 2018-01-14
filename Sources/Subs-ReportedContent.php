@@ -330,6 +330,16 @@ function getReports($closed = 0)
 			);
 		}
 		$smcFunc['db_free_result']($request);
+
+		foreach ($reports as $id_report => $report)
+		{
+			$reporters = [];
+			foreach ($report['comments'] as $comment)
+			{
+				$reporters[$comment['member']['id']] = $comment['member']['link'];
+			}
+			$reports[$id_report]['reporters'] = $reporters;
+		}
 	}
 
 	// Get the boards where the current user can remove any message.
@@ -472,7 +482,7 @@ function getReportComments($report_id)
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$report['comments'][] = array(
+		$comment = array(
 			'id' => $row['id_comment'],
 			'message' => strtr($row['comment'], array("\n" => '<br>')),
 			'time' => timeformat($row['time_sent']),
@@ -484,6 +494,11 @@ function getReportComments($report_id)
 				'ip' => !empty($row['member_ip']) && allowedTo('moderate_forum') ? '<a href="' . $scripturl . '?action=trackip;searchip=' . inet_dtop($row['member_ip']) . '">' . inet_dtop($row['member_ip']) . '</a>' : '',
 			),
 		);
+		if (empty($comment['member']['id']) && !empty($comment['member']['ip']))
+		{
+			$comment['member']['link'] .= ' (' . $comment['member']['ip'] . ')';
+		}
+		$report['comments'][] = $comment;
 	}
 	$smcFunc['db_free_result']($request);
 

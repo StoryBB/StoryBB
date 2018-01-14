@@ -56,7 +56,9 @@ function Post($post_errors = array())
 
 	if (isset($_REQUEST['xml']))
 	{
-		$context['sub_template'] = 'post';
+		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::set_layout('xml');
+		$context['sub_template'] = 'xml_post_preview';
 
 		// Just in case of an earlier error...
 		$context['preview_message'] = '';
@@ -2411,7 +2413,12 @@ function QuoteFast()
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
-	$context['sub_template'] = !isset($_REQUEST['xml']) ? 'post_quotefast' : 'quotefast';
+	$context['sub_template'] = 'xml_quotefast';
+	StoryBB\Template::set_layout('xml');
+	register_helper([
+		'cleanXml' => 'cleanXml',
+	]);
+
 	if (!empty($row))
 		$can_view_post = $row['approved'] || ($row['id_member'] != 0 && $row['id_member'] == $user_info['id']) || allowedTo('approve_posts', $row['id_board']);
 
@@ -2430,7 +2437,7 @@ function QuoteFast()
 		{
 			censorText($row['subject']);
 
-			$context['sub_template'] = 'modifyfast';
+			$context['sub_template'] = 'xml_modifyfast';
 			$context['message'] = array(
 				'id' => $_REQUEST['quote'],
 				'body' => $row['body'],
@@ -2462,7 +2469,7 @@ function QuoteFast()
 	// In case our message has been removed in the meantime.
 	elseif (isset($_REQUEST['modify']))
 	{
-		$context['sub_template'] = 'modifyfast';
+		$context['sub_template'] = 'xml_modifyfast';
 		$context['message'] = array(
 			'id' => 0,
 			'body' => '',
@@ -2702,7 +2709,9 @@ function JavaScriptModify()
 
 	if (isset($_REQUEST['xml']))
 	{
-		$context['sub_template'] = 'modifydone';
+		StoryBB\Template::set_layout('xml');
+		$context['sub_template'] = 'xml_modifydone';
+		register_helper(['cleanXml' => 'cleanXml']);
 		if (empty($post_errors) && isset($msgOptions['subject']) && isset($msgOptions['body']))
 		{
 			$context['message'] = array(
@@ -2726,7 +2735,7 @@ function JavaScriptModify()
 		// Topic?
 		elseif (empty($post_errors))
 		{
-			$context['sub_template'] = 'modifytopicdone';
+			$context['sub_template'] = 'xml_modifytopicdone';
 			$context['message'] = array(
 				'id' => $row['id_msg'],
 				'modified' => array(

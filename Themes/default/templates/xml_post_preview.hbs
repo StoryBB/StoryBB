@@ -1,0 +1,31 @@
+	<preview>
+		<subject><![CDATA[{{{context.preview_subject}}}]]></subject>
+		<body><![CDATA[{{{context.preview_message}}}]]></body>
+	</preview>
+	<errors serious="{{#if (eq context.error_type 'serious')}}1{{else}}0{{/if}}" topic_locked="{{#if context.locked}}1{{else}}0{{/if}}">
+
+	{{#if context.post_error}}
+		{{#each context.post_error}}
+			<error><![CDATA[{{{cleanXml .}}}]]></error>
+		{{/each}}
+	{{/if}}
+
+		<caption name="guestname" class="{{#if (or context.post_error.long_name context.post_error.no_name context.post_error.bad_name)}}error{{/if}}" />
+		<caption name="email" class="{{#if (or context.post_error.no_email context.post_error.bad_email)}}error{{/if}}" />
+		<caption name="subject" class="{{#if context.post_error.no_subject}}error{{/if}}" />
+		<caption name="question" class="{{#if context.post_error.no_question}}error{{/if}}" />
+		{{#if (or context.post_error.no_message context.post_error.long_message)}}<post_error />{{/if}}
+	</errors>
+	<last_msg>{{#if context.topic_last_message}}{{{context.topic_last_message}}}{{else}}0{{/if}}</last_msg>
+
+	{{#if context.previous_posts}}
+	<new_posts>
+		{{#each context.previous_posts}}
+			<post id="{{id}}">
+				<time><![CDATA[{{{time}}}]]></time>
+				<poster><![CDATA[{{{cleanXml poster}}}]]></poster>
+				<message><![CDATA[{{{cleanXml message}}}]]></message>
+				<is_ignored>{{#if is_ignored}}1{{else}}0{{/if}}</is_ignored>
+		{{/each}}
+	</new_posts>
+	{{/if}}

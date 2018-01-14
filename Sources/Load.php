@@ -334,19 +334,6 @@ function reloadSettings()
 	// Define a list of allowed tags for descriptions.
 	$context['description_allowed_tags'] = array('abbr', 'anchor', 'b', 'center', 'color', 'font', 'hr', 'i', 'img', 'iurl', 'left', 'li', 'list', 'ltr', 'pre', 'right', 's', 'sub', 'sup', 'table', 'td', 'tr', 'u', 'url',);
 
-	// Get an error count, if necessary
-	if (!isset($context['num_errors']))
-	{
-		$query = $smcFunc['db_query']('', '
-			SELECT COUNT(id_error)
-			FROM {db_prefix}log_errors',
-			array()
-		);
-
-		list($context['num_errors']) = $smcFunc['db_fetch_row']($query);
-		$smcFunc['db_free_result']($query);
-	}
-
 	// Call pre load integration functions.
 	call_integration_hook('integrate_pre_load');
 }
@@ -2210,7 +2197,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Output is fully XML, so no need for the index template.
 	if (isset($_REQUEST['xml']) && (in_array($context['current_action'], $xmlActions) || $requiresXML))
 	{
-		loadTemplate('Xml');
 		StoryBB\Template::set_layout('raw');
 	}
 

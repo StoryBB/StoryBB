@@ -23,7 +23,6 @@ function ManageSmileys()
 	isAllowedTo('manage_smileys');
 
 	loadLanguage('ManageSmileys');
-	loadTemplate('ManageSmileys');
 
 	$subActions = array(
 		'addsmiley' => 'AddSmiley',
@@ -169,6 +168,7 @@ function EditSmileySets()
 
 	// Set the right tab to be selected.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'editsets';
+	$context['sub_template'] = 'admin_smiley_set_list';
 
 	// They must've been submitted a form.
 	if (isset($_POST['smiley_save']))
@@ -272,11 +272,12 @@ function EditSmileySets()
 
 		// Force the process to continue.
 		$context['sub_action'] = 'modifyset';
-		$context['sub_template'] = 'modifyset';
+		$context['sub_template'] = 'admin_smiley_set_edit';
 	}
 	// If we're modifying or adding a smileyset, some context info needs to be set.
 	if ($context['sub_action'] == 'modifyset')
 	{
+		$context['sub_template'] = 'admin_smiley_set_edit';
 		$_GET['set'] = !isset($_GET['set']) ? -1 : (int) $_GET['set'];
 		if ($_GET['set'] == -1 || !isset($context['smiley_sets'][$_GET['set']]))
 			$context['current_set'] = array(
@@ -456,8 +457,6 @@ function EditSmileySets()
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
-
-	$context['sub_template'] = 'admin_smiley_set_list';
 }
 
 /**
@@ -526,6 +525,8 @@ function list_getNumSmileySets()
 function AddSmiley()
 {
 	global $modSettings, $context, $txt, $boarddir, $smcFunc;
+
+	$context['sub_template'] = 'admin_smiley_add';
 
 	// Get a list of all known smiley sets.
 	$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
@@ -1121,6 +1122,7 @@ function EditSmileys()
 	// Modifying smileys.
 	elseif ($context['sub_action'] == 'modifysmiley')
 	{
+		$context['sub_template'] = 'admin_smiley_edit';
 		// Get a list of all known smiley sets.
 		$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
 		$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
@@ -1234,6 +1236,8 @@ function list_getNumSmileys()
 function EditSmileyOrder()
 {
 	global $context, $txt, $smcFunc;
+
+	$context['sub_template'] = 'admin_smiley_reorder';
 
 	// Move smileys to another position.
 	if (isset($_REQUEST['reorder']))
@@ -1703,13 +1707,15 @@ function EditMessageIcons()
 	if ($context['sub_action'] == 'editicon' || isset($_POST['add']))
 	{
 		// Force the sub_template just in case.
-		$context['sub_template'] = 'editicon';
+		$context['sub_template'] = 'admin_messageicon_edit';
 
 		$context['new_icon'] = !isset($_GET['icon']);
 
 		// Get the properties of the current icon from the icon list.
 		if (!$context['new_icon'])
 			$context['icon'] = $context['icons'][$_GET['icon']];
+		else
+			$context['icon'] = ['id' => 0];
 
 		// Get a list of boards needed for assigning this icon to a specific board.
 		$boardListOptions = array(

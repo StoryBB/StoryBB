@@ -1,0 +1,48 @@
+	{{! Setting up and managing TFA }}
+		<div class="cat_bar">
+			<h3 class="catbg">{{{txt.tfa_title}}}</h3>
+		</div>
+		<div class="roundframe">
+			<div>
+				{{#if context.tfa_backup}}
+					<div class="smalltext error">{{{txt.tfa_backup_used_desc}}}</div>
+				{{else}}
+					{{#if (eq modSettings.tfa_mode 2)}}
+						<div class="smalltext"><strong>{{{txt.tfa_forced_desc}}}</strong></div>
+					{{/if}}
+				{{/if}}
+
+				<div class="smalltext">{{{txt.tfa_desc}}}</div>
+				<div id="basicinfo" style="width: 60%">
+					<form action="{{scripturl}}?action=profile;area=tfasetup" method="post">
+						<div class="title_top">
+							<strong>{{{txt.tfa_step1}}}</strong><br />
+							{{#if context.tfa_pass_error}}<div class="error smalltext">{{{txt.tfa_pass_invalid}}}</div>{{/if}}
+							<input type="password" name="passwd" style="width: 200px;"{{#if context.tfa_pass_error}} class="error"{{/if}}{{#if context.tfa_pass_value}} value="{{{context.tfa_pass_value}}}">
+						</div>
+						<div class="title_top">
+							<strong>{{{txt.tfa_step2}}}</strong>
+							<div class="smalltext">{{{txt.tfa_step2_desc}}}</div>
+							<div class="tfacode">{{{context.tfa_secret}}}</div>
+						</div>
+						<div class="title_top">
+							<strong>{{{txt.tfa_step3}}}</strong><br />
+							{{#if context.tfa_error}}<div class="error smalltext">{{{txt.tfa_code_invalid}}}</div>{{/if}}
+							<input type="text" name="tfa_code" style="width: 200px;"{{#if context.tfa_error}} class="error"{{/if}}{{#if context.tfa_value}} value="{{{context.tfa_value}}}">
+							<input type="submit" name="save" value="{{{txt.tfa_enable}}}" class="button_submit" style="float: none;" />
+						</div>
+						{{token_form context.token_check}}
+						{{session_form}}
+					</form>
+				</div>
+				<div id="detailedinfo" style="width: 30%;">
+					<img src="{{{context.tfa_qr_url}}}" alt="" style="max-width: 120px;" />
+				</div>
+				<div class="clear"></div>
+
+				{{#if context.from_ajax}}
+					<br>
+					<a href="javascript:self.close();"></a>
+				{{/if}}
+			</div>
+		</div>

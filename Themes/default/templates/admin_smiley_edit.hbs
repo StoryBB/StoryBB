@@ -1,0 +1,71 @@
+	{{! Editing an individual smiley. }}
+	<div id="admincenter">
+		<form action="{{scripturl}}?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.smiley_modify_existing}}}</h3>
+			</div>
+			<div class="windowbg2">
+				<dl class="settings">
+					<dt>
+						<strong>{{{txt.smiley_preview}}}: </strong>
+					</dt>
+					<dd>
+						<img src="{{{modSettings.smileys_url}}}/{{{modSettings.smiley_sets_default}}}/{{{context.current_smiley.filename}}}" id="preview" alt=""> ({{{txt.smiley_preview_using}}}: <select name="set" onchange="updatePreview();">';
+
+						{{#each context.smiley_sets}}
+						<option value="{{path}}"{{#if (eq ../context.selected_set path)}} selected{{/if}}>{{{name}}}</option>
+						{{/each}}
+
+						</select>)
+					</dd>
+					<dt>
+						<strong><label for="smiley_code">{{{txt.smileys_code}}}</label>: </strong>
+					</dt>
+					<dd>
+						<input type="text" name="smiley_code" id="smiley_code" value="{{{context.current_smiley.code}}}" class="input_text">
+					</dd>
+					<dt>
+						<strong><label for="smiley_filename">{{{txt.smileys_filename}}}</label>: </strong>
+					</dt>
+					<dd>
+						{{#unless context.filenames}}
+						<input type="text" name="smiley_filename" id="smiley_filename" value="{{{context.current_smiley.filename}}}" class="input_text">
+						{{else}}
+						<select name="smiley_filename" id="smiley_filename" onchange="updatePreview();">
+							{{#each context.filenames}}
+							<option value="{{id}}"{{#if selected}} selected{{/if}}>{{id}}</option>
+							{{/each}}
+
+						</select>
+						{{/unless}}
+					</dd>
+					<dt>
+						<strong><label for="smiley_description">{{{txt.smileys_description}}}</label>: </strong>
+					</dt>
+					<dd>
+						<input type="text" name="smiley_description" id="smiley_description" value="{{{context.current_smiley.description}}}" class="input_text">
+					</dd>
+					<dt>
+						<strong><label for="smiley_location">{{{txt.smileys_location}}}</label>: </strong>
+					</dt>
+					<dd>
+						<select name="smiley_location" id="smiley_location">
+							<option value="0"{{#if (eq context.current_smiley.location '0')}} selected{{/if}}>
+								{{{txt.smileys_location_form}}}
+							</option>
+							<option value="1"{{#if (eq context.current_smiley.location '1')}} selected{{/if}}>
+								{{{txt.smileys_location_hidden}}}
+							</option>
+							<option value="2"{{#if (eq context.current_smiley.location '2')}} selected{{/if}}>
+								{{{txt.smileys_location_popup}}}
+							</option>
+						</select>
+					</dd>
+				</dl>
+				<input type="submit" name="smiley_save" value="{{{txt.smileys_save}}}" class="button_submit">
+				<input type="submit" name="deletesmiley" value="{{{txt.smileys_delete}}}" data-confirm="{{{txt.smileys_delete_confirm}}}" class="button_submit you_sure">
+			</div>
+			{{session_form}}
+			<input type="hidden" name="smiley" value="{{context.current_smiley.id}}">
+		</form>
+	</div>
