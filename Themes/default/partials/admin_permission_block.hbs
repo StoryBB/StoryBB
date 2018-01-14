@@ -1,0 +1,65 @@
+	{{! A partial template for showing the permissions that users want. }}
+	{{#each permission_list.columns}}{{! $column}}
+		<table class="table_grid half_content">
+
+		{{#each .}}{{! $permissionGroup}}
+			{{! Are we likely to have something in this group to display or is it all hidden? }}
+			{{#unless hidden}}
+				<tr class="title_bar">
+					<th></th>
+					<th{{#unless (neq ../../context.group.id -1)}} colspan="2"{{/unless}} class="smalltext">{{{name}}}</th>
+
+					{{#if (neq ../../context.group.id -1)}}
+						<th>{{{../../txt.permissions_option_own}}}</th>
+						<th>{{{../../txt.permissions_option_any}}}</th>
+					{{/if}}
+				</tr>
+
+				{{#each permissions}}{{! $permission}}
+					{{#unless hidden}}
+						<tr class="windowbg">
+							<td>
+								{{#if show_help}}{{> helpicon help=id scripturl=../../../scripturl txt=../../../txt}}{{/if}}
+							</td>
+							<td class="lefttext full_width">{{{name}}}</td>
+							<td> 
+								{{#if has_own_any}}
+									{{! Guests can't do their 'own' thing. }}
+									{{#if (neq ../../../context.group.id -1)}}
+										<select name="perm[{{../../../permission_type}}][{{own.id}}]"{{#unless ../../../context.profile.can_modify}} disabled{{/unless}}>
+											<option{{#if (eq own.select 'on')}} selected{{/if}} value="on">{{{../../../txt.permissions_option_on}}}</option>
+											<option{{#if (eq own.select 'off')}} selected{{/if}} value="off">{{{../../../txt.permissions_option_off}}}</option>
+											<option{{#if (eq own.select 'deny')}} selected{{/if}} value="deny">{{{../../../txt.permissions_option_deny}}}</option>
+										</select>
+									</td>
+									<td>
+										<select name="perm[{{../../../permission_type}}][{{any.id}}]"{{#unless ../../../context.profile.can_modify}} disabled{{/unless}}>
+											<option{{#if (eq any.select 'on')}} selected{{/if}} value="on">{{{../../../txt.permissions_option_on}}}</option>
+											<option{{#if (eq any.select 'off')}} selected{{/if}} value="off">{{{../../../txt.permissions_option_off}}}</option>
+											<option{{#if (eq any.select 'deny')}} selected{{/if}} value="deny">{{{../../../txt.permissions_option_deny}}}</option>
+										</select>
+									{{else}}
+									<input type="checkbox" name="perm[{{../../../permission_type}}][{{any.id}}]"{{#if (eq any.select 'on')}} checked{{/if}} value="on" class="input_check"{{#unless ../../../context.profile.can_modify}} disabled{{/unless}} />
+									{{/if}}
+								{{else}}
+									{{#if (neq ../../../context.group.id -1)}}
+									</td>
+									<td>
+										<select name="perm[{{../../../permission_type}}][{{id}}]"{{#unless ../../../context.profile.can_modify}} disabled{{/unless}}>
+											<option{{#if (eq select 'on')}} selected{{/if}} value="on">{{{../../../txt.permissions_option_on}}}</option>
+											<option{{#if (eq select 'off')}} selected{{/if}} value="off">{{{../../../txt.permissions_option_off}}}</option>
+											<option{{#if (eq select 'deny')}} selected{{/if}} value="deny">{{{../../../txt.permissions_option_deny}}}</option>
+										</select>
+									{{else}}
+										<input type="checkbox" name="perm[{{../../../permission_type}}][{{id}}]"{{#if (eq select 'on')}} checked{{/if}} value="on" class="input_check"{{#unless ../../../context.profile.can_modify}} disabled{{/unless}} />
+									{{/if}}
+								{{/if}}
+							</td>
+						</tr>
+					{{/unless}}
+				{{/each}}
+			{{/unless}}
+		{{/each}}
+		</table>
+	{{/each}}
+	<br class="clear">

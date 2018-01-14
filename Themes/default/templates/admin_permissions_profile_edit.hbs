@@ -1,0 +1,77 @@
+	{{! Modifying a permissions profile. }}
+	<div id="admin_form_wrapper">
+		<form action="{{scripturl}}?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.permissions_profile_edit}}}</h3>
+			</div>
+
+			<table class="table_grid">
+				<thead>
+					<tr class="title_bar">
+						<th>{{{txt.permissions_profile_name}}}</th>
+						<th>{{{txt.permissions_profile_used_by}}}</th>
+						<th class="table_icon"{{#if context.show_rename_boxes}} style="display:none"{{/if}}>{{{txt.delete}}}</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					{{#each context.profiles}}
+					<tr class="windowbg">
+						<td>
+							{{#if (and ../context.show_rename_boxes can_edit)}}
+							<input type="text" name="rename_profile[{{id}}]" value="{{{name}}}" class="input_text">
+							{{else}}
+							<a href="{{../scripturl}}?action=admin;area=permissions;sa=index;pid={{id}};{{session_url}}">{{{name}}}</a>
+							{{/if}}
+						</td>
+						<td>
+							{{#if boards_text}}{{{boards_text}}}{{else}}{{{../txt.permissions_profile_used_by_none}}}{{/if}}
+						</td>
+						<td{{#if ../context.show_rename_boxes}} style="display:none"{{/if}}>
+							<input type="checkbox" name="delete_profile[]" value="{{id}}"{{#unless can_delete}}disabled{{/unless}} class="input_check">
+						</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			<div class="flow_auto righttext padding">
+				{{session_form}}
+				{{token_form 'admin-mpp'}}
+
+				{{#if context.can_edit_something}}
+				<input type="submit" name="rename" value="{{#unless context.show_rename_boxes}}{{{txt.permissions_profile_rename}}}{{else}}{{{txt.permissions_commit}}}{{/unless}}" class="button_submit">
+				{{/if}}
+
+				<input type="submit" name="delete" value="{{{txt.quickmod_delete_selected}}}" class="button_submit" {{#if context.show_rename_boxes}} style="display:none"{{/if}} />
+			</div>
+		</form>
+		<br>
+		<form action="{{scripturl}}?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.permissions_profile_new}}}</h3>
+			</div>
+			<div class="windowbg2 noup">
+				<dl class="settings">
+					<dt>
+						<strong>{{{txt.permissions_profile_name}}}:</strong>
+					</dt>
+					<dd>
+						<input type="text" name="profile_name" value="" class="input_text">
+					</dd>
+					<dt>
+						<strong>{{{txt.permissions_profile_copy_from}}}:</strong>
+					</dt>
+					<dd>
+						<select name="copy_from">
+							{{#each context.profiles}}
+							<option value="{{@key}}#">{{{name}}}</option>
+							{{/each}}
+						</select>
+					</dd>
+				</dl>
+				{{session_form}}
+				{{token_form 'admin-mpp'}}
+				<input type="submit" name="create" value="{{{txt.permissions_profile_new_create}}}" class="button_submit">
+			</div>
+		</form>
+	</div>

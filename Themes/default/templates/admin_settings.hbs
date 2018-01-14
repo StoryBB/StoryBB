@@ -42,7 +42,7 @@
 					{{#if (eq type 'select')}}{{> admin_setting_select config_var=.}}{{/if}}
 					{{! Convenient special types }}
 					{{#if (eq type 'boards')}}{{> admin_setting_boards config_var=.}}{{/if}}
-					{{#if (eq type 'permissions')}}{{! theme_inline_permissions($config_var['name']); }}{{!> admin_setting_permissions config_var=.}}{{/if}}
+					{{#if (eq type 'permissions')}}{{> admin_setting_permissions config_var=. context=../context txt=../txt scripturl=../scripturl}}{{/if}}
 					{{#if (eq type 'bbc')}}{{> admin_setting_bbc config_var=. context=../context txt=../txt scripturl=../scripturl}}{{/if}}
 					{{#if (eq type 'var_message')}}{{> admin_setting_var_message config_var=.}}{{/if}}
 				{{else}}
