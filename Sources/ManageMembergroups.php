@@ -1204,7 +1204,7 @@ function EditMembergroup()
 
 	call_integration_hook('integrate_view_membergroup');
 
-	$context['sub_template'] = 'edit_group';
+	$context['sub_template'] = 'admin_membergroups_edit';
 	$context['page_title'] = $txt['membergroups_edit_group'];
 
 	createToken('admin-mmg');
