@@ -48,7 +48,6 @@ function ModifyMembergroups()
 
 	// Language and template stuff, the usual.
 	loadLanguage('ManageMembers');
-	loadTemplate('ManageMembergroups');
 
 	// Setup the admin tabs.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
