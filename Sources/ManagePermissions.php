@@ -26,7 +26,6 @@ function ModifyPermissions()
 	global $txt, $context;
 
 	loadLanguage('ManagePermissions+ManageMembers');
-	loadTemplate('ManagePermissions');
 
 	// Format: 'sub-action' => array('function_to_call', 'permission_needed'),
 	$subActions = array(
@@ -333,9 +332,13 @@ function PermissionIndex()
 
 	// We can modify any permission set apart from the read only, reply only and no polls ones as they are redefined.
 	$context['can_modify'] = empty($_REQUEST['pid']) || $_REQUEST['pid'] == 1 || $_REQUEST['pid'] > 4;
+	if (!$context['can_modify'])
+	{
+		session_flash('warning', sprintf($txt['permission_cannot_edit'], $scripturl . '?action=admin;area=permissions;sa=profiles'));
+	}
 
 	// Load the proper template.
-	$context['sub_template'] = 'permission_index';
+	$context['sub_template'] = 'admin_permissions';
 	createToken('admin-mpq');
 }
 
@@ -411,7 +414,7 @@ function PermissionByBoard()
 		}
 	}
 
-	$context['sub_template'] = 'by_board';
+	$context['sub_template'] = 'admin_permissions_board_profiles';
 	createToken('admin-mpb');
 }
 
@@ -831,7 +834,40 @@ function ModifyMembergroup()
 			}
 		}
 	}
-	$context['sub_template'] = 'modify_group';
+
+	// Check that any group marked as non-hidden actually has some non-hidden permissions too.
+	foreach ($context['permissions'] as $permissionType => $tmp)
+	{
+		foreach ($tmp['columns'] as $position => $permissionGroups)
+		{
+			foreach ($permissionGroups as $permissionGroup => $permissionArray)
+			{
+				if (empty($permissionArray['permissions']))
+				{
+					// If it's empty, also mark it as hidden.
+					$context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['hidden'] = true;
+					continue;
+				}
+
+				// Step through all the permissions in the group.
+				$has_display_content = false;
+				foreach ($permissionArray['permissions'] as $perm)
+				{
+					if (!$perm['hidden'])
+					{
+						$has_display_content = true;
+						break;
+					}
+				}
+				if (!$has_display_content)
+				{
+					$context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['hidden'] = true;
+				}
+			}
+		}
+	}
+
+	$context['sub_template'] = 'admin_permission_edit';
 	$context['page_title'] = $txt['permissions_modify_group'];
 
 	createToken('admin-mp');
@@ -1535,6 +1571,11 @@ function loadAllPermissions()
 		$hiddenPermissions[] = 'post_unapproved_attachments';
 		$hiddenPermissions[] = 'post_attachment';
 	}
+	elseif ($modSettings['attachmentEnable'] == 2)
+	{
+		$hiddenPermissions[] = 'post_unapproved_attachments';
+		$hiddenPermissions[] = 'post_attachment';
+	}
 
 	// Hide Likes/Mentions permissions...
 	if (empty($modSettings['enable_likes']))
@@ -1655,7 +1696,6 @@ function init_inline_permissions($permissions, $excluded_groups = array())
 	global $context, $txt, $modSettings, $smcFunc;
 
 	loadLanguage('ManagePermissions');
-	loadTemplate('ManagePermissions');
 	$context['can_change_permissions'] = allowedTo('manage_permissions');
 
 	// Nothing to initialize here.
@@ -1749,23 +1789,6 @@ function init_inline_permissions($permissions, $excluded_groups = array())
 
 	// Create the token for the separate inline permission verification.
 	createToken('admin-mp');
-}
-
-/**
- * Show a collapsible box to set a specific permission.
- * The function is called by templates to show a list of permissions settings.
- * Calls the template function template_inline_permissions().
- *
- * @param string $permission The permission to display inline
- */
-function theme_inline_permissions($permission)
-{
-	global $context;
-
-	$context['current_permission'] = $permission;
-	$context['member_groups'] = $context[$permission];
-
-	template_inline_permissions();
 }
 
 /**
@@ -1871,7 +1894,7 @@ function EditPermissionProfiles()
 
 	// Setup the template, first for fun.
 	$context['page_title'] = $txt['permissions_profile_edit'];
-	$context['sub_template'] = 'edit_profiles';
+	$context['sub_template'] = 'admin_permissions_profile_edit';
 
 	// If we're creating a new one do it first.
 	if (isset($_POST['create']) && trim($_POST['profile_name']) != '')
@@ -2235,7 +2258,7 @@ function ModifyPostModeration()
 	checkSession('get');
 
 	$context['page_title'] = $txt['permissions_post_moderation'];
-	$context['sub_template'] = 'postmod_permissions';
+	$context['sub_template'] = 'admin_permissions_postmoderation';
 	$context['current_profile'] = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 1;
 
 	// Load all the permission profiles.

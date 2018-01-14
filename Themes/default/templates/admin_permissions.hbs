@@ -1,0 +1,184 @@
+	{{! The main permissions page. }}
+	<div id="admin_form_wrapper">
+		<form action="{{scripturl}}?action=admin;area=permissions;sa=quick" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm">
+
+			{{#if context.profile}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.permissions_for_profile}}}: &quot;{{{context.profile.name}}}&quot;</h3>
+			</div>
+			{{else}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.permissions_title}}}</h3>
+			</div>
+			{{/if}}
+
+			<table class="table_grid">
+				<thead>
+					<tr class="title_bar">
+						<th>{{{txt.membergroups_name}}}</th>
+						<th class="small_table">{{{txt.membergroups_members_top}}}</th>
+						<th class="small_table">{{{txt.permissions_allowed}}}</th>
+						<th class="small_table">{{{txt.permissions_denied}}}</th>
+						<th class="small_table">{{#if context.can_modify}}{{{txt.permissions_modify}}}{{else}}{{{txt.permissions_view}}}{{/if}}</th>
+						<th class="table_icon centercol">
+							{{#if context.can_modify}}<input type="checkbox" class="input_check" onclick="invertAll(this, this.form, 'group');">{{/if}}
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each context.groups}}
+					<tr class="windowbg">
+						<td>
+							{{#if help}}{{> helpicon help=help}}{{/if}}&nbsp;<span>{{{name}}}</span>
+
+							{{#if children}}
+							<br>
+							<span class="smalltext">{{{../txt.permissions_includes_inherited}}}: &quot;{{{join children '&quot;, &quot;'}}}&quot;</span>
+							{{/if}}
+						</td>
+						<td>{{#if can_search}}{{{link}}}{{else}}{{{num_members}}}{{/if}}</td>
+
+						<td{{#if (eq id 1)}} style="font-style: italic;"{{/if}}>{{{num_permissions.allowed}}}</td>
+						<td{{#if (or (eq id 1) (eq id -1))}} style="font-style: italic;"{{else}}{{#if (gt num_permissions.denied 0)}} class="red"{{/if}}{{/if}}>{{{num_permissions.denied}}}</td>
+
+						<td>{{#if allow_modify}}<a href="{{../scripturl}}?action=admin;area=permissions;sa=modify;group={{id}}{{#if ../context.profile}};pid={{../context.profile.id}}{{/if}}">{{#if ../context.can_modify}}{{{../txt.permissions_modify}}}{{else}}{{{../txt.permissions_view}}}{{/if}}</a>{{/if}}</td>
+						<td class="centercol">{{#if (and allow_modify ../context.can_modify)}}<input type="checkbox" name="group[]" value="{{id}}" class="input_check">{{/if}}</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			<br>
+
+			{{#if context.can_modify}}
+				<div class="cat_bar">
+					<h3 class="catbg">
+						<span id="permissions_panel_toggle" class="{{#if context.show_advanced_options}}toggle_up{{else}}toggle_down{{/if}} floatright" style="display: none;"></span>
+						<a href="#" id="permissions_panel_link">{{{txt.permissions_advanced_options}}}</a>
+					</h3>
+				</div>
+				<div id="permissions_panel_advanced" class="windowbg2 noup">
+					<fieldset>
+						<legend>{{{txt.permissions_with_selection}}}</legend>
+						<dl class="settings">
+							<dt>
+								{{> helpicon help='permissions_quickgroups'}} {{{txt.permissions_apply_pre_defined}}}
+							</dt>
+							<dd>
+								<select name="predefined">
+									<option value="">({{{txt.permissions_select_pre_defined}}})</option>
+									<option value="restrict">{{{txt.permitgroups_restrict}}}</option>
+									<option value="standard">{{{txt.permitgroups_standard}}}</option>
+									<option value="moderator">{{{txt.permitgroups_moderator}}}</option>
+									<option value="maintenance">{{{txt.permitgroups_maintenance}}}</option>
+								</select>
+							</dd>
+							<dt>
+								{{{txt.permissions_like_group}}}:
+							</dt>
+							<dd>
+								<select name="copy_from">
+									<option value="empty">({{{txt.permissions_select_membergroup}}})</option>
+									{{#each context.groups}}
+										{{#if (eq id -1)}}
+										<option value="{{id}}">{{{name}}}</option>
+										{{/if}}
+									{{/each}}
+								</select>
+							</dd>
+							<dt>
+								<select name="add_remove">
+									<option value="add">{{{txt.permissions_add}}}...</option>
+									<option value="clear">{{{txt.permissions_remove}}}...</option>
+									<option value="deny">{{{txt.permissions_deny}}}...</option>
+								</select>
+							</dt>
+							<dd style="overflow:auto;">
+								<select name="permissions">
+									<option value="">({{{txt.permissions_select_permission}}})</option>
+									{{#each context.permissions}}{{! permissionType }}
+										{{#if (or (eq id 'board') (not ../context.profile))}}
+											{{#each columns}}
+												{{#each .}}{{! permissionGroup }}
+													{{#unless hidden}}
+														<option value="" disabled>[{{{name}}}]</option>';
+														{{#each permissions}}
+															{{#unless hidden}}
+																{{#if has_own_any}}
+																	<option value="{{../../../id}}/{{own.id}}">&nbsp;&nbsp;&nbsp;{{{name}}} ({{{own.name}}})</option>
+																	<option value="{{../../../id}}/{{any.id}}">&nbsp;&nbsp;&nbsp;{{{name}}} ({{{any.name}}})</option>
+																{{else}}
+																	<option value="{{../../../id}}/{{id}}">&nbsp;&nbsp;&nbsp;{{{name}}}</option>
+																{{/if}}
+															{{/unless}}
+														{{/each}}
+													{{/unless}}
+												{{/each}}
+											{{/each}}
+										{{/if}}
+									{{/each}}
+								</select>
+							</dd>
+						</dl>
+					</fieldset>
+					<input type="submit" value="{{{txt.permissions_set_permissions}}}" onclick="return checkSubmit();" class="button_submit">
+				</div>
+
+				<script>
+					var oPermissionsPanelToggle = new smc_Toggle({
+						bToggleEnabled: true,
+						bCurrentlyCollapsed: {{#unless context.show_advanced_options}}true{{else}}false{{/unless}},
+						aSwappableContainers: [
+							'permissions_panel_advanced'
+						],
+						aSwapImages: [
+							{
+								sId: 'permissions_panel_toggle',
+								altExpanded: {{{json txt.hide}}},
+								altCollapsed: {{{json txt.show}}}
+							}
+						],
+						aSwapLinks: [
+							{
+								sId: 'permissions_panel_link',
+								msgExpanded: {{{json txt.permissions_advanced_options}}},
+								msgCollapsed: {{{json txt.permissions_advanced_options}}}
+							}
+						],
+						oThemeOptions: {
+							bUseThemeSettings: true,
+							sOptionName: 'admin_preferences',
+							sSessionVar: smf_session_var,
+							sSessionId: smf_session_id,
+							sThemeId: '1',
+							sAdditionalVars: ';admin_key=app'
+						}
+					});
+
+					function checkSubmit()
+					{
+						if ((document.forms.permissionForm.predefined.value != "" && (document.forms.permissionForm.copy_from.value != "empty" || document.forms.permissionForm.permissions.value != "")) || (document.forms.permissionForm.copy_from.value != "empty" && document.forms.permissionForm.permissions.value != ""))
+						{
+							alert({{{json txt.permissions_only_one_option}}});
+							return false;
+						}
+						if (document.forms.permissionForm.predefined.value == "" && document.forms.permissionForm.copy_from.value == "" && document.forms.permissionForm.permissions.value == "")
+						{
+							alert({{{json txt.permissions_no_action}}});
+							return false;
+						}
+						if (document.forms.permissionForm.permissions.value != "" && document.forms.permissionForm.add_remove.value == "deny")
+							return confirm({{{json txt.permissions_deny_dangerous}}});
+
+						return true;
+					}
+				</script>
+
+				{{#if context.profile}}
+				<input type="hidden" name="pid" value="{{context.profile.id}}">
+				{{/if}}
+
+				{{session_form}}
+				{{token_form 'admin-mpq'}}
+			{{/if}}
+		</form>
+	</div>

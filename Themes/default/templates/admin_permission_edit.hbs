@@ -1,0 +1,68 @@
+	{{! Main permission changing page. }}
+	{{#unless context.profile.can_modify}}
+		<div class="errorbox">
+			{{{textTemplate txt.permission_cannot_edit (concat scripturl '?action=admin;area=permissions;sa=profiles')}}}
+		</div>
+	{{else}}
+		<script>
+			window.smf_usedDeny = false;
+
+			function warnAboutDeny()
+			{
+				if (window.smf_usedDeny)
+					return confirm({{{json txt.permissions_deny_dangerous}}});
+				else
+					return true;
+			}
+		</script>
+	{{/unless}}
+
+	<div id="admincenter">
+		<form id="permissions" action="{{scripturl}}?action=admin;area=permissions;sa=modify2;group={{context.group.id}};pid={{context.profile.id}}" method="post" accept-charset="UTF-8" name="permissionForm" onsubmit="return warnAboutDeny();">
+
+			{{#if (neq context.group.id -1)}}
+			<div class="information">
+				{{{txt.permissions_option_desc}}}
+			</div>
+			{{/if}}
+
+			<div class="cat_bar">
+				<h3 class="catbg">
+					{{#if (eq context.permission_type 'board')}}
+					{{{txt.permissions_local_for}}} &quot;{{{context.group.name}}}&quot; {{{txt.permissions_on}}} &quot;{{{context.profile.name}}}&quot;
+					{{else}}
+					{{{txt.permissions_general}}}
+					{{/if}}
+				</h3>
+			</div>
+
+			{{! If this is general permissions also show the default profile. }}
+			{{#if (eq context.permission_type 'membergroup')}}
+				{{> admin_permission_block permission_type='membergroup' permission_list=context.permissions.membergroup context=context txt=txt scripturl=scripturl}}
+				<br>
+				<div class="cat_bar">
+					<h3 class="catbg">{{{txt.permissions_board}}}</h3>
+				</div>
+				<div class="information">
+					{{{txt.permissions_board_desc}}}
+				</div>
+
+				{{> admin_permission_block permission_type='board' permission_list=context.permissions.board context=context txt=txt scripturl=scripturl}}
+			{{else}}
+				{{> admin_permission_block permission_type='board' permission_list=context.permissions.board context=context txt=txt scripturl=scripturl}}
+			{{/if}}
+
+			{{#if context.profile.can_modify}}
+			<div class="padding">
+				<input type="submit" value="{{{txt.permissions_commit}}}" class="button_submit">
+			</div>
+			{{/if}}
+
+			{{#each context.hidden_perms}}
+			<input type="hidden" name="perm[{{0}}][{{1}}]" value="{{2}}">
+			{{/each}}
+
+			{{session_form}}
+			{{token_form 'admin-mp'}}
+		</form>
+	</div>
