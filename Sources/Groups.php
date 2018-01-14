@@ -250,6 +250,12 @@ function MembergroupMembers()
 	}
 	$smcFunc['db_free_result']($request);
 
+	$context['group']['moderators_formatted'] = [];
+	foreach ($context['group']['moderators'] as $moderator)
+	{
+		$context['group']['moderators_formatted'][] = '<a href="' . $scripturl . '?action=profile;u=' . $moderator['id'] . '">' . $moderator['name'] . '</a>';
+	}
+
 	// If this group is hidden then it can only "exists" if the user can moderate it!
 	if ($context['group']['hidden'] && !$context['group']['can_moderate'])
 		fatal_lang_error('membergroup_does_not_exist', false);
@@ -491,7 +497,7 @@ function MembergroupMembers()
 	$smcFunc['db_free_result']($request);
 
 	// Select the template.
-	$context['sub_template'] = 'group_members';
+	$context['sub_template'] = 'admin_membergroups_members';
 	$context['page_title'] = $txt['membergroups_members_title'] . ': ' . $context['group']['name'];
 	createToken('mod-mgm');
 
