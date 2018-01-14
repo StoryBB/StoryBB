@@ -1858,7 +1858,7 @@ function EditPermissionProfiles()
 
 	// Setup the template, first for fun.
 	$context['page_title'] = $txt['permissions_profile_edit'];
-	$context['sub_template'] = 'edit_profiles';
+	$context['sub_template'] = 'admin_permissions_profile_edit';
 
 	// If we're creating a new one do it first.
 	if (isset($_POST['create']) && trim($_POST['profile_name']) != '')
