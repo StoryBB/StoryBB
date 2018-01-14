@@ -26,7 +26,6 @@ function ModifyPermissions()
 	global $txt, $context;
 
 	loadLanguage('ManagePermissions+ManageMembers');
-	loadTemplate('ManagePermissions');
 
 	// Format: 'sub-action' => array('function_to_call', 'permission_needed'),
 	$subActions = array(
@@ -1697,7 +1696,6 @@ function init_inline_permissions($permissions, $excluded_groups = array())
 	global $context, $txt, $modSettings, $smcFunc;
 
 	loadLanguage('ManagePermissions');
-	loadTemplate('ManagePermissions');
 	$context['can_change_permissions'] = allowedTo('manage_permissions');
 
 	// Nothing to initialize here.
