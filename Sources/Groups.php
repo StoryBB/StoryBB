@@ -35,7 +35,6 @@ function Groups()
 	// Get the template stuff up and running.
 	loadLanguage('ManageMembers');
 	loadLanguage('ModerationCenter');
-	loadTemplate('ManageMembergroups');
 
 	// If we can see the moderation center, and this has a mod bar entry, add the mod center bar.
 	if (allowedTo('access_mod_center') || $user_info['mod_cache']['bq'] != '0=1' || $user_info['mod_cache']['gq'] != '0=1' || allowedTo('manage_membergroups'))
@@ -249,6 +248,12 @@ function MembergroupMembers()
 			$context['group']['can_moderate'] = true;
 	}
 	$smcFunc['db_free_result']($request);
+
+	$context['group']['moderators_formatted'] = [];
+	foreach ($context['group']['moderators'] as $moderator)
+	{
+		$context['group']['moderators_formatted'][] = '<a href="' . $scripturl . '?action=profile;u=' . $moderator['id'] . '">' . $moderator['name'] . '</a>';
+	}
 
 	// If this group is hidden then it can only "exists" if the user can moderate it!
 	if ($context['group']['hidden'] && !$context['group']['can_moderate'])
@@ -491,7 +496,7 @@ function MembergroupMembers()
 	$smcFunc['db_free_result']($request);
 
 	// Select the template.
-	$context['sub_template'] = 'group_members';
+	$context['sub_template'] = 'admin_membergroups_members';
 	$context['page_title'] = $txt['membergroups_members_title'] . ': ' . $context['group']['name'];
 	createToken('mod-mgm');
 
@@ -542,7 +547,7 @@ function GroupRequests()
 		if ($_POST['req_action'] == 'reason')
 		{
 			// Different sub template...
-			$context['sub_template'] = 'group_request_reason';
+			$context['sub_template'] = 'admin_membergroups_request_reason';
 			// And a limitation. We don't care that the page number bit makes no sense, as we don't need it!
 			$where .= ' AND lgr.id_request IN ({array_int:request_ids})';
 			$where_parameters['request_ids'] = $_POST['groupr'];

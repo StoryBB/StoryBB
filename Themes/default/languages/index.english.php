@@ -87,6 +87,7 @@ $txt['reason_for_edit'] = 'Reason for editing';
 
 $txt['switch_to_char_menu'] = 'Reattribute to...';
 $txt['char_name'] = 'Character Name:';
+$txt['character_name_title'] = 'Character Name';
 
 $txt['choose_pass'] = 'Choose password';
 $txt['verify_pass'] = 'Verify password';

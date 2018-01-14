@@ -1,0 +1,123 @@
+	{{! Adding a member group. }}
+	<div id="admincenter">
+		<form id="new_group" action="{{scripturl}}?action=admin;area=membergroups;sa=add" method="post" accept-charset="UTF-8">
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.membergroups_new_group}}}</h3>
+			</div>
+			<div class="windowbg2 noup">
+				<dl class="settings">
+					<dt>
+						<label for="group_name_input"><strong>{{{txt.membergroups_group_name}}}:</strong></label>
+					</dt>
+					<dd>
+						<input type="text" name="group_name" id="group_name_input" size="30" class="input_text">
+					</dd>
+
+					{{#unless context.post_group}}
+					<dt>
+						<label for="group_level_input"><strong>{{{txt.char_group_level}}}:</strong></label>
+					</dt>
+					<dd>
+						<select name="group_level" id="group_level_input">
+							<option value="0">{{{txt.char_group_level_acct}}}</option>
+							<option value="1">{{{txt.char_group_level_char}}}</option>
+						</select>
+					</dd>
+					{{/unless}}
+
+					{{#if context.undefined_group}}
+					<dt>
+						<label for="group_type"><strong>{{{txt.membergroups_edit_group_type}}}</strong>:</label>
+					</dt>
+					<dd>
+						<fieldset id="group_type">
+							<legend>{{{txt.membergroups_edit_select_group_type}}}</legend>
+							<label for="group_type_private"><input type="radio" name="group_type" id="group_type_private" value="0" checked class="input_radio" onclick="swapPostGroup(0);">{{{txt.membergroups_group_type_private}}}</label><br>
+
+							{{#if context.allow_protected}}
+							<label for="group_type_protected"><input type="radio" name="group_type" id="group_type_protected" value="1" class="input_radio" onclick="swapPostGroup(0);">{{{txt.membergroups_group_type_protected}}}</label><br>
+							{{/if}}
+
+							<label for="group_type_request"><input type="radio" name="group_type" id="group_type_request" value="2" class="input_radio" onclick="swapPostGroup(0);">{{{txt.membergroups_group_type_request}}}</label><br>
+							<label for="group_type_free"><input type="radio" name="group_type" id="group_type_free" value="3" class="input_radio" onclick="swapPostGroup(0);">{{{txt.membergroups_group_type_free}}}</label><br>
+							<label for="group_type_post"><input type="radio" name="group_type" id="group_type_post" value="-1" class="input_radio" onclick="swapPostGroup(1);">{{{txt.membergroups_group_type_post}}}</label><br>
+						</fieldset>
+					</dd>
+					{{/if}}
+
+					{{#if (or context.post_group context.undefined_group)}}
+					<dt id="min_posts_text">
+						<strong>{{{txt.membergroups_min_posts}}}:</strong>
+					</dt>
+					<dd>
+						<input type="number" name="min_posts" id="min_posts_input" size="5" class="input_text">
+					</dd>
+					{{/if}}
+
+					{{#if (or (not context.post_group) (eq modSettings.permission_enable_postgroups '1'))}}
+					<dt>
+						<label for="permission_base"><strong>{{{txt.membergroups_permissions}}}:</strong></label><br>
+						<span class="smalltext">{{{txt.membergroups_can_edit_later}}}</span>
+					</dt>
+					<dd>
+						<fieldset id="permission_base">
+							<legend>{{{txt.membergroups_select_permission_type}}}</legend>
+							<input type="radio" name="perm_type" id="perm_type_inherit" value="inherit" checked class="input_radio">
+							<label for="perm_type_inherit">{{{txt.membergroups_new_as_inherit}}}:</label>
+							<select name="inheritperm" id="inheritperm_select" onclick="document.getElementById('perm_type_inherit').checked = true;">
+								<option value="-1">{{{txt.membergroups_guests}}}</option>
+								<option value="0" selected>{{{txt.membergroups_members}}}</option>
+								{{#each context.groups}}
+								<option value="{{id}}">{{{name}}}</option>
+								{{/each}}
+							</select>
+							<br>
+							<input type="radio" name="perm_type" id="perm_type_copy" value="copy" class="input_radio">
+							<label for="perm_type_copy">{{{txt.membergroups_new_as_copy}}}:</label>
+							<select name="copyperm" id="copyperm_select" onclick="document.getElementById('perm_type_copy').checked = true;">
+								<option value="-1">{{{txt.membergroups_guests}}}</option>
+								<option value="0" selected>{{{txt.membergroups_members}}}</option>
+								{{#each context.groups}}
+								<option value="{{id}}">{{{name}}}</option>
+								{{/each}}
+							</select>
+							<br>
+							<input type="radio" name="perm_type" id="perm_type_predefined" value="predefined" class="input_radio">
+							<label for="perm_type_predefined">{{{txt.membergroups_new_as_type}}}:</label>
+							<select name="level" id="level_select" onclick="document.getElementById('perm_type_predefined').checked = true;">
+								<option value="restrict">{{{txt.permitgroups_restrict}}}</option>
+								<option value="standard" selected>{{{txt.permitgroups_standard}}}</option>
+								<option value="moderator">{{{txt.permitgroups_moderator}}}</option>
+								<option value="maintenance">{{{txt.permitgroups_maintenance}}}</option>
+							</select>
+						</fieldset>
+					</dd>
+					{{/if}}
+
+					<dt>
+						<strong>{{{txt.membergroups_new_board}}}:</strong>
+						{{#if context.post_group}}<br><span class="smalltext" style="font-weight: normal">{{{txt.membergroups_new_board_post_groups}}}</span>{{/if}}
+					</dt>
+					<dd>
+						{{> admin_membergroups_boards_list collapse=false}}
+					</dd>
+				</dl>
+				<input type="submit" value="{{{txt.membergroups_add_group}}}" class="button_submit">
+			</div>
+
+			{{#if context.undefined_group}}
+			<script>
+				function swapPostGroup(isChecked)
+				{
+					var min_posts_text = document.getElementById('min_posts_text');
+					document.getElementById('min_posts_input').disabled = !isChecked;
+					min_posts_text.style.color = isChecked ? "" : "#888888";
+				}
+				swapPostGroup({{#if context.post_group}}true{{else}}false{{/if}});
+			</script>
+			{{/if}}
+
+			{{session_form}}
+			{{token_form 'admin-mmg'}}
+		</form>
+	</div>

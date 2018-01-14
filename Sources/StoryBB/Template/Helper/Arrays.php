@@ -22,6 +22,7 @@ class Arrays
 			'is_array' => 'StoryBB\\Template\\Helper\\Arrays::is_array',
 			'getNumItems' => 'StoryBB\\Template\\Helper\\Arrays::count',
 			'count' => 'StoryBB\\Template\\Helper\\Arrays::count',
+			'keys' => 'StoryBB\\Template\\Helper\\Arrays::keys',
 		]);
 	}
 
@@ -48,6 +49,11 @@ class Arrays
 	public static function array2js($array)
 	{
 		return new \LightnCandy\SafeString(json_encode(array_values($array)));
+	}
+
+	public static function keys($array)
+	{
+		return array_keys($array);
 	}
 }
 

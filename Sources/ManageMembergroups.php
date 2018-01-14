@@ -48,7 +48,6 @@ function ModifyMembergroups()
 
 	// Language and template stuff, the usual.
 	loadLanguage('ManageMembers');
-	loadTemplate('ManageMembergroups');
 
 	// Setup the admin tabs.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -516,7 +515,7 @@ function AddMembergroup()
 
 	// Just show the 'add membergroup' screen.
 	$context['page_title'] = $txt['membergroups_new_group'];
-	$context['sub_template'] = 'new_group';
+	$context['sub_template'] = 'admin_membergroups_add';
 	$context['post_group'] = isset($_REQUEST['postgroup']);
 	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']);
 	$context['allow_protected'] = allowedTo('admin_forum');
@@ -1204,7 +1203,7 @@ function EditMembergroup()
 
 	call_integration_hook('integrate_view_membergroup');
 
-	$context['sub_template'] = 'edit_group';
+	$context['sub_template'] = 'admin_membergroups_edit';
 	$context['page_title'] = $txt['membergroups_edit_group'];
 
 	createToken('admin-mmg');
