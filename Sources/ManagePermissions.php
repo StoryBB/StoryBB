@@ -835,6 +835,39 @@ function ModifyMembergroup()
 			}
 		}
 	}
+
+	// Check that any group marked as non-hidden actually has some non-hidden permissions too.
+	foreach ($context['permissions'] as $permissionType => $tmp)
+	{
+		foreach ($tmp['columns'] as $position => $permissionGroups)
+		{
+			foreach ($permissionGroups as $permissionGroup => $permissionArray)
+			{
+				if (empty($permissionArray['permissions']))
+				{
+					// If it's empty, also mark it as hidden.
+					$context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['hidden'] = true;
+					continue;
+				}
+
+				// Step through all the permissions in the group.
+				$has_display_content = false;
+				foreach ($permissionArray['permissions'] as $perm)
+				{
+					if (!$perm['hidden'])
+					{
+						$has_display_content = true;
+						break;
+					}
+				}
+				if (!$has_display_content)
+				{
+					$context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['hidden'] = true;
+				}
+			}
+		}
+	}
+
 	$context['sub_template'] = 'modify_group';
 	$context['page_title'] = $txt['permissions_modify_group'];
 
@@ -1536,6 +1569,11 @@ function loadAllPermissions()
 	{
 		$hiddenPermissions[] = 'manage_attachments';
 		$hiddenPermissions[] = 'view_attachments';
+		$hiddenPermissions[] = 'post_unapproved_attachments';
+		$hiddenPermissions[] = 'post_attachment';
+	}
+	elseif ($modSettings['attachmentEnable'] == 2)
+	{
 		$hiddenPermissions[] = 'post_unapproved_attachments';
 		$hiddenPermissions[] = 'post_attachment';
 	}

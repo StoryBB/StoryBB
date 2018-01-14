@@ -62,12 +62,10 @@ function template_modify_group()
 				</h3>
 			</div>';
 
-	// Draw out the main bits.
-	template_modify_group_display($context['permission_type']);
-
 	// If this is general permissions also show the default profile.
 	if ($context['permission_type'] == 'membergroup')
 	{
+		template_modify_group_display($context['permissions']['membergroup']);
 		echo '
 			<br>
 			<div class="cat_bar">
@@ -77,7 +75,11 @@ function template_modify_group()
 				', $txt['permissions_board_desc'], '
 			</div>';
 
-		template_modify_group_display('board');
+		template_modify_group_display($context['permissions']['board']);
+	}
+	else
+	{
+		template_modify_group_display($context['permissions']['board']);
 	}
 
 	if ($context['profile']['can_modify'])
@@ -102,11 +104,10 @@ function template_modify_group()
  *
  * @param string $type The permissions type
  */
-function template_modify_group_display($type)
+function template_modify_group_display($permission_type)
 {
 	global $context, $settings, $scripturl, $txt, $modSettings;
 
-	$permission_type = &$context['permissions'][$type];
 	$disable_field = $context['profile']['can_modify'] ? '' : 'disabled ';
 
 	foreach ($permission_type['columns'] as $column)
@@ -116,33 +117,21 @@ function template_modify_group_display($type)
 
 		foreach ($column as $permissionGroup)
 		{
-			if (empty($permissionGroup['permissions']))
-				continue;
-
 			// Are we likely to have something in this group to display or is it all hidden?
-			$has_display_content = false;
 			if (!$permissionGroup['hidden'])
 			{
-				// Before we go any further check we are going to have some data to print otherwise we just have a silly heading.
-				foreach ($permissionGroup['permissions'] as $permission)
-					if (!$permission['hidden'])
-						$has_display_content = true;
+				echo '
+					<tr class="title_bar">
+						<th></th>
+						<th', $context['group']['id'] == -1 ? ' colspan="2"' : '', ' class="smalltext">', $permissionGroup['name'], '</th>';
 
-				if ($has_display_content)
-				{
+				if ($context['group']['id'] != -1)
 					echo '
-						<tr class="title_bar">
-							<th></th>
-							<th', $context['group']['id'] == -1 ? ' colspan="2"' : '', ' class="smalltext">', $permissionGroup['name'], '</th>';
+						<th>', $txt['permissions_option_own'], '</th>
+						<th>', $txt['permissions_option_any'], '</th>';
 
-					if ($context['group']['id'] != -1)
-						echo '
-							<th>', $txt['permissions_option_own'], '</th>
-							<th>', $txt['permissions_option_any'], '</th>';
-
-						echo '
-						</tr>';
-				}
+					echo '
+					</tr>';
 			}
 
 			foreach ($permissionGroup['permissions'] as $permission)
