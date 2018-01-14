@@ -23,7 +23,6 @@ function ManageSmileys()
 	isAllowedTo('manage_smileys');
 
 	loadLanguage('ManageSmileys');
-	loadTemplate('ManageSmileys');
 
 	$subActions = array(
 		'addsmiley' => 'AddSmiley',
