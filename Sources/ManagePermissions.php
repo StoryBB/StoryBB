@@ -868,7 +868,7 @@ function ModifyMembergroup()
 		}
 	}
 
-	$context['sub_template'] = 'modify_group';
+	$context['sub_template'] = 'admin_permission_edit';
 	$context['page_title'] = $txt['permissions_modify_group'];
 
 	createToken('admin-mp');
