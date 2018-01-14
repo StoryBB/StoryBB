@@ -1238,6 +1238,8 @@ function EditSmileyOrder()
 {
 	global $context, $txt, $smcFunc;
 
+	$context['sub_template'] = 'admin_smiley_reorder';
+
 	// Move smileys to another position.
 	if (isset($_REQUEST['reorder']))
 	{
