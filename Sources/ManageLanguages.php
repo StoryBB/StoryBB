@@ -25,7 +25,6 @@ function ManageLanguages()
 {
 	global $context, $txt;
 
-	loadTemplate('ManageLanguages');
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['edit_languages'];
