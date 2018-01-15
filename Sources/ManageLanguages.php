@@ -339,7 +339,7 @@ function ModifyLanguage()
 	// Select the languages tab.
 	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'edit';
 	$context['page_title'] = $txt['edit_languages'];
-	$context['sub_template'] = 'modify_language_entries';
+	$context['sub_template'] = 'admin_languages_edit';
 
 	$context['lang_id'] = $_GET['lid'];
 	list($theme_id, $file_id) = empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '+') === false ? array(1, '') : explode('+', $_REQUEST['tfid']);
@@ -706,6 +706,12 @@ function ModifyLanguage()
 	// If we saved, redirect.
 	if ($madeSave)
 		redirectexit('action=admin;area=languages;sa=editlang;lid=' . $context['lang_id']);
+
+	if (!empty($context['file_entries']))
+	{
+		// We need to split this up into pairs for the template.
+		$context['split_file_entries'] = array_chunk($context['file_entries'], 2);
+	}
 
 	createToken('admin-mlang');
 }
