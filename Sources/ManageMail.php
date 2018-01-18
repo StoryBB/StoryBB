@@ -310,7 +310,7 @@ function ModifyMailSettings($return_config = false)
 			array('text', 'smtp_username'),
 			array('password', 'smtp_password'),
 		'',
-			array('select', 'birthday_email', $emails, 'value' => array('subject' => $subject, 'body' => $body), 'javascript' => 'onchange="fetch_birthday_preview()"'),
+			array('select', 'birthday_email', $emails, 'value' => !empty($modSettings['birthday_email']) ? $modSettings['birthday_email'] : 'happy_birthday', 'javascript' => 'onchange="fetch_birthday_preview()"'),
 			'birthday_subject' => array('var_message', 'birthday_subject', 'var_message' => $processedBirthdayEmails[empty($modSettings['birthday_email']) ? 'happy_birthday' : $modSettings['birthday_email']]['subject'], 'disabled' => true, 'size' => strlen($subject) + 3),
 			'birthday_body' => array('var_message', 'birthday_body', 'var_message' => nl2br($body), 'disabled' => true, 'size' => ceil(strlen($body) / 25)),
 	);
@@ -362,7 +362,7 @@ function ModifyMailSettings($return_config = false)
 		};
 		function fetch_birthday_preview()
 		{
-			var index = document.getElementById(\'birthday_email\').value;
+			var index = $("select[name=birthday_email]").val();
 			document.getElementById(\'birthday_subject\').innerHTML = bDay[index].subject;
 			document.getElementById(\'birthday_body\').innerHTML = bDay[index].body;
 		}
