@@ -5624,7 +5624,7 @@ function get_main_menu_groups()
 			FROM {db_prefix}membergroups AS mg
 			INNER JOIN {db_prefix}characters AS chars ON (chars.main_char_group = mg.id_group)
 			WHERE chars.char_sheet != 0
-			GROUP BY mg.id_group
+			GROUP BY mg.id_group, mg.group_name
 			ORDER BY mg.badge_order, mg.group_name');
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
