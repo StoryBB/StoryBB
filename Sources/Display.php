@@ -1057,7 +1057,7 @@ function Display()
 	foreach ($anyown_permissions as $contextual => $perm)
 		$context[$contextual] = allowedTo($perm . '_any') || ($context['user']['started'] && allowedTo($perm . '_own'));
 
-	if (!$user_info['is_admin'] && !$modSettings['topic_move_any'])
+	if (!$user_info['is_admin'] && $context['can_move'] && !$modSettings['topic_move_any'])
 	{
 		// We'll use this in a minute
 		$boards_allowed = array_diff(boardsAllowedTo('post_new'), array($board));
