@@ -5708,4 +5708,19 @@ function get_user_possible_characters($id_member, $board_id = 0)
 	return $characters;
 }
 
+/**
+ * Check if the connection is using HTTPS.
+ * 
+ * @return boolean true if connection used https
+ */
+function httpsOn()
+{
+	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') 
+		return true;
+	elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') 
+		return true;
+
+	return false;
+}
+
 ?>
