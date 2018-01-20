@@ -36,7 +36,7 @@ class Controls
 		$verify_context['hidden_input_name'] = $verify_context['empty_field'] ? $_SESSION[$verify_id . '_vv']['empty_field'] : '';
 
 		$template = StoryBB\Template::load_partial('control_visual_verification');
-		$phpStr = StoryBB\Template::compile($template, [], 'visual_verification');
+		$phpStr = StoryBB\Template::compile($template, [], 'visual_verification-' . \StoryBB\Template::get_theme_id('partials', 'control_visual_verification'));
 		return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, [
 			'verify_id' => $verify_id,
 			'verify_context' => $verify_context,
@@ -51,7 +51,7 @@ class Controls
 			return '';
 
 		$template = StoryBB\Template::load_partial('control_richedit');
-		$phpStr = StoryBB\Template::compile($template, [], 'richedit');
+		$phpStr = StoryBB\Template::compile($template, [], 'richedit-' . \StoryBB\Template::get_theme_id('partials', 'control_richedit'));
 		return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, [
 			'editor_id' => $editor_id,
 			'editor_context' => $context['controls']['richedit'][$editor_id],
@@ -70,7 +70,7 @@ class Controls
 			return '';
 
 		$template = StoryBB\Template::load_partial('control_richedit_buttons');
-		$phpStr = StoryBB\Template::compile($template, [], 'richedit_buttons');
+		$phpStr = StoryBB\Template::compile($template, [], 'richedit_buttons-' . \StoryBB\Template::get_theme_id('partials', 'control_richedit_buttons'));
 		return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, [
 			'editor_id' => $editor_id,
 			'editor_context' => $context['controls']['richedit'][$editor_id],
@@ -92,7 +92,7 @@ class Controls
 		$cur_list['list_id'] = $list_id;
 		
 		$template = \StoryBB\Template::load_partial('generic_list');
-		$phpStr = \StoryBB\Template::compile($template, [], 'genericlist');
+		$phpStr = \StoryBB\Template::compile($template, [], 'genericlist-' . \StoryBB\Template::get_theme_id('partials', 'generic_list'));
 		return new \LightnCandy\SafeString(\StoryBB\Template::prepare($phpStr, [
 			'context' => $context,
 			'cur_list' => $cur_list,
