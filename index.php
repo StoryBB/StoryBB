@@ -23,7 +23,7 @@ $forum_version = 'StoryBB 3.0 Alpha 1';
 // Get everything started up...
 define('SMF', 1);
 
-error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
+error_reporting(E_ALL);
 $time_start = microtime(true);
 
 // This makes it so headers can be sent!
