@@ -370,6 +370,10 @@ class Attachments
 					unlink($attachment['tmp_name']);
 			}
 
+			// Server-side data that doesn't need to be passed back out.
+			unset($attachmentOptions['tmp_name']);
+			unset($attachmentOptions['destination']);
+
 			// Regardless of errors, pass the results.
 			$this->_attachResults[] = $attachmentOptions;
 		}
