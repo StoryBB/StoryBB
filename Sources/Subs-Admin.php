@@ -20,7 +20,7 @@ if (!defined('SMF'))
  */
 function getServerVersions($checkFor)
 {
-	global $txt, $db_connection, $_PHPA, $smcFunc, $memcached, $modSettings;
+	global $txt, $db_connection, $_PHPA, $smcFunc, $cache_accelerator, $cache_memcached, $cacheAPI, $modSettings;
 
 	loadLanguage('Admin');
 
@@ -73,8 +73,9 @@ function getServerVersions($checkFor)
 	}
 
 	// If we're using memcache we need the server info.
-	if (empty($memcached) && function_exists('memcache_get') && isset($modSettings['cache_memcached']) && trim($modSettings['cache_memcached']) != '')
-		get_memcached_server();
+	$memcache_version = '???';
+	if (!empty($cache_accelerator) && ($cache_accelerator == 'memcached' || $cache_accelerator == 'memcache') && !empty($cache_memcached) && !empty($cacheAPI))
+		$memcache_version = $cacheAPI->getVersion();
 
 	// Check to see if we have any accelerators installed...
 	if (in_array('phpa', $checkFor) && isset($_PHPA))
@@ -82,7 +83,7 @@ function getServerVersions($checkFor)
 	if (in_array('apc', $checkFor) && extension_loaded('apc'))
 		$versions['apc'] = array('title' => 'Alternative PHP Cache', 'version' => phpversion('apc'));
 	if (in_array('memcache', $checkFor) && function_exists('memcache_set'))
-		$versions['memcache'] = array('title' => 'Memcached', 'version' => empty($memcached) ? '???' : memcache_get_version($memcached));
+		$versions['memcache'] = array('title' => 'Memcached', 'version' => $memcache_version);
 	if (in_array('xcache', $checkFor) && function_exists('xcache_set'))
 		$versions['xcache'] = array('title' => 'XCache', 'version' => XCACHE_VERSION);
 
