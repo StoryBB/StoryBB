@@ -260,6 +260,24 @@ class Template
 	{
 		return self::$debug;
 	}
+
+	public static function get_theme_id(string $template_type, string $template_name): int {
+		global $settings;
+
+		if (!in_array($template_type, ['partials', 'templates', 'layouts']))
+			fatal_error('Invalid template type: ' . $template_type);
+
+		if ($settings['default_theme_dir'] == $settings['theme_dir'])
+			return 1; // Default theme.
+
+		if (!file_exists($settings['theme_dir'] . '/' . $template_type))
+			return 1; // The entire folder doesn't exist in this theme, use default.
+
+		if (file_exists($settings['theme_dir'] . '/' . $template_type . '/' . $template_name . '.hbs'))
+			return (int) $settings['theme_id'];
+
+		return 1; // Default theme ultimately used.
+	}
 }
 
 ?>

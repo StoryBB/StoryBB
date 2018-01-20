@@ -5626,7 +5626,7 @@ function get_main_menu_groups()
 			FROM {db_prefix}membergroups AS mg
 			INNER JOIN {db_prefix}characters AS chars ON (chars.main_char_group = mg.id_group)
 			WHERE chars.char_sheet != 0
-			GROUP BY mg.id_group
+			GROUP BY mg.id_group, mg.group_name
 			ORDER BY mg.badge_order, mg.group_name');
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -5666,19 +5666,23 @@ function get_user_possible_characters($id_member, $board_id = 0)
 	}
 	else
 	{
-		$board_in_character = false;
-		$request = $smcFunc['db_query']('', '
-			SELECT id_board, in_character
-			FROM {db_prefix}boards');
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-		{
-			$boards_ic[$row['id_board']] = $row['in_character'];
-		}
-		$smcFunc['db_free_result']($request);
+		if (isset($board_info['id']) && $board_info['id'] == $board_id) {
+			$board_in_character = !empty($board_info['in_character']);
+		} else {
+			$board_in_character = false;
+			$request = $smcFunc['db_query']('', '
+				SELECT id_board, in_character
+				FROM {db_prefix}boards');
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+			{
+				$boards_ic[$row['id_board']] = $row['in_character'];
+			}
+			$smcFunc['db_free_result']($request);
 
-		if (isset($boards_ic[$board_id]))
-		{
-			$board_in_character = $boards_ic[$board_id];
+			if (isset($boards_ic[$board_id]))
+			{
+				$board_in_character = $boards_ic[$board_id];
+			}
 		}
 	}
 
