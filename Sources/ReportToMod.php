@@ -117,7 +117,7 @@ function ReportToModerator()
 		$context['submit_url'] = $scripturl . '?action=reporttm;u=' . $_REQUEST['u'];
 	}
 
-	$context['comment_body'] = !isset($_POST['comment']) ? '' : $smcFunc['htmlspecialchars'](trim($_POST['comment'], ENT_QUOTES);
+	$context['comment_body'] = !isset($_POST['comment']) ? '' : $smcFunc['htmlspecialchars'](trim($_POST['comment'], ENT_QUOTES));
 
 	$context['page_title'] = $context['report_type'] == 'msg' ? $txt['report_to_mod'] : sprintf($txt['report_profile'], $display_name);
 	$context['notice'] = $context['report_type'] == 'msg' ? $txt['report_to_mod_func'] : $txt['report_profile_func'];
