@@ -374,21 +374,39 @@ function loadUserSettings()
 
 	if (empty($id_member) && isset($_COOKIE[$cookiename]))
 	{
+		// First try 2.1 json-format cookie
 		$cookie_data = smf_json_decode($_COOKIE[$cookiename], true, false);
 
+		// Legacy format (for recent 2.0 --> 2.1 upgrades)
 		if (empty($cookie_data))
 			$cookie_data = safe_unserialize($_COOKIE[$cookiename]);
 
-		list ($id_member, $password) = $cookie_data;
+		// Malformed or was reset
+		if (empty($cookie_data))
+			$cookie_data = array(0, '', 0, '', '');
+
+		if (count($cookie_data) < 5)
+			$cookie_data = array_pad($cookie_data, 5, '');
+
+		list ($id_member, $password, $login_span, $cookie_domain, $cookie_path) = $cookie_data;
+
 		$id_member = !empty($id_member) && strlen($password) > 0 ? (int) $id_member : 0;
+
+		// Make sure the cookie is set to the correct domain and path
+		require_once($sourcedir . '/Subs-Auth.php');
+		if (array($cookie_domain, $cookie_path) != url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies'])))
+			setLoginCookie($login_span - time(), $id_member);
 	}
 	elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] || !empty($modSettings['disableCheckUA'])))
 	{
 		// @todo Perhaps we can do some more checking on this, such as on the first octet of the IP?
-		$cookie_data = smf_json_decode($_SESSION['login_' . $cookiename]);
+		$cookie_data = smf_json_decode($_SESSION['login_' . $cookiename], true);
 
 		if (empty($cookie_data))
 			$cookie_data = safe_unserialize($_SESSION['login_' . $cookiename]);
+
+		if (empty($cookie_data))
+			$cookie_data = array(0, '', 0);
 
 		list ($id_member, $password, $login_span) = $cookie_data;
 		$id_member = !empty($id_member) && strlen($password) == 128 && $login_span > time() ? (int) $id_member : 0;
@@ -628,9 +646,9 @@ function loadUserSettings()
 			if (is_null($tfa_data))
 				$tfa_data = safe_unserialize($_COOKIE[$cookiename . '_tfa']);
 
-			list ($id, $user, $exp, $state, $preserve) = $tfa_data;
+			list ($id, $user, $exp, $domain, $path, $preserve) = $tfa_data;
 
-			if (!isset($id, $user, $exp, $state, $preserve) || !$preserve || time() > $exp)
+			if (!isset($id, $user, $exp, $domain, $path, $preserve) || !$preserve || time() > $exp)
 			{
 				$_COOKIE[$cookiename . '_tfa'] = '';
 				setTFACookie(-3600, 0, '');
