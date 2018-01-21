@@ -425,7 +425,7 @@ function ModifyCookieSettings($return_config = false)
 		array('localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies'),
 		array('globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies'),
 		array('globalCookiesDomain', $txt['globalCookiesDomain'], 'db', 'text', false, 'globalCookiesDomain'),
-		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !isset($_SERVER['HTTPS']) || !(strtolower($_SERVER['HTTPS']) == 'on' || strtolower($_SERVER['HTTPS']) == '1')),
+		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !httpsOn()),
 		array('httponlyCookies', $txt['httponlyCookies'], 'db', 'check', false, 'httponlyCookies'),
 		'',
 		// Sessions
@@ -481,13 +481,16 @@ function ModifyCookieSettings($return_config = false)
 		if (!empty($_POST['localCookies']) && empty($_POST['globalCookies']))
 			unset ($_POST['globalCookies']);
 
+		if (empty($modSettings['localCookies']) != empty($_POST['localCookies']) || empty($modSettings['globalCookies']) != empty($_POST['globalCookies']))
+			$scope_changed = true;
+
 		if (!empty($_POST['globalCookiesDomain']) && strpos($boardurl, $_POST['globalCookiesDomain']) === false)
 			fatal_lang_error('invalid_cookie_domain', false);
 
 		saveSettings($config_vars);
 
-		// If the cookie name was changed, reset the cookie.
-		if ($cookiename != $_POST['cookiename'])
+		// If the cookie name or scope were changed, reset the cookie.
+		if ($cookiename != $_POST['cookiename'] || !empty($scope_changed))
 		{
 			$original_session_id = $context['session_id'];
 			include_once($sourcedir . '/Subs-Auth.php');
@@ -496,7 +499,7 @@ function ModifyCookieSettings($return_config = false)
 			setLoginCookie(-3600, 0);
 
 			// Set the new one.
-			$cookiename = $_POST['cookiename'];
+			$cookiename = !empty($_POST['cookiename']) ? $_POST['cookiename'] : $cookiename;
 			setLoginCookie(60 * $modSettings['cookieTime'], $user_settings['id_member'], hash_salt($user_settings['passwd'], $user_settings['password_salt']));
 
 			redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $original_session_id, $context['server']['needs_login_fix']);

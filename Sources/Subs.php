@@ -5459,17 +5459,19 @@ function smf_serverResponse($data = '', $type = 'Content-Type: application/json'
  */
  function ssl_cert_found($url) {
 
-	// Ask for the headers for the passed url, but via https...
-	$url = str_ireplace('http://', 'https://', $url) . '/';
-
+	// First, strip the subfolder from the passed url, if any
+	$parsedurl = parse_url($url);
+	$url = 'ssl://' . $parsedurl['host'] . ':443'; 
+	
+	// Next, check the ssl stream context for certificate info 
 	$result = false;
-	$stream = stream_context_create (array("ssl" => array("capture_peer_cert" => true)));
-	$read = @fopen($url, "rb", false, $stream);
-	if ($read !== false) {
-		$cont = stream_context_get_params($read);
-		$result = isset($cont["options"]["ssl"]["peer_certificate"]) ? true : false;
+	$context = stream_context_create(array("ssl" => array("capture_peer_cert" => true, "verify_peer" => true, "allow_self_signed" => true)));
+	$stream = @stream_socket_client($url, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
+	if ($stream !== false)
+	{
+		$params = stream_context_get_params($stream);
+		$result = isset($params["options"]["ssl"]["peer_certificate"]) ? true : false;
 	}
-    return $result;
 }
 
 /**
@@ -5544,10 +5546,10 @@ function build_query_board($userid)
 		$row = $smcFunc['db_fetch_assoc']($request);
 
 		if (empty($row['additional_groups']))
-			$groups = array($row['id_group'], $user_settings['id_post_group']);
+			$groups = array($row['id_group'], $row['id_post_group']);
 		else
 			$groups = array_merge(
-					array($row['id_group'], $user_settings['id_post_group']),
+					array($row['id_group'], $row['id_post_group']),
 					explode(',', $row['additional_groups'])
 			);
 
@@ -5710,6 +5712,21 @@ function get_user_possible_characters($id_member, $board_id = 0)
 	}
 
 	return $characters;
+}
+
+/**
+ * Check if the connection is using HTTPS.
+ * 
+ * @return boolean true if connection used https
+ */
+function httpsOn()
+{
+	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') 
+		return true;
+	elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') 
+		return true;
+
+	return false;
 }
 
 ?>

@@ -366,21 +366,39 @@ function loadUserSettings()
 
 	if (empty($id_member) && isset($_COOKIE[$cookiename]))
 	{
+		// First try 2.1 json-format cookie
 		$cookie_data = smf_json_decode($_COOKIE[$cookiename], true, false);
 
+		// Legacy format (for recent 2.0 --> 2.1 upgrades)
 		if (empty($cookie_data))
 			$cookie_data = safe_unserialize($_COOKIE[$cookiename]);
 
-		list ($id_member, $password) = $cookie_data;
+		// Malformed or was reset
+		if (empty($cookie_data))
+			$cookie_data = array(0, '', 0, '', '');
+
+		if (count($cookie_data) < 5)
+			$cookie_data = array_pad($cookie_data, 5, '');
+
+		list ($id_member, $password, $login_span, $cookie_domain, $cookie_path) = $cookie_data;
+
 		$id_member = !empty($id_member) && strlen($password) > 0 ? (int) $id_member : 0;
+
+		// Make sure the cookie is set to the correct domain and path
+		require_once($sourcedir . '/Subs-Auth.php');
+		if (array($cookie_domain, $cookie_path) != url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies'])))
+			setLoginCookie($login_span - time(), $id_member);
 	}
 	elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] || !empty($modSettings['disableCheckUA'])))
 	{
 		// @todo Perhaps we can do some more checking on this, such as on the first octet of the IP?
-		$cookie_data = smf_json_decode($_SESSION['login_' . $cookiename]);
+		$cookie_data = smf_json_decode($_SESSION['login_' . $cookiename], true);
 
 		if (empty($cookie_data))
 			$cookie_data = safe_unserialize($_SESSION['login_' . $cookiename]);
+
+		if (empty($cookie_data))
+			$cookie_data = array(0, '', 0);
 
 		list ($id_member, $password, $login_span) = $cookie_data;
 		$id_member = !empty($id_member) && strlen($password) == 128 && $login_span > time() ? (int) $id_member : 0;
@@ -620,9 +638,9 @@ function loadUserSettings()
 			if (is_null($tfa_data))
 				$tfa_data = safe_unserialize($_COOKIE[$cookiename . '_tfa']);
 
-			list ($id, $user, $exp, $state, $preserve) = $tfa_data;
+			list ($id, $user, $exp, $domain, $path, $preserve) = $tfa_data;
 
-			if (!isset($id, $user, $exp, $state, $preserve) || !$preserve || time() > $exp)
+			if (!isset($id, $user, $exp, $domain, $path, $preserve) || !$preserve || time() > $exp)
 			{
 				$_COOKIE[$cookiename . '_tfa'] = '';
 				setTFACookie(-3600, 0, '');
@@ -719,22 +737,9 @@ function loadUserSettings()
 			$user_info['language'] = strtr($_SESSION['language'], './\\:', '____');
 	}
 
-	// Just build this here, it makes it easier to change/use - administrators can see all boards.
-	if ($user_info['is_admin'])
-		$user_info['query_see_board'] = '1=1';
-	// Otherwise just the groups in $user_info['groups'].
-	else
-		$user_info['query_see_board'] = '((FIND_IN_SET(' . implode(', b.member_groups) != 0 OR FIND_IN_SET(', $user_info['groups']) . ', b.member_groups) != 0)' . (!empty($modSettings['deny_boards_access']) ? ' AND (FIND_IN_SET(' . implode(', b.deny_member_groups) = 0 AND FIND_IN_SET(', $user_info['groups']) . ', b.deny_member_groups) = 0)' : '') . (isset($user_info['mod_cache']) ? ' OR ' . $user_info['mod_cache']['mq'] : '') . ')';
-
-	// Build the list of boards they WANT to see.
-	// This will take the place of query_see_boards in certain spots, so it better include the boards they can see also
-
-	// If they aren't ignoring any boards then they want to see all the boards they can see
-	if (empty($user_info['ignoreboards']))
-		$user_info['query_wanna_see_board'] = $user_info['query_see_board'];
-	// Ok I guess they don't want to see all the boards
-	else
-		$user_info['query_wanna_see_board'] = '(' . $user_info['query_see_board'] . ' AND b.id_board NOT IN (' . implode(',', $user_info['ignoreboards']) . '))';
+	$temp = build_query_board($user_info['id']);
+	$user_info['query_see_board'] = $temp['query_see_board'];
+	$user_info['query_wanna_see_board'] = $temp['query_wanna_see_board'];
 
 	call_integration_hook('integrate_user_info');
 }
@@ -1682,9 +1687,17 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 			$value = $profile['options'][$custom['col_name']];
 
-			// Don't show the "disabled" option for the "gender" field.
-			if ($custom['col_name'] == 'cust_gender' && $value == 'Disabled')
-				continue;
+			$fieldOptions = array();
+			$currentKey = 0;
+
+			// Create a key => value array for multiple options fields
+			if (!empty($custom['options']))
+				foreach ($custom['options'] as $k => $v)
+				{
+					$fieldOptions[] = $v;
+					if (empty($currentKey))
+						$currentKey = $v == $value ? $k : 0;
+				}
 
 			// BBC?
 			if ($custom['bbc'])
@@ -1751,6 +1764,18 @@ function loadMemberCustomFields($users, $params)
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
+		$fieldOptions = array();
+		$currentKey = 0;
+
+		// Create a key => value array for multiple options fields
+		if (!empty($row['field_options']))
+			foreach (explode(',', $row['field_options']) as $k => $v)
+			{
+				$fieldOptions[] = $v;
+				if (empty($currentKey))
+					$currentKey = $v == $row['value'] ? $k : 0;
+			}
+
 		// BBC?
 		if (!empty($row['bbc']))
 			$row['value'] = parse_bbc($row['value']);
@@ -1766,6 +1791,7 @@ function loadMemberCustomFields($users, $params)
 				'{IMAGES_URL}' => $settings['images_url'],
 				'{DEFAULT_IMAGES_URL}' => $settings['default_images_url'],
 				'{INPUT}' => un_htmlspecialchars($row['value']),
+				'{KEY}' => $currentKey,
 			));
 
 		// Send a simple array if there is just 1 param
@@ -1954,13 +1980,21 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Check to see if we're forcing SSL
 	if (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] == 2 && empty($maintenance) &&
-		(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off') && SMF != 'SSI')
-		redirectexit(strtr($_SERVER['REQUEST_URL'], array('http://' => 'https://')));
+		!httpsOn() && SMF != 'SSI')
+	{
+		if (isset($_GET['sslRedirect']))
+		{
+			loadLanguage('Errors');
+			fatal_lang_error($txt['login_ssl_required']);
+		}
+
+		redirectexit(strtr($_SERVER['REQUEST_URL'], array('http://' => 'https://')) . (strpos($_SERVER['REQUEST_URL'], '?') > 0 ? ';' : '?') . 'sslRedirect');
+	}
 
 	// Check to see if they're accessing it from the wrong place.
 	if (isset($_SERVER['HTTP_HOST']) || isset($_SERVER['SERVER_NAME']))
 	{
-		$detected_url = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 'https://' : 'http://';
+		$detected_url = httpsOn() ? 'https://' : 'http://';
 		$detected_url .= empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] . (empty($_SERVER['SERVER_PORT']) || $_SERVER['SERVER_PORT'] == '80' ? '' : ':' . $_SERVER['SERVER_PORT']) : $_SERVER['HTTP_HOST'];
 		$temp = preg_replace('~/' . basename($scripturl) . '(/.+)?$~', '', strtr(dirname($_SERVER['PHP_SELF']), '\\', '/'));
 		if ($temp != '/')
@@ -1989,7 +2023,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 				redirectexit('wwwRedirect');
 			else
 			{
-				list ($k, $v) = each($_GET);
+				$k = key($_GET);
+				$v = current($_GET);
 
 				if ($k != 'wwwRedirect')
 					redirectexit('wwwRedirect;' . $k . '=' . $v);
@@ -2021,6 +2056,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 			// And just a few mod settings :).
 			$modSettings['smileys_url'] = strtr($modSettings['smileys_url'], array($oldurl => $boardurl));
+			$modSettings['custom_avatar_url'] = strtr($modSettings['custom_avatar_url'], array($oldurl => $boardurl));
 
 			// Clean up after loadBoard().
 			if (isset($board_info['moderators']))
@@ -2273,17 +2309,17 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Add the JQuery library to the list of files to load.
 	if (isset($modSettings['jquery_source']) && $modSettings['jquery_source'] == 'cdn')
-		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js', array('external' => true), 'smf_jquery');
+		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', array('external' => true), 'smf_jquery');
 
 	elseif (isset($modSettings['jquery_source']) && $modSettings['jquery_source'] == 'local')
-		loadJavaScriptFile('jquery-3.1.1.min.js', array('seed' => false), 'smf_jquery');
+		loadJavaScriptFile('jquery-3.2.1.min.js', array('seed' => false), 'smf_jquery');
 
 	elseif (isset($modSettings['jquery_source'], $modSettings['jquery_custom']) && $modSettings['jquery_source'] == 'custom')
 		loadJavaScriptFile($modSettings['jquery_custom'], array('external' => true), 'smf_jquery');
 
 	// Auto loading? template_javascript() will take care of the local half of this.
 	else
-		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js', array('external' => true), 'smf_jquery');
+		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', array('external' => true), 'smf_jquery');
 
 	// Queue our JQuery plugins!
 	loadJavaScriptFile('smf_jquery_plugins.js', array('minimize' => true), 'smf_jquery_plugins');

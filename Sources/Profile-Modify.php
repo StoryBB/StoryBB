@@ -1170,7 +1170,23 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 			// Any masks?
 			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
 			{
-				if ($row['mask'] == 'email' && (!filter_var($value, FILTER_VALIDATE_EMAIL) || strlen($value) > 255))
+				$value = $smcFunc['htmltrim']($value);
+				$valueReference = un_htmlspecialchars($value);
+
+				// Try and avoid some checks. '0' could be a valid non-empty value.
+				if (empty($value) && !is_numeric($value))
+					$value = '';
+
+				if ($row['mask'] == 'nohtml' && ($valueReference != strip_tags($valueReference) || $value != filter_var($value, FILTER_SANITIZE_STRING) || preg_match('/<(.+?)[\s]*\/?[\s]*>/si', $valueReference)))
+				{
+					if ($returnErrors)
+						$errors[] = 'custom_field_nohtml_fail';
+
+					else
+						$value = '';
+				}
+				elseif ($row['mask'] == 'email' && (!filter_var($value, FILTER_VALIDATE_EMAIL) || strlen($value) > 255))
+
 				{
 					if ($returnErrors)
 						$errors[] = 'custom_field_mail_fail';
@@ -1190,6 +1206,8 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 					else
 						$value = '';
 				}
+
+				unset($valueReference);
 			}
 		}
 
@@ -1426,7 +1444,7 @@ function editBuddies($memID)
 			);
 
 	// Gotta disable the gender option.
-	if (isset($context['custom_pf']['cust_gender']) && $context['custom_pf']['cust_gender'] == 'Disabled')
+	if (isset($context['custom_pf']['cust_gender']) && $context['custom_pf']['cust_gender'] == 'None')
 		unset($context['custom_pf']['cust_gender']);
 
 	$smcFunc['db_free_result']($request);
@@ -3919,7 +3937,7 @@ function tfasetup($memID)
 	if (empty($user_settings['tfa_secret']) && $context['user']['is_owner'])
 	{
 		// Check to ensure we're forcing SSL for authentication
-		if (!empty($modSettings['force_ssl']) && empty($maintenance) && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on'))
+		if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
 			fatal_lang_error('login_ssl_required');
 
 		// In some cases (forced 2FA or backup code) they would be forced to be redirected here,

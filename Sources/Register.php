@@ -255,7 +255,7 @@ function Register2()
 	validateToken('register');
 
 	// Check to ensure we're forcing SSL for authentication
-	if (!empty($modSettings['force_ssl']) && empty($maintenance) && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on'))
+	if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
 		fatal_lang_error('register_ssl_required');
 
 	// Start collecting together any errors.
@@ -345,7 +345,7 @@ function Register2()
 
 		// Website is a little different
 		if (in_array('website', $reg_fields))
-			$possible_strings += array('website_url', 'website_title');
+			$possible_strings = array_merge($possible_strings, array('website_url', 'website_title'));
 	}
 
 	if (isset($_POST['secret_answer']) && $_POST['secret_answer'] != '')

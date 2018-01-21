@@ -80,7 +80,7 @@ function Login2()
 	global $cookiename, $modSettings, $context, $sourcedir, $maintenance;
 
 	// Check to ensure we're forcing SSL for authentication
-	if (!empty($modSettings['force_ssl']) && empty($maintenance) && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on'))
+	if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
 		fatal_lang_error('login_ssl_required');
 
 	// Load cookie authentication stuff.
@@ -94,22 +94,22 @@ function Login2()
 
 	if (isset($_GET['sa']) && $_GET['sa'] == 'salt' && !$user_info['is_guest'])
 	{
-		if (isset($_COOKIE[$cookiename]) && preg_match('~^a:[34]:\{i:0;i:\d{1,7};i:1;s:(0|128):"([a-fA-F0-9]{128})?";i:2;[id]:\d{1,14};(i:3;i:\d;)?\}$~', $_COOKIE[$cookiename]) === 1)
-		{
+		// First check for 2.1 json-format cookie in $_COOKIE
+		if (isset($_COOKIE[$cookiename]) && preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+~', $_COOKIE[$cookiename]) === 1)
 			list (,, $timeout) = smf_json_decode($_COOKIE[$cookiename], true);
 
-			// That didn't work... Maybe it's using serialize?
-			if (is_null($timeout))
-				list (,, $timeout) = safe_unserialize($_COOKIE[$cookiename]);
-		}
-		elseif (isset($_SESSION['login_' . $cookiename]))
-		{
+		// Try checking for 2.1 json-format cookie in $_SESSION
+		elseif (isset($_SESSION['login_' . $cookiename]) && preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+~', $_SESSION['login_' . $cookiename]) === 1)
 			list (,, $timeout) = smf_json_decode($_SESSION['login_' . $cookiename]);
 
-			// Try for old format
-			if (is_null($timeout))
-				list (,, $timeout) = safe_unserialize($_SESSION['login_' . $cookiename]);
-		}
+		// Next, try checking for 2.0 serialized string cookie in $_COOKIE
+		elseif (isset($_COOKIE[$cookiename]) && preg_match('~^a:[34]:\{i:0;i:\d+;i:1;s:(0|128):"([a-fA-F0-9]{128})?";i:2;[id]:\d+;~', $_COOKIE[$cookiename]) === 1)
+			list (,, $timeout) = safe_unserialize($_COOKIE[$cookiename]);
+
+		// Last, see if you need to fall back on checking for 2.0 serialized string cookie in $_SESSION
+		elseif (isset($_SESSION['login_' . $cookiename]) && preg_match('~^a:[34]:\{i:0;i:\d+;i:1;s:(0|128):"([a-fA-F0-9]{128})?";i:2;[id]:\d+;~', $_SESSION['login_' . $cookiename]) === 1)
+			list (,, $timeout) = safe_unserialize($_SESSION['login_' . $cookiename]);
+
 		else
 			trigger_error('Login2(): Cannot be logged in without a session or cookie', E_USER_ERROR);
 
@@ -125,10 +125,10 @@ function Login2()
 			if (is_null($tfadata))
 				$tfadata = safe_unserialize($_COOKIE[$cookiename . '_tfa']);
 
-			list ($tfamember, $tfasecret, $exp, $state, $preserve) = $tfadata;
+			list ($tfamember, $tfasecret, $exp, $domain, $path, $preserve) = $tfadata;
 
 			// If we're preserving the cookie, reset it with updated salt
-			if (isset($tfamember, $tfasecret, $exp, $state, $preserve) && $preserve && time() < $exp)
+			if (isset($tfamember, $tfasecret, $exp, $domain, $path, $preserve) && $preserve && time() < $exp)
 				setTFACookie(3153600, $user_info['password_salt'], hash_salt($user_settings['tfa_backup'], $user_settings['password_salt']), true);
 			else
 				setTFACookie(-3600, 0, '');
@@ -434,7 +434,7 @@ function LoginTFA()
 	if (!empty($_POST['tfa_code']) && empty($_POST['tfa_backup']))
 	{
 		// Check to ensure we're forcing SSL for authentication
-		if (!empty($modSettings['force_ssl']) && empty($maintenance) && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on'))
+		if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
 			fatal_lang_error('login_ssl_required');
 
 		$code = $_POST['tfa_code'];
@@ -457,7 +457,7 @@ function LoginTFA()
 	elseif (!empty($_POST['tfa_backup']))
 	{
 		// Check to ensure we're forcing SSL for authentication
-		if (!empty($modSettings['force_ssl']) && empty($maintenance) && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on'))
+		if (!empty($modSettings['force_ssl']) && empty($maintenance) && !httpsOn())
 			fatal_lang_error('login_ssl_required');
 
 		$backup = $_POST['tfa_backup'];

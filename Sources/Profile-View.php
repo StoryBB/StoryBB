@@ -253,6 +253,9 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 {
 	global $smcFunc, $txt, $scripturl, $memberContext;
 
+	$query_see_board = build_query_board($memID);
+	$query_see_board = $query_see_board['query_see_board'];
+
 	$alerts = array();
 	$request = $smcFunc['db_query']('', '
 		SELECT id_alert, alert_time, mem.id_member AS sender_id, COALESCE(mem.real_name, ua.member_name) AS sender_name,
@@ -323,7 +326,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 		$request = $smcFunc['db_query']('', '
 			SELECT id_board, name
 			FROM {db_prefix}boards AS b
-			WHERE {query_see_board}
+			WHERE ' . $query_see_board . '
 				AND id_board IN ({array_int:boards})',
 			array(
 				'boards' => array_keys($boards),
@@ -339,7 +342,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 				INNER JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
-			WHERE {query_see_board}
+			WHERE ' . $query_see_board . '
 				AND t.id_topic IN ({array_int:topics})',
 			array(
 				'topics' => array_keys($topics),
@@ -355,7 +358,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 				INNER JOIN {db_prefix}boards AS b ON (m.id_board = b.id_board)
-			WHERE {query_see_board}
+			WHERE ' . $query_see_board . '
 				AND m.id_msg IN ({array_int:msgs})',
 			array(
 				'msgs' => array_keys($msgs),
@@ -746,7 +749,7 @@ function showPosts($memID)
 		}
 
 		// Make sure we quit this loop.
-		if ($smcFunc['db_num_rows']($request) === $maxIndex || $looped)
+		if ($smcFunc['db_num_rows']($request) === $maxIndex || $looped || $range_limit === '')
 			break;
 		$looped = true;
 		$range_limit = '';
