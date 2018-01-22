@@ -44,11 +44,15 @@
 			<th scope="col" id="header_{{list_id}}_{{id}}"
 			{{#if class}} class="{{class}}"{{/if}}
 			{{#if style}}style="{{style}}"{{/if}}
-			{{#if colspan}} colspan="{{colspan}}">{{/if}}
-			<a href="{{href}}" rel="nofollow">
-				{{#if label}}{{{label}}}{{else}}&nbsp;{{/if}}
-				{{#if (and href sort_image)}}<span class="generic_icons sort_{{sort_image}}"></span>{{/if}}
-				</a>
+			{{#if colspan}} colspan="{{colspan}}">{{/if}}>
+				{{#if href}}
+					<a href="{{href}}" rel="nofollow">
+					{{#if label}}{{{label}}}{{else}}&nbsp;{{/if}}
+					{{#if (and href sort_image)}}<span class="generic_icons sort_{{sort_image}}"></span>{{/if}}
+					</a>
+				{{else}}
+					{{#if label}}{{{label}}}{{else}}&nbsp;{{/if}}
+				{{/if}}
 			</th>
 {{/each}}
     	</tr>

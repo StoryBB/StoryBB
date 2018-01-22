@@ -20,7 +20,7 @@ if (!defined('SMF'))
  */
 function createList($listOptions)
 {
-	global $context, $smcFunc;
+	global $context, $smcFunc, $txt;
 
 	assert(isset($listOptions['id']));
 	assert(isset($listOptions['columns']));
@@ -136,6 +136,10 @@ function createList($listOptions)
 				foreach ($column['data']['sprintf']['params'] as $sprintf_param => $htmlsafe)
 					$params[] = $htmlsafe ? $smcFunc['htmlspecialchars']($list_item[$sprintf_param]) : $list_item[$sprintf_param];
 				$cur_data['value'] = vsprintf($column['data']['sprintf']['format'], $params);
+			}
+			elseif (isset($column['data']['yesno']))
+			{
+				$cur_data['value'] = !empty($list_item[$column['data']['yesno']]) ? $txt['yes'] : $txt['no'];
 			}
 
 			// The most flexible way probably is applying a custom function.
