@@ -572,6 +572,41 @@ function modifyBoard($board_id, &$boardOptions)
 		);
 	}
 
+	// Do we want the parent permissions to be inherited?
+	if ($boardOptions['inherit_permissions'])
+	{
+		if (!empty($boardUpdateParameters['id_parent']))
+		{
+			// We've just moved it into position, use that.
+			$board_parent = $boardUpdateParameters['id_parent'];
+		}
+		elseif (!empty($boards[$board_id]['parent']))
+		{
+			// It was already on the tree, let's run with that.
+			$board_parent = $boards[$board_id]['parent'];
+		}
+
+		if (!empty($board_parent))
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT id_profile
+				FROM {db_prefix}boards
+				WHERE id_board = {int:board_parent}
+				LIMIT 1',
+				array(
+					'board_parent' => (int) $board_parent,
+				)
+			);
+			list ($boardOptions['profile']) = $smcFunc['db_fetch_row']($request);
+			$smcFunc['db_free_result']($request);
+		}
+	}
+	if (isset($boardOptions['profile']) && $boardOptions['profile'] == -1)
+	{
+		// -1 is an inherited profile permission but for whatever reason we can't action it - so don't.
+		unset($boardOptions['profile']);
+	}
+
 	// This setting is a little twisted in the database...
 	if (isset($boardOptions['posts_count']))
 	{
@@ -861,37 +896,6 @@ function createBoard($boardOptions)
 
 	// Change the board according to the given specifications.
 	modifyBoard($board_id, $boardOptions);
-
-	// Do we want the parent permissions to be inherited?
-	if ($boardOptions['inherit_permissions'])
-	{
-		getBoardTree();
-
-		if (!empty($boards[$board_id]['parent']))
-		{
-			$request = $smcFunc['db_query']('', '
-				SELECT id_profile
-				FROM {db_prefix}boards
-				WHERE id_board = {int:board_parent}
-				LIMIT 1',
-				array(
-					'board_parent' => (int) $boards[$board_id]['parent'],
-				)
-			);
-			list ($boardOptions['profile']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
-
-			$smcFunc['db_query']('', '
-				UPDATE {db_prefix}boards
-				SET id_profile = {int:new_profile}
-				WHERE id_board = {int:current_board}',
-				array(
-					'new_profile' => $boardOptions['profile'],
-					'current_board' => $board_id,
-				)
-			);
-		}
-	}
 
 	// Clean the data cache.
 	clean_cache('data');
