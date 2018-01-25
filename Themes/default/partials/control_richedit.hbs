@@ -68,7 +68,7 @@ style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if 
 					sUniqueId: '{{editor_id}}',
 					sEditWidth: '{{jsEscape editor_context.width}}',
 					sEditHeight: '{{jsEscape editor_context.height}}',
-					bRichEditOff: {{#if modSettings.disable_wysiwyg}}true{{else}}false{{/if}},
+					bRichEditOff: {{#if (eq_coerce modSettings.disable_wysiwyg 1)}}true{{else}}false{{/if}},
 					oSmileyBox: null,
 					oBBCBox: null
 				});
