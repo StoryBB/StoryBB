@@ -959,7 +959,7 @@ function subscriptions($memID)
 		}
 
 		// Change the template.
-		$context['sub_template'] = 'choose_payment';
+		$context['sub_template'] = 'subscription_choose_payment';
 
 		// Quit.
 		return;
