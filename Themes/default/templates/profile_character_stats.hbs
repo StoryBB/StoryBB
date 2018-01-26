@@ -24,9 +24,9 @@
 				<ul class="activity_stats flow_hidden">
 					{{#each context.posts_by_time}}
 						<li {{#if is_last}} class="last"{{/if}}>
-							<div class="bar" style="padding-top: {{{inverted_percent relative_percent}}}px" title="{{{textTemplate ../txt.statPanel_activityTime_posts posts posts_percent}}}">
+							<div class="bar" style="padding-top: {{{inverted_percent relative_percent}}}px" title="{{textTemplate ../txt.statPanel_activityTime_posts posts posts_percent}}">
 								<div style="height: {{{relative_percent}}}px">
-									<span>{{{textTemplate ../txt.statPanel_activityTime_posts posts posts_percent}}}</span>
+									<span>{{textTemplate ../txt.statPanel_activityTime_posts posts posts_percent}}</span>
 								</div>
 							</div>
 							<span class="stats_hour">{{{hour_format}}}</span>
@@ -52,7 +52,7 @@
 						{{#each context.popular_boards}}
 							<dt>{{{link}}}</dt>
 							<dd>
-								<div class="profile_pie" style="background-position: -{{{pie_percent posts_percent}}}px 0" title="{{{textTemplate ../txt.statPanel_topBoards_memberposts posts total_posts_char posts_percent}}}">{{{textTemplate ../txt.statPanel_topBoards_memberposts posts total_posts_member posts_percent}}}</div>
+								<div class="profile_pie" style="background-position: -{{{pie_percent posts_percent}}}px 0" title="{{textTemplate ../txt.statPanel_topBoards_memberposts posts total_posts_char posts_percent}}">{{textTemplate ../txt.statPanel_topBoards_memberposts posts total_posts_member posts_percent}}</div>
 								{{#unless context.hide_num_posts}}{{posts}}{{/unless}}
 							</dd>
 						{{/each}}
@@ -73,7 +73,7 @@
 						{{#each context.board_activity}}
 							<dt>{{{link}}}</dt>
 							<dd>
-								<div class="profile_pie" style="background-position: -{{{pie_percent percent}}}px 0" title="{{{textTemplate ../txt.statPanel_topBoards_posts posts total_posts posts_percent}}}">{{{textTemplate ../txt.statPanel_topBoards_posts posts total_posts posts_percent}}}</div>
+								<div class="profile_pie" style="background-position: -{{{pie_percent percent}}}px 0" title="{{textTemplate ../txt.statPanel_topBoards_posts posts total_posts posts_percent}}">{{textTemplate ../txt.statPanel_topBoards_posts posts total_posts posts_percent}}</div>
 								{{percent}}%
 							</dd>
 						{{/each}}
