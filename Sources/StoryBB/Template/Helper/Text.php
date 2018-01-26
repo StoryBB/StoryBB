@@ -52,8 +52,7 @@ class Text
 	 */
 	public static function textTemplate($template, ...$args) {
 		array_pop($args);
-		$string = new \LightnCandy\SafeString(sprintf($template, ...$args));
-		return (string) $string;
+		return new \LightnCandy\SafeString(sprintf($template, ...$args));
 	}
 
 	/**
