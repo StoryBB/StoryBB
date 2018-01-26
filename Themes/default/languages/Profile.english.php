@@ -646,6 +646,7 @@ $txt['char_sheet_send_for_approval'] = 'Send For Approval';
 $txt['char_sheet_edit'] = 'Edit Sheet';
 $txt['char_sheet_history'] = 'Edit History';
 $txt['char_sheet_approve'] = 'Approve';
+$txt['char_sheet_reject'] = 'Reject';
 $txt['char_sheet_approve_are_you_sure'] = 'Are you sure you want to approve this character sheet?';
 $txt['char_sheet_reject_are_you_sure'] = 'Are you sure you want to reject this character sheet?';
 $txt['char_sheet_compare'] = 'Compare to Last Approved';
