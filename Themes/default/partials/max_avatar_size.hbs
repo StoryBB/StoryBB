@@ -1,12 +1,12 @@
 	{{! Simplify showing avatar sizes}}
 	{{#if (gt modSettings.avatar_max_width 0)}}
 		{{#if (gt modSettings.avatar_max_height 0)}}
-			<div class="smalltext">{{{textTemplate txt.avatar_max_size_wh modSettings.avatar_max_width modSettings.avatar_max_height}}}</div>
+			<div class="smalltext">{{textTemplate txt.avatar_max_size_wh modSettings.avatar_max_width modSettings.avatar_max_height}}</div>
 		{{else}}
-			<div class="smalltext">{{{textTemplate txt.avatar_max_size_w modSettings.avatar_max_width '0'}}}</div>
+			<div class="smalltext">{{textTemplate txt.avatar_max_size_w modSettings.avatar_max_width '0'}}</div>
 		{{/if}}
 	{{else}}
 		{{#if (gt modSettings.avatar_max_height 0)}}
-			<div class="smalltext">{{{textTemplate txt.avatar_max_size_h '0' modSettings.avatar_max_height}}}</div>
+			<div class="smalltext">{{textTemplate txt.avatar_max_size_h '0' modSettings.avatar_max_height}}</div>
 		{{/if}}
 	{{/if}}

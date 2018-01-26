@@ -29,11 +29,4 @@ function array2js($array) {
 	return StoryBB\Template\Helper\Arrays::array2js($array);
 }
 
-function textTemplate ($template, ...$args) {
-	// Strip the last item off the array, it's the calling context.
-	array_pop($args);
-	$string = new \LightnCandy\SafeString(sprintf($template, ...$args));
-	return (string) $string;
-}
-
 ?>
