@@ -420,8 +420,8 @@ function remove_theme($themeID)
 	$enable = strtr(implode(',', $enable), array(',,' => ','));
 
 	// Clear any cache of them having been minified before.
-	cache_put_data('minimized_'. $settings['theme_id'] .'_css', null, 0);
-	cache_put_data('minimized_'. $settings['theme_id'] .'_js', null, 0);
+	cache_put_data('minimized_'. $themeID .'_css', null, 0);
+	cache_put_data('minimized_'. $themeID .'_js', null, 0);
 
 	// Update the enableThemes list.
 	updateSettings(array('enableThemes' => $enable, 'knownThemes' => $known));
