@@ -1,5 +1,12 @@
 {
-    "theme_version": "3.0",
+    "id": "StoryBB:Curve2",
+    "name": "Curve 2 - StoryBB base theme",
+    "author": {
+        "name": "StoryBB team",
+        "website": "https:\/\/storybb.org\/"
+    },
+    "theme_version": "1.0",
+    "storybb_version": "3.0",
     "require_theme_strings": false,
     "page_index": {
         "extra_before": "<span class=\"pages\">{{{txt.pages}}}<\/span>",
