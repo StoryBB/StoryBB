@@ -127,8 +127,8 @@
 						</ul>
 					</div>
 					{{/if}}
-					{{#unless member.is_guest}}<li class="icons">{{{member.group_icons}}}</li>{{/unless}}
-					{{#if member.group}}<li class="membergroup">{{{member.group}}}</li>{{/if}}
+					{{#unless member.is_guest}}<li class="icons">{{{member.ooc_group.badges}}}</li>{{/unless}}
+					{{#if member.group}}<li class="membergroup">{{{member.ooc_group.title}}}</li>{{/if}}
 					{{#unless member.is_guest}}
 						{{#unless ../modSettings.hide_post_group}}{{#if member.post_group}}<li class="postgroup">{{member.post_group}}</li>{{/if}}{{/unless}}
 						{{#unless ../context.disabled_fields.posts}}<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>{{/unless}}
