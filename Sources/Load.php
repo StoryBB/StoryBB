@@ -1317,6 +1317,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				$row['avatar'] = $boardurl . '/proxy.php?request=' . urlencode($row['avatar']) . '&hash=' . md5($row['avatar'] . $image_proxy_secret);
 
 			// Keep track of the member's normal member group
+			$row['primary_group_id'] = $row['id_group'];
 			$row['primary_group'] = $row['member_group'];
 
 			if (isset($row['member_ip']))
@@ -1554,6 +1555,16 @@ function loadMemberContext($user, $display_custom_fields = false)
 	$profile['buddy'] = in_array($profile['id_member'], $user_info['buddies']);
 	$buddy_list = !empty($profile['buddy_list']) ? explode(',', $profile['buddy_list']) : array();
 
+	if (!isset($profile['ooc_group']) && isset($profile['primary_group_id'], $profile['additional_groups']))
+	{
+		$groups = [$profile['primary_group_id']];
+		if (!empty($profile['additional_groups']))
+		{
+			$groups = array_merge($groups, explode(',', $profile['additional_groups']));
+		}
+		$profile['ooc_group'] = get_labels_and_badges($groups);
+	}
+
 	//We need a little fallback for the membergroup icons. If it doesn't exist in the current theme, fallback to default theme
 	if (isset($profile['icons'][1]) && file_exists($settings['actual_theme_dir'] . '/images/membericons/' . $profile['icons'][1])) //icon is set and exists
 		$group_icon_url = $settings['images_url'] . '/membericons/' . $profile['icons'][1];
@@ -1628,6 +1639,12 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'warning_status' => !empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($modSettings['warning_watch']) && $modSettings['warning_watch'] <= $profile['warning'] ? 'watch' : (''))),
 			'local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),
 			'custom_fields' => array(),
+			'ooc_group' => !empty($profile['ooc_group']) ? $profile['ooc_group'] : [
+				'title' => '',
+				'color' => '',
+				'badges' => '',
+				'combined_badges' => '',
+			],
 		);
 	}
 
