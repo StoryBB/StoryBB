@@ -81,7 +81,7 @@ function MembergroupIndex()
 	$listOptions = array(
 		'id' => 'regular_membergroups_list',
 		'title' => $txt['membergroups_regular'],
-		'base_href' => $scripturl . '?action=admin;area=membergroups' . (isset($_REQUEST['sort2']) ? ';sort2=' . urlencode($_REQUEST['sort2']) : ''),
+		'base_href' => $scripturl . '?action=admin;area=membergroups' . (isset($_REQUEST['sort2']) ? ';sort2=' . urlencode($_REQUEST['sort2']) : '') . (isset($_REQUEST['sort3']) ? ';sort3=' . urlencode($_REQUEST['sort3']) : ''),
 		'default_sort_col' => 'name',
 		'get_items' => array(
 			'file' => $sourcedir . '/Subs-Membergroups.php',
@@ -119,17 +119,6 @@ function MembergroupIndex()
 				'sort' => array(
 					'default' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, mg.group_name',
 					'reverse' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, mg.group_name DESC',
-				),
-			),
-			'level' => array(
-				'header' => array(
-					'value' => $txt['char_group_level'],
-				),
-				'data' => array(
-					'function' => function($rowData) use ($txt)
-					{
-						return empty($rowData['is_character']) ? $txt['char_group_level_acct'] : $txt['char_group_level_char'];
-					},
 				),
 			),
 			'icons' => array(
@@ -193,15 +182,125 @@ function MembergroupIndex()
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	// The second list shows the post count based groups.
+	// The second list shows the character membergroups.
 	$listOptions = array(
-		'id' => 'post_count_membergroups_list',
-		'title' => $txt['membergroups_post'],
-		'base_href' => $scripturl . '?action=admin;area=membergroups' . (isset($_REQUEST['sort']) ? ';sort=' . urlencode($_REQUEST['sort']) : ''),
-		'default_sort_col' => 'required_posts',
+		'id' => 'character_membergroups_list',
+		'title' => $txt['membergroups_character'],
+		'base_href' => $scripturl . '?action=admin;area=membergroups' . (isset($_REQUEST['sort']) ? ';sort=' . urlencode($_REQUEST['sort']) : '') . (isset($_REQUEST['sort3']) ? ';sort3=' . urlencode($_REQUEST['sort3']) : ''),
+		'default_sort_col' => 'name',
+		'no_items_label' => $txt['no_character_groups'],
 		'request_vars' => array(
 			'sort' => 'sort2',
 			'desc' => 'desc2',
+		),
+		'get_items' => array(
+			'file' => $sourcedir . '/Subs-Membergroups.php',
+			'function' => 'list_getMembergroups',
+			'params' => array(
+				'character',
+			),
+		),
+		'columns' => array(
+			'name' => array(
+				'header' => array(
+					'value' => $txt['membergroups_name'],
+				),
+				'data' => array(
+					'function' => function($rowData) use ($scripturl)
+					{
+						// Since the moderator group has no explicit members, no link is needed.
+						if ($rowData['id_group'] == 3)
+							$group_name = $rowData['group_name'];
+						else
+						{
+							$color_style = empty($rowData['online_color']) ? '' : sprintf(' style="color: %1$s;"', $rowData['online_color']);
+							$group_name = sprintf('<a href="%1$s?action=admin;area=membergroups;sa=members;group=%2$d"%3$s>%4$s</a>', $scripturl, $rowData['id_group'], $color_style, $rowData['group_name']);
+						}
+
+						// Add a help option for moderator and administrator.
+						if ($rowData['id_group'] == 1)
+							$group_name .= sprintf(' (<a href="%1$s?action=helpadmin;help=membergroup_administrator" onclick="return reqOverlayDiv(this.href);">?</a>)', $scripturl);
+						elseif ($rowData['id_group'] == 3)
+							$group_name .= sprintf(' (<a href="%1$s?action=helpadmin;help=membergroup_moderator" onclick="return reqOverlayDiv(this.href);">?</a>)', $scripturl);
+
+						return $group_name;
+					},
+				),
+				'sort' => array(
+					'default' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, mg.group_name',
+					'reverse' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, mg.group_name DESC',
+				),
+			),
+			'icons' => array(
+				'header' => array(
+					'value' => $txt['membergroups_icons'],
+				),
+				'data' => array(
+					'db' => 'icons',
+				),
+				'sort' => array(
+					'default' => 'mg.icons',
+					'reverse' => 'mg.icons DESC',
+				)
+			),
+			'members' => array(
+				'header' => array(
+					'value' => $txt['membergroups_members_top'],
+					'class' => 'centercol',
+				),
+				'data' => array(
+					'function' => function($rowData) use ($txt)
+					{
+						// No explicit members for the moderator group.
+						return $rowData['id_group'] == 3 ? $txt['membergroups_guests_na'] : comma_format($rowData['num_members']);
+					},
+					'class' => 'centercol',
+				),
+				'sort' => array(
+					'default' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, 1',
+					'reverse' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, 1 DESC',
+				),
+			),
+			'modify' => array(
+				'header' => array(
+					'value' => $txt['modify'],
+					'class' => 'centercol',
+				),
+				'data' => array(
+					'sprintf' => array(
+						'format' => '<a href="' . $scripturl . '?action=admin;area=membergroups;sa=edit;group=%1$d">' . $txt['membergroups_modify'] . '</a>',
+						'params' => array(
+							'id_group' => false,
+						),
+					),
+					'class' => 'centercol',
+				),
+			),
+		),
+		'additional_rows' => array(
+			array(
+				'position' => 'above_table_headers',
+				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
+			),
+			array(
+				'position' => 'below_table_data',
+				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
+			),
+		),
+	);
+
+	require_once($sourcedir . '/Subs-List.php');
+	createList($listOptions);
+
+	// The third list shows the post count based groups.
+	$listOptions = array(
+		'id' => 'post_count_membergroups_list',
+		'title' => $txt['membergroups_post'],
+		'base_href' => $scripturl . '?action=admin;area=membergroups' . (isset($_REQUEST['sort']) ? ';sort=' . urlencode($_REQUEST['sort']) : '') . (isset($_REQUEST['sort2']) ? ';sort2=' . urlencode($_REQUEST['sort2']) : ''),
+		'default_sort_col' => 'required_posts',
+		'request_vars' => array(
+			'sort' => 'sort3',
+			'desc' => 'desc3',
 		),
 		'get_items' => array(
 			'file' => $sourcedir . '/Subs-Membergroups.php',
