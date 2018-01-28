@@ -231,7 +231,7 @@ class Template
 				'login_helper' => 'login_helper',
 				'isSelected' => 'isSelected',
 				'javascript' => 'template_javascript',
-				'css' => 'template_css',
+				'css' => function() { return template_css(); },
 			]
 		], $cache_id);
 
