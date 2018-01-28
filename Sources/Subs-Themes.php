@@ -383,6 +383,17 @@ function remove_theme($themeID)
 		)
 	);
 
+	// Update characters settings too.
+	$smcFunc['db_query']('', '
+		UPDATE {db_prefix}characters
+		SET id_theme = {int:default_theme}
+		WHERE id_theme = {int:current_theme}',
+		array(
+			'default_theme' => 0,
+			'current_theme' => $themeID,
+		)
+	);
+
 	// Some boards may have it as preferred theme.
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}boards
