@@ -22,9 +22,9 @@
 						{{#if (or enable (eq id 1))}}<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{../context.session_var}}={{../context.session_id}};sa=list">{{name}}</a>{{else}}{{name}}{{/if}}{{#if version}}<em>{{version}}</em>{{/if}}
 					</span>
 					{{#if (neq id 1)}}<span class="floatright">
-					    <a href="{{../scripturl}}?action=admin;area=theme;sa=enable;th={{id}};{{../context.session_var}}={{../context.session_id}};{{../context.admin-tre_token_var}}={{../context.admin-tre_token}}{{#if enable}};disabled{{/if}}" data-confirm="{{#if enable}}{{../txt.theme_enable_confirm}}{{else}}{{../txt.theme_disable_confirm}}{{/if}}" class="you_sure">
+					    <a href="{{../scripturl}}?action=admin;area=theme;sa=enable;th={{id}};{{session_url}};{{token_url 'admin-tre'}}{{#if enable}};disabled{{/if}}" data-confirm="{{#if enable}}{{../txt.theme_enable_confirm}}{{else}}{{../txt.theme_disable_confirm}}{{/if}}" class="you_sure">
 					        <span class="generic_icons {{#if enable}}disable{{else}}enable{{/if}}" title="{{#if enable}}{{../txt.theme_disable}}{{else}}{{../txt.theme_enable}}{{/if}}"></span></a>
-                        <a href="{{../scripturl}}?action=admin;area=theme;sa=remove;th={{id}};{{../context.session_var}}={{../context.session_id}};{{../context.admin-tre_token_var}}={{../context.admin-tre_token}}{{#if enable}};disabled{{/if}}" data-confirm="{{../txt.theme_remove_confirm}}" class="you_sure">
+                        <a href="{{../scripturl}}?action=admin;area=theme;sa=remove;th={{id}};{{session_url}};{{token_url 'admin-tr'}}{{#if enable}};disabled{{/if}}" data-confirm="{{../txt.theme_remove_confirm}}" class="you_sure">
 					        <span class="generic_icons delete" title="{{../txt.theme_remove}}"></span></a>
 			        </span>{{/if}}
 				</h3>

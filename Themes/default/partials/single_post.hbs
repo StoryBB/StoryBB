@@ -228,12 +228,14 @@
 									</ul>
 								</li>
 								{{/if}}
+								{{#if (and ../context.can_split ../context.real_num_replies)}}
+								<li><a href="{{../scripturl}}?action=splittopics;topic={{../context.current_topic}}.0;at={{id}}"><span class="generic_icons split_button"></span>{{../txt.split}}</a></li>
+								{{/if}}
 							</ul>
+
 						</li>
 					{{/if}}
-					{{#if (and ../context.can_split ../context.real_num_replies)}}
-						<li><a href="{{../scripturl}}?action=splittopics;topic={{../context.current_topic}}.0;at={{id}}"><span class="generic_icons split_button"></span>{{../txt.split}}</a></li>
-					{{/if}}
+
 					{{#unless (or (not ../context.can_issue_warning) is_message_author member.is_guest)}}
 						<li><a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}};msg={{id}}"><span class="generic_icons warn_button"></span>{{../txt.issue_warning}}</a></li>
 					{{/unless}}
