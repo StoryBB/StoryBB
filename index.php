@@ -202,7 +202,7 @@ function smf_main()
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
-	$no_stat_actions = array('dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'modifycat', 'requestmembers', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery', 'viewsmfile');
+	$no_stat_actions = array('dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'requestmembers', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery', 'viewsmfile');
 	call_integration_hook('integrate_pre_log_stats', array(&$no_stat_actions));
 	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
 	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $no_stat_actions))
@@ -304,7 +304,6 @@ function smf_main()
 		'mergetopics' => array('SplitTopics.php', 'MergeTopics'),
 		'mlist' => array('Memberlist.php', 'Memberlist'),
 		'moderate' => array('ModerationCenter.php', 'ModerationMain'),
-		'modifycat' => array('ManageBoards.php', 'ModifyCat'),
 		'movetopic' => array('MoveTopic.php', 'MoveTopic'),
 		'movetopic2' => array('MoveTopic.php', 'MoveTopic2'),
 		'notify' => array('Notify.php', 'Notify'),
@@ -355,13 +354,6 @@ function smf_main()
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($_REQUEST['action']) || !isset($actionArray[$_REQUEST['action']]))
 	{
-		// Catch the action with the theme?
-		if (!empty($settings['catch_action']))
-		{
-			require_once($sourcedir . '/Themes.php');
-			return 'WrapAction';
-		}
-
 		if (!empty($modSettings['integrate_fallback_action']))
 		{
 			$fallbackAction = explode(',', $modSettings['integrate_fallback_action']);

@@ -34,6 +34,18 @@ class Theme
 	public static function get_defaults(): array {
 		$theme_json = self::get_theme_json();
 		unset($theme_json['theme_settings'], $theme_json['user_options']);
+		if (empty($theme_json['additional_files']))
+		{
+			$theme_json['additional_files'] = [];
+		}
+		if (empty($theme_json['additional_files']['css']))
+		{
+			$theme_json['additional_files']['css'] = [];
+		}
+		if (empty($theme_json['additional_files']['js']))
+		{
+			$theme_json['additional_files']['js'] = [];
+		}
 		return $theme_json;
 	}
 

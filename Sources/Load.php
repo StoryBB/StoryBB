@@ -1944,7 +1944,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
 			// There are just things we shouldn't be able to change as members.
-			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'number_recent_posts', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_layers', 'theme_templates', 'theme_url')))
+			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'number_recent_posts', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_url')))
 				continue;
 
 			// If this is the theme_dir of the default theme, store it.
@@ -2274,6 +2274,23 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// And of course, let's load the default CSS file.
 	loadCSSFile('index.css', array('minimize' => true), 'smf_index');
 
+	if (!empty($settings['additional_files']['css']))
+	{
+		foreach ($settings['additional_files']['css'] as $css_file)
+		{
+			if (is_string($css_file))
+			{
+				// Simple case, just load the file.
+				loadCSSFile($css_file, [], str_replace('.', '_', $css_file));
+			}
+			elseif (is_array($css_file) && !empty($css_file[0]))
+			{
+				// If it's a more complex case, it should be an array containing the parameters here.
+				loadCSSFile($css_file[0], !empty($css_file[1]) ? $css_file[1] : [], !empty($css_file[2]) ? $css_file[2] : '');
+			}
+		}
+	}
+
 	// Here is my luvly Responsive CSS
 	loadCSSFile('responsive.css', array('force_current' => false, 'validate' => true, 'minimize' => true), 'smf_responsive');
 
@@ -2349,6 +2366,23 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// script.js and theme.js, always required, so always add them! Makes index.template.php cleaner and all.
 	loadJavaScriptFile('script.js', array('defer' => false, 'minimize' => true), 'smf_script');
 	loadJavaScriptFile('theme.js', array('minimize' => true), 'smf_theme');
+
+	if (!empty($settings['additional_files']['js']))
+	{
+		foreach ($settings['additional_files']['js'] as $js_file)
+		{
+			if (is_string($js_file))
+			{
+				// Simple case, just load the file.
+				loadJavaScriptFile($js_file, [], str_replace('.', '_', $js_file));
+			}
+			elseif (is_array($js_file) && !empty($js_file[0]))
+			{
+				// If it's a more complex case, it should be an array containing the parameters here.
+				loadJavaScriptFile($js_file[0], !empty($js_file[1]) ? $js_file[1] : [], !empty($js_file[2]) ? $js_file[2] : '');
+			}
+		}
+	}
 
 	// If we think we have mail to send, let's offer up some possibilities... robots get pain (Now with scheduled task support!)
 	if ((!empty($modSettings['mail_next_send']) && $modSettings['mail_next_send'] < time() && empty($modSettings['mail_queue_use_cron'])) || empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time())
