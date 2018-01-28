@@ -11,7 +11,7 @@
 
 				{{#each context.watched_users}}
 				<li>
-					<span class="smalltext">{{#if last_login}}{{{textTemplate ../txt.mc_seen link last_login}}}{{else}}{{{textTemplate ../txt.mc_seen_never link}}}{{/if}}</span>
+					<span class="smalltext">{{#if last_login}}{{textTemplate ../txt.mc_seen link last_login}}{{else}}{{textTemplate ../txt.mc_seen_never link}}{{/if}}</span>
 				</li>
 				{{/each}}
 

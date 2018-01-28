@@ -52,7 +52,7 @@ class Misc
 
 	public static function json($data)
 	{
-		return json_encode($data);
+		return json_encode($data instanceof \LightnCandy\SafeString ? (string) $data : $data);
 	}
 
 	public static function breakrow($index, $perRow, $sep) {

@@ -191,7 +191,7 @@
 				<div>
 					{{! Is there a limit on signatures? }}
 					{{#if context.signature_limits.max_length}}
-					<span class="smalltext">{{{textTemplate txt.max_sig_characters context.signature_limits.max_length}}} <span id="signatureLeft">{{{context.signature_limits.max_length}}}</span></span>
+					<span class="smalltext">{{textTemplate txt.max_sig_characters context.signature_limits.max_length}} <span id="signatureLeft">{{{context.signature_limits.max_length}}}</span></span>
 					{{/if}}
 
 					<span class="floatright"><input type="button" name="preview_signature" id="preview_button" value="{{{txt.preview_signature}}}" class="button_submit"></span>

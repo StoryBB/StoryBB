@@ -10,10 +10,10 @@
 				<div class="alert">{{{txt.deleteAccount_warning}}}</div>
 				<br>
 				<div>
-					{{{textTemplate txt.move_are_you_sure
+					{{textTemplate txt.move_are_you_sure
 						(concat '<a class="new_win" target="_blank" href="' scripturl '?action=profile;u=' context.id_member ';area=characters;char='  context.character.id_character '">' context.character.character_name '</a>')
 						(concat '<a class="new_win" target="_blank" href="' scripturl '?action=profile;u=' context.move_destination_id '">' context.move_destination.real_name '</a>')
-					}}}
+					}}
 				<input type="hidden" name="{{{context.session_var}}}" value="{{{context.session_id}}}">
 				<input type="hidden" name="move_acct_id" value="{{context.move_destination_id}}">
 				<input type="submit" value="{{{txt.move_char_action}}}" class="button_submit">
