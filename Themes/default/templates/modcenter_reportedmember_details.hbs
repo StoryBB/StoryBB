@@ -3,13 +3,13 @@
 		<form action="{{scripturl}}?action=moderate;area=reportedmembers;sa=handlecomment;rid={{context.report.id}}" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
-					{{{textTemplate txt.mc_viewmemberreport context.report.user.link}}}
+					{{textTemplate txt.mc_viewmemberreport context.report.user.link}}
 				</h3>
 			</div>
 			<div class="title_bar">
 				<h3 class="titlebg">
 					<span class="floatleft">
-						{{{textTemplate txt.mc_modreport_summary context.report.num_reports context.report.last_updated}}}
+						{{textTemplate txt.mc_modreport_summary context.report.num_reports context.report.last_updated}}
 					</span>
 					<span class="floatright">
 						<a href="{{scripturl}}?action=moderate;area=reportedmembers;sa=handle;ignore={{#if (eq context.report.ignore '1')}}0{{else}}1{{/if}};rid={{context.report.id}};{{session_url}};{{token_url 'mod-report-ignore'}}" class="button{{#if (neq context.report.ignore '1')}} you_sure{{/if}}"{{#if (neq context.report.ignore '1')}} data-confirm="{{{txt.mc_reportedp_ignore_confirm}}}"{{/if}}>{{#if (eq context.report.ignore '1')}}{{{create_button 'ignore' 'mc_reportedp_unignore' 'mc_reportedp_unignore'}}}{{else}}{{{create_button 'ignore' 'mc_reportedp_ignore' 'mc_reportedp_ignore'}}}{{/if}}</a>
@@ -24,7 +24,7 @@
 
 			{{#each context.report.comments}}
 			<div class="windowbg">
-				<p class="smalltext">{{{textTemplate ../txt.mc_modreport_whoreported_data member.link time}}}</p>
+				<p class="smalltext">{{textTemplate ../txt.mc_modreport_whoreported_data member.link time}}</p>
 				<p>{{{message}}}</p>
 			</div>
 			{{/each}}

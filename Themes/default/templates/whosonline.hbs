@@ -41,9 +41,9 @@
 								{{/unless}}
 								<span class="member{{#if is_hidden}} hidden{{/if}}">
 									{{#if is_guest}}
-										{{name}}
+										{{{name}}}
 									{{else}}
-										<a href="{{{href}}}" title="{{../txt.profile_of}} {{name}}"{{#if color}} style="color: {{color}}"{{/if}}>{{name}}</a>
+										<a href="{{{href}}}" title="{{../txt.profile_of}} {{{name}}}"{{#if color}} style="color: {{color}}"{{/if}}>{{{name}}}</a>
 									{{/if}}
 								</span>
 								{{#if ip}}

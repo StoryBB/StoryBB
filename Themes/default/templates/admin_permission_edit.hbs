@@ -1,7 +1,7 @@
 	{{! Main permission changing page. }}
 	{{#unless context.profile.can_modify}}
 		<div class="errorbox">
-			{{{textTemplate txt.permission_cannot_edit (concat scripturl '?action=admin;area=permissions;sa=profiles')}}}
+			{{textTemplate txt.permission_cannot_edit (concat scripturl '?action=admin;area=permissions;sa=profiles')}}
 		</div>
 	{{else}}
 		<script>

@@ -10,7 +10,7 @@
 			{{! If this is an existing set, and there are still un-added smileys - offer an import opportunity. }}
 			{{#if (gt context.current_set.can_import 0)}}
 			<div class="information">
-				{{#if (eq context.current_set.can_import 1)}}{{{textTemplate txt.smiley_set_import_single context.current_set.import_url}}}{{else}}{{{textTemplate txt.smiley_set_import_multiple context.current_set.can_import context.current_set.import_url}}}{{/if}}
+				{{#if (eq context.current_set.can_import 1)}}{{textTemplate txt.smiley_set_import_single context.current_set.import_url}}{{else}}{{textTemplate txt.smiley_set_import_multiple context.current_set.can_import context.current_set.import_url}}{{/if}}
 			</div>
 
 			{{/if}}

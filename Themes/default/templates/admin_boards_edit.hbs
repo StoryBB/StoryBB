@@ -35,7 +35,7 @@
 							<option value="after">{{{txt.mboards_order_after}}}...</option>
 							<option value="child">{{{txt.mboards_order_child_of}}}...</option>
 							<option value="before">{{{txt.mboards_order_before}}}...</option>
-						</select>';
+						</select>
 
 						{{! The second select box lists all the boards in the category. }}
 						<select id="board_order" name="board_order"{{#unless context.board.is_new}} disabled{{/unless}}>
@@ -82,7 +82,7 @@
 							{{/if}}
 
 							{{#each context.profiles}}
-							<option value="{{@key}}"{{#if (eq key ../context.board.profile)}} selected{{/if}}>{{{name}}}</option>
+							<option value="{{@key}}"{{#if (eq_coerce @key ../context.board.profile)}} selected{{/if}}>{{{name}}}</option>
 							{{/each}}
 						</select>
 					</dd>
@@ -219,7 +219,7 @@
 							</dt>
 							<dd>
 								<input type="checkbox" name="reset_redirect" class="input_check">
-								<em>({{{textTemplate txt.mboards_current_redirects context.board.posts}}})</em>
+								<em>({{textTemplate txt.mboards_current_redirects context.board.posts}})</em>
 							</dd>
 						</dl>
 					</div>
