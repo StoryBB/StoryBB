@@ -122,7 +122,7 @@ function modifyCategory($category_id, $catOptions)
 /**
  * Create a new category.
  * general function to create a new category and set its position.
- * allows (almost) the same options as the modifyCat() function.
+ * allows (almost) the same options as the modifyCategory() function.
  * returns the ID of the newly created category.
  *
  * @param array $catOptions An array of data and settings related to the new category. Should have at least 'cat_name' and can also have 'cat_desc', 'move_after' and 'is_collapsable'
