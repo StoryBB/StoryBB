@@ -1388,45 +1388,6 @@ function InstallDir()
 }
 
 /**
- * Possibly the simplest and best example of how to use the template system.
- *  - allows the theme to take care of actions.
- *  - happens if $settings['catch_action'] is set and action isn't found
- *   in the action array.
- *  - can use a template, layers, sub_template, filename, and/or function.
- */
-function WrapAction()
-{
-	global $context, $settings;
-
-	// Load any necessary template(s)?
-	if (isset($settings['catch_action']['template']))
-	{
-		// Load both the template and language file. (but don't fret if the language file isn't there...)
-		loadTemplate($settings['catch_action']['template']);
-		loadLanguage($settings['catch_action']['template'], '', false);
-	}
-
-	// Any special layers?
-	if (isset($settings['catch_action']['layers']))
-		$context['template_layers'] = $settings['catch_action']['layers'];
-
-	// Any function to call?
-	if (isset($settings['catch_action']['function']))
-	{
-		$hook = $settings['catch_action']['function'];
-
-		if (!isset($settings['catch_action']['filename']))
-			$settings['catch_action']['filename'] = '';
-
-		add_integration_function('integrate_wrap_action', $hook, false, $settings['catch_action']['filename'], false);
-		call_integration_hook('integrate_wrap_action');
-	}
-	// And finally, the main sub template ;).
-	if (isset($settings['catch_action']['sub_template']))
-		$context['sub_template'] = $settings['catch_action']['sub_template'];
-}
-
-/**
  * Set an option via javascript.
  * - sets a theme option without outputting anything.
  * - can be used with javascript, via a dummy image... (which doesn't require
