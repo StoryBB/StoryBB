@@ -38,7 +38,6 @@ function get_single_theme($id)
 		'name',
 		'version',
 		'install_for',
-		'based_on',
 	);
 
 	// Make changes if you really want it.
@@ -108,7 +107,6 @@ function get_all_themes($enable_only = false)
 		'name',
 		'version',
 		'install_for',
-		'based_on',
 	);
 
 	// Make changes if you really want it.
@@ -279,70 +277,6 @@ function theme_install($to_install = array())
 				default: // Any other possible result.
 					fatal_lang_error('package_get_error_theme_no_new_version', false, array($context['to_install']['version'], $to_update['version']));
 			}
-	}
-
-	if (!empty($context['to_install']['based_on']))
-	{
-		// No need for elaborated stuff when the theme is based on the default one.
-		if ($context['to_install']['based_on'] == 'default')
-		{
-			$context['to_install']['theme_url'] = $settings['default_theme_url'];
-			$context['to_install']['images_url'] = $settings['default_images_url'];
-		}
-
-		// Custom theme based on another custom theme, lets get some info.
-		elseif ($context['to_install']['based_on'] != '')
-		{
-			$context['to_install']['based_on'] = preg_replace('~[^A-Za-z0-9\-_ ]~', '', $context['to_install']['based_on']);
-
-			// Get the theme info first.
-			$request = $smcFunc['db_query']('', '
-				SELECT id_theme
-				FROM {db_prefix}themes
-				WHERE id_member = {int:no_member}
-					AND (value LIKE {string:based_on} OR value LIKE {string:based_on_path})
-				LIMIT 1',
-				array(
-					'no_member' => 0,
-					'based_on' => '%/' . $context['to_install']['based_on'],
-					'based_on_path' => '%' . "\\" . $context['to_install']['based_on'],
-				)
-			);
-
-			$based_on = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
-
-			$request = $smcFunc['db_query']('', '
-				SELECT variable, value
-				FROM {db_prefix}themes
-					WHERE variable IN ({array_string:theme_values})
-						AND id_theme = ({int:based_on})
-				LIMIT 1',
-				array(
-					'no_member' => 0,
-					'theme__values' => array('theme_url', 'images_url', 'theme_dir',),
-					'based_on' => $based_on['id_theme'],
-				)
-			);
-			$temp = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
-
-			// Found the based on theme info, add it to the current one being installed.
-			if (is_array($temp))
-			{
-				$context['to_install']['base_theme_url'] = $temp['theme_url'];
-				$context['to_install']['base_theme_dir'] = $temp['theme_dir'];
-
-				if (empty($explicit_images) && !empty($context['to_install']['base_theme_url']))
-					$context['to_install']['theme_url'] = $context['to_install']['base_theme_url'];
-			}
-
-			// Nope, sorry, couldn't find any theme already installed.
-			else
-				fatal_lang_error('package_get_error_theme_no_based_on_found', false, $context['to_install']['based_on']);
-		}
-
-		unset($context['to_install']['based_on']);
 	}
 
 	// Find the newest id_theme.

@@ -1300,8 +1300,6 @@ function InstallCopy()
 		'images_url' => $themeurl . '/' . $name . '/images',
 		'version' => '1.0',
 		'install_for' => '3.0 - 3.0.99, ' . strtr($forum_version, array('StoryBB ' => '')),
-		'based_on' => '',
-		'based_on_dir' => $themedir . '/default',
 	);
 
 	// Create the specific dir.
