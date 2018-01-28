@@ -30,14 +30,12 @@ function get_single_theme($id)
 	// Make sure $id is an int.
 	$id = (int) $id;
 
-	// List of all possible  values.
+	// List of all possible values.
 	$themeValues = array(
 		'theme_dir',
 		'images_url',
 		'theme_url',
 		'name',
-		'theme_layers',
-		'theme_templates',
 		'version',
 		'install_for',
 		'based_on',
@@ -108,8 +106,6 @@ function get_all_themes($enable_only = false)
 		'images_url',
 		'theme_url',
 		'name',
-		'theme_layers',
-		'theme_templates',
 		'version',
 		'install_for',
 		'based_on',
