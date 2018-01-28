@@ -8,7 +8,7 @@
 				{{#each context.repair_errors}}
 					{{#if (gt . '0')}}
 					<input type="checkbox" name="to_fix[]" id="{{@key}}" value="{{@key}}" class="input_check">
-					<label for="{{@key}}">{{{textTemplate (get_text (concat 'attach_repair_' @key)) .}}}</label><br>
+					<label for="{{@key}}">{{textTemplate (get_text (concat 'attach_repair_' @key)) .}}</label><br>
 					{{/if}}
 				{{/each}}
 				<br>

@@ -10,7 +10,7 @@
 				{{! Loop through and print out a reason box for each... }}
 				{{#each context.group_requests}}
 					<dt>
-						<strong>{{{textTemplate ../txt.mc_groupr_reason_desc member_link group_link}}}:</strong>
+						<strong>{{textTemplate ../txt.mc_groupr_reason_desc member_link group_link}}:</strong>
 					</dt>
 					<dd>
 						<input type="hidden" name="groupr[]" value="{{id}}">
