@@ -354,13 +354,6 @@ function smf_main()
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($_REQUEST['action']) || !isset($actionArray[$_REQUEST['action']]))
 	{
-		// Catch the action with the theme?
-		if (!empty($settings['catch_action']))
-		{
-			require_once($sourcedir . '/Themes.php');
-			return 'WrapAction';
-		}
-
 		if (!empty($modSettings['integrate_fallback_action']))
 		{
 			$fallbackAction = explode(',', $modSettings['integrate_fallback_action']);

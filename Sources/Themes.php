@@ -1300,8 +1300,6 @@ function InstallCopy()
 		'images_url' => $themeurl . '/' . $name . '/images',
 		'version' => '1.0',
 		'install_for' => '3.0 - 3.0.99, ' . strtr($forum_version, array('StoryBB ' => '')),
-		'based_on' => '',
-		'based_on_dir' => $themedir . '/default',
 	);
 
 	// Create the specific dir.
@@ -1318,7 +1316,7 @@ function InstallCopy()
 	mkdir($context['to_install']['theme_dir'] . '/scripts', 0777);
 
 	// Copy over the default non-theme files.
-	$to_copy = array('/index.php', '/index.template.php', '/css/index.css', '/css/responsive.css', '/css/slider.min.css', '/css/rtl.css', '/css/admin.css', '/scripts/theme.js');
+	$to_copy = array('/index.php', '/css/index.css', '/css/responsive.css', '/css/slider.min.css', '/css/rtl.css', '/css/admin.css', '/scripts/theme.js');
 
 	foreach ($to_copy as $file)
 	{
@@ -1330,68 +1328,17 @@ function InstallCopy()
 	copytree($settings['default_theme_dir'] . '/images', $context['to_install']['theme_dir'] . '/images');
 	package_flush_cache();
 
-	// Lets get some data for the new theme.
-	$request = $smcFunc['db_query']('', '
-		SELECT variable, value
-		FROM {db_prefix}themes
-		WHERE variable IN ({string:theme_templates}, {string:theme_layers})
-			AND id_member = {int:no_member}
-			AND id_theme = {int:default_theme}',
-		array(
-			'no_member' => 0,
-			'default_theme' => 1,
-			'theme_templates' => 'theme_templates',
-			'theme_layers' => 'theme_layers',
-		)
-	);
+	// Let's add a theme.json to this theme. Most of this should come from the default theme.
+	$json_loaded = @json_decode(file_get_contents($settings['default_theme_dir'] . '/theme.json'), true);
+	$json = [
+		'id' => 'StoryBB:' . $smcFunc['strtolower']($context['to_install']['name']),
+		'name' => $context['to_install']['name'],
+		'theme_version' => '1.0',
+		'storybb_version' => $context['to_install']['install_for'],
+	];
+	$json += $json_loaded;
 
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-	{
-		if ($row['variable'] == 'theme_templates')
-			$theme_templates = $row['value'];
-		elseif ($row['variable'] == 'theme_layers')
-			$theme_layers = $row['value'];
-		else
-			continue;
-	}
-
-	$smcFunc['db_free_result']($request);
-
-	$context['to_install'] += array(
-		'theme_layers' => empty($theme_layers) ? 'html,body' : $theme_layers,
-		'theme_templates' => empty($theme_templates) ? 'index' : $theme_templates,
-	);
-
-	// Lets add a theme_info.xml to this theme.
-	$xml_info = '<' . '?xml version="1.0"?' . '>
-<theme-info xmlns="http://www.simplemachines.org/xml/theme-info" xmlns:smf="http://www.simplemachines.org/">
-<!-- For the id, always use something unique - put your name, a colon, and then the package name. -->
-<id>smf:' . $smcFunc['strtolower']($context['to_install']['name']) . '</id>
-<!-- The theme\'s version, please try to use semantic versioning. -->
-<version>1.0</version>
-<!-- Install for, the StoryBB versions this theme was designed for. Uses the same wildcards used in the packager manager. This field is mandatory. -->
-<install for="'. $context['to_install']['install_for'] . '" />
-<!-- Theme name, used purely for aesthetics. -->
-<name>' . $context['to_install']['name'] . '</name>
-<!-- Author: your email address or contact information. The name attribute is optional. -->
-<author name="Simple Machines">info@simplemachines.org</author>
-<!-- Website... where to get updates and more information. -->
-<website>https://www.simplemachines.org/</website>
-<!-- Template layers to use, defaults to "html,body". -->
-<layers>' . $context['to_install']['theme_layers'] . '</layers>
-<!-- Templates to load on startup. Default is "index". -->
-<templates>' . $context['to_install']['theme_templates'] . '</templates>
-<!-- Base this theme off another? Default is blank, or no. It could be "default". -->
-<based-on></based-on>
-</theme-info>';
-
-	// Now write it.
-	$fp = @fopen($context['to_install']['theme_dir'] . '/theme_info.xml', 'w+');
-	if ($fp)
-	{
-		fwrite($fp, $xml_info);
-		fclose($fp);
-	}
+	file_put_contents($context['to_install']['theme_dir'] . '/theme.json', json_encode($json, JSON_PRETTY_PRINT));
 
 	// Install the theme. theme_install() will take care of possible errors.
 	$context['to_install']['id'] = theme_install($context['to_install']);
@@ -1415,7 +1362,7 @@ function InstallDir()
 		fatal_lang_error('theme_install_invalid_dir', false);
 
 	// Check is there is "something" on the dir.
-	elseif (!is_dir($_REQUEST['theme_dir']) || !file_exists($_REQUEST['theme_dir'] . '/theme_info.xml'))
+	elseif (!is_dir($_REQUEST['theme_dir']) || !file_exists($_REQUEST['theme_dir'] . '/theme.json'))
 		fatal_lang_error('theme_install_error', false);
 
 	$name = basename($_REQUEST['theme_dir']);
@@ -1438,45 +1385,6 @@ function InstallDir()
 
 	// return the info.
 	return $context['to_install'];
-}
-
-/**
- * Possibly the simplest and best example of how to use the template system.
- *  - allows the theme to take care of actions.
- *  - happens if $settings['catch_action'] is set and action isn't found
- *   in the action array.
- *  - can use a template, layers, sub_template, filename, and/or function.
- */
-function WrapAction()
-{
-	global $context, $settings;
-
-	// Load any necessary template(s)?
-	if (isset($settings['catch_action']['template']))
-	{
-		// Load both the template and language file. (but don't fret if the language file isn't there...)
-		loadTemplate($settings['catch_action']['template']);
-		loadLanguage($settings['catch_action']['template'], '', false);
-	}
-
-	// Any special layers?
-	if (isset($settings['catch_action']['layers']))
-		$context['template_layers'] = $settings['catch_action']['layers'];
-
-	// Any function to call?
-	if (isset($settings['catch_action']['function']))
-	{
-		$hook = $settings['catch_action']['function'];
-
-		if (!isset($settings['catch_action']['filename']))
-			$settings['catch_action']['filename'] = '';
-
-		add_integration_function('integrate_wrap_action', $hook, false, $settings['catch_action']['filename'], false);
-		call_integration_hook('integrate_wrap_action');
-	}
-	// And finally, the main sub template ;).
-	if (isset($settings['catch_action']['sub_template']))
-		$context['sub_template'] = $settings['catch_action']['sub_template'];
 }
 
 /**
@@ -1517,8 +1425,6 @@ function SetJavaScript()
 		'smiley_sets_default',
 		'theme_dir',
 		'theme_id',
-		'theme_layers',
-		'theme_templates',
 		'theme_url',
 		'name',
 	);
