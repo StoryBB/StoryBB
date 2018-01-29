@@ -573,7 +573,7 @@ function modifyBoard($board_id, &$boardOptions)
 	}
 
 	// Do we want the parent permissions to be inherited?
-	if ($boardOptions['inherit_permissions'])
+	if (!empty($boardOptions['inherit_permissions']))
 	{
 		if (!empty($boardUpdateParameters['id_parent']))
 		{

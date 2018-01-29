@@ -915,11 +915,13 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			mg.icons, COALESCE(gm.id_member, 0) AS can_moderate, 0 AS num_members, is_character
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}group_moderators AS gm ON (gm.id_group = mg.id_group AND gm.id_member = {int:current_member})
-		WHERE mg.min_posts {raw:min_posts}' . (allowedTo('admin_forum') ? '' : '
+		WHERE mg.min_posts {raw:min_posts}
+			AND is_character = {int:is_character}' . (allowedTo('admin_forum') ? '' : '
 			AND mg.id_group != {int:mod_group}') . '
 		ORDER BY {raw:sort}',
 		array(
 			'current_member' => $user_info['id'],
+			'is_character' => ($membergroup_type === 'character' ? 1 : 0),
 			'min_posts' => ($membergroup_type === 'post_count' ? '!= ' : '= ') . -1,
 			'mod_group' => 3,
 			'sort' => $sort,
@@ -971,7 +973,10 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				)
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($query))
-				$groups[$row['id_group']]['num_members'] += $row['num_members'];
+			{
+				if (isset($groups[$row['id_group']]))
+					$groups[$row['id_group']]['num_members'] += $row['num_members'];
+			}
 			$smcFunc['db_free_result']($query);
 		}
 
@@ -987,7 +992,10 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				)
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($query))
-				$groups[$row['id_group']]['num_members'] += $row['num_members'];
+			{
+				if (isset($groups[$row['id_group']]))
+					$groups[$row['id_group']]['num_members'] += $row['num_members'];
+			}
 			$smcFunc['db_free_result']($query);
 
 			// And collect all the characters too.
@@ -1001,7 +1009,10 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				)
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($query))
-				$groups[$row['main_char_group']]['num_members'] += $row['num_members'];
+			{
+				if (isset($groups[$row['main_char_group']]))
+					$groups[$row['main_char_group']]['num_members'] += $row['num_members'];
+			}
 			$smcFunc['db_free_result']($query);
 
 			if ($context['can_moderate'])
