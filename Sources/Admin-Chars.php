@@ -185,6 +185,7 @@ function CharacterSheets()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $scripturl;
 	require_once($sourcedir . '/Subs-List.php');
+	loadLanguage('Profile');
 
 	$listOptions = [
 		'id' => 'approval_queue',
