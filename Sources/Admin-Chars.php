@@ -228,6 +228,10 @@ function CharacterSheets()
 					);
 					while ($row = $smcFunc['db_fetch_assoc']($request))
 					{
+						// If it's not actually pending approval (strict mode makes this complicated), skip it.
+						if (empty($row['approval_state']))
+							continue;
+
 						$rows[$row['id_character']] = array_merge($rows[$row['id_character']], $row);
 					}
 					$smcFunc['db_free_result']($request);
