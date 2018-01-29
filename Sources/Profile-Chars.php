@@ -1435,7 +1435,7 @@ function char_sheet()
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
-				$row = parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
+				$row['sheet_comment_parsed'] = parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
 				$context['sheet_comments'][$row['id_comment']] = $row;
 			}
 			$smcFunc['db_free_result']($request);
