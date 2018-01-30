@@ -318,6 +318,17 @@ function CharacterImmersion($return_config = false)
 				'icooc' => $txt['ic_and_ooc_boards'],
 			)),
 			array('check', 'characters_admin_override'),
+		'',
+			array('select', 'enable_immersive_mode', [
+				'user_on' => $txt['enable_immersive_mode_user_on'],
+				'user_off' => $txt['enable_immersive_mode_user_off'],
+				'off' => $txt['enable_immersive_mode_off'],
+				'on' => $txt['enable_immersive_mode_on'],
+			]),
+			array('select', 'non_immersive_mode', [
+				'simple' => $txt['non_immersive_mode_simple'],
+				'contextual' => $txt['non_immersive_mode_contextual'],
+			]),
 	);
 
 	call_integration_hook('integrate_immersion_settings', array(&$config_vars));
