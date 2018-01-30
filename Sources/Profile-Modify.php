@@ -238,6 +238,7 @@ function loadProfileFields($force_reload = false)
 			'label' => $txt['immersive_mode'],
 			'subtext' => $txt['immersive_mode_desc'],
 			'permission' => 'profile_identity',
+			'enabled' => in_array($modSettings['enable_immersive_mode'], ['user_on', 'user_off']),
 		),
 		'lngfile' => array(
 			'type' => 'select',
