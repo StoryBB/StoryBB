@@ -59,6 +59,16 @@ function reloadSettings()
 			cache_put_data('modSettings', $modSettings, 90);
 	}
 
+	// Let's make sure we have these settings set up.
+	if (empty($modSettings['enable_immersive_mode']) || !in_array($modSettings['enable_immersive_mode'], ['user_on', 'user_off', 'on', 'off']))
+	{
+		$modSettings['enable_immersive_mode'] = 'user_on';
+	}
+	if (empty($modSettings['non_immersive_mode']) || !in_array($modSettings['non_immersive_mode'], ['simple', 'contextual']))
+	{
+		$modSettings['non_immersive_mode'] = 'simple';
+	}
+
 	$modSettings['cache_enable'] = $cache_enable;
 
 	// Set a list of common functions.
