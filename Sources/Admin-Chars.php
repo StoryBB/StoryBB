@@ -185,6 +185,7 @@ function CharacterSheets()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $scripturl;
 	require_once($sourcedir . '/Subs-List.php');
+	loadLanguage('Profile');
 
 	$listOptions = [
 		'id' => 'approval_queue',
@@ -198,24 +199,70 @@ function CharacterSheets()
 				global $smcFunc;
 				$rows = [];
 				$request = $smcFunc['db_query']('', '
-					SELECT mem.id_member, mem.real_name, chars.id_character,
-						chars.character_name, MAX(csv.created_time) AS latest_version,
+					SELECT csv.id_character, MAX(csv.created_time) AS latest_version,
 						MAX(csv.approved_time) AS last_approval, MAX(csv.approval_state) AS approval_state
 					FROM {db_prefix}character_sheet_versions AS csv
-					INNER JOIN {db_prefix}characters AS chars ON (csv.id_character = chars.id_character)
-					INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
 					GROUP BY csv.id_character
-					HAVING approval_state = 1
-					ORDER BY {raw:sort}',
+					ORDER BY latest_version ASC',
 					[
 						'sort' => $sort,
 					]
 				);
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 				{
-					$rows[] = $row;
+					// If it's not actually pending approval (strict mode makes this complicated), skip it.
+					if (empty($row['approval_state']))
+						continue;
+
+					$rows[$row['id_character']] = $row;
 				}
 				$smcFunc['db_free_result']($request);
+
+				// Having fetched whichever versions are relevant, we now need to fetch the rest of the data.
+				if (!empty($rows))
+				{
+					$request = $smcFunc['db_query']('', '
+						SELECT mem.id_member, mem.real_name, chars.id_character, chars.character_name
+						FROM {db_prefix}characters AS chars
+						INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
+						WHERE chars.id_character IN ({array_int:ids})',
+						[
+							'ids' => array_keys($rows),
+						]
+					);
+					while ($row = $smcFunc['db_fetch_assoc']($request))
+					{
+						$rows[$row['id_character']] = array_merge($rows[$row['id_character']], $row);
+					}
+					$smcFunc['db_free_result']($request);
+				}
+
+				// And make sure any stray entries are cleaned.
+				foreach ($rows as $id_char => $row)
+				{
+					if (empty($row['character_name']))
+						unset($rows[$id_char]);
+				}
+
+				// Owing to the fact that we've split the query in such a way we can't order by it... reorder.
+				$ascending = 1;
+				if (substr($sort, -5) == ' DESC')
+				{
+					$ascending = -1;
+					$sort = substr($sort, 0, -5);
+				}
+
+				$fields = [
+					'chars.character_name' => 'character_name',
+					'mem.real_name' => 'real_name',
+					'latest_version' => 'latest_version',
+				];
+				$sort = isset($fields[$sort]) ? $fields[$sort] : 'character_name';
+
+				uasort($rows, function($a, $b) use ($sort, $ascending) {
+					return $a[$sort] == $b[$sort] ? 0 : ($a[$sort] < $b[$sort] ? $ascending : -$ascending);
+				});
+
 				return $rows;
 			},
 			'params' => ['regular'],

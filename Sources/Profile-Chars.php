@@ -1385,7 +1385,7 @@ function char_sheet()
 		{
 			$context['sheet_buttons']['approve'] = array(
 				'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_approve;version=' . $context['character']['sheet_details']['id_version'] . ';char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
-				'text' => 'char_sheet_reject',
+				'text' => 'char_sheet_approve',
 				'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['char_sheet_approve_are_you_sure']) . ')"',
 			);
 		}
@@ -1394,7 +1394,7 @@ function char_sheet()
 		{
 			$context['sheet_buttons']['reject'] = array(
 				'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_reject;version=' . $context['character']['sheet_details']['id_version'] . ';char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
-				'text' => 'remove_from_queue',
+				'text' => 'char_sheet_reject',
 				'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['char_sheet_reject_are_you_sure']) . ')"',
 			);
 		}
