@@ -732,6 +732,7 @@ function loadUserSettings()
 	{
 		$immersive = false;
 	}
+	$user_info['in_immersive_mode'] = $immersive;
 
 	$group_filter = function($main, $extras) {
 		$return = [];

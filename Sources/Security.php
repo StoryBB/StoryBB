@@ -1014,6 +1014,213 @@ function isAllowedTo($permission, $boards = null)
 }
 
 /**
+ * Check the user's character's permissions.
+ * Specifically, which of the user's characters might have a given permission.
+ * If boards is specified, checks those boards instead of the current one.
+ *
+ * @param string|array $permission A single permission to check or an array of permissions to check
+ * @param int|array $boards The ID of a board or an array of board IDs if we want to check board-level permissions
+ * @return array Which character IDs are permitted to carry out the permission 
+ */
+function charactersAllowedTo($permission, $boards = null)
+{
+	global $smcFunc, $modSettings, $user_info, $board;
+	static $cache = null, $contextual_cache = null;
+
+	if (empty($user_info['id']))
+	{
+		// Guests don't have permissions, nor do they have characters.
+		return [];
+	}
+
+	if ($user_info['in_immersive_mode'])
+	{
+		// We don't need to build a cache or anything. If we're in immersive mode, we already have our permissions.
+		// And we just need to query for them given our current groups etc.
+		// If we do have that permission, the allowed character is the current one - otherwise noone.
+		return allowedTo($permission, $boards) ? [$user_info['id_character']] : [];
+	}
+
+	if ($cache === null || $contextual_cache === null)
+	{
+		// We haven't cached this before, better get on with it.
+		$cache = [];
+		$contextual_cache = [];
+
+		if ($modSettings['non_immersive_mode'] == 'simple')
+		{
+			// In the case of simple non-immersive mode, we only touch the account permissions.
+			// They all have the current permission set, effectively, and we can just query that instead.
+			$request = $smcFunc['db_query']('', '
+				SELECT id_character
+				FROM {db_prefix}characters
+				WHERE id_member = {int:member}',
+				[
+					'member' => $user_info['id'],
+				]
+			);
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+			{
+				$cache[$row['id_character']] = $row['id_character'];
+			}
+			$smcFunc['db_free_result']($request);
+		}
+		else
+		{
+			// In the case of contextual immersive mode, we need to do this thoroughly.
+			$request = $smcFunc['db_query']('', '
+				SELECT chars.id_character, chars.main_char_group, chars.char_groups,
+					mem.id_group, mem.additional_groups, mem.id_post_group
+				FROM {db_prefix}characters
+				INNER JOIN {db_prefix}members ON (chars.id_member = mem.id_member)
+				WHERE chars.id_member = {int:member}',
+				[
+					'member' => $user_info['id'],
+				]
+			);
+			$characters = [];
+			$contextual_cache['characters'] = [];
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+			{
+				// First, get the account groups.
+				$characters[$row['id_character']] = [(int) $row['id_group'], (int) $row['id_post_group']];
+				if (!empty($row['additional_groups']))
+				{
+					foreach (explode(',', $row['additional_groups']) as $group)
+					{
+						$group = (int) $group;
+						if (!empty($group))
+						{
+							$characters[$row['id_character']][] = $group;
+						}
+					}
+				}
+				// Now layer on the character groups. OOC characters by design have no groups here anyway.
+				if (!empty($row['main_char_group']))
+				{
+					$characters[$row['id_character']][] = (int) $row['main_char_group'];
+				}
+				if (!empty($row['char_groups']))
+				{
+					foreach (explode(',', $row['char_groups']) as $group)
+					{
+						$group = (int) $group;
+						if (!empty($group))
+						{
+							$characters[$row['id_character']][] = $group;
+						}
+					}
+				}
+			}
+			$smcFunc['db_free_result']($request);
+			$contextual_cache['characters'] = $characters;
+
+			// Some local storage before we shunt it to a longer-term cache.
+			$permissions = $contextual_cache['permissions'] = [];
+			$board_permissions = $contextual_cache['board_permissions'] = [];
+			$removals = [];
+			$board_removals = [];
+			$boards_profiles = $contextual_cache['boards_profiles'] = [];
+			if (!empty($characters))
+			{
+				// First, fetch board permissions.
+				$request = $smcFunc['db_query']('', '
+					SELECT id_group, id_profile, permission, add_deny
+					FROM {db_prefix}permissions');
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					if ($row['add_deny'])
+					{
+						$board_permissions[$row['id_group']][$row['id_profile']][$row['permission']] = true;
+					}
+					else
+					{
+						$board_removals[$row['id_profile']][$row['permission']] = true;
+					}
+				}
+				$smcFunc['db_free_result']($request);
+				foreach ($board_removals as $profile => $removals)
+					$board_removals[$profile] = array_keys($removals);
+
+				// Sift out which permissions are denied across a profile because of any of the groups denied in that profile.
+				foreach ($board_permissions as $group => $profile_list)
+				{
+					foreach (array_keys($profile_list) as $profile)
+					{
+						if (!isset($board_removals[$profile]))
+							continue;
+
+						foreach ($board_removals[$profile] as $removal)
+						{
+							unset ($board_permissions[$group][$profile][$removal]);
+						}
+					}
+				}
+				$contextual_cache['board_permissions'] = $board_permissions;
+
+				// Lastly, a list of boards and their profiles.
+				$request = $smcFunc['db_query']('', '
+					SELECT id_board, id_profile
+					FROM {db_prefix}boards');
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					$boards_profiles[$row['id_board']] = (int) $row['profile'];
+				}
+				$smcFunc['db_free_result']($request);
+				$contextual_cache['boards_profiles'] = $boards_profiles;
+			}
+		}
+	}
+
+	// So, let's do this. We don't know if this is a board permission per se, so we have to check both cases.
+	if ($modSettings['non_immersive_mode'] == 'simple')
+	{
+		return allowedTo($permission, $boards) ? array_values($cache) : [];
+	}
+	else
+	{
+		$valid_chars = [];
+		$board_list = [];
+		if (!empty($boards)) {
+			$board_list = $boards;
+		} elseif (!empty($board)) {
+			$board_list = [$board];
+		}
+
+		if (empty($board_list))
+		{
+			// We don't know what boards we're checking, but since characters can only have board permissions...
+			return [];
+		}
+
+		foreach ($contextual_cache['characters'] as $id_character => $groups)
+		{
+			foreach ($groups as $group)
+			{
+				foreach ($board_list as $board_id)
+				{
+					if (!isset($contextual_cache['board_profiles'][$board_id]))
+						continue;
+
+					foreach ($permission as $specific_permission)
+					{
+						$profile = $contextual_cache['board_profiles'][$board_id];
+						if (isset($contextual_cache['board_permissions'][$group][$profile][$specific_permission]))
+						{
+							$valid_chars[] = $id_character;
+							break 3;
+						}
+					}
+				}
+
+			}
+		}
+
+		return array_unique($valid_chars);
+	}
+}
+
+/**
  * Return the boards a user has a certain (board) permission on. (array(0) if all.)
  *  - returns a list of boards on which the user is allowed to do the specified permission.
  *  - returns an array with only a 0 in it if the user has permission to do this on every board.
