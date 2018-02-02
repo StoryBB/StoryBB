@@ -3410,7 +3410,7 @@ function template_upgrade_below()
 		</div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; 2017, StoryBB project</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; 2018, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>
