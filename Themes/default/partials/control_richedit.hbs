@@ -1,10 +1,24 @@
-<textarea class="editor" name="{{editor_id}}" id="{{editor_id}}" cols="600" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" 
+<textarea class="editor" name="{{editor_id}}" id="{{editor_id}}" cols="600" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);"
 style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if (or context.post_error.no_message context.post_error.long_message)}}border: 1px solid red;{{/if}}"{{#if context.editor.required}} required{{/if}}>{{{editor_context.value}}}</textarea>
 		<div id="{{editor_id}}_resizer" class="richedit_resize"></div>
 		<input type="hidden" name="{{editor_id}}_mode" id="{{editor_id}}_mode" value="0">
 		<script>
 			$(document).ready(function() {
 				{{{context.bbcodes_handlers}}}
+
+				// This was added in the header so i can add my function
+				window.StoryBB.OnPendingPostUnload = function(e) {
+					// Set custom text for browsers that support it, trigger are you sure box for those that don't.
+
+					// This text is almost always ignored, but set it anyway so older browsers have better experience.
+					var text = "You have a post pending, if you continue it will be lost, are you sure?";
+
+					// for Gecko 1-44, Trident 4+, and Chrome 34-51
+					(e||{}).returnValue = text;
+
+					// for Chrome<34, Webkit 3-9.1, Gecko1-44
+					return text;
+				}
 
 				$("#{{editor_id}}").sceditor({
 					{{#if (neq editor_id 'quickReply')}}autofocus : true,{{/if}}
@@ -60,10 +74,13 @@ style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if 
                 	$("#{{editor_id}}").closest("form").submit();
                 });
                 $("#{{editor_id}}").data("sceditor").bind("blur", function() { //The "are you sure" prompt
-				    if($("#{{editor_id}}").data("sceditor").val() != "" )
-				        window.onbeforeunload = function() { return true  };
-				    else 
-				    	window.onbeforeunload = undefined;
+				    if($("#{{editor_id}}").data("sceditor").val() != "" ) {
+				    	// Set the pending post confirmation
+				    	$(window).on('beforeunload', window.StoryBB.OnPendingPostUnload);
+				    } else {
+				    	// Remove the pending post confirmation
+				    	$(window).off('beforeunload', window.StoryBB.OnPendingPostUnload);
+				    }
 				});
 				$("#{{editor_id}}").data("sceditor").createPermanentDropDown();{{#unless editor_context.rich_active}}
 				$("#{{editor_id}}").data("sceditor").toggleSourceMode();{{/unless}}{{#if (or context.post_error.no_message context.post_error.long_message)}}

@@ -2,7 +2,7 @@
 <html {{#if context.right_to_left}}dir="rtl" {{/if}}{{#if txt.lang_locale}} lang="{{locale txt.lang_locale}}"{{/if}}>
 <head>
 	<meta charset="UTF-8">
-    
+
     {{{css}}}
     {{{javascript deferred=0}}}
 
@@ -11,25 +11,28 @@
 	{{#each context.meta_tags}}
 	    <meta {{#if name}}name="{{name}}"{{else}}property="{{property}}"{{/if}}  content="{{content}}">
 	{{/each}}
-	
+
 	<!-- Theme color; feel free to override -->
 	<meta name="theme-color" content="#557EA0">
-	
+
 	{{#if context.robot_no_index}}<meta name="robots" content="noindex">{{/if}}
 	{{#if context.canonical_url}}<link rel="canonical" href="{{context.canonical_url}}">{{/if}}
 	<link rel="help" href="{{scripturl}}?action=help">
 	<link rel="contents" href="{{scripturl}}">
 	{{#if context.allow_search}}<link rel="search" href="{{scripturl}}?action=search">{{/if}}
-	
+
 	<link rel="alternate" type="application/rss+xml" title="{{context.forum_name_html_safe}} - {{txt.rss}}" href="{{scripturl}}?action=.xml;type=rss2{{#if context.current_board}};board={{context.current_board}}{{/if}}">
 	<link rel="alternate" type="application/atom+xml" title="{{context.forum_name_html_safe}} - {{txt.atom}}" href="{{scripturl}}?action=.xml;type=atom{{#if context.current_board}};board={{context.current_board}}{{/if}}">
-	
+
 	{{#if context.links.next}}<link rel="next" href="{{context.links.next}}">{{/if}}
 	{{#if context.links.prev}}<link rel="perv" href="{{context.links.prev}}">{{/if}}
 	{{#if context.current_board}}<link rel="index" href="{{scripturl}}?board={{context.current_board}}.0">{{/if}}
 	{{{context.html_headers}}}
+	<script type="text/javascript">
+	    window.StoryBB = {};
+	</script>
 	</head>
-	{{!-- 
+	{{!--
 	I apologise for the next line. -Yami
 	--}}
 <body id="{{context.browser_body_id}}" class="action_{{#if context.current_action}}{{context.current_action}}{{else}}{{#if context.current_board}}messageindex{{else}}{{#if context.current_topic}}display{{else}}home{{/if}}{{/if}}{{/if}}{{#if context.current_board}}board_{{context.current_board}}{{/if}}">
@@ -48,14 +51,14 @@
                     {{textTemplate txt.posting_as user_info.character_name}} &#9660;</a>
                     <div id="characters_menu" class="top_menu"></div>
                 </li>
-        			
+
             	{{#if context.allow_pm}}
                 	<li>
                 		<a href="{{scripturl}}?action=pm" {{#if context.self_pm}}class="active"{{/if}} id="pm_menu_top">{{txt.pm_short}} {{#if context.user.unread_messages}} <span class="amt">{{context.user.unread_messages}}</span>{{/if}}</a>
                 		<div id="pm_menu" class="top_menu scrollable"></div>
                 	</li>
             	{{/if}}
-            	
+
             	<li>
         			<a href="{{scripturl}}?action=profile;area=showalerts;u={{context.user.id}}"{{#if context.self_alerts}}class="active"{{/if}} id="alerts_menu_top">{{txt.alerts}}{{#if context.user.alerts}}<span class="amt">{{context.user.alerts}}</span>{{/if}}</a>
         			<div id="alerts_menu" class="top_menu scrollable"></div>
@@ -72,7 +75,7 @@
         	</ul>
         	{{/if}}
         {{/if}}
-        
+
         {{#if modSettings.userLanguage}}
             {{#if context.languages}}
                 <form id="languages_form" method="get" class="floatright">
@@ -87,7 +90,7 @@
         	</form>
         	{{/if}}
         {{/if}}
-        
+
         {{#if context.allow_search}}
         	<form id="search_form" class="floatright" action="{{scripturl}}?action=search2" method="post" accept-charset="UTF-8">
         		<input type="search" name="search" value="" class="input_text">&nbsp;
@@ -104,7 +107,7 @@
             </form>
         {{/if}}
     </div>
-    
+
     <div id="header">
     	<h1 class="forumtitle">
     		<a id="top" href="{{scripturl}}">{{#if context.header_logo_url_html_safe}}<img src="{{context.header_logo_url_html_safe}}" alt="{{context.forum_name_html_safe}}">{{else}}{{context.forum_name_html_safe}}{{/if}}</a>
@@ -156,7 +159,7 @@
     		</div>
     	</div>
     </div>
-    
+
     <div id="footer">
     	<ul>
     		<li class="floatright">
