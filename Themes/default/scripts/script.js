@@ -474,9 +474,9 @@ function submitonce(theform)
 }
 function submitThisOnce(oControl)
 {
-	//Don't prompt the pending post confirmation as we're submitting the post
-	$(window).off('beforeunload', window.StoryBB.OnPendingPostUnload);
-
+	//Don't prompt
+	window.onbeforeunload = undefined;
+	
 	// oControl might also be a form.
 	var oForm = 'form' in oControl ? oControl.form : oControl;
 
