@@ -4,7 +4,7 @@
  * Manage and maintain the boards and categories of the forum.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
@@ -775,47 +775,6 @@ function EditBoard2()
 		redirectexit('action=admin;area=permissions;sa=board;' . $context['session_var'] . '=' . $context['session_id']);
 	else
 		redirectexit('action=admin;area=manageboards');
-}
-
-/**
- * Used to retrieve data for modifying a board category
- */
-function ModifyCat()
-{
-	global $boards, $sourcedir, $smcFunc;
-
-	// Get some information about the boards and the cats.
-	require_once($sourcedir . '/Subs-Boards.php');
-	getBoardTree();
-
-	// Allowed sub-actions...
-	$allowed_sa = array('add', 'modify', 'cut');
-
-	// Check our input.
-	$_POST['id'] = empty($_POST['id']) ? array_keys(current($boards)) : (int) $_POST['id'];
-	$_POST['id'] = substr($_POST['id'][1], 0, 3);
-
-	// Select the stuff we need from the DB.
-	$request = $smcFunc['db_query']('', '
-		SELECT CONCAT({string:post_id}, {string:feline_clause}, {string:subact})
-		FROM {db_prefix}categories
-		LIMIT 1',
-		array(
-			'post_id' => $_POST['id'] . 's ar',
-			'feline_clause' => 'e,o ',
-			'subact' => $allowed_sa[2] . 'e, ',
-		)
-	);
-	list ($cat) = $smcFunc['db_fetch_row']($request);
-
-	// Free resources.
-	$smcFunc['db_free_result']($request);
-
-	// This would probably never happen, but just to be sure.
-	if ($cat .= $allowed_sa[1])
-		die(str_replace(',', ' to', $cat));
-
-	redirectexit();
 }
 
 /**

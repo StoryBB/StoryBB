@@ -4,7 +4,7 @@
  * Helper file for handling themes.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
@@ -30,17 +30,14 @@ function get_single_theme($id)
 	// Make sure $id is an int.
 	$id = (int) $id;
 
-	// List of all possible  values.
+	// List of all possible values.
 	$themeValues = array(
 		'theme_dir',
 		'images_url',
 		'theme_url',
 		'name',
-		'theme_layers',
-		'theme_templates',
 		'version',
 		'install_for',
-		'based_on',
 	);
 
 	// Make changes if you really want it.
@@ -108,11 +105,8 @@ function get_all_themes($enable_only = false)
 		'images_url',
 		'theme_url',
 		'name',
-		'theme_layers',
-		'theme_templates',
 		'version',
 		'install_for',
-		'based_on',
 	);
 
 	// Make changes if you really want it.
@@ -157,11 +151,11 @@ function get_all_themes($enable_only = false)
 }
 
 /**
- * Reads an .xml file and returns the data as an array
+ * Reads an .json file and returns the data as an array
  *
- * Removes the entire theme if the .xml file couldn't be found or read.
- * @param string $path The absolute path to the xml file.
- * @return array An array with all the info extracted from the xml file.
+ * Removes the entire theme if the .json file couldn't be found or read.
+ * @param string $path The absolute path to the JSON file.
+ * @return array An array with all the info extracted from the JSON file.
  */
 function get_theme_info($path)
 {
@@ -171,7 +165,6 @@ function get_theme_info($path)
 	if (empty($path))
 		return false;
 
-	$xml_data = array();
 	$explicit_images = false;
 
 	// Perhaps they are trying to install a mod, lets tell them nicely this is the wrong function.
@@ -186,19 +179,18 @@ function get_theme_info($path)
 		fatal_lang_error('package_theme_upload_error_broken', false, $txt['package_get_error_is_mod']);
 	}
 
-	// Parse theme-info.xml into an xmlArray.
-	require_once($sourcedir . '/Class-Package.php');
-	$theme_info_xml = new xmlArray(file_get_contents($path . '/theme_info.xml'));
+	// Parse theme.json into something we can work with.
+	$theme_info = @json_decode(file_get_contents($path . '/theme.json'), true);
 
 	// Error message, there isn't any valid info.
-	if (!$theme_info_xml->exists('theme-info[0]'))
+	if (empty($theme_info) || empty($theme_info['id']) || empty($theme_info['name']))
 	{
 		remove_dir($path);
 		fatal_lang_error('package_get_error_packageinfo_corrupt', false);
 	}
 
 	// Check for compatibility with 2.1 or greater.
-	if (!$theme_info_xml->exists('theme-info/install'))
+	if (empty($theme_info['storybb_version']))
 	{
 		remove_dir($path);
 		fatal_lang_error('package_get_error_theme_not_compatible', false, $forum_version);
@@ -206,44 +198,19 @@ function get_theme_info($path)
 
 	// So, we have an install tag which is cool and stuff but we also need to check it and match your current SMF version...
 	$the_version = strtr($forum_version, array('StoryBB ' => ''));
-	$install_versions = $theme_info_xml->path('theme-info/install/@for');
 
 	// The theme isn't compatible with the current SMF version.
-	if (!$install_versions || !matchPackageVersion($the_version, $install_versions))
+	if (!matchPackageVersion($the_version, $theme_info['storybb_version']))
 	{
 		remove_dir($path);
 		fatal_lang_error('package_get_error_theme_not_compatible', false, $forum_version);
 	}
 
-	$theme_info_xml = $theme_info_xml->path('theme-info[0]');
-	$theme_info_xml = $theme_info_xml->to_array();
+	// Remove things that definitely shouldn't be exported up here.
+	unset($theme_info['theme_settings'], $theme_info['theme_options'], $theme_info['additional_files']);
+	unset($theme_info['page_index'], $theme_info['disable_files'], $theme_info['author']);
 
-	$xml_elements = array(
-		'theme_layers' => 'layers',
-		'theme_templates' => 'templates',
-		'based_on' => 'based-on',
-		'version' => 'version',
-	);
-
-	// Assign the values to be stored.
-	foreach ($xml_elements as $var => $name)
-		if (!empty($theme_info_xml[$name]))
-			$xml_data[$var] = $theme_info_xml[$name];
-
-	// Add the supported versions.
-	$xml_data['install_for'] = $install_versions;
-
-	// Overwrite the default images folder.
-	if (!empty($theme_info_xml['images']))
-	{
-		$xml_data['images_url'] = $path . '/' . $theme_info_xml['images'];
-		$explicit_images = true;
-	}
-
-	if (!empty($theme_info_xml['extra']))
-		$xml_data += smf_json_decode($theme_info_xml['extra'], true);
-
-	return $xml_data;
+	return $theme_info;
 }
 
 /**
@@ -314,70 +281,6 @@ function theme_install($to_install = array())
 				default: // Any other possible result.
 					fatal_lang_error('package_get_error_theme_no_new_version', false, array($context['to_install']['version'], $to_update['version']));
 			}
-	}
-
-	if (!empty($context['to_install']['based_on']))
-	{
-		// No need for elaborated stuff when the theme is based on the default one.
-		if ($context['to_install']['based_on'] == 'default')
-		{
-			$context['to_install']['theme_url'] = $settings['default_theme_url'];
-			$context['to_install']['images_url'] = $settings['default_images_url'];
-		}
-
-		// Custom theme based on another custom theme, lets get some info.
-		elseif ($context['to_install']['based_on'] != '')
-		{
-			$context['to_install']['based_on'] = preg_replace('~[^A-Za-z0-9\-_ ]~', '', $context['to_install']['based_on']);
-
-			// Get the theme info first.
-			$request = $smcFunc['db_query']('', '
-				SELECT id_theme
-				FROM {db_prefix}themes
-				WHERE id_member = {int:no_member}
-					AND (value LIKE {string:based_on} OR value LIKE {string:based_on_path})
-				LIMIT 1',
-				array(
-					'no_member' => 0,
-					'based_on' => '%/' . $context['to_install']['based_on'],
-					'based_on_path' => '%' . "\\" . $context['to_install']['based_on'],
-				)
-			);
-
-			$based_on = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
-
-			$request = $smcFunc['db_query']('', '
-				SELECT variable, value
-				FROM {db_prefix}themes
-					WHERE variable IN ({array_string:theme_values})
-						AND id_theme = ({int:based_on})
-				LIMIT 1',
-				array(
-					'no_member' => 0,
-					'theme__values' => array('theme_url', 'images_url', 'theme_dir',),
-					'based_on' => $based_on['id_theme'],
-				)
-			);
-			$temp = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
-
-			// Found the based on theme info, add it to the current one being installed.
-			if (is_array($temp))
-			{
-				$context['to_install']['base_theme_url'] = $temp['theme_url'];
-				$context['to_install']['base_theme_dir'] = $temp['theme_dir'];
-
-				if (empty($explicit_images) && !empty($context['to_install']['base_theme_url']))
-					$context['to_install']['theme_url'] = $context['to_install']['base_theme_url'];
-			}
-
-			// Nope, sorry, couldn't find any theme already installed.
-			else
-				fatal_lang_error('package_get_error_theme_no_based_on_found', false, $context['to_install']['based_on']);
-		}
-
-		unset($context['to_install']['based_on']);
 	}
 
 	// Find the newest id_theme.
@@ -484,6 +387,17 @@ function remove_theme($themeID)
 		)
 	);
 
+	// Update characters settings too.
+	$smcFunc['db_query']('', '
+		UPDATE {db_prefix}characters
+		SET id_theme = {int:default_theme}
+		WHERE id_theme = {int:current_theme}',
+		array(
+			'default_theme' => 0,
+			'current_theme' => $themeID,
+		)
+	);
+
 	// Some boards may have it as preferred theme.
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}boards
@@ -504,6 +418,10 @@ function remove_theme($themeID)
 	// Back to good old comma separated string.
 	$known = strtr(implode(',', $known), array(',,' => ','));
 	$enable = strtr(implode(',', $enable), array(',,' => ','));
+
+	// Clear any cache of them having been minified before.
+	cache_put_data('minimized_'. $themeID .'_css', null, 0);
+	cache_put_data('minimized_'. $themeID .'_js', null, 0);
 
 	// Update the enableThemes list.
 	updateSettings(array('enableThemes' => $enable, 'knownThemes' => $known));

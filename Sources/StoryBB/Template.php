@@ -4,7 +4,7 @@
  * This class encapsulates all of the behaviours required by StoryBB's template system.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
@@ -20,6 +20,7 @@ class Template
 	private static $helpers = [];
 	private static $layout_loaded = '';
 	private static $layout_template = '';
+	private static $layout_source = '';
 
 	private static $debug = [
 		'template' => [],
@@ -85,6 +86,8 @@ class Template
 		if ($layout === 'raw') {
 			self::$layout_loaded = 'raw';
 			self::$layout_template = '{{{content}}}';
+			self::$layout_source = '';
+			return;
 		}
 
 		$paths = [
@@ -97,6 +100,7 @@ class Template
 				self::$layout_loaded = $layout;
 				self::$layout_template = file_get_contents($path . '/' . $layout . '.hbs');
 				self::$debug['template'][] = $layout . ' (' . $source . ' layout)';
+				self::$layout_source = 'theme' . $settings['theme_id'];
 				break;
 			}
 		}
@@ -212,15 +216,24 @@ class Template
 			self::set_layout('default');
 		}
 
+		$cache_id = '';
+
+		if (empty(self::$layout_loaded) || self::$layout_loaded != 'raw')
+		{
+			$cache_id = 'layout-' . (!empty(self::$layout_loaded) ? self::$layout_loaded : 'default');
+			if (!empty(self::$layout_source))
+				$cache_id .= '-' . self::$layout_source;
+		}
+
 		$phpStr = self::compile(self::$layout_template, [
 			'helpers' => [
 				'locale' => 'locale_helper',
 				'login_helper' => 'login_helper',
 				'isSelected' => 'isSelected',
 				'javascript' => 'template_javascript',
-				'css' => 'template_css',
+				'css' => function() { return template_css(); },
 			]
-		], 'layout-' . (!empty(self::$layout_loaded) ? self::$layout_loaded : 'default'));
+		], $cache_id);
 
 		echo self::prepare($phpStr, $data);
 	}

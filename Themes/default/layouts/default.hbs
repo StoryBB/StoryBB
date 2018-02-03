@@ -45,7 +45,7 @@
         		</li>
                 <li>
                     <a href="{{scripturl}}?action=profile;area=characters" id="characters_menu_top" onclick="return false;">
-                    {{{textTemplate txt.posting_as user_info.character_name}}} &#9660;</a>
+                    {{textTemplate txt.posting_as user_info.character_name}} &#9660;</a>
                     <div id="characters_menu" class="top_menu"></div>
                 </li>
         			
@@ -145,7 +145,7 @@
                                     <strong id="error_serious">{{txt.forum_in_maintenance}}</strong>
                                 </dt>
                                 <dd class="error" id="error_list">
-                                    {{{textTemplate txt.maintenance_page (concat scripturl '?action=admin;area=serversettings;' context.session_var '=' context.session_id)}}}
+                                    {{textTemplate txt.maintenance_page (concat scripturl '?action=admin;area=serversettings;' context.session_var '=' context.session_id)}}
                                 </dd>
                             </dl>
                         </div>

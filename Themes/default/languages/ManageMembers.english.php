@@ -11,9 +11,11 @@ $txt['membergroups_description'] = 'Membergroups are groups of members that have
 $txt['membergroups_modify'] = 'Modify';
 
 $txt['membergroups_add_group'] = 'Add group';
-$txt['membergroups_regular'] = 'Regular groups';
+$txt['membergroups_regular'] = 'Account groups';
+$txt['membergroups_character'] = 'Character groups';
 $txt['membergroups_post'] = 'Post count based groups';
 $txt['membergroups_guests_na'] = 'n/a';
+$txt['no_character_groups'] = 'There are no character groups configured.';
 
 $txt['membergroups_group_name'] = 'Membergroup name';
 $txt['membergroups_new_board'] = 'Visible Boards';

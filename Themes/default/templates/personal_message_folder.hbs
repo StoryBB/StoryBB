@@ -110,7 +110,7 @@
 				{{/if}}
 				<h4>
 					<a id="msg{{id}}"></a>
-					{{#unless member.is_guest}}<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{{member.link}}}{{/unless}}
+					{{#unless member.is_guest}}<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span> {{{member.link}}}{{/unless}}
 				</h4>
 				<ul class="user_info">
 					{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
@@ -127,8 +127,8 @@
 						</ul>
 					</div>
 					{{/if}}
-					{{#unless member.is_guest}}<li class="icons">{{{member.group_icons}}}</li>{{/unless}}
-					{{#if member.group}}<li class="membergroup">{{{member.group}}}</li>{{/if}}
+					{{#unless member.is_guest}}<li class="icons">{{{member.ooc_group.badges}}}</li>{{/unless}}
+					{{#if member.ooc_group.title}}<li class="membergroup">{{{member.ooc_group.title}}}</li>{{/if}}
 					{{#unless member.is_guest}}
 						{{#unless ../modSettings.hide_post_group}}{{#if member.post_group}}<li class="postgroup">{{member.post_group}}</li>{{/if}}{{/unless}}
 						{{#unless ../context.disabled_fields.posts}}<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>{{/unless}}
@@ -139,7 +139,7 @@
 								<li class="custom {{col_name}}">{{{value}}}</li>
 								{{/each}}
 							</ol>
-						</li
+						</li>
 						{{/if}}
 					{{/unless}}
 					{{#if member.show_profile_buttons}}

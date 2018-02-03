@@ -133,7 +133,7 @@
 				<div class="board_stats centertext"><p>{{replies}} {{../txt.replies}}<br>{{views}} {{../txt.views}}</p></div>
 				<div class="lastpost">
 					{{{last_post.member.avatar.image}}}
-					<p>{{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}}</p>
+					<p>{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}</p>
 				</div> 
 				{{#if ../context.can_quick_mod}}
 				<div class="moderation">

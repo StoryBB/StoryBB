@@ -4,7 +4,7 @@
  * This file contains the functions to add, modify, remove, collapse and expand categories.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
@@ -122,7 +122,7 @@ function modifyCategory($category_id, $catOptions)
 /**
  * Create a new category.
  * general function to create a new category and set its position.
- * allows (almost) the same options as the modifyCat() function.
+ * allows (almost) the same options as the modifyCategory() function.
  * returns the ID of the newly created category.
  *
  * @param array $catOptions An array of data and settings related to the new category. Should have at least 'cat_name' and can also have 'cat_desc', 'move_after' and 'is_collapsable'

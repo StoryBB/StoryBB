@@ -4,7 +4,7 @@
  * This class provides miscellaneous helpers for StoryBB's templates.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
@@ -52,7 +52,7 @@ class Misc
 
 	public static function json($data)
 	{
-		return json_encode($data);
+		return json_encode($data instanceof \LightnCandy\SafeString ? (string) $data : $data);
 	}
 
 	public static function breakrow($index, $perRow, $sep) {

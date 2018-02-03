@@ -64,7 +64,7 @@
 				<dl id="uploadMore" style="display: none;" class="settings">
 					{{#each context.smiley_sets}}
 					<dt>
-						{{{textTemplate ../txt.smileys_add_upload_for (concat '<strong>' name '</strong>')}}}:
+						{{textTemplate ../txt.smileys_add_upload_for (concat '<strong>' name '</strong>')}}:
 					</dt>
 					<dd>
 						<input type="file" name="individual_{{name}}" onchange="selectMethod('upload');" class="input_file">

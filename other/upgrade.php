@@ -2,7 +2,7 @@
 
 /**
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
@@ -3410,7 +3410,7 @@ function template_upgrade_below()
 		</div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; 2017, StoryBB project</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; 2018, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>
