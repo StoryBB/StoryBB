@@ -1671,6 +1671,8 @@ function loadAllPermissions()
 		'make_sticky',
 		'move',
 		'lock',
+		'moderate_board',
+		'approve_posts',
 	];
 
 	// Provide a practical way to modify permissions.
