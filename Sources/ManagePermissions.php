@@ -154,10 +154,11 @@ function PermissionIndex()
 
 	$postGroups = array();
 	$normalGroups = array();
+	$characterGroups = array();
 
 	// Query the database defined membergroups.
 	$query = $smcFunc['db_query']('', '
-		SELECT id_group, id_parent, group_name, min_posts, online_color, icons
+		SELECT id_group, id_parent, group_name, min_posts, online_color, icons, is_character
 		FROM {db_prefix}membergroups' . (empty($modSettings['permission_enable_postgroups']) ? '
 		WHERE min_posts = {int:min_posts}' : '') . '
 		ORDER BY id_parent = {int:not_inherited} DESC, min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
@@ -196,10 +197,20 @@ function PermissionIndex()
 				'denied' => $row['id_group'] == 1 ? '(' . $txt['permissions_none'] . ')' : 0
 			),
 			'access' => false,
+			'is_character' => !empty($row['is_character']),
 		);
 
 		if ($row['min_posts'] == -1)
-			$normalGroups[$row['id_group']] = $row['id_group'];
+		{
+			if ($row['is_character'])
+			{
+				$characterGroups[$row['id_group']] = $row['id_group'];
+			}
+			else
+			{
+				$normalGroups[$row['id_group']] = $row['id_group'];
+			}
+		}
 		else
 			$postGroups[$row['id_group']] = $row['id_group'];
 	}
@@ -249,6 +260,40 @@ function PermissionIndex()
 			GROUP BY mg.id_group',
 			array(
 				'normal_group_list' => $normalGroups,
+				'blank_string' => '',
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($query))
+			$context['groups'][$row['id_group']]['num_members'] += $row['num_members'];
+		$smcFunc['db_free_result']($query);
+	}
+
+	if (!empty($characterGroups))
+	{
+		$query = $smcFunc['db_query']('', '
+			SELECT main_char_group, COUNT(*) AS num_members
+			FROM {db_prefix}characters
+			WHERE main_char_group IN ({array_int:char_group_list})
+			GROUP BY main_char_group',
+			array(
+				'char_group_list' => $characterGroups,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($query))
+			$context['groups'][$row['main_char_group']]['num_members'] += $row['num_members'];
+		$smcFunc['db_free_result']($query);
+
+		// This one is slower, but it's okay... careful not to count twice!
+		$query = $smcFunc['db_query']('', '
+			SELECT mg.id_group, COUNT(*) AS num_members
+			FROM {db_prefix}membergroups AS mg
+				INNER JOIN {db_prefix}characters AS chars ON (chars.char_groups != {string:blank_string}
+					AND chars.main_char_group != mg.id_group
+					AND FIND_IN_SET(mg.id_group, chars.char_groups) != 0)
+			WHERE mg.id_group IN ({array_int:char_group_list})
+			GROUP BY mg.id_group',
+			array(
+				'char_group_list' => $characterGroups,
 				'blank_string' => '',
 			)
 		);
@@ -335,6 +380,17 @@ function PermissionIndex()
 	if (!$context['can_modify'])
 	{
 		session_flash('warning', sprintf($txt['permission_cannot_edit'], $scripturl . '?action=admin;area=permissions;sa=profiles'));
+	}
+
+	// Now sift out the character groups.
+	$context['character_groups'] = [];
+	foreach ($context['groups'] as $id_group => $group)
+	{
+		if (!empty($group['is_character']))
+		{
+			$context['character_groups'][$id_group] = $group;
+			unset ($context['groups'][$id_group]);
+		}
 	}
 
 	// Load the proper template.
