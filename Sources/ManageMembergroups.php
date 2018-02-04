@@ -411,6 +411,32 @@ function AddMembergroup()
 	// A form was submitted, we can start adding.
 	if (isset($_POST['group_name']) && trim($_POST['group_name']) != '')
 	{
+		// Are we inheriting? Account groups can't inherit from character groups, and vice versa.
+		if (!empty($_POST['perm_type']) && $_POST['perm_type'] == 'inherit')
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT is_character
+				FROM {db_prefix}membergroups
+				WHERE id_group = {int:copy_from}
+				LIMIT {int:limit}',
+				array(
+					'copy_from' => isset($_POST['inheritperm']) ? (int) $_POST['inheritperm'] : 0,
+					'limit' => 1,
+				)
+			);
+			list ($is_character) = $smcFunc['db_fetch_row']($request);
+			$smcFunc['db_free_result']($request);
+
+			if ($is_character && empty($_POST['group_level']))
+			{
+				fatal_lang_error('membergroup_cannot_inherit_character', false);
+			}
+			elseif (!$is_character && !empty($_POST['group_level']))
+			{
+				fatal_lang_error('membergroup_cannot_inherit_account', false);
+			}
+		}
+
 		checkSession();
 		validateToken('admin-mmg');
 

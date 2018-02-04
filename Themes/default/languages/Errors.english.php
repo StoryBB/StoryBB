@@ -277,6 +277,8 @@ $txt['package_get_error_theme_no_new_version'] = 'The theme you\'re trying to in
 
 $txt['no_membergroup_selected'] = 'No membergroup selected';
 $txt['membergroup_does_not_exist'] = 'The membergroup doesn\'t exist or is invalid.';
+$txt['membergroup_cannot_inherit_character'] = 'Membergroups set for accounts cannot inherit permissions from character groups.';
+$txt['membergroup_cannot_inherit_account'] = 'Membergroups set for characters cannot inherit permissions from account groups.';
 
 $txt['at_least_one_admin'] = 'There must be at least one administrator on a forum!';
 
