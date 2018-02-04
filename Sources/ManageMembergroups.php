@@ -280,11 +280,11 @@ function MembergroupIndex()
 		'additional_rows' => array(
 			array(
 				'position' => 'above_table_headers',
-				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
+				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;charactergroup">' . $txt['membergroups_add_group'] . '</a>',
 			),
 			array(
 				'position' => 'below_table_data',
-				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
+				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;charactergroup">' . $txt['membergroups_add_group'] . '</a>',
 			),
 		),
 	);
@@ -615,15 +615,16 @@ function AddMembergroup()
 	// Just show the 'add membergroup' screen.
 	$context['page_title'] = $txt['membergroups_new_group'];
 	$context['sub_template'] = 'admin_membergroups_add';
+	$context['character_group'] = isset($_REQUEST['charactergroup']);
 	$context['post_group'] = isset($_REQUEST['postgroup']);
-	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']);
+	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']) && !isset($_REQUEST['charactergroup']);
 	$context['allow_protected'] = allowedTo('admin_forum');
 
 	if (!empty($modSettings['deny_boards_access']))
 		loadLanguage('ManagePermissions');
 
 	$result = $smcFunc['db_query']('', '
-		SELECT id_group, group_name
+		SELECT id_group, group_name, is_character
 		FROM {db_prefix}membergroups
 		WHERE (id_group > {int:moderator_group} OR id_group = {int:global_mod_group})' . (empty($modSettings['permission_enable_postgroups']) ? '
 			AND min_posts = {int:min_posts}' : '') . (allowedTo('admin_forum') ? '' : '
@@ -637,11 +638,19 @@ function AddMembergroup()
 		)
 	);
 	$context['groups'] = array();
+	$context['character_groups'] = [];
+	$context['account_groups'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
+	{
 		$context['groups'][] = array(
 			'id' => $row['id_group'],
 			'name' => $row['group_name']
 		);
+		$context[$row['is_character'] ? 'character_groups' : 'account_groups'][] = array(
+			'id' => $row['id_group'],
+			'name' => $row['group_name']
+		);
+	}
 	$smcFunc['db_free_result']($result);
 
 	$request = $smcFunc['db_query']('', '
