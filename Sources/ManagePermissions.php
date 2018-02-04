@@ -756,10 +756,11 @@ function ModifyMembergroup()
 	loadPermissionProfiles();
 	$context['hidden_perms'] = array();
 
+	$is_character_group = false;
 	if ($context['group']['id'] > 0)
 	{
 		$result = $smcFunc['db_query']('', '
-			SELECT group_name, id_parent
+			SELECT group_name, id_parent, is_character
 			FROM {db_prefix}membergroups
 			WHERE id_group = {int:current_group}
 			LIMIT 1',
@@ -767,7 +768,7 @@ function ModifyMembergroup()
 				'current_group' => $context['group']['id'],
 			)
 		);
-		list ($context['group']['name'], $parent) = $smcFunc['db_fetch_row']($result);
+		list ($context['group']['name'], $parent, $is_character_group) = $smcFunc['db_fetch_row']($result);
 		$smcFunc['db_free_result']($result);
 
 		// Cannot edit an inherited group!
@@ -797,6 +798,11 @@ function ModifyMembergroup()
 	}
 
 	$context['permission_type'] = empty($context['profile']['id']) ? 'membergroup' : 'board';
+	if (!empty($is_character_group) && $context['permission_type'] == 'membergroup')
+	{
+		redirectexit('action=admin;area=permissions');
+	}
+
 	$context['profile']['can_modify'] = !$context['profile']['id'] || $context['profiles'][$context['profile']['id']]['can_modify'];
 
 	// Set up things a little nicer for board related stuff...
@@ -850,7 +856,7 @@ function ModifyMembergroup()
 		{
 			foreach ($permissionGroups as $permissionGroup => $permissionArray)
 			{
-				foreach ($permissionArray['permissions'] as $perm)
+				foreach ($permissionArray['permissions'] as $perm_id => $perm)
 				{
 					// Create a shortcut for the current permission.
 					$curPerm = &$context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['permissions'][$perm['id']];
@@ -861,31 +867,45 @@ function ModifyMembergroup()
 						$curPerm['own']['select'] = in_array($perm['id'] . '_own', $permissions[$permissionType]['allowed']) ? 'on' : (in_array($perm['id'] . '_own', $permissions[$permissionType]['denied']) ? 'deny' : 'off');
 					}
 					else
+					{
 						$curPerm['select'] = in_array($perm['id'], $permissions[$permissionType]['denied']) ? 'deny' : (in_array($perm['id'], $permissions[$permissionType]['allowed']) ? 'on' : 'off');
+					}
 
-						// Keep the last value if it's hidden.
-						if ($perm['hidden'] || $permissionArray['hidden'])
+					// If this is for a board profile, and it's a character group... check whether skipping.
+					if ($context['permission_type'] == 'board' && $is_character_group)
+					{
+						if (in_array($perm_id, $context['non_character_permissions']))
 						{
-							if ($perm['has_own_any'])
-							{
-								$context['hidden_perms'][] = array(
-									$permissionType,
-									$perm['own']['id'],
-									$curPerm['own']['select'],
-								);
-								$context['hidden_perms'][] = array(
-									$permissionType,
-									$perm['any']['id'],
-									$curPerm['any']['select'],
-								);
-							}
-							else
-								$context['hidden_perms'][] = array(
-									$permissionType,
-									$perm['id'],
-									$curPerm['select'],
-								);
+							$context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['permissions'][$perm_id]['hidden'] = true;
+							continue;
 						}
+					}
+
+					// Keep the last value if it's hidden.
+					if ($perm['hidden'] || $permissionArray['hidden'])
+					{
+						if ($perm['has_own_any'])
+						{
+							$context['hidden_perms'][] = array(
+								$permissionType,
+								$perm['own']['id'],
+								$curPerm['own']['select'],
+							);
+							$context['hidden_perms'][] = array(
+								$permissionType,
+								$perm['any']['id'],
+								$curPerm['any']['select'],
+							);
+						}
+						else
+						{
+							$context['hidden_perms'][] = array(
+								$permissionType,
+								$perm['id'],
+								$curPerm['select'],
+							);
+						}
+					}
 				}
 			}
 		}
@@ -1644,8 +1664,19 @@ function loadAllPermissions()
 		$hiddenPermissions[] = 'mention';
 	}
 
+	// Some permissions shouldn't be shown to characters even if they otherwise could be.
+	$noncharacterPerms = [
+		'merge_any',
+		'split_any',
+		'make_sticky',
+		'move',
+		'lock',
+	];
+
 	// Provide a practical way to modify permissions.
-	call_integration_hook('integrate_load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions));
+	call_integration_hook('integrate_load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$noncharacterPerms, &$relabelPermissions));
+
+	$context['non_character_permissions'] = $noncharacterPerms;
 
 	$context['permissions'] = array();
 	$context['hidden_permissions'] = array();
