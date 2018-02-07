@@ -414,18 +414,7 @@ function AddMembergroup()
 		// Are we inheriting? Account groups can't inherit from character groups, and vice versa.
 		if (!empty($_POST['perm_type']) && $_POST['perm_type'] == 'inherit')
 		{
-			$request = $smcFunc['db_query']('', '
-				SELECT is_character
-				FROM {db_prefix}membergroups
-				WHERE id_group = {int:copy_from}
-				LIMIT {int:limit}',
-				array(
-					'copy_from' => isset($_POST['inheritperm']) ? (int) $_POST['inheritperm'] : 0,
-					'limit' => 1,
-				)
-			);
-			list ($is_character) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$is_character = StoryBB\Model\Group::is_character_group(isset($_POST['inheritperm']) ? (int) $_POST['inheritperm'] : 0);
 
 			if ($is_character && empty($_POST['group_level']))
 			{
