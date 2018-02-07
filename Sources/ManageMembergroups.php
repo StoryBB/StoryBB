@@ -822,10 +822,10 @@ function EditMembergroup()
 	elseif (isset($_POST['save']))
 	{
 		// Are we inheriting? Account groups can't inherit from character groups, and vice versa.
+		$current_group_is_character = StoryBB\Model\Group::is_character_group((int) $_REQUEST['group']);
 		if (isset($_POST['group_inherit']) && $_POST['group_inherit'] != -2)
 		{
 			$is_character = StoryBB\Model\Group::is_character_group((int) $_POST['group_inherit']);
-			$current_group_is_character = StoryBB\Model\Group::is_character_group((int) $_REQUEST['group']);
 
 			if ($is_character && !$current_group_is_character)
 			{
@@ -834,6 +834,15 @@ function EditMembergroup()
 			elseif (!$is_character && $current_group_is_character)
 			{
 				fatal_lang_error('membergroup_cannot_inherit_account', false);
+			}
+		}
+		// Character groups can never be converted into post groups.
+		if ($current_group_is_character)
+		{
+			$_POST['min_posts'] = -1;
+			if (!empty($_POST['group_type']) && $_POST['group_type'] == -1)
+			{
+				$_POST['group_type'] = 0; // Force it to be a regular assigned group.
 			}
 		}
 
