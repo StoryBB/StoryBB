@@ -821,6 +821,22 @@ function EditMembergroup()
 	// A form was submitted with the new membergroup settings.
 	elseif (isset($_POST['save']))
 	{
+		// Are we inheriting? Account groups can't inherit from character groups, and vice versa.
+		if (isset($_POST['group_inherit']) && $_POST['group_inherit'] != -2)
+		{
+			$is_character = StoryBB\Model\Group::is_character_group((int) $_POST['group_inherit']);
+			$current_group_is_character = StoryBB\Model\Group::is_character_group((int) $_REQUEST['group']);
+
+			if ($is_character && !$current_group_is_character)
+			{
+				fatal_lang_error('membergroup_cannot_inherit_character', false);
+			}
+			elseif (!$is_character && $current_group_is_character)
+			{
+				fatal_lang_error('membergroup_cannot_inherit_account', false);
+			}
+		}
+
 		// Validate the session.
 		checkSession();
 		validateToken('admin-mmg');
