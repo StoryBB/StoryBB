@@ -1071,8 +1071,8 @@ function charactersAllowedTo($permission, $boards = null)
 			$request = $smcFunc['db_query']('', '
 				SELECT chars.id_character, chars.main_char_group, chars.char_groups,
 					mem.id_group, mem.additional_groups, mem.id_post_group
-				FROM {db_prefix}characters
-				INNER JOIN {db_prefix}members ON (chars.id_member = mem.id_member)
+				FROM {db_prefix}characters AS chars
+				INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
 				WHERE chars.id_member = {int:member}',
 				[
 					'member' => $user_info['id'],
@@ -1113,10 +1113,18 @@ function charactersAllowedTo($permission, $boards = null)
 				}
 			}
 			$smcFunc['db_free_result']($request);
+
+			// If the admin override isn't on, strip admin powers from this lot.
+			if (empty($modSettings['characters_admin_override']))
+			{
+				foreach ($characters as $char_id => $groups)
+				{
+					$characters[$char_id] = array_diff($groups, [1]);
+				}
+			}
 			$contextual_cache['characters'] = $characters;
 
 			// Some local storage before we shunt it to a longer-term cache.
-			$permissions = $contextual_cache['permissions'] = [];
 			$board_permissions = $contextual_cache['board_permissions'] = [];
 			$removals = [];
 			$board_removals = [];
@@ -1126,7 +1134,7 @@ function charactersAllowedTo($permission, $boards = null)
 				// First, fetch board permissions.
 				$request = $smcFunc['db_query']('', '
 					SELECT id_group, id_profile, permission, add_deny
-					FROM {db_prefix}permissions');
+					FROM {db_prefix}board_permissions');
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 				{
 					if ($row['add_deny'])
@@ -1164,7 +1172,7 @@ function charactersAllowedTo($permission, $boards = null)
 					FROM {db_prefix}boards');
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 				{
-					$boards_profiles[$row['id_board']] = (int) $row['profile'];
+					$boards_profiles[$row['id_board']] = (int) $row['id_profile'];
 				}
 				$smcFunc['db_free_result']($request);
 				$contextual_cache['boards_profiles'] = $boards_profiles;
@@ -1179,10 +1187,12 @@ function charactersAllowedTo($permission, $boards = null)
 	}
 	else
 	{
+		$permission = (array) $permission;
+
 		$valid_chars = [];
 		$board_list = [];
 		if (!empty($boards)) {
-			$board_list = $boards;
+			$board_list = (array) $boards;
 		} elseif (!empty($board)) {
 			$board_list = [$board];
 		}
@@ -1199,16 +1209,20 @@ function charactersAllowedTo($permission, $boards = null)
 			{
 				foreach ($board_list as $board_id)
 				{
-					if (!isset($contextual_cache['board_profiles'][$board_id]))
+					// Do we know a profile for this board?
+					if (!isset($contextual_cache['boards_profiles'][$board_id]))
+						continue;
+
+					// Do we have a profile for this board for the group we're looking at?
+					$profile = $contextual_cache['boards_profiles'][$board_id];
+					if (!isset($contextual_cache['board_permissions'][$group][$profile]))
 						continue;
 
 					foreach ($permission as $specific_permission)
 					{
-						$profile = $contextual_cache['board_profiles'][$board_id];
 						if (isset($contextual_cache['board_permissions'][$group][$profile][$specific_permission]))
 						{
 							$valid_chars[] = $id_character;
-							break 3;
 						}
 					}
 				}
@@ -1218,6 +1232,57 @@ function charactersAllowedTo($permission, $boards = null)
 
 		return array_unique($valid_chars);
 	}
+}
+
+/**
+ * Similar to isAllowedTo, verify that at least one character is allowed
+ * to perform the action, or issue an error.
+ *
+ * @param string|array $permission A single permission to check or an array of permissions to check
+ * @param int|array $boards The ID of a single board or an array of board IDs if we're checking board-level permissions (null otherwise)
+ */
+function areCharactersAllowedTo($permission, $boards = null)
+{
+	global $user_info, $txt;
+
+	// None of the heavy permissions in isAllowedTo should apply.
+	// But it's possible there is something - hence the hook.
+	$heavy_permissions = [];
+
+	// Make it an array, even if a string was passed.
+	$permission = (array) $permission;
+
+	call_integration_hook('integrate_heavy_permissions_char_session', array(&$heavy_permissions));
+
+	// Check the permission and return an error...
+	if (!charactersAllowedTo($permission, $boards))
+	{
+		// Pick the last array entry as the permission shown as the error.
+		$error_permission = array_shift($permission);
+
+		// If they are a guest, show a login. (because the error might be gone if they do!)
+		if ($user_info['is_guest'])
+		{
+			loadLanguage('Errors');
+			is_not_guest($txt['cannot_' . $error_permission]);
+		}
+
+		// Clear the action because they aren't really doing that!
+		$_GET['action'] = '';
+		$_GET['board'] = '';
+		$_GET['topic'] = '';
+		writeLog(true);
+
+		fatal_lang_error('cannot_' . $error_permission, false);
+
+		// Getting this far is a really big problem, but let's try our best to prevent any cases...
+		trigger_error('Hacking attempt...', E_USER_ERROR);
+	}
+
+	// If you're doing something on behalf of some "heavy" permissions, validate your session.
+	// (take out the heavy permissions, and if you can't do anything but those, you need a validated session.)
+	if (!charactersAllowedTo(array_diff($permission, $heavy_permissions), $boards))
+		validateSession();
 }
 
 /**

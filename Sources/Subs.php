@@ -5642,7 +5642,7 @@ function get_main_menu_groups()
 /**
  * Gets the list of possible characters applicable to a user right now.
  */
-function get_user_possible_characters($id_member, $board_id = 0)
+function get_user_possible_characters($id_member, $board_id = 0, $perms = [])
 {
 	global $context, $board_info, $modSettings, $memberContext, $user_profile, $smcFunc;
 	static $boards_ic = [];
@@ -5708,7 +5708,21 @@ function get_user_possible_characters($id_member, $board_id = 0)
 		$characters[$char_id] = [
 			'name' => $character['character_name'],
 			'avatar' => !empty($character['avatar']) ? $character['avatar'] : $settings['images_url'] . '/default.png',
+			'permissions' => [],
+			'needs_approval' => false,
 		];
+	}
+
+	if (!empty($perms))
+	{
+		foreach ((array) $perms as $perm)
+		{
+			$chars = charactersAllowedTo($perm, $board_id);
+			foreach ($chars as $char_id)
+			{
+				$characters[$char_id]['permissions'][] = $perm;
+			}
+		}
 	}
 
 	return $characters;

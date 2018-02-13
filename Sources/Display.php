@@ -1091,21 +1091,73 @@ function Display()
 	// If we're posting, we need to make sure we have the character data.
 	$context['post_characters'] = [];
 
-	if (!$user_info['is_guest'] && $context['can_reply'])
+	if (!$user_info['is_guest'] && ($context['can_reply'] || $context['can_reply_unapproved']))
 	{
 		if (empty($user_profile[$context['user']['id']]))
 			loadMemberData($context['user']['id']);
 		loadMemberContext($context['user']['id']);
 
 		// Get the current characters.
-		$context['post_characters'] = get_user_possible_characters($context['user']['id'], $board_info['id']);
+		$permissions = ['post_reply_any'];
+		if ($modSettings['postmod_active'])
+		{
+			$permissions[] = 'post_unapproved_replies_any';
+		}
+		if ($context['user']['started'])
+		{
+			$permissions[] = 'post_reply_own';
+			if ($modSettings['postmod_active'])
+			{
+				$permissions[] = 'post_unapproved_replies_own';
+			}
+		}
+
+		$reply = ['post_reply_any', 'post_reply_own'];
+		$reply_unapproved = ['post_unapproved_replies_any', 'post_unapproved_replies_own'];
+
+		$context['post_characters'] = get_user_possible_characters($context['user']['id'], $board_info['id'], $permissions);
+		foreach ($context['post_characters'] as $char_id => $char)
+		{
+			if (empty($char['permissions']))
+			{
+				unset($context['post_characters'][$char_id]);
+				continue;
+			}
+
+			if (array_intersect($reply, $char['permissions']))
+			{
+				$context['post_characters'][$char_id]['needs_approval'] = false;
+				continue;
+			}
+			if (array_intersect($reply_unapproved, $char['permissions']))
+			{
+				$context['post_characters'][$char_id]['needs_approval'] = true;
+				continue;
+			}
+
+			// We got here? Something awry.
+			unset($context['post_characters'][$char_id]);
+		}
 
 		// Make sure we have some avatar to work with.
 		$context['current_avatar'] = '';
-		foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
+		$context['posting_as'] = '';
+		foreach ($context['post_characters'] as $char_id => $character)
 		{
 			if ($char_id == $user_info['id_character'])
+			{
 				$context['current_avatar'] = $character['avatar'];
+				$context['posting_as'] = $character['name'];
+			}
+		}
+		if (empty($context['posting_as']) && !empty($context['post_characters']))
+		{
+			foreach ($context['post_characters'] as $character)
+			{
+				$context['current_avatar'] = $character['avatar'];
+				$context['posting_as'] = $character['name'];
+				break;
+			}
 		}
 
 		addInlineJavaScript('
@@ -1121,7 +1173,7 @@ function Display()
 
 	if (!$user_info['is_guest'] && $context['can_reply'] && empty($context['post_characters']))
 	{
-		if (!allowedTo('admin_forum'))
+		if (empty($modSettings['characters_admin_override']) || !$user_info['is_admin'])
 		{
 			$context['can_reply'] = false;
 			$context['can_reply_unapproved'] = false;
