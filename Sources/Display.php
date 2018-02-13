@@ -1142,20 +1142,23 @@ function Display()
 		// Make sure we have some avatar to work with.
 		$context['current_avatar'] = '';
 		$context['posting_as'] = '';
+		$context['posting_as_id'] = 0;
 		foreach ($context['post_characters'] as $char_id => $character)
 		{
 			if ($char_id == $user_info['id_character'])
 			{
 				$context['current_avatar'] = $character['avatar'];
 				$context['posting_as'] = $character['name'];
+				$context['posting_as_id'] = $char_id;
 			}
 		}
 		if (empty($context['posting_as']) && !empty($context['post_characters']))
 		{
-			foreach ($context['post_characters'] as $character)
+			foreach ($context['post_characters'] as $char_id => $character)
 			{
 				$context['current_avatar'] = $character['avatar'];
 				$context['posting_as'] = $character['name'];
+				$context['posting_as_id'] = $char_id;
 				break;
 			}
 		}

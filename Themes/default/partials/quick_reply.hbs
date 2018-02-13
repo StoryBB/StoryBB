@@ -31,6 +31,7 @@
 									<img src="{{#if context.current_avatar}}{{{context.current_avatar}}}{{else}}{{settings.images_url}}/default.png{{/if}}">
 								</li>
 							</ul>
+							<input type="hidden" name="character_id" value="{{context.posting_as_id}}">
 							{{/if}}
 						</div>
 						{{/unless}}
