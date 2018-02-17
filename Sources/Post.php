@@ -110,24 +110,24 @@ function Post($post_errors = array())
 
 		if (empty($_REQUEST['msg']))
 		{
-			if ($user_info['is_guest'] && !allowedTo('post_reply_any') && (!$modSettings['postmod_active'] || !allowedTo('post_unapproved_replies_any')))
+			if ($user_info['is_guest'] && !charactersAllowedTo('post_reply_any') && (!$modSettings['postmod_active'] || !charactersAllowedTo('post_unapproved_replies_any')))
 				is_not_guest();
 
 			// By default the reply will be approved...
 			$context['becomes_approved'] = true;
 			if ($id_member_poster != $user_info['id'] || $user_info['is_guest'])
 			{
-				if ($modSettings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
+				if ($modSettings['postmod_active'] && charactersAllowedTo('post_unapproved_replies_any') && !charactersAllowedTo('post_reply_any'))
 					$context['becomes_approved'] = false;
 				else
-					isAllowedTo('post_reply_any');
+					areCharactersAllowedTo('post_reply_any');
 			}
-			elseif (!allowedTo('post_reply_any'))
+			elseif (!charactersAllowedTo('post_reply_any'))
 			{
-				if ($modSettings['postmod_active'] && ((allowedTo('post_unapproved_replies_own') && !allowedTo('post_reply_own')) || allowedTo('post_unapproved_replies_any')))
+				if ($modSettings['postmod_active'] && ((charactersAllowedTo('post_unapproved_replies_own') && !charactersAllowedTo('post_reply_own')) || charactersAllowedTo('post_unapproved_replies_any')))
 					$context['becomes_approved'] = false;
 				else
-					isAllowedTo('post_reply_own');
+					areCharactersAllowedTo('post_reply_own');
 			}
 		}
 		else
@@ -151,10 +151,10 @@ function Post($post_errors = array())
 		$context['becomes_approved'] = true;
 		if (!empty($board))
 		{
-			if ($modSettings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
+			if ($modSettings['postmod_active'] && !charactersAllowedTo('post_new') && charactersAllowedTo('post_unapproved_topics'))
 				$context['becomes_approved'] = false;
 			else
-				isAllowedTo('post_new');
+				areCharactersAllowedTo('post_new');
 		}
 
 		$locked = 0;
@@ -168,7 +168,17 @@ function Post($post_errors = array())
 		$context['sticky'] = !empty($_REQUEST['sticky']);
 	}
 
-	// @todo These won't work if you're posting an event!
+	// Work out who might be able to post here.
+	$context['post_characters'] = [];
+	if (!$user_info['is_guest'])
+	{
+		init_possible_posting_characters($context['user']['id'], $board, false, !empty($id_member_poster) && $id_member_poster == $context['user']['id']);
+		if (isset($_REQUEST['character_id']) && isset($context['post_characters'][$_REQUEST['character_id']]))
+		{
+			$context['posting_as_id'] = (int) $_REQUEST['character_id'];
+		}
+	}
+
 	$context['can_notify'] = !$context['user']['is_guest'];
 	$context['can_move'] = allowedTo('move_any');
 	$context['move'] = !empty($_REQUEST['move']);
@@ -197,13 +207,13 @@ function Post($post_errors = array())
 	{
 		// New topic, new poll.
 		if (empty($topic))
-			isAllowedTo('poll_post');
+			areCharactersAllowedTo('poll_post');
 		// This is an old topic - but it is yours!  Can you add to it?
-		elseif ($user_info['id'] == $id_member_poster && !allowedTo('poll_add_any'))
-			isAllowedTo('poll_add_own');
+		elseif ($user_info['id'] == $id_member_poster && !charactersAllowedTo('poll_add_any'))
+			areCharactersAllowedTo('poll_add_own');
 		// If you're not the owner, can you add to any poll?
 		else
-			isAllowedTo('poll_add_any');
+			areCharactersAllowedTo('poll_add_any');
 
 		require_once($sourcedir . '/Subs-Members.php');
 		$allowedVoteGroups = groupsAllowedTo('poll_vote', $board);
@@ -564,20 +574,20 @@ function Post($post_errors = array())
 			$attachment_stuff[] = $row2;
 		$smcFunc['db_free_result']($request);
 
-		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
+		if ($row['id_member'] == $user_info['id'] && !charactersAllowedTo('modify_any'))
 		{
 			// Give an extra five minutes over the disable time threshold, so they can type - assuming the post is public.
 			if ($row['approved'] && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + ($modSettings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
-			elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_own'))
-				isAllowedTo('modify_replies');
+			elseif ($row['id_member_poster'] == $user_info['id'] && !charactersAllowedTo('modify_own'))
+				areCharactersAllowedTo('modify_replies');
 			else
-				isAllowedTo('modify_own');
+				areCharactersAllowedTo('modify_own');
 		}
-		elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_any'))
-			isAllowedTo('modify_replies');
+		elseif ($row['id_member_poster'] == $user_info['id'] && !charactersAllowedTo('modify_any'))
+			areCharactersAllowedTo('modify_replies');
 		else
-			isAllowedTo('modify_any');
+			areCharactersAllowedTo('modify_any');
 
 		if ($context['can_announce'] && !empty($row['id_action']))
 		{
@@ -735,7 +745,7 @@ function Post($post_errors = array())
 		}
 	}
 
-	$context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments')));
+	$context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (charactersAllowedTo('post_attachment') || ($modSettings['postmod_active'] && charactersAllowedTo('post_unapproved_attachments')));
 	if ($context['can_post_attachment'])
 	{
 		// If there are attachments, calculate the total size and how many.
@@ -963,8 +973,8 @@ function Post($post_errors = array())
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);
 
 	// Are post drafts enabled?
-	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && allowedTo('post_draft');
-	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']) && !empty($options['drafts_autosave_enabled']) && allowedTo('post_autosave_draft');
+	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && charactersAllowedTo('post_draft');
+	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']) && !empty($options['drafts_autosave_enabled']) && charactersAllowedTo('post_autosave_draft');
 
 	// Build a list of drafts that they can load in to the editor
 	if (!empty($context['drafts_save']))
@@ -1045,7 +1055,7 @@ function Post($post_errors = array())
 	{
 		// If they've unchecked an attachment, they may still want to attach that many more files, but don't allow more than num_allowed_attachments.
 		$context['num_allowed_attachments'] = empty($modSettings['attachmentNumPerPostLimit']) ? 50 : min($modSettings['attachmentNumPerPostLimit'] - count($context['current_attachments']), $modSettings['attachmentNumPerPostLimit']);
-		$context['can_post_attachment_unapproved'] = allowedTo('post_attachment');
+		$context['can_post_attachment_unapproved'] = charactersAllowedTo('post_attachment');
 		$context['attachment_restrictions'] = array();
 		$context['allowed_extensions'] = strtr(strtolower($modSettings['attachmentExtensions']), array(',' => ', '));
 		$attachmentRestrictionTypes = array('attachmentNumPerPostLimit', 'attachmentPostLimit', 'attachmentSizeLimit');
@@ -1157,6 +1167,29 @@ function Post($post_errors = array())
 				'dt' => '<span id="caption_email"' .  (isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? ' class="error"' : '') . '>' . $txt['email'] . '</span>',
 				'dd' => '<input type="email" name="email" size="25" value="' . $context['email'] . '" class="input_text" required>',
 			);
+		}
+	}
+
+	// Gotta have a character.
+	if (!empty($context['post_characters']))
+	{
+		$context['posting_fields']['character'] = [
+			'dt' => '<span id="caption_character">' . $txt['posting_as_generic'] . '</span>',
+			'dd' => '',
+		];
+		if (!empty($modSettings['character_selector_post']) || !isset($context['post_characters'][$context['posting_as_id']]))
+		{
+			$context['posting_fields']['character']['dd'] .= '<select name="character_id">';
+			foreach ($context['post_characters'] as $id => $char)
+			{
+				$context['posting_fields']['character']['dd'] .= '<option value="' . $id . '"' . ($id == $context['posting_as_id'] ? ' selected' : '') . '>' . $char['name'] . '</option>';
+			}
+			$context['posting_fields']['character']['dd'] .= '</select>';
+		}
+		else
+		{
+			$context['posting_fields']['character']['dd'] = $context['posting_as'];
+			$context['posting_fields']['character']['dd'] .= '<input type="hidden" name="character_id" value="' . $context['posting_as_id'] . '">';
 		}
 	}
 
