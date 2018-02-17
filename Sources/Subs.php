@@ -5736,7 +5736,7 @@ function get_user_possible_characters($id_member, $board_id = 0, $perms = [])
 	return $characters;
 }
 
-function init_possible_posting_characters($id_member, $board_id, $new_topic = false)
+function init_possible_posting_characters($id_member, $board_id, $new_topic = false, $user_started = false)
 {
 	global $modSettings, $context, $user_info;
 
@@ -5758,7 +5758,7 @@ function init_possible_posting_characters($id_member, $board_id, $new_topic = fa
 		{
 			$permissions[] = 'post_unapproved_replies_any';
 		}
-		if ($context['user']['started'])
+		if ($user_started)
 		{
 			$permissions[] = 'post_reply_own';
 			if ($modSettings['postmod_active'])

@@ -1093,7 +1093,7 @@ function Display()
 
 	if (!$user_info['is_guest'] && ($context['can_reply'] || $context['can_reply_unapproved']))
 	{
-		init_possible_posting_characters($context['user']['id'], $board_info['id'], false);
+		init_possible_posting_characters($context['user']['id'], $board_info['id'], false, !empty($context['user']['started']));
 
 		addInlineJavaScript('
 			var characters = ' . json_encode($context['post_characters']) . ';
