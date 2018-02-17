@@ -1182,7 +1182,7 @@ function Post($post_errors = array())
 			$context['posting_fields']['character']['dd'] .= '<select name="character_id">';
 			foreach ($context['post_characters'] as $id => $char)
 			{
-				$context['posting_fields']['character']['dd'] .= '<option value="' . $id . '"' . ($id == $context['posting_as_id'] ? ' selected' : '') . '>' . $char['name'] . '</option>';
+				$context['posting_fields']['character']['dd'] .= '<option value="' . $id . '"' . ($id == $context['posting_as_id'] ? ' selected' : '') . '>' . $char['name'] . ($char['needs_approval'] ? ' ' . $txt['needs_approval'] : '') . '</option>';
 			}
 			$context['posting_fields']['character']['dd'] .= '</select>';
 		}
