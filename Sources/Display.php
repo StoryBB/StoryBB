@@ -1093,71 +1093,7 @@ function Display()
 
 	if (!$user_info['is_guest'] && ($context['can_reply'] || $context['can_reply_unapproved']))
 	{
-		// Get the current characters.
-		$permissions = ['post_reply_any'];
-		if ($modSettings['postmod_active'])
-		{
-			$permissions[] = 'post_unapproved_replies_any';
-		}
-		if ($context['user']['started'])
-		{
-			$permissions[] = 'post_reply_own';
-			if ($modSettings['postmod_active'])
-			{
-				$permissions[] = 'post_unapproved_replies_own';
-			}
-		}
-
-		$reply = ['post_reply_any', 'post_reply_own'];
-		$reply_unapproved = ['post_unapproved_replies_any', 'post_unapproved_replies_own'];
-
-		$context['post_characters'] = get_user_possible_characters($context['user']['id'], $board_info['id'], $permissions);
-		foreach ($context['post_characters'] as $char_id => $char)
-		{
-			if (empty($char['permissions']))
-			{
-				unset($context['post_characters'][$char_id]);
-				continue;
-			}
-
-			if (array_intersect($reply, $char['permissions']))
-			{
-				$context['post_characters'][$char_id]['needs_approval'] = false;
-				continue;
-			}
-			if (array_intersect($reply_unapproved, $char['permissions']))
-			{
-				$context['post_characters'][$char_id]['needs_approval'] = true;
-				continue;
-			}
-
-			// We got here? Something awry.
-			unset($context['post_characters'][$char_id]);
-		}
-
-		// Make sure we have some avatar to work with.
-		$context['current_avatar'] = '';
-		$context['posting_as'] = '';
-		$context['posting_as_id'] = 0;
-		foreach ($context['post_characters'] as $char_id => $character)
-		{
-			if ($char_id == $user_info['id_character'])
-			{
-				$context['current_avatar'] = $character['avatar'];
-				$context['posting_as'] = $character['name'];
-				$context['posting_as_id'] = $char_id;
-			}
-		}
-		if (empty($context['posting_as']) && !empty($context['post_characters']))
-		{
-			foreach ($context['post_characters'] as $char_id => $character)
-			{
-				$context['current_avatar'] = $character['avatar'];
-				$context['posting_as'] = $character['name'];
-				$context['posting_as_id'] = $char_id;
-				break;
-			}
-		}
+		init_possible_posting_characters($context['user']['id'], $board_info['id'], false);
 
 		addInlineJavaScript('
 			var characters = ' . json_encode($context['post_characters']) . ';
