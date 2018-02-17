@@ -1020,9 +1020,10 @@ function isAllowedTo($permission, $boards = null)
  *
  * @param string|array $permission A single permission to check or an array of permissions to check
  * @param int|array $boards The ID of a board or an array of board IDs if we want to check board-level permissions
+ * @param int $character A specific character to filter by for easier perms checking.
  * @return array Which character IDs are permitted to carry out the permission 
  */
-function charactersAllowedTo($permission, $boards = null)
+function charactersAllowedTo($permission, $boards = null, $character = 0)
 {
 	global $smcFunc, $modSettings, $user_info, $board;
 	static $cache = null, $contextual_cache = null;
@@ -1038,6 +1039,9 @@ function charactersAllowedTo($permission, $boards = null)
 		// We don't need to build a cache or anything. If we're in immersive mode, we already have our permissions.
 		// And we just need to query for them given our current groups etc.
 		// If we do have that permission, the allowed character is the current one - otherwise noone.
+		if ($character) {
+			return allowedTo($permission, $boards) && $character == $user_info['id_character'] ? [$user_info['id_character']] : [];
+		}
 		return allowedTo($permission, $boards) ? [$user_info['id_character']] : [];
 	}
 
@@ -1183,6 +1187,9 @@ function charactersAllowedTo($permission, $boards = null)
 	// So, let's do this. We don't know if this is a board permission per se, so we have to check both cases.
 	if ($modSettings['non_immersive_mode'] == 'simple')
 	{
+		if ($character) {
+			return allowedTo($permission, $boards) && in_array($character, $cache) ? [$character] : [];
+		}
 		return allowedTo($permission, $boards) ? array_values($cache) : [];
 	}
 	else
@@ -1230,6 +1237,10 @@ function charactersAllowedTo($permission, $boards = null)
 			}
 		}
 
+		if ($character) {
+			return in_array($character, $valid_chars) ? [$character] : [];
+		}
+
 		return array_unique($valid_chars);
 	}
 }
@@ -1239,9 +1250,10 @@ function charactersAllowedTo($permission, $boards = null)
  * to perform the action, or issue an error.
  *
  * @param string|array $permission A single permission to check or an array of permissions to check
+ * @param int $character A specific character to filter by for easier perms checking.
  * @param int|array $boards The ID of a single board or an array of board IDs if we're checking board-level permissions (null otherwise)
  */
-function areCharactersAllowedTo($permission, $boards = null)
+function areCharactersAllowedTo($permission, $boards = null, $character = 0)
 {
 	global $user_info, $txt;
 
@@ -1255,7 +1267,7 @@ function areCharactersAllowedTo($permission, $boards = null)
 	call_integration_hook('integrate_heavy_permissions_char_session', array(&$heavy_permissions));
 
 	// Check the permission and return an error...
-	if (!charactersAllowedTo($permission, $boards))
+	if (!charactersAllowedTo($permission, $boards, $character))
 	{
 		// Pick the last array entry as the permission shown as the error.
 		$error_permission = array_shift($permission);
@@ -1281,7 +1293,7 @@ function areCharactersAllowedTo($permission, $boards = null)
 
 	// If you're doing something on behalf of some "heavy" permissions, validate your session.
 	// (take out the heavy permissions, and if you can't do anything but those, you need a validated session.)
-	if (!charactersAllowedTo(array_diff($permission, $heavy_permissions), $boards))
+	if (!charactersAllowedTo(array_diff($permission, $heavy_permissions), $boards, $character))
 		validateSession();
 }
 
