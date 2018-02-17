@@ -1093,10 +1093,6 @@ function Display()
 
 	if (!$user_info['is_guest'] && ($context['can_reply'] || $context['can_reply_unapproved']))
 	{
-		if (empty($user_profile[$context['user']['id']]))
-			loadMemberData($context['user']['id']);
-		loadMemberContext($context['user']['id']);
-
 		// Get the current characters.
 		$permissions = ['post_reply_any'];
 		if ($modSettings['postmod_active'])
