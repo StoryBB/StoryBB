@@ -547,7 +547,7 @@ function Post($post_errors = array())
 		$request = $smcFunc['db_query']('', '
 			SELECT
 				m.id_member, m.modified_time, m.modified_name, m.modified_reason, m.smileys_enabled, m.body,
-				m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
+				m.poster_name, m.poster_email, m.subject, m.icon, m.approved, m.id_character,
 				COALESCE(a.size, -1) AS filesize, a.filename, a.id_attach, a.mime_type, a.id_thumb,
 				a.approved AS attachment_approved, t.id_member_started AS id_member_poster,
 				m.poster_time, log.id_action
@@ -568,6 +568,9 @@ function Post($post_errors = array())
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('no_message', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
+
+		$context['do_not_select_character'] = true;
+		$context['posting_as_id'] = $row['id_character'];
 
 		$attachment_stuff = array($row);
 		while ($row2 = $smcFunc['db_fetch_assoc']($request))
@@ -1171,7 +1174,7 @@ function Post($post_errors = array())
 	}
 
 	// Gotta have a character.
-	if (!empty($context['post_characters']))
+	if (!empty($context['post_characters']) && empty($context['do_not_select_character']))
 	{
 		$context['posting_fields']['character'] = [
 			'dt' => '<span id="caption_character">' . $txt['posting_as_generic'] . '</span>',
@@ -1191,6 +1194,13 @@ function Post($post_errors = array())
 			$context['posting_fields']['character']['dd'] = $context['posting_as'];
 			$context['posting_fields']['character']['dd'] .= '<input type="hidden" name="character_id" value="' . $context['posting_as_id'] . '">';
 		}
+	}
+	elseif (!empty($context['do_not_select_character']))
+	{
+		$context['posting_fields']['character'] = [
+			'dt' => '',
+			'dd' => '<input type="hidden" name="character_id" value="' . $context['posting_as_id'] . '">',
+		];
 	}
 
 	// Gotta have a subject.
@@ -1381,8 +1391,9 @@ function Post2()
 		if (isset($memberContext[$user_info['id']]['characters'][$_POST['character_id']]))
 			$character_id = $_POST['character_id'];
 	}
-	if (!$character_id)
+	if (!$character_id && (!isset($_REQUEST['msg']) || empty($topic)))
 	{
+		// The character ID might not be valid if you're editing an existing post, but that's OK.
 		fatal_lang_error($user_started_topic ? 'cannot_post_reply_own' : 'cannot_post_reply_any', false);
 	}
 
@@ -1515,7 +1526,7 @@ function Post2()
 		$_REQUEST['msg'] = (int) $_REQUEST['msg'];
 
 		$request = $smcFunc['db_query']('', '
-			SELECT id_member, poster_name, poster_email, poster_time, approved
+			SELECT id_member, poster_name, poster_email, poster_time, approved, id_character
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}
 			LIMIT 1',
@@ -1526,6 +1537,11 @@ function Post2()
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('cant_find_messages', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
+
+		// Make sure we preserve whoever originally edited this post.
+		$character_id = $row['id_character'];
+		$context['posting_as_id'] = $row['id_character'];
+		$context['do_not_select_character'] = true;
 		$smcFunc['db_free_result']($request);
 
 		if (!empty($topic_info['locked']) && !allowedTo('moderate_board'))
@@ -1570,25 +1586,25 @@ function Post2()
 				$post_errors[] = 'topic_' . (empty($topic_info['locked']) ? 'un' : '') . 'stickied';
 		}
 
-		if ($row['id_member'] == $user_info['id'] && !charactersAllowedTo('modify_any', null, $character_id))
+		if ($row['id_member'] == $user_info['id'] && !charactersAllowedTo('modify_any'))
 		{
 			if ((!$modSettings['postmod_active'] || $row['approved']) && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + ($modSettings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
-			elseif ($topic_info['id_member_started'] == $user_info['id'] && !charactersAllowedTo('modify_own', null, $character_id))
-				areCharactersAllowedTo('modify_replies', null, $character_id);
+			elseif ($topic_info['id_member_started'] == $user_info['id'] && !charactersAllowedTo('modify_own'))
+				areCharactersAllowedTo('modify_replies');
 			else
-				areCharactersAllowedTo('modify_own', null, $character_id);
+				areCharactersAllowedTo('modify_own');
 		}
-		elseif ($user_started_topic && !charactersAllowedTo('modify_any', null, $character_id))
+		elseif ($user_started_topic && !charactersAllowedTo('modify_any'))
 		{
-			areCharactersAllowedTo('modify_replies', null, $character_id);
+			areCharactersAllowedTo('modify_replies');
 
 			// If you're modifying a reply, I say it better be logged...
 			$moderationAction = true;
 		}
 		else
 		{
-			areCharactersAllowedTo('modify_any', null, $character_id);
+			areCharactersAllowedTo('modify_any');
 
 			// Log it, assuming you're not modifying your own post.
 			if ($row['id_member'] != $user_info['id'])
