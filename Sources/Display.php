@@ -1172,13 +1172,10 @@ function Display()
 
 	if (!$user_info['is_guest'] && $context['can_reply'] && empty($context['post_characters']))
 	{
-		if (empty($modSettings['characters_admin_override']) || !$user_info['is_admin'])
-		{
-			$context['can_reply'] = false;
-			$context['can_reply_unapproved'] = false;
-			$context['can_reply_approved'] = false;
-			$context['can_quote'] = false;
-		}
+		$context['can_reply'] = false;
+		$context['can_reply_unapproved'] = false;
+		$context['can_reply_approved'] = false;
+		$context['can_quote'] = false;
 	}
 
 	// Start this off for quick moderation - it will be or'd for each post.
