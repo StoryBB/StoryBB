@@ -494,29 +494,33 @@ function AddMembergroup()
 			require_once($sourcedir . '/ManagePermissions.php');
 			loadIllegalPermissions();
 
-			$request = $smcFunc['db_query']('', '
-				SELECT permission, add_deny
-				FROM {db_prefix}permissions
-				WHERE id_group = {int:copy_from}',
-				array(
-					'copy_from' => $copy_id,
-				)
-			);
-			$inserts = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			// Copy the main permissions - but only if it's not copying to a character group.
+			if (empty($_POST['group_level']))
 			{
-				if (empty($context['illegal_permissions']) || !in_array($row['permission'], $context['illegal_permissions']))
-					$inserts[] = array($id_group, $row['permission'], $row['add_deny']);
-			}
-			$smcFunc['db_free_result']($request);
-
-			if (!empty($inserts))
-				$smcFunc['db_insert']('insert',
-					'{db_prefix}permissions',
-					array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-					$inserts,
-					array('id_group', 'permission')
+				$request = $smcFunc['db_query']('', '
+					SELECT permission, add_deny
+					FROM {db_prefix}permissions
+					WHERE id_group = {int:copy_from}',
+					array(
+						'copy_from' => $copy_id,
+					)
 				);
+				$inserts = array();
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					if (empty($context['illegal_permissions']) || !in_array($row['permission'], $context['illegal_permissions']))
+						$inserts[] = array($id_group, $row['permission'], $row['add_deny']);
+				}
+				$smcFunc['db_free_result']($request);
+
+				if (!empty($inserts))
+					$smcFunc['db_insert']('insert',
+						'{db_prefix}permissions',
+						array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
+						$inserts,
+						array('id_group', 'permission')
+					);
+			}
 
 			$request = $smcFunc['db_query']('', '
 				SELECT id_profile, permission, add_deny

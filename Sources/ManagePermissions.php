@@ -1347,19 +1347,24 @@ function setPermissionLevel($level, $group, $profile = 'null')
 	if ($profile === 'null' && $group !== 'null')
 	{
 		$group = (int) $group;
+		$is_character_group = StoryBB\Model\Group::is_character_group($group);
 
 		if (empty($groupLevels['global'][$level]))
 			return;
 
-		$smcFunc['db_query']('', '
-			DELETE FROM {db_prefix}permissions
-			WHERE id_group = {int:current_group}
-			' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
-			array(
-				'current_group' => $group,
-				'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
-			)
-		);
+		// Clean up existing permissions for the group - but only non-character groups get non-board permissions.
+		if (!$is_character_group)
+		{
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}permissions
+				WHERE id_group = {int:current_group}
+				' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
+				array(
+					'current_group' => $group,
+					'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
+				)
+			);
+		}
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}board_permissions
 			WHERE id_group = {int:current_group}
@@ -1370,16 +1375,19 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			)
 		);
 
-		$groupInserts = array();
-		foreach ($groupLevels['global'][$level] as $permission)
-			$groupInserts[] = array($group, $permission);
+		if (!$is_character_group)
+		{
+			$groupInserts = array();
+			foreach ($groupLevels['global'][$level] as $permission)
+				$groupInserts[] = array($group, $permission);
 
-		$smcFunc['db_insert']('insert',
-			'{db_prefix}permissions',
-			array('id_group' => 'int', 'permission' => 'string'),
-			$groupInserts,
-			array('id_group')
-		);
+			$smcFunc['db_insert']('insert',
+				'{db_prefix}permissions',
+				array('id_group' => 'int', 'permission' => 'string'),
+				$groupInserts,
+				array('id_group')
+			);
+		}
 
 		$boardInserts = array();
 		foreach ($groupLevels['board'][$level] as $permission)
