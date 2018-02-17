@@ -160,8 +160,14 @@ function MessageIndex()
 
 	// Set the variables up for the template.
 	$context['can_mark_notify'] = !$user_info['is_guest'];
-	$context['can_post_new'] = allowedTo('post_new') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_topics'));
-	$context['can_post_poll'] = $modSettings['pollMode'] == '1' && allowedTo('poll_post') && $context['can_post_new'];
+
+	$context['can_post_new'] = false;
+	if (!$user_info['is_guest'])
+	{
+		init_possible_posting_characters($context['user']['id'], $board_info['id'], true);
+		$context['can_post_new'] = !empty($context['post_characters']);
+	}
+	$context['can_post_poll'] = $modSettings['pollMode'] == '1' && charactersAllowedTo('poll_post') && $context['can_post_new'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['can_approve_posts'] = allowedTo('approve_posts');
 
