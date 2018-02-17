@@ -16,7 +16,7 @@
 								<li class="user_selector">
 									<select name="character_id" class="character_selector">
 										{{#each context.post_characters}}
-										<option value="{{@key}}"{{#if (eq @key ../user_info.id_character)}} selected{{/if}}>{{{name}}}</option>
+										<option value="{{@key}}"{{#if (eq @key ../user_info.id_character)}} selected{{/if}}>{{{name}}} {{#if needs_approval}}{{{../txt.needs_approval}}}{{/if}}</option>
 										{{/each}}
 									</select>
 								</li>
