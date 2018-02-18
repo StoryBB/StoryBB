@@ -182,6 +182,11 @@ function html_to_bbc($text)
 								$curCloseTags .= '[/right]';
 								$replacement .= '[right]';
 							}
+							elseif ($style_value == 'justify')
+							{
+								$curCloseTags .= '[/justify]';
+								$replacement .= '[justify]';
+							}
 						break;
 
 						case 'font-style':
@@ -274,7 +279,7 @@ function html_to_bbc($text)
 		@apache_reset_timeout();
 
 	// Let's pull out any legacy alignments.
-	while (preg_match('~<([A-Za-z]+)\s+[^<>]*?(align="*(left|center|right)"*)[^<>]*?(/?)>~i', $text, $matches) === 1)
+	while (preg_match('~<([A-Za-z]+)\s+[^<>]*?(align="*(left|center|right|justify)"*)[^<>]*?(/?)>~i', $text, $matches) === 1)
 	{
 		// Find the position in the text of this tag over again.
 		$start_pos = strpos($text, $matches[0]);
@@ -978,7 +983,7 @@ function legalise_bbc($text)
 	}
 
 	// Right - we're going to start by going through the whole lot to make sure we don't have align stuff crossed as this happens load and is stupid!
-	$align_tags = array('left', 'center', 'right', 'pre');
+	$align_tags = array('left', 'center', 'right', 'justify', 'pre');
 
 	// Remove those align tags that are not valid.
 	$align_tags = array_intersect($align_tags, array_keys($valid_tags));
@@ -1549,6 +1554,10 @@ function create_control_richedit($editorOptions)
 			array(
 				'code' => 'right',
 				'description' => $editortxt['right_align']
+			),
+			array(
+				'code' => 'justify',
+				'description' => $editortxt['justify']
 			),
 		);
 		$context['bbc_tags'][] = array(
