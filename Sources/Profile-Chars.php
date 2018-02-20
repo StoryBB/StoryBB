@@ -1,7 +1,7 @@
 <?php
 /**
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
@@ -1385,7 +1385,7 @@ function char_sheet()
 		{
 			$context['sheet_buttons']['approve'] = array(
 				'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_approve;version=' . $context['character']['sheet_details']['id_version'] . ';char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
-				'text' => 'char_sheet_reject',
+				'text' => 'char_sheet_approve',
 				'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['char_sheet_approve_are_you_sure']) . ')"',
 			);
 		}
@@ -1394,7 +1394,7 @@ function char_sheet()
 		{
 			$context['sheet_buttons']['reject'] = array(
 				'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_reject;version=' . $context['character']['sheet_details']['id_version'] . ';char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
-				'text' => 'remove_from_queue',
+				'text' => 'char_sheet_reject',
 				'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['char_sheet_reject_are_you_sure']) . ')"',
 			);
 		}
@@ -1435,7 +1435,7 @@ function char_sheet()
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
-				$row = parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
+				$row['sheet_comment_parsed'] = parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
 				$context['sheet_comments'][$row['id_comment']] = $row;
 			}
 			$smcFunc['db_free_result']($request);

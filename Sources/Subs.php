@@ -4,7 +4,7 @@
  * This file has all the main functions in it that relate to, well, everything.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
@@ -1443,6 +1443,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				},
 				'disallow_children' => array('email', 'ftp', 'url', 'iurl'),
 				'disabled_after' => ' ($1)',
+			),
+			array(
+				'tag' => 'justify',
+				'before' => '<div align="justify">',
+				'after' => '</div>',
+				'block_level' => true,
 			),
 			array(
 				'tag' => 'left',

@@ -4,7 +4,7 @@
  * This file has functions in it to do with authentication, user handling, and the like.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2017 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
@@ -390,6 +390,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 		$names = explode(',', $names);
 
 	$maybe_email = false;
+	$names_list = array();
 	foreach ($names as $i => $name)
 	{
 		// Trim, and fix wildcards for each name.
@@ -402,6 +403,9 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 			$names[$i] = strtr($names[$i], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '\'' => '&#039;'));
 		else
 			$names[$i] = strtr($names[$i], array('\'' => '&#039;'));
+		
+		$names_list[] = '{string:lookup_name_' . $i . '}';
+		$where_params['lookup_name_' . $i] = $names[$i];
 	}
 
 	// What are we using to compare?
@@ -427,7 +431,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 
 	// Search by username, display name, and email address.
 	$request = $smcFunc['db_query']('', '
-		SELECT id_member, member_name, real_name, email_address, hide_email
+		SELECT id_member, member_name, real_name, email_address
 		FROM {db_prefix}members
 		WHERE (' . $member_name_search . '
 			OR ' . $real_name_search . ' ' . $email_condition . ')
