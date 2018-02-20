@@ -285,6 +285,7 @@ $txt['wild_cards_allowed'] = 'wildcard characters * and ? are allowed';
 $txt['search_for'] = 'Search for';
 $txt['search_match'] = 'Match';
 $txt['member_part_of_these_membergroups'] = 'Member is part of these membergroups';
+$txt['member_characters_in_these_groups'] = 'Member has characters with these membergroups';
 $txt['membergroups'] = 'Membergroups';
 $txt['confirm_delete_members'] = 'Are you sure you want to delete the selected members?';
 

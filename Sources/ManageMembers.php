@@ -177,9 +177,10 @@ function ViewMemberlist()
 			)
 		);
 		$context['postgroups'] = array();
+		$context['charactergroups'] = [];
 
 		$request = $smcFunc['db_query']('', '
-			SELECT id_group, group_name, min_posts
+			SELECT id_group, group_name, min_posts, is_character
 			FROM {db_prefix}membergroups
 			WHERE id_group != {int:moderator_group}
 			ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
@@ -190,7 +191,13 @@ function ViewMemberlist()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			if ($row['min_posts'] == -1)
+			if ($row['is_character'])
+				$context['charactergroups'][] = [
+					'id' => $row['id_group'],
+					'name' => $row['group_name'],
+					'can_be_additional' => true
+				];
+			elseif ($row['min_posts'] == -1)
 				$context['membergroups'][] = array(
 					'id' => $row['id_group'],
 					'name' => $row['group_name'],
@@ -270,8 +277,15 @@ function ViewMemberlist()
 		{
 			$search_params['types'] = $_POST['types'];
 			foreach ($params as $param_name => $param_info)
+			{
 				if (isset($_POST[$param_name]))
 					$search_params[$param_name] = $_POST[$param_name];
+			}
+			foreach (['membergroups', 'postgroups', 'charactergroups'] as $group_type)
+			{
+				if (isset($_POST[$group_type]))
+					$search_params[$group_type] = $_POST[$group_type];
+			}
 		}
 
 		$search_url_params = isset($search_params) ? base64_encode(json_encode($search_params)) : null;
@@ -387,6 +401,48 @@ function ViewMemberlist()
 		{
 			$query_parts[] = 'id_post_group IN ({array_int:post_groups})';
 			$where_params['post_groups'] = $search_params['postgroups'];
+		}
+
+		// Combine the one or two membergroup parts into one query part linked with an OR.
+		if (!empty($mg_query_parts))
+			$query_parts[] = '(' . implode(' OR ', $mg_query_parts) . ')';
+
+		// Now do character groups.
+		$cg_query_parts = [];
+		$cg_where_params = [];
+		if (!empty($search_params['charactergroups'][1]) && count($context['charactergroups']) != count($search_params['charactergroups'][1]))
+		{
+			$cg_query_parts[] = 'chars.main_char_group IN ({array_int:group_check})';
+			$cg_where_params['group_check'] = $search_params['charactergroups'][1];
+		}
+		if (!empty($search_params['charactergroups'][2]) && (empty($search_params['charactergroups'][1]) || count($context['charactergroups']) != count($search_params['charactergroups'][1])))
+			foreach ($search_params['charactergroups'][2] as $cg)
+			{
+				$cg_query_parts[] = 'FIND_IN_SET({int:add_group_' . $cg . '}, chars.char_groups) != 0';
+				$cg_where_params['add_group_' . $cg] = $cg;
+			}
+
+		// If we have a match on character groups, match the member IDs and pass those into the parent query.
+		if (!empty($cg_query_parts))
+		{
+			$character_owners = [];
+			$result = $smcFunc['db_query']('', '
+				SELECT id_member
+				FROM {db_prefix}characters AS chars
+				WHERE ' . implode(' OR ', $cg_query_parts),
+				$cg_where_params
+			);
+			while ($row = $smcFunc['db_fetch_assoc']($result))
+			{
+				$character_owners[$row['id_member']] = true;
+			}
+			$smcFunc['db_free_result']($result);
+
+			if (!empty($character_owners))
+			{
+				$query_parts[] = '(id_member IN ({array_int:character_owners}))';
+				$where_params['character_owners'] = array_keys($character_owners);
+			}
 		}
 
 		// Construct the where part of the query.
@@ -621,9 +677,10 @@ function SearchMembers()
 		)
 	);
 	$context['postgroups'] = array();
+	$context['charactergroups'] = [];
 
 	$request = $smcFunc['db_query']('', '
-		SELECT id_group, group_name, min_posts
+		SELECT id_group, group_name, min_posts, is_character
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
 		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
@@ -634,7 +691,13 @@ function SearchMembers()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		if ($row['min_posts'] == -1)
+		if ($row['is_character'])
+			$context['charactergroups'][] = [
+				'id' => $row['id_group'],
+				'name' => $row['group_name'],
+				'can_be_additional' => true
+			];
+		elseif ($row['min_posts'] == -1)
 			$context['membergroups'][] = array(
 				'id' => $row['id_group'],
 				'name' => $row['group_name'],
