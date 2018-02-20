@@ -1041,7 +1041,7 @@ function ModifyUserSubscription()
 	$context['action_type'] = $context['log_id'] ? 'edit' : 'add';
 
 	// Setup the template.
-	$context['sub_template'] = 'modify_user_subscription';
+	$context['sub_template'] = 'subscription_user_modify';
 	$context['page_title'] = $txt[$context['action_type'] . '_subscriber'];
 
 	// If we haven't been passed the subscription ID get it.
@@ -1359,6 +1359,13 @@ function ModifyUserSubscription()
 	}
 
 	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+
+	// Some ranges to make the template easier to deal with.
+	$context['year_range'] = range(2018, 2030);
+	foreach (range(1, 12) as $month)
+		$context['month_range'][$month] = $txt['months'][$month];
+	$context['day_start_range'] = range(1, $context['sub']['start']['last_day']);
+	$context['day_end_range'] = range(1, $context['sub']['end']['last_day']);
 }
 
 /**
