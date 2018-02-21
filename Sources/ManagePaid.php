@@ -27,7 +27,6 @@ function ManagePaidSubscriptions()
 
 	// Load the required language and template.
 	loadLanguage('ManagePaid');
-	loadTemplate('ManagePaid');
 
 	if (!empty($modSettings['paid_enabled']))
 		$subActions = array(
@@ -398,13 +397,13 @@ function ViewSubscriptions()
  */
 function ModifySubscription()
 {
-	global $context, $txt, $smcFunc;
+	global $context, $txt, $smcFunc, $modSettings;
 
 	$context['sub_id'] = isset($_REQUEST['sid']) ? (int) $_REQUEST['sid'] : 0;
 	$context['action_type'] = $context['sub_id'] ? (isset($_REQUEST['delete']) ? 'delete' : 'edit') : 'add';
 
 	// Setup the template.
-	$context['sub_template'] = $context['action_type'] == 'delete' ? 'subscription_delete' : 'modify_subscription';
+	$context['sub_template'] = $context['action_type'] == 'delete' ? 'subscription_delete' : 'subscription_modify';
 	$context['page_title'] = $txt['paid_' . $context['action_type'] . '_subscription'];
 
 	// Delete it?
@@ -702,8 +701,8 @@ function ModifySubscription()
 				),
 				'prim_group' => $row['id_group'],
 				'add_groups' => explode(',', $row['add_groups']),
-				'active' => $row['active'],
-				'repeatable' => $row['repeatable'],
+				'active' => (int) $row['active'],
+				'repeatable' => (int) $row['repeatable'],
 				'allow_partial' => $row['allow_partial'],
 				'duration' => $isFlexible ? 'flexible' : 'fixed',
 				'email_complete' => $smcFunc['htmlspecialchars']($row['email_complete']),
@@ -725,6 +724,7 @@ function ModifySubscription()
 		);
 		list ($context['disable_groups']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
+		$context['disable_groups'] = (int) $context['disable_groups'];
 	}
 
 	// Load up all the groups.
@@ -732,16 +732,20 @@ function ModifySubscription()
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
-			AND min_posts = {int:min_posts}',
+			AND min_posts = {int:min_posts}
+			AND is_character = {int:account_group}',
 		array(
 			'moderator_group' => 3,
 			'min_posts' => -1,
+			'account_group' => 0,
 		)
 	);
 	$context['groups'] = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['groups'][$row['id_group']] = $row['group_name'];
 	$smcFunc['db_free_result']($request);
+
+	$context['paid_currency_symbol'] = preg_replace('~%[df\.\d]+~', '', $modSettings['paid_currency_symbol']);
 
 	// This always happens.
 	createToken($context['action_type'] == 'delete' ? 'admin-pmsd' : 'admin-pms');
@@ -1041,7 +1045,7 @@ function ModifyUserSubscription()
 	$context['action_type'] = $context['log_id'] ? 'edit' : 'add';
 
 	// Setup the template.
-	$context['sub_template'] = 'modify_user_subscription';
+	$context['sub_template'] = 'subscription_user_modify';
 	$context['page_title'] = $txt[$context['action_type'] . '_subscriber'];
 
 	// If we haven't been passed the subscription ID get it.
@@ -1359,6 +1363,13 @@ function ModifyUserSubscription()
 	}
 
 	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+
+	// Some ranges to make the template easier to deal with.
+	$context['year_range'] = range(2018, 2030);
+	foreach (range(1, 12) as $month)
+		$context['month_range'][$month] = $txt['months'][$month];
+	$context['day_start_range'] = range(1, $context['sub']['start']['last_day']);
+	$context['day_end_range'] = range(1, $context['sub']['end']['last_day']);
 }
 
 /**
