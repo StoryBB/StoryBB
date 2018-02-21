@@ -269,10 +269,7 @@ function ShowXmlFeed()
 
 	// This is an xml file....
 	ob_end_clean();
-	if (!empty($modSettings['enableCompressedOutput']))
-		@ob_start('ob_gzhandler');
-	else
-		ob_start();
+	ob_start();
 
 	if ($xml_format == 'rss' || $xml_format == 'rss2')
 		header('Content-Type: application/rss+xml; charset=UTF-8');

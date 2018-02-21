@@ -427,11 +427,7 @@ class Attachments
 
 		ob_end_clean();
 
-		if (!empty($modSettings['CompressedOutput']))
-			@ob_start('ob_gzhandler');
-
-		else
-			ob_start();
+		ob_start();
 
 		// Set the header.
 		header('Content-Type: application/json; charset=UTF-8');

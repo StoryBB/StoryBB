@@ -94,12 +94,6 @@ elseif (isset($_REQUEST['ssi_layers'], $ssi_layers) && ($_REQUEST['ssi_layers'] 
 if (isset($_REQUEST['context']))
 	die('No direct access...');
 
-// Gzip output? (because it must be boolean and true, this can't be hacked.)
-if (isset($ssi_gzip) && $ssi_gzip === true && ini_get('zlib.output_compression') != '1' && ini_get('output_handler') != 'ob_gzhandler')
-	ob_start('ob_gzhandler');
-else
-	$modSettings['enableCompressedOutput'] = '0';
-
 // Primarily, this is to fix the URLs...
 ob_start('ob_sessrewrite');
 

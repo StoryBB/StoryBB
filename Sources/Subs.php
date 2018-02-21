@@ -5440,12 +5440,7 @@ function smf_serverResponse($data = '', $type = 'Content-Type: application/json'
 
 	// Kill anything else.
 	ob_end_clean();
-
-	if (!empty($modSettings['CompressedOutput']))
-		@ob_start('ob_gzhandler');
-
-	else
-		ob_start();
+	ob_start();
 
 	// Set the header.
 	header($type);

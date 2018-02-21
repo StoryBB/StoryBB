@@ -1340,10 +1340,7 @@ function loadLocale()
 	$context['template_layers'] = array();
 	// Lets make sure we aren't going to output anything nasty.
 	@ob_end_clean();
-	if (!empty($modSettings['enableCompressedOutput']))
-		@ob_start('ob_gzhandler');
-	else
-		@ob_start();
+	@ob_start();
 
 	// If we don't have any locale better avoid broken js
 	if (empty($txt['lang_locale']))

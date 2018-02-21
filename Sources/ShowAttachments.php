@@ -31,20 +31,8 @@ function showAttachment()
 	// This is done to clear any output that was made before now.
 	ob_end_clean();
 
-	if (!empty($modSettings['enableCompressedOutput']) && !headers_sent() && ob_get_length() == 0)
-	{
-		if (@ini_get('zlib.output_compression') == '1' || @ini_get('output_handler') == 'ob_gzhandler')
-			$modSettings['enableCompressedOutput'] = 0;
-
-		else
-			ob_start('ob_gzhandler');
-	}
-
-	if (empty($modSettings['enableCompressedOutput']))
-	{
-		ob_start();
-		header('Content-Encoding: none');
-	}
+	ob_start();
+	header('Content-Encoding: none');
 
 	// Better handling.
 	$attachId = isset($_REQUEST['attach']) ? (int) $_REQUEST['attach'] : (int) (isset($_REQUEST['id']) ? (int) $_REQUEST['id'] : 0);

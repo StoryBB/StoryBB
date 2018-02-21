@@ -92,19 +92,6 @@ require_once($sourcedir . '/Logging.php');
 require_once($sourcedir . '/Security.php');
 require_once($sourcedir . '/Class-BrowserDetect.php');
 
-// Check if compressed output is enabled, supported, and not already being done.
-if (!empty($modSettings['enableCompressedOutput']) && !headers_sent())
-{
-	// If zlib is being used, turn off output compression.
-	if (ini_get('zlib.output_compression') >= 1 || ini_get('output_handler') == 'ob_gzhandler')
-		$modSettings['enableCompressedOutput'] = '0';
-	else
-	{
-		ob_end_clean();
-		ob_start('ob_gzhandler');
-	}
-}
-
 /**
  * An autoloader for certain classes.
  *

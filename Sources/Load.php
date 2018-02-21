@@ -3239,10 +3239,7 @@ function template_include($filename, $once = false)
 	if ($file_found !== true)
 	{
 		ob_end_clean();
-		if (!empty($modSettings['enableCompressedOutput']))
-			@ob_start('ob_gzhandler');
-		else
-			ob_start();
+		ob_start();
 
 		if (isset($_GET['debug']))
 			header('Content-Type: application/xhtml+xml; charset=UTF-8');
