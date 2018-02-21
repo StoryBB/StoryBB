@@ -718,8 +718,6 @@ function subscriptions($memID)
 {
 	global $context, $txt, $sourcedir, $modSettings, $smcFunc, $scripturl;
 
-	// Load the paid template anyway.
-	loadTemplate('ManagePaid');
 	loadLanguage('ManagePaid');
 
 	// Load all of the subscriptions.

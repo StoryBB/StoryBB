@@ -27,7 +27,6 @@ function ManagePaidSubscriptions()
 
 	// Load the required language and template.
 	loadLanguage('ManagePaid');
-	loadTemplate('ManagePaid');
 
 	if (!empty($modSettings['paid_enabled']))
 		$subActions = array(
