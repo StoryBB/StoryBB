@@ -1795,7 +1795,6 @@ VALUES
 	('karmaTimeRestrictAdmins', '1'),
 	('pollMode', '1'),
 	('enableVBStyleLogin', '1'),
-	('enableCompressedOutput', '1'),
 	('karmaWaitTime', '1'),
 	('karmaMinPosts', '0'),
 	('karmaLabel', 'Karma:'),

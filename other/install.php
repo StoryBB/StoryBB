@@ -1044,7 +1044,6 @@ function DatabasePopulation()
 		'{$attachdir}' => json_encode(array(1 => $smcFunc['db_escape_string']($attachdir))),
 		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
-		'{$enableCompressedOutput}' => isset($_POST['compress']) ? '1' : '0',
 		'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
 		'{$smf_version}' => $GLOBALS['current_smf_version'],
 		'{$current_time}' => time(),
