@@ -156,7 +156,6 @@ function ModifyGeneralSettings($return_config = false)
 		'',
 		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'text', 30),
 		'',
-		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
 		array('debug_templates', $txt['debug_templates'], 'db', 'check', 'null', 'debug_templates'),
 		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
 		'',
