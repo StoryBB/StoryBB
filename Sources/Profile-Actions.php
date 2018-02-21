@@ -718,8 +718,6 @@ function subscriptions($memID)
 {
 	global $context, $txt, $sourcedir, $modSettings, $smcFunc, $scripturl;
 
-	// Load the paid template anyway.
-	loadTemplate('ManagePaid');
 	loadLanguage('ManagePaid');
 
 	// Load all of the subscriptions.
@@ -780,6 +778,7 @@ function subscriptions($memID)
 		)
 	);
 	$context['current'] = array();
+	$admin_forum = allowedTo('admin_forum');
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// The subscription must exist!
@@ -796,10 +795,13 @@ function subscriptions($memID)
 			'pending_details' => $row['pending_details'],
 			'status' => $row['status'],
 			'status_text' => $row['status'] == 0 ? ($row['payments_pending'] ? $txt['paid_pending'] : $txt['paid_finished']) : $txt['paid_active'],
+			'can_modify' => $admin_forum,
 		);
 
 		if ($row['status'] == 1)
 			$context['subscriptions'][$row['id_subscribe']]['subscribed'] = true;
+
+		$context['subscriptions'][$row['id_subscribe']]['sublog'] = $row['id_sublog'];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -959,13 +961,13 @@ function subscriptions($memID)
 		}
 
 		// Change the template.
-		$context['sub_template'] = 'choose_payment';
+		$context['sub_template'] = 'subscription_choose_payment';
 
 		// Quit.
 		return;
 	}
 	else
-		$context['sub_template'] = 'user_subscription';
+		$context['sub_template'] = 'subscription_user_choice';
 }
 
 ?>
