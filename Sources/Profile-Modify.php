@@ -1522,6 +1522,8 @@ function editIgnoreList($memID)
 	global $txt;
 	global $context, $user_profile, $memberContext, $smcFunc;
 
+	$context['show_ignore_email_address'] = allowedTo('moderate_forum');
+
 	// For making changes!
 	$ignoreArray = explode(',', $user_profile[$memID]['pm_ignore_list']);
 	foreach ($ignoreArray as $k => $dummy)
@@ -1657,6 +1659,8 @@ function editIgnoreList($memID)
 		loadMemberContext($ignore_member);
 		$context['ignore_list'][$ignore_member] = $memberContext[$ignore_member];
 	}
+
+	$context['sub_template'] = 'profile_ignore';
 }
 
 /**
