@@ -49,13 +49,6 @@ function template_editIgnoreList()
 {
 	global $context, $scripturl, $txt;
 
-	if (!empty($context['saved_successful']))
-		echo '
-					<div class="infobox">', $context['user']['is_owner'] ? $txt['profile_updated_own'] : sprintf($txt['profile_updated_else'], $context['member']['name']), '</div>';
-	elseif (!empty($context['saved_failed']))
-		echo '
-					<div class="errorbox">', $context['saved_failed'], '</div>';
-
 	echo '
 	<div id="edit_buddies">
 		<div class="cat_bar">

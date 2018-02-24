@@ -1533,19 +1533,29 @@ function editIgnoreList($memID)
 	{
 		checkSession('get');
 
-		$_SESSION['prf-save'] = $txt['could_not_remove_person'];
+		$saved = false;
 
 		// Heh, I'm lazy, do it the easy way...
 		foreach ($ignoreArray as $key => $id_remove)
 			if ($id_remove == (int) $_GET['remove'])
 			{
 				unset($ignoreArray[$key]);
+				$saved = true;
 				$_SESSION['prf-save'] = true;
 			}
 
 		// Make the changes.
 		$user_profile[$memID]['pm_ignore_list'] = implode(',', $ignoreArray);
 		updateMemberData($memID, array('pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']));
+
+		if ($saved)
+		{
+			session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
+		}
+		else
+		{
+			session_flash('error', $txt['could_not_remove_person']);
+		}
 
 		// Redirect off the page because we don't like all this ugly query stuff to stick in the history.
 		redirectexit('action=profile;area=lists;sa=ignore;u=' . $memID);
@@ -1566,7 +1576,7 @@ function editIgnoreList($memID)
 				unset($new_entries[$k]);
 		}
 
-		$_SESSION['prf-save'] = $txt['could_not_add_person'];
+		$saved = false;
 		if (!empty($new_entries))
 		{
 			// Now find out the id_member for the members in question.
@@ -1582,7 +1592,9 @@ function editIgnoreList($memID)
 			);
 
 			if ($smcFunc['db_num_rows']($request) != 0)
-				$_SESSION['prf-save'] = true;
+			{
+				$saved = true;
+			}
 
 			// Add the new member to the buddies array.
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1597,6 +1609,15 @@ function editIgnoreList($memID)
 			// Now update the current users buddy list.
 			$user_profile[$memID]['pm_ignore_list'] = implode(',', $ignoreArray);
 			updateMemberData($memID, array('pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']));
+		}
+
+		if ($saved)
+		{
+			session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
+		}
+		else
+		{
+			session_flash('error', $txt['could_not_add_person']);
 		}
 
 		// Back to the list of pityful people!
@@ -1635,16 +1656,6 @@ function editIgnoreList($memID)
 	{
 		loadMemberContext($ignore_member);
 		$context['ignore_list'][$ignore_member] = $memberContext[$ignore_member];
-	}
-
-	if (isset($_SESSION['prf-save']))
-	{
-		if ($_SESSION['prf-save'] === true)
-			$context['saved_successful'] = true;
-		else
-			$context['saved_failed'] = $_SESSION['prf-save'];
-
-		unset($_SESSION['prf-save']);
 	}
 }
 
