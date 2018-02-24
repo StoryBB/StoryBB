@@ -528,6 +528,7 @@ function deleteAccount($memID)
 	// Can they do this, or will they need approval?
 	$context['needs_approval'] = $context['user']['is_owner'] && !empty($modSettings['approveAccountDeletion']) && !allowedTo('moderate_forum');
 	$context['page_title'] = $txt['deleteAccount'] . ': ' . $cur_profile['real_name'];
+	$context['sub_template'] = 'profile_delete';
 }
 
 /**
