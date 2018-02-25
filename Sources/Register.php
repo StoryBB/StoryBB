@@ -183,7 +183,6 @@ function Register($reg_errors = array())
 
 		// Setup some important context.
 		loadLanguage('Profile');
-		loadTemplate('Profile');
 
 		$context['user']['is_owner'] = true;
 

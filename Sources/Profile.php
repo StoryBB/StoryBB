@@ -29,7 +29,6 @@ function ModifyProfile($post_errors = array())
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))
 		loadLanguage('Profile+Drafts');
-	loadTemplate('Profile');
 
 	require_once($sourcedir . '/Subs-Menu.php');
 
