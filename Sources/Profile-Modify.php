@@ -708,8 +708,11 @@ function setupProfileContext($fields)
 	unset($profile_fields);
 
 	// Do some processing to make the submission URL.
-	$context['profile_submit_url'] = !empty($context['profile_custom_submit_url']) ? $context['profile_custom_submit_url'] : $scripturl . '?action=profile;area=' . $context['menu_item_selected'] . ';u=' . $context['id_member'];
-	$context['profile_submit_url'] = $context['require_password'] && !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($context['profile_submit_url'], array('http://' => 'https://')) : $context['profile_submit_url'];
+	if (!empty($context['menu_item_selected']) && !empty($context['id_member']))
+	{
+		$context['profile_submit_url'] = !empty($context['profile_custom_submit_url']) ? $context['profile_custom_submit_url'] : $scripturl . '?action=profile;area=' . $context['menu_item_selected'] . ';u=' . $context['id_member'];
+		$context['profile_submit_url'] = !empty($context['require_password']) && !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($context['profile_submit_url'], array('http://' => 'https://')) : $context['profile_submit_url'];
+	}
 }
 
 /**
