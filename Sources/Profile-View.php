@@ -3030,6 +3030,24 @@ function viewWarning($memID)
 	foreach ($context['level_effects'] as $limit => $dummy)
 		if ($context['member']['warning'] >= $limit)
 			$context['current_level'] = $limit;
+
+	$context['current_level_effects'] = $context['level_effects'][$context['current_level']];
+
+	// Convert levels to classes
+	$context['warning_classes'] = array(
+		0 => 'nothing',
+		$modSettings['warning_watch'] => 'watch',
+		$modSettings['warning_moderate'] => 'moderate',
+		$modSettings['warning_mute'] => 'mute',
+	);
+
+	// Work out the starting color.
+	$context['current_class'] = $context['warning_classes'][0];
+	foreach ($context['warning_classes'] as $limit => $color)
+		if ($context['member']['warning'] >= $limit)
+			$context['current_class'] = $color;
+
+	$context['sub_template'] = 'profile_warning_view';
 }
 
 ?>
