@@ -2134,6 +2134,7 @@ function alert_markread($memID)
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
 	StoryBB\Template::set_layout('raw');
+	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'alerts_all_read';
 
 	loadLanguage('Alerts');
@@ -4061,6 +4062,7 @@ function tfasetup($memID)
 			$context['from_ajax'] = true;
 			StoryBB\Template::set_layout('raw');
 			$context['template_layers'] = array();
+			StoryBB\Template::remove_all_layers();
 		}
 
 		// When the code is being sent, verify to make sure the user got it right

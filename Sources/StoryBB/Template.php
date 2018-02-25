@@ -361,9 +361,19 @@ class Template
 		self::$layers[] = $template_layer;
 	}
 
+	public static function remove_layer(string $template_layer)
+	{
+		self::$layers = array_diff(self::$layers, [$template_layer]);
+	}
+
 	public static function remove_all_layers()
 	{
 		self::$layers = [];
+	}
+
+	public static function has_layers()
+	{
+		return !empty(self::$layers);
 	}
 }
 

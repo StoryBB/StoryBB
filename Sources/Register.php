@@ -759,6 +759,7 @@ function CoppaForm()
 			// Shortcut for producing underlines.
 			$context['ul'] = '<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>';
 			$context['template_layers'] = array();
+			StoryBB\Template::remove_all_layers();
 			$context['sub_template'] = 'register_coppa_form';
 			$context['page_title'] = $txt['coppa_form_title'];
 			$context['coppa_body'] = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}'), array($context['ul'], $context['ul'], $username), $txt['coppa_form_body']);
