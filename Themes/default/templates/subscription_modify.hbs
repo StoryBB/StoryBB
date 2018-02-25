@@ -1,0 +1,155 @@
+	{{! The template for adding or editing a subscription. }}
+	<div id="admincenter">
+		<form action="{{scripturl}}?action=admin;area=paidsubscribe;sa=modify;sid={{context.sub_id}}" method="post">
+			<div class="cat_bar">
+				<h3 class="catbg">{{get_text 'paid_' context.action_type '_subscription'}}</h3>
+			</div>
+
+			{{#if context.disable_groups}}
+			<div class="information">
+				<span class="alert">{{{txt.paid_mod_edit_note}}}</span>
+			</div>
+			{{/if}}
+
+			<div class="windowbg2">
+				<dl class="settings">
+					<dt>
+						{{{txt.paid_mod_name}}}:
+					</dt>
+					<dd>
+						<input type="text" name="name" value="{{{context.sub.name}}}" size="30" class="input_text">
+					</dd>
+					<dt>
+						{{{txt.paid_mod_desc}}}:
+					</dt>
+					<dd>
+						<textarea name="desc" rows="3" cols="40">{{{context.sub.desc}}}</textarea>
+					</dd>
+					<dt>
+						<label for="repeatable_check">{{{txt.paid_mod_repeatable}}}</label>:
+					</dt>
+					<dd>
+						<input type="checkbox" name="repeatable" id="repeatable_check"{{#if (eq context.sub.repeatable 1)}} checked{{/if}} class="input_check">
+					</dd>
+					<dt>
+						<label for="activated_check">{{{txt.paid_mod_active}}}</label>:<br><span class="smalltext">{{{txt.paid_mod_active_desc}}}</span>
+					</dt>
+					<dd>
+						<input type="checkbox" name="active" id="activated_check"{{#if context.sub.active}} checked{{/if}} class="input_check">
+					</dd>
+				</dl>
+				<hr>
+				<dl class="settings">
+					<dt>
+						{{{txt.paid_mod_prim_group}}}:<br><span class="smalltext">{{{txt.paid_mod_prim_group_desc}}}</span>
+					</dt>
+					<dd>
+						<select name="prim_group"{{#if context.disable_groups}} disabled{{/if}}>
+							<option value="0"{{#if (eq_coerce context.sub.prim_group 0)}} selected{{/if}}>{{{txt.paid_mod_no_group}}}</option>
+
+							{{#each context.groups}}
+							<option value="{{@key}}"{{#if (eq_coerce ../context.sub.prim_group @key)}} selected{{/if}}>{{{.}}}</option>
+							{{/each}}
+
+						</select>
+					</dd>
+					<dt>
+						{{{txt.paid_mod_add_groups}}}:<br><span class="smalltext">{{{txt.paid_mod_add_groups_desc}}}</span>
+					</dt>
+					<dd>
+
+						{{#each context.groups}}
+						<label for="addgroup_{{@key}}"><input type="checkbox" id="addgroup_{{@key}}" name="addgroup[{{@key}}]"{{#if (in_array @key ../context.sub.add_groups)}} checked{{/if}}{{#if context.disable_groups}} disabled{{/if}} class="input_check">&nbsp;<span class="smalltext">{{{.}}}</span></label><br>
+						{{/each}}
+
+					</dd>
+					<dt>
+						{{{txt.paid_mod_reminder}}}:<br><span class="smalltext">{{{txt.paid_mod_reminder_desc}}} {{{txt.zero_to_disable}}}</span>
+					</dt>
+					<dd>
+						<input type="number" name="reminder" value="{{{context.sub.reminder}}}" size="6" class="input_text">
+					</dd>
+					<dt>
+						{{{txt.paid_mod_email}}}:<br><span class="smalltext">{{{txt.paid_mod_email_desc}}}</span>
+					</dt>
+					<dd>
+						<textarea name="emailcomplete" rows="6" cols="40">{{{context.sub.email_complete}}}</textarea>
+					</dd>
+				</dl>
+				<hr>
+				<input type="radio" name="duration_type" id="duration_type_fixed" value="fixed"{{#unless (eq context.sub.duration 'flexible')}} checked{{/unless}} class="input_radio" onclick="toggleDuration('fixed');">
+				<strong><label for="duration_type_fixed">{{{txt.paid_mod_fixed_price}}}</label></strong>
+				<br>
+				<div id="fixed_area"{{#if (eq context.sub.duration 'flexible')}} style="display: none;"{{/if}}>
+					<fieldset>
+						<dl class="settings">
+							<dt>
+								{{{txt.paid_cost}}} ({{{context.paid_currency_symbol}}}):
+							</dt>
+							<dd>
+								<input type="number" name="cost" value="{{#if context.sub.cost.fixed}}{{context.sub.cost.fixed}}{{else}}0{{/if}}" size="4" class="input_text">
+							</dd>
+							<dt>
+								{{{txt.paid_mod_span}}}:
+							</dt>
+							<dd>
+								<input type="number" name="span_value" value="{{context.sub.span.value}}" size="4" class="input_text">
+								<select name="span_unit">
+									<option value="D"{{#if (eq context.sub.span.unit 'D')}} selected{{/if}}>{{{txt.paid_mod_span_days}}}</option>
+									<option value="W"{{#if (eq context.sub.span.unit 'W')}} selected{{/if}}>{{{txt.paid_mod_span_weeks}}}</option>
+									<option value="M"{{#if (eq context.sub.span.unit 'M')}} selected{{/if}}>{{{txt.paid_mod_span_months}}}</option>
+									<option value="Y"{{#if (eq context.sub.span.unit 'Y')}} selected{{/if}}>{{{txt.paid_mod_span_years}}}</option>
+								</select>
+							</dd>
+						</dl>
+					</fieldset>
+				</div>
+				<input type="radio" name="duration_type" id="duration_type_flexible" value="flexible"{{#if (eq context.sub.duration 'flexible')}} checked{{/if}} class="input_radio" onclick="toggleDuration('flexible');">
+				<strong><label for="duration_type_flexible">{{{txt.paid_mod_flexible_price}}}</label></strong>
+				<br>
+				<div id="flexible_area"{{#if (neq context.sub.duration 'flexible')}} style="display: none;"{{/if}}>
+					<fieldset>
+						<div class="information">
+							<strong>{{{txt.paid_mod_price_breakdown}}}</strong><br>
+							{{{txt.paid_mod_price_breakdown_desc}}}
+						</div>
+						<dl class="settings">
+							<dt>
+								<strong>{{{txt.paid_duration}}}</strong>
+							</dt>
+							<dd>
+								<strong>{{{txt.paid_cost}}} ({{{context.paid_currency_symbol}}})</strong>
+							</dd>
+							<dt>
+								{{{txt.paid_per_day}}}:
+							</dt>
+							<dd>
+								<input type="number" name="cost_day" value="{{#if context.sub.cost.day}}{{context.sub.cost.day}}{{else}}0{{/if}}" size="5" class="input_text">
+							</dd>
+							<dt>
+								{{{txt.paid_per_week}}}:
+							</dt>
+							<dd>
+								<input type="number" name="cost_week" value="{{#if context.sub.cost.week}}{{context.sub.cost.week}}{{else}}0{{/if}}" size="5" class="input_text">
+							</dd>
+							<dt>
+								{{{txt.paid_per_month}}}:
+							</dt>
+							<dd>
+								<input type="number" name="cost_month" value="{{#if context.sub.cost.month}}{{context.sub.cost.month}}{{else}}0{{/if}}" size="5" class="input_text">
+							</dd>
+							<dt>
+								{{{txt.paid_per_year}}}:
+							</dt>
+							<dd>
+								<input type="number" name="cost_year" value="{{#if context.sub.cost.year}}{{context.sub.cost.year}}{{else}}0{{/if}}" size="5" class="input_text">
+							</dd>
+						</dl>
+					</fieldset>
+				</div>
+				<input type="submit" name="save" value="{{{txt.paid_settings_save}}}" class="button_submit">
+				{{session_form}}
+				{{token_form 'admin-pms'}}
+			</div>
+		</form>
+	</div>

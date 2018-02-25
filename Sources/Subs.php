@@ -1445,6 +1445,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'disabled_after' => ' ($1)',
 			),
 			array(
+				'tag' => 'justify',
+				'before' => '<div align="justify">',
+				'after' => '</div>',
+				'block_level' => true,
+			),
+			array(
 				'tag' => 'left',
 				'before' => '<div style="text-align: left;">',
 				'after' => '</div>',
@@ -5434,12 +5440,7 @@ function smf_serverResponse($data = '', $type = 'Content-Type: application/json'
 
 	// Kill anything else.
 	ob_end_clean();
-
-	if (!empty($modSettings['CompressedOutput']))
-		@ob_start('ob_gzhandler');
-
-	else
-		ob_start();
+	ob_start();
 
 	// Set the header.
 	header($type);

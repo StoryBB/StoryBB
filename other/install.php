@@ -145,35 +145,12 @@ function initialize_inputs()
 		return;
 	}
 
-	if (!isset($_GET['obgz']))
-	{
-		ob_start();
+	ob_start();
 
-		if (ini_get('session.save_handler') == 'user')
-			@ini_set('session.save_handler', 'files');
-		if (function_exists('session_start'))
-			@session_start();
-	}
-	else
-	{
-		ob_start('ob_gzhandler');
-
-		if (ini_get('session.save_handler') == 'user')
-			@ini_set('session.save_handler', 'files');
-		session_start();
-
-		if (!headers_sent())
-			echo '<!DOCTYPE html>
-<html>
-	<head>
-		<title>', htmlspecialchars($_GET['pass_string']), '</title>
-	</head>
-	<body style="background-color: #d4d4d4; margin-top: 16%; text-align: center; font-size: 16pt;">
-		<strong>', htmlspecialchars($_GET['pass_string']), '</strong>
-	</body>
-</html>';
-		exit;
-	}
+	if (ini_get('session.save_handler') == 'user')
+		@ini_set('session.save_handler', 'files');
+	if (function_exists('session_start'))
+		@session_start();
 
 	// Add slashes, because they're not being added additionally by the fun that is Magic Quotes.
 	// @todo not suuuuure this is a good idea.
@@ -1044,7 +1021,6 @@ function DatabasePopulation()
 		'{$attachdir}' => json_encode(array(1 => $smcFunc['db_escape_string']($attachdir))),
 		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
-		'{$enableCompressedOutput}' => isset($_POST['compress']) ? '1' : '0',
 		'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
 		'{$smf_version}' => $GLOBALS['current_smf_version'],
 		'{$current_time}' => time(),
@@ -2186,15 +2162,6 @@ function template_forum_settings()
 					</select>
 					<br>
 					<div class="smalltext block">', $txt['install_settings_reg_mode_info'], '</div>
-				</td>
-			</tr>
-			<tr>
-				<td class="textbox" style="vertical-align: top;">', $txt['install_settings_compress'], ':</td>
-				<td>
-					<input type="checkbox" name="compress" id="compress_check" checked class="input_check" />&nbsp;
-					<label for="compress_check">', $txt['install_settings_compress_title'], '</label>
-					<br>
-					<div class="smalltext block">', $txt['install_settings_compress_info'], '</div>
 				</td>
 			</tr>
 			<tr>
