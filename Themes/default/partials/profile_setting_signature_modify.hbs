@@ -1,0 +1,46 @@
+		<dt id="current_signature" style="display:none">
+			<strong>{{{txt.current_signature}}}:</strong>
+		</dt>
+		<dd id="current_signature_display" style="display:none">
+			<hr>
+		</dd>
+		<dt id="preview_signature" style="display:none">
+			<strong>{{{txt.signature_preview}}}:</strong>
+		</dt>
+		<dd id="preview_signature_display" style="display:none">
+			<hr>
+		</dd>
+
+		<dt>
+			<strong>{{{txt.signature}}}:</strong><br>
+			<span class="smalltext">{{{txt.sig_info}}}</span>
+		</dt>
+		<dd>
+			<textarea class="editor" onkeyup="calcCharLeft();" id="signature" name="signature" rows="5" cols="50" style="min-width: 50%; max-width: 99%;">{{{context.member.signature}}}</textarea><br>
+
+			{{! Is there is a limit at all? }}
+			{{#if (gt context.signature_limits.max_length 0)}}
+				<span class="smalltext">{{textTemplate txt.max_sig_characters context.signature_limits.max_length}}
+				<span id="signatureLeft">{{context.signature_limits.max_length}}</span></span><br>
+			{{/if}}
+
+			{{#if context.show_preview_button}}
+				<input type="button" name="preview_signature" id="preview_button" value="{{{txt.preview_signature}}}" class="button_submit">
+			{{/if}}
+
+			{{#if context.signature_warning}}
+				<span class="smalltext">{{{context.signature_warning}}}</span>
+			{{/if}}
+
+			{{! Some javascript used to count how many characters have been used so far in the signature. }}
+			<script>
+				var maxLength = {{context.signature_limits.max_length}};
+
+				$(document).ready(function() {
+					calcCharLeft();
+					$("#preview_button").click(function() {
+						return ajax_getSignaturePreview(true);
+					});
+				});
+			</script>
+		</dd>

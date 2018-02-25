@@ -1,0 +1,15 @@
+		<dt>
+			<strong>{{{txt.tfa_profile_label}}}:</strong>
+			<br /><div class="smalltext">{{{txt.tfa_profile_desc}}}</div>
+		</dt>
+		<dd>
+			{{#if (not context.tfa_enabled)}}
+				{{#if context.user.is_owner}}
+					<a href="{{{context.tfa_url}}}" id="enable_tfa">{{{txt.tfa_profile_enable}}}</a>
+				{{else}}
+					{{{txt.tfa_profile_disabled}}}
+				{{/if}}
+			{{else}}
+				{{textTemplate txt.tfa_profile_enabled (concat scripturl '?action=profile;u=' context.id_member ';area=tfasetup;disable')}}
+			{{/if}}
+		</dd>

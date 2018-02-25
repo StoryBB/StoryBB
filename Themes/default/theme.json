@@ -100,7 +100,8 @@
                 "25": 25,
                 "50": 50
             },
-            "default": true
+            "default": true,
+            "disableOn": "disableCustomPerPage"
         },
         {
             "id": "messages_per_page",
@@ -112,7 +113,8 @@
                 "25": 25,
                 "50": 50
             },
-            "default": true
+            "default": true,
+            "disableOn": "disableCustomPerPage"
         },
         {
             "id": "view_newest_first",

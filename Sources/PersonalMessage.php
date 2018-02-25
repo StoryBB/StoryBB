@@ -3364,7 +3364,6 @@ function MessageSettings()
 	$cur_profile = $user_profile[$user_info['id']];
 
 	loadLanguage('Profile');
-	loadTemplate('Profile');
 
 	// Since this is internally handled with the profile code because that's how it was done ages ago
 	// we have to set everything up for handling this...
@@ -3375,7 +3374,7 @@ function MessageSettings()
 	$context['menu_item_selected'] = 'settings';
 	$context['submit_button_text'] = $txt['pm_settings'];
 	$context['profile_header_text'] = $txt['personal_messages'];
-	$context['sub_template'] = 'edit_options';
+	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['pm_settings_desc'];
 
 	loadThemeOptions($user_info['id']);

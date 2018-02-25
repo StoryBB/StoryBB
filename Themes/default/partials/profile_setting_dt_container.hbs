@@ -1,0 +1,13 @@
+		<dt>
+			<strong{{#if field.is_error}} class="error"{{/if}}>
+				{{#if (eq field.type 'label')}}
+					{{{field.label}}}
+				{{else}}
+					<label for="{{key}}">{{{field.label}}}</label>
+				{{/if}}
+			</strong>
+			{{#if field.subtext}}
+				<br>
+				<span class="smalltext">{{{field.subtext}}}</span>
+			{{/if}}
+		</dt>

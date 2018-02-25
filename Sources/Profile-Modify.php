@@ -495,9 +495,10 @@ function loadProfileFields($force_reload = false)
 			'callback_func' => 'tfa',
 			'permission' => 'profile_password',
 			'enabled' => !empty($modSettings['tfa_mode']),
-			'preload' => function() use (&$context, $cur_profile)
+			'preload' => function() use (&$context, $cur_profile, $modSettings, $scripturl)
 			{
 				$context['tfa_enabled'] = !empty($cur_profile['tfa_secret']);
+				$context['tfa_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl) . '?action=profile;area=tfasetup';
 
 				return true;
 			},
@@ -592,7 +593,7 @@ function loadProfileFields($force_reload = false)
  */
 function setupProfileContext($fields)
 {
-	global $profile_fields, $context, $cur_profile, $txt;
+	global $profile_fields, $context, $cur_profile, $txt, $modSetting, $scripturl;
 
 	// Some default bits.
 	$context['profile_prehtml'] = '';
@@ -668,6 +669,18 @@ function setupProfileContext($fields)
 		}
 	}
 
+	// Make sure all of the selects really come with arrays of options, rather than callbacks.
+	foreach ($context['profile_fields'] as $pf => $field)
+	{
+		if (empty($field['type']) || $field['type'] != 'select')
+			continue;
+
+		if (!empty($field['options']) && !is_array($field['options']))
+		{
+			$context['profile_fields'][$pf]['options'] = $field['options']();
+		}
+	}
+
 	// Some spicy JS.
 	addInlineJavaScript('
 	var form_handle = document.forms.creator;
@@ -693,6 +706,10 @@ function setupProfileContext($fields)
 
 	// Free up some memory.
 	unset($profile_fields);
+
+	// Do some processing to make the submission URL.
+	$context['profile_submit_url'] = !empty($context['profile_custom_submit_url']) ? $context['profile_custom_submit_url'] : $scripturl . '?action=profile;area=' . $context['menu_item_selected'] . ';u=' . $context['id_member'];
+	$context['profile_submit_url'] = $context['require_password'] && !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($context['profile_submit_url'], array('http://' => 'https://')) : $context['profile_submit_url'];
 }
 
 /**
@@ -1676,7 +1693,7 @@ function account($memID)
 	if (allowedTo(array('profile_identity_own', 'profile_identity_any', 'profile_password_own', 'profile_password_any')))
 		loadCustomFields($memID, 'account');
 
-	$context['sub_template'] = 'edit_options';
+	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['account_info'];
 
 	setupProfileContext(
@@ -1705,7 +1722,7 @@ function forumProfile($memID)
 	if (allowedTo(array('profile_forum_own', 'profile_forum_any')))
 		loadCustomFields($memID, 'forumprofile');
 
-	$context['sub_template'] = 'edit_options';
+	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['forumProfile_info'];
 	$context['show_preview_button'] = true;
 
@@ -1725,7 +1742,7 @@ function forumProfile($memID)
  */
 function theme($memID)
 {
-	global $txt, $context;
+	global $txt, $context, $modSettings;
 
 	$context['theme_options'] = StoryBB\Model\Theme::get_user_options();
 
@@ -1733,13 +1750,41 @@ function theme($memID)
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
 		loadCustomFields($memID, 'theme');
 
-	$context['sub_template'] = 'edit_options';
+	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['theme_info'];
+
+	// Do some fix-ups to keep the template a bit simpler.
+	foreach ($context['theme_options'] as $id => $setting)
+	{
+		if (!is_array($setting))
+			continue;
+		// If it's going to be disabled through a modSettings entry, do that first.
+		if (!empty($setting['disableOn']) && !empty($modSettings[$setting['disableOn']])) {
+			unset ($context['theme_options'][$id]);
+			continue;
+		}
+
+		// Make sure there's a type given, or create the more canonical names we want to use here.
+		if (!isset($setting['type']) || $setting['type'] == 'bool')
+			$context['theme_options'][$id]['type'] = 'checkbox';
+		elseif ($setting['type'] == 'int' || $setting['type'] == 'integer')
+			$context['theme_options'][$id]['type'] = 'number';
+		elseif ($setting['type'] == 'string')
+			$context['theme_options'][$id]['type'] = 'text';
+
+		if (isset($setting['options']))
+			$context['theme_options'][$id]['type'] = 'list';
+
+		// Make the value more readily available to the template.
+		$context['theme_options'][$id]['user_value'] = '';
+		if (isset($context['member']['options'][$setting['id']]))
+			$context['theme_options'][$id]['user_value'] = $context['member']['options'][$setting['id']];
+	}
 
 	setupProfileContext(
 		array(
 			'smiley_set', 'hr',
-			'time_format', 'timezone', 'hr',
+			'time_format', 'timezone',
 			'theme_settings',
 		)
 	);
