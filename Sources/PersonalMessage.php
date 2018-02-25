@@ -33,10 +33,6 @@ function MessageMain()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	loadLanguage('PersonalMessage+Drafts');
-	
-	//Grab the partial
-	$template = loadTemplatePartial('pm_above');
-
 
 	// Load up the members maximum message capacity.
 	if ($user_info['is_admin'])
@@ -360,8 +356,8 @@ function messageIndexBar($area)
 	$context['menu_item_selected'] = $current_area;
 
 	// Set the template for this area and add the profile layer.
-//	if (!isset($_REQUEST['xml']))
-//		$context['template_layers'][] = 'pm';
+	if (!isset($_REQUEST['xml']))
+		StoryBB\Template::add_layer('pm');
 }
 
 /**
