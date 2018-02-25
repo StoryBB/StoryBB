@@ -2203,7 +2203,7 @@ function ModifyAlertsSettings()
 
 	// Override the description
 	$context['description'] = $txt['notifications_desc'];
-	$context['sub_template'] = 'alert_configuration';
+	$context['sub_template'] = 'profile_alert_configuration';
 }
 
 ?>

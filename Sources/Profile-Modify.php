@@ -1898,16 +1898,16 @@ function alert_configuration($memID)
 	);
 	$group_options = array(
 		'board' => array(
-			array('check', 'msg_auto_notify', 'label' => 'after'),
-			array('check', 'msg_receive_body', 'label' => 'after'),
-			array('select', 'msg_notify_pref', 'label' => 'before', 'opts' => array(
+			array('check', 'msg_auto_notify', 'position' => 'after'),
+			array('check', 'msg_receive_body', 'position' => 'after'),
+			array('select', 'msg_notify_pref', 'position' => 'before', 'opts' => array(
 				0 => $txt['alert_opt_msg_notify_pref_nothing'],
 				1 => $txt['alert_opt_msg_notify_pref_instant'],
 				2 => $txt['alert_opt_msg_notify_pref_first'],
 				3 => $txt['alert_opt_msg_notify_pref_daily'],
 				4 => $txt['alert_opt_msg_notify_pref_weekly'],
 			)),
-			array('select', 'msg_notify_type', 'label' => 'before', 'opts' => array(
+			array('select', 'msg_notify_type', 'position' => 'before', 'opts' => array(
 				1 => $txt['notify_send_type_everything'],
 				2 => $txt['notify_send_type_everything_own'],
 				3 => $txt['notify_send_type_only_replies'],
@@ -1915,7 +1915,7 @@ function alert_configuration($memID)
 			)),
 		),
 		'pm' => array(
-			array('select', 'pm_notify', 'label' => 'before', 'opts' => array(
+			array('select', 'pm_notify', 'position' => 'before', 'opts' => array(
 				1 => $txt['email_notify_all'],
 				2 => $txt['email_notify_buddies'],
 			)),
@@ -2067,6 +2067,53 @@ function alert_configuration($memID)
 	}
 
 	createToken($context['token_check'], 'post');
+
+	// Now we need to set up for the template.
+	$context['alert_groups'] = [];
+	foreach ($alert_types as $id => $group) {
+		$context['alert_groups'][$id] = [
+			'title' => $txt['alert_group_' . $id],
+			'group_config' => [],
+			'options' => [],
+		];
+
+		// If this group of settings has its own section-specific settings, expose them to the template.
+		if (!empty($group_options[$id]))
+		{
+			$context['alert_groups'][$id]['group_config'] = $group_options[$id];
+			foreach ($group_options[$id] as $pos => $opts) {
+				// Make the label easy to deal with.
+				$context['alert_groups'][$id]['group_config'][$pos]['label'] = $txt['alert_opt_' . $opts[1]];
+
+				// Make sure we have a label position that is sane.
+				if (empty($opts['position']) || !in_array($opts['position'], ['before', 'after'])) {
+					$context['alert_groups'][$id]['group_config'][$pos]['position'] = 'before';
+				}
+
+				// Export the value cleanly.
+				$context['alert_groups'][$id]['group_config'][$pos]['value'] = 0;
+				if (isset($context['alert_prefs'][$opts[1]]))
+					$context['alert_groups'][$id]['group_config'][$pos]['value'] = $context['alert_prefs'][$opts[1]];
+			}
+		}
+
+		// Fix up the options in this group.
+		foreach ($group as $alert_id => $alert_option)
+		{
+			$alert_option['label'] = $txt['alert_' . $alert_id];
+			foreach ($context['alert_bits'] as $alert_type => $bitmask)
+			{
+				if ($alert_option[$alert_type] == 'yes')
+				{
+					$this_value = isset($context['alert_prefs'][$alert_id]) ? $context['alert_prefs'][$alert_id] : 0;
+					$alert_option[$alert_type] = $this_value & $bitmask ? 'yes' : 'no';
+				}
+			}
+			$context['alert_groups'][$id]['options'][$alert_id] = $alert_option;
+		}
+	}
+
+	$context['sub_template'] = 'profile_alert_configuration';
 }
 
 /**
