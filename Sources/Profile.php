@@ -671,7 +671,7 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 
 	// Set the template for this area and add the profile layer.
 	$context['sub_template'] = $profile_include_data['function'];
-	$context['template_layers'][] = 'profile';
+	StoryBB\Template::add_layer('profile');
 
 	// All the subactions that require a user password in order to validate.
 	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
