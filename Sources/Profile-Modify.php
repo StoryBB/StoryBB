@@ -3725,7 +3725,7 @@ function groupMembership($memID)
 			'desc' => $row['description'],
 			'color' => $row['online_color'],
 			'type' => $row['group_type'],
-			'pending' => $row['pending'],
+			'pending' => (bool) $row['pending'],
 			'is_primary' => $row['id_group'] == $context['primary_group'],
 			'can_be_primary' => $row['hidden'] != 2,
 			// Anything more than this needs to be done through account settings for security.
@@ -3752,6 +3752,9 @@ function groupMembership($memID)
 	// In the special case that someone is requesting membership of a group, setup some special context vars.
 	if (isset($_REQUEST['request']) && isset($context['groups']['available'][(int) $_REQUEST['request']]) && $context['groups']['available'][(int) $_REQUEST['request']]['type'] == 2)
 		$context['group_request'] = $context['groups']['available'][(int) $_REQUEST['request']];
+
+	$context['highlight_primary'] = isset($context['groups']['member'][$context['primary_group']]);
+	$context['sub_template'] = 'profile_group_request';
 }
 
 /**
