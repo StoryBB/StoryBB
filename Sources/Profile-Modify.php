@@ -2696,7 +2696,7 @@ function ignoreboards($memID)
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'child_level' => $row['child_level'],
-			'selected' => $row['is_ignored'],
+			'selected' => (bool) $row['is_ignored'],
 		);
 	}
 	$smcFunc['db_free_result']($request);
@@ -2732,6 +2732,9 @@ function ignoreboards($memID)
 		else
 			$context['board_columns'][] = array();
 	}
+
+	$context['split_categories'] = array_chunk($context['categories'], ceil(count($context['categories']) / 2), true);
+	$context['sub_template'] = 'profile_ignoreboards';
 
 	loadThemeOptions($memID);
 }
