@@ -21,6 +21,7 @@ class Template
 	private static $layout_loaded = '';
 	private static $layout_template = '';
 	private static $layout_source = '';
+	private static $layers = [];
 
 	private static $debug = [
 		'template' => [],
@@ -138,9 +139,10 @@ class Template
 	 * Loads a template partial.
 	 *
 	 * @param string $partial Partial name, without root path or extension
+	 * @param bool $fatal_on_fail Whether to fail with a fatal error if the partial could not be loaded, or return empty.
 	 * @return string Partial template contents
 	 */
-	public static function load_partial($partial) {
+	public static function load_partial($partial, $fatal_on_fail = true): string {
 		global $settings;
 
 		$paths = [
@@ -155,7 +157,10 @@ class Template
 			}
 		}
 
-		fatal_error('Could not load partial ' . $partial);
+		if ($fatal_on_fail)
+			fatal_error('Could not load partial ' . $partial);
+
+		return '';
 	}
 
 	public static function compile(string $template, array $options = [], string $cache_id = '') {
@@ -238,6 +243,65 @@ class Template
 		echo self::prepare($phpStr, $data);
 	}
 
+	public static function render_page(string $content) {
+		global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $user_info, $options;
+
+		$context['session_flash'] = session_flash_retrieve();
+
+		$template_above = '';
+		$template_below = '';
+		if (!empty(self::$layers))
+		{
+			foreach (self::$layers as $layer)
+			{
+				$template = self::load_partial($layer . '_above', false);
+				if ($template)
+				{
+					$phpStr = self::compile($template, [], 'partial-' . $layer . '_above-' . self::get_theme_id('partials', $layer . '_above'));
+					$template_above .= new \LightnCandy\SafeString(self::prepare($phpStr, [
+						'context' => $context,
+						'modSettings' => $modSettings,
+						'settings' => $settings,
+						'modSettings' => $modSettings,
+						'txt' => $txt,
+						'scripturl' => $scripturl,
+						'options' => $options,
+						'user_info' => $user_info,
+					]));
+				}
+
+				$template = self::load_partial($layer . '_below', false);
+				if ($template)
+				{
+					$phpStr = self::compile($template, [], 'partial-' . $layer . 'below-' . self::get_theme_id('partials', $layer . 'below'));
+					$template_below .= new \LightnCandy\SafeString(self::prepare($phpStr, [
+						'context' => $context,
+						'modSettings' => $modSettings,
+						'settings' => $settings,
+						'modSettings' => $modSettings,
+						'txt' => $txt,
+						'scripturl' => $scripturl,
+						'options' => $options,
+						'user_info' => $user_info,
+					]));
+				}
+			}
+		}
+
+		self::render([
+			'content' => $template_above . $content . $template_below,
+			'context' => $context,
+			'txt' => $txt,
+			'scripturl' => $scripturl,
+			'settings' => $settings,
+			'maintenance' => $maintenance,
+			'modSettings' => $modSettings,
+			'options' => $options,
+			'user_info' => $user_info,
+			'copyright' => theme_copyright(),
+		]);
+	}
+
 	public static function add(string $name, string $position = 'after', $relative = null)
 	{
 		global $context;
@@ -290,6 +354,16 @@ class Template
 			return (int) $settings['theme_id'];
 
 		return 1; // Default theme ultimately used.
+	}
+
+	public static function add_layer(string $template_layer)
+	{
+		self::$layers[] = $template_layer;
+	}
+
+	public static function remove_all_layers()
+	{
+		self::$layers = [];
 	}
 }
 
