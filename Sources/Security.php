@@ -391,21 +391,9 @@ function is_not_banned($forceCheck = false)
 		banPermissions();
 }
 
-/**
- * Fix permissions according to ban status.
- * Applies any states of banning by removing permissions the user cannot have.
- */
-function banPermissions()
+function permissions_denied_by_mute()
 {
-	global $user_info, $sourcedir, $modSettings, $context;
-
-	// Somehow they got here, at least take away all permissions...
-	if (isset($_SESSION['ban']['cannot_access']))
-		$user_info['permissions'] = array();
-	// Okay, well, you can watch, but don't touch a thing.
-	elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $user_info['warning']))
-	{
-		$denied_permissions = array(
+	$denied_permissions = array(
 			'pm_send',
 			'poll_post',
 			'poll_add_own', 'poll_add_any',
@@ -426,20 +414,44 @@ function banPermissions()
 			'remove_own', 'remove_any',
 			'post_unapproved_topics', 'post_unapproved_replies_own', 'post_unapproved_replies_any',
 		);
-		call_integration_hook('integrate_post_ban_permissions', array(&$denied_permissions));
-		$user_info['permissions'] = array_diff($user_info['permissions'], $denied_permissions);
+	call_integration_hook('integrate_post_ban_permissions', array(&$denied_permissions));
+	return $denied_permissions;
+}
+
+function permissions_denied_by_moderate()
+{
+	// Work out what permissions should change...
+	$permission_change = array(
+		'post_new' => 'post_unapproved_topics',
+		'post_reply_own' => 'post_unapproved_replies_own',
+		'post_reply_any' => 'post_unapproved_replies_any',
+		'post_attachment' => 'post_unapproved_attachments',
+	);
+	call_integration_hook('integrate_warn_permissions', array(&$permission_change));
+	return $permission_change;
+}
+
+/**
+ * Fix permissions according to ban status.
+ * Applies any states of banning by removing permissions the user cannot have.
+ */
+function banPermissions()
+{
+	global $user_info, $sourcedir, $modSettings, $context;
+
+	// Somehow they got here, at least take away all permissions...
+	if (isset($_SESSION['ban']['cannot_access']))
+		$user_info['permissions'] = array();
+	// Okay, well, you can watch, but don't touch a thing.
+	elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $user_info['warning']))
+	{
+		$user_info['permissions'] = array_diff($user_info['permissions'], permissions_denied_by_mute());
 	}
 	// Are they absolutely under moderation?
 	elseif (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $user_info['warning'])
 	{
 		// Work out what permissions should change...
-		$permission_change = array(
-			'post_new' => 'post_unapproved_topics',
-			'post_reply_own' => 'post_unapproved_replies_own',
-			'post_reply_any' => 'post_unapproved_replies_any',
-			'post_attachment' => 'post_unapproved_attachments',
-		);
-		call_integration_hook('integrate_warn_permissions', array(&$permission_change));
+		$permission_change = permissions_denied_by_moderate();
 		foreach ($permission_change as $old => $new)
 		{
 			if (!in_array($old, $user_info['permissions']))
@@ -1165,6 +1177,44 @@ function charactersAllowedTo($permission, $boards = null, $character = 0)
 						foreach ($board_removals[$profile] as $removal)
 						{
 							unset ($board_permissions[$group][$profile][$removal]);
+						}
+					}
+				}
+
+				// Now apply any relevant permissions from bans etc. (separately)
+				if (isset($_SESSION['ban']['cannot_access']))
+				{
+					$board_permissions = [];
+				}
+				elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $user_info['warning']))
+				{
+					$mute = permissions_denied_by_mute();
+					foreach ($board_permissions as $group => $profile_list)
+					{
+						foreach (array_keys($profile_list) as $profile)
+						{
+							foreach ($mute as $mute_perm)
+							{
+								unset ($board_permissions[$group][$profile][$mute_perm]);
+							}
+						}
+					}
+				}
+				elseif (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $user_info['warning'])
+				{
+					$moderate = permissions_denied_by_moderate();
+					foreach ($board_permissions as $group => $profile_list)
+					{
+						foreach (array_keys($profile_list) as $profile)
+						{
+							foreach ($moderate as $old => $new)
+							{
+								if (isset($board_permissions[$group][$profile][$old]))
+								{
+									unset ($board_permissions[$group][$profile][$old]);
+									$board_permissions[$group][$profile][$new] = true;
+								}
+							}
 						}
 					}
 				}
