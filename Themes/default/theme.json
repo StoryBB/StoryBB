@@ -59,6 +59,10 @@
             "type": "number"
         },
         {
+            "id": "ph_sub_board_display",
+            "label": "ph_sub_board_display"
+        },
+        {
             "id": "show_stats_index",
             "label": "show_stats_index"
         },

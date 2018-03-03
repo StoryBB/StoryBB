@@ -486,6 +486,9 @@
 	.board_stats {
 		display: none;
 	}
+	.info {
+		width: calc(100% - 65px);
+	}
 	div.lastpost {
 		width: 100%;
 		padding: 0;
@@ -500,6 +503,12 @@
 	}
 	span.postby {
 		display: inline-block;
+	}
+	.children div {
+		width: 100%;
+	}
+	.lastpost img.avatar {
+		margin: 0 10px;
 	}
 
 	/* MessageIndex */

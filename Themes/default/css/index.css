@@ -107,7 +107,7 @@ fieldset legend {
 /* Define strong as bold, and em as italics */
 /* Note: in some particular places, strong has been redefined as font-weight: 600; */
 /* This gives a better effect for those areas, and will default to bold for fonts which do not support numerical font-weight. */
-strong {
+strong, .strong {
 	font-weight: bold;
 	color: #444;
 }
@@ -2933,8 +2933,7 @@ h3 .collapse {
 }
 /* Child boards */
 .children {
-	border-top: 1px solid #DDD;
-	padding: 5px;
+	padding: 7px 0;
 }
 .children p {
 	font-size: 0.9em;
@@ -4195,4 +4194,18 @@ div#char_theme_wrapper,
 }
 .collapsed:hover {
 	opacity: 1;
+}
+
+/* Sub-Board tests (PH) */
+.ph_sub_2p div {
+	display: inline-block;
+	width: calc(50% - 5px);
+}
+.ph_sub_4p div {
+	display: inline-block;
+	width: calc(25% - 5px);
+}
+.ph_sub_redirect:before,
+.ph_sub_new:before {
+	content: "(PH)";
 }
