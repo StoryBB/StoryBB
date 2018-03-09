@@ -1,0 +1,23 @@
+FROM php:7.2.3-cli-stretch as builder
+COPY ./ /data/StoryBB
+WORKDIR /data/StoryBB/docker
+RUN chmod a+x /data/StoryBB/docker/makeMySqlInstall.php \
+	&& cp /data/StoryBB/docker/Settings_buildMysql.php /data/StoryBB/Settings.php \
+	&& php /data/StoryBB/docker/makeMySqlInstall.php
+
+FROM mysql:5
+COPY --from=builder /data/StoryBB/docker/install_mysql_docker.sql /data/StoryBB/install.sql
+COPY ./docker/init-db.sh /data/StoryBB/init-db.sh
+ENV MYSQL_ROOT_PASSWORD=testingPurposesOnly
+
+# We need to avoid putting the data in a volume so it doesn't go away
+COPY ./docker/mysql-storybb.cnf /etc/mysql/conf.d/mysql-storybb.cnf
+RUN chmod 644 /etc/mysql/conf.d/mysql-storybb.cnf \
+	&& mkdir -p /var/log/mysql \
+	&& chown mysql /var/log/mysql \
+	&& mkdir –p /var/lib/mysql-data/ \
+	&& chown mysql /var/lib/mysql-data
+
+#Now import the data
+RUN su - mysql -c '/usr/bin/mysqld_safe --initialize-insecure' \
+	&& /data/StoryBB/init-db.sh

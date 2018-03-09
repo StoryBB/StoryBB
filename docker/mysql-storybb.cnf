@@ -1,0 +1,8 @@
+[mysqld]
+datadir = /var/lib/mysql-data
+performance_schema = OFF
+innodb_flush_log_at_trx_commit = 0
+general_log = on
+log-error = /var/log/mysql/mysql_err.log
+#log-bin = /var/log/mysql/mysql_bin.log
+bind-address = 0.0.0.0
