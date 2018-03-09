@@ -1,0 +1,8 @@
+version: '2'
+services:
+  storybb:
+    image: sockdrawer/storybb:latest
+    depends_on:
+      - mysql
+  mysql:
+    image: sockdrawer/storybb:mysql-testData
