@@ -16,8 +16,13 @@ RUN chmod 644 /etc/mysql/conf.d/mysql-storybb.cnf \
 	&& mkdir -p /var/log/mysql \
 	&& chown mysql /var/log/mysql \
 	&& mkdir –p /var/lib/mysql-data/ \
-	&& chown mysql /var/lib/mysql-data
+	&& chown mysql /var/lib/mysql-data \
+  && rm /etc/mysql/conf.d/docker.cnf \
+  && rm /etc/mysql/conf.d/mysql.cnf \
+  && rm /etc/mysql/conf.d/mysqldump.cnf
 
 #Now import the data
-RUN su - mysql -c '/usr/bin/mysqld_safe --initialize-insecure' \
+RUN su - mysql -c '/usr/bin/mysqld_safe --defaults-file=/etc/mysql/conf.d/mysql-storybb.cnf --initialize-insecure' \
 	&& /data/StoryBB/init-db.sh
+ 
+CMD ["--defaults-file=/etc/mysql/conf.d/mysql-storybb.cnf"]

@@ -14,7 +14,7 @@ require_once($boarddir . '/Themes/default/languages/Install.english.php');
 
 $output = "DROP DATABASE IF EXISTS `$db_name`;\n";
 $output .= "CREATE DATABASE `$db_name`;\n";
-$output .= "USE `$db_name;`\n";
+$output .= "USE `$db_name`;\n";
 
 $replaces = array(
     '{$db_prefix}' => $db_prefix,
