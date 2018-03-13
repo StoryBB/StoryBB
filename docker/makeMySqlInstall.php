@@ -17,7 +17,7 @@ $output .= "CREATE DATABASE `$db_name`;\n";
 $output .= "USE `$db_name;`\n";
 
 $replaces = array(
-    '{$db_prefix}' => 'behat_' . $db_prefix,
+    '{$db_prefix}' => $db_prefix,
     '{$attachdir}' => json_encode(array(1 => addslashes($boarddir . '/attachments'))),
     '{$boarddir}' => addslashes($boarddir),
     '{$boardurl}' => $boardurl,
@@ -46,28 +46,17 @@ $replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
 // Read in the SQL.  Turn this on and that off... internationalize... etc.
 $sql_lines = explode("\n", strtr(implode(' ', file($boarddir . '/other/install_' . $version . '_mysql.sql')), $replaces));
 
+$current_statement = "";
 
 foreach ($sql_lines as $count => $line)
 {
     // No comments allowed!
-    if (substr(trim($line), 0, 1) != '#')
-        $current_statement .= "\n" . rtrim($line) . "\n";
+    if (trim($line) == '' || substr(trim($line), 0, 1) == '#') continue;
     
-    // Does this table already exist?  If so, don't insert more data into it!
-    if (preg_match('~^\s*INSERT INTO ([^\s\n\r]+?)~', $current_statement, $match) != 0 && in_array($match[1], $exists))
-    {
-        preg_match_all('~\)[,;]~', $current_statement, $matches);
-        if (!empty($matches[0]))
-            $incontext['sql_results']['insert_dups'] += count($matches[0]);
-        else
-            $incontext['sql_results']['insert_dups']++;
-
-        $current_statement = '';
-        continue;
-    }
+    $current_statement .= "\n" . rtrim($line);
 
     $output .= $current_statement;
-
+    $current_statement = '';
 }
 
 file_put_contents("install_mysql_docker.sql", $output);
