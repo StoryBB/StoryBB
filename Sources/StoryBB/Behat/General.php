@@ -347,10 +347,10 @@ class General extends RawMinkContext implements Context
                 $request = $smcFunc['db_query']('', '
                     SELECT id_board, id_cat
                     FROM {db_prefix}boards
-                    WHERE board_name = {string:board_name}
+                    WHERE name = {string:board_name}
                     LIMIT 1',
                     [
-                        'board_name' => $board_to_create['board name']
+                        'board_name' => $board_to_create['board parent']
                     ]
                 );
                 if ($smcFunc['db_num_rows']($request))
