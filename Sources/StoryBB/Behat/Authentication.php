@@ -57,3 +57,5 @@ class Authentication extends RawMinkContext implements Context
         $this->getSession()->reset();
     }
 }
+
+?>
