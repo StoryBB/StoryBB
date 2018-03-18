@@ -237,9 +237,10 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
  * @param string $table_name The name of the table to drop
  * @param array $parameters Not used at the moment
  * @param string $error
+ * @param bool $bypass_checks
  * @return boolean Whether or not the operation was successful
  */
-function smf_db_drop_table($table_name, $parameters = array(), $error = 'fatal')
+function smf_db_drop_table($table_name, $parameters = array(), $error = 'fatal', $bypass_checks = false)
 {
 	global $reservedTables, $smcFunc, $db_prefix;
 
@@ -255,7 +256,7 @@ function smf_db_drop_table($table_name, $parameters = array(), $error = 'fatal')
 		return false;
 
 	// Does it exist?
-	if (in_array($full_table_name, $smcFunc['db_list_tables']()))
+	if ($bypass_checks || in_array($full_table_name, $smcFunc['db_list_tables']()))
 	{
 		$query = 'DROP TABLE ' . $table_name;
 		$smcFunc['db_query']('',
