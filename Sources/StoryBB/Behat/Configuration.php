@@ -35,8 +35,12 @@ class Configuration extends RawMinkContext implements Context
     public function theFollowingSettingsAreSet(TableNode $table)
     {
     	$settings = $table->getHash();
-    	foreach ($settings as $setting) {
-    		updateSettings([$setting->variable_name => $setting->value]);
+    	foreach ($settings as $setting)
+        {
+            if (isset($setting['variable'], $setting['value']))
+            {
+        		updateSettings([$setting['variable'] => $setting['value']]);
+            }
     	}
     }
 }
