@@ -38,7 +38,7 @@ class Text
 			array_pop($key);
 		    $key = implode('', $key);
 		}
-		return $txt[$key];
+		return isset($txt[$key]) ? $txt[$key] : $key;
 	}
 
 	/**

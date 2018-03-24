@@ -2831,7 +2831,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 				]);
 			}
 		}
-		render_page($content); //found in Subs.php, this renders the layout around the page
+		StoryBB\Template::render_page($content);
 
 		// Anything special to put out?
 		if (!empty($context['insert_after_template']) && !isset($_REQUEST['xml']))
@@ -2861,27 +2861,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index)
 		exit;
-}
-
-function render_page($content) {
-	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count, $user_info, $options;
-
-	$context['load_queries'] = $db_count;
-
-	$context['session_flash'] = session_flash_retrieve();
-
-	StoryBB\Template::render([
-		'content' => $content,
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'settings' => $settings,
-		'maintenance' => $maintenance,
-		'modSettings' => $modSettings,
-		'options' => $options,
-		'user_info' => $user_info,
-		'copyright' => theme_copyright(),
-	]);
 }
 
 function locale_helper($lang_locale) 

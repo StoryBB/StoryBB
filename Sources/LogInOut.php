@@ -38,6 +38,7 @@ function Login()
 	{
 		$context['from_ajax'] = true;
 		$context['template_layers'] = array();
+		StoryBB\Template::remove_all_layers();
 	}
 
 	// Get the template ready.... not really much else to do.
@@ -90,6 +91,7 @@ function Login2()
 	{
 		$context['from_ajax'] = true;
 		$context['template_layers'] = array();
+		StoryBB\Template::remove_all_layers();
 	}
 
 	if (isset($_GET['sa']) && $_GET['sa'] == 'salt' && !$user_info['is_guest'])
@@ -429,6 +431,7 @@ function LoginTFA()
 	{
 		$context['from_ajax'] = true;
 		$context['template_layers'] = array();
+		StoryBB\Template::remove_all_layers();
 	}
 
 	if (!empty($_POST['tfa_code']) && empty($_POST['tfa_backup']))

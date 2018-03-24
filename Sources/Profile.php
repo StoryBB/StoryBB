@@ -29,7 +29,6 @@ function ModifyProfile($post_errors = array())
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))
 		loadLanguage('Profile+Drafts');
-	loadTemplate('Profile');
 
 	require_once($sourcedir . '/Subs-Menu.php');
 
@@ -671,7 +670,7 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 
 	// Set the template for this area and add the profile layer.
 	$context['sub_template'] = $profile_include_data['function'];
-	$context['template_layers'][] = 'profile';
+	StoryBB\Template::add_layer('profile');
 
 	// All the subactions that require a user password in order to validate.
 	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
@@ -860,6 +859,7 @@ function profile_popup($memID)
 	// We only want to output our little layer here.
 	$template = StoryBB\Template::set_layout('raw');
 	$context['template_layers'] = [];
+	StoryBB\Template::remove_all_layers();
 
 	// This list will pull from the master list wherever possible. Hopefully it should be clear what does what.
 	$profile_items = array(
@@ -947,6 +947,7 @@ function alerts_popup($memID)
 
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
+	StoryBB\Template::remove_all_layers();
 	$template = StoryBB\Template::set_layout('raw');
 
 	$context['unread_alerts'] = array();

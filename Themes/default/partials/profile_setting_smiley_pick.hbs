@@ -1,0 +1,12 @@
+		<dt>
+			<strong><label for="smiley_set">{{{txt.smileys_current}}}:</label></strong>
+		</dt>
+		<dd>
+			<select name="smiley_set" id="smiley_set" onchange="document.getElementById('smileypr').src = this.selectedIndex == 0 ? '{{{settings.images_url}}}/blank.png' : '{{{modSettings.smileys_url}}}/' + (this.selectedIndex != 1 ? this.options[this.selectedIndex].value : '{{#if settings.smiley_sets_default}}{{{settings.smiley_sets_default}}}{{else}}{{{modSettings.smiley_sets_default}}}{{/if}}') + '/smiley.gif';">
+				{{#each context.smiley_sets}}
+				<option value="{{id}}"{{#if selected}} selected{{/if}}>{{{name}}}</option>
+				{{/each}}
+			</select>
+			<img id="smileypr" class="centericon" src="
+			{{#if (neq context.member.smiley_set.id 'none')}}{{modSettings.smileys_url}}/{{#if (neq context.member.smiley_set.id '')}}{{context.member.smiley_set.id}}{{else}}{{#if settings.smiley_sets_default}}{{settings.smiley_sets_default}}{{else}}{{modSettings.smiley_sets_default}}{{/if}}{{/if}}/smiley.gif{{else}}{{settings.images_url}}/blank.png{{/if}}" alt=":)"  style="padding-left: 20px;">
+		</dd>

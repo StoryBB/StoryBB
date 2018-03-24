@@ -419,6 +419,7 @@ function ViewFile()
 
 	StoryBB\Template::set_layout('raw');
 	$context['template_layers'] = array();
+	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'error_show_file';
 
 }
