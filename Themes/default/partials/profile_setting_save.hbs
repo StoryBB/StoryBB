@@ -1,0 +1,23 @@
+		<hr>
+
+		{{! Only show the password box if it's actually needed. }}
+		{{#if context.require_password}}
+			<dl class="settings">
+				<dt>
+					<strong{{#if (or context.modify_error.bad_password context.modify_error.no_password)}} class="error"{{/if}}>{{{txt.current_password}}}: </strong><br>
+					<span class="smalltext">{{{txt.required_security_reasons}}}</span>
+				</dt>
+				<dd>
+					<input type="password" name="oldpasswrd" size="20" style="margin-right: 4ex;" class="input_password">
+				</dd>
+			</dl>
+		{{/if}}
+
+		<div class="righttext">
+			{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
+			{{session_form}}
+
+			<input type="submit" value="{{{txt.change_profile}}}" class="button_submit">
+			<input type="hidden" name="u" value="{{context.id_member}}">
+			<input type="hidden" name="sa" value="{{context.menu_item_selected}}">
+		</div>

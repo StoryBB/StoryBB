@@ -2193,7 +2193,6 @@ function ModifyAlertsSettings()
 	// Specify our action since we'll want to post back here instead of the profile
 	$context['action'] = 'action=admin;area=featuresettings;sa=alerts;'. $context['session_var'] .'='. $context['session_id'];
 
-	loadTemplate('Profile');
 	loadLanguage('Profile');
 
 	include_once($sourcedir . '/Profile-Modify.php');
@@ -2203,7 +2202,7 @@ function ModifyAlertsSettings()
 
 	// Override the description
 	$context['description'] = $txt['notifications_desc'];
-	$context['sub_template'] = 'alert_configuration';
+	$context['sub_template'] = 'profile_alert_configuration';
 }
 
 ?>

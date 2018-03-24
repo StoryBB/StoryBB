@@ -523,6 +523,7 @@ class Likes
 		loadLanguage('Help'); // For the close window button.
 		$context['template_layers'] = array();
 		StoryBB\Template::set_layout('popup');
+		StoryBB\Template::remove_all_layers();
 		$context['popup_id'] = 'likes_popup';
 		$context['sub_template'] = 'likes_popup';
 
@@ -552,6 +553,7 @@ class Likes
 		// Set everything up for display.
 		$context['template_layers'] = array();
 		StoryBB\Template::set_layout('raw');
+		StoryBB\Template::remove_all_layers();
 
 		// If there are any errors, process them first.
 		if ($this->_error)

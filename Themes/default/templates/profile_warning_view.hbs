@@ -1,0 +1,42 @@
+	{{! Viewing a member's warnings }}
+	<div class="cat_bar">
+		<h3 class="catbg profile_hd">
+			{{textTemplate txt.profile_viewwarning_for_user context.member.name}}
+		</h3>
+	</div>
+	<p class="information">{{{txt.viewWarning_help}}}</p>
+	<div class="windowbg">
+		<dl class="settings">
+			<dt>
+				<strong>{{{txt.profile_warning_name}}}:</strong>
+			</dt>
+			<dd>
+				{{{context.member.name}}}
+			</dd>
+			<dt>
+				<strong>{{{txt.profile_warning_level}}}:</strong>
+			</dt>
+			<dd>
+				<div>
+					<div>
+						<div id="warning_container">
+							<div id="warning_text">{{context.member.warning}}%</div>
+							<div id="warning_progress" class="{{context.current_class}}" style="width: {{context.member.warning}}%;">&nbsp;</div>
+						</div>
+					</div>
+				</div>
+			</dd>
+
+			{{! There's some impact of this? }}
+			{{#if context.current_level_effects}}
+			<dt>
+				<strong>{{{txt.profile_viewwarning_impact}}}:</strong>
+			</dt>
+			<dd>
+				{{{context.current_level_effects}}}
+			</dd>
+			{{/if}}
+		</dl>
+	</div>
+
+	{{genericlist 'view_warnings'}}

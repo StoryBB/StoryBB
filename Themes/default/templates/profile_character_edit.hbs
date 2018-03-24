@@ -89,7 +89,6 @@
 							<script>
 								var avatar = document.getElementById("avatar");
 								var selavatar = {{{json context.avatar_selected}}};
-								var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
 								var file = document.getElementById("file");
 								var maxHeight = {{#if (gt modSettings.avatar_max_height '0')}}{{modSettings.avatar_max_height}}{{else}}0{{/if}};
 								var maxWidth = {{#if (gt modSettings.avatar_max_width '0')}}{{modSettings.avatar_max_width}}{{else}}0{{/if}};
@@ -120,7 +119,7 @@
 							<div id="avatar_gravatar">
 								<img src="{{{context.character.avatar}}}" alt="">
 
-								{{#if modSettings.gravatarAllowExtraEmail}}
+								{{#if (eq_coerce modSettings.gravatarAllowExtraEmail 1)}}
 									<div class="smalltext">{{{txt.gravatar_alternateEmail}}}</div>
 									<input type="text" name="gravatarEmail" id="gravatarEmail" size="45" value="{{#if (and (not context.character.avatar_settings.is_url) (neq context.character.avatar_settings.external context.member.email_address))}}{{{context.character.avatar}}}{{/if}}" class="input_text">
 								{{else}}
