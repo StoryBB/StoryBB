@@ -1,17 +1,17 @@
 [
     {
         "name": "symfony/polyfill-iconv",
-        "version": "v1.5.0",
-        "version_normalized": "1.5.0.0",
+        "version": "v1.7.0",
+        "version_normalized": "1.7.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-iconv.git",
-            "reference": "1ea0e08453819ecc7130e1fb0ee10862c2f33ed0"
+            "reference": "bd515d8f392730c833bc1ba993a4f598da64fa5b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/1ea0e08453819ecc7130e1fb0ee10862c2f33ed0",
-            "reference": "1ea0e08453819ecc7130e1fb0ee10862c2f33ed0",
+            "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/bd515d8f392730c833bc1ba993a4f598da64fa5b",
+            "reference": "bd515d8f392730c833bc1ba993a4f598da64fa5b",
             "shasum": ""
         },
         "require": {
@@ -20,11 +20,11 @@
         "suggest": {
             "ext-iconv": "For best performance"
         },
-        "time": "2017-06-14T15:44:48+00:00",
+        "time": "2018-01-30T19:27:44+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.5-dev"
+                "dev-master": "1.7-dev"
             }
         },
         "installation-source": "dist",
@@ -62,17 +62,17 @@
     },
     {
         "name": "symfony/polyfill-mbstring",
-        "version": "v1.5.0",
-        "version_normalized": "1.5.0.0",
+        "version": "v1.7.0",
+        "version_normalized": "1.7.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/polyfill-mbstring.git",
-            "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803"
+            "reference": "78be803ce01e55d3491c1397cf1c64beb9c1b63b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
-            "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
+            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/78be803ce01e55d3491c1397cf1c64beb9c1b63b",
+            "reference": "78be803ce01e55d3491c1397cf1c64beb9c1b63b",
             "shasum": ""
         },
         "require": {
@@ -81,11 +81,11 @@
         "suggest": {
             "ext-mbstring": "For best performance"
         },
-        "time": "2017-06-14T15:44:48+00:00",
+        "time": "2018-01-30T19:27:44+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.5-dev"
+                "dev-master": "1.7-dev"
             }
         },
         "installation-source": "dist",
