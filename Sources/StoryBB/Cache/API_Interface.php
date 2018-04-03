@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * This interface specifies what is required for short-term cache API implementations.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -13,6 +15,9 @@ namespace StoryBB\Cache;
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+/**
+ * All cache backends supported by StoryBB are required to implement this interface.
+ */
 interface API_Interface
 {
 	/**

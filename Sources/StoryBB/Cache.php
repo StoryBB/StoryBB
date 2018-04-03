@@ -1,6 +1,7 @@
 <?php
-
 /**
+ * General class for handling the short-term cache available to StoryBB.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -13,6 +14,9 @@ namespace StoryBB;
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+/**
+ * A singleton for containing the current cache backend and accessing it.
+ */
 class Cache
 {
 	private static $cacheAPI = null;
