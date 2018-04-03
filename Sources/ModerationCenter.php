@@ -925,6 +925,7 @@ function ShowNotice()
 	StoryBB\Template::set_layout('popup');
 	$context['sub_template'] = 'modcenter_notice_show';
 	$context['template_layers'] = array();
+	StoryBB\Template::remove_all_layers();
 
 	// @todo Assumes nothing needs permission more than accessing moderation center!
 	$id_notice = (int) $_GET['nid'];

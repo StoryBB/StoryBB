@@ -635,7 +635,7 @@ function updateSettings($changeArray, $update = false)
  */
 function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
 {
-	global $modSettings, $context, $smcFunc, $settings, $txt;
+	global $modSettings, $context, $smcFunc, $settings, $txt, $scripturl;
 
 	// Save whether $start was less than 0 or not.
 	$start = (int) $start;
@@ -653,90 +653,66 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 
 	$context['current_page'] = $start / $num_per_page;
 
-	// Define some default page index settings if we don't already have it...
-	if (!isset($settings['page_index']))
-	{
-		// This defines the formatting for the page indexes used throughout the forum.
-		$settings['page_index'] = array(
-			'extra_before' => '<span class="pages">{{{txt.pages}}}</span>',
-			'previous_page' => '<span class="generic_icons previous_page"></span>',
-			'current_page' => '<span class="current_page">%1$d</span> ',
-			'page' => '<a class="navPages" href="{URL}">%2$s</a> ',
-			'expand_pages' => '<span class="expand_pages" onclick="expandPages(this, {LINK}, {FIRST_PAGE}, {LAST_PAGE}, {PER_PAGE});"> ... </span>',
-			'next_page' => '<span class="generic_icons next_page"></span>',
-			'extra_after' => '',
-		);
-	}
-
-	$base_link = strtr($settings['page_index']['page'], array('{URL}' => $flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d'));
-	$pageindex = str_replace('{{{txt.pages}}}', $txt['pages'], $settings['page_index']['extra_before']);
-
-
 	// Number of items either side of the selected item.
 	$PageContiguous = 2;
 
-		// Show the "prev page" link. (>prev page< 1 ... 6 7 [8] 9 10 ... 15 next page)
-		if (!empty($start) && $show_prevnext)
-			$pageindex .= sprintf($base_link, $start - $num_per_page, $settings['page_index']['previous_page']);
-		else
-			$pageindex .= '';
+	$data = [
+		'context' => $context,
+		'scripturl' => $scripturl,
+		'txt' => $txt,
+		'base_url' => $flexible_start ? $base_url : strtr($base_url, ['%' => '%%']) . ';start=%1$d',
+		'previous_page' => -1,
+		'next_page' => -1,
+		'start' => $start,
+		'num_per_page' => $num_per_page,
+		'continuous_numbers' => $PageContiguous,
+		'range_before' => [],
+		'range_after' => [],
+		'range_all_except_ends' => [],
+		'max_index' => (int) (($max_value - 1) / $num_per_page) * $num_per_page,
+		'max_pages' => ceil(($max_value - 1) / $num_per_page),
+		'current_page' => $start / $num_per_page,
+		'current_page_display' => $start / $num_per_page + 1,
+		'actually_on_current_page' => !$start_invalid,
+	];
 
-		// Show the first page. (prev page >1< ... 6 7 [8] 9 10 ... 15)
-		if ($start > $num_per_page * $PageContiguous)
-			$pageindex .= sprintf($base_link, 0, '1');
+	// Make some data available to the template: whether there are previous/next pages.
+	if ($show_prevnext)
+	{
+		if (!empty($start))
+			$data['previous_page'] = $start - $num_per_page;
 
-		// Show the ... after the first page.  (prev page 1 >...< 6 7 [8] 9 10 ... 15 next page)
-		if ($start > $num_per_page * ($PageContiguous + 1))
-			$pageindex .= strtr($settings['page_index']['expand_pages'], array(
-				'{LINK}' => JavaScriptEscape($smcFunc['htmlspecialchars']($base_link)),
-				'{FIRST_PAGE}' => $num_per_page,
-				'{LAST_PAGE}' => $start - $num_per_page * $PageContiguous,
-				'{PER_PAGE}' => $num_per_page,
-			));
+		if ($start != $data['max_index'])
+			$data['next_page'] = $start + $num_per_page;
+	}
 
-		// Show the pages before the current one. (prev page 1 ... >6 7< [8] 9 10 ... 15 next page)
-		for ($nCont = $PageContiguous; $nCont >= 1; $nCont--)
-			if ($start >= $num_per_page * $nCont)
-			{
-				$tmpStart = $start - $num_per_page * $nCont;
-				$pageindex .= sprintf($base_link, $tmpStart, $tmpStart / $num_per_page + 1);
-			}
+	// If there's only one page, or two pages, first/last are already covered.
+	// But if not, we need to expose the rest to the template conveniently.
+	if ($data['max_pages'] >= 3)
+	{
+		foreach(range(2, $data['max_pages'] - 1) as $page)
+		{
+			$data['range_all_except_ends'][$page] = $num_per_page * ($page - 1);
+		}
+	}
 
-		// Show the current page. (prev page 1 ... 6 7 >[8]< 9 10 ... 15 next page)
-		if (!$start_invalid)
-			$pageindex .= sprintf($settings['page_index']['current_page'], $start / $num_per_page + 1);
-		else
-			$pageindex .= sprintf($base_link, $start, $start / $num_per_page + 1);
+	// Assuming we're doing the 1 ... 6 7 [8] type stuff, we need to outline the links for 6 and 7. And the ones after the current page, too.
+	for ($nCont = $PageContiguous; $nCont >= 1; $nCont--)
+		if ($start >= $num_per_page * $nCont)
+		{
+			$tmpStart = $start - $num_per_page * $nCont;
+			$data['range_before'][$tmpStart / $num_per_page + 1] = $tmpStart;
+		}
 
-		// Show the pages after the current one... (prev page 1 ... 6 7 [8] >9 10< ... 15 next page)
-		$tmpMaxPages = (int) (($max_value - 1) / $num_per_page) * $num_per_page;
-		for ($nCont = 1; $nCont <= $PageContiguous; $nCont++)
-			if ($start + $num_per_page * $nCont <= $tmpMaxPages)
-			{
-				$tmpStart = $start + $num_per_page * $nCont;
-				$pageindex .= sprintf($base_link, $tmpStart, $tmpStart / $num_per_page + 1);
-			}
+	for ($nCont = 1; $nCont <= $PageContiguous; $nCont++)
+		if ($start + $num_per_page * $nCont <= $data['max_index'])
+		{
+			$tmpStart = $start + $num_per_page * $nCont;
+			$data['range_after'][$tmpStart / $num_per_page + 1] = $tmpStart;
+		}
 
-		// Show the '...' part near the end. (prev page 1 ... 6 7 [8] 9 10 >...< 15 next page)
-		if ($start + $num_per_page * ($PageContiguous + 1) < $tmpMaxPages)
-			$pageindex .= strtr($settings['page_index']['expand_pages'], array(
-				'{LINK}' => JavaScriptEscape($smcFunc['htmlspecialchars']($base_link)),
-				'{FIRST_PAGE}' => $start + $num_per_page * ($PageContiguous + 1),
-				'{LAST_PAGE}' => $tmpMaxPages,
-				'{PER_PAGE}' => $num_per_page,
-			));
-
-		// Show the last number in the list. (prev page 1 ... 6 7 [8] 9 10 ... >15<  next page)
-		if ($start + $num_per_page * $PageContiguous < $tmpMaxPages)
-			$pageindex .= sprintf($base_link, $tmpMaxPages, $tmpMaxPages / $num_per_page + 1);
-
-		// Show the "next page" link. (prev page 1 ... 6 7 [8] 9 10 ... 15 >next page<)
-		if ($start != $tmpMaxPages && $show_prevnext)
-			$pageindex .= sprintf($base_link, $start + $num_per_page, $settings['page_index']['next_page']);
-
-	$pageindex .= $settings['page_index']['extra_after'];
-
-	return $pageindex;
+	$phpStr = StoryBB\Template::compile(StoryBB\Template::load_partial('pagination'), [], 'pagination' . StoryBB\Template::get_theme_id('partials', 'pagination'));
+	return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, $data));
 }
 
 /**
@@ -2855,7 +2831,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 				]);
 			}
 		}
-		render_page($content); //found in Subs.php, this renders the layout around the page
+		StoryBB\Template::render_page($content);
 
 		// Anything special to put out?
 		if (!empty($context['insert_after_template']) && !isset($_REQUEST['xml']))
@@ -2885,27 +2861,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index)
 		exit;
-}
-
-function render_page($content) {
-	global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $time_start, $db_count, $user_info, $options;
-
-	$context['load_queries'] = $db_count;
-
-	$context['session_flash'] = session_flash_retrieve();
-
-	StoryBB\Template::render([
-		'content' => $content,
-		'context' => $context,
-		'txt' => $txt,
-		'scripturl' => $scripturl,
-		'settings' => $settings,
-		'maintenance' => $maintenance,
-		'modSettings' => $modSettings,
-		'options' => $options,
-		'user_info' => $user_info,
-		'copyright' => theme_copyright(),
-	]);
 }
 
 function locale_helper($lang_locale) 

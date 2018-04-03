@@ -33,10 +33,6 @@ function MessageMain()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	loadLanguage('PersonalMessage+Drafts');
-	
-	//Grab the partial
-	$template = loadTemplatePartial('pm_above');
-
 
 	// Load up the members maximum message capacity.
 	if ($user_info['is_admin'])
@@ -362,8 +358,8 @@ function messageIndexBar($area)
 	$context['menu_item_selected'] = $current_area;
 
 	// Set the template for this area and add the profile layer.
-//	if (!isset($_REQUEST['xml']))
-//		$context['template_layers'][] = 'pm';
+	if (!isset($_REQUEST['xml']))
+		StoryBB\Template::add_layer('pm');
 }
 
 /**
@@ -378,6 +374,7 @@ function MessagePopup()
 
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
+	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'personal_message_popup';
 	StoryBB\Template::set_layout('raw');
 
@@ -3366,7 +3363,6 @@ function MessageSettings()
 	$cur_profile = $user_profile[$user_info['id']];
 
 	loadLanguage('Profile');
-	loadTemplate('Profile');
 
 	// Since this is internally handled with the profile code because that's how it was done ages ago
 	// we have to set everything up for handling this...
@@ -3377,7 +3373,7 @@ function MessageSettings()
 	$context['menu_item_selected'] = 'settings';
 	$context['submit_button_text'] = $txt['pm_settings'];
 	$context['profile_header_text'] = $txt['personal_messages'];
-	$context['sub_template'] = 'edit_options';
+	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['pm_settings_desc'];
 
 	loadThemeOptions($user_info['id']);

@@ -496,9 +496,10 @@ function loadProfileFields($force_reload = false)
 			'callback_func' => 'tfa',
 			'permission' => 'profile_password',
 			'enabled' => !empty($modSettings['tfa_mode']),
-			'preload' => function() use (&$context, $cur_profile)
+			'preload' => function() use (&$context, $cur_profile, $modSettings, $scripturl)
 			{
 				$context['tfa_enabled'] = !empty($cur_profile['tfa_secret']);
+				$context['tfa_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl) . '?action=profile;area=tfasetup';
 
 				return true;
 			},
@@ -593,7 +594,7 @@ function loadProfileFields($force_reload = false)
  */
 function setupProfileContext($fields)
 {
-	global $profile_fields, $context, $cur_profile, $txt;
+	global $profile_fields, $context, $cur_profile, $txt, $modSetting, $scripturl;
 
 	// Some default bits.
 	$context['profile_prehtml'] = '';
@@ -669,6 +670,18 @@ function setupProfileContext($fields)
 		}
 	}
 
+	// Make sure all of the selects really come with arrays of options, rather than callbacks.
+	foreach ($context['profile_fields'] as $pf => $field)
+	{
+		if (empty($field['type']) || $field['type'] != 'select')
+			continue;
+
+		if (!empty($field['options']) && !is_array($field['options']))
+		{
+			$context['profile_fields'][$pf]['options'] = $field['options']();
+		}
+	}
+
 	// Some spicy JS.
 	addInlineJavaScript('
 	var form_handle = document.forms.creator;
@@ -694,6 +707,13 @@ function setupProfileContext($fields)
 
 	// Free up some memory.
 	unset($profile_fields);
+
+	// Do some processing to make the submission URL.
+	if (!empty($context['menu_item_selected']) && !empty($context['id_member']))
+	{
+		$context['profile_submit_url'] = !empty($context['profile_custom_submit_url']) ? $context['profile_custom_submit_url'] : $scripturl . '?action=profile;area=' . $context['menu_item_selected'] . ';u=' . $context['id_member'];
+		$context['profile_submit_url'] = !empty($context['require_password']) && !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($context['profile_submit_url'], array('http://' => 'https://')) : $context['profile_submit_url'];
+	}
 }
 
 /**
@@ -1523,6 +1543,8 @@ function editIgnoreList($memID)
 	global $txt;
 	global $context, $user_profile, $memberContext, $smcFunc;
 
+	$context['show_ignore_email_address'] = allowedTo('moderate_forum');
+
 	// For making changes!
 	$ignoreArray = explode(',', $user_profile[$memID]['pm_ignore_list']);
 	foreach ($ignoreArray as $k => $dummy)
@@ -1534,19 +1556,29 @@ function editIgnoreList($memID)
 	{
 		checkSession('get');
 
-		$_SESSION['prf-save'] = $txt['could_not_remove_person'];
+		$saved = false;
 
 		// Heh, I'm lazy, do it the easy way...
 		foreach ($ignoreArray as $key => $id_remove)
 			if ($id_remove == (int) $_GET['remove'])
 			{
 				unset($ignoreArray[$key]);
+				$saved = true;
 				$_SESSION['prf-save'] = true;
 			}
 
 		// Make the changes.
 		$user_profile[$memID]['pm_ignore_list'] = implode(',', $ignoreArray);
 		updateMemberData($memID, array('pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']));
+
+		if ($saved)
+		{
+			session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
+		}
+		else
+		{
+			session_flash('error', $txt['could_not_remove_person']);
+		}
 
 		// Redirect off the page because we don't like all this ugly query stuff to stick in the history.
 		redirectexit('action=profile;area=lists;sa=ignore;u=' . $memID);
@@ -1567,7 +1599,7 @@ function editIgnoreList($memID)
 				unset($new_entries[$k]);
 		}
 
-		$_SESSION['prf-save'] = $txt['could_not_add_person'];
+		$saved = false;
 		if (!empty($new_entries))
 		{
 			// Now find out the id_member for the members in question.
@@ -1583,7 +1615,9 @@ function editIgnoreList($memID)
 			);
 
 			if ($smcFunc['db_num_rows']($request) != 0)
-				$_SESSION['prf-save'] = true;
+			{
+				$saved = true;
+			}
 
 			// Add the new member to the buddies array.
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1598,6 +1632,15 @@ function editIgnoreList($memID)
 			// Now update the current users buddy list.
 			$user_profile[$memID]['pm_ignore_list'] = implode(',', $ignoreArray);
 			updateMemberData($memID, array('pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']));
+		}
+
+		if ($saved)
+		{
+			session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
+		}
+		else
+		{
+			session_flash('error', $txt['could_not_add_person']);
 		}
 
 		// Back to the list of pityful people!
@@ -1638,15 +1681,7 @@ function editIgnoreList($memID)
 		$context['ignore_list'][$ignore_member] = $memberContext[$ignore_member];
 	}
 
-	if (isset($_SESSION['prf-save']))
-	{
-		if ($_SESSION['prf-save'] === true)
-			$context['saved_successful'] = true;
-		else
-			$context['saved_failed'] = $_SESSION['prf-save'];
-
-		unset($_SESSION['prf-save']);
-	}
+	$context['sub_template'] = 'profile_ignore';
 }
 
 /**
@@ -1662,7 +1697,7 @@ function account($memID)
 	if (allowedTo(array('profile_identity_own', 'profile_identity_any', 'profile_password_own', 'profile_password_any')))
 		loadCustomFields($memID, 'account');
 
-	$context['sub_template'] = 'edit_options';
+	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['account_info'];
 
 	setupProfileContext(
@@ -1691,7 +1726,7 @@ function forumProfile($memID)
 	if (allowedTo(array('profile_forum_own', 'profile_forum_any')))
 		loadCustomFields($memID, 'forumprofile');
 
-	$context['sub_template'] = 'edit_options';
+	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['forumProfile_info'];
 	$context['show_preview_button'] = true;
 
@@ -1711,7 +1746,7 @@ function forumProfile($memID)
  */
 function theme($memID)
 {
-	global $txt, $context;
+	global $txt, $context, $modSettings;
 
 	$context['theme_options'] = StoryBB\Model\Theme::get_user_options();
 
@@ -1719,13 +1754,41 @@ function theme($memID)
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
 		loadCustomFields($memID, 'theme');
 
-	$context['sub_template'] = 'edit_options';
+	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['theme_info'];
+
+	// Do some fix-ups to keep the template a bit simpler.
+	foreach ($context['theme_options'] as $id => $setting)
+	{
+		if (!is_array($setting))
+			continue;
+		// If it's going to be disabled through a modSettings entry, do that first.
+		if (!empty($setting['disableOn']) && !empty($modSettings[$setting['disableOn']])) {
+			unset ($context['theme_options'][$id]);
+			continue;
+		}
+
+		// Make sure there's a type given, or create the more canonical names we want to use here.
+		if (!isset($setting['type']) || $setting['type'] == 'bool')
+			$context['theme_options'][$id]['type'] = 'checkbox';
+		elseif ($setting['type'] == 'int' || $setting['type'] == 'integer')
+			$context['theme_options'][$id]['type'] = 'number';
+		elseif ($setting['type'] == 'string')
+			$context['theme_options'][$id]['type'] = 'text';
+
+		if (isset($setting['options']))
+			$context['theme_options'][$id]['type'] = 'list';
+
+		// Make the value more readily available to the template.
+		$context['theme_options'][$id]['user_value'] = '';
+		if (isset($context['member']['options'][$setting['id']]))
+			$context['theme_options'][$id]['user_value'] = $context['member']['options'][$setting['id']];
+	}
 
 	setupProfileContext(
 		array(
 			'smiley_set', 'hr',
-			'time_format', 'timezone', 'hr',
+			'time_format', 'timezone',
 			'theme_settings',
 		)
 	);
@@ -1839,16 +1902,16 @@ function alert_configuration($memID)
 	);
 	$group_options = array(
 		'board' => array(
-			array('check', 'msg_auto_notify', 'label' => 'after'),
-			array('check', 'msg_receive_body', 'label' => 'after'),
-			array('select', 'msg_notify_pref', 'label' => 'before', 'opts' => array(
+			array('check', 'msg_auto_notify', 'position' => 'after'),
+			array('check', 'msg_receive_body', 'position' => 'after'),
+			array('select', 'msg_notify_pref', 'position' => 'before', 'opts' => array(
 				0 => $txt['alert_opt_msg_notify_pref_nothing'],
 				1 => $txt['alert_opt_msg_notify_pref_instant'],
 				2 => $txt['alert_opt_msg_notify_pref_first'],
 				3 => $txt['alert_opt_msg_notify_pref_daily'],
 				4 => $txt['alert_opt_msg_notify_pref_weekly'],
 			)),
-			array('select', 'msg_notify_type', 'label' => 'before', 'opts' => array(
+			array('select', 'msg_notify_type', 'position' => 'before', 'opts' => array(
 				1 => $txt['notify_send_type_everything'],
 				2 => $txt['notify_send_type_everything_own'],
 				3 => $txt['notify_send_type_only_replies'],
@@ -1856,7 +1919,7 @@ function alert_configuration($memID)
 			)),
 		),
 		'pm' => array(
-			array('select', 'pm_notify', 'label' => 'before', 'opts' => array(
+			array('select', 'pm_notify', 'position' => 'before', 'opts' => array(
 				1 => $txt['email_notify_all'],
 				2 => $txt['email_notify_buddies'],
 			)),
@@ -2008,6 +2071,53 @@ function alert_configuration($memID)
 	}
 
 	createToken($context['token_check'], 'post');
+
+	// Now we need to set up for the template.
+	$context['alert_groups'] = [];
+	foreach ($alert_types as $id => $group) {
+		$context['alert_groups'][$id] = [
+			'title' => $txt['alert_group_' . $id],
+			'group_config' => [],
+			'options' => [],
+		];
+
+		// If this group of settings has its own section-specific settings, expose them to the template.
+		if (!empty($group_options[$id]))
+		{
+			$context['alert_groups'][$id]['group_config'] = $group_options[$id];
+			foreach ($group_options[$id] as $pos => $opts) {
+				// Make the label easy to deal with.
+				$context['alert_groups'][$id]['group_config'][$pos]['label'] = $txt['alert_opt_' . $opts[1]];
+
+				// Make sure we have a label position that is sane.
+				if (empty($opts['position']) || !in_array($opts['position'], ['before', 'after'])) {
+					$context['alert_groups'][$id]['group_config'][$pos]['position'] = 'before';
+				}
+
+				// Export the value cleanly.
+				$context['alert_groups'][$id]['group_config'][$pos]['value'] = 0;
+				if (isset($context['alert_prefs'][$opts[1]]))
+					$context['alert_groups'][$id]['group_config'][$pos]['value'] = $context['alert_prefs'][$opts[1]];
+			}
+		}
+
+		// Fix up the options in this group.
+		foreach ($group as $alert_id => $alert_option)
+		{
+			$alert_option['label'] = $txt['alert_' . $alert_id];
+			foreach ($context['alert_bits'] as $alert_type => $bitmask)
+			{
+				if ($alert_option[$alert_type] == 'yes')
+				{
+					$this_value = isset($context['alert_prefs'][$alert_id]) ? $context['alert_prefs'][$alert_id] : 0;
+					$alert_option[$alert_type] = $this_value & $bitmask ? 'yes' : 'no';
+				}
+			}
+			$context['alert_groups'][$id]['options'][$alert_id] = $alert_option;
+		}
+	}
+
+	$context['sub_template'] = 'profile_alert_configuration';
 }
 
 /**
@@ -2025,6 +2135,7 @@ function alert_markread($memID)
 	// We only want to output our little layer here.
 	$context['template_layers'] = array();
 	StoryBB\Template::set_layout('raw');
+	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'alerts_all_read';
 
 	loadLanguage('Alerts');
@@ -2682,7 +2793,7 @@ function ignoreboards($memID)
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'child_level' => $row['child_level'],
-			'selected' => $row['is_ignored'],
+			'selected' => (bool) $row['is_ignored'],
 		);
 	}
 	$smcFunc['db_free_result']($request);
@@ -2718,6 +2829,9 @@ function ignoreboards($memID)
 		else
 			$context['board_columns'][] = array();
 	}
+
+	$context['split_categories'] = array_chunk($context['categories'], ceil(count($context['categories']) / 2), true);
+	$context['sub_template'] = 'profile_ignoreboards';
 
 	loadThemeOptions($memID);
 }
@@ -3663,7 +3777,7 @@ function groupMembership($memID)
 			'desc' => $row['description'],
 			'color' => $row['online_color'],
 			'type' => $row['group_type'],
-			'pending' => $row['pending'],
+			'pending' => (bool) $row['pending'],
 			'is_primary' => $row['id_group'] == $context['primary_group'],
 			'can_be_primary' => $row['hidden'] != 2,
 			// Anything more than this needs to be done through account settings for security.
@@ -3690,6 +3804,9 @@ function groupMembership($memID)
 	// In the special case that someone is requesting membership of a group, setup some special context vars.
 	if (isset($_REQUEST['request']) && isset($context['groups']['available'][(int) $_REQUEST['request']]) && $context['groups']['available'][(int) $_REQUEST['request']]['type'] == 2)
 		$context['group_request'] = $context['groups']['available'][(int) $_REQUEST['request']];
+
+	$context['highlight_primary'] = isset($context['groups']['member'][$context['primary_group']]);
+	$context['sub_template'] = 'profile_group_request';
 }
 
 /**
@@ -3946,6 +4063,7 @@ function tfasetup($memID)
 			$context['from_ajax'] = true;
 			StoryBB\Template::set_layout('raw');
 			$context['template_layers'] = array();
+			StoryBB\Template::remove_all_layers();
 		}
 
 		// When the code is being sent, verify to make sure the user got it right

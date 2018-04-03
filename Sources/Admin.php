@@ -589,6 +589,7 @@ if (!(\'smfForum_sessionvar\' in window))
 ' . strtr($file_data, array(';sesc=' => ';\' + window.smfForum_sessionvar + \'='));
 
 	$context['template_layers'] = array();
+	StoryBB\Template::remove_all_layers();
 	// Lets make sure we aren't going to output anything nasty.
 	@ob_end_clean();
 	@ob_start();

@@ -272,6 +272,7 @@ function issueWarning($memID)
 	foreach ($context['level_effects'] as $limit => $dummy)
 		if ($context['member']['warning'] >= $limit)
 			$context['current_level'] = $limit;
+	$context['current_level_effects'] = $context['level_effects'][$context['current_level']];
 
 	$listOptions = array(
 		'id' => 'view_warnings',
@@ -430,6 +431,8 @@ function issueWarning($memID)
 	// Replace all the common variables in the templates.
 	foreach ($context['notification_templates'] as $k => $name)
 		$context['notification_templates'][$k]['body'] = strtr($name['body'], array('{MEMBER}' => un_htmlspecialchars($context['member']['name']), '{MESSAGE}' => '[url=' . $scripturl . '?msg=' . $context['warning_for_message'] . ']' . un_htmlspecialchars($context['warned_message_subject']) . '[/url]', '{SCRIPTURL}' => $scripturl, '{FORUMNAME}' => $mbname, '{REGARDS}' => $txt['regards_team']));
+
+	$context['sub_template'] = 'profile_warning_issue';
 }
 
 /**
@@ -528,6 +531,7 @@ function deleteAccount($memID)
 	// Can they do this, or will they need approval?
 	$context['needs_approval'] = $context['user']['is_owner'] && !empty($modSettings['approveAccountDeletion']) && !allowedTo('moderate_forum');
 	$context['page_title'] = $txt['deleteAccount'] . ': ' . $cur_profile['real_name'];
+	$context['sub_template'] = 'profile_delete';
 }
 
 /**

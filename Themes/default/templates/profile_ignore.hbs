@@ -1,0 +1,76 @@
+	{{! Showing the ignore list of the user. }}
+	<div id="edit_buddies">
+		<div class="cat_bar">
+			<h3 class="catbg profile_hd">
+				{{{txt.editIgnoreList}}}
+			</h3>
+		</div>
+		<table class="table_grid">
+			<tr class="title_bar">
+				<th scope="col" class="quarter_table">{{{txt.name}}}</th>
+				<th scope="col">{{{txt.status}}}</th>
+
+				{{#if context.show_ignore_email_address}}
+				<th scope="col">{{{txt.email}}}</th>
+				{{/if}}
+
+				<th scope="col">{{{txt.ignore_remove}}}</th>
+			</tr>
+
+			{{! If they don't have anyone on their ignore list, don't list it! }}
+			{{#unless context.ignore_list}}
+			<tr class="windowbg">
+				<td colspan="{{#if context.show_ignore_email_address}}4{{else}}3{{/if}}"><strong>{{{txt.no_ignore}}}</strong></td>
+			</tr>
+			{{/unless}}
+
+			{{! Now loop through each account showing info on each. }}
+			{{#each context.ignore_list}}
+			<tr class="windowbg">
+				<td>{{{link}}}</td>
+				<td><a href="{{{online.href}}}"><span class="{{#if (eq_coerce online.is_online 1)}}on{{else}}off{{/if}}" title="{{{online.text}}}"></span></a></td>
+
+				{{#if show_email}}
+				<td><a href="mailto:{{{email}}}" rel="nofollow"><span class="generic_icons mail icon" title="{{{../txt.email}}} {{{name}}}"></span></a></td>
+				{{/if}}
+
+				<td><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=lists;sa=ignore;remove={{id}};{{session_url}}"><span class="generic_icons delete" title="{{{../txt.ignore_remove}}}"></span></a></td>
+			</tr>
+			{{/each}}
+
+		</table>
+	</div>
+
+	{{! Add to the ignore list? }}
+	<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=lists;sa=ignore" method="post" accept-charset="UTF-8">
+		<div class="cat_bar">
+			<h3 class="catbg">{{{txt.ignore_add}}}</h3>
+		</div>
+		<div class="information">
+			<dl class="settings">
+				<dt>
+					<label for="new_buddy"><strong>{{{txt.who_member}}}:</strong></label>
+				</dt>
+				<dd>
+					<input type="text" name="new_ignore" id="new_ignore" size="25" class="input_text">
+				</dd>
+			</dl>
+		</div>
+
+		{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
+		{{session_form}}
+
+		<input type="submit" value="{{{txt.ignore_add_button}}}" class="button_submit">
+	</form>
+	<script>
+		var oAddIgnoreSuggest = new smc_AutoSuggest({
+			sSelf: 'oAddIgnoreSuggest',
+			sSessionId: '{{context.session_id}}',
+			sSessionVar: '{{context.session_var}}',
+			sSuggestId: 'new_ignore',
+			sControlId: 'new_ignore',
+			sSearchType: 'member',
+			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
+			bItemList: false
+		});
+	</script>

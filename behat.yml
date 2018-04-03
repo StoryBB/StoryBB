@@ -1,0 +1,24 @@
+
+
+default:
+    autoload:
+        '': %paths.base%/Sources
+    extensions:
+        Behat\MinkExtension:
+            base_url: 'http://localhost:8000'
+            sessions:
+                default:
+                    goutte: ~
+            show_auto: true
+            show_cmd: 'start "" notepad %s'
+    suites:
+        default:
+            contexts:
+                - Behat\MinkExtension\Context\MinkContext
+                - StoryBB\Behat
+                - StoryBB\Behat\Authentication
+                - StoryBB\Behat\Character
+                - StoryBB\Behat\Configuration
+                - StoryBB\Behat\General
+                - StoryBB\Behat\Navigation
+            paths: [%paths.base%/other/behat]
