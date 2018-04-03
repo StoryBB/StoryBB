@@ -1,7 +1,7 @@
 <?php
 
 /**
- * The xmlArray class is an xml parser.
+ * A library for handling FTP connections.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -10,16 +10,14 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
+namespace StoryBB\Helper;
 
 /**
- * Class ftp_connection
- * Simple FTP protocol implementation.
+ * A simple FTP protocol implementation.
  *
  * @see https://tools.ietf.org/html/rfc959
  */
-class ftp_connection
+class FTP
 {
 	/**
 	 * @var string Holds the connection response
@@ -49,7 +47,7 @@ class ftp_connection
 	 * @param string $ftp_user The username
 	 * @param string $ftp_pass The password
 	 */
-	public function __construct($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@simplemachines.org')
+	public function __construct($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@storybb.org')
 	{
 		// Initialize variables.
 		$this->connection = 'no_connection';
