@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Checks that the version listed in language files matches that of the current version
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)

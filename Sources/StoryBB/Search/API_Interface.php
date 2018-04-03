@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Defines the methods required to be implemented by a search backend.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -13,6 +15,9 @@ namespace StoryBB\Search;
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+/**
+ * These methods should all be implemented for a search backend to successfully implement post searching.
+ */
 interface API_Interface
 {
 	/**
