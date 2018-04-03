@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Generic search class, all search backends should extend this class.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -14,7 +16,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /**
- * Class search_api
+ * The generic search class has a number of functions, most backends should override most of these.
  */
 abstract class API implements API_Interface
 {

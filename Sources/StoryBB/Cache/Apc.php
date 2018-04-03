@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * This provides short-term caching functionality using APC (older version)
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
