@@ -1,5 +1,7 @@
 <?php
 /**
+ * A generic class to fetch data from the web via cURL.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -12,7 +14,6 @@ if (!defined('SMF'))
 
 /**
  * Class curl_fetch_web_data
- * Simple cURL class to fetch a web page
  * Properly redirects even with safe mode and basedir restrictions
  * Can provide simple post options to a page
  *

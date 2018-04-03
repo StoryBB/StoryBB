@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * Fix serialised columns when converting databases to UTF-8
+ *
+ * @deprecated This is no longer directly relevant; it is of use during SMF UTF-8 conversion, but we're UTF-8 from the start so this is likely no longer needed
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
