@@ -14,8 +14,6 @@ $ignoreFiles = array(
 	'\./attachments/index\.php',
 	'\./cache/index\.php',
 	'\./custom_avatar/index\.php',
-	'\./Sources/index\.php',
-	'\./Sources/tasks/index\.php',
 	'\./Themes/default/css/index\.php',
 	'\./Themes/default/fonts/index\.php',
 	'\./Themes/default/fonts/sound/index\.php',
