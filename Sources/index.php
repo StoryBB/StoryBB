@@ -1,7 +1,12 @@
 <?php
-
 /**
- * This file is here solely to protect your Sources directory.
+ * Tries to protect against this folder having a directory index.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
  */
 
 // Look for Settings.php....

@@ -570,11 +570,8 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 		return false;
 	elseif ($match[1] == 'ftp')
 	{
-		// Include the file containing the ftp_connection class.
-		require_once($sourcedir . '/Class-Package.php');
-
 		// Establish a connection and attempt to enable passive mode.
-		$ftp = new ftp_connection(($match[2] ? 'ssl://' : '') . $match[3], empty($match[5]) ? 21 : $match[5], 'anonymous', $webmaster_email);
+		$ftp = new \StoryBB\Helper\FTP(($match[2] ? 'ssl://' : '') . $match[3], empty($match[5]) ? 21 : $match[5], 'anonymous', $webmaster_email);
 		if ($ftp->error !== false || !$ftp->passive())
 			return false;
 

@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * This class provides support for using the cache module from Zend Platform
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)

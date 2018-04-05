@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file handles avatar and attachment preview requests. The whole point of this file is to reduce the loaded stuff to show an image.
+ * This file handles using PostgreSQL as a cache backend.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)

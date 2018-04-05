@@ -20,7 +20,7 @@ $GLOBALS['required_php_version'] = '7.0.0';
 if (!defined('SMF'))
 	define('SMF', 1);
 
-require_once('Sources/Class-Package.php');
+require_once('Sources/StoryBB/Helper/FTP.php');
 
 // Database info.
 $databases = array(
@@ -163,7 +163,7 @@ function initialize_inputs()
 	{
 		if (isset($_SESSION['installer_temp_ftp']))
 		{
-			$ftp = new ftp_connection($_SESSION['installer_temp_ftp']['server'], $_SESSION['installer_temp_ftp']['port'], $_SESSION['installer_temp_ftp']['username'], $_SESSION['installer_temp_ftp']['password']);
+			$ftp = new \StoryBB\Helper\FTP($_SESSION['installer_temp_ftp']['server'], $_SESSION['installer_temp_ftp']['port'], $_SESSION['installer_temp_ftp']['username'], $_SESSION['installer_temp_ftp']['password']);
 			$ftp->chdir($_SESSION['installer_temp_ftp']['path']);
 
 			$ftp->unlink('install.php');
@@ -563,10 +563,9 @@ function CheckFilesWritable()
 		}
 
 		$incontext['ftp_errors'] = array();
-		require_once('Sources/Class-Package.php');
 		if (isset($_POST['ftp_username']))
 		{
-			$ftp = new ftp_connection($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
+			$ftp = new \StoryBB\Helper\FTP($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
 
 			if ($ftp->error === false)
 			{
@@ -582,7 +581,7 @@ function CheckFilesWritable()
 		if (!isset($ftp) || $ftp->error !== false)
 		{
 			if (!isset($ftp))
-				$ftp = new ftp_connection(null);
+				$ftp = new \StoryBB\Helper\FTP(null);
 			// Save the error so we can mess with listing...
 			elseif ($ftp->error !== false && empty($incontext['ftp_errors']) && !empty($ftp->last_message))
 				$incontext['ftp_errors'][] = $ftp->last_message;

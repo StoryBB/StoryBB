@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * This class provides the backbone that all short-term cache APIs need to implement.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -13,6 +15,9 @@ namespace StoryBB\Cache;
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+/**
+ * This provides generic functionality for cache backends, that might need to be overridden.
+ */
 abstract class API implements API_Interface
 {
 	/**

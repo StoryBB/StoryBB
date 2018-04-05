@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * This class provides connections to memcache (old version) for short-term caching
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)

@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Provides detection to identify the current user's browser.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)

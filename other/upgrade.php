@@ -436,7 +436,7 @@ function loadEssentialData()
 
 	// We need this for authentication and some upgrade code
 	require_once($sourcedir . '/Subs-Auth.php');
-	require_once($sourcedir . '/Class-Package.php');
+	require_once($sourcedir . '/StoryBB/Helper/FTP.php');
 
 	$smcFunc['strtolower'] = 'smf_strtolower';
 

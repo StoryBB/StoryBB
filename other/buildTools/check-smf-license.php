@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * This file checks files during pull requests to ensure they have correct headers.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -10,24 +12,6 @@
 
 // Stuff we will ignore.
 $ignoreFiles = array(
-	// Index files.
-	'\./attachments/index\.php',
-	'\./cache/index\.php',
-	'\./custom_avatar/index\.php',
-	'\./Smileys/[A-Za-z0-9]+/index\.php',
-	'\./Smileys/index\.php',
-	'\./Sources/index\.php',
-	'\./Sources/tasks/index\.php',
-	'\./Themes/default/css/index\.php',
-	'\./Themes/default/fonts/index\.php',
-	'\./Themes/default/fonts/sound/index\.php',
-	'\./Themes/default/images/[A-Za-z0-9]+/index\.php',
-	'\./Themes/default/images/index\.php',
-	'\./Themes/default/index\.php',
-	'\./Themes/default/languages/index\.php',
-	'\./Themes/default/scripts/index\.php',
-	'\./Themes/index\.php',
-
 	// Minify Stuff.
 	'\./Sources/minify/[A-Za-z0-9/-]+\.php',
 
