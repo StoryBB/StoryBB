@@ -273,9 +273,6 @@ $nameChanges = array(
 		'ID_MEMBER' => 'ID_MEMBER id_member mediumint(8) unsigned NOT NULL default \'0\'',
 		'ID_BOARD' => 'ID_BOARD id_board smallint(5) unsigned NOT NULL default \'0\'',
 	),
-	'package_servers' => array(
-		'ID_SERVER' => 'ID_SERVER id_server smallint(5) unsigned NOT NULL auto_increment',
-	),
 	'personal_messages' => array(
 		'ID_PM' => 'ID_PM id_pm int(10) unsigned NOT NULL auto_increment',
 		'ID_MEMBER_FROM' => 'ID_MEMBER_FROM id_member_from mediumint(8) unsigned NOT NULL default \'0\'',
@@ -957,12 +954,6 @@ CREATE TABLE IF NOT EXISTS {$db_prefix}log_packages (
 ---# Adding extra "log_packages" columns...
 ALTER TABLE {$db_prefix}log_packages
 ADD db_changes text NOT NULL AFTER themes_installed;
----#
-
----# Changing URL to SMF package server...
-UPDATE {$db_prefix}package_servers
-SET url = 'http://custom.simplemachines.org/packages/mods'
-WHERE url = 'http://mods.simplemachines.org';
 ---#
 
 /******************************************************************************/
@@ -2490,10 +2481,6 @@ $nameChanges = array(
 	),
 	'openid_assoc' => array(
 		'handle' => 'handle handle varchar(255) NOT NULL default \'\'',
-	),
-	'package_servers' => array(
-		'name' => 'name name varchar(255) NOT NULL default \'\'',
-		'url' => 'url url varchar(255) NOT NULL default \'\'',
 	),
 	'permission_profiles' => array(
 		'profile_name' => 'profile_name profile_name varchar(255) NOT NULL default \'\'',
