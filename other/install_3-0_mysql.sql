@@ -838,17 +838,6 @@ CREATE TABLE {$db_prefix}moderator_groups (
 ) ENGINE={$engine};
 
 #
-# Table structure for table `package_servers`
-#
-
-CREATE TABLE {$db_prefix}package_servers (
-  id_server SMALLINT UNSIGNED AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL DEFAULT '',
-  url VARCHAR(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (id_server)
-) ENGINE={$engine};
-
-#
 # Table structure for table `permission_profiles`
 #
 
@@ -1611,15 +1600,6 @@ VALUES ('xx', 'Standard', '0'),
 INSERT INTO {$db_prefix}messages
   (id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, modified_name, body, icon)
 VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'StoryBB', 'info@storybb.org', '', '{$default_topic_message}', 'xx');
-# --------------------------------------------------------
-
-#
-# Dumping data for table `package_servers`
-#
-
-INSERT INTO {$db_prefix}package_servers
-  (name, url)
-VALUES ('Simple Machines Third-party Mod Site', 'https://custom.simplemachines.org/packages/mods');
 # --------------------------------------------------------
 
 #
