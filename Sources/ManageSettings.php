@@ -2023,14 +2023,12 @@ function ModifyLogSettings($return_config = false)
 			array('check', 'adminlog_enabled', 'help' => 'adminlog'),
 			array('check', 'userlog_enabled', 'help' => 'userlog'),
 			// The error log is a wonderful thing.
-			array('title', 'errlog'),
-			array('desc', 'error_log_desc'),
+			array('title', 'errlog', 'desc' => $txt['error_log_desc']),
 			array('check', 'enableErrorLogging'),
 			array('check', 'enableErrorQueryLogging'),
 			array('check', 'log_ban_hits'),
 			// Even do the pruning?
-			array('title', 'pruning_title'),
-			array('desc', 'pruning_desc'),
+			array('title', 'pruning_title', 'desc' => $txt['pruning_desc']),
 			// The array indexes are there so we can remove/change them before saving.
 			'pruningOptions' => array('check', 'pruningOptions'),
 		'',
@@ -2147,7 +2145,7 @@ function ModifyGeneralModSettings($return_config = false)
 	if (empty($config_vars))
 	{
 		$context['settings_save_dont_show'] = true;
-		$context['settings_message'] = '<div class="centertext">' . $txt['modification_no_misc_settings'] . '</div>';
+		$config_vars[] = $txt['modification_no_misc_settings'];
 
 		return prepareDBSettingContext($config_vars);
 	}

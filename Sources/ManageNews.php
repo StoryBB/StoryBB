@@ -1058,7 +1058,6 @@ function ModifyNewsSettings($return_config = false)
 	global $context, $sourcedir, $txt, $scripturl;
 
 	$config_vars = array(
-		array('title', 'settings'),
 			// Just the remaining settings.
 			array('check', 'xmlnews_enable', 'onclick' => 'document.getElementById(\'xmlnews_maxlen\').disabled = !this.checked;'),
 			array('int', 'xmlnews_maxlen', 'subtext' => $txt['xmlnews_maxlen_note'], 10),
@@ -1098,6 +1097,7 @@ function ModifyNewsSettings($return_config = false)
 	createToken('admin-mp');
 
 	prepareDBSettingContext($config_vars);
+	$context['settings_title'] = $txt['settings'];
 }
 
 ?>

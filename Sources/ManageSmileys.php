@@ -111,7 +111,6 @@ function EditSmileySettings($return_config = false)
 
 	// All the settings for the page...
 	$config_vars = array(
-		array('title', 'settings'),
 			array('select', 'smiley_sets_default', $smiley_context),
 			array('check', 'smiley_sets_enable'),
 			array('text', 'smileys_url', 40),
@@ -156,6 +155,7 @@ function EditSmileySettings($return_config = false)
 	createToken('admin-mp');
 
 	prepareDBSettingContext($config_vars);
+	$context['settings_title'] = $txt['settings'];
 }
 
 /**
