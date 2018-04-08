@@ -743,26 +743,6 @@ if (@$modSettings['smfVersion'] < '1.1')
 ---#
 
 /******************************************************************************/
---- Adding package servers...
-/******************************************************************************/
-
----# Creating "package_servers"...
-CREATE TABLE IF NOT EXISTS {$db_prefix}package_servers (
-	id_server smallint(5) unsigned NOT NULL auto_increment,
-	name tinytext NOT NULL,
-	url tinytext NOT NULL,
-	PRIMARY KEY (id_server)
-) ENGINE=MyISAM;
----#
-
----# Inserting "package_servers"...
-INSERT IGNORE INTO {$db_prefix}package_servers
-	(id_server, name, url)
-VALUES
-	(1, 'Simple Machines Third-party Mod Site', 'http://mods.simplemachines.org');
----#
-
-/******************************************************************************/
 --- Cleaning up database...
 /******************************************************************************/
 
@@ -2262,12 +2242,6 @@ $textfield_updates = array(
 		'table' => 'personal_messages',
 		'column' => 'body',
 		'type' => 'text',
-		'null_allowed' => false,
-	),
-	array(
-		'table' => 'package_servers',
-		'column' => 'name',
-		'type' => 'tinytext',
 		'null_allowed' => false,
 	),
 	array(
