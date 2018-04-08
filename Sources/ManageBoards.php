@@ -813,7 +813,6 @@ function EditBoardSettings($return_config = false)
 
 	// Here and the board settings...
 	$config_vars = array(
-		array('title', 'settings'),
 			// Other board settings.
 			array('check', 'countChildPosts'),
 			array('check', 'recycle_enable', 'onclick' => 'document.getElementById(\'recycle_board\').disabled = !this.checked;'),
@@ -858,6 +857,7 @@ function EditBoardSettings($return_config = false)
 
 	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
+	$context['settings_title'] = $txt['settings'];
 }
 
 ?>

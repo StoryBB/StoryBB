@@ -320,25 +320,7 @@ fieldset.admin_group .inactive {
 
 /* Styles for the package manager.
 /* Haven't got here yet. :P */
-#package_list .tborder {
-	margin: .25em 0 .25em 26px;
-}
-#package_list ol, #package_list ol li {
-	list-style: decimal;
-	margin-left: 50px;
-	border: none;
-}
-#package_list li {
-	border: 1px solid #cacdd3;
-	padding: 0.2em;
-	margin: 1px;
-}
-.package_section {
-	border: 1px solid #cacdd3;
-}
-span.package_server {
-	padding: 0 3em;
-}
+
 pre.file_content {
 	overflow: auto;
 	width: 100%;
