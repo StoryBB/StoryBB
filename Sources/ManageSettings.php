@@ -2147,7 +2147,7 @@ function ModifyGeneralModSettings($return_config = false)
 	if (empty($config_vars))
 	{
 		$context['settings_save_dont_show'] = true;
-		$context['settings_message'] = '<div class="centertext">' . $txt['modification_no_misc_settings'] . '</div>';
+		$config_vars[] = $txt['modification_no_misc_settings'];
 
 		return prepareDBSettingContext($config_vars);
 	}

@@ -635,6 +635,9 @@ dl.settings dd {
 	overflow: auto;
 	margin: 0 0 3px 0;
 }
+dl.settings dd.fullwidth {
+	width: 100%;
+}
 dl.settings.report dd {
 	overflow: auto;
 	margin: 0 0 10px 30px;
