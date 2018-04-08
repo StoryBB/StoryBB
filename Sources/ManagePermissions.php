@@ -1010,7 +1010,6 @@ function GeneralPermissionSettings($return_config = false)
 
 	// All the setting variables
 	$config_vars = array(
-		array('title', 'settings'),
 			array('check', 'permission_enable_postgroups', 0, $txt['permission_settings_enable_postgroups'], 'help' => 'permissions_postgroups'),
 	);
 
@@ -1086,6 +1085,7 @@ function GeneralPermissionSettings($return_config = false)
 	createToken('admin-mp');
 
 	prepareDBSettingContext($config_vars);
+	$context['settings_title'] = $txt['settings'];
 }
 
 /**
