@@ -434,6 +434,12 @@ function Welcome()
 	// @todo Move this down later if they don't use database-driven sessions?
 	elseif (@ini_get('session.save_path') == '/tmp' && substr(__FILE__, 1, 2) == ':\\')
 		$error = 'error_session_save_path';
+	elseif (!function_exists('imagecreatetruecolor') || !function_exists('imagegif'))
+		$error = 'error_no_gd';
+	elseif (!function_exists('json_encode') || !function_exists('json_decode'))
+		$error = 'error_no_json';
+	elseif (!function_exists('curl_init') || !function_exists('curl_exec'))
+		$error = 'error_no_curl';
 
 	// Since each of the three messages would look the same, anyway...
 	if (isset($error))

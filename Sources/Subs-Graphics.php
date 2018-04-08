@@ -234,26 +234,6 @@ function checkImageContents($fileName, $extensiveCheck = false)
 }
 
 /**
- * Sets a global $gd2 variable needed by some functions to determine
- * whether the GD2 library is present.
- *
- * @return bool Whether or not GD1 is available.
- */
-function checkGD()
-{
-	global $gd2;
-
-	// Check to see if GD is installed and what version.
-	if (($extensionFunctions = get_extension_funcs('gd')) === false)
-		return false;
-
-	// Also determine if GD2 is installed and store it in a global.
-	$gd2 = in_array('imagecreatetruecolor', $extensionFunctions) && function_exists('imagecreatetruecolor');
-
-	return true;
-}
-
-/**
  * Checks whether the Imagick class is present.
  *
  * @return bool Whether or not the Imagick extension is available.
@@ -316,10 +296,6 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 {
 	global $sourcedir;
 
-	// Nothing to do without GD or IM/MW
-	if (!checkGD() && !checkImagick() && !checkMagickWand())
-		return false;
-
 	static $default_formats = array(
 		'1' => 'gif',
 		'2' => 'jpeg',
@@ -362,7 +338,7 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 
 	// See if we have -or- can get the needed memory for this operation
 	// ImageMagick isn't subject to PHP's memory limits :)
-	if (!(checkIMagick() || checkMagickWand()) && checkGD() && !imageMemoryCheck($sizes))
+	if (!(checkIMagick() || checkMagickWand()) && !imageMemoryCheck($sizes))
 		return false;
 
 	// A known and supported format?
@@ -371,7 +347,7 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 	{
 		return resizeImage(null, $destination, null, null, $max_width, $max_height, true, $preferred_format);
 	}
-	elseif (checkGD() && isset($default_formats[$sizes[2]]) && function_exists('imagecreatefrom' . $default_formats[$sizes[2]]))
+	elseif (isset($default_formats[$sizes[2]]) && function_exists('imagecreatefrom' . $default_formats[$sizes[2]]))
 	{
 		$imagecreatefrom = 'imagecreatefrom' . $default_formats[$sizes[2]];
 		if ($src_img = @$imagecreatefrom($destination))
@@ -403,7 +379,7 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
  */
 function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $max_height, $force_resize = false, $preferred_format = 0)
 {
-	global $gd2, $modSettings;
+	global $modSettings;
 
 	if (checkImagick() || checkMagickWand())
 	{
@@ -450,7 +426,7 @@ function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $
 
 		return !empty($success);
 	}
-	elseif (checkGD())
+	else
 	{
 		$success = false;
 
@@ -472,26 +448,18 @@ function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $
 			if (!empty($dst_width) && !empty($dst_height) && ($dst_width < $src_width || $dst_height < $src_height || $force_resize))
 			{
 				// (make a true color image, because it just looks better for resizing.)
-				if ($gd2)
-				{
-					$dst_img = imagecreatetruecolor($dst_width, $dst_height);
+				$dst_img = imagecreatetruecolor($dst_width, $dst_height);
 
-					// Deal nicely with a PNG - because we can.
-					if ((!empty($preferred_format)) && ($preferred_format == 3))
-					{
-						imagealphablending($dst_img, false);
-						if (function_exists('imagesavealpha'))
-							imagesavealpha($dst_img, true);
-					}
+				// Deal nicely with a PNG - because we can.
+				if ((!empty($preferred_format)) && ($preferred_format == 3))
+				{
+					imagealphablending($dst_img, false);
+					if (function_exists('imagesavealpha'))
+						imagesavealpha($dst_img, true);
 				}
-				else
-					$dst_img = imagecreate($dst_width, $dst_height);
 
 				// Resize it!
-				if ($gd2)
-					imagecopyresampled($dst_img, $src_img, 0, 0, 0, 0, $dst_width, $dst_height, $src_width, $src_height);
-				else
-					imagecopyresamplebicubic($dst_img, $src_img, 0, 0, 0, 0, $dst_width, $dst_height, $src_width, $src_height);
+				imagecopyresampled($dst_img, $src_img, 0, 0, 0, 0, $dst_width, $dst_height, $src_width, $src_height);
 			}
 			else
 				$dst_img = $src_img;
@@ -514,9 +482,6 @@ function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $
 
 		return $success;
 	}
-	else
-		// Without GD, no image resizing at all.
-		return false;
 }
 
 /**
@@ -593,8 +558,6 @@ if (!function_exists('imagecreatefrombmp'))
 	 */
 	function imagecreatefrombmp($filename)
 	{
-		global $gd2;
-
 		$fp = fopen($filename, 'rb');
 
 		$errors = error_reporting(0);
@@ -605,10 +568,7 @@ if (!function_exists('imagecreatefrombmp'))
 		if ($header['type'] != 0x4D42)
 			return false;
 
-		if ($gd2)
-			$dst_img = imagecreatetruecolor($info['width'], $info['height']);
-		else
-			$dst_img = imagecreate($info['width'], $info['height']);
+		$dst_img = imagecreatetruecolor($info['width'], $info['height']);
 
 		$palette_size = $header['offset'] - 54;
 		$info['ncolor'] = $palette_size / 4;
@@ -789,7 +749,7 @@ function gif_outputAsPng($gif, $lpszFileName, $background_color = -1)
  */
 function showCodeImage($code)
 {
-	global $gd2, $settings, $user_info, $modSettings;
+	global $settings, $user_info, $modSettings;
 
 	// Note: The higher the value of visual_verification_type the harder the verification is - from 0 as disabled through to 4 as "Very hard".
 
@@ -917,7 +877,7 @@ function showCodeImage($code)
 	}
 
 	// Create an image.
-	$code_image = $gd2 ? imagecreatetruecolor($total_width, $max_height) : imagecreate($total_width, $max_height);
+	$code_image = imagecreatetruecolor($total_width, $max_height);
 
 	// Draw the background.
 	$bg_color = imagecolorallocate($code_image, $background_color[0], $background_color[1], $background_color[2]);
@@ -990,9 +950,9 @@ function showCodeImage($code)
 			{
 				// GD2 handles font size differently.
 				if ($fontSizeRandom)
-					$font_size = $gd2 ? mt_rand(17, 19) : mt_rand(18, 25);
+					$font_size = mt_rand(17, 19);
 				else
-					$font_size = $gd2 ? 18 : 24;
+					$font_size = 18;
 
 				// Work out the sizes - also fix the character width cause TTF not quite so wide!
 				$font_x = $fontHorSpace == 'minus' && $cur_x > 0 ? $cur_x - 3 : $cur_x + 5;
@@ -1025,7 +985,7 @@ function showCodeImage($code)
 				// Rotating the characters a little...
 				if (function_exists('imagerotate'))
 				{
-					$char_image = $gd2 ? imagecreatetruecolor($character['width'], $character['height']) : imagecreate($character['width'], $character['height']);
+					$char_image = imagecreatetruecolor($character['width'], $character['height']);
 					$char_bgcolor = imagecolorallocate($char_image, $background_color[0], $background_color[1], $background_color[2]);
 					imagefilledrectangle($char_image, 0, 0, $character['width'] - 1, $character['height'] - 1, $char_bgcolor);
 					imagechar($char_image, $loaded_fonts[$character['font']], 0, 0, $character['id'], imagecolorallocate($char_image, $char_fg_color[0], $char_fg_color[1], $char_fg_color[2]));
