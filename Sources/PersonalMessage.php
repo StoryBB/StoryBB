@@ -371,7 +371,6 @@ function MessagePopup()
 	$db_show_debug = false;
 
 	// We only want to output our little layer here.
-	$context['template_layers'] = array();
 	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'personal_message_popup';
 	StoryBB\Template::set_layout('raw');

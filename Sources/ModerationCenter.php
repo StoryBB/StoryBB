@@ -40,7 +40,7 @@ function ModerationMain($dont_call = false)
 
 	// Load the language, and the template.
 	loadLanguage('ModerationCenter');
-	loadTemplate(false, 'admin');
+	loadCSSFile('admin.css', [], 'admin');
 
 	$context['admin_preferences'] = !empty($options['admin_preferences']) ? smf_json_decode($options['admin_preferences'], true) : array();
 	$context['robot_no_index'] = true;
@@ -924,7 +924,6 @@ function ShowNotice()
 	$context['page_title'] = $txt['show_notice'];
 	StoryBB\Template::set_layout('popup');
 	$context['sub_template'] = 'modcenter_notice_show';
-	$context['template_layers'] = array();
 	StoryBB\Template::remove_all_layers();
 
 	// @todo Assumes nothing needs permission more than accessing moderation center!

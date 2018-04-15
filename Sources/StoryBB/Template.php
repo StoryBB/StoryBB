@@ -234,7 +234,6 @@ class Template
 			'helpers' => [
 				'locale' => 'locale_helper',
 				'login_helper' => 'login_helper',
-				'isSelected' => 'isSelected',
 				'javascript' => 'template_javascript',
 				'css' => function() { return template_css(); },
 			]
@@ -259,10 +258,9 @@ class Template
 				{
 					$phpStr = self::compile($template, [], 'partial-' . $layer . '_above-' . self::get_theme_id('partials', $layer . '_above'));
 					$template_above .= new \LightnCandy\SafeString(self::prepare($phpStr, [
-						'context' => $context,
+						'context' => &$context,
 						'modSettings' => $modSettings,
 						'settings' => $settings,
-						'modSettings' => $modSettings,
 						'txt' => $txt,
 						'scripturl' => $scripturl,
 						'options' => $options,
@@ -275,10 +273,9 @@ class Template
 				{
 					$phpStr = self::compile($template, [], 'partial-' . $layer . 'below-' . self::get_theme_id('partials', $layer . 'below'));
 					$template_below .= new \LightnCandy\SafeString(self::prepare($phpStr, [
-						'context' => $context,
+						'context' => &$context,
 						'modSettings' => $modSettings,
 						'settings' => $settings,
-						'modSettings' => $modSettings,
 						'txt' => $txt,
 						'scripturl' => $scripturl,
 						'options' => $options,

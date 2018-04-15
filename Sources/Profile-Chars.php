@@ -21,7 +21,6 @@ function characters_popup($memID)
 
 	// We only want to output our little layer here.
 	StoryBB\Template::set_layout('raw');
-	$context['template_layers'] = [];
 	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'profile_character_popup';
 

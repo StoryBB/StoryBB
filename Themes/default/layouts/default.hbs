@@ -78,7 +78,7 @@
                 <form id="languages_form" method="get" class="floatright">
         			<select id="language_select" name="language" onchange="this.form.submit()">
         			    {{#each context.languages}}
-        			    <option value="{{filename}}"{{isSelected context.user.language filename}}>{{name}}</option>
+        			    <option value="{{filename}}"{{#if (eq context.user.language filename)}} selected{{/if}}>{{name}}</option>
         			    {{/each}}
         		    </select>
         		<noscript>

@@ -1,0 +1,63 @@
+	{{! Showing tabs within a generic menu }}
+	{{#if context.current_menu_context.tab_data.title}}
+		<div class="cat_bar">
+			{{#if context.show_admin_search}}
+				<form action="{{scripturl}}?action=admin;area=search" method="post" accept-charset="UTF-8">
+			{{/if}}
+			<h3 class="catbg">
+				{{#if context.show_admin_search}}
+					<span class="floatright admin_search">
+						<span class="generic_icons filter centericon"></span>
+						<input type="search" name="search_term" placeholder="{{get_text 'admin_search'}}" class="input_text">
+						<select name="search_type">
+							<option value="internal"{{#if (eq context.admin_preferences.sb 'internal')}} selected{{/if}}>{{get_text 'admin_search_type_internal'}}</option>
+							<option value="member"{{#if (eq context.admin_preferences.sb 'member')}} selected{{/if}}>{{get_text 'admin_search_type_member'}}</option>
+						</select>
+						<input type="submit" name="search_go" id="search_go" value="{{get_text 'admin_search_go'}}" class="button_submit">
+					</span>
+				{{/if}}
+				{{#if (or context.selected_tab.icon_class context.current_menu_context.tab_data.icon_class)}}
+					<span class="{{#if context.selected_tab.icon_class}}{{context.selected_tab.icon_class}}{{else}}{{context.current_menu_context.tab.icon_class}}{{/if}} icon"></span>
+				{{else}}
+					{{#if (or context.selected_tab.icon context.current_menu_context.tab_data.icon)}}
+						<img src="{{settings.images_url}}/icons/{{#if context.selected_tab.icon}}{{context.selected_tab.icon}}{{else}}{{context.current_menu_context.tab_data.icon}}{{/if}}" alt="" class="icon">
+					{{/if}}
+				{{/if}}
+
+				{{#if context.selected_tab.help}}
+					{{> helpicon help=context.selected_tab.help}}
+				{{else}}
+					{{#if context.current_menu_context.tab_data.help}}
+						{{> helpicon help=context.current_menu_context.tab_data.help}}
+					{{/if}}
+				{{/if}}
+
+				{{{context.current_menu_context.tab_data.title}}}
+			</h3>
+			{{#if context.show_admin_search}}
+				</form>
+			{{/if}}
+		</div>
+	{{/if}}
+
+	{{#if context.selected_tab.description}}
+		<p class="information">{{{context.selected_tab.description}}}</p>
+	{{else}}
+		{{#if context.current_menu_context.tab_data.description}}
+			<p class="information">{{{context.current_menu_context.tab_data.description}}}
+		{{/if}}
+	{{/if}}
+
+	{{#if context.tabs}}
+		<div id="adm_submenus">
+			<ul class="dropmenu">
+				{{#each context.current_menu_context.tab_data.tabs}}
+					{{#unless this.disabled}}
+						<li>
+							<a{{#if this.is_selected}} class="active"{{/if}} href="{{#if this.url}}{{{this.url}}}{{else}}{{../context.current_menu_context.base_url}};area={{../context.current_menu_context.current_area}};sa={{@key}}{{/if}}{{{../context.current_menu_context.extra_parameters}}}{{#if this.add_params}}{{{this.add_params}}}{{/if}}">{{{this.label}}}</a>
+						</li>
+					{{/unless}}
+				{{/each}}
+			</ul>
+		</div>
+	{{/if}}
