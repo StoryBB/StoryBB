@@ -658,9 +658,6 @@ function SetThemeSettings()
 
 	loadTheme($_GET['th'], false);
 
-	// Sadly we really do need to init the template.
-	loadSubTemplate('init', 'ignore');
-
 	// Also load the actual themes language file - in case of special settings.
 	loadLanguage('Settings', '', true, true);
 
@@ -788,9 +785,6 @@ function SetThemeSettings()
 
 	// Restore the current theme.
 	loadTheme($old_id, false);
-
-	// Reinit just incase.
-	loadSubTemplate('init', 'ignore');
 
 	$settings = $old_settings;
 

@@ -229,9 +229,6 @@ function smf_error_handler($error_level, $error_string, $file, $line)
 		$count = count($array);
 		for ($i = 0; $i < $count; $i++)
 		{
-			if ($array[$i]['function'] != 'loadSubTemplate')
-				continue;
-
 			// This is a bug in PHP, with eval, it seems!
 			if (empty($array[$i]['args']))
 				$i++;
@@ -326,7 +323,14 @@ function setup_fatal_error_context($error_message, $error_code = null)
 		if (!empty($ssi_on_error_method) && $ssi_on_error_method !== true && is_callable($ssi_on_error_method))
 			$ssi_on_error_method();
 		elseif (empty($ssi_on_error_method) || $ssi_on_error_method !== true)
-			loadSubTemplate('error_fatal');
+		{
+			$template = StoryBB\Template::load('error_fatal');
+			$phpStr = StoryBB\Template::compile($template);
+			echo StoryBB\Template::prepare($phpStr, [
+				'context' => $context,
+				'txt' => $txt,
+			]);
+		}
 
 		// No layers?
 		if (empty($ssi_on_error_method) || $ssi_on_error_method !== true)

@@ -2501,47 +2501,6 @@ function register_helper($helper_array) {
 }
 
 /**
- * Load a sub-template.
- * What it does:
- * 	- loads the sub template specified by sub_template_name, which must be in an already-loaded template.
- *  - if ?debug is in the query string, shows administrators a marker after every sub template
- *	for debugging purposes.
- *
- * @todo get rid of reading $_REQUEST directly
- *
- * @param string $sub_template_name The name of the sub-template to load
- * @param bool $fatal Whether to die with an error if the sub-template can't be loaded
- */
-function loadSubTemplate($sub_template_name, $fatal = false)
-{
-	global $context, $txt, $db_show_debug;
-
-	$result = '';
-
-	if ($db_show_debug === true)
-		$context['debug']['sub_templates'][] = $sub_template_name;
-
-	// Figure out what the template function is named.
-	$theme_function = 'template_' . $sub_template_name;
-	if (function_exists($theme_function))
-		$result = $theme_function();
-	elseif ($fatal === false)
-		fatal_lang_error('theme_template_error', 'template', array((string) $sub_template_name));
-	elseif ($fatal !== 'ignore')
-		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load the %s sub template!', (string) $sub_template_name), 'template'));
-
-	// Are we showing debugging for templates?  Just make sure not to do it before the doctype...
-	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && !in_array($sub_template_name, array('init', 'main_below')) && ob_get_length() > 0 && !isset($_REQUEST['xml']))
-	{
-		echo '
-<div class="warningbox">---- ', $sub_template_name, ' ends ----</div>';
-	}
-	
-	return $result;
-}
-
-
-/**
  * Add a CSS file for output later
  *
  * @param string $fileName The name of the file to load
