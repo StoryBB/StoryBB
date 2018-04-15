@@ -223,7 +223,7 @@ function SplitSelectTopics()
 	{
 		StoryBB\Template::set_layout('xml');
 		$context['sub_template'] = 'xml_split';
-		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::add_helper(['cleanXml' => 'cleanXml']);
 	}
 	else
 	{

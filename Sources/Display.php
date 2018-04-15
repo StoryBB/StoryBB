@@ -1291,7 +1291,7 @@ function Display()
 
 	// Some convenient template setup.
 	$context['sub_template'] = 'display_main';
-	register_helper([
+	StoryBB\Template::add_helper([
 		'getLikeText' => function($likes) {
 			global $txt, $context, $scripturl;
 			

@@ -71,7 +71,7 @@ function HelpIndex()
 	$context['page_title'] = $txt['manual_smf_user_help'];
 	$context['sub_template'] = 'help_manual';
 
-	register_helper([
+	StoryBB\Template::add_helper([
 		'getLangSuffix' => function($lang) {
 			return ($lang != 'en' ? '/' . $lang : '');
 		}

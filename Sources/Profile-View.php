@@ -1321,7 +1321,7 @@ function statPanel($memID)
 		fatal_lang_error('loadavg_userstats_disabled', false);
 
 	$context['sub_template'] = 'profile_stats';
-	register_helper([
+	StoryBB\Template::add_helper([
 		'inverted_percent' => function($pc) { return 100 - $pc; },
 		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
 	]);

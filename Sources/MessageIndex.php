@@ -40,7 +40,7 @@ function MessageIndex()
 	}
 
 	$context['sub_template'] = 'msgIndex_main';
-	register_helper([
+	StoryBB\Template::add_helper([
 		'qmod_option' => function($action) {
 				global $context, $txt;
 				if (!empty($context['can_' . $action]))
