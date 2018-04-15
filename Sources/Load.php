@@ -2460,17 +2460,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['theme_loaded'] = true;
 }
 
-/**
- * Handles generic loading for all template behaviour where possible.
- *
- * @param array $cx Context array from Lightncandy
- * @param string $name Name of the template partial
- * @return string The partial template contents
- */
-function loadTemplatePartialResolver($cx, $name) {
-	return StoryBB\Template::load_partial($name);
-}
-
 function compileTemplate($template, $options = [], $cache_id = '') {
 	return StoryBB\Template::compile($template, $options, $cache_id);
 }
