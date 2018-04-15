@@ -14,8 +14,4 @@ function isSelected($current_val, $val)
 	return StoryBB\Template\Helper\Text::isSelected($current_val, $val);
 }
 
-function hasKey($arr, $key) {
-	return StoryBB\Template\Helper\Arrays::in_array($key, $arr);
-}
-
 ?>
