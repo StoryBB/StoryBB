@@ -1,0 +1,29 @@
+	{{! The generic menu itself }}
+	<div class="generic_menu">
+		<ul class="dropmenu dropdown_menu_{{context.cur_menu_id}}">
+		{{#each context.current_menu_context.sections}}
+			<li{{#if this.areas}} class="subsections"{{/if}}>
+				<a class="{{#if this.selected}}active{{/if}}" href="{{this.url}}{{../context.current_menu_context.extra_parameters}}">{{{this.title}}}</a>
+				<ul>
+					{{! For every area of this section show a link to that area (bold if it's currently selected.) }}
+					{{#each this.areas}}
+						<li{{#if this.subsections}} class="subsections"{{/if}}>
+							<a class="{{this.icon_class}}{{#if this.selected}} chosen{{/if}}" href="{{#if this.url}}{{{this.url}}}{{else}}{{{../../context.current_menu_context.base_url}}};area={{@key}}{{/if}}">{{{this.icon}}}{{{this.label}}}</a>
+
+							{{#if this.subsections}}
+								<ul>
+									{{#each this.subsections}}
+										{{#unless this.disabled}}
+											<li>
+												<a{{#if this.selected}} class="chosen"{{/if}} href="{{#if this.url}}{{this.url}}{{else}}{{#if ../this.url}}{{../this.url}}{{else}}{{../../../context.current_menu_context.base_url}};area={{../@key}};sa={{@key}}{{/if}}{{/if}}">{{{this.label}}}</a>
+										{{/unless}}
+									{{/each}}
+								</ul>
+							{{/if}}
+						</li>
+					{{/each}}
+				</ul>
+			</li>
+		{{/each}}
+		</ul>
+	</div>
