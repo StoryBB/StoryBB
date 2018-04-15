@@ -2461,16 +2461,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 }
 
 /**
- * Loads a template file.
- *
- * @param string $template Template name
- * @return string Template contents
- */
-function loadTemplateFile($template) {
-	return StoryBB\Template::load($template);
-}
-
-/**
  * Loads a template partial.
  *
  * @param string $partial Partial name, without root path or extension
