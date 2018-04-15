@@ -2461,16 +2461,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 }
 
 /**
- * Loads a template partial.
- *
- * @param string $partial Partial name, without root path or extension
- * @return string Partial template contents
- */
-function loadTemplatePartial($partial) {
-	return StoryBB\Template::load_partial($partial);
-}
-
-/**
  * Handles generic loading for all template behaviour where possible.
  *
  * @param array $cx Context array from Lightncandy
