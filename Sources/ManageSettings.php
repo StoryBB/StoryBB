@@ -2048,22 +2048,19 @@ function ModifyLogSettings($return_config = false)
 
 	call_integration_hook('integrate_prune_settings', array(&$config_vars, &$prune_toggle, false));
 
-	$prune_toggle_dt = array();
-	foreach ($prune_toggle as $item)
-		$prune_toggle_dt[] = 'setting_' . $item;
-
 	if ($return_config)
 		return $config_vars;
 
-	addInlineJavaScript('
-	function togglePruned()
+	if (!empty($prune_toggle))
 	{
-		var newval = $("#pruningOptions").prop("checked");
-		$("#' . implode(', #', $prune_toggle) . '").closest("dd").toggle(newval);
-		$("#' . implode(', #', $prune_toggle_dt) . '").closest("dt").toggle(newval);
-	};
-	togglePruned();
-	$("#pruningOptions").click(function() { togglePruned(); });', true);
+		addInlineJavaScript('
+	$(document).ready(function () {
+		$("input#pruningOptions").on("change", function() {
+			var newval = $("input#pruningOptions").is(":checked");
+			$("#' . implode(', #', $prune_toggle) . '").closest("dd").toggle(newval).prev("dt").toggle(newval);
+		}).trigger("change");
+	});', true);
+	}
 
 	// We'll need this in a bit.
 	require_once($sourcedir . '/ManageServer.php');
@@ -2111,7 +2108,10 @@ function ModifyLogSettings($return_config = false)
 
 	// Get the actual values
 	if (!empty($modSettings['pruningOptions']))
+	{
 		@list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneBanLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
+		$modSettings['pruningOptions'] = 1;
+	}
 	else
 		$modSettings['pruneErrorLog'] = $modSettings['pruneModLog'] = $modSettings['pruneBanLog'] = $modSettings['pruneReportLog'] = $modSettings['pruneScheduledTaskLog'] = $modSettings['pruneSpiderHitLog'] = 0;
 
