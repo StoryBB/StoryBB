@@ -949,10 +949,6 @@ function prepareDBSettingContext(&$config_vars)
 		require_once($sourcedir . '/Subs-MessageIndex.php');
 		$context['board_list'] = getBoardList();
 
-		register_helper([
-			'repeat' => function($string, $repeat) { return $repeat > 0 ? str_repeat($string, $repeat) : ''; }
-		]);
-
 		addInlineJavascript('
 		$("legend.board_selector").closest("fieldset").hide();
 		$("a.board_selector").click(function(e) {

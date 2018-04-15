@@ -26,7 +26,7 @@ function XMLhttpMain()
 		'previews' => 'RetrievePreview',
 	);
 
-	register_helper([
+	StoryBB\Template::add_helper([
 		'cleanXml' => 'cleanXml',
 	]);
 

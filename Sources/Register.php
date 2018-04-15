@@ -156,7 +156,7 @@ function Register($reg_errors = array())
 		}
 	}
 
-	register_helper([
+	StoryBB\Template::add_helper([
 		'profile_callback_helper' => function ($field) {
 			var_dump($field);
 	        if ($field['type'] == 'callback')
@@ -824,7 +824,7 @@ function VerificationCode()
 
 		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
 		$context['sub_template'] = 'register_sound_verification';
-		register_helper(['isBrowser' => 'isBrowser']);
+		StoryBB\Template::add_helper(['isBrowser' => 'isBrowser']);
 		$context['popup_id'] = 'sound_verification';
 		StoryBB\Template::set_layout('popup');
 
@@ -881,7 +881,7 @@ function RegisterCheckUsername()
 	$context['sub_template'] = 'xml_check_username';
 	$context['checked_username'] = isset($_GET['username']) ? un_htmlspecialchars($_GET['username']) : '';
 	$context['valid_username'] = true;
-	register_helper([
+	StoryBB\Template::add_helper([
 		'cleanXml' => 'cleanXml'
 	]);
 

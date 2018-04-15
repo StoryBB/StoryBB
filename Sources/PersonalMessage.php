@@ -1623,7 +1623,7 @@ function MessageSearch2()
 
 
 	//We need a helper
-	register_helper([
+	StoryBB\Template::add_helper([
 		'create_button' => 'create_button'
 	]);
 	
@@ -1965,7 +1965,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	}
 	else
 	{
-		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::add_helper(['cleanXml' => 'cleanXml']);
 		StoryBB\Template::set_layout('xml');
 		$context['sub_template'] = 'xml_pm_preview';
 	}

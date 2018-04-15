@@ -1532,7 +1532,7 @@ function EditCustomProfiles()
 	$context[$context['admin_menu_name']]['current_subsection'] = 'profile';
 	$context['page_title'] = $context['fid'] ? $txt['custom_edit_title'] : $txt['custom_add_title'];
 	$context['sub_template'] = 'admin_profile_fields_edit';
-	register_helper([
+	StoryBB\Template::add_helper([
 		'begins_with' => function($string, $test) { return strpos($string, $test) === 0; }
 	]);
 

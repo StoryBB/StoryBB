@@ -189,7 +189,9 @@ class Template
 		$phpStr = LightnCandy::compile($template, [
 			'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL),
 			'helpers' => !empty($options['helpers']) ? array_merge(self::$helpers, $options['helpers']) : self::$helpers,
-			'partialresolver' => 'loadTemplatePartialResolver',
+			'partialresolver' => function($cx, $name) {
+				return \StoryBB\Template::load_partial($name);
+			},
 			'partials' => !empty($options['partials']) ? array_merge($default_partials, $options['partials']) : $default_partials,
 		]);
 
