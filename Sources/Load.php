@@ -2462,82 +2462,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 }
 
 /**
- * Load a template - if the theme doesn't include it, use the default.
- * What this function does:
- *  - loads a template file with the name template_name from the current, default, or base theme.
- *  - detects a wrong default theme directory and tries to work around it.
- *
- * @uses the template_include() function to include the file.
- * @param string $template_name The name of the template to load
- * @param array|string $style_sheets The name of a single stylesheet or an array of names of stylesheets to load
- * @param bool $fatal If true, dies with an error message if the template cannot be found
- * @return boolean Whether or not the template was loaded
- */
-function loadTemplate($template_name, $style_sheets = array(), $fatal = true)
-{
-	global $context, $settings, $txt, $scripturl, $boarddir, $db_show_debug;
-
-	// Do any style sheets first, cause we're easy with those.
-	if (!empty($style_sheets))
-	{
-		if (!is_array($style_sheets))
-			$style_sheets = array($style_sheets);
-
-		foreach ($style_sheets as $sheet)
-			loadCSSFile($sheet . '.css', array(), $sheet);
-	}
-
-	// No template to load?
-	if ($template_name === false)
-		return true;
-
-	$loaded = false;
-	foreach ($settings['template_dirs'] as $template_dir)
-	{
-		if (file_exists($template_dir . '/' . $template_name . '.template.php'))
-		{
-			$loaded = true;
-			template_include($template_dir . '/' . $template_name . '.template.php', true);
-			break;
-		}
-	}
-
-	if ($loaded)
-	{
-		if ($db_show_debug === true)
-			$context['debug']['templates'][] = $template_name . ' (' . basename($template_dir) . ')';
-
-		// If they have specified an initialization function for this template, go ahead and call it now.
-		if (function_exists('template_' . $template_name . '_init'))
-			call_user_func('template_' . $template_name . '_init');
-	}
-	// Hmmm... doesn't exist?!  I don't suppose the directory is wrong, is it?
-	elseif (!file_exists($settings['default_theme_dir']) && file_exists($boarddir . '/Themes/default'))
-	{
-		$settings['default_theme_dir'] = $boarddir . '/Themes/default';
-		$settings['template_dirs'][] = $settings['default_theme_dir'];
-
-		if (!empty($context['user']['is_admin']) && !isset($_GET['th']))
-		{
-			loadLanguage('Errors');
-			echo '
-<div class="alert errorbox">
-	<a href="', $scripturl . '?action=admin;area=theme;sa=list;' . $context['session_var'] . '=' . $context['session_id'], '" class="alert">', $txt['theme_dir_wrong'], '</a>
-</div>';
-		}
-
-		loadTemplate($template_name);
-	}
-	// Cause an error otherwise.
-	elseif ($template_name != 'Errors' && $template_name != 'index' && $fatal)
-		fatal_lang_error('theme_template_error', 'template', array((string) $template_name));
-	elseif ($fatal)
-		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load Themes/default/%s.template.php!', (string) $template_name), 'template'));
-	else
-		return false;
-}
-
-/**
  * Loads a template file.
  *
  * @param string $template Template name
@@ -3204,8 +3128,8 @@ function censorText(&$text, $force = false)
 }
 
 /**
- * Load the template/language file using eval or require? (with eval we can show an error message!)
- * 	- loads the template or language file specified by filename.
+ * Load the language file using require
+ * 	- loads the language file specified by filename.
  * 	- outputs a parse error if the file did not exist or contained errors.
  * 	- attempts to detect the error and line, and show detailed information.
  *
