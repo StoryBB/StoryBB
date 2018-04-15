@@ -2461,45 +2461,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 }
 
 /**
- * Loads a template file.
- *
- * @param string $template Template name
- * @return string Template contents
- */
-function loadTemplateFile($template) {
-	return StoryBB\Template::load($template);
-}
-
-/**
- * Loads a template partial.
- *
- * @param string $partial Partial name, without root path or extension
- * @return string Partial template contents
- */
-function loadTemplatePartial($partial) {
-	return StoryBB\Template::load_partial($partial);
-}
-
-/**
- * Handles generic loading for all template behaviour where possible.
- *
- * @param array $cx Context array from Lightncandy
- * @param string $name Name of the template partial
- * @return string The partial template contents
- */
-function loadTemplatePartialResolver($cx, $name) {
-	return StoryBB\Template::load_partial($name);
-}
-
-function compileTemplate($template, $options = [], $cache_id = '') {
-	return StoryBB\Template::compile($template, $options, $cache_id);
-}
-
-function register_helper($helper_array) {
-	StoryBB\Template::add_helper($helper_array);
-}
-
-/**
  * Add a CSS file for output later
  *
  * @param string $fileName The name of the file to load

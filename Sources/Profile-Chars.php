@@ -1105,7 +1105,7 @@ function char_stats()
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $context['character']['character_name'];
 	$context['sub_template'] = 'profile_character_stats';
 
-	register_helper([
+	StoryBB\Template::add_helper([
 		'inverted_percent' => function($pc) { return 100 - $pc; },
 		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
 	]);

@@ -1134,7 +1134,7 @@ function ViewWatchedUsers()
 	// If this is being viewed by posts we actually change the columns to call a template each time.
 	if ($context['view_posts'])
 	{
-		register_helper(['create_button' => 'create_button']);
+		StoryBB\Template::add_helper(['create_button' => 'create_button']);
 		$listOptions['columns'] = array(
 			'posts' => array(
 				'data' => array(
