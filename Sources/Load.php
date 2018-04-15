@@ -2460,10 +2460,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['theme_loaded'] = true;
 }
 
-function compileTemplate($template, $options = [], $cache_id = '') {
-	return StoryBB\Template::compile($template, $options, $cache_id);
-}
-
 function register_helper($helper_array) {
 	StoryBB\Template::add_helper($helper_array);
 }
