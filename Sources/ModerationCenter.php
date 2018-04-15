@@ -40,7 +40,7 @@ function ModerationMain($dont_call = false)
 
 	// Load the language, and the template.
 	loadLanguage('ModerationCenter');
-	loadTemplate(false, 'admin');
+	loadCSSFile('admin.css', [], 'admin');
 
 	$context['admin_preferences'] = !empty($options['admin_preferences']) ? smf_json_decode($options['admin_preferences'], true) : array();
 	$context['robot_no_index'] = true;
