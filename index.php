@@ -55,7 +55,6 @@ require_once($sourcedir . '/Load.php');
 sbb_autoload();
 
 // Template helpers
-require_once(__DIR__ . '/Themes/default/helpers/mischelpers.php');
 require_once(__DIR__ . '/Themes/default/helpers/stringhelpers.php');
 
 // If $maintenance is set specifically to 2, then we're upgrading or something.
