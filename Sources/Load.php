@@ -2460,10 +2460,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['theme_loaded'] = true;
 }
 
-function register_helper($helper_array) {
-	StoryBB\Template::add_helper($helper_array);
-}
-
 /**
  * Add a CSS file for output later
  *
