@@ -309,12 +309,7 @@ function destroyMenu($menu_id = 'last')
 	if (!isset($context[$menu_name]))
 		return false;
 
-	$layer_index = array_search($context[$menu_name]['layer_name'], $context['template_layers']);
-	if ($layer_index !== false)
-	{
-		unset($context['template_layers'][$layer_index]);
-		StoryBB\Template::remove_layer($context[$menu_name]['layer_name']);
-	}
+	StoryBB\Template::remove_layer($context[$menu_name]['layer_name']);
 
 	unset($context[$menu_name]);
 }
