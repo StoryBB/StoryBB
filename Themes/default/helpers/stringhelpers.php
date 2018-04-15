@@ -9,17 +9,6 @@
  * @version 3.0 Alpha 1
  */
 
-/**
- * Given an array of strings, combine them with commas, e.g. "X, Y, Z".
- *
- * @param $array Array of strings to implode with commas
- * @return string Combined string
- */
-function implode_comma($array)
-{
-	return StoryBB\Template\Helper\Text::join($array, ', ');
-}
-
 function array2js($array) {
 	return StoryBB\Template\Helper\Arrays::array2js($array);
 }
