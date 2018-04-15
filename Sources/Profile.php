@@ -858,7 +858,6 @@ function profile_popup($memID)
 
 	// We only want to output our little layer here.
 	$template = StoryBB\Template::set_layout('raw');
-	$context['template_layers'] = [];
 	StoryBB\Template::remove_all_layers();
 
 	// This list will pull from the master list wherever possible. Hopefully it should be clear what does what.
@@ -946,7 +945,6 @@ function alerts_popup($memID)
 	$db_show_debug = false;
 
 	// We only want to output our little layer here.
-	$context['template_layers'] = array();
 	StoryBB\Template::remove_all_layers();
 	$template = StoryBB\Template::set_layout('raw');
 

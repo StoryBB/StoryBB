@@ -37,7 +37,6 @@ function Login()
 	if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
 	{
 		$context['from_ajax'] = true;
-		$context['template_layers'] = array();
 		StoryBB\Template::remove_all_layers();
 	}
 
@@ -90,7 +89,6 @@ function Login2()
 	if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
 	{
 		$context['from_ajax'] = true;
-		$context['template_layers'] = array();
 		StoryBB\Template::remove_all_layers();
 	}
 
@@ -430,7 +428,6 @@ function LoginTFA()
 	if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
 	{
 		$context['from_ajax'] = true;
-		$context['template_layers'] = array();
 		StoryBB\Template::remove_all_layers();
 	}
 
