@@ -9,8 +9,4 @@
  * @version 3.0 Alpha 1
  */
 
-function array2js($array) {
-	return StoryBB\Template\Helper\Arrays::array2js($array);
-}
-
 ?>

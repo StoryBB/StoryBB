@@ -1108,10 +1108,6 @@ function VersionDetail()
 		'tasks_versions' => $version_info['tasks_versions'],
 	);
 
-	register_helper([
-		'array2js' => 'array2js',
-	]);
-
 	// Make it easier to manage for the template.
 	$context['forum_version'] = $forum_version;
 
