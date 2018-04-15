@@ -9,9 +9,4 @@
  * @version 3.0 Alpha 1
  */
 
-function isSelected($current_val, $val) 
-{
-	return StoryBB\Template\Helper\Text::isSelected($current_val, $val);
-}
-
 ?>

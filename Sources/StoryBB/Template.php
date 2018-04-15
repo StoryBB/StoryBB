@@ -234,7 +234,6 @@ class Template
 			'helpers' => [
 				'locale' => 'locale_helper',
 				'login_helper' => 'login_helper',
-				'isSelected' => 'isSelected',
 				'javascript' => 'template_javascript',
 				'css' => function() { return template_css(); },
 			]
