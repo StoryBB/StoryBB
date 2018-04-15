@@ -18,8 +18,8 @@
 						<h5><strong>{{subject}}</strong>&nbsp;
 						</h5>
 						<span class="smalltext">&#171;&nbsp;<strong>{{../txt.draft_saved_on}}:</strong> {{textTemplate ../txt.draft_days_ago age}}{{#if remaining}}, {{textTemplate ../txt.draft_retain remaining}}{{/if}}&#187;</span><br>
-						<span class="smalltext">&#171;&nbsp;<strong>{{../txt.to}}:</strong> {{implode_sep recipients.to ', '}}&nbsp;&#187;</span><br>
-						<span class="smalltext">&#171;&nbsp;<strong>{{../txt.pm_bcc}}:</strong>{{implode_sep recipients.bcc ', '}}&nbsp;&#187;</span>
+						<span class="smalltext">&#171;&nbsp;<strong>{{../txt.to}}:</strong> {{join recipients.to ', '}}&nbsp;&#187;</span><br>
+						<span class="smalltext">&#171;&nbsp;<strong>{{../txt.pm_bcc}}:</strong>{{join recipients.bcc ', '}}&nbsp;&#187;</span>
 					</div>
 					<div class="list_posts">
 					    {{body}}

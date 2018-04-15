@@ -20,11 +20,6 @@ function implode_comma($array)
 	return StoryBB\Template\Helper\Text::join($array, ', ');
 }
 
-function implode_sep($array, $sep)
-{
-	return StoryBB\Template\Helper\Text::join($array, $sep);
-}
-
 function array2js($array) {
 	return StoryBB\Template\Helper\Arrays::array2js($array);
 }
