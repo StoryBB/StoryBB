@@ -205,7 +205,7 @@ function issueWarning($memID)
 			updateMemberData($memID, array('warning' => $_POST['warning_level']));
 
 			// Leave a lovely message.
-			$context['profile_updated'] = $context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_warning_success'];
+			session_flash('success', $context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_warning_success']);
 		}
 		else
 		{
