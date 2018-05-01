@@ -2857,7 +2857,10 @@ function session_flash($status, $message) {
 	if (!in_array($status, ['success', 'warning', 'error'])) {
 		fatal_error('Invalid session flash');
 	}
-	$_SESSION['flash'][$status][] = $message;
+	if (empty($_SESSION['flash'][$status]) || !in_array($message, $_SESSION['flash'][$status]))
+	{
+		$_SESSION['flash'][$status][] = $message;
+	}
 }
 
 function session_flash_retrieve() {
