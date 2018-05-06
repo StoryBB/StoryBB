@@ -210,7 +210,7 @@ function ScheduledTasks()
 	{
 		foreach ($context['scheduled_errors'] as $task_id => $errors) {
 			$context['scheduled_errors'][$task_id] = [
-				'title' => isset($txt['scheduled_task_' . $task_id]) ? $txt['scheduled_task_' . $id] : $task_id,
+				'title' => isset($txt['scheduled_task_' . $task_id]) ? $txt['scheduled_task_' . $task_id] : $task_id,
 				'errors' => $errors,
 			];
 		}
