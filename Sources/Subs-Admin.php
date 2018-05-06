@@ -14,6 +14,46 @@ if (!defined('SMF'))
 	die('No direct access...');
 
 /**
+ * Get the contents of a locally-stored admin info file.
+ *
+ * If the type of the file has a better representation, attempt to provide that (e.g. unpack JSON)
+ *
+ * @param string $filename The filename to look up
+ * @param string $path The path to match against, default to empty for storybb.org cases
+ * @return mixed Returns the contents of the file
+ */
+function getAdminFile(string $filename, string $path = '')
+{
+	global $smcFunc;
+
+	$request = $smcFunc['db_query']('', '
+		SELECT a.data, a.filetype
+		FROM {db_prefix}admin_info_files AS a
+		WHERE filename = {string:filename}
+			AND a.path = {string:path}
+		LIMIT 1',
+		[
+			'filename' => $filename,
+			'path' => $path,
+		]
+	);
+	$data = null;
+	if ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$data = $row['data'];
+		switch ($row['filetype'])
+		{
+			case 'application/json':
+				return json_decode($data, true);
+				break;
+		}
+	}
+	$smcFunc['db_free_result']($request);
+
+	return $data;
+}
+
+/**
  * Get a list of versions that are currently installed on the server.
  * @param array $checkFor An array of what to check versions for - can contain one or more of 'gd', 'imagemagick', 'db_server', 'phpa', 'memcache', 'xcache', 'apc', 'php' or 'server'
  * @return array An array of versions (keys are same as what was in $checkFor, values are the versions)
