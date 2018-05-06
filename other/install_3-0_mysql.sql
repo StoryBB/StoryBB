@@ -1204,8 +1204,7 @@ INSERT INTO {$db_prefix}admin_info_files
 VALUES
   (1, 'current-version.js', '/smf/', 'version=%3$s', '', 'text/javascript'),
   (2, 'detailed-version.js', '/smf/', 'language=%1$s&version=%3$s', '', 'text/javascript'),
-  (3, 'latest-news.js', '/smf/', 'language=%1$s&format=%2$s', '', 'text/javascript'),
-  (4, 'latest-versions.txt', '/smf/', 'version=%3$s', '', 'text/plain');
+  (3, 'latest-news.js', '/smf/', 'language=%1$s&format=%2$s', '', 'text/javascript');
 # --------------------------------------------------------
 
 #
