@@ -1119,10 +1119,18 @@ function VersionDetail()
 
 	foreach ($context['file_versions'] as $path => $current_ver)
 	{
-		$context['file_versions'][$path] = ['current' => $current_ver, 'master' => '??'];
+		$context['file_versions'][$path] = ['current' => $current_ver, 'master' => '??', 'state' => 0];
+	}
+	foreach ($context['default_language_versions'] as $language_id => $files)
+	{
+		foreach ($files as $file_id => $current_ver)
+		{
+			$context['default_language_versions'][$language_id][$file_id] = ['current' => $current_ver, 'master' => '??', 'state' => 0];
+		}
 	}
 
 	$versions = getAdminFile('versions.json');
+	// Sift through the version numbers.
 	if (!empty($versions))
 	{
 		foreach ($versions['sources'] as $path => $master_ver)
@@ -1133,7 +1141,21 @@ function VersionDetail()
 			}
 			$context['file_versions'][$path]['master'] = $master_ver;
 		}
+		foreach ($versions['languages'] as $language_id => $language_ver)
+		{
+			foreach ($language_ver as $language_file => $language_file_ver)
+			{
+				list($language_file) = explode('.', $language_file);
+				if (!isset($context['default_language_versions'][$language_id][$language_file]))
+				{
+					$context['default_language_versions'][$language_id][$language_file] = ['current' => '??', 'master' => '??', 'state' => 0];
+				}
+				$context['default_language_versions'][$language_id][$language_file]['master'] = $language_file_ver;
+			}
+		}
 	}
+
+	// Pull out the headings - sources first.
 	$context['sources_versions'] = ['current' => '??', 'master' => '??'];
 	foreach ($context['file_versions'] as $version)
 	{
@@ -1165,6 +1187,46 @@ function VersionDetail()
 		$context['file_versions'][$path]['state'] = version_compare($version['current'], $version['master']);
 	}
 	$context['sources_current'] = version_compare($context['master_forum_version'], $context['sources_versions']['current']);
+
+	// Headings for the language area.
+	$context['languages_versions'] = ['current' => '??', 'master' => '??'];
+	foreach ($context['default_language_versions'] as $language_id => $language_ver)
+	{
+		foreach ($language_ver as $language_file => $version)
+		{
+			foreach (['current', 'master'] as $type)
+			{
+				if ($version[$type] != '??')
+				{
+					if ($context['languages_versions'][$type] == '??')
+					{
+						$context['languages_versions'][$type] = $version[$type];
+					}
+					else
+					{
+						if (version_compare($version[$type], $context['languages_versions'][$type], '<'))
+						{
+							$context['languages_versions'][$type] = trim($version[$type]);
+						}
+					}
+				}
+			}
+		}
+	}
+	foreach ($context['default_language_versions'] as $language_id => $language_ver)
+	{
+		foreach ($language_ver as $language_file => $version)
+		{
+			if ($version['current'] == '??')
+				continue;
+			if ($version['master'] == '??')
+				continue;
+
+			$context['default_language_versions'][$language_id][$language_file]['state'] = version_compare($version['current'], $version['master']);
+
+		}
+	}
+	$context['languages_current'] = version_compare($context['master_forum_version'], $context['languages_versions']['current']);
 
 	$context['sub_template'] = 'admin_versions';
 	$context['page_title'] = $txt['admin_version_check'];

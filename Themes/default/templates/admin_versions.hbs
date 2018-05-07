@@ -54,7 +54,7 @@
     					{{@key}}
     				</td>
     				<td class="quarter_table">
-    					<em id="yourSources{{@key}}"><span class="{{#if (eq state -1)}}alert{{else}}{{#if (eq state 0)}}up-to-date{{else}}future{{/if}}{{/if}}">{{current}}</em>
+    					<em id="yourSources{{@key}}"><span class="{{#if (eq state -1)}}alert{{else}}{{#if (eq state 0)}}up-to-date{{else}}future{{/if}}{{/if}}">{{current}}</span></em>
     				</td>
     				<td class="quarter_table">
     					<em id="currentSources{{@key}}">{{master}}</em>
@@ -105,10 +105,10 @@
 						<a href="#" id="Languages-link">{{txt.dvc_languages}}</a>
 					</td>
 					<td class="quarter_table">
-						<em id="yourLanguages">??</em>
+						<em id="yourLanguages"><span class="{{#if (eq context.languages_current 1)}}alert{{else}}{{#if (eq context.languages_current 0)}}up-to-date{{else}}future{{/if}}{{/if}}">{{context.languages_versions.current}}</span></em>
 					</td>
 					<td class="quarter_table">
-						<em id="currentLanguages">??</em>
+						<em id="currentLanguages">{{context.master_forum_version}}</em>
 					</td>
 				</tr>
 			</tbody>
@@ -123,10 +123,10 @@
 						{{@key}}.<em>{{../@key}}</em>.php
 					</td>
 					<td class="quarter_table">
-						<em id="your{{@key}}.{{../@key}}">{{.}}</em>
+						<em id="your{{@key}}.{{../@key}}"><span class="{{#if (eq state -1)}}alert{{else}}{{#if (eq state 0)}}up-to-date{{else}}future{{/if}}{{/if}}">{{current}}</span></em>
 					</td>
 					<td class="quarter_table">
-						<em id="current{{@key}}.{{../@key}}">??</em>
+						<em id="current{{@key}}.{{../@key}}">{{master}}</em>
 					</td>
 				</tr>
 		{{/each}}

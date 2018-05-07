@@ -253,7 +253,7 @@ function getFileVersions(&$versionOptions)
 
 			// Look for the version comment in the file header.
 			if (preg_match('~(?://|/\*)\s*Version:\s+(.+?);\s*' . preg_quote($name, '~') . '(?:[\s]{2}|\*/)~i', $header, $match) == 1)
-				$version_info['default_language_versions'][$language][$name] = $match[1];
+				$version_info['default_language_versions'][$language][$name] = trim($match[1]);
 			// It wasn't found, but the file was... show a '??'.
 			else
 				$version_info['default_language_versions'][$language][$name] = '??';
