@@ -1093,7 +1093,6 @@ function VersionDetail()
 	$versionOptions = array(
 		'include_ssi' => true,
 		'include_subscriptions' => true,
-		'include_tasks' => true,
 		'sort_results' => true,
 	);
 	$version_info = getFileVersions($versionOptions);
@@ -1105,11 +1104,67 @@ function VersionDetail()
 		'template_versions' => $version_info['template_versions'],
 		'default_language_versions' => $version_info['default_language_versions'],
 		'default_known_languages' => array_keys($version_info['default_language_versions']),
-		'tasks_versions' => $version_info['tasks_versions'],
 	);
 
 	// Make it easier to manage for the template.
 	$context['forum_version'] = $forum_version;
+	$context['master_forum_version'] = '??';
+
+	// Get the forum package version.
+	$updates = getAdminFile('updates.json');
+	if (!empty($updates))
+	{
+		$context['master_forum_version'] = $updates['current_version'];
+	}
+
+	foreach ($context['file_versions'] as $path => $current_ver)
+	{
+		$context['file_versions'][$path] = ['current' => $current_ver, 'master' => '??'];
+	}
+
+	$versions = getAdminFile('versions.json');
+	if (!empty($versions))
+	{
+		foreach ($versions['sources'] as $path => $master_ver)
+		{
+			if (!isset($context['file_versions'][$path]))
+			{
+				$context['file_versions'][$path] = ['current' => '??', 'master' => '??', 'state' => 0];
+			}
+			$context['file_versions'][$path]['master'] = $master_ver;
+		}
+	}
+	$context['sources_versions'] = ['current' => '??', 'master' => '??'];
+	foreach ($context['file_versions'] as $version)
+	{
+		foreach (['current', 'master'] as $type)
+		{
+			if ($version[$type] != '??')
+			{
+				if ($context['sources_versions'][$type] == '??')
+				{
+					$context['sources_versions'][$type] = $version[$type];
+				}
+				else
+				{
+					if (version_compare($version[$type], $context['sources_versions'][$type], '<'))
+					{
+						$context['sources_versions'][$type] = trim($version[$type]);
+					}
+				}
+			}
+		}
+	}
+	foreach ($context['file_versions'] as $path => $version)
+	{
+		if ($version['current'] == '??')
+			continue;
+		if ($version['master'] == '??')
+			continue;
+
+		$context['file_versions'][$path]['state'] = version_compare($version['current'], $version['master']);
+	}
+	$context['sources_current'] = version_compare($context['master_forum_version'], $context['sources_versions']['current']);
 
 	$context['sub_template'] = 'admin_versions';
 	$context['page_title'] = $txt['admin_version_check'];

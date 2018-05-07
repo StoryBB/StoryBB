@@ -29,7 +29,7 @@
 							<em id="yourSMF">{{context.forum_version}}</em>
 						</td>
 						<td class="quarter_table">
-							<em id="currentSMF">??</em>
+							<em id="currentSMF">StoryBB {{context.master_forum_version}}</em>
 						</td>
 					</tr>
 					<tr class="windowbg">
@@ -37,10 +37,10 @@
 							<a href="#" id="Sources-link">{{txt.dvc_sources}}</a>
 						</td>
 						<td class="quarter_table">
-							<em id="yourSources">??</em>
+							<em id="yourSources"><span class="{{#if (eq context.sources_current 1)}}alert{{else}}{{#if (eq context.sources_current 0)}}up-to-date{{else}}future{{/if}}{{/if}}">{{context.sources_versions.current}}</span></em>
 					    </td>
 						<td class="quarter_table">
-							<em id="currentSources">??</em>
+							<em id="currentSources">{{context.master_forum_version}}</em>
 						</td>
 					</tr>
 				</tbody>
@@ -54,10 +54,10 @@
     					{{@key}}
     				</td>
     				<td class="quarter_table">
-    					<em id="yourSources{{@key}}">{{.}}</em>
+    					<em id="yourSources{{@key}}"><span class="{{#if (eq state -1)}}alert{{else}}{{#if (eq state 0)}}up-to-date{{else}}future{{/if}}{{/if}}">{{current}}</em>
     				</td>
     				<td class="quarter_table">
-    					<em id="currentSources{{@key}}">??</em>
+    					<em id="currentSources{{@key}}">{{master}}</em>
     				</td>
     			</tr>
 		{{/each}}
@@ -138,7 +138,7 @@
     		<tbody>
     			<tr class="windowbg">
     				<td class="half_table">
-    					<a href="#" id="Templates-link">', $txt['dvc_templates'], '</a>
+    					<a href="#" id="Templates-link">{{{txt.dvc_templates}}}</a>
     				</td>
     				<td class="quarter_table">
     					<em id="yourTemplates">??</em>
@@ -168,43 +168,6 @@
         {{/each}}
 		</table>
 	{{/if}}
-	{{#if context.tasks_versions}}
-		<table class="table_grid">
-			<tbody>
-				<tr class="windowbg">
-					<td class="half_table">
-						<a href="#" id="Tasks-link">{{txt.dvc_tasks}}</a>
-					</td>
-					<td class="quarter_table">
-						<em id="yourTasks">??</em>
-					</td>
-					<td class="quarter_table">
-						<em id="currentTasks">??</em>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<table id="Tasks" class="table_grid">
-			<tbody>
-
-		{{#each context.tasks_versions}}
-    			<tr class="windowbg">
-    				<td class="half_table">
-    					{{@key}}
-    				</td>
-    				<td class="quarter_table">
-    					<em id="yourTasks{{@key}}">{{.}}</em>
-    				</td>
-    				<td class="quarter_table">
-    					<em id="currentTasks{{@key}}">??</em>
-    				</td>
-    			</tr>
-    	{{/each}}
-			</tbody>
-		</table>
-	{{/if}}
-	</div>
 	</div>
 	
 	
@@ -212,7 +175,6 @@
 	   held at simplemachines.org and works out if they are up to date.  If they aren't it colors that files number
 	   red.  It also contains the function, swapOption, that toggles showing the detailed information for each of the
 	   file categories. (sources, languages, and templates.) --}}
-    <script src="{{scripturl}}?action=viewsmfile;filename=detailed-version.js"></script>
 	<script>
 		var oViewVersions = new smf_ViewVersions({
 			aKnownLanguages: {{array2js context.default_known_languages}},
@@ -220,8 +182,7 @@
 				Sources: 'Sources',
 				Default: 'Default',
 				Languages: 'Languages',
-				Templates: 'Templates',
-				Tasks: 'Tasks'
+				Templates: 'Templates'
 			}
 		});
 	</script>

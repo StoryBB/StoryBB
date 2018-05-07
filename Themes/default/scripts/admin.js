@@ -4,8 +4,6 @@
 		public init()
 		public loadViewVersions
 		public swapOption(oSendingElement, sName)
-		public compareVersions(sCurrent, sTarget)
-		public determineVersions()
 	}
 */
 
@@ -26,11 +24,6 @@ smf_ViewVersions.prototype.init = function ()
 	addLoadEvent(fHandlePageLoaded);
 }
 
-smf_ViewVersions.prototype.loadViewVersions = function ()
-{
-	this.determineVersions();
-}
-
 smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 {
 	// If it is undefined, or currently off, turn it on - otherwise off.
@@ -45,85 +38,13 @@ smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 	return false;
 }
 
-smf_ViewVersions.prototype.compareVersions = function (sCurrent, sTarget)
+smf_ViewVersions.prototype.loadViewVersions = function ()
 {
-	var aVersions = aParts = new Array();
-	var aCompare = new Array(sCurrent, sTarget);
-
-	for (var i = 0; i < 2; i++)
-	{
-		// Clean the version and extract the version parts.
-		var sClean = aCompare[i].toLowerCase().replace(/ /g, '').replace(/2.0rc1-1/, '2.0rc1.1');
-		aParts = sClean.match(/(\d+)(?:\.(\d+|))?(?:\.)?(\d+|)(?:(alpha|beta|rc)(\d+|)(?:\.)?(\d+|))?(?:(dev))?(\d+|)/);
-
-		// No matches?
-		if (aParts == null)
-			return false;
-
-		// Build an array of parts.
-		aVersions[i] = [
-			aParts[1] > 0 ? parseInt(aParts[1]) : 0,
-			aParts[2] > 0 ? parseInt(aParts[2]) : 0,
-			aParts[3] > 0 ? parseInt(aParts[3]) : 0,
-			typeof(aParts[4]) == 'undefined' ? 'stable' : aParts[4],
-			aParts[5] > 0 ? parseInt(aParts[5]) : 0,
-			aParts[6] > 0 ? parseInt(aParts[6]) : 0,
-			typeof(aParts[7]) != 'undefined',
-		];
-	}
-
-	// Loop through each category.
-	for (i = 0; i < 7; i++)
-	{
-		// Is there something for us to calculate?
-		if (aVersions[0][i] != aVersions[1][i])
-		{
-			// Dev builds are a problematic exception.
-			// (stable) dev < (stable) but (unstable) dev = (unstable)
-			if (i == 3)
-				return aVersions[0][i] < aVersions[1][i] ? !aVersions[1][6] : aVersions[0][6];
-			else if (i == 6)
-				return aVersions[0][6] ? aVersions[1][3] == 'stable' : false;
-			// Otherwise a simple comparison.
-			else
-				return aVersions[0][i] < aVersions[1][i];
-		}
-	}
-
-	// They are the same!
-	return false;
-}
-
-smf_ViewVersions.prototype.determineVersions = function ()
-{
-	var oHighYour = {
-		Sources: '??',
-		Default: '??',
-		Languages: '??',
-		Templates: '??',
-		Tasks: '??'
-	};
-	var oHighCurrent = {
-		Sources: '??',
-		Default: '??',
-		Languages: '??',
-		Templates: '??',
-		Tasks: '??'
-	};
-	var oLowVersion = {
-		Sources: false,
-		Default: false,
-		Languages: false,
-		Templates: false,
-		Tasks: false
-	};
-
 	var sSections = [
 		'Sources',
 		'Default',
 		'Languages',
-		'Templates',
-		'Tasks'
+		'Templates'
 	];
 
 	for (var i = 0, n = sSections.length; i < n; i++)
@@ -145,101 +66,6 @@ smf_ViewVersions.prototype.determineVersions = function ()
 			};
 		}
 	}
-
-	if (!('smfVersions' in window))
-		window.smfVersions = {};
-
-	for (var sFilename in window.smfVersions)
-	{
-		if (!document.getElementById('current' + sFilename))
-			continue;
-
-		var sYourVersion = getInnerHTML(document.getElementById('your' + sFilename));
-
-		var sCurVersionType;
-		for (var sVersionType in oLowVersion)
-			if (sFilename.substr(0, sVersionType.length) == sVersionType)
-			{
-				sCurVersionType = sVersionType;
-				break;
-			}
-
-		if (typeof(sCurVersionType) != 'undefined')
-		{
-			if ((this.compareVersions(oHighYour[sCurVersionType], sYourVersion) || oHighYour[sCurVersionType] == '??') && !oLowVersion[sCurVersionType])
-				oHighYour[sCurVersionType] = sYourVersion;
-			if (this.compareVersions(oHighCurrent[sCurVersionType], smfVersions[sFilename]) || oHighCurrent[sCurVersionType] == '??')
-				oHighCurrent[sCurVersionType] = smfVersions[sFilename];
-
-			if (this.compareVersions(sYourVersion, smfVersions[sFilename]))
-			{
-				oLowVersion[sCurVersionType] = sYourVersion;
-				document.getElementById('your' + sFilename).className = 'alert';
-			}
-		}
-		else if (this.compareVersions(sYourVersion, smfVersions[sFilename]))
-			oLowVersion[sCurVersionType] = sYourVersion;
-
-		setInnerHTML(document.getElementById('current' + sFilename), smfVersions[sFilename]);
-		setInnerHTML(document.getElementById('your' + sFilename), sYourVersion);
-	}
-
-	if (!('smfLanguageVersions' in window))
-		window.smfLanguageVersions = {};
-
-	for (sFilename in window.smfLanguageVersions)
-	{
-		for (var i = 0; i < this.opt.aKnownLanguages.length; i++)
-		{
-			if (!document.getElementById('current' + sFilename + this.opt.aKnownLanguages[i]))
-				continue;
-
-			setInnerHTML(document.getElementById('current' + sFilename + this.opt.aKnownLanguages[i]), smfLanguageVersions[sFilename]);
-
-			sYourVersion = getInnerHTML(document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]));
-			setInnerHTML(document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]), sYourVersion);
-
-			if ((this.compareVersions(oHighYour.Languages, sYourVersion) || oHighYour.Languages == '??') && !oLowVersion.Languages)
-				oHighYour.Languages = sYourVersion;
-			if (this.compareVersions(oHighCurrent.Languages, smfLanguageVersions[sFilename]) || oHighCurrent.Languages == '??')
-				oHighCurrent.Languages = smfLanguageVersions[sFilename];
-
-			if (this.compareVersions(sYourVersion, smfLanguageVersions[sFilename]))
-			{
-				oLowVersion.Languages = sYourVersion;
-				document.getElementById('your' + sFilename + this.opt.aKnownLanguages[i]).style.color = 'red';
-			}
-		}
-	}
-
-	setInnerHTML(document.getElementById('yourSources'), oLowVersion.Sources ? oLowVersion.Sources : oHighYour.Sources);
-	setInnerHTML(document.getElementById('currentSources'), oHighCurrent.Sources);
-	if (oLowVersion.Sources)
-		document.getElementById('yourSources').className = 'alert';
-
-	setInnerHTML(document.getElementById('yourDefault'), oLowVersion.Default ? oLowVersion.Default : oHighYour.Default);
-	setInnerHTML(document.getElementById('currentDefault'), oHighCurrent.Default);
-	if (oLowVersion.Default)
-		document.getElementById('yourDefault').className = 'alert';
-
-	if (document.getElementById('Templates'))
-	{
-		setInnerHTML(document.getElementById('yourTemplates'), oLowVersion.Templates ? oLowVersion.Templates : oHighYour.Templates);
-		setInnerHTML(document.getElementById('currentTemplates'), oHighCurrent.Templates);
-
-		if (oLowVersion.Templates)
-			document.getElementById('yourTemplates').className = 'alert';
-	}
-
-	setInnerHTML(document.getElementById('yourLanguages'), oLowVersion.Languages ? oLowVersion.Languages : oHighYour.Languages);
-	setInnerHTML(document.getElementById('currentLanguages'), oHighCurrent.Languages);
-	if (oLowVersion.Languages)
-		document.getElementById('yourLanguages').className = 'alert';
-
-	setInnerHTML(document.getElementById('yourTasks'), oLowVersion.Tasks ? oLowVersion.Tasks : oHighYour.Tasks);
-	setInnerHTML(document.getElementById('currentTasks'), oHighCurrent.Tasks);
-	if (oLowVersion.Tasks)
-		document.getElementById('yourTasks').className = 'alert';
 }
 
 function toggleBBCDisabled(section, disable)
