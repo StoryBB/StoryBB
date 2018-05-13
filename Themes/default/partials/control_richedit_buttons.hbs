@@ -1,3 +1,7 @@
+<input type="submit" value="{{#if editor_context.labels.post_button}}{{editor_context.labels.post_button}}{{else}}{{txt.post}}{{/if}}" name="post" onclick="return submitThisOnce(this);" class="button_submit">
+{{#if editor_context.preview_type}}
+<input type="submit" name="preview" value="{{#if editor_context.labels.preview_button}}{{editor_context.labels.preview_button}}{{else}}{{txt.preview}}{{/if}}" onclick="{{#if (eq editor_context.preview_type 2)}}return event.ctrlKey || previewPost();{{else}}return submitThisOnce(this);{{/if}}" class="button_submit">
+{{/if}}
 {{#if context.drafts_pm_save}}
 <input type="submit" name="save_draft" value="{{txt.draft_save}}" onclick="submitThisOnce(this);" accesskey="d" class="button_submit">
 		<input type="hidden" id="id_pm_draft" name="id_pm_draft" value="{{#if context.id_pm_draft}}{{context.id_pm_draft}}{{else}}0{{/if}}">
@@ -6,13 +10,9 @@
 		<input type="submit" name="save_draft" value="{{txt.draft_save}}" onclick="return confirm({{jsEscape txt.draft_save_note}}) && submitThisOnce(this);" class="button_submit">
 		<input type="hidden" id="id_draft" name="id_draft" value="{{#if context.id_draft}}{{context.id_draft}}{{else}}0{{/if}}">
 {{/if}}
-{{#if editor_context.preview_type}}
-<input type="submit" name="preview" value="{{#if editor_context.labels.preview_button}}{{editor_context.labels.preview_button}}{{else}}{{txt.preview}}{{/if}}" onclick="{{#if (eq editor_context.preview_type 2)}}return event.ctrlKey || previewPost();{{else}}return submitThisOnce(this);{{/if}}" class="button_submit">
-{{/if}}
-<input type="submit" value="{{#if editor_context.labels.post_button}}{{editor_context.labels.post_button}}{{else}}{{txt.post}}{{/if}}" name="post" onclick="return submitThisOnce(this);" class="button_submit">
 {{!-- auto-saver --}}
 {{#if (and context.drafts_pm_save context.drafts_autosave)}}
-<span class="righttext padding" style="display: block">
+<span class="floatleft padding" style="display: block">
 	<span id="throbber" style="display:none"><img src="{{settings.images_url}}/loading_sm.gif" alt="" class="centericon">&nbsp;</span>
 	<span id="draft_lastautosave" ></span>
 </span>
@@ -31,7 +31,7 @@
 </script>
 {{/if}}
 {{#if (and context.drafts_save context.drafts_autosave)}}
-<span class="righttext padding" style="display: block">
+<span class="floatleft padding" style="display: block">
 	<span id="throbber" style="display:none"><img src="{{settings.images_url}}/loading_sm.gif" alt="" class="centericon">&nbsp;</span>
 	<span id="draft_lastautosave" ></span>
 </span>
