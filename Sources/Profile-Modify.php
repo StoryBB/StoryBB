@@ -2068,7 +2068,7 @@ function alert_configuration($memID)
 
 		makeNotificationChanges($memID);
 
-		$context['profile_updated'] = $txt['profile_updated_own'];
+		session_flash('success', $txt['profile_updated_own']);
 	}
 
 	createToken($context['token_check'], 'post');
@@ -2284,7 +2284,7 @@ function alert_notifications_topics($memID)
 		validateToken(str_replace('%u', $memID, 'profile-nt%u'), 'post');
 
 		makeNotificationChanges($memID);
-		$context['profile_updated'] = $txt['profile_updated_own'];
+		session_flash('success', $txt['profile_updated_own']);
 	}
 
 	// Now set up for the token check.
@@ -2445,7 +2445,7 @@ function alert_notifications_boards($memID)
 		validateToken(str_replace('%u', $memID, 'profile-nt%u'), 'post');
 
 		makeNotificationChanges($memID);
-		$context['profile_updated'] = $txt['profile_updated_own'];
+		session_flash('success', $txt['profile_updated_own']);
 	}
 
 	// Now set up for the token check.

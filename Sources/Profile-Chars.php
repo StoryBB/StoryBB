@@ -1993,7 +1993,7 @@ function char_merge_account($memID)
 		if ($result !== true)
 			fatal_lang_error('cannot_merge_' . $result, false);
 
-		$_SESSION['merge_success'] = sprintf($txt['merge_success'], $context['member']['name']);
+		session_flash('success', sprintf($txt['merge_success'], $context['member']['name']));
 
 		redirectexit('action=profile;u=' . $_POST['merge_acct_id']);
 	}
@@ -2207,7 +2207,7 @@ function char_move_account()
 		if ($result !== true)
 			fatal_lang_error('cannot_move_' . $result, false);
 
-		$_SESSION['merge_success'] = sprintf($txt['move_success'], $context['character']['character_name']);
+		session_flash('success', sprintf($txt['move_success'], $context['character']['character_name']));
 
 		redirectexit('action=profile;u=' . $_POST['move_acct_id']);
 	}

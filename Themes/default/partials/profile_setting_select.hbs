@@ -1,5 +1,5 @@
 		<select name="{{key}}" id="{{key}}">
 			{{#each field.options}}
-				<option value="{{@key}}"{{#if (eq_coerce @key value)}} selected{{/if}}>{{{.}}}</option>
+				<option value="{{@key}}"{{#if (eq_coerce @key ../field.value)}} selected{{/if}}>{{{.}}}</option>
 			{{/each}}
 		</select>

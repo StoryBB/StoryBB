@@ -545,10 +545,6 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 		}
 	}
 
-	// Is there an updated message to show?
-	if (isset($_GET['updated']))
-		$context['profile_updated'] = $txt['profile_updated_own'];
-
 	// Set a few options for the menu.
 	$menuOptions = array(
 		'disable_url_session_check' => true,
@@ -811,7 +807,7 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 					$saveFunc();
 
 			// Let them know it worked!
-			$context['profile_updated'] = $context['user']['is_owner'] ? $txt['profile_updated_own'] : sprintf($txt['profile_updated_else'], $cur_profile['member_name']);
+			session_flash('success', $context['user']['is_owner'] ? $txt['profile_updated_own'] : sprintf($txt['profile_updated_else'], $cur_profile['member_name']));
 
 			// Invalidate any cached data.
 			cache_put_data('member_data-profile-' . $memID, null, 0);
@@ -827,7 +823,10 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 	}
 	// If it's you then we should redirect upon save.
 	elseif (!empty($profile_vars) && $context['user']['is_owner'] && !$context['do_preview'])
-		redirectexit('action=profile;area=' . $current_area . (!empty($current_sa) ? ';sa=' . $current_sa : '') . ';updated');
+	{
+		session_flash('success', $txt['profile_updated_own']);
+		redirectexit('action=profile;area=' . $current_area . (!empty($current_sa) ? ';sa=' . $current_sa : ''));
+	}
 	elseif (!empty($force_redirect))
 		redirectexit('action=profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=' . $current_area);
 
