@@ -8,7 +8,16 @@
 						</h3>
 					</div>
 					<div class="windowbg nopadding">
-						<div id="smfAnnouncements">{{txt.lfyi}}</div>
+						<div id="smfAnnouncements">
+							{{#if context.admin_news.sbbAnnouncements.en}}
+								{{#each context.admin_news.sbbAnnouncements.en}}
+								<dt><a href="{{href}}">{{subject}}</a> {{{../txt.on}}} {{time}}</dt>
+								<dd>{{message}}</dd>
+								{{/each}}
+							{{else}}
+								{{{txt.lfyi}}}
+							{{/if}}
+						</div>
 					</div>
 				</div>
 				<div id="supportVersionsTable" class="floatright">
@@ -21,9 +30,9 @@
 						<div id="version_details" class="padding">
 							<strong>{{txt.support_versions}}:</strong><br>
 							{{txt.support_versions_forum}}:
-							<em id="yourVersion">{{context.forum_version}}</em><br>
+							<em id="yourVersion"><span class="{{#if context.admin_news.needs_update}}alert{{else}}up-to-date{{/if}}">{{context.forum_version}}</span></em><br>
 							{{txt.support_versions_current}}:
-							<em id="smfVersion">??</em>
+							<em id="smfVersion">StoryBB {{context.admin_news.current_version}}</em>
 							{{#if context.can_admin}}<a href="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=version">{{txt.version_check_more}}</a>{{/if}}<br><br>
 
 							{{#each context.current_versions}}
@@ -62,30 +71,3 @@
 				</fieldset>
 			{{/each}}
 		</div>
-
-		{{! The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization. }}
-		<script src="{{scripturl}}?action=viewsmfile;filename=current-version.js"></script>
-		<script src="{{scripturl}}?action=viewsmfile;filename=latest-news.js"></script>
-		<script>
-			var oAdminIndex = new smf_AdminIndex({
-				sSelf: 'oAdminCenter',
-
-				sAnnouncementTemplate: '<dl>%content%</dl>',
-				sAnnouncementMessageTemplate: '' +
-					'<dt><a href="%href%">%subject%</a> ' + {{{json txt.on}}} + ' %time%</dt>' +
-					'<dd>%message%</dd>',
-				sAnnouncementContainerId: 'smfAnnouncements',
-
-				sSmfVersionContainerId: 'smfVersion',
-				sYourVersionContainerId: 'yourVersion',
-
-				sUpdateNotificationContainerId: 'update_section',
-				sUpdateNotificationDefaultTitle: {{{json txt.update_available}}},
-				sUpdateNotificationDefaultMessage: {{{json txt.update_message}}},
-				sUpdateNotificationTemplate: '' +
-					'<h3 id="update_title">%title%</h3>' +
-					'<div id="update_message" class="smalltext">%message%</div>',
-				sUpdateNotificationLink: smf_scripturl + '?action=admin;area=packages;pgdownload;auto;package=%package%;{{context.session_var}}={{contextsession_id}}'
-
-			});
-		</script>

@@ -3485,11 +3485,17 @@ ul.post_options li {
 #postDraftOptions .settings strong{
 	color: #555;
 }
-#post_confirm_strip /* < That may be deprecated. */, #shortcuts {
+#shortcuts {
 	padding: 12px 0;
 }
 #post_confirm_buttons .smalltext {
 	padding: 0 10px;
+}
+#post_confirm_buttons {
+	float: right;
+}
+#post_confirm_buttons .button_submit {
+	float: none;
 }
 .post_verification {
 	margin-top: 6px;

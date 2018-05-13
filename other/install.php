@@ -1769,7 +1769,7 @@ function template_install_above()
 		<link rel="stylesheet" href="Themes/default/css/install.css?alp21">
 		', $txt['lang_rtl'] == true ? '<link rel="stylesheet" href="Themes/default/css/rtl.css?alp21">' : '', '
 
-		<script src="Themes/default/scripts/jquery-3.1.1.min.js"></script>
+		<script src="Themes/default/scripts/jquery-3.2.1.min.js"></script>
 		<script src="Themes/default/scripts/script.js"></script>
 	</head>
 	<body><div id="footerfix">
@@ -1876,7 +1876,6 @@ function template_welcome_message()
 	global $incontext, $txt;
 
 	echo '
-	<script src="https://www.simplemachines.org/smf/current-version.js?version=' . $GLOBALS['current_smf_version'] . '"></script>
 	<form action="', $incontext['form_url'], '" method="post">
 		<p>', sprintf($txt['install_welcome_desc'], $GLOBALS['current_smf_version']), '</p>
 		<div id="version_warning" style="margin: 2ex; padding: 2ex; border: 2px dashed #a92174; color: black; background-color: #fbbbe2; display: none;">
@@ -1900,25 +1899,17 @@ function template_welcome_message()
 	echo '
 		<script>
 			// Latest version?
-			function smfCurrentVersion()
-			{
-				var smfVer, yourVer;
-
-				if (!(\'smfVersion\' in window))
-					return;
-
-				window.smfVersion = window.smfVersion.replace(/SMF\s?/g, \'\');
-
-				smfVer = document.getElementById("smfVersion");
-				yourVer = document.getElementById("yourVersion");
-
-				setInnerHTML(smfVer, window.smfVersion);
-
-				var currentVersion = getInnerHTML(yourVer);
-				if (currentVersion < window.smfVersion)
-					document.getElementById(\'version_warning\').style.display = \'\';
-			}
-			addLoadEvent(smfCurrentVersion);
+			$(document).ready(function() {
+				$.getJSON( "https://storybb.org/updates.json", function(data) {
+					if (data && data.current_version) {
+						var currentVersion = $("#yourVersion").text();
+						$("#smfVersion").text(data.current_version);
+						if (currentVersion < data.current_version) {
+							$("#version_warning").show();
+						}
+					}
+				})
+			});
 		</script>';
 }
 

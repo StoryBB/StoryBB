@@ -546,7 +546,21 @@ function AdminHome()
 						' . sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']),
 		);
 
-	loadJavaScriptFile('admin.js', array('defer' => false), 'smf_admin');
+	$context['admin_news'] = getAdminFile('updates.json');
+	if (empty($context['admin_news']))
+	{
+		$context['admin_news'] = [
+			'current_version' => '??',
+			'sbbAnnouncements' => [],
+			'needs_update' => false,
+		];
+	}
+
+	if (!empty($context['admin_news']['current_version']))
+	{
+
+		$context['admin_news']['needs_update'] = version_compare(strtr($context['forum_version'], ['StoryBB ' => '']), $context['admin_news']['current_version'], '<');
+	}
 }
 
 /**

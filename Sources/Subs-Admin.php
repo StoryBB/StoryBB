@@ -14,6 +14,46 @@ if (!defined('SMF'))
 	die('No direct access...');
 
 /**
+ * Get the contents of a locally-stored admin info file.
+ *
+ * If the type of the file has a better representation, attempt to provide that (e.g. unpack JSON)
+ *
+ * @param string $filename The filename to look up
+ * @param string $path The path to match against, default to empty for storybb.org cases
+ * @return mixed Returns the contents of the file
+ */
+function getAdminFile(string $filename, string $path = '')
+{
+	global $smcFunc;
+
+	$request = $smcFunc['db_query']('', '
+		SELECT a.data, a.filetype
+		FROM {db_prefix}admin_info_files AS a
+		WHERE filename = {string:filename}
+			AND a.path = {string:path}
+		LIMIT 1',
+		[
+			'filename' => $filename,
+			'path' => $path,
+		]
+	);
+	$data = null;
+	if ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$data = $row['data'];
+		switch ($row['filetype'])
+		{
+			case 'application/json':
+				return json_decode($data, true);
+				break;
+		}
+	}
+	$smcFunc['db_free_result']($request);
+
+	return $data;
+}
+
+/**
  * Get a list of versions that are currently installed on the server.
  * @param array $checkFor An array of what to check versions for - can contain one or more of 'gd', 'imagemagick', 'db_server', 'phpa', 'memcache', 'xcache', 'apc', 'php' or 'server'
  * @return array An array of versions (keys are same as what was in $checkFor, values are the versions)
@@ -114,7 +154,6 @@ function getFileVersions(&$versionOptions)
 		'default_template_versions' => array(),
 		'template_versions' => array(),
 		'default_language_versions' => array(),
-		'tasks_versions' => array(),
 	);
 
 	// Find the version in SSI.php's file header.
@@ -126,7 +165,7 @@ function getFileVersions(&$versionOptions)
 
 		// The comment looks rougly like... that.
 		if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
-			$version_info['file_versions']['SSI.php'] = $match[1];
+			$version_info['file_versions']['SSI.php'] = trim($match[1]);
 		// Not found!  This is bad.
 		else
 			$version_info['file_versions']['SSI.php'] = '??';
@@ -141,55 +180,33 @@ function getFileVersions(&$versionOptions)
 
 		// Found it?
 		if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
-			$version_info['file_versions']['subscriptions.php'] = $match[1];
+			$version_info['file_versions']['subscriptions.php'] = trim($match[1]);
 		// If we haven't how do we all get paid?
 		else
 			$version_info['file_versions']['subscriptions.php'] = '??';
 	}
 
 	// Load all the files in the Sources directory, except this file and the redirect.
-	$sources_dir = dir($sourcedir);
-	while ($entry = $sources_dir->read())
-	{
-		if (substr($entry, -4) === '.php' && !is_dir($sourcedir . '/' . $entry) && $entry !== 'index.php')
-		{
-			// Read the first 4k from the file.... enough for the header.
-			$fp = fopen($sourcedir . '/' . $entry, 'rb');
-			$header = fread($fp, 4096);
-			fclose($fp);
-
-			// Look for the version comment in the file header.
-			if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
-				$version_info['file_versions'][$entry] = $match[1];
-			// It wasn't found, but the file was... show a '??'.
-			else
-				$version_info['file_versions'][$entry] = '??';
+	$sources_dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($sourcedir), RecursiveIteratorIterator::SELF_FIRST);
+	$repl = [
+		$sourcedir => '',
+		'\\' => '/',
+	];
+	foreach($sources_dir as $name => $object) {
+		if (strlen($name) < 5 || substr($name, -4) !== '.php') {
+			continue;
 		}
-	}
-	$sources_dir->close();
+		// Read the first 4k from the file.... enough for the header.
+		$fp = fopen($name, 'rb');
+		$header = fread($fp, 4096);
+		fclose($fp);
 
-	// Load all the files in the tasks directory.
-	if (!empty($versionOptions['include_tasks']))
-	{
-		$tasks_dir = dir($tasksdir);
-		while ($entry = $tasks_dir->read())
-		{
-			if (substr($entry, -4) === '.php' && !is_dir($tasksdir . '/' . $entry) && $entry !== 'index.php')
-			{
-				// Read the first 4k from the file.... enough for the header.
-				$fp = fopen($tasksdir . '/' . $entry, 'rb');
-				$header = fread($fp, 4096);
-				fclose($fp);
-
-				// Look for the version comment in the file header.
-				if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
-					$version_info['tasks_versions'][$entry] = $match[1];
-				// It wasn't found, but the file was... show a '??'.
-				else
-					$version_info['tasks_versions'][$entry] = '??';
-			}
-		}
-		$tasks_dir->close();
+		$entry = ltrim(strtr($name, $repl), '/');
+		if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
+			$version_info['file_versions'][$entry] = trim($match[1]);
+		// It wasn't found, but the file was... show a '??'.
+		else
+			$version_info['file_versions'][$entry] = '??';
 	}
 
 	// Load all the files in the default template directory - and the current theme if applicable.
@@ -236,7 +253,7 @@ function getFileVersions(&$versionOptions)
 
 			// Look for the version comment in the file header.
 			if (preg_match('~(?://|/\*)\s*Version:\s+(.+?);\s*' . preg_quote($name, '~') . '(?:[\s]{2}|\*/)~i', $header, $match) == 1)
-				$version_info['default_language_versions'][$language][$name] = $match[1];
+				$version_info['default_language_versions'][$language][$name] = trim($match[1]);
 			// It wasn't found, but the file was... show a '??'.
 			else
 				$version_info['default_language_versions'][$language][$name] = '??';
@@ -251,7 +268,6 @@ function getFileVersions(&$versionOptions)
 		ksort($version_info['default_template_versions']);
 		ksort($version_info['template_versions']);
 		ksort($version_info['default_language_versions']);
-		ksort($version_info['tasks_versions']);
 
 		// For languages sort each language too.
 		foreach ($version_info['default_language_versions'] as $language => $dummy)
