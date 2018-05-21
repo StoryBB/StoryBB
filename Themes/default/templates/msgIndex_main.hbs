@@ -23,7 +23,7 @@
 					{{/if}}
 					<p class="board_description">{{description}}</p>
 					{{#if (or moderators moderator_groups)}}
-					<p class="moderators">{{#if (eq (getNumItems link_moderators) 1)}}{{../txt.moderator}}{{else}}{{../txt.moderators}}{{/if}}: {{{implode_comma link_moderators}}}</p>
+					<p class="moderators">{{#if (eq (getNumItems link_moderators) 1)}}{{../txt.moderator}}{{else}}{{../txt.moderators}}{{/if}}: {{{join link_moderators ', '}}}</p>
 					{{/if}}
 				</div>
 				<div class="board_stats centertext">
@@ -60,7 +60,7 @@
 			<p>
 			{{context.description}}&nbsp;
 			{{#if context.moderators}}
-				{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{implode_comma context.link_moderators}}}.
+				{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{join context.link_moderators ', '}}}.
 			{{/if}}
 			</p>
 		</div>
@@ -74,7 +74,7 @@
 			{{#if (eq settings.display_who_viewing 1)}}
 				{{#if (eq (getNumItems context.view_members) 1)}}{{txt.who_member}}{{else}}{{txt.members}}{{/if}}
 			{{else}}
-				{{#if context.view_members_list}}{{{implode_comma context.view_members_list}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}}0{{txt.members}}{{/if}}
+				{{#if context.view_members_list}}{{{join context.view_members_list ', '}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}}0{{txt.members}}{{/if}}
 			{{/if}}
 			{{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}} {{txt.who_viewing_board}}
 			</div>

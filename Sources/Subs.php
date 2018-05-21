@@ -2786,50 +2786,24 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	if ($do_footer)
 	{
 		$content = '';
-		$render_templates = [];
-		// Add the before layers.
-		if (empty($context['template_layers']))
-		{
-			$context['template_layers'] = [];
-		}
-		foreach ($context['template_layers'] as $layer) {
-			$render_templates[] = $layer . '_above';
-		}
 
 		// Add the inner part
 		if (empty($context['sub_template']))
 		{
-			$render_templates[] = 'main';
-		}
-		else
-		{
-			$render_templates = array_merge($render_templates, (array) $context['sub_template']);
+			$context['sub_template'] = 'main';
 		}
 
-		// Add the after layers
-		foreach (array_reverse($context['template_layers']) as $layer) {
-			$render_templates[] = $layer . '_below';
-		}
-
-		foreach ($render_templates as $sub_template) {
-			// Super hacky way to render all the layers in the right place.
-			if (function_exists('template_' . $sub_template)) {
-				ob_start();
-				$content .= loadSubTemplate($sub_template);
-				$buffer = ob_get_clean();
-				$content .= $buffer;
-			} else {
-				$phpStr = StoryBB\Template::compile(StoryBB\Template::load($sub_template), [], $settings['theme_id'] . '-' . $sub_template);
-    			$content .= StoryBB\Template::prepare($phpStr, [
-					'context' => $context,
-					'txt' => $txt,
-					'scripturl' => $scripturl,
-					'settings' => $settings,
-					'modSettings' => $modSettings,
-					'options' => $options,
-					'user_info' => $user_info,
-				]);
-			}
+		foreach ((array) $context['sub_template'] as $sub_template) {
+			$phpStr = StoryBB\Template::compile(StoryBB\Template::load($sub_template), [], $settings['theme_id'] . '-' . $sub_template);
+			$content .= StoryBB\Template::prepare($phpStr, [
+				'context' => &$context,
+				'txt' => $txt,
+				'scripturl' => $scripturl,
+				'settings' => $settings,
+				'modSettings' => $modSettings,
+				'options' => $options,
+				'user_info' => $user_info,
+			]);
 		}
 		StoryBB\Template::render_page($content);
 
@@ -2883,7 +2857,10 @@ function session_flash($status, $message) {
 	if (!in_array($status, ['success', 'warning', 'error'])) {
 		fatal_error('Invalid session flash');
 	}
-	$_SESSION['flash'][$status][] = $message;
+	if (empty($_SESSION['flash'][$status]) || !in_array($message, $_SESSION['flash'][$status]))
+	{
+		$_SESSION['flash'][$status][] = $message;
+	}
 }
 
 function session_flash_retrieve() {

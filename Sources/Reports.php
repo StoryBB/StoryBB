@@ -85,22 +85,9 @@ function ReportsMain()
 		'main' => array(
 			'layers' => null,
 		),
-		//'print' => array(
-		//	'layers' => array('print'),
-		//),
 	);
 
 	$context['sub_template'] = 'report';
-
-	// Specific template? Use that instead of main!
-	if (isset($_REQUEST['st']) && isset($reportTemplates[$_REQUEST['st']]))
-	{
-		$context['sub_template'] = $_REQUEST['st'];
-
-		// Are we disabling the other layers - print friendly for example?
-		if ($reportTemplates[$_REQUEST['st']]['layers'] !== null)
-			$context['template_layers'] = $reportTemplates[$_REQUEST['st']]['layers'];
-	}
 
 	// Make the page title more descriptive.
 	$context['page_title'] .= ' - ' . (isset($txt['gr_type_' . $context['report_type']]) ? $txt['gr_type_' . $context['report_type']] : $context['report_type']);
@@ -108,7 +95,6 @@ function ReportsMain()
 	// Build the reports button array.
 	$context['report_buttons'] = array(
 		'generate_reports' => array('text' => 'generate_reports', 'image' => 'print.png', 'url' => $scripturl . '?action=admin;area=reports', 'active' => true),
-		//'print' => array('text' => 'print', 'image' => 'print.png', 'url' => $scripturl . '?action=admin;area=reports;rt=' . $context['report_type'] . ';st=print', 'custom' => 'target="_blank"'),
 	);
 
 	// Allow mods to add additional buttons here

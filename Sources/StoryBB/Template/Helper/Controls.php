@@ -14,6 +14,8 @@ namespace StoryBB\Template\Helper;
 
 class Controls
 {
+	protected static $menu_context;
+
 	public static function _list()
 	{
 		return ([
@@ -21,6 +23,7 @@ class Controls
 			'richtexteditor' => 'StoryBB\\Template\\Helper\\Controls::richtexteditor',
 			'richtextbuttons' => 'StoryBB\\Template\\Helper\\Controls::richedit_buttons',
 			'genericlist' => 'StoryBB\\Template\\Helper\\Controls::genericlist',
+			'genericmenucontext' => 'StoryBB\\Template\\Helper\\Controls::genericmenucontext',
 		]);
 	}
 
@@ -98,6 +101,81 @@ class Controls
 			'cur_list' => $cur_list,
 			'headerCount' => count($cur_list['headers'])
 		]));
+	}
+
+	public static function genericmenucontext()
+	{
+		global $context;
+
+		$context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 1;
+		$context['current_menu_context'] = &$context['menu_data_' . $context['cur_menu_id']];
+		$tab_context = &$context['current_menu_context']['tab_data'];
+
+		// Run through the menu looking for whether we've set up menu tabs or not and whether we need to.
+		if (empty($context['tabs']))
+		{
+			foreach ($context['current_menu_context']['sections'] as $section)
+			{
+				foreach ($section['areas'] as $area)
+				{
+					if (!empty($area['selected']) && empty($context['tabs']))
+					{
+						$context['tabs'] = isset($area['subsections']) ? $area['subsections'] : [];
+					}
+				}
+			}
+		}
+
+		// Exactly how many tabs do we have?
+		if (!empty($context['tabs']))
+		{
+			foreach ($context['tabs'] as $id => $tab)
+			{
+				// Can this not be accessed?
+				if (!empty($tab['disabled']))
+				{
+					$tab_context['tabs'][$id]['disabled'] = true;
+					continue;
+				}
+
+				// Did this not even exist - or do we not have a label?
+				if (!isset($tab_context['tabs'][$id]))
+					$tab_context['tabs'][$id] = array('label' => $tab['label']);
+				elseif (!isset($tab_context['tabs'][$id]['label']))
+					$tab_context['tabs'][$id]['label'] = $tab['label'];
+
+				// Has a custom URL defined in the main admin structure?
+				if (isset($tab['url']) && !isset($tab_context['tabs'][$id]['url']))
+					$tab_context['tabs'][$id]['url'] = $tab['url'];
+
+				// Any additional paramaters for the url?
+				if (isset($tab['add_params']) && !isset($tab_context['tabs'][$id]['add_params']))
+					$tab_context['tabs'][$id]['add_params'] = $tab['add_params'];
+
+				// Has it been deemed selected?
+				if (!empty($tab['is_selected']))
+					$tab_context['tabs'][$id]['is_selected'] = true;
+
+				// Does it have its own help?
+				if (!empty($tab['help']))
+					$tab_context['tabs'][$id]['help'] = $tab['help'];
+
+				// Is this the last one?
+				if (!empty($tab['is_last']) && !isset($tab_context['override_last']))
+					$tab_context['tabs'][$id]['is_last'] = true;
+			}
+
+			// Find the selected tab
+			foreach ($tab_context['tabs'] as $sa => $tab)
+			{
+				if (!empty($tab['is_selected']) || (isset($context['current_menu_context']['current_subsection']) && $context['current_menu_context']['current_subsection'] == $sa))
+				{
+					$selected_tab = $tab;
+					$tab_context['tabs'][$sa]['is_selected'] = true;
+				}
+			}
+		}
+		$context['selected_tab'] = !empty($selected_tab) ? $selected_tab : '';
 	}
 }
 

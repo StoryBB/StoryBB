@@ -56,7 +56,7 @@ function Post($post_errors = array())
 
 	if (isset($_REQUEST['xml']))
 	{
-		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::add_helper(['cleanXml' => 'cleanXml']);
 		StoryBB\Template::set_layout('xml');
 		$context['sub_template'] = 'xml_post_preview';
 
@@ -2478,7 +2478,7 @@ function QuoteFast()
 
 	$context['sub_template'] = 'xml_quotefast';
 	StoryBB\Template::set_layout('xml');
-	register_helper([
+	StoryBB\Template::add_helper([
 		'cleanXml' => 'cleanXml',
 	]);
 
@@ -2774,7 +2774,7 @@ function JavaScriptModify()
 	{
 		StoryBB\Template::set_layout('xml');
 		$context['sub_template'] = 'xml_modifydone';
-		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::add_helper(['cleanXml' => 'cleanXml']);
 		if (empty($post_errors) && isset($msgOptions['subject']) && isset($msgOptions['body']))
 		{
 			$context['message'] = array(

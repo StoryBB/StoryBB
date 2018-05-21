@@ -189,7 +189,9 @@ class Template
 		$phpStr = LightnCandy::compile($template, [
 			'flags' => isset($options['flags']) ? $options['flags'] : (LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL),
 			'helpers' => !empty($options['helpers']) ? array_merge(self::$helpers, $options['helpers']) : self::$helpers,
-			'partialresolver' => 'loadTemplatePartialResolver',
+			'partialresolver' => function($cx, $name) {
+				return \StoryBB\Template::load_partial($name);
+			},
 			'partials' => !empty($options['partials']) ? array_merge($default_partials, $options['partials']) : $default_partials,
 		]);
 
@@ -234,7 +236,6 @@ class Template
 			'helpers' => [
 				'locale' => 'locale_helper',
 				'login_helper' => 'login_helper',
-				'isSelected' => 'isSelected',
 				'javascript' => 'template_javascript',
 				'css' => function() { return template_css(); },
 			]
@@ -259,10 +260,9 @@ class Template
 				{
 					$phpStr = self::compile($template, [], 'partial-' . $layer . '_above-' . self::get_theme_id('partials', $layer . '_above'));
 					$template_above .= new \LightnCandy\SafeString(self::prepare($phpStr, [
-						'context' => $context,
+						'context' => &$context,
 						'modSettings' => $modSettings,
 						'settings' => $settings,
-						'modSettings' => $modSettings,
 						'txt' => $txt,
 						'scripturl' => $scripturl,
 						'options' => $options,
@@ -275,10 +275,9 @@ class Template
 				{
 					$phpStr = self::compile($template, [], 'partial-' . $layer . 'below-' . self::get_theme_id('partials', $layer . 'below'));
 					$template_below .= new \LightnCandy\SafeString(self::prepare($phpStr, [
-						'context' => $context,
+						'context' => &$context,
 						'modSettings' => $modSettings,
 						'settings' => $settings,
-						'modSettings' => $modSettings,
 						'txt' => $txt,
 						'scripturl' => $scripturl,
 						'options' => $options,

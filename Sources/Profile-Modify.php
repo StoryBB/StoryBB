@@ -682,20 +682,22 @@ function setupProfileContext($fields)
 		}
 	}
 
-	// Some spicy JS.
+	// Some spicy JS. @TODO rewrite with jQuery sometime.
 	addInlineJavaScript('
-	var form_handle = document.forms.creator;
-	createEventListener(form_handle);
-	'. (!empty($context['require_password']) ? '
-	form_handle.addEventListener(\'submit\', function(event)
-	{
-		if (this.oldpasswrd.value == "")
+	if (document.forms.creator) {
+		var form_handle = document.forms.creator;
+		createEventListener(form_handle);
+		' . (!empty($context['require_password']) ? '
+		form_handle.addEventListener(\'submit\', function(event)
 		{
-			event.preventDefault();
-			alert('. (JavaScriptEscape($txt['required_security_reasons'])) . ');
-			return false;
-		}
-	}, false);' : ''), true);
+			if (this.oldpasswrd.value == "")
+			{
+				event.preventDefault();
+				alert(' . (JavaScriptEscape($txt['required_security_reasons'])) . ');
+				return false;
+			}
+		}, false);
+	}' : ''), true);
 
 	// Any onsubmit javascript?
 	if (!empty($context['profile_onsubmit_javascript']))
@@ -2067,7 +2069,7 @@ function alert_configuration($memID)
 
 		makeNotificationChanges($memID);
 
-		$context['profile_updated'] = $txt['profile_updated_own'];
+		session_flash('success', $txt['profile_updated_own']);
 	}
 
 	createToken($context['token_check'], 'post');
@@ -2133,7 +2135,6 @@ function alert_markread($memID)
 	$db_show_debug = false;
 
 	// We only want to output our little layer here.
-	$context['template_layers'] = array();
 	StoryBB\Template::set_layout('raw');
 	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'alerts_all_read';
@@ -2284,7 +2285,7 @@ function alert_notifications_topics($memID)
 		validateToken(str_replace('%u', $memID, 'profile-nt%u'), 'post');
 
 		makeNotificationChanges($memID);
-		$context['profile_updated'] = $txt['profile_updated_own'];
+		session_flash('success', $txt['profile_updated_own']);
 	}
 
 	// Now set up for the token check.
@@ -2445,7 +2446,7 @@ function alert_notifications_boards($memID)
 		validateToken(str_replace('%u', $memID, 'profile-nt%u'), 'post');
 
 		makeNotificationChanges($memID);
-		$context['profile_updated'] = $txt['profile_updated_own'];
+		session_flash('success', $txt['profile_updated_own']);
 	}
 
 	// Now set up for the token check.
@@ -4062,7 +4063,6 @@ function tfasetup($memID)
 		{
 			$context['from_ajax'] = true;
 			StoryBB\Template::set_layout('raw');
-			$context['template_layers'] = array();
 			StoryBB\Template::remove_all_layers();
 		}
 

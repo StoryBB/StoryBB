@@ -21,7 +21,6 @@ function characters_popup($memID)
 
 	// We only want to output our little layer here.
 	StoryBB\Template::set_layout('raw');
-	$context['template_layers'] = [];
 	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'profile_character_popup';
 
@@ -1106,7 +1105,7 @@ function char_stats()
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $context['character']['character_name'];
 	$context['sub_template'] = 'profile_character_stats';
 
-	register_helper([
+	StoryBB\Template::add_helper([
 		'inverted_percent' => function($pc) { return 100 - $pc; },
 		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
 	]);
@@ -1994,7 +1993,7 @@ function char_merge_account($memID)
 		if ($result !== true)
 			fatal_lang_error('cannot_merge_' . $result, false);
 
-		$_SESSION['merge_success'] = sprintf($txt['merge_success'], $context['member']['name']);
+		session_flash('success', sprintf($txt['merge_success'], $context['member']['name']));
 
 		redirectexit('action=profile;u=' . $_POST['merge_acct_id']);
 	}
@@ -2208,7 +2207,7 @@ function char_move_account()
 		if ($result !== true)
 			fatal_lang_error('cannot_move_' . $result, false);
 
-		$_SESSION['merge_success'] = sprintf($txt['move_success'], $context['character']['character_name']);
+		session_flash('success', sprintf($txt['move_success'], $context['character']['character_name']));
 
 		redirectexit('action=profile;u=' . $_POST['move_acct_id']);
 	}

@@ -200,12 +200,6 @@ function summary($memID)
 		foreach ($context['custom_fields'] as $custom)
 			$context['print_custom_fields'][$context['cust_profile_fields_placement'][$custom['placement']]][] = $custom;
 
-	if (!empty($_SESSION['merge_success']))
-	{
-		$context['profile_updated'] = $_SESSION['merge_success'];
-		unset ($_SESSION['merge_success']);
-	}
-
 	$cur_profile = $user_profile[$memID];
 	$main_char = $cur_profile['characters'][$cur_profile['main_char']];
 	$context['member']['signature'] = $main_char['sig_parsed'];
@@ -1321,7 +1315,7 @@ function statPanel($memID)
 		fatal_lang_error('loadavg_userstats_disabled', false);
 
 	$context['sub_template'] = 'profile_stats';
-	register_helper([
+	StoryBB\Template::add_helper([
 		'inverted_percent' => function($pc) { return 100 - $pc; },
 		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
 	]);

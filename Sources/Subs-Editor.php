@@ -1337,7 +1337,6 @@ function loadLocale()
 
 	loadLanguage('Editor');
 
-	$context['template_layers'] = array();
 	StoryBB\Template::remove_all_layers();
 	// Lets make sure we aren't going to output anything nasty.
 	@ob_end_clean();

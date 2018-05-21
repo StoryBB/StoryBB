@@ -546,7 +546,21 @@ function AdminHome()
 						' . sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']),
 		);
 
-	loadJavaScriptFile('admin.js', array('defer' => false), 'smf_admin');
+	$context['admin_news'] = getAdminFile('updates.json');
+	if (empty($context['admin_news']))
+	{
+		$context['admin_news'] = [
+			'current_version' => '??',
+			'sbbAnnouncements' => [],
+			'needs_update' => false,
+		];
+	}
+
+	if (!empty($context['admin_news']['current_version']))
+	{
+
+		$context['admin_news']['needs_update'] = version_compare(strtr($context['forum_version'], ['StoryBB ' => '']), $context['admin_news']['current_version'], '<');
+	}
 }
 
 /**
@@ -588,7 +602,6 @@ if (!(\'smfForum_sessionvar\' in window))
 	window.smfForum_sessionvar = \'sesc\';
 ' . strtr($file_data, array(';sesc=' => ';\' + window.smfForum_sessionvar + \'='));
 
-	$context['template_layers'] = array();
 	StoryBB\Template::remove_all_layers();
 	// Lets make sure we aren't going to output anything nasty.
 	@ob_end_clean();

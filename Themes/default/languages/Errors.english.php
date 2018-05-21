@@ -128,7 +128,6 @@ $txt['cannot_view_stats'] = 'You aren\'t allowed to view the forum statistics.';
 $txt['cannot_who_view'] = 'Sorry - you don\'t have the proper permissions to view the Who\'s Online list.';
 
 $txt['no_theme'] = 'That theme does not exist.';
-$txt['theme_dir_wrong'] = 'The default theme\'s directory is wrong, please correct it by clicking this text.';
 $txt['registration_disabled'] = 'Sorry, registration is currently disabled.';
 $txt['registration_agreement_missing'] = 'The registration agreement file, agreement.txt, is either missing or empty. Registrations have been disable until this is fixed';
 $txt['registration_no_secret_question'] = 'Sorry, there is no secret question set for this member.';
