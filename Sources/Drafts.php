@@ -11,6 +11,7 @@
  * @version 3.0 Alpha 1
  */
 
+// @todo fix this
 loadLanguage('Drafts');
 
 /**
