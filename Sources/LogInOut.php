@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Ask them for their login information. (shows a page for the user to type
  *  in their username and password.)

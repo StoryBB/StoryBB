@@ -12,9 +12,6 @@
 
 namespace StoryBB\Search;
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Class fulltext_search
  * Used for fulltext index searching

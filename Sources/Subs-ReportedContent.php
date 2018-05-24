@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Updates a report with the given parameters. Logs each action via logAction()
  *

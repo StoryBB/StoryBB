@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Fixes corrupted serialized strings after a character set conversion.
  */

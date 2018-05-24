@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 class Attachments
 {
 	protected $_msg = 0;

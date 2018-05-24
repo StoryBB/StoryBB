@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Create a menu.
  * @param array $menuData An array of menu data

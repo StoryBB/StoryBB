@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This is a handling function for all things post moderation.
  */

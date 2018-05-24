@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Outputs xml data representing recent information or a profile.
  * Can be passed 4 subactions which decide what is output:

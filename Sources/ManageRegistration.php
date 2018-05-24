@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Entrance point for the registration center, it checks permissions and forwards
  * to the right function based on the subaction.

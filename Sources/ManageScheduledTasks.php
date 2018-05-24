@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Scheduled tasks management dispatcher. This function checks permissions and delegates
  * to the appropriate function based on the sub-action.
