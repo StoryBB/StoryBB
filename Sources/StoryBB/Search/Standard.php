@@ -12,10 +12,6 @@
 
 namespace StoryBB\Search;
 
-
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Standard non full index, non custom index search
  */

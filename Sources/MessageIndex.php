@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Show the list of topics in this board, along with any child boards.
  */

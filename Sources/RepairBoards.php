@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Finds or repairs errors in the database to fix possible problems.
  * Requires the admin_forum permission.

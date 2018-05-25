@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Sets the SMF-style login cookie and session based on the id_member and password passed.
  * - password should be already encrypted with the cookie salt.

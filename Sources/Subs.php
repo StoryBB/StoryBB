@@ -12,9 +12,6 @@
 
 use LightnCandy\LightnCandy;
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Simple autoloader.
  */

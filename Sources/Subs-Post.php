@@ -12,9 +12,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Takes a message and parses it, returning nothing.
  * Cleans up links (javascript, etc.) and code/quote sections.

@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Check if the user is who he/she says he is
  * Makes sure the user is who they claim to be by requiring a password to be typed in every hour.

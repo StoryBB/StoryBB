@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This function shows the board index.
  * It uses the BoardIndex template, and main sub template.

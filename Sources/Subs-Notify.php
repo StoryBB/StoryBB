@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Fetches the list of preferences (or a single/subset of preferences) for
  * notifications for one or more users.

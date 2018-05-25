@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * The main dispatcher; doesn't do anything, just delegates.
  * This is the main entry point for all the manageboards admin screens.

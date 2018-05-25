@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This function makes sure the requested subaction does exists, if it doesn't, it sets a default action or.
  *

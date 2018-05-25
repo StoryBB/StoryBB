@@ -9,9 +9,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This is the controlling delegator
  * @uses Profile language files and Reminder template

@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Turn off/on notification for a particular board.
  * Must be called with a board specified in the URL.

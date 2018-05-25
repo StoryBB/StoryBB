@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Delete one or more members.
  * Requires profile_remove_own or profile_remove_any permission for

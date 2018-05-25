@@ -9,9 +9,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Class curl_fetch_web_data
  * Properly redirects even with safe mode and basedir restrictions

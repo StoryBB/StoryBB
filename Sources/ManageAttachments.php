@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * The main 'Attachments and Avatars' management function.
  * This function is the entry point for index.php?action=admin;area=manageattachments

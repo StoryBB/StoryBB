@@ -15,9 +15,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * downloads a file from a url and stores it locally for avatar use by id_member.
  * - supports GIF, JPG, PNG, BMP and WBMP formats.
