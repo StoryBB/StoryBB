@@ -756,7 +756,10 @@ function loadUserSettings()
 	if ($immersive)
 	{
 		// In immersive mode, we apply the groups for the current character.
-		$user_info['groups'] = array_merge($user_info['groups'], $group_filter($user_settings['main_char_group'], $user_settings['char_groups']));
+		if (isset($user_settings['main_char_group']))
+		{
+			$user_info['groups'] = array_merge($user_info['groups'], $group_filter($user_settings['main_char_group'], $user_settings['char_groups']));
+		}
 	}
 	elseif ($modSettings['non_immersive_mode'] == 'contextual')
 	{
