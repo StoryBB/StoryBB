@@ -4153,7 +4153,7 @@ function setupMenuContext()
  */
 function smf_seed_generator()
 {
-	updateSettings(array('rand_seed' => microtime() * 1000000));
+	updateSettings(array('rand_seed' => (float) microtime() * 1000000));
 }
 
 /**
