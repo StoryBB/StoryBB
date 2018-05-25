@@ -10,7 +10,7 @@
 						<label for="group_name_input"><strong>{{{txt.membergroups_edit_name}}}:</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="group_name" id="group_name_input" value="{{{context.group.editable_name}}}" size="30" class="input_text">
+						<input type="text" name="group_name" id="group_name_input" value="{{{context.group.editable_name}}}" size="30" class="input_text" required>
 					</dd>
 
 					{{#unless context.group.is_post_group}}
