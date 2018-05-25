@@ -634,7 +634,7 @@ function AddMembergroup()
 	// Just show the 'add membergroup' screen.
 	$context['page_title'] = $txt['membergroups_new_group'];
 	$context['sub_template'] = 'admin_membergroups_add';
-	$context['character_group'] = isset($_REQUEST['charactergroup']);
+	$context['character_group'] = isset($_REQUEST['charactergroup']) || !empty($_REQUEST['group_level']);
 	$context['post_group'] = isset($_REQUEST['postgroup']);
 	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']) && !isset($_REQUEST['charactergroup']);
 	$context['allow_protected'] = allowedTo('admin_forum');
