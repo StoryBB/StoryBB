@@ -47,7 +47,7 @@ class Zend extends API
 
 		// Zend's pricey stuff.
 		if (function_exists('zend_shm_cache_fetch'))
-			return zend_shm_cache_fetch('SMF::' . $key);
+			return zend_shm_cache_fetch('SBB::' . $key);
 		elseif (function_exists('output_cache_get'))
 			return output_cache_get($key, $ttl);
 	}
@@ -60,7 +60,7 @@ class Zend extends API
 		$key = $this->prefix . strtr($key, ':/', '-_');
 
 		if (function_exists('zend_shm_cache_store'))
-			return zend_shm_cache_store('SMF::' . $key, $value, $ttl);
+			return zend_shm_cache_store('SBB::' . $key, $value, $ttl);
 		elseif (function_exists('output_cache_put'))
 			return output_cache_put($key, $value);
 	}
@@ -72,7 +72,7 @@ class Zend extends API
 	{
 		$this->invalidateCache();
 
-		return zend_shm_cache_clear('SMF');
+		return zend_shm_cache_clear('SBB');
 	}
 }
 
