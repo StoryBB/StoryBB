@@ -12,9 +12,6 @@
 
 namespace StoryBB\Cache;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
 /**
  * This provides generic functionality for cache backends, that might need to be overridden.
  */
