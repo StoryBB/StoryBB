@@ -209,7 +209,7 @@ function perform_task($task_details)
 	}
 
 	// All background tasks need to be classes.
-	elseif (class_exists($task_details['task_class']) && is_subclass_of($task_details['task_class'], 'SMF_BackgroundTask'))
+	elseif (class_exists($task_details['task_class']) && is_subclass_of($task_details['task_class'], 'StoryBB\\Task\\Adhoc'))
 	{
 		$details = empty($task_details['task_data']) ? array() : json_decode($task_details['task_data'], true);
 		$bgtask = new $task_details['task_class']($details);
@@ -280,35 +280,6 @@ function obExit_cron()
 		header('Content-Type: image/gif');
 		die("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
 	}
-}
-
-// We would like this to be defined, but we don't want to have to load more stuff than necessary.
-// Thus we declare it here, and any legitimate background task must implement this.
-/**
- * Class SMF_BackgroundTask
- */
-abstract class SMF_BackgroundTask
-{
-
-	/**
-	 * @var array Holds the details for the task
-	 */
-	protected $_details;
-
-	/**
-	 * The constructor.
-	 * @param array $details The details for the task
-	 */
-	public function __construct($details)
-	{
-		$this->_details = $details;
-	}
-
-	/**
-	 * The function to actually execute a task
-	 * @return mixed
-	 */
-	abstract public function execute();
 }
 
 ?>
