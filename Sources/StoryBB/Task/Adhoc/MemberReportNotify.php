@@ -10,10 +10,12 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Task\Adhoc;
+
 /**
  * Class MemberReport_Notify_Background
  */
-class MemberReport_Notify_Background extends SMF_BackgroundTask
+class MemberReportNotify extends StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the information, puts the email in the queue and inserts alerts as needed.
