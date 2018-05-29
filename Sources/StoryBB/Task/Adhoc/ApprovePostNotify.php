@@ -9,10 +9,12 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Task\Adhoc;
+
 /**
- * Class ApprovePost_Notify_Background
+ * Notify moderators that a post needs to be approved.
  */
-class ApprovePost_Notify_Background extends SMF_BackgroundTask
+class ApprovePostNotify extends StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the info, puts the email in the queue and inserts any alerts as needed.

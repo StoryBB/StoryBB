@@ -309,19 +309,12 @@ class Post
 				array()
 			);
 
-			$smcFunc['db_insert']('',
-				'{db_prefix}background_tasks',
-				array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-				array(
-					'$sourcedir/tasks/ApprovePost-Notify.php', 'ApprovePost_Notify_Background', json_encode(array(
-						'msgOptions' => $msgOptions,
-						'topicOptions' => $topicOptions,
-						'posterOptions' => $posterOptions,
-						'type' => $new_topic ? 'topic' : 'post',
-					)), 0
-				),
-				array('id_task')
-			);
+			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ApprovePostNotify', [
+				'msgOptions' => $msgOptions,
+				'topicOptions' => $topicOptions,
+				'posterOptions' => $posterOptions,
+				'type' => $new_topic ? 'topic' : 'post',
+			]);
 		}
 
 		// Mark inserted topic as read (only for the user calling this function).
