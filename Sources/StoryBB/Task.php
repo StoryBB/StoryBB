@@ -14,6 +14,8 @@ namespace StoryBB;
 
 class Task
 {
+	static $pre_batch_queue = [];
+
 	/**
 	 * Add an adhoc task to the background task list.
 	 *
@@ -36,6 +38,46 @@ class Task
 		);
 
 		return true;
+	}
+
+	/**
+	 * Batch-queue a background task.
+	 *
+	 * @param string $class Name of the class (should be autoloadable)
+	 * @param array $data The data that the class needs
+	 * @return bool True if the class could be added
+	 */
+	public static function batch_queue_adhoc(string $class, array $data = []): bool
+	{
+		if (!class_exists($class)) {
+			return false;
+		}
+
+		self::$pre_batch_queue[] = [$class, $data];
+		return true;
+	}
+
+	/**
+	 * Commit the batch queue to the database.
+	 */
+	public static function commit_batch_queue()
+	{
+		if (!empty(self::$pre_batch_queue))
+		{
+			$rows = [];
+			foreach (self::$pre_batch_queue as $task)
+			{
+				$rows[] = ['', $task[0], !empty($task[1]) ? json_encode($task[1]) : '', 0];
+			}
+
+			$smcFunc['db_insert']('insert', '{db_prefix}background_tasks',
+				['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'],
+				$rows,
+				['id_task']
+			);
+		}
+
+		self::$pre_batch_queue = [];
 	}
 }
 

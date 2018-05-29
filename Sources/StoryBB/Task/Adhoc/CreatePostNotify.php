@@ -9,10 +9,12 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Task\Adhoc;
+
 /**
  * Class CreatePost_Notify_Background
  */
-class CreatePost_Notify_Background extends SMF_BackgroundTask
+class CreatePostNotify extends StoryBB\Task\Adhoc
 {
 	/**
      * This handles notifications when a new post is created - new topic, reply, quotes and mentions.
