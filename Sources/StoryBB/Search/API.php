@@ -12,9 +12,6 @@
 
 namespace StoryBB\Search;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
 /**
  * The generic search class has a number of functions, most backends should override most of these.
  */

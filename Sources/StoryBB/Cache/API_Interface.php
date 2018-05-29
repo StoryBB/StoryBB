@@ -12,9 +12,6 @@
 
 namespace StoryBB\Cache;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
 /**
  * All cache backends supported by StoryBB are required to implement this interface.
  */
