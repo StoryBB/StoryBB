@@ -315,20 +315,15 @@ function reportPost($msg, $reason)
 		);
 
 		// And get ready to notify people.
-		$smcFunc['db_insert']('insert',
-			'{db_prefix}background_tasks',
-			array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-			array('$sourcedir/tasks/MsgReport-Notify.php', 'MsgReport_Notify_Background', json_encode(array(
-				'report_id' => $id_report,
-				'msg_id' => $_POST['msg'],
-				'topic_id' => $message['id_topic'],
-				'board_id' => $message['id_board'],
-				'sender_id' => $context['user']['id'],
-				'sender_name' => $context['user']['name'],
-				'time' => time(),
-			)), 0),
-			array('id_task')
-		);
+		StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\MsgReportNotify', [
+			'report_id' => $id_report,
+			'msg_id' => $_POST['msg'],
+			'topic_id' => $message['id_topic'],
+			'board_id' => $message['id_board'],
+			'sender_id' => $context['user']['id'],
+			'sender_name' => $context['user']['name'],
+			'time' => time(),
+		]);
 	}
 
 	// Keep track of when the mod reports get updated, that way we know when we need to look again.
