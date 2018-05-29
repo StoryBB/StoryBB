@@ -1536,17 +1536,12 @@ function adminNotify($type, $memberID, $member_name = null)
 	}
 
 	// This is really just a wrapper for making a new background task to deal with all the fun.
-	$smcFunc['db_insert']('insert',
-		'{db_prefix}background_tasks',
-		array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-		array('$sourcedir/tasks/Register-Notify.php', 'Register_Notify_Background', json_encode(array(
-			'new_member_id' => $memberID,
-			'new_member_name' => $member_name,
-			'notify_type' => $type,
-			'time' => time(),
-		)), 0),
-		array('id_task')
-	);
+	StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\RegisterNotify', [
+		'new_member_id' => $memberID,
+		'new_member_name' => $member_name,
+		'notify_type' => $type,
+		'time' => time(),
+	]);
 }
 
 /**
