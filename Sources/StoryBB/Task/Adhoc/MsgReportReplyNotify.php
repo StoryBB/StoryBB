@@ -16,7 +16,7 @@ namespace StoryBB\Task\Adhoc;
 /**
  * Class MsgReportReply_Notify_Background
  */
-class MsgReportReplyNotify extends StoryBB\Task\Adhoc
+class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the information, puts the email in the queue and inserts alerts as needed.

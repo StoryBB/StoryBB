@@ -15,7 +15,7 @@ namespace StoryBB\Task\Adhoc;
 /**
  * Calls the existing functionality for TLD management, just makes it available as an adhoc task.
  */
-class UpdateTldRegex extends StoryBB\Task\Adhoc
+class UpdateTldRegex extends \StoryBB\Task\Adhoc
 {
     /**
      * This executes the task. It just calls set_tld_regex helper.

@@ -16,7 +16,7 @@ namespace StoryBB\Task\Adhoc;
 /**
  * Class GroupReq_Notify_Background
  */
-class GroupReqNotify extends StoryBB\Task\Adhoc
+class GroupReqNotify extends \StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the information, puts the email in the queue and inserts any alerts as needed.

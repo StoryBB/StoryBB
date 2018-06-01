@@ -14,7 +14,7 @@ namespace StoryBB\Task\Adhoc;
 /**
  * Class ApproveReply_Notify_Background
  */
-class ApproveReplyNotify extends StoryBB\Task\Adhoc
+class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the information, puts the email in the queue and inserts alerts.

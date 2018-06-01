@@ -14,7 +14,7 @@ namespace StoryBB\Task\Adhoc;
 /**
  * Class CreatePost_Notify_Background
  */
-class CreatePostNotify extends StoryBB\Task\Adhoc
+class CreatePostNotify extends \StoryBB\Task\Adhoc
 {
 	/**
      * This handles notifications when a new post is created - new topic, reply, quotes and mentions.

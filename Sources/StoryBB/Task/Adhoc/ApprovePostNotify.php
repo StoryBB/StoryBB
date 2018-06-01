@@ -14,7 +14,7 @@ namespace StoryBB\Task\Adhoc;
 /**
  * Notify moderators that a post needs to be approved.
  */
-class ApprovePostNotify extends StoryBB\Task\Adhoc
+class ApprovePostNotify extends \StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the info, puts the email in the queue and inserts any alerts as needed.

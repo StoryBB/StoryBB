@@ -15,7 +15,7 @@ namespace StoryBB\Task\Adhoc;
 /**
  * This task handles notifying someone that an user has added him/her as his/her buddy.
  */
-class BuddyNotify extends StoryBB\Task\Adhoc
+class BuddyNotify extends \StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the info, sets the alerts and loads up the email queue.

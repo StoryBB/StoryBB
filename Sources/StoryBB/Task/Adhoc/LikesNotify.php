@@ -15,7 +15,7 @@ namespace StoryBB\Task\Adhoc;
 /**
  * Class Likes_Notify_Background
  */
-class LikesNotify extends StoryBB\Task\Adhoc
+class LikesNotify extends \StoryBB\Task\Adhoc
 {
 	/**
 	 * This executes the task - loads up the information, puts the email in the queue and inserts alerts as needed.

@@ -15,7 +15,7 @@ namespace StoryBB\Task\Adhoc;
 /**
  * Class Birthday_Notify_Background
  */
-class BirthdayNotify extends StoryBB\Task\Adhoc
+class BirthdayNotify extends \StoryBB\Task\Adhoc
 {
     /**
      * This executes the task. It loads up the birthdays, figures out the greeting, etc.
