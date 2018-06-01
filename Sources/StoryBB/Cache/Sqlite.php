@@ -12,9 +12,6 @@
 
 namespace StoryBB\Cache;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
 /**
  * SQLite Cache API class
  * @package cacheAPI

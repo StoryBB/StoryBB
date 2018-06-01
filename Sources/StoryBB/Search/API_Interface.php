@@ -12,9 +12,6 @@
 
 namespace StoryBB\Search;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
 /**
  * These methods should all be implemented for a search backend to successfully implement post searching.
  */
