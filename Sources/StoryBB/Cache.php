@@ -11,9 +11,6 @@
 
 namespace StoryBB;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
 /**
  * A singleton for containing the current cache backend and accessing it.
  */

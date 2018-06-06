@@ -12,9 +12,6 @@
 
 namespace StoryBB\Search;
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Used for the "custom search index" option
  * Class custom_search

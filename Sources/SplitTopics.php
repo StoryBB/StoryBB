@@ -12,9 +12,6 @@
  * Original module by Mach8 - We'll never forget you.
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * splits a topic into two topics.
  * delegates to the other functions (based on the URL parameter 'sa').

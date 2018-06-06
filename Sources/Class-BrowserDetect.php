@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Class browser_detector
  *  This class is an experiment for the job of correctly detecting browsers and settings needed for them.

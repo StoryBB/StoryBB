@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /*	The contents of this file handle the deletion of topics, posts, and related
 	paraphernalia.  It has the following functions:
 

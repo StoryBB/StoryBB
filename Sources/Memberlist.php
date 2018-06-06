@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Shows a listing of registered members.
  * - If a subaction is not specified, lists all registered members.

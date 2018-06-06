@@ -13,9 +13,6 @@
 
 use LightnCandy\LightnCandy;
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * !!!Compatibility!!!
  * This is no more needed, but to avoid break mods let's keep it
