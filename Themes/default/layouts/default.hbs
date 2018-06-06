@@ -74,7 +74,7 @@
         {{/if}}
         
         {{#if modSettings.userLanguage}}
-            {{#if context.languages}}
+            {{#if (gt (count context.languages) 1)}}
                 <form id="languages_form" method="get" class="floatright">
         			<select id="language_select" name="language" onchange="this.form.submit()">
         			    {{#each context.languages}}
