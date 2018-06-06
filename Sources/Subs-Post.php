@@ -1004,36 +1004,28 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		$row['subject'] = un_htmlspecialchars($row['subject']);
 		$row['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($row['body'], false, $row['id_last_msg']), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
-		$task_rows[] = array(
-			'$sourcedir/tasks/CreatePost-Notify.php', 'CreatePost_Notify_Background', json_encode(array(
-				'msgOptions' => array(
-					'id' => $row['id_msg'],
-					'subject' => $row['subject'],
-					'body' => $row['body'],
-				),
-				'topicOptions' => array(
-					'id' => $row['id_topic'],
-					'board' => $row['id_board'],
-				),
-				// Kinda cheeky, but for any action the originator is usually the current user
-				'posterOptions' => array(
-					'id' => $user_info['id'],
-					'name' => $user_info['name'],
-				),
-				'type' => $type,
-				'members_only' => $members_only,
-			)), 0
-		);
+		StoryBB\Task::batch_queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
+			'msgOptions' => array(
+				'id' => $row['id_msg'],
+				'subject' => $row['subject'],
+				'body' => $row['body'],
+			),
+			'topicOptions' => array(
+				'id' => $row['id_topic'],
+				'board' => $row['id_board'],
+			),
+			// Kinda cheeky, but for any action the originator is usually the current user
+			'posterOptions' => array(
+				'id' => $user_info['id'],
+				'name' => $user_info['name'],
+			),
+			'type' => $type,
+			'members_only' => $members_only,
+		]);
 	}
 	$smcFunc['db_free_result']($result);
 
-	if (!empty($task_rows))
-		$smcFunc['db_insert']('',
-			'{db_prefix}background_tasks',
-			array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-			$task_rows,
-			array('id_task')
-		);
+	StoryBB\Task::commit_batch_queue();
 }
 
 /**
@@ -1260,32 +1252,27 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	{
 		$task_rows = array();
 		foreach (array_merge($notification_topics, $notification_posts) as $topic)
-			$task_rows[] = array(
-				'$sourcedir/tasks/CreatePost-Notify.php', 'CreatePost_Notify_Background', json_encode(array(
-					'msgOptions' => array(
-						'id' => $topic['msg'],
-						'body' => $topic['body'],
-						'subject' => $topic['subject'],
-					),
-					'topicOptions' => array(
-						'id' => $topic['topic'],
-						'board' => $topic['board'],
-					),
-					'posterOptions' => array(
-						'id' => $topic['poster'],
-						'name' => $topic['name'],
-					),
-					'type' => $topic['new_topic'] ? 'topic' : 'reply',
-				)), 0
-			);
+		{
+			StoryBB\Task::batch_queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
+				'msgOptions' => array(
+					'id' => $topic['msg'],
+					'body' => $topic['body'],
+					'subject' => $topic['subject'],
+				),
+				'topicOptions' => array(
+					'id' => $topic['topic'],
+					'board' => $topic['board'],
+				),
+				'posterOptions' => array(
+					'id' => $topic['poster'],
+					'name' => $topic['name'],
+				),
+				'type' => $topic['new_topic'] ? 'topic' : 'reply',
+			]);
+		}
 
 		if ($notify)
-			$smcFunc['db_insert']('',
-				'{db_prefix}background_tasks',
-				array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-				$task_rows,
-				array('id_task')
-			);
+			StoryBB\Task::commit_batch_queue();
 
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}approval_queue
@@ -1536,17 +1523,12 @@ function adminNotify($type, $memberID, $member_name = null)
 	}
 
 	// This is really just a wrapper for making a new background task to deal with all the fun.
-	$smcFunc['db_insert']('insert',
-		'{db_prefix}background_tasks',
-		array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-		array('$sourcedir/tasks/Register-Notify.php', 'Register_Notify_Background', json_encode(array(
-			'new_member_id' => $memberID,
-			'new_member_name' => $member_name,
-			'notify_type' => $type,
-			'time' => time(),
-		)), 0),
-		array('id_task')
-	);
+	StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\RegisterNotify', [
+		'new_member_id' => $memberID,
+		'new_member_name' => $member_name,
+		'notify_type' => $type,
+		'time' => time(),
+	]);
 }
 
 /**

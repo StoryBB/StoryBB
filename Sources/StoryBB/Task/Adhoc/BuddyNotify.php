@@ -10,10 +10,12 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Task\Adhoc;
+
 /**
- * Class Buddy_Notify_Background
+ * This task handles notifying someone that an user has added him/her as his/her buddy.
  */
-class Buddy_Notify_Background extends SMF_BackgroundTask
+class BuddyNotify extends \StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the info, sets the alerts and loads up the email queue.

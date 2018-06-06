@@ -10,19 +10,19 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Task\Adhoc;
+
 /**
- * Class Update_TLD_Regex
+ * Calls the existing functionality for TLD management, just makes it available as an adhoc task.
  */
-class Update_TLD_Regex extends SMF_BackgroundTask
+class UpdateTldRegex extends \StoryBB\Task\Adhoc
 {
     /**
-     * This executes the task. It just calls set_tld_regex() in Subs.php
+     * This executes the task. It just calls set_tld_regex helper.
      * @return bool Always returns true
      */
 	public function execute()
  	{
-		global $sourcedir;
-
 		StoryBB\Helper\TLD::set_tld_regex(true);
 
 		return true;

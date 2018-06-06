@@ -9,14 +9,16 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Task\Adhoc;
+
 /**
- * Class ApproveReply_Notify_Background
+ * Notify moderators that a post needs to be approved.
  */
-class ApproveReply_Notify_Background extends SMF_BackgroundTask
+class ApprovePostNotify extends \StoryBB\Task\Adhoc
 {
 	/**
-     * This executes the task - loads up the information, puts the email in the queue and inserts alerts.
-	 * @return bool Always returns true.
+     * This executes the task - loads up the info, puts the email in the queue and inserts any alerts as needed.
+	 * @return bool Always returns true
 	 */
 	public function execute()
 	{
@@ -25,17 +27,21 @@ class ApproveReply_Notify_Background extends SMF_BackgroundTask
 		$msgOptions = $this->_details['msgOptions'];
 		$topicOptions = $this->_details['topicOptions'];
 		$posterOptions = $this->_details['posterOptions'];
+		$type = $this->_details['type'];
 
 		$members = array();
 		$alert_rows = array();
 
+		// We need to know who can approve this post.
+		require_once($sourcedir . '/Subs-Members.php');
+		$modMembers = membersAllowedTo('approve_posts', $topicOptions['board']);
+
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member, email_address, lngfile
-			FROM {db_prefix}topics AS t
-				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = t.id_member_started)
-			WHERE id_topic = {int:topic}',
+			FROM {db_prefix}members
+			WHERE id_member IN({array_int:members})',
 			array(
-				'topic' => $topicOptions['id'],
+				'members' => $modMembers,
 			)
 		);
 
@@ -47,11 +53,15 @@ class ApproveReply_Notify_Background extends SMF_BackgroundTask
 		}
 		$smcFunc['db_free_result']($request);
 
+		if (empty($members))
+			return true;
+
 		require_once($sourcedir . '/Subs-Notify.php');
-		$prefs = getNotifyPrefs($members, 'unapproved_reply', true);
+		$members = array_unique($members);
+		$prefs = getNotifyPrefs($members, 'unapproved_post', true);
 		foreach ($watched as $member => $data)
 		{
-			$pref = !empty($prefs[$member]['unapproved_reply']) ? $prefs[$member]['unapproved_reply'] : 0;
+			$pref = !empty($prefs[$member]['unapproved_post']) ? $prefs[$member]['unapproved_post'] : 0;
 
 			if ($pref & 0x02)
 			{
@@ -63,10 +73,9 @@ class ApproveReply_Notify_Background extends SMF_BackgroundTask
 				$replacements = array(
 					'SUBJECT' => $msgOptions['subject'],
 					'LINK' => $scripturl . '?topic=' . $topicOptions['id'] . '.new#new',
-					'POSTERNAME' => un_htmlspecialchars($posterOptions['name']),
 				);
 
-				$emaildata = loadEmailTemplate('alert_unapproved_reply', $replacements, empty($data['lngfile']) || empty($modSettings['userLanguage']) ? $language : $data['lngfile']);
+				$emaildata = loadEmailTemplate('alert_unapproved_post', $replacements, empty($data['lngfile']) || empty($modSettings['userLanguage']) ? $language : $data['lngfile']);
 				StoryBB\Helper\Mail::send($data['email_address'], $emaildata['subject'], $emaildata['body'], null, 'm' . $topicOptions['id'], $emaildata['is_html']);
 			}
 
@@ -79,7 +88,7 @@ class ApproveReply_Notify_Background extends SMF_BackgroundTask
 					'member_name' => $posterOptions['name'],
 					'content_type' => 'unapproved',
 					'content_id' => $topicOptions['id'],
-					'content_action' => 'reply',
+					'content_action' => $type,
 					'is_read' => 0,
 					'extra' => json_encode(array(
 						'topic' => $topicOptions['id'],

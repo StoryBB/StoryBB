@@ -317,18 +317,15 @@ class Likes
 		// Add a background task to process sending alerts.
 		// Mod author, you can add your own background task for your own custom like event using the "integrate_issue_like" hook or your callback, both are immediately called after this.
 		if ($this->_type == 'msg')
-			$smcFunc['db_insert']('insert',
-				'{db_prefix}background_tasks',
-				array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-				array('$sourcedir/tasks/Likes-Notify.php', 'Likes_Notify_Background', json_encode(array(
-					'content_id' => $content,
-					'content_type' => $type,
-					'sender_id' => $user['id'],
-					'sender_name' => $user['name'],
-					'time' => $time,
-				)), 0),
-				array('id_task')
-			);
+		{
+			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\LikesNotify', [
+				'content_id' => $content,
+				'content_type' => $type,
+				'sender_id' => $user['id'],
+				'sender_name' => $user['name'],
+				'time' => $time,
+			]);
+		}
 
 		// Are we calling this directly? if so, set a proper data for the response. Do note that __METHOD__ returns both the class name and the function name.
 		if ($this->_sa == __FUNCTION__)

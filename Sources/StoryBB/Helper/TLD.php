@@ -210,10 +210,7 @@ class TLD
 		// Schedule a background update if we need one
 		if (!empty($schedule_update))
 		{
-			$smcFunc['db_insert']('insert', '{db_prefix}background_tasks',
-				array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'),
-				array('$sourcedir/tasks/UpdateTldRegex.php', 'Update_TLD_Regex', '', 0), array()
-			);
+			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\UpdateTldRegex');
 		}
 
 		// Redundant repetition is redundant

@@ -11,10 +11,12 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Task\Adhoc;
+
 /**
  * Class GroupReq_Notify_Background
  */
-class GroupReq_Notify_Background extends SMF_BackgroundTask
+class GroupReqNotify extends \StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the information, puts the email in the queue and inserts any alerts as needed.
