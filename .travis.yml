@@ -20,6 +20,3 @@ script:
   {} 2>&1 \; | grep "Error:"; then exit 1; fi
 - if find . -name "*.php" ! -path "./vendor/*" -exec php other/buildTools/check-eof.php
   {} 2>&1 \; | grep "Error:"; then exit 1; fi
-notifications:
-  slack:
-    secure: zb4Vct3Qmj9WiZSbmCjvsi1n5zsWeAafzkmelbBz0yOW2Dgt/SD9kKlBkEfzXlhp2e5Ei26F+FiTRZImz5HeazuOJwNjsV4HpaMSbu9/CECvVd2z4o9Ia/UigqJSLg80hYQsAXBMvNk7xixLnXfXo4gX2LhDlPRTwox3aM6q0IOyqwew2tKdAaU4EQdP2MwU9UzzqTYR6InOsrKzi/mOlqjes5Xg1bYyNLxFS4tWysiHyv0FQxrybGfVGhBhN/+iZ5ZpYpEc8X8fPRIuqgy7DJSyml0tqi3OykweC9Dv7Hs9USiuMlSQRpQ93MaM2Y6BKhWX9gMJVQfc9umtfHEGkcrHCWpLQ7G4j6mrVLfiCEh12QQO0bSfh6IBomggtrKUOpujNwOYHvCFYFQ1lHDFpr28Puuub2OSUOoNFuXW3KTUkoK+cguZMbdMtw/HGfAxbA6EGGjNT385/PsLOTrZTroBY8GaZ7AepZzO4lNHvCLekx+XKAYPj/6Q/VKGZvzYqhItgoXmhim1TzdyXCV8VuEc/q3plEjtKDyt9KWNo/bcXrPn0ukgZvYFip6T0NUXlv1j4hWcxeToXFdH647ldwZUDjim3Yz1BJP0AXQo8fy+CS6zlAd04VNY7D5/0X2O2Ic/lvSQJCHT++pz3HInxBdhzF2O8QaobUMLZAlfz5o=
