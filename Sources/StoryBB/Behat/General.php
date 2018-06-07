@@ -32,6 +32,14 @@ use Behat\MinkExtension\Context\RawMinkContext;
 class General extends RawMinkContext implements Context
 {
     /**
+     * @When I wait for :length second(s)
+     */
+    public function iWaitForSecond($length)
+    {
+        sleep($length);
+    }
+
+    /**
      * @Given the following :type exist(s):
      */
     public function theFollowingExist($type, TableNode $table)
