@@ -55,8 +55,8 @@ var icon_urls = {
 			</div>
 			{{/if}}
 			<dl id="post_header">
-			    {{#each context.posting_fields}}
-			    <dt class="clear{{#unless (is_numeric @key)}} pf_{{@key}}{{/unless}}">
+				{{#each context.posting_fields}}
+				<dt class="clear{{#unless (is_numeric @key)}} pf_{{@key}}{{/unless}}">
 					{{{dt}}}
 				</dt>
 				<dd{{#unless (is_numeric @key)}} class="pf_{{@key}}"{{/unless}}>
