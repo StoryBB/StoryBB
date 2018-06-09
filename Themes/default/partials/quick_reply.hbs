@@ -10,28 +10,12 @@
 					<div class="roundframe">
 						{{#unless context.user.is_guest}}
 						<div class="poster">
-							{{#if (and (eq modSettings.character_selector_post '1') (gt (getNumItems context.post_characters) 1))}}
-							<h4>{{{txt.posting_as_generic}}}</h4>
-							<ul class="user_info">
-								<li class="user_selector">
-									<select name="character_id" class="character_selector">
-										{{#each context.post_characters}}
-										<option value="{{@key}}"{{#if (eq @key ../user_info.id_character)}} selected{{/if}}>{{{name}}}</option>
-										{{/each}}
-									</select>
-								</li>
-								<li class="avatar">
-									<img src="{{#if context.current_avatar}}{{{context.current_avatar}}}{{else}}{{settings.images_url}}/default.png{{/if}}">
-								</li>
-							</ul>
-							{{else}}
 							<h4>{{textTemplate txt.posting_as user_info.character_name}}</h4>
 							<ul class="user_info">
 								<li class="avatar">
 									<img src="{{#if context.current_avatar}}{{{context.current_avatar}}}{{else}}{{settings.images_url}}/default.png{{/if}}">
 								</li>
 							</ul>
-							{{/if}}
 						</div>
 						{{/unless}}
 						<div class="postarea">
