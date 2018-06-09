@@ -52,6 +52,7 @@ $txt['session_verify_fail'] = 'Session verification failed. Please try logging o
 $txt['verify_url_fail'] = 'Unable to verify referring URL. Please go back and try again.';
 $txt['token_verify_fail'] = 'Token verification failed. Please go back and try again.';
 $txt['guest_vote_disabled'] = 'Guests cannot vote in this poll.';
+$txt['cannot_post_as_character'] = 'You cannot post in this board as %s. Switch to another character and try again.';
 
 $txt['cannot_like_content'] = 'You are not able to like that content.';
 $txt['cannot_view_likes'] = 'You are not able to view who liked that content.';
