@@ -29,56 +29,70 @@ Feature: Board access
 		When I log in as "Test"
 		And I go to the board index
 		Then I should see "Common Rooms"
-		And I should not see "Headmaster's Office"
+		And I should not see "Headmaster"
 		And I log out
+		And I wait for 5 seconds
 		And I log in as "Admin"
 		And I should see "Common Rooms"
-		And I should see "Headmaster's Office"
+		And I should see "Headmaster"
 
-	# Scenario: Checking board access restricted in immersive mode with deny groups
-	# 	When the following "boards" exist:
-	# 		| board name        | board parent | can see         | cannot see |
-	# 		| Gryffindor Tower  | Common Rooms | Regular Members | Slytherin  |
-	# 		| Slytherin Dungeon | Common Rooms | Regular Members | Gryffindor |
-	# 	And the following settings are set:
-	# 		| variable              | value |
-	# 		| enable_immersive_mode | on    |
-	# 	And I log in as "Test"
-	# 	And I switch character to "Harry Potter"
-	# 	And I go to the board index
-	# 	Then I should see "Gryffindor Tower"
-	# 	And I should not see "Slytherin Dungeon"
-	# 	And I switch character to "Draco Malfoy"
-	# 	And I go to the board index
-	# 	And I should see "Slytherin Dungeon"
-	# 	And I should not see "Gryffindor Tower"
+	Scenario: Checking board access restricted in immersive mode with deny groups
+		When the following "boards" exist:
+			| board name        | board parent | can see         | cannot see |
+			| Gryffindor Tower  | Common Rooms | Regular Members | Slytherin  |
+			| Slytherin Dungeon | Common Rooms | Regular Members | Gryffindor |
+		And the following settings are set:
+			| variable              | value |
+			| enable_immersive_mode | on    |
+			| deny_boards_access    | 1     |
+		And I log in as "Test"
+		And I switch character to "Harry Potter"
+		And I go to the board index
+		Then I should see "Gryffindor Tower"
+		And I should not see "Slytherin Dungeon"
+		And I switch character to "Draco Malfoy"
+		And I go to the board index
+		And I should see "Slytherin Dungeon"
+		And I should not see "Gryffindor Tower"
 
-	# Scenario: Checking board access restricted in immersive mode with allow groups
-	# 	When the following "boards" exist:
-	# 		| board name        | board parent | can see                     | cannot see |
-	# 		| Gryffindor Tower  | Common Rooms | Regular Members, Gryffindor |            |
-	# 		| Slytherin Dungeon | Common Rooms | Regular Members, Slytherin  |            |
-	# 	And the following settings are set:
-	# 		| variable              | value |
-	# 		| enable_immersive_mode | on    |
-	# 	And I log in as "Test"
-	# 	And I switch character to "Harry Potter"
-	# 	And I go to the board index
-	# 	Then I should see "Gryffindor Tower"
-	# 	And I should not see "Slytherin Dungeon"
-	# 	And I switch character to "Draco Malfoy"
-	# 	And I go to the board index
-	# 	And I should see "Slytherin Dungeon"
-	# 	And I should not see "Gryffindor Tower"
+	Scenario: Checking board access restricted in immersive mode with allow groups
+		When the following "boards" exist:
+			| board name        | board parent | can see    | cannot see |
+			| Gryffindor Tower  | Common Rooms | Gryffindor |            |
+			| Slytherin Dungeon | Common Rooms | Slytherin  |            |
+		And the following settings are set:
+			| variable              | value |
+			| enable_immersive_mode | on    |
+		And I log in as "Test"
+		And I switch character to "Harry Potter"
+		And I go to the board index
+		Then I should see "Gryffindor Tower"
+		And I should not see "Slytherin Dungeon"
+		And I switch character to "Draco Malfoy"
+		And I go to the board index
+		And I should see "Slytherin Dungeon"
+		And I should not see "Gryffindor Tower"
 
-	# Scenario: Checking board access is not restricted in simple non-immersive mode
-	# 	When the following "boards" exist:
-	# 		| board name        | board parent | can see         | cannot see |
-	# 		| Gryffindor Tower  | Common Rooms | Regular Members | Slytherin  |
-	# 		| Slytherin Dungeon | Common Rooms | Regular Members | Gryffindor |
-	# 	And the following settings are set:
-	# 		| variable              | value   |
-	# 		| enable_immersive_mode | user_on |
+	# In simple mode, access isn't applied on character groups.
+	Scenario: Checking board access is not restricted in simple non-immersive mode
+		When the following "boards" exist:
+			| board name        | board parent | can see         | cannot see |
+			| Gryffindor Tower  | Common Rooms | Regular Members | Slytherin  |
+			| Slytherin Dungeon | Common Rooms | Regular Members | Gryffindor |
+		And the following settings are set:
+			| variable              | value  |
+			| enable_immersive_mode | off    |
+			| non_immersive_mode    | simple |
+			| deny_boards_access    | 1      |
+		And I log in as "Test"
+		And I switch character to "Harry Potter"
+		And I go to the board index
+		Then I should see "Gryffindor Tower"
+		And I should see "Slytherin Dungeon"
+		And I switch character to "Draco Malfoy"
+		And I go to the board index
+		And I should see "Slytherin Dungeon"
+		And I should see "Gryffindor Tower"
 
 	# Scenario: Checking when board access should be restricted in immersive mode
 
