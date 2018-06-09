@@ -134,9 +134,9 @@ function exportData($memID)
 				'data' => [
 					'function' => function($rowData) use ($scripturl, $txt)
 					{
-						if (!empty($rowData['member_name']))
+						if (!empty($rowData['real_name']))
 						{
-							return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_requester'] . '">' . $rowData['member_name'] . '</a>';
+							return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_requester'] . '">' . $rowData['real_name'] . '</a>';
 						}
 						return $txt['not_applicable'];
 					},
@@ -152,7 +152,7 @@ function exportData($memID)
 					{
 						if ($rowData['approved'])
 						{
-							return '<a href="' . $scripturl . '?action=profile;area=export_data;u=' . $rowData['id_member'] . ';download=' . $rowData['id_export'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '">' . $txt['profile_export_data_download'] . '</a>';
+							return '<a href="' . $scripturl . '?action=profile;area=export_data;u=' . $rowData['id_member'] . ';download=' . $rowData['id_export'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '">' . $txt['profile_export_data_download'] . '</a> (' . round($rowData['size'] / 1024, 1) . $txt['kilobyte'] . ')';
 						}
 						return $txt['profile_export_data_processing'];
 					}
