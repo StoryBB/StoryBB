@@ -33,7 +33,7 @@ var icon_urls = {
 						<strong id="error_serious">{{txt.error_while_submitting}}</strong>
 					</dt>
 					<dd class="error" id="error_list">
-						{{#if context.post_error}}{{#each context.post_error}}{{.}}<br>{{/each}}{{/if}}
+						{{#if context.post_error}}{{#each context.post_error}}{{{.}}}<br>{{/each}}{{/if}}
 					</dd>
 				</dl>
 			</div>
