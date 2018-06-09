@@ -1662,6 +1662,31 @@ CREATE TABLE {$db_prefix}user_drafts (
 CREATE UNIQUE INDEX {$db_prefix}user_drafts_id_member ON {$db_prefix}user_drafts (id_member, id_draft, type);
 
 #
+# Sequence for table `user_exports`
+#
+
+CREATE SEQUENCE {$db_prefix}user_exports_seq;
+
+#
+# Table structure for table `user_exports`
+#
+
+CREATE TABLE {$db_prefix}user_exports (
+  id_export bigint default nextval('{$db_prefix}user_exports_seq'),
+  id_attach INT NOT NULL DEFAULT '0',
+  id_member INT NOT NULL DEFAULT '0',
+  id_requester INT NOT NULL DEFAULT '0',
+  requested_on INT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_export)
+);
+
+#
+# Indexes for table `user_exports`
+#
+
+CREATE INDEX {$db_prefix}user_exports_member ON {$db_prefix}user_exports (id_member);
+
+#
 # Table structure for table `user_likes`
 #
 
