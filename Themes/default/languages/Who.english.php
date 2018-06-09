@@ -117,5 +117,3 @@ $txt['who_viewownprofile'] = 'Viewing <a href="' . $scripturl . '?action=profile
 $txt['who_profile'] = 'Editing the profile of <a href="' . $scripturl . '?action=profile;u=%1$d">%2$s</a>.';
 $txt['who_post'] = 'Posting a new topic in <a href="' . $scripturl . '?board=%1$d.0">%2$s</a>.';
 $txt['who_poll'] = 'Posting a new poll in <a href="' . $scripturl . '?board=%1$d.0">%2$s</a>.';
-
-?>
