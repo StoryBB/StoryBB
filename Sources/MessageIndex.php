@@ -162,6 +162,13 @@ function MessageIndex()
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['can_approve_posts'] = allowedTo('approve_posts');
 
+	$possible_characters = get_user_possible_characters($user_info['id'], $board_info['id']);
+	if (!isset($possible_characters[$user_info['id_character']]))
+	{
+		$context['can_post_new'] = false;
+		$context['can_post_poll'] = false;
+	}
+
 	require_once($sourcedir . '/Subs-BoardIndex.php');
 	$boardIndexOptions = array(
 		'include_categories' => false,

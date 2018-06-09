@@ -1090,40 +1090,24 @@ function Display()
 
 	if (!$user_info['is_guest'] && $context['can_reply'])
 	{
-		if (empty($user_profile[$context['user']['id']]))
-			loadMemberData($context['user']['id']);
-		loadMemberContext($context['user']['id']);
+		$possible_characters = get_user_possible_characters($user_info['id'], $board);
 
-		// Get the current characters.
-		$context['post_characters'] = get_user_possible_characters($context['user']['id'], $board_info['id']);
-
-		// Make sure we have some avatar to work with.
-		$context['current_avatar'] = '';
-		foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
-		{
-			if ($char_id == $user_info['id_character'])
-				$context['current_avatar'] = $character['avatar'];
-		}
-
-		addInlineJavaScript('
-			var characters = ' . json_encode($context['post_characters']) . ';
-			$("#quickReplyOptions .character_selector").on("change", function() {
-				var char_id = $(this).val();
-				if (characters.hasOwnProperty(char_id)) {
-					$("#quickReplyOptions .poster .avatar img").attr("src", characters[char_id].avatar);
-				}
-			}).trigger("change");
-		', true);
-	}
-
-	if (!$user_info['is_guest'] && $context['can_reply'] && empty($context['post_characters']))
-	{
-		if (!allowedTo('admin_forum'))
+		if (!isset($possible_characters[$user_info['id_character']]))
 		{
 			$context['can_reply'] = false;
 			$context['can_reply_unapproved'] = false;
 			$context['can_reply_approved'] = false;
 			$context['can_quote'] = false;
+		}
+		else
+		{
+			// Make sure we have some avatar to work with.
+			$context['current_avatar'] = '';
+			foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
+			{
+				if ($char_id == $user_info['id_character'])
+					$context['current_avatar'] = $character['avatar'];
+			}
 		}
 	}
 

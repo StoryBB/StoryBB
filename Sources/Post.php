@@ -1219,6 +1219,12 @@ function Post2()
 	elseif (empty($_POST) && !empty($topic))
 		redirectexit('action=post;topic=' . $topic . '.0');
 
+	$possible_characters = get_user_possible_characters($user_info['id'], $board);
+	if (!isset($possible_characters[$user_info['id_character']]))
+	{
+		fatal_lang_error('cannot_post_as_character', false);
+	}
+
 	// No need!
 	$context['robot_no_index'] = true;
 

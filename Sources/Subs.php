@@ -5620,7 +5620,7 @@ function get_user_possible_characters($id_member, $board_id = 0)
 	{
 		if ($board_in_character)
 		{
-			if ($modSettings['characters_ic_may_post'] == 'ic' && $character['is_main'] && (!allowedTo('admin_forum') || empty($modSettings['characters_admin_override'])))
+			if ($modSettings['characters_ic_may_post'] == 'ic' && $character['is_main'] && !allowedTo('admin_forum'))
 			{
 				// IC board that requires IC only, and character is main and (not admin or no admin override)
 				continue;
@@ -5628,7 +5628,7 @@ function get_user_possible_characters($id_member, $board_id = 0)
 		}
 		else
 		{
-			if ($modSettings['characters_ooc_may_post'] == 'ooc' && !$character['is_main'] && (!allowedTo('admin_forum') || empty($modSettings['characters_admin_override'])))
+			if ($modSettings['characters_ooc_may_post'] == 'ooc' && !$character['is_main'] && !allowedTo('admin_forum'))
 			{
 				// OOC board that requires OOC only, and character is not main and (not admin or no admin override)
 				continue;

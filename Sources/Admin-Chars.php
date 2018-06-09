@@ -353,8 +353,6 @@ function CharacterImmersion($return_config = false)
 	require_once($sourcedir . '/ManageServer.php');
 
 	$config_vars = array(
-			array('check', 'character_selector_post'),
-		'',
 			array('select', 'characters_ic_may_post', array(
 				'ic' => $txt['ic_boards_only'],
 				'icooc' => $txt['ic_and_ooc_boards'],
@@ -363,7 +361,6 @@ function CharacterImmersion($return_config = false)
 				'ooc' => $txt['ooc_boards_only'],
 				'icooc' => $txt['ic_and_ooc_boards'],
 			)),
-			array('check', 'characters_admin_override'),
 		'',
 			array('select', 'enable_immersive_mode', [
 				'user_on' => $txt['enable_immersive_mode_user_on'],
