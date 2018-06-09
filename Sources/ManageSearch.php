@@ -791,5 +791,3 @@ function detectFulltextIndex()
 		}
 	}
 }
-
-?>

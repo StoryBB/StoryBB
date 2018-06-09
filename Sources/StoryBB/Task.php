@@ -80,5 +80,3 @@ class Task
 		self::$pre_batch_queue = [];
 	}
 }
-
-?>

@@ -211,5 +211,3 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

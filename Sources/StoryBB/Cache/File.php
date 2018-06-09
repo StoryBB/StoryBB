@@ -210,5 +210,3 @@ class File extends API
 		return $this->cachedir;
 	}
 }
-
-?>

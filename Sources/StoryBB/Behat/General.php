@@ -636,5 +636,3 @@ class General extends RawMinkContext implements Context
         }
     }
 }
-
-?>

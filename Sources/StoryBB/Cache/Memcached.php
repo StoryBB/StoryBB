@@ -151,5 +151,3 @@ class Memcached extends API
 			});';
 	}
 }
-
-?>

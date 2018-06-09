@@ -44,6 +44,3 @@ $txt['alert_msg_mentionchr'] = '{your_chr} mentioned {char_link} in the post {ms
 $txt['alert_msg_likechr'] = '{member_link} liked {your_chr}\'s post {msg_msg}';
 $txt['alert_member_char_sheet_approvalchr'] = '{char_link}\'s character sheet is awaiting approval.';
 $txt['alert_member_char_sheet_approvedchr'] = '{your_chr}\'s character sheet was approved.';
-
-
-?>

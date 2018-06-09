@@ -2377,5 +2377,3 @@ function getMemberData($id)
 
 	return $suggestions;
 }
-
-?>

@@ -55,5 +55,3 @@ class BuddyNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

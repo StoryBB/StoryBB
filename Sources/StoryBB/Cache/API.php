@@ -191,5 +191,3 @@ abstract class API implements API_Interface
 		return $this->min_smf_version;
 	}
 }
-
-?>

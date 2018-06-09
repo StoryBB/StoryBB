@@ -131,5 +131,3 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

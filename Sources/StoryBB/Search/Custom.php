@@ -297,5 +297,3 @@ class Custom extends API
 		}
 	}
 }
-
-?>

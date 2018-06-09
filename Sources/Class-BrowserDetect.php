@@ -440,5 +440,3 @@ class browser_detector
 		);
 	}
 }
-
-?>

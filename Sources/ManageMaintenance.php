@@ -2253,5 +2253,3 @@ function get_hook_info_from_raw($rawData)
 
 	return $hookData;
 }
-
-?>

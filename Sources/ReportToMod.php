@@ -450,5 +450,3 @@ function reportUser($id_member, $reason)
 	session_flash('success', $txt['report_sent']);
 	redirectexit('reportsent;action=profile;u=' . $id_member);
 }
-
-?>

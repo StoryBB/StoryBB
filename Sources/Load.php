@@ -3525,5 +3525,3 @@ function get_labels_and_badges($group_list)
 		'combined_badges' => $combined_badges,
 	];
 }
-
-?>

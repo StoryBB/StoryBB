@@ -429,5 +429,3 @@ function remove_theme($themeID)
 
 	return true;
 }
-
-?>

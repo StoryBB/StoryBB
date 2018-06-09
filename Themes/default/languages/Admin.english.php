@@ -752,5 +752,3 @@ $txt['enable_immersive_mode_on'] = 'Immersive mode is always on';
 $txt['non_immersive_mode'] = 'Non-immersive mode';
 $txt['non_immersive_mode_simple'] = 'Simple mode';
 $txt['non_immersive_mode_contextual'] = 'Contextual mode';
-
-?>

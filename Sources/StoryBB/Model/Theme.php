@@ -117,5 +117,3 @@ class Theme
 		return $theme_settings;
 	}
 }
-
-?>

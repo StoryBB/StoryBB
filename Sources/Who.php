@@ -538,5 +538,3 @@ function determineActions($urls, $preferred_prefix = false)
 	else
 		return $data;
 }
-
-?>

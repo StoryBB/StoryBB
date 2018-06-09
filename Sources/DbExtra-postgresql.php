@@ -301,5 +301,3 @@ function smf_db_get_engine()
 {
 	return 'PostgreSQL';
 }
-
-?>

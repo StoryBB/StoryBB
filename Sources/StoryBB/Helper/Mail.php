@@ -492,5 +492,3 @@ class Mail
 		return true;
 	}
 }
-
-?>

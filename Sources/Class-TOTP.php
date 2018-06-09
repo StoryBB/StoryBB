@@ -348,5 +348,3 @@ class Auth
 		return 'https://chart.googleapis.com/chart?chs=280x280&chld=M|0&cht=qr&chl=' . $urlencoded;
 	}
 }
-
-?>

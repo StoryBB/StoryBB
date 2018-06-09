@@ -117,5 +117,3 @@ $txt['modlog_ac_unlock_poll'] = 'Unlocked voting in the poll in &quot;{topic}&qu
 $txt['modlog_ac_char_reattribute'] = 'Reattributed &quot;{message}&quot; by &quot;{member}&quot; from &quot;{old_character}&quot; to &quot;{new_character}&quot;';
 $txt['modlog_ac_char_added_to_group'] = 'Added &quot;{character}&quot; ({member}) to the &quot;{group}&quot; group';
 $txt['modlog_ac_char_removed_from_group'] = 'Removed &quot;{character}&quot; ({member}) from the &quot;{group}&quot; group';
-
-?>

@@ -375,5 +375,3 @@ class Template
 		return !empty(self::$layers);
 	}
 }
-
-?>

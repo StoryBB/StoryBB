@@ -175,5 +175,3 @@ function smf_db_search_language()
 
 	return $language_ftx;
 }
-
-?>

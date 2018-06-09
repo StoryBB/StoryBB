@@ -629,5 +629,3 @@ class Likes
 		die;
 	}
 }
-
-?>

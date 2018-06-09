@@ -155,5 +155,3 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

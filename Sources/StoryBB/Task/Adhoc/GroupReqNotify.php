@@ -129,5 +129,3 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

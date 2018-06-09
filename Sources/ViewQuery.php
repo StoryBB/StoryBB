@@ -178,5 +178,3 @@ function ViewQuery()
 
 	obExit(false);
 }
-
-?>

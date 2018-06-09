@@ -1304,5 +1304,3 @@ function getXmlProfile($xml_format)
 
 	return $data;
 }
-
-?>

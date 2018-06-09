@@ -32,5 +32,3 @@ $txt['manual_section_memberlist_desc'] = 'The memberlist shows all the members o
 $txt['manual_section_features_desc'] = 'Here is a list of the most popular features in StoryBB.';
 
 $txt['agreement_disabled'] = 'Registration agreement disabled';
-
-?>

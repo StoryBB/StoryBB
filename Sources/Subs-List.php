@@ -296,5 +296,3 @@ function createList($listOptions)
 		}
 	}
 }
-
-?>
