@@ -65,21 +65,39 @@
 							<input type="radio" name="perm_type" id="perm_type_inherit" value="inherit" checked class="input_radio">
 							<label for="perm_type_inherit">{{{txt.membergroups_new_as_inherit}}}:</label>
 							<select name="inheritperm" id="inheritperm_select" onclick="document.getElementById('perm_type_inherit').checked = true;">
-								<option value="-1">{{{txt.membergroups_guests}}}</option>
-								<option value="0" selected>{{{txt.membergroups_members}}}</option>
-								{{#each context.groups}}
-								<option value="{{id}}">{{{name}}}</option>
-								{{/each}}
+								<optgroup label="{{{txt.membergroups_regular}}}">
+									<option value="-1">{{{txt.membergroups_guests}}}</option>
+									<option value="0" selected>{{{txt.membergroups_members}}}</option>
+									{{#each context.account_groups}}
+									<option value="{{id}}">{{{name}}}</option>
+									{{/each}}
+								</optgroup>
+								{{#if context.character_groups}}
+								<optgroup label="{{{txt.membergroups_character}}}">
+									{{#each context.character_groups}}
+									<option value="{{id}}">{{{name}}}</option>
+									{{/each}}
+								</optgroup>
+								{{/if}}
 							</select>
 							<br>
 							<input type="radio" name="perm_type" id="perm_type_copy" value="copy" class="input_radio">
 							<label for="perm_type_copy">{{{txt.membergroups_new_as_copy}}}:</label>
 							<select name="copyperm" id="copyperm_select" onclick="document.getElementById('perm_type_copy').checked = true;">
-								<option value="-1">{{{txt.membergroups_guests}}}</option>
-								<option value="0" selected>{{{txt.membergroups_members}}}</option>
-								{{#each context.groups}}
-								<option value="{{id}}">{{{name}}}</option>
-								{{/each}}
+								<optgroup label="{{{txt.membergroups_regular}}}">
+									<option value="-1">{{{txt.membergroups_guests}}}</option>
+									<option value="0" selected>{{{txt.membergroups_members}}}</option>
+									{{#each context.account_groups}}
+									<option value="{{id}}">{{{name}}}</option>
+									{{/each}}
+								</optgroup>
+								{{#if context.character_groups}}
+								<optgroup label="{{{txt.membergroups_character}}}">
+									{{#each context.character_groups}}
+									<option value="{{id}}">{{{name}}}</option>
+									{{/each}}
+								</optgroup>
+								{{/if}}
 							</select>
 							<br>
 							<input type="radio" name="perm_type" id="perm_type_predefined" value="predefined" class="input_radio">
