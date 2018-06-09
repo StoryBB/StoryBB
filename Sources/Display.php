@@ -1088,22 +1088,9 @@ function Display()
 	// If we're posting, we need to make sure we have the character data.
 	$context['post_characters'] = [];
 
-	if (!$user_info['is_guest'] && $context['can_reply'])
+	if (!$user_info['is_guest'] && ($context['can_reply'] || $context['can_reply_unapproved']))
 	{
-		if (empty($user_profile[$context['user']['id']]))
-			loadMemberData($context['user']['id']);
-		loadMemberContext($context['user']['id']);
-
-		// Get the current characters.
-		$context['post_characters'] = get_user_possible_characters($context['user']['id'], $board_info['id']);
-
-		// Make sure we have some avatar to work with.
-		$context['current_avatar'] = '';
-		foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
-		{
-			if ($char_id == $user_info['id_character'])
-				$context['current_avatar'] = $character['avatar'];
-		}
+		init_possible_posting_characters($context['user']['id'], $board_info['id'], false, !empty($context['user']['started']));
 
 		addInlineJavaScript('
 			var characters = ' . json_encode($context['post_characters']) . ';
@@ -1118,13 +1105,10 @@ function Display()
 
 	if (!$user_info['is_guest'] && $context['can_reply'] && empty($context['post_characters']))
 	{
-		if (!allowedTo('admin_forum'))
-		{
-			$context['can_reply'] = false;
-			$context['can_reply_unapproved'] = false;
-			$context['can_reply_approved'] = false;
-			$context['can_quote'] = false;
-		}
+		$context['can_reply'] = false;
+		$context['can_reply_unapproved'] = false;
+		$context['can_reply_approved'] = false;
+		$context['can_quote'] = false;
 	}
 
 	// Start this off for quick moderation - it will be or'd for each post.

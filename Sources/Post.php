@@ -107,24 +107,24 @@ function Post($post_errors = array())
 
 		if (empty($_REQUEST['msg']))
 		{
-			if ($user_info['is_guest'] && !allowedTo('post_reply_any') && (!$modSettings['postmod_active'] || !allowedTo('post_unapproved_replies_any')))
+			if ($user_info['is_guest'] && !charactersAllowedTo('post_reply_any') && (!$modSettings['postmod_active'] || !charactersAllowedTo('post_unapproved_replies_any')))
 				is_not_guest();
 
 			// By default the reply will be approved...
 			$context['becomes_approved'] = true;
 			if ($id_member_poster != $user_info['id'] || $user_info['is_guest'])
 			{
-				if ($modSettings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
+				if ($modSettings['postmod_active'] && charactersAllowedTo('post_unapproved_replies_any') && !charactersAllowedTo('post_reply_any'))
 					$context['becomes_approved'] = false;
 				else
-					isAllowedTo('post_reply_any');
+					areCharactersAllowedTo('post_reply_any');
 			}
-			elseif (!allowedTo('post_reply_any'))
+			elseif (!charactersAllowedTo('post_reply_any'))
 			{
-				if ($modSettings['postmod_active'] && ((allowedTo('post_unapproved_replies_own') && !allowedTo('post_reply_own')) || allowedTo('post_unapproved_replies_any')))
+				if ($modSettings['postmod_active'] && ((charactersAllowedTo('post_unapproved_replies_own') && !charactersAllowedTo('post_reply_own')) || charactersAllowedTo('post_unapproved_replies_any')))
 					$context['becomes_approved'] = false;
 				else
-					isAllowedTo('post_reply_own');
+					areCharactersAllowedTo('post_reply_own');
 			}
 		}
 		else
@@ -148,10 +148,10 @@ function Post($post_errors = array())
 		$context['becomes_approved'] = true;
 		if (!empty($board))
 		{
-			if ($modSettings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
+			if ($modSettings['postmod_active'] && !charactersAllowedTo('post_new') && charactersAllowedTo('post_unapproved_topics'))
 				$context['becomes_approved'] = false;
 			else
-				isAllowedTo('post_new');
+				areCharactersAllowedTo('post_new');
 		}
 
 		$locked = 0;
@@ -165,7 +165,17 @@ function Post($post_errors = array())
 		$context['sticky'] = !empty($_REQUEST['sticky']);
 	}
 
-	// @todo These won't work if you're posting an event!
+	// Work out who might be able to post here.
+	$context['post_characters'] = [];
+	if (!$user_info['is_guest'])
+	{
+		init_possible_posting_characters($context['user']['id'], $board, false, !empty($id_member_poster) && $id_member_poster == $context['user']['id']);
+		if (isset($_REQUEST['character_id']) && isset($context['post_characters'][$_REQUEST['character_id']]))
+		{
+			$context['posting_as_id'] = (int) $_REQUEST['character_id'];
+		}
+	}
+
 	$context['can_notify'] = !$context['user']['is_guest'];
 	$context['can_move'] = allowedTo('move_any');
 	$context['move'] = !empty($_REQUEST['move']);
@@ -194,13 +204,13 @@ function Post($post_errors = array())
 	{
 		// New topic, new poll.
 		if (empty($topic))
-			isAllowedTo('poll_post');
+			areCharactersAllowedTo('poll_post');
 		// This is an old topic - but it is yours!  Can you add to it?
-		elseif ($user_info['id'] == $id_member_poster && !allowedTo('poll_add_any'))
-			isAllowedTo('poll_add_own');
+		elseif ($user_info['id'] == $id_member_poster && !charactersAllowedTo('poll_add_any'))
+			areCharactersAllowedTo('poll_add_own');
 		// If you're not the owner, can you add to any poll?
 		else
-			isAllowedTo('poll_add_any');
+			areCharactersAllowedTo('poll_add_any');
 
 		require_once($sourcedir . '/Subs-Members.php');
 		$allowedVoteGroups = groupsAllowedTo('poll_vote', $board);
@@ -534,7 +544,7 @@ function Post($post_errors = array())
 		$request = $smcFunc['db_query']('', '
 			SELECT
 				m.id_member, m.modified_time, m.modified_name, m.modified_reason, m.smileys_enabled, m.body,
-				m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
+				m.poster_name, m.poster_email, m.subject, m.icon, m.approved, m.id_character,
 				COALESCE(a.size, -1) AS filesize, a.filename, a.id_attach, a.mime_type, a.id_thumb,
 				a.approved AS attachment_approved, t.id_member_started AS id_member_poster,
 				m.poster_time, log.id_action
@@ -556,25 +566,28 @@ function Post($post_errors = array())
 			fatal_lang_error('no_message', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
 
+		$context['do_not_select_character'] = true;
+		$context['posting_as_id'] = $row['id_character'];
+
 		$attachment_stuff = array($row);
 		while ($row2 = $smcFunc['db_fetch_assoc']($request))
 			$attachment_stuff[] = $row2;
 		$smcFunc['db_free_result']($request);
 
-		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
+		if ($row['id_member'] == $user_info['id'] && !charactersAllowedTo('modify_any'))
 		{
 			// Give an extra five minutes over the disable time threshold, so they can type - assuming the post is public.
 			if ($row['approved'] && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + ($modSettings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
-			elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_own'))
-				isAllowedTo('modify_replies');
+			elseif ($row['id_member_poster'] == $user_info['id'] && !charactersAllowedTo('modify_own'))
+				areCharactersAllowedTo('modify_replies');
 			else
-				isAllowedTo('modify_own');
+				areCharactersAllowedTo('modify_own');
 		}
-		elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_any'))
-			isAllowedTo('modify_replies');
+		elseif ($row['id_member_poster'] == $user_info['id'] && !charactersAllowedTo('modify_any'))
+			areCharactersAllowedTo('modify_replies');
 		else
-			isAllowedTo('modify_any');
+			areCharactersAllowedTo('modify_any');
 
 		if ($context['can_announce'] && !empty($row['id_action']))
 		{
@@ -732,7 +745,7 @@ function Post($post_errors = array())
 		}
 	}
 
-	$context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments')));
+	$context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (charactersAllowedTo('post_attachment') || ($modSettings['postmod_active'] && charactersAllowedTo('post_unapproved_attachments')));
 	if ($context['can_post_attachment'])
 	{
 		// If there are attachments, calculate the total size and how many.
@@ -960,8 +973,8 @@ function Post($post_errors = array())
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);
 
 	// Are post drafts enabled?
-	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && allowedTo('post_draft');
-	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']) && !empty($options['drafts_autosave_enabled']) && allowedTo('post_autosave_draft');
+	$context['drafts_save'] = !empty($modSettings['drafts_post_enabled']) && charactersAllowedTo('post_draft');
+	$context['drafts_autosave'] = !empty($context['drafts_save']) && !empty($modSettings['drafts_autosave_enabled']) && !empty($options['drafts_autosave_enabled']) && charactersAllowedTo('post_autosave_draft');
 
 	// Build a list of drafts that they can load in to the editor
 	if (!empty($context['drafts_save']))
@@ -1042,7 +1055,7 @@ function Post($post_errors = array())
 	{
 		// If they've unchecked an attachment, they may still want to attach that many more files, but don't allow more than num_allowed_attachments.
 		$context['num_allowed_attachments'] = empty($modSettings['attachmentNumPerPostLimit']) ? 50 : min($modSettings['attachmentNumPerPostLimit'] - count($context['current_attachments']), $modSettings['attachmentNumPerPostLimit']);
-		$context['can_post_attachment_unapproved'] = allowedTo('post_attachment');
+		$context['can_post_attachment_unapproved'] = charactersAllowedTo('post_attachment');
 		$context['attachment_restrictions'] = array();
 		$context['allowed_extensions'] = strtr(strtolower($modSettings['attachmentExtensions']), array(',' => ', '));
 		$attachmentRestrictionTypes = array('attachmentNumPerPostLimit', 'attachmentPostLimit', 'attachmentSizeLimit');
@@ -1155,6 +1168,36 @@ function Post($post_errors = array())
 				'dd' => '<input type="email" name="email" size="25" value="' . $context['email'] . '" class="input_text" required>',
 			);
 		}
+	}
+
+	// Gotta have a character.
+	if (!empty($context['post_characters']) && empty($context['do_not_select_character']))
+	{
+		$context['posting_fields']['character'] = [
+			'dt' => '<span id="caption_character">' . $txt['posting_as_generic'] . '</span>',
+			'dd' => '',
+		];
+		if (!empty($modSettings['character_selector_post']) || !isset($context['post_characters'][$context['posting_as_id']]))
+		{
+			$context['posting_fields']['character']['dd'] .= '<select name="character_id">';
+			foreach ($context['post_characters'] as $id => $char)
+			{
+				$context['posting_fields']['character']['dd'] .= '<option value="' . $id . '"' . ($id == $context['posting_as_id'] ? ' selected' : '') . '>' . $char['name'] . ($char['needs_approval'] ? ' ' . $txt['needs_approval'] : '') . '</option>';
+			}
+			$context['posting_fields']['character']['dd'] .= '</select>';
+		}
+		else
+		{
+			$context['posting_fields']['character']['dd'] = $context['posting_as'];
+			$context['posting_fields']['character']['dd'] .= '<input type="hidden" name="character_id" value="' . $context['posting_as_id'] . '">';
+		}
+	}
+	elseif (!empty($context['do_not_select_character']))
+	{
+		$context['posting_fields']['character'] = [
+			'dt' => '',
+			'dd' => '<input type="hidden" name="character_id" value="' . $context['posting_as_id'] . '">',
+		];
 	}
 
 	// Gotta have a subject.
@@ -1285,7 +1328,7 @@ function Post2()
 	}
 
 	// Then try to upload any attachments.
-	$context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments')));
+	$context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (charactersAllowedTo('post_attachment') || ($modSettings['postmod_active'] && charactersAllowedTo('post_unapproved_attachments')));
 	if ($context['can_post_attachment'] && empty($_POST['from_qr']))
 	{
 		require_once($sourcedir . '/Subs-Attachments.php');
@@ -1332,6 +1375,25 @@ function Post2()
 		}
 	}
 
+	// Who is posting this?
+	$character_id = 0;
+	$user_started_topic = $context['user']['id'] && $topic_info['id_member_started'] == $context['user']['id'];
+	init_possible_posting_characters($context['user']['id'], $board_info['id'], empty($topic), $user_started_topic);
+	if (!empty($user_info['id']) && isset($_POST['character_id']))
+	{
+		// We've elected to override for this post. Does the character belong to this user?
+		$_POST['character_id'] = (int) $_POST['character_id'];
+		loadMemberData($user_info['id']);
+		loadMemberContext($user_info['id']);
+		if (isset($memberContext[$user_info['id']]['characters'][$_POST['character_id']]))
+			$character_id = $_POST['character_id'];
+	}
+	if (!$character_id && (!isset($_REQUEST['msg']) || empty($topic)))
+	{
+		// The character ID might not be valid if you're editing an existing post, but that's OK.
+		fatal_lang_error($user_started_topic ? 'cannot_post_reply_own' : 'cannot_post_reply_any', false);
+	}
+
 	// Replying to a topic?
 	if (!empty($topic) && !isset($_REQUEST['msg']))
 	{
@@ -1343,21 +1405,21 @@ function Post2()
 		if (isset($_REQUEST['poll']) && $topic_info['id_poll'] > 0)
 			unset($_REQUEST['poll']);
 
-		elseif ($topic_info['id_member_started'] != $user_info['id'])
+		elseif ($user_started_topic)
 		{
-			if ($modSettings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
+			if ($modSettings['postmod_active'] && charactersAllowedTo('post_unapproved_replies_any', null, $character_id) && !charactersAllowedTo('post_reply_any', null, $character_id))
 				$becomesApproved = false;
 
 			else
-				isAllowedTo('post_reply_any');
+				areCharactersAllowedTo('post_reply_any', null, $character_id);
 		}
-		elseif (!allowedTo('post_reply_any'))
+		elseif (!charactersAllowedTo('post_reply_any', null, $character_id))
 		{
-			if ($modSettings['postmod_active'] && allowedTo('post_unapproved_replies_own') && !allowedTo('post_reply_own'))
+			if ($modSettings['postmod_active'] && charactersAllowedTo('post_unapproved_replies_own', null, $character_id) && !charactersAllowedTo('post_reply_own', null, $character_id))
 				$becomesApproved = false;
 
 			else
-				isAllowedTo('post_reply_own');
+				areCharactersAllowedTo('post_reply_own');
 		}
 
 		if (isset($_POST['lock']))
@@ -1367,7 +1429,7 @@ function Post2()
 				unset($_POST['lock']);
 
 			// You're have no permission to lock this topic.
-			elseif (!allowedTo(array('lock_any', 'lock_own')) || (!allowedTo('lock_any') && $user_info['id'] != $topic_info['id_member_started']))
+			elseif (!allowedTo(array('lock_any', 'lock_own')) || (!allowedTo('lock_any') && $user_started_topic))
 				unset($_POST['lock']);
 
 			// You are allowed to (un)lock your own topic only.
@@ -1425,10 +1487,10 @@ function Post2()
 
 		// Do like, the permissions, for safety and stuff...
 		$becomesApproved = true;
-		if ($modSettings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
+		if ($modSettings['postmod_active'] && !charactersAllowedTo('post_new', null, $character_id) && charactersAllowedTo('post_unapproved_topics', null, $character_id))
 			$becomesApproved = false;
 		else
-			isAllowedTo('post_new');
+			areCharactersAllowedTo('post_new', null, $character_id);
 
 		if (isset($_POST['lock']))
 		{
@@ -1461,7 +1523,7 @@ function Post2()
 		$_REQUEST['msg'] = (int) $_REQUEST['msg'];
 
 		$request = $smcFunc['db_query']('', '
-			SELECT id_member, poster_name, poster_email, poster_time, approved
+			SELECT id_member, poster_name, poster_email, poster_time, approved, id_character
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}
 			LIMIT 1',
@@ -1472,6 +1534,11 @@ function Post2()
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('cant_find_messages', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
+
+		// Make sure we preserve whoever originally edited this post.
+		$character_id = $row['id_character'];
+		$context['posting_as_id'] = $row['id_character'];
+		$context['do_not_select_character'] = true;
 		$smcFunc['db_free_result']($request);
 
 		if (!empty($topic_info['locked']) && !allowedTo('moderate_board'))
@@ -1516,25 +1583,25 @@ function Post2()
 				$post_errors[] = 'topic_' . (empty($topic_info['locked']) ? 'un' : '') . 'stickied';
 		}
 
-		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
+		if ($row['id_member'] == $user_info['id'] && !charactersAllowedTo('modify_any'))
 		{
 			if ((!$modSettings['postmod_active'] || $row['approved']) && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + ($modSettings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
-			elseif ($topic_info['id_member_started'] == $user_info['id'] && !allowedTo('modify_own'))
-				isAllowedTo('modify_replies');
+			elseif ($topic_info['id_member_started'] == $user_info['id'] && !charactersAllowedTo('modify_own'))
+				areCharactersAllowedTo('modify_replies');
 			else
-				isAllowedTo('modify_own');
+				areCharactersAllowedTo('modify_own');
 		}
-		elseif ($topic_info['id_member_started'] == $user_info['id'] && !allowedTo('modify_any'))
+		elseif ($user_started_topic && !charactersAllowedTo('modify_any'))
 		{
-			isAllowedTo('modify_replies');
+			areCharactersAllowedTo('modify_replies');
 
 			// If you're modifying a reply, I say it better be logged...
 			$moderationAction = true;
 		}
 		else
 		{
-			isAllowedTo('modify_any');
+			areCharactersAllowedTo('modify_any');
 
 			// Log it, assuming you're not modifying your own post.
 			if ($row['id_member'] != $user_info['id'])
@@ -1566,7 +1633,12 @@ function Post2()
 	// In case we have approval permissions and want to override.
 	if (allowedTo('approve_posts') && $modSettings['postmod_active'])
 	{
-		$becomesApproved = !empty($_REQUEST['approve']) ? 1 : 0;
+		// If it's coming from quick reply and it's capable of being approved, auto approve it.
+		if (isset($_POST['quickReply']))
+			$becomesApproved = 1;
+		else
+			$becomesApproved = !empty($_REQUEST['approve']) ? 1 : 0;
+
 		$approve_has_changed = isset($row['approved']) ? $row['approved'] != $becomesApproved : false;
 	}
 
@@ -1638,13 +1710,13 @@ function Post2()
 
 		// This is a new topic... so it's a new poll.
 		if (empty($topic))
-			isAllowedTo('poll_post');
+			areCharactersAllowedTo('poll_post');
 		// Can you add to your own topics?
-		elseif ($user_info['id'] == $topic_info['id_member_started'] && !allowedTo('poll_add_any'))
-			isAllowedTo('poll_add_own');
+		elseif ($user_info['id'] == $topic_info['id_member_started'] && !charactersAllowedTo('poll_add_any'))
+			areCharactersAllowedTo('poll_add_own');
 		// Can you add polls to any topic, then?
 		else
-			isAllowedTo('poll_add_any');
+			areCharactersAllowedTo('poll_add_any');
 
 		if (!isset($_POST['question']) || trim($_POST['question']) == '')
 			$post_errors[] = 'no_question';
@@ -1796,7 +1868,7 @@ function Post2()
 				'size' => isset($attachment['size']) ? $attachment['size'] : 0,
 				'mime_type' => isset($attachment['type']) ? $attachment['type'] : '',
 				'id_folder' => isset($attachment['id_folder']) ? $attachment['id_folder'] : $modSettings['currentAttachmentUploadDir'],
-				'approved' => !$modSettings['postmod_active'] || allowedTo('post_attachment'),
+				'approved' => !$modSettings['postmod_active'] || charactersAllowedTo('post_attachment', null, $character_id),
 				'errors' => $attachment['errors'],
 			);
 
@@ -1910,16 +1982,6 @@ function Post2()
 		'is_approved' => !$modSettings['postmod_active'] || empty($topic) || !empty($board_info['cur_topic_approved']),
 	);
 
-	$character_id = $user_info['id_character'];
-	if (!empty($user_info['id']) && isset($_POST['character_id']))
-	{
-		// We've elected to override for this post. Does the character belong to this user?
-		$_POST['character_id'] = (int) $_POST['character_id'];
-		loadMemberData($user_info['id']);
-		loadMemberContext($user_info['id']);
-		if (isset($memberContext[$user_info['id']]['characters'][$_POST['character_id']]))
-			$character_id = $_POST['character_id'];
-	}
 	$posterOptions = array(
 		'id' => $user_info['id'],
 		'char_id' => $character_id,

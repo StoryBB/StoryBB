@@ -388,21 +388,9 @@ function is_not_banned($forceCheck = false)
 		banPermissions();
 }
 
-/**
- * Fix permissions according to ban status.
- * Applies any states of banning by removing permissions the user cannot have.
- */
-function banPermissions()
+function permissions_denied_by_mute()
 {
-	global $user_info, $sourcedir, $modSettings, $context;
-
-	// Somehow they got here, at least take away all permissions...
-	if (isset($_SESSION['ban']['cannot_access']))
-		$user_info['permissions'] = array();
-	// Okay, well, you can watch, but don't touch a thing.
-	elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $user_info['warning']))
-	{
-		$denied_permissions = array(
+	$denied_permissions = array(
 			'pm_send',
 			'poll_post',
 			'poll_add_own', 'poll_add_any',
@@ -423,20 +411,44 @@ function banPermissions()
 			'remove_own', 'remove_any',
 			'post_unapproved_topics', 'post_unapproved_replies_own', 'post_unapproved_replies_any',
 		);
-		call_integration_hook('integrate_post_ban_permissions', array(&$denied_permissions));
-		$user_info['permissions'] = array_diff($user_info['permissions'], $denied_permissions);
+	call_integration_hook('integrate_post_ban_permissions', array(&$denied_permissions));
+	return $denied_permissions;
+}
+
+function permissions_denied_by_moderate()
+{
+	// Work out what permissions should change...
+	$permission_change = array(
+		'post_new' => 'post_unapproved_topics',
+		'post_reply_own' => 'post_unapproved_replies_own',
+		'post_reply_any' => 'post_unapproved_replies_any',
+		'post_attachment' => 'post_unapproved_attachments',
+	);
+	call_integration_hook('integrate_warn_permissions', array(&$permission_change));
+	return $permission_change;
+}
+
+/**
+ * Fix permissions according to ban status.
+ * Applies any states of banning by removing permissions the user cannot have.
+ */
+function banPermissions()
+{
+	global $user_info, $sourcedir, $modSettings, $context;
+
+	// Somehow they got here, at least take away all permissions...
+	if (isset($_SESSION['ban']['cannot_access']))
+		$user_info['permissions'] = array();
+	// Okay, well, you can watch, but don't touch a thing.
+	elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $user_info['warning']))
+	{
+		$user_info['permissions'] = array_diff($user_info['permissions'], permissions_denied_by_mute());
 	}
 	// Are they absolutely under moderation?
 	elseif (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $user_info['warning'])
 	{
 		// Work out what permissions should change...
-		$permission_change = array(
-			'post_new' => 'post_unapproved_topics',
-			'post_reply_own' => 'post_unapproved_replies_own',
-			'post_reply_any' => 'post_unapproved_replies_any',
-			'post_attachment' => 'post_unapproved_attachments',
-		);
-		call_integration_hook('integrate_warn_permissions', array(&$permission_change));
+		$permission_change = permissions_denied_by_moderate();
 		foreach ($permission_change as $old => $new)
 		{
 			if (!in_array($old, $user_info['permissions']))
@@ -1007,6 +1019,328 @@ function isAllowedTo($permission, $boards = null)
 	// If you're doing something on behalf of some "heavy" permissions, validate your session.
 	// (take out the heavy permissions, and if you can't do anything but those, you need a validated session.)
 	if (!allowedTo(array_diff($permission, $heavy_permissions), $boards))
+		validateSession();
+}
+
+/**
+ * Check the user's character's permissions.
+ * Specifically, which of the user's characters might have a given permission.
+ * If boards is specified, checks those boards instead of the current one.
+ *
+ * @param string|array $permission A single permission to check or an array of permissions to check
+ * @param int|array $boards The ID of a board or an array of board IDs if we want to check board-level permissions
+ * @param int $character A specific character to filter by for easier perms checking.
+ * @return array Which character IDs are permitted to carry out the permission 
+ */
+function charactersAllowedTo($permission, $boards = null, $character = 0)
+{
+	global $smcFunc, $modSettings, $user_info, $board;
+	static $cache = null, $contextual_cache = null;
+
+	if (empty($user_info['id']))
+	{
+		// Guests don't have permissions, nor do they have characters.
+		return [];
+	}
+
+	if ($user_info['in_immersive_mode'])
+	{
+		// We don't need to build a cache or anything. If we're in immersive mode, we already have our permissions.
+		// And we just need to query for them given our current groups etc.
+		// If we do have that permission, the allowed character is the current one - otherwise noone.
+		if ($character) {
+			return allowedTo($permission, $boards) && $character == $user_info['id_character'] ? [$user_info['id_character']] : [];
+		}
+		return allowedTo($permission, $boards) ? [$user_info['id_character']] : [];
+	}
+
+	if ($cache === null || $contextual_cache === null)
+	{
+		// We haven't cached this before, better get on with it.
+		$cache = [];
+		$contextual_cache = [];
+
+		if ($modSettings['non_immersive_mode'] == 'simple')
+		{
+			// In the case of simple non-immersive mode, we only touch the account permissions.
+			// They all have the current permission set, effectively, and we can just query that instead.
+			$request = $smcFunc['db_query']('', '
+				SELECT id_character
+				FROM {db_prefix}characters
+				WHERE id_member = {int:member}',
+				[
+					'member' => $user_info['id'],
+				]
+			);
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+			{
+				$cache[$row['id_character']] = $row['id_character'];
+			}
+			$smcFunc['db_free_result']($request);
+		}
+		else
+		{
+			// In the case of contextual immersive mode, we need to do this thoroughly.
+			$request = $smcFunc['db_query']('', '
+				SELECT chars.id_character, chars.main_char_group, chars.char_groups,
+					mem.id_group, mem.additional_groups, mem.id_post_group
+				FROM {db_prefix}characters AS chars
+				INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
+				WHERE chars.id_member = {int:member}',
+				[
+					'member' => $user_info['id'],
+				]
+			);
+			$characters = [];
+			$contextual_cache['characters'] = [];
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+			{
+				// First, get the account groups.
+				$characters[$row['id_character']] = [(int) $row['id_group'], (int) $row['id_post_group']];
+				if (!empty($row['additional_groups']))
+				{
+					foreach (explode(',', $row['additional_groups']) as $group)
+					{
+						$group = (int) $group;
+						if (!empty($group))
+						{
+							$characters[$row['id_character']][] = $group;
+						}
+					}
+				}
+				// Now layer on the character groups. OOC characters by design have no groups here anyway.
+				if (!empty($row['main_char_group']))
+				{
+					$characters[$row['id_character']][] = (int) $row['main_char_group'];
+				}
+				if (!empty($row['char_groups']))
+				{
+					foreach (explode(',', $row['char_groups']) as $group)
+					{
+						$group = (int) $group;
+						if (!empty($group))
+						{
+							$characters[$row['id_character']][] = $group;
+						}
+					}
+				}
+			}
+			$smcFunc['db_free_result']($request);
+
+			// If the admin override isn't on, strip admin powers from this lot.
+			if (empty($modSettings['characters_admin_override']))
+			{
+				foreach ($characters as $char_id => $groups)
+				{
+					$characters[$char_id] = array_diff($groups, [1]);
+				}
+			}
+			$contextual_cache['characters'] = $characters;
+
+			// Some local storage before we shunt it to a longer-term cache.
+			$board_permissions = $contextual_cache['board_permissions'] = [];
+			$removals = [];
+			$board_removals = [];
+			$boards_profiles = $contextual_cache['boards_profiles'] = [];
+			if (!empty($characters))
+			{
+				// First, fetch board permissions.
+				$request = $smcFunc['db_query']('', '
+					SELECT id_group, id_profile, permission, add_deny
+					FROM {db_prefix}board_permissions');
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					if ($row['add_deny'])
+					{
+						$board_permissions[$row['id_group']][$row['id_profile']][$row['permission']] = true;
+					}
+					else
+					{
+						$board_removals[$row['id_profile']][$row['permission']] = true;
+					}
+				}
+				$smcFunc['db_free_result']($request);
+				foreach ($board_removals as $profile => $removals)
+					$board_removals[$profile] = array_keys($removals);
+
+				// Sift out which permissions are denied across a profile because of any of the groups denied in that profile.
+				foreach ($board_permissions as $group => $profile_list)
+				{
+					foreach (array_keys($profile_list) as $profile)
+					{
+						if (!isset($board_removals[$profile]))
+							continue;
+
+						foreach ($board_removals[$profile] as $removal)
+						{
+							unset ($board_permissions[$group][$profile][$removal]);
+						}
+					}
+				}
+
+				// Now apply any relevant permissions from bans etc. (separately)
+				if (isset($_SESSION['ban']['cannot_access']))
+				{
+					$board_permissions = [];
+				}
+				elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $user_info['warning']))
+				{
+					$mute = permissions_denied_by_mute();
+					foreach ($board_permissions as $group => $profile_list)
+					{
+						foreach (array_keys($profile_list) as $profile)
+						{
+							foreach ($mute as $mute_perm)
+							{
+								unset ($board_permissions[$group][$profile][$mute_perm]);
+							}
+						}
+					}
+				}
+				elseif (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $user_info['warning'])
+				{
+					$moderate = permissions_denied_by_moderate();
+					foreach ($board_permissions as $group => $profile_list)
+					{
+						foreach (array_keys($profile_list) as $profile)
+						{
+							foreach ($moderate as $old => $new)
+							{
+								if (isset($board_permissions[$group][$profile][$old]))
+								{
+									unset ($board_permissions[$group][$profile][$old]);
+									$board_permissions[$group][$profile][$new] = true;
+								}
+							}
+						}
+					}
+				}
+				$contextual_cache['board_permissions'] = $board_permissions;
+
+				// Lastly, a list of boards and their profiles.
+				$request = $smcFunc['db_query']('', '
+					SELECT id_board, id_profile
+					FROM {db_prefix}boards');
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					$boards_profiles[$row['id_board']] = (int) $row['id_profile'];
+				}
+				$smcFunc['db_free_result']($request);
+				$contextual_cache['boards_profiles'] = $boards_profiles;
+			}
+		}
+	}
+
+	// So, let's do this. We don't know if this is a board permission per se, so we have to check both cases.
+	if ($modSettings['non_immersive_mode'] == 'simple')
+	{
+		if ($character) {
+			return allowedTo($permission, $boards) && in_array($character, $cache) ? [$character] : [];
+		}
+		return allowedTo($permission, $boards) ? array_values($cache) : [];
+	}
+	else
+	{
+		$permission = (array) $permission;
+
+		$valid_chars = [];
+		$board_list = [];
+		if (!empty($boards)) {
+			$board_list = (array) $boards;
+		} elseif (!empty($board)) {
+			$board_list = [$board];
+		}
+
+		if (empty($board_list))
+		{
+			// We don't know what boards we're checking, but since characters can only have board permissions...
+			return [];
+		}
+
+		foreach ($contextual_cache['characters'] as $id_character => $groups)
+		{
+			foreach ($groups as $group)
+			{
+				foreach ($board_list as $board_id)
+				{
+					// Do we know a profile for this board?
+					if (!isset($contextual_cache['boards_profiles'][$board_id]))
+						continue;
+
+					// Do we have a profile for this board for the group we're looking at?
+					$profile = $contextual_cache['boards_profiles'][$board_id];
+					if (!isset($contextual_cache['board_permissions'][$group][$profile]))
+						continue;
+
+					foreach ($permission as $specific_permission)
+					{
+						if (isset($contextual_cache['board_permissions'][$group][$profile][$specific_permission]))
+						{
+							$valid_chars[] = $id_character;
+						}
+					}
+				}
+
+			}
+		}
+
+		if ($character) {
+			return in_array($character, $valid_chars) ? [$character] : [];
+		}
+
+		return array_unique($valid_chars);
+	}
+}
+
+/**
+ * Similar to isAllowedTo, verify that at least one character is allowed
+ * to perform the action, or issue an error.
+ *
+ * @param string|array $permission A single permission to check or an array of permissions to check
+ * @param int $character A specific character to filter by for easier perms checking.
+ * @param int|array $boards The ID of a single board or an array of board IDs if we're checking board-level permissions (null otherwise)
+ */
+function areCharactersAllowedTo($permission, $boards = null, $character = 0)
+{
+	global $user_info, $txt;
+
+	// None of the heavy permissions in isAllowedTo should apply.
+	// But it's possible there is something - hence the hook.
+	$heavy_permissions = [];
+
+	// Make it an array, even if a string was passed.
+	$permission = (array) $permission;
+
+	call_integration_hook('integrate_heavy_permissions_char_session', array(&$heavy_permissions));
+
+	// Check the permission and return an error...
+	if (!charactersAllowedTo($permission, $boards, $character))
+	{
+		// Pick the last array entry as the permission shown as the error.
+		$error_permission = array_shift($permission);
+
+		// If they are a guest, show a login. (because the error might be gone if they do!)
+		if ($user_info['is_guest'])
+		{
+			loadLanguage('Errors');
+			is_not_guest($txt['cannot_' . $error_permission]);
+		}
+
+		// Clear the action because they aren't really doing that!
+		$_GET['action'] = '';
+		$_GET['board'] = '';
+		$_GET['topic'] = '';
+		writeLog(true);
+
+		fatal_lang_error('cannot_' . $error_permission, false);
+
+		// Getting this far is a really big problem, but let's try our best to prevent any cases...
+		trigger_error('Hacking attempt...', E_USER_ERROR);
+	}
+
+	// If you're doing something on behalf of some "heavy" permissions, validate your session.
+	// (take out the heavy permissions, and if you can't do anything but those, you need a validated session.)
+	if (!charactersAllowedTo(array_diff($permission, $heavy_permissions), $boards, $character))
 		validateSession();
 }
 

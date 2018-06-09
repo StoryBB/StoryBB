@@ -2,6 +2,8 @@
 // Version: 3.0 Alpha 1; ManagePermissions
 
 $txt['permissions_title'] = 'Manage Permissions';
+$txt['permissions_title_account'] = 'Manage Permissions - Account Groups';
+$txt['permissions_title_character'] = 'Manage Permissions - Character Groups';
 $txt['permissions_modify'] = 'Modify';
 $txt['permissions_view'] = 'View';
 $txt['permissions_allowed'] = 'Allowed';

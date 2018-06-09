@@ -151,10 +151,11 @@ function PermissionIndex()
 
 	$postGroups = array();
 	$normalGroups = array();
+	$characterGroups = array();
 
 	// Query the database defined membergroups.
 	$query = $smcFunc['db_query']('', '
-		SELECT id_group, id_parent, group_name, min_posts, online_color, icons
+		SELECT id_group, id_parent, group_name, min_posts, online_color, icons, is_character
 		FROM {db_prefix}membergroups' . (empty($modSettings['permission_enable_postgroups']) ? '
 		WHERE min_posts = {int:min_posts}' : '') . '
 		ORDER BY id_parent = {int:not_inherited} DESC, min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
@@ -193,10 +194,20 @@ function PermissionIndex()
 				'denied' => $row['id_group'] == 1 ? '(' . $txt['permissions_none'] . ')' : 0
 			),
 			'access' => false,
+			'is_character' => !empty($row['is_character']),
 		);
 
 		if ($row['min_posts'] == -1)
-			$normalGroups[$row['id_group']] = $row['id_group'];
+		{
+			if ($row['is_character'])
+			{
+				$characterGroups[$row['id_group']] = $row['id_group'];
+			}
+			else
+			{
+				$normalGroups[$row['id_group']] = $row['id_group'];
+			}
+		}
 		else
 			$postGroups[$row['id_group']] = $row['id_group'];
 	}
@@ -246,6 +257,40 @@ function PermissionIndex()
 			GROUP BY mg.id_group',
 			array(
 				'normal_group_list' => $normalGroups,
+				'blank_string' => '',
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($query))
+			$context['groups'][$row['id_group']]['num_members'] += $row['num_members'];
+		$smcFunc['db_free_result']($query);
+	}
+
+	if (!empty($characterGroups))
+	{
+		$query = $smcFunc['db_query']('', '
+			SELECT main_char_group, COUNT(*) AS num_members
+			FROM {db_prefix}characters
+			WHERE main_char_group IN ({array_int:char_group_list})
+			GROUP BY main_char_group',
+			array(
+				'char_group_list' => $characterGroups,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($query))
+			$context['groups'][$row['main_char_group']]['num_members'] += $row['num_members'];
+		$smcFunc['db_free_result']($query);
+
+		// This one is slower, but it's okay... careful not to count twice!
+		$query = $smcFunc['db_query']('', '
+			SELECT mg.id_group, COUNT(*) AS num_members
+			FROM {db_prefix}membergroups AS mg
+				INNER JOIN {db_prefix}characters AS chars ON (chars.char_groups != {string:blank_string}
+					AND chars.main_char_group != mg.id_group
+					AND FIND_IN_SET(mg.id_group, chars.char_groups) != 0)
+			WHERE mg.id_group IN ({array_int:char_group_list})
+			GROUP BY mg.id_group',
+			array(
+				'char_group_list' => $characterGroups,
 				'blank_string' => '',
 			)
 		);
@@ -332,6 +377,17 @@ function PermissionIndex()
 	if (!$context['can_modify'])
 	{
 		session_flash('warning', sprintf($txt['permission_cannot_edit'], $scripturl . '?action=admin;area=permissions;sa=profiles'));
+	}
+
+	// Now sift out the character groups.
+	$context['character_groups'] = [];
+	foreach ($context['groups'] as $id_group => $group)
+	{
+		if (!empty($group['is_character']))
+		{
+			$context['character_groups'][$id_group] = $group;
+			unset ($context['groups'][$id_group]);
+		}
 	}
 
 	// Load the proper template.
@@ -697,10 +753,11 @@ function ModifyMembergroup()
 	loadPermissionProfiles();
 	$context['hidden_perms'] = array();
 
+	$is_character_group = false;
 	if ($context['group']['id'] > 0)
 	{
 		$result = $smcFunc['db_query']('', '
-			SELECT group_name, id_parent
+			SELECT group_name, id_parent, is_character
 			FROM {db_prefix}membergroups
 			WHERE id_group = {int:current_group}
 			LIMIT 1',
@@ -708,7 +765,7 @@ function ModifyMembergroup()
 				'current_group' => $context['group']['id'],
 			)
 		);
-		list ($context['group']['name'], $parent) = $smcFunc['db_fetch_row']($result);
+		list ($context['group']['name'], $parent, $is_character_group) = $smcFunc['db_fetch_row']($result);
 		$smcFunc['db_free_result']($result);
 
 		// Cannot edit an inherited group!
@@ -738,6 +795,11 @@ function ModifyMembergroup()
 	}
 
 	$context['permission_type'] = empty($context['profile']['id']) ? 'membergroup' : 'board';
+	if (!empty($is_character_group) && $context['permission_type'] == 'membergroup')
+	{
+		redirectexit('action=admin;area=permissions');
+	}
+
 	$context['profile']['can_modify'] = !$context['profile']['id'] || $context['profiles'][$context['profile']['id']]['can_modify'];
 
 	// Set up things a little nicer for board related stuff...
@@ -791,7 +853,7 @@ function ModifyMembergroup()
 		{
 			foreach ($permissionGroups as $permissionGroup => $permissionArray)
 			{
-				foreach ($permissionArray['permissions'] as $perm)
+				foreach ($permissionArray['permissions'] as $perm_id => $perm)
 				{
 					// Create a shortcut for the current permission.
 					$curPerm = &$context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['permissions'][$perm['id']];
@@ -802,31 +864,45 @@ function ModifyMembergroup()
 						$curPerm['own']['select'] = in_array($perm['id'] . '_own', $permissions[$permissionType]['allowed']) ? 'on' : (in_array($perm['id'] . '_own', $permissions[$permissionType]['denied']) ? 'deny' : 'off');
 					}
 					else
+					{
 						$curPerm['select'] = in_array($perm['id'], $permissions[$permissionType]['denied']) ? 'deny' : (in_array($perm['id'], $permissions[$permissionType]['allowed']) ? 'on' : 'off');
+					}
 
-						// Keep the last value if it's hidden.
-						if ($perm['hidden'] || $permissionArray['hidden'])
+					// If this is for a board profile, and it's a character group... check whether skipping.
+					if ($context['permission_type'] == 'board' && $is_character_group)
+					{
+						if (in_array($perm_id, $context['non_character_permissions']))
 						{
-							if ($perm['has_own_any'])
-							{
-								$context['hidden_perms'][] = array(
-									$permissionType,
-									$perm['own']['id'],
-									$curPerm['own']['select'],
-								);
-								$context['hidden_perms'][] = array(
-									$permissionType,
-									$perm['any']['id'],
-									$curPerm['any']['select'],
-								);
-							}
-							else
-								$context['hidden_perms'][] = array(
-									$permissionType,
-									$perm['id'],
-									$curPerm['select'],
-								);
+							$context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['permissions'][$perm_id]['hidden'] = true;
+							continue;
 						}
+					}
+
+					// Keep the last value if it's hidden.
+					if ($perm['hidden'] || $permissionArray['hidden'])
+					{
+						if ($perm['has_own_any'])
+						{
+							$context['hidden_perms'][] = array(
+								$permissionType,
+								$perm['own']['id'],
+								$curPerm['own']['select'],
+							);
+							$context['hidden_perms'][] = array(
+								$permissionType,
+								$perm['any']['id'],
+								$curPerm['any']['select'],
+							);
+						}
+						else
+						{
+							$context['hidden_perms'][] = array(
+								$permissionType,
+								$perm['id'],
+								$curPerm['select'],
+							);
+						}
+					}
 				}
 			}
 		}
@@ -1268,19 +1344,24 @@ function setPermissionLevel($level, $group, $profile = 'null')
 	if ($profile === 'null' && $group !== 'null')
 	{
 		$group = (int) $group;
+		$is_character_group = StoryBB\Model\Group::is_character_group($group);
 
 		if (empty($groupLevels['global'][$level]))
 			return;
 
-		$smcFunc['db_query']('', '
-			DELETE FROM {db_prefix}permissions
-			WHERE id_group = {int:current_group}
-			' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
-			array(
-				'current_group' => $group,
-				'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
-			)
-		);
+		// Clean up existing permissions for the group - but only non-character groups get non-board permissions.
+		if (!$is_character_group)
+		{
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}permissions
+				WHERE id_group = {int:current_group}
+				' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
+				array(
+					'current_group' => $group,
+					'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
+				)
+			);
+		}
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}board_permissions
 			WHERE id_group = {int:current_group}
@@ -1291,16 +1372,19 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			)
 		);
 
-		$groupInserts = array();
-		foreach ($groupLevels['global'][$level] as $permission)
-			$groupInserts[] = array($group, $permission);
+		if (!$is_character_group)
+		{
+			$groupInserts = array();
+			foreach ($groupLevels['global'][$level] as $permission)
+				$groupInserts[] = array($group, $permission);
 
-		$smcFunc['db_insert']('insert',
-			'{db_prefix}permissions',
-			array('id_group' => 'int', 'permission' => 'string'),
-			$groupInserts,
-			array('id_group')
-		);
+			$smcFunc['db_insert']('insert',
+				'{db_prefix}permissions',
+				array('id_group' => 'int', 'permission' => 'string'),
+				$groupInserts,
+				array('id_group')
+			);
+		}
 
 		$boardInserts = array();
 		foreach ($groupLevels['board'][$level] as $permission)
@@ -1585,8 +1669,21 @@ function loadAllPermissions()
 		$hiddenPermissions[] = 'mention';
 	}
 
+	// Some permissions shouldn't be shown to characters even if they otherwise could be.
+	$noncharacterPerms = [
+		'merge_any',
+		'split_any',
+		'make_sticky',
+		'move',
+		'lock',
+		'moderate_board',
+		'approve_posts',
+	];
+
 	// Provide a practical way to modify permissions.
-	call_integration_hook('integrate_load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions));
+	call_integration_hook('integrate_load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$noncharacterPerms, &$relabelPermissions));
+
+	$context['non_character_permissions'] = $noncharacterPerms;
 
 	$context['permissions'] = array();
 	$context['hidden_permissions'] = array();
@@ -2222,6 +2319,10 @@ function loadIllegalGuestPermissions()
 		'poll_remove',
 		'post_autosave_draft',
 		'post_draft',
+		'post_new',
+		'post_reply',
+		'post_unapproved_replies',
+		'post_unapproved_topics',
 		'profile_displayed_name',
 		'profile_extra',
 		'profile_forum',

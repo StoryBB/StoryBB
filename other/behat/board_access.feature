@@ -94,8 +94,44 @@ Feature: Board access
 		And I should see "Slytherin Dungeon"
 		And I should see "Gryffindor Tower"
 
-	# Scenario: Checking when board access should be restricted in immersive mode
+	# If any character is restricted from seeing a board, they all are.
+	Scenario: Checking board access is (correctly) restricted in contextual non-immersive mode
+		When the following "boards" exist:
+			| board name        | board parent | can see         | cannot see |
+			| Gryffindor Tower  | Common Rooms | Regular Members | Slytherin  |
+			| Slytherin Dungeon | Common Rooms | Regular Members | Gryffindor |
+		And the following settings are set:
+			| variable              | value      |
+			| enable_immersive_mode | off        |
+			| non_immersive_mode    | contextual |
+			| deny_boards_access    | 1          |
+		And I log in as "Test"
+		And I switch character to "Harry Potter"
+		And I go to the board index
+		Then I should not see "Gryffindor Tower"
+		And I should not see "Slytherin Dungeon"
+		And I switch character to "Draco Malfoy"
+		And I go to the board index
+		And I should not see "Slytherin Dungeon"
+		And I should not see "Gryffindor Tower"
 
-	# Scenario: Checking that board access is (correctly) not restricted in simple non-immersive
-
-	# Scenario: Checking that board access is (correctly) not restricted in contextual mode
+	# As long as one character can see the board, they all can.
+	Scenario: Checking board access is (correctly) not restricted in contextual non-immersive mode
+		When the following "boards" exist:
+			| board name        | board parent | can see    | cannot see |
+			| Gryffindor Tower  | Common Rooms | Slytherin  |            |
+			| Slytherin Dungeon | Common Rooms | Gryffindor |            |
+		And the following settings are set:
+			| variable              | value      |
+			| enable_immersive_mode | off        |
+			| non_immersive_mode    | contextual |
+			| deny_boards_access    | 1          |
+		And I log in as "Test"
+		And I switch character to "Harry Potter"
+		And I go to the board index
+		Then I should see "Gryffindor Tower"
+		And I should see "Slytherin Dungeon"
+		And I switch character to "Draco Malfoy"
+		And I go to the board index
+		And I should see "Slytherin Dungeon"
+		And I should see "Gryffindor Tower"

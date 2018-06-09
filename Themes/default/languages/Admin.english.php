@@ -748,3 +748,7 @@ $txt['enable_immersive_mode_user_on'] = 'Immersive mode is user choice (default 
 $txt['enable_immersive_mode_user_off'] = 'Immersive mode is user choice (default off)';
 $txt['enable_immersive_mode_off'] = 'Immersive mode is always off';
 $txt['enable_immersive_mode_on'] = 'Immersive mode is always on';
+
+$txt['non_immersive_mode'] = 'Non-immersive mode';
+$txt['non_immersive_mode_simple'] = 'Simple mode';
+$txt['non_immersive_mode_contextual'] = 'Contextual mode';

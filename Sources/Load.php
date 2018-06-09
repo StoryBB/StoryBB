@@ -61,6 +61,11 @@ function reloadSettings()
 	{
 		$modSettings['enable_immersive_mode'] = 'user_on';
 	}
+	if (empty($modSettings['non_immersive_mode']) || !in_array($modSettings['non_immersive_mode'], ['simple', 'contextual']))
+	{
+		$modSettings['non_immersive_mode'] = 'simple';
+	}
+
 	$modSettings['cache_enable'] = $cache_enable;
 
 	// Set a list of common functions.
@@ -753,6 +758,26 @@ function loadUserSettings()
 			$user_info['groups'] = array_merge($user_info['groups'], $group_filter($user_settings['main_char_group'], $user_settings['char_groups']));
 		}
 	}
+	elseif ($modSettings['non_immersive_mode'] == 'contextual')
+	{
+		// In non-immersive mode, depending on which mode we're in, we need to apply character groups.
+		// Simple mode doesn't apply any character groups; contextual mode applies all character groups.
+		// This gets all of the board access taken care of and a lot of the permissions too.
+		$request = $smcFunc['db_query']('', '
+			SELECT main_char_group, char_groups
+			FROM {db_prefix}characters
+			WHERE id_member = {int:member}',
+			[
+				'member' => $user_info['id'],
+			]
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$user_info['groups'] = array_merge($user_info['groups'], $group_filter($row['main_char_group'], $row['char_groups']));
+		}
+		$smcFunc['db_free_result']($request);
+	}
+
 	$user_info['groups'] = array_unique($user_info['groups']);
 
 	// Make sure that the last item in the ignore boards array is valid. If the list was too long it could have an ending comma that could cause problems.

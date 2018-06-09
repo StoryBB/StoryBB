@@ -5572,7 +5572,7 @@ function get_main_menu_groups()
 /**
  * Gets the list of possible characters applicable to a user right now.
  */
-function get_user_possible_characters($id_member, $board_id = 0)
+function get_user_possible_characters($id_member, $board_id = 0, $perms = [])
 {
 	global $context, $board_info, $modSettings, $memberContext, $user_profile, $smcFunc;
 	static $boards_ic = [];
@@ -5618,30 +5618,156 @@ function get_user_possible_characters($id_member, $board_id = 0)
 
 	foreach ($memberContext[$id_member]['characters'] as $char_id => $character)
 	{
-		if ($board_in_character)
+		// Does the admin override apply?
+		if (!allowedTo('admin_forum') || empty($modSettings['characters_admin_override']))
 		{
-			if ($modSettings['characters_ic_may_post'] == 'ic' && $character['is_main'] && (!allowedTo('admin_forum') || empty($modSettings['characters_admin_override'])))
+			// If you can't admin the forum, or you can but the setting is off... need to look at exclusions.
+			if ($board_in_character)
 			{
-				// IC board that requires IC only, and character is main and (not admin or no admin override)
-				continue;
+				if ($modSettings['characters_ooc_may_post'] != 'icooc' && $character['is_main'])
+				{
+					// If OOC characters may not post in IC boards, and this is an OOC character, skip.
+					continue;
+				}
 			}
-		}
-		else
-		{
-			if ($modSettings['characters_ooc_may_post'] == 'ooc' && !$character['is_main'] && (!allowedTo('admin_forum') || empty($modSettings['characters_admin_override'])))
+			else
 			{
-				// OOC board that requires OOC only, and character is not main and (not admin or no admin override)
-				continue;
+				if ($modSettings['characters_ic_may_post'] != 'icooc' && !$character['is_main'])
+				{
+					// If IC characteres may not post in OOC boards, and this is an IC character, skip.
+					continue;
+				}
 			}
 		}
 
 		$characters[$char_id] = [
 			'name' => $character['character_name'],
 			'avatar' => !empty($character['avatar']) ? $character['avatar'] : $settings['images_url'] . '/default.png',
+			'permissions' => [],
+			'needs_approval' => false,
 		];
 	}
 
+	if (!empty($perms))
+	{
+		foreach ((array) $perms as $perm)
+		{
+			$chars = charactersAllowedTo($perm, $board_id);
+			foreach ($chars as $char_id)
+			{
+				if (isset($characters[$char_id]))
+				{
+					$characters[$char_id]['permissions'][] = $perm;
+				}
+			}
+		}
+	}
+
 	return $characters;
+}
+
+function init_possible_posting_characters($id_member, $board_id, $new_topic = false, $user_started = false)
+{
+	global $modSettings, $context, $user_info;
+
+	$post_characters = [];
+
+	// Get the current characters' permissions.
+	if ($new_topic)
+	{
+		$permissions = ['post_new'];
+		if ($modSettings['postmod_active'])
+		{
+			$permissions[] = 'post_unapproved_topics';
+		}
+	}
+	else
+	{
+		$permissions = ['post_reply_any'];
+		if ($modSettings['postmod_active'])
+		{
+			$permissions[] = 'post_unapproved_replies_any';
+		}
+		if ($user_started)
+		{
+			$permissions[] = 'post_reply_own';
+			if ($modSettings['postmod_active'])
+			{
+				$permissions[] = 'post_unapproved_replies_own';
+			}
+		}
+	}
+
+	$new = ['post_new'];
+	$new_unapproved = ['post_unapproved_topics'];
+
+	$reply = ['post_reply_any', 'post_reply_own'];
+	$reply_unapproved = ['post_unapproved_replies_any', 'post_unapproved_replies_own'];
+
+	$context['post_characters'] = get_user_possible_characters($id_member, $board_id, $permissions);
+	foreach ($post_characters as $char_id => $char)
+	{
+		if (empty($char['permissions']))
+		{
+			unset($context['post_characters'][$char_id]);
+			continue;
+		}
+
+		if ($new_topic)
+		{
+			if (array_intersect($new, $char['permissions']))
+			{
+				$context['post_characters'][$char_id]['needs_approval'] = false;
+				continue;
+			}
+			if (array_intersect($new_unapproved, $char['permissions']))
+			{
+				$context['post_characters'][$char_id]['needs_approval'] = true;
+				continue;
+			}
+		}
+		else
+		{
+			if (array_intersect($reply, $char['permissions']))
+			{
+				$context['post_characters'][$char_id]['needs_approval'] = false;
+				continue;
+			}
+			if (array_intersect($reply_unapproved, $char['permissions']))
+			{
+				$context['post_characters'][$char_id]['needs_approval'] = true;
+				continue;
+			}
+		}
+
+		// We got here? Something awry.
+		unset($context['post_characters'][$char_id]);
+	}
+
+	// Make sure we have some avatar to work with.
+	$context['current_avatar'] = '';
+	$context['posting_as'] = '';
+	$context['posting_as_id'] = 0;
+	foreach ($context['post_characters'] as $char_id => $character)
+	{
+		if ($char_id == $user_info['id_character'])
+		{
+			$context['current_avatar'] = $character['avatar'];
+			$context['posting_as'] = $character['name'];
+			$context['posting_as_id'] = $char_id;
+		}
+	}
+	// If we didn't get one based on the current user, grab the first defined character as a default.
+	if (empty($context['posting_as']) && !empty($context['post_characters']))
+	{
+		foreach ($context['post_characters'] as $char_id => $character)
+		{
+			$context['current_avatar'] = $character['avatar'];
+			$context['posting_as'] = $character['name'];
+			$context['posting_as_id'] = $char_id;
+			break;
+		}
+	}
 }
 
 /**

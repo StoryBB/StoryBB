@@ -8,7 +8,7 @@
 			</div>
 			{{else}}
 			<div class="cat_bar">
-				<h3 class="catbg">{{{txt.permissions_title}}}</h3>
+				<h3 class="catbg">{{{txt.permissions_title_account}}}</h3>
 			</div>
 			{{/if}}
 
@@ -48,6 +48,47 @@
 				</tbody>
 			</table>
 			<br>
+			{{#if context.character_groups}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.permissions_title_character}}}</h3>
+			</div>
+			<table class="table_grid">
+				<thead>
+					<tr class="title_bar">
+						<th>{{{txt.membergroups_name}}}</th>
+						<th class="small_table">{{{txt.membergroups_members_top}}}</th>
+						<th class="small_table">{{{txt.permissions_allowed}}}</th>
+						<th class="small_table">{{{txt.permissions_denied}}}</th>
+						<th class="small_table">{{#if context.can_modify}}{{{txt.permissions_modify}}}{{else}}{{{txt.permissions_view}}}{{/if}}</th>
+						<th class="table_icon centercol">
+							{{#if context.can_modify}}<input type="checkbox" class="input_check" onclick="invertAll(this, this.form, 'group');">{{/if}}
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each context.character_groups}}
+					<tr class="windowbg">
+						<td>
+							{{#if help}}{{> helpicon help=help}}{{/if}}&nbsp;<span>{{{name}}}</span>
+
+							{{#if children}}
+							<br>
+							<span class="smalltext">{{{../txt.permissions_includes_inherited}}}: &quot;{{{join children '&quot;, &quot;'}}}&quot;</span>
+							{{/if}}
+						</td>
+						<td>{{#if can_search}}{{{link}}}{{else}}{{{num_members}}}{{/if}}</td>
+
+						<td{{#if (eq id 1)}} style="font-style: italic;"{{/if}}>{{{num_permissions.allowed}}}</td>
+						<td{{#if (or (eq id 1) (eq id -1))}} style="font-style: italic;"{{else}}{{#if (gt num_permissions.denied 0)}} class="red"{{/if}}{{/if}}>{{{num_permissions.denied}}}</td>
+
+						<td>{{#if allow_modify}}<a href="{{../scripturl}}?action=admin;area=permissions;sa=modify;group={{id}}{{#if ../context.profile}};pid={{../context.profile.id}}{{else}};pid=1{{/if}}">{{#if ../context.can_modify}}{{{../txt.permissions_modify}}}{{else}}{{{../txt.permissions_view}}}{{/if}}</a>{{/if}}</td>
+						<td class="centercol">{{#if (and allow_modify ../context.can_modify)}}<input type="checkbox" name="group[]" value="{{id}}" class="input_check">{{/if}}</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			<br>
+			{{/if}}
 
 			{{#if context.can_modify}}
 				<div class="cat_bar">

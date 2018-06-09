@@ -371,6 +371,10 @@ function CharacterImmersion($return_config = false)
 				'off' => $txt['enable_immersive_mode_off'],
 				'on' => $txt['enable_immersive_mode_on'],
 			]),
+			array('select', 'non_immersive_mode', [
+				'simple' => $txt['non_immersive_mode_simple'],
+				'contextual' => $txt['non_immersive_mode_contextual'],
+			]),
 	);
 
 	call_integration_hook('integrate_immersion_settings', array(&$config_vars));
