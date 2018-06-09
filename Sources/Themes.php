@@ -1458,5 +1458,3 @@ function SetJavaScript()
 	// Don't output anything...
 	redirectexit($settings['images_url'] . '/blank.png');
 }
-
-?>

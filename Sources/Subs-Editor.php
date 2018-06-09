@@ -2364,5 +2364,3 @@ function AutoSuggest_Search_MemberChar()
 
 	return $xml_data;
 }
-
-?>

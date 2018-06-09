@@ -421,5 +421,3 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		}
 	}
 }
-
-?>

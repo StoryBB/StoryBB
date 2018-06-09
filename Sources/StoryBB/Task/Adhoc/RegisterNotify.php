@@ -134,5 +134,3 @@ class RegisterNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

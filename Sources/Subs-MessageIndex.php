@@ -111,5 +111,3 @@ function child_boards($board) {
 	
 	return new \LightnCandy\Safestring(implode(', ', $children));
 }
-
-?>

@@ -104,5 +104,3 @@ function cache_getLastPosts($latestPostOptions)
 			}',
 	);
 }
-
-?>

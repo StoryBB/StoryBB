@@ -268,5 +268,3 @@ class Fulltext extends API
 		return $ignoreRequest;
 	}
 }
-
-?>

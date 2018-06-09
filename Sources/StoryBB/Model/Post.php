@@ -610,5 +610,3 @@ class Post
 		return true;
 	}
 }
-
-?>

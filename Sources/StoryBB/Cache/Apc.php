@@ -81,5 +81,3 @@ class Apc extends API
 		return true;
 	}
 }
-
-?>

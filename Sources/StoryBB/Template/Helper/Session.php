@@ -78,5 +78,3 @@ class Session
 		return new \LightnCandy\SafeString('<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">');
 	}
 }
-
-?>

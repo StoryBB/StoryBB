@@ -1051,5 +1051,3 @@ function smf_db_custom_order($field, $array_values, $desc = false)
 	$return .= 'END';
 	return $return;
 }
-
-?>

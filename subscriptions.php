@@ -314,5 +314,3 @@ function generateSubscriptionError($text)
 
 	exit;
 }
-
-?>

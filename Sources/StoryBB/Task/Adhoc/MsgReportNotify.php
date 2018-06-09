@@ -185,5 +185,3 @@ class MsgReportNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

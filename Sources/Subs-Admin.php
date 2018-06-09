@@ -562,5 +562,3 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 			StoryBB\Helper\Mail::send($recipient['email'], $emaildata['subject'], $emaildata['body'], null, $template, $emaildata['is_html'], 1);
 		}
 }
-
-?>

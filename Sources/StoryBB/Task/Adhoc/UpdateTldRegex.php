@@ -28,5 +28,3 @@ class UpdateTldRegex extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

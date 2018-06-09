@@ -1371,5 +1371,3 @@ function MembergroupBadges()
 	addInlineJavascript('
 	$(\'.sortable\').sortable({handle: ".handle"});', true);
 }
-
-?>

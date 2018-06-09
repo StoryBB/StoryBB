@@ -436,5 +436,3 @@ class Attachments
 		die;
 	}
 }
-
-?>

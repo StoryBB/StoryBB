@@ -59,5 +59,3 @@ class Character extends RawMinkContext implements Context
         throw new ElementNotFoundException($this->getSession(), 'link', null, $character);
     }
 }
-
-?>

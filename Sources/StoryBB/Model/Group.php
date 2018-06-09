@@ -38,5 +38,3 @@ class Group
 		return $is_character_group;
 	}
 }
-
-?>

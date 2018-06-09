@@ -148,5 +148,3 @@ class Memcache extends API
 			});';
 	}
 }
-
-?>

@@ -446,5 +446,3 @@ function highlight_php_code($code)
 
 	return strtr($buffer, array('\'' => '&#039;', '<code>' => '', '</code>' => ''));
 }
-
-?>

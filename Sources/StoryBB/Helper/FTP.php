@@ -491,5 +491,3 @@ class FTP
 		return true;
 	}
 }
-
-?>

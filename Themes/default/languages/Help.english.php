@@ -570,5 +570,3 @@ $helptxt['character_selector_post'] = 'If ticked, users can select which charact
 $helptxt['characters_ic_may_post'] = 'On a forum where you have a strong sense of immersion, you might want to ensure that "characters" can only post in in-character boards and never outside. Tick this box to enforce this.';
 $helptxt['characters_ooc_may_post'] = 'On a forum where there is a strong divide between "in character" posts and "out of character" posts, you may wish to enforce that characters cannot post in the out of character areas - tick this box to enforce this.';
 $helptxt['characters_admin_override'] = 'By default, administrators are subject to the same rules as all other users for "in character" and "out of character" boards. Tick this option to have admins always able to post as any character on their account.';
-
-?>

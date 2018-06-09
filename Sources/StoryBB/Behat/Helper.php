@@ -33,5 +33,3 @@ class Helper
         return self::$escaper->escapeLiteral($label);
     }
 }
-
-?>

@@ -850,5 +850,3 @@ function validatePasswordFlood($id_member, $member_name, $password_flood_value =
 	updateMemberData($id_member, array('passwd_flood' => $was_correct && $number_tries == 1 ? '' : $time_stamp . '|' . $number_tries));
 
 }
-
-?>

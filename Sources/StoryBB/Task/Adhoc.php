@@ -35,5 +35,3 @@ abstract class Adhoc
 	 */
 	abstract public function execute();
 }
-
-?>

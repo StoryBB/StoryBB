@@ -565,5 +565,3 @@ function logActions($logs)
 
 	return $id_action;
 }
-
-?>

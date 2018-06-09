@@ -75,5 +75,3 @@ class Zend extends API
 		return zend_shm_cache_clear('SBB');
 	}
 }
-
-?>

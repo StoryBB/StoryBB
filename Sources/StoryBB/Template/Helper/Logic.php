@@ -147,5 +147,3 @@ class Logic
 		return FALSE;
 	}
 }
-
-?>

@@ -391,5 +391,3 @@ function SecretAnswer2()
 
 	createToken('login');
 }
-
-?>

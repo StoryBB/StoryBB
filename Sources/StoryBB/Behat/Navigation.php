@@ -107,5 +107,3 @@ class Navigation extends RawMinkContext implements Context
 		$this->visitPath('index.php?topic=' . $id_topic . '.0');
 	}
 }
-
-?>

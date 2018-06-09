@@ -2771,5 +2771,3 @@ function ReattributePost()
 	// 8. All done. Exit back to the post.
 	redirectexit('topic=' . $topic . '.msg' . $msg . '#msg' . $msg);
 }
-
-?>

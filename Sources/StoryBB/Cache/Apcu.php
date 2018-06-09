@@ -71,5 +71,3 @@ class Apcu extends API
 		return apcu_clear_cache();
 	}
 }
-
-?>

@@ -910,5 +910,3 @@ function SendActivation()
 	// We're gone!
 	obExit();
 }
-
-?>

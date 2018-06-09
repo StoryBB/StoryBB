@@ -70,5 +70,3 @@ class Cache
 		clearstatcache();
 	}
 }
-
-?>

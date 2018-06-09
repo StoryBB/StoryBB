@@ -345,5 +345,3 @@ class Behat extends RawMinkContext implements Context
         }
     }
 }
-
-?>
