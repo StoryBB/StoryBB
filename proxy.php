@@ -196,5 +196,3 @@ class ProxyServer
 
 $proxy = new ProxyServer();
 $proxy->serve();
-
-?>

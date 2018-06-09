@@ -363,5 +363,3 @@ function smf_main()
 	// Do the right thing.
 	return call_helper($actionArray[$_REQUEST['action']][1], true);
 }
-
-?>
