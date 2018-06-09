@@ -43,7 +43,9 @@
 
 							<label for="group_type_request"><input type="radio" name="group_type" id="group_type_request" value="2"{{#if (eq_coerce context.group.type 2)}} checked{{/if}} class="input_radio" onclick="swapPostGroup(0);">{{{txt.membergroups_group_type_request}}}</label><br>
 							<label for="group_type_free"><input type="radio" name="group_type" id="group_type_free" value="3"{{#if (eq_coerce context.group.type 3)}} checked{{/if}} class="input_radio" onclick="swapPostGroup(0);">{{{txt.membergroups_group_type_free}}}</label><br>
+							{{#if (neq context.group.is_character '1')}}
 							<label for="group_type_post"><input type="radio" name="group_type" id="group_type_post" value="-1"{{#if context.group.is_post_group}} checked{{/if}} class="input_radio" onclick="swapPostGroup(1);">{{{txt.membergroups_group_type_post}}}</label><br>
+							{{/if}}
 						</fieldset>
 					</dd>
 					{{/if}}
