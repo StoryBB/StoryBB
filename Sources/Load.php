@@ -56,6 +56,11 @@ function reloadSettings()
 			cache_put_data('modSettings', $modSettings, 90);
 	}
 
+	// Let's make sure we have these settings set up.
+	if (empty($modSettings['enable_immersive_mode']) || !in_array($modSettings['enable_immersive_mode'], ['user_on', 'user_off', 'on', 'off']))
+	{
+		$modSettings['enable_immersive_mode'] = 'user_on';
+	}
 	$modSettings['cache_enable'] = $cache_enable;
 
 	// Set a list of common functions.
@@ -708,6 +713,46 @@ function loadUserSettings()
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 		'permissions' => array(),
 	);
+
+	// We now need to apply immersive mode, potentially.
+	$immersive = $user_info['immersive_mode'];
+	if ($modSettings['enable_immersive_mode'] == 'on')
+	{
+		$immersive = true;
+	}
+	elseif ($modSettings['enable_immersive_mode'] == 'off')
+	{
+		$immersive = false;
+	}
+	$user_info['in_immersive_mode'] = $immersive;
+
+	$group_filter = function($main, $extras) {
+		$return = [];
+		if (!empty($main))
+			$return[] = (int) $main;
+
+		if (!empty($extras))
+		{
+			$groups = explode(',', $extras);
+			foreach ($groups as $group)
+			{
+				$group = (int) $group;
+				if ($group)
+					$return[] = $group;
+			}
+		}
+
+		return $return;
+	};
+
+	if ($immersive)
+	{
+		// In immersive mode, we apply the groups for the current character.
+		if (isset($user_settings['main_char_group']))
+		{
+			$user_info['groups'] = array_merge($user_info['groups'], $group_filter($user_settings['main_char_group'], $user_settings['char_groups']));
+		}
+	}
 	$user_info['groups'] = array_unique($user_info['groups']);
 
 	// Make sure that the last item in the ignore boards array is valid. If the list was too long it could have an ending comma that could cause problems.
