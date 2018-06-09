@@ -137,5 +137,3 @@ class MemberReportNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

@@ -883,5 +883,3 @@ function AdminEndSession()
 
 	redirectexit();
 }
-
-?>

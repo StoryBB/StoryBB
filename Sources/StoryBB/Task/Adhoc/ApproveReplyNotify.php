@@ -107,5 +107,3 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

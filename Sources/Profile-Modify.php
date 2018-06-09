@@ -4122,5 +4122,3 @@ function tfasetup($memID)
 	else
 		redirectexit('action=profile;area=account;u=' . $memID);
 }
-
-?>

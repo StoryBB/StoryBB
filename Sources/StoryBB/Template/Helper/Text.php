@@ -91,5 +91,3 @@ class Text
 		return $amount == 0 ? '' : new \LightnCandy\SafeString(str_repeat($string, $amount));
 	}
 }
-
-?>

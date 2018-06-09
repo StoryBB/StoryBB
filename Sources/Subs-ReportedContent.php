@@ -680,5 +680,3 @@ function deleteModComment($comment_id)
 	);
 
 }
-
-?>

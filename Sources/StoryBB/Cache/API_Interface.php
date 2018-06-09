@@ -145,5 +145,3 @@ interface API_Interface
 	 */
 	public function getMiniumnVersion();
 }
-
-?>

@@ -244,5 +244,3 @@ function deleteCategories($categories, $moveBoardsTo = null)
 	// Get all boards back into the right order.
 	reorderBoards();
 }
-
-?>

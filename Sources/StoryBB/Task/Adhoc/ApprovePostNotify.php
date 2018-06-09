@@ -114,5 +114,3 @@ class ApprovePostNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

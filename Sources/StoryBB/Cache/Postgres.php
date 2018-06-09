@@ -144,5 +144,3 @@ class Postgres extends API
 		return true;
 	}
 }
-
-?>

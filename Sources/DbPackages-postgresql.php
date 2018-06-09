@@ -906,5 +906,3 @@ function smf_db_list_indexes($table_name, $detail = false, $parameters = array()
 
 	return $indexes;
 }
-
-?>

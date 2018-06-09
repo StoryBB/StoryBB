@@ -1112,5 +1112,3 @@ function showLetterImage($letter)
 	// Nothing more to come.
 	die();
 }
-
-?>

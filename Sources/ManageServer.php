@@ -1332,5 +1332,3 @@ function ShowPHPinfoSettings()
 	$context['sub_template'] = 'admin_phpinfo';
 	return;
 }
-
-?>

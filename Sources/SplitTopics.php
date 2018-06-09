@@ -1755,5 +1755,3 @@ function MergeDone()
 	$context['page_title'] = $txt['merge'];
 	$context['sub_template'] = 'topic_merge_done';
 }
-
-?>

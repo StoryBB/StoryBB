@@ -306,5 +306,3 @@ function warning_preview()
 	StoryBB\Template::set_layout('xml');
 	$context['sub_template'] = 'xml_warning_preview';
 }
-
-?>

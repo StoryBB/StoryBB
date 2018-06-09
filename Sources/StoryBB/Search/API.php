@@ -102,5 +102,3 @@ abstract class API implements API_Interface
 	{
 	}
 }
-
-?>

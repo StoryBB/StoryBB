@@ -338,5 +338,3 @@ class curl_fetch_web_data
 		return strlen($header);
 	}
 }
-
-?>

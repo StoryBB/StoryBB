@@ -1618,5 +1618,3 @@ function user_info_callback($matches)
 
 	return $use_ref ? $ref : $matches[0];
 }
-
-?>

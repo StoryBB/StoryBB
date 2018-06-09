@@ -57,5 +57,3 @@ class Arrays
 		return array_keys($array);
 	}
 }
-
-?>

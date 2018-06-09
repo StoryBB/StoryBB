@@ -26,5 +26,3 @@ class Standard extends API
 		return false;
 	}
 }
-
-?>

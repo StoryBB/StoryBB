@@ -178,5 +178,3 @@ class Controls
 		$context['selected_tab'] = !empty($selected_tab) ? $selected_tab : '';
 	}
 }
-
-?>

@@ -127,5 +127,3 @@ class Xcache extends API
 			});';
 	}
 }
-
-?>

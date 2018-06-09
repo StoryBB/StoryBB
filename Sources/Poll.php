@@ -999,5 +999,3 @@ function RemovePoll()
 	// Take the moderator back to the topic.
 	redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
 }
-
-?>

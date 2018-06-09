@@ -68,5 +68,3 @@ class Misc
 		return is_numeric($x);
 	}
 }
-
-?>

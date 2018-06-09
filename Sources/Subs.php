@@ -5658,5 +5658,3 @@ function httpsOn()
 
 	return false;
 }
-
-?>

@@ -132,5 +132,3 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 }
-
-?>

@@ -2070,5 +2070,3 @@ function ModEndSession()
 
 	redirectexit();
 }
-
-?>

@@ -1096,5 +1096,3 @@ function ModifyNewsSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 	$context['settings_title'] = $txt['settings'];
 }
-
-?>

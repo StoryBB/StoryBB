@@ -54,5 +54,3 @@ class Recaptcha
 		return false;
 	}
 }
-
-?>

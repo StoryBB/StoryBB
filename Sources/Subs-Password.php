@@ -290,5 +290,3 @@ namespace PasswordCompat\binary {
 	}
 
 }
-
-?>

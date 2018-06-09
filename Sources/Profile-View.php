@@ -3041,5 +3041,3 @@ function viewWarning($memID)
 
 	$context['sub_template'] = 'profile_warning_view';
 }
-
-?>

@@ -45,5 +45,3 @@ class Math
 	    return $arg1 / $arg2;
 	}
 }
-
-?>

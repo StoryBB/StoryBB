@@ -765,5 +765,3 @@ function getDailyStats($condition_string, $condition_parameters = array())
 		);
 	$smcFunc['db_free_result']($days_result);
 }
-
-?>

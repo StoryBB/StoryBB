@@ -44,5 +44,3 @@ class Configuration extends RawMinkContext implements Context
     	}
     }
 }
-
-?>
