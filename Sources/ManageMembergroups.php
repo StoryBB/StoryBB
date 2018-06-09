@@ -408,6 +408,21 @@ function AddMembergroup()
 	// A form was submitted, we can start adding.
 	if (isset($_POST['group_name']) && trim($_POST['group_name']) != '')
 	{
+		// Are we inheriting? Account groups can't inherit from character groups, and vice versa.
+		if (!empty($_POST['perm_type']) && $_POST['perm_type'] == 'inherit')
+		{
+			$is_character = StoryBB\Model\Group::is_character_group(isset($_POST['inheritperm']) ? (int) $_POST['inheritperm'] : 0);
+
+			if ($is_character && empty($_POST['group_level']))
+			{
+				fatal_lang_error('membergroup_cannot_inherit_character', false);
+			}
+			elseif (!$is_character && !empty($_POST['group_level']))
+			{
+				fatal_lang_error('membergroup_cannot_inherit_account', false);
+			}
+		}
+
 		checkSession();
 		validateToken('admin-mmg');
 
@@ -476,29 +491,33 @@ function AddMembergroup()
 			require_once($sourcedir . '/ManagePermissions.php');
 			loadIllegalPermissions();
 
-			$request = $smcFunc['db_query']('', '
-				SELECT permission, add_deny
-				FROM {db_prefix}permissions
-				WHERE id_group = {int:copy_from}',
-				array(
-					'copy_from' => $copy_id,
-				)
-			);
-			$inserts = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			// Copy the main permissions - but only if it's not copying to a character group.
+			if (empty($_POST['group_level']))
 			{
-				if (empty($context['illegal_permissions']) || !in_array($row['permission'], $context['illegal_permissions']))
-					$inserts[] = array($id_group, $row['permission'], $row['add_deny']);
-			}
-			$smcFunc['db_free_result']($request);
-
-			if (!empty($inserts))
-				$smcFunc['db_insert']('insert',
-					'{db_prefix}permissions',
-					array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-					$inserts,
-					array('id_group', 'permission')
+				$request = $smcFunc['db_query']('', '
+					SELECT permission, add_deny
+					FROM {db_prefix}permissions
+					WHERE id_group = {int:copy_from}',
+					array(
+						'copy_from' => $copy_id,
+					)
 				);
+				$inserts = array();
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					if (empty($context['illegal_permissions']) || !in_array($row['permission'], $context['illegal_permissions']))
+						$inserts[] = array($id_group, $row['permission'], $row['add_deny']);
+				}
+				$smcFunc['db_free_result']($request);
+
+				if (!empty($inserts))
+					$smcFunc['db_insert']('insert',
+						'{db_prefix}permissions',
+						array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
+						$inserts,
+						array('id_group', 'permission')
+					);
+			}
 
 			$request = $smcFunc['db_query']('', '
 				SELECT id_profile, permission, add_deny
@@ -803,6 +822,31 @@ function EditMembergroup()
 	// A form was submitted with the new membergroup settings.
 	elseif (isset($_POST['save']))
 	{
+		// Are we inheriting? Account groups can't inherit from character groups, and vice versa.
+		$current_group_is_character = StoryBB\Model\Group::is_character_group((int) $_REQUEST['group']);
+		if (isset($_POST['group_inherit']) && $_POST['group_inherit'] != -2)
+		{
+			$is_character = StoryBB\Model\Group::is_character_group((int) $_POST['group_inherit']);
+
+			if ($is_character && !$current_group_is_character)
+			{
+				fatal_lang_error('membergroup_cannot_inherit_character', false);
+			}
+			elseif (!$is_character && $current_group_is_character)
+			{
+				fatal_lang_error('membergroup_cannot_inherit_account', false);
+			}
+		}
+		// Character groups can never be converted into post groups.
+		if ($current_group_is_character)
+		{
+			$_POST['min_posts'] = -1;
+			if (!empty($_POST['group_type']) && $_POST['group_type'] == -1)
+			{
+				$_POST['group_type'] = 0; // Force it to be a regular assigned group.
+			}
+		}
+
 		// Validate the session.
 		checkSession();
 		validateToken('admin-mmg');
