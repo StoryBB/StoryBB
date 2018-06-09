@@ -10,7 +10,7 @@
 						<label for="group_name_input"><strong>{{{txt.membergroups_group_name}}}:</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="group_name" id="group_name_input" size="30" class="input_text">
+						<input type="text" name="group_name" id="group_name_input" size="30" class="input_text" required>
 					</dd>
 
 					{{#unless context.post_group}}
@@ -19,8 +19,8 @@
 					</dt>
 					<dd>
 						<select name="group_level" id="group_level_input">
-							<option value="0">{{{txt.char_group_level_acct}}}</option>
-							<option value="1">{{{txt.char_group_level_char}}}</option>
+							<option{{#unless context.character_group}} selected{{/unless}} value="0">{{{txt.char_group_level_acct}}}</option>
+							<option{{#if context.character_group}} selected{{/if}} value="1">{{{txt.char_group_level_char}}}</option>
 						</select>
 					</dd>
 					{{/unless}}
