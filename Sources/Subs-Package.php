@@ -13,9 +13,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Checks if the forum version matches any of the available versions from the package install xml.
  * - supports comma separated version numbers, with or without whitespace.

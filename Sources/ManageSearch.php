@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Main entry point for the admin search settings screen.
  * It checks permissions, and it forwards to the appropriate function based on

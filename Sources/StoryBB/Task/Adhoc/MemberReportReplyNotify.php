@@ -11,10 +11,12 @@
  * @version 3.0 Alpha 1
  */
 
+namespace StoryBB\Task\Adhoc;
+
 /**
- * Class MsgReportReply_Notify_Background
+ * Class MemberReportReply_Notify_Background
  */
-class MsgReportReply_Notify_Background extends SMF_BackgroundTask
+class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 {
 	/**
      * This executes the task - loads up the information, puts the email in the queue and inserts alerts as needed.
@@ -53,46 +55,11 @@ class MsgReportReply_Notify_Background extends SMF_BackgroundTask
 		// We need to know who can moderate this board - and therefore who can see this report.
 		// First up, people who have moderate_board in the board this topic was in.
 		require_once($sourcedir . '/Subs-Members.php');
-		$members = membersAllowedTo('moderate_board', $this->_details['board_id']);
-
-		// Second, anyone assigned to be a moderator of this board directly.
-		$request = $smcFunc['db_query']('', '
-			SELECT id_member
-			FROM {db_prefix}moderators
-			WHERE id_board = {int:current_board}',
-			array(
-				'current_board' => $this->_details['board_id'],
-			)
-		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$members[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
-
-		// Thirdly, anyone assigned to be a moderator of this group as a group->board moderator.
-		$request = $smcFunc['db_query']('', '
-			SELECT mem.id_member
-			FROM {db_prefix}members AS mem, {db_prefix}moderator_groups AS bm
-			WHERE bm.id_board = {int:current_board}
-				AND(
-					mem.id_group = bm.id_group
-					OR FIND_IN_SET(bm.id_group, mem.additional_groups) != 0
-				)',
-			array(
-				'current_board' => $this->_details['board_id'],
-			)
-		);
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$members[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
-
-		// So now we have two lists: the people who replied to a report in the past,
-		// and all the possible people who could see said report.
-		$members = array_intersect($possible_members, $members);
+		$members = membersAllowedTo('moderate_forum');
 
 		// Having successfully figured this out, now let's get the preferences of everyone.
 		require_once($sourcedir . '/Subs-Notify.php');
-		$prefs = getNotifyPrefs($members, 'msg_report_reply', true);
+		$prefs = getNotifyPrefs($members, 'member_report_reply', true);
 
 		// So now we find out who wants what.
 		$alert_bits = array(
@@ -105,7 +72,7 @@ class MsgReportReply_Notify_Background extends SMF_BackgroundTask
 		{
 			foreach ($alert_bits as $type => $bitvalue)
 			{
-				if ($pref_option['msg_report_reply'] & $bitvalue)
+				if ($pref_option['member_report_reply'] & $bitvalue)
 					$notifies[$type][] = $member;
 			}
 		}
@@ -122,13 +89,14 @@ class MsgReportReply_Notify_Background extends SMF_BackgroundTask
 					'id_member' => $member,
 					'id_member_started' => $this->_details['sender_id'],
 					'member_name' => $this->_details['sender_name'],
-					'content_type' => 'msg',
-					'content_id' => $this->_details['msg_id'],
+					'content_type' => 'profile',
+					'content_id' => $this->_details['user_id'],
 					'content_action' => 'report_reply',
 					'is_read' => 0,
 					'extra' => json_encode(
 						array(
-							'report_link' => '?action=moderate;area=reportedposts;sa=details;rid=' . $this->_details['report_id'], // We don't put $scripturl in these!
+							'report_link' => '?action=moderate;area=reportedmembers;sa=details;rid=' . $this->_details['report_id'], // We don't put $scripturl in these!
+							'user_name' => $this->_details['user_name'],
 						)
 					),
 				);
@@ -173,35 +141,21 @@ class MsgReportReply_Notify_Background extends SMF_BackgroundTask
 			}
 			$smcFunc['db_free_result']($request);
 
-			// Second, get some details that might be nice for the report email.
-			// We don't bother cluttering up the tasks data for this, when it's really no bother to fetch it.
-			$request = $smcFunc['db_query']('', '
-				SELECT lr.subject, lr.membername, lr.body
-				FROM {db_prefix}log_reported AS lr
-				WHERE id_report = {int:report}',
-				array(
-					'report' => $this->_details['report_id'],
-				)
-			);
-			list ($subject, $poster_name, $comment) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
-
-			// Third, iterate through each language, load the relevant templates and set up sending.
+			// Iterate through each language, load the relevant templates and set up sending.
 			foreach ($emails as $this_lang => $recipients)
 			{
 				$replacements = array(
-					'TOPICSUBJECT' => $subject,
-					'POSTERNAME' => $poster_name,
+					'MEMBERNAME' => $this->_details['member_name'],
 					'COMMENTERNAME' => $this->_details['sender_name'],
-					'TOPICLINK' => $scripturl . '?topic=' . $this->_details['topic_id'] . '.msg' . $this->_details['msg_id'] . '#msg' . $this->_details['msg_id'],
-					'REPORTLINK' => $scripturl . '?action=moderate;area=reportedposts;sa=details;rid=' . $this->_details['report_id'],
+					'PROFILELINK' => $scripturl . 'action=profile;u=' . $this->_details['user_id'],
+					'REPORTLINK' => $scripturl . '?action=moderate;area=userreports;report=' . $this->_details['report_id'],
 				);
 
-				$emaildata = loadEmailTemplate('reply_to_moderator', $replacements, empty($modSettings['userLanguage']) ? $language : $this_lang);
+				$emaildata = loadEmailTemplate('reply_to_user_reports', $replacements, empty($modSettings['userLanguage']) ? $language : $this_lang);
 
 				// And do the actual sending...
 				foreach ($recipients as $id_member => $email_address)
-					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'rptrpy' . $this->_details['comment_id'], $emaildata['is_html'], 3);
+					StoryBB\Helper\Mail::send($email_address, $emaildata['subject'], $emaildata['body'], null, 'urptrpy' . $this->_details['comment_id'], $emaildata['is_html'], 3);
 			}
 		}
 

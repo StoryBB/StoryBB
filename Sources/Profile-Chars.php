@@ -9,9 +9,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 function characters_popup($memID)
 {
 	global $context, $user_info, $sourcedir, $db_show_debug, $cur_profile, $smcFunc;

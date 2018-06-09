@@ -12,9 +12,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This helps organize things...
  * @todo this should be a simple dispatcher....

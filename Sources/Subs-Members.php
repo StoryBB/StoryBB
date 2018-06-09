@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Delete one or more members.
  * Requires profile_remove_own or profile_remove_any permission for
@@ -1371,17 +1368,12 @@ function BuddyListToggle()
 		// And add a nice alert. Don't abuse though!
 		if ((cache_get_data('Buddy-sent-'. $user_info['id'] .'-'. $userReceiver, 86400)) == null)
 		{
-			$smcFunc['db_insert']('insert',
-				'{db_prefix}background_tasks',
-				array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-				array('$sourcedir/tasks/Buddy-Notify.php', 'Buddy_Notify_Background', json_encode(array(
-					'receiver_id' => $userReceiver,
-					'id_member' => $user_info['id'],
-					'member_name' => $user_info['username'],
-					'time' => time(),
-				)), 0),
-				array('id_task')
-			);
+			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\BuddyNotify', [
+				'receiver_id' => $userReceiver,
+				'id_member' => $user_info['id'],
+				'member_name' => $user_info['username'],
+				'time' => time(),
+			]);
 
 			// Store this in a cache entry to avoid creating multiple alerts. Give it a long life cycle.
 			cache_put_data('Buddy-sent-'. $user_info['id'] .'-'. $userReceiver, '1', 86400);

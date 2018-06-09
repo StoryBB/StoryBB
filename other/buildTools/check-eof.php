@@ -19,10 +19,8 @@ $ignoreFiles = array(
 	'\./cache/data_[A-Za-z0-9-_]\.php',
 	'\./other/db_last_error.php',
 
-	// Installer and ugprade are not a worry.
+	// Installer is not a worry.
 	'\./other/install.php',
-	'\./other/upgrade.php',
-	'\./other/upgrade-helper.php',
 
 	// Minify Stuff.
 	'\./Sources/minify/[A-Za-z0-9/-]+\.php',

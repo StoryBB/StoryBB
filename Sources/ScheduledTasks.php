@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This function works out what to do!
  */
@@ -1259,10 +1256,7 @@ function scheduled_birthdayemails()
 {
 	global $smcFunc;
 
-	$smcFunc['db_insert']('insert', '{db_prefix}background_tasks',
-		array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'),
-		array('$sourcedir/tasks/Birthday-Notify.php', 'Birthday_Notify_Background', '', 0), array()
-	);
+	StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\BirthdayNotify');
 
 	return true;
 }
@@ -1455,10 +1449,7 @@ function scheduled_weekly_maintenance()
 	);
 
 	// Update the regex of top level domains with the IANA's latest official list
-	$smcFunc['db_insert']('insert', '{db_prefix}background_tasks',
-		array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'),
-		array('$sourcedir/tasks/UpdateTldRegex.php', 'Update_TLD_Regex', '', 0), array()
-	);
+	StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\UpdateTldRegex');
 
 	return true;
 }

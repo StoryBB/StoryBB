@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * The news dispatcher; doesn't do anything, just delegates.
  * This is the entrance point for all News and Newsletter screens.

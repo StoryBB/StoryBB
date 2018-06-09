@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Main dispatcher, the entrance point for all 'Manage Membergroup' actions.
  * It forwards to a function based on the given subaction, default being subaction 'index', or, without manage_membergroup

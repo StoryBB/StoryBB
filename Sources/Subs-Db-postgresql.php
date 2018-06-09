@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Maps the implementations in this file (smf_db_function_name)
  * to the $smcFunc['db_function_name'] variable.

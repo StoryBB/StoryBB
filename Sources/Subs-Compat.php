@@ -13,10 +13,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
-
 /**
  * Define the old SMF sha1 function. Uses mhash if available
  * @param string $str The string
