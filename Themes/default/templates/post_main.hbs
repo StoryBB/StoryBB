@@ -157,7 +157,7 @@ var icon_urls = {
 						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"{{#unless context.use_smileys}} checked{{/unless}} value="NS" class="input_check"> {{txt.dont_use_smileys}}</label></li>
 						{{#if context.can_move}}<li><input type="hidden" name="move" value="0"><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" class="input_check" {{#if context.move}} checked{{/if}}> {{txt.move_after2}}</label></li>{{/if}}
 						{{#if (and context.can_announce context.is_first_post)}}<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1" class="input_check"{{#if context.announce}} checked{{/if}}> {{txt.announce_topic}}</label></li>{{/if}}
-						{{#if context.show_approval}}<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2" class="input_check" {{#if (eq context.show_approval2)}} checked{{/if}}> {{txt.approve_this_post}}</label></li>{{/if}}
+						{{#if context.show_approval}}<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2" class="input_check" {{#if (eq context.show_approval 2)}} checked{{/if}}> {{txt.approve_this_post}}</label></li>{{/if}}
 					</ul>
 				</div>
 				{{#if context.current_attachments}}
