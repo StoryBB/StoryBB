@@ -40,9 +40,11 @@ function MessageMain()
 		$request = $smcFunc['db_query']('', '
 			SELECT MAX(max_messages) AS top_limit, MIN(max_messages) AS bottom_limit
 			FROM {db_prefix}membergroups
-			WHERE id_group IN ({array_int:users_groups})',
+			WHERE id_group IN ({array_int:users_groups})
+				AND is_character = {int:is_not_character}',
 			array(
 				'users_groups' => $user_info['groups'],
+				'is_not_character' => 0,
 			)
 		);
 		list ($maxMessage, $minMessage) = $smcFunc['db_fetch_row']($request);

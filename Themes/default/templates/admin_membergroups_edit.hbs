@@ -131,6 +131,7 @@
 						<input type="hidden" name="icon_image" value="">
 					{{/if}}
 
+					{{#if (neq context.group.is_character '1')}}
 					<dt>
 						<label for="max_messages_input"><strong>{{{txt.membergroups_max_messages}}}:</strong></label><br>
 						<span class="smalltext">{{{txt.membergroups_max_messages_note}}}</span>
@@ -138,6 +139,7 @@
 					<dd>
 						<input type="text" name="max_messages" id="max_messages_input" value="{{#if (eq_coerce context.group.id 1)}}0{{else}}{{context.group.max_messages}}{{/if}}" size="6"{{#if (eq_coerce context.group.id 1)}} disabled{{/if}} class="input_text">
 					</dd>
+					{{/if}}
 
 					{{! Force 2FA for this membergroup? }}
 					{{#if (eq modSettings.tfa_mode '2')}}
