@@ -742,3 +742,9 @@ $txt['ic_boards_only'] = 'In-character (IC) boards only';
 $txt['ooc_boards_only'] = 'Out-of-character (OOC) boards only';
 $txt['ic_and_ooc_boards'] = 'Both IC and OOC boards';
 $txt['characters_admin_override'] = 'Admininstrators can override the IC/OOC board rules?';
+
+$txt['enable_immersive_mode'] = 'Enable immersive mode';
+$txt['enable_immersive_mode_user_on'] = 'Immersive mode is user choice (default on)';
+$txt['enable_immersive_mode_user_off'] = 'Immersive mode is user choice (default off)';
+$txt['enable_immersive_mode_off'] = 'Immersive mode is always off';
+$txt['enable_immersive_mode_on'] = 'Immersive mode is always on';
