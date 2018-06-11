@@ -49,6 +49,10 @@ function exportData($memID)
 	if (!$in_process && isset($_GET['request']))
 	{
 		session_flash('success', $txt['profile_export_data_queued']);
+		StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ExportData', [
+			'id_member' => $memID,
+			'id_requester' => $context['user']['id'],
+		]);
 		redirectexit('action=profile;area=export_data;u=' . $memID);
 	}
 
