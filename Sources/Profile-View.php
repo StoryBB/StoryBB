@@ -373,7 +373,10 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 			)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
 			$chars[$row['id_character']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>';
+			$chars_sheets[$row['id_character']] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . ';sa=sheet';
+		}
 		$smcFunc['db_free_result']($request);
 	}
 
@@ -406,6 +409,11 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 			{
 				$search[] = '{char_link}';
 				$repl[] = $chars[$alert['extra']['chars_src']];
+				if (!empty($chars_sheets[$alert['extra']['chars_src']]))
+				{
+					$search[] = '#{char_sheet_link}';
+					$repl[] = $chars_sheets[$alert['extra']['chars_src']];
+				}
 			}
 			if (isset($alert['extra']['chars_dest']))
 			{
