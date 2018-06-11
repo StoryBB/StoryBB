@@ -1016,7 +1016,7 @@ function loadBoard()
 
 		if (count(array_intersect($user_info['groups'], $board_info['groups'])) == 0 && !$user_info['is_admin'])
 			$board_info['error'] = 'access';
-		if (!empty($modSettings['deny_boards_access']) && count(array_intersect($user_info['groups'], $board_info['deny_groups'])) != 0 && !$user_info['is_admin'])
+		if (count(array_intersect($user_info['groups'], $board_info['deny_groups'])) != 0 && !$user_info['is_admin'])
 			$board_info['error'] = 'access';
 
 		// Build up the linktree.
@@ -1044,7 +1044,7 @@ function loadBoard()
 		$board_info['error'] == 'post_in_redirect';
 
 	// Hacker... you can't see this topic, I'll tell you that. (but moderators can!)
-	if (!empty($board_info['error']) && (!empty($modSettings['deny_boards_access']) || $board_info['error'] != 'access' || !$user_info['is_mod']))
+	if (!empty($board_info['error']))
 	{
 		// The permissions and theme need loading, just to make sure everything goes smoothly.
 		loadPermissions();
@@ -2473,7 +2473,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		{
 			if (!empty($element['groups']) &&
 				(count(array_intersect($user_info['groups'], $element['groups'])) == 0 ||
-				(!empty($modSettings['deny_boards_access']) && count(array_intersect($user_info['groups'], $element['deny_groups'])) != 0)))
+				(count(array_intersect($user_info['groups'], $element['deny_groups'])) != 0)))
 			{
 				$context['linktree'][$k]['name'] = $txt['restricted_board'];
 				$context['linktree'][$k]['extra_before'] = '<i>';

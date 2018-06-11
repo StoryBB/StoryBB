@@ -44,7 +44,6 @@ Feature: Board access
 		And the following settings are set:
 			| variable              | value |
 			| enable_immersive_mode | on    |
-			| deny_boards_access    | 1     |
 		And I log in as "Test"
 		And I switch character to "Harry Potter"
 		And I go to the board index
@@ -83,7 +82,6 @@ Feature: Board access
 			| variable              | value  |
 			| enable_immersive_mode | off    |
 			| non_immersive_mode    | simple |
-			| deny_boards_access    | 1      |
 		And I log in as "Test"
 		And I switch character to "Harry Potter"
 		And I go to the board index
