@@ -214,7 +214,6 @@ $txt['notify_deactivate'] = 'Would you like to deactivate notification on this t
 $txt['recent_posts'] = 'Recent Posts';
 
 $txt['location'] = 'Location';
-$txt['gender'] = 'Gender';
 $txt['date_registered'] = 'Date Registered';
 
 $txt['recent_view'] = 'View the most recent posts on the forum.';
