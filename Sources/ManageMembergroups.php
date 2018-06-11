@@ -636,8 +636,7 @@ function AddMembergroup()
 	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']) && !isset($_REQUEST['charactergroup']);
 	$context['allow_protected'] = allowedTo('admin_forum');
 
-	if (!empty($modSettings['deny_boards_access']))
-		loadLanguage('ManagePermissions');
+	loadLanguage('ManagePermissions');
 
 	$result = $smcFunc['db_query']('', '
 		SELECT id_group, group_name, is_character
@@ -759,8 +758,7 @@ function EditMembergroup()
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) && $_REQUEST['group'] > 0 ? (int) $_REQUEST['group'] : 0;
 
-	if (!empty($modSettings['deny_boards_access']))
-		loadLanguage('ManagePermissions');
+	loadLanguage('ManagePermissions');
 
 	// Make sure this group is editable.
 	if (!empty($_REQUEST['group']))
