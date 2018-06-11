@@ -2660,7 +2660,15 @@ function JavaScriptModify()
 			if (time() - $row['poster_time'] > $modSettings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
 			{
 				$msgOptions['modify_time'] = time();
-				$msgOptions['modify_name'] = $user_info['name'];
+				// Admin edit should be credited to admin user, all other edits to character
+				if ($user_info['is_admin'])
+				{
+					$msgOptions['modify_name'] = $user_info['name'];
+				}
+				else
+				{
+					$msgOptions['modify_name'] = $user_info['character_name'];
+				}
 			}
 		}
 		// If nothing was changed there's no need to add an entry to the moderation log.
