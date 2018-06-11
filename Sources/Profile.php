@@ -1007,10 +1007,6 @@ function loadCustomFields($memID, $area = 'summary')
 					$value = ($options = explode(',', $row['field_options'])) && isset($options[$value]) ? $options[$value] : '';
 		}
 
-		// Don't show the "disabled" option for the "gender" field if we are on the "summary" area.
-		if ($area == 'summary' && $row['col_name'] == 'cust_gender' && $value == 'None')
-			continue;
-
 		// HTML for the input form.
 		$output_html = $value;
 		if ($row['field_type'] == 'check')
