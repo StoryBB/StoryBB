@@ -173,9 +173,8 @@ function BoardReport()
 		'moderators' => $txt['board_moderators'],
 		'moderator_groups' => $txt['board_moderator_groups'],
 		'groups' => $txt['board_groups'],
+		'disallowed_groups' => $txt['board_disallowed_groups'],
 	);
-	if (!empty($modSettings['deny_boards_access']))
-		$boardSettings['disallowed_groups'] = $txt['board_disallowed_groups'];
 
 	// Do it in columns, it's just easier.
 	setKeys('cols');
@@ -235,18 +234,16 @@ function BoardReport()
 				unset($allowedGroups[$key]);
 		}
 		$boardData['groups'] = implode(', ', $allowedGroups);
-		if (!empty($modSettings['deny_boards_access']))
+
+		$disallowedGroups = explode(',', $row['deny_member_groups']);
+		foreach ($disallowedGroups as $key => $group)
 		{
-			$disallowedGroups = explode(',', $row['deny_member_groups']);
-			foreach ($disallowedGroups as $key => $group)
-			{
-				if (isset($groups[$group]))
-					$disallowedGroups[$key] = $groups[$group];
-				else
-					unset($disallowedGroups[$key]);
-			}
-			$boardData['disallowed_groups'] = implode(', ', $disallowedGroups);
+			if (isset($groups[$group]))
+				$disallowedGroups[$key] = $groups[$group];
+			else
+				unset($disallowedGroups[$key]);
 		}
+		$boardData['disallowed_groups'] = implode(', ', $disallowedGroups);
 
 		if (empty($row['redirect']))
 			unset ($boardData['redirect']);
@@ -586,7 +583,7 @@ function MemberGroupsReport()
 
 		// Board permissions.
 		foreach ($boards as $board)
-			$group['board_' . $board['id']] = in_array($row['id_group'], $board['groups']) ? '<span class="success">' . $txt['board_perms_allow'] . '</span>' : (!empty($modSettings['deny_boards_access']) && in_array($row['id_group'], $board['deny_groups']) ? '<span class="alert">' . $txt['board_perms_deny'] . '</span>' : 'x');
+			$group['board_' . $board['id']] = in_array($row['id_group'], $board['groups']) ? '<span class="success">' . $txt['board_perms_allow'] . '</span>' : (in_array($row['id_group'], $board['deny_groups']) ? '<span class="alert">' . $txt['board_perms_deny'] . '</span>' : 'x');
 
 		addData($group);
 	}
