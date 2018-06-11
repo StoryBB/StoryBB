@@ -2312,7 +2312,6 @@ function ManageAttachmentPaths()
 			empty($errors['dir']) ? array(
 				'position' => 'top_of_list',
 				'value' => $txt['attach_dir_desc'],
-				'class' => 'information'
 			) : array(
 				'position' => 'top_of_list',
 				'value' => $txt['attach_dir_save_problem'] . '<br>' . implode('<br>', $errors['dir']),
@@ -2389,8 +2388,6 @@ function ManageAttachmentPaths()
 				empty($errors['base']) ? array(
 					'position' => 'top_of_list',
 					'value' => $txt['attach_dir_base_desc'],
-					'style' => 'padding: 5px 10px;',
-					'class' => 'windowbg2 smalltext'
 				) : array(
 					'position' => 'top_of_list',
 					'value' => $txt['attach_dir_save_problem'] . '<br>' . implode('<br>', $errors['base']),
