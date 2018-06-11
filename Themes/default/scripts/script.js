@@ -550,6 +550,10 @@ function selectAllRadio(oInvertCheckbox, oForm, sMask, sValue, bIgnoreDisabled)
 		if (oForm[i].name != undefined && oForm[i].name.substr(0, sMask.length) == sMask && oForm[i].value == sValue && (!oForm[i].disabled || (typeof(bIgnoreDisabled) == 'boolean' && bIgnoreDisabled)))
 			oForm[i].checked = true;
 }
+function selectAllRadioClass(oForm, sMask, sValue, sClass)
+{
+	$(oForm).find('input[name^="' + sMask + '"].' + sClass + '[value="' + sValue + '"]').prop('checked', true).trigger('change');
+}
 
 // Invert all checkboxes at once by clicking a single checkbox.
 function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
