@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Helper;
+use StoryBB\Task;
 
 class TLD
 {
@@ -210,7 +211,7 @@ class TLD
 		// Schedule a background update if we need one
 		if (!empty($schedule_update))
 		{
-			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\UpdateTldRegex');
+			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\UpdateTldRegex');
 		}
 
 		// Redundant repetition is redundant
