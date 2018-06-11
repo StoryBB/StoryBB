@@ -322,7 +322,7 @@ function updateMemberData($members, $data)
 	// Everything is assumed to be a string unless it's in the below.
 	$knownInts = array(
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
-		'new_pm', 'pm_prefs', 'gender', 'show_online', 'pm_receive_from', 'alerts',
+		'new_pm', 'pm_prefs', 'show_online', 'pm_receive_from', 'alerts',
 		'id_theme', 'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
 	);
 	$knownFloats = array(
@@ -337,7 +337,6 @@ function updateMemberData($members, $data)
 			'real_name',
 			'email_address',
 			'id_group',
-			'gender',
 			'birthdate',
 			'website_title',
 			'website_url',

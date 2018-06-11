@@ -41,10 +41,6 @@
 				<dd>{{{context.common_stats.latest_member.link}}}</dd>
 				<dt>{{txt.average_online}}:</dt>
 				<dd>{{context.average_online}}</dd>
-				{{#if context.gender}}
-				<dt>{{txt.gender_stats}}:</dt>
-				<dd>{{#each context.gender}}{{@key}}: {{.}}<br>{{/each}}</dd>
-				{{/if}}
 				{{#if modSettings.hitStats}}
 				<dt>{{txt.average_hits}}:</dt>
 				<dd>{{context.average_hits}}</dd>

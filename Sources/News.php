@@ -474,7 +474,6 @@ function dumpTags($data, $i, $tag = null, $xml_format = '', $forceCdataKeys = ar
 		'signature',
 		'position',
 		'language',
-		'gender',
 	);
 	if ($xml_format != 'atom')
 		$keysToCdata[] = 'category';

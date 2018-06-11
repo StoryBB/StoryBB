@@ -273,7 +273,6 @@ $txt['admin_confirm_password'] = '(confirm)';
 $txt['admin_incorrect_password'] = 'Incorrect Password';
 
 $txt['date_format'] = '(YYYY-MM-DD)';
-$txt['undefined_gender'] = 'Undefined';
 $txt['age'] = 'User age';
 $txt['activation_status'] = 'Activation Status';
 $txt['activated'] = 'Activated';
