@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Model;
+use StoryBB\Task;
 
 class Post
 {
@@ -309,7 +310,7 @@ class Post
 				array()
 			);
 
-			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ApprovePostNotify', [
+			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ApprovePostNotify', [
 				'msgOptions' => $msgOptions,
 				'topicOptions' => $topicOptions,
 				'posterOptions' => $posterOptions,
@@ -351,7 +352,7 @@ class Post
 
 		if ($msgOptions['approved'] && empty($topicOptions['is_approved']))
 		{
-			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ApproveReplyNotify', [
+			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ApproveReplyNotify', [
 				'msgOptions' => $msgOptions,
 				'topicOptions' => $topicOptions,
 				'posterOptions' => $posterOptions,
@@ -393,7 +394,7 @@ class Post
 		// Queue createPost background notification
 		if ($msgOptions['send_notifications'] && $msgOptions['approved'])
 		{
-			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
+			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
 				'msgOptions' => $msgOptions,
 				'topicOptions' => $topicOptions,
 				'posterOptions' => $posterOptions,
@@ -503,7 +504,7 @@ class Post
 				$msgOptions['mentioned_members'] = array_diff_key($mentions, $oldmentions);
 
 
-				StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
+				Task::queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
 					'msgOptions' => $msgOptions,
 					'topicOptions' => $topicOptions,
 					'posterOptions' => $posterOptions,
