@@ -2578,7 +2578,7 @@ dl.addrules dt.floatleft {
 #mlist .website_url {
 	width: 70px;
 }
-#mlist .icq, #mlist .aim, #mlist .yim, #mlist .skype {
+#mlist .skype {
 	width: 30px;
 }
 #mlist .posts {
