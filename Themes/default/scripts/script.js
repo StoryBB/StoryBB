@@ -591,7 +591,7 @@ function smf_setThemeOption(theme_var, theme_value, theme_id, theme_cur_session_
 {
 	// Compatibility.
 	if (theme_cur_session_id == null)
-		theme_cur_session_id = smf_session_id;
+		theme_cur_session_id = sbb_session_id;
 	if (typeof(theme_cur_session_var) == 'undefined')
 		theme_cur_session_var = 'sesc';
 
@@ -862,7 +862,7 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 		this.oCookie.set(this.opt.oCookieOptions.sCookieName, this.bCollapsed | 0);
 
 	if (!bInit && 'oThemeOptions' in this.opt && this.opt.oThemeOptions.bUseThemeSettings)
-		smf_setThemeOption(this.opt.oThemeOptions.sOptionName, this.bCollapsed | 0, 'sThemeId' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sThemeId : null, smf_session_id, smf_session_var, 'sAdditionalVars' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sAdditionalVars : null);
+		smf_setThemeOption(this.opt.oThemeOptions.sOptionName, this.bCollapsed | 0, 'sThemeId' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sThemeId : null, sbb_session_id, sbb_session_var, 'sAdditionalVars' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sAdditionalVars : null);
 }
 
 smc_Toggle.prototype.toggle = function()
@@ -1172,7 +1172,7 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 	{
 		ajax_indicator(true);
 		this.tmpMethod = getXMLDocument;
-		var oXMLDoc = this.tmpMethod(smf_prepareScriptUrl(smf_scripturl) + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + smf_session_var + '=' + smf_session_id + ';icon=' + sNewIcon + ';xml'),
+		var oXMLDoc = this.tmpMethod(smf_prepareScriptUrl(smf_scripturl) + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + sbb_session_var + '=' + sbb_session_id + ';icon=' + sNewIcon + ';xml'),
 		oThis = this;
 		delete this.tmpMethod;
 		ajax_indicator(false);

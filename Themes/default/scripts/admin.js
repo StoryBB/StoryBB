@@ -245,7 +245,7 @@ function testFTP()
 		sPostData = sPostData + (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + escape(document.getElementById(oPostData[i]).value);
 
 	// Post the data out.
-	sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=admin;area=packages;sa=ftptest;xml;' + smf_session_var + '=' + smf_session_id, sPostData, testFTPResults);
+	sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=admin;area=packages;sa=ftptest;xml;' + sbb_session_var + '=' + sbb_session_id, sPostData, testFTPResults);
 }
 
 function expandFolder(folderIdent, folderReal)
@@ -272,7 +272,7 @@ function expandFolder(folderIdent, folderReal)
 	else if (window.XMLHttpRequest)
 	{
 		ajax_indicator(true);
-		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=admin;area=packages;onlyfind=' + escape(folderReal) + ';sa=perms;xml;' + smf_session_var + '=' + smf_session_id, onNewFolderReceived);
+		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=admin;area=packages;onlyfind=' + escape(folderReal) + ';sa=perms;xml;' + sbb_session_var + '=' + sbb_session_id, onNewFolderReceived);
 	}
 	// Otherwise reload.
 	else

@@ -99,7 +99,7 @@ smf_DraftAutoSave.prototype.draftSave = function ()
 		'message=' + escape(sPostdata.php_to8bit()).replace(/\+/g, "%2B"),
 		'icon=' + escape(document.forms.postmodify['icon'].value.php_to8bit()).replace(/\+/g, "%2B"),
 		'save_draft=true',
-		smf_session_var + '=' + smf_session_id,
+		sbb_session_var + '=' + sbb_session_id,
 	];
 
 	// Get the locked an/or sticky values if they have been selected or set that is
@@ -151,7 +151,7 @@ smf_DraftAutoSave.prototype.draftPMSave = function ()
 		'recipient_to=' + aTo,
 		'recipient_bcc=' + aBcc,
 		'save_draft=true',
-		smf_session_var + '=' + smf_session_id,
+		sbb_session_var + '=' + sbb_session_id,
 	];
 
 	// account for wysiwyg

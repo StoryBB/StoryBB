@@ -183,7 +183,7 @@ QuickModifyTopic.prototype.modify_topic_keypress = function (oEvent)
 		}
 		else if (oEvent.keyCode == 13)
 		{
-			this.modify_topic_save(smf_session_id, smf_session_var);
+			this.modify_topic_save(sbb_session_id, sbb_session_var);
 			if (typeof(oEvent.preventDefault) == "undefined")
 				oEvent.returnValue = false;
 			else
@@ -196,7 +196,7 @@ QuickModifyTopic.prototype.modify_topic_keypress = function (oEvent)
 QuickModifyTopic.prototype.modify_topic_click = function (oEvent)
 {
 	if (this.bInEditMode && !this.bMouseOnDiv)
-		this.modify_topic_save(smf_session_id, smf_session_var);
+		this.modify_topic_save(sbb_session_id, sbb_session_var);
 }
 
 // Moved out of the editing div
@@ -318,7 +318,7 @@ QuickModify.prototype.modifyMsg = function (iMessageId, blnShowSubject)
 
 	// Send out the XMLhttp request to get more info
 	ajax_indicator(true);
-	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=quotefast;quote=' + iMessageId + ';modify;xml;' + smf_session_var + '=' + smf_session_id, '', this.onMessageReceived);
+	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=quotefast;quote=' + iMessageId + ';modify;xml;' + sbb_session_var + '=' + sbb_session_id, '', this.onMessageReceived);
 }
 
 // The callback function used for the XMLhttp request retrieving the message.
@@ -436,7 +436,7 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 	// Send in the XMLhttp request and let's hope for the best.
 	ajax_indicator(true);
 
-	sendXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + smf_session_var + "=" + smf_session_id + ";xml", formData, this.onModifyDone);
+	sendXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + sbb_session_var + "=" + sbb_session_id + ";xml", formData, this.onModifyDone);
 
 	return false;
 }
