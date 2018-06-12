@@ -39,8 +39,8 @@
 			</div>
 			{{#if variants}}
 			<script>
-			var sBaseUseUrl{{id}} = smf_prepareScriptUrl(smf_scripturl) + 'action=theme;sa=pick;u={{../context.current_member}};th={{id}};{{../context.session_var}}={{../context.session_id}}';
-			var sBasePreviewUrl{{id}} = smf_prepareScriptUrl(smf_scripturl) + 'action=theme;sa=pick;u={{../context.current_member}};theme={{id}};{{../context.session_var}}={{../context.session_id}}';
+			var sBaseUseUrl{{id}} = smf_prepareScriptUrl(sbb_scripturl) + 'action=theme;sa=pick;u={{../context.current_member}};th={{id}};{{../context.session_var}}={{../context.session_id}}';
+			var sBasePreviewUrl{{id}} = smf_prepareScriptUrl(sbb_scripturl) + 'action=theme;sa=pick;u={{../context.current_member}};theme={{id}};{{../context.session_var}}={{../context.session_id}}';
 			var oThumbnails{{id}} = {
 			    {{#each variants}}
 			    	'{{@key}}': '{{thumbnail}}',

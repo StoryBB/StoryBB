@@ -115,7 +115,7 @@ smf_DraftAutoSave.prototype.draftSave = function ()
 	aSections[aSections.length] = 'message_mode=' + $('#' + this.opt.sSceditorID).data("sceditor").inSourceMode();
 
 	// Send in document for saving and hope for the best
-	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + "action=post2;board=" + this.opt.iBoard + ";xml", aSections.join("&"), this.onDraftDone);
+	sendXMLDocument.call(this, smf_prepareScriptUrl(sbb_scripturl) + "action=post2;board=" + this.opt.iBoard + ";xml", aSections.join("&"), this.onDraftDone);
 
 	// Save the latest for compare
 	this.sCheckDraft = sPostdata;
@@ -159,7 +159,7 @@ smf_DraftAutoSave.prototype.draftPMSave = function ()
 		aSections[aSections.length] = 'message_mode=' + parseInt(document.forms.postmodify.elements['message_mode'].value);
 
 	// Send in (post) the document for saving
-	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + "action=pm;sa=send2;xml", aSections.join("&"), this.onDraftDone);
+	sendXMLDocument.call(this, smf_prepareScriptUrl(sbb_scripturl) + "action=pm;sa=send2;xml", aSections.join("&"), this.onDraftDone);
 
 	// Save the latest for compare
 	this.sCheckDraft = sPostdata;

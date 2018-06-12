@@ -192,7 +192,7 @@
 	if ('XMLHttpRequest' in window)
 		{
 			var oQuickModify = new QuickModify({
-				sScriptUrl: smf_scripturl,
+				sScriptUrl: sbb_scripturl,
 				sClassName: 'quick_edit',
 				bShowModify: {{#if modSettings.show_modify}}true{{else}}false{{/if}},
 				iTopicId: {{{json context.current_topic}}},
@@ -232,7 +232,7 @@
 			aIconLists[aIconLists.length] = new IconList({
 				sBackReference: "aIconLists[" + aIconLists.length + "]",
 				sIconIdPrefix: "msg_icon_",
-				sScriptUrl: smf_scripturl,
+				sScriptUrl: sbb_scripturl,
 				bShowModify: {{#if modSettings.show_modify}}true{{else}}false{{/if}},
 				iBoardId: {{context.current_board}},
 				iTopicId: {{context.current_topic}},

@@ -430,7 +430,7 @@ function template_ssi_above()
 			}
 		</style>
 		<script>
-			var smf_scripturl = "', $scripturl, '";
+			var sbb_scripturl = "', $scripturl, '";
 			var smf_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';
 
 			// Sets all ssi_preview class to hidden, then shows the one requested.
