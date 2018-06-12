@@ -185,7 +185,7 @@ function smf_main()
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
-	$no_stat_actions = array('dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'requestmembers', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery', 'viewsmfile');
+	$no_stat_actions = array('dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'requestmembers', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery');
 	call_integration_hook('integrate_pre_log_stats', array(&$no_stat_actions));
 	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
 	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $no_stat_actions))
@@ -325,7 +325,6 @@ function smf_main()
 		'viewprofile' => array('Profile.php', 'ModifyProfile'),
 		'vote' => array('Poll.php', 'Vote'),
 		'viewquery' => array('ViewQuery.php', 'ViewQuery'),
-		'viewsmfile' => array('Admin.php', 'DisplayAdminFile'),
 		'who' => array('Who.php', 'Who'),
 		'.xml' => array('News.php', 'ShowXmlFeed'),
 		'xmlhttp' => array('Xml.php', 'XMLhttpMain'),
