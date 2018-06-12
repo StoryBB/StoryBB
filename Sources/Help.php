@@ -58,7 +58,7 @@ function HelpIndex()
 	);
 
 	// Lastly, some minor template stuff.
-	$context['page_title'] = $txt['manual_smf_user_help'];
+	$context['page_title'] = $txt['manual_storybb_user_help'];
 	$context['sub_template'] = 'help_manual';
 }
 
