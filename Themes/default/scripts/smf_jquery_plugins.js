@@ -727,8 +727,8 @@ $(function() {
 				oThemeOptions: {
 					bUseThemeSettings: true,
 					sOptionName: 'collapse_category_' + catid,
-					sSessionVar: smf_session_var,
-					sSessionId: smf_session_id
+					sSessionVar: sbb_session_var,
+					sSessionId: sbb_session_id
 				}
 			});
 		});

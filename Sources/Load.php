@@ -2373,10 +2373,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'smf_default_theme_url' => '"' . $settings['default_theme_url'] . '"',
 		'smf_images_url' => '"' . $settings['images_url'] . '"',
 		'smf_smileys_url' => '"' . $modSettings['smileys_url'] . '"',
-		'smf_scripturl' => '"' . $scripturl . '"',
+		'sbb_scripturl' => '"' . $scripturl . '"',
 		'smf_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',
-		'smf_session_id' => '"' . $context['session_id'] . '"',
-		'smf_session_var' => '"' . $context['session_var'] . '"',
+		'sbb_session_id' => '"' . $context['session_id'] . '"',
+		'sbb_session_var' => '"' . $context['session_var'] . '"',
 		'smf_member_id' => $context['user']['id'],
 		'ajax_notification_text' => JavaScriptEscape($txt['ajax_in_progress']),
 		'help_popup_heading_text' => JavaScriptEscape($txt['help_popup']),
@@ -2447,7 +2447,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			addInlineJavaScript('
 		function smfAutoTask()
 		{
-			$.get(smf_scripturl + "?scheduled=' . $type . ';ts=' . $ts . '");
+			$.get(sbb_scripturl + "?scheduled=' . $type . ';ts=' . $ts . '");
 		}
 		window.setTimeout("smfAutoTask();", 1);');
 		}
