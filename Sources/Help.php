@@ -25,9 +25,15 @@ function ShowHelp()
 	$subActions = array(
 		'index' => 'HelpIndex',
 		'rules' => 'HelpRules',
+		'smileys' => 'HelpSmileys',
 	);
 
 	$context['manual_sections'] = [
+		'smileys' => [
+			'link' => $scripturl . '?action=help;sa=smileys',
+			'title' => $txt['manual_smileys'],
+			'desc' => $txt['manual_smileys_desc'],
+		],
 		'rules' => [
 			'link' => $scripturl . '?action=help;sa=rules',
 			'title' => $txt['terms_and_rules'],
@@ -60,6 +66,53 @@ function HelpIndex()
 	// Lastly, some minor template stuff.
 	$context['page_title'] = $txt['manual_storybb_user_help'];
 	$context['sub_template'] = 'help_manual';
+}
+
+/**
+ * The smileys list in the Help section
+ */
+function HelpSmileys()
+{
+	global $smcFunc, $scripturl, $context, $txt, $modSettings;
+
+	// Build the link tree.
+	$context['linktree'][] = array(
+		'url' => $scripturl . '?action=help',
+		'name' => $txt['help'],
+	);
+	$context['linktree'][] = array(
+		'url' => $scripturl . '?action=help;sa=smileys',
+		'name' => $txt['manual_smileys'],
+	);
+
+	$context['smileys'] = [];
+	$request = $smcFunc['db_query']('', '
+		SELECT code, filename, description
+		FROM {db_prefix}smileys
+		ORDER BY smiley_row, smiley_order, hidden');
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		if (!isset($context['smileys'][$row['filename']]))
+		{
+			$context['smileys'][$row['filename']] = [
+				'text' => $row['description'],
+				'code' => [$row['code']],
+				'image' => $modSettings['smileys_url'] . '/' . $modSettings['smiley_sets_default'] . '/' . $row['filename'],
+			];
+		}
+		else
+		{
+			if (empty($context['smileys'][$row['filename']]['text']))
+			{
+				$context['smileys'][$row['filename']]['text'] = $row['description'];
+			}
+			$context['smileys'][$row['filename']]['code'][] = $row['code'];
+		}
+	}
+	$smcFunc['db_free_result']($request);
+
+	$context['page_title'] = $txt['manual_smileys'];
+	$context['sub_template'] = 'help_smileys';
 }
 
 /**
