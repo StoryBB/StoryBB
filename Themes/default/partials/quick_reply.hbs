@@ -53,7 +53,7 @@
 								<script>
 									function insertQuoteFast(messageid)
 									{
-										getXMLDocument(smf_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + messageid + ';xml;pb={{context.post_box_name}};mode=' + (oEditorHandle_{{context.post_box_name}}.bRichTextEnabled ? 1 : 0), onDocReceived);
+										getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + messageid + ';xml;pb={{context.post_box_name}};mode=' + (oEditorHandle_{{context.post_box_name}}.bRichTextEnabled ? 1 : 0), onDocReceived);
 										return false;
 									}
 									function onDocReceived(XMLDoc)

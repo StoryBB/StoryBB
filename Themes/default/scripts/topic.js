@@ -50,7 +50,7 @@ QuickModifyTopic.prototype.modify_topic = function (topic_id, first_msg_id)
 
 	// Get the topics current subject
 	ajax_indicator(true);
-	sendXMLDocument.call(this, smf_prepareScriptUrl(sbb_scripturl) + "action=quotefast;quote=" + first_msg_id + ";modify;xml", '', this.onDocReceived_modify_topic);
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + "action=quotefast;quote=" + first_msg_id + ";modify;xml", '', this.onDocReceived_modify_topic);
 }
 
 // callback function from the modify_topic ajax call
@@ -124,7 +124,7 @@ QuickModifyTopic.prototype.modify_topic_save = function (cur_session_id, cur_ses
 
 	// send in the call to save the updated topic subject
 	ajax_indicator(true);
-	sendXMLDocument.call(this, smf_prepareScriptUrl(sbb_scripturl) + "action=jsmodify;topic=" + parseInt(document.forms.quickModForm.elements['topic'].value) + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), this.modify_topic_done);
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + "action=jsmodify;topic=" + parseInt(document.forms.quickModForm.elements['topic'].value) + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), this.modify_topic_done);
 
 	return false;
 }
@@ -228,7 +228,7 @@ QuickReply.prototype.quote = function (iMessageId, xDeprecated)
 
 	if (this.bCollapsed)
 	{
-		window.location.href = smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=post;quote=' + iMessageId + ';topic=' + this.opt.iTopicId + '.' + this.opt.iStart;
+		window.location.href = sbb_prepareScriptUrl(this.opt.sScriptUrl) + 'action=post;quote=' + iMessageId + ';topic=' + this.opt.iTopicId + '.' + this.opt.iStart;
 		return false;
 	}
 	else
@@ -238,7 +238,7 @@ QuickReply.prototype.quote = function (iMessageId, xDeprecated)
 			insertQuoteFast(iMessageId);
 
 		else
-			getXMLDocument(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';xml', this.onQuoteReceived);
+			getXMLDocument(sbb_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';xml', this.onQuoteReceived);
 
 		// Move the view to the quick reply box.
 		if (navigator.appName == 'Microsoft Internet Explorer')
@@ -318,7 +318,7 @@ QuickModify.prototype.modifyMsg = function (iMessageId, blnShowSubject)
 
 	// Send out the XMLhttp request to get more info
 	ajax_indicator(true);
-	sendXMLDocument.call(this, smf_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + iMessageId + ';modify;xml;' + sbb_session_var + '=' + sbb_session_id, '', this.onMessageReceived);
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + iMessageId + ';modify;xml;' + sbb_session_var + '=' + sbb_session_id, '', this.onMessageReceived);
 }
 
 // The callback function used for the XMLhttp request retrieving the message.
@@ -436,7 +436,7 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 	// Send in the XMLhttp request and let's hope for the best.
 	ajax_indicator(true);
 
-	sendXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + sbb_session_var + "=" + sbb_session_id + ";xml", formData, this.onModifyDone);
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(this.opt.sScriptUrl) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + sbb_session_var + "=" + sbb_session_id + ";xml", formData, this.onModifyDone);
 
 	return false;
 }
