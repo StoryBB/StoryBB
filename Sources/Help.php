@@ -18,12 +18,22 @@
  */
 function ShowHelp()
 {
+	global $context, $txt, $scripturl;
+
 	loadLanguage('Manual');
 
 	$subActions = array(
 		'index' => 'HelpIndex',
 		'rules' => 'HelpRules',
 	);
+
+	$context['manual_sections'] = [
+		'rules' => [
+			'link' => $scripturl . '?action=help;sa=rules',
+			'title' => $txt['terms_and_rules'],
+			'desc' => $txt['manual_terms_and_rules'],
+		],
+	];
 
 	// CRUD $subActions as needed.
 	call_integration_hook('integrate_manage_help', array(&$subActions));
@@ -39,24 +49,7 @@ function HelpIndex()
 {
 	global $scripturl, $context, $txt;
 
-	// We need to know where our wiki is.
-	$context['wiki_url'] = 'https://wiki.simplemachines.org/smf';
-	$context['wiki_prefix'] = 'SMF2.1:';
-
 	$context['canonical_url'] = $scripturl . '?action=help';
-
-	// Sections were are going to link...
-	$context['manual_sections'] = array(
-		'registering' => 'Registering',
-		'logging_in' => 'Logging_In',
-		'profile' => 'Profile',
-		'search' => 'Search',
-		'posting' => 'Posting',
-		'bbc' => 'Bulletin_board_code',
-		'personal_messages' => 'Personal_messages',
-		'memberlist' => 'Memberlist',
-		'features' => 'Features',
-	);
 
 	// Build the link tree.
 	$context['linktree'][] = array(
@@ -67,12 +60,6 @@ function HelpIndex()
 	// Lastly, some minor template stuff.
 	$context['page_title'] = $txt['manual_smf_user_help'];
 	$context['sub_template'] = 'help_manual';
-
-	StoryBB\Template::add_helper([
-		'getLangSuffix' => function($lang) {
-			return ($lang != 'en' ? '/' . $lang : '');
-		}
-	]);
 }
 
 /**
