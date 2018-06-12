@@ -1,4 +1,4 @@
-function smf_StatsCenter(oOptions)
+function sbb_StatsCenter(oOptions)
 {
 	this.opt = oOptions;
 
@@ -10,7 +10,7 @@ function smf_StatsCenter(oOptions)
 	this.init();
 }
 
-smf_StatsCenter.prototype.init = function ()
+sbb_StatsCenter.prototype.init = function ()
 {
 	this.oTable = document.getElementById(this.opt.sTableId);
 
@@ -143,7 +143,7 @@ smf_StatsCenter.prototype.init = function ()
 		this.oYears[this.opt.aCollapsedYears[i]].oToggle.toggle();
 }
 
-smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
+sbb_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 {
 	// Tell StoryBB that all underlying months have disappeared.
 	for (var sMonth in this.oYears[oToggle.opt.sYearId].oMonths)
@@ -152,7 +152,7 @@ smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 }
 
 
-smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
+sbb_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 {
 	if (!oToggle.bCollapsed)
 	{
@@ -172,7 +172,7 @@ smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 }
 
 
-smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
+sbb_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 {
 	// Ignore if we're still loading the previous batch.
 	if (this.bIsLoading)
@@ -194,7 +194,7 @@ smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 		getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
 }
 
-smf_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
+sbb_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
 {
 	// Loop through all the months we got from the XML.
 	var aMonthNodes = oXMLDoc.getElementsByTagName('month');
