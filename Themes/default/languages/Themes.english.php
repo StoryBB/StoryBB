@@ -140,4 +140,3 @@ $txt['og_image_desc'] = 'Link to your Open Graph optimized image, suggested size
 
 /* Sub-Board Display */
 $txt['ph_sub_board_display'] = '(PH) 4P Sub Board';
-?>
