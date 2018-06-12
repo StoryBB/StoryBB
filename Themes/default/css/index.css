@@ -4197,15 +4197,15 @@ div#char_theme_wrapper,
 }
 
 /* Sub-Board tests (PH) */
-.ph_sub_2p div {
+.more_sub_2 div {
 	display: inline-block;
 	width: calc(50% - 5px);
 }
-.ph_sub_4p div {
+.more_sub_4 div {
 	display: inline-block;
 	width: calc(25% - 5px);
 }
-.ph_sub_redirect:before,
-.ph_sub_new:before {
+.more_sub_redirect:before,
+.more_sub_new:before {
 	content: "(PH)";
 }

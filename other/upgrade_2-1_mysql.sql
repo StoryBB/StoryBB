@@ -1219,7 +1219,8 @@ INSERT INTO {$db_prefix}settings
 VALUES
 	('drafts_autosave_enabled', '1'),
 	('drafts_show_saved_enabled', '1'),
-	('drafts_keep_days', '7');
+	('drafts_keep_days', '7'),
+	('more_sub_row', '0');
 
 INSERT INTO {$db_prefix}themes
 	(id_theme, variable, value)
