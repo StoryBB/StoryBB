@@ -1270,7 +1270,7 @@ function addLoadEvent(fNewOnload)
 }
 
 // Get the text in a code tag.
-function smfSelectText(oCurElement, bActOnElement)
+function sbbSelectText(oCurElement, bActOnElement)
 {
 	// The place we're looking for is one div up, and next door - if it's auto detect.
 	if (typeof(bActOnElement) == 'boolean' && bActOnElement)
@@ -1535,7 +1535,7 @@ $(function()
 		return confirm(custom_message ? custom_message.replace(/-n-/g, "\n") : sbb_you_sure);
 	});
 
-	// Generic event for smfSelectText()
+	// Generic event for sbbSelectText()
 	$('.sbb_select_text').on('click', function(e) {
 
 		e.preventDefault();
@@ -1543,6 +1543,6 @@ $(function()
 		// Do you want to target yourself?
 		var actOnElement = $(this).attr('data-actonelement');
 
-		return typeof actOnElement !== "undefined" ? smfSelectText(actOnElement, true) : smfSelectText(this);
+		return typeof actOnElement !== "undefined" ? sbbSelectText(actOnElement, true) : sbbSelectText(this);
 	});
 });
