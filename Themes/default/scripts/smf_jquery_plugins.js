@@ -1,5 +1,5 @@
 /**
- * SMFtooltip, Basic JQuery function to provide styled tooltips
+ * SBBtooltip, Basic JQuery function to provide styled tooltips
  *
  * - will use the hoverintent plugin if available
  * - shows the tooltip in a div with the class defined in tooltipClass
@@ -15,8 +15,8 @@
  */
 
 (function($) {
-	$.fn.SMFtooltip = function(oInstanceSettings) {
-		$.fn.SMFtooltip.oDefaultsSettings = {
+	$.fn.SBBtooltip = function(oInstanceSettings) {
+		$.fn.SBBtooltip.oDefaultsSettings = {
 			followMouse: 1,
 			hoverIntent: {sensitivity: 10, interval: 300, timeout: 50},
 			positionTop: 12,
@@ -29,7 +29,7 @@
 		};
 
 		// account for any user options
-		var oSettings = $.extend({}, $.fn.SMFtooltip.oDefaultsSettings , oInstanceSettings || {});
+		var oSettings = $.extend({}, $.fn.SBBtooltip.oDefaultsSettings , oInstanceSettings || {});
 
 		// move passed selector titles to a hidden span, then remove the selector title to prevent any default browser actions
 		$(this).each(function()
