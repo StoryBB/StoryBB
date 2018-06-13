@@ -1,6 +1,6 @@
 // This file contains javascript associated with the captcha visual verification stuffs.
 
-function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
+function sbbCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 {
 	// By default the letter count is five.
 	if (!letterCount)

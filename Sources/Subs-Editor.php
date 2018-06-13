@@ -1472,7 +1472,7 @@ function create_control_richedit($editorOptions)
 		// JS makes the editor go round
 		loadJavaScriptFile('editor.js', array(), 'sbb_editor');
 		loadJavaScriptFile('jquery.sceditor.bbcode.min.js', array(), 'sbb_sceditor_bbcode');
-		loadJavaScriptFile('jquery.sceditor.smf.js', array(), 'sbb_sceditor_smf');
+		loadJavaScriptFile('jquery.sceditor.storybb.js', array(), 'sbb_sceditor_storybb');
 		addInlineJavaScript('
 		var sbb_smileys_url = \'' . $settings['smileys_url'] . '\';
 		var bbc_quote_from = \'' . addcslashes($txt['quote_from'], "'") . '\';
@@ -1843,7 +1843,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	if ($context['controls']['verification'][$verificationOptions['id']]['show_visual'])
 		$context['insert_after_template'] .= '
 			<script>
-				var verification' . $verificationOptions['id'] . 'Handle = new smfCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '", ' . ($verificationOptions['use_graphic_library'] ? 1 : 0) . ');
+				var verification' . $verificationOptions['id'] . 'Handle = new sbbCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '", ' . ($verificationOptions['use_graphic_library'] ? 1 : 0) . ');
 			</script>';
 
 	// If we want questions do we have a cache of all the IDs?

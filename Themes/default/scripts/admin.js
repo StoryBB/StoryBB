@@ -142,15 +142,6 @@ function createNamedElement(type, name, customFields)
 	return element;
 }
 
-function smfSetLatestThemes()
-{
-	if (typeof(window.smfLatestThemes) != "undefined")
-		setInnerHTML(document.getElementById("themeLatest"), window.smfLatestThemes);
-
-	if (tempOldOnload)
-		tempOldOnload();
-}
-
 function changeVariant(sVariant)
 {
 	document.getElementById('variant_preview').src = oThumbnails[sVariant];
