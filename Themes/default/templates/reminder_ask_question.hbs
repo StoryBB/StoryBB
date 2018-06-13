@@ -44,5 +44,5 @@
 		"password_no_match": {{{json txt.registration_password_no_match}}},
 		"password_valid": {{{json txt.registration_password_valid}}}
 	};
-	var verificationHandle = new smfRegister("creator", {{#if modSettings.password_strength}}{{modSettings.password_strength}}{{else}}0{{/if}}, regTextStrings);
+	var verificationHandle = new sbbRegister("creator", {{#if modSettings.password_strength}}{{modSettings.password_strength}}{{else}}0{{/if}}, regTextStrings);
 </script>
