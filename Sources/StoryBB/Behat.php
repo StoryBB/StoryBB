@@ -81,7 +81,7 @@ class Behat extends RawMinkContext implements Context
         require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
         require_once($boarddir . '/Themes/default/languages/Install.english.php');
 
-        $db_connection = smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, ['dont_select_db' => true]);
+        $db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, ['dont_select_db' => true]);
         if (empty($db_connection)) {
             die('Database could not be connected - error given: ' . $smcFunc['db_error']());
         }
@@ -112,7 +112,7 @@ class Behat extends RawMinkContext implements Context
             '{$boarddir}' => $smcFunc['db_escape_string']($boarddir),
             '{$boardurl}' => $boardurl,
             '{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
-            '{$smf_version}' => 'Behat',
+            '{$sbb_version}' => 'Behat',
             '{$current_time}' => time(),
             '{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
             '{$registration_method}' => 0,

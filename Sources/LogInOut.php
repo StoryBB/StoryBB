@@ -93,11 +93,11 @@ function Login2()
 	{
 		// First check for 2.1 json-format cookie in $_COOKIE
 		if (isset($_COOKIE[$cookiename]) && preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+~', $_COOKIE[$cookiename]) === 1)
-			list (,, $timeout) = smf_json_decode($_COOKIE[$cookiename], true);
+			list (,, $timeout) = sbb_json_decode($_COOKIE[$cookiename], true);
 
 		// Try checking for 2.1 json-format cookie in $_SESSION
 		elseif (isset($_SESSION['login_' . $cookiename]) && preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+~', $_SESSION['login_' . $cookiename]) === 1)
-			list (,, $timeout) = smf_json_decode($_SESSION['login_' . $cookiename]);
+			list (,, $timeout) = sbb_json_decode($_SESSION['login_' . $cookiename]);
 
 		// Next, try checking for 2.0 serialized string cookie in $_COOKIE
 		elseif (isset($_COOKIE[$cookiename]) && preg_match('~^a:[34]:\{i:0;i:\d+;i:1;s:(0|128):"([a-fA-F0-9]{128})?";i:2;[id]:\d+;~', $_COOKIE[$cookiename]) === 1)
@@ -116,7 +116,7 @@ function Login2()
 		// Preserve the 2FA cookie?
 		if (!empty($modSettings['tfa_mode']) && !empty($_COOKIE[$cookiename . '_tfa']))
 		{
-			$tfadata = smf_json_decode($_COOKIE[$cookiename . '_tfa'], true);
+			$tfadata = sbb_json_decode($_COOKIE[$cookiename . '_tfa'], true);
 
 			// If that didn't work, try unserialize instead...
 			if (is_null($tfadata))
@@ -676,7 +676,7 @@ function Logout($internal = false, $redirect = true)
 
 	if (!empty($modSettings['tfa_mode']) && !empty($user_info['id']) && !empty($_COOKIE[$cookiename . '_tfa']))
 	{
-		$tfadata = smf_json_decode($_COOKIE[$cookiename . '_tfa'], true);
+		$tfadata = sbb_json_decode($_COOKIE[$cookiename . '_tfa'], true);
 
 		// If that failed, try the old method
 		if (is_null($tfadata))

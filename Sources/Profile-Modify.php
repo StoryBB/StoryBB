@@ -525,12 +525,12 @@ function loadProfileFields($force_reload = false)
 		),
 		'timezone' => array(
 			'type' => 'select',
-			'options' => smf_list_timezones(),
+			'options' => sbb_list_timezones(),
 			'permission' => 'profile_extra',
 			'label' => $txt['timezone'],
 			'input_validate' => function($value)
 			{
-				$tz = smf_list_timezones();
+				$tz = sbb_list_timezones();
 				if (!isset($tz[$value]))
 					return 'bad_timezone';
 
@@ -1308,7 +1308,7 @@ function editBuddyIgnoreLists($memID)
 		),
 	);
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 
 	// Pass on to the actual function.
 	$context['sub_template'] = $subActions[$context['list_area']][0];
@@ -1799,7 +1799,7 @@ function notification($memID)
 	global $txt, $context;
 
 	// Going to want this for consistency.
-	loadCSSFile('admin.css', array(), 'smf_admin');
+	loadCSSFile('admin.css', array(), 'sbb_admin');
 
 	// This is just a bootstrap for everything else.
 	$sa = array(
@@ -1842,7 +1842,7 @@ function alert_configuration($memID)
 
 	// What options are set
 	loadThemeOptions($memID);
-	loadJavaScriptFile('alertSettings.js', array(), 'smf_alertSettings');
+	loadJavaScriptFile('alertSettings.js', array(), 'sbb_alertSettings');
 
 	// Now load all the values for this user.
 	require_once($sourcedir . '/Subs-Notify.php');
@@ -3308,7 +3308,7 @@ function profileSaveAvatarData(&$value)
 				if (!empty($modSettings['avatar_resize_upload']))
 				{
 					// Attempt to chmod it.
-					smf_chmod($_FILES['attachment']['tmp_name'], 0644);
+					sbb_chmod($_FILES['attachment']['tmp_name'], 0644);
 
 					// @todo remove this require when appropriate
 					require_once($sourcedir . '/Subs-Graphics.php');
@@ -3397,7 +3397,7 @@ function profileSaveAvatarData(&$value)
 				}
 
 				// Attempt to chmod it.
-				smf_chmod($uploadDir . '/' . $destinationPath, 0644);
+				sbb_chmod($uploadDir . '/' . $destinationPath, 0644);
 			}
 			$profile_vars['avatar'] = '';
 

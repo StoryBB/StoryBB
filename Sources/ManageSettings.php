@@ -560,7 +560,7 @@ function ModifyAntispamSettings($return_config = false)
 		}
 		$context['question_answers'][$lang_id]['questions'][$row['id_question']] = [
 			'question' => $row['question'],
-			'answers' => smf_json_decode($row['answers'], true),
+			'answers' => sbb_json_decode($row['answers'], true),
 		];
 		$questions++;
 	}

@@ -80,7 +80,7 @@ cleanRequest();
 
 // Seed the random generator?
 if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
-	smf_seed_generator();
+	sbb_seed_generator();
 
 // Check on any hacking attempts.
 if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']))
@@ -1647,7 +1647,7 @@ function ssi_pollVote()
 
 		require_once($sourcedir . '/Subs-Auth.php');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-		smf_setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], false, false);
+		sbb_setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], false, false);
 	}
 
 	redirectexit('topic=' . $row['id_topic'] . '.0');

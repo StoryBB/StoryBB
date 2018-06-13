@@ -172,7 +172,7 @@ function MaintainMembers()
 	}
 	$smcFunc['db_free_result']($result);
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 }
 
 /**

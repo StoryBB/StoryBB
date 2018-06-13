@@ -1647,8 +1647,8 @@ function MessagePost()
 	isAllowedTo('pm_send');
 
 	loadLanguage('PersonalMessage');
-	loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'smf_pms');
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'sbb_pms');
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 	$context['sub_template'] = 'personal_message_send';
 
 	// Extract out the spam settings - cause it's neat.
@@ -1959,8 +1959,8 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	{
 		$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 		$context['sub_template'] = 'personal_message_send';
-		loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'smf_pms');
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+		loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'sbb_pms');
+		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 	}
 	else
 	{
@@ -3971,8 +3971,8 @@ function LoadRules($reload = false)
 		$context['rules'][$row['id_rule']] = array(
 			'id' => $row['id_rule'],
 			'name' => $row['rule_name'],
-			'criteria' => smf_json_decode($row['criteria'], true),
-			'actions' => smf_json_decode($row['actions'], true),
+			'criteria' => sbb_json_decode($row['criteria'], true),
+			'actions' => sbb_json_decode($row['actions'], true),
 			'delete' => $row['delete_pm'],
 			'logic' => $row['is_or'] ? 'or' : 'and',
 		);

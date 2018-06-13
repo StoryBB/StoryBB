@@ -95,7 +95,7 @@ $user_info = [
 ];
 
 // Just in case there's a problem...
-set_error_handler('smf_error_handler_cron');
+set_error_handler('sbb_error_handler_cron');
 $sc = '';
 $_SERVER['QUERY_STRING'] = '';
 $_SERVER['REQUEST_URL'] = FROM_CLI ? 'CLI cron.php' : $boardurl . '/cron.php';
@@ -251,7 +251,7 @@ function cleanRequest_cron()
  * @param int $line What line of the specified file the error occurred on
  * @return void
  */
-function smf_error_handler_cron($error_level, $error_string, $file, $line)
+function sbb_error_handler_cron($error_level, $error_string, $file, $line)
 {
 	global $modSettings;
 

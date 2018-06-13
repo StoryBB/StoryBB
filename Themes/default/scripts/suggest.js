@@ -281,7 +281,7 @@ smc_AutoSuggest.prototype.positionDiv = function()
 	this.bPositionComplete = true;
 
 	// Put the div under the text box.
-	var aParentPos = smf_itemPos(this.oTextHandle);
+	var aParentPos = sbb_itemPos(this.oTextHandle);
 
 	this.oSuggestDivHandle.style.left = aParentPos[0] + 'px';
 	this.oSuggestDivHandle.style.top = (aParentPos[1] + this.oTextHandle.offsetHeight) + 'px';

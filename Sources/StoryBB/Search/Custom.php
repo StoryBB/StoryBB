@@ -55,7 +55,7 @@ class Custom extends API
 		if (empty($modSettings['search_custom_index_config']))
 			return;
 
-		$this->indexSettings = smf_json_decode($modSettings['search_custom_index_config'], true);
+		$this->indexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
 
 		$this->bannedWords = empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
 		$this->min_word_length = $this->indexSettings['bytes_per_word'];
@@ -230,7 +230,7 @@ class Custom extends API
 	{
 		global $modSettings, $smcFunc;
 
-		$customIndexSettings = smf_json_decode($modSettings['search_custom_index_config'], true);
+		$customIndexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
 
 		$inserts = array();
 		foreach (text2words($msgOptions['body'], $customIndexSettings['bytes_per_word'], true) as $word)
@@ -254,7 +254,7 @@ class Custom extends API
 
 		if (isset($msgOptions['body']))
 		{
-			$customIndexSettings = smf_json_decode($modSettings['search_custom_index_config'], true);
+			$customIndexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
 			$stopwords = empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
 			$old_body = isset($msgOptions['old_body']) ? $msgOptions['old_body'] : '';
 

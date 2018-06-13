@@ -50,7 +50,7 @@ function reloadSettings()
 			$modSettings['defaultMaxListItems'] = 15;
 
 		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = smf_json_decode($modSettings['attachmentUploadDir'], true);
+			$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);
 
 		if (!empty($cache_enable))
 			cache_put_data('modSettings', $modSettings, 90);
@@ -258,7 +258,7 @@ function reloadSettings()
 	// Integration is cool.
 	if (defined('STORYBB_INTEGRATION_SETTINGS'))
 	{
-		$integration_settings = smf_json_decode(STORYBB_INTEGRATION_SETTINGS, true);
+		$integration_settings = sbb_json_decode(STORYBB_INTEGRATION_SETTINGS, true);
 		foreach ($integration_settings as $hook => $function)
 			add_integration_function($hook, $function, '', false);
 	}
@@ -369,7 +369,7 @@ function loadUserSettings()
 	if (empty($id_member) && isset($_COOKIE[$cookiename]))
 	{
 		// First try 2.1 json-format cookie
-		$cookie_data = smf_json_decode($_COOKIE[$cookiename], true, false);
+		$cookie_data = sbb_json_decode($_COOKIE[$cookiename], true, false);
 
 		// Legacy format (for recent 2.0 --> 2.1 upgrades)
 		if (empty($cookie_data))
@@ -394,7 +394,7 @@ function loadUserSettings()
 	elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] || !empty($modSettings['disableCheckUA'])))
 	{
 		// @todo Perhaps we can do some more checking on this, such as on the first octet of the IP?
-		$cookie_data = smf_json_decode($_SESSION['login_' . $cookiename], true);
+		$cookie_data = sbb_json_decode($_SESSION['login_' . $cookiename], true);
 
 		if (empty($cookie_data))
 			$cookie_data = safe_unserialize($_SESSION['login_' . $cookiename]);
@@ -478,7 +478,7 @@ function loadUserSettings()
 			{
 				if (!empty($_COOKIE[$tfacookie]))
 				{
-					$tfa_data = smf_json_decode($_COOKIE[$tfacookie]);
+					$tfa_data = sbb_json_decode($_COOKIE[$tfacookie]);
 
 					if (is_null($tfa_data))
 						$tfa_data = safe_unserialize($_COOKIE[$tfacookie]);
@@ -635,7 +635,7 @@ function loadUserSettings()
 		// Expire the 2FA cookie
 		if (isset($_COOKIE[$cookiename . '_tfa']) && empty($context['tfa_member']))
 		{
-			$tfa_data = smf_json_decode($_COOKIE[$cookiename . '_tfa'], true);
+			$tfa_data = sbb_json_decode($_COOKIE[$cookiename . '_tfa'], true);
 
 			if (is_null($tfa_data))
 				$tfa_data = safe_unserialize($_COOKIE[$cookiename . '_tfa']);
@@ -1737,7 +1737,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		$memberContext[$user]['custom_fields'] = array();
 
 		if (!isset($context['display_fields']))
-			$context['display_fields'] = smf_json_decode($modSettings['displayFields'], true);
+			$context['display_fields'] = sbb_json_decode($modSettings['displayFields'], true);
 
 		foreach ($context['display_fields'] as $custom)
 		{
@@ -2313,7 +2313,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$settings['lang_images_url'] = $settings['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
 
 	// And of course, let's load the default CSS file.
-	loadCSSFile('index.css', array('minimize' => true), 'smf_index');
+	loadCSSFile('index.css', array('minimize' => true), 'sbb_index');
 
 	if (!empty($settings['additional_files']['css']))
 	{
@@ -2333,10 +2333,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Here is my luvly Responsive CSS
-	loadCSSFile('responsive.css', array('force_current' => false, 'validate' => true, 'minimize' => true), 'smf_responsive');
+	loadCSSFile('responsive.css', array('force_current' => false, 'validate' => true, 'minimize' => true), 'sbb_responsive');
 
 	if ($context['right_to_left'])
-		loadCSSFile('rtl.css', array(), 'smf_rtl');
+		loadCSSFile('rtl.css', array(), 'sbb_rtl');
 
 	// We allow theme variants, because we're cool.
 	$context['theme_variant'] = '';
@@ -2359,9 +2359,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 		if (!empty($context['theme_variant']))
 		{
-			loadCSSFile('index' . $context['theme_variant'] . '.css', array(), 'smf_index' . $context['theme_variant']);
+			loadCSSFile('index' . $context['theme_variant'] . '.css', array(), 'sbb_index' . $context['theme_variant']);
 			if ($context['right_to_left'])
-				loadCSSFile('rtl' . $context['theme_variant'] . '.css', array(), 'smf_rtl' . $context['theme_variant']);
+				loadCSSFile('rtl' . $context['theme_variant'] . '.css', array(), 'sbb_rtl' . $context['theme_variant']);
 		}
 	}
 
@@ -2369,44 +2369,44 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Default JS variables for use in every theme
 	$context['javascript_vars'] = array(
-		'smf_theme_url' => '"' . $settings['theme_url'] . '"',
-		'smf_default_theme_url' => '"' . $settings['default_theme_url'] . '"',
+		'sbb_theme_url' => '"' . $settings['theme_url'] . '"',
+		'sbb_default_theme_url' => '"' . $settings['default_theme_url'] . '"',
 		'sbb_images_url' => '"' . $settings['images_url'] . '"',
 		'sbb_smileys_url' => '"' . $modSettings['smileys_url'] . '"',
 		'sbb_scripturl' => '"' . $scripturl . '"',
-		'smf_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',
+		'sbb_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',
 		'sbb_session_id' => '"' . $context['session_id'] . '"',
 		'sbb_session_var' => '"' . $context['session_var'] . '"',
-		'smf_member_id' => $context['user']['id'],
+		'sbb_member_id' => $context['user']['id'],
 		'ajax_notification_text' => JavaScriptEscape($txt['ajax_in_progress']),
 		'help_popup_heading_text' => JavaScriptEscape($txt['help_popup']),
 	);
 
 	// Add the JQuery library to the list of files to load.
 	if (isset($modSettings['jquery_source']) && $modSettings['jquery_source'] == 'cdn')
-		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', array('external' => true), 'smf_jquery');
+		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', array('external' => true), 'sbb_jquery');
 
 	elseif (isset($modSettings['jquery_source']) && $modSettings['jquery_source'] == 'local')
-		loadJavaScriptFile('jquery-3.2.1.min.js', array('seed' => false), 'smf_jquery');
+		loadJavaScriptFile('jquery-3.2.1.min.js', array('seed' => false), 'sbb_jquery');
 
 	elseif (isset($modSettings['jquery_source'], $modSettings['jquery_custom']) && $modSettings['jquery_source'] == 'custom')
-		loadJavaScriptFile($modSettings['jquery_custom'], array('external' => true), 'smf_jquery');
+		loadJavaScriptFile($modSettings['jquery_custom'], array('external' => true), 'sbb_jquery');
 
 	// Auto loading? template_javascript() will take care of the local half of this.
 	else
-		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', array('external' => true), 'smf_jquery');
+		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', array('external' => true), 'sbb_jquery');
 
 	// Queue our JQuery plugins!
-	loadJavaScriptFile('smf_jquery_plugins.js', array('minimize' => true), 'smf_jquery_plugins');
+	loadJavaScriptFile('sbb_jquery_plugins.js', array('minimize' => true), 'sbb_jquery_plugins');
 	if (!$user_info['is_guest'])
 	{
-		loadJavaScriptFile('jquery.custom-scrollbar.js', array(), 'smf_jquery_scrollbar');
-		loadCSSFile('jquery.custom-scrollbar.css', array('force_current' => false, 'validate' => true), 'smf_scrollbar');
+		loadJavaScriptFile('jquery.custom-scrollbar.js', array(), 'sbb_jquery_scrollbar');
+		loadCSSFile('jquery.custom-scrollbar.css', array('force_current' => false, 'validate' => true), 'sbb_scrollbar');
 	}
 
 	// script.js and theme.js, always required, so always add them! Makes index.template.php cleaner and all.
-	loadJavaScriptFile('script.js', array('defer' => false, 'minimize' => true), 'smf_script');
-	loadJavaScriptFile('theme.js', array('minimize' => true), 'smf_theme');
+	loadJavaScriptFile('script.js', array('defer' => false, 'minimize' => true), 'sbb_script');
+	loadJavaScriptFile('theme.js', array('minimize' => true), 'sbb_theme');
 
 	if (!empty($settings['additional_files']['js']))
 	{
@@ -3200,7 +3200,7 @@ function loadDatabase()
 	{
 		$options = array_merge($db_options, array('persist' => $db_persist, 'non_fatal' => true, 'dont_select_db' => true));
 
-		$db_connection = smf_db_initiate($db_server, $db_name, $ssi_db_user, $ssi_db_passwd, $db_prefix, $options);
+		$db_connection = sbb_db_initiate($db_server, $db_name, $ssi_db_user, $ssi_db_passwd, $db_prefix, $options);
 	}
 
 	// Either we aren't in SSI mode, or it failed.
@@ -3208,7 +3208,7 @@ function loadDatabase()
 	{
 		$options = array_merge($db_options, array('persist' => $db_persist, 'dont_select_db' => STORYBB == 'SSI'));
 
-		$db_connection = smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
+		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
 	}
 
 	// Safe guard here, if there isn't a valid connection lets put a stop to it.

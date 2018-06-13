@@ -1254,20 +1254,20 @@ function Display()
 
 	// Load the drafts js file
 	if ($context['drafts_autosave'])
-		loadJavaScriptFile('drafts.js', array('defer' => false), 'smf_drafts');
+		loadJavaScriptFile('drafts.js', array('defer' => false), 'sbb_drafts');
 
 	// topic.js
-	loadJavaScriptFile('topic.js', array('defer' => false), 'smf_topic');
+	loadJavaScriptFile('topic.js', array('defer' => false), 'sbb_topic');
 
 	// quotedText.js
-	loadJavaScriptFile('quotedText.js', array('defer' => true), 'smf_quotedText');
+	loadJavaScriptFile('quotedText.js', array('defer' => true), 'sbb_quotedText');
 
 	// Mentions
 	if (!empty($modSettings['enable_mentions']) && allowedTo('mention'))
 	{
-		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'smf_atwho');
-		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'smf_caret');
-		loadJavaScriptFile('mentions.js', array('defer' => true), 'smf_mentions');
+		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'sbb_atwho');
+		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'sbb_caret');
+		loadJavaScriptFile('mentions.js', array('defer' => true), 'sbb_mentions');
 	}
 
 	// Some convenient template setup.

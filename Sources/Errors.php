@@ -212,7 +212,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $status 
  * @param string $file The file where the error occurred
  * @param int $line The line where the error occurred
  */
-function smf_error_handler($error_level, $error_string, $file, $line)
+function sbb_error_handler($error_level, $error_string, $file, $line)
 {
 	global $settings, $modSettings, $db_show_debug;
 
@@ -511,7 +511,7 @@ function log_error_online($error, $sprintf = array())
 	if ($smcFunc['db_num_rows']($request) != 0)
 	{
 		list ($url) = $smcFunc['db_fetch_row']($request);
-		$url = smf_json_decode($url, true);
+		$url = sbb_json_decode($url, true);
 		$url['error'] = $error;
 
 		if (!empty($sprintf))

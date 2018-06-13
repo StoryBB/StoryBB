@@ -38,7 +38,7 @@ function PlushSearch1()
 		fatal_lang_error('loadavg_search_disabled', false);
 
 	loadLanguage('Search');
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 
 	// Check the user's permissions.
 	isAllowedTo('search_posts');

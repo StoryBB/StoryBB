@@ -1589,7 +1589,7 @@ function scheduled_remove_temp_attachments()
 	if (!empty($modSettings['currentAttachmentUploadDir']))
 	{
 		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = smf_json_decode($modSettings['attachmentUploadDir'], true);
+			$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);
 
 		// Just use the current path for temp files.
 		$attach_dirs = $modSettings['attachmentUploadDir'];

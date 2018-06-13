@@ -9,7 +9,7 @@ $(function() {
 });
 
 // The purpose of this code is to fix the height of overflow: auto blocks, because some browsers can't figure it out for themselves.
-function smf_codeBoxFix()
+function sbb_codeBoxFix()
 {
 	var codeFix = $('code');
 	$.each(codeFix, function(index, tag)
@@ -33,7 +33,7 @@ function smf_codeBoxFix()
 
 // Add a fix for code stuff?
 if (is_ie || is_webkit || is_ff)
-	addLoadEvent(smf_codeBoxFix);
+	addLoadEvent(sbb_codeBoxFix);
 
 // Toggles the element height and width styles of an image.
 function smc_toggleImageDimensions()
@@ -57,7 +57,7 @@ function smc_toggleImageDimensions()
 // Add a load event for the function above.
 addLoadEvent(smc_toggleImageDimensions);
 
-function smf_addButton(stripId, image, options)
+function sbb_addButton(stripId, image, options)
 {
 	$('#' + stripId).append(
 		'<a href="' + options.sUrl + '" class="button last" ' + ('sCustom' in options ? options.sCustom : '') + ' ' + ('sId' in options ? ' id="' + options.sId + '_text"' : '') + '>'

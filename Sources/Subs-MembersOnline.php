@@ -58,7 +58,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 	$spiders = array();
 	$spider_finds = array();
 	if (!empty($modSettings['show_spider_online']) && ($modSettings['show_spider_online'] < 3 || allowedTo('admin_forum')) && !empty($modSettings['spider_name_cache']))
-		$spiders = smf_json_decode($modSettings['spider_name_cache'], true);
+		$spiders = sbb_json_decode($modSettings['spider_name_cache'], true);
 
 	// Load the users online right now.
 	$request = $smcFunc['db_query']('', '

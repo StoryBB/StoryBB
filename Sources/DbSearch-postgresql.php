@@ -17,13 +17,13 @@ function db_search_init()
 {
 	global $smcFunc;
 
-	if (!isset($smcFunc['db_search_query']) || $smcFunc['db_search_query'] != 'smf_db_search_query')
+	if (!isset($smcFunc['db_search_query']) || $smcFunc['db_search_query'] != 'sbb_db_search_query')
 		$smcFunc += array(
-			'db_search_query' => 'smf_db_search_query',
-			'db_search_support' => 'smf_db_search_support',
-			'db_create_word_search' => 'smf_db_create_word_search',
+			'db_search_query' => 'sbb_db_search_query',
+			'db_search_support' => 'sbb_db_search_support',
+			'db_create_word_search' => 'sbb_db_create_word_search',
 			'db_support_ignore' => false,
-			'db_search_language' => 'smf_db_search_language',
+			'db_search_language' => 'sbb_db_search_language',
 		);
 
 	db_extend();
@@ -47,7 +47,7 @@ function db_search_init()
  * @param string $search_type The search type
  * @return boolean Whether or not the specified search type is supported by this DB system.
  */
-function smf_db_search_support($search_type)
+function sbb_db_search_support($search_type)
 {
 	$supported_types = array('custom','fulltext');
 
@@ -63,7 +63,7 @@ function smf_db_search_support($search_type)
  * @param resource $connection The current DB connection resource
  * @return resource The query result resource from $smcFunc['db_query']
  */
-function smf_db_search_query($identifier, $db_string, $db_values = array(), $connection = null)
+function sbb_db_search_query($identifier, $db_string, $db_values = array(), $connection = null)
 {
 	global $smcFunc;
 
@@ -120,7 +120,7 @@ function smf_db_search_query($identifier, $db_string, $db_values = array(), $con
  *
  * @param string $size The column size type (int, mediumint (8), etc.). Not used here.
  */
-function smf_db_create_word_search($size)
+function sbb_db_create_word_search($size)
 {
 	global $smcFunc;
 
@@ -142,7 +142,7 @@ function smf_db_create_word_search($size)
 /**
 * Return the language for the textsearch index
 */
-function smf_db_search_language()
+function sbb_db_search_language()
 {
 	global $smcFunc, $modSettings;
 

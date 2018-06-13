@@ -25,7 +25,7 @@ abstract class API implements API_Interface
 	/**
 	 * @var string The minimum StoryBB version that this will work with
 	 */
-	protected $min_smf_version = 'StoryBB 3.0 Alpha 1';
+	protected $min_sbb_version = 'StoryBB 3.0 Alpha 1';
 
 	/**
 	 * @var string The prefix for all keys.
@@ -188,6 +188,6 @@ abstract class API implements API_Interface
 	 */
 	public function getMiniumnVersion()
 	{
-		return $this->min_smf_version;
+		return $this->min_sbb_version;
 	}
 }

@@ -96,7 +96,7 @@ class Cache
 		if (function_exists('call_integration_hook') && isset($value))
 			call_integration_hook('cache_get_data', array(&$key, &$ttl, &$value));
 
-		return empty($value) ? null : smf_json_decode($value, true);
+		return empty($value) ? null : sbb_json_decode($value, true);
 	}
 
 	public static function put($key, $value, $ttl = 120)

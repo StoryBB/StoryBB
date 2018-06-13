@@ -156,7 +156,7 @@ QuickModifyTopic.prototype.modify_topic_done = function (XMLDoc)
 
 	// redo tips if they are on since we just pulled the rug out on this one
 	if ($.isFunction($.fn.SBBtooltip));
-		$('.preview').SBBtooltip().smf_tooltip_off;
+		$('.preview').SBBtooltip().sbb_tooltip_off;
 
 	return false;
 }
@@ -562,7 +562,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 
 		// Add the 'remove selected items' button.
 		if (this.opt.bCanRemove)
-			smf_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
+			sbb_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
 				sId: this.opt.sSelf + '_remove_button',
 				sText: this.opt.sRemoveButtonLabel,
 				sImage: this.opt.sRemoveButtonImage,
@@ -572,7 +572,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 
 		// Add the 'restore selected items' button.
 		if (this.opt.bCanRestore)
-			smf_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
+			sbb_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
 				sId: this.opt.sSelf + '_restore_button',
 				sText: this.opt.sRestoreButtonLabel,
 				sImage: this.opt.sRestoreButtonImage,
@@ -582,7 +582,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 
 		// Add the 'split selected items' button.
 		if (this.opt.bCanSplit)
-			smf_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
+			sbb_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
 				sId: this.opt.sSelf + '_split_button',
 				sText: this.opt.sSplitButtonLabel,
 				sImage: this.opt.sSplitButtonImage,
@@ -616,8 +616,8 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 		document.getElementById(this.opt.sSelf + '_split_button_text').style.display = this.iNumSelected < 1 ? "none" : "";
 	}
 
-	if(typeof smf_fixButtonClass == 'function')
-		smf_fixButtonClass(this.opt.sButtonStrip);
+	if(typeof sbb_fixButtonClass == 'function')
+		sbb_fixButtonClass(this.opt.sButtonStrip);
 }
 
 InTopicModeration.prototype.handleSubmit = function (sSubmitType)

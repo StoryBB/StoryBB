@@ -5,7 +5,7 @@
    If you are looking at translating the manual into another language
    please visit the Simple Machines website for tools to assist! */
 
-$txt['manual_smf_user_help'] = 'StoryBB User Help';
+$txt['manual_sbb_user_help'] = 'StoryBB User Help';
 
 $txt['manual_welcome'] = 'Welcome to %s, powered by StoryBB!';
 $txt['manual_introduction'] = 'StoryBB is the software solution for roleplayers that this site is running. It allows users to communicate in discussion topics on a given subject in a clever and organized manner. Furthermore, it has a number of powerful features which end users can take advantage of. Help for many of StoryBB\'s features can be found by either clicking the question mark icon next to the relevant section or by selecting one of the links on this page. These links will take you to StoryBB\'s centrally-located documentation on the Simple Machines official site.';
