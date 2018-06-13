@@ -52,7 +52,7 @@ var updateAlerts = function ()
         {
             var notification = notify.createNotification(new_alert_title, {
                 body: $(item).find('div.details:first > span').text(),
-                icon: smf_images_url + '/blank.png'
+                icon: sbb_images_url + '/blank.png'
             });
 
             notification.click(function()

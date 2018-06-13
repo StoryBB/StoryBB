@@ -2371,7 +2371,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['javascript_vars'] = array(
 		'smf_theme_url' => '"' . $settings['theme_url'] . '"',
 		'smf_default_theme_url' => '"' . $settings['default_theme_url'] . '"',
-		'smf_images_url' => '"' . $settings['images_url'] . '"',
+		'sbb_images_url' => '"' . $settings['images_url'] . '"',
 		'smf_smileys_url' => '"' . $modSettings['smileys_url'] . '"',
 		'sbb_scripturl' => '"' . $scripturl . '"',
 		'smf_iso_case_folding' => $context['server']['iso_case_folding'] ? 'true' : 'false',

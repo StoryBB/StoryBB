@@ -61,9 +61,9 @@ sbb_StatsCenter.prototype.init = function ()
 				aSwapImages: [
 					{
 						sId: this.opt.sYearImageIdPrefix + sYearId,
-						srcExpanded: smf_images_url + '/' + this.opt.sYearImageExpanded,
+						srcExpanded: sbb_images_url + '/' + this.opt.sYearImageExpanded,
 						altExpanded: '-',
-						srcCollapsed: smf_images_url + '/' + this.opt.sYearImageCollapsed,
+						srcCollapsed: sbb_images_url + '/' + this.opt.sYearImageCollapsed,
 						altCollapsed: '+'
 					}
 				],
@@ -113,9 +113,9 @@ sbb_StatsCenter.prototype.init = function ()
 				aSwapImages: [
 					{
 						sId: this.opt.sMonthImageIdPrefix + sMonthId,
-						srcExpanded: smf_images_url + '/' + this.opt.sMonthImageExpanded,
+						srcExpanded: sbb_images_url + '/' + this.opt.sMonthImageExpanded,
 						altExpanded: '-',
-						srcCollapsed: smf_images_url + '/' + this.opt.sMonthImageCollapsed,
+						srcCollapsed: sbb_images_url + '/' + this.opt.sMonthImageCollapsed,
 						altCollapsed: '+'
 					}
 				],

@@ -6,7 +6,7 @@
 			rotSwap = !rotSwap;
 
 			// Toggle icon
-			document.getElementById("rotIcon").src = smf_images_url + (rotSwap ? "/selected_open.png" : "/selected.png");
+			document.getElementById("rotIcon").src = sbb_images_url + (rotSwap ? "/selected_open.png" : "/selected.png");
 			setInnerHTML(document.getElementById("rotText"), rotSwap ? {{{json txt.maintain_old_choose}}} : {{{json txt.maintain_old_all}}});
 
 			// Toggle panel

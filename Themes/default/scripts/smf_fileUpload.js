@@ -129,7 +129,7 @@ function smf_fileUpload(oOptions) {
 
 		// If the attachment is an image and has a thumbnail, show it. Otherwise fallback to the generic thumbfile.
 		if (!file.type.match(/image.*/)) {
-			myDropzone.emit('thumbnail', file, smf_images_url + '/generic_attach.png');
+			myDropzone.emit('thumbnail', file, sbb_images_url + '/generic_attach.png');
 		}
 
 		// If the file is too small, it won't have a thumbnail, show the regular file.
