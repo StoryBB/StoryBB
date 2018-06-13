@@ -228,7 +228,7 @@ $txt['upgrade_ready_proceed'] = 'Thank you for choosing to upgrade to StoryBB %1
 $txt['upgrade_error_script_js'] = 'The upgrade script cannot find script.js or it is out of date. Make sure your theme paths are correct. You can download a setting checker tool from the <a href="https://storybb.org">StoryBB website</a>';
 
 $txt['upgrade_warning_lots_data'] = 'This upgrade script has detected that your forum contains a lot of data which needs upgrading. This process may take quite some time depending on your server and forum size, and for very large forums (~300,000 messages) may take several hours to complete.';
-$txt['upgrade_warning_out_of_date'] = 'This upgrade script is out of date! The current version of StoryBB is <em id="smfVersion" style="white-space: nowrap;">??</em> but this upgrade script is for <em id="yourVersion" style="white-space: nowrap;">%1$s</em>.<br><br>It is recommended that you visit the <a href="https://storybb.org">StoryBB</a> website to ensure you are upgrading to the latest version.';
+$txt['upgrade_warning_out_of_date'] = 'This upgrade script is out of date! The current version of StoryBB is <em style="white-space: nowrap;">??</em> but this upgrade script is for <em style="white-space: nowrap;">%1$s</em>.<br><br>It is recommended that you visit the <a href="https://storybb.org">StoryBB</a> website to ensure you are upgrading to the latest version.';
 
 $txt['error_ftp_no_connect'] = 'Unable to connect to FTP server with this combination of details.';
 $txt['ftp_login'] = 'Your FTP connection information';

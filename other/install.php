@@ -992,7 +992,7 @@ function DatabasePopulation()
 		$smcFunc['db_free_result']($result);
 
 		// Do they match?  If so, this is just a refresh so charge on!
-		if (!isset($modSettings['smfVersion']) || $modSettings['smfVersion'] != $GLOBALS['current_sbb_version'])
+		if (!isset($modSettings['sbbVersion']) || $modSettings['sbbVersion'] != $GLOBALS['current_sbb_version'])
 		{
 			$incontext['error'] = $txt['error_versions_do_not_match'];
 			return false;
@@ -1876,7 +1876,7 @@ function template_welcome_message()
 			<div style="float: left; width: 2ex; font-size: 2em; color: red;">!!</div>
 			<strong style="text-decoration: underline;">', $txt['error_warning_notice'], '</strong><br>
 			<div style="padding-left: 6ex;">
-				', sprintf($txt['error_script_outdated'], '<em id="smfVersion" style="white-space: nowrap;">??</em>', '<em id="yourVersion" style="white-space: nowrap;">' . $GLOBALS['current_sbb_version'] . '</em>'), '
+				', sprintf($txt['error_script_outdated'], '<em id="sbbVersion" style="white-space: nowrap;">??</em>', '<em id="yourVersion" style="white-space: nowrap;">' . $GLOBALS['current_sbb_version'] . '</em>'), '
 			</div>
 		</div>';
 
@@ -1897,7 +1897,7 @@ function template_welcome_message()
 				$.getJSON( "https://storybb.org/updates.json", function(data) {
 					if (data && data.current_version) {
 						var currentVersion = $("#yourVersion").text();
-						$("#smfVersion").text(data.current_version);
+						$("#sbbVersion").text(data.current_version);
 						if (currentVersion < data.current_version) {
 							$("#version_warning").show();
 						}

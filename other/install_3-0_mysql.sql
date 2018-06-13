@@ -1683,7 +1683,7 @@ VALUES
 
 INSERT INTO {$db_prefix}settings
   (variable, value)
-VALUES ('smfVersion', '{$sbb_version}'),
+VALUES ('sbbVersion', '{$sbb_version}'),
   ('news', '{$default_news}'),
   ('todayMod', '1'),
   ('pollMode', '1'),
