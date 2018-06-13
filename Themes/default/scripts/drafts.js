@@ -1,5 +1,5 @@
 // The draft save object
-function smf_DraftAutoSave(oOptions)
+function sbb_DraftAutoSave(oOptions)
 {
 	this.opt = oOptions;
 	this.bInDraftMode = false;
@@ -19,7 +19,7 @@ function smf_DraftAutoSave(oOptions)
 }
 
 // Start our self calling routine
-smf_DraftAutoSave.prototype.init = function ()
+sbb_DraftAutoSave.prototype.init = function ()
 {
 	if (this.opt.iFreq > 0)
 	{
@@ -46,7 +46,7 @@ smf_DraftAutoSave.prototype.init = function ()
 }
 
 // Moved away from the page, where did you go? ... till you return we pause autosaving
-smf_DraftAutoSave.prototype.draftBlur = function(oEvent, source)
+sbb_DraftAutoSave.prototype.draftBlur = function(oEvent, source)
 {
 	if ($('#' + this.opt.sSceditorID).data("sceditor").inSourceMode() == source)
 	{
@@ -64,7 +64,7 @@ smf_DraftAutoSave.prototype.draftBlur = function(oEvent, source)
 }
 
 // Since you're back we resume the autosave timer
-smf_DraftAutoSave.prototype.draftFocus = function(oEvent, source)
+sbb_DraftAutoSave.prototype.draftFocus = function(oEvent, source)
 {
 	if ($('#' + this.opt.sSceditorID).data("sceditor").inSourceMode() == source)
 	{
@@ -75,12 +75,12 @@ smf_DraftAutoSave.prototype.draftFocus = function(oEvent, source)
 }
 
 // Make the call to save this draft in the background
-smf_DraftAutoSave.prototype.draftSave = function ()
+sbb_DraftAutoSave.prototype.draftSave = function ()
 {
 	var sPostdata = $('#' + this.opt.sSceditorID).data("sceditor").getText(true);
 
 	// nothing to save or already posting or nothing changed?
-	if (isEmptyText(sPostdata) || smf_formSubmitted || this.sCheckDraft == sPostdata)
+	if (isEmptyText(sPostdata) || sbb_formSubmitted || this.sCheckDraft == sPostdata)
 		return false;
 
 	// Still saving the last one or other?
@@ -122,12 +122,12 @@ smf_DraftAutoSave.prototype.draftSave = function ()
 }
 
 // Make the call to save this PM draft in the background
-smf_DraftAutoSave.prototype.draftPMSave = function ()
+sbb_DraftAutoSave.prototype.draftPMSave = function ()
 {
 	var sPostdata = $('#' + this.opt.sSceditorID).data("sceditor").getText();
 
 	// nothing to save or already posting or nothing changed?
-	if (isEmptyText(sPostdata) || smf_formSubmitted || this.sCheckDraft == sPostdata)
+	if (isEmptyText(sPostdata) || sbb_formSubmitted || this.sCheckDraft == sPostdata)
 		return false;
 
 	// Still saving the last one or some other?
@@ -166,7 +166,7 @@ smf_DraftAutoSave.prototype.draftPMSave = function ()
 }
 
 // Callback function of the XMLhttp request for saving the draft message
-smf_DraftAutoSave.prototype.onDraftDone = function (XMLDoc)
+sbb_DraftAutoSave.prototype.onDraftDone = function (XMLDoc)
 {
 	// If it is not valid then clean up
 	if (!XMLDoc || !XMLDoc.getElementsByTagName('draft'))
@@ -191,7 +191,7 @@ smf_DraftAutoSave.prototype.onDraftDone = function (XMLDoc)
 }
 
 // function to retrieve the to and bcc values from the pseudo arrays
-smf_DraftAutoSave.prototype.draftGetRecipient = function (sField)
+sbb_DraftAutoSave.prototype.draftGetRecipient = function (sField)
 {
 	var oRecipient = document.forms.postmodify.elements[sField];
 	var aRecipient = []
@@ -212,7 +212,7 @@ smf_DraftAutoSave.prototype.draftGetRecipient = function (sField)
 }
 
 // If another auto save came in with one still pending
-smf_DraftAutoSave.prototype.draftCancel = function ()
+sbb_DraftAutoSave.prototype.draftCancel = function ()
 {
 	// can we do anything at all ... do we want to (e.g. sequence our async events?)
 	// @todo if not remove this function

@@ -130,7 +130,7 @@ interface API_Interface
 	public function cacheSettings(array &$config_vars);
 
 	/**
-	 * Gets the latest version of SMF this is compatible with.
+	 * Gets the latest version of StoryBB this is compatible with.
 	 *
 	 * @access public
 	 * @return string the value of $key.

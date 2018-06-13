@@ -23,8 +23,8 @@ function AdminMain()
 
 	// Load the language and templates....
 	loadLanguage('Admin');
-	loadJavaScriptFile('admin.js', array(), 'smf_admin');
-	loadCSSFile('admin.css', array(), 'smf_admin');
+	loadJavaScriptFile('admin.js', array(), 'sbb_admin');
+	loadCSSFile('admin.css', array(), 'sbb_admin');
 
 	$context['show_admin_search'] = $context['user']['is_admin'];
 
@@ -34,7 +34,7 @@ function AdminMain()
 	require_once($sourcedir . '/Subs-Menu.php');
 
 	// Some preferences.
-	$context['admin_preferences'] = !empty($options['admin_preferences']) ? smf_json_decode($options['admin_preferences'], true) : array();
+	$context['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
 
 	/** @var array $admin_areas Defines the menu structure for the admin center. See {@link Subs-Menu.php Subs-Menu.php} for details! */
 	$admin_areas = array(

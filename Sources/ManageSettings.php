@@ -560,7 +560,7 @@ function ModifyAntispamSettings($return_config = false)
 		}
 		$context['question_answers'][$lang_id]['questions'][$row['id_question']] = [
 			'question' => $row['question'],
-			'answers' => smf_json_decode($row['answers'], true),
+			'answers' => sbb_json_decode($row['answers'], true),
 		];
 		$questions++;
 	}
@@ -2037,7 +2037,7 @@ function ModifyLogSettings($return_config = false)
 			array('int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Log of the scheduled tasks and how long they ran.
 			array('int', 'pruneSpiderHitLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Log of the scheduled tasks and how long they ran.
 			// If you add any additional logs make sure to add them after this point.  Additionally, make sure you add them to the weekly scheduled task.
-			// Mod Developers: Do NOT use the pruningOptions master variable for this as SMF Core may overwrite your setting in the future!
+			// Mod Developers: Do NOT use the pruningOptions master variable for this as StoryBB Core may overwrite your setting in the future!
 	);
 
 	// We want to be toggling some of these for a nice user experience. If you want to add yours to the list of those magically hidden when the 'pruning' option is off, add to this.

@@ -1,10 +1,10 @@
-<ul id="smf_slider" class="roundframe">
+<ul id="sbb_slider" class="roundframe">
 {{#each context.news_lines}}
     <li>{{this}}</li>
 {{/each}}
 </ul>
 <script>
-    jQuery("#smf_slider").slippry({
+    jQuery("#sbb_slider").slippry({
         pause: {{settings.newsfader_time}},
         adaptiveHeight: 0,
         captions: 0,

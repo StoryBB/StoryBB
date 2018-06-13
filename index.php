@@ -4,7 +4,7 @@
  * This, as you have probably guessed, is the crux on which StoryBB functions.
  * Everything should start here, so all the setup and security is done
  * properly.  The most interesting part of this file is the action array in
- * the smf_main() function.  It is formatted as so:
+ * the sbb_main() function.  It is formatted as so:
  * 	'action-in-url' => array('Source-File.php', 'FunctionToCall'),
  *
  * Then, you can access the FunctionToCall() function from Source-File.php
@@ -21,7 +21,7 @@ $software_year = '2018';
 $forum_version = 'StoryBB 3.0 Alpha 1';
 
 // Get everything started up...
-define('SMF', 1);
+define('STORYBB', 1);
 
 error_reporting(E_ALL);
 $time_start = microtime(true);
@@ -72,7 +72,7 @@ cleanRequest();
 
 // Seed the random generator.
 if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
-	smf_seed_generator();
+	sbb_seed_generator();
 
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
 if (isset($_GET['scheduled']))
@@ -131,13 +131,13 @@ spl_autoload_register(function ($class) use ($sourcedir)
 });
 
 // Register an error handler.
-set_error_handler('smf_error_handler');
+set_error_handler('sbb_error_handler');
 
 // Start the session. (assuming it hasn't already been.)
 loadSession();
 
 // What function shall we execute? (done like this for memory's sake.)
-call_user_func(smf_main());
+call_user_func(sbb_main());
 
 // Call obExit specially; we're coming from the main area ;).
 obExit(null, null, true);
@@ -147,7 +147,7 @@ obExit(null, null, true);
  * This delegates to each area.
  * @return array|string|void An array containing the file to include and name of function to call, the name of a function to call or dies with a fatal_lang_error if we couldn't find anything to do.
  */
-function smf_main()
+function sbb_main()
 {
 	global $modSettings, $settings, $user_info, $board, $topic;
 	global $board_info, $maintenance, $sourcedir;

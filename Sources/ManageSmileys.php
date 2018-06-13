@@ -613,7 +613,7 @@ function AddSmiley()
 			{
 				$smileyLocation = $context['smileys_dir'] . '/' . un_htmlspecialchars($context['smiley_sets'][$i]['path']) . '/' . $destName;
 				move_uploaded_file($_FILES['uploadSmiley']['tmp_name'], $smileyLocation);
-				smf_chmod($smileyLocation, 0644);
+				sbb_chmod($smileyLocation, 0644);
 
 				// Now, we want to move it from there to all the other sets.
 				for ($n = count($context['smiley_sets']); $i < $n; $i++)
@@ -626,7 +626,7 @@ function AddSmiley()
 
 					// Okay, so copy the first one we made to here.
 					copy($smileyLocation, $currentPath);
-					smf_chmod($currentPath, 0644);
+					sbb_chmod($currentPath, 0644);
 				}
 			}
 
@@ -681,7 +681,7 @@ function AddSmiley()
 
 				// Finally - move the image!
 				move_uploaded_file($_FILES['individual_' . $set['name']]['tmp_name'], $smileyLocation);
-				smf_chmod($smileyLocation, 0644);
+				sbb_chmod($smileyLocation, 0644);
 
 				// Should always be saved correctly!
 				$_POST['smiley_filename'] = $destName;

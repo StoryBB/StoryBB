@@ -103,7 +103,7 @@ function is_not_guest($message = '')
 		obExit(false);
 
 	// Attempt to detect if they came from dlattach.
-	if (SMF != 'SSI' && empty($context['theme_loaded']))
+	if (STORYBB != 'SSI' && empty($context['theme_loaded']))
 		loadTheme();
 
 	// Never redirect to an attachment
@@ -283,7 +283,7 @@ function is_not_banned($forceCheck = false)
 		{
 			require_once($sourcedir . '/Subs-Auth.php');
 			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-			smf_setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], false, false);
+			sbb_setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], false, false);
 		}
 	}
 
@@ -324,7 +324,7 @@ function is_not_banned($forceCheck = false)
 		require_once($sourcedir . '/Subs-Auth.php');
 		require_once($sourcedir . '/LogInOut.php');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-		smf_setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], false, false);
+		sbb_setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], false, false);
 
 		// Don't scare anyone, now.
 		$_GET['action'] = '';
@@ -371,7 +371,7 @@ function is_not_banned($forceCheck = false)
 			'language' => $user_info['language'],
 		);
 
-		// SMF's Wipe 'n Clean(r) erases all traces.
+		// Clean all traces of the request.
 		$_GET['action'] = '';
 		$_GET['board'] = '';
 		$_GET['topic'] = '';
@@ -1031,8 +1031,7 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 		$permissions = array($permissions);
 
 	/*
-	 * Set $simple to true to use this function as it were in SMF 2.0.x.
-	 * Otherwise, the resultant array becomes split into the multiple
+	 * If not $simple, the resultant array becomes split into the multiple
 	 * permissions that were passed. Other than that, it's just the normal
 	 * state of play that you're used to.
 	 */

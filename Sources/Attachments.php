@@ -264,7 +264,7 @@ class Attachments
 
 				// Move the file to the attachments folder with a temp name for now.
 				if (@move_uploaded_file($_FILES['attachment']['tmp_name'][$n], $destName))
-					smf_chmod($destName, 0644);
+					sbb_chmod($destName, 0644);
 
 				// This is madness!!
 				else

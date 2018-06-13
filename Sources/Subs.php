@@ -1226,7 +1226,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'code',
 				'type' => 'unparsed_content',
-				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> <a class="codeoperation smf_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
+				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> <a class="codeoperation sbb_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
 				// @todo Maybe this can be simplified?
 				'validate' => isset($disabled['code']) ? null : function (&$tag, &$data, $disabled) use ($context)
 				{
@@ -1245,7 +1245,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'code',
 				'type' => 'unparsed_equals_content',
-				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> ($2) <a class="codeoperation smf_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
+				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> ($2) <a class="codeoperation sbb_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
 				// @todo Maybe this can be simplified?
 				'validate' => isset($disabled['code']) ? null : function (&$tag, &$data, $disabled) use ($context)
 				{
@@ -2911,7 +2911,7 @@ function url_image_size($url)
 		if ($fp != false)
 		{
 			// Send the HEAD request (since we don't have to worry about chunked, HTTP/1.1 is fine here.)
-			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/SMF' . "\r\n" . 'Connection: close' . "\r\n\r\n");
+			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/StoryBB' . "\r\n" . 'Connection: close' . "\r\n\r\n");
 
 			// Read in the HTTP/1.1 or whatever.
 			$test = substr(fgets($fp, 11), -1);
@@ -3049,7 +3049,7 @@ function setupThemeContext($forceload = false)
 
 	// Add a generic "Are you sure?" confirmation message.
 	addInlineJavaScript('
-	var smf_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');
+	var sbb_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');
 
 	// Now add the capping code for avatars.
 	if (!empty($modSettings['avatar_max_width']) && !empty($modSettings['avatar_max_height']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
@@ -3502,7 +3502,7 @@ function custMinify($data, $type, $do_deferred = false)
 	$toCreate = $cTempPath .'minified'. ($do_deferred ? '_deferred' : '') .'.'. $type;
 
 	// File has to exists, if it isn't try to create it.
-	if ((!file_exists($toCreate) && @fopen($toCreate, 'w') === false) || !smf_chmod($toCreate))
+	if ((!file_exists($toCreate) && @fopen($toCreate, 'w') === false) || !sbb_chmod($toCreate))
 	{
 		loadLanguage('Errors');
 		log_error(sprintf($txt['file_not_created'], $toCreate), 'general');
@@ -3861,7 +3861,7 @@ function setupMenuContext()
 			addInlineJavaScript('
 	var new_alert_title = "' . $context['forum_name'] . '";
 	var alert_timeout = ' . $timeout . ';');
-			loadJavaScriptFile('alerts.js', array(), 'smf_alerts');
+			loadJavaScriptFile('alerts.js', array(), 'sbb_alerts');
 		}
 	}
 
@@ -4147,7 +4147,7 @@ function setupMenuContext()
 /**
  * Generate a random seed and ensure it's stored in settings.
  */
-function smf_seed_generator()
+function sbb_seed_generator()
 {
 	updateSettings(array('rand_seed' => (float) microtime() * 1000000));
 }
@@ -4337,7 +4337,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 
 /**
  * Receives a string and tries to figure it out if its a method or a function.
- * If a method is found, it looks for a "#" which indicates SMF should create a new instance of the given class.
+ * If a method is found, it looks for a "#" which indicates StoryBB should create a new instance of the given class.
  * Checks the string/array for is_callable() and return false/fatal_lang_error is the given value results in a non callable string/array.
  * Prepare and returns a callable depending on the type of method/function found.
  *
@@ -4728,7 +4728,7 @@ function get_gravatar_url($email_address)
  * @param string $when An optional date or time for which to calculate the timezone offset values. May be a Unix timestamp or any string that strtotime() can understand. Defaults to 'now'.
  * @return array An array of timezone info.
  */
-function smf_list_timezones($when = 'now')
+function sbb_list_timezones($when = 'now')
 {
 	global $smcFunc, $modSettings;
 	static $timezones = null, $lastwhen = null;
@@ -5237,7 +5237,7 @@ function safe_unserialize($str)
  * @param int $value Not needed, added for legacy reasons.
  * @return boolean  true if the file/dir is already writable or the function was able to make it writable, false if the function couldn't make the file/dir writable.
  */
-function smf_chmod($file, $value = 0)
+function sbb_chmod($file, $value = 0)
 {
 	// No file? no checks!
 	if (empty($file))
@@ -5274,11 +5274,11 @@ function smf_chmod($file, $value = 0)
  * Wrapper function for json_decode() with error handling.
 
  * @param string $json The string to decode.
- * @param bool $returnAsArray To return the decoded string as an array or an object, SMF only uses Arrays but to keep on compatibility with json_decode its set to false as default.
+ * @param bool $returnAsArray To return the decoded string as an array or an object, StoryBB only uses Arrays but to keep on compatibility with json_decode its set to false as default.
  * @param bool $logIt To specify if the error will be logged if theres any.
  * @return array Either an empty array or the decoded data as an array.
  */
-function smf_json_decode($json, $returnAsArray = false, $logIt = true)
+function sbb_json_decode($json, $returnAsArray = false, $logIt = true)
 {
 	global $txt;
 
@@ -5317,7 +5317,7 @@ function smf_json_decode($json, $returnAsArray = false, $logIt = true)
 	// Something went wrong!
 	if (!empty($jsonError) && $logIt)
 	{
-		// Being a wrapper means we lost our smf_error_handler() privileges :(
+		// Being a wrapper means we lost our sbb_error_handler() privileges :(
 		$jsonDebug = debug_backtrace();
 		$jsonDebug = $jsonDebug[0];
 		loadLanguage('Errors');
@@ -5355,7 +5355,7 @@ function isValidIP($IPString)
  * @param string $type The content type. Defaults to Json.
  * @return void
  */
-function smf_serverResponse($data = '', $type = 'Content-Type: application/json')
+function sbb_serverResponse($data = '', $type = 'Content-Type: application/json')
 {
 	global $db_show_debug, $modSettings;
 
@@ -5407,8 +5407,8 @@ function smf_serverResponse($data = '', $type = 'Content-Type: application/json'
  * Check if the passed url has a redirect to https:// by querying headers.
  *
  * Returns true if a redirect was found & false if not.
- * Note that when force_ssl = 2, SMF issues its own redirect...  So if this
- * returns true, it may be caused by SMF, not necessarily an .htaccess redirect.
+ * Note that when force_ssl = 2, StoryBB issues its own redirect...  So if this
+ * returns true, it may be caused by StoryBB, not necessarily an .htaccess redirect.
  * @param string $url to check, in $boardurl format (no trailing slash).
  */
 function https_redirect_active($url) {

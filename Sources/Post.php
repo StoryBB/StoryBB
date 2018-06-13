@@ -1071,13 +1071,13 @@ function Post($post_errors = array())
 	// Mentions
 	if (!empty($modSettings['enable_mentions']) && allowedTo('mention'))
 	{
-		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'smf_caret');
-		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'smf_atwho');
-		loadJavaScriptFile('mentions.js', array('defer' => true), 'smf_mentions');
+		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'sbb_caret');
+		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'sbb_atwho');
+		loadJavaScriptFile('mentions.js', array('defer' => true), 'sbb_mentions');
 	}
 
 	// quotedText.js
-	loadJavaScriptFile('quotedText.js', array('defer' => true), 'smf_quotedText');
+	loadJavaScriptFile('quotedText.js', array('defer' => true), 'sbb_quotedText');
 
 	// Mock files to show already attached files.
 	addInlineJavaScript('
@@ -1102,11 +1102,11 @@ function Post($post_errors = array())
 	{
 		$acceptedFiles = implode(',', array_map(function($val) use($smcFunc) { return '.' . $smcFunc['htmltrim']($val); } , explode(',', $context['allowed_extensions'])));
 
-		loadJavaScriptFile('dropzone.min.js', array('defer' => true), 'smf_dropzone');
-		loadJavaScriptFile('smf_fileUpload.js', array('defer' => true), 'smf_fileUpload');
+		loadJavaScriptFile('dropzone.min.js', array('defer' => true), 'sbb_dropzone');
+		loadJavaScriptFile('sbb_fileUpload.js', array('defer' => true), 'sbb_fileUpload');
 		addInlineJavaScript('
 	$(function() {
-		smf_fileUpload({
+		sbb_fileUpload({
 			dictDefaultMessage : '. JavaScriptEscape($txt['attach_drop_zone']) . ',
 			dictFallbackMessage : '. JavaScriptEscape($txt['attach_drop_zone_no']) . ',
 			dictCancelUpload : '. JavaScriptEscape($txt['modify_cancel']) . ',

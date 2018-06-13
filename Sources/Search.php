@@ -11,12 +11,12 @@
  */
 
 // @todo fix this
-// This defines two version types for checking the API's are compatible with this version of SMF.
+// This defines two version types for checking the API's are compatible with this version of StoryBB.
 $GLOBALS['search_versions'] = array(
 	// This is the forum version but is repeated due to some people rewriting $forum_version.
-	'forum_version' => 'StoryBB Alpha 1',
-	// This is the minimum version of SMF that an API could have been written for to work. (strtr to stop accidentally updating version on release)
-	'search_version' => strtr('SMF 2+1=Alpha=1', array('+' => '.', '=' => ' ')),
+	'forum_version' => 'StoryBB 3.0 Alpha 1',
+	// This is the minimum version of StoryBB that an API could have been written for to work. (strtr to stop accidentally updating version on release)
+	'search_version' => strtr('StoryBB 3+0=Alpha=1', array('+' => '.', '=' => ' ')),
 );
 
 /**
@@ -38,7 +38,7 @@ function PlushSearch1()
 		fatal_lang_error('loadavg_search_disabled', false);
 
 	loadLanguage('Search');
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 
 	// Check the user's permissions.
 	isAllowedTo('search_posts');
@@ -2071,7 +2071,7 @@ function findSearchAPI()
 	// Search has a special database set.
 	db_extend('search');
 
-	// Create an instance of the search API and check it is valid for this version of SMF.
+	// Create an instance of the search API and check it is valid for this version of StoryBB.
 	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
 	$search_class_name = '\\StoryBB\\Search\\' . ucfirst(strtolower($modSettings['search_index']));
 	if (!class_exists($search_class_name))

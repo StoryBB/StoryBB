@@ -455,7 +455,7 @@ class Likes
 		);
 
 		// Note that we could just as easily have cleared the cache here, or set up the redirection address
-		// but if your liked content doesn't need to do anything other than have the record in smf_user_likes,
+		// but if your liked content doesn't need to do anything other than have the record in sbb_user_likes,
 		// there's no point in creating another function unnecessarily.
 	}
 
@@ -625,7 +625,7 @@ class Likes
 		call_integration_hook('integrate_likes_json_response', array(&$print));
 
 		// Print the data.
-		smf_serverResponse(json_encode($print));
+		sbb_serverResponse(json_encode($print));
 		die;
 	}
 }

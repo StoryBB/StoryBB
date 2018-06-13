@@ -1,4 +1,4 @@
-function smf_fileUpload(oOptions) {
+function sbb_fileUpload(oOptions) {
 	// Check if the file should be accepted or not...
 	Dropzone.prototype.accept = function (file, done) {
 		if ((this.options.maxFiles != null) && this.getAcceptedFiles().length >= this.options.maxFiles) {
@@ -28,7 +28,7 @@ function smf_fileUpload(oOptions) {
 		autoQueue: false,
 		clickable: '.fileinput-button',
 		currentUsedSize: 0,
-		smf_insertBBC: function (file, w, h) {
+		sbb_insertBBC: function (file, w, h) {
 
 			var mime_type = typeof file.type !== "undefined" ? file.type : (typeof file.mime_type !== "undefined" ? file.mime_type : '');
 
@@ -129,7 +129,7 @@ function smf_fileUpload(oOptions) {
 
 		// If the attachment is an image and has a thumbnail, show it. Otherwise fallback to the generic thumbfile.
 		if (!file.type.match(/image.*/)) {
-			myDropzone.emit('thumbnail', file, smf_images_url + '/generic_attach.png');
+			myDropzone.emit('thumbnail', file, sbb_images_url + '/generic_attach.png');
 		}
 
 		// If the file is too small, it won't have a thumbnail, show the regular file.
@@ -157,7 +157,7 @@ function smf_fileUpload(oOptions) {
 					// Get the editor stuff.
 					var oEditor = $('#' + oEditorID).data('sceditor');
 
-					oEditor.insert(myDropzone.options.smf_insertBBC(response, w, h));
+					oEditor.insert(myDropzone.options.sbb_insertBBC(response, w, h));
 				})
 				.appendTo(_innerElement.find('.attach-ui'));
 		};
@@ -174,7 +174,7 @@ function smf_fileUpload(oOptions) {
 					$this = $(this);
 
 					// Perform the action only after receiving the confirmation.
-					if (!confirm(smf_you_sure)) {
+					if (!confirm(sbb_you_sure)) {
 						return;
 					}
 
@@ -318,7 +318,7 @@ function smf_fileUpload(oOptions) {
 		// Append the BBC.
 		w = _thisElement.find('input[name="attached_BBC_width"]').val();
 		h = _thisElement.find('input[name="attached_BBC_height"]').val();
-		_thisElement.find('input[name="attachBBC"]').val(myDropzone.options.smf_insertBBC(response, w, h));
+		_thisElement.find('input[name="attachBBC"]').val(myDropzone.options.sbb_insertBBC(response, w, h));
 
 		file.insertAttachment(_thisElement, response);
 
@@ -363,7 +363,7 @@ function smf_fileUpload(oOptions) {
 			// Append the BBC.
 			w = _thisElement.find('input[name="attached_BBC_width"]').val();
 			h = _thisElement.find('input[name="attached_BBC_height"]').val();
-			_thisElement.find('input[name="attachBBC"]').val(myDropzone.options.smf_insertBBC(file, w, h));
+			_thisElement.find('input[name="attachBBC"]').val(myDropzone.options.sbb_insertBBC(file, w, h));
 
 			file.insertAttachment(_thisElement, file);
 
@@ -406,7 +406,7 @@ function smf_fileUpload(oOptions) {
 	// Add an event for uploading and cancelling all files.
 	$('a#attach-cancelAll').on('click', function () {
 
-		if (!confirm(smf_you_sure)) {
+		if (!confirm(sbb_you_sure)) {
 			return;
 		}
 
@@ -416,7 +416,7 @@ function smf_fileUpload(oOptions) {
 
 	$('a#attach-uploadAll').on('click', function () {
 
-		if (!confirm(smf_you_sure)) {
+		if (!confirm(sbb_you_sure)) {
 			return;
 		}
 

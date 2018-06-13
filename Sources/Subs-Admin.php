@@ -129,7 +129,7 @@ function getServerVersions($checkFor)
 
 /**
  * Search through source, theme and language files to determine their version.
- * Get detailed version information about the physical SMF files on the server.
+ * Get detailed version information about the physical StoryBB files on the server.
  *
  * - the input parameter allows to set whether to include SSI.php and whether
  *   the results should be sorted.

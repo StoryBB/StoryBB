@@ -29,7 +29,7 @@ var updateAlerts = function ()
 
     unreadAlerts = parseInt(unreadAlerts);
 
-    $.get(sbb_scripturl + '?action=profile;area=alerts_popup;counter=' + unreadAlerts + ';u=' + smf_member_id, function (data)
+    $.get(sbb_scripturl + '?action=profile;area=alerts_popup;counter=' + unreadAlerts + ';u=' + sbb_member_id, function (data)
     {
         var alerts = $(data).find('.unread');
         if (alerts.length == 0)
@@ -52,7 +52,7 @@ var updateAlerts = function ()
         {
             var notification = notify.createNotification(new_alert_title, {
                 body: $(item).find('div.details:first > span').text(),
-                icon: smf_images_url + '/blank.png'
+                icon: sbb_images_url + '/blank.png'
             });
 
             notification.click(function()

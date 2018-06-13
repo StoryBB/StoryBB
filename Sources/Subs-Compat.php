@@ -14,7 +14,7 @@
  */
 
 /**
- * Define the old SMF sha1 function. Uses mhash if available
+ * Define the old legacy sha1 function. Uses mhash if available
  * @param string $str The string
  * @return string The sha1 hashed version of $str
  */
@@ -140,9 +140,9 @@ function sha1_rol($num, $cnt)
  * @param string $number
  * @return string The crc32 polynomial of $number
  */
-if (!function_exists('smf_crc32'))
+if (!function_exists('sbb_crc32'))
 {
-	function smf_crc32($number)
+	function sbb_crc32($number)
 	{
 		$crc = crc32($number);
 

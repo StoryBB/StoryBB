@@ -45,7 +45,7 @@ class Apc extends API
 	{
 		$key = $this->prefix . strtr($key, ':/', '-_');
 
-		return apc_fetch($key . 'smf');
+		return apc_fetch($key . 'sbb');
 	}
 
 	/**
@@ -57,9 +57,9 @@ class Apc extends API
 
 		// An extended key is needed to counteract a bug in APC.
 		if ($value === null)
-			return apc_delete($key . 'smf');
+			return apc_delete($key . 'sbb');
 		else
-			return apc_store($key . 'smf', $value, $ttl);
+			return apc_store($key . 'sbb', $value, $ttl);
 	}
 
 	/**

@@ -360,7 +360,7 @@ class PayPal implements PaymentProcessor
 	 */
 	public function performCancel($subscription_id, $member_id, $subscription_info)
 	{
-		// PayPal doesn't require SMF to notify it every time the subscription is up for renewal.
+		// PayPal doesn't require StoryBB to notify it every time the subscription is up for renewal.
 		// A cancellation should not cause the user to be immediately dropped from their subscription, but
 		// let it expire normally. Some systems require taking action in the database to deal with this, but
 		// PayPal does not, so we actually just do nothing. But this is a nice prototype/example just in case.

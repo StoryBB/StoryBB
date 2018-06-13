@@ -83,7 +83,7 @@ function writeLog($force = false)
 	// Guests use 0, members use their session ID.
 	$session_id = $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
 
-	// Grab the last all-of-SMF-specific log_online deletion time.
+	// Grab the last all-of-StoryBB-specific log_online deletion time.
 	$do_delete = cache_get_data('log_online-update', 30) < time() - 30;
 
 	// If the last click wasn't a long time ago, and there was a last click...
@@ -153,7 +153,7 @@ function writeLog($force = false)
 		$_SESSION['timeOnlineUpdated'] = time();
 
 	// Set their login time, if not already done within the last minute.
-	if (SMF != 'SSI' && !empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('.xml', 'login2', 'logintfa'))))
+	if (STORYBB != 'SSI' && !empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('.xml', 'login2', 'logintfa'))))
 	{
 		// Don't count longer than 15 minutes.
 		if (time() - $_SESSION['timeOnlineUpdated'] > 60 * 15)
@@ -436,8 +436,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 }
 
 /**
- * Log changes to the forum, such as moderation events or administrative changes.
- * This behaves just like logAction() in SMF 2.0, except that it is designed to log multiple actions at once.
+ * Log multiple changes to the forum, such as moderation events or administrative changes.
  *
  * @param array $logs An array of log data
  * @return int The last logged ID

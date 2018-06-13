@@ -16,7 +16,7 @@ $txt['storybb_installer'] = 'StoryBB Installer';
 $txt['installer_language'] = 'Language';
 $txt['installer_language_set'] = 'Set';
 $txt['congratulations'] = 'Congratulations, the installation process is complete!';
-$txt['congratulations_help'] = 'If at any time you need support, or StoryBB fails to work properly, please remember that <a href="https://www.simplemachines.org/community/index.php" target="_blank">help is available</a> if you need it.';
+$txt['congratulations_help'] = 'If at any time you need support, or StoryBB fails to work properly, please remember that <a href="https://storybb.org/" target="_blank">help is available</a> if you need it.';
 $txt['still_writable'] = 'Your installation directory is still writable. It\'s a good idea to chmod it so that it is not writable for security reasons.';
 $txt['delete_installer'] = 'Click here to delete this install.php file now.';
 $txt['delete_installer_maybe'] = '<em>(doesn\'t work on all servers.)</em>';
@@ -25,7 +25,7 @@ $txt['good_luck'] = 'Good luck!<br>StoryBB';
 
 $txt['install_welcome'] = 'Welcome';
 $txt['install_welcome_desc'] = 'Welcome to StoryBB. This script will guide you through the process for installing %1$s. We\'ll gather a few details about your forum over the next few steps, and after a couple of minutes your forum will be ready for use.';
-$txt['install_no_https'] = 'Your environment does not support https streams.  Certain functions, e.g., receiving updates from SimpleMachines.org, will not work.';
+$txt['install_no_https'] = 'Your environment does not support https streams.  Certain functions, e.g., receiving updates from storybb.org, will not work.';
 $txt['install_all_lovely'] = 'We\'ve completed some initial tests on your server and everything appears to be in order. Simply click the &quot;Continue&quot; button below to get started.';
 
 $txt['user_refresh_install'] = 'Forum Refreshed';
@@ -188,8 +188,8 @@ $txt['error_user_settings_query'] = 'A database error occurred while trying to c
 $txt['error_subs_missing'] = 'Unable to find the Sources/Subs.php file. Please make sure it was uploaded properly, and then try again.';
 $txt['error_db_alter_priv'] = 'The database account you specified does not have permission to ALTER, CREATE, and/or DROP tables in the database; this is necessary for StoryBB to function properly.';
 $txt['error_versions_do_not_match'] = 'The installer has detected another version of StoryBB already installed with the specified information. If you are trying to upgrade, you should use the upgrader, not the installer.<br><br>Otherwise, you may wish to use different information, or create a backup and then delete the data currently in the database.';
-$txt['error_mod_security'] = 'The installer has detected the mod_security module is installed on your web server. Mod_security will block submitted forms even before StoryBB gets a say in anything. StoryBB has a built-in security scanner that will work more effectively than mod_security and that won\'t block submitted forms.<br><br><a href="https://www.simplemachines.org/redirect/mod_security">More information about disabling mod_security</a>';
-$txt['error_mod_security_no_write'] = 'The installer has detected the mod_security module is installed on your web server. Mod_security will block submitted forms even before StoryBB gets a say in anything. StoryBB has a built-in security scanner that will work more effectively than mod_security and that won\'t block submitted forms.<br><br><a href="https://www.simplemachines.org/redirect/mod_security">More information about disabling mod_security</a><br><br>Alternatively, you may wish to use your ftp client to chmod .htaccess in the forum directory to be writable (777), and then refresh this page.';
+$txt['error_mod_security'] = 'The installer has detected the mod_security module is installed on your web server. Mod_security will block submitted forms even before StoryBB gets a say in anything. StoryBB has a built-in security scanner that will work more effectively than mod_security and that won\'t block submitted forms.';
+$txt['error_mod_security_no_write'] = 'The installer has detected the mod_security module is installed on your web server. Mod_security will block submitted forms even before StoryBB gets a say in anything. StoryBB has a built-in security scanner that will work more effectively than mod_security and that won\'t block submitted forms.<br><br>You may wish to use your ftp client to chmod .htaccess in the forum directory to be writable (777), and then refresh this page.';
 $txt['error_valid_admin_email_needed'] = 'You have not entered a valid email address for your administrator account.';
 $txt['error_valid_server_email_needed'] = 'You have not entered a valid webmaster email address.';
 $txt['error_already_installed'] = 'The installer has detected that you already have StoryBB installed. It is strongly advised that you do <strong>not</strong> try to overwrite an existing installation - continuing with installation <strong>may result in the loss or corruption of existing data</strong>.<br><br>If you wish to upgrade please visit the <a href="https:/storybb.org">StoryBB website</a> and download the latest <em>upgrade</em> package.<br><br>If you wish to overwrite your existing installation, including all data, it\'s recommended that you delete the existing database tables and replace Settings.php and try again.';
@@ -228,7 +228,7 @@ $txt['upgrade_ready_proceed'] = 'Thank you for choosing to upgrade to StoryBB %1
 $txt['upgrade_error_script_js'] = 'The upgrade script cannot find script.js or it is out of date. Make sure your theme paths are correct. You can download a setting checker tool from the <a href="https://storybb.org">StoryBB website</a>';
 
 $txt['upgrade_warning_lots_data'] = 'This upgrade script has detected that your forum contains a lot of data which needs upgrading. This process may take quite some time depending on your server and forum size, and for very large forums (~300,000 messages) may take several hours to complete.';
-$txt['upgrade_warning_out_of_date'] = 'This upgrade script is out of date! The current version of StoryBB is <em id="smfVersion" style="white-space: nowrap;">??</em> but this upgrade script is for <em id="yourVersion" style="white-space: nowrap;">%1$s</em>.<br><br>It is recommended that you visit the <a href="https://storybb.org">StoryBB</a> website to ensure you are upgrading to the latest version.';
+$txt['upgrade_warning_out_of_date'] = 'This upgrade script is out of date! The current version of StoryBB is <em style="white-space: nowrap;">??</em> but this upgrade script is for <em style="white-space: nowrap;">%1$s</em>.<br><br>It is recommended that you visit the <a href="https://storybb.org">StoryBB</a> website to ensure you are upgrading to the latest version.';
 
 $txt['error_ftp_no_connect'] = 'Unable to connect to FTP server with this combination of details.';
 $txt['ftp_login'] = 'Your FTP connection information';

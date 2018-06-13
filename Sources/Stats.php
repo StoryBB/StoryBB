@@ -69,7 +69,7 @@ function DisplayStats()
 
 	loadLanguage('Stats');
 	$context['sub_template'] = 'stats_main';
-	loadJavaScriptFile('stats.js', array('default_theme' => true, 'defer' => false), 'smf_stats');
+	loadJavaScriptFile('stats.js', array('default_theme' => true, 'defer' => false), 'sbb_stats');
 
 	// Build the link tree......
 	$context['linktree'][] = array(

@@ -10,7 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
-define('SMF', 'proxy');
+define('STORYBB', 'proxy');
 
 /**
  * Class ProxyServer
