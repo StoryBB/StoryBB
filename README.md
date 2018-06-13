@@ -1,5 +1,5 @@
 # StoryBB
-[![Build Status](https://travis-ci.org/StoryBB/StoryBB.svg?branch=master)]https://travis-ci.org/StoryBB/StoryBB)
+[![Build Status](https://travis-ci.org/StoryBB/StoryBB.svg?branch=master)](https://travis-ci.org/StoryBB/StoryBB) [![Open Source Helpers](https://www.codetriage.com/storybb/storybb/badges/users.svg)](https://www.codetriage.com/storybb/storybb)
 
 This is StoryBB! It was forked from SMF.
 The software is licensed under [BSD 3-clause license](https://opensource.org/licenses/BSD-3-Clause).
