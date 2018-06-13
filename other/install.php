@@ -1593,7 +1593,7 @@ function DeleteInstall()
 	if (isset($modSettings['recycle_board']))
 	{
 		$forum_version = $current_sbb_version; // The variable is usually defined in index.php so lets just use our variable to do it for us.
-		scheduled_fetchSMfiles(); // Now go get those files!
+		scheduled_fetchStoryBBfiles(); // Now go get those files!
 
 		// We've just installed!
 		$user_info['ip'] = $_SERVER['REMOTE_ADDR'];

@@ -1186,7 +1186,7 @@ function loadEssentialThemeData()
 /**
  * This retrieves data (e.g. last version of StoryBB) from storybb.org
  */
-function scheduled_fetchSMfiles()
+function scheduled_fetchStoryBBfiles()
 {
 	global $sourcedir, $txt, $language, $forum_version, $modSettings, $smcFunc, $context;
 
@@ -1230,7 +1230,7 @@ function scheduled_fetchSMfiles()
 		// If we got an error - give up - the site might be down. And if we should happen to be coming from elsewhere, let's also make a note of it.
 		if ($file_data === false)
 		{
-			$context['scheduled_errors']['fetchSMfiles'][] = sprintf($txt['st_cannot_retrieve_file'], $url);
+			$context['scheduled_errors']['fetchStoryBBiles'][] = sprintf($txt['st_cannot_retrieve_file'], $url);
 			log_error(sprintf($txt['st_cannot_retrieve_file'], $url));
 			return false;
 		}
