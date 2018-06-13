@@ -760,7 +760,7 @@ function subscriptions($memID)
 	$gateways = loadPaymentGateways();
 	foreach ($gateways as $id => $gateway)
 	{
-		$gateways[$id] = new $gateway['display_class']();
+		$gateways[$id] = new $gateway['class'];
 		if (!$gateways[$id]->gatewayEnabled())
 			unset($gateways[$id]);
 	}
