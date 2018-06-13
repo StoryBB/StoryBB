@@ -466,7 +466,7 @@ function MessageFolder()
 	$labelQuery = '';
 	$labelQuery2 = '';
 
-	// SMF logic: If you're viewing a label, it's still the inbox
+	// StoryBB logic: If you're viewing a label, it's still the inbox
 	if ($context['folder'] == 'inbox' && $context['current_label_id'] == -1)
 	{
 		$labelQuery = '

@@ -262,7 +262,7 @@ function smf_db_replacement__callback($matches)
 		break;
 
 		case 'identifier':
-			// Backticks inside identifiers are supported as of MySQL 4.1. We don't need them for SMF.
+			// Backticks inside identifiers are supported as of MySQL 4.1. We don't need them for StoryBB.
 			return '`' . strtr($replacement, array('`' => '', '.' => '`.`')) . '`';
 		break;
 

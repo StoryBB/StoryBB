@@ -312,7 +312,7 @@ function reloadSettings()
 		'<div>',
 	);
 
-	// These are the only valid image types for SMF, by default anyway.
+	// These are the only valid image types for StoryBB, by default anyway.
 	$context['validImageTypes'] = array(
 		1 => 'gif',
 		2 => 'jpeg',
@@ -3311,7 +3311,7 @@ function cache_get_data($key, $ttl = 120)
  *  - If no type is specified will perform a complete cache clearing
  * For cache engines that do not distinguish on types, a full cache flush will be done
  *
- * @param string $type The cache type ('memcached', 'apc', 'xcache', 'zend' or something else for SMF's file cache)
+ * @param string $type The cache type ('memcached', 'apc', 'xcache', 'zend' or something else for StoryBB's file cache)
  */
 function clean_cache($type = '')
 {

@@ -294,7 +294,7 @@ function loadProfileFields($force_reload = false)
 						validateUsername($context['id_member'], trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $value)));
 						updateMemberData($context['id_member'], array('member_name' => $value));
 
-						// Call this here so any integrated systems will know about the name change (resetPassword() takes care of this if we're letting SMF generate the password)
+						// Call this here so any integrated systems will know about the name change (resetPassword() takes care of this if we're letting StoryBB generate the password)
 						call_integration_hook('integrate_reset_pass', array($cur_profile['member_name'], $value, $_POST['passwrd1']));
 					}
 				}
@@ -4031,7 +4031,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 }
 
 /**
- * Provides interface to setup Two Factor Auth in SMF
+ * Provides interface to setup Two Factor Auth in StoryBB
  *
  * @param int $memID The ID of the member
  */

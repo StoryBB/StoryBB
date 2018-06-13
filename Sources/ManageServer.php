@@ -221,7 +221,7 @@ $(function()
  * The admin must have pointed those somewhere else on purpose, so they must be updated manually.
  * 
  * A word of caution: You can't trust the http/https scheme reflected for these URLs in $globals
- * (e.g., $boardurl) or in $modSettings.  This is because SMF may change them in memory to comply
+ * (e.g., $boardurl) or in $modSettings.  This is because StoryBB may change them in memory to comply
  * with the force_ssl setting - a soft redirect may be in effect...  Thus, conditional updates
  * to these values do not work.  You gotta just brute force overwrite them based on force_ssl.
  *
@@ -313,7 +313,7 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
  *
  * Helper function to see if the url being checked is based off of $boardurl.
  * If not, it was overridden by the admin to some other value on purpose, and should not
- * be stepped on by SMF when aligning URLs with the force_ssl setting.
+ * be stepped on by StoryBB when aligning URLs with the force_ssl setting.
  * The site admin must change URLs that are not aligned with $boardurl manually.
  *
  * @param string $url is the url to check.

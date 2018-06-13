@@ -394,7 +394,7 @@ function html_to_bbc($text)
 		// Keep track of the number of nested list levels.
 		$listDepth = 0;
 
-		// Map what we can expect from the HTML to what is supported by SMF.
+		// Map what we can expect from the HTML to what is supported by StoryBB.
 		$listTypeMapping = array(
 			'1' => 'decimal',
 			'A' => 'upper-alpha',
@@ -2080,7 +2080,6 @@ function AutoSuggestHandler($checkRegistered = null)
 	$searchTypes = array(
 		'member' => 'Member',
 		'membergroups' => 'MemberGroups',
-		'versions' => 'SMFVersions',
 		'memberchar' => 'MemberChar',
 		'character' => 'Character',
 		'rawcharacter' => 'RawCharacter',

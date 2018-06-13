@@ -2,7 +2,7 @@
 
 /**
  * This is perhaps the most important and probably most accessed file in all
- * of SMF.  This file controls topic, message, and attachment display.
+ * of StoryBB.  This file controls topic, message, and attachment display.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)

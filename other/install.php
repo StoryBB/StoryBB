@@ -741,7 +741,7 @@ function DatabaseSettings()
 			'db_server' => $_POST['db_server'],
 			'db_prefix' => $db_prefix,
 			// The cookiename is special; we want it to be the same if it ever needs to be reinstalled with the same info.
-			'cookiename' => 'SMFCookie' . abs(crc32($_POST['db_name'] . preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix'])) % 1000),
+			'cookiename' => 'SBBCookie' . abs(crc32($_POST['db_name'] . preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix'])) % 1000),
 		);
 
 		// Only set the port if we're not using the default
@@ -1009,7 +1009,7 @@ function DatabasePopulation()
 			)
 		);
 
-	// Windows likes to leave the trailing slash, which yields to C:\path\to\SMF\/attachments...
+	// Windows likes to leave the trailing slash, which yields to C:\path\to\StoryBB\/attachments...
 	if (substr(__DIR__, -1) == '\\')
 		$attachdir = __DIR__ . 'attachments';
 	else
@@ -1864,7 +1864,7 @@ function template_install_below()
 </html>';
 }
 
-// Welcome them to the wonderful world of SMF!
+// Welcome them to the wonderful world of StoryBB!
 function template_welcome_message()
 {
 	global $incontext, $txt;

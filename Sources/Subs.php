@@ -2911,7 +2911,7 @@ function url_image_size($url)
 		if ($fp != false)
 		{
 			// Send the HEAD request (since we don't have to worry about chunked, HTTP/1.1 is fine here.)
-			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/SMF' . "\r\n" . 'Connection: close' . "\r\n\r\n");
+			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/StoryBB' . "\r\n" . 'Connection: close' . "\r\n\r\n");
 
 			// Read in the HTTP/1.1 or whatever.
 			$test = substr(fgets($fp, 11), -1);
@@ -4337,7 +4337,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 
 /**
  * Receives a string and tries to figure it out if its a method or a function.
- * If a method is found, it looks for a "#" which indicates SMF should create a new instance of the given class.
+ * If a method is found, it looks for a "#" which indicates StoryBB should create a new instance of the given class.
  * Checks the string/array for is_callable() and return false/fatal_lang_error is the given value results in a non callable string/array.
  * Prepare and returns a callable depending on the type of method/function found.
  *
@@ -5274,7 +5274,7 @@ function smf_chmod($file, $value = 0)
  * Wrapper function for json_decode() with error handling.
 
  * @param string $json The string to decode.
- * @param bool $returnAsArray To return the decoded string as an array or an object, SMF only uses Arrays but to keep on compatibility with json_decode its set to false as default.
+ * @param bool $returnAsArray To return the decoded string as an array or an object, StoryBB only uses Arrays but to keep on compatibility with json_decode its set to false as default.
  * @param bool $logIt To specify if the error will be logged if theres any.
  * @return array Either an empty array or the decoded data as an array.
  */
@@ -5407,8 +5407,8 @@ function smf_serverResponse($data = '', $type = 'Content-Type: application/json'
  * Check if the passed url has a redirect to https:// by querying headers.
  *
  * Returns true if a redirect was found & false if not.
- * Note that when force_ssl = 2, SMF issues its own redirect...  So if this
- * returns true, it may be caused by SMF, not necessarily an .htaccess redirect.
+ * Note that when force_ssl = 2, StoryBB issues its own redirect...  So if this
+ * returns true, it may be caused by StoryBB, not necessarily an .htaccess redirect.
  * @param string $url to check, in $boardurl format (no trailing slash).
  */
 function https_redirect_active($url) {

@@ -232,7 +232,7 @@ function MaintainFindFixErrors()
 
 /**
  * Wipes the whole cache directory.
- * This only applies to SMF's own cache directory, though.
+ * This only applies to StoryBB's own cache directory, though.
  */
 function MaintainCleanCache()
 {
@@ -491,7 +491,7 @@ function OptimizeTables()
 	// If there aren't any tables then I believe that would mean the world has exploded...
 	$context['num_tables'] = count($tables);
 	if ($context['num_tables'] == 0)
-		fatal_error('You appear to be running SMF in a flat file mode... fantastic!', false);
+		fatal_error('You appear to be running StoryBB in a flat file mode... fantastic!', false);
 
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 

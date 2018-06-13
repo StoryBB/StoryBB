@@ -11,7 +11,7 @@
  */
 
 /**
- * Sets the SMF-style login cookie and session based on the id_member and password passed.
+ * Sets the StoryBB-style login cookie and session based on the id_member and password passed.
  * - password should be already encrypted with the cookie salt.
  * - logs the user out if id_member is zero.
  * - sets the cookie and session to last the number of seconds specified by cookie_length, or
@@ -818,7 +818,7 @@ function hash_salt($password, $salt)
 }
 
 /**
- * Verifies a raw SMF password against the bcrypt'd string
+ * Verifies a raw StoryBB password against the bcrypt'd string
  *
  * @param string $username The username
  * @param string $password The password
