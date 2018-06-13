@@ -10,25 +10,41 @@
  * @version 3.0 Alpha 1
  */
 
-// This won't be dedicated without this - this must exist in each gateway!
-// SMF Payment Gateway: paypal
+namespace StoryBB\Payment;
 
 /**
  * Class for returning available form data for this gateway
  */
-class paypal_display
+class PayPal implements PaymentProcessor
 {
+	private $return_data;
+
 	/**
-	 * @var string Name of this payment gateway
+	 * Returns a short title for display.
+	 *
+	 * @return string The short title of the payment processor.
 	 */
-	public $title = 'PayPal';
+	public function getShortTitle(): string
+	{
+		return 'PayPal';
+	}
+
+	/**
+	 * Returns the display title.
+	 *
+	 * @return string The display title of the payment processor.
+	 */
+	public function getDisplayTitle(): string
+	{
+		return 'PayPal';
+	}
 
 	/**
 	 * Return the admin settings for this gateway
 	 *
 	 * @return array An array of settings data
 	 */
-	public function getGatewaySettings()
+	public function getGatewaySettings(): array
 	{
 		global $txt;
 
@@ -58,7 +74,7 @@ class paypal_display
 	 *
 	 * @return boolean Whether this gateway is enabled (for PayPal, whether the PayPal email is set)
 	 */
-	public function gatewayEnabled()
+	public function gatewayEnabled(): bool
 	{
 		global $modSettings;
 
@@ -78,7 +94,7 @@ class paypal_display
 	 * @param string $return_url The URL to return the user to after processing the payment
 	 * @return array An array of data for the form
 	 */
-	public function fetchGatewayFields($unique_id, $sub_data, $value, $period, $return_url)
+	public function fetchGatewayFields(string $unique_id, array $sub_data, $value, string $period, string $return_url): array
 	{
 		global $modSettings, $txt, $boardurl;
 
@@ -137,21 +153,13 @@ class paypal_display
 
 		return $return_data;
 	}
-}
-
-/**
- * Class of functions to validate a IPN response and provide details of the payment
- */
-class paypal_payment
-{
-	private $return_data;
 
 	/**
 	 * This function returns true/false for whether this gateway thinks the data is intended for it.
 	 *
 	 * @return boolean Whether this gateway things the data is valid
 	 */
-	public function isValid()
+	public function isValid(): bool
 	{
 		global $modSettings;
 
@@ -183,7 +191,7 @@ class paypal_payment
 	 *
 	 * @return string A string containing the subscription ID and member ID, separated by a +
 	 */
-	public function precheck()
+	public function precheck(): array
 	{
 		global $modSettings, $txt;
 
@@ -293,7 +301,7 @@ class paypal_payment
 	 *
 	 * @return boolean Whether this is a refund
 	 */
-	public function isRefund()
+	public function isRefund(): bool
 	{
 		if ($_POST['payment_status'] === 'Refunded' || $_POST['payment_status'] === 'Reversed' || $_POST['txn_type'] === 'Refunded' || ($_POST['txn_type'] === 'reversal' && $_POST['payment_status'] === 'Completed'))
 			return true;
@@ -306,7 +314,7 @@ class paypal_payment
 	 *
 	 * @return boolean Whether this is a subscription
 	 */
-	public function isSubscription()
+	public function isSubscription(): bool
 	{
 		if (substr($_POST['txn_type'], 0, 14) === 'subscr_payment' && $_POST['payment_status'] === 'Completed')
 			return true;
@@ -319,7 +327,7 @@ class paypal_payment
 	 *
 	 * @return boolean Whether this is a normal payment
 	 */
-	public function isPayment()
+	public function isPayment(): bool
 	{
 		if ($_POST['payment_status'] === 'Completed' && $_POST['txn_type'] === 'web_accept')
 			return true;
@@ -332,7 +340,7 @@ class paypal_payment
 	 *
 	 * @return boolean Whether this is a cancellation
 	 */
-	public function isCancellation()
+	public function isCancellation(): bool
 	{
 		// subscr_cancel is sent when the user cancels, subscr_eot is sent when the subscription reaches final payment
 		// Neither require us to *do* anything as per performCancel().

@@ -105,11 +105,11 @@ function ModifySubscriptionSettings($return_config = false)
 		$gateways = loadPaymentGateways();
 		foreach ($gateways as $gateway)
 		{
-			$gatewayClass = new $gateway['display_class']();
+			$gatewayClass = new $gateway['class'];
 			$setting_data = $gatewayClass->getGatewaySettings();
 			if (!empty($setting_data))
 			{
-				$config_vars[] = array('title', $gatewayClass->title, 'text_label' => (isset($txt['paidsubs_gateway_title_' . $gatewayClass->title]) ? $txt['paidsubs_gateway_title_' . $gatewayClass->title] : $gatewayClass->title));
+				$config_vars[] = array('title', $gatewayClass->getShortTitle(), 'text_label' => $gatewayClass->getDisplayTitle());
 				$config_vars = array_merge($config_vars, $setting_data);
 			}
 		}
@@ -1948,37 +1948,14 @@ function loadSubscriptions()
  */
 function loadPaymentGateways()
 {
-	global $sourcedir;
+	$gateways = [
+		'paypal' => [
+			'class' => 'StoryBB\\Payment\\PayPal',
+			'code' => 'paypal',
+		],
+	];
 
-	$gateways = array();
-	if ($dh = opendir($sourcedir))
-	{
-		while (($file = readdir($dh)) !== false)
-		{
-			if (is_file($sourcedir . '/' . $file) && preg_match('~^Subscriptions-([A-Za-z\d]+)\.php$~', $file, $matches))
-			{
-				// Check this is definitely a valid gateway!
-				$fp = fopen($sourcedir . '/' . $file, 'rb');
-				$header = fread($fp, 4096);
-				fclose($fp);
-
-				if (strpos($header, '// SMF Payment Gateway: ' . strtolower($matches[1])) !== false)
-				{
-					require_once($sourcedir . '/' . $file);
-
-					$gateways[] = array(
-						'filename' => $file,
-						'code' => strtolower($matches[1]),
-						// Don't need anything snazzier than this yet.
-						'valid_version' => class_exists(strtolower($matches[1]) . '_payment') && class_exists(strtolower($matches[1]) . '_display'),
-						'payment_class' => strtolower($matches[1]) . '_payment',
-						'display_class' => strtolower($matches[1]) . '_display',
-					);
-				}
-			}
-		}
-	}
-	closedir($dh);
+	call_integration_hook('integrate_payment_processors', array(&$gateways));
 
 	return $gateways;
 }

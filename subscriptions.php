@@ -54,7 +54,7 @@ $txnType = '';
 $gatewayHandles = loadPaymentGateways();
 foreach ($gatewayHandles as $gateway)
 {
-	$gatewayClass = new $gateway['payment_class']();
+	$gatewayClass = new $gateway['class']();
 	if ($gatewayClass->isValid())
 	{
 		$txnType = $gateway['code'];
