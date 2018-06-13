@@ -1071,8 +1071,7 @@ function AdminBoardRecount()
 /**
  * Perform a detailed version check.  A very good thing ;).
  * The function parses the comment headers in all files for their version information,
- * and outputs that for some javascript to check with simplemachines.org.
- * It does not connect directly with simplemachines.org, but rather expects the client to.
+ * and compares that to JSON pulled at some point from storybb.org previous.
  *
  * It requires the admin_forum permission.
  * Uses the view_versions admin area.

@@ -170,11 +170,6 @@
 	{{/if}}
 	</div>
 	
-	
-	{{!-- Below is the hefty javascript for this. Upon opening the page it checks the current file versions with ones
-	   held at simplemachines.org and works out if they are up to date.  If they aren't it colors that files number
-	   red.  It also contains the function, swapOption, that toggles showing the detailed information for each of the
-	   file categories. (sources, languages, and templates.) --}}
 	<script>
 		var oViewVersions = new sbb_ViewVersions({
 			aKnownLanguages: {{array2js context.default_known_languages}},

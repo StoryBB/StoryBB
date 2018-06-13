@@ -43,7 +43,6 @@ template_ssi_above();
 			<p>This functionality can be used to allow you to present the information in any way you wish.</p>
 
 			<h2>Additional Guides &amp; FAQ</h2>
-			<p>Need more information on using SSI.php? Check out <a href="https://wiki.simplemachines.org/smf/Category:SSI">Using SSI.php article</a>.</p>
 
 			<div id="sidenav" class="windowbg">
 				<span class="topslice"><span></span></span>
@@ -480,7 +479,7 @@ function template_ssi_below()
 				<a href="#header" id="bot" class="go_up"></a>
 				<ul>
 					<li class="copyright">
-						<span class="smalltext"><a href="https://www.simplemachines.org">Simple Machines Forum</a></span>
+						<span class="smalltext"><a href="https://storybb.org">StoryBB</a></span>
 					</li>
 				</ul>
 			</div>
