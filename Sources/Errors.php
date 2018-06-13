@@ -75,7 +75,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 
 	// Don't log the session hash in the url twice, it's a waste.
 	if (!empty($smcFunc['htmlspecialchars']))
-		$query_string = $smcFunc['htmlspecialchars']((SMF == 'SSI' || SMF == 'BACKGROUND' ? '' : '?') . preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string));
+		$query_string = $smcFunc['htmlspecialchars']((STORYBB == 'SSI' || STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string));
 
 	// Just so we know what board error messages are from.
 	if (isset($_POST['board']) && !isset($_GET['board']))
@@ -297,7 +297,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 		return false;
 
 	// Maybe they came from dlattach or similar?
-	if (SMF != 'SSI' && SMF != 'BACKGROUND' && empty($context['theme_loaded']))
+	if (STORYBB != 'SSI' && STORYBB != 'BACKGROUND' && empty($context['theme_loaded']))
 		loadTheme();
 
 	// Don't bother indexing errors mate...
@@ -315,7 +315,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 	$context['sub_template'] = 'error_fatal';
 
 	// If this is SSI, what do they want us to do?
-	if (SMF == 'SSI')
+	if (STORYBB == 'SSI')
 	{
 		if (!empty($ssi_on_error_method) && $ssi_on_error_method !== true && is_callable($ssi_on_error_method))
 			$ssi_on_error_method();
@@ -334,7 +334,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 			exit;
 	}
 	// Alternatively from the cron call?
-	elseif (SMF == 'BACKGROUND')
+	elseif (STORYBB == 'BACKGROUND')
 	{
 		// We can't rely on even having language files available.
 		if (defined('FROM_CLI') && FROM_CLI)
@@ -494,7 +494,7 @@ function log_error_online($error, $sprintf = array())
 		return;
 
 	// Maybe they came from SSI or similar where sessions are not recorded?
-	if (SMF == 'SSI' || SMF == 'BACKGROUND')
+	if (STORYBB == 'SSI' || STORYBB == 'BACKGROUND')
 		return;
 
 	$session_id = !empty($user_info['is_guest']) ? 'ip' . $user_info['ip'] : session_id();

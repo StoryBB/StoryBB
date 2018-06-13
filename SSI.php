@@ -9,10 +9,10 @@
  */
 
 // Don't do anything if StoryBB is already loaded.
-if (defined('SMF'))
+if (defined('STORYBB'))
 	return true;
 
-define('SMF', 'SSI');
+define('STORYBB', 'SSI');
 
 // We're going to want a few globals... these are all set later.
 global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;

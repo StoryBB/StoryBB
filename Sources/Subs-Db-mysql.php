@@ -370,7 +370,7 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
 
 		// Are we in SSI mode?  If so try that username and password first
-		if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
+		if (STORYBB == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
 		{
 			if (empty($db_persist))
 				$db_connection = @mysqli_connect($db_server, $ssi_db_user, $ssi_db_passwd);
@@ -679,7 +679,7 @@ function smf_db_error($db_string, $connection = null)
 			if (in_array($query_errno, array(2006, 2013)) && $db_connection == $connection)
 			{
 				// Are we in SSI mode?  If so try that username and password first
-				if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
+				if (STORYBB == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
 				{
 					if (empty($db_persist))
 						$db_connection = @mysqli_connect($db_server, $ssi_db_user, $ssi_db_passwd);

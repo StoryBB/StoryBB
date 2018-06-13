@@ -17,7 +17,7 @@
  * @version 3.0 Alpha 1
  */
 
-define('SMF', 'BACKGROUND');
+define('STORYBB', 'BACKGROUND');
 define('FROM_CLI', empty($_SERVER['REQUEST_METHOD']));
 
 // This one setting is worth bearing in mind. If you are running this from proper cron, make sure you

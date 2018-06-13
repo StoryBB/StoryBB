@@ -76,7 +76,7 @@ class Behat extends RawMinkContext implements Context
         global $db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_type;
         require_once(__DIR__ . '/../../Settings.php');
         $smcFunc = [];
-        define('SMF', 1);
+        define('STORYBB', 1);
 
         require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
         require_once($boarddir . '/Themes/default/languages/Install.english.php');

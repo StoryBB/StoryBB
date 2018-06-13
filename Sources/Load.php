@@ -256,9 +256,9 @@ function reloadSettings()
 	}
 
 	// Integration is cool.
-	if (defined('SMF_INTEGRATION_SETTINGS'))
+	if (defined('STORYBB_INTEGRATION_SETTINGS'))
 	{
-		$integration_settings = smf_json_decode(SMF_INTEGRATION_SETTINGS, true);
+		$integration_settings = smf_json_decode(STORYBB_INTEGRATION_SETTINGS, true);
 		foreach ($integration_settings as $hook => $function)
 			add_integration_function($hook, $function, '', false);
 	}
@@ -550,7 +550,7 @@ function loadUserSettings()
 		// 3. If it was set within this session, no need to set it again.
 		// 4. New session, yet updated < five hours ago? Maybe cache can help.
 		// 5. We're still logging in or authenticating
-		if (SMF != 'SSI' && !isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('.xml', 'login2', 'logintfa'))) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
+		if (STORYBB != 'SSI' && !isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('.xml', 'login2', 'logintfa'))) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
 		{
 			// @todo can this be cached?
 			// Do a quick query to make sure this isn't a mistake.
@@ -2039,7 +2039,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Check to see if we're forcing SSL
 	if (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] == 2 && empty($maintenance) &&
-		!httpsOn() && SMF != 'SSI')
+		!httpsOn() && STORYBB != 'SSI')
 	{
 		if (isset($_GET['sslRedirect']))
 		{
@@ -2075,7 +2075,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 
 		// Hmm... check #2 - is it just different by a www?  Send them to the correct place!!
-		if (empty($do_fix) && strtr($detected_url, array('://' => '://www.')) == $boardurl && (empty($_GET) || count($_GET) == 1) && SMF != 'SSI')
+		if (empty($do_fix) && strtr($detected_url, array('://' => '://www.')) == $boardurl && (empty($_GET) || count($_GET) == 1) && STORYBB != 'SSI')
 		{
 			// Okay, this seems weird, but we don't want an endless loop - this will make $_GET not empty ;).
 			if (empty($_GET))
@@ -3196,7 +3196,7 @@ function loadDatabase()
 		$db_options['port'] = $db_port;
 
 	// If we are in SSI try them first, but don't worry if it doesn't work, we have the normal username and password we can use.
-	if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
+	if (STORYBB == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
 	{
 		$options = array_merge($db_options, array('persist' => $db_persist, 'non_fatal' => true, 'dont_select_db' => true));
 
@@ -3206,7 +3206,7 @@ function loadDatabase()
 	// Either we aren't in SSI mode, or it failed.
 	if (empty($db_connection))
 	{
-		$options = array_merge($db_options, array('persist' => $db_persist, 'dont_select_db' => SMF == 'SSI'));
+		$options = array_merge($db_options, array('persist' => $db_persist, 'dont_select_db' => STORYBB == 'SSI'));
 
 		$db_connection = smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
 	}
@@ -3216,7 +3216,7 @@ function loadDatabase()
 		display_db_error();
 
 	// If in SSI mode fix up the prefix.
-	if (SMF == 'SSI')
+	if (STORYBB == 'SSI')
 		db_fix_prefix($db_prefix, $db_name);
 }
 

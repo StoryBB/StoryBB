@@ -17,8 +17,8 @@ $GLOBALS['required_php_version'] = '7.0.0';
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none;">
 
 // Let's pull in useful classes
-if (!defined('SMF'))
-	define('SMF', 1);
+if (!defined('STORYBB'))
+	define('STORYBB', 1);
 
 require_once('Sources/StoryBB/Helper/FTP.php');
 
@@ -299,8 +299,6 @@ function load_database()
 
 	// Need this to check whether we need the database password.
 	require(dirname(__FILE__) . '/Settings.php');
-	if (!defined('SMF'))
-		define('SMF', 1);
 	if (empty($smcFunc))
 		$smcFunc = array();
 
@@ -775,10 +773,6 @@ function DatabaseSettings()
 			$incontext['error'] = sprintf($txt['error_db_file'], 'Subs-Db-' . $db_type . '.php');
 			return false;
 		}
-
-		// Now include it for database functions!
-		if (!defined('SMF'))
-			define('SMF', 1);
 
 		$modSettings['disableQueryCheck'] = true;
 		if (empty($smcFunc))

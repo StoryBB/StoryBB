@@ -21,7 +21,7 @@ $software_year = '2018';
 $forum_version = 'StoryBB 3.0 Alpha 1';
 
 // Get everything started up...
-define('SMF', 1);
+define('STORYBB', 1);
 
 error_reporting(E_ALL);
 $time_start = microtime(true);
