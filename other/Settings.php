@@ -57,7 +57,7 @@ $webmaster_email = 'noreply@myserver.com';
  * Name of the cookie to set for authentication.
  * @var string
  */
-$cookiename = 'SMFCookie11';
+$cookiename = 'SBBCookie11';
 
 ########## Database Info ##########
 /**

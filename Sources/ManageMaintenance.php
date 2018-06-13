@@ -479,7 +479,7 @@ function OptimizeTables()
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = 3;
 
-	// Only optimize the tables related to this smf install, not all the tables in the db
+	// Only optimize the tables related to this StoryBB install, not all the tables in the db
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
 
 	// Get a list of tables, as well as how many there are.

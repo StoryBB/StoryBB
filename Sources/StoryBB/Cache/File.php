@@ -177,7 +177,7 @@ class File extends API
 		$context['settings_post_javascript'] .= '
 			$("#cache_accelerator").change(function (e) {
 				var cache_type = e.currentTarget.value;
-				$("#cachedir").prop("disabled", cache_type != "smf");
+				$("#cachedir").prop("disabled", cache_type != "file");
 			});';
 	}
 

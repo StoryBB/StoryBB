@@ -1136,7 +1136,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 // Setup the list of icons once it is received through xmlHTTP.
 IconList.prototype.onIconsReceived = function (oXMLDoc)
 {
-	var icons = oXMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('icon');
+	var icons = oXMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('icon');
 	var sItems = '';
 
 	for (var i = 0, n = icons.length; i < n; i++)

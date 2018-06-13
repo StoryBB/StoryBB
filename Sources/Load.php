@@ -2445,11 +2445,11 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$ts = $type == 'mailq' ? $modSettings['mail_next_send'] : $modSettings['next_task_time'];
 
 			addInlineJavaScript('
-		function smfAutoTask()
+		function sbbAutoTask()
 		{
 			$.get(sbb_scripturl + "?scheduled=' . $type . ';ts=' . $ts . '");
 		}
-		window.setTimeout("smfAutoTask();", 1);');
+		window.setTimeout("sbbAutoTask();", 1);');
 		}
 	}
 
