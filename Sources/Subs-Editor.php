@@ -1474,7 +1474,7 @@ function create_control_richedit($editorOptions)
 		loadJavaScriptFile('jquery.sceditor.bbcode.min.js', array(), 'smf_sceditor_bbcode');
 		loadJavaScriptFile('jquery.sceditor.smf.js', array(), 'smf_sceditor_smf');
 		addInlineJavaScript('
-		var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
+		var sbb_smileys_url = \'' . $settings['smileys_url'] . '\';
 		var bbc_quote_from = \'' . addcslashes($txt['quote_from'], "'") . '\';
 		var bbc_quote = \'' . addcslashes($txt['quote'], "'") . '\';
 		var bbc_search_on = \'' . addcslashes($txt['search_on'], "'") . '\';');
