@@ -31,6 +31,8 @@ class Character extends RawMinkContext implements Context
 {
     /**
      * @When I switch character to :character
+     * @param string $character A character name to switch to
+     * @throws ElementNotFoundException if the switch-character link couldn't be found
      */
     public function iSwitchCharacterTo($character)
     {

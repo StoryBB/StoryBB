@@ -42,6 +42,7 @@ class Navigation extends RawMinkContext implements Context
 	 * Navigate to a specific board in this test
 	 * @When I go to :boardname board
 	 * @param string $boardname The name of the board (unescaped) to visit in this unit test
+	 * @throws ExpectationException if the board could not be visited
 	 */
 	public function iGoToBoard($boardname)
 	{
@@ -76,6 +77,7 @@ class Navigation extends RawMinkContext implements Context
 	 * Navigate to a specific topic in this test
 	 * @When I go to :topicname topic
 	 * @param string $topicname The subject of a topic (unescaped) to visit in this unit test
+	 * @throws ExpectationException if the topic could not be visited
 	 */
 	public function iGoToTopic($topicname)
 	{
