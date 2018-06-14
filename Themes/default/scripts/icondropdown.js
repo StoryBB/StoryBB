@@ -30,5 +30,5 @@ function refreshIconPreview()
 		icon_count.val(1);
 
 	// Update the icon preview.
-	$('#icon_preview').attr('src', smf_default_theme_url + '/images/membericons/' + select_box);
+	$('#icon_preview').attr('src', sbb_default_theme_url + '/images/membericons/' + select_box);
 }

@@ -106,7 +106,7 @@ function deltree($dir, $delete_dir = true)
 			else
 			{
 				if (!is_writable($dir . '/' . $entryname))
-					smf_chmod($dir . '/' . $entryname, 0777);
+					sbb_chmod($dir . '/' . $entryname, 0777);
 				unlink($dir . '/' . $entryname);
 			}
 		}
@@ -126,7 +126,7 @@ function deltree($dir, $delete_dir = true)
 		else
 		{
 			if (!is_writable($dir))
-				smf_chmod($dir, 0777);
+				sbb_chmod($dir, 0777);
 			@rmdir($dir);
 		}
 	}
@@ -151,7 +151,7 @@ function mktree($strPath, $mode)
 			if (isset($package_ftp))
 				$package_ftp->chmod(strtr($strPath, array($_SESSION['pack_ftp']['root'] => '')), $mode);
 			else
-				smf_chmod($strPath, $mode);
+				sbb_chmod($strPath, $mode);
 		}
 
 		$test = @opendir($strPath);
@@ -172,7 +172,7 @@ function mktree($strPath, $mode)
 		if (isset($package_ftp))
 			$package_ftp->chmod(dirname(strtr($strPath, array($_SESSION['pack_ftp']['root'] => ''))), $mode);
 		else
-			smf_chmod(dirname($strPath), $mode);
+			sbb_chmod(dirname($strPath), $mode);
 	}
 
 	if ($mode !== false && isset($package_ftp))
@@ -451,7 +451,7 @@ function package_chmod($filename, $perm_state = 'writable', $track_change = fals
 
 					mktree(dirname($chmod_file), 0755);
 					@touch($chmod_file);
-					smf_chmod($chmod_file, 0755);
+					sbb_chmod($chmod_file, 0755);
 				}
 				else
 					$file_permissions = @fileperms($chmod_file);
@@ -459,17 +459,17 @@ function package_chmod($filename, $perm_state = 'writable', $track_change = fals
 
 			// This looks odd, but it's another attempt to work around PHP suExec.
 			if ($perm_state != 'writable')
-				smf_chmod($chmod_file, $perm_state == 'execute' ? 0755 : 0644);
+				sbb_chmod($chmod_file, $perm_state == 'execute' ? 0755 : 0644);
 			else
 			{
 				if (!@is_writable($chmod_file))
-					smf_chmod($chmod_file, 0755);
+					sbb_chmod($chmod_file, 0755);
 				if (!@is_writable($chmod_file))
-					smf_chmod($chmod_file, 0777);
+					sbb_chmod($chmod_file, 0777);
 				if (!@is_writable(dirname($chmod_file)))
-					smf_chmod($chmod_file, 0755);
+					sbb_chmod($chmod_file, 0755);
 				if (!@is_writable(dirname($chmod_file)))
-					smf_chmod($chmod_file, 0777);
+					sbb_chmod($chmod_file, 0777);
 			}
 
 			// The ultimate writable test.
@@ -631,7 +631,7 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 		{
 			fwrite($fp, 'GET ' . ($match[6] !== '/' ? str_replace(' ', '%20', $match[6]) : '') . ' HTTP/1.0' . "\r\n");
 			fwrite($fp, 'Host: ' . $match[3] . (empty($match[5]) ? ($match[2] ? ':443' : '') : ':' . $match[5]) . "\r\n");
-			fwrite($fp, 'User-Agent: PHP/SMF' . "\r\n");
+			fwrite($fp, 'User-Agent: PHP/StoryBB' . "\r\n");
 			if ($keep_alive)
 				fwrite($fp, 'Connection: Keep-Alive' . "\r\n\r\n");
 			else
@@ -641,7 +641,7 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 		{
 			fwrite($fp, 'POST ' . ($match[6] !== '/' ? $match[6] : '') . ' HTTP/1.0' . "\r\n");
 			fwrite($fp, 'Host: ' . $match[3] . (empty($match[5]) ? ($match[2] ? ':443' : '') : ':' . $match[5]) . "\r\n");
-			fwrite($fp, 'User-Agent: PHP/SMF' . "\r\n");
+			fwrite($fp, 'User-Agent: PHP/StoryBB' . "\r\n");
 			if ($keep_alive)
 				fwrite($fp, 'Connection: Keep-Alive' . "\r\n");
 			else
@@ -713,28 +713,4 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 	}
 
 	return $data;
-}
-
-if (!function_exists('smf_crc32'))
-{
-	/**
-	 * crc32 doesn't work as expected on 64-bit functions - make our own.
-	 * https://php.net/crc32#79567
-	 *
-	 * @param string $number
-	 * @return string The crc32
-	 */
-	function smf_crc32($number)
-	{
-		$crc = crc32($number);
-
-		if ($crc & 0x80000000)
-		{
-			$crc ^= 0xffffffff;
-			$crc += 1;
-			$crc = -$crc;
-		}
-
-		return $crc;
-	}
 }

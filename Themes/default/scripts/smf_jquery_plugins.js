@@ -1,5 +1,5 @@
 /**
- * SMFtooltip, Basic JQuery function to provide styled tooltips
+ * SBBtooltip, Basic JQuery function to provide styled tooltips
  *
  * - will use the hoverintent plugin if available
  * - shows the tooltip in a div with the class defined in tooltipClass
@@ -7,33 +7,29 @@
  *   prevent any default browser actions
  * - attempts to keep the tooltip on screen
  *
- * Simple Machines Forum (SMF)
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @package SMF
- * @author Simple Machines http://www.simplemachines.org
- * @copyright 2017 Simple Machines and individual contributors
- * @license http://www.simplemachines.org/about/smf/license.php BSD
- *
- * @version 2.1 Beta 3
- *
+ * @version 3.0 Alpha 1
  */
 
 (function($) {
-	$.fn.SMFtooltip = function(oInstanceSettings) {
-		$.fn.SMFtooltip.oDefaultsSettings = {
+	$.fn.SBBtooltip = function(oInstanceSettings) {
+		$.fn.SBBtooltip.oDefaultsSettings = {
 			followMouse: 1,
 			hoverIntent: {sensitivity: 10, interval: 300, timeout: 50},
 			positionTop: 12,
 			positionLeft: 12,
-			tooltipID: 'smf_tooltip', // ID used on the outer div
-			tooltipTextID: 'smf_tooltipText', // as above but on the inner div holding the text
+			tooltipID: 'sbb_tooltip', // ID used on the outer div
+			tooltipTextID: 'sbb_tooltipText', // as above but on the inner div holding the text
 			tooltipClass: 'tooltip', // The class applied to the outer div (that displays on hover), use this in your css
-			tooltipSwapClass: 'smf_swaptip', // a class only used internally, change only if you have a conflict
+			tooltipSwapClass: 'sbb_swaptip', // a class only used internally, change only if you have a conflict
 			tooltipContent: 'html' // display captured title text as html or text
 		};
 
 		// account for any user options
-		var oSettings = $.extend({}, $.fn.SMFtooltip.oDefaultsSettings , oInstanceSettings || {});
+		var oSettings = $.extend({}, $.fn.SBBtooltip.oDefaultsSettings , oInstanceSettings || {});
 
 		// move passed selector titles to a hidden span, then remove the selector title to prevent any default browser actions
 		$(this).each(function()
@@ -122,19 +118,19 @@
 				$(this).hoverIntent({
 					sensitivity: oSettings.hoverIntent.sensitivity,
 					interval: oSettings.hoverIntent.interval,
-					over: smf_tooltip_on,
+					over: sbb_tooltip_on,
 					timeout: oSettings.hoverIntent.timeout,
-					out: smf_tooltip_off
+					out: sbb_tooltip_off
 				});
 			}
 			else
 			{
 				// plain old hover it is
-				$(this).hover(smf_tooltip_on, smf_tooltip_off);
+				$(this).hover(sbb_tooltip_on, sbb_tooltip_off);
 			}
 
 			// create the on tip action
-			function smf_tooltip_on(event)
+			function sbb_tooltip_on(event)
 			{
 				// If we have text in the hidden span element we created on page load
 				if ($(this).children('.' + oSettings.tooltipSwapClass).text())
@@ -163,7 +159,7 @@
 			};
 
 			// create the Bye bye tip
-			function smf_tooltip_off(event)
+			function sbb_tooltip_off(event)
 			{
 				hideTooltip(this);
 				return false;
@@ -710,7 +706,7 @@
 
 /* Takes every category header available and adds a collapse option */
 $(function() {
-	if (smf_member_id > 0)
+	if (sbb_member_id > 0)
 		$('div.boardindex_table div.cat_bar').each(function(index, el)
 		{
 			var catid = el.id.replace('category_', '');
@@ -731,8 +727,8 @@ $(function() {
 				oThemeOptions: {
 					bUseThemeSettings: true,
 					sOptionName: 'collapse_category_' + catid,
-					sSessionVar: smf_session_var,
-					sSessionId: smf_session_id
+					sSessionVar: sbb_session_var,
+					sSessionId: sbb_session_id
 				}
 			});
 		});

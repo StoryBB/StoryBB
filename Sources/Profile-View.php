@@ -273,7 +273,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 	{
 		$id_alert = array_shift($row);
 		$row['time'] = timeformat($row['alert_time']);
-		$row['extra'] = !empty($row['extra']) ? smf_json_decode($row['extra'], true) : array();
+		$row['extra'] = !empty($row['extra']) ? sbb_json_decode($row['extra'], true) : array();
 		$alerts[$id_alert] = $row;
 
 		if (!empty($row['sender_id']))
@@ -373,7 +373,10 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 			)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
 			$chars[$row['id_character']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>';
+			$chars_sheets[$row['id_character']] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . ';sa=sheet';
+		}
 		$smcFunc['db_free_result']($request);
 	}
 
@@ -406,6 +409,11 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 			{
 				$search[] = '{char_link}';
 				$repl[] = $chars[$alert['extra']['chars_src']];
+				if (!empty($chars_sheets[$alert['extra']['chars_src']]))
+				{
+					$search[] = '#{char_sheet_link}';
+					$repl[] = $chars_sheets[$alert['extra']['chars_src']];
+				}
 			}
 			if (isset($alert['extra']['chars_dest']))
 			{
@@ -2499,7 +2507,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 	$members = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$extra = smf_json_decode($row['extra'], true);
+		$extra = sbb_json_decode($row['extra'], true);
 		if (!empty($extra['applicator']))
 			$members[] = $extra['applicator'];
 

@@ -5,11 +5,11 @@
 		</div>
 	{{else}}
 		<script>
-			window.smf_usedDeny = false;
+			window.sbb_usedDeny = false;
 
 			function warnAboutDeny()
 			{
-				if (window.smf_usedDeny)
+				if (window.sbb_usedDeny)
 					return confirm({{{json txt.permissions_deny_dangerous}}});
 				else
 					return true;

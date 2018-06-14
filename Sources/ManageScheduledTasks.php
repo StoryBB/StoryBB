@@ -147,7 +147,7 @@ function ScheduledTasks()
 			if (!empty($row['callable']))
 				$task_string = $row['callable'];
 
-			// Default SMF task or old mods?
+			// Default StoryBB task or old mods?
 			elseif (function_exists('scheduled_' . $row['task']))
 				$task_string = 'scheduled_' . $row['task'];
 

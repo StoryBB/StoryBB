@@ -1,5 +1,5 @@
 /*
-	smf_ViewVersions(oOptions)
+	sbb_ViewVersions(oOptions)
 	{
 		public init()
 		public loadViewVersions
@@ -7,14 +7,14 @@
 	}
 */
 
-function smf_ViewVersions (oOptions)
+function sbb_ViewVersions (oOptions)
 {
 	this.opt = oOptions;
 	this.oSwaps = {};
 	this.init();
 }
 
-smf_ViewVersions.prototype.init = function ()
+sbb_ViewVersions.prototype.init = function ()
 {
 	// Load this on loading of the page.
 	window.viewVersionsInstanceRef = this;
@@ -24,7 +24,7 @@ smf_ViewVersions.prototype.init = function ()
 	addLoadEvent(fHandlePageLoaded);
 }
 
-smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
+sbb_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 {
 	// If it is undefined, or currently off, turn it on - otherwise off.
 	this.oSwaps[sName] = !(sName in this.oSwaps) || !this.oSwaps[sName];
@@ -38,7 +38,7 @@ smf_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 	return false;
 }
 
-smf_ViewVersions.prototype.loadViewVersions = function ()
+sbb_ViewVersions.prototype.loadViewVersions = function ()
 {
 	var sSections = [
 		'Sources',
@@ -142,15 +142,6 @@ function createNamedElement(type, name, customFields)
 	return element;
 }
 
-function smfSetLatestThemes()
-{
-	if (typeof(window.smfLatestThemes) != "undefined")
-		setInnerHTML(document.getElementById("themeLatest"), window.smfLatestThemes);
-
-	if (tempOldOnload)
-		tempOldOnload();
-}
-
 function changeVariant(sVariant)
 {
 	document.getElementById('variant_preview').src = oThumbnails[sVariant];
@@ -217,7 +208,7 @@ function selectMethod(element)
 function updatePreview()
 {
 	var currentImage = document.getElementById("preview");
-	currentImage.src = smf_smileys_url + "/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value;
+	currentImage.src = sbb_smileys_url + "/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value;
 }
 
 function swap_database_changes()
@@ -245,7 +236,7 @@ function testFTP()
 		sPostData = sPostData + (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + escape(document.getElementById(oPostData[i]).value);
 
 	// Post the data out.
-	sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=admin;area=packages;sa=ftptest;xml;' + smf_session_var + '=' + smf_session_id, sPostData, testFTPResults);
+	sendXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=admin;area=packages;sa=ftptest;xml;' + sbb_session_var + '=' + sbb_session_id, sPostData, testFTPResults);
 }
 
 function expandFolder(folderIdent, folderReal)
@@ -272,7 +263,7 @@ function expandFolder(folderIdent, folderReal)
 	else if (window.XMLHttpRequest)
 	{
 		ajax_indicator(true);
-		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=admin;area=packages;onlyfind=' + escape(folderReal) + ';sa=perms;xml;' + smf_session_var + '=' + smf_session_id, onNewFolderReceived);
+		getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=admin;area=packages;onlyfind=' + escape(folderReal) + ';sa=perms;xml;' + sbb_session_var + '=' + sbb_session_id, onNewFolderReceived);
 	}
 	// Otherwise reload.
 	else

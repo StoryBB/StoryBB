@@ -105,11 +105,11 @@ function ModifySubscriptionSettings($return_config = false)
 		$gateways = loadPaymentGateways();
 		foreach ($gateways as $gateway)
 		{
-			$gatewayClass = new $gateway['display_class']();
+			$gatewayClass = new $gateway['class'];
 			$setting_data = $gatewayClass->getGatewaySettings();
 			if (!empty($setting_data))
 			{
-				$config_vars[] = array('title', $gatewayClass->title, 'text_label' => (isset($txt['paidsubs_gateway_title_' . $gatewayClass->title]) ? $txt['paidsubs_gateway_title_' . $gatewayClass->title] : $gatewayClass->title));
+				$config_vars[] = array('title', $gatewayClass->getShortTitle(), 'text_label' => $gatewayClass->getDisplayTitle());
 				$config_vars = array_merge($config_vars, $setting_data);
 			}
 		}
@@ -691,7 +691,7 @@ function ModifySubscription()
 			$context['sub'] = array(
 				'name' => $row['name'],
 				'desc' => $row['description'],
-				'cost' => smf_json_decode($row['cost'], true),
+				'cost' => sbb_json_decode($row['cost'], true),
 				'span' => array(
 					'value' => $span_value,
 					'unit' => $span_unit,
@@ -1272,14 +1272,14 @@ function ModifyUserSubscription()
 		$context['pending_payments'] = array();
 		if (!empty($row['pending_details']))
 		{
-			$pending_details = smf_json_decode($row['pending_details'], true);
+			$pending_details = sbb_json_decode($row['pending_details'], true);
 			foreach ($pending_details as $id => $pending)
 			{
 				// Only this type need be displayed.
 				if ($pending[3] == 'payback')
 				{
 					// Work out what the options were.
-					$costs = smf_json_decode($context['current_subscription']['real_cost'], true);
+					$costs = sbb_json_decode($context['current_subscription']['real_cost'], true);
 
 					if ($context['current_subscription']['real_length'] == 'F')
 					{
@@ -1359,7 +1359,7 @@ function ModifyUserSubscription()
 		$context['sub']['end']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['end']['month'] == 12 ? 1 : $context['sub']['end']['month'] + 1, 0, $context['sub']['end']['month'] == 12 ? $context['sub']['end']['year'] + 1 : $context['sub']['end']['year']));
 	}
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 
 	// Some ranges to make the template easier to deal with.
 	$context['year_range'] = range(2018, 2030);
@@ -1848,7 +1848,7 @@ function loadSubscriptions()
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Pick a cost.
-		$costs = smf_json_decode($row['cost'], true);
+		$costs = sbb_json_decode($row['cost'], true);
 
 		if ($row['length'] != 'F' && !empty($modSettings['paid_currency_symbol']) && !empty($costs['fixed']))
 			$cost = sprintf($modSettings['paid_currency_symbol'], $costs['fixed']);
@@ -1940,45 +1940,19 @@ function loadSubscriptions()
 
 /**
  * Load all the payment gateways.
- * Checks the Sources directory for any files fitting the format of a payment gateway,
- * loads each file to check it's valid, includes each file and returns the
- * function name and whether it should work with this version of SMF.
  *
  * @return array An array of information about available payment gateways
  */
 function loadPaymentGateways()
 {
-	global $sourcedir;
+	$gateways = [
+		'paypal' => [
+			'class' => 'StoryBB\\Payment\\PayPal',
+			'code' => 'paypal',
+		],
+	];
 
-	$gateways = array();
-	if ($dh = opendir($sourcedir))
-	{
-		while (($file = readdir($dh)) !== false)
-		{
-			if (is_file($sourcedir . '/' . $file) && preg_match('~^Subscriptions-([A-Za-z\d]+)\.php$~', $file, $matches))
-			{
-				// Check this is definitely a valid gateway!
-				$fp = fopen($sourcedir . '/' . $file, 'rb');
-				$header = fread($fp, 4096);
-				fclose($fp);
-
-				if (strpos($header, '// SMF Payment Gateway: ' . strtolower($matches[1])) !== false)
-				{
-					require_once($sourcedir . '/' . $file);
-
-					$gateways[] = array(
-						'filename' => $file,
-						'code' => strtolower($matches[1]),
-						// Don't need anything snazzier than this yet.
-						'valid_version' => class_exists(strtolower($matches[1]) . '_payment') && class_exists(strtolower($matches[1]) . '_display'),
-						'payment_class' => strtolower($matches[1]) . '_payment',
-						'display_class' => strtolower($matches[1]) . '_display',
-					);
-				}
-			}
-		}
-	}
-	closedir($dh);
+	call_integration_hook('integrate_payment_processors', array(&$gateways));
 
 	return $gateways;
 }

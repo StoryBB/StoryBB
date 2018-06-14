@@ -915,7 +915,7 @@ function subscriptions($memID)
 	foreach ($context['subscriptions'] as $id => $sub)
 	{
 		// Work out the costs.
-		$costs = smf_json_decode($sub['real_cost'], true);
+		$costs = sbb_json_decode($sub['real_cost'], true);
 
 		$cost_array = array();
 		if ($sub['real_length'] == 'F')
@@ -945,7 +945,7 @@ function subscriptions($memID)
 	$gateways = loadPaymentGateways();
 	foreach ($gateways as $id => $gateway)
 	{
-		$gateways[$id] = new $gateway['display_class']();
+		$gateways[$id] = new $gateway['class'];
 		if (!$gateways[$id]->gatewayEnabled())
 			unset($gateways[$id]);
 	}
@@ -1000,7 +1000,7 @@ function subscriptions($memID)
 		if (isset($context['current'][$_GET['sub_id']]))
 		{
 			// What are the details like?
-			$current_pending = smf_json_decode($context['current'][$_GET['sub_id']]['pending_details'], true);
+			$current_pending = sbb_json_decode($context['current'][$_GET['sub_id']]['pending_details'], true);
 			if (!empty($current_pending))
 			{
 				$current_pending = array_reverse($current_pending);
@@ -1098,7 +1098,7 @@ function subscriptions($memID)
 			// What are the details like?
 			$current_pending = array();
 			if ($context['current'][$context['sub']['id']]['pending_details'] != '')
-				$current_pending = smf_json_decode($context['current'][$context['sub']['id']]['pending_details'], true);
+				$current_pending = sbb_json_decode($context['current'][$context['sub']['id']]['pending_details'], true);
 			// Don't get silly.
 			if (count($current_pending) > 9)
 				$current_pending = array();

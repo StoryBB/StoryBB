@@ -66,7 +66,7 @@ class FTP
 	 * @param string $ftp_user The username
 	 * @param string $ftp_pass The password
 	 */
-	public function connect($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@simplemachines.org')
+	public function connect($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@storybb.org')
 	{
 		if (strpos($ftp_server, 'ftp://') === 0)
 			$ftp_server = substr($ftp_server, 6);

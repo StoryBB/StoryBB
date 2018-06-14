@@ -45,7 +45,7 @@ class Apcu extends API
 	{
 		$key = $this->prefix . strtr($key, ':/', '-_');
 
-		return apcu_fetch($key . 'smf');
+		return apcu_fetch($key . 'sbb');
 	}
 
 	/**
@@ -57,9 +57,9 @@ class Apcu extends API
 
 		// An extended key is needed to counteract a bug in APC.
 		if ($value === null)
-			return apcu_delete($key . 'smf');
+			return apcu_delete($key . 'sbb');
 		else
-			return apcu_store($key . 'smf', $value, $ttl);
+			return apcu_store($key . 'sbb', $value, $ttl);
 	}
 
 	/**

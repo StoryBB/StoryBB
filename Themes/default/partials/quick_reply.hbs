@@ -53,7 +53,7 @@
 								<script>
 									function insertQuoteFast(messageid)
 									{
-										getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=quotefast;quote=' + messageid + ';xml;pb={{context.post_box_name}};mode=' + (oEditorHandle_{{context.post_box_name}}.bRichTextEnabled ? 1 : 0), onDocReceived);
+										getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + messageid + ';xml;pb={{context.post_box_name}};mode=' + (oEditorHandle_{{context.post_box_name}}.bRichTextEnabled ? 1 : 0), onDocReceived);
 										return false;
 									}
 									function onDocReceived(XMLDoc)
@@ -84,7 +84,7 @@
 		<br class="clear">
 		{{#if context.drafts_autosave}}
 		<script>
-				var oDraftAutoSave = new smf_DraftAutoSave({
+				var oDraftAutoSave = new sbb_DraftAutoSave({
 					sSelf: 'oDraftAutoSave',
 					sLastNote: 'draft_lastautosave',
 					sLastID: 'id_draft',{{#if context.post_box_name}}
@@ -100,8 +100,8 @@
 						bDefaultCollapsed: false,
 						iTopicId: '{{context.current_topic}}',
 						iStart: '{{context.start}}',
-						sScriptUrl: smf_scripturl,
-						sImagesUrl: smf_images_url,
+						sScriptUrl: sbb_scripturl,
+						sImagesUrl: sbb_images_url,
 						sContainerId: "quickReplyOptions",
 						sImageId: "quickReplyExpand",
 						sClassCollapsed: "toggle_up",

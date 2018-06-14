@@ -34,14 +34,14 @@ var atwhoConfig = {
 					return;
 
 			$.ajax({
-				url: smf_scripturl + '?action=suggest;' + smf_session_var + '=' + smf_session_id + ';xml',
+				url: sbb_scripturl + '?action=suggest;' + sbb_session_var + '=' + sbb_session_id + ';xml',
 				method: 'GET',
 				data: {
 					search: query,
 					suggest_type: 'rawcharacter'
 				},
 				success: function (data) {
-					var members = $(data).find('smf > items > item');
+					var members = $(data).find('storybb > items > item');
 					if (members.length == 0)
 						fails[fails.length] = query;
 

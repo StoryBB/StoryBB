@@ -11,9 +11,9 @@
  */
 
 /**
- * Maps the implementations in this file (smf_db_function_name)
+ * Maps the implementations in this file (sbb_db_function_name)
  * to the $smcFunc['db_function_name'] variable.
- * @see Subs-Db-mysql.php#smf_db_initiate
+ * @see Subs-Db-mysql.php#sbb_db_initiate
  *
  * @param string $db_server The database server
  * @param string $db_name The name of the database
@@ -23,40 +23,40 @@
  * @param array $db_options An array of database options
  * @return null|resource Returns null on failure if $db_options['non_fatal'] is true or a PostgreSQL connection resource handle if the connection was successful.
  */
-function smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, &$db_prefix, $db_options = array())
+function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, &$db_prefix, $db_options = array())
 {
 	global $smcFunc;
 
 	// Map some database specific functions, only do this once.
 	if (!isset($smcFunc['db_fetch_assoc']))
 		$smcFunc += array(
-			'db_query' => 'smf_db_query',
-			'db_quote' => 'smf_db_quote',
-			'db_insert' => 'smf_db_insert',
-			'db_insert_id' => 'smf_db_insert_id',
-			'db_fetch_assoc' => 'smf_db_fetch_assoc',
-			'db_fetch_row' => 'smf_db_fetch_row',
+			'db_query' => 'sbb_db_query',
+			'db_quote' => 'sbb_db_quote',
+			'db_insert' => 'sbb_db_insert',
+			'db_insert_id' => 'sbb_db_insert_id',
+			'db_fetch_assoc' => 'sbb_db_fetch_assoc',
+			'db_fetch_row' => 'sbb_db_fetch_row',
 			'db_free_result' => 'pg_free_result',
 			'db_num_rows' => 'pg_num_rows',
-			'db_data_seek' => 'smf_db_data_seek',
+			'db_data_seek' => 'sbb_db_data_seek',
 			'db_num_fields' => 'pg_num_fields',
 			'db_escape_string' => 'pg_escape_string',
-			'db_unescape_string' => 'smf_db_unescape_string',
-			'db_server_info' => 'smf_db_version',
-			'db_affected_rows' => 'smf_db_affected_rows',
-			'db_transaction' => 'smf_db_transaction',
+			'db_unescape_string' => 'sbb_db_unescape_string',
+			'db_server_info' => 'sbb_db_version',
+			'db_affected_rows' => 'sbb_db_affected_rows',
+			'db_transaction' => 'sbb_db_transaction',
 			'db_error' => 'pg_last_error',
-			'db_select_db' => 'smf_db_select_db',
+			'db_select_db' => 'sbb_db_select_db',
 			'db_title' => 'PostgreSQL',
 			'db_sybase' => true,
 			'db_case_sensitive' => true,
-			'db_escape_wildcard_string' => 'smf_db_escape_wildcard_string',
+			'db_escape_wildcard_string' => 'sbb_db_escape_wildcard_string',
 			'db_is_resource' => 'is_resource',
 			'db_mb4' => true,
 			'db_ping' => 'pg_ping',
-			'db_fetch_all' => 'smf_db_fetch_all',
-			'db_error_insert' => 'smf_db_error_insert',
-			'db_custom_order' => 'smf_db_custom_order',
+			'db_fetch_all' => 'sbb_db_fetch_all',
+			'db_error_insert' => 'sbb_db_error_insert',
+			'db_custom_order' => 'sbb_db_custom_order',
 		);
 
 	if (!empty($db_options['persist']))
@@ -118,7 +118,7 @@ function db_fix_prefix(&$db_prefix, $db_name)
  * @param array $matches The matches from preg_replace_callback
  * @return string The appropriate string depending on $matches[1]
  */
-function smf_db_replacement__callback($matches)
+function sbb_db_replacement__callback($matches)
 {
 	global $db_callback, $user_info, $db_prefix, $smcFunc;
 
@@ -134,13 +134,13 @@ function smf_db_replacement__callback($matches)
 		return '\'\'';
 
 	if (!isset($matches[2]))
-		smf_db_error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);
+		sbb_db_error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);
 
 	if ($matches[1] === 'literal')
 		return '\'' . pg_escape_string($matches[2]) . '\'';
 
 	if (!isset($values[$matches[2]]))
-		smf_db_error_backtrace('The database value you\'re trying to insert does not exist: ' . (isset($smcFunc['htmlspecialchars']) ? $smcFunc['htmlspecialchars']($matches[2]) : htmlspecialchars($matches[2])), '', E_USER_ERROR, __FILE__, __LINE__);
+		sbb_db_error_backtrace('The database value you\'re trying to insert does not exist: ' . (isset($smcFunc['htmlspecialchars']) ? $smcFunc['htmlspecialchars']($matches[2]) : htmlspecialchars($matches[2])), '', E_USER_ERROR, __FILE__, __LINE__);
 
 	$replacement = $values[$matches[2]];
 
@@ -148,7 +148,7 @@ function smf_db_replacement__callback($matches)
 	{
 		case 'int':
 			if (!is_numeric($replacement) || (string) $replacement !== (string) (int) $replacement)
-				smf_db_error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				sbb_db_error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			return (string) (int) $replacement;
 		break;
 
@@ -161,12 +161,12 @@ function smf_db_replacement__callback($matches)
 			if (is_array($replacement))
 			{
 				if (empty($replacement))
-					smf_db_error_backtrace('Database error, given array of integer values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					sbb_db_error_backtrace('Database error, given array of integer values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 				foreach ($replacement as $key => $value)
 				{
 					if (!is_numeric($value) || (string) $value !== (string) (int) $value)
-						smf_db_error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+						sbb_db_error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 					$replacement[$key] = (string) (int) $value;
 				}
@@ -174,7 +174,7 @@ function smf_db_replacement__callback($matches)
 				return implode(', ', $replacement);
 			}
 			else
-				smf_db_error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				sbb_db_error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 		break;
 
@@ -182,7 +182,7 @@ function smf_db_replacement__callback($matches)
 			if (is_array($replacement))
 			{
 				if (empty($replacement))
-					smf_db_error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					sbb_db_error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 				foreach ($replacement as $key => $value)
 					$replacement[$key] = sprintf('\'%1$s\'', pg_escape_string($value));
@@ -190,21 +190,21 @@ function smf_db_replacement__callback($matches)
 				return implode(', ', $replacement);
 			}
 			else
-				smf_db_error_backtrace('Wrong value type sent to the database. Array of strings expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				sbb_db_error_backtrace('Wrong value type sent to the database. Array of strings expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		case 'date':
 			if (preg_match('~^(\d{4})-([0-1]?\d)-([0-3]?\d)$~', $replacement, $date_matches) === 1)
 				return sprintf('\'%04d-%02d-%02d\'', $date_matches[1], $date_matches[2], $date_matches[3]).'::date';
 			else
-				smf_db_error_backtrace('Wrong value type sent to the database. Date expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				sbb_db_error_backtrace('Wrong value type sent to the database. Date expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		case 'time':
 			if (preg_match('~^([0-1]?\d|2[0-3]):([0-5]\d):([0-5]\d)$~', $replacement, $time_matches) === 1)
 				return sprintf('\'%02d:%02d:%02d\'', $time_matches[1], $time_matches[2], $time_matches[3]).'::time';
 			else
-				smf_db_error_backtrace('Wrong value type sent to the database. Time expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				sbb_db_error_backtrace('Wrong value type sent to the database. Time expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		case 'datetime':
@@ -213,12 +213,12 @@ function smf_db_replacement__callback($matches)
 					sprintf('\'%04d-%02d-%02d %02d:%02d:%02d\'', $datetime_matches[1], $datetime_matches[2], $datetime_matches[3], $datetime_matches[4], $datetime_matches[5] ,$datetime_matches[6]).
 					',\'YYYY-MM-DD HH24:MI:SS\')';
 			else
-				smf_db_error_backtrace('Wrong value type sent to the database. Datetime expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				sbb_db_error_backtrace('Wrong value type sent to the database. Datetime expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		case 'float':
 			if (!is_numeric($replacement))
-				smf_db_error_backtrace('Wrong value type sent to the database. Floating point number expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				sbb_db_error_backtrace('Wrong value type sent to the database. Floating point number expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			return (string) (float) $replacement;
 		break;
 
@@ -234,32 +234,32 @@ function smf_db_replacement__callback($matches)
 			if ($replacement == 'null' || $replacement == '')
 				return 'null';
 			if (inet_pton($replacement) === false)
-				smf_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			return sprintf('\'%1$s\'::inet', pg_escape_string($replacement));
 
 		case 'array_inet':
 			if (is_array($replacement))
 			{
 				if (empty($replacement))
-					smf_db_error_backtrace('Database error, given array of IPv4 or IPv6 values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					sbb_db_error_backtrace('Database error, given array of IPv4 or IPv6 values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 				foreach ($replacement as $key => $value)
 				{
 					if ($replacement == 'null' || $replacement == '')
 						$replacement[$key] = 'null';
 					if (!isValidIP($value))
-						smf_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+						sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 					$replacement[$key] = sprintf('\'%1$s\'::inet', pg_escape_string($value));
 				}
 
 				return implode(', ', $replacement);
 			}
 			else
-				smf_db_error_backtrace('Wrong value type sent to the database. Array of IPv4 or IPv6 expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				sbb_db_error_backtrace('Wrong value type sent to the database. Array of IPv4 or IPv6 expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		default:
-			smf_db_error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')', '', false, __FILE__, __LINE__);
+			sbb_db_error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')', '', false, __FILE__, __LINE__);
 		break;
 	}
 }
@@ -272,7 +272,7 @@ function smf_db_replacement__callback($matches)
  * @param resource $connection = null The connection to use (null to use $db_connection)
  * @return string The string with the values inserted
  */
-function smf_db_quote($db_string, $db_values, $connection = null)
+function sbb_db_quote($db_string, $db_values, $connection = null)
 {
 	global $db_callback, $db_connection;
 
@@ -283,7 +283,7 @@ function smf_db_quote($db_string, $db_values, $connection = null)
 		$db_callback = array($db_values, $connection === null ? $db_connection : $connection);
 
 		// Do the quoting and escaping
-		$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'smf_db_replacement__callback', $db_string);
+		$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
 
 		// Clear this global variable.
 		$db_callback = array();
@@ -303,7 +303,7 @@ function smf_db_quote($db_string, $db_values, $connection = null)
  * @param resource $connection = null The connection to use (null to use $db_connection)
  * @return resource|bool Returns a MySQL result resource (for SELECT queries), true (for UPDATE queries) or false if the query failed
  */
-function smf_db_query($identifier, $db_string, $db_values = array(), $connection = null)
+function sbb_db_query($identifier, $db_string, $db_values = array(), $connection = null)
 {
 	global $db_cache, $db_count, $db_connection, $db_show_debug, $time_start;
 	global $db_callback, $db_last_result, $db_replace_result, $modSettings;
@@ -371,7 +371,7 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 	$db_replace_result = 0;
 
 	if (empty($modSettings['disableQueryCheck']) && strpos($db_string, '\'') !== false && empty($db_values['security_override']))
-		smf_db_error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true, __FILE__, __LINE__);
+		sbb_db_error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true, __FILE__, __LINE__);
 
 	if (empty($db_values['security_override']) && (!empty($db_values) || strpos($db_string, '{db_prefix}') !== false))
 	{
@@ -379,7 +379,7 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 		$db_callback = array($db_values, $connection);
 
 		// Inject the values passed to this function.
-		$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'smf_db_replacement__callback', $db_string);
+		$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
 
 		// This shouldn't be residing in global space any longer.
 		$db_callback = array();
@@ -389,7 +389,7 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
 		// Get the file and line number this function was called.
-		list ($file, $line) = smf_db_error_backtrace('', '', 'return', __FILE__, __LINE__);
+		list ($file, $line) = sbb_db_error_backtrace('', '', 'return', __FILE__, __LINE__);
 
 		// Initialize $db_cache if not already initialized.
 		if (!isset($db_cache))
@@ -454,7 +454,7 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 			$fail = true;
 
 		if (!empty($fail) && function_exists('log_error'))
-			smf_db_error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR, __FILE__, __LINE__);
+			sbb_db_error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR, __FILE__, __LINE__);
 	}
 
 	// Set optimize stuff
@@ -480,7 +480,7 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 	$db_last_result = @pg_query($connection, $db_string);
 
 	if ($db_last_result === false && empty($db_values['db_error_skip']))
-		$db_last_result = smf_db_error($db_string, $connection);
+		$db_last_result = sbb_db_error($db_string, $connection);
 
 	// Debugging.
 	if (isset($db_show_debug) && $db_show_debug === true)
@@ -497,7 +497,7 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
  * @return int
  *
  */
-function smf_db_affected_rows($result = null)
+function sbb_db_affected_rows($result = null)
 {
 	global $db_last_result, $db_replace_result;
 
@@ -517,7 +517,7 @@ function smf_db_affected_rows($result = null)
  * @param resource $connection = null The connection (if null, $db_connection is used) (not used here)
  * @return int The ID of the most recently inserted row
  */
-function smf_db_insert_id($table, $field = null, $connection = null)
+function sbb_db_insert_id($table, $field = null, $connection = null)
 {
 	global $smcFunc, $db_prefix;
 
@@ -543,7 +543,7 @@ function smf_db_insert_id($table, $field = null, $connection = null)
  * @param resource $connection The connection to use (if null, $db_connection is used)
  * @return bool True if successful, false otherwise
  */
-function smf_db_transaction($type = 'commit', $connection = null)
+function sbb_db_transaction($type = 'commit', $connection = null)
 {
 	global $db_connection;
 
@@ -567,14 +567,14 @@ function smf_db_transaction($type = 'commit', $connection = null)
  * @param string $db_string The DB string
  * @param resource $connection The connection to use (if null, $db_connection is used)
  */
-function smf_db_error($db_string, $connection = null)
+function sbb_db_error($db_string, $connection = null)
 {
 	global $txt, $context, $modSettings;
 	global $db_connection;
 	global $db_show_debug;
 
 	// We'll try recovering the file and line number the original db query was called from.
-	list ($file, $line) = smf_db_error_backtrace('', '', 'return', __FILE__, __LINE__);
+	list ($file, $line) = sbb_db_error_backtrace('', '', 'return', __FILE__, __LINE__);
 
 	// Decide which connection to use
 	$connection = $connection === null ? $db_connection : $connection;
@@ -613,7 +613,7 @@ function smf_db_error($db_string, $connection = null)
  * @param bool|int $counter The row number in the result to fetch (false to fetch the next one)
  * @return array The contents of the row that was fetched
  */
-function smf_db_fetch_row($request, $counter = false)
+function sbb_db_fetch_row($request, $counter = false)
 {
 	global $db_row_count;
 
@@ -635,7 +635,7 @@ function smf_db_fetch_row($request, $counter = false)
  * @param int|bool $counter The row to get. If false, returns the next row.
  * @return array An associative array of row contents
  */
-function smf_db_fetch_assoc($request, $counter = false)
+function sbb_db_fetch_assoc($request, $counter = false)
 {
 	global $db_row_count;
 
@@ -657,7 +657,7 @@ function smf_db_fetch_assoc($request, $counter = false)
  * @param int $counter The counter
  * @return bool Always returns true
  */
-function smf_db_data_seek($request, $counter)
+function sbb_db_data_seek($request, $counter)
 {
 	global $db_row_count;
 
@@ -672,7 +672,7 @@ function smf_db_data_seek($request, $counter)
  * @param string $string The string to unescape
  * @return string The unescaped string
  */
-function smf_db_unescape_string($string)
+function sbb_db_unescape_string($string)
 {
 	return strtr($string, array('\'\'' => '\''));
 }
@@ -689,7 +689,7 @@ function smf_db_unescape_string($string)
  * @param resource $connection The connection to use (if null, $db_connection is used)
  * @return mixed value of the first key, behavior based on returnmode. null if no data.
  */
-function smf_db_insert($method = 'replace', $table, $columns, $data, $keys, $returnmode = 0, $connection = null)
+function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $returnmode = 0, $connection = null)
 {
 	global $smcFunc, $db_connection, $db_prefix;
 
@@ -817,7 +817,7 @@ function smf_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 		// Here's where the variables are injected to the query.
 		$insertRows = array();
 		foreach ($data as $dataRow)
-			$insertRows[] = smf_db_quote($insertData, array_combine($indexed_columns, $dataRow), $connection);
+			$insertRows[] = sbb_db_quote($insertData, array_combine($indexed_columns, $dataRow), $connection);
 
 		// Do the insert.
 		$request = $smcFunc['db_query']('', '
@@ -866,7 +866,7 @@ function smf_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
  * @param resource $db_connection The database connection
  * @return true Always returns true
  */
-function smf_db_select_db($db_name, $db_connection)
+function sbb_db_select_db($db_name, $db_connection)
 {
 	return true;
 }
@@ -875,7 +875,7 @@ function smf_db_select_db($db_name, $db_connection)
  * Get the current version.
  * @return string The client version
  */
-function smf_db_version()
+function sbb_db_version()
 {
 	$version = pg_version();
 
@@ -892,7 +892,7 @@ function smf_db_version()
  * @param int $line What line of $file the code which generated the error is on
  * @return void|array Returns an array with the file and line if $error_type is 'return'
  */
-function smf_db_error_backtrace($error_message, $log_message = '', $error_type = false, $file = null, $line = null)
+function sbb_db_error_backtrace($error_message, $log_message = '', $error_type = false, $file = null, $line = null)
 {
 	if (empty($log_message))
 		$log_message = $error_message;
@@ -900,7 +900,7 @@ function smf_db_error_backtrace($error_message, $log_message = '', $error_type =
 	foreach (debug_backtrace() as $step)
 	{
 		// Found it?
-		if (strpos($step['function'], 'query') === false && !in_array(substr($step['function'], 0, 7), array('smf_db_', 'preg_re', 'db_erro', 'call_us')) && strpos($step['function'], '__') !== 0)
+		if (strpos($step['function'], 'query') === false && !in_array(substr($step['function'], 0, 7), array('sbb_db_', 'preg_re', 'db_erro', 'call_us')) && strpos($step['function'], '__') !== 0)
 		{
 			$log_message .= '<br>Function: ' . $step['function'];
 			break;
@@ -941,7 +941,7 @@ function smf_db_error_backtrace($error_message, $log_message = '', $error_type =
  * @param bool $translate_human_wildcards If true, turns human readable wildcards into SQL wildcards.
  * @return string The escaped string
  */
-function smf_db_escape_wildcard_string($string, $translate_human_wildcards = false)
+function sbb_db_escape_wildcard_string($string, $translate_human_wildcards = false)
 {
 	$replacements = array(
 		'%' => '\%',
@@ -963,7 +963,7 @@ function smf_db_escape_wildcard_string($string, $translate_human_wildcards = fal
  * @param resource $request A PostgreSQL result resource
  * @return array An array that contains all rows (records) in the result resource
  */
-function smf_db_fetch_all($request)
+function sbb_db_fetch_all($request)
 {
 	// Return the right row.
 	return @pg_fetch_all($request);
@@ -975,18 +975,18 @@ function smf_db_fetch_all($request)
  * @param array with keys in this order id_member, log_time, ip, url, message, session, error_type, file, line
  * @return void
  */
-function smf_db_error_insert($error_array)
+function sbb_db_error_insert($error_array)
 {
 	global  $db_prefix, $db_connection;
 	static $pg_error_data_prep;
 
 	if (empty($pg_error_data_prep))
-			$pg_error_data_prep = pg_prepare($db_connection, 'smf_log_errors',
+			$pg_error_data_prep = pg_prepare($db_connection, 'sbb_log_errors',
 				'INSERT INTO ' . $db_prefix . 'log_errors(id_member, log_time, ip, url, message, session, error_type, file, line)
 				VALUES( $1, $2, $3, $4, $5, $6, $7, $8, $9)'
 			);
 
-	pg_execute($db_connection, 'smf_log_errors', $error_array);
+	pg_execute($db_connection, 'sbb_log_errors', $error_array);
 }
 
 /**
@@ -998,7 +998,7 @@ function smf_db_error_insert($error_array)
  * @param boolean $desc default false
  * @return string case field when ... then ... end
  */
-function smf_db_custom_order($field, $array_values, $desc = false)
+function sbb_db_custom_order($field, $array_values, $desc = false)
 {
 	$return = 'CASE '. $field . ' ';
 	$count = count($array_values);

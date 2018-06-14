@@ -576,7 +576,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 	}
 
 	// If they are using SSI there is a good chance obExit will never be called.  So lets be nice and flush it for them.
-	if (SMF === 'SSI' || SMF === 'BACKGROUND')
+	if (STORYBB === 'SSI' || STORYBB === 'BACKGROUND')
 		return AddMailQueue(true);
 
 	return true;
@@ -699,7 +699,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	// Check whether we have to apply anything...
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$criteria = smf_json_decode($row['criteria'], true);
+		$criteria = sbb_json_decode($row['criteria'], true);
 		// Note we don't check the buddy status, cause deletion from buddy = madness!
 		$delete = false;
 		foreach ($criteria as $criterium)

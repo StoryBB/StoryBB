@@ -1,7 +1,7 @@
 <script>
 			function verifyAgree()
 			{
-				if (currentAuthMethod == 'passwd' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
+				if (currentAuthMethod == 'passwd' && document.forms.registration.sbb_autov_pwmain.value != document.forms.registration.sbb_autov_pwverify.value)
 				{
 					alert("{{txt.register_passwords_differ_js}}");
 					return false;
@@ -32,16 +32,16 @@
 			<div class="roundframe noup">
 				<fieldset>
 					<dl class="register_form">
-						<dt><strong><label for="smf_autov_username">{{txt.username}}:</label></strong></dt>
+						<dt><strong><label for="sbb_autov_username">{{txt.username}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="user" id="smf_autov_username" size="30" maxlength="25" value="{{context.username}}" class="input_text">
-							<span id="smf_autov_username_div" style="display: none;">
-								<span id="smf_autov_username_img" class="generic_icons check"></span>
+							<input type="text" name="user" id="sbb_autov_username" size="30" maxlength="25" value="{{context.username}}" class="input_text">
+							<span id="sbb_autov_username_div" style="display: none;">
+								<span id="sbb_autov_username_img" class="generic_icons check"></span>
 							</span>
 						</dd>
-						<dt><strong><label for="smf_autov_reserve1">{{txt.user_email_address}}:</label></strong></dt>
+						<dt><strong><label for="sbb_autov_reserve1">{{txt.user_email_address}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="email" id="smf_autov_reserve1" size="30" value="{{context.email}}" class="input_text">
+							<input type="text" name="email" id="sbb_autov_reserve1" size="30" value="{{context.email}}" class="input_text">
 						</dd>
 						{{#if context.display_edit_real_name}}
 						<dt><strong><label for="real_name_box">{{{txt.char_register_nickname}}}:</label></strong></dt>
@@ -57,20 +57,20 @@
 						{{/if}}
 					</dl>
 					<dl class="register_form" id="password1_group">
-						<dt><strong><label for="smf_autov_pwmain">{{txt.choose_pass}}:</label></strong></dt>
+						<dt><strong><label for="sbb_autov_pwmain">{{txt.choose_pass}}:</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" class="input_password">
-							<span id="smf_autov_pwmain_div" style="display: none;">
-								<span id="smf_autov_pwmain_img" class="generic_icons invalid"></span>
+							<input type="password" name="passwrd1" id="sbb_autov_pwmain" size="30" class="input_password">
+							<span id="sbb_autov_pwmain_div" style="display: none;">
+								<span id="sbb_autov_pwmain_img" class="generic_icons invalid"></span>
 							</span>
 						</dd>
 					</dl>
 					<dl class="register_form" id="password2_group">
-						<dt><strong><label for="smf_autov_pwverify">{{txt.verify_pass}}:</label></strong></dt>
+						<dt><strong><label for="sbb_autov_pwverify">{{txt.verify_pass}}:</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" class="input_password">
-							<span id="smf_autov_pwverify_div" style="display: none;">
-								<span id="smf_autov_pwverify_img" class="generic_icons valid"></span>
+							<input type="password" name="passwrd2" id="sbb_autov_pwverify" size="30" class="input_password">
+							<span id="sbb_autov_pwverify_div" style="display: none;">
+								<span id="sbb_autov_pwverify_img" class="generic_icons valid"></span>
 							</span>
 						</dd>
 					</dl>
@@ -171,5 +171,5 @@
 				"password_no_match": "{{txt.registration_password_no_match}}",
 				"password_valid": "{{txt.registration_password_valid}}"
 			};
-			var verificationHandle = new smfRegister("registration", '{{#if modSettings.password_strength}}{{modSettings.password_strength}}{{else}}0{{/if}}', regTextStrings);
+			var verificationHandle = new sbbRegister("registration", '{{#if modSettings.password_strength}}{{modSettings.password_strength}}{{else}}0{{/if}}', regTextStrings);
 		</script>

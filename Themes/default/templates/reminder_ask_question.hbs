@@ -14,16 +14,16 @@
 					<dd><input type="text" name="secret_answer" size="22" class="input_text"></dd>
 					<dt>{{{txt.choose_pass}}}: </dt>
 					<dd>
-						<input type="password" name="passwrd1" id="smf_autov_pwmain" size="22" class="input_password">
-						<span id="smf_autov_pwmain_div" style="display: none;">
-							<span id="smf_autov_pwmain_img" class="generic_icons invalid"></span>
+						<input type="password" name="passwrd1" id="sbb_autov_pwmain" size="22" class="input_password">
+						<span id="sbb_autov_pwmain_div" style="display: none;">
+							<span id="sbb_autov_pwmain_img" class="generic_icons invalid"></span>
 						</span>
 					</dd>
 					<dt>{{{txt.verify_pass}}}: </dt>
 					<dd>
-						<input type="password" name="passwrd2" id="smf_autov_pwverify" size="22" class="input_password">
-						<span id="smf_autov_pwverify_div" style="display: none;">
-							<span id="smf_autov_pwverify_img" class="generic_icons valid"></span>
+						<input type="password" name="passwrd2" id="sbb_autov_pwverify" size="22" class="input_password">
+						<span id="sbb_autov_pwverify_div" style="display: none;">
+							<span id="sbb_autov_pwverify_img" class="generic_icons valid"></span>
 						</span>
 					</dd>
 				</dl>
@@ -44,5 +44,5 @@
 		"password_no_match": {{{json txt.registration_password_no_match}}},
 		"password_valid": {{{json txt.registration_password_valid}}}
 	};
-	var verificationHandle = new smfRegister("creator", {{#if modSettings.password_strength}}{{modSettings.password_strength}}{{else}}0{{/if}}, regTextStrings);
+	var verificationHandle = new sbbRegister("creator", {{#if modSettings.password_strength}}{{modSettings.password_strength}}{{else}}0{{/if}}, regTextStrings);
 </script>

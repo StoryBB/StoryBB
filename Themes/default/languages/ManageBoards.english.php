@@ -49,7 +49,6 @@ $txt['mboards_description'] = 'Description';
 $txt['mboards_description_desc'] = 'A short description of your board. HTML is not allowed, you can use the following BBC tags: {allowed_tags}';
 $txt['mboards_cat_description_desc'] = 'A short description of your category. HTML is not allowed, you can use the following BBC tags: {allowed_tags}';
 $txt['mboards_groups'] = 'Allowed Groups';
-$txt['mboards_groups_desc'] = 'Groups allowed to access this board.<br><em>Note: if the member is in any group or post group checked, they will have access to this board.</em>';
 $txt['mboards_groups_regular_members'] = 'This group contains all members that have no primary group set.';
 $txt['mboards_groups_post_group'] = 'This group is a post count based group.';
 $txt['mboards_moderators'] = 'Moderators';
@@ -68,7 +67,7 @@ $txt['mboards_override_theme_desc'] = 'Use this board\'s theme even if the membe
 $txt['mboards_redirect'] = 'Redirect to a web address';
 $txt['mboards_redirect_desc'] = 'Enable this option to redirect anyone who clicks on this board to another web address.';
 $txt['mboards_redirect_url'] = 'Address to redirect users to';
-$txt['mboards_redirect_url_desc'] = 'For example: &quot;https://www.simplemachines.org&quot;.';
+$txt['mboards_redirect_url_desc'] = 'For example: &quot;https://storybb.org&quot;.';
 $txt['mboards_redirect_reset'] = 'Reset redirect count';
 $txt['mboards_redirect_reset_desc'] = 'Selecting this will reset the redirection count for this board to zero.';
 $txt['mboards_current_redirects'] = 'Currently: %1$s';
@@ -89,7 +88,6 @@ $txt['redirect_board_desc'] = 'A board that redirects users if they visit it';
 $txt['recycle_board_unselected_notice'] = 'You have enabled the recycling of topics without specifying a board to place them in. This feature will not be enabled until you specify a board to place recycled topics into.';
 $txt['countChildPosts'] = 'Count sub-board\'s posts in parent\'s totals';
 $txt['allow_ignore_boards'] = 'Allow boards to be ignored';
-$txt['deny_boards_access'] = 'Enable the option to deny board access based on membergroup';
 $txt['boardsaccess_option_desc'] = 'For each permission you can choose \'Allow\' (A), \'Disallow\' (X), or <span class="alert">\'Deny\' (D)</span>.<br><br>If you deny access, any member - (including moderators) - in that group will be denied access.<br>For this reason, you should set deny carefully, only when <strong>necessary</strong>. Disallow, on the other hand, denies unless otherwise granted.';
 
 $txt['mboards_select_destination'] = 'Select destination for board \'<strong>%1$s</strong>\'';

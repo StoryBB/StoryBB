@@ -498,7 +498,7 @@ function MembergroupMembers()
 	createToken('mod-mgm');
 
 	if ($context['group']['assignable'])
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 }
 
 /**

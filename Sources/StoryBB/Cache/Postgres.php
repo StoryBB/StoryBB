@@ -91,9 +91,9 @@ class Postgres extends API
 		$ttl = time() - $ttl;
 		
 		if (empty($this->pg_get_data_prep))
-			$this->pg_get_data_prep = pg_prepare($db_connection, 'smf_cache_get_data', 'SELECT value FROM ' . $db_prefix . 'cache WHERE key = $1 AND ttl >= $2 LIMIT 1');
+			$this->pg_get_data_prep = pg_prepare($db_connection, 'sbb_cache_get_data', 'SELECT value FROM ' . $db_prefix . 'cache WHERE key = $1 AND ttl >= $2 LIMIT 1');
 			
-		$result = pg_execute($db_connection, 'smf_cache_get_data', array($key, $ttl));
+		$result = pg_execute($db_connection, 'sbb_cache_get_data', array($key, $ttl));
 		
 		if (pg_affected_rows($result) === 0)
 			return null;
@@ -116,12 +116,12 @@ class Postgres extends API
 		$ttl = time() + $ttl;
 		
 		if (empty($this->pg_put_data_prep))
-			$this->pg_put_data_prep = pg_prepare($db_connection, 'smf_cache_put_data',
+			$this->pg_put_data_prep = pg_prepare($db_connection, 'sbb_cache_put_data',
 				'INSERT INTO ' . $db_prefix . 'cache(key,value,ttl) VALUES($1,$2,$3)
 				ON CONFLICT(key) DO UPDATE SET value = excluded.value, ttl = excluded.ttl'
 			);
 
-		$result = pg_execute($db_connection, 'smf_cache_put_data', array($key, $value, $ttl));
+		$result = pg_execute($db_connection, 'sbb_cache_put_data', array($key, $value, $ttl));
 
 		if (pg_affected_rows($result) > 0)
 			return true;

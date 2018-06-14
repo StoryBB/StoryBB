@@ -84,7 +84,7 @@ function Register($reg_errors = array())
 
 	// Kinda need this.
 	if ($context['sub_template'] == 'register_form')
-		loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
+		loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
 
 	// Add the register chain to the link tree.
 	$context['linktree'][] = array(

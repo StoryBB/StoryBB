@@ -193,10 +193,10 @@ function get_theme_info($path)
 		fatal_lang_error('package_get_error_theme_not_compatible', false, $forum_version);
 	}
 
-	// So, we have an install tag which is cool and stuff but we also need to check it and match your current SMF version...
+	// So, we have an install tag which is cool and stuff but we also need to check it and match your current StoryBB version...
 	$the_version = strtr($forum_version, array('StoryBB ' => ''));
 
-	// The theme isn't compatible with the current SMF version.
+	// The theme isn't compatible with the current StoryBB version.
 	if (!matchPackageVersion($the_version, $theme_info['storybb_version']))
 	{
 		remove_dir($path);

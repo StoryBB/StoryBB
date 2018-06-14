@@ -1,6 +1,6 @@
 
 // Handle the JavaScript surrounding personal messages send form.
-function smf_PersonalMessageSend(oOptions)
+function sbb_PersonalMessageSend(oOptions)
 {
 	this.opt = oOptions;
 	this.oBccDiv = null;
@@ -11,7 +11,7 @@ function smf_PersonalMessageSend(oOptions)
 	this.init();
 }
 
-smf_PersonalMessageSend.prototype.init = function()
+sbb_PersonalMessageSend.prototype.init = function()
 {
 	if (!this.opt.bBccShowByDefault)
 	{
@@ -70,7 +70,7 @@ smf_PersonalMessageSend.prototype.init = function()
 
 }
 
-smf_PersonalMessageSend.prototype.showBcc = function()
+sbb_PersonalMessageSend.prototype.showBcc = function()
 {
 	// No longer hide it, show it to the world!
 	this.oBccDiv.style.display = '';
@@ -79,7 +79,7 @@ smf_PersonalMessageSend.prototype.showBcc = function()
 
 
 // Prevent items to be added twice or to both the 'To' and 'Bcc'.
-smf_PersonalMessageSend.prototype.callbackAddItem = function(oAutoSuggestInstance, sSuggestId)
+sbb_PersonalMessageSend.prototype.callbackAddItem = function(oAutoSuggestInstance, sSuggestId)
 {
 	this.oToAutoSuggest.deleteAddedItem(sSuggestId);
 	this.oBccAutoSuggest.deleteAddedItem(sSuggestId);

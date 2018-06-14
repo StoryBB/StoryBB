@@ -83,7 +83,7 @@ class Text
 			'<script' => '<scri\'+\'pt',
 			'<body>' => '<bo\'+\'dy>',
 			'<a href' => '<a hr\'+\'ef',
-			$scripturl => '\' + smf_scripturl + \'',
+			$scripturl => '\' + sbb_scripturl + \'',
 		)) . '\'';
 	}
 

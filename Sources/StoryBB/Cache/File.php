@@ -106,7 +106,7 @@ class File extends API
 			@unlink($cachedir . '/data_' . $key . '.php');
 		else
 		{
-			$cache_data = '<' . '?' . 'php if (!defined(\'SMF\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}' . '?' . '>';
+			$cache_data = '<' . '?' . 'php if (!defined(\'STORYBB\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}' . '?' . '>';
 
 			// Write out the cache file, check that the cache write was successful; all the data must be written
 			// If it fails due to low diskspace, or other, remove the cache file
@@ -168,7 +168,7 @@ class File extends API
 	{
 		global $context, $txt;
 
-		$config_vars[] = $txt['cache_smf_settings'];
+		$config_vars[] = $txt['cache_sbb_settings'];
 		$config_vars[] = array('cachedir', $txt['cachedir'], 'file', 'text', 36, 'cache_cachedir');
 
 		if (!isset($context['settings_post_javascript']))
@@ -177,7 +177,7 @@ class File extends API
 		$context['settings_post_javascript'] .= '
 			$("#cache_accelerator").change(function (e) {
 				var cache_type = e.currentTarget.value;
-				$("#cachedir").prop("disabled", cache_type != "smf");
+				$("#cachedir").prop("disabled", cache_type != "file");
 			});';
 	}
 

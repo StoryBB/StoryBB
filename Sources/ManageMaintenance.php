@@ -172,7 +172,7 @@ function MaintainMembers()
 	}
 	$smcFunc['db_free_result']($result);
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 }
 
 /**
@@ -232,7 +232,7 @@ function MaintainFindFixErrors()
 
 /**
  * Wipes the whole cache directory.
- * This only applies to SMF's own cache directory, though.
+ * This only applies to StoryBB's own cache directory, though.
  */
 function MaintainCleanCache()
 {
@@ -479,7 +479,7 @@ function OptimizeTables()
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = 3;
 
-	// Only optimize the tables related to this smf install, not all the tables in the db
+	// Only optimize the tables related to this StoryBB install, not all the tables in the db
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
 
 	// Get a list of tables, as well as how many there are.
@@ -491,7 +491,7 @@ function OptimizeTables()
 	// If there aren't any tables then I believe that would mean the world has exploded...
 	$context['num_tables'] = count($tables);
 	if ($context['num_tables'] == 0)
-		fatal_error('You appear to be running SMF in a flat file mode... fantastic!', false);
+		fatal_error('You appear to be running StoryBB in a flat file mode... fantastic!', false);
 
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 
@@ -1071,8 +1071,7 @@ function AdminBoardRecount()
 /**
  * Perform a detailed version check.  A very good thing ;).
  * The function parses the comment headers in all files for their version information,
- * and outputs that for some javascript to check with simplemachines.org.
- * It does not connect directly with simplemachines.org, but rather expects the client to.
+ * and compares that to JSON pulled at some point from storybb.org previous.
  *
  * It requires the admin_forum permission.
  * Uses the view_versions admin area.

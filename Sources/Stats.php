@@ -69,7 +69,7 @@ function DisplayStats()
 
 	loadLanguage('Stats');
 	$context['sub_template'] = 'stats_main';
-	loadJavaScriptFile('stats.js', array('default_theme' => true, 'defer' => false), 'smf_stats');
+	loadJavaScriptFile('stats.js', array('default_theme' => true, 'defer' => false), 'sbb_stats');
 
 	// Build the link tree......
 	$context['linktree'][] = array(
@@ -147,33 +147,6 @@ function DisplayStats()
 		'date' => timeformat($modSettings['mostDate'])
 	);
 	$context['latest_member'] = &$context['common_stats']['latest_member'];
-
-	// Let's calculate gender stats only every four minutes.
-	$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
-	if (!in_array('gender', $disabled_fields))
-	{
-		if (($context['gender'] = cache_get_data('stats_gender', 240)) == null)
-		{
-			$result = $smcFunc['db_query']('', '
-				SELECT COUNT(id_member) AS total_members, value AS gender
-				FROM {db_prefix}themes
-				WHERE variable = {string:gender_var} AND id_theme = {int:default_theme}
-				GROUP BY value',
-				array(
-					'gender_var' => 'cust_gender',
-					'default_theme' => 1,
-				)
-			);
-			$context['gender'] = array();
-			while ($row = $smcFunc['db_fetch_assoc']($result))
-			{
-				$context['gender'][$row['gender']] = $row['total_members'];
-			}
-			$smcFunc['db_free_result']($result);
-
-			cache_put_data('stats_gender', $context['gender'], 240);
-		}
-	}
 
 	$date = strftime('%Y-%m-%d', forum_time(false));
 

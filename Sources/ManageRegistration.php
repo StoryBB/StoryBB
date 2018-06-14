@@ -165,7 +165,7 @@ function AdminRegister()
 	$context['sub_template'] = 'register_admin';
 	$context['page_title'] = $txt['registration_center'];
 	createToken('admin-regc');
-	loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
+	loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
 }
 
 /**
