@@ -32,8 +32,8 @@ class Logic
 			'lte' => 'StoryBB\\Template\\Helper\\Logic::lte',
 			'gte' => 'StoryBB\\Template\\Helper\\Logic::gte',
 			'not' => 'StoryBB\\Template\\Helper\\Logic::not',
-			'and' => 'StoryBB\\Template\\Helper\\Logic::and',
-			'or'  => 'StoryBB\\Template\\Helper\\Logic::or',
+			'and' => 'StoryBB\\Template\\Helper\\Logic::op_and',
+			'or'  => 'StoryBB\\Template\\Helper\\Logic::op_or',
 		]);
 	}
 
@@ -139,7 +139,7 @@ class Logic
 	 * @param mixed $args An array of arguments to compare, last argument is context supplied by Lightncandy
 	 * @return bool True if all arguments (except Lnc context) evaluate to true
 	 */
-	public static function and(...$args) {
+	public static function op_and(...$args) {
 		$context = array_pop($args);
 		
 		foreach ( $args as $arg ) 
@@ -160,7 +160,7 @@ class Logic
 	 * @param mixed $args An array of arguments to compare, last argument is context supplied by Lightncandy
 	 * @return bool True if any arguments (except Lnc context) evaluate to true
 	 */
-	public static function or(...$args) 
+	public static function op_or(...$args) 
 	{
 		$context = array_pop($args);
 		
