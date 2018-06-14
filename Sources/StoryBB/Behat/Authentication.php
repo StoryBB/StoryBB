@@ -24,7 +24,9 @@ use Behat\MinkExtension\Context\RawMinkContext;
 class Authentication extends RawMinkContext implements Context
 {
     /**
+     * Log in as a user
      * @When I log in as :user
+     * @param string $user The username to log in as.
      */
     public function iLogInAs(string $user)
     {
@@ -36,6 +38,7 @@ class Authentication extends RawMinkContext implements Context
     }
 
     /**
+     * Log out as a user
      * @When I log out
      */
     public function iLogOut()
