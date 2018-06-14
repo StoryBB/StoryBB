@@ -12,10 +12,17 @@
 
 namespace StoryBB\Template\Helper;
 
+/**
+ * This class provides generic controls helpers for StoryBB's templates.
+ */
 class Controls
 {
 	protected static $menu_context;
 
+	/**
+	 * List the different helpers available in this class.
+	 * @return array Helpers, assocating name to method
+	 */
 	public static function _list()
 	{
 		return ([
@@ -27,6 +34,11 @@ class Controls
 		]);
 	}
 
+	/**
+	 * Return the HTML necessary for a CAPTCHA to be diplayed.
+	 * @param string $verify_id The internal ID of a CAPTCHA
+	 * @return string|SafeString A string to be exported to display the CAPTCHA
+	 */
 	public static function captcha($verify_id)
 	{
 		global $context, $txt;
@@ -47,6 +59,13 @@ class Controls
 		]));	
 	}
 
+	/**
+	 * Return the HTML necessary to render a rich text editor widget
+	 * @param string $editor_id The editor ID to refer to this widget
+	 * @param string $smileyContainer The ID of the HTML element where smileys should be rendered
+	 * @param string $bbcContainer The ID of the HTML element where BBC should be rendered
+	 * @return string|SafeString A string to be exported to display the WYSIWYG editor
+	 */
 	public static function richtexteditor($editor_id, $smileyContainer = null, $bbcContainer = null) {
 		global $context, $settings, $modSettings;
 
@@ -66,6 +85,11 @@ class Controls
 		]));
 	}
 
+	/**
+	 * Return the HTML buttons attached to a rich text editor form
+	 * @param string $editor_id The editor ID to which the buttons should be attached
+	 * @return string|SafeString A string to be exported to display the form buttons
+	 */
 	public static function richedit_buttons($editor_id) {
 		global $context, $settings, $modSettings, $txt;
 
@@ -84,6 +108,11 @@ class Controls
 		]));
 	}
 
+	/**
+	 * Return the HTML buttons attached to a generic list
+	 * @param string $list_id The ID of the list to be displayed
+	 * @return string|SafeString A string to be exported to display the generic list
+	 */
 	public static function genericlist($list_id = null)
 	{
 		global $context;
@@ -103,6 +132,9 @@ class Controls
 		]));
 	}
 
+	/**
+	 * Initialises a generic menu in a template ready to hand off to partials
+	 */
 	public static function genericmenucontext()
 	{
 		global $context;
