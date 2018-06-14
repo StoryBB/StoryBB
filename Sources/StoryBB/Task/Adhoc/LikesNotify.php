@@ -13,7 +13,7 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class Likes_Notify_Background
+ * This task handles notifying users when something is liked.
  */
 class LikesNotify extends \StoryBB\Task\Adhoc
 {

@@ -1,8 +1,7 @@
 <?php
 
 /**
- * This task handles notifying users when they've commented to a moderation report and
- * someone else replies to them.
+ * This task handles notifying users when they've commented to a moderation report and someone else replies to them.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -14,7 +13,7 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class MemberReportReply_Notify_Background
+ * This task handles notifying users when they've commented to a moderation report and someone else replies to them.
  */
 class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 {

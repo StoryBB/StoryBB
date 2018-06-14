@@ -13,7 +13,7 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class MsgReport_Notify_Background
+ * This task handles notifying users when a message gets reported.
  */
 class MsgReportNotify extends \StoryBB\Task\Adhoc
 {
