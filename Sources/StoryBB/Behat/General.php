@@ -261,7 +261,7 @@ class General extends RawMinkContext implements Context
 
     /**
      * Finds characters in the database by character name
-     * @param array $usernames Array of strings listing characters names to be found
+     * @param array $charnames Array of strings listing characters names to be found
      * @return array Returns a key/value array of names to character ids
      */
     private function get_character_ids(array $charnames): array
@@ -297,7 +297,7 @@ class General extends RawMinkContext implements Context
 
     /**
      * Finds groups in the database by group name
-     * @param array $usernames Array of strings listing group names to be found
+     * @param array $groupnames Array of strings listing group names to be found
      * @return array Returns a key/value array of names to group ids
      */
     private function get_group_ids(array $groupnames): array
