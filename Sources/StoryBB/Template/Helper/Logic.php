@@ -125,7 +125,6 @@ class Logic
 	 * Returns negation of arg1
 	 * Usage: {{#if (not arg1)}}
 	 * @param mixed $arg1 First argument
-	 * @param mixed $arg2 Second argument
 	 * @return bool True if $arg1 is falsy/empty
 	 */
 	public static function not($arg1)
