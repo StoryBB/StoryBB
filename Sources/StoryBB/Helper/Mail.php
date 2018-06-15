@@ -12,6 +12,9 @@
 
 namespace StoryBB\Helper;
 
+/**
+ * This class handles the mail processing.
+ */
 class Mail
 {
 	/**
