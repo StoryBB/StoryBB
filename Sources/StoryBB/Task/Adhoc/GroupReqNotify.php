@@ -1,8 +1,7 @@
 <?php
 
 /**
- * This taks handles notifying someone that a user has
- * requeted to join a group they moderate.
+ * This taks handles notifying someone that a user has requested to join a group they moderate.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -14,7 +13,7 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class GroupReq_Notify_Background
+ * This taks handles notifying someone that a user has requested to join a group they moderate.
  */
 class GroupReqNotify extends \StoryBB\Task\Adhoc
 {

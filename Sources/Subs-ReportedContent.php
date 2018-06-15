@@ -14,8 +14,8 @@
  * Updates a report with the given parameters. Logs each action via logAction()
  *
  * @param string $action The action to perform. Accepts "closed" and "ignore".
- * @param integer $value The new value to update.
- * @params integer|array $report_id The affected report(s).
+ * @param int $value The new value to update.
+ * @param int|array $report_id An id or array of ids to filter on first.
  */
 function updateReport($action, $value, $report_id)
 {
@@ -636,7 +636,7 @@ function saveModComment($report_id, $data)
  * Saves the new information whenever a moderator comment is edited.
  *
  * @param int $comment_id The edited moderator comment ID.
- * @param array $data The new data to de inserted. Should be already properly sanitized.
+ * @param string $edited_comment The updated comment, already sanitised.
  * @return bool  Boolean false if no data or no comment ID was provided.
  */
 function editModComment($comment_id, $edited_comment)

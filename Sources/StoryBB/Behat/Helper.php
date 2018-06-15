@@ -12,6 +12,9 @@
 
 namespace StoryBB\Behat;
 
+/**
+ * This class handles behaviours for Behat tests within StoryBB.
+ */
 class Helper
 {
     /**

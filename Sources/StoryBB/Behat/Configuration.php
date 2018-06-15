@@ -30,7 +30,9 @@ use Behat\MinkExtension\Context\RawMinkContext;
 class Configuration extends RawMinkContext implements Context
 {
     /**
+     * Sets some global settings
      * @When the following settings are set:
+     * @param TableNode $table The list of settings and their values to be set
      */
     public function theFollowingSettingsAreSet(TableNode $table)
     {

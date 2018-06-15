@@ -13,7 +13,7 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class Register_Notify_Background
+ * This task handles notifying users when someone new signs up.
  */
 class RegisterNotify extends \StoryBB\Task\Adhoc
 {

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains background notification code for any create post action
+ * This file contains background notification code for any create post action.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,7 +12,7 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class CreatePost_Notify_Background
+ * This file contains background notification code for any create post action.
  */
 class CreatePostNotify extends \StoryBB\Task\Adhoc
 {

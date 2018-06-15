@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This class handles the TLD regex processing.
+ * This class handles the TLD regex processing for linking to URLs.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -13,6 +13,9 @@
 namespace StoryBB\Helper;
 use StoryBB\Task;
 
+/**
+ * This class handles the TLD regex processing for linking to URLs.
+ */
 class TLD
 {
 	/**

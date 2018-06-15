@@ -32,7 +32,9 @@ use Behat\MinkExtension\Context\RawMinkContext;
 class General extends RawMinkContext implements Context
 {
     /**
+     * Wait for a few seconds in the test
      * @When I wait for :length second(s)
+     * @param int $length How many seconds to wait for.
      */
     public function iWaitForSecond($length)
     {
@@ -40,7 +42,10 @@ class General extends RawMinkContext implements Context
     }
 
     /**
+     * Creates data in the database, e.g. users or boards
      * @Given the following :type exist(s):
+     * @param string $type A type of data to create in the database
+     * @param TableNode $table The data to insert
      */
     public function theFollowingExist($type, TableNode $table)
     {
@@ -69,6 +74,11 @@ class General extends RawMinkContext implements Context
         updateSettings(['settings_updated' => time()]);
     }
 
+    /**
+     * Creates users in the database.
+     * @param TableNode $table The users to be added
+     * @throws ExpectationException if the list of users cannot be added
+     */
     private function create_users(TableNode $table)
     {
         global $user_info, $sourcedir, $smcFunc, $context, $mtitle;
@@ -147,6 +157,11 @@ class General extends RawMinkContext implements Context
         }
     }
 
+    /**
+     * Creates characters in the database.
+     * @param TableNode $table The characters to be added
+     * @throws ExpectationException if the list of characters cannot be added
+     */
     private function create_characters(TableNode $table)
     {
         global $smcFunc;
@@ -208,6 +223,11 @@ class General extends RawMinkContext implements Context
         );
     }
 
+    /**
+     * Finds users in the database by username
+     * @param array $usernames Array of strings listing usernames to be found
+     * @return array Returns a key/value array of names to user ids
+     */
     private function get_user_ids(array $usernames): array
     {
         global $smcFunc;
@@ -239,6 +259,11 @@ class General extends RawMinkContext implements Context
         return $userids;
     }
 
+    /**
+     * Finds characters in the database by character name
+     * @param array $charnames Array of strings listing characters names to be found
+     * @return array Returns a key/value array of names to character ids
+     */
     private function get_character_ids(array $charnames): array
     {
         global $smcFunc;
@@ -270,6 +295,11 @@ class General extends RawMinkContext implements Context
         return $charids;
     }
 
+    /**
+     * Finds groups in the database by group name
+     * @param array $groupnames Array of strings listing group names to be found
+     * @return array Returns a key/value array of names to group ids
+     */
     private function get_group_ids(array $groupnames): array
     {
         global $smcFunc;
@@ -301,6 +331,11 @@ class General extends RawMinkContext implements Context
         return $group_ids;
     }
 
+    /**
+     * Creates boards in the database.
+     * @param TableNode $table The boards to be added
+     * @throws ExpectationException if the list of boards cannot be added
+     */
     private function create_boards(TableNode $table)
     {
         global $smcFunc, $sourcedir, $boards, $cat_tree;
@@ -420,6 +455,11 @@ class General extends RawMinkContext implements Context
         }
     }
 
+    /**
+     * Creates groups in the database.
+     * @param TableNode $table The groups to be added
+     * @throws ExpectationException if the list of groups cannot be added
+     */
     private function create_groups(TableNode $table)
     {
         global $smcFunc;
@@ -540,6 +580,11 @@ class General extends RawMinkContext implements Context
         }
     }
 
+    /**
+     * Adds characters to groups for testing purposes
+     * @param TableNode $table A table listing characters and groups to be added
+     * @throws ExpectationException if the list cannot be added
+     */
     private function add_characters_to_group(TableNode $table)
     {
         global $sourcedir;
@@ -588,6 +633,11 @@ class General extends RawMinkContext implements Context
         }
     }
 
+    /**
+     * Adds users to groups for testing purposes
+     * @param TableNode $table A table listing users and groups to be added
+     * @throws ExpectationException if the list cannot be added
+     */
     private function add_users_to_group(TableNode $table)
     {
         global $sourcedir;

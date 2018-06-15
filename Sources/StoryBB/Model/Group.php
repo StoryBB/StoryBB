@@ -12,8 +12,17 @@
 
 namespace StoryBB\Model;
 
+/**
+ * This class handles the database processing for a membergroup.
+ */
 class Group
 {
+	/**
+	 * Identifies whether a given group is a character-based or account based.
+	 *
+	 * @param int $group The group ID
+	 * @return bool True if the group is a character-based group
+	 */
 	public static function is_character_group(int $group): bool
 	{
 		global $smcFunc;
