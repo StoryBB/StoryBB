@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handles getting settings from the theme.
+ * Handles processing for a theme.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -14,8 +14,16 @@ declare(strict_types=1);
 
 namespace StoryBB\Model;
 
+/**
+ * Handles processing for a theme.
+ */
 class Theme
 {
+	/**
+	 * Gets the theme's JSON configuration file
+	 *
+	 * @return array Return the current theme's configuration settings
+	 */
 	private static function get_theme_json(): array {
 		global $settings;
 
@@ -31,6 +39,11 @@ class Theme
 		return !empty($theme_json) && is_array($theme_json) ? $theme_json : [];
 	}
 
+	/**
+	 * Returns the default settings for the current theme
+	 *
+	 * @return array The default generic settings as set in the theme configuration
+	 */
 	public static function get_defaults(): array {
 		$theme_json = self::get_theme_json();
 		unset($theme_json['theme_settings'], $theme_json['user_options']);
@@ -49,14 +62,30 @@ class Theme
 		return $theme_json;
 	}
 
+	/**
+	 * Returns the theme settings as opposed to its configuration
+	 *
+	 * @return array The configurable settings for a theme
+	 */
 	public static function get_theme_settings(): array {
 		return self::parse_section('theme_settings');
 	}
 
+	/**
+	 * Returns the user preferences from a theme
+	 *
+	 * @return array The user-preferences from the theme
+	 */
 	public static function get_user_options(): array {
 		return self::parse_section('user_options');
 	}
 
+	/**
+	 * Returns a specific section of configuration, having fetched language strings etc.
+	 *
+	 * @param string $section The key from the configuration to be parsed
+	 * @return array The relevant section from configuration, processed ready for use
+	 */
 	private static function parse_section(string $section): array {
 		global $txt, $context;
 

@@ -13,6 +13,9 @@
 namespace StoryBB\Model;
 use StoryBB\Task;
 
+/**
+ * This class handles the database processing for a post.
+ */
 class Post
 {
 
