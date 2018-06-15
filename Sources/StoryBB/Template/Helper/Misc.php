@@ -82,6 +82,13 @@ class Misc
 		return json_encode($data instanceof \LightnCandy\SafeString ? (string) $data : $data);
 	}
 
+	/**
+	 * Issues a separator to break a row after a number of items.
+	 * @param int $index The current index from the loop of items
+	 * @param int $perRow The number of items per row
+	 * @param string $sep The separator HTML between rows
+	 * @return string HTML, conditionally the separator if we're correctly between rows
+	 */
 	public static function breakrow($index, $perRow, $sep) {
 		$perRow = (int) $perRow;
 		if ($perRow == 0) {
