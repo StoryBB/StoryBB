@@ -330,12 +330,36 @@ class ExportData extends \StoryBB\Task\Adhoc
 				}
 				$details[] = '';
 				$details[] = 'Last active: ' . date('j F Y, H:i:s', $character['last_active']);
+
+				$zip->addEmptyDir('account_and_characters/' . $character['export_folder'] . '/sheets');
 			}
 
 			$zip->addFromString('account_and_characters/' . $character['export_folder'] . '/details.txt', implode("\r\n", $details));
 		}
 
-		// @todo Fetch character sheet versions, and export those too.
+		// Fetch character sheet versions, and export those too.
+		$request = $smcFunc['db_query']('', '
+			SELECT id_character, created_time, sheet_text
+			FROM {db_prefix}character_sheet_versions
+			WHERE id_member = {int:member}
+			ORDER BY id_version',
+			[
+				'member' => $this->_details['id_member'],
+			]
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			if (!isset($exports[$row['id_character']]))
+			{
+				continue;
+			}
+
+			$row['sheet_text'] = str_replace("\n", "\r\n", $row['sheet_text']);
+			$character_sheet_path = 'account_and_characters/' . $exports[$row['id_character']]['export_folder'] . '/sheets/';
+			$character_sheet_filename = date('Y-m-d H-i-s', $row['created_time']) . '.txt';
+			$zip->addFromString($character_sheet_path . $character_sheet_filename, $row['sheet_text']);
+		}
+		$smcFunc['db_free_result']($request);
 
 		$zip->close();
 	}
