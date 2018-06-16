@@ -311,6 +311,12 @@ class ExportData extends \StoryBB\Task\Adhoc
 			{
 				$details[] = 'Character name: ' . $character['character_name'];
 				$details[] = 'Created on: ' . date('j F Y, H:i:s', $character['date_created']);
+
+				if (!empty($character['signature'])) {
+					$details[] = 'Signature: ' . str_replace("\n", "\r\n", $character['signature']);
+				}
+				$details[] = '';
+				$details[] = 'Last active: ' . date('j F Y, H:i:s', $character['last_active']);
 			}
 
 			$zip->addFromString('account_and_characters/' . $character['export_folder'] . '/details.txt', implode("\r\n", $details));
