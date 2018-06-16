@@ -30,6 +30,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			'init_export',
 			'export_characters',
 			'export_posts',
+			'export_attachments',
 			'finalise_export',
 		];
 
@@ -110,6 +111,8 @@ class ExportData extends \StoryBB\Task\Adhoc
 		if (isset($steps[$position + 1]))
 		{
 			$options = $this->_details;
+			// Clear up from previous tasks and gear up for future ones.
+			unset ($options['start_from'], $options['step_size']);
 			$options['current_step'] = $steps[$position + 1];
 			$options['export_id'] = $this->_details['export_id'];
 			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ExportData', $options);
@@ -127,7 +130,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		// Make the zip file.
 		$zip = new ZipArchive;
 		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = smf_json_decode($modSettings['attachmentUploadDir'], true);
+			$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);
 
 		$this->_details['attach_folder_id'] = $modSettings['currentAttachmentUploadDir'];
 		$this->_details['attach_folder'] = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
@@ -399,6 +402,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		global $smcFunc;
 
 		// We want to move things in batches. This is how many to export in a single step. The main loop will handle this for us.
+		// We primarily want to do it in batches because 100 posts is potentially a lot for the DB to chug at once.
 		$this->_details['step_size'] = 100;
 		if (!isset($this->_details['start_from']))
 		{
@@ -464,6 +468,79 @@ class ExportData extends \StoryBB\Task\Adhoc
 			$path .= 'topic_' . $row['id_topic'] . '/';
 			$path .= 'msg_' . $row['id_msg'] . '.txt';
 			$zip->addFromString($path, $content);
+		}
+		$smcFunc['db_free_result']($request);
+
+		// And back to the start.
+		$zip->close();
+		throw new NotCompleteException;
+	}
+
+	/**
+	 * Export process part 4: output attachments in batches
+	 */
+	protected function export_attachments()
+	{
+		global $smcFunc, $modSettings;
+
+		if (!is_array($modSettings['attachmentUploadDir']))
+			$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);
+
+		// We want to move things in batches. This is how many to export in a single step. The main loop will handle this for us.
+		// We primarily want to do it in batches because ZipArchive has hidden limits on moving files.
+		$this->_details['step_size'] = 25;
+		if (!isset($this->_details['start_from']))
+		{
+			$this->_details['start_from'] = 0;
+		}
+
+		// Query for posts.
+		$request = $smcFunc['db_query']('', '
+			SELECT m.id_msg, m.id_character, m.id_topic, t.id_board, chars.character_name,
+				a.id_attach, a.filename, a.file_hash, a.id_folder
+			FROM {db_prefix}messages AS m
+			INNER JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character)
+			INNER JOIN {db_prefix}topics AS t ON (m.id_topic = t.id_topic)
+			INNER JOIN {db_prefix}attachments AS a ON (a.id_msg = m.id_msg)
+			WHERE m.id_member = {int:member}
+				AND a.attachment_type = {int:attachment}
+			ORDER BY a.id_attach
+			LIMIT {int:start}, {int:step_size}',
+			$data = [
+				'member' => $this->_details['id_member'],
+				'attachment' => 0,
+				'start' => $this->_details['start_from'],
+				'step_size' => $this->_details['step_size'],
+			]
+		);
+		if ($smcFunc['db_num_rows']($request) == 0)
+		{
+			// Nothing to do?
+			$smcFunc['db_free_result']($request);
+			return true;
+		}
+
+		$zip = new ZipArchive;
+		if ($zip->open($this->_details['zipfile']) !== true)
+		{
+			throw new Exception("Could not open export data for user " . $this->_details['id_member'] . ". Permissions for the attachments folder may need to be checked.");
+		}
+
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$path = 'posts/';
+			$path .= $this->_exportable_character_name($row['character_name'], (int) $row['id_character']) . '/';
+			$path .= 'board_' . $row['id_board'] . '/';
+			$path .= 'topic_' . $row['id_topic'] . '/';
+			$path .= 'msg_' . $row['id_msg'] . '_' . $row['id_attach'] . '_' . iconv('UTF-8', 'ASCII//TRANSLIT', $row['filename']);
+
+			if (!isset($modSettings['attachmentUploadDir'][$row['id_folder']]))
+			{
+				continue;
+			}
+			$sourcefile = $modSettings['attachmentUploadDir'][$row['id_folder']] . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.dat';
+
+			$zip->addFile($sourcefile, $path);
 		}
 		$smcFunc['db_free_result']($request);
 
