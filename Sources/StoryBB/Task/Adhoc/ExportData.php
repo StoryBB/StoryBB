@@ -288,6 +288,22 @@ class ExportData extends \StoryBB\Task\Adhoc
 					$details[] = 'Signature: ' . str_replace("\n", "\r\n", $character['signature']);
 				}
 				$details[] = '';
+
+				if (!empty($character['custom_fields']))
+				{
+					$added = false;
+					foreach ($character['custom_fields'] as $name => $value)
+					{
+						if ($value)
+						{
+							$added = true;
+							$details[] = $name . ': ' . $value;
+						}
+					}
+					if ($added)
+						$details[] = '';
+				}
+
 				$details[] = 'Immersive mode: ' . ($character['immersive_mode'] ? 'Yes' : 'No');
 				$details[] = 'Language: ' . (!empty($character['lngfile']) ? $character['lngfile'] : $language);
 				$details[] = 'Last login: ' . date('j F Y, H:i:s', $character['last_login']);
