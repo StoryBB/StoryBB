@@ -44,3 +44,5 @@ $txt['alert_msg_mentionchr'] = '{your_chr} mentioned {char_link} in the post {ms
 $txt['alert_msg_likechr'] = '{member_link} liked {your_chr}\'s post {msg_msg}';
 $txt['alert_member_char_sheet_approvalchr'] = '{char_link}\'s <a href="#{char_sheet_link}">character sheet</a> is awaiting approval.';
 $txt['alert_member_char_sheet_approvedchr'] = '{your_chr}\'s character sheet was approved.';
+$txt['alert_member_export_complete'] = 'An export of your posts and attachments is <a href="{scripturl}{export_link}">ready for you</a>.';
+$txt['alert_member_export_complete_admin'] = 'An export of posts and attachments for {member_link} is now <a href="{scripturl}{export_link}">ready for download</a>.';

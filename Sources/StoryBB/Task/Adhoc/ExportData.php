@@ -630,37 +630,63 @@ class ExportData extends \StoryBB\Task\Adhoc
 			]
 		);
 
-		// // Issue an alert to the owner to indicate they're good to go.
-		// $alert_rows[] = [
-		// 	'alert_time' => time(),
-		// 	'id_member' => $member,
-		// 	'id_member_started' => $posterOptions['id'],
-		// 	'member_name' => $posterOptions['name'],
-		// 	'content_type' => 'unapproved',
-		// 	'content_id' => $topicOptions['id'],
-		// 	'content_action' => $type,
-		// 	'is_read' => 0,
-		// 	'extra' => json_encode(array(
-		// 		'topic' => $topicOptions['id'],
-		// 		'board' => $topicOptions['board'],
-		// 		'content_subject' => $msgOptions['subject'],
-		// 		'content_link' => $scripturl . '?topic=' . $topicOptions['id'] . '.new;topicseen#new',
-		// 	)),
-		// ];
+		$export_link = '?action=profile;area=export_data;u=' . $this->_details['id_member'];
 
-		// // Issue an alert to the requester if they aren't the owner to indicate they're good to go.
-		// if ($this->_details['id_requester'] != $this->_details['id_member'])
-		// {
+		$request = $smcFunc['db_query']('', '
+			SELECT real_name
+			FROM {db_prefix}members
+			WHERE id_member = {int:member}',
+			[
+				'member' => $this->_details['id_member'],
+			]
+		);
+		$row = $smcFunc['db_fetch_assoc']($request);
+		$smcFunc['db_free_result']($request);
 
-		// }
+		// Issue an alert to the owner to indicate they're good to go.
+		$alert_rows[] = [
+			'alert_time' => time(),
+			'id_member' => $this->_details['id_member'],
+			'id_member_started' => $this->_details['id_member'],
+			'member_name' => $row['real_name'],
+			'content_type' => 'member',
+			'content_id' => $this->_details['id_member'],
+			'content_action' => 'export_complete',
+			'is_read' => 0,
+			'extra' => json_encode(array(
+				'export_link' => $export_link,
+			)),
+		];
 
-		// // Add the alerts.
-		// $smcFunc['db_insert']('',
-		// 	'{db_prefix}user_alerts',
-		// 	array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
-		// 		'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
-		// 	$alert_rows,
-		// 	array()
-		// );
+		// Issue an alert to the requester if they aren't the owner to indicate they're good to go.
+		if ($this->_details['id_requester'] != $this->_details['id_member'])
+		{
+			$alert_rows[] = [
+				'alert_time' => time(),
+				'id_member' => $this->_details['id_requester'],
+				'id_member_started' => $this->_details['id_member'],
+				'member_name' => $row['real_name'],
+				'content_type' => 'member',
+				'content_id' => $this->_details['id_member'],
+				'content_action' => 'export_complete_admin',
+				'is_read' => 0,
+				'extra' => json_encode(array(
+					'export_link' => $export_link,
+				)),
+			];
+		}
+
+		// Add the alerts.
+		$smcFunc['db_insert']('',
+			'{db_prefix}user_alerts',
+			array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+			$alert_rows,
+			array()
+		);
+
+		updateMemberData($this->_details['id_member'], array('alerts' => '+'));
+		if ($this->_details['id_requester'] != $this->_details['id_member'])
+			updateMemberData($this->_details['id_requester'], array('alerts' => '+'));
 	}
 }
