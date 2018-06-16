@@ -174,7 +174,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 	protected function export_characters()
 	{
-		global $smcFunc;
+		global $smcFunc, $language;
 
 		$export = [];
 		$main_char = 0;
@@ -218,7 +218,26 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 		$smcFunc['db_free_result']($request);
 
-		// @todo Pull the rest of the stuff out of the members table.
+		// Pull the rest of the stuff out of the members table.
+		if (!empty($main_char))
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT member_name, date_registered, immersive_mode, lngfile, last_login,
+					email_address, birthdate, website_title, website_url, signature,
+					member_ip, member_ip2, secret_question, total_time_logged_in, timezone
+				FROM {db_prefix}members
+				WHERE id_member = {int:member}',
+				[
+					'member' => $this->_details['id_member'],
+				]
+			);
+			$row = $smcFunc['db_fetch_assoc']($request);
+			$smcFunc['db_free_result']($request);
+
+			$row['member_ip'] = inet_dtop($row['member_ip']);
+			$row['member_ip2'] = inet_dtop($row['member_ip2']);
+			$exports[$main_char] += $row;
+		}
 
 		// Add custom fields to the account entry.
 		if (!empty($main_char))
@@ -228,8 +247,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				FROM {db_prefix}custom_fields AS cf
 				INNER JOIN {db_prefix}themes AS th ON (th.id_member = {int:member} AND th.variable = cf.col_name)
 				WHERE cf.private < {int:admin_only}
-				ORDER BY cf.field_order
-				',
+				ORDER BY cf.field_order',
 				[
 					'member' => $this->_details['id_member'],
 					'admin_only' => 3,
@@ -255,14 +273,44 @@ class ExportData extends \StoryBB\Task\Adhoc
 			$details = [];
 			if ($character['is_main'])
 			{
-				$details[] = 'Account Name: ' . $character['character_name'];
-				// @todo add user name
-				$details[] = 'Date Registered: ' . date('j F Y, H:i:s', $character['date_created']);
+				$details[] = 'Username: ' . $character['member_name'];
+				$details[] = 'Account name: ' . $character['character_name'];
+				$details[] = 'Date registered: ' . date('j F Y, H:i:s', $character['date_registered']);
+				$details[] = 'Email address: ' . $character['email_address'];
+				if (!empty($character['signature'])) {
+					$details[] = 'Signature: ' . str_replace("\n", "\r\n", $character['signature']);
+				}
+				$details[] = '';
+				$details[] = 'Immersive mode: ' . ($character['immersive_mode'] ? 'Yes' : 'No');
+				$details[] = 'Language: ' . (!empty($character['lngfile']) ? $character['lngfile'] : $language);
+				$details[] = 'Last login: ' . date('j F Y, H:i:s', $character['last_login']);
+				$details[] = 'Primary IP address: ' . $character['member_ip'];
+				if ($character['member_ip'] != $character['member_ip2']) {
+					$details[] = 'Secondary IP address: ' . $character['member_ip2'];
+				}
+				if (!empty($character['secret_question'])) {
+					$details[] = 'Secret question: ' . $character['secret_question'];
+				}
+				if (!empty($character['website_url'])) {
+					$details[] = 'Website: ' . $character['website_title'] . ' - ' . $character['website_url'];
+				}
+				$details[] = 'Timezone: ' . $character['timezone'];
+				$total_time_logged_in = '';
+				if ($character['total_time_logged_in'] > 86400) {
+					$total_time_logged_in .= floor($character['total_time_logged_in'] / 86400) . ' days';
+					$character['total_time_logged_in'] = $character['total_time_logged_in'] % 86400;
+				}
+				if ($character['total_time_logged_in'] > 3600) {
+					$total_time_logged_in .= (!empty($total_time_logged_in) ? ', ' : '') . floor($character['total_time_logged_in'] / 3600) . ' hours';
+					$character['total_time_logged_in'] = $character['total_time_logged_in'] % 3600;
+				}
+				$total_time_logged_in .= (!empty($total_time_logged_in) ? ', ' : '') . round($character['total_time_logged_in'] / 60) . ' minutes';
+				$details[] = 'Total time logged in: ' . $total_time_logged_in;
 			}
 			else
 			{
-				$details[] = 'Character Name: ' . $character['character_name'];
-				$details[] = 'Created On: ' . date('j F Y, H:i:s', $character['date_created']);
+				$details[] = 'Character name: ' . $character['character_name'];
+				$details[] = 'Created on: ' . date('j F Y, H:i:s', $character['date_created']);
 			}
 
 			$zip->addFromString('account_and_characters/' . $character['export_folder'] . '/details.txt', implode("\r\n", $details));
