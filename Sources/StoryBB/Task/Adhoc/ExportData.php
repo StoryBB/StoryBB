@@ -67,6 +67,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			}
 			$options['export_id'] = $this->_details['export_id'];
 			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ExportData', $options);
+			return true;
 		}
 		catch (Exception $e)
 		{
@@ -399,9 +400,9 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 		// We want to move things in batches. This is how many to export in a single step. The main loop will handle this for us.
 		$this->_details['step_size'] = 100;
-		if (!isset($this->_details['start']))
+		if (!isset($this->_details['start_from']))
 		{
-			$this->_details['start'] = 0;
+			$this->_details['start_from'] = 0;
 		}
 
 		// Query for posts.
@@ -417,7 +418,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			LIMIT {int:start}, {int:step_size}',
 			[
 				'member' => $this->_details['id_member'],
-				'start' => $this->_details['start'],
+				'start' => $this->_details['start_from'],
 				'step_size' => $this->_details['step_size'],
 			]
 		);
@@ -533,6 +534,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		global $smcFunc;
 
 		// Get the file size so we can add it to the table.
+		clearstatcache($this->_details['zipfile']);
 		$size = @filesize($this->_details['zipfile']);
 
 		// Update the export to indicate it is done.
