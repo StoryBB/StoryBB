@@ -11,6 +11,7 @@
 
 namespace StoryBB\Task\Adhoc;
 use StoryBB\Task;
+use StoryBB\Task\Adhoc\Exception\NotCompleteException;
 use ZipArchive;
 use Exception;
 
@@ -28,6 +29,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		$steps = [
 			'init_export',
 			'export_characters',
+			'export_posts',
 			'finalise_export',
 		];
 
@@ -53,6 +55,18 @@ class ExportData extends \StoryBB\Task\Adhoc
 		try {
 			$method = $this->_details['current_step'];
 			$this->$method();
+		}
+		catch (NotCompleteException $e)
+		{
+			// This isn't necessarily that something went wrong but that we need to not just move onto the next step.
+			// This is mostly when we're tackling posts, we want to do them in batches. This way we keep going until we run out.
+			$options = $this->_details;
+			if (!empty($options['step_size']))
+			{
+				$options['start_from'] += $options['step_size'];
+			}
+			$options['export_id'] = $this->_details['export_id'];
+			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ExportData', $options);
 		}
 		catch (Exception $e)
 		{
@@ -209,17 +223,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			$row['custom_fields'] = [];
 
 			// Work out a suitable location for the files.
-			$row['export_folder'] = iconv('UTF-8', 'ASCII//TRANSLIT', html_entity_decode($row['character_name'], ENT_QUOTES, 'UTF-8'));
-			$row['export_folder'] = str_replace('"', "''", $row['export_folder']);
-			$row['export_folder'] = preg_replace('/[^a-z0-9\'\- ]/i', '', $row['export_folder']);
-			if (empty($row['export_folder']))
-			{
-				$row['export_folder'] = 'character_' . $row['id_character'];
-			}
-			else
-			{
-				$row['export_folder'] .= '_' . $row['id_character'];
-			}
+			$row['export_folder'] = $this->_exportable_character_name($row['character_name'], (int) $row['id_character']);
 			$exports[$row['id_character']] = $row;
 		}
 		$smcFunc['db_free_result']($request);
@@ -384,6 +388,108 @@ class ExportData extends \StoryBB\Task\Adhoc
 		$smcFunc['db_free_result']($request);
 
 		$zip->close();
+	}
+
+	/**
+	 * Export process part 3: output posts in batches
+	 */
+	protected function export_posts()
+	{
+		global $smcFunc;
+
+		// We want to move things in batches. This is how many to export in a single step. The main loop will handle this for us.
+		$this->_details['step_size'] = 100;
+		if (!isset($this->_details['start']))
+		{
+			$this->_details['start'] = 0;
+		}
+
+		// Query for posts.
+		$request = $smcFunc['db_query']('', '
+			SELECT m.id_msg, m.id_character, m.poster_time, m.id_topic, t.id_board, b.name AS board_name, m.subject, m.body,
+				m.modified_time, m.modified_name, m.modified_reason, chars.character_name
+			FROM {db_prefix}messages AS m
+			INNER JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character)
+			INNER JOIN {db_prefix}topics AS t ON (m.id_topic = t.id_topic)
+			INNER JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
+			WHERE m.id_member = {int:member}
+			ORDER BY m.id_msg
+			LIMIT {int:start}, {int:step_size}',
+			[
+				'member' => $this->_details['id_member'],
+				'start' => $this->_details['start'],
+				'step_size' => $this->_details['step_size'],
+			]
+		);
+		if ($smcFunc['db_num_rows']($request) == 0)
+		{
+			// Nothing to do?
+			$smcFunc['db_free_result']($request);
+			return true;
+		}
+
+		$zip = new ZipArchive;
+		if ($zip->open($this->_details['zipfile']) !== true)
+		{
+			throw new Exception("Could not open export data for user " . $this->_details['id_member'] . ". Permissions for the attachments folder may need to be checked.");
+		}
+
+		// Now begin the export.
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$content = 'Board: ' . $row['board_name'] . "\r\n";
+			$content .= 'Topic: ' . $row['subject'] . "\r\n";
+			$content .= 'Posted on: ' . date('j F Y, H:i:s', $row['poster_time']) . "\r\n";
+			if (!empty($row['modified_time']))
+			{
+				$content .= 'Last modified on: ' . date('j F Y, H:i:s', $row['modified_time']);
+				if (!empty($row['modified_name']))
+				{
+					$content .= ' by ' . $row['modified_name'];
+				}
+				if (!empty($row['modified_reason']))
+				{
+					$content .= ' (reason: ' . $row['modified_reason'] . ')';
+				}
+				$content .= "\r\n";
+			}
+			$content .= "\r\n";
+			$content .= html_entity_decode(str_replace('<br>', "\r\n", $row['body']), ENT_QUOTES);
+
+			$path = 'posts/';
+			$path .= $this->_exportable_character_name($row['character_name'], (int) $row['id_character']) . '/';
+			$path .= 'board' . $row['id_board'] . '/';
+			$path .= 'topic' . $row['id_topic'] . '/';
+			$path .= 'msg' . $row['id_msg'] . '.txt';
+			$zip->addFromString($path, $content);
+		}
+		$smcFunc['db_free_result']($request);
+
+		// And back to the start.
+		$zip->close();
+		throw new NotCompleteException;
+	}
+
+	/**
+	 * Given a character name, convert it to a zipfile-safe folder name.
+	 * @param string $character_name The character name as raw UTF-8
+	 * @param string $id_character The character ID for a fallback folder name, or as a disambiguator
+	 * @return string Zipfile-safe folder name
+	 */
+	private function _exportable_character_name(string $character_name, int $id_character): string
+	{
+		$export_folder = iconv('UTF-8', 'ASCII//TRANSLIT', html_entity_decode($character_name, ENT_QUOTES, 'UTF-8'));
+		$export_folder = str_replace('"', "''", $export_folder);
+		$export_folder = preg_replace('/[^a-z0-9\'\- ]/i', '', $export_folder);
+		if (empty($export_folder))
+		{
+			$export_folder = 'character_' . $id_character;
+		}
+		else
+		{
+			$export_folder .= '_' . $id_character;
+		}
+		return $export_folder;
 	}
 
 	/**
