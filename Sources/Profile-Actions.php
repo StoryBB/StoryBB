@@ -25,6 +25,33 @@ function exportData($memID)
 		isAllowedTo('admin_forum');
 	}
 
+	// Is the user requesting a download?
+	if (isset($_REQUEST['download']))
+	{
+		$_REQUEST['download'] = (int) $_REQUEST['download'];
+		checkSession('get');
+
+		$request = $smcFunc['db_query']('', '
+			SELECT a.id_attach, ue.id_member
+			FROM {db_prefix}user_exports AS ue
+			INNER JOIN {db_prefix}attachments AS a ON (ue.id_attach = a.id_attach)
+			WHERE ue.id_export = {int:export}
+				AND ue.id_member = {int:member}
+				AND ue.requested_on > {int:last_valid}',
+			[
+				'export' => $_REQUEST['download'],
+				'member' => $memID,
+				'last_valid' => time() - (86400 * 7),
+			]
+		);
+		if ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			require_once($sourcedir . '/ShowAttachments.php');
+			showAttachment($row['id_attach']);
+		}
+		fatal_lang_error('profile_export_data_not_available', false);
+	}
+
 	// Is one currently processing for this user?
 	$in_process = false;
 	$request = $smcFunc['db_query']('', '

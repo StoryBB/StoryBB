@@ -435,7 +435,7 @@ function BrowseFiles()
 
 						// Exports link to the profile page.
 						elseif ($context['browse_type'] == 'exports')
-							$link .= sprintf('%1$s?action=profile;area=export_data;u=%2$s;attach=%3$s;%4$s=%5$s', $scripturl, $rowData['id_member'], $rowData['id_topic'], $context['session_var'], $context['session_id']);
+							$link .= sprintf('%1$s?action=profile;area=export_data;u=%2$s;download=%3$s;%4$s=%5$s', $scripturl, $rowData['id_member'], $rowData['id_topic'], $context['session_var'], $context['session_id']);
 
 						// Normal attachments are always linked to a topic ID.
 						else

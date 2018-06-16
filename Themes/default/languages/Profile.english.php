@@ -437,6 +437,7 @@ $txt['profile_export_data_available_until'] = 'Download available until';
 $txt['profile_export_data_no_export_available'] = 'No exports currently available.';
 $txt['profile_export_data_in_process'] = 'An export is currently processing.';
 $txt['profile_export_data_queued'] = 'An export is being prepared. You will be notified when it is ready for download.';
+$txt['profile_export_data_not_available'] = 'The requested export is not available.';
 
 $txt['profile_view_warnings'] = 'View Warnings';
 $txt['profile_issue_warning'] = 'Issue a Warning';
