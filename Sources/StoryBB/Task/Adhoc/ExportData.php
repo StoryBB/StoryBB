@@ -27,6 +27,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 	{
 		$steps = [
 			'init_export',
+			'export_characters',
 			'finalise_export',
 		];
 
@@ -168,6 +169,107 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 		$zip->addEmptyDir('posts');
 		$zip->addEmptyDir('account_and_characters');
+		$zip->close();
+	}
+
+	protected function export_characters()
+	{
+		global $smcFunc;
+
+		$export = [];
+		$main_char = 0;
+
+		$request = $smcFunc['db_query']('', '
+			SELECT chars.id_character, chars.character_name, chars.avatar, chars.signature, chars.id_theme,
+				chars.posts, chars.age, chars.date_created, chars.last_active, chars.is_main,
+				chars.main_char_group, chars.char_groups, a.id_attach, a.filename, a.attachment_type
+			FROM {db_prefix}characters AS chars
+			LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character AND a.attachment_type = 1)
+			WHERE chars.id_member = {int:member}',
+			[
+				'member' => $this->_details['id_member'],
+			]
+		);
+
+		// @todo appropriate setlocale call here
+
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			if ($row['is_main'])
+			{
+				$main_char = $row['id_character'];
+			}
+
+			$row['custom_fields'] = [];
+
+			// Work out a suitable location for the files.
+			$row['export_folder'] = iconv('UTF-8', 'ASCII//TRANSLIT', html_entity_decode($row['character_name'], ENT_QUOTES, 'UTF-8'));
+			$row['export_folder'] = str_replace('"', "''", $row['export_folder']);
+			$row['export_folder'] = preg_replace('/[^a-z0-9\'\- ]/i', '', $row['export_folder']);
+			if (empty($row['export_folder']))
+			{
+				$row['export_folder'] = 'character_' . $row['id_character'];
+			}
+			else
+			{
+				$row['export_folder'] .= '_' . $row['id_character'];
+			}
+			$exports[$row['id_character']] = $row;
+		}
+		$smcFunc['db_free_result']($request);
+
+		// @todo Pull the rest of the stuff out of the members table.
+
+		// Add custom fields to the account entry.
+		if (!empty($main_char))
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT cf.field_name, th.value
+				FROM {db_prefix}custom_fields AS cf
+				INNER JOIN {db_prefix}themes AS th ON (th.id_member = {int:member} AND th.variable = cf.col_name)
+				WHERE cf.private < {int:admin_only}
+				ORDER BY cf.field_order
+				',
+				[
+					'member' => $this->_details['id_member'],
+					'admin_only' => 3,
+				]
+			);
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+			{
+				$exports[$main_char]['custom_fields'][$row['field_name']] = $row['value'];
+			}
+		}
+
+		$zip = new ZipArchive;
+		if ($zip->open($this->_details['zipfile']) !== true)
+		{
+			throw new Exception("Could not open export data for user " . $this->_details['id_member'] . ". Permissions for the attachments folder may need to be checked.");
+		}
+
+		// Export the data we have to the archive.
+		foreach ($exports as $id_character => $character)
+		{
+			$zip->addEmptyDir('account_and_characters/' . $character['export_folder']);
+
+			$details = [];
+			if ($character['is_main'])
+			{
+				$details[] = 'Account Name: ' . $character['character_name'];
+				// @todo add user name
+				$details[] = 'Date Registered: ' . date('j F Y, H:i:s', $character['date_created']);
+			}
+			else
+			{
+				$details[] = 'Character Name: ' . $character['character_name'];
+				$details[] = 'Created On: ' . date('j F Y, H:i:s', $character['date_created']);
+			}
+
+			$zip->addFromString('account_and_characters/' . $character['export_folder'] . '/details.txt', implode("\r\n", $details));
+		}
+
+		// @todo Fetch character sheet versions, and export those too.
+
 		$zip->close();
 	}
 
