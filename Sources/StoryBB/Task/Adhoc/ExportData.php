@@ -102,6 +102,9 @@ class ExportData extends \StoryBB\Task\Adhoc
 		return true;
 	}
 
+	/**
+	 * Export process part 1: establish some metadata for the user, add it to the places in the DB we care about, create the final zip file.
+	 */
 	protected function init_export()
 	{
 		global $modSettings, $smcFunc;
@@ -172,6 +175,9 @@ class ExportData extends \StoryBB\Task\Adhoc
 		$zip->close();
 	}
 
+	/**
+	 * Export process part 2: output the account and character details we have stored.
+	 */
 	protected function export_characters()
 	{
 		global $smcFunc, $language;
@@ -413,6 +419,9 @@ class ExportData extends \StoryBB\Task\Adhoc
 		return '';
 	}
 
+	/**
+	 * Data export last part: mark the attachment as ready to go, notify the owner that there is a new data export for them.
+	 */
 	protected function finalise_export()
 	{
 		global $smcFunc;
