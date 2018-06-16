@@ -987,6 +987,8 @@ function RemoveAllAttachments()
 
 	$messages = removeAttachments(array('attachment_type' => 0), '', true);
 
+	$smcFunc['db_query']('', 'DELETE FROM {db_prefix}user_exports');
+
 	if (!isset($_POST['notice']))
 		$_POST['notice'] = $txt['attachment_delete_admin'];
 
@@ -1251,7 +1253,7 @@ function RepairAttachments()
 					AND thumb.attachment_type = {int:thumbnail}
 					AND tparent.id_attach IS NULL',
 				array(
-					'thumbnail' => 3,
+					'thumbnail' => Attachment::ATTACHMENT_THUMBNAIL,
 					'substep' => $_GET['substep'],
 				)
 			);
@@ -1485,6 +1487,13 @@ function RepairAttachments()
 						'no_thumb' => 0,
 					)
 				);
+				$smcFunc['db_query']('', '
+					DELETE FROM {db_prefix}user_exports
+					WHERE id_attach IN ({array_int:to_remove})',
+					[
+						'to_remove' => $to_remove,
+					]
+				);
 			}
 
 			pauseAttachmentMaintenance($to_fix, $thumbnails);
@@ -1518,11 +1527,13 @@ function RepairAttachments()
 				WHERE a.id_attach BETWEEN {int:substep} AND {int:substep} + 499
 					AND a.id_character != {int:no_member}
 					AND a.id_msg = {int:no_msg}
+					AND a.attachment_type != {int:export}
 					AND chars.id_character IS NULL',
 				array(
 					'no_member' => 0,
 					'no_msg' => 0,
 					'substep' => $_GET['substep'],
+					'export' => Attachment::ATTACHMENT_EXPORT,
 				)
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -1600,7 +1611,7 @@ function RepairAttachments()
 					'no_msg' => 0,
 					'substep' => $_GET['substep'],
 					'ignore_ids' => $ignore_ids,
-					'attach_thumb' => array(0,3),
+					'attach_thumb' => [Attachment::ATTACHMENT_STANDARD, Attachment::ATTACHMENT_THUMBNAIL],
 				)
 			);
 			
