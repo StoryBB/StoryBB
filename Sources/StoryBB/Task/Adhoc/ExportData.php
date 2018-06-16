@@ -440,6 +440,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		{
 			$content = 'Board: ' . $row['board_name'] . "\r\n";
 			$content .= 'Topic: ' . $row['subject'] . "\r\n";
+			$content .= 'Posted by: ' . $row['character_name'] . "\r\n";
 			$content .= 'Posted on: ' . date('j F Y, H:i:s', $row['poster_time']) . "\r\n";
 			if (!empty($row['modified_time']))
 			{
@@ -459,9 +460,9 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 			$path = 'posts/';
 			$path .= $this->_exportable_character_name($row['character_name'], (int) $row['id_character']) . '/';
-			$path .= 'board' . $row['id_board'] . '/';
-			$path .= 'topic' . $row['id_topic'] . '/';
-			$path .= 'msg' . $row['id_msg'] . '.txt';
+			$path .= 'board_' . $row['id_board'] . '/';
+			$path .= 'topic_' . $row['id_topic'] . '/';
+			$path .= 'msg_' . $row['id_msg'] . '.txt';
 			$zip->addFromString($path, $content);
 		}
 		$smcFunc['db_free_result']($request);
