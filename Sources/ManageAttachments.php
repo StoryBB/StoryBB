@@ -400,7 +400,7 @@ function BrowseFiles()
 		'id' => 'file_list',
 		'title' => $list_title,
 		'items_per_page' => $modSettings['defaultMaxListItems'],
-		'base_href' => $scripturl . '?action=admin;area=manageattachments;sa=browse' . ($context['browse_type'] === 'avatars' ? ';avatars' : ($context['browse_type'] === 'thumbs' ? ';thumbs' : '')),
+		'base_href' => $scripturl . '?action=admin;area=manageattachments;sa=browse' . ($context['browse_type'] !== 'attachments' ? ';' . $context['browse_type'] : ''),
 		'default_sort_col' => 'name',
 		'no_items_label' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ($context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments')) . '_no_entries'],
 		'get_items' => array(
@@ -527,8 +527,8 @@ function BrowseFiles()
 					},
 				),
 				'sort' => array(
-					'default' => $context['browse_type'] === 'avatars' ? 'mem.last_login' : 'm.id_msg',
-					'reverse' => $context['browse_type'] === 'avatars' ? 'mem.last_login DESC' : 'm.id_msg DESC',
+					'default' => $context['browse_type'] === 'avatars' ? 'mem.last_login' : ($context['browse_type'] == 'exports' ? 'poster_time' : 'm.id_msg'),
+					'reverse' => $context['browse_type'] === 'avatars' ? 'mem.last_login DESC' : ($context['browse_type'] == 'exports' ? 'poster_time DESC' : 'm.id_msg DESC'),
 				),
 			),
 			'downloads' => array(
@@ -719,7 +719,7 @@ function list_getNumFiles($browse_type)
 			WHERE a.attachment_type = {int:attachment_type}
 				AND a.id_character = {int:guest_id_member}',
 			array(
-				'attachment_type' => $browse_type === 'thumbs' ? '3' : '0',
+				'attachment_type' => $browse_type === 'thumbs' ? Attachment::ATTACHMENT_THUMBNAIL : Attachment::ATTACHMENT_STANDARD,
 				'guest_id_member' => 0,
 			)
 		);
@@ -753,7 +753,7 @@ function MaintainFiles()
 		WHERE attachment_type = {int:attachment_type}
 			AND id_character = {int:guest_id_member}',
 		array(
-			'attachment_type' => 0,
+			'attachment_type' => Attachment::ATTACHMENT_STANDARD,
 			'guest_id_member' => 0,
 		)
 	);
@@ -780,7 +780,7 @@ function MaintainFiles()
 		FROM {db_prefix}attachments
 		WHERE attachment_type != {int:type}',
 		array(
-			'type' => 1,
+			'type' => Attachment::ATTACHMENT_AVATAR,
 		)
 	);
 	list ($attachmentDirSize) = $smcFunc['db_fetch_row']($request);
@@ -797,7 +797,7 @@ function MaintainFiles()
 			AND attachment_type != {int:type}',
 		array(
 			'folder_id' => $modSettings['currentAttachmentUploadDir'],
-			'type' => 1,
+			'type' => Attachment::ATTACHMENT_AVATAR,
 		)
 	);
 	list ($current_dir_files, $current_dir_size) = $smcFunc['db_fetch_row']($request);
