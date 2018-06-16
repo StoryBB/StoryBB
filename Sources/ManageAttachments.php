@@ -934,8 +934,21 @@ function RemoveAttachment()
 		call_integration_hook('integrate_attachment_remove', array(&$filesRemoved, $attachments));
 
 		if ($_REQUEST['type'] == 'avatars' && !empty($attachments))
+		{
 			removeAttachments(array('id_attach' => $attachments));
-		else if (!empty($attachments))
+		}
+		elseif ($_REQUEST['type'] == 'exports' && !empty($attachments))
+		{
+			removeAttachments(['id_attach' => $attachments]);
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}user_exports
+				WHERE id_attach IN ({array_int:attachments})',
+				[
+					'attachments' => $attachments,
+				]
+			);
+		}
+		elseif (!empty($attachments))
 		{
 			$messages = removeAttachments(array('id_attach' => $attachments), 'messages', true);
 
