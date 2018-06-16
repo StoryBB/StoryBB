@@ -765,14 +765,28 @@ function MaintainFiles()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
-		WHERE id_character != {int:guest_id_member}',
+		WHERE id_character != {int:guest_id_member}
+			AND attachment_type != {int:export}',
 		array(
 			'guest_id_member' => 0,
+			'export' => Attachment::ATTACHMENT_EXPORT,
 		)
 	);
 	list ($context['num_avatars']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 	$context['num_avatars'] = comma_format($context['num_avatars'], 0);
+
+	$request = $smcFunc['db_query']('', '
+		SELECT COUNT(*)
+		FROM {db_prefix}attachments
+		WHERE attachment_type = {int:export}',
+		[
+			'export' => Attachment::ATTACHMENT_EXPORT,
+		]
+	);
+	list ($context['num_exports']) = $smcFunc['db_fetch_row']($request);
+	$smcFunc['db_free_result']($request);
+	$context['num_exports'] = comma_format($context['num_exports'], 0);
 
 	// Check the size of all the directories.
 	$request = $smcFunc['db_query']('', '

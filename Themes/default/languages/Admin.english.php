@@ -85,6 +85,7 @@ $txt['attachment_pruning_message'] = 'Message to add to post';
 $txt['attachment_pruning_warning'] = 'Are you sure you want to delete these attachments?\\nThis cannot be undone!';
 
 $txt['attachment_total'] = 'Total attachments';
+$txt['attachment_total_exports'] = 'Total data exports';
 $txt['attachmentdir_size'] = 'Total size of all attachment directories';
 $txt['attachmentdir_size_current'] = 'Total size of current attachment directory';
 $txt['attachmentdir_files_current'] = 'Total files in current attachment directory';
