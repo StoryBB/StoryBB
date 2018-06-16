@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Attachment;
+
 /**
  * The main 'Attachments and Avatars' management function.
  * This function is the entry point for index.php?action=admin;area=manageattachments
@@ -363,14 +365,23 @@ function BrowseFiles()
 	global $context, $txt, $scripturl, $modSettings;
 	global $smcFunc, $sourcedir, $settings;
 
-	// Attachments or avatars?
-	$context['browse_type'] = isset($_REQUEST['avatars']) ? 'avatars' : (isset($_REQUEST['thumbs']) ? 'thumbs' : 'attachments');
-
+	// What type of thing are we doing?
 	$titles = array(
 		'attachments' => array('?action=admin;area=manageattachments;sa=browse', $txt['attachment_manager_attachments']),
 		'avatars' => array('?action=admin;area=manageattachments;sa=browse;avatars', $txt['attachment_manager_avatars']),
 		'thumbs' => array('?action=admin;area=manageattachments;sa=browse;thumbs', $txt['attachment_manager_thumbs']),
+		'exports' => array('?action=admin;area=manageattachments;sa=browse;exports', $txt['attachment_manager_exports']),
 	);
+
+	$context['browse_type'] = 'attachments';
+	foreach (array_keys($titles) as $type)
+	{
+		if (isset($_REQUEST[$type]))
+		{
+			$context['browse_type'] = $type;
+			break;
+		}
+	}
 
 	$list_title = $txt['attachment_manager_browse_files'] . ': ';
 	foreach ($titles as $browse_type => $details)
@@ -415,12 +426,16 @@ function BrowseFiles()
 						$link = '<a href="';
 
 						// In case of a custom avatar URL attachments have a fixed directory.
-						if ($rowData['attachment_type'] == 1)
+						if ($rowData['attachment_type'] == Attachment::ATTACHMENT_AVATAR)
 							$link .= sprintf('%1$s/%2$s', $modSettings['custom_avatar_url'], $rowData['filename']);
 
 						// By default avatars are downloaded almost as attachments.
 						elseif ($context['browse_type'] == 'avatars')
 							$link .= sprintf('%1$s?action=dlattach;type=avatar;attach=%2$d', $scripturl, $rowData['id_attach']);
+
+						// Exports link to the profile page.
+						elseif ($context['browse_type'] == 'exports')
+							$link .= sprintf('%1$s?action=profile;area=export_data;u=%2$s;attach=%3$s;%4$s=%5$s', $scripturl, $rowData['id_member'], $rowData['id_topic'], $context['session_var'], $context['session_id']);
 
 						// Normal attachments are always linked to a topic ID.
 						else
@@ -463,17 +478,17 @@ function BrowseFiles()
 			),
 			'member' => array(
 				'header' => array(
-					'value' => $context['browse_type'] == 'avatars' ? $txt['attachment_manager_member'] : $txt['posted_by'],
+					'value' => ($context['browse_type'] == 'avatars' || $context['browse_type'] == 'exports') ? $txt['attachment_manager_member'] : $txt['posted_by'],
 				),
 				'data' => array(
-					'function' => function($rowData) use ($scripturl, $smcFunc)
+					'function' => function($rowData) use ($scripturl, $context, $smcFunc)
 					{
 						// In case of an attachment, return the poster of the attachment.
 						if (empty($rowData['id_member']))
 							return $smcFunc['htmlspecialchars']($rowData['poster_name']);
 
 						// Otherwise it must be an avatar, return the link to the owner of it.
-						elseif (!empty($rowData['character_name']))
+						elseif (!empty($rowData['character_name']) && $context['browse_type'] != 'exports')
 							return $rowData['poster_name'] . ($rowData['poster_name'] != $rowData['character_name'] ? ' (' . $rowData['character_name'] . ')' : '');
 
 						else
@@ -496,8 +511,17 @@ function BrowseFiles()
 						$date = empty($rowData['poster_time']) ? $txt['never'] : timeformat($rowData['poster_time']);
 
 						// Add a link to the topic in case of an attachment.
-						if ($context['browse_type'] !== 'avatars')
+						if ($context['browse_type'] == 'exports')
+						{
+							if (!empty($rowData['character_name']))
+							{
+								$date .= '<br>' . sprintf($txt['attachment_manager_requested_by'], $rowData['character_name']);
+							}
+						}
+						elseif ($context['browse_type'] !== 'avatars')
+						{
 							$date .= sprintf('<br>%1$s <a href="%2$s?topic=%3$d.msg%4$d#msg%4$d">%5$s</a>', $txt['in'], $scripturl, $rowData['id_topic'], $rowData['id_msg'], $rowData['subject']);
+						}
 
 						return $date;
 					},
@@ -583,6 +607,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 
 	// Choose a query depending on what we are viewing.
 	if ($browse_type === 'avatars')
+	{
 		$request = $smcFunc['db_query']('', '
 			SELECT
 				{string:blank_text} AS id_msg, COALESCE(mem.real_name, {string:not_applicable_text}) AS poster_name, chars.character_name,
@@ -592,10 +617,12 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = a.id_character)
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = chars.id_member)
 			WHERE a.id_character != {int:guest_id}
+				AND a.attachment_type != {int:export}
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:per_page}',
 			array(
 				'guest_id' => 0,
+				'export' => Attachment::ATTACHMENT_EXPORT,
 				'blank_text' => '',
 				'not_applicable_text' => $txt['not_applicable'],
 				'sort' => $sort,
@@ -603,7 +630,36 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 				'per_page' => $items_per_page,
 			)
 		);
+	}
+	elseif ($browse_type === 'exports')
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT
+				{string:blank_text} AS id_msg, COALESCE(mem.real_name, {string:not_applicable_text}) AS poster_name, COALESCE(requester.real_name, {string:blank_text}) AS character_name,
+				ue.requested_on AS poster_time, ue.id_export AS id_topic, mem.id_member, a.id_character, a.id_attach, a.filename, a.file_hash, a.attachment_type,
+				a.size, a.width, a.height, a.downloads, {string:blank_text} AS subject, 0 AS id_board
+			FROM {db_prefix}attachments AS a
+				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = a.id_character)
+				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = chars.id_member)
+				INNER JOIN {db_prefix}user_exports AS ue ON (ue.id_attach = a.id_attach)
+				LEFT JOIN {db_prefix}members AS requester ON (ue.id_requester = requester.id_member)
+			WHERE a.id_character != {int:guest_id}
+				AND a.attachment_type = {int:export}
+			ORDER BY {raw:sort}
+			LIMIT {int:start}, {int:per_page}',
+			array(
+				'guest_id' => 0,
+				'export' => Attachment::ATTACHMENT_EXPORT,
+				'blank_text' => '',
+				'not_applicable_text' => $txt['not_applicable'],
+				'sort' => $sort,
+				'start' => $start,
+				'per_page' => $items_per_page,
+			)
+		);
+	}
 	else
+	{
 		$request = $smcFunc['db_query']('', '
 			SELECT
 				m.id_msg, COALESCE(mem.real_name, m.poster_name) AS poster_name, null AS character_name, m.poster_time, m.id_topic, m.id_member,
@@ -617,12 +673,13 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:per_page}',
 			array(
-				'attachment_type' => $browse_type == 'thumbs' ? '3' : '0',
+				'attachment_type' => $browse_type == 'thumbs' ? Attachment::ATTACHMENT_THUMBNAIL : Attachment::ATTACHMENT_STANDARD,
 				'sort' => $sort,
 				'start' => $start,
 				'per_page' => $items_per_page,
 			)
 		);
+	}
 	$files = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$files[] = $row;

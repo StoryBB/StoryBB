@@ -316,14 +316,17 @@ $txt['attachment_manager_repair'] = 'Maintain';
 $txt['attachment_manager_avatars'] = 'Avatars';
 $txt['attachment_manager_attachments'] = 'Attachments';
 $txt['attachment_manager_thumbs'] = 'Thumbnails';
+$txt['attachment_manager_exports'] = 'Data exports';
 $txt['attachment_manager_last_active'] = 'Last Active';
 $txt['attachment_manager_member'] = 'Member';
 $txt['attachment_manager_avatars_older'] = 'Remove avatars from members not active for more than';
 $txt['attachment_manager_total_avatars'] = 'Total avatars';
+$txt['attachment_manager_requested_by'] = 'Requested by: %1$s';
 
 $txt['attachment_manager_avatars_no_entries'] = 'There are currently no avatars.';
 $txt['attachment_manager_attachments_no_entries'] = 'There are currently no attachments.';
 $txt['attachment_manager_thumbs_no_entries'] = 'There are currently no thumbnails.';
+$txt['attachment_manager_exports_no_entries'] = 'There are currently no exports.';
 
 $txt['attachment_manager_settings'] = 'Attachment Settings';
 $txt['attachment_manager_avatar_settings'] = 'Avatar Settings';
