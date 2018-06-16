@@ -180,9 +180,9 @@ class ExportData extends \StoryBB\Task\Adhoc
 		$main_char = 0;
 
 		$request = $smcFunc['db_query']('', '
-			SELECT chars.id_character, chars.character_name, chars.avatar, chars.signature, chars.id_theme,
+			SELECT chars.id_character, chars.character_name, chars.avatar, chars.signature,
 				chars.posts, chars.age, chars.date_created, chars.last_active, chars.is_main,
-				chars.main_char_group, chars.char_groups, a.id_attach, a.filename, a.attachment_type
+				a.id_attach, a.filename, a.attachment_type
 			FROM {db_prefix}characters AS chars
 			LEFT JOIN {db_prefix}attachments AS a ON (chars.id_character = a.id_character AND a.attachment_type = 1)
 			WHERE chars.id_member = {int:member}',
@@ -277,6 +277,13 @@ class ExportData extends \StoryBB\Task\Adhoc
 				$details[] = 'Account name: ' . $character['character_name'];
 				$details[] = 'Date registered: ' . date('j F Y, H:i:s', $character['date_registered']);
 				$details[] = 'Email address: ' . $character['email_address'];
+
+				$avatar = $this->_include_avatar($character, $zip);
+				if (!empty($avatar))
+				{
+					$details[] = $avatar;
+				}
+
 				if (!empty($character['signature'])) {
 					$details[] = 'Signature: ' . str_replace("\n", "\r\n", $character['signature']);
 				}
@@ -312,6 +319,12 @@ class ExportData extends \StoryBB\Task\Adhoc
 				$details[] = 'Character name: ' . $character['character_name'];
 				$details[] = 'Created on: ' . date('j F Y, H:i:s', $character['date_created']);
 
+				$avatar = $this->_include_avatar($character, $zip);
+				if (!empty($avatar))
+				{
+					$details[] = $avatar;
+				}
+
 				if (!empty($character['signature'])) {
 					$details[] = 'Signature: ' . str_replace("\n", "\r\n", $character['signature']);
 				}
@@ -325,6 +338,39 @@ class ExportData extends \StoryBB\Task\Adhoc
 		// @todo Fetch character sheet versions, and export those too.
 
 		$zip->close();
+	}
+
+	/**
+	 * Given an array of character details, process out the avatar, including it in the ZIP
+	 * if appropriate, and return the string for the details.txt file.
+	 * @param array $character The character currently being processed.
+	 * @param ZipArchive $zip The zip object being manipulated.
+	 * @return string The entry for the details.txt file, or empty string if no avatar.
+	 */
+	private function _include_avatar(array $character, ZipArchive $zip): string
+	{
+		global $modSettings;
+
+		if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($character['avatar'], 'gravatar://')))
+		{
+			if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($character['avatar'], 'gravatar://') && strlen($character['avatar']) > 11)
+				return 'Avatar is a Gravatar, using email ' . substr($character['avatar'], 11);
+			else
+				return 'Avatar is a Gravatar using the main account email';
+		}
+		else
+		{
+			if (!empty($character['avatar']) && (stristr($character['avatar'], 'http://') || stristr($character['avatar'], 'https://')))
+			{
+				return 'Avatar is from a link: ' . $character['avatar'];
+			}
+			elseif (!empty($character['filename'])) {
+				$zip->addFile($modSettings['custom_avatar_dir'] . '/' . $character['filename'], 'account_and_characters/' . $character['export_folder'] . '/' . $character['filename']);
+				return 'Avatar was uploaded to the site, included here as ' . $character['filename'];
+			}
+		}
+
+		return '';
 	}
 
 	protected function finalise_export()
