@@ -14,6 +14,7 @@ use StoryBB\Task;
 use StoryBB\Task\Adhoc\Exception\NotCompleteException;
 use ZipArchive;
 use Exception;
+use StoryBB\Model\Attachment;
 
 /**
  * Notify moderators that a post needs to be approved.
@@ -159,10 +160,12 @@ class ExportData extends \StoryBB\Task\Adhoc
 			[
 				'id_folder' => 'int', 'id_msg' => 'int', 'id_character' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40',
 				'fileext' => 'string-8', 'size' => 'int', 'width' => 'int', 'height' => 'int', 'mime_type' => 'string-20', 'approved' => 'int',
+				'attachment_type' => 'int',
 			],
 			[
 				$this->_details['attach_folder_id'], 0, $char_id, $this->_details['filename'], $this->_details['filehash'],
 				'.zip', 0, 0, 0, 'application/zip', 0,
+				Attachment::ATTACHMENT_EXPORT,
 			],
 			['id_attach'],
 			1
