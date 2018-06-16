@@ -85,6 +85,7 @@ $txt['attachment_pruning_message'] = 'Message to add to post';
 $txt['attachment_pruning_warning'] = 'Are you sure you want to delete these attachments?\\nThis cannot be undone!';
 
 $txt['attachment_total'] = 'Total attachments';
+$txt['attachment_total_exports'] = 'Total data exports';
 $txt['attachmentdir_size'] = 'Total size of all attachment directories';
 $txt['attachmentdir_size_current'] = 'Total size of current attachment directory';
 $txt['attachmentdir_files_current'] = 'Total files in current attachment directory';
@@ -316,14 +317,17 @@ $txt['attachment_manager_repair'] = 'Maintain';
 $txt['attachment_manager_avatars'] = 'Avatars';
 $txt['attachment_manager_attachments'] = 'Attachments';
 $txt['attachment_manager_thumbs'] = 'Thumbnails';
+$txt['attachment_manager_exports'] = 'Data exports';
 $txt['attachment_manager_last_active'] = 'Last Active';
 $txt['attachment_manager_member'] = 'Member';
 $txt['attachment_manager_avatars_older'] = 'Remove avatars from members not active for more than';
 $txt['attachment_manager_total_avatars'] = 'Total avatars';
+$txt['attachment_manager_requested_by'] = 'Requested by: %1$s';
 
 $txt['attachment_manager_avatars_no_entries'] = 'There are currently no avatars.';
 $txt['attachment_manager_attachments_no_entries'] = 'There are currently no attachments.';
 $txt['attachment_manager_thumbs_no_entries'] = 'There are currently no thumbnails.';
+$txt['attachment_manager_exports_no_entries'] = 'There are currently no exports.';
 
 $txt['attachment_manager_settings'] = 'Attachment Settings';
 $txt['attachment_manager_avatar_settings'] = 'Avatar Settings';

@@ -393,6 +393,17 @@ function ModifyProfile($post_errors = array())
 		'profile_action' => array(
 			'title' => $txt['profileAction'],
 			'areas' => array(
+				'export_data' => array(
+					'label' => $txt['profile_export_data'],
+					'file' => 'Profile-Actions.php',
+					'function' => 'exportData',
+					'icon' => 'inbox',
+					'token' => 'profile-ed%u',
+					'permission' => array(
+						'own' => array('is_not_guest'),
+						'any' => array('admin_forum'),
+					),
+				),
 				'sendpm' => array(
 					'label' => $txt['profileSendIm'],
 					'custom_url' => $scripturl . '?action=pm;sa=send',

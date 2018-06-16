@@ -426,6 +426,19 @@ $txt['profile_error_signature_allow_smileys'] = 'You are not allowed to use any 
 $txt['profile_error_signature_max_smileys'] = 'You are not allowed to use more than %1$d smileys within your signature';
 $txt['profile_error_signature_disabled_bbc'] = 'The following BBC is not allowed within your signature: %1$s';
 
+$txt['profile_export_data'] = 'Export data';
+$txt['profile_export_data_desc'] = 'From this page you can download all the things you have submitted to this site.';
+$txt['profile_export_data_go'] = 'I want an export of data';
+$txt['profile_export_data_requested_on'] = 'Export requested on';
+$txt['profile_export_data_requested_by'] = 'Requested by';
+$txt['profile_export_data_download'] = 'Download';
+$txt['profile_export_data_processing'] = 'Processing, available soon';
+$txt['profile_export_data_available_until'] = 'Download available until';
+$txt['profile_export_data_no_export_available'] = 'No exports currently available.';
+$txt['profile_export_data_in_process'] = 'An export is currently processing.';
+$txt['profile_export_data_queued'] = 'An export is being prepared. You will be notified when it is ready for download.';
+$txt['profile_export_data_not_available'] = 'The requested export is not available.';
+
 $txt['profile_view_warnings'] = 'View Warnings';
 $txt['profile_issue_warning'] = 'Issue a Warning';
 $txt['profile_warning_level'] = 'Warning Level';

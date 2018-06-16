@@ -1163,6 +1163,20 @@ CREATE TABLE {$db_prefix}user_drafts (
 ) ENGINE={$engine};
 
 #
+# Table structure for table `user_exports`
+#
+
+CREATE TABLE {$db_prefix}user_exports (
+  id_export INT NOT NULL AUTO_INCREMENT,
+  id_attach INT NOT NULL DEFAULT 0,
+  id_member MEDIUMINT NOT NULL DEFAULT 0,
+  id_requester MEDIUMINT NOT NULL DEFAULT 0,
+  requested_on INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (id_export),
+  INDEX (id_member)
+) ENGINE={$engine};
+
+#
 # Table structure for table `user_likes`
 #
 
@@ -1673,7 +1687,8 @@ VALUES
   (10, 0, 120, 1, 'd', 1, 'paid_subscriptions', ''),
   (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', ''),
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', ''),
-  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', '');
+  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', ''),
+  (14, 0, 300, 1, 'd', 0, 'clean_exports', '');
 
 # --------------------------------------------------------
 
