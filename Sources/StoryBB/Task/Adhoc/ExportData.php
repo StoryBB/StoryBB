@@ -420,7 +420,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			INNER JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character)
 			INNER JOIN {db_prefix}topics AS t ON (m.id_topic = t.id_topic)
 			INNER JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
-			WHERE m.id_member = {int:member}
+			WHERE m.id_creator = {int:member}
 			ORDER BY m.id_msg
 			LIMIT {int:start}, {int:step_size}',
 			[
