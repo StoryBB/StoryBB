@@ -36,7 +36,9 @@ class Postgres extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Connects to the cache method. This defines our $key. If this fails, we return false, otherwise we return true.
+	 *
+	 * @return boolean Whether or not the cache method was connected to.
 	 */
 	public function connect()
 	{
