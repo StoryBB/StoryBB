@@ -34,7 +34,9 @@ class Apcu extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the name for the cache method performed by this API. Likely to be a brand of sorts.
+	 *
+	 * @return string The name of the cache backend
 	 */
 	public function getName()
 	{
