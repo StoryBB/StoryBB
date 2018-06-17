@@ -44,7 +44,11 @@ class Zend extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gets data from the cache.
+	 *
+	 * @param string $key The key to use, the prefix is applied to the key name.
+	 * @param string $ttl Overrides the default TTL.
+	 * @return mixed The result from the cache, if there is no data or it is invalid, we return null.
 	 */
 	public function getData($key, $ttl = null)
 	{

@@ -72,7 +72,6 @@ interface API_Interface
 	/**
 	 * Gets data from the cache.
 	 *
-	 * @access public
 	 * @param string $key The key to use, the prefix is applied to the key name.
 	 * @param string $ttl Overrides the default TTL.
 	 * @return mixed The result from the cache, if there is no data or it is invalid, we return null.
