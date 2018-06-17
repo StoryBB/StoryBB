@@ -24,7 +24,10 @@ class Memcache extends API
 	private $memcache = null;
 
 	/**
-	 * {@inheritDoc}
+	 * Checks whether we can use the cache method performed by this API.
+	 *
+	 * @param boolean $test Test if this is supported or enabled.
+	 * @return boolean Whether or not the cache is supported
 	 */
 	public function isSupported($test = false)
 	{
@@ -38,7 +41,9 @@ class Memcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Connects to the cache method. This defines our $key. If this fails, we return false, otherwise we return true.
+	 *
+	 * @return boolean Whether or not the cache method was connected to.
 	 */
 	public function connect()
 	{
@@ -79,7 +84,9 @@ class Memcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the name for the cache method performed by this API. Likely to be a brand of sorts.
+	 *
+	 * @return string The name of the cache backend
 	 */
 	public function getName()
 	{
@@ -87,7 +94,11 @@ class Memcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gets data from the cache.
+	 *
+	 * @param string $key The key to use, the prefix is applied to the key name.
+	 * @param string $ttl Overrides the default TTL.
+	 * @return mixed The result from the cache, if there is no data or it is invalid, we return null.
 	 */
 	public function getData($key, $ttl = null)
 	{
@@ -102,7 +113,12 @@ class Memcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Saves to data the cache.
+	 *
+	 * @param string $key The key to use, the prefix is applied to the key name.
+	 * @param mixed $value The data we wish to save.
+	 * @param string $ttl Overrides the default TTL.
+	 * @return bool Whether or not we could save this to the cache.
 	 */
 	public function putData($key, $value, $ttl = null)
 	{
@@ -112,7 +128,9 @@ class Memcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Closes connections to the cache method.
+	 *
+	 * @return bool Whether or not we could close connections.
 	 */
 	public function quit()
 	{
@@ -120,7 +138,10 @@ class Memcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Clean out the cache.
+	 *
+	 * @param string $type If supported, the type of cache to clear, blank/data or user.
+	 * @return bool Whether or not we could clean the cache.
 	 */
 	public function cleanCache($type = '')
 	{
@@ -129,7 +150,10 @@ class Memcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Specify custom settings that the cache API supports.
+	 *
+	 * @param array $config_vars Additional config_vars, see ManageSettings.php for usage.
+	 * @return void No return is needed.
 	 */
 	public function cacheSettings(array &$config_vars)
 	{
