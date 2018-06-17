@@ -108,7 +108,9 @@ abstract class API implements API_Interface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gets the prefix as defined from set or the default.
+	 *
+	 * @return string the value of $key.
 	 */
 	public function getPrefix()
 	{

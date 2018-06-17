@@ -50,7 +50,6 @@ interface API_Interface
 	/**
 	 * Gets the prefix as defined from set or the default.
 	 *
-	 * @access public
 	 * @return string the value of $key.
 	 */
 	public function getPrefix();
