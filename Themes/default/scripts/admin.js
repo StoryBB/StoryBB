@@ -193,12 +193,6 @@ function switchType()
 	document.getElementById("ex_settings").style.display = document.getElementById("method-upload").checked ? "none" : "";
 }
 
-function swapUploads()
-{
-	document.getElementById("uploadMore").style.display = document.getElementById("uploadSmiley").disabled ? "none" : "";
-	document.getElementById("uploadSmiley").disabled = !document.getElementById("uploadSmiley").disabled;
-}
-
 function selectMethod(element)
 {
 	document.getElementById("method-existing").checked = element != "upload";
@@ -208,7 +202,7 @@ function selectMethod(element)
 function updatePreview()
 {
 	var currentImage = document.getElementById("preview");
-	currentImage.src = sbb_smileys_url + "/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value;
+	currentImage.src = sbb_smileys_url + "/" + document.forms.smileyForm.smiley_filename.value;
 }
 
 function swap_database_changes()

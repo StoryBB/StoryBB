@@ -1462,7 +1462,7 @@ function create_control_richedit($editorOptions)
 	if (empty($context['controls']['richedit']))
 	{
 		// Some general stuff.
-		$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
+		$settings['smileys_url'] = $modSettings['smileys_url'];
 		if (!empty($context['drafts_autosave']))
 			$context['drafts_autosave_frequency'] = empty($modSettings['drafts_autosave_frequency']) ? 60000 : $modSettings['drafts_autosave_frequency'] * 1000;
 

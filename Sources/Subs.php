@@ -2606,7 +2606,7 @@ function parsesmileys(&$message)
 	static $smileyPregSearch = null, $smileyPregReplacements = array();
 
 	// No smiley set at all?!
-	if ($user_info['smiley_set'] == 'none' || trim($message) == '')
+	if (trim($message) == '')
 		return;
 
 	// If smileyPregSearch hasn't been set, do it now.
@@ -2644,7 +2644,7 @@ function parsesmileys(&$message)
 		// This smiley regex makes sure it doesn't parse smileys within code tags (so [url=mailto:David@bla.com] doesn't parse the :D smiley)
 		$smileyPregReplacements = array();
 		$searchParts = array();
-		$smileys_path = $smcFunc['htmlspecialchars']($modSettings['smileys_url'] . '/' . $user_info['smiley_set'] . '/');
+		$smileys_path = $smcFunc['htmlspecialchars']($modSettings['smileys_url'] . '/');
 
 		for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 		{

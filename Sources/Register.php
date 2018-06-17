@@ -319,7 +319,6 @@ function Register2()
 		'time_format',
 		'buddy_list',
 		'pm_ignore_list',
-		'smiley_set',
 		'avatar',
 		'lngfile',
 		'secret_question', 'secret_answer',

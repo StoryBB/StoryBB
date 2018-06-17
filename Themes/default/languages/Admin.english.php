@@ -262,9 +262,6 @@ $txt['dvc_default'] = 'Default Templates';
 $txt['dvc_templates'] = 'Current Templates';
 $txt['dvc_languages'] = 'Language Files';
 
-$txt['smileys_default_set_for_theme'] = 'Select default smiley set for this theme';
-$txt['smileys_no_default'] = '(use global default smiley set)';
-
 $txt['censor_test'] = 'Test censored words';
 $txt['censor_test_save'] = 'Test';
 $txt['censor_case'] = 'Ignore case when censoring';
@@ -662,7 +659,6 @@ $txt['boardsEdit'] = 'Modify Boards';
 $txt['mboards_new_cat'] = 'Create new category';
 $txt['search_method'] = 'Search Method';
 
-$txt['smiley_sets'] = 'Smiley Sets';
 $txt['smileys_add'] = 'Add Smiley';
 $txt['smileys_edit'] = 'Edit Smileys';
 $txt['smileys_set_order'] = 'Set Smiley order';

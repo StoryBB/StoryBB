@@ -10,13 +10,7 @@
 						<strong>{{{txt.smiley_preview}}}: </strong>
 					</dt>
 					<dd>
-						<img src="{{{modSettings.smileys_url}}}/{{{modSettings.smiley_sets_default}}}/{{{context.current_smiley.filename}}}" id="preview" alt=""> ({{{txt.smiley_preview_using}}}: <select name="set" onchange="updatePreview();">';
-
-						{{#each context.smiley_sets}}
-						<option value="{{path}}"{{#if (eq ../context.selected_set path)}} selected{{/if}}>{{{name}}}</option>
-						{{/each}}
-
-						</select>)
+						<img src="{{{modSettings.smileys_url}}}/{{{context.current_smiley.filename}}}" id="preview" alt="">
 					</dd>
 					<dt>
 						<strong><label for="smiley_code">{{{txt.smileys_code}}}</label>: </strong>
