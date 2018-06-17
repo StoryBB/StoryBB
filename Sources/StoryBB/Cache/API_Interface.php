@@ -57,7 +57,6 @@ interface API_Interface
 	/**
 	 * Sets a default Time To Live, if this isn't specified we let the class define it.
 	 *
-	 * @access public
 	 * @param int $ttl The default TTL
 	 * @return boolean If this was successful or not.
 	 */
@@ -66,7 +65,6 @@ interface API_Interface
 	/**
 	 * Gets the TTL as defined from set or the default.
 	 *
-	 * @access public
 	 * @return string the value of $ttl.
 	 */
 	public function getDefaultTTL();

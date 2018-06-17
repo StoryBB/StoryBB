@@ -118,7 +118,10 @@ abstract class API implements API_Interface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Sets a default Time To Live, if this isn't specified we let the class define it.
+	 *
+	 * @param int $ttl The default TTL
+	 * @return boolean If this was successful or not.
 	 */
 	public function setDefaultTTL($ttl = 120)
 	{
@@ -128,7 +131,9 @@ abstract class API implements API_Interface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gets the TTL as defined from set or the default.
+	 *
+	 * @return string the value of $ttl.
 	 */
 	public function getDefaultTTL()
 	{
