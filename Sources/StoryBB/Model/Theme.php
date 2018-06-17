@@ -122,12 +122,7 @@ class Theme
 					$item['description'] = $txt[$item['description']];
 				}
 
-				// Smiley sets need to be imported.
-				if (isset($item['id']) && $item['id'] == 'smiley_sets_default')
-				{
-					$item['options'] = $context['smiley_sets'];
-				}
-				elseif (!empty($item['options']))
+				if (!empty($item['options']))
 				{
 					// Other dropdowns might need setting up of language strings.
 					foreach ($item['options'] as $key => $value)

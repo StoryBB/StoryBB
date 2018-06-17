@@ -188,7 +188,6 @@ function AdminMain()
 					'icon' => 'smiley',
 					'permission' => array('manage_smileys'),
 					'subsections' => array(
-						'editsets' => array($txt['smiley_sets']),
 						'addsmiley' => array($txt['smileys_add']),
 						'editsmileys' => array($txt['smileys_edit']),
 						'setorder' => array($txt['smileys_set_order']),

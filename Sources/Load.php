@@ -702,7 +702,6 @@ function loadUserSettings()
 			'custom_dir' => !empty($user_settings['attachment_type']) && $user_settings['attachment_type'] == 1,
 			'id_attach' => isset($user_settings['id_attach']) ? $user_settings['id_attach'] : 0
 		),
-		'smiley_set' => isset($user_settings['smiley_set']) ? $user_settings['smiley_set'] : '',
 		'messages' => empty($user_settings['instant_messages']) ? 0 : $user_settings['instant_messages'],
 		'unread_messages' => empty($user_settings['unread_messages']) ? 0 : $user_settings['unread_messages'],
 		'alerts' => empty($user_settings['alerts']) ? 0 : $user_settings['alerts'],
@@ -1317,7 +1316,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			break;
 		case 'profile':
 			$select_columns .= ', mem.additional_groups, mem.id_theme, mem.pm_ignore_list, mem.pm_receive_from,
-			mem.time_format, mem.timezone, mem.secret_question, mem.smiley_set, mem.tfa_secret,
+			mem.time_format, mem.timezone, mem.secret_question, mem.tfa_secret,
 			mem.total_time_logged_in, lo.url, mem.ignore_boards, mem.password_salt, mem.pm_prefs, mem.buddy_list, mem.alerts,
 			lo.id_character AS online_character, chars.is_main, chars.main_char_group, chars.char_groups,
 			cg.online_color AS char_group_color, COALESCE(cg.group_name, {string:blank_string}) AS character_group,
@@ -1986,7 +1985,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
 			// There are just things we shouldn't be able to change as members.
-			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'number_recent_posts', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_url')))
+			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'number_recent_posts', 'theme_dir', 'theme_id', 'theme_url')))
 				continue;
 
 			// If this is the theme_dir of the default theme, store it.
@@ -2150,10 +2149,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$context['user']['name'] = $user_info['name'];
 		elseif ($context['user']['is_guest'] && !empty($txt['guest_title']))
 			$context['user']['name'] = $txt['guest_title'];
-
-		// Determine the current smiley set.
-		$user_info['smiley_set'] = (!in_array($user_info['smiley_set'], explode(',', $modSettings['smiley_sets_known'])) && $user_info['smiley_set'] != 'none') || empty($modSettings['smiley_sets_enable']) ? (!empty($settings['smiley_sets_default']) ? $settings['smiley_sets_default'] : $modSettings['smiley_sets_default']) : $user_info['smiley_set'];
-		$context['user']['smiley_set'] = $user_info['smiley_set'];
 	}
 	else
 	{
@@ -2178,7 +2173,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 			'username' => $txt['guest_title'],
 			'language' => $language,
 			'email' => '',
-			'smiley_set' => '',
 			'permissions' => array(),
 			'groups' => array(),
 			'ignoreusers' => array(),

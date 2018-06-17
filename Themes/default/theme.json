@@ -22,12 +22,6 @@
             "description": "site_slogan_desc",
             "type": "text"
         },
-        {
-            "id": "smiley_sets_default",
-            "label": "smileys_default_set_for_theme",
-            "options": [],
-            "type": "text"
-        },
         "",
         {
             "id": "enable_news",

@@ -17,16 +17,6 @@
 				<fieldset id="ex_settings">
 					<dl class="settings">
 						<dt>
-							<img src="{{{modSettings.smileys_url}}}/{{{modSettings.smiley_sets_default}}}/{{context.filesnames.0.id}}" id="preview" alt="">
-						</dt>
-						<dd>
-							{{{txt.smiley_preview_using}}}: <select name="set" onchange="updatePreview();selectMethod('existing');">
-							{{#each context.smiley_sets}}
-								<option value="{{path}}"{{#if (eq ../context.selected_set path)}} selected{{/if}}>{{{name}}}</option>
-							{{/each}}
-							</select>
-						</dd>
-						<dt>
 							<strong><label for="smiley_filename">{{{txt.smileys_filename}}}</label>: </strong>
 						</dt>
 						<dd>
@@ -40,38 +30,20 @@
 								</select>
 							{{/unless}}
 
+							&nbsp; <img src="{{{modSettings.smileys_url}}}/{{context.current_smiley.filename}}" id="preview" alt="">
 						</dd>
 					</dl>
 				</fieldset>
 				<fieldset id="ul_settings" style="display: none;">
 					<dl class="settings">
 						<dt>
-							<strong>{{{txt.smileys_add_upload_choose}}}:</strong><br>
-							<span class="smalltext">{{{txt.smileys_add_upload_choose_desc}}}</span>
+							<strong>{{{txt.smileys_add_upload_choose}}}:</strong>
 						</dt>
 						<dd>
 							<input type="file" name="uploadSmiley" id="uploadSmiley" onchange="selectMethod('upload');" class="input_file">
 						</dd>
-						<dt>
-							<strong><label for="sameall">{{{txt.smileys_add_upload_all}}}:</label></strong>
-						</dt>
-						<dd>
-							<input type="checkbox" name="sameall" id="sameall" checked class="input_check" onclick="swapUploads(); selectMethod('upload');">
-						</dd>
 					</dl>
 				</fieldset>
-
-				<dl id="uploadMore" style="display: none;" class="settings">
-					{{#each context.smiley_sets}}
-					<dt>
-						{{textTemplate ../txt.smileys_add_upload_for (concat '<strong>' name '</strong>')}}:
-					</dt>
-					<dd>
-						<input type="file" name="individual_{{name}}" onchange="selectMethod('upload');" class="input_file">
-					</dd>
-					{{/each}}
-
-				</dl>
 			</div>
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.smiley_new}}}</h3>

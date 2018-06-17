@@ -619,7 +619,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'default_template',
 		'images_url',
 		'number_recent_posts',
-		'smiley_sets_default',
 		'theme_dir',
 		'theme_id',
 		'theme_url',
@@ -655,7 +654,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'secret_answer' => '',
 		'additional_groups' => '',
 		'ignore_boards' => '',
-		'smiley_set' => '',
 		'timezone' => !empty($regOptions['timezone']) ? $regOptions['timezone'] : 'UTC',
 	);
 

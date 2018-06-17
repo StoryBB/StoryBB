@@ -641,15 +641,6 @@ function SetThemeSettings()
 	if (empty($_GET['th']))
 		fatal_lang_error('no_theme', false);
 
-	// Fetch the smiley sets...
-	$sets = explode(',', 'none,' . $modSettings['smiley_sets_known']);
-	$set_names = explode("\n", $txt['smileys_none'] . "\n" . $modSettings['smiley_sets_names']);
-	$context['smiley_sets'] = array(
-		'' => $txt['smileys_no_default']
-	);
-	foreach ($sets as $i => $set)
-		$context['smiley_sets'][$set] = $smcFunc['htmlspecialchars']($set_names[$i]);
-
 	$old_id = $settings['theme_id'];
 	$old_settings = $settings;
 
@@ -1413,7 +1404,6 @@ function SetJavaScript()
 		'default_template',
 		'images_url',
 		'number_recent_posts',
-		'smiley_sets_default',
 		'theme_dir',
 		'theme_id',
 		'theme_url',
