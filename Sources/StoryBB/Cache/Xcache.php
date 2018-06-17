@@ -19,7 +19,7 @@ namespace StoryBB\Cache;
 class Xcache extends API
 {
 	/**
-	 * {@inheritDoc}
+	 * Does basic setup of a cache method when we create the object but before we call connect.
 	 */
 	public function __construct()
 	{

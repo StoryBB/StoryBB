@@ -39,8 +39,6 @@ abstract class API implements API_Interface
 
 	/**
 	 * Does basic setup of a cache method when we create the object but before we call connect.
-	 *
-	 * @access public
 	 */
 	public function __construct()
 	{

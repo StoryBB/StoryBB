@@ -24,7 +24,7 @@ class File extends API
 	private $cachedir = null;
 
 	/**
-	 * {@inheritDoc}
+	 * Does basic setup of a cache method when we create the object but before we call connect.
 	 */
 	public function __construct()
 	{
@@ -204,9 +204,8 @@ class File extends API
 	}
 
 	/**
-	 * Sets the $cachedir or uses the StoryBB default $cachedir..
+	 * Sets the $cachedir or uses the StoryBB default $cachedir.
 	 *
-	 * @access public
 	 * @param string $dir A valid path
 	 * @return boolean If this was successful or not.
 	 */
@@ -224,7 +223,6 @@ class File extends API
 	/**
 	 * Gets the current $cachedir.
 	 *
-	 * @access public
 	 * @return string the value of $ttl.
 	 */
 	public function getCachedir()

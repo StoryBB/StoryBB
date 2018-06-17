@@ -167,10 +167,7 @@ class Sqlite extends API
 	/**
 	 * Sets the $cachedir or uses the StoryBB default $cachedir..
 	 *
-	 * @access public
-	 *
 	 * @param string $dir A valid path
-	 *
 	 * @return boolean If this was successful or not.
 	 */
 	public function setCachedir($dir = null)
