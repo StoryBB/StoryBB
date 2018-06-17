@@ -62,6 +62,8 @@ class Task
 	 */
 	public static function commit_batch_queue()
 	{
+		global $smcFunc;
+
 		if (!empty(self::$pre_batch_queue))
 		{
 			$rows = [];
