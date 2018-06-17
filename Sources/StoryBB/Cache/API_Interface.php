@@ -121,7 +121,6 @@ interface API_Interface
 	/**
 	 * Gets the latest version of StoryBB this is compatible with.
 	 *
-	 * @access public
 	 * @return string the value of $key.
 	 */
 	public function getCompatibleVersion();
@@ -129,7 +128,6 @@ interface API_Interface
 	/**
 	 * Gets the min version that we support.
 	 *
-	 * @access public
 	 * @return string the value of $key.
 	 */
 	public function getMiniumnVersion();

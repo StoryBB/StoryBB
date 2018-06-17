@@ -210,7 +210,9 @@ abstract class API implements API_Interface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gets the latest version of StoryBB this is compatible with.
+	 *
+	 * @return string the value of $key.
 	 */
 	public function getCompatibleVersion()
 	{
@@ -218,7 +220,9 @@ abstract class API implements API_Interface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gets the min version that we support.
+	 *
+	 * @return string the value of $key.
 	 */
 	public function getMiniumnVersion()
 	{
