@@ -181,7 +181,10 @@ class File extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Specify custom settings that the cache API supports.
+	 *
+	 * @param array $config_vars Additional config_vars, see ManageSettings.php for usage.
+	 * @return void No return is needed.
 	 */
 	public function cacheSettings(array &$config_vars)
 	{

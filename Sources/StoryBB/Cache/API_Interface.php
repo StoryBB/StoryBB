@@ -113,7 +113,6 @@ interface API_Interface
 	/**
 	 * Specify custom settings that the cache API supports.
 	 *
-	 * @access public
 	 * @param array $config_vars Additional config_vars, see ManageSettings.php for usage.
 	 * @return void No return is needed.
 	 */
