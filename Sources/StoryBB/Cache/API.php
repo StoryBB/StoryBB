@@ -48,7 +48,10 @@ abstract class API implements API_Interface
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Checks whether we can use the cache method performed by this API.
+	 *
+	 * @param boolean $test Test if this is supported or enabled.
+	 * @return boolean Whether or not the cache is supported
 	 */
 	public function isSupported($test = false)
 	{

@@ -19,7 +19,10 @@ namespace StoryBB\Cache;
 class Apc extends API
 {
 	/**
-	 * {@inheritDoc}
+	 * Checks whether we can use the cache method performed by this API.
+	 *
+	 * @param boolean $test Test if this is supported or enabled.
+	 * @return boolean Whether or not the cache is supported
 	 */
 	public function isSupported($test = false)
 	{
