@@ -81,7 +81,6 @@ interface API_Interface
 	/**
 	 * Saves to data the cache.
 	 *
-	 * @access public
 	 * @param string $key The key to use, the prefix is applied to the key name.
 	 * @param mixed $value The data we wish to save.
 	 * @param string $ttl Overrides the default TTL.

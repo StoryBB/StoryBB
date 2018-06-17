@@ -115,7 +115,12 @@ class Postgres extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Saves to data the cache.
+	 *
+	 * @param string $key The key to use, the prefix is applied to the key name.
+	 * @param mixed $value The data we wish to save.
+	 * @param string $ttl Overrides the default TTL.
+	 * @return bool Whether or not we could save this to the cache.
 	 */
 	public function putData($key, $value, $ttl = null)
 	{
