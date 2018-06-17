@@ -165,7 +165,9 @@ class File extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Invalidate all cached data.
+	 *
+	 * @return bool Whether or not we could invalidate the cache.
 	 */
 	public function invalidateCache()
 	{
