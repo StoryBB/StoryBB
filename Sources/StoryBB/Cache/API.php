@@ -224,7 +224,7 @@ abstract class API implements API_Interface
 	 *
 	 * @return string the value of $key.
 	 */
-	public function getMiniumnVersion()
+	public function getMinimumVersion()
 	{
 		return $this->min_sbb_version;
 	}

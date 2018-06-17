@@ -130,5 +130,5 @@ interface API_Interface
 	 *
 	 * @return string the value of $key.
 	 */
-	public function getMiniumnVersion();
+	public function getMinimumVersion();
 }
