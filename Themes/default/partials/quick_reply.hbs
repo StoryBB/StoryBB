@@ -20,7 +20,7 @@
 						{{/unless}}
 						<div class="postarea">
 							{{#if context.is_locked}}<p class="alert smalltext">{{txt.quick_reply_warning}}</p>{{/if}}
-							{{#if context.oldTopicError}}<p class="alert smalltext">{{textTemplate 'error_old_topic' modSettings.oldTopicDays}}</p>{{/if}}
+							{{#if context.oldTopicError}}<p class="alert smalltext">{{textTemplate txt.error_old_topic modSettings.oldTopicDays}}</p>{{/if}}
 							{{#unless context.can_reply_approved}}<em>{{txt.wait_for_approval}}</em>{{/unless}}
 							{{#if (and context.can_reply_approved context.require_verification)}}<br>{{/if}}
 								<input type="hidden" name="topic" value="{{context.current_topic}}">
