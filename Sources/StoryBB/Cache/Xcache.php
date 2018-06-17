@@ -93,7 +93,10 @@ class Xcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Clean out the cache.
+	 *
+	 * @param string $type If supported, the type of cache to clear, blank/data or user.
+	 * @return bool Whether or not we could clean the cache.
 	 */
 	public function cleanCache($type = '')
 	{
