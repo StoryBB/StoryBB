@@ -125,13 +125,13 @@ class Post
 		$new_topic = empty($topicOptions['id']);
 
 		$message_columns = array(
-			'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'id_character' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : (empty($modSettings['max_messageLength']) ? 'string' : 'string-65534')),
+			'id_board' => 'int', 'id_topic' => 'int', 'id_creator' => 'int', 'id_member' => 'int', 'id_character' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : (empty($modSettings['max_messageLength']) ? 'string' : 'string-65534')),
 			'poster_name' => 'string-255', 'poster_email' => 'string-255', 'poster_time' => 'int', 'poster_ip' => 'inet',
 			'smileys_enabled' => 'int', 'modified_name' => 'string', 'icon' => 'string-16', 'approved' => 'int',
 		);
 
 		$message_parameters = array(
-			$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $posterOptions['char_id'], $msgOptions['subject'], $msgOptions['body'],
+			$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $posterOptions['id'], $posterOptions['char_id'], $msgOptions['subject'], $msgOptions['body'],
 			$posterOptions['name'], $posterOptions['email'], time(), $posterOptions['ip'],
 			$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['icon'], $msgOptions['approved'],
 		);

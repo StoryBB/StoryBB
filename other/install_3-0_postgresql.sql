@@ -1153,6 +1153,7 @@ CREATE TABLE {$db_prefix}messages (
   id_topic int NOT NULL default '0',
   id_board smallint NOT NULL default '0',
   poster_time bigint NOT NULL default '0',
+  id_creator int NOT NULL default '0',
   id_member int NOT NULL default '0',
   id_character int NOT NULL default '0',
   id_msg_modified int NOT NULL default '0',
