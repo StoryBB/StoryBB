@@ -106,7 +106,6 @@ interface API_Interface
 	/**
 	 * Closes connections to the cache method.
 	 *
-	 * @access public
 	 * @return bool Whether or not we could close connections.
 	 */
 	public function quit();

@@ -143,7 +143,9 @@ class Memcached extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Closes connections to the cache method.
+	 *
+	 * @return bool Whether or not we could close connections.
 	 */
 	public function quit()
 	{
