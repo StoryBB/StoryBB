@@ -8,7 +8,7 @@
 				{{#if context.users_online}}
 				{{textTemplate txt.users_active modSettings.lastActive}}: {{{join context.list_users_online ',&nbsp;'}}}
 				{{#if (and settings.show_group_key context.membergroups)}}
-				<span class="membergroups">{{{join context.membergroups ',&nbsp;'}}}</span>
+				<span class="membergroups">{{{join context.membergroups ', '}}}</span>
 				{{/if}}
 				{{/if}}
 			</p>
