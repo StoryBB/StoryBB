@@ -55,16 +55,28 @@ style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if 
 					,
 					toolbar: "",
 					{{/if}}
-                });
-                $("#{{editor_id}}").data("sceditor").addShortcut('ctrl+enter', function () {
-                	$("#{{editor_id}}").closest("form").submit();
-                });
-                $("#{{editor_id}}").data("sceditor").bind("blur", function() { //The "are you sure" prompt
-				    if($("#{{editor_id}}").data("sceditor").val() != "" )
-				        window.onbeforeunload = function() { return true  };
-				    else 
-				    	window.onbeforeunload = undefined;
 				});
+				$("#{{editor_id}}").data("sceditor").addShortcut('ctrl+enter', function () {
+					$("#{{editor_id}}").closest("form").submit();
+				});
+				if (!window.hasOwnProperty('storybb_editors')) {
+					window.storybb_editors = {};
+					window.onbeforeunload = function() {
+						for (var i in window.storybb_editors) {
+							if (window.storybb_editors.hasOwnProperty(i)) {
+								var value = $("#" + i).data("sceditor").val();
+								if (window.storybb_editors[i] != value) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+				window.storybb_editors["{{editor_id}}"] = $("#{{editor_id}}").data("sceditor").val();
+				$("#{{editor_id}}").closest("form").on("submit", function(e) {
+					window.storybb_editors["{{editor_id}}"] = $("#{{editor_id}}").data("sceditor").val();
+				});
+
 				$("#{{editor_id}}").data("sceditor").createPermanentDropDown();{{#unless editor_context.rich_active}}
 				$("#{{editor_id}}").data("sceditor").toggleSourceMode();{{/unless}}{{#if (or context.post_error.no_message context.post_error.long_message)}}
 				$(".sceditor-container").find("textarea").each(function() {$(this).css({border: "1px solid red"})});

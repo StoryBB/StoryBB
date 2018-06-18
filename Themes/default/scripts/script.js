@@ -474,9 +474,6 @@ function submitonce(theform)
 }
 function submitThisOnce(oControl)
 {
-	//Don't prompt
-	window.onbeforeunload = undefined;
-	
 	// oControl might also be a form.
 	var oForm = 'form' in oControl ? oControl.form : oControl;
 
