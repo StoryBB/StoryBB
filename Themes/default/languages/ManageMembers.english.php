@@ -56,10 +56,15 @@ $txt['membergroups_group_type_free'] = 'Free <span class="smalltext">(User may l
 $txt['membergroups_group_type_post'] = 'Post Based <span class="smalltext">(Membership based on post count)</span>';
 $txt['membergroups_min_posts'] = 'Required posts';
 $txt['membergroups_online_color'] = 'Color in online list';
-$txt['membergroups_icon_count'] = 'Number of icon images';
-$txt['membergroups_icon_image'] = 'Icon image filename';
-$txt['membergroups_icon_image_note'] = 'You can upload custom images to the forum\'s default theme directory to be able to select them here. Different images can be used in different themes, just give them the same name.';
-$txt['membergroups_icon_image_size'] = 'Max size allowed 128x32px';
+
+$txt['membergroup_no_badge'] = '(no badge)';
+$txt['membergroup_badge'] = 'Membergroup badge';
+$txt['membergroup_has_badge'] = 'Has badge?';
+$txt['membergroup_badge_preview'] = 'Preview:';
+$txt['membergroup_badge_show'] = 'Show: ';
+$txt['membergroup_badge_times'] = '&times;';
+$txt['membergroup_no_images'] = 'There are no images in the Themes/default/images/membericons folder - no badge can be set.';
+
 $txt['membergroups_max_messages'] = 'Max personal messages';
 $txt['membergroups_max_messages_note'] = '0 = unlimited';
 $txt['membergroups_tfa_force'] = 'Force Two-Factor-Authentication (2FA) for this membergroup';
@@ -86,7 +91,6 @@ $txt['membergroups_members_deadmin_confirm'] = 'Are you sure you wish to remove 
 
 $txt['membergroups_postgroups'] = 'Post groups';
 $txt['membergroups_select_permission_type'] = 'Select permission profile';
-$txt['membergroups_images_url'] = 'Themes/default/images/membericons/';
 $txt['membergroups_select_visible_boards'] = 'Show boards';
 $txt['membergroups_members_top'] = 'Members';
 $txt['membergroups_name'] = 'Name';

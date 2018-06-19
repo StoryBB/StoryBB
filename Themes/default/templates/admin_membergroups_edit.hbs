@@ -106,32 +106,37 @@
 					<dd>
 						<input type="text" name="online_color" id="online_color_input" value="{{{context.group.color}}}" size="20" class="input_text">
 					</dd>
+
 					<dt>
-						<label for="icon_count_input"><strong>{{{txt.membergroups_icon_count}}}:</strong></label>
+						<label for="membergroup_has_badge"><strong>{{{txt.membergroup_badge}}}:</strong></label>
 					</dt>
 					<dd>
-						<input type="number" name="icon_count" id="icon_count_input" value="{{{context.group.icon_count}}}" size="4" class="input_text">
-					</dd>
+						{{#if context.possible_icons}}
+							<label><input type="checkbox" class="input_check" name="has_badge" value="1" id="membergroup_has_badge"{{#if context.group.has_badge}} checked{{/if}}{{#unless context.group.badge_enabled}} disabled{{/unless}}> {{{txt.membergroup_has_badge}}}</label>
+							{{> helpicon help='membergroup_badge'}}
+							<div id="badge_config">
+								{{{txt.membergroup_badge_show}}}
 
-					{{! Do we have any possible icons to select from? }}
-					{{#if context.possible_icons}}
-						<dt>
-							<label for="icon_image_input"><strong>{{{txt.membergroups_icon_image}}}:</strong></label><br>
-							<span class="smalltext">{{{txt.membergroups_icon_image_note}}}</span>
-							<span class="smalltext">{{{txt.membergroups_icon_image_size}}}</span>
-						</dt>
-						<dd>
-							{{{txt.membergroups_images_url}}}
-							<select name="icon_image" id="icon_image_input">
-								{{#each context.possible_icons}}
-								<option value="{{{.}}}"{{#if (eq ../context.group.icon_image .)}} selected{{/if}}>{{{.}}}</option>
-								{{/each}}
-							</select>
-							<img id="icon_preview" src="" alt="*">
-						</dd>
-					{{else}}
-						<input type="hidden" name="icon_image" value="">
-					{{/if}}
+								<input type="number" name="icon_count" id="icon_count_input" value="{{{context.group.icon_count}}}" size="4" class="input_text" min="1" max="99">
+
+								<span class="multiplier">{{{txt.membergroup_badge_times}}}</span>
+
+								<select name="icon_image" id="icon_image_input">
+									{{#each context.possible_icons}}
+									<option value="{{{.}}}"{{#if (eq ../context.group.icon_image .)}} selected{{/if}}>{{{.}}}</option>
+									{{/each}}
+								</select>
+
+								<div id="badge_preview">
+									{{{txt.membergroup_badge_preview}}}
+									<span class="image"></span>
+								</div>
+							</div>
+						{{else}}
+							<input type="hidden" name="icon_image" value="">
+							{{{txt.membergroup_no_images}}}
+						{{/if}}
+					</dd>
 
 					{{#if (neq context.group.is_character '1')}}
 					<dt>

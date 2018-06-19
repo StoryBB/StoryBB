@@ -869,7 +869,13 @@ function EditMembergroup()
 		// Set variables to their proper value.
 		$_POST['max_messages'] = isset($_POST['max_messages']) ? (int) $_POST['max_messages'] : 0;
 		$_POST['min_posts'] = isset($_POST['min_posts']) && isset($_POST['group_type']) && $_POST['group_type'] == -1 && $_REQUEST['group'] > 3 ? abs($_POST['min_posts']) : ($_REQUEST['group'] == 4 ? 0 : -1);
-		$_POST['icons'] = (empty($_POST['icon_count']) || $_POST['icon_count'] < 0) ? '' : min((int) $_POST['icon_count'], 99) . '#' . $_POST['icon_image'];
+
+		$_POST['icons'] = '';
+		if (!empty($_POST['has_badge']) && !empty($_POST['icon_count']) && $_POST['icon_count'] > 0 && !empty($_POST['icon_image']))
+		{
+			$_POST['icons'] = min((int) $_POST['icon_count'], 99) . '#' . $_POST['icon_image'];
+		}
+
 		$_POST['group_desc'] = isset($_POST['group_desc']) && ($_REQUEST['group'] == 1 || (isset($_POST['group_type']) && $_POST['group_type'] != -1)) ? trim($_POST['group_desc']) : '';
 		$_POST['group_type'] = !isset($_POST['group_type']) || $_POST['group_type'] < 0 || $_POST['group_type'] > 3 || ($_POST['group_type'] == 1 && !allowedTo('admin_forum')) ? 0 : (int) $_POST['group_type'];
 		$_POST['group_hidden'] = empty($_POST['group_hidden']) || $_POST['min_posts'] != -1 || $_REQUEST['group'] == 3 ? 0 : (int) $_POST['group_hidden'];
@@ -1207,6 +1213,8 @@ function EditMembergroup()
 		'color' => $row['online_color'],
 		'min_posts' => $row['min_posts'],
 		'max_messages' => $row['max_messages'],
+		'has_badge' => !empty($row['icons'][0]),
+		'badge_enabled' => true,
 		'icon_count' => (int) $row['icons'][0],
 		'icon_image' => isset($row['icons'][1]) ? $row['icons'][1] : '',
 		'is_post_group' => $row['min_posts'] != -1,
@@ -1318,6 +1326,12 @@ function EditMembergroup()
 					$context['possible_icons'][] = $value;
 			}
 		}
+	}
+
+	if (empty($context['possible_icons']))
+	{
+		$context['group']['has_badge'] = false;
+		$context['group']['badge_enabled'] = false;
 	}
 
 	// Insert our JS, if we have possible icons.

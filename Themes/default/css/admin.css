@@ -464,6 +464,22 @@ dl.right dt {
 	padding-right: 10px;
 }
 
+/* Styles for manage membergroups. */
+dl.settings span.image img {
+	margin: 0;
+}
+#badge_config {
+	margin-top: 10px;
+}
+#badge_config .multiplier {
+	font-size: x-large;
+	display: inline-block;
+	vertical-align: middle;
+}
+#badge_preview {
+	margin: 5px 0 15px 0;
+}
+
 /* Styles for the question and answers */
 fieldset.qa_fieldset {
 	clear: both;
