@@ -1608,6 +1608,9 @@ fieldset.merge_options {
 	width: 540px;
 	margin: 0 auto;
 }
+.login .login {
+	width: auto;
+}
 .popup_content .login {
 	width: 100%;
 }
