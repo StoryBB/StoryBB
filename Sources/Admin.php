@@ -355,7 +355,6 @@ function AdminMain()
 					'icon' => 'server',
 					'subsections' => array(
 						'general' => array($txt['general_settings']),
-						'database' => array($txt['database_settings']),
 						'cookie' => array($txt['cookies_sessions_settings']),
 						'security' => array($txt['security_settings']),
 						'cache' => array($txt['caching_settings']),
@@ -641,7 +640,6 @@ function AdminSearchInternal()
 		array('EditSearchSettings', 'area=managesearch;sa=settings'),
 		array('EditSmileySettings', 'area=smileys;sa=settings'),
 		array('ModifyGeneralSettings', 'area=serversettings;sa=general'),
-		array('ModifyDatabaseSettings', 'area=serversettings;sa=database'),
 		array('ModifyCookieSettings', 'area=serversettings;sa=cookie'),
 		array('ModifyGeneralSecuritySettings', 'area=serversettings;sa=security'),
 		array('ModifyCacheSettings', 'area=serversettings;sa=cache'),
