@@ -242,8 +242,6 @@ $txt['userlog_enabled'] = 'Enable the profile edits log';
 
 $txt['mailqueue_title'] = 'Mail';
 
-$txt['db_error_send'] = 'Send emails on database connection error';
-
 $txt['default_language'] = 'Default forum language';
 
 $txt['maintenance_subject'] = 'Subject for display';

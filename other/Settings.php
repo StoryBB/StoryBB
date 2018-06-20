@@ -107,11 +107,6 @@ $db_prefix = 'sbb_';
  * @var int|bool
  */
 $db_persist = 0;
-/**
- *
- * @var int|bool
- */
-$db_error_send = 0;
 
 ########## Cache Info ##########
 /**
