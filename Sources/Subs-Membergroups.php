@@ -442,6 +442,13 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	return true;
 }
 
+/**
+ * Removes one or more groups from one or more characters, and applies to both main and additional groups.
+ *
+ * @param int|array Character ID or array of character IDs
+ * @param int|array Group ID or array of group IDs
+ * @return bool True on success
+ */
 function removeCharactersFromGroups($characters, $groups)
 {
 	global $smcFunc, $sourcedir, $modSettings;
@@ -732,6 +739,13 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	return true;
 }
 
+/**
+ * Adds characters into a group (or more accurately, adds a group to characters' settings) - additional groups only.
+ *
+ * @param int|array A character ID or array of character ids
+ * @param int $group A group to apply
+ * @return bool True on success
+ */
 function addCharactersToGroup($characters, $group)
 {
 	global $smcFunc, $sourcedir;
