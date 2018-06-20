@@ -20,7 +20,6 @@ $ignoreFiles = array(
 
 	// Cache and miscellaneous.
 	'\./cache/data_[A-Za-z0-9-_]\.php',
-	'\./other/db_last_error.php',
 );
 
 // No file? Thats bad.
