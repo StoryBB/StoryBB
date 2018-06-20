@@ -358,8 +358,6 @@ function ModifyDatabaseSettings($return_config = false)
 		OR a string for a titled section. */
 	$config_vars = array(
 		array('db_error_send', $txt['db_error_send'], 'file', 'check'),
-		'',
-		array('autoFixDatabase', $txt['autoFixDatabase'], 'db', 'check', false, 'autoFixDatabase')
 	);
 
 	// Add PG Stuff
