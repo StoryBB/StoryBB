@@ -393,28 +393,13 @@ function display_maintenance_message()
 function display_db_error()
 {
 	global $mbname, $modSettings, $maintenance;
-	global $db_connection, $webmaster_email, $db_last_error, $db_error_send, $smcFunc, $sourcedir;
+	global $db_connection, $webmaster_email, $db_error_send, $smcFunc, $sourcedir;
 
 	require_once($sourcedir . '/Logging.php');
 	set_fatal_error_headers();
 
 	// For our purposes, we're gonna want this on if at all possible.
 	$modSettings['cache_enable'] = '1';
-
-	if (($temp = cache_get_data('db_last_error', 600)) !== null)
-		$db_last_error = max($db_last_error, $temp);
-
-	if ($db_last_error < time() - 3600 * 24 * 3 && empty($maintenance) && !empty($db_error_send))
-	{
-		// Avoid writing to the Settings.php file if at all possible; use shared memory instead.
-		cache_put_data('db_last_error', time(), 600);
-		if (($temp = cache_get_data('db_last_error', 600)) === null)
-			logLastDatabaseError();
-
-		// Language files aren't loaded yet :(.
-		$db_error = @$smcFunc['db_error']($db_connection);
-		@mail($webmaster_email, $mbname . ': StoryBB Database Error!', 'There has been a problem with the database!' . ($db_error == '' ? '' : "\n" . $smcFunc['db_title'] . ' reported:' . "\n" . $db_error) . "\n\n" . 'This is a notice email to let you know that StoryBB could not connect to the database, contact your host if this continues.');
-	}
 
 	// What to do?  Language files haven't and can't be loaded yet...
 	echo '<!DOCTYPE html>
