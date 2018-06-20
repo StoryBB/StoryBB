@@ -469,7 +469,6 @@ function CheckFilesWritable()
 		'agreement.txt',
 		'Settings.php',
 		'Settings_bak.php',
-		'db_last_error.php',
 	);
 
 	foreach ($incontext['detected_languages'] as $lang => $temp)
@@ -1681,14 +1680,6 @@ function updateSettingsFile($vars)
 	// it seems that there are times it might not. So let's MAKE it dump the cache.
 	if (function_exists('opcache_invalidate'))
 		opcache_invalidate(dirname(__FILE__) . '/Settings.php', true);
-
-	return true;
-}
-
-function updateDbLastError()
-{
-	// Write out the db_last_error file with the error timestamp
-	file_put_contents(dirname(__FILE__) . '/db_last_error.php', '<' . '?' . "php\n" . '$db_last_error = 0;' . "\n" . '?' . '>');
 
 	return true;
 }
