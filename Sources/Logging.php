@@ -180,47 +180,6 @@ function writeLog($force = false)
 }
 
 /**
- * Logs the last database error into a file.
- * Attempts to use the backup file first, to store the last database error
- * and only update db_last_error.php if the first was successful.
- */
-function logLastDatabaseError()
-{
-	global $boarddir;
-
-	// Make a note of the last modified time in case someone does this before us
-	$last_db_error_change = @filemtime($boarddir . '/db_last_error.php');
-
-	// save the old file before we do anything
-	$file = $boarddir . '/db_last_error.php';
-	$dberror_backup_fail = !@is_writable($boarddir . '/db_last_error_bak.php') || !@copy($file, $boarddir . '/db_last_error_bak.php');
-	$dberror_backup_fail = !$dberror_backup_fail ? (!file_exists($boarddir . '/db_last_error_bak.php') || filesize($boarddir . '/db_last_error_bak.php') === 0) : $dberror_backup_fail;
-
-	clearstatcache();
-	if (filemtime($boarddir . '/db_last_error.php') === $last_db_error_change)
-	{
-		// Write the change
-		$write_db_change =  '<' . '?' . "php\n" . '$db_last_error = ' . time() . ';' . "\n" . '?' . '>';
-		$written_bytes = file_put_contents($boarddir . '/db_last_error.php', $write_db_change, LOCK_EX);
-
-		// survey says ...
-		if ($written_bytes !== strlen($write_db_change) && !$dberror_backup_fail)
-		{
-			// Oops. maybe we have no more disk space left, or some other troubles, troubles...
-			// Copy the file back and run for your life!
-			@copy($boarddir . '/db_last_error_bak.php', $boarddir . '/db_last_error.php');
-		}
-		else
-		{
-			@touch($boarddir . '/' . 'Settings.php');
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
  * This function shows the debug information tracked when $db_show_debug = true
  * in Settings.php
  */

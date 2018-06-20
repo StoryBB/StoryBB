@@ -242,8 +242,6 @@ $txt['userlog_enabled'] = 'Enable the profile edits log';
 
 $txt['mailqueue_title'] = 'Mail';
 
-$txt['db_error_send'] = 'Send emails on database connection error';
-
 $txt['default_language'] = 'Default forum language';
 
 $txt['maintenance_subject'] = 'Subject for display';
@@ -593,7 +591,6 @@ $txt['not_done_reason'] = 'To avoid overloading your server, the process has bee
 $txt['not_done_continue'] = 'Continue';
 
 $txt['general_settings'] = 'General';
-$txt['database_settings'] = 'Database';
 $txt['cookies_sessions_settings'] = 'Cookies and Sessions';
 $txt['security_settings'] = 'Security';
 $txt['caching_settings'] = 'Caching';

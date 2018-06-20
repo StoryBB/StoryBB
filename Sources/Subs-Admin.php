@@ -286,7 +286,6 @@ function getFileVersions(&$versionOptions)
  * - preserves case, formatting, and additional options in file.
  * - writes nothing if the resulting file would be less than 10 lines
  *   in length (sanity check for read lock.)
- * - check for changes to db_last_error and passes those off to a separate handler
  * - attempts to create a backup file and will use it should the writing of the
  *   new settings file fail
  *
@@ -295,13 +294,6 @@ function getFileVersions(&$versionOptions)
 function updateSettingsFile($config_vars)
 {
 	global $boarddir, $cachedir, $context;
-
-	// Updating the db_last_error, then don't mess around with Settings.php
-	if (count($config_vars) === 1 && isset($config_vars['db_last_error']))
-	{
-		updateDbLastError($config_vars['db_last_error']);
-		return;
-	}
 
 	// When was Settings.php last changed?
 	$last_settings_change = filemtime($boarddir . '/Settings.php');
@@ -337,13 +329,7 @@ function updateSettingsFile($config_vars)
 		// Look through the variables to set....
 		foreach ($config_vars as $var => $val)
 		{
-			// be sure someone is not updating db_last_error this with a group
-			if ($var === 'db_last_error')
-			{
-				updateDbLastError($val);
-				unset($config_vars[$var]);
-			}
-			elseif (strncasecmp($settingsArray[$i], '$' . $var, 1 + strlen($var)) == 0)
+			if (strncasecmp($settingsArray[$i], '$' . $var, 1 + strlen($var)) == 0)
 			{
 				$comment = strstr(substr($settingsArray[$i], strpos($settingsArray[$i], ';')), '#');
 				$settingsArray[$i] = '$' . $var . ' = ' . $val . ';' . ($comment == '' ? '' : "\t\t" . rtrim($comment)) . "\n";
@@ -436,22 +422,6 @@ function updateSettingsFile($config_vars)
 		opcache_invalidate($boarddir . '/Settings.php', true);
 }
 
-/**
- * Saves the time of the last db error for the error log
- * - Done separately from updateSettingsFile to avoid race conditions
- *   which can occur during a db error
- * - If it fails Settings.php will assume 0
- *
- * @param int $time The timestamp of the last DB error
- */
-function updateDbLastError($time)
-{
-	global $boarddir, $cachedir;
-
-	// Write out the db_last_error file with the error timestamp
-	file_put_contents($cachedir . '/db_last_error.php', '<' . '?' . "php\n" . '$db_last_error = ' . $time . ';' . "\n" . '?' . '>', LOCK_EX);
-	@touch($boarddir . '/' . 'Settings.php');
-}
 /**
  * Saves the admin's current preferences to the database.
  */

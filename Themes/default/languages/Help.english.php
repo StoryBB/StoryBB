@@ -358,7 +358,6 @@ $helptxt['customoptions'] = 'This defines the options that a user may choose fro
 		<li><strong>Reordering Options:</strong> You can reorder the options by moving text around between the boxes. However - an important note - you must make sure you do <strong>not</strong> change the text when reordering options as otherwise user data will be lost.</li>
 	</ul>';
 
-$helptxt['autoFixDatabase'] = 'This will automatically fix broken tables and resume as if nothing happened. This can be useful, because the only way to fix it is to REPAIR the table, and this way your forum won\'t be down until you notice. It does email you when this happens.';
 $helptxt['pgFulltextSearch'] = 'This setting defines the language to use for PostgreSQL\'s fulltext search. Choose the language that most closely matches the language your forum actually uses. If your forum\'s language is not listed, or if your forum is multi-lingual, choose the "simple" option. <br>
 This setting is independent of your main StoryBB language settings and not related to the installed language for StoryBB. <br>
 When you change this setting you need to [url=' . $scripturl . '?action=admin;area=managesearch;sa=method]rebuild the fulltext search index[/url].<br>

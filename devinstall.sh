@@ -15,7 +15,6 @@ cp ./other/composerInstaller ./composerInstaller
 
 # Create special files
 touch Settings_bak.php
-touch db_last_error.php
 
 # Adjust file permissions
 chmod -R a+rwx ./*

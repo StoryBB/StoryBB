@@ -88,7 +88,6 @@ function ModifySettings()
 
 	$subActions = array(
 		'general' => 'ModifyGeneralSettings',
-		'database' => 'ModifyDatabaseSettings',
 		'cookie' => 'ModifyCookieSettings',
 		'security' => 'ModifyGeneralSecuritySettings',
 		'cache' => 'ModifyCacheSettings',
@@ -333,74 +332,6 @@ function BoardurlMatch($url = '')
 		return false;
 	else
 		return true;
-}
-
-/**
- * Basic database and paths settings - database name, host, etc.
- *
- * - It shows an interface for the settings in Settings.php to be changed.
- * - It contains the actual array of settings to show from Settings.php.
- * - Requires the admin_forum permission.
- * - Uses the edit_settings administration area.
- * - Accessed from ?action=admin;area=serversettings;sa=database.
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyDatabaseSettings($return_config = false)
-{
-	global $scripturl, $context, $txt, $smcFunc;
-
-	/* If you're writing a mod, it's a bad idea to add things here....
-		For each option:
-		variable name, description, type (constant), size/possible values, helptext, optional 'min' (minimum value for float/int, defaults to 0), optional 'max' (maximum value for float/int), optional 'step' (amount to increment/decrement value for float/int)
-		OR an empty string for a horizontal rule.
-		OR a string for a titled section. */
-	$config_vars = array(
-		array('db_error_send', $txt['db_error_send'], 'file', 'check'),
-		'',
-		array('autoFixDatabase', $txt['autoFixDatabase'], 'db', 'check', false, 'autoFixDatabase')
-	);
-
-	// Add PG Stuff
-	if ($smcFunc['db_title'] == "PostgreSQL")
-	{
-		$request = $smcFunc['db_query']('', 'SELECT cfgname FROM pg_ts_config', array());
-		$fts_language = array();
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$fts_language[$row['cfgname']] = $row['cfgname'];
-
-		$config_vars = array_merge ($config_vars, array(
-				'',
-				array('search_language', $txt['search_language'], 'db', 'select', $fts_language, 'pgFulltextSearch')
-			)
-		);
-	}
-
-
-	call_integration_hook('integrate_database_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	// Setup the template stuff.
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=database;save';
-	$context['settings_title'] = $txt['database_settings'];
-	$context['save_disabled'] = $context['settings_not_writable'];
-
-	// Saving settings?
-	if (isset($_REQUEST['save']))
-	{
-		call_integration_hook('integrate_save_database_settings');
-
-		saveSettings($config_vars);
-		session_flash('success', $txt['settings_saved']);
-		redirectexit('action=admin;area=serversettings;sa=database;' . $context['session_var'] . '=' . $context['session_id']);
-	}
-
-	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
 }
 
 /**
@@ -1065,7 +996,7 @@ function saveSettings(&$config_vars)
 	);
 
 	// All the checkboxes
-	$config_bools = array('db_persist', 'db_error_send', 'maintenance', 'image_proxy_enabled');
+	$config_bools = array('db_persist', 'maintenance', 'image_proxy_enabled');
 
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = array();
