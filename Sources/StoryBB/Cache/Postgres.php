@@ -29,12 +29,6 @@ class Postgres extends API
 	 */
 	private $pg_put_data_prep;
 
-	public function __construct()
-	{
-		parent::__construct();
-
-	}
-
 	/**
 	 * Connects to the cache method. This defines our $key. If this fails, we return false, otherwise we return true.
 	 *
