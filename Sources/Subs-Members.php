@@ -165,6 +165,15 @@ function deleteMembers($users, $check_not_admin = false)
 		]
 	);
 
+	// And any alerts they may have accrued.
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}user_alerts
+		WHERE id_member IN ({array_int:users})',
+		[
+			'users' => $users,
+		]
+	);
+
 	// Make their votes into guest votes.
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}polls
