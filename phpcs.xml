@@ -5,7 +5,12 @@
     <file>.</file>
 
     <!-- Don't include anything that comes from Composer; they don't have to follow our rules -->
+    <exclude-pattern>Sources/minify/*</exclude-pattern>
     <exclude-pattern>vendor/*</exclude-pattern>
+
+    <!-- The cache folder is a hot mess, and not relevant. -->
+    <exclude-pattern>./cache/data*</exclude-pattern>
+    <exclude-pattern>./cache/template*</exclude-pattern>
 
     <!-- Don't include anything that we know ahead of time to be minified. -->
     <exclude-pattern>./Themes/default/css/minified.css</exclude-pattern>
