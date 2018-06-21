@@ -94,7 +94,7 @@ class Logic
 	 */
 	public static function gt($arg1, $arg2)
 	{
-	    return $arg1 > $arg2;
+		return $arg1 > $arg2;
 	}
 
 	/**
@@ -118,7 +118,7 @@ class Logic
 	 */
 	public static function gte($arg1, $arg2)
 	{
-	    return $arg1 >= $arg2;
+		return $arg1 >= $arg2;
 	}
 
 	/**

@@ -2835,17 +2835,17 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 
 function locale_helper($lang_locale) 
 {
-    return new \LightnCandy\SafeString(str_replace("_", "-", substr($lang_locale, 0, strcspn($lang_locale, "."))));
+	return new \LightnCandy\SafeString(str_replace("_", "-", substr($lang_locale, 0, strcspn($lang_locale, "."))));
 }
 
 function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
 {
-    return new \LightnCandy\SafeString(sprintf($string,
-	    $guest_title, 
-	    $forum_name, 
-	    $scripturl . '?action=login', 
-	    'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
-	    $scripturl . '?action=signup'
+	return new \LightnCandy\SafeString(sprintf($string,
+		$guest_title, 
+		$forum_name, 
+		$scripturl . '?action=login', 
+		'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
+		$scripturl . '?action=signup'
 	));
 }
 

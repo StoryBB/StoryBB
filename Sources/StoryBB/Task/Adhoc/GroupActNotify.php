@@ -17,10 +17,10 @@ namespace StoryBB\Task\Adhoc;
  */
 class GroupActNotify extends \StoryBB\Task\Adhoc
 {
-    /**
-     * This executes the task - loads up the information, puts the email in the queue and inserts alerts as needed.
-     * @return bool Always returns true
-     */
+	/**
+	 * This executes the task - loads up the information, puts the email in the queue and inserts alerts as needed.
+	 * @return bool Always returns true
+	 */
 	public function execute()
 	{
 		global $sourcedir, $smcFunc, $language, $modSettings;
