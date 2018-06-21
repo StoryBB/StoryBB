@@ -130,6 +130,42 @@ class Alert
 	}
 
 	/**
+	 * Deletes a single or a group of alerts by ID
+	 *
+	 * @param int|array The ID of a single alert to delete or an array containing the IDs of multiple alerts. The function will convert integers into an array for better handling.
+	 * @param bool|int $memID The user ID. Used to update the user unread alerts count.
+	 * @return void|int If the $memID param is set, returns the new amount of unread alerts.
+	 */
+	public static function delete($toDelete, $memID = false)
+	{
+		global $smcFunc;
+
+		if (empty($toDelete))
+			return false;
+
+		$toDelete = (array) $toDelete;
+
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}user_alerts
+			WHERE id_alert IN({array_int:toDelete})',
+			array(
+				'toDelete' => $toDelete,
+			)
+		);
+
+		// Gotta know how many unread alerts are left.
+		if ($memID)
+		{
+			$count = alert_count($memID, true);
+
+			updateMemberData($memID, array('alerts' => $count));
+
+			// Might want to know this.
+			return $count;
+		}
+	}
+
+	/**
 	 * Counts how many alerts a user has - either unread or all depending on $unread
 	 *
 	 * @param int $memID The user ID.

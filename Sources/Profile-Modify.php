@@ -2146,31 +2146,7 @@ function alert_mark($memID, $toMark, $read = 0)
  */
 function alert_delete($toDelete, $memID = false)
 {
-	global $smcFunc;
-
-	if (empty($toDelete))
-		return false;
-
-	$toDelete = (array) $toDelete;
-
-	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}user_alerts
-		WHERE id_alert IN({array_int:toDelete})',
-		array(
-			'toDelete' => $toDelete,
-		)
-	);
-
-	// Gotta know how many unread alerts are left.
-	if ($memID)
-	{
-		$count = alert_count($memID, true);
-
-		updateMemberData($memID, array('alerts' => $count));
-
-		// Might want to know this.
-		return $count;
-	}
+	return StoryBB\Model\Alert::delete($toDelete, $memID);
 }
 
 /**
