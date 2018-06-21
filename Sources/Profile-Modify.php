@@ -12,6 +12,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Alert;
+
 /**
  * This defines every profile field known to man.
  *
@@ -2132,30 +2134,7 @@ function alert_markread($memID)
  */
 function alert_mark($memID, $toMark, $read = 0)
 {
-	global $smcFunc;
-
-	if (empty($toMark) || empty($memID))
-		return false;
-
-	$toMark = (array) $toMark;
-
-	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}user_alerts
-		SET is_read = {int:read}
-		WHERE id_alert IN({array_int:toMark})',
-		array(
-			'read' => $read == 1 ? time() : 0,
-			'toMark' => $toMark,
-		)
-	);
-
-	// Gotta know how many unread alerts are left.
-	$count = alert_count($memID, true);
-
-	updateMemberData($memID, array('alerts' => $count));
-
-	// Might want to know this.
-	return $count;
+	return StoryBB\Model\Alert::change_read($memID, $toMark, $read = 0);
 }
 
 /**
@@ -2167,31 +2146,7 @@ function alert_mark($memID, $toMark, $read = 0)
  */
 function alert_delete($toDelete, $memID = false)
 {
-	global $smcFunc;
-
-	if (empty($toDelete))
-		return false;
-
-	$toDelete = (array) $toDelete;
-
-	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}user_alerts
-		WHERE id_alert IN({array_int:toDelete})',
-		array(
-			'toDelete' => $toDelete,
-		)
-	);
-
-	// Gotta know how many unread alerts are left.
-	if ($memID)
-	{
-		$count = alert_count($memID, true);
-
-		updateMemberData($memID, array('alerts' => $count));
-
-		// Might want to know this.
-		return $count;
-	}
+	return StoryBB\Model\Alert::delete($toDelete, $memID);
 }
 
 /**
@@ -2200,29 +2155,11 @@ function alert_delete($toDelete, $memID = false)
  * @param int $memID The user ID.
  * @param bool $unread Whether to only count unread alerts.
  * @return int The number of requested alerts
+ * @deprecated Call StoryBB\Model\Alert::count_for_member instead
  */
 function alert_count($memID, $unread = false)
 {
-	global $smcFunc;
-
-	if (empty($memID))
-		return false;
-
-	$request = $smcFunc['db_query']('', '
-		SELECT id_alert
-		FROM {db_prefix}user_alerts
-		WHERE id_member = {int:id_member}
-			'.($unread ? '
-			AND is_read = 0' : ''),
-		array(
-			'id_member' => $memID,
-		)
-	);
-
-	$count = $smcFunc['db_num_rows']($request);
-	$smcFunc['db_free_result']($request);
-
-	return $count;
+	return Alert::count_for_member($memID, $unread);
 }
 
 /**
