@@ -143,14 +143,14 @@ class Logic
 		
 		foreach ( $args as $arg ) 
 		{
-			if ( $arg == FALSE ) 
+			if ( $arg == false ) 
 			{
 				// Once one argument returns false, return false and don't compare other arguments
-				return FALSE;
+				return false;
 			}
 		}
 		// No argument returned false (all evaluated to true) - return true
-		return TRUE;
+		return true;
 	}
 
 	/**
@@ -165,13 +165,13 @@ class Logic
 		
 		foreach ( $args as $arg ) 
 		{
-			if ( $arg == TRUE ) 
+			if ( $arg == true ) 
 			{
 				// Once one argument returns true, return true and don't compare other arguments
-				return TRUE;
+				return true;
 			}
 		}
 		// No argument returned true (all evaluated to false) - return false
-		return FALSE;
+		return false;
 	}
 }
