@@ -1240,6 +1240,18 @@ function AdminApprove()
 	// Are we rejecting them?
 	elseif ($_POST['todo'] == 'reject' || $_POST['todo'] == 'rejectemail')
 	{
+		// Delete the alerts about them.
+		$alerted = StoryBB\Model\Alert::find_alerts([
+			'id_member_started' => $members,
+			'content_action' => 'register_approval',
+			'is_read' => 0
+		]);
+		foreach ($alerted as $memID => $alerts)
+		{
+			StoryBB\Model\Alert::delete($alerts, $memID);
+		}
+
+		// Delete their accounts.
 		require_once($sourcedir . '/Subs-Members.php');
 		deleteMembers($members);
 
@@ -1260,6 +1272,18 @@ function AdminApprove()
 	// A simple delete?
 	elseif ($_POST['todo'] == 'delete' || $_POST['todo'] == 'deleteemail')
 	{
+		// Delete the alerts about them.
+		$alerted = StoryBB\Model\Alert::find_alerts([
+			'id_member_started' => $members,
+			'content_action' => 'register_approval',
+			'is_read' => 0
+		]);
+		foreach ($alerted as $memID => $alerts)
+		{
+			StoryBB\Model\Alert::delete($alerts, $memID);
+		}
+
+		// Delete their accounts.
 		require_once($sourcedir . '/Subs-Members.php');
 		deleteMembers($members);
 

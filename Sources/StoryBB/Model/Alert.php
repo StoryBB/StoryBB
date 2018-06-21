@@ -156,7 +156,7 @@ class Alert
 		// Gotta know how many unread alerts are left.
 		if ($memID)
 		{
-			$count = alert_count($memID, true);
+			$count = self::count_for_member($memID, true);
 
 			updateMemberData($memID, array('alerts' => $count));
 
