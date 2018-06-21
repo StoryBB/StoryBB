@@ -1183,6 +1183,20 @@ function AdminApprove()
 				StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accapp' . $member['id'], $emaildata['is_html'], 0);
 			}
 		}
+
+		// Anyone that got alerted about this user, mark those as read.
+		$alerted = StoryBB\Model\Alert::find_alerts([
+			'id_member_started' => $members,
+			'content_action' => 'register_approval',
+			'is_read' => 0
+		]);
+		if (!empty($alerted))
+		{
+			foreach ($alerted as $memID => $alerts)
+			{
+				StoryBB\Model\Alert::change_read($memID, $alerts, 1);
+			}
+		}
 	}
 	// Maybe we're sending it off for activation?
 	elseif ($_POST['todo'] == 'require_activation')
