@@ -257,6 +257,7 @@ namespace {
 }
 
 namespace PasswordCompat\binary {
+
 	/**
 	 * Count the number of bytes in a string
 	 *

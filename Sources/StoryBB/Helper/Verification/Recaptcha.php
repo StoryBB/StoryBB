@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Helper\Verification;
+
 use curl_fetch_web_data;
 
 class Recaptcha

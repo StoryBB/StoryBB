@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Model;
+
 use StoryBB\Task;
 
 /**
