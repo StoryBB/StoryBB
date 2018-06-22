@@ -61,7 +61,7 @@
     <rule ref="PSR2.ControlStructures.ElseIfDeclaration"/>
     <rule ref="PSR2.Files.EndFileNewline"/>
     <rule ref="PSR2.Namespaces.NamespaceDeclaration"/>
-    <!-- <rule ref="PSR2.Namespaces.UseDeclaration"/> -->
+    <rule ref="PSR2.Namespaces.UseDeclaration"/>
     <!-- <rule ref="Squiz.PHP.CommentedOutCode"/> -->
     <rule ref="Squiz.PHP.Heredoc"/>
     <!-- <rule ref="Squiz.PHP.InnerFunctions"/> -->
