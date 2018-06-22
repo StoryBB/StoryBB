@@ -64,7 +64,7 @@
     <rule ref="PSR2.Namespaces.UseDeclaration"/>
     <!-- <rule ref="Squiz.PHP.CommentedOutCode"/> -->
     <rule ref="Squiz.PHP.Heredoc"/>
-    <!-- <rule ref="Squiz.PHP.InnerFunctions"/> -->
+    <rule ref="Squiz.PHP.InnerFunctions"/>
     <!-- <rule ref="Squiz.PHP.LowercasePHPFunctions"/> -->
     <!-- <rule ref="Squiz.PHP.NonExecutableCode"/> -->
     <!-- <rule ref="Squiz.Scope.MemberVarScope"/> -->
