@@ -803,7 +803,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 			
 			if ($returnmode == 1)
 				$return_var = $ai;
-			else if ($returnmode == 2)
+			elseif ($returnmode == 2)
 				$return_var[] = $ai;
 		}
 	}
@@ -813,7 +813,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 	{
 		if ($returnmode == 1 && empty($return_var))
 			$return_var = sbb_db_insert_id($table, $keys[0]) + count($insertRows) - 1;
-		else if ($returnmode == 2 && empty($return_var))
+		elseif ($returnmode == 2 && empty($return_var))
 		{
 			$return_var = array();
 			$count = count($insertRows);

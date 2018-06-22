@@ -17,12 +17,12 @@ namespace StoryBB\Task\Adhoc;
  */
 class UpdateTldRegex extends \StoryBB\Task\Adhoc
 {
-    /**
-     * This executes the task. It just calls set_tld_regex helper.
-     * @return bool Always returns true
-     */
+	/**
+	 * This executes the task. It just calls set_tld_regex helper.
+	 * @return bool Always returns true
+	 */
 	public function execute()
- 	{
+	{
 		StoryBB\Helper\TLD::set_tld_regex(true);
 
 		return true;

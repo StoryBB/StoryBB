@@ -115,7 +115,7 @@ class ProxyServer
 
 		// Right, image not cached? Simply redirect, then.
 		if (!$response)
-		    redirectexit($request);
+			redirectexit($request);
 
 		// Make sure we're serving an image
 		$contentParts = explode('/', !empty($cached['content_type']) ? $cached['content_type'] : '');

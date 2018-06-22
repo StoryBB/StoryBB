@@ -733,18 +733,18 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 		$where = '';
 		$count_pk = 0;
 
-		If ($replace_support)
+		if ($replace_support)
 		{
 			foreach ($columns as $columnName => $type)
 			{
 				//check pk fiel
-				IF (in_array($columnName, $keys))
+				if (in_array($columnName, $keys))
 				{
 					$key_str .= ($count_pk > 0 ? ',' : '');
 					$key_str .= $columnName;
 					$count_pk++;
 				}
-				else if ($method == 'replace') //normal field
+				elseif ($method == 'replace') //normal field
 				{
 					$col_str .= ($count > 0 ? ',' : '');
 					$col_str .= $columnName . ' = EXCLUDED.' . $columnName;
@@ -756,7 +756,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 			else
 				$replace = ' ON CONFLICT (' . $key_str . ') DO NOTHING';
 		}
-		else if ($method == 'replace')
+		elseif ($method == 'replace')
 		{
 			foreach ($columns as $columnName => $type)
 			{

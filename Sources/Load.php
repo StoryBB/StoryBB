@@ -3340,7 +3340,7 @@ function set_avatar_data($data = array())
 		if (!empty($modSettings['gravatarAllowExtraEmail']) && !empty($data['avatar']) && stristr($data['avatar'], 'gravatar://'))
 			$image = get_gravatar_url($smcFunc['substr']($data['avatar'], 11));
 
-		else if (!empty($data['email']))
+		elseif (!empty($data['email']))
 			$image = get_gravatar_url($data['email']);
 	}
 
@@ -3374,7 +3374,7 @@ function set_avatar_data($data = array())
 		}
 
 		// Perhaps this user has an attachment as avatar...
-		else if (!empty($data['filename']))
+		elseif (!empty($data['filename']))
 			$image = $modSettings['custom_avatar_url'] . '/' . $data['filename'];
 
 		// Right... no avatar... use our default image.

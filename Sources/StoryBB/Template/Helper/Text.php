@@ -43,7 +43,7 @@ class Text
 		global $txt;
 		if (is_array($key)) {
 			array_pop($key);
-		    $key = implode('', $key);
+			$key = implode('', $key);
 		}
 		return isset($txt[$key]) ? $txt[$key] : $key;
 	}

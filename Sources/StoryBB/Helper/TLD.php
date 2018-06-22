@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Helper;
+
 use StoryBB\Task;
 
 /**
@@ -114,7 +115,7 @@ class TLD
 
 					for ($enco_idx = $delim_pos ? ($delim_pos + 1) : 0; $enco_idx < $enco_len; ++$deco_len)
 					{
-						for ($old_idx = $idx, $w = 1, $k = $base; 1 ; $k += $base)
+						for ($old_idx = $idx, $w = 1, $k = $base; 1; $k += $base)
 						{
 							$cp = ord($encoded{$enco_idx++});
 							$digit = ($cp - 48 < 10) ? $cp - 22 : (($cp - 65 < 26) ? $cp - 65 : (($cp - 97 < 26) ? $cp - 97 : $base));

@@ -156,7 +156,7 @@ function Register($reg_errors = array())
 	StoryBB\Template::add_helper([
 		'profile_callback_helper' => function ($field) {
 			var_dump($field);
-	        if ($field['type'] == 'callback')
+			if ($field['type'] == 'callback')
 			{
 				if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
 				{

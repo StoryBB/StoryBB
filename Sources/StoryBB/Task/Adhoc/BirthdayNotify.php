@@ -17,12 +17,12 @@ namespace StoryBB\Task\Adhoc;
  */
 class BirthdayNotify extends \StoryBB\Task\Adhoc
 {
-    /**
-     * This executes the task. It loads up the birthdays, figures out the greeting, etc.
-     * @return bool Always returns true
-     */
+	/**
+	 * This executes the task. It loads up the birthdays, figures out the greeting, etc.
+	 * @return bool Always returns true
+	 */
 	public function execute()
- 	{
+	{
 		global $txt, $smcFunc, $txtBirthdayEmails, $language, $modSettings, $sourcedir;
 
 		$greeting = isset($modSettings['birthday_email']) ? $modSettings['birthday_email'] : 'happy_birthday';

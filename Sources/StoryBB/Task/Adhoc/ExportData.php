@@ -10,6 +10,7 @@
  */
 
 namespace StoryBB\Task\Adhoc;
+
 use StoryBB\Task;
 use StoryBB\Task\Adhoc\Exception\NotCompleteException;
 use ZipArchive;

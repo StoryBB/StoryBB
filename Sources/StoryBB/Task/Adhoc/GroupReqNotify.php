@@ -18,12 +18,12 @@ namespace StoryBB\Task\Adhoc;
 class GroupReqNotify extends \StoryBB\Task\Adhoc
 {
 	/**
-     * This executes the task - loads up the information, puts the email in the queue and inserts any alerts as needed.
+	 * This executes the task - loads up the information, puts the email in the queue and inserts any alerts as needed.
 	 * @return bool Always returns true.
 	 */
 	public function execute()
- 	{
- 		global $sourcedir, $smcFunc, $language, $modSettings, $scripturl;
+	{
+		global $sourcedir, $smcFunc, $language, $modSettings, $scripturl;
 
 		// Do we have any group moderators?
 		$request = $smcFunc['db_query']('', '

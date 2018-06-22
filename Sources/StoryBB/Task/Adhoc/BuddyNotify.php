@@ -18,12 +18,12 @@ namespace StoryBB\Task\Adhoc;
 class BuddyNotify extends \StoryBB\Task\Adhoc
 {
 	/**
-     * This executes the task - loads up the info, sets the alerts and loads up the email queue.
+	 * This executes the task - loads up the info, sets the alerts and loads up the email queue.
 	 * @return bool Always returns true
 	 */
 	public function execute()
- 	{
- 		global $smcFunc, $sourcedir;
+	{
+		global $smcFunc, $sourcedir;
 
 		// Figure out if the user wants to be notified.
 		require_once($sourcedir . '/Subs-Notify.php');

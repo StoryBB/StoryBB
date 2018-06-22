@@ -17,7 +17,7 @@ namespace StoryBB\Task\Adhoc;
 class CreatePostNotify extends \StoryBB\Task\Adhoc
 {
 	/**
-     * This handles notifications when a new post is created - new topic, reply, quotes and mentions.
+	 * This handles notifications when a new post is created - new topic, reply, quotes and mentions.
 	 * @return bool Always returns true
 	 */
 	public function execute()
@@ -108,7 +108,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 			// Don't send a notification if the watching member ignored the member who made the action.
 			if (!empty($data['pm_ignore_list']) && in_array($data['id_member_updated'], explode(',', $data['pm_ignore_list'])))
-			    continue;
+				continue;
 			if (!in_array($type, array('reply', 'topic')) && $notify_types == 2 && $member != $data['id_member_started'])
 				continue;
 			elseif (in_array($type, array('reply', 'topic')) && $member == $posterOptions['id'])
