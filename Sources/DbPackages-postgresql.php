@@ -114,7 +114,7 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
 		// This is a sad day... drop the table? If not, return false (error) by default.
 		if ($if_exists == 'overwrite')
 			$smcFunc['db_drop_table']($table_name);
-		else if ($if_exists == 'update')
+		elseif ($if_exists == 'update')
 		{
 			$smcFunc['db_drop_table']($table_name.'_old');
 			$smcFunc['db_transaction']('begin');
