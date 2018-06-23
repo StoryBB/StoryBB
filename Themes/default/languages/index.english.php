@@ -849,3 +849,5 @@ $txt['search_by_character'] = 'By character';
 
 $txt['in_character_board'] = 'In-Character Board';
 $txt['out_of_character_board'] = 'Out-Of-Character Board';
+
+$txt['contact_us'] = 'Contact Us';
