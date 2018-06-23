@@ -84,7 +84,7 @@
 			<span id="post_confirm_buttons" class="righttext">
 				{{{richtextbuttons context.post_box_name}}}
 			</span>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 			<input type="hidden" name="seqnum" value="{{context.form_sequence_number}}">
 			<input type="hidden" name="replied_to" value="{{#if context.quoted_message.id}}{{context.quoted_message.id}}{{else}}0{{/if}}">
 			<input type="hidden" name="pm_head" value="{{#if context.quoted_message.pm_head}}{{context.quoted_message.pm_head}}{{else}}0{{/if}}">

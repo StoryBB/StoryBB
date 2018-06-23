@@ -12,8 +12,8 @@
 				{{else}}
 				<input type="submit" name="accept_agreement" value="{{txt.agreement_agree}}" class="button_submit">
 				{{/if}}
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-			<input type="hidden" name="{{context.register_token_var}}" value="{{context.register_token}}">
+				{{session_form}}
+				{{token_form 'register'}}
 			</div>
 			<input type="hidden" name="step" value="1">
 		</form>

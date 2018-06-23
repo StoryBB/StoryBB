@@ -3,7 +3,7 @@
 		var startOptID = {{getNumItems context.field.options}};
 	</script>
 	<div id="admincenter">
-		<form action="{{scripturl}}?action=admin;area=featuresettings;sa=profileedit;fid={{context.fid}};{{context.session_var}}={{context.session_id}}" method="post" accept-charset="UTF-8">
+		<form action="{{scripturl}}?action=admin;area=featuresettings;sa=profileedit;fid={{context.fid}};{{session_url}}" method="post" accept-charset="UTF-8">
 			<div id="section_header" class="cat_bar">
 				<h3 class="catbg">{{{context.page_title}}}</h3>
 			</div>
@@ -190,8 +190,8 @@
 					<input type="submit" name="delete" value="{{{txt.delete}}}" data-confirm="{{{txt.custom_edit_delete_sure}}}" class="button_submit you_sure">
 				{{/if}}
 			</div>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-			<input type="hidden" name="{{context.admin-ecp_token_var}}" value="{{context.admin-ecp_token}}">
+			{{session_form}}
+			{{token_form 'admin-ecp'}}
 		</form>
 	</div>
 	<script>

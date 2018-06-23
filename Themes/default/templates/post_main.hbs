@@ -299,7 +299,7 @@ var icon_urls = {
 	<input type="hidden" name="last_msg" value="{{context.topic_last_message}}">
 	{{/if}}
 	<input type="hidden" name="additional_options" id="additional_options" value="{{#if context.show_additional_options}}1{{else}}0{{/if}}">
-	<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+	{{session_form}}
 	<input type="hidden" name="seqnum" value="{{context.form_sequence_number}}">
 </form>
 	<script>

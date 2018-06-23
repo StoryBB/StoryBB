@@ -30,8 +30,8 @@
 				<div class="auto_flow">
 					<input type="submit" value="{{{txt.save}}}" class="button_submit">
 					<input type="hidden" name="uid" value="{{{context.remind_user}}}">
-					<input type="hidden" name="{{{context.session_var}}}" value="{{{context.session_id}}}">
-					<input type="hidden" name="{{{context.remind-sai_token_var}}}" value="{{{context.remind-sai_token}}}">
+					{{session_form}}
+					{{token_form 'remind-sai'}}
 				</div>
 			</div>
 		</div>

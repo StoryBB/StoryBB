@@ -19,7 +19,7 @@
 						<p class="board_description mobile_display">{{description}}</p>
 					</a>
 					{{#if (and can_approve_posts (or unapproved_posts unapproved_topics))}}
-						<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{#if unapproved_topics}}topics{{else}}posts{{/if}};brd={{id}};{{../context.session_var}}={{../context.session_id}}" title="{{textTemplate 'unapproved_posts' unapproved_topics unapproved_posts}}" class="moderation_link">(!)</a>
+						<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{#if unapproved_topics}}topics{{else}}posts{{/if}};brd={{id}};{{session_url}}" title="{{textTemplate 'unapproved_posts' unapproved_topics unapproved_posts}}" class="moderation_link">(!)</a>
 					{{/if}}
 					<p class="board_description">{{description}}</p>
 					{{#if (or moderators moderator_groups)}}
@@ -154,7 +154,7 @@
 			{{/if}}
 			</div>
 			{{#if (and context.can_quick_mod context.topics)}}
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 			</form>
 			{{/if}}
 			<div class="mobile_buttons floatright">

@@ -1,5 +1,5 @@
 		{{! Editing a character template }}
-		<form method="post" action="{{scripturl}}?action=admin;area=templates;sa=save;{{context.session_var}}={{context.session_id}}">
+		<form method="post" action="{{scripturl}}?action=admin;area=templates;sa=save;{{session_url}}">
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.char_templates}}}</h3>
 			</div>
@@ -9,7 +9,7 @@
 				 {{{richtexteditor 'message' '' 'bbcBox'}}}
 				<br>
 				<div>
-					<input type="hidden" name="{{{context.session_var}}}" value="{{{context.session_id}}}">
+					{{session_form}}
 					<input type="hidden" name="template_id" value="{{{context.template_id}}}">
 					<input type="submit" value="{{{txt.save}}}" class="button_submit">
 				</div>
