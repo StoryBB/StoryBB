@@ -636,8 +636,8 @@ function showProfileDrafts($memID, $draft_type = 0)
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'icon' => $row['icon'],
 			'id_draft' => $row['id_draft'],
-			'locked' => $row['locked'],
-			'sticky' => $row['is_sticky'],
+			'locked' => (bool) $row['locked'],
+			'sticky' => (bool) $row['is_sticky'],
 		);
 	}
 	$smcFunc['db_free_result']($request);
