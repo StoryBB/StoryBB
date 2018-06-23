@@ -851,3 +851,8 @@ $txt['in_character_board'] = 'In-Character Board';
 $txt['out_of_character_board'] = 'Out-Of-Character Board';
 
 $txt['contact_us'] = 'Contact Us';
+$txt['send_message'] = 'Send message';
+$txt['your_name'] = 'Your name';
+$txt['your_email'] = 'Your email address';
+$txt['verification'] = 'Verification';
+$txt['thank_you_for_message'] = 'Thank you for your message. The administrators have been notified and should reply soon.';

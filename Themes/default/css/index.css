@@ -1118,6 +1118,20 @@ img.sort, .sort {
 	color: #a85400;
 	text-decoration: none;
 }
+/* The contact page */
+#contactform dl.settings {
+	max-width: 600px;
+	margin: 12px auto 0 auto;
+}
+#contactform dl.settings dt {
+	width: 20%;
+}
+#contactform dl.settings dd {
+	width: 75%;
+}
+#contactform input[type=text], #contactform input[type=email] {
+	width: 100%;
+}
 /* The logo and slogan. */
 #header {
 	padding: 2px 2px 12px 2px;

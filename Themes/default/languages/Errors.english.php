@@ -414,3 +414,10 @@ $txt['json_JSON_ERROR_RECURSION'] = 'Json decode error: One or more recursive re
 $txt['json_JSON_ERROR_INF_OR_NAN'] = 'Json decode error: One or more NAN or INF values in the value to be encoded';
 $txt['json_JSON_ERROR_UNSUPPORTED_TYPE'] = 'Json decode error: A value of a type that cannot be encoded was given';
 $txt['json_unknown'] = 'Unknown error';
+
+$txt['error_contact'] = 'We encountered the following problems trying to send a message to the admins:';
+$txt['error_contact_no_name'] = 'You didn\'t provide a name.';
+$txt['error_contact_no_email'] = 'You didn\'t provide an email address.';
+$txt['error_contact_no_subject'] = 'You didn\'t provide a subject.';
+$txt['error_contact_no_message'] = 'You didn\'t provide a message.';
+$txt['error_contact_invalid_email'] = 'You didn\'t provide a valid email address.';

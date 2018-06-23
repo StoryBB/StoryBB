@@ -1,3 +1,52 @@
 			<div class="cat_bar">
 				<h3 class="catbg">{{txt.contact_us}}</h3>
 			</div>
+			<form id="contactform" action="{{scripturl}}?action=contact" method="post" accept-charset="UTF-8">
+				<div class="roundframe">
+					{{#if context.contact.errors}}
+					<div class="errorbox">
+						<strong>{{{txt.error_contact}}}</strong>
+						<ul>
+							{{#each context.contact.errors}}
+							<li>{{{.}}}</li>
+							{{/each}}
+						</ul>
+					</div>
+					{{/if}}
+					<dl class="settings">
+						<dt>{{{txt.your_name}}}:</dt>
+						<dd>
+							{{#if context.user.is_guest}}
+							<input type="text" name="name" value="" class="input_text" required>
+							{{else}}
+							{{{context.user.name}}}
+							{{/if}}
+						</dd>
+						<dt>{{{txt.your_email}}}:</dt>
+						<dd>
+							{{#if context.user.is_guest}}
+							<input type="email" name="email" value="" class="input_text" required>
+							{{else}}
+							{{{context.user.email}}}
+							{{/if}}
+						</dd>
+						<dt>{{{txt.subject}}}:</dt>
+						<dd><input type="text" name="subject" value="" class="input_text" required></dd>
+						<dt>{{{txt.message}}}:</dt>
+						<dd><textarea name="message" required></textarea></dd>
+
+						{{#if context.visual_verification_id}}
+						<dt>{{{txt.verification}}}:</dt>
+						<dd>{{{captcha context.visual_verification_id}}}</dd>
+						{{/if}}
+
+						<dt>&nbsp;</dt><dd></dd>
+						<dt></dt>
+						<dd>
+							<input type="submit" name="save" value="{{{txt.send_message}}}" class="button_submit">
+						</dd>
+					</dl>
+				</div>
+				{{session_form}}
+				{{token_form 'contact'}}
+			</form>
