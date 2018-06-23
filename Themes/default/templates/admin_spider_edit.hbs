@@ -33,8 +33,8 @@
 				</dl>
 				<hr>
 				<input type="submit" name="save" value="{{{context.page_title}}}" class="button_submit">
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-				<input type="hidden" name="{{context.admin-ses_token_var}}" value="{{context.admin-ses_token}}">
+				{{session_form}}
+				{{token_form 'admin-ses'}}
 			</div>
 		</form>
 	</div>

@@ -13,13 +13,13 @@
 		<div class="windowbg2 noup">
 			<ul>
 				<li>
-					<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{../context.session_var}}={{../context.session_id}};sa=reset">{{../txt.themeadmin_reset_defaults}}</a> <em class="smalltext">({{num_default_options}} {{../txt.themeadmin_reset_defaults_current}})</em>
+					<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=reset">{{../txt.themeadmin_reset_defaults}}</a> <em class="smalltext">({{num_default_options}} {{../txt.themeadmin_reset_defaults_current}})</em>
 				</li>
 				<li>
-					<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{../context.session_var}}={{../context.session_id}};sa=reset;who=1">{{../txt.themeadmin_reset_members}}</a>
+					<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=reset;who=1">{{../txt.themeadmin_reset_members}}</a>
 				</li>
 				<li>
-					<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{../context.session_var}}={{../context.session_id}};sa=reset;who=2;{{../context.admin-stor_token_var}}={{../context.admin-stor_token}}" data-confirm="{{../txt.themeadmin_reset_remove_confirm}}" class="you_sure">{{../txt.themeadmin_reset_remove}}</a> <em class="smalltext">({{num_members}} {{../txt.themeadmin_reset_remove_current}})</em>
+					<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=reset;who=2;{{token_url 'admin-stor'}}" data-confirm="{{../txt.themeadmin_reset_remove_confirm}}" class="you_sure">{{../txt.themeadmin_reset_remove}}</a> <em class="smalltext">({{num_members}} {{../txt.themeadmin_reset_remove_current}})</em>
 				</li>
 			</ul>
 		</div>

@@ -13,7 +13,7 @@
 				</div>
 				<hr>
 				<input type="submit" name="b" value="{{{txt.email_continue}}}" class="button_submit">
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+				{{session_form}}
 				<input type="hidden" name="subject" value="{{{context.subject}}}">
 				<input type="hidden" name="message" value="{{{context.message}}}">
 				<input type="hidden" name="start" value="{{context.start}}">

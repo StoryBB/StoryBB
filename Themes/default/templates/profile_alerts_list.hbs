@@ -19,8 +19,8 @@
 					<td>{{{time}}}</td>
 					<td>
 						<ul class="quickbuttons">
-							<li><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=showalerts;do=remove;aid={{@key}};{{../context.session_var}}={{../context.session_id}}" class="you_sure"><span class="generic_icons remove_button"></span>{{{../txt.delete}}}</a></li>
-							<li><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=showalerts;do={{#if (gt is_read '0')}}unread{{else}}read{{/if}};aid={{@key}};{{../context.session_var}}={{../context.session_id}}"><span class="generic_icons {{#if (gt is_read '0')}}unread_button{{else}}read_button{{/if}}"></span>{{#if (gt is_read '0')}}{{../txt.mark_unread}}{{else}}{{../txt.mark_read_short}}{{/if}}</a></li>
+							<li><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=showalerts;do=remove;aid={{@key}};{{session_url}}" class="you_sure"><span class="generic_icons remove_button"></span>{{{../txt.delete}}}</a></li>
+							<li><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=showalerts;do={{#if (gt is_read '0')}}unread{{else}}read{{/if}};aid={{@key}};{{session_url}}"><span class="generic_icons {{#if (gt is_read '0')}}unread_button{{else}}read_button{{/if}}"></span>{{#if (gt is_read '0')}}{{../txt.mark_unread}}{{else}}{{../txt.mark_read_short}}{{/if}}</a></li>
 							<li><input type="checkbox" class="input_check" name="mark[{{@key}}]" value="{{@key}}"></li>
 						</ul>
 					</td>
@@ -39,7 +39,7 @@
 						<option value="unread">{{{txt.quick_mod_markunread}}}</option>
 						<option value="remove">{{{txt.quick_mod_remove}}}</option>
 					</select>
-					<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+					{{session_form}}
 					<input type="submit" name="req" value="{{{txt.quick_mod_go}}}" class="button_submit you_sure">
 				</div>
 			</div>

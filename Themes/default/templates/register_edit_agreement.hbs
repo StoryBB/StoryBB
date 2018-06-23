@@ -25,8 +25,8 @@
 					</select>
 					<div class="righttext">
 						<input type="hidden" name="sa" value="agreement">
-						<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-						<input type="hidden" name="{{context.admin-rega_token_var}}" value="{{context.admin-rega_token}}">
+						{{session_form}}
+						{{token_form 'admin-rega'}}
 						<input type="submit" name="change" value="{{txt.admin_agreement_select_language_change}}" class="button_submit">
 					</div>
 				</form>
@@ -40,8 +40,8 @@
 				<input type="submit" value="'{{txt.save}}" class="button_submit">
 				<input type="hidden" name="agree_lang" value="{{context.current_agreement}}">
 				<input type="hidden" name="sa" value="agreement">
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-				<input type="hidden" name="{{context.admin-rega_token_var}}" value="{{context.admin-rega_token}}">
+				{{session_form}}
+				{{token_form 'admin-rega'}}
 			</form>
 		</div>
 	</div>

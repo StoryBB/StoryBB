@@ -266,7 +266,7 @@
 				<dl></dl>
 				<input type="hidden" name="u" value="{{context.id_member}}" />
 				<input type="submit" name="edit_char" class="button_submit" value="{{{txt.save_changes}}}" />
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}" />
+				{{session_form}}
 				<input type="hidden" name="{{token_var (concat 'edit-char' context.character.id_character)}}" value="{{token (concat 'edit-char' context.character.id_character)}}">
 			</form>
 		</div>

@@ -10,8 +10,8 @@
 					{{textTemplate txt.spider_stats_delete_older '<input type="text" name="older" id="older" value="90" size="3" class="input_text">'}}
 				</p>
 				<input type="submit" name="delete_entries" value="{{{txt.spider_logs_delete_submit}}}" onclick="if (document.getElementById('older').value &lt; 1 &amp;&amp; !confirm('{{{context.spider_logs_delete_confirm}}}')) return false; return true;" class="button_submit">
-				<input type="hidden" name="{{context.session_var}}" value="{{{context.session_id}}}">
-				<input type="hidden" name="{{context.admin-ss_token_var}}" value="{{context.admin-ss_token}}">
+				{{session_form}}
+				{{token_form 'admin-ss'}}
 			</div>
 		</form>
 	</div>

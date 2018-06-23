@@ -156,8 +156,8 @@
 				<input type="submit" name="regSubmit" value="{{txt.register}}" tabindex="{{getTabindex}}" class="button_submit">
 				{{/if}}
 				</div>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-			<input type="hidden" name="{{context.register_token_var}}" value="{{context.register_token}}">
+			{{session_form}}
+			{{token_form 'register'}}
 			<input type="hidden" name="step" value="2">
 		</form>
 		<script>

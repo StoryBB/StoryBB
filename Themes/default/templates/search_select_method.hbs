@@ -48,13 +48,13 @@
 						<dd>
 							<span class="smalltext">
 							{{#if context.fulltext_index}}
-								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_already_exist}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removefulltext;{{context.session_var}}={{context.session_id}};{{context.admin-msm_token_var}}={{context.admin-msm_token}}">{{{txt.search_method_fulltext_remove}}}</a>]<br>
+								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_already_exist}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removefulltext;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_method_fulltext_remove}}}</a>]<br>
 								<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.fulltext_length}}}
 							{{else}}
 								{{#if context.cannot_create_fulltext}}
 									<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_fulltext_cannot_create}}}
 								{{else}}
-									<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_no_index_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createfulltext;{{context.session_var}}={{context.session_id}};{{context.admin-msm_token_var}}={{context.admin-msm_token}}">{{{txt.search_method_fulltext_create}}}</a>]
+									<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_no_index_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createfulltext;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_method_fulltext_create}}}</a>]
 								{{/if}}
 							{{/if}}
 							</span>
@@ -68,11 +68,11 @@
 						<dd>
 							<span class="smalltext">
 								{{#if context.custom_index}}
-									<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_already_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{context.session_var}}={{context.session_id}};{{context.admin-msm_token_var}}={{context.admin-msm_token}}">{{{txt.search_index_custom_remove}}}</a>]<br>
+									<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_already_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_remove}}}</a>]<br>
 									<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.custom_index_length}}}
 								{{else}}
 									{{#if context.partial_custom_index}}
-										<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_partial}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{context.session_var}}={{context.session_id}};{{context.admin-msm_token_var}}={{context.admin-msm_token}}">{{{txt.search_index_custom_remove}}}</a>] [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createmsgindex;resume;{{context.session_var}}={{context.session_id}};{{context.admin-msm_token_var}}={{context.admin-msm_token}}">{{{txt.search_index_custom_resume}}}</a>]<br>
+										<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_partial}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_remove}}}</a>] [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createmsgindex;resume;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_resume}}}</a>]<br>
 										<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.custom_index_length}}}
 									{{else}}
 										<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_no_index_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createmsgindex">{{{txt.search_index_create_custom}}}</a>]
@@ -103,8 +103,8 @@
 				</fieldset>
 				<br class="clear">
 				<input type="submit" name="save" value="{{{txt.search_method_save}}}" class="button_submit">
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-				<input type="hidden" name="{{context.admin-msmpost_token_var}}" value="{{context.admin-msmpost_token}}">
+				{{session_form}}
+				{{token_form 'admin-msmpost'}}
 			</div>
 		</form>
 	</div>

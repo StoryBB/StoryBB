@@ -1,5 +1,5 @@
 		{{! Managing badges of membergroups }}
-		<form method="post" action="{{scripturl}}?action=admin;area=membergroups;sa=badges;{{context.session_var}}={{context.session_id}}">
+		<form method="post" action="{{scripturl}}?action=admin;area=membergroups;sa=badges;{{session_url}}">
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.char_group_level_acct}}}</h3>
 			</div>
@@ -32,6 +32,6 @@
 				</ul>
 			</div>
 			<input type="submit" value="{{{txt.save}}}" class="button_submit">
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 			<div class="clear"></div>
 		</form>

@@ -14,7 +14,7 @@
 						(concat '<a class="new_win" target="_blank" href="' scripturl '?action=profile;u=' context.id_member '">' context.member.name '</a>')
 						(concat '<a class="new_win" target="_blank" href="' scripturl '?action=profile;u=' context.merge_destination_id '">' context.merge_destination.real_name '</a>')
 					}}
-				<input type="hidden" name="{{{context.session_var}}}" value="{{{context.session_id}}}">
+				{{session_form}}
 				<input type="hidden" name="merge_acct_id" value="{{context.merge_destination_id}}">
 				<input type="submit" value="{{{txt.move_char_action}}}" class="button_submit">
 			</div>
