@@ -62,7 +62,7 @@ function AdminMain()
 				'contactform' => [
 					'label' => $txt['contact_us'],
 					'file' => 'ManageContact.php',
-					'function' => 'ManageContact.php',
+					'function' => 'ManageContact',
 					'icon' => 'contact',
 					'permission' => ['admin_forum'],
 				],

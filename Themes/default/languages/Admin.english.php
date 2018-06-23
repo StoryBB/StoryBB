@@ -742,3 +742,12 @@ $txt['enable_immersive_mode_user_on'] = 'Immersive mode is user choice (default 
 $txt['enable_immersive_mode_user_off'] = 'Immersive mode is user choice (default off)';
 $txt['enable_immersive_mode_off'] = 'Immersive mode is always off';
 $txt['enable_immersive_mode_on'] = 'Immersive mode is always on';
+
+$txt['contact_form_no_messages'] = 'No messages have been received from the contact form.';
+$txt['contact_form_sender'] = 'Sent by';
+$txt['contact_form_email'] = 'Sender email';
+$txt['contact_form_subject'] = 'Subject';
+$txt['contact_form_sent_on'] = 'Sent on';
+$txt['contact_form_status'] = 'Status';
+$txt['contact_form_status_unanswered'] = 'Unanswered';
+$txt['contact_form_status_answered'] = 'Answered';
