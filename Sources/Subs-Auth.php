@@ -794,9 +794,7 @@ function sbb_setcookie($name, $value = '', $expire = 0, $path = '', $domain = ''
  */
 function hash_password($username, $password, $cost = null)
 {
-	global $sourcedir, $smcFunc, $modSettings;
-	if (!function_exists('password_hash'))
-		require_once($sourcedir . '/Subs-Password.php');
+	global $smcFunc, $modSettings;
 
 	$cost = empty($cost) ? (empty($modSettings['bcrypt_hash_cost']) ? 10 : $modSettings['bcrypt_hash_cost']) : $cost;
 
@@ -827,9 +825,7 @@ function hash_salt($password, $salt)
  */
 function hash_verify_password($username, $password, $hash)
 {
-	global $sourcedir, $smcFunc;
-	if (!function_exists('password_verify'))
-		require_once($sourcedir . '/Subs-Password.php');
+	global $smcFunc;
 
 	return password_verify($smcFunc['strtolower']($username) . $password, $hash);
 }
