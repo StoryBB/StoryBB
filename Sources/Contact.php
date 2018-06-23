@@ -79,6 +79,23 @@ function Contact()
 		if (empty($context['contact']['errors']))
 		{
 			// No errors, that means we're good here. Save the result and go home.
+			$message = $smcFunc['db_insert']('insert',
+				'{db_prefix}contact_form',
+				[
+					'id_member' => 'int', 'contact_name' => 'string-255', 'contact_email' => 'string-255',
+					'subject' => 'string-255', 'message' => 'string', 'time_received' => 'int', 'status' => 'int'
+				],
+				[
+					$context['user']['id'], $context['contact']['name'], $context['contact']['email'],
+					$context['contact']['subject'], $context['contact']['message'], time(), 0
+				],
+				['id_message'],
+				1
+			);
+
+			// Now we have the message, we can link to it for the admins.
+
+			// And send users on their way.
 			$context['sub_template'] = 'contact_form_success';
 			return;
 		}
