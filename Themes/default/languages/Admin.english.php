@@ -751,3 +751,6 @@ $txt['contact_form_sent_on'] = 'Sent on';
 $txt['contact_form_status'] = 'Status';
 $txt['contact_form_status_unanswered'] = 'Unanswered';
 $txt['contact_form_status_answered'] = 'Answered';
+$txt['contact_form_message_not_found'] = 'The requested contact form message was not found.';
+$txt['contact_form_reply'] = 'Reply to this message';
+$txt['contact_form_replies'] = 'Replies to this message';

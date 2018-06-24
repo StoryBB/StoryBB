@@ -1,0 +1,43 @@
+			<div class="cat_bar">
+				<h3 class="catbg">{{txt.contact_us}}</h3>
+			</div>
+			<div class="roundframe">
+				<dl class="settings">
+					<dt>{{{txt.contact_form_sender}}}:</dt>
+					<dd>
+						{{#if context.contact.id_member}}
+							<a href="{{scripturl}}?action=profile;u={{context.contact.id_member}}">{{{context.contact.member_name}}}</a>
+						{{else}}
+							{{{context.contact.member_name}}}
+						{{/if}}
+					</dd>
+					<dt>{{{txt.contact_form_email}}}:</dt>
+					<dd>
+						{{{context.contact.member_email}}}
+					</dd>
+					<dt>{{{txt.subject}}}:</dt>
+					<dd>{{{context.contact.subject}}}</dd>
+					<dt>{{{txt.message}}}:</dt>
+					<dd>{{{context.contact.message}}}</dd>
+					<dt>{{{txt.contact_form_sent_on}}}:</dt>
+					<dd>{{{context.contact.time_received_timeformat}}}</dd>
+					<dt>{{{txt.contact_form_status}}}:</dt>
+					<dd>
+						{{#if (eq context.contact.status '0')}}
+							<strong>{{{txt.contact_form_status_unanswered}}}</strong>
+						{{else}}
+
+						{{/if}}
+					</dd>
+				</dl>
+			</div>
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.contact_form_reply}}}</h3>
+			</div>
+			<form action="{{scripturl}}?action=admin;area=contactform;sa=replycontact" method="post" accept-charset="UTF-8">
+				<div class="roundframe">
+
+				</div>
+				{{session_form}}
+				{{token_form 'admin-contact'}}
+			</form>
