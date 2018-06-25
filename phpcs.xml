@@ -41,7 +41,7 @@
     <!-- <rule ref="Generic.Functions.CallTimePassByReference"/> -->
     <!-- <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/> -->
     <!-- <rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman"/> -->
-    <!-- <rule ref="Generic.NamingConventions.ConstructorName"/> -->
+    <rule ref="Generic.NamingConventions.ConstructorName"/>
     <!-- <rule ref="Generic.NamingConventions.UpperCaseConstantName"/> -->
     <rule ref="Generic.PHP.DeprecatedFunctions"/>
     <rule ref="Generic.PHP.DisallowShortOpenTag"/>

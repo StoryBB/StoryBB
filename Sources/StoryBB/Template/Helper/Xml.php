@@ -24,7 +24,7 @@ class Xml
 	public static function _list()
 	{
 		return ([
-			'xml' => 'StoryBB\\Template\\Helper\\Xml::xml',
+			'xml' => 'StoryBB\\Template\\Helper\\Xml::export_xml',
 		]);
 	}
 
@@ -34,7 +34,7 @@ class Xml
 	 * @param string $parent_ident The parent tag to export into
 	 * @return SafeString The final XML, fully processed in a safe-for-template format
 	 */
-	public static function xml($xml_data, $parent_ident)
+	public static function export_xml($xml_data, $parent_ident)
 	{
 		$recursive = \StoryBB\Template\Helper\Xml::get_recursive_function();
 		return new \LightnCandy\SafeString($recursive($xml_data, $parent_ident, '', -1, $recursive));
