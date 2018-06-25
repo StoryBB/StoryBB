@@ -318,7 +318,7 @@ class Auth
 		$length = 0;
 		$binary = '';
 
-		for ($i = 0; $i < strlen($hash); $i++) {
+		for ($i = 0, $n = strlen($hash); $i < $n; $i++) {
 			$buffer = $buffer << 5;
 			$buffer += $lookup[$hash[$i]];
 			$length += 5;

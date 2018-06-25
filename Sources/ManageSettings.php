@@ -895,7 +895,7 @@ function ModifySignatureSettings($return_config = false)
 				if (!empty($sig_limits[2]))
 				{
 					$count = 0;
-					for ($i = 0; $i < strlen($sig); $i++)
+					for ($i = 0, $n = strlen($sig); $i < $n; $i++)
 					{
 						if ($sig[$i] == "\n")
 						{
