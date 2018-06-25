@@ -77,7 +77,7 @@
     <rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing"/>
     <rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing"/>
     <rule ref="Squiz.WhiteSpace.OperatorSpacing"/>
-    <!-- <rule ref="Squiz.WhiteSpace.ScopeClosingBrace"/> -->
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace"/>
     <rule ref="Squiz.WhiteSpace.ScopeKeywordSpacing"/>
     <rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
     <rule ref="Zend.Files.ClosingTag"/>

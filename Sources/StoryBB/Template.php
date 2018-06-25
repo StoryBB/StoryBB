@@ -242,7 +242,10 @@ class Template
 				'locale' => 'locale_helper',
 				'login_helper' => 'login_helper',
 				'javascript' => 'template_javascript',
-				'css' => function() { return template_css(); },
+				'css' => function()
+				{
+					return template_css();
+				},
 			]
 		], $cache_id);
 

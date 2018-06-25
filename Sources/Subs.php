@@ -4609,25 +4609,37 @@ function replaceEntities__callback($matches)
 
 	// Quote, Ampersand, Apostrophe, Less/Greater Than get html replaced
 	if (in_array($num, array(0x22, 0x26, 0x27, 0x3C, 0x3E)))
+	{
 		return '&#' . $num . ';';
-
-		// <0x20 are control characters, 0x20 is a space, > 0x10FFFF is past the end of the utf8 character set
-		// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text)
-		if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF))
-			return '';
-		// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and punctuation
-		elseif ($num < 0x80)
-			return chr($num);
-		// <0x800 (2048)
-		elseif ($num < 0x800)
-			return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
-		// < 0x10000 (65536)
-		elseif ($num < 0x10000)
-			return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
-		// <= 0x10FFFF (1114111)
-		else
-			return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
 	}
+
+	// <0x20 are control characters, 0x20 is a space, > 0x10FFFF is past the end of the utf8 character set
+	// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text)
+	if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF))
+	{
+		return '';
+	}
+	// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and punctuation
+	elseif ($num < 0x80)
+	{
+		return chr($num);
+	}
+	// <0x800 (2048)
+	elseif ($num < 0x800)
+	{
+		return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+	}
+	// < 0x10000 (65536)
+	elseif ($num < 0x10000)
+	{
+		return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+	}
+	// <= 0x10FFFF (1114111)
+	else
+	{
+		return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+	}
+}
 
 /**
  * Converts html entities to utf8 equivalents
@@ -5390,8 +5402,8 @@ function sbb_serverResponse($data = '', $type = 'Content-Type: application/json'
  * Returns true if a cert was found & false if not.
  * @param string $url to check, in $boardurl format (no trailing slash).
  */
- function ssl_cert_found($url)
- {
+function ssl_cert_found($url)
+{
 	// First, strip the subfolder from the passed url, if any
 	$parsedurl = parse_url($url);
 	$url = 'ssl://' . $parsedurl['host'] . ':443'; 
@@ -5422,17 +5434,23 @@ function https_redirect_active($url)
 	$url = str_ireplace('https://', 'http://', $url) . '/';
 	$headers = @get_headers($url);
 	if ($headers === false)
+	{
 		return false;
+	}
 
 	// Now to see if it came back https...
 	// First check for a redirect status code in first row (301, 302, 307)
 	if (strstr($headers[0], '301') === false && strstr($headers[0], '302') === false && strstr($headers[0], '307') === false)
+	{
 		return false;
+	}
 
 	// Search for the location entry to confirm https
 	$result = false;
-	foreach ($headers as $header) {
-		if (stristr($header, 'Location: https://') !== false) {
+	foreach ($headers as $header)
+	{
+		if (stristr($header, 'Location: https://') !== false)
+		{
 			$result = true;
 			break;
 		}
