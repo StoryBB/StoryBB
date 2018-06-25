@@ -88,7 +88,7 @@ class TLD
 
 				foreach ($enco_parts as $encoded)
 				{
-					if (strpos($encoded,$prefix) !== 0 || strlen(trim(str_replace($prefix,'',$encoded))) == 0)
+					if (strpos($encoded, $prefix) !== 0 || strlen(trim(str_replace($prefix, '', $encoded))) == 0)
 					{
 						$output_parts[] = $encoded;
 						continue;

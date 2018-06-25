@@ -3656,7 +3656,7 @@ function ip2range($fullip)
 		$valid_low = isValidIP($ip_parts[0]);
 		$valid_high = isValidIP($ip_parts[1]);
 		$count = 0;
-		$mode = (preg_match('/:/',$ip_parts[0]) > 0 ? ':' : '.');
+		$mode = (preg_match('/:/', $ip_parts[0]) > 0 ? ':' : '.');
 		$max = ($mode == ':' ? 'ffff' : '255');
 		$min = 0;
 		if(!$valid_low)

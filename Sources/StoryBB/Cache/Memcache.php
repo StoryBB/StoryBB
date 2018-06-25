@@ -64,7 +64,7 @@ class Memcache extends API
 			$server = trim($servers[array_rand($servers)]);
 
 			// Normal host names do not contain slashes, while e.g. unix sockets do. Assume alternative transport pipe with port 0.
-			if (strpos($server,'/') !== false)
+			if (strpos($server, '/') !== false)
 				$host = $server;
 			else
 			{

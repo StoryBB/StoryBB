@@ -1100,7 +1100,7 @@ function Post($post_errors = array())
 	// File Upload.
 	if ($context['can_post_attachment'])
 	{
-		$acceptedFiles = implode(',', array_map(function($val) use($smcFunc) { return '.' . $smcFunc['htmltrim']($val); } , explode(',', $context['allowed_extensions'])));
+		$acceptedFiles = implode(',', array_map(function($val) use($smcFunc) { return '.' . $smcFunc['htmltrim']($val); }, explode(',', $context['allowed_extensions'])));
 
 		loadJavaScriptFile('dropzone.min.js', array('defer' => true), 'sbb_dropzone');
 		loadJavaScriptFile('sbb_fileUpload.js', array('defer' => true), 'sbb_fileUpload');

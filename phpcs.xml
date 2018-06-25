@@ -39,7 +39,7 @@
     <!-- <rule ref="Generic.Formatting.DisallowMultipleStatements"/> -->
     <!-- <rule ref="Generic.Formatting.SpaceAfterCast"/> -->
     <!-- <rule ref="Generic.Functions.CallTimePassByReference"/> -->
-    <!-- <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/> -->
+    <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/>
     <rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman"/>
     <rule ref="Generic.NamingConventions.ConstructorName"/>
     <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
