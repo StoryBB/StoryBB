@@ -53,9 +53,9 @@
         </properties>
     </rule> -->
     <rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
-    <!-- <rule ref="PEAR.Commenting.InlineComment"/> -->
-    <!-- <rule ref="PSR1.Classes.ClassDeclaration"/> -->
-    <!-- <rule ref="PSR1.Files.SideEffects"/> -->
+    <rule ref="PEAR.Commenting.InlineComment"/>
+    <!-- <rule ref="PSR1.Classes.ClassDeclaration"/> --><!-- Requires refactoring the top level classes into a namespace -->
+    <!-- <rule ref="PSR1.Files.SideEffects"/> --><!-- Requires refactoring the image proxy -->
     <rule ref="PSR2.Classes.ClassDeclaration"/>
     <rule ref="PSR2.ControlStructures.ControlStructureSpacing"/>
     <rule ref="PSR2.ControlStructures.ElseIfDeclaration"/>
