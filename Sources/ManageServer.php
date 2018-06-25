@@ -909,7 +909,8 @@ function prepareDBSettingContext(&$config_vars)
 		$context['bbc_columns'] = array();
 		$tagsPerColumn = ceil($totalTags / $numColumns);
 
-		$col = 0; $i = 0;
+		$col = 0;
+		$i = 0;
 		foreach ($bbcTags as $tag)
 		{
 			if ($i % $tagsPerColumn == 0 && $i != 0)

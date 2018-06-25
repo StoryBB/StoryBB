@@ -956,7 +956,8 @@ function ModifySignatureSettings($return_config = false)
 						$image_count_holder = array();
 						foreach ($matches[0] as $key => $image)
 						{
-							$width = -1; $height = -1;
+							$width = -1;
+							$height = -1;
 							$img_count++;
 							// Too many images?
 							if (!empty($sig_limits[3]) && $img_count > $sig_limits[3])

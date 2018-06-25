@@ -1029,13 +1029,15 @@ function showCodeImage($code)
 				{
 					$x1 = mt_rand(0, $total_width);
 					$x2 = mt_rand(0, $total_width);
-					$y1 = 0; $y2 = $max_height;
+					$y1 = 0;
+					$y2 = $max_height;
 				}
 				else
 				{
 					$y1 = mt_rand(0, $max_height);
 					$y2 = mt_rand(0, $max_height);
-					$x1 = 0; $x2 = $total_width;
+					$x1 = 0;
+					$x2 = $total_width;
 				}
 				imagesetthickness($code_image, mt_rand(1, 2));
 				imageline($code_image, $x1, $y1, $x2, $y2, mt_rand(0, 1) ? $fg_color : $randomness_color);
