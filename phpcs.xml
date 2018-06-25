@@ -56,7 +56,7 @@
     <!-- <rule ref="PEAR.Commenting.InlineComment"/> -->
     <!-- <rule ref="PSR1.Classes.ClassDeclaration"/> -->
     <!-- <rule ref="PSR1.Files.SideEffects"/> -->
-    <!-- <rule ref="PSR2.Classes.ClassDeclaration"/> -->
+    <rule ref="PSR2.Classes.ClassDeclaration"/>
     <rule ref="PSR2.ControlStructures.ControlStructureSpacing"/>
     <rule ref="PSR2.ControlStructures.ElseIfDeclaration"/>
     <rule ref="PSR2.Files.EndFileNewline">

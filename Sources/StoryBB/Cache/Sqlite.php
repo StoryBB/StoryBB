@@ -184,5 +184,4 @@ class Sqlite extends API
 			$this->cachedir = $dir;
 		}
 	}
-
 }
