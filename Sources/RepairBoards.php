@@ -358,7 +358,7 @@ function loadForumTests()
 				{
 					// Only if we don't have a reasonable idea of where to put it.
 					createSalvageArea();
-					$row['id_board'] = (int)$salvageBoardID;
+					$row['id_board'] = (int) $salvageBoardID;
 				}
 
 				if(empty($row['id_topic'])) {

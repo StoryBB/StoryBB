@@ -5113,22 +5113,22 @@ function _safe_unserialize($str)
 		}
 		elseif($type == 'i' && preg_match('/^i:(-?[0-9]+);(.*)/s', $str, $matches))
 		{
-			$value = (int)$matches[1];
+			$value = (int) $matches[1];
 			$str = $matches[2];
 		}
 		elseif($type == 'd' && preg_match('/^d:(-?[0-9]+\.?[0-9]*(E[+-][0-9]+)?);(.*)/s', $str, $matches))
 		{
-			$value = (float)$matches[1];
+			$value = (float) $matches[1];
 			$str = $matches[3];
 		}
-		elseif($type == 's' && preg_match('/^s:([0-9]+):"(.*)/s', $str, $matches) && substr($matches[2], (int)$matches[1], 2) == '";')
+		elseif($type == 's' && preg_match('/^s:([0-9]+):"(.*)/s', $str, $matches) && substr($matches[2], (int) $matches[1], 2) == '";')
 		{
-			$value = substr($matches[2], 0, (int)$matches[1]);
-			$str = substr($matches[2], (int)$matches[1] + 2);
+			$value = substr($matches[2], 0, (int) $matches[1]);
+			$str = substr($matches[2], (int) $matches[1] + 2);
 		}
 		elseif($type == 'a' && preg_match('/^a:([0-9]+):{(.*)/s', $str, $matches))
 		{
-			$expectedLength = (int)$matches[1];
+			$expectedLength = (int) $matches[1];
 			$str = $matches[2];
 		}
 
