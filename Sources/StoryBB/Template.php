@@ -72,7 +72,8 @@ class Template
 	 *
 	 * @param array $helper_array Key/value, key is helper name, value is its callable
 	 */
-	public static function add_helper(array $helper_array) {
+	public static function add_helper(array $helper_array)
+	{
 		self::$helpers += $helper_array;
 	}
 
@@ -81,7 +82,8 @@ class Template
 	 *
 	 * @param string $partial Layout name, without root path or extension
 	 */
-	public static function set_layout($layout) {
+	public static function set_layout($layout)
+	{
 		global $settings;
 
 		if ($layout === 'raw') {
@@ -117,7 +119,8 @@ class Template
 	 * @param string $template Template name
 	 * @return string Template contents
 	 */
-	public static function load($template) {
+	public static function load($template)
+	{
 		global $settings;
 
 		$paths = [
@@ -142,7 +145,8 @@ class Template
 	 * @param bool $fatal_on_fail Whether to fail with a fatal error if the partial could not be loaded, or return empty.
 	 * @return string Partial template contents
 	 */
-	public static function load_partial($partial, $fatal_on_fail = true): string {
+	public static function load_partial($partial, $fatal_on_fail = true): string
+	{
 		global $settings;
 
 		$paths = [
@@ -163,7 +167,8 @@ class Template
 		return '';
 	}
 
-	public static function compile(string $template, array $options = [], string $cache_id = '') {
+	public static function compile(string $template, array $options = [], string $cache_id = '')
+	{
 		global $context, $cachedir, $modSettings;
 
 		$phpStr = Cache::fetch($cache_id);
@@ -244,7 +249,8 @@ class Template
 		echo self::prepare($phpStr, $data);
 	}
 
-	public static function render_page(string $content) {
+	public static function render_page(string $content)
+	{
 		global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $user_info, $options;
 
 		$context['session_flash'] = session_flash_retrieve();
@@ -337,7 +343,8 @@ class Template
 		return self::$debug;
 	}
 
-	public static function get_theme_id(string $template_type, string $template_name): int {
+	public static function get_theme_id(string $template_type, string $template_name): int
+	{
 		global $settings;
 
 		if (!in_array($template_type, ['partials', 'templates', 'layouts']))

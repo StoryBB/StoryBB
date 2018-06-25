@@ -66,7 +66,8 @@ class Controls
 	 * @param string $bbcContainer The ID of the HTML element where BBC should be rendered
 	 * @return string|SafeString A string to be exported to display the WYSIWYG editor
 	 */
-	public static function richtexteditor($editor_id, $smileyContainer = null, $bbcContainer = null) {
+	public static function richtexteditor($editor_id, $smileyContainer = null, $bbcContainer = null)
+	{
 		global $context, $settings, $modSettings;
 
 		if (empty($context['controls']['richedit'][$editor_id]))
@@ -90,7 +91,8 @@ class Controls
 	 * @param string $editor_id The editor ID to which the buttons should be attached
 	 * @return string|SafeString A string to be exported to display the form buttons
 	 */
-	public static function richedit_buttons($editor_id) {
+	public static function richedit_buttons($editor_id)
+	{
 		global $context, $settings, $modSettings, $txt;
 
 		if (empty($context['controls']['richedit'][$editor_id]))

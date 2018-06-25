@@ -138,7 +138,8 @@ class Logic
 	 * @param mixed $args An array of arguments to compare, last argument is context supplied by Lightncandy
 	 * @return bool True if all arguments (except Lnc context) evaluate to true
 	 */
-	public static function op_and(...$args) {
+	public static function op_and(...$args)
+	{
 		$context = array_pop($args);
 		
 		foreach ( $args as $arg ) 

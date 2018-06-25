@@ -2849,8 +2849,10 @@ function login_helper($string, $guest_title, $forum_name, $scripturl, $login)
 	));
 }
 
-function session_flash($status, $message) {
-	if (!in_array($status, ['success', 'warning', 'error'])) {
+function session_flash($status, $message)
+{
+	if (!in_array($status, ['success', 'warning', 'error']))
+	{
 		fatal_error('Invalid session flash');
 	}
 	if (empty($_SESSION['flash'][$status]) || !in_array($message, $_SESSION['flash'][$status]))
@@ -2859,9 +2861,11 @@ function session_flash($status, $message) {
 	}
 }
 
-function session_flash_retrieve() {
+function session_flash_retrieve()
+{
 	$messages = [];
-	foreach (['error', 'warning', 'success'] as $status) {
+	foreach (['error', 'warning', 'success'] as $status)
+	{
 		$messages[$status] = !empty($_SESSION['flash'][$status]) ? $_SESSION['flash'][$status] : [];
 	}
 	unset ($_SESSION['flash']);
@@ -5386,8 +5390,8 @@ function sbb_serverResponse($data = '', $type = 'Content-Type: application/json'
  * Returns true if a cert was found & false if not.
  * @param string $url to check, in $boardurl format (no trailing slash).
  */
- function ssl_cert_found($url) {
-
+ function ssl_cert_found($url)
+ {
 	// First, strip the subfolder from the passed url, if any
 	$parsedurl = parse_url($url);
 	$url = 'ssl://' . $parsedurl['host'] . ':443'; 
@@ -5411,8 +5415,8 @@ function sbb_serverResponse($data = '', $type = 'Content-Type: application/json'
  * returns true, it may be caused by StoryBB, not necessarily an .htaccess redirect.
  * @param string $url to check, in $boardurl format (no trailing slash).
  */
-function https_redirect_active($url) {
-
+function https_redirect_active($url)
+{
 	// Ask for the headers for the passed url, but via http...
 	// Need to add the trailing slash, or it puts it there & thinks there's a redirect when there isn't...
 	$url = str_ireplace('https://', 'http://', $url) . '/';
