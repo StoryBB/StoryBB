@@ -142,9 +142,9 @@ class Logic
 	{
 		$context = array_pop($args);
 		
-		foreach ( $args as $arg ) 
+		foreach ($args as $arg) 
 		{
-			if ( $arg == false ) 
+			if ($arg == false) 
 			{
 				// Once one argument returns false, return false and don't compare other arguments
 				return false;
@@ -164,9 +164,9 @@ class Logic
 	{
 		$context = array_pop($args);
 		
-		foreach ( $args as $arg ) 
+		foreach ($args as $arg) 
 		{
-			if ( $arg == true ) 
+			if ($arg == true) 
 			{
 				// Once one argument returns true, return true and don't compare other arguments
 				return true;

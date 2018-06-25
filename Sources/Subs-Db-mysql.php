@@ -818,7 +818,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 			$return_var = array();
 			$count = count($insertRows);
 			$start = sbb_db_insert_id($table, $keys[0]);
-			for ($i = 0; $i < $count; $i++ )
+			for ($i = 0; $i < $count; $i++)
 				$return_var[] = $start + $i;
 		}
 		return $return_var;
