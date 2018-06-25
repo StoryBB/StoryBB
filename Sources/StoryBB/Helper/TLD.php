@@ -99,7 +99,7 @@ class TLD
 					$idx = 0;
 					$char = 0x80;
 					$decoded = array();
-					$output='';
+					$output = '';
 					$delim_pos = strrpos($encoded, '-');
 
 					if ($delim_pos > strlen($prefix))
@@ -156,15 +156,15 @@ class TLD
 
 						// 2 bytes
 						elseif ($v < (1 << 11))
-							$output .= chr(192+($v >> 6)) . chr(128+($v & 63));
+							$output .= chr(192 + ($v >> 6)) . chr(128 + ($v & 63));
 
 						// 3 bytes
 						elseif ($v < (1 << 16))
-							$output .= chr(224+($v >> 12)) . chr(128+(($v >> 6) & 63)) . chr(128+($v & 63));
+							$output .= chr(224 + ($v >> 12)) . chr(128 + (($v >> 6) & 63)) . chr(128 + ($v & 63));
 
 						// 4 bytes
 						elseif ($v < (1 << 21))
-							$output .= chr(240+($v >> 18)) . chr(128+(($v >> 12) & 63)) . chr(128+(($v >> 6) & 63)) . chr(128+($v & 63));
+							$output .= chr(240 + ($v >> 18)) . chr(128 + (($v >> 12) & 63)) . chr(128 + (($v >> 6) & 63)) . chr(128 + ($v & 63));
 
 						//  'Conversion from UCS-4 to UTF-8 failed: malformed input at byte '.$k
 						else

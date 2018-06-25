@@ -26,8 +26,8 @@ function RemindMe()
 	$subActions = array(
 		'picktype' => 'RemindPick',
 		'secret2' => 'SecretAnswer2',
-		'setpassword' =>'setPassword',
-		'setpassword2' =>'setPassword2'
+		'setpassword' => 'setPassword',
+		'setpassword2' => 'setPassword2'
 	);
 
 	// Any subaction?  If none, fall through to the main template, which will ask for one.

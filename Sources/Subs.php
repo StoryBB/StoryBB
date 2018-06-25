@@ -5154,7 +5154,7 @@ function _safe_unserialize($str)
 						return false;
 
 					unset($list);
-					$list = &$stack[count($stack)-1];
+					$list = &$stack[count($stack) - 1];
 					array_pop($stack);
 
 					// Go to terminal state if we're at the end of the root array.
@@ -5299,7 +5299,7 @@ function sbb_json_decode($json, $returnAsArray = false, $logIt = true)
 			$jsonError = false;
 			break;
 		case JSON_ERROR_DEPTH:
-			$jsonError =  'JSON_ERROR_DEPTH';
+			$jsonError = 'JSON_ERROR_DEPTH';
 			break;
 		case JSON_ERROR_STATE_MISMATCH:
 			$jsonError = 'JSON_ERROR_STATE_MISMATCH';

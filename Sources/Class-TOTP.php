@@ -294,10 +294,7 @@ class Auth
 		$offset = ord($hash[19]) & 0xf;
 
 		return (
-			((ord($hash[$offset + 0]) & 0x7f) << 24) |
-			((ord($hash[$offset + 1]) & 0xff) << 16) |
-			((ord($hash[$offset + 2]) & 0xff) << 8) |
-			(ord($hash[$offset + 3]) & 0xff)
+			((ord($hash[$offset + 0]) & 0x7f) << 24) | ((ord($hash[$offset + 1]) & 0xff) << 16) | ((ord($hash[$offset + 2]) & 0xff) << 8) | (ord($hash[$offset + 3]) & 0xff)
 		) % pow(10, $this->getCodeLength());
 	}
 
