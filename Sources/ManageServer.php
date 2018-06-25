@@ -1261,5 +1261,4 @@ function ShowPHPinfoSettings()
 	}
 	$context['page_title'] = $txt['admin_server_settings'];
 	$context['sub_template'] = 'admin_phpinfo';
-	return;
 }
