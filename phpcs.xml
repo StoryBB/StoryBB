@@ -34,7 +34,7 @@
     <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
     <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
     <rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
-    <!-- <rule ref="Generic.ControlStructures.InlineControlStructure"/> -->
+    <!-- <rule ref="Generic.ControlStructures.InlineControlStructure"/> --><!-- Requires many, many changes to implement -->
     <rule ref="Generic.Files.ByteOrderMark"/>
     <rule ref="Generic.Formatting.DisallowMultipleStatements">
         <exclude-pattern>./other/Settings.php</exclude-pattern>
@@ -53,7 +53,7 @@
         <properties>
             <property name="error" value="false"/>
         </properties>
-    </rule> -->
+    </rule> --><!-- Flags a number of issues that really aren't so problematic, done for readability... -->
     <rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
     <rule ref="PEAR.Commenting.InlineComment"/>
     <!-- <rule ref="PSR1.Classes.ClassDeclaration"/> --><!-- Requires refactoring the top level classes into a namespace -->
@@ -67,7 +67,7 @@
     </rule>
     <rule ref="PSR2.Namespaces.NamespaceDeclaration"/>
     <rule ref="PSR2.Namespaces.UseDeclaration"/>
-    <!-- <rule ref="Squiz.PHP.CommentedOutCode"/> -->
+    <!-- <rule ref="Squiz.PHP.CommentedOutCode"/> --><!-- Has a fair number of false positives right now, not suitable for automation -->
     <rule ref="Squiz.PHP.Heredoc"/>
     <rule ref="Squiz.PHP.InnerFunctions"/>
     <rule ref="Squiz.PHP.LowercasePHPFunctions"/>
