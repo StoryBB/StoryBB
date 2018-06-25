@@ -1118,8 +1118,7 @@ function ViewWatchedUsers()
 			),
 		),
 		'additional_rows' => array(
-			$context['view_posts'] ?
-			array(
+			$context['view_posts'] ? array(
 				'position' => 'bottom_of_list',
 				'value' => '
 					<input type="submit" name="delete_selected" value="' . $txt['quickmod_delete_selected'] . '" class="button_submit">',

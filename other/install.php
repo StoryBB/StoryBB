@@ -1283,8 +1283,8 @@ function AdminAccount()
 
 	// We need this to properly hash the password for Admin
 	$smcFunc['strtolower'] = function($string) {
-				return mb_strtolower($string, 'UTF-8');
-		};
+		return mb_strtolower($string, 'UTF-8');
+	};
 
 	if (!isset($_POST['username']))
 		$_POST['username'] = '';
@@ -1563,8 +1563,8 @@ function DeleteInstall()
 
 	// This function is needed to do the updateStats('subject') call.
 	$smcFunc['strtolower'] = function($string){
-				return mb_strtolower($string, 'UTF-8');
-		};
+		return mb_strtolower($string, 'UTF-8');
+	};
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_msg

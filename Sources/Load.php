@@ -65,14 +65,22 @@ function reloadSettings()
 
 	// Set a list of common functions.
 	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(#021|quot|amp|lt|gt|nbsp);';
-	$ent_check = empty($modSettings['disableEntityCheck']) ? function($string)
+	if (empty($modSettings['disableEntityCheck']))
+	{
+		$ent_check = function($string)
 		{
 			$string = preg_replace_callback('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $string);
 			return $string;
-		} : function($string)
+		};
+	}
+	else
+	{
+		$ent_check = function($string)
 		{
 			return $string;
 		};
+	}
+
 	$fix_utf8mb4 = function($string) use ($smcFunc)
 	{
 		if ($smcFunc['db_mb4'])

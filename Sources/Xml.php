@@ -18,7 +18,7 @@ function XMLhttpMain()
 	StoryBB\Template::set_layout('raw');
 
 	$subActions = array(
-		'jumpto' =>  'GetJumpTo',
+		'jumpto' => 'GetJumpTo',
 		'messageicons' => 'ListMessageIcons',
 		'previews' => 'RetrievePreview',
 	);

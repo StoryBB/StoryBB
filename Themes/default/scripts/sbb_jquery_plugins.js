@@ -561,7 +561,7 @@
 			return methods.init.apply(this, arguments);
 		}
 		else {
-			return $.error('Method ' +  method + ' does not exist on jQuery.fn.superfish');
+			return $.error('Method ' + method + ' does not exist on jQuery.fn.superfish');
 		}
 	};
 
@@ -652,7 +652,7 @@
 		var compare = function(ev,ob) {
 			ob.hoverIntent_t = clearTimeout(ob.hoverIntent_t);
 			// compare mouse positions to see if they've crossed the threshold
-			if ( ( Math.abs(pX-cX) + Math.abs(pY-cY) ) < cfg.sensitivity ) {
+			if ( ( Math.abs(pX - cX) + Math.abs(pY - cY) ) < cfg.sensitivity ) {
 				$(ob).off("mousemove.hoverIntent",track);
 				// set hoverIntent state to true (so mouseOut can be called)
 				ob.hoverIntent_s = 1;

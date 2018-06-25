@@ -1291,10 +1291,7 @@ function Display()
 	$context['viewing'] = '';
 	if (!empty($settings['display_who_viewing']))
 	{
-		$context['viewing'] = $settings['display_who_viewing'] == 1 ? 
-				count($context['view_members']) . ' ' . count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members']
-			:
-				empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
+		$context['viewing'] = $settings['display_who_viewing'] == 1 ? count($context['view_members']) . ' ' . count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members'] : empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
 	}
 	$context['messages'] = [];
 	$context['ignoredMsgs'] = [];

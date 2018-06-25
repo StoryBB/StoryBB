@@ -88,7 +88,8 @@ function getBoardList($boardListOptions = array())
 }
 
 
-function child_boards($board) {
+function child_boards($board)
+{
 	global $txt;
 
 	// Sort the links into an array with new boards bold so it can be imploded.

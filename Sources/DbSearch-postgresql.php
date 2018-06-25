@@ -37,7 +37,7 @@ function db_search_init()
 	if (stripos($version, 'rc') !== false)
 		$version = substr($version, 0, stripos($version, 'rc')).'.0';
 
-	if (version_compare($version,'9.5.0','>='))
+	if (version_compare($version, '9.5.0', '>='))
 		$smcFunc['db_support_ignore'] = true;
 }
 

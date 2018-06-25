@@ -164,7 +164,7 @@ class Fulltext extends API
 		$query_where = array();
 		$query_params = $search_data['params'];
 
-		if( $smcFunc['db_title'] == "PostgreSQL")
+		if($smcFunc['db_title'] == "PostgreSQL")
 			$modSettings['search_simple_fulltext'] = true;
 
 		if ($query_params['id_search'])

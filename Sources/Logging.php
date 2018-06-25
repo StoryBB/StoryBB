@@ -25,7 +25,7 @@ function truncateArray($arr, $max_length=1900)
 	else
 	{
 		// Truncate each element's value to a reasonable length
-		$param_max = floor($max_length/count($arr));
+		$param_max = floor($max_length / count($arr));
 		foreach ($arr as $key => &$value)
 			$value = substr($value, 0, $param_max - strlen($key) - 5);
 		return $arr;

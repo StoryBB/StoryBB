@@ -58,7 +58,8 @@ class Misc
 	 * @param string $partial A partial to load (can be a dynamic expression result)
 	 * @return $string The rendered partial
 	 */
-	public static function dynamicpartial($partial) {
+	public static function dynamicpartial($partial)
+	{
 		global $context, $txt, $scripturl, $settings, $modSettings, $options;
 		$template = \StoryBB\Template::load_partial($partial);
 		$phpStr = \StoryBB\Template::compile($template, [], 'dynamicpartial-' . $settings['theme_id'] . '-' . $partial);
@@ -89,7 +90,8 @@ class Misc
 	 * @param string $sep The separator HTML between rows
 	 * @return string HTML, conditionally the separator if we're correctly between rows
 	 */
-	public static function breakrow($index, $perRow, $sep) {
+	public static function breakrow($index, $perRow, $sep)
+	{
 		$perRow = (int) $perRow;
 		if ($perRow == 0) {
 			return '';
@@ -103,7 +105,8 @@ class Misc
 	 * @param mixed $x Variable to check
 	 * @return bool True if $x is numeric
 	 */
-	public static function is_numeric($x) {
+	public static function is_numeric($x)
+	{
 		return is_numeric($x);
 	}
 }

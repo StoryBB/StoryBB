@@ -787,7 +787,7 @@ function html_to_bbc($text)
 		{
 			return "[hr]";
 		},
-		'~<blockquote(\s(.)*?)*?' . '>~i' =>  function()
+		'~<blockquote(\s(.)*?)*?' . '>~i' => function()
 		{
 			return "&lt;blockquote&gt;";
 		},
@@ -902,7 +902,7 @@ function fetchTagAttributes($text)
 	$attribs = array();
 	$key = $value = '';
 	$tag_state = 0; // 0 = key, 1 = attribute with no string, 2 = attribute with string
-	for ($i = 0; $i < strlen($text); $i++)
+	for ($i = 0, $n = strlen($text); $i < $n; $i++)
 	{
 		// We're either moving from the key to the attribute or we're in a string and this is fine.
 		if ($text[$i] == '=')

@@ -114,7 +114,7 @@ template_ssi_above();
 				<h3>Code (advanced mode)</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo'); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_recentTopics(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_recentTopics(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_recentPosts">
@@ -122,7 +122,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_recentPosts(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_recentPosts(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_recentPosts(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_recentPoll">
@@ -130,7 +130,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_recentPoll(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_recentPoll(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_recentPoll(); ?></div>
 			</div>
 
 <!-- TOP ITEMS -->
@@ -141,7 +141,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_topBoards(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_topBoards(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_topBoards(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_topTopicsViews">
@@ -151,12 +151,12 @@ template_ssi_above();
 				<h3>Code (show by number of views)</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_topTopicsViews(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_topTopicsViews(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_topTopicsViews(); ?></div>
 
 				<h3>Code (show by number of replies)</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_topTopicsReplies(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_topTopicsReplies(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_topTopicsReplies(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_topPoll">
@@ -166,7 +166,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_topPoll(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_topPoll(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_topPoll(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_topPoster">
@@ -176,7 +176,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_topPoster(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_topPoster(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_topPoster(); ?></div>
 			</div>
 
 <!-- MEMBERS -->
@@ -187,7 +187,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_latestMember(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_latestMember(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_latestMember(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_randomMember">
@@ -197,7 +197,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_randomMember('day'); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_randomMember('day'); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_randomMember('day'); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_whosOnline">
@@ -207,7 +207,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_whosOnline(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_whosOnline(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_whosOnline(); ?></div>
 
 				<h2>Log Online Presence</h2>
 				<p>This function logs the SSI page's visitor, then shows the Who's Online list. In other words, this function shows who are online inside and outside the forum.</p>
@@ -215,7 +215,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_logOnline(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_logOnline(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_logOnline(); ?></div>
 			</div>
 
 <!-- WELCOME, LOGIN AND LOGOUT -->
@@ -226,7 +226,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_login(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_login(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_login(); ?></div>
 
 				<h2>Logout Function</h2>
 				<p>Shows a logout link only when user is logged in.</p>
@@ -234,7 +234,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_logout(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_logout(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_logout(); ?></div>
 
 				<h2>Welcome Function</h2>
 				<p>Greets users or guests, also shows user's messages if logged in.</p>
@@ -242,7 +242,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_welcome(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_welcome(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_welcome(); ?></div>
 			</div>
 
 <!-- MISCELLANEOUS -->
@@ -253,7 +253,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_boardStats(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_boardStats(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_boardStats(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_news">
@@ -263,7 +263,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_news(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_news(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_news(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_boardNews">
@@ -273,7 +273,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_boardNews(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_boardNews(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_boardNews(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_menubar">
@@ -283,7 +283,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_menubar(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_menubar(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_menubar(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_quickSearch">
@@ -292,7 +292,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_quickSearch(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_quickSearch(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_quickSearch(); ?></div>
 			</div>
 
 			<div class="ssi_preview" id="ssi_recentAttachments">
@@ -301,7 +301,7 @@ template_ssi_above();
 				<h3>Code</h3>
 				<div class="codeheader">Code: <a href="javascript:void(0);" onclick="return sbbSelectText(this);" class="codeoperation">[Select]</a></div><code class="bbc_code">&lt;?php ssi_recentAttachments(); ?&gt;</code>
 				<h3>Result</h3>
-				<div class="ssi_result"><?php ssi_recentAttachments(); flush(); ?></div>
+				<div class="ssi_result"><?php ssi_recentAttachments(); ?></div>
 			</div>
 
 <!-- ADVANCED FUNCTIONS -->

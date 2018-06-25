@@ -106,7 +106,7 @@
 						// The editor can cope if IE does unselect the text it's just not nice.
 						if (base.ieUnselectable !== false) {
 							content = $(content);
-							content.find(':not(input,textarea)').filter(function () { return this.nodeType===1; }).attr('unselectable', 'on');
+							content.find(':not(input,textarea)').filter(function () { return this.nodeType === 1; }).attr('unselectable', 'on');
 						}
 
 						dropdownIgnoreLastClick = true;
@@ -357,7 +357,7 @@ $.sceditor.plugins.bbcode.bbcode.set(
 				if (element.attr('title'))
 					attribs += ' name=' + element.attr('title');
 				if (element.attr('data-type'))
-					attribs += ' type=' + 	element.attr('data-type');
+					attribs += ' type=' + element.attr('data-type');
 
 				return '[attach' + attribs + ']' + element.attr('data-attachment') + '[/attach]';
 			}
@@ -449,7 +449,7 @@ $.sceditor.plugins.bbcode.bbcode.set(
 
 			// Is this an image?
 			if ((typeof attrs.type !== "undefined" && attrs.type.indexOf("image") === 0)) {
-				var contentUrl = sbb_scripturl +'?action=dlattach;attach='+ id + ';type=preview;thumb';
+				var contentUrl = sbb_scripturl + '?action=dlattach;attach=' + id + ';type=preview;thumb';
 				contentIMG = new Image();
 					contentIMG.src = contentUrl;
 			}
@@ -486,7 +486,7 @@ $.sceditor.plugins.bbcode.bbcode.set(
 			// A mention?
 			else if (typeof element.attr('data-mention') !== "undefined")
 			{
-				return '[member='+ element.attr('data-mention') +']'+ content.replace('@','') +'[/member]';
+				return '[member=' + element.attr('data-mention') + ']' + content.replace('@','') + '[/member]';
 			}
 
 			// Is this an attachment?
@@ -670,13 +670,13 @@ $.sceditor.plugins.bbcode.bbcode.set(
 	'member', {
 		isInline: true,
 		format: function ($element, content) {
-			return '[member='+ $element.attr('data-mention') +']'+ content.replace('@','') +'[/member]';
+			return '[member=' + $element.attr('data-mention') + ']' + content.replace('@','') + '[/member]';
 		},
 		html: function (token, attrs, content) {
 			if (typeof attrs.defaultattr === "undefined" || attrs.defaultattr.length === 0)
 				attrs.defaultattr = content;
 
-			return '<a href="' + sbb_scripturl +'?action=profile;u='+ attrs.defaultattr + '" class="mention" data-mention="'+ attrs.defaultattr + '">@'+ content.replace('@','') +'</a>';
+			return '<a href="' + sbb_scripturl + '?action=profile;u=' + attrs.defaultattr + '" class="mention" data-mention="' + attrs.defaultattr + '">@' + content.replace('@','') + '</a>';
 		}
 	}
 );

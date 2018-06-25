@@ -1103,8 +1103,14 @@ function char_stats()
 	$context['sub_template'] = 'profile_character_stats';
 
 	StoryBB\Template::add_helper([
-		'inverted_percent' => function($pc) { return 100 - $pc; },
-		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
+		'inverted_percent' => function($pc)
+		{
+			return 100 - $pc;
+		},
+		'pie_percent' => function($pc)
+		{
+			return round($pc / 5) * 20;
+		},
 	]);
 
 	// Is the load average too high to allow searching just now?

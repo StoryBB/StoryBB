@@ -286,8 +286,6 @@ function SavePMDraft(&$post_errors, $recipientList)
 		$context['draft_saved_on'] = time();
 		XmlDraft($id_pm_draft);
 	}
-
-	return;
 }
 
 /**
