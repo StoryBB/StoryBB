@@ -27,8 +27,8 @@
     <exclude-pattern>./Themes/default/scripts/slippry.min.js</exclude-pattern>
 
     <rule ref="Generic.Classes.DuplicateClassName"/>
-    <!-- <rule ref="Generic.CodeAnalysis.EmptyStatement"/> -->
-    <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/> -->
+    <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+    <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/>
     <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/>
     <rule ref="Generic.CodeAnalysis.JumbledIncrementer"/>
     <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
