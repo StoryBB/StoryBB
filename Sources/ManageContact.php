@@ -192,7 +192,7 @@ function ViewContact()
  */
 function ReplyContact()
 {
-	global $context, $txt, $smcFunc;
+	global $context, $txt, $smcFunc, $sourcedir, $language;
 
 	isAllowedTo('admin_forum');
 	checkSession();
@@ -245,6 +245,17 @@ function ReplyContact()
 			'msg' => $msg,
 		]
 	);
+
+	// Send the original recipient an email.
+	require_once($sourcedir . '/Subs-Post.php');
+	$replacements = array(
+		'NAME' => $context['contact']['member_name'],
+		'MSGSUBJECT' => $context['contact']['subject'],
+		'MSGRESPONSE' => $message,
+	);
+
+	$emaildata = loadEmailTemplate('contact_form_response', $replacements, $language);
+	StoryBB\Helper\Mail::send($context['contact']['member_email'], $emaildata['subject'], $emaildata['body'], null, 'contactform' . $context['contact']['id_message'], $emaildata['is_html']);
 
 	// Return to the admin.
 	session_flash('success', $txt['contact_form_reply_sent']);

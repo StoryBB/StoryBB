@@ -991,6 +991,25 @@ You have been mentioned in the post titled "{CONTENTSUBJECT}" by {MENTIONNAME}, 
 {REGARDS}';
 
 /**
+	@additional_params: contact_form_response
+		MSGSUBJECT: the original subject
+		NAME: the name given by the user
+		MSGRESPONSE: the response by the admin
+	@description: A response to people who used the contact form
+*/
+
+$txt['contact_form_response_subject'] = 'Contact Us - "{MSGSUBJECT}" [{FORUMNAME}]';
+$txt['contact_form_response_body'] = 'Hello {NAME},
+
+You recently left a message with our contact form, "{MSGSUBJECT}". Our admin team has reviewed your message and has a response:
+
+{MSGRESPONSE}
+
+We hope this answers your message, but if not please do get in touch with us. Please do NOT reply to this message - it will not get back to the admin.
+
+{REGARDS}';
+
+/**
 	@additional_params: happy_birthday
 		REALNAME: The real (display) name of the person receiving the birthday message.
 	@description: A message sent to members on their birthday.
