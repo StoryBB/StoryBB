@@ -52,3 +52,21 @@
 				{{session_form}}
 				{{token_form 'admin-contact'}}
 			</form>
+			{{#if context.contact.previous}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.contact_form_previous_responses}}}</h3>
+			</div>
+			<div class="roundframe">
+				<dl class="settings">
+					{{#each context.contact.previous}}
+					<dt>
+						{{#if real_name}}{{{real_name}}}{{else}}{{{../txt.not_applicable}}}{{/if}}<br>
+						{{{time_sent_format}}}
+					</dt>
+					<dd>
+						{{{response}}}
+					</dd>
+					{{/each}}
+				</dl>
+			</div>
+			{{/if}}

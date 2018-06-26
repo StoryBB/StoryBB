@@ -756,3 +756,4 @@ $txt['contact_form_reply'] = 'Reply to this message';
 $txt['contact_form_replies'] = 'Replies to this message';
 $txt['contact_form_no_reply'] = 'No reply was written.';
 $txt['contact_form_reply_sent'] = 'The reply was sent successfully.';
+$txt['contact_form_previous_responses'] = 'Previous responses';

@@ -181,6 +181,27 @@ function ViewContact()
 
 	$context['contact']['time_received_timeformat'] = timeformat($context['contact']['time_received']);
 
+	// See if there's any previous messages we should show.
+	$context['contact']['previous'] = [];
+
+	$request = $smcFunc['db_query']('', '
+		SELECT mem.id_member, mem.real_name, cfr.response, cfr.time_sent
+		FROM {db_prefix}contact_form_response AS cfr
+			LEFT JOIN {db_prefix}members AS mem ON (cfr.id_member = mem.id_member)
+		WHERE cfr.id_message = {int:msg}
+		ORDER BY cfr.time_sent',
+		[
+			'msg' => $msg,
+		]
+	);
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$row['time_sent_format'] = timeformat($row['time_sent']);
+		$context['contact']['previous'][] = $row;
+	}
+	$smcFunc['db_free_result']($request);
+
+	// And set up the template.
 	$context['page_title'] = $txt['contact_us'];
 	$context['sub_template'] = 'admin_contact_form';
 
