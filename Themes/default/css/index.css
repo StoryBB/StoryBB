@@ -1821,7 +1821,7 @@ tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
 .generic_icons.previous_page {
 	background-position: -31px -57px;
 }
-.generic_icons.inbox {
+.generic_icons.inbox, .generic_icons.contact {
 	background-position: -57px -57px;
 }
 .generic_icons.www {
