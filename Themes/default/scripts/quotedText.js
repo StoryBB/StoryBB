@@ -68,7 +68,7 @@ function quotedTextClick(oOptions)
 
 		// Do a call to make sure this is a valid message.
 		$.ajax({
-			url: sbb_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + oOptions.msgID + ';xml;pb='+ oEditorID + ';mode=' + (oEditorObject.bRichTextEnabled ? 1 : 0),
+			url: sbb_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + oOptions.msgID + ';xml;pb=' + oEditorID + ';mode=' + (oEditorObject.bRichTextEnabled ? 1 : 0),
 			type: 'GET',
 			dataType: 'xml',
 			beforeSend: function () {

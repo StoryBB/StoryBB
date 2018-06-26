@@ -60,7 +60,8 @@ class Cache
 		}
 	}
 
-	public static function get($key, $ttl = 120) {
+	public static function get($key, $ttl = 120)
+	{
 		global $boardurl, $modSettings, $cache_enable, $cacheAPI;
 		global $cache_hits, $cache_count, $cache_misses, $cache_count_misses, $db_show_debug;
 

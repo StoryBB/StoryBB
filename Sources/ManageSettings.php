@@ -895,7 +895,7 @@ function ModifySignatureSettings($return_config = false)
 				if (!empty($sig_limits[2]))
 				{
 					$count = 0;
-					for ($i = 0; $i < strlen($sig); $i++)
+					for ($i = 0, $n = strlen($sig); $i < $n; $i++)
 					{
 						if ($sig[$i] == "\n")
 						{
@@ -956,7 +956,8 @@ function ModifySignatureSettings($return_config = false)
 						$image_count_holder = array();
 						foreach ($matches[0] as $key => $image)
 						{
-							$width = -1; $height = -1;
+							$width = -1;
+							$height = -1;
 							$img_count++;
 							// Too many images?
 							if (!empty($sig_limits[3]) && $img_count > $sig_limits[3])
@@ -1530,7 +1531,10 @@ function EditCustomProfiles()
 	$context['page_title'] = $context['fid'] ? $txt['custom_edit_title'] : $txt['custom_add_title'];
 	$context['sub_template'] = 'admin_profile_fields_edit';
 	StoryBB\Template::add_helper([
-		'begins_with' => function($string, $test) { return strpos($string, $test) === 0; }
+		'begins_with' => function($string, $test)
+		{
+			return strpos($string, $test) === 0;
+		}
 	]);
 
 	// Load the profile language for section names.

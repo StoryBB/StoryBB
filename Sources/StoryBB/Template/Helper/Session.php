@@ -40,7 +40,8 @@ class Session
 	 * @param string $string The token name to export
 	 * @return string The key for the named token
 	 */
-	public static function token($string) {
+	public static function token($string)
+	{
 		global $context;
 		return isset($context[$string . '_token']) ? $context[$string . '_token'] : '';
 	}
@@ -50,7 +51,8 @@ class Session
 	 * @param string $string The token name to export
 	 * @return string The value for the named token
 	 */
-	public static function token_var($string) {
+	public static function token_var($string)
+	{
 		global $context;
 		return isset($context[$string . '_token_var']) ? $context[$string . '_token_var'] : '';
 	}
@@ -60,7 +62,8 @@ class Session
 	 * @param string $string The token name to export
 	 * @return string The key=value pair for a URL
 	 */
-	public static function token_url($string) {
+	public static function token_url($string)
+	{
 		global $context;
 		if (!isset($context[$string . '_token_var'], $context[$string . '_token']))
 		{
@@ -75,7 +78,8 @@ class Session
 	 * @param string $string The token name to export
 	 * @return string A fragment of HTML containing a hidden input with the token details
 	 */
-	public static function token_form($string) {
+	public static function token_form($string)
+	{
 		global $context;
 		if (!isset($context[$string . '_token_var'], $context[$string . '_token']))
 		{
@@ -89,7 +93,8 @@ class Session
 	 * Export the session ID
 	 * @return string Session ID
 	 */
-	public static function session_id() {
+	public static function session_id()
+	{
 		global $context;
 		return $context['session_id'];
 	}
@@ -98,7 +103,8 @@ class Session
 	 * Export the session key
 	 * @return string Session key for ID
 	 */
-	public static function session_var() {
+	public static function session_var()
+	{
 		global $context;
 		return $context['session_var'];
 	}
@@ -107,7 +113,8 @@ class Session
 	 * Export the session key/value in URL format
 	 * @return string sessionkey=sessionid
 	 */
-	public static function session_url() {
+	public static function session_url()
+	{
 		global $context;
 		return $context['session_var'] . '=' . $context['session_id'];
 	}
@@ -116,7 +123,8 @@ class Session
 	 * Export the session key/value for use in a form
 	 * @return string A fragment of HTML containing a hidden input with the session details
 	 */
-	public static function session_form() {
+	public static function session_form()
+	{
 		global $context;
 		return new \LightnCandy\SafeString('<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">');
 	}

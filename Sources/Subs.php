@@ -2849,8 +2849,10 @@ function login_helper($string, $guest_title, $forum_name, $scripturl, $login)
 	));
 }
 
-function session_flash($status, $message) {
-	if (!in_array($status, ['success', 'warning', 'error'])) {
+function session_flash($status, $message)
+{
+	if (!in_array($status, ['success', 'warning', 'error']))
+	{
 		fatal_error('Invalid session flash');
 	}
 	if (empty($_SESSION['flash'][$status]) || !in_array($message, $_SESSION['flash'][$status]))
@@ -2859,9 +2861,11 @@ function session_flash($status, $message) {
 	}
 }
 
-function session_flash_retrieve() {
+function session_flash_retrieve()
+{
 	$messages = [];
-	foreach (['error', 'warning', 'success'] as $status) {
+	foreach (['error', 'warning', 'success'] as $status)
+	{
 		$messages[$status] = !empty($_SESSION['flash'][$status]) ? $_SESSION['flash'][$status] : [];
 	}
 	unset ($_SESSION['flash']);
@@ -3652,7 +3656,7 @@ function ip2range($fullip)
 		$valid_low = isValidIP($ip_parts[0]);
 		$valid_high = isValidIP($ip_parts[1]);
 		$count = 0;
-		$mode = (preg_match('/:/',$ip_parts[0]) > 0 ? ':' : '.');
+		$mode = (preg_match('/:/', $ip_parts[0]) > 0 ? ':' : '.');
 		$max = ($mode == ':' ? 'ffff' : '255');
 		$min = 0;
 		if(!$valid_low)
@@ -4605,25 +4609,37 @@ function replaceEntities__callback($matches)
 
 	// Quote, Ampersand, Apostrophe, Less/Greater Than get html replaced
 	if (in_array($num, array(0x22, 0x26, 0x27, 0x3C, 0x3E)))
+	{
 		return '&#' . $num . ';';
-
-		// <0x20 are control characters, 0x20 is a space, > 0x10FFFF is past the end of the utf8 character set
-		// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text)
-		if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF))
-			return '';
-		// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and punctuation
-		elseif ($num < 0x80)
-			return chr($num);
-		// <0x800 (2048)
-		elseif ($num < 0x800)
-			return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
-		// < 0x10000 (65536)
-		elseif ($num < 0x10000)
-			return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
-		// <= 0x10FFFF (1114111)
-		else
-			return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
 	}
+
+	// <0x20 are control characters, 0x20 is a space, > 0x10FFFF is past the end of the utf8 character set
+	// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text)
+	if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF))
+	{
+		return '';
+	}
+	// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and punctuation
+	elseif ($num < 0x80)
+	{
+		return chr($num);
+	}
+	// <0x800 (2048)
+	elseif ($num < 0x800)
+	{
+		return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+	}
+	// < 0x10000 (65536)
+	elseif ($num < 0x10000)
+	{
+		return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+	}
+	// <= 0x10FFFF (1114111)
+	else
+	{
+		return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+	}
+}
 
 /**
  * Converts html entities to utf8 equivalents
@@ -5097,22 +5113,22 @@ function _safe_unserialize($str)
 		}
 		elseif($type == 'i' && preg_match('/^i:(-?[0-9]+);(.*)/s', $str, $matches))
 		{
-			$value = (int)$matches[1];
+			$value = (int) $matches[1];
 			$str = $matches[2];
 		}
 		elseif($type == 'd' && preg_match('/^d:(-?[0-9]+\.?[0-9]*(E[+-][0-9]+)?);(.*)/s', $str, $matches))
 		{
-			$value = (float)$matches[1];
+			$value = (float) $matches[1];
 			$str = $matches[3];
 		}
-		elseif($type == 's' && preg_match('/^s:([0-9]+):"(.*)/s', $str, $matches) && substr($matches[2], (int)$matches[1], 2) == '";')
+		elseif($type == 's' && preg_match('/^s:([0-9]+):"(.*)/s', $str, $matches) && substr($matches[2], (int) $matches[1], 2) == '";')
 		{
-			$value = substr($matches[2], 0, (int)$matches[1]);
-			$str = substr($matches[2], (int)$matches[1] + 2);
+			$value = substr($matches[2], 0, (int) $matches[1]);
+			$str = substr($matches[2], (int) $matches[1] + 2);
 		}
 		elseif($type == 'a' && preg_match('/^a:([0-9]+):{(.*)/s', $str, $matches))
 		{
-			$expectedLength = (int)$matches[1];
+			$expectedLength = (int) $matches[1];
 			$str = $matches[2];
 		}
 
@@ -5150,7 +5166,7 @@ function _safe_unserialize($str)
 						return false;
 
 					unset($list);
-					$list = &$stack[count($stack)-1];
+					$list = &$stack[count($stack) - 1];
 					array_pop($stack);
 
 					// Go to terminal state if we're at the end of the root array.
@@ -5295,7 +5311,7 @@ function sbb_json_decode($json, $returnAsArray = false, $logIt = true)
 			$jsonError = false;
 			break;
 		case JSON_ERROR_DEPTH:
-			$jsonError =  'JSON_ERROR_DEPTH';
+			$jsonError = 'JSON_ERROR_DEPTH';
 			break;
 		case JSON_ERROR_STATE_MISMATCH:
 			$jsonError = 'JSON_ERROR_STATE_MISMATCH';
@@ -5386,8 +5402,8 @@ function sbb_serverResponse($data = '', $type = 'Content-Type: application/json'
  * Returns true if a cert was found & false if not.
  * @param string $url to check, in $boardurl format (no trailing slash).
  */
- function ssl_cert_found($url) {
-
+function ssl_cert_found($url)
+{
 	// First, strip the subfolder from the passed url, if any
 	$parsedurl = parse_url($url);
 	$url = 'ssl://' . $parsedurl['host'] . ':443'; 
@@ -5411,24 +5427,30 @@ function sbb_serverResponse($data = '', $type = 'Content-Type: application/json'
  * returns true, it may be caused by StoryBB, not necessarily an .htaccess redirect.
  * @param string $url to check, in $boardurl format (no trailing slash).
  */
-function https_redirect_active($url) {
-
+function https_redirect_active($url)
+{
 	// Ask for the headers for the passed url, but via http...
 	// Need to add the trailing slash, or it puts it there & thinks there's a redirect when there isn't...
 	$url = str_ireplace('https://', 'http://', $url) . '/';
 	$headers = @get_headers($url);
 	if ($headers === false)
+	{
 		return false;
+	}
 
 	// Now to see if it came back https...
 	// First check for a redirect status code in first row (301, 302, 307)
 	if (strstr($headers[0], '301') === false && strstr($headers[0], '302') === false && strstr($headers[0], '307') === false)
+	{
 		return false;
+	}
 
 	// Search for the location entry to confirm https
 	$result = false;
-	foreach ($headers as $header) {
-		if (stristr($header, 'Location: https://') !== false) {
+	foreach ($headers as $header)
+	{
+		if (stristr($header, 'Location: https://') !== false)
+		{
 			$result = true;
 			break;
 		}

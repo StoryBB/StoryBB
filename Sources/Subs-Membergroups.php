@@ -933,7 +933,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 		array(
 			'current_member' => $user_info['id'],
 			'is_character' => ($membergroup_type === 'character' ? 1 : 0),
-			'min_posts' => ($membergroup_type === 'post_count' ? '!= ' : '= ') . -1,
+			'min_posts' => ($membergroup_type === 'post_count' ? '!= ' : '= ') . '-1',
 			'mod_group' => 3,
 			'sort' => $sort,
 		)

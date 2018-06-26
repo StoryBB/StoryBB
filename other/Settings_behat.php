@@ -10,7 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
-########## Maintenance ##########
+/********* Maintenance *********/
 /**
  * The maintenance "mode"
  * Set to 1 to enable Maintenance Mode, 2 to make the forum untouchable. (you'll have to make it 0 again manually!)
@@ -32,7 +32,7 @@ $mtitle = 'Maintenance Mode';
  */
 $mmessage = 'Okay faithful users...we\'re attempting to restore an older backup of the database...news will be posted once we\'re back!';
 
-########## Forum Info ##########
+/********* Forum Info *********/
 /**
  * The name of your forum.
  * @var string
@@ -59,7 +59,7 @@ $webmaster_email = 'noreply@myserver.com';
  */
 $cookiename = 'SBBCookie11';
 
-########## Database Info ##########
+/********* Database Info *********/
 /**
  * The database type
  * Default options: mysql, postgresql
@@ -108,7 +108,7 @@ $db_prefix = 'sbb_';
  */
 $db_persist = 0;
 
-########## Cache Info ##########
+/********* Cache Info *********/
 /**
  * Select a cache system. You want to leave this up to the cache area of the admin panel for
  * proper detection of apc, memcached, output_cache, file, or xcache
@@ -133,8 +133,8 @@ $cache_memcached = '';
  */
 $cachedir = dirname(__FILE__) . '/cache';
 
-########## Image Proxy ##########
-# This is done entirely in Settings.php to avoid loading the DB while serving the images
+/********* Image Proxy *********/
+// This is done entirely in Settings.php to avoid loading the DB while serving the images
 /**
  * Whether the proxy is enabled or not
  * @var bool
@@ -153,8 +153,8 @@ $image_proxy_secret = 'storybbisawesome';
  */
 $image_proxy_maxsize = 5192;
 
-########## Directories/Files ##########
-# Note: These directories do not have to be changed unless you move things.
+/********* Directories/Files *********/
+// Note: These directories do not have to be changed unless you move things.
 /**
  * The absolute path to the forum's folder. (not just '.'!)
  * @var string
@@ -171,7 +171,7 @@ $sourcedir = dirname(__FILE__) . '/Sources';
  */
 $tasksdir = $sourcedir . '/tasks';
 
-# Make sure the paths are correct... at least try to fix them.
+// Make sure the paths are correct... at least try to fix them.
 if (!file_exists($boarddir) && file_exists(dirname(__FILE__) . '/agreement.txt'))
 	$boarddir = dirname(__FILE__);
 if (!file_exists($sourcedir) && file_exists($boarddir . '/Sources'))

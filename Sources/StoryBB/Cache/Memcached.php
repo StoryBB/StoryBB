@@ -56,7 +56,7 @@ class Memcached extends API
 		$currentServers = $this->memcached->getServerList();
 		foreach ($servers as $server)
 		{
-			if (strpos($server,'/') !== false)
+			if (strpos($server, '/') !== false)
 				$tempServer = array($server, 0);
 			else
 			{

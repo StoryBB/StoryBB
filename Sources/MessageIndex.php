@@ -38,13 +38,14 @@ function MessageIndex()
 
 	$context['sub_template'] = 'msgIndex_main';
 	StoryBB\Template::add_helper([
-		'qmod_option' => function($action) {
-				global $context, $txt;
-				if (!empty($context['can_' . $action]))
-					return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
-			},
+		'qmod_option' => function($action)
+		{
+			global $context, $txt;
+			if (!empty($context['can_' . $action]))
+				return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
+		},
 		'child_boards' => 'child_boards'
-		]);
+	]);
 
 	if (!$user_info['is_guest'])
 	{

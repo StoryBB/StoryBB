@@ -1798,8 +1798,7 @@ function BanBrowseTriggers()
 			'function' => function($rowData)
 			{
 				return range2ip(
-					$rowData['ip_low']
-				,
+					$rowData['ip_low'],
 					$rowData['ip_high']
 				);
 			},

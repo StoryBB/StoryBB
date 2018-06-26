@@ -39,7 +39,8 @@ class Text
 	 * @param array $key An array of items to implode and treat as key to $txt
 	 * @return string The final string in $txt
 	 */
-	public static function get_text(...$key) {
+	public static function get_text(...$key)
+	{
 		global $txt;
 		if (is_array($key)) {
 			array_pop($key);
@@ -57,7 +58,8 @@ class Text
 	 * @param array $args A list of arguments to insert into the sprintf call
 	 * @return string The string, sprintf'd
 	 */
-	public static function textTemplate($template, ...$args) {
+	public static function textTemplate($template, ...$args)
+	{
 		array_pop($args);
 		return new \LightnCandy\SafeString(sprintf($template, ...$args));
 	}
@@ -105,7 +107,8 @@ class Text
 	 * @param int $amount Number of times to repeat the string
 	 * @return string The final string of repetitions
 	 */
-	public static function repeat($string, $amount) {
+	public static function repeat($string, $amount)
+	{
 		return $amount == 0 ? '' : new \LightnCandy\SafeString(str_repeat($string, $amount));
 	}
 }

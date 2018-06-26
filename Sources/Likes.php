@@ -437,7 +437,7 @@ class Likes
 	 * Partly it indicates how it's supposed to work and partly it deals with updating the count of likes
 	 * attached to this message now.
 	 */
-	function msgIssueLike()
+	public function msgIssueLike()
 	{
 		global $smcFunc;
 
@@ -466,7 +466,7 @@ class Likes
 	 * Accessed from index.php?action=likes;view and should generally load in a popup.
 	 * We use a template for this in case themers want to style it.
 	 */
-	function view()
+	public function view()
 	{
 		global $smcFunc, $txt, $context, $memberContext;
 

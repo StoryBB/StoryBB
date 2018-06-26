@@ -1859,7 +1859,7 @@ function list_integration_hooks()
 				'data' => array(
 					'db' => 'hook_name',
 				),
-				'sort' =>  array(
+				'sort' => array(
 					'default' => 'hook_name',
 					'reverse' => 'hook_name DESC',
 				),
@@ -1881,7 +1881,7 @@ function list_integration_hooks()
 							return $instance . $data['real_function'];
 					},
 				),
-				'sort' =>  array(
+				'sort' => array(
 					'default' => 'function_name',
 					'reverse' => 'function_name DESC',
 				),
@@ -1893,7 +1893,7 @@ function list_integration_hooks()
 				'data' => array(
 					'db' => 'file_name',
 				),
-				'sort' =>  array(
+				'sort' => array(
 					'default' => 'file_name',
 					'reverse' => 'file_name DESC',
 				),
@@ -1915,7 +1915,7 @@ function list_integration_hooks()
 					},
 					'class' => 'centertext',
 				),
-				'sort' =>  array(
+				'sort' => array(
 					'default' => 'status',
 					'reverse' => 'status DESC',
 				),

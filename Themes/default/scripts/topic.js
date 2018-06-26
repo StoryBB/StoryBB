@@ -165,7 +165,7 @@ QuickModifyTopic.prototype.modify_topic_done = function (XMLDoc)
 QuickModifyTopic.prototype.modify_topic_hide_edit = function (subject)
 {
 	// Re-template the subject!
-	setInnerHTML(this.oCurSubjectDiv, '<a href="' + sbb_scripturl + '?topic=' + this.iCurTopicId + '.0">' + subject + '<' +'/a>');
+	setInnerHTML(this.oCurSubjectDiv, '<a href="' + sbb_scripturl + '?topic=' + this.iCurTopicId + '.0">' + subject + '<' + '/a>');
 }
 
 // keypress event ... like enter or escape

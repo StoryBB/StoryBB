@@ -24,7 +24,8 @@ class Theme
 	 *
 	 * @return array Return the current theme's configuration settings
 	 */
-	private static function get_theme_json(): array {
+	private static function get_theme_json(): array
+	{
 		global $settings;
 
 		if (file_exists($settings['theme_dir'] . '/theme.json'))
@@ -44,7 +45,8 @@ class Theme
 	 *
 	 * @return array The default generic settings as set in the theme configuration
 	 */
-	public static function get_defaults(): array {
+	public static function get_defaults(): array
+	{
 		$theme_json = self::get_theme_json();
 		unset($theme_json['theme_settings'], $theme_json['user_options']);
 		if (empty($theme_json['additional_files']))
@@ -67,7 +69,8 @@ class Theme
 	 *
 	 * @return array The configurable settings for a theme
 	 */
-	public static function get_theme_settings(): array {
+	public static function get_theme_settings(): array
+	{
 		return self::parse_section('theme_settings');
 	}
 
@@ -76,7 +79,8 @@ class Theme
 	 *
 	 * @return array The user-preferences from the theme
 	 */
-	public static function get_user_options(): array {
+	public static function get_user_options(): array
+	{
 		return self::parse_section('user_options');
 	}
 
@@ -86,7 +90,8 @@ class Theme
 	 * @param string $section The key from the configuration to be parsed
 	 * @return array The relevant section from configuration, processed ready for use
 	 */
-	private static function parse_section(string $section): array {
+	private static function parse_section(string $section): array
+	{
 		global $txt, $context;
 
 		$theme_json = self::get_theme_json();

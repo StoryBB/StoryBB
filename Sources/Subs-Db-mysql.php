@@ -249,7 +249,7 @@ function sbb_db_replacement__callback($matches)
 		case 'datetime':
 			if (preg_match('~^(\d{4})-([0-1]?\d)-([0-3]?\d) ([0-1]?\d|2[0-3]):([0-5]\d):([0-5]\d)$~', $replacement, $datetime_matches) === 1)
 				return 'str_to_date('.
-					sprintf('\'%04d-%02d-%02d %02d:%02d:%02d\'', $datetime_matches[1], $datetime_matches[2], $datetime_matches[3], $datetime_matches[4], $datetime_matches[5] ,$datetime_matches[6]).
+					sprintf('\'%04d-%02d-%02d %02d:%02d:%02d\'', $datetime_matches[1], $datetime_matches[2], $datetime_matches[3], $datetime_matches[4], $datetime_matches[5], $datetime_matches[6]).
 					',\'%Y-%m-%d %h:%i:%s\')';
 			else
 				sbb_db_error_backtrace('Wrong value type sent to the database. Datetime expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
@@ -818,7 +818,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 			$return_var = array();
 			$count = count($insertRows);
 			$start = sbb_db_insert_id($table, $keys[0]);
-			for ($i = 0; $i < $count; $i++ )
+			for ($i = 0; $i < $count; $i++)
 				$return_var[] = $start + $i;
 		}
 		return $return_var;
