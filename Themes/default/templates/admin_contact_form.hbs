@@ -26,7 +26,7 @@
 						{{#if (eq context.contact.status '0')}}
 							<strong>{{{txt.contact_form_status_unanswered}}}</strong>
 						{{else}}
-
+							{{{txt.contact_form_status_answered}}}
 						{{/if}}
 					</dd>
 				</dl>
@@ -36,8 +36,19 @@
 			</div>
 			<form action="{{scripturl}}?action=admin;area=contactform;sa=replycontact" method="post" accept-charset="UTF-8">
 				<div class="roundframe">
-
+					<dl class="settings">
+						<dt>{{{txt.contact_form_reply}}}:</dt>
+						<dd>
+							<textarea name="reply"></textarea>
+						</dd>
+						<dt>&nbsp;</dt><dd></dd>
+						<dt></dt>
+						<dd>
+							<input type="submit" name="save" value="{{{txt.send_message}}}" class="button_submit">
+						</dd>
+					</dl>
 				</div>
+				<input type="hidden" name="msg" value="{{context.contact.id_message}}">
 				{{session_form}}
 				{{token_form 'admin-contact'}}
 			</form>

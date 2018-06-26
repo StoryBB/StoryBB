@@ -20,6 +20,7 @@ function ManageContact()
 	$actions = [
 		'listcontact' => 'ListContact',
 		'viewcontact' => 'ViewContact',
+		'replycontact' => 'ReplyContact',
 	];
 
 	$sa = isset($_GET['sa'], $actions[$_GET['sa']]) ? $_GET['sa'] : 'listcontact';
@@ -161,7 +162,7 @@ function ViewContact()
 	$msg = isset($_GET['msg']) ? (int) $_GET['msg'] : 0;
 
 	$request = $smcFunc['db_query']('', '
-		SELECT mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,
+		SELECT cf.id_message, mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,
 			COALESCE(mem.email_address, cf.contact_email) AS member_email, cf.subject, cf.message, cf.time_received, cf.status
 		FROM {db_prefix}contact_form AS cf
 			LEFT JOIN {db_prefix}members AS mem ON (cf.id_member = mem.id_member)
@@ -184,4 +185,68 @@ function ViewContact()
 	$context['sub_template'] = 'admin_contact_form';
 
 	createToken('admin-contact');
+}
+
+/**
+ * Reply to an actual message.
+ */
+function ReplyContact()
+{
+	global $context, $txt, $smcFunc;
+
+	isAllowedTo('admin_forum');
+	checkSession();
+	validateToken('admin-contact');
+
+	$msg = isset($_POST['msg']) ? (int) $_POST['msg'] : 0;
+
+	$message = !empty($_POST['reply']) ? $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['reply'], ENT_QUOTES)) : '';
+
+	$request = $smcFunc['db_query']('', '
+		SELECT cf.id_message, mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,
+			COALESCE(mem.email_address, cf.contact_email) AS member_email, cf.subject, cf.message, cf.time_received, cf.status
+		FROM {db_prefix}contact_form AS cf
+			LEFT JOIN {db_prefix}members AS mem ON (cf.id_member = mem.id_member)
+		WHERE cf.id_message = {int:msg}',
+		[
+			'msg' => $msg,
+		]
+	);
+	if ($smcFunc['db_num_rows']($request) == 0)
+	{
+		$smcFunc['db_free_result']($request);
+		fatal_lang_error('contact_form_message_not_found', false);
+	}
+	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
+	$smcFunc['db_free_result']($request);
+
+	// Nothing entered?
+	if (empty($message))
+	{
+		session_flash('warning', $txt['contact_form_no_reply']);
+		redirectexit('action=admin;area=contactform;sa=viewcontact;msg=' . $msg);
+	}
+
+	// Insert it into the database.
+	$smcFunc['db_insert']('insert',
+		'{db_prefix}contact_form_response',
+		['id_message' => 'int', 'id_member' => 'int', 'response' => 'string', 'time_sent' => 'int'],
+		[$msg, $context['user']['id'], $message, time()],
+		['id_response']
+	);
+
+	// Update the message to be sent.
+	$smcFunc['db_query']('', '
+		UPDATE {db_prefix}contact_form
+		SET status = 1
+		WHERE status = 0
+			AND id_message = {int:msg}',
+		[
+			'msg' => $msg,
+		]
+	);
+
+	// Return to the admin.
+	session_flash('success', $txt['contact_form_reply_sent']);
+	redirectexit('action=admin;area=contactform;sa=viewcontact;msg=' . $msg);
 }
