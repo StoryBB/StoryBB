@@ -227,6 +227,36 @@ CREATE TABLE {$db_prefix}character_sheet_versions (
 ) ENGINE={$engine};
 
 #
+# Table structure for table `contact_form`
+#
+
+CREATE TABLE {$db_prefix}contact_form (
+  id_message MEDIUMINT AUTO_INCREMENT,
+  id_member MEDIUMINT NOT NULL DEFAULT '0',
+  contact_name VARCHAR(255) NOT NULL DEFAULT '',
+  contact_email VARCHAR(255) NOT NULL DEFAULT '',
+  subject VARCHAR(255) NOT NULL DEFAULT '',
+  message TEXT NOT NULL,
+  time_received INT NOT NULL DEFAULT '0',
+  status TINYINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_message)
+) ENGINE={$engine};
+
+#
+# Table structure for table `contact_form_response`
+#
+
+CREATE TABLE {$db_prefix}contact_form_response (
+  id_response MEDIUMINT AUTO_INCREMENT,
+  id_message MEDIUMINT NOT NULL DEFAULT '0',
+  id_member MEDIUMINT NOT NULL DEFAULT '0',
+  response TEXT NOT NULL,
+  time_sent INT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_response),
+  INDEX idx_id_message (id_message)
+) ENGINE={$engine};
+
+#
 # Table structure for table `custom_fields`
 #
 

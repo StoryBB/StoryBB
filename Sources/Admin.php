@@ -59,6 +59,13 @@ function AdminMain()
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
+				'contactform' => [
+					'label' => $txt['contact_us'],
+					'file' => 'ManageContact.php',
+					'function' => 'ManageContact',
+					'icon' => 'contact',
+					'permission' => ['admin_forum'],
+				],
 				'search' => array(
 					'function' => 'AdminSearch',
 					'permission' => array('admin_forum'),

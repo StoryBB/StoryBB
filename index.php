@@ -265,6 +265,7 @@ function sbb_main()
 		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
 		'characters' => array('Profile-Chars.php', 'CharacterList'),
+		'contact' => array('Contact.php', 'Contact'),
 		'coppa' => array('Register.php', 'CoppaForm'),
 		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 		'dlattach' => array('ShowAttachments.php', 'showAttachment'),
