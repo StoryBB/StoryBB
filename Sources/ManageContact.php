@@ -177,6 +177,7 @@ function ViewContact()
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
 	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
+	$context['contact']['message'] = str_replace("\n", "<br>\n", $context['contact']['message']);
 	$smcFunc['db_free_result']($request);
 
 	$context['contact']['time_received_timeformat'] = timeformat($context['contact']['time_received']);
