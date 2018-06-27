@@ -177,6 +177,7 @@ function ViewContact()
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
 	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
+	$context['contact']['message'] = str_replace("\n", "<br>\n", $context['contact']['message']);
 	$smcFunc['db_free_result']($request);
 
 	$context['contact']['time_received_timeformat'] = timeformat($context['contact']['time_received']);
@@ -277,6 +278,21 @@ function ReplyContact()
 
 	$emaildata = loadEmailTemplate('contact_form_response', $replacements, $language);
 	StoryBB\Helper\Mail::send($context['contact']['member_email'], $emaildata['subject'], $emaildata['body'], null, 'contactform' . $context['contact']['id_message'], $emaildata['is_html']);
+
+	// Clear any pending alerts.
+	$alerted = StoryBB\Model\Alert::find_alerts([
+		'content_type' => 'contactform',
+		'content_id' => $msg,
+		'content_action' => 'received',
+		'is_read' => 0
+	]);
+	if (!empty($alerted))
+	{
+		foreach ($alerted as $memID => $alerts)
+		{
+			StoryBB\Model\Alert::change_read($memID, $alerts, 1);
+		}
+	}
 
 	// Return to the admin.
 	session_flash('success', $txt['contact_form_reply_sent']);

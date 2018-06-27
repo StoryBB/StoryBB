@@ -46,3 +46,4 @@ $txt['alert_member_char_sheet_approvalchr'] = '{char_link}\'s <a href="#{char_sh
 $txt['alert_member_char_sheet_approvedchr'] = '{your_chr}\'s character sheet was approved.';
 $txt['alert_member_export_complete'] = 'An export of your posts and attachments is <a href="{scripturl}{export_link}">ready for you</a>.';
 $txt['alert_member_export_complete_admin'] = 'An export of posts and attachments for {member_link} is now <a href="{scripturl}{export_link}">ready for download</a>.';
+$txt['alert_contactform_received'] = '<a href="{scripturl}{contact_link}">A new message</a> has been received via the contact form.';
