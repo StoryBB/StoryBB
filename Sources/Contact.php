@@ -94,6 +94,36 @@ function Contact()
 			);
 
 			// Now we have the message, we can link to it for the admins.
+			require_once($sourcedir . '/Subs-Members.php');
+			$admins = membersAllowedTo('admin_forum');
+
+			$alert_rows = [];
+			foreach ($admins as $id_member)
+			{
+				$alert_rows[] = array(
+					'alert_time' => time(),
+					'id_member' => $id_member,
+					'id_member_started' => $context['user']['id'],
+					'member_name' => $context['contact']['name'],
+					'content_type' => 'contactform',
+					'content_id' => 0,
+					'content_action' => 'received',
+					'is_read' => 0,
+					'extra' => json_encode(['contact_link' => '?action=admin;area=contactform;sa=viewcontact;msg=' . $message]),
+				);
+			}
+
+			if (!empty($alert_rows))
+			{
+				$smcFunc['db_insert']('',
+					'{db_prefix}user_alerts',
+					array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+						'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+					$alert_rows,
+					[]
+				);
+				updateMemberData($admins, array('alerts' => '+'));
+			}
 
 			// And send users on their way.
 			$context['sub_template'] = 'contact_form_success';
