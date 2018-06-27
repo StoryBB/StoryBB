@@ -3913,6 +3913,11 @@ function setupMenuContext()
 						'title' => $txt['approve_members_waiting'],
 						'href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
 						'show' => !empty($context['unapproved_members']),
+					),
+					'contactform' => array(
+						'title' => $txt['contact_us'],
+						'href' => $scripturl . '?action=admin;area=contactform',
+						'show' => allowedTo('admin_forum'),
 						'is_last' => true,
 					),
 				),
@@ -4118,6 +4123,19 @@ function setupMenuContext()
 		{
 			$context['menu_buttons']['admin']['badge'] += $errors;
 			$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $errors;
+		}
+
+		$query = $smcFunc['db_query']('', '
+			SELECT COUNT(id_message)
+			FROM {db_prefix}contact_form
+			WHERE status = 0');
+		list($contactform) = $smcFunc['db_fetch_row']($query);
+		$smcFunc['db_free_result']($query);
+
+		if ($errors)
+		{
+			$context['menu_buttons']['admin']['badge'] += $contactform;
+			$context['menu_buttons']['admin']['sub_buttons']['contactform']['badge'] = $contactform;
 		}
 	}
 
