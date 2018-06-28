@@ -450,7 +450,9 @@ Sometimes you just want a single interesting bagde to show, other times you migh
 <br>
 You can always add new icons to this by uploading the images into the Themes/default/images/membericons/ folder as .gif, .jpg or .png files and they will show up in this list. You can also have different images in different themes - just name the file with the same name and put it in the images/membericons/ folder of your theme.<br>
 <br>
-Of course, you don\'t have to have a badge - just untick the box and no badge will be shown for people in this group.';
+Of course, you don\'t have to have a badge - just untick the box and no badge will be shown for people in this group.<br>
+<br>
+For best results, images should probably be no larger than 150 pixels wide and 100 pixels high.';
 
 $helptxt['maintenance_backup'] = 'This area allows you to save a copy of all the posts, settings, members, and other information in your forum to a very large file.<br><br>It is recommended that you do this often, perhaps weekly, for safety and security.';
 $helptxt['maintenance_rot'] = 'This allows you to <strong>completely</strong> and <strong>irrevocably</strong> remove old topics. It is recommended that you try to make a backup first, just in case you remove something you didn\'t mean to.<br><br><strong>Use this setting with care.</strong>';
