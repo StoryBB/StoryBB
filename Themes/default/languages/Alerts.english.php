@@ -11,6 +11,7 @@ $txt['alert_settings'] = 'Settings';
 $txt['alerts_no_unread'] = 'No unread alerts.';
 
 $txt['alert_topic_reply'] = '{member_link} replied to the topic {topic_msg}';
+$txt['alert_topic_replychr'] = '{char_link} replied to the topic {topic_msg}';
 $txt['alert_topic_move'] = 'The topic {topic_msg} has been moved to {board_msg}';
 $txt['alert_topic_remove'] = 'The topic {topic_msg} has been deleted';
 $txt['alert_topic_unlock'] = 'The topic {topic_msg} has been unlocked';
