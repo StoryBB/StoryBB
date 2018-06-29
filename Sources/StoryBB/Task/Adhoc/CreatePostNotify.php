@@ -10,6 +10,7 @@
  */
 
 namespace StoryBB\Task\Adhoc;
+
 use Mentions;
 
 /**
