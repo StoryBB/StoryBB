@@ -10,6 +10,7 @@
  */
 
 namespace StoryBB\Task\Adhoc;
+use Mentions;
 
 /**
  * This file contains background notification code for any create post action.
