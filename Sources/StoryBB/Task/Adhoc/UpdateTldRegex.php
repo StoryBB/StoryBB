@@ -12,6 +12,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\TLD;
+
 /**
  * This file initiates updates of the master list of known TLDs for link recognition.
  */
@@ -23,7 +25,7 @@ class UpdateTldRegex extends \StoryBB\Task\Adhoc
 	 */
 	public function execute()
 	{
-		StoryBB\Helper\TLD::set_tld_regex(true);
+		TLD::set_tld_regex(true);
 
 		return true;
 	}
