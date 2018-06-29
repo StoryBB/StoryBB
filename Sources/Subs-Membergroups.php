@@ -442,6 +442,13 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	return true;
 }
 
+/**
+ * Removes one or more groups from one or more characters, and applies to both main and additional groups.
+ *
+ * @param int|array Character ID or array of character IDs
+ * @param int|array Group ID or array of group IDs
+ * @return bool True on success
+ */
 function removeCharactersFromGroups($characters, $groups)
 {
 	global $smcFunc, $sourcedir, $modSettings;
@@ -732,6 +739,13 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	return true;
 }
 
+/**
+ * Adds characters into a group (or more accurately, adds a group to characters' settings) - additional groups only.
+ *
+ * @param int|array A character ID or array of character ids
+ * @param int $group A group to apply
+ * @return bool True on success
+ */
 function addCharactersToGroup($characters, $group)
 {
 	global $smcFunc, $sourcedir;
@@ -905,7 +919,7 @@ function cache_getMembergroupList()
  */
 function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 {
-	global $scripturl, $context, $settings, $smcFunc, $user_info;
+	global $scripturl, $context, $settings, $smcFunc, $user_info, $txt;
 
 	$request = $smcFunc['db_query']('substring_membergroups', '
 		SELECT mg.id_group, mg.group_name, mg.min_posts, mg.description, mg.group_type, mg.online_color, mg.hidden,
@@ -919,7 +933,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 		array(
 			'current_member' => $user_info['id'],
 			'is_character' => ($membergroup_type === 'character' ? 1 : 0),
-			'min_posts' => ($membergroup_type === 'post_count' ? '!= ' : '= ') . -1,
+			'min_posts' => ($membergroup_type === 'post_count' ? '!= ' : '= ') . '-1',
 			'mod_group' => 3,
 			'sort' => $sort,
 		)
@@ -947,7 +961,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			'type' => $row['group_type'],
 			'num_members' => $row['num_members'],
 			'moderators' => array(),
-			'icons' => !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' . $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '',
+			'icons' => !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' . $row['icons'][1] . '" alt="*">', $row['icons'][0]) : $txt['membergroup_no_badge'],
 		);
 
 		$context['can_moderate'] |= $row['can_moderate'];

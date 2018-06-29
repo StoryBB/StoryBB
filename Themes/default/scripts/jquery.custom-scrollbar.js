@@ -724,8 +724,7 @@
 				throw "Invalid type of options";
 		});
 
-	}
-	;
+	};
 
 })
 	(jQuery);

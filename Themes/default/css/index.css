@@ -1,4 +1,3 @@
-/* You can find detailed information at https://wiki.simplemachines.org/smf/Curve2_CSS
 /* Index */
 html {
 	background: #3e5a78;
@@ -1119,6 +1118,20 @@ img.sort, .sort {
 	color: #a85400;
 	text-decoration: none;
 }
+/* The contact page */
+#contactform dl.settings {
+	max-width: 600px;
+	margin: 12px auto 0 auto;
+}
+#contactform dl.settings dt {
+	width: 20%;
+}
+#contactform dl.settings dd {
+	width: 75%;
+}
+#contactform input[type=text], #contactform input[type=email] {
+	width: 100%;
+}
 /* The logo and slogan. */
 #header {
 	padding: 2px 2px 12px 2px;
@@ -1490,8 +1503,8 @@ ul li.greeting {
 	clear: both;
 }
 div.event_options {
-    line-height: 25px;
-    margin-top: 5px;
+	line-height: 25px;
+	margin-top: 5px;
 }
 #post_event span.label {
 	margin: 0 0.5em 0 2px;
@@ -1512,38 +1525,38 @@ div.event_options {
 	box-sizing: border-box;
 }
 .event_options_left div, .event_options_right div {
-    min-height: 25px;
-    margin-bottom: 5px;
+	min-height: 25px;
+	margin-bottom: 5px;
 }
 
 #post_event #event_main input {
-    margin: 0;
+	margin: 0;
 }
 #evtitle {
-    max-width: 100%;
+	max-width: 100%;
 }
 #event_time_input {
-    clear: left;
+	clear: left;
 }
 #event_time_input input[type="text"] {
 	width: 80px;
 	display: inline-block;
 }
 #post_event input[type="checkbox"] {
-    height: auto;
-    vertical-align: baseline;
+	height: auto;
+	vertical-align: baseline;
 }
 #post_event input[disabled].input_text {
 	color: transparent;
 }
 #post_event select, #event_options input[type="text"], #tz {
-    max-width: calc(100% - 75px);
+	max-width: calc(100% - 75px);
 }
 #post_event select, #event_location {
-    width: calc(100% - 75px);
+	width: calc(100% - 75px);
 }
 #post_event .input_check + select {
-    max-width: calc(100% - 95px);
+	max-width: calc(100% - 95px);
 }
 
 /* Styles for the recent messages section.
@@ -1608,6 +1621,9 @@ fieldset.merge_options {
 .login {
 	width: 540px;
 	margin: 0 auto;
+}
+.login .login {
+	width: auto;
 }
 .popup_content .login {
 	width: 100%;
@@ -1805,7 +1821,7 @@ tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
 .generic_icons.previous_page {
 	background-position: -31px -57px;
 }
-.generic_icons.inbox {
+.generic_icons.inbox, .generic_icons.contact {
 	background-position: -57px -57px;
 }
 .generic_icons.www {

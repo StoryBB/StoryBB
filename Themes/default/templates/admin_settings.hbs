@@ -58,10 +58,10 @@
 				<input type="submit" value="{{{txt.save}}}"{{#if context.save_disabled}} disabled{{/if}}{{#if context.settings.save_onclick}} onclick="{{{context.settings_save_onclick}}}"{{/if}} class="button_submit">
 			{{/unless}}
 		</div>
-		{{#if context.admin-ssc_token}}<input type="hidden" name="{{context.admin-ssc_token_var}}" value="{{context.admin-ssc_token}}">{{/if}}
-		{{#if context.admin-dbsc_token_var}}<input type="hidden" name="{{context.admin-dbsc_token_var}}" value="{{context.admin-dbsc_token}}">{{/if}}
-		{{#if context.admin-mp_token_var}}<input type="hidden" name="{{context.admin-mp_token_var}}" value="{{context.admin-mp_token}}">{{/if}}
-		<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+		{{#if context.admin-ssc_token}}{{token_form 'admin-ssc'}}{{/if}}
+		{{#if context.admin-dbsc_token}}{{token_form 'admin-dbsc'}}{{/if}}
+		{{#if context.admin-mp_token}}{{token_form 'admin-mp'}}{{/if}}
+		{{session_form}}
 	</form>
 </div>
 {{#if context.settings_post_javascript}}

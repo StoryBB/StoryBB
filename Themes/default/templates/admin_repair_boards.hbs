@@ -20,7 +20,7 @@
 							{{{txt.errors_fix}}}
 						</p>
 						<p class="padding">
-							<strong><a href="{{scripturl}}?action=admin;area=repairboards;fixErrors;{{context.session_var}}={{context.session_id}}">{{{txt.yes}}}</a> - <a href="{{scripturl}}?action=admin;area=maintain">{{{txt.no}}}</a></strong>
+							<strong><a href="{{scripturl}}?action=admin;area=repairboards;fixErrors;{{session_url}}">{{{txt.yes}}}</a> - <a href="{{scripturl}}?action=admin;area=maintain">{{{txt.no}}}</a></strong>
 						</p>
 					{{else}}
 						<p>{{{txt.maintain_no_errors}}}</p>
@@ -32,7 +32,7 @@
 					{{#if context.redirect_to_recount}}
 						<p>{{{txt.errors_do_recount}}}</p>
 						<form action="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
-							<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+							{{session_form}}
 							<input type="submit" name="recount" id="recount_now" value="{{{txt.errors_recount_now}}}">
 						</form>
 					{{else}}

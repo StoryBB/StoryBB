@@ -180,9 +180,9 @@ function ShowAdminHelp()
 		loadLanguage('ManagePermissions');
 
 	// Allow mods to load their own language file here
- 	call_integration_hook('integrate_helpadmin');
+	call_integration_hook('integrate_helpadmin');
 
- 	StoryBB\Template::set_layout('popup');
+	StoryBB\Template::set_layout('popup');
 
 	// Set the page title to something relevant.
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['help'];

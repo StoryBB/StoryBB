@@ -407,7 +407,7 @@ function updateMemberData($members, $data)
 				$val = count($blub);
 			}
 		}
-		else if ($type == 'int' && ($val === '+' || $val === '-'))
+		elseif ($type == 'int' && ($val === '+' || $val === '-'))
 		{
 			$val = $var . ' ' . $val . ' 1';
 			$type = 'raw';
@@ -1226,7 +1226,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'code',
 				'type' => 'unparsed_content',
-				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> <a class="codeoperation smf_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
+				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> <a class="codeoperation sbb_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
 				// @todo Maybe this can be simplified?
 				'validate' => isset($disabled['code']) ? null : function (&$tag, &$data, $disabled) use ($context)
 				{
@@ -1245,7 +1245,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'code',
 				'type' => 'unparsed_equals_content',
-				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> ($2) <a class="codeoperation smf_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
+				'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> ($2) <a class="codeoperation sbb_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
 				// @todo Maybe this can be simplified?
 				'validate' => isset($disabled['code']) ? null : function (&$tag, &$data, $disabled) use ($context)
 				{
@@ -2606,7 +2606,7 @@ function parsesmileys(&$message)
 	static $smileyPregSearch = null, $smileyPregReplacements = array();
 
 	// No smiley set at all?!
-	if ($user_info['smiley_set'] == 'none' || trim($message) == '')
+	if (trim($message) == '')
 		return;
 
 	// If smileyPregSearch hasn't been set, do it now.
@@ -2644,7 +2644,7 @@ function parsesmileys(&$message)
 		// This smiley regex makes sure it doesn't parse smileys within code tags (so [url=mailto:David@bla.com] doesn't parse the :D smiley)
 		$smileyPregReplacements = array();
 		$searchParts = array();
-		$smileys_path = $smcFunc['htmlspecialchars']($modSettings['smileys_url'] . '/' . $user_info['smiley_set'] . '/');
+		$smileys_path = $smcFunc['htmlspecialchars']($modSettings['smileys_url'] . '/');
 
 		for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 		{
@@ -2835,22 +2835,24 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 
 function locale_helper($lang_locale) 
 {
-    return new \LightnCandy\SafeString(str_replace("_", "-", substr($lang_locale, 0, strcspn($lang_locale, "."))));
+	return new \LightnCandy\SafeString(str_replace("_", "-", substr($lang_locale, 0, strcspn($lang_locale, "."))));
 }
 
 function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
 {
-    return new \LightnCandy\SafeString(sprintf($string,
-	    $guest_title, 
-	    $forum_name, 
-	    $scripturl . '?action=login', 
-	    'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
-	    $scripturl . '?action=signup'
+	return new \LightnCandy\SafeString(sprintf($string,
+		$guest_title, 
+		$forum_name, 
+		$scripturl . '?action=login', 
+		'return reqOverlayDiv(this.href, ' . JavaScriptEscape($login) . ');', 
+		$scripturl . '?action=signup'
 	));
 }
 
-function session_flash($status, $message) {
-	if (!in_array($status, ['success', 'warning', 'error'])) {
+function session_flash($status, $message)
+{
+	if (!in_array($status, ['success', 'warning', 'error']))
+	{
 		fatal_error('Invalid session flash');
 	}
 	if (empty($_SESSION['flash'][$status]) || !in_array($message, $_SESSION['flash'][$status]))
@@ -2859,9 +2861,11 @@ function session_flash($status, $message) {
 	}
 }
 
-function session_flash_retrieve() {
+function session_flash_retrieve()
+{
 	$messages = [];
-	foreach (['error', 'warning', 'success'] as $status) {
+	foreach (['error', 'warning', 'success'] as $status)
+	{
 		$messages[$status] = !empty($_SESSION['flash'][$status]) ? $_SESSION['flash'][$status] : [];
 	}
 	unset ($_SESSION['flash']);
@@ -2911,7 +2915,7 @@ function url_image_size($url)
 		if ($fp != false)
 		{
 			// Send the HEAD request (since we don't have to worry about chunked, HTTP/1.1 is fine here.)
-			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/SMF' . "\r\n" . 'Connection: close' . "\r\n\r\n");
+			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/StoryBB' . "\r\n" . 'Connection: close' . "\r\n\r\n");
 
 			// Read in the HTTP/1.1 or whatever.
 			$test = substr(fgets($fp, 11), -1);
@@ -3049,7 +3053,7 @@ function setupThemeContext($forceload = false)
 
 	// Add a generic "Are you sure?" confirmation message.
 	addInlineJavaScript('
-	var smf_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');
+	var sbb_you_sure =' . JavaScriptEscape($txt['quickmod_confirm']) .';');
 
 	// Now add the capping code for avatars.
 	if (!empty($modSettings['avatar_max_width']) && !empty($modSettings['avatar_max_height']) && !empty($modSettings['avatar_action_too_large']) && $modSettings['avatar_action_too_large'] == 'option_css_resize')
@@ -3502,7 +3506,7 @@ function custMinify($data, $type, $do_deferred = false)
 	$toCreate = $cTempPath .'minified'. ($do_deferred ? '_deferred' : '') .'.'. $type;
 
 	// File has to exists, if it isn't try to create it.
-	if ((!file_exists($toCreate) && @fopen($toCreate, 'w') === false) || !smf_chmod($toCreate))
+	if ((!file_exists($toCreate) && @fopen($toCreate, 'w') === false) || !sbb_chmod($toCreate))
 	{
 		loadLanguage('Errors');
 		log_error(sprintf($txt['file_not_created'], $toCreate), 'general');
@@ -3652,7 +3656,7 @@ function ip2range($fullip)
 		$valid_low = isValidIP($ip_parts[0]);
 		$valid_high = isValidIP($ip_parts[1]);
 		$count = 0;
-		$mode = (preg_match('/:/',$ip_parts[0]) > 0 ? ':' : '.');
+		$mode = (preg_match('/:/', $ip_parts[0]) > 0 ? ':' : '.');
 		$max = ($mode == ':' ? 'ffff' : '255');
 		$min = 0;
 		if(!$valid_low)
@@ -3861,7 +3865,7 @@ function setupMenuContext()
 			addInlineJavaScript('
 	var new_alert_title = "' . $context['forum_name'] . '";
 	var alert_timeout = ' . $timeout . ';');
-			loadJavaScriptFile('alerts.js', array(), 'smf_alerts');
+			loadJavaScriptFile('alerts.js', array(), 'sbb_alerts');
 		}
 	}
 
@@ -3909,6 +3913,11 @@ function setupMenuContext()
 						'title' => $txt['approve_members_waiting'],
 						'href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
 						'show' => !empty($context['unapproved_members']),
+					),
+					'contactform' => array(
+						'title' => $txt['contact_us'],
+						'href' => $scripturl . '?action=admin;area=contactform',
+						'show' => allowedTo('admin_forum'),
 						'is_last' => true,
 					),
 				),
@@ -4115,6 +4124,19 @@ function setupMenuContext()
 			$context['menu_buttons']['admin']['badge'] += $errors;
 			$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $errors;
 		}
+
+		$query = $smcFunc['db_query']('', '
+			SELECT COUNT(id_message)
+			FROM {db_prefix}contact_form
+			WHERE status = 0');
+		list($contactform) = $smcFunc['db_fetch_row']($query);
+		$smcFunc['db_free_result']($query);
+
+		if ($errors)
+		{
+			$context['menu_buttons']['admin']['badge'] += $contactform;
+			$context['menu_buttons']['admin']['sub_buttons']['contactform']['badge'] = $contactform;
+		}
 	}
 
 	// Show number of reported members
@@ -4147,7 +4169,7 @@ function setupMenuContext()
 /**
  * Generate a random seed and ensure it's stored in settings.
  */
-function smf_seed_generator()
+function sbb_seed_generator()
 {
 	updateSettings(array('rand_seed' => (float) microtime() * 1000000));
 }
@@ -4337,7 +4359,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 
 /**
  * Receives a string and tries to figure it out if its a method or a function.
- * If a method is found, it looks for a "#" which indicates SMF should create a new instance of the given class.
+ * If a method is found, it looks for a "#" which indicates StoryBB should create a new instance of the given class.
  * Checks the string/array for is_callable() and return false/fatal_lang_error is the given value results in a non callable string/array.
  * Prepare and returns a callable depending on the type of method/function found.
  *
@@ -4605,25 +4627,37 @@ function replaceEntities__callback($matches)
 
 	// Quote, Ampersand, Apostrophe, Less/Greater Than get html replaced
 	if (in_array($num, array(0x22, 0x26, 0x27, 0x3C, 0x3E)))
+	{
 		return '&#' . $num . ';';
-
-		// <0x20 are control characters, 0x20 is a space, > 0x10FFFF is past the end of the utf8 character set
-		// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text)
-		if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF))
-			return '';
-		// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and punctuation
-		elseif ($num < 0x80)
-			return chr($num);
-		// <0x800 (2048)
-		elseif ($num < 0x800)
-			return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
-		// < 0x10000 (65536)
-		elseif ($num < 0x10000)
-			return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
-		// <= 0x10FFFF (1114111)
-		else
-			return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
 	}
+
+	// <0x20 are control characters, 0x20 is a space, > 0x10FFFF is past the end of the utf8 character set
+	// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text)
+	if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF))
+	{
+		return '';
+	}
+	// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and punctuation
+	elseif ($num < 0x80)
+	{
+		return chr($num);
+	}
+	// <0x800 (2048)
+	elseif ($num < 0x800)
+	{
+		return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+	}
+	// < 0x10000 (65536)
+	elseif ($num < 0x10000)
+	{
+		return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+	}
+	// <= 0x10FFFF (1114111)
+	else
+	{
+		return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+	}
+}
 
 /**
  * Converts html entities to utf8 equivalents
@@ -4728,7 +4762,7 @@ function get_gravatar_url($email_address)
  * @param string $when An optional date or time for which to calculate the timezone offset values. May be a Unix timestamp or any string that strtotime() can understand. Defaults to 'now'.
  * @return array An array of timezone info.
  */
-function smf_list_timezones($when = 'now')
+function sbb_list_timezones($when = 'now')
 {
 	global $smcFunc, $modSettings;
 	static $timezones = null, $lastwhen = null;
@@ -5085,34 +5119,34 @@ function _safe_unserialize($str)
 		if($type == '}')
 			$str = substr($str, 1);
 
-		else if($type == 'N' && $str[1] == ';')
+		elseif($type == 'N' && $str[1] == ';')
 		{
 			$value = null;
 			$str = substr($str, 2);
 		}
-		else if($type == 'b' && preg_match('/^b:([01]);/', $str, $matches))
+		elseif($type == 'b' && preg_match('/^b:([01]);/', $str, $matches))
 		{
 			$value = $matches[1] == '1' ? true : false;
 			$str = substr($str, 4);
 		}
-		else if($type == 'i' && preg_match('/^i:(-?[0-9]+);(.*)/s', $str, $matches))
+		elseif($type == 'i' && preg_match('/^i:(-?[0-9]+);(.*)/s', $str, $matches))
 		{
-			$value = (int)$matches[1];
+			$value = (int) $matches[1];
 			$str = $matches[2];
 		}
-		else if($type == 'd' && preg_match('/^d:(-?[0-9]+\.?[0-9]*(E[+-][0-9]+)?);(.*)/s', $str, $matches))
+		elseif($type == 'd' && preg_match('/^d:(-?[0-9]+\.?[0-9]*(E[+-][0-9]+)?);(.*)/s', $str, $matches))
 		{
-			$value = (float)$matches[1];
+			$value = (float) $matches[1];
 			$str = $matches[3];
 		}
-		else if($type == 's' && preg_match('/^s:([0-9]+):"(.*)/s', $str, $matches) && substr($matches[2], (int)$matches[1], 2) == '";')
+		elseif($type == 's' && preg_match('/^s:([0-9]+):"(.*)/s', $str, $matches) && substr($matches[2], (int) $matches[1], 2) == '";')
 		{
-			$value = substr($matches[2], 0, (int)$matches[1]);
-			$str = substr($matches[2], (int)$matches[1] + 2);
+			$value = substr($matches[2], 0, (int) $matches[1]);
+			$str = substr($matches[2], (int) $matches[1] + 2);
 		}
-		else if($type == 'a' && preg_match('/^a:([0-9]+):{(.*)/s', $str, $matches))
+		elseif($type == 'a' && preg_match('/^a:([0-9]+):{(.*)/s', $str, $matches))
 		{
-			$expectedLength = (int)$matches[1];
+			$expectedLength = (int) $matches[1];
 			$str = $matches[2];
 		}
 
@@ -5150,7 +5184,7 @@ function _safe_unserialize($str)
 						return false;
 
 					unset($list);
-					$list = &$stack[count($stack)-1];
+					$list = &$stack[count($stack) - 1];
 					array_pop($stack);
 
 					// Go to terminal state if we're at the end of the root array.
@@ -5237,7 +5271,7 @@ function safe_unserialize($str)
  * @param int $value Not needed, added for legacy reasons.
  * @return boolean  true if the file/dir is already writable or the function was able to make it writable, false if the function couldn't make the file/dir writable.
  */
-function smf_chmod($file, $value = 0)
+function sbb_chmod($file, $value = 0)
 {
 	// No file? no checks!
 	if (empty($file))
@@ -5274,11 +5308,11 @@ function smf_chmod($file, $value = 0)
  * Wrapper function for json_decode() with error handling.
 
  * @param string $json The string to decode.
- * @param bool $returnAsArray To return the decoded string as an array or an object, SMF only uses Arrays but to keep on compatibility with json_decode its set to false as default.
+ * @param bool $returnAsArray To return the decoded string as an array or an object, StoryBB only uses Arrays but to keep on compatibility with json_decode its set to false as default.
  * @param bool $logIt To specify if the error will be logged if theres any.
  * @return array Either an empty array or the decoded data as an array.
  */
-function smf_json_decode($json, $returnAsArray = false, $logIt = true)
+function sbb_json_decode($json, $returnAsArray = false, $logIt = true)
 {
 	global $txt;
 
@@ -5295,7 +5329,7 @@ function smf_json_decode($json, $returnAsArray = false, $logIt = true)
 			$jsonError = false;
 			break;
 		case JSON_ERROR_DEPTH:
-			$jsonError =  'JSON_ERROR_DEPTH';
+			$jsonError = 'JSON_ERROR_DEPTH';
 			break;
 		case JSON_ERROR_STATE_MISMATCH:
 			$jsonError = 'JSON_ERROR_STATE_MISMATCH';
@@ -5317,7 +5351,7 @@ function smf_json_decode($json, $returnAsArray = false, $logIt = true)
 	// Something went wrong!
 	if (!empty($jsonError) && $logIt)
 	{
-		// Being a wrapper means we lost our smf_error_handler() privileges :(
+		// Being a wrapper means we lost our sbb_error_handler() privileges :(
 		$jsonDebug = debug_backtrace();
 		$jsonDebug = $jsonDebug[0];
 		loadLanguage('Errors');
@@ -5355,7 +5389,7 @@ function isValidIP($IPString)
  * @param string $type The content type. Defaults to Json.
  * @return void
  */
-function smf_serverResponse($data = '', $type = 'Content-Type: application/json')
+function sbb_serverResponse($data = '', $type = 'Content-Type: application/json')
 {
 	global $db_show_debug, $modSettings;
 
@@ -5386,8 +5420,8 @@ function smf_serverResponse($data = '', $type = 'Content-Type: application/json'
  * Returns true if a cert was found & false if not.
  * @param string $url to check, in $boardurl format (no trailing slash).
  */
- function ssl_cert_found($url) {
-
+function ssl_cert_found($url)
+{
 	// First, strip the subfolder from the passed url, if any
 	$parsedurl = parse_url($url);
 	$url = 'ssl://' . $parsedurl['host'] . ':443'; 
@@ -5407,28 +5441,34 @@ function smf_serverResponse($data = '', $type = 'Content-Type: application/json'
  * Check if the passed url has a redirect to https:// by querying headers.
  *
  * Returns true if a redirect was found & false if not.
- * Note that when force_ssl = 2, SMF issues its own redirect...  So if this
- * returns true, it may be caused by SMF, not necessarily an .htaccess redirect.
+ * Note that when force_ssl = 2, StoryBB issues its own redirect...  So if this
+ * returns true, it may be caused by StoryBB, not necessarily an .htaccess redirect.
  * @param string $url to check, in $boardurl format (no trailing slash).
  */
-function https_redirect_active($url) {
-
+function https_redirect_active($url)
+{
 	// Ask for the headers for the passed url, but via http...
 	// Need to add the trailing slash, or it puts it there & thinks there's a redirect when there isn't...
 	$url = str_ireplace('https://', 'http://', $url) . '/';
 	$headers = @get_headers($url);
 	if ($headers === false)
+	{
 		return false;
+	}
 
 	// Now to see if it came back https...
 	// First check for a redirect status code in first row (301, 302, 307)
 	if (strstr($headers[0], '301') === false && strstr($headers[0], '302') === false && strstr($headers[0], '307') === false)
+	{
 		return false;
+	}
 
 	// Search for the location entry to confirm https
 	$result = false;
-	foreach ($headers as $header) {
-		if (stristr($header, 'Location: https://') !== false) {
+	foreach ($headers as $header)
+	{
+		if (stristr($header, 'Location: https://') !== false)
+		{
 			$result = true;
 			break;
 		}

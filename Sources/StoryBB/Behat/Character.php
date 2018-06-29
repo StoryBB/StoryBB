@@ -29,33 +29,35 @@ use Behat\MinkExtension\Context\RawMinkContext;
  */
 class Character extends RawMinkContext implements Context
 {
-    /**
-     * @When I switch character to :character
-     */
-    public function iSwitchCharacterTo($character)
-    {
-    	// So we need to go to the profile page. We (probably) don't have JavaScript.
-        $this->visitPath('index.php?action=profile');
+	/**
+	 * @When I switch character to :character
+	 * @param string $character A character name to switch to
+	 * @throws ElementNotFoundException if the switch-character link couldn't be found
+	 */
+	public function iSwitchCharacterTo($character)
+	{
+		// So we need to go to the profile page. We (probably) don't have JavaScript.
+		$this->visitPath('index.php?action=profile');
 
-        // Now to find the menu of all the characters.
-        $page = $this->getSession()->getPage();
-        $links_to_characters = $page->findAll('xpath', "//div[@id='main_content_section']//div[contains(@class, 'generic_menu')]//*[a='Characters']/ul/li[@class='subsections']/a");
-        file_put_contents($GLOBALS['boarddir'] . '/dump.txt', print_r($links_to_characters, true));
-        if (empty($links_to_characters))
-        {
-        	throw new ElementNotFoundException($this->getSession(), 'css', null, 'any links to characters');
-        }
-        foreach ($links_to_characters as $link)
-        {
-        	if ($character_link = $link->find('named', ['content', $character]))
-        	{
-        		$character_link->click();
-        		$page = $this->getSession()->getPage();
-        		$switch_link = $page->find('named', ['link', 'Switch to this character']);
-        		$switch_link->click();
-        		return;
-        	}
-        }
-        throw new ElementNotFoundException($this->getSession(), 'link', null, $character);
-    }
+		// Now to find the menu of all the characters.
+		$page = $this->getSession()->getPage();
+		$links_to_characters = $page->findAll('xpath', "//div[@id='main_content_section']//div[contains(@class, 'generic_menu')]//*[a='Characters']/ul/li[@class='subsections']/a");
+		file_put_contents($GLOBALS['boarddir'] . '/dump.txt', print_r($links_to_characters, true));
+		if (empty($links_to_characters))
+		{
+			throw new ElementNotFoundException($this->getSession(), 'css', null, 'any links to characters');
+		}
+		foreach ($links_to_characters as $link)
+		{
+			if ($character_link = $link->find('named', ['content', $character]))
+			{
+				$character_link->click();
+				$page = $this->getSession()->getPage();
+				$switch_link = $page->find('named', ['link', 'Switch to this character']);
+				$switch_link->click();
+				return;
+			}
+		}
+		throw new ElementNotFoundException($this->getSession(), 'link', null, $character);
+	}
 }

@@ -32,8 +32,8 @@
 				<p class="centertext"><input type="submit" value="{{txt.login}}" class="button_submit"></p>
 				<p class="centertext smalltext"><a href="{{scripturl}}?action=reminder">{{txt.forgot_your_password}}</a></p>
 			</div>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-			<input type="hidden" name="{{context.login_token_var}}" value="{{context.login_token}}">
+			{{session_form}}
+			{{token_form 'login'}}
 			<input type="hidden" name="hash_passwrd" value="">
 		</div>
 	</form>

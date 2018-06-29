@@ -70,7 +70,6 @@ function cleanRequest()
 		$_SERVER['QUERY_STRING'] = substr($_SERVER['QUERY_STRING'], 0, 5) === 'url=/' ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
 
 		// Replace ';' with '&' and '&something&' with '&something=&'.  (this is done for compatibility...)
-		// @todo smflib
 		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
 	}
 	elseif (strpos(ini_get('arg_separator.input'), ';') !== false)
@@ -109,7 +108,6 @@ function cleanRequest()
 		else
 			$request = $_SERVER['REQUEST_URI'];
 
-		// @todo smflib.
 		// Replace 'index.php/a,b,c/d/e,f' with 'a=b,c&d=&e=f' and parse it into $_GET.
 		if (strpos($request, basename($scripturl) . '/') !== false)
 		{
@@ -388,7 +386,7 @@ function expandIPv6($addr, $strict_check = true)
 		$part[1] = explode(':', $part[1]);
 		$missing = array();
 
-		for ($i = 0; $i < (8 - (count($part[0]) + count($part[1]))); $i++)
+		for ($i = 0, $n = (8 - (count($part[0]) + count($part[1]))); $i < $n; $i++)
 			array_push($missing, '0000');
 
 		$part = array_merge($part[0], $missing, $part[1]);
@@ -427,8 +425,8 @@ function expandIPv6($addr, $strict_check = true)
 */
 function matchIPtoCIDR($ip_address, $cidr_address)
 {
-    list ($cidr_network, $cidr_subnetmask) = preg_split('/', $cidr_address);
-    return (ip2long($ip_address) & (~((1 << (32 - $cidr_subnetmask)) - 1))) == ip2long($cidr_network);
+	list ($cidr_network, $cidr_subnetmask) = preg_split('/', $cidr_address);
+	return (ip2long($ip_address) & (~((1 << (32 - $cidr_subnetmask)) - 1))) == ip2long($cidr_network);
 }
 
 /**
@@ -636,7 +634,6 @@ function ob_sessrewrite($buffer)
 		return $buffer;
 
 	// Do nothing if the session is cookied, or they are a crawler - guests are caught by redirectexit().
-	// @todo smflib
 	if (empty($_COOKIE) && SID != '' && !isBrowser('possibly_robot'))
 		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', '"' . $scripturl . '?' . SID . '&amp;', $buffer);
 	// Debugging templates, are we?

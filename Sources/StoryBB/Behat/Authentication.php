@@ -23,37 +23,40 @@ use Behat\MinkExtension\Context\RawMinkContext;
  */
 class Authentication extends RawMinkContext implements Context
 {
-    /**
-     * @When I log in as :user
-     */
-    public function iLogInAs(string $user)
-    {
-        $this->visitPath('index.php?action=login');
-        $page = $this->getSession()->getPage();
-        $page->fillField('user', $user);
-        $page->fillField('passwrd', 'password');
-        $page->pressButton('Login');
-    }
+	/**
+	 * Log in as a user
+	 * @When I log in as :user
+	 * @param string $user The username to log in as.
+	 */
+	public function iLogInAs(string $user)
+	{
+		$this->visitPath('index.php?action=login');
+		$page = $this->getSession()->getPage();
+		$page->fillField('user', $user);
+		$page->fillField('passwrd', 'password');
+		$page->pressButton('Login');
+	}
 
-    /**
-     * @When I log out
-     */
-    public function iLogOut()
-    {
-        $page = $this->getSession()->getPage();
-        $main_menu = $page->find('css', '#main_menu');
-        if (!$main_menu)
-        {
-            $exception_msg = 'Main menu (#main_menu) could not be found in the page';
-            throw new ElementNotFoundException($this->getSession(), 'css', null, $exception_msg);
-        }
-        $link = $main_menu->findLink('Logout');
-        if (!$link)
-        {
-            $exception_msg = 'Logout link in the main menu was not found';
-            throw new ElementNotFoundException($this->getSession(), 'link', null, $exception_msg);
-        }
-        $link->click();
-        $this->getSession()->reset();
-    }
+	/**
+	 * Log out as a user
+	 * @When I log out
+	 */
+	public function iLogOut()
+	{
+		$page = $this->getSession()->getPage();
+		$main_menu = $page->find('css', '#main_menu');
+		if (!$main_menu)
+		{
+			$exception_msg = 'Main menu (#main_menu) could not be found in the page';
+			throw new ElementNotFoundException($this->getSession(), 'css', null, $exception_msg);
+		}
+		$link = $main_menu->findLink('Logout');
+		if (!$link)
+		{
+			$exception_msg = 'Logout link in the main menu was not found';
+			throw new ElementNotFoundException($this->getSession(), 'link', null, $exception_msg);
+		}
+		$link->click();
+		$this->getSession()->reset();
+	}
 }

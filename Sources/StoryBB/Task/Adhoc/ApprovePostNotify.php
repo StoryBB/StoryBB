@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains background notification code for any create post action
+ * Notify moderators that a post needs to be approved.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -17,7 +17,7 @@ namespace StoryBB\Task\Adhoc;
 class ApprovePostNotify extends \StoryBB\Task\Adhoc
 {
 	/**
-     * This executes the task - loads up the info, puts the email in the queue and inserts any alerts as needed.
+	 * This executes the task - loads up the info, puts the email in the queue and inserts any alerts as needed.
 	 * @return bool Always returns true
 	 */
 	public function execute()

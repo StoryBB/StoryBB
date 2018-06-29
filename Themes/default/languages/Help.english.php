@@ -358,9 +358,8 @@ $helptxt['customoptions'] = 'This defines the options that a user may choose fro
 		<li><strong>Reordering Options:</strong> You can reorder the options by moving text around between the boxes. However - an important note - you must make sure you do <strong>not</strong> change the text when reordering options as otherwise user data will be lost.</li>
 	</ul>';
 
-$helptxt['autoFixDatabase'] = 'This will automatically fix broken tables and resume as if nothing happened. This can be useful, because the only way to fix it is to REPAIR the table, and this way your forum won\'t be down until you notice. It does email you when this happens.';
 $helptxt['pgFulltextSearch'] = 'This setting defines the language to use for PostgreSQL\'s fulltext search. Choose the language that most closely matches the language your forum actually uses. If your forum\'s language is not listed, or if your forum is multi-lingual, choose the "simple" option. <br>
-This setting is independent of your main SMF language settings and not related to the installed language for SMF. <br>
+This setting is independent of your main StoryBB language settings and not related to the installed language for StoryBB. <br>
 When you change this setting you need to [url=' . $scripturl . '?action=admin;area=managesearch;sa=method]rebuild the fulltext search index[/url].<br>
 If a language you need is not listed, ask your database admin to install PostgreSQL language support for that language.';
 
@@ -427,8 +426,6 @@ $helptxt['coppaPost'] = 'The contact boxes are required so that forms granting p
 $helptxt['allow_hideOnline'] = 'With this setting enabled all members will be able to hide their online status from other users (except administrators). If disabled, only users who can moderate the forum can hide their presence. Note that disabling this setting will not change any existing member\'s status - it just stops them from hiding themselves in the future.';
 $helptxt['meta_keywords'] = 'These keywords are sent in the output of every page to indicate to search engines (etc) the key content of your site. They should be a comma separated list of words, and should not use HTML.';
 
-$helptxt['latest_themes'] = 'This area shows a few of the latest and most popular themes from <a href="https://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>. It may not show up properly if your computer can\'t find <a href="https://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>, though.';
-
 $helptxt['secret_why_blank'] = 'For your security, your password and the answer to your secret question are encrypted so that the StoryBB software will never tell you, or anyone else, what they are.';
 $helptxt['moderator_why_missing'] = 'Since moderation is done on a board-by-board basis, you have to make members moderators from the <a href="%1$s?action=admin;area=manageboards" target="_blank" class="new_win">board management interface</a>.';
 
@@ -446,6 +443,16 @@ $helptxt['membergroups'] = 'In StoryBB there are two types of groups that your m
 		<li><strong>Regular Groups:</strong> A regular group is a group which members are not automatically placed. To assign a member to be in a group simply go to their profile and click &quot;Account Settings&quot;. From here you can assign them any number of regular groups to which they will be part.</li>
 		<li><strong>Post Groups:</strong> Unlike regular groups post based groups cannot be assigned. Instead, members are automatically assigned to a post based group when they reach the minimum number of posts required to be in that group.</li>
 	</ul>';
+
+$helptxt['membergroup_badge'] = 'When people post, either in their account or their characters, it\'s possible to display an icon, or group of icons, next to their avatar as a visual guide as to special things on their account. For example, administrators usually have an icon by their avatar to show people that they are administrators. Moderators usually have something similar, too.<br>
+<br>
+Sometimes you just want a single interesting bagde to show, other times you might want to show 5 of the same icons like stars or pips to show off what rank someone is. Either way, here is where you set the number of times the badge should be shown for this group, and what badge to show.<br>
+<br>
+You can always add new icons to this by uploading the images into the Themes/default/images/membericons/ folder as .gif, .jpg or .png files and they will show up in this list. You can also have different images in different themes - just name the file with the same name and put it in the images/membericons/ folder of your theme.<br>
+<br>
+Of course, you don\'t have to have a badge - just untick the box and no badge will be shown for people in this group.<br>
+<br>
+For best results, images should probably be no larger than 150 pixels wide and 100 pixels high.';
 
 $helptxt['maintenance_backup'] = 'This area allows you to save a copy of all the posts, settings, members, and other information in your forum to a very large file.<br><br>It is recommended that you do this often, perhaps weekly, for safety and security.';
 $helptxt['maintenance_rot'] = 'This allows you to <strong>completely</strong> and <strong>irrevocably</strong> remove old topics. It is recommended that you try to make a backup first, just in case you remove something you didn\'t mean to.<br><br><strong>Use this setting with care.</strong>';

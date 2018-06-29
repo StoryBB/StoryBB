@@ -6,7 +6,7 @@
 			rotSwap = !rotSwap;
 
 			// Toggle icon
-			document.getElementById("rotIcon").src = smf_images_url + (rotSwap ? "/selected_open.png" : "/selected.png");
+			document.getElementById("rotIcon").src = sbb_images_url + (rotSwap ? "/selected_open.png" : "/selected.png");
 			setInnerHTML(document.getElementById("rotText"), rotSwap ? {{{json txt.maintain_old_choose}}} : {{{json txt.maintain_old_all}}});
 
 			// Toggle panel
@@ -70,7 +70,7 @@
 					</div>
 					<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_old_confirm}}}" class="button_submit you_sure">
 					{{session_form}}
-					{{token_form admin-maint}}
+					{{token_form 'admin-maint'}}
 				</form>
 			</div>
 		</div>
@@ -84,7 +84,7 @@
 				<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_old_drafts_confirm}}}" class="button_submit you_sure">
 
 				{{session_form}}
-				{{token_form admin-maint}}
+				{{token_form 'admin-maint'}}
 			</form>
 		</div>
 		<div class="cat_bar">
@@ -125,7 +125,7 @@
 				</p>
 				<input type="submit" value="{{{txt.move_topics_now}}}" onclick="if (document.getElementById('id_board_from').options[document.getElementById('id_board_from').selectedIndex].disabled || document.getElementById('id_board_from').options[document.getElementById('id_board_to').selectedIndex].disabled) return false; var confirmText = '{{{txt.move_topics_confirm}}}'; return confirm(confirmText.replace(/%board_from%/, document.getElementById('id_board_from').options[document.getElementById('id_board_from').selectedIndex].text.replace(/^=+&gt;&nbsp;/, '')).replace(/%board_to%/, document.getElementById('id_board_to').options[document.getElementById('id_board_to').selectedIndex].text.replace(/^=+&gt;&nbsp;/, '')));" class="button_submit">
 				{{session_form}}
-				{{token_form admin-maint}}
+				{{token_form 'admin-maint'}}
 			</form>
 		</div>
 	</div>

@@ -69,7 +69,7 @@ function DisplayStats()
 
 	loadLanguage('Stats');
 	$context['sub_template'] = 'stats_main';
-	loadJavaScriptFile('stats.js', array('default_theme' => true, 'defer' => false), 'smf_stats');
+	loadJavaScriptFile('stats.js', array('default_theme' => true, 'defer' => false), 'sbb_stats');
 
 	// Build the link tree......
 	$context['linktree'][] = array(
@@ -704,7 +704,7 @@ function DisplayStats()
 	getDailyStats(implode(' OR ', $condition_text), $condition_params);
 
 	// Custom stats (just add a template_layer to add it to the template!)
- 	call_integration_hook('integrate_forum_stats');
+	call_integration_hook('integrate_forum_stats');
 }
 
 /**

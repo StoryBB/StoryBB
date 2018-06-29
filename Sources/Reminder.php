@@ -26,8 +26,8 @@ function RemindMe()
 	$subActions = array(
 		'picktype' => 'RemindPick',
 		'secret2' => 'SecretAnswer2',
-		'setpassword' =>'setPassword',
-		'setpassword2' =>'setPassword2'
+		'setpassword' => 'setPassword',
+		'setpassword2' => 'setPassword2'
 	);
 
 	// Any subaction?  If none, fall through to the main template, which will ask for one.
@@ -183,7 +183,7 @@ function setPassword()
 		'memID' => (int) $_REQUEST['u']
 	);
 
-	loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
+	loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
 
 	// Tokens!
 	createToken('remind-sp');
@@ -316,7 +316,7 @@ function SecretAnswerInput()
 
 	$context['sub_template'] = 'reminder_ask_question';
 	createToken('remind-sai');
-	loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
+	loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
 }
 
 /**

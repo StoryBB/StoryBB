@@ -12,8 +12,15 @@
 
 namespace StoryBB\Template\Helper;
 
+/**
+ * This class provides text/string helpers for StoryBB's templates.
+ */
 class Text
 {
+	/**
+	 * List the different helpers available in this class.
+	 * @return array Helpers, assocating name to method
+	 */
 	public static function _list()
 	{
 		return ([
@@ -32,11 +39,12 @@ class Text
 	 * @param array $key An array of items to implode and treat as key to $txt
 	 * @return string The final string in $txt
 	 */
-	public static function get_text(...$key) {
+	public static function get_text(...$key)
+	{
 		global $txt;
 		if (is_array($key)) {
 			array_pop($key);
-		    $key = implode('', $key);
+			$key = implode('', $key);
 		}
 		return isset($txt[$key]) ? $txt[$key] : $key;
 	}
@@ -50,7 +58,8 @@ class Text
 	 * @param array $args A list of arguments to insert into the sprintf call
 	 * @return string The string, sprintf'd
 	 */
-	public static function textTemplate($template, ...$args) {
+	public static function textTemplate($template, ...$args)
+	{
 		array_pop($args);
 		return new \LightnCandy\SafeString(sprintf($template, ...$args));
 	}
@@ -69,6 +78,11 @@ class Text
 		return implode('', $items);
 	}
 
+	/**
+	 * Export a given string with extra escaping for JavaScript purposes
+	 * @param string $string The string to be output
+	 * @return string Escaped string including escaping certain HTML elements broken up
+	 */
 	public static function jsEscape($string)
 	{
 		global $scripturl;
@@ -87,7 +101,14 @@ class Text
 		)) . '\'';
 	}
 
-	public static function repeat($string, $amount) {
+	/**
+	 * Repeats a string multiple times, for template purposes
+	 * @param string $string String to be repeated
+	 * @param int $amount Number of times to repeat the string
+	 * @return string The final string of repetitions
+	 */
+	public static function repeat($string, $amount)
+	{
 		return $amount == 0 ? '' : new \LightnCandy\SafeString(str_repeat($string, $amount));
 	}
 }

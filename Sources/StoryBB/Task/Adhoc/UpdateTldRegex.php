@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file initiates updates of $modSettings['tld_regex']
+ * This file initiates updates of the master list of known TLDs for link recognition.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,18 +12,20 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use StoryBB\Helper\TLD;
+
 /**
- * Calls the existing functionality for TLD management, just makes it available as an adhoc task.
+ * This file initiates updates of the master list of known TLDs for link recognition.
  */
 class UpdateTldRegex extends \StoryBB\Task\Adhoc
 {
-    /**
-     * This executes the task. It just calls set_tld_regex helper.
-     * @return bool Always returns true
-     */
+	/**
+	 * This executes the task. It just calls set_tld_regex helper.
+	 * @return bool Always returns true
+	 */
 	public function execute()
- 	{
-		StoryBB\Helper\TLD::set_tld_regex(true);
+	{
+		TLD::set_tld_regex(true);
 
 		return true;
 	}

@@ -378,6 +378,47 @@ CREATE TABLE {$db_prefix}character_sheet_versions (
   INDEX idx_id_character_id_approver (id_character, id_approver)
 ) ENGINE={$engine};
 
+#
+# Sequence for table `contact_form`
+#
+
+CREATE SEQUENCE {$db_prefix}contact_form_seq;
+
+#
+# Table structure for table `contact_form`
+#
+
+CREATE TABLE {$db_prefix}contact_form (
+  id_message INT DEFAULT NEXTVAL('{$db_prefix}contact_form_seq'),
+  id_member INT NOT NULL DEFAULT '0',
+  contact_name VARCHAR(255) NOT NULL DEFAULT '',
+  contact_email VARCHAR(255) NOT NULL DEFAULT '',
+  subject VARCHAR(255) NOT NULL DEFAULT '',
+  message TEXT NOT NULL,
+  time_received INT NOT NULL DEFAULT '0',
+  status TINYINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_message)
+);
+
+#
+# Sequence for table `contact_form_response`
+#
+
+CREATE TABLE {$db_prefix}contact_form_response_seq;
+
+#
+# Table structure for table `contact_form_response`
+#
+
+CREATE TABLE {$db_prefix}contact_form_response (
+  id_response INT DEFAULT NEXTVAL('{$db_prefix}contact_form_response_seq'),
+  id_message INT NOT NULL DEFAULT '0',
+  id_member INT NOT NULL DEFAULT '0',
+  response TEXT NOT NULL,
+  time_sent INT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_response),
+  INDEX idx_id_message (id_message)
+);
 
 #
 # Sequence for table `custom_fields`
@@ -1052,7 +1093,6 @@ CREATE TABLE {$db_prefix}members (
   validation_code varchar(10) NOT NULL default '',
   id_msg_last_visit int NOT NULL default '0',
   additional_groups varchar(255) NOT NULL DEFAULT '',
-  smiley_set varchar(48) NOT NULL default '',
   id_post_group smallint NOT NULL default '0',
   total_time_logged_in bigint NOT NULL default '0',
   password_salt varchar(255) NOT NULL default '',
@@ -1154,6 +1194,7 @@ CREATE TABLE {$db_prefix}messages (
   id_topic int NOT NULL default '0',
   id_board smallint NOT NULL default '0',
   poster_time bigint NOT NULL default '0',
+  id_creator int NOT NULL default '0',
   id_member int NOT NULL default '0',
   id_character int NOT NULL default '0',
   id_msg_modified int NOT NULL default '0',
@@ -1660,6 +1701,31 @@ CREATE TABLE {$db_prefix}user_drafts (
 #
 
 CREATE UNIQUE INDEX {$db_prefix}user_drafts_id_member ON {$db_prefix}user_drafts (id_member, id_draft, type);
+
+#
+# Sequence for table `user_exports`
+#
+
+CREATE SEQUENCE {$db_prefix}user_exports_seq;
+
+#
+# Table structure for table `user_exports`
+#
+
+CREATE TABLE {$db_prefix}user_exports (
+  id_export bigint default nextval('{$db_prefix}user_exports_seq'),
+  id_attach INT NOT NULL DEFAULT '0',
+  id_member INT NOT NULL DEFAULT '0',
+  id_requester INT NOT NULL DEFAULT '0',
+  requested_on INT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_export)
+);
+
+#
+# Indexes for table `user_exports`
+#
+
+CREATE INDEX {$db_prefix}user_exports_member ON {$db_prefix}user_exports (id_member);
 
 #
 # Table structure for table `user_likes`
@@ -2177,13 +2243,14 @@ VALUES
   (3, 0, 60, 1, 'd', 0, 'daily_maintenance', ''),
   (5, 0, 0, 1, 'd', 0, 'daily_digest', ''),
   (6, 0, 0, 1, 'w', 0, 'weekly_digest', ''),
-  (7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchSMfiles', ''),
+  (7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchStoryBBfiles', ''),
   (8, 0, 0, 1, 'd', 1, 'birthdayemails', ''),
   (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', ''),
   (10, 0, 120, 1, 'd', 1, 'paid_subscriptions', ''),
   (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', ''),
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', ''),
-  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', '');
+  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', ''),
+  (14, 0, 300, 1, 'd', 0, 'clean_exports', '');
 
 # --------------------------------------------------------
 
@@ -2193,7 +2260,7 @@ VALUES
 
 INSERT INTO {$db_prefix}settings
   (variable, value)
-VALUES ('smfVersion', '{$smf_version}'),
+VALUES ('sbbVersion', '{$sbb_version}'),
   ('news', '{$default_news}'),
   ('todayMod', '1'),
   ('pollMode', '1'),
@@ -2267,7 +2334,6 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('oldTopicDays', '120'),
   ('edit_wait_time', '90'),
   ('edit_disable_time', '0'),
-  ('autoFixDatabase', '1'),
   ('allow_guestAccess', '1'),
   ('time_format', '{$default_time_format}'),
   ('number_format', '1234.00'),
@@ -2288,9 +2354,6 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('time_offset', '0'),
   ('cookieTime', '60'),
   ('lastActive', '15'),
-  ('smiley_sets_known', 'default,aaron,akyhne,fugue'),
-  ('smiley_sets_names', '{$default_smileyset_name}\n{$default_aaron_smileyset_name}\n{$default_akyhne_smileyset_name}\n{$default_fugue_smileyset_name}'),
-  ('smiley_sets_default', 'default'),
   ('cal_days_for_index', '7'),
   ('requireAgreement', '1'),
   ('unapprovedMembers', '0'),

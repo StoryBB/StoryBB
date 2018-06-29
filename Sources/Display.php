@@ -2,7 +2,7 @@
 
 /**
  * This is perhaps the most important and probably most accessed file in all
- * of SMF.  This file controls topic, message, and attachment display.
+ * of StoryBB.  This file controls topic, message, and attachment display.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -1254,20 +1254,20 @@ function Display()
 
 	// Load the drafts js file
 	if ($context['drafts_autosave'])
-		loadJavaScriptFile('drafts.js', array('defer' => false), 'smf_drafts');
+		loadJavaScriptFile('drafts.js', array('defer' => false), 'sbb_drafts');
 
 	// topic.js
-	loadJavaScriptFile('topic.js', array('defer' => false), 'smf_topic');
+	loadJavaScriptFile('topic.js', array('defer' => false), 'sbb_topic');
 
 	// quotedText.js
-	loadJavaScriptFile('quotedText.js', array('defer' => true), 'smf_quotedText');
+	loadJavaScriptFile('quotedText.js', array('defer' => true), 'sbb_quotedText');
 
 	// Mentions
 	if (!empty($modSettings['enable_mentions']) && allowedTo('mention'))
 	{
-		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'smf_atwho');
-		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'smf_caret');
-		loadJavaScriptFile('mentions.js', array('defer' => true), 'smf_mentions');
+		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'sbb_atwho');
+		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'sbb_caret');
+		loadJavaScriptFile('mentions.js', array('defer' => true), 'sbb_mentions');
 	}
 
 	// Some convenient template setup.
@@ -1291,10 +1291,7 @@ function Display()
 	$context['viewing'] = '';
 	if (!empty($settings['display_who_viewing']))
 	{
-		$context['viewing'] = $settings['display_who_viewing'] == 1 ? 
-				count($context['view_members']) . ' ' . count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members']
-			:
-				empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
+		$context['viewing'] = $settings['display_who_viewing'] == 1 ? count($context['view_members']) . ' ' . count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members'] : empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
 	}
 	$context['messages'] = [];
 	$context['ignoredMsgs'] = [];

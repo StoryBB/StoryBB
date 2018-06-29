@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains background notification code
+ * Send people a notification wishing them a happy birthday.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -13,16 +13,16 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class Birthday_Notify_Background
+ * Send people a notification wishing them a happy birthday.
  */
 class BirthdayNotify extends \StoryBB\Task\Adhoc
 {
-    /**
-     * This executes the task. It loads up the birthdays, figures out the greeting, etc.
-     * @return bool Always returns true
-     */
+	/**
+	 * This executes the task. It loads up the birthdays, figures out the greeting, etc.
+	 * @return bool Always returns true
+	 */
 	public function execute()
- 	{
+	{
 		global $txt, $smcFunc, $txtBirthdayEmails, $language, $modSettings, $sourcedir;
 
 		$greeting = isset($modSettings['birthday_email']) ? $modSettings['birthday_email'] : 'happy_birthday';

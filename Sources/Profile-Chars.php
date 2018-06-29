@@ -1103,8 +1103,14 @@ function char_stats()
 	$context['sub_template'] = 'profile_character_stats';
 
 	StoryBB\Template::add_helper([
-		'inverted_percent' => function($pc) { return 100 - $pc; },
-		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
+		'inverted_percent' => function($pc)
+		{
+			return 100 - $pc;
+		},
+		'pie_percent' => function($pc)
+		{
+			return round($pc / 5) * 20;
+		},
 	]);
 
 	// Is the load average too high to allow searching just now?
@@ -1979,7 +1985,7 @@ function char_merge_account($memID)
 	if ($user_profile[$memID]['id_group'] == 1 || in_array('1', explode(',', $user_profile[$memID]['additional_groups'])))
 		fatal_lang_error('cannot_merge_admin', false);
 
-	loadJavascriptFile('suggest.js', array('default_theme' => true, 'defer' => false), 'smf_suggest');
+	loadJavascriptFile('suggest.js', array('default_theme' => true, 'defer' => false), 'sbb_suggest');
 	$context['page_title'] = $txt['merge_char_account'];
 	$context['sub_template'] = 'profile_merge_account';
 
@@ -2193,7 +2199,7 @@ function char_move_account()
 	if ($context['character']['is_main'])
 		fatal_lang_error('cannot_move_main', false);
 
-	loadJavascriptFile('suggest.js', ['default_theme' => true, 'defer' => false], 'smf_suggest');
+	loadJavascriptFile('suggest.js', ['default_theme' => true, 'defer' => false], 'sbb_suggest');
 	$context['page_title'] = $txt['move_char_account'];
 	$context['sub_template'] = 'profile_character_move_account';
 

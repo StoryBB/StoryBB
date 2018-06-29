@@ -12,6 +12,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Alert;
+
 /**
  * This defines every profile field known to man.
  *
@@ -294,7 +296,7 @@ function loadProfileFields($force_reload = false)
 						validateUsername($context['id_member'], trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $value)));
 						updateMemberData($context['id_member'], array('member_name' => $value));
 
-						// Call this here so any integrated systems will know about the name change (resetPassword() takes care of this if we're letting SMF generate the password)
+						// Call this here so any integrated systems will know about the name change (resetPassword() takes care of this if we're letting StoryBB generate the password)
 						call_integration_hook('integrate_reset_pass', array($cur_profile['member_name'], $value, $_POST['passwrd1']));
 					}
 				}
@@ -438,39 +440,6 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_identity',
 			'enabled' => !empty($modSettings['allow_hideOnline']) || allowedTo('moderate_forum'),
 		),
-		'smiley_set' => array(
-			'type' => 'callback',
-			'callback_func' => 'smiley_pick',
-			'enabled' => !empty($modSettings['smiley_sets_enable']),
-			'permission' => 'profile_extra',
-			'preload' => function() use ($modSettings, &$context, $txt, $cur_profile, $smcFunc)
-			{
-				$context['member']['smiley_set']['id'] = empty($cur_profile['smiley_set']) ? '' : $cur_profile['smiley_set'];
-				$context['smiley_sets'] = explode(',', 'none,,' . $modSettings['smiley_sets_known']);
-				$set_names = explode("\n", $txt['smileys_none'] . "\n" . $txt['smileys_forum_board_default'] . "\n" . $modSettings['smiley_sets_names']);
-				foreach ($context['smiley_sets'] as $i => $set)
-				{
-					$context['smiley_sets'][$i] = array(
-						'id' => $smcFunc['htmlspecialchars']($set),
-						'name' => $smcFunc['htmlspecialchars']($set_names[$i]),
-						'selected' => $set == $context['member']['smiley_set']['id']
-					);
-
-					if ($context['smiley_sets'][$i]['selected'])
-						$context['member']['smiley_set']['name'] = $set_names[$i];
-				}
-				return true;
-			},
-			'input_validate' => function(&$value)
-			{
-				global $modSettings;
-
-				$smiley_sets = explode(',', $modSettings['smiley_sets_known']);
-				if (!in_array($value, $smiley_sets) && $value != 'none')
-					$value = '';
-				return true;
-			},
-		),
 		// Pretty much a dummy entry - it populates all the theme settings.
 		'theme_settings' => array(
 			'type' => 'callback',
@@ -525,12 +494,12 @@ function loadProfileFields($force_reload = false)
 		),
 		'timezone' => array(
 			'type' => 'select',
-			'options' => smf_list_timezones(),
+			'options' => sbb_list_timezones(),
 			'permission' => 'profile_extra',
 			'label' => $txt['timezone'],
 			'input_validate' => function($value)
 			{
-				$tz = smf_list_timezones();
+				$tz = sbb_list_timezones();
 				if (!isset($tz[$value]))
 					return 'bad_timezone';
 
@@ -953,7 +922,6 @@ function makeThemeChanges($memID, $id_theme)
 		'default_template',
 		'images_url',
 		'number_recent_posts',
-		'smiley_sets_default',
 		'theme_dir',
 		'theme_id',
 		'theme_url',
@@ -1308,7 +1276,7 @@ function editBuddyIgnoreLists($memID)
 		),
 	);
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 
 	// Pass on to the actual function.
 	$context['sub_template'] = $subActions[$context['list_area']][0];
@@ -1782,7 +1750,6 @@ function theme($memID)
 
 	setupProfileContext(
 		array(
-			'smiley_set', 'hr',
 			'time_format', 'timezone',
 			'theme_settings',
 		)
@@ -1799,7 +1766,7 @@ function notification($memID)
 	global $txt, $context;
 
 	// Going to want this for consistency.
-	loadCSSFile('admin.css', array(), 'smf_admin');
+	loadCSSFile('admin.css', array(), 'sbb_admin');
 
 	// This is just a bootstrap for everything else.
 	$sa = array(
@@ -1842,7 +1809,7 @@ function alert_configuration($memID)
 
 	// What options are set
 	loadThemeOptions($memID);
-	loadJavaScriptFile('alertSettings.js', array(), 'smf_alertSettings');
+	loadJavaScriptFile('alertSettings.js', array(), 'sbb_alertSettings');
 
 	// Now load all the values for this user.
 	require_once($sourcedir . '/Subs-Notify.php');
@@ -2167,30 +2134,7 @@ function alert_markread($memID)
  */
 function alert_mark($memID, $toMark, $read = 0)
 {
-	global $smcFunc;
-
-	if (empty($toMark) || empty($memID))
-		return false;
-
-	$toMark = (array) $toMark;
-
-	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}user_alerts
-		SET is_read = {int:read}
-		WHERE id_alert IN({array_int:toMark})',
-		array(
-			'read' => $read == 1 ? time() : 0,
-			'toMark' => $toMark,
-		)
-	);
-
-	// Gotta know how many unread alerts are left.
-	$count = alert_count($memID, true);
-
-	updateMemberData($memID, array('alerts' => $count));
-
-	// Might want to know this.
-	return $count;
+	return StoryBB\Model\Alert::change_read($memID, $toMark, $read = 0);
 }
 
 /**
@@ -2202,31 +2146,7 @@ function alert_mark($memID, $toMark, $read = 0)
  */
 function alert_delete($toDelete, $memID = false)
 {
-	global $smcFunc;
-
-	if (empty($toDelete))
-		return false;
-
-	$toDelete = (array) $toDelete;
-
-	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}user_alerts
-		WHERE id_alert IN({array_int:toDelete})',
-		array(
-			'toDelete' => $toDelete,
-		)
-	);
-
-	// Gotta know how many unread alerts are left.
-	if ($memID)
-	{
-		$count = alert_count($memID, true);
-
-		updateMemberData($memID, array('alerts' => $count));
-
-		// Might want to know this.
-		return $count;
-	}
+	return StoryBB\Model\Alert::delete($toDelete, $memID);
 }
 
 /**
@@ -2235,29 +2155,11 @@ function alert_delete($toDelete, $memID = false)
  * @param int $memID The user ID.
  * @param bool $unread Whether to only count unread alerts.
  * @return int The number of requested alerts
+ * @deprecated Call StoryBB\Model\Alert::count_for_member instead
  */
 function alert_count($memID, $unread = false)
 {
-	global $smcFunc;
-
-	if (empty($memID))
-		return false;
-
-	$request = $smcFunc['db_query']('', '
-		SELECT id_alert
-		FROM {db_prefix}user_alerts
-		WHERE id_member = {int:id_member}
-			'.($unread ? '
-			AND is_read = 0' : ''),
-		array(
-			'id_member' => $memID,
-		)
-	);
-
-	$count = $smcFunc['db_num_rows']($request);
-	$smcFunc['db_free_result']($request);
-
-	return $count;
+	return Alert::count_for_member($memID, $unread);
 }
 
 /**
@@ -3308,7 +3210,7 @@ function profileSaveAvatarData(&$value)
 				if (!empty($modSettings['avatar_resize_upload']))
 				{
 					// Attempt to chmod it.
-					smf_chmod($_FILES['attachment']['tmp_name'], 0644);
+					sbb_chmod($_FILES['attachment']['tmp_name'], 0644);
 
 					// @todo remove this require when appropriate
 					require_once($sourcedir . '/Subs-Graphics.php');
@@ -3397,7 +3299,7 @@ function profileSaveAvatarData(&$value)
 				}
 
 				// Attempt to chmod it.
-				smf_chmod($uploadDir . '/' . $destinationPath, 0644);
+				sbb_chmod($uploadDir . '/' . $destinationPath, 0644);
 			}
 			$profile_vars['avatar'] = '';
 
@@ -3521,7 +3423,8 @@ function profileValidateSignature(&$value)
 			{
 				foreach ($matches[0] as $key => $image)
 				{
-					$width = -1; $height = -1;
+					$width = -1;
+					$height = -1;
 
 					// Does it have predefined restraints? Width first.
 					if ($matches[6][$key])
@@ -4031,7 +3934,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 }
 
 /**
- * Provides interface to setup Two Factor Auth in SMF
+ * Provides interface to setup Two Factor Auth in StoryBB
  *
  * @param int $memID The ID of the member
  */

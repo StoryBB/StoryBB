@@ -273,7 +273,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 	{
 		$id_alert = array_shift($row);
 		$row['time'] = timeformat($row['alert_time']);
-		$row['extra'] = !empty($row['extra']) ? smf_json_decode($row['extra'], true) : array();
+		$row['extra'] = !empty($row['extra']) ? sbb_json_decode($row['extra'], true) : array();
 		$alerts[$id_alert] = $row;
 
 		if (!empty($row['sender_id']))
@@ -283,9 +283,9 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 
 	if($withSender)
 	{
-	$senders = loadMemberData($senders);
-	foreach ($senders as $member)
-		loadMemberContext($member);
+		$senders = loadMemberData($senders);
+		foreach ($senders as $member)
+			loadMemberContext($member);
 	}
 
 	// Now go through and actually make with the text.
@@ -299,6 +299,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 	$topics = array();
 	$msgs = array();
 	$chars = array();
+	$char_accounts = [];
 	foreach ($alerts as $id_alert => $alert)
 	{
 		if (isset($alert['extra']['chars_src']))
@@ -394,12 +395,24 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 		if ($alert['content_type'] == 'profile')
 			$alerts[$id_alert]['extra']['profile_msg'] = '<a href="' . $scripturl . '?action=profile;u=' . $alerts[$id_alert]['content_id'] . '">' . $alerts[$id_alert]['extra']['user_name'] . '</a>';
 
+		// Use the sender details first if we have them.
 		if (!empty($memberContext[$alert['sender_id']]))
-			$alerts[$id_alert]['sender'] = &$memberContext[$alert['sender_id']];
+			$alerts[$id_alert]['sender'] = $memberContext[$alert['sender_id']];
+
+		// And additionally if we have a character, use that.
+		if (isset($alert['extra']['chars_src']))
+		{
+			if (!empty($memberContext[$alert['sender_id']]['characters'][$alert['extra']['chars_src']]))
+			{
+				$alerts[$id_alert]['sender']['avatar']['image'] = $memberContext[$alert['sender_id']]['characters'][$alert['extra']['chars_src']]['avatar'];
+				$alerts[$id_alert]['sender']['avatar']['image'] = '<img class="avatar" src="' . $alerts[$id_alert]['sender']['avatar']['image'] . '" alt="">';
+			}
+		}
 
 		$string = 'alert_' . $alert['content_type'] . '_' . $alert['content_action'];
-		if (isset($alert['extra']['chars_src']) || isset($alert['extra']['chars_dest']))
+		if (isset($alert['extra']['chars_dest']))
 			$string .= 'chr';
+
 		if (isset($txt[$string]))
 		{
 			$extra = $alerts[$id_alert]['extra'];
@@ -1321,8 +1334,14 @@ function statPanel($memID)
 
 	$context['sub_template'] = 'profile_stats';
 	StoryBB\Template::add_helper([
-		'inverted_percent' => function($pc) { return 100 - $pc; },
-		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
+		'inverted_percent' => function($pc)
+		{
+			return 100 - $pc;
+		},
+		'pie_percent' => function($pc)
+		{
+			return round($pc / 5) * 20;
+		},
 	]);
 
 	// General user statistics.
@@ -1489,7 +1508,7 @@ function statPanel($memID)
 	ksort($context['posts_by_time']);
 
 	// Custom stats (just add a template_layer to add it to the template!)
- 	call_integration_hook('integrate_profile_stats', array($memID));
+	call_integration_hook('integrate_profile_stats', array($memID));
 }
 
 /**
@@ -2507,7 +2526,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 	$members = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$extra = smf_json_decode($row['extra'], true);
+		$extra = sbb_json_decode($row['extra'], true);
 		if (!empty($extra['applicator']))
 			$members[] = $extra['applicator'];
 

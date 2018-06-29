@@ -9,15 +9,15 @@
  */
 
 // Don't do anything if StoryBB is already loaded.
-if (defined('SMF'))
+if (defined('STORYBB'))
 	return true;
 
-define('SMF', 'SSI');
+define('STORYBB', 'SSI');
 
 // We're going to want a few globals... these are all set later.
 global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
-global $db_type, $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
+global $db_type, $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $db_connection, $modSettings, $context, $sc, $user_info, $topic, $board, $txt;
 global $smcFunc, $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
 
@@ -80,7 +80,7 @@ cleanRequest();
 
 // Seed the random generator?
 if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
-	smf_seed_generator();
+	sbb_seed_generator();
 
 // Check on any hacking attempts.
 if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']))
@@ -1647,7 +1647,7 @@ function ssi_pollVote()
 
 		require_once($sourcedir . '/Subs-Auth.php');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-		smf_setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], false, false);
+		sbb_setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], false, false);
 	}
 
 	redirectexit('topic=' . $row['id_topic'] . '.0');

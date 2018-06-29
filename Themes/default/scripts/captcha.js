@@ -1,6 +1,6 @@
 // This file contains javascript associated with the captcha visual verification stuffs.
 
-function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
+function sbbCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 {
 	// By default the letter count is five.
 	if (!letterCount)
@@ -38,7 +38,7 @@ function smfCaptcha(imageURL, uniqueID, useLibrary, letterCount)
 
 		// Quick and dirty way of converting decimal to hex
 		var hexstr = "0123456789abcdef";
-		for(var i=0; i < 32; i++)
+		for(var i = 0; i < 32; i++)
 			new_url = new_url + hexstr.substr(Math.floor(Math.random() * 16), 1);
 
 		if (useLibrary && document.getElementById("verification_image" + uniqueID))

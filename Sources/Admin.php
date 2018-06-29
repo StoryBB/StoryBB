@@ -23,8 +23,8 @@ function AdminMain()
 
 	// Load the language and templates....
 	loadLanguage('Admin');
-	loadJavaScriptFile('admin.js', array(), 'smf_admin');
-	loadCSSFile('admin.css', array(), 'smf_admin');
+	loadJavaScriptFile('admin.js', array(), 'sbb_admin');
+	loadCSSFile('admin.css', array(), 'sbb_admin');
 
 	$context['show_admin_search'] = $context['user']['is_admin'];
 
@@ -34,7 +34,7 @@ function AdminMain()
 	require_once($sourcedir . '/Subs-Menu.php');
 
 	// Some preferences.
-	$context['admin_preferences'] = !empty($options['admin_preferences']) ? smf_json_decode($options['admin_preferences'], true) : array();
+	$context['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
 
 	/** @var array $admin_areas Defines the menu structure for the admin center. See {@link Subs-Menu.php Subs-Menu.php} for details! */
 	$admin_areas = array(
@@ -59,6 +59,13 @@ function AdminMain()
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
+				'contactform' => [
+					'label' => $txt['contact_us'],
+					'file' => 'ManageContact.php',
+					'function' => 'ManageContact',
+					'icon' => 'contact',
+					'permission' => ['admin_forum'],
+				],
 				'search' => array(
 					'function' => 'AdminSearch',
 					'permission' => array('admin_forum'),
@@ -188,7 +195,6 @@ function AdminMain()
 					'icon' => 'smiley',
 					'permission' => array('manage_smileys'),
 					'subsections' => array(
-						'editsets' => array($txt['smiley_sets']),
 						'addsmiley' => array($txt['smileys_add']),
 						'editsmileys' => array($txt['smileys_edit']),
 						'setorder' => array($txt['smileys_set_order']),
@@ -356,7 +362,6 @@ function AdminMain()
 					'icon' => 'server',
 					'subsections' => array(
 						'general' => array($txt['general_settings']),
-						'database' => array($txt['database_settings']),
 						'cookie' => array($txt['cookies_sessions_settings']),
 						'security' => array($txt['security_settings']),
 						'cache' => array($txt['caching_settings']),
@@ -642,7 +647,6 @@ function AdminSearchInternal()
 		array('EditSearchSettings', 'area=managesearch;sa=settings'),
 		array('EditSmileySettings', 'area=smileys;sa=settings'),
 		array('ModifyGeneralSettings', 'area=serversettings;sa=general'),
-		array('ModifyDatabaseSettings', 'area=serversettings;sa=database'),
 		array('ModifyCookieSettings', 'area=serversettings;sa=cookie'),
 		array('ModifyGeneralSecuritySettings', 'area=serversettings;sa=security'),
 		array('ModifyCacheSettings', 'area=serversettings;sa=cache'),

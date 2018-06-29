@@ -47,7 +47,7 @@ $txt['admin_agreement_select_language_change'] = 'Change';
 $txt['admin_agreement_not_saved'] = 'The agreement changes have not been saved. Perhaps the file permissions on the file were not set correctly.';
 $txt['admin_delete_members'] = 'Delete Selected Members';
 $txt['admin_repair'] = 'Repair All boards and topics';
-$txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support&quot; page. If the information there doesn\'t help you, feel free to <a href="https://www.simplemachines.org/community/index.php" target="_blank" class="new_win">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="generic_icons help" title="%3$s"></span> symbols for more information on the related functions.';
+$txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support&quot; page. If the information there doesn\'t help you, feel free to <a href="https://storybb.org/" target="_blank" class="new_win">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="generic_icons help" title="%3$s"></span> symbols for more information on the related functions.';
 $txt['admin_news_desc'] = 'Please place one news item per box. BBC tags, such as <span title="Are you bold?">[b]</span>, <span title="I tall icks!!">[i]</span> and <span title="Brackets are great, no?">[u]</span> are allowed in your news, as well as smileys. Clear a news item\'s text box to remove it.';
 $txt['administrators'] = 'Forum Administrators';
 $txt['admin_reserved_desc'] = 'Reserved names will keep members from registering certain usernames or using these words in their displayed names. Choose the options you wish to use from the bottom before submitting.';
@@ -85,6 +85,7 @@ $txt['attachment_pruning_message'] = 'Message to add to post';
 $txt['attachment_pruning_warning'] = 'Are you sure you want to delete these attachments?\\nThis cannot be undone!';
 
 $txt['attachment_total'] = 'Total attachments';
+$txt['attachment_total_exports'] = 'Total data exports';
 $txt['attachmentdir_size'] = 'Total size of all attachment directories';
 $txt['attachmentdir_size_current'] = 'Total size of current attachment directory';
 $txt['attachmentdir_files_current'] = 'Total files in current attachment directory';
@@ -241,8 +242,6 @@ $txt['userlog_enabled'] = 'Enable the profile edits log';
 
 $txt['mailqueue_title'] = 'Mail';
 
-$txt['db_error_send'] = 'Send emails on database connection error';
-
 $txt['default_language'] = 'Default forum language';
 
 $txt['maintenance_subject'] = 'Subject for display';
@@ -260,9 +259,6 @@ $txt['dvc_sources'] = 'Sources';
 $txt['dvc_default'] = 'Default Templates';
 $txt['dvc_templates'] = 'Current Templates';
 $txt['dvc_languages'] = 'Language Files';
-
-$txt['smileys_default_set_for_theme'] = 'Select default smiley set for this theme';
-$txt['smileys_no_default'] = '(use global default smiley set)';
 
 $txt['censor_test'] = 'Test censored words';
 $txt['censor_test_save'] = 'Test';
@@ -316,14 +312,17 @@ $txt['attachment_manager_repair'] = 'Maintain';
 $txt['attachment_manager_avatars'] = 'Avatars';
 $txt['attachment_manager_attachments'] = 'Attachments';
 $txt['attachment_manager_thumbs'] = 'Thumbnails';
+$txt['attachment_manager_exports'] = 'Data exports';
 $txt['attachment_manager_last_active'] = 'Last Active';
 $txt['attachment_manager_member'] = 'Member';
 $txt['attachment_manager_avatars_older'] = 'Remove avatars from members not active for more than';
 $txt['attachment_manager_total_avatars'] = 'Total avatars';
+$txt['attachment_manager_requested_by'] = 'Requested by: %1$s';
 
 $txt['attachment_manager_avatars_no_entries'] = 'There are currently no avatars.';
 $txt['attachment_manager_attachments_no_entries'] = 'There are currently no attachments.';
 $txt['attachment_manager_thumbs_no_entries'] = 'There are currently no thumbnails.';
+$txt['attachment_manager_exports_no_entries'] = 'There are currently no exports.';
 
 $txt['attachment_manager_settings'] = 'Attachment Settings';
 $txt['attachment_manager_avatar_settings'] = 'Avatar Settings';
@@ -592,7 +591,6 @@ $txt['not_done_reason'] = 'To avoid overloading your server, the process has bee
 $txt['not_done_continue'] = 'Continue';
 
 $txt['general_settings'] = 'General';
-$txt['database_settings'] = 'Database';
 $txt['cookies_sessions_settings'] = 'Cookies and Sessions';
 $txt['security_settings'] = 'Security';
 $txt['caching_settings'] = 'Caching';
@@ -658,7 +656,6 @@ $txt['boardsEdit'] = 'Modify Boards';
 $txt['mboards_new_cat'] = 'Create new category';
 $txt['search_method'] = 'Search Method';
 
-$txt['smiley_sets'] = 'Smiley Sets';
 $txt['smileys_add'] = 'Add Smiley';
 $txt['smileys_edit'] = 'Edit Smileys';
 $txt['smileys_set_order'] = 'Set Smiley order';
@@ -745,3 +742,18 @@ $txt['enable_immersive_mode_user_on'] = 'Immersive mode is user choice (default 
 $txt['enable_immersive_mode_user_off'] = 'Immersive mode is user choice (default off)';
 $txt['enable_immersive_mode_off'] = 'Immersive mode is always off';
 $txt['enable_immersive_mode_on'] = 'Immersive mode is always on';
+
+$txt['contact_form_no_messages'] = 'No messages have been received from the contact form.';
+$txt['contact_form_sender'] = 'Sent by';
+$txt['contact_form_email'] = 'Sender email';
+$txt['contact_form_subject'] = 'Subject';
+$txt['contact_form_sent_on'] = 'Sent on';
+$txt['contact_form_status'] = 'Status';
+$txt['contact_form_status_unanswered'] = 'Unanswered';
+$txt['contact_form_status_answered'] = 'Answered';
+$txt['contact_form_message_not_found'] = 'The requested contact form message was not found.';
+$txt['contact_form_reply'] = 'Reply to this message';
+$txt['contact_form_replies'] = 'Replies to this message';
+$txt['contact_form_no_reply'] = 'No reply was written.';
+$txt['contact_form_reply_sent'] = 'The reply was sent successfully.';
+$txt['contact_form_previous_responses'] = 'Previous responses';

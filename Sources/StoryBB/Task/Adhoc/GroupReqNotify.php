@@ -1,8 +1,7 @@
 <?php
 
 /**
- * This taks handles notifying someone that a user has
- * requeted to join a group they moderate.
+ * This taks handles notifying someone that a user has requested to join a group they moderate.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -14,17 +13,17 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class GroupReq_Notify_Background
+ * This taks handles notifying someone that a user has requested to join a group they moderate.
  */
 class GroupReqNotify extends \StoryBB\Task\Adhoc
 {
 	/**
-     * This executes the task - loads up the information, puts the email in the queue and inserts any alerts as needed.
+	 * This executes the task - loads up the information, puts the email in the queue and inserts any alerts as needed.
 	 * @return bool Always returns true.
 	 */
 	public function execute()
- 	{
- 		global $sourcedir, $smcFunc, $language, $modSettings, $scripturl;
+	{
+		global $sourcedir, $smcFunc, $language, $modSettings, $scripturl;
 
 		// Do we have any group moderators?
 		$request = $smcFunc['db_query']('', '

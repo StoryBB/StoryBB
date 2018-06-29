@@ -24,7 +24,7 @@ class File extends API
 	private $cachedir = null;
 
 	/**
-	 * {@inheritDoc}
+	 * Does basic setup of a cache method when we create the object but before we call connect.
 	 */
 	public function __construct()
 	{
@@ -35,7 +35,9 @@ class File extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the name for the cache method performed by this API. Likely to be a brand of sorts.
+	 *
+	 * @return string The name of the cache backend
 	 */
 	public function getName()
 	{
@@ -43,7 +45,10 @@ class File extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Checks whether we can use the cache method performed by this API.
+	 *
+	 * @param boolean $test Test if this is supported or enabled.
+	 * @return boolean Whether or not the cache is supported
 	 */
 	public function isSupported($test = false)
 	{
@@ -55,7 +60,11 @@ class File extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gets data from the cache.
+	 *
+	 * @param string $key The key to use, the prefix is applied to the key name.
+	 * @param string $ttl Overrides the default TTL.
+	 * @return mixed The result from the cache, if there is no data or it is invalid, we return null.
 	 */
 	public function getData($key, $ttl = null)
 	{
@@ -86,7 +95,12 @@ class File extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Saves to data the cache.
+	 *
+	 * @param string $key The key to use, the prefix is applied to the key name.
+	 * @param mixed $value The data we wish to save.
+	 * @param string $ttl Overrides the default TTL.
+	 * @return bool Whether or not we could save this to the cache.
 	 */
 	public function putData($key, $value, $ttl = null)
 	{
@@ -106,7 +120,7 @@ class File extends API
 			@unlink($cachedir . '/data_' . $key . '.php');
 		else
 		{
-			$cache_data = '<' . '?' . 'php if (!defined(\'SMF\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}' . '?' . '>';
+			$cache_data = '<' . '?' . 'php if (!defined(\'STORYBB\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}' . '?' . '>';
 
 			// Write out the cache file, check that the cache write was successful; all the data must be written
 			// If it fails due to low diskspace, or other, remove the cache file
@@ -122,7 +136,10 @@ class File extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Clean out the cache.
+	 *
+	 * @param string $type If supported, the type of cache to clear, blank/data or user.
+	 * @return bool Whether or not we could clean the cache.
 	 */
 	public function cleanCache($type = '')
 	{
@@ -148,7 +165,9 @@ class File extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Invalidate all cached data.
+	 *
+	 * @return bool Whether or not we could invalidate the cache.
 	 */
 	public function invalidateCache()
 	{
@@ -162,13 +181,16 @@ class File extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Specify custom settings that the cache API supports.
+	 *
+	 * @param array $config_vars Additional config_vars, see ManageSettings.php for usage.
+	 * @return void No return is needed.
 	 */
 	public function cacheSettings(array &$config_vars)
 	{
 		global $context, $txt;
 
-		$config_vars[] = $txt['cache_smf_settings'];
+		$config_vars[] = $txt['cache_sbb_settings'];
 		$config_vars[] = array('cachedir', $txt['cachedir'], 'file', 'text', 36, 'cache_cachedir');
 
 		if (!isset($context['settings_post_javascript']))
@@ -177,14 +199,13 @@ class File extends API
 		$context['settings_post_javascript'] .= '
 			$("#cache_accelerator").change(function (e) {
 				var cache_type = e.currentTarget.value;
-				$("#cachedir").prop("disabled", cache_type != "smf");
+				$("#cachedir").prop("disabled", cache_type != "file");
 			});';
 	}
 
 	/**
-	 * Sets the $cachedir or uses the StoryBB default $cachedir..
+	 * Sets the $cachedir or uses the StoryBB default $cachedir.
 	 *
-	 * @access public
 	 * @param string $dir A valid path
 	 * @return boolean If this was successful or not.
 	 */
@@ -202,7 +223,6 @@ class File extends API
 	/**
 	 * Gets the current $cachedir.
 	 *
-	 * @access public
 	 * @return string the value of $ttl.
 	 */
 	public function getCachedir()

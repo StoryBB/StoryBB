@@ -165,6 +165,15 @@ function deleteMembers($users, $check_not_admin = false)
 		]
 	);
 
+	// And any alerts they may have accrued.
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}user_alerts
+		WHERE id_member IN ({array_int:users})',
+		[
+			'users' => $users,
+		]
+	);
+
 	// Make their votes into guest votes.
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}polls
@@ -619,7 +628,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'default_template',
 		'images_url',
 		'number_recent_posts',
-		'smiley_sets_default',
 		'theme_dir',
 		'theme_id',
 		'theme_url',
@@ -655,7 +663,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'secret_answer' => '',
 		'additional_groups' => '',
 		'ignore_boards' => '',
-		'smiley_set' => '',
 		'timezone' => !empty($regOptions['timezone']) ? $regOptions['timezone'] : 'UTC',
 	);
 
@@ -1331,7 +1338,7 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 	}
 
 	// Allow mods with their own post tables to reattribute posts as well :)
- 	call_integration_hook('integrate_reattribute_posts', array($memID, $email, $membername, $post_count, &$updated));
+	call_integration_hook('integrate_reattribute_posts', array($memID, $email, $membername, $post_count, &$updated));
 
 	return $updated;
 }

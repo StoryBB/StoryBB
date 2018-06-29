@@ -16,12 +16,14 @@ namespace StoryBB\Template;
 
 class Cache
 {
-	public static function is_enabled(): bool {
+	public static function is_enabled(): bool
+	{
 		global $modSettings;
 		return empty($modSettings['debug_templates']);
 	}
 
-	public static function fetch(string $cache_id = '') {
+	public static function fetch(string $cache_id = '')
+	{
 		global $cachedir;
 
 		if (empty($cache_id) || !self::is_enabled())
@@ -41,7 +43,8 @@ class Cache
 		return '';
 	}
 
-	public static function push(string $cache_id, string $phpStr): bool {
+	public static function push(string $cache_id, string $phpStr): bool
+	{
 		global $cachedir;
 
 		if (empty($cache_id) || !self::is_enabled())
@@ -54,7 +57,6 @@ class Cache
 
 	/**
 	 * Cleans the template cache.
-
 	 */
 	public static function clean()
 	{

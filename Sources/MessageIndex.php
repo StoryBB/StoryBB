@@ -38,13 +38,14 @@ function MessageIndex()
 
 	$context['sub_template'] = 'msgIndex_main';
 	StoryBB\Template::add_helper([
-		'qmod_option' => function($action) {
-				global $context, $txt;
-				if (!empty($context['can_' . $action]))
-					return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
-			},
+		'qmod_option' => function($action)
+		{
+			global $context, $txt;
+			if (!empty($context['can_' . $action]))
+				return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
+		},
 		'child_boards' => 'child_boards'
-		]);
+	]);
 
 	if (!$user_info['is_guest'])
 	{
@@ -149,7 +150,7 @@ function MessageIndex()
 	// Now we tack the info onto the end of the linktree
 	if (!empty($context['link_moderators']))
 	{
-	 	$context['linktree'][count($context['linktree']) - 1]['extra_after'] = '<span class="board_moderators">(' . (count($context['link_moderators']) == 1 ? $txt['moderator'] : $txt['moderators']) . ': ' . implode(', ', $context['link_moderators']) . ')</span>';
+		$context['linktree'][count($context['linktree']) - 1]['extra_after'] = '<span class="board_moderators">(' . (count($context['link_moderators']) == 1 ? $txt['moderator'] : $txt['moderators']) . ': ' . implode(', ', $context['link_moderators']) . ')</span>';
 	}
 
 	// 'Print' the header and board info.
@@ -758,7 +759,7 @@ function MessageIndex()
 		);
 
 	// Javascript for inline editing.
-	loadJavaScriptFile('topic.js', array('defer' => false), 'smf_topic');
+	loadJavaScriptFile('topic.js', array('defer' => false), 'sbb_topic');
 
 	// Allow adding new buttons easily.
 	// Note: $context['normal_buttons'] is added for backward compatibility with 2.0, but is deprecated and should not be used

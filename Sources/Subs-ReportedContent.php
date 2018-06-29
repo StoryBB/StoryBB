@@ -14,8 +14,8 @@
  * Updates a report with the given parameters. Logs each action via logAction()
  *
  * @param string $action The action to perform. Accepts "closed" and "ignore".
- * @param integer $value The new value to update.
- * @params integer|array $report_id The affected report(s).
+ * @param int $value The new value to update.
+ * @param int|array $report_id An id or array of ids to filter on first.
  */
 function updateReport($action, $value, $report_id)
 {
@@ -367,7 +367,7 @@ function recountOpenReports($type)
 		WHERE closed = {int:not_closed}
 			AND ignore_all = {int:not_ignored}
 			AND id_board' . ($type == 'members' ? '' : '!') . '= {int:not_a_reported_post}'
-		 	. $bq,
+			. $bq,
 		array(
 			'not_closed' => 0,
 			'not_ignored' => 0,
@@ -601,7 +601,7 @@ function saveModComment($report_id, $data)
 	{
 		$prefix = 'Member';
 		$data = array(
-		 	'report_id' => $report_id,
+			'report_id' => $report_id,
 			'user_id' => $report['id_user'],
 			'user_name' => $report['user_name'],
 			'sender_id' => $context['user']['id'],
@@ -636,7 +636,7 @@ function saveModComment($report_id, $data)
  * Saves the new information whenever a moderator comment is edited.
  *
  * @param int $comment_id The edited moderator comment ID.
- * @param array $data The new data to de inserted. Should be already properly sanitized.
+ * @param string $edited_comment The updated comment, already sanitised.
  * @return bool  Boolean false if no data or no comment ID was provided.
  */
 function editModComment($comment_id, $edited_comment)

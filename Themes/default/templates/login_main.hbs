@@ -29,8 +29,8 @@
 					<p><input type="submit" value="{{txt.login}}" class="button_submit"></p>
 					<p class="smalltext"><a href="{{scripturl}}?action=reminder">{{txt.forgot_your_password}}</a></p>
 					<input type="hidden" name="hash_passwrd" value="">
-					<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-					<input type="hidden" name="{{context.login_token_var}}" value="{{context.login_token}}">
+					{{session_form}}
+					{{token_form 'login'}}
 					<script>
 						setTimeout(function() {
 							document.getElementById("{{#if context.from_ajax}}ajax_{{/if}}{{#if context.default_username}}loginpass{{else}}loginuser{{/if}}").focus();

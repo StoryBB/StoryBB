@@ -74,8 +74,8 @@
 					<div class="flow_auto">
 						<input type="submit" name="regSubmit" value="{{txt.register}}" class="button_submit">
 						<input type="hidden" name="sa" value="register">
-						<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-						<input type="hidden" name="{{context.admin-regc_token_var}}" value="{{context.admin-regc_token}}">
+						{{session_form}}
+						{{token_form 'admin-regc'}}
 					</div>
 				</div>
 			</form>

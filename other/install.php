@@ -8,7 +8,7 @@
  * @version 3.0 Alpha 1
  */
 
-$GLOBALS['current_smf_version'] = '3.0 Alpha 1';
+$GLOBALS['current_sbb_version'] = '3.0 Alpha 1';
 $GLOBALS['db_script_version'] = '3-0';
 
 $GLOBALS['required_php_version'] = '7.0.0';
@@ -17,8 +17,8 @@ $GLOBALS['required_php_version'] = '7.0.0';
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none;">
 
 // Let's pull in useful classes
-if (!defined('SMF'))
-	define('SMF', 1);
+if (!defined('STORYBB'))
+	define('STORYBB', 1);
 
 require_once('Sources/StoryBB/Helper/FTP.php');
 
@@ -261,7 +261,7 @@ function load_lang_file()
 		<p>In some cases, FTP clients do not properly upload files with this many folders.  Please double check to make sure you <span style="font-weight: 600;">have uploaded all the files in the distribution</span>.</p>
 		<p>If that doesn\'t help, please make sure this install.php file is in the same place as the Themes folder.</p>
 
-		<p>If you continue to get this error message, feel free to <a href="https://support.simplemachines.org/">look to us for support</a>.</p>
+		<p>If you continue to get this error message, feel free to <a href="https://storybb.org/">look to us for support</a>.</p>
 	</div></body>
 </html>';
 		die;
@@ -299,8 +299,6 @@ function load_database()
 
 	// Need this to check whether we need the database password.
 	require(dirname(__FILE__) . '/Settings.php');
-	if (!defined('SMF'))
-		define('SMF', 1);
 	if (empty($smcFunc))
 		$smcFunc = array();
 
@@ -310,8 +308,6 @@ function load_database()
 	if (!$db_connection)
 	{
 		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
-		if (version_compare(PHP_VERSION, '5', '<'))
-			require_once($sourcedir . '/Subs-Compat.php');
 
 		$db_options = array('persist' => $db_persist);
 		$port = '';
@@ -334,7 +330,7 @@ function load_database()
 			$db_options['port'] = $port;
 
 		if (!$db_connection)
-			$db_connection = smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
+			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
 	}
 }
 
@@ -473,7 +469,6 @@ function CheckFilesWritable()
 		'agreement.txt',
 		'Settings.php',
 		'Settings_bak.php',
-		'db_last_error.php',
 	);
 
 	foreach ($incontext['detected_languages'] as $lang => $temp)
@@ -743,7 +738,7 @@ function DatabaseSettings()
 			'db_server' => $_POST['db_server'],
 			'db_prefix' => $db_prefix,
 			// The cookiename is special; we want it to be the same if it ever needs to be reinstalled with the same info.
-			'cookiename' => 'SMFCookie' . abs(crc32($_POST['db_name'] . preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix'])) % 1000),
+			'cookiename' => 'SBBCookie' . abs(crc32($_POST['db_name'] . preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix'])) % 1000),
 		);
 
 		// Only set the port if we're not using the default
@@ -776,30 +771,22 @@ function DatabaseSettings()
 			return false;
 		}
 
-		// Now include it for database functions!
-		if (!defined('SMF'))
-			define('SMF', 1);
-
 		$modSettings['disableQueryCheck'] = true;
 		if (empty($smcFunc))
 			$smcFunc = array();
 
-			require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
-
-		// What - running PHP4? The shame!
-		if (version_compare(PHP_VERSION, '5', '<'))
-			require_once($sourcedir . '/Subs-Compat.php');
+		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
 
 		// Attempt a connection.
 		$needsDB = !empty($databases[$db_type]['always_has_db']);
-		$db_connection = smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
+		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
 
 		// No dice?  Let's try adding the prefix they specified, just in case they misread the instructions ;)
 		if ($db_connection == null)
 		{
 			$db_error = @$smcFunc['db_error']();
 
-			$db_connection = smf_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
+			$db_connection = sbb_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
 			if ($db_connection != null)
 			{
 				$db_user = $_POST['db_prefix'] . $db_user;
@@ -998,7 +985,7 @@ function DatabasePopulation()
 		$smcFunc['db_free_result']($result);
 
 		// Do they match?  If so, this is just a refresh so charge on!
-		if (!isset($modSettings['smfVersion']) || $modSettings['smfVersion'] != $GLOBALS['current_smf_version'])
+		if (!isset($modSettings['sbbVersion']) || $modSettings['sbbVersion'] != $GLOBALS['current_sbb_version'])
 		{
 			$incontext['error'] = $txt['error_versions_do_not_match'];
 			return false;
@@ -1015,7 +1002,7 @@ function DatabasePopulation()
 			)
 		);
 
-	// Windows likes to leave the trailing slash, which yields to C:\path\to\SMF\/attachments...
+	// Windows likes to leave the trailing slash, which yields to C:\path\to\StoryBB\/attachments...
 	if (substr(__DIR__, -1) == '\\')
 		$attachdir = __DIR__ . 'attachments';
 	else
@@ -1027,7 +1014,7 @@ function DatabasePopulation()
 		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
 		'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
-		'{$smf_version}' => $GLOBALS['current_smf_version'],
+		'{$sbb_version}' => $GLOBALS['current_sbb_version'],
 		'{$current_time}' => time(),
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
 		'{$registration_method}' => isset($_POST['reg_mode']) ? $_POST['reg_mode'] : 0,
@@ -1296,8 +1283,8 @@ function AdminAccount()
 
 	// We need this to properly hash the password for Admin
 	$smcFunc['strtolower'] = function($string) {
-				return mb_strtolower($string, 'UTF-8');
-		};
+		return mb_strtolower($string, 'UTF-8');
+	};
 
 	if (!isset($_POST['username']))
 		$_POST['username'] = '';
@@ -1477,7 +1464,7 @@ function DeleteInstall()
 {
 	global $txt, $incontext;
 	global $smcFunc, $context, $cookiename;
-	global $current_smf_version, $databases, $boarddir, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
+	global $current_sbb_version, $databases, $boarddir, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['sub_template'] = 'delete_install';
@@ -1576,8 +1563,8 @@ function DeleteInstall()
 
 	// This function is needed to do the updateStats('subject') call.
 	$smcFunc['strtolower'] = function($string){
-				return mb_strtolower($string, 'UTF-8');
-		};
+		return mb_strtolower($string, 'UTF-8');
+	};
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_msg
@@ -1598,8 +1585,8 @@ function DeleteInstall()
 	// Sanity check that they loaded earlier!
 	if (isset($modSettings['recycle_board']))
 	{
-		$forum_version = $current_smf_version; // The variable is usually defined in index.php so lets just use our variable to do it for us.
-		scheduled_fetchSMfiles(); // Now go get those files!
+		$forum_version = $current_sbb_version; // The variable is usually defined in index.php so lets just use our variable to do it for us.
+		scheduled_fetchStoryBBfiles(); // Now go get those files!
 
 		// We've just installed!
 		$user_info['ip'] = $_SERVER['REMOTE_ADDR'];
@@ -1693,14 +1680,6 @@ function updateSettingsFile($vars)
 	// it seems that there are times it might not. So let's MAKE it dump the cache.
 	if (function_exists('opcache_invalidate'))
 		opcache_invalidate(dirname(__FILE__) . '/Settings.php', true);
-
-	return true;
-}
-
-function updateDbLastError()
-{
-	// Write out the db_last_error file with the error timestamp
-	file_put_contents(dirname(__FILE__) . '/db_last_error.php', '<' . '?' . "php\n" . '$db_last_error = 0;' . "\n" . '?' . '>');
 
 	return true;
 }
@@ -1870,19 +1849,19 @@ function template_install_below()
 </html>';
 }
 
-// Welcome them to the wonderful world of SMF!
+// Welcome them to the wonderful world of StoryBB!
 function template_welcome_message()
 {
 	global $incontext, $txt;
 
 	echo '
 	<form action="', $incontext['form_url'], '" method="post">
-		<p>', sprintf($txt['install_welcome_desc'], $GLOBALS['current_smf_version']), '</p>
+		<p>', sprintf($txt['install_welcome_desc'], $GLOBALS['current_sbb_version']), '</p>
 		<div id="version_warning" style="margin: 2ex; padding: 2ex; border: 2px dashed #a92174; color: black; background-color: #fbbbe2; display: none;">
 			<div style="float: left; width: 2ex; font-size: 2em; color: red;">!!</div>
 			<strong style="text-decoration: underline;">', $txt['error_warning_notice'], '</strong><br>
 			<div style="padding-left: 6ex;">
-				', sprintf($txt['error_script_outdated'], '<em id="smfVersion" style="white-space: nowrap;">??</em>', '<em id="yourVersion" style="white-space: nowrap;">' . $GLOBALS['current_smf_version'] . '</em>'), '
+				', sprintf($txt['error_script_outdated'], '<em id="sbbVersion" style="white-space: nowrap;">??</em>', '<em id="yourVersion" style="white-space: nowrap;">' . $GLOBALS['current_sbb_version'] . '</em>'), '
 			</div>
 		</div>';
 
@@ -1903,7 +1882,7 @@ function template_welcome_message()
 				$.getJSON( "https://storybb.org/updates.json", function(data) {
 					if (data && data.current_version) {
 						var currentVersion = $("#yourVersion").text();
-						$("#smfVersion").text(data.current_version);
+						$("#sbbVersion").text(data.current_version);
 						if (currentVersion < data.current_version) {
 							$("#version_warning").show();
 						}
@@ -2088,7 +2067,7 @@ function template_database_settings()
 			</tr><tr id="db_filename_contain" style="display: none;">
 				<td valign="top" class="textbox"><label for="db_filename_input">', $txt['db_settings_database_file'], ':</label></td>
 				<td>
-					<input type="text" name="db_filename" id="db_filename_input" value="', empty($incontext['db']['name']) ? dirname(__FILE__) . '/smf_' . substr(md5(microtime()), 0, 10) : stripslashes($incontext['db']['name']), '" size="30" class="input_text" /><br>
+					<input type="text" name="db_filename" id="db_filename_input" value="', empty($incontext['db']['name']) ? dirname(__FILE__) . '/sbb_' . substr(md5(microtime()), 0, 10) : stripslashes($incontext['db']['name']), '" size="30" class="input_text" /><br>
 					<div class="smalltext block">', $txt['db_settings_database_file_info'], '</div>
 				</td>
 			</tr><tr>

@@ -84,7 +84,7 @@ function Register($reg_errors = array())
 
 	// Kinda need this.
 	if ($context['sub_template'] == 'register_form')
-		loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
+		loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
 
 	// Add the register chain to the link tree.
 	$context['linktree'][] = array(
@@ -156,7 +156,7 @@ function Register($reg_errors = array())
 	StoryBB\Template::add_helper([
 		'profile_callback_helper' => function ($field) {
 			var_dump($field);
-	        if ($field['type'] == 'callback')
+			if ($field['type'] == 'callback')
 			{
 				if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
 				{
@@ -319,7 +319,6 @@ function Register2()
 		'time_format',
 		'buddy_list',
 		'pm_ignore_list',
-		'smiley_set',
 		'avatar',
 		'lngfile',
 		'secret_question', 'secret_answer',

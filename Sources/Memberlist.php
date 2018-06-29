@@ -132,7 +132,7 @@ function Memberlist()
 
 	// Build the memberlist button array.
 	$context['memberlist_buttons'] = array(
-		'view_all_members' => array('text' => 'view_all_members', 'image' => 'mlist.png', 'url' => $scripturl . '?action=mlist' . ';sa=all', 'active'=> true),
+		'view_all_members' => array('text' => 'view_all_members', 'image' => 'mlist.png', 'url' => $scripturl . '?action=mlist' . ';sa=all', 'active' => true),
 		'mlist_search' => array('text' => 'mlist_search', 'image' => 'mlist.png', 'url' => $scripturl . '?action=mlist' . ';sa=search'),
 	);
 
@@ -171,7 +171,7 @@ function MLAll()
 	{
 		// Maybe there's something cached already.
 		if (!empty($modSettings['memberlist_cache']))
-			$memberlist_cache = smf_json_decode($modSettings['memberlist_cache'], true);
+			$memberlist_cache = sbb_json_decode($modSettings['memberlist_cache'], true);
 
 		// The chunk size for the cached index.
 		$cache_step_size = 500;

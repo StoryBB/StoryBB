@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains background notification code for any create post action
+ * This file contains background notification code for any create post action.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -11,13 +11,15 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use Mentions;
+
 /**
- * Class CreatePost_Notify_Background
+ * This file contains background notification code for any create post action.
  */
 class CreatePostNotify extends \StoryBB\Task\Adhoc
 {
 	/**
-     * This handles notifications when a new post is created - new topic, reply, quotes and mentions.
+	 * This handles notifications when a new post is created - new topic, reply, quotes and mentions.
 	 * @return bool Always returns true
 	 */
 	public function execute()
@@ -108,7 +110,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 			// Don't send a notification if the watching member ignored the member who made the action.
 			if (!empty($data['pm_ignore_list']) && in_array($data['id_member_updated'], explode(',', $data['pm_ignore_list'])))
-			    continue;
+				continue;
 			if (!in_array($type, array('reply', 'topic')) && $notify_types == 2 && $member != $data['id_member_started'])
 				continue;
 			elseif (in_array($type, array('reply', 'topic')) && $member == $posterOptions['id'])
@@ -169,7 +171,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 			if ($pref & 0x01)
 			{
-				$alert_rows[] = array(
+				$alert = [
 					'alert_time' => time(),
 					'id_member' => $member,
 					// Only tell sender's information for new topics and replies
@@ -179,14 +181,19 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'content_id' => $topicOptions['id'],
 					'content_action' => $type,
 					'is_read' => 0,
-					'extra' => json_encode(array(
+					'extra' => [
 						'topic' => $topicOptions['id'],
 						'board' => $topicOptions['board'],
 						'content_subject' => $msgOptions['subject'],
 						'content_link' => $scripturl . '?topic=' . $topicOptions['id'] . '.new;topicseen#new',
-					)),
-				);
-				updateMemberData($member, array('alerts' => '+'));
+					],
+				];
+				if (!empty($posterOptions['char_id']))
+				{
+					$alert['extra']['chars_src'] = $posterOptions['char_id'];
+				}
+				$alert['extra'] = json_encode($alert['extra']);
+				$alert_rows[] = $alert;
 			}
 
 			$smcFunc['db_query']('', '
@@ -215,6 +222,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 		// Insert the alerts if any
 		if (!empty($alert_rows))
+		{
 			$smcFunc['db_insert']('',
 				'{db_prefix}user_alerts',
 				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
@@ -222,6 +230,15 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				$alert_rows,
 				array()
 			);
+
+			$members = [];
+			foreach ($alert_rows as $alert)
+			{
+				$members[] = $alert['id_member'];
+			}
+			$members = array_unique($members);
+			updateMemberData($members, ['alerts' => '+']);
+		}
 
 		return true;
 	}
@@ -396,7 +413,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'content_subject' => $msgOptions['subject'],
 					'content_link' => $scripturl . '?msg=' . $msgOptions['id'],
 				];
-				if (!empty($member['dest_chr']))
+				if (!empty($member['dest_chr']) && empty($member['dest_is_main']))
 				{
 					$extra['chars_dest'] = $member['dest_chr'];
 				}

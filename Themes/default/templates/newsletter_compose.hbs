@@ -60,7 +60,7 @@
 					{{{richtextbuttons context.post_box_name}}}
 				</span>
 			</div>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 			<input type="hidden" name="email_force" value="{{context.email_force}}">
 			<input type="hidden" name="total_emails" value="{{context.total_emails}}">
 			{{#each context.recipients}}
@@ -93,9 +93,9 @@
 							{
 								// Handle the WYSIWYG editor.
 								if (textFields[i] == '{{context.post_box_name}}' && $("#{{context.post_box_name}}").data("sceditor") != undefined)
-									x[x.length] = textFields[i] + '=' + $("#{{context.post_box_name}}").data("sceditor").getText().html();
+									x[x.length] = textFields[i] + '=' + $("#{{context.post_box_name}}").data("sceditor").getText();
 								else
-									x[x.length] = textFields[i] + '=' + document.forms.postmodify[textFields[i]].value.html();
+									x[x.length] = textFields[i] + '=' + $(document.forms.postmodify[textFields[i]]).val();
 							}
 						for (var i = 0, n = checkboxFields.length; i < n; i++)
 							if (checkboxFields[i] in document.forms.newsmodify && document.forms.newsmodify.elements[checkboxFields[i]].checked)

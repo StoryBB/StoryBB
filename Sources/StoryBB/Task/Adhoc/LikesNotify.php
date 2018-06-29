@@ -13,7 +13,7 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class Likes_Notify_Background
+ * This task handles notifying users when something is liked.
  */
 class LikesNotify extends \StoryBB\Task\Adhoc
 {
@@ -45,7 +45,6 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 			{
 				// Before we assign the author, let's just check that the author can see the board this is in...
 				// as it'd suck to notify someone their post was liked when in a board they can't see.
-				// Use an empty array if additional_groups is blank to avoid a fringe case... (see https://github.com/SimpleMachines/SMF2.1/issues/2987)
 				$groups = array_merge(array($row['id_group'], $row['id_post_group']), (empty($row['additional_groups']) ? array() : explode(',', $row['additional_groups'])));
 				$allowed = explode(',', $row['member_groups']);
 				$ignored_members = explode(',', $row['pm_ignore_list']);

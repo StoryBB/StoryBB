@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains a standard way of displaying side/drop down menus for SMF.
+ * This file contains a standard way of displaying side/drop down menus for StoryBB.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)

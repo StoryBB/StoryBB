@@ -375,8 +375,7 @@ $txt['database_error'] = 'Database Error';
 $txt['try_again'] = 'Please try again. If you come back to this error screen, report the error to an administrator.';
 $txt['file'] = 'File';
 $txt['line'] = 'Line';
-// Use numeric entities in the below string.
-$txt['tried_to_repair'] = 'StoryBB has detected and automatically tried to repair an error in your database. If you continue to have problems, or continue to receive these emails, please contact your host.';
+
 $txt['database_error_versions'] = '<strong>Note:</strong> It appears that your database <em>may</em> require an upgrade. Your forum\'s files are currently at version %1$s, while your database is at version %2$s. The above error might possibly go away if you execute the latest version of upgrade.php.';
 $txt['template_parse_error'] = 'Template Parse Error!';
 $txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
@@ -850,3 +849,10 @@ $txt['search_by_character'] = 'By character';
 
 $txt['in_character_board'] = 'In-Character Board';
 $txt['out_of_character_board'] = 'Out-Of-Character Board';
+
+$txt['contact_us'] = 'Contact Us';
+$txt['send_message'] = 'Send message';
+$txt['your_name'] = 'Your name';
+$txt['your_email'] = 'Your email address';
+$txt['verification'] = 'Verification';
+$txt['thank_you_for_message'] = 'Thank you for your message. The administrators have been notified and should reply soon.';

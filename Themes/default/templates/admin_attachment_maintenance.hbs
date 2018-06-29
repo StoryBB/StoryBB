@@ -7,6 +7,8 @@
 			<dl class="settings">
 				<dt><strong>{{{txt.attachment_total}}}:</strong></dt>
 				<dd>{{{context.num_attachments}}}</dd>
+				<dt><strong>{{{txt.attachment_total_exports}}}</strong></dt>
+				<dd>{{{context.num_exports}}}</dd>
 				<dt><strong>{{{txt.attachment_manager_total_avatars}}}:</strong></dt>
 				<dd>{{{context.num_avatars}}}</dd>
 				<dt><strong>{{{txt.attachmentdir_size}}}:</strong></dt>
@@ -28,7 +30,7 @@
 			<h3 class="catbg">{{{txt.attachment_integrity_check}}}</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<form action="{{scripturl}}?action=admin;area=manageattachments;sa=repair;{{context.session_var}}={{context.session_id}}" method="post" accept-charset="UTF-8">
+			<form action="{{scripturl}}?action=admin;area=manageattachments;sa=repair;{{session_url}}" method="post" accept-charset="UTF-8">
 				<p>{{{txt.attachment_integrity_check_desc}}}</p>
 				<input type="submit" name="repair" value="{{{txt.attachment_check_now}}}" class="button_submit">
 			</form>
@@ -45,7 +47,7 @@
 					<dd><input type="text" name="notice" value="{{{txt.attachment_delete_admin}}}" size="40" class="input_text"></dd>
 					<input type="submit" name="remove" value="{{{txt.remove}}}" class="button_submit">
 					<input type="hidden" name="type" value="attachments">
-					<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+					{{session_form}}
 					<input type="hidden" name="sa" value="byAge">
 				</dl>
 			</form>
@@ -57,7 +59,7 @@
 					<dd><input type="text" name="notice" value="{{{txt.attachment_delete_admin}}}" size="40" class="input_text"></dd>
 					<input type="submit" name="remove" value="{{{txt.remove}}}" class="button_submit">
 					<input type="hidden" name="type" value="attachments">
-					<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+					{{session_form}}
 					<input type="hidden" name="sa" value="bySize">
 				</dl>
 			</form>
@@ -67,7 +69,7 @@
 					<dd><input type="number" name="age" value="45" size="4" class="input_text"> {{{txt.days_word}}}</dd>
 					<input type="submit" name="remove" value="{{{txt.remove}}}" class="button_submit">
 					<input type="hidden" name="type" value="avatars">
-					<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+					{{session_form}}
 					<input type="hidden" name="sa" value="byAge">
 				</dl>
 			</form>
@@ -127,7 +129,7 @@
 				{{/if}}
 
 			</dl>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 			<input type="submit" onclick="start_progress()" name="transfer" value="{{{txt.attachment_transfer_now}}}" class="button_submit">
 			<div id="progress_msg"></div>
 			<div id="show_progress" class="padding"></div>

@@ -14,7 +14,7 @@ namespace StoryBB;
 
 class Task
 {
-	static $pre_batch_queue = [];
+	protected static $pre_batch_queue = [];
 
 	/**
 	 * Add an adhoc task to the background task list.
@@ -62,6 +62,8 @@ class Task
 	 */
 	public static function commit_batch_queue()
 	{
+		global $smcFunc;
+
 		if (!empty(self::$pre_batch_queue))
 		{
 			$rows = [];

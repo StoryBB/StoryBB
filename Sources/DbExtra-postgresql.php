@@ -17,14 +17,14 @@ function db_extra_init()
 {
 	global $smcFunc;
 
-	if (!isset($smcFunc['db_backup_table']) || $smcFunc['db_backup_table'] != 'smf_db_backup_table')
+	if (!isset($smcFunc['db_backup_table']) || $smcFunc['db_backup_table'] != 'sbb_db_backup_table')
 		$smcFunc += array(
-			'db_backup_table' => 'smf_db_backup_table',
-			'db_optimize_table' => 'smf_db_optimize_table',
-			'db_table_sql' => 'smf_db_table_sql',
-			'db_list_tables' => 'smf_db_list_tables',
-			'db_get_version' => 'smf_db_get_version',
-			'db_get_engine' => 'smf_db_get_engine',
+			'db_backup_table' => 'sbb_db_backup_table',
+			'db_optimize_table' => 'sbb_db_optimize_table',
+			'db_table_sql' => 'sbb_db_table_sql',
+			'db_list_tables' => 'sbb_db_list_tables',
+			'db_get_version' => 'sbb_db_get_version',
+			'db_get_engine' => 'sbb_db_get_engine',
 		);
 }
 
@@ -34,14 +34,14 @@ function db_extra_init()
  * @param string $backup_table The name of the backup table for this table
  * @return resource -the request handle to the table creation query
  */
-function smf_db_backup_table($table, $backup_table)
+function sbb_db_backup_table($table, $backup_table)
 {
 	global $smcFunc, $db_prefix;
 
 	$table = str_replace('{db_prefix}', $db_prefix, $table);
 
 	// Do we need to drop it first?
-	$tables = smf_db_list_tables(false, $backup_table);
+	$tables = sbb_db_list_tables(false, $backup_table);
 	if (!empty($tables))
 		$smcFunc['db_query']('', '
 			DROP TABLE {raw:backup_table}',
@@ -79,7 +79,7 @@ function smf_db_backup_table($table, $backup_table)
  * @param string $table The table to be optimized
  * @return int How much space was gained
  */
-function smf_db_optimize_table($table)
+function sbb_db_optimize_table($table)
 {
 	global $smcFunc, $db_prefix;
 
@@ -144,7 +144,7 @@ function smf_db_optimize_table($table)
  * @param string|boolean $filter String to filter by or false to list all tables
  * @return array An array of table names
  */
-function smf_db_list_tables($db = false, $filter = false)
+function sbb_db_list_tables($db = false, $filter = false)
 {
 	global $smcFunc;
 
@@ -174,7 +174,7 @@ function smf_db_list_tables($db = false, $filter = false)
  * @param string $tableName The name of the table
  * @return string The "CREATE TABLE" SQL string for this table
  */
-function smf_db_table_sql($tableName)
+function sbb_db_table_sql($tableName)
 {
 	global $smcFunc, $db_prefix;
 
@@ -279,7 +279,7 @@ function smf_db_table_sql($tableName)
  *  Get the version number.
  *  @return string The version
  */
-function smf_db_get_version()
+function sbb_db_get_version()
 {
 	global $db_connection;
 	static $ver;
@@ -297,7 +297,7 @@ function smf_db_get_version()
  *
  * @return string The database engine we are using
 */
-function smf_db_get_engine()
+function sbb_db_get_engine()
 {
 	return 'PostgreSQL';
 }

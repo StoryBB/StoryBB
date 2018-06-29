@@ -15,10 +15,10 @@
 			<div class="windowbg2 noup">
 				<ul>
 					<li>
-						<a href="{{scripturl}}?action=admin;area=theme;th={{context.theme_settings.theme_id}};{{context.session_var}}={{context.session_id}};sa=edit;filename=index.template.php">{{txt.theme_edit_index}}</a>
+						<a href="{{scripturl}}?action=admin;area=theme;th={{context.theme_settings.theme_id}};{{session_url}};sa=edit;filename=index.template.php">{{txt.theme_edit_index}}</a>
 					</li>
 					<li>
-						<a href="{{scripturl}}?action=admin;area=theme;th={{context.theme_settings.theme_id}};{{context.session_var}}={{context.session_id}};sa=edit;directory=css">{{txt.theme_edit_style}}</a>
+						<a href="{{scripturl}}?action=admin;area=theme;th={{context.theme_settings.theme_id}};{{session_url}};sa=edit;directory=css">{{txt.theme_edit_style}}</a>
 					</li>
 				</ul>
 			</div>
@@ -142,8 +142,8 @@
 				</dl>
 				{{/each}}
 				<input type="submit" name="save" value="{{txt.save}}" class="button_submit">
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-				<input type="hidden" name="{{context.admin-sts_token_var}}" value="{{context.admin-sts_token}}">
+				{{session_form}}
+				{{token_form 'admin-sts'}}
 			</div>
 		</form>
 	</div>

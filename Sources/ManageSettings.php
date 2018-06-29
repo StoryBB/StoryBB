@@ -560,7 +560,7 @@ function ModifyAntispamSettings($return_config = false)
 		}
 		$context['question_answers'][$lang_id]['questions'][$row['id_question']] = [
 			'question' => $row['question'],
-			'answers' => smf_json_decode($row['answers'], true),
+			'answers' => sbb_json_decode($row['answers'], true),
 		];
 		$questions++;
 	}
@@ -895,7 +895,7 @@ function ModifySignatureSettings($return_config = false)
 				if (!empty($sig_limits[2]))
 				{
 					$count = 0;
-					for ($i = 0; $i < strlen($sig); $i++)
+					for ($i = 0, $n = strlen($sig); $i < $n; $i++)
 					{
 						if ($sig[$i] == "\n")
 						{
@@ -956,7 +956,8 @@ function ModifySignatureSettings($return_config = false)
 						$image_count_holder = array();
 						foreach ($matches[0] as $key => $image)
 						{
-							$width = -1; $height = -1;
+							$width = -1;
+							$height = -1;
 							$img_count++;
 							// Too many images?
 							if (!empty($sig_limits[3]) && $img_count > $sig_limits[3])
@@ -1530,7 +1531,10 @@ function EditCustomProfiles()
 	$context['page_title'] = $context['fid'] ? $txt['custom_edit_title'] : $txt['custom_add_title'];
 	$context['sub_template'] = 'admin_profile_fields_edit';
 	StoryBB\Template::add_helper([
-		'begins_with' => function($string, $test) { return strpos($string, $test) === 0; }
+		'begins_with' => function($string, $test)
+		{
+			return strpos($string, $test) === 0;
+		}
 	]);
 
 	// Load the profile language for section names.
@@ -2037,7 +2041,7 @@ function ModifyLogSettings($return_config = false)
 			array('int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Log of the scheduled tasks and how long they ran.
 			array('int', 'pruneSpiderHitLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Log of the scheduled tasks and how long they ran.
 			// If you add any additional logs make sure to add them after this point.  Additionally, make sure you add them to the weekly scheduled task.
-			// Mod Developers: Do NOT use the pruningOptions master variable for this as SMF Core may overwrite your setting in the future!
+			// Mod Developers: Do NOT use the pruningOptions master variable for this as StoryBB Core may overwrite your setting in the future!
 	);
 
 	// We want to be toggling some of these for a nice user experience. If you want to add yours to the list of those magically hidden when the 'pruning' option is off, add to this.

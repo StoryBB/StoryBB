@@ -1,7 +1,7 @@
 <?php
 
 /**
- * All adhoc tasks must implement this.
+ * Base class for every adhoc task which also functions as a sort of interface as well.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,9 +12,11 @@
 
 namespace StoryBB\Task;
 
+/**
+ * Base class for every adhoc task which also functions as a sort of interface as well.
+ */
 abstract class Adhoc
 {
-
 	/**
 	 * @var array Holds the details for the task
 	 */

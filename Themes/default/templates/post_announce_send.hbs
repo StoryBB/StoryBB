@@ -9,7 +9,7 @@
 				<hr>
 				<div id="confirm_buttons">
 					<input type="submit" name="b" value="{{txt.announce_continue}}" class="button_submit">
-					<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+					{{session_form}}
 					<input type="hidden" name="topic" value="{{context.current_topic}}">
 					<input type="hidden" name="move" value="{{context.move}}">
 					<input type="hidden" name="goback" value="{{context.go_back}}">

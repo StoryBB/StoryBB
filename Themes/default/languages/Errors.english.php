@@ -246,11 +246,6 @@ $txt['smiley_not_found'] = 'Smiley not found.';
 $txt['smiley_has_no_code'] = 'No code for this smiley was given.';
 $txt['smiley_has_no_filename'] = 'No filename for this smiley was given.';
 $txt['smiley_not_unique'] = 'A smiley with that code already exists.';
-$txt['smiley_set_already_exists'] = 'A smiley set with that URL already exists';
-$txt['smiley_set_not_found'] = 'Smiley set not found';
-$txt['smiley_set_dir_not_found'] = 'The directory of the smiley set %1$s is either invalid or cannot be accessed';
-$txt['smiley_set_path_already_used'] = 'The URL of the smiley set is already being used by another smiley set.';
-$txt['smiley_set_unable_to_import'] = 'Unable to import smiley set. Either the directory is invalid or cannot be accessed.';
 
 $txt['smileys_upload_error'] = 'Failed to upload file.';
 $txt['smileys_upload_error_blank'] = 'All smiley sets must have an image.';
@@ -378,8 +373,6 @@ $txt['custom_option_regex_error'] = 'The regex you entered is not valid';
 $txt['warning_no_reason'] = 'You must enter a reason for altering the warning state of a member';
 $txt['warning_notify_blank'] = 'You selected to notify the user but did not fill in the subject/message fields';
 
-$txt['cannot_connect_doc_site'] = 'Could not connect to the StoryBB Online Manual. Please check that your server configuration allows external internet connections and try again later.';
-
 $txt['movetopic_no_reason'] = 'You must enter a reason for moving the topic, or uncheck the option to \'post a redirection topic\'.';
 
 $txt['error_custom_field_too_long'] = 'The &quot;%1$s&quot; field cannot be greater than %2$d characters in length.';
@@ -421,3 +414,10 @@ $txt['json_JSON_ERROR_RECURSION'] = 'Json decode error: One or more recursive re
 $txt['json_JSON_ERROR_INF_OR_NAN'] = 'Json decode error: One or more NAN or INF values in the value to be encoded';
 $txt['json_JSON_ERROR_UNSUPPORTED_TYPE'] = 'Json decode error: A value of a type that cannot be encoded was given';
 $txt['json_unknown'] = 'Unknown error';
+
+$txt['error_contact'] = 'We encountered the following problems trying to send a message to the admins:';
+$txt['error_contact_no_name'] = 'You didn\'t provide a name.';
+$txt['error_contact_no_email'] = 'You didn\'t provide an email address.';
+$txt['error_contact_no_subject'] = 'You didn\'t provide a subject.';
+$txt['error_contact_no_message'] = 'You didn\'t provide a message.';
+$txt['error_contact_invalid_email'] = 'You didn\'t provide a valid email address.';

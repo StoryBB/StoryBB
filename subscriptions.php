@@ -54,7 +54,7 @@ $txnType = '';
 $gatewayHandles = loadPaymentGateways();
 foreach ($gatewayHandles as $gateway)
 {
-	$gatewayClass = new $gateway['payment_class']();
+	$gatewayClass = new $gateway['class']();
 	if ($gatewayClass->isValid())
 	{
 		$txnType = $gateway['code'];
@@ -268,16 +268,14 @@ elseif ($gatewayClass->isCancellation())
 	if (method_exists($gatewayClass, 'performCancel'))
 		$gatewayClass->performCancel($subscription_id, $member_id, $subscription_info);
 }
-else
-{
-	// Some other "valid" transaction such as:
-	//
-	// subscr_signup: This IPN response (txn_type) is sent only the first time the user signs up for a subscription.
-	// It then does not fire in any event later. This response is received somewhere before or after the first payment of
-	// subscription is received (txn_type=subscr_payment) which is what we do process
-	//
-	// Should we log any of these ...
-}
+
+/* @todo Some other "valid" transactions might need to be handled, such as:
+ *
+ * subscr_signup: This IPN response (txn_type) is sent only the first time the user signs up for a subscription.
+ * It then does not fire in any event later. This response is received somewhere before or after the first payment of
+ * subscription is received (txn_type=subscr_payment) which is what we do process
+ *
+ * Should we log any of these ...*/
 
 // In case we have anything specific to do.
 $gatewayClass->close();

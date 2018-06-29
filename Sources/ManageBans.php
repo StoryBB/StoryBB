@@ -571,7 +571,7 @@ function BanEdit()
 		}
 	}
 
-	loadJavaScriptFile('suggest.js', array(), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array(), 'sbb_suggest');
 	$context['sub_template'] = 'admin_ban_manage';
 
 }
@@ -786,7 +786,7 @@ function banLoadAdditionalIPsError($member_id)
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-	    $error_ips[] = inet_dtop($row['ip']);
+		$error_ips[] = inet_dtop($row['ip']);
 	$smcFunc['db_free_result']($request);
 
 	return $error_ips;
@@ -1601,7 +1601,7 @@ function BanEditTrigger()
 		redirectexit('action=admin;area=ban;sa=edit' . (!empty($ban_group) ? ';bg=' . $ban_group : ''));
 	}
 
-	loadJavaScriptFile('suggest.js', array(), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array(), 'sbb_suggest');
 
 	if (empty($ban_id))
 	{
@@ -1798,8 +1798,7 @@ function BanBrowseTriggers()
 			'function' => function($rowData)
 			{
 				return range2ip(
-					$rowData['ip_low']
-				,
+					$rowData['ip_low'],
 					$rowData['ip_high']
 				);
 			},
@@ -2168,9 +2167,9 @@ function range2ip($low, $high)
 
 	if ($low == '255.255.255.255') return 'unknown';
 	if ($low == $high)
-	    return $low;
+		return $low;
 	else
-	    return $low . '-' . $high;
+		return $low . '-' . $high;
 }
 
 /**

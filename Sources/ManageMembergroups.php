@@ -869,7 +869,13 @@ function EditMembergroup()
 		// Set variables to their proper value.
 		$_POST['max_messages'] = isset($_POST['max_messages']) ? (int) $_POST['max_messages'] : 0;
 		$_POST['min_posts'] = isset($_POST['min_posts']) && isset($_POST['group_type']) && $_POST['group_type'] == -1 && $_REQUEST['group'] > 3 ? abs($_POST['min_posts']) : ($_REQUEST['group'] == 4 ? 0 : -1);
-		$_POST['icons'] = (empty($_POST['icon_count']) || $_POST['icon_count'] < 0) ? '' : min((int) $_POST['icon_count'], 99) . '#' . $_POST['icon_image'];
+
+		$_POST['icons'] = '';
+		if (!empty($_POST['has_badge']) && !empty($_POST['icon_count']) && $_POST['icon_count'] > 0 && !empty($_POST['icon_image']))
+		{
+			$_POST['icons'] = min((int) $_POST['icon_count'], 99) . '#' . $_POST['icon_image'];
+		}
+
 		$_POST['group_desc'] = isset($_POST['group_desc']) && ($_REQUEST['group'] == 1 || (isset($_POST['group_type']) && $_POST['group_type'] != -1)) ? trim($_POST['group_desc']) : '';
 		$_POST['group_type'] = !isset($_POST['group_type']) || $_POST['group_type'] < 0 || $_POST['group_type'] > 3 || ($_POST['group_type'] == 1 && !allowedTo('admin_forum')) ? 0 : (int) $_POST['group_type'];
 		$_POST['group_hidden'] = empty($_POST['group_hidden']) || $_POST['min_posts'] != -1 || $_REQUEST['group'] == 3 ? 0 : (int) $_POST['group_hidden'];
@@ -1207,6 +1213,8 @@ function EditMembergroup()
 		'color' => $row['online_color'],
 		'min_posts' => $row['min_posts'],
 		'max_messages' => $row['max_messages'],
+		'has_badge' => !empty($row['icons'][0]),
+		'badge_enabled' => true,
 		'icon_count' => (int) $row['icons'][0],
 		'icon_image' => isset($row['icons'][1]) ? $row['icons'][1] : '',
 		'is_post_group' => $row['min_posts'] != -1,
@@ -1309,8 +1317,8 @@ function EditMembergroup()
 				// Get the size of the image.
 				$image_info = getimagesize($settings['default_theme_dir'] . '/images/membericons/' . $value);
 
-				// If this is bigger than 128 in width or 32 in height, skip this one.
-				if ($image_info == false || $image_info[0] > 128 || $image_info[1] > 32)
+				// If this image doesn't have a size or the size is unreasonable large, don't use it.
+				if ($image_info == false || $image_info[0] > 1024 || $image_info[1] > 1024)
 					continue;
 
 				// Else it's valid. Add it in.
@@ -1320,11 +1328,17 @@ function EditMembergroup()
 		}
 	}
 
+	if (empty($context['possible_icons']))
+	{
+		$context['group']['has_badge'] = false;
+		$context['group']['badge_enabled'] = false;
+	}
+
 	// Insert our JS, if we have possible icons.
 	if (!empty($context['possible_icons']))
-		loadJavaScriptFile('icondropdown.js', array('validate' => true), 'smf_icondropdown');
+		loadJavaScriptFile('icondropdown.js', array('validate' => true), 'sbb_icondropdown');
 
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 
 	// Finally, get all the groups this could be inherited off.
 	$request = $smcFunc['db_query']('', '

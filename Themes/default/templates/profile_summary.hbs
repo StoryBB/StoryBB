@@ -69,7 +69,7 @@
 
 			{{! Can they add this member as a buddy? }}
 			{{#if (and context.can_have_buddy (not context.user.is_owner))}}
-				<a href="{{scripturl}}?action=buddy;u={{context.id_member}};{{context.session_var}}={{context.session_id}}">[{{#if context.member.is_buddy}}{{txt.buddy_remove}}{{else}}{{txt.buddy_add}}{{/if}}]</a>
+				<a href="{{scripturl}}?action=buddy;u={{context.id_member}};{{session_url}}">[{{#if context.member.is_buddy}}{{txt.buddy_remove}}{{else}}{{txt.buddy_add}}{{/if}}]</a>
 			{{/if}}
 
 			{{! What about sending them a PM? }}

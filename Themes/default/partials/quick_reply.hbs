@@ -20,7 +20,7 @@
 						{{/unless}}
 						<div class="postarea">
 							{{#if context.is_locked}}<p class="alert smalltext">{{txt.quick_reply_warning}}</p>{{/if}}
-							{{#if context.oldTopicError}}<p class="alert smalltext">{{textTemplate 'error_old_topic' modSettings.oldTopicDays}}</p>{{/if}}
+							{{#if context.oldTopicError}}<p class="alert smalltext">{{textTemplate txt.error_old_topic modSettings.oldTopicDays}}</p>{{/if}}
 							{{#unless context.can_reply_approved}}<em>{{txt.wait_for_approval}}</em>{{/unless}}
 							{{#if (and context.can_reply_approved context.require_verification)}}<br>{{/if}}
 								<input type="hidden" name="topic" value="{{context.current_topic}}">
@@ -31,7 +31,7 @@
 								<input type="hidden" name="not_approved" value="{{#if (eq_coerce context.can_reply_approved 1)}}0{{else}}1{{/if}}">
 								<input type="hidden" name="goback" value="{{#unless options.return_to_post}}0{{else}}1{{/unless}}">
 								<input type="hidden" name="last_msg" value="{{context.topic_last_message}}">
-								<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+								{{session_form}}
 								<input type="hidden" name="seqnum" value="{{context.form_sequence_number}}">
 		                        {{#if context.user.is_guest}}
 		                        <dl id="post_header">
@@ -84,7 +84,7 @@
 		<br class="clear">
 		{{#if context.drafts_autosave}}
 		<script>
-				var oDraftAutoSave = new smf_DraftAutoSave({
+				var oDraftAutoSave = new sbb_DraftAutoSave({
 					sSelf: 'oDraftAutoSave',
 					sLastNote: 'draft_lastautosave',
 					sLastID: 'id_draft',{{#if context.post_box_name}}
@@ -101,7 +101,7 @@
 						iTopicId: '{{context.current_topic}}',
 						iStart: '{{context.start}}',
 						sScriptUrl: sbb_scripturl,
-						sImagesUrl: smf_images_url,
+						sImagesUrl: sbb_images_url,
 						sContainerId: "quickReplyOptions",
 						sImageId: "quickReplyExpand",
 						sClassCollapsed: "toggle_up",

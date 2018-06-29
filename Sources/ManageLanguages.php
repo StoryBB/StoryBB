@@ -731,7 +731,7 @@ function cleanLangString($string, $to_display = true)
 		// Are we in a string (0 = no, 1 = single quote, 2 = parsed)
 		$in_string = 0;
 		$is_escape = false;
-		for ($i = 0; $i < strlen($string); $i++)
+		for ($i = 0, $n = strlen($string); $i < $n; $i++)
 		{
 			// Handle escapes first.
 			if ($string{$i} == '\\')
@@ -827,7 +827,7 @@ function cleanLangString($string, $to_display = true)
 		$in_string = 0;
 		// This is for deciding whether to HTML a quote.
 		$in_html = false;
-		for ($i = 0; $i < strlen($string); $i++)
+		for ($i = 0, $n = strlen($string); $i < $n; $i++)
 		{
 			// We don't do parsed strings apart from for breaks.
 			if ($in_string == 2)

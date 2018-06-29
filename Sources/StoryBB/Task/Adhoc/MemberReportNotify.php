@@ -13,12 +13,12 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class MemberReport_Notify_Background
+ * This task handles notifying users when another member's profile gets reported.
  */
 class MemberReportNotify extends \StoryBB\Task\Adhoc
 {
 	/**
-     * This executes the task - loads up the information, puts the email in the queue and inserts alerts as needed.
+	 * This executes the task - loads up the information, puts the email in the queue and inserts alerts as needed.
 	 * @return bool Always returns true.
 	 */
 	public function execute()

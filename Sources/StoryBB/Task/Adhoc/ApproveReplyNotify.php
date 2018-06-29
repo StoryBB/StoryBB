@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains background notification code for any create post action
+ * Notifies moderators once their moderation comment is replied to.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,12 +12,12 @@
 namespace StoryBB\Task\Adhoc;
 
 /**
- * Class ApproveReply_Notify_Background
+ * Notifies moderators once their moderation comment is replied to.
  */
 class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 {
 	/**
-     * This executes the task - loads up the information, puts the email in the queue and inserts alerts.
+	 * This executes the task - loads up the information, puts the email in the queue and inserts alerts.
 	 * @return bool Always returns true.
 	 */
 	public function execute()
