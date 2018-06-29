@@ -412,7 +412,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'content_subject' => $msgOptions['subject'],
 					'content_link' => $scripturl . '?msg=' . $msgOptions['id'],
 				];
-				if (!empty($member['dest_chr']))
+				if (!empty($member['dest_chr']) && empty($member['dest_is_main']))
 				{
 					$extra['chars_dest'] = $member['dest_chr'];
 				}
