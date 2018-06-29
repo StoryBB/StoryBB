@@ -97,7 +97,7 @@ function HelpSmileys()
 			$context['smileys'][$row['filename']] = [
 				'text' => $row['description'],
 				'code' => [$row['code']],
-				'image' => $modSettings['smileys_url'] . '/' . $modSettings['smiley_sets_default'] . '/' . $row['filename'],
+				'image' => $modSettings['smileys_url'] . '/' . $row['filename'],
 			];
 		}
 		else
