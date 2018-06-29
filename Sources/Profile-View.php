@@ -283,9 +283,9 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 
 	if($withSender)
 	{
-	$senders = loadMemberData($senders);
-	foreach ($senders as $member)
-		loadMemberContext($member);
+		$senders = loadMemberData($senders);
+		foreach ($senders as $member)
+			loadMemberContext($member);
 	}
 
 	// Now go through and actually make with the text.
@@ -299,6 +299,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 	$topics = array();
 	$msgs = array();
 	$chars = array();
+	$char_accounts = [];
 	foreach ($alerts as $id_alert => $alert)
 	{
 		if (isset($alert['extra']['chars_src']))
@@ -394,12 +395,24 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 		if ($alert['content_type'] == 'profile')
 			$alerts[$id_alert]['extra']['profile_msg'] = '<a href="' . $scripturl . '?action=profile;u=' . $alerts[$id_alert]['content_id'] . '">' . $alerts[$id_alert]['extra']['user_name'] . '</a>';
 
+		// Use the sender details first if we have them.
 		if (!empty($memberContext[$alert['sender_id']]))
-			$alerts[$id_alert]['sender'] = &$memberContext[$alert['sender_id']];
+			$alerts[$id_alert]['sender'] = $memberContext[$alert['sender_id']];
+
+		// And additionally if we have a character, use that.
+		if (isset($alert['extra']['chars_src']))
+		{
+			if (!empty($memberContext[$alert['sender_id']]['characters'][$alert['extra']['chars_src']]))
+			{
+				$alerts[$id_alert]['sender']['avatar']['image'] = $memberContext[$alert['sender_id']]['characters'][$alert['extra']['chars_src']]['avatar'];
+				$alerts[$id_alert]['sender']['avatar']['image'] = '<img class="avatar" src="' . $alerts[$id_alert]['sender']['avatar']['image'] . '" alt="">';
+			}
+		}
 
 		$string = 'alert_' . $alert['content_type'] . '_' . $alert['content_action'];
-		if (isset($alert['extra']['chars_src']) || isset($alert['extra']['chars_dest']))
+		if (isset($alert['extra']['chars_dest']))
 			$string .= 'chr';
+
 		if (isset($txt[$string]))
 		{
 			$extra = $alerts[$id_alert]['extra'];

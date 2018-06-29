@@ -11,6 +11,8 @@
 
 namespace StoryBB\Task\Adhoc;
 
+use Mentions;
+
 /**
  * This file contains background notification code for any create post action.
  */
@@ -169,7 +171,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 			if ($pref & 0x01)
 			{
-				$alert_rows[] = array(
+				$alert = [
 					'alert_time' => time(),
 					'id_member' => $member,
 					// Only tell sender's information for new topics and replies
@@ -179,14 +181,19 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'content_id' => $topicOptions['id'],
 					'content_action' => $type,
 					'is_read' => 0,
-					'extra' => json_encode(array(
+					'extra' => [
 						'topic' => $topicOptions['id'],
 						'board' => $topicOptions['board'],
 						'content_subject' => $msgOptions['subject'],
 						'content_link' => $scripturl . '?topic=' . $topicOptions['id'] . '.new;topicseen#new',
-					)),
-				);
-				updateMemberData($member, array('alerts' => '+'));
+					],
+				];
+				if (!empty($posterOptions['char_id']))
+				{
+					$alert['extra']['chars_src'] = $posterOptions['char_id'];
+				}
+				$alert['extra'] = json_encode($alert['extra']);
+				$alert_rows[] = $alert;
 			}
 
 			$smcFunc['db_query']('', '
@@ -215,6 +222,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 		// Insert the alerts if any
 		if (!empty($alert_rows))
+		{
 			$smcFunc['db_insert']('',
 				'{db_prefix}user_alerts',
 				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
@@ -222,6 +230,15 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				$alert_rows,
 				array()
 			);
+
+			$members = [];
+			foreach ($alert_rows as $alert)
+			{
+				$members[] = $alert['id_member'];
+			}
+			$members = array_unique($members);
+			updateMemberData($members, ['alerts' => '+']);
+		}
 
 		return true;
 	}
@@ -396,7 +413,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'content_subject' => $msgOptions['subject'],
 					'content_link' => $scripturl . '?msg=' . $msgOptions['id'],
 				];
-				if (!empty($member['dest_chr']))
+				if (!empty($member['dest_chr']) && empty($member['dest_is_main']))
 				{
 					$extra['chars_dest'] = $member['dest_chr'];
 				}
