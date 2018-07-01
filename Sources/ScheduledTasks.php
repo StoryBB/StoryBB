@@ -847,6 +847,34 @@ function scheduled_clean_exports()
 }
 
 /**
+ * Scrub log data.
+ */
+function scheduled_scrub_logs()
+{
+	global $modSettings, $smcFunc;
+
+	// The flood control table keeps IPs - so we have to clean it. Anything more than a day old shouldn't exist anyway...
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}log_floodcontrol
+		WHERE log_time < {int:log_time}',
+		[
+			'log_time' => time() - 86400,
+		]
+	);
+
+	// Ditto the online log but because historically admins have done odd things, give it a day plus an hour.
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}log_online
+		WHERE log_time < {int:log_time}',
+		[
+			'log_time' => time() - 86400 - 3600,
+		]
+	);
+
+	return true;
+}
+
+/**
  * Send a group of emails from the mail queue.
  *
  * @param bool|int $number The number to send each loop through or false to use the standard limits
