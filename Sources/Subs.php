@@ -4132,7 +4132,7 @@ function setupMenuContext()
 		list($contactform) = $smcFunc['db_fetch_row']($query);
 		$smcFunc['db_free_result']($query);
 
-		if ($errors)
+		if ($contactform)
 		{
 			$context['menu_buttons']['admin']['badge'] += $contactform;
 			$context['menu_buttons']['admin']['sub_buttons']['contactform']['badge'] = $contactform;
