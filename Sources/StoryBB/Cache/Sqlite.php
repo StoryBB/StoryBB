@@ -22,17 +22,24 @@ class Sqlite extends API
 	 * @var string The path to the current $cachedir directory.
 	 */
 	private $cachedir = null;
+	/**
+	 * @var SQLite3 Class instance to connect to the SQLite3 database for our cache
+	 */
 	private $cacheDB = null;
+	/**
+	 * @var int Time the class was instantiated for calculating TTLs
+	 */
 	private $cacheTime = 0;
 
+	/**
+	 * Class constructor
+	 */
 	public function __construct()
 	{
-
 		parent::__construct();
 
 		// Set our default cachedir.
 		$this->setCachedir();
-
 	}
 
 	/**
@@ -52,7 +59,6 @@ class Sqlite extends API
 	 */
 	public function connect()
 	{
-
 		$database = $this->cachedir . '/' . 'SQLite3Cache.db3';
 		$this->cacheDB = new SQLite3($database);
 		$this->cacheDB->busyTimeout(1000);
@@ -62,7 +68,6 @@ class Sqlite extends API
 			$this->cacheDB->exec('CREATE INDEX ttls ON cache(ttl);');
 		}
 		$this->cacheTime = time();
-
 	}
 
 	/**
@@ -115,7 +120,6 @@ class Sqlite extends API
 	 */
 	public function putData($key, $value, $ttl = null)
 	{
-
 		$ttl = $this->cacheTime + $ttl;
 		$query = 'REPLACE INTO cache VALUES (\'' . $this->cacheDB->escapeString($key) . '\', \'' . $this->cacheDB->escapeString($value) . '\', ' . $this->cacheDB->escapeString($ttl) . ');';
 		$result = $this->cacheDB->exec($query);
@@ -131,12 +135,10 @@ class Sqlite extends API
 	 */
 	public function cleanCache($type = '')
 	{
-
 		$query = 'DELETE FROM cache;';
 		$result = $this->cacheDB->exec($query);
 
 		return $result;
-
 	}
 
 	/**
