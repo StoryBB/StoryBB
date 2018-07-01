@@ -799,6 +799,24 @@ function Display()
 	// Guests can't mark topics read or for notifications, just can't sorry.
 	if (!$user_info['is_guest'] && !empty($messages))
 	{
+		// Additionally, if the current user has some alerts, try to mark any of these ones read.
+		if (!empty($user_info['alerts']))
+		{
+			// Clear any pending alerts.
+			$alerted = StoryBB\Model\Alert::find_alerts([
+				'content_type' => 'msg',
+				'content_id' => $messages,
+				'id_member' => $context['user']['id'],
+				'is_read' => 0
+			]);
+			if (!empty($alerted))
+			{
+				foreach ($alerted as $memID => $alerts)
+				{
+					StoryBB\Model\Alert::change_read($memID, $alerts, 1);
+				}
+			}
+		}
 		$mark_at_msg = max($messages);
 		if ($mark_at_msg >= $context['topicinfo']['id_last_msg'])
 			$mark_at_msg = $modSettings['maxMsgID'];
