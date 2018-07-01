@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Task management.
+ * A class for managing tasks being queued for running asynchronously.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,8 +12,14 @@
 
 namespace StoryBB;
 
+/**
+ * A class for managing tasks being queued for running asynchronously.
+ */
 class Task
 {
+	/**
+	 * @var array Stores tasks to be queued when a group of tasks is going to be queued together
+	 */
 	protected static $pre_batch_queue = [];
 
 	/**
