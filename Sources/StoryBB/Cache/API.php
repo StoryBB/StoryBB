@@ -81,7 +81,7 @@ abstract class API implements API_Interface
 	/**
 	 * Overrides the default prefix. If left alone, this will use the default key defined in the class.
 	 *
-	 * @param string $key The key to use
+	 * @param string $prefix The key to use
 	 * @return boolean If this was successful or not.
 	 */
 	public function setPrefix($prefix = '')
