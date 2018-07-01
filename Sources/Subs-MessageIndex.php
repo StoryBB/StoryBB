@@ -87,7 +87,12 @@ function getBoardList($boardListOptions = array())
 	return $return_value;
 }
 
-
+/**
+ * Make a string linking to all the child boards for a given board.
+ *
+ * @param array $board A board array
+ * @return SafeString The links to all the children of this board, as a single string
+ */
 function child_boards($board)
 {
 	global $txt;

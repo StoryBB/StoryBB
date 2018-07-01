@@ -243,6 +243,17 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		return true;
 	}
 
+	/**
+	 * Send notifications to people who have been quoted in a post.
+	 * This assumes a new message is being posted, and other notifications to possible recipients have been handled.
+	 *
+	 * @param array $msgOptions The message being posted (as from Model\Post::create)
+	 * @param array $posterOptions The person making the post
+	 * @param array $quotedMembers A list of people (id -> details) that were quoted in this post
+	 * @param array $prefs The preferences previously loaded for these people
+	 * @param array $done_members Members previously handled by this round of notifications
+	 * @param array $alert_rows The rows to be inserted into the database for this round of alerts
+	 */
 	protected static function handleQuoteNotifications($msgOptions, $posterOptions, $quotedMembers, $prefs, &$done_members, &$alert_rows)
 	{
 		global $modSettings, $language, $scripturl;
@@ -301,6 +312,13 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		}
 	}
 
+	/**
+	 * From a message currently being posted, that contains quotes (with ids), identify which members were quoted in this post.
+	 *
+	 * @param array $msgOptions The message being posted (as from Model\Post::create)
+	 * @param array $posterOptions The person making the post
+	 * @return array An array of all the people being quoted, which messages of theirs are quoted, and which characters are relevant
+	 */
 	protected static function getQuotedMembers($msgOptions, $posterOptions)
 	{
 		global $smcFunc;
@@ -378,6 +396,16 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		return $members;
 	}
 
+	/**
+	 * Send notifications to people who have been mentioned in a post.
+	 * This assumes a new message is being posted, and other notifications to possible recipients have been handled.
+	 *
+	 * @param array $msgOptions The message being posted (as from Model\Post::create)
+	 * @param array $members The members that were mentioned in this post
+	 * @param array $prefs The preferences previously loaded for these people
+	 * @param array $done_members Members previously handled by this round of notifications
+	 * @param array $alert_rows The rows to be inserted into the database for this round of alerts
+	 */
 	protected static function handleMentionedNotifications($msgOptions, $members, $prefs, &$done_members, &$alert_rows)
 	{
 		global $scripturl, $language, $modSettings;
