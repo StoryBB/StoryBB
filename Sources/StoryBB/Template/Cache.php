@@ -61,6 +61,7 @@ class Cache
 	 * Push a string containing a compiled template to cache storage.
 	 *
 	 * @param string $cache_id The name of the entry in the cache
+	 * @param string $phpStr The template code to be saved
 	 * @return bool True if successfully cached
 	 */
 	public static function push(string $cache_id, string $phpStr): bool
