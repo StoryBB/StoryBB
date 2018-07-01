@@ -764,6 +764,7 @@ CREATE TABLE {$db_prefix}members (
   timezone VARCHAR(80) NOT NULL DEFAULT 'UTC',
   tfa_secret VARCHAR(24) NOT NULL DEFAULT '',
   tfa_backup VARCHAR(64) NOT NULL DEFAULT '',
+  policy_acceptance TINYINT NOT NULL DEFAULT '0',
   PRIMARY KEY (id_member),
   INDEX idx_member_name (member_name),
   INDEX idx_real_name (real_name),
@@ -957,6 +958,59 @@ CREATE TABLE {$db_prefix}pm_rules (
   PRIMARY KEY (id_rule),
   INDEX idx_id_member (id_member),
   INDEX idx_delete_pm (delete_pm)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy`
+#
+
+CREATE TABLE {$db_prefix}policy (
+  id_policy SMALLINT UNSIGNED AUTO_INCREMENT,
+  policy_type TINYINT UNSIGNED NOT NULL DEFAULT '0',
+  language VARCHAR(20) NOT NULL DEFAULT '',
+  title VARCHAR(100) NOT NULL DEFAULT '',
+  last_revision INT UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_policy)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy_acceptance`
+#
+
+CREATE TABLE {$db_prefix}policy_acceptance (
+  id_policy SMALLINT UNSIGNED AUTO_INCREMENT,
+  id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
+  id_revision INT UNSIGNED NOT NULL DEFAULT '0',
+  acceptance_time INT UNSIGNED NOT NULL DEFAULT '0'
+  PRIMARY KEY (id_policy, id_member)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy_revision`
+#
+
+CREATE TABLE {$db_prefix}policy_revision (
+  id_revision INT UNSIGNED AUTO_INCREMENT,
+  id_policy SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+  last_change INT UNSIGNED NOT NULL DEFAULT '0',
+  short_revision_note TEXT NOT NULL,
+  revision_text TEXT NOT NULL,
+  edit_id_member INT UNSIGNED NOT NULL DEFAULT '0',
+  edit_member_name VARCHAR(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (id_revision)
+  INDEX idx_id_policy (id_policy)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy_types`
+#
+
+CREATE TABLE {$db_prefix}policy_types (
+  id_policy_type TINYINT UNSIGNED AUTO_INCREMENT,
+  policy_type VARCHAR(50) NOT NULL,
+  require_acceptance TINYINT UNSIGNED DEFAULT '0',
+  show_reg TINYINT UNSIGNED DEFAULT '0',
+  PRIMARY KEY (id_policy_type)
 ) ENGINE={$engine};
 
 #

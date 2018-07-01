@@ -1103,6 +1103,7 @@ CREATE TABLE {$db_prefix}members (
   timezone varchar(80) NOT NULL DEFAULT 'UTC',
   tfa_secret varchar(24) NOT NULL DEFAULT '',
   tfa_backup varchar(64) NOT NULL DEFAULT '',
+  policy_acceptance TINYINT NOT NULL DEFAULT '0',
   PRIMARY KEY (id_member)
 );
 
