@@ -52,6 +52,22 @@ function exportData($memID)
 		fatal_lang_error('profile_export_data_not_available', false);
 	}
 
+	// Did this user potentially get an alert about it? If so, clear up.
+	$alerted = StoryBB\Model\Alert::find_alerts([
+		'content_type' => 'member',
+		'content_id' => $memID,
+		'content_action' => 'export_complete',
+		'id_member' => $context['user']['id'],
+		'is_read' => 0
+	]);
+	if (!empty($alerted))
+	{
+		foreach ($alerted as $member => $alerts)
+		{
+			StoryBB\Model\Alert::change_read($member, $alerts, 1);
+		}
+	}
+
 	// Is one currently processing for this user?
 	$in_process = false;
 	$request = $smcFunc['db_query']('', '
