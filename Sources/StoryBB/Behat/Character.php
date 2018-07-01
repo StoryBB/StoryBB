@@ -30,6 +30,8 @@ use Behat\MinkExtension\Context\RawMinkContext;
 class Character extends RawMinkContext implements Context
 {
 	/**
+	 * Change who the current character is in the Behat session.
+	 *
 	 * @When I switch character to :character
 	 * @param string $character A character name to switch to
 	 * @throws ElementNotFoundException if the switch-character link couldn't be found
