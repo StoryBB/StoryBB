@@ -17,6 +17,9 @@ namespace StoryBB\Payment;
  */
 class PayPal implements PaymentProcessor
 {
+	/**
+	 * @var string Stores raw data from PayPal
+	 */
 	private $return_data;
 
 	/**
