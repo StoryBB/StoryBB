@@ -85,7 +85,7 @@ class PayPal implements PaymentProcessor
 	}
 
 	/**
-	 * What do we want?
+	 * Provide the fields to build a payment transaction form
 	 *
 	 * Called from Profile-Actions.php to return a unique set of fields for the given gateway
 	 * plus all the standard ones for the subscription form
@@ -160,7 +160,7 @@ class PayPal implements PaymentProcessor
 	/**
 	 * This function returns true/false for whether this gateway thinks the data is intended for it.
 	 *
-	 * @return boolean Whether this gateway things the data is valid
+	 * @return boolean Whether this gateway thinks the data is valid
 	 */
 	public function isValid(): bool
 	{
@@ -381,7 +381,6 @@ class PayPal implements PaymentProcessor
 
 	/**
 	 * Record the transaction reference and exit
-	 *
 	 */
 	public function close()
 	{
