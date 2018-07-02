@@ -142,6 +142,7 @@ function ModifyBasicSettings($return_config = false)
 			// Basic stuff, titles, permissions...
 			array('check', 'allow_guestAccess'),
 			array('check', 'enable_likes'),
+			array('check', 'enable_mentions'),
 			array('check', 'enable_buddylist'),
 			array('check', 'allow_hideOnline'),
 			array('check', 'topic_move_any'),
