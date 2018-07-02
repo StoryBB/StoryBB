@@ -2228,7 +2228,6 @@ VALUES (-1, 'search_posts'),
   (2, 'profile_upload_avatar'),
   (2, 'profile_remote_avatar'),
   (2, 'send_email_to_members'),
-  (2, 'profile_title_own'),
   (2, 'access_mod_center');
 # --------------------------------------------------------
 
