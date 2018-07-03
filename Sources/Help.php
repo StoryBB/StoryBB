@@ -18,7 +18,7 @@
  */
 function ShowHelp()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt, $scripturl, $smcFunc, $user_info, $language;
 
 	loadLanguage('Manual');
 
@@ -41,11 +41,43 @@ function ShowHelp()
 		],
 	];
 
+	$request = $smcFunc['db_query']('', '
+		SELECT p.id_policy, pt.policy_type, p.language, p.title, p.description
+		FROM {db_prefix}policy_types AS pt
+			INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
+		WHERE pt.show_help = 1
+		AND p.language IN ({array_string:languages})',
+		[
+			'languages' => [$language, $user_info['language']],
+		]
+	);
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$subActions[$row['policy_type']] = 'HelpPolicy';
+		if (!isset($context['manual_sections'][$row['policy_type']]))
+		{
+			$context['manual_sections'][$row['policy_type']] = [
+				'link' => $scripturl . '?action=help;sa=' . $row['policy_type'],
+				'title' => $row['title'],
+				'desc' => $row['description'],
+				'id_policy' => $row['id_policy'],
+			];
+		}
+		elseif ($row['language'] == $user_info['language'])
+		{
+			// So we matched multiple, we previously had one (in site language) and now we have one for the user language, so use that.
+			$context['manual_sections'][$row['policy_type']]['title'] = $row['title'];
+			$context['manual_sections'][$row['policy_type']]['desc'] = $row['description'];
+			$context['manual_sections'][$row['policy_type']]['id_policy'] = $row['id_policy'];
+		}
+	}
+	$smcFunc['db_free_result']($request);
+
 	// CRUD $subActions as needed.
 	call_integration_hook('integrate_manage_help', array(&$subActions));
 
-	$sa = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'index';
-	call_helper($subActions[$sa]);
+	$context['subaction'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'index';
+	call_helper($subActions[$context['subaction']]);
 }
 
 /**
@@ -66,6 +98,54 @@ function HelpIndex()
 	// Lastly, some minor template stuff.
 	$context['page_title'] = $txt['manual_storybb_user_help'];
 	$context['sub_template'] = 'help_manual';
+}
+
+/**
+ * Display a policy page.
+ */
+function HelpPolicy()
+{
+	global $scripturl, $context, $txt, $smcFunc, $cookiename, $modSettings;
+
+	$context['canonical_url'] = $scripturl . '?action=help;sa=' . $context['subaction'];
+
+	// Build the link tree.
+	$context['linktree'][] = [
+		'url' => $scripturl . '?action=help',
+		'name' => $txt['help'],
+	];
+	$context['linktree'][] = [
+		'url' => $context['canonical_url'],
+		'name' => $context['manual_sections'][$context['subaction']]['title'],
+	];
+	
+	// We know if we're here the policy exists.
+	$request = $smcFunc['db_query']('', '
+		SELECT p.id_policy, pr.last_change, pr.revision_text
+		FROM {db_prefix}policy_revision AS pr
+			INNER JOIN {db_prefix}policy AS p ON (p.last_revision = pr.id_revision)
+		WHERE p.id_policy = {int:policy}',
+		[
+			'policy' => $context['manual_sections'][$context['subaction']]['id_policy'],
+		]
+	);
+	$row = $smcFunc['db_fetch_assoc']($request);
+
+	$context['policy_name'] = $context['manual_sections'][$context['subaction']]['title'];
+
+	// Replace out some of the placeholders in our text.
+	$replacements = [
+		'{$forum_name}' => $context['forum_name_html_safe'],
+		'{$contact_url}' => $scripturl . '?action=contact',
+		'{$cookiename}' => $cookiename,
+		'{$age}' => !empty($modSettings['coppaAge']) ? $modSettings['coppaAge'] : 18,
+		'{$cookiepolicy}' => $scripturl . '?action=help;sa=cookies',
+	];
+	$context['policy_text'] = parse_bbc(strtr($row['revision_text'], $replacements), false);
+	$context['last_updated'] = timeformat($row['last_change']);
+
+	$context['page_title'] = $context['policy_name'];
+	$context['sub_template'] = 'help_policy';
 }
 
 /**
