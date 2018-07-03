@@ -92,6 +92,9 @@ $txt['board_moderators'] = 'Moderators';
 $txt['board_moderator_groups'] = 'Moderator Groups';
 $txt['board_groups'] = 'Groups with Access';
 $txt['board_disallowed_groups'] = 'Groups with Access Denied';
+$txt['board_in_character'] = 'Board is "in character"';
+$txt['board_is_ic'] = 'In character';
+$txt['board_is_ooc'] = 'Out of character';
 
 // Group Permissions.
 $txt['group_perms_name_access_mod_center'] = 'Access Moderation Center';

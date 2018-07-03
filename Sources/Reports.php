@@ -166,6 +166,7 @@ function BoardReport()
 		'redirect' => $txt['board_redirect'],
 		'num_topics' => $txt['board_num_topics'],
 		'num_posts' => $txt['board_num_posts'],
+		'in_character' => $txt['board_in_character'],
 		'count_posts' => $txt['board_count_posts'],
 		'theme' => $txt['board_theme'],
 		'override_theme' => $txt['board_override_theme'],
@@ -181,7 +182,7 @@ function BoardReport()
 
 	// Go through each board!
 	$request = $smcFunc['db_query']('order_by_board_order', '
-		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.member_groups, b.override_theme, b.id_profile, b.deny_member_groups,
+		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.in_character, b.member_groups, b.override_theme, b.id_profile, b.deny_member_groups,
 			b.redirect, c.name AS cat_name, COALESCE(par.name, {string:text_none}) AS parent_name, COALESCE(th.value, {string:text_none}) AS theme_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -216,6 +217,7 @@ function BoardReport()
 			'redirect' => $row['redirect'],
 			'num_posts' => $row['num_posts'],
 			'num_topics' => $row['num_topics'],
+			'in_character' => $row['in_character'] ? $txt['board_is_ic'] : $txt['board_is_ooc'],
 			'count_posts' => empty($row['count_posts']) ? $txt['yes'] : $txt['no'],
 			'theme' => $row['theme_name'],
 			'profile' => $profile_name,
