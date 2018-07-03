@@ -9,6 +9,11 @@
  * @version 3.0 Alpha 1
  */
 
+/**
+ * Setup to fetch the HTML for the characters popup (excluding all other forum chrome)
+ *
+ * @param int $memID The user ID that we are fetching for, passed automatically from caller
+ */
 function characters_popup($memID)
 {
 	global $context, $user_info, $sourcedir, $db_show_debug, $cur_profile, $smcFunc;
@@ -24,6 +29,14 @@ function characters_popup($memID)
 	$context['current_characters'] = $cur_profile['characters'];
 }
 
+/**
+ * Handle switching the active character on the currently logged in account.
+ *
+ * @param int $memID The current user ID
+ * @param int $char The character ID to switch to (if not supplied, fetched from GET)
+ * @param bool $return Whether to return to main flow or not, normally redirects
+ * @return bool If returning to main flow, true on success. Will end execution otherwise.
+ */
 function char_switch($memID, $char = null, $return = false)
 {
 	global $smcFunc, $modSettings;
@@ -107,6 +120,12 @@ function char_switch($memID, $char = null, $return = false)
 		die;
 }
 
+/**
+ * Handle switching the active character on the currently logged in account, and redirecting back to the profile on completion.
+ * Character ID to switch to is pulled from GET.
+ *
+ * @param int $memID The current user ID
+ */
 function char_switch_redir($memID)
 {
 	checkSession('get');
@@ -120,6 +139,12 @@ function char_switch_redir($memID)
 	redirectexit('action=profile;u=' . $memID);
 }
 
+/**
+ * Core dispatcher for the characters area within the profile page.
+ * Also identifies current character from GET where specified. Unless a different action is given, will present the character summary.
+ *
+ * @param int $memID The current user ID
+ */
 function character_profile($memID)
 {
 	global $user_profile, $context, $scripturl, $modSettings, $smcFunc, $txt, $user_info;
@@ -2191,6 +2216,10 @@ function merge_char_accounts($source, $dest)
 	return true;
 }
 
+/**
+ * Handle UI aspects of moving characters between accounts, including requesting from the user and security checks.
+ * Defers actual processing to move_char_accounts().
+ */
 function char_move_account()
 {
 	global $context, $txt, $user_profile, $smcFunc;
@@ -2243,6 +2272,14 @@ function char_move_account()
 	}
 }
 
+/**
+ * Move a character physically to another account.
+ *
+ * @param int $source_chr The ID of the character to be moved
+ * @param int $dest_account The ID of the account to move the character to
+ * @return mixed True on success, otherwise string indicating error type
+ * @todo refactor this to emit exceptions rather than mixed return types
+ */
 function move_char_accounts($source_chr, $dest_acct)
 {
 	global $user_profile, $sourcedir, $smcFunc, $modSettings;
@@ -2391,6 +2428,12 @@ function move_char_accounts($source_chr, $dest_acct)
 	return true;
 }
 
+/**
+ * Quick and dirty call to get an avatar image from a remote source to identify its size.
+ *
+ * @param string $url The URL of the avatar
+ * @return array|false Array of [width, height] for the size of image, or false if could not get image/could not identify size.
+ */
 function get_avatar_url_size($url)
 {
 	global $sourcedir;
@@ -2413,6 +2456,12 @@ function get_avatar_url_size($url)
 		return false;
 }
 
+/**
+ * Given raw binary data for an image, identify its image size and return.
+ *
+ * @param string $data Raw image bytes as a string
+ * @return array|false Returns array of [width, height] or false if couldn't identify image size
+ */
 function get_image_size_from_string($data)
 {
 	if (empty($data)) {
@@ -2466,6 +2515,9 @@ function get_image_size_from_string($data)
 	return false;
 }
 
+/**
+ * Display sthe list of characters on the site.
+ */
 function CharacterList()
 {
 	global $context, $smcFunc, $txt, $scripturl, $modSettings, $settings;
@@ -2628,6 +2680,10 @@ function CharacterList()
 	}
 }
 
+/**
+ * Show a filtered form of the character list based on characters being in a given group.
+ * Params should be set up by the caller, which is CharacterList().
+ */
 function CharacterSheetList()
 {
 	global $context, $txt, $smcFunc;
@@ -2678,9 +2734,11 @@ function CharacterSheetList()
 		$context['characters'][] = $row;
 	}
 	$smcFunc['db_free_result']($request);
-
 }
 
+/**
+ * Moves a post between characters on an account.
+ */
 function ReattributePost()
 {
 	global $topic, $smcFunc, $modSettings, $user_info, $board_info;

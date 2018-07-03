@@ -1,4 +1,5 @@
 <?php
+
 /**
  * General class for handling the short-term cache available to StoryBB.
  *

@@ -1194,7 +1194,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'profile_website_any',
 		'profile_displayed_name_any',
 		'profile_password_any',
-		'profile_title_any',
 	));
 	$groupLevels['board']['maintenance'] = array_merge($groupLevels['board']['moderator'], array(
 	));
@@ -1471,7 +1470,6 @@ function loadAllPermissions()
 			'profile_extra' => array(true, 'profile'),
 			'profile_signature' => array(true, 'profile'),
 			'profile_website' => array(true, 'profile'),
-			'profile_title' => array(true, 'profile'),
 			'profile_upload_avatar' => array(false, 'profile'),
 			'profile_remote_avatar' => array(false, 'profile'),
 			'report_user' => array(false, 'profile'),
@@ -2231,7 +2229,6 @@ function loadIllegalGuestPermissions()
 		'profile_remove',
 		'profile_remote_avatar',
 		'profile_signature',
-		'profile_title',
 		'profile_upload_avatar',
 		'profile_warning',
 		'remove',

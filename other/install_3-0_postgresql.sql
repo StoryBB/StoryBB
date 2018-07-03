@@ -2209,7 +2209,7 @@ VALUES (-1, 'search_posts'),
   (0, 'profile_remove_own'),
   (0, 'profile_upload_avatar'),
   (0, 'profile_remote_avatar'),
-  (0, 'send_email_to_members'),
+  (0, 'mention'),
   (2, 'view_mlist'),
   (2, 'search_posts'),
   (2, 'profile_view'),
@@ -2228,8 +2228,7 @@ VALUES (-1, 'search_posts'),
   (2, 'profile_remove_own'),
   (2, 'profile_upload_avatar'),
   (2, 'profile_remote_avatar'),
-  (2, 'send_email_to_members'),
-  (2, 'profile_title_own'),
+  (2, 'mention'),
   (2, 'access_mod_center');
 # --------------------------------------------------------
 
@@ -2421,7 +2420,8 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('allow_expire_redirect', '1'),
   ('json_done', '1'),
   ('displayFields', '[{"col_name":"cust_skype","title":"Skype","type":"text","order":"1","bbc":"0","placement":"1","enclose":"<a href=\\"skype:{INPUT}?call\\"><img src=\\"{DEFAULT_IMAGES_URL}\\/skype.png\\" alt=\\"{INPUT}\\" title=\\"{INPUT}\\" \\/><\\/a> ","mlist":"0"},{"col_name":"cust_loca","title":"Location","type":"text","order":"2","bbc":"0","placement":"0","enclose":"","mlist":"0"}]'),
-  ('minimize_files', '1');
+  ('minimize_files', '1'),
+  ('enable_mentions', '1');
 # --------------------------------------------------------
 
 #
