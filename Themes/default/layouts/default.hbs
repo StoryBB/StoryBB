@@ -158,15 +158,15 @@
     </div>
     
     <div id="footer">
-    	<ul>
-    		<li class="floatright">
+        <ul>
+            <li class="floatright">
                 <a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
-    		    | <a href="{{scripturl}}?action=help">{{txt.help}}</a>
-    		    {{#if modSettings.requireAgreement}}| <a href="{{scripturl}}?action=help;sa=rules">{{txt.terms_and_rules}}</a>{{/if}}
-    		    | <a href="#top_section">{{txt.go_up}} &#9650;</a>
-		    </li>
-    		<li class="copyright">{{{copyright}}}</li>
-    	</ul>
+                | <a href="{{scripturl}}?action=help">{{txt.help}}</a>
+                | <a href="{{scripturl}}?action=help;sa=terms">{{txt.terms_and_rules}}</a>
+                | <a href="#top_section">{{txt.go_up}} &#9650;</a>
+            </li>
+            <li class="copyright">{{{copyright}}}</li>
+        </ul>
     </div>
 
    {{{javascript deferred=1}}}
