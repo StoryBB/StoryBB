@@ -954,7 +954,7 @@ function ForumSettings()
 // Step one: Do the SQL thang.
 function DatabasePopulation()
 {
-	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl;
+	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl, $language;
 
 	$incontext['sub_template'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -1010,6 +1010,7 @@ function DatabasePopulation()
 
 	$replaces = array(
 		'{$db_prefix}' => $db_prefix,
+		'{$language}' => $language,
 		'{$attachdir}' => json_encode(array(1 => $smcFunc['db_escape_string']($attachdir))),
 		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
