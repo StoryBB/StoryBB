@@ -1403,6 +1403,7 @@ function AdminAccount()
 					'website_title' => 'string', 'website_url' => 'string',
 					'signature' => 'string', 'secret_question' => 'string',
 					'additional_groups' => 'string', 'ignore_boards' => 'string',
+					'policy_acceptance' => 'int',
 				),
 				array(
 					stripslashes($_POST['username']), stripslashes($_POST['username']), $_POST['password1'], stripslashes($_POST['email']),
@@ -1412,6 +1413,7 @@ function AdminAccount()
 					'', '',
 					'', '',
 					'', '',
+					StoryBB\Model\Policy::POLICY_CURRENTLYACCEPTED,
 				),
 				array('id_member'),
 				1
