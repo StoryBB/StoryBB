@@ -24,7 +24,6 @@ function ShowHelp()
 
 	$subActions = array(
 		'index' => 'HelpIndex',
-		'rules' => 'HelpRules',
 		'smileys' => 'HelpSmileys',
 	);
 
@@ -33,11 +32,6 @@ function ShowHelp()
 			'link' => $scripturl . '?action=help;sa=smileys',
 			'title' => $txt['manual_smileys'],
 			'desc' => $txt['manual_smileys_desc'],
-		],
-		'rules' => [
-			'link' => $scripturl . '?action=help;sa=rules',
-			'title' => $txt['terms_and_rules'],
-			'desc' => $txt['manual_terms_and_rules'],
 		],
 	];
 
@@ -193,44 +187,6 @@ function HelpSmileys()
 
 	$context['page_title'] = $txt['manual_smileys'];
 	$context['sub_template'] = 'help_smileys';
-}
-
-/**
- * Displays forum rules
- */
-function HelpRules()
-{
-	global $context, $txt, $boarddir, $user_info, $scripturl;
-
-	// Build the link tree.
-	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=help',
-		'name' => $txt['help'],
-	);
-	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=help;sa=rules',
-		'name' => $txt['terms_and_rules'],
-	);
-
-	// Have we got a localized one?
-	if (file_exists($boarddir . '/agreement.' . $user_info['language'] . '.txt'))
-		$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.' . $user_info['language'] . '.txt'), true, 'agreement_' . $user_info['language']);
-	elseif (file_exists($boarddir . '/agreement.txt'))
-		$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.txt'), true, 'agreement');
-	else
-		$context['agreement'] = '';
-
-	// Nothing to show, so let's get out of here
-	if (empty($context['agreement']))
-	{
-		// No file found or a blank file! Just leave...
-		redirectexit();
-	}
-
-	$context['canonical_url'] = $scripturl . '?action=help;sa=rules';
-
-	$context['page_title'] = $txt['terms_and_rules'];
-	$context['sub_template'] = 'help_terms';
 }
 
 /**
