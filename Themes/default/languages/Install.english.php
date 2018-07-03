@@ -40,9 +40,6 @@ $txt['default_time_format'] = '%b %d, %Y, %I:%M %p';
 $txt['default_news'] = 'StoryBB - Just Installed!';
 $txt['default_reserved_names'] = 'Admin\nWebmaster\nGuest\nroot';
 $txt['default_theme_name'] = 'StoryBB Default Theme - Curve2';
-$txt['default_core_theme_name'] = 'Core Theme';
-$txt['default_classic_theme_name'] = 'Classic YaBB SE Theme';
-$txt['default_babylon_theme_name'] = 'Babylon Theme';
 
 $txt['default_administrator_group'] = 'Administrator';
 $txt['default_global_moderator_group'] = 'Global Moderator';
@@ -188,7 +185,7 @@ $txt['error_mod_security'] = 'The installer has detected the mod_security module
 $txt['error_mod_security_no_write'] = 'The installer has detected the mod_security module is installed on your web server. Mod_security will block submitted forms even before StoryBB gets a say in anything. StoryBB has a built-in security scanner that will work more effectively than mod_security and that won\'t block submitted forms.<br><br>You may wish to use your ftp client to chmod .htaccess in the forum directory to be writable (777), and then refresh this page.';
 $txt['error_valid_admin_email_needed'] = 'You have not entered a valid email address for your administrator account.';
 $txt['error_valid_server_email_needed'] = 'You have not entered a valid webmaster email address.';
-$txt['error_already_installed'] = 'The installer has detected that you already have StoryBB installed. It is strongly advised that you do <strong>not</strong> try to overwrite an existing installation - continuing with installation <strong>may result in the loss or corruption of existing data</strong>.<br><br>If you wish to upgrade please visit the <a href="https:/storybb.org">StoryBB website</a> and download the latest <em>upgrade</em> package.<br><br>If you wish to overwrite your existing installation, including all data, it\'s recommended that you delete the existing database tables and replace Settings.php and try again.';
+$txt['error_already_installed'] = 'The installer has detected that you already have StoryBB installed. It is strongly advised that you do <strong>not</strong> try to overwrite an existing installation - continuing with installation <strong>may result in the loss or corruption of existing data</strong>.<br><br>If you wish to upgrade please visit the <a href="https://storybb.org">StoryBB website</a> and download the latest <em>upgrade</em> package.<br><br>If you wish to overwrite your existing installation, including all data, it\'s recommended that you delete the existing database tables and replace Settings.php and try again.';
 $txt['error_warning_notice'] = 'Warning!';
 $txt['error_script_outdated'] = 'This install script is out of date! The current version of StoryBB is %1$s but this install script is for %2$s.<br><br>
 	It is recommended that you visit the <a href="https://storybb.org">StoryBB</a> website to ensure you are installing the latest version.';
