@@ -1756,6 +1756,48 @@ VALUES (-1, 'search_posts'),
 # --------------------------------------------------------
 
 #
+# Dumping data for table `policy`
+#
+
+INSERT INTO {$db_prefix}policy
+  (id_policy, policy_type, language, title, description, last_revision)
+VALUES
+  (1, 1, '{$language}', '{$default_policy_terms}', '{$default_policy_terms_desc}', 1),
+  (2, 2, '{$language}', '{$default_policy_privacy}', '{$default_policy_privacy_desc}', 2),
+  (3, 3, '{$language}', '{$default_policy_roleplay}', '{$default_policy_roleplay_desc}', 3),
+  (4, 4, '{$language}', '{$default_policy_cookies}', '{$default_policy_cookies_desc}', 4);
+
+# --------------------------------------------------------
+
+#
+# Dumping data for table `policy_revision`
+#
+
+INSERT INTO {$db_prefix}policy_revision
+  (id_revision, id_policy, last_change, short_revision_note, revision_text, edit_id_member, edit_member_name)
+VALUES
+  (1, 1, {$current_time}, '', '{$default_policy_terms_text}', 0, ''),
+  (2, 2, {$current_time}, '', '{$default_policy_privacy_text}', 0, ''),
+  (3, 3, {$current_time}, '', '{$default_policy_roleplay_text}', 0, ''),
+  (4, 4, {$current_time}, '', '{$default_policy_cookies_text}', 0, '');
+
+# --------------------------------------------------------
+
+#
+# Dumping data for table `policy_types`
+#
+
+INSERT INTO {$db_prefix}policy_types
+  (id_policy_type, policy_type, require_acceptance, show_reg, show_help)
+VALUES
+  (1, 'terms', 1, 1, 1),
+  (2, 'privacy', 1, 1, 1),
+  (3, 'roleplay', 0, 0, 0),
+  (4, 'cookies', 0, 0, 1);
+
+# --------------------------------------------------------
+
+#
 # Dumping data for table `scheduled_tasks`
 #
 
