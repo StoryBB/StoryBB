@@ -969,6 +969,7 @@ CREATE TABLE {$db_prefix}policy (
   policy_type TINYINT UNSIGNED NOT NULL DEFAULT '0',
   language VARCHAR(20) NOT NULL DEFAULT '',
   title VARCHAR(100) NOT NULL DEFAULT '',
+  description VARCHAR(200) NOT NULL DEFAULT '',
   last_revision INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (id_policy)
 ) ENGINE={$engine};
@@ -981,7 +982,7 @@ CREATE TABLE {$db_prefix}policy_acceptance (
   id_policy SMALLINT UNSIGNED AUTO_INCREMENT,
   id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   id_revision INT UNSIGNED NOT NULL DEFAULT '0',
-  acceptance_time INT UNSIGNED NOT NULL DEFAULT '0'
+  acceptance_time INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (id_policy, id_member)
 ) ENGINE={$engine};
 
@@ -997,7 +998,7 @@ CREATE TABLE {$db_prefix}policy_revision (
   revision_text TEXT NOT NULL,
   edit_id_member INT UNSIGNED NOT NULL DEFAULT '0',
   edit_member_name VARCHAR(50) NOT NULL DEFAULT '',
-  PRIMARY KEY (id_revision)
+  PRIMARY KEY (id_revision),
   INDEX idx_id_policy (id_policy)
 ) ENGINE={$engine};
 
@@ -1010,6 +1011,7 @@ CREATE TABLE {$db_prefix}policy_types (
   policy_type VARCHAR(50) NOT NULL,
   require_acceptance TINYINT UNSIGNED DEFAULT '0',
   show_reg TINYINT UNSIGNED DEFAULT '0',
+  show_help TINYINT UNSIGNED DEFAULT '0',
   PRIMARY KEY (id_policy_type)
 ) ENGINE={$engine};
 
