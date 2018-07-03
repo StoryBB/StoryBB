@@ -37,6 +37,8 @@ $txt['years_title'] = 'Years';
 $txt['time_am'] = 'am';
 $txt['time_pm'] = 'pm';
 
+$txt['last_updated'] = 'Last updated';
+
 $txt['admin'] = 'Admin';
 $txt['moderate'] = 'Moderate';
 $txt['chars_menu_title'] = 'Characters';

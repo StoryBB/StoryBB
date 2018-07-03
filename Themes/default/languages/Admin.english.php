@@ -726,7 +726,6 @@ $txt['char_templates_none'] = 'There are no templates.';
 
 $txt['char_sheet_admin'] = 'Pending Character Sheets';
 $txt['no_pending_sheets'] = 'There are no pending character sheets to review.';
-$txt['last_updated'] = 'Last updated';
 $txt['previously_approved'] = 'Previous approved';
 $txt['remove_from_queue'] = 'Remove from Queue';
 
