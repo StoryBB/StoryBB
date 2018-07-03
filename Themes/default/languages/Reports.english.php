@@ -76,6 +76,10 @@ $txt['member_group_max_messages'] = 'Max Personal Messages';
 $txt['member_group_icons'] = 'Icons';
 $txt['member_group_settings'] = 'Settings';
 $txt['member_group_access'] = 'Board Access';
+$txt['member_group_level'] = 'Group level';
+$txt['member_group_level_account'] = 'Account';
+$txt['member_group_level_char'] = 'Character';
+$txt['member_group_postcount'] = 'Post-count';
 
 // Board info.
 $txt['none'] = 'None';

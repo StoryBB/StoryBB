@@ -517,6 +517,7 @@ function MemberGroupsReport()
 		'min_posts' => $txt['member_group_min_posts'],
 		'max_messages' => $txt['member_group_max_messages'],
 		'icons' => $txt['member_group_icons'],
+		'group_level' => $txt['member_group_level'],
 		'#sep#2' => $txt['member_group_access'],
 	);
 
@@ -535,7 +536,7 @@ function MemberGroupsReport()
 
 	// Now start cycling the membergroups!
 	$request = $smcFunc['db_query']('', '
-		SELECT mg.id_group, mg.group_name, mg.online_color, mg.min_posts, mg.max_messages, mg.icons,
+		SELECT mg.id_group, mg.group_name, mg.online_color, mg.min_posts, mg.max_messages, mg.icons, mg.is_character,
 			CASE WHEN bp.permission IS NOT NULL OR mg.id_group = {int:admin_group} THEN 1 ELSE 0 END AS can_moderate
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}board_permissions AS bp ON (bp.id_group = mg.id_group AND bp.id_profile = {int:default_profile} AND bp.permission = {string:moderate_board})
@@ -581,6 +582,7 @@ function MemberGroupsReport()
 			'min_posts' => $row['min_posts'] == -1 ? 'N/A' : $row['min_posts'],
 			'max_messages' => $row['max_messages'],
 			'icons' => !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' . $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '',
+			'group_level' => $row['min_posts'] == -1 ? (!empty($row['is_character']) ? $txt['member_group_level_char'] : $txt['member_group_level_account']) : $txt['member_group_postcount'],
 		);
 
 		// Board permissions.
