@@ -462,7 +462,6 @@ $txt['search_advanced'] = 'Advanced search';
 $txt['security_risk'] = 'MAJOR SECURITY RISK!';
 $txt['not_removed'] = 'You have not removed the following files';
 $txt['generic_warning'] = 'Warning';
-$txt['agreement_missing'] = 'You are requiring new users to accept a registration agreement, however the file (agreement.txt) doesn\'t exist.';
 
 $txt['cache_writable'] = 'The cache directory is not writable - this will adversely affect the performance of your forum.';
 

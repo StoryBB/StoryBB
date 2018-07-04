@@ -466,7 +466,6 @@ function CheckFilesWritable()
 		'cache',
 		'Smileys',
 		'Themes',
-		'agreement.txt',
 		'Settings.php',
 		'Settings_bak.php',
 	);
