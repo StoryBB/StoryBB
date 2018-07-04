@@ -215,10 +215,6 @@ function Register2()
 	if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 3)
 		fatal_lang_error('registration_disabled', false);
 
-	// Well, if you don't agree, you can't register.
-	if (!empty($modSettings['requireAgreement']) && empty($_SESSION['registration_agreed']))
-		redirectexit();
-
 	// Make sure they came from *somewhere*, have a session.
 	if (!isset($_SESSION['old_url']))
 		redirectexit('action=signup');
