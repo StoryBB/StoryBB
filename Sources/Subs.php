@@ -3230,10 +3230,6 @@ function template_header()
 		{
 			session_flash('error', $txt['cache_writable']);
 		}
-		if ($modSettings['requireAgreement'] && !file_exists($boarddir . '/agreement.txt'))
-		{
-			session_flash('error', $txt['agreement_missing']);
-		}
 	}
 
 	// Now we can warn people about being banned.

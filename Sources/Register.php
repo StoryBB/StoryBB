@@ -48,39 +48,13 @@ function Register($reg_errors = array())
 	if ($context['show_coppa'])
 	{
 		$context['skip_coppa'] = false;
-		$context['coppa_agree_above'] = sprintf($txt[($context['require_agreement'] ? 'agreement_' : '') . 'agree_coppa_above'], $modSettings['coppaAge']);
-		$context['coppa_agree_below'] = sprintf($txt[($context['require_agreement'] ? 'agreement_' : '') . 'agree_coppa_below'], $modSettings['coppaAge']);
+		$context['coppa_agree_above'] = sprintf($txt['agree_coppa_above'], $modSettings['coppaAge']);
+		$context['coppa_agree_below'] = sprintf($txt['agree_coppa_below'], $modSettings['coppaAge']);
 	}
-
-	// What step are we at?
-	$current_step = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : ($context['require_agreement'] ? 1 : 2);
-
-	// Does this user agree to the registation agreement?
-	if ($current_step == 1 && (isset($_POST['accept_agreement']) || isset($_POST['accept_agreement_coppa'])))
-	{
-		$context['registration_passed_agreement'] = $_SESSION['registration_agreed'] = true;
-		$current_step = 2;
-
-		// Skip the coppa procedure if the user says he's old enough.
-		if ($context['show_coppa'])
-		{
-			$_SESSION['skip_coppa'] = !empty($_POST['accept_agreement']);
-
-			// Are they saying they're under age, while under age registration is disabled?
-			if (empty($modSettings['coppaType']) && empty($_SESSION['skip_coppa']))
-			{
-				loadLanguage('Login');
-				fatal_lang_error('under_age_registration_prohibited', false, array($modSettings['coppaAge']));
-			}
-		}
-	}
-	// Make sure they don't squeeze through without agreeing.
-	elseif ($current_step > 1 && $context['require_agreement'] && !$context['registration_passed_agreement'])
-		$current_step = 1;
 
 	// Show the user the right form.
-	$context['sub_template'] = $current_step == 1 ? 'register_agreement' : 'register_form';
-	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
+	$context['sub_template'] = 'register_form';
+	$context['page_title'] = $txt['registration_form'];
 
 	// Kinda need this.
 	if ($context['sub_template'] == 'register_form')
@@ -100,26 +74,6 @@ function Register($reg_errors = array())
 		);
 	else
 		$_SESSION['register']['timenow'] = time();
-
-	// If you have to agree to the agreement, it needs to be fetched from the file.
-	if ($context['require_agreement'])
-	{
-		// Have we got a localized one?
-		if (file_exists($boarddir . '/agreement.' . $user_info['language'] . '.txt'))
-			$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.' . $user_info['language'] . '.txt'), true, 'agreement_' . $user_info['language']);
-		elseif (file_exists($boarddir . '/agreement.txt'))
-			$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.txt'), true, 'agreement');
-		else
-			$context['agreement'] = '';
-
-		// Nothing to show, lets disable registration and inform the admin of this error
-		if (empty($context['agreement']))
-		{
-			// No file found or a blank file, log the error so the admin knows there is a problem!
-			log_error($txt['registration_agreement_missing'], 'critical');
-			fatal_lang_error('registration_disabled', false);
-		}
-	}
 
 	if (!empty($modSettings['userLanguage']))
 	{
@@ -270,8 +224,9 @@ function Register2()
 		redirectexit('action=signup');
 
 	// If we don't require an agreement, we need a extra check for coppa.
-	if (empty($modSettings['requireAgreement']) && !empty($modSettings['coppaAge']))
+	if (!empty($modSettings['coppaAge']))
 		$_SESSION['skip_coppa'] = !empty($_POST['accept_agreement']);
+
 	// Are they under age, and under age users are banned?
 	if (!empty($modSettings['coppaAge']) && empty($modSettings['coppaType']) && empty($_SESSION['skip_coppa']))
 	{
