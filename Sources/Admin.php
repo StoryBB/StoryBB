@@ -280,7 +280,6 @@ function AdminMain()
 					'permission' => array('admin_forum', 'moderate_forum'),
 					'subsections' => array(
 						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
-						'agreement' => array($txt['registration_agreement'], 'admin_forum'),
 						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),

@@ -30,7 +30,6 @@ function RegCenter()
 
 	$subActions = array(
 		'register' => array('AdminRegister', 'moderate_forum'),
-		'agreement' => array('EditAgreement', 'admin_forum'),
 		'reservednames' => array('SetReserved', 'admin_forum'),
 		'settings' => array('ModifyRegistrationSettings', 'admin_forum'),
 	);
@@ -52,9 +51,6 @@ function RegCenter()
 		'tabs' => array(
 			'register' => array(
 				'description' => $txt['admin_register_desc'],
-			),
-			'agreement' => array(
-				'description' => $txt['registration_agreement_desc'],
 			),
 			'reservednames' => array(
 				'description' => $txt['admin_reserved_desc'],
@@ -166,69 +162,6 @@ function AdminRegister()
 	$context['page_title'] = $txt['registration_center'];
 	createToken('admin-regc');
 	loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
-}
-
-/**
- * Allows the administrator to edit the registration agreement, and choose whether
- * it should be shown or not. It writes and saves the agreement to the agreement.txt
- * file.
- * Accessed by ?action=admin;area=regcenter;sa=agreement.
- * Requires the admin_forum permission.
- *
- * @uses Admin template and the edit_agreement sub template.
- */
-function EditAgreement()
-{
-	// I hereby agree not to be a lazy bum.
-	global $txt, $boarddir, $context, $modSettings, $smcFunc;
-
-	// By default we look at agreement.txt.
-	$context['current_agreement'] = '';
-
-	// Is there more than one to edit?
-	$context['editable_agreements'] = array(
-		'' => $txt['admin_agreement_default'],
-	);
-
-	// Get our languages.
-	getLanguages();
-
-	// Try to figure out if we have more agreements.
-	foreach ($context['languages'] as $lang)
-	{
-		if (file_exists($boarddir . '/agreement.' . $lang['filename'] . '.txt'))
-		{
-			$context['editable_agreements']['.' . $lang['filename']] = $lang['name'];
-			// Are we editing this?
-			if (isset($_POST['agree_lang']) && $_POST['agree_lang'] == '.' . $lang['filename'])
-				$context['current_agreement'] = '.' . $lang['filename'];
-		}
-	}
-
-	if (isset($_POST['agreement']))
-	{
-		checkSession();
-		validateToken('admin-rega');
-
-		// Off it goes to the agreement file.
-		$to_write = str_replace("\r", '', $_POST['agreement']);
-		$bytes = file_put_contents($boarddir . '/agreement' . $context['current_agreement'] . '.txt', $to_write, LOCK_EX);
-
-		updateSettings(array('requireAgreement' => !empty($_POST['requireAgreement'])));
-
-		if ($bytes == strlen($to_write))
-			session_flash('success', $txt['settings_saved']);
-		else
-			session_flash('error', $txt['admin_agreement_not_saved']);
-	}
-
-	$context['agreement'] = file_exists($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? $smcFunc['htmlspecialchars'](file_get_contents($boarddir . '/agreement' . $context['current_agreement'] . '.txt')) : '';
-	$context['warning'] = is_writable($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? '' : $txt['agreement_not_writable'];
-	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
-
-	$context['sub_template'] = 'register_edit_agreement';
-	$context['page_title'] = $txt['registration_agreement'];
-	createToken('admin-rega');
 }
 
 /**

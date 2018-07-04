@@ -81,7 +81,6 @@ $txt['whotopic_vote'] = 'Voting in <a href="' . $scripturl . '?topic=%1$d.0">%2$
 
 $txt['whopost_quotefast'] = 'Quoting a post from &quot;<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>&quot;.';
 
-$txt['whoadmin_editagreement'] = 'Editing the registration agreement.';
 $txt['whoadmin_featuresettings'] = 'Editing forum features and options.';
 $txt['whoadmin_modlog'] = 'Viewing the moderator log.';
 $txt['whoadmin_serversettings'] = 'Editing the forum settings.';
