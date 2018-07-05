@@ -132,6 +132,8 @@ $txt['errortype_backup'] = 'Backups';
 $txt['errortype_backup_desc'] = 'Errors resulting from backing up files, which are usually messages explaining why the proceedure failed.';
 $txt['errortype_login'] = 'Logins';
 $txt['errortype_login_desc'] = 'Errors caused by failed login attempts or brute force attempts.';
+$txt['errortype_mail'] = 'Mail';
+$txt['errortype_mail_desc'] = 'Errors caused by mail not sending correctly.';
 
 $txt['maintain_recount'] = 'Recount all forum totals and statistics';
 $txt['maintain_recount_info'] = 'Should the total replies of a topic or the number of PMs in your inbox be incorrect: this function will recount all saved counts and statistics for you.';

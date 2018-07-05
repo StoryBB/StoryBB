@@ -194,7 +194,7 @@ class Mail
 			{
 				if (!mail(strtr($to, array("\r" => '', "\n" => '')), $subject, $message, $headers))
 				{
-					log_error(sprintf($txt['mail_send_unable'], $to));
+					log_error(sprintf($txt['mail_send_unable'], $to), 'mail');
 					$mail_result = false;
 				}
 
