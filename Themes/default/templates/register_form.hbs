@@ -95,6 +95,24 @@
 					{{/if}}
 				</fieldset>
 			</div>
+
+			{{#if context.registration_policies}}
+			<div class="title_bar title_top">
+				<h3 class="titlebg">{{{txt.site_policies}}}</h3>
+			</div>
+			<div class="roundframe noup">
+				<fieldset>
+					<dl class="register_form">
+						{{#each context.registration_policies}}
+						<dt><strong><label for="policy_{{@key}}">{{textTemplate ../txt.registration_i_agree_to .}}:</label></strong></dt>
+						<dd>
+							<input type="checkbox" name="policy_{{@key}}" id="policy_{{@key}}" class="input_check" />
+						</dd>
+						{{/each}}
+					</dl>
+				</fieldset>
+			</div>
+			{{/if}}
 			
 			{{#if (or context.profile_fields context.custom_fields)}}
 			<div class="title_bar title_top">

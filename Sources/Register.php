@@ -12,6 +12,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Policy;
+
 /**
  * Begin the registration process.
  *
@@ -40,8 +42,12 @@ function Register($reg_errors = array())
 	loadLanguage('Login');
 
 	// Do we need them to agree to the registration agreement, first?
-	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
-	$context['registration_passed_agreement'] = !empty($_SESSION['registration_agreed']);
+	$policies = Policy::get_policies_for_registration();
+	$context['registration_policies'] = [];
+	foreach ($policies as $policy_type => $policy_name)
+	{
+		$context['registration_policies'][$policy_type] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank">' . $policy_name . '</a>';
+	}
 	$context['show_coppa'] = !empty($modSettings['coppaAge']);
 
 	// Under age restrictions?
