@@ -672,7 +672,6 @@ function AdminSearchInternal()
 		'sections' => array(
 		),
 		'settings' => array(
-			array('COPPA', 'area=regcenter;sa=settings'),
 			array('CAPTCHA', 'area=antispam'),
 		),
 	);

@@ -562,24 +562,6 @@ Should you have any problems with activation, please visit {ACTIVATIONLINKWITHOU
 {REGARDS}';
 
 /**
-	@additional_params: register_coppa
-		REALNAME: The display name for the member receiving the email.
-		USERNAME: The user name for the member receiving the email.
-		PASSWORD: The password for the member.
-		COPPALINK:  The url link to the coppa form.
-		FORGOTPASSWORDLINK: The url to the "forgot password" page.
-	@description:
-*/
-$txt['register_coppa_subject'] = 'Welcome to {FORUMNAME}';
-$txt['register_coppa_body'] = 'Thank you for registering at {FORUMNAME}. Your username is {USERNAME}. If you forget your password, you can change it at {FORGOTPASSWORDLINK}
-
-Before you can login, the admin requires consent from your parent/guardian for you to join the community. You can obtain more information at the link below:
-
-{COPPALINK}
-
-{REGARDS}';
-
-/**
 	@additional_params: register_immediate
 		REALNAME: The display name for the member receiving the email.
 		USERNAME: The user name for the member receiving the email.

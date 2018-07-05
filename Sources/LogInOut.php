@@ -419,14 +419,8 @@ function checkActivation()
 	// What is the true activation status of this account?
 	$activation_status = $user_settings['is_activated'] > 10 ? $user_settings['is_activated'] - 10 : $user_settings['is_activated'];
 
-	// Check if the account is activated - COPPA first...
-	if ($activation_status == 5)
-	{
-		$context['login_errors'][] = $txt['coppa_no_concent'] . ' <a href="' . $scripturl . '?action=coppa;member=' . $user_settings['id_member'] . '">' . $txt['coppa_need_more_details'] . '</a>';
-		return false;
-	}
 	// Awaiting approval still?
-	elseif ($activation_status == 3)
+	if ($activation_status == 3)
 		fatal_lang_error('still_awaiting_approval', 'user');
 	// Awaiting deletion, changed their mind?
 	elseif ($activation_status == 4)

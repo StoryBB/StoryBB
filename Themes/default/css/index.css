@@ -1684,14 +1684,6 @@ dl.register_form dd {
 	text-align: center;
 	padding: 12px 0;
 }
-.coppa_contact {
-	padding: 4px;
-	width: 32ex;
-	background: #fff;
-	color: #222;
-	margin-left: 5ex;
-	border: 1px solid #222;
-}
 .valid_input {
 	background: #f5fff0;
 }

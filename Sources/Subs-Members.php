@@ -666,15 +666,8 @@ function registerMember(&$regOptions, $return_errors = false)
 		'timezone' => !empty($regOptions['timezone']) ? $regOptions['timezone'] : 'UTC',
 	);
 
-	// Setup the activation status on this new account so it is correct - firstly is it an under age account?
-	if ($regOptions['require'] == 'coppa')
-	{
-		$regOptions['register_vars']['is_activated'] = 5;
-		// @todo This should be changed.  To what should be it be changed??
-		$regOptions['register_vars']['validation_code'] = '';
-	}
 	// Maybe it can be activated right away?
-	elseif ($regOptions['require'] == 'nothing')
+	if ($regOptions['require'] == 'nothing')
 		$regOptions['register_vars']['is_activated'] = 1;
 	// Maybe it must be activated by email?
 	elseif ($regOptions['require'] == 'activation')
@@ -882,28 +875,20 @@ function registerMember(&$regOptions, $return_errors = false)
 		// Send admin their notification.
 		adminNotify('standard', $memberID, $regOptions['username']);
 	}
-	// Need to activate their account - or fall under COPPA.
-	elseif ($regOptions['require'] == 'activation' || $regOptions['require'] == 'coppa')
+	// Need to activate their account.
+	elseif ($regOptions['require'] == 'activation')
 	{
 		$replacements = array(
 			'REALNAME' => $regOptions['register_vars']['real_name'],
 			'USERNAME' => $regOptions['username'],
 			'PASSWORD' => $regOptions['password'],
 			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
+			'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $memberID . ';code=' . $validation_code,
+			'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $memberID,
+			'ACTIVATIONCODE' => $validation_code,
 		);
 
-		if ($regOptions['require'] == 'activation')
-			$replacements += array(
-				'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $memberID . ';code=' . $validation_code,
-				'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $memberID,
-				'ACTIVATIONCODE' => $validation_code,
-			);
-		else
-			$replacements += array(
-				'COPPALINK' => $scripturl . '?action=coppa;u=' . $memberID,
-			);
-
-		$emaildata = loadEmailTemplate('register_' . ($regOptions['require'] == 'activation' ? 'activate' : 'coppa'), $replacements);
+		$emaildata = loadEmailTemplate('register_activate', $replacements);
 
 		StoryBB\Helper\Mail::send($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, 'reg_' . $regOptions['require'] . $memberID, $emaildata['is_html'], 0);
 	}

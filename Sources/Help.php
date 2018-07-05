@@ -132,7 +132,7 @@ function HelpPolicy()
 		'{$forum_name}' => $context['forum_name_html_safe'],
 		'{$contact_url}' => $scripturl . '?action=contact',
 		'{$cookiename}' => $cookiename,
-		'{$age}' => !empty($modSettings['coppaAge']) ? $modSettings['coppaAge'] : 18,
+		'{$age}' => $modSettings['minimum_age'],
 		'{$cookiepolicy}' => $scripturl . '?action=help;sa=cookies',
 	];
 	$context['policy_text'] = parse_bbc(strtr($row['revision_text'], $replacements), false);

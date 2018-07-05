@@ -48,15 +48,6 @@ function Register($reg_errors = array())
 	{
 		$context['registration_policies'][$policy_type] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank">' . $policy_name . '</a>';
 	}
-	$context['show_coppa'] = !empty($modSettings['coppaAge']);
-
-	// Under age restrictions?
-	if ($context['show_coppa'])
-	{
-		$context['skip_coppa'] = false;
-		$context['coppa_agree_above'] = sprintf($txt['agree_coppa_above'], $modSettings['coppaAge']);
-		$context['coppa_agree_below'] = sprintf($txt['agree_coppa_below'], $modSettings['coppaAge']);
-	}
 
 	// Show the user the right form.
 	$context['sub_template'] = 'register_form';
@@ -232,15 +223,11 @@ function Register2()
 		}
 	}
 
-	// If we don't require an agreement, we need a extra check for coppa.
-	if (!empty($modSettings['coppaAge']))
-		$_SESSION['skip_coppa'] = !empty($_POST['accept_agreement']);
-
 	// Are they under age, and under age users are banned?
-	if (!empty($modSettings['coppaAge']) && empty($modSettings['coppaType']) && empty($_SESSION['skip_coppa']))
+	if (false && !empty($modSettings['minimum_age']))
 	{
 		loadLanguage('Errors');
-		fatal_lang_error('under_age_registration_prohibited', false, array($modSettings['coppaAge']));
+		fatal_lang_error('under_age_registration_prohibited', false, array($modSettings['minimum_age']));
 	}
 
 	// Check the time gate for miscreants. First make sure they came from somewhere that actually set it up.
@@ -371,7 +358,7 @@ function Register2()
 		'check_password_strength' => true,
 		'check_email_ban' => true,
 		'send_welcome_email' => !empty($modSettings['send_welcomeEmail']),
-		'require' => !empty($modSettings['coppaAge']) && empty($_SESSION['skip_coppa']) ? 'coppa' : (empty($modSettings['registration_method']) ? 'nothing' : ($modSettings['registration_method'] == 1 ? 'activation' : 'approval')),
+		'require' => empty($modSettings['registration_method']) ? 'nothing' : ($modSettings['registration_method'] == 1 ? 'activation' : 'approval'),
 		'extra_register_vars' => array(),
 		'theme_vars' => array(),
 		'timezone' => !empty($modSettings['default_timezone']) ? $modSettings['default_timezone'] : '',
@@ -495,11 +482,8 @@ function Register2()
 		makeCustomFieldChanges($memberID, 'register');
 	}
 
-	// If COPPA has been selected then things get complicated, setup the template.
-	if (!empty($modSettings['coppaAge']) && empty($_SESSION['skip_coppa']))
-		redirectexit('action=coppa;member=' . $memberID);
 	// Basic template variable setup.
-	elseif (!empty($modSettings['registration_method']))
+	if (!empty($modSettings['registration_method']))
 	{
 		$context += array(
 			'page_title' => $txt['register'],
@@ -674,88 +658,6 @@ function Activate()
 		'never_expire' => false,
 		'description' => $txt['activate_success']
 	);
-}
-
-/**
- * This function will display the contact information for the forum, as well a form to fill in.
- */
-function CoppaForm()
-{
-	global $context, $modSettings, $txt, $smcFunc;
-
-	loadLanguage('Login');
-
-	// No User ID??
-	if (!isset($_GET['member']))
-		fatal_lang_error('no_access', false);
-
-	// Get the user details...
-	$request = $smcFunc['db_query']('', '
-		SELECT member_name
-		FROM {db_prefix}members
-		WHERE id_member = {int:id_member}
-			AND is_activated = {int:is_coppa}',
-		array(
-			'id_member' => (int) $_GET['member'],
-			'is_coppa' => 5,
-		)
-	);
-	if ($smcFunc['db_num_rows']($request) == 0)
-		fatal_lang_error('no_access', false);
-	list ($username) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
-
-	if (isset($_GET['form']))
-	{
-		// Some simple contact stuff for the forum.
-		$context['forum_contacts'] = (!empty($modSettings['coppaPost']) ? $modSettings['coppaPost'] . '<br><br>' : '') . (!empty($modSettings['coppaFax']) ? $modSettings['coppaFax'] . '<br>' : '');
-		$context['forum_contacts'] = !empty($context['forum_contacts']) ? $context['forum_name_html_safe'] . '<br>' . $context['forum_contacts'] : '';
-
-		// Showing template?
-		if (!isset($_GET['dl']))
-		{
-			// Shortcut for producing underlines.
-			$context['ul'] = '<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>';
-			StoryBB\Template::remove_all_layers();
-			$context['sub_template'] = 'register_coppa_form';
-			$context['page_title'] = $txt['coppa_form_title'];
-			$context['coppa_body'] = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}'), array($context['ul'], $context['ul'], $username), $txt['coppa_form_body']);
-		}
-		// Downloading.
-		else
-		{
-			// The data.
-			$ul = '                ';
-			$crlf = "\r\n";
-			$data = $context['forum_contacts'] . $crlf . $txt['coppa_form_address'] . ':' . $crlf . $txt['coppa_form_date'] . ':' . $crlf . $crlf . $crlf . $txt['coppa_form_body'];
-			$data = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}', '<br>', '<br>'), array($ul, $ul, $username, $crlf, $crlf), $data);
-
-			// Send the headers.
-			header('Connection: close');
-			header('Content-Disposition: attachment; filename="approval.txt"');
-			header('Content-Type: ' . (isBrowser('ie') || isBrowser('opera') ? 'application/octetstream' : 'application/octet-stream'));
-			header('Content-Length: ' . count($data));
-
-			echo $data;
-			obExit(false);
-		}
-	}
-	else
-	{
-		$context += array(
-			'page_title' => $txt['coppa_title'],
-			'sub_template' => 'register_coppa',
-		);
-
-		$context['coppa'] = array(
-			'body' => str_replace('{MINIMUM_AGE}', $modSettings['coppaAge'], $txt['coppa_after_registration']),
-			'many_options' => !empty($modSettings['coppaPost']) && !empty($modSettings['coppaFax']),
-			'post' => empty($modSettings['coppaPost']) ? '' : $modSettings['coppaPost'],
-			'fax' => empty($modSettings['coppaFax']) ? '' : $modSettings['coppaFax'],
-			'phone' => empty($modSettings['coppaPhone']) ? '' : str_replace('{PHONE_NUMBER}', $modSettings['coppaPhone'], $txt['coppa_send_by_phone']),
-			'id' => $_GET['member'],
-		);
-	}
 }
 
 /**

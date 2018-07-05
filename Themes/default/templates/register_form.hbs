@@ -167,12 +167,7 @@
 			</div>
 			{{/if}}
 			<div id="confirm_buttons" class="flow_auto">
-				{{#if (and context.require_agreement context.show_coppa)}}
-				<input type="submit" name="accept_agreement" value="{{context.coppa_agree_above}}" class="button_submit"><br><br>
-				<input type="submit" name="accept_agreement_coppa" value="{{context.coppa_agree_below}}" class="button_submit">
-				{{else}}
 				<input type="submit" name="regSubmit" value="{{txt.register}}" tabindex="{{getTabindex}}" class="button_submit">
-				{{/if}}
 				</div>
 			{{session_form}}
 			{{token_form 'register'}}

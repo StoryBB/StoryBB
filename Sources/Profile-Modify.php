@@ -118,7 +118,7 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_extra',
 			'input_validate' => function(&$value) use ($cur_profile)
 			{
-				// @todo Should we check for this year and tell them they made a mistake :P? (based on coppa at least?)
+				// @todo Should we check for this year and tell them they made a mistake?
 				if (preg_match('/(\d{4})[\-\., ](\d{2})[\-\., ](\d{2})/', $value, $dates) === 1)
 				{
 					$value = checkdate($dates[2], $dates[3], $dates[1] < 4 ? 4 : $dates[1]) ? sprintf('%04d-%02d-%02d', $dates[1] < 4 ? 4 : $dates[1], $dates[2], $dates[3]) : '1004-01-01';
