@@ -72,7 +72,7 @@ function Register($reg_errors = array())
 		'name' => $txt['register'],
 	);
 
-	// Prepare the time gate! Do it like so, in case later steps want to reset the limit for any reason, but make sure the time is the current one.
+	// Prepare the time gate! Do it like so, in case later attempts want to reset the limit for any reason, but make sure the time is the current one.
 	if (!isset($_SESSION['register']))
 		$_SESSION['register'] = array(
 			'timenow' => time(),
@@ -459,7 +459,6 @@ function Register2()
 	// Lets check for other errors before trying to register the member.
 	if (!empty($reg_errors))
 	{
-		$_REQUEST['step'] = 2;
 		$_SESSION['register']['limit'] = 5; // If they've filled in some details, they won't need the full 10 seconds of the limit.
 		return Register($reg_errors);
 	}
@@ -470,7 +469,6 @@ function Register2()
 	if (is_array($memberID))
 	{
 		$reg_errors = array_merge($reg_errors, $memberID);
-		$_REQUEST['step'] = 2;
 		return Register($reg_errors);
 	}
 
