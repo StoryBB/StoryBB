@@ -41,7 +41,7 @@
 						</dd>
 						<dt><strong><label for="sbb_autov_reserve1">{{txt.user_email_address}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="email" required id="sbb_autov_reserve1" size="30" value="{{context.email}}" class="input_text">
+							<input type="email" name="email" required id="sbb_autov_reserve1" size="30" value="{{context.email}}" class="input_text">
 						</dd>
 						{{#if context.display_edit_real_name}}
 						<dt><strong><label for="real_name_box">{{{txt.char_register_nickname}}}:</label></strong></dt>
@@ -106,7 +106,7 @@
 						{{#each context.registration_policies}}
 						<dt><strong><label for="policy_{{@key}}">{{textTemplate ../txt.registration_i_agree_to .}}:</label></strong></dt>
 						<dd>
-							<input type="checkbox" required name="policy_{{@key}}" id="policy_{{@key}}" class="input_check" />
+							<input type="checkbox" value="1" required name="policy_{{@key}}" id="policy_{{@key}}" class="input_check" />
 						</dd>
 						{{/each}}
 					</dl>

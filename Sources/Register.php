@@ -225,6 +225,17 @@ function Register2()
 	if (!isset($_SESSION['old_url']))
 		redirectexit('action=signup');
 
+	// Check whether they have accepted policies.
+	$policies = Policy::get_policies_for_registration();
+	foreach ($policies as $policy_type => $policy_name)
+	{
+		if (empty($_POST['policy_' . $policy_type]))
+		{
+			loadLanguage('Errors');
+			$reg_errors[] = sprintf($txt['registration_require_policy'], $policy_name);
+		}
+	}
+
 	// If we don't require an agreement, we need a extra check for coppa.
 	if (!empty($modSettings['coppaAge']))
 		$_SESSION['skip_coppa'] = !empty($_POST['accept_agreement']);
