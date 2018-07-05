@@ -44,7 +44,7 @@ class Character extends RawMinkContext implements Context
 		// Now to find the menu of all the characters.
 		$page = $this->getSession()->getPage();
 		$links_to_characters = $page->findAll('xpath', "//div[@id='main_content_section']//div[contains(@class, 'generic_menu')]//*[a='Characters']/ul/li[@class='subsections']/a");
-		file_put_contents($GLOBALS['boarddir'] . '/dump.txt', print_r($links_to_characters, true));
+
 		if (empty($links_to_characters))
 		{
 			throw new ElementNotFoundException($this->getSession(), 'css', null, 'any links to characters');
