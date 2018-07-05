@@ -221,10 +221,6 @@ function Register2()
 	if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 3)
 		fatal_lang_error('registration_disabled', false);
 
-	// Make sure they came from *somewhere*, have a session.
-	if (!isset($_SESSION['old_url']))
-		redirectexit('action=signup');
-
 	// Check whether they have accepted policies.
 	$policies = Policy::get_policies_for_registration();
 	foreach ($policies as $policy_type => $policy_name)
