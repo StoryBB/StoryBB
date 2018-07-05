@@ -97,6 +97,13 @@ $txt['admin_register_group_desc'] = 'Primary membergroup new member will belong 
 $txt['admin_register_group_none'] = '(no primary membergroup)';
 $txt['admin_register_done'] = 'Member %1$s has been registered successfully!';
 
+$txt['admin_policies_desc'] = 'Manage site-wide policies for users.';
+$txt['policy_type'] = 'Policy Type';
+$txt['policy_type_terms'] = 'Terms and conditions';
+$txt['policy_type_privacy'] = 'Privacy policy';
+$txt['policy_type_roleplay'] = 'Roleplay rules';
+$txt['policy_type_cookies'] = 'Cookie notice';
+
 $txt['visual_verification_sound_again'] = 'Play again';
 $txt['visual_verification_sound_close'] = 'Close window';
 $txt['visual_verification_sound_direct'] = 'Having problems hearing this?  Try a direct link to it.';

@@ -282,6 +282,7 @@ function AdminMain()
 						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
 						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
 						'settings' => array($txt['settings'], 'admin_forum'),
+						'policies' => array($txt['admin_policies'], 'admin_forum'),
 					),
 				),
 				'warnings' => array(

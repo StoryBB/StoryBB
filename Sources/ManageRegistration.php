@@ -32,6 +32,7 @@ function RegCenter()
 		'register' => array('AdminRegister', 'moderate_forum'),
 		'reservednames' => array('SetReserved', 'admin_forum'),
 		'settings' => array('ModifyRegistrationSettings', 'admin_forum'),
+		'policies' => array('ManagePolicies', 'admin_forum'),
 	);
 
 	// Work out which to call...
@@ -57,7 +58,10 @@ function RegCenter()
 			),
 			'settings' => array(
 				'description' => $txt['admin_settings_desc'],
-			)
+			),
+			'policies' => array(
+				'description' => $txt['admin_policies_desc'],
+			),
 		)
 	);
 
@@ -257,4 +261,16 @@ function ModifyRegistrationSettings($return_config = false)
 	$context['settings_title'] = $txt['settings'];
 
 	prepareDBSettingContext($config_vars);
+}
+
+/**
+ * This area handles site policies.
+ * Accessed by ?action=admin;area=regcenter;sa=policies.
+ * Requires the admin_forum permission.
+ */
+function ManagePolicies()
+{
+	global $txt, $context;
+
+	
 }

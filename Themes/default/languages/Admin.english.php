@@ -668,6 +668,7 @@ $txt['themeadmin_admin_title'] = 'Manage and Install';
 $txt['themeadmin_list_title'] = 'Theme Settings';
 $txt['themeadmin_reset_title'] = 'Member Options';
 $txt['admin_browse_register_new'] = 'Register new member';
+$txt['admin_policies'] = 'Site Policies';
 
 $txt['search_engines'] = 'Search Engines';
 $txt['spiders'] = 'Spiders';
