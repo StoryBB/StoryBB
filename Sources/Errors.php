@@ -95,6 +95,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		'paidsubs',
 		'backup',
 		'login',
+		'mail',
 	);
 
 	// This prevents us from infinite looping if the hook or call produces an error.
@@ -253,7 +254,15 @@ function sbb_error_handler($error_level, $error_string, $file, $line)
 <strong>', $error_level % 255 == E_ERROR ? 'Error' : ($error_level % 255 == E_WARNING ? 'Warning' : 'Notice'), '</strong>: ', $error_string, ' in <strong>', $file, '</strong> on line <strong>', $line, '</strong><br>';
 	}
 
-	$error_type = stripos($error_string, 'undefined') !== false ? 'undefined_vars' : 'general';
+	$error_type = 'general';
+	if (stripos($error_string, 'mail(): Failed') !== false)
+	{
+		$error_type = 'mail';
+	}
+	elseif (stripos($error_string, 'undefined') !== false)
+	{
+		$error_type = 'undefined_vars';
+	}
 
 	$message = log_error($error_level . ': ' . $error_string, $error_type, $file, $line);
 
