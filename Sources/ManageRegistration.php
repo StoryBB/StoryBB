@@ -56,11 +56,11 @@ function RegCenter()
 			'reservednames' => array(
 				'description' => $txt['admin_reserved_desc'],
 			),
-			'settings' => array(
-				'description' => $txt['admin_settings_desc'],
-			),
 			'policies' => array(
 				'description' => $txt['admin_policies_desc'],
+			),
+			'settings' => array(
+				'description' => $txt['admin_settings_desc'],
 			),
 		)
 	);
