@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Policy;
+
 /**
  * Entrance point for the registration center, it checks permissions and forwards
  * to the right function based on the subaction.
@@ -271,6 +273,17 @@ function ModifyRegistrationSettings($return_config = false)
 function ManagePolicies()
 {
 	global $txt, $context;
+	loadLanguage('Login');
 
-	
+	// If the user specified an actual policy, let them edit that.
+	if (!empty($_REQUEST['policy']))
+	{
+
+	}
+
+	// So we're displaying a list of policies and their language versions.
+	$context['policies'] = Policy::get_policy_list();
+
+	$context['page_title'] = $txt['admin_policies'];
+	$context['sub_template'] = 'admin_policy_list';
 }

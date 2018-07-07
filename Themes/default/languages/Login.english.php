@@ -103,6 +103,10 @@ $txt['policy_type_terms'] = 'Terms and conditions';
 $txt['policy_type_privacy'] = 'Privacy policy';
 $txt['policy_type_roleplay'] = 'Roleplay rules';
 $txt['policy_type_cookies'] = 'Cookie notice';
+$txt['policy_show_reg'] = 'Show on registration';
+$txt['policy_show_help'] = 'Show in help area';
+$txt['policies_in_languages'] = 'Policies in languages';
+$txt['policy_language_no_version'] = 'Missing in these languages:';
 
 $txt['visual_verification_sound_again'] = 'Play again';
 $txt['visual_verification_sound_close'] = 'Close window';

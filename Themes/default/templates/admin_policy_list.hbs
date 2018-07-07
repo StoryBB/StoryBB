@@ -1,0 +1,55 @@
+	{{! List the policies that a site has with their language variants. }}
+	<div class="cat_bar">
+		<h3 class="catbg">{{{txt.admin_policies}}}</h3>
+	</div>
+	<div class="windowbg2 noup">
+		<table class="table_grid">
+			<thead>
+				<tr class="title_bar">
+					<th>{{{txt.policy_type}}}</th>
+					<th style="width:50%">{{{txt.policies_in_languages}}}</th>
+					<th>{{{txt.policy_show_reg}}}</th>
+					<th>{{{txt.policy_show_help}}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each context.policies}}
+					<tr class="windowbg">
+						<td>{{get_text 'policy_type_' policy_type}}</td>
+						<td>
+							{{#if versions}}
+								<ul>
+									{{#each versions}}
+									<li>{{{title}}} [{{language}}]</li>
+									{{/each}}
+								</ul>
+							{{/if}}
+							{{#if no_language}}
+								{{#if versions}}<br>{{/if}}
+								{{{../txt.policy_language_no_version}}}
+								<ul>
+									{{#each no_language}}
+									<li>{{.}}</li>
+									{{/each}}
+								</ul>
+							{{/if}}
+						</td>
+						<td>
+							{{#if (eq show_reg '1')}}
+								{{{../txt.yes}}}
+							{{else}}
+								{{{../txt.no}}}
+							{{/if}}
+						</td>
+						<td>
+							{{#if (eq show_help '1')}}
+								{{{../txt.yes}}}
+							{{else}}
+								{{{../txt.no}}}
+							{{/if}}
+						</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>

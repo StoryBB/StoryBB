@@ -26,7 +26,7 @@ class Policy
 	 *
 	 * @return array Return an array of policies required for registration
 	 */
-	public static function get_policies_for_registration()
+	public static function get_policies_for_registration(): array
 	{
 		global $smcFunc, $user_info, $language;
 
@@ -67,5 +67,59 @@ class Policy
 		}
 
 		return $final_policies;
+	}
+
+	/**
+	 * List of all the policies, language versions etc.
+	 *
+	 * @return array An array of all policies in the system, subdivided by policy type and language.
+	 */
+	public static function get_policy_list(): array
+	{
+		global $smcFunc;
+
+		$policies = [];
+
+		// First, policy types, forming the backbone of what gets returned.
+		$request = $smcFunc['db_query']('', '
+			SELECT pt.id_policy_type, pt.policy_type, pt.require_acceptance, pt.show_reg, pt.show_help
+			FROM {db_prefix}policy_types AS pt
+			ORDER BY pt.id_policy_type');
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$policies[$row['id_policy_type']] = $row;
+		}
+		$smcFunc['db_free_result']($request);
+
+		// Next up, fetch the different versions that we have.
+		$request = $smcFunc['db_query']('', '
+			SELECT p.id_policy, p.policy_type, p.language, p.title, p.last_revision
+			FROM {db_prefix}policy AS p
+			ORDER BY p.id_policy');
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			if (!isset($policies[$row['policy_type']]))
+			{
+				continue; // We don't know this policy type?
+			}
+			$policies[$row['policy_type']]['versions'][$row['language']] = $row;
+		}
+		$smcFunc['db_free_result']($request);
+
+		// Now identify any ones that don't have a specific language attached.
+		$languages = array_keys(getLanguages());
+		foreach ($policies as $policy_type => $policy_list)
+		{
+			foreach ($languages as $language)
+			{
+				if (!isset($policy_list['versions'][$language]))
+				{
+					$policies[$policy_type]['no_language'][] = $language;
+				}
+			}
+		}
+
+		// And we're done.
+		return $policies;
 	}
 }
