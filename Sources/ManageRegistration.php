@@ -275,15 +275,36 @@ function ManagePolicies()
 	global $txt, $context;
 	loadLanguage('Login');
 
-	// If the user specified an actual policy, let them edit that.
-	if (!empty($_REQUEST['policy']))
-	{
+	$context['policies'] = Policy::get_policy_list();
+	$context['page_title'] = $txt['admin_policies'];
 
+	$language = isset($_REQUEST['lang']) ? $_REQUEST['lang'] : '';
+
+	// If the user specified an actual policy, let them edit that.
+	if (!empty($_REQUEST['policy']) && isset($context['policies'][$_REQUEST['policy']]))
+	{
+		$policy = $context['policies'][$_REQUEST['policy']];
+
+		// Is it for a language we know about?
+		if (isset($policy['versions'][$language]) || in_array($language, $policy['no_language']))
+		{
+			$context['policy'] = $policy;
+			if (isset($policy['versions'][$language]))
+			{
+				$context['policy_version'] = $policy['versions'][$language];
+			}
+			else
+			{
+				$context['policy_version'] = [
+					'title' => '',
+					'description' => '',
+				];
+			}
+			$context['sub_template'] = 'admin_policy_edit';
+			return;
+		}
 	}
 
 	// So we're displaying a list of policies and their language versions.
-	$context['policies'] = Policy::get_policy_list();
-
-	$context['page_title'] = $txt['admin_policies'];
 	$context['sub_template'] = 'admin_policy_list';
 }

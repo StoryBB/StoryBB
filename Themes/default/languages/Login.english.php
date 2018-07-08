@@ -99,6 +99,8 @@ $txt['admin_register_done'] = 'Member %1$s has been registered successfully!';
 
 $txt['admin_policies_desc'] = 'Manage site-wide policies for users.';
 $txt['policy_type'] = 'Policy Type';
+$txt['policy_name'] = 'Policy Name';
+$txt['policy_desc'] = 'Policy Description';
 $txt['policy_type_terms'] = 'Terms and conditions';
 $txt['policy_type_privacy'] = 'Privacy policy';
 $txt['policy_type_roleplay'] = 'Roleplay rules';

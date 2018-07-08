@@ -87,14 +87,16 @@ class Policy
 			ORDER BY pt.id_policy_type');
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
+			$row['no_language'] = [];
 			$policies[$row['id_policy_type']] = $row;
 		}
 		$smcFunc['db_free_result']($request);
 
 		// Next up, fetch the different versions that we have.
 		$request = $smcFunc['db_query']('', '
-			SELECT p.id_policy, p.policy_type, p.language, p.title, p.last_revision
+			SELECT p.id_policy, p.policy_type, p.language, p.title, p.description, p.last_revision, pr.last_change
 			FROM {db_prefix}policy AS p
+				INNER JOIN {db_prefix}policy_revision AS pr ON (p.last_revision = pr.id_revision)
 			ORDER BY p.id_policy');
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -102,6 +104,7 @@ class Policy
 			{
 				continue; // We don't know this policy type?
 			}
+			$row['last_change_format'] = timeformat($row['last_change']);
 			$policies[$row['policy_type']]['versions'][$row['language']] = $row;
 		}
 		$smcFunc['db_free_result']($request);

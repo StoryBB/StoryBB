@@ -1,0 +1,29 @@
+	{{! Edit a policy. }}
+	<div class="cat_bar">
+		<h3 class="catbg">{{{txt.admin_policies}}}</h3>
+	</div>
+	<form action="{{scripturl}}?action=admin;area=regcenter;sa=policy">
+		<div class="roundframe">
+			<dl class="settings">
+				<dt>{{{txt.policy_type}}}:</dt>
+				<dd>{{get_text 'policy_type_' context.policy.policy_type}}</dd>
+				<dt>{{{txt.policy_name}}}:</dt>
+				<dd><input type="text" name="policy_name" class="input_text" value="{{{context.policy_version.title}}}"></dd>
+				<dt>{{{txt.policy_desc}}}:</dt>
+				<dd><textarea>{{{context.policy_version.description}}}</textarea></dd>
+			</dl>
+			<hr>
+			<dl class="settings">
+				<dt>{{{txt.policy_show_reg}}}:</dt>
+				<dd>{{#if (eq context.policy.show_reg '1')}}{{{txt.yes}}}{{else}}{{{txt.no}}}{{/if}}</dd>
+				<dt>{{{txt.policy_show_help}}}:</dt>
+				<dd>{{#if (eq context.policy.show_help '1')}}{{{txt.yes}}}{{else}}{{{txt.no}}}{{/if}}</dd>
+			</dl>
+			<hr>
+			<dl class="settings">
+				<dt>{{{txt.last_updated}}}:</dt>
+				<dd>{{{context.policy_version.last_change_format}}}</dd>
+			</dl>
+		</div>
+	</form>
+	{{json context.policy}}

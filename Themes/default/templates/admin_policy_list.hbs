@@ -20,7 +20,7 @@
 							{{#if versions}}
 								<ul>
 									{{#each versions}}
-									<li>{{{title}}} [{{language}}]</li>
+									<li><a href="{{../scripturl}}?action=admin;area=regcenter;sa=policies;policy={{../@key}};lang={{language}}">{{{title}}}</a> [{{language}}]</li>
 									{{/each}}
 								</ul>
 							{{/if}}
@@ -29,7 +29,7 @@
 								{{{../txt.policy_language_no_version}}}
 								<ul>
 									{{#each no_language}}
-									<li>{{.}}</li>
+									<li><a href="{{../scripturl}}?action=admin;area=regcenter;sa=policies;policy={{../@key}};lang={{.}}">{{.}}</a></li>
 									{{/each}}
 								</ul>
 							{{/if}}
