@@ -98,9 +98,9 @@ $txt['admin_register_group_none'] = '(no primary membergroup)';
 $txt['admin_register_done'] = 'Member %1$s has been registered successfully!';
 
 $txt['admin_policies_desc'] = 'Manage site-wide policies for users.';
-$txt['policy_type'] = 'Policy Type';
-$txt['policy_name'] = 'Policy Name';
-$txt['policy_desc'] = 'Policy Description';
+$txt['policy_type'] = 'Policy type';
+$txt['policy_name'] = 'Policy name';
+$txt['policy_desc'] = 'Policy description';
 $txt['policy_type_terms'] = 'Terms and conditions';
 $txt['policy_type_privacy'] = 'Privacy policy';
 $txt['policy_type_roleplay'] = 'Roleplay rules';
@@ -110,6 +110,10 @@ $txt['policy_show_help'] = 'Show in help area';
 $txt['policies_in_languages'] = 'Policies in languages';
 $txt['policy_language_no_version'] = 'Missing in these languages:';
 $txt['policy_text'] = 'Policy text';
+$txt['policy_reagree'] = 'Force users to re-agree to this policy';
+$txt['policy_reagree_desc'] = 'If ticked, all users will be forced to reagree to this policy before continuing to use the site.';
+$txt['policy_edit'] = 'Reason for change';
+$txt['policy_edit_desc'] = 'If specified, it will be shown to users who are re-agreeing to this policy.';
 
 $txt['visual_verification_sound_again'] = 'Play again';
 $txt['visual_verification_sound_close'] = 'Close window';

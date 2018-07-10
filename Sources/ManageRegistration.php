@@ -290,6 +290,7 @@ function ManagePolicies()
 		// Is it for a language we know about?
 		if (isset($policy['versions'][$language]) || in_array($language, $policy['no_language']))
 		{
+			$context['policy_token'] = 'adm-pol-' . $_REQUEST['policy'] . '-' . $language;
 			$context['policy'] = $policy;
 			if (isset($policy['versions'][$language]))
 			{
@@ -321,6 +322,7 @@ function ManagePolicies()
 			];
 			create_control_richedit($editorOptions);
 
+			createToken($context['policy_token']);
 			$context['sub_template'] = 'admin_policy_edit';
 			return;
 		}
