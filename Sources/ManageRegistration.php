@@ -272,7 +272,7 @@ function ModifyRegistrationSettings($return_config = false)
  */
 function ManagePolicies()
 {
-	global $txt, $context;
+	global $txt, $context, $sourcedir;
 	loadLanguage('Login');
 
 	$context['policies'] = Policy::get_policy_list();
@@ -284,6 +284,8 @@ function ManagePolicies()
 	if (!empty($_REQUEST['policy']) && isset($context['policies'][$_REQUEST['policy']]))
 	{
 		$policy = $context['policies'][$_REQUEST['policy']];
+		require_once($sourcedir . '/Subs-Post.php');
+		require_once($sourcedir . '/Subs-Editor.php');
 
 		// Is it for a language we know about?
 		if (isset($policy['versions'][$language]) || in_array($language, $policy['no_language']))
@@ -292,14 +294,33 @@ function ManagePolicies()
 			if (isset($policy['versions'][$language]))
 			{
 				$context['policy_version'] = $policy['versions'][$language];
+				$context['policy_revision'] = Policy::get_policy_revision((int) $context['policy_version']['last_revision']);
+				$context['policy_version']['policy_text'] = $context['policy_revision']['revision_text'];
 			}
 			else
 			{
 				$context['policy_version'] = [
 					'title' => '',
 					'description' => '',
+					'policy_text' => '',
 				];
 			}
+
+			// Now create the editor.
+			$editorOptions = [
+				'id' => 'message',
+				'value' => un_preparsecode($context['policy_version']['policy_text']),
+				'labels' => [
+					'post_button' => $txt['save'],
+				],
+				// add height and width for the editor
+				'height' => '500px',
+				'width' => '100%',
+				'preview_type' => 0,
+				'required' => true,
+			];
+			create_control_richedit($editorOptions);
+
 			$context['sub_template'] = 'admin_policy_edit';
 			return;
 		}

@@ -125,4 +125,32 @@ class Policy
 		// And we're done.
 		return $policies;
 	}
+
+	/**
+	 * Get a specific policy revision.
+	 *
+	 * @param int $revision_id The revision ID to fetch
+	 * @return array Poilcy with that revision, empty array if not found.
+	 */
+	public static function get_policy_revision(int $revision_id): array
+	{
+		global $smcFunc;
+
+		$request = $smcFunc['db_query']('', '
+			SELECT id_policy, last_change, short_revision_note, revision_text, edit_id_member, edit_member_name
+			FROM {db_prefix}policy_revision
+			WHERE id_revision = {int:revision_id}',
+			[
+				'revision_id' => $revision_id,
+			]
+		);
+		$row = $smcFunc['db_fetch_assoc']($request);
+		$smcFunc['db_free_result']($request);
+
+		if (empty($row))
+		{
+			return [];
+		}
+		return $row;
+	}
 }

@@ -4,25 +4,27 @@
 	</div>
 	<form action="{{scripturl}}?action=admin;area=regcenter;sa=policy">
 		<div class="roundframe">
-			<dl class="settings">
+			<dl class="register_form">
 				<dt>{{{txt.policy_type}}}:</dt>
 				<dd>{{get_text 'policy_type_' context.policy.policy_type}}</dd>
-				<dt>{{{txt.policy_name}}}:</dt>
-				<dd><input type="text" name="policy_name" class="input_text" value="{{{context.policy_version.title}}}"></dd>
-				<dt>{{{txt.policy_desc}}}:</dt>
-				<dd><textarea>{{{context.policy_version.description}}}</textarea></dd>
+				<dt><label for="policy_name">{{{txt.policy_name}}}:</label></dt>
+				<dd><input type="text" id="policy_name" name="policy_name" class="input_text" value="{{{context.policy_version.title}}}"></dd>
+				<dt><label for="policy_desc">{{{txt.policy_desc}}}:</label></dt>
+				<dd><textarea id="policy_desc" name="policy_desc">{{{context.policy_version.description}}}</textarea></dd>
 			</dl>
 			<hr>
-			<dl class="settings">
+			<dl class="register_form">
 				<dt>{{{txt.policy_show_reg}}}:</dt>
 				<dd>{{#if (eq context.policy.show_reg '1')}}{{{txt.yes}}}{{else}}{{{txt.no}}}{{/if}}</dd>
-				<dt>{{{txt.policy_show_help}}}:</dt>
-				<dd>{{#if (eq context.policy.show_help '1')}}{{{txt.yes}}}{{else}}{{{txt.no}}}{{/if}}</dd>
+				<dt><label for="show_help">{{{txt.policy_show_help}}}:</label></dt>
+				<dd><input type="checkbox" value="1" id="show_help" name="show_help"{{#if (eq context.policy.show_help '1')}} checked{{/if}}></dd>
 			</dl>
 			<hr>
-			<dl class="settings">
+			<dl class="register_form">
 				<dt>{{{txt.last_updated}}}:</dt>
 				<dd>{{{context.policy_version.last_change_format}}}</dd>
+				<dt>{{{txt.policy_text}}}</dt>
+				<dd>{{{richtexteditor 'message' '' 'bbcBox'}}}</dd>
 			</dl>
 		</div>
 	</form>
