@@ -54,7 +54,7 @@
 					</dd>
 					{{/if}}
 
-					{{#if (or (not context.post_group) (eq modSettings.permission_enable_postgroups '1'))}}
+					{{#if (not context.post_group)}}
 					<dt>
 						<label for="permission_base"><strong>{{{txt.membergroups_permissions}}}:</strong></label><br>
 						<span class="smalltext">{{{txt.membergroups_can_edit_later}}}</span>

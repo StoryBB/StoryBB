@@ -451,8 +451,8 @@ function AddMembergroup()
 		if (isset($_POST['min_posts']))
 			updateStats('postgroups');
 
-		// You cannot set permissions for post groups if they are disabled.
-		if ($postCountBasedGroup && empty($modSettings['permission_enable_postgroups']))
+		// You cannot set permissions for post groups as they are disabled.
+		if ($postCountBasedGroup)
 			$_POST['perm_type'] = '';
 
 		if ($_POST['perm_type'] == 'predefined')
@@ -641,8 +641,8 @@ function AddMembergroup()
 	$result = $smcFunc['db_query']('', '
 		SELECT id_group, group_name, is_character
 		FROM {db_prefix}membergroups
-		WHERE (id_group > {int:moderator_group} OR id_group = {int:global_mod_group})' . (empty($modSettings['permission_enable_postgroups']) ? '
-			AND min_posts = {int:min_posts}' : '') . (allowedTo('admin_forum') ? '' : '
+		WHERE (id_group > {int:moderator_group} OR id_group = {int:global_mod_group})
+			AND min_posts = {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 		ORDER BY min_posts, id_group != {int:global_mod_group}, group_name',
 		array(
@@ -1344,9 +1344,8 @@ function EditMembergroup()
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
-		WHERE id_group != {int:current_group}' .
-			(empty($modSettings['permission_enable_postgroups']) ? '
-			AND min_posts = {int:min_posts}' : '') . (allowedTo('admin_forum') ? '' : '
+		WHERE id_group != {int:current_group}
+			AND min_posts = {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 			AND id_group NOT IN (1, 3)
 			AND id_parent = {int:not_inherited}',
