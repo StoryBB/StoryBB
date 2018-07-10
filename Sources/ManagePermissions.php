@@ -155,8 +155,8 @@ function PermissionIndex()
 	// Query the database defined membergroups.
 	$query = $smcFunc['db_query']('', '
 		SELECT id_group, id_parent, group_name, min_posts, online_color, icons
-		FROM {db_prefix}membergroups' . (empty($modSettings['permission_enable_postgroups']) ? '
-		WHERE min_posts = {int:min_posts}' : '') . '
+		FROM {db_prefix}membergroups
+		WHERE min_posts = {int:min_posts}
 		ORDER BY id_parent = {int:not_inherited} DESC, min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
 		array(
 			'min_posts' => -1,
@@ -1032,47 +1032,44 @@ function GeneralPermissionSettings($return_config = false)
 		saveDBSettings($config_vars);
 
 		// Make sure there are no postgroup based permissions left.
-		if (empty($modSettings['permission_enable_postgroups']))
-		{
-			// Get a list of postgroups.
-			$post_groups = array();
-			$request = $smcFunc['db_query']('', '
-				SELECT id_group
-				FROM {db_prefix}membergroups
-				WHERE min_posts != {int:min_posts}',
-				array(
-					'min_posts' => -1,
-				)
-			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$post_groups[] = $row['id_group'];
-			$smcFunc['db_free_result']($request);
+		// Get a list of postgroups.
+		$post_groups = array();
+		$request = $smcFunc['db_query']('', '
+			SELECT id_group
+			FROM {db_prefix}membergroups
+			WHERE min_posts != {int:min_posts}',
+			array(
+				'min_posts' => -1,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$post_groups[] = $row['id_group'];
+		$smcFunc['db_free_result']($request);
 
-			// Remove'em.
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}permissions
-				WHERE id_group IN ({array_int:post_group_list})',
-				array(
-					'post_group_list' => $post_groups,
-				)
-			);
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}board_permissions
-				WHERE id_group IN ({array_int:post_group_list})',
-				array(
-					'post_group_list' => $post_groups,
-				)
-			);
-			$smcFunc['db_query']('', '
-				UPDATE {db_prefix}membergroups
-				SET id_parent = {int:not_inherited}
-				WHERE id_parent IN ({array_int:post_group_list})',
-				array(
-					'post_group_list' => $post_groups,
-					'not_inherited' => -2,
-				)
-			);
-		}
+		// Remove'em.
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}permissions
+			WHERE id_group IN ({array_int:post_group_list})',
+			array(
+				'post_group_list' => $post_groups,
+			)
+		);
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}board_permissions
+			WHERE id_group IN ({array_int:post_group_list})',
+			array(
+				'post_group_list' => $post_groups,
+			)
+		);
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}membergroups
+			SET id_parent = {int:not_inherited}
+			WHERE id_parent IN ({array_int:post_group_list})',
+			array(
+				'post_group_list' => $post_groups,
+				'not_inherited' => -2,
+			)
+		);
 
 		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=permissions;sa=settings');
@@ -1735,8 +1732,8 @@ function init_inline_permissions($permissions, $excluded_groups = array())
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}permissions AS p ON (p.id_group = mg.id_group AND p.permission IN ({array_string:permissions}))
 		WHERE mg.id_group NOT IN (1, 3)
-			AND mg.id_parent = {int:not_inherited}' . (empty($modSettings['permission_enable_postgroups']) ? '
-			AND mg.min_posts = {int:min_posts}' : '') . '
+			AND mg.id_parent = {int:not_inherited}
+			AND mg.min_posts = {int:min_posts}
 		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
 		array(
 			'not_inherited' => -2,
@@ -2297,7 +2294,7 @@ function ModifyPostModeration()
 		SELECT id_group, group_name, online_color, id_parent
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:admin_group}
-			' . (empty($modSettings['permission_enable_postgroups']) ? ' AND min_posts = {int:min_posts}' : '') . '
+			AND min_posts = {int:min_posts}
 		ORDER BY id_parent ASC',
 		array(
 			'admin_group' => 1,
