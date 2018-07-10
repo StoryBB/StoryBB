@@ -26,7 +26,7 @@
 				<dt>{{{txt.policy_text}}}</dt>
 				<dd>{{{richtexteditor 'message' '' 'bbcBox'}}}</dd>
 			</dl>
-			{{#if context.policy.require_acceptance}}
+			{{#if (eq context.policy.require_acceptance '1')}}
 				<hr>
 				<dl class="register_form">
 					<dt>
@@ -45,6 +45,8 @@
 					</dd>
 				</dl>
 			{{/if}}
+			<hr>
+			<input type="submit" class="button_submit" name="save" value="{{{txt.save}}}">
 		</div>
 		{{session_form}}
 		{{token_form context.policy_token}}
