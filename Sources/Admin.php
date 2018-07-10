@@ -269,7 +269,6 @@ function AdminMain()
 						'board' => array($txt['permissions_boards'], 'manage_permissions'),
 						'profiles' => array($txt['permissions_profiles'], 'manage_permissions'),
 						'postmod' => array($txt['permissions_post_moderation'], 'manage_permissions'),
-						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
 				'regcenter' => array(
@@ -638,7 +637,6 @@ function AdminSearchInternal()
 		array('EditBoardSettings', 'area=manageboards;sa=settings'),
 		array('ModifyMailSettings', 'area=mailqueue;sa=settings'),
 		array('ModifyNewsSettings', 'area=news;sa=settings'),
-		array('GeneralPermissionSettings', 'area=permissions;sa=settings'),
 		array('ModifyPostSettings', 'area=postsettings;sa=posts'),
 		array('ModifyTopicSettings', 'area=postsettings;sa=topics'),
 		array('ModifyDraftSettings', 'area=postsettings;sa=drafts'),
