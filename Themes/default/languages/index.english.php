@@ -481,7 +481,7 @@ $txt['status'] = 'Status';
 $txt['go_up'] = 'Go Up';
 $txt['go_down'] = 'Go Down';
 
-$forum_copyright = '<a href="http://storybb.org" title="StoryBB" target="_blank" class="new_win">%1$s &copy; %2$s, StoryBB project</a>';
+$forum_copyright = '<a href="http://storybb.org" title="StoryBB" target="_blank">%1$s &copy; %2$s, StoryBB project</a>';
 
 $txt['calendar_month'] = 'Month';
 $txt['calendar_year'] = 'Year';

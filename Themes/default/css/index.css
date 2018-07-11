@@ -151,11 +151,11 @@ hr {
 	box-shadow: 0 1px 0 #bbb inset;
 }
 /* This is about links */
-a:link, a:visited, a.new_win:link, a.new_win:visited {
+a:link, a:visited {
 	color: #346;
 	text-decoration: none;
 }
-a:hover, a.new_win:hover {
+a:hover {
 	text-decoration: underline;
 	cursor: pointer;
 }

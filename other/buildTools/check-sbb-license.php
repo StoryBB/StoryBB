@@ -84,7 +84,7 @@ if (in_array($currentFile, array('./other/upgrade.php', './other/install.php')))
 	// The code is fairly well into it, just get the entire contents.
 	$upgradeFile = file_get_contents($currentFile);
 
-	if (!preg_match('~<li class="copyright"><a href="https?://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; (\d{4}), StoryBB project</a></li>~i', $upgradeFile, $upgradeResults))
+	if (!preg_match('~<li class="copyright"><a href="https?://storybb.org/" title="StoryBB" target="_blank">StoryBB &copy; (\d{4}), StoryBB project</a></li>~i', $upgradeFile, $upgradeResults))
 		die('Error: Could not locate upgrade template copyright $software_year' . "\n");
 
 	if ((int) $upgradeResults[1] != $currentSoftwareYear)

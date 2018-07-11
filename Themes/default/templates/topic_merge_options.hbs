@@ -21,7 +21,7 @@
 							<input type="checkbox" class="input_check" name="topics[]" value="{{id}}" checked>
 						</td>
 						<td>
-							<a href="{{scripturl}}?topic={{id}}.0" target="_blank" class="new_win">{{{subject}}}</a>
+							<a href="{{scripturl}}?topic={{id}}.0" target="_blank">{{{subject}}}</a>
 						</td>
 						<td>
 							{{{started.link}}}<br>
@@ -111,7 +111,7 @@
 					<ul>
 						{{#each context.polls}}
 						<li>
-							<input type="radio" name="poll" value="{{id}}"{{#if selected}} checked{{/if}} class="input_radio"> {{question}} ({{{../txt.topic}}}: <a href="{{../scripturl}}?topic={{topic.id}}.0" target="_blank" class="new_win">{{{topic.subject}}}</a>)
+							<input type="radio" name="poll" value="{{id}}"{{#if selected}} checked{{/if}} class="input_radio"> {{question}} ({{{../txt.topic}}}: <a href="{{../scripturl}}?topic={{topic.id}}.0" target="_blank">{{{topic.subject}}}</a>)
 						</li>
 						{{/each}}
 
