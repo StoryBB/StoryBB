@@ -45,7 +45,7 @@
 
 				{{! Don't show an icon if they haven't specified a website. }}
 				{{#if (and context.member.website.url (not context.disabled_fields.website))}}
-					<li><a href="{{context.member.website.url}}" title="{{{context.member.website.title}}}" target="_blank" class="new_win">
+					<li><a href="{{context.member.website.url}}" title="{{{context.member.website.title}}}" target="_blank">
 						<span class="generic_icons www" title="{{{context.member.website.title}}}"></span></a></li>
 				{{/if}}
 

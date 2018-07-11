@@ -9,7 +9,7 @@ $txt['manual_sbb_user_help'] = 'StoryBB User Help';
 
 $txt['manual_welcome'] = 'Welcome to %s, powered by StoryBB!';
 $txt['manual_introduction'] = 'StoryBB is the software solution for roleplayers that this site is running. It allows users to communicate in discussion topics on a given subject in a clever and organized manner. Furthermore, it has a number of powerful features which end users can take advantage of. Help for many of StoryBB\'s features can be found by either clicking the question mark icon next to the relevant section or by selecting one of the links on this page. These links will take you to StoryBB\'s centrally-located documentation on the Simple Machines official site.';
-$txt['manual_docs'] = 'For more information about how to use StoryBB, please see the <a href="%1$s" target="_blank" class="new_win">StoryBB website</a>.';
+$txt['manual_docs'] = 'For more information about how to use StoryBB, please see the <a href="%1$s" target="_blank">StoryBB website</a>.';
 
 $txt['manual_section_registering_title'] = 'Registering';
 $txt['manual_section_logging_in_title'] = 'Logging In';
