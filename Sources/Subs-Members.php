@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Policy;
+
 /**
  * Delete one or more members.
  * Requires profile_remove_own or profile_remove_any permission for
@@ -464,7 +466,7 @@ function deleteMembers($users, $check_not_admin = false)
  */
 function registerMember(&$regOptions, $return_errors = false)
 {
-	global $scripturl, $txt, $modSettings, $context, $sourcedir;
+	global $scripturl, $txt, $modSettings, $context, $sourcedir, $language;
 	global $user_info, $smcFunc;
 
 	loadLanguage('Login');
@@ -664,6 +666,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		'additional_groups' => '',
 		'ignore_boards' => '',
 		'timezone' => !empty($regOptions['timezone']) ? $regOptions['timezone'] : 'UTC',
+		'policy_acceptance' => isset($regOptions['reg_policies']) ? Policy::POLICY_CURRENTLYACCEPTED : Policy::POLICY_NOTACCEPTED,
 	);
 
 	// Maybe it can be activated right away?
@@ -717,6 +720,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'show_online',
 		'id_theme', 'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
+		'policy_acceptance',
 	);
 	$knownFloats = array(
 		'time_offset',
@@ -755,6 +759,11 @@ function registerMember(&$regOptions, $return_errors = false)
 		array('id_member'),
 		1
 	);
+
+	if (isset($regOptions['reg_policies']))
+	{
+		Policy::agree_to_policy($regOptions['reg_policies'], $language, (int) $memberID);
+	}
 
 	// So at this point we've created the account, and we're going to be creating
 	// a character. More accurately, two - one for the 'main' and one for the 'character'.

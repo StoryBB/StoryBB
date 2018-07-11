@@ -983,7 +983,7 @@ CREATE TABLE {$db_prefix}policy_acceptance (
   id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   id_revision INT UNSIGNED NOT NULL DEFAULT '0',
   acceptance_time INT UNSIGNED NOT NULL DEFAULT '0',
-  PRIMARY KEY (id_policy, id_member)
+  PRIMARY KEY (id_policy, id_member, id_revision)
 ) ENGINE={$engine};
 
 #

@@ -857,3 +857,8 @@ $txt['your_name'] = 'Your name';
 $txt['your_email'] = 'Your email address';
 $txt['verification'] = 'Verification';
 $txt['thank_you_for_message'] = 'Thank you for your message. The administrators have been notified and should reply soon.';
+
+$txt['updated_agreement'] = 'We have updated our terms and conditions';
+$txt['updated_agreement_desc'] = 'We have updated the site policies. In order to continue using %1$s, the following policies need to be accepted again:';
+$txt['updated_agreement_contact_admin'] = 'Remember, if you have any questions before accepting the new policy, you can <a href="%1$s">contact the admin team</a>.';
+$txt['update_agreement_accept'] = 'I accept these policies';

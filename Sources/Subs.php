@@ -303,6 +303,7 @@ function updateMemberData($members, $data)
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'show_online', 'pm_receive_from', 'alerts',
 		'id_theme', 'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
+		'policy_acceptance',
 	);
 	$knownFloats = array(
 		'time_offset',

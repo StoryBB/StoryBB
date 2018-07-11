@@ -268,4 +268,138 @@ class Policy
 			}
 		}
 	}
+
+	/**
+	 * Work out which policy/ies the current user has not agreed the latest version of.
+	 *
+	 * @return array List of policies
+	 */
+	public static function get_unagreed_policies()
+	{
+		global $smcFunc, $user_info, $language;
+
+		$policies = [];
+		$final_policies = [];
+		$versions_in_order = [$user_info['language'], $language, 'english'];
+
+		// Fetch all the policies.
+		$request = $smcFunc['db_query']('', '
+			SELECT p.id_policy, pt.policy_type, p.language, p.title, p.last_revision, MAX(pa.id_revision) AS last_acceptance
+			FROM {db_prefix}policy_types AS pt
+				INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
+				LEFT JOIN {db_prefix}policy_acceptance AS pa ON (pa.id_policy = p.id_policy AND pa.id_member = {int:member})
+			WHERE pt.show_reg = 1
+				AND p.language IN ({array_string:language})
+			GROUP BY p.id_policy, p.language, pt.policy_type, p.title, p.last_revision
+			ORDER BY p.id_policy, p.language
+			',
+			[
+				'member' => $user_info['id'],
+				'language' => $versions_in_order,
+			]
+		);
+		while($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$policies[$row['policy_type']][$row['language']] = $row;
+		}
+		$smcFunc['db_free_result']($request);
+
+		// Having fetched all possible policies for this user, let's figure out whether they have agreed to anything.
+		foreach ($policies as $policy_type => $languages)
+		{
+			foreach ($languages as $language_name => $language_version_details)
+			{
+				if ($language_version_details['last_acceptance'] >= $language_version_details['last_revision'])
+				{
+					// We have an acceptance for this policy type, so we don't need to worry about it any more.
+					unset ($policies[$policy_type]);
+					continue 2;
+				}
+			}
+		}
+
+		// Let's now sift out whatever might be left to get the things we care about.
+		foreach ($policies as $policy_type => $languages)
+		{
+			foreach ($versions_in_order as $this_language)
+			{
+				if (isset($languages[$this_language]))
+				{
+					$final_policies[$policy_type] = $languages[$this_language]['title'];
+					break;
+				}
+			}
+		}
+
+		return $final_policies;
+	}
+
+	/**
+	 * Mark the current user as having agreed to a policy.
+	 *
+	 * @param array List of policy types agreed to
+	 */
+	public static function agree_to_policy(array $agreed, string $user_language, int $user_id)
+	{
+		global $smcFunc, $user_info;
+
+		if (empty($agreed))
+		{
+			return;
+		}
+
+		$policies = [];
+		$final_policies = [];
+		$versions_in_order = [$user_language, 'english'];
+
+		// Fetch all the policies.
+		$request = $smcFunc['db_query']('', '
+			SELECT pt.policy_type, p.id_policy, p.language, p.last_revision
+			FROM {db_prefix}policy_types AS pt
+				INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
+			WHERE pt.show_reg = 1
+				AND p.language IN ({array_string:language})
+				AND pt.policy_type IN ({array_string:agreed})
+			ORDER BY p.id_policy, p.language
+			',
+			[
+				'language' => $versions_in_order,
+				'agreed' => $agreed,
+			]
+		);
+		while($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$policies[$row['policy_type']][$row['language']] = $row;
+		}
+		$smcFunc['db_free_result']($request);
+
+		// Sift out which ones we care about for this user.
+		foreach ($policies as $policy_type => $policy_languages)
+		{
+			foreach ($versions_in_order as $version)
+			{
+				if (isset($policy_languages[$version]))
+				{
+					$final_policies[$policy_type] = $policy_languages[$version];
+					break;
+				}
+			}
+		}
+
+		// Now make that into a set of rows to insert into the acceptance table.
+		$rows = [];
+		foreach ($final_policies as $policy_type => $policy)
+		{
+			$rows[] = [$policy['id_policy'], $user_language, $policy['last_revision'], time()];
+		}
+		if (!empty($rows))
+		{
+			$smcFunc['db_insert']('ignore',
+				'{db_prefix}policy_acceptance',
+				['id_policy' => 'int', 'id_member' => 'int', 'id_revision' => 'int', 'acceptance_time' => 'int'],
+				$rows,
+				['id_policy', 'id_member', 'id_revision']
+			);
+		}
+	}
 }

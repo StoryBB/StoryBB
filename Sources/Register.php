@@ -362,6 +362,7 @@ function Register2()
 		'extra_register_vars' => array(),
 		'theme_vars' => array(),
 		'timezone' => !empty($modSettings['default_timezone']) ? $modSettings['default_timezone'] : '',
+		'reg_policies' => array_keys($policies),
 	);
 
 	// Include the additional options that might have been filled in.
