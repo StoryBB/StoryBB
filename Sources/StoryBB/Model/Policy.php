@@ -153,4 +153,119 @@ class Policy
 		}
 		return $row;
 	}
+
+	/**
+	 * Update the general policy details.
+	 *
+	 * @param int $policy_type The policy type to update
+	 * @param string $language The language to update for the same policy
+	 * @param array $details Fields to be updated in the policy
+	 */
+	public static function update_policy(int $policy_type, string $language, array $details)
+	{
+		global $smcFunc, $context;
+
+		// First update the stuff at policy-type level.
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}policy_types
+			SET show_reg = {int:show_reg},
+				show_help = {int:show_help}
+			WHERE id_policy_type = {int:policy_type}',
+			[
+				'policy_type' => $policy_type,
+				'show_reg' => !empty($details['show_reg']) ? 1 : 0,
+				'show_help' => !empty($details['show_help']) ? 1 : 0,
+			]
+		);
+
+		// Now the stuff for this policy version.
+		$clauses = [];
+		if (isset($details['title']))
+		{
+			$clauses[] = 'title = {string:title}';
+		}
+		if (isset($details['description']))
+		{
+			$clauses[] = 'description = {string:description}';
+		}
+		if (!empty($clauses))
+		{
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}policy
+				SET ' . implode(', ', $clauses) . '
+				WHERE policy_type = {int:policy_type}
+					AND language = {string:language}',
+				array_merge($details, [
+					'policy_type' => $policy_type,
+					'language' => $language,
+				])
+			);
+			if ($smcFunc['db_affected_rows']() == 0)
+			{
+				// Hmm, we didn't change a row? Guess we're adding a new language we didn't already have.
+				$smcFunc['db_insert']('insert',
+					'{db_prefix}policy',
+					['policy_type' => 'int', 'language' => 'string', 'title' => 'string', 'description' => '', 'last_revision' => 'int'],
+					[$policy_type, $language, !empty($details['title']) ? $details['title'] : '', !empty($details['description']) ? $details['description'] : '', 0],
+					['id_policy']
+				);
+			}
+
+			// And we're updating the policy text itself.
+			if (!empty($details['policy_text']))
+			{
+				// First we need to know which policy it is.
+				$request = $smcFunc['db_query']('', '
+					SELECT id_policy
+					FROM {db_prefix}policy
+					WHERE policy_type = {int:policy_type}
+						AND language = {string:language}',
+					[
+						'policy_type' => $policy_type,
+						'language' => $language,
+					]
+				);
+				$row = $smcFunc['db_fetch_assoc']($request);
+				$smcFunc['db_free_result']($request);
+				if (empty($row))
+				{
+					return;
+				}
+
+				if (empty($details['edit_id_member']))
+				{
+					$details['edit_id_member'] = $context['user']['id'];
+				}
+				if (empty($details['edit_member_name']))
+				{
+					$details['edit_member_name'] = $context['user']['name'];
+				}
+
+				// Now insert the new revision.
+				$revision_id = $smcFunc['db_insert']('insert',
+					'{db_prefix}policy_revision',
+					[
+						'id_policy' => 'int', 'last_change' => 'int', 'short_revision_note' => 'string', 'revision_text' => 'string',
+						'edit_id_member' => 'int', 'edit_member_name' => 'string'
+					],
+					[
+						$row['id_policy'], time(), '', $details['policy_text'],
+						$details['edit_id_member'], $details['edit_member_name']
+					],
+					['id_revision'],
+					1
+				);
+				// Now update the policy table to point to the new entry.
+				$smcFunc['db_query']('', '
+					UPDATE {db_prefix}policy
+					SET last_revision = {int:revision_id}
+					WHERE id_policy = {int:id_policy}',
+					[
+						'id_policy' => $row['id_policy'],
+						'revision_id' => $revision_id,
+					]
+				);
+			}
+		}
+	}
 }

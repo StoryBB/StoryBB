@@ -272,13 +272,13 @@ function ModifyRegistrationSettings($return_config = false)
  */
 function ManagePolicies()
 {
-	global $txt, $context, $sourcedir;
+	global $txt, $context, $sourcedir, $smcFunc;
 	loadLanguage('Login');
 
 	$context['policies'] = Policy::get_policy_list();
 	$context['page_title'] = $txt['admin_policies'];
 
-	$language = isset($_REQUEST['lang']) ? $_REQUEST['lang'] : '';
+	$context['policy_language'] = isset($_REQUEST['lang']) ? $_REQUEST['lang'] : '';
 
 	// If the user specified an actual policy, let them edit that.
 	if (!empty($_REQUEST['policy']) && isset($context['policies'][$_REQUEST['policy']]))
@@ -288,13 +288,71 @@ function ManagePolicies()
 		require_once($sourcedir . '/Subs-Editor.php');
 
 		// Is it for a language we know about?
-		if (isset($policy['versions'][$language]) || in_array($language, $policy['no_language']))
+		if (isset($policy['versions'][$context['policy_language']]) || in_array($context['policy_language'], $policy['no_language']))
 		{
-			$context['policy_token'] = 'adm-pol-' . $_REQUEST['policy'] . '-' . $language;
+			$context['policy_token'] = 'adm-pol-' . $_REQUEST['policy'] . '-' . $context['policy_language'];
 			$context['policy'] = $policy;
-			if (isset($policy['versions'][$language]))
+			$context['policy_id'] = $_REQUEST['policy'];
+
+			// Are we saving?
+			if (isset($_POST['save']))
 			{
-				$context['policy_version'] = $policy['versions'][$language];
+				checkSession();
+				validateToken($context['policy_token']);
+
+				$policy_details = [];
+
+				// Now, let's validate/process things in order.
+				// Policy name is not optional - but if we don't have one, don't overwrite what we already had.
+				if (!empty($_POST['policy_name']))
+				{
+					$policy_details['title'] = $smcFunc['htmlspecialchars']($_POST['policy_name']);
+				}
+				elseif (!empty($policy['versions'][$context['policy_language']]))
+				{
+					$policy_details['title'] = $policy['versions'][$context['policy_language']]['title'];
+				}
+				else
+				{
+					// Fall back to English which we really should have.
+					$policy_details['title'] = $policy['versions']['english']['title'];
+				}
+
+				// Policy description is optional.
+				$policy_details['description'] = isset($_POST['policy_desc']) ? $smcFunc['htmlspecialchars']($_POST['policy_desc'], ENT_QUOTES) : '';
+
+				// Showing on registration is easy.
+				$policy_details['show_reg'] = !empty($_POST['show_reg']);
+
+				// Showing on help is also easy.
+				$policy_details['show_help'] = !empty($_POST['show_help']);
+
+				if (!empty($_POST['message']))
+				{
+					$policy_details['policy_text'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+					preparsecode($policy_details['policy_text']);
+					// We need to fix a few of the replacements where we have links as placeholders.
+					$replacements = [
+						'[url=http://{$' => '[url={$',
+						'[url=&quot;http://{$' => '[url=&quot;{$',
+					];
+					$policy_details['policy_text'] = strtr($policy_details['policy_text'], $replacements);
+
+					$policy_details['edit_id_member'] = $context['user']['id'];
+					$policy_details['edit_member_name'] = $context['user']['name'];
+				}
+
+				// Update the policy with the new details.
+				Policy::update_policy($_REQUEST['policy'], $context['policy_language'], $policy_details);
+
+				// And we're done here.
+				redirectexit('action=admin;area=regcenter;sa=policies');
+			}
+
+			// If not, push everything we need into the context so we can get it in the template.
+			if (isset($policy['versions'][$context['policy_language']]))
+			{
+				$context['policy_version'] = $policy['versions'][$context['policy_language']];
 				$context['policy_revision'] = Policy::get_policy_revision((int) $context['policy_version']['last_revision']);
 				$context['policy_version']['policy_text'] = $context['policy_revision']['revision_text'];
 			}
