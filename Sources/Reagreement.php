@@ -116,9 +116,10 @@ function Reagreement()
 		redirectexit();
 	}
 
-	foreach ($policies as $policy_type => $policy_name)
+	foreach ($policies as $policy_type => $policy)
 	{
-		$context['policies'][$policy_type] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank">' . $policy_name . '</a>';
+		$policy['title'] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank">' . $policy['title'] . '</a>';
+		$context['policies'][$policy_type] = $policy;
 	}
 
 	$txt['updated_agreement_desc'] = sprintf($txt['updated_agreement_desc'], $context['forum_name_html_safe']);

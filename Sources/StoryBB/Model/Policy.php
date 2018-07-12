@@ -240,6 +240,10 @@ class Policy
 				{
 					$details['edit_member_name'] = $context['user']['name'];
 				}
+				if (!isset($details['policy_edit']))
+				{
+					$details['policy_edit'] = '';
+				}
 
 				// Now insert the new revision.
 				$revision_id = $smcFunc['db_insert']('insert',
@@ -249,7 +253,7 @@ class Policy
 						'edit_id_member' => 'int', 'edit_member_name' => 'string'
 					],
 					[
-						$row['id_policy'], time(), '', $details['policy_text'],
+						$row['id_policy'], time(), $details['policy_edit'], $details['policy_text'],
 						$details['edit_id_member'], $details['edit_member_name']
 					],
 					['id_revision'],
@@ -325,10 +329,33 @@ class Policy
 			{
 				if (isset($languages[$this_language]))
 				{
-					$final_policies[$policy_type] = $languages[$this_language]['title'];
+					$revisions[] = $languages[$this_language]['last_revision'];
+					$final_policies[$policy_type] = [
+						'title' => $languages[$this_language]['title'],
+						'revision_note' => '',
+					];
 					break;
 				}
 			}
+		}
+
+		if (!empty($revisions))
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT pt.policy_type, pr.short_revision_note
+				FROM {db_prefix}policy_revision AS pr
+					INNER JOIN {db_prefix}policy AS p ON (pr.id_policy = p.id_policy)
+					INNER JOIN {db_prefix}policy_types AS pt ON (p.policy_type = pt.id_policy_type)
+				WHERE pr.id_revision IN ({array_int:revisions})',
+				[
+					'revisions' => $revisions,
+				]
+			);
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+			{
+				$final_policies[$row['policy_type']]['revision_note'] = $row['short_revision_note'];
+			}
+			$smcFunc['db_free_result']($request);
 		}
 
 		return $final_policies;
@@ -401,5 +428,30 @@ class Policy
 				['id_policy', 'id_member', 'id_revision']
 			);
 		}
+	}
+
+	/**
+	 * Reset all users' policy acceptance state, except the admin(s).
+	 *
+	 * @param array $exclude User IDs to exclude from resetting policy acceptance state
+	 */
+	public static function reset_acceptance(array $exclude = [])
+	{
+		global $smcFunc;
+
+		// Make sure there is something in the array even if it is harmless.
+		$exclude[] = 0;
+
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}members
+			SET policy_acceptance = {int:previouslyaccepted}
+			WHERE policy_acceptance = {int:currentlyaccepted}
+				AND id_member NOT IN ({array_int:exclude})',
+			[
+				'previouslyaccepted' => self::POLICY_PREVIOUSLYACCEPTED,
+				'currentlyaccepted' => self::POLICY_CURRENTLYACCEPTED,
+				'exclude' => $exclude,
+			]
+		);
 	}
 }

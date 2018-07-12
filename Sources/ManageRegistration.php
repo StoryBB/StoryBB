@@ -342,8 +342,22 @@ function ManagePolicies()
 					$policy_details['edit_member_name'] = $context['user']['name'];
 				}
 
+				$force_update = false;
+				if ($context['policy']['require_acceptance'])
+				{
+					// If the policy can be required, let's check if that's a thing.
+					$force_update = !empty($_POST['policy_reagree']);
+					$policy_details['policy_edit'] = !empty($_POST['policy_edit']) ? $smcFunc['htmlspecialchars']($_POST['policy_edit'], ENT_QUOTES) : '';
+				}
+
 				// Update the policy with the new details.
 				Policy::update_policy($_REQUEST['policy'], $context['policy_language'], $policy_details);
+
+				if ($force_update)
+				{
+					// Now that a policy exists, bump people to reagree to it.
+					Policy::reset_acceptance([$context['user']['id']]);
+				}
 
 				// And we're done here.
 				redirectexit('action=admin;area=regcenter;sa=policies');
