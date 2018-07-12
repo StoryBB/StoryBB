@@ -390,7 +390,7 @@ class Policy
 		$rows = [];
 		foreach ($final_policies as $policy_type => $policy)
 		{
-			$rows[] = [$policy['id_policy'], $user_language, $policy['last_revision'], time()];
+			$rows[] = [$policy['id_policy'], $user_id, $policy['last_revision'], time()];
 		}
 		if (!empty($rows))
 		{
