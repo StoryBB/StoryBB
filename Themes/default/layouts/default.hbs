@@ -162,7 +162,9 @@
             <li class="floatright">
                 <a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
                 | <a href="{{scripturl}}?action=help">{{txt.help}}</a>
-                | <a href="{{scripturl}}?action=help;sa=terms">{{txt.terms_and_rules}}</a>
+                {{#each context.footer_links}}
+                | <a href="{{{link}}}">{{{title}}}</a>
+                {{/each}}
                 | <a href="#top_section">{{txt.go_up}} &#9650;</a>
             </li>
             <li class="copyright">{{{copyright}}}</li>

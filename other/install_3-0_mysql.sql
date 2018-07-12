@@ -1010,6 +1010,7 @@ CREATE TABLE {$db_prefix}policy_types (
   id_policy_type TINYINT UNSIGNED AUTO_INCREMENT,
   policy_type VARCHAR(50) NOT NULL,
   require_acceptance TINYINT UNSIGNED DEFAULT '0',
+  show_footer TINYINT UNSIGNED DEFAULT '0',
   show_reg TINYINT UNSIGNED DEFAULT '0',
   show_help TINYINT UNSIGNED DEFAULT '0',
   PRIMARY KEY (id_policy_type)
@@ -1788,12 +1789,12 @@ VALUES
 #
 
 INSERT INTO {$db_prefix}policy_types
-  (id_policy_type, policy_type, require_acceptance, show_reg, show_help)
+  (id_policy_type, policy_type, require_acceptance, show_footer, show_reg, show_help)
 VALUES
-  (1, 'terms', 1, 1, 1),
-  (2, 'privacy', 1, 1, 1),
-  (3, 'roleplay', 0, 0, 0),
-  (4, 'cookies', 0, 0, 1);
+  (1, 'terms', 1, 1, 1, 1),
+  (2, 'privacy', 1, 1, 1, 1),
+  (3, 'roleplay', 0, 0, 0, 0),
+  (4, 'cookies', 0, 0, 0, 1);
 
 # --------------------------------------------------------
 

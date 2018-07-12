@@ -269,6 +269,9 @@ class Policy
 						'revision_id' => $revision_id,
 					]
 				);
+
+				// And make sure to clear our cache of it.
+				cache_put_data('footer_links', null);
 			}
 		}
 	}
@@ -453,5 +456,51 @@ class Policy
 				'exclude' => $exclude,
 			]
 		);
+	}
+
+	/**
+	 * Get which links should be in the footer.
+	 *
+	 * @return array A list of links for the footer.
+	 */
+	public static function get_footer_policies()
+	{
+		global $smcFunc, $language, $user_info, $scripturl;
+
+		if (($footer_links = cache_get_data('footer_links', 300)) === null)
+		{
+			$footer_links = [];
+
+			$request = $smcFunc['db_query']('', '
+				SELECT p.id_policy, pt.policy_type, p.language, p.title
+				FROM {db_prefix}policy_types AS pt
+					INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
+				WHERE pt.show_footer = 1
+				AND p.language IN ({array_string:languages})',
+				[
+					'languages' => [$language, $user_info['language']],
+				]
+			);
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+			{
+				if (!isset($footer_links[$row['policy_type']]))
+				{
+					$footer_links[$row['policy_type']] = [
+						'link' => $scripturl . '?action=help;sa=' . $row['policy_type'],
+						'title' => $row['title'],
+					];
+				}
+				elseif ($row['language'] == $user_info['language'])
+				{
+					// So we matched multiple, we previously had one (in site language) and now we have one for the user language, so use that.
+					$footer_links[$row['policy_type']]['title'] = $row['title'];
+				}
+			}
+			$smcFunc['db_free_result']($request);
+
+			cache_put_data('footer_links', $footer_links, 300);
+		}
+
+		return $footer_links;
 	}
 }

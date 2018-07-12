@@ -11,6 +11,7 @@
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\Model\Policy;
 
 /**
  * Simple autoloader.
@@ -4140,6 +4141,8 @@ function setupMenuContext()
 
 	if (isset($context['menu_buttons'][$current_action]))
 		$context['menu_buttons'][$current_action]['active_button'] = true;
+
+	$context['footer_links'] = Policy::get_footer_policies();
 }
 
 /**
