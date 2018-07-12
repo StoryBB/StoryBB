@@ -477,32 +477,33 @@ class Policy
 				SELECT p.id_policy, pt.policy_type, p.language, p.title
 				FROM {db_prefix}policy_types AS pt
 					INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
-				WHERE pt.show_footer = 1
-				AND p.language IN ({array_string:languages})',
-				[
-					'languages' => [$language, $user_info['language']],
-				]
-			);
+				WHERE pt.show_footer = 1');
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
-				if (!isset($footer_links[$row['policy_type']]))
-				{
-					$footer_links[$row['policy_type']] = [
-						'link' => $scripturl . '?action=help;sa=' . $row['policy_type'],
-						'title' => $row['title'],
-					];
-				}
-				elseif ($row['language'] == $user_info['language'])
-				{
-					// So we matched multiple, we previously had one (in site language) and now we have one for the user language, so use that.
-					$footer_links[$row['policy_type']]['title'] = $row['title'];
-				}
+				$footer_links[$row['policy_type']][$row['language']] = [
+					'link' => $scripturl . '?action=help;sa=' . $row['policy_type'],
+					'title' => $row['title'],
+				];
 			}
 			$smcFunc['db_free_result']($request);
 
 			cache_put_data('footer_links', $footer_links, 300);
 		}
 
-		return $footer_links;
+		$versions = [$user_info['language'], $language, 'english'];
+
+		foreach ($footer_links as $policy_type => $languages)
+		{
+			foreach ($versions as $version)
+			{
+				if (isset($languages[$version]))
+				{
+					$lang_footer_links[$policy_type] = $languages[$version];
+					break;
+				}
+			}
+		}
+
+		return $lang_footer_links;
 	}
 }
