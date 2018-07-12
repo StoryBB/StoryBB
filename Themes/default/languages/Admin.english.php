@@ -41,10 +41,9 @@ $txt['admin_logoff'] = 'End Admin Session';
 $txt['admin_maintenance'] = 'Maintenance';
 $txt['admin_image_text'] = 'Show buttons as images instead of text';
 $txt['admin_agreement'] = 'Show and require agreement letter when registering';
-$txt['admin_agreement_default'] = 'Default';
 $txt['admin_agreement_select_language'] = 'Language to edit';
 $txt['admin_agreement_select_language_change'] = 'Change';
-$txt['admin_agreement_not_saved'] = 'The agreement changes have not been saved. Perhaps the file permissions on the file were not set correctly.';
+
 $txt['admin_delete_members'] = 'Delete Selected Members';
 $txt['admin_repair'] = 'Repair All boards and topics';
 $txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support&quot; page. If the information there doesn\'t help you, feel free to <a href="https://storybb.org/" target="_blank">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="generic_icons help" title="%3$s"></span> symbols for more information on the related functions.';
@@ -65,8 +64,6 @@ $txt['dont_show_attach_under_post'] = 'Do not show attachments under the post if
 $txt['dont_show_attach_under_post_sub'] = 'Enable this if you do not want attachments to appear twice. Attachments embedded in the post still count towards attachment limits and can still be treated like normal attachments.';
 
 $txt['admin_backup_fail'] = 'Failed to make backup of Settings.php - make sure Settings_bak.php exists and is writable.';
-$txt['registration_agreement'] = 'Registration Agreement';
-$txt['registration_agreement_desc'] = 'This agreement is shown when a user registers an account on this forum and has to be accepted before users can continue registration.';
 $txt['errors_list'] = 'Listing of forum errors';
 $txt['errors_found'] = 'The following errors are fouling up your forum';
 $txt['errors_fix'] = 'Would you like to attempt to fix these errors?';
@@ -104,7 +101,6 @@ $txt['attachment_delete_admin'] = '[attachment deleted by admin]';
 $txt['live'] = 'News from StoryBB';
 $txt['remove_all'] = 'Clear Log';
 $txt['approve_new_members'] = 'Admin must approve all new members';
-$txt['agreement_not_writable'] = 'Warning - agreement.txt is not writable, any changes you make will NOT be saved.';
 
 $txt['version_check_desc'] = 'This shows you the versions of your installation\'s files versus those of the latest version. If any of these files are out of date, you should download and upgrade to the latest version at <a href="https://storybb.org/" target="_blank">storybb.org</a>.';
 $txt['version_check_more'] = '(more detailed)';
@@ -672,6 +668,7 @@ $txt['themeadmin_admin_title'] = 'Manage and Install';
 $txt['themeadmin_list_title'] = 'Theme Settings';
 $txt['themeadmin_reset_title'] = 'Member Options';
 $txt['admin_browse_register_new'] = 'Register new member';
+$txt['admin_policies'] = 'Site Policies';
 
 $txt['search_engines'] = 'Search Engines';
 $txt['spiders'] = 'Spiders';
@@ -726,7 +723,6 @@ $txt['char_templates_none'] = 'There are no templates.';
 
 $txt['char_sheet_admin'] = 'Pending Character Sheets';
 $txt['no_pending_sheets'] = 'There are no pending character sheets to review.';
-$txt['last_updated'] = 'Last updated';
 $txt['previously_approved'] = 'Previous approved';
 $txt['remove_from_queue'] = 'Remove from Queue';
 

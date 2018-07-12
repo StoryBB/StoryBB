@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Policy;
+
 /**
  * Entrance point for the registration center, it checks permissions and forwards
  * to the right function based on the subaction.
@@ -30,9 +32,9 @@ function RegCenter()
 
 	$subActions = array(
 		'register' => array('AdminRegister', 'moderate_forum'),
-		'agreement' => array('EditAgreement', 'admin_forum'),
 		'reservednames' => array('SetReserved', 'admin_forum'),
 		'settings' => array('ModifyRegistrationSettings', 'admin_forum'),
+		'policies' => array('ManagePolicies', 'admin_forum'),
 	);
 
 	// Work out which to call...
@@ -53,15 +55,15 @@ function RegCenter()
 			'register' => array(
 				'description' => $txt['admin_register_desc'],
 			),
-			'agreement' => array(
-				'description' => $txt['registration_agreement_desc'],
-			),
 			'reservednames' => array(
 				'description' => $txt['admin_reserved_desc'],
 			),
+			'policies' => array(
+				'description' => $txt['admin_policies_desc'],
+			),
 			'settings' => array(
 				'description' => $txt['admin_settings_desc'],
-			)
+			),
 		)
 	);
 
@@ -169,69 +171,6 @@ function AdminRegister()
 }
 
 /**
- * Allows the administrator to edit the registration agreement, and choose whether
- * it should be shown or not. It writes and saves the agreement to the agreement.txt
- * file.
- * Accessed by ?action=admin;area=regcenter;sa=agreement.
- * Requires the admin_forum permission.
- *
- * @uses Admin template and the edit_agreement sub template.
- */
-function EditAgreement()
-{
-	// I hereby agree not to be a lazy bum.
-	global $txt, $boarddir, $context, $modSettings, $smcFunc;
-
-	// By default we look at agreement.txt.
-	$context['current_agreement'] = '';
-
-	// Is there more than one to edit?
-	$context['editable_agreements'] = array(
-		'' => $txt['admin_agreement_default'],
-	);
-
-	// Get our languages.
-	getLanguages();
-
-	// Try to figure out if we have more agreements.
-	foreach ($context['languages'] as $lang)
-	{
-		if (file_exists($boarddir . '/agreement.' . $lang['filename'] . '.txt'))
-		{
-			$context['editable_agreements']['.' . $lang['filename']] = $lang['name'];
-			// Are we editing this?
-			if (isset($_POST['agree_lang']) && $_POST['agree_lang'] == '.' . $lang['filename'])
-				$context['current_agreement'] = '.' . $lang['filename'];
-		}
-	}
-
-	if (isset($_POST['agreement']))
-	{
-		checkSession();
-		validateToken('admin-rega');
-
-		// Off it goes to the agreement file.
-		$to_write = str_replace("\r", '', $_POST['agreement']);
-		$bytes = file_put_contents($boarddir . '/agreement' . $context['current_agreement'] . '.txt', $to_write, LOCK_EX);
-
-		updateSettings(array('requireAgreement' => !empty($_POST['requireAgreement'])));
-
-		if ($bytes == strlen($to_write))
-			session_flash('success', $txt['settings_saved']);
-		else
-			session_flash('error', $txt['admin_agreement_not_saved']);
-	}
-
-	$context['agreement'] = file_exists($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? $smcFunc['htmlspecialchars'](file_get_contents($boarddir . '/agreement' . $context['current_agreement'] . '.txt')) : '';
-	$context['warning'] = is_writable($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? '' : $txt['agreement_not_writable'];
-	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
-
-	$context['sub_template'] = 'register_edit_agreement';
-	$context['page_title'] = $txt['registration_agreement'];
-	createToken('admin-rega');
-}
-
-/**
  * Set the names under which users are not allowed to register.
  * Accessed by ?action=admin;area=regcenter;sa=reservednames.
  * Requires the admin_forum permission.
@@ -275,8 +214,7 @@ function SetReserved()
 }
 
 /**
- * This function handles registration settings, and provides a few pretty stats too while it's at it.
- * General registration settings and Coppa compliance settings.
+ * This function handles registration settings.
  * Accessed by ?action=admin;area=regcenter;sa=settings.
  * Requires the admin_forum permission.
  *
@@ -299,11 +237,7 @@ function ModifyRegistrationSettings($return_config = false)
 				'required' => $txt['setting_registration_character_required'],
 			)),
 		'',
-			array('int', 'coppaAge', 'subtext' => $txt['zero_to_disable'], 'onchange' => 'checkCoppa();', 'onkeyup' => 'checkCoppa();'),
-			array('select', 'coppaType', array($txt['setting_coppaType_reject'], $txt['setting_coppaType_approval']), 'onchange' => 'checkCoppa();'),
-			array('large_text', 'coppaPost', 'subtext' => $txt['setting_coppaPost_desc']),
-			array('text', 'coppaFax'),
-			array('text', 'coppaPhone'),
+			array('int', 'minimum_age'),
 	);
 
 	call_integration_hook('integrate_modify_registration_settings', array(&$config_vars));
@@ -318,13 +252,6 @@ function ModifyRegistrationSettings($return_config = false)
 	{
 		checkSession();
 
-		// Are there some contacts missing?
-		if (!empty($_POST['coppaAge']) && !empty($_POST['coppaType']) && empty($_POST['coppaPost']) && empty($_POST['coppaFax']))
-			fatal_lang_error('admin_setting_coppa_require_contact');
-
-		// Post needs to take into account line breaks.
-		$_POST['coppaPost'] = str_replace("\n", '<br>', empty($_POST['coppaPost']) ? '' : $_POST['coppaPost']);
-
 		call_integration_hook('integrate_save_registration_settings');
 
 		saveDBSettings($config_vars);
@@ -335,22 +262,147 @@ function ModifyRegistrationSettings($return_config = false)
 	$context['post_url'] = $scripturl . '?action=admin;area=regcenter;save;sa=settings';
 	$context['settings_title'] = $txt['settings'];
 
-	// Define some javascript for COPPA.
-	$context['settings_post_javascript'] = '
-		function checkCoppa()
-		{
-			var coppaDisabled = document.getElementById(\'coppaAge\').value == 0;
-			document.getElementById(\'coppaType\').disabled = coppaDisabled;
-
-			var disableContacts = coppaDisabled || document.getElementById(\'coppaType\').options[document.getElementById(\'coppaType\').selectedIndex].value != 1;
-			document.getElementById(\'coppaPost\').disabled = disableContacts;
-			document.getElementById(\'coppaFax\').disabled = disableContacts;
-			document.getElementById(\'coppaPhone\').disabled = disableContacts;
-		}
-		checkCoppa();';
-
-	// Turn the postal address into something suitable for a textbox.
-	$modSettings['coppaPost'] = !empty($modSettings['coppaPost']) ? preg_replace('~<br ?/?' . '>~', "\n", $modSettings['coppaPost']) : '';
-
 	prepareDBSettingContext($config_vars);
+}
+
+/**
+ * This area handles site policies.
+ * Accessed by ?action=admin;area=regcenter;sa=policies.
+ * Requires the admin_forum permission.
+ */
+function ManagePolicies()
+{
+	global $txt, $context, $sourcedir, $smcFunc;
+	loadLanguage('Login');
+
+	$context['policies'] = Policy::get_policy_list();
+	$context['page_title'] = $txt['admin_policies'];
+
+	$context['policy_language'] = isset($_REQUEST['lang']) ? $_REQUEST['lang'] : '';
+
+	// If the user specified an actual policy, let them edit that.
+	if (!empty($_REQUEST['policy']) && isset($context['policies'][$_REQUEST['policy']]))
+	{
+		$policy = $context['policies'][$_REQUEST['policy']];
+		require_once($sourcedir . '/Subs-Post.php');
+		require_once($sourcedir . '/Subs-Editor.php');
+
+		// Is it for a language we know about?
+		if (isset($policy['versions'][$context['policy_language']]) || in_array($context['policy_language'], $policy['no_language']))
+		{
+			$context['policy_token'] = 'adm-pol-' . $_REQUEST['policy'] . '-' . $context['policy_language'];
+			$context['policy'] = $policy;
+			$context['policy_id'] = $_REQUEST['policy'];
+
+			// Are we saving?
+			if (isset($_POST['save']))
+			{
+				checkSession();
+				validateToken($context['policy_token']);
+
+				$policy_details = [];
+
+				// Now, let's validate/process things in order.
+				// Policy name is not optional - but if we don't have one, don't overwrite what we already had.
+				if (!empty($_POST['policy_name']))
+				{
+					$policy_details['title'] = $smcFunc['htmlspecialchars']($_POST['policy_name']);
+				}
+				elseif (!empty($policy['versions'][$context['policy_language']]))
+				{
+					$policy_details['title'] = $policy['versions'][$context['policy_language']]['title'];
+				}
+				else
+				{
+					// Fall back to English which we really should have.
+					$policy_details['title'] = $policy['versions']['english']['title'];
+				}
+
+				// Policy description is optional.
+				$policy_details['description'] = isset($_POST['policy_desc']) ? $smcFunc['htmlspecialchars']($_POST['policy_desc'], ENT_QUOTES) : '';
+
+				// Showing on registration is easy.
+				$policy_details['show_reg'] = !empty($_POST['show_reg']);
+
+				// Showing on help is also easy.
+				$policy_details['show_help'] = !empty($_POST['show_help']);
+
+				// Lastly, showing in the footer.
+				$policy_details['show_footer'] = !empty($_POST['show_footer']);
+
+				if (!empty($_POST['message']))
+				{
+					$policy_details['policy_text'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+					preparsecode($policy_details['policy_text']);
+					// We need to fix a few of the replacements where we have links as placeholders.
+					$replacements = [
+						'[url=http://{$' => '[url={$',
+						'[url=&quot;http://{$' => '[url=&quot;{$',
+					];
+					$policy_details['policy_text'] = strtr($policy_details['policy_text'], $replacements);
+
+					$policy_details['edit_id_member'] = $context['user']['id'];
+					$policy_details['edit_member_name'] = $context['user']['name'];
+				}
+
+				$force_update = false;
+				if ($context['policy']['require_acceptance'])
+				{
+					// If the policy can be required, let's check if that's a thing.
+					$force_update = !empty($_POST['policy_reagree']);
+					$policy_details['policy_edit'] = !empty($_POST['policy_edit']) ? $smcFunc['htmlspecialchars']($_POST['policy_edit'], ENT_QUOTES) : '';
+				}
+
+				// Update the policy with the new details.
+				Policy::update_policy($_REQUEST['policy'], $context['policy_language'], $policy_details);
+
+				if ($force_update)
+				{
+					// Now that a policy exists, bump people to reagree to it.
+					Policy::reset_acceptance([$context['user']['id']]);
+				}
+
+				// And we're done here.
+				redirectexit('action=admin;area=regcenter;sa=policies');
+			}
+
+			// If not, push everything we need into the context so we can get it in the template.
+			if (isset($policy['versions'][$context['policy_language']]))
+			{
+				$context['policy_version'] = $policy['versions'][$context['policy_language']];
+				$context['policy_revision'] = Policy::get_policy_revision((int) $context['policy_version']['last_revision']);
+				$context['policy_version']['policy_text'] = $context['policy_revision']['revision_text'];
+			}
+			else
+			{
+				$context['policy_version'] = [
+					'title' => '',
+					'description' => '',
+					'policy_text' => '',
+				];
+			}
+
+			// Now create the editor.
+			$editorOptions = [
+				'id' => 'message',
+				'value' => un_preparsecode($context['policy_version']['policy_text']),
+				'labels' => [
+					'post_button' => $txt['save'],
+				],
+				// add height and width for the editor
+				'height' => '500px',
+				'width' => '100%',
+				'preview_type' => 0,
+				'required' => true,
+			];
+			create_control_richedit($editorOptions);
+
+			createToken($context['policy_token']);
+			$context['sub_template'] = 'admin_policy_edit';
+			return;
+		}
+	}
+
+	// So we're displaying a list of policies and their language versions.
+	$context['sub_template'] = 'admin_policy_list';
 }

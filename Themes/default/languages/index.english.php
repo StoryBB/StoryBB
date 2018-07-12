@@ -37,6 +37,8 @@ $txt['years_title'] = 'Years';
 $txt['time_am'] = 'am';
 $txt['time_pm'] = 'pm';
 
+$txt['last_updated'] = 'Last updated';
+
 $txt['admin'] = 'Admin';
 $txt['moderate'] = 'Moderate';
 $txt['chars_menu_title'] = 'Characters';
@@ -137,7 +139,6 @@ $txt['admin_login'] = 'Administration Login';
 // Use numeric entities in the below string.
 $txt['topic'] = 'Topic';
 $txt['help'] = 'Help';
-$txt['terms_and_rules'] = 'Terms and Rules';
 $txt['watch_board'] = 'Watch this Board';
 $txt['unwatch_board'] = 'Stop Watching Board';
 $txt['watch_topic'] = 'Watch this Topic';
@@ -460,7 +461,6 @@ $txt['search_advanced'] = 'Advanced search';
 $txt['security_risk'] = 'MAJOR SECURITY RISK!';
 $txt['not_removed'] = 'You have not removed the following files';
 $txt['generic_warning'] = 'Warning';
-$txt['agreement_missing'] = 'You are requiring new users to accept a registration agreement, however the file (agreement.txt) doesn\'t exist.';
 
 $txt['cache_writable'] = 'The cache directory is not writable - this will adversely affect the performance of your forum.';
 
@@ -856,3 +856,9 @@ $txt['your_name'] = 'Your name';
 $txt['your_email'] = 'Your email address';
 $txt['verification'] = 'Verification';
 $txt['thank_you_for_message'] = 'Thank you for your message. The administrators have been notified and should reply soon.';
+
+$txt['updated_agreement'] = 'We have updated our terms and conditions';
+$txt['updated_agreement_desc'] = 'We have updated the site policies. In order to continue using %1$s, the following policies need to be accepted again.';
+$txt['updated_agreement_contact_admin'] = 'Remember, if you have any questions before accepting the new policy, you can <a href="%1$s">contact the admin team</a>.';
+$txt['updated_agreement_changed'] = 'Changed in this version:';
+$txt['update_agreement_accept'] = 'I accept these policies';

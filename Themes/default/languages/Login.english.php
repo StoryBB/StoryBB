@@ -1,16 +1,6 @@
 <?php
 // Version: 3.0 Alpha 1; Login
 
-global $context;
-
-// Registration agreement page.
-$txt['registration_agreement'] = 'Registration Agreement';
-$txt['agreement_agree'] = 'I accept the terms of the agreement.';
-$txt['agreement_agree_coppa_above'] = 'I accept the terms of the agreement and I am at least %1$d years old.';
-$txt['agreement_agree_coppa_below'] = 'I accept the terms of the agreement and I am younger than %1$d years old.';
-$txt['agree_coppa_above'] = 'I am at least %1$d years old.';
-$txt['agree_coppa_below'] = 'I am younger than %1$d years old.';
-
 // Registration form.
 $txt['registration_form'] = 'Registration Form';
 $txt['need_username'] = 'You need to fill in a username.';
@@ -58,9 +48,6 @@ $txt['invalid_activation_known'] = 'If you already know your activation code, pl
 $txt['invalid_activation_retry'] = 'Activation code';
 $txt['invalid_activation_submit'] = 'Activate';
 
-$txt['coppa_no_concent'] = 'The administrator has still not received parent/guardian consent for your account.';
-$txt['coppa_need_more_details'] = 'Need more details?';
-
 $txt['awaiting_delete_account'] = 'Your account has been marked for deletion!<br>If you wish to restore your account, please check the &quot;Reactivate my account&quot; box, and login again.';
 $txt['undelete_account'] = 'Reactivate my account';
 
@@ -71,8 +58,9 @@ $txt['change_password_new'] = 'have been changed and your password reset. Below 
 
 $txt['in_maintain_mode'] = 'This board is in Maintenance Mode.';
 
-// These two are used as a javascript alert; please use international characters directly, not as entities.
-$txt['register_agree'] = 'Please read and accept the agreement before signing up.';
+$txt['registration_i_agree_to'] = 'I agree to the %1$s';
+$txt['site_policies'] = 'Site Policies';
+
 $txt['register_passwords_differ_js'] = 'The two passwords you entered are not the same!';
 
 $txt['approval_after_registration'] = 'Thank you for signing up. The admin must approve your registration before you may begin to use your account, you will receive an email shortly advising you of the admins decision.';
@@ -91,14 +79,7 @@ $txt['setting_registration_character_disabled'] = 'No character creation on regi
 $txt['setting_registration_character_optional'] = 'Character creation on registration is optional';
 $txt['setting_registration_character_required'] = 'New users must create a new character at sign-up';
 
-$txt['setting_coppaAge'] = 'Age below which to apply registration restrictions';
-$txt['setting_coppaType'] = 'Action to take when a user below minimum age registers';
-$txt['setting_coppaType_reject'] = 'Reject their registration';
-$txt['setting_coppaType_approval'] = 'Require parent/guardian approval';
-$txt['setting_coppaPost'] = 'Postal address to which approval forms should be sent';
-$txt['setting_coppaPost_desc'] = 'Only applies if age restriction is in place';
-$txt['setting_coppaFax'] = 'Fax number to which approval forms should be faxed';
-$txt['setting_coppaPhone'] = 'Contact number for parents to contact with age restriction queries';
+$txt['setting_minimum_age'] = 'Minimum allowed age on the site';
 
 $txt['admin_register'] = 'Registration of new member';
 $txt['admin_register_desc'] = 'From here you can register new members into the forum, and if desired, email them their details.';
@@ -116,21 +97,24 @@ $txt['admin_register_group_desc'] = 'Primary membergroup new member will belong 
 $txt['admin_register_group_none'] = '(no primary membergroup)';
 $txt['admin_register_done'] = 'Member %1$s has been registered successfully!';
 
-$txt['coppa_title'] = 'Age Restricted Forum';
-$txt['coppa_after_registration'] = 'Thank you for signing up with ' . $context['forum_name_html_safe'] . '.<br><br>Because you fall under the age of {MINIMUM_AGE}, it is a legal requirement
-	to obtain your parent or guardian\'s permission before you may begin to use your account. To arrange for account activation please print off the form below:';
-$txt['coppa_form_link_popup'] = 'Load Form In New Window';
-$txt['coppa_form_link_download'] = 'Download Form as Text File';
-$txt['coppa_send_to_one_option'] = 'Then arrange for your parent/guardian to send the completed form by:';
-$txt['coppa_send_to_two_options'] = 'Then arrange for your parent/guardian to send the completed form by either:';
-$txt['coppa_send_by_post'] = 'Post, to the following address:';
-$txt['coppa_send_by_fax'] = 'Fax, to the following number:';
-$txt['coppa_send_by_phone'] = 'Alternatively, arrange for them to phone the administrator at {PHONE_NUMBER}.';
-
-$txt['coppa_form_title'] = 'Permission form for registration at ' . $context['forum_name_html_safe'];
-$txt['coppa_form_address'] = 'Address';
-$txt['coppa_form_date'] = 'Date';
-$txt['coppa_form_body'] = 'I {PARENT_NAME},<br><br>Give permission for {CHILD_NAME} (child name) to become a fully registered member of the forum: ' . $context['forum_name_html_safe'] . ', with the username: {USER_NAME}.<br><br>I understand that certain personal information entered by {USER_NAME} may be shown to other users of the forum.<br><br>Signed:<br>{PARENT_NAME} (Parent/Guardian).';
+$txt['admin_policies_desc'] = 'Manage site-wide policies for users.';
+$txt['policy_type'] = 'Policy type';
+$txt['policy_name'] = 'Policy name';
+$txt['policy_desc'] = 'Policy description';
+$txt['policy_type_terms'] = 'Terms and conditions';
+$txt['policy_type_privacy'] = 'Privacy policy';
+$txt['policy_type_roleplay'] = 'Roleplay rules';
+$txt['policy_type_cookies'] = 'Cookie notice';
+$txt['policy_show_reg'] = 'Show on registration';
+$txt['policy_show_help'] = 'Show in help area';
+$txt['policy_show_footer'] = 'Show in footer';
+$txt['policies_in_languages'] = 'Policies in languages';
+$txt['policy_language_no_version'] = 'Missing in these languages:';
+$txt['policy_text'] = 'Policy text';
+$txt['policy_reagree'] = 'Force users to re-agree to this policy';
+$txt['policy_reagree_desc'] = 'If ticked, all users will be forced to reagree to this policy before continuing to use the site.';
+$txt['policy_edit'] = 'Reason for change';
+$txt['policy_edit_desc'] = 'If specified, it will be shown to users who are re-agreeing to this policy.';
 
 $txt['visual_verification_sound_again'] = 'Play again';
 $txt['visual_verification_sound_close'] = 'Close window';

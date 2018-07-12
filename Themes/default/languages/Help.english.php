@@ -406,21 +406,7 @@ $helptxt['password_strength'] = 'This setting determines the strength required f
 		<li><strong>High:</strong> As for medium, except the password must also contain a mixture of upper and lower case letters, and at least one number.</li>
 	</ul>';
 
-$helptxt['coppaAge'] = 'The value specified in this box will determine the minimum age that new members must be in order to be granted immediate access to the forums.
-	On registration they will be prompted to confirm whether they are over this age, and if not will either have their application rejected or suspended awaiting parental approval - dependant on the type of restriction chosen.
-	If a value of 0 is chosen for this setting then all other age restriction settings shall be ignored.';
-$helptxt['coppaType'] = 'If age restrictions are enabled, then this setting will define what happens when a user below the minimum age attempts to register with your forum. There are two possible choices:
-	<ul class="normallist">
-		<li>
-			<strong>Reject Their Registration:</strong><br>
-				Any new member below the minimum age will have their registration rejected immediately.<br>
-		</li><li>
-			<strong>Require Parent/Guardian Approval</strong><br>
-				Any new member who attempts to register and is below the minimum permitted age will have their account marked as awaiting approval, and will be presented with a form upon which their parents must give permission to become a member of the forum.
-				They will also be presented with the forum contact details entered on the settings page, so that they can send the form to the administrator by mail or fax.
-		</li>
-	</ul>';
-$helptxt['coppaPost'] = 'The contact boxes are required so that forms granting permission for underage registration can be sent to the forum administrator. These details will be shown to all new minors, and are required for parent/guardian approval. At the very least a postal address or fax number must be provided.';
+$helptxt['minimum_age'] = 'This setting sets the minimum age that will be shown in the terms and conditions.';
 
 $helptxt['allow_hideOnline'] = 'With this setting enabled all members will be able to hide their online status from other users (except administrators). If disabled, only users who can moderate the forum can hide their presence. Note that disabling this setting will not change any existing member\'s status - it just stops them from hiding themselves in the future.';
 $helptxt['meta_keywords'] = 'These keywords are sent in the output of every page to indicate to search engines (etc) the key content of your site. They should be a comma separated list of words, and should not use HTML.';

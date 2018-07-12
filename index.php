@@ -213,9 +213,22 @@ function sbb_main()
 			return 'InMaintenance';
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('coppa', 'login', 'login2', 'logintfa', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'))))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('login', 'login2', 'logintfa', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'))))
 		return 'KickGuest';
-	elseif (empty($_REQUEST['action']))
+
+	// Apply policy settings if appropriate.
+	if ($user_info['id'] && $user_info['policy_acceptance'] != 2) /* StoryBB\Model\Policy::POLICY_CURRENTLYACCEPTED */
+	{
+		// Some agreement is probably necessary.
+		require_once($sourcedir . '/Reagreement.php');
+
+		if (!on_allowed_reagreement_actions())
+		{
+			return 'Reagreement';
+		}
+	}
+
+	if (empty($_REQUEST['action']))
 	{
 		// Action and board are both empty... BoardIndex! Unless someone else wants to do something different.
 		if (empty($board) && empty($topic))
@@ -266,7 +279,6 @@ function sbb_main()
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
 		'characters' => array('Profile-Chars.php', 'CharacterList'),
 		'contact' => array('Contact.php', 'Contact'),
-		'coppa' => array('Register.php', 'CoppaForm'),
 		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 		'dlattach' => array('ShowAttachments.php', 'showAttachment'),
 		'editpoll' => array('Poll.php', 'EditPoll'),
@@ -301,6 +313,7 @@ function sbb_main()
 		'quickmod' => array('MessageIndex.php', 'QuickModeration'),
 		'quickmod2' => array('Display.php', 'QuickInTopicModeration'),
 		'reattributepost' => array('Profile-Chars.php', 'ReattributePost'),
+		'reagreement' => array('Reagreement.php', 'Reagreement'),
 		'recent' => array('Recent.php', 'RecentPosts'),
 		'reminder' => array('Reminder.php', 'RemindMe'),
 		'removepoll' => array('Poll.php', 'RemovePoll'),

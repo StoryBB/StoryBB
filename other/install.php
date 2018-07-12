@@ -466,7 +466,6 @@ function CheckFilesWritable()
 		'cache',
 		'Smileys',
 		'Themes',
-		'agreement.txt',
 		'Settings.php',
 		'Settings_bak.php',
 	);
@@ -954,7 +953,7 @@ function ForumSettings()
 // Step one: Do the SQL thang.
 function DatabasePopulation()
 {
-	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl;
+	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl, $language;
 
 	$incontext['sub_template'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -1010,6 +1009,7 @@ function DatabasePopulation()
 
 	$replaces = array(
 		'{$db_prefix}' => $db_prefix,
+		'{$language}' => $language,
 		'{$attachdir}' => json_encode(array(1 => $smcFunc['db_escape_string']($attachdir))),
 		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
@@ -1105,13 +1105,9 @@ function DatabasePopulation()
 
 		if ($smcFunc['db_query']('', $current_statement, array('security_override' => true, 'db_error_skip' => true), $db_connection) === false)
 		{
-			// Use the appropriate function based on the DB type
-			if ($db_type == 'mysql' || $db_type == 'mysqli')
-				$db_errorno = $db_type . '_errno';
-
 			// Error 1050: Table already exists!
 			// @todo Needs to be made better!
-			if ((($db_type != 'mysql' && $db_type != 'mysqli') || $db_errorno($db_connection) == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
+			if ((($db_type != 'mysql' && $db_type != 'mysqli') || $smcFunc['db_errno']($db_connection) == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
 			{
 				$exists[] = $match[1];
 				$incontext['sql_results']['table_dups']++;
@@ -1406,6 +1402,7 @@ function AdminAccount()
 					'website_title' => 'string', 'website_url' => 'string',
 					'signature' => 'string', 'secret_question' => 'string',
 					'additional_groups' => 'string', 'ignore_boards' => 'string',
+					'policy_acceptance' => 'int',
 				),
 				array(
 					stripslashes($_POST['username']), stripslashes($_POST['username']), $_POST['password1'], stripslashes($_POST['email']),
@@ -1415,6 +1412,7 @@ function AdminAccount()
 					'', '',
 					'', '',
 					'', '',
+					StoryBB\Model\Policy::POLICY_CURRENTLYACCEPTED,
 				),
 				array('id_member'),
 				1

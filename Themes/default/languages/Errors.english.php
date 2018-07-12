@@ -127,7 +127,7 @@ $txt['cannot_who_view'] = 'Sorry - you don\'t have the proper permissions to vie
 
 $txt['no_theme'] = 'That theme does not exist.';
 $txt['registration_disabled'] = 'Sorry, registration is currently disabled.';
-$txt['registration_agreement_missing'] = 'The registration agreement file, agreement.txt, is either missing or empty. Registrations have been disable until this is fixed';
+$txt['registration_require_policy'] = 'You have not accepted the %1$s.';
 $txt['registration_no_secret_question'] = 'Sorry, there is no secret question set for this member.';
 $txt['poll_range_error'] = 'Sorry, the poll must run for more than 0 days.';
 $txt['delFirstPost'] = 'You are not allowed to delete the first post in a topic.<p>If you want to delete this topic, click on the Remove Topic link, or ask a moderator/administrator to do it for you.</p>';
@@ -210,7 +210,6 @@ $txt['quoted_post_deleted'] = 'The post you are trying to quote either does not 
 $txt['pm_too_many_per_hour'] = 'You have exceeded the limit of %1$d personal messages per hour.';
 
 $txt['register_only_once'] = 'Sorry, but you\'re not allowed to register multiple accounts at the same time from the same computer.';
-$txt['admin_setting_coppa_require_contact'] = 'You must enter either a postal or fax contact if parent/guardian approval is required.';
 
 $txt['error_long_name'] = 'The name you tried to use was too long.';
 $txt['error_no_name'] = 'No name was provided.';

@@ -764,6 +764,7 @@ CREATE TABLE {$db_prefix}members (
   timezone VARCHAR(80) NOT NULL DEFAULT 'UTC',
   tfa_secret VARCHAR(24) NOT NULL DEFAULT '',
   tfa_backup VARCHAR(64) NOT NULL DEFAULT '',
+  policy_acceptance TINYINT NOT NULL DEFAULT '0',
   PRIMARY KEY (id_member),
   INDEX idx_member_name (member_name),
   INDEX idx_real_name (real_name),
@@ -957,6 +958,62 @@ CREATE TABLE {$db_prefix}pm_rules (
   PRIMARY KEY (id_rule),
   INDEX idx_id_member (id_member),
   INDEX idx_delete_pm (delete_pm)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy`
+#
+
+CREATE TABLE {$db_prefix}policy (
+  id_policy SMALLINT UNSIGNED AUTO_INCREMENT,
+  policy_type TINYINT UNSIGNED NOT NULL DEFAULT '0',
+  language VARCHAR(20) NOT NULL DEFAULT '',
+  title VARCHAR(100) NOT NULL DEFAULT '',
+  description VARCHAR(200) NOT NULL DEFAULT '',
+  last_revision INT UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_policy)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy_acceptance`
+#
+
+CREATE TABLE {$db_prefix}policy_acceptance (
+  id_policy SMALLINT UNSIGNED AUTO_INCREMENT,
+  id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
+  id_revision INT UNSIGNED NOT NULL DEFAULT '0',
+  acceptance_time INT UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_policy, id_member, id_revision)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy_revision`
+#
+
+CREATE TABLE {$db_prefix}policy_revision (
+  id_revision INT UNSIGNED AUTO_INCREMENT,
+  id_policy SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+  last_change INT UNSIGNED NOT NULL DEFAULT '0',
+  short_revision_note TEXT NOT NULL,
+  revision_text TEXT NOT NULL,
+  edit_id_member INT UNSIGNED NOT NULL DEFAULT '0',
+  edit_member_name VARCHAR(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (id_revision),
+  INDEX idx_id_policy (id_policy)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy_types`
+#
+
+CREATE TABLE {$db_prefix}policy_types (
+  id_policy_type TINYINT UNSIGNED AUTO_INCREMENT,
+  policy_type VARCHAR(50) NOT NULL,
+  require_acceptance TINYINT UNSIGNED DEFAULT '0',
+  show_footer TINYINT UNSIGNED DEFAULT '0',
+  show_reg TINYINT UNSIGNED DEFAULT '0',
+  show_help TINYINT UNSIGNED DEFAULT '0',
+  PRIMARY KEY (id_policy_type)
 ) ENGINE={$engine};
 
 #
@@ -1700,6 +1757,48 @@ VALUES (-1, 'search_posts'),
 # --------------------------------------------------------
 
 #
+# Dumping data for table `policy`
+#
+
+INSERT INTO {$db_prefix}policy
+  (id_policy, policy_type, language, title, description, last_revision)
+VALUES
+  (1, 1, '{$language}', '{$default_policy_terms}', '{$default_policy_terms_desc}', 1),
+  (2, 2, '{$language}', '{$default_policy_privacy}', '{$default_policy_privacy_desc}', 2),
+  (3, 3, '{$language}', '{$default_policy_roleplay}', '{$default_policy_roleplay_desc}', 3),
+  (4, 4, '{$language}', '{$default_policy_cookies}', '{$default_policy_cookies_desc}', 4);
+
+# --------------------------------------------------------
+
+#
+# Dumping data for table `policy_revision`
+#
+
+INSERT INTO {$db_prefix}policy_revision
+  (id_revision, id_policy, last_change, short_revision_note, revision_text, edit_id_member, edit_member_name)
+VALUES
+  (1, 1, {$current_time}, '', '{$default_policy_terms_text}', 0, ''),
+  (2, 2, {$current_time}, '', '{$default_policy_privacy_text}', 0, ''),
+  (3, 3, {$current_time}, '', '{$default_policy_roleplay_text}', 0, ''),
+  (4, 4, {$current_time}, '', '{$default_policy_cookies_text}', 0, '');
+
+# --------------------------------------------------------
+
+#
+# Dumping data for table `policy_types`
+#
+
+INSERT INTO {$db_prefix}policy_types
+  (id_policy_type, policy_type, require_acceptance, show_footer, show_reg, show_help)
+VALUES
+  (1, 'terms', 1, 1, 1, 1),
+  (2, 'privacy', 1, 1, 1, 1),
+  (3, 'roleplay', 0, 0, 0, 0),
+  (4, 'cookies', 0, 0, 0, 1);
+
+# --------------------------------------------------------
+
+#
 # Dumping data for table `scheduled_tasks`
 #
 
@@ -1822,7 +1921,6 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('cookieTime', '60'),
   ('lastActive', '15'),
   ('cal_days_for_index', '7'),
-  ('requireAgreement', '1'),
   ('unapprovedMembers', '0'),
   ('databaseSession_enable', '{$databaseSession_enable}'),
   ('databaseSession_loose', '1'),
@@ -1849,6 +1947,7 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('modlog_enabled', '1'),
   ('adminlog_enabled', '1'),
   ('cache_enable', '1'),
+  ('minimum_age', '16'),
   ('reg_verification', '1'),
   ('visual_verification_type', '3'),
   ('enable_buddylist', '1'),

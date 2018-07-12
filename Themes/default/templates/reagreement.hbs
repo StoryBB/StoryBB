@@ -1,0 +1,27 @@
+	{{! Reagree to policies. }}
+	<div class="cat_bar">
+		<h3 class="catbg">{{{txt.updated_agreement}}}</h3>
+	</div>
+	<form action="{{scripturl}}?action=admin;area=regcenter;sa=policies" method="post" accept-charset="UTF-8">
+		<div class="roundframe">
+			<p>{{{txt.updated_agreement_desc}}}</p>
+			<br>
+			<p>{{{txt.updated_agreement_contact_admin}}}</p>
+			<br>
+			<dl class="register_form">
+				{{#each context.policies}}
+				<dt>
+					<strong><label for="policy_{{@key}}">{{textTemplate ../txt.registration_i_agree_to title}}:</label></strong>
+					{{#if revision_note}}<div class="smalltext">{{{../txt.updated_agreement_changed}}}<br>{{{revision_note}}}</div>{{/if}}
+				</dt>
+				<dd>
+					<input type="checkbox" value="1" required name="policy_{{@key}}" id="policy_{{@key}}" class="input_check" />
+				</dd>
+				{{/each}}
+			</dl>
+			<hr>
+			<input type="submit" name="save" value="{{{txt.update_agreement_accept}}}" class="button_submit">
+			{{session_form}}
+			{{token_form 'reagree'}}
+		</div>
+	</form>

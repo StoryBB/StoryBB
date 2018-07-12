@@ -1103,6 +1103,7 @@ CREATE TABLE {$db_prefix}members (
   timezone varchar(80) NOT NULL DEFAULT 'UTC',
   tfa_secret varchar(24) NOT NULL DEFAULT '',
   tfa_backup varchar(64) NOT NULL DEFAULT '',
+  policy_acceptance TINYINT NOT NULL DEFAULT '0',
   PRIMARY KEY (id_member)
 );
 
@@ -2354,7 +2355,6 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('cookieTime', '60'),
   ('lastActive', '15'),
   ('cal_days_for_index', '7'),
-  ('requireAgreement', '1'),
   ('unapprovedMembers', '0'),
   ('databaseSession_enable', '{$databaseSession_enable}'),
   ('databaseSession_loose', '1'),

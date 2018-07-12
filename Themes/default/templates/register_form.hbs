@@ -34,32 +34,32 @@
 					<dl class="register_form">
 						<dt><strong><label for="sbb_autov_username">{{txt.username}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="user" id="sbb_autov_username" size="30" maxlength="25" value="{{context.username}}" class="input_text">
+							<input type="text" name="user" required id="sbb_autov_username" size="30" maxlength="25" value="{{context.username}}" class="input_text">
 							<span id="sbb_autov_username_div" style="display: none;">
 								<span id="sbb_autov_username_img" class="generic_icons check"></span>
 							</span>
 						</dd>
 						<dt><strong><label for="sbb_autov_reserve1">{{txt.user_email_address}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="email" id="sbb_autov_reserve1" size="30" value="{{context.email}}" class="input_text">
+							<input type="email" name="email" required id="sbb_autov_reserve1" size="30" value="{{context.email}}" class="input_text">
 						</dd>
 						{{#if context.display_edit_real_name}}
 						<dt><strong><label for="real_name_box">{{{txt.char_register_nickname}}}:</label></strong></dt>
 						<dd>
-							<input type="text" id="real_name_box" name="real_name" size="30" maxlength="200" value="{{{context.real_name}}}" class="input_text">
+							<input type="text" id="real_name_box" name="real_name" required size="30" maxlength="200" value="{{{context.real_name}}}" class="input_text">
 						</dd>
 						{{/if}}
 						{{#if context.display_create_character}}
 						<dt><strong><label for="first_char_box">{{{txt.char_register_charname}}}:</label></strong></dt>
 						<dd>
-							<input type="text" id="first_char_box" name="first_char" size="30" maxlength="200" value="{{{context.first_char}}}" class="input_text">
+							<input type="text" id="first_char_box" name="first_char" required size="30" maxlength="200" value="{{{context.first_char}}}" class="input_text">
 						</dd>
 						{{/if}}
 					</dl>
 					<dl class="register_form" id="password1_group">
 						<dt><strong><label for="sbb_autov_pwmain">{{txt.choose_pass}}:</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd1" id="sbb_autov_pwmain" size="30" class="input_password">
+							<input type="password" name="passwrd1" required id="sbb_autov_pwmain" size="30" class="input_password">
 							<span id="sbb_autov_pwmain_div" style="display: none;">
 								<span id="sbb_autov_pwmain_img" class="generic_icons invalid"></span>
 							</span>
@@ -68,7 +68,7 @@
 					<dl class="register_form" id="password2_group">
 						<dt><strong><label for="sbb_autov_pwverify">{{txt.verify_pass}}:</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd2" id="sbb_autov_pwverify" size="30" class="input_password">
+							<input type="password" name="passwrd2" required id="sbb_autov_pwverify" size="30" class="input_password">
 							<span id="sbb_autov_pwverify_div" style="display: none;">
 								<span id="sbb_autov_pwverify_img" class="generic_icons valid"></span>
 							</span>
@@ -95,6 +95,24 @@
 					{{/if}}
 				</fieldset>
 			</div>
+
+			{{#if context.registration_policies}}
+			<div class="title_bar title_top">
+				<h3 class="titlebg">{{{txt.site_policies}}}</h3>
+			</div>
+			<div class="roundframe noup">
+				<fieldset>
+					<dl class="register_form">
+						{{#each context.registration_policies}}
+						<dt><strong><label for="policy_{{@key}}">{{textTemplate ../txt.registration_i_agree_to .}}:</label></strong></dt>
+						<dd>
+							<input type="checkbox" value="1" required name="policy_{{@key}}" id="policy_{{@key}}" class="input_check" />
+						</dd>
+						{{/each}}
+					</dl>
+				</fieldset>
+			</div>
+			{{/if}}
 			
 			{{#if (or context.profile_fields context.custom_fields)}}
 			<div class="title_bar title_top">
@@ -149,12 +167,7 @@
 			</div>
 			{{/if}}
 			<div id="confirm_buttons" class="flow_auto">
-				{{#if (and context.require_agreement context.show_coppa)}}
-				<input type="submit" name="accept_agreement" value="{{context.coppa_agree_above}}" class="button_submit"><br><br>
-				<input type="submit" name="accept_agreement_coppa" value="{{context.coppa_agree_below}}" class="button_submit">
-				{{else}}
 				<input type="submit" name="regSubmit" value="{{txt.register}}" tabindex="{{getTabindex}}" class="button_submit">
-				{{/if}}
 				</div>
 			{{session_form}}
 			{{token_form 'register'}}
