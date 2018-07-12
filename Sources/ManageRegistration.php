@@ -327,6 +327,9 @@ function ManagePolicies()
 				// Showing on help is also easy.
 				$policy_details['show_help'] = !empty($_POST['show_help']);
 
+				// Lastly, showing in the footer.
+				$policy_details['show_footer'] = !empty($_POST['show_footer']);
+
 				if (!empty($_POST['message']))
 				{
 					$policy_details['policy_text'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);

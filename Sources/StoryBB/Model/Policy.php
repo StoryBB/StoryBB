@@ -82,7 +82,7 @@ class Policy
 
 		// First, policy types, forming the backbone of what gets returned.
 		$request = $smcFunc['db_query']('', '
-			SELECT pt.id_policy_type, pt.policy_type, pt.require_acceptance, pt.show_reg, pt.show_help
+			SELECT pt.id_policy_type, pt.policy_type, pt.require_acceptance, pt.show_footer, pt.show_reg, pt.show_help
 			FROM {db_prefix}policy_types AS pt
 			ORDER BY pt.id_policy_type');
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -169,12 +169,14 @@ class Policy
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}policy_types
 			SET show_reg = {int:show_reg},
-				show_help = {int:show_help}
+				show_help = {int:show_help},
+				show_footer = {int:show_footer}
 			WHERE id_policy_type = {int:policy_type}',
 			[
 				'policy_type' => $policy_type,
 				'show_reg' => !empty($details['show_reg']) ? 1 : 0,
 				'show_help' => !empty($details['show_help']) ? 1 : 0,
+				'show_footer' => !empty($details['show_footer']) ? 1 : 0,
 			]
 		);
 

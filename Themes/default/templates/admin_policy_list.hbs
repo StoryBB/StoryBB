@@ -8,6 +8,7 @@
 				<tr class="title_bar">
 					<th>{{{txt.policy_type}}}</th>
 					<th style="width:50%">{{{txt.policies_in_languages}}}</th>
+					<th>{{{txt.policy_show_footer}}}</th>
 					<th>{{{txt.policy_show_reg}}}</th>
 					<th>{{{txt.policy_show_help}}}</th>
 				</tr>
@@ -34,6 +35,12 @@
 								</ul>
 							{{/if}}
 						</td>
+						<td>
+							{{#if (eq show_footer '1')}}
+								{{{../txt.yes}}}
+							{{else}}
+								{{{../txt.no}}}
+							{{/if}}
 						<td>
 							{{#if (eq show_reg '1')}}
 								{{{../txt.yes}}}
