@@ -26,7 +26,7 @@ To get started, <a href="https://www.clahub.com/agreements/StoryBB/StoryBB">sign
 * Just do a PR against the master branch with why it seems like a good idea
 
 ## Requirements
-* MySQL 5.0.3 or PostgreSQL 9.2 or higher
+* MySQL 5.5.3 or PostgreSQL 9.2 or higher
 * PHP 7.0 or higher
 
 #### Required PHP extensions

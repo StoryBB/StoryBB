@@ -26,7 +26,7 @@ require_once('Sources/StoryBB/Helper/FTP.php');
 $databases = array(
 	'mysql' => array(
 		'name' => 'MySQL',
-		'version' => '5.0.3',
+		'version' => '5.5.3',
 		'version_check' => 'return min(mysqli_get_server_info($db_connection), mysqli_get_client_info());',
 		'supported' => function_exists('mysqli_connect'),
 		'default_user' => 'mysql.default_user',
