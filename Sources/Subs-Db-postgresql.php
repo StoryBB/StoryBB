@@ -52,7 +52,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, &$db_prefix
 			'db_case_sensitive' => true,
 			'db_escape_wildcard_string' => 'sbb_db_escape_wildcard_string',
 			'db_is_resource' => 'is_resource',
-			'db_mb4' => true,
 			'db_ping' => 'pg_ping',
 			'db_fetch_all' => 'sbb_db_fetch_all',
 			'db_error_insert' => 'sbb_db_error_insert',
