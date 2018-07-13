@@ -71,46 +71,6 @@ function reloadSettings()
 		return $string;
 	};
 
-	$fix_utf8mb4 = function($string) use ($smcFunc)
-	{
-		if ($smcFunc['db_mb4'])
-			return $string;
-
-		$i = 0;
-		$len = strlen($string);
-		$new_string = '';
-		while ($i < $len)
-		{
-			$ord = ord($string[$i]);
-			if ($ord < 128)
-			{
-				$new_string .= $string[$i];
-				$i++;
-			}
-			elseif ($ord < 224)
-			{
-				$new_string .= $string[$i] . $string[$i + 1];
-				$i += 2;
-			}
-			elseif ($ord < 240)
-			{
-				$new_string .= $string[$i] . $string[$i + 1] . $string[$i + 2];
-				$i += 3;
-			}
-			elseif ($ord < 248)
-			{
-				// Magic happens.
-				$val = (ord($string[$i]) & 0x07) << 18;
-				$val += (ord($string[$i + 1]) & 0x3F) << 12;
-				$val += (ord($string[$i + 2]) & 0x3F) << 6;
-				$val += (ord($string[$i + 3]) & 0x3F);
-				$new_string .= '&#' . $val . ';';
-				$i += 4;
-			}
-		}
-		return $new_string;
-	};
-
 	// Preg_replace space characters depend on the character set in use
 	$space_chars = '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}';
 
@@ -121,9 +81,9 @@ function reloadSettings()
 			$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
 			return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202E || $num === 0x202D ? '' : '&#' . $num . ';';
 		},
-		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'UTF-8') use ($ent_check, $fix_utf8mb4)
+		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'UTF-8') use ($ent_check)
 		{
-			return $fix_utf8mb4($ent_check(htmlspecialchars($string, $quote_style, $charset)));
+			return $ent_check(htmlspecialchars($string, $quote_style, $charset));
 		},
 		'htmltrim' => function($string) use ($space_chars, $ent_check)
 		{
