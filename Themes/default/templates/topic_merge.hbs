@@ -53,7 +53,7 @@
 						{{#each context.topics}}
 						<li>
 							<a href="{{../scripturl}}?action=mergetopics;sa=options;board={{{../context.current_board}}}.0;from={{{../context.origin_topic}}};to={{id}};{{session_url}}">{{{create_button 'merge' 'merge' ''}}}</a>&nbsp;
-							<a href="{{../scripturl}}?topic={{id}}.0" target="_blank"> {{{subject}}}</a> {{{../txt.started_by}}} {{{poster.link}}}
+							<a href="{{../scripturl}}?topic={{id}}.0" target="_blank" rel="noopener"> {{{subject}}}</a> {{{../txt.started_by}}} {{{poster.link}}}
 						</li>
 						{{/each}}
 					</ul>

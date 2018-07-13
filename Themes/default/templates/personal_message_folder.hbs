@@ -149,7 +149,7 @@
 								<li><a href="{{member.href}}"><img src="{{../settings.images_url}}/icons/profile_sm.png" alt="{{txt.view_profile}}" title="{{txt.view_profile}}"></a></li>
 							{{/if}}
 							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-									<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank"><span class="generic_icons www centericon" title="{{member.website.title}}"></span></a></li>
+									<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener"><span class="generic_icons www centericon" title="{{member.website.title}}"></span></a></li>
 							{{/if}}
 							{{#if member.show_email}}
 								<li><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{txt.email}}"></span></a></li>

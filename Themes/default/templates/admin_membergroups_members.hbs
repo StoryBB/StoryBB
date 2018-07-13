@@ -152,7 +152,7 @@
 				sSessionVar: sbb_session_var,
 				sSuggestId: 'to_suggest',
 				sControlId: 'toAdd',
-				sItemTemplate: '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<span class="generic_icons delete" title="%delete_text%" onclick="return %self%.deleteAddedItem(\'%item_id%\');"></span>',
+				sItemTemplate: '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\', \'noopener\'); return false;">%item_name%</a>&nbsp;<span class="generic_icons delete" title="%delete_text%" onclick="return %self%.deleteAddedItem(\'%item_id%\');"></span>',
 				sSearchType: '{{#if (eq context.group.is_character '1')}}character{{else}}member{{/if}}',
 				sPostName: 'member_add',
 				sURLMask: 'action=profile;u=%item_id%',

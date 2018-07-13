@@ -46,7 +46,7 @@ function Register($reg_errors = array())
 	$context['registration_policies'] = [];
 	foreach ($policies as $policy_type => $policy_name)
 	{
-		$context['registration_policies'][$policy_type] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank">' . $policy_name . '</a>';
+		$context['registration_policies'][$policy_type] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank" rel="noopener">' . $policy_name . '</a>';
 	}
 
 	// Show the user the right form.
