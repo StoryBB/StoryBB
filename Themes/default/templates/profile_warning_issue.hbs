@@ -119,7 +119,7 @@
 							<option value="{{@key}}">{{{title}}}</option>
 						{{/each}}
 					</select>
-					<span class="smalltext" id="new_template_link" style="display: none;">[<a href="{{scripturl}}?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank">{{{txt.profile_warning_new_template}}}</a>]</span><br>
+					<span class="smalltext" id="new_template_link" style="display: none;">[<a href="{{scripturl}}?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank" rel="noopener">{{{txt.profile_warning_new_template}}}</a>]</span><br>
 					<textarea name="warn_body" id="warn_body" cols="40" rows="8" style="min-width: 50%; max-width: 99%;">{{{context.warning_data.notify_body}}}</textarea>
 				</dd>
 				{{/unless}}

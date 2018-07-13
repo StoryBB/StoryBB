@@ -118,7 +118,7 @@ function Reagreement()
 
 	foreach ($policies as $policy_type => $policy)
 	{
-		$policy['title'] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank">' . $policy['title'] . '</a>';
+		$policy['title'] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank" rel="noopener">' . $policy['title'] . '</a>';
 		$context['policies'][$policy_type] = $policy;
 	}
 

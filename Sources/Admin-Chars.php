@@ -274,7 +274,7 @@ function CharacterSheets()
 				'data' => [
 					'function' => function ($rowData) use ($scripturl)
 					{
-						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . '" target="_blank">' . $rowData['real_name'] . '</a>';
+						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . '" target="_blank" rel="noopener">' . $rowData['real_name'] . '</a>';
 					}
 				],
 				'sort' => [
@@ -289,7 +289,7 @@ function CharacterSheets()
 				'data' => [
 					'function' => function ($rowData) use ($scripturl)
 					{
-						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=characters;char=' . $rowData['id_character'] . '" target="_blank">' . $rowData['character_name'] . '</a>';
+						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=characters;char=' . $rowData['id_character'] . '" target="_blank" rel="noopener">' . $rowData['character_name'] . '</a>';
 					}
 				],
 				'sort' => [
@@ -304,7 +304,7 @@ function CharacterSheets()
 				'data' => [
 					'function' => function ($rowData) use ($txt, $scripturl)
 					{
-						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=characters;char=' . $rowData['id_character'] . ';sa=sheet" target="_blank">' . $txt['char_sheet'] . '</a>';
+						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=characters;char=' . $rowData['id_character'] . ';sa=sheet" target="_blank" rel="noopener">' . $txt['char_sheet'] . '</a>';
 					},
 					'class' => 'centercol',
 				],

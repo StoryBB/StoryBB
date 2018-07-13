@@ -11,8 +11,8 @@
 				<br>
 				<div>
 					{{textTemplate txt.merge_are_you_sure
-						(concat '<a target="_blank" href="' scripturl '?action=profile;u=' context.id_member '">' context.member.name '</a>')
-						(concat '<a target="_blank" href="' scripturl '?action=profile;u=' context.merge_destination_id '">' context.merge_destination.real_name '</a>')
+						(concat '<a target="_blank" rel="noopener" href="' scripturl '?action=profile;u=' context.id_member '">' context.member.name '</a>')
+						(concat '<a target="_blank" rel="noopener" href="' scripturl '?action=profile;u=' context.merge_destination_id '">' context.merge_destination.real_name '</a>')
 					}}
 				{{session_form}}
 				<input type="hidden" name="merge_acct_id" value="{{context.merge_destination_id}}">
