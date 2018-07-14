@@ -69,7 +69,7 @@
 						<span class="smalltext">{{{txt.board_in_character_desc}}}</span><br>
 					</dt>
 					<dd>
-						<input type="checkbox" name="in_character"{{#if (eq context.board.in_character '1')}} checked{{/if}} class="input_check">
+						<input type="checkbox" name="in_character"{{#if (eq context.board.in_character '1')}} checked{{/if}}>
 					</dd>
 					<dt>
 						<strong>{{{txt.permission_profile}}}:</strong><br>
@@ -273,7 +273,7 @@
 							<span class="smalltext">{{{txt.mboards_redirect_desc}}}</span><br>
 						</dt>
 						<dd>
-							<input type="checkbox" id="redirect_enable" name="redirect_enable"{{#if context.board.redirect}} checked{{/if}} onclick="refreshOptions();" class="input_check">
+							<input type="checkbox" id="redirect_enable" name="redirect_enable"{{#if context.board.redirect}} checked{{/if}} onclick="refreshOptions();">
 						</dd>
 					</dl>
 
@@ -297,7 +297,7 @@
 								<span class="smalltext">{{{txt.mboards_redirect_reset_desc}}}</span><br>
 							</dt>
 							<dd>
-								<input type="checkbox" name="reset_redirect" class="input_check">
+								<input type="checkbox" name="reset_redirect">
 								<em>({{textTemplate txt.mboards_current_redirects context.board.posts}})</em>
 							</dd>
 						</dl>
@@ -312,7 +312,7 @@
 							<span class="smalltext">{{{txt.mboards_count_posts_desc}}}</span><br>
 						</dt>
 						<dd>
-							<input type="checkbox" name="count"{{#if context.board.count_posts}} checked{{/if}} class="input_check">
+							<input type="checkbox" name="count"{{#if context.board.count_posts}} checked{{/if}}>
 						</dd>
 					</dl>
 				</div>
@@ -341,7 +341,7 @@
 							<span class="smalltext">{{{txt.mboards_override_theme_desc}}}</span><br>
 						</dt>
 						<dd>
-							<input type="checkbox" name="override_theme"{{#if context.board.override_theme}} checked{{/if}} class="input_check">
+							<input type="checkbox" name="override_theme"{{#if context.board.override_theme}} checked{{/if}}>
 						</dd>
 					</dl>
 				</div>

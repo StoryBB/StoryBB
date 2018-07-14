@@ -28,7 +28,7 @@
 							{{#if boards_text}}{{{boards_text}}}{{else}}{{{../txt.permissions_profile_used_by_none}}}{{/if}}
 						</td>
 						<td{{#if ../context.show_rename_boxes}} style="display:none"{{/if}}>
-							<input type="checkbox" name="delete_profile[]" value="{{id}}"{{#unless can_delete}}disabled{{/unless}} class="input_check">
+							<input type="checkbox" name="delete_profile[]" value="{{id}}"{{#unless can_delete}}disabled{{/unless}}>
 						</td>
 					</tr>
 					{{/each}}

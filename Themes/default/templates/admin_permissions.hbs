@@ -21,7 +21,7 @@
 						<th class="small_table">{{{txt.permissions_denied}}}</th>
 						<th class="small_table">{{#if context.can_modify}}{{{txt.permissions_modify}}}{{else}}{{{txt.permissions_view}}}{{/if}}</th>
 						<th class="table_icon centercol">
-							{{#if context.can_modify}}<input type="checkbox" class="input_check" onclick="invertAll(this, this.form, 'group');">{{/if}}
+							{{#if context.can_modify}}<input type="checkbox" onclick="invertAll(this, this.form, 'group');">{{/if}}
 						</th>
 					</tr>
 				</thead>
@@ -42,7 +42,7 @@
 						<td{{#if (or (eq id 1) (eq id -1))}} style="font-style: italic;"{{else}}{{#if (gt num_permissions.denied 0)}} class="red"{{/if}}{{/if}}>{{{num_permissions.denied}}}</td>
 
 						<td>{{#if allow_modify}}<a href="{{../scripturl}}?action=admin;area=permissions;sa=modify;group={{id}}{{#if ../context.profile}};pid={{../context.profile.id}}{{/if}}">{{#if ../context.can_modify}}{{{../txt.permissions_modify}}}{{else}}{{{../txt.permissions_view}}}{{/if}}</a>{{/if}}</td>
-						<td class="centercol">{{#if (and allow_modify ../context.can_modify)}}<input type="checkbox" name="group[]" value="{{id}}" class="input_check">{{/if}}</td>
+						<td class="centercol">{{#if (and allow_modify ../context.can_modify)}}<input type="checkbox" name="group[]" value="{{id}}">{{/if}}</td>
 					</tr>
 					{{/each}}
 				</tbody>

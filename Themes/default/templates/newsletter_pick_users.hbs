@@ -19,10 +19,10 @@
 					</dt>
 					<dd>
 						{{#each context.groups}}
-						<label for="groups_{{id}}"><input type="checkbox" name="groups[{{id}}]" id="groups_{{id}}" value="{{id}}" checked class="input_check"> {{{name}}}</label> <em>({{member_count}})</em><br>
+						<label for="groups_{{id}}"><input type="checkbox" name="groups[{{id}}]" id="groups_{{id}}" value="{{id}}" checked> {{{name}}}</label> <em>({{member_count}})</em><br>
 						{{/each}}
 						<br>
-						<label for="checkAllGroups"><input type="checkbox" id="checkAllGroups" checked onclick="invertAll(this, this.form, 'groups');" class="input_check"> <em>{{{txt.check_all}}}</em></label>
+						<label for="checkAllGroups"><input type="checkbox" id="checkAllGroups" checked onclick="invertAll(this, this.form, 'groups');"> <em>{{{txt.check_all}}}</em></label>
 					</dd>
 				</dl>
 				<div id="advanced_panel_header" class="title_bar">
@@ -57,10 +57,10 @@
 						</dt>
 						<dd>
 							{{#each context.groups}}
-							<label for="exclude_groups_{{id}}"><input type="checkbox" name="exclude_groups[{{id}}]" id="exclude_groups_{{id}}" value="{{id}}" class="input_check"> {{name}}</label> <em>({{member_count}})</em><br>
+							<label for="exclude_groups_{{id}}"><input type="checkbox" name="exclude_groups[{{id}}]" id="exclude_groups_{{id}}" value="{{id}}"> {{name}}</label> <em>({{member_count}})</em><br>
 							{{/each}}
 							<br>
-							<label for="checkAllGroupsExclude"><input type="checkbox" id="checkAllGroupsExclude" onclick="invertAll(this, this.form, 'exclude_groups');" class="input_check"> <em>{{{txt.check_all}}}</em></label><br>
+							<label for="checkAllGroupsExclude"><input type="checkbox" id="checkAllGroupsExclude" onclick="invertAll(this, this.form, 'exclude_groups');"> <em>{{{txt.check_all}}}</em></label><br>
 						</dd>
 						<dt>
 							<strong>{{{txt.admin_news_select_excluded_members}}}:</strong><br>
@@ -78,7 +78,7 @@
 							<span class="smalltext">{{{txt.email_force}}}</span>
 						</dt>
 						<dd>
-							<input type="checkbox" name="email_force" id="email_force" value="1" class="input_check">
+							<input type="checkbox" name="email_force" id="email_force" value="1">
 						</dd>
 					</dl>
 				</div>

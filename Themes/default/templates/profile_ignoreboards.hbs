@@ -16,7 +16,7 @@
 						<ul>
 							{{#each boards}}
 							<li class="board" style="margin-{{#if ../../../context.right_to_left}}right{{else}}left{{/if}}: {{child_level}}em;">
-								<label for="ignore_brd{{id}}"><input type="checkbox" id="brd{{id}}" name="ignore_brd[{{id}}]" value="{{id}}"{{#if selected}} checked{{/if}} class="input_check"> {{{name}}}</label>
+								<label for="ignore_brd{{id}}"><input type="checkbox" id="brd{{id}}" name="ignore_brd[{{id}}]" value="{{id}}"{{#if selected}} checked{{/if}}> {{{name}}}</label>
 							</li>
 							{{/each}}
 						</ul>

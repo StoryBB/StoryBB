@@ -21,9 +21,9 @@
 					<li class="board" style="width:100%">
 						<span style="margin-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{child_level}}em;">{{{name}}}: </span>
 						<span style="width:50%;float:right">
-							<input type="radio" name="boardaccess[{{id}}]" id="allow_brd{{id}}" value="allow"{{#if allow}} checked{{/if}} class="input_check"> <label for="allow_brd{{id}}">{{{../../txt.permissions_option_on}}}</label>
-							<input type="radio" name="boardaccess[{{id}}]" id="ignore_brd{{id}}" value="ignore"{{#unless (or allow deny)}} checked{{/unless}} class="input_check"> <label for="ignore_brd{{id}}">{{{../../txt.permissions_option_off}}}</label>
-							<input type="radio" name="boardaccess[{{id}}]" id="deny_brd{{id}}" value="deny"{{#if deny}} checked{{/if}} class="input_check"> <label for="deny_brd{{id}}">{{{../../txt.permissions_option_deny}}}</label>
+							<input type="radio" name="boardaccess[{{id}}]" id="allow_brd{{id}}" value="allow"{{#if allow}} checked{{/if}}> <label for="allow_brd{{id}}">{{{../../txt.permissions_option_on}}}</label>
+							<input type="radio" name="boardaccess[{{id}}]" id="ignore_brd{{id}}" value="ignore"{{#unless (or allow deny)}} checked{{/unless}}> <label for="ignore_brd{{id}}">{{{../../txt.permissions_option_off}}}</label>
+							<input type="radio" name="boardaccess[{{id}}]" id="deny_brd{{id}}" value="deny"{{#if deny}} checked{{/if}}> <label for="deny_brd{{id}}">{{{../../txt.permissions_option_deny}}}</label>
 						</span>
 					</li>
 					{{/each}}

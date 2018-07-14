@@ -41,7 +41,7 @@
 							{{! // For each membergroup show a checkbox so members can be assigned to more than one group. }}
 							{{#each context.member_groups}}
 								{{#if can_be_additional}}
-									<label for="additional_groups-{{id}}"><input type="checkbox" name="additional_groups[]" value="{{id}}" id="additional_groups-{{id}}"{{#if is_additional}} checked{{/if}} class="input_check">{{{name}}}</label><br>
+									<label for="additional_groups-{{id}}"><input type="checkbox" name="additional_groups[]" value="{{id}}" id="additional_groups-{{id}}"{{#if is_additional}} checked{{/if}}>{{{name}}}</label><br>
 								{{/if}}
 							{{/each}}
 						</span>

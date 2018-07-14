@@ -112,7 +112,7 @@
 					</dt>
 					<dd>
 						{{#if context.possible_icons}}
-							<label><input type="checkbox" class="input_check" name="has_badge" value="1" id="membergroup_has_badge"{{#if context.group.has_badge}} checked{{/if}}{{#unless context.group.badge_enabled}} disabled{{/unless}}> {{{txt.membergroup_has_badge}}}</label>
+							<label><input type="checkbox" name="has_badge" value="1" id="membergroup_has_badge"{{#if context.group.has_badge}} checked{{/if}}{{#unless context.group.badge_enabled}} disabled{{/unless}}> {{{txt.membergroup_has_badge}}}</label>
 							{{> helpicon help='membergroup_badge'}}
 							<div id="badge_config">
 								{{{txt.membergroup_badge_show}}}
@@ -155,7 +155,7 @@
 						<span class="smalltext">{{{txt.membergroups_tfa_force_note}}}</span>
 					</dt>
 					<dd>
-						<input type="checkbox" name="group_tfa_force"{{#if context.group.tfa_required}} checked{{/if}} class="input_check">
+						<input type="checkbox" name="group_tfa_force"{{#if context.group.tfa_required}} checked{{/if}}>
 					</dd>
 					{{/if}}
 

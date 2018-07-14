@@ -77,7 +77,7 @@
 					<dl class="register_form" id="notify_announcements">
 						<dt><strong><label for="notify_announcements">{{txt.notify_announcements}}:</label></strong></dt>
 						<dd>
-							<input type="checkbox" name="notify_announcements" id="notify_announcements" {{#if context.notify_announcements}}checked="checked"{{/if}} class="input_check" />
+							<input type="checkbox" name="notify_announcements" id="notify_announcements" {{#if context.notify_announcements}}checked="checked"{{/if}}>
 						</dd>
 					</dl>
 					{{#if context.custom_fields_required}}
@@ -106,7 +106,7 @@
 						{{#each context.registration_policies}}
 						<dt><strong><label for="policy_{{@key}}">{{textTemplate ../txt.registration_i_agree_to .}}:</label></strong></dt>
 						<dd>
-							<input type="checkbox" value="1" required name="policy_{{@key}}" id="policy_{{@key}}" class="input_check" />
+							<input type="checkbox" value="1" required name="policy_{{@key}}" id="policy_{{@key}}">
 						</dd>
 						{{/each}}
 					</dl>
@@ -132,7 +132,7 @@
 							{{preinput}}
 							{{#if (eq type "label")}}{{value}}{{/if}}
 							{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}} class="input_type{{#if (eq type "password")}}password{{else}}text{{/if}}">{{/if}}
-							{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" class="input_check" {{input_attr}}>{{/if}}
+							{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>{{/if}}
 							{{#if (eq type "select")}}
 								<select name="{{@key}}" id="{{@key}}">
 									{{#each options}}

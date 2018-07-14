@@ -23,7 +23,7 @@
 					<ul>
 					    {{#each context.search_fields}}
 					    <li>
-							<input type="checkbox" name="fields[]" id="fields-{{@key}}" value="{{@key}}"{{#if (in_array @key ../context.search_defaults)}} checked{{/if}} class="input_check">
+							<input type="checkbox" name="fields[]" id="fields-{{@key}}" value="{{@key}}"{{#if (in_array @key ../context.search_defaults)}} checked{{/if}}>
 							<label for="fields-{{@key}}">{{.}}</label>
 						</li>
 						{{/each}}

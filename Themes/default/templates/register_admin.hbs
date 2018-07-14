@@ -62,13 +62,13 @@
 							<span class="smalltext">{{txt.admin_register_email_detail_desc}}</span>
 						</dt>
 						<dd>
-							<input type="checkbox" name="emailPassword" id="emailPassword_check" checked disabled class="input_check">
+							<input type="checkbox" name="emailPassword" id="emailPassword_check" checked disabled>
 						</dd>
 						<dt>
 							<strong><label for="emailActivate_check">{{txt.admin_register_email_activate}}:</label></strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="emailActivate" id="emailActivate_check" {{#if (eq modSettings.registration_method 1)}}checked{{/if}} onclick="onCheckChange();" class="input_check">
+							<input type="checkbox" name="emailActivate" id="emailActivate_check" {{#if (eq modSettings.registration_method 1)}}checked{{/if}} onclick="onCheckChange();">
 						</dd>
 					</dl>
 					<div class="flow_auto">

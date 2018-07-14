@@ -6,7 +6,7 @@
 		<div class="floatright">
 			{{#if post.can_delete}}
 				<a href="{{scripturl}}?action=moderate;area=userwatch;sa=post;delete={{post.id}};start={{context.start}};{{session_url}}" data-confirm="{{{txt.mc_watched_users_delete_post}}}" class="you_sure">{{{create_button 'delete' 'remove_message' 'remove' ' class="centericon"'}}}</a>
-				<input type="checkbox" name="delete[]" value="{{post.id}}" class="input_check">
+				<input type="checkbox" name="delete[]" value="{{post.id}}">
 			{{/if}}
 		</div>
 	</div><br>

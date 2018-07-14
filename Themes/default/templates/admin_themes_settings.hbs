@@ -79,7 +79,7 @@
 					</dt>
 					<dd>
 						<input type="hidden" name="options[disable_user_variant]" value="0">
-						<input type="checkbox" name="options[disable_user_variant]" id="disable_user_variant"', !empty($context['theme_settings']['disable_user_variant']) ? ' checked' : '', ' value="1" class="input_check">
+						<input type="checkbox" name="options[disable_user_variant]" id="disable_user_variant"', !empty($context['theme_settings']['disable_user_variant']) ? ' checked' : '', ' value="1">
 					</dd>
 				</dl>
 				<img src="{{context.default_variant.thumbnail}}" id="variant_preview" alt="">
@@ -110,7 +110,7 @@
 					{{#if (eq type 'checkbox')}}
 					<dd>
 						<input type="hidden" name="{{#if default}}default_{{/if}}options[{{id}}]" value="0">
-						<input type="checkbox" name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}"{{#if value}} checked{{/if}} value="1" class="input_check">
+						<input type="checkbox" name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}"{{#if value}} checked{{/if}} value="1">
 					</dd>
 					{{/if}}
 					{{#if (eq type 'list')}}

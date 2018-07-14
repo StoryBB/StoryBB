@@ -27,7 +27,7 @@
 					<dt>{{txt.mins_logged_in}}:</dt>
 					<dd><input type="text" name="cookielength" size="4" maxlength="4" value="{{modSettings.cookieTime}}" class="input_text"></dd>
 					<dt>{{txt.always_logged_in}}:</dt>
-					<dd><input type="checkbox" name="cookieneverexp" class="input_check" onclick="this.form.cookielength.disabled = this.checked;"></dd>
+					<dd><input type="checkbox" name="cookieneverexp" onclick="this.form.cookielength.disabled = this.checked;"></dd>
 				</dl>
 				<p class="centertext"><input type="submit" value="{{txt.login}}" class="button_submit"></p>
 				<p class="centertext smalltext"><a href="{{scripturl}}?action=reminder">{{txt.forgot_your_password}}</a></p>

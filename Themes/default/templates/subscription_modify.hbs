@@ -29,13 +29,13 @@
 						<label for="repeatable_check">{{{txt.paid_mod_repeatable}}}</label>:
 					</dt>
 					<dd>
-						<input type="checkbox" name="repeatable" id="repeatable_check"{{#if (eq context.sub.repeatable 1)}} checked{{/if}} class="input_check">
+						<input type="checkbox" name="repeatable" id="repeatable_check"{{#if (eq context.sub.repeatable 1)}} checked{{/if}}>
 					</dd>
 					<dt>
 						<label for="activated_check">{{{txt.paid_mod_active}}}</label>:<br><span class="smalltext">{{{txt.paid_mod_active_desc}}}</span>
 					</dt>
 					<dd>
-						<input type="checkbox" name="active" id="activated_check"{{#if context.sub.active}} checked{{/if}} class="input_check">
+						<input type="checkbox" name="active" id="activated_check"{{#if context.sub.active}} checked{{/if}}>
 					</dd>
 				</dl>
 				<hr>
@@ -59,7 +59,7 @@
 					<dd>
 
 						{{#each context.groups}}
-						<label for="addgroup_{{@key}}"><input type="checkbox" id="addgroup_{{@key}}" name="addgroup[{{@key}}]"{{#if (in_array @key ../context.sub.add_groups)}} checked{{/if}}{{#if context.disable_groups}} disabled{{/if}} class="input_check">&nbsp;<span class="smalltext">{{{.}}}</span></label><br>
+						<label for="addgroup_{{@key}}"><input type="checkbox" id="addgroup_{{@key}}" name="addgroup[{{@key}}]"{{#if (in_array @key ../context.sub.add_groups)}} checked{{/if}}{{#if context.disable_groups}} disabled{{/if}}>&nbsp;<span class="smalltext">{{{.}}}</span></label><br>
 						{{/each}}
 
 					</dd>

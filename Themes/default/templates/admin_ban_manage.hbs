@@ -79,11 +79,11 @@
 				{{#if context.ban_suggestions}}
 				<fieldset>
 					<legend>
-						<input type="checkbox" onclick="invertAll(this, this.form, 'ban_suggestion');" class="input_check"> {{{txt.ban_triggers}}}
+						<input type="checkbox" onclick="invertAll(this, this.form, 'ban_suggestion');"> {{{txt.ban_triggers}}}
 					</legend>
 					<dl class="settings">
 						<dt>
-							<input type="checkbox" name="ban_suggestions[]" id="main_ip_check" value="main_ip" class="input_check"{{#if context.ban_suggestions.main_ip}} checked{{/if}}>
+							<input type="checkbox" name="ban_suggestions[]" id="main_ip_check" value="main_ip"{{#if context.ban_suggestions.main_ip}} checked{{/if}}>
 							<label for="main_ip_check">{{{txt.ban_on_ip}}}</label>
 						</dt>
 						<dd>
@@ -92,7 +92,7 @@
 
 						{{#if (neq modSettings.disableHostnameLookup '1')}}
 						<dt>
-							<input type="checkbox" name="ban_suggestions[]" id="hostname_check" value="hostname" class="input_check"{{#if context.ban_suggestions.hostname}} checked{{/if}}>
+							<input type="checkbox" name="ban_suggestions[]" id="hostname_check" value="hostname"{{#if context.ban_suggestions.hostname}} checked{{/if}}>
 							<label for="hostname_check">{{{txt.ban_on_hostname}}}</label>
 						</dt>
 						<dd>
@@ -101,14 +101,14 @@
 						{{/if}}
 
 						<dt>
-							<input type="checkbox" name="ban_suggestions[]" id="email_check" value="email" class="input_check"{{#if context.ban_suggestions.email}} checked{{/if}}>
+							<input type="checkbox" name="ban_suggestions[]" id="email_check" value="email"{{#if context.ban_suggestions.email}} checked{{/if}}>
 							<label for="email_check">{{{txt.ban_on_email}}}</label>
 						</dt>
 						<dd>
 							<input type="text" name="email" value="{{{context.ban_suggestions.email}}}" size="44" onfocus="document.getElementById('email_check').checked = true;" class="input_text">
 						</dd>
 						<dt>
-							<input type="checkbox" name="ban_suggestions[]" id="user_check" value="user" class="input_check"{{#if (or context.ban_suggestions.user context.ban.from_user)}} checked{{/if}}>
+							<input type="checkbox" name="ban_suggestions[]" id="user_check" value="user"{{#if (or context.ban_suggestions.user context.ban.from_user)}} checked{{/if}}>
 							<label for="user_check">{{{txt.ban_on_username}}}</label>:
 						</dt>
 						<dd>
@@ -122,7 +122,7 @@
 
 						{{#each .}}
 						<dt>
-							<input type="checkbox" id="suggestions_{{../@key}}_{{@index}}" name="ban_suggestions[{{../@key}}][]"{{#if ../../context.ban_suggestions.saved_triggers}}{{#if (in_array . (lookup ../../context.ban_suggestions.saved_triggers ../@key))}} checked{{/if}}{{/if}} value="{{.}}" class="input_check">
+							<input type="checkbox" id="suggestions_{{../@key}}_{{@index}}" name="ban_suggestions[{{../@key}}][]"{{#if ../../context.ban_suggestions.saved_triggers}}{{#if (in_array . (lookup ../../context.ban_suggestions.saved_triggers ../@key))}} checked{{/if}}{{/if}} value="{{.}}">
 						</dt>
 						<dd>
 							<label for="suggestions_{{../@key}}_{{@index}}">{{{.}}}</label>

@@ -83,7 +83,7 @@
 								<label for="poll_change_vote">{{txt.poll_do_change_vote}}:</label>
 							</dt>
 							<dd>
-								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"{{#if context.poll.change_vote}} checked{{/if}} class="input_check">
+								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"{{#if context.poll.change_vote}} checked{{/if}}>
 							</dd>
 						{{/if}}
 						{{#if context.poll.guest_vote_allowed}}
@@ -91,7 +91,7 @@
 								<label for="poll_guest_vote">{{txt.poll_guest_vote}}:</label>
 							</dt>
 							<dd>
-								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"{{#if context.poll.guest_vote}} checked{{/if}} class="input_check">
+								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"{{#if context.poll.guest_vote}} checked{{/if}}>
 							</dd>
 						{{/if}}
 						<dt>
@@ -107,7 +107,7 @@
 				{{#if context.is_edit}}
 					<fieldset id="poll_reset">
 						<legend>{{txt.reset_votes}}</legend>
-						<input type="checkbox" name="resetVoteCount" value="on" class="input_check">{{txt.reset_votes_check}}
+						<input type="checkbox" name="resetVoteCount" value="on">{{txt.reset_votes_check}}
 					</fieldset>
 				{{/if}}
 				<input type="submit" name="post" value="{{txt.save}}" onclick="return submitThisOnce(this);" accesskey="s" class="button_submit">

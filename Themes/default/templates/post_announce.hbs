@@ -13,11 +13,11 @@
 				<ul>
 				    {{#each context.groups}}
 				    <li>
-						<label for="who_{{id}}"><input type="checkbox" name="who[{{id}}]" id="who_{{id}}" value="{{id}}" checked class="input_check"> {{name}}</label> <em>({{member_count}})</em>
+						<label for="who_{{id}}"><input type="checkbox" name="who[{{id}}]" id="who_{{id}}" value="{{id}}" checked> {{name}}</label> <em>({{member_count}})</em>
 					</li>
 					{{/each}}
 					<li>
-						<label for="checkall"><input type="checkbox" id="checkall" class="input_check" onclick="invertAll(this, this.form);" checked> <em>{{txt.check_all}}</em></label>
+						<label for="checkall"><input type="checkbox" id="checkall" onclick="invertAll(this, this.form);" checked> <em>{{txt.check_all}}</em></label>
 					</li>
 				</ul>
 				<hr>

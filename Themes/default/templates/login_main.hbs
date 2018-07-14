@@ -20,10 +20,10 @@
 						<dt>{{txt.mins_logged_in}}:</dt>
 						<dd><input type="number" name="cookielength" size="4" maxlength="4" value="{{modSettings.cookieTime}}"{{#if context.never_expire}} disabled{{/if}} class="input_text" min="1"></dd>
 						<dt>{{txt.always_logged_in}}:</dt>
-						<dd><input type="checkbox" name="cookieneverexp"{{#if context.never_expire}} checked{{/if}} class="input_check" onclick="this.form.cookielength.disabled = this.checked;"></dd>
+						<dd><input type="checkbox" name="cookieneverexp"{{#if context.never_expire}} checked{{/if}} onclick="this.form.cookielength.disabled = this.checked;"></dd>
 						{{#if context.login_show_undelete}}
 						<dt class="alert">{{txt.undelete_account}}:</dt>
-						<dd><input type="checkbox" name="undelete" class="input_check"></dd>
+						<dd><input type="checkbox" name="undelete"></dd>
 						{{/if}}
 							</dl>
 					<p><input type="submit" value="{{txt.login}}" class="button_submit"></p>

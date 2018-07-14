@@ -64,11 +64,11 @@
 				<dd class="options">
 					<ul>
 						<li>
-							<input type="checkbox" name="show_complete" id="show_complete" value="1"{{#if context.search_params.show_complete}} checked{{/if}} class="input_check">
+							<input type="checkbox" name="show_complete" id="show_complete" value="1"{{#if context.search_params.show_complete}} checked{{/if}}>
 							<label for="show_complete">{{{txt.search_show_complete_messages}}}</label>
 						</li>
 						<li>
-							<input type="checkbox" name="subject_only" id="subject_only" value="1"{{#if context.search_params.subject_only}} checked{{/if}} class="input_check">
+							<input type="checkbox" name="subject_only" id="subject_only" value="1"{{#if context.search_params.subject_only}} checked{{/if}}>
 							<label for="subject_only">{{{txt.search_subject_only}}}</label>
 						</li>
 					</ul>
@@ -123,7 +123,7 @@
 								{{#each boards}}
 									<li class="board">
 										<label for="brd{{id}}" style="margin-{{#if context.right_to_left}}right{{else}}left{{/if}}: {{child_level}}em">
-											<input type="checkbox" id="brd{{id}}" name="brd{{id}}" value="brd{{id}}"{{#if selected}} checked{{/if}} class="input_check"> {{name}}
+											<input type="checkbox" id="brd{{id}}" name="brd{{id}}" value="brd{{id}}"{{#if selected}} checked{{/if}}> {{name}}
 										</label>
 									</li>
 								{{/each}}
@@ -134,7 +134,7 @@
 				</div>
 				<br class="clear">
 				<div class="padding flow_auto">
-					<input type="checkbox" name="all" id="check_all" value=""{{if context.boards_check_all}} checked{{/if}} onclick="invertAll(this, this.form, 'brd');" class="input_check floatleft">
+					<input type="checkbox" name="all" id="check_all" value=""{{if context.boards_check_all}} checked{{/if}} onclick="invertAll(this, this.form, 'brd');" class="floatleft">
 					<label for="check_all" class="floatleft"><em>{{{txt.check_all}}}</em></label>
 					<input type="submit" name="b_search" value="{{{txt.search}}}" class="button_submit">
 				</div>

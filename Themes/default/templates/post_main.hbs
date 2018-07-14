@@ -104,14 +104,14 @@ var icon_urls = {
 								<label for="poll_change_vote">{{txt.poll_do_change_vote}}:</label>
 							</dt>
 							<dd>
-								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"{{#if context.poll.change_vote}} checked{{/if}} class="input_check">
+								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"{{#if context.poll.change_vote}} checked{{/if}}>
 							</dd>
 							{{#if context.poll_options.guest_vote_enabled}}
 							<dt>
 								<label for="poll_guest_vote">{{txt.poll_guest_vote}}:</label>
 							</dt>
 							<dd>
-								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"{{#if context.poll_options.guest_vote}} checked{{/if}} class="input_check">
+								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"{{#if context.poll_options.guest_vote}} checked{{/if}}>
 							</dd>
 							{{/if}}
 							<dt>
@@ -150,14 +150,14 @@ var icon_urls = {
 			<div id="postAdditionalOptions">
 			    <div id="postMoreOptions" class="smalltext">
 					<ul class="post_options">
-						{{#if context.can_notify}}<li><input type="hidden" name="notify" value="0"><label for="check_notify"><input type="checkbox" name="notify" id="check_notify" {{#if (or context.notify options.auto_notify context.auto_notify)}} checked{{/if}} value="1" class="input_check"> {{txt.notify_replies}}</label></li>{{/if}}
-					    {{#if context.can_lock}}<li><input type="hidden" name="already_locked" value="{{context.already_locked}}"><input type="hidden" name="lock" value="0"><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"{{#if context.locked}} checked{{/if}} value="1" class="input_check"> {{txt.lock_topic}}</label></li>{{/if}}
-						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back" {{#if (or context.back_to_topic (not options.return_to_post))}} checked{{/if}} value="1" class="input_check"> {{txt.back_to_topic}}</label></li>
-						{{#if context.can_sticky}}<li><input type="hidden" name="already_sticky" value="{{context.already_sticky}}"><input type="hidden" name="sticky" value="0"><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"{{#if (eq_coerce context.sticky 1)}} checked{{/if}} value="1" class="input_check"> {{txt.sticky_after}}</label></li>{{/if}}
-						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"{{#unless context.use_smileys}} checked{{/unless}} value="NS" class="input_check"> {{txt.dont_use_smileys}}</label></li>
-						{{#if context.can_move}}<li><input type="hidden" name="move" value="0"><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" class="input_check" {{#if context.move}} checked{{/if}}> {{txt.move_after2}}</label></li>{{/if}}
-						{{#if (and context.can_announce context.is_first_post)}}<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1" class="input_check"{{#if context.announce}} checked{{/if}}> {{txt.announce_topic}}</label></li>{{/if}}
-						{{#if context.show_approval}}<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2" class="input_check" {{#if (eq context.show_approval 2)}} checked{{/if}}> {{txt.approve_this_post}}</label></li>{{/if}}
+						{{#if context.can_notify}}<li><input type="hidden" name="notify" value="0"><label for="check_notify"><input type="checkbox" name="notify" id="check_notify" {{#if (or context.notify options.auto_notify context.auto_notify)}} checked{{/if}} value="1"> {{txt.notify_replies}}</label></li>{{/if}}
+					    {{#if context.can_lock}}<li><input type="hidden" name="already_locked" value="{{context.already_locked}}"><input type="hidden" name="lock" value="0"><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"{{#if context.locked}} checked{{/if}} value="1"> {{txt.lock_topic}}</label></li>{{/if}}
+						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back" {{#if (or context.back_to_topic (not options.return_to_post))}} checked{{/if}} value="1"> {{txt.back_to_topic}}</label></li>
+						{{#if context.can_sticky}}<li><input type="hidden" name="already_sticky" value="{{context.already_sticky}}"><input type="hidden" name="sticky" value="0"><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"{{#if (eq_coerce context.sticky 1)}} checked{{/if}} value="1"> {{txt.sticky_after}}</label></li>{{/if}}
+						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"{{#unless context.use_smileys}} checked{{/unless}} value="NS"> {{txt.dont_use_smileys}}</label></li>
+						{{#if context.can_move}}<li><input type="hidden" name="move" value="0"><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" {{#if context.move}} checked{{/if}}> {{txt.move_after2}}</label></li>{{/if}}
+						{{#if (and context.can_announce context.is_first_post)}}<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1"{{#if context.announce}} checked{{/if}}> {{txt.announce_topic}}</label></li>{{/if}}
+						{{#if context.show_approval}}<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2"{{#if (eq context.show_approval 2)}} checked{{/if}}> {{txt.approve_this_post}}</label></li>{{/if}}
 					</ul>
 				</div>
 				{{#if context.current_attachments}}
@@ -171,7 +171,7 @@ var icon_urls = {
 						</dd>
 						{{#each context.current_attachments}}
 						<dd class="smalltext">
-							<label for="attachment_{{attachID}}"><input type="checkbox" id="attachment_{{attachID}}" name="attach_del[]" value="{{attachID}}"{{#if unchecked}} checked{{/if}} class="input_check">{{name}}{{#unless approved}}({{../txt.awaiting_approval}}){{/unless}}
+							<label for="attachment_{{attachID}}"><input type="checkbox" id="attachment_{{attachID}}" name="attach_del[]" value="{{attachID}}"{{#if unchecked}} checked{{/if}}>{{name}}{{#unless approved}}({{../txt.awaiting_approval}}){{/unless}}
 							{{#if (or modSettings.attachmentPostLimit modSettings.attachmentSizeLimit)}}{{textTemplate 'attach_kb' (formatKb size)}}{{/if}}</label>
 						</dd>
 						{{/each}}

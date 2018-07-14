@@ -80,7 +80,7 @@
 					</dd>
 				</dl>
 				<p class="maintain_members">
-					<input type="checkbox" name="posts" id="posts" checked class="input_check">
+					<input type="checkbox" name="posts" id="posts" checked>
 					<label for="posts">{{{txt.reattribute_increase_posts}}}</label>
 				</p>
 				<input type="submit" id="do_attribute" value="{{{txt.reattribute}}}" onclick="if (!checkAttributeValidity()) return false;
@@ -106,7 +106,7 @@
 				<div style="display: none; padding: 3px" id="membersPanel">
 
 				{{#each context.membergroups}}
-					<label for="groups{{id}}"><input type="checkbox" name="groups[{{id}}]" id="groups{{id}}" checked class="input_check"> {{{name}}}</label><br>
+					<label for="groups{{id}}"><input type="checkbox" name="groups[{{id}}]" id="groups{{id}}" checked> {{{name}}}</label><br>
 				{{/each}}
 
 				</div>
