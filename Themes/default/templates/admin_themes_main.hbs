@@ -21,7 +21,7 @@
 					</dt>
 					<dd>
 						<input type="hidden" value="0" name="options[theme_allow]">
-						<input type="checkbox" name="options[theme_allow]" id="options-theme_allow" value="1"{{#if modSettings.theme_allow}} checked{{/if}} class="input_check">
+						<input type="checkbox" name="options[theme_allow]" id="options-theme_allow" value="1"{{#if modSettings.theme_allow}} checked{{/if}}>
 					</dd>
 					<dt>
 						<label for="known_themes_list">{{txt.themeadmin_selectable}}</label>:
@@ -29,7 +29,7 @@
 					<dd>
 						<div id="known_themes_list">
 						    {{#each context.themes}}
-						    <label for="options-known_themes_{{id}}"><input type="checkbox" name="options[known_themes][]" id="options-known_themes_{{id}}" value="{{id}}"{{#if known}} checked{{/if}} class="input_check"> {{name}}</label><br>
+						    <label for="options-known_themes_{{id}}"><input type="checkbox" name="options[known_themes][]" id="options-known_themes_{{id}}" value="{{id}}"{{#if known}} checked{{/if}}> {{name}}</label><br>
 						    {{/each}}
 						</div>
 						<a href="javascript:void(0);" onclick="document.getElementById('known_themes_list').style.display='block'; document.getElementById('known_themes_link').style.display = 'none'; return false; " id="known_themes_link" style="display: none;">[ {{txt.themeadmin_themelist_link}} ]</a>
@@ -89,7 +89,7 @@
 					<form action="{{scripturl}}?action=admin;area=theme;sa=install;do=copy" method="post" accept-charset="UTF-8" class="padding">
 						{{session_form}}
 						{{token_form 'admin-t-copy'}}
-						<input type="text" name="copy" id="copy" value="{{context.new_theme_name}}" size="40" class="input_text">
+						<input type="text" name="copy" id="copy" value="{{context.new_theme_name}}" size="40">
 						<input type="submit" name="save_copy" value="{{txt.save}}" class="button_submit">
 					</form>
 				</fieldset>
@@ -99,7 +99,7 @@
 					<form action="{{scripturl}}?action=admin;area=theme;sa=install;do=dir" method="post" accept-charset="UTF-8" class="padding">
 						{{session_form}}
 						{{token_form 'admin-t-dir'}}
-						<input type="text" name="theme_dir" id="theme_dir" value="{{context.new_theme_dir}}" size="40" style="width: 40%;" class="input_text">
+						<input type="text" name="theme_dir" id="theme_dir" value="{{context.new_theme_dir}}" size="40" style="width: 40%;">
 						<input type="submit" name="save_dir" value="{{txt.save}}" class="button_submit">
 					</form>
 				</fieldset>

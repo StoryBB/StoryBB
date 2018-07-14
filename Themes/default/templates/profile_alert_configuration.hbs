@@ -20,7 +20,7 @@
 					</dt>
 					<dd>
 						<input type="hidden" name="notify_announcements" value="0">
-						<input type="checkbox" id="notify_announcements" name="notify_announcements" value="1"{{#if (eq_coerce context.member.notify_announcements 1)}} checked{{/if}} class="input_check">
+						<input type="checkbox" id="notify_announcements" name="notify_announcements" value="1"{{#if (eq_coerce context.member.notify_announcements 1)}} checked{{/if}}>
 					</dd>
 				{{/if}}
 
@@ -30,7 +30,7 @@
 						<label for="notify_send_body">{{{txt.notify_alert_timeout}}}</label>
 					</dt>
 					<dd>
-						<input type="number" size="4" id="notify_alert_timeout" name="opt_alert_timeout" min="0" value="{{context.member.alert_timeout}}" class="input_text">
+						<input type="number" size="4" id="notify_alert_timeout" name="opt_alert_timeout" min="0" value="{{context.member.alert_timeout}}">
 					</dd>
 				{{/if}}
 

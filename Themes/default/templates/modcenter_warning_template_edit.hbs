@@ -33,7 +33,7 @@
 						<strong><label for="template_title">{{{txt.mc_warning_template_title}}}</label>:</strong>
 					</dt>
 					<dd>
-						<input type="text" id="template_title" name="template_title" value="{{{context.template_data.title}}}" size="30" class="input_text">
+						<input type="text" id="template_title" name="template_title" value="{{{context.template_data.title}}}" size="30">
 					</dd>
 					<dt>
 						<strong><label for="template_body">{{{txt.profile_warning_notify_body}}}</label>:</strong><br>
@@ -45,7 +45,7 @@
 				</dl>
 
 				{{#if context.template_data.can_edit_personal}}
-				<input type="checkbox" name="make_personal" id="make_personal"{{#if context.template_data.personal}} checked{{/if}} class="input_check">
+				<input type="checkbox" name="make_personal" id="make_personal"{{#if context.template_data.personal}} checked{{/if}}>
 					<label for="make_personal">
 						<strong>{{{txt.mc_warning_template_personal}}}</strong>
 					</label>

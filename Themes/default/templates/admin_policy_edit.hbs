@@ -8,7 +8,7 @@
 				<dt>{{{txt.policy_type}}}:</dt>
 				<dd>{{get_text 'policy_type_' context.policy.policy_type}}</dd>
 				<dt><label for="policy_name">{{{txt.policy_name}}}:</label></dt>
-				<dd><input type="text" id="policy_name" name="policy_name" class="input_text" value="{{{context.policy_version.title}}}" required></dd>
+				<dd><input type="text" id="policy_name" name="policy_name" value="{{{context.policy_version.title}}}" required></dd>
 				<dt><label for="policy_desc">{{{txt.policy_desc}}}:</label></dt>
 				<dd><textarea id="policy_desc" name="policy_desc">{{{context.policy_version.description}}}</textarea></dd>
 			</dl>

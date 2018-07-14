@@ -18,8 +18,8 @@
 			</div>
 			<div class="windowbg">
 				<p>
-					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" class="input_radio" checked>{{{txt.mboards_delete_option1}}}</label><br>
-					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1" class="input_radio"{{#if (eq (count context.category_order) 1)}} disabled{{/if}}>{{{txt.mboards_delete_option2}}}</label>:
+					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" checked>{{{txt.mboards_delete_option1}}}</label><br>
+					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1"{{#if (eq (count context.category_order) 1)}} disabled{{/if}}>{{{txt.mboards_delete_option2}}}</label>:
 					<select name="cat_to"{{#unless (eq (count context.category_order) 1)}} disabled{{/unless}}>
 
 					{{#each context.category_order}}

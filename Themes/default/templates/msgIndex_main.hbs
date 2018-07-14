@@ -86,7 +86,7 @@
 			<div class="board_stats centertext">{{{context.topics_headers.replies}}} / {{{context.topics_headers.views}}}</div>
 			<div class="lastpost">{{{context.topics_headers.last_post}}}</div>
 			{{#if context.can_quick_mod}}
-				<div class="moderation"><input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');" class="input_check"></div>
+				<div class="moderation"><input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');"></div>
 			{{/if}}
 		{{else}}
 		{{!-- no topics --}}
@@ -137,7 +137,7 @@
 				</div> 
 				{{#if ../context.can_quick_mod}}
 				<div class="moderation">
-					<input type="checkbox" name="topics[]" value="{{id}}" class="input_check">
+					<input type="checkbox" name="topics[]" value="{{id}}">
 				</div>
 				{{/if}}
 			</div>

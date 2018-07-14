@@ -221,7 +221,7 @@
 	#advanced_search dl#search_options {
 		width: 100%;
 	}
-	INPUT#searchfor.input_text, INPUT#userspec.input_text {
+	input#searchfor, input#userspec {
 		width: 75%;
 	}
 	/* Memberlist */
@@ -241,7 +241,7 @@
 		padding: 0;
 		margin: 0;
 	}
-	#mlist_search .input_check{
+	#mlist_search input[type=checkbox] {
 		margin: 0 13px 3px 3px;
 		vertical-align: middle;
 	}
@@ -272,7 +272,8 @@
 	.action_admin .navigate_section {
 		display: none;
 	}
-	#admincenter .input_text, #quick_search .input_text,
+	#admincenter input[type=text], #admincenter input[type=search], #admincenter input[type=email],
+	#quick_search input[type=text], #quick_search input[type=search], #quick_search input[type=email],
 	#admincenter select, #quick_search select {
 		width: 90%;
 	}
@@ -311,7 +312,7 @@
 	.msearch_details input {
 		width: 90%;
 	}
-	.msearch_details .input_check {
+	.msearch_details input[type=checkbox] {
 		width: 5%;
 	}
 	/* 3rd level menu tests */
@@ -363,7 +364,7 @@
 	#advanced_search dl#search_options {
 		width: 100%;
 	}
-	INPUT#searchfor.input_text, INPUT#userspec.input_text {
+	input#searchfor, input#userspec {
 		width: 75%;
 	}
 }

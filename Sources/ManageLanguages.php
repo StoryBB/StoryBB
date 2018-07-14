@@ -104,7 +104,7 @@ function ModifyLanguages()
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return '<input type="radio" name="def_language" value="' . $rowData['id'] . '"' . ($rowData['default'] ? ' checked' : '') . ' onclick="highlightSelected(\'list_language_list_' . $rowData['id'] . '\');" class="input_radio">';
+						return '<input type="radio" name="def_language" value="' . $rowData['id'] . '"' . ($rowData['default'] ? ' checked' : '') . ' onclick="highlightSelected(\'list_language_list_' . $rowData['id'] . '\');">';
 					},
 					'style' => 'width: 8%;',
 					'class' => 'centercol',

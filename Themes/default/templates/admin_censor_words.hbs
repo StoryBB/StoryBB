@@ -23,19 +23,19 @@
 							<strong><label for="allow_no_censored">{{{txt.allow_no_censored}}}:</label></strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="allow_no_censored" value="1" id="allow_no_censored"{{#if modSettings.allow_no_censored}} checked{{/if}} class="input_check">
+							<input type="checkbox" name="allow_no_censored" value="1" id="allow_no_censored"{{#if modSettings.allow_no_censored}} checked{{/if}}>
 						</dd>
 						<dt>
 							<strong><label for="censorWholeWord_check">{{{txt.censor_whole_words}}}:</label></strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="censorWholeWord" value="1" id="censorWholeWord_check"{{#if modSettings.censorWholeWord}}checked{{/if}} class="input_check">
+							<input type="checkbox" name="censorWholeWord" value="1" id="censorWholeWord_check"{{#if modSettings.censorWholeWord}}checked{{/if}}>
 						</dd>
 						<dt>
 							<strong><label for="censorIgnoreCase_check">{{{txt.censor_case}}}:</label></strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="censorIgnoreCase" value="1" id="censorIgnoreCase_check"{{#if modSettings.censorIgnoreCase}} checked{{/if}} class="input_check">
+							<input type="checkbox" name="censorIgnoreCase" value="1" id="censorIgnoreCase_check"{{#if modSettings.censorIgnoreCase}} checked{{/if}}>
 						</dd>
 					</dl>
 					<input type="submit" name="save_censor" value="{{{txt.save}}}" class="button_submit">
@@ -49,7 +49,7 @@
 				</div>
 				<div class="windowbg2 noup">
 					<p class="centertext">
-						<input type="text" name="censortest" value="{{{context.censor_test}}}" class="input_text">
+						<input type="text" name="censortest" value="{{{context.censor_test}}}">
 						<input type="submit" value="{{{txt.censor_test_save}}}" class="button_submit">
 					</p>
 				</div>
@@ -63,6 +63,6 @@
 
 		function addNewWord()
 		{
-			setOuterHTML(document.getElementById('moreCensoredWords'), '<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="30" class="input_text"> => <input type="text" name="censor_proper[]" size="30" class="input_text"><' + '/div><div id="moreCensoredWords"><' + '/div>');
+			setOuterHTML(document.getElementById('moreCensoredWords'), '<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="30"> => <input type="text" name="censor_proper[]" size="30"><' + '/div><div id="moreCensoredWords"><' + '/div>');
 		}
 		</script>

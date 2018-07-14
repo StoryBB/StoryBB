@@ -23,7 +23,7 @@
 				<div class="alert">{{{txt.own_profile_confirm}}}</div>
 				<div>
 					<strong{{#if (or context.modify_error.bad_password context.modify_error.no_password)}} class="error"{{/if}}>{{{txt.current_password}}}: </strong>
-					<input type="password" name="oldpasswrd" size="20" class="input_password">&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="password" name="oldpasswrd" size="20">&nbsp;&nbsp;&nbsp;&nbsp;
 					<input type="submit" value="{{{txt.yes}}}" class="button_submit">';
 
 					{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
@@ -39,21 +39,21 @@
 				{{! Only actually give these options if they are kind of important. }}
 				{{#if context.can_delete_posts}}
 				<div>
-					<label for="deleteVotes"><input type="checkbox" name="deleteVotes" id="deleteVotes" value="1" class="input_check"> {{{txt.deleteAccount_votes}}}:</label><br>
-					<label for="deletePosts"><input type="checkbox" name="deletePosts" id="deletePosts" value="1" class="input_check"> {{{txt.deleteAccount_posts}}}:</label>
+					<label for="deleteVotes"><input type="checkbox" name="deleteVotes" id="deleteVotes" value="1"> {{{txt.deleteAccount_votes}}}:</label><br>
+					<label for="deletePosts"><input type="checkbox" name="deletePosts" id="deletePosts" value="1"> {{{txt.deleteAccount_posts}}}:</label>
 					<select name="remove_type">
 						<option value="posts">{{{txt.deleteAccount_all_posts}}}</option>
 						<option value="topics">{{{txt.deleteAccount_topics}}}</option>
 					</select>
 
 					{{#if context.show_perma_delete}}
-					<br><label for="perma_delete"><input type="checkbox" name="perma_delete" id="perma_delete" value="1" class="input_check"> {{{txt.deleteAccount_permanent}}}</label>
+					<br><label for="perma_delete"><input type="checkbox" name="perma_delete" id="perma_delete" value="1"> {{{txt.deleteAccount_permanent}}}</label>
 					{{/if}}
 				</div>
 				{{/if}}
 
 				<div>
-					<label for="deleteAccount"><input type="checkbox" name="deleteAccount" id="deleteAccount" value="1" class="input_check" onclick="if (this.checked) return confirm('{{{txt.deleteAccount_confirm}}}');"> {{{txt.deleteAccount_member}}}.</label>
+					<label for="deleteAccount"><input type="checkbox" name="deleteAccount" id="deleteAccount" value="1" onclick="if (this.checked) return confirm('{{{txt.deleteAccount_confirm}}}');"> {{{txt.deleteAccount_member}}}.</label>
 				</div>
 				<div>
 					<input type="submit" value="{{{txt.delete}}}" class="button_submit">

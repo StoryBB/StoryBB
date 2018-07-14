@@ -9,40 +9,40 @@
 			<div class="windowbg">
 				<fieldset>
 					<legend>
-						<input type="checkbox" onclick="invertAll(this, this.form, \'ban_suggestion\');" class="input_check"> {{{txt.ban_triggers}}}
+						<input type="checkbox" onclick="invertAll(this, this.form, \'ban_suggestion\');"> {{{txt.ban_triggers}}}
 					</legend>
 					<dl class="settings">
 						<dt>
-							<input type="checkbox" name="ban_suggestions[]" id="main_ip_check" value="main_ip" class="input_check"{{#if context.ban_trigger.ip.selected}} checked{{/if}}>
+							<input type="checkbox" name="ban_suggestions[]" id="main_ip_check" value="main_ip"{{#if context.ban_trigger.ip.selected}} checked{{/if}}>
 							<label for="main_ip_check">{{{txt.ban_on_ip}}}</label>
 						</dt>
 						<dd>
-							<input type="text" name="main_ip" value="{{{context.ban_trigger.ip.value}}}" size="44" onfocus="document.getElementById('main_ip_check').checked = true;" class="input_text">
+							<input type="text" name="main_ip" value="{{{context.ban_trigger.ip.value}}}" size="44" onfocus="document.getElementById('main_ip_check').checked = true;">
 						</dd>
 
 						{{#if (neq modSettings.disableHotnameLookup '1')}}
 							<dt>
-								<input type="checkbox" name="ban_suggestions[]" id="hostname_check" value="hostname" class="input_check"{{#if context.ban_trigger.hostname.selected}} checked{{/if}}>
+								<input type="checkbox" name="ban_suggestions[]" id="hostname_check" value="hostname"{{#if context.ban_trigger.hostname.selected}} checked{{/if}}>
 								<label for="hostname_check">{{{txt.ban_on_hostname}}}</label>
 							</dt>
 							<dd>
-								<input type="text" name="hostname" value="{{{context.ban_trigger.hostname.value}}}" size="44" onfocus="document.getElementById('hostname_check').checked = true;" class="input_text">
+								<input type="text" name="hostname" value="{{{context.ban_trigger.hostname.value}}}" size="44" onfocus="document.getElementById('hostname_check').checked = true;">
 							</dd>
 						{{/if}}
 
 						<dt>
-							<input type="checkbox" name="ban_suggestions[]" id="email_check" value="email" class="input_check"{{#if context.ban_trigger.email.selected}} checked{{/if}}>
+							<input type="checkbox" name="ban_suggestions[]" id="email_check" value="email"{{#if context.ban_trigger.email.selected}} checked{{/if}}>
 							<label for="email_check">{{{txt.ban_on_email}}}</label>
 						</dt>
 						<dd>
-							<input type="text" name="email" value="{{{context.ban_trigger.email.value}}}" size="44" onfocus="document.getElementById('email_check').checked = true;" class="input_text">
+							<input type="text" name="email" value="{{{context.ban_trigger.email.value}}}" size="44" onfocus="document.getElementById('email_check').checked = true;">
 						</dd>
 						<dt>
-							<input type="checkbox" name="ban_suggestions[]" id="user_check" value="user" class="input_check"{{#if context.ban_trigger.banneduser.selected}} checked{{/if}}>
+							<input type="checkbox" name="ban_suggestions[]" id="user_check" value="user"{{#if context.ban_trigger.banneduser.selected}} checked{{/if}}>
 							<label for="user_check">{{{txt.ban_on_username}}}</label>:
 						</dt>
 						<dd>
-							<input type="text" value="{{{context.ban_trigger.banneduser.value}}}" name="user" id="user" size="44"  onfocus="document.getElementById('user_check').checked = true;"class="input_text">
+							<input type="text" value="{{{context.ban_trigger.banneduser.value}}}" name="user" id="user" size="44"  onfocus="document.getElementById('user_check').checked = true;">
 						</dd>
 					</dl>
 				</fieldset>

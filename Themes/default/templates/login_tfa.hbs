@@ -16,7 +16,7 @@
 						{{txt.tfa_login_desc}}<br>
 						<div>
 							<strong>{{txt.tfa_code}}:</strong>
-							<input type="text" class="input_text" name="tfa_code" style="width: 150px;" value="{{context.fa_value}}">
+							<input type="text" name="tfa_code" style="width: 150px;" value="{{context.fa_value}}">
 							<input type="submit" class="button_submit" name="submit" value="{{txt.login}}" style="float: none; margin: 0;"><br />
 						</div><br />
 						<div><input type="checkbox" value="1" name="tfa_preserve" id="tfa_preserve"/><label for="tfa_preserve">&nbsp;{{txt.tfa_preserve}}</label></div>
@@ -26,7 +26,7 @@
 					<div id="tfaBackup" style="display: none;">
 						{{txt.tfa_backup_desc}}<br>
 						<strong>{{txt.tfa_backup_code}}: </strong>
-						<input type="text" class="input_text" name="tfa_backup" style="width: 150px;" value="{{context.tfa_backup}}">
+						<input type="text" name="tfa_backup" style="width: 150px;" value="{{context.tfa_backup}}">
 						<input type="submit" class="button_submit" name="submit" value="{{txt.login}}">
 					</div>
 				</form>

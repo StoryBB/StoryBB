@@ -13,7 +13,7 @@
 				</th>
 				<th class="centertext table_icon">
 				    {{#if context.rules}}
-				    <input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">
+				    <input type="checkbox" onclick="invertAll(this, this.form);">
 				    {{/if}}
 				</th>
 			</tr>
@@ -31,7 +31,7 @@
 					<a href="{{scripturl}}?action=pm;sa=manrules;add;rid={{id}}">{{name}}</a>
 				</td>
 				<td class="table_icon">
-					<input type="checkbox" name="delrule[{{id}}]" class="input_check">
+					<input type="checkbox" name="delrule[{{id}}]">
 				</td>
 			</tr>
 			{{/each}}

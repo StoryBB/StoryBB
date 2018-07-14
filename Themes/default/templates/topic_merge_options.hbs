@@ -18,7 +18,7 @@
 					{{#each context.topics}}
 					<tr class="windowbg">
 						<td>
-							<input type="checkbox" class="input_check" name="topics[]" value="{{id}}" checked>
+							<input type="checkbox" name="topics[]" value="{{id}}" checked>
 						</td>
 						<td>
 							<a href="{{scripturl}}?topic={{id}}.0" target="_blank" rel="noopener">{{{subject}}}</a>
@@ -32,7 +32,7 @@
 							<span class="smalltext">{{{updated.time}}}</span>
 						</td>
 						<td>
-							<input type="checkbox" class="input_check" name="notifications[]" value="{{id}}" checked>
+							<input type="checkbox" name="notifications[]" value="{{id}}" checked>
 						</td>
 					</tr>
 					{{/each}}
@@ -48,13 +48,13 @@
 						{{/each}}
 						<option value="0">{{{txt.merge_custom_subject}}}:</option>
 					</select>
-					<br><input type="text" name="custom_subject" size="60" id="custom_subject" class="input_text custom_subject" style="display: none;">
+					<br><input type="text" name="custom_subject" size="60" id="custom_subject" class="custom_subject" style="display: none;">
 					<br>
-					<label for="enforce_subject"><input type="checkbox" class="input_check" name="enforce_subject" id="enforce_subject" value="1"> {{{txt.movetopic_change_all_subjects}}}</label>
+					<label for="enforce_subject"><input type="checkbox" name="enforce_subject" id="enforce_subject" value="1"> {{{txt.movetopic_change_all_subjects}}}</label>
 				</fieldset>
 
 				{{! Show an option to create a redirection topic as well... }}
-				<label for="postRedirect"><input type="checkbox" name="postRedirect" id="postRedirect"{{#if context.is_approved}} checked{{/if}} onclick="{{#unless context.is_approved}}if (this.checked && !confirm('{{{txt.merge_topic_unapproved_js}}}')) return false; {{/unless}} document.getElementById('reasonArea').style.display = this.checked ? 'block' : 'none';" class="input_check"> {{{txt.post_redirection}}}.</label>
+				<label for="postRedirect"><input type="checkbox" name="postRedirect" id="postRedirect"{{#if context.is_approved}} checked{{/if}} onclick="{{#unless context.is_approved}}if (this.checked && !confirm('{{{txt.merge_topic_unapproved_js}}}')) return false; {{/unless}} document.getElementById('reasonArea').style.display = this.checked ? 'block' : 'none';"> {{{txt.post_redirection}}}.</label>
 				<fieldset id="reasonArea" style="margin-top: 1ex;{{#unless context.is_approved}}display: none;{{/unless}}">
 					<dl class="settings">
 						<dt>
@@ -67,7 +67,7 @@
 							<label for="redirect_topic">{{{txt.mergetopic_redirect}}}</label>
 						</dt>
 						<dd>
-							<input type="checkbox" name="redirect_topic" id="redirect_topic" checked class="input_check">
+							<input type="checkbox" name="redirect_topic" id="redirect_topic" checked>
 						</dd>
 
 						{{#if (eq modSettings.allow_expire_redirect '1')}}
@@ -97,7 +97,7 @@
 
 						{{#each context.boards}}
 						<li>
-							<input type="radio" name="board" value="{{id}}"{{#if selected}} checked{{/if}} class="input_radio"> {{{name}}}
+							<input type="radio" name="board" value="{{id}}"{{#if selected}} checked{{/if}}> {{{name}}}
 						</li>
 						{{/each}}
 
@@ -111,12 +111,12 @@
 					<ul>
 						{{#each context.polls}}
 						<li>
-							<input type="radio" name="poll" value="{{id}}"{{#if selected}} checked{{/if}} class="input_radio"> {{question}} ({{{../txt.topic}}}: <a href="{{../scripturl}}?topic={{topic.id}}.0" target="_blank" rel="noopener">{{{topic.subject}}}</a>)
+							<input type="radio" name="poll" value="{{id}}"{{#if selected}} checked{{/if}}> {{question}} ({{{../txt.topic}}}: <a href="{{../scripturl}}?topic={{topic.id}}.0" target="_blank" rel="noopener">{{{topic.subject}}}</a>)
 						</li>
 						{{/each}}
 
 						<li>
-							<input type="radio" name="poll" value="-1" class="input_radio"> ({{{txt.merge_no_poll}}})
+							<input type="radio" name="poll" value="-1"> ({{{txt.merge_no_poll}}})
 						</li>
 					</ul>
 				</fieldset>

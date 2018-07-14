@@ -26,13 +26,13 @@
 							<label for="locale">{{{txt.languages_locale}}}:</label>
 						</dt>
 						<dd>
-							<input type="text" name="locale" id="locale" size="20" value="{{{context.primary_settings.locale}}}"{{#if context.file_entries}} disabled{{/if}} class="input_text">
+							<input type="text" name="locale" id="locale" size="20" value="{{{context.primary_settings.locale}}}"{{#if context.file_entries}} disabled{{/if}}>
 						</dd>
 						<dt>
 							<label for="rtl">{{{txt.languages_rtl}}}:</label>
 						</dt>
 						<dd>
-							<input type="checkbox" name="rtl" id="rtl"{{#if context.primary_settings.rtl}} checked{{/if}} class="input_check"{{#if context.file_entries}} disabled{{/if}}>
+							<input type="checkbox" name="rtl" id="rtl"{{#if context.primary_settings.rtl}} checked{{/if}}{{#if context.file_entries}} disabled{{/if}}>
 						</dd>
 					</dl>
 				</fieldset>

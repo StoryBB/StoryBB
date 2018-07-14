@@ -3,7 +3,7 @@
 		</dt>
 		<dd>
 			<input type="hidden" name="default_options[view_newest_pm_first]" value="0">
-			<input type="checkbox" name="default_options[view_newest_pm_first]" id="view_newest_pm_first" value="1"{{#if (eq_coerce context.member.options.view_newest_pm_first 1)}} checked{{/if}} class="input_check">
+			<input type="checkbox" name="default_options[view_newest_pm_first]" id="view_newest_pm_first" value="1"{{#if (eq_coerce context.member.options.view_newest_pm_first 1)}} checked{{/if}}>
 		</dd>
 	</dl>
 	<hr>
@@ -31,5 +31,5 @@
 		</dt>
 		<dd>
 			<input type="hidden" name="default_options[pm_remove_inbox_label]" value="0">
-			<input type="checkbox" name="default_options[pm_remove_inbox_label]" id="pm_remove_inbox_label" value="1"{{#if (eq_coerce context.member.options.pm_remove_inbox_label 1)}} checked{{/if}} class="input_check">
+			<input type="checkbox" name="default_options[pm_remove_inbox_label]" id="pm_remove_inbox_label" value="1"{{#if (eq_coerce context.member.options.pm_remove_inbox_label 1)}} checked{{/if}}>
 		</dd>
