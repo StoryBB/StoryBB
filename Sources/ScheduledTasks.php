@@ -163,7 +163,7 @@ function scheduled_approval_notification()
 
 	// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
 	$request = $smcFunc['db_query']('', '
-		SELECT aq.id_msg, aq.id_attach, aq.id_event, m.id_topic, m.id_board, m.subject, t.id_first_msg,
+		SELECT aq.id_msg, aq.id_attach, m.id_topic, m.id_board, m.subject, t.id_first_msg,
 			b.id_profile
 		FROM {db_prefix}approval_queue AS aq
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = aq.id_msg)
