@@ -109,7 +109,7 @@
 						{{! If the user is able to upload avatars to the server show them an upload box. }}
 						{{#if context.character.avatar_settings.allow_upload}}
 							<div id="avatar_upload">
-								<input type="file" size="44" name="attachment" id="avatar_upload_box" value="" onchange="readfromUpload(this)"  onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'upload');" class="input_file" accept="image/gif, image/jpeg, image/jpg, image/png">{{> max_avatar_size}}
+								<input type="file" size="44" name="attachment" id="avatar_upload_box" value="" onchange="readfromUpload(this)"  onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'upload');" accept="image/gif, image/jpeg, image/jpg, image/png">{{> max_avatar_size}}
 								{{#if context.character.id_attach}}<br><img src="{{{context.character.avatar}}}" alt="" id="attached_image"><input type="hidden" name="id_attach" value="{{context.character.id_attach}}">{{/if}}
 							</div>
 						{{/if}}
