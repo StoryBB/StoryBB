@@ -22,8 +22,7 @@ CREATE TABLE {$db_prefix}admin_info_files (
 
 CREATE TABLE {$db_prefix}approval_queue (
   id_msg INT UNSIGNED NOT NULL DEFAULT '0',
-  id_attach INT UNSIGNED NOT NULL DEFAULT '0',
-  id_event SMALLINT UNSIGNED NOT NULL DEFAULT '0'
+  id_attach INT UNSIGNED NOT NULL DEFAULT '0'
 ) ENGINE={$engine};
 
 #

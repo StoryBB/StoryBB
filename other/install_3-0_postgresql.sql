@@ -123,8 +123,7 @@ CREATE INDEX {$db_prefix}admin_info_files_filename ON {$db_prefix}admin_info_fil
 
 CREATE TABLE {$db_prefix}approval_queue (
   id_msg bigint NOT NULL default '0',
-  id_attach bigint NOT NULL default '0',
-  id_event smallint NOT NULL default '0'
+  id_attach bigint NOT NULL default '0'
 );
 
 #
