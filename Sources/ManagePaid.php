@@ -906,7 +906,7 @@ function ViewSubscribedUsers()
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return '<input type="checkbox" name="delsub[' . $rowData['id'] . ']" class="input_check">';
+						return '<input type="checkbox" name="delsub[' . $rowData['id'] . ']">';
 					},
 					'class' => 'centercol',
 				),
