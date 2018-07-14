@@ -133,7 +133,7 @@ input[type=checkbox], input[type=radio] {
 	display: none;
 }
 /* Give disabled text input elements a different background color. */
-input[disabled].input_text {
+input[disabled][type=text], input[disabled][type=email], input[disabled][type=search] {
 	background: #eee;
 }
 select[disabled] {
@@ -1099,7 +1099,7 @@ img.sort, .sort {
 	text-align: right;
 	min-width: 30em;
 }
-#search_form .input_text, #search_form select, #search_form .button_submit {
+#search_form input[type=text], #search_form input[type=email], #search_form input[type=search], #search_form select, #search_form .button_submit {
 	padding: 2px;
 	margin: 2px;
 	background: #fff;
@@ -1546,7 +1546,7 @@ div.event_options {
 	height: auto;
 	vertical-align: baseline;
 }
-#post_event input[disabled].input_text {
+#post_event input[disabled][type=text], #post_event input[disabled][type=email] {
 	color: transparent;
 }
 #post_event select, #event_options input[type="text"], #tz {
