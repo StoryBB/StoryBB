@@ -122,7 +122,7 @@
 							<div>
 								{{#each context.field.options}}
 									{{#if (gt @key 0)}}<br>{{/if}}
-									<input type="radio" name="default_select" value="{{@key}}"{{#if (eq ../context.field.default_select .)}} checked{{/if}} class="input_radio">
+									<input type="radio" name="default_select" value="{{@key}}"{{#if (eq ../context.field.default_select .)}} checked{{/if}}>
 									<input type="text" name="select_option[{{@key}}]" value="{{{.}}}" class="input_text">
 								{{/each}}
 							<span id="addopt"></span>

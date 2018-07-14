@@ -77,7 +77,7 @@
 					</dd>
 				</dl>
 				<hr>
-				<input type="radio" name="duration_type" id="duration_type_fixed" value="fixed"{{#unless (eq context.sub.duration 'flexible')}} checked{{/unless}} class="input_radio" onclick="toggleDuration('fixed');">
+				<input type="radio" name="duration_type" id="duration_type_fixed" value="fixed"{{#unless (eq context.sub.duration 'flexible')}} checked{{/unless}} onclick="toggleDuration('fixed');">
 				<strong><label for="duration_type_fixed">{{{txt.paid_mod_fixed_price}}}</label></strong>
 				<br>
 				<div id="fixed_area"{{#if (eq context.sub.duration 'flexible')}} style="display: none;"{{/if}}>
@@ -104,7 +104,7 @@
 						</dl>
 					</fieldset>
 				</div>
-				<input type="radio" name="duration_type" id="duration_type_flexible" value="flexible"{{#if (eq context.sub.duration 'flexible')}} checked{{/if}} class="input_radio" onclick="toggleDuration('flexible');">
+				<input type="radio" name="duration_type" id="duration_type_flexible" value="flexible"{{#if (eq context.sub.duration 'flexible')}} checked{{/if}} onclick="toggleDuration('flexible');">
 				<strong><label for="duration_type_flexible">{{{txt.paid_mod_flexible_price}}}</label></strong>
 				<br>
 				<div id="flexible_area"{{#if (neq context.sub.duration 'flexible')}} style="display: none;"{{/if}}>

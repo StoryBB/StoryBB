@@ -117,13 +117,13 @@
 										</label>
 									</td>
 									<td>
-										<input type="radio" class="account" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}} class="input_radio">
+										<input type="radio" class="account" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}}>
 									</td>
 									<td>
-										<input type="radio" class="account" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}} class="input_radio">
+										<input type="radio" class="account" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}}>
 									</td>
 									<td>
-										<input type="radio" class="account" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}} class="input_radio">
+										<input type="radio" class="account" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}}>
 									</td>
 									<td></td>
 								</tr>
@@ -132,13 +132,13 @@
 								<td>
 								</td>
 								<td>
-									<input type="radio" name="select_all_account" class="input_radio" onclick="selectAllRadioClass(this.form, 'groups', 'allow', 'account');">
+									<input type="radio" name="select_all_account" onclick="selectAllRadioClass(this.form, 'groups', 'allow', 'account');">
 								</td>
 								<td>
-									<input type="radio" name="select_all_account" class="input_radio" onclick="selectAllRadioClass(this.form, 'groups', 'ignore', 'account');">
+									<input type="radio" name="select_all_account" onclick="selectAllRadioClass(this.form, 'groups', 'ignore', 'account');">
 								</td>
 								<td>
-									<input type="radio" name="select_all_account" class="input_radio" onclick="selectAllRadioClass(this.form, 'groups', 'deny', 'account');">
+									<input type="radio" name="select_all_account" onclick="selectAllRadioClass(this.form, 'groups', 'deny', 'account');">
 								</td>
 								<td>
 									<em>{{{txt.check_all}}}</em>
@@ -162,13 +162,13 @@
 										</label>
 									</td>
 									<td>
-										<input type="radio" class="character" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}} class="input_radio">
+										<input type="radio" class="character" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}}>
 									</td>
 									<td>
-										<input type="radio" class="character" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}} class="input_radio">
+										<input type="radio" class="character" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}}>
 									</td>
 									<td>
-										<input type="radio" class="character" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}} class="input_radio">
+										<input type="radio" class="character" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}}>
 									</td>
 									<td></td>
 								</tr>
@@ -177,13 +177,13 @@
 								<td>
 								</td>
 								<td>
-									<input type="radio" name="select_all_character" class="input_radio" onclick="selectAllRadioClass(this.form, 'groups', 'allow', 'character');">
+									<input type="radio" name="select_all_character" onclick="selectAllRadioClass(this.form, 'groups', 'allow', 'character');">
 								</td>
 								<td>
-									<input type="radio" name="select_all_character" class="input_radio" onclick="selectAllRadioClass(this.form, 'groups', 'ignore', 'character');">
+									<input type="radio" name="select_all_character" onclick="selectAllRadioClass(this.form, 'groups', 'ignore', 'character');">
 								</td>
 								<td>
-									<input type="radio" name="select_all_character" class="input_radio" onclick="selectAllRadioClass(this.form, 'groups', 'deny', 'character');">
+									<input type="radio" name="select_all_character" onclick="selectAllRadioClass(this.form, 'groups', 'deny', 'character');">
 								</td>
 								<td>
 									<em>{{{txt.check_all}}}</em>
@@ -207,13 +207,13 @@
 									</label>
 								</td>
 								<td>
-									<input type="radio" class="post" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}} class="input_radio">
+									<input type="radio" class="post" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}}>
 								</td>
 								<td>
-									<input type="radio" class="post" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}} class="input_radio">
+									<input type="radio" class="post" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}}>
 								</td>
 								<td>
-									<input type="radio" class="post" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}} class="input_radio">
+									<input type="radio" class="post" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}}>
 								</td>
 								<td></td>
 							</tr>
@@ -223,13 +223,13 @@
 								<td>
 								</td>
 								<td>
-									<input type="radio" name="select_all_post" class="input_radio" onclick="selectAllRadioClass(this.form, 'groups', 'allow', 'post');">
+									<input type="radio" name="select_all_post" onclick="selectAllRadioClass(this.form, 'groups', 'allow', 'post');">
 								</td>
 								<td>
-									<input type="radio" name="select_all_post" class="input_radio" onclick="selectAllRadioClass(this.form, 'groups', 'ignore', 'post');">
+									<input type="radio" name="select_all_post" onclick="selectAllRadioClass(this.form, 'groups', 'ignore', 'post');">
 								</td>
 								<td>
-									<input type="radio" name="select_all_post" class="input_radio" onclick="selectAllRadioClass(this.form, 'groups', 'deny', 'post');">
+									<input type="radio" name="select_all_post" onclick="selectAllRadioClass(this.form, 'groups', 'deny', 'post');">
 								</td>
 								<td>
 									<em>{{{txt.check_all}}}</em>

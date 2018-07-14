@@ -97,7 +97,7 @@
 
 						{{#each context.boards}}
 						<li>
-							<input type="radio" name="board" value="{{id}}"{{#if selected}} checked{{/if}} class="input_radio"> {{{name}}}
+							<input type="radio" name="board" value="{{id}}"{{#if selected}} checked{{/if}}> {{{name}}}
 						</li>
 						{{/each}}
 
@@ -111,12 +111,12 @@
 					<ul>
 						{{#each context.polls}}
 						<li>
-							<input type="radio" name="poll" value="{{id}}"{{#if selected}} checked{{/if}} class="input_radio"> {{question}} ({{{../txt.topic}}}: <a href="{{../scripturl}}?topic={{topic.id}}.0" target="_blank" rel="noopener">{{{topic.subject}}}</a>)
+							<input type="radio" name="poll" value="{{id}}"{{#if selected}} checked{{/if}}> {{question}} ({{{../txt.topic}}}: <a href="{{../scripturl}}?topic={{topic.id}}.0" target="_blank" rel="noopener">{{{topic.subject}}}</a>)
 						</li>
 						{{/each}}
 
 						<li>
-							<input type="radio" name="poll" value="-1" class="input_radio"> ({{{txt.merge_no_poll}}})
+							<input type="radio" name="poll" value="-1"> ({{{txt.merge_no_poll}}})
 						</li>
 					</ul>
 				</fieldset>

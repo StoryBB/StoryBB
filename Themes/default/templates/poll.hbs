@@ -98,9 +98,9 @@
 							{{txt.poll_results_visibility}}:
 						</dt>
 						<dd>
-							<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"{{#if (eq context.poll.hide_results 0)}} checked{{/if}} class="input_radio"> <label for="poll_results_anyone">{{txt.poll_results_anyone}}</label><br>
-							<input type="radio" name="poll_hide" id="poll_results_voted" value="1"{{#if (eq context.poll.hide_results 1)}} checked{{/if}} class="input_radio"> <label for="poll_results_voted">{{txt.poll_results_voted}}</label><br>
-							<input type="radio" name="poll_hide" id="poll_results_expire" value="2"{{#if (eq context.poll.hide_results 2)}} checked{{/if}}{{#unless context.poll.expiration}} disabled{{/unless}} class="input_radio"> <label for="poll_results_expire">{{txt.poll_results_after}}</label>
+							<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"{{#if (eq context.poll.hide_results 0)}} checked{{/if}}> <label for="poll_results_anyone">{{txt.poll_results_anyone}}</label><br>
+							<input type="radio" name="poll_hide" id="poll_results_voted" value="1"{{#if (eq context.poll.hide_results 1)}} checked{{/if}}> <label for="poll_results_voted">{{txt.poll_results_voted}}</label><br>
+							<input type="radio" name="poll_hide" id="poll_results_expire" value="2"{{#if (eq context.poll.hide_results 2)}} checked{{/if}}{{#unless context.poll.expiration}} disabled{{/unless}}> <label for="poll_results_expire">{{txt.poll_results_after}}</label>
 						</dd>
 					</dl>
 				</fieldset>
