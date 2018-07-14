@@ -10,7 +10,7 @@
 						<label for="group_name_input"><strong>{{{txt.membergroups_edit_name}}}:</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="group_name" id="group_name_input" value="{{{context.group.editable_name}}}" size="30" class="input_text" required>
+						<input type="text" name="group_name" id="group_name_input" value="{{{context.group.editable_name}}}" size="30" required>
 					</dd>
 
 					{{#unless context.group.is_post_group}}
@@ -55,7 +55,7 @@
 						<label for="group_moderators"><strong>{{{txt.moderators}}}:</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="group_moderators" id="group_moderators" value="{{{context.group.moderator_list}}}" size="30" class="input_text">
+						<input type="text" name="group_moderators" id="group_moderators" value="{{{context.group.moderator_list}}}" size="30">
 						<div id="moderator_container"></div>
 					</dd>
 					<dt id="group_hidden_text">
@@ -96,7 +96,7 @@
 						<label for="min_posts_input"><strong>{{{txt.membergroups_min_posts}}}:</strong></label>
 					</dt>
 					<dd>
-						<input type="number" name="min_posts" id="min_posts_input"{{#if context.group.is_post_group}} value="{{context.group.min_posts}}"{{/if}} size="6" class="input_text">
+						<input type="number" name="min_posts" id="min_posts_input"{{#if context.group.is_post_group}} value="{{context.group.min_posts}}"{{/if}} size="6">
 					</dd>
 					{{/if}}
 
@@ -104,7 +104,7 @@
 						<label for="online_color_input"><strong>{{{txt.membergroups_online_color}}}:</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="online_color" id="online_color_input" value="{{{context.group.color}}}" size="20" class="input_text">
+						<input type="text" name="online_color" id="online_color_input" value="{{{context.group.color}}}" size="20">
 					</dd>
 
 					<dt>
@@ -117,7 +117,7 @@
 							<div id="badge_config">
 								{{{txt.membergroup_badge_show}}}
 
-								<input type="number" name="icon_count" id="icon_count_input" value="{{{context.group.icon_count}}}" size="4" class="input_text" min="1" max="99">
+								<input type="number" name="icon_count" id="icon_count_input" value="{{{context.group.icon_count}}}" size="4" min="1" max="99">
 
 								<span class="multiplier">{{{txt.membergroup_badge_times}}}</span>
 
@@ -144,7 +144,7 @@
 						<span class="smalltext">{{{txt.membergroups_max_messages_note}}}</span>
 					</dt>
 					<dd>
-						<input type="text" name="max_messages" id="max_messages_input" value="{{#if (eq_coerce context.group.id 1)}}0{{else}}{{context.group.max_messages}}{{/if}}" size="6"{{#if (eq_coerce context.group.id 1)}} disabled{{/if}} class="input_text">
+						<input type="text" name="max_messages" id="max_messages_input" value="{{#if (eq_coerce context.group.id 1)}}0{{else}}{{context.group.max_messages}}{{/if}}" size="6"{{#if (eq_coerce context.group.id 1)}} disabled{{/if}}>
 					</dd>
 					{{/if}}
 

@@ -29,11 +29,11 @@
 					{{/if}}
 
 					{{#if (eq type 'number')}}
-						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}"{{#if max}} max="{{max}}"{{/if}}{{#if step}} step="{{step}}"{{/if}} name="default_options[{{id}}]" id="{{id}}" value="{{{user_value}}}" size="5" class="input_text">
+						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}"{{#if max}} max="{{max}}"{{/if}}{{#if step}} step="{{step}}"{{/if}} name="default_options[{{id}}]" id="{{id}}" value="{{{user_value}}}" size="5">
 					{{/if}}
 
 					{{#if (or (eq type 'url') (eq type 'text'))}}
-						<input type="{{type}}" name="default_options[{{id}}]" id="{{id}}" name="default_options[{{id}}]" value="{{{user_value}}}" class="input_text">
+						<input type="{{type}}" name="default_options[{{id}}]" id="{{id}}" name="default_options[{{id}}]" value="{{{user_value}}}">
 					{{/if}}
 				</dd>
 			{{/if}}

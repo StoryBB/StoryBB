@@ -5,12 +5,12 @@
 		<div class="roundframe">
 			<dl>
 				<dt>{{txt.invalid_activation_username}}:</dt>
-				<dd><input type="text" name="user" size="40" value="{{context.default_username}}" class="input_text"></dd>
+				<dd><input type="text" name="user" size="40" value="{{context.default_username}}"></dd>
 			</dl>
 			<p>{{txt.invalid_activation_new}}</p>
 			<dl>
 				<dt>{{txt.invalid_activation_new_email}}:</dt>
-				<dd><input type="text" name="new_email" size="40" class="input_text"></dd>
+				<dd><input type="text" name="new_email" size="40"></dd>
 				<dt>{{txt.invalid_activation_password}}:</dt>
 				<dd><input type="password" name="passwd" size="30"></dd>
 			</dl>
@@ -19,7 +19,7 @@
 			<p>{{txt.invalid_activation_known}}</p>
 			<dl>
 				<dt>{{txt.invalid_activation_retry}}:</dt>
-				<dd><input type="text" name="code" size="30" class="input_text"></dd>
+				<dd><input type="text" name="code" size="30"></dd>
 			</dl>
 {{/if}}
 			<p><input type="submit" value="{{txt.invalid_activation_resend}}" class="button_submit"></p>

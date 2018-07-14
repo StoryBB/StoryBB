@@ -12,13 +12,13 @@
 				    {{#if context.description}}<div class="information">{{context.description}}</div>{{/if}}
 				    <dl>
 						<dt>{{txt.username}}:</dt>
-						<dd><input type="text" id="{{#if context.from_ajax}}ajax_{{/if}}loginuser" name="user" size="20" value="{{context.default_username}}" class="input_text"></dd>
+						<dd><input type="text" id="{{#if context.from_ajax}}ajax_{{/if}}loginuser" name="user" size="20" value="{{context.default_username}}"></dd>
 						<dt>{{txt.password}}:</dt>
 						<dd><input type="password" id="{{#if context.from_ajax}}ajax_{{/if}}loginpass" name="passwrd" value="{{context.default_password}}" size="20"></dd>
 					</dl>
 					<dl>
 						<dt>{{txt.mins_logged_in}}:</dt>
-						<dd><input type="number" name="cookielength" size="4" maxlength="4" value="{{modSettings.cookieTime}}"{{#if context.never_expire}} disabled{{/if}} class="input_text" min="1"></dd>
+						<dd><input type="number" name="cookielength" size="4" maxlength="4" value="{{modSettings.cookieTime}}"{{#if context.never_expire}} disabled{{/if}} min="1"></dd>
 						<dt>{{txt.always_logged_in}}:</dt>
 						<dd><input type="checkbox" name="cookieneverexp"{{#if context.never_expire}} checked{{/if}} onclick="this.form.cookielength.disabled = this.checked;"></dd>
 						{{#if context.login_show_undelete}}

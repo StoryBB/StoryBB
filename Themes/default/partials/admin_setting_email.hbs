@@ -1,6 +1,6 @@
 		{{> admin_setting_dt_container config_var=config_var}}
 		<dd{{#if config_var.force_div_id}} id="{{config_var.force_div_id}}_dd"{{/if}}>
 			{{{config_var.preinput}}}
-			<input type="email" {{{config_var.javascript}}}{{#if config_var.disabled}} disabled{{/if}} name="{{config_var.name}}" id="{{config_var.name}}" value="{{{config_var.value}}}"{{#if (gt config_size '0')}} size="{{config_var.size}}{{/if}} class="input_text">
+			<input type="email" {{{config_var.javascript}}}{{#if config_var.disabled}} disabled{{/if}} name="{{config_var.name}}" id="{{config_var.name}}" value="{{{config_var.value}}}"{{#if (gt config_size '0')}} size="{{config_var.size}}{{/if}}>
 			{{{config_var.postinput}}}
 		</dd>

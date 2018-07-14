@@ -89,7 +89,7 @@
 					<form action="{{scripturl}}?action=admin;area=theme;sa=install;do=copy" method="post" accept-charset="UTF-8" class="padding">
 						{{session_form}}
 						{{token_form 'admin-t-copy'}}
-						<input type="text" name="copy" id="copy" value="{{context.new_theme_name}}" size="40" class="input_text">
+						<input type="text" name="copy" id="copy" value="{{context.new_theme_name}}" size="40">
 						<input type="submit" name="save_copy" value="{{txt.save}}" class="button_submit">
 					</form>
 				</fieldset>
@@ -99,7 +99,7 @@
 					<form action="{{scripturl}}?action=admin;area=theme;sa=install;do=dir" method="post" accept-charset="UTF-8" class="padding">
 						{{session_form}}
 						{{token_form 'admin-t-dir'}}
-						<input type="text" name="theme_dir" id="theme_dir" value="{{context.new_theme_dir}}" size="40" style="width: 40%;" class="input_text">
+						<input type="text" name="theme_dir" id="theme_dir" value="{{context.new_theme_dir}}" size="40" style="width: 40%;">
 						<input type="submit" name="save_dir" value="{{txt.save}}" class="button_submit">
 					</form>
 				</fieldset>

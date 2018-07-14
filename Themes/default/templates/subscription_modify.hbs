@@ -17,7 +17,7 @@
 						{{{txt.paid_mod_name}}}:
 					</dt>
 					<dd>
-						<input type="text" name="name" value="{{{context.sub.name}}}" size="30" class="input_text">
+						<input type="text" name="name" value="{{{context.sub.name}}}" size="30">
 					</dd>
 					<dt>
 						{{{txt.paid_mod_desc}}}:
@@ -67,7 +67,7 @@
 						{{{txt.paid_mod_reminder}}}:<br><span class="smalltext">{{{txt.paid_mod_reminder_desc}}} {{{txt.zero_to_disable}}}</span>
 					</dt>
 					<dd>
-						<input type="number" name="reminder" value="{{{context.sub.reminder}}}" size="6" class="input_text">
+						<input type="number" name="reminder" value="{{{context.sub.reminder}}}" size="6">
 					</dd>
 					<dt>
 						{{{txt.paid_mod_email}}}:<br><span class="smalltext">{{{txt.paid_mod_email_desc}}}</span>
@@ -87,13 +87,13 @@
 								{{{txt.paid_cost}}} ({{{context.paid_currency_symbol}}}):
 							</dt>
 							<dd>
-								<input type="number" name="cost" value="{{#if context.sub.cost.fixed}}{{context.sub.cost.fixed}}{{else}}0{{/if}}" size="4" class="input_text">
+								<input type="number" name="cost" value="{{#if context.sub.cost.fixed}}{{context.sub.cost.fixed}}{{else}}0{{/if}}" size="4">
 							</dd>
 							<dt>
 								{{{txt.paid_mod_span}}}:
 							</dt>
 							<dd>
-								<input type="number" name="span_value" value="{{context.sub.span.value}}" size="4" class="input_text">
+								<input type="number" name="span_value" value="{{context.sub.span.value}}" size="4">
 								<select name="span_unit">
 									<option value="D"{{#if (eq context.sub.span.unit 'D')}} selected{{/if}}>{{{txt.paid_mod_span_days}}}</option>
 									<option value="W"{{#if (eq context.sub.span.unit 'W')}} selected{{/if}}>{{{txt.paid_mod_span_weeks}}}</option>
@@ -124,25 +124,25 @@
 								{{{txt.paid_per_day}}}:
 							</dt>
 							<dd>
-								<input type="number" name="cost_day" value="{{#if context.sub.cost.day}}{{context.sub.cost.day}}{{else}}0{{/if}}" size="5" class="input_text">
+								<input type="number" name="cost_day" value="{{#if context.sub.cost.day}}{{context.sub.cost.day}}{{else}}0{{/if}}" size="5">
 							</dd>
 							<dt>
 								{{{txt.paid_per_week}}}:
 							</dt>
 							<dd>
-								<input type="number" name="cost_week" value="{{#if context.sub.cost.week}}{{context.sub.cost.week}}{{else}}0{{/if}}" size="5" class="input_text">
+								<input type="number" name="cost_week" value="{{#if context.sub.cost.week}}{{context.sub.cost.week}}{{else}}0{{/if}}" size="5">
 							</dd>
 							<dt>
 								{{{txt.paid_per_month}}}:
 							</dt>
 							<dd>
-								<input type="number" name="cost_month" value="{{#if context.sub.cost.month}}{{context.sub.cost.month}}{{else}}0{{/if}}" size="5" class="input_text">
+								<input type="number" name="cost_month" value="{{#if context.sub.cost.month}}{{context.sub.cost.month}}{{else}}0{{/if}}" size="5">
 							</dd>
 							<dt>
 								{{{txt.paid_per_year}}}:
 							</dt>
 							<dd>
-								<input type="number" name="cost_year" value="{{#if context.sub.cost.year}}{{context.sub.cost.year}}{{else}}0{{/if}}" size="5" class="input_text">
+								<input type="number" name="cost_year" value="{{#if context.sub.cost.year}}{{context.sub.cost.year}}{{else}}0{{/if}}" size="5">
 							</dd>
 						</dl>
 					</fieldset>

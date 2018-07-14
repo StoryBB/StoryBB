@@ -49,7 +49,7 @@
 				</div>
 				<div class="windowbg2 noup">
 					<p class="centertext">
-						<input type="text" name="censortest" value="{{{context.censor_test}}}" class="input_text">
+						<input type="text" name="censortest" value="{{{context.censor_test}}}">
 						<input type="submit" value="{{{txt.censor_test_save}}}" class="button_submit">
 					</p>
 				</div>
@@ -63,6 +63,6 @@
 
 		function addNewWord()
 		{
-			setOuterHTML(document.getElementById('moreCensoredWords'), '<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="30" class="input_text"> => <input type="text" name="censor_proper[]" size="30" class="input_text"><' + '/div><div id="moreCensoredWords"><' + '/div>');
+			setOuterHTML(document.getElementById('moreCensoredWords'), '<div style="margin-top: 1ex;"><input type="text" name="censor_vulgar[]" size="30"> => <input type="text" name="censor_proper[]" size="30"><' + '/div><div id="moreCensoredWords"><' + '/div>');
 		}
 		</script>

@@ -26,7 +26,7 @@
 			{{#unless (eq id -1)}}
 			<tr class="windowbg">
 				<td>
-					<input type="text" name="label_name[{{id}}]" value="{{name}}" size="30" maxlength="30" class="input_text">
+					<input type="text" name="label_name[{{id}}]" value="{{name}}" size="30" maxlength="30">
 				</td>
 				<td class="table_icon"><input type="checkbox" name="delete_label[{{id}}]"></td>
 			</tr>
@@ -54,7 +54,7 @@
 					<strong><label for="add_label">{{txt.pm_label_name}}</label>:</strong>
 				</dt>
 				<dd>
-					<input type="text" id="add_label" name="label" value="" size="30" maxlength="30" class="input_text">
+					<input type="text" id="add_label" name="label" value="" size="30" maxlength="30">
 				</dd>
 			</dl>
 			<input type="submit" name="add" value="{{txt.pm_label_add_new}}" class="button_submit">

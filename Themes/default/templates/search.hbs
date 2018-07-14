@@ -28,7 +28,7 @@
 					<strong><label for="searchfor">{{{txt.search_for}}}:</label></strong>
 				</dt>
 				<dd>
-					<input type="search" name="search" id="searchfor" value="{{{context.search_params.search}}}" maxlength="{{{context.search_string_limit}}}" size="40" class="input_text">
+					<input type="search" name="search" id="searchfor" value="{{{context.search_params.search}}}" maxlength="{{{context.search_string_limit}}}" size="40">
 
 					{{#unless modSettings.search_simple_fulltext}}
 						<br><em class="smalltext">{{{txt.search_example}}}</em>
@@ -46,7 +46,7 @@
 				<dt class="righttext"><label for="userspec">{{{txt.search_by_character}}}:</label>
 				</dt>
 				<dd>
-					<input id="userspec" type="text" name="userspec" value="{{#if context.search_params.userspec}}{{{context.search_params.userspec}}}{{else}}*{{/if}}" size="40" class="input_text">
+					<input id="userspec" type="text" name="userspec" value="{{#if context.search_params.userspec}}{{{context.search_params.userspec}}}{{else}}*{{/if}}" size="40">
 				</dd>
 				<dt class="righttext"><label for="sort">{{{txt.search_order}}}:</label>
 				</dt>
@@ -77,9 +77,9 @@
 				</dt>
 				<dd>
 					<label for="minage">{{{txt.search_between}}}</label>
-					<input type="number" name="minage" id="minage" value="{{#if context.search_params.minage}}{{context.search_params.minage}}{{else}}0{{/if}}" size="5" maxlength="4" class="input_text">
+					<input type="number" name="minage" id="minage" value="{{#if context.search_params.minage}}{{context.search_params.minage}}{{else}}0{{/if}}" size="5" maxlength="4">
 					<label for="maxage">{{{txt.search_and}}}&nbsp;</label>
-					<input type="number" name="maxage" id="maxage" value="{{#if context.search_params.maxage}}{{context.search_params.maxage}}{{else}}999{{/if}}" size="5" maxlength="4" class="input_text"> {{{txt.days_word}}}
+					<input type="number" name="maxage" id="maxage" value="{{#if context.search_params.maxage}}{{context.search_params.maxage}}{{else}}999{{/if}}" size="5" maxlength="4"> {{{txt.days_word}}}
 				</dd>
 			</dl>
 			<script>

@@ -17,7 +17,7 @@
 							<label for="main_ip_check">{{{txt.ban_on_ip}}}</label>
 						</dt>
 						<dd>
-							<input type="text" name="main_ip" value="{{{context.ban_trigger.ip.value}}}" size="44" onfocus="document.getElementById('main_ip_check').checked = true;" class="input_text">
+							<input type="text" name="main_ip" value="{{{context.ban_trigger.ip.value}}}" size="44" onfocus="document.getElementById('main_ip_check').checked = true;">
 						</dd>
 
 						{{#if (neq modSettings.disableHotnameLookup '1')}}
@@ -26,7 +26,7 @@
 								<label for="hostname_check">{{{txt.ban_on_hostname}}}</label>
 							</dt>
 							<dd>
-								<input type="text" name="hostname" value="{{{context.ban_trigger.hostname.value}}}" size="44" onfocus="document.getElementById('hostname_check').checked = true;" class="input_text">
+								<input type="text" name="hostname" value="{{{context.ban_trigger.hostname.value}}}" size="44" onfocus="document.getElementById('hostname_check').checked = true;">
 							</dd>
 						{{/if}}
 
@@ -35,14 +35,14 @@
 							<label for="email_check">{{{txt.ban_on_email}}}</label>
 						</dt>
 						<dd>
-							<input type="text" name="email" value="{{{context.ban_trigger.email.value}}}" size="44" onfocus="document.getElementById('email_check').checked = true;" class="input_text">
+							<input type="text" name="email" value="{{{context.ban_trigger.email.value}}}" size="44" onfocus="document.getElementById('email_check').checked = true;">
 						</dd>
 						<dt>
 							<input type="checkbox" name="ban_suggestions[]" id="user_check" value="user"{{#if context.ban_trigger.banneduser.selected}} checked{{/if}}>
 							<label for="user_check">{{{txt.ban_on_username}}}</label>:
 						</dt>
 						<dd>
-							<input type="text" value="{{{context.ban_trigger.banneduser.value}}}" name="user" id="user" size="44"  onfocus="document.getElementById('user_check').checked = true;"class="input_text">
+							<input type="text" value="{{{context.ban_trigger.banneduser.value}}}" name="user" id="user" size="44"  onfocus="document.getElementById('user_check').checked = true;">
 						</dd>
 					</dl>
 				</fieldset>

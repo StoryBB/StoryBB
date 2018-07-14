@@ -49,7 +49,7 @@
 					<span{{#if (or context.post_error.no_to context.post_error.bad_to)}} class="error"{{/if}} id="caption_to">{{txt.pm_to}}:</span>
 				</dt>
 				<dd id="pm_to" class="clear_right">
-					<input type="text" name="to" id="to_control" value="{{{context.to_value}}}" size="40" style="width: 130px;" class="input_text">
+					<input type="text" name="to" id="to_control" value="{{{context.to_value}}}" size="40" style="width: 130px;">
 					<span class="smalltext" id="bcc_link_container" style="display: none;"></span>
 					<div id="to_item_list_container"></div>
 				</dd>
@@ -57,14 +57,14 @@
 					<span{{#if (or context.post_error.no_to context.post_error.bad_bcc)}} class="error"{{/if}} id="caption_bbc">{{{txt.pm_bcc}}}:</span>
 				</dt>
 				<dd id="bcc_div2">
-					<input type="text" name="bcc" id="bcc_control" value="{{{context.bcc_value}}}" size="40" style="width: 130px;" class="input_text">
+					<input type="text" name="bcc" id="bcc_control" value="{{{context.bcc_value}}}" size="40" style="width: 130px;">
 					<div id="bcc_item_list_container"></div>
 				</dd>
 				<dt class="clear_left">
 					<span{{#if context.post_error.no_subject}} class="error"{{/if}} id="caption_subject">{{{txt.subject}}}:</span>
 				</dt>
 				<dd id="pm_subject">
-					<input type="text" name="subject" value="{{{context.subject}}}" size="80" maxlength="80"{{#if context.post_error.no_subject}} class="error"{{else}}class="input_text"{{/if}}/>
+					<input type="text" name="subject" value="{{{context.subject}}}" size="80" maxlength="80"{{#if context.post_error.no_subject}} class="error"{{/if}}>
 				</dd>
 			</dl><hr>
 			{{#if context.show_bbc}}

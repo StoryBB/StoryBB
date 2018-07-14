@@ -34,25 +34,25 @@
 					<dl class="register_form">
 						<dt><strong><label for="sbb_autov_username">{{txt.username}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="user" required id="sbb_autov_username" size="30" maxlength="25" value="{{context.username}}" class="input_text">
+							<input type="text" name="user" required id="sbb_autov_username" size="30" maxlength="25" value="{{context.username}}">
 							<span id="sbb_autov_username_div" style="display: none;">
 								<span id="sbb_autov_username_img" class="generic_icons check"></span>
 							</span>
 						</dd>
 						<dt><strong><label for="sbb_autov_reserve1">{{txt.user_email_address}}:</label></strong></dt>
 						<dd>
-							<input type="email" name="email" required id="sbb_autov_reserve1" size="30" value="{{context.email}}" class="input_text">
+							<input type="email" name="email" required id="sbb_autov_reserve1" size="30" value="{{context.email}}">
 						</dd>
 						{{#if context.display_edit_real_name}}
 						<dt><strong><label for="real_name_box">{{{txt.char_register_nickname}}}:</label></strong></dt>
 						<dd>
-							<input type="text" id="real_name_box" name="real_name" required size="30" maxlength="200" value="{{{context.real_name}}}" class="input_text">
+							<input type="text" id="real_name_box" name="real_name" required size="30" maxlength="200" value="{{{context.real_name}}}">
 						</dd>
 						{{/if}}
 						{{#if context.display_create_character}}
 						<dt><strong><label for="first_char_box">{{{txt.char_register_charname}}}:</label></strong></dt>
 						<dd>
-							<input type="text" id="first_char_box" name="first_char" required size="30" maxlength="200" value="{{{context.first_char}}}" class="input_text">
+							<input type="text" id="first_char_box" name="first_char" required size="30" maxlength="200" value="{{{context.first_char}}}">
 						</dd>
 						{{/if}}
 					</dl>

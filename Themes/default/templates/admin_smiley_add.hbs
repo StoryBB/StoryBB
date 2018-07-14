@@ -21,7 +21,7 @@
 						</dt>
 						<dd>
 							{{#unless context.filenames}}
-							<input type="text" name="smiley_filename" id="smiley_filename" value="{{{context.current_smiley.filename}}}" onchange="selectMethod('existing');" class="input_text">
+							<input type="text" name="smiley_filename" id="smiley_filename" value="{{{context.current_smiley.filename}}}" onchange="selectMethod('existing');">
 							{{else}}
 								<select name="smiley_filename" id="smiley_filename" onchange="updatePreview();selectMethod('existing');">
 									{{#each context.filenames}}
@@ -54,13 +54,13 @@
 						<strong><label for="smiley_code">{{{txt.smileys_code}}}</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_code" id="smiley_code" value="" class="input_text">
+						<input type="text" name="smiley_code" id="smiley_code" value="">
 					</dd>
 					<dt>
 						<strong><label for="smiley_description">{{{txt.smileys_description}}}</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_description" id="smiley_description" value="" class="input_text">
+						<input type="text" name="smiley_description" id="smiley_description" value="">
 					</dd>
 					<dt>
 						<strong><label for="smiley_location">{{{txt.smileys_location}}}</label>: </strong>

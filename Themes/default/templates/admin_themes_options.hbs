@@ -51,12 +51,12 @@
 					{{/if}}
 					{{#if (or (eq type 'text') (eq type 'url'))}}
 					<dd {{#if context.theme_options_reset}}style="width:40%"{{/if}}>
-						<input type="{{type}}" name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="{{#if size}}{{size}}{{else}}40{{/if}}" class="input_text">
+						<input type="{{type}}" name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="{{#if size}}{{size}}{{else}}40{{/if}}">
 					</dd>
 					{{/if}}
 					{{#if (eq type 'number')}}
 					<dd {{#if context.theme_options_reset}}style="width:40%"{{/if}}>
-						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}" max="{{max}}" step="{{step}}"	name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="5" class="input_text">
+						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}" max="{{max}}" step="{{step}}"	name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="5">
 					</dd>
 					{{/if}}
 				    {{/unless}}

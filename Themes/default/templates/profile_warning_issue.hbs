@@ -80,7 +80,7 @@
 					<span class="smalltext">{{{txt.profile_warning_reason_desc}}}</span>
 				</dt>
 				<dd>
-					<input type="text" name="warn_reason" id="warn_reason" value="{{{context.warning_data.reason}}}" size="50" style="width: 80%;" class="input_text">
+					<input type="text" name="warn_reason" id="warn_reason" value="{{{context.warning_data.reason}}}" size="50" style="width: 80%;">
 				</dd>
 			</dl>
 			<hr>
@@ -106,7 +106,7 @@
 					<strong><label for="warn_sub">{{{txt.profile_warning_notify_subject}}}:</label></strong>
 				</dt>
 				<dd>
-					<input type="text" name="warn_sub" id="warn_sub" value="{{#if context.warning_data.notify_subject}}{{{context.warning_data.notify_subject}}}{{else}}{{{txt.profile_warning_notify_template_subject}}}{{/if}}" size="50" style="width: 80%;" class="input_text">
+					<input type="text" name="warn_sub" id="warn_sub" value="{{#if context.warning_data.notify_subject}}{{{context.warning_data.notify_subject}}}{{else}}{{{txt.profile_warning_notify_template_subject}}}{{/if}}" size="50" style="width: 80%;">
 				</dd>
 				<dt>
 					<strong><label for="warn_temp">{{{txt.profile_warning_notify_body}}}:</label></strong>

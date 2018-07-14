@@ -1,6 +1,6 @@
 		{{> admin_setting_dt_container config_var=config_var}}
 		<dd{{#if config_var.force_div_id}} id="{{config_var.force_div_id}}_dd"{{/if}}>
 			{{{config_var.preinput}}}
-			<input type="number" {{{config_var.javascript}}}{{#if config_var.disabled}} disabled{{/if}} name="{{config_var.name}}" id="{{config_var.name}}" value="{{{config_var.value}}}"{{#if (gt config_var.size '0')}} size="{{config_var.size}}{{/if}} class="input_text"{{#if (neq config_var.min '')}} min="{{config_var.min}}"{{/if}}{{#if (neq config_var.max '')}} max="{{config_var.max}}"{{/if}}{{#if (eq config_var.type 'float')}}{{#if (eq config_var.step '')}} step="0.1"{{else}} step="{{config_var.step}}"{{/if}}{{else}}{{#if (neq config_var.step '')}} step="{{config_var.step}}"{{/if}}{{/if}}{{#if (neq config_var.max '')}} min="{{config_var.max}}"{{/if}}>
+			<input type="number" {{{config_var.javascript}}}{{#if config_var.disabled}} disabled{{/if}} name="{{config_var.name}}" id="{{config_var.name}}" value="{{{config_var.value}}}"{{#if (gt config_var.size '0')}} size="{{config_var.size}}{{/if}}{{#if (neq config_var.min '')}} min="{{config_var.min}}"{{/if}}{{#if (neq config_var.max '')}} max="{{config_var.max}}"{{/if}}{{#if (eq config_var.type 'float')}}{{#if (eq config_var.step '')}} step="0.1"{{else}} step="{{config_var.step}}"{{/if}}{{else}}{{#if (neq config_var.step '')}} step="{{config_var.step}}"{{/if}}{{/if}}{{#if (neq config_var.max '')}} min="{{config_var.max}}"{{/if}}>
 			{{{config_var.postinput}}}
 		</dd>

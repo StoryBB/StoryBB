@@ -57,7 +57,7 @@
 				<dl>
 					<dt>{{{txt.char_name}}}</dt>
 					<dd>
-						<input type="text" name="char_name" id="char_name" size="50" value="{{{context.character.character_name}}}" maxlength="50" class="input_text">
+						<input type="text" name="char_name" id="char_name" size="50" value="{{{context.character.character_name}}}" maxlength="50">
 					</dd>
 				</dl>
 
@@ -102,7 +102,7 @@
 						{{#if context.character.avatar_settings.allow_external}}
 							<div id="avatar_external">
 								<div class="smalltext">{{{txt.avatar_by_url}}}</div>{{#if (eq modSettings.avatar_action_too_large 'option_download_and_resize')}}{{> max_avatar_size}}{{/if}}
-								<input type="text" name="userpicpersonal" size="45" value="{{#if (eq context.character.avatar_settings.choice 'external')}}{{{context.character.avatar_settings.external}}}{{/if}}" placeholder="https://" onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'external');" onchange="if (typeof(previewExternalAvatar) != 'undefined') previewExternalAvatar(this.value);" class="input_text" />
+								<input type="text" name="userpicpersonal" size="45" value="{{#if (eq context.character.avatar_settings.choice 'external')}}{{{context.character.avatar_settings.external}}}{{/if}}" placeholder="https://" onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'external');" onchange="if (typeof(previewExternalAvatar) != 'undefined') previewExternalAvatar(this.value);" />
 							</div>
 						{{/if}}
 
@@ -121,7 +121,7 @@
 
 								{{#if (eq_coerce modSettings.gravatarAllowExtraEmail 1)}}
 									<div class="smalltext">{{{txt.gravatar_alternateEmail}}}</div>
-									<input type="text" name="gravatarEmail" id="gravatarEmail" size="45" value="{{#if (and (not context.character.avatar_settings.is_url) (neq context.character.avatar_settings.external context.member.email_address))}}{{{context.character.avatar}}}{{/if}}" class="input_text">
+									<input type="text" name="gravatarEmail" id="gravatarEmail" size="45" value="{{#if (and (not context.character.avatar_settings.is_url) (neq context.character.avatar_settings.external context.member.email_address))}}{{{context.character.avatar}}}{{/if}}">
 								{{else}}
 									<div class="smalltext">{{{txt.gravatar_noAlternateEmail}}}</div>
 								{{/if}}
@@ -164,7 +164,7 @@
 				<dl>
 					<dt>{{{txt.age}}}:</dt>
 					<dd>
-						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50" class="input_text">
+						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50">
 					</dd>
 				</dl>
 				<div class="char_signature"></div>
