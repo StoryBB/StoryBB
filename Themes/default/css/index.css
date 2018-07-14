@@ -544,23 +544,6 @@ a img {
 	color: red;
 }
 
-/* Calendar colors for birthdays, events and holidays */
-.birthday {
-	color: #920ac4;
-}
-
-.event {
-	color: #078907;
-}
-
-.holiday > span {
-	color: rgb(0, 92, 255);
-}
-/* Events that are currently selected on the calendar. Won't see it much, probably. */
-.sel_event {
-	font-weight: bold;
-}
-
 /* Colors for warnings */
 .warn_mute {
 	color: red;
@@ -1490,73 +1473,6 @@ ul li.greeting {
 .quickModifyMargin {
 	margin-bottom: 5px;
 	padding-bottom: 5px;
-}
-
-/* Styles for edit event section
----------------------------------------------------- */
-#post_event .roundframe {
-	padding: 12px 12%;
-	overflow: auto;
-}
-#post_event fieldset {
-	padding: 6px;
-	clear: both;
-}
-div.event_options {
-	line-height: 25px;
-	margin-top: 5px;
-}
-#post_event span.label {
-	margin: 0 0.5em 0 2px;
-	min-width: 60px;
-	display: inline-block;
-}
-
-.event_options_left {
-	display: inline-block;
-	width: 49%;
-	padding-right: 1em;
-	min-width: 238px;
-	box-sizing: border-box;
-}
-.event_options_right {
-	display: inline-block;
-	width: 50%;
-	box-sizing: border-box;
-}
-.event_options_left div, .event_options_right div {
-	min-height: 25px;
-	margin-bottom: 5px;
-}
-
-#post_event #event_main input {
-	margin: 0;
-}
-#evtitle {
-	max-width: 100%;
-}
-#event_time_input {
-	clear: left;
-}
-#event_time_input input[type="text"] {
-	width: 80px;
-	display: inline-block;
-}
-#post_event input[type="checkbox"] {
-	height: auto;
-	vertical-align: baseline;
-}
-#post_event input[disabled][type=text], #post_event input[disabled][type=email] {
-	color: transparent;
-}
-#post_event select, #event_options input[type="text"], #tz {
-	max-width: calc(100% - 75px);
-}
-#post_event select, #event_location {
-	width: calc(100% - 75px);
-}
-#post_event input[type=checkbox] + select {
-	max-width: calc(100% - 95px);
 }
 
 /* Styles for the recent messages section.
@@ -3212,14 +3128,6 @@ div#pollmoderation {
 }
 #edit_poll dl.poll_options dd {
 	width: 65%;
-}
-
-/* Linked events */
-.event_title {
-	font-size: larger;
-}
-.event_title + a {
-	margin-left: 1em;
 }
 
 /* On to the posts */

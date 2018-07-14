@@ -310,28 +310,6 @@ ul.post_options li {
 	margin: 0 2px ;
 }
 
-/* Styles for edit event section
----------------------------------------------------- */
-#post_event div.event_options {
-	float: left;
-}
-#post_event #event_main input {
-	margin: 0 0 1em 0;
-	float: right;
-}
-#post_event #event_main div.smalltext {
-	float: left;
-}
-#post_event ul.event_main li {
-	float: left;
-}
-#post_event ul.event_options {
-	padding: 0 .7em .7em 0;
-}
-#post_event #event_main select, #post_event ul.event_options li select, #post_event ul.event_options li input[type=checkbox] {
-	margin: 0 0 0 1em;
-}
-
 /* Styles for edit poll section.
 ---------------------------------------------------- */
 #edit_poll fieldset input {
