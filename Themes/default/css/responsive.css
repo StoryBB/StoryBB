@@ -241,7 +241,7 @@
 		padding: 0;
 		margin: 0;
 	}
-	#mlist_search .input_check{
+	#mlist_search input[type=checkbox] {
 		margin: 0 13px 3px 3px;
 		vertical-align: middle;
 	}
@@ -311,7 +311,7 @@
 	.msearch_details input {
 		width: 90%;
 	}
-	.msearch_details .input_check {
+	.msearch_details input[type=checkbox] {
 		width: 5%;
 	}
 	/* 3rd level menu tests */

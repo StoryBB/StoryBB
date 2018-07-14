@@ -74,7 +74,7 @@ select {
 select option {
 	padding: 0 4px;
 }
-select[size], input.input_check, input.input_radio {
+select[size], input[type=checkbox], input[type=radio] {
 	height: auto;
 }
 input:hover, textarea:hover, button:hover, select:hover {
@@ -124,7 +124,7 @@ h1, h2, h3, h4, h5, h6 {
 	color: #444;
 }
 /* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
-input.input_check, input.input_radio {
+input[type=checkbox], input[type=radio] {
 	border: none;
 	background: none;
 	vertical-align: top;
@@ -1555,7 +1555,7 @@ div.event_options {
 #post_event select, #event_location {
 	width: calc(100% - 75px);
 }
-#post_event .input_check + select {
+#post_event input[type=checkbox] + select {
 	max-width: calc(100% - 95px);
 }
 
