@@ -2358,7 +2358,7 @@ function ManageAttachmentPaths()
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return '<input type="hidden" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"><input type="text" size="40" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"' . (!empty($rowData['disable_base_dir']) ? ' disabled' : '') . ' class="input_text" style="width: 100%">';
+						return '<input type="hidden" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"><input type="text" size="40" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"' . (!empty($rowData['disable_base_dir']) ? ' disabled' : '') . ' style="width: 100%">';
 					},
 					'style' => 'width: 40%;',
 				),

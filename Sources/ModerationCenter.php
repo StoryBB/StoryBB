@@ -1552,7 +1552,7 @@ function ViewWarningLog()
 				'position' => 'below_table_data',
 				'value' => '
 					' . $txt['modlog_search'] . ':
-					<input type="text" name="search" size="18" value="' . $smcFunc['htmlspecialchars']($context['search']['string']) . '" class="input_text">
+					<input type="text" name="search" size="18" value="' . $smcFunc['htmlspecialchars']($context['search']['string']) . '">
 					<input type="submit" name="is_search" value="' . $txt['modlog_go'] . '" class="button_submit">',
 				'class' => 'floatright',
 			),
