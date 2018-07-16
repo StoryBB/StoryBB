@@ -4,9 +4,6 @@
 global $scripturl;
 
 $txt['modSettings_desc'] = 'This page allows you to change the settings of features and basic options in your forum. Please see the <a href="' . $scripturl . '?action=admin;area=theme;sa=list;th=%1$s;%3$s=%2$s">theme settings</a> for more options. Click the help icons for more information about a setting.';
-$txt['modification_settings_desc'] = 'This page contains settings added by any modifications to your forum';
-
-$txt['modification_no_misc_settings'] = 'There are no modifications installed that have added any settings to this area yet.';
 
 $txt['pollMode'] = 'Poll mode';
 $txt['disable_polls'] = 'Disable polls';
