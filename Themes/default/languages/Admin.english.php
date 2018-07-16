@@ -37,6 +37,7 @@ $txt['admin_version_check'] = 'Detailed version check';
 $txt['admin_storybbfile'] = 'StoryBB File';
 $txt['admin_storybbpackage'] = 'StoryBB Package';
 $txt['admin_logoff'] = 'End Admin Session';
+$txt['admin_moderation'] = 'Moderation';
 $txt['admin_maintenance'] = 'Maintenance';
 $txt['admin_image_text'] = 'Show buttons as images instead of text';
 $txt['admin_agreement'] = 'Show and require agreement letter when registering';
