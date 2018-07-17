@@ -59,17 +59,17 @@
 				<p><strong>{{{txt.reattribute_guest_posts}}}</strong></p>
 				<dl class="settings">
 					<dt>
-						<label for="type_email"><input type="radio" name="type" id="type_email" value="email" checked>{{{txt.reattribute_email}}}</label>
+						<label for="type_name"><input type="radio" name="type" id="type_name" value="name" checked>{{{txt.reattribute_username}}}</label>
+					</dt>
+					<dd>
+						<input type="text" name="from_name" id="from_name" value="" onclick="document.getElementById('type_name').checked = 'checked'; document.getElementById('from_email').value = '';">
+					</dd>
+					<dt>
+						<label for="type_email"><input type="radio" name="type" id="type_email" value="email">{{{txt.reattribute_email}}}</label>
 						<div class="smalltext">{{{txt.reattribute_email_note}}}</div>
 					</dt>
 					<dd>
 						<input type="text" name="from_email" id="from_email" value="" onclick="document.getElementById('type_email').checked = 'checked'; document.getElementById('from_name').value = '';">
-					</dd>
-					<dt>
-						<label for="type_name"><input type="radio" name="type" id="type_name" value="name">{{{txt.reattribute_username}}}</label>
-					</dt>
-					<dd>
-						<input type="text" name="from_name" id="from_name" value="" onclick="document.getElementById('type_name').checked = 'checked'; document.getElementById('from_email').value = '';">
 					</dd>
 				</dl>
 				<dl class="settings">
