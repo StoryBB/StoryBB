@@ -238,6 +238,8 @@ function ModifyRegistrationSettings($return_config = false)
 			)),
 		'',
 			array('int', 'minimum_age'),
+		'',
+			array('check', 'show_cookie_notice'),
 	);
 
 	call_integration_hook('integrate_modify_registration_settings', array(&$config_vars));

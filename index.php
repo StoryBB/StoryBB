@@ -149,7 +149,7 @@ obExit(null, null, true);
  */
 function sbb_main()
 {
-	global $modSettings, $settings, $user_info, $board, $topic;
+	global $modSettings, $settings, $user_info, $board, $topic, $context;
 	global $board_info, $maintenance, $sourcedir;
 
 	// Special case: session keep-alive, output a transparent pixel.
@@ -268,6 +268,16 @@ function sbb_main()
 			require_once($sourcedir . '/Display.php');
 			return 'Display';
 		}
+	}
+
+	// Setting the cookie cookie.
+	if ($_REQUEST['action'] == 'cookie')
+	{
+		if ($context['show_cookie_notice'] && $context['user']['is_guest'])
+		{
+			setcookie('cookies', '1', time() + (30 * 24 * 60 * 60));
+		}
+		redirectexit();
 	}
 
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
