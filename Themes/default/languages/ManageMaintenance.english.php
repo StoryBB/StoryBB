@@ -213,8 +213,9 @@ $txt['reattribute_guest_posts'] = 'Attribute posts made with';
 $txt['reattribute_email'] = 'Email address of';
 $txt['reattribute_email_note'] = 'Note: email addresses previously associated with posts may have been removed for privacy reasons.';
 $txt['reattribute_username'] = 'Username of';
-$txt['reattribute_current_member'] = 'Attribute posts to member';
-$txt['reattribute_increase_posts'] = 'Add posts to users post count';
+$txt['reattribute_current_member'] = 'Attribute posts to member (OOC account)';
+$txt['reattribute_current_character'] = 'Attribute posts to character';
+$txt['reattribute_increase_posts'] = 'Add posts to post count';
 $txt['reattribute'] = 'Reattribute';
 // Don't use entities in the below string.
 $txt['reattribute_confirm'] = 'Are you sure you want to attribute all guest posts with %type% of "%find%" to member "%member_to%"?';

@@ -74,10 +74,16 @@
 				</dl>
 				<dl class="settings">
 					<dt>
-						<label for="to"><strong>{{{txt.reattribute_current_member}}}:</strong></label>
+						<label for="to_member"><input type="radio" name="reattribute_type" id="to_member_radio" value="member" checked> {{{txt.reattribute_current_member}}}:</label>
 					</dt>
 					<dd>
-						<input type="text" name="to" id="to" value="">
+						<input type="text" name="to" id="to" value="" onclick="document.getElementById('to_member_radio').checked = 'checked'; document.getElementById('to_char').value = '';">
+					</dd>
+					<dt>
+						<label for="to_char"><input type="radio" name="reattribute_type" id="to_char_radio" value="character"> {{{txt.reattribute_current_character}}}:</label>
+					</dt>
+					<dd>
+						<input type="text" name="to_char" id="to_char" value="" onclick="document.getElementById('to_char_radio').checked = 'checked'; document.getElementById('to').value = '';">
 					</dd>
 				</dl>
 				<p class="maintain_members">
@@ -137,6 +143,16 @@
 			sSuggestId: 'attributeMember',
 			sControlId: 'to',
 			sSearchType: 'member',
+			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
+			bItemList: false
+		});
+		var oAttributeCharacterSuggest = new smc_AutoSuggest({
+			sSelf: 'oAttributeCharacterSuggest',
+			sSessionId: sbb_session_id,
+			sSessionVar: sbb_session_var,
+			sSuggestId: 'attributeCharacter',
+			sControlId: 'to_char',
+			sSearchType: 'character',
 			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
 			bItemList: false
 		});
