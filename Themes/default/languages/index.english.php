@@ -862,3 +862,8 @@ $txt['updated_agreement_desc'] = 'We have updated the site policies. In order to
 $txt['updated_agreement_contact_admin'] = 'Remember, if you have any questions before accepting the new policy, you can <a href="%1$s">contact the admin team</a>.';
 $txt['updated_agreement_changed'] = 'Changed in this version:';
 $txt['update_agreement_accept'] = 'I accept these policies';
+
+$txt['cookie_notice_1'] = 'This site uses cookies to help remember preferences, personalise content to you and to keep you logged in if you register.';
+$txt['cookie_notice_2'] = 'If you continue to use this site, you are consenting to our use of cookies.';
+$txt['cookie_notice_accept'] = 'I accept';
+$txt['cookie_notice_more_info'] = 'More information';
