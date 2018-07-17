@@ -73,6 +73,7 @@ $txt['setting_registration_standard'] = 'Immediate Registration';
 $txt['setting_registration_activate'] = 'Email Activation';
 $txt['setting_registration_approval'] = 'Admin Approval';
 $txt['setting_send_welcomeEmail'] = 'Send welcome email to new members';
+$txt['setting_show_cookie_notice'] = 'Show a cookie notice in the footer to guests';
 
 $txt['setting_registration_character'] = 'Whether users need to make characters on registration';
 $txt['setting_registration_character_disabled'] = 'No character creation on registration';

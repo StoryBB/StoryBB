@@ -398,6 +398,7 @@ $helptxt['send_validation_onChange'] = 'When this setting is checked all members
 $helptxt['approveAccountDeletion'] = 'When this setting is checked, any user request to delete his own account has to be approved by an administrator';
 
 $helptxt['send_welcomeEmail'] = 'When this setting is enabled all new members will be sent an email welcoming them to your community';
+$helptxt['show_cookie_notice'] = 'When this setting is enabled, StoryBB will check to see if the user has previously accepted to have cookies from this site - if not, puts up a message in the footer that will remain there until the guest accepts. This option is designed to make it easier to be compliant with EU cookie regulations and the GDPR.';
 $helptxt['password_strength'] = 'This setting determines the strength required for passwords selected by your forum users. The stronger the password, the harder it should be to compromise member\'s accounts.
 	Its possible settings are:
 	<ul class="normallist">
