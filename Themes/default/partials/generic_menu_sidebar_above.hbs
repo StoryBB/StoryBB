@@ -1,0 +1,34 @@
+	{{! The area above the content when we have a menu. }}
+	{{genericmenucontext}}
+	{{> generic_menu}}
+	<div class="generic_menu_container">
+		<div class="generic_menu_sidebar">
+			{{#each context.current_menu_context.sections}}
+				{{#if this.selected}}
+					{{#each this.areas}}
+						<div class="sidebar_area">
+							<div class="cat_bar">
+								<h3 class="catbg">{{{this.label}}}</h3>
+							</div>
+							<div class="windowbg noup">
+							{{#if this.subsections}}
+								<ul>
+								{{#each this.subsections}}
+									{{#unless this.disabled}}
+									<li><a href="{{#if this.url}}{{this.url}}{{else}}{{#if ../this.url}}{{../this.url}}{{else}}{{../../../context.current_menu_context.base_url}};area={{../@key}};sa={{@key}}{{/if}}{{/if}}"{{#if this.selected}} class="chosen"{{/if}}>{{{this.label}}}</a></li>
+									{{/unless}}
+								{{/each}}
+								</ul>
+							{{else}}
+								<ul>
+									<li><a href="{{#if this.url}}{{this.url}}{{else}}{{#if ../this.url}}{{../this.url}}{{else}}{{../../../context.current_menu_context.base_url}};area={{../@key}};sa={{@key}}{{/if}}{{/if}}"{{#if this.selected}} class="chosen"{{/if}}>{{{this.label}}}</a></li>
+								</ul>
+							{{/if}}
+							</div>
+						</div>
+					{{/each}}
+				{{/if}}
+			{{/each}}
+		</div>
+		<div id="admin_content">
+			{{> generic_menu_tabs }}
