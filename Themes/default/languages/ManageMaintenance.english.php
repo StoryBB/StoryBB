@@ -211,6 +211,7 @@ $txt['move_zero_all'] = 'Enter 0 to move all topics';
 $txt['maintain_reattribute_posts'] = 'Reattribute User Posts';
 $txt['reattribute_guest_posts'] = 'Attribute posts made with';
 $txt['reattribute_email'] = 'Email address of';
+$txt['reattribute_email_note'] = 'Note: email addresses previously associated with posts may have been removed for privacy reasons.';
 $txt['reattribute_username'] = 'Username of';
 $txt['reattribute_current_member'] = 'Attribute posts to member';
 $txt['reattribute_increase_posts'] = 'Add posts to users post count';
