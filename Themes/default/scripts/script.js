@@ -1547,8 +1547,8 @@ $(function()
 	$('#cookie_footer a[data-value]').on('click', function(e) {
 		e.preventDefault();
 		date = new Date();
-        date.setTime(date.getTime()+(30*24*60*60*1000));
-        document.cookie = 'cookies=1; expires="' + date.toGMTString();
-        $('#cookie_footer').slideUp('fast');
+		date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+		document.cookie = 'cookies=1; expires="' + date.toGMTString();
+		$('#cookie_footer').slideUp('fast');
 	});
 });

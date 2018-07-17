@@ -275,7 +275,7 @@ function sbb_main()
 	{
 		if ($context['show_cookie_notice'] && $context['user']['is_guest'])
 		{
-			setcookie('cookies', '1', time() + (30*24*60*60));
+			setcookie('cookies', '1', time() + (30 * 24 * 60 * 60));
 		}
 		redirectexit();
 	}
