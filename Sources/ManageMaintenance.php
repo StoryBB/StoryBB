@@ -1252,7 +1252,7 @@ function MaintainReattributePosts()
 
 	// Now call the reattribute function.
 	require_once($sourcedir . '/Subs-Members.php');
-	reattributePosts($memID, $email, $membername, !empty($_POST['posts']));
+	reattributePosts($memID, false, $email, $membername, !empty($_POST['posts']));
 
 	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_reattribute_posts']));
 }
