@@ -1352,7 +1352,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 	}
 
 	// Allow mods with their own post tables to reattribute posts as well :)
-	call_integration_hook('integrate_reattribute_posts', array($memID, $email, $membername, $post_count, &$updated));
+	call_integration_hook('integrate_reattribute_posts', array($memID, $characterID, $email, $membername, $post_count, &$updated));
 
 	return $updated;
 }

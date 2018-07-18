@@ -1237,22 +1237,56 @@ function MaintainReattributePosts()
 
 	checkSession();
 
-	// Find the member.
-	require_once($sourcedir . '/Subs-Auth.php');
-	$members = findMembers($_POST['to']);
+	// Are we doing the member or a character?
+	if (!isset($_POST['reattribute_type']) || $_POST['reattribute_type'] == 'member')
+	{
+		// Find the member.
+		require_once($sourcedir . '/Subs-Auth.php');
+		$members = findMembers($_POST['to']);
 
-	if (empty($members))
-		fatal_lang_error('reattribute_cannot_find_member');
+		if (empty($members))
+			fatal_lang_error('reattribute_cannot_find_member');
 
-	$memID = array_shift($members);
-	$memID = $memID['id'];
+		$memID = array_shift($members);
+		$memID = $memID['id'];
+
+		// The OOC character ID can be looked up inside reattributePosts.
+		$characterID = false;
+	}
+	else
+	{
+		// So we're matching character. This is going to get interesting because the format we get is "Character (Member Name)".
+		// This would be fine if we could guarantee no brackets in either.
+		$character_name = isset($_POST['to_char']) ? $smcFunc['htmlspecialchars']($_POST['to_char'], ENT_QUOTES) : '';
+		if (empty($character_name))
+			fatal_lang_error('reattribute_cannot_find_member');
+
+		// This is so not a nice query but I don't have any better ideas.
+		$request = $smcFunc['db_query']('', '
+			SELECT mem.id_member, chars.id_character, chars.character_name, mem.real_name
+			FROM {db_prefix}characters AS chars
+				INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
+				GROUP BY mem.id_member, chars.character_name, mem.real_name
+				HAVING CONCAT(chars.character_name, {string:opening}, mem.real_name, {string:closing}) = {string:character_name}',
+			[
+				'opening' => ' (',
+				'closing' => ')',
+				'character_name' => $character_name,
+			]
+		);
+		if ($smcFunc['db_num_rows']($request) == 0)
+			fatal_lang_error('reattribute_cannot_find_member');
+
+		list ($memID, $characterID) = $smcFunc['db_fetch_row']($request);
+		$smcFunc['db_free_result']($request);
+	}
 
 	$email = $_POST['type'] == 'email' ? $_POST['from_email'] : '';
 	$membername = $_POST['type'] == 'name' ? $_POST['from_name'] : '';
 
 	// Now call the reattribute function.
 	require_once($sourcedir . '/Subs-Members.php');
-	reattributePosts($memID, false, $email, $membername, !empty($_POST['posts']));
+	reattributePosts($memID, $characterID, $email, $membername, !empty($_POST['posts']));
 
 	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_reattribute_posts']));
 }
