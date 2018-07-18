@@ -22,13 +22,23 @@
 
 		function checkAttributeValidity()
 		{
-			origText = {{{json txt.reattribute_confirm}}};
 			valid = true;
 
 			// Do all the fields!
-			if (!document.getElementById('to').value)
-				valid = false;
-			warningMessage = origText.replace(/%member_to%/, document.getElementById('to').value);
+			if (document.getElementById('to_member_radio').checked)
+			{
+				origText = {{{json txt.reattribute_confirm}}};
+				if (!document.getElementById('to').value)
+					valid = false;
+				warningMessage = origText.replace(/%member_to%/, document.getElementById('to').value);
+			}
+			else
+			{
+				origText = {{{json txt.reattribute_confirm_character}}};
+				if (!document.getElementById('to_char').value)
+					valid = false;
+				warningMessage = origText.replace(/%character_to%/, document.getElementById('to_char').value);
+			}
 
 			if (document.getElementById('type_email').checked)
 			{

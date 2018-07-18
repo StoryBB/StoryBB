@@ -1233,7 +1233,7 @@ function VersionDetail()
  */
 function MaintainReattributePosts()
 {
-	global $sourcedir, $context, $txt;
+	global $sourcedir, $context, $txt, $smcFunc;
 
 	checkSession();
 
@@ -1266,7 +1266,7 @@ function MaintainReattributePosts()
 			SELECT mem.id_member, chars.id_character, chars.character_name, mem.real_name
 			FROM {db_prefix}characters AS chars
 				INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
-				GROUP BY mem.id_member, chars.character_name, mem.real_name
+				GROUP BY mem.id_member, chars.id_character, chars.character_name, mem.real_name
 				HAVING CONCAT(chars.character_name, {string:opening}, mem.real_name, {string:closing}) = {string:character_name}',
 			[
 				'opening' => ' (',
