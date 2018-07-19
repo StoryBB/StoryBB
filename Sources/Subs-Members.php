@@ -1299,7 +1299,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 		$smcFunc['db_free_result']($request);
 
 		updateMemberData($memID, array('posts' => 'posts + ' . $messageCount));
-		updateCharacterData($characterID, array('posts' => 'posts - ' . $messageCount));
+		updateCharacterData($characterID, array('posts' => 'posts + ' . $messageCount));
 	}
 
 	$query_parts = array();
