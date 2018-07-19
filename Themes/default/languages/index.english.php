@@ -377,7 +377,6 @@ $txt['try_again'] = 'Please try again. If you come back to this error screen, re
 $txt['file'] = 'File';
 $txt['line'] = 'Line';
 
-$txt['database_error_versions'] = '<strong>Note:</strong> It appears that your database <em>may</em> require an upgrade. Your forum\'s files are currently at version %1$s, while your database is at version %2$s. The above error might possibly go away if you execute the latest version of upgrade.php.';
 $txt['template_parse_error'] = 'Template Parse Error!';
 $txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
 $txt['template_parse_error_details'] = 'There was a problem loading the <pre><strong>%1$s</strong></pre> template or language file. Please check the syntax and try again - remember, single quotes (<pre>\'</pre>) often have to be escaped with a slash (<pre>\\</pre>). To see more specific error information from PHP, try <a href="' . $boardurl . '%1$s">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="' . $scripturl . '?theme=1">use the default theme</a>.';
@@ -463,8 +462,6 @@ $txt['not_removed'] = 'You have not removed the following files';
 $txt['generic_warning'] = 'Warning';
 
 $txt['cache_writable'] = 'The cache directory is not writable - this will adversely affect the performance of your forum.';
-
-$txt['page_created_full'] = 'Page created in %1$.3f seconds with %2$d queries.';
 
 $txt['report_to_mod_func'] = 'Use this function to inform the moderators and administrators of an abusive or problematic message.';
 $txt['report_profile_func'] = 'Use this function to inform the administrators of abusive profile content, such as spam or inappropriate images.';
@@ -763,12 +760,6 @@ $txt['filesize'] = 'Filesize';
 $txt['restore_topic'] = 'Restore Topic';
 $txt['restore_message'] = 'Restore';
 $txt['quick_mod_restore'] = 'Restore Selected';
-
-// Editor prompt.
-$txt['prompt_text_email'] = 'Please enter the email address.';
-$txt['prompt_text_ftp'] = 'Please enter the FTP address.';
-$txt['prompt_text_url'] = 'Please enter the URL you wish to link to.';
-$txt['prompt_text_img'] = 'Enter image location';
 
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['autosuggest_delete_item'] = 'Delete Item';
