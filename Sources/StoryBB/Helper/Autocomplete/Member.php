@@ -82,4 +82,27 @@ class Member extends AbstractCompletable implements Completable
 
 		return $result;
 	}
+
+	public function get_js(string $target, int $maximum = 1): string
+	{
+		global $scripturl, $txt;
+
+		return '
+$("' . $target . '").select2({
+  placeholder: "' . $txt['autocomplete_search_member'] . '",
+  allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',
+  ajax: {
+    url: "' . $scripturl . '",
+    data: function (params) {
+      var query = {
+      	action: "autocomplete",
+        term: params.term,
+        type: "member"
+      }
+      query[sbb_session_var] = sbb_session_id;
+      return query;
+    }
+  }
+});';
+	}
 }

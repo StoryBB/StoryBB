@@ -848,3 +848,5 @@ $txt['cookie_notice_1'] = 'This site uses cookies to help remember preferences, 
 $txt['cookie_notice_2'] = 'If you continue to use this site, you are consenting to our use of cookies.';
 $txt['cookie_notice_accept'] = 'I accept';
 $txt['cookie_notice_more_info'] = 'More information';
+
+$txt['autocomplete_search_member'] = 'Search for a member';

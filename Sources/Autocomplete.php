@@ -18,11 +18,7 @@ function Autocomplete()
 	global $context;
 
 	// These are all registered types.
-	$searchTypes = array(
-		'member' => 'StoryBB\Helper\Autocomplete\Member',
-	);
-
-	call_integration_hook('integrate_autocomplete', array(&$searchTypes));
+	$searchTypes = StoryBB\Helper\Autocomplete::get_registered_types();
 
 	// Do the minimum setup stuff.
 	checkSession('get');
@@ -30,9 +26,9 @@ function Autocomplete()
 	StoryBB\Template::remove_all_layers();
 
 	$response = [];
-	if (isset($_REQUEST['complete'], $searchTypes[$_REQUEST['complete']], $_REQUEST['term']))
+	if (isset($_REQUEST['type'], $searchTypes[$_REQUEST['type']], $_REQUEST['term']))
 	{
-		$autocomplete = new $searchTypes[$_REQUEST['complete']];
+		$autocomplete = new $searchTypes[$_REQUEST['type']];
 		$autocomplete->set_search_term($_REQUEST['term']);
 
 		if ($autocomplete->can_paginate())
