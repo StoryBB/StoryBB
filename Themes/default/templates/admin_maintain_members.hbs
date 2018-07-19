@@ -22,13 +22,23 @@
 
 		function checkAttributeValidity()
 		{
-			origText = {{{json txt.reattribute_confirm}}};
 			valid = true;
 
 			// Do all the fields!
-			if (!document.getElementById('to').value)
-				valid = false;
-			warningMessage = origText.replace(/%member_to%/, document.getElementById('to').value);
+			if (document.getElementById('to_member_radio').checked)
+			{
+				origText = {{{json txt.reattribute_confirm}}};
+				if (!document.getElementById('to').value)
+					valid = false;
+				warningMessage = origText.replace(/%member_to%/, document.getElementById('to').value);
+			}
+			else
+			{
+				origText = {{{json txt.reattribute_confirm_character}}};
+				if (!document.getElementById('to_char').value)
+					valid = false;
+				warningMessage = origText.replace(/%character_to%/, document.getElementById('to_char').value);
+			}
 
 			if (document.getElementById('type_email').checked)
 			{
@@ -59,24 +69,31 @@
 				<p><strong>{{{txt.reattribute_guest_posts}}}</strong></p>
 				<dl class="settings">
 					<dt>
-						<label for="type_email"><input type="radio" name="type" id="type_email" value="email" checked>{{{txt.reattribute_email}}}</label>
-					</dt>
-					<dd>
-						<input type="text" name="from_email" id="from_email" value="" onclick="document.getElementById('type_email').checked = 'checked'; document.getElementById('from_name').value = '';">
-					</dd>
-					<dt>
-						<label for="type_name"><input type="radio" name="type" id="type_name" value="name">{{{txt.reattribute_username}}}</label>
+						<label for="type_name"><input type="radio" name="type" id="type_name" value="name" checked>{{{txt.reattribute_username}}}</label>
 					</dt>
 					<dd>
 						<input type="text" name="from_name" id="from_name" value="" onclick="document.getElementById('type_name').checked = 'checked'; document.getElementById('from_email').value = '';">
 					</dd>
+					<dt>
+						<label for="type_email"><input type="radio" name="type" id="type_email" value="email">{{{txt.reattribute_email}}}</label>
+						<div class="smalltext">{{{txt.reattribute_email_note}}}</div>
+					</dt>
+					<dd>
+						<input type="text" name="from_email" id="from_email" value="" onclick="document.getElementById('type_email').checked = 'checked'; document.getElementById('from_name').value = '';">
+					</dd>
 				</dl>
 				<dl class="settings">
 					<dt>
-						<label for="to"><strong>{{{txt.reattribute_current_member}}}:</strong></label>
+						<label for="to_member"><input type="radio" name="reattribute_type" id="to_member_radio" value="member" checked> {{{txt.reattribute_current_member}}}:</label>
 					</dt>
 					<dd>
-						<input type="text" name="to" id="to" value="">
+						<input type="text" name="to" id="to" value="" onclick="document.getElementById('to_member_radio').checked = 'checked'; document.getElementById('to_char').value = '';">
+					</dd>
+					<dt>
+						<label for="to_char"><input type="radio" name="reattribute_type" id="to_char_radio" value="character"> {{{txt.reattribute_current_character}}}:</label>
+					</dt>
+					<dd>
+						<input type="text" name="to_char" id="to_char" value="" onclick="document.getElementById('to_char_radio').checked = 'checked'; document.getElementById('to').value = '';">
 					</dd>
 				</dl>
 				<p class="maintain_members">
@@ -136,6 +153,16 @@
 			sSuggestId: 'attributeMember',
 			sControlId: 'to',
 			sSearchType: 'member',
+			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
+			bItemList: false
+		});
+		var oAttributeCharacterSuggest = new smc_AutoSuggest({
+			sSelf: 'oAttributeCharacterSuggest',
+			sSessionId: sbb_session_id,
+			sSessionVar: sbb_session_var,
+			sSuggestId: 'attributeCharacter',
+			sControlId: 'to_char',
+			sSearchType: 'character',
 			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
 			bItemList: false
 		});

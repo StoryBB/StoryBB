@@ -149,6 +149,8 @@ function deleteMembers($users, $check_not_admin = false)
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}messages
 			SET id_character = 0,
+				id_member = 0,
+				id_creator = 0,
 				poster_name = {string:character_name}
 			WHERE id_character = {int:id_character}',
 			[
@@ -1224,12 +1226,13 @@ function membersAllowedTo($permission, $board_id = null)
  * If add_to_post_count is set, the member's post count is increased.
  *
  * @param int $memID The ID of the original poster
+ * @param bool|int $characterID The ID of the character to attribute to, uses OOC if not set
  * @param bool|string $email If set, should be the email of the poster
  * @param bool|string $membername If set, the membername of the poster
  * @param bool $post_count Whether to adjust post counts
  * @return array An array containing the number of messages, topics and reports updated
  */
-function reattributePosts($memID, $email = false, $membername = false, $post_count = false)
+function reattributePosts($memID, $characterID = false, $email = false, $membername = false, $post_count = false)
 {
 	global $smcFunc, $modSettings;
 
@@ -1253,6 +1256,21 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 		);
 		list ($email, $membername) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
+	}
+
+	if ($characterID === false)
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT id_character
+			FROM {db_prefix}characters
+			WHERE id_member = {int:memID}
+				AND is_main = 1
+			LIMIT 1',
+			[
+				'memID' => $memID,
+			]
+		);
+		list ($characterID) = $smcFunc['db_fetch_row']($request);
 	}
 
 	// If they want the post count restored then we need to do some research.
@@ -1281,6 +1299,7 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 		$smcFunc['db_free_result']($request);
 
 		updateMemberData($memID, array('posts' => 'posts + ' . $messageCount));
+		updateCharacterData($characterID, array('posts' => 'posts + ' . $messageCount));
 	}
 
 	$query_parts = array();
@@ -1293,10 +1312,13 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 	// Finally, update the posts themselves!
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}messages
-		SET id_member = {int:memID}
+		SET id_member = {int:memID},
+			id_character = {int:characterID},
+			id_creator = {int:memID}
 		WHERE ' . $query,
 		array(
 			'memID' => $memID,
+			'characterID' => $characterID,
 			'email_address' => $email,
 			'member_name' => $membername,
 		)
@@ -1332,7 +1354,7 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 	}
 
 	// Allow mods with their own post tables to reattribute posts as well :)
-	call_integration_hook('integrate_reattribute_posts', array($memID, $email, $membername, $post_count, &$updated));
+	call_integration_hook('integrate_reattribute_posts', array($memID, $characterID, $email, $membername, $post_count, &$updated));
 
 	return $updated;
 }
