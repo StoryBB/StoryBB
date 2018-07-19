@@ -149,6 +149,8 @@ function deleteMembers($users, $check_not_admin = false)
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}messages
 			SET id_character = 0,
+				id_member = 0,
+				id_creator = 0,
 				poster_name = {string:character_name}
 			WHERE id_character = {int:id_character}',
 			[
