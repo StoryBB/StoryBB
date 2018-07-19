@@ -32,7 +32,6 @@ $txt['poll_error'] = 'Either that poll doesn\'t exist, the poll has been locked,
 $txt['members_only'] = 'This option is only available to registered members.';
 $txt['locked_by_admin'] = 'This was locked by an administrator. You cannot unlock it.';
 $txt['feature_disabled'] = 'Sorry, this feature is disabled.';
-$txt['feature_no_exists'] = 'Sorry, this feature doesn\'t exist.';
 $txt['couldnt_connect'] = 'Could not connect to server or could not find file';
 $txt['no_board'] = 'The board you specified doesn\'t exist';
 $txt['no_message'] = 'The message is no longer available';
@@ -244,8 +243,6 @@ $txt['smiley_has_no_filename'] = 'No filename for this smiley was given.';
 $txt['smiley_not_unique'] = 'A smiley with that code already exists.';
 
 $txt['smileys_upload_error'] = 'Failed to upload file.';
-$txt['smileys_upload_error_blank'] = 'All smiley sets must have an image.';
-$txt['smileys_upload_error_name'] = 'All smileys must have the same filename.';
 $txt['smileys_upload_error_illegal'] = 'Illegal Type.';
 
 $txt['search_invalid_weights'] = 'Search weights are not properly configured. At least one weight should be configure to be non-zero. Please report this error to an administrator.';
