@@ -28,6 +28,7 @@ class Character extends AbstractCompletable implements Completable
 			FROM {db_prefix}characters AS chars
 			INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
 			WHERE {raw:character_name} LIKE {string:search}
+				AND is_main = 0
 				AND is_activated IN (1, 11)',
 			[
 				'character_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
@@ -65,6 +66,7 @@ class Character extends AbstractCompletable implements Completable
 				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member)
 				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character AND a.attachment_type = 1)
 			WHERE {raw:character_name} LIKE {string:search}
+				AND is_main = 0
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
