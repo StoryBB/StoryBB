@@ -48,7 +48,8 @@ class Autocomplete
 	public static function get_registered_types(): array
 	{
 		$searchTypes = array(
-			'member' => 'StoryBB\Helper\Autocomplete\Member',
+			'member' => 'StoryBB\\Helper\\Autocomplete\\Member',
+			'character' => 'StoryBB\\Helper\\Autocomplete\\Character',
 		);
 
 		call_integration_hook('integrate_autocomplete', array(&$searchTypes));

@@ -4175,7 +4175,22 @@ div#char_theme_wrapper,
 	vertical-align: middle;
 	margin-right: 5px;
 }
+.autocomplete-avatar-lg {
+	width: 50px;
+	height: 50px;
+	background-position: 50%;
+	background-size: contain;
+	float: left;
+}
 .autocomplete-member {
 	display:inline-block;
 	vertical-align: middle;
+}
+.autocomplete-container {
+	margin-left: 55px;
+	height: 50px;
+}
+.autocomplete-character-account {
+	padding-top: 3px;
+	font-size: 0.9em;
 }

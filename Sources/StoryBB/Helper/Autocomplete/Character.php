@@ -12,7 +12,7 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
-class Member extends AbstractCompletable implements Completable
+class Character extends AbstractCompletable implements Completable
 {
 	public function can_paginate(): bool
 	{
@@ -24,12 +24,13 @@ class Member extends AbstractCompletable implements Completable
 		global $smcFunc;
 
 		$request = $smcFunc['db_query']('', '
-			SELECT COUNT(id_member)
-			FROM {db_prefix}members
-			WHERE {raw:real_name} LIKE {string:search}
+			SELECT COUNT(id_character)
+			FROM {db_prefix}characters AS chars
+			INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
+			WHERE {raw:character_name} LIKE {string:search}
 				AND is_activated IN (1, 11)',
 			[
-				'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
+				'character_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 			]
 		);
@@ -59,15 +60,15 @@ class Member extends AbstractCompletable implements Completable
 		$result = [];
 
 		$request = $smcFunc['db_query']('', '
-			SELECT mem.id_member, real_name, email_address, a.filename, mainchar.avatar
+			SELECT chars.id_character, chars.character_name, mem.real_name, mem.email_address, a.filename, chars.avatar
 			FROM {db_prefix}members AS mem
-				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
-				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
-			WHERE {raw:real_name} LIKE {string:search}
+				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member)
+				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character AND a.attachment_type = 1)
+			WHERE {raw:character_name} LIKE {string:search}
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
-				'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
+				'character_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 				'start' => $start,
 				'limit' => $limit,
@@ -76,8 +77,10 @@ class Member extends AbstractCompletable implements Completable
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$this_result = [
-				'id' => $row['id_member'],
-				'text' => $row['real_name'],
+				'id' => $row['id_character'],
+				'text' => $row['character_name'],
+				'char_name' => $row['character_name'],
+				'account_name' => $row['real_name'],
 			];
 
 			if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($row['avatar'], 'gravatar://')))
@@ -116,7 +119,7 @@ class Member extends AbstractCompletable implements Completable
 $("' . $target . '").select2({
 	dropdownAutoWidth: true,
 	width: "auto",
-	placeholder: ' . json_encode($txt['autocomplete_search_member']) . ',
+	placeholder: ' . json_encode($txt['autocomplete_search_character']) . ',
 	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',
 	ajax: {
 		url: "' . $scripturl . '",
@@ -124,19 +127,21 @@ $("' . $target . '").select2({
 			var query = {
 				action: "autocomplete",
 				term: params.term,
-				type: "member"
+				type: "character"
 			}
 			query[sbb_session_var] = sbb_session_id;
 			return query;
 		}
 	},
 	delay: 150,
-	templateResult: function(member) {
-		if (!member.avatar)
-			return member.text;
+	templateResult: function(character) {
+		if (!character.avatar)
+			return character.text;
 
-		var $mem = $("<div class=\"autocomplete\"><div style=\"background-image:url(" + member.avatar + ")\" class=\"autocomplete-avatar\"></div><span class=\"autocomplete-member\">" + member.text + "</span></div>");
-		return $mem;
+		var str = ' . json_encode($txt['autocomplete_search_character_account']) . ';
+
+		var $char = $("<div class=\"autocomplete\"><div style=\"background-image:url(" + character.avatar + ")\" class=\"autocomplete-avatar-lg\"></div><div class=\"autocomplete-container\"><div class=\"autocomplete-character\">" + character.text + "</div><div class=\"autocomplete-character-account\">" + str.replace("%s", character.account_name) + "</div></div></div>");
+		return $char;
 	}
 });';
 	}

@@ -850,3 +850,5 @@ $txt['cookie_notice_accept'] = 'I accept';
 $txt['cookie_notice_more_info'] = 'More information';
 
 $txt['autocomplete_search_member'] = 'Search for a member';
+$txt['autocomplete_search_character'] = 'Search for a character';
+$txt['autocomplete_search_character_account'] = '(Account: %s)';
