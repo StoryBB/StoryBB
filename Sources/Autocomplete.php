@@ -25,7 +25,7 @@ function Autocomplete()
 	StoryBB\Template::set_layout('raw');
 	StoryBB\Template::remove_all_layers();
 
-	$response = [];
+	$response = ['results' => []];
 	if (isset($_REQUEST['type'], $searchTypes[$_REQUEST['type']], $_REQUEST['term']))
 	{
 		$autocomplete = new $searchTypes[$_REQUEST['type']];
