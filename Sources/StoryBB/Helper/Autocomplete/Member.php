@@ -41,7 +41,7 @@ class Member extends AbstractCompletable implements Completable
 
 	public function get_results(int $start = null, int $limit = null): array
 	{
-		global $smcFunc;
+		global $smcFunc, $modSettings, $settings;
 
 		if (empty($this->term))
 			return [];
@@ -59,8 +59,10 @@ class Member extends AbstractCompletable implements Completable
 		$result = [];
 
 		$request = $smcFunc['db_query']('', '
-			SELECT id_member, real_name
-			FROM {db_prefix}members
+			SELECT mem.id_member, real_name, email_address, a.filename, mainchar.avatar
+			FROM {db_prefix}members AS mem
+				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
+				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
 			WHERE {raw:real_name} LIKE {string:search}
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
@@ -73,10 +75,33 @@ class Member extends AbstractCompletable implements Completable
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$result[] = [
+			$this_result = [
 				'id' => $row['id_member'],
 				'text' => $row['real_name'],
 			];
+
+			if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($row['avatar'], 'gravatar://')))
+			{
+				if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($row['avatar'], 'gravatar://') && strlen($row['avatar']) > 11)
+					$this_result['avatar'] = get_gravatar_url($smcFunc['substr']($row['avatar'], 11));
+				else
+					$this_result['avatar'] = get_gravatar_url($row['email_address']);
+			}
+			else
+			{
+				// So it's stored in the member table?
+				if (!empty($row['avatar']))
+				{
+					$this_result['avatar'] = (stristr($row['avatar'], 'http://') || stristr($row['avatar'], 'https://')) ? $row['avatar'] : '';
+				}
+				elseif (!empty($row['filename']))
+					$this_result['avatar'] = $modSettings['custom_avatar_url'] . '/' . $row['filename'];
+				// Right... no avatar...use the default one
+				else
+					$this_result['avatar'] = $settings['images_url'] . '/default.png';
+			}
+
+			$result[] = $this_result;
 		}
 		$smcFunc['db_free_result']($request);
 
@@ -104,6 +129,14 @@ $("' . $target . '").select2({
 			query[sbb_session_var] = sbb_session_id;
 			return query;
 		}
+	},
+	delay: 150,
+	templateResult: function(member) {
+		if (!member.avatar)
+			return member.text;
+
+		var $mem = $("<div class=\"autocomplete\"><div style=\"background-image:url(" + member.avatar + ")\" class=\"autocomplete-avatar\"></div><span class=\"autocomplete-member\">" + member.text + "</span></div>");
+		return $mem;
 	}
 });';
 	}

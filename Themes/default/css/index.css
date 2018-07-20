@@ -4161,3 +4161,21 @@ div#char_theme_wrapper,
 #cookie_footer .cookie_buttons a {
 	margin: 10px;
 }
+
+/* Autocomplete */
+.select2-container {
+	min-width: 200px;
+}
+.autocomplete-avatar {
+	width: 25px;
+	height: 25px;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.autocomplete-member {
+	display:inline-block;
+	vertical-align: middle;
+}
