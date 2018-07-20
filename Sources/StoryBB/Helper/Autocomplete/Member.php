@@ -89,20 +89,22 @@ class Member extends AbstractCompletable implements Completable
 
 		return '
 $("' . $target . '").select2({
-  placeholder: "' . $txt['autocomplete_search_member'] . '",
-  allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',
-  ajax: {
-    url: "' . $scripturl . '",
-    data: function (params) {
-      var query = {
-      	action: "autocomplete",
-        term: params.term,
-        type: "member"
-      }
-      query[sbb_session_var] = sbb_session_id;
-      return query;
-    }
-  }
+	dropdownAutoWidth: true,
+	width: "auto",
+	placeholder: "' . $txt['autocomplete_search_member'] . '",
+	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',
+	ajax: {
+		url: "' . $scripturl . '",
+		data: function (params) {
+			var query = {
+				action: "autocomplete",
+				term: params.term,
+				type: "member"
+			}
+			query[sbb_session_var] = sbb_session_id;
+			return query;
+		}
+	}
 });';
 	}
 }

@@ -614,7 +614,7 @@ dl.settings dt.windowbg {
 dl.settings dd {
 	width: 42%;
 	float: right;
-	overflow: auto;
+	overflow: visible;
 	margin: 0 0 3px 0;
 }
 dl.settings dd.fullwidth {
