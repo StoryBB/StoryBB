@@ -30,14 +30,16 @@
 				origText = {{{json txt.reattribute_confirm}}};
 				if (!document.getElementById('to').value)
 					valid = false;
-				warningMessage = origText.replace(/%member_to%/, document.getElementById('to').value);
+				var sel = document.getElementById('to');
+				warningMessage = origText.replace(/%member_to%/, sel.options[sel.selectedIndex].text);
 			}
 			else
 			{
 				origText = {{{json txt.reattribute_confirm_character}}};
 				if (!document.getElementById('to_char').value)
 					valid = false;
-				warningMessage = origText.replace(/%character_to%/, document.getElementById('to_char').value);
+				var sel = document.getElementById('to_char');
+				warningMessage = origText.replace(/%character_to%/, sel.options[sel.selectedIndex].text);
 			}
 
 			if (document.getElementById('type_email').checked)
@@ -84,16 +86,16 @@
 				</dl>
 				<dl class="settings">
 					<dt>
-						<label for="to_member"><input type="radio" name="reattribute_type" id="to_member_radio" value="member" checked> {{{txt.reattribute_current_member}}}:</label>
+						<label for="to_member_radio"><input type="radio" name="reattribute_type" id="to_member_radio" value="member" checked> {{{txt.reattribute_current_member}}}:</label>
 					</dt>
 					<dd>
-						<input type="text" name="to" id="to" value="" onclick="document.getElementById('to_member_radio').checked = 'checked'; document.getElementById('to_char').value = '';">
+						<select name="to" id="to"><option></option></select>
 					</dd>
 					<dt>
-						<label for="to_char"><input type="radio" name="reattribute_type" id="to_char_radio" value="character"> {{{txt.reattribute_current_character}}}:</label>
+						<label for="to_char_radio"><input type="radio" name="reattribute_type" id="to_char_radio" value="character"> {{{txt.reattribute_current_character}}}:</label>
 					</dt>
 					<dd>
-						<input type="text" name="to_char" id="to_char" value="" onclick="document.getElementById('to_char_radio').checked = 'checked'; document.getElementById('to').value = '';">
+						<select name="to_char" id="to_char" disabled><option></option></select>
 					</dd>
 				</dl>
 				<p class="maintain_members">
@@ -146,24 +148,8 @@
 	</div>
 
 	<script>
-		var oAttributeMemberSuggest = new smc_AutoSuggest({
-			sSelf: 'oAttributeMemberSuggest',
-			sSessionId: sbb_session_id,
-			sSessionVar: sbb_session_var,
-			sSuggestId: 'attributeMember',
-			sControlId: 'to',
-			sSearchType: 'member',
-			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-			bItemList: false
-		});
-		var oAttributeCharacterSuggest = new smc_AutoSuggest({
-			sSelf: 'oAttributeCharacterSuggest',
-			sSessionId: sbb_session_id,
-			sSessionVar: sbb_session_var,
-			sSuggestId: 'attributeCharacter',
-			sControlId: 'to_char',
-			sSearchType: 'character',
-			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-			bItemList: false
+		$('input[name=reattribute_type]').on('change', function() {
+			$('#to').prop('disabled', $(this).val() == 'character');
+			$('#to_char').prop('disabled', $(this).val() == 'member');
 		});
 	</script>

@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
+
 /**
  * Main dispatcher, the maintenance access point.
  * This, as usual, checks permissions, loads language files, and forwards to the actual workers.
@@ -172,7 +174,8 @@ function MaintainMembers()
 	}
 	$smcFunc['db_free_result']($result);
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
+	Autocomplete::init('member', '#to');
+	Autocomplete::init('character', '#to_char');
 }
 
 /**
@@ -1240,38 +1243,35 @@ function MaintainReattributePosts()
 	// Are we doing the member or a character?
 	if (!isset($_POST['reattribute_type']) || $_POST['reattribute_type'] == 'member')
 	{
-		// Find the member.
-		require_once($sourcedir . '/Subs-Auth.php');
-		$members = findMembers($_POST['to']);
-
-		if (empty($members))
+		$memID = isset($_POST['to']) ? (int) $_POST['to'] : 0;
+		$request = $smcFunc['db_query']('', '
+			SELECT id_member
+			FROM {db_prefix}members
+			WHERE id_member = {int:memID}',
+			[
+				'memID' => $memID,
+			]
+		);
+		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('reattribute_cannot_find_member');
 
-		$memID = array_shift($members);
-		$memID = $memID['id'];
+		$smcFunc['db_free_result']($request);
 
 		// The OOC character ID can be looked up inside reattributePosts.
 		$characterID = false;
 	}
 	else
 	{
-		// So we're matching character. This is going to get interesting because the format we get is "Character (Member Name)".
-		// This would be fine if we could guarantee no brackets in either.
-		$character_name = isset($_POST['to_char']) ? $smcFunc['htmlspecialchars']($_POST['to_char'], ENT_QUOTES) : '';
-		if (empty($character_name))
-			fatal_lang_error('reattribute_cannot_find_member');
+		// We're given a character ID - we need to find the member ID as well.
+		$characterID = isset($_POST['to_char']) ? (int) $_POST['to_char'] : 0;
 
-		// This is so not a nice query but I don't have any better ideas.
 		$request = $smcFunc['db_query']('', '
-			SELECT mem.id_member, chars.id_character, chars.character_name, mem.real_name
+			SELECT mem.id_member, chars.id_character
 			FROM {db_prefix}characters AS chars
 				INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
-				GROUP BY mem.id_member, chars.id_character, chars.character_name, mem.real_name
-				HAVING CONCAT(chars.character_name, {string:opening}, mem.real_name, {string:closing}) = {string:character_name}',
+			WHERE id_character = {int:characterID}',
 			[
-				'opening' => ' (',
-				'closing' => ')',
-				'character_name' => $character_name,
+				'characterID' => $characterID,
 			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
