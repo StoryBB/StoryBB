@@ -23,8 +23,9 @@ class Autocomplete
 	 *
 	 * @param string $type Type of autocomplete, e.g. 'member'
 	 * @param string $target CSS/jQuery selector to target, e.g. '#to'
+	 * @param int $maximum Maximum number of items allowed in the autocomplete
 	 */
-	public static function init(string $type, string $target)
+	public static function init(string $type, string $target, int $maximum = 1)
 	{
 		$searchTypes = self::get_registered_types();
 		if (!isset($searchTypes[$type]))
@@ -38,7 +39,7 @@ class Autocomplete
 		loadJavaScriptFile('select2/select2.min.js', ['minimize' => false, 'default_theme' => true], 'select2');
 		loadCSSFile('select2.min.css', ['minimize' => false, 'default_theme' => true], 'select2');
 
-		addInlineJavaScript($autocomplete->get_js($target), true);
+		addInlineJavaScript($autocomplete->get_js($target, $maximum), true);
 	}
 
 	/**
