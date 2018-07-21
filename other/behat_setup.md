@@ -7,8 +7,7 @@ favourite command line and try `php -v`. If it fails with an error, you'll need
 to figure out how to get that going. If you get some output, the first line will
 be the version number. Needs to be 7.0 or higher.
 
-MySQL - while StoryBB does support Postgres, the Behat support currently does
-not support anything other than MySQL. It will need to be at least MySQL 5.1,
+MySQL - your Behat environment will require a database to be at least MySQL 5.5,
 it'll need to be running on its usual port 3306, with a user called root who has
 no password. If you're using XAMPP or similar, this should be how it's set up.
 (The root user will be able to make you the storybb_behat database etc.)
