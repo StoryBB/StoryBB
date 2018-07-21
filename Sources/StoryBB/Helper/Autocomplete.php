@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Helper;
+
 use Exception;
 
 /**
