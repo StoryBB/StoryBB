@@ -336,7 +336,7 @@ function sbb_db_quote($db_string, $db_values, $connection = null)
 /**
  * Do a query.  Takes care of errors too.
  *
- * @param string $identifier An identifier. Only used in Postgres when we need to do things differently...
+ * @param string $identifier An identifier.
  * @param string $db_string The database string
  * @param array $db_values = array() The values to be inserted into the string
  * @param resource $connection = null The connection to use (null to use $db_connection)
@@ -523,12 +523,10 @@ function sbb_db_affected_rows($connection = null)
 /**
  * Gets the ID of the most recently inserted row.
  *
- * @param string $table The table (only used for Postgres)
- * @param string $field = null The specific field (not used here)
  * @param resource $connection = null The connection (if null, $db_connection is used)
  * @return int The ID of the most recently inserted row
  */
-function sbb_db_insert_id($table, $field = null, $connection = null)
+function sbb_db_insert_id($connection = null)
 {
 	global $db_connection;
 
@@ -812,12 +810,12 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 	if ($with_returning)
 	{
 		if ($returnmode == 1 && empty($return_var))
-			$return_var = sbb_db_insert_id($table, $keys[0]) + count($insertRows) - 1;
+			$return_var = sbb_db_insert_id() + count($insertRows) - 1;
 		elseif ($returnmode == 2 && empty($return_var))
 		{
 			$return_var = array();
 			$count = count($insertRows);
-			$start = sbb_db_insert_id($table, $keys[0]);
+			$start = sbb_db_insert_id();
 			for ($i = 0; $i < $count; $i++)
 				$return_var[] = $start + $i;
 		}

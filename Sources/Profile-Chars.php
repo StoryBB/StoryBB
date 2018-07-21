@@ -291,7 +291,7 @@ function char_create()
 					0, 0],
 				['id_character']
 			);
-			$context['character']['id_character'] = $smcFunc['db_insert_id']('{db_prefix}characters', 'id_character');
+			$context['character']['id_character'] = $smcFunc['db_insert_id']();
 			if (!empty($context['character']['sheet']))
 			{
 				// Also gotta insert this.
