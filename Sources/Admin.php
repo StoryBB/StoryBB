@@ -398,6 +398,14 @@ function AdminMain()
 					'file' => 'Reports.php',
 					'function' => 'ReportsMain',
 					'icon' => 'reports',
+					'subsections' => array(
+						'list' => array($txt['generate_reports_index'], 'admin_forum'),
+						'boards' => array($txt['gr_type_boards'], 'admin_forum'),
+						'board_perms' => array($txt['gr_type_board_perms'], 'admin_forum'),
+						'member_groups' => array($txt['gr_type_member_groups'], 'admin_forum'),
+						'group_perms' => array($txt['gr_type_group_perms'], 'admin_forum'),
+						'staff' => array($txt['gr_type_staff'], 'admin_forum'),
+					),
 				),
 				'logs' => array(
 					'label' => $txt['logs'],

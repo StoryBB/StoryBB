@@ -4,15 +4,11 @@
 $txt['generate_reports_desc'] = 'From this section you can generate a variety of reports to assist in the administration of your forum. Simply follow the steps below to select the option of your choice.';
 $txt['generate_reports_continue'] = 'Continue';
 $txt['generate_reports_type'] = 'Select Type of Report';
-$txt['gr_type_boards'] = 'Boards';
+
 $txt['gr_type_desc_boards'] = 'Reports showing the current settings and access levels for each of boards on your forum.';
-$txt['gr_type_board_perms'] = 'Board Permissions';
 $txt['gr_type_desc_board_perms'] = 'Generate reports showing permissions each membergroup has across the different boards in your forum.';
-$txt['gr_type_member_groups'] = 'Membergroups';
 $txt['gr_type_desc_member_groups'] = 'Report showing the settings for each membergroup on your forum.';
-$txt['gr_type_group_perms'] = 'Group Permissions';
 $txt['gr_type_desc_group_perms'] = 'Report on the permissions each membergroup has in the forum.';
-$txt['gr_type_staff'] = 'Staff';
 $txt['gr_type_desc_staff'] = 'This report summarizes all members who currently have positions of authority on the forum.';
 
 $txt['full_member'] = 'Full Member';
