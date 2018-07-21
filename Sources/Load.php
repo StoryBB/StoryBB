@@ -630,6 +630,8 @@ function loadUserSettings()
 
 		// We don't know the offset...
 		$user_info['time_offset'] = 0;
+
+		$context['show_cookie_notice'] = !empty($modSettings['show_cookie_notice']) && empty($_COOKIE['cookies']);
 	}
 
 	// Set up the $user_info array.

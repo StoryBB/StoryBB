@@ -149,7 +149,7 @@ obExit(null, null, true);
  */
 function sbb_main()
 {
-	global $modSettings, $settings, $user_info, $board, $topic;
+	global $modSettings, $settings, $user_info, $board, $topic, $context;
 	global $board_info, $maintenance, $sourcedir;
 
 	// Special case: session keep-alive, output a transparent pixel.
@@ -185,7 +185,7 @@ function sbb_main()
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
-	$no_stat_actions = array('dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'requestmembers', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery');
+	$no_stat_actions = array('autocomplete', 'dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'requestmembers', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery');
 	call_integration_hook('integrate_pre_log_stats', array(&$no_stat_actions));
 	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
 	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $no_stat_actions))
@@ -270,12 +270,23 @@ function sbb_main()
 		}
 	}
 
+	// Setting the cookie cookie.
+	if ($_REQUEST['action'] == 'cookie')
+	{
+		if ($context['show_cookie_notice'] && $context['user']['is_guest'])
+		{
+			setcookie('cookies', '1', time() + (30 * 24 * 60 * 60));
+		}
+		redirectexit();
+	}
+
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
 	$actionArray = array(
 		'activate' => array('Register.php', 'Activate'),
 		'admin' => array('Admin.php', 'AdminMain'),
 		'announce' => array('Post.php', 'AnnounceTopic'),
 		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
+		'autocomplete' => array('Autocomplete.php', 'Autocomplete'),
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
 		'characters' => array('Profile-Chars.php', 'CharacterList'),
 		'contact' => array('Contact.php', 'Contact'),
