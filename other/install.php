@@ -42,37 +42,6 @@ $databases = array(
 			return true;
 		},
 	),
-	'postgresql' => array(
-		'name' => 'PostgreSQL',
-		'version' => '9.2',
-		'function_check' => 'pg_connect',
-		'version_check' => '$request = pg_query(\'SELECT version()\'); list ($version) = pg_fetch_row($request); list($pgl, $version) = explode(" ", $version); return $version;',
-		'supported' => function_exists('pg_connect'),
-		'always_has_db' => true,
-		'utf8_support' => function() {
-			$request = pg_query('SHOW SERVER_ENCODING');
-
-			list ($charcode) = pg_fetch_row($request);
-
-			if ($charcode == 'UTF8')
-				return true;
-			else
-				return false;
-		},
-		'validate_prefix' => function(&$value) {
-			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
-
-			// Is it reserved?
-			if ($value == 'pg_')
-				return $txt['error_db_prefix_reserved'];
-
-			// Is the prefix numeric?
-			if (preg_match('~^\d~', $value))
-				return $txt['error_db_prefix_numeric'];
-
-			return true;
-		},
-	),
 );
 
 // Initialize everything and load the language files.
@@ -318,11 +287,6 @@ function load_database()
 			if ($db_type == 'mysql')
 			{
 				$port = ((int) $_POST['db_port'] == ini_get($db_type . 'default_port')) ? '' : (int) $_POST['db_port'];
-			}
-			elseif ($db_type == 'postgresql')
-			{
-				// PostgreSQL doesn't have a default port setting in php.ini, so just check against the default
-				$port = ((int) $_POST['db_port'] == 5432) ? '' : (int) $_POST['db_port'];
 			}
 		}
 
@@ -743,10 +707,8 @@ function DatabaseSettings()
 		// Only set the port if we're not using the default
 		if (!empty($_POST['db_port']))
 		{
-			// For MySQL, we can get the "default port" from PHP. PostgreSQL has no such option though.
+			// For MySQL, we can get the "default port" from PHP.
 			if (($db_type == 'mysql' || $db_type == 'mysqli') && $_POST['db_port'] != ini_get($db_type . '.default_port'))
-				$vars['db_port'] = (int) $_POST['db_port'];
-			elseif ($db_type == 'postgresql' && $_POST['db_port'] != 5432)
 				$vars['db_port'] = (int) $_POST['db_port'];
 		}
 
@@ -992,7 +954,7 @@ function DatabasePopulation()
 	}
 	$modSettings['disableQueryCheck'] = true;
 
-	// We're doing UTF8, select it. PostgreSQL requires passing it as a string...
+	// We're doing UTF8, select it.
 	$smcFunc['db_query']('', '
 		SET NAMES {string:utf8}',
 		array(
@@ -1112,10 +1074,10 @@ function DatabasePopulation()
 				$exists[] = $match[1];
 				$incontext['sql_results']['table_dups']++;
 			}
-			// Don't error on duplicate indexes (or duplicate operators in PostgreSQL.)
-			elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match) && !($db_type == 'postgresql' && preg_match('~^\s*CREATE OPERATOR (^\n\r]+?)~', $current_statement, $match)))
+			// Don't error on duplicate indexes
+			elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 			{
-				// MySQLi requires a connection object. It's optional with MySQL and Postgres
+				// MySQLi requires a connection object.
 				$incontext['failures'][$count] = $smcFunc['db_error']($db_connection);
 			}
 		}
@@ -2076,16 +2038,6 @@ function template_database_settings()
 				</td>
 			</tr>
 		</table>';
-
-	// Toggles a warning related to db names in PostgreSQL
-	echo '
-	<script>
-		function toggleDBInput()
-		{
-			$("#db_name_info_warning").toggle($("#db_type_input").val() != "postgresql");
-		}
-		toggleDBInput();
-	</script>';
 }
 
 // Stick in their forum settings.

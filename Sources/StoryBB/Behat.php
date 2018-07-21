@@ -223,10 +223,10 @@ class Behat extends RawMinkContext implements Context
 					$exists[] = $match[1];
 					$incontext['sql_results']['table_dups']++;
 				}
-				// Don't error on duplicate indexes (or duplicate operators in PostgreSQL.)
-				elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match) && !($db_type == 'postgresql' && preg_match('~^\s*CREATE OPERATOR (^\n\r]+?)~', $current_statement, $match)))
+				// Don't error on duplicate indexes
+				elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 				{
-					// MySQLi requires a connection object. It's optional with MySQL and Postgres
+					// MySQLi requires a connection object.
 					$incontext['failures'][$count] = $smcFunc['db_error']($db_connection) . "\n" . $current_statement;
 				}
 			}
