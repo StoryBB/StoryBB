@@ -785,7 +785,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		],
 		['id_character']
 	);
-	$real_account = $smcFunc['db_insert_id']('{db_prefix}characters', 'id_character');
+	$real_account = $smcFunc['db_insert_id']();
 
 	if (!empty($regOptions['extra_register_vars']['first_char']))
 	{

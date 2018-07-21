@@ -358,11 +358,6 @@ $helptxt['customoptions'] = 'This defines the options that a user may choose fro
 		<li><strong>Reordering Options:</strong> You can reorder the options by moving text around between the boxes. However - an important note - you must make sure you do <strong>not</strong> change the text when reordering options as otherwise user data will be lost.</li>
 	</ul>';
 
-$helptxt['pgFulltextSearch'] = 'This setting defines the language to use for PostgreSQL\'s fulltext search. Choose the language that most closely matches the language your forum actually uses. If your forum\'s language is not listed, or if your forum is multi-lingual, choose the "simple" option. <br>
-This setting is independent of your main StoryBB language settings and not related to the installed language for StoryBB. <br>
-When you change this setting you need to [url=' . $scripturl . '?action=admin;area=managesearch;sa=method]rebuild the fulltext search index[/url].<br>
-If a language you need is not listed, ask your database admin to install PostgreSQL language support for that language.';
-
 $helptxt['enableParticipation'] = 'This shows a little icon on the topics the user has posted in.';
 
 $helptxt['minimize_files'] = 'This option will minimize all css and js files that are loaded everytime, everywhere for every user, reducing the requests calls to your server. New files are re-created everyday, if you want to re-create them just clean your forum\'s cache.';

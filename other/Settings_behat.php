@@ -62,7 +62,7 @@ $cookiename = 'SBBCookie11';
 /********* Database Info *********/
 /**
  * The database type
- * Default options: mysql, postgresql
+ * Default options: mysql
  * @var string
  */
 $db_type = 'mysql';
