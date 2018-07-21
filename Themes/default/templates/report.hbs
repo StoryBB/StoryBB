@@ -2,9 +2,6 @@
 	<div class="cat_bar">
 		<h3 class="catbg">{{txt.results}}</h3>
 	</div>
-	<div id="report_buttons">
-		{{>button_strip button_strip=context.report_buttons txt=txt direction="right"}}
-	</div>
 	{{#each context.tables}}
 		<table class="table_grid report_results">
 			{{#if title}}
