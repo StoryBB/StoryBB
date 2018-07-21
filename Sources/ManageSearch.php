@@ -89,22 +89,6 @@ function EditSearchSettings($return_config = false)
 			array('int', 'search_floodcontrol_time', 'subtext' => $txt['search_floodcontrol_time_desc'], 6, 'postinput' => $txt['seconds']),
 	);
 
-	// Add PG Stuff
-	if ($smcFunc['db_title'] == "PostgreSQL")
-	{
-		$request = $smcFunc['db_query']('', 'SELECT cfgname FROM pg_ts_config', array());
-		$fts_language = array();
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$fts_language[$row['cfgname']] = $row['cfgname'];
-
-		$config_vars = array_merge($config_vars, array(
-				'',
-				array('search_language', $txt['search_language'], 'db', 'select', $fts_language, 'pgFulltextSearch')
-			)
-		);
-	}
-
 	call_integration_hook('integrate_modify_search_settings', array(&$config_vars));
 
 	// Perhaps the search method wants to add some settings?
@@ -176,42 +160,21 @@ function EditSearchMethod()
 		checkSession('get');
 		validateToken('admin-msm', 'get');
 
-		if ($db_type == 'postgresql') {
-			$smcFunc['db_query']('', '
-				DROP INDEX IF EXISTS {db_prefix}messages_ftx',
-				array(
-					'db_error_skip' => true,
-				)
-			);
+		// Make sure it's gone before creating it.
+		$smcFunc['db_query']('', '
+			ALTER TABLE {db_prefix}messages
+			DROP INDEX body',
+			array(
+				'db_error_skip' => true,
+			)
+		);
 
-			$language_ftx = $smcFunc['db_search_language']();
-
-			$smcFunc['db_query']('', '
-				CREATE INDEX {db_prefix}messages_ftx ON {db_prefix}messages
-				USING gin(to_tsvector({string:language},body))',
-				array(
-					'language' => $language_ftx
-				)
-			);
-		}
-		else
-		{
-			// Make sure it's gone before creating it.
-			$smcFunc['db_query']('', '
-				ALTER TABLE {db_prefix}messages
-				DROP INDEX body',
-				array(
-					'db_error_skip' => true,
-				)
-			);
-
-			$smcFunc['db_query']('', '
-				ALTER TABLE {db_prefix}messages
-				ADD FULLTEXT body (body)',
-				array(
-				)
-			);
-		}
+		$smcFunc['db_query']('', '
+			ALTER TABLE {db_prefix}messages
+			ADD FULLTEXT body (body)',
+			array(
+			)
+		);
 	}
 	elseif (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'removefulltext' && !empty($context['fulltext_index']))
 	{
