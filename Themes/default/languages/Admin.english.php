@@ -222,6 +222,7 @@ $txt['maintain_done'] = 'The maintenance task \'%1$s\' was executed successfully
 $txt['maintain_no_errors'] = 'Congratulations, no errors were found. Thanks for checking.';
 
 $txt['maintain_tasks'] = 'Scheduled Tasks';
+$txt['maintain_task_list'] = 'Scheduled Task List';
 $txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by StoryBB.';
 
 $txt['scheduled_log'] = 'Task Log';

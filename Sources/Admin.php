@@ -379,7 +379,7 @@ function AdminMain()
 					'icon' => 'scheduled',
 					'function' => 'ManageScheduledTasks',
 					'subsections' => array(
-						'tasks' => array($txt['maintain_tasks'], 'admin_forum'),
+						'tasks' => array($txt['maintain_task_list'], 'admin_forum'),
 						'tasklog' => array($txt['scheduled_log'], 'admin_forum'),
 					),
 				),

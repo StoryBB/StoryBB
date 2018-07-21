@@ -71,7 +71,7 @@ function ScheduledTasks()
 	// Mama, setup the template first - cause it's like the most important bit, like pickle in a sandwich.
 	// ... ironically I don't like pickle. </grudge>
 	$context['sub_template'] = 'admin_scheduled_view';
-	$context['page_title'] = $txt['maintain_tasks'];
+	$context['page_title'] = $txt['maintain_task_list'];
 
 	// Saving changes?
 	if (isset($_REQUEST['save']) && isset($_POST['enable_task']))
@@ -215,7 +215,7 @@ function ScheduledTasks()
 
 	$listOptions = array(
 		'id' => 'scheduled_tasks',
-		'title' => $txt['maintain_tasks'],
+		'title' => $txt['maintain_task_list'],
 		'base_href' => $scripturl . '?action=admin;area=scheduledtasks',
 		'get_items' => array(
 			'function' => 'list_getScheduledTasks',
