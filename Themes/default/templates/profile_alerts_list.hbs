@@ -21,7 +21,7 @@
 						<ul class="quickbuttons">
 							<li><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=showalerts;do=remove;aid={{@key}};{{session_url}}" class="you_sure"><span class="generic_icons remove_button"></span>{{{../txt.delete}}}</a></li>
 							<li><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=showalerts;do={{#if (gt is_read '0')}}unread{{else}}read{{/if}};aid={{@key}};{{session_url}}"><span class="generic_icons {{#if (gt is_read '0')}}unread_button{{else}}read_button{{/if}}"></span>{{#if (gt is_read '0')}}{{../txt.mark_unread}}{{else}}{{../txt.mark_read_short}}{{/if}}</a></li>
-							<li><input type="checkbox" class="input_check" name="mark[{{@key}}]" value="{{@key}}"></li>
+							<li><input type="checkbox" name="mark[{{@key}}]" value="{{@key}}"></li>
 						</ul>
 					</td>
 				</tr>
@@ -33,7 +33,7 @@
 					{{{context.pagination}}}
 				</div>
 				<div class="floatright">
-					{{{txt.check_all}}}: <input type="checkbox" class="input_check" name="select_all" id="select_all">
+					{{{txt.check_all}}}: <input type="checkbox" name="select_all" id="select_all">
 					<select name="mark_as">
 						<option value="read">{{{txt.quick_mod_markread}}}</option>
 						<option value="unread">{{{txt.quick_mod_markunread}}}</option>

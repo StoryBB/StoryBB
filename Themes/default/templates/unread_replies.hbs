@@ -28,7 +28,7 @@
 							<a href="{{scripturl}}?action=unreadreplies{{{context.querystring_board_limits}}};sort=last_post{{#if (and (eq context.sort_by 'last_post') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.last_post}}}{{#if (eq context.sort_by 'last_post')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
 						</div>
 						<div class="moderation">
-							<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');" class="input_check">
+							<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
 						</div>
 					</div>
 					<div id="topic_container">
@@ -72,7 +72,7 @@
 							</div>
 
 							<div class="moderation">
-								<input type="checkbox" name="topics[]" value="{{id}}" class="input_check">
+								<input type="checkbox" name="topics[]" value="{{id}}">
 							</div>
 
 						</div>

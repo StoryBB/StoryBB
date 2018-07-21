@@ -149,8 +149,8 @@ class Behat extends RawMinkContext implements Context
 			$replaces['{$memory}'] = in_array('MEMORY', $engines) ? 'MEMORY' : $replaces['{$engine}'];
 
 			// We're using UTF-8 setting, so add it to the table definitions.
-			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
-			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
+			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 
 			$replaces['{$engine_master}'] = $replaces['{$engine}'];
 

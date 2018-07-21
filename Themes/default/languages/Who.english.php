@@ -27,7 +27,6 @@ $txt['whospider_reminder'] = 'Viewing the reminder page.';
 
 $txt['whoall_activate'] = 'Activating their account.';
 $txt['whoall_buddy'] = 'Modifying their buddy list.';
-$txt['whoall_coppa'] = 'Filling out parent/guardian consent form.';
 $txt['whoall_emailuser'] = 'Sending email to another member.';
 $txt['whoall_groups'] = 'Viewing the member groups page.';
 $txt['whoall_help'] = 'Viewing the <a href="' . $scripturl . '?action=help">help page</a>.';
@@ -81,7 +80,6 @@ $txt['whotopic_vote'] = 'Voting in <a href="' . $scripturl . '?topic=%1$d.0">%2$
 
 $txt['whopost_quotefast'] = 'Quoting a post from &quot;<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>&quot;.';
 
-$txt['whoadmin_editagreement'] = 'Editing the registration agreement.';
 $txt['whoadmin_featuresettings'] = 'Editing forum features and options.';
 $txt['whoadmin_modlog'] = 'Viewing the moderator log.';
 $txt['whoadmin_serversettings'] = 'Editing the forum settings.';

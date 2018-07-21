@@ -89,7 +89,7 @@ $txt['header_logo_url_desc'] = '(leave blank to show forum name or default logo.
 $txt['number_recent_posts'] = 'Number of recent posts to display on board index';
 
 $txt['theme_adding_title'] = 'Obtaining Themes';
-$txt['theme_adding'] = 'You can always find new themes for your forum from the StoryBB themes area - <strong><a href="https://storybb.org" target="_blank">https://storybb.org/</a></strong>. You can browse them on the website, read the comments, and download them to your computer and then upload them to your forum from there.';
+$txt['theme_adding'] = 'You can always find new themes for your forum from the StoryBB themes area - <strong><a href="https://storybb.org" target="_blank" rel="noopener">https://storybb.org/</a></strong>. You can browse them on the website, read the comments, and download them to your computer and then upload them to your forum from there.';
 
 $txt['theme_options_defaults'] = 'These are the default values for some member specific settings. Changing these will only affect new members and guests.';
 $txt['theme_options_title'] = 'Change or reset default options';

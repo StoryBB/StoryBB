@@ -32,7 +32,6 @@ $txt['poll_error'] = 'Either that poll doesn\'t exist, the poll has been locked,
 $txt['members_only'] = 'This option is only available to registered members.';
 $txt['locked_by_admin'] = 'This was locked by an administrator. You cannot unlock it.';
 $txt['feature_disabled'] = 'Sorry, this feature is disabled.';
-$txt['feature_no_exists'] = 'Sorry, this feature doesn\'t exist.';
 $txt['couldnt_connect'] = 'Could not connect to server or could not find file';
 $txt['no_board'] = 'The board you specified doesn\'t exist';
 $txt['no_message'] = 'The message is no longer available';
@@ -107,10 +106,8 @@ $txt['cannot_profile_remove_own'] = 'Sorry, but you aren\'t allowed to delete yo
 $txt['cannot_profile_remove_any'] = 'You don\'t have the appropriate permissions to remove accounts.';
 $txt['cannot_profile_extra_any'] = 'You are not permitted to modify profile settings.';
 $txt['cannot_profile_identity_any'] = 'You aren\'t allowed to edit account settings.';
-$txt['cannot_profile_title_any'] = 'You cannot edit people\'s custom titles.';
 $txt['cannot_profile_extra_own'] = 'Sorry, but you don\'t have the necessary permissions to edit your profile data.';
 $txt['cannot_profile_identity_own'] = 'You can\'t change your identity at the current moment.';
-$txt['cannot_profile_title_own'] = 'You are not allowed to change your custom title.';
 $txt['cannot_profile_upload_avatar'] = 'You do not have permission to upload an avatar.';
 $txt['cannot_profile_remote_avatar'] = 'You don\'t have the privilege of using a remote avatar.';
 $txt['cannot_profile_view'] = 'Many apologies, but you can\'t view just any profile.';
@@ -121,7 +118,6 @@ $txt['cannot_report_any'] = 'You are not allowed to report posts in this board.'
 $txt['cannot_search_posts'] = 'You are not allowed to search for posts in this forum.';
 $txt['cannot_send_mail'] = 'You don\'t have the privilege of sending out emails to everyone.';
 $txt['cannot_issue_warning'] = 'Sorry, you do not have permission to issue warnings to members.';
-$txt['cannot_send_email_to_members'] = 'Sorry, but the administrator has disallowed sending emails on this board.';
 $txt['cannot_split_any'] = 'Splitting just any topic is not allowed in this board.';
 $txt['cannot_view_attachments'] = 'It seems that you are not allowed to download or view attachments on this board.';
 $txt['cannot_view_mlist'] = 'You can\'t view the memberlist because you don\'t have permission to.';
@@ -130,7 +126,7 @@ $txt['cannot_who_view'] = 'Sorry - you don\'t have the proper permissions to vie
 
 $txt['no_theme'] = 'That theme does not exist.';
 $txt['registration_disabled'] = 'Sorry, registration is currently disabled.';
-$txt['registration_agreement_missing'] = 'The registration agreement file, agreement.txt, is either missing or empty. Registrations have been disable until this is fixed';
+$txt['registration_require_policy'] = 'You have not accepted the %1$s.';
 $txt['registration_no_secret_question'] = 'Sorry, there is no secret question set for this member.';
 $txt['poll_range_error'] = 'Sorry, the poll must run for more than 0 days.';
 $txt['delFirstPost'] = 'You are not allowed to delete the first post in a topic.<p>If you want to delete this topic, click on the Remove Topic link, or ask a moderator/administrator to do it for you.</p>';
@@ -213,7 +209,6 @@ $txt['quoted_post_deleted'] = 'The post you are trying to quote either does not 
 $txt['pm_too_many_per_hour'] = 'You have exceeded the limit of %1$d personal messages per hour.';
 
 $txt['register_only_once'] = 'Sorry, but you\'re not allowed to register multiple accounts at the same time from the same computer.';
-$txt['admin_setting_coppa_require_contact'] = 'You must enter either a postal or fax contact if parent/guardian approval is required.';
 
 $txt['error_long_name'] = 'The name you tried to use was too long.';
 $txt['error_no_name'] = 'No name was provided.';
@@ -248,15 +243,13 @@ $txt['smiley_has_no_filename'] = 'No filename for this smiley was given.';
 $txt['smiley_not_unique'] = 'A smiley with that code already exists.';
 
 $txt['smileys_upload_error'] = 'Failed to upload file.';
-$txt['smileys_upload_error_blank'] = 'All smiley sets must have an image.';
-$txt['smileys_upload_error_name'] = 'All smileys must have the same filename.';
 $txt['smileys_upload_error_illegal'] = 'Illegal Type.';
 
 $txt['search_invalid_weights'] = 'Search weights are not properly configured. At least one weight should be configure to be non-zero. Please report this error to an administrator.';
 $txt['unable_to_create_temporary'] = 'The search function was unable to create temporary tables. Please try again.';
 
 $txt['package_no_file'] = 'Unable to find package file!';
-$txt['packageget_unable'] = 'Unable to connect to the server. Please try using <a href="%1$s" target="_blank" class="new_win">this URL</a> instead.';
+$txt['packageget_unable'] = 'Unable to connect to the server. Please try using <a href="%1$s" target="_blank" rel="noopener">this URL</a> instead.';
 $txt['package_cant_uninstall'] = 'This package was either never installed or was already uninstalled - you can\'t uninstall it now.';
 $txt['package_cant_download'] = 'You cannot download or install new packages because the Packages directory or one of the files in it are not writable!';
 $txt['package_theme_upload_error_broken'] = 'Theme upload failed due to the following error:<br>&quot;%1$s&quot;';

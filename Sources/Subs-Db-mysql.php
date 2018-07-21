@@ -45,13 +45,13 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_affected_rows'          => 'sbb_db_affected_rows',
 			'db_transaction'            => 'sbb_db_transaction',
 			'db_error'                  => 'mysqli_error',
+			'db_errno'                  => 'mysqli_errno',
 			'db_select_db'              => 'sbb_db_select',
 			'db_title'                  => 'MySQLi',
 			'db_sybase'                 => false,
 			'db_case_sensitive'         => false,
 			'db_escape_wildcard_string' => 'sbb_db_escape_wildcard_string',
 			'db_is_resource'            => 'sbb_is_resource',
-			'db_mb4'                    => false,
 			'db_ping'                   => 'mysqli_ping',
 			'db_fetch_all'              => 'sbb_db_fetch_all',
 			'db_error_insert'			=> 'sbb_db_error_insert',
@@ -89,7 +89,7 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 
 	mysqli_query($connection, "SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
 
-	mysqli_set_charset($connection, 'utf8');
+	mysqli_set_charset($connection, 'utf8mb4');
 
 	return $connection;
 }

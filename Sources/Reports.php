@@ -166,6 +166,7 @@ function BoardReport()
 		'redirect' => $txt['board_redirect'],
 		'num_topics' => $txt['board_num_topics'],
 		'num_posts' => $txt['board_num_posts'],
+		'in_character' => $txt['board_in_character'],
 		'count_posts' => $txt['board_count_posts'],
 		'theme' => $txt['board_theme'],
 		'override_theme' => $txt['board_override_theme'],
@@ -181,7 +182,7 @@ function BoardReport()
 
 	// Go through each board!
 	$request = $smcFunc['db_query']('order_by_board_order', '
-		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.member_groups, b.override_theme, b.id_profile, b.deny_member_groups,
+		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.in_character, b.member_groups, b.override_theme, b.id_profile, b.deny_member_groups,
 			b.redirect, c.name AS cat_name, COALESCE(par.name, {string:text_none}) AS parent_name, COALESCE(th.value, {string:text_none}) AS theme_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
@@ -216,6 +217,7 @@ function BoardReport()
 			'redirect' => $row['redirect'],
 			'num_posts' => $row['num_posts'],
 			'num_topics' => $row['num_topics'],
+			'in_character' => $row['in_character'] ? $txt['board_is_ic'] : $txt['board_is_ooc'],
 			'count_posts' => empty($row['count_posts']) ? $txt['yes'] : $txt['no'],
 			'theme' => $row['theme_name'],
 			'profile' => $profile_name,
@@ -335,8 +337,8 @@ function BoardPermissionsReport()
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $group_clause . '
-			AND id_group != {int:admin_group}' . (empty($modSettings['permission_enable_postgroups']) ? '
-			AND min_posts = {int:min_posts}' : '') . '
+			AND id_group != {int:admin_group}
+			AND min_posts = {int:min_posts}
 		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
 		array(
 			'admin_group' => 1,
@@ -515,6 +517,7 @@ function MemberGroupsReport()
 		'min_posts' => $txt['member_group_min_posts'],
 		'max_messages' => $txt['member_group_max_messages'],
 		'icons' => $txt['member_group_icons'],
+		'group_level' => $txt['member_group_level'],
 		'#sep#2' => $txt['member_group_access'],
 	);
 
@@ -533,7 +536,7 @@ function MemberGroupsReport()
 
 	// Now start cycling the membergroups!
 	$request = $smcFunc['db_query']('', '
-		SELECT mg.id_group, mg.group_name, mg.online_color, mg.min_posts, mg.max_messages, mg.icons,
+		SELECT mg.id_group, mg.group_name, mg.online_color, mg.min_posts, mg.max_messages, mg.icons, mg.is_character,
 			CASE WHEN bp.permission IS NOT NULL OR mg.id_group = {int:admin_group} THEN 1 ELSE 0 END AS can_moderate
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}board_permissions AS bp ON (bp.id_group = mg.id_group AND bp.id_profile = {int:default_profile} AND bp.permission = {string:moderate_board})
@@ -579,6 +582,7 @@ function MemberGroupsReport()
 			'min_posts' => $row['min_posts'] == -1 ? 'N/A' : $row['min_posts'],
 			'max_messages' => $row['max_messages'],
 			'icons' => !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' . $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '',
+			'group_level' => $row['min_posts'] == -1 ? (!empty($row['is_character']) ? $txt['member_group_level_char'] : $txt['member_group_level_account']) : $txt['member_group_postcount'],
 		);
 
 		// Board permissions.
@@ -619,8 +623,8 @@ function GroupPermissionsReport()
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $clause . '
-			AND id_group != {int:admin_group}' . (empty($modSettings['permission_enable_postgroups']) ? '
-			AND min_posts = {int:min_posts}' : '') . '
+			AND id_group != {int:admin_group}
+			AND min_posts = {int:min_posts}
 		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
 		array(
 			'admin_group' => 1,

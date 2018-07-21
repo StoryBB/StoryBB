@@ -95,7 +95,6 @@ function AdminMain()
 						'layout' => array($txt['mods_cat_layout']),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle']),
-						'mentions' => array($txt['mentions']),
 						'alerts' => array($txt['notifications']),
 					),
 				),
@@ -270,7 +269,6 @@ function AdminMain()
 						'board' => array($txt['permissions_boards'], 'manage_permissions'),
 						'profiles' => array($txt['permissions_profiles'], 'manage_permissions'),
 						'postmod' => array($txt['permissions_post_moderation'], 'manage_permissions'),
-						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
 				'regcenter' => array(
@@ -281,8 +279,8 @@ function AdminMain()
 					'permission' => array('admin_forum', 'moderate_forum'),
 					'subsections' => array(
 						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
-						'agreement' => array($txt['registration_agreement'], 'admin_forum'),
 						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
+						'policies' => array($txt['admin_policies'], 'admin_forum'),
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
@@ -629,7 +627,6 @@ function AdminSearchInternal()
 		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
 		array('ModifyBBCSettings', 'area=featuresettings;sa=bbc'),
 		array('ModifyLayoutSettings', 'area=featuresettings;sa=layout'),
-		array('ModifyMentionsSettings', 'area=featuresettings;sa=mentions'),
 		array('ModifySignatureSettings', 'area=featuresettings;sa=sig'),
 		array('ModifyAntispamSettings', 'area=antispam'),
 		array('ModifyWarningSettings', 'area=warnings'),
@@ -640,7 +637,6 @@ function AdminSearchInternal()
 		array('EditBoardSettings', 'area=manageboards;sa=settings'),
 		array('ModifyMailSettings', 'area=mailqueue;sa=settings'),
 		array('ModifyNewsSettings', 'area=news;sa=settings'),
-		array('GeneralPermissionSettings', 'area=permissions;sa=settings'),
 		array('ModifyPostSettings', 'area=postsettings;sa=posts'),
 		array('ModifyTopicSettings', 'area=postsettings;sa=topics'),
 		array('ModifyDraftSettings', 'area=postsettings;sa=drafts'),
@@ -675,7 +671,6 @@ function AdminSearchInternal()
 		'sections' => array(
 		),
 		'settings' => array(
-			array('COPPA', 'area=regcenter;sa=settings'),
 			array('CAPTCHA', 'area=antispam'),
 		),
 	);

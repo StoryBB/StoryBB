@@ -37,6 +37,8 @@ $txt['years_title'] = 'Years';
 $txt['time_am'] = 'am';
 $txt['time_pm'] = 'pm';
 
+$txt['last_updated'] = 'Last updated';
+
 $txt['admin'] = 'Admin';
 $txt['moderate'] = 'Moderate';
 $txt['chars_menu_title'] = 'Characters';
@@ -137,7 +139,6 @@ $txt['admin_login'] = 'Administration Login';
 // Use numeric entities in the below string.
 $txt['topic'] = 'Topic';
 $txt['help'] = 'Help';
-$txt['terms_and_rules'] = 'Terms and Rules';
 $txt['watch_board'] = 'Watch this Board';
 $txt['unwatch_board'] = 'Stop Watching Board';
 $txt['watch_topic'] = 'Watch this Topic';
@@ -376,7 +377,6 @@ $txt['try_again'] = 'Please try again. If you come back to this error screen, re
 $txt['file'] = 'File';
 $txt['line'] = 'Line';
 
-$txt['database_error_versions'] = '<strong>Note:</strong> It appears that your database <em>may</em> require an upgrade. Your forum\'s files are currently at version %1$s, while your database is at version %2$s. The above error might possibly go away if you execute the latest version of upgrade.php.';
 $txt['template_parse_error'] = 'Template Parse Error!';
 $txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
 $txt['template_parse_error_details'] = 'There was a problem loading the <pre><strong>%1$s</strong></pre> template or language file. Please check the syntax and try again - remember, single quotes (<pre>\'</pre>) often have to be escaped with a slash (<pre>\\</pre>). To see more specific error information from PHP, try <a href="' . $boardurl . '%1$s">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="' . $scripturl . '?theme=1">use the default theme</a>.';
@@ -460,11 +460,8 @@ $txt['search_advanced'] = 'Advanced search';
 $txt['security_risk'] = 'MAJOR SECURITY RISK!';
 $txt['not_removed'] = 'You have not removed the following files';
 $txt['generic_warning'] = 'Warning';
-$txt['agreement_missing'] = 'You are requiring new users to accept a registration agreement, however the file (agreement.txt) doesn\'t exist.';
 
 $txt['cache_writable'] = 'The cache directory is not writable - this will adversely affect the performance of your forum.';
-
-$txt['page_created_full'] = 'Page created in %1$.3f seconds with %2$d queries.';
 
 $txt['report_to_mod_func'] = 'Use this function to inform the moderators and administrators of an abusive or problematic message.';
 $txt['report_profile_func'] = 'Use this function to inform the administrators of abusive profile content, such as spam or inappropriate images.';
@@ -480,7 +477,7 @@ $txt['status'] = 'Status';
 $txt['go_up'] = 'Go Up';
 $txt['go_down'] = 'Go Down';
 
-$forum_copyright = '<a href="http://storybb.org" title="StoryBB" target="_blank" class="new_win">%1$s &copy; %2$s, StoryBB project</a>';
+$forum_copyright = '<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">%1$s &copy; %2$s, StoryBB project</a>';
 
 $txt['calendar_month'] = 'Month';
 $txt['calendar_year'] = 'Year';
@@ -606,19 +603,9 @@ $txt['who_viewing_topic'] = ' are viewing this topic.';
 $txt['who_viewing_board'] = ' are viewing this board.';
 $txt['who_member'] = 'Member';
 
-// No longer used by default theme, but for backwards compat
-$txt['powered_by_php'] = 'Powered by PHP';
-$txt['powered_by_mysql'] = 'Powered by MySQL';
-$txt['valid_css'] = 'Valid CSS';
-
 // Current footer strings, no longer used
-$txt['valid_html'] = 'Valid HTML 4.01';
-$txt['valid_xhtml'] = 'Valid XHTML 1.0';
-$txt['wap2'] = 'WAP2';
 $txt['rss'] = 'RSS';
 $txt['atom'] = 'Atom';
-$txt['xhtml'] = 'XHTML';
-$txt['html'] = 'HTML';
 
 $txt['guest'] = 'Guest';
 $txt['guests'] = 'Guests';
@@ -764,12 +751,6 @@ $txt['restore_topic'] = 'Restore Topic';
 $txt['restore_message'] = 'Restore';
 $txt['quick_mod_restore'] = 'Restore Selected';
 
-// Editor prompt.
-$txt['prompt_text_email'] = 'Please enter the email address.';
-$txt['prompt_text_ftp'] = 'Please enter the FTP address.';
-$txt['prompt_text_url'] = 'Please enter the URL you wish to link to.';
-$txt['prompt_text_img'] = 'Enter image location';
-
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['autosuggest_delete_item'] = 'Delete Item';
 
@@ -856,3 +837,18 @@ $txt['your_name'] = 'Your name';
 $txt['your_email'] = 'Your email address';
 $txt['verification'] = 'Verification';
 $txt['thank_you_for_message'] = 'Thank you for your message. The administrators have been notified and should reply soon.';
+
+$txt['updated_agreement'] = 'We have updated our terms and conditions';
+$txt['updated_agreement_desc'] = 'We have updated the site policies. In order to continue using %1$s, the following policies need to be accepted again.';
+$txt['updated_agreement_contact_admin'] = 'Remember, if you have any questions before accepting the new policy, you can <a href="%1$s">contact the admin team</a>.';
+$txt['updated_agreement_changed'] = 'Changed in this version:';
+$txt['update_agreement_accept'] = 'I accept these policies';
+
+$txt['cookie_notice_1'] = 'This site uses cookies to help remember preferences, personalise content to you and to keep you logged in if you register.';
+$txt['cookie_notice_2'] = 'If you continue to use this site, you are consenting to our use of cookies.';
+$txt['cookie_notice_accept'] = 'I accept';
+$txt['cookie_notice_more_info'] = 'More information';
+
+$txt['autocomplete_search_member'] = 'Search for a member';
+$txt['autocomplete_search_character'] = 'Search for a character';
+$txt['autocomplete_search_character_account'] = '(Account: %s)';

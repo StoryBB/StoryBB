@@ -54,7 +54,6 @@ function ModifyFeatureSettings()
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
-		'mentions' => 'ModifyMentionsSettings',
 		'alerts' => 'ModifyAlertsSettings',
 	);
 
@@ -78,8 +77,6 @@ function ModifyFeatureSettings()
 			),
 			'profile' => array(
 				'description' => $txt['custom_profile_desc'],
-			),
-			'mentions' => array(
 			),
 			'alerts' => array(
 				'description' => $txt['notifications_desc'],
@@ -142,6 +139,7 @@ function ModifyBasicSettings($return_config = false)
 			// Basic stuff, titles, permissions...
 			array('check', 'allow_guestAccess'),
 			array('check', 'enable_likes'),
+			array('check', 'enable_mentions'),
 			array('check', 'enable_buddylist'),
 			array('check', 'allow_hideOnline'),
 			array('check', 'topic_move_any'),
@@ -327,44 +325,6 @@ function ModifyLayoutSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=layout';
 	$context['settings_title'] = $txt['mods_cat_layout'];
-
-	prepareDBSettingContext($config_vars);
-}
-
-/**
- * Config array for changing like settings
- * Accessed  from ?action=admin;area=featuresettings;sa=mentions;
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyMentionsSettings($return_config = false)
-{
-	global $txt, $scripturl, $context;
-
-	$config_vars = array(
-		array('check', 'enable_mentions'),
-	);
-
-	call_integration_hook('integrate_mentions_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		call_integration_hook('integrate_save_mentions_settings');
-
-		saveDBSettings($config_vars);
-		session_flash('success', $txt['settings_saved']);
-		redirectexit('action=admin;area=featuresettings;sa=mentions');
-	}
-
-	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=mentions';
-	$context['settings_title'] = $txt['mentions'];
 
 	prepareDBSettingContext($config_vars);
 }
@@ -590,13 +550,13 @@ function ModifyAntispamSettings($return_config = false)
 	});
 	$(".qa_add_question a").click(function() {
 		var id = $(this).closest("fieldset").attr("id").substring(6);
-		$(\'<dt><input type="text" name="question[\' + id + \'][\' + nextrow + \']" value="" size="50" class="input_text verification_question"></dt><dd><input type="text" name="answer[\' + id + \'][\' + nextrow + \'][]" value="" size="50" class="input_text verification_answer" / ><div class="qa_add_answer"><a href="javascript:void(0);" onclick="return addAnswer(this);">[ \' + ' . JavaScriptEscape($txt['setup_verification_add_answer']) . ' + \' ]</a></div></dd>\').insertBefore($(this).parent());
+		$(\'<dt><input type="text" name="question[\' + id + \'][\' + nextrow + \']" value="" size="50" class="verification_question"></dt><dd><input type="text" name="answer[\' + id + \'][\' + nextrow + \'][]" value="" size="50" class="verification_answer" / ><div class="qa_add_answer"><a href="javascript:void(0);" onclick="return addAnswer(this);">[ \' + ' . JavaScriptEscape($txt['setup_verification_add_answer']) . ' + \' ]</a></div></dd>\').insertBefore($(this).parent());
 		nextrow++;
 	});
 	function addAnswer(obj)
 	{
 		var attr = $(obj).closest("dd").find(".verification_answer:last").attr("name");
-		$(\'<input type="text" name="\' + attr + \'" value="" size="50" class="input_text verification_answer">\').insertBefore($(obj).closest("div"));
+		$(\'<input type="text" name="\' + attr + \'" value="" size="50" class="verification_answer">\').insertBefore($(obj).closest("div"));
 		return false;
 	}
 	$("#qa_dt_' . strtr($language, array('-utf8' => '')) . ' a").click();', true);
@@ -1269,7 +1229,7 @@ function ShowCustomProfiles()
 					{
 						$isChecked = $rowData['disabled'] ? '' : ' checked';
 						$onClickHandler = $rowData['can_show_register'] ? sprintf(' onclick="document.getElementById(\'reg_%1$s\').disabled = !this.checked;"', $rowData['id']) : '';
-						return sprintf('<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s" class="input_check"%2$s%3$s>', $rowData['id'], $isChecked, $onClickHandler);
+						return sprintf('<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s"%2$s%3$s>', $rowData['id'], $isChecked, $onClickHandler);
 					},
 					'style' => 'width: 20%;',
 					'class' => 'centercol',
@@ -1285,7 +1245,7 @@ function ShowCustomProfiles()
 					{
 						$isChecked = $rowData['on_register'] && !$rowData['disabled'] ? ' checked' : '';
 						$isDisabled = $rowData['can_show_register'] ? '' : ' disabled';
-						return sprintf('<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s" class="input_check"%2$s%3$s>', $rowData['id'], $isChecked, $isDisabled);
+						return sprintf('<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s"%2$s%3$s>', $rowData['id'], $isChecked, $isDisabled);
 					},
 					'style' => 'width: 20%;',
 					'class' => 'centercol',

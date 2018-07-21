@@ -221,6 +221,9 @@ function character_profile($memID)
 	$context['sub_template'] = 'profile_character_summary';
 }
 
+/**
+ * Creating a character, both the initial form and actually performing the creation.
+ */
 function char_create()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
@@ -332,6 +335,9 @@ function char_create()
 	});', true);
 }
 
+/**
+ * Editing a character, both showing the form and performing the edit.
+ */
 function char_edit()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings, $scripturl;
@@ -592,6 +598,9 @@ function char_edit()
 	createToken('edit-char' . $context['character']['id_character'], 'post');
 }
 
+/**
+ * Deleting a character.
+ */
 function char_delete()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
@@ -657,6 +666,9 @@ function char_delete()
 	redirectexit('action=profile;u=' . $context['id_member']);
 }
 
+/**
+ * Choosing a theme for a given character.
+ */
 function char_theme()
 {
 	global $context, $smcFunc, $modSettings;
@@ -720,6 +732,9 @@ function char_theme()
 	$context['sub_template'] = 'profile_character_theme';
 }
 
+/**
+ * Showing the posts/topics made by a given character.
+ */
 function char_posts()
 {
 	global $txt, $user_info, $scripturl, $modSettings;
@@ -1033,6 +1048,11 @@ function char_posts()
 	call_integration_hook('integrate_profile_showPosts');
 }
 
+/**
+ * Load the profile groups attached to the current character being viewed.
+ *
+ * @return bool True on success (values loaded into $context)
+ */
 function profileLoadCharGroups()
 {
 	global $cur_profile, $txt, $context, $smcFunc, $user_settings;
@@ -1082,6 +1102,9 @@ function profileLoadCharGroups()
 	return true;
 }
 
+/**
+ * Retiring a character from active use (or making them unretired)
+ */
 function char_retire()
 {
 	global $context, $smcFunc, $txt, $user_info;
@@ -1120,6 +1143,9 @@ function char_retire()
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 }
 
+/**
+ * Viewing the stats for a given character.
+ */
 function char_stats()
 {
 	global $txt, $scripturl, $context, $user_profile, $user_info, $modSettings, $smcFunc;
@@ -1291,6 +1317,9 @@ function char_stats()
 	ksort($context['posts_by_time']);
 }
 
+/**
+ * Viewing a character sheet for a character.
+ */
 function char_sheet()
 {
 	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
@@ -1492,6 +1521,9 @@ function char_sheet()
 	}
 }
 
+/**
+ * Viewing the history of edits to a character sheet.
+ */
 function char_sheet_history()
 {
 	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
@@ -1574,6 +1606,9 @@ function char_sheet_history()
 	', true);
 }
 
+/**
+ * Editing a character sheet.
+ */
 function char_sheet_edit()
 {
 	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
@@ -1701,6 +1736,9 @@ function char_sheet_edit()
 	$context['sub_template'] = 'profile_character_sheet_edit';
 }
 
+/**
+ * Load the possible character sheet templates into $context.
+ */
 function load_char_sheet_templates()
 {
 	global $context, $smcFunc, $sourcedir;
@@ -1722,6 +1760,9 @@ function load_char_sheet_templates()
 	$smcFunc['db_free_result']($request);
 }
 
+/**
+ * Marking a character sheet ready for approval by admins.
+ */
 function char_sheet_approval()
 {
 	global $smcFunc, $context, $sourcedir;
@@ -1819,6 +1860,9 @@ function char_sheet_approval()
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 }
 
+/**
+ * Approving a character sheet.
+ */
 function char_sheet_approve()
 {
 	global $context, $smcFunc;
@@ -1914,6 +1958,9 @@ function char_sheet_approve()
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 }
 
+/**
+ * Reject a version of a character sheet (sending it back to the creator for changes)
+ */
 function char_sheet_reject()
 {
 	global $context, $smcFunc;
@@ -1932,6 +1979,9 @@ function char_sheet_reject()
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 }
 
+/**
+ * Show two versiosns of a character sheet side by side.
+ */
 function char_sheet_compare()
 {
 	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
@@ -1987,6 +2037,11 @@ function char_sheet_compare()
 	$context['sub_template'] = 'profile_character_sheet_compare';
 }
 
+/**
+ * Mark a given character's sheet as unapproved.
+ *
+ * @param int $char Character ID whose character sheet should be marked as unapproved.
+ */
 function mark_char_sheet_unapproved($char)
 {
 	global $smcFunc;
@@ -2000,6 +2055,13 @@ function mark_char_sheet_unapproved($char)
 	);
 }
 
+
+/**
+ * Handle UI aspects of merging multiple accounts accounts, including requesting from the user and security checks.
+ * Defers actual processing to merge_char_accounts().
+ *
+ * @param int $memID The source account to be merged into something else.
+ */
 function char_merge_account($memID)
 {
 	global $context, $txt, $user_profile, $smcFunc;
@@ -2054,6 +2116,14 @@ function char_merge_account($memID)
 	}
 }
 
+/**
+ * Perform the actual merger of accounts. Everything from $source gets added to $dest.
+ *
+ * @param int $source Account ID to merge from
+ * @param int $dest Account ID to merge into
+ * @return mixed True on success, otherwise string indicating error type
+ * @todo refactor this to emit exceptions rather than mixed types
+ */
 function merge_char_accounts($source, $dest)
 {
 	global $user_profile, $sourcedir, $smcFunc;

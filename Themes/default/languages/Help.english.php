@@ -97,7 +97,7 @@ $helptxt['modsettings'] = '<strong>Modification Settings</strong><br>
 
 $helptxt['time_format'] = '<strong>Time Format</strong><br>
 	You have the ability to adjust how the time and date look for yourself. There are a lot of little letters, but it\'s quite simple.
-	The conventions follow PHP\'s strftime function and are described as below (more details can be found at <a href="https://php.net/manual/function.strftime.php" target="_blank" class="new_win">php.net</a>).<br>
+	The conventions follow PHP\'s strftime function and are described as below (more details can be found at <a href="https://php.net/manual/function.strftime.php" target="_blank" rel="noopener">php.net</a>).<br>
 	<br>
 	The following characters are recognized in the format string: <br>
 	<span class="smalltext">
@@ -294,8 +294,8 @@ $helptxt['localCookies'] = 'StoryBB uses cookies to store login information on t
 	Global cookies are especially recommended when using SSI.php but work well for most sites on their own domain.';
 $helptxt['enableBBC'] = 'Selecting this setting will allow your members to use Bulletin Board Code (BBC) throughout the forum, allowing users to format their posts with images, type formatting, and more.';
 $helptxt['time_offset'] = 'Not all forum administrators want their forum to use the same time zone as the server upon which it is hosted. Use this setting to specify the time difference (in hours) between the server time and the time to be used for the forum. Negative and decimal values are permitted.';
-$helptxt['default_timezone'] = 'The server time zone tells PHP where your server is located. You should ensure that this is set correctly, preferably to the country/city in which the server is located. You can find out more information on the <a href="https://php.net/manual/en/timezones.php" target="_blank">PHP Site</a>.';
-$helptxt['timezone_priority_countries'] = 'This setting lets you push the time zones for a certain country or countries to the top of the list of selectabled time zones that is shown when users are configuring their profiles, etc.<br><br>For example, if many of your forum\'s members live in New Zealand or Fiji, you may enter "NZ,FJ" to make it easier for them to find the most relevant time zones quickly.<br><br>You can find the complete list of ISO country codes by searching the Internet for "<a href="//www.google.com/search?q=iso+3166-1+alpha-2" target="_blank">ISO 3166-1 alpha-2</a>".';
+$helptxt['default_timezone'] = 'The server time zone tells PHP where your server is located. You should ensure that this is set correctly, preferably to the country/city in which the server is located. You can find out more information on the <a href="https://php.net/manual/en/timezones.php" target="_blank" rel="noopener">PHP Site</a>.';
+$helptxt['timezone_priority_countries'] = 'This setting lets you push the time zones for a certain country or countries to the top of the list of selectabled time zones that is shown when users are configuring their profiles, etc.<br><br>For example, if many of your forum\'s members live in New Zealand or Fiji, you may enter "NZ,FJ" to make it easier for them to find the most relevant time zones quickly.<br><br>You can find the complete list of ISO country codes by searching the Internet for "<a href="//www.google.com/search?q=iso+3166-1+alpha-2" target="_blank" rel="noopener">ISO 3166-1 alpha-2</a>".';
 $helptxt['spamWaitTime'] = 'Here you can select the amount of time that must pass between postings. This can be used to stop people from "spamming" your forum by limiting how often they can post.';
 
 $helptxt['enablePostHTML'] = 'This will allow the posting of some basic HTML tags:
@@ -310,7 +310,7 @@ $helptxt['enablePostHTML'] = 'This will allow the posting of some basic HTML tag
 $helptxt['themes'] = 'Here you can select whether the default theme can be chosen, what theme guests will use,
 	as well as other settings. Click on a theme to the right to change the settings for it.';
 $helptxt['theme_install'] = 'This allows you to install new themes. You can do this from an existing directory, by uploading an archive for the theme, or by copying the default theme.<br><br>Note that the archive or directory must have a <pre>theme.json</pre> definition file.';
-$helptxt['xmlnews_enable'] = 'Allows people to link to <a href="%1$s?action=.xml;sa=news" target="_blank" class="new_win">Recent news</a>
+$helptxt['xmlnews_enable'] = 'Allows people to link to <a href="%1$s?action=.xml;sa=news" target="_blank" rel="noopener">Recent news</a>
 	and similar data. It is also recommended that you limit the size of recent posts/news because some clients expect the RSS data to be truncated for display.';
 $helptxt['xmlnews_attachments'] = 'Allows links to attachments to be enclosed within your XML/RSS feeds. Turn this on if you want to use your forum as a podcasting, broadcatching, or similar content distribution platform.
 	<br><br>
@@ -398,6 +398,7 @@ $helptxt['send_validation_onChange'] = 'When this setting is checked all members
 $helptxt['approveAccountDeletion'] = 'When this setting is checked, any user request to delete his own account has to be approved by an administrator';
 
 $helptxt['send_welcomeEmail'] = 'When this setting is enabled all new members will be sent an email welcoming them to your community';
+$helptxt['show_cookie_notice'] = 'When this setting is enabled, StoryBB will check to see if the user has previously accepted to have cookies from this site - if not, puts up a message in the footer that will remain there until the guest accepts. This option is designed to make it easier to be compliant with EU cookie regulations and the GDPR.';
 $helptxt['password_strength'] = 'This setting determines the strength required for passwords selected by your forum users. The stronger the password, the harder it should be to compromise member\'s accounts.
 	Its possible settings are:
 	<ul class="normallist">
@@ -405,35 +406,19 @@ $helptxt['password_strength'] = 'This setting determines the strength required f
 		<li><strong>Medium:</strong> The password must be at least eight characters long, and cannot be part of a user\'s name or email address.</li>
 		<li><strong>High:</strong> As for medium, except the password must also contain a mixture of upper and lower case letters, and at least one number.</li>
 	</ul>';
-$helptxt['enable_password_conversion'] = 'By enabling this setting, StoryBB will attempt to detect passwords stored in other formats and convert them to the format StoryBB uses. Typically this is used for forums converted to StoryBB, but may have other uses as well. Disabling this prevents a user from logging in using their password after a conversion and they would need to reset their password.';
 
-$helptxt['coppaAge'] = 'The value specified in this box will determine the minimum age that new members must be in order to be granted immediate access to the forums.
-	On registration they will be prompted to confirm whether they are over this age, and if not will either have their application rejected or suspended awaiting parental approval - dependant on the type of restriction chosen.
-	If a value of 0 is chosen for this setting then all other age restriction settings shall be ignored.';
-$helptxt['coppaType'] = 'If age restrictions are enabled, then this setting will define what happens when a user below the minimum age attempts to register with your forum. There are two possible choices:
-	<ul class="normallist">
-		<li>
-			<strong>Reject Their Registration:</strong><br>
-				Any new member below the minimum age will have their registration rejected immediately.<br>
-		</li><li>
-			<strong>Require Parent/Guardian Approval</strong><br>
-				Any new member who attempts to register and is below the minimum permitted age will have their account marked as awaiting approval, and will be presented with a form upon which their parents must give permission to become a member of the forum.
-				They will also be presented with the forum contact details entered on the settings page, so that they can send the form to the administrator by mail or fax.
-		</li>
-	</ul>';
-$helptxt['coppaPost'] = 'The contact boxes are required so that forms granting permission for underage registration can be sent to the forum administrator. These details will be shown to all new minors, and are required for parent/guardian approval. At the very least a postal address or fax number must be provided.';
+$helptxt['minimum_age'] = 'This setting sets the minimum age that will be shown in the terms and conditions.';
 
 $helptxt['allow_hideOnline'] = 'With this setting enabled all members will be able to hide their online status from other users (except administrators). If disabled, only users who can moderate the forum can hide their presence. Note that disabling this setting will not change any existing member\'s status - it just stops them from hiding themselves in the future.';
 $helptxt['meta_keywords'] = 'These keywords are sent in the output of every page to indicate to search engines (etc) the key content of your site. They should be a comma separated list of words, and should not use HTML.';
 
 $helptxt['secret_why_blank'] = 'For your security, your password and the answer to your secret question are encrypted so that the StoryBB software will never tell you, or anyone else, what they are.';
-$helptxt['moderator_why_missing'] = 'Since moderation is done on a board-by-board basis, you have to make members moderators from the <a href="%1$s?action=admin;area=manageboards" target="_blank" class="new_win">board management interface</a>.';
+$helptxt['moderator_why_missing'] = 'Since moderation is done on a board-by-board basis, you have to make members moderators from the <a href="%1$s?action=admin;area=manageboards" target="_blank" rel="noopener">board management interface</a>.';
 
 $helptxt['permissions'] = 'Permissions are how you either allow groups to, or deny groups from, doing specific things.<br><br>You can modify multiple boards at once with the checkboxes, or look at the permissions for a specific group by clicking \'Modify.\'';
 $helptxt['permissions_board'] = 'If a board is set to \'Global,\' it means that the board will not have any special permissions. \'Local\' means it will have its own permissions - separate from the global ones. This allows you to have a board that has more or fewer permissions than another, without requiring you to set them for each and every board.';
 $helptxt['permissions_quickgroups'] = 'These allow you to use the &quot;default&quot; permission setups -  <em>standard</em> means \'nothing special\', <em>restrictive</em> means \'like a guest\', <em>moderator</em> means \'what a moderator has\', and lastly <em>maintenance</em> means \'permissions very close to those of an administrator\'.';
 $helptxt['permissions_deny'] = 'Denying permissions can be useful when you want to take away permission from certain members. You can add a membergroup with a \'deny\'-permission to the members you wish to deny a permission.<br><br><strong>Use with care</strong>, a denied permission will stay denied no matter what other membergroups the member is in.';
-$helptxt['permissions_postgroups'] = 'Enabling permissions for groups based on post count will allow you to attribute permissions to members that have posted a certain amount of messages. The permissions of the post count based groups are <em>added</em> to the permissions of the regular membergroups.';
 $helptxt['membergroup_guests'] = 'The Guests membergroup is for all users that are not logged in.';
 $helptxt['membergroup_regular_members'] = 'The Regular Members are all members that are logged in, but that have no primary membergroup assigned.';
 $helptxt['membergroup_administrator'] = 'The administrator can, per definition, do anything and see any board. There are no permission settings for the administrator.';
@@ -518,7 +503,7 @@ $helptxt['show_spider_online'] = 'This setting allows you to select whether spid
 		</li>
 	</ul>';
 
-$helptxt['birthday_email'] = 'Choose the index of the birthday email message to use. A preview will be shown in the Email Subject and Email Body fields.<br><strong>Note:</strong> Selecting this setting does not automatically enable birthday emails. To enable birthday emails use the <a href="%1$s?action=admin;area=scheduledtasks;%3$s=%2$s" target="_blank" class="new_win">Scheduled Tasks</a> page and enable the birthday email task.';
+$helptxt['birthday_email'] = 'Choose the index of the birthday email message to use. A preview will be shown in the Email Subject and Email Body fields.<br><strong>Note:</strong> Selecting this setting does not automatically enable birthday emails. To enable birthday emails use the <a href="%1$s?action=admin;area=scheduledtasks;%3$s=%2$s" target="_blank" rel="noopener">Scheduled Tasks</a> page and enable the birthday email task.';
 $helptxt['pm_bcc'] = 'When sending a personal message you can choose to add a recipient as BCC (Blind Carbon Copy). BCC recipients do not have their identities revealed to the other recipients of the message.';
 
 $helptxt['move_topics_maintenance'] = 'This will allow you to move all the posts from one board to another board.';

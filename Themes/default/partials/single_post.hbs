@@ -65,7 +65,7 @@
 	    		        <li class="profile">
 							<ol class="profile_icons">
 							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-							    <li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" class="new_win">
+							    <li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener">
 							        <span class="generic_icons www centericon" title="{{member.website.title}}"></span>
 					            </a></li>
 							{{/if}}

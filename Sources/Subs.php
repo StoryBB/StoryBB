@@ -11,6 +11,7 @@
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\Model\Policy;
 
 /**
  * Simple autoloader.
@@ -117,27 +118,6 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						);
 						list ($changes['unapprovedMembers']) = $smcFunc['db_fetch_row']($result);
 						$smcFunc['db_free_result']($result);
-					}
-
-					// What about unapproved COPPA registrations?
-					if (!empty($modSettings['coppaType']) && $modSettings['coppaType'] != 1)
-					{
-						$result = $smcFunc['db_query']('', '
-						SELECT COUNT(*)
-						FROM {db_prefix}members
-						WHERE is_activated = {int:coppa_approval}',
-							array(
-								'coppa_approval' => 5,
-							)
-						);
-						list ($coppa_approvals) = $smcFunc['db_fetch_row']($result);
-						$smcFunc['db_free_result']($result);
-
-						// Add this to the number of unapproved members
-						if (!empty($changes['unapprovedMembers']))
-							$changes['unapprovedMembers'] += $coppa_approvals;
-						else
-							$changes['unapprovedMembers'] = $coppa_approvals;
 					}
 				}
 			}
@@ -324,6 +304,7 @@ function updateMemberData($members, $data)
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'show_online', 'pm_receive_from', 'alerts',
 		'id_theme', 'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
+		'policy_acceptance',
 	);
 	$knownFloats = array(
 		'time_offset',
@@ -1622,7 +1603,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'url',
 				'type' => 'unparsed_content',
-				'content' => '<a href="$1" class="bbc_link" target="_blank">$1</a>',
+				'content' => '<a href="$1" class="bbc_link" target="_blank" rel="noopener">$1</a>',
 				'validate' => function (&$tag, &$data, $disabled)
 				{
 					$data = strtr($data, array('<br>' => ''));
@@ -1635,7 +1616,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'tag' => 'url',
 				'type' => 'unparsed_equals',
 				'quoted' => 'optional',
-				'before' => '<a href="$1" class="bbc_link" target="_blank">',
+				'before' => '<a href="$1" class="bbc_link" target="_blank" rel="noopener">',
 				'after' => '</a>',
 				'validate' => function (&$tag, &$data, $disabled)
 				{
@@ -2998,7 +2979,7 @@ function setupThemeContext($forceload = false)
 		$_SESSION['unread_messages'] = $user_info['unread_messages'];
 
 		if (allowedTo('moderate_forum'))
-			$context['unapproved_members'] = (!empty($modSettings['registration_method']) && ($modSettings['registration_method'] == 2 || (!empty($modSettings['coppaType']) && $modSettings['coppaType'] == 2))) || !empty($modSettings['approveAccountDeletion']) ? $modSettings['unapprovedMembers'] : 0;
+			$context['unapproved_members'] = (!empty($modSettings['registration_method']) && ($modSettings['registration_method'] == 2)) || !empty($modSettings['approveAccountDeletion']) ? $modSettings['unapprovedMembers'] : 0;
 
 		$context['user']['avatar'] = array();
 
@@ -3229,10 +3210,6 @@ function template_header()
 		if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
 		{
 			session_flash('error', $txt['cache_writable']);
-		}
-		if ($modSettings['requireAgreement'] && !file_exists($boarddir . '/agreement.txt'))
-		{
-			session_flash('error', $txt['agreement_missing']);
 		}
 	}
 
@@ -4164,6 +4141,8 @@ function setupMenuContext()
 
 	if (isset($context['menu_buttons'][$current_action]))
 		$context['menu_buttons'][$current_action]['active_button'] = true;
+
+	$context['footer_links'] = Policy::get_footer_policies();
 }
 
 /**

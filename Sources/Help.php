@@ -18,18 +18,60 @@
  */
 function ShowHelp()
 {
+	global $context, $txt, $scripturl, $smcFunc, $user_info, $language;
+
 	loadLanguage('Manual');
 
 	$subActions = array(
 		'index' => 'HelpIndex',
-		'rules' => 'HelpRules',
+		'smileys' => 'HelpSmileys',
 	);
+
+	$context['manual_sections'] = [
+		'smileys' => [
+			'link' => $scripturl . '?action=help;sa=smileys',
+			'title' => $txt['manual_smileys'],
+			'desc' => $txt['manual_smileys_desc'],
+		],
+	];
+
+	$request = $smcFunc['db_query']('', '
+		SELECT p.id_policy, pt.policy_type, p.language, p.title, p.description
+		FROM {db_prefix}policy_types AS pt
+			INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
+		WHERE pt.show_help = 1
+		AND p.language IN ({array_string:languages})',
+		[
+			'languages' => [$language, $user_info['language']],
+		]
+	);
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$subActions[$row['policy_type']] = 'HelpPolicy';
+		if (!isset($context['manual_sections'][$row['policy_type']]))
+		{
+			$context['manual_sections'][$row['policy_type']] = [
+				'link' => $scripturl . '?action=help;sa=' . $row['policy_type'],
+				'title' => $row['title'],
+				'desc' => $row['description'],
+				'id_policy' => $row['id_policy'],
+			];
+		}
+		elseif ($row['language'] == $user_info['language'])
+		{
+			// So we matched multiple, we previously had one (in site language) and now we have one for the user language, so use that.
+			$context['manual_sections'][$row['policy_type']]['title'] = $row['title'];
+			$context['manual_sections'][$row['policy_type']]['desc'] = $row['description'];
+			$context['manual_sections'][$row['policy_type']]['id_policy'] = $row['id_policy'];
+		}
+	}
+	$smcFunc['db_free_result']($request);
 
 	// CRUD $subActions as needed.
 	call_integration_hook('integrate_manage_help', array(&$subActions));
 
-	$sa = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'index';
-	call_helper($subActions[$sa]);
+	$context['subaction'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'index';
+	call_helper($subActions[$context['subaction']]);
 }
 
 /**
@@ -39,24 +81,7 @@ function HelpIndex()
 {
 	global $scripturl, $context, $txt;
 
-	// We need to know where our wiki is.
-	$context['wiki_url'] = 'https://wiki.simplemachines.org/smf';
-	$context['wiki_prefix'] = 'SMF2.1:';
-
 	$context['canonical_url'] = $scripturl . '?action=help';
-
-	// Sections were are going to link...
-	$context['manual_sections'] = array(
-		'registering' => 'Registering',
-		'logging_in' => 'Logging_In',
-		'profile' => 'Profile',
-		'search' => 'Search',
-		'posting' => 'Posting',
-		'bbc' => 'Bulletin_board_code',
-		'personal_messages' => 'Personal_messages',
-		'memberlist' => 'Memberlist',
-		'features' => 'Features',
-	);
 
 	// Build the link tree.
 	$context['linktree'][] = array(
@@ -65,22 +90,64 @@ function HelpIndex()
 	);
 
 	// Lastly, some minor template stuff.
-	$context['page_title'] = $txt['manual_sbb_user_help'];
+	$context['page_title'] = $txt['manual_storybb_user_help'];
 	$context['sub_template'] = 'help_manual';
-
-	StoryBB\Template::add_helper([
-		'getLangSuffix' => function($lang) {
-			return ($lang != 'en' ? '/' . $lang : '');
-		}
-	]);
 }
 
 /**
- * Displays forum rules
+ * Display a policy page.
  */
-function HelpRules()
+function HelpPolicy()
 {
-	global $context, $txt, $boarddir, $user_info, $scripturl;
+	global $scripturl, $context, $txt, $smcFunc, $cookiename, $modSettings;
+
+	$context['canonical_url'] = $scripturl . '?action=help;sa=' . $context['subaction'];
+
+	// Build the link tree.
+	$context['linktree'][] = [
+		'url' => $scripturl . '?action=help',
+		'name' => $txt['help'],
+	];
+	$context['linktree'][] = [
+		'url' => $context['canonical_url'],
+		'name' => $context['manual_sections'][$context['subaction']]['title'],
+	];
+	
+	// We know if we're here the policy exists.
+	$request = $smcFunc['db_query']('', '
+		SELECT p.id_policy, pr.last_change, pr.revision_text
+		FROM {db_prefix}policy_revision AS pr
+			INNER JOIN {db_prefix}policy AS p ON (p.last_revision = pr.id_revision)
+		WHERE p.id_policy = {int:policy}',
+		[
+			'policy' => $context['manual_sections'][$context['subaction']]['id_policy'],
+		]
+	);
+	$row = $smcFunc['db_fetch_assoc']($request);
+
+	$context['policy_name'] = $context['manual_sections'][$context['subaction']]['title'];
+
+	// Replace out some of the placeholders in our text.
+	$replacements = [
+		'{$forum_name}' => $context['forum_name_html_safe'],
+		'{$contact_url}' => $scripturl . '?action=contact',
+		'{$cookiename}' => $cookiename,
+		'{$age}' => $modSettings['minimum_age'],
+		'{$cookiepolicy}' => $scripturl . '?action=help;sa=cookies',
+	];
+	$context['policy_text'] = parse_bbc(strtr($row['revision_text'], $replacements), false);
+	$context['last_updated'] = timeformat($row['last_change']);
+
+	$context['page_title'] = $context['policy_name'];
+	$context['sub_template'] = 'help_policy';
+}
+
+/**
+ * The smileys list in the Help section
+ */
+function HelpSmileys()
+{
+	global $smcFunc, $scripturl, $context, $txt, $modSettings;
 
 	// Build the link tree.
 	$context['linktree'][] = array(
@@ -88,29 +155,38 @@ function HelpRules()
 		'name' => $txt['help'],
 	);
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=help;sa=rules',
-		'name' => $txt['terms_and_rules'],
+		'url' => $scripturl . '?action=help;sa=smileys',
+		'name' => $txt['manual_smileys'],
 	);
 
-	// Have we got a localized one?
-	if (file_exists($boarddir . '/agreement.' . $user_info['language'] . '.txt'))
-		$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.' . $user_info['language'] . '.txt'), true, 'agreement_' . $user_info['language']);
-	elseif (file_exists($boarddir . '/agreement.txt'))
-		$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.txt'), true, 'agreement');
-	else
-		$context['agreement'] = '';
-
-	// Nothing to show, so let's get out of here
-	if (empty($context['agreement']))
+	$context['smileys'] = [];
+	$request = $smcFunc['db_query']('', '
+		SELECT code, filename, description
+		FROM {db_prefix}smileys
+		ORDER BY smiley_row, smiley_order, hidden');
+	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		// No file found or a blank file! Just leave...
-		redirectexit();
+		if (!isset($context['smileys'][$row['filename']]))
+		{
+			$context['smileys'][$row['filename']] = [
+				'text' => $row['description'],
+				'code' => [$row['code']],
+				'image' => $modSettings['smileys_url'] . '/' . $row['filename'],
+			];
+		}
+		else
+		{
+			if (empty($context['smileys'][$row['filename']]['text']))
+			{
+				$context['smileys'][$row['filename']]['text'] = $row['description'];
+			}
+			$context['smileys'][$row['filename']]['code'][] = $row['code'];
+		}
 	}
+	$smcFunc['db_free_result']($request);
 
-	$context['canonical_url'] = $scripturl . '?action=help;sa=rules';
-
-	$context['page_title'] = $txt['terms_and_rules'];
-	$context['sub_template'] = 'help_terms';
+	$context['page_title'] = $txt['manual_smileys'];
+	$context['sub_template'] = 'help_smileys';
 }
 
 /**

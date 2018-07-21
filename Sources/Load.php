@@ -64,61 +64,11 @@ function reloadSettings()
 	$modSettings['cache_enable'] = $cache_enable;
 
 	// Set a list of common functions.
-	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(#021|quot|amp|lt|gt|nbsp);';
-	if (empty($modSettings['disableEntityCheck']))
+	$ent_list = '&(?:#\d{1,7}|quot|amp|lt|gt|nbsp);';
+	$ent_check = function($string)
 	{
-		$ent_check = function($string)
-		{
-			$string = preg_replace_callback('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $string);
-			return $string;
-		};
-	}
-	else
-	{
-		$ent_check = function($string)
-		{
-			return $string;
-		};
-	}
-
-	$fix_utf8mb4 = function($string) use ($smcFunc)
-	{
-		if ($smcFunc['db_mb4'])
-			return $string;
-
-		$i = 0;
-		$len = strlen($string);
-		$new_string = '';
-		while ($i < $len)
-		{
-			$ord = ord($string[$i]);
-			if ($ord < 128)
-			{
-				$new_string .= $string[$i];
-				$i++;
-			}
-			elseif ($ord < 224)
-			{
-				$new_string .= $string[$i] . $string[$i + 1];
-				$i += 2;
-			}
-			elseif ($ord < 240)
-			{
-				$new_string .= $string[$i] . $string[$i + 1] . $string[$i + 2];
-				$i += 3;
-			}
-			elseif ($ord < 248)
-			{
-				// Magic happens.
-				$val = (ord($string[$i]) & 0x07) << 18;
-				$val += (ord($string[$i + 1]) & 0x3F) << 12;
-				$val += (ord($string[$i + 2]) & 0x3F) << 6;
-				$val += (ord($string[$i + 3]) & 0x3F);
-				$new_string .= '&#' . $val . ';';
-				$i += 4;
-			}
-		}
-		return $new_string;
+		$string = preg_replace_callback('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $string);
+		return $string;
 	};
 
 	// Preg_replace space characters depend on the character set in use
@@ -131,9 +81,9 @@ function reloadSettings()
 			$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
 			return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202E || $num === 0x202D ? '' : '&#' . $num . ';';
 		},
-		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'UTF-8') use ($ent_check, $fix_utf8mb4)
+		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'UTF-8') use ($ent_check)
 		{
-			return $fix_utf8mb4($ent_check(htmlspecialchars($string, $quote_style, $charset)));
+			return $ent_check(htmlspecialchars($string, $quote_style, $charset));
 		},
 		'htmltrim' => function($string) use ($space_chars, $ent_check)
 		{
@@ -145,7 +95,7 @@ function reloadSettings()
 		},
 		'strpos' => function($haystack, $needle, $offset = 0) use ($ent_check, $modSettings)
 		{
-			$haystack_arr = preg_split('~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+			$haystack_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
 			if (strlen($needle) === 1)
 			{
@@ -154,7 +104,7 @@ function reloadSettings()
 			}
 			else
 			{
-				$needle_arr = preg_split('~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($needle), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+				$needle_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($needle), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 				$needle_size = count($needle_arr);
 
 				$result = array_search($needle_arr[0], array_slice($haystack_arr, $offset));
@@ -170,7 +120,7 @@ function reloadSettings()
 		},
 		'substr' => function($string, $start, $length = null) use ($ent_check, $modSettings)
 		{
-			$ent_arr = preg_split('~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+			$ent_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 			return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
 		},
 		'strtolower' => function($string) use ($sourcedir)
@@ -680,6 +630,8 @@ function loadUserSettings()
 
 		// We don't know the offset...
 		$user_info['time_offset'] = 0;
+
+		$context['show_cookie_notice'] = !empty($modSettings['show_cookie_notice']) && empty($_COOKIE['cookies']);
 	}
 
 	// Set up the $user_info array.
@@ -719,6 +671,7 @@ function loadUserSettings()
 		'ignoreusers' => !empty($user_settings['pm_ignore_list']) ? explode(',', $user_settings['pm_ignore_list']) : array(),
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 		'permissions' => array(),
+		'policy_acceptance' => isset($user_settings['policy_acceptance']) ? $user_settings['policy_acceptance'] : 0,
 	);
 
 	// We now need to apply immersive mode, potentially.

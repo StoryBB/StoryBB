@@ -34,7 +34,6 @@ function ModifyPermissions()
 		'quickboard' => array('SetQuickBoards', 'manage_permissions'),
 		'postmod' => array('ModifyPostModeration', 'manage_permissions'),
 		'profiles' => array('EditPermissionProfiles', 'manage_permissions'),
-		'settings' => array('GeneralPermissionSettings', 'admin_forum'),
 	);
 
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) && empty($subActions[$_REQUEST['sa']]['disabled']) ? $_REQUEST['sa'] : (allowedTo('manage_permissions') ? 'index' : 'settings');
@@ -57,9 +56,6 @@ function ModifyPermissions()
 			),
 			'postmod' => array(
 				'description' => $txt['permissions_post_moderation_desc'],
-			),
-			'settings' => array(
-				'description' => $txt['permission_settings_desc'],
 			),
 		),
 	);
@@ -155,8 +151,8 @@ function PermissionIndex()
 	// Query the database defined membergroups.
 	$query = $smcFunc['db_query']('', '
 		SELECT id_group, id_parent, group_name, min_posts, online_color, icons
-		FROM {db_prefix}membergroups' . (empty($modSettings['permission_enable_postgroups']) ? '
-		WHERE min_posts = {int:min_posts}' : '') . '
+		FROM {db_prefix}membergroups
+		WHERE min_posts = {int:min_posts}
 		ORDER BY id_parent = {int:not_inherited} DESC, min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
 		array(
 			'min_posts' => -1,
@@ -1005,84 +1001,6 @@ function GeneralPermissionSettings($return_config = false)
 {
 	global $context, $modSettings, $sourcedir, $txt, $scripturl, $smcFunc;
 
-	// All the setting variables
-	$config_vars = array(
-			array('check', 'permission_enable_postgroups', 0, $txt['permission_settings_enable_postgroups'], 'help' => 'permissions_postgroups'),
-	);
-
-	call_integration_hook('integrate_modify_permission_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	$context['page_title'] = $txt['permission_settings_title'];
-
-	// Needed for the inline permission functions, and the settings template.
-	require_once($sourcedir . '/ManageServer.php');
-
-	// Don't let guests have these permissions.
-	$context['post_url'] = $scripturl . '?action=admin;area=permissions;save;sa=settings';
-	$context['permissions_excluded'] = array(-1);
-
-	// Saving the settings?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-		call_integration_hook('integrate_save_permission_settings');
-		saveDBSettings($config_vars);
-
-		// Make sure there are no postgroup based permissions left.
-		if (empty($modSettings['permission_enable_postgroups']))
-		{
-			// Get a list of postgroups.
-			$post_groups = array();
-			$request = $smcFunc['db_query']('', '
-				SELECT id_group
-				FROM {db_prefix}membergroups
-				WHERE min_posts != {int:min_posts}',
-				array(
-					'min_posts' => -1,
-				)
-			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$post_groups[] = $row['id_group'];
-			$smcFunc['db_free_result']($request);
-
-			// Remove'em.
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}permissions
-				WHERE id_group IN ({array_int:post_group_list})',
-				array(
-					'post_group_list' => $post_groups,
-				)
-			);
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}board_permissions
-				WHERE id_group IN ({array_int:post_group_list})',
-				array(
-					'post_group_list' => $post_groups,
-				)
-			);
-			$smcFunc['db_query']('', '
-				UPDATE {db_prefix}membergroups
-				SET id_parent = {int:not_inherited}
-				WHERE id_parent IN ({array_int:post_group_list})',
-				array(
-					'post_group_list' => $post_groups,
-					'not_inherited' => -2,
-				)
-			);
-		}
-
-		session_flash('success', $txt['settings_saved']);
-		redirectexit('action=admin;area=permissions;sa=settings');
-	}
-
-	// We need this for the in-line permissions
-	createToken('admin-mp');
-
-	prepareDBSettingContext($config_vars);
-	$context['settings_title'] = $txt['settings'];
 }
 
 /**
@@ -1194,7 +1112,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'profile_website_any',
 		'profile_displayed_name_any',
 		'profile_password_any',
-		'profile_title_any',
 	));
 	$groupLevels['board']['maintenance'] = array_merge($groupLevels['board']['moderator'], array(
 	));
@@ -1471,7 +1388,6 @@ function loadAllPermissions()
 			'profile_extra' => array(true, 'profile'),
 			'profile_signature' => array(true, 'profile'),
 			'profile_website' => array(true, 'profile'),
-			'profile_title' => array(true, 'profile'),
 			'profile_upload_avatar' => array(false, 'profile'),
 			'profile_remote_avatar' => array(false, 'profile'),
 			'report_user' => array(false, 'profile'),
@@ -1737,8 +1653,8 @@ function init_inline_permissions($permissions, $excluded_groups = array())
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}permissions AS p ON (p.id_group = mg.id_group AND p.permission IN ({array_string:permissions}))
 		WHERE mg.id_group NOT IN (1, 3)
-			AND mg.id_parent = {int:not_inherited}' . (empty($modSettings['permission_enable_postgroups']) ? '
-			AND mg.min_posts = {int:min_posts}' : '') . '
+			AND mg.id_parent = {int:not_inherited}
+			AND mg.min_posts = {int:min_posts}
 		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
 		array(
 			'not_inherited' => -2,
@@ -2231,7 +2147,6 @@ function loadIllegalGuestPermissions()
 		'profile_remove',
 		'profile_remote_avatar',
 		'profile_signature',
-		'profile_title',
 		'profile_upload_avatar',
 		'profile_warning',
 		'remove',
@@ -2300,7 +2215,7 @@ function ModifyPostModeration()
 		SELECT id_group, group_name, online_color, id_parent
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:admin_group}
-			' . (empty($modSettings['permission_enable_postgroups']) ? ' AND min_posts = {int:min_posts}' : '') . '
+			AND min_posts = {int:min_posts}
 		ORDER BY id_parent ASC',
 		array(
 			'admin_group' => 1,

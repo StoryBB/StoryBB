@@ -80,7 +80,7 @@
 					<span class="smalltext">{{{txt.profile_warning_reason_desc}}}</span>
 				</dt>
 				<dd>
-					<input type="text" name="warn_reason" id="warn_reason" value="{{{context.warning_data.reason}}}" size="50" style="width: 80%;" class="input_text">
+					<input type="text" name="warn_reason" id="warn_reason" value="{{{context.warning_data.reason}}}" size="50" style="width: 80%;">
 				</dd>
 			</dl>
 			<hr>
@@ -100,13 +100,13 @@
 					<strong><label for="warn_notify">{{{txt.profile_warning_notify}}}:</label></strong>
 				</dt>
 				<dd>
-					<input type="checkbox" name="warn_notify" id="warn_notify" onclick="modifyWarnNotify();"{{#if (eq_coerce context.warning_data.notify 1)}} checked{{/if}} class="input_check">
+					<input type="checkbox" name="warn_notify" id="warn_notify" onclick="modifyWarnNotify();"{{#if (eq_coerce context.warning_data.notify 1)}} checked{{/if}}>
 				</dd>
 				<dt>
 					<strong><label for="warn_sub">{{{txt.profile_warning_notify_subject}}}:</label></strong>
 				</dt>
 				<dd>
-					<input type="text" name="warn_sub" id="warn_sub" value="{{#if context.warning_data.notify_subject}}{{{context.warning_data.notify_subject}}}{{else}}{{{txt.profile_warning_notify_template_subject}}}{{/if}}" size="50" style="width: 80%;" class="input_text">
+					<input type="text" name="warn_sub" id="warn_sub" value="{{#if context.warning_data.notify_subject}}{{{context.warning_data.notify_subject}}}{{else}}{{{txt.profile_warning_notify_template_subject}}}{{/if}}" size="50" style="width: 80%;">
 				</dd>
 				<dt>
 					<strong><label for="warn_temp">{{{txt.profile_warning_notify_body}}}:</label></strong>
@@ -119,7 +119,7 @@
 							<option value="{{@key}}">{{{title}}}</option>
 						{{/each}}
 					</select>
-					<span class="smalltext" id="new_template_link" style="display: none;">[<a href="{{scripturl}}?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank" class="new_win">{{{txt.profile_warning_new_template}}}</a>]</span><br>
+					<span class="smalltext" id="new_template_link" style="display: none;">[<a href="{{scripturl}}?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank" rel="noopener">{{{txt.profile_warning_new_template}}}</a>]</span><br>
 					<textarea name="warn_body" id="warn_body" cols="40" rows="8" style="min-width: 50%; max-width: 99%;">{{{context.warning_data.notify_body}}}</textarea>
 				</dd>
 				{{/unless}}

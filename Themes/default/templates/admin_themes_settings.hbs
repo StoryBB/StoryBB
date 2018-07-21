@@ -34,25 +34,25 @@
 						<label for="theme_name">{{txt.actual_theme_name}}</label>
 					</dt>
 					<dd>
-						<input type="text" id="theme_name" name="options[name]" value="{{context.theme_settings.name}}" size="32" class="input_text">
+						<input type="text" id="theme_name" name="options[name]" value="{{context.theme_settings.name}}" size="32">
 					</dd>
 					<dt>
 						<label for="theme_url">{{txt.actual_theme_url}}</label>
 					</dt>
 					<dd>
-						<input type="text" id="theme_url" name="options[theme_url]" value="{{context.theme_settings.actual_theme_url}}" size="50" style="max-width: 100%; width: 50ex;" class="input_text">
+						<input type="text" id="theme_url" name="options[theme_url]" value="{{context.theme_settings.actual_theme_url}}" size="50" style="max-width: 100%; width: 50ex;">
 					</dd>
 					<dt>
 						<label for="images_url">{{txt.actual_images_url}}</label>
 					</dt>
 					<dd>
-						<input type="text" id="images_url" name="options[images_url]" value="{{context.theme_settings.actual_images_url}}" size="50" style="max-width: 100%; width: 50ex;" class="input_text">
+						<input type="text" id="images_url" name="options[images_url]" value="{{context.theme_settings.actual_images_url}}" size="50" style="max-width: 100%; width: 50ex;">
 					</dd>
 					<dt>
 						<label for="theme_dir">{{txt.actual_theme_dir}}</label>
 					</dt>
 					<dd>
-						<input type="text" id="theme_dir" name="options[theme_dir]" value="{{context.theme_settings.actual_theme_dir}}" size="50" style="max-width: 100%; width: 50ex;" class="input_text">
+						<input type="text" id="theme_dir" name="options[theme_dir]" value="{{context.theme_settings.actual_theme_dir}}" size="50" style="max-width: 100%; width: 50ex;">
 					</dd>
 				</dl>
 			</div>
@@ -79,7 +79,7 @@
 					</dt>
 					<dd>
 						<input type="hidden" name="options[disable_user_variant]" value="0">
-						<input type="checkbox" name="options[disable_user_variant]" id="disable_user_variant"', !empty($context['theme_settings']['disable_user_variant']) ? ' checked' : '', ' value="1" class="input_check">
+						<input type="checkbox" name="options[disable_user_variant]" id="disable_user_variant"', !empty($context['theme_settings']['disable_user_variant']) ? ' checked' : '', ' value="1">
 					</dd>
 				</dl>
 				<img src="{{context.default_variant.thumbnail}}" id="variant_preview" alt="">
@@ -110,7 +110,7 @@
 					{{#if (eq type 'checkbox')}}
 					<dd>
 						<input type="hidden" name="{{#if default}}default_{{/if}}options[{{id}}]" value="0">
-						<input type="checkbox" name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}"{{#if value}} checked{{/if}} value="1" class="input_check">
+						<input type="checkbox" name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}"{{#if value}} checked{{/if}} value="1">
 					</dd>
 					{{/if}}
 					{{#if (eq type 'list')}}
@@ -129,12 +129,12 @@
 					{{/if}}
 					{{#if (or (eq type 'text') (eq type 'url'))}}
 					<dd>
-						<input type="{{type}}" name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="{{#if size}}{{size}}{{else}}40{{/if}}" class="input_text">
+						<input type="{{type}}" name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="{{#if size}}{{size}}{{else}}40{{/if}}">
 					</dd>
 					{{/if}}
 					{{#if (eq type 'number')}}
 					<dd>
-						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}" max="{{max}}" step="{{step}}"	name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="5" class="input_text">
+						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}" max="{{max}}" step="{{step}}"	name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="5">
 					</dd>
 					{{/if}}
 					

@@ -90,7 +90,7 @@ function ListContact()
 					{
 						if (!empty($rowData['id_member']))
 						{
-							return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . '" target="_blank">' . $rowData['member_name'] . '</a>';
+							return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . '" target="_blank" rel="noopener">' . $rowData['member_name'] . '</a>';
 						}
 						else
 							return $rowData['member_name'];

@@ -169,14 +169,14 @@ function EditNews()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'function' => function($news)
 					{
 						if (is_numeric($news['id']))
-							return '<input type="checkbox" name="remove[]" value="' . $news['id'] . '" class="input_check">';
+							return '<input type="checkbox" name="remove[]" value="' . $news['id'] . '">';
 						else
 							return '';
 					},
@@ -313,22 +313,19 @@ function SelectMailingMembers()
 	$postGroups = array();
 	$normalGroups = array();
 
-	// If we have post groups disabled then we need to give a "ungrouped members" option.
-	if (empty($modSettings['permission_enable_postgroups']))
-	{
-		$context['groups'][0] = array(
-			'id' => 0,
-			'name' => $txt['membergroups_members'],
-			'member_count' => 0,
-		);
-		$normalGroups[0] = 0;
-	}
+	// As post groups are disabled then we need to give a "ungrouped members" option.
+	$context['groups'][0] = array(
+		'id' => 0,
+		'name' => $txt['membergroups_members'],
+		'member_count' => 0,
+	);
+	$normalGroups[0] = 0;
 
 	// Get all the extra groups as well as Administrator and Global Moderator.
 	$request = $smcFunc['db_query']('', '
 		SELECT mg.id_group, mg.group_name, mg.min_posts
-		FROM {db_prefix}membergroups AS mg' . (empty($modSettings['permission_enable_postgroups']) ? '
-		WHERE mg.min_posts = {int:min_posts}' : '') . '
+		FROM {db_prefix}membergroups AS mg
+		WHERE mg.min_posts = {int:min_posts}
 		GROUP BY mg.id_group, mg.min_posts, mg.group_name
 		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
 		array(

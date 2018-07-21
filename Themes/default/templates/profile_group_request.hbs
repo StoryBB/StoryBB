@@ -40,7 +40,7 @@
 					<div class="windowbg" id="primdiv_{{id}}">
 
 						{{#if ../context.can_edit_primary}}
-						<input type="radio" name="primary" id="primary_{{id}}" value="{{id}}"{{#if is_primary}} checked{{/if}} onclick="highlightSelected('primdiv_{{id}}');"{{#unless can_be_primary}} disabled{{/unless}} class="input_radio">
+						<input type="radio" name="primary" id="primary_{{id}}" value="{{id}}"{{#if is_primary}} checked{{/if}} onclick="highlightSelected('primdiv_{{id}}');"{{#unless can_be_primary}} disabled{{/unless}}>
 						{{/if}}
 
 						<label for="primary_{{id}}">

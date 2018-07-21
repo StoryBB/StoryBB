@@ -7,10 +7,10 @@
 			<div class="windowbg2">
 				<ul>
 					<li>
-						<label for="method-existing"><input type="radio" onclick="switchType();" name="method" id="method-existing" value="existing" checked class="input_radio"> {{{txt.smileys_add_existing}}}</label>
+						<label for="method-existing"><input type="radio" onclick="switchType();" name="method" id="method-existing" value="existing" checked> {{{txt.smileys_add_existing}}}</label>
 					</li>
 					<li>
-						<label for="method-upload"><input type="radio" onclick="switchType();" name="method" id="method-upload" value="upload" class="input_radio"> {{{txt.smileys_add_upload}}}</label>
+						<label for="method-upload"><input type="radio" onclick="switchType();" name="method" id="method-upload" value="upload"> {{{txt.smileys_add_upload}}}</label>
 					</li>
 				</ul>
 				<br>
@@ -21,7 +21,7 @@
 						</dt>
 						<dd>
 							{{#unless context.filenames}}
-							<input type="text" name="smiley_filename" id="smiley_filename" value="{{{context.current_smiley.filename}}}" onchange="selectMethod('existing');" class="input_text">
+							<input type="text" name="smiley_filename" id="smiley_filename" value="{{{context.current_smiley.filename}}}" onchange="selectMethod('existing');">
 							{{else}}
 								<select name="smiley_filename" id="smiley_filename" onchange="updatePreview();selectMethod('existing');">
 									{{#each context.filenames}}
@@ -40,7 +40,7 @@
 							<strong>{{{txt.smileys_add_upload_choose}}}:</strong>
 						</dt>
 						<dd>
-							<input type="file" name="uploadSmiley" id="uploadSmiley" onchange="selectMethod('upload');" class="input_file">
+							<input type="file" name="uploadSmiley" id="uploadSmiley" onchange="selectMethod('upload');">
 						</dd>
 					</dl>
 				</fieldset>
@@ -54,13 +54,13 @@
 						<strong><label for="smiley_code">{{{txt.smileys_code}}}</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_code" id="smiley_code" value="" class="input_text">
+						<input type="text" name="smiley_code" id="smiley_code" value="">
 					</dd>
 					<dt>
 						<strong><label for="smiley_description">{{{txt.smileys_description}}}</label>: </strong>
 					</dt>
 					<dd>
-						<input type="text" name="smiley_description" id="smiley_description" value="" class="input_text">
+						<input type="text" name="smiley_description" id="smiley_description" value="">
 					</dd>
 					<dt>
 						<strong><label for="smiley_location">{{{txt.smileys_location}}}</label>: </strong>

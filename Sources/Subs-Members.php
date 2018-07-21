@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Policy;
+
 /**
  * Delete one or more members.
  * Requires profile_remove_own or profile_remove_any permission for
@@ -147,6 +149,8 @@ function deleteMembers($users, $check_not_admin = false)
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}messages
 			SET id_character = 0,
+				id_member = 0,
+				id_creator = 0,
 				poster_name = {string:character_name}
 			WHERE id_character = {int:id_character}',
 			[
@@ -464,7 +468,7 @@ function deleteMembers($users, $check_not_admin = false)
  */
 function registerMember(&$regOptions, $return_errors = false)
 {
-	global $scripturl, $txt, $modSettings, $context, $sourcedir;
+	global $scripturl, $txt, $modSettings, $context, $sourcedir, $language;
 	global $user_info, $smcFunc;
 
 	loadLanguage('Login');
@@ -664,17 +668,11 @@ function registerMember(&$regOptions, $return_errors = false)
 		'additional_groups' => '',
 		'ignore_boards' => '',
 		'timezone' => !empty($regOptions['timezone']) ? $regOptions['timezone'] : 'UTC',
+		'policy_acceptance' => isset($regOptions['reg_policies']) ? Policy::POLICY_CURRENTLYACCEPTED : Policy::POLICY_NOTACCEPTED,
 	);
 
-	// Setup the activation status on this new account so it is correct - firstly is it an under age account?
-	if ($regOptions['require'] == 'coppa')
-	{
-		$regOptions['register_vars']['is_activated'] = 5;
-		// @todo This should be changed.  To what should be it be changed??
-		$regOptions['register_vars']['validation_code'] = '';
-	}
 	// Maybe it can be activated right away?
-	elseif ($regOptions['require'] == 'nothing')
+	if ($regOptions['require'] == 'nothing')
 		$regOptions['register_vars']['is_activated'] = 1;
 	// Maybe it must be activated by email?
 	elseif ($regOptions['require'] == 'activation')
@@ -724,6 +722,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'show_online',
 		'id_theme', 'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
+		'policy_acceptance',
 	);
 	$knownFloats = array(
 		'time_offset',
@@ -762,6 +761,11 @@ function registerMember(&$regOptions, $return_errors = false)
 		array('id_member'),
 		1
 	);
+
+	if (isset($regOptions['reg_policies']))
+	{
+		Policy::agree_to_policy($regOptions['reg_policies'], $language, (int) $memberID);
+	}
 
 	// So at this point we've created the account, and we're going to be creating
 	// a character. More accurately, two - one for the 'main' and one for the 'character'.
@@ -882,28 +886,20 @@ function registerMember(&$regOptions, $return_errors = false)
 		// Send admin their notification.
 		adminNotify('standard', $memberID, $regOptions['username']);
 	}
-	// Need to activate their account - or fall under COPPA.
-	elseif ($regOptions['require'] == 'activation' || $regOptions['require'] == 'coppa')
+	// Need to activate their account.
+	elseif ($regOptions['require'] == 'activation')
 	{
 		$replacements = array(
 			'REALNAME' => $regOptions['register_vars']['real_name'],
 			'USERNAME' => $regOptions['username'],
 			'PASSWORD' => $regOptions['password'],
 			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
+			'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $memberID . ';code=' . $validation_code,
+			'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $memberID,
+			'ACTIVATIONCODE' => $validation_code,
 		);
 
-		if ($regOptions['require'] == 'activation')
-			$replacements += array(
-				'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $memberID . ';code=' . $validation_code,
-				'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $memberID,
-				'ACTIVATIONCODE' => $validation_code,
-			);
-		else
-			$replacements += array(
-				'COPPALINK' => $scripturl . '?action=coppa;u=' . $memberID,
-			);
-
-		$emaildata = loadEmailTemplate('register_' . ($regOptions['require'] == 'activation' ? 'activate' : 'coppa'), $replacements);
+		$emaildata = loadEmailTemplate('register_activate', $replacements);
 
 		StoryBB\Helper\Mail::send($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, 'reg_' . $regOptions['require'] . $memberID, $emaildata['is_html'], 0);
 	}
@@ -1230,12 +1226,13 @@ function membersAllowedTo($permission, $board_id = null)
  * If add_to_post_count is set, the member's post count is increased.
  *
  * @param int $memID The ID of the original poster
+ * @param bool|int $characterID The ID of the character to attribute to, uses OOC if not set
  * @param bool|string $email If set, should be the email of the poster
  * @param bool|string $membername If set, the membername of the poster
  * @param bool $post_count Whether to adjust post counts
  * @return array An array containing the number of messages, topics and reports updated
  */
-function reattributePosts($memID, $email = false, $membername = false, $post_count = false)
+function reattributePosts($memID, $characterID = false, $email = false, $membername = false, $post_count = false)
 {
 	global $smcFunc, $modSettings;
 
@@ -1259,6 +1256,21 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 		);
 		list ($email, $membername) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
+	}
+
+	if ($characterID === false)
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT id_character
+			FROM {db_prefix}characters
+			WHERE id_member = {int:memID}
+				AND is_main = 1
+			LIMIT 1',
+			[
+				'memID' => $memID,
+			]
+		);
+		list ($characterID) = $smcFunc['db_fetch_row']($request);
 	}
 
 	// If they want the post count restored then we need to do some research.
@@ -1287,6 +1299,7 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 		$smcFunc['db_free_result']($request);
 
 		updateMemberData($memID, array('posts' => 'posts + ' . $messageCount));
+		updateCharacterData($characterID, array('posts' => 'posts + ' . $messageCount));
 	}
 
 	$query_parts = array();
@@ -1299,10 +1312,13 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 	// Finally, update the posts themselves!
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}messages
-		SET id_member = {int:memID}
+		SET id_member = {int:memID},
+			id_character = {int:characterID},
+			id_creator = {int:memID}
 		WHERE ' . $query,
 		array(
 			'memID' => $memID,
+			'characterID' => $characterID,
 			'email_address' => $email,
 			'member_name' => $membername,
 		)
@@ -1338,7 +1354,7 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 	}
 
 	// Allow mods with their own post tables to reattribute posts as well :)
-	call_integration_hook('integrate_reattribute_posts', array($memID, $email, $membername, $post_count, &$updated));
+	call_integration_hook('integrate_reattribute_posts', array($memID, $characterID, $email, $membername, $post_count, &$updated));
 
 	return $updated;
 }

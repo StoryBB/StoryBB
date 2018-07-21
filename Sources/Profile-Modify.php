@@ -118,7 +118,7 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_extra',
 			'input_validate' => function(&$value) use ($cur_profile)
 			{
-				// @todo Should we check for this year and tell them they made a mistake :P? (based on coppa at least?)
+				// @todo Should we check for this year and tell them they made a mistake?
 				if (preg_match('/(\d{4})[\-\., ](\d{2})[\-\., ](\d{2})/', $value, $dates) === 1)
 				{
 					$value = checkdate($dates[2], $dates[3], $dates[1] < 4 ? 4 : $dates[1]) ? sprintf('%04d-%02d-%02d', $dates[1] < 4 ? 4 : $dates[1], $dates[2], $dates[3]) : '1004-01-01';
@@ -2283,13 +2283,13 @@ function alert_notifications_topics($memID)
 			),
 			'delete' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'style' => 'width: 4%;',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="notify_topics[]" value="%1$d" class="input_check">',
+						'format' => '<input type="checkbox" name="notify_topics[]" value="%1$d">',
 						'params' => array(
 							'id' => false,
 						),
@@ -2403,13 +2403,13 @@ function alert_notifications_boards($memID)
 			),
 			'delete' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'style' => 'width: 4%;',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="notify_boards[]" value="%1$d" class="input_check">',
+						'format' => '<input type="checkbox" name="notify_boards[]" value="%1$d">',
 						'params' => array(
 							'id' => false,
 						),

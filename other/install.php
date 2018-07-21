@@ -26,7 +26,7 @@ require_once('Sources/StoryBB/Helper/FTP.php');
 $databases = array(
 	'mysql' => array(
 		'name' => 'MySQL',
-		'version' => '5.0.3',
+		'version' => '5.5.3',
 		'version_check' => 'return min(mysqli_get_server_info($db_connection), mysqli_get_client_info());',
 		'supported' => function_exists('mysqli_connect'),
 		'default_user' => 'mysql.default_user',
@@ -466,7 +466,6 @@ function CheckFilesWritable()
 		'cache',
 		'Smileys',
 		'Themes',
-		'agreement.txt',
 		'Settings.php',
 		'Settings_bak.php',
 	);
@@ -954,7 +953,7 @@ function ForumSettings()
 // Step one: Do the SQL thang.
 function DatabasePopulation()
 {
-	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl;
+	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl, $language;
 
 	$incontext['sub_template'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -994,13 +993,13 @@ function DatabasePopulation()
 	$modSettings['disableQueryCheck'] = true;
 
 	// We're doing UTF8, select it. PostgreSQL requires passing it as a string...
-		$smcFunc['db_query']('', '
-			SET NAMES {string:utf8}',
-			array(
-				'db_error_skip' => true,
-				'utf8' => 'utf8',
-			)
-		);
+	$smcFunc['db_query']('', '
+		SET NAMES {string:utf8}',
+		array(
+			'db_error_skip' => true,
+			'utf8' => (in_array($db_type, ['mysql', 'mysqli']) ? 'utf8mb4' : 'utf8'),
+		)
+	);
 
 	// Windows likes to leave the trailing slash, which yields to C:\path\to\StoryBB\/attachments...
 	if (substr(__DIR__, -1) == '\\')
@@ -1010,6 +1009,7 @@ function DatabasePopulation()
 
 	$replaces = array(
 		'{$db_prefix}' => $db_prefix,
+		'{$language}' => $language,
 		'{$attachdir}' => json_encode(array(1 => $smcFunc['db_escape_string']($attachdir))),
 		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
@@ -1051,8 +1051,8 @@ function DatabasePopulation()
 		$replaces['{$memory}'] = (!$has_innodb && in_array('MEMORY', $engines)) ? 'MEMORY' : $replaces['{$engine}'];
 
 		// We're using UTF-8 setting, so add it to the table definitions.
-			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
-			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
+			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 
 		// One last thing - if we don't have InnoDB, we can't do transactions...
 		if (!$has_innodb)
@@ -1105,13 +1105,9 @@ function DatabasePopulation()
 
 		if ($smcFunc['db_query']('', $current_statement, array('security_override' => true, 'db_error_skip' => true), $db_connection) === false)
 		{
-			// Use the appropriate function based on the DB type
-			if ($db_type == 'mysql' || $db_type == 'mysqli')
-				$db_errorno = $db_type . '_errno';
-
 			// Error 1050: Table already exists!
 			// @todo Needs to be made better!
-			if ((($db_type != 'mysql' && $db_type != 'mysqli') || $db_errorno($db_connection) == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
+			if ((($db_type != 'mysql' && $db_type != 'mysqli') || $smcFunc['db_errno']($db_connection) == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
 			{
 				$exists[] = $match[1];
 				$incontext['sql_results']['table_dups']++;
@@ -1406,6 +1402,7 @@ function AdminAccount()
 					'website_title' => 'string', 'website_url' => 'string',
 					'signature' => 'string', 'secret_question' => 'string',
 					'additional_groups' => 'string', 'ignore_boards' => 'string',
+					'policy_acceptance' => 'int',
 				),
 				array(
 					stripslashes($_POST['username']), stripslashes($_POST['username']), $_POST['password1'], stripslashes($_POST['email']),
@@ -1415,6 +1412,7 @@ function AdminAccount()
 					'', '',
 					'', '',
 					'', '',
+					StoryBB\Model\Policy::POLICY_CURRENTLYACCEPTED,
 				),
 				array('id_member'),
 				1
@@ -1842,7 +1840,7 @@ function template_install_below()
 		</div></div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; 2018, StoryBB project</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" rel="noopener">StoryBB &copy; 2018, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>
@@ -1960,26 +1958,26 @@ function template_chmod_files()
 				<tr>
 					<td width="26%" valign="top" class="textbox"><label for="ftp_server">', $txt['ftp_server'], ':</label></td>
 					<td>
-						<div style="float: ', $txt['lang_rtl'] == false ? 'right' : 'left', '; margin-', $txt['lang_rtl'] == false ? 'right' : 'left', ': 1px;"><label for="ftp_port" class="textbox"><strong>', $txt['ftp_port'], ':&nbsp;</strong></label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $incontext['ftp']['port'], '" class="input_text" /></div>
-						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $incontext['ftp']['server'], '" style="width: 70%;" class="input_text" />
+						<div style="float: ', $txt['lang_rtl'] == false ? 'right' : 'left', '; margin-', $txt['lang_rtl'] == false ? 'right' : 'left', ': 1px;"><label for="ftp_port" class="textbox"><strong>', $txt['ftp_port'], ':&nbsp;</strong></label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $incontext['ftp']['port'], '" /></div>
+						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $incontext['ftp']['server'], '" style="width: 70%;" />
 						<div class="smalltext block">', $txt['ftp_server_info'], '</div>
 					</td>
 				</tr><tr>
 					<td width="26%" valign="top" class="textbox"><label for="ftp_username">', $txt['ftp_username'], ':</label></td>
 					<td>
-						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $incontext['ftp']['username'], '" style="width: 99%;" class="input_text" />
+						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $incontext['ftp']['username'], '" style="width: 99%;" />
 						<div class="smalltext block">', $txt['ftp_username_info'], '</div>
 					</td>
 				</tr><tr>
 					<td width="26%" valign="top" class="textbox"><label for="ftp_password">', $txt['ftp_password'], ':</label></td>
 					<td>
-						<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 99%;" class="input_password" />
+						<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 99%;" />
 						<div class="smalltext block">', $txt['ftp_password_info'], '</div>
 					</td>
 				</tr><tr>
 					<td width="26%" valign="top" class="textbox"><label for="ftp_path">', $txt['ftp_path'], ':</label></td>
 					<td style="padding-bottom: 1ex;">
-						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $incontext['ftp']['path'], '" style="width: 99%;" class="input_text" />
+						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $incontext['ftp']['path'], '" style="width: 99%;" />
 						<div class="smalltext block">', $incontext['ftp']['path_msg'], '</div>
 					</td>
 				</tr>
@@ -2036,7 +2034,7 @@ function template_database_settings()
 			<tr id="db_server_contain">
 				<td width="20%" valign="top" class="textbox"><label for="db_server_input">', $txt['db_settings_server'], ':</label></td>
 				<td>
-					<input type="text" name="db_server" id="db_server_input" value="', $incontext['db']['server'], '" size="30" class="input_text" /><br>
+					<input type="text" name="db_server" id="db_server_input" value="', $incontext['db']['server'], '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_server_info'], '</div>
 				</td>
 			</tr><tr id="db_port_contain">
@@ -2048,32 +2046,32 @@ function template_database_settings()
 			</tr><tr id="db_user_contain">
 				<td valign="top" class="textbox"><label for="db_user_input">', $txt['db_settings_username'], ':</label></td>
 				<td>
-					<input type="text" name="db_user" id="db_user_input" value="', $incontext['db']['user'], '" size="30" class="input_text" /><br>
+					<input type="text" name="db_user" id="db_user_input" value="', $incontext['db']['user'], '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_username_info'], '</div>
 				</td>
 			</tr><tr id="db_passwd_contain">
 				<td valign="top" class="textbox"><label for="db_passwd_input">', $txt['db_settings_password'], ':</label></td>
 				<td>
-					<input type="password" name="db_passwd" id="db_passwd_input" value="', $incontext['db']['pass'], '" size="30" class="input_password" /><br>
+					<input type="password" name="db_passwd" id="db_passwd_input" value="', $incontext['db']['pass'], '" size="30"><br>
 					<div class="smalltext block">', $txt['db_settings_password_info'], '</div>
 				</td>
 			</tr><tr id="db_name_contain">
 				<td valign="top" class="textbox"><label for="db_name_input">', $txt['db_settings_database'], ':</label></td>
 				<td>
-					<input type="text" name="db_name" id="db_name_input" value="', empty($incontext['db']['name']) ? 'storybb' : $incontext['db']['name'], '" size="30" class="input_text" /><br>
+					<input type="text" name="db_name" id="db_name_input" value="', empty($incontext['db']['name']) ? 'storybb' : $incontext['db']['name'], '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_database_info'], '
 					<span id="db_name_info_warning">', $txt['db_settings_database_info_note'], '</span></div>
 				</td>
 			</tr><tr id="db_filename_contain" style="display: none;">
 				<td valign="top" class="textbox"><label for="db_filename_input">', $txt['db_settings_database_file'], ':</label></td>
 				<td>
-					<input type="text" name="db_filename" id="db_filename_input" value="', empty($incontext['db']['name']) ? dirname(__FILE__) . '/sbb_' . substr(md5(microtime()), 0, 10) : stripslashes($incontext['db']['name']), '" size="30" class="input_text" /><br>
+					<input type="text" name="db_filename" id="db_filename_input" value="', empty($incontext['db']['name']) ? dirname(__FILE__) . '/sbb_' . substr(md5(microtime()), 0, 10) : stripslashes($incontext['db']['name']), '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_database_file_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="db_prefix_input">', $txt['db_settings_prefix'], ':</label></td>
 				<td>
-					<input type="text" name="db_prefix" id="db_prefix_input" value="', $incontext['db']['prefix'], '" size="30" class="input_text" /><br>
+					<input type="text" name="db_prefix" id="db_prefix_input" value="', $incontext['db']['prefix'], '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_prefix_info'], '</div>
 				</td>
 			</tr>
@@ -2108,7 +2106,7 @@ function template_forum_settings()
 					<label for="mbname_input">', $txt['install_settings_name'], ':</label>
 				</td>
 				<td>
-					<input type="text" name="mbname" id="mbname_input" value="', $txt['install_settings_name_default'], '" size="65" class="input_text" />
+					<input type="text" name="mbname" id="mbname_input" value="', $txt['install_settings_name_default'], '" size="65" />
 					<div class="smalltext block">', $txt['install_settings_name_info'], '</div>
 				</td>
 			</tr>
@@ -2117,7 +2115,7 @@ function template_forum_settings()
 					<label for="boardurl_input">', $txt['install_settings_url'], ':</label>
 				</td>
 				<td>
-					<input type="text" name="boardurl" id="boardurl_input" value="', $incontext['detected_url'], '" size="65" class="input_text" />
+					<input type="text" name="boardurl" id="boardurl_input" value="', $incontext['detected_url'], '" size="65" />
 					<br>
 					<div class="smalltext block">', $txt['install_settings_url_info'], '</div>
 				</td>
@@ -2209,31 +2207,31 @@ function template_admin_account()
 			<tr>
 				<td width="18%" valign="top" class="textbox"><label for="username">', $txt['user_settings_username'], ':</label></td>
 				<td>
-					<input type="text" name="username" id="username" value="', $incontext['username'], '" size="40" class="input_text" />
+					<input type="text" name="username" id="username" value="', $incontext['username'], '" size="40" />
 					<div class="smalltext block">', $txt['user_settings_username_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="password1">', $txt['user_settings_password'], ':</label></td>
 				<td>
-					<input type="password" name="password1" id="password1" size="40" class="input_password" />
+					<input type="password" name="password1" id="password1" size="40">
 					<div class="smalltext block">', $txt['user_settings_password_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="password2">', $txt['user_settings_again'], ':</label></td>
 				<td>
-					<input type="password" name="password2" id="password2" size="40" class="input_password" />
+					<input type="password" name="password2" id="password2" size="40">
 					<div class="smalltext block">', $txt['user_settings_again_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="email">', $txt['user_settings_admin_email'], ':</label></td>
 				<td>
-					<input type="text" name="email" id="email" value="', $incontext['email'], '" size="40" class="input_text" />
+					<input type="text" name="email" id="email" value="', $incontext['email'], '" size="40" />
 					<div class="smalltext block">', $txt['user_settings_admin_email_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="server_email">', $txt['user_settings_server_email'], ':</label></td>
 				<td>
-					<input type="text" name="server_email" id="server_email" value="', $incontext['server_email'], '" size="40" class="input_text" />
+					<input type="text" name="server_email" id="server_email" value="', $incontext['server_email'], '" size="40" />
 					<div class="smalltext block">', $txt['user_settings_server_email_info'], '</div>
 				</td>
 			</tr>
@@ -2245,7 +2243,7 @@ function template_admin_account()
 		<p>', $txt['user_settings_database_info'], '</p>
 
 		<div style="margin-bottom: 2ex; padding-', $txt['lang_rtl'] == false ? 'left' : 'right', ': 50px;">
-			<input type="password" name="password3" size="30" class="input_password" />
+			<input type="password" name="password3" size="30">
 		</div>';
 }
 
@@ -2269,7 +2267,7 @@ function template_delete_install()
 	if ($incontext['probably_delete_install'])
 		echo '
 		<div style="margin: 1ex; font-weight: bold;">
-			<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" class="input_check" /> ', $txt['delete_installer'], !isset($_SESSION['installer_temp_ftp']) ? ' ' . $txt['delete_installer_maybe'] : '', '</label>
+			<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" /> ', $txt['delete_installer'], !isset($_SESSION['installer_temp_ftp']) ? ' ' . $txt['delete_installer_maybe'] : '', '</label>
 		</div>
 		<script>
 			function doTheDelete()

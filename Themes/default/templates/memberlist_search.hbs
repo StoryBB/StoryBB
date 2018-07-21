@@ -14,7 +14,7 @@
 					<label><strong>{{txt.search_for}}:</strong></label>
 				</dt>
 				<dd>
-					<input type="text" name="search" value="{{context.old_search}}" size="40" class="input_text">
+					<input type="text" name="search" value="{{context.old_search}}" size="40">
 				</dd>
 				<dt>
 					<label><strong>{{txt.mlist_search_filter}}:</strong></label>
@@ -23,7 +23,7 @@
 					<ul>
 					    {{#each context.search_fields}}
 					    <li>
-							<input type="checkbox" name="fields[]" id="fields-{{@key}}" value="{{@key}}"{{#if (in_array @key ../context.search_defaults)}} checked{{/if}} class="input_check">
+							<input type="checkbox" name="fields[]" id="fields-{{@key}}" value="{{@key}}"{{#if (in_array @key ../context.search_defaults)}} checked{{/if}}>
 							<label for="fields-{{@key}}">{{.}}</label>
 						</li>
 						{{/each}}

@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
+
 /**
  * Main dispatcher, the maintenance access point.
  * This, as usual, checks permissions, loads language files, and forwards to the actual workers.
@@ -172,7 +174,8 @@ function MaintainMembers()
 	}
 	$smcFunc['db_free_result']($result);
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
+	Autocomplete::init('member', '#to');
+	Autocomplete::init('character', '#to_char');
 }
 
 /**
@@ -1233,26 +1236,57 @@ function VersionDetail()
  */
 function MaintainReattributePosts()
 {
-	global $sourcedir, $context, $txt;
+	global $sourcedir, $context, $txt, $smcFunc;
 
 	checkSession();
 
-	// Find the member.
-	require_once($sourcedir . '/Subs-Auth.php');
-	$members = findMembers($_POST['to']);
+	// Are we doing the member or a character?
+	if (!isset($_POST['reattribute_type']) || $_POST['reattribute_type'] == 'member')
+	{
+		$memID = isset($_POST['to']) ? (int) $_POST['to'] : 0;
+		$request = $smcFunc['db_query']('', '
+			SELECT id_member
+			FROM {db_prefix}members
+			WHERE id_member = {int:memID}',
+			[
+				'memID' => $memID,
+			]
+		);
+		if ($smcFunc['db_num_rows']($request) == 0)
+			fatal_lang_error('reattribute_cannot_find_member');
 
-	if (empty($members))
-		fatal_lang_error('reattribute_cannot_find_member');
+		$smcFunc['db_free_result']($request);
 
-	$memID = array_shift($members);
-	$memID = $memID['id'];
+		// The OOC character ID can be looked up inside reattributePosts.
+		$characterID = false;
+	}
+	else
+	{
+		// We're given a character ID - we need to find the member ID as well.
+		$characterID = isset($_POST['to_char']) ? (int) $_POST['to_char'] : 0;
+
+		$request = $smcFunc['db_query']('', '
+			SELECT mem.id_member, chars.id_character
+			FROM {db_prefix}characters AS chars
+				INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
+			WHERE id_character = {int:characterID}',
+			[
+				'characterID' => $characterID,
+			]
+		);
+		if ($smcFunc['db_num_rows']($request) == 0)
+			fatal_lang_error('reattribute_cannot_find_member');
+
+		list ($memID, $characterID) = $smcFunc['db_fetch_row']($request);
+		$smcFunc['db_free_result']($request);
+	}
 
 	$email = $_POST['type'] == 'email' ? $_POST['from_email'] : '';
 	$membername = $_POST['type'] == 'name' ? $_POST['from_name'] : '';
 
 	// Now call the reattribute function.
 	require_once($sourcedir . '/Subs-Members.php');
-	reattributePosts($memID, $email, $membername, !empty($_POST['posts']));
+	reattributePosts($memID, $characterID, $email, $membername, !empty($_POST['posts']));
 
 	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_reattribute_posts']));
 }

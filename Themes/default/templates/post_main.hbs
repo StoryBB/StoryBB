@@ -71,13 +71,13 @@ var icon_urls = {
 						<legend><span {{#if context.poll_error.no_question}} class="error"{{/if}}>{{txt.poll_question}}</span></legend>
 						<dl class="settings poll_options">
 							<dt>{{txt.poll_question}}</dt>
-							<dd><input type="text" name="question" value="{{context.question}}" size="80" class="input_text"></dd>
+							<dd><input type="text" name="question" value="{{context.question}}" size="80"></dd>
 							{{#each context.choices}}
 							<dt>
 								<label for="options-{{id}}">{{txt.option}} {{number}}</label>:
 							</dt>
 							<dd>
-								<input type="text" name="options[{{id}}]" id="options-{{id}}" value="{{label}}" size="80" maxlength="255" class="input_text">
+								<input type="text" name="options[{{id}}]" id="options-{{id}}" value="{{label}}" size="80" maxlength="255">
 							</dd>
 							{{/each}}
 							<p id="pollMoreOptions"></p>
@@ -91,36 +91,36 @@ var icon_urls = {
 								<label for="poll_max_votes">{{txt.poll_max_votes}}:</label>
 							</dt>
 							<dd>
-								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="{{context.poll_options.max_votes}}" class="input_text">
+								<input type="text" name="poll_max_votes" id="poll_max_votes" size="2" value="{{context.poll_options.max_votes}}">
 							</dd>
 							<dt>
 								<label for="poll_expire">{{txt.poll_run}}:</label><br>
 								<em class="smalltext">{{txt.poll_run_limit}}</em>
 							</dt>
 							<dd>
-								<input type="text" name="poll_expire" id="poll_expire" size="2" value="{{context.poll_options.expire}}" onchange="pollOptions();" maxlength="4" class="input_text"> {{txt.days_word}}
+								<input type="text" name="poll_expire" id="poll_expire" size="2" value="{{context.poll_options.expire}}" onchange="pollOptions();" maxlength="4"> {{txt.days_word}}
 							</dd>
 							<dt>
 								<label for="poll_change_vote">{{txt.poll_do_change_vote}}:</label>
 							</dt>
 							<dd>
-								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"{{#if context.poll.change_vote}} checked{{/if}} class="input_check">
+								<input type="checkbox" id="poll_change_vote" name="poll_change_vote"{{#if context.poll.change_vote}} checked{{/if}}>
 							</dd>
 							{{#if context.poll_options.guest_vote_enabled}}
 							<dt>
 								<label for="poll_guest_vote">{{txt.poll_guest_vote}}:</label>
 							</dt>
 							<dd>
-								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"{{#if context.poll_options.guest_vote}} checked{{/if}} class="input_check">
+								<input type="checkbox" id="poll_guest_vote" name="poll_guest_vote"{{#if context.poll_options.guest_vote}} checked{{/if}}>
 							</dd>
 							{{/if}}
 							<dt>
 								{{txt.poll_results_visibility}}:
 							</dt>
 							<dd>
-								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"{{#if (eq context.poll_options.hide 0)}} checked{{/if}} class="input_radio"> <label for="poll_results_anyone">{{txt.poll_results_anyone}}</label><br>
-								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"{{#if (eq context.poll_options.hide 1)}} checked{{/if}} class="input_radio"> <label for="poll_results_voted">{{txt.poll_results_voted}}</label><br>
-								<input type="radio" name="poll_hide" id="poll_results_expire" value="2"{{#if (eq context.poll_options.hide 2)}} checked{{/if}} {{#unless context.poll_options.expire}} disabled{{/unless}} class="input_radio"> <label for="poll_results_expire">{{txt.poll_results_after}}</label>
+								<input type="radio" name="poll_hide" id="poll_results_anyone" value="0"{{#if (eq context.poll_options.hide 0)}} checked{{/if}}> <label for="poll_results_anyone">{{txt.poll_results_anyone}}</label><br>
+								<input type="radio" name="poll_hide" id="poll_results_voted" value="1"{{#if (eq context.poll_options.hide 1)}} checked{{/if}}> <label for="poll_results_voted">{{txt.poll_results_voted}}</label><br>
+								<input type="radio" name="poll_hide" id="poll_results_expire" value="2"{{#if (eq context.poll_options.hide 2)}} checked{{/if}} {{#unless context.poll_options.expire}} disabled{{/unless}}> <label for="poll_results_expire">{{txt.poll_results_after}}</label>
 							</dd>
 						</dl>
 					</fieldset>
@@ -133,7 +133,7 @@ var icon_urls = {
 					<span id="caption_edit_reason">{{txt.reason_for_edit}}:</span>
 				</dt>
 				<dd>
-					<input type="text" name="modify_reason"{{#if context.last_modified_reason}} value="{{{context.last_modified_reason}}}"{{/if}} size="80" maxlength="80" class="input_text">
+					<input type="text" name="modify_reason"{{#if context.last_modified_reason}} value="{{{context.last_modified_reason}}}"{{/if}} size="80" maxlength="80">
 				</dd>
 			</dl>
 			{{/if}}
@@ -150,14 +150,14 @@ var icon_urls = {
 			<div id="postAdditionalOptions">
 			    <div id="postMoreOptions" class="smalltext">
 					<ul class="post_options">
-						{{#if context.can_notify}}<li><input type="hidden" name="notify" value="0"><label for="check_notify"><input type="checkbox" name="notify" id="check_notify" {{#if (or context.notify options.auto_notify context.auto_notify)}} checked{{/if}} value="1" class="input_check"> {{txt.notify_replies}}</label></li>{{/if}}
-					    {{#if context.can_lock}}<li><input type="hidden" name="already_locked" value="{{context.already_locked}}"><input type="hidden" name="lock" value="0"><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"{{#if context.locked}} checked{{/if}} value="1" class="input_check"> {{txt.lock_topic}}</label></li>{{/if}}
-						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back" {{#if (or context.back_to_topic (not options.return_to_post))}} checked{{/if}} value="1" class="input_check"> {{txt.back_to_topic}}</label></li>
-						{{#if context.can_sticky}}<li><input type="hidden" name="already_sticky" value="{{context.already_sticky}}"><input type="hidden" name="sticky" value="0"><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"{{#if (eq_coerce context.sticky 1)}} checked{{/if}} value="1" class="input_check"> {{txt.sticky_after}}</label></li>{{/if}}
-						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"{{#unless context.use_smileys}} checked{{/unless}} value="NS" class="input_check"> {{txt.dont_use_smileys}}</label></li>
-						{{#if context.can_move}}<li><input type="hidden" name="move" value="0"><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" class="input_check" {{#if context.move}} checked{{/if}}> {{txt.move_after2}}</label></li>{{/if}}
-						{{#if (and context.can_announce context.is_first_post)}}<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1" class="input_check"{{#if context.announce}} checked{{/if}}> {{txt.announce_topic}}</label></li>{{/if}}
-						{{#if context.show_approval}}<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2" class="input_check" {{#if (eq context.show_approval 2)}} checked{{/if}}> {{txt.approve_this_post}}</label></li>{{/if}}
+						{{#if context.can_notify}}<li><input type="hidden" name="notify" value="0"><label for="check_notify"><input type="checkbox" name="notify" id="check_notify" {{#if (or context.notify options.auto_notify context.auto_notify)}} checked{{/if}} value="1"> {{txt.notify_replies}}</label></li>{{/if}}
+					    {{#if context.can_lock}}<li><input type="hidden" name="already_locked" value="{{context.already_locked}}"><input type="hidden" name="lock" value="0"><label for="check_lock"><input type="checkbox" name="lock" id="check_lock"{{#if context.locked}} checked{{/if}} value="1"> {{txt.lock_topic}}</label></li>{{/if}}
+						<li><label for="check_back"><input type="checkbox" name="goback" id="check_back" {{#if (or context.back_to_topic (not options.return_to_post))}} checked{{/if}} value="1"> {{txt.back_to_topic}}</label></li>
+						{{#if context.can_sticky}}<li><input type="hidden" name="already_sticky" value="{{context.already_sticky}}"><input type="hidden" name="sticky" value="0"><label for="check_sticky"><input type="checkbox" name="sticky" id="check_sticky"{{#if (eq_coerce context.sticky 1)}} checked{{/if}} value="1"> {{txt.sticky_after}}</label></li>{{/if}}
+						<li><label for="check_smileys"><input type="checkbox" name="ns" id="check_smileys"{{#unless context.use_smileys}} checked{{/unless}} value="NS"> {{txt.dont_use_smileys}}</label></li>
+						{{#if context.can_move}}<li><input type="hidden" name="move" value="0"><label for="check_move"><input type="checkbox" name="move" id="check_move" value="1" {{#if context.move}} checked{{/if}}> {{txt.move_after2}}</label></li>{{/if}}
+						{{#if (and context.can_announce context.is_first_post)}}<li><label for="check_announce"><input type="checkbox" name="announce_topic" id="check_announce" value="1"{{#if context.announce}} checked{{/if}}> {{txt.announce_topic}}</label></li>{{/if}}
+						{{#if context.show_approval}}<li><label for="approve"><input type="checkbox" name="approve" id="approve" value="2"{{#if (eq context.show_approval 2)}} checked{{/if}}> {{txt.approve_this_post}}</label></li>{{/if}}
 					</ul>
 				</div>
 				{{#if context.current_attachments}}
@@ -171,7 +171,7 @@ var icon_urls = {
 						</dd>
 						{{#each context.current_attachments}}
 						<dd class="smalltext">
-							<label for="attachment_{{attachID}}"><input type="checkbox" id="attachment_{{attachID}}" name="attach_del[]" value="{{attachID}}"{{#if unchecked}} checked{{/if}} class="input_check">{{name}}{{#unless approved}}({{../txt.awaiting_approval}}){{/unless}}
+							<label for="attachment_{{attachID}}"><input type="checkbox" id="attachment_{{attachID}}" name="attach_del[]" value="{{attachID}}"{{#if unchecked}} checked{{/if}}>{{name}}{{#unless approved}}({{../txt.awaiting_approval}}){{/unless}}
 							{{#if (or modSettings.attachmentPostLimit modSettings.attachmentSizeLimit)}}{{textTemplate 'attach_kb' (formatKb size)}}{{/if}}</label>
 						</dd>
 						{{/each}}
@@ -228,7 +228,7 @@ var icon_urls = {
 								<a class="button_submit fileinput-button">{{txt.attach_add}}</a>
 								<div id="total-progress" class="progressBar" role="progressBar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
 								<div class="fallback">
-									<input type="file" multiple="multiple" name="attachment[]" id="attachment1" class="input_file fallback"> (<a href="javascript:void(0);" onclick="cleanFileInput('attachment1');">{{txt.clean_attach}}</a>)
+									<input type="file" multiple="multiple" name="attachment[]" id="attachment1" class="fallback"> (<a href="javascript:void(0);" onclick="cleanFileInput('attachment1');">{{txt.clean_attach}}</a>)
 									{{#if modSettings.attachmentSizeLimit}}<input type="hidden" name="MAX_FILE_SIZE" value="{{sizeLimit}}">{{/if}}
 									{{#if (gt context.num_allowed_attachment 1)}}
 										<script>
@@ -242,7 +242,7 @@ var icon_urls = {
 												if (allowed_attachments <= 0)
 													return alert("{{txt.more_attachments_error}}");
 
-												setOuterHTML(document.getElementById("moreAttachments"), '<dd class="smalltext"><input type="file" name="attachment[]" id="attachment' + current_attachment + '" class="input_file"> (<a href="javascript:void(0);" onclick="cleanFileInput('attachment' + current_attachment + '');">', $txt['clean_attach'], '<\/a>)' + '<\/dd><dd class="smalltext" id="moreAttachments"><a href="#" onclick="addAttachment(); return false;">({{txt.more_attachments}})<' + '/a><' + '/dd>');
+												setOuterHTML(document.getElementById("moreAttachments"), '<dd class="smalltext"><input type="file" name="attachment[]" id="attachment' + current_attachment + '"> (<a href="javascript:void(0);" onclick="cleanFileInput('attachment' + current_attachment + '');">', $txt['clean_attach'], '<\/a>)' + '<\/dd><dd class="smalltext" id="moreAttachments"><a href="#" onclick="addAttachment(); return false;">({{txt.more_attachments}})<' + '/a><' + '/dd>');
 
 												return true;
 											}
@@ -608,7 +608,7 @@ var icon_urls = {
 					pollOptionNum++
 					pollOptionId++
 
-					setOuterHTML(document.getElementById('pollMoreOptions'), '{{jsEscape '<dt><label for="options-'}}' + pollOptionId + '{{jsEscape (concat '">'  txt.option)}}' + pollOptionNum + '{{jsEscape '</label>:</dt><dd><input type="text" name="options['}}' + pollOptionId + '{{jsEscape ']" id="options-'}}' + pollOptionId + '{{jsEscape '" value="" size="80" maxlength="255" tabindex="'}}' + pollTabIndex + '{{jsEscape '" class="input_text"></dd><p id="pollMoreOptions"></p>'}}');
+					setOuterHTML(document.getElementById('pollMoreOptions'), '{{jsEscape '<dt><label for="options-'}}' + pollOptionId + '{{jsEscape (concat '">'  txt.option)}}' + pollOptionNum + '{{jsEscape '</label>:</dt><dd><input type="text" name="options['}}' + pollOptionId + '{{jsEscape ']" id="options-'}}' + pollOptionId + '{{jsEscape '" value="" size="80" maxlength="255" tabindex="'}}' + pollTabIndex + '{{jsEscape '"></dd><p id="pollMoreOptions"></p>'}}');
 				};
 			{{/if}}
 		</script>

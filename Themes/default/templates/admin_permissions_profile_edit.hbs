@@ -19,7 +19,7 @@
 					<tr class="windowbg">
 						<td>
 							{{#if (and ../context.show_rename_boxes can_edit)}}
-							<input type="text" name="rename_profile[{{id}}]" value="{{{name}}}" class="input_text">
+							<input type="text" name="rename_profile[{{id}}]" value="{{{name}}}">
 							{{else}}
 							<a href="{{../scripturl}}?action=admin;area=permissions;sa=index;pid={{id}};{{session_url}}">{{{name}}}</a>
 							{{/if}}
@@ -28,7 +28,7 @@
 							{{#if boards_text}}{{{boards_text}}}{{else}}{{{../txt.permissions_profile_used_by_none}}}{{/if}}
 						</td>
 						<td{{#if ../context.show_rename_boxes}} style="display:none"{{/if}}>
-							<input type="checkbox" name="delete_profile[]" value="{{id}}"{{#unless can_delete}}disabled{{/unless}} class="input_check">
+							<input type="checkbox" name="delete_profile[]" value="{{id}}"{{#unless can_delete}}disabled{{/unless}}>
 						</td>
 					</tr>
 					{{/each}}
@@ -56,7 +56,7 @@
 						<strong>{{{txt.permissions_profile_name}}}:</strong>
 					</dt>
 					<dd>
-						<input type="text" name="profile_name" value="" class="input_text">
+						<input type="text" name="profile_name" value="">
 					</dd>
 					<dt>
 						<strong>{{{txt.permissions_profile_copy_from}}}:</strong>

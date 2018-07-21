@@ -174,7 +174,7 @@ class Alert
 	 */
 	public static function count_for_member($memID, $unread = false)
 	{
-		global $smcFunc;
+		global $smcFunc, $user_info;
 
 		if (empty($memID))
 			return false;
@@ -192,6 +192,12 @@ class Alert
 
 		$count = $smcFunc['db_num_rows']($request);
 		$smcFunc['db_free_result']($request);
+
+		// Also update the current member's count if we've just calculated it.
+		if ($memID == $user_info['id'])
+		{
+			$user_info['alerts'] = $count;
+		}
 
 		return $count;
 	}
