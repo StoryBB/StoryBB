@@ -559,3 +559,18 @@ $helptxt['field_reg_require'] = 'If this field is required during registration, 
 $helptxt['characters_ic_may_post'] = 'On a forum where you have a strong sense of immersion, you might want to ensure that "characters" can only post in in-character boards and never outside. Tick this box to enforce this.';
 $helptxt['characters_ooc_may_post'] = 'On a forum where there is a strong divide between "in character" posts and "out of character" posts, you may wish to enforce that characters cannot post in the out of character areas - tick this box to enforce this.';
 $helptxt['enable_immersive_mode'] = 'Immersive mode is an optional way to run a roleplay forum that can be used to make users feel more like the site recognises their characters better. When immersive mode is enabled, the groups attached to each character are enforced, meaning that different characters may not be able to see all of the areas that the overall account theoretically could. For example, if roleplaying in a Harry Potter based universe, characters might have a Gryffindor group and a Slytherin group - and only Gryffindors can see the Gryffindor common room. This setting controls whether this is enforced or not.';
+
+
+$helptxt['retention_policy_standard'] = 'The software keeps logs that include identifiers such as IP addresses. This list is the more general list of items that get pruned for privacy reasons after the given number of days. This includes (but is not limited to):<br>
+	<ul class="normallist">
+		<li>IP addresses in posts (unless the IP address is in a ban)</li>
+		<li>IP address in moderation/admin/profile edits logs (unless banned)</li>
+		<li>IP addresses that visited the site while banned</li>
+		<li>IP addresses used by members when logging in (unless banned)</li>
+		<li>IP address when commenting on moderation reports (unless banned)</li>
+	</ul>';
+$helptxt['retention_policy_sensitive'] = 'Sensitive items in logs are ones that generally do not need to be kept as long as the period of time in which they are relevant is usually shorter, and may be damaging if held onto for long periods. This includes (but is not limited to):<br>
+	<ul class="normallist">
+		<li>IP addresses in error log</li>
+		<li>Session IDs in error log</li>
+	</ul>';
