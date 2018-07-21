@@ -62,7 +62,7 @@ function showAttachment($force_attach = false)
 	}
 
 	// No access in strict maintenance mode or you don't have permission to see attachments.
-	if ((!empty($maintenance) && $maintenance == 2) || !allowedTo('view_attachments') || !$force_attach)
+	if ((!empty($maintenance) && $maintenance == 2) || (!allowedTo('view_attachments') && !$force_attach))
 	{
 		header('HTTP/1.0 404 File Not Found');
 		die('404 File Not Found');
