@@ -303,66 +303,6 @@ function EditSearchMethod()
 			$smcFunc['db_free_result']($request);
 		}
 	}
-	elseif ($db_type == 'postgresql')
-	{
-		// In order to report the sizes correctly we need to perform vacuum (optimize) on the tables we will be using.
-		//db_extend();
-		//$temp_tables = $smcFunc['db_list_tables']();
-		//foreach ($temp_tables as $table)
-		//	if ($table == $db_prefix. 'messages' || $table == $db_prefix. 'log_search_words')
-		//		$smcFunc['db_optimize_table']($table);
-
-		// PostGreSql has some hidden sizes.
-		$request = $smcFunc['db_query']('', '
-			SELECT
-				indexname,
-				pg_relation_size(quote_ident(t.tablename)::text) AS table_size,
-				pg_relation_size(quote_ident(indexrelname)::text) AS index_size
-			FROM pg_tables t
-			LEFT OUTER JOIN pg_class c ON t.tablename=c.relname
-			LEFT OUTER JOIN
-				( SELECT c.relname AS ctablename, ipg.relname AS indexname, indexrelname FROM pg_index x
-						JOIN pg_class c ON c.oid = x.indrelid
-						JOIN pg_class ipg ON ipg.oid = x.indexrelid
-						JOIN pg_stat_all_indexes psai ON x.indexrelid = psai.indexrelid )
-				AS foo
-				ON t.tablename = foo.ctablename
-			WHERE t.schemaname= {string:schema} and (
-				indexname = {string:messages_ftx} OR indexname = {string:log_search_words} )',
-			array(
-				'messages_ftx' => $db_prefix . 'messages_ftx',
-				'log_search_words' => $db_prefix . 'log_search_words',
-				'schema' => 'public',
-			)
-		);
-
-		if ($request !== false && $smcFunc['db_num_rows']($request) > 0)
-		{
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			{
-				if ($row['indexname'] == $db_prefix . 'messages_ftx')
-				{
-					$context['table_info']['data_length'] = (int) $row['table_size'];
-					$context['table_info']['index_length'] = (int) $row['index_size'];
-					$context['table_info']['fulltext_length'] = (int) $row['index_size'];
-				}
-				elseif ($row['indexname'] == $db_prefix . 'log_search_words')
-				{
-					$context['table_info']['index_length'] = (int) $row['index_size'];
-					$context['table_info']['custom_index_length'] = (int) $row['index_size'];
-				}
-			}
-			$smcFunc['db_free_result']($request);
-		}
-		else
-			// Didn't work for some reason...
-			$context['table_info'] = array(
-				'data_length' => $txt['not_applicable'],
-				'index_length' => $txt['not_applicable'],
-				'fulltext_length' => $txt['not_applicable'],
-				'custom_index_length' => $txt['not_applicable'],
-			);
-	}
 	else
 		$context['table_info'] = array(
 			'data_length' => $txt['not_applicable'],
@@ -701,72 +641,48 @@ function detectFulltextIndex()
 	// We need this for db_get_version
 	db_extend();
 
-	if ($smcFunc['db_title'] == 'PostgreSQL') {
-		$request = $smcFunc['db_query']('', '
-			SELECT
-				indexname
-			FROM pg_tables t
-			LEFT OUTER JOIN
-				( SELECT c.relname AS ctablename, ipg.relname AS indexname, indexrelname FROM pg_index x
-						JOIN pg_class c ON c.oid = x.indrelid
-						JOIN pg_class ipg ON ipg.oid = x.indexrelid
-						JOIN pg_stat_all_indexes psai ON x.indexrelid = psai.indexrelid )
-				AS foo
-				ON t.tablename = foo.ctablename
-			WHERE t.schemaname= {string:schema} and indexname = {string:messages_ftx}',
-			array(
-				'schema' => 'public',
-				'messages_ftx' => $db_prefix . 'messages_ftx',
-			)
-		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$context['fulltext_index'][] = $row['indexname'];
-	}
-	else
+	$request = $smcFunc['db_query']('', '
+		SHOW INDEX
+		FROM {db_prefix}messages',
+		array(
+		)
+	);
+	$context['fulltext_index'] = array();
+	if ($request !== false || $smcFunc['db_num_rows']($request) != 0)
 	{
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))
+			$context['fulltext_index'][] = $row['Key_name'];
+		$smcFunc['db_free_result']($request);
+
+		if (is_array($context['fulltext_index']))
+			$context['fulltext_index'] = array_unique($context['fulltext_index']);
+	}
+
+	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
 		$request = $smcFunc['db_query']('', '
-			SHOW INDEX
-			FROM {db_prefix}messages',
-			array(
-			)
+		SHOW TABLE STATUS
+		FROM {string:database_name}
+		LIKE {string:table_name}',
+		array(
+			'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
+			'table_name' => str_replace('_', '\_', $match[2]) . 'messages',
+		)
 		);
-		$context['fulltext_index'] = array();
-		if ($request !== false || $smcFunc['db_num_rows']($request) != 0)
-		{
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))
-				$context['fulltext_index'][] = $row['Key_name'];
-			$smcFunc['db_free_result']($request);
+	else
+		$request = $smcFunc['db_query']('', '
+		SHOW TABLE STATUS
+		LIKE {string:table_name}',
+		array(
+			'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
+		)
+		);
 
-			if (is_array($context['fulltext_index']))
-				$context['fulltext_index'] = array_unique($context['fulltext_index']);
-		}
-
-		if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-			$request = $smcFunc['db_query']('', '
-			SHOW TABLE STATUS
-			FROM {string:database_name}
-			LIKE {string:table_name}',
-			array(
-				'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
-				'table_name' => str_replace('_', '\_', $match[2]) . 'messages',
-			)
-			);
-		else
-			$request = $smcFunc['db_query']('', '
-			SHOW TABLE STATUS
-			LIKE {string:table_name}',
-			array(
-				'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
-			)
-			);
-
-		if ($request !== false)
-		{
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			if (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam' && !(strtolower($row['Engine']) == 'innodb' && version_compare($smcFunc['db_get_version'](), '5.6.4', '>=')))
-				$context['cannot_create_fulltext'] = true;
-			$smcFunc['db_free_result']($request);
-		}
+	if ($request !== false)
+	{
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		if (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam' && !(strtolower($row['Engine']) == 'innodb' && version_compare($smcFunc['db_get_version'](), '5.6.4', '>=')))
+			$context['cannot_create_fulltext'] = true;
+		$smcFunc['db_free_result']($request);
 	}
 }
