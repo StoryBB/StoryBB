@@ -1815,7 +1815,8 @@ VALUES
   (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', ''),
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', ''),
   (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', ''),
-  (14, 0, 300, 1, 'd', 0, 'clean_exports', '');
+  (14, 0, 300, 1, 'd', 0, 'clean_exports', ''),
+  (15, 0, 360, 1, 'd', 0, 'scrub_logs', '');
 
 # --------------------------------------------------------
 
@@ -1985,7 +1986,9 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('json_done', '1'),
   ('displayFields', '[{"col_name":"cust_skype","title":"Skype","type":"text","order":"1","bbc":"0","placement":"1","enclose":"<a href=\\"skype:{INPUT}?call\\"><img src=\\"{DEFAULT_IMAGES_URL}\\/skype.png\\" alt=\\"{INPUT}\\" title=\\"{INPUT}\\" \\/><\\/a> ","mlist":"0"},{"col_name":"cust_loca","title":"Location","type":"text","order":"2","bbc":"0","placement":"0","enclose":"","mlist":"0"}]'),
   ('minimize_files', '1'),
-  ('enable_mentions', '1');
+  ('enable_mentions', '1'),
+  ('retention_policy_standard', 90),
+  ('retention_policy_sensitive', 15);
 
 # --------------------------------------------------------
 

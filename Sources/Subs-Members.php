@@ -151,7 +151,8 @@ function deleteMembers($users, $check_not_admin = false)
 			SET id_character = 0,
 				id_member = 0,
 				id_creator = 0,
-				poster_name = {string:character_name}
+				poster_name = {string:character_name},
+				poster_email = {empty}
 			WHERE id_character = {int:id_character}',
 			[
 				'id_character' => $id_character,
