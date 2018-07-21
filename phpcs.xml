@@ -7,6 +7,7 @@
     <!-- Don't include anything that comes from Composer; they don't have to follow our rules -->
     <exclude-pattern>Sources/minify/*</exclude-pattern>
     <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>Themes/default/scripts/select2/*</exclude-pattern>
 
     <!-- The cache folder is a hot mess, and not relevant. -->
     <exclude-pattern>./cache/data*</exclude-pattern>
@@ -14,6 +15,8 @@
 
     <!-- Don't include anything that we know ahead of time to be minified. -->
     <exclude-pattern>./Themes/default/css/minified.css</exclude-pattern>
+    <exclude-pattern>./Themes/default/css/select2.css</exclude-pattern>
+    <exclude-pattern>./Themes/default/css/select2.min.css</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/datepair.min.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/dropzone.min.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/jquery-3.2.1.min.js</exclude-pattern>

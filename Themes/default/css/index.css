@@ -614,7 +614,7 @@ dl.settings dt.windowbg {
 dl.settings dd {
 	width: 42%;
 	float: right;
-	overflow: auto;
+	overflow: visible;
 	margin: 0 0 3px 0;
 }
 dl.settings dd.fullwidth {
@@ -4160,4 +4160,37 @@ div#char_theme_wrapper,
 }
 #cookie_footer .cookie_buttons a {
 	margin: 10px;
+}
+
+/* Autocomplete */
+.select2-container {
+	min-width: 200px;
+}
+.autocomplete-avatar {
+	width: 25px;
+	height: 25px;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.autocomplete-avatar-lg {
+	width: 50px;
+	height: 50px;
+	background-position: 50%;
+	background-size: contain;
+	float: left;
+}
+.autocomplete-member {
+	display:inline-block;
+	vertical-align: middle;
+}
+.autocomplete-container {
+	margin-left: 55px;
+	height: 50px;
+}
+.autocomplete-character-account {
+	padding-top: 3px;
+	font-size: 0.9em;
 }
