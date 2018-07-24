@@ -801,6 +801,7 @@ function registerMember(&$regOptions, $return_errors = false)
 			],
 			['id_character']
 		);
+		trackStats(array('chars' => '+'));
 	}
 
 	// Now we mark the current character into the user table.

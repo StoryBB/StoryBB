@@ -292,6 +292,8 @@ function char_create()
 				['id_character']
 			);
 			$context['character']['id_character'] = $smcFunc['db_insert_id']();
+			trackStats(array('chars' => '+'));
+
 			if (!empty($context['character']['sheet']))
 			{
 				// Also gotta insert this.
