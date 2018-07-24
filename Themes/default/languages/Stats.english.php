@@ -14,6 +14,7 @@ $txt['stats_date'] = 'Date (yyyy/mm/dd)';
 $txt['stats_new_topics'] = 'New Topics';
 $txt['stats_new_posts'] = 'New Posts';
 $txt['stats_new_members'] = 'New Members';
+$txt['stats_new_chars'] = 'New Characters';
 $txt['page_views'] = 'Page views';
 $txt['top_topics_replies'] = 'Top 10 Topics (by Replies)';
 $txt['top_topics_views'] = 'Top 10 Topics (by Views)';
