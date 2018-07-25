@@ -113,11 +113,32 @@ class Character extends AbstractCompletable implements Completable
 		return $result;
 	}
 
+	public function set_value($default_value)
+	{
+		global $smcFunc;
+
+		$default_value = (int) $default_value;
+		if (empty($default_value))
+			return;
+
+		$request = $smcFunc['db_query']('', '
+			SELECT id_character, character_name
+			FROM {db_prefix}characters
+				WHERE is_main = 0
+			WHERE id_character = {int:default_value}',
+			[
+				'default_value' => $default_value,
+			]
+		);
+		$this->default = $smcFunc['db_fetch_assoc']($request);
+		$smcFunc['db_free_result']($request);
+	}
+
 	public function get_js(string $target, int $maximum = 1): string
 	{
 		global $scripturl, $txt;
 
-		return '
+		$js = '
 $("' . $target . '").select2({
 	dropdownAutoWidth: true,
 	width: "auto",
@@ -146,5 +167,15 @@ $("' . $target . '").select2({
 		return $char;
 	}
 });';
+
+		if (!empty($this->default))
+		{
+			$js .= '
+var newOption = new Option(' . json_encode($this->default['character_name']) . ', ' . $this->default['id_character'] . ', false, false);
+$("' . $target . '").append(newOption).val(' . $this->default['id_character'] . ').trigger("change");
+';
+		}
+
+		return $js;
 	}
 }
