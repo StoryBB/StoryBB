@@ -46,7 +46,7 @@
 				<dt class="righttext"><label for="userspec">{{{txt.search_by_character}}}:</label>
 				</dt>
 				<dd>
-					<input id="userspec" type="text" name="userspec" value="{{#if context.search_params.userspec}}{{{context.search_params.userspec}}}{{else}}*{{/if}}" size="40">
+					<select id="userspec" name="userspec"><option></option></select>
 				</dd>
 				<dt class="righttext"><label for="sort">{{{txt.search_order}}}:</label>
 				</dt>
@@ -167,13 +167,3 @@
 		{{/unless}}
 
 	</form>
-	<script>
-		var oAddMemberSuggest = new smc_AutoSuggest({
-			sSelf: 'oAddMemberSuggest',
-			sSessionId: sbb_session_id,
-			sSessionVar: sbb_session_var,
-			sControlId: 'userspec',
-			sSearchType: 'rawcharacter',
-			bItemList: false
-		});
-	</script>
