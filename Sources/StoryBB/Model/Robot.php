@@ -35,11 +35,12 @@ class Robot
 			'baiduspider' => 'baidu',
 			'bingbot' => 'bing',
 			'bingpreview' => 'bingpreview',
-			//'facebookexternalhit' => 'facebook',
+			'facebookexternalhit' => 'facebook',
+			'facebot' => 'facebook',
 			'feedly' => 'feedly',
-			//'googlebot' => 'google',
+			'googlebot' => 'google',
 			'ia_archiver' => 'alexa',
-			//'magpie-crawler' => 'brandwatch',
+			'magpie-crawler' => 'brandwatch',
 			'mj12bot' => 'majestic12',
 			'msnbot-media' => 'bingmedia'
 			'msnbot' => 'bing',
@@ -47,8 +48,8 @@ class Robot
 			'pingdom.com_bot' => 'pingdom',
 			'proximic' => 'proximic',
 			'scoutjet' => 'scoutjet',
-			//'slackbot' => 'slack',
-			//'sogou web spider' => 'sogou',
+			'slackbot' => 'slack',
+			'sogou web spider' => 'sogou',
 			'statuscake' => 'statuscake',
 			'teoma' => 'teoma',
 			'uptimerobot' => 'uptimerobot',
@@ -115,9 +116,21 @@ class Robot
 				'title' => 'Bing (BingPreview)',
 				'link' => 'https://www.bing.com/webmaster/help/which-crawlers-does-bing-use-8c184ec0',
 			],
+			'brandwatch' => [
+				'title' => 'Brandwatch',
+				'link' => 'https://www.brandwatch.com/legal/magpie-crawler/',
+			],
+			'facebook' => [
+				'title' => 'Facebook',
+				'link' => 'https://developers.facebook.com/docs/sharing/webmasters/crawler',
+			],
 			'feedly' => [
 				'title' => 'Feedly',
 				'link' => 'https://www.feedly.com/fetcher.html',
+			],
+			'google' => [
+				'title' => 'Google',
+				'link' => 'https://support.google.com/webmasters/answer/182072',
 			],
 			'majestic12' => [
 				'title' => 'Majestic12',
@@ -138,6 +151,14 @@ class Robot
 			'scoutjet' => [
 				'title' => 'ScoutJet',
 				'link' => 'http://scoutjet.com/',
+			],
+			'slack' => [
+				'title' => 'Slack',
+				'link' => 'https://api.slack.com/robots',
+			],
+			'sogou' => [
+				'title' => 'Sogou',
+				'link' => 'http://www.sogou.com/docs/help/webmasters.htm#07',
 			],
 			'statuscake' => [
 				'title' => 'StatusCake',
