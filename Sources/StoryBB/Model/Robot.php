@@ -41,6 +41,7 @@ class Robot
 			'googlebot' => 'google',
 			'ia_archiver' => 'alexa',
 			'magpie-crawler' => 'brandwatch',
+			'mediapartners-google' => 'googleadsense',
 			'mj12bot' => 'majestic12',
 			'msnbot-media' => 'bingmedia'
 			'msnbot' => 'bing',
@@ -130,6 +131,10 @@ class Robot
 			],
 			'google' => [
 				'title' => 'Google',
+				'link' => 'https://support.google.com/webmasters/answer/182072',
+			],
+			'googleadsense' => [
+				'title' => 'Google (Adsense)',
 				'link' => 'https://support.google.com/webmasters/answer/182072',
 			],
 			'majestic12' => [
