@@ -92,15 +92,3 @@ $txt['search_warning_ignored_words'] = 'The following terms have been ignored in
 $txt['search_adjust_submit'] = 'Revise Search';
 
 $txt['search_example'] = '<em>e.g.</em> Orwell "Animal Farm" -movie';
-
-$txt['show_spider_online'] = 'Show spiders in the online list';
-$txt['show_spider_online_no'] = 'Not at all';
-$txt['show_spider_online_summary'] = 'Show spider quantity';
-$txt['show_spider_online_detail'] = 'Show spider names';
-$txt['show_spider_online_detail_admin'] = 'Show spider names - admin only';
-
-$txt['spider'] = 'Spider';
-$txt['spider_time'] = 'Time';
-$txt['spider_disabled'] = 'Disabled';
-
-$txt['spider_stats_page_hits'] = 'Page Hits';
