@@ -21,23 +21,13 @@ function SearchEngines()
 
 	loadLanguage('Search');
 
-	if (!empty($modSettings['spider_mode']))
-	{
-		$subActions = array(
-			'editspiders' => 'EditSpider',
-			'logs' => 'SpiderLogs',
-			'settings' => 'ManageSearchEngineSettings',
-			'spiders' => 'ViewSpiders',
-		);
-		$default = 'stats';
-	}
-	else
-	{
-		$subActions = array(
-			'settings' => 'ManageSearchEngineSettings',
-		);
-		$default = 'settings';
-	}
+	$subActions = array(
+		'editspiders' => 'EditSpider',
+		'logs' => 'SpiderLogs',
+		'settings' => 'ManageSearchEngineSettings',
+		'spiders' => 'ViewSpiders',
+	);
+	$default = 'stats';
 
 	// Ensure we have a valid subaction.
 	$context['sub_action'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : $default;
@@ -67,28 +57,7 @@ function ManageSearchEngineSettings($return_config = false)
 	global $context, $txt, $scripturl, $sourcedir, $smcFunc;
 
 	$config_vars = array(
-		// How much detail?
-		array('select', 'spider_mode', 'subtext' => $txt['spider_mode_note'], array($txt['spider_mode_off'], $txt['spider_mode_standard'], $txt['spider_mode_high'], $txt['spider_mode_vhigh']), 'onchange' => 'disableFields();'),
 	);
-
-	// Set up a message.
-	$context['settings_message'] = '<span class="smalltext">' . sprintf($txt['spider_settings_desc'], $scripturl . '?action=admin;area=logs;sa=settings;' . $context['session_var'] . '=' . $context['session_id']) . '</span>';
-
-	// Do some javascript.
-	$javascript_function = '
-		function disableFields()
-		{
-			disabledState = document.getElementById(\'spider_mode\').value == 0;';
-
-	foreach ($config_vars as $variable)
-		if ($variable[1] != 'spider_mode')
-			$javascript_function .= '
-			if (document.getElementById(\'' . $variable[1] . '\'))
-				document.getElementById(\'' . $variable[1] . '\').disabled = disabledState;';
-
-	$javascript_function .= '
-		}
-		disableFields();';
 
 	call_integration_hook('integrate_modify_search_engine_settings', array(&$config_vars));
 
@@ -116,7 +85,6 @@ function ManageSearchEngineSettings($return_config = false)
 	// Final settings...
 	$context['post_url'] = $scripturl . '?action=admin;area=sengines;save;sa=settings';
 	$context['settings_title'] = $txt['settings'];
-	addInlineJavaScript($javascript_function, true);
 
 	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
@@ -690,7 +658,7 @@ function SpiderLogs()
 		foreach ($context['spider_logs']['rows'] as $k => $row)
 		{
 			// Feature disabled?
-			if (empty($row['data']['viewing']['value']) && isset($modSettings['spider_mode']) && $modSettings['spider_mode'] < 3)
+			if (empty($row['data']['viewing']['value']))
 				$context['spider_logs']['rows'][$k]['viewing']['value'] = '<em>' . $txt['spider_disabled'] . '</em>';
 			else
 				$urls[$k] = array($row['data']['viewing']['value'], -1);

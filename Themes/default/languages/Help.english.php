@@ -475,11 +475,6 @@ $helptxt['posts_and_topics'] = '
 		</li>
 	</ul>';
 
-$helptxt['spider_mode'] = 'Sets the logging level.<br>
-Standard - Logs minimal spider activity.<br>
-Moderate - Provides more accurate statistics.<br>
-Agressive - As for &quot;Moderate&quot; but logs data about each page visited.';
-
 $helptxt['show_spider_online'] = 'This setting allows you to select whether spiders should be listed in the &quot;Who\'s Online&quot; list on the board index and &quot;Who\'s Online&quot; page. The options are:
 	<ul class="normallist">
 		<li>

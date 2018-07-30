@@ -217,12 +217,11 @@ function AdminMain()
 				),
 				'sengines' => array(
 					'label' => $txt['search_engines'],
-					'inactive' => empty($modSettings['spider_mode']),
 					'file' => 'ManageSearchEngines.php',
 					'icon' => 'engines',
 					'function' => 'SearchEngines',
 					'permission' => 'admin_forum',
-					'subsections' => empty($modSettings['spider_mode']) ? array() : array(
+					'subsections' => array(
 						'logs' => array($txt['spider_logs']),
 						'spiders' => array($txt['spiders']),
 						'settings' => array($txt['settings']),
@@ -413,7 +412,7 @@ function AdminMain()
 						'adminlog' => array($txt['admin_log'], 'admin_forum', 'enabled' => !empty($modSettings['adminlog_enabled'])),
 						'modlog' => array($txt['moderation_log'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
 						'banlog' => array($txt['ban_log'], 'manage_bans'),
-						'spiderlog' => array($txt['spider_logs'], 'admin_forum', 'enabled' => !empty($modSettings['spider_mode'])),
+						'spiderlog' => array($txt['spider_logs'], 'admin_forum'),
 						'tasklog' => array($txt['scheduled_log'], 'admin_forum'),
 						'settings' => array($txt['log_settings'], 'admin_forum'),
 					),

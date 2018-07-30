@@ -94,13 +94,6 @@ $txt['search_adjust_submit'] = 'Revise Search';
 $txt['search_example'] = '<em>e.g.</em> Orwell "Animal Farm" -movie';
 
 $txt['search_engines_description'] = 'From this area you can decide in what detail you wish to track search engines as they index your forum as well as review search engine logs.';
-$txt['spider_mode'] = 'Search Engine Tracking Level';
-$txt['spider_mode_note'] = 'Note that logging of every spider action only occurs if tracking is set to either "high" or "very high". Detail of every spiders action is only logged if tracking is set to "very high".';
-$txt['spider_mode_off'] = 'Disabled';
-$txt['spider_mode_standard'] = 'Standard';
-$txt['spider_mode_high'] = 'Moderate';
-$txt['spider_mode_vhigh'] = 'Aggressive';
-$txt['spider_settings_desc'] = 'You can change settings for spider tracking from this page. Note, if you wish to enable automatic pruning of the hit logs you can set this up <a href="%1$s">here</a>';
 
 $txt['show_spider_online'] = 'Show spiders in the online list';
 $txt['show_spider_online_no'] = 'Not at all';

@@ -439,13 +439,6 @@ function scheduled_daily_maintenance()
 		}
 	}
 
-	// Do any spider stuff.
-	if (!empty($modSettings['spider_mode']) && $modSettings['spider_mode'] > 1)
-	{
-		require_once($sourcedir . '/ManageSearchEngines.php');
-		consolidateSpiderStats();
-	}
-
 	// Clean up some old login history information.
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}member_logins
@@ -1460,7 +1453,7 @@ function scheduled_weekly_maintenance()
 
 	// Delete some settings that needn't be set if they are otherwise empty.
 	$emptySettings = array(
-		'warning_mute', 'warning_moderate', 'warning_watch', 'warning_show', 'disableCustomPerPage', 'spider_mode',
+		'warning_mute', 'warning_moderate', 'warning_watch', 'warning_show', 'disableCustomPerPage',
 		'paid_currency_code', 'paid_currency_symbol', 'paid_email_to', 'paid_email', 'paid_enabled', 'paypal_email',
 		'search_enable_captcha', 'search_floodcontrol_time',
 	);
