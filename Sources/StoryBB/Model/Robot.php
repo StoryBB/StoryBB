@@ -56,7 +56,7 @@ class Robot
 			'uptimerobot' => 'uptimerobot',
 			'w3c_validator' => 'w3c_validator',
 			'yacybot' => 'yacy',
-			//'yahoo! slurp' => 'yahoo',
+			'yahoo! slurp' => 'yahoo',
 			'yandex' => 'yandex',
 		];
 
@@ -184,6 +184,10 @@ class Robot
 			'yacy' => [
 				'title' => 'YaCy',
 				'link' => 'https://yacy.net/bot.html',
+			],
+			'yahoo' => [
+				'title' => 'Yahoo',
+				'link' => 'http://help.yahoo.com/help/us/ysearch/slurp',
 			],
 			'yandex' => [
 				'title' => 'Yandex',
