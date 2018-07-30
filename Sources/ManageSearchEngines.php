@@ -74,7 +74,6 @@ function ManageSearchEngineSettings($return_config = false)
 
 		call_integration_hook('integrate_save_search_engine_settings');
 		saveDBSettings($config_vars);
-		recacheSpiderNames();
 		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=sengines;sa=settings');
 	}
@@ -153,24 +152,4 @@ function consolidateSpiderStats()
 			'not_processed' => 0,
 		)
 	);
-}
-
-/**
- * Recache spider names?
- */
-function recacheSpiderNames()
-{
-	global $smcFunc;
-
-	$request = $smcFunc['db_query']('', '
-		SELECT id_spider, spider_name
-		FROM {db_prefix}spiders',
-		array()
-	);
-	$spiders = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$spiders[$row['id_spider']] = $row['spider_name'];
-	$smcFunc['db_free_result']($request);
-
-	updateSettings(array('spider_name_cache' => json_encode($spiders)));
 }
