@@ -215,16 +215,6 @@ function AdminMain()
 						'maintenance' => array($txt['attachment_manager_maintenance']),
 					),
 				),
-				'sengines' => array(
-					'label' => $txt['search_engines'],
-					'file' => 'ManageSearchEngines.php',
-					'icon' => 'engines',
-					'function' => 'SearchEngines',
-					'permission' => 'admin_forum',
-					'subsections' => array(
-						'settings' => array($txt['settings']),
-					),
-				),
 			),
 		),
 		'members' => array(
@@ -643,7 +633,6 @@ function AdminSearchInternal()
 		array('ModifyCacheSettings', 'area=serversettings;sa=cache'),
 		array('ModifyLanguageSettings', 'area=languages;sa=settings'),
 		array('ModifyRegistrationSettings', 'area=regcenter;sa=settings'),
-		array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
 		array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
 		array('ModifyLogSettings', 'area=logs;sa=settings'),
 	);

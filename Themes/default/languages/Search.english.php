@@ -93,8 +93,6 @@ $txt['search_adjust_submit'] = 'Revise Search';
 
 $txt['search_example'] = '<em>e.g.</em> Orwell "Animal Farm" -movie';
 
-$txt['search_engines_description'] = 'From this area you can decide in what detail you wish to track search engines as they index your forum as well as review search engine logs.';
-
 $txt['show_spider_online'] = 'Show spiders in the online list';
 $txt['show_spider_online_no'] = 'Not at all';
 $txt['show_spider_online_summary'] = 'Show spider quantity';
