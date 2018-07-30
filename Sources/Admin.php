@@ -604,7 +604,7 @@ function AdminSearchInternal()
 	// All the files we need to include.
 	$include_files = array(
 		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManagePaid', 'ManagePermissions',
-		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
+		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
 	);
 
 	// This is a special array of functions that contain setting data - we query all these to simply pull all setting bits!
