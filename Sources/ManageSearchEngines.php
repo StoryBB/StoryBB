@@ -22,7 +22,6 @@ function SearchEngines()
 	loadLanguage('Search');
 
 	$subActions = array(
-		'editspiders' => 'EditSpider',
 		'logs' => 'SpiderLogs',
 		'settings' => 'ManageSearchEngineSettings',
 		'spiders' => 'ViewSpiders',
@@ -179,7 +178,7 @@ function ViewSpiders()
 				'data' => array(
 					'function' => function($rowData) use ($smcFunc, $scripturl)
 					{
-						return sprintf('<a href="%1$s?action=admin;area=sengines;sa=editspiders;sid=%2$d">%3$s</a>', $scripturl, $rowData['id_spider'], $smcFunc['htmlspecialchars']($rowData['spider_name']));
+						return $smcFunc['htmlspecialchars']($rowData['spider_name']);
 					},
 				),
 				'sort' => array(
@@ -212,7 +211,7 @@ function ViewSpiders()
 			),
 			'ip_info' => array(
 				'header' => array(
-					'value' => $txt['spider_ip_info'],
+					'value' => 'ip_info',
 				),
 				'data' => array(
 					'db_htmlsafe' => 'ip_info',
