@@ -230,7 +230,6 @@ $txt['admin_log'] = 'Administration Log';
 $txt['admin_log_desc'] = 'Lists administrative tasks that have been performed by admins of your forum.';
 $txt['moderation_log'] = 'Moderation Log';
 $txt['moderation_log_desc'] = 'Lists moderation activities that have been performed by moderators on your forum.';
-$txt['spider_log_desc'] = 'Review the entries related to search engine spider activity on your forum.';
 $txt['log_settings_desc'] = 'Use these options to configure how logging works on your forum.';
 $txt['modlog_enabled'] = 'Enable the moderation log';
 $txt['adminlog_enabled'] = 'Enable the administration log';
@@ -672,7 +671,6 @@ $txt['admin_policies'] = 'Site Policies';
 
 $txt['search_engines'] = 'Search Engines';
 $txt['spiders'] = 'Spiders';
-$txt['spider_logs'] = 'Spider Log';
 $txt['spider_stats'] = 'Stats';
 
 $txt['paid_subscriptions'] = 'Paid Subscriptions';
