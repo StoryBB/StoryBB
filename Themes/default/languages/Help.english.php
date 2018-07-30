@@ -475,29 +475,6 @@ $helptxt['posts_and_topics'] = '
 		</li>
 	</ul>';
 
-$helptxt['spider_mode'] = 'Sets the logging level.<br>
-Standard - Logs minimal spider activity.<br>
-Moderate - Provides more accurate statistics.<br>
-Agressive - As for &quot;Moderate&quot; but logs data about each page visited.';
-
-$helptxt['spider_group'] = 'By selecting a restrictive group, when a guest is detected as a search crawler it will automatically be assigned any &quot;deny&quot; deny permissions of this group in addition to the normal permissions of a guest. You can use this to provide lesser access to a search engine than you would a normal guest. You might for example wish to create a new group called &quot;Spiders&quot; and select that here. You could then deny permission for that group to view profiles to stop spiders indexing your members profiles.<br>Note: Spider detection is not perfect and can be simulated by users so this feature is not guaranteed to restrict content only to those search engines you have added.';
-$helptxt['show_spider_online'] = 'This setting allows you to select whether spiders should be listed in the &quot;Who\'s Online&quot; list on the board index and &quot;Who\'s Online&quot; page. The options are:
-	<ul class="normallist">
-		<li>
-			<strong>Not at All</strong><br>
-			Spiders will simply appear as guests to all users.
-		</li><li>
-			<strong>Show Spider Quantity</strong><br>
-			The Board Index will display the number of spiders currently visiting the forum.
-		</li><li>
-			<strong>Show Spider Names</strong><br>
-			Each spider name will be revealed, so users can see how many of each spider is currently visiting the forum - this takes effect in both the Board Index and Who\'s Online page.
-		</li><li>
-			<strong>Show Spider Names - Admin Only</strong><br>
-			As above except only Administrators can see spider status - to all other users spiders appear as guests.
-		</li>
-	</ul>';
-
 $helptxt['birthday_email'] = 'Choose the index of the birthday email message to use. A preview will be shown in the Email Subject and Email Body fields.<br><strong>Note:</strong> Selecting this setting does not automatically enable birthday emails. To enable birthday emails use the <a href="%1$s?action=admin;area=scheduledtasks;%3$s=%2$s" target="_blank" rel="noopener">Scheduled Tasks</a> page and enable the birthday email task.';
 $helptxt['pm_bcc'] = 'When sending a personal message you can choose to add a recipient as BCC (Blind Carbon Copy). BCC recipients do not have their identities revealed to the other recipients of the message.';
 
