@@ -762,61 +762,6 @@ function list_getNumSpiderLogs()
 }
 
 /**
- * Callback function for createList()
- * Get a list of spider stats from the log_spider table
- *
- * @param int $start The item to start with (for pagination purposes)
- * @param int $items_per_page The number of items to show per page
- * @param string $sort A string indicating how to sort the results
- * @return array An array of spider statistics info
- */
-function list_getSpiderStats($start, $items_per_page, $sort)
-{
-	global $smcFunc;
-
-	$request = $smcFunc['db_query']('', '
-		SELECT ss.id_spider, ss.stat_date, ss.page_hits, s.spider_name
-		FROM {db_prefix}log_spider_stats AS ss
-			INNER JOIN {db_prefix}spiders AS s ON (s.id_spider = ss.id_spider)
-		ORDER BY {raw:sort}
-		LIMIT {int:start}, {int:items}',
-		array(
-			'sort' => $sort,
-			'start' => $start,
-			'items' => $items_per_page,
-		)
-	);
-	$spider_stats = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$spider_stats[] = $row;
-	$smcFunc['db_free_result']($request);
-
-	return $spider_stats;
-}
-
-/**
- * Callback function for createList()
- * Get the number of spider stat rows from the log spider stats table
- *
- * @return int The number of rows in the log_spider_stats table
- */
-function list_getNumSpiderStats()
-{
-	global $smcFunc;
-
-	$request = $smcFunc['db_query']('', '
-		SELECT COUNT(*) AS num_stats
-		FROM {db_prefix}log_spider_stats',
-		array(
-		)
-	);
-	list ($numStats) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
-
-	return $numStats;
-}
-
-/**
  * Recache spider names?
  */
 function recacheSpiderNames()
