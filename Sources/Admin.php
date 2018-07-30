@@ -223,7 +223,6 @@ function AdminMain()
 					'function' => 'SearchEngines',
 					'permission' => 'admin_forum',
 					'subsections' => empty($modSettings['spider_mode']) ? array() : array(
-						'stats' => array($txt['spider_stats']),
 						'logs' => array($txt['spider_logs']),
 						'spiders' => array($txt['spiders']),
 						'settings' => array($txt['settings']),
