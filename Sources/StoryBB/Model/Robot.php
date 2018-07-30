@@ -43,7 +43,7 @@ class Robot
 			'magpie-crawler' => 'brandwatch',
 			'mediapartners-google' => 'googleadsense',
 			'mj12bot' => 'majestic12',
-			'msnbot-media' => 'bingmedia'
+			'msnbot-media' => 'bingmedia',
 			'msnbot' => 'bing',
 			'netvibes' => 'netvibes',
 			'pingdom.com_bot' => 'pingdom',

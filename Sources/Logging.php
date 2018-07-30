@@ -56,7 +56,7 @@ function writeLog($force = false)
 	}
 
 	// Are they a spider we should be tracking? Mode = 1 gets tracked on its spider check...
-	if (!empty($user_info['possibly_robot']) && !empty($modSettings['spider_mode']) && $modSettings['spider_mode'] > 1)
+	if (!empty($user_info['possibly_robot']))
 	{
 		require_once($sourcedir . '/ManageSearchEngines.php');
 		logSpider();
@@ -139,8 +139,8 @@ function writeLog($force = false)
 
 		$smcFunc['db_insert']($do_delete ? 'ignore' : 'replace',
 			'{db_prefix}log_online',
-			array('session' => 'string', 'id_member' => 'int', 'id_character' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'inet', 'url' => 'string'),
-			array($session_id, $user_info['id'], $user_info['id_character'], empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), $user_info['ip'], $encoded_get),
+			array('session' => 'string', 'id_member' => 'int', 'id_character' => 'int', 'robot_name' => 'string', 'log_time' => 'int', 'ip' => 'inet', 'url' => 'string'),
+			array($session_id, $user_info['id'], $user_info['id_character'], empty($_SESSION['robot_name']) ? '' : $_SESSION['robot_name'], time(), $user_info['ip'], $encoded_get),
 			array('session')
 		);
 	}
