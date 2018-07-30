@@ -1460,7 +1460,7 @@ function scheduled_weekly_maintenance()
 
 	// Delete some settings that needn't be set if they are otherwise empty.
 	$emptySettings = array(
-		'warning_mute', 'warning_moderate', 'warning_watch', 'warning_show', 'disableCustomPerPage', 'spider_mode', 'spider_group',
+		'warning_mute', 'warning_moderate', 'warning_watch', 'warning_show', 'disableCustomPerPage', 'spider_mode',
 		'paid_currency_code', 'paid_currency_symbol', 'paid_email_to', 'paid_email', 'paid_enabled', 'paypal_email',
 		'search_enable_captcha', 'search_floodcontrol_time', 'show_spider_online',
 	);

@@ -218,9 +218,6 @@ function deleteMembergroups($groups)
 
 	// Make a note of the fact that the cache may be wrong.
 	$settings_update = array('settings_updated' => time());
-	// Have we deleted the spider group?
-	if (isset($modSettings['spider_group']) && in_array($modSettings['spider_group'], $groups))
-		$settings_update['spider_group'] = 0;
 
 	updateSettings($settings_update);
 

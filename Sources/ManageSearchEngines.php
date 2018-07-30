@@ -70,7 +70,6 @@ function ManageSearchEngineSettings($return_config = false)
 	$config_vars = array(
 		// How much detail?
 		array('select', 'spider_mode', 'subtext' => $txt['spider_mode_note'], array($txt['spider_mode_off'], $txt['spider_mode_standard'], $txt['spider_mode_high'], $txt['spider_mode_vhigh']), 'onchange' => 'disableFields();'),
-		'spider_group' => array('select', 'spider_group', 'subtext' => $txt['spider_group_note'], array($txt['spider_group_none'], $txt['membergroups_members'])),
 		array('select', 'show_spider_online', array($txt['show_spider_online_no'], $txt['show_spider_online_summary'], $txt['show_spider_online_detail'], $txt['show_spider_online_detail_admin'])),
 	);
 
@@ -97,25 +96,6 @@ function ManageSearchEngineSettings($return_config = false)
 
 	if ($return_config)
 		return $config_vars;
-
-	// We need to load the groups for the spider group thingy.
-	$request = $smcFunc['db_query']('', '
-		SELECT id_group, group_name
-		FROM {db_prefix}membergroups
-		WHERE id_group != {int:admin_group}
-			AND id_group != {int:moderator_group}',
-		array(
-			'admin_group' => 1,
-			'moderator_group' => 3,
-		)
-	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$config_vars['spider_group'][2][$row['id_group']] = $row['group_name'];
-	$smcFunc['db_free_result']($request);
-
-	// Make sure it's valid - note that regular members are given id_group = 1 which is reversed in Load.php - no admins here!
-	if (isset($_POST['spider_group']) && !isset($config_vars['spider_group'][2][$_POST['spider_group']]))
-		$_POST['spider_group'] = 0;
 
 	// We'll want this for our easy save.
 	require_once($sourcedir . '/ManageServer.php');

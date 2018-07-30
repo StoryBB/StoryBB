@@ -102,10 +102,6 @@ $txt['spider_mode_high'] = 'Moderate';
 $txt['spider_mode_vhigh'] = 'Aggressive';
 $txt['spider_settings_desc'] = 'You can change settings for spider tracking from this page. Note, if you wish to enable automatic pruning of the hit logs you can set this up <a href="%1$s">here</a>';
 
-$txt['spider_group'] = 'Apply restrictive permissions from group';
-$txt['spider_group_note'] = 'To enable you to stop spiders indexing some pages.';
-$txt['spider_group_none'] = 'Disabled';
-
 $txt['show_spider_online'] = 'Show spiders in the online list';
 $txt['show_spider_online_no'] = 'Not at all';
 $txt['show_spider_online_summary'] = 'Show spider quantity';

@@ -614,7 +614,7 @@ function loadUserSettings()
 			list ($context['login_token_var'],,, $context['login_token']) = $_SESSION['token']['post-login'];
 
 		// Do we perhaps think this is a search robot? Check every five minutes just in case...
-		if ((!empty($modSettings['spider_mode']) || !empty($modSettings['spider_group'])) && (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300))
+		if (!empty($modSettings['spider_mode']) && (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300))
 		{
 			require_once($sourcedir . '/ManageSearchEngines.php');
 			$user_info['possibly_robot'] = SpiderCheck();
@@ -1079,20 +1079,15 @@ function loadPermissions()
 			list ($user_info['permissions'], $removals) = $temp;
 	}
 
-	// If it is detected as a robot, and we are restricting permissions as a special group - then implement this.
-	$spider_restrict = $user_info['possibly_robot'] && !empty($modSettings['spider_group']) ? ' OR (id_group = {int:spider_group} AND add_deny = 0)' : '';
-
 	if (empty($user_info['permissions']))
 	{
 		// Get the general permissions.
 		$request = $smcFunc['db_query']('', '
 			SELECT permission, add_deny
 			FROM {db_prefix}permissions
-			WHERE id_group IN ({array_int:member_groups})
-				' . $spider_restrict,
+			WHERE id_group IN ({array_int:member_groups})',
 			array(
 				'member_groups' => $user_info['groups'],
-				'spider_group' => !empty($modSettings['spider_group']) ? $modSettings['spider_group'] : 0,
 			)
 		);
 		$removals = array();
@@ -1119,13 +1114,11 @@ function loadPermissions()
 		$request = $smcFunc['db_query']('', '
 			SELECT permission, add_deny
 			FROM {db_prefix}board_permissions
-			WHERE (id_group IN ({array_int:member_groups})
-				' . $spider_restrict . ')
+			WHERE id_group IN ({array_int:member_groups})
 				AND id_profile = {int:id_profile}',
 			array(
 				'member_groups' => $user_info['groups'],
 				'id_profile' => $board_info['profile'],
-				'spider_group' => !empty($modSettings['spider_group']) ? $modSettings['spider_group'] : 0,
 			)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
