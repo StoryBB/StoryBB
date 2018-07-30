@@ -103,7 +103,7 @@ class Robot
 			],
 			'bing' => [
 				'title' => 'Bing (MSNBot)',
-				'link' => '',
+				'link' => 'http://www.bing.com/bingbot.htm',
 			],
 			'bingads' => [
 				'title' => 'Bing (AdIdxBot)',
