@@ -223,7 +223,6 @@ function AdminMain()
 					'permission' => 'admin_forum',
 					'subsections' => array(
 						'logs' => array($txt['spider_logs']),
-						'spiders' => array($txt['spiders']),
 						'settings' => array($txt['settings']),
 					),
 				),
