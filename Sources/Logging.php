@@ -55,13 +55,6 @@ function writeLog($force = false)
 		}
 	}
 
-	// Are they a spider we should be tracking? Mode = 1 gets tracked on its spider check...
-	if (!empty($user_info['possibly_robot']))
-	{
-		require_once($sourcedir . '/ManageSearchEngines.php');
-		logSpider();
-	}
-
 	// Don't mark them as online more than every so often.
 	if (!empty($_SESSION['log_time']) && $_SESSION['log_time'] >= (time() - 8) && !$force)
 		return;
