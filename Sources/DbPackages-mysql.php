@@ -42,7 +42,7 @@ function db_packages_init()
 		'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_mark_read', 'log_member_notices',
 		'log_notify', 'log_online', 'log_polls', 'log_reported', 'log_reported_comments',
 		'log_scheduled_tasks', 'log_search_messages', 'log_search_results', 'log_search_subjects',
-		'log_search_topics', 'log_spider_stats', 'log_subscribed', 'log_topics',
+		'log_search_topics', 'log_subscribed', 'log_topics',
 		'mail_queue', 'membergroups', 'members', 'mentions', 'message_icons',
 		'messages', 'moderator_groups', 'moderators', 'permission_profiles', 'permissions', 'personal_messages',
 		'pm_labeled_messages', 'pm_labels', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls', 'scheduled_tasks', 'sessions', 'settings', 'smileys',

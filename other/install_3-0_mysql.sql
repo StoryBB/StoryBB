@@ -606,18 +606,6 @@ CREATE TABLE {$db_prefix}log_search_topics (
 ) ENGINE={$engine};
 
 #
-# Table structure for table `log_spider_stats`
-#
-
-CREATE TABLE {$db_prefix}log_spider_stats (
-  id_spider SMALLINT UNSIGNED DEFAULT '0',
-  page_hits SMALLINT UNSIGNED NOT NULL DEFAULT '0',
-  last_seen INT UNSIGNED NOT NULL DEFAULT '0',
-  stat_date DATE DEFAULT '1004-01-01',
-  PRIMARY KEY (stat_date, id_spider)
-) ENGINE={$engine};
-
-#
 # Table structure for table `log_subscribed`
 #
 
