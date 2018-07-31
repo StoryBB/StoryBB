@@ -197,20 +197,6 @@ function AdminMain()
 						'maintenance' => array($txt['attachment_manager_maintenance']),
 					),
 				),
-				'sengines' => array(
-					'label' => $txt['search_engines'],
-					'inactive' => empty($modSettings['spider_mode']),
-					'file' => 'ManageSearchEngines.php',
-					'icon' => 'engines',
-					'function' => 'SearchEngines',
-					'permission' => 'admin_forum',
-					'subsections' => empty($modSettings['spider_mode']) ? array() : array(
-						'stats' => array($txt['spider_stats']),
-						'logs' => array($txt['spider_logs']),
-						'spiders' => array($txt['spiders']),
-						'settings' => array($txt['settings']),
-					),
-				),
 			),
 		),
 		'members' => array(
@@ -416,7 +402,6 @@ function AdminMain()
 						'adminlog' => array($txt['admin_log'], 'admin_forum', 'enabled' => !empty($modSettings['adminlog_enabled'])),
 						'modlog' => array($txt['moderation_log'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
 						'banlog' => array($txt['ban_log'], 'manage_bans'),
-						'spiderlog' => array($txt['spider_logs'], 'admin_forum', 'enabled' => !empty($modSettings['spider_mode'])),
 						'tasklog' => array($txt['scheduled_log'], 'admin_forum'),
 						'settings' => array($txt['log_settings'], 'admin_forum'),
 					),
@@ -621,7 +606,7 @@ function AdminSearchInternal()
 	// All the files we need to include.
 	$include_files = array(
 		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManagePaid', 'ManagePermissions',
-		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
+		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
 	);
 
 	// This is a special array of functions that contain setting data - we query all these to simply pull all setting bits!
@@ -648,7 +633,6 @@ function AdminSearchInternal()
 		array('ModifyCacheSettings', 'area=serversettings;sa=cache'),
 		array('ModifyLanguageSettings', 'area=languages;sa=settings'),
 		array('ModifyRegistrationSettings', 'area=regcenter;sa=settings'),
-		array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
 		array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
 		array('ModifyLogSettings', 'area=logs;sa=settings'),
 	);
@@ -769,7 +753,6 @@ function AdminLogs()
 		'adminlog' => array('Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['adminlog_enabled'])),
 		'modlog' => array('Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['modlog_enabled'])),
 		'banlog' => array('ManageBans.php', 'BanLog'),
-		'spiderlog' => array('ManageSearchEngines.php', 'SpiderLogs'),
 		'tasklog' => array('ManageScheduledTasks.php', 'TaskLog'),
 		'settings' => array('ManageSettings.php', 'ModifyLogSettings'),
 	);
@@ -796,9 +779,6 @@ function AdminLogs()
 			),
 			'banlog' => array(
 				'description' => $txt['ban_log_description'],
-			),
-			'spiderlog' => array(
-				'description' => $txt['spider_log_desc'],
 			),
 			'tasklog' => array(
 				'description' => $txt['scheduled_log_desc'],

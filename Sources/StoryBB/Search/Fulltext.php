@@ -164,9 +164,6 @@ class Fulltext extends API
 		$query_where = array();
 		$query_params = $search_data['params'];
 
-		if($smcFunc['db_title'] == "PostgreSQL")
-			$modSettings['search_simple_fulltext'] = true;
-
 		if ($query_params['id_search'])
 			$query_select['id_search'] = '{int:id_search}';
 
@@ -207,15 +204,7 @@ class Fulltext extends API
 
 		if (!empty($modSettings['search_simple_fulltext']))
 		{
-			if($smcFunc['db_title'] == "PostgreSQL")
-			{
-				$language_ftx = $smcFunc['db_search_language']();
-
-				$query_where[] = 'to_tsvector({string:language_ftx},body) @@ plainto_tsquery({string:language_ftx},{string:body_match})';
-				$query_params['language_ftx'] = $language_ftx;
-			}
-			else
-				$query_where[] = 'MATCH (body) AGAINST ({string:body_match})';
+			$query_where[] = 'MATCH (body) AGAINST ({string:body_match})';
 			$query_params['body_match'] = implode(' ', array_diff($words['indexed_words'], $query_params['excluded_index_words']));
 		}
 		else
@@ -225,31 +214,14 @@ class Fulltext extends API
 			// remove any indexed words that are used in the complex body search terms
 			$words['indexed_words'] = array_diff($words['indexed_words'], $words['complex_words']);
 
-			if($smcFunc['db_title'] == "PostgreSQL"){
-				$row = 0;
-				foreach ($words['indexed_words'] as $fulltextWord) {
-					$query_params['boolean_match'] .= ($row <> 0 ? '&' : '');
-					$query_params['boolean_match'] .= (in_array($fulltextWord, $query_params['excluded_index_words']) ? '!' : '') . $fulltextWord . ' ';
-					$row++;
-				}
-			}
-			else
-				foreach ($words['indexed_words'] as $fulltextWord)
-					$query_params['boolean_match'] .= (in_array($fulltextWord, $query_params['excluded_index_words']) ? '-' : '+') . $fulltextWord . ' ';
+			foreach ($words['indexed_words'] as $fulltextWord)
+				$query_params['boolean_match'] .= (in_array($fulltextWord, $query_params['excluded_index_words']) ? '-' : '+') . $fulltextWord . ' ';
 
 			$query_params['boolean_match'] = substr($query_params['boolean_match'], 0, -1);
 
 			// if we have bool terms to search, add them in
 			if ($query_params['boolean_match']) {
-				if($smcFunc['db_title'] == "PostgreSQL")
-				{
-					$language_ftx = $smcFunc['db_search_language']();
-
-					$query_where[] = 'to_tsvector({string:language_ftx},body) @@ plainto_tsquery({string:language_ftx},{string:boolean_match})';
-					$query_params['language_ftx'] = $language_ftx;
-				}
-				else
-					$query_where[] = 'MATCH (body) AGAINST ({string:boolean_match} IN BOOLEAN MODE)';
+				$query_where[] = 'MATCH (body) AGAINST ({string:boolean_match} IN BOOLEAN MODE)';
 			}
 
 		}

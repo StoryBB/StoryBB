@@ -15,6 +15,7 @@ namespace StoryBB\Helper\Autocomplete;
 abstract class AbstractCompletable implements Completable
 {
 	protected $term = null;
+	protected $default = null;
 
 	public function set_search_term(string $term)
 	{
@@ -45,6 +46,8 @@ abstract class AbstractCompletable implements Completable
 	}
 
 	abstract public function get_results(int $start = null, int $limit = null): array;
+
+	abstract public function set_value($default_value);
 
 	public function get_js(string $target, int $maximum = 1): string
 	{

@@ -48,22 +48,19 @@ function getMembersOnlineStats($membersOnlineOptions)
 		'list_users_online' => array(),
 		'online_groups' => array(),
 		'num_guests' => 0,
-		'num_spiders' => 0,
+		'num_robots' => 0,
 		'num_buddies' => 0,
 		'num_users_hidden' => 0,
 		'num_users_online' => 0,
 	);
 
-	// Get any spiders if enabled.
-	$spiders = array();
-	$spider_finds = array();
-	if (!empty($modSettings['show_spider_online']) && ($modSettings['show_spider_online'] < 3 || allowedTo('admin_forum')) && !empty($modSettings['spider_name_cache']))
-		$spiders = sbb_json_decode($modSettings['spider_name_cache'], true);
-
 	// Load the users online right now.
+	$robot = new \StoryBB\Model\Robot;
+	$robot_finds = [];
+
 	$request = $smcFunc['db_query']('', '
 		SELECT
-			lo.id_member, lo.log_time, lo.id_spider, chars.id_character, IFNULL(chars.character_name, mem.real_name) AS real_name, mem.member_name, mem.show_online,
+			lo.id_member, lo.log_time, lo.robot_name, chars.id_character, IFNULL(chars.character_name, mem.real_name) AS real_name, mem.member_name, mem.show_online,
 			IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, mg.id_group, mg.group_name,
 			mg.hidden, mg.group_type, mg.id_parent
 		FROM {db_prefix}log_online AS lo
@@ -79,12 +76,23 @@ function getMembersOnlineStats($membersOnlineOptions)
 	{
 		if (empty($row['real_name']))
 		{
-			// Do we think it's a spider?
-			if ($row['id_spider'] && isset($spiders[$row['id_spider']]))
+			// Do we think it's a robot?
+			if (!empty($row['robot_name']))
 			{
-				$spider_finds[$row['id_spider']] = isset($spider_finds[$row['id_spider']]) ? $spider_finds[$row['id_spider']] + 1 : 1;
-				$membersOnlineStats['num_spiders']++;
+				$robot_details = $robot->get_robot_info($row['robot_name']);
+				if (!empty($robot_details))
+				{
+					if (!isset($robot_finds[$row['robot_name']]))
+					{
+						$robot_finds[$row['robot_name']] = $robot_details;
+						$robot_finds[$row['robot_name']]['count'] = 0;
+					}
+					$robot_finds[$row['robot_name']]['count']++;
+					$membersOnlineStats['num_robots']++;
+					continue;
+				}
 			}
+
 			// Guests are only nice for statistics.
 			$membersOnlineStats['num_guests']++;
 
@@ -141,25 +149,25 @@ function getMembersOnlineStats($membersOnlineOptions)
 	}
 	$smcFunc['db_free_result']($request);
 
-	// If there are spiders only and we're showing the detail, add them to the online list - at the bottom.
-	if (!empty($spider_finds) && $modSettings['show_spider_online'] > 1)
+	// If there are robots only and we're showing the detail, add them to the online list - at the bottom.
+	if (!empty($robot_finds))
 	{
 		$sort = $membersOnlineOptions['sort'] === 'log_time' && $membersOnlineOptions['reverse_sort'] ? 0 : 'zzz_';
-		foreach ($spider_finds as $id => $count)
+		foreach ($robot_finds as $id => $this_robot)
 		{
-			$link = $spiders[$id] . ($count > 1 ? ' (' . $count . ')' : '');
-			$membersOnlineStats['users_online'][$sort . '_' . $spiders[$id]] = array(
+			$link = $this_robot['title'] . ($this_robot['count'] > 1 ? ' (' . $this_robot['count'] . ')' : '');
+			$membersOnlineStats['users_online'][$sort . '_' . $id] = array(
 				'id' => 0,
-				'username' => $spiders[$id],
-				'name' => $link,
-				'group' => $txt['spiders'],
+				'username' => $id,
+				'name' => $this_robot['title'],
+				'group' => $txt['robots'],
 				'href' => '',
 				'link' => $link,
 				'is_buddy' => false,
 				'hidden' => false,
 				'is_last' => false,
 			);
-			$membersOnlineStats['list_users_online'][$sort . '_' . $spiders[$id]] = $link;
+			$membersOnlineStats['list_users_online'][$sort . '_' . $id] = $link;
 		}
 	}
 
@@ -182,7 +190,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 	ksort($membersOnlineStats['online_groups']);
 
 	// Hidden and non-hidden members make up all online members.
-	$membersOnlineStats['num_users_online'] = count($membersOnlineStats['users_online']) + $membersOnlineStats['num_users_hidden'] - (isset($modSettings['show_spider_online']) && $modSettings['show_spider_online'] > 1 ? count($spider_finds) : 0);
+	$membersOnlineStats['num_users_online'] = count($membersOnlineStats['users_online']) + $membersOnlineStats['num_users_hidden'] - count($robot_finds);
 
 	return $membersOnlineStats;
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Any autocomplete handlers must implement this interface.
+ * Autcompleting for characters when we don't want to differentiate between IC/OOC, e.g. search.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,7 +12,10 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
-class Character extends AbstractCompletable implements Completable
+/**
+ * Autcompleting for characters when we don't want to differentiate between IC/OOC, e.g. search.
+ */
+class RawCharacter extends AbstractCompletable implements Completable
 {
 	public function can_paginate(): bool
 	{
@@ -28,7 +31,6 @@ class Character extends AbstractCompletable implements Completable
 			FROM {db_prefix}characters AS chars
 			INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
 			WHERE {raw:character_name} LIKE {string:search}
-				AND is_main = 0
 				AND is_activated IN (1, 11)',
 			[
 				'character_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
@@ -61,12 +63,11 @@ class Character extends AbstractCompletable implements Completable
 		$result = [];
 
 		$request = $smcFunc['db_query']('', '
-			SELECT chars.id_character, chars.character_name, mem.real_name, mem.email_address, a.filename, chars.avatar
+			SELECT chars.id_character, chars.character_name, mem.email_address, a.filename, chars.avatar
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member)
 				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character AND a.attachment_type = 1)
 			WHERE {raw:character_name} LIKE {string:search}
-				AND is_main = 0
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
@@ -82,7 +83,6 @@ class Character extends AbstractCompletable implements Completable
 				'id' => $row['id_character'],
 				'text' => $row['character_name'],
 				'char_name' => $row['character_name'],
-				'account_name' => $row['real_name'],
 			];
 
 			if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($row['avatar'], 'gravatar://')))
@@ -124,7 +124,6 @@ class Character extends AbstractCompletable implements Completable
 		$request = $smcFunc['db_query']('', '
 			SELECT id_character, character_name
 			FROM {db_prefix}characters
-				WHERE is_main = 0
 			WHERE id_character = {int:default_value}',
 			[
 				'default_value' => $default_value,
@@ -150,7 +149,7 @@ $("' . $target . '").select2({
 			var query = {
 				action: "autocomplete",
 				term: params.term,
-				type: "character"
+				type: "rawcharacter"
 			}
 			query[sbb_session_var] = sbb_session_id;
 			return query;
@@ -161,13 +160,10 @@ $("' . $target . '").select2({
 		if (!character.avatar)
 			return character.text;
 
-		var str = ' . json_encode($txt['autocomplete_search_character_account']) . ';
-
-		var $char = $("<div class=\"autocomplete\"><div style=\"background-image:url(" + character.avatar + ")\" class=\"autocomplete-avatar-lg\"></div><div class=\"autocomplete-container\"><div class=\"autocomplete-character\">" + character.text + "</div><div class=\"autocomplete-character-account\">" + str.replace("%s", character.account_name) + "</div></div></div>");
-		return $char;
+		var $mem = $("<div class=\"autocomplete\"><div style=\"background-image:url(" + character.avatar + ")\" class=\"autocomplete-avatar\"></div><span class=\"autocomplete-member\">" + character.text + "</span></div>");
+		return $mem;
 	}
 });';
-
 		if (!empty($this->default))
 		{
 			$js .= '
