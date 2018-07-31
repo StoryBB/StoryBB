@@ -486,7 +486,6 @@ CREATE TABLE {$db_prefix}log_online (
   log_time INT NOT NULL DEFAULT '0',
   id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   id_character INT UNSIGNED NOT NULL DEFAULT '0',
-  id_spider SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   robot_name VARCHAR(20) NOT NULL DEFAULT '',
   ip VARBINARY(16),
   url VARCHAR(2048) NOT NULL DEFAULT '',
@@ -604,22 +603,6 @@ CREATE TABLE {$db_prefix}log_search_topics (
   id_search TINYINT UNSIGNED DEFAULT '0',
   id_topic MEDIUMINT UNSIGNED DEFAULT '0',
   PRIMARY KEY (id_search, id_topic)
-) ENGINE={$engine};
-
-#
-# Table structure for table `log_spider_hits`
-#
-
-CREATE TABLE {$db_prefix}log_spider_hits (
-  id_hit INT UNSIGNED AUTO_INCREMENT,
-  id_spider SMALLINT UNSIGNED NOT NULL DEFAULT '0',
-  log_time INT UNSIGNED NOT NULL DEFAULT '0',
-  url VARCHAR(1024) NOT NULL DEFAULT '',
-  processed TINYINT NOT NULL DEFAULT '0',
-  PRIMARY KEY (id_hit),
-  INDEX idx_id_spider(id_spider),
-  INDEX idx_log_time(log_time),
-  INDEX idx_processed (processed)
 ) ENGINE={$engine};
 
 #
