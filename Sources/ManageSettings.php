@@ -91,40 +91,6 @@ function ModifyFeatureSettings()
 }
 
 /**
- * This my friend, is for all the mod authors out there.
- */
-function ModifyModSettings()
-{
-	global $context, $txt;
-
-	$context['page_title'] = $txt['admin_modifications'];
-
-	$subActions = array(
-		'general' => 'ModifyGeneralModSettings',
-		// Mod authors, once again, if you have a whole section to add do it AFTER this line, and keep a comma at the end.
-	);
-
-	// Make it easier for mods to add new areas.
-	call_integration_hook('integrate_modify_modifications', array(&$subActions));
-
-	loadGeneralSettingParameters($subActions, 'general');
-
-	// Load up all the tabs...
-	$context[$context['admin_menu_name']]['tab_data'] = array(
-		'title' => $txt['admin_modifications'],
-		'help' => 'modsettings',
-		'description' => $txt['modification_settings_desc'],
-		'tabs' => array(
-			'general' => array(
-			),
-		),
-	);
-
-	// Call the right function for this sub-action.
-	call_helper($subActions[$_REQUEST['sa']]);
-}
-
-/**
  * Config array for changing the basic forum settings
  * Accessed  from ?action=admin;area=featuresettings;sa=basic;
  *
@@ -2078,61 +2044,6 @@ function ModifyLogSettings($return_config = false)
 	else
 		$modSettings['pruneErrorLog'] = $modSettings['pruneModLog'] = $modSettings['pruneBanLog'] = $modSettings['pruneReportLog'] = $modSettings['pruneScheduledTaskLog'] = 0;
 
-	prepareDBSettingContext($config_vars);
-}
-
-/**
- * If you have a general mod setting to add stick it here.
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyGeneralModSettings($return_config = false)
-{
-	global $txt, $scripturl, $context;
-
-	$config_vars = array(
-		// Mod authors, add any settings UNDER this line. Include a comma at the end of the line and don't remove this statement!!
-	);
-
-	// Make it even easier to add new settings.
-	call_integration_hook('integrate_general_mod_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	$context['post_url'] = $scripturl . '?action=admin;area=modsettings;save;sa=general';
-	$context['settings_title'] = $txt['mods_cat_modifications_misc'];
-
-	// No removing this line you, dirty unwashed mod authors. :p
-	if (empty($config_vars))
-	{
-		$context['settings_save_dont_show'] = true;
-		$config_vars[] = $txt['modification_no_misc_settings'];
-
-		return prepareDBSettingContext($config_vars);
-	}
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		$save_vars = $config_vars;
-
-		call_integration_hook('integrate_save_general_mod_settings', array(&$save_vars));
-
-		// This line is to help mod authors do a search/add after if you want to add something here. Keyword: FOOT TAPPING SUCKS!
-		saveDBSettings($save_vars);
-
-		// This line is to remind mod authors that it's nice to let the users know when something has been saved.
-		session_flash('success', $txt['settings_saved']);
-
-		// This line is to help mod authors do a search/add after if you want to add something here. Keyword: I LOVE TEA!
-		redirectexit('action=admin;area=modsettings;sa=general');
-	}
-
-	// This line is to help mod authors do a search/add after if you want to add something here. Keyword: RED INK IS FOR TEACHERS AND THOSE WHO LIKE PAIN!
 	prepareDBSettingContext($config_vars);
 }
 

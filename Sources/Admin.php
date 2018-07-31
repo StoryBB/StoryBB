@@ -133,18 +133,6 @@ function AdminMain()
 						'reset' => array($txt['themeadmin_reset_title']),
 					),
 				),
-				'modsettings' => array(
-					'label' => $txt['admin_modifications'],
-					'file' => 'ManageSettings.php',
-					'function' => 'ModifyModSettings',
-					'icon' => 'modifications',
-					'subsections' => array(
-						'general' => array($txt['mods_cat_modifications_misc']),
-						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:
-						// 'shout' => array($txt['shout']),
-						// Note the comma!! The setting with automatically appear with the first mod to be added.
-					),
-				),
 			),
 		),
 		'layout' => array(
@@ -615,8 +603,6 @@ function AdminSearchInternal()
 		array('ModifySignatureSettings', 'area=featuresettings;sa=sig'),
 		array('ModifyAntispamSettings', 'area=antispam'),
 		array('ModifyWarningSettings', 'area=warnings'),
-		array('ModifyGeneralModSettings', 'area=modsettings;sa=general'),
-		// Mod authors if you want to be "real freaking good" then add any setting pages for your mod BELOW this line!
 		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
 		array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
 		array('EditBoardSettings', 'area=manageboards;sa=settings'),
