@@ -669,10 +669,6 @@ $txt['themeadmin_reset_title'] = 'Member Options';
 $txt['admin_browse_register_new'] = 'Register new member';
 $txt['admin_policies'] = 'Site Policies';
 
-$txt['search_engines'] = 'Search Engines';
-$txt['spiders'] = 'Spiders';
-$txt['spider_stats'] = 'Stats';
-
 $txt['paid_subscriptions'] = 'Paid Subscriptions';
 $txt['paid_subs_view'] = 'View Subscriptions';
 
