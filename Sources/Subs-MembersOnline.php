@@ -89,6 +89,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 					}
 					$robot_finds[$row['robot_name']]['count']++;
 					$membersOnlineStats['num_robots']++;
+					continue;
 				}
 			}
 
