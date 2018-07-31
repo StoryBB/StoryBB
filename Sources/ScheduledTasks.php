@@ -1486,7 +1486,7 @@ function scheduled_weekly_maintenance()
 	if (!empty($modSettings['pruningOptions']))
 	{
 		if (!empty($modSettings['pruningOptions']) && strpos($modSettings['pruningOptions'], ',') !== false)
-			list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneBanLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
+			list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneBanLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog']) = explode(',', $modSettings['pruningOptions']);
 
 		if (!empty($modSettings['pruneErrorLog']))
 		{
@@ -1588,20 +1588,6 @@ function scheduled_weekly_maintenance()
 				WHERE time_run < {int:time_run}',
 				array(
 					'time_run' => $t,
-				)
-			);
-		}
-
-		if (!empty($modSettings['pruneSpiderHitLog']))
-		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneSpiderHitLog'] * 86400;
-
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}log_spider_hits
-				WHERE log_time < {int:log_time}',
-				array(
-					'log_time' => $t,
 				)
 			);
 		}

@@ -40,7 +40,6 @@ $txt['pruneModLog'] = 'Remove moderation log entries older than';
 $txt['pruneBanLog'] = 'Remove ban hit log entries older than';
 $txt['pruneReportLog'] = 'Remove report to moderator log entries older than';
 $txt['pruneScheduledTaskLog'] = 'Remove scheduled task log entries older than';
-$txt['pruneSpiderHitLog'] = 'Remove search engine hit logs older than';
 $txt['retention_policy_standard'] = 'Remove privacy-related items in logs after';
 $txt['retention_policy_sensitive'] = 'Remove more sensitive items in logs after';
 $txt['zero_means_zero'] = 'Setting this to 0 means purging these items after only a matter of hours.';
