@@ -46,7 +46,7 @@ function db_packages_init()
 		'mail_queue', 'membergroups', 'members', 'mentions', 'message_icons',
 		'messages', 'moderator_groups', 'moderators', 'permission_profiles', 'permissions', 'personal_messages',
 		'pm_labeled_messages', 'pm_labels', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls', 'scheduled_tasks', 'sessions', 'settings', 'smileys',
-		'spiders', 'subscriptions', 'themes', 'topics', 'user_alerts', 'user_alerts_prefs', 'user_drafts', 'user_likes');
+		'subscriptions', 'themes', 'topics', 'user_alerts', 'user_alerts_prefs', 'user_drafts', 'user_likes');
 	foreach ($reservedTables as $k => $table_name)
 		$reservedTables[$k] = strtolower($db_prefix . $table_name);
 
