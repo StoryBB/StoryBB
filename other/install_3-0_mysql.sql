@@ -1089,18 +1089,6 @@ CREATE TABLE {$db_prefix}smileys (
 ) ENGINE={$engine};
 
 #
-# Table structure for table `spiders`
-#
-
-CREATE TABLE {$db_prefix}spiders (
-  id_spider SMALLINT UNSIGNED AUTO_INCREMENT,
-  spider_name VARCHAR(255) NOT NULL DEFAULT '',
-  user_agent VARCHAR(255) NOT NULL DEFAULT '',
-  ip_info VARCHAR(255) NOT NULL DEFAULT '',
-  PRIMARY KEY id_spider(id_spider)
-) ENGINE={$engine};
-
-#
 # Table structure for table `subscriptions`
 #
 
@@ -1994,34 +1982,6 @@ VALUES (':)', 'smiley.gif', '{$default_smiley_smiley}', 0, 0),
   ('C:-)', 'police.gif', '{$default_police_smiley}', 20, 1),
   ('O:-)', 'angel.gif', '{$default_angel_smiley}', 21, 1);
 # --------------------------------------------------------
-
-#
-# Dumping data for table `spiders`
-#
-
-INSERT INTO {$db_prefix}spiders
-  (spider_name, user_agent, ip_info)
-VALUES ('Google', 'googlebot', ''),
-  ('Yahoo!', 'slurp', ''),
-  ('MSN', 'msnbot', ''),
-  ('Google (Mobile)', 'Googlebot-Mobile', ''),
-  ('Google (Image)', 'Googlebot-Image', ''),
-  ('Google (AdSense)', 'Mediapartners-Google', ''),
-  ('Google (Adwords)', 'AdsBot-Google', ''),
-  ('Yahoo! (Mobile)', 'YahooSeeker/M1A1-R2D2', ''),
-  ('Yahoo! (Image)', 'Yahoo-MMCrawler', ''),
-  ('MSN (Mobile)', 'MSNBOT_Mobile', ''),
-  ('MSN (Media)', 'msnbot-media', ''),
-  ('Cuil', 'twiceler', ''),
-  ('Ask', 'Teoma', ''),
-  ('Baidu', 'Baiduspider', ''),
-  ('Gigablast', 'Gigabot', ''),
-  ('InternetArchive', 'ia_archiver-web.archive.org', ''),
-  ('Alexa', 'ia_archiver', ''),
-  ('Omgili', 'omgilibot', ''),
-  ('EntireWeb', 'Speedy Spider', ''),
-  ('Yandex', 'yandex', '');
-#---------------------------------------------------------
 
 #
 # Dumping data for table `themes`
