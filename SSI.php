@@ -1120,7 +1120,7 @@ function ssi_whosOnline($output_method = 'echo')
 	if (!empty($user_info['buddies']))
 		$bracketList[] = comma_format($return['num_buddies']) . ' ' . ($return['num_buddies'] == 1 ? $txt['buddy'] : $txt['buddies']);
 	if (!empty($return['num_robots']))
-		$bracketList[] = comma_format($return['num_robots']) . ' ' . ($return['num_robots'] == 1 ? $txt['spider'] : $txt['spiders']);
+		$bracketList[] = comma_format($return['num_robots']) . ' ' . ($return['num_robots'] == 1 ? $txt['robot'] : $txt['robots']);
 	if (!empty($return['num_users_hidden']))
 		$bracketList[] = comma_format($return['num_users_hidden']) . ' ' . $txt['hidden'];
 

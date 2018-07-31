@@ -740,8 +740,8 @@ $txt['send_email_disclosed'] = 'Note this will be visible to the recipient.';
 $txt['ignoring_user'] = 'You are ignoring this user.';
 $txt['show_ignore_user_post'] = 'Show me the post.';
 
-$txt['spider'] = 'Spider';
-$txt['spiders'] = 'Spiders';
+$txt['robot'] = 'Robot';
+$txt['robots'] = 'Robots';
 
 $txt['downloads'] = 'Downloads';
 $txt['filesize'] = 'Filesize';

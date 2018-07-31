@@ -486,7 +486,6 @@ CREATE TABLE {$db_prefix}log_online (
   log_time INT NOT NULL DEFAULT '0',
   id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   id_character INT UNSIGNED NOT NULL DEFAULT '0',
-  id_spider SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   robot_name VARCHAR(20) NOT NULL DEFAULT '',
   ip VARBINARY(16),
   url VARCHAR(2048) NOT NULL DEFAULT '',
@@ -604,34 +603,6 @@ CREATE TABLE {$db_prefix}log_search_topics (
   id_search TINYINT UNSIGNED DEFAULT '0',
   id_topic MEDIUMINT UNSIGNED DEFAULT '0',
   PRIMARY KEY (id_search, id_topic)
-) ENGINE={$engine};
-
-#
-# Table structure for table `log_spider_hits`
-#
-
-CREATE TABLE {$db_prefix}log_spider_hits (
-  id_hit INT UNSIGNED AUTO_INCREMENT,
-  id_spider SMALLINT UNSIGNED NOT NULL DEFAULT '0',
-  log_time INT UNSIGNED NOT NULL DEFAULT '0',
-  url VARCHAR(1024) NOT NULL DEFAULT '',
-  processed TINYINT NOT NULL DEFAULT '0',
-  PRIMARY KEY (id_hit),
-  INDEX idx_id_spider(id_spider),
-  INDEX idx_log_time(log_time),
-  INDEX idx_processed (processed)
-) ENGINE={$engine};
-
-#
-# Table structure for table `log_spider_stats`
-#
-
-CREATE TABLE {$db_prefix}log_spider_stats (
-  id_spider SMALLINT UNSIGNED DEFAULT '0',
-  page_hits SMALLINT UNSIGNED NOT NULL DEFAULT '0',
-  last_seen INT UNSIGNED NOT NULL DEFAULT '0',
-  stat_date DATE DEFAULT '1004-01-01',
-  PRIMARY KEY (stat_date, id_spider)
 ) ENGINE={$engine};
 
 #
@@ -1115,18 +1086,6 @@ CREATE TABLE {$db_prefix}smileys (
   smiley_order SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   hidden TINYINT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (id_smiley)
-) ENGINE={$engine};
-
-#
-# Table structure for table `spiders`
-#
-
-CREATE TABLE {$db_prefix}spiders (
-  id_spider SMALLINT UNSIGNED AUTO_INCREMENT,
-  spider_name VARCHAR(255) NOT NULL DEFAULT '',
-  user_agent VARCHAR(255) NOT NULL DEFAULT '',
-  ip_info VARCHAR(255) NOT NULL DEFAULT '',
-  PRIMARY KEY id_spider(id_spider)
 ) ENGINE={$engine};
 
 #
@@ -1945,7 +1904,7 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('warning_moderate', '35'),
   ('warning_mute', '60'),
   ('last_mod_report_action', '0'),
-  ('pruningOptions', '30,180,180,180,30,0'),
+  ('pruningOptions', '30,180,180,180,30'),
   ('modlog_enabled', '1'),
   ('adminlog_enabled', '1'),
   ('cache_enable', '1'),
@@ -2023,34 +1982,6 @@ VALUES (':)', 'smiley.gif', '{$default_smiley_smiley}', 0, 0),
   ('C:-)', 'police.gif', '{$default_police_smiley}', 20, 1),
   ('O:-)', 'angel.gif', '{$default_angel_smiley}', 21, 1);
 # --------------------------------------------------------
-
-#
-# Dumping data for table `spiders`
-#
-
-INSERT INTO {$db_prefix}spiders
-  (spider_name, user_agent, ip_info)
-VALUES ('Google', 'googlebot', ''),
-  ('Yahoo!', 'slurp', ''),
-  ('MSN', 'msnbot', ''),
-  ('Google (Mobile)', 'Googlebot-Mobile', ''),
-  ('Google (Image)', 'Googlebot-Image', ''),
-  ('Google (AdSense)', 'Mediapartners-Google', ''),
-  ('Google (Adwords)', 'AdsBot-Google', ''),
-  ('Yahoo! (Mobile)', 'YahooSeeker/M1A1-R2D2', ''),
-  ('Yahoo! (Image)', 'Yahoo-MMCrawler', ''),
-  ('MSN (Mobile)', 'MSNBOT_Mobile', ''),
-  ('MSN (Media)', 'msnbot-media', ''),
-  ('Cuil', 'twiceler', ''),
-  ('Ask', 'Teoma', ''),
-  ('Baidu', 'Baiduspider', ''),
-  ('Gigablast', 'Gigabot', ''),
-  ('InternetArchive', 'ia_archiver-web.archive.org', ''),
-  ('Alexa', 'ia_archiver', ''),
-  ('Omgili', 'omgilibot', ''),
-  ('EntireWeb', 'Speedy Spider', ''),
-  ('Yandex', 'yandex', '');
-#---------------------------------------------------------
 
 #
 # Dumping data for table `themes`
