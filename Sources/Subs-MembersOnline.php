@@ -148,7 +148,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 	}
 	$smcFunc['db_free_result']($request);
 
-	// If there are spiders only and we're showing the detail, add them to the online list - at the bottom.
+	// If there are robots only and we're showing the detail, add them to the online list - at the bottom.
 	if (!empty($robot_finds))
 	{
 		$sort = $membersOnlineOptions['sort'] === 'log_time' && $membersOnlineOptions['reverse_sort'] ? 0 : 'zzz_';
@@ -159,7 +159,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 				'id' => 0,
 				'username' => $id,
 				'name' => $this_robot['title'],
-				'group' => $txt['spiders'],
+				'group' => $txt['robots'],
 				'href' => '',
 				'link' => $link,
 				'is_buddy' => false,

@@ -45,7 +45,7 @@ function Who()
 		'members' => '(lo.id_member != 0)',
 		'guests' => '(lo.id_member = 0 AND lo.robot_name = {empty})',
 		'all' => '1=1',
-		'spiders' => '(lo.robot_name != {empty})',
+		'robots' => '(lo.robot_name != {empty})',
 	);
 
 	// Store the sort methods and the show types for use in the template.
@@ -57,7 +57,7 @@ function Who()
 		'all' => $txt['who_show_all'],
 		'members' => $txt['who_show_members_only'],
 		'guests' => $txt['who_show_guests_only'],
-		'spiders' => $txt['who_show_spiders_only'],
+		'robots' => $txt['who_show_robots_only'],
 	);
 
 	// Does the user prefer a different sort direction?
@@ -160,7 +160,7 @@ function Who()
 			'color' => empty($row['online_color']) ? '' : $row['online_color']
 		);
 
-		$url_data[$row['session']] = array($row['url'], $row['id_member']);
+		$url_data[$row['session']] = array($row['url'], $row['id_member'], $row['robot_name']);
 		$member_ids[] = $row['id_member'];
 	}
 	$smcFunc['db_free_result']($request);
@@ -207,7 +207,7 @@ function Who()
 				$context['members'][$i] += [
 					'id' => 0,
 					'name' => $robot_details['title'],
-					'group' => $txt['spiders'],
+					'group' => $txt['robots'],
 					'href' => '',
 					'link' => $robot_details['title'],
 					'email' => $robot_details['title'],
@@ -336,8 +336,13 @@ function determineActions($urls, $preferred_prefix = false)
 		// Some other normal action...?
 		else
 		{
+			// Robot actions.
+			if (!empty($url[2]) && isset($txt['whorobot_' . $actions['action']]))
+			{
+				$data[$k] = $txt['whorobot_' . $actions['action']];
+			}
 			// Viewing/editing a profile.
-			if ($actions['action'] == 'profile')
+			elseif ($actions['action'] == 'profile')
 			{
 				// Whose?  Their own?
 				if (empty($actions['u']))

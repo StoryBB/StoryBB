@@ -560,7 +560,7 @@ function loadUserSettings()
 		foreach ($user_info['groups'] as $k => $v)
 			$user_info['groups'][$k] = (int) $v;
 
-		// This is a logged in user, so definitely not a spider.
+		// This is a logged in user, so definitely not a search robot.
 		$user_info['possibly_robot'] = false;
 
 		// Figure out the new time offset.
@@ -1058,9 +1058,9 @@ function loadPermissions()
 		$cache_groups = $user_info['groups'];
 		asort($cache_groups);
 		$cache_groups = implode(',', $cache_groups);
-		// If it's a spider then cache it different.
+		// If it's a robot then cache it different.
 		if ($user_info['possibly_robot'])
-			$cache_groups .= '-spider';
+			$cache_groups .= '-robot';
 
 		if ($modSettings['cache_enable'] >= 2 && !empty($board) && ($temp = cache_get_data('permissions:' . $cache_groups . ':' . $board, 240)) != null && time() - 240 > $modSettings['settings_updated'])
 		{

@@ -14,16 +14,16 @@ $txt['who_action'] = 'Action';
 $txt['who_show1'] = 'Show ';
 $txt['who_show_members_only'] = 'Members Only';
 $txt['who_show_guests_only'] = 'Guests Only';
-$txt['who_show_spiders_only'] = 'Spiders Only';
+$txt['who_show_robots_only'] = 'Robots Only';
 $txt['who_show_all'] = 'Everyone';
-$txt['who_no_online_spiders'] = 'There are currently no spiders online.';
+$txt['who_no_online_robots'] = 'There are currently no robots online.';
 $txt['who_no_online_guests'] = 'There are currently no guests online.';
 $txt['who_no_online_members'] = 'There are currently no members online.';
 $txt['who_guest_login'] = 'User has been taken to the login page.';
 
-$txt['whospider_login'] = 'Viewing the login page.';
-$txt['whospider_register'] = 'Viewing the registration page.';
-$txt['whospider_reminder'] = 'Viewing the reminder page.';
+$txt['whorobot_login'] = 'Viewing the login page.';
+$txt['whorobot_signup'] = 'Viewing the registration page.';
+$txt['whorobot_reminder'] = 'Viewing the reminder page.';
 
 $txt['whoall_activate'] = 'Activating their account.';
 $txt['whoall_buddy'] = 'Modifying their buddy list.';
