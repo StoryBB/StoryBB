@@ -46,6 +46,7 @@ class Robot
 			'msnbot-media' => 'bingmedia',
 			'msnbot' => 'bing',
 			'netvibes' => 'netvibes',
+			'omgili' => 'webhose',
 			'pingdom.com_bot' => 'pingdom',
 			'proximic' => 'proximic',
 			'scoutjet' => 'scoutjet',
@@ -180,6 +181,10 @@ class Robot
 			'w3c_validator' => [
 				'title' => 'W3C Validator',
 				'link' => 'http://validator.w3.org',
+			],
+			'webhose' => [
+				'title' => 'Webhose.io (Omgilibot)',
+				'link' => 'https://blog.webhose.io/2017/12/28/what-is-the-omgili-bot-and-why-is-it-crawling-your-website/',
 			],
 			'yacy' => [
 				'title' => 'YaCy',
