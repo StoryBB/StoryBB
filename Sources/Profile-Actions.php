@@ -740,7 +740,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
  */
 function deleteAccount($memID)
 {
-	global $txt, $context, $modSettings, $cur_profile;
+	global $txt, $context, $modSettings, $cur_profile, $scripturl;
 
 	if (!$context['user']['is_owner'])
 		isAllowedTo('profile_remove_any');
@@ -757,6 +757,7 @@ function deleteAccount($memID)
 	$context['needs_approval'] = $context['user']['is_owner'] && !allowedTo('moderate_forum');
 	$context['page_title'] = $txt['deleteAccount'] . ': ' . $cur_profile['real_name'];
 	$context['sub_template'] = 'profile_delete';
+	$context['delete_account_posts_advice'] = sprintf($txt['delete_account_posts_advice'], $scripturl . '?action=contact');
 }
 
 /**

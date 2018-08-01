@@ -273,6 +273,7 @@ $txt['no_messages_from_ip'] = 'No messages from the specified IP (range) found';
 $txt['trackLogins_none_found'] = 'No recent logins were found';
 $txt['none'] = 'None';
 $txt['own_profile_confirm'] = 'Are you sure you want to delete your account?';
+$txt['delete_account_posts_advice'] = 'Please note that deleting your account will remove the account but may not remove posts. If you have any questions, please <a href="%1$s">contact the administration team</a>.';
 $txt['view_ips_by'] = 'View IPs used by';
 
 $txt['avatar_will_upload'] = 'Upload an avatar';
