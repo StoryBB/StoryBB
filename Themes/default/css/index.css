@@ -2868,6 +2868,17 @@ h3 .collapse {
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
+.info .first_poster {
+    display: inline-block;
+}
+.info img.avatar.participation {
+    max-width: 20px;
+    max-height: 20px;
+    vertical-align: bottom;
+    margin-bottom: 5px;
+    margin-left: -30px;
+    margin-top: 0;
+}
 .info .msg_container {
 	display: inline-block;
 	vertical-align: middle;
