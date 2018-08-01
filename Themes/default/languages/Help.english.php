@@ -358,8 +358,6 @@ $helptxt['customoptions'] = 'This defines the options that a user may choose fro
 		<li><strong>Reordering Options:</strong> You can reorder the options by moving text around between the boxes. However - an important note - you must make sure you do <strong>not</strong> change the text when reordering options as otherwise user data will be lost.</li>
 	</ul>';
 
-$helptxt['enableParticipation'] = 'This shows a little icon on the topics the user has posted in.';
-
 $helptxt['minimize_files'] = 'This option will minimize all css and js files that are loaded everytime, everywhere for every user, reducing the requests calls to your server. New files are re-created everyday, if you want to re-create them just clean your forum\'s cache.';
 $helptxt['countChildPosts'] = 'Checking this setting means that posts and topics in a board\'s sub-board will count toward its totals on the index page.<br><br>This will make things notably slower, but means that a parent with no posts in it won\'t show \'0\'.';
 $helptxt['allow_ignore_boards'] = 'Checking this setting will allow users to select boards they wish to ignore.';
