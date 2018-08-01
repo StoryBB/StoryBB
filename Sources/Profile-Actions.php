@@ -859,23 +859,41 @@ function deleteAccount2($memID)
 		}
 
 		// Now, have you been naughty and need your posts deleting?
-		if (allowedTo('moderate_forum') && (!empty($_POST['deleteTopics']) || !empty($_POST['deletePosts'])))
+		$topicIDs = [];
+		$msgIDs = [];
+
+		// Include RemoveTopics - essential for this type of work!
+		require_once($sourcedir . '/RemoveTopic.php');
+
+		$extra = empty($_POST['perma_delete']) ? ' AND t.id_board != {int:recycle_board}' : '';
+		$recycle_board = empty($modSettings['recycle_board']) ? 0 : $modSettings['recycle_board'];
+
+		if (allowedTo('moderate_forum'))
 		{
-			// Include RemoveTopics - essential for this type of work!
-			require_once($sourcedir . '/RemoveTopic.php');
+			// Identify the OOC account in here.
+			$ooc_account = 0;
+			foreach ($context['member']['characters'] as $charID => $char)
+			{
+				if ($char['is_main'])
+				{
+					$ooc_account = $charID;
+					break;
+				}
+			}
 
-			$extra = empty($_POST['perma_delete']) ? ' AND t.id_board != {int:recycle_board}' : '';
-			$recycle_board = empty($modSettings['recycle_board']) ? 0 : $modSettings['recycle_board'];
-
-			if (!empty($_POST['deleteTopics']))
+			// Find all the topics started by the OOC character.
+			if (!empty($_POST['deleteTopics_ooc']) && $ooc_account)
 			{
 				// Fetch all topics started by this user.
 				$request = $smcFunc['db_query']('', '
 					SELECT t.id_topic
 					FROM {db_prefix}topics AS t
-					WHERE t.id_member_started = {int:selected_member}' . $extra,
+						INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
+					WHERE t.id_member_started = {int:selected_member}
+						AND m.id_character = {int:ooc_character}' . $extra,
 					array(
 						'selected_member' => $memID,
+						'ooc_character' => $ooc_account,
 						'recycle_board' => $recycle_board,
 					)
 				);
@@ -883,36 +901,98 @@ function deleteAccount2($memID)
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$topicIDs[] = $row['id_topic'];
 				$smcFunc['db_free_result']($request);
-
-				// Actually remove the topics. Ignore recycling if we want to perma-delete things...
-				// @todo This needs to check permissions, but we'll let it slide for now because of moderate_forum already being had.
-				removeTopics($topicIDs, true, !empty($extra));
+			}
+			// And all the IC topics.
+			if (!empty($_POST['deleteTopics_ic']) && $ooc_account)
+			{
+				// Fetch all topics started by this user.
+				$request = $smcFunc['db_query']('', '
+					SELECT t.id_topic
+					FROM {db_prefix}topics AS t
+						INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
+					WHERE t.id_member_started = {int:selected_member}
+						AND m.id_character != {int:ooc_character}' . $extra,
+					array(
+						'selected_member' => $memID,
+						'ooc_character' => $ooc_account,
+						'recycle_board' => $recycle_board,
+					)
+				);
+				$topicIDs = array();
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					$topicIDs[] = $row['id_topic'];
+				}
+				$smcFunc['db_free_result']($request);
 			}
 
-			// @todo Should this check board permissions?
-			if (!empty($_POST['deletePosts']))
+			// Find all the messages by the OOC character that aren't in the topics we already found.
+			if (!empty($_POST['deletePosts_ooc']))
 			{
-				// Now delete the remaining messages.
 				$request = $smcFunc['db_query']('', '
 					SELECT m.id_msg
 					FROM {db_prefix}messages AS m
 						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic
 							AND t.id_first_msg != m.id_msg)
-					WHERE m.id_member = {int:selected_member}' . $extra,
+					WHERE m.id_member = {int:selected_member}
+						AND m.id_character = {int:ooc_character}' . (!empty($topicIDs) ? '
+						AND t.id_topic NOT IN ({array:topics})' : '') . $extra,
 					array(
 						'selected_member' => $memID,
+						'ooc_character' => $ooc_account,
+						'topics' => $topicIDs,
 						'recycle_board' => $recycle_board,
 					)
 				);
 				// This could take a while... but ya know it's gonna be worth it in the end.
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 				{
+					$msgIDs[] = $row['id_msg'];
+				}
+				$smcFunc['db_free_result']($request);
+			}
+			// Find all the IC posts next.
+			if (!empty($_POST['deletePosts_ic']))
+			{
+				$request = $smcFunc['db_query']('', '
+					SELECT m.id_msg
+					FROM {db_prefix}messages AS m
+						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic
+							AND t.id_first_msg != m.id_msg)
+					WHERE m.id_member = {int:selected_member}
+						AND m.id_character != {int:ooc_character}' . (!empty($topicIDs) ? '
+						AND t.id_topic NOT IN ({array:topics})' : '') . $extra,
+					array(
+						'selected_member' => $memID,
+						'ooc_character' => $ooc_account,
+						'topics' => $topicIDs,
+						'recycle_board' => $recycle_board,
+					)
+				);
+				// This could take a while... but ya know it's gonna be worth it in the end.
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					$msgIDs[] = $row['id_msg'];
+				}
+				$smcFunc['db_free_result']($request);
+			}
+
+			if (!empty($topicIDs))
+			{
+				// Actually remove the topics. Ignore recycling if we want to perma-delete things...
+				// @todo This needs to check permissions, but we'll let it slide for now because of moderate_forum already being had.
+				removeTopics($topicIDs, true, !empty($extra));
+			}
+
+			if (!empty($msgIDs))
+			{
+				foreach ($msgIDs as $id_msg)
+				{
 					if (function_exists('apache_reset_timeout'))
 						@apache_reset_timeout();
 
-					removeMessage($row['id_msg']);
+					removeMessage($id_msg);
 				}
-				$smcFunc['db_free_result']($request);
 			}
 		}
 
