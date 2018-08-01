@@ -747,7 +747,7 @@ function MembersAwaitingActivation()
 			$context['available_filters'][] = array(
 				'type' => $type,
 				'amount' => $amount,
-				'desc' => isset($txt['admin_browse_filter_type_' . $type]) ? $txt['admin_browse_filter_type_' . $type] : '?',
+				'desc' => (isset($txt['admin_browse_filter_type_' . $type]) ? $txt['admin_browse_filter_type_' . $type] : '?') . ($type == 4 ? '<br>' . $txt['admin_browse_filter_no_deletion'] : ''),
 				'selected' => $type == $context['current_filter']
 			);
 	}
