@@ -71,7 +71,7 @@ function ViewMembers()
 	$context['show_activate'] = (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1) || !empty($context['awaiting_activation']);
 
 	// What about approval?
-	$context['show_approve'] = (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 2) || !empty($context['awaiting_approval']) || !empty($modSettings['approveAccountDeletion']);
+	$context['show_approve'] = true;
 
 	// Setup the admin tabs.
 	$context[$context['admin_menu_name']]['tab_data'] = array(

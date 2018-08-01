@@ -754,7 +754,7 @@ function deleteAccount($memID)
 	$context['show_perma_delete'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']);
 
 	// Can they do this, or will they need approval?
-	$context['needs_approval'] = $context['user']['is_owner'] && !empty($modSettings['approveAccountDeletion']) && !allowedTo('moderate_forum');
+	$context['needs_approval'] = $context['user']['is_owner'] && !allowedTo('moderate_forum');
 	$context['page_title'] = $txt['deleteAccount'] . ': ' . $cur_profile['real_name'];
 	$context['sub_template'] = 'profile_delete';
 }
@@ -920,8 +920,8 @@ function deleteAccount2($memID)
 		if (isset($_POST['deleteAccount']))
 			deleteMembers($memID);
 	}
-	// Do they need approval to delete?
-	elseif (!empty($modSettings['approveAccountDeletion']) && !allowedTo('moderate_forum'))
+	// They need approval to delete!
+	elseif (!allowedTo('moderate_forum'))
 	{
 		// Setup their account for deletion ;)
 		updateMemberData($memID, array('is_activated' => 4));
