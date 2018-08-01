@@ -859,8 +859,7 @@ function deleteAccount2($memID)
 		}
 
 		// Now, have you been naughty and need your posts deleting?
-		// @todo Should this check board permissions?
-		if (!empty($_POST['deletePosts']) && in_array($_POST['remove_type'], array('posts', 'topics')) && allowedTo('moderate_forum'))
+		if (allowedTo('moderate_forum') && (!empty($_POST['deleteTopics']) || !empty($_POST['deletePosts'])))
 		{
 			// Include RemoveTopics - essential for this type of work!
 			require_once($sourcedir . '/RemoveTopic.php');
@@ -868,10 +867,9 @@ function deleteAccount2($memID)
 			$extra = empty($_POST['perma_delete']) ? ' AND t.id_board != {int:recycle_board}' : '';
 			$recycle_board = empty($modSettings['recycle_board']) ? 0 : $modSettings['recycle_board'];
 
-			// First off we delete any topics the member has started - if they wanted topics being done.
-			if ($_POST['remove_type'] == 'topics')
+			if (!empty($_POST['deleteTopics']))
 			{
-				// Fetch all topics started by this user within the time period.
+				// Fetch all topics started by this user.
 				$request = $smcFunc['db_query']('', '
 					SELECT t.id_topic
 					FROM {db_prefix}topics AS t
@@ -891,27 +889,31 @@ function deleteAccount2($memID)
 				removeTopics($topicIDs, true, !empty($extra));
 			}
 
-			// Now delete the remaining messages.
-			$request = $smcFunc['db_query']('', '
-				SELECT m.id_msg
-				FROM {db_prefix}messages AS m
-					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic
-						AND t.id_first_msg != m.id_msg)
-				WHERE m.id_member = {int:selected_member}' . $extra,
-				array(
-					'selected_member' => $memID,
-					'recycle_board' => $recycle_board,
-				)
-			);
-			// This could take a while... but ya know it's gonna be worth it in the end.
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			// @todo Should this check board permissions?
+			if (!empty($_POST['deletePosts']))
 			{
-				if (function_exists('apache_reset_timeout'))
-					@apache_reset_timeout();
+				// Now delete the remaining messages.
+				$request = $smcFunc['db_query']('', '
+					SELECT m.id_msg
+					FROM {db_prefix}messages AS m
+						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic
+							AND t.id_first_msg != m.id_msg)
+					WHERE m.id_member = {int:selected_member}' . $extra,
+					array(
+						'selected_member' => $memID,
+						'recycle_board' => $recycle_board,
+					)
+				);
+				// This could take a while... but ya know it's gonna be worth it in the end.
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					if (function_exists('apache_reset_timeout'))
+						@apache_reset_timeout();
 
-				removeMessage($row['id_msg']);
+					removeMessage($row['id_msg']);
+				}
+				$smcFunc['db_free_result']($request);
 			}
-			$smcFunc['db_free_result']($request);
 		}
 
 		// Only delete this poor members account if they are actually being booted out of camp.
