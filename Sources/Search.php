@@ -1650,7 +1650,7 @@ function PlushSearch2()
 			$context['topics'] = array();
 
 		// If we want to know who participated in what then load this now.
-		if (!empty($modSettings['enableParticipation']) && !$user_info['is_guest'])
+		if (!$user_info['is_guest'])
 		{
 			$result = $smcFunc['db_query']('', '
 				SELECT id_topic

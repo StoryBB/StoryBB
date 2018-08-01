@@ -354,10 +354,7 @@ function MessageIndex()
 		$message_index_wheres = array();
 		call_integration_hook('integrate_message_index', array(&$message_index_selects, &$message_index_tables, &$message_index_parameters, &$message_index_wheres, &$topic_ids));
 
-		if (!empty($modSettings['enableParticipation']) && !$user_info['is_guest'])
-			$enableParticipation = true;
-		else
-			$enableParticipation = false;
+		$enableParticipation = empty($user_info['is_guest']);
 
 		$result = $smcFunc['db_query']('substring', '
 			SELECT

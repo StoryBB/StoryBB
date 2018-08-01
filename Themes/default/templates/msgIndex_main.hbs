@@ -103,7 +103,6 @@
 			<div class="{{css_class}}">
 				<div class="board_icon">
 					<img src="{{first_post.icon_url}}" alt="">
-					{{#if is_posted_in}}<img class="posted" src="{{../settings.images_url}}/icons/profile_sm.png" alt="">{{/if}}
 				</div>
 				<div class="info{{#if ../context.can_quick_mod}} info_block{{/if}}">
 					<div {{#if quick_mod.modify}}id="topic_{{first_post.id}}"  ondblclick="oQuickModifyTopic.modify_topic('{{id}}', '{{first_post.id}}');"{{/if}}>
@@ -114,7 +113,10 @@
 							{{#if is_redirect}}<span class="generic_icons move"></span>{{/if}}
 							{{#if is_poll}}<span class="generic_icons poll"></span>{{/if}}
 						</div>
-						{{{first_post.member.avatar.image}}}
+						<div class="first_poster">
+							{{{first_post.member.avatar.image}}}
+							{{#if (eq_coerce is_posted_in 1)}}<img src="{{{../context.user.avatar.href}}}" class="avatar participation" alt="{{{../txt.participation_caption}}}" title="{{{../txt.participation_caption}}}">{{/if}}
+						</div>
 						<div class="msg_container">
 							<div class="message_index_title">
 								{{#if (and new ../context.user.is_logged)}}<a href="{{new_href}}" id="newicon{{first_post.id}}"><span class="new_posts">{{../txt.new}}</span></a>{{/if}}

@@ -145,9 +145,6 @@
 					{{#if member.show_profile_buttons}}
 					<li class="profile">
 						<ol class="profile_icons">
-							{{#if member.can_view_profile}}
-								<li><a href="{{member.href}}"><img src="{{../settings.images_url}}/icons/profile_sm.png" alt="{{txt.view_profile}}" title="{{txt.view_profile}}"></a></li>
-							{{/if}}
 							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
 									<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener"><span class="generic_icons www centericon" title="{{member.website.title}}"></span></a></li>
 							{{/if}}

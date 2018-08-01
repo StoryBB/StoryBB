@@ -572,7 +572,6 @@ $txt['bbcTagsToUse'] = 'Enabled BBC tags';
 $txt['bbcTagsToUse_select'] = 'Select the tags allowed to be used';
 $txt['bbcTagsToUse_select_all'] = 'Select all tags';
 
-$txt['enableParticipation'] = 'Enable participation icons';
 $txt['oldTopicDays'] = 'Time before topic is warned as old on reply';
 $txt['defaultMaxTopics'] = 'Number of topics per page in the message index';
 $txt['defaultMaxMessages'] = 'Number of posts per page in a topic page';

@@ -1361,7 +1361,7 @@ function UnreadTopics()
 	}
 	$smcFunc['db_free_result']($request);
 
-	if ($is_topics && !empty($modSettings['enableParticipation']) && !empty($topic_ids))
+	if ($is_topics && !empty($topic_ids))
 	{
 		$result = $smcFunc['db_query']('', '
 			SELECT id_topic
