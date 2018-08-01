@@ -478,7 +478,6 @@ function ModifyGeneralSecuritySettings($return_config = false)
 		'',
 			// Reactive on email, and approve on delete
 			array('check', 'send_validation_onChange'),
-			array('check', 'approveAccountDeletion'),
 		'',
 			// Password strength.
 			array('select', 'password_strength', array($txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high'])),

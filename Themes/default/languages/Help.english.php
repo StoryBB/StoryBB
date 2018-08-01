@@ -388,7 +388,6 @@ $helptxt['registration_method'] = 'This setting determines what method of regist
 	</ul>';
 
 $helptxt['send_validation_onChange'] = 'When this setting is checked all members who change their email address in their profile will have to reactivate their account from an email sent to that address';
-$helptxt['approveAccountDeletion'] = 'When this setting is checked, any user request to delete his own account has to be approved by an administrator';
 
 $helptxt['send_welcomeEmail'] = 'When this setting is enabled all new members will be sent an email welcoming them to your community';
 $helptxt['show_cookie_notice'] = 'When this setting is enabled, StoryBB will check to see if the user has previously accepted to have cookies from this site - if not, puts up a message in the footer that will remain there until the guest accepts. This option is designed to make it easier to be compliant with EU cookie regulations and the GDPR.';

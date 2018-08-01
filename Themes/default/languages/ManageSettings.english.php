@@ -50,7 +50,6 @@ $txt['httponlyCookies'] = 'Force cookies to be made accessible only through the 
 $txt['securityDisable'] = 'Disable administration security';
 $txt['securityDisable_moderate'] = 'Disable moderation security';
 $txt['send_validation_onChange'] = 'Require reactivation after email change';
-$txt['approveAccountDeletion'] = 'Require admin approval when member deletes account';
 $txt['allow_disableAnnounce'] = 'Allow users to disable announcements';
 $txt['disallow_sendBody'] = 'Don\'t allow post text in notifications';
 $txt['enable_ajax_alerts'] = 'Allow AJAX Desktop Notifications for Alerts';
