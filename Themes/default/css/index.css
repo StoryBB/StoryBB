@@ -2869,15 +2869,15 @@ h3 .collapse {
 	margin-bottom: 10px;
 }
 .info .first_poster {
-    display: inline-block;
+	display: inline-block;
 }
 .info img.avatar.participation {
-    max-width: 20px;
-    max-height: 20px;
-    vertical-align: bottom;
-    margin-bottom: 5px;
-    margin-left: -30px;
-    margin-top: 0;
+	max-width: 20px;
+	max-height: 20px;
+	vertical-align: bottom;
+	margin-bottom: 5px;
+	margin-left: -30px;
+	margin-top: 0;
 }
 .info .msg_container {
 	display: inline-block;
