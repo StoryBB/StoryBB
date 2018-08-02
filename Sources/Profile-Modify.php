@@ -662,8 +662,8 @@ function setupProfileContext($fields)
 				alert(' . (JavaScriptEscape($txt['required_security_reasons'])) . ');
 				return false;
 			}
-		}, false);
-	}' : ''), true);
+		}, false);' : '') . '
+	}', true);
 
 	// Any onsubmit javascript?
 	if (!empty($context['profile_onsubmit_javascript']))
