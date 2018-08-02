@@ -19,7 +19,7 @@
 			<div class="cat_bar">
 				<h3 class="catbg">
 					<span class="floatleft">
-						{{#if (or enable (eq id 1))}}<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=list">{{name}}</a>{{else}}{{name}}{{/if}}{{#if version}}<em>{{version}}</em>{{/if}}
+						{{#if (or enable (eq_coerce id 1))}}<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=list">{{name}}</a>{{else}}{{name}}{{/if}}{{#if version}}<em>{{version}}</em>{{/if}}
 					</span>
 					{{#if (neq id 1)}}<span class="floatright">
 					    <a href="{{../scripturl}}?action=admin;area=theme;sa=enable;th={{id}};{{session_url}};{{token_url 'admin-tre'}}{{#if enable}};disabled{{/if}}" data-confirm="{{#if enable}}{{../txt.theme_enable_confirm}}{{else}}{{../txt.theme_disable_confirm}}{{/if}}" class="you_sure">
@@ -37,6 +37,9 @@
 					<dd>{{theme_url}}</dd>
 					<dt>{{../txt.themeadmin_list_images_url}}:</dt>
 					<dd>{{images_url}}</dd>
+					{{#if (or enable (eq_coerce id 1))}}
+					<dt><a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=list" class="button_submit floatleft">{{{../txt.settings}}}</a></dt>
+					{{/if}}
 				</dl>
 			</div>
 			{{/each}}
