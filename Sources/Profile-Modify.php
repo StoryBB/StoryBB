@@ -93,20 +93,9 @@ function loadProfileFields($force_reload = false)
 				elseif (!allowedTo('admin_forum'))
 				{
 					// Regular members aren't allowed to edit their DOB.
-					// First, get the date format from the time/date format.
-					$format = $cur_profile['time_format'];
-					if (empty($format))
-						$format = $modSettings['time_format'];
-
-					$format = str_replace(['%a', '%A', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r', '%R', '%S', '%T', '%X', '%z', '%Z'], '', $format);
-					$format = trim($format, ',: ');
 					$time = strtotime($cur_profile['birthdate']);
+					$context['member']['formatted_birthdate'] = dateformat($time, $cur_profile['time_format']);
 
-					foreach (array('%b' => 'months_short', '%B' => 'months') as $token => $text_label)
-						if (strpos($format, $token) !== false)
-							$format = str_replace($token, $txt[$text_label][(int) strftime('%m', $time)], $format);
-
-					$context['member']['formatted_birthdate'] = strftime($format, $time);
 					$context['member']['birthdate_editable'] = false;
 				}
 				else

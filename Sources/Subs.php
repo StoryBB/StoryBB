@@ -878,6 +878,37 @@ function timeformat($log_time, $show_today = true, $offset_type = false, $proces
 }
 
 /**
+ * Like timeformat, formats a specific timestamp but only displays the date portion.
+ *
+ * @param int $timestamp The timestamp to display (ignoring timezones)
+ * @param string $format The format to use, falling back to current user then to default if empty.
+ * @param bool $year Whether to include the year or not
+ * @return string The date formatted to a given user format
+ */
+function dateformat(int $timestamp, string $format = '', bool $year = true): string
+{
+	global $modSettings, $txt;
+
+	if (empty($format))
+		$format = $modSettings['time_format'];
+
+	$excluded_items = ['%a', '%A', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r', '%R', '%S', '%T', '%X', '%z', '%Z'];
+	if (!$year)
+	{
+		$excluded_items[] = '%y';
+		$excluded_items[] = '%Y';
+	}
+	$format = str_replace($excluded_items, '', $format);
+	$format = trim($format, ',: ');
+
+	foreach (array('%b' => 'months_short', '%B' => 'months') as $token => $text_label)
+		if (strpos($format, $token) !== false)
+			$format = str_replace($token, $txt[$text_label][(int) strftime('%m', $timestamp)], $format);
+
+	return strftime($format, $timestamp);
+}
+
+/**
  * Removes special entities from strings.  Compatibility...
  * Should be used instead of html_entity_decode for PHP version compatibility reasons.
  *
