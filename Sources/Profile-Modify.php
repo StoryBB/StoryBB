@@ -78,58 +78,93 @@ function loadProfileFields($force_reload = false)
 			'input_validate' => 'profileSaveAvatarData',
 			'save_key' => 'avatar',
 		),
-		'bday1' => array(
+		'birthday_date' => array(
 			'type' => 'callback',
-			'callback_func' => 'birthdate',
+			'callback_func' => 'birthday_date',
 			'permission' => 'profile_extra',
-			'preload' => function() use ($cur_profile, &$context)
+			'preload' => function() use ($cur_profile, &$context, $txt, $modSettings)
 			{
-				// Split up the birthdate....
-				list ($uyear, $umonth, $uday) = explode('-', empty($cur_profile['birthdate']) ? '1004-01-01' : $cur_profile['birthdate']);
-				$context['member']['birth_date'] = array(
-					'year' => $uyear,
-					'month' => $umonth,
-					'day' => $uday,
-				);
+				if (empty($cur_profile['birthdate']) || $cur_profile['birthdate'] == '1004-01-01')
+				{
+					// No existing birthdate, therefore editable.
+					$context['member']['birthdate'] = '';
+					$context['member']['birthdate_editable'] = true;
+					$context['member']['birth_date'] = [
+						'year' => '',
+						'month' => '',
+						'day' => '',
+					];
+				}
+				elseif (!allowedTo('admin_forum'))
+				{
+					// Regular members aren't allowed to edit their DOB.
+					list ($year, $month, $day) = explode('-', $cur_profile['birthdate']);
+					$context['member']['formatted_birthdate'] = dateformat($year, $month, $day, $cur_profile['time_format']);
+
+					$context['member']['birthdate_editable'] = false;
+				}
+				else
+				{
+					// The profile user has entered a date and the current user is an admin.
+					list($year, $month, $day) = explode('-', $cur_profile['birthdate']);
+					$context['member']['birth_date'] = [
+						'year' => (int) $year,
+						'month' => (int) $month,
+						'day' => (int) $day,
+					];
+					$context['member']['birthdate_editable'] = true;
+				}
 
 				return true;
 			},
-			'input_validate' => function(&$value) use (&$cur_profile, &$profile_vars)
+			'input_validate' => function(&$value) use (&$cur_profile, &$profile_vars, $modSettings)
 			{
-				if (isset($_POST['bday2'], $_POST['bday3']) && $value > 0 && $_POST['bday2'] > 0)
+				if (!empty($cur_profile['birthdate']) && $cur_profile['birthdate'] != '1004-01-01')
 				{
-					// Set to blank?
-					if ((int) $_POST['bday3'] == 1 && (int) $_POST['bday2'] == 1 && (int) $value == 1)
-						$value = '1004-01-01';
-					else
-						$value = checkdate($value, $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
+					// If it's not already empty, and it's being edited, make sure we're an admin.
+					if (!allowedTo('admin_forum'))
+					{
+						$value = $cur_profile['birthdate'];
+						return true;
+					}
 				}
-				else
-					$value = '1004-01-01';
 
-				$profile_vars['birthdate'] = $value;
-				$cur_profile['birthdate'] = $value;
-				return false;
-			},
-		),
-		// Setting the birthdate the old style way?
-		'birthdate' => array(
-			'type' => 'hidden',
-			'permission' => 'profile_extra',
-			'input_validate' => function(&$value) use ($cur_profile)
-			{
-				// @todo Should we check for this year and tell them they made a mistake?
-				if (preg_match('/(\d{4})[\-\., ](\d{2})[\-\., ](\d{2})/', $value, $dates) === 1)
+				// OK so either we're adding a date for the first time or we're updating an existing date.
+				if (isset($_POST['bday1'], $_POST['bday2'], $_POST['bday3']))
 				{
-					$value = checkdate($dates[2], $dates[3], $dates[1] < 4 ? 4 : $dates[1]) ? sprintf('%04d-%02d-%02d', $dates[1] < 4 ? 4 : $dates[1], $dates[2], $dates[3]) : '1004-01-01';
-					return true;
+					// Make sure it's valid and if it is, handle it.
+					$value = checkdate($_POST['bday1'], $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
+
+					// Also check if it's valid or not.
+					if (!empty($modSettings['minimum_age']) && !empty($modSettings['minimum_age_profile']) && $value != '1004-01-01')
+					{
+						$datearray = getdate(forum_time());
+						$age = $datearray['year'] - $_POST['bday3'] - (($datearray['mon'] > $_POST['bday1'] || ($datearray['mon'] == $_POST['bday1'] && $datearray['mday'] >= $_POST['bday2'])) ? 0 : 1);
+						if ($age < (int) $modSettings['minimum_age'])
+						{
+							return false;
+						}
+					}
 				}
 				else
 				{
-					$value = empty($cur_profile['birthdate']) ? '1004-01-01' : $cur_profile['birthdate'];
-					return false;
+					// Not sure what happened here. Put the value back to what it was.
+					$value = $cur_profile['birthdate'];
 				}
+
+				return true;
 			},
+			'link_with' => 'birthday',
+		),
+		'birthday_visibility' => array(
+			'type' => 'select',
+			'options' => array(
+				0 => $txt['birthday_visibility_adminonly'],
+				1 => $txt['birthday_visibility_daymonth'],
+				2 => $txt['birthday_visibility_fulldate'],
+			),
+			'permission' => 'profile_extra',
+			'link_with' => 'birthday',
 		),
 		'date_registered' => array(
 			'type' => 'date',
@@ -1696,7 +1731,8 @@ function forumProfile($memID)
 	setupProfileContext(
 		array(
 			'avatar_choice', 'hr',
-			'bday1', 'signature', 'hr',
+			'birthday_date', 'birthday_visibility', 'hr',
+			'signature', 'hr',
 			'website_title', 'website_url',
 		)
 	);

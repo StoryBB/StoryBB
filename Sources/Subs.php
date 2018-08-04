@@ -878,6 +878,47 @@ function timeformat($log_time, $show_today = true, $offset_type = false, $proces
 }
 
 /**
+ * Like timeformat, formats a specific date (only).
+ *
+ * @param int $year The year to format
+ * @param int $month The month to format
+ * @param int $day The day to format
+ * @return string The date formatted to a given user format
+ */
+function dateformat(int $year, int $month, int $day, string $format = ''): string
+{
+	global $modSettings, $txt;
+
+	if (empty($format))
+		$format = $modSettings['time_format'];
+
+	$excluded_items = ['%a', '%A', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r', '%R', '%S', '%T', '%X', '%z', '%Z'];
+
+	if (empty($year))
+	{
+		$excluded_items[] = '%y';
+		$excluded_items[] = '%Y';
+	}
+
+	// This gives us the format we care about.
+	$format = str_replace($excluded_items, '', $format);
+	$format = trim($format, ',: ');
+
+	// Now we have to be a little more careful but ultimately we're building a find/replace list.
+	$replaces = [
+		'%d' => substr('00' . $day, -2),
+		'%#d' => (int) $day,
+		'%e' => (int) $day,
+		'%b' => $txt['months_short'][$month],
+		'%B' => $txt['months'][$month],
+		'%y' => substr($year, -2),
+		'%Y' => $year,
+	];
+
+	return strtr($format, $replaces);
+}
+
+/**
  * Removes special entities from strings.  Compatibility...
  * Should be used instead of html_entity_decode for PHP version compatibility reasons.
  *

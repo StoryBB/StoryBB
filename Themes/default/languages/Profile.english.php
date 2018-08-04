@@ -28,6 +28,7 @@ $txt['picture_text'] = 'Picture/Text';
 $txt['reset_form'] = 'Reset Form';
 $txt['preferred_language'] = 'Preferred Language';
 $txt['age'] = 'Age';
+$txt['age_profile'] = '(Age: %1$s)';
 $txt['no_pic'] = '(no pic)';
 $txt['latest_posts'] = 'Latest posts of: ';
 $txt['additional_info'] = 'Additional Information';
@@ -41,10 +42,16 @@ $txt['time_format'] = 'Time Format';
 $txt['timezone'] = 'Time zone';
 $txt['display_name_desc'] = 'This is the displayed name that people will see.';
 $txt['personal_time_offset'] = 'Number of hours to +/- to make displayed time equal to your local time.';
-$txt['dob'] = 'Birthdate';
-$txt['dob_month'] = 'Month (MM)';
+$txt['dob'] = 'Birthday';
 $txt['dob_day'] = 'Day (DD)';
 $txt['dob_year'] = 'Year (YYYY)';
+
+$txt['birthday_visibility'] = 'Who can see your birthday?';
+$txt['birthday_visibility_adminonly'] = 'Show no details (except to admins)';
+$txt['birthday_visibility_daymonth'] = 'Show the day/month';
+$txt['birthday_visibility_fulldate'] = 'Show the day/month/year';
+$txt['birthday_set'] = 'Once your birthday has been set, it cannot be changed except by an administrator.';
+
 $txt['password_strength'] = 'For best security, you should use eight or more characters with a combination of letters, numbers, and symbols.';
 $txt['include_website_url'] = 'This must be included if you specify a URL below.';
 $txt['complete_url'] = 'This must be a complete URL.';

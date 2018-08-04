@@ -16,7 +16,7 @@
  */
 function summary($memID)
 {
-	global $context, $memberContext, $txt, $modSettings, $user_profile, $sourcedir, $scripturl, $smcFunc;
+	global $context, $memberContext, $txt, $modSettings, $user_profile, $sourcedir, $scripturl, $smcFunc, $user_info;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -62,21 +62,33 @@ function summary($memID)
 		$context['member']['posts_per_day'] = comma_format($context['member']['real_posts'] / $days_registered, 3);
 
 	// Set the age...
-	if (empty($context['member']['birth_date']) || substr($context['member']['birth_date'], 0, 4) < 1002)
+	$context['member'] += [
+		'show_birth' => false,
+		'today_is_birthday' => false,
+		'age' => false,
+	];
+
+	if (!empty($context['member']['birthday_visibility']) && $context['member']['birth_date'] > '1004-01-01')
 	{
-		$context['member'] += array(
-			'age' => $txt['not_applicable'],
-			'today_is_birthday' => false
-		);
-	}
-	else
-	{
-		list ($birth_year, $birth_month, $birth_day) = sscanf($context['member']['birth_date'], '%d-%d-%d');
+		list ($birth_year, $birth_month, $birth_day) = explode('-', $context['member']['birth_date']);
 		$datearray = getdate(forum_time());
-		$context['member'] += array(
-			'age' => $birth_year <= 1004 ? $txt['not_applicable'] : $datearray['year'] - $birth_year - (($datearray['mon'] > $birth_month || ($datearray['mon'] == $birth_month && $datearray['mday'] >= $birth_day)) ? 0 : 1),
-			'today_is_birthday' => $datearray['mon'] == $birth_month && $datearray['mday'] == $birth_day
-		);
+		$context['member']['today_is_birthday'] = $datearray['mon'] == $birth_month && $datearray['mday'] == $birth_day;
+
+		if ($context['member']['birthday_visibility'] == 1)
+		{
+			// Showing day/month only.
+			$context['member']['show_birth'] = true;
+			$context['member']['formatted_birthdate'] = dateformat(0, $birth_month, $birth_day, $user_info['time_format']);
+		}
+		elseif ($context['member']['birthday_visibility'] == 2)
+		{
+			// Showing full date (and thus age)
+			$context['member']['show_birth'] = true;
+			$context['member']['formatted_birthdate'] = dateformat($birth_year, $birth_month, $birth_day, $user_info['time_format']);
+
+			$age = $datearray['year'] - $birth_year - (($datearray['mon'] > $birth_month || ($datearray['mon'] == $birth_month && $datearray['mday'] >= $birth_day)) ? 0 : 1);
+			$context['member']['age'] = sprintf($txt['age_profile'], $age);
+		}
 	}
 
 	if (allowedTo('moderate_forum'))

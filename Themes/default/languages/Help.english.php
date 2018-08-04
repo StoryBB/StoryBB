@@ -400,6 +400,7 @@ $helptxt['password_strength'] = 'This setting determines the strength required f
 	</ul>';
 
 $helptxt['minimum_age'] = 'This setting sets the minimum age that will be shown in the terms and conditions.';
+$helptxt['minimum_age_profile'] = 'By default, the minimum age is just set for the terms and conditions, but this enforces that anyone setting their date of birth in their profile also meets the minimum age.';
 
 $helptxt['allow_hideOnline'] = 'With this setting enabled all members will be able to hide their online status from other users (except administrators). If disabled, only users who can moderate the forum can hide their presence. Note that disabling this setting will not change any existing member\'s status - it just stops them from hiding themselves in the future.';
 $helptxt['meta_keywords'] = 'These keywords are sent in the output of every page to indicate to search engines (etc) the key content of your site. They should be a comma separated list of words, and should not use HTML.';
