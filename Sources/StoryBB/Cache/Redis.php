@@ -86,7 +86,7 @@ class Redis extends API
 
 		if ($connected)
 		{
-			$this->redis->setOption(\Redis::OPT_PREFIX, $this->prefix . ':');
+			$this->redis->setOption(\Redis::OPT_PREFIX, $this->prefix);
 			$this->redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
 		}
 
@@ -101,6 +101,33 @@ class Redis extends API
 	public function getName()
 	{
 		return 'Redis';
+	}
+
+	/**
+	 * Overrides the default prefix. If left alone, this will use the default key defined in the class.
+	 *
+	 * @param string $prefix The key to use
+	 * @return boolean If this was successful or not.
+	 */
+	public function setPrefix($prefix = '')
+	{
+		global $boardurl, $cachedir;
+
+		// Find a valid good file to do mtime checks on.
+		if (file_exists($cachedir . '/' . 'index.php'))
+			$filemtime = $cachedir . '/' . 'index.php';
+		elseif (is_dir($cachedir . '/'))
+			$filemtime = $cachedir . '/';
+		else
+			$filemtime = $boardurl . '/index.php';
+
+		// Set the default if no prefix was specified.
+		if (empty($prefix))
+			$this->prefix = 'StoryBB-' . substr(md5($boardurl . filemtime($filemtime)), 0, 16) . '-';
+		else
+			$this->prefix = $prefix;
+
+		return true;
 	}
 
 	/**
