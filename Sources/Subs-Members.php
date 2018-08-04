@@ -785,7 +785,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		],
 		['id_character']
 	);
-	$real_account = $smcFunc['db_insert_id']('{db_prefix}characters', 'id_character');
+	$real_account = $smcFunc['db_insert_id']();
 
 	if (!empty($regOptions['extra_register_vars']['first_char']))
 	{
@@ -801,6 +801,7 @@ function registerMember(&$regOptions, $return_errors = false)
 			],
 			['id_character']
 		);
+		trackStats(array('chars' => '+'));
 	}
 
 	// Now we mark the current character into the user table.

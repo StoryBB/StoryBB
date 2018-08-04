@@ -133,18 +133,6 @@ function AdminMain()
 						'reset' => array($txt['themeadmin_reset_title']),
 					),
 				),
-				'modsettings' => array(
-					'label' => $txt['admin_modifications'],
-					'file' => 'ManageSettings.php',
-					'function' => 'ModifyModSettings',
-					'icon' => 'modifications',
-					'subsections' => array(
-						'general' => array($txt['mods_cat_modifications_misc']),
-						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:
-						// 'shout' => array($txt['shout']),
-						// Note the comma!! The setting with automatically appear with the first mod to be added.
-					),
-				),
 			),
 		),
 		'layout' => array(
@@ -213,20 +201,6 @@ function AdminMain()
 						'avatars' => array($txt['attachment_manager_avatar_settings']),
 						'attachpaths' => array($txt['attach_directories']),
 						'maintenance' => array($txt['attachment_manager_maintenance']),
-					),
-				),
-				'sengines' => array(
-					'label' => $txt['search_engines'],
-					'inactive' => empty($modSettings['spider_mode']),
-					'file' => 'ManageSearchEngines.php',
-					'icon' => 'engines',
-					'function' => 'SearchEngines',
-					'permission' => 'admin_forum',
-					'subsections' => empty($modSettings['spider_mode']) ? array() : array(
-						'stats' => array($txt['spider_stats']),
-						'logs' => array($txt['spider_logs']),
-						'spiders' => array($txt['spiders']),
-						'settings' => array($txt['settings']),
 					),
 				),
 			),
@@ -414,7 +388,6 @@ function AdminMain()
 						'adminlog' => array($txt['admin_log'], 'admin_forum', 'enabled' => !empty($modSettings['adminlog_enabled'])),
 						'modlog' => array($txt['moderation_log'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
 						'banlog' => array($txt['ban_log'], 'manage_bans'),
-						'spiderlog' => array($txt['spider_logs'], 'admin_forum', 'enabled' => !empty($modSettings['spider_mode'])),
 						'tasklog' => array($txt['scheduled_log'], 'admin_forum'),
 						'settings' => array($txt['log_settings'], 'admin_forum'),
 					),
@@ -619,7 +592,7 @@ function AdminSearchInternal()
 	// All the files we need to include.
 	$include_files = array(
 		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManagePaid', 'ManagePermissions',
-		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
+		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
 	);
 
 	// This is a special array of functions that contain setting data - we query all these to simply pull all setting bits!
@@ -630,8 +603,6 @@ function AdminSearchInternal()
 		array('ModifySignatureSettings', 'area=featuresettings;sa=sig'),
 		array('ModifyAntispamSettings', 'area=antispam'),
 		array('ModifyWarningSettings', 'area=warnings'),
-		array('ModifyGeneralModSettings', 'area=modsettings;sa=general'),
-		// Mod authors if you want to be "real freaking good" then add any setting pages for your mod BELOW this line!
 		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
 		array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
 		array('EditBoardSettings', 'area=manageboards;sa=settings'),
@@ -648,7 +619,6 @@ function AdminSearchInternal()
 		array('ModifyCacheSettings', 'area=serversettings;sa=cache'),
 		array('ModifyLanguageSettings', 'area=languages;sa=settings'),
 		array('ModifyRegistrationSettings', 'area=regcenter;sa=settings'),
-		array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
 		array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
 		array('ModifyLogSettings', 'area=logs;sa=settings'),
 	);
@@ -769,7 +739,6 @@ function AdminLogs()
 		'adminlog' => array('Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['adminlog_enabled'])),
 		'modlog' => array('Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['modlog_enabled'])),
 		'banlog' => array('ManageBans.php', 'BanLog'),
-		'spiderlog' => array('ManageSearchEngines.php', 'SpiderLogs'),
 		'tasklog' => array('ManageScheduledTasks.php', 'TaskLog'),
 		'settings' => array('ManageSettings.php', 'ModifyLogSettings'),
 	);
@@ -796,9 +765,6 @@ function AdminLogs()
 			),
 			'banlog' => array(
 				'description' => $txt['ban_log_description'],
-			),
-			'spiderlog' => array(
-				'description' => $txt['spider_log_desc'],
 			),
 			'tasklog' => array(
 				'description' => $txt['scheduled_log_desc'],

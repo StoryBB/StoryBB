@@ -610,7 +610,7 @@ function DisplayStats()
 	// Activity by month.
 	$months_result = $smcFunc['db_query']('', '
 		SELECT
-			YEAR(date) AS stats_year, MONTH(date) AS stats_month, SUM(hits) AS hits, SUM(registers) AS registers, SUM(topics) AS topics, SUM(posts) AS posts, MAX(most_on) AS most_on, COUNT(*) AS num_days
+			YEAR(date) AS stats_year, MONTH(date) AS stats_month, SUM(hits) AS hits, SUM(registers) AS registers, SUM(chars) AS chars, SUM(topics) AS topics, SUM(posts) AS posts, MAX(most_on) AS most_on, COUNT(*) AS num_days
 		FROM {db_prefix}log_activity
 		GROUP BY stats_year, stats_month',
 		array()
@@ -628,6 +628,7 @@ function DisplayStats()
 				'new_topics' => 0,
 				'new_posts' => 0,
 				'new_members' => 0,
+				'new_chars' => 0,
 				'most_members_online' => 0,
 				'hits' => 0,
 				'num_months' => 0,
@@ -649,6 +650,7 @@ function DisplayStats()
 			'new_topics' => comma_format($row_months['topics']),
 			'new_posts' => comma_format($row_months['posts']),
 			'new_members' => comma_format($row_months['registers']),
+			'new_chars' => comma_format($row_months['chars']),
 			'most_members_online' => comma_format($row_months['most_on']),
 			'hits' => comma_format($row_months['hits']),
 			'num_days' => $row_months['num_days'],
@@ -659,6 +661,7 @@ function DisplayStats()
 		$context['yearly'][$row_months['stats_year']]['new_topics'] += $row_months['topics'];
 		$context['yearly'][$row_months['stats_year']]['new_posts'] += $row_months['posts'];
 		$context['yearly'][$row_months['stats_year']]['new_members'] += $row_months['registers'];
+		$context['yearly'][$row_months['stats_year']]['new_chars'] += $row_months['chars'];
 		$context['yearly'][$row_months['stats_year']]['hits'] += $row_months['hits'];
 		$context['yearly'][$row_months['stats_year']]['num_months']++;
 		$context['yearly'][$row_months['stats_year']]['expanded'] |= $expanded;
@@ -676,6 +679,7 @@ function DisplayStats()
 		$context['yearly'][$year]['new_topics'] = comma_format($data['new_topics']);
 		$context['yearly'][$year]['new_posts'] = comma_format($data['new_posts']);
 		$context['yearly'][$year]['new_members'] = comma_format($data['new_members']);
+		$context['yearly'][$year]['new_chars'] = comma_format($data['new_chars']);
 		$context['yearly'][$year]['most_members_online'] = comma_format($data['most_members_online']);
 		$context['yearly'][$year]['hits'] = comma_format($data['hits']);
 
@@ -719,7 +723,7 @@ function getDailyStats($condition_string, $condition_parameters = array())
 
 	// Activity by day.
 	$days_result = $smcFunc['db_query']('', '
-		SELECT YEAR(date) AS stats_year, MONTH(date) AS stats_month, DAYOFMONTH(date) AS stats_day, topics, posts, registers, most_on, hits
+		SELECT YEAR(date) AS stats_year, MONTH(date) AS stats_month, DAYOFMONTH(date) AS stats_day, topics, posts, chars, registers, most_on, hits
 		FROM {db_prefix}log_activity
 		WHERE ' . $condition_string . '
 		ORDER BY stats_day ASC',
@@ -732,6 +736,7 @@ function getDailyStats($condition_string, $condition_parameters = array())
 			'year' => $row_days['stats_year'],
 			'new_topics' => comma_format($row_days['topics']),
 			'new_posts' => comma_format($row_days['posts']),
+			'new_chars' => comma_format($row_days['chars']),
 			'new_members' => comma_format($row_days['registers']),
 			'most_members_online' => comma_format($row_days['most_on']),
 			'hits' => comma_format($row_days['hits'])

@@ -19,7 +19,6 @@ $txt['admin_censored_where'] = 'Put the word to be censored on the left, and wha
 $txt['admin_censored_desc'] = 'Due to the public nature of forums there may be some words that you wish to prohibit being posted by users of your forum. You can enter any words below that you wish to be censored whenever used by a member.<br>Clear a box to remove that word from the censor.';
 $txt['admin_reserved_names'] = 'Reserved Names';
 $txt['admin_template_edit'] = 'Edit your forum template';
-$txt['admin_modifications'] = 'Modification Settings';
 $txt['admin_server_settings'] = 'Server Settings';
 $txt['admin_reserved_set'] = 'Set reserved names';
 $txt['admin_reserved_line'] = 'One reserved word per line.';
@@ -230,7 +229,6 @@ $txt['admin_log'] = 'Administration Log';
 $txt['admin_log_desc'] = 'Lists administrative tasks that have been performed by admins of your forum.';
 $txt['moderation_log'] = 'Moderation Log';
 $txt['moderation_log_desc'] = 'Lists moderation activities that have been performed by moderators on your forum.';
-$txt['spider_log_desc'] = 'Review the entries related to search engine spider activity on your forum.';
 $txt['log_settings_desc'] = 'Use these options to configure how logging works on your forum.';
 $txt['modlog_enabled'] = 'Enable the moderation log';
 $txt['adminlog_enabled'] = 'Enable the administration log';
@@ -574,7 +572,6 @@ $txt['bbcTagsToUse'] = 'Enabled BBC tags';
 $txt['bbcTagsToUse_select'] = 'Select the tags allowed to be used';
 $txt['bbcTagsToUse_select_all'] = 'Select all tags';
 
-$txt['enableParticipation'] = 'Enable participation icons';
 $txt['oldTopicDays'] = 'Time before topic is warned as old on reply';
 $txt['defaultMaxTopics'] = 'Number of topics per page in the message index';
 $txt['defaultMaxMessages'] = 'Number of posts per page in a topic page';
@@ -669,11 +666,6 @@ $txt['themeadmin_list_title'] = 'Theme Settings';
 $txt['themeadmin_reset_title'] = 'Member Options';
 $txt['admin_browse_register_new'] = 'Register new member';
 $txt['admin_policies'] = 'Site Policies';
-
-$txt['search_engines'] = 'Search Engines';
-$txt['spiders'] = 'Spiders';
-$txt['spider_logs'] = 'Spider Log';
-$txt['spider_stats'] = 'Stats';
 
 $txt['paid_subscriptions'] = 'Paid Subscriptions';
 $txt['paid_subs_view'] = 'View Subscriptions';

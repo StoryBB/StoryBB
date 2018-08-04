@@ -358,13 +358,6 @@ $helptxt['customoptions'] = 'This defines the options that a user may choose fro
 		<li><strong>Reordering Options:</strong> You can reorder the options by moving text around between the boxes. However - an important note - you must make sure you do <strong>not</strong> change the text when reordering options as otherwise user data will be lost.</li>
 	</ul>';
 
-$helptxt['pgFulltextSearch'] = 'This setting defines the language to use for PostgreSQL\'s fulltext search. Choose the language that most closely matches the language your forum actually uses. If your forum\'s language is not listed, or if your forum is multi-lingual, choose the "simple" option. <br>
-This setting is independent of your main StoryBB language settings and not related to the installed language for StoryBB. <br>
-When you change this setting you need to [url=' . $scripturl . '?action=admin;area=managesearch;sa=method]rebuild the fulltext search index[/url].<br>
-If a language you need is not listed, ask your database admin to install PostgreSQL language support for that language.';
-
-$helptxt['enableParticipation'] = 'This shows a little icon on the topics the user has posted in.';
-
 $helptxt['minimize_files'] = 'This option will minimize all css and js files that are loaded everytime, everywhere for every user, reducing the requests calls to your server. New files are re-created everyday, if you want to re-create them just clean your forum\'s cache.';
 $helptxt['countChildPosts'] = 'Checking this setting means that posts and topics in a board\'s sub-board will count toward its totals on the index page.<br><br>This will make things notably slower, but means that a parent with no posts in it won\'t show \'0\'.';
 $helptxt['allow_ignore_boards'] = 'Checking this setting will allow users to select boards they wish to ignore.';
@@ -395,7 +388,6 @@ $helptxt['registration_method'] = 'This setting determines what method of regist
 	</ul>';
 
 $helptxt['send_validation_onChange'] = 'When this setting is checked all members who change their email address in their profile will have to reactivate their account from an email sent to that address';
-$helptxt['approveAccountDeletion'] = 'When this setting is checked, any user request to delete his own account has to be approved by an administrator';
 
 $helptxt['send_welcomeEmail'] = 'When this setting is enabled all new members will be sent an email welcoming them to your community';
 $helptxt['show_cookie_notice'] = 'When this setting is enabled, StoryBB will check to see if the user has previously accepted to have cookies from this site - if not, puts up a message in the footer that will remain there until the guest accepts. This option is designed to make it easier to be compliant with EU cookie regulations and the GDPR.';
@@ -477,29 +469,6 @@ $helptxt['posts_and_topics'] = '
 		</li><li>
 			<strong>Topic Settings</strong>
 			Modify the settings related to topics. The number of topics per page, whether the print-page view is enabled, etc.
-		</li>
-	</ul>';
-
-$helptxt['spider_mode'] = 'Sets the logging level.<br>
-Standard - Logs minimal spider activity.<br>
-Moderate - Provides more accurate statistics.<br>
-Agressive - As for &quot;Moderate&quot; but logs data about each page visited.';
-
-$helptxt['spider_group'] = 'By selecting a restrictive group, when a guest is detected as a search crawler it will automatically be assigned any &quot;deny&quot; deny permissions of this group in addition to the normal permissions of a guest. You can use this to provide lesser access to a search engine than you would a normal guest. You might for example wish to create a new group called &quot;Spiders&quot; and select that here. You could then deny permission for that group to view profiles to stop spiders indexing your members profiles.<br>Note: Spider detection is not perfect and can be simulated by users so this feature is not guaranteed to restrict content only to those search engines you have added.';
-$helptxt['show_spider_online'] = 'This setting allows you to select whether spiders should be listed in the &quot;Who\'s Online&quot; list on the board index and &quot;Who\'s Online&quot; page. The options are:
-	<ul class="normallist">
-		<li>
-			<strong>Not at All</strong><br>
-			Spiders will simply appear as guests to all users.
-		</li><li>
-			<strong>Show Spider Quantity</strong><br>
-			The Board Index will display the number of spiders currently visiting the forum.
-		</li><li>
-			<strong>Show Spider Names</strong><br>
-			Each spider name will be revealed, so users can see how many of each spider is currently visiting the forum - this takes effect in both the Board Index and Who\'s Online page.
-		</li><li>
-			<strong>Show Spider Names - Admin Only</strong><br>
-			As above except only Administrators can see spider status - to all other users spiders appear as guests.
 		</li>
 	</ul>';
 

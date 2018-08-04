@@ -62,7 +62,7 @@ $cookiename = 'SBBCookie11';
 /********* Database Info *********/
 /**
  * The database type
- * Default options: mysql, postgresql
+ * Default options: mysql
  * @var string
  */
 $db_type = 'mysql';
@@ -126,6 +126,11 @@ $cache_enable = 0;
  * @var array
  */
 $cache_memcached = '';
+/**
+ * This is only used for Redis. Should be: server:port:password
+ * @var string
+ */
+$cache_redis = '';
 /**
  * This is only for the file cache system. It is the path to the cache directory.
  * It is also recommended that you place this in /tmp/ if you are going to use this.

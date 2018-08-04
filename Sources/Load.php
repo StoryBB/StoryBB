@@ -560,7 +560,7 @@ function loadUserSettings()
 		foreach ($user_info['groups'] as $k => $v)
 			$user_info['groups'][$k] = (int) $v;
 
-		// This is a logged in user, so definitely not a spider.
+		// This is a logged in user, so definitely not a search robot.
 		$user_info['possibly_robot'] = false;
 
 		// Figure out the new time offset.
@@ -614,19 +614,13 @@ function loadUserSettings()
 			list ($context['login_token_var'],,, $context['login_token']) = $_SESSION['token']['post-login'];
 
 		// Do we perhaps think this is a search robot? Check every five minutes just in case...
-		if ((!empty($modSettings['spider_mode']) || !empty($modSettings['spider_group'])) && (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300))
+		if (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300)
 		{
-			require_once($sourcedir . '/ManageSearchEngines.php');
-			$user_info['possibly_robot'] = SpiderCheck();
+			$robot = new \StoryBB\Model\Robot;
+			$_SESSION['robot_check'] = time();
+			$_SESSION['robot_name'] = $robot->identify_robot_from_user_agent($_SERVER['HTTP_USER_AGENT']);
 		}
-		elseif (!empty($modSettings['spider_mode']))
-			$user_info['possibly_robot'] = isset($_SESSION['id_robot']) ? $_SESSION['id_robot'] : 0;
-		// If we haven't turned on proper spider hunts then have a guess!
-		else
-		{
-			$ci_user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
-			$user_info['possibly_robot'] = (strpos($_SERVER['HTTP_USER_AGENT'], 'Mozilla') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') === false) || strpos($ci_user_agent, 'googlebot') !== false || strpos($ci_user_agent, 'slurp') !== false || strpos($ci_user_agent, 'crawl') !== false || strpos($ci_user_agent, 'msnbot') !== false;
-		}
+		$user_info['possibly_robot'] = !empty($_SESSION['robot_name']);
 
 		// We don't know the offset...
 		$user_info['time_offset'] = 0;
@@ -1064,9 +1058,9 @@ function loadPermissions()
 		$cache_groups = $user_info['groups'];
 		asort($cache_groups);
 		$cache_groups = implode(',', $cache_groups);
-		// If it's a spider then cache it different.
+		// If it's a robot then cache it different.
 		if ($user_info['possibly_robot'])
-			$cache_groups .= '-spider';
+			$cache_groups .= '-robot';
 
 		if ($modSettings['cache_enable'] >= 2 && !empty($board) && ($temp = cache_get_data('permissions:' . $cache_groups . ':' . $board, 240)) != null && time() - 240 > $modSettings['settings_updated'])
 		{
@@ -1079,20 +1073,15 @@ function loadPermissions()
 			list ($user_info['permissions'], $removals) = $temp;
 	}
 
-	// If it is detected as a robot, and we are restricting permissions as a special group - then implement this.
-	$spider_restrict = $user_info['possibly_robot'] && !empty($modSettings['spider_group']) ? ' OR (id_group = {int:spider_group} AND add_deny = 0)' : '';
-
 	if (empty($user_info['permissions']))
 	{
 		// Get the general permissions.
 		$request = $smcFunc['db_query']('', '
 			SELECT permission, add_deny
 			FROM {db_prefix}permissions
-			WHERE id_group IN ({array_int:member_groups})
-				' . $spider_restrict,
+			WHERE id_group IN ({array_int:member_groups})',
 			array(
 				'member_groups' => $user_info['groups'],
-				'spider_group' => !empty($modSettings['spider_group']) ? $modSettings['spider_group'] : 0,
 			)
 		);
 		$removals = array();
@@ -1119,13 +1108,11 @@ function loadPermissions()
 		$request = $smcFunc['db_query']('', '
 			SELECT permission, add_deny
 			FROM {db_prefix}board_permissions
-			WHERE (id_group IN ({array_int:member_groups})
-				' . $spider_restrict . ')
+			WHERE id_group IN ({array_int:member_groups})
 				AND id_profile = {int:id_profile}',
 			array(
 				'member_groups' => $user_info['groups'],
 				'id_profile' => $board_info['profile'],
-				'spider_group' => !empty($modSettings['spider_group']) ? $modSettings['spider_group'] : 0,
 			)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))

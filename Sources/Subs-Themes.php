@@ -298,7 +298,12 @@ function theme_install($to_install = array())
 
 	$inserts = array();
 	foreach ($context['to_install'] as $var => $val)
+	{
+		if (is_array($val))
+			continue;
+
 		$inserts[] = array($id_theme, $var, $val);
+	}
 
 	if (!empty($inserts))
 		$smcFunc['db_insert']('insert',

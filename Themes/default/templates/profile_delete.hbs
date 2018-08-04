@@ -21,10 +21,12 @@
 			{{! If the user is deleting their own account warn them first - and require a password! }}
 			{{#if context.user.is_owner}}
 				<div class="alert">{{{txt.own_profile_confirm}}}</div>
+				<p>{{{context.delete_account_posts_advice}}}</p>
+				<br>
 				<div>
 					<strong{{#if (or context.modify_error.bad_password context.modify_error.no_password)}} class="error"{{/if}}>{{{txt.current_password}}}: </strong>
 					<input type="password" name="oldpasswrd" size="20">&nbsp;&nbsp;&nbsp;&nbsp;
-					<input type="submit" value="{{{txt.yes}}}" class="button_submit">';
+					<input type="submit" value="{{{txt.yes}}}" class="button_submit">
 
 					{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
 					{{session_form}}
@@ -39,19 +41,21 @@
 				{{! Only actually give these options if they are kind of important. }}
 				{{#if context.can_delete_posts}}
 				<div>
-					<label for="deleteVotes"><input type="checkbox" name="deleteVotes" id="deleteVotes" value="1"> {{{txt.deleteAccount_votes}}}:</label><br>
-					<label for="deletePosts"><input type="checkbox" name="deletePosts" id="deletePosts" value="1"> {{{txt.deleteAccount_posts}}}:</label>
-					<select name="remove_type">
-						<option value="posts">{{{txt.deleteAccount_all_posts}}}</option>
-						<option value="topics">{{{txt.deleteAccount_topics}}}</option>
-					</select>
+					<label for="deleteVotes"><input type="checkbox" name="deleteVotes" id="deleteVotes" value="1"> {{{txt.deleteAccount_votes}}}</label><br>
+					<br>
+					<label for="deletePosts_ooc"><input type="checkbox" name="deletePosts_ooc" id="deletePosts_ooc" value="1"> {{{txt.deleteAccount_posts_ooc}}}</label><br>
+					<label for="deleteTopics_ooc"><input type="checkbox" name="deleteTopics_ooc" id="deleteTopics_ooc" value="1"> {{{txt.deleteAccount_topics_ooc}}}</label><br>
+					<br>
+					<label for="deletePosts_ic"><input type="checkbox" name="deletePosts_ic" id="deletePosts_ic" value="1"> {{{txt.deleteAccount_posts_ic}}}</label><br>
+					<label for="deleteTopics_ic"><input type="checkbox" name="deleteTopics_ic" id="deleteTopics_ic" value="1"> {{{txt.deleteAccount_topics_ic}}}</label><br>
 
 					{{#if context.show_perma_delete}}
-					<br><label for="perma_delete"><input type="checkbox" name="perma_delete" id="perma_delete" value="1"> {{{txt.deleteAccount_permanent}}}</label>
+					<br><br><label for="perma_delete"><input type="checkbox" name="perma_delete" id="perma_delete" value="1"> {{{txt.deleteAccount_permanent}}}</label>
 					{{/if}}
 				</div>
 				{{/if}}
 
+				<br>
 				<div>
 					<label for="deleteAccount"><input type="checkbox" name="deleteAccount" id="deleteAccount" value="1" onclick="if (this.checked) return confirm('{{{txt.deleteAccount_confirm}}}');"> {{{txt.deleteAccount_member}}}.</label>
 				</div>
