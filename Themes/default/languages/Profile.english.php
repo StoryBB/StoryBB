@@ -45,6 +45,13 @@ $txt['dob'] = 'Birthdate';
 $txt['dob_month'] = 'Month (MM)';
 $txt['dob_day'] = 'Day (DD)';
 $txt['dob_year'] = 'Year (YYYY)';
+
+$txt['birthday_visibility'] = 'Who can see your birthday?';
+$txt['birthday_visibility_adminonly'] = 'Show no details (except to admins)';
+$txt['birthday_visibility_daymonth'] = 'Show the day/month';
+$txt['birthday_visibility_fulldate'] = 'Show the day/month/year';
+$txt['birthday_set'] = 'Once your birthday has been set, it cannot be changed except by an administrator.';
+
 $txt['password_strength'] = 'For best security, you should use eight or more characters with a combination of letters, numbers, and symbols.';
 $txt['include_website_url'] = 'This must be included if you specify a URL below.';
 $txt['complete_url'] = 'This must be a complete URL.';

@@ -78,6 +78,89 @@ function loadProfileFields($force_reload = false)
 			'input_validate' => 'profileSaveAvatarData',
 			'save_key' => 'avatar',
 		),
+		'birthday_date' => array(
+			'type' => 'callback',
+			'callback_func' => 'birthday_date',
+			'permission' => 'profile_extra',
+			'preload' => function() use ($cur_profile, &$context, $txt, $modSettings)
+			{
+				if (empty($cur_profile['birthdate']) || $cur_profile['birthdate'] == '1004-01-01')
+				{
+					// No existing birthdate, therefore editable.
+					$context['member']['birthdate'] = '';
+					$context['member']['birthdate_editable'] = true;
+				}
+				elseif (!allowedTo('admin_forum'))
+				{
+					// Regular members aren't allowed to edit their DOB.
+					// First, get the date format from the time/date format.
+					$format = $cur_profile['time_format'];
+					if (empty($format))
+						$format = $modSettings['time_format'];
+
+					$format = str_replace(['%a', '%A', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r', '%R', '%S', '%T', '%X', '%z', '%Z'], '', $format);
+					$format = trim($format, ',: ');
+					$time = strtotime($cur_profile['birthdate']);
+
+					foreach (array('%b' => 'months_short', '%B' => 'months') as $token => $text_label)
+						if (strpos($format, $token) !== false)
+							$format = str_replace($token, $txt[$text_label][(int) strftime('%m', $time)], $format);
+
+					$context['member']['formatted_birthdate'] = strftime($format, $time);
+					$context['member']['birthdate_editable'] = false;
+				}
+				else
+				{
+					// The profile user has entered a date and the current user is an admin.
+					list($year, $month, $day) = explode('-', $cur_profile['birthdate']);
+					$context['member']['birth_date'] = [
+						'year' => (int) $year,
+						'month' => (int) $month,
+						'day' => (int) $day,
+					];
+					$context['member']['birthdate_editable'] = true;
+				}
+
+				return true;
+			},
+			'input_validate' => function(&$value) use (&$cur_profile, &$profile_vars)
+			{
+				if (!empty($cur_profile['birthdate']) && $cur_profile['birthdate'] != '1004-01-01')
+				{
+					// If it's not already empty, and it's being edited, make sure we're an admin.
+					if (!allowedTo('admin_forum'))
+					{
+						$value = $cur_profile['birthdate'];
+						return true;
+					}
+				}
+
+				// OK so either we're adding a date for the first time or we're updating an existing date.
+				if (isset($_POST['bday1'], $_POST['bday2'], $_POST['bday3']))
+				{
+					// Make sure it's valid and if it is, handle it.
+					$value = checkdate($_POST['bday1'], $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
+				}
+				else
+				{
+					// Not sure what happened here. Put the value back to what it was.
+					$value = $cur_profile['birthdate'];
+				}
+
+				return true;
+			},
+			'link_with' => 'birthday',
+		),
+		'birthday_visibility' => array(
+			'type' => 'select',
+			'options' => array(
+				0 => $txt['birthday_visibility_adminonly'],
+				1 => $txt['birthday_visibility_daymonth'],
+				2 => $txt['birthday_visibility_fulldate'],
+			),
+			'permission' => 'profile_extra',
+			'link_with' => 'birthday',
+		),
 		'bday1' => array(
 			'type' => 'callback',
 			'callback_func' => 'birthdate',
@@ -1696,7 +1779,7 @@ function forumProfile($memID)
 	setupProfileContext(
 		array(
 			'avatar_choice', 'hr',
-			'bday1', 'signature', 'hr',
+			'birthday', 'signature', 'hr',
 			'website_title', 'website_url',
 		)
 	);

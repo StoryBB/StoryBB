@@ -710,6 +710,7 @@ CREATE TABLE {$db_prefix}members (
   passwd VARCHAR(64) NOT NULL DEFAULT '',
   email_address VARCHAR(255) NOT NULL DEFAULT '',
   birthdate date NOT NULL DEFAULT '1004-01-01',
+  birthday_visibility TINYINT UNSIGNED NOT NULL DEFAULT '0',
   website_title VARCHAR(255) NOT NULL DEFAULT '',
   website_url VARCHAR(255) NOT NULL DEFAULT '',
   show_online TINYINT NOT NULL DEFAULT '1',
