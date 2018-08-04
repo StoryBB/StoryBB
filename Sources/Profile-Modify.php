@@ -89,6 +89,11 @@ function loadProfileFields($force_reload = false)
 					// No existing birthdate, therefore editable.
 					$context['member']['birthdate'] = '';
 					$context['member']['birthdate_editable'] = true;
+					$context['member']['birth_date'] = [
+						'year' => '',
+						'month' => '',
+						'day' => '',
+					];
 				}
 				elseif (!allowedTo('admin_forum'))
 				{

@@ -105,17 +105,6 @@ function Register($reg_errors = array())
 	}
 
 	StoryBB\Template::add_helper([
-		'profile_callback_helper' => function ($field) {
-			var_dump($field);
-			if ($field['type'] == 'callback')
-			{
-				if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
-				{
-					$callback_func = 'template_profile_' . $field['callback_func'];
-					$callback_func();
-				}
-			}
-		},
 		'makeHTTPS' => function($url) { 
 			return strtr($url, array('http://' => 'https://'));
 		},
@@ -125,7 +114,16 @@ function Register($reg_errors = array())
 	]);
 
 	// Or any standard ones?
+	$reg_fields = [];
 	if (!empty($modSettings['registration_fields']))
+	{
+		$reg_fields = explode(',', $modSettings['registration_fields']);
+	}
+	if (!empty($modSettings['minimum_age']) && !empty($modSettings['age_on_registration']))
+	{
+		$reg_fields[] = 'birthday_date';
+	}
+	if (!empty($reg_fields))
 	{
 		require_once($sourcedir . '/Profile-Modify.php');
 
@@ -136,7 +134,6 @@ function Register($reg_errors = array())
 
 		// Here, and here only, emulate the permissions the user would have to do this.
 		$user_info['permissions'] = array_merge($user_info['permissions'], array('profile_account_own', 'profile_extra_own', 'profile_other_own', 'profile_password_own', 'profile_website_own'));
-		$reg_fields = explode(',', $modSettings['registration_fields']);
 
 		// We might have had some submissions on this front - go check.
 		foreach ($reg_fields as $field)
@@ -145,6 +142,12 @@ function Register($reg_errors = array())
 
 		// Load all the fields in question.
 		setupProfileContext($reg_fields);
+	}
+	$context['profile_fields_required'] = [];
+	if (isset($context['profile_fields']['birthday_date']))
+	{
+		$context['profile_fields_required']['birthday_date'] = $context['profile_fields']['birthday_date'];
+		unset($context['profile_fields']['birthday_date']);
 	}
 
 	// Generate a visual verification code to make sure the user is no bot.
