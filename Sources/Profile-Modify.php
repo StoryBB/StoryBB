@@ -112,7 +112,7 @@ function loadProfileFields($force_reload = false)
 
 				return true;
 			},
-			'input_validate' => function(&$value) use (&$cur_profile, &$profile_vars)
+			'input_validate' => function(&$value) use (&$cur_profile, &$profile_vars, $modSettings)
 			{
 				if (!empty($cur_profile['birthdate']) && $cur_profile['birthdate'] != '1004-01-01')
 				{
@@ -129,6 +129,17 @@ function loadProfileFields($force_reload = false)
 				{
 					// Make sure it's valid and if it is, handle it.
 					$value = checkdate($_POST['bday1'], $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
+
+					// Also check if it's valid or not.
+					if (!empty($modSettings['minimum_age']) && !empty($modSettings['minimum_age_profile']) && $value != '1004-01-01')
+					{
+						$datearray = getdate(forum_time());
+						$age = $datearray['year'] - $_POST['bday3'] - (($datearray['mon'] > $_POST['bday1'] || ($datearray['mon'] == $_POST['bday1'] && $datearray['mday'] >= $_POST['bday2'])) ? 0 : 1);
+						if ($age < (int) $modSettings['minimum_age'])
+						{
+							return false;
+						}
+					}
 				}
 				else
 				{

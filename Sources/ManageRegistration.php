@@ -238,6 +238,7 @@ function ModifyRegistrationSettings($return_config = false)
 			)),
 		'',
 			array('int', 'minimum_age'),
+			array('check', 'minimum_age_profile'),
 		'',
 			array('check', 'show_cookie_notice'),
 	);
