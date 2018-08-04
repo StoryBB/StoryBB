@@ -268,7 +268,6 @@ function Register2()
 
 	// Collect all extra registration fields someone might have filled in.
 	$possible_strings = array(
-		'birthdate',
 		'first_char',
 		'time_format',
 		'buddy_list',
@@ -328,11 +327,31 @@ function Register2()
 	}
 
 	// Handle a string as a birthdate...
-	if (isset($_POST['birthdate']) && $_POST['birthdate'] != '')
-		$_POST['birthdate'] = strftime('%Y-%m-%d', strtotime($_POST['birthdate']));
-	// Or birthdate parts...
-	elseif (!empty($_POST['bday1']) && !empty($_POST['bday2']))
-		$_POST['birthdate'] = sprintf('%04d-%02d-%02d', empty($_POST['bday3']) ? 0 : (int) $_POST['bday3'], (int) $_POST['bday1'], (int) $_POST['bday2']);
+	if (isset($_POST['bday1'], $_POST['bday2'], $_POST['bday3']))
+	{
+		// Make sure it's valid and if it is, handle it.
+		$_POST['birthdate'] = checkdate((int) $_POST['bday1'], (int) $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : (int) $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
+		if ($_POST['birthdate'] == '1004-01-01')
+		{
+			loadLanguage('Errors');
+			$reg_errors['invalid_dob'] = $txt['error_dob_required'];
+		}
+
+		// Also check if it's valid or not.
+		if (!empty($modSettings['minimum_age']) && !empty($modSettings['minimum_age_profile']) && $value != '1004-01-01')
+		{
+			$datearray = getdate(forum_time());
+			$age = $datearray['year'] - $_POST['bday3'] - (($datearray['mon'] > $_POST['bday1'] || ($datearray['mon'] == $_POST['bday1'] && $datearray['mday'] >= $_POST['bday2'])) ? 0 : 1);
+			if ($age < (int) $modSettings['minimum_age'])
+			{
+				$reg_errors['invalid_dob'] = sprintf($txt['error_dob_not_old_enough'], $modSettings['minimum_age']);
+			}
+			else
+			{
+				$possible_strings[] = 'birthdate';
+			}
+		}
+	}
 
 	// Validate the passed language file.
 	if (isset($_POST['lngfile']) && !empty($modSettings['userLanguage']))
