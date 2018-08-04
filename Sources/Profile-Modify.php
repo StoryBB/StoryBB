@@ -93,8 +93,8 @@ function loadProfileFields($force_reload = false)
 				elseif (!allowedTo('admin_forum'))
 				{
 					// Regular members aren't allowed to edit their DOB.
-					$time = strtotime($cur_profile['birthdate']);
-					$context['member']['formatted_birthdate'] = dateformat($time, $cur_profile['time_format']);
+					list ($year, $month, $day) = explode('-', $cur_profile['birthdate']);
+					$context['member']['formatted_birthdate'] = dateformat($year, $month, $day, $cur_profile['time_format']);
 
 					$context['member']['birthdate_editable'] = false;
 				}

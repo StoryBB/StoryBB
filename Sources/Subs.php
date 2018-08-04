@@ -878,14 +878,14 @@ function timeformat($log_time, $show_today = true, $offset_type = false, $proces
 }
 
 /**
- * Like timeformat, formats a specific timestamp but only displays the date portion.
+ * Like timeformat, formats a specific date (only).
  *
- * @param int $timestamp The timestamp to display (ignoring timezones)
- * @param string $format The format to use, falling back to current user then to default if empty.
- * @param bool $year Whether to include the year or not
+ * @param int $year The year to format
+ * @param int $month The month to format
+ * @param int $day The day to format
  * @return string The date formatted to a given user format
  */
-function dateformat(int $timestamp, string $format = '', bool $year = true): string
+function dateformat(int $year, int $month, int $day, string $format = ''): string
 {
 	global $modSettings, $txt;
 
@@ -893,19 +893,29 @@ function dateformat(int $timestamp, string $format = '', bool $year = true): str
 		$format = $modSettings['time_format'];
 
 	$excluded_items = ['%a', '%A', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r', '%R', '%S', '%T', '%X', '%z', '%Z'];
-	if (!$year)
+
+	if (empty($year))
 	{
 		$excluded_items[] = '%y';
 		$excluded_items[] = '%Y';
 	}
+
+	// This gives us the format we care about.
 	$format = str_replace($excluded_items, '', $format);
 	$format = trim($format, ',: ');
 
-	foreach (array('%b' => 'months_short', '%B' => 'months') as $token => $text_label)
-		if (strpos($format, $token) !== false)
-			$format = str_replace($token, $txt[$text_label][(int) strftime('%m', $timestamp)], $format);
+	// Now we have to be a little more careful but ultimately we're building a find/replace list.
+	$replaces = [
+		'%d' => substr('00' . $day, -2),
+		'%#d' => (int) $day,
+		'%e' => (int) $day,
+		'%b' => $txt['months_short'][$month],
+		'%B' => $txt['months'][$month],
+		'%y' => substr($year, -2),
+		'%Y' => $year,
+	];
 
-	return strftime($format, $timestamp);
+	return strtr($format, $replaces);
 }
 
 /**
