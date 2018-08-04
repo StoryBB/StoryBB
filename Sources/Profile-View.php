@@ -91,23 +91,6 @@ function summary($memID)
 		}
 	}
 
-	if (empty($context['member']['birth_date']) || substr($context['member']['birth_date'], 0, 4) < 1002)
-	{
-		$context['member'] += array(
-			'age' => $txt['not_applicable'],
-			'today_is_birthday' => false
-		);
-	}
-	else
-	{
-		list ($birth_year, $birth_month, $birth_day) = sscanf($context['member']['birth_date'], '%d-%d-%d');
-		$datearray = getdate(forum_time());
-		$context['member'] += array(
-			'age' => $birth_year <= 1004 ? $txt['not_applicable'] : $datearray['year'] - $birth_year - (($datearray['mon'] > $birth_month || ($datearray['mon'] == $birth_month && $datearray['mday'] >= $birth_day)) ? 0 : 1),
-			'today_is_birthday' => $datearray['mon'] == $birth_month && $datearray['mday'] == $birth_day
-		);
-	}
-
 	if (allowedTo('moderate_forum'))
 	{
 		// Make sure it's a valid ip address; otherwise, don't bother...
