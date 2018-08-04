@@ -119,13 +119,18 @@
 					<dd><a href="mailto:{{{context.member.email}}}">{{{context.member.email}}}</a></dd>
 				{{/if}}
 
-				<dt>{{{txt.age}}}</dt>
+				{{#if context.member.show_birth}}
+				<dt>{{{txt.dob}}}</dt>
 				<dd>
+					{{{context.member.formatted_birthdate}}}
+					{{#if context.member.age}}
 					{{{context.member.age}}}
+					{{/if}}
 					{{#if context.member.today_is_birthday}}
 						&nbsp; <img src="{{{settings.images_url}}}/cake.png" alt="">
 					{{/if}}
 				</dd>
+				{{/if}}
 			</dl>
 
 			{{! Are there any custom profile fields for standard? }}
