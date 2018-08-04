@@ -1715,7 +1715,8 @@ function forumProfile($memID)
 	setupProfileContext(
 		array(
 			'avatar_choice', 'hr',
-			'birthday', 'signature', 'hr',
+			'birthday_date', 'birthday_visibility', 'hr',
+			'signature', 'hr',
 			'website_title', 'website_url',
 		)
 	);
