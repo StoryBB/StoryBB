@@ -14,22 +14,6 @@ use LightnCandy\LightnCandy;
 use StoryBB\Model\Policy;
 
 /**
- * Simple autoloader.
- */
-function sbb_autoload()
-{
-	spl_autoload_register(function (string $class) {
-		if (strpos($class, 'StoryBB') === 0) {
-			$path = __DIR__ . '/' . str_replace('\\', '/', $class) . '.php';
-			if (file_exists($path))
-			{
-				require_once($path);
-			}
-		}
-	});
-}
-
-/**
  * Update some basic statistics.
  *
  * 'member' statistic updates the latest member, the total member

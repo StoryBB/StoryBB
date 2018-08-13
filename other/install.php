@@ -846,8 +846,9 @@ function ForumSettings()
 	$incontext['ssl_chkbx_checked'] = false;
 
 	// If redirect in effect, force ssl ON
+	require_once(dirname(__FILE__) . '/vendor/autoload.php');
 	require_once(dirname(__FILE__) . '/Sources/Subs.php');
-	sbb_autoload();
+
 	if (https_redirect_active($incontext['detected_url'])) {
 		$incontext['ssl_chkbx_protected'] = true;
 		$incontext['ssl_chkbx_checked'] = true;
@@ -1237,7 +1238,6 @@ function AdminAccount()
 	require_once($sourcedir . '/Subs-Auth.php');
 
 	require_once($sourcedir . '/Subs.php');
-	sbb_autoload();
 
 	// We need this to properly hash the password for Admin
 	$smcFunc['strtolower'] = function($string) {

@@ -65,7 +65,6 @@ require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
 require_once($sourcedir . '/Class-BrowserDetect.php');
 require_once($sourcedir . '/Subs-Auth.php');
-sbb_autoload();
 
 // Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();

@@ -280,7 +280,6 @@ class Behat extends RawMinkContext implements Context
 		require_once($sourcedir . '/Load.php');
 		require_once($sourcedir . '/Security.php');
 		require_once($sourcedir . '/Logging.php');
-		sbb_autoload();
 	}
 
 	/**
