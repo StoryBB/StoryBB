@@ -1528,12 +1528,12 @@ function editIgnoreList($memID)
 		if ($dummy == '')
 			unset($ignoreArray[$k]);
 
+	$saved = false;
+
 	// Removing a member from the ignore list?
 	if (isset($_GET['remove']))
 	{
 		checkSession('get');
-
-		$saved = false;
 
 		// Heh, I'm lazy, do it the easy way...
 		foreach ($ignoreArray as $key => $id_remove)
@@ -1541,7 +1541,6 @@ function editIgnoreList($memID)
 			{
 				unset($ignoreArray[$key]);
 				$saved = true;
-				$_SESSION['prf-save'] = true;
 			}
 
 		// Make the changes.
@@ -1564,47 +1563,23 @@ function editIgnoreList($memID)
 	{
 		checkSession();
 		// Prepare the string for extraction...
-		$_POST['new_ignore'] = strtr($smcFunc['htmlspecialchars']($_POST['new_ignore'], ENT_QUOTES), array('&quot;' => '"'));
-		preg_match_all('~"([^"]+)"~', $_POST['new_ignore'], $matches);
-		$new_entries = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_POST['new_ignore']))));
-
-		foreach ($new_entries as $k => $dummy)
+		$new_ignore = !empty($_POST['new_ignore']) ? (array) $_POST['new_ignore'] : [];
+		foreach ($new_ignore as $k => $v)
 		{
-			$new_entries[$k] = strtr(trim($new_entries[$k]), array('\'' => '&#039;'));
-
-			if (strlen($new_entries[$k]) == 0 || in_array($new_entries[$k], array($user_profile[$memID]['member_name'], $user_profile[$memID]['real_name'])))
-				unset($new_entries[$k]);
+			$v = (int) $v;
+			if ($v <= 0)
+				unset ($new_ignore[$k]);
+			else
+				$new_ignore[$k] = $v;
 		}
+		$new_ignore = array_diff($new_ignore, $ignoreArray);
 
-		$saved = false;
-		if (!empty($new_entries))
+		call_integration_hook('integrate_add_ignore', array($memID, &$new_ignore));
+
+		if (!empty($new_ignore))
 		{
-			// Now find out the id_member for the members in question.
-			$request = $smcFunc['db_query']('', '
-				SELECT id_member
-				FROM {db_prefix}members
-				WHERE member_name IN ({array_string:new_entries}) OR real_name IN ({array_string:new_entries})
-				LIMIT {int:count_new_entries}',
-				array(
-					'new_entries' => $new_entries,
-					'count_new_entries' => count($new_entries),
-				)
-			);
-
-			if ($smcFunc['db_num_rows']($request) != 0)
-			{
-				$saved = true;
-			}
-
-			// Add the new member to the buddies array.
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			{
-				if (in_array($row['id_member'], $ignoreArray))
-					continue;
-				else
-					$ignoreArray[] = (int) $row['id_member'];
-			}
-			$smcFunc['db_free_result']($request);
+			$saved = true;
+			$ignoreArray = array_merge($ignoreArray, $new_ignore);
 
 			// Now update the current users buddy list.
 			$user_profile[$memID]['pm_ignore_list'] = implode(',', $ignoreArray);
@@ -1657,6 +1632,8 @@ function editIgnoreList($memID)
 		loadMemberContext($ignore_member);
 		$context['ignore_list'][$ignore_member] = $memberContext[$ignore_member];
 	}
+
+	Autocomplete::init('member', '#new_ignore');
 
 	$context['sub_template'] = 'profile_ignore';
 }
