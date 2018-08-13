@@ -184,7 +184,7 @@ function sbb_main()
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
-	$no_stat_actions = array('autocomplete', 'dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'requestmembers', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery');
+	$no_stat_actions = array('autocomplete', 'dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery');
 	call_integration_hook('integrate_pre_log_stats', array(&$no_stat_actions));
 	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
 	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $no_stat_actions))
@@ -329,7 +329,6 @@ function sbb_main()
 		'removepoll' => array('Poll.php', 'RemovePoll'),
 		'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
 		'reporttm' => array('ReportToMod.php', 'ReportToModerator'),
-		'requestmembers' => array('Subs-Auth.php', 'RequestMembers'),
 		'restoretopic' => array('RemoveTopic.php', 'RestoreTopic'),
 		'search' => array('Search.php', 'PlushSearch1'),
 		'search2' => array('Search.php', 'PlushSearch2'),
