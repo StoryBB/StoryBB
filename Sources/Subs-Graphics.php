@@ -15,6 +15,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Environment;
+
 /**
  * downloads a file from a url and stores it locally for avatar use by id_member.
  * - supports GIF, JPG, PNG, BMP and WBMP formats.
@@ -263,7 +265,7 @@ function imageMemoryCheck($sizes)
 	// doing the old 'set it and hope' way?
 	if (empty($modSettings['attachment_thumb_memory']))
 	{
-		setMemoryLimit('128M');
+		Environment::setMemoryLimit('128M');
 		return true;
 	}
 
@@ -273,7 +275,7 @@ function imageMemoryCheck($sizes)
 	$needed_memory = ($sizes[0] * $sizes[1] * 5);
 
 	// if we need more, lets try to get it
-	return setMemoryLimit($needed_memory, true);
+	return Environment::setMemoryLimit($needed_memory, true);
 }
 
 /**

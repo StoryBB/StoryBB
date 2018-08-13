@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Environment;
+
 /**
  * The main admin handling function.<br>
  * It initialises all the basic context required for the admin center.<br>
@@ -581,7 +583,7 @@ function AdminSearchInternal()
 	global $context, $txt, $helptxt, $scripturl, $sourcedir;
 
 	// Try to get some more memory.
-	setMemoryLimit('128M');
+	Environment::setMemoryLimit('128M');
 
 	// Load a lot of language files.
 	$language_files = array(
