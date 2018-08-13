@@ -1313,8 +1313,6 @@ function editBuddyIgnoreLists($memID)
 		),
 	);
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
-
 	// Pass on to the actual function.
 	$context['sub_template'] = $subActions[$context['list_area']][0];
 	$call = call_helper($subActions[$context['list_area']][0], true);
