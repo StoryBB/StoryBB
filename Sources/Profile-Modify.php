@@ -14,6 +14,7 @@
 
 use StoryBB\Model\Alert;
 use StoryBB\Helper\Timezone;
+use StoryBB\Helper\Autocomplete;
 
 /**
  * This defines every profile field known to man.
@@ -1341,14 +1342,14 @@ function editBuddies($memID)
 		if ($dummy == '')
 			unset($buddiesArray[$k]);
 
+	$saved = false;
+
 	// Removing a buddy?
 	if (isset($_GET['remove']))
 	{
 		checkSession('get');
 
 		call_integration_hook('integrate_remove_buddy', array($memID));
-
-		$saved = false;
 
 		// Heh, I'm lazy, do it the easy way...
 		foreach ($buddiesArray as $key => $buddy)
@@ -1377,62 +1378,37 @@ function editBuddies($memID)
 	elseif (isset($_POST['new_buddy']))
 	{
 		checkSession();
-
 		// Prepare the string for extraction...
-		$_POST['new_buddy'] = strtr($smcFunc['htmlspecialchars']($_POST['new_buddy'], ENT_QUOTES), array('&quot;' => '"'));
-		preg_match_all('~"([^"]+)"~', $_POST['new_buddy'], $matches);
-		$new_buddies = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_POST['new_buddy']))));
-
-		foreach ($new_buddies as $k => $dummy)
+		$new_buddy = !empty($_POST['new_buddy']) ? (array) $_POST['new_buddy'] : [];
+		foreach ($new_buddy as $k => $v)
 		{
-			$new_buddies[$k] = strtr(trim($new_buddies[$k]), array('\'' => '&#039;'));
-
-			if (strlen($new_buddies[$k]) == 0 || in_array($new_buddies[$k], array($user_profile[$memID]['member_name'], $user_profile[$memID]['real_name'])))
-				unset($new_buddies[$k]);
+			$v = (int) $v;
+			if ($v <= 0)
+				unset ($new_buddy[$k]);
+			else
+				$new_buddy[$k] = $v;
 		}
+		$new_buddy = array_diff($new_buddy, $buddiesArray);
 
-		call_integration_hook('integrate_add_buddies', array($memID, &$new_buddies));
+		call_integration_hook('integrate_add_buddies', array($memID, &$new_buddy));
 
-		$saved = false;
-		if (!empty($new_buddies))
+		if (!empty($new_buddy))
 		{
-			// Now find out the id_member of the buddy.
-			$request = $smcFunc['db_query']('', '
-				SELECT id_member
-				FROM {db_prefix}members
-				WHERE member_name IN ({array_string:new_buddies}) OR real_name IN ({array_string:new_buddies})
-				LIMIT {int:count_new_buddies}',
-				array(
-					'new_buddies' => $new_buddies,
-					'count_new_buddies' => count($new_buddies),
-				)
-			);
-
-			if ($smcFunc['db_num_rows']($request) != 0)
-				$saved = true;
-
-			// Add the new member to the buddies array.
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			{
-				if (in_array($row['id_member'], $buddiesArray))
-					continue;
-				else
-					$buddiesArray[] = (int) $row['id_member'];
-			}
-			$smcFunc['db_free_result']($request);
+			$saved = true;
+			$buddiesArray = array_merge($buddiesArray, $new_buddy);
 
 			// Now update the current users buddy list.
 			$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
 			updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+		}
 
-			if ($saved)
-			{
-				session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
-			}
-			else
-			{
-				session_flash('error', $txt['could_not_add_person']);
-			}
+		if ($saved)
+		{
+			session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
+		}
+		else
+		{
+			session_flash('error', $txt['could_not_add_person']);
 		}
 
 		// Back to the buddy list!
@@ -1528,6 +1504,8 @@ function editBuddies($memID)
 	}
 
 	$context['columns_colspan'] = count($context['custom_pf']) + 3 + ($context['show_buddy_email_address'] ? 1 : 0);
+
+	Autocomplete::init('member', '#new_buddy');
 
 	call_integration_hook('integrate_view_buddies', array($memID));
 }
