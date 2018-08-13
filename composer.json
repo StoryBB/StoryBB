@@ -1,4 +1,7 @@
 {
+    "autoload": {
+        "psr-4": {"StoryBB\\": "Sources/StoryBB/"}
+    },
     "require": {
         "zordius/lightncandy": "dev-master",
         "symfony/polyfill-iconv": "~1.0",

@@ -13,6 +13,7 @@
  */
 
 use StoryBB\Model\Alert;
+use StoryBB\Helper\Timezone;
 
 /**
  * This defines every profile field known to man.
@@ -529,12 +530,12 @@ function loadProfileFields($force_reload = false)
 		),
 		'timezone' => array(
 			'type' => 'select',
-			'options' => sbb_list_timezones(),
+			'options' => Timezone::list_timezones(),
 			'permission' => 'profile_extra',
 			'label' => $txt['timezone'],
 			'input_validate' => function($value)
 			{
-				$tz = sbb_list_timezones();
+				$tz = Timezone::list_timezones();
 				if (!isset($tz[$value]))
 					return 'bad_timezone';
 

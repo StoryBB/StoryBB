@@ -329,10 +329,6 @@ function loadUserSettings()
 		// First try 2.1 json-format cookie
 		$cookie_data = sbb_json_decode($_COOKIE[$cookiename], true, false);
 
-		// Legacy format (for recent 2.0 --> 2.1 upgrades)
-		if (empty($cookie_data))
-			$cookie_data = safe_unserialize($_COOKIE[$cookiename]);
-
 		// Malformed or was reset
 		if (empty($cookie_data))
 			$cookie_data = array(0, '', 0, '', '');
@@ -353,9 +349,6 @@ function loadUserSettings()
 	{
 		// @todo Perhaps we can do some more checking on this, such as on the first octet of the IP?
 		$cookie_data = sbb_json_decode($_SESSION['login_' . $cookiename], true);
-
-		if (empty($cookie_data))
-			$cookie_data = safe_unserialize($_SESSION['login_' . $cookiename]);
 
 		if (empty($cookie_data))
 			$cookie_data = array(0, '', 0);
@@ -437,9 +430,6 @@ function loadUserSettings()
 				if (!empty($_COOKIE[$tfacookie]))
 				{
 					$tfa_data = sbb_json_decode($_COOKIE[$tfacookie]);
-
-					if (is_null($tfa_data))
-						$tfa_data = safe_unserialize($_COOKIE[$tfacookie]);
 
 					list ($tfamember, $tfasecret) = $tfa_data;
 
@@ -594,9 +584,6 @@ function loadUserSettings()
 		if (isset($_COOKIE[$cookiename . '_tfa']) && empty($context['tfa_member']))
 		{
 			$tfa_data = sbb_json_decode($_COOKIE[$cookiename . '_tfa'], true);
-
-			if (is_null($tfa_data))
-				$tfa_data = safe_unserialize($_COOKIE[$cookiename . '_tfa']);
 
 			list ($id, $user, $exp, $domain, $path, $preserve) = $tfa_data;
 

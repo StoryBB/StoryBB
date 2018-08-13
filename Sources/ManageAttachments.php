@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Model\Attachment;
+use StoryBB\Helper\Environment;
 
 /**
  * The main 'Attachments and Avatars' management function.
@@ -117,8 +118,8 @@ function ManageAttachmentSettings($return_config = false)
 	// See if we can find if the server is set up to support the attachment limits
 	$post_max_size = ini_get('post_max_size');
 	$upload_max_filesize = ini_get('upload_max_filesize');
-	$testPM = !empty($post_max_size) ? (memoryReturnBytes($post_max_size) >= (isset($modSettings['attachmentPostLimit']) ? $modSettings['attachmentPostLimit'] * 1024 : 0)) : true;
-	$testUM = !empty($upload_max_filesize) ? (memoryReturnBytes($upload_max_filesize) >= (isset($modSettings['attachmentSizeLimit']) ? $modSettings['attachmentSizeLimit'] * 1024 : 0)) : true;
+	$testPM = !empty($post_max_size) ? (Environment::memoryReturnBytes($post_max_size) >= (isset($modSettings['attachmentPostLimit']) ? $modSettings['attachmentPostLimit'] * 1024 : 0)) : true;
+	$testUM = !empty($upload_max_filesize) ? (Environment::memoryReturnBytes($upload_max_filesize) >= (isset($modSettings['attachmentSizeLimit']) ? $modSettings['attachmentSizeLimit'] * 1024 : 0)) : true;
 
 	$config_vars = array(
 			// Are attachments enabled?

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit4e8efefe5603bb645d50291d5899e030
+class ComposerStaticInite80983aba8e099f5453bdfe087012f44
 {
     public static $files = array (
         'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
@@ -16,6 +16,7 @@ class ComposerStaticInit4e8efefe5603bb645d50291d5899e030
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Iconv\\' => 23,
+            'StoryBB\\' => 8,
         ),
         'L' => 
         array (
@@ -32,6 +33,10 @@ class ComposerStaticInit4e8efefe5603bb645d50291d5899e030
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-iconv',
         ),
+        'StoryBB\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Sources/StoryBB',
+        ),
         'LightnCandy\\' => 
         array (
             0 => __DIR__ . '/..' . '/zordius/lightncandy/src',
@@ -41,8 +46,8 @@ class ComposerStaticInit4e8efefe5603bb645d50291d5899e030
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit4e8efefe5603bb645d50291d5899e030::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit4e8efefe5603bb645d50291d5899e030::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInite80983aba8e099f5453bdfe087012f44::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInite80983aba8e099f5453bdfe087012f44::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }

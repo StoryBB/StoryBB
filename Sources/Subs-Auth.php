@@ -45,20 +45,6 @@ function setLoginCookie($cookie_length, $id, $password = '')
 		if (preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+,"3":"[^"]+","4":"[^"]+"~', $_COOKIE[$cookiename]) === 1)
 			list(,,, $old_domain, $old_path) = sbb_json_decode($_COOKIE[$cookiename], true);
 
-		// Legacy format (for recent 2.0 --> 2.1 upgrades)
-		elseif (preg_match('~^a:[34]:\{i:0;i:\d+;i:1;s:(0|128):"([a-fA-F0-9]{128})?";i:2;[id]:\d+;(i:3;i:\d;)?~', $_COOKIE[$cookiename]) === 1)
-		{
-			list(,,, $old_state) = safe_unserialize($_COOKIE[$cookiename]);
-
-			$cookie_state = (empty($modSettings['localCookies']) ? 0 : 1) | (empty($modSettings['globalCookies']) ? 0 : 2);
-
-			// Maybe we need to temporarily pretend to be using local cookies
-			if ($cookie_state == 0 && $old_state == 1)
-				list($old_domain, $old_path) = url_parts(true, false);
-			else
-				list($old_domain, $old_path) = url_parts($old_state & 1 > 0, $old_state & 2 > 0);
-		}
-
 		// Out with the old, in with the new!
 		if (isset($old_domain) && $old_domain != $cookie_url[0] || isset($old_path) && $old_path != $cookie_url[1])
 			sbb_setcookie($cookiename, json_encode(array(0, '', 0, $old_domain, $old_path), JSON_FORCE_OBJECT), 1, $old_path, $old_domain);
@@ -455,49 +441,6 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 
 	// Return all the results.
 	return $results;
-}
-
-/**
- * Outputs each member name on its own line.
- * - used by javascript to find members matching the request.
- */
-function RequestMembers()
-{
-	global $user_info, $txt, $smcFunc;
-
-	checkSession('get');
-
-	$_REQUEST['search'] = $smcFunc['htmlspecialchars']($_REQUEST['search']) . '*';
-	$_REQUEST['search'] = trim($smcFunc['strtolower']($_REQUEST['search']));
-	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));
-
-	header('Content-Type: text/plain; charset=UTF-8');
-
-	$request = $smcFunc['db_query']('', '
-		SELECT real_name
-		FROM {db_prefix}members
-		WHERE {raw:real_name} LIKE {string:search}' . (isset($_REQUEST['buddies']) ? '
-			AND id_member IN ({array_int:buddy_list})' : '') . '
-			AND is_activated IN (1, 11)
-		LIMIT ' . ($smcFunc['strlen']($_REQUEST['search']) <= 2 ? '100' : '800'),
-		array(
-			'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
-			'buddy_list' => $user_info['buddies'],
-			'search' => $_REQUEST['search'],
-		)
-	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-	{
-		$row['real_name'] = strtr($row['real_name'], array('&amp;' => '&#038;', '&lt;' => '&#060;', '&gt;' => '&#062;', '&quot;' => '&#034;'));
-
-		if (preg_match('~&#\d+;~', $row['real_name']) != 0)
-			$row['real_name'] = preg_replace_callback('~&#(\d+);~', 'fixchar__callback', $row['real_name']);
-
-		echo $row['real_name'], "\n";
-	}
-	$smcFunc['db_free_result']($request);
-
-	obExit(false);
 }
 
 /**
