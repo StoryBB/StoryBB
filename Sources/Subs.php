@@ -4323,9 +4323,6 @@ function call_helper($string, $return = false)
 	// Stay vitaminized my friends...
 	$string = $smcFunc['htmlspecialchars']($smcFunc['htmltrim']($string));
 
-	// Is there a file to load?
-	$string = load_file($string);
-
 	// Loaded file failed
 	if (empty($string))
 		return false;
@@ -4395,59 +4392,6 @@ function call_helper($string, $return = false)
 				$func();
 		}
 	}
-}
-
-/**
- * Receives a string and tries to figure it out if it contains info to load a file.
- * Checks for a | (pipe) symbol and tries to load a file with the info given.
- * The string should be format as follows File.php|. You can use the following wildcards: $boarddir, $sourcedir and if available at the moment of execution, $themedir.
- *
- * @param string $string The string containing a valid format.
- * @return string|boolean The given string with the pipe and file info removed. Boolean false if the file couldn't be loaded.
- */
-function load_file($string)
-{
-	global $sourcedir, $txt, $boarddir, $settings;
-
-	if (empty($string))
-		return false;
-
-	if (strpos($string, '|') !== false)
-	{
-		list ($file, $string) = explode('|', $string);
-
-		// Match the wildcards to their regular vars.
-		if (empty($settings['theme_dir']))
-			$absPath = strtr(trim($file), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir));
-
-		else
-			$absPath = strtr(trim($file), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir']));
-
-		// Load the file if it can be loaded.
-		if (file_exists($absPath))
-			require_once($absPath);
-
-		// No? try a fallback to $sourcedir
-		else
-		{
-			$absPath = $sourcedir .'/'. $file;
-
-			if (file_exists($absPath))
-				require_once($absPath);
-
-			// Sorry, can't do much for you at this point.
-			else
-			{
-				loadLanguage('Errors');
-				log_error(sprintf($txt['hook_fail_loading_file'], $absPath), 'general');
-
-				// File couldn't be loaded.
-				return false;
-			}
-		}
-	}
-
-	return $string;
 }
 
 /**
