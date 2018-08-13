@@ -1392,6 +1392,20 @@ VAREND
                 'expected' => '--=B--=D'
             ),
 
+            Array(
+                'id' => 281,
+                'template' => '{{echo (echo "foo bar (moo).")}}',
+                'data' => null,
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARS,
+                    'helpers' => Array(
+                        'echo' => function($arg1) {
+                            return "ECHO: $arg1";
+                        }
+                    )
+                ),
+                'expected' => 'ECHO: ECHO: foo bar (moo).'
+            ),
 
             Array(
                 'template' => '{{testNull null undefined 1}}',
