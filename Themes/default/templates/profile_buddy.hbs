@@ -57,7 +57,7 @@
 					<label for="new_buddy"><strong>{{{txt.who_member}}}:</strong></label>
 				</dt>
 				<dd>
-					<input type="text" name="new_buddy" id="new_buddy" size="30">
+					<select name="new_buddy" id="new_buddy"><option></option></select>
 					<input type="submit" value="{{{txt.buddy_add_button}}}" class="button_submit floatnone">
 				</dd>
 			</dl>
@@ -65,15 +65,3 @@
 		{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
 		{{session_form}}
 	</form>
-	<script>
-		var oAddBuddySuggest = new smc_AutoSuggest({
-			sSelf: 'oAddBuddySuggest',
-			sSessionId: sbb_session_id,
-			sSessionVar: sbb_session_var,
-			sSuggestId: 'new_buddy',
-			sControlId: 'new_buddy',
-			sSearchType: 'member',
-			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-			bItemList: false
-		});
-	</script>
