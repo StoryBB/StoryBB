@@ -20,7 +20,7 @@
 						<span class="smalltext">{{{txt.one_username}}}</span>
 					</dt>
 					<dd>
-						<input type="text" name="name" id="name_control" value="{{{context.sub.username}}}" size="30">
+						<select name="new_subscriber" id="new_subscriber"><option></option></select>
 					</dd>
 					{{/if}}
 
@@ -98,18 +98,6 @@
 			</div>
 			{{session_form}}
 		</form>
-		<script>
-		var oAddMemberSuggest = new smc_AutoSuggest({
-			sSelf: 'oAddMemberSuggest',
-			sSessionId: sbb_session_id,
-			sSessionVar: sbb_session_var,
-			sSuggestId: 'name_subscriber',
-			sControlId: 'name_control',
-			sSearchType: 'member',
-			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-			bItemList: false
-			});
-		</script>
 
 		{{#if context.pending_payments}}
 		<div class="cat_bar">
