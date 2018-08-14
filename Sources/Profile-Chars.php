@@ -2076,9 +2076,9 @@ function char_merge_account($memID)
 	if ($user_profile[$memID]['id_group'] == 1 || in_array('1', explode(',', $user_profile[$memID]['additional_groups'])))
 		fatal_lang_error('cannot_merge_admin', false);
 
-	loadJavascriptFile('suggest.js', array('default_theme' => true, 'defer' => false), 'sbb_suggest');
 	$context['page_title'] = $txt['merge_char_account'];
 	$context['sub_template'] = 'profile_merge_account';
+	Autocomplete::init('member', '#merge_acct');
 
 	if (isset($_POST['merge_acct_id']))
 	{
@@ -2097,13 +2097,12 @@ function char_merge_account($memID)
 
 		// We picked an account to merge, let's see if we can find and if we can,
 		// get its details so that we can check for sure it's what the user wants.
-		$name = $smcFunc['htmlspecialchars']($_POST['merge_acct'], ENT_QUOTES);
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member
 			FROM {db_prefix}members
-			WHERE real_name = {string:name}',
+			WHERE id_member = {int:id_member}',
 			array(
-				'name' => $name,
+				'id_member' => (int) $_POST['merge_acct'],
 			)
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)

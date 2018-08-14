@@ -482,6 +482,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'merge_acct' => array(
 					'label' => $txt['merge_char_account'],
+					'file' => 'Profile-Chars.php',
 					'function' => 'char_merge_account',
 					'permission' => array(
 						'own' => [],
