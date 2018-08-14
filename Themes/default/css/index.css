@@ -3641,7 +3641,7 @@ p.information img {
 }
 .atwho-view ul li {
 	display: block;
-	padding: 5px 10px;
+	padding: 5px;
 	border-bottom: 1px solid #DDD;
 	cursor: pointer;
 }
@@ -3649,6 +3649,20 @@ p.information img {
 	font-size: smaller;
 	color: #777;
 	font-weight: normal;
+}
+.atwho-view li span {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+}
+.atwho-view li span.avatar {
+	width: 24px;
+	height: 24px;
+	margin-right: 5px;
+}
+.atwho-view li span img {
+	max-width: 24px;
+	max-height: 24px;
 }
 /* On/Off Icons (User) */
 .on, .off {

@@ -3,6 +3,7 @@ var fails = [];
 var atwhoConfig = {
 	at: '@',
 	data: [],
+	displayTpl: '<li><span class="avatar"><img src="${avatar}" alt=""></span><span>${name}</span></li>',
 	show_the_at: true,
 	limit: 10,
 	callbacks: {
@@ -34,21 +35,21 @@ var atwhoConfig = {
 					return;
 
 			$.ajax({
-				url: sbb_scripturl + '?action=suggest;' + sbb_session_var + '=' + sbb_session_id + ';xml',
+				url: sbb_scripturl + '?action=autocomplete;' + sbb_session_var + '=' + sbb_session_id,
 				method: 'GET',
 				data: {
-					search: query,
-					suggest_type: 'rawcharacter'
+					term: query,
+					type: 'rawcharacter'
 				},
 				success: function (data) {
-					var members = $(data).find('storybb > items > item');
-					if (members.length == 0)
+					if (data.results.length == 0)
 						fails[fails.length] = query;
 
 					var callbackArray = [];
-					$.each(members, function (index, item) {
+					$.each(data.results, function (index, item) {
 						callbackArray[callbackArray.length] = {
-							name: $(item).text()
+							name: item.char_name,
+							avatar: item.avatar
 						};
 					});
 
