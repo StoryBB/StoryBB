@@ -12,20 +12,10 @@
 				<dl>
 					<dt>{{{txt.move_char_to}}}</dt>
 					<dd>
-						<input type="text" name="move_acct" id="move_acct">
+						<select name="move_acct" id="move_acct"><option></option></select>
 					</dd>
 				</dl>
 				{{session_form}}
 				<input type="submit" value="{{{txt.move_char_action}}}" class="button_submit">
 			</div>
 		</form>
-		<script>
-			var oMoveMemberSuggest = new smc_AutoSuggest({
-				sSelf: 'oMoveMemberSuggest',
-				sSessionId: sbb_session_id,
-				sSessionVar: sbb_session_var,
-				sControlId: 'move_acct',
-				sSearchType: 'member',
-				bItemList: false
-			});
-		</script>

@@ -9,6 +9,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
+
 /**
  * Setup to fetch the HTML for the characters popup (excluding all other forum chrome)
  *
@@ -2300,9 +2302,9 @@ function char_move_account()
 	if ($context['character']['is_main'])
 		fatal_lang_error('cannot_move_main', false);
 
-	loadJavascriptFile('suggest.js', ['default_theme' => true, 'defer' => false], 'sbb_suggest');
 	$context['page_title'] = $txt['move_char_account'];
 	$context['sub_template'] = 'profile_character_move_account';
+	Autocomplete::init('member', '#move_acct');
 
 	if (isset($_POST['move_acct_id']))
 	{
@@ -2321,13 +2323,12 @@ function char_move_account()
 
 		// We picked an account to move to, let's see if we can find and if we can,
 		// get its details so that we can check for sure it's what the user wants.
-		$name = $smcFunc['htmlspecialchars']($_POST['move_acct'], ENT_QUOTES);
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member
 			FROM {db_prefix}members
-			WHERE real_name = {string:name}',
+			WHERE id_member = {int:id_member}',
 			[
-				'name' => $name,
+				'id_member' => (int) $_POST['move_acct'],
 			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)

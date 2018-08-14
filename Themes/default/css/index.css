@@ -2237,7 +2237,7 @@ dl {
 	float: right;
 	width: 55%;
 	margin: 0 0 10px 2px;
-	overflow: auto;
+	overflow: visible;
 }
 .centericon {
 	vertical-align: middle;
