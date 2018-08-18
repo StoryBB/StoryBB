@@ -1309,16 +1309,8 @@ function setupThemeContext($forceload = false)
 
 		$context['user']['avatar'] = array();
 
-		// Check for gravatar first since we might be forcing them...
-		if (($modSettings['gravatarEnabled'] && substr($user_info['avatar']['url'], 0, 11) == 'gravatar://') || !empty($modSettings['gravatarOverride']))
-		{
-			if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($user_info['avatar']['url'], 'gravatar://') && strlen($user_info['avatar']['url']) > 11)
-				$context['user']['avatar']['href'] = get_gravatar_url($smcFunc['substr']($user_info['avatar']['url'], 11));
-			else
-				$context['user']['avatar']['href'] = get_gravatar_url($user_info['email']);
-		}
-		// Uploaded?
-		elseif ($user_info['avatar']['url'] == '' && !empty($user_info['avatar']['id_attach']))
+		// Uploaded avatar?
+		if ($user_info['avatar']['url'] == '' && !empty($user_info['avatar']['id_attach']))
 			$context['user']['avatar']['href'] = $user_info['avatar']['custom_dir'] ? $modSettings['custom_avatar_url'] . '/' . $user_info['avatar']['filename'] : $scripturl . '?action=dlattach;attach=' . $user_info['avatar']['id_attach'] . ';type=avatar';
 		// Full URL?
 		elseif (strpos($user_info['avatar']['url'], 'http://') === 0 || strpos($user_info['avatar']['url'], 'https://') === 0)
@@ -2856,45 +2848,6 @@ function entity_fix__callback($matches)
 		return '';
 	else
 		return '&#' . $num . ';';
-}
-
-/**
- * Return a Gravatar URL based on
- * - the supplied email address,
- * - the global maximum rating,
- * - the global default fallback,
- * - maximum sizes as set in the admin panel.
- *
- * It is SSL aware, and caches most of the parameters.
- *
- * @param string $email_address The user's email address
- * @return string The gravatar URL
- */
-function get_gravatar_url($email_address)
-{
-	global $modSettings, $smcFunc;
-	static $url_params = null;
-
-	if ($url_params === null)
-	{
-		$ratings = array('G', 'PG', 'R', 'X');
-		$defaults = array('mm', 'identicon', 'monsterid', 'wavatar', 'retro', 'blank');
-		$url_params = array();
-		if (!empty($modSettings['gravatarMaxRating']) && in_array($modSettings['gravatarMaxRating'], $ratings))
-			$url_params[] = 'rating=' . $modSettings['gravatarMaxRating'];
-		if (!empty($modSettings['gravatarDefault']) && in_array($modSettings['gravatarDefault'], $defaults))
-			$url_params[] = 'default=' . $modSettings['gravatarDefault'];
-		if (!empty($modSettings['avatar_max_width']))
-			$size_string = (int) $modSettings['avatar_max_width'];
-		if (!empty($modSettings['avatar_max_height']) && !empty($size_string))
-			if ((int) $modSettings['avatar_max_height'] < $size_string)
-				$size_string = $modSettings['avatar_max_height'];
-
-		if (!empty($size_string))
-			$url_params[] = 's=' . $size_string;
-	}
-
-	return 'https://secure.gravatar.com/avatar/' . md5($smcFunc['strtolower']($email_address)) . '?' . implode('&', $url_params);
 }
 
 /**
