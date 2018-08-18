@@ -1374,26 +1374,17 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				$user_profile[$row['id_member']]['id_attach'] = $row['id_attach'];
 			}
 			$image = '';
-			if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($row['avatar'], 'gravatar://')))
+
+			if (!empty($row['avatar']))
 			{
-				if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($row['avatar'], 'gravatar://') && strlen($row['avatar']) > 11)
-					$image = get_gravatar_url($smcFunc['substr']($row['avatar'], 11));
-				else
-					$image = get_gravatar_url($user_profile[$row['id_member']]['email_address']);
+				$image = (stristr($row['avatar'], 'http://') || stristr($row['avatar'], 'https://')) ? $row['avatar'] : '';
+			}
+			elseif (!empty($row['filename']))
+			{
+				$image = $modSettings['custom_avatar_url'] . '/' . $row['filename'];
 			}
 			else
-			{
-				if (!empty($row['avatar']))
-				{
-					$image = (stristr($row['avatar'], 'http://') || stristr($row['avatar'], 'https://')) ? $row['avatar'] : '';
-				}
-				elseif (!empty($row['filename']))
-				{
-					$image = $modSettings['custom_avatar_url'] . '/' . $row['filename'];
-				}
-				else
-					$image = $settings['images_url'] . '/default.png';
-			}
+				$image = $settings['images_url'] . '/default.png';
 
 			$user_profile[$row['id_member']]['characters'][$row['id_character']]['avatar'] = $image;
 		}
@@ -1637,26 +1628,18 @@ function loadMemberContext($user, $display_custom_fields = false)
 				break;
 			}
 		}
-		if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($profile['avatar'], 'gravatar://')))
+
+		// So it's stored in the member table?
+		if (!empty($profile['avatar']))
 		{
-			if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($profile['avatar'], 'gravatar://') && strlen($profile['avatar']) > 11)
-				$image = get_gravatar_url($smcFunc['substr']($profile['avatar'], 11));
-			else
-				$image = get_gravatar_url($profile['email_address']);
+			$image = (stristr($profile['avatar'], 'http://') || stristr($profile['avatar'], 'https://')) ? $profile['avatar'] : '';
 		}
+		elseif (!empty($profile['filename']))
+			$image = $modSettings['custom_avatar_url'] . '/' . $profile['filename'];
+		// Right... no avatar...use the default one
 		else
-		{
-			// So it's stored in the member table?
-			if (!empty($profile['avatar']))
-			{
-				$image = (stristr($profile['avatar'], 'http://') || stristr($profile['avatar'], 'https://')) ? $profile['avatar'] : '';
-			}
-			elseif (!empty($profile['filename']))
-				$image = $modSettings['custom_avatar_url'] . '/' . $profile['filename'];
-			// Right... no avatar...use the default one
-			else
-				$image = $settings['images_url'] . '/default.png';
-		}
+			$image = $settings['images_url'] . '/default.png';
+
 		if (!empty($image))
 			$memberContext[$user]['avatar'] = array(
 				'name' => $profile['avatar'],
@@ -3253,7 +3236,6 @@ function clean_cache($type = '')
  *
  * Makes assumptions based on the data provided, the following keys are required:
  * - avatar The raw "avatar" column in members table
- * - email The user's email. Used to get the gravatar info
  * - filename The attachment filename
  *
  * @param array $data An array of raw info
@@ -3270,57 +3252,29 @@ function set_avatar_data($data = array())
 	// Set a nice default var.
 	$image = '';
 
-	// Gravatar has been set as mandatory!
-	if (!empty($modSettings['gravatarOverride']))
+	// So it's stored in the member table?
+	if (!empty($data['avatar']))
 	{
-		if (!empty($modSettings['gravatarAllowExtraEmail']) && !empty($data['avatar']) && stristr($data['avatar'], 'gravatar://'))
-			$image = get_gravatar_url($smcFunc['substr']($data['avatar'], 11));
+		// Using ssl?
+		if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($data['avatar'], 'http://') !== false)
+			$image = strtr($boardurl, array('http://' => 'https://')) . '/proxy.php?request=' . urlencode($data['avatar']) . '&hash=' . md5($data['avatar'] . $image_proxy_secret);
 
-		elseif (!empty($data['email']))
-			$image = get_gravatar_url($data['email']);
-	}
-
-	// Look if the user has a gravatar field or has set an external url as avatar.
-	else
-	{
-		// So it's stored in the member table?
-		if (!empty($data['avatar']))
-		{
-			// Gravatar.
-			if (stristr($data['avatar'], 'gravatar://'))
-			{
-				if ($data['avatar'] == 'gravatar://')
-					$image = get_gravatar_url($data['email']);
-
-				elseif (!empty($modSettings['gravatarAllowExtraEmail']))
-					$image = get_gravatar_url($smcFunc['substr']($data['avatar'], 11));
-			}
-
-			// External url.
-			else
-			{
-				// Using ssl?
-				if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($data['avatar'], 'http://') !== false)
-					$image = strtr($boardurl, array('http://' => 'https://')) . '/proxy.php?request=' . urlencode($data['avatar']) . '&hash=' . md5($data['avatar'] . $image_proxy_secret);
-
-				// Just a plain external url.
-				else
-					$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : '';
-			}
-		}
-
-		// Perhaps this user has an attachment as avatar...
-		elseif (!empty($data['filename']))
-			$image = $modSettings['custom_avatar_url'] . '/' . $data['filename'];
-
-		// Right... no avatar... use our default image.
+		// Just a plain external url.
 		else
-			$image = $settings['images_url'] . '/default.png';
+			$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : '';
 	}
+
+	// Perhaps this user has an attachment as avatar...
+	elseif (!empty($data['filename']))
+		$image = $modSettings['custom_avatar_url'] . '/' . $data['filename'];
+
+	// Right... no avatar... use our default image.
+	else
+		$image = $settings['images_url'] . '/default.png';
 
 	call_integration_hook('integrate_set_avatar_data', array(&$image, &$data));
 
-	// At this point in time $image has to be filled unless you chose to force gravatar and the user doesn't have the needed data to retrieve it... thus a check for !empty() is still needed.
+	// At this point in time $image has to be filled... thus a check for !empty() is still needed.
 	if (!empty($image))
 		return array(
 			'name' => !empty($data['avatar']) ? $data['avatar'] : '',

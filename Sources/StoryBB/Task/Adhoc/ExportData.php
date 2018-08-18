@@ -586,23 +586,13 @@ class ExportData extends \StoryBB\Task\Adhoc
 	{
 		global $modSettings;
 
-		if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($character['avatar'], 'gravatar://')))
+		if (!empty($character['avatar']) && (stristr($character['avatar'], 'http://') || stristr($character['avatar'], 'https://')))
 		{
-			if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($character['avatar'], 'gravatar://') && strlen($character['avatar']) > 11)
-				return 'Avatar is a Gravatar, using email ' . substr($character['avatar'], 11);
-			else
-				return 'Avatar is a Gravatar using the main account email';
+			return 'Avatar is from a link: ' . $character['avatar'];
 		}
-		else
-		{
-			if (!empty($character['avatar']) && (stristr($character['avatar'], 'http://') || stristr($character['avatar'], 'https://')))
-			{
-				return 'Avatar is from a link: ' . $character['avatar'];
-			}
-			elseif (!empty($character['filename'])) {
-				$zip->addFile($modSettings['custom_avatar_dir'] . '/' . $character['filename'], 'account_and_characters/' . $character['export_folder'] . '/' . $character['filename']);
-				return 'Avatar was uploaded to the site, included here as ' . $character['filename'];
-			}
+		elseif (!empty($character['filename'])) {
+			$zip->addFile($modSettings['custom_avatar_dir'] . '/' . $character['filename'], 'account_and_characters/' . $character['export_folder'] . '/' . $character['filename']);
+			return 'Avatar was uploaded to the site, included here as ' . $character['filename'];
 		}
 
 		return '';

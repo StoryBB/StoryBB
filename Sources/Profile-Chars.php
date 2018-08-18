@@ -372,20 +372,11 @@ function char_edit()
 	$context['character']['avatar_settings'] = array(
 		'custom' => stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://') ? $context['character']['avatar'] : 'http://',
 		'selection' => $context['character']['avatar'] == '' || (stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://')) ? '' : $context['character']['avatar'],
-		'allow_upload' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_external' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_gravatar' => !empty($modSettings['gravatarEnabled']) || !empty($modSettings['gravatarOverride']),
+		'allow_upload' => allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
+		'allow_external' => allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
 	);
 
-	if ($context['character']['avatar_settings']['allow_gravatar'] && (stristr($context['character']['avatar_original'], 'gravatar://') || !empty($modSettings['gravatarOverride'])))
-	{
-		$context['character']['avatar_settings'] += array(
-			'choice' => 'gravatar',
-			'external' => $context['character']['avatar_original'] == 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']) || !empty($modSettings['gravatarOverride']) ? $context['member']['email'] : substr($context['character']['avatar_original'], 11)
-		);
-		$context['character']['avatar'] = get_gravatar_url($context['character']['avatar_settings']['external']);
-	}
-	elseif ((!empty($context['character']['avatar']) && $context['character']['avatar'] != $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
+	if ((!empty($context['character']['avatar']) && $context['character']['avatar'] != $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
 	{
 		$context['character']['avatar_settings'] += array(
 			'choice' => 'upload',

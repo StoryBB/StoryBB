@@ -64,10 +64,8 @@
 				<dl>
 					<dt>
 						<strong id="personal_picture"><label for="avatar_upload_box">{{{txt.personal_picture}}}</label></strong>
-						{{#unless (eq modSettings.gravatarOverride '1')}}
-							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_none" value="none"{{#if (eq context.character.avatar_settings.choice 'none')}} checked{{/if}} /><label for="avatar_choice_none"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.no_avatar}}}</label>
-							<br />
-						{{/unless}}
+						<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_none" value="none"{{#if (eq context.character.avatar_settings.choice 'none')}} checked{{/if}} /><label for="avatar_choice_none"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.no_avatar}}}</label>
+						<br />
 
 						{{#if context.character.avatar_settings.allow_external}}
 							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"{{#if (eq context.character.avatar_settings.choice 'external')}} checked{{/if}} /><label for="avatar_choice_external"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.my_own_pic}}}</label>
@@ -77,10 +75,6 @@
 						{{#if context.character.avatar_settings.allow_upload}}
 							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"{{#if (eq context.character.avatar_settings.choice 'upload')}} checked{{/if}} /><label for="avatar_choice_upload"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.avatar_will_upload}}}</label>
 							<br />
-						{{/if}}
-
-						{{#if context.character.avatar_settings.allow_gravatar}}
-							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"{{#if (eq context.character.avatar_settings.choice 'gravatar')}} checked{{/if}} /><label for="avatar_choice_gravatar"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.use_gravatar}}}</label>
 						{{/if}}
 					</dt>
 					<dd>
@@ -114,20 +108,6 @@
 							</div>
 						{{/if}}
 
-						{{! if the user is able to use Gravatar avatars show then the image preview }}
-						{{#if context.character.avatar_settings.allow_gravatar}}
-							<div id="avatar_gravatar">
-								<img src="{{{context.character.avatar}}}" alt="">
-
-								{{#if (eq_coerce modSettings.gravatarAllowExtraEmail 1)}}
-									<div class="smalltext">{{{txt.gravatar_alternateEmail}}}</div>
-									<input type="text" name="gravatarEmail" id="gravatarEmail" size="45" value="{{#if (and (not context.character.avatar_settings.is_url) (neq context.character.avatar_settings.external context.member.email_address))}}{{{context.character.avatar}}}{{/if}}">
-								{{else}}
-									<div class="smalltext">{{{txt.gravatar_noAlternateEmail}}}</div>
-								{{/if}}
-							</div>
-						{{/if}}
-
 						<script>
 							function swap_avatar(type)
 							{
@@ -136,23 +116,14 @@
 									case "avatar_choice_external":
 										{{#if context.character.avatar_settings.allow_external}}document.getElementById("avatar_external").style.display = "";{{/if}}
 										{{#if context.character.avatar_settings.allow_upload}}document.getElementById("avatar_upload").style.display = "none";{{/if}}
-										{{#if context.character.avatar_settings.allow_gravatar}}document.getElementById("avatar_gravatar").style.display = "none";{{/if}}
 										break;
 									case "avatar_choice_upload":
 										{{#if context.character.avatar_settings.allow_external}}document.getElementById("avatar_external").style.display = "none";{{/if}}
 										{{#if context.character.avatar_settings.allow_upload}}document.getElementById("avatar_upload").style.display = "";{{/if}}
-										{{#if context.character.avatar_settings.allow_gravatar}}document.getElementById("avatar_gravatar").style.display = "none";{{/if}}
 										break;
 									case "avatar_choice_none":
 										{{#if context.character.avatar_settings.allow_external}}document.getElementById("avatar_external").style.display = "none";{{/if}}
 										{{#if context.character.avatar_settings.allow_upload}}document.getElementById("avatar_upload").style.display = "none";{{/if}}
-										{{#if context.character.avatar_settings.allow_gravatar}}document.getElementById("avatar_gravatar").style.display = "none";{{/if}}
-										break;
-									case "avatar_choice_gravatar":
-										{{#if context.character.avatar_settings.allow_external}}document.getElementById("avatar_external").style.display = "none";{{/if}}
-										{{#if context.character.avatar_settings.allow_upload}}document.getElementById("avatar_upload").style.display = "none";{{/if}}
-										{{#if context.character.avatar_settings.allow_gravatar}}document.getElementById("avatar_gravatar").style.display = "";{{/if}}
-										{{#if (eq context.character.avatar_settings.external context.member.email)}}document.getElementById("gravatarEmail").value = "";{{/if}}
 										break;
 								}
 							}
