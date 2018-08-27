@@ -1046,7 +1046,7 @@ CREATE TABLE {$db_prefix}scheduled_tasks (
   time_unit VARCHAR(1) NOT NULL DEFAULT 'h',
   disabled TINYINT NOT NULL DEFAULT '0',
   task VARCHAR(24) NOT NULL DEFAULT '',
-  callable VARCHAR(60) NOT NULL DEFAULT '',
+  class VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (id_task),
   INDEX idx_next_time (next_time),
   INDEX idx_disabled (disabled),
@@ -1764,7 +1764,7 @@ VALUES
 #
 
 INSERT INTO {$db_prefix}scheduled_tasks
-  (id_task, next_time, time_offset, time_regularity, time_unit, disabled, task, callable)
+  (id_task, next_time, time_offset, time_regularity, time_unit, disabled, task, class)
 VALUES
   (1, 0, 0, 2, 'h', 0, 'approval_notification', ''),
   (3, 0, 60, 1, 'd', 0, 'daily_maintenance', ''),
@@ -1778,7 +1778,7 @@ VALUES
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', ''),
   (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', ''),
   (14, 0, 300, 1, 'd', 0, 'clean_exports', ''),
-  (15, 0, 360, 1, 'd', 0, 'scrub_logs', '');
+  (15, 0, 360, 1, 'd', 0, 'scrub_logs', 'StoryBB\\Task\\Schedulable\\ScrubLogs');
 
 # --------------------------------------------------------
 

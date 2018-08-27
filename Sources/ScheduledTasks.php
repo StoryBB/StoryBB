@@ -28,7 +28,7 @@ function AutoTask()
 
 		// Select the next task to do.
 		$request = $smcFunc['db_query']('', '
-			SELECT id_task, task, next_time, time_offset, time_regularity, time_unit, callable
+			SELECT id_task, task, next_time, time_offset, time_regularity, time_unit, class
 			FROM {db_prefix}scheduled_tasks
 			WHERE disabled = {int:not_disabled}
 				AND next_time <= {int:current_time}
@@ -77,31 +77,41 @@ function AutoTask()
 			$affected_rows = $smcFunc['db_affected_rows']();
 
 			// What kind of task are we handling?
-			if (!empty($row['callable']))
-				$task_string = $row['callable'];
+			$task = false;
+			if (!empty($row['class']) && class_exists($row['class']))
+			{
+				$refl = new ReflectionClass($row['class']);
+				if ($refl->isSubclassOf('StoryBB\\Task\\Schedulable'))
+				{
+					$task = new $row['class'];
+				}
+			}
 
 			// Default StoryBB task or old mods?
 			elseif (function_exists('scheduled_' . $row['task']))
-				$task_string = 'scheduled_' . $row['task'];
-
-			// One last resource, the task name.
-			elseif (!empty($row['task']))
-				$task_string = $row['task'];
+				$task = 'scheduled_' . $row['task'];
 
 			// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!
-			if (!empty($task_string) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
+			if (!empty($task) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
 			{
 				ignore_user_abort(true);
 
 				// Get the callable.
-				$callable_task = call_helper($task_string, true);
-
-				// Perform the task.
-				if (!empty($callable_task))
-					$completed = call_user_func($callable_task);
-
+				if (is_object($task))
+				{
+					$completed = $task->execute();
+				}
 				else
-					$completed = false;
+				{
+					$callable_task = call_helper($task, true);
+
+					// Perform the task.
+					if (!empty($callable_task))
+						$completed = call_user_func($callable_task);
+
+					else
+						$completed = false;
+				}
 
 				// Log that we did it ;)
 				if ($completed)
