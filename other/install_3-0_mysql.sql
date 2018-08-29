@@ -1772,7 +1772,7 @@ VALUES
   (6, 0, 0, 1, 'w', 0, 'weekly_digest', ''),
   (7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchStoryBBfiles', ''),
   (8, 0, 0, 1, 'd', 1, 'birthdayemails', ''),
-  (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', ''),
+  (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', 'StoryBB\\Task\\Schedulable\\WeeklyMaintenance'),
   (10, 0, 120, 1, 'd', 1, 'paid_subscriptions', ''),
   (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', ''),
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', ''),
