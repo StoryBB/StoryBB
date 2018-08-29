@@ -1776,7 +1776,7 @@ VALUES
   (10, 0, 120, 1, 'd', 1, 'paid_subscriptions', ''),
   (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', ''),
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', ''),
-  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', ''),
+  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', 'StoryBB\\Task\\Schedulable\\RemoveOldDrafts'),
   (14, 0, 300, 1, 'd', 0, 'clean_exports', 'StoryBB\\Task\\Schedulable\\CleanExports'),
   (15, 0, 360, 1, 'd', 0, 'scrub_logs', 'StoryBB\\Task\\Schedulable\\ScrubLogs');
 
