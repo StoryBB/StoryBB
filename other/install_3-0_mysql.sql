@@ -1046,7 +1046,7 @@ CREATE TABLE {$db_prefix}scheduled_tasks (
   time_unit VARCHAR(1) NOT NULL DEFAULT 'h',
   disabled TINYINT NOT NULL DEFAULT '0',
   task VARCHAR(24) NOT NULL DEFAULT '',
-  callable VARCHAR(60) NOT NULL DEFAULT '',
+  class VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (id_task),
   INDEX idx_next_time (next_time),
   INDEX idx_disabled (disabled),
@@ -1764,21 +1764,21 @@ VALUES
 #
 
 INSERT INTO {$db_prefix}scheduled_tasks
-  (id_task, next_time, time_offset, time_regularity, time_unit, disabled, task, callable)
+  (id_task, next_time, time_offset, time_regularity, time_unit, disabled, task, class)
 VALUES
   (1, 0, 0, 2, 'h', 0, 'approval_notification', ''),
-  (3, 0, 60, 1, 'd', 0, 'daily_maintenance', ''),
+  (3, 0, 60, 1, 'd', 0, 'daily_maintenance', 'StoryBB\\Task\\Schedulable\\DailyMaintenance'),
   (5, 0, 0, 1, 'd', 0, 'daily_digest', ''),
   (6, 0, 0, 1, 'w', 0, 'weekly_digest', ''),
   (7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchStoryBBfiles', ''),
   (8, 0, 0, 1, 'd', 1, 'birthdayemails', ''),
-  (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', ''),
+  (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', 'StoryBB\\Task\\Schedulable\\WeeklyMaintenance'),
   (10, 0, 120, 1, 'd', 1, 'paid_subscriptions', ''),
   (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', ''),
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', ''),
-  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', ''),
-  (14, 0, 300, 1, 'd', 0, 'clean_exports', ''),
-  (15, 0, 360, 1, 'd', 0, 'scrub_logs', '');
+  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', 'StoryBB\\Task\\Schedulable\\RemoveOldDrafts'),
+  (14, 0, 300, 1, 'd', 0, 'clean_exports', 'StoryBB\\Task\\Schedulable\\CleanExports'),
+  (15, 0, 360, 1, 'd', 0, 'scrub_logs', 'StoryBB\\Task\\Schedulable\\ScrubLogs');
 
 # --------------------------------------------------------
 
