@@ -2276,7 +2276,7 @@ dl {
 	float: right;
 	width: 55%;
 	margin: 0 0 10px 2px;
-	overflow: auto;
+	overflow: visible;
 }
 .centericon {
 	vertical-align: middle;
@@ -2906,6 +2906,17 @@ h3 .collapse {
 	margin-right: 10px;
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+.info .first_poster {
+	display: inline-block;
+}
+.info img.avatar.participation {
+	max-width: 20px;
+	max-height: 20px;
+	vertical-align: bottom;
+	margin-bottom: 5px;
+	margin-left: -30px;
+	margin-top: 0;
 }
 .info .msg_container {
 	display: inline-block;
@@ -3669,7 +3680,7 @@ p.information img {
 }
 .atwho-view ul li {
 	display: block;
-	padding: 5px 10px;
+	padding: 5px;
 	border-bottom: 1px solid #DDD;
 	cursor: pointer;
 }
@@ -3677,6 +3688,20 @@ p.information img {
 	font-size: smaller;
 	color: #777;
 	font-weight: normal;
+}
+.atwho-view li span {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+}
+.atwho-view li span.avatar {
+	width: 24px;
+	height: 24px;
+	margin-right: 5px;
+}
+.atwho-view li span img {
+	max-width: 24px;
+	max-height: 24px;
 }
 /* On/Off Icons (User) */
 .on, .off {

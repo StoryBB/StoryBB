@@ -2,8 +2,7 @@
 		<div class="information">
 			<p class="floatright" id="message_index_jump_to">&nbsp;</p>
 			{{#unless context.no_topic_listing}}
-			<p class="floatleft">{{#if (and modSettings.enableParticipation context.user.is_logged)}}
-				<img src="{{settings.images_url}}/icons/profile_sm.png" alt="" class="centericon"> {{txt.participation_caption}}<br>{{/if}}
+			<p class="floatleft">
 				{{#if modSettings.pollMode}}<span class="generic_icons poll centericon"></span> {{txt.poll}}{{/if}}<br>
 				<img src="{{settings.images_url}}/post/moved.png" alt="" class="centericon sizefix"> {{txt.moved_topic}}<br>
 			</p>

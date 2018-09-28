@@ -1,0 +1,19 @@
+		<dt>
+			<strong>{{{txt.dob}}}:</strong><br>
+		</dt>
+		<dd>
+			{{#if context.member.birthdate_editable}}
+			<select name="bday1">
+				<option value=""></option>
+				{{#each txt.months}}
+					<option value="{{@key}}"{{#if (eq_coerce @key ../context.member.birth_date.month)}} selected{{/if}}>{{{.}}}</option>
+				{{/each}}
+			</select>
+			<input type="text" name="bday2" size="2" maxlength="2" placeholder="{{{txt.dob_day}}}" value="{{{context.member.birth_date.day}}}">
+
+			<input type="text" name="bday3" size="4" maxlength="4" placeholder="{{{txt.dob_year}}}" value="{{{context.member.birth_date.year}}}">
+			{{else}}
+			{{{context.member.formatted_birthdate}}}
+			<div class="smalltext">{{{txt.birthday_set}}}</div>
+			{{/if}}
+		</dd>

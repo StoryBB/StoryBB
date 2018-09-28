@@ -270,7 +270,6 @@ function ModifyTopicSettings($return_config = false)
 	// Here are all the topic settings.
 	$config_vars = array(
 			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
-			array('check', 'enableParticipation'),
 		'',
 			// Pagination etc...
 			array('int', 'oldTopicDays', 'postinput' => $txt['manageposts_days'], 'subtext' => $txt['zero_to_disable']),

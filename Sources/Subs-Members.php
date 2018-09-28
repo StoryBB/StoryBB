@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Model\Policy;
+use StoryBB\Helper\Environment;
 
 /**
  * Delete one or more members.
@@ -36,7 +37,7 @@ function deleteMembers($users, $check_not_admin = false)
 	@set_time_limit(600);
 
 	// Try to get some more memory.
-	setMemoryLimit('128M');
+	Environment::setMemoryLimit('128M');
 
 	// If it's not an array, make it so!
 	if (!is_array($users))

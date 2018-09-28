@@ -80,18 +80,46 @@
 							<input type="checkbox" name="notify_announcements" id="notify_announcements" {{#if context.notify_announcements}}checked="checked"{{/if}}>
 						</dd>
 					</dl>
-					{{#if context.custom_fields_required}}
-					   {{#if context.custom_fields}}
-					   <dl class="register_form">
-					   {{#each context.custom_fields}}
-					   <dt>
-							<strong{{#if is_error}} class="red"{{/if}}>{{name}}:</strong>
-							<span class="smalltext">{{desc}}</span>
-						</dt>
-						<dd>{{input_html}}</dd>
+					{{#if context.profile_fields_required}}
+					<dl class="register_form">
+					{{#each context.profile_fields_required}}
+						{{#if (eq type "callback")}}
+							{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
+						{{else}}
+							<dt>
+								<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
+								{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
+							</dt>
+							<dd>
+								{{preinput}}
+								{{#if (eq type "label")}}{{value}}{{/if}}
+								{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}}>{{/if}}
+								{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>{{/if}}
+								{{#if (eq type "select")}}
+									<select name="{{@key}}" id="{{@key}}">
+										{{#each options}}
+											<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
+										{{/each}}
+									</select>
+								{{/if}}
+								{{postinput}}
+							</dd>
+						{{/if}}
+					{{/each}}
+					</dl>
+					{{/if}}
+					{{#if (and context.custom_fields_required context.custom_fields)}}
+						<dl class="register_form">
+						{{#each context.custom_fields}}
+							{{#if (gt show_reg 1)}}
+							<dt>
+								<strong{{#if is_error}} class="red"{{/if}}>{{name}}:</strong>
+								<span class="smalltext">{{desc}}</span>
+							</dt>
+							<dd>{{input_html}}</dd>
+							{{/if}}
 						{{/each}}
 						</dl>
-						{{/if}}
 					{{/if}}
 				</fieldset>
 			</div>
@@ -123,33 +151,35 @@
 					<dl class="register_form" id="custom_group">
 			{{/if}}
 			{{#each context.profile_fields}}
-				{{#if (eq type "callback")}}{{profile_callback_helper .}}{{else}}
-						<dt>
-							<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
-							{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
-						</dt>
-						<dd>
-							{{preinput}}
-							{{#if (eq type "label")}}{{value}}{{/if}}
-							{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}}>{{/if}}
-							{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>{{/if}}
-							{{#if (eq type "select")}}
-								<select name="{{@key}}" id="{{@key}}">
-									{{#each options}}
-										<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
-									{{/each}}
-								</select>
-							{{/if}}
-							{{postinput}}
-						</dd>
+				{{#if (eq type "callback")}}
+					{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
+				{{else}}
+					<dt>
+						<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
+						{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
+					</dt>
+					<dd>
+						{{preinput}}
+						{{#if (eq type "label")}}{{value}}{{/if}}
+						{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}}>{{/if}}
+						{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>{{/if}}
+						{{#if (eq type "select")}}
+							<select name="{{@key}}" id="{{@key}}">
+								{{#each options}}
+									<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
+								{{/each}}
+							</select>
+						{{/if}}
+						{{postinput}}
+					</dd>
 				{{/if}}
 			{{/each}}
 		    {{#each context.custom_fields}}
-		                <dt>
-							<strong{{#if is_error}} class="red"{{/if}}>{{name}}</strong>
-							<span class="smalltext">{{desc}}</span>
-						</dt>
-						<dd>{{{input_html}}}</dd>
+                <dt>
+					<strong{{#if is_error}} class="red"{{/if}}>{{name}}</strong>
+					<span class="smalltext">{{desc}}</span>
+				</dt>
+				<dd>{{{input_html}}}</dd>
 		    {{/each}}
 		    {{#if (or context.profile_fields context.custom_fields)}}
 					</dl>

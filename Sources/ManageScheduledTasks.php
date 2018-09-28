@@ -119,8 +119,6 @@ function ScheduledTasks()
 	// Want to run any of the tasks?
 	if (isset($_REQUEST['run']) && isset($_POST['run_task']))
 	{
-		$task_string = '';
-
 		// Lets figure out which ones they want to run.
 		$tasks = array();
 		foreach ($_POST['run_task'] as $task => $dummy)
@@ -128,7 +126,7 @@ function ScheduledTasks()
 
 		// Load up the tasks.
 		$request = $smcFunc['db_query']('', '
-			SELECT id_task, task, callable
+			SELECT id_task, task, class
 			FROM {db_prefix}scheduled_tasks
 			WHERE id_task IN ({array_int:tasks})
 			LIMIT {int:limit}',
@@ -143,21 +141,24 @@ function ScheduledTasks()
 		ignore_user_abort(true);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			// What kind of task are we handling?
-			if (!empty($row['callable']))
-				$task_string = $row['callable'];
+			$task = false;
+			if (!empty($row['class']) && class_exists($row['class']))
+			{
+				$refl = new ReflectionClass($row['class']);
+				if ($refl->isSubclassOf('StoryBB\\Task\\Schedulable'))
+				{
+					$task = new $row['class'];
+				}
+			}
 
 			// Default StoryBB task or old mods?
 			elseif (function_exists('scheduled_' . $row['task']))
-				$task_string = 'scheduled_' . $row['task'];
-
-			// One last resource, the task name.
-			elseif (!empty($row['task']))
-				$task_string = $row['task'];
+				$task = 'scheduled_' . $row['task'];
 
 			$start_time = microtime(true);
+
 			// The functions got to exist for us to use it.
-			if (empty($task_string))
+			if (empty($task))
 				continue;
 
 			// Try to stop a timeout, this would be bad...
@@ -166,14 +167,21 @@ function ScheduledTasks()
 				@apache_reset_timeout();
 
 			// Get the callable.
-			$callable_task = call_helper($task_string, true);
-
-			// Perform the task.
-			if (!empty($callable_task))
-				$completed = call_user_func($callable_task);
-
+			if (is_object($task))
+			{
+				$completed = $task->execute();
+			}
 			else
-				$completed = false;
+			{
+				$callable_task = call_helper($task, true);
+
+				// Perform the task.
+				if (!empty($callable_task))
+					$completed = call_user_func($callable_task);
+
+				else
+					$completed = false;
+			}
 
 			// Log that we did it ;)
 			if ($completed)

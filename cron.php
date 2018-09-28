@@ -78,7 +78,6 @@ require_once($boarddir . '/vendor/autoload.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Subs.php');
-sbb_autoload();
 
 // Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();

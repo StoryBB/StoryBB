@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
+
 /**
  * The main entrance point for the 'Paid Subscription' screen, calling
  * the right function based on the given sub-action.
@@ -1090,10 +1092,10 @@ function ModifyUserSubscription()
 			$request = $smcFunc['db_query']('', '
 				SELECT id_member, id_group
 				FROM {db_prefix}members
-				WHERE real_name = {string:name}
+				WHERE id_member = {int:id_member}
 				LIMIT 1',
 				array(
-					'name' => $_POST['name'],
+					'id_member' => !empty($_POST['new_subscriber']) ? (int) $_POST['new_subscriber'] : 0,
 				)
 			);
 			if ($smcFunc['db_num_rows']($request) == 0)
@@ -1359,7 +1361,7 @@ function ModifyUserSubscription()
 		$context['sub']['end']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['end']['month'] == 12 ? 1 : $context['sub']['end']['month'] + 1, 0, $context['sub']['end']['month'] == 12 ? $context['sub']['end']['year'] + 1 : $context['sub']['end']['year']));
 	}
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
+	Autocomplete::init('member', '#new_subscriber');
 
 	// Some ranges to make the template easier to deal with.
 	$context['year_range'] = range(2018, 2030);

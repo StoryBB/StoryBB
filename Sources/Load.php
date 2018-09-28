@@ -329,10 +329,6 @@ function loadUserSettings()
 		// First try 2.1 json-format cookie
 		$cookie_data = sbb_json_decode($_COOKIE[$cookiename], true, false);
 
-		// Legacy format (for recent 2.0 --> 2.1 upgrades)
-		if (empty($cookie_data))
-			$cookie_data = safe_unserialize($_COOKIE[$cookiename]);
-
 		// Malformed or was reset
 		if (empty($cookie_data))
 			$cookie_data = array(0, '', 0, '', '');
@@ -353,9 +349,6 @@ function loadUserSettings()
 	{
 		// @todo Perhaps we can do some more checking on this, such as on the first octet of the IP?
 		$cookie_data = sbb_json_decode($_SESSION['login_' . $cookiename], true);
-
-		if (empty($cookie_data))
-			$cookie_data = safe_unserialize($_SESSION['login_' . $cookiename]);
 
 		if (empty($cookie_data))
 			$cookie_data = array(0, '', 0);
@@ -437,9 +430,6 @@ function loadUserSettings()
 				if (!empty($_COOKIE[$tfacookie]))
 				{
 					$tfa_data = sbb_json_decode($_COOKIE[$tfacookie]);
-
-					if (is_null($tfa_data))
-						$tfa_data = safe_unserialize($_COOKIE[$tfacookie]);
 
 					list ($tfamember, $tfasecret) = $tfa_data;
 
@@ -594,9 +584,6 @@ function loadUserSettings()
 		if (isset($_COOKIE[$cookiename . '_tfa']) && empty($context['tfa_member']))
 		{
 			$tfa_data = sbb_json_decode($_COOKIE[$cookiename . '_tfa'], true);
-
-			if (is_null($tfa_data))
-				$tfa_data = safe_unserialize($_COOKIE[$cookiename . '_tfa']);
 
 			list ($id, $user, $exp, $domain, $path, $preserve) = $tfa_data;
 
@@ -1241,7 +1228,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			COALESCE(lo.log_time, 0) AS is_online, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
 			mem.signature, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.date_registered, mem.website_title, mem.website_url,
-			mem.birthdate, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.id_post_group, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
+			mem.birthdate, mem.birthday_visibility, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.id_post_group, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
 			mg.online_color AS member_group_color, COALESCE(mg.group_name, {string:blank_string}) AS member_group,
 			pg.online_color AS post_group_color, COALESCE(pg.group_name, {string:blank_string}) AS post_group,
 			mem.is_activated, mem.warning,
@@ -1387,26 +1374,17 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				$user_profile[$row['id_member']]['id_attach'] = $row['id_attach'];
 			}
 			$image = '';
-			if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($row['avatar'], 'gravatar://')))
+
+			if (!empty($row['avatar']))
 			{
-				if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($row['avatar'], 'gravatar://') && strlen($row['avatar']) > 11)
-					$image = get_gravatar_url($smcFunc['substr']($row['avatar'], 11));
-				else
-					$image = get_gravatar_url($user_profile[$row['id_member']]['email_address']);
+				$image = (stristr($row['avatar'], 'http://') || stristr($row['avatar'], 'https://')) ? $row['avatar'] : '';
+			}
+			elseif (!empty($row['filename']))
+			{
+				$image = $modSettings['custom_avatar_url'] . '/' . $row['filename'];
 			}
 			else
-			{
-				if (!empty($row['avatar']))
-				{
-					$image = (stristr($row['avatar'], 'http://') || stristr($row['avatar'], 'https://')) ? $row['avatar'] : '';
-				}
-				elseif (!empty($row['filename']))
-				{
-					$image = $modSettings['custom_avatar_url'] . '/' . $row['filename'];
-				}
-				else
-					$image = $settings['images_url'] . '/default.png';
-			}
+				$image = $settings['images_url'] . '/default.png';
 
 			$user_profile[$row['id_member']]['characters'][$row['id_character']]['avatar'] = $image;
 		}
@@ -1596,7 +1574,8 @@ function loadMemberContext($user, $display_custom_fields = false)
 				'title' => $profile['website_title'],
 				'url' => $profile['website_url'],
 			),
-			'birth_date' => empty($profile['birthdate']) ? '1004-01-01' : (substr($profile['birthdate'], 0, 4) === '0004' ? '1004' . substr($profile['birthdate'], 4) : $profile['birthdate']),
+			'birth_date' => empty($profile['birthdate']) ? '1004-01-01' : $profile['birthdate'],
+			'birthday_visibility' => $profile['birthday_visibility'],
 			'signature' => $profile['signature'],
 			'real_posts' => $profile['posts'],
 			'posts' => comma_format($profile['posts']),
@@ -1649,26 +1628,18 @@ function loadMemberContext($user, $display_custom_fields = false)
 				break;
 			}
 		}
-		if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($profile['avatar'], 'gravatar://')))
+
+		// So it's stored in the member table?
+		if (!empty($profile['avatar']))
 		{
-			if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($profile['avatar'], 'gravatar://') && strlen($profile['avatar']) > 11)
-				$image = get_gravatar_url($smcFunc['substr']($profile['avatar'], 11));
-			else
-				$image = get_gravatar_url($profile['email_address']);
+			$image = (stristr($profile['avatar'], 'http://') || stristr($profile['avatar'], 'https://')) ? $profile['avatar'] : '';
 		}
+		elseif (!empty($profile['filename']))
+			$image = $modSettings['custom_avatar_url'] . '/' . $profile['filename'];
+		// Right... no avatar...use the default one
 		else
-		{
-			// So it's stored in the member table?
-			if (!empty($profile['avatar']))
-			{
-				$image = (stristr($profile['avatar'], 'http://') || stristr($profile['avatar'], 'https://')) ? $profile['avatar'] : '';
-			}
-			elseif (!empty($profile['filename']))
-				$image = $modSettings['custom_avatar_url'] . '/' . $profile['filename'];
-			// Right... no avatar...use the default one
-			else
-				$image = $settings['images_url'] . '/default.png';
-		}
+			$image = $settings['images_url'] . '/default.png';
+
 		if (!empty($image))
 			$memberContext[$user]['avatar'] = array(
 				'name' => $profile['avatar'],
@@ -3265,7 +3236,6 @@ function clean_cache($type = '')
  *
  * Makes assumptions based on the data provided, the following keys are required:
  * - avatar The raw "avatar" column in members table
- * - email The user's email. Used to get the gravatar info
  * - filename The attachment filename
  *
  * @param array $data An array of raw info
@@ -3282,57 +3252,29 @@ function set_avatar_data($data = array())
 	// Set a nice default var.
 	$image = '';
 
-	// Gravatar has been set as mandatory!
-	if (!empty($modSettings['gravatarOverride']))
+	// So it's stored in the member table?
+	if (!empty($data['avatar']))
 	{
-		if (!empty($modSettings['gravatarAllowExtraEmail']) && !empty($data['avatar']) && stristr($data['avatar'], 'gravatar://'))
-			$image = get_gravatar_url($smcFunc['substr']($data['avatar'], 11));
+		// Using ssl?
+		if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($data['avatar'], 'http://') !== false)
+			$image = strtr($boardurl, array('http://' => 'https://')) . '/proxy.php?request=' . urlencode($data['avatar']) . '&hash=' . md5($data['avatar'] . $image_proxy_secret);
 
-		elseif (!empty($data['email']))
-			$image = get_gravatar_url($data['email']);
-	}
-
-	// Look if the user has a gravatar field or has set an external url as avatar.
-	else
-	{
-		// So it's stored in the member table?
-		if (!empty($data['avatar']))
-		{
-			// Gravatar.
-			if (stristr($data['avatar'], 'gravatar://'))
-			{
-				if ($data['avatar'] == 'gravatar://')
-					$image = get_gravatar_url($data['email']);
-
-				elseif (!empty($modSettings['gravatarAllowExtraEmail']))
-					$image = get_gravatar_url($smcFunc['substr']($data['avatar'], 11));
-			}
-
-			// External url.
-			else
-			{
-				// Using ssl?
-				if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($data['avatar'], 'http://') !== false)
-					$image = strtr($boardurl, array('http://' => 'https://')) . '/proxy.php?request=' . urlencode($data['avatar']) . '&hash=' . md5($data['avatar'] . $image_proxy_secret);
-
-				// Just a plain external url.
-				else
-					$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : '';
-			}
-		}
-
-		// Perhaps this user has an attachment as avatar...
-		elseif (!empty($data['filename']))
-			$image = $modSettings['custom_avatar_url'] . '/' . $data['filename'];
-
-		// Right... no avatar... use our default image.
+		// Just a plain external url.
 		else
-			$image = $settings['images_url'] . '/default.png';
+			$image = (stristr($data['avatar'], 'http://') || stristr($data['avatar'], 'https://')) ? $data['avatar'] : '';
 	}
+
+	// Perhaps this user has an attachment as avatar...
+	elseif (!empty($data['filename']))
+		$image = $modSettings['custom_avatar_url'] . '/' . $data['filename'];
+
+	// Right... no avatar... use our default image.
+	else
+		$image = $settings['images_url'] . '/default.png';
 
 	call_integration_hook('integrate_set_avatar_data', array(&$image, &$data));
 
-	// At this point in time $image has to be filled unless you chose to force gravatar and the user doesn't have the needed data to retrieve it... thus a check for !empty() is still needed.
+	// At this point in time $image has to be filled... thus a check for !empty() is still needed.
 	if (!empty($image))
 		return array(
 			'name' => !empty($data['avatar']) ? $data['avatar'] : '',

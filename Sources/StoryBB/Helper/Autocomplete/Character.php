@@ -78,35 +78,13 @@ class Character extends AbstractCompletable implements Completable
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$this_result = [
+			$result[] = [
 				'id' => $row['id_character'],
 				'text' => $row['character_name'],
 				'char_name' => $row['character_name'],
 				'account_name' => $row['real_name'],
+				'avatar' => set_avatar_data($row)['url'],
 			];
-
-			if (!empty($modSettings['gravatarOverride']) || (!empty($modSettings['gravatarEnabled']) && stristr($row['avatar'], 'gravatar://')))
-			{
-				if (!empty($modSettings['gravatarAllowExtraEmail']) && stristr($row['avatar'], 'gravatar://') && strlen($row['avatar']) > 11)
-					$this_result['avatar'] = get_gravatar_url($smcFunc['substr']($row['avatar'], 11));
-				else
-					$this_result['avatar'] = get_gravatar_url($row['email_address']);
-			}
-			else
-			{
-				// So it's stored in the member table?
-				if (!empty($row['avatar']))
-				{
-					$this_result['avatar'] = (stristr($row['avatar'], 'http://') || stristr($row['avatar'], 'https://')) ? $row['avatar'] : '';
-				}
-				elseif (!empty($row['filename']))
-					$this_result['avatar'] = $modSettings['custom_avatar_url'] . '/' . $row['filename'];
-				// Right... no avatar...use the default one
-				else
-					$this_result['avatar'] = $settings['images_url'] . '/default.png';
-			}
-
-			$result[] = $this_result;
 		}
 		$smcFunc['db_free_result']($request);
 

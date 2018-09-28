@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Environment;
+
 /**
  * Finds or repairs errors in the database to fix possible problems.
  * Requires the admin_forum permission.
@@ -25,7 +27,7 @@ function RepairBoards()
 	isAllowedTo('admin_forum');
 
 	// Try secure more memory.
-	setMemoryLimit('128M');
+	Environment::setMemoryLimit('128M');
 
 	// Print out the top of the webpage.
 	$context['page_title'] = $txt['admin_repair'];

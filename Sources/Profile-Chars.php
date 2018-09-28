@@ -9,6 +9,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
+
 /**
  * Setup to fetch the HTML for the characters popup (excluding all other forum chrome)
  *
@@ -370,20 +372,11 @@ function char_edit()
 	$context['character']['avatar_settings'] = array(
 		'custom' => stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://') ? $context['character']['avatar'] : 'http://',
 		'selection' => $context['character']['avatar'] == '' || (stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://')) ? '' : $context['character']['avatar'],
-		'allow_upload' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_external' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_gravatar' => !empty($modSettings['gravatarEnabled']) || !empty($modSettings['gravatarOverride']),
+		'allow_upload' => allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
+		'allow_external' => allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
 	);
 
-	if ($context['character']['avatar_settings']['allow_gravatar'] && (stristr($context['character']['avatar_original'], 'gravatar://') || !empty($modSettings['gravatarOverride'])))
-	{
-		$context['character']['avatar_settings'] += array(
-			'choice' => 'gravatar',
-			'external' => $context['character']['avatar_original'] == 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']) || !empty($modSettings['gravatarOverride']) ? $context['member']['email'] : substr($context['character']['avatar_original'], 11)
-		);
-		$context['character']['avatar'] = get_gravatar_url($context['character']['avatar_settings']['external']);
-	}
-	elseif ((!empty($context['character']['avatar']) && $context['character']['avatar'] != $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
+	if ((!empty($context['character']['avatar']) && $context['character']['avatar'] != $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
 	{
 		$context['character']['avatar_settings'] += array(
 			'choice' => 'upload',
@@ -2074,9 +2067,9 @@ function char_merge_account($memID)
 	if ($user_profile[$memID]['id_group'] == 1 || in_array('1', explode(',', $user_profile[$memID]['additional_groups'])))
 		fatal_lang_error('cannot_merge_admin', false);
 
-	loadJavascriptFile('suggest.js', array('default_theme' => true, 'defer' => false), 'sbb_suggest');
 	$context['page_title'] = $txt['merge_char_account'];
 	$context['sub_template'] = 'profile_merge_account';
+	Autocomplete::init('member', '#merge_acct');
 
 	if (isset($_POST['merge_acct_id']))
 	{
@@ -2095,13 +2088,12 @@ function char_merge_account($memID)
 
 		// We picked an account to merge, let's see if we can find and if we can,
 		// get its details so that we can check for sure it's what the user wants.
-		$name = $smcFunc['htmlspecialchars']($_POST['merge_acct'], ENT_QUOTES);
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member
 			FROM {db_prefix}members
-			WHERE real_name = {string:name}',
+			WHERE id_member = {int:id_member}',
 			array(
-				'name' => $name,
+				'id_member' => (int) $_POST['merge_acct'],
 			)
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
@@ -2300,9 +2292,9 @@ function char_move_account()
 	if ($context['character']['is_main'])
 		fatal_lang_error('cannot_move_main', false);
 
-	loadJavascriptFile('suggest.js', ['default_theme' => true, 'defer' => false], 'sbb_suggest');
 	$context['page_title'] = $txt['move_char_account'];
 	$context['sub_template'] = 'profile_character_move_account';
+	Autocomplete::init('member', '#move_acct');
 
 	if (isset($_POST['move_acct_id']))
 	{
@@ -2321,13 +2313,12 @@ function char_move_account()
 
 		// We picked an account to move to, let's see if we can find and if we can,
 		// get its details so that we can check for sure it's what the user wants.
-		$name = $smcFunc['htmlspecialchars']($_POST['move_acct'], ENT_QUOTES);
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member
 			FROM {db_prefix}members
-			WHERE real_name = {string:name}',
+			WHERE id_member = {int:id_member}',
 			[
-				'name' => $name,
+				'id_member' => (int) $_POST['move_acct'],
 			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)

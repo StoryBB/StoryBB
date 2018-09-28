@@ -13,6 +13,8 @@
  */
 
 use StoryBB\Model\Alert;
+use StoryBB\Helper\Timezone;
+use StoryBB\Helper\Autocomplete;
 
 /**
  * This defines every profile field known to man.
@@ -78,58 +80,93 @@ function loadProfileFields($force_reload = false)
 			'input_validate' => 'profileSaveAvatarData',
 			'save_key' => 'avatar',
 		),
-		'bday1' => array(
+		'birthday_date' => array(
 			'type' => 'callback',
-			'callback_func' => 'birthdate',
+			'callback_func' => 'birthday_date',
 			'permission' => 'profile_extra',
-			'preload' => function() use ($cur_profile, &$context)
+			'preload' => function() use ($cur_profile, &$context, $txt, $modSettings)
 			{
-				// Split up the birthdate....
-				list ($uyear, $umonth, $uday) = explode('-', empty($cur_profile['birthdate']) ? '1004-01-01' : $cur_profile['birthdate']);
-				$context['member']['birth_date'] = array(
-					'year' => $uyear,
-					'month' => $umonth,
-					'day' => $uday,
-				);
+				if (empty($cur_profile['birthdate']) || $cur_profile['birthdate'] == '1004-01-01')
+				{
+					// No existing birthdate, therefore editable.
+					$context['member']['birthdate'] = '';
+					$context['member']['birthdate_editable'] = true;
+					$context['member']['birth_date'] = [
+						'year' => '',
+						'month' => '',
+						'day' => '',
+					];
+				}
+				elseif (!allowedTo('admin_forum'))
+				{
+					// Regular members aren't allowed to edit their DOB.
+					list ($year, $month, $day) = explode('-', $cur_profile['birthdate']);
+					$context['member']['formatted_birthdate'] = dateformat($year, $month, $day, $cur_profile['time_format']);
+
+					$context['member']['birthdate_editable'] = false;
+				}
+				else
+				{
+					// The profile user has entered a date and the current user is an admin.
+					list($year, $month, $day) = explode('-', $cur_profile['birthdate']);
+					$context['member']['birth_date'] = [
+						'year' => (int) $year,
+						'month' => (int) $month,
+						'day' => (int) $day,
+					];
+					$context['member']['birthdate_editable'] = true;
+				}
 
 				return true;
 			},
-			'input_validate' => function(&$value) use (&$cur_profile, &$profile_vars)
+			'input_validate' => function(&$value) use (&$cur_profile, &$profile_vars, $modSettings)
 			{
-				if (isset($_POST['bday2'], $_POST['bday3']) && $value > 0 && $_POST['bday2'] > 0)
+				if (!empty($cur_profile['birthdate']) && $cur_profile['birthdate'] != '1004-01-01')
 				{
-					// Set to blank?
-					if ((int) $_POST['bday3'] == 1 && (int) $_POST['bday2'] == 1 && (int) $value == 1)
-						$value = '1004-01-01';
-					else
-						$value = checkdate($value, $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
+					// If it's not already empty, and it's being edited, make sure we're an admin.
+					if (!allowedTo('admin_forum'))
+					{
+						$value = $cur_profile['birthdate'];
+						return true;
+					}
 				}
-				else
-					$value = '1004-01-01';
 
-				$profile_vars['birthdate'] = $value;
-				$cur_profile['birthdate'] = $value;
-				return false;
-			},
-		),
-		// Setting the birthdate the old style way?
-		'birthdate' => array(
-			'type' => 'hidden',
-			'permission' => 'profile_extra',
-			'input_validate' => function(&$value) use ($cur_profile)
-			{
-				// @todo Should we check for this year and tell them they made a mistake?
-				if (preg_match('/(\d{4})[\-\., ](\d{2})[\-\., ](\d{2})/', $value, $dates) === 1)
+				// OK so either we're adding a date for the first time or we're updating an existing date.
+				if (isset($_POST['bday1'], $_POST['bday2'], $_POST['bday3']))
 				{
-					$value = checkdate($dates[2], $dates[3], $dates[1] < 4 ? 4 : $dates[1]) ? sprintf('%04d-%02d-%02d', $dates[1] < 4 ? 4 : $dates[1], $dates[2], $dates[3]) : '1004-01-01';
-					return true;
+					// Make sure it's valid and if it is, handle it.
+					$value = checkdate($_POST['bday1'], $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
+
+					// Also check if it's valid or not.
+					if (!empty($modSettings['minimum_age']) && !empty($modSettings['minimum_age_profile']) && $value != '1004-01-01')
+					{
+						$datearray = getdate(forum_time());
+						$age = $datearray['year'] - $_POST['bday3'] - (($datearray['mon'] > $_POST['bday1'] || ($datearray['mon'] == $_POST['bday1'] && $datearray['mday'] >= $_POST['bday2'])) ? 0 : 1);
+						if ($age < (int) $modSettings['minimum_age'])
+						{
+							return false;
+						}
+					}
 				}
 				else
 				{
-					$value = empty($cur_profile['birthdate']) ? '1004-01-01' : $cur_profile['birthdate'];
-					return false;
+					// Not sure what happened here. Put the value back to what it was.
+					$value = $cur_profile['birthdate'];
 				}
+
+				return true;
 			},
+			'link_with' => 'birthday',
+		),
+		'birthday_visibility' => array(
+			'type' => 'select',
+			'options' => array(
+				0 => $txt['birthday_visibility_adminonly'],
+				1 => $txt['birthday_visibility_daymonth'],
+				2 => $txt['birthday_visibility_fulldate'],
+			),
+			'permission' => 'profile_extra',
+			'link_with' => 'birthday',
 		),
 		'date_registered' => array(
 			'type' => 'date',
@@ -494,12 +531,12 @@ function loadProfileFields($force_reload = false)
 		),
 		'timezone' => array(
 			'type' => 'select',
-			'options' => sbb_list_timezones(),
+			'options' => Timezone::list_timezones(),
 			'permission' => 'profile_extra',
 			'label' => $txt['timezone'],
 			'input_validate' => function($value)
 			{
-				$tz = sbb_list_timezones();
+				$tz = Timezone::list_timezones();
 				if (!isset($tz[$value]))
 					return 'bad_timezone';
 
@@ -662,8 +699,8 @@ function setupProfileContext($fields)
 				alert(' . (JavaScriptEscape($txt['required_security_reasons'])) . ');
 				return false;
 			}
-		}, false);
-	}' : ''), true);
+		}, false);' : '') . '
+	}', true);
 
 	// Any onsubmit javascript?
 	if (!empty($context['profile_onsubmit_javascript']))
@@ -1276,8 +1313,6 @@ function editBuddyIgnoreLists($memID)
 		),
 	);
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
-
 	// Pass on to the actual function.
 	$context['sub_template'] = $subActions[$context['list_area']][0];
 	$call = call_helper($subActions[$context['list_area']][0], true);
@@ -1305,14 +1340,14 @@ function editBuddies($memID)
 		if ($dummy == '')
 			unset($buddiesArray[$k]);
 
+	$saved = false;
+
 	// Removing a buddy?
 	if (isset($_GET['remove']))
 	{
 		checkSession('get');
 
 		call_integration_hook('integrate_remove_buddy', array($memID));
-
-		$saved = false;
 
 		// Heh, I'm lazy, do it the easy way...
 		foreach ($buddiesArray as $key => $buddy)
@@ -1341,62 +1376,37 @@ function editBuddies($memID)
 	elseif (isset($_POST['new_buddy']))
 	{
 		checkSession();
-
 		// Prepare the string for extraction...
-		$_POST['new_buddy'] = strtr($smcFunc['htmlspecialchars']($_POST['new_buddy'], ENT_QUOTES), array('&quot;' => '"'));
-		preg_match_all('~"([^"]+)"~', $_POST['new_buddy'], $matches);
-		$new_buddies = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_POST['new_buddy']))));
-
-		foreach ($new_buddies as $k => $dummy)
+		$new_buddy = !empty($_POST['new_buddy']) ? (array) $_POST['new_buddy'] : [];
+		foreach ($new_buddy as $k => $v)
 		{
-			$new_buddies[$k] = strtr(trim($new_buddies[$k]), array('\'' => '&#039;'));
-
-			if (strlen($new_buddies[$k]) == 0 || in_array($new_buddies[$k], array($user_profile[$memID]['member_name'], $user_profile[$memID]['real_name'])))
-				unset($new_buddies[$k]);
+			$v = (int) $v;
+			if ($v <= 0)
+				unset ($new_buddy[$k]);
+			else
+				$new_buddy[$k] = $v;
 		}
+		$new_buddy = array_diff($new_buddy, $buddiesArray);
 
-		call_integration_hook('integrate_add_buddies', array($memID, &$new_buddies));
+		call_integration_hook('integrate_add_buddies', array($memID, &$new_buddy));
 
-		$saved = false;
-		if (!empty($new_buddies))
+		if (!empty($new_buddy))
 		{
-			// Now find out the id_member of the buddy.
-			$request = $smcFunc['db_query']('', '
-				SELECT id_member
-				FROM {db_prefix}members
-				WHERE member_name IN ({array_string:new_buddies}) OR real_name IN ({array_string:new_buddies})
-				LIMIT {int:count_new_buddies}',
-				array(
-					'new_buddies' => $new_buddies,
-					'count_new_buddies' => count($new_buddies),
-				)
-			);
-
-			if ($smcFunc['db_num_rows']($request) != 0)
-				$saved = true;
-
-			// Add the new member to the buddies array.
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			{
-				if (in_array($row['id_member'], $buddiesArray))
-					continue;
-				else
-					$buddiesArray[] = (int) $row['id_member'];
-			}
-			$smcFunc['db_free_result']($request);
+			$saved = true;
+			$buddiesArray = array_merge($buddiesArray, $new_buddy);
 
 			// Now update the current users buddy list.
 			$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
 			updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+		}
 
-			if ($saved)
-			{
-				session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
-			}
-			else
-			{
-				session_flash('error', $txt['could_not_add_person']);
-			}
+		if ($saved)
+		{
+			session_flash('success', sprintf($context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_updated_else'], $context['member']['name']));
+		}
+		else
+		{
+			session_flash('error', $txt['could_not_add_person']);
 		}
 
 		// Back to the buddy list!
@@ -1493,6 +1503,8 @@ function editBuddies($memID)
 
 	$context['columns_colspan'] = count($context['custom_pf']) + 3 + ($context['show_buddy_email_address'] ? 1 : 0);
 
+	Autocomplete::init('member', '#new_buddy');
+
 	call_integration_hook('integrate_view_buddies', array($memID));
 }
 
@@ -1514,12 +1526,12 @@ function editIgnoreList($memID)
 		if ($dummy == '')
 			unset($ignoreArray[$k]);
 
+	$saved = false;
+
 	// Removing a member from the ignore list?
 	if (isset($_GET['remove']))
 	{
 		checkSession('get');
-
-		$saved = false;
 
 		// Heh, I'm lazy, do it the easy way...
 		foreach ($ignoreArray as $key => $id_remove)
@@ -1527,7 +1539,6 @@ function editIgnoreList($memID)
 			{
 				unset($ignoreArray[$key]);
 				$saved = true;
-				$_SESSION['prf-save'] = true;
 			}
 
 		// Make the changes.
@@ -1550,47 +1561,23 @@ function editIgnoreList($memID)
 	{
 		checkSession();
 		// Prepare the string for extraction...
-		$_POST['new_ignore'] = strtr($smcFunc['htmlspecialchars']($_POST['new_ignore'], ENT_QUOTES), array('&quot;' => '"'));
-		preg_match_all('~"([^"]+)"~', $_POST['new_ignore'], $matches);
-		$new_entries = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_POST['new_ignore']))));
-
-		foreach ($new_entries as $k => $dummy)
+		$new_ignore = !empty($_POST['new_ignore']) ? (array) $_POST['new_ignore'] : [];
+		foreach ($new_ignore as $k => $v)
 		{
-			$new_entries[$k] = strtr(trim($new_entries[$k]), array('\'' => '&#039;'));
-
-			if (strlen($new_entries[$k]) == 0 || in_array($new_entries[$k], array($user_profile[$memID]['member_name'], $user_profile[$memID]['real_name'])))
-				unset($new_entries[$k]);
+			$v = (int) $v;
+			if ($v <= 0)
+				unset ($new_ignore[$k]);
+			else
+				$new_ignore[$k] = $v;
 		}
+		$new_ignore = array_diff($new_ignore, $ignoreArray);
 
-		$saved = false;
-		if (!empty($new_entries))
+		call_integration_hook('integrate_add_ignore', array($memID, &$new_ignore));
+
+		if (!empty($new_ignore))
 		{
-			// Now find out the id_member for the members in question.
-			$request = $smcFunc['db_query']('', '
-				SELECT id_member
-				FROM {db_prefix}members
-				WHERE member_name IN ({array_string:new_entries}) OR real_name IN ({array_string:new_entries})
-				LIMIT {int:count_new_entries}',
-				array(
-					'new_entries' => $new_entries,
-					'count_new_entries' => count($new_entries),
-				)
-			);
-
-			if ($smcFunc['db_num_rows']($request) != 0)
-			{
-				$saved = true;
-			}
-
-			// Add the new member to the buddies array.
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			{
-				if (in_array($row['id_member'], $ignoreArray))
-					continue;
-				else
-					$ignoreArray[] = (int) $row['id_member'];
-			}
-			$smcFunc['db_free_result']($request);
+			$saved = true;
+			$ignoreArray = array_merge($ignoreArray, $new_ignore);
 
 			// Now update the current users buddy list.
 			$user_profile[$memID]['pm_ignore_list'] = implode(',', $ignoreArray);
@@ -1644,6 +1631,8 @@ function editIgnoreList($memID)
 		$context['ignore_list'][$ignore_member] = $memberContext[$ignore_member];
 	}
 
+	Autocomplete::init('member', '#new_ignore');
+
 	$context['sub_template'] = 'profile_ignore';
 }
 
@@ -1696,7 +1685,8 @@ function forumProfile($memID)
 	setupProfileContext(
 		array(
 			'avatar_choice', 'hr',
-			'bday1', 'signature', 'hr',
+			'birthday_date', 'birthday_visibility', 'hr',
+			'signature', 'hr',
 			'website_title', 'website_url',
 		)
 	);
@@ -2889,21 +2879,11 @@ function profileLoadAvatarData()
 	$context['member']['avatar'] += array(
 		'custom' => stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://') ? $cur_profile['avatar'] : 'http://',
 		'selection' => $cur_profile['avatar'] == '' || (stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://')) ? '' : $cur_profile['avatar'],
-		'allow_upload' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_external' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_gravatar' => !empty($modSettings['gravatarEnabled']) || !empty($modSettings['gravatarOverride']),
+		'allow_upload' => allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
+		'allow_external' => allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
 	);
 
-	if ($context['member']['avatar']['allow_gravatar'] && (stristr($cur_profile['avatar'], 'gravatar://') || !empty($modSettings['gravatarOverride'])))
-	{
-		$context['member']['avatar'] += array(
-			'choice' => 'gravatar',
-			'server_pic' => 'blank.png',
-			'external' => $cur_profile['avatar'] == 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']) || !empty($modSettings['gravatarOverride']) ? $cur_profile['email_address'] : substr($cur_profile['avatar'], 11)
-		);
-		$context['member']['avatar']['href'] = get_gravatar_url($context['member']['avatar']['external']);
-	}
-	elseif ($cur_profile['avatar'] == '' && $cur_profile['id_attach'] > 0 && $context['member']['avatar']['allow_upload'])
+	if ($cur_profile['avatar'] == '' && $cur_profile['id_attach'] > 0 && $context['member']['avatar']['allow_upload'])
 	{
 		$context['member']['avatar'] += array(
 			'choice' => 'upload',
@@ -2927,8 +2907,8 @@ function profileLoadAvatarData()
 		);
 
 	// Second level selected avatar...
-	$context['avatar_selected'] = substr(strrchr($context['member']['avatar']['server_pic'], '/'), 1);
-	return !empty($context['member']['avatar']['allow_external']) || !empty($context['member']['avatar']['allow_upload']) || !empty($context['member']['avatar']['allow_gravatar']);
+	$context['avatar_selected'] = substr(strrchr($context['member']['avatar']['server_pic'], '/'), 1); // @todo remove?
+	return !empty($context['member']['avatar']['allow_external']) || !empty($context['member']['avatar']['allow_upload']);
 }
 
 /**
@@ -3057,7 +3037,7 @@ function profileSaveGroups(&$value)
  * The avatar is incredibly complicated, what with the options... and what not.
  * @todo argh, the avatar here. Take this out of here!
  *
- * @param string &$value What kind of avatar we're expecting. Can be 'none', 'gravatar', 'external' or 'upload'
+ * @param string &$value What kind of avatar we're expecting. Can be 'none', 'external' or 'upload'
  * @return bool|string False if success (or if memID is empty and password authentication failed), otherwise a string indicating what error occurred
  */
 function profileSaveAvatarData(&$value)
@@ -3117,18 +3097,6 @@ function profileSaveAvatarData(&$value)
 		$cur_profile['attachment_type'] = 0;
 		$cur_profile['filename'] = '';
 
-		removeAttachments(array('id_character' => $context['character']['id_character']));
-	}
-
-	elseif ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
-	{
-		// One wasn't specified, or it's not allowed to use extra email addresses, or it's not a valid one, reset to default Gravatar.
-		if (empty($_POST['gravatarEmail']) || empty($modSettings['gravatarAllowExtraEmail']) || !filter_var($_POST['gravatarEmail'], FILTER_VALIDATE_EMAIL))
-			$profile_vars['avatar'] = 'gravatar://';
-		else
-			$profile_vars['avatar'] = 'gravatar://' . ($_POST['gravatarEmail'] != $cur_profile['email_address'] ? $_POST['gravatarEmail'] : '');
-
-		// Get rid of their old avatar. (if uploaded.)
 		removeAttachments(array('id_character' => $context['character']['id_character']));
 	}
 	elseif ($value == 'external' && allowedTo('profile_remote_avatar') && (stripos($_POST['userpicpersonal'], 'http://') === 0 || stripos($_POST['userpicpersonal'], 'https://') === 0) && empty($modSettings['avatar_download_external']))
@@ -3311,8 +3279,6 @@ function profileSaveAvatarData(&$value)
 		else
 			$profile_vars['avatar'] = '';
 	}
-	elseif ($value == 'gravatar' && allowedTo('profile_gravatar_avatar'))
-		$profile_vars['avatar'] = 'gravatar://www.gravatar.com/avatar/' . md5(strtolower(trim($cur_profile['email_address'])));
 	else
 		$profile_vars['avatar'] = '';
 

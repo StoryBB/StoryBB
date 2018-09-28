@@ -18,6 +18,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Environment;
+
 /**
  * Handling function for generating reports.
  * Requires the admin_forum permission.
@@ -261,7 +263,7 @@ function BoardPermissionsReport()
 	global $txt, $modSettings, $smcFunc;
 
 	// Get as much memory as possible as this can be big.
-	setMemoryLimit('256M');
+	Environment::setMemoryLimit('256M');
 
 	if (isset($_REQUEST['boards']))
 	{

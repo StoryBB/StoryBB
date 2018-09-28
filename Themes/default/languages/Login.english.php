@@ -81,6 +81,8 @@ $txt['setting_registration_character_optional'] = 'Character creation on registr
 $txt['setting_registration_character_required'] = 'New users must create a new character at sign-up';
 
 $txt['setting_minimum_age'] = 'Minimum allowed age on the site';
+$txt['setting_minimum_age_profile'] = 'Enforce minimum allowed age in profiles';
+$txt['setting_age_on_registration'] = 'Ask for birthdate on registration';
 
 $txt['admin_register'] = 'Registration of new member';
 $txt['admin_register_desc'] = 'From here you can register new members into the forum, and if desired, email them their details.';

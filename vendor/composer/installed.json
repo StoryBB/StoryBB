@@ -149,7 +149,7 @@
                 "dev-master": "1.1.1-dev"
             }
         },
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "psr-4": {
                 "LightnCandy\\": "src"

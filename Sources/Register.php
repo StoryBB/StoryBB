@@ -105,17 +105,6 @@ function Register($reg_errors = array())
 	}
 
 	StoryBB\Template::add_helper([
-		'profile_callback_helper' => function ($field) {
-			var_dump($field);
-			if ($field['type'] == 'callback')
-			{
-				if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
-				{
-					$callback_func = 'template_profile_' . $field['callback_func'];
-					$callback_func();
-				}
-			}
-		},
 		'makeHTTPS' => function($url) { 
 			return strtr($url, array('http://' => 'https://'));
 		},
@@ -125,7 +114,16 @@ function Register($reg_errors = array())
 	]);
 
 	// Or any standard ones?
+	$reg_fields = [];
 	if (!empty($modSettings['registration_fields']))
+	{
+		$reg_fields = explode(',', $modSettings['registration_fields']);
+	}
+	if (!empty($modSettings['minimum_age']) && !empty($modSettings['age_on_registration']))
+	{
+		$reg_fields[] = 'birthday_date';
+	}
+	if (!empty($reg_fields))
 	{
 		require_once($sourcedir . '/Profile-Modify.php');
 
@@ -136,7 +134,6 @@ function Register($reg_errors = array())
 
 		// Here, and here only, emulate the permissions the user would have to do this.
 		$user_info['permissions'] = array_merge($user_info['permissions'], array('profile_account_own', 'profile_extra_own', 'profile_other_own', 'profile_password_own', 'profile_website_own'));
-		$reg_fields = explode(',', $modSettings['registration_fields']);
 
 		// We might have had some submissions on this front - go check.
 		foreach ($reg_fields as $field)
@@ -145,6 +142,12 @@ function Register($reg_errors = array())
 
 		// Load all the fields in question.
 		setupProfileContext($reg_fields);
+	}
+	$context['profile_fields_required'] = [];
+	if (isset($context['profile_fields']['birthday_date']))
+	{
+		$context['profile_fields_required']['birthday_date'] = $context['profile_fields']['birthday_date'];
+		unset($context['profile_fields']['birthday_date']);
 	}
 
 	// Generate a visual verification code to make sure the user is no bot.
@@ -265,7 +268,6 @@ function Register2()
 
 	// Collect all extra registration fields someone might have filled in.
 	$possible_strings = array(
-		'birthdate',
 		'first_char',
 		'time_format',
 		'buddy_list',
@@ -325,11 +327,31 @@ function Register2()
 	}
 
 	// Handle a string as a birthdate...
-	if (isset($_POST['birthdate']) && $_POST['birthdate'] != '')
-		$_POST['birthdate'] = strftime('%Y-%m-%d', strtotime($_POST['birthdate']));
-	// Or birthdate parts...
-	elseif (!empty($_POST['bday1']) && !empty($_POST['bday2']))
-		$_POST['birthdate'] = sprintf('%04d-%02d-%02d', empty($_POST['bday3']) ? 0 : (int) $_POST['bday3'], (int) $_POST['bday1'], (int) $_POST['bday2']);
+	if (isset($_POST['bday1'], $_POST['bday2'], $_POST['bday3']))
+	{
+		// Make sure it's valid and if it is, handle it.
+		$_POST['birthdate'] = checkdate((int) $_POST['bday1'], (int) $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : (int) $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
+		if ($_POST['birthdate'] == '1004-01-01')
+		{
+			loadLanguage('Errors');
+			$reg_errors['invalid_dob'] = $txt['error_dob_required'];
+		}
+
+		// Also check if it's valid or not.
+		if (!empty($modSettings['minimum_age']) && !empty($modSettings['minimum_age_profile']) && $value != '1004-01-01')
+		{
+			$datearray = getdate(forum_time());
+			$age = $datearray['year'] - $_POST['bday3'] - (($datearray['mon'] > $_POST['bday1'] || ($datearray['mon'] == $_POST['bday1'] && $datearray['mday'] >= $_POST['bday2'])) ? 0 : 1);
+			if ($age < (int) $modSettings['minimum_age'])
+			{
+				$reg_errors['invalid_dob'] = sprintf($txt['error_dob_not_old_enough'], $modSettings['minimum_age']);
+			}
+			else
+			{
+				$possible_strings[] = 'birthdate';
+			}
+		}
+	}
 
 	// Validate the passed language file.
 	if (isset($_POST['lngfile']) && !empty($modSettings['userLanguage']))
