@@ -12,6 +12,8 @@
 
 namespace StoryBB\Helper;
 
+use StoryBB\Helper\TLD;
+
 /**
  * Parse content according to its bbc and smiley content.
  */
@@ -74,7 +76,7 @@ class Parser
 
 		// Ensure $modSettings['tld_regex'] contains a valid regex for the autolinker
 		if (!empty($modSettings['autoLinkUrls']) && empty($modSettings['tld_regex']))
-			StoryBB\Helper\TLD::set_tld_regex(true);
+			TLD::set_tld_regex(true);
 
 		// Allow mods access before entering the main parse_bbc loop
 		call_integration_hook('integrate_pre_parsebbc', array(&$message, &$smileys, &$cache_id, &$parse_tags));
