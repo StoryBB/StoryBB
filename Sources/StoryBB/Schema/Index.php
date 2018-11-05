@@ -17,5 +17,41 @@ namespace StoryBB\Schema;
  */
 class Index
 {
+	private function __construct()
+	{
 
+	}
+
+	/**
+	 * Factory function to create a primary key index.
+	 *
+	 * @param array Columns to index as part of the primary key
+	 * @return Index instance
+	 */
+	public static function primary(array $columns)
+	{
+
+	}
+
+	/**
+	 * Factory function to create a simple index.
+	 *
+	 * @param array Columns to index as part of the key
+	 * @return Index instance
+	 */
+	public static function key(array $columns)
+	{
+
+	}
+
+	/**
+	 * Factory function to create a unique index.
+	 *
+	 * @param array Columns to index as part of the primary key
+	 * @return Index instance
+	 */
+	public static function unique(array $columns)
+	{
+
+	}
 }

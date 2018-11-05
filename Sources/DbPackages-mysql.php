@@ -38,9 +38,11 @@ function db_packages_init()
 	}
 
 	// We setup an array of StoryBB tables we can't do auto-remove on - in case a mod writer cocks it up!
-	$reservedTables = array_keys(Schema::get_tables());
-	foreach ($reservedTables as $k => $table_name)
-		$reservedTables[$k] = strtolower($db_prefix . $table_name);
+	foreach (Schema::get_tables() as $table)
+	{
+		$table_name = $table->get_table_name();
+		$reservedTables[] = strtolower($db_prefix . $table_name);
+	}
 
 	// We in turn may need the extra stuff.
 	db_extend('extra');
