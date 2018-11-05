@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Check if the user is who he/she says he is
  * Makes sure the user is who they claim to be by requiring a password to be typed in every hour.
@@ -106,7 +103,7 @@ function is_not_guest($message = '')
 		obExit(false);
 
 	// Attempt to detect if they came from dlattach.
-	if (SMF != 'SSI' && empty($context['theme_loaded']))
+	if (STORYBB != 'SSI' && empty($context['theme_loaded']))
 		loadTheme();
 
 	// Never redirect to an attachment
@@ -118,7 +115,7 @@ function is_not_guest($message = '')
 
 	// Apparently we're not in a position to handle this now. Let's go to a safer location for now.
 	// @todo this might need reworking
-	if (empty($context['template_layers']))
+	if (!StoryBB\Template::has_layers())
 	{
 		$_SESSION['login_url'] = $scripturl . '?' . $_SERVER['QUERY_STRING'];
 		redirectexit('action=login');
@@ -286,7 +283,7 @@ function is_not_banned($forceCheck = false)
 		{
 			require_once($sourcedir . '/Subs-Auth.php');
 			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-			smf_setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], false, false);
+			sbb_setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], false, false);
 		}
 	}
 
@@ -327,7 +324,7 @@ function is_not_banned($forceCheck = false)
 		require_once($sourcedir . '/Subs-Auth.php');
 		require_once($sourcedir . '/LogInOut.php');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-		smf_setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], false, false);
+		sbb_setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], false, false);
 
 		// Don't scare anyone, now.
 		$_GET['action'] = '';
@@ -374,7 +371,7 @@ function is_not_banned($forceCheck = false)
 			'language' => $user_info['language'],
 		);
 
-		// SMF's Wipe 'n Clean(r) erases all traces.
+		// Clean all traces of the request.
 		$_GET['action'] = '';
 		$_GET['board'] = '';
 		$_GET['topic'] = '';
@@ -414,7 +411,7 @@ function banPermissions()
 			'poll_remove_own', 'poll_remove_any',
 			'manage_attachments', 'manage_smileys', 'manage_boards', 'admin_forum', 'manage_permissions',
 			'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news',
-			'profile_identity_any', 'profile_extra_any', 'profile_title_any',
+			'profile_identity_any', 'profile_extra_any',
 			'profile_forum_any', 'profile_other_any', 'profile_signature_any',
 			'post_new', 'post_reply_own', 'post_reply_any',
 			'delete_own', 'delete_any', 'delete_replies',
@@ -1034,8 +1031,7 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 		$permissions = array($permissions);
 
 	/*
-	 * Set $simple to true to use this function as it were in SMF 2.0.x.
-	 * Otherwise, the resultant array becomes split into the multiple
+	 * If not $simple, the resultant array becomes split into the multiple
 	 * permissions that were passed. Other than that, it's just the normal
 	 * state of play that you're used to.
 	 */
@@ -1282,5 +1278,3 @@ function frameOptionsHeader($override = null)
 	header('X-XSS-Protection: 1');
 	header('X-Content-Type-Options: nosniff');
 }
-
-?>

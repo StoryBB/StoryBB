@@ -49,7 +49,7 @@
 			</ul>
 			<div class="submitbutton">
 				<input type="submit" value="{{txt.poll_vote}}" class="button_submit">
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+				{{session_form}}
 			</div>
 		</form>
 		{{#if context.poll.expire_time}}
@@ -145,8 +145,8 @@
 					sSelf: 'oInTopicModeration',
 					sCheckboxContainerMask: 'in_topic_mod_check_',
 					aMessageIds: {{{json context.removableMessageIDs}}},
-					sSessionId: smf_session_id,
-					sSessionVar: smf_session_var,
+					sSessionId: sbb_session_id,
+					sSessionVar: sbb_session_var,
 					sButtonStrip: 'moderationbuttons',
 					sButtonStripDisplay: 'moderationbuttons_strip',
 					bUseImageButton: false,
@@ -169,8 +169,8 @@
 					sSelf: 'oInTopicModerationMobile',
 					sCheckboxContainerMask: 'in_topic_mod_check_',
 					aMessageIds: {{{json context.removableMessageIDs}}},
-					sSessionId: smf_session_id,
-					sSessionVar: smf_session_var,
+					sSessionId: sbb_session_id,
+					sSessionVar: sbb_session_var,
 					sButtonStrip: 'moderationbuttons_mobile',
 					sButtonStripDisplay: 'moderationbuttons_strip_mobile',
 					bUseImageButton: false,
@@ -192,25 +192,25 @@
 	if ('XMLHttpRequest' in window)
 		{
 			var oQuickModify = new QuickModify({
-				sScriptUrl: smf_scripturl,
+				sScriptUrl: sbb_scripturl,
 				sClassName: 'quick_edit',
 				bShowModify: {{#if modSettings.show_modify}}true{{else}}false{{/if}},
 				iTopicId: {{{json context.current_topic}}},
 				sTemplateBodyEdit: '<div id="quick_edit_body_container">' +
 						'<div id="error_box" class="error"></div>' +
 						'<textarea class="editor" name="message" rows="12" style="margin-bottom: 10px;">%body%</textarea><br>' +
-						'<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">' +
+						'{{session_form}}' +
 						'<input type="hidden" name="topic" value="{{context.current_topic}}">' +
 						'<input type="hidden" name="msg" value="%msg_id%">' +
 						'<div class="righttext quickModifyMargin">' +
 							'<input type="submit" name="post" value="{{txt.save}}" onclick="return oQuickModify.modifySave(\'{{context.session_id}}\', \'{{context.session_var}}\');" accesskey="s" class="button_submit">&nbsp;&nbsp;<input type="submit" name="cancel" value="{{txt.modify_cancel}}" onclick="return oQuickModify.modifyCancel();" class="button_submit">' +
 						'</div>' +
 					'</div>',
-				sTemplateSubjectEdit: {{{json '<input type="text" name="subject" value="%subject%" size="80" maxlength="80" class="input_text">'}}},
+				sTemplateSubjectEdit: {{{json '<input type="text" name="subject" value="%subject%" size="80" maxlength="80">'}}},
 				sTemplateBodyNormal: {{{json '%body%'}}},
 				sTemplateSubjectNormal: '<a href="{{scripturl}}?topic={{context.current_topic}}.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>',
 				sTemplateTopSubject: {{{json '%subject%'}}},
-				sTemplateReasonEdit: {{{json (concat txt.reason_for_edit ': ' '<input type="text" name="modify_reason" value="%modify_reason%" size="80" maxlength="80" class="input_text quickModifyMargin">')}}},
+				sTemplateReasonEdit: {{{json (concat txt.reason_for_edit ': ' '<input type="text" name="modify_reason" value="%modify_reason%" size="80" maxlength="80" class="quickModifyMargin">')}}},
 				sTemplateReasonNormal: {{{json '%modify_text'}}},
 				sErrorBorderStyle: {{{json '1px solid red'}}}{{#if context.can_reply}},
 				sFormRemoveAccessKeys: 'postmodify'{{/if}}
@@ -232,12 +232,12 @@
 			aIconLists[aIconLists.length] = new IconList({
 				sBackReference: "aIconLists[" + aIconLists.length + "]",
 				sIconIdPrefix: "msg_icon_",
-				sScriptUrl: smf_scripturl,
+				sScriptUrl: sbb_scripturl,
 				bShowModify: {{#if modSettings.show_modify}}true{{else}}false{{/if}},
 				iBoardId: {{context.current_board}},
 				iTopicId: {{context.current_topic}},
-				sSessionId: smf_session_id,
-				sSessionVar: smf_session_var,
+				sSessionId: sbb_session_id,
+				sSessionVar: sbb_session_var,
 				sLabelIconList: {{{json txt.message_icon}}},
 				sBoxBackground: "transparent",
 				sBoxBackgroundHover: "#ffffff",

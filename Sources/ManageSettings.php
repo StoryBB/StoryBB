@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This function makes sure the requested subaction does exists, if it doesn't, it sets a default action or.
  *
@@ -57,7 +54,6 @@ function ModifyFeatureSettings()
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
-		'mentions' => 'ModifyMentionsSettings',
 		'alerts' => 'ModifyAlertsSettings',
 	);
 
@@ -82,8 +78,6 @@ function ModifyFeatureSettings()
 			'profile' => array(
 				'description' => $txt['custom_profile_desc'],
 			),
-			'mentions' => array(
-			),
 			'alerts' => array(
 				'description' => $txt['notifications_desc'],
 			),
@@ -91,40 +85,6 @@ function ModifyFeatureSettings()
 	);
 
 	call_integration_hook('integrate_modify_features', array(&$subActions));
-
-	// Call the right function for this sub-action.
-	call_helper($subActions[$_REQUEST['sa']]);
-}
-
-/**
- * This my friend, is for all the mod authors out there.
- */
-function ModifyModSettings()
-{
-	global $context, $txt;
-
-	$context['page_title'] = $txt['admin_modifications'];
-
-	$subActions = array(
-		'general' => 'ModifyGeneralModSettings',
-		// Mod authors, once again, if you have a whole section to add do it AFTER this line, and keep a comma at the end.
-	);
-
-	// Make it easier for mods to add new areas.
-	call_integration_hook('integrate_modify_modifications', array(&$subActions));
-
-	loadGeneralSettingParameters($subActions, 'general');
-
-	// Load up all the tabs...
-	$context[$context['admin_menu_name']]['tab_data'] = array(
-		'title' => $txt['admin_modifications'],
-		'help' => 'modsettings',
-		'description' => $txt['modification_settings_desc'],
-		'tabs' => array(
-			'general' => array(
-			),
-		),
-	);
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);
@@ -145,6 +105,7 @@ function ModifyBasicSettings($return_config = false)
 			// Basic stuff, titles, permissions...
 			array('check', 'allow_guestAccess'),
 			array('check', 'enable_likes'),
+			array('check', 'enable_mentions'),
 			array('check', 'enable_buddylist'),
 			array('check', 'allow_hideOnline'),
 			array('check', 'topic_move_any'),
@@ -330,44 +291,6 @@ function ModifyLayoutSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=layout';
 	$context['settings_title'] = $txt['mods_cat_layout'];
-
-	prepareDBSettingContext($config_vars);
-}
-
-/**
- * Config array for changing like settings
- * Accessed  from ?action=admin;area=featuresettings;sa=mentions;
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyMentionsSettings($return_config = false)
-{
-	global $txt, $scripturl, $context;
-
-	$config_vars = array(
-		array('check', 'enable_mentions'),
-	);
-
-	call_integration_hook('integrate_mentions_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		call_integration_hook('integrate_save_mentions_settings');
-
-		saveDBSettings($config_vars);
-		session_flash('success', $txt['settings_saved']);
-		redirectexit('action=admin;area=featuresettings;sa=mentions');
-	}
-
-	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=mentions';
-	$context['settings_title'] = $txt['mentions'];
 
 	prepareDBSettingContext($config_vars);
 }
@@ -563,7 +486,7 @@ function ModifyAntispamSettings($return_config = false)
 		}
 		$context['question_answers'][$lang_id]['questions'][$row['id_question']] = [
 			'question' => $row['question'],
-			'answers' => smf_json_decode($row['answers'], true),
+			'answers' => sbb_json_decode($row['answers'], true),
 		];
 		$questions++;
 	}
@@ -593,13 +516,13 @@ function ModifyAntispamSettings($return_config = false)
 	});
 	$(".qa_add_question a").click(function() {
 		var id = $(this).closest("fieldset").attr("id").substring(6);
-		$(\'<dt><input type="text" name="question[\' + id + \'][\' + nextrow + \']" value="" size="50" class="input_text verification_question"></dt><dd><input type="text" name="answer[\' + id + \'][\' + nextrow + \'][]" value="" size="50" class="input_text verification_answer" / ><div class="qa_add_answer"><a href="javascript:void(0);" onclick="return addAnswer(this);">[ \' + ' . JavaScriptEscape($txt['setup_verification_add_answer']) . ' + \' ]</a></div></dd>\').insertBefore($(this).parent());
+		$(\'<dt><input type="text" name="question[\' + id + \'][\' + nextrow + \']" value="" size="50" class="verification_question"></dt><dd><input type="text" name="answer[\' + id + \'][\' + nextrow + \'][]" value="" size="50" class="verification_answer" / ><div class="qa_add_answer"><a href="javascript:void(0);" onclick="return addAnswer(this);">[ \' + ' . JavaScriptEscape($txt['setup_verification_add_answer']) . ' + \' ]</a></div></dd>\').insertBefore($(this).parent());
 		nextrow++;
 	});
 	function addAnswer(obj)
 	{
 		var attr = $(obj).closest("dd").find(".verification_answer:last").attr("name");
-		$(\'<input type="text" name="\' + attr + \'" value="" size="50" class="input_text verification_answer">\').insertBefore($(obj).closest("div"));
+		$(\'<input type="text" name="\' + attr + \'" value="" size="50" class="verification_answer">\').insertBefore($(obj).closest("div"));
 		return false;
 	}
 	$("#qa_dt_' . strtr($language, array('-utf8' => '')) . ' a").click();', true);
@@ -898,7 +821,7 @@ function ModifySignatureSettings($return_config = false)
 				if (!empty($sig_limits[2]))
 				{
 					$count = 0;
-					for ($i = 0; $i < strlen($sig); $i++)
+					for ($i = 0, $n = strlen($sig); $i < $n; $i++)
 					{
 						if ($sig[$i] == "\n")
 						{
@@ -959,7 +882,8 @@ function ModifySignatureSettings($return_config = false)
 						$image_count_holder = array();
 						foreach ($matches[0] as $key => $image)
 						{
-							$width = -1; $height = -1;
+							$width = -1;
+							$height = -1;
 							$img_count++;
 							// Too many images?
 							if (!empty($sig_limits[3]) && $img_count > $sig_limits[3])
@@ -1271,7 +1195,7 @@ function ShowCustomProfiles()
 					{
 						$isChecked = $rowData['disabled'] ? '' : ' checked';
 						$onClickHandler = $rowData['can_show_register'] ? sprintf(' onclick="document.getElementById(\'reg_%1$s\').disabled = !this.checked;"', $rowData['id']) : '';
-						return sprintf('<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s" class="input_check"%2$s%3$s>', $rowData['id'], $isChecked, $onClickHandler);
+						return sprintf('<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s"%2$s%3$s>', $rowData['id'], $isChecked, $onClickHandler);
 					},
 					'style' => 'width: 20%;',
 					'class' => 'centercol',
@@ -1287,7 +1211,7 @@ function ShowCustomProfiles()
 					{
 						$isChecked = $rowData['on_register'] && !$rowData['disabled'] ? ' checked' : '';
 						$isDisabled = $rowData['can_show_register'] ? '' : ' disabled';
-						return sprintf('<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s" class="input_check"%2$s%3$s>', $rowData['id'], $isChecked, $isDisabled);
+						return sprintf('<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s"%2$s%3$s>', $rowData['id'], $isChecked, $isDisabled);
 					},
 					'style' => 'width: 20%;',
 					'class' => 'centercol',
@@ -1532,8 +1456,11 @@ function EditCustomProfiles()
 	$context[$context['admin_menu_name']]['current_subsection'] = 'profile';
 	$context['page_title'] = $context['fid'] ? $txt['custom_edit_title'] : $txt['custom_add_title'];
 	$context['sub_template'] = 'admin_profile_fields_edit';
-	register_helper([
-		'begins_with' => function($string, $test) { return strpos($string, $test) === 0; }
+	StoryBB\Template::add_helper([
+		'begins_with' => function($string, $test)
+		{
+			return strpos($string, $test) === 0;
+		}
 	]);
 
 	// Load the profile language for section names.
@@ -2023,14 +1950,12 @@ function ModifyLogSettings($return_config = false)
 			array('check', 'adminlog_enabled', 'help' => 'adminlog'),
 			array('check', 'userlog_enabled', 'help' => 'userlog'),
 			// The error log is a wonderful thing.
-			array('title', 'errlog'),
-			array('desc', 'error_log_desc'),
+			array('title', 'errlog', 'desc' => $txt['error_log_desc']),
 			array('check', 'enableErrorLogging'),
 			array('check', 'enableErrorQueryLogging'),
 			array('check', 'log_ban_hits'),
 			// Even do the pruning?
-			array('title', 'pruning_title'),
-			array('desc', 'pruning_desc'),
+			array('title', 'pruning_title', 'desc' => $txt['pruning_desc']),
 			// The array indexes are there so we can remove/change them before saving.
 			'pruningOptions' => array('check', 'pruningOptions'),
 		'',
@@ -2040,32 +1965,31 @@ function ModifyLogSettings($return_config = false)
 			array('int', 'pruneBanLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Ban hit log.
 			array('int', 'pruneReportLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Report to moderator log.
 			array('int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Log of the scheduled tasks and how long they ran.
-			array('int', 'pruneSpiderHitLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Log of the scheduled tasks and how long they ran.
 			// If you add any additional logs make sure to add them after this point.  Additionally, make sure you add them to the weekly scheduled task.
-			// Mod Developers: Do NOT use the pruningOptions master variable for this as SMF Core may overwrite your setting in the future!
+			// Mod Developers: Do NOT use the pruningOptions master variable for this as StoryBB Core may overwrite your setting in the future!
+		'',
+			array('int', 'retention_policy_standard', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_means_zero']),
+			array('int', 'retention_policy_sensitive', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_means_zero']),
 	);
 
 	// We want to be toggling some of these for a nice user experience. If you want to add yours to the list of those magically hidden when the 'pruning' option is off, add to this.
-	$prune_toggle = array('pruneErrorLog', 'pruneModLog', 'pruneBanLog', 'pruneReportLog', 'pruneScheduledTaskLog', 'pruneSpiderHitLog');
+	$prune_toggle = array('pruneErrorLog', 'pruneModLog', 'pruneBanLog', 'pruneReportLog', 'pruneScheduledTaskLog');
 
 	call_integration_hook('integrate_prune_settings', array(&$config_vars, &$prune_toggle, false));
-
-	$prune_toggle_dt = array();
-	foreach ($prune_toggle as $item)
-		$prune_toggle_dt[] = 'setting_' . $item;
 
 	if ($return_config)
 		return $config_vars;
 
-	addInlineJavaScript('
-	function togglePruned()
+	if (!empty($prune_toggle))
 	{
-		var newval = $("#pruningOptions").prop("checked");
-		$("#' . implode(', #', $prune_toggle) . '").closest("dd").toggle(newval);
-		$("#' . implode(', #', $prune_toggle_dt) . '").closest("dt").toggle(newval);
-	};
-	togglePruned();
-	$("#pruningOptions").click(function() { togglePruned(); });', true);
+		addInlineJavaScript('
+	$(document).ready(function () {
+		$("input#pruningOptions").on("change", function() {
+			var newval = $("input#pruningOptions").is(":checked");
+			$("#' . implode(', #', $prune_toggle) . '").closest("dd").toggle(newval).prev("dt").toggle(newval);
+		}).trigger("change");
+	});', true);
+	}
 
 	// We'll need this in a bit.
 	require_once($sourcedir . '/ManageServer.php');
@@ -2113,65 +2037,13 @@ function ModifyLogSettings($return_config = false)
 
 	// Get the actual values
 	if (!empty($modSettings['pruningOptions']))
-		@list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneBanLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
+	{
+		@list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneBanLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog']) = explode(',', $modSettings['pruningOptions']);
+		$modSettings['pruningOptions'] = 1;
+	}
 	else
-		$modSettings['pruneErrorLog'] = $modSettings['pruneModLog'] = $modSettings['pruneBanLog'] = $modSettings['pruneReportLog'] = $modSettings['pruneScheduledTaskLog'] = $modSettings['pruneSpiderHitLog'] = 0;
+		$modSettings['pruneErrorLog'] = $modSettings['pruneModLog'] = $modSettings['pruneBanLog'] = $modSettings['pruneReportLog'] = $modSettings['pruneScheduledTaskLog'] = 0;
 
-	prepareDBSettingContext($config_vars);
-}
-
-/**
- * If you have a general mod setting to add stick it here.
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyGeneralModSettings($return_config = false)
-{
-	global $txt, $scripturl, $context;
-
-	$config_vars = array(
-		// Mod authors, add any settings UNDER this line. Include a comma at the end of the line and don't remove this statement!!
-	);
-
-	// Make it even easier to add new settings.
-	call_integration_hook('integrate_general_mod_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	$context['post_url'] = $scripturl . '?action=admin;area=modsettings;save;sa=general';
-	$context['settings_title'] = $txt['mods_cat_modifications_misc'];
-
-	// No removing this line you, dirty unwashed mod authors. :p
-	if (empty($config_vars))
-	{
-		$context['settings_save_dont_show'] = true;
-		$context['settings_message'] = '<div class="centertext">' . $txt['modification_no_misc_settings'] . '</div>';
-
-		return prepareDBSettingContext($config_vars);
-	}
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		$save_vars = $config_vars;
-
-		call_integration_hook('integrate_save_general_mod_settings', array(&$save_vars));
-
-		// This line is to help mod authors do a search/add after if you want to add something here. Keyword: FOOT TAPPING SUCKS!
-		saveDBSettings($save_vars);
-
-		// This line is to remind mod authors that it's nice to let the users know when something has been saved.
-		session_flash('success', $txt['settings_saved']);
-
-		// This line is to help mod authors do a search/add after if you want to add something here. Keyword: I LOVE TEA!
-		redirectexit('action=admin;area=modsettings;sa=general');
-	}
-
-	// This line is to help mod authors do a search/add after if you want to add something here. Keyword: RED INK IS FOR TEACHERS AND THOSE WHO LIKE PAIN!
 	prepareDBSettingContext($config_vars);
 }
 
@@ -2193,7 +2065,6 @@ function ModifyAlertsSettings()
 	// Specify our action since we'll want to post back here instead of the profile
 	$context['action'] = 'action=admin;area=featuresettings;sa=alerts;'. $context['session_var'] .'='. $context['session_id'];
 
-	loadTemplate('Profile');
 	loadLanguage('Profile');
 
 	include_once($sourcedir . '/Profile-Modify.php');
@@ -2203,7 +2074,5 @@ function ModifyAlertsSettings()
 
 	// Override the description
 	$context['description'] = $txt['notifications_desc'];
-	$context['sub_template'] = 'alert_configuration';
+	$context['sub_template'] = 'profile_alert_configuration';
 }
-
-?>

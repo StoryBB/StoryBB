@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Outputs xml data representing recent information or a profile.
  * Can be passed 4 subactions which decide what is output:
@@ -162,7 +159,7 @@ function ShowXmlFeed()
 		$smcFunc['db_free_result']($request);
 
 		$feed_meta['title'] = ' - ' . strip_tags($board_info['name']);
-		$feed_meta['source'] .= '?board=' . $board . '.0' ;
+		$feed_meta['source'] .= '?board=' . $board . '.0';
 
 		$query_this_board = 'b.id_board = ' . $board;
 
@@ -191,7 +188,7 @@ function ShowXmlFeed()
 	);
 
 	// Easy adding of sub actions
- 	call_integration_hook('integrate_xmlfeeds', array(&$subActions));
+	call_integration_hook('integrate_xmlfeeds', array(&$subActions));
 
 	if (empty($_GET['sa']) || !isset($subActions[$_GET['sa']]))
 		$_GET['sa'] = 'recent';
@@ -477,7 +474,6 @@ function dumpTags($data, $i, $tag = null, $xml_format = '', $forceCdataKeys = ar
 		'signature',
 		'position',
 		'language',
-		'gender',
 	);
 	if ($xml_format != 'atom')
 		$keysToCdata[] = 'category';
@@ -747,7 +743,7 @@ function getXmlNews($xml_format)
 			{
 				uasort($loaded_attachments, function($a, $b) {
 					if ($a['filesize'] == $b['filesize'])
-					        return 0;
+						return 0;
 					return ($a['filesize'] < $b['filesize']) ? -1 : 1;
 				});
 			}
@@ -1028,7 +1024,7 @@ function getXmlRecent($xml_format)
 			{
 				uasort($loaded_attachments, function($a, $b) {
 					if ($a['filesize'] == $b['filesize'])
-					        return 0;
+						return 0;
 					return ($a['filesize'] < $b['filesize']) ? -1 : 1;
 				});
 			}
@@ -1307,5 +1303,3 @@ function getXmlProfile($xml_format)
 
 	return $data;
 }
-
-?>

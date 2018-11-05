@@ -1,0 +1,32 @@
+	{{! Template for managing ignored boards}}
+	<form action="{{scripturl}}?action=profile;area=ignoreboards;save" method="post" accept-charset="UTF-8" name="creator" id="creator">
+		<div class="cat_bar">
+			<h3 class="catbg profile_hd">
+				{{{txt.profile}}}
+			</h3>
+		</div>
+		<p class="information">{{{txt.ignoreboards_info}}}</p>
+		<div class="windowbg2">
+			<div class="flow_hidden">
+				{{#each context.split_categories}}
+				<ul class="ignoreboards {{#if (eq @index 0)}}floatleft{{else}}floatright{{/if}}">
+					{{#each .}}
+					<li class="category">
+						<a href="javascript:void(0);" onclick="selectBoards([{{{join child_ids ','}}}], 'creator'); return false;">{{{name}}}</a>
+						<ul>
+							{{#each boards}}
+							<li class="board" style="margin-{{#if ../../../context.right_to_left}}right{{else}}left{{/if}}: {{child_level}}em;">
+								<label for="ignore_brd{{id}}"><input type="checkbox" id="brd{{id}}" name="ignore_brd[{{id}}]" value="{{id}}"{{#if selected}} checked{{/if}}> {{{name}}}</label>
+							</li>
+							{{/each}}
+						</ul>
+					</li>
+					{{/each}}
+				</ul>
+				{{/each}}
+
+			</div>
+			{{> profile_setting_save}}
+		</div>
+	</form>
+	<br>

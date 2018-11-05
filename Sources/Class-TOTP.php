@@ -1,7 +1,5 @@
 <?php
 
-namespace TOTP;
-
 /**
  * A class for generating the codes compatible with the Google Authenticator and similar TOTP
  * clients.
@@ -19,6 +17,8 @@ namespace TOTP;
  *
  * @version 3.0 Alpha 1
  */
+
+namespace TOTP;
 
 /**
  * Class Auth
@@ -294,10 +294,7 @@ class Auth
 		$offset = ord($hash[19]) & 0xf;
 
 		return (
-			((ord($hash[$offset + 0]) & 0x7f) << 24) |
-			((ord($hash[$offset + 1]) & 0xff) << 16) |
-			((ord($hash[$offset + 2]) & 0xff) << 8) |
-			(ord($hash[$offset + 3]) & 0xff)
+			((ord($hash[$offset + 0]) & 0x7f) << 24) | ((ord($hash[$offset + 1]) & 0xff) << 16) | ((ord($hash[$offset + 2]) & 0xff) << 8) | (ord($hash[$offset + 3]) & 0xff)
 		) % pow(10, $this->getCodeLength());
 	}
 
@@ -321,7 +318,7 @@ class Auth
 		$length = 0;
 		$binary = '';
 
-		for ($i = 0; $i < strlen($hash); $i++) {
+		for ($i = 0, $n = strlen($hash); $i < $n; $i++) {
 			$buffer = $buffer << 5;
 			$buffer += $lookup[$hash[$i]];
 			$length += 5;
@@ -348,5 +345,3 @@ class Auth
 		return 'https://chart.googleapis.com/chart?chs=280x280&chld=M|0&cht=qr&chl=' . $urlencoded;
 	}
 }
-
-?>

@@ -1,15 +1,14 @@
 <?php
 
 /**
+ * Supplementary functions used when building the message index (lists of topics)
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
  */
-
-if (!defined('SMF'))
-	die('No direct access...');
 
 /**
  * Generates the query to determine the list of available boards for a user
@@ -88,8 +87,14 @@ function getBoardList($boardListOptions = array())
 	return $return_value;
 }
 
-
-function child_boards($board) {
+/**
+ * Make a string linking to all the child boards for a given board.
+ *
+ * @param array $board A board array
+ * @return SafeString The links to all the children of this board, as a single string
+ */
+function child_boards($board)
+{
 	global $txt;
 
 	// Sort the links into an array with new boards bold so it can be imploded.
@@ -112,5 +117,3 @@ function child_boards($board) {
 	
 	return new \LightnCandy\Safestring(implode(', ', $children));
 }
-
-?>

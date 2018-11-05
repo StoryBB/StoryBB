@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This function shows the board index.
  * It uses the BoardIndex template, and main sub template.
@@ -82,7 +79,7 @@ function BoardIndex()
 
 	// Track most online statistics? (Subs-MembersOnline.php)
 	if (!empty($modSettings['trackStats']))
-		trackStatsUsersOnline($context['num_guests'] + $context['num_spiders'] + $context['num_users_online']);
+		trackStatsUsersOnline($context['num_guests'] + $context['num_robots'] + $context['num_users_online']);
 
 	// Are we showing all membergroups on the board index?
 	if (!empty($settings['show_group_key']))
@@ -103,9 +100,7 @@ function BoardIndex()
 
 	if (!empty($settings['show_newsfader']))
 	{
-		loadJavaScriptFile('slippry.min.js', array(), 'smf_jquery_slippry');
-		loadCSSFile('slider.min.css', array(), 'smf_jquery_slider');
+		loadJavaScriptFile('slippry.min.js', array(), 'sbb_jquery_slippry');
+		loadCSSFile('slider.min.css', array(), 'sbb_jquery_slider');
 	}
 }
-
-?>

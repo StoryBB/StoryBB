@@ -10,8 +10,233 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
+/**
+ * Set up data exports for users and list exports available.
+ *
+ * @param int $memID The ID of the member whose data export we're setting up
+ */
+function exportData($memID)
+{
+	global $context, $sourcedir, $txt, $modSettings, $scripturl, $smcFunc;
+
+	// Users can get to their own, but otherwise, must be admins.
+	if ($context['user']['id'] != $memID)
+	{
+		isAllowedTo('admin_forum');
+	}
+
+	// Is the user requesting a download?
+	if (isset($_REQUEST['download']))
+	{
+		$_REQUEST['download'] = (int) $_REQUEST['download'];
+		checkSession('get');
+
+		$request = $smcFunc['db_query']('', '
+			SELECT a.id_attach, ue.id_member
+			FROM {db_prefix}user_exports AS ue
+			INNER JOIN {db_prefix}attachments AS a ON (ue.id_attach = a.id_attach)
+			WHERE ue.id_export = {int:export}
+				AND ue.id_member = {int:member}
+				AND ue.requested_on > {int:last_valid}',
+			[
+				'export' => $_REQUEST['download'],
+				'member' => $memID,
+				'last_valid' => time() - (86400 * 7),
+			]
+		);
+		if ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			require_once($sourcedir . '/ShowAttachments.php');
+			showAttachment($row['id_attach']);
+		}
+		fatal_lang_error('profile_export_data_not_available', false);
+	}
+
+	// Did this user potentially get an alert about it? If so, clear up.
+	$alerted = StoryBB\Model\Alert::find_alerts([
+		'content_type' => 'member',
+		'content_id' => $memID,
+		'content_action' => 'export_complete',
+		'id_member' => $context['user']['id'],
+		'is_read' => 0
+	]);
+	if (!empty($alerted))
+	{
+		foreach ($alerted as $member => $alerts)
+		{
+			StoryBB\Model\Alert::change_read($member, $alerts, 1);
+		}
+	}
+
+	// Is one currently processing for this user?
+	$in_process = false;
+	$request = $smcFunc['db_query']('', '
+		SELECT ue.id_export, a.approved
+		FROM {db_prefix}user_exports AS ue
+			INNER JOIN {db_prefix}attachments AS a ON (ue.id_attach = a.id_attach)
+		WHERE ue.id_member = {int:memID}
+		ORDER BY ue.id_export DESC
+		LIMIT 1',
+		[
+			'memID' => $memID,
+		]
+	);
+	if ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		if (!empty($row['id_export']) && empty($row['approved']))
+			$in_process = true;
+	}
+	$smcFunc['db_free_result']($request);
+
+	// User is requesting an export.
+	if (!$in_process && isset($_GET['request']))
+	{
+		session_flash('success', $txt['profile_export_data_queued']);
+		StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ExportData', [
+			'id_member' => $memID,
+			'id_requester' => $context['user']['id'],
+		]);
+		redirectexit('action=profile;area=export_data;u=' . $memID);
+	}
+
+	$context['page_title'] = $txt['profile_export_data'];
+	require_once($sourcedir . '/Subs-List.php');
+
+	$listOptions = [
+		'id' => 'list_exports',
+		'title' => $txt['profile_export_data'],
+		'items_per_page' => $modSettings['defaultMaxListItems'],
+		'no_items_label' => $txt['profile_export_data_no_export_available'],
+		'base_href' => $scripturl . '?action=profile;area=issuewarning;sa=user;u=' . $memID,
+		'default_sort_col' => 'requested_on',
+		'get_items' => [
+			'function' => function($start, $items_per_page, $sort, $memID) use ($smcFunc)
+			{
+				$request = $smcFunc['db_query']('', '
+					SELECT ue.id_export, ue.id_attach, ue.id_member, mem.real_name, ue.id_requester, a.approved, a.size,
+						ue.requested_on
+					FROM {db_prefix}user_exports AS ue
+						INNER JOIN {db_prefix}attachments AS a ON (ue.id_attach = a.id_attach)
+						LEFT JOIN {db_prefix}members AS mem ON (ue.id_requester = mem.id_member)
+					WHERE ue.id_member = {int:memID}
+					ORDER BY {raw:sort}
+					LIMIT {int:start}, {int:limit}',
+					[
+						'memID' => $memID,
+						'sort' => $sort,
+						'start' => $start,
+						'limit' => $items_per_page,
+					]
+				);
+				$rows = [];
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					$rows[] = $row;
+				}
+				$smcFunc['db_free_result']($request);
+				return $rows;
+			},
+			'params' => [
+				$memID,
+			],
+		],
+		'get_count' => [
+			'function' => function($memID) use ($smcFunc)
+			{
+				$request = $smcFunc['db_query']('', '
+					SELECT COUNT(ue.id_export)
+					FROM {db_prefix}user_exports AS ue
+					WHERE ue.id_member = {int:memID}',
+					[
+						'memID' => $memID,
+					]
+				);
+				list($count) = $smcFunc['db_fetch_row']($request);
+				$smcFunc['db_free_result']($request);
+
+				return $count;
+			},
+			'params' => [
+				$memID,
+			],
+		],
+		'columns' => [
+			'requested_on' => [
+				'header' => [
+					'value' => $txt['profile_export_data_requested_on'],
+				],
+				'data' => [
+					'db' => 'requested_on',
+					'timeformat' => true,
+				],
+				'sort' => [
+					'default' => 'ue.requested_on DESC',
+					'reverse' => 'ue.requested_on',
+				],
+			],
+			'requested_by' => [
+				'header' => [
+					'value' => $txt['profile_export_data_requested_by'],
+				],
+				'data' => [
+					'function' => function($rowData) use ($scripturl, $txt)
+					{
+						if (!empty($rowData['real_name']))
+						{
+							return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_requester'] . '">' . $rowData['real_name'] . '</a>';
+						}
+						return $txt['not_applicable'];
+					},
+				],
+				'sort' => [],
+			],
+			'download' => [
+				'header' => [
+					'value' => $txt['profile_export_data_download'],
+				],
+				'data' => [
+					'function' => function($rowData) use ($scripturl, $txt, $context)
+					{
+						if ($rowData['approved'])
+						{
+							return '<a href="' . $scripturl . '?action=profile;area=export_data;u=' . $rowData['id_member'] . ';download=' . $rowData['id_export'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '">' . $txt['profile_export_data_download'] . '</a> (' . round($rowData['size'] / 1024, 1) . $txt['kilobyte'] . ')';
+						}
+						return $txt['profile_export_data_processing'];
+					}
+				],
+				'sort' => [],
+			],
+			'available_until' => [
+				'header' => [
+					'value' => $txt['profile_export_data_available_until'],
+				],
+				'data' => [
+					'function' => function($rowData) use ($scripturl, $txt, $context)
+					{
+						if ($rowData['approved'])
+						{
+							return timeformat($rowData['requested_on'] + (7 * 86400));
+						}
+						return $txt['not_applicable'];
+					}
+				],
+				'sort' => [],
+			],
+		],
+		'additional_rows' => [
+			[
+				'position' => 'bottom_of_list',
+				'value' => $in_process ? $txt['profile_export_data_in_process'] : '
+					<a href="' . $scripturl . '?action=profile;area=export_data;u=' . $memID . ';request;' . $context['session_var'] . '=' . $context['session_id'] . '" class="button">' . $txt['profile_export_data_go'] . '</a>',
+				'class' => 'floatright',
+			],
+		],
+	];
+	createList($listOptions);
+
+	$context['default_list'] = 'list_exports';
+	$context['sub_template'] = 'generic_list_page';
+}
 
 /**
  * Activate an account.
@@ -205,7 +430,7 @@ function issueWarning($memID)
 			updateMemberData($memID, array('warning' => $_POST['warning_level']));
 
 			// Leave a lovely message.
-			$context['profile_updated'] = $context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_warning_success'];
+			session_flash('success', $context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_warning_success']);
 		}
 		else
 		{
@@ -272,6 +497,7 @@ function issueWarning($memID)
 	foreach ($context['level_effects'] as $limit => $dummy)
 		if ($context['member']['warning'] >= $limit)
 			$context['current_level'] = $limit;
+	$context['current_level_effects'] = $context['level_effects'][$context['current_level']];
 
 	$listOptions = array(
 		'id' => 'view_warnings',
@@ -337,7 +563,7 @@ function issueWarning($memID)
 						if (!empty($warning['id_notice']))
 							$ret .= '
 						<div class="floatright">
-							<a href="' . $scripturl . '?action=moderate;area=notice;nid=' . $warning['id_notice'] . '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" class="new_win" title="' . $txt['profile_warning_previous_notice'] . '"><span class="generic_icons filter centericon"></span></a>
+							<a href="' . $scripturl . '?action=moderate;area=notice;nid=' . $warning['id_notice'] . '" onclick="window.open(this.href, \'\', \'scrollbars=yes,resizable=yes,width=400,height=250\');return false;" target="_blank" rel="noopener" title="' . $txt['profile_warning_previous_notice'] . '"><span class="generic_icons filter centericon"></span></a>
 						</div>';
 
 						return $ret;
@@ -430,6 +656,8 @@ function issueWarning($memID)
 	// Replace all the common variables in the templates.
 	foreach ($context['notification_templates'] as $k => $name)
 		$context['notification_templates'][$k]['body'] = strtr($name['body'], array('{MEMBER}' => un_htmlspecialchars($context['member']['name']), '{MESSAGE}' => '[url=' . $scripturl . '?msg=' . $context['warning_for_message'] . ']' . un_htmlspecialchars($context['warned_message_subject']) . '[/url]', '{SCRIPTURL}' => $scripturl, '{FORUMNAME}' => $mbname, '{REGARDS}' => $txt['regards_team']));
+
+	$context['sub_template'] = 'profile_warning_issue';
 }
 
 /**
@@ -512,7 +740,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
  */
 function deleteAccount($memID)
 {
-	global $txt, $context, $modSettings, $cur_profile;
+	global $txt, $context, $modSettings, $cur_profile, $scripturl;
 
 	if (!$context['user']['is_owner'])
 		isAllowedTo('profile_remove_any');
@@ -526,8 +754,10 @@ function deleteAccount($memID)
 	$context['show_perma_delete'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']);
 
 	// Can they do this, or will they need approval?
-	$context['needs_approval'] = $context['user']['is_owner'] && !empty($modSettings['approveAccountDeletion']) && !allowedTo('moderate_forum');
+	$context['needs_approval'] = $context['user']['is_owner'] && !allowedTo('moderate_forum');
 	$context['page_title'] = $txt['deleteAccount'] . ': ' . $cur_profile['real_name'];
+	$context['sub_template'] = 'profile_delete';
+	$context['delete_account_posts_advice'] = sprintf($txt['delete_account_posts_advice'], $scripturl . '?action=contact');
 }
 
 /**
@@ -630,25 +860,41 @@ function deleteAccount2($memID)
 		}
 
 		// Now, have you been naughty and need your posts deleting?
-		// @todo Should this check board permissions?
-		if (!empty($_POST['deletePosts']) && in_array($_POST['remove_type'], array('posts', 'topics')) && allowedTo('moderate_forum'))
+		$topicIDs = [];
+		$msgIDs = [];
+
+		// Include RemoveTopics - essential for this type of work!
+		require_once($sourcedir . '/RemoveTopic.php');
+
+		$extra = empty($_POST['perma_delete']) ? ' AND t.id_board != {int:recycle_board}' : '';
+		$recycle_board = empty($modSettings['recycle_board']) ? 0 : $modSettings['recycle_board'];
+
+		if (allowedTo('moderate_forum'))
 		{
-			// Include RemoveTopics - essential for this type of work!
-			require_once($sourcedir . '/RemoveTopic.php');
-
-			$extra = empty($_POST['perma_delete']) ? ' AND t.id_board != {int:recycle_board}' : '';
-			$recycle_board = empty($modSettings['recycle_board']) ? 0 : $modSettings['recycle_board'];
-
-			// First off we delete any topics the member has started - if they wanted topics being done.
-			if ($_POST['remove_type'] == 'topics')
+			// Identify the OOC account in here.
+			$ooc_account = 0;
+			foreach ($context['member']['characters'] as $charID => $char)
 			{
-				// Fetch all topics started by this user within the time period.
+				if ($char['is_main'])
+				{
+					$ooc_account = $charID;
+					break;
+				}
+			}
+
+			// Find all the topics started by the OOC character.
+			if (!empty($_POST['deleteTopics_ooc']) && $ooc_account)
+			{
+				// Fetch all topics started by this user.
 				$request = $smcFunc['db_query']('', '
 					SELECT t.id_topic
 					FROM {db_prefix}topics AS t
-					WHERE t.id_member_started = {int:selected_member}' . $extra,
+						INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
+					WHERE t.id_member_started = {int:selected_member}
+						AND m.id_character = {int:ooc_character}' . $extra,
 					array(
 						'selected_member' => $memID,
+						'ooc_character' => $ooc_account,
 						'recycle_board' => $recycle_board,
 					)
 				);
@@ -656,41 +902,107 @@ function deleteAccount2($memID)
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$topicIDs[] = $row['id_topic'];
 				$smcFunc['db_free_result']($request);
+			}
+			// And all the IC topics.
+			if (!empty($_POST['deleteTopics_ic']) && $ooc_account)
+			{
+				// Fetch all topics started by this user.
+				$request = $smcFunc['db_query']('', '
+					SELECT t.id_topic
+					FROM {db_prefix}topics AS t
+						INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
+					WHERE t.id_member_started = {int:selected_member}
+						AND m.id_character != {int:ooc_character}' . $extra,
+					array(
+						'selected_member' => $memID,
+						'ooc_character' => $ooc_account,
+						'recycle_board' => $recycle_board,
+					)
+				);
+				$topicIDs = array();
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					$topicIDs[] = $row['id_topic'];
+				}
+				$smcFunc['db_free_result']($request);
+			}
 
+			// Find all the messages by the OOC character that aren't in the topics we already found.
+			if (!empty($_POST['deletePosts_ooc']))
+			{
+				$request = $smcFunc['db_query']('', '
+					SELECT m.id_msg
+					FROM {db_prefix}messages AS m
+						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic
+							AND t.id_first_msg != m.id_msg)
+					WHERE m.id_member = {int:selected_member}
+						AND m.id_character = {int:ooc_character}' . (!empty($topicIDs) ? '
+						AND t.id_topic NOT IN ({array:topics})' : '') . $extra,
+					array(
+						'selected_member' => $memID,
+						'ooc_character' => $ooc_account,
+						'topics' => $topicIDs,
+						'recycle_board' => $recycle_board,
+					)
+				);
+				// This could take a while... but ya know it's gonna be worth it in the end.
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					$msgIDs[] = $row['id_msg'];
+				}
+				$smcFunc['db_free_result']($request);
+			}
+			// Find all the IC posts next.
+			if (!empty($_POST['deletePosts_ic']))
+			{
+				$request = $smcFunc['db_query']('', '
+					SELECT m.id_msg
+					FROM {db_prefix}messages AS m
+						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic
+							AND t.id_first_msg != m.id_msg)
+					WHERE m.id_member = {int:selected_member}
+						AND m.id_character != {int:ooc_character}' . (!empty($topicIDs) ? '
+						AND t.id_topic NOT IN ({array:topics})' : '') . $extra,
+					array(
+						'selected_member' => $memID,
+						'ooc_character' => $ooc_account,
+						'topics' => $topicIDs,
+						'recycle_board' => $recycle_board,
+					)
+				);
+				// This could take a while... but ya know it's gonna be worth it in the end.
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					$msgIDs[] = $row['id_msg'];
+				}
+				$smcFunc['db_free_result']($request);
+			}
+
+			if (!empty($topicIDs))
+			{
 				// Actually remove the topics. Ignore recycling if we want to perma-delete things...
 				// @todo This needs to check permissions, but we'll let it slide for now because of moderate_forum already being had.
 				removeTopics($topicIDs, true, !empty($extra));
 			}
 
-			// Now delete the remaining messages.
-			$request = $smcFunc['db_query']('', '
-				SELECT m.id_msg
-				FROM {db_prefix}messages AS m
-					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic
-						AND t.id_first_msg != m.id_msg)
-				WHERE m.id_member = {int:selected_member}' . $extra,
-				array(
-					'selected_member' => $memID,
-					'recycle_board' => $recycle_board,
-				)
-			);
-			// This could take a while... but ya know it's gonna be worth it in the end.
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			if (!empty($msgIDs))
 			{
-				if (function_exists('apache_reset_timeout'))
-					@apache_reset_timeout();
+				foreach ($msgIDs as $id_msg)
+				{
+					if (function_exists('apache_reset_timeout'))
+						@apache_reset_timeout();
 
-				removeMessage($row['id_msg']);
+					removeMessage($id_msg);
+				}
 			}
-			$smcFunc['db_free_result']($request);
 		}
 
 		// Only delete this poor members account if they are actually being booted out of camp.
 		if (isset($_POST['deleteAccount']))
 			deleteMembers($memID);
 	}
-	// Do they need approval to delete?
-	elseif (!empty($modSettings['approveAccountDeletion']) && !allowedTo('moderate_forum'))
+	// They need approval to delete!
+	elseif (!allowedTo('moderate_forum'))
 	{
 		// Setup their account for deletion ;)
 		updateMemberData($memID, array('is_activated' => 4));
@@ -729,7 +1041,7 @@ function subscriptions($memID)
 	foreach ($context['subscriptions'] as $id => $sub)
 	{
 		// Work out the costs.
-		$costs = smf_json_decode($sub['real_cost'], true);
+		$costs = sbb_json_decode($sub['real_cost'], true);
 
 		$cost_array = array();
 		if ($sub['real_length'] == 'F')
@@ -759,7 +1071,7 @@ function subscriptions($memID)
 	$gateways = loadPaymentGateways();
 	foreach ($gateways as $id => $gateway)
 	{
-		$gateways[$id] = new $gateway['display_class']();
+		$gateways[$id] = new $gateway['class'];
 		if (!$gateways[$id]->gatewayEnabled())
 			unset($gateways[$id]);
 	}
@@ -814,7 +1126,7 @@ function subscriptions($memID)
 		if (isset($context['current'][$_GET['sub_id']]))
 		{
 			// What are the details like?
-			$current_pending = smf_json_decode($context['current'][$_GET['sub_id']]['pending_details'], true);
+			$current_pending = sbb_json_decode($context['current'][$_GET['sub_id']]['pending_details'], true);
 			if (!empty($current_pending))
 			{
 				$current_pending = array_reverse($current_pending);
@@ -912,7 +1224,7 @@ function subscriptions($memID)
 			// What are the details like?
 			$current_pending = array();
 			if ($context['current'][$context['sub']['id']]['pending_details'] != '')
-				$current_pending = smf_json_decode($context['current'][$context['sub']['id']]['pending_details'], true);
+				$current_pending = sbb_json_decode($context['current'][$context['sub']['id']]['pending_details'], true);
 			// Don't get silly.
 			if (count($current_pending) > 9)
 				$current_pending = array();
@@ -969,5 +1281,3 @@ function subscriptions($memID)
 	else
 		$context['sub_template'] = 'subscription_user_choice';
 }
-
-?>

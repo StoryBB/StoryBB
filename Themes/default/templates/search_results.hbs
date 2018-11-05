@@ -25,7 +25,7 @@
 							<strong>{{{txt.search_for}}}:</strong>
 						</dt>
 						<dd>
-							<input type="text" name="search" value="{{{context.search_params.search}}}" maxlength="{{{context.search_string_limit}}}" size="40" class="input_text">
+							<input type="text" name="search" value="{{{context.search_params.search}}}" maxlength="{{{context.search_string_limit}}}" size="40">
 						</dd>
 					</dl>
 					<div class="flow_auto" >
@@ -54,7 +54,7 @@
 			<div class="cat_bar">
 				<h3 class="catbg">
 					<span class="floatright">
-						<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');" class="input_check">
+						<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
 					</span>
 					<span class="generic_icons filter"></span>&nbsp;{{{txt.mlist_search_results}}}:&nbsp;{{{context.search_params.search}}}
 				</h3>
@@ -78,7 +78,7 @@
 								<span class="smalltext">&#171;&nbsp;{{{../../txt.by}}}&nbsp;<strong>{{{member.link}}}</strong>&nbsp;{{{../../txt.on}}}&nbsp;{{{time}}}&nbsp;&#187;</span>
 							</div>
 							<div class="floatright">
-								<input type="checkbox" name="topics[]" value="{{../id}}" class="input_check">
+								<input type="checkbox" name="topics[]" value="{{../id}}">
 							</div>
 
 							{{#if body_highlighted}}
@@ -115,13 +115,13 @@
 				</div>
 			{{/if}}
 
-			<input type="hidden" name="{{{context.session_var}}}" value="{{{context.session_id}}}">
+			{{session_form}}
 		</form>
 	{{else}}
 		<div class="cat_bar">
 			<h3 class="catbg">
 				<span class="floatright">
-					<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');" class="input_check">
+					<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
 				</span>
 				<span class="generic_icons filter"></span>&nbsp;{{{txt.mlist_search_results}}}:&nbsp;{{{context.search_params.search}}}
 			</h3>

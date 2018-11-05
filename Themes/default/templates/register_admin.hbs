@@ -15,21 +15,21 @@
 							<span class="smalltext">{{txt.admin_register_username_desc}}</span>
 						</dt>
 						<dd>
-							<input type="text" name="user" id="user_input" size="30" maxlength="25" class="input_text">
+							<input type="text" name="user" id="user_input" size="30" maxlength="25">
 						</dd>
 						<dt>
 							<strong><label for="email_input">{{txt.admin_register_email}}:</label></strong>
 							<span class="smalltext">{{txt.admin_register_email_desc}}</span>
 						</dt>
 						<dd>
-							<input type="text" name="email" id="email_input" size="30" class="input_text">
+							<input type="text" name="email" id="email_input" size="30">
 						</dd>
 						<dt>
 							<strong><label for="password_input">{{txt.admin_register_password}}:</label></strong>
 							<span class="smalltext">{{txt.admin_register_password_desc}}</span>
 						</dt>
 						<dd>
-							<input type="password" name="password" id="password_input" size="30" class="input_password" onchange="onCheckChange();">
+							<input type="password" name="password" id="password_input" size="30" onchange="onCheckChange();">
 						</dd>
 
 	{{#if context.member_groups}}
@@ -62,20 +62,20 @@
 							<span class="smalltext">{{txt.admin_register_email_detail_desc}}</span>
 						</dt>
 						<dd>
-							<input type="checkbox" name="emailPassword" id="emailPassword_check" checked disabled class="input_check">
+							<input type="checkbox" name="emailPassword" id="emailPassword_check" checked disabled>
 						</dd>
 						<dt>
 							<strong><label for="emailActivate_check">{{txt.admin_register_email_activate}}:</label></strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="emailActivate" id="emailActivate_check" {{#if (eq modSettings.registration_method 1)}}checked{{/if}} onclick="onCheckChange();" class="input_check">
+							<input type="checkbox" name="emailActivate" id="emailActivate_check" {{#if (eq modSettings.registration_method 1)}}checked{{/if}} onclick="onCheckChange();">
 						</dd>
 					</dl>
 					<div class="flow_auto">
 						<input type="submit" name="regSubmit" value="{{txt.register}}" class="button_submit">
 						<input type="hidden" name="sa" value="register">
-						<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-						<input type="hidden" name="{{context.admin-regc_token_var}}" value="{{context.admin-regc_token}}">
+						{{session_form}}
+						{{token_form 'admin-regc'}}
 					</div>
 				</div>
 			</form>

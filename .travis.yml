@@ -2,7 +2,7 @@ sudo: required
 language: php
 php:
   - 7.0
-  - 7.1
+  - 7.2
 
 before_install:
 - sudo rm -vf /etc/apt/sources.list.d/*riak*
@@ -11,15 +11,12 @@ before_install:
 script:
 - sudo add-apt-repository ppa:git-core/ppa -y
 - sudo apt-get update
-- sudo apt-get install git
+- curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
 - if find . -name "*.php" ! -path "./vendor/*" -exec php -l {} 2>&1 \; | grep "syntax
   error, unexpected"; then exit 1; fi
-- if find . -name "*.php" ! -path "./vendor/*" -exec php other/buildTools/check-smf-license.php
+- if find . -name "*.php" ! -path "./vendor/*" -exec php other/buildTools/check-sbb-license.php
   {} 2>&1 \; | grep "Error:"; then exit 1; fi
-- if find . -name "./Themes/default/languages/*.english.php" -exec php other/buildTools/check-smf-langauge.php
-  {} 2>&1 \; | grep "Error:"; then exit 1; fi
-- if find . -name "*.php" ! -path "./vendor/*" -exec php other/buildTools/check-eof.php
-  {} 2>&1 \; | grep "Error:"; then exit 1; fi
+- php phpcs.phar .
+
 notifications:
-  slack:
-    secure: zb4Vct3Qmj9WiZSbmCjvsi1n5zsWeAafzkmelbBz0yOW2Dgt/SD9kKlBkEfzXlhp2e5Ei26F+FiTRZImz5HeazuOJwNjsV4HpaMSbu9/CECvVd2z4o9Ia/UigqJSLg80hYQsAXBMvNk7xixLnXfXo4gX2LhDlPRTwox3aM6q0IOyqwew2tKdAaU4EQdP2MwU9UzzqTYR6InOsrKzi/mOlqjes5Xg1bYyNLxFS4tWysiHyv0FQxrybGfVGhBhN/+iZ5ZpYpEc8X8fPRIuqgy7DJSyml0tqi3OykweC9Dv7Hs9USiuMlSQRpQ93MaM2Y6BKhWX9gMJVQfc9umtfHEGkcrHCWpLQ7G4j6mrVLfiCEh12QQO0bSfh6IBomggtrKUOpujNwOYHvCFYFQ1lHDFpr28Puuub2OSUOoNFuXW3KTUkoK+cguZMbdMtw/HGfAxbA6EGGjNT385/PsLOTrZTroBY8GaZ7AepZzO4lNHvCLekx+XKAYPj/6Q/VKGZvzYqhItgoXmhim1TzdyXCV8VuEc/q3plEjtKDyt9KWNo/bcXrPn0ukgZvYFip6T0NUXlv1j4hWcxeToXFdH647ldwZUDjim3Yz1BJP0AXQo8fy+CS6zlAd04VNY7D5/0X2O2Ic/lvSQJCHT++pz3HInxBdhzF2O8QaobUMLZAlfz5o=
+  email: false

@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This is a handling function for all things post moderation.
  */
@@ -305,7 +302,7 @@ function UnapprovedPosts()
 	$smcFunc['db_free_result']($request);
 
 	$context['sub_template'] = 'modcenter_unapproved';
-	register_helper(['create_button' => 'create_button']);
+	StoryBB\Template::add_helper(['create_button' => 'create_button']);
 }
 
 /**
@@ -478,13 +475,13 @@ function UnapprovedAttachments()
 			),
 			'action' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);" checked>',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" checked>',
 					'style' => 'width: 4%;',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="item[]" value="%1$d" checked class="input_check">',
+						'format' => '<input type="checkbox" name="item[]" value="%1$d" checked>',
 						'params' => array(
 							'id' => false,
 						),
@@ -806,5 +803,3 @@ function removeMessages($messages, $messageDetails, $current_view = 'replies')
 		}
 	}
 }
-
-?>

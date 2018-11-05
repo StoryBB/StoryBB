@@ -145,11 +145,8 @@
 					{{#if member.show_profile_buttons}}
 					<li class="profile">
 						<ol class="profile_icons">
-							{{#if member.can_view_profile}}
-								<li><a href="{{member.href}}"><img src="{{../settings.images_url}}/icons/profile_sm.png" alt="{{txt.view_profile}}" title="{{txt.view_profile}}"></a></li>
-							{{/if}}
 							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-									<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" class="new_win"><span class="generic_icons www centericon" title="{{member.website.title}}"></span></a></li>
+									<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener"><span class="generic_icons www centericon" title="{{member.website.title}}"></span></a></li>
 							{{/if}}
 							{{#if member.show_email}}
 								<li><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{txt.email}}"></span></a></li>
@@ -225,7 +222,7 @@
 								{{else}}
 								<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote"><span class="generic_icons quote"></span>{{../txt.reply_quote}}</a></li>
 								{{/unless}}
-								<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{../context.session_var}}={{../context.session_id}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="generic_icons remove_button"></span>{{../txt.delete}}</a></li>
+								<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{session_url}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="generic_icons remove_button"></span>{{../txt.delete}}</a></li>
 							{{/if}}
 						</ul>
 					</div>
@@ -265,5 +262,5 @@
     {{/if}}
     <br>
     {{/if}}
-    <input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+    {{session_form}}
 </form>

@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Prepares the information from the moderation log for viewing.
  * Show the moderation log.
@@ -86,7 +83,7 @@ function ViewModlog()
 
 	// Do the column stuff!
 	$sort_types = array(
-		'action' =>'lm.action',
+		'action' => 'lm.action',
 		'time' => 'lm.log_time',
 		'member' => 'mem.real_name',
 		'group' => 'mg.group_name',
@@ -100,7 +97,7 @@ function ViewModlog()
 	if (!empty($_REQUEST['params']) && empty($_REQUEST['is_search']))
 	{
 		$search_params = base64_decode(strtr($_REQUEST['params'], array(' ' => '+')));
-		$search_params = smf_json_decode($search_params, true);
+		$search_params = sbb_json_decode($search_params, true);
 	}
 
 	// This array houses all the valid search types.
@@ -249,13 +246,13 @@ function ViewModlog()
 			),
 			'delete' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" name="all" class="input_check" onclick="invertAll(this, this.form);">',
+					'value' => '<input type="checkbox" name="all" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'function' => function ($entry)
 					{
-						return '<input type="checkbox" class="input_check" name="delete[]" value="' . $entry['id'] . '"' . ($entry['editable'] ? '' : ' disabled') . '>';
+						return '<input type="checkbox" name="delete[]" value="' . $entry['id'] . '"' . ($entry['editable'] ? '' : ' disabled') . '>';
 					},
 					'class' => 'centercol',
 				),
@@ -276,7 +273,7 @@ function ViewModlog()
 				'position' => 'below_table_data',
 				'value' => '
 					' . $txt['modlog_search'] . ' (' . $txt['modlog_by'] . ': ' . $context['search']['label'] . '):
-					<input type="text" name="search" size="18" value="' . $smcFunc['htmlspecialchars']($context['search']['string']) . '" class="input_text">
+					<input type="text" name="search" size="18" value="' . $smcFunc['htmlspecialchars']($context['search']['string']) . '">
 					<input type="submit" name="is_search" value="' . $txt['modlog_go'] . '" class="button_submit" style="float:none">
 					' . ($context['can_delete'] ? '&nbsp;
 					<input type="submit" name="remove" value="' . $txt['modlog_remove'] . '" data-confirm="' . $txt['modlog_remove_selected_confirm'] . '" class="button_submit you_sure">
@@ -403,7 +400,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	$entries = array();
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
-		$row['extra'] = smf_json_decode($row['extra'], true);
+		$row['extra'] = sbb_json_decode($row['extra'], true);
 
 		// Corrupt?
 		$row['extra'] = is_array($row['extra']) ? $row['extra'] : array();
@@ -651,5 +648,3 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	// Back we go!
 	return $entries;
 }
-
-?>

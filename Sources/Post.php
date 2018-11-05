@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Handles showing the post screen, loading the post to be modified, and loading any post quoted.
  *
@@ -56,7 +53,7 @@ function Post($post_errors = array())
 
 	if (isset($_REQUEST['xml']))
 	{
-		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::add_helper(['cleanXml' => 'cleanXml']);
 		StoryBB\Template::set_layout('xml');
 		$context['sub_template'] = 'xml_post_preview';
 
@@ -1074,13 +1071,13 @@ function Post($post_errors = array())
 	// Mentions
 	if (!empty($modSettings['enable_mentions']) && allowedTo('mention'))
 	{
-		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'smf_caret');
-		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'smf_atwho');
-		loadJavaScriptFile('mentions.js', array('defer' => true), 'smf_mentions');
+		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'sbb_caret');
+		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'sbb_atwho');
+		loadJavaScriptFile('mentions.js', array('defer' => true), 'sbb_mentions');
 	}
 
 	// quotedText.js
-	loadJavaScriptFile('quotedText.js', array('defer' => true), 'smf_quotedText');
+	loadJavaScriptFile('quotedText.js', array('defer' => true), 'sbb_quotedText');
 
 	// Mock files to show already attached files.
 	addInlineJavaScript('
@@ -1103,13 +1100,17 @@ function Post($post_errors = array())
 	// File Upload.
 	if ($context['can_post_attachment'])
 	{
-		$acceptedFiles = implode(',', array_map(function($val) use($smcFunc) { return '.' . $smcFunc['htmltrim']($val); } , explode(',', $context['allowed_extensions'])));
+		$trimfunc = function($val) use ($smcFunc)
+		{
+			return '.' . $smcFunc['htmltrim']($val);
+		};
+		$acceptedFiles = implode(',', array_map($trimfunc, explode(',', $context['allowed_extensions'])));
 
-		loadJavaScriptFile('dropzone.min.js', array('defer' => true), 'smf_dropzone');
-		loadJavaScriptFile('smf_fileUpload.js', array('defer' => true), 'smf_fileUpload');
+		loadJavaScriptFile('dropzone.min.js', array('defer' => true), 'sbb_dropzone');
+		loadJavaScriptFile('sbb_fileUpload.js', array('defer' => true), 'sbb_fileUpload');
 		addInlineJavaScript('
 	$(function() {
-		smf_fileUpload({
+		sbb_fileUpload({
 			dictDefaultMessage : '. JavaScriptEscape($txt['attach_drop_zone']) . ',
 			dictFallbackMessage : '. JavaScriptEscape($txt['attach_drop_zone_no']) . ',
 			dictCancelUpload : '. JavaScriptEscape($txt['modify_cancel']) . ',
@@ -1148,14 +1149,14 @@ function Post($post_errors = array())
 	{
 		$context['posting_fields']['guestname'] = array(
 			'dt' => '<span id="caption_guestname"' .  (isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) || isset($context['post_error']['bad_name']) ? ' class="error"' : '') . '>' . $txt['name'] . '</span>',
-			'dd' => '<input type="text" name="guestname" size="25" value="' . $context['name'] . '" class="input_text" required>',
+			'dd' => '<input type="text" name="guestname" size="25" value="' . $context['name'] . '" required>',
 		);
 
 		if (empty($modSettings['guest_post_no_email']))
 		{
 			$context['posting_fields']['email'] = array(
 				'dt' => '<span id="caption_email"' .  (isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? ' class="error"' : '') . '>' . $txt['email'] . '</span>',
-				'dd' => '<input type="email" name="email" size="25" value="' . $context['email'] . '" class="input_text" required>',
+				'dd' => '<input type="email" name="email" size="25" value="' . $context['email'] . '" required>',
 			);
 		}
 	}
@@ -1163,7 +1164,7 @@ function Post($post_errors = array())
 	// Gotta have a subject.
 	$context['posting_fields']['subject'] = array(
 		'dt' => '<span id="caption_subject"' . (isset($context['post_error']['no_subject']) ? ' class="error"' : '') . '>' . $txt['subject'] . '</span>',
-		'dd' => '<input type="text" name="subject" value="' . $context['subject'] . '" size="80" maxlength="80" class="input_text" required>',
+		'dd' => '<input type="text" name="subject" value="' . $context['subject'] . '" size="80" maxlength="80" required>',
 	);
 
 	// Icons are fun.
@@ -1189,10 +1190,14 @@ function Post($post_errors = array())
 
 	StoryBB\Template::add_helper([
 		'browser' => 'isBrowser',
-		'formatKb' => function($size) {
+		'formatKb' => function($size)
+		{
 			return comma_format(round(max($size, 1024) / 1024), 0);
 		},
-		'sizeLimit' => function() { global $modSettings; return $modSettings['attachmentSizeLimit'] * 1024; },
+		'sizeLimit' => function() {
+			global $modSettings;
+			return $modSettings['attachmentSizeLimit'] * 1024;
+		},
 	]);
 
 	call_integration_hook('integrate_post_end');
@@ -1221,6 +1226,12 @@ function Post2()
 	}
 	elseif (empty($_POST) && !empty($topic))
 		redirectexit('action=post;topic=' . $topic . '.0');
+
+	$possible_characters = get_user_possible_characters($user_info['id'], $board);
+	if (!isset($possible_characters[$user_info['id_character']]))
+	{
+		fatal_lang_error('cannot_post_as_character', false);
+	}
 
 	// No need!
 	$context['robot_no_index'] = true;
@@ -1569,7 +1580,7 @@ function Post2()
 	// In case we have approval permissions and want to override.
 	if (allowedTo('approve_posts') && $modSettings['postmod_active'])
 	{
-		$becomesApproved = !empty($_REQUEST['approve']) ? 1 : 0;
+		$becomesApproved = !isset($_REQUEST['approve']) || !empty($_REQUEST['approve']) ? 1 : 0;
 		$approve_has_changed = isset($row['approved']) ? $row['approved'] != $becomesApproved : false;
 	}
 
@@ -2416,7 +2427,7 @@ function QuoteFast()
 
 	$context['sub_template'] = 'xml_quotefast';
 	StoryBB\Template::set_layout('xml');
-	register_helper([
+	StoryBB\Template::add_helper([
 		'cleanXml' => 'cleanXml',
 	]);
 
@@ -2657,7 +2668,15 @@ function JavaScriptModify()
 			if (time() - $row['poster_time'] > $modSettings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
 			{
 				$msgOptions['modify_time'] = time();
-				$msgOptions['modify_name'] = $user_info['name'];
+				// Admin edit should be credited to admin user, all other edits to character
+				if ($user_info['is_admin'])
+				{
+					$msgOptions['modify_name'] = $user_info['name'];
+				}
+				else
+				{
+					$msgOptions['modify_name'] = $user_info['character_name'];
+				}
 			}
 		}
 		// If nothing was changed there's no need to add an entry to the moderation log.
@@ -2712,7 +2731,7 @@ function JavaScriptModify()
 	{
 		StoryBB\Template::set_layout('xml');
 		$context['sub_template'] = 'xml_modifydone';
-		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::add_helper(['cleanXml' => 'cleanXml']);
 		if (empty($post_errors) && isset($msgOptions['subject']) && isset($msgOptions['body']))
 		{
 			$context['message'] = array(
@@ -2771,5 +2790,3 @@ function JavaScriptModify()
 	else
 		obExit(false);
 }
-
-?>

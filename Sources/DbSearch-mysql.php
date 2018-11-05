@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  *  Add the file functions to the $smcFunc array.
  */
@@ -20,11 +17,11 @@ function db_search_init()
 {
 	global $smcFunc;
 
-	if (!isset($smcFunc['db_search_query']) || $smcFunc['db_search_query'] != 'smf_db_query')
+	if (!isset($smcFunc['db_search_query']) || $smcFunc['db_search_query'] != 'sbb_db_query')
 		$smcFunc += array(
-			'db_search_query' => 'smf_db_query',
-			'db_search_support' => 'smf_db_search_support',
-			'db_create_word_search' => 'smf_db_create_word_search',
+			'db_search_query' => 'sbb_db_query',
+			'db_search_support' => 'sbb_db_search_support',
+			'db_create_word_search' => 'sbb_db_create_word_search',
 			'db_support_ignore' => true,
 		);
 }
@@ -35,7 +32,7 @@ function db_search_init()
  * @param string $search_type The search type.
  * @return boolean Whether or not the specified search type is supported by this db system
  */
-function smf_db_search_support($search_type)
+function sbb_db_search_support($search_type)
 {
 	$supported_types = array('fulltext');
 
@@ -47,7 +44,7 @@ function smf_db_search_support($search_type)
  *
  * @param string $size The size of the desired index.
  */
-function smf_db_create_word_search($size)
+function sbb_db_create_word_search($size)
 {
 	global $smcFunc;
 
@@ -70,5 +67,3 @@ function smf_db_create_word_search($size)
 		)
 	);
 }
-
-?>

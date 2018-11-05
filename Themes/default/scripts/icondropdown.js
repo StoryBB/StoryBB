@@ -1,34 +1,31 @@
 $(document).ready(function()
 {
-	$('#icon_count_input').change(function ()
-	{
-		var select_box = $('select#icon_image_input option:selected').val();
-		var icon_count = $('#icon_count_input');
-		if (icon_count.val() == 0 && select_box != 'blank.png')
-			icon_count.val(1);
-
-		if (icon_count.val().length > 2)
-			icon_count.val(99);
-	});
-
-	$('#icon_image_input').change(function ()
-	{
-		refreshIconPreview();
-	});
-
+	$('#membergroup_has_badge, #icon_count_input, #icon_image_input').on('change', refreshIconPreview);
 	refreshIconPreview();
 });
 
 function refreshIconPreview()
 {
+	if (!$('#membergroup_has_badge').prop('checked')) {
+		$('#badge_config').hide();
+		return;
+	}
+
+	$('#badge_config').show();
+	$('#badge_preview .image').empty();
+
 	// Get the icon count element.
-	var icon_count = $('#icon_count_input');
+	var icon_count = $('#icon_count_input').val();
+	if (icon_count == 0) {
+		return;
+	}
+
 	var select_box = $('select#icon_image_input').val();
 
-	// If it's empty, set it to 1.
-	if (icon_count.val() == 0 && select_box != 'blank.png')
-		icon_count.val(1);
-
-	// Update the icon preview.
-	$('#icon_preview').attr('src', smf_default_theme_url + '/images/membericons/' + select_box);
+	var img = '<img alt="" src="' + sbb_default_theme_url + '/images/membericons/' + select_box + '">';
+	var finalimg = '';
+	for (var i = 0; i < icon_count; i++) {
+		finalimg += img;
+	}
+	$('#badge_preview .image').html(finalimg);
 }

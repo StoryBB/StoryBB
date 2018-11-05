@@ -1,5 +1,5 @@
 		{{! The list of character templates, with sortables }}
-		<form method="post" action="{{scripturl}}?action=admin;area=templates;sa=reorder;{{context.session_var}}={{context.session_id}}">
+		<form method="post" action="{{scripturl}}?action=admin;area=templates;sa=reorder;{{session_url}}">
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.char_templates}}}</h3>
 			</div>
@@ -24,6 +24,6 @@
 				<a href="{{scripturl}}?action=admin;area=templates;sa=add" class="button">{{{txt.char_templates_add}}}</a>
 				<input type="submit" name="save" value="{{{txt.save}}}" class="button_submit">
 			</div>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 			<div class="clear"></div>
 		</form>

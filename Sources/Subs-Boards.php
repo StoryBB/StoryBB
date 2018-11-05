@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Mark a board or multiple boards read.
  *
@@ -1466,5 +1463,3 @@ function isChildOf($child, $parent)
 
 	return isChildOf($boards[$child]['parent'], $parent);
 }
-
-?>

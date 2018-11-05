@@ -20,7 +20,7 @@
 						<span class="smalltext">{{{txt.one_username}}}</span>
 					</dt>
 					<dd>
-						<input type="text" name="name" id="name_control" value="{{{context.sub.username}}}" size="30" class="input_text">
+						<select name="new_subscriber" id="new_subscriber"><option></option></select>
 					</dd>
 					{{/if}}
 
@@ -61,8 +61,8 @@
 					{{/each}}
 
 					</select>
-					{{{txt.hour}}}: <input type="number" min="0" max="23" name="hour" value="{{{context.sub.start.hour}}}" size="2" class="input_text">
-					{{{txt.minute}}}: <input type="number" min="0" max="59" name="minute" value="{{{context.sub.start.min}}}" size="2" class="input_text">
+					{{{txt.hour}}}: <input type="number" min="0" max="23" name="hour" value="{{{context.sub.start.hour}}}" size="2">
+					{{{txt.minute}}}: <input type="number" min="0" max="59" name="minute" value="{{{context.sub.start.min}}}" size="2">
 				</fieldset>
 				<fieldset>
 					<legend>{{{txt.end_date_and_time}}}</legend>
@@ -91,25 +91,13 @@
 					{{/each}}
 
 					</select>
-					{{{txt.hour}}}: <input type="number" min="0" max="23" name="hourend" value="{{{context.sub.end.hour}}}" size="2" class="input_text">
-					{{{txt.minute}}}: <input type="number" min="0" max="59" name="minuteend" value="{{{context.sub.end.min}}}" size="2" class="input_text">
+					{{{txt.hour}}}: <input type="number" min="0" max="23" name="hourend" value="{{{context.sub.end.hour}}}" size="2">
+					{{{txt.minute}}}: <input type="number" min="0" max="59" name="minuteend" value="{{{context.sub.end.min}}}" size="2">
 				</fieldset>
 				<input type="submit" name="save_sub" value="{{{txt.paid_settings_save}}}" class="button_submit">
 			</div>
 			{{session_form}}
 		</form>
-		<script>
-		var oAddMemberSuggest = new smc_AutoSuggest({
-			sSelf: 'oAddMemberSuggest',
-			sSessionId: smf_session_id,
-			sSessionVar: smf_session_var,
-			sSuggestId: 'name_subscriber',
-			sControlId: 'name_control',
-			sSearchType: 'member',
-			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-			bItemList: false
-			});
-		</script>
 
 		{{#if context.pending_payments}}
 		<div class="cat_bar">

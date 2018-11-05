@@ -12,6 +12,11 @@
 
 namespace StoryBB\Model;
 
+use StoryBB\Task;
+
+/**
+ * This class handles the database processing for a post.
+ */
 class Post
 {
 
@@ -121,13 +126,13 @@ class Post
 		$new_topic = empty($topicOptions['id']);
 
 		$message_columns = array(
-			'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'id_character' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : (empty($modSettings['max_messageLength']) ? 'string' : 'string-65534')),
+			'id_board' => 'int', 'id_topic' => 'int', 'id_creator' => 'int', 'id_member' => 'int', 'id_character' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : (empty($modSettings['max_messageLength']) ? 'string' : 'string-65534')),
 			'poster_name' => 'string-255', 'poster_email' => 'string-255', 'poster_time' => 'int', 'poster_ip' => 'inet',
 			'smileys_enabled' => 'int', 'modified_name' => 'string', 'icon' => 'string-16', 'approved' => 'int',
 		);
 
 		$message_parameters = array(
-			$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $posterOptions['char_id'], $msgOptions['subject'], $msgOptions['body'],
+			$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $posterOptions['id'], $posterOptions['char_id'], $msgOptions['subject'], $msgOptions['body'],
 			$posterOptions['name'], $posterOptions['email'], time(), $posterOptions['ip'],
 			$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['icon'], $msgOptions['approved'],
 		);
@@ -309,19 +314,12 @@ class Post
 				array()
 			);
 
-			$smcFunc['db_insert']('',
-				'{db_prefix}background_tasks',
-				array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-				array(
-					'$sourcedir/tasks/ApprovePost-Notify.php', 'ApprovePost_Notify_Background', json_encode(array(
-						'msgOptions' => $msgOptions,
-						'topicOptions' => $topicOptions,
-						'posterOptions' => $posterOptions,
-						'type' => $new_topic ? 'topic' : 'post',
-					)), 0
-				),
-				array('id_task')
-			);
+			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ApprovePostNotify', [
+				'msgOptions' => $msgOptions,
+				'topicOptions' => $topicOptions,
+				'posterOptions' => $posterOptions,
+				'type' => $new_topic ? 'topic' : 'post',
+			]);
 		}
 
 		// Mark inserted topic as read (only for the user calling this function).
@@ -357,18 +355,13 @@ class Post
 		}
 
 		if ($msgOptions['approved'] && empty($topicOptions['is_approved']))
-			$smcFunc['db_insert']('',
-				'{db_prefix}background_tasks',
-				array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-				array(
-					'$sourcedir/tasks/ApproveReply-Notify.php', 'ApproveReply_Notify_Background', json_encode(array(
-						'msgOptions' => $msgOptions,
-						'topicOptions' => $topicOptions,
-						'posterOptions' => $posterOptions,
-					)), 0
-				),
-				array('id_task')
-			);
+		{
+			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ApproveReplyNotify', [
+				'msgOptions' => $msgOptions,
+				'topicOptions' => $topicOptions,
+				'posterOptions' => $posterOptions,
+			]);
+		}
 
 		// If there's a custom search index, it may need updating...
 		require_once($sourcedir . '/Search.php');
@@ -404,17 +397,14 @@ class Post
 
 		// Queue createPost background notification
 		if ($msgOptions['send_notifications'] && $msgOptions['approved'])
-			$smcFunc['db_insert']('',
-				'{db_prefix}background_tasks',
-				array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-				array('$sourcedir/tasks/CreatePost-Notify.php', 'CreatePost_Notify_Background', json_encode(array(
-					'msgOptions' => $msgOptions,
-					'topicOptions' => $topicOptions,
-					'posterOptions' => $posterOptions,
-					'type' => $new_topic ? 'topic' : 'reply',
-				)), 0),
-				array('id_task')
-			);
+		{
+			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
+				'msgOptions' => $msgOptions,
+				'topicOptions' => $topicOptions,
+				'posterOptions' => $posterOptions,
+				'type' => $new_topic ? 'topic' : 'reply',
+			]);
+		}
 
 		// Alright, done now... we can abort now, I guess... at least this much is done.
 		ignore_user_abort($previous_ignore_user_abort);
@@ -517,17 +507,13 @@ class Post
 				// Queue this for notification.
 				$msgOptions['mentioned_members'] = array_diff_key($mentions, $oldmentions);
 
-				$smcFunc['db_insert']('',
-					'{db_prefix}background_tasks',
-					array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-					array('$sourcedir/tasks/CreatePost-Notify.php', 'CreatePost_Notify_Background', json_encode(array(
-						'msgOptions' => $msgOptions,
-						'topicOptions' => $topicOptions,
-						'posterOptions' => $posterOptions,
-						'type' => 'edit',
-					)), 0),
-					array('id_task')
-				);
+
+				Task::queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
+					'msgOptions' => $msgOptions,
+					'topicOptions' => $topicOptions,
+					'posterOptions' => $posterOptions,
+					'type' => 'edit',
+				]);
 			}
 		}
 
@@ -629,5 +615,3 @@ class Post
 		return true;
 	}
 }
-
-?>

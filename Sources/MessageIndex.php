@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Show the list of topics in this board, along with any child boards.
  */
@@ -40,14 +37,15 @@ function MessageIndex()
 	}
 
 	$context['sub_template'] = 'msgIndex_main';
-	register_helper([
-		'qmod_option' => function($action) {
-				global $context, $txt;
-				if (!empty($context['can_' . $action]))
-					return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
-			},
+	StoryBB\Template::add_helper([
+		'qmod_option' => function($action)
+		{
+			global $context, $txt;
+			if (!empty($context['can_' . $action]))
+				return '<option value="' . $action . '">' . $txt['quick_mod_' . $action] . '</option>';
+		},
 		'child_boards' => 'child_boards'
-		]);
+	]);
 
 	if (!$user_info['is_guest'])
 	{
@@ -152,7 +150,7 @@ function MessageIndex()
 	// Now we tack the info onto the end of the linktree
 	if (!empty($context['link_moderators']))
 	{
-	 	$context['linktree'][count($context['linktree']) - 1]['extra_after'] = '<span class="board_moderators">(' . (count($context['link_moderators']) == 1 ? $txt['moderator'] : $txt['moderators']) . ': ' . implode(', ', $context['link_moderators']) . ')</span>';
+		$context['linktree'][count($context['linktree']) - 1]['extra_after'] = '<span class="board_moderators">(' . (count($context['link_moderators']) == 1 ? $txt['moderator'] : $txt['moderators']) . ': ' . implode(', ', $context['link_moderators']) . ')</span>';
 	}
 
 	// 'Print' the header and board info.
@@ -164,6 +162,13 @@ function MessageIndex()
 	$context['can_post_poll'] = $modSettings['pollMode'] == '1' && allowedTo('poll_post') && $context['can_post_new'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['can_approve_posts'] = allowedTo('approve_posts');
+
+	$possible_characters = get_user_possible_characters($user_info['id'], $board_info['id']);
+	if (!isset($possible_characters[$user_info['id_character']]))
+	{
+		$context['can_post_new'] = false;
+		$context['can_post_poll'] = false;
+	}
 
 	require_once($sourcedir . '/Subs-BoardIndex.php');
 	$boardIndexOptions = array(
@@ -349,10 +354,7 @@ function MessageIndex()
 		$message_index_wheres = array();
 		call_integration_hook('integrate_message_index', array(&$message_index_selects, &$message_index_tables, &$message_index_parameters, &$message_index_wheres, &$topic_ids));
 
-		if (!empty($modSettings['enableParticipation']) && !$user_info['is_guest'])
-			$enableParticipation = true;
-		else
-			$enableParticipation = false;
+		$enableParticipation = empty($user_info['is_guest']);
 
 		$result = $smcFunc['db_query']('substring', '
 			SELECT
@@ -754,7 +756,7 @@ function MessageIndex()
 		);
 
 	// Javascript for inline editing.
-	loadJavaScriptFile('topic.js', array('defer' => false), 'smf_topic');
+	loadJavaScriptFile('topic.js', array('defer' => false), 'sbb_topic');
 
 	// Allow adding new buttons easily.
 	// Note: $context['normal_buttons'] is added for backward compatibility with 2.0, but is deprecated and should not be used
@@ -1325,5 +1327,3 @@ function QuickModeration()
 
 	redirectexit($redirect_url);
 }
-
-?>

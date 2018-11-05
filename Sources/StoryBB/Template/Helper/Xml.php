@@ -12,21 +12,38 @@
 
 namespace StoryBB\Template\Helper;
 
+/**
+ * This class provide a generic XML helper for StoryBB's templates.
+ */
 class Xml
 {
+	/**
+	 * List the different helpers loaded by default in this class.
+	 * @return array Helpers, assocating name to method
+	 */
 	public static function _list()
 	{
 		return ([
-			'xml' => 'StoryBB\\Template\\Helper\\Xml::xml',
+			'xml' => 'StoryBB\\Template\\Helper\\Xml::export_xml',
 		]);
 	}
 
-	public static function xml($xml_data, $parent_ident)
+	/**
+	 * Export an array of XML data into a template
+	 * @param mixed $xml_data The XML data to export
+	 * @param string $parent_ident The parent tag to export into
+	 * @return SafeString The final XML, fully processed in a safe-for-template format
+	 */
+	public static function export_xml($xml_data, $parent_ident)
 	{
 		$recursive = \StoryBB\Template\Helper\Xml::get_recursive_function();
 		return new \LightnCandy\SafeString($recursive($xml_data, $parent_ident, '', -1, $recursive));
 	}
 
+	/**
+	 * Exports a function to recursively descend into XML for use with xml()
+	 * @return closure Recursive descender
+	 */
 	public static function get_recursive_function()
 	{
 		return function($xml_data, $parent_ident, $child_ident, $level, $recursive)
@@ -57,5 +74,3 @@ class Xml
 		};
 	}
 }
-
-?>

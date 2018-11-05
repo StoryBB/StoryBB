@@ -9,15 +9,15 @@
  */
 
 // Don't do anything if StoryBB is already loaded.
-if (defined('SMF'))
+if (defined('STORYBB'))
 	return true;
 
-define('SMF', 'SSI');
+define('STORYBB', 'SSI');
 
 // We're going to want a few globals... these are all set later.
 global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
-global $db_type, $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
+global $db_type, $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $db_connection, $modSettings, $context, $sc, $user_info, $topic, $board, $txt;
 global $smcFunc, $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
 
@@ -65,7 +65,6 @@ require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
 require_once($sourcedir . '/Class-BrowserDetect.php');
 require_once($sourcedir . '/Subs-Auth.php');
-sbb_autoload();
 
 // Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();
@@ -80,7 +79,7 @@ cleanRequest();
 
 // Seed the random generator?
 if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
-	smf_seed_generator();
+	sbb_seed_generator();
 
 // Check on any hacking attempts.
 if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']))
@@ -152,7 +151,6 @@ if (empty($ssi_guest_access) && empty($modSettings['allow_guestAccess']) && $use
 // Load the stuff like the menu bar, etc.
 if (isset($ssi_layers))
 {
-	$context['template_layers'] = $ssi_layers;
 	template_header();
 }
 else
@@ -1120,8 +1118,8 @@ function ssi_whosOnline($output_method = 'echo')
 	$bracketList = array();
 	if (!empty($user_info['buddies']))
 		$bracketList[] = comma_format($return['num_buddies']) . ' ' . ($return['num_buddies'] == 1 ? $txt['buddy'] : $txt['buddies']);
-	if (!empty($return['num_spiders']))
-		$bracketList[] = comma_format($return['num_spiders']) . ' ' . ($return['num_spiders'] == 1 ? $txt['spider'] : $txt['spiders']);
+	if (!empty($return['num_robots']))
+		$bracketList[] = comma_format($return['num_robots']) . ' ' . ($return['num_robots'] == 1 ? $txt['robot'] : $txt['robots']);
 	if (!empty($return['num_users_hidden']))
 		$bracketList[] = comma_format($return['num_users_hidden']) . ' ' . $txt['hidden'];
 
@@ -1177,10 +1175,10 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 			<table style="border: none" class="ssi_table">
 				<tr>
 					<td style="text-align: right; border-spacing: 1"><label for="user">', $txt['username'], ':</label>&nbsp;</td>
-					<td><input type="text" id="user" name="user" size="9" value="', $user_info['username'], '" class="input_text"></td>
+					<td><input type="text" id="user" name="user" size="9" value="', $user_info['username'], '"></td>
 				</tr><tr>
 					<td style="text-align: right; border-spacing: 1"><label for="passwrd">', $txt['password'], ':</label>&nbsp;</td>
-					<td><input type="password" name="passwrd" id="passwrd" size="9" class="input_password"></td>
+					<td><input type="password" name="passwrd" id="passwrd" size="9"></td>
 				</tr>
 				<tr>
 					<td>
@@ -1313,7 +1311,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			'percent' => $bar,
 			'votes' => $option[1],
 			'option' => parse_bbc($option[0]),
-			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . ($topPollInstead ? 'top-' : 'recent-') . $i . '" value="' . $i . '" class="input_' . ($row['max_votes'] > 1 ? 'check' : 'radio') . '">'
+			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . ($topPollInstead ? 'top-' : 'recent-') . $i . '" value="' . $i . '">'
 		);
 	}
 
@@ -1481,7 +1479,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			'percent' => $bar,
 			'votes' => $option[1],
 			'option' => parse_bbc($option[0]),
-			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '" class="input_' . ($row['max_votes'] > 1 ? 'check' : 'radio') . '">'
+			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '">'
 		);
 	}
 
@@ -1648,7 +1646,7 @@ function ssi_pollVote()
 
 		require_once($sourcedir . '/Subs-Auth.php');
 		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
-		smf_setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], false, false);
+		sbb_setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], false, false);
 	}
 
 	redirectexit('topic=' . $row['id_topic'] . '.0');
@@ -1672,7 +1670,7 @@ function ssi_quickSearch($output_method = 'echo')
 
 	echo '
 		<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="advanced" value="0"><input type="text" name="ssi_search" size="30" class="input_text"> <input type="submit" value="', $txt['search'], '" class="button_submit">
+			<input type="hidden" name="advanced" value="0"><input type="text" name="ssi_search" size="30"> <input type="submit" value="', $txt['search'], '" class="button_submit">
 		</form>';
 }
 
@@ -2092,5 +2090,3 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 	echo '
 		</table>';
 }
-
-?>

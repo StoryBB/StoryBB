@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Gets a single theme's info.
  *
@@ -196,10 +193,10 @@ function get_theme_info($path)
 		fatal_lang_error('package_get_error_theme_not_compatible', false, $forum_version);
 	}
 
-	// So, we have an install tag which is cool and stuff but we also need to check it and match your current SMF version...
+	// So, we have an install tag which is cool and stuff but we also need to check it and match your current StoryBB version...
 	$the_version = strtr($forum_version, array('StoryBB ' => ''));
 
-	// The theme isn't compatible with the current SMF version.
+	// The theme isn't compatible with the current StoryBB version.
 	if (!matchPackageVersion($the_version, $theme_info['storybb_version']))
 	{
 		remove_dir($path);
@@ -301,7 +298,12 @@ function theme_install($to_install = array())
 
 	$inserts = array();
 	foreach ($context['to_install'] as $var => $val)
+	{
+		if (is_array($val))
+			continue;
+
 		$inserts[] = array($id_theme, $var, $val);
+	}
 
 	if (!empty($inserts))
 		$smcFunc['db_insert']('insert',
@@ -432,5 +434,3 @@ function remove_theme($themeID)
 
 	return true;
 }
-
-?>

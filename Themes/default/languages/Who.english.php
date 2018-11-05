@@ -14,20 +14,19 @@ $txt['who_action'] = 'Action';
 $txt['who_show1'] = 'Show ';
 $txt['who_show_members_only'] = 'Members Only';
 $txt['who_show_guests_only'] = 'Guests Only';
-$txt['who_show_spiders_only'] = 'Spiders Only';
+$txt['who_show_robots_only'] = 'Robots Only';
 $txt['who_show_all'] = 'Everyone';
-$txt['who_no_online_spiders'] = 'There are currently no spiders online.';
+$txt['who_no_online_robots'] = 'There are currently no robots online.';
 $txt['who_no_online_guests'] = 'There are currently no guests online.';
 $txt['who_no_online_members'] = 'There are currently no members online.';
 $txt['who_guest_login'] = 'User has been taken to the login page.';
 
-$txt['whospider_login'] = 'Viewing the login page.';
-$txt['whospider_register'] = 'Viewing the registration page.';
-$txt['whospider_reminder'] = 'Viewing the reminder page.';
+$txt['whorobot_login'] = 'Viewing the login page.';
+$txt['whorobot_signup'] = 'Viewing the registration page.';
+$txt['whorobot_reminder'] = 'Viewing the reminder page.';
 
 $txt['whoall_activate'] = 'Activating their account.';
 $txt['whoall_buddy'] = 'Modifying their buddy list.';
-$txt['whoall_coppa'] = 'Filling out parent/guardian consent form.';
 $txt['whoall_emailuser'] = 'Sending email to another member.';
 $txt['whoall_groups'] = 'Viewing the member groups page.';
 $txt['whoall_help'] = 'Viewing the <a href="' . $scripturl . '?action=help">help page</a>.';
@@ -81,7 +80,6 @@ $txt['whotopic_vote'] = 'Voting in <a href="' . $scripturl . '?topic=%1$d.0">%2$
 
 $txt['whopost_quotefast'] = 'Quoting a post from &quot;<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>&quot;.';
 
-$txt['whoadmin_editagreement'] = 'Editing the registration agreement.';
 $txt['whoadmin_featuresettings'] = 'Editing forum features and options.';
 $txt['whoadmin_modlog'] = 'Viewing the moderator log.';
 $txt['whoadmin_serversettings'] = 'Editing the forum settings.';
@@ -117,5 +115,3 @@ $txt['who_viewownprofile'] = 'Viewing <a href="' . $scripturl . '?action=profile
 $txt['who_profile'] = 'Editing the profile of <a href="' . $scripturl . '?action=profile;u=%1$d">%2$s</a>.';
 $txt['who_post'] = 'Posting a new topic in <a href="' . $scripturl . '?board=%1$d.0">%2$s</a>.';
 $txt['who_poll'] = 'Posting a new poll in <a href="' . $scripturl . '?board=%1$d.0">%2$s</a>.';
-
-?>

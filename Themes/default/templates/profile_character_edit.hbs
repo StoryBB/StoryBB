@@ -41,7 +41,7 @@
 							{{! // For each membergroup show a checkbox so members can be assigned to more than one group. }}
 							{{#each context.member_groups}}
 								{{#if can_be_additional}}
-									<label for="additional_groups-{{id}}"><input type="checkbox" name="additional_groups[]" value="{{id}}" id="additional_groups-{{id}}"{{#if is_additional}} checked{{/if}} class="input_check">{{{name}}}</label><br>
+									<label for="additional_groups-{{id}}"><input type="checkbox" name="additional_groups[]" value="{{id}}" id="additional_groups-{{id}}"{{#if is_additional}} checked{{/if}}>{{{name}}}</label><br>
 								{{/if}}
 							{{/each}}
 						</span>
@@ -57,30 +57,24 @@
 				<dl>
 					<dt>{{{txt.char_name}}}</dt>
 					<dd>
-						<input type="text" name="char_name" id="char_name" size="50" value="{{{context.character.character_name}}}" maxlength="50" class="input_text">
+						<input type="text" name="char_name" id="char_name" size="50" value="{{{context.character.character_name}}}" maxlength="50">
 					</dd>
 				</dl>
 
 				<dl>
 					<dt>
 						<strong id="personal_picture"><label for="avatar_upload_box">{{{txt.personal_picture}}}</label></strong>
-						{{#unless (eq modSettings.gravatarOverride '1')}}
-							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_none" value="none"{{#if (eq context.character.avatar_settings.choice 'none')}} checked{{/if}} class="input_radio" /><label for="avatar_choice_none"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.no_avatar}}}</label>
-							<br />
-						{{/unless}}
+						<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_none" value="none"{{#if (eq context.character.avatar_settings.choice 'none')}} checked{{/if}} /><label for="avatar_choice_none"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.no_avatar}}}</label>
+						<br />
 
 						{{#if context.character.avatar_settings.allow_external}}
-							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"{{#if (eq context.character.avatar_settings.choice 'external')}} checked{{/if}} class="input_radio" /><label for="avatar_choice_external"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.my_own_pic}}}</label>
+							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_external" value="external"{{#if (eq context.character.avatar_settings.choice 'external')}} checked{{/if}} /><label for="avatar_choice_external"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.my_own_pic}}}</label>
 							<br />
 						{{/if}}
 
 						{{#if context.character.avatar_settings.allow_upload}}
-							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"{{#if (eq context.character.avatar_settings.choice 'upload')}} checked{{/if}} class="input_radio" /><label for="avatar_choice_upload"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.avatar_will_upload}}}</label>
+							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_upload" value="upload"{{#if (eq context.character.avatar_settings.choice 'upload')}} checked{{/if}} /><label for="avatar_choice_upload"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.avatar_will_upload}}}</label>
 							<br />
-						{{/if}}
-
-						{{#if context.character.avatar_settings.allow_gravatar}}
-							<input type="radio" onclick="swap_avatar(this); return true;" name="avatar_choice" id="avatar_choice_gravatar" value="gravatar"{{#if (eq context.character.avatar_settings.choice 'gravatar')}} checked{{/if}} class="input_radio" /><label for="avatar_choice_gravatar"{{#if context.form_errors.bad_avatar}} class="error"{{/if}}>{{{txt.use_gravatar}}}</label>
 						{{/if}}
 					</dt>
 					<dd>
@@ -89,7 +83,6 @@
 							<script>
 								var avatar = document.getElementById("avatar");
 								var selavatar = {{{json context.avatar_selected}}};
-								var size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
 								var file = document.getElementById("file");
 								var maxHeight = {{#if (gt modSettings.avatar_max_height '0')}}{{modSettings.avatar_max_height}}{{else}}0{{/if}};
 								var maxWidth = {{#if (gt modSettings.avatar_max_width '0')}}{{modSettings.avatar_max_width}}{{else}}0{{/if}};
@@ -103,29 +96,15 @@
 						{{#if context.character.avatar_settings.allow_external}}
 							<div id="avatar_external">
 								<div class="smalltext">{{{txt.avatar_by_url}}}</div>{{#if (eq modSettings.avatar_action_too_large 'option_download_and_resize')}}{{> max_avatar_size}}{{/if}}
-								<input type="text" name="userpicpersonal" size="45" value="{{#if (eq context.character.avatar_settings.choice 'external')}}{{{context.character.avatar_settings.external}}}{{/if}}" placeholder="https://" onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'external');" onchange="if (typeof(previewExternalAvatar) != 'undefined') previewExternalAvatar(this.value);" class="input_text" />
+								<input type="text" name="userpicpersonal" size="45" value="{{#if (eq context.character.avatar_settings.choice 'external')}}{{{context.character.avatar_settings.external}}}{{/if}}" placeholder="https://" onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'external');" onchange="if (typeof(previewExternalAvatar) != 'undefined') previewExternalAvatar(this.value);" />
 							</div>
 						{{/if}}
 
 						{{! If the user is able to upload avatars to the server show them an upload box. }}
 						{{#if context.character.avatar_settings.allow_upload}}
 							<div id="avatar_upload">
-								<input type="file" size="44" name="attachment" id="avatar_upload_box" value="" onchange="readfromUpload(this)"  onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'upload');" class="input_file" accept="image/gif, image/jpeg, image/jpg, image/png">{{> max_avatar_size}}
+								<input type="file" size="44" name="attachment" id="avatar_upload_box" value="" onchange="readfromUpload(this)"  onfocus="selectRadioByName(document.forms.creator.avatar_choice, 'upload');" accept="image/gif, image/jpeg, image/jpg, image/png">{{> max_avatar_size}}
 								{{#if context.character.id_attach}}<br><img src="{{{context.character.avatar}}}" alt="" id="attached_image"><input type="hidden" name="id_attach" value="{{context.character.id_attach}}">{{/if}}
-							</div>
-						{{/if}}
-
-						{{! if the user is able to use Gravatar avatars show then the image preview }}
-						{{#if context.character.avatar_settings.allow_gravatar}}
-							<div id="avatar_gravatar">
-								<img src="{{{context.character.avatar}}}" alt="">
-
-								{{#if modSettings.gravatarAllowExtraEmail}}
-									<div class="smalltext">{{{txt.gravatar_alternateEmail}}}</div>
-									<input type="text" name="gravatarEmail" id="gravatarEmail" size="45" value="{{#if (and (not context.character.avatar_settings.is_url) (neq context.character.avatar_settings.external context.member.email_address))}}{{{context.character.avatar}}}{{/if}}" class="input_text">
-								{{else}}
-									<div class="smalltext">{{{txt.gravatar_noAlternateEmail}}}</div>
-								{{/if}}
 							</div>
 						{{/if}}
 
@@ -137,23 +116,14 @@
 									case "avatar_choice_external":
 										{{#if context.character.avatar_settings.allow_external}}document.getElementById("avatar_external").style.display = "";{{/if}}
 										{{#if context.character.avatar_settings.allow_upload}}document.getElementById("avatar_upload").style.display = "none";{{/if}}
-										{{#if context.character.avatar_settings.allow_gravatar}}document.getElementById("avatar_gravatar").style.display = "none";{{/if}}
 										break;
 									case "avatar_choice_upload":
 										{{#if context.character.avatar_settings.allow_external}}document.getElementById("avatar_external").style.display = "none";{{/if}}
 										{{#if context.character.avatar_settings.allow_upload}}document.getElementById("avatar_upload").style.display = "";{{/if}}
-										{{#if context.character.avatar_settings.allow_gravatar}}document.getElementById("avatar_gravatar").style.display = "none";{{/if}}
 										break;
 									case "avatar_choice_none":
 										{{#if context.character.avatar_settings.allow_external}}document.getElementById("avatar_external").style.display = "none";{{/if}}
 										{{#if context.character.avatar_settings.allow_upload}}document.getElementById("avatar_upload").style.display = "none";{{/if}}
-										{{#if context.character.avatar_settings.allow_gravatar}}document.getElementById("avatar_gravatar").style.display = "none";{{/if}}
-										break;
-									case "avatar_choice_gravatar":
-										{{#if context.character.avatar_settings.allow_external}}document.getElementById("avatar_external").style.display = "none";{{/if}}
-										{{#if context.character.avatar_settings.allow_upload}}document.getElementById("avatar_upload").style.display = "none";{{/if}}
-										{{#if context.character.avatar_settings.allow_gravatar}}document.getElementById("avatar_gravatar").style.display = "";{{/if}}
-										{{#if (eq context.character.avatar_settings.external context.member.email)}}document.getElementById("gravatarEmail").value = "";{{/if}}
 										break;
 								}
 							}
@@ -165,7 +135,7 @@
 				<dl>
 					<dt>{{{txt.age}}}:</dt>
 					<dd>
-						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50" class="input_text">
+						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50">
 					</dd>
 				</dl>
 				<div class="char_signature"></div>
@@ -267,7 +237,7 @@
 				<dl></dl>
 				<input type="hidden" name="u" value="{{context.id_member}}" />
 				<input type="submit" name="edit_char" class="button_submit" value="{{{txt.save_changes}}}" />
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}" />
+				{{session_form}}
 				<input type="hidden" name="{{token_var (concat 'edit-char' context.character.id_character)}}" value="{{token (concat 'edit-char' context.character.id_character)}}">
 			</form>
 		</div>

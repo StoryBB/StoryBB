@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * The main dispatcher; doesn't do anything, just delegates.
  * This is the main entry point for all the manageboards admin screens.
@@ -383,6 +380,7 @@ function EditBoard()
 
 	// For editing the profile we'll need this.
 	loadLanguage('ManagePermissions');
+	loadLanguage('ManageMembers');
 	require_once($sourcedir . '/ManagePermissions.php');
 	loadPermissionProfiles();
 
@@ -450,26 +448,28 @@ function EditBoard()
 	$context['permission_profile_desc'] = $context['can_manage_permissions'] ? sprintf($txt['permission_profile_desc'], $scripturl . '?action=admin;area=permissions;sa=profiles;' . $context['session_var'] . '=' . $context['session_id']) : strip_tags($txt['permission_profile_desc']);
 
 	// Default membergroups.
-	$context['groups'] = array(
-		-1 => array(
+	$context['groups'] = [
+		-1 => [
 			'id' => '-1',
 			'name' => $txt['parent_guests_only'],
 			'allow' => in_array('-1', $curBoard['member_groups']),
 			'deny' => in_array('-1', $curBoard['deny_groups']),
-			'is_post_group' => false,
-		),
+		],
 		0 => array(
 			'id' => '0',
 			'name' => $txt['parent_members_only'],
 			'allow' => in_array('0', $curBoard['member_groups']),
 			'deny' => in_array('0', $curBoard['deny_groups']),
-			'is_post_group' => false,
 		)
-	);
+	];
+	// As much as we want all the things, we also want them separately.
+	$context['groups_account'] = $context['groups'];
+	$context['groups_character'] = [];
+	$context['groups_post'] = [];
 
 	// Load membergroups.
 	$request = $smcFunc['db_query']('', '
-		SELECT group_name, id_group, min_posts
+		SELECT group_name, id_group, min_posts, is_character
 		FROM {db_prefix}membergroups
 		WHERE id_group > {int:moderator_group} OR id_group = {int:global_moderator}
 		ORDER BY min_posts, id_group != {int:global_moderator}, group_name',
@@ -483,13 +483,21 @@ function EditBoard()
 		if ($_REQUEST['sa'] == 'newboard' && $row['min_posts'] == -1)
 			$curBoard['member_groups'][] = $row['id_group'];
 
-		$context['groups'][(int) $row['id_group']] = array(
+		if ($row['min_posts'] >= 0)
+		{
+			$group_type = 'groups_post';
+		}
+		else
+		{
+			$group_type = $row['is_character'] ? 'groups_character' : 'groups_account';
+		}
+		$context['groups'][(int) $row['id_group']] = $context[$group_type][(int) $row['id_group']] = [
 			'id' => $row['id_group'],
 			'name' => trim($row['group_name']),
 			'allow' => in_array($row['id_group'], $curBoard['member_groups']),
 			'deny' => in_array($row['id_group'], $curBoard['deny_groups']),
 			'is_post_group' => $row['min_posts'] != -1,
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -597,7 +605,7 @@ function EditBoard()
 	{
 		$context['sub_template'] = 'admin_boards_edit';
 		$context['page_title'] = $txt['boardsEdit'];
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 	}
 	else
 	{
@@ -813,13 +821,11 @@ function EditBoardSettings($return_config = false)
 
 	// Here and the board settings...
 	$config_vars = array(
-		array('title', 'settings'),
 			// Other board settings.
 			array('check', 'countChildPosts'),
 			array('check', 'recycle_enable', 'onclick' => 'document.getElementById(\'recycle_board\').disabled = !this.checked;'),
 			array('select', 'recycle_board', $recycle_boards),
 			array('check', 'allow_ignore_boards'),
-			array('check', 'deny_boards_access'),
 	);
 
 	call_integration_hook('integrate_modify_board_settings', array(&$config_vars));
@@ -858,6 +864,5 @@ function EditBoardSettings($return_config = false)
 
 	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
+	$context['settings_title'] = $txt['settings'];
 }
-
-?>

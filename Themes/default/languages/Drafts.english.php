@@ -8,7 +8,7 @@ $txt['drafts_show_desc'] = 'This area shows you all the drafts you currently hav
 // misc
 $txt['drafts'] = 'Drafts';
 $txt['draft_save'] = 'Save Draft';
-$txt['draft_save_note'] = 'This will save the text of your post, but it will not save attachments, poll or event information.';
+$txt['draft_save_note'] = 'This will save the text of your post, but it will not save attachments or poll information.';
 $txt['draft_none'] = 'You have no drafts.';
 $txt['draft_edit'] = 'Edit draft';
 $txt['draft_load'] = 'Load drafts';
@@ -35,5 +35,3 @@ $txt['drafts_pm_enabled'] = 'Enable the saving of PM drafts';
 $txt['drafts_post_enabled'] = 'Enable the saving of Post drafts';
 $txt['drafts_none'] = 'No Subject';
 $txt['drafts_saved'] = 'Draft was successfully saved';
-
-?>

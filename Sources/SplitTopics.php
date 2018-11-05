@@ -12,9 +12,6 @@
  * Original module by Mach8 - We'll never forget you.
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * splits a topic into two topics.
  * delegates to the other functions (based on the URL parameter 'sa').
@@ -223,7 +220,7 @@ function SplitSelectTopics()
 	{
 		StoryBB\Template::set_layout('xml');
 		$context['sub_template'] = 'xml_split';
-		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::add_helper(['cleanXml' => 'cleanXml']);
 	}
 	else
 	{
@@ -971,7 +968,7 @@ function MergeIndex()
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
 				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'],
-				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" target="_blank" class="new_win">' . $row['poster_name'] . '</a>'
+				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" target="_blank" rel="noopener">' . $row['poster_name'] . '</a>'
 			),
 			'subject' => $row['subject'],
 			'js_subject' => addcslashes(addslashes($row['subject']), '/')
@@ -1342,7 +1339,7 @@ function MergeExecute($topics = array())
 	list ($member_started) = $smcFunc['db_fetch_row']($request);
 	list ($member_updated) = $smcFunc['db_fetch_row']($request);
 	// First and last message are the same, so only row was returned.
-	if ($member_updated === NULL)
+	if ($member_updated === null)
 		$member_updated = $member_started;
 
 	$smcFunc['db_free_result']($request);
@@ -1758,5 +1755,3 @@ function MergeDone()
 	$context['page_title'] = $txt['merge'];
 	$context['sub_template'] = 'topic_merge_done';
 }
-
-?>

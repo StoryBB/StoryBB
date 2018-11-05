@@ -10,8 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
+use StoryBB\Helper\Environment;
 
 /**
  * The main admin handling function.<br>
@@ -26,8 +25,8 @@ function AdminMain()
 
 	// Load the language and templates....
 	loadLanguage('Admin');
-	loadJavaScriptFile('admin.js', array(), 'smf_admin');
-	loadCSSFile('admin.css', array(), 'smf_admin');
+	loadJavaScriptFile('admin.js', array(), 'sbb_admin');
+	loadCSSFile('admin.css', array(), 'sbb_admin');
 
 	$context['show_admin_search'] = $context['user']['is_admin'];
 
@@ -37,7 +36,7 @@ function AdminMain()
 	require_once($sourcedir . '/Subs-Menu.php');
 
 	// Some preferences.
-	$context['admin_preferences'] = !empty($options['admin_preferences']) ? smf_json_decode($options['admin_preferences'], true) : array();
+	$context['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
 
 	/** @var array $admin_areas Defines the menu structure for the admin center. See {@link Subs-Menu.php Subs-Menu.php} for details! */
 	$admin_areas = array(
@@ -62,6 +61,13 @@ function AdminMain()
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
+				'contactform' => [
+					'label' => $txt['contact_us'],
+					'file' => 'ManageContact.php',
+					'function' => 'ManageContact',
+					'icon' => 'contact',
+					'permission' => ['admin_forum'],
+				],
 				'search' => array(
 					'function' => 'AdminSearch',
 					'permission' => array('admin_forum'),
@@ -91,7 +97,6 @@ function AdminMain()
 						'layout' => array($txt['mods_cat_layout']),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle']),
-						'mentions' => array($txt['mentions']),
 						'alerts' => array($txt['notifications']),
 					),
 				),
@@ -128,18 +133,6 @@ function AdminMain()
 						'admin' => array($txt['themeadmin_admin_title']),
 						'list' => array($txt['themeadmin_list_title']),
 						'reset' => array($txt['themeadmin_reset_title']),
-					),
-				),
-				'modsettings' => array(
-					'label' => $txt['admin_modifications'],
-					'file' => 'ManageSettings.php',
-					'function' => 'ModifyModSettings',
-					'icon' => 'modifications',
-					'subsections' => array(
-						'general' => array($txt['mods_cat_modifications_misc']),
-						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:
-						// 'shout' => array($txt['shout']),
-						// Note the comma!! The setting with automatically appear with the first mod to be added.
 					),
 				),
 			),
@@ -191,7 +184,6 @@ function AdminMain()
 					'icon' => 'smiley',
 					'permission' => array('manage_smileys'),
 					'subsections' => array(
-						'editsets' => array($txt['smiley_sets']),
 						'addsmiley' => array($txt['smileys_add']),
 						'editsmileys' => array($txt['smileys_edit']),
 						'setorder' => array($txt['smileys_set_order']),
@@ -211,20 +203,6 @@ function AdminMain()
 						'avatars' => array($txt['attachment_manager_avatar_settings']),
 						'attachpaths' => array($txt['attach_directories']),
 						'maintenance' => array($txt['attachment_manager_maintenance']),
-					),
-				),
-				'sengines' => array(
-					'label' => $txt['search_engines'],
-					'inactive' => empty($modSettings['spider_mode']),
-					'file' => 'ManageSearchEngines.php',
-					'icon' => 'engines',
-					'function' => 'SearchEngines',
-					'permission' => 'admin_forum',
-					'subsections' => empty($modSettings['spider_mode']) ? array() : array(
-						'stats' => array($txt['spider_stats']),
-						'logs' => array($txt['spider_logs']),
-						'spiders' => array($txt['spiders']),
-						'settings' => array($txt['settings']),
 					),
 				),
 			),
@@ -267,7 +245,6 @@ function AdminMain()
 						'board' => array($txt['permissions_boards'], 'manage_permissions'),
 						'profiles' => array($txt['permissions_profiles'], 'manage_permissions'),
 						'postmod' => array($txt['permissions_post_moderation'], 'manage_permissions'),
-						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
 				'regcenter' => array(
@@ -278,8 +255,8 @@ function AdminMain()
 					'permission' => array('admin_forum', 'moderate_forum'),
 					'subsections' => array(
 						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
-						'agreement' => array($txt['registration_agreement'], 'admin_forum'),
 						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
+						'policies' => array($txt['admin_policies'], 'admin_forum'),
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
@@ -359,7 +336,6 @@ function AdminMain()
 					'icon' => 'server',
 					'subsections' => array(
 						'general' => array($txt['general_settings']),
-						'database' => array($txt['database_settings']),
 						'cookie' => array($txt['cookies_sessions_settings']),
 						'security' => array($txt['security_settings']),
 						'cache' => array($txt['caching_settings']),
@@ -414,7 +390,6 @@ function AdminMain()
 						'adminlog' => array($txt['admin_log'], 'admin_forum', 'enabled' => !empty($modSettings['adminlog_enabled'])),
 						'modlog' => array($txt['moderation_log'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
 						'banlog' => array($txt['ban_log'], 'manage_bans'),
-						'spiderlog' => array($txt['spider_logs'], 'admin_forum', 'enabled' => !empty($modSettings['spider_mode'])),
 						'tasklog' => array($txt['scheduled_log'], 'admin_forum'),
 						'settings' => array($txt['log_settings'], 'admin_forum'),
 					),
@@ -546,57 +521,21 @@ function AdminHome()
 						' . sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']),
 		);
 
-	loadJavaScriptFile('admin.js', array('defer' => false), 'smf_admin');
-}
+	$context['admin_news'] = getAdminFile('updates.json');
+	if (empty($context['admin_news']))
+	{
+		$context['admin_news'] = [
+			'current_version' => '??',
+			'sbbAnnouncements' => [],
+			'needs_update' => false,
+		];
+	}
 
-/**
- * Get one of the admin information files from Simple Machines.
- */
-function DisplayAdminFile()
-{
-	global $context, $modSettings, $smcFunc;
+	if (!empty($context['admin_news']['current_version']))
+	{
 
-	setMemoryLimit('32M');
-
-	if (empty($_REQUEST['filename']) || !is_string($_REQUEST['filename']))
-		fatal_lang_error('no_access', false);
-
-	// Strip off the forum cache part or we won't find it...
-	$_REQUEST['filename'] = str_replace($modSettings['browser_cache'], '', $_REQUEST['filename']);
-
-	$request = $smcFunc['db_query']('', '
-		SELECT data, filetype
-		FROM {db_prefix}admin_info_files
-		WHERE filename = {string:current_filename}
-		LIMIT 1',
-		array(
-			'current_filename' => $_REQUEST['filename'],
-		)
-	);
-
-	if ($smcFunc['db_num_rows']($request) == 0)
-		fatal_lang_error('admin_file_not_found', true, array($_REQUEST['filename']), 404);
-
-	list ($file_data, $filetype) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
-
-	// @todo Temp
-	// Figure out if sesc is still being used.
-	if (strpos($file_data, ';sesc=') !== false && $filetype == 'text/javascript')
-		$file_data = '
-if (!(\'smfForum_sessionvar\' in window))
-	window.smfForum_sessionvar = \'sesc\';
-' . strtr($file_data, array(';sesc=' => ';\' + window.smfForum_sessionvar + \'='));
-
-	$context['template_layers'] = array();
-	// Lets make sure we aren't going to output anything nasty.
-	@ob_end_clean();
-	@ob_start();
-
-	// Make sure they know what type of file we are.
-	header('Content-Type: ' . $filetype);
-	echo $file_data;
-	obExit(false);
+		$context['admin_news']['needs_update'] = version_compare(strtr($context['forum_version'], ['StoryBB ' => '']), $context['admin_news']['current_version'], '<');
+	}
 }
 
 /**
@@ -644,7 +583,7 @@ function AdminSearchInternal()
 	global $context, $txt, $helptxt, $scripturl, $sourcedir;
 
 	// Try to get some more memory.
-	setMemoryLimit('128M');
+	Environment::setMemoryLimit('128M');
 
 	// Load a lot of language files.
 	$language_files = array(
@@ -655,7 +594,7 @@ function AdminSearchInternal()
 	// All the files we need to include.
 	$include_files = array(
 		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManagePaid', 'ManagePermissions',
-		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
+		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageServer', 'ManageSmileys', 'ManageLanguages',
 	);
 
 	// This is a special array of functions that contain setting data - we query all these to simply pull all setting bits!
@@ -663,31 +602,25 @@ function AdminSearchInternal()
 		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
 		array('ModifyBBCSettings', 'area=featuresettings;sa=bbc'),
 		array('ModifyLayoutSettings', 'area=featuresettings;sa=layout'),
-		array('ModifyMentionsSettings', 'area=featuresettings;sa=mentions'),
 		array('ModifySignatureSettings', 'area=featuresettings;sa=sig'),
 		array('ModifyAntispamSettings', 'area=antispam'),
 		array('ModifyWarningSettings', 'area=warnings'),
-		array('ModifyGeneralModSettings', 'area=modsettings;sa=general'),
-		// Mod authors if you want to be "real freaking good" then add any setting pages for your mod BELOW this line!
 		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
 		array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
 		array('EditBoardSettings', 'area=manageboards;sa=settings'),
 		array('ModifyMailSettings', 'area=mailqueue;sa=settings'),
 		array('ModifyNewsSettings', 'area=news;sa=settings'),
-		array('GeneralPermissionSettings', 'area=permissions;sa=settings'),
 		array('ModifyPostSettings', 'area=postsettings;sa=posts'),
 		array('ModifyTopicSettings', 'area=postsettings;sa=topics'),
 		array('ModifyDraftSettings', 'area=postsettings;sa=drafts'),
 		array('EditSearchSettings', 'area=managesearch;sa=settings'),
 		array('EditSmileySettings', 'area=smileys;sa=settings'),
 		array('ModifyGeneralSettings', 'area=serversettings;sa=general'),
-		array('ModifyDatabaseSettings', 'area=serversettings;sa=database'),
 		array('ModifyCookieSettings', 'area=serversettings;sa=cookie'),
 		array('ModifyGeneralSecuritySettings', 'area=serversettings;sa=security'),
 		array('ModifyCacheSettings', 'area=serversettings;sa=cache'),
 		array('ModifyLanguageSettings', 'area=languages;sa=settings'),
 		array('ModifyRegistrationSettings', 'area=regcenter;sa=settings'),
-		array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
 		array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
 		array('ModifyLogSettings', 'area=logs;sa=settings'),
 	);
@@ -710,7 +643,6 @@ function AdminSearchInternal()
 		'sections' => array(
 		),
 		'settings' => array(
-			array('COPPA', 'area=regcenter;sa=settings'),
 			array('CAPTCHA', 'area=antispam'),
 		),
 	);
@@ -809,7 +741,6 @@ function AdminLogs()
 		'adminlog' => array('Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['adminlog_enabled'])),
 		'modlog' => array('Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['modlog_enabled'])),
 		'banlog' => array('ManageBans.php', 'BanLog'),
-		'spiderlog' => array('ManageSearchEngines.php', 'SpiderLogs'),
 		'tasklog' => array('ManageScheduledTasks.php', 'TaskLog'),
 		'settings' => array('ManageSettings.php', 'ModifyLogSettings'),
 	);
@@ -836,9 +767,6 @@ function AdminLogs()
 			),
 			'banlog' => array(
 				'description' => $txt['ban_log_description'],
-			),
-			'spiderlog' => array(
-				'description' => $txt['spider_log_desc'],
 			),
 			'tasklog' => array(
 				'description' => $txt['scheduled_log_desc'],
@@ -872,5 +800,3 @@ function AdminEndSession()
 
 	redirectexit();
 }
-
-?>

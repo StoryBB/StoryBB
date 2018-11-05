@@ -69,7 +69,7 @@
 						<th{{#unless context.group.assignable}} colspan="2"{{/unless}}><a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=posts{{#if (and (eq context.sort_by 'posts') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.posts}}}{{#if (eq context.sort_by 'posts')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
 
 						{{#if context.group.assignable}}
-						<th style="width: 4%"><input type="checkbox" class="input_check" onclick="invertAll(this, this.form);"></th>
+						<th style="width: 4%"><input type="checkbox" onclick="invertAll(this, this.form);"></th>
 						{{/if}}
 					</tr>
 				</thead>
@@ -97,9 +97,9 @@
 						{{#if ../context.group.assignable}}
 							<td>{{{posts}}}</td>
 							{{#if (eq ../context.group.is_character '1')}}
-								<td style="width:4%"><input type="checkbox" name="rem[]" value="{{id_character}}" class="input_check"></td>
+								<td style="width:4%"><input type="checkbox" name="rem[]" value="{{id_character}}"></td>
 							{{else}}
-								<td style="width: 4%"><input type="checkbox" name="rem[]" value="{{id}}" class="input_check"{{#if (and (eq_coerce ../context.user.id id) (eq_coerce ../context.group.id 1))}} onclick="if (this.checked) return confirm('{{{../txt.membergroups_members_deadmin_confirm}}}')"{{/if}}></td>
+								<td style="width: 4%"><input type="checkbox" name="rem[]" value="{{id}}"{{#if (and (eq_coerce ../context.user.id id) (eq_coerce ../context.group.id 1))}} onclick="if (this.checked) return confirm('{{{../txt.membergroups_members_deadmin_confirm}}}')"{{/if}}></td>
 							{{/if}}
 						{{else}}
 							<td colspan="2">{{{posts}}}</td>
@@ -131,7 +131,7 @@
 						<strong><label for="toAdd">{{{txt.membergroups_members_add_desc}}}:</label></strong>
 					</dt>
 					<dd>
-						<input type="text" name="toAdd" id="toAdd" value="" class="input_text">
+						<input type="text" name="toAdd" id="toAdd" value="">
 						<div id="toAddItemContainer"></div>
 					</dd>
 				</dl>
@@ -148,11 +148,11 @@
 		<script>
 			var oAddMemberSuggest = new smc_AutoSuggest({
 				sSelf: 'oAddMemberSuggest',
-				sSessionId: smf_session_id,
-				sSessionVar: smf_session_var,
+				sSessionId: sbb_session_id,
+				sSessionVar: sbb_session_var,
 				sSuggestId: 'to_suggest',
 				sControlId: 'toAdd',
-				sItemTemplate: '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<span class="generic_icons delete" title="%delete_text%" onclick="return %self%.deleteAddedItem(\'%item_id%\');"></span>',
+				sItemTemplate: '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\', \'noopener\'); return false;">%item_name%</a>&nbsp;<span class="generic_icons delete" title="%delete_text%" onclick="return %self%.deleteAddedItem(\'%item_id%\');"></span>',
 				sSearchType: '{{#if (eq context.group.is_character '1')}}character{{else}}member{{/if}}',
 				sPostName: 'member_add',
 				sURLMask: 'action=profile;u=%item_id%',

@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Sets and call a function based on the given subaction. Acts as a dispatcher function.
  * It requires the moderate_forum permission.
@@ -85,7 +82,7 @@ function ShowReports()
 	$context['view_closed'] = 0;
 
 	// Call the right template.
-	register_helper(['create_button' => 'create_button']);
+	StoryBB\Template::add_helper(['create_button' => 'create_button']);
 	if ($context['report_type'] == 'posts')
 	{
 		$context['sub_template'] = 'modcenter_reportedposts';
@@ -149,7 +146,7 @@ function ShowClosedReports()
 	// Call the right template.
 	if ($context['report_type'] == 'posts')
 	{
-		register_helper(['create_button' => 'create_button']);
+		StoryBB\Template::add_helper(['create_button' => 'create_button']);
 		$context['sub_template'] = 'modcenter_reportedposts';
 	}
 	else
@@ -371,7 +368,7 @@ function ReportDetails()
 		$context[$context['moderation_menu_name']]['current_subsection'] = 'closed';
 
 	// Finally we are done :P
-	register_helper(['create_button' => 'create_button']);
+	StoryBB\Template::add_helper(['create_button' => 'create_button']);
 	if ($context['report_type'] == 'members')
 	{
 		$context['page_title'] = sprintf($txt['mc_viewmemberreport'], $context['report']['user']['name']);
@@ -552,5 +549,3 @@ function HandleReport()
 	// Done!
 	redirectexit($scripturl . '?action=moderate;area=reported' . $context['report_type']);
 }
-
-?>

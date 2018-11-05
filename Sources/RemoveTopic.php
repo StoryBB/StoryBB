@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /*	The contents of this file handle the deletion of topics, posts, and related
 	paraphernalia.  It has the following functions:
 
@@ -480,7 +477,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	// Delete possible search index entries.
 	if (!empty($modSettings['search_custom_index_config']))
 	{
-		$customIndexSettings = smf_json_decode($modSettings['search_custom_index_config'], true);
+		$customIndexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
 
 		$words = array();
 		$messages = array();
@@ -553,7 +550,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	);
 
 	// Maybe there's a mod that wants to delete topic related data of its own
- 	call_integration_hook('integrate_remove_topics', array($topics));
+	call_integration_hook('integrate_remove_topics', array($topics));
 
 	// Update the totals...
 	updateStats('message');
@@ -957,7 +954,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 		if (!empty($modSettings['search_custom_index_config']))
 		{
-			$customIndexSettings = smf_json_decode($modSettings['search_custom_index_config'], true);
+			$customIndexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
 			$words = text2words($row['body'], $customIndexSettings['bytes_per_word'], true);
 			if (!empty($words))
 				$smcFunc['db_query']('', '
@@ -1513,5 +1510,3 @@ function removeDeleteConcurrence()
 
 	fatal_lang_error('post_already_deleted', false, array($confirm_url));
 }
-
-?>

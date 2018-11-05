@@ -12,20 +12,10 @@
 				<dl>
 					<dt>{{{txt.merge_char_from}}}</dt>
 					<dd>
-						<input type="text" class="input_text" name="merge_acct" id="merge_acct">
+						<select name="merge_acct" id="merge_acct"><option></option></select>
 					</dd>
 				</dl>
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+				{{session_form}}
 				<input type="submit" value="{{txt.merge_char_account}}" class="button_submit">
 			</div>
 		</form>
-		<script>
-			var oMergeMemberSuggest = new smc_AutoSuggest({
-				sSelf: 'oMergeMemberSuggest',
-				sSessionId: smf_session_id,
-				sSessionVar: smf_session_var,
-				sControlId: 'merge_acct',
-				sSearchType: 'member',
-				bItemList: false
-			});
-		</script>

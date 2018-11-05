@@ -12,25 +12,25 @@
 				    {{#if context.description}}<div class="information">{{context.description}}</div>{{/if}}
 				    <dl>
 						<dt>{{txt.username}}:</dt>
-						<dd><input type="text" id="{{#if context.from_ajax}}ajax_{{/if}}loginuser" name="user" size="20" value="{{context.default_username}}" class="input_text"></dd>
+						<dd><input type="text" id="{{#if context.from_ajax}}ajax_{{/if}}loginuser" name="user" size="20" value="{{context.default_username}}"></dd>
 						<dt>{{txt.password}}:</dt>
-						<dd><input type="password" id="{{#if context.from_ajax}}ajax_{{/if}}loginpass" name="passwrd" value="{{context.default_password}}" size="20" class="input_password"></dd>
+						<dd><input type="password" id="{{#if context.from_ajax}}ajax_{{/if}}loginpass" name="passwrd" value="{{context.default_password}}" size="20"></dd>
 					</dl>
 					<dl>
 						<dt>{{txt.mins_logged_in}}:</dt>
-						<dd><input type="number" name="cookielength" size="4" maxlength="4" value="{{modSettings.cookieTime}}"{{#if context.never_expire}} disabled{{/if}} class="input_text" min="1"></dd>
+						<dd><input type="number" name="cookielength" size="4" maxlength="4" value="{{modSettings.cookieTime}}"{{#if context.never_expire}} disabled{{/if}} min="1"></dd>
 						<dt>{{txt.always_logged_in}}:</dt>
-						<dd><input type="checkbox" name="cookieneverexp"{{#if context.never_expire}} checked{{/if}} class="input_check" onclick="this.form.cookielength.disabled = this.checked;"></dd>
+						<dd><input type="checkbox" name="cookieneverexp"{{#if context.never_expire}} checked{{/if}} onclick="this.form.cookielength.disabled = this.checked;"></dd>
 						{{#if context.login_show_undelete}}
 						<dt class="alert">{{txt.undelete_account}}:</dt>
-						<dd><input type="checkbox" name="undelete" class="input_check"></dd>
+						<dd><input type="checkbox" name="undelete"></dd>
 						{{/if}}
 							</dl>
 					<p><input type="submit" value="{{txt.login}}" class="button_submit"></p>
 					<p class="smalltext"><a href="{{scripturl}}?action=reminder">{{txt.forgot_your_password}}</a></p>
 					<input type="hidden" name="hash_passwrd" value="">
-					<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-					<input type="hidden" name="{{context.login_token_var}}" value="{{context.login_token}}">
+					{{session_form}}
+					{{token_form 'login'}}
 					<script>
 						setTimeout(function() {
 							document.getElementById("{{#if context.from_ajax}}ajax_{{/if}}{{#if context.default_username}}loginpass{{else}}loginuser{{/if}}").focus();

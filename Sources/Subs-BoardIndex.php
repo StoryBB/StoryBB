@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Fetches a list of boards and (optional) categories including
  * statistical information, child boards and moderators.
@@ -260,7 +257,7 @@ function getBoardIndex($boardIndexOptions)
 				'id' => $row_board['id_member'],
 				'username' => $row_board['poster_name'] != '' ? $row_board['poster_name'] : $txt['not_applicable'],
 				'name' => $row_board['real_name'],
-				'href' => $row_board['poster_name'] != '' && !empty($row_board['id_member']) ? $scripturl . '?action=profile;u=' . $row_board['id_member'] . (!empty($row_board['id_character']) ? ';area=characters;char=' . $row_board['id_character'] : ''): '',
+				'href' => $row_board['poster_name'] != '' && !empty($row_board['id_member']) ? $scripturl . '?action=profile;u=' . $row_board['id_member'] . (!empty($row_board['id_character']) ? ';area=characters;char=' . $row_board['id_character'] : '') : '',
 				'link' => $row_board['poster_name'] != '' ? (!empty($row_board['id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row_board['id_member'] . (!empty($row_board['id_character']) ? ';area=characters;char=' . $row_board['id_character'] : '') . '">' . $row_board['real_name'] . '</a>' : $row_board['real_name']) : $txt['not_applicable'],
 			),
 			'start' => 'msg' . $row_board['new_from'],
@@ -382,5 +379,3 @@ function getBoardIndex($boardIndexOptions)
 
 	return $boardIndexOptions['include_categories'] ? $categories : $this_category;
 }
-
-?>

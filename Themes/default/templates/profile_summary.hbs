@@ -45,7 +45,7 @@
 
 				{{! Don't show an icon if they haven't specified a website. }}
 				{{#if (and context.member.website.url (not context.disabled_fields.website))}}
-					<li><a href="{{context.member.website.url}}" title="{{{context.member.website.title}}}" target="_blank" class="new_win">
+					<li><a href="{{context.member.website.url}}" title="{{{context.member.website.title}}}" target="_blank" rel="noopener">
 						<span class="generic_icons www" title="{{{context.member.website.title}}}"></span></a></li>
 				{{/if}}
 
@@ -69,7 +69,7 @@
 
 			{{! Can they add this member as a buddy? }}
 			{{#if (and context.can_have_buddy (not context.user.is_owner))}}
-				<a href="{{scripturl}}?action=buddy;u={{context.id_member}};{{context.session_var}}={{context.session_id}}">[{{#if context.member.is_buddy}}{{txt.buddy_remove}}{{else}}{{txt.buddy_add}}{{/if}}]</a>
+				<a href="{{scripturl}}?action=buddy;u={{context.id_member}};{{session_url}}">[{{#if context.member.is_buddy}}{{txt.buddy_remove}}{{else}}{{txt.buddy_add}}{{/if}}]</a>
 			{{/if}}
 
 			{{! What about sending them a PM? }}
@@ -119,13 +119,18 @@
 					<dd><a href="mailto:{{{context.member.email}}}">{{{context.member.email}}}</a></dd>
 				{{/if}}
 
-				<dt>{{{txt.age}}}</dt>
+				{{#if context.member.show_birth}}
+				<dt>{{{txt.dob}}}</dt>
 				<dd>
+					{{{context.member.formatted_birthdate}}}
+					{{#if context.member.age}}
 					{{{context.member.age}}}
+					{{/if}}
 					{{#if context.member.today_is_birthday}}
 						&nbsp; <img src="{{{settings.images_url}}}/cake.png" alt="">
 					{{/if}}
 				</dd>
+				{{/if}}
 			</dl>
 
 			{{! Are there any custom profile fields for standard? }}

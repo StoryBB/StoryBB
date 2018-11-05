@@ -9,7 +9,7 @@
                 <div class="cat_bar{{#if is_collapsed}} collapsed{{/if}}" id="category_{{this.id}}">
                     <h3 class="catbg">
                         {{#if this.can_collapse}}
-                            <span id="category_{{this.id}}_upshrink" class="{{#if this.is_collapsed}}toggle_down{{else}}toggle_up{{/if}} floatright" data-collapsed="{{this.is_collapsed}}" title="{{#if this.is_collapsed}}{{txt.hide_category}}{{else}}{{txt.show_category}}{{/if}}" style="display:none"></span>
+                            <span id="category_{{this.id}}_upshrink" class="{{#if this.is_collapsed}}toggle_down{{else}}toggle_up{{/if}} floatright" data-collapsed="{{this.is_collapsed}}" title="{{#if this.is_collapsed}}{{../txt.hide_category}}{{else}}{{../txt.show_category}}{{/if}}" style="display:none"></span>
                         {{/if}} {{! close this.can_collapse on line 8 }}
                         {{{this.link}}}
                     </h3>
@@ -25,7 +25,7 @@
                     {{#each this.boards}}
                         <div id="board_{{this.id}}" class="up_contain {{#if this.css_class}}{{{this.css_class}}}{{/if}}">
                             <div class="board_icon">
-                                <a href="{{#if (or this.is_redirect context.user.is_guest)}}{{this.href}}{{else}}{{scripturl}}?action=unread;board={{this.id}}.0;children{{/if}}" class="board_{{this.board_class}}" {{#if this.board_tooltip}}title="{{this.board_tooltip}}"{{/if}}></a>
+                                <a href="{{#if (or this.is_redirect ../../context.user.is_guest)}}{{this.href}}{{else}}{{../../scripturl}}?action=unread;board={{this.id}}.0;children{{/if}}" class="board_{{this.board_class}}" {{#if this.board_tooltip}}title="{{this.board_tooltip}}"{{/if}}></a>
                             </div>
                             <div class="info">
                                 <a class="subject mobile_subject" href="{{this.href}}" id="b{{this.id}}">
@@ -34,7 +34,7 @@
                                 </a>
                                 {{! Does board have outstanding posts for approval? }}
                                 {{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
-                                    <a href="{{scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{context.session_var}}={{context.session_id}}" title="{{textTemplate ../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a>
+                                    <a href="{{../../scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{session_url}}" title="{{textTemplate ../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a>
                                 {{/if}} {{! close if (and (or)) on line 32 }}
                                 <p class="board_description">{{{this.description}}}</p>
                                 

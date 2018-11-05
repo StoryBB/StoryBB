@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Show the database queries for debugging
  * What this does:
@@ -134,7 +131,7 @@ function ViewQuery()
 		if ($query_id == $q && $is_select_query)
 		{
 			$result = $smcFunc['db_query']('', '
-				EXPLAIN '.($smcFunc['db_title'] == 'PostgreSQL' ? 'ANALYZE ' : '') . $select,
+				EXPLAIN ' . $select,
 				array(
 				)
 			);
@@ -181,5 +178,3 @@ function ViewQuery()
 
 	obExit(false);
 }
-
-?>

@@ -4,9 +4,6 @@
 global $scripturl;
 
 $txt['modSettings_desc'] = 'This page allows you to change the settings of features and basic options in your forum. Please see the <a href="' . $scripturl . '?action=admin;area=theme;sa=list;th=%1$s;%3$s=%2$s">theme settings</a> for more options. Click the help icons for more information about a setting.';
-$txt['modification_settings_desc'] = 'This page contains settings added by any modifications to your forum';
-
-$txt['modification_no_misc_settings'] = 'There are no modifications installed that have added any settings to this area yet.';
 
 $txt['pollMode'] = 'Poll mode';
 $txt['disable_polls'] = 'Disable polls';
@@ -40,7 +37,9 @@ $txt['pruneModLog'] = 'Remove moderation log entries older than';
 $txt['pruneBanLog'] = 'Remove ban hit log entries older than';
 $txt['pruneReportLog'] = 'Remove report to moderator log entries older than';
 $txt['pruneScheduledTaskLog'] = 'Remove scheduled task log entries older than';
-$txt['pruneSpiderHitLog'] = 'Remove search engine hit logs older than';
+$txt['retention_policy_standard'] = 'Remove privacy-related items in logs after';
+$txt['retention_policy_sensitive'] = 'Remove more sensitive items in logs after';
+$txt['zero_means_zero'] = 'Setting this to 0 means purging these items after only a matter of hours.';
 $txt['cookieTime'] = 'Default login cookies length';
 $txt['localCookies'] = 'Enable local storage of cookies';
 $txt['globalCookies'] = 'Use subdomain independent cookies';
@@ -51,8 +50,6 @@ $txt['httponlyCookies'] = 'Force cookies to be made accessible only through the 
 $txt['securityDisable'] = 'Disable administration security';
 $txt['securityDisable_moderate'] = 'Disable moderation security';
 $txt['send_validation_onChange'] = 'Require reactivation after email change';
-$txt['approveAccountDeletion'] = 'Require admin approval when member deletes account';
-$txt['autoFixDatabase'] = 'Automatically fix broken tables';
 $txt['allow_disableAnnounce'] = 'Allow users to disable announcements';
 $txt['disallow_sendBody'] = 'Don\'t allow post text in notifications';
 $txt['enable_ajax_alerts'] = 'Allow AJAX Desktop Notifications for Alerts';
@@ -88,7 +85,6 @@ $txt['force_ssl'] = 'Forum SSL mode';
 $txt['force_ssl_off'] = 'Disable SSL';
 $txt['force_ssl_auth'] = 'Enable SSL for Authentication (Login and Register)';
 $txt['force_ssl_complete'] = 'Force SSL throughout the forum';
-$txt['search_language'] = 'Fulltext Search Language';
 
 // Like settings.
 $txt['enable_likes'] = 'Enable likes';
@@ -96,7 +92,7 @@ $txt['enable_likes'] = 'Enable likes';
 // Mention settings.
 $txt['enable_mentions'] = 'Enable mentions';
 
-$txt['caching_information'] = 'StoryBB supports caching through the following: APC/APCu, Memcache, Postgres, SQLitee, XCache and Zend Platform/Performance Suite, as well as an internal file-based cache.';
+$txt['caching_information'] = 'StoryBB supports caching through the following: APC/APCu, Memcache, SQLitee, XCache and Zend Platform/Performance Suite, as well as an internal file-based cache.';
 $txt['detected_no_caching'] = '<strong class="alert">StoryBB has not been able to detect a compatible accelerator on your server. File based caching can be used instead.</strong>';
 $txt['detected_accelerators'] = '<strong class="success">StoryBB has detected the following accelerators: %1$s</strong>';
 
@@ -107,21 +103,23 @@ $txt['cache_level1'] = 'Level 1 Caching (Recommended)';
 $txt['cache_level2'] = 'Level 2 Caching';
 $txt['cache_level3'] = 'Level 3 Caching (Not Recommended)';
 $txt['cache_accelerator'] = 'Caching Accelerator';
-$txt['smf_cache'] = 'StoryBB file based caching';
+$txt['sbb_cache'] = 'StoryBB file based caching';
 $txt['sqlite_cache'] = 'SQLite3 database based caching';
 $txt['cachedir_sqlite'] = 'SQLite3 database cache directory';
 $txt['apc_cache'] = 'APC';
 $txt['apcu_cache'] = 'APCu';
 $txt['memcache_cache'] = 'Memcache';
 $txt['memcached_cache'] = 'Memcached';
-$txt['postgres_cache'] = 'PostgreSQL';
 $txt['xcache_cache'] = 'XCache';
 $txt['zend_cache'] = 'Zend Platform/Performance Suite';
-$txt['cache_smf_settings'] = 'StoryBB file based caching settings';
+$txt['cache_sbb_settings'] = 'StoryBB file based caching settings';
 $txt['cache_sqlite_settings'] = 'SQLite3 database caching settings';
 $txt['cache_memcache_settings'] = 'Memcache(d) settings';
 $txt['cache_memcache_servers'] = 'Memcache(d) servers';
 $txt['cache_memcache_servers_subtext'] = 'Example: 127.0.0.1:11211,127.0.0.2';
+$txt['cache_redis_settings'] = 'Redis settings';
+$txt['cache_redis_server'] = 'Redis server';
+$txt['cache_redis_server_subtext'] = 'Example: 127.0.0.1:6379 or 127.0.0.1:6379:password if a password is needed';
 $txt['cache_xcache_settings'] = 'XCache settings';
 $txt['cache_xcache_adminuser'] = 'XCache Admin User';
 $txt['cache_xcache_adminpass'] = 'XCache Admin Password';
@@ -130,7 +128,6 @@ $txt['setting_password_strength'] = 'Required strength for user passwords';
 $txt['setting_password_strength_low'] = 'Low - 4 character minimum';
 $txt['setting_password_strength_medium'] = 'Medium - cannot contain username';
 $txt['setting_password_strength_high'] = 'High - mixture of different characters';
-$txt['setting_enable_password_conversion'] = 'Allow password hash conversion';
 
 $txt['antispam_Settings'] = 'Anti-Spam Verification';
 $txt['antispam_Settings_desc'] = 'This section allows you to setup verification checks to ensure the user is a human (and not a bot), and tweak how and where these apply.';
@@ -362,5 +359,3 @@ $txt['tfa_mode_forced_help'] = 'Please enable 2FA in your account in order to be
 $txt['tfa_mode_enabled'] = 'Enabled';
 $txt['tfa_mode_disabled'] = 'Disabled';
 $txt['tfa_mode_subtext'] = 'Allows users to have a second layer of security while logging in, users would need an app like Google Authenticator paired with their account';
-
-?>

@@ -10,7 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
-########## Maintenance ##########
+/********* Maintenance *********/
 /**
  * The maintenance "mode"
  * Set to 1 to enable Maintenance Mode, 2 to make the forum untouchable. (you'll have to make it 0 again manually!)
@@ -32,7 +32,7 @@ $mtitle = 'Maintenance Mode';
  */
 $mmessage = 'Okay faithful users...we\'re attempting to restore an older backup of the database...news will be posted once we\'re back!';
 
-########## Forum Info ##########
+/********* Forum Info *********/
 /**
  * The name of your forum.
  * @var string
@@ -57,12 +57,12 @@ $webmaster_email = 'noreply@myserver.com';
  * Name of the cookie to set for authentication.
  * @var string
  */
-$cookiename = 'SMFCookie11';
+$cookiename = 'SBBCookie11';
 
-########## Database Info ##########
+/********* Database Info *********/
 /**
  * The database type
- * Default options: mysql, postgresql
+ * Default options: mysql
  * @var string
  */
 $db_type = 'mysql';
@@ -107,13 +107,8 @@ $db_prefix = 'sbb_';
  * @var int|bool
  */
 $db_persist = 0;
-/**
- *
- * @var int|bool
- */
-$db_error_send = 0;
 
-########## Cache Info ##########
+/********* Cache Info *********/
 /**
  * Select a cache system. You want to leave this up to the cache area of the admin panel for
  * proper detection of apc, memcached, output_cache, file, or xcache
@@ -132,14 +127,19 @@ $cache_enable = 0;
  */
 $cache_memcached = '';
 /**
+ * This is only used for Redis. Should be: server:port:password
+ * @var string
+ */
+$cache_redis = '';
+/**
  * This is only for the file cache system. It is the path to the cache directory.
  * It is also recommended that you place this in /tmp/ if you are going to use this.
  * @var string
  */
 $cachedir = dirname(__FILE__) . '/cache';
 
-########## Image Proxy ##########
-# This is done entirely in Settings.php to avoid loading the DB while serving the images
+/********* Image Proxy *********/
+// This is done entirely in Settings.php to avoid loading the DB while serving the images
 /**
  * Whether the proxy is enabled or not
  * @var bool
@@ -158,8 +158,8 @@ $image_proxy_secret = 'storybbisawesome';
  */
 $image_proxy_maxsize = 5192;
 
-########## Directories/Files ##########
-# Note: These directories do not have to be changed unless you move things.
+/********* Directories/Files *********/
+// Note: These directories do not have to be changed unless you move things.
 /**
  * The absolute path to the forum's folder. (not just '.'!)
  * @var string
@@ -176,29 +176,15 @@ $sourcedir = dirname(__FILE__) . '/Sources';
  */
 $tasksdir = $sourcedir . '/tasks';
 
-########## Error-Catching ##########
-# Note: You shouldn't touch these settings.
-if (file_exists(dirname(__FILE__) . '/db_last_error.php'))
-	include(dirname(__FILE__) . '/db_last_error.php');
-
-if (!isset($db_last_error))
-{
-	// File does not exist so lets try to create it
-	file_put_contents(dirname(__FILE__) . '/db_last_error.php', '<' . '?' . "php\n" . '$db_last_error = 0;' . "\n" . '?' . '>');
-	$db_last_error = 0;
-}
-
 if (file_exists(dirname(__FILE__) . '/install.php'))
 {
 	header('Location: http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 's' : '') . '://' . (empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] . (empty($_SERVER['SERVER_PORT']) || $_SERVER['SERVER_PORT'] == '80' ? '' : ':' . $_SERVER['SERVER_PORT']) : $_SERVER['HTTP_HOST']) . (strtr(dirname($_SERVER['PHP_SELF']), '\\', '/') == '/' ? '' : strtr(dirname($_SERVER['PHP_SELF']), '\\', '/')) . '/install.php'); exit;
 }
 
-# Make sure the paths are correct... at least try to fix them.
-if (!file_exists($boarddir) && file_exists(dirname(__FILE__) . '/agreement.txt'))
+// Make sure the paths are correct... at least try to fix them.
+if (!file_exists($boarddir) && file_exists(dirname(__FILE__) . '/subscriptions.php'))
 	$boarddir = dirname(__FILE__);
 if (!file_exists($sourcedir) && file_exists($boarddir . '/Sources'))
 	$sourcedir = $boarddir . '/Sources';
 if (!file_exists($cachedir) && file_exists($boarddir . '/cache'))
 	$cachedir = $boarddir . '/cache';
-
-?>

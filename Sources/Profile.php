@@ -12,9 +12,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * The main designating function for modifying profiles. Loads up info, determins what to do, etc.
  *
@@ -29,7 +26,6 @@ function ModifyProfile($post_errors = array())
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))
 		loadLanguage('Profile+Drafts');
-	loadTemplate('Profile');
 
 	require_once($sourcedir . '/Subs-Menu.php');
 
@@ -89,7 +85,7 @@ function ModifyProfile($post_errors = array())
 	}
 
 	/* Define all the sections within the profile area!
-		We start by defining the permission required - then SMF takes this and turns it into the relevant context ;)
+		We start by defining the permission required - then StoryBB takes this and turns it into the relevant context ;)
 		Possible fields:
 			For Section:
 				string $title:		Section title.
@@ -100,7 +96,7 @@ function ModifyProfile($post_errors = array())
 				string $file:		Optional text string that may contain a file name that's needed for inclusion in order to display the area properly.
 				string $custom_url:	Optional href for area.
 				string $function:	Function to execute for this section. Can be a call to an static method: class::method
-				string $class		If your function is a method, set the class field with your class's name and SMF will create a new instance for it.
+				string $class		If your function is a method, set the class field with your class's name and StoryBB will create a new instance for it.
 				bool $enabled:		Should area be shown?
 				string $sc:			Session check validation to do on save - note without this save will get unset - if set.
 				bool $hidden:		Does this not actually appear on the menu?
@@ -397,6 +393,17 @@ function ModifyProfile($post_errors = array())
 		'profile_action' => array(
 			'title' => $txt['profileAction'],
 			'areas' => array(
+				'export_data' => array(
+					'label' => $txt['profile_export_data'],
+					'file' => 'Profile-Actions.php',
+					'function' => 'exportData',
+					'icon' => 'inbox',
+					'token' => 'profile-ed%u',
+					'permission' => array(
+						'own' => array('is_not_guest'),
+						'any' => array('admin_forum'),
+					),
+				),
 				'sendpm' => array(
 					'label' => $txt['profileSendIm'],
 					'custom_url' => $scripturl . '?action=pm;sa=send',
@@ -475,6 +482,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'merge_acct' => array(
 					'label' => $txt['merge_char_account'],
+					'file' => 'Profile-Chars.php',
 					'function' => 'char_merge_account',
 					'permission' => array(
 						'own' => [],
@@ -545,10 +553,6 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 				$context['password_areas'][] = $area_id;
 		}
 	}
-
-	// Is there an updated message to show?
-	if (isset($_GET['updated']))
-		$context['profile_updated'] = $txt['profile_updated_own'];
 
 	// Set a few options for the menu.
 	$menuOptions = array(
@@ -671,13 +675,13 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 
 	// Set the template for this area and add the profile layer.
 	$context['sub_template'] = $profile_include_data['function'];
-	$context['template_layers'][] = 'profile';
+	StoryBB\Template::add_layer('profile');
 
 	// All the subactions that require a user password in order to validate.
 	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
 	$context['require_password'] = $check_password;
 
-	loadJavaScriptFile('profile.js', array('defer' => false), 'smf_profile');
+	loadJavaScriptFile('profile.js', array('defer' => false), 'sbb_profile');
 
 	// These will get populated soon!
 	$post_errors = array();
@@ -812,7 +816,7 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 					$saveFunc();
 
 			// Let them know it worked!
-			$context['profile_updated'] = $context['user']['is_owner'] ? $txt['profile_updated_own'] : sprintf($txt['profile_updated_else'], $cur_profile['member_name']);
+			session_flash('success', $context['user']['is_owner'] ? $txt['profile_updated_own'] : sprintf($txt['profile_updated_else'], $cur_profile['member_name']));
 
 			// Invalidate any cached data.
 			cache_put_data('member_data-profile-' . $memID, null, 0);
@@ -828,7 +832,10 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 	}
 	// If it's you then we should redirect upon save.
 	elseif (!empty($profile_vars) && $context['user']['is_owner'] && !$context['do_preview'])
-		redirectexit('action=profile;area=' . $current_area . (!empty($current_sa) ? ';sa=' . $current_sa : '') . ';updated');
+	{
+		session_flash('success', $txt['profile_updated_own']);
+		redirectexit('action=profile;area=' . $current_area . (!empty($current_sa) ? ';sa=' . $current_sa : ''));
+	}
 	elseif (!empty($force_redirect))
 		redirectexit('action=profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=' . $current_area);
 
@@ -859,7 +866,7 @@ function profile_popup($memID)
 
 	// We only want to output our little layer here.
 	$template = StoryBB\Template::set_layout('raw');
-	$context['template_layers'] = [];
+	StoryBB\Template::remove_all_layers();
 
 	// This list will pull from the master list wherever possible. Hopefully it should be clear what does what.
 	$profile_items = array(
@@ -946,7 +953,7 @@ function alerts_popup($memID)
 	$db_show_debug = false;
 
 	// We only want to output our little layer here.
-	$context['template_layers'] = array();
+	StoryBB\Template::remove_all_layers();
 	$template = StoryBB\Template::set_layout('raw');
 
 	$context['unread_alerts'] = array();
@@ -1012,16 +1019,12 @@ function loadCustomFields($memID, $area = 'summary')
 					$value = ($options = explode(',', $row['field_options'])) && isset($options[$value]) ? $options[$value] : '';
 		}
 
-		// Don't show the "disabled" option for the "gender" field if we are on the "summary" area.
-		if ($area == 'summary' && $row['col_name'] == 'cust_gender' && $value == 'None')
-			continue;
-
 		// HTML for the input form.
 		$output_html = $value;
 		if ($row['field_type'] == 'check')
 		{
 			$true = (!$exists && $row['default_value']) || $value;
-			$input_html = '<input type="checkbox" name="customfield[' . $row['col_name'] . ']" id="customfield[' . $row['col_name'] . ']"' . ($true ? ' checked' : '') . ' class="input_check">';
+			$input_html = '<input type="checkbox" name="customfield[' . $row['col_name'] . ']" id="customfield[' . $row['col_name'] . ']"' . ($true ? ' checked' : '') . '>';
 			$output_html = $true ? $txt['yes'] : $txt['no'];
 		}
 		elseif ($row['field_type'] == 'select')
@@ -1045,7 +1048,7 @@ function loadCustomFields($memID, $area = 'summary')
 			foreach ($options as $k => $v)
 			{
 				$true = (!$exists && $row['default_value'] == $v) || $value == $v;
-				$input_html .= '<label for="customfield_' . $row['col_name'] . '_' . $k . '"><input type="radio" name="customfield[' . $row['col_name'] . ']" class="input_radio" id="customfield_' . $row['col_name'] . '_' . $k . '" value="' . $k . '"' . ($true ? ' checked' : '') . '>' . $v . '</label><br>';
+				$input_html .= '<label for="customfield_' . $row['col_name'] . '_' . $k . '"><input type="radio" name="customfield[' . $row['col_name'] . ']" id="customfield_' . $row['col_name'] . '_' . $k . '" value="' . $k . '"' . ($true ? ' checked' : '') . '>' . $v . '</label><br>';
 				if ($true)
 					$output_html = $v;
 			}
@@ -1053,7 +1056,7 @@ function loadCustomFields($memID, $area = 'summary')
 		}
 		elseif ($row['field_type'] == 'text')
 		{
-			$input_html = '<input type="text" name="customfield[' . $row['col_name'] . ']" id="customfield[' . $row['col_name'] . ']"' . ($row['field_length'] != 0 ? ' maxlength="' . $row['field_length'] . '"' : '') . ' size="' . ($row['field_length'] == 0 || $row['field_length'] >= 50 ? 50 : ($row['field_length'] > 30 ? 30 : ($row['field_length'] > 10 ? 20 : 10))) . '" value="' . un_htmlspecialchars($value) . '" class="input_text"' . ($row['show_reg'] == 2 ? ' required' : '') . '>';
+			$input_html = '<input type="text" name="customfield[' . $row['col_name'] . ']" id="customfield[' . $row['col_name'] . ']"' . ($row['field_length'] != 0 ? ' maxlength="' . $row['field_length'] . '"' : '') . ' size="' . ($row['field_length'] == 0 || $row['field_length'] >= 50 ? 50 : ($row['field_length'] > 30 ? 30 : ($row['field_length'] > 10 ? 20 : 10))) . '" value="' . un_htmlspecialchars($value) . '"' . ($row['show_reg'] == 2 ? ' required' : '') . '>';
 		}
 		else
 		{
@@ -1095,5 +1098,3 @@ function loadCustomFields($memID, $area = 'summary')
 
 	call_integration_hook('integrate_load_custom_profile_fields', array($memID, $area));
 }
-
-?>

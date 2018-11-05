@@ -126,7 +126,7 @@ $txt['permissionname_manage_permissions'] = 'Manage permissions';
 $txt['permissionhelp_manage_permissions'] = 'This permission allows a user to edit all permissions of a membergroup, globally or for individual boards.';
 $txt['permissionname_manage_bans'] = 'Manage ban list';
 $txt['permissionhelp_manage_bans'] = 'This permission allows a user to add or remove usernames, IP addresses, hostnames and email addresses to a list of banned users. It also allows a user to view and remove log entries of banned users that attempted to login.';
-$txt['permissionname_send_mail'] = 'Send a forum email to members';
+$txt['permissionname_send_mail'] = 'Send an email newsletter to members';
 $txt['permissionhelp_send_mail'] = 'Mass mail all forum members, or just a few membergroups by email or personal message (the latter requires \'Send Personal Message\' permission).';
 $txt['permissionname_issue_warning'] = 'Issue warnings to members';
 $txt['permissionhelp_issue_warning'] = 'Issue a warning to members of the forum and change that members\' warning level. Requires the warning system to be enabled.';
@@ -138,10 +138,6 @@ $txt['permissionname_profile_extra'] = 'Edit additional profile settings';
 $txt['permissionhelp_profile_extra'] = 'Additional profile settings include settings for avatars, theme preferences, notifications and Personal Messages.';
 $txt['permissionname_profile_extra_own'] = 'Own profile';
 $txt['permissionname_profile_extra_any'] = 'Any profile';
-$txt['permissionname_profile_title'] = 'Edit custom title';
-$txt['permissionhelp_profile_title'] = 'The custom title is shown on the topic display page, under the profile of each user that has a custom title.';
-$txt['permissionname_profile_title_own'] = 'Own profile';
-$txt['permissionname_profile_title_any'] = 'Any profile';
 $txt['permissionname_profile_upload_avatar'] = 'Upload an avatar to the server';
 $txt['permissionhelp_profile_upload_avatar'] = 'This permission will allow a user to upload their personal avatar to the server.';
 $txt['permissionname_profile_remote_avatar'] = 'Choose a remotely stored avatar';
@@ -279,12 +275,7 @@ $txt['permissionhelp_post_attachment'] = 'Attachments are files that are attache
 
 $txt['permissionicon'] = '';
 
-$txt['permission_settings_title'] = 'Permission Settings';
-$txt['permission_settings_submit'] = 'Save';
-
 $txt['permission_by_board_desc'] = 'Here you can set which permissions profile a board uses. You can create new permission profiles from the &quot;Edit Profiles&quot; menu.';
-$txt['permission_settings_desc'] = 'Here you can set who has permission to change permissions, as well as how sophisticated the permission system should be.';
-$txt['permission_settings_enable_postgroups'] = 'Enable permissions for post count based groups';
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['permission_disable_postgroups_warning'] = 'Disabling this setting will remove permissions currently set to post count based groups.';
 
@@ -305,5 +296,3 @@ $txt['permissions_post_moderation_group'] = 'Group';
 $txt['auto_approve_topics'] = 'Post new topics, without requiring approval';
 $txt['auto_approve_replies'] = 'Post replies to topics, without requiring approval';
 $txt['auto_approve_attachments'] = 'Post attachments, without requiring approval';
-
-?>

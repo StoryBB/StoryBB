@@ -1,7 +1,17 @@
 {
+    "autoload": {
+        "psr-4": {"StoryBB\\": "Sources/StoryBB/"}
+    },
     "require": {
         "zordius/lightncandy": "dev-master",
         "symfony/polyfill-iconv": "~1.0",
         "symfony/polyfill-mbstring": "~1.0"
+    },
+    "require-dev": {
+        "behat/behat": "3.3.*",
+        "behat/mink": "~1.7",
+        "behat/mink-extension": "~2.2",
+        "behat/mink-goutte-driver": "~1.2",
+        "behat/mink-selenium2-driver": "~1.3"
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * This file handles most of the read-only views within the user profile area.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -8,16 +10,13 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * View a summary.
  * @param int $memID The ID of the member
  */
 function summary($memID)
 {
-	global $context, $memberContext, $txt, $modSettings, $user_profile, $sourcedir, $scripturl, $smcFunc;
+	global $context, $memberContext, $txt, $modSettings, $user_profile, $sourcedir, $scripturl, $smcFunc, $user_info;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -63,21 +62,33 @@ function summary($memID)
 		$context['member']['posts_per_day'] = comma_format($context['member']['real_posts'] / $days_registered, 3);
 
 	// Set the age...
-	if (empty($context['member']['birth_date']) || substr($context['member']['birth_date'], 0, 4) < 1002)
+	$context['member'] += [
+		'show_birth' => false,
+		'today_is_birthday' => false,
+		'age' => false,
+	];
+
+	if (!empty($context['member']['birthday_visibility']) && $context['member']['birth_date'] > '1004-01-01')
 	{
-		$context['member'] += array(
-			'age' => $txt['not_applicable'],
-			'today_is_birthday' => false
-		);
-	}
-	else
-	{
-		list ($birth_year, $birth_month, $birth_day) = sscanf($context['member']['birth_date'], '%d-%d-%d');
+		list ($birth_year, $birth_month, $birth_day) = explode('-', $context['member']['birth_date']);
 		$datearray = getdate(forum_time());
-		$context['member'] += array(
-			'age' => $birth_year <= 1004 ? $txt['not_applicable'] : $datearray['year'] - $birth_year - (($datearray['mon'] > $birth_month || ($datearray['mon'] == $birth_month && $datearray['mday'] >= $birth_day)) ? 0 : 1),
-			'today_is_birthday' => $datearray['mon'] == $birth_month && $datearray['mday'] == $birth_day
-		);
+		$context['member']['today_is_birthday'] = $datearray['mon'] == $birth_month && $datearray['mday'] == $birth_day;
+
+		if ($context['member']['birthday_visibility'] == 1)
+		{
+			// Showing day/month only.
+			$context['member']['show_birth'] = true;
+			$context['member']['formatted_birthdate'] = dateformat(0, $birth_month, $birth_day, $user_info['time_format']);
+		}
+		elseif ($context['member']['birthday_visibility'] == 2)
+		{
+			// Showing full date (and thus age)
+			$context['member']['show_birth'] = true;
+			$context['member']['formatted_birthdate'] = dateformat($birth_year, $birth_month, $birth_day, $user_info['time_format']);
+
+			$age = $datearray['year'] - $birth_year - (($datearray['mon'] > $birth_month || ($datearray['mon'] == $birth_month && $datearray['mday'] >= $birth_day)) ? 0 : 1);
+			$context['member']['age'] = sprintf($txt['age_profile'], $age);
+		}
 	}
 
 	if (allowedTo('moderate_forum'))
@@ -198,12 +209,6 @@ function summary($memID)
 		foreach ($context['custom_fields'] as $custom)
 			$context['print_custom_fields'][$context['cust_profile_fields_placement'][$custom['placement']]][] = $custom;
 
-	if (!empty($_SESSION['merge_success']))
-	{
-		$context['profile_updated'] = $_SESSION['merge_success'];
-		unset ($_SESSION['merge_success']);
-	}
-
 	$cur_profile = $user_profile[$memID];
 	$main_char = $cur_profile['characters'][$cur_profile['main_char']];
 	$context['member']['signature'] = $main_char['sig_parsed'];
@@ -280,7 +285,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 	{
 		$id_alert = array_shift($row);
 		$row['time'] = timeformat($row['alert_time']);
-		$row['extra'] = !empty($row['extra']) ? smf_json_decode($row['extra'], true) : array();
+		$row['extra'] = !empty($row['extra']) ? sbb_json_decode($row['extra'], true) : array();
 		$alerts[$id_alert] = $row;
 
 		if (!empty($row['sender_id']))
@@ -290,9 +295,9 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 
 	if($withSender)
 	{
-	$senders = loadMemberData($senders);
-	foreach ($senders as $member)
-		loadMemberContext($member);
+		$senders = loadMemberData($senders);
+		foreach ($senders as $member)
+			loadMemberContext($member);
 	}
 
 	// Now go through and actually make with the text.
@@ -306,6 +311,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 	$topics = array();
 	$msgs = array();
 	$chars = array();
+	$char_accounts = [];
 	foreach ($alerts as $id_alert => $alert)
 	{
 		if (isset($alert['extra']['chars_src']))
@@ -380,7 +386,10 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 			)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
 			$chars[$row['id_character']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . '">' . $row['character_name'] . '</a>';
+			$chars_sheets[$row['id_character']] = $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'] . ';sa=sheet';
+		}
 		$smcFunc['db_free_result']($request);
 	}
 
@@ -398,12 +407,24 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 		if ($alert['content_type'] == 'profile')
 			$alerts[$id_alert]['extra']['profile_msg'] = '<a href="' . $scripturl . '?action=profile;u=' . $alerts[$id_alert]['content_id'] . '">' . $alerts[$id_alert]['extra']['user_name'] . '</a>';
 
+		// Use the sender details first if we have them.
 		if (!empty($memberContext[$alert['sender_id']]))
-			$alerts[$id_alert]['sender'] = &$memberContext[$alert['sender_id']];
+			$alerts[$id_alert]['sender'] = $memberContext[$alert['sender_id']];
+
+		// And additionally if we have a character, use that.
+		if (isset($alert['extra']['chars_src']))
+		{
+			if (!empty($memberContext[$alert['sender_id']]['characters'][$alert['extra']['chars_src']]))
+			{
+				$alerts[$id_alert]['sender']['avatar']['image'] = $memberContext[$alert['sender_id']]['characters'][$alert['extra']['chars_src']]['avatar'];
+				$alerts[$id_alert]['sender']['avatar']['image'] = '<img class="avatar" src="' . $alerts[$id_alert]['sender']['avatar']['image'] . '" alt="">';
+			}
+		}
 
 		$string = 'alert_' . $alert['content_type'] . '_' . $alert['content_action'];
-		if (isset($alert['extra']['chars_src']) || isset($alert['extra']['chars_dest']))
+		if (isset($alert['extra']['chars_dest']))
 			$string .= 'chr';
+
 		if (isset($txt[$string]))
 		{
 			$extra = $alerts[$id_alert]['extra'];
@@ -413,6 +434,11 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = array(),
 			{
 				$search[] = '{char_link}';
 				$repl[] = $chars[$alert['extra']['chars_src']];
+				if (!empty($chars_sheets[$alert['extra']['chars_src']]))
+				{
+					$search[] = '#{char_sheet_link}';
+					$repl[] = $chars_sheets[$alert['extra']['chars_src']];
+				}
 			}
 			if (isset($alert['extra']['chars_dest']))
 			{
@@ -1319,9 +1345,15 @@ function statPanel($memID)
 		fatal_lang_error('loadavg_userstats_disabled', false);
 
 	$context['sub_template'] = 'profile_stats';
-	register_helper([
-		'inverted_percent' => function($pc) { return 100 - $pc; },
-		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
+	StoryBB\Template::add_helper([
+		'inverted_percent' => function($pc)
+		{
+			return 100 - $pc;
+		},
+		'pie_percent' => function($pc)
+		{
+			return round($pc / 5) * 20;
+		},
 	]);
 
 	// General user statistics.
@@ -1488,7 +1520,7 @@ function statPanel($memID)
 	ksort($context['posts_by_time']);
 
 	// Custom stats (just add a template_layer to add it to the template!)
- 	call_integration_hook('integrate_profile_stats', array($memID));
+	call_integration_hook('integrate_profile_stats', array($memID));
 }
 
 /**
@@ -1935,7 +1967,6 @@ function TrackIP($memID = 0)
 	if ($memID == 0)
 	{
 		$context['ip'] = $user_info['ip'];
-		loadTemplate('Profile');
 		loadLanguage('Profile');
 		$context['sub_template'] = 'trackIP';
 		$context['page_title'] = $txt['profile'];
@@ -2507,7 +2538,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 	$members = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$extra = smf_json_decode($row['extra'], true);
+		$extra = sbb_json_decode($row['extra'], true);
 		if (!empty($extra['applicator']))
 			$members[] = $extra['applicator'];
 
@@ -3030,6 +3061,22 @@ function viewWarning($memID)
 	foreach ($context['level_effects'] as $limit => $dummy)
 		if ($context['member']['warning'] >= $limit)
 			$context['current_level'] = $limit;
-}
 
-?>
+	$context['current_level_effects'] = $context['level_effects'][$context['current_level']];
+
+	// Convert levels to classes
+	$context['warning_classes'] = array(
+		0 => 'nothing',
+		$modSettings['warning_watch'] => 'watch',
+		$modSettings['warning_moderate'] => 'moderate',
+		$modSettings['warning_mute'] => 'mute',
+	);
+
+	// Work out the starting color.
+	$context['current_class'] = $context['warning_classes'][0];
+	foreach ($context['warning_classes'] as $limit => $color)
+		if ($context['member']['warning'] >= $limit)
+			$context['current_class'] = $color;
+
+	$context['sub_template'] = 'profile_warning_view';
+}

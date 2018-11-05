@@ -13,9 +13,6 @@
 
 use LightnCandy\LightnCandy;
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * !!!Compatibility!!!
  * This is no more needed, but to avoid break mods let's keep it
@@ -47,7 +44,7 @@ function html_to_bbc($text)
 	// Remove any formatting within code tags.
 	if (strpos($text, '[code') !== false)
 	{
-		$text = preg_replace('~<br\s?/?' . '>~i', '#smf_br_spec_grudge_cool!#', $text);
+		$text = preg_replace('~<br\s?/?' . '>~i', '#sbb_br_spec_grudge_cool!#', $text);
 		$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		// Only mess with stuff outside [code] tags.
@@ -58,7 +55,7 @@ function html_to_bbc($text)
 				$parts[$i] = strip_tags($parts[$i]);
 		}
 
-		$text = strtr(implode('', $parts), array('#smf_br_spec_grudge_cool!#' => '<br>'));
+		$text = strtr(implode('', $parts), array('#sbb_br_spec_grudge_cool!#' => '<br>'));
 	}
 
 	// Remove scripts, style and comment blocks.
@@ -94,14 +91,14 @@ function html_to_bbc($text)
 
 			foreach ($matches[1] as $k => $file)
 				if (isset($mappings[$file]))
-					$matches[1][$k] = '-[]-smf_smily_start#|#' . $mappings[$file] . '-[]-smf_smily_end#|#';
+					$matches[1][$k] = '-[]-sbb_smily_start#|#' . $mappings[$file] . '-[]-sbb_smily_end#|#';
 		}
 
 		// Replace the tags!
 		$text = str_replace($matches[0], $matches[1], $text);
 
 		// Now sort out spaces
-		$text = str_replace(array('-[]-smf_smily_end#|#-[]-smf_smily_start#|#', '-[]-smf_smily_end#|#', '-[]-smf_smily_start#|#'), ' ', $text);
+		$text = str_replace(array('-[]-sbb_smily_end#|#-[]-sbb_smily_start#|#', '-[]-sbb_smily_end#|#', '-[]-sbb_smily_start#|#'), ' ', $text);
 	}
 
 	// Only try to buy more time if the client didn't quit.
@@ -397,7 +394,7 @@ function html_to_bbc($text)
 		// Keep track of the number of nested list levels.
 		$listDepth = 0;
 
-		// Map what we can expect from the HTML to what is supported by SMF.
+		// Map what we can expect from the HTML to what is supported by StoryBB.
 		$listTypeMapping = array(
 			'1' => 'decimal',
 			'A' => 'upper-alpha',
@@ -790,7 +787,7 @@ function html_to_bbc($text)
 		{
 			return "[hr]";
 		},
-		'~<blockquote(\s(.)*?)*?' . '>~i' =>  function()
+		'~<blockquote(\s(.)*?)*?' . '>~i' => function()
 		{
 			return "&lt;blockquote&gt;";
 		},
@@ -905,7 +902,7 @@ function fetchTagAttributes($text)
 	$attribs = array();
 	$key = $value = '';
 	$tag_state = 0; // 0 = key, 1 = attribute with no string, 2 = attribute with string
-	for ($i = 0; $i < strlen($text); $i++)
+	for ($i = 0, $n = strlen($text); $i < $n; $i++)
 	{
 		// We're either moving from the key to the attribute or we're in a string and this is fine.
 		if ($text[$i] == '=')
@@ -1337,7 +1334,7 @@ function loadLocale()
 
 	loadLanguage('Editor');
 
-	$context['template_layers'] = array();
+	StoryBB\Template::remove_all_layers();
 	// Lets make sure we aren't going to output anything nasty.
 	@ob_end_clean();
 	@ob_start();
@@ -1465,19 +1462,19 @@ function create_control_richedit($editorOptions)
 	if (empty($context['controls']['richedit']))
 	{
 		// Some general stuff.
-		$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
+		$settings['smileys_url'] = $modSettings['smileys_url'];
 		if (!empty($context['drafts_autosave']))
 			$context['drafts_autosave_frequency'] = empty($modSettings['drafts_autosave_frequency']) ? 60000 : $modSettings['drafts_autosave_frequency'] * 1000;
 
 		// This really has some WYSIWYG stuff.
-		loadCSSFile('jquery.sceditor.css', array('force_current' => false, 'validate' => true), 'smf_jquery_sceditor');
+		loadCSSFile('jquery.sceditor.css', array('force_current' => false, 'validate' => true), 'sbb_jquery_sceditor');
 
 		// JS makes the editor go round
-		loadJavaScriptFile('editor.js', array(), 'smf_editor');
-		loadJavaScriptFile('jquery.sceditor.bbcode.min.js', array(), 'smf_sceditor_bbcode');
-		loadJavaScriptFile('jquery.sceditor.smf.js', array(), 'smf_sceditor_smf');
+		loadJavaScriptFile('editor.js', array(), 'sbb_editor');
+		loadJavaScriptFile('jquery.sceditor.bbcode.min.js', array(), 'sbb_sceditor_bbcode');
+		loadJavaScriptFile('jquery.sceditor.storybb.js', array(), 'sbb_sceditor_storybb');
 		addInlineJavaScript('
-		var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
+		var sbb_smileys_url = \'' . $settings['smileys_url'] . '\';
 		var bbc_quote_from = \'' . addcslashes($txt['quote_from'], "'") . '\';
 		var bbc_quote = \'' . addcslashes($txt['quote'], "'") . '\';
 		var bbc_search_on = \'' . addcslashes($txt['search_on'], "'") . '\';');
@@ -1798,7 +1795,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	{
 		// Some javascript ma'am?
 		if (!empty($verificationOptions['override_visual']) || (!empty($modSettings['visual_verification_type']) && !isset($verificationOptions['override_visual'])))
-			loadJavaScriptFile('captcha.js', array(), 'smf_captcha');
+			loadJavaScriptFile('captcha.js', array(), 'sbb_captcha');
 
 		$verificationOptions['use_graphic_library'] = in_array('gd', get_loaded_extensions());
 
@@ -1846,7 +1843,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	if ($context['controls']['verification'][$verificationOptions['id']]['show_visual'])
 		$context['insert_after_template'] .= '
 			<script>
-				var verification' . $verificationOptions['id'] . 'Handle = new smfCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '", ' . ($verificationOptions['use_graphic_library'] ? 1 : 0) . ');
+				var verification' . $verificationOptions['id'] . 'Handle = new sbbCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '", ' . ($verificationOptions['use_graphic_library'] ? 1 : 0) . ');
 			</script>';
 
 	// If we want questions do we have a cache of all the IDs?
@@ -1869,7 +1866,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 				$id_question = $row['id_question'];
 				unset ($row['id_question']);
 				// Make them all lowercase. We can't directly use $smcFunc['strtolower'] with array_walk, so do it manually, eh?
-				$row['answers'] = smf_json_decode($row['answers'], true);
+				$row['answers'] = sbb_json_decode($row['answers'], true);
 				foreach ($row['answers'] as $k => $v)
 					$row['answers'][$k] = $smcFunc['strtolower']($v);
 
@@ -2083,7 +2080,6 @@ function AutoSuggestHandler($checkRegistered = null)
 	$searchTypes = array(
 		'member' => 'Member',
 		'membergroups' => 'MemberGroups',
-		'versions' => 'SMFVersions',
 		'memberchar' => 'MemberChar',
 		'character' => 'Character',
 		'rawcharacter' => 'RawCharacter',
@@ -2099,7 +2095,7 @@ function AutoSuggestHandler($checkRegistered = null)
 	StoryBB\Template::set_layout('raw');
 
 	// Any parameters?
-	$context['search_param'] = isset($_REQUEST['search_param']) ? smf_json_decode(base64_decode($_REQUEST['search_param']), true) : array();
+	$context['search_param'] = isset($_REQUEST['search_param']) ? sbb_json_decode(base64_decode($_REQUEST['search_param']), true) : array();
 
 	if (isset($_REQUEST['suggest_type'], $_REQUEST['search']) && isset($searchTypes[$_REQUEST['suggest_type']]))
 	{
@@ -2367,5 +2363,3 @@ function AutoSuggest_Search_MemberChar()
 
 	return $xml_data;
 }
-
-?>

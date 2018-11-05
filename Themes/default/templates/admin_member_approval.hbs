@@ -35,7 +35,7 @@
 						{{{txt.admin_browse_outstanding_days_1}}}:
 					</dt>
 					<dd>
-						<input type="text" name="time_passed" value="14" maxlength="4" size="3" class="input_text"> {{{txt.admin_browse_outstanding_days_2}}}.
+						<input type="text" name="time_passed" value="14" maxlength="4" size="3"> {{{txt.admin_browse_outstanding_days_2}}}.
 					</dd>
 					<dt>
 						{{{txt.admin_browse_outstanding_perform}}}:
@@ -62,6 +62,6 @@
 				<input type="hidden" name="sa" value="approve">
 				{{#if context.approve_list.sort.desc}}<input type="hidden" name="desc" value="1">{{/if}}
 			</div>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 		</form>
 	</div>

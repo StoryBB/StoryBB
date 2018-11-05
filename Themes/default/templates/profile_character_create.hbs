@@ -18,11 +18,11 @@
 				<dl>
 					<dt>{{{txt.char_name}}}</dt>
 					<dd>
-						<input type="text" name="char_name" id="char_name" size="50" value="{{{context.character.character_name}}}" maxlength="50" class="input_text">
+						<input type="text" name="char_name" id="char_name" size="50" value="{{{context.character.character_name}}}" maxlength="50">
 					</dd>
 					<dt>{{{txt.age}}}:</dt>
 					<dd>
-						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50" class="input_text">
+						<input type="text" name="age" id="age" size="50" value="{{{context.character.age}}}" maxlength="50">
 					</dd>
 				</dl>
 				<dl class="char_sheet_text">
@@ -47,7 +47,7 @@
 				<div class="smalltext">{{{txt.you_can_add_later}}}</div>
 				<input type="hidden" name="u" value="{{context.id_member}}">
 				<input type="submit" name="create_char" class="button_submit" value="{{{txt.char_create}}}">
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+				{{session_form}}
 			</form>
 		</div>
 	</div>

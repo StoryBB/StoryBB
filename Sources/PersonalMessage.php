@@ -12,9 +12,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This helps organize things...
  * @todo this should be a simple dispatcher....
@@ -33,10 +30,6 @@ function MessageMain()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	loadLanguage('PersonalMessage+Drafts');
-	
-	//Grab the partial
-	$template = loadTemplatePartial('pm_above');
-
 
 	// Load up the members maximum message capacity.
 	if ($user_info['is_admin'])
@@ -47,9 +40,11 @@ function MessageMain()
 		$request = $smcFunc['db_query']('', '
 			SELECT MAX(max_messages) AS top_limit, MIN(max_messages) AS bottom_limit
 			FROM {db_prefix}membergroups
-			WHERE id_group IN ({array_int:users_groups})',
+			WHERE id_group IN ({array_int:users_groups})
+				AND is_character = {int:is_not_character}',
 			array(
 				'users_groups' => $user_info['groups'],
+				'is_not_character' => 0,
 			)
 		);
 		list ($maxMessage, $minMessage) = $smcFunc['db_fetch_row']($request);
@@ -360,8 +355,8 @@ function messageIndexBar($area)
 	$context['menu_item_selected'] = $current_area;
 
 	// Set the template for this area and add the profile layer.
-//	if (!isset($_REQUEST['xml']))
-//		$context['template_layers'][] = 'pm';
+	if (!isset($_REQUEST['xml']))
+		StoryBB\Template::add_layer('pm');
 }
 
 /**
@@ -375,7 +370,7 @@ function MessagePopup()
 	$db_show_debug = false;
 
 	// We only want to output our little layer here.
-	$context['template_layers'] = array();
+	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'personal_message_popup';
 	StoryBB\Template::set_layout('raw');
 
@@ -471,7 +466,7 @@ function MessageFolder()
 	$labelQuery = '';
 	$labelQuery2 = '';
 
-	// SMF logic: If you're viewing a label, it's still the inbox
+	// StoryBB logic: If you're viewing a label, it's still the inbox
 	if ($context['folder'] == 'inbox' && $context['current_label_id'] == -1)
 	{
 		$labelQuery = '
@@ -1627,7 +1622,7 @@ function MessageSearch2()
 
 
 	//We need a helper
-	register_helper([
+	StoryBB\Template::add_helper([
 		'create_button' => 'create_button'
 	]);
 	
@@ -1652,8 +1647,8 @@ function MessagePost()
 	isAllowedTo('pm_send');
 
 	loadLanguage('PersonalMessage');
-	loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'smf_pms');
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'sbb_pms');
+	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 	$context['sub_template'] = 'personal_message_send';
 
 	// Extract out the spam settings - cause it's neat.
@@ -1964,12 +1959,12 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	{
 		$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 		$context['sub_template'] = 'personal_message_send';
-		loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'smf_pms');
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+		loadJavaScriptFile('PersonalMessage.js', array('defer' => false), 'sbb_pms');
+		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 	}
 	else
 	{
-		register_helper(['cleanXml' => 'cleanXml']);
+		StoryBB\Template::add_helper(['cleanXml' => 'cleanXml']);
 		StoryBB\Template::set_layout('xml');
 		$context['sub_template'] = 'xml_pm_preview';
 	}
@@ -2615,7 +2610,7 @@ function MessageActionsApply()
 				// If this label is in the list and we're not adding it, remove it
 				if (array_key_exists($to_label[$row['id_pm']], $labels) && $type !== 'add')
 					unset($labels[$to_label[$row['id_pm']]]);
-				else if ($type !== 'rem')
+				elseif ($type !== 'rem')
 					$labels[$to_label[$row['id_pm']]] = $to_label[$row['id_pm']];
 			}
 
@@ -3364,7 +3359,6 @@ function MessageSettings()
 	$cur_profile = $user_profile[$user_info['id']];
 
 	loadLanguage('Profile');
-	loadTemplate('Profile');
 
 	// Since this is internally handled with the profile code because that's how it was done ages ago
 	// we have to set everything up for handling this...
@@ -3375,7 +3369,7 @@ function MessageSettings()
 	$context['menu_item_selected'] = 'settings';
 	$context['submit_button_text'] = $txt['pm_settings'];
 	$context['profile_header_text'] = $txt['personal_messages'];
-	$context['sub_template'] = 'edit_options';
+	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['pm_settings_desc'];
 
 	loadThemeOptions($user_info['id']);
@@ -3977,8 +3971,8 @@ function LoadRules($reload = false)
 		$context['rules'][$row['id_rule']] = array(
 			'id' => $row['id_rule'],
 			'name' => $row['rule_name'],
-			'criteria' => smf_json_decode($row['criteria'], true),
-			'actions' => smf_json_decode($row['actions'], true),
+			'criteria' => sbb_json_decode($row['criteria'], true),
+			'actions' => sbb_json_decode($row['actions'], true),
 			'delete' => $row['delete_pm'],
 			'logic' => $row['is_or'] ? 'or' : 'and',
 		);
@@ -4043,5 +4037,3 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 		break;
 	}
 }
-
-?>

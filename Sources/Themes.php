@@ -27,9 +27,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Subaction handler - manages the action and delegates control to the proper
  * sub-action.
@@ -644,22 +641,10 @@ function SetThemeSettings()
 	if (empty($_GET['th']))
 		fatal_lang_error('no_theme', false);
 
-	// Fetch the smiley sets...
-	$sets = explode(',', 'none,' . $modSettings['smiley_sets_known']);
-	$set_names = explode("\n", $txt['smileys_none'] . "\n" . $modSettings['smiley_sets_names']);
-	$context['smiley_sets'] = array(
-		'' => $txt['smileys_no_default']
-	);
-	foreach ($sets as $i => $set)
-		$context['smiley_sets'][$set] = $smcFunc['htmlspecialchars']($set_names[$i]);
-
 	$old_id = $settings['theme_id'];
 	$old_settings = $settings;
 
 	loadTheme($_GET['th'], false);
-
-	// Sadly we really do need to init the template.
-	loadSubTemplate('init', 'ignore');
 
 	// Also load the actual themes language file - in case of special settings.
 	loadLanguage('Settings', '', true, true);
@@ -788,9 +773,6 @@ function SetThemeSettings()
 
 	// Restore the current theme.
 	loadTheme($old_id, false);
-
-	// Reinit just incase.
-	loadSubTemplate('init', 'ignore');
 
 	$settings = $old_settings;
 
@@ -1321,7 +1303,7 @@ function InstallCopy()
 	foreach ($to_copy as $file)
 	{
 		copy($settings['default_theme_dir'] . $file, $context['to_install']['theme_dir'] . $file);
-		smf_chmod($context['to_install']['theme_dir'] . $file, 0777);
+		sbb_chmod($context['to_install']['theme_dir'] . $file, 0777);
 	}
 
 	// And now the entire images directory!
@@ -1422,7 +1404,6 @@ function SetJavaScript()
 		'default_template',
 		'images_url',
 		'number_recent_posts',
-		'smiley_sets_default',
 		'theme_dir',
 		'theme_id',
 		'theme_url',
@@ -1445,7 +1426,7 @@ function SetJavaScript()
 	// If this is the admin preferences the passed value will just be an element of it.
 	if ($_GET['var'] == 'admin_preferences')
 	{
-		$options['admin_preferences'] = !empty($options['admin_preferences']) ? smf_json_decode($options['admin_preferences'], true) : array();
+		$options['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
 		// New thingy...
 		if (isset($_GET['admin_key']) && strlen($_GET['admin_key']) < 5)
 			$options['admin_preferences'][$_GET['admin_key']] = $_GET['val'];
@@ -1467,5 +1448,3 @@ function SetJavaScript()
 	// Don't output anything...
 	redirectexit($settings['images_url'] . '/blank.png');
 }
-
-?>

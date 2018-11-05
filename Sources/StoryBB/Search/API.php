@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Generic search class, all search backends should extend this class.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -10,23 +12,20 @@
 
 namespace StoryBB\Search;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
 /**
- * Class search_api
+ * The generic search class has a number of functions, most backends should override most of these.
  */
 abstract class API implements API_Interface
 {
 	/**
-	 * @var string The last version of SMF that this was tested on. Helps protect against API changes.
+	 * @var string The last version of StoryBB that this was tested on. Helps protect against API changes.
 	 */
 	public $version_compatible = 'StoryBB 3.0 Alpha 1';
 
 	/**
-	 * @var string The minimum SMF version that this will work with
+	 * @var string The minimum StoryBB version that this will work with
 	 */
-	public $min_smf_version = 'StoryBB 3.0 Alpha 1';
+	public $min_sbb_version = 'StoryBB 3.0 Alpha 1';
 
 	/**
 	 * @var bool Whether or not it's supported
@@ -103,5 +102,3 @@ abstract class API implements API_Interface
 	{
 	}
 }
-
-?>

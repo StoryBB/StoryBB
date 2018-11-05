@@ -21,7 +21,7 @@
 					</dt>
 					<dd>
 						{{{txt.scheduled_task_edit_repeat}}}
-						<input type="text" name="regularity" id="regularity" value="{{#if context.task.regularity}}{{context.task.regularity}}{{else}}1{{/if}}" onchange="if (this.value < 1) this.value = 1;" size="2" maxlength="2" class="input_text">
+						<input type="text" name="regularity" id="regularity" value="{{#if context.task.regularity}}{{context.task.regularity}}{{else}}1{{/if}}" onchange="if (this.value < 1) this.value = 1;" size="2" maxlength="2">
 						<select name="unit">
 							<option value="m"{{#if (eq context.task.unit 'm')}} selected{{/if}}>{{{txt.scheduled_task_reg_unit_m}}}</option>
 							<option value="h"{{#if (eq context.task.unit 'h')}} selected{{/if}}>{{{txt.scheduled_task_reg_unit_h}}}</option>
@@ -34,18 +34,18 @@
 						<span class="smalltext">{{{txt.scheduled_task_edit_start_time_desc}}}</span>
 					</dt>
 					<dd>
-						<input type="text" name="offset" id="start_time" value="{{{context.task.offset_formatted}}}" size="6" maxlength="5" class="input_text">
+						<input type="text" name="offset" id="start_time" value="{{{context.task.offset_formatted}}}" size="6" maxlength="5">
 					</dd>
 					<dt>
 						<strong><label for="enabled">{{{txt.scheduled_tasks_enabled}}}:</label></strong>
 					</dt>
 					<dd>
-						<input type="checkbox" name="enabled" id="enabled"{{#unless context.task.disabled}} checked{{/unless}} class="input_check">
+						<input type="checkbox" name="enabled" id="enabled"{{#unless context.task.disabled}} checked{{/unless}}>
 					</dd>
 				</dl>
 				<div class="righttext">
-					<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-					<input type="hidden" name="{{context.admin-st_token_var}}" value="{{context.admin-st_token}}">
+					{{session_form}}
+					{{token_form 'admin-st'}}
 					<input type="submit" name="save" value="{{{txt.scheduled_tasks_save_changes}}}" class="button_submit">
 				</div>
 			</div>

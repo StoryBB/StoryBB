@@ -41,10 +41,6 @@
 				<dd>{{{context.common_stats.latest_member.link}}}</dd>
 				<dt>{{txt.average_online}}:</dt>
 				<dd>{{context.average_online}}</dd>
-				{{#if context.gender}}
-				<dt>{{txt.gender_stats}}:</dt>
-				<dd>{{#each context.gender}}{{@key}}: {{.}}<br>{{/each}}</dd>
-				{{/if}}
 				{{#if modSettings.hitStats}}
 				<dt>{{txt.average_hits}}:</dt>
 				<dd>{{context.average_hits}}</dd>
@@ -91,6 +87,7 @@
 					<th>{{txt.stats_new_topics}}</th>
 					<th>{{txt.stats_new_posts}}</th>
 					<th>{{txt.stats_new_members}}</th>
+					<th>{{txt.stats_new_chars}}</th>
 					<th>{{txt.most_online}}</th>
 					{{#if modSettings.hitStats}}
 					<th>{{txt.page_views}}</th>
@@ -106,6 +103,7 @@
 				<th>{{new_topics}}</th>
 				<th>{{new_posts}}</th>
 				<th>{{new_members}}</th>
+				<th>{{new_chars}}</th>
 				<th>{{most_members_online}}</th>
 				{{#if (eq modSettings.hitStats '1')}}
 				<th>{{hits}}</th>
@@ -119,6 +117,7 @@
 					<th>{{new_topics}}</th>
 					<th>{{new_posts}}</th>
 					<th>{{new_members}}</th>
+					<th>{{new_chars}}</th>
 					<th>{{most_members_online}}</th>
 					{{#if modSettings.hitStats}}
     				<th>{{hits}}</th>
@@ -131,6 +130,7 @@
         					<td>{{new_topics}}</td>
         					<td>{{new_posts}}</td>
         					<td>{{new_members}}</td>
+        					<td>{{new_chars}}</td>
         					<td>{{most_members_online}}</td>
         					{{#if modSettings.hitStats}}
             				<td>{{hits}}</td>
@@ -144,7 +144,7 @@
 		</table>
 	</div>
 	<script>
-		var oStatsCenter = new smf_StatsCenter({
+		var oStatsCenter = new sbb_StatsCenter({
 			sTableId: 'stats',
 
 			reYearPattern: /year_(\d+)/,
@@ -172,6 +172,7 @@
 				'new_topics',
 				'new_posts',
 				'new_members',
+				'new_chars',
 				'most_members_online'
 				{{#if (eq modSettings.hitStats '1')}}
 				,'hits'

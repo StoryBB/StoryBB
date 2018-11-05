@@ -12,8 +12,15 @@
 
 namespace StoryBB\Template\Helper;
 
+/**
+ * This class provides logic helpers for StoryBB's templates.
+ */
 class Logic
 {
+	/**
+	 * List the different helpers available in this class.
+	 * @return array Helpers, assocating name to method
+	 */
 	public static function _list()
 	{
 		return ([
@@ -25,127 +32,147 @@ class Logic
 			'lte' => 'StoryBB\\Template\\Helper\\Logic::lte',
 			'gte' => 'StoryBB\\Template\\Helper\\Logic::gte',
 			'not' => 'StoryBB\\Template\\Helper\\Logic::not',
-			'and' => 'StoryBB\\Template\\Helper\\Logic::and',
-			'or'  => 'StoryBB\\Template\\Helper\\Logic::or',
+			'and' => 'StoryBB\\Template\\Helper\\Logic::op_and',
+			'or'  => 'StoryBB\\Template\\Helper\\Logic::op_or',
 		]);
 	}
 
-	/*****
-	 * Usage: {{#if (eq arg1 arg2)}}
+	/**
 	 * Returns true if arg1 === arg2, otherwise returns false
+	 * Usage: {{#if (eq arg1 arg2)}}
+	 * @param mixed $arg1 First argument
+	 * @param mixed $arg2 Second argument
+	 * @return bool True if the two are identically valued (=== comparison)
 	 */
-	public static function eq($arg1,$arg2) 
+	public static function eq($arg1, $arg2) 
 	{
 		return $arg1 === $arg2;
 	}
 	
-	/*****
+	/**
+	 * Returns true if arg1 == arg2, otherwise returns false
 	 * Usage: {{#if (eq arg1 arg2)}}
-	 * Returns true if arg1 === arg2, otherwise returns false
+	 * @param mixed $arg1 First argument
+	 * @param mixed $arg2 Second argument
+	 * @return bool True if the two are loosely equal valued (== comparison)
 	 */
-	public static function eq_coerce($arg1,$arg2) 
+	public static function eq_coerce($arg1, $arg2) 
 	{
 		return $arg1 == $arg2;
 	}
 
-	/*****
-	 * Usage: {{#if (ne arg1 arg2)}}
+	/**
 	 * Returns true if arg1 !== arg2, otherwise returns false
+	 * Usage: {{#if (ne arg1 arg2)}}
+	 * @param mixed $arg1 First argument
+	 * @param mixed $arg2 Second argument
+	 * @return bool True if the two are not identically valued (!== comparison)
 	 */
-	public static function ne($arg1,$arg2) 
+	public static function ne($arg1, $arg2) 
 	{
 		return $arg1 !== $arg2;
 	}
 
-	/*****
-	 * Usage: {{#if (lt arg1 arg2)}}
+	/**
 	 * Returns true if arg1 < arg2, otherwise returns false
+	 * Usage: {{#if (lt arg1 arg2)}}
+	 * @param mixed $arg1 First argument
+	 * @param mixed $arg2 Second argument
+	 * @return bool True if $arg1 is less than $arg2
 	 */
-	public static function lt($arg1,$arg2)
+	public static function lt($arg1, $arg2)
 	{
 		return $arg1 < $arg2;
 	}
 
-	/*****
-	 * Usage: {{#if (gt arg1 arg2)}}
+	/**
 	 * Returns true if arg1 > arg2, otherwise returns false
+	 * Usage: {{#if (gt arg1 arg2)}}
+	 * @param mixed $arg1 First argument
+	 * @param mixed $arg2 Second argument
+	 * @return bool True if $arg1 is greater than $arg2
 	 */
-	public static function gt($arg1,$arg2)
+	public static function gt($arg1, $arg2)
 	{
-	    return $arg1 > $arg2;
+		return $arg1 > $arg2;
 	}
 
-	/*****
-	 * Usage: {{#if (lte arg1 arg2)}}
+	/**
 	 * Returns true if arg1 <= arg2, otherwise returns false
+	 * Usage: {{#if (lte arg1 arg2)}}
+	 * @param mixed $arg1 First argument
+	 * @param mixed $arg2 Second argument
+	 * @return bool True if $arg1 is less than or equal to $arg2
 	 */
-	public static function lte($arg1,$arg2)
+	public static function lte($arg1, $arg2)
 	{
 		return $arg1 <= $arg2;
 	}
 
-	/*****
-	 * Usage: {{#if (ne arg1 arg2)}}
+	/**
 	 * Returns true if arg1 >= arg2, otherwise returns false
+	 * Usage: {{#if (ne arg1 arg2)}}
+	 * @param mixed $arg1 First argument
+	 * @param mixed $arg2 Second argument
+	 * @return bool True if $arg1 is greater than or equal to $arg2
 	 */
-	public static function gte($arg1,$arg2)
+	public static function gte($arg1, $arg2)
 	{
-	    return $arg1 >= $arg2;
+		return $arg1 >= $arg2;
 	}
 
-	/*****
-	 * Usage: {{#if (not arg1)}}
+	/**
 	 * Returns negation of arg1
+	 * Usage: {{#if (not arg1)}}
+	 * @param mixed $arg1 First argument
+	 * @return bool True if $arg1 is falsy/empty
 	 */
 	public static function not($arg1)
 	{
 		return !$arg1;
 	}
 
-	/*****
-	 * Usage: {{#if (and arg1 arg2 .. argN)}}
+	/**
 	 * Boolean AND - return true if all arguments evaluate to true
+	 * Usage: {{#if (and arg1 arg2 .. argN)}}
+	 * @param mixed $args An array of arguments to compare, last argument is context supplied by Lightncandy
+	 * @return bool True if all arguments (except Lnc context) evaluate to true
 	 */
-	public static function and() {
-
-		$args = func_get_args();
-		// Last element on function arguments is context - not an argument, remove before evaluating
+	public static function op_and(...$args)
+	{
 		$context = array_pop($args);
 		
-		foreach ( $args as $arg ) 
+		foreach ($args as $arg) 
 		{
-			if ( $arg == FALSE ) 
+			if ($arg == false) 
 			{
 				// Once one argument returns false, return false and don't compare other arguments
-				return FALSE;
+				return false;
 			}
 		}
 		// No argument returned false (all evaluated to true) - return true
-		return TRUE;
+		return true;
 	}
 
-	/*****
-	 * Usage: {{#if (or arg1 arg2 .. argN)}}
+	/**
 	 * Boolean OR - return true if any argument evaluates to true
+	 * Usage: {{#if (or arg1 arg2 .. argN)}}
+	 * @param mixed $args An array of arguments to compare, last argument is context supplied by Lightncandy
+	 * @return bool True if any arguments (except Lnc context) evaluate to true
 	 */
-	public static function or() 
+	public static function op_or(...$args) 
 	{
-		 
-		$args = func_get_args();
-		// Last element on function arguments is context - not an argument, remove before evaluating
 		$context = array_pop($args);
 		
-		foreach ( $args as $arg ) 
+		foreach ($args as $arg) 
 		{
-			if ( $arg == TRUE ) 
+			if ($arg == true) 
 			{
 				// Once one argument returns true, return true and don't compare other arguments
-				return TRUE;
+				return true;
 			}
 		}
 		// No argument returned true (all evaluated to false) - return false
-		return FALSE;
+		return false;
 	}
 }
-
-?>

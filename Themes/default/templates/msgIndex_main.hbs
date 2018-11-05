@@ -19,11 +19,11 @@
 						<p class="board_description mobile_display">{{description}}</p>
 					</a>
 					{{#if (and can_approve_posts (or unapproved_posts unapproved_topics))}}
-						<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{#if unapproved_topics}}topics{{else}}posts{{/if}};brd={{id}};{{../context.session_var}}={{../context.session_id}}" title="{{textTemplate 'unapproved_posts' unapproved_topics unapproved_posts}}" class="moderation_link">(!)</a>
+						<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{#if unapproved_topics}}topics{{else}}posts{{/if}};brd={{id}};{{session_url}}" title="{{textTemplate 'unapproved_posts' unapproved_topics unapproved_posts}}" class="moderation_link">(!)</a>
 					{{/if}}
 					<p class="board_description">{{description}}</p>
 					{{#if (or moderators moderator_groups)}}
-					<p class="moderators">{{#if (eq (getNumItems link_moderators) 1)}}{{../txt.moderator}}{{else}}{{../txt.moderators}}{{/if}}: {{{implode_comma link_moderators}}}</p>
+					<p class="moderators">{{#if (eq (getNumItems link_moderators) 1)}}{{../txt.moderator}}{{else}}{{../txt.moderators}}{{/if}}: {{{join link_moderators ', '}}}</p>
 					{{/if}}
 				</div>
 				<div class="board_stats centertext">
@@ -60,7 +60,7 @@
 			<p>
 			{{context.description}}&nbsp;
 			{{#if context.moderators}}
-				{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{implode_comma context.link_moderators}}}.
+				{{#if (eq (getNumItems context.moderators) 1)}}{{txt.moderator}}{{else}}{{txt.moderator}}{{/if}}: {{{join context.link_moderators ', '}}}.
 			{{/if}}
 			</p>
 		</div>
@@ -74,7 +74,7 @@
 			{{#if (eq settings.display_who_viewing 1)}}
 				{{#if (eq (getNumItems context.view_members) 1)}}{{txt.who_member}}{{else}}{{txt.members}}{{/if}}
 			{{else}}
-				{{#if context.view_members_list}}{{{implode_comma context.view_members_list}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}}0{{txt.members}}{{/if}}
+				{{#if context.view_members_list}}{{{join context.view_members_list ', '}}} {{#if (or context.view_num_hidden context.can_moderate_forum)}}({{context.view_num_hidden}} {{txt.hidden}}){{/if}}{{else}}0{{txt.members}}{{/if}}
 			{{/if}}
 			{{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}} {{txt.who_viewing_board}}
 			</div>
@@ -86,7 +86,7 @@
 			<div class="board_stats centertext">{{{context.topics_headers.replies}}} / {{{context.topics_headers.views}}}</div>
 			<div class="lastpost">{{{context.topics_headers.last_post}}}</div>
 			{{#if context.can_quick_mod}}
-				<div class="moderation"><input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');" class="input_check"></div>
+				<div class="moderation"><input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');"></div>
 			{{/if}}
 		{{else}}
 		{{!-- no topics --}}
@@ -103,7 +103,6 @@
 			<div class="{{css_class}}">
 				<div class="board_icon">
 					<img src="{{first_post.icon_url}}" alt="">
-					{{#if is_posted_in}}<img class="posted" src="{{../settings.images_url}}/icons/profile_sm.png" alt="">{{/if}}
 				</div>
 				<div class="info{{#if ../context.can_quick_mod}} info_block{{/if}}">
 					<div {{#if quick_mod.modify}}id="topic_{{first_post.id}}"  ondblclick="oQuickModifyTopic.modify_topic('{{id}}', '{{first_post.id}}');"{{/if}}>
@@ -114,7 +113,10 @@
 							{{#if is_redirect}}<span class="generic_icons move"></span>{{/if}}
 							{{#if is_poll}}<span class="generic_icons poll"></span>{{/if}}
 						</div>
-						{{{first_post.member.avatar.image}}}
+						<div class="first_poster">
+							{{{first_post.member.avatar.image}}}
+							{{#if (eq_coerce is_posted_in 1)}}<img src="{{{../context.user.avatar.href}}}" class="avatar participation" alt="{{{../txt.participation_caption}}}" title="{{{../txt.participation_caption}}}">{{/if}}
+						</div>
 						<div class="msg_container">
 							<div class="message_index_title">
 								{{#if (and new ../context.user.is_logged)}}<a href="{{new_href}}" id="newicon{{first_post.id}}"><span class="new_posts">{{../txt.new}}</span></a>{{/if}}
@@ -137,7 +139,7 @@
 				</div> 
 				{{#if ../context.can_quick_mod}}
 				<div class="moderation">
-					<input type="checkbox" name="topics[]" value="{{id}}" class="input_check">
+					<input type="checkbox" name="topics[]" value="{{id}}">
 				</div>
 				{{/if}}
 			</div>
@@ -154,7 +156,7 @@
 			{{/if}}
 			</div>
 			{{#if (and context.can_quick_mod context.topics)}}
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 			</form>
 			{{/if}}
 			<div class="mobile_buttons floatright">

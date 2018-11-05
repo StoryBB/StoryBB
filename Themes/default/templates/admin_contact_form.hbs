@@ -1,0 +1,72 @@
+			<div class="cat_bar">
+				<h3 class="catbg">{{txt.contact_us}}</h3>
+			</div>
+			<div class="roundframe">
+				<dl class="settings">
+					<dt>{{{txt.contact_form_sender}}}:</dt>
+					<dd>
+						{{#if context.contact.id_member}}
+							<a href="{{scripturl}}?action=profile;u={{context.contact.id_member}}">{{{context.contact.member_name}}}</a>
+						{{else}}
+							{{{context.contact.member_name}}}
+						{{/if}}
+					</dd>
+					<dt>{{{txt.contact_form_email}}}:</dt>
+					<dd>
+						{{{context.contact.member_email}}}
+					</dd>
+					<dt>{{{txt.subject}}}:</dt>
+					<dd>{{{context.contact.subject}}}</dd>
+					<dt>{{{txt.message}}}:</dt>
+					<dd>{{{context.contact.message}}}</dd>
+					<dt>{{{txt.contact_form_sent_on}}}:</dt>
+					<dd>{{{context.contact.time_received_timeformat}}}</dd>
+					<dt>{{{txt.contact_form_status}}}:</dt>
+					<dd>
+						{{#if (eq context.contact.status '0')}}
+							<strong>{{{txt.contact_form_status_unanswered}}}</strong>
+						{{else}}
+							{{{txt.contact_form_status_answered}}}
+						{{/if}}
+					</dd>
+				</dl>
+			</div>
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.contact_form_reply}}}</h3>
+			</div>
+			<form action="{{scripturl}}?action=admin;area=contactform;sa=replycontact" method="post" accept-charset="UTF-8">
+				<div class="roundframe">
+					<dl class="settings">
+						<dt>{{{txt.contact_form_reply}}}:</dt>
+						<dd>
+							<textarea name="reply"></textarea>
+						</dd>
+						<dt>&nbsp;</dt><dd></dd>
+						<dt></dt>
+						<dd>
+							<input type="submit" name="save" value="{{{txt.send_message}}}" class="button_submit">
+						</dd>
+					</dl>
+				</div>
+				<input type="hidden" name="msg" value="{{context.contact.id_message}}">
+				{{session_form}}
+				{{token_form 'admin-contact'}}
+			</form>
+			{{#if context.contact.previous}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.contact_form_previous_responses}}}</h3>
+			</div>
+			<div class="roundframe">
+				<dl class="settings">
+					{{#each context.contact.previous}}
+					<dt>
+						{{#if real_name}}{{{real_name}}}{{else}}{{{../txt.not_applicable}}}{{/if}}<br>
+						{{{time_sent_format}}}
+					</dt>
+					<dd>
+						{{{response}}}
+					</dd>
+					{{/each}}
+				</dl>
+			</div>
+			{{/if}}

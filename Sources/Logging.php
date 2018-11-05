@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Truncate the GET array to a specified length
  * @param array $arr The array to truncate
@@ -28,7 +25,7 @@ function truncateArray($arr, $max_length=1900)
 	else
 	{
 		// Truncate each element's value to a reasonable length
-		$param_max = floor($max_length/count($arr));
+		$param_max = floor($max_length / count($arr));
 		foreach ($arr as $key => &$value)
 			$value = substr($value, 0, $param_max - strlen($key) - 5);
 		return $arr;
@@ -58,13 +55,6 @@ function writeLog($force = false)
 		}
 	}
 
-	// Are they a spider we should be tracking? Mode = 1 gets tracked on its spider check...
-	if (!empty($user_info['possibly_robot']) && !empty($modSettings['spider_mode']) && $modSettings['spider_mode'] > 1)
-	{
-		require_once($sourcedir . '/ManageSearchEngines.php');
-		logSpider();
-	}
-
 	// Don't mark them as online more than every so often.
 	if (!empty($_SESSION['log_time']) && $_SESSION['log_time'] >= (time() - 8) && !$force)
 		return;
@@ -86,7 +76,7 @@ function writeLog($force = false)
 	// Guests use 0, members use their session ID.
 	$session_id = $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
 
-	// Grab the last all-of-SMF-specific log_online deletion time.
+	// Grab the last all-of-StoryBB-specific log_online deletion time.
 	$do_delete = cache_get_data('log_online-update', 30) < time() - 30;
 
 	// If the last click wasn't a long time ago, and there was a last click...
@@ -142,8 +132,8 @@ function writeLog($force = false)
 
 		$smcFunc['db_insert']($do_delete ? 'ignore' : 'replace',
 			'{db_prefix}log_online',
-			array('session' => 'string', 'id_member' => 'int', 'id_character' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'inet', 'url' => 'string'),
-			array($session_id, $user_info['id'], $user_info['id_character'], empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), $user_info['ip'], $encoded_get),
+			array('session' => 'string', 'id_member' => 'int', 'id_character' => 'int', 'robot_name' => 'string', 'log_time' => 'int', 'ip' => 'inet', 'url' => 'string'),
+			array($session_id, $user_info['id'], $user_info['id_character'], empty($_SESSION['robot_name']) ? '' : $_SESSION['robot_name'], time(), $user_info['ip'], $encoded_get),
 			array('session')
 		);
 	}
@@ -156,7 +146,7 @@ function writeLog($force = false)
 		$_SESSION['timeOnlineUpdated'] = time();
 
 	// Set their login time, if not already done within the last minute.
-	if (SMF != 'SSI' && !empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('.xml', 'login2', 'logintfa'))))
+	if (STORYBB != 'SSI' && !empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('.xml', 'login2', 'logintfa'))))
 	{
 		// Don't count longer than 15 minutes.
 		if (time() - $_SESSION['timeOnlineUpdated'] > 60 * 15)
@@ -180,47 +170,6 @@ function writeLog($force = false)
 		$user_info['total_time_logged_in'] += time() - $_SESSION['timeOnlineUpdated'];
 		$_SESSION['timeOnlineUpdated'] = time();
 	}
-}
-
-/**
- * Logs the last database error into a file.
- * Attempts to use the backup file first, to store the last database error
- * and only update db_last_error.php if the first was successful.
- */
-function logLastDatabaseError()
-{
-	global $boarddir;
-
-	// Make a note of the last modified time in case someone does this before us
-	$last_db_error_change = @filemtime($boarddir . '/db_last_error.php');
-
-	// save the old file before we do anything
-	$file = $boarddir . '/db_last_error.php';
-	$dberror_backup_fail = !@is_writable($boarddir . '/db_last_error_bak.php') || !@copy($file, $boarddir . '/db_last_error_bak.php');
-	$dberror_backup_fail = !$dberror_backup_fail ? (!file_exists($boarddir . '/db_last_error_bak.php') || filesize($boarddir . '/db_last_error_bak.php') === 0) : $dberror_backup_fail;
-
-	clearstatcache();
-	if (filemtime($boarddir . '/db_last_error.php') === $last_db_error_change)
-	{
-		// Write the change
-		$write_db_change =  '<' . '?' . "php\n" . '$db_last_error = ' . time() . ';' . "\n" . '?' . '>';
-		$written_bytes = file_put_contents($boarddir . '/db_last_error.php', $write_db_change, LOCK_EX);
-
-		// survey says ...
-		if ($written_bytes !== strlen($write_db_change) && !$dberror_backup_fail)
-		{
-			// Oops. maybe we have no more disk space left, or some other troubles, troubles...
-			// Copy the file back and run for your life!
-			@copy($boarddir . '/db_last_error_bak.php', $boarddir . '/db_last_error.php');
-		}
-		else
-		{
-			@touch($boarddir . '/' . 'Settings.php');
-			return true;
-		}
-	}
-
-	return false;
 }
 
 /**
@@ -313,7 +262,7 @@ function displayDebug()
 	}
 
 	echo '
-	<a href="', $scripturl, '?action=viewquery" target="_blank" class="new_win">', $warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings), '</a><br>
+	<a href="', $scripturl, '?action=viewquery" target="_blank" rel="noopener">', $warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings), '</a><br>
 	<br>';
 
 	if ($_SESSION['view_queries'] == 1 && !empty($db_cache))
@@ -339,7 +288,7 @@ function displayDebug()
 				$qq['f'] = preg_replace('~^' . preg_quote($boarddir, '~') . '~', '...', $qq['f']);
 
 			echo '
-	<strong>', $is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" class="new_win" style="text-decoration: none;">' : '', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', $smcFunc['htmlspecialchars'](ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
+	<strong>', $is_select ? '<a href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '" target="_blank" rel="noopener" style="text-decoration: none;">' : '', nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', $smcFunc['htmlspecialchars'](ltrim($qq['q'], "\n\r")))) . ($is_select ? '</a></strong>' : '</strong>') . '<br>
 	&nbsp;&nbsp;&nbsp;';
 			if (!empty($qq['f']) && !empty($qq['l']))
 				echo sprintf($txt['debug_query_in_line'], $qq['f'], $qq['l']);
@@ -439,8 +388,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 }
 
 /**
- * Log changes to the forum, such as moderation events or administrative changes.
- * This behaves just like logAction() in SMF 2.0, except that it is designed to log multiple actions at once.
+ * Log multiple changes to the forum, such as moderation events or administrative changes.
  *
  * @param array $logs An array of log data
  * @return int The last logged ID
@@ -568,5 +516,3 @@ function logActions($logs)
 
 	return $id_action;
 }
-
-?>

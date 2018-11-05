@@ -10,16 +10,16 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
-// This defines two version types for checking the API's are compatible with this version of SMF.
+// @todo fix this
+// This defines two version types for checking the API's are compatible with this version of StoryBB.
 $GLOBALS['search_versions'] = array(
 	// This is the forum version but is repeated due to some people rewriting $forum_version.
-	'forum_version' => 'StoryBB Alpha 1',
-	// This is the minimum version of SMF that an API could have been written for to work. (strtr to stop accidentally updating version on release)
-	'search_version' => strtr('SMF 2+1=Alpha=1', array('+' => '.', '=' => ' ')),
+	'forum_version' => 'StoryBB 3.0 Alpha 1',
+	// This is the minimum version of StoryBB that an API could have been written for to work. (strtr to stop accidentally updating version on release)
+	'search_version' => strtr('StoryBB 3+0=Alpha=1', array('+' => '.', '=' => ' ')),
 );
+
+use StoryBB\Helper\Autocomplete;
 
 /**
  * Ask the user what they want to search for.
@@ -40,7 +40,6 @@ function PlushSearch1()
 		fatal_lang_error('loadavg_search_disabled', false);
 
 	loadLanguage('Search');
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
 
 	// Check the user's permissions.
 	isAllowedTo('search_posts');
@@ -91,13 +90,15 @@ function PlushSearch1()
 	if (isset($context['search_params']['search']))
 		$context['search_params']['search'] = $smcFunc['htmlspecialchars']($context['search_params']['search']);
 	if (isset($context['search_params']['userspec']))
-		$context['search_params']['userspec'] = $smcFunc['htmlspecialchars']($context['search_params']['userspec']);
+		$context['search_params']['userspec'] = (int) $context['search_params']['userspec'];
 	if (!empty($context['search_params']['searchtype']))
 		$context['search_params']['searchtype'] = 2;
 	if (!empty($context['search_params']['minage']))
 		$context['search_params']['minage'] = (int) $context['search_params']['minage'];
 	if (!empty($context['search_params']['maxage']))
 		$context['search_params']['maxage'] = (int) $context['search_params']['maxage'];
+
+	Autocomplete::init('rawcharacter', '#userspec', 1, !empty($context['search_params']['userspec']) ? $context['search_params']['userspec'] : 0);
 
 	$context['search_params']['show_complete'] = !empty($context['search_params']['show_complete']);
 	$context['search_params']['subject_only'] = !empty($context['search_params']['subject_only']);
@@ -403,7 +404,7 @@ function PlushSearch2()
 	}
 
 	// Default the user name to a wildcard matching every user (*).
-	if (!empty($search_params['userspec']) || (!empty($_REQUEST['userspec']) && $_REQUEST['userspec'] != '*'))
+	if (!empty($search_params['userspec']) || !empty($_REQUEST['userspec']))
 		$search_params['userspec'] = isset($search_params['userspec']) ? $search_params['userspec'] : $_REQUEST['userspec'];
 
 	// If there's no specific user, then don't mention it in the main query.
@@ -411,68 +412,27 @@ function PlushSearch2()
 		$userQuery = '';
 	else
 	{
-		$userString = strtr($smcFunc['htmlspecialchars']($search_params['userspec'], ENT_QUOTES), array('&quot;' => '"'));
-		$userString = strtr($userString, array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_'));
-
-		preg_match_all('~"([^"]+)"~', $userString, $matches);
-		$possible_users = array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $userString)));
-
-		for ($k = 0, $n = count($possible_users); $k < $n; $k++)
+		$search_params['userspec'] = is_array($search_params['userspec']) ? $search_params['userspec'] : explode(',', $search_params['userspec']);
+		foreach ($search_params['userspec'] as $k => $v)
 		{
-			$possible_users[$k] = trim($possible_users[$k]);
-
-			if (strlen($possible_users[$k]) == 0)
-				unset($possible_users[$k]);
+			$v = (int) $v;
+			if ($v <= 0)
+				unset ($search_params[$k]);
+			else
+				$search_params[$k] = $v;
 		}
 
-		// Create a list of database-escaped search names.
-		$realNameMatches = array();
-		foreach ($possible_users as $possible_user)
-			$realNameMatches[] = $smcFunc['db_quote'](
-				'{string:possible_user}',
-				array(
-					'possible_user' => $possible_user
-				)
-			);
-
-		// Retrieve a list of possible members.
-		$request = $smcFunc['db_query']('', '
-			SELECT id_character
-			FROM {db_prefix}characters
-			WHERE {raw:match_possible_users}
-			GROUP BY id_member',
-			array(
-				'match_possible_users' => 'character_name LIKE ' . implode(' OR character_name LIKE ', $realNameMatches),
-			)
-		);
-		// Simply do nothing if there're too many members matching the criteria.
-		if ($smcFunc['db_num_rows']($request) > $maxMembersToSearch)
+		if (empty($search_params))
 			$userQuery = '';
-		elseif ($smcFunc['db_num_rows']($request) == 0)
-		{
-			$userQuery = $smcFunc['db_quote'](
-				'm.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})',
-				array(
-					'id_member_guest' => 0,
-					'match_possible_guest_names' => 'm.poster_name LIKE ' . implode(' OR m.poster_name LIKE ', $realNameMatches),
-				)
-			);
-		}
 		else
 		{
-			$memberlist = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$memberlist[] = $row['id_character'];
 			$userQuery = $smcFunc['db_quote'](
-				'(m.id_character IN ({array_int:matched_members}) OR (m.id_member = {int:id_member_guest} AND ({raw:match_possible_guest_names})))',
-				array(
-					'matched_members' => $memberlist,
-					'id_member_guest' => 0,
-					'match_possible_guest_names' => 'm.poster_name LIKE ' . implode(' OR m.poster_name LIKE ', $realNameMatches),
-				)
+				'm.id_character IN ({array_int:userspec})',
+				[
+					'userspec' => $search_params['userspec'],
+				]
 			);
 		}
-		$smcFunc['db_free_result']($request);
 	}
 
 	// If the boards were passed by URL (params=), temporarily put them back in $_REQUEST.
@@ -649,7 +609,7 @@ function PlushSearch2()
 
 	// Remove the phrase parts and extract the words.
 	$wordArray = preg_replace('~(?:^|\s)(?:[-]?)"(?:[^"]+)"(?:$|\s)~u', ' ', $search_params['search']);
-	$wordArray = explode(' ',  $smcFunc['htmlspecialchars'](un_htmlspecialchars($wordArray), ENT_QUOTES));
+	$wordArray = explode(' ', $smcFunc['htmlspecialchars'](un_htmlspecialchars($wordArray), ENT_QUOTES));
 
 	// A minus sign in front of a word excludes the word.... so...
 	$excludedWords = array();
@@ -793,8 +753,6 @@ function PlushSearch2()
 	$context['search_params'] = $search_params;
 	if (isset($context['search_params']['search']))
 		$context['search_params']['search'] = $smcFunc['htmlspecialchars']($context['search_params']['search']);
-	if (isset($context['search_params']['userspec']))
-		$context['search_params']['userspec'] = $smcFunc['htmlspecialchars']($context['search_params']['userspec']);
 
 	// Do we have captcha enabled?
 	if ($user_info['is_guest'] && !empty($modSettings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']) && (empty($_SESSION['last_ss']) || $_SESSION['last_ss'] != $search_params['search']))
@@ -827,6 +785,8 @@ function PlushSearch2()
 	$temp_params = $search_params;
 	if (isset($temp_params['brd']))
 		$temp_params['brd'] = implode(',', $temp_params['brd']);
+	if (isset($temp_params['userspec']))
+		$temp_params['userspec'] = implode(',', $temp_params['userspec']);
 	$context['params'] = array();
 	foreach ($temp_params as $k => $v)
 		$context['params'][] = $k . '|\'|' . $v;
@@ -1690,7 +1650,7 @@ function PlushSearch2()
 			$context['topics'] = array();
 
 		// If we want to know who participated in what then load this now.
-		if (!empty($modSettings['enableParticipation']) && !$user_info['is_guest'])
+		if (!$user_info['is_guest'])
 		{
 			$result = $smcFunc['db_query']('', '
 				SELECT id_topic
@@ -2073,7 +2033,7 @@ function findSearchAPI()
 	// Search has a special database set.
 	db_extend('search');
 
-	// Create an instance of the search API and check it is valid for this version of SMF.
+	// Create an instance of the search API and check it is valid for this version of StoryBB.
 	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
 	$search_class_name = '\\StoryBB\\Search\\' . ucfirst(strtolower($modSettings['search_index']));
 	if (!class_exists($search_class_name))
@@ -2109,5 +2069,3 @@ function searchSort($a, $b)
 
 	return $searchAPI->searchSort($a, $b);
 }
-
-?>

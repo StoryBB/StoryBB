@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This function allows to move a topic, making sure to ask the moderator
  * to give reason for topic move.
@@ -712,5 +709,3 @@ function moveTopicConcurrence()
 		fatal_lang_error('topic_already_moved', false, array($topic_link, $board_link));
 	}
 }
-
-?>

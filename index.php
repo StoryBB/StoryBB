@@ -4,7 +4,7 @@
  * This, as you have probably guessed, is the crux on which StoryBB functions.
  * Everything should start here, so all the setup and security is done
  * properly.  The most interesting part of this file is the action array in
- * the smf_main() function.  It is formatted as so:
+ * the sbb_main() function.  It is formatted as so:
  * 	'action-in-url' => array('Source-File.php', 'FunctionToCall'),
  *
  * Then, you can access the FunctionToCall() function from Source-File.php
@@ -21,7 +21,7 @@ $software_year = '2018';
 $forum_version = 'StoryBB 3.0 Alpha 1';
 
 // Get everything started up...
-define('SMF', 1);
+define('STORYBB', 1);
 
 error_reporting(E_ALL);
 $time_start = microtime(true);
@@ -52,11 +52,6 @@ require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Subs-Auth.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
-sbb_autoload();
-
-// Template helpers
-require_once(__DIR__ . '/Themes/default/helpers/mischelpers.php');
-require_once(__DIR__ . '/Themes/default/helpers/stringhelpers.php');
 
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)
@@ -76,7 +71,7 @@ cleanRequest();
 
 // Seed the random generator.
 if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)
-	smf_seed_generator();
+	sbb_seed_generator();
 
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
 if (isset($_GET['scheduled']))
@@ -135,13 +130,13 @@ spl_autoload_register(function ($class) use ($sourcedir)
 });
 
 // Register an error handler.
-set_error_handler('smf_error_handler');
+set_error_handler('sbb_error_handler');
 
 // Start the session. (assuming it hasn't already been.)
 loadSession();
 
 // What function shall we execute? (done like this for memory's sake.)
-call_user_func(smf_main());
+call_user_func(sbb_main());
 
 // Call obExit specially; we're coming from the main area ;).
 obExit(null, null, true);
@@ -151,9 +146,9 @@ obExit(null, null, true);
  * This delegates to each area.
  * @return array|string|void An array containing the file to include and name of function to call, the name of a function to call or dies with a fatal_lang_error if we couldn't find anything to do.
  */
-function smf_main()
+function sbb_main()
 {
-	global $modSettings, $settings, $user_info, $board, $topic;
+	global $modSettings, $settings, $user_info, $board, $topic, $context;
 	global $board_info, $maintenance, $sourcedir;
 
 	// Special case: session keep-alive, output a transparent pixel.
@@ -189,7 +184,7 @@ function smf_main()
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
-	$no_stat_actions = array('dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'requestmembers', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery', 'viewsmfile');
+	$no_stat_actions = array('autocomplete', 'dlattach', 'jsoption', 'likes', 'loadeditorlocale', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery');
 	call_integration_hook('integrate_pre_log_stats', array(&$no_stat_actions));
 	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
 	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $no_stat_actions))
@@ -217,9 +212,22 @@ function smf_main()
 			return 'InMaintenance';
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('coppa', 'login', 'login2', 'logintfa', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'))))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('login', 'login2', 'logintfa', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'))))
 		return 'KickGuest';
-	elseif (empty($_REQUEST['action']))
+
+	// Apply policy settings if appropriate.
+	if ($user_info['id'] && $user_info['policy_acceptance'] != 2) /* StoryBB\Model\Policy::POLICY_CURRENTLYACCEPTED */
+	{
+		// Some agreement is probably necessary.
+		require_once($sourcedir . '/Reagreement.php');
+
+		if (!on_allowed_reagreement_actions())
+		{
+			return 'Reagreement';
+		}
+	}
+
+	if (empty($_REQUEST['action']))
 	{
 		// Action and board are both empty... BoardIndex! Unless someone else wants to do something different.
 		if (empty($board) && empty($topic))
@@ -261,15 +269,26 @@ function smf_main()
 		}
 	}
 
+	// Setting the cookie cookie.
+	if ($_REQUEST['action'] == 'cookie')
+	{
+		if ($context['show_cookie_notice'] && $context['user']['is_guest'])
+		{
+			setcookie('cookies', '1', time() + (30 * 24 * 60 * 60));
+		}
+		redirectexit();
+	}
+
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
 	$actionArray = array(
 		'activate' => array('Register.php', 'Activate'),
 		'admin' => array('Admin.php', 'AdminMain'),
 		'announce' => array('Post.php', 'AnnounceTopic'),
 		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
+		'autocomplete' => array('Autocomplete.php', 'Autocomplete'),
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
 		'characters' => array('Profile-Chars.php', 'CharacterList'),
-		'coppa' => array('Register.php', 'CoppaForm'),
+		'contact' => array('Contact.php', 'Contact'),
 		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 		'dlattach' => array('ShowAttachments.php', 'showAttachment'),
 		'editpoll' => array('Poll.php', 'EditPoll'),
@@ -304,12 +323,12 @@ function smf_main()
 		'quickmod' => array('MessageIndex.php', 'QuickModeration'),
 		'quickmod2' => array('Display.php', 'QuickInTopicModeration'),
 		'reattributepost' => array('Profile-Chars.php', 'ReattributePost'),
+		'reagreement' => array('Reagreement.php', 'Reagreement'),
 		'recent' => array('Recent.php', 'RecentPosts'),
 		'reminder' => array('Reminder.php', 'RemindMe'),
 		'removepoll' => array('Poll.php', 'RemovePoll'),
 		'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
 		'reporttm' => array('ReportToMod.php', 'ReportToModerator'),
-		'requestmembers' => array('Subs-Auth.php', 'RequestMembers'),
 		'restoretopic' => array('RemoveTopic.php', 'RestoreTopic'),
 		'search' => array('Search.php', 'PlushSearch1'),
 		'search2' => array('Search.php', 'PlushSearch2'),
@@ -329,7 +348,6 @@ function smf_main()
 		'viewprofile' => array('Profile.php', 'ModifyProfile'),
 		'vote' => array('Poll.php', 'Vote'),
 		'viewquery' => array('ViewQuery.php', 'ViewQuery'),
-		'viewsmfile' => array('Admin.php', 'DisplayAdminFile'),
 		'who' => array('Who.php', 'Who'),
 		'.xml' => array('News.php', 'ShowXmlFeed'),
 		'xmlhttp' => array('Xml.php', 'XMLhttpMain'),
@@ -367,5 +385,3 @@ function smf_main()
 	// Do the right thing.
 	return call_helper($actionArray[$_REQUEST['action']][1], true);
 }
-
-?>

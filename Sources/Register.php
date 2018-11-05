@@ -12,8 +12,7 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
+use StoryBB\Model\Policy;
 
 /**
  * Begin the registration process.
@@ -43,51 +42,20 @@ function Register($reg_errors = array())
 	loadLanguage('Login');
 
 	// Do we need them to agree to the registration agreement, first?
-	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
-	$context['registration_passed_agreement'] = !empty($_SESSION['registration_agreed']);
-	$context['show_coppa'] = !empty($modSettings['coppaAge']);
-
-	// Under age restrictions?
-	if ($context['show_coppa'])
+	$policies = Policy::get_policies_for_registration();
+	$context['registration_policies'] = [];
+	foreach ($policies as $policy_type => $policy_name)
 	{
-		$context['skip_coppa'] = false;
-		$context['coppa_agree_above'] = sprintf($txt[($context['require_agreement'] ? 'agreement_' : '') . 'agree_coppa_above'], $modSettings['coppaAge']);
-		$context['coppa_agree_below'] = sprintf($txt[($context['require_agreement'] ? 'agreement_' : '') . 'agree_coppa_below'], $modSettings['coppaAge']);
+		$context['registration_policies'][$policy_type] = '<a href="' . $scripturl . '?action=help;sa=' . $policy_type . '" target="_blank" rel="noopener">' . $policy_name . '</a>';
 	}
-
-	// What step are we at?
-	$current_step = isset($_REQUEST['step']) ? (int) $_REQUEST['step'] : ($context['require_agreement'] ? 1 : 2);
-
-	// Does this user agree to the registation agreement?
-	if ($current_step == 1 && (isset($_POST['accept_agreement']) || isset($_POST['accept_agreement_coppa'])))
-	{
-		$context['registration_passed_agreement'] = $_SESSION['registration_agreed'] = true;
-		$current_step = 2;
-
-		// Skip the coppa procedure if the user says he's old enough.
-		if ($context['show_coppa'])
-		{
-			$_SESSION['skip_coppa'] = !empty($_POST['accept_agreement']);
-
-			// Are they saying they're under age, while under age registration is disabled?
-			if (empty($modSettings['coppaType']) && empty($_SESSION['skip_coppa']))
-			{
-				loadLanguage('Login');
-				fatal_lang_error('under_age_registration_prohibited', false, array($modSettings['coppaAge']));
-			}
-		}
-	}
-	// Make sure they don't squeeze through without agreeing.
-	elseif ($current_step > 1 && $context['require_agreement'] && !$context['registration_passed_agreement'])
-		$current_step = 1;
 
 	// Show the user the right form.
-	$context['sub_template'] = $current_step == 1 ? 'register_agreement' : 'register_form';
-	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
+	$context['sub_template'] = 'register_form';
+	$context['page_title'] = $txt['registration_form'];
 
 	// Kinda need this.
 	if ($context['sub_template'] == 'register_form')
-		loadJavaScriptFile('register.js', array('defer' => false), 'smf_register');
+		loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
 
 	// Add the register chain to the link tree.
 	$context['linktree'][] = array(
@@ -95,7 +63,7 @@ function Register($reg_errors = array())
 		'name' => $txt['register'],
 	);
 
-	// Prepare the time gate! Do it like so, in case later steps want to reset the limit for any reason, but make sure the time is the current one.
+	// Prepare the time gate! Do it like so, in case later attempts want to reset the limit for any reason, but make sure the time is the current one.
 	if (!isset($_SESSION['register']))
 		$_SESSION['register'] = array(
 			'timenow' => time(),
@@ -103,26 +71,6 @@ function Register($reg_errors = array())
 		);
 	else
 		$_SESSION['register']['timenow'] = time();
-
-	// If you have to agree to the agreement, it needs to be fetched from the file.
-	if ($context['require_agreement'])
-	{
-		// Have we got a localized one?
-		if (file_exists($boarddir . '/agreement.' . $user_info['language'] . '.txt'))
-			$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.' . $user_info['language'] . '.txt'), true, 'agreement_' . $user_info['language']);
-		elseif (file_exists($boarddir . '/agreement.txt'))
-			$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.txt'), true, 'agreement');
-		else
-			$context['agreement'] = '';
-
-		// Nothing to show, lets disable registration and inform the admin of this error
-		if (empty($context['agreement']))
-		{
-			// No file found or a blank file, log the error so the admin knows there is a problem!
-			log_error($txt['registration_agreement_missing'], 'critical');
-			fatal_lang_error('registration_disabled', false);
-		}
-	}
 
 	if (!empty($modSettings['userLanguage']))
 	{
@@ -156,18 +104,7 @@ function Register($reg_errors = array())
 		}
 	}
 
-	register_helper([
-		'profile_callback_helper' => function ($field) {
-			var_dump($field);
-	        if ($field['type'] == 'callback')
-			{
-				if (isset($field['callback_func']) && function_exists('template_profile_' . $field['callback_func']))
-				{
-					$callback_func = 'template_profile_' . $field['callback_func'];
-					$callback_func();
-				}
-			}
-		},
+	StoryBB\Template::add_helper([
 		'makeHTTPS' => function($url) { 
 			return strtr($url, array('http://' => 'https://'));
 		},
@@ -177,19 +114,26 @@ function Register($reg_errors = array())
 	]);
 
 	// Or any standard ones?
+	$reg_fields = [];
 	if (!empty($modSettings['registration_fields']))
+	{
+		$reg_fields = explode(',', $modSettings['registration_fields']);
+	}
+	if (!empty($modSettings['minimum_age']) && !empty($modSettings['age_on_registration']))
+	{
+		$reg_fields[] = 'birthday_date';
+	}
+	if (!empty($reg_fields))
 	{
 		require_once($sourcedir . '/Profile-Modify.php');
 
 		// Setup some important context.
 		loadLanguage('Profile');
-		loadTemplate('Profile');
 
 		$context['user']['is_owner'] = true;
 
 		// Here, and here only, emulate the permissions the user would have to do this.
 		$user_info['permissions'] = array_merge($user_info['permissions'], array('profile_account_own', 'profile_extra_own', 'profile_other_own', 'profile_password_own', 'profile_website_own'));
-		$reg_fields = explode(',', $modSettings['registration_fields']);
 
 		// We might have had some submissions on this front - go check.
 		foreach ($reg_fields as $field)
@@ -198,6 +142,12 @@ function Register($reg_errors = array())
 
 		// Load all the fields in question.
 		setupProfileContext($reg_fields);
+	}
+	$context['profile_fields_required'] = [];
+	if (isset($context['profile_fields']['birthday_date']))
+	{
+		$context['profile_fields_required']['birthday_date'] = $context['profile_fields']['birthday_date'];
+		unset($context['profile_fields']['birthday_date']);
 	}
 
 	// Generate a visual verification code to make sure the user is no bot.
@@ -265,22 +215,22 @@ function Register2()
 	if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 3)
 		fatal_lang_error('registration_disabled', false);
 
-	// Well, if you don't agree, you can't register.
-	if (!empty($modSettings['requireAgreement']) && empty($_SESSION['registration_agreed']))
-		redirectexit();
+	// Check whether they have accepted policies.
+	$policies = Policy::get_policies_for_registration();
+	foreach ($policies as $policy_type => $policy_name)
+	{
+		if (empty($_POST['policy_' . $policy_type]))
+		{
+			loadLanguage('Errors');
+			$reg_errors[] = sprintf($txt['registration_require_policy'], $policy_name);
+		}
+	}
 
-	// Make sure they came from *somewhere*, have a session.
-	if (!isset($_SESSION['old_url']))
-		redirectexit('action=signup');
-
-	// If we don't require an agreement, we need a extra check for coppa.
-	if (empty($modSettings['requireAgreement']) && !empty($modSettings['coppaAge']))
-		$_SESSION['skip_coppa'] = !empty($_POST['accept_agreement']);
 	// Are they under age, and under age users are banned?
-	if (!empty($modSettings['coppaAge']) && empty($modSettings['coppaType']) && empty($_SESSION['skip_coppa']))
+	if (false && !empty($modSettings['minimum_age']))
 	{
 		loadLanguage('Errors');
-		fatal_lang_error('under_age_registration_prohibited', false, array($modSettings['coppaAge']));
+		fatal_lang_error('under_age_registration_prohibited', false, array($modSettings['minimum_age']));
 	}
 
 	// Check the time gate for miscreants. First make sure they came from somewhere that actually set it up.
@@ -318,12 +268,10 @@ function Register2()
 
 	// Collect all extra registration fields someone might have filled in.
 	$possible_strings = array(
-		'birthdate',
 		'first_char',
 		'time_format',
 		'buddy_list',
 		'pm_ignore_list',
-		'smiley_set',
 		'avatar',
 		'lngfile',
 		'secret_question', 'secret_answer',
@@ -379,11 +327,31 @@ function Register2()
 	}
 
 	// Handle a string as a birthdate...
-	if (isset($_POST['birthdate']) && $_POST['birthdate'] != '')
-		$_POST['birthdate'] = strftime('%Y-%m-%d', strtotime($_POST['birthdate']));
-	// Or birthdate parts...
-	elseif (!empty($_POST['bday1']) && !empty($_POST['bday2']))
-		$_POST['birthdate'] = sprintf('%04d-%02d-%02d', empty($_POST['bday3']) ? 0 : (int) $_POST['bday3'], (int) $_POST['bday1'], (int) $_POST['bday2']);
+	if (isset($_POST['bday1'], $_POST['bday2'], $_POST['bday3']))
+	{
+		// Make sure it's valid and if it is, handle it.
+		$_POST['birthdate'] = checkdate((int) $_POST['bday1'], (int) $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : (int) $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
+		if ($_POST['birthdate'] == '1004-01-01')
+		{
+			loadLanguage('Errors');
+			$reg_errors['invalid_dob'] = $txt['error_dob_required'];
+		}
+
+		// Also check if it's valid or not.
+		if (!empty($modSettings['minimum_age']) && !empty($modSettings['minimum_age_profile']) && $value != '1004-01-01')
+		{
+			$datearray = getdate(forum_time());
+			$age = $datearray['year'] - $_POST['bday3'] - (($datearray['mon'] > $_POST['bday1'] || ($datearray['mon'] == $_POST['bday1'] && $datearray['mday'] >= $_POST['bday2'])) ? 0 : 1);
+			if ($age < (int) $modSettings['minimum_age'])
+			{
+				$reg_errors['invalid_dob'] = sprintf($txt['error_dob_not_old_enough'], $modSettings['minimum_age']);
+			}
+			else
+			{
+				$possible_strings[] = 'birthdate';
+			}
+		}
+	}
 
 	// Validate the passed language file.
 	if (isset($_POST['lngfile']) && !empty($modSettings['userLanguage']))
@@ -412,10 +380,11 @@ function Register2()
 		'check_password_strength' => true,
 		'check_email_ban' => true,
 		'send_welcome_email' => !empty($modSettings['send_welcomeEmail']),
-		'require' => !empty($modSettings['coppaAge']) && empty($_SESSION['skip_coppa']) ? 'coppa' : (empty($modSettings['registration_method']) ? 'nothing' : ($modSettings['registration_method'] == 1 ? 'activation' : 'approval')),
+		'require' => empty($modSettings['registration_method']) ? 'nothing' : ($modSettings['registration_method'] == 1 ? 'activation' : 'approval'),
 		'extra_register_vars' => array(),
 		'theme_vars' => array(),
 		'timezone' => !empty($modSettings['default_timezone']) ? $modSettings['default_timezone'] : '',
+		'reg_policies' => array_keys($policies),
 	);
 
 	// Include the additional options that might have been filled in.
@@ -500,7 +469,6 @@ function Register2()
 	// Lets check for other errors before trying to register the member.
 	if (!empty($reg_errors))
 	{
-		$_REQUEST['step'] = 2;
 		$_SESSION['register']['limit'] = 5; // If they've filled in some details, they won't need the full 10 seconds of the limit.
 		return Register($reg_errors);
 	}
@@ -511,7 +479,6 @@ function Register2()
 	if (is_array($memberID))
 	{
 		$reg_errors = array_merge($reg_errors, $memberID);
-		$_REQUEST['step'] = 2;
 		return Register($reg_errors);
 	}
 
@@ -538,11 +505,8 @@ function Register2()
 		makeCustomFieldChanges($memberID, 'register');
 	}
 
-	// If COPPA has been selected then things get complicated, setup the template.
-	if (!empty($modSettings['coppaAge']) && empty($_SESSION['skip_coppa']))
-		redirectexit('action=coppa;member=' . $memberID);
 	// Basic template variable setup.
-	elseif (!empty($modSettings['registration_method']))
+	if (!empty($modSettings['registration_method']))
 	{
 		$context += array(
 			'page_title' => $txt['register'],
@@ -720,88 +684,6 @@ function Activate()
 }
 
 /**
- * This function will display the contact information for the forum, as well a form to fill in.
- */
-function CoppaForm()
-{
-	global $context, $modSettings, $txt, $smcFunc;
-
-	loadLanguage('Login');
-
-	// No User ID??
-	if (!isset($_GET['member']))
-		fatal_lang_error('no_access', false);
-
-	// Get the user details...
-	$request = $smcFunc['db_query']('', '
-		SELECT member_name
-		FROM {db_prefix}members
-		WHERE id_member = {int:id_member}
-			AND is_activated = {int:is_coppa}',
-		array(
-			'id_member' => (int) $_GET['member'],
-			'is_coppa' => 5,
-		)
-	);
-	if ($smcFunc['db_num_rows']($request) == 0)
-		fatal_lang_error('no_access', false);
-	list ($username) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
-
-	if (isset($_GET['form']))
-	{
-		// Some simple contact stuff for the forum.
-		$context['forum_contacts'] = (!empty($modSettings['coppaPost']) ? $modSettings['coppaPost'] . '<br><br>' : '') . (!empty($modSettings['coppaFax']) ? $modSettings['coppaFax'] . '<br>' : '');
-		$context['forum_contacts'] = !empty($context['forum_contacts']) ? $context['forum_name_html_safe'] . '<br>' . $context['forum_contacts'] : '';
-
-		// Showing template?
-		if (!isset($_GET['dl']))
-		{
-			// Shortcut for producing underlines.
-			$context['ul'] = '<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>';
-			$context['template_layers'] = array();
-			$context['sub_template'] = 'register_coppa_form';
-			$context['page_title'] = $txt['coppa_form_title'];
-			$context['coppa_body'] = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}'), array($context['ul'], $context['ul'], $username), $txt['coppa_form_body']);
-		}
-		// Downloading.
-		else
-		{
-			// The data.
-			$ul = '                ';
-			$crlf = "\r\n";
-			$data = $context['forum_contacts'] . $crlf . $txt['coppa_form_address'] . ':' . $crlf . $txt['coppa_form_date'] . ':' . $crlf . $crlf . $crlf . $txt['coppa_form_body'];
-			$data = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}', '<br>', '<br>'), array($ul, $ul, $username, $crlf, $crlf), $data);
-
-			// Send the headers.
-			header('Connection: close');
-			header('Content-Disposition: attachment; filename="approval.txt"');
-			header('Content-Type: ' . (isBrowser('ie') || isBrowser('opera') ? 'application/octetstream' : 'application/octet-stream'));
-			header('Content-Length: ' . count($data));
-
-			echo $data;
-			obExit(false);
-		}
-	}
-	else
-	{
-		$context += array(
-			'page_title' => $txt['coppa_title'],
-			'sub_template' => 'register_coppa',
-		);
-
-		$context['coppa'] = array(
-			'body' => str_replace('{MINIMUM_AGE}', $modSettings['coppaAge'], $txt['coppa_after_registration']),
-			'many_options' => !empty($modSettings['coppaPost']) && !empty($modSettings['coppaFax']),
-			'post' => empty($modSettings['coppaPost']) ? '' : $modSettings['coppaPost'],
-			'fax' => empty($modSettings['coppaFax']) ? '' : $modSettings['coppaFax'],
-			'phone' => empty($modSettings['coppaPhone']) ? '' : str_replace('{PHONE_NUMBER}', $modSettings['coppaPhone'], $txt['coppa_send_by_phone']),
-			'id' => $_GET['member'],
-		);
-	}
-}
-
-/**
  * Show the verification code or let it be heard.
  */
 function VerificationCode()
@@ -825,7 +707,7 @@ function VerificationCode()
 
 		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
 		$context['sub_template'] = 'register_sound_verification';
-		register_helper(['isBrowser' => 'isBrowser']);
+		StoryBB\Template::add_helper(['isBrowser' => 'isBrowser']);
 		$context['popup_id'] = 'sound_verification';
 		StoryBB\Template::set_layout('popup');
 
@@ -882,7 +764,7 @@ function RegisterCheckUsername()
 	$context['sub_template'] = 'xml_check_username';
 	$context['checked_username'] = isset($_GET['username']) ? un_htmlspecialchars($_GET['username']) : '';
 	$context['valid_username'] = true;
-	register_helper([
+	StoryBB\Template::add_helper([
 		'cleanXml' => 'cleanXml'
 	]);
 
@@ -914,5 +796,3 @@ function SendActivation()
 	// We're gone!
 	obExit();
 }
-
-?>

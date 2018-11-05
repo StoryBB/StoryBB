@@ -13,7 +13,7 @@
 				</th>
 				<th class="centertext table_icon">
 				    {{#if context.rules}}
-				    <input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">
+				    <input type="checkbox" onclick="invertAll(this, this.form);">
 				    {{/if}}
 				</th>
 			</tr>
@@ -31,7 +31,7 @@
 					<a href="{{scripturl}}?action=pm;sa=manrules;add;rid={{id}}">{{name}}</a>
 				</td>
 				<td class="table_icon">
-					<input type="checkbox" name="delrule[{{id}}]" class="input_check">
+					<input type="checkbox" name="delrule[{{id}}]">
 				</td>
 			</tr>
 			{{/each}}
@@ -40,8 +40,8 @@
 		<div class="righttext">
 			<a class="button_link" href="{{scripturl}}?action=pm;sa=manrules;add;rid=0">{{txt.pm_add_rule}}</a>
 			{{#if context.rules}}
-			[<a href="{{scripturl}}?action=pm;sa=manrules;apply;{{context.session_var}}={{context.session_id}}" onclick="return confirm('{{txt.pm_js_apply_rules_confirm}}');">{{txt.pm_apply_rules}}</a>]
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			[<a href="{{scripturl}}?action=pm;sa=manrules;apply;{{session_url}}" onclick="return confirm('{{txt.pm_js_apply_rules_confirm}}');">{{txt.pm_apply_rules}}</a>]
+			{{session_form}}
 			<input type="submit" name="delselected" value="{{txt.pm_delete_selected_rule}}" data-confirm="{{txt.pm_js_delete_rule_confirm}}" class="button_submit smalltext you_sure">
 			{{/if}}
 		</div>

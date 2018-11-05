@@ -1,5 +1,7 @@
 <?php
 /**
+ * This file provides handling for character-specific features within the profile area.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -7,9 +9,13 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
+use StoryBB\Helper\Autocomplete;
 
+/**
+ * Setup to fetch the HTML for the characters popup (excluding all other forum chrome)
+ *
+ * @param int $memID The user ID that we are fetching for, passed automatically from caller
+ */
 function characters_popup($memID)
 {
 	global $context, $user_info, $sourcedir, $db_show_debug, $cur_profile, $smcFunc;
@@ -19,12 +25,20 @@ function characters_popup($memID)
 
 	// We only want to output our little layer here.
 	StoryBB\Template::set_layout('raw');
-	$context['template_layers'] = [];
+	StoryBB\Template::remove_all_layers();
 	$context['sub_template'] = 'profile_character_popup';
 
 	$context['current_characters'] = $cur_profile['characters'];
 }
 
+/**
+ * Handle switching the active character on the currently logged in account.
+ *
+ * @param int $memID The current user ID
+ * @param int $char The character ID to switch to (if not supplied, fetched from GET)
+ * @param bool $return Whether to return to main flow or not, normally redirects
+ * @return bool If returning to main flow, true on success. Will end execution otherwise.
+ */
 function char_switch($memID, $char = null, $return = false)
 {
 	global $smcFunc, $modSettings;
@@ -108,6 +122,12 @@ function char_switch($memID, $char = null, $return = false)
 		die;
 }
 
+/**
+ * Handle switching the active character on the currently logged in account, and redirecting back to the profile on completion.
+ * Character ID to switch to is pulled from GET.
+ *
+ * @param int $memID The current user ID
+ */
 function char_switch_redir($memID)
 {
 	checkSession('get');
@@ -121,6 +141,12 @@ function char_switch_redir($memID)
 	redirectexit('action=profile;u=' . $memID);
 }
 
+/**
+ * Core dispatcher for the characters area within the profile page.
+ * Also identifies current character from GET where specified. Unless a different action is given, will present the character summary.
+ *
+ * @param int $memID The current user ID
+ */
 function character_profile($memID)
 {
 	global $user_profile, $context, $scripturl, $modSettings, $smcFunc, $txt, $user_info;
@@ -197,6 +223,9 @@ function character_profile($memID)
 	$context['sub_template'] = 'profile_character_summary';
 }
 
+/**
+ * Creating a character, both the initial form and actually performing the creation.
+ */
 function char_create()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
@@ -264,7 +293,9 @@ function char_create()
 					0, 0],
 				['id_character']
 			);
-			$context['character']['id_character'] = $smcFunc['db_insert_id']('{db_prefix}characters', 'id_character');
+			$context['character']['id_character'] = $smcFunc['db_insert_id']();
+			trackStats(array('chars' => '+'));
+
 			if (!empty($context['character']['sheet']))
 			{
 				// Also gotta insert this.
@@ -308,6 +339,9 @@ function char_create()
 	});', true);
 }
 
+/**
+ * Editing a character, both showing the form and performing the edit.
+ */
 function char_edit()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings, $scripturl;
@@ -338,20 +372,11 @@ function char_edit()
 	$context['character']['avatar_settings'] = array(
 		'custom' => stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://') ? $context['character']['avatar'] : 'http://',
 		'selection' => $context['character']['avatar'] == '' || (stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://')) ? '' : $context['character']['avatar'],
-		'allow_upload' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_external' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_gravatar' => !empty($modSettings['gravatarEnabled']) || !empty($modSettings['gravatarOverride']),
+		'allow_upload' => allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
+		'allow_external' => allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
 	);
 
-	if ($context['character']['avatar_settings']['allow_gravatar'] && (stristr($context['character']['avatar_original'], 'gravatar://') || !empty($modSettings['gravatarOverride'])))
-	{
-		$context['character']['avatar_settings'] += array(
-			'choice' => 'gravatar',
-			'external' => $context['character']['avatar_original'] == 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']) || !empty($modSettings['gravatarOverride']) ? $context['member']['email'] : substr($context['character']['avatar_original'], 11)
-		);
-		$context['character']['avatar'] = get_gravatar_url($context['character']['avatar_settings']['external']);
-	}
-	elseif ((!empty($context['character']['avatar']) && $context['character']['avatar'] != $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
+	if ((!empty($context['character']['avatar']) && $context['character']['avatar'] != $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
 	{
 		$context['character']['avatar_settings'] += array(
 			'choice' => 'upload',
@@ -568,6 +593,9 @@ function char_edit()
 	createToken('edit-char' . $context['character']['id_character'], 'post');
 }
 
+/**
+ * Deleting a character.
+ */
 function char_delete()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $user_info, $modSettings;
@@ -633,6 +661,9 @@ function char_delete()
 	redirectexit('action=profile;u=' . $context['id_member']);
 }
 
+/**
+ * Choosing a theme for a given character.
+ */
 function char_theme()
 {
 	global $context, $smcFunc, $modSettings;
@@ -696,6 +727,9 @@ function char_theme()
 	$context['sub_template'] = 'profile_character_theme';
 }
 
+/**
+ * Showing the posts/topics made by a given character.
+ */
 function char_posts()
 {
 	global $txt, $user_info, $scripturl, $modSettings;
@@ -1009,6 +1043,11 @@ function char_posts()
 	call_integration_hook('integrate_profile_showPosts');
 }
 
+/**
+ * Load the profile groups attached to the current character being viewed.
+ *
+ * @return bool True on success (values loaded into $context)
+ */
 function profileLoadCharGroups()
 {
 	global $cur_profile, $txt, $context, $smcFunc, $user_settings;
@@ -1058,6 +1097,9 @@ function profileLoadCharGroups()
 	return true;
 }
 
+/**
+ * Retiring a character from active use (or making them unretired)
+ */
 function char_retire()
 {
 	global $context, $smcFunc, $txt, $user_info;
@@ -1096,6 +1138,9 @@ function char_retire()
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 }
 
+/**
+ * Viewing the stats for a given character.
+ */
 function char_stats()
 {
 	global $txt, $scripturl, $context, $user_profile, $user_info, $modSettings, $smcFunc;
@@ -1103,9 +1148,15 @@ function char_stats()
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $context['character']['character_name'];
 	$context['sub_template'] = 'profile_character_stats';
 
-	register_helper([
-		'inverted_percent' => function($pc) { return 100 - $pc; },
-		'pie_percent' => function($pc) { return round($pc / 5) * 20; },
+	StoryBB\Template::add_helper([
+		'inverted_percent' => function($pc)
+		{
+			return 100 - $pc;
+		},
+		'pie_percent' => function($pc)
+		{
+			return round($pc / 5) * 20;
+		},
 	]);
 
 	// Is the load average too high to allow searching just now?
@@ -1261,6 +1312,9 @@ function char_stats()
 	ksort($context['posts_by_time']);
 }
 
+/**
+ * Viewing a character sheet for a character.
+ */
 function char_sheet()
 {
 	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
@@ -1462,6 +1516,9 @@ function char_sheet()
 	}
 }
 
+/**
+ * Viewing the history of edits to a character sheet.
+ */
 function char_sheet_history()
 {
 	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
@@ -1544,6 +1601,9 @@ function char_sheet_history()
 	', true);
 }
 
+/**
+ * Editing a character sheet.
+ */
 function char_sheet_edit()
 {
 	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
@@ -1671,6 +1731,9 @@ function char_sheet_edit()
 	$context['sub_template'] = 'profile_character_sheet_edit';
 }
 
+/**
+ * Load the possible character sheet templates into $context.
+ */
 function load_char_sheet_templates()
 {
 	global $context, $smcFunc, $sourcedir;
@@ -1692,6 +1755,9 @@ function load_char_sheet_templates()
 	$smcFunc['db_free_result']($request);
 }
 
+/**
+ * Marking a character sheet ready for approval by admins.
+ */
 function char_sheet_approval()
 {
 	global $smcFunc, $context, $sourcedir;
@@ -1789,6 +1855,9 @@ function char_sheet_approval()
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 }
 
+/**
+ * Approving a character sheet.
+ */
 function char_sheet_approve()
 {
 	global $context, $smcFunc;
@@ -1884,6 +1953,9 @@ function char_sheet_approve()
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 }
 
+/**
+ * Reject a version of a character sheet (sending it back to the creator for changes)
+ */
 function char_sheet_reject()
 {
 	global $context, $smcFunc;
@@ -1902,6 +1974,9 @@ function char_sheet_reject()
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 }
 
+/**
+ * Show two versiosns of a character sheet side by side.
+ */
 function char_sheet_compare()
 {
 	global $context, $txt, $smcFunc, $scripturl, $sourcedir;
@@ -1957,6 +2032,11 @@ function char_sheet_compare()
 	$context['sub_template'] = 'profile_character_sheet_compare';
 }
 
+/**
+ * Mark a given character's sheet as unapproved.
+ *
+ * @param int $char Character ID whose character sheet should be marked as unapproved.
+ */
 function mark_char_sheet_unapproved($char)
 {
 	global $smcFunc;
@@ -1970,6 +2050,13 @@ function mark_char_sheet_unapproved($char)
 	);
 }
 
+
+/**
+ * Handle UI aspects of merging multiple accounts accounts, including requesting from the user and security checks.
+ * Defers actual processing to merge_char_accounts().
+ *
+ * @param int $memID The source account to be merged into something else.
+ */
 function char_merge_account($memID)
 {
 	global $context, $txt, $user_profile, $smcFunc;
@@ -1980,9 +2067,9 @@ function char_merge_account($memID)
 	if ($user_profile[$memID]['id_group'] == 1 || in_array('1', explode(',', $user_profile[$memID]['additional_groups'])))
 		fatal_lang_error('cannot_merge_admin', false);
 
-	loadJavascriptFile('suggest.js', array('default_theme' => true, 'defer' => false), 'smf_suggest');
 	$context['page_title'] = $txt['merge_char_account'];
 	$context['sub_template'] = 'profile_merge_account';
+	Autocomplete::init('member', '#merge_acct');
 
 	if (isset($_POST['merge_acct_id']))
 	{
@@ -1991,7 +2078,7 @@ function char_merge_account($memID)
 		if ($result !== true)
 			fatal_lang_error('cannot_merge_' . $result, false);
 
-		$_SESSION['merge_success'] = sprintf($txt['merge_success'], $context['member']['name']);
+		session_flash('success', sprintf($txt['merge_success'], $context['member']['name']));
 
 		redirectexit('action=profile;u=' . $_POST['merge_acct_id']);
 	}
@@ -2001,13 +2088,12 @@ function char_merge_account($memID)
 
 		// We picked an account to merge, let's see if we can find and if we can,
 		// get its details so that we can check for sure it's what the user wants.
-		$name = $smcFunc['htmlspecialchars']($_POST['merge_acct'], ENT_QUOTES);
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member
 			FROM {db_prefix}members
-			WHERE real_name = {string:name}',
+			WHERE id_member = {int:id_member}',
 			array(
-				'name' => $name,
+				'id_member' => (int) $_POST['merge_acct'],
 			)
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
@@ -2024,6 +2110,14 @@ function char_merge_account($memID)
 	}
 }
 
+/**
+ * Perform the actual merger of accounts. Everything from $source gets added to $dest.
+ *
+ * @param int $source Account ID to merge from
+ * @param int $dest Account ID to merge into
+ * @return mixed True on success, otherwise string indicating error type
+ * @todo refactor this to emit exceptions rather than mixed types
+ */
 function merge_char_accounts($source, $dest)
 {
 	global $user_profile, $sourcedir, $smcFunc;
@@ -2186,6 +2280,10 @@ function merge_char_accounts($source, $dest)
 	return true;
 }
 
+/**
+ * Handle UI aspects of moving characters between accounts, including requesting from the user and security checks.
+ * Defers actual processing to move_char_accounts().
+ */
 function char_move_account()
 {
 	global $context, $txt, $user_profile, $smcFunc;
@@ -2194,9 +2292,9 @@ function char_move_account()
 	if ($context['character']['is_main'])
 		fatal_lang_error('cannot_move_main', false);
 
-	loadJavascriptFile('suggest.js', ['default_theme' => true, 'defer' => false], 'smf_suggest');
 	$context['page_title'] = $txt['move_char_account'];
 	$context['sub_template'] = 'profile_character_move_account';
+	Autocomplete::init('member', '#move_acct');
 
 	if (isset($_POST['move_acct_id']))
 	{
@@ -2205,7 +2303,7 @@ function char_move_account()
 		if ($result !== true)
 			fatal_lang_error('cannot_move_' . $result, false);
 
-		$_SESSION['merge_success'] = sprintf($txt['move_success'], $context['character']['character_name']);
+		session_flash('success', sprintf($txt['move_success'], $context['character']['character_name']));
 
 		redirectexit('action=profile;u=' . $_POST['move_acct_id']);
 	}
@@ -2215,13 +2313,12 @@ function char_move_account()
 
 		// We picked an account to move to, let's see if we can find and if we can,
 		// get its details so that we can check for sure it's what the user wants.
-		$name = $smcFunc['htmlspecialchars']($_POST['move_acct'], ENT_QUOTES);
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member
 			FROM {db_prefix}members
-			WHERE real_name = {string:name}',
+			WHERE id_member = {int:id_member}',
 			[
-				'name' => $name,
+				'id_member' => (int) $_POST['move_acct'],
 			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
@@ -2238,6 +2335,14 @@ function char_move_account()
 	}
 }
 
+/**
+ * Move a character physically to another account.
+ *
+ * @param int $source_chr The ID of the character to be moved
+ * @param int $dest_account The ID of the account to move the character to
+ * @return mixed True on success, otherwise string indicating error type
+ * @todo refactor this to emit exceptions rather than mixed return types
+ */
 function move_char_accounts($source_chr, $dest_acct)
 {
 	global $user_profile, $sourcedir, $smcFunc, $modSettings;
@@ -2386,6 +2491,12 @@ function move_char_accounts($source_chr, $dest_acct)
 	return true;
 }
 
+/**
+ * Quick and dirty call to get an avatar image from a remote source to identify its size.
+ *
+ * @param string $url The URL of the avatar
+ * @return array|false Array of [width, height] for the size of image, or false if could not get image/could not identify size.
+ */
 function get_avatar_url_size($url)
 {
 	global $sourcedir;
@@ -2408,6 +2519,12 @@ function get_avatar_url_size($url)
 		return false;
 }
 
+/**
+ * Given raw binary data for an image, identify its image size and return.
+ *
+ * @param string $data Raw image bytes as a string
+ * @return array|false Returns array of [width, height] or false if couldn't identify image size
+ */
 function get_image_size_from_string($data)
 {
 	if (empty($data)) {
@@ -2461,6 +2578,9 @@ function get_image_size_from_string($data)
 	return false;
 }
 
+/**
+ * Display sthe list of characters on the site.
+ */
 function CharacterList()
 {
 	global $context, $smcFunc, $txt, $scripturl, $modSettings, $settings;
@@ -2623,6 +2743,10 @@ function CharacterList()
 	}
 }
 
+/**
+ * Show a filtered form of the character list based on characters being in a given group.
+ * Params should be set up by the caller, which is CharacterList().
+ */
 function CharacterSheetList()
 {
 	global $context, $txt, $smcFunc;
@@ -2673,9 +2797,11 @@ function CharacterSheetList()
 		$context['characters'][] = $row;
 	}
 	$smcFunc['db_free_result']($request);
-
 }
 
+/**
+ * Moves a post between characters on an account.
+ */
 function ReattributePost()
 {
 	global $topic, $smcFunc, $modSettings, $user_info, $board_info;
@@ -2772,5 +2898,3 @@ function ReattributePost()
 	// 8. All done. Exit back to the post.
 	redirectexit('topic=' . $topic . '.msg' . $msg . '#msg' . $msg);
 }
-
-?>

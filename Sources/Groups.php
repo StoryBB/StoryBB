@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Entry point function, permission checks, admin bars, etc.
  * It allows moderators and users to access the group showing functions.
@@ -501,7 +498,7 @@ function MembergroupMembers()
 	createToken('mod-mgm');
 
 	if ($context['group']['assignable'])
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 }
 
 /**
@@ -590,11 +587,14 @@ function GroupRequests()
 			$smcFunc['db_free_result']($request);
 
 			// Add a background task to handle notifying people of this request
-			$data = json_encode(array('member_id' => $user_info['id'], 'member_ip' => $user_info['ip'], 'request_list' => $request_list, 'status' => $_POST['req_action'], 'reason' => isset($_POST['groupreason']) ? $_POST['groupreason'] : '', 'time' => time()));
-			$smcFunc['db_insert']('insert', '{db_prefix}background_tasks',
-				array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'),
-				array('$sourcedir/tasks/GroupAct-Notify.php', 'GroupAct_Notify_Background', $data, 0), array()
-			);
+			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\GroupActNotify', [
+				'member_id' => $user_info['id'],
+				'member_ip' => $user_info['ip'],
+				'request_list' => $request_list,
+				'status' => $_POST['req_action'],
+				'reason' => isset($_POST['groupreason']) ? $_POST['groupreason'] : '',
+				'time' => time(),
+			]);
 
 			// Some changes to log?
 			if (!empty($log_changes))
@@ -685,13 +685,13 @@ function GroupRequests()
 			),
 			'action' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'style' => 'width: 4%;',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="groupr[]" value="%1$d" class="input_check">',
+						'format' => '<input type="checkbox" name="groupr[]" value="%1$d">',
 						'params' => array(
 							'id' => false,
 						),
@@ -836,5 +836,3 @@ function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_pa
 
 	return $group_requests;
 }
-
-?>

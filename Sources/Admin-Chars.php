@@ -1,14 +1,13 @@
 <?php
 /**
+ * Provides functions for managing several character-focused features in the administration area.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
  */
-
-if (!defined('SMF'))
-	die('No direct access...');
 
 function CharacterTemplates()
 {
@@ -275,7 +274,7 @@ function CharacterSheets()
 				'data' => [
 					'function' => function ($rowData) use ($scripturl)
 					{
-						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . '" target="_blank">' . $rowData['real_name'] . '</a>';
+						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . '" target="_blank" rel="noopener">' . $rowData['real_name'] . '</a>';
 					}
 				],
 				'sort' => [
@@ -290,7 +289,7 @@ function CharacterSheets()
 				'data' => [
 					'function' => function ($rowData) use ($scripturl)
 					{
-						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=characters;char=' . $rowData['id_character'] . '" target="_blank">' . $rowData['character_name'] . '</a>';
+						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=characters;char=' . $rowData['id_character'] . '" target="_blank" rel="noopener">' . $rowData['character_name'] . '</a>';
 					}
 				],
 				'sort' => [
@@ -305,7 +304,7 @@ function CharacterSheets()
 				'data' => [
 					'function' => function ($rowData) use ($txt, $scripturl)
 					{
-						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=characters;char=' . $rowData['id_character'] . ';sa=sheet" target="_blank">' . $txt['char_sheet'] . '</a>';
+						return '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . ';area=characters;char=' . $rowData['id_character'] . ';sa=sheet" target="_blank" rel="noopener">' . $txt['char_sheet'] . '</a>';
 					},
 					'class' => 'centercol',
 				],
@@ -354,8 +353,6 @@ function CharacterImmersion($return_config = false)
 	require_once($sourcedir . '/ManageServer.php');
 
 	$config_vars = array(
-			array('check', 'character_selector_post'),
-		'',
 			array('select', 'characters_ic_may_post', array(
 				'ic' => $txt['ic_boards_only'],
 				'icooc' => $txt['ic_and_ooc_boards'],
@@ -364,7 +361,13 @@ function CharacterImmersion($return_config = false)
 				'ooc' => $txt['ooc_boards_only'],
 				'icooc' => $txt['ic_and_ooc_boards'],
 			)),
-			array('check', 'characters_admin_override'),
+		'',
+			array('select', 'enable_immersive_mode', [
+				'user_on' => $txt['enable_immersive_mode_user_on'],
+				'user_off' => $txt['enable_immersive_mode_user_off'],
+				'off' => $txt['enable_immersive_mode_off'],
+				'on' => $txt['enable_immersive_mode_on'],
+			]),
 	);
 
 	call_integration_hook('integrate_immersion_settings', array(&$config_vars));
@@ -392,5 +395,3 @@ function CharacterImmersion($return_config = false)
 
 	prepareDBSettingContext($config_vars);
 }
-
-?>

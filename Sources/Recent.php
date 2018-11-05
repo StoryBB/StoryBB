@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Get the latest post made on the system
  *
@@ -1364,7 +1361,7 @@ function UnreadTopics()
 	}
 	$smcFunc['db_free_result']($request);
 
-	if ($is_topics && !empty($modSettings['enableParticipation']) && !empty($topic_ids))
+	if ($is_topics && !empty($topic_ids))
 	{
 		$result = $smcFunc['db_query']('', '
 			SELECT id_topic
@@ -1425,7 +1422,5 @@ function UnreadTopics()
 	$context['no_topic_listing'] = empty($context['topics']);
 
 	// Allow helpdesks and bug trackers and what not to add their own unread data (just add a template_layer to show custom stuff in the template!)
- 	call_integration_hook('integrate_unread_list');
+	call_integration_hook('integrate_unread_list');
 }
-
-?>

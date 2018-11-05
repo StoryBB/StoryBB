@@ -10,11 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
- * Sets the SMF-style login cookie and session based on the id_member and password passed.
+ * Sets the StoryBB-style login cookie and session based on the id_member and password passed.
  * - password should be already encrypted with the cookie salt.
  * - logs the user out if id_member is zero.
  * - sets the cookie and session to last the number of seconds specified by cookie_length, or
@@ -46,25 +43,11 @@ function setLoginCookie($cookie_length, $id, $password = '')
 	{
 		// First check for 2.1 json-format cookie
 		if (preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+,"3":"[^"]+","4":"[^"]+"~', $_COOKIE[$cookiename]) === 1)
-			list(,,, $old_domain, $old_path) = smf_json_decode($_COOKIE[$cookiename], true);
-
-		// Legacy format (for recent 2.0 --> 2.1 upgrades)
-		elseif (preg_match('~^a:[34]:\{i:0;i:\d+;i:1;s:(0|128):"([a-fA-F0-9]{128})?";i:2;[id]:\d+;(i:3;i:\d;)?~', $_COOKIE[$cookiename]) === 1)
-		{
-			list(,,, $old_state) = safe_unserialize($_COOKIE[$cookiename]);
-
-			$cookie_state = (empty($modSettings['localCookies']) ? 0 : 1) | (empty($modSettings['globalCookies']) ? 0 : 2);
-
-			// Maybe we need to temporarily pretend to be using local cookies
-			if ($cookie_state == 0 && $old_state == 1)
-				list($old_domain, $old_path) = url_parts(true, false);
-			else
-				list($old_domain, $old_path) = url_parts($old_state & 1 > 0, $old_state & 2 > 0);
-		}
+			list(,,, $old_domain, $old_path) = sbb_json_decode($_COOKIE[$cookiename], true);
 
 		// Out with the old, in with the new!
 		if (isset($old_domain) && $old_domain != $cookie_url[0] || isset($old_path) && $old_path != $cookie_url[1])
-			smf_setcookie($cookiename, json_encode(array(0, '', 0, $old_domain, $old_path), JSON_FORCE_OBJECT), 1, $old_path, $old_domain);
+			sbb_setcookie($cookiename, json_encode(array(0, '', 0, $old_domain, $old_path), JSON_FORCE_OBJECT), 1, $old_path, $old_domain);
 	}
 
 	// Get the data and path to set it on.
@@ -77,11 +60,11 @@ function setLoginCookie($cookie_length, $id, $password = '')
 	$data = json_encode(array_merge($data, $custom_data), JSON_FORCE_OBJECT);
 
 	// Set the cookie, $_COOKIE, and session variable.
-	smf_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], $cookie_url[0]);
+	sbb_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], $cookie_url[0]);
 
 	// If subdomain-independent cookies are on, unset the subdomain-dependent cookie too.
 	if (empty($id) && !empty($modSettings['globalCookies']))
-		smf_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], '');
+		sbb_setcookie($cookiename, $data, $expiry_time, $cookie_url[1], '');
 
 	// Any alias URLs?  This is mainly for use with frames, etc.
 	if (!empty($modSettings['forum_alias_urls']))
@@ -100,12 +83,12 @@ function setLoginCookie($cookie_length, $id, $password = '')
 			if ($cookie_url[0] == '')
 				$cookie_url[0] = strtok($alias, '/');
 
-			$alias_data = smf_json_decode($data);
+			$alias_data = sbb_json_decode($data);
 			$alias_data[3] = $cookie_url[0];
 			$alias_data[4] = $cookie_url[1];
 			$alias_data = json_encode($alias_data, JSON_FORCE_OBJECT);
 
-			smf_setcookie($cookiename, $alias_data, $expiry_time, $cookie_url[1], $cookie_url[0]);
+			sbb_setcookie($cookiename, $alias_data, $expiry_time, $cookie_url[1], $cookie_url[0]);
 		}
 
 		$boardurl = $temp;
@@ -156,11 +139,11 @@ function setTFACookie($cookie_length, $id, $secret, $preserve = false)
 	$data = json_encode(empty($id) ? array(0, '', 0, $cookie_url[0], $cookie_url[1], false) : array($id, $secret, time() + $cookie_length, $cookie_url[0], $cookie_url[1], $preserve), JSON_FORCE_OBJECT);
 
 	// Set the cookie, $_COOKIE, and session variable.
-	smf_setcookie($identifier, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0]);
+	sbb_setcookie($identifier, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0]);
 
 	// If subdomain-independent cookies are on, unset the subdomain-dependent cookie too.
 	if (empty($id) && !empty($modSettings['globalCookies']))
-		smf_setcookie($identifier, $data, time() + $cookie_length, $cookie_url[1], '');
+		sbb_setcookie($identifier, $data, time() + $cookie_length, $cookie_url[1], '');
 
 	$_COOKIE[$identifier] = $data;
 }
@@ -461,49 +444,6 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 }
 
 /**
- * Outputs each member name on its own line.
- * - used by javascript to find members matching the request.
- */
-function RequestMembers()
-{
-	global $user_info, $txt, $smcFunc;
-
-	checkSession('get');
-
-	$_REQUEST['search'] = $smcFunc['htmlspecialchars']($_REQUEST['search']) . '*';
-	$_REQUEST['search'] = trim($smcFunc['strtolower']($_REQUEST['search']));
-	$_REQUEST['search'] = strtr($_REQUEST['search'], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;'));
-
-	header('Content-Type: text/plain; charset=UTF-8');
-
-	$request = $smcFunc['db_query']('', '
-		SELECT real_name
-		FROM {db_prefix}members
-		WHERE {raw:real_name} LIKE {string:search}' . (isset($_REQUEST['buddies']) ? '
-			AND id_member IN ({array_int:buddy_list})' : '') . '
-			AND is_activated IN (1, 11)
-		LIMIT ' . ($smcFunc['strlen']($_REQUEST['search']) <= 2 ? '100' : '800'),
-		array(
-			'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
-			'buddy_list' => $user_info['buddies'],
-			'search' => $_REQUEST['search'],
-		)
-	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-	{
-		$row['real_name'] = strtr($row['real_name'], array('&amp;' => '&#038;', '&lt;' => '&#060;', '&gt;' => '&#062;', '&quot;' => '&#034;'));
-
-		if (preg_match('~&#\d+;~', $row['real_name']) != 0)
-			$row['real_name'] = preg_replace_callback('~&#(\d+);~', 'fixchar__callback', $row['real_name']);
-
-		echo $row['real_name'], "\n";
-	}
-	$smcFunc['db_free_result']($request);
-
-	obExit(false);
-}
-
-/**
  * Generates a random password for a user and emails it to them.
  * - called by Profile.php when changing someone's username.
  * - checks the validity of the new username.
@@ -770,7 +710,7 @@ function rebuildModCache()
  * @param bool $secure = false
  * @param bool $httponly = true
  */
-function smf_setcookie($name, $value = '', $expire = 0, $path = '', $domain = '', $secure = null, $httponly = true)
+function sbb_setcookie($name, $value = '', $expire = 0, $path = '', $domain = '', $secure = null, $httponly = true)
 {
 	global $modSettings;
 
@@ -797,9 +737,7 @@ function smf_setcookie($name, $value = '', $expire = 0, $path = '', $domain = ''
  */
 function hash_password($username, $password, $cost = null)
 {
-	global $sourcedir, $smcFunc, $modSettings;
-	if (!function_exists('password_hash'))
-		require_once($sourcedir . '/Subs-Password.php');
+	global $smcFunc, $modSettings;
 
 	$cost = empty($cost) ? (empty($modSettings['bcrypt_hash_cost']) ? 10 : $modSettings['bcrypt_hash_cost']) : $cost;
 
@@ -821,7 +759,7 @@ function hash_salt($password, $salt)
 }
 
 /**
- * Verifies a raw SMF password against the bcrypt'd string
+ * Verifies a raw StoryBB password against the bcrypt'd string
  *
  * @param string $username The username
  * @param string $password The password
@@ -830,9 +768,7 @@ function hash_salt($password, $salt)
  */
 function hash_verify_password($username, $password, $hash)
 {
-	global $sourcedir, $smcFunc;
-	if (!function_exists('password_verify'))
-		require_once($sourcedir . '/Subs-Password.php');
+	global $smcFunc;
 
 	return password_verify($smcFunc['strtolower']($username) . $password, $hash);
 }
@@ -865,5 +801,3 @@ function hash_benchmark($hashTime = 0.2)
 
 	return $cost;
 }
-
-?>

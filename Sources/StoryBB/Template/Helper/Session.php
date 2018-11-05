@@ -12,8 +12,15 @@
 
 namespace StoryBB\Template\Helper;
 
+/**
+ * This class provides session and token helpers for StoryBB's templates.
+ */
 class Session
 {
+	/**
+	 * List the different helpers available in this class.
+	 * @return array Helpers, assocating name to method
+	 */
 	public static function _list()
 	{
 		return ([
@@ -28,17 +35,35 @@ class Session
 		]);
 	}
 
-	public static function token($string) {
+	/**
+	 * Export the token key for a token
+	 * @param string $string The token name to export
+	 * @return string The key for the named token
+	 */
+	public static function token($string)
+	{
 		global $context;
 		return isset($context[$string . '_token']) ? $context[$string . '_token'] : '';
 	}
 
-	public static function token_var($string) {
+	/**
+	 * Export the token value for a token
+	 * @param string $string The token name to export
+	 * @return string The value for the named token
+	 */
+	public static function token_var($string)
+	{
 		global $context;
 		return isset($context[$string . '_token_var']) ? $context[$string . '_token_var'] : '';
 	}
 
-	public static function token_url($string) {
+	/**
+	 * Export the token key/value for use in a URL
+	 * @param string $string The token name to export
+	 * @return string The key=value pair for a URL
+	 */
+	public static function token_url($string)
+	{
 		global $context;
 		if (!isset($context[$string . '_token_var'], $context[$string . '_token']))
 		{
@@ -48,7 +73,13 @@ class Session
 		return new \LightnCandy\SafeString( $context[$string . '_token_var'] . '=' . $context[$string . '_token']);
 	}
 
-	public static function token_form($string) {
+	/**
+	 * Export the token key/value for use in a form
+	 * @param string $string The token name to export
+	 * @return string A fragment of HTML containing a hidden input with the token details
+	 */
+	public static function token_form($string)
+	{
 		global $context;
 		if (!isset($context[$string . '_token_var'], $context[$string . '_token']))
 		{
@@ -58,25 +89,43 @@ class Session
 		return new \LightnCandy\SafeString('<input type="hidden" name="' . $context[$string . '_token_var'] . '" value="' . $context[$string . '_token'] . '">');
 	}
 
-	public static function session_id() {
+	/**
+	 * Export the session ID
+	 * @return string Session ID
+	 */
+	public static function session_id()
+	{
 		global $context;
 		return $context['session_id'];
 	}
 
-	public static function session_var() {
+	/**
+	 * Export the session key
+	 * @return string Session key for ID
+	 */
+	public static function session_var()
+	{
 		global $context;
 		return $context['session_var'];
 	}
 
-	public static function session_url() {
+	/**
+	 * Export the session key/value in URL format
+	 * @return string sessionkey=sessionid
+	 */
+	public static function session_url()
+	{
 		global $context;
 		return $context['session_var'] . '=' . $context['session_id'];
 	}
 
-	public static function session_form() {
+	/**
+	 * Export the session key/value for use in a form
+	 * @return string A fragment of HTML containing a hidden input with the session details
+	 */
+	public static function session_form()
+	{
 		global $context;
 		return new \LightnCandy\SafeString('<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">');
 	}
 }
-
-?>

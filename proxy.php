@@ -10,7 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
-define('SMF', 'proxy');
+define('STORYBB', 'proxy');
 
 /**
  * Class ProxyServer
@@ -115,7 +115,7 @@ class ProxyServer
 
 		// Right, image not cached? Simply redirect, then.
 		if (!$response)
-		    redirectexit($request);
+			redirectexit($request);
 
 		// Make sure we're serving an image
 		$contentParts = explode('/', !empty($cached['content_type']) ? $cached['content_type'] : '');
@@ -196,5 +196,3 @@ class ProxyServer
 
 $proxy = new ProxyServer();
 $proxy->serve();
-
-?>

@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Main dispatcher, the entrance point for all 'Manage Membergroup' actions.
  * It forwards to a function based on the given subaction, default being subaction 'index', or, without manage_membergroup
@@ -280,11 +277,11 @@ function MembergroupIndex()
 		'additional_rows' => array(
 			array(
 				'position' => 'above_table_headers',
-				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
+				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;charactergroup">' . $txt['membergroups_add_group'] . '</a>',
 			),
 			array(
 				'position' => 'below_table_data',
-				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
+				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;charactergroup">' . $txt['membergroups_add_group'] . '</a>',
 			),
 		),
 	);
@@ -411,6 +408,21 @@ function AddMembergroup()
 	// A form was submitted, we can start adding.
 	if (isset($_POST['group_name']) && trim($_POST['group_name']) != '')
 	{
+		// Are we inheriting? Account groups can't inherit from character groups, and vice versa.
+		if (!empty($_POST['perm_type']) && $_POST['perm_type'] == 'inherit')
+		{
+			$is_character = StoryBB\Model\Group::is_character_group(isset($_POST['inheritperm']) ? (int) $_POST['inheritperm'] : 0);
+
+			if ($is_character && empty($_POST['group_level']))
+			{
+				fatal_lang_error('membergroup_cannot_inherit_character', false);
+			}
+			elseif (!$is_character && !empty($_POST['group_level']))
+			{
+				fatal_lang_error('membergroup_cannot_inherit_account', false);
+			}
+		}
+
 		checkSession();
 		validateToken('admin-mmg');
 
@@ -439,8 +451,8 @@ function AddMembergroup()
 		if (isset($_POST['min_posts']))
 			updateStats('postgroups');
 
-		// You cannot set permissions for post groups if they are disabled.
-		if ($postCountBasedGroup && empty($modSettings['permission_enable_postgroups']))
+		// You cannot set permissions for post groups as they are disabled.
+		if ($postCountBasedGroup)
 			$_POST['perm_type'] = '';
 
 		if ($_POST['perm_type'] == 'predefined')
@@ -479,29 +491,33 @@ function AddMembergroup()
 			require_once($sourcedir . '/ManagePermissions.php');
 			loadIllegalPermissions();
 
-			$request = $smcFunc['db_query']('', '
-				SELECT permission, add_deny
-				FROM {db_prefix}permissions
-				WHERE id_group = {int:copy_from}',
-				array(
-					'copy_from' => $copy_id,
-				)
-			);
-			$inserts = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			// Copy the main permissions - but only if it's not copying to a character group.
+			if (empty($_POST['group_level']))
 			{
-				if (empty($context['illegal_permissions']) || !in_array($row['permission'], $context['illegal_permissions']))
-					$inserts[] = array($id_group, $row['permission'], $row['add_deny']);
-			}
-			$smcFunc['db_free_result']($request);
-
-			if (!empty($inserts))
-				$smcFunc['db_insert']('insert',
-					'{db_prefix}permissions',
-					array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-					$inserts,
-					array('id_group', 'permission')
+				$request = $smcFunc['db_query']('', '
+					SELECT permission, add_deny
+					FROM {db_prefix}permissions
+					WHERE id_group = {int:copy_from}',
+					array(
+						'copy_from' => $copy_id,
+					)
 				);
+				$inserts = array();
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+				{
+					if (empty($context['illegal_permissions']) || !in_array($row['permission'], $context['illegal_permissions']))
+						$inserts[] = array($id_group, $row['permission'], $row['add_deny']);
+				}
+				$smcFunc['db_free_result']($request);
+
+				if (!empty($inserts))
+					$smcFunc['db_insert']('insert',
+						'{db_prefix}permissions',
+						array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
+						$inserts,
+						array('id_group', 'permission')
+					);
+			}
 
 			$request = $smcFunc['db_query']('', '
 				SELECT id_profile, permission, add_deny
@@ -615,18 +631,18 @@ function AddMembergroup()
 	// Just show the 'add membergroup' screen.
 	$context['page_title'] = $txt['membergroups_new_group'];
 	$context['sub_template'] = 'admin_membergroups_add';
+	$context['character_group'] = isset($_REQUEST['charactergroup']) || !empty($_REQUEST['group_level']);
 	$context['post_group'] = isset($_REQUEST['postgroup']);
-	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']);
+	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']) && !isset($_REQUEST['charactergroup']);
 	$context['allow_protected'] = allowedTo('admin_forum');
 
-	if (!empty($modSettings['deny_boards_access']))
-		loadLanguage('ManagePermissions');
+	loadLanguage('ManagePermissions');
 
 	$result = $smcFunc['db_query']('', '
-		SELECT id_group, group_name
+		SELECT id_group, group_name, is_character
 		FROM {db_prefix}membergroups
-		WHERE (id_group > {int:moderator_group} OR id_group = {int:global_mod_group})' . (empty($modSettings['permission_enable_postgroups']) ? '
-			AND min_posts = {int:min_posts}' : '') . (allowedTo('admin_forum') ? '' : '
+		WHERE (id_group > {int:moderator_group} OR id_group = {int:global_mod_group})
+			AND min_posts = {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 		ORDER BY min_posts, id_group != {int:global_mod_group}, group_name',
 		array(
@@ -637,11 +653,19 @@ function AddMembergroup()
 		)
 	);
 	$context['groups'] = array();
+	$context['character_groups'] = [];
+	$context['account_groups'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
+	{
 		$context['groups'][] = array(
 			'id' => $row['id_group'],
 			'name' => $row['group_name']
 		);
+		$context[$row['is_character'] ? 'character_groups' : 'account_groups'][] = array(
+			'id' => $row['id_group'],
+			'name' => $row['group_name']
+		);
+	}
 	$smcFunc['db_free_result']($result);
 
 	$request = $smcFunc['db_query']('', '
@@ -734,8 +758,7 @@ function EditMembergroup()
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) && $_REQUEST['group'] > 0 ? (int) $_REQUEST['group'] : 0;
 
-	if (!empty($modSettings['deny_boards_access']))
-		loadLanguage('ManagePermissions');
+	loadLanguage('ManagePermissions');
 
 	// Make sure this group is editable.
 	if (!empty($_REQUEST['group']))
@@ -797,6 +820,31 @@ function EditMembergroup()
 	// A form was submitted with the new membergroup settings.
 	elseif (isset($_POST['save']))
 	{
+		// Are we inheriting? Account groups can't inherit from character groups, and vice versa.
+		$current_group_is_character = StoryBB\Model\Group::is_character_group((int) $_REQUEST['group']);
+		if (isset($_POST['group_inherit']) && $_POST['group_inherit'] != -2)
+		{
+			$is_character = StoryBB\Model\Group::is_character_group((int) $_POST['group_inherit']);
+
+			if ($is_character && !$current_group_is_character)
+			{
+				fatal_lang_error('membergroup_cannot_inherit_character', false);
+			}
+			elseif (!$is_character && $current_group_is_character)
+			{
+				fatal_lang_error('membergroup_cannot_inherit_account', false);
+			}
+		}
+		// Character groups can never be converted into post groups.
+		if ($current_group_is_character)
+		{
+			$_POST['min_posts'] = -1;
+			if (!empty($_POST['group_type']) && $_POST['group_type'] == -1)
+			{
+				$_POST['group_type'] = 0; // Force it to be a regular assigned group.
+			}
+		}
+
 		// Validate the session.
 		checkSession();
 		validateToken('admin-mmg');
@@ -821,7 +869,13 @@ function EditMembergroup()
 		// Set variables to their proper value.
 		$_POST['max_messages'] = isset($_POST['max_messages']) ? (int) $_POST['max_messages'] : 0;
 		$_POST['min_posts'] = isset($_POST['min_posts']) && isset($_POST['group_type']) && $_POST['group_type'] == -1 && $_REQUEST['group'] > 3 ? abs($_POST['min_posts']) : ($_REQUEST['group'] == 4 ? 0 : -1);
-		$_POST['icons'] = (empty($_POST['icon_count']) || $_POST['icon_count'] < 0) ? '' : min((int) $_POST['icon_count'], 99) . '#' . $_POST['icon_image'];
+
+		$_POST['icons'] = '';
+		if (!empty($_POST['has_badge']) && !empty($_POST['icon_count']) && $_POST['icon_count'] > 0 && !empty($_POST['icon_image']))
+		{
+			$_POST['icons'] = min((int) $_POST['icon_count'], 99) . '#' . $_POST['icon_image'];
+		}
+
 		$_POST['group_desc'] = isset($_POST['group_desc']) && ($_REQUEST['group'] == 1 || (isset($_POST['group_type']) && $_POST['group_type'] != -1)) ? trim($_POST['group_desc']) : '';
 		$_POST['group_type'] = !isset($_POST['group_type']) || $_POST['group_type'] < 0 || $_POST['group_type'] > 3 || ($_POST['group_type'] == 1 && !allowedTo('admin_forum')) ? 0 : (int) $_POST['group_type'];
 		$_POST['group_hidden'] = empty($_POST['group_hidden']) || $_POST['min_posts'] != -1 || $_REQUEST['group'] == 3 ? 0 : (int) $_POST['group_hidden'];
@@ -1159,6 +1213,8 @@ function EditMembergroup()
 		'color' => $row['online_color'],
 		'min_posts' => $row['min_posts'],
 		'max_messages' => $row['max_messages'],
+		'has_badge' => !empty($row['icons'][0]),
+		'badge_enabled' => true,
 		'icon_count' => (int) $row['icons'][0],
 		'icon_image' => isset($row['icons'][1]) ? $row['icons'][1] : '',
 		'is_post_group' => $row['min_posts'] != -1,
@@ -1261,8 +1317,8 @@ function EditMembergroup()
 				// Get the size of the image.
 				$image_info = getimagesize($settings['default_theme_dir'] . '/images/membericons/' . $value);
 
-				// If this is bigger than 128 in width or 32 in height, skip this one.
-				if ($image_info == false || $image_info[0] > 128 || $image_info[1] > 32)
+				// If this image doesn't have a size or the size is unreasonable large, don't use it.
+				if ($image_info == false || $image_info[0] > 1024 || $image_info[1] > 1024)
 					continue;
 
 				// Else it's valid. Add it in.
@@ -1272,19 +1328,24 @@ function EditMembergroup()
 		}
 	}
 
+	if (empty($context['possible_icons']))
+	{
+		$context['group']['has_badge'] = false;
+		$context['group']['badge_enabled'] = false;
+	}
+
 	// Insert our JS, if we have possible icons.
 	if (!empty($context['possible_icons']))
-		loadJavaScriptFile('icondropdown.js', array('validate' => true), 'smf_icondropdown');
+		loadJavaScriptFile('icondropdown.js', array('validate' => true), 'sbb_icondropdown');
 
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
 
 	// Finally, get all the groups this could be inherited off.
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
-		WHERE id_group != {int:current_group}' .
-			(empty($modSettings['permission_enable_postgroups']) ? '
-			AND min_posts = {int:min_posts}' : '') . (allowedTo('admin_forum') ? '' : '
+		WHERE id_group != {int:current_group}
+			AND min_posts = {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 			AND id_group NOT IN (1, 3)
 			AND id_parent = {int:not_inherited}',
@@ -1365,5 +1426,3 @@ function MembergroupBadges()
 	addInlineJavascript('
 	$(\'.sortable\').sortable({handle: ".handle"});', true);
 }
-
-?>

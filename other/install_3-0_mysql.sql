@@ -22,8 +22,7 @@ CREATE TABLE {$db_prefix}admin_info_files (
 
 CREATE TABLE {$db_prefix}approval_queue (
   id_msg INT UNSIGNED NOT NULL DEFAULT '0',
-  id_attach INT UNSIGNED NOT NULL DEFAULT '0',
-  id_event SMALLINT UNSIGNED NOT NULL DEFAULT '0'
+  id_attach INT UNSIGNED NOT NULL DEFAULT '0'
 ) ENGINE={$engine};
 
 #
@@ -227,6 +226,36 @@ CREATE TABLE {$db_prefix}character_sheet_versions (
 ) ENGINE={$engine};
 
 #
+# Table structure for table `contact_form`
+#
+
+CREATE TABLE {$db_prefix}contact_form (
+  id_message MEDIUMINT AUTO_INCREMENT,
+  id_member MEDIUMINT NOT NULL DEFAULT '0',
+  contact_name VARCHAR(255) NOT NULL DEFAULT '',
+  contact_email VARCHAR(255) NOT NULL DEFAULT '',
+  subject VARCHAR(255) NOT NULL DEFAULT '',
+  message TEXT NOT NULL,
+  time_received INT NOT NULL DEFAULT '0',
+  status TINYINT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_message)
+) ENGINE={$engine};
+
+#
+# Table structure for table `contact_form_response`
+#
+
+CREATE TABLE {$db_prefix}contact_form_response (
+  id_response MEDIUMINT AUTO_INCREMENT,
+  id_message MEDIUMINT NOT NULL DEFAULT '0',
+  id_member MEDIUMINT NOT NULL DEFAULT '0',
+  response TEXT NOT NULL,
+  time_sent INT NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_response),
+  INDEX idx_id_message (id_message)
+) ENGINE={$engine};
+
+#
 # Table structure for table `custom_fields`
 #
 
@@ -298,6 +327,7 @@ CREATE TABLE {$db_prefix}log_activity (
   hits MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   topics SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   posts SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+  chars SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   registers SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   most_on SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (date)
@@ -456,7 +486,7 @@ CREATE TABLE {$db_prefix}log_online (
   log_time INT NOT NULL DEFAULT '0',
   id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   id_character INT UNSIGNED NOT NULL DEFAULT '0',
-  id_spider SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+  robot_name VARCHAR(20) NOT NULL DEFAULT '',
   ip VARBINARY(16),
   url VARCHAR(2048) NOT NULL DEFAULT '',
   PRIMARY KEY (session),
@@ -576,34 +606,6 @@ CREATE TABLE {$db_prefix}log_search_topics (
 ) ENGINE={$engine};
 
 #
-# Table structure for table `log_spider_hits`
-#
-
-CREATE TABLE {$db_prefix}log_spider_hits (
-  id_hit INT UNSIGNED AUTO_INCREMENT,
-  id_spider SMALLINT UNSIGNED NOT NULL DEFAULT '0',
-  log_time INT UNSIGNED NOT NULL DEFAULT '0',
-  url VARCHAR(1024) NOT NULL DEFAULT '',
-  processed TINYINT NOT NULL DEFAULT '0',
-  PRIMARY KEY (id_hit),
-  INDEX idx_id_spider(id_spider),
-  INDEX idx_log_time(log_time),
-  INDEX idx_processed (processed)
-) ENGINE={$engine};
-
-#
-# Table structure for table `log_spider_stats`
-#
-
-CREATE TABLE {$db_prefix}log_spider_stats (
-  id_spider SMALLINT UNSIGNED DEFAULT '0',
-  page_hits SMALLINT UNSIGNED NOT NULL DEFAULT '0',
-  last_seen INT UNSIGNED NOT NULL DEFAULT '0',
-  stat_date DATE DEFAULT '1004-01-01',
-  PRIMARY KEY (stat_date, id_spider)
-) ENGINE={$engine};
-
-#
 # Table structure for table `log_subscribed`
 #
 
@@ -708,6 +710,7 @@ CREATE TABLE {$db_prefix}members (
   passwd VARCHAR(64) NOT NULL DEFAULT '',
   email_address VARCHAR(255) NOT NULL DEFAULT '',
   birthdate date NOT NULL DEFAULT '1004-01-01',
+  birthday_visibility TINYINT UNSIGNED NOT NULL DEFAULT '0',
   website_title VARCHAR(255) NOT NULL DEFAULT '',
   website_url VARCHAR(255) NOT NULL DEFAULT '',
   show_online TINYINT NOT NULL DEFAULT '1',
@@ -724,7 +727,6 @@ CREATE TABLE {$db_prefix}members (
   validation_code VARCHAR(10) NOT NULL DEFAULT '',
   id_msg_last_visit INT UNSIGNED NOT NULL DEFAULT '0',
   additional_groups VARCHAR(255) NOT NULL DEFAULT '',
-  smiley_set VARCHAR(48) NOT NULL DEFAULT '',
   id_post_group SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   total_time_logged_in INT UNSIGNED NOT NULL DEFAULT '0',
   password_salt VARCHAR(255) NOT NULL DEFAULT '',
@@ -735,10 +737,11 @@ CREATE TABLE {$db_prefix}members (
   timezone VARCHAR(80) NOT NULL DEFAULT 'UTC',
   tfa_secret VARCHAR(24) NOT NULL DEFAULT '',
   tfa_backup VARCHAR(64) NOT NULL DEFAULT '',
+  policy_acceptance TINYINT NOT NULL DEFAULT '0',
   PRIMARY KEY (id_member),
   INDEX idx_member_name (member_name),
-  INDEX idx_real_name (real_name),
-  INDEX idx_email_address (email_address),
+  INDEX idx_real_name (real_name(80)),
+  INDEX idx_email_address (email_address(30)),
   INDEX idx_date_registered (date_registered),
   INDEX idx_id_group (id_group),
   INDEX idx_birthdate (birthdate),
@@ -789,6 +792,7 @@ CREATE TABLE {$db_prefix}messages (
   id_topic MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   id_board SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   poster_time INT UNSIGNED NOT NULL DEFAULT '0',
+  id_creator MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
   id_character INT UNSIGNED NOT NULL DEFAULT '0',
   id_msg_modified INT UNSIGNED NOT NULL DEFAULT '0',
@@ -835,17 +839,6 @@ CREATE TABLE {$db_prefix}moderator_groups (
   id_board SMALLINT UNSIGNED DEFAULT '0',
   id_group SMALLINT UNSIGNED DEFAULT '0',
   PRIMARY KEY (id_board, id_group)
-) ENGINE={$engine};
-
-#
-# Table structure for table `package_servers`
-#
-
-CREATE TABLE {$db_prefix}package_servers (
-  id_server SMALLINT UNSIGNED AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL DEFAULT '',
-  url VARCHAR(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (id_server)
 ) ENGINE={$engine};
 
 #
@@ -941,6 +934,62 @@ CREATE TABLE {$db_prefix}pm_rules (
 ) ENGINE={$engine};
 
 #
+# Table structure for table `policy`
+#
+
+CREATE TABLE {$db_prefix}policy (
+  id_policy SMALLINT UNSIGNED AUTO_INCREMENT,
+  policy_type TINYINT UNSIGNED NOT NULL DEFAULT '0',
+  language VARCHAR(20) NOT NULL DEFAULT '',
+  title VARCHAR(100) NOT NULL DEFAULT '',
+  description VARCHAR(200) NOT NULL DEFAULT '',
+  last_revision INT UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_policy)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy_acceptance`
+#
+
+CREATE TABLE {$db_prefix}policy_acceptance (
+  id_policy SMALLINT UNSIGNED AUTO_INCREMENT,
+  id_member MEDIUMINT UNSIGNED NOT NULL DEFAULT '0',
+  id_revision INT UNSIGNED NOT NULL DEFAULT '0',
+  acceptance_time INT UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (id_policy, id_member, id_revision)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy_revision`
+#
+
+CREATE TABLE {$db_prefix}policy_revision (
+  id_revision INT UNSIGNED AUTO_INCREMENT,
+  id_policy SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+  last_change INT UNSIGNED NOT NULL DEFAULT '0',
+  short_revision_note TEXT NOT NULL,
+  revision_text TEXT NOT NULL,
+  edit_id_member INT UNSIGNED NOT NULL DEFAULT '0',
+  edit_member_name VARCHAR(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (id_revision),
+  INDEX idx_id_policy (id_policy)
+) ENGINE={$engine};
+
+#
+# Table structure for table `policy_types`
+#
+
+CREATE TABLE {$db_prefix}policy_types (
+  id_policy_type TINYINT UNSIGNED AUTO_INCREMENT,
+  policy_type VARCHAR(50) NOT NULL,
+  require_acceptance TINYINT UNSIGNED DEFAULT '0',
+  show_footer TINYINT UNSIGNED DEFAULT '0',
+  show_reg TINYINT UNSIGNED DEFAULT '0',
+  show_help TINYINT UNSIGNED DEFAULT '0',
+  PRIMARY KEY (id_policy_type)
+) ENGINE={$engine};
+
+#
 # Table structure for table `polls`
 #
 
@@ -982,7 +1031,7 @@ CREATE TABLE {$db_prefix}qanda (
   question VARCHAR(255) NOT NULL DEFAULT '',
   answers TEXT NOT NULL,
   PRIMARY KEY (id_question),
-  INDEX idx_lngfile (lngfile)
+  INDEX idx_lngfile (lngfile(30))
 ) ENGINE={$engine};
 
 #
@@ -997,7 +1046,7 @@ CREATE TABLE {$db_prefix}scheduled_tasks (
   time_unit VARCHAR(1) NOT NULL DEFAULT 'h',
   disabled TINYINT NOT NULL DEFAULT '0',
   task VARCHAR(24) NOT NULL DEFAULT '',
-  callable VARCHAR(60) NOT NULL DEFAULT '',
+  class VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (id_task),
   INDEX idx_next_time (next_time),
   INDEX idx_disabled (disabled),
@@ -1038,18 +1087,6 @@ CREATE TABLE {$db_prefix}smileys (
   smiley_order SMALLINT UNSIGNED NOT NULL DEFAULT '0',
   hidden TINYINT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (id_smiley)
-) ENGINE={$engine};
-
-#
-# Table structure for table `spiders`
-#
-
-CREATE TABLE {$db_prefix}spiders (
-  id_spider SMALLINT UNSIGNED AUTO_INCREMENT,
-  spider_name VARCHAR(255) NOT NULL DEFAULT '',
-  user_agent VARCHAR(255) NOT NULL DEFAULT '',
-  ip_info VARCHAR(255) NOT NULL DEFAULT '',
-  PRIMARY KEY id_spider(id_spider)
 ) ENGINE={$engine};
 
 #
@@ -1174,6 +1211,20 @@ CREATE TABLE {$db_prefix}user_drafts (
 ) ENGINE={$engine};
 
 #
+# Table structure for table `user_exports`
+#
+
+CREATE TABLE {$db_prefix}user_exports (
+  id_export INT NOT NULL AUTO_INCREMENT,
+  id_attach INT NOT NULL DEFAULT 0,
+  id_member MEDIUMINT NOT NULL DEFAULT 0,
+  id_requester MEDIUMINT NOT NULL DEFAULT 0,
+  requested_on INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (id_export),
+  INDEX (id_member)
+) ENGINE={$engine};
+
+#
 # Table structure for table `user_likes`
 #
 
@@ -1213,10 +1264,8 @@ START TRANSACTION;
 INSERT INTO {$db_prefix}admin_info_files
   (id_file, filename, path, parameters, data, filetype)
 VALUES
-  (1, 'current-version.js', '/smf/', 'version=%3$s', '', 'text/javascript'),
-  (2, 'detailed-version.js', '/smf/', 'language=%1$s&version=%3$s', '', 'text/javascript'),
-  (3, 'latest-news.js', '/smf/', 'language=%1$s&format=%2$s', '', 'text/javascript'),
-  (4, 'latest-versions.txt', '/smf/', 'version=%3$s', '', 'text/plain');
+  (1, 'updates.json', '', '', '', 'application/json'),
+  (2, 'versions.json', '', '', '', 'application/json');
 # --------------------------------------------------------
 
 #
@@ -1558,12 +1607,8 @@ VALUES (1, 0, '{$default_category_name}', '', 1);
 
 INSERT INTO {$db_prefix}custom_fields
   (`col_name`, `field_name`, `field_desc`, `field_type`, `field_length`, `field_options`, `field_order`, `mask`, `show_reg`, `show_display`, `show_mlist`, `show_profile`, `private`, `active`, `bbc`, `can_search`, `default_value`, `enclose`, `placement`)
-VALUES ('cust_aolins', 'AOL Instant Messenger', 'This is your AOL Instant Messenger nickname.', 'text', 50, '', 1, 'regex~[a-z][0-9a-z.-]{1,31}~i', 0, 1, 0, 'forumprofile', 0, 1, 0, 0, '', '<a class="aim" href="aim:goim?screenname={INPUT}&message=Hello!+Are+you+there?" target="_blank" title="AIM - {INPUT}"><img src="{IMAGES_URL}/aim.png" alt="AIM - {INPUT}"></a>', 1),
-  ('cust_icq', 'ICQ', 'This is your ICQ number.', 'text', 12, '', 2, 'regex~[1-9][0-9]{4,9}~i', 0, 1, 0, 'forumprofile', 0, 1, 0, 0, '', '<a class="icq" href="//www.icq.com/people/{INPUT}" target="_blank" title="ICQ - {INPUT}"><img src="{DEFAULT_IMAGES_URL}/icq.png" alt="ICQ - {INPUT}"></a>', 1),
-  ('cust_skype', 'Skype', 'Your Skype name', 'text', 32, '', 3, 'nohtml', 0, 1, 0, 'forumprofile', 0, 1, 0, 0, '', '<a href="skype:{INPUT}?call"><img src="{DEFAULT_IMAGES_URL}/skype.png" alt="{INPUT}" title="{INPUT}" /></a> ', 1),
-  ('cust_yahoo', 'Yahoo! Messenger', 'This is your Yahoo! Instant Messenger nickname.', 'text', 50, '', 4, 'nohtml', 0, 1, 0, 'forumprofile', 0, 1, 0, 0, '', '<a class="yim" href="edit.yahoo.com/config/send_webmesg?.target={INPUT}" target="_blank" title="Yahoo! Messenger - {INPUT}"><img src="{IMAGES_URL}/yahoo.png" alt="Yahoo! Messenger - {INPUT}"></a>', 1),
-  ('cust_loca', 'Location', 'Geographic location.', 'text', 50, '', 5, 'nohtml', 0, 1, 0, 'forumprofile', 0, 1, 0, 0, '', '', 0),
-  ('cust_gender', 'Gender', 'Your gender.', 'radio', 255, 'None,Male,Female', 6, 'nohtml', 1, 1, 0, 'forumprofile', 0, 1, 0, 0, 'None', '<span class=" generic_icons gender_{INPUT}" title="{INPUT}"></span>', 1);
+VALUES ('cust_skype', 'Skype', 'Your Skype name', 'text', 32, '', 1, 'nohtml', 0, 1, 0, 'forumprofile', 0, 1, 0, 0, '', '<a href="skype:{INPUT}?call"><img src="{DEFAULT_IMAGES_URL}/skype.png" alt="{INPUT}" title="{INPUT}" /></a> ', 1),
+  ('cust_loca', 'Location', 'Geographic location.', 'text', 50, '', 2, 'nohtml', 0, 1, 0, 'forumprofile', 0, 1, 0, 0, '', '', 0);
 
 # --------------------------------------------------------
 
@@ -1615,15 +1660,6 @@ VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'StoryBB', 'in
 # --------------------------------------------------------
 
 #
-# Dumping data for table `package_servers`
-#
-
-INSERT INTO {$db_prefix}package_servers
-  (name, url)
-VALUES ('Simple Machines Third-party Mod Site', 'https://custom.simplemachines.org/packages/mods');
-# --------------------------------------------------------
-
-#
 # Dumping data for table `permission_profiles`
 #
 
@@ -1658,7 +1694,7 @@ VALUES (-1, 'search_posts'),
   (0, 'profile_remove_own'),
   (0, 'profile_upload_avatar'),
   (0, 'profile_remote_avatar'),
-  (0, 'send_email_to_members'),
+  (0, 'mention'),
   (2, 'view_mlist'),
   (2, 'search_posts'),
   (2, 'profile_view'),
@@ -1677,9 +1713,50 @@ VALUES (-1, 'search_posts'),
   (2, 'profile_remove_own'),
   (2, 'profile_upload_avatar'),
   (2, 'profile_remote_avatar'),
-  (2, 'send_email_to_members'),
-  (2, 'profile_title_own'),
+  (2, 'mention'),
   (2, 'access_mod_center');
+# --------------------------------------------------------
+
+#
+# Dumping data for table `policy`
+#
+
+INSERT INTO {$db_prefix}policy
+  (id_policy, policy_type, language, title, description, last_revision)
+VALUES
+  (1, 1, '{$language}', '{$default_policy_terms}', '{$default_policy_terms_desc}', 1),
+  (2, 2, '{$language}', '{$default_policy_privacy}', '{$default_policy_privacy_desc}', 2),
+  (3, 3, '{$language}', '{$default_policy_roleplay}', '{$default_policy_roleplay_desc}', 3),
+  (4, 4, '{$language}', '{$default_policy_cookies}', '{$default_policy_cookies_desc}', 4);
+
+# --------------------------------------------------------
+
+#
+# Dumping data for table `policy_revision`
+#
+
+INSERT INTO {$db_prefix}policy_revision
+  (id_revision, id_policy, last_change, short_revision_note, revision_text, edit_id_member, edit_member_name)
+VALUES
+  (1, 1, {$current_time}, '', '{$default_policy_terms_text}', 0, ''),
+  (2, 2, {$current_time}, '', '{$default_policy_privacy_text}', 0, ''),
+  (3, 3, {$current_time}, '', '{$default_policy_roleplay_text}', 0, ''),
+  (4, 4, {$current_time}, '', '{$default_policy_cookies_text}', 0, '');
+
+# --------------------------------------------------------
+
+#
+# Dumping data for table `policy_types`
+#
+
+INSERT INTO {$db_prefix}policy_types
+  (id_policy_type, policy_type, require_acceptance, show_footer, show_reg, show_help)
+VALUES
+  (1, 'terms', 1, 1, 1, 1),
+  (2, 'privacy', 1, 1, 1, 1),
+  (3, 'roleplay', 0, 0, 0, 0),
+  (4, 'cookies', 0, 0, 0, 1);
+
 # --------------------------------------------------------
 
 #
@@ -1687,19 +1764,21 @@ VALUES (-1, 'search_posts'),
 #
 
 INSERT INTO {$db_prefix}scheduled_tasks
-  (id_task, next_time, time_offset, time_regularity, time_unit, disabled, task, callable)
+  (id_task, next_time, time_offset, time_regularity, time_unit, disabled, task, class)
 VALUES
   (1, 0, 0, 2, 'h', 0, 'approval_notification', ''),
-  (3, 0, 60, 1, 'd', 0, 'daily_maintenance', ''),
+  (3, 0, 60, 1, 'd', 0, 'daily_maintenance', 'StoryBB\\Task\\Schedulable\\DailyMaintenance'),
   (5, 0, 0, 1, 'd', 0, 'daily_digest', ''),
   (6, 0, 0, 1, 'w', 0, 'weekly_digest', ''),
-  (7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchSMfiles', ''),
+  (7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchStoryBBfiles', ''),
   (8, 0, 0, 1, 'd', 1, 'birthdayemails', ''),
-  (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', ''),
+  (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', 'StoryBB\\Task\\Schedulable\\WeeklyMaintenance'),
   (10, 0, 120, 1, 'd', 1, 'paid_subscriptions', ''),
   (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', ''),
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', ''),
-  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', '');
+  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', 'StoryBB\\Task\\Schedulable\\RemoveOldDrafts'),
+  (14, 0, 300, 1, 'd', 0, 'clean_exports', 'StoryBB\\Task\\Schedulable\\CleanExports'),
+  (15, 0, 360, 1, 'd', 0, 'scrub_logs', 'StoryBB\\Task\\Schedulable\\ScrubLogs');
 
 # --------------------------------------------------------
 
@@ -1709,7 +1788,7 @@ VALUES
 
 INSERT INTO {$db_prefix}settings
   (variable, value)
-VALUES ('smfVersion', '{$smf_version}'),
+VALUES ('sbbVersion', '{$sbb_version}'),
   ('news', '{$default_news}'),
   ('todayMod', '1'),
   ('pollMode', '1'),
@@ -1783,7 +1862,6 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('oldTopicDays', '120'),
   ('edit_wait_time', '90'),
   ('edit_disable_time', '0'),
-  ('autoFixDatabase', '1'),
   ('allow_guestAccess', '1'),
   ('time_format', '{$default_time_format}'),
   ('number_format', '1234.00'),
@@ -1793,7 +1871,6 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('defaultMaxMessages', '15'),
   ('defaultMaxTopics', '20'),
   ('defaultMaxMembers', '30'),
-  ('enableParticipation', '1'),
   ('recycle_enable', '0'),
   ('recycle_board', '0'),
   ('maxMsgID', '1'),
@@ -1804,11 +1881,6 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('time_offset', '0'),
   ('cookieTime', '60'),
   ('lastActive', '15'),
-  ('smiley_sets_known', 'default,aaron,akyhne,fugue'),
-  ('smiley_sets_names', '{$default_smileyset_name}\n{$default_aaron_smileyset_name}\n{$default_akyhne_smileyset_name}\n{$default_fugue_smileyset_name}'),
-  ('smiley_sets_default', 'default'),
-  ('cal_days_for_index', '7'),
-  ('requireAgreement', '1'),
   ('unapprovedMembers', '0'),
   ('databaseSession_enable', '{$databaseSession_enable}'),
   ('databaseSession_loose', '1'),
@@ -1822,7 +1894,6 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('search_weight_first_message', '10'),
   ('search_max_results', '1200'),
   ('search_floodcontrol_time', '5'),
-  ('permission_enable_postgroups', '0'),
   ('mail_next_send', '0'),
   ('mail_recent', '0000000000|0'),
   ('settings_updated', '0'),
@@ -1832,17 +1903,15 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('warning_moderate', '35'),
   ('warning_mute', '60'),
   ('last_mod_report_action', '0'),
-  ('pruningOptions', '30,180,180,180,30,0'),
+  ('pruningOptions', '30,180,180,180,30'),
   ('modlog_enabled', '1'),
   ('adminlog_enabled', '1'),
   ('cache_enable', '1'),
+  ('minimum_age', '16'),
   ('reg_verification', '1'),
   ('visual_verification_type', '3'),
   ('enable_buddylist', '1'),
   ('birthday_email', 'happy_birthday'),
-  ('dont_repeat_theme_core', '1'),
-  ('dont_repeat_smileys_20', '1'),
-  ('dont_repeat_buddylists', '1'),
   ('attachment_image_reencode', '1'),
   ('attachment_image_paranoid', '0'),
   ('attachment_thumb_png', '1'),
@@ -1862,18 +1931,16 @@ VALUES ('smfVersion', '{$smf_version}'),
   ('show_user_images', '1'),
   ('show_profile_buttons', '1'),
   ('enable_ajax_alerts', '1'),
-  ('gravatarEnabled', '1'),
-  ('gravatarOverride', '0'),
-  ('gravatarAllowExtraEmail', '1'),
-  ('gravatarMaxRating', 'PG'),
   ('defaultMaxListItems', '15'),
   ('loginHistoryDays', '30'),
   ('httponlyCookies', '1'),
   ('tfa_mode', '1'),
   ('allow_expire_redirect', '1'),
-  ('json_done', '1'),
-  ('displayFields', '[{"col_name":"cust_aolins","title":"AOL Instant Messenger","type":"text","order":"1","bbc":"0","placement":"1","enclose":"<a class=\\"aim\\" href=\\"aim:goim?screenname={INPUT}&message=Hello!+Are+you+there?\\" target=\\"_blank\\" title=\\"AIM - {INPUT}\\"><img src=\\"{IMAGES_URL}\\/aim.png\\" alt=\\"AIM - {INPUT}\\"><\\/a>","mlist":"0"},{"col_name":"cust_icq","title":"ICQ","type":"text","order":"2","bbc":"0","placement":"1","enclose":"<a class=\\"icq\\" href=\\"\\/\\/www.icq.com\\/people\\/{INPUT}\\" target=\\"_blank\\" title=\\"ICQ - {INPUT}\\"><img src=\\"{DEFAULT_IMAGES_URL}\\/icq.png\\" alt=\\"ICQ - {INPUT}\\"><\\/a>","mlist":"0"},{"col_name":"cust_skype","title":"Skype","type":"text","order":"3","bbc":"0","placement":"1","enclose":"<a href=\\"skype:{INPUT}?call\\"><img src=\\"{DEFAULT_IMAGES_URL}\\/skype.png\\" alt=\\"{INPUT}\\" title=\\"{INPUT}\\" \\/><\\/a> ","mlist":"0"},{"col_name":"cust_yahoo","title":"Yahoo! Messenger","type":"text","order":"4","bbc":"0","placement":"1","enclose":"<a class=\\"yim\\" href=\\"\\/\\/edit.yahoo.com\\/config\\/send_webmesg?.target={INPUT}\\" target=\\"_blank\\" title=\\"Yahoo! Messenger - {INPUT}\\"><img src=\\"{IMAGES_URL}\\/yahoo.png\\" alt=\\"Yahoo! Messenger - {INPUT}\\"><\\/a>","mlist":"0"},{"col_name":"cust_loca","title":"Location","type":"text","order":"5","bbc":"0","placement":"0","enclose":"","mlist":"0"},{"col_name":"cust_gender","title":"Gender","type":"radio","order":"6","bbc":"0","placement":"1","enclose":"<span class=\\" generic_icons gender_{INPUT}\\" title=\\"{INPUT}\\"><\\/span>","mlist":"0"}]'),
-  ('minimize_files', '1');
+  ('displayFields', '[{"col_name":"cust_skype","title":"Skype","type":"text","order":"1","bbc":"0","placement":"1","enclose":"<a href=\\"skype:{INPUT}?call\\"><img src=\\"{DEFAULT_IMAGES_URL}\\/skype.png\\" alt=\\"{INPUT}\\" title=\\"{INPUT}\\" \\/><\\/a> ","mlist":"0"},{"col_name":"cust_loca","title":"Location","type":"text","order":"2","bbc":"0","placement":"0","enclose":"","mlist":"0"}]'),
+  ('minimize_files', '1'),
+  ('enable_mentions', '1'),
+  ('retention_policy_standard', 90),
+  ('retention_policy_sensitive', 15);
 
 # --------------------------------------------------------
 
@@ -1906,34 +1973,6 @@ VALUES (':)', 'smiley.gif', '{$default_smiley_smiley}', 0, 0),
   ('C:-)', 'police.gif', '{$default_police_smiley}', 20, 1),
   ('O:-)', 'angel.gif', '{$default_angel_smiley}', 21, 1);
 # --------------------------------------------------------
-
-#
-# Dumping data for table `spiders`
-#
-
-INSERT INTO {$db_prefix}spiders
-  (spider_name, user_agent, ip_info)
-VALUES ('Google', 'googlebot', ''),
-  ('Yahoo!', 'slurp', ''),
-  ('MSN', 'msnbot', ''),
-  ('Google (Mobile)', 'Googlebot-Mobile', ''),
-  ('Google (Image)', 'Googlebot-Image', ''),
-  ('Google (AdSense)', 'Mediapartners-Google', ''),
-  ('Google (Adwords)', 'AdsBot-Google', ''),
-  ('Yahoo! (Mobile)', 'YahooSeeker/M1A1-R2D2', ''),
-  ('Yahoo! (Image)', 'Yahoo-MMCrawler', ''),
-  ('MSN (Mobile)', 'MSNBOT_Mobile', ''),
-  ('MSN (Media)', 'msnbot-media', ''),
-  ('Cuil', 'twiceler', ''),
-  ('Ask', 'Teoma', ''),
-  ('Baidu', 'Baiduspider', ''),
-  ('Gigablast', 'Gigabot', ''),
-  ('InternetArchive', 'ia_archiver-web.archive.org', ''),
-  ('Alexa', 'ia_archiver', ''),
-  ('Omgili', 'omgilibot', ''),
-  ('EntireWeb', 'Speedy Spider', ''),
-  ('Yandex', 'yandex', '');
-#---------------------------------------------------------
 
 #
 # Dumping data for table `themes`

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains a standard way of displaying side/drop down menus for SMF.
+ * This file contains a standard way of displaying side/drop down menus for StoryBB.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -9,9 +9,6 @@
  *
  * @version 3.0 Alpha 1
  */
-
-if (!defined('SMF'))
-	die('No direct access...');
 
 /**
  * Create a menu.
@@ -259,9 +256,8 @@ function createMenu($menuData, $menuOptions = array())
 	}
 
 	// Almost there - load the template and add to the template layers.
-	loadTemplate(isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'GenericMenu');
 	$menu_context['layer_name'] = (isset($menuOptions['layer_name']) ? $menuOptions['layer_name'] : 'generic_menu') . '_dropdown';
-	$context['template_layers'][] = $menu_context['layer_name'];
+	StoryBB\Template::add_layer($menu_context['layer_name']);
 
 	// Check we had something - for sanity sake.
 	if (empty($include_data))
@@ -310,11 +306,7 @@ function destroyMenu($menu_id = 'last')
 	if (!isset($context[$menu_name]))
 		return false;
 
-	$layer_index = array_search($context[$menu_name]['layer_name'], $context['template_layers']);
-	if ($layer_index !== false)
-		unset($context['template_layers'][$layer_index]);
+	StoryBB\Template::remove_layer($context[$menu_name]['layer_name']);
 
 	unset($context[$menu_name]);
 }
-
-?>

@@ -50,7 +50,7 @@ QuickModifyTopic.prototype.modify_topic = function (topic_id, first_msg_id)
 
 	// Get the topics current subject
 	ajax_indicator(true);
-	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + "action=quotefast;quote=" + first_msg_id + ";modify;xml", '', this.onDocReceived_modify_topic);
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + "action=quotefast;quote=" + first_msg_id + ";modify;xml", '', this.onDocReceived_modify_topic);
 }
 
 // callback function from the modify_topic ajax call
@@ -99,7 +99,7 @@ QuickModifyTopic.prototype.set_hidden_topic_areas = function (set_style)
 QuickModifyTopic.prototype.modify_topic_show_edit = function (subject)
 {
 	// Just template the subject.
-	setInnerHTML(this.oCurSubjectDiv, '<input type="text" name="subject" value="' + subject + '" size="60" style="width: 95%;" maxlength="80" class="input_text"><input type="hidden" name="topic" value="' + this.iCurTopicId + '"><input type="hidden" name="msg" value="' + this.sCurMessageId.substr(4) + '">');
+	setInnerHTML(this.oCurSubjectDiv, '<input type="text" name="subject" value="' + subject + '" size="60" style="width: 95%;" maxlength="80"><input type="hidden" name="topic" value="' + this.iCurTopicId + '"><input type="hidden" name="msg" value="' + this.sCurMessageId.substr(4) + '">');
 
 	// attach mouse over and out events to this new div
 	this.oCurSubjectDiv.instanceRef = this;
@@ -124,7 +124,7 @@ QuickModifyTopic.prototype.modify_topic_save = function (cur_session_id, cur_ses
 
 	// send in the call to save the updated topic subject
 	ajax_indicator(true);
-	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + "action=jsmodify;topic=" + parseInt(document.forms.quickModForm.elements['topic'].value) + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), this.modify_topic_done);
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + "action=jsmodify;topic=" + parseInt(document.forms.quickModForm.elements['topic'].value) + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), this.modify_topic_done);
 
 	return false;
 }
@@ -155,8 +155,8 @@ QuickModifyTopic.prototype.modify_topic_done = function (XMLDoc)
 	this.bInEditMode = false;
 
 	// redo tips if they are on since we just pulled the rug out on this one
-	if ($.isFunction($.fn.SMFtooltip));
-		$('.preview').SMFtooltip().smf_tooltip_off;
+	if ($.isFunction($.fn.SBBtooltip));
+		$('.preview').SBBtooltip().sbb_tooltip_off;
 
 	return false;
 }
@@ -165,7 +165,7 @@ QuickModifyTopic.prototype.modify_topic_done = function (XMLDoc)
 QuickModifyTopic.prototype.modify_topic_hide_edit = function (subject)
 {
 	// Re-template the subject!
-	setInnerHTML(this.oCurSubjectDiv, '<a href="' + smf_scripturl + '?topic=' + this.iCurTopicId + '.0">' + subject + '<' +'/a>');
+	setInnerHTML(this.oCurSubjectDiv, '<a href="' + sbb_scripturl + '?topic=' + this.iCurTopicId + '.0">' + subject + '<' + '/a>');
 }
 
 // keypress event ... like enter or escape
@@ -183,7 +183,7 @@ QuickModifyTopic.prototype.modify_topic_keypress = function (oEvent)
 		}
 		else if (oEvent.keyCode == 13)
 		{
-			this.modify_topic_save(smf_session_id, smf_session_var);
+			this.modify_topic_save(sbb_session_id, sbb_session_var);
 			if (typeof(oEvent.preventDefault) == "undefined")
 				oEvent.returnValue = false;
 			else
@@ -196,7 +196,7 @@ QuickModifyTopic.prototype.modify_topic_keypress = function (oEvent)
 QuickModifyTopic.prototype.modify_topic_click = function (oEvent)
 {
 	if (this.bInEditMode && !this.bMouseOnDiv)
-		this.modify_topic_save(smf_session_id, smf_session_var);
+		this.modify_topic_save(sbb_session_id, sbb_session_var);
 }
 
 // Moved out of the editing div
@@ -228,7 +228,7 @@ QuickReply.prototype.quote = function (iMessageId, xDeprecated)
 
 	if (this.bCollapsed)
 	{
-		window.location.href = smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=post;quote=' + iMessageId + ';topic=' + this.opt.iTopicId + '.' + this.opt.iStart;
+		window.location.href = sbb_prepareScriptUrl(this.opt.sScriptUrl) + 'action=post;quote=' + iMessageId + ';topic=' + this.opt.iTopicId + '.' + this.opt.iStart;
 		return false;
 	}
 	else
@@ -238,7 +238,7 @@ QuickReply.prototype.quote = function (iMessageId, xDeprecated)
 			insertQuoteFast(iMessageId);
 
 		else
-			getXMLDocument(smf_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';xml', this.onQuoteReceived);
+			getXMLDocument(sbb_prepareScriptUrl(this.opt.sScriptUrl) + 'action=quotefast;quote=' + iMessageId + ';xml', this.onQuoteReceived);
 
 		// Move the view to the quick reply box.
 		if (navigator.appName == 'Microsoft Internet Explorer')
@@ -318,7 +318,7 @@ QuickModify.prototype.modifyMsg = function (iMessageId, blnShowSubject)
 
 	// Send out the XMLhttp request to get more info
 	ajax_indicator(true);
-	sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=quotefast;quote=' + iMessageId + ';modify;xml;' + smf_session_var + '=' + smf_session_id, '', this.onMessageReceived);
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + iMessageId + ';modify;xml;' + sbb_session_var + '=' + sbb_session_id, '', this.onMessageReceived);
 }
 
 // The callback function used for the XMLhttp request retrieving the message.
@@ -436,7 +436,7 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 	// Send in the XMLhttp request and let's hope for the best.
 	ajax_indicator(true);
 
-	sendXMLDocument.call(this, smf_prepareScriptUrl(this.opt.sScriptUrl) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + smf_session_var + "=" + smf_session_id + ";xml", formData, this.onModifyDone);
+	sendXMLDocument.call(this, sbb_prepareScriptUrl(this.opt.sScriptUrl) + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + sbb_session_var + "=" + sbb_session_id + ";xml", formData, this.onModifyDone);
 
 	return false;
 }
@@ -523,7 +523,7 @@ InTopicModeration.prototype.init = function()
 		// Create the checkbox.
 		var oCheckbox = document.createElement('input');
 		oCheckbox.type = 'checkbox';
-		oCheckbox.className = this.opt.sButtonStrip + '_check input_check';
+		oCheckbox.className = this.opt.sButtonStrip + '_check';
 		oCheckbox.name = 'msgs[]';
 		oCheckbox.value = this.opt.aMessageIds[i];
 		oCheckbox.instanceRef = this;
@@ -562,7 +562,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 
 		// Add the 'remove selected items' button.
 		if (this.opt.bCanRemove)
-			smf_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
+			sbb_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
 				sId: this.opt.sSelf + '_remove_button',
 				sText: this.opt.sRemoveButtonLabel,
 				sImage: this.opt.sRemoveButtonImage,
@@ -572,7 +572,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 
 		// Add the 'restore selected items' button.
 		if (this.opt.bCanRestore)
-			smf_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
+			sbb_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
 				sId: this.opt.sSelf + '_restore_button',
 				sText: this.opt.sRestoreButtonLabel,
 				sImage: this.opt.sRestoreButtonImage,
@@ -582,7 +582,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 
 		// Add the 'split selected items' button.
 		if (this.opt.bCanSplit)
-			smf_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
+			sbb_addButton(this.opt.sButtonStrip, this.opt.bUseImageButton, {
 				sId: this.opt.sSelf + '_split_button',
 				sText: this.opt.sSplitButtonLabel,
 				sImage: this.opt.sSplitButtonImage,
@@ -616,8 +616,8 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 		document.getElementById(this.opt.sSelf + '_split_button_text').style.display = this.iNumSelected < 1 ? "none" : "";
 	}
 
-	if(typeof smf_fixButtonClass == 'function')
-		smf_fixButtonClass(this.opt.sButtonStrip);
+	if(typeof sbb_fixButtonClass == 'function')
+		sbb_fixButtonClass(this.opt.sButtonStrip);
 }
 
 InTopicModeration.prototype.handleSubmit = function (sSubmitType)

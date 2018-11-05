@@ -1,7 +1,7 @@
 	{{! This shows the topics that are generally unread. }}
 	<div id="recent" class="main_content">
 		<form action="{{scripturl}}?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 			<input type="hidden" name="qaction" value="markread">
 			<input type="hidden" name="redirect_url" value="action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}}">
 
@@ -27,7 +27,7 @@
 							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=last_post{{#if (and (eq context.sort_by 'last_post') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.last_post}}}{{#if (eq context.sort_by 'last_post')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
 						</div>
 						<div class="moderation">
-							<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');" class="input_check">
+							<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
 						</div>
 					</div>
 					<div id="topic_container">
@@ -35,16 +35,17 @@
 						<div class="{{{css_class}}}">
 							<div class="board_icon">
 								<img src="{{{first_post.icon_url}}}" alt="">
-								{{#if is_posted_in}}<img class="posted" src="{{../settings.images_url}}/icons/profile_sm.png" alt="">{{/if}}
 							</div>
 							<div class="info">
-								{{{first_post.member.avatar.image}}}
-
 								{{! // Now we handle the icons }}
 								<div class="icons floatright">
 									{{#if is_locked}} <span class="generic_icons lock"></span>{{/if}}
 									{{#if is_sticky}} <span class="generic_icons sticky"></span>{{/if}}
 									{{#if is_poll}} <span class="generic_icons poll"></span>{{/if}}
+								</div>
+								<div class="first_poster">
+									{{{first_post.member.avatar.image}}}
+									{{#if (eq_coerce is_posted_in 1)}}<img src="{{{../context.user.avatar.href}}}" class="avatar participation" alt="{{{../txt.participation_caption}}}" title="{{{../txt.participation_caption}}}">{{/if}}
 								</div>
 								<div class="msg_container">
 									<div class="recent_title">
@@ -70,7 +71,7 @@
 							</div>
 
 							<div class="moderation">
-								<input type="checkbox" name="topics[]" value="{{id}}" class="input_check">
+								<input type="checkbox" name="topics[]" value="{{id}}">
 							</div>
 
 						</div>

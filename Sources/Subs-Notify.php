@@ -1,15 +1,14 @@
 <?php
 
 /**
+ * Provides some supporting functionality regarding notifications, notably getting user preferences.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
  */
-
-if (!defined('SMF'))
-	die('No direct access...');
 
 /**
  * Fetches the list of preferences (or a single/subset of preferences) for
@@ -111,5 +110,3 @@ function deleteNotifyPrefs($memID, array $prefs)
 		)
 	);
 }
-
-?>

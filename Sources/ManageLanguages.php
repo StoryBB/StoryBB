@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This is the main function for the languages area.
  * It dispatches the requests.
@@ -107,7 +104,7 @@ function ModifyLanguages()
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return '<input type="radio" name="def_language" value="' . $rowData['id'] . '"' . ($rowData['default'] ? ' checked' : '') . ' onclick="highlightSelected(\'list_language_list_' . $rowData['id'] . '\');" class="input_radio">';
+						return '<input type="radio" name="def_language" value="' . $rowData['id'] . '"' . ($rowData['default'] ? ' checked' : '') . ' onclick="highlightSelected(\'list_language_list_' . $rowData['id'] . '\');">';
 					},
 					'style' => 'width: 8%;',
 					'class' => 'centercol',
@@ -734,7 +731,7 @@ function cleanLangString($string, $to_display = true)
 		// Are we in a string (0 = no, 1 = single quote, 2 = parsed)
 		$in_string = 0;
 		$is_escape = false;
-		for ($i = 0; $i < strlen($string); $i++)
+		for ($i = 0, $n = strlen($string); $i < $n; $i++)
 		{
 			// Handle escapes first.
 			if ($string{$i} == '\\')
@@ -830,7 +827,7 @@ function cleanLangString($string, $to_display = true)
 		$in_string = 0;
 		// This is for deciding whether to HTML a quote.
 		$in_html = false;
-		for ($i = 0; $i < strlen($string); $i++)
+		for ($i = 0, $n = strlen($string); $i < $n; $i++)
 		{
 			// We don't do parsed strings apart from for breaks.
 			if ($in_string == 2)
@@ -924,5 +921,3 @@ function cleanLangString($string, $to_display = true)
 
 	return $new_string;
 }
-
-?>

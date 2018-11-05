@@ -15,11 +15,11 @@
 				{{#if questions}}
 					{{#each questions}}
 						<dt>
-							<input type="text" name="question[{{../@key}}][{{@key}}]" value="{{{question}}}" size="50" class="input_text verification_question">
+							<input type="text" name="question[{{../@key}}][{{@key}}]" value="{{{question}}}" size="50" class="verification_question">
 						</dt>
 						<dd>
 							{{#each answers}}
-								<input type="text" name="answer[{{../../@key}}][{{../@key}}][]" value="{{{.}}}" size="50" class="input_text verification_answer">
+								<input type="text" name="answer[{{../../@key}}][{{../@key}}][]" value="{{{.}}}" size="50" class="verification_answer">
 							{{/each}}
 							<div class="qa_add_answer"><a href="javascript:void(0);" onclick="return addAnswer(this);">[ {{{../../txt.setup_verification_add_answer}}} ]</a></div>
 						</dd>

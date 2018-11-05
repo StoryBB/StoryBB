@@ -19,7 +19,6 @@ $txt['admin_censored_where'] = 'Put the word to be censored on the left, and wha
 $txt['admin_censored_desc'] = 'Due to the public nature of forums there may be some words that you wish to prohibit being posted by users of your forum. You can enter any words below that you wish to be censored whenever used by a member.<br>Clear a box to remove that word from the censor.';
 $txt['admin_reserved_names'] = 'Reserved Names';
 $txt['admin_template_edit'] = 'Edit your forum template';
-$txt['admin_modifications'] = 'Modification Settings';
 $txt['admin_server_settings'] = 'Server Settings';
 $txt['admin_reserved_set'] = 'Set reserved names';
 $txt['admin_reserved_line'] = 'One reserved word per line.';
@@ -35,19 +34,18 @@ $txt['admin_manage_members'] = 'Members';
 $txt['admin_main'] = 'Main';
 $txt['admin_config'] = 'Configuration';
 $txt['admin_version_check'] = 'Detailed version check';
-$txt['admin_smffile'] = 'SMF File';
-$txt['admin_smfpackage'] = 'SMF Package';
+$txt['admin_storybbfile'] = 'StoryBB File';
+$txt['admin_storybbpackage'] = 'StoryBB Package';
 $txt['admin_logoff'] = 'End Admin Session';
 $txt['admin_maintenance'] = 'Maintenance';
 $txt['admin_image_text'] = 'Show buttons as images instead of text';
 $txt['admin_agreement'] = 'Show and require agreement letter when registering';
-$txt['admin_agreement_default'] = 'Default';
 $txt['admin_agreement_select_language'] = 'Language to edit';
 $txt['admin_agreement_select_language_change'] = 'Change';
-$txt['admin_agreement_not_saved'] = 'The agreement changes have not been saved. Perhaps the file permissions on the file were not set correctly.';
+
 $txt['admin_delete_members'] = 'Delete Selected Members';
 $txt['admin_repair'] = 'Repair All boards and topics';
-$txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support&quot; page. If the information there doesn\'t help you, feel free to <a href="https://www.simplemachines.org/community/index.php" target="_blank" class="new_win">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="generic_icons help" title="%3$s"></span> symbols for more information on the related functions.';
+$txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;. From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<br><br>If you have any trouble, please look at the &quot;Support&quot; page. If the information there doesn\'t help you, feel free to <a href="https://storybb.org/" target="_blank" rel="noopener">look to us for help</a> with the problem.<br>You may also find answers to your questions or problems by clicking the <span class="generic_icons help" title="%3$s"></span> symbols for more information on the related functions.';
 $txt['admin_news_desc'] = 'Please place one news item per box. BBC tags, such as <span title="Are you bold?">[b]</span>, <span title="I tall icks!!">[i]</span> and <span title="Brackets are great, no?">[u]</span> are allowed in your news, as well as smileys. Clear a news item\'s text box to remove it.';
 $txt['administrators'] = 'Forum Administrators';
 $txt['admin_reserved_desc'] = 'Reserved names will keep members from registering certain usernames or using these words in their displayed names. Choose the options you wish to use from the bottom before submitting.';
@@ -65,8 +63,6 @@ $txt['dont_show_attach_under_post'] = 'Do not show attachments under the post if
 $txt['dont_show_attach_under_post_sub'] = 'Enable this if you do not want attachments to appear twice. Attachments embedded in the post still count towards attachment limits and can still be treated like normal attachments.';
 
 $txt['admin_backup_fail'] = 'Failed to make backup of Settings.php - make sure Settings_bak.php exists and is writable.';
-$txt['registration_agreement'] = 'Registration Agreement';
-$txt['registration_agreement_desc'] = 'This agreement is shown when a user registers an account on this forum and has to be accepted before users can continue registration.';
 $txt['errors_list'] = 'Listing of forum errors';
 $txt['errors_found'] = 'The following errors are fouling up your forum';
 $txt['errors_fix'] = 'Would you like to attempt to fix these errors?';
@@ -85,6 +81,7 @@ $txt['attachment_pruning_message'] = 'Message to add to post';
 $txt['attachment_pruning_warning'] = 'Are you sure you want to delete these attachments?\\nThis cannot be undone!';
 
 $txt['attachment_total'] = 'Total attachments';
+$txt['attachment_total_exports'] = 'Total data exports';
 $txt['attachmentdir_size'] = 'Total size of all attachment directories';
 $txt['attachmentdir_size_current'] = 'Total size of current attachment directory';
 $txt['attachmentdir_files_current'] = 'Total files in current attachment directory';
@@ -103,12 +100,11 @@ $txt['attachment_delete_admin'] = '[attachment deleted by admin]';
 $txt['live'] = 'News from StoryBB';
 $txt['remove_all'] = 'Clear Log';
 $txt['approve_new_members'] = 'Admin must approve all new members';
-$txt['agreement_not_writable'] = 'Warning - agreement.txt is not writable, any changes you make will NOT be saved.';
 
-$txt['version_check_desc'] = 'This shows you the versions of your installation\'s files versus those of the latest version. If any of these files are out of date, you should download and upgrade to the latest version at <a href="https://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>.';
+$txt['version_check_desc'] = 'This shows you the versions of your installation\'s files versus those of the latest version. If any of these files are out of date, you should download and upgrade to the latest version at <a href="https://storybb.org/" target="_blank" rel="noopener">storybb.org</a>.';
 $txt['version_check_more'] = '(more detailed)';
 
-$txt['lfyi'] = 'You are unable to connect to simplemachines.org\'s latest news file.';
+$txt['lfyi'] = 'You are unable to connect to storybb.org\'s latest news file.';
 
 $txt['manage_search'] = 'Search';
 
@@ -233,15 +229,12 @@ $txt['admin_log'] = 'Administration Log';
 $txt['admin_log_desc'] = 'Lists administrative tasks that have been performed by admins of your forum.';
 $txt['moderation_log'] = 'Moderation Log';
 $txt['moderation_log_desc'] = 'Lists moderation activities that have been performed by moderators on your forum.';
-$txt['spider_log_desc'] = 'Review the entries related to search engine spider activity on your forum.';
 $txt['log_settings_desc'] = 'Use these options to configure how logging works on your forum.';
 $txt['modlog_enabled'] = 'Enable the moderation log';
 $txt['adminlog_enabled'] = 'Enable the administration log';
 $txt['userlog_enabled'] = 'Enable the profile edits log';
 
 $txt['mailqueue_title'] = 'Mail';
-
-$txt['db_error_send'] = 'Send emails on database connection error';
 
 $txt['default_language'] = 'Default forum language';
 
@@ -260,10 +253,6 @@ $txt['dvc_sources'] = 'Sources';
 $txt['dvc_default'] = 'Default Templates';
 $txt['dvc_templates'] = 'Current Templates';
 $txt['dvc_languages'] = 'Language Files';
-$txt['dvc_tasks'] = 'Background Tasks';
-
-$txt['smileys_default_set_for_theme'] = 'Select default smiley set for this theme';
-$txt['smileys_no_default'] = '(use global default smiley set)';
 
 $txt['censor_test'] = 'Test censored words';
 $txt['censor_test_save'] = 'Test';
@@ -274,7 +263,6 @@ $txt['admin_confirm_password'] = '(confirm)';
 $txt['admin_incorrect_password'] = 'Incorrect Password';
 
 $txt['date_format'] = '(YYYY-MM-DD)';
-$txt['undefined_gender'] = 'Undefined';
 $txt['age'] = 'User age';
 $txt['activation_status'] = 'Activation Status';
 $txt['activated'] = 'Activated';
@@ -318,14 +306,17 @@ $txt['attachment_manager_repair'] = 'Maintain';
 $txt['attachment_manager_avatars'] = 'Avatars';
 $txt['attachment_manager_attachments'] = 'Attachments';
 $txt['attachment_manager_thumbs'] = 'Thumbnails';
+$txt['attachment_manager_exports'] = 'Data exports';
 $txt['attachment_manager_last_active'] = 'Last Active';
 $txt['attachment_manager_member'] = 'Member';
 $txt['attachment_manager_avatars_older'] = 'Remove avatars from members not active for more than';
 $txt['attachment_manager_total_avatars'] = 'Total avatars';
+$txt['attachment_manager_requested_by'] = 'Requested by: %1$s';
 
 $txt['attachment_manager_avatars_no_entries'] = 'There are currently no avatars.';
 $txt['attachment_manager_attachments_no_entries'] = 'There are currently no attachments.';
 $txt['attachment_manager_thumbs_no_entries'] = 'There are currently no thumbnails.';
+$txt['attachment_manager_exports_no_entries'] = 'There are currently no exports.';
 
 $txt['attachment_manager_settings'] = 'Attachment Settings';
 $txt['attachment_manager_avatar_settings'] = 'Avatar Settings';
@@ -467,22 +458,6 @@ $txt['avatar_reencode'] = 'Re-encode potentially dangerous avatars';
 $txt['avatar_reencode_note'] = '(requires GD module or ImageMagick with IMagick or MagickWand extension)';
 $txt['avatar_paranoid_warning'] = 'The extensive security checks can result in a large number of rejected avatars.';
 $txt['avatar_paranoid'] = 'Perform extensive security checks on uploaded avatars';
-$txt['gravatar_settings'] = 'Gravatars (Globally Recognized Avatars)';
-$txt['gravatarEnabled'] = 'Enable Gravatars for forum users?';
-$txt['gravatarOverride'] = 'Force Gravatars to be used instead of normal avatars?';
-$txt['gravatarAllowExtraEmail'] = 'Allow storing an extra email address for Gravatars?';
-$txt['gravatarMaxRating'] = 'Maximum allowed rating?';
-$txt['gravatar_maxG'] = 'G rated (Generally acceptable)';
-$txt['gravatar_maxPG'] = 'PG rated (Parental Guidance)';
-$txt['gravatar_maxR'] = 'R rated (Restricted)';
-$txt['gravatar_maxX'] = 'X rated (Explicit)';
-$txt['gravatarDefault'] = 'Default image to show when an email address has no matching Gravatar ';
-$txt['gravatar_mm'] = 'A simple, cartoon-style silhouetted outline of a person';
-$txt['gravatar_identicon'] = 'A geometric pattern based on an email hash';
-$txt['gravatar_monsterid'] = 'A generated \'monster\' with different colors, faces, etc';
-$txt['gravatar_wavatar'] = 'Generated faces with differing features and backgrounds';
-$txt['gravatar_retro'] = 'Awesome generated, 8-bit arcade-style pixelated faces';
-$txt['gravatar_blank'] = 'A transparent PNG image';
 
 $txt['repair_attachments'] = 'Maintain Attachments';
 $txt['repair_attachments_complete'] = 'Maintenance Complete';
@@ -581,7 +556,6 @@ $txt['bbcTagsToUse'] = 'Enabled BBC tags';
 $txt['bbcTagsToUse_select'] = 'Select the tags allowed to be used';
 $txt['bbcTagsToUse_select_all'] = 'Select all tags';
 
-$txt['enableParticipation'] = 'Enable participation icons';
 $txt['oldTopicDays'] = 'Time before topic is warned as old on reply';
 $txt['defaultMaxTopics'] = 'Number of topics per page in the message index';
 $txt['defaultMaxMessages'] = 'Number of posts per page in a topic page';
@@ -594,7 +568,6 @@ $txt['not_done_reason'] = 'To avoid overloading your server, the process has bee
 $txt['not_done_continue'] = 'Continue';
 
 $txt['general_settings'] = 'General';
-$txt['database_settings'] = 'Database';
 $txt['cookies_sessions_settings'] = 'Cookies and Sessions';
 $txt['security_settings'] = 'Security';
 $txt['caching_settings'] = 'Caching';
@@ -660,7 +633,6 @@ $txt['boardsEdit'] = 'Modify Boards';
 $txt['mboards_new_cat'] = 'Create new category';
 $txt['search_method'] = 'Search Method';
 
-$txt['smiley_sets'] = 'Smiley Sets';
 $txt['smileys_add'] = 'Add Smiley';
 $txt['smileys_edit'] = 'Edit Smileys';
 $txt['smileys_set_order'] = 'Set Smiley order';
@@ -677,11 +649,7 @@ $txt['themeadmin_admin_title'] = 'Manage and Install';
 $txt['themeadmin_list_title'] = 'Theme Settings';
 $txt['themeadmin_reset_title'] = 'Member Options';
 $txt['admin_browse_register_new'] = 'Register new member';
-
-$txt['search_engines'] = 'Search Engines';
-$txt['spiders'] = 'Spiders';
-$txt['spider_logs'] = 'Spider Log';
-$txt['spider_stats'] = 'Stats';
+$txt['admin_policies'] = 'Site Policies';
 
 $txt['paid_subscriptions'] = 'Paid Subscriptions';
 $txt['paid_subs_view'] = 'View Subscriptions';
@@ -731,17 +699,33 @@ $txt['char_templates_none'] = 'There are no templates.';
 
 $txt['char_sheet_admin'] = 'Pending Character Sheets';
 $txt['no_pending_sheets'] = 'There are no pending character sheets to review.';
-$txt['last_updated'] = 'Last updated';
 $txt['previously_approved'] = 'Previous approved';
 $txt['remove_from_queue'] = 'Remove from Queue';
 
 $txt['immersion'] = 'Immersion';
-$txt['character_selector_post'] = 'Show character dropdown when posting';
 $txt['characters_ic_may_post'] = 'Characters may post in...';
 $txt['characters_ooc_may_post'] = 'Accounts (OOC characters) may post in...';
 $txt['ic_boards_only'] = 'In-character (IC) boards only';
 $txt['ooc_boards_only'] = 'Out-of-character (OOC) boards only';
 $txt['ic_and_ooc_boards'] = 'Both IC and OOC boards';
-$txt['characters_admin_override'] = 'Admininstrators can override the IC/OOC board rules?';
 
-?>
+$txt['enable_immersive_mode'] = 'Enable immersive mode';
+$txt['enable_immersive_mode_user_on'] = 'Immersive mode is user choice (default on)';
+$txt['enable_immersive_mode_user_off'] = 'Immersive mode is user choice (default off)';
+$txt['enable_immersive_mode_off'] = 'Immersive mode is always off';
+$txt['enable_immersive_mode_on'] = 'Immersive mode is always on';
+
+$txt['contact_form_no_messages'] = 'No messages have been received from the contact form.';
+$txt['contact_form_sender'] = 'Sent by';
+$txt['contact_form_email'] = 'Sender email';
+$txt['contact_form_subject'] = 'Subject';
+$txt['contact_form_sent_on'] = 'Sent on';
+$txt['contact_form_status'] = 'Status';
+$txt['contact_form_status_unanswered'] = 'Unanswered';
+$txt['contact_form_status_answered'] = 'Answered';
+$txt['contact_form_message_not_found'] = 'The requested contact form message was not found.';
+$txt['contact_form_reply'] = 'Reply to this message';
+$txt['contact_form_replies'] = 'Replies to this message';
+$txt['contact_form_no_reply'] = 'No reply was written.';
+$txt['contact_form_reply_sent'] = 'The reply was sent successfully.';
+$txt['contact_form_previous_responses'] = 'Previous responses';

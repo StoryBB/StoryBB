@@ -12,9 +12,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Log an error, if the error logging is enabled.
  * filename and line should be __FILE__ and __LINE__, respectively.
@@ -78,7 +75,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 
 	// Don't log the session hash in the url twice, it's a waste.
 	if (!empty($smcFunc['htmlspecialchars']))
-		$query_string = $smcFunc['htmlspecialchars']((SMF == 'SSI' || SMF == 'BACKGROUND' ? '' : '?') . preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string));
+		$query_string = $smcFunc['htmlspecialchars']((STORYBB == 'SSI' || STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string));
 
 	// Just so we know what board error messages are from.
 	if (isset($_POST['board']) && !isset($_GET['board']))
@@ -98,6 +95,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		'paidsubs',
 		'backup',
 		'login',
+		'mail',
 	);
 
 	// This prevents us from infinite looping if the hook or call produces an error.
@@ -215,7 +213,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $status 
  * @param string $file The file where the error occurred
  * @param int $line The line where the error occurred
  */
-function smf_error_handler($error_level, $error_string, $file, $line)
+function sbb_error_handler($error_level, $error_string, $file, $line)
 {
 	global $settings, $modSettings, $db_show_debug;
 
@@ -229,9 +227,6 @@ function smf_error_handler($error_level, $error_string, $file, $line)
 		$count = count($array);
 		for ($i = 0; $i < $count; $i++)
 		{
-			if ($array[$i]['function'] != 'loadSubTemplate')
-				continue;
-
 			// This is a bug in PHP, with eval, it seems!
 			if (empty($array[$i]['args']))
 				$i++;
@@ -259,7 +254,15 @@ function smf_error_handler($error_level, $error_string, $file, $line)
 <strong>', $error_level % 255 == E_ERROR ? 'Error' : ($error_level % 255 == E_WARNING ? 'Warning' : 'Notice'), '</strong>: ', $error_string, ' in <strong>', $file, '</strong> on line <strong>', $line, '</strong><br>';
 	}
 
-	$error_type = stripos($error_string, 'undefined') !== false ? 'undefined_vars' : 'general';
+	$error_type = 'general';
+	if (stripos($error_string, 'mail(): Failed') !== false)
+	{
+		$error_type = 'mail';
+	}
+	elseif (stripos($error_string, 'undefined') !== false)
+	{
+		$error_type = 'undefined_vars';
+	}
 
 	$message = log_error($error_level . ': ' . $error_string, $error_type, $file, $line);
 
@@ -303,7 +306,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 		return false;
 
 	// Maybe they came from dlattach or similar?
-	if (SMF != 'SSI' && SMF != 'BACKGROUND' && empty($context['theme_loaded']))
+	if (STORYBB != 'SSI' && STORYBB != 'BACKGROUND' && empty($context['theme_loaded']))
 		loadTheme();
 
 	// Don't bother indexing errors mate...
@@ -321,19 +324,26 @@ function setup_fatal_error_context($error_message, $error_code = null)
 	$context['sub_template'] = 'error_fatal';
 
 	// If this is SSI, what do they want us to do?
-	if (SMF == 'SSI')
+	if (STORYBB == 'SSI')
 	{
 		if (!empty($ssi_on_error_method) && $ssi_on_error_method !== true && is_callable($ssi_on_error_method))
 			$ssi_on_error_method();
 		elseif (empty($ssi_on_error_method) || $ssi_on_error_method !== true)
-			loadSubTemplate('error_fatal');
+		{
+			$template = StoryBB\Template::load('error_fatal');
+			$phpStr = StoryBB\Template::compile($template);
+			echo StoryBB\Template::prepare($phpStr, [
+				'context' => $context,
+				'txt' => $txt,
+			]);
+		}
 
 		// No layers?
 		if (empty($ssi_on_error_method) || $ssi_on_error_method !== true)
 			exit;
 	}
 	// Alternatively from the cron call?
-	elseif (SMF == 'BACKGROUND')
+	elseif (STORYBB == 'BACKGROUND')
 	{
 		// We can't rely on even having language files available.
 		if (defined('FROM_CLI') && FROM_CLI)
@@ -347,7 +357,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 	obExit(null, true, false, true);
 
 	/* DO NOT IGNORE:
-		If you are creating a bridge to SMF or modifying this function, you MUST
+		If you are creating a bridge to StoryBB or modifying this function, you MUST
 		make ABSOLUTELY SURE that this function quits and DOES NOT RETURN TO NORMAL
 		PROGRAM FLOW.  Otherwise, security error messages will not be shown, and
 		your forum will be in a very easily hackable state.
@@ -392,28 +402,13 @@ function display_maintenance_message()
 function display_db_error()
 {
 	global $mbname, $modSettings, $maintenance;
-	global $db_connection, $webmaster_email, $db_last_error, $db_error_send, $smcFunc, $sourcedir;
+	global $db_connection, $webmaster_email, $smcFunc, $sourcedir;
 
 	require_once($sourcedir . '/Logging.php');
 	set_fatal_error_headers();
 
 	// For our purposes, we're gonna want this on if at all possible.
 	$modSettings['cache_enable'] = '1';
-
-	if (($temp = cache_get_data('db_last_error', 600)) !== null)
-		$db_last_error = max($db_last_error, $temp);
-
-	if ($db_last_error < time() - 3600 * 24 * 3 && empty($maintenance) && !empty($db_error_send))
-	{
-		// Avoid writing to the Settings.php file if at all possible; use shared memory instead.
-		cache_put_data('db_last_error', time(), 600);
-		if (($temp = cache_get_data('db_last_error', 600)) === null)
-			logLastDatabaseError();
-
-		// Language files aren't loaded yet :(.
-		$db_error = @$smcFunc['db_error']($db_connection);
-		@mail($webmaster_email, $mbname . ': SMF Database Error!', 'There has been a problem with the database!' . ($db_error == '' ? '' : "\n" . $smcFunc['db_title'] . ' reported:' . "\n" . $db_error) . "\n\n" . 'This is a notice email to let you know that SMF could not connect to the database, contact your host if this continues.');
-	}
 
 	// What to do?  Language files haven't and can't be loaded yet...
 	echo '<!DOCTYPE html>
@@ -424,7 +419,7 @@ function display_db_error()
 	</head>
 	<body>
 		<h3>Connection Problems</h3>
-		Sorry, SMF was unable to connect to the database.  This may be caused by the server being busy.  Please try again later.
+		Sorry, StoryBB was unable to connect to the database.  This may be caused by the server being busy.  Please try again later.
 	</body>
 </html>';
 
@@ -493,7 +488,7 @@ function log_error_online($error, $sprintf = array())
 		return;
 
 	// Maybe they came from SSI or similar where sessions are not recorded?
-	if (SMF == 'SSI' || SMF == 'BACKGROUND')
+	if (STORYBB == 'SSI' || STORYBB == 'BACKGROUND')
 		return;
 
 	$session_id = !empty($user_info['is_guest']) ? 'ip' . $user_info['ip'] : session_id();
@@ -510,7 +505,7 @@ function log_error_online($error, $sprintf = array())
 	if ($smcFunc['db_num_rows']($request) != 0)
 	{
 		list ($url) = $smcFunc['db_fetch_row']($request);
-		$url = smf_json_decode($url, true);
+		$url = sbb_json_decode($url, true);
 		$url['error'] = $error;
 
 		if (!empty($sprintf))
@@ -550,5 +545,3 @@ function send_http_status($code)
 	else
 		header($protocol . ' ' . $code . ' ' . $statuses[$code]);
 }
-
-?>

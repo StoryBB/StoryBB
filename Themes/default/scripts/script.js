@@ -1,6 +1,6 @@
-var smf_formSubmitted = false;
+var sbb_formSubmitted = false;
 var lastKeepAliveCheck = new Date().getTime();
-var smf_editorArray = new Array();
+var sbb_editorArray = new Array();
 
 // Some very basic browser detection - from Mozilla's sniffer page.
 var ua = navigator.userAgent.toLowerCase();
@@ -135,7 +135,7 @@ String.prototype.php_strtr = function (sFrom, sTo)
 // Simulate PHP's strtolower (in SOME cases PHP uses ISO-8859-1 case folding).
 String.prototype.php_strtolower = function ()
 {
-	return typeof(smf_iso_case_folding) == 'boolean' && smf_iso_case_folding == true ? this.php_strtr(
+	return typeof(sbb_iso_case_folding) == 'boolean' && sbb_iso_case_folding == true ? this.php_strtr(
 		'ABCDEFGHIJKLMNOPQRSTUVWXYZ\x8a\x8c\x8e\x9f\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde',
 		'abcdefghijklmnopqrstuvwxyz\x9a\x9c\x9e\xff\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe'
 	) : this.php_strtr('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz');
@@ -202,8 +202,8 @@ function reqWin(desktopURL, alternateWidth, alternateHeight, noScrollbars)
 function reqOverlayDiv(desktopURL, sHeader, sIcon)
 {
 	// Set up our div details
-	var sAjax_indicator = '<div class="centertext"><img src="' + smf_images_url + '/loading_sm.gif"></div>';
-	var sIcon = smf_images_url + '/' + (typeof(sIcon) == 'string' ? sIcon : 'helptopics.png');
+	var sAjax_indicator = '<div class="centertext"><img src="' + sbb_images_url + '/loading_sm.gif"></div>';
+	var sIcon = sbb_images_url + '/' + (typeof(sIcon) == 'string' ? sIcon : 'helptopics.png');
 	var sHeader = typeof(sHeader) == 'string' ? sHeader : help_popup_heading_text;
 
 	// Create the div that we are going to load
@@ -308,7 +308,7 @@ smc_PopupMenu.prototype.closeAll = function ()
 function smc_Popup(oOptions)
 {
 	this.opt = oOptions;
-	this.popup_id = this.opt.custom_id ? this.opt.custom_id : 'smf_popup';
+	this.popup_id = this.opt.custom_id ? this.opt.custom_id : 'sbb_popup';
 	this.show();
 }
 
@@ -466,17 +466,14 @@ function isEmptyText(theField)
 // Only allow form submission ONCE.
 function submitonce(theform)
 {
-	smf_formSubmitted = true;
+	sbb_formSubmitted = true;
 
 	// If there are any editors warn them submit is coming!
-	for (var i = 0; i < smf_editorArray.length; i++)
-		smf_editorArray[i].doSubmit();
+	for (var i = 0; i < sbb_editorArray.length; i++)
+		sbb_editorArray[i].doSubmit();
 }
 function submitThisOnce(oControl)
 {
-	//Don't prompt
-	window.onbeforeunload = undefined;
-	
 	// oControl might also be a form.
 	var oForm = 'form' in oControl ? oControl.form : oControl;
 
@@ -484,7 +481,7 @@ function submitThisOnce(oControl)
 	for (var i = 0, n = aTextareas.length; i < n; i++)
 		aTextareas[i].readOnly = true;
 
-	return !smf_formSubmitted;
+	return !sbb_formSubmitted;
 }
 
 // Deprecated, as innerHTML is supported everywhere.
@@ -550,6 +547,10 @@ function selectAllRadio(oInvertCheckbox, oForm, sMask, sValue, bIgnoreDisabled)
 		if (oForm[i].name != undefined && oForm[i].name.substr(0, sMask.length) == sMask && oForm[i].value == sValue && (!oForm[i].disabled || (typeof(bIgnoreDisabled) == 'boolean' && bIgnoreDisabled)))
 			oForm[i].checked = true;
 }
+function selectAllRadioClass(oForm, sMask, sValue, sClass)
+{
+	$(oForm).find('input[name^="' + sMask + '"].' + sClass + '[value="' + sValue + '"]').prop('checked', true).trigger('change');
+}
 
 // Invert all checkboxes at once by clicking a single checkbox.
 function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
@@ -566,28 +567,28 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 
 // Keep the session alive - always!
 var lastKeepAliveCheck = new Date().getTime();
-function smf_sessionKeepAlive()
+function sbb_sessionKeepAlive()
 {
 	var curTime = new Date().getTime();
 
 	// Prevent a Firefox bug from hammering the server.
-	if (smf_scripturl && curTime - lastKeepAliveCheck > 900000)
+	if (sbb_scripturl && curTime - lastKeepAliveCheck > 900000)
 	{
 		var tempImage = new Image();
-		tempImage.src = smf_prepareScriptUrl(smf_scripturl) + 'action=keepalive;time=' + curTime;
+		tempImage.src = sbb_prepareScriptUrl(sbb_scripturl) + 'action=keepalive;time=' + curTime;
 		lastKeepAliveCheck = curTime;
 	}
 
-	window.setTimeout('smf_sessionKeepAlive();', 1200000);
+	window.setTimeout('sbb_sessionKeepAlive();', 1200000);
 }
-window.setTimeout('smf_sessionKeepAlive();', 1200000);
+window.setTimeout('sbb_sessionKeepAlive();', 1200000);
 
 // Set a theme option through javascript.
-function smf_setThemeOption(theme_var, theme_value, theme_id, theme_cur_session_id, theme_cur_session_var, theme_additional_vars)
+function sbb_setThemeOption(theme_var, theme_value, theme_id, theme_cur_session_id, theme_cur_session_var, theme_additional_vars)
 {
 	// Compatibility.
 	if (theme_cur_session_id == null)
-		theme_cur_session_id = smf_session_id;
+		theme_cur_session_id = sbb_session_id;
 	if (typeof(theme_cur_session_var) == 'undefined')
 		theme_cur_session_var = 'sesc';
 
@@ -595,7 +596,7 @@ function smf_setThemeOption(theme_var, theme_value, theme_id, theme_cur_session_
 		theme_additional_vars = '';
 
 	var tempImage = new Image();
-	tempImage.src = smf_prepareScriptUrl(smf_scripturl) + 'action=jsoption;var=' + theme_var + ';val=' + theme_value + ';' + theme_cur_session_var + '=' + theme_cur_session_id + theme_additional_vars + (theme_id == null ? '' : '&th=' + theme_id) + ';time=' + (new Date().getTime());
+	tempImage.src = sbb_prepareScriptUrl(sbb_scripturl) + 'action=jsoption;var=' + theme_var + ';val=' + theme_value + ';' + theme_cur_session_var + '=' + theme_cur_session_id + theme_additional_vars + (theme_id == null ? '' : '&th=' + theme_id) + ';time=' + (new Date().getTime());
 }
 
 // Shows the page numbers by clicking the dots (in compact view).
@@ -858,7 +859,7 @@ smc_Toggle.prototype.changeState = function(bCollapse, bInit)
 		this.oCookie.set(this.opt.oCookieOptions.sCookieName, this.bCollapsed | 0);
 
 	if (!bInit && 'oThemeOptions' in this.opt && this.opt.oThemeOptions.bUseThemeSettings)
-		smf_setThemeOption(this.opt.oThemeOptions.sOptionName, this.bCollapsed | 0, 'sThemeId' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sThemeId : null, smf_session_id, smf_session_var, 'sAdditionalVars' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sAdditionalVars : null);
+		sbb_setThemeOption(this.opt.oThemeOptions.sOptionName, this.bCollapsed | 0, 'sThemeId' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sThemeId : null, sbb_session_id, sbb_session_var, 'sAdditionalVars' in this.opt.oThemeOptions ? this.opt.oThemeOptions.sAdditionalVars : null);
 }
 
 smc_Toggle.prototype.toggle = function()
@@ -929,7 +930,7 @@ function createEventListener(oTarget)
 // This function will retrieve the contents needed for the jump to boxes.
 function grabJumpToContent(elem)
 {
-	var oXMLDoc = getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=jumpto;xml');
+	var oXMLDoc = getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=xmlhttp;sa=jumpto;xml');
 	var aBoardsAndCategories = [];
 
 	ajax_indicator(true);
@@ -978,7 +979,7 @@ JumpTo.prototype.showSelect = function ()
 	var sChildLevelPrefix = '';
 	for (var i = this.opt.iCurBoardChildLevel; i > 0; i--)
 		sChildLevelPrefix += this.opt.sBoardChildLevelIndicator;
-	setInnerHTML(document.getElementById(this.opt.sContainerId), this.opt.sJumpToTemplate.replace(/%select_id%/, this.opt.sContainerId + '_select').replace(/%dropdown_list%/, '<select ' + (this.opt.bDisabled == true ? 'disabled ' : '') + (this.opt.sClassName != undefined ? 'class="' + this.opt.sClassName + '" ' : '') + 'name="' + (this.opt.sCustomName != undefined ? this.opt.sCustomName : this.opt.sContainerId + '_select') + '" id="' + this.opt.sContainerId + '_select"><option value="' + (this.opt.bNoRedirect != undefined && this.opt.bNoRedirect == true ? this.opt.iCurBoardId : '?board=' + this.opt.iCurBoardId + '.0') + '">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities() + '</option></select>&nbsp;' + (this.opt.sGoButtonLabel != undefined ? '<input type="button" class="button_submit" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \'' + smf_prepareScriptUrl(smf_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';">' : '')));
+	setInnerHTML(document.getElementById(this.opt.sContainerId), this.opt.sJumpToTemplate.replace(/%select_id%/, this.opt.sContainerId + '_select').replace(/%dropdown_list%/, '<select ' + (this.opt.bDisabled == true ? 'disabled ' : '') + (this.opt.sClassName != undefined ? 'class="' + this.opt.sClassName + '" ' : '') + 'name="' + (this.opt.sCustomName != undefined ? this.opt.sCustomName : this.opt.sContainerId + '_select') + '" id="' + this.opt.sContainerId + '_select"><option value="' + (this.opt.bNoRedirect != undefined && this.opt.bNoRedirect == true ? this.opt.iCurBoardId : '?board=' + this.opt.iCurBoardId + '.0') + '">' + sChildLevelPrefix + this.opt.sBoardPrefix + this.opt.sCurBoardName.removeEntities() + '</option></select>&nbsp;' + (this.opt.sGoButtonLabel != undefined ? '<input type="button" class="button_submit" value="' + this.opt.sGoButtonLabel + '" onclick="window.location.href = \'' + sbb_prepareScriptUrl(sbb_scripturl) + 'board=' + this.opt.iCurBoardId + '.0\';">' : '')));
 	this.dropdownList = document.getElementById(this.opt.sContainerId + '_select');
 }
 
@@ -1047,7 +1048,7 @@ JumpTo.prototype.fillSelect = function (aBoardsAndCategories)
 	if (!this.opt.bNoRedirect)
 		this.dropdownList.onchange = function() {
 			if (this.selectedIndex > 0 && this.options[this.selectedIndex].value)
-				window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
+				window.location.href = sbb_scripturl + this.options[this.selectedIndex].value.substr(sbb_scripturl.indexOf('?') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != '?' ? 0 : 1);
 		}
 }
 
@@ -1111,13 +1112,13 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 
 		// Start to fetch its contents.
 		ajax_indicator(true);
-		sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=messageicons;board=' + this.opt.iBoardId + ';xml', '', this.onIconsReceived);
+		sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + 'action=xmlhttp;sa=messageicons;board=' + this.opt.iBoardId + ';xml', '', this.onIconsReceived);
 
 		createEventListener(document.body);
 	}
 
 	// Set the position of the container.
-	var aPos = smf_itemPos(oDiv);
+	var aPos = sbb_itemPos(oDiv);
 
 	this.oContainerDiv.style.top = (aPos[1] + oDiv.offsetHeight) + 'px';
 	this.oContainerDiv.style.left = (aPos[0] - 1) + 'px';
@@ -1132,7 +1133,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 // Setup the list of icons once it is received through xmlHTTP.
 IconList.prototype.onIconsReceived = function (oXMLDoc)
 {
-	var icons = oXMLDoc.getElementsByTagName('smf')[0].getElementsByTagName('icon');
+	var icons = oXMLDoc.getElementsByTagName('storybb')[0].getElementsByTagName('icon');
 	var sItems = '';
 
 	for (var i = 0, n = icons.length; i < n; i++)
@@ -1168,7 +1169,7 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 	{
 		ajax_indicator(true);
 		this.tmpMethod = getXMLDocument;
-		var oXMLDoc = this.tmpMethod(smf_prepareScriptUrl(smf_scripturl) + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + smf_session_var + '=' + smf_session_id + ';icon=' + sNewIcon + ';xml'),
+		var oXMLDoc = this.tmpMethod(sbb_prepareScriptUrl(sbb_scripturl) + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + sbb_session_var + '=' + sbb_session_id + ';icon=' + sNewIcon + ';xml'),
 		oThis = this;
 		delete this.tmpMethod;
 		ajax_indicator(false);
@@ -1209,7 +1210,7 @@ IconList.prototype.collapseList = function()
 }
 
 // Handy shortcuts for getting the mouse position on the screen - only used for IE at the moment.
-function smf_mousePose(oEvent)
+function sbb_mousePose(oEvent)
 {
 	var x = 0;
 	var y = 0;
@@ -1229,7 +1230,7 @@ function smf_mousePose(oEvent)
 }
 
 // Short function for finding the actual position of an item.
-function smf_itemPos(itemHandle)
+function sbb_itemPos(itemHandle)
 {
 	var itemX = 0;
 	var itemY = 0;
@@ -1255,7 +1256,7 @@ function smf_itemPos(itemHandle)
 }
 
 // This function takes the script URL and prepares it to allow the query string to be appended to it.
-function smf_prepareScriptUrl(sUrl)
+function sbb_prepareScriptUrl(sUrl)
 {
 	return sUrl.indexOf('?') == -1 ? sUrl + '?' : sUrl + (sUrl.charAt(sUrl.length - 1) == '?' || sUrl.charAt(sUrl.length - 1) == '&' || sUrl.charAt(sUrl.length - 1) == ';' ? '' : ';');
 }
@@ -1266,7 +1267,7 @@ function addLoadEvent(fNewOnload)
 }
 
 // Get the text in a code tag.
-function smfSelectText(oCurElement, bActOnElement)
+function sbbSelectText(oCurElement, bActOnElement)
 {
 	// The place we're looking for is one div up, and next door - if it's auto detect.
 	if (typeof(bActOnElement) == 'boolean' && bActOnElement)
@@ -1528,17 +1529,26 @@ $(function()
 	{
 		var custom_message = $(this).attr('data-confirm');
 
-		return confirm(custom_message ? custom_message.replace(/-n-/g, "\n") : smf_you_sure);
+		return confirm(custom_message ? custom_message.replace(/-n-/g, "\n") : sbb_you_sure);
 	});
 
-	// Generic event for smfSelectText()
-	$('.smf_select_text').on('click', function(e) {
+	// Generic event for sbbSelectText()
+	$('.sbb_select_text').on('click', function(e) {
 
 		e.preventDefault();
 
 		// Do you want to target yourself?
 		var actOnElement = $(this).attr('data-actonelement');
 
-		return typeof actOnElement !== "undefined" ? smfSelectText(actOnElement, true) : smfSelectText(this);
+		return typeof actOnElement !== "undefined" ? sbbSelectText(actOnElement, true) : sbbSelectText(this);
+	});
+
+	// Cookie notice
+	$('#cookie_footer a[data-value]').on('click', function(e) {
+		e.preventDefault();
+		date = new Date();
+		date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+		document.cookie = 'cookies=1; expires="' + date.toGMTString();
+		$('#cookie_footer').slideUp('fast');
 	});
 });

@@ -1,0 +1,182 @@
+	{{! Issuing a warning }}
+	<script>
+		// Disable notification boxes as required.
+		function modifyWarnNotify()
+		{
+			disable = !document.getElementById('warn_notify').checked;
+			document.getElementById('warn_sub').disabled = disable;
+			document.getElementById('warn_body').disabled = disable;
+			document.getElementById('warn_temp').disabled = disable;
+			document.getElementById('new_template_link').style.display = disable ? 'none' : '';
+			document.getElementById('preview_button').style.display = disable ? 'none' : '';
+		}
+
+		// Warn template.
+		function populateNotifyTemplate()
+		{
+			index = document.getElementById('warn_temp').value;
+			if (index == -1)
+				return false;
+
+			// Otherwise see what we can do...
+			var templates = {{{json context.notification_templates}}};
+			if (templates[index])
+				document.getElementById('warn_body').value = templates[index].body;
+		}
+
+		function updateSlider(slideAmount)
+		{
+			// Also set the right effect.
+			effectText = "";
+			{{#each context.level_effects}}
+			if (slideAmount >= {{@key}})
+				effectText = "{{{.}}}";
+			{{/each}}
+
+			setInnerHTML(document.getElementById('cur_level_div'), slideAmount + '% (' + effectText + ')');
+		}
+	</script>
+
+	<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=issuewarning" method="post" class="flow_hidden" accept-charset="UTF-8">
+		<div class="cat_bar">
+			<h3 class="catbg profile_hd">
+				{{#if context.user.is_owner}}{{{txt.profile_warning_level}}}{{else}}{{{txt.profile_issue_warning}}}{{/if}}
+			</h3>
+		</div>
+
+		{{#unless context.user.is_owner}}
+		<p class="information">{{{txt.profile_warning_desc}}}</p>
+		{{/unless}}
+
+		<div class="windowbg">
+			<dl class="settings">
+
+				{{#unless context.user.is_owner}}
+				<dt>
+					<strong>{{{txt.profile_warning_name}}}:</strong>
+				</dt>
+				<dd>
+					<strong>{{{context.member.name}}}</strong>
+				</dd>
+				{{/unless}}
+
+				<dt>
+					<strong>{{{txt.profile_warning_level}}}:</strong>';
+
+					{{! Is there only so much they can apply? }}
+					{{#if context.warning_limit}}
+					<br><span class="smalltext">{{textTemplate txt.profile_warning_limit_attribute context.warning_limit}}</span>
+					{{/if}}
+
+				</dt>
+				<dd>
+					0% <input name="warning_level" id="warning_level" type="range" min="0" max="100" step="5" value="{{context.member.warning}}" onchange="updateSlider(this.value)" /> 100%
+					<div class="clear_left">{{{txt.profile_warning_impact}}}: <span id="cur_level_div">{{context.member.warning}}% ({{context.current_level_effects}})</span></div>
+				</dd>
+
+				{{#unless context.user.is_owner}}
+				<dt>
+					<strong>{{{txt.profile_warning_reason}}}:</strong><br>
+					<span class="smalltext">{{{txt.profile_warning_reason_desc}}}</span>
+				</dt>
+				<dd>
+					<input type="text" name="warn_reason" id="warn_reason" value="{{{context.warning_data.reason}}}" size="50" style="width: 80%;">
+				</dd>
+			</dl>
+			<hr>
+			<div id="box_preview"{{#unless warning_data.body_preview}} style="display:none"{{/unless}}>
+				<dl class="settings">
+					<dt>
+						<strong>{{{txt.preview}}}</strong>
+					</dt>
+					<dd id="body_preview">
+						{{{context.warning_data.body_preview}}}
+					</dd>
+				</dl>
+				<hr>
+			</div>
+			<dl class="settings">
+				<dt>
+					<strong><label for="warn_notify">{{{txt.profile_warning_notify}}}:</label></strong>
+				</dt>
+				<dd>
+					<input type="checkbox" name="warn_notify" id="warn_notify" onclick="modifyWarnNotify();"{{#if (eq_coerce context.warning_data.notify 1)}} checked{{/if}}>
+				</dd>
+				<dt>
+					<strong><label for="warn_sub">{{{txt.profile_warning_notify_subject}}}:</label></strong>
+				</dt>
+				<dd>
+					<input type="text" name="warn_sub" id="warn_sub" value="{{#if context.warning_data.notify_subject}}{{{context.warning_data.notify_subject}}}{{else}}{{{txt.profile_warning_notify_template_subject}}}{{/if}}" size="50" style="width: 80%;">
+				</dd>
+				<dt>
+					<strong><label for="warn_temp">{{{txt.profile_warning_notify_body}}}:</label></strong>
+				</dt>
+				<dd>
+					<select name="warn_temp" id="warn_temp" disabled onchange="populateNotifyTemplate();" style="font-size: x-small;">
+						<option value="-1">{{{txt.profile_warning_notify_template}}}</option>
+						<option value="-1" disabled>------------------------------</option>
+						{{#each context.notification_templates}}
+							<option value="{{@key}}">{{{title}}}</option>
+						{{/each}}
+					</select>
+					<span class="smalltext" id="new_template_link" style="display: none;">[<a href="{{scripturl}}?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank" rel="noopener">{{{txt.profile_warning_new_template}}}</a>]</span><br>
+					<textarea name="warn_body" id="warn_body" cols="40" rows="8" style="min-width: 50%; max-width: 99%;">{{{context.warning_data.notify_body}}}</textarea>
+				</dd>
+				{{/unless}}
+
+			</dl>
+			<div class="righttext">
+				{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
+				{{session_form}}
+
+				<input type="button" name="preview" id="preview_button" value="{{{txt.preview}}}" class="button_submit">
+				<input type="submit" name="save" value="{{#if context.user.is_owner}}{{{txt.change_profile}}}{{else}}{{{txt.profile_warning_issue}}}{{/if}}" class="button_submit">
+			</div>
+		</div>
+	</form>
+
+	{{! Previous warnings? }}
+	{{genericlist 'view_warnings'}}
+
+	<script>
+		{{#unless context.user.is_owner}}
+		modifyWarnNotify();
+		$(document).ready(function() {
+			$("#preview_button").click(function() {
+				return ajax_getTemplatePreview();
+			});
+		});
+		{{/unless}}
+
+		function ajax_getTemplatePreview ()
+		{
+			$.ajax({
+				type: "POST",
+				url: "{{scripturl}}?action=xmlhttp;sa=previews;xml",
+				data: {item: "warning_preview", title: $("#warn_sub").val(), body: $("#warn_body").val(), issuing: true},
+				context: document.body,
+				success: function(request){
+					$("#box_preview").css({display:""});
+					$("#body_preview").html($(request).find('body').text());
+					if ($(request).find("error").text() != '')
+					{
+						$("#profile_error").css({display:""});
+						var errors_html = '<ul class="list_errors">';
+						var errors = $(request).find('error').each(function() {
+							errors_html += '<li>' + $(this).text() + '</li>';
+						});
+						errors_html += '</ul>';
+
+						$("#profile_error").html(errors_html);
+					}
+					else
+					{
+						$("#profile_error").css({display:"none"});
+						$("#error_list").html('');
+					}
+				return false;
+				},
+			});
+			return false;
+		}
+	</script>

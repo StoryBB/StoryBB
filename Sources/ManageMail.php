@@ -12,9 +12,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Main dispatcher. This function checks permissions and passes control through to the relevant section.
  */
@@ -177,12 +174,12 @@ function BrowseMailQueue()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 				),
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return '<input type="checkbox" name="delete[]" value="' . $rowData['id_mail'] . '" class="input_check">';
+						return '<input type="checkbox" name="delete[]" value="' . $rowData['id_mail'] . '">';
 					},
 					'class' => 'smalltext',
 				),
@@ -479,5 +476,3 @@ function time_since($time_diff)
 	else
 		return sprintf($time_diff == 1 ? $txt['mq_second'] : $txt['mq_seconds'], $time_diff);
 }
-
-?>

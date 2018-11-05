@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * The main handler and designator for AJAX stuff - jumpto, message icons and previews
  */
@@ -21,12 +18,12 @@ function XMLhttpMain()
 	StoryBB\Template::set_layout('raw');
 
 	$subActions = array(
-		'jumpto' =>  'GetJumpTo',
+		'jumpto' => 'GetJumpTo',
 		'messageicons' => 'ListMessageIcons',
 		'previews' => 'RetrievePreview',
 	);
 
-	register_helper([
+	StoryBB\Template::add_helper([
 		'cleanXml' => 'cleanXml',
 	]);
 
@@ -309,5 +306,3 @@ function warning_preview()
 	StoryBB\Template::set_layout('xml');
 	$context['sub_template'] = 'xml_warning_preview';
 }
-
-?>

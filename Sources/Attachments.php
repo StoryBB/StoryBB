@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 class Attachments
 {
 	protected $_msg = 0;
@@ -73,7 +70,7 @@ class Attachments
 		// Just send a generic message.
 		else
 			$this->setResponse(array(
-				'text' => $this->_sa == 'add' ? 'attach_error_title' :   'attached_file_deleted_error',
+				'text' => $this->_sa == 'add' ? 'attach_error_title' : 'attached_file_deleted_error',
 				'type' => 'error',
 				'data' => false,
 			));
@@ -267,7 +264,7 @@ class Attachments
 
 				// Move the file to the attachments folder with a temp name for now.
 				if (@move_uploaded_file($_FILES['attachment']['tmp_name'][$n], $destName))
-					smf_chmod($destName, 0644);
+					sbb_chmod($destName, 0644);
 
 				// This is madness!!
 				else
@@ -407,7 +404,7 @@ class Attachments
 			// Gotta urlencode the filename.
 			if ($this->_attachResults)
 				foreach ($this->_attachResults as $k => $v)
-					$this->_attachResults[$k]['name'] =  urlencode($this->_attachResults[$k]['name']);
+					$this->_attachResults[$k]['name'] = urlencode($this->_attachResults[$k]['name']);
 
 			$this->_response = array(
 				'files' => $this->_attachResults ? $this->_attachResults : false,
@@ -439,5 +436,3 @@ class Attachments
 		die;
 	}
 }
-
-?>

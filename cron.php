@@ -17,7 +17,7 @@
  * @version 3.0 Alpha 1
  */
 
-define('SMF', 'BACKGROUND');
+define('STORYBB', 'BACKGROUND');
 define('FROM_CLI', empty($_SERVER['REQUEST_METHOD']));
 
 // This one setting is worth bearing in mind. If you are running this from proper cron, make sure you
@@ -31,7 +31,7 @@ define('MAX_CLAIM_THRESHOLD', 300);
 // We're going to want a few globals... these are all set later.
 global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email;
-global $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
+global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $db_connection, $modSettings, $context, $sc, $user_info, $txt;
 global $smcFunc, $ssi_db_user, $scripturl, $db_passwd, $cachedir;
 
@@ -78,7 +78,6 @@ require_once($boarddir . '/vendor/autoload.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Subs.php');
-sbb_autoload();
 
 // Create a variable to store some StoryBB specific functions in.
 $smcFunc = array();
@@ -95,7 +94,7 @@ $user_info = [
 ];
 
 // Just in case there's a problem...
-set_error_handler('smf_error_handler_cron');
+set_error_handler('sbb_error_handler_cron');
 $sc = '';
 $_SERVER['QUERY_STRING'] = '';
 $_SERVER['REQUEST_URL'] = FROM_CLI ? 'CLI cron.php' : $boardurl . '/cron.php';
@@ -209,7 +208,7 @@ function perform_task($task_details)
 	}
 
 	// All background tasks need to be classes.
-	elseif (class_exists($task_details['task_class']) && is_subclass_of($task_details['task_class'], 'SMF_BackgroundTask'))
+	elseif (class_exists($task_details['task_class']) && is_subclass_of($task_details['task_class'], 'StoryBB\\Task\\Adhoc'))
 	{
 		$details = empty($task_details['task_data']) ? array() : json_decode($task_details['task_data'], true);
 		$bgtask = new $task_details['task_class']($details);
@@ -251,7 +250,7 @@ function cleanRequest_cron()
  * @param int $line What line of the specified file the error occurred on
  * @return void
  */
-function smf_error_handler_cron($error_level, $error_string, $file, $line)
+function sbb_error_handler_cron($error_level, $error_string, $file, $line)
 {
 	global $modSettings;
 
@@ -281,34 +280,3 @@ function obExit_cron()
 		die("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
 	}
 }
-
-// We would like this to be defined, but we don't want to have to load more stuff than necessary.
-// Thus we declare it here, and any legitimate background task must implement this.
-/**
- * Class SMF_BackgroundTask
- */
-abstract class SMF_BackgroundTask
-{
-
-	/**
-	 * @var array Holds the details for the task
-	 */
-	protected $_details;
-
-	/**
-	 * The constructor.
-	 * @param array $details The details for the task
-	 */
-	public function __construct($details)
-	{
-		$this->_details = $details;
-	}
-
-	/**
-	 * The function to actually execute a task
-	 * @return mixed
-	 */
-	abstract public function execute();
-}
-
-?>

@@ -10,7 +10,7 @@
 		<div class="information">
 			{{txt.themeadmin_list_tip}}
 		</div>
-		<form id="admin_form_wrapper" action="{{scripturl}}?action=admin;area=theme;{{context.session_var}}={{context.session_id}};sa=list" method="post" accept-charset="UTF-8">
+		<form id="admin_form_wrapper" action="{{scripturl}}?action=admin;area=theme;{{session_url}};sa=list" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">{{txt.theme_settings}}</h3>
 			</div>
@@ -19,7 +19,7 @@
 			<div class="cat_bar">
 				<h3 class="catbg">
 					<span class="floatleft">
-						{{#if (or enable (eq id 1))}}<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{../context.session_var}}={{../context.session_id}};sa=list">{{name}}</a>{{else}}{{name}}{{/if}}{{#if version}}<em>{{version}}</em>{{/if}}
+						{{#if (or enable (eq_coerce id 1))}}<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=list">{{name}}</a>{{else}}{{name}}{{/if}}{{#if version}}<em>{{version}}</em>{{/if}}
 					</span>
 					{{#if (neq id 1)}}<span class="floatright">
 					    <a href="{{../scripturl}}?action=admin;area=theme;sa=enable;th={{id}};{{session_url}};{{token_url 'admin-tre'}}{{#if enable}};disabled{{/if}}" data-confirm="{{#if enable}}{{../txt.theme_enable_confirm}}{{else}}{{../txt.theme_disable_confirm}}{{/if}}" class="you_sure">
@@ -37,6 +37,9 @@
 					<dd>{{theme_url}}</dd>
 					<dt>{{../txt.themeadmin_list_images_url}}:</dt>
 					<dd>{{images_url}}</dd>
+					{{#if (or enable (eq_coerce id 1))}}
+					<dt><a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=list" class="button_submit floatleft">{{{../txt.settings}}}</a></dt>
+					{{/if}}
 				</dl>
 			</div>
 			{{/each}}
@@ -49,18 +52,18 @@
 						<label for="reset_dir">{{txt.themeadmin_list_reset_dir}}</label>:
 					</dt>
 					<dd>
-						<input type="text" name="reset_dir" id="reset_dir" value="{{context.reset_dir}}" size="40" style="width: 80%;" class="input_text">
+						<input type="text" name="reset_dir" id="reset_dir" value="{{context.reset_dir}}" size="40" style="width: 80%;">
 					</dd>
 					<dt>
 						<label for="reset_url">{{txt.themeadmin_list_reset_url}}</label>:
 					</dt>
 					<dd>
-						<input type="text" name="reset_url" id="reset_url" value="{{context.reset_url}}" size="40" style="width: 80%;" class="input_text">
+						<input type="text" name="reset_url" id="reset_url" value="{{context.reset_url}}" size="40" style="width: 80%;">
 					</dd>
 				</dl>
 				<input type="submit" name="save" value="{{txt.themeadmin_list_reset_go}}" class="button_submit">
-				<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-				<input type="hidden" name="{{context.admin-tl_token_var}}" value="{{context.admin-tl_token}}">
+				{{session_form}}
+				{{token_form 'admin-tl'}}
 			</div>
 
 		</form>

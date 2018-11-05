@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Who's online, and what are they doing?
  * This function prepares the who's online data for the Who template.
@@ -46,8 +43,9 @@ function Who()
 
 	$show_methods = array(
 		'members' => '(lo.id_member != 0)',
-		'guests' => '(lo.id_member = 0)',
+		'guests' => '(lo.id_member = 0 AND lo.robot_name = {empty})',
 		'all' => '1=1',
+		'robots' => '(lo.robot_name != {empty})',
 	);
 
 	// Store the sort methods and the show types for use in the template.
@@ -59,17 +57,8 @@ function Who()
 		'all' => $txt['who_show_all'],
 		'members' => $txt['who_show_members_only'],
 		'guests' => $txt['who_show_guests_only'],
+		'robots' => $txt['who_show_robots_only'],
 	);
-
-	// Can they see spiders too?
-	if (!empty($modSettings['show_spider_online']) && ($modSettings['show_spider_online'] == 2 || allowedTo('admin_forum')) && !empty($modSettings['spider_name_cache']))
-	{
-		$show_methods['spiders'] = '(lo.id_member = 0 AND lo.id_spider > 0)';
-		$show_methods['guests'] = '(lo.id_member = 0 AND lo.id_spider = 0)';
-		$context['show_methods']['spiders'] = $txt['who_show_spiders_only'];
-	}
-	elseif (empty($modSettings['show_spider_online']) && isset($_SESSION['who_online_filter']) && $_SESSION['who_online_filter'] == 'spiders')
-		unset($_SESSION['who_online_filter']);
 
 	// Does the user prefer a different sort direction?
 	if (isset($_REQUEST['sort']) && isset($sort_methods[$_REQUEST['sort']]))
@@ -131,7 +120,7 @@ function Who()
 		SELECT
 			lo.log_time, lo.id_member, lo.url, lo.ip AS ip, lo.id_character, COALESCE(chars.character_name, mem.real_name) AS real_name,
 			lo.session, IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, COALESCE(mem.show_online, 1) AS show_online,
-			lo.id_spider
+			lo.robot_name
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_member} THEN mem.id_post_group ELSE mem.id_group END)
@@ -153,7 +142,7 @@ function Who()
 	$url_data = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$actions = smf_json_decode($row['url'], true);
+		$actions = sbb_json_decode($row['url'], true);
 		if ($actions === false)
 			continue;
 
@@ -167,11 +156,11 @@ function Who()
 			'timestamp' => forum_time(true, $row['log_time']),
 			'query' => $actions,
 			'is_hidden' => $row['show_online'] == 0,
-			'id_spider' => $row['id_spider'],
+			'robot_name' => $row['robot_name'],
 			'color' => empty($row['online_color']) ? '' : $row['online_color']
 		);
 
-		$url_data[$row['session']] = array($row['url'], $row['id_member']);
+		$url_data[$row['session']] = array($row['url'], $row['id_member'], $row['robot_name']);
 		$member_ids[] = $row['id_member'];
 	}
 	$smcFunc['db_free_result']($request);
@@ -190,22 +179,6 @@ function Who()
 		'is_guest' => true
 	);
 
-	// Are we showing spiders?
-	$spiderContext = array();
-	if (!empty($modSettings['show_spider_online']) && ($modSettings['show_spider_online'] == 2 || allowedTo('admin_forum')) && !empty($modSettings['spider_name_cache']))
-	{
-		foreach (smf_json_decode($modSettings['spider_name_cache'], true) as $id => $name)
-			$spiderContext[$id] = array(
-				'id' => 0,
-				'name' => $name,
-				'group' => $txt['spiders'],
-				'href' => '',
-				'link' => $name,
-				'email' => $name,
-				'is_guest' => true
-			);
-	}
-
 	$url_data = determineActions($url_data);
 
 	// Setup the linktree and page title (do it down here because the language files are now loaded..)
@@ -216,6 +189,7 @@ function Who()
 	);
 
 	// Put it in the context variables.
+	$robot = new \StoryBB\Model\Robot;
 	foreach ($context['members'] as $i => $member)
 	{
 		if ($member['id'] != 0)
@@ -224,10 +198,26 @@ function Who()
 		// Keep the IP that came from the database.
 		$memberContext[$member['id']]['ip'] = $member['ip'];
 		$context['members'][$i]['action'] = isset($url_data[$i]) ? $url_data[$i] : $txt['who_hidden'];
-		if ($member['id'] == 0 && isset($spiderContext[$member['id_spider']]))
-			$context['members'][$i] += $spiderContext[$member['id_spider']];
-		else
-			$context['members'][$i] += $memberContext[$member['id']];
+
+		if ($member['id'] == 0 && !empty($member['robot_name']))
+		{
+			$robot_details = $robot->get_robot_info($member['robot_name']);
+			if (!empty($robot_details))
+			{
+				$context['members'][$i] += [
+					'id' => 0,
+					'name' => $robot_details['title'],
+					'group' => $txt['robots'],
+					'href' => '',
+					'link' => $robot_details['title'],
+					'email' => $robot_details['title'],
+					'is_guest' => true,
+				];
+				continue;
+			}
+		}
+
+		$context['members'][$i] += $memberContext[$member['id']];
 
 		if (!empty($member['id_character']) && !empty($context['members'][$i]['characters'][$member['id_character']]))
 		{
@@ -240,7 +230,6 @@ function Who()
 
 	// Some people can't send personal messages...
 	$context['can_send_pm'] = allowedTo('pm_send');
-	$context['can_send_email'] = allowedTo('send_email_to_members');
 
 	// any profile fields disabled?
 	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
@@ -312,7 +301,7 @@ function determineActions($urls, $preferred_prefix = false)
 	foreach ($url_list as $k => $url)
 	{
 		// Get the request parameters..
-		$actions = smf_json_decode($url[0], true);
+		$actions = sbb_json_decode($url[0], true);
 		if ($actions === false)
 			continue;
 
@@ -347,8 +336,13 @@ function determineActions($urls, $preferred_prefix = false)
 		// Some other normal action...?
 		else
 		{
+			// Robot actions.
+			if (!empty($url[2]) && isset($txt['whorobot_' . $actions['action']]))
+			{
+				$data[$k] = $txt['whorobot_' . $actions['action']];
+			}
 			// Viewing/editing a profile.
-			if ($actions['action'] == 'profile')
+			elseif ($actions['action'] == 'profile')
 			{
 				// Whose?  Their own?
 				if (empty($actions['u']))
@@ -541,5 +535,3 @@ function determineActions($urls, $preferred_prefix = false)
 	else
 		return $data;
 }
-
-?>

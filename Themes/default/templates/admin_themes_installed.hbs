@@ -9,10 +9,10 @@
 			</p>
 			{{else}}
 			<p>
-				<a href="{{scripturl}}?action=admin;area=theme;sa=list;th={{context.installed_theme.id}};{{context.session_var}}={{context.session_id}}">{{context.installed_theme.name}}</a> {{#if context.installed_theme.updated}}{{txt.theme_updated_message}}{{else}}{{txt.theme_installed_message}}{{/if}}
+				<a href="{{scripturl}}?action=admin;area=theme;sa=list;th={{context.installed_theme.id}};{{session_url}}">{{context.installed_theme.name}}</a> {{#if context.installed_theme.updated}}{{txt.theme_updated_message}}{{else}}{{txt.theme_installed_message}}{{/if}}
 			</p>
 			<p>
-				<a href="{{scripturl}}?action=admin;area=theme;sa=admin;{{context.session_var}}={{context.session_id}}">{{txt.back}}</a>
+				<a href="{{scripturl}}?action=admin;area=theme;sa=admin;{{session_url}}">{{txt.back}}</a>
 			</p>
 		    {{/if}}
 	    </div>

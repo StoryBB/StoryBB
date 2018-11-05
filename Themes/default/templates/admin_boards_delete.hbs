@@ -19,8 +19,8 @@
 			</div>
 			<div class="windowbg">
 				<p>
-					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" class="input_radio" checked>{{{txt.mboards_delete_board_option1}}}</label><br>
-					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1" class="input_radio"{{#unless context.can_move_children}} disabled{{/unless}}>{{{txt.mboards_delete_board_option2}}}</label>:
+					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" checked>{{{txt.mboards_delete_board_option1}}}</label><br>
+					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1"{{#unless context.can_move_children}} disabled{{/unless}}>{{{txt.mboards_delete_board_option2}}}</label>:
 					<select name="board_to"{{#unless context.can_move_children}} disabled{{/unless}}>
 						{{#each context.board_order}}
 						{{#if (and (neq id ../context.board.id) (not is_child))}}

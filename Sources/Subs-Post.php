@@ -12,9 +12,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Takes a message and parses it, returning nothing.
  * Cleans up links (javascript, etc.) and code/quote sections.
@@ -579,7 +576,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 	}
 
 	// If they are using SSI there is a good chance obExit will never be called.  So lets be nice and flush it for them.
-	if (SMF === 'SSI' || SMF === 'BACKGROUND')
+	if (STORYBB === 'SSI' || STORYBB === 'BACKGROUND')
 		return AddMailQueue(true);
 
 	return true;
@@ -702,7 +699,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	// Check whether we have to apply anything...
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$criteria = smf_json_decode($row['criteria'], true);
+		$criteria = sbb_json_decode($row['criteria'], true);
 		// Note we don't check the buddy status, cause deletion from buddy = madness!
 		$delete = false;
 		foreach ($criteria as $criterium)
@@ -813,8 +810,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			}
 		}
 
-		// Note that PostgreSQL can return a lowercase t/f for FIND_IN_SET
-		if (!empty($row['ignored']) && $row['ignored'] != 'f' && $row['id_member'] != $from['id'])
+		if (!empty($row['ignored']) && $row['id_member'] != $from['id'])
 		{
 			$log['failed'][$row['id_member']] = sprintf($txt['pm_error_ignored_by_user'], $row['real_name']);
 			unset($all_to[array_search($row['id_member'], $all_to)]);
@@ -1007,36 +1003,28 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		$row['subject'] = un_htmlspecialchars($row['subject']);
 		$row['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($row['body'], false, $row['id_last_msg']), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
-		$task_rows[] = array(
-			'$sourcedir/tasks/CreatePost-Notify.php', 'CreatePost_Notify_Background', json_encode(array(
-				'msgOptions' => array(
-					'id' => $row['id_msg'],
-					'subject' => $row['subject'],
-					'body' => $row['body'],
-				),
-				'topicOptions' => array(
-					'id' => $row['id_topic'],
-					'board' => $row['id_board'],
-				),
-				// Kinda cheeky, but for any action the originator is usually the current user
-				'posterOptions' => array(
-					'id' => $user_info['id'],
-					'name' => $user_info['name'],
-				),
-				'type' => $type,
-				'members_only' => $members_only,
-			)), 0
-		);
+		StoryBB\Task::batch_queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
+			'msgOptions' => array(
+				'id' => $row['id_msg'],
+				'subject' => $row['subject'],
+				'body' => $row['body'],
+			),
+			'topicOptions' => array(
+				'id' => $row['id_topic'],
+				'board' => $row['id_board'],
+			),
+			// Kinda cheeky, but for any action the originator is usually the current user
+			'posterOptions' => array(
+				'id' => $user_info['id'],
+				'name' => $user_info['name'],
+			),
+			'type' => $type,
+			'members_only' => $members_only,
+		]);
 	}
 	$smcFunc['db_free_result']($result);
 
-	if (!empty($task_rows))
-		$smcFunc['db_insert']('',
-			'{db_prefix}background_tasks',
-			array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-			$task_rows,
-			array('id_task')
-		);
+	StoryBB\Task::commit_batch_queue();
 }
 
 /**
@@ -1263,32 +1251,27 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	{
 		$task_rows = array();
 		foreach (array_merge($notification_topics, $notification_posts) as $topic)
-			$task_rows[] = array(
-				'$sourcedir/tasks/CreatePost-Notify.php', 'CreatePost_Notify_Background', json_encode(array(
-					'msgOptions' => array(
-						'id' => $topic['msg'],
-						'body' => $topic['body'],
-						'subject' => $topic['subject'],
-					),
-					'topicOptions' => array(
-						'id' => $topic['topic'],
-						'board' => $topic['board'],
-					),
-					'posterOptions' => array(
-						'id' => $topic['poster'],
-						'name' => $topic['name'],
-					),
-					'type' => $topic['new_topic'] ? 'topic' : 'reply',
-				)), 0
-			);
+		{
+			StoryBB\Task::batch_queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
+				'msgOptions' => array(
+					'id' => $topic['msg'],
+					'body' => $topic['body'],
+					'subject' => $topic['subject'],
+				),
+				'topicOptions' => array(
+					'id' => $topic['topic'],
+					'board' => $topic['board'],
+				),
+				'posterOptions' => array(
+					'id' => $topic['poster'],
+					'name' => $topic['name'],
+				),
+				'type' => $topic['new_topic'] ? 'topic' : 'reply',
+			]);
+		}
 
 		if ($notify)
-			$smcFunc['db_insert']('',
-				'{db_prefix}background_tasks',
-				array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-				$task_rows,
-				array('id_task')
-			);
+			StoryBB\Task::commit_batch_queue();
 
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}approval_queue
@@ -1539,17 +1522,12 @@ function adminNotify($type, $memberID, $member_name = null)
 	}
 
 	// This is really just a wrapper for making a new background task to deal with all the fun.
-	$smcFunc['db_insert']('insert',
-		'{db_prefix}background_tasks',
-		array('task_file' => 'string', 'task_class' => 'string', 'task_data' => 'string', 'claimed_time' => 'int'),
-		array('$sourcedir/tasks/Register-Notify.php', 'Register_Notify_Background', json_encode(array(
-			'new_member_id' => $memberID,
-			'new_member_name' => $member_name,
-			'notify_type' => $type,
-			'time' => time(),
-		)), 0),
-		array('id_task')
-	);
+	StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\RegisterNotify', [
+		'new_member_id' => $memberID,
+		'new_member_name' => $member_name,
+		'notify_type' => $type,
+		'time' => time(),
+	]);
 }
 
 /**
@@ -1639,5 +1617,3 @@ function user_info_callback($matches)
 
 	return $use_ref ? $ref : $matches[0];
 }
-
-?>

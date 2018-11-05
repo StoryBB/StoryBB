@@ -14,14 +14,30 @@ declare(strict_types=1);
 
 namespace StoryBB\Template;
 
+/**
+ * Handles caching for the template layer.
+ */
 class Cache
 {
-	public static function is_enabled(): bool {
+	/**
+	 * Whether the template cache is enabled.
+	 *
+	 * @return bool True if the template cache is enabled
+	 */
+	public static function is_enabled(): bool
+	{
 		global $modSettings;
 		return empty($modSettings['debug_templates']);
 	}
 
-	public static function fetch(string $cache_id = '') {
+	/**
+	 * Fetch a cached template.
+	 *
+	 * @param string $cache_id The name of the cached entry to look for
+	 * @return function|string If the template could be retrieved, return the compiled template function otherwise empty string
+	 */
+	public static function fetch(string $cache_id = '')
+	{
 		global $cachedir;
 
 		if (empty($cache_id) || !self::is_enabled())
@@ -41,7 +57,15 @@ class Cache
 		return '';
 	}
 
-	public static function push(string $cache_id, string $phpStr): bool {
+	/**
+	 * Push a string containing a compiled template to cache storage.
+	 *
+	 * @param string $cache_id The name of the entry in the cache
+	 * @param string $phpStr The template code to be saved
+	 * @return bool True if successfully cached
+	 */
+	public static function push(string $cache_id, string $phpStr): bool
+	{
 		global $cachedir;
 
 		if (empty($cache_id) || !self::is_enabled())
@@ -54,7 +78,6 @@ class Cache
 
 	/**
 	 * Cleans the template cache.
-
 	 */
 	public static function clean()
 	{
@@ -70,5 +93,3 @@ class Cache
 		clearstatcache();
 	}
 }
-
-?>

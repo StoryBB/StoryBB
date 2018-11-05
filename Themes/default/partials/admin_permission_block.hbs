@@ -39,7 +39,7 @@
 											<option{{#if (eq any.select 'deny')}} selected{{/if}} value="deny">{{{../../../txt.permissions_option_deny}}}</option>
 										</select>
 									{{else}}
-									<input type="checkbox" name="perm[{{../../../permission_type}}][{{any.id}}]"{{#if (eq any.select 'on')}} checked{{/if}} value="on" class="input_check"{{#unless ../../../context.profile.can_modify}} disabled{{/unless}} />
+									<input type="checkbox" name="perm[{{../../../permission_type}}][{{any.id}}]"{{#if (eq any.select 'on')}} checked{{/if}} value="on"{{#unless ../../../context.profile.can_modify}} disabled{{/unless}}>
 									{{/if}}
 								{{else}}
 									{{#if (neq ../../../context.group.id -1)}}
@@ -51,7 +51,7 @@
 											<option{{#if (eq select 'deny')}} selected{{/if}} value="deny">{{{../../../txt.permissions_option_deny}}}</option>
 										</select>
 									{{else}}
-										<input type="checkbox" name="perm[{{../../../permission_type}}][{{id}}]"{{#if (eq select 'on')}} checked{{/if}} value="on" class="input_check"{{#unless ../../../context.profile.can_modify}} disabled{{/unless}} />
+										<input type="checkbox" name="perm[{{../../../permission_type}}][{{id}}]"{{#if (eq select 'on')}} checked{{/if}} value="on"{{#unless ../../../context.profile.can_modify}} disabled{{/unless}}>
 									{{/if}}
 								{{/if}}
 							</td>

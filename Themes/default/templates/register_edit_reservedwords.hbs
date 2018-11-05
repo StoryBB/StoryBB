@@ -14,32 +14,32 @@
 				<label for="matchword">{{txt.admin_match_whole}}</label>
 			</dt>
 			<dd>
-				<input type="checkbox" name="matchword" id="matchword" {{#if context.reserved_word_options.match_word}} checked{{/if}} class="input_check">
+				<input type="checkbox" name="matchword" id="matchword" {{#if context.reserved_word_options.match_word}} checked{{/if}}>
 			</dd>
 			<dt>
 				<label for="matchcase">{{txt.admin_match_case}}</label>
 			</dt>
 			<dd>
-				<input type="checkbox" name="matchcase" id="matchcase"  {{#if context.reserved_word_options.match_case}} checked{{/if}} class="input_check">
+				<input type="checkbox" name="matchcase" id="matchcase"  {{#if context.reserved_word_options.match_case}} checked{{/if}}>
 			</dd>
 			<dt>
 				<label for="matchuser">{{txt.admin_check_user}}</label>
 			</dt>
 			<dd>
-				<input type="checkbox" name="matchuser" id="matchuser"  {{#if context.reserved_word_options.match_user}} checked{{/if}} class="input_check">
+				<input type="checkbox" name="matchuser" id="matchuser"  {{#if context.reserved_word_options.match_user}} checked{{/if}}>
 			</dd>
 			<dt>
 				<label for="matchname">{{txt.admin_check_display}}</label>
 			</dt>
 			<dd>
-				<input type="checkbox" name="matchname" id="matchname"  {{#if context.reserved_word_options.match_name}} checked{{/if}} class="input_check">
+				<input type="checkbox" name="matchname" id="matchname"  {{#if context.reserved_word_options.match_name}} checked{{/if}}>
 			</dd>
 		</dl>
 		<div class="flow_auto">
 			<input type="submit" value="{{txt.save}}" name="save_reserved_names" style="margin: 1ex;" class="button_submit">
 			<input type="hidden" name="sa" value="reservednames">
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-			<input type="hidden" name="{{context.admin-regr_token_var}}" value="{{context.admin-regr_token}}">
+			{{session_form}}
+			{{token_form 'admin-regr'}}
 		</div>
 	</div>
 </form>

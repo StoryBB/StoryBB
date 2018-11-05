@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * The main entrance point for the 'Posts and topics' screen.
  * Like all others, it checks permissions, then forwards to the right function
@@ -273,7 +270,6 @@ function ModifyTopicSettings($return_config = false)
 	// Here are all the topic settings.
 	$config_vars = array(
 			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
-			array('check', 'enableParticipation'),
 		'',
 			// Pagination etc...
 			array('int', 'oldTopicDays', 'postinput' => $txt['manageposts_days'], 'subtext' => $txt['zero_to_disable']),
@@ -284,7 +280,7 @@ function ModifyTopicSettings($return_config = false)
 			array('int', 'enableAllMessages', 'postinput' => $txt['manageposts_posts'], 'subtext' => $txt['enableAllMessages_zero']),
 			array('check', 'disableCustomPerPage'),
 		'',
-			// Topic related settings (show gender icon/avatars etc...)
+			// Topic related settings (show icons/avatars etc...)
 			array('check', 'subject_toggle'),
 			array('check', 'show_modify'),
 			array('check', 'show_profile_buttons'),
@@ -405,5 +401,3 @@ function ModifyDraftSettings($return_config = false)
 	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
 }
-
-?>

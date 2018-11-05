@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * This allows using Xcache as a short term data cache.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -10,9 +12,6 @@
 
 namespace StoryBB\Cache;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
 /**
  * Our Cache API class
  * @package cacheAPI
@@ -20,7 +19,7 @@ if (!defined('SMF'))
 class Xcache extends API
 {
 	/**
-	 * {@inheritDoc}
+	 * Does basic setup of a cache method when we create the object but before we call connect.
 	 */
 	public function __construct()
 	{
@@ -37,7 +36,9 @@ class Xcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the name for the cache method performed by this API. Likely to be a brand of sorts.
+	 *
+	 * @return string The name of the cache backend
 	 */
 	public function getName()
 	{
@@ -45,7 +46,10 @@ class Xcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Checks whether we can use the cache method performed by this API.
+	 *
+	 * @param boolean $test Test if this is supported or enabled.
+	 * @return boolean Whether or not the cache is supported
 	 */
 	public function isSupported($test = false)
 	{
@@ -57,7 +61,11 @@ class Xcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gets data from the cache.
+	 *
+	 * @param string $key The key to use, the prefix is applied to the key name.
+	 * @param string $ttl Overrides the default TTL.
+	 * @return mixed The result from the cache, if there is no data or it is invalid, we return null.
 	 */
 	public function getData($key, $ttl = null)
 	{
@@ -67,7 +75,12 @@ class Xcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Saves to data the cache.
+	 *
+	 * @param string $key The key to use, the prefix is applied to the key name.
+	 * @param mixed $value The data we wish to save.
+	 * @param string $ttl Overrides the default TTL.
+	 * @return bool Whether or not we could save this to the cache.
 	 */
 	public function putData($key, $value, $ttl = null)
 	{
@@ -80,7 +93,10 @@ class Xcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Clean out the cache.
+	 *
+	 * @param string $type If supported, the type of cache to clear, blank/data or user.
+	 * @return bool Whether or not we could clean the cache.
 	 */
 	public function cleanCache($type = '')
 	{
@@ -105,7 +121,10 @@ class Xcache extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Specify custom settings that the cache API supports.
+	 *
+	 * @param array $config_vars Additional config_vars, see ManageSettings.php for usage.
+	 * @return void No return is needed.
 	 */
 	public function cacheSettings(array &$config_vars)
 	{
@@ -128,5 +147,3 @@ class Xcache extends API
 			});';
 	}
 }
-
-?>

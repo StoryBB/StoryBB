@@ -8,7 +8,7 @@
  * @version 3.0 Alpha 1
  */
 
-$GLOBALS['current_smf_version'] = '3.0 Alpha 1';
+$GLOBALS['current_sbb_version'] = '3.0 Alpha 1';
 $GLOBALS['db_script_version'] = '3-0';
 
 $GLOBALS['required_php_version'] = '7.0.0';
@@ -17,16 +17,16 @@ $GLOBALS['required_php_version'] = '7.0.0';
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none;">
 
 // Let's pull in useful classes
-if (!defined('SMF'))
-	define('SMF', 1);
+if (!defined('STORYBB'))
+	define('STORYBB', 1);
 
-require_once('Sources/Class-Package.php');
+require_once('Sources/StoryBB/Helper/FTP.php');
 
 // Database info.
 $databases = array(
 	'mysql' => array(
 		'name' => 'MySQL',
-		'version' => '5.0.3',
+		'version' => '5.5.3',
 		'version_check' => 'return min(mysqli_get_server_info($db_connection), mysqli_get_client_info());',
 		'supported' => function_exists('mysqli_connect'),
 		'default_user' => 'mysql.default_user',
@@ -39,37 +39,6 @@ $databases = array(
 		'alter_support' => true,
 		'validate_prefix' => function(&$value) {
 			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
-			return true;
-		},
-	),
-	'postgresql' => array(
-		'name' => 'PostgreSQL',
-		'version' => '9.2',
-		'function_check' => 'pg_connect',
-		'version_check' => '$request = pg_query(\'SELECT version()\'); list ($version) = pg_fetch_row($request); list($pgl, $version) = explode(" ", $version); return $version;',
-		'supported' => function_exists('pg_connect'),
-		'always_has_db' => true,
-		'utf8_support' => function() {
-			$request = pg_query('SHOW SERVER_ENCODING');
-
-			list ($charcode) = pg_fetch_row($request);
-
-			if ($charcode == 'UTF8')
-				return true;
-			else
-				return false;
-		},
-		'validate_prefix' => function(&$value) {
-			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
-
-			// Is it reserved?
-			if ($value == 'pg_')
-				return $txt['error_db_prefix_reserved'];
-
-			// Is the prefix numeric?
-			if (preg_match('~^\d~', $value))
-				return $txt['error_db_prefix_numeric'];
-
 			return true;
 		},
 	),
@@ -163,7 +132,7 @@ function initialize_inputs()
 	{
 		if (isset($_SESSION['installer_temp_ftp']))
 		{
-			$ftp = new ftp_connection($_SESSION['installer_temp_ftp']['server'], $_SESSION['installer_temp_ftp']['port'], $_SESSION['installer_temp_ftp']['username'], $_SESSION['installer_temp_ftp']['password']);
+			$ftp = new \StoryBB\Helper\FTP($_SESSION['installer_temp_ftp']['server'], $_SESSION['installer_temp_ftp']['port'], $_SESSION['installer_temp_ftp']['username'], $_SESSION['installer_temp_ftp']['password']);
 			$ftp->chdir($_SESSION['installer_temp_ftp']['path']);
 
 			$ftp->unlink('install.php');
@@ -261,7 +230,7 @@ function load_lang_file()
 		<p>In some cases, FTP clients do not properly upload files with this many folders.  Please double check to make sure you <span style="font-weight: 600;">have uploaded all the files in the distribution</span>.</p>
 		<p>If that doesn\'t help, please make sure this install.php file is in the same place as the Themes folder.</p>
 
-		<p>If you continue to get this error message, feel free to <a href="https://support.simplemachines.org/">look to us for support</a>.</p>
+		<p>If you continue to get this error message, feel free to <a href="https://storybb.org/">look to us for support</a>.</p>
 	</div></body>
 </html>';
 		die;
@@ -299,8 +268,6 @@ function load_database()
 
 	// Need this to check whether we need the database password.
 	require(dirname(__FILE__) . '/Settings.php');
-	if (!defined('SMF'))
-		define('SMF', 1);
 	if (empty($smcFunc))
 		$smcFunc = array();
 
@@ -310,8 +277,6 @@ function load_database()
 	if (!$db_connection)
 	{
 		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
-		if (version_compare(PHP_VERSION, '5', '<'))
-			require_once($sourcedir . '/Subs-Compat.php');
 
 		$db_options = array('persist' => $db_persist);
 		$port = '';
@@ -323,18 +288,13 @@ function load_database()
 			{
 				$port = ((int) $_POST['db_port'] == ini_get($db_type . 'default_port')) ? '' : (int) $_POST['db_port'];
 			}
-			elseif ($db_type == 'postgresql')
-			{
-				// PostgreSQL doesn't have a default port setting in php.ini, so just check against the default
-				$port = ((int) $_POST['db_port'] == 5432) ? '' : (int) $_POST['db_port'];
-			}
 		}
 
 		if (!empty($port))
 			$db_options['port'] = $port;
 
 		if (!$db_connection)
-			$db_connection = smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
+			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
 	}
 }
 
@@ -434,6 +394,12 @@ function Welcome()
 	// @todo Move this down later if they don't use database-driven sessions?
 	elseif (@ini_get('session.save_path') == '/tmp' && substr(__FILE__, 1, 2) == ':\\')
 		$error = 'error_session_save_path';
+	elseif (!function_exists('imagecreatetruecolor') || !function_exists('imagegif'))
+		$error = 'error_no_gd';
+	elseif (!function_exists('json_encode') || !function_exists('json_decode'))
+		$error = 'error_no_json';
+	elseif (!function_exists('curl_init') || !function_exists('curl_exec'))
+		$error = 'error_no_curl';
 
 	// Since each of the three messages would look the same, anyway...
 	if (isset($error))
@@ -464,10 +430,8 @@ function CheckFilesWritable()
 		'cache',
 		'Smileys',
 		'Themes',
-		'agreement.txt',
 		'Settings.php',
 		'Settings_bak.php',
-		'db_last_error.php',
 	);
 
 	foreach ($incontext['detected_languages'] as $lang => $temp)
@@ -563,10 +527,9 @@ function CheckFilesWritable()
 		}
 
 		$incontext['ftp_errors'] = array();
-		require_once('Sources/Class-Package.php');
 		if (isset($_POST['ftp_username']))
 		{
-			$ftp = new ftp_connection($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
+			$ftp = new \StoryBB\Helper\FTP($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
 
 			if ($ftp->error === false)
 			{
@@ -582,7 +545,7 @@ function CheckFilesWritable()
 		if (!isset($ftp) || $ftp->error !== false)
 		{
 			if (!isset($ftp))
-				$ftp = new ftp_connection(null);
+				$ftp = new \StoryBB\Helper\FTP(null);
 			// Save the error so we can mess with listing...
 			elseif ($ftp->error !== false && empty($incontext['ftp_errors']) && !empty($ftp->last_message))
 				$incontext['ftp_errors'][] = $ftp->last_message;
@@ -738,16 +701,14 @@ function DatabaseSettings()
 			'db_server' => $_POST['db_server'],
 			'db_prefix' => $db_prefix,
 			// The cookiename is special; we want it to be the same if it ever needs to be reinstalled with the same info.
-			'cookiename' => 'SMFCookie' . abs(crc32($_POST['db_name'] . preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix'])) % 1000),
+			'cookiename' => 'SBBCookie' . abs(crc32($_POST['db_name'] . preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix'])) % 1000),
 		);
 
 		// Only set the port if we're not using the default
 		if (!empty($_POST['db_port']))
 		{
-			// For MySQL, we can get the "default port" from PHP. PostgreSQL has no such option though.
+			// For MySQL, we can get the "default port" from PHP.
 			if (($db_type == 'mysql' || $db_type == 'mysqli') && $_POST['db_port'] != ini_get($db_type . '.default_port'))
-				$vars['db_port'] = (int) $_POST['db_port'];
-			elseif ($db_type == 'postgresql' && $_POST['db_port'] != 5432)
 				$vars['db_port'] = (int) $_POST['db_port'];
 		}
 
@@ -771,30 +732,22 @@ function DatabaseSettings()
 			return false;
 		}
 
-		// Now include it for database functions!
-		if (!defined('SMF'))
-			define('SMF', 1);
-
 		$modSettings['disableQueryCheck'] = true;
 		if (empty($smcFunc))
 			$smcFunc = array();
 
-			require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
-
-		// What - running PHP4? The shame!
-		if (version_compare(PHP_VERSION, '5', '<'))
-			require_once($sourcedir . '/Subs-Compat.php');
+		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
 
 		// Attempt a connection.
 		$needsDB = !empty($databases[$db_type]['always_has_db']);
-		$db_connection = smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
+		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
 
 		// No dice?  Let's try adding the prefix they specified, just in case they misread the instructions ;)
 		if ($db_connection == null)
 		{
 			$db_error = @$smcFunc['db_error']();
 
-			$db_connection = smf_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
+			$db_connection = sbb_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
 			if ($db_connection != null)
 			{
 				$db_user = $_POST['db_prefix'] . $db_user;
@@ -893,8 +846,9 @@ function ForumSettings()
 	$incontext['ssl_chkbx_checked'] = false;
 
 	// If redirect in effect, force ssl ON
+	require_once(dirname(__FILE__) . '/vendor/autoload.php');
 	require_once(dirname(__FILE__) . '/Sources/Subs.php');
-	sbb_autoload();
+
 	if (https_redirect_active($incontext['detected_url'])) {
 		$incontext['ssl_chkbx_protected'] = true;
 		$incontext['ssl_chkbx_checked'] = true;
@@ -962,7 +916,7 @@ function ForumSettings()
 // Step one: Do the SQL thang.
 function DatabasePopulation()
 {
-	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl;
+	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl, $language;
 
 	$incontext['sub_template'] = 'populate_database';
 	$incontext['page_title'] = $txt['db_populate'];
@@ -993,7 +947,7 @@ function DatabasePopulation()
 		$smcFunc['db_free_result']($result);
 
 		// Do they match?  If so, this is just a refresh so charge on!
-		if (!isset($modSettings['smfVersion']) || $modSettings['smfVersion'] != $GLOBALS['current_smf_version'])
+		if (!isset($modSettings['sbbVersion']) || $modSettings['sbbVersion'] != $GLOBALS['current_sbb_version'])
 		{
 			$incontext['error'] = $txt['error_versions_do_not_match'];
 			return false;
@@ -1001,16 +955,16 @@ function DatabasePopulation()
 	}
 	$modSettings['disableQueryCheck'] = true;
 
-	// We're doing UTF8, select it. PostgreSQL requires passing it as a string...
-		$smcFunc['db_query']('', '
-			SET NAMES {string:utf8}',
-			array(
-				'db_error_skip' => true,
-				'utf8' => 'utf8',
-			)
-		);
+	// We're doing UTF8, select it.
+	$smcFunc['db_query']('', '
+		SET NAMES {string:utf8}',
+		array(
+			'db_error_skip' => true,
+			'utf8' => (in_array($db_type, ['mysql', 'mysqli']) ? 'utf8mb4' : 'utf8'),
+		)
+	);
 
-	// Windows likes to leave the trailing slash, which yields to C:\path\to\SMF\/attachments...
+	// Windows likes to leave the trailing slash, which yields to C:\path\to\StoryBB\/attachments...
 	if (substr(__DIR__, -1) == '\\')
 		$attachdir = __DIR__ . 'attachments';
 	else
@@ -1018,11 +972,12 @@ function DatabasePopulation()
 
 	$replaces = array(
 		'{$db_prefix}' => $db_prefix,
+		'{$language}' => $language,
 		'{$attachdir}' => json_encode(array(1 => $smcFunc['db_escape_string']($attachdir))),
 		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
 		'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
-		'{$smf_version}' => $GLOBALS['current_smf_version'],
+		'{$sbb_version}' => $GLOBALS['current_sbb_version'],
 		'{$current_time}' => time(),
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
 		'{$registration_method}' => isset($_POST['reg_mode']) ? $_POST['reg_mode'] : 0,
@@ -1059,8 +1014,8 @@ function DatabasePopulation()
 		$replaces['{$memory}'] = (!$has_innodb && in_array('MEMORY', $engines)) ? 'MEMORY' : $replaces['{$engine}'];
 
 		// We're using UTF-8 setting, so add it to the table definitions.
-			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
-			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
+			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
 
 		// One last thing - if we don't have InnoDB, we can't do transactions...
 		if (!$has_innodb)
@@ -1113,21 +1068,17 @@ function DatabasePopulation()
 
 		if ($smcFunc['db_query']('', $current_statement, array('security_override' => true, 'db_error_skip' => true), $db_connection) === false)
 		{
-			// Use the appropriate function based on the DB type
-			if ($db_type == 'mysql' || $db_type == 'mysqli')
-				$db_errorno = $db_type . '_errno';
-
 			// Error 1050: Table already exists!
 			// @todo Needs to be made better!
-			if ((($db_type != 'mysql' && $db_type != 'mysqli') || $db_errorno($db_connection) == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
+			if ((($db_type != 'mysql' && $db_type != 'mysqli') || $smcFunc['db_errno']($db_connection) == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
 			{
 				$exists[] = $match[1];
 				$incontext['sql_results']['table_dups']++;
 			}
-			// Don't error on duplicate indexes (or duplicate operators in PostgreSQL.)
-			elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match) && !($db_type == 'postgresql' && preg_match('~^\s*CREATE OPERATOR (^\n\r]+?)~', $current_statement, $match)))
+			// Don't error on duplicate indexes
+			elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 			{
-				// MySQLi requires a connection object. It's optional with MySQL and Postgres
+				// MySQLi requires a connection object.
 				$incontext['failures'][$count] = $smcFunc['db_error']($db_connection);
 			}
 		}
@@ -1287,12 +1238,11 @@ function AdminAccount()
 	require_once($sourcedir . '/Subs-Auth.php');
 
 	require_once($sourcedir . '/Subs.php');
-	sbb_autoload();
 
 	// We need this to properly hash the password for Admin
 	$smcFunc['strtolower'] = function($string) {
-				return mb_strtolower($string, 'UTF-8');
-		};
+		return mb_strtolower($string, 'UTF-8');
+	};
 
 	if (!isset($_POST['username']))
 		$_POST['username'] = '';
@@ -1414,6 +1364,7 @@ function AdminAccount()
 					'website_title' => 'string', 'website_url' => 'string',
 					'signature' => 'string', 'secret_question' => 'string',
 					'additional_groups' => 'string', 'ignore_boards' => 'string',
+					'policy_acceptance' => 'int',
 				),
 				array(
 					stripslashes($_POST['username']), stripslashes($_POST['username']), $_POST['password1'], stripslashes($_POST['email']),
@@ -1423,6 +1374,7 @@ function AdminAccount()
 					'', '',
 					'', '',
 					'', '',
+					StoryBB\Model\Policy::POLICY_CURRENTLYACCEPTED,
 				),
 				array('id_member'),
 				1
@@ -1472,7 +1424,7 @@ function DeleteInstall()
 {
 	global $txt, $incontext;
 	global $smcFunc, $context, $cookiename;
-	global $current_smf_version, $databases, $boarddir, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
+	global $current_sbb_version, $databases, $boarddir, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['sub_template'] = 'delete_install';
@@ -1571,8 +1523,8 @@ function DeleteInstall()
 
 	// This function is needed to do the updateStats('subject') call.
 	$smcFunc['strtolower'] = function($string){
-				return mb_strtolower($string, 'UTF-8');
-		};
+		return mb_strtolower($string, 'UTF-8');
+	};
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_msg
@@ -1593,8 +1545,8 @@ function DeleteInstall()
 	// Sanity check that they loaded earlier!
 	if (isset($modSettings['recycle_board']))
 	{
-		$forum_version = $current_smf_version; // The variable is usually defined in index.php so lets just use our variable to do it for us.
-		scheduled_fetchSMfiles(); // Now go get those files!
+		$forum_version = $current_sbb_version; // The variable is usually defined in index.php so lets just use our variable to do it for us.
+		scheduled_fetchStoryBBfiles(); // Now go get those files!
 
 		// We've just installed!
 		$user_info['ip'] = $_SERVER['REMOTE_ADDR'];
@@ -1692,14 +1644,6 @@ function updateSettingsFile($vars)
 	return true;
 }
 
-function updateDbLastError()
-{
-	// Write out the db_last_error file with the error timestamp
-	file_put_contents(dirname(__FILE__) . '/db_last_error.php', '<' . '?' . "php\n" . '$db_last_error = 0;' . "\n" . '?' . '>');
-
-	return true;
-}
-
 // Create an .htaccess file to prevent mod_security. StoryBB has filtering built-in.
 function fixModSecurity()
 {
@@ -1764,7 +1708,7 @@ function template_install_above()
 		<link rel="stylesheet" href="Themes/default/css/install.css?alp21">
 		', $txt['lang_rtl'] == true ? '<link rel="stylesheet" href="Themes/default/css/rtl.css?alp21">' : '', '
 
-		<script src="Themes/default/scripts/jquery-3.1.1.min.js"></script>
+		<script src="Themes/default/scripts/jquery-3.2.1.min.js"></script>
 		<script src="Themes/default/scripts/script.js"></script>
 	</head>
 	<body><div id="footerfix">
@@ -1858,27 +1802,26 @@ function template_install_below()
 		</div></div>
 		<div id="footer">
 			<ul>
-				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" class="new_win">StoryBB &copy; 2018, StoryBB project</a></li>
+				<li class="copyright"><a href="https://storybb.org/" title="StoryBB" target="_blank" rel="noopener">StoryBB &copy; 2018, StoryBB project</a></li>
 			</ul>
 		</div>
 	</body>
 </html>';
 }
 
-// Welcome them to the wonderful world of SMF!
+// Welcome them to the wonderful world of StoryBB!
 function template_welcome_message()
 {
 	global $incontext, $txt;
 
 	echo '
-	<script src="https://www.simplemachines.org/smf/current-version.js?version=' . $GLOBALS['current_smf_version'] . '"></script>
 	<form action="', $incontext['form_url'], '" method="post">
-		<p>', sprintf($txt['install_welcome_desc'], $GLOBALS['current_smf_version']), '</p>
+		<p>', sprintf($txt['install_welcome_desc'], $GLOBALS['current_sbb_version']), '</p>
 		<div id="version_warning" style="margin: 2ex; padding: 2ex; border: 2px dashed #a92174; color: black; background-color: #fbbbe2; display: none;">
 			<div style="float: left; width: 2ex; font-size: 2em; color: red;">!!</div>
 			<strong style="text-decoration: underline;">', $txt['error_warning_notice'], '</strong><br>
 			<div style="padding-left: 6ex;">
-				', sprintf($txt['error_script_outdated'], '<em id="smfVersion" style="white-space: nowrap;">??</em>', '<em id="yourVersion" style="white-space: nowrap;">' . $GLOBALS['current_smf_version'] . '</em>'), '
+				', sprintf($txt['error_script_outdated'], '<em id="sbbVersion" style="white-space: nowrap;">??</em>', '<em id="yourVersion" style="white-space: nowrap;">' . $GLOBALS['current_sbb_version'] . '</em>'), '
 			</div>
 		</div>';
 
@@ -1895,25 +1838,17 @@ function template_welcome_message()
 	echo '
 		<script>
 			// Latest version?
-			function smfCurrentVersion()
-			{
-				var smfVer, yourVer;
-
-				if (!(\'smfVersion\' in window))
-					return;
-
-				window.smfVersion = window.smfVersion.replace(/SMF\s?/g, \'\');
-
-				smfVer = document.getElementById("smfVersion");
-				yourVer = document.getElementById("yourVersion");
-
-				setInnerHTML(smfVer, window.smfVersion);
-
-				var currentVersion = getInnerHTML(yourVer);
-				if (currentVersion < window.smfVersion)
-					document.getElementById(\'version_warning\').style.display = \'\';
-			}
-			addLoadEvent(smfCurrentVersion);
+			$(document).ready(function() {
+				$.getJSON( "https://storybb.org/updates.json", function(data) {
+					if (data && data.current_version) {
+						var currentVersion = $("#yourVersion").text();
+						$("#sbbVersion").text(data.current_version);
+						if (currentVersion < data.current_version) {
+							$("#version_warning").show();
+						}
+					}
+				})
+			});
 		</script>';
 }
 
@@ -1985,26 +1920,26 @@ function template_chmod_files()
 				<tr>
 					<td width="26%" valign="top" class="textbox"><label for="ftp_server">', $txt['ftp_server'], ':</label></td>
 					<td>
-						<div style="float: ', $txt['lang_rtl'] == false ? 'right' : 'left', '; margin-', $txt['lang_rtl'] == false ? 'right' : 'left', ': 1px;"><label for="ftp_port" class="textbox"><strong>', $txt['ftp_port'], ':&nbsp;</strong></label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $incontext['ftp']['port'], '" class="input_text" /></div>
-						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $incontext['ftp']['server'], '" style="width: 70%;" class="input_text" />
+						<div style="float: ', $txt['lang_rtl'] == false ? 'right' : 'left', '; margin-', $txt['lang_rtl'] == false ? 'right' : 'left', ': 1px;"><label for="ftp_port" class="textbox"><strong>', $txt['ftp_port'], ':&nbsp;</strong></label> <input type="text" size="3" name="ftp_port" id="ftp_port" value="', $incontext['ftp']['port'], '" /></div>
+						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', $incontext['ftp']['server'], '" style="width: 70%;" />
 						<div class="smalltext block">', $txt['ftp_server_info'], '</div>
 					</td>
 				</tr><tr>
 					<td width="26%" valign="top" class="textbox"><label for="ftp_username">', $txt['ftp_username'], ':</label></td>
 					<td>
-						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $incontext['ftp']['username'], '" style="width: 99%;" class="input_text" />
+						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', $incontext['ftp']['username'], '" style="width: 99%;" />
 						<div class="smalltext block">', $txt['ftp_username_info'], '</div>
 					</td>
 				</tr><tr>
 					<td width="26%" valign="top" class="textbox"><label for="ftp_password">', $txt['ftp_password'], ':</label></td>
 					<td>
-						<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 99%;" class="input_password" />
+						<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 99%;" />
 						<div class="smalltext block">', $txt['ftp_password_info'], '</div>
 					</td>
 				</tr><tr>
 					<td width="26%" valign="top" class="textbox"><label for="ftp_path">', $txt['ftp_path'], ':</label></td>
 					<td style="padding-bottom: 1ex;">
-						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $incontext['ftp']['path'], '" style="width: 99%;" class="input_text" />
+						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $incontext['ftp']['path'], '" style="width: 99%;" />
 						<div class="smalltext block">', $incontext['ftp']['path_msg'], '</div>
 					</td>
 				</tr>
@@ -2061,7 +1996,7 @@ function template_database_settings()
 			<tr id="db_server_contain">
 				<td width="20%" valign="top" class="textbox"><label for="db_server_input">', $txt['db_settings_server'], ':</label></td>
 				<td>
-					<input type="text" name="db_server" id="db_server_input" value="', $incontext['db']['server'], '" size="30" class="input_text" /><br>
+					<input type="text" name="db_server" id="db_server_input" value="', $incontext['db']['server'], '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_server_info'], '</div>
 				</td>
 			</tr><tr id="db_port_contain">
@@ -2073,46 +2008,36 @@ function template_database_settings()
 			</tr><tr id="db_user_contain">
 				<td valign="top" class="textbox"><label for="db_user_input">', $txt['db_settings_username'], ':</label></td>
 				<td>
-					<input type="text" name="db_user" id="db_user_input" value="', $incontext['db']['user'], '" size="30" class="input_text" /><br>
+					<input type="text" name="db_user" id="db_user_input" value="', $incontext['db']['user'], '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_username_info'], '</div>
 				</td>
 			</tr><tr id="db_passwd_contain">
 				<td valign="top" class="textbox"><label for="db_passwd_input">', $txt['db_settings_password'], ':</label></td>
 				<td>
-					<input type="password" name="db_passwd" id="db_passwd_input" value="', $incontext['db']['pass'], '" size="30" class="input_password" /><br>
+					<input type="password" name="db_passwd" id="db_passwd_input" value="', $incontext['db']['pass'], '" size="30"><br>
 					<div class="smalltext block">', $txt['db_settings_password_info'], '</div>
 				</td>
 			</tr><tr id="db_name_contain">
 				<td valign="top" class="textbox"><label for="db_name_input">', $txt['db_settings_database'], ':</label></td>
 				<td>
-					<input type="text" name="db_name" id="db_name_input" value="', empty($incontext['db']['name']) ? 'storybb' : $incontext['db']['name'], '" size="30" class="input_text" /><br>
+					<input type="text" name="db_name" id="db_name_input" value="', empty($incontext['db']['name']) ? 'storybb' : $incontext['db']['name'], '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_database_info'], '
 					<span id="db_name_info_warning">', $txt['db_settings_database_info_note'], '</span></div>
 				</td>
 			</tr><tr id="db_filename_contain" style="display: none;">
 				<td valign="top" class="textbox"><label for="db_filename_input">', $txt['db_settings_database_file'], ':</label></td>
 				<td>
-					<input type="text" name="db_filename" id="db_filename_input" value="', empty($incontext['db']['name']) ? dirname(__FILE__) . '/smf_' . substr(md5(microtime()), 0, 10) : stripslashes($incontext['db']['name']), '" size="30" class="input_text" /><br>
+					<input type="text" name="db_filename" id="db_filename_input" value="', empty($incontext['db']['name']) ? dirname(__FILE__) . '/sbb_' . substr(md5(microtime()), 0, 10) : stripslashes($incontext['db']['name']), '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_database_file_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="db_prefix_input">', $txt['db_settings_prefix'], ':</label></td>
 				<td>
-					<input type="text" name="db_prefix" id="db_prefix_input" value="', $incontext['db']['prefix'], '" size="30" class="input_text" /><br>
+					<input type="text" name="db_prefix" id="db_prefix_input" value="', $incontext['db']['prefix'], '" size="30" /><br>
 					<div class="smalltext block">', $txt['db_settings_prefix_info'], '</div>
 				</td>
 			</tr>
 		</table>';
-
-	// Toggles a warning related to db names in PostgreSQL
-	echo '
-	<script>
-		function toggleDBInput()
-		{
-			$("#db_name_info_warning").toggle($("#db_type_input").val() != "postgresql");
-		}
-		toggleDBInput();
-	</script>';
 }
 
 // Stick in their forum settings.
@@ -2133,7 +2058,7 @@ function template_forum_settings()
 					<label for="mbname_input">', $txt['install_settings_name'], ':</label>
 				</td>
 				<td>
-					<input type="text" name="mbname" id="mbname_input" value="', $txt['install_settings_name_default'], '" size="65" class="input_text" />
+					<input type="text" name="mbname" id="mbname_input" value="', $txt['install_settings_name_default'], '" size="65" />
 					<div class="smalltext block">', $txt['install_settings_name_info'], '</div>
 				</td>
 			</tr>
@@ -2142,7 +2067,7 @@ function template_forum_settings()
 					<label for="boardurl_input">', $txt['install_settings_url'], ':</label>
 				</td>
 				<td>
-					<input type="text" name="boardurl" id="boardurl_input" value="', $incontext['detected_url'], '" size="65" class="input_text" />
+					<input type="text" name="boardurl" id="boardurl_input" value="', $incontext['detected_url'], '" size="65" />
 					<br>
 					<div class="smalltext block">', $txt['install_settings_url_info'], '</div>
 				</td>
@@ -2234,31 +2159,31 @@ function template_admin_account()
 			<tr>
 				<td width="18%" valign="top" class="textbox"><label for="username">', $txt['user_settings_username'], ':</label></td>
 				<td>
-					<input type="text" name="username" id="username" value="', $incontext['username'], '" size="40" class="input_text" />
+					<input type="text" name="username" id="username" value="', $incontext['username'], '" size="40" />
 					<div class="smalltext block">', $txt['user_settings_username_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="password1">', $txt['user_settings_password'], ':</label></td>
 				<td>
-					<input type="password" name="password1" id="password1" size="40" class="input_password" />
+					<input type="password" name="password1" id="password1" size="40">
 					<div class="smalltext block">', $txt['user_settings_password_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="password2">', $txt['user_settings_again'], ':</label></td>
 				<td>
-					<input type="password" name="password2" id="password2" size="40" class="input_password" />
+					<input type="password" name="password2" id="password2" size="40">
 					<div class="smalltext block">', $txt['user_settings_again_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="email">', $txt['user_settings_admin_email'], ':</label></td>
 				<td>
-					<input type="text" name="email" id="email" value="', $incontext['email'], '" size="40" class="input_text" />
+					<input type="text" name="email" id="email" value="', $incontext['email'], '" size="40" />
 					<div class="smalltext block">', $txt['user_settings_admin_email_info'], '</div>
 				</td>
 			</tr><tr>
 				<td valign="top" class="textbox"><label for="server_email">', $txt['user_settings_server_email'], ':</label></td>
 				<td>
-					<input type="text" name="server_email" id="server_email" value="', $incontext['server_email'], '" size="40" class="input_text" />
+					<input type="text" name="server_email" id="server_email" value="', $incontext['server_email'], '" size="40" />
 					<div class="smalltext block">', $txt['user_settings_server_email_info'], '</div>
 				</td>
 			</tr>
@@ -2270,7 +2195,7 @@ function template_admin_account()
 		<p>', $txt['user_settings_database_info'], '</p>
 
 		<div style="margin-bottom: 2ex; padding-', $txt['lang_rtl'] == false ? 'left' : 'right', ': 50px;">
-			<input type="password" name="password3" size="30" class="input_password" />
+			<input type="password" name="password3" size="30">
 		</div>';
 }
 
@@ -2294,7 +2219,7 @@ function template_delete_install()
 	if ($incontext['probably_delete_install'])
 		echo '
 		<div style="margin: 1ex; font-weight: bold;">
-			<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" class="input_check" /> ', $txt['delete_installer'], !isset($_SESSION['installer_temp_ftp']) ? ' ' . $txt['delete_installer_maybe'] : '', '</label>
+			<label for="delete_self"><input type="checkbox" id="delete_self" onclick="doTheDelete();" /> ', $txt['delete_installer'], !isset($_SESSION['installer_temp_ftp']) ? ' ' . $txt['delete_installer_maybe'] : '', '</label>
 		</div>
 		<script>
 			function doTheDelete()
@@ -2314,5 +2239,3 @@ function template_delete_install()
 		<br>
 		', $txt['good_luck'];
 }
-
-?>

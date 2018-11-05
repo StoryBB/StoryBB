@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * The main entrance point for the Manage Members screen.
  * As everyone else, it calls a function based on the given sub-action.
@@ -74,7 +71,7 @@ function ViewMembers()
 	$context['show_activate'] = (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1) || !empty($context['awaiting_activation']);
 
 	// What about approval?
-	$context['show_approve'] = (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 2) || !empty($context['awaiting_approval']) || !empty($modSettings['approveAccountDeletion']);
+	$context['show_approve'] = true;
 
 	// Setup the admin tabs.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -272,7 +269,7 @@ function ViewMemberlist()
 
 		$search_params = array();
 		if ($context['sub_action'] == 'query' && !empty($_REQUEST['params']) && empty($_POST['types']))
-			$search_params = smf_json_decode(base64_decode($_REQUEST['params']), true);
+			$search_params = sbb_json_decode(base64_decode($_REQUEST['params']), true);
 		elseif (!empty($_POST))
 		{
 			$search_params['types'] = $_POST['types'];
@@ -620,13 +617,13 @@ function ViewMemberlist()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'function' => function($rowData) use ($user_info)
 					{
-						return '<input type="checkbox" name="delete[]" value="' . $rowData['id_member'] . '" class="input_check"' . ($rowData['id_member'] == $user_info['id'] || $rowData['id_group'] == 1 || in_array(1, explode(',', $rowData['additional_groups'])) ? ' disabled' : '') . '>';
+						return '<input type="checkbox" name="delete[]" value="' . $rowData['id_member'] . '"' . ($rowData['id_member'] == $user_info['id'] || $rowData['id_group'] == 1 || in_array(1, explode(',', $rowData['additional_groups'])) ? ' disabled' : '') . '>';
 					},
 					'class' => 'centercol',
 				),
@@ -750,7 +747,7 @@ function MembersAwaitingActivation()
 			$context['available_filters'][] = array(
 				'type' => $type,
 				'amount' => $amount,
-				'desc' => isset($txt['admin_browse_filter_type_' . $type]) ? $txt['admin_browse_filter_type_' . $type] : '?',
+				'desc' => (isset($txt['admin_browse_filter_type_' . $type]) ? $txt['admin_browse_filter_type_' . $type] : '?') . ($type == 4 ? '<br>' . $txt['admin_browse_filter_no_deletion'] : ''),
 				'selected' => $type == $context['current_filter']
 			);
 	}
@@ -982,12 +979,12 @@ function MembersAwaitingActivation()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="todoAction[]" value="%1$d" class="input_check">',
+						'format' => '<input type="checkbox" name="todoAction[]" value="%1$d">',
 						'params' => array(
 							'id_member' => false,
 						),
@@ -1186,6 +1183,20 @@ function AdminApprove()
 				StoryBB\Helper\Mail::send($member['email'], $emaildata['subject'], $emaildata['body'], null, 'accapp' . $member['id'], $emaildata['is_html'], 0);
 			}
 		}
+
+		// Anyone that got alerted about this user, mark those as read.
+		$alerted = StoryBB\Model\Alert::find_alerts([
+			'id_member_started' => $members,
+			'content_action' => 'register_approval',
+			'is_read' => 0
+		]);
+		if (!empty($alerted))
+		{
+			foreach ($alerted as $memID => $alerts)
+			{
+				StoryBB\Model\Alert::change_read($memID, $alerts, 1);
+			}
+		}
 	}
 	// Maybe we're sending it off for activation?
 	elseif ($_POST['todo'] == 'require_activation')
@@ -1229,6 +1240,18 @@ function AdminApprove()
 	// Are we rejecting them?
 	elseif ($_POST['todo'] == 'reject' || $_POST['todo'] == 'rejectemail')
 	{
+		// Delete the alerts about them.
+		$alerted = StoryBB\Model\Alert::find_alerts([
+			'id_member_started' => $members,
+			'content_action' => 'register_approval',
+			'is_read' => 0
+		]);
+		foreach ($alerted as $memID => $alerts)
+		{
+			StoryBB\Model\Alert::delete($alerts, $memID);
+		}
+
+		// Delete their accounts.
 		require_once($sourcedir . '/Subs-Members.php');
 		deleteMembers($members);
 
@@ -1249,6 +1272,18 @@ function AdminApprove()
 	// A simple delete?
 	elseif ($_POST['todo'] == 'delete' || $_POST['todo'] == 'deleteemail')
 	{
+		// Delete the alerts about them.
+		$alerted = StoryBB\Model\Alert::find_alerts([
+			'id_member_started' => $members,
+			'content_action' => 'register_approval',
+			'is_read' => 0
+		]);
+		foreach ($alerted as $memID => $alerts)
+		{
+			StoryBB\Model\Alert::delete($alerts, $memID);
+		}
+
+		// Delete their accounts.
 		require_once($sourcedir . '/Subs-Members.php');
 		deleteMembers($members);
 
@@ -1343,5 +1378,3 @@ function jeffsdatediff($old)
 	// Divide out the seconds in a day to get the number of days.
 	return ceil($dis / (24 * 60 * 60));
 }
-
-?>

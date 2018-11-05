@@ -24,7 +24,6 @@ $txt['mc_warnings'] = 'Warnings';
 $txt['mc_notes'] = 'Moderator Notes';
 
 $txt['mc_notes_delete_own'] = 'You are only allowed to delete your own notes.';
-$txt['mc_cannot_connect_sm'] = 'You are unable to connect to simplemachines.org\'s latest news file.';
 
 $txt['mc_recent_reports_none'] = 'There are no outstanding reports';
 $txt['mc_watched_users_none'] = 'There are not currently any watches in place.';
@@ -174,5 +173,3 @@ $txt['mc_add_note'] = 'Add';
 $txt['mc_reportedm_ignore_confirm'] = 'Are you sure you wish to ignore further reports about this user\'s profile?\\n\\nThis will turn off further reports for everyone.';
 $txt['mc_reported_members_title'] = 'Reported Members';
 $txt['mc_reported_members_desc'] = 'Allows you to view a list of all users whose profiles have been reported';
-
-?>

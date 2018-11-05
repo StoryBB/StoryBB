@@ -74,11 +74,11 @@
         {{/if}}
         
         {{#if modSettings.userLanguage}}
-            {{#if context.languages}}
+            {{#if (gt (count context.languages) 1)}}
                 <form id="languages_form" method="get" class="floatright">
         			<select id="language_select" name="language" onchange="this.form.submit()">
         			    {{#each context.languages}}
-        			    <option value="{{filename}}"{{isSelected context.user.language filename}}>{{name}}</option>
+        			    <option value="{{filename}}"{{#if (eq context.user.language filename)}} selected{{/if}}>{{name}}</option>
         			    {{/each}}
         		    </select>
         		<noscript>
@@ -90,7 +90,7 @@
         
         {{#if context.allow_search}}
         	<form id="search_form" class="floatright" action="{{scripturl}}?action=search2" method="post" accept-charset="UTF-8">
-        		<input type="search" name="search" value="" class="input_text">&nbsp;
+        		<input type="search" name="search" value="">&nbsp;
                 <select name="search_selection">
                     <option value="all">{{txt.search_entireforum}}</option>
                     {{#if context.current_topic}}<option value="topic" selected="selected">{{txt.search_thistopic}}</option>{{/if}}
@@ -158,16 +158,20 @@
     </div>
     
     <div id="footer">
-    	<ul>
-    		<li class="floatright">
-    		    <a href="{{scripturl}}?action=help">{{txt.help}}</a>
-    		    {{#if modSettings.requireAgreement}}| <a href="{{scripturl}}?action=help;sa=rules">{{txt.terms_and_rules}}</a>{{/if}}
-    		    | <a href="#top_section">{{txt.go_up}} &#9650;</a>
-		    </li>
-    		<li class="copyright">{{{copyright}}}</li>
-    	</ul>
+        <ul>
+            <li class="floatright">
+                <a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
+                | <a href="{{scripturl}}?action=help">{{txt.help}}</a>
+                {{#each context.footer_links}}
+                | <a href="{{{link}}}">{{{title}}}</a>
+                {{/each}}
+                | <a href="#top_section">{{txt.go_up}} &#9650;</a>
+            </li>
+            <li class="copyright">{{{copyright}}}</li>
+        </ul>
     </div>
 
    {{{javascript deferred=1}}}
+   {{> cookie_footer}}
 </body>
 </html>

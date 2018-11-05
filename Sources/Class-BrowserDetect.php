@@ -1,15 +1,14 @@
 <?php
 
 /**
+ * Provides detection to identify the current user's browser.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 3.0 Alpha 1
  */
-
-if (!defined('SMF'))
-	die('No direct access...');
 
 /**
  * Class browser_detector
@@ -40,7 +39,7 @@ class browser_detector
 	 * The main method of this class, you know the one that does the job: detect the thing.
 	 *  - determines the user agent (browser) as best it can.
 	 */
-	function detectBrowser()
+	public function detectBrowser()
 	{
 		global $context, $user_info;
 
@@ -101,7 +100,7 @@ class browser_detector
 	* Determine if the browser is Opera or not
 	* @return boolean Whether or not this is Opera
 	*/
-	function isOpera()
+	public function isOpera()
 	{
 		if (!isset($this->_browsers['is_opera']))
 			$this->_browsers['is_opera'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false;
@@ -112,7 +111,7 @@ class browser_detector
 	* Determine if the browser is IE or not
 	* @return boolean true Whether or not the browser is IE
 	*/
-	function isIe()
+	public function isIe()
 	{
 		// I'm IE, Yes I'm the real IE; All you other IEs are just imitating.
 		if (!isset($this->_browsers['is_ie']))
@@ -124,20 +123,20 @@ class browser_detector
 	* Determine if the browser is IE11 or not
 	* @return boolean Whether or not the browser is IE11
 	*/
-	function isIe11()
+	public function isIe11()
 	{
 		// IE11 is a bit different than earlier versions
 		// The isGecko() part is to ensure we get this right...
 		if (!isset($this->_browsers['is_ie11']))
 			$this->_browsers['is_ie11'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== false && $this->isGecko();
 		return $this->_browsers['is_ie11'];
- 	}
+	}
 
 	/**
 	* Determine if the browser is Edge or not
 	* @return boolean Whether or not the browser is Edge
 	*/
-	function isEdge()
+	public function isEdge()
 	{
 		if (!isset($this->_browsers['is_edge']))
 			$this->_browsers['is_edge'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Edge') !== false;
@@ -148,7 +147,7 @@ class browser_detector
 	* Determine if the browser is a Webkit based one or not
 	* @return boolean Whether or not this is a Webkit-based browser
 	*/
-	function isWebkit()
+	public function isWebkit()
 	{
 		if (!isset($this->_browsers['is_webkit']))
 			$this->_browsers['is_webkit'] = strpos($_SERVER['HTTP_USER_AGENT'], 'AppleWebKit') !== false;
@@ -159,7 +158,7 @@ class browser_detector
 	* Determine if the browser is Firefox or one of its variants
 	* @return boolean Whether or not this is Firefox (or one of its variants)
 	*/
-	function isFirefox()
+	public function isFirefox()
 	{
 		if (!isset($this->_browsers['is_firefox']))
 			$this->_browsers['is_firefox'] = preg_match('~(?:Firefox|Ice[wW]easel|IceCat|Shiretoko|Minefield)/~', $_SERVER['HTTP_USER_AGENT']) === 1 && $this->isGecko();
@@ -170,7 +169,7 @@ class browser_detector
 	* Determine if the browser is WebTv or not
 	* @return boolean Whether or not this is WebTV
 	*/
-	function isWebTv()
+	public function isWebTv()
 	{
 		if (!isset($this->_browsers['is_web_tv']))
 			$this->_browsers['is_web_tv'] = strpos($_SERVER['HTTP_USER_AGENT'], 'WebTV') !== false;
@@ -181,7 +180,7 @@ class browser_detector
 	* Determine if the browser is konqueror or not
 	* @return boolean Whether or not this is Konqueror
 	*/
-	function isKonqueror()
+	public function isKonqueror()
 	{
 		if (!isset($this->_browsers['is_konqueror']))
 			$this->_browsers['is_konqueror'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Konqueror') !== false;
@@ -192,7 +191,7 @@ class browser_detector
 	* Determine if the browser is Gecko or not
 	* @return boolean Whether or not this is a Gecko-based browser
 	*/
-	function isGecko()
+	public function isGecko()
 	{
 		if (!isset($this->_browsers['is_gecko']))
 			$this->_browsers['is_gecko'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') !== false && !$this->isWebkit() && !$this->isKonqueror();
@@ -203,7 +202,7 @@ class browser_detector
 	* Determine if the browser is Opera Mini or not
 	* @return boolean Whether or not this is Opera Mini
 	*/
-	function isOperaMini()
+	public function isOperaMini()
 	{
 		if (!isset($this->_browsers['is_opera_mini']))
 			$this->_browsers['is_opera_mini'] = (isset($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']) || stripos($_SERVER['HTTP_USER_AGENT'], 'opera mini') !== false);
@@ -216,7 +215,7 @@ class browser_detector
 	* Determine if the browser is Opera Mobile or not
 	* @return boolean Whether or not this is Opera Mobile
 	*/
-	function isOperaMobi()
+	public function isOperaMobi()
 	{
 		if (!isset($this->_browsers['is_opera_mobi']))
 			$this->_browsers['is_opera_mobi'] = stripos($_SERVER['HTTP_USER_AGENT'], 'opera mobi') !== false;
@@ -388,7 +387,7 @@ class browser_detector
 				'is_konqueror' => 'konqueror',
 			);
 
-			$context['browser_body_id'] = 'smf';
+			$context['browser_body_id'] = 'storybb';
 			$active = array_reverse(array_keys($this->_browsers, true));
 			foreach ($active as $browser)
 			{
@@ -405,7 +404,7 @@ class browser_detector
 	 * Fill out the historical array
 	 *  - needed to support old mods that don't use isBrowser
 	 */
-	function fillInformation()
+	public function fillInformation()
 	{
 		$this->_browsers += array(
 			'is_opera' => false,
@@ -441,5 +440,3 @@ class browser_detector
 		);
 	}
 }
-
-?>

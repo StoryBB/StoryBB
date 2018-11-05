@@ -132,6 +132,8 @@ $txt['errortype_backup'] = 'Backups';
 $txt['errortype_backup_desc'] = 'Errors resulting from backing up files, which are usually messages explaining why the proceedure failed.';
 $txt['errortype_login'] = 'Logins';
 $txt['errortype_login_desc'] = 'Errors caused by failed login attempts or brute force attempts.';
+$txt['errortype_mail'] = 'Mail';
+$txt['errortype_mail_desc'] = 'Errors caused by mail not sending correctly.';
 
 $txt['maintain_recount'] = 'Recount all forum totals and statistics';
 $txt['maintain_recount_info'] = 'Should the total replies of a topic or the number of PMs in your inbox be incorrect: this function will recount all saved counts and statistics for you.';
@@ -209,12 +211,15 @@ $txt['move_zero_all'] = 'Enter 0 to move all topics';
 $txt['maintain_reattribute_posts'] = 'Reattribute User Posts';
 $txt['reattribute_guest_posts'] = 'Attribute posts made with';
 $txt['reattribute_email'] = 'Email address of';
+$txt['reattribute_email_note'] = 'Note: email addresses previously associated with posts may have been removed for privacy reasons.';
 $txt['reattribute_username'] = 'Username of';
-$txt['reattribute_current_member'] = 'Attribute posts to member';
-$txt['reattribute_increase_posts'] = 'Add posts to users post count';
+$txt['reattribute_current_member'] = 'Attribute posts to member (OOC account)';
+$txt['reattribute_current_character'] = 'Attribute posts to character';
+$txt['reattribute_increase_posts'] = 'Add posts to post count';
 $txt['reattribute'] = 'Reattribute';
 // Don't use entities in the below string.
 $txt['reattribute_confirm'] = 'Are you sure you want to attribute all guest posts with %type% of "%find%" to member "%member_to%"?';
+$txt['reattribute_confirm_character'] = 'Are you sure you want to attribute all guest posts with %type% of "%find%" to character "%character_to%"?';
 $txt['reattribute_confirm_username'] = 'a username';
 $txt['reattribute_confirm_email'] = 'an email address';
 $txt['reattribute_cannot_find_member'] = 'Could not find member to attribute posts to.';
@@ -228,5 +233,3 @@ $txt['zipped_file'] = 'If you want you can create a compressed (zipped) backup.'
 $txt['plain_text'] = 'The best method to backup your database is to create a plain text file, a compressed package may not be completely reliable.';
 $txt['enable_maintenance1'] = 'Due to the size of your forum, it is recommended to place your forum in "maintenance mode" before you start the backup.';
 $txt['enable_maintenance2'] = 'To proceed, due to the size of your forum, please place your forum in "maintenance mode".';
-
-?>

@@ -56,9 +56,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * This is the main dispatcher. Sets up all the available sub-actions, all the tabs and selects
  * the appropriate one based on the sub-action.
@@ -91,7 +88,6 @@ function ModifySettings()
 
 	$subActions = array(
 		'general' => 'ModifyGeneralSettings',
-		'database' => 'ModifyDatabaseSettings',
 		'cookie' => 'ModifyCookieSettings',
 		'security' => 'ModifyGeneralSecuritySettings',
 		'cache' => 'ModifyCacheSettings',
@@ -224,7 +220,7 @@ $(function()
  * The admin must have pointed those somewhere else on purpose, so they must be updated manually.
  * 
  * A word of caution: You can't trust the http/https scheme reflected for these URLs in $globals
- * (e.g., $boardurl) or in $modSettings.  This is because SMF may change them in memory to comply
+ * (e.g., $boardurl) or in $modSettings.  This is because StoryBB may change them in memory to comply
  * with the force_ssl setting - a soft redirect may be in effect...  Thus, conditional updates
  * to these values do not work.  You gotta just brute force overwrite them based on force_ssl.
  *
@@ -316,7 +312,7 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
  *
  * Helper function to see if the url being checked is based off of $boardurl.
  * If not, it was overridden by the admin to some other value on purpose, and should not
- * be stepped on by SMF when aligning URLs with the force_ssl setting.
+ * be stepped on by StoryBB when aligning URLs with the force_ssl setting.
  * The site admin must change URLs that are not aligned with $boardurl manually.
  *
  * @param string $url is the url to check.
@@ -336,74 +332,6 @@ function BoardurlMatch($url = '')
 		return false;
 	else
 		return true;
-}
-
-/**
- * Basic database and paths settings - database name, host, etc.
- *
- * - It shows an interface for the settings in Settings.php to be changed.
- * - It contains the actual array of settings to show from Settings.php.
- * - Requires the admin_forum permission.
- * - Uses the edit_settings administration area.
- * - Accessed from ?action=admin;area=serversettings;sa=database.
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyDatabaseSettings($return_config = false)
-{
-	global $scripturl, $context, $txt, $smcFunc;
-
-	/* If you're writing a mod, it's a bad idea to add things here....
-		For each option:
-		variable name, description, type (constant), size/possible values, helptext, optional 'min' (minimum value for float/int, defaults to 0), optional 'max' (maximum value for float/int), optional 'step' (amount to increment/decrement value for float/int)
-		OR an empty string for a horizontal rule.
-		OR a string for a titled section. */
-	$config_vars = array(
-		array('db_error_send', $txt['db_error_send'], 'file', 'check'),
-		'',
-		array('autoFixDatabase', $txt['autoFixDatabase'], 'db', 'check', false, 'autoFixDatabase')
-	);
-
-	// Add PG Stuff
-	if ($smcFunc['db_title'] == "PostgreSQL")
-	{
-		$request = $smcFunc['db_query']('', 'SELECT cfgname FROM pg_ts_config', array());
-		$fts_language = array();
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$fts_language[$row['cfgname']] = $row['cfgname'];
-
-		$config_vars = array_merge ($config_vars, array(
-				'',
-				array('search_language', $txt['search_language'], 'db', 'select', $fts_language, 'pgFulltextSearch')
-			)
-		);
-	}
-
-
-	call_integration_hook('integrate_database_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	// Setup the template stuff.
-	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=database;save';
-	$context['settings_title'] = $txt['database_settings'];
-	$context['save_disabled'] = $context['settings_not_writable'];
-
-	// Saving settings?
-	if (isset($_REQUEST['save']))
-	{
-		call_integration_hook('integrate_save_database_settings');
-
-		saveSettings($config_vars);
-		session_flash('success', $txt['settings_saved']);
-		redirectexit('action=admin;area=serversettings;sa=database;' . $context['session_var'] . '=' . $context['session_id']);
-	}
-
-	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
 }
 
 /**
@@ -550,11 +478,9 @@ function ModifyGeneralSecuritySettings($return_config = false)
 		'',
 			// Reactive on email, and approve on delete
 			array('check', 'send_validation_onChange'),
-			array('check', 'approveAccountDeletion'),
 		'',
 			// Password strength.
 			array('select', 'password_strength', array($txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high'])),
-			array('check', 'enable_password_conversion'),
 		'',
 			array('select', 'frame_security', array('SAMEORIGIN' => $txt['setting_frame_security_SAMEORIGIN'], 'DENY' => $txt['setting_frame_security_DENY'], 'DISABLE' => $txt['setting_frame_security_DISABLE'])),
 		'',
@@ -895,7 +821,7 @@ function prepareDBSettingContext(&$config_vars)
 				if ($config_var[0] == 'select' && !empty($config_var['multiple']))
 				{
 					$context['config_vars'][$config_var[1]]['name'] .= '[]';
-					$context['config_vars'][$config_var[1]]['value'] = !empty($context['config_vars'][$config_var[1]]['value']) ? smf_json_decode($context['config_vars'][$config_var[1]]['value'], true) : array();
+					$context['config_vars'][$config_var[1]]['value'] = !empty($context['config_vars'][$config_var[1]]['value']) ? sbb_json_decode($context['config_vars'][$config_var[1]]['value'], true) : array();
 				}
 
 				// If it's associative
@@ -949,10 +875,6 @@ function prepareDBSettingContext(&$config_vars)
 		require_once($sourcedir . '/Subs-MessageIndex.php');
 		$context['board_list'] = getBoardList();
 
-		register_helper([
-			'repeat' => function($string, $repeat) { return $repeat > 0 ? str_repeat($string, $repeat) : ''; }
-		]);
-
 		addInlineJavascript('
 		$("legend.board_selector").closest("fieldset").hide();
 		$("a.board_selector").click(function(e) {
@@ -985,7 +907,8 @@ function prepareDBSettingContext(&$config_vars)
 		$context['bbc_columns'] = array();
 		$tagsPerColumn = ceil($totalTags / $numColumns);
 
-		$col = 0; $i = 0;
+		$col = 0;
+		$i = 0;
 		foreach ($bbcTags as $tag)
 		{
 			if ($i % $tagsPerColumn == 0 && $i != 0)
@@ -1061,7 +984,7 @@ function saveSettings(&$config_vars)
 		'webmaster_email',
 		'db_name', 'db_user', 'db_server', 'db_prefix', 'ssi_db_user',
 		'boarddir', 'sourcedir',
-		'cachedir', 'cachedir_sqlite', 'cache_accelerator', 'cache_memcached',
+		'cachedir', 'cachedir_sqlite', 'cache_accelerator', 'cache_memcached', 'cache_redis',
 		'image_proxy_secret',
 	);
 
@@ -1072,7 +995,7 @@ function saveSettings(&$config_vars)
 	);
 
 	// All the checkboxes
-	$config_bools = array('db_persist', 'db_error_send', 'maintenance', 'image_proxy_enabled');
+	$config_bools = array('db_persist', 'maintenance', 'image_proxy_enabled');
 
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = array();
@@ -1337,7 +1260,4 @@ function ShowPHPinfoSettings()
 	}
 	$context['page_title'] = $txt['admin_server_settings'];
 	$context['sub_template'] = 'admin_phpinfo';
-	return;
 }
-
-?>

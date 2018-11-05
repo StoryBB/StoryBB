@@ -8,7 +8,7 @@
 					<strong>{{name}}</strong>
 					<ul>
 					{{#each boards}}
-						<li><label><input type="checkbox" name="{{../../config_var.name}}[{{id}}]" value="1" class="input_check"{{#if (in_array id ../../config_var.value)}} checked{{/if}}> {{{repeat '&nbsp; &nbsp;' child_level}}}{{{name}}}</label></li>
+						<li><label><input type="checkbox" name="{{../../config_var.name}}[{{id}}]" value="1"{{#if (in_array id ../../config_var.value)}} checked{{/if}}> {{{repeat '&nbsp; &nbsp;' child_level}}}{{{name}}}</label></li>
 					{{/each}}
 					</ul>
 				{{/each}}

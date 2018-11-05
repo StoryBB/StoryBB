@@ -11,9 +11,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Ban center. The main entrance point for all ban center functions.
  * It is accesssed by ?action=admin;area=ban.
@@ -242,12 +239,12 @@ function BanList()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="remove[]" value="%1$d" class="input_check">',
+						'format' => '<input type="checkbox" name="remove[]" value="%1$d">',
 						'params' => array(
 							'id_ban_group' => false,
 						),
@@ -433,12 +430,12 @@ function BanEdit()
 					),
 					'checkboxes' => array(
 						'header' => array(
-							'value' => '<input type="checkbox" onclick="invertAll(this, this.form, \'ban_items\');" class="input_check">',
+							'value' => '<input type="checkbox" onclick="invertAll(this, this.form, \'ban_items\');">',
 							'style' => 'width: 5%; text-align: center;',
 						),
 						'data' => array(
 							'sprintf' => array(
-								'format' => '<input type="checkbox" name="ban_items[]" value="%1$d" class="input_check">',
+								'format' => '<input type="checkbox" name="ban_items[]" value="%1$d">',
 								'params' => array(
 									'id' => false,
 								),
@@ -574,7 +571,7 @@ function BanEdit()
 		}
 	}
 
-	loadJavaScriptFile('suggest.js', array(), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array(), 'sbb_suggest');
 	$context['sub_template'] = 'admin_ban_manage';
 
 }
@@ -789,7 +786,7 @@ function banLoadAdditionalIPsError($member_id)
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-	    $error_ips[] = inet_dtop($row['ip']);
+		$error_ips[] = inet_dtop($row['ip']);
 	$smcFunc['db_free_result']($request);
 
 	return $error_ips;
@@ -1133,7 +1130,7 @@ function validateTriggers(&$triggers)
 	global $context, $smcFunc;
 
 	if (empty($triggers))
-		$context['ban_erros'][] = 'ban_empty_triggers';
+		$context['ban_errors'][] = 'ban_empty_triggers';
 
 	$ban_triggers = array();
 	$log_info = array();
@@ -1150,7 +1147,7 @@ function validateTriggers(&$triggers)
 				$value = trim($value);
 				$ip_parts = ip2range($value);
 				if (!checkExistingTriggerIP($ip_parts, $value))
-					$context['ban_erros'][] = 'invalid_ip';
+					$context['ban_errors'][] = 'invalid_ip';
 				else
 				{
 					$ban_triggers['main_ip'] = array(
@@ -1162,7 +1159,7 @@ function validateTriggers(&$triggers)
 			elseif ($key == 'hostname')
 			{
 				if (preg_match('/[^\w.\-*]/', $value) == 1)
-					$context['ban_erros'][] = 'invalid_hostname';
+					$context['ban_errors'][] = 'invalid_hostname';
 				else
 				{
 					// Replace the * wildcard by a MySQL wildcard %.
@@ -1174,7 +1171,7 @@ function validateTriggers(&$triggers)
 			elseif ($key == 'email')
 			{
 				if (preg_match('/[^\w.\-\+*@]/', $value) == 1)
-					$context['ban_erros'][] = 'invalid_email';
+					$context['ban_errors'][] = 'invalid_email';
 
 				// Check the user is not banning an admin.
 				$request = $smcFunc['db_query']('', '
@@ -1189,7 +1186,7 @@ function validateTriggers(&$triggers)
 					)
 				);
 				if ($smcFunc['db_num_rows']($request) != 0)
-					$context['ban_erros'][] = 'no_ban_admin';
+					$context['ban_errors'][] = 'no_ban_admin';
 				$smcFunc['db_free_result']($request);
 
 				$value = substr(strtolower(str_replace('*', '%', $value)), 0, 255);
@@ -1211,14 +1208,14 @@ function validateTriggers(&$triggers)
 					)
 				);
 				if ($smcFunc['db_num_rows']($request) == 0)
-					$context['ban_erros'][] = 'invalid_username';
+					$context['ban_errors'][] = 'invalid_username';
 				list ($value, $isAdmin) = $smcFunc['db_fetch_row']($request);
 				$smcFunc['db_free_result']($request);
 
 				if ($isAdmin && strtolower($isAdmin) != 'f')
 				{
 					unset($value);
-					$context['ban_erros'][] = 'no_ban_admin';
+					$context['ban_errors'][] = 'no_ban_admin';
 				}
 				else
 					$ban_triggers['user']['id_member'] = $value;
@@ -1236,7 +1233,7 @@ function validateTriggers(&$triggers)
 					$val = trim($val);
 					$ip_parts = ip2range($val);
 					if (!checkExistingTriggerIP($ip_parts, $val))
-						$context['ban_erros'][] = 'invalid_ip';
+						$context['ban_errors'][] = 'invalid_ip';
 					else
 					{
 						$ban_triggers[$key][] = array(
@@ -1252,7 +1249,7 @@ function validateTriggers(&$triggers)
 				}
 			}
 			else
-				$context['ban_erros'][] = 'no_bantype_selected';
+				$context['ban_errors'][] = 'no_bantype_selected';
 
 			if (isset($value) && !is_array($value))
 				$log_info[] = array(
@@ -1592,7 +1589,7 @@ function BanEditTrigger()
 	elseif (isset($_POST['edit_trigger']) && !empty($_POST['ban_suggestions']))
 	{
 		// The first replaces the old one, the others are added new (simplification, otherwise it would require another query and some work...)
-		saveTriggers(array_shift($_POST['ban_suggestions']), $ban_group, 0, $ban_id);
+		saveTriggers([array_shift($_POST['ban_suggestions'])], $ban_group, 0, $ban_id);
 		if (!empty($_POST['ban_suggestions']))
 			saveTriggers($_POST['ban_suggestions'], $ban_group);
 
@@ -1604,7 +1601,7 @@ function BanEditTrigger()
 		redirectexit('action=admin;area=ban;sa=edit' . (!empty($ban_group) ? ';bg=' . $ban_group : ''));
 	}
 
-	loadJavaScriptFile('suggest.js', array(), 'smf_suggest');
+	loadJavaScriptFile('suggest.js', array(), 'sbb_suggest');
 
 	if (empty($ban_id))
 	{
@@ -1763,12 +1760,12 @@ function BanBrowseTriggers()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="remove[]" value="%1$d" class="input_check">',
+						'format' => '<input type="checkbox" name="remove[]" value="%1$d">',
 						'params' => array(
 							'id_ban' => false,
 						),
@@ -1801,8 +1798,7 @@ function BanBrowseTriggers()
 			'function' => function($rowData)
 			{
 				return range2ip(
-					$rowData['ip_low']
-				,
+					$rowData['ip_low'],
 					$rowData['ip_high']
 				);
 			},
@@ -2047,12 +2043,12 @@ function BanLog()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="remove[]" value="%1$d" class="input_check">',
+						'format' => '<input type="checkbox" name="remove[]" value="%1$d">',
 						'params' => array(
 							'id_ban_log' => false,
 						),
@@ -2171,9 +2167,9 @@ function range2ip($low, $high)
 
 	if ($low == '255.255.255.255') return 'unknown';
 	if ($low == $high)
-	    return $low;
+		return $low;
 	else
-	    return $low . '-' . $high;
+		return $low . '-' . $high;
 }
 
 /**
@@ -2189,6 +2185,8 @@ function checkExistingTriggerIP($ip_array, $fullip = '')
 {
 	global $smcFunc, $scripturl;
 
+	if (empty($ip_array['low']) || empty($ip_array['high']))
+		return false;
 
 	$values = array(
 		'ip_low' => $ip_array['low'],
@@ -2380,5 +2378,3 @@ function getMemberData($id)
 
 	return $suggestions;
 }
-
-?>

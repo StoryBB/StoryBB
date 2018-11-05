@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This class handles the TLD regex processing.
+ * This class handles the TLD regex processing for linking to URLs.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,6 +12,11 @@
 
 namespace StoryBB\Helper;
 
+use StoryBB\Task;
+
+/**
+ * This class handles the TLD regex processing for linking to URLs.
+ */
 class TLD
 {
 	/**
@@ -83,7 +88,7 @@ class TLD
 
 				foreach ($enco_parts as $encoded)
 				{
-					if (strpos($encoded,$prefix) !== 0 || strlen(trim(str_replace($prefix,'',$encoded))) == 0)
+					if (strpos($encoded, $prefix) !== 0 || strlen(trim(str_replace($prefix, '', $encoded))) == 0)
 					{
 						$output_parts[] = $encoded;
 						continue;
@@ -94,7 +99,7 @@ class TLD
 					$idx = 0;
 					$char = 0x80;
 					$decoded = array();
-					$output='';
+					$output = '';
 					$delim_pos = strrpos($encoded, '-');
 
 					if ($delim_pos > strlen($prefix))
@@ -110,7 +115,7 @@ class TLD
 
 					for ($enco_idx = $delim_pos ? ($delim_pos + 1) : 0; $enco_idx < $enco_len; ++$deco_len)
 					{
-						for ($old_idx = $idx, $w = 1, $k = $base; 1 ; $k += $base)
+						for ($old_idx = $idx, $w = 1, $k = $base; 1; $k += $base)
 						{
 							$cp = ord($encoded{$enco_idx++});
 							$digit = ($cp - 48 < 10) ? $cp - 22 : (($cp - 65 < 26) ? $cp - 65 : (($cp - 97 < 26) ? $cp - 97 : $base));
@@ -151,15 +156,15 @@ class TLD
 
 						// 2 bytes
 						elseif ($v < (1 << 11))
-							$output .= chr(192+($v >> 6)) . chr(128+($v & 63));
+							$output .= chr(192 + ($v >> 6)) . chr(128 + ($v & 63));
 
 						// 3 bytes
 						elseif ($v < (1 << 16))
-							$output .= chr(224+($v >> 12)) . chr(128+(($v >> 6) & 63)) . chr(128+($v & 63));
+							$output .= chr(224 + ($v >> 12)) . chr(128 + (($v >> 6) & 63)) . chr(128 + ($v & 63));
 
 						// 4 bytes
 						elseif ($v < (1 << 21))
-							$output .= chr(240+($v >> 18)) . chr(128+(($v >> 12) & 63)) . chr(128+(($v >> 6) & 63)) . chr(128+($v & 63));
+							$output .= chr(240 + ($v >> 18)) . chr(128 + (($v >> 12) & 63)) . chr(128 + (($v >> 6) & 63)) . chr(128 + ($v & 63));
 
 						//  'Conversion from UCS-4 to UTF-8 failed: malformed input at byte '.$k
 						else
@@ -210,10 +215,7 @@ class TLD
 		// Schedule a background update if we need one
 		if (!empty($schedule_update))
 		{
-			$smcFunc['db_insert']('insert', '{db_prefix}background_tasks',
-				array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'),
-				array('$sourcedir/tasks/UpdateTldRegex.php', 'Update_TLD_Regex', '', 0), array()
-			);
+			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\UpdateTldRegex');
 		}
 
 		// Redundant repetition is redundant
@@ -363,5 +365,3 @@ class TLD
 		return $regex;
 	}	
 }
-
-?>

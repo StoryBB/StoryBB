@@ -10,8 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
+use StoryBB\Model\Attachment;
 
 /**
  * Downloads an avatar or attachment based on $_GET['attach'], and increments the download count.
@@ -20,8 +19,10 @@ if (!defined('SMF'))
  * It depends on the attachmentUploadDir setting being correct.
  * It is accessed via the query string ?action=dlattach.
  * Views to attachments do not increase hits and are not logged in the "Who's Online" log.
+ *
+ * @param mixed $force_attach If supplied, treat as an ID of a file to serve and bypass the usual checks (as is an internal request)
  */
-function showAttachment()
+function showAttachment($force_attach = false)
 {
 	global $smcFunc, $modSettings, $maintenance, $context;
 
@@ -36,6 +37,8 @@ function showAttachment()
 
 	// Better handling.
 	$attachId = isset($_REQUEST['attach']) ? (int) $_REQUEST['attach'] : (int) (isset($_REQUEST['id']) ? (int) $_REQUEST['id'] : 0);
+	if ($force_attach)
+		$attachId = $force_attach;
 
 	// We need a valid ID.
 	if (empty($attachId))
@@ -45,12 +48,21 @@ function showAttachment()
 	}
 
 	// A thumbnail has been requested? madness! madness I say!
-	$preview = isset($_REQUEST['preview']) ? $_REQUEST['preview'] : (isset($_REQUEST['type']) && $_REQUEST['type'] == 'preview' ? $_REQUEST['type'] : 0);
-	$showThumb = isset($_REQUEST['thumb']) || !empty($preview);
-	$attachTopic = isset($_REQUEST['topic']) ? (int) $_REQUEST['topic'] : 0;
+	if ($force_attach)
+	{
+		$preview = 0;
+		$showThumb = false;
+		$attachTopic = 0;
+	}
+	else
+	{
+		$preview = isset($_REQUEST['preview']) ? $_REQUEST['preview'] : (isset($_REQUEST['type']) && $_REQUEST['type'] == 'preview' ? $_REQUEST['type'] : 0);
+		$showThumb = isset($_REQUEST['thumb']) || !empty($preview);
+		$attachTopic = isset($_REQUEST['topic']) ? (int) $_REQUEST['topic'] : 0;
+	}
 
 	// No access in strict maintenance mode or you don't have permission to see attachments.
-	if ((!empty($maintenance) && $maintenance == 2) || !allowedTo('view_attachments'))
+	if ((!empty($maintenance) && $maintenance == 2) || (!allowedTo('view_attachments') && !$force_attach))
 	{
 		header('HTTP/1.0 404 File Not Found');
 		die('404 File Not Found');
@@ -101,7 +113,7 @@ function showAttachment()
 		}
 
 		// Previews doesn't have this info.
-		if (empty($preview))
+		if (empty($preview) && !$force_attach)
 		{
 			$request2 = $smcFunc['db_query']('', '
 				SELECT a.id_msg
@@ -195,7 +207,7 @@ function showAttachment()
 	}
 
 	// Check whether the ETag was sent back, and cache based on that...
-	$eTag = '"' . substr($_REQUEST['attach'] . $file['filePath'] . filemtime($file['filePath']), 0, 64) . '"';
+	$eTag = '"' . substr($attachId . $file['filePath'] . filemtime($file['filePath']), 0, 64) . '"';
 	if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) && strpos($_SERVER['HTTP_IF_NONE_MATCH'], $eTag) !== false)
 	{
 		ob_end_clean();
@@ -218,7 +230,7 @@ function showAttachment()
 	}
 
 	// Update the download counter (unless it's a thumbnail or resuming an incomplete download).
-	if ($file['attachment_type'] != 3 && empty($showThumb) && $range === 0)
+	if ($file['attachment_type'] != Attachment::ATTACHMENT_THUMBNAIL && empty($showThumb) && $range === 0)
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}attachments
 			SET downloads = downloads + 1
@@ -338,5 +350,3 @@ function showAttachment()
 
 	die();
 }
-
-?>

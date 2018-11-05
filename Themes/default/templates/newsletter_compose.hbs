@@ -38,7 +38,7 @@
 						<span{{#if context.post_error.no_subject}} class="error"{{/if}} id="caption_subject">{{{txt.subject}}}:</span>
 					</dt>
 					<dd id="pm_subject">
-						<input type="text" name="subject" value="{{{context.subject}}}" size="60" maxlength="60"{{#if context.post_error.no_subject}} class="error"{{/if}} class="input_text">
+						<input type="text" name="subject" value="{{{context.subject}}}" size="60" maxlength="60"{{#if context.post_error.no_subject}} class="error"{{/if}}>
 					</dd>
 				</dl><hr class="clear">
 				<div id="bbcBox_message"></div>
@@ -51,16 +51,16 @@
 				{{{richtexteditor context.post_box_name 'smileyBox_message' 'bbcBox_message'}}}
 
 				<ul>
-					<li><label for="send_pm"><input type="checkbox" name="send_pm" id="send_pm"{{#if context.send_pm}} checked{{/if}} class="input_check" onclick="checkboxes_status(this);"> {{{txt.email_as_pms}}}</label></li>
-					<li><label for="send_html"><input type="checkbox" name="send_html" id="send_html"{{#if context.send_html}} checked{{/if}} class="input_check" onclick="checkboxes_status(this);"> {{{txt.email_as_html}}}</label></li>
-					<li><label for="parse_html"><input type="checkbox" name="parse_html" id="parse_html" checked disabled class="input_check"> {{{txt.email_parsed_html}}}</label></li>
+					<li><label for="send_pm"><input type="checkbox" name="send_pm" id="send_pm"{{#if context.send_pm}} checked{{/if}} onclick="checkboxes_status(this);"> {{{txt.email_as_pms}}}</label></li>
+					<li><label for="send_html"><input type="checkbox" name="send_html" id="send_html"{{#if context.send_html}} checked{{/if}} onclick="checkboxes_status(this);"> {{{txt.email_as_html}}}</label></li>
+					<li><label for="parse_html"><input type="checkbox" name="parse_html" id="parse_html" checked disabled> {{{txt.email_parsed_html}}}</label></li>
 				</ul>
 				<br class="clear_right">
 				<span id="post_confirm_buttons">
 					{{{richtextbuttons context.post_box_name}}}
 				</span>
 			</div>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
+			{{session_form}}
 			<input type="hidden" name="email_force" value="{{context.email_force}}">
 			<input type="hidden" name="total_emails" value="{{context.total_emails}}">
 			{{#each context.recipients}}
@@ -93,9 +93,9 @@
 							{
 								// Handle the WYSIWYG editor.
 								if (textFields[i] == '{{context.post_box_name}}' && $("#{{context.post_box_name}}").data("sceditor") != undefined)
-									x[x.length] = textFields[i] + '=' + $("#{{context.post_box_name}}").data("sceditor").getText().html();
+									x[x.length] = textFields[i] + '=' + $("#{{context.post_box_name}}").data("sceditor").getText();
 								else
-									x[x.length] = textFields[i] + '=' + document.forms.postmodify[textFields[i]].value.html();
+									x[x.length] = textFields[i] + '=' + $(document.forms.postmodify[textFields[i]]).val();
 							}
 						for (var i = 0, n = checkboxFields.length; i < n; i++)
 							if (checkboxFields[i] in document.forms.newsmodify && document.forms.newsmodify.elements[checkboxFields[i]].checked)
@@ -103,7 +103,7 @@
 
 						x[x.length] = 'item=newsletterpreview';
 
-						sendXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=xmlhttp;sa=previews;xml', x.join('&'), onDocSent);
+						sendXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=xmlhttp;sa=previews;xml', x.join('&'), onDocSent);
 
 						document.getElementById('preview_section').style.display = '';
 						setInnerHTML(document.getElementById('preview_subject'), txt_preview_title);

@@ -28,7 +28,7 @@
 						<span class="smalltext">{{{txt.name_on_display}}}</span>
 					</dt>
 					<dd>
-						<input type="text" name="cat_name" value="{{{context.category.editable_name}}}" size="30" class="input_text">
+						<input type="text" name="cat_name" value="{{{context.category.editable_name}}}" size="30">
 					</dd>
 					<dt>
 						<strong>{{{txt.mboards_description}}}</strong><br>
@@ -42,7 +42,7 @@
 						<span class="smalltext">{{{txt.collapse_desc}}}</span>
 					</dt>
 					<dd>
-						<input type="checkbox" name="collapse"{{#if context.category.can_collapse}} checked{{/if}} class="input_check">
+						<input type="checkbox" name="collapse"{{#if context.category.can_collapse}} checked{{/if}}>
 					</dd>
 
 					{{! Show any category settings added by mods using the 'integrate_edit_category' hook. }}

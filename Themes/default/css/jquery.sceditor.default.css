@@ -22,8 +22,8 @@ body {
 		long lines don't cause horizontal scrolling */
 	min-height: 100%;
 	word-wrap: break-word;
-    margin: 0 5px;
-    padding: 0;
+	margin: 0 5px;
+	padding: 0;
 }
 
 ul, ol {

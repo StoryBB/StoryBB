@@ -1,31 +1,16 @@
 <?php
 // Version: 3.0 Alpha 1; ManageSmileys
 
-$txt['smiley_sets_save'] = 'Save Changes';
-$txt['smiley_sets_add'] = 'New smiley Set';
-$txt['smiley_sets_delete'] = 'Delete selected';
-$txt['smiley_sets_confirm'] = 'Are you sure you want to remove these smiley sets?-n-Note: This won\\\'t remove the images, just the choices.';
-$txt['smiley_sets_none'] = 'There are currently no smiley sets.';
-
-$txt['setting_smiley_sets_default'] = 'Default Smiley Set';
-$txt['setting_smiley_sets_enable'] = 'Enable smiley set selection by members';
-$txt['setting_smileys_url'] = 'Base URL to all smiley sets';
-$txt['setting_smileys_dir'] = 'Absolute path to all smiley sets';
-$txt['setting_smileys_dir_wrong'] = 'The path to all smiley sets is wrong. This will prevent smileys from working.';
+$txt['setting_smileys_url'] = 'Base URL to the smiley folder';
+$txt['setting_smileys_dir'] = 'Absolute path to the smileys folder';
+$txt['setting_smileys_dir_wrong'] = 'The path to all smileys is wrong. This will prevent smileys from working.';
 $txt['setting_messageIcons_enable'] = 'Enable customized message icons';
 $txt['setting_messageIcons_enable_note'] = '(otherwise, the default message icons will be used.)';
-
-$txt['smiley_sets_name'] = 'Name';
-$txt['smiley_sets_url'] = 'URL';
-$txt['smiley_sets_default'] = 'Default';
 
 $txt['smileys_add_method'] = 'Image Source';
 $txt['smileys_add_existing'] = 'Use existing file';
 $txt['smileys_add_upload'] = 'Upload new smiley';
 $txt['smileys_add_upload_choose'] = 'File to upload';
-$txt['smileys_add_upload_choose_desc'] = 'Image to be used by all smiley sets.';
-$txt['smileys_add_upload_all'] = 'Same image for all sets';
-$txt['smileys_add_upload_for'] = 'Image for the %1$s set';
 
 $txt['smileys_code'] = 'Code';
 $txt['smileys_filename'] = 'Filename';
@@ -46,14 +31,6 @@ $txt['smiley_editsmileys_explain'] = 'Change your smileys here by clicking on th
 $txt['smiley_setorder_explain'] = 'Change the order of the smileys here.';
 $txt['smiley_addsmiley_explain'] = 'Here you can add a new smiley - either from an existing file or by uploading new ones.';
 
-$txt['smiley_set_select_default'] = 'Default Smiley set';
-$txt['smiley_set_new'] = 'Create new Smiley set';
-$txt['smiley_set_modify_existing'] = 'Modify existing Smiley set';
-$txt['smiley_set_modify'] = 'Modify';
-$txt['smiley_set_import_directory'] = 'Import smileys already in this directory';
-$txt['smiley_set_import_single'] = 'There is one smiley in this smiley set not yet imported. Click <a href="%1$s">here</a> to import it now.';
-$txt['smiley_set_import_multiple'] = 'There are %1$d smileys in the directory that have not yet been imported. Click <a href="%2$s">here</a> to import them now.';
-
 $txt['smileys_location'] = 'Location';
 $txt['smileys_location_form'] = 'Post form';
 $txt['smileys_location_hidden'] = 'Hidden';
@@ -64,7 +41,6 @@ $txt['smileys_default_description'] = '(Insert a description)';
 $txt['smiley_new'] = 'Add new smiley';
 $txt['smiley_modify_existing'] = 'Modify smiley';
 $txt['smiley_preview'] = 'Preview';
-$txt['smiley_preview_using'] = 'using smiley set';
 $txt['smileys_confirm'] = 'Are you sure you want to remove these smileys?\\n\\nNote: This won\\\'t remove the images, just the choices.';
 $txt['smileys_location_form_description'] = 'These smileys will appear above the text area, when posting a new forum message or Personal Message.';
 $txt['smileys_location_popup_description'] = 'These smileys will be shown in a popup, that is shown after a user has clicked \'more\' button.';
@@ -86,5 +62,3 @@ $txt['icons_location_after'] = 'After';
 $txt['icons_filename_all_gif'] = 'All files must be &quot;gif&quot; files';
 $txt['icons_filename_all_png'] = 'All files must be &quot;png&quot; files';
 $txt['icons_no_entries'] = 'There are currently no message icons configured.';
-
-?>

@@ -8,15 +8,6 @@
     "theme_version": "1.0",
     "storybb_version": "3.0",
     "require_theme_strings": false,
-    "page_index": {
-        "extra_before": "<span class=\"pages\">{{{txt.pages}}}<\/span>",
-        "previous_page": "<span class=\"generic_icons previous_page\"><\/span>",
-        "current_page": "<span class=\"current_page\">%1$d<\/span> ",
-        "page": "<a class=\"navPages\" href=\"{URL}\">%2$s<\/a> ",
-        "expand_pages": "<span class=\"expand_pages\" onclick=\"expandPages(this, {LINK}, {FIRST_PAGE}, {LAST_PAGE}, {PER_PAGE});\"> ... <\/span>",
-        "next_page": "<span class=\"generic_icons next_page\"><\/span>",
-        "extra_after": ""
-    },
     "disable_files": [],
     "theme_settings": [
         {
@@ -29,12 +20,6 @@
             "id": "site_slogan",
             "label": "site_slogan",
             "description": "site_slogan_desc",
-            "type": "text"
-        },
-        {
-            "id": "smiley_sets_default",
-            "label": "smileys_default_set_for_theme",
-            "options": [],
             "type": "text"
         },
         "",
@@ -104,7 +89,8 @@
                 "25": 25,
                 "50": 50
             },
-            "default": true
+            "default": true,
+            "disableOn": "disableCustomPerPage"
         },
         {
             "id": "messages_per_page",
@@ -116,7 +102,8 @@
                 "25": 25,
                 "50": 50
             },
-            "default": true
+            "default": true,
+            "disableOn": "disableCustomPerPage"
         },
         {
             "id": "view_newest_first",

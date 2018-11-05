@@ -10,9 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Entry point for the moderation center.
  *
@@ -40,9 +37,9 @@ function ModerationMain($dont_call = false)
 
 	// Load the language, and the template.
 	loadLanguage('ModerationCenter');
-	loadTemplate(false, 'admin');
+	loadCSSFile('admin.css', [], 'admin');
 
-	$context['admin_preferences'] = !empty($options['admin_preferences']) ? smf_json_decode($options['admin_preferences'], true) : array();
+	$context['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
 	$context['robot_no_index'] = true;
 
 	// This is the menu structure - refer to Subs-Menu.php for the details.
@@ -244,7 +241,7 @@ function ModerationHome()
 {
 	global $txt, $context, $options;
 
-	loadJavaScriptFile('admin.js', array(), 'smf_admin');
+	loadJavaScriptFile('admin.js', array(), 'sbb_admin');
 
 	$context['page_title'] = $txt['moderation_center'];
 	$context['sub_template'] = 'modcenter_home';
@@ -281,7 +278,7 @@ function ModerationHome()
 			$context['mod_blocks'][] = $block();
 	}
 
-	$context['admin_prefs'] = !empty($options['admin_preferences']) ? smf_json_decode($options['admin_preferences'], true) : array();
+	$context['admin_prefs'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
 }
 
 /**
@@ -924,7 +921,7 @@ function ShowNotice()
 	$context['page_title'] = $txt['show_notice'];
 	StoryBB\Template::set_layout('popup');
 	$context['sub_template'] = 'modcenter_notice_show';
-	$context['template_layers'] = array();
+	StoryBB\Template::remove_all_layers();
 
 	// @todo Assumes nothing needs permission more than accessing moderation center!
 	$id_notice = (int) $_GET['nid'];
@@ -1121,8 +1118,7 @@ function ViewWatchedUsers()
 			),
 		),
 		'additional_rows' => array(
-			$context['view_posts'] ?
-			array(
+			$context['view_posts'] ? array(
 				'position' => 'bottom_of_list',
 				'value' => '
 					<input type="submit" name="delete_selected" value="' . $txt['quickmod_delete_selected'] . '" class="button_submit">',
@@ -1134,7 +1130,7 @@ function ViewWatchedUsers()
 	// If this is being viewed by posts we actually change the columns to call a template each time.
 	if ($context['view_posts'])
 	{
-		register_helper(['create_button' => 'create_button']);
+		StoryBB\Template::add_helper(['create_button' => 'create_button']);
 		$listOptions['columns'] = array(
 			'posts' => array(
 				'data' => array(
@@ -1417,7 +1413,7 @@ function ViewWarningLog()
 	if (!empty($_REQUEST['params']) && empty($_REQUEST['is_search']))
 	{
 		$search_params = base64_decode(strtr($_REQUEST['params'], array(' ' => '+')));
-		$search_params = smf_json_decode($search_params, true);
+		$search_params = sbb_json_decode($search_params, true);
 	}
 
 	// This array houses all the valid search types.
@@ -1528,7 +1524,7 @@ function ViewWarningLog()
 
 						if (!empty($rowData['id_notice']))
 							$output .= '
-								&nbsp;<a href="' . $scripturl . '?action=moderate;area=notice;nid=' . $rowData['id_notice'] . '" onclick="return reqOverlayDiv(this.href, \'' . $txt['show_notice'] . '\', \'warn.png\');" target="_blank" class="new_win" title="' . $txt['profile_warning_previous_notice'] . '"><span class="generic_icons filter centericon"></span></a>';
+								&nbsp;<a href="' . $scripturl . '?action=moderate;area=notice;nid=' . $rowData['id_notice'] . '" onclick="return reqOverlayDiv(this.href, \'' . $txt['show_notice'] . '\', \'warn.png\');" target="_blank" rel="noopener" title="' . $txt['profile_warning_previous_notice'] . '"><span class="generic_icons filter centericon"></span></a>';
 						return $output;
 					},
 				),
@@ -1556,7 +1552,7 @@ function ViewWarningLog()
 				'position' => 'below_table_data',
 				'value' => '
 					' . $txt['modlog_search'] . ':
-					<input type="text" name="search" size="18" value="' . $smcFunc['htmlspecialchars']($context['search']['string']) . '" class="input_text">
+					<input type="text" name="search" size="18" value="' . $smcFunc['htmlspecialchars']($context['search']['string']) . '">
 					<input type="submit" name="is_search" value="' . $txt['modlog_go'] . '" class="button_submit">',
 				'class' => 'floatright',
 			),
@@ -1752,14 +1748,14 @@ function ViewWarningTemplates()
 			),
 			'delete' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" class="input_check" onclick="invertAll(this, this.form);">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'style' => 'width: 4%;',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return '<input type="checkbox" name="deltpl[]" value="' . $rowData['id_comment'] . '" class="input_check">';
+						return '<input type="checkbox" name="deltpl[]" value="' . $rowData['id_comment'] . '">';
 					},
 					'class' => 'centercol',
 				),
@@ -2073,5 +2069,3 @@ function ModEndSession()
 
 	redirectexit();
 }
-
-?>

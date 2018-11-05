@@ -1,4 +1,4 @@
-function smf_StatsCenter(oOptions)
+function sbb_StatsCenter(oOptions)
 {
 	this.opt = oOptions;
 
@@ -10,7 +10,7 @@ function smf_StatsCenter(oOptions)
 	this.init();
 }
 
-smf_StatsCenter.prototype.init = function ()
+sbb_StatsCenter.prototype.init = function ()
 {
 	this.oTable = document.getElementById(this.opt.sTableId);
 
@@ -61,9 +61,9 @@ smf_StatsCenter.prototype.init = function ()
 				aSwapImages: [
 					{
 						sId: this.opt.sYearImageIdPrefix + sYearId,
-						srcExpanded: smf_images_url + '/' + this.opt.sYearImageExpanded,
+						srcExpanded: sbb_images_url + '/' + this.opt.sYearImageExpanded,
 						altExpanded: '-',
-						srcCollapsed: smf_images_url + '/' + this.opt.sYearImageCollapsed,
+						srcCollapsed: sbb_images_url + '/' + this.opt.sYearImageCollapsed,
 						altCollapsed: '+'
 					}
 				],
@@ -113,15 +113,15 @@ smf_StatsCenter.prototype.init = function ()
 				aSwapImages: [
 					{
 						sId: this.opt.sMonthImageIdPrefix + sMonthId,
-						srcExpanded: smf_images_url + '/' + this.opt.sMonthImageExpanded,
+						srcExpanded: sbb_images_url + '/' + this.opt.sMonthImageExpanded,
 						altExpanded: '-',
-						srcCollapsed: smf_images_url + '/' + this.opt.sMonthImageCollapsed,
+						srcCollapsed: sbb_images_url + '/' + this.opt.sMonthImageCollapsed,
 						altCollapsed: '+'
 					}
 				],
 				aSwapLinks: [
 					{
-						sId: this.opt.sMonthLinkIdPrefix +  sMonthId,
+						sId: this.opt.sMonthLinkIdPrefix + sMonthId,
 						msgExpanded: sLinkText,
 						msgCollapsed: sLinkText
 					}
@@ -143,7 +143,7 @@ smf_StatsCenter.prototype.init = function ()
 		this.oYears[this.opt.aCollapsedYears[i]].oToggle.toggle();
 }
 
-smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
+sbb_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 {
 	// Tell StoryBB that all underlying months have disappeared.
 	for (var sMonth in this.oYears[oToggle.opt.sYearId].oMonths)
@@ -152,12 +152,12 @@ smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 }
 
 
-smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
+sbb_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 {
 	if (!oToggle.bCollapsed)
 	{
 		// Tell StoryBB that it the state has changed.
-		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=stats;collapse=' + oToggle.opt.sMonthId + ';xml');
+		getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=stats;collapse=' + oToggle.opt.sMonthId + ';xml');
 
 		// Remove the month rows from the year toggle.
 		var aNewContainers = [];
@@ -172,7 +172,7 @@ smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 }
 
 
-smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
+sbb_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 {
 	// Ignore if we're still loading the previous batch.
 	if (this.bIsLoading)
@@ -181,7 +181,7 @@ smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 	if (oToggle.opt.aSwappableContainers.length == 0)
 	{
 		// Make the xml call
-		sendXMLDocument.call(this, smf_prepareScriptUrl(smf_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', '', this.onDocReceived);
+		sendXMLDocument.call(this, sbb_prepareScriptUrl(sbb_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', '', this.onDocReceived);
 
 		if ('ajax_indicator' in window)
 			ajax_indicator(true);
@@ -191,10 +191,10 @@ smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 
 	// Silently let StoryBB know this one is expanded.
 	else
-		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
+		getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
 }
 
-smf_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
+sbb_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
 {
 	// Loop through all the months we got from the XML.
 	var aMonthNodes = oXMLDoc.getElementsByTagName('month');

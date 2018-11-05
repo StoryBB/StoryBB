@@ -11,7 +11,7 @@ function autoDetectTimeOffset(currentTime)
 		return 0;
 
 	// Get the difference between the two, set it up so that the sign will tell us who is ahead of who.
-	var diff = Math.round((localTime.getTime() - serverTime.getTime())/3600000);
+	var diff = Math.round((localTime.getTime() - serverTime.getTime()) / 3600000);
 
 	// Make sure we are limiting this to one day's difference.
 	diff %= 24;
@@ -93,7 +93,7 @@ function ajax_getSignaturePreview (showPreview)
 
 	$.ajax({
 		type: "POST",
-		url: smf_scripturl + "?action=xmlhttp;sa=previews;xml",
+		url: sbb_scripturl + "?action=xmlhttp;sa=previews;xml",
 		data: {item: "sig_preview", signature: $("#signature").val(), user: $('input[name="u"]').attr("value")},
 		context: document.body,
 		success: function(request){

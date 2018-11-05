@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * This interface specifies what is required for short-term cache API implementations.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -10,15 +12,14 @@
 
 namespace StoryBB\Cache;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
+/**
+ * All cache backends supported by StoryBB are required to implement this interface.
+ */
 interface API_Interface
 {
 	/**
 	 * Checks whether we can use the cache method performed by this API.
 	 *
-	 * @access public
 	 * @param boolean $test Test if this is supported or enabled.
 	 * @return boolean Whether or not the cache is supported
 	 */
@@ -27,7 +28,6 @@ interface API_Interface
 	/**
 	 * Returns the name for the cache method performed by this API. Likely to be a brand of sorts.
 	 *
-	 * @access public
 	 * @return string The name of the cache backend
 	 */
 	public function getName();
@@ -35,7 +35,6 @@ interface API_Interface
 	/**
 	 * Connects to the cache method. This defines our $key. If this fails, we return false, otherwise we return true.
 	 *
-	 * @access public
 	 * @return boolean Whether or not the cache method was connected to.
 	 */
 	public function connect();
@@ -43,7 +42,6 @@ interface API_Interface
 	/**
 	 * Overrides the default prefix. If left alone, this will use the default key defined in the class.
 	 *
-	 * @access public
 	 * @param string $key The key to use
 	 * @return boolean If this was successful or not.
 	 */
@@ -52,7 +50,6 @@ interface API_Interface
 	/**
 	 * Gets the prefix as defined from set or the default.
 	 *
-	 * @access public
 	 * @return string the value of $key.
 	 */
 	public function getPrefix();
@@ -60,7 +57,6 @@ interface API_Interface
 	/**
 	 * Sets a default Time To Live, if this isn't specified we let the class define it.
 	 *
-	 * @access public
 	 * @param int $ttl The default TTL
 	 * @return boolean If this was successful or not.
 	 */
@@ -69,7 +65,6 @@ interface API_Interface
 	/**
 	 * Gets the TTL as defined from set or the default.
 	 *
-	 * @access public
 	 * @return string the value of $ttl.
 	 */
 	public function getDefaultTTL();
@@ -77,7 +72,6 @@ interface API_Interface
 	/**
 	 * Gets data from the cache.
 	 *
-	 * @access public
 	 * @param string $key The key to use, the prefix is applied to the key name.
 	 * @param string $ttl Overrides the default TTL.
 	 * @return mixed The result from the cache, if there is no data or it is invalid, we return null.
@@ -87,7 +81,6 @@ interface API_Interface
 	/**
 	 * Saves to data the cache.
 	 *
-	 * @access public
 	 * @param string $key The key to use, the prefix is applied to the key name.
 	 * @param mixed $value The data we wish to save.
 	 * @param string $ttl Overrides the default TTL.
@@ -113,7 +106,6 @@ interface API_Interface
 	/**
 	 * Closes connections to the cache method.
 	 *
-	 * @access public
 	 * @return bool Whether or not we could close connections.
 	 */
 	public function quit();
@@ -121,16 +113,14 @@ interface API_Interface
 	/**
 	 * Specify custom settings that the cache API supports.
 	 *
-	 * @access public
 	 * @param array $config_vars Additional config_vars, see ManageSettings.php for usage.
 	 * @return void No return is needed.
 	 */
 	public function cacheSettings(array &$config_vars);
 
 	/**
-	 * Gets the latest version of SMF this is compatible with.
+	 * Gets the latest version of StoryBB this is compatible with.
 	 *
-	 * @access public
 	 * @return string the value of $key.
 	 */
 	public function getCompatibleVersion();
@@ -138,10 +128,7 @@ interface API_Interface
 	/**
 	 * Gets the min version that we support.
 	 *
-	 * @access public
 	 * @return string the value of $key.
 	 */
-	public function getMiniumnVersion();
+	public function getMinimumVersion();
 }
-
-?>

@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * General class for handling the short-term cache available to StoryBB.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -10,9 +12,9 @@
 
 namespace StoryBB;
 
-if (!defined('SMF'))
-	die('Hacking attempt...');
-
+/**
+ * A singleton for containing the current cache backend and accessing it.
+ */
 class Cache
 {
 	private static $cacheAPI = null;
@@ -59,7 +61,8 @@ class Cache
 		}
 	}
 
-	public static function get($key, $ttl = 120) {
+	public static function get($key, $ttl = 120)
+	{
 		global $boardurl, $modSettings, $cache_enable, $cacheAPI;
 		global $cache_hits, $cache_count, $cache_misses, $cache_count_misses, $db_show_debug;
 
@@ -95,7 +98,7 @@ class Cache
 		if (function_exists('call_integration_hook') && isset($value))
 			call_integration_hook('cache_get_data', array(&$key, &$ttl, &$value));
 
-		return empty($value) ? null : smf_json_decode($value, true);
+		return empty($value) ? null : sbb_json_decode($value, true);
 	}
 
 	public static function put($key, $value, $ttl = 120)
@@ -170,5 +173,3 @@ class Cache
 		clearstatcache();
 	}
 }
-
-?>

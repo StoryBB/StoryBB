@@ -310,28 +310,6 @@ ul.post_options li {
 	margin: 0 2px ;
 }
 
-/* Styles for edit event section
----------------------------------------------------- */
-#post_event div.event_options {
-	float: left;
-}
-#post_event #event_main input {
-	margin: 0 0 1em 0;
-	float: right;
-}
-#post_event #event_main div.smalltext {
-	float: left;
-}
-#post_event ul.event_main li {
-	float: left;
-}
-#post_event ul.event_options {
-	padding: 0 .7em .7em 0;
-}
-#post_event #event_main select, #post_event ul.event_options li select, #post_event ul.event_options li .input_check {
-	margin: 0 0 0 1em;
-}
-
 /* Styles for edit poll section.
 ---------------------------------------------------- */
 #edit_poll fieldset input {
@@ -617,7 +595,7 @@ tr.windowbg2 th.stats_month, tr.windowbg2 td.stats_day {
 }
 
 /* admin home */
-#smfAnnouncements dd {
+#sbbAnnouncements dd {
 	padding: 0;
 	margin: 0 1.5em 1em 0;
 }
@@ -631,15 +609,6 @@ tr.windowbg2 th.stats_month, tr.windowbg2 td.stats_day {
 	margin: 0 1ex 0 0 !important;
 }
 
-/* Styles for the package manager.
-------------------------------------------------- */
-#package_list .tborder {
-	margin: .25em 26px .25em 0;
-}
-#package_list ol, #package_list ol li {
-	margin-left: 0;
-	margin-right: 50px;
-}
 
 /* ManageBoards */
 #manage_boards ul {

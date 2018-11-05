@@ -1,7 +1,7 @@
 <script>
 			function verifyAgree()
 			{
-				if (currentAuthMethod == 'passwd' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
+				if (currentAuthMethod == 'passwd' && document.forms.registration.sbb_autov_pwmain.value != document.forms.registration.sbb_autov_pwverify.value)
 				{
 					alert("{{txt.register_passwords_differ_js}}");
 					return false;
@@ -32,69 +32,115 @@
 			<div class="roundframe noup">
 				<fieldset>
 					<dl class="register_form">
-						<dt><strong><label for="smf_autov_username">{{txt.username}}:</label></strong></dt>
+						<dt><strong><label for="sbb_autov_username">{{txt.username}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="user" id="smf_autov_username" size="30" maxlength="25" value="{{context.username}}" class="input_text">
-							<span id="smf_autov_username_div" style="display: none;">
-								<span id="smf_autov_username_img" class="generic_icons check"></span>
+							<input type="text" name="user" required id="sbb_autov_username" size="30" maxlength="25" value="{{context.username}}">
+							<span id="sbb_autov_username_div" style="display: none;">
+								<span id="sbb_autov_username_img" class="generic_icons check"></span>
 							</span>
 						</dd>
-						<dt><strong><label for="smf_autov_reserve1">{{txt.user_email_address}}:</label></strong></dt>
+						<dt><strong><label for="sbb_autov_reserve1">{{txt.user_email_address}}:</label></strong></dt>
 						<dd>
-							<input type="text" name="email" id="smf_autov_reserve1" size="30" value="{{context.email}}" class="input_text">
+							<input type="email" name="email" required id="sbb_autov_reserve1" size="30" value="{{context.email}}">
 						</dd>
 						{{#if context.display_edit_real_name}}
 						<dt><strong><label for="real_name_box">{{{txt.char_register_nickname}}}:</label></strong></dt>
 						<dd>
-							<input type="text" id="real_name_box" name="real_name" size="30" maxlength="200" value="{{{context.real_name}}}" class="input_text">
+							<input type="text" id="real_name_box" name="real_name" required size="30" maxlength="200" value="{{{context.real_name}}}">
 						</dd>
 						{{/if}}
 						{{#if context.display_create_character}}
 						<dt><strong><label for="first_char_box">{{{txt.char_register_charname}}}:</label></strong></dt>
 						<dd>
-							<input type="text" id="first_char_box" name="first_char" size="30" maxlength="200" value="{{{context.first_char}}}" class="input_text">
+							<input type="text" id="first_char_box" name="first_char" required size="30" maxlength="200" value="{{{context.first_char}}}">
 						</dd>
 						{{/if}}
 					</dl>
 					<dl class="register_form" id="password1_group">
-						<dt><strong><label for="smf_autov_pwmain">{{txt.choose_pass}}:</label></strong></dt>
+						<dt><strong><label for="sbb_autov_pwmain">{{txt.choose_pass}}:</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" class="input_password">
-							<span id="smf_autov_pwmain_div" style="display: none;">
-								<span id="smf_autov_pwmain_img" class="generic_icons invalid"></span>
+							<input type="password" name="passwrd1" required id="sbb_autov_pwmain" size="30">
+							<span id="sbb_autov_pwmain_div" style="display: none;">
+								<span id="sbb_autov_pwmain_img" class="generic_icons invalid"></span>
 							</span>
 						</dd>
 					</dl>
 					<dl class="register_form" id="password2_group">
-						<dt><strong><label for="smf_autov_pwverify">{{txt.verify_pass}}:</label></strong></dt>
+						<dt><strong><label for="sbb_autov_pwverify">{{txt.verify_pass}}:</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" class="input_password">
-							<span id="smf_autov_pwverify_div" style="display: none;">
-								<span id="smf_autov_pwverify_img" class="generic_icons valid"></span>
+							<input type="password" name="passwrd2" required id="sbb_autov_pwverify" size="30">
+							<span id="sbb_autov_pwverify_div" style="display: none;">
+								<span id="sbb_autov_pwverify_img" class="generic_icons valid"></span>
 							</span>
 						</dd>
 					</dl>
 					<dl class="register_form" id="notify_announcements">
 						<dt><strong><label for="notify_announcements">{{txt.notify_announcements}}:</label></strong></dt>
 						<dd>
-							<input type="checkbox" name="notify_announcements" id="notify_announcements" {{#if context.notify_announcements}}checked="checked"{{/if}} class="input_check" />
+							<input type="checkbox" name="notify_announcements" id="notify_announcements" {{#if context.notify_announcements}}checked="checked"{{/if}}>
 						</dd>
 					</dl>
-					{{#if context.custom_fields_required}}
-					   {{#if context.custom_fields}}
-					   <dl class="register_form">
-					   {{#each context.custom_fields}}
-					   <dt>
-							<strong{{#if is_error}} class="red"{{/if}}>{{name}}:</strong>
-							<span class="smalltext">{{desc}}</span>
-						</dt>
-						<dd>{{input_html}}</dd>
+					{{#if context.profile_fields_required}}
+					<dl class="register_form">
+					{{#each context.profile_fields_required}}
+						{{#if (eq type "callback")}}
+							{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
+						{{else}}
+							<dt>
+								<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
+								{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
+							</dt>
+							<dd>
+								{{preinput}}
+								{{#if (eq type "label")}}{{value}}{{/if}}
+								{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}}>{{/if}}
+								{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>{{/if}}
+								{{#if (eq type "select")}}
+									<select name="{{@key}}" id="{{@key}}">
+										{{#each options}}
+											<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
+										{{/each}}
+									</select>
+								{{/if}}
+								{{postinput}}
+							</dd>
+						{{/if}}
+					{{/each}}
+					</dl>
+					{{/if}}
+					{{#if (and context.custom_fields_required context.custom_fields)}}
+						<dl class="register_form">
+						{{#each context.custom_fields}}
+							{{#if (gt show_reg 1)}}
+							<dt>
+								<strong{{#if is_error}} class="red"{{/if}}>{{name}}:</strong>
+								<span class="smalltext">{{desc}}</span>
+							</dt>
+							<dd>{{input_html}}</dd>
+							{{/if}}
 						{{/each}}
 						</dl>
-						{{/if}}
 					{{/if}}
 				</fieldset>
 			</div>
+
+			{{#if context.registration_policies}}
+			<div class="title_bar title_top">
+				<h3 class="titlebg">{{{txt.site_policies}}}</h3>
+			</div>
+			<div class="roundframe noup">
+				<fieldset>
+					<dl class="register_form">
+						{{#each context.registration_policies}}
+						<dt><strong><label for="policy_{{@key}}">{{textTemplate ../txt.registration_i_agree_to .}}:</label></strong></dt>
+						<dd>
+							<input type="checkbox" value="1" required name="policy_{{@key}}" id="policy_{{@key}}">
+						</dd>
+						{{/each}}
+					</dl>
+				</fieldset>
+			</div>
+			{{/if}}
 			
 			{{#if (or context.profile_fields context.custom_fields)}}
 			<div class="title_bar title_top">
@@ -105,33 +151,35 @@
 					<dl class="register_form" id="custom_group">
 			{{/if}}
 			{{#each context.profile_fields}}
-				{{#if (eq type "callback")}}{{profile_callback_helper .}}{{else}}
-						<dt>
-							<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
-							{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
-						</dt>
-						<dd>
-							{{preinput}}
-							{{#if (eq type "label")}}{{value}}{{/if}}
-							{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}} class="input_type{{#if (eq type "password")}}password{{else}}text{{/if}}">{{/if}}
-							{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" class="input_check" {{input_attr}}>{{/if}}
-							{{#if (eq type "select")}}
-								<select name="{{@key}}" id="{{@key}}">
-									{{#each options}}
-										<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
-									{{/each}}
-								</select>
-							{{/if}}
-							{{postinput}}
-						</dd>
+				{{#if (eq type "callback")}}
+					{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
+				{{else}}
+					<dt>
+						<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
+						{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
+					</dt>
+					<dd>
+						{{preinput}}
+						{{#if (eq type "label")}}{{value}}{{/if}}
+						{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}}>{{/if}}
+						{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>{{/if}}
+						{{#if (eq type "select")}}
+							<select name="{{@key}}" id="{{@key}}">
+								{{#each options}}
+									<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
+								{{/each}}
+							</select>
+						{{/if}}
+						{{postinput}}
+					</dd>
 				{{/if}}
 			{{/each}}
 		    {{#each context.custom_fields}}
-		                <dt>
-							<strong{{#if is_error}} class="red"{{/if}}>{{name}}</strong>
-							<span class="smalltext">{{desc}}</span>
-						</dt>
-						<dd>{{{input_html}}}</dd>
+                <dt>
+					<strong{{#if is_error}} class="red"{{/if}}>{{name}}</strong>
+					<span class="smalltext">{{desc}}</span>
+				</dt>
+				<dd>{{{input_html}}}</dd>
 		    {{/each}}
 		    {{#if (or context.profile_fields context.custom_fields)}}
 					</dl>
@@ -149,15 +197,10 @@
 			</div>
 			{{/if}}
 			<div id="confirm_buttons" class="flow_auto">
-				{{#if (and context.require_agreement context.show_coppa)}}
-				<input type="submit" name="accept_agreement" value="{{context.coppa_agree_above}}" class="button_submit"><br><br>
-				<input type="submit" name="accept_agreement_coppa" value="{{context.coppa_agree_below}}" class="button_submit">
-				{{else}}
 				<input type="submit" name="regSubmit" value="{{txt.register}}" tabindex="{{getTabindex}}" class="button_submit">
-				{{/if}}
 				</div>
-			<input type="hidden" name="{{context.session_var}}" value="{{context.session_id}}">
-			<input type="hidden" name="{{context.register_token_var}}" value="{{context.register_token}}">
+			{{session_form}}
+			{{token_form 'register'}}
 			<input type="hidden" name="step" value="2">
 		</form>
 		<script>
@@ -171,5 +214,5 @@
 				"password_no_match": "{{txt.registration_password_no_match}}",
 				"password_valid": "{{txt.registration_password_valid}}"
 			};
-			var verificationHandle = new smfRegister("registration", '{{#if modSettings.password_strength}}{{modSettings.password_strength}}{{else}}0{{/if}}', regTextStrings);
+			var verificationHandle = new sbbRegister("registration", '{{#if modSettings.password_strength}}{{modSettings.password_strength}}{{else}}0{{/if}}', regTextStrings);
 		</script>

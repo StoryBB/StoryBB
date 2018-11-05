@@ -10,8 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
+use StoryBB\Model\Attachment;
 
 /**
  * This function works out what to do!
@@ -29,7 +28,7 @@ function AutoTask()
 
 		// Select the next task to do.
 		$request = $smcFunc['db_query']('', '
-			SELECT id_task, task, next_time, time_offset, time_regularity, time_unit, callable
+			SELECT id_task, task, next_time, time_offset, time_regularity, time_unit, class
 			FROM {db_prefix}scheduled_tasks
 			WHERE disabled = {int:not_disabled}
 				AND next_time <= {int:current_time}
@@ -78,31 +77,41 @@ function AutoTask()
 			$affected_rows = $smcFunc['db_affected_rows']();
 
 			// What kind of task are we handling?
-			if (!empty($row['callable']))
-				$task_string = $row['callable'];
+			$task = false;
+			if (!empty($row['class']) && class_exists($row['class']))
+			{
+				$refl = new ReflectionClass($row['class']);
+				if ($refl->isSubclassOf('StoryBB\\Task\\Schedulable'))
+				{
+					$task = new $row['class'];
+				}
+			}
 
-			// Default SMF task or old mods?
+			// Default StoryBB task or old mods?
 			elseif (function_exists('scheduled_' . $row['task']))
-				$task_string = 'scheduled_' . $row['task'];
-
-			// One last resource, the task name.
-			elseif (!empty($row['task']))
-				$task_string = $row['task'];
+				$task = 'scheduled_' . $row['task'];
 
 			// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!
-			if (!empty($task_string) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
+			if (!empty($task) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
 			{
 				ignore_user_abort(true);
 
 				// Get the callable.
-				$callable_task = call_helper($task_string, true);
-
-				// Perform the task.
-				if (!empty($callable_task))
-					$completed = call_user_func($callable_task);
-
+				if (is_object($task))
+				{
+					$completed = $task->execute();
+				}
 				else
-					$completed = false;
+				{
+					$callable_task = call_helper($task, true);
+
+					// Perform the task.
+					if (!empty($callable_task))
+						$completed = call_user_func($callable_task);
+
+					else
+						$completed = false;
+				}
 
 				// Log that we did it ;)
 				if ($completed)
@@ -164,7 +173,7 @@ function scheduled_approval_notification()
 
 	// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
 	$request = $smcFunc['db_query']('', '
-		SELECT aq.id_msg, aq.id_attach, aq.id_event, m.id_topic, m.id_board, m.subject, t.id_first_msg,
+		SELECT aq.id_msg, aq.id_attach, m.id_topic, m.id_board, m.subject, t.id_first_msg,
 			b.id_profile
 		FROM {db_prefix}approval_queue AS aq
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = aq.id_msg)
@@ -367,95 +376,6 @@ function scheduled_approval_notification()
 	}
 
 	// All went well!
-	return true;
-}
-
-/**
- * Do some daily cleaning up.
- */
-function scheduled_daily_maintenance()
-{
-	global $smcFunc, $modSettings, $sourcedir, $db_type;
-
-	// First clean out the cache.
-	clean_cache();
-
-	// If warning decrement is enabled and we have people who have not had a new warning in 24 hours, lower their warning level.
-	list (, , $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);
-	if ($modSettings['warning_decrement'])
-	{
-		// Find every member who has a warning level...
-		$request = $smcFunc['db_query']('', '
-			SELECT id_member, warning
-			FROM {db_prefix}members
-			WHERE warning > {int:no_warning}',
-			array(
-				'no_warning' => 0,
-			)
-		);
-		$members = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$members[$row['id_member']] = $row['warning'];
-		$smcFunc['db_free_result']($request);
-
-		// Have some members to check?
-		if (!empty($members))
-		{
-			// Find out when they were last warned.
-			$request = $smcFunc['db_query']('', '
-				SELECT id_recipient, MAX(log_time) AS last_warning
-				FROM {db_prefix}log_comments
-				WHERE id_recipient IN ({array_int:member_list})
-					AND comment_type = {string:warning}
-				GROUP BY id_recipient',
-				array(
-					'member_list' => array_keys($members),
-					'warning' => 'warning',
-				)
-			);
-			$member_changes = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-			{
-				// More than 24 hours ago?
-				if ($row['last_warning'] <= time() - 86400)
-					$member_changes[] = array(
-						'id' => $row['id_recipient'],
-						'warning' => $members[$row['id_recipient']] >= $modSettings['warning_decrement'] ? $members[$row['id_recipient']] - $modSettings['warning_decrement'] : 0,
-					);
-			}
-			$smcFunc['db_free_result']($request);
-
-			// Have some members to change?
-			if (!empty($member_changes))
-				foreach ($member_changes as $change)
-					$smcFunc['db_query']('', '
-						UPDATE {db_prefix}members
-						SET warning = {int:warning}
-						WHERE id_member = {int:id_member}',
-						array(
-							'warning' => $change['warning'],
-							'id_member' => $change['id'],
-						)
-					);
-		}
-	}
-
-	// Do any spider stuff.
-	if (!empty($modSettings['spider_mode']) && $modSettings['spider_mode'] > 1)
-	{
-		require_once($sourcedir . '/ManageSearchEngines.php');
-		consolidateSpiderStats();
-	}
-
-	// Clean up some old login history information.
-	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}member_logins
-		WHERE time < {int:oldLogins}',
-		array(
-			'oldLogins' => time() - (!empty($modSettings['loginHistoryDays']) ? 60 * 60 * 24 * $modSettings['loginHistoryDays'] : 2592000),
-	));
-
-	// Log we've done it...
 	return true;
 }
 
@@ -1187,9 +1107,9 @@ function loadEssentialThemeData()
 }
 
 /**
- * This retieves data (e.g. last version of SMF) from sm.org
+ * This retrieves data (e.g. last version of StoryBB) from storybb.org
  */
-function scheduled_fetchSMfiles()
+function scheduled_fetchStoryBBfiles()
 {
 	global $sourcedir, $txt, $language, $forum_version, $modSettings, $smcFunc, $context;
 
@@ -1224,7 +1144,7 @@ function scheduled_fetchSMfiles()
 	foreach ($js_files as $ID_FILE => $file)
 	{
 		// Create the url
-		$server = empty($file['path']) || (substr($file['path'], 0, 7) != 'http://' && substr($file['path'], 0, 8) != 'https://') ? 'https://www.simplemachines.org' : '';
+		$server = empty($file['path']) || (substr($file['path'], 0, 7) != 'http://' && substr($file['path'], 0, 8) != 'https://') ? 'https://storybb.org/' : '';
 		$url = $server . (!empty($file['path']) ? $file['path'] : $file['path']) . $file['filename'] . (!empty($file['parameters']) ? '?' . $file['parameters'] : '');
 
 		// Get the file
@@ -1233,7 +1153,7 @@ function scheduled_fetchSMfiles()
 		// If we got an error - give up - the site might be down. And if we should happen to be coming from elsewhere, let's also make a note of it.
 		if ($file_data === false)
 		{
-			$context['scheduled_errors']['fetchSMfiles'][] = sprintf($txt['st_cannot_retrieve_file'], $url);
+			$context['scheduled_errors']['fetchStoryBBiles'][] = sprintf($txt['st_cannot_retrieve_file'], $url);
 			log_error(sprintf($txt['st_cannot_retrieve_file'], $url));
 			return false;
 		}
@@ -1259,206 +1179,7 @@ function scheduled_birthdayemails()
 {
 	global $smcFunc;
 
-	$smcFunc['db_insert']('insert', '{db_prefix}background_tasks',
-		array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'),
-		array('$sourcedir/tasks/Birthday-Notify.php', 'Birthday_Notify_Background', '', 0), array()
-	);
-
-	return true;
-}
-
-/**
- * Weekly maintenance
- */
-function scheduled_weekly_maintenance()
-{
-	global $modSettings, $smcFunc;
-
-	// Delete some settings that needn't be set if they are otherwise empty.
-	$emptySettings = array(
-		'warning_mute', 'warning_moderate', 'warning_watch', 'warning_show', 'disableCustomPerPage', 'spider_mode', 'spider_group',
-		'paid_currency_code', 'paid_currency_symbol', 'paid_email_to', 'paid_email', 'paid_enabled', 'paypal_email',
-		'search_enable_captcha', 'search_floodcontrol_time', 'show_spider_online',
-	);
-
-	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}settings
-		WHERE variable IN ({array_string:setting_list})
-			AND (value = {string:zero_value} OR value = {string:blank_value})',
-		array(
-			'zero_value' => '0',
-			'blank_value' => '',
-			'setting_list' => $emptySettings,
-		)
-	);
-
-	// Some settings we never want to keep - they are just there for temporary purposes.
-	$deleteAnywaySettings = array(
-		'attachment_full_notified',
-	);
-
-	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}settings
-		WHERE variable IN ({array_string:setting_list})',
-		array(
-			'setting_list' => $deleteAnywaySettings,
-		)
-	);
-
-	// Ok should we prune the logs?
-	if (!empty($modSettings['pruningOptions']))
-	{
-		if (!empty($modSettings['pruningOptions']) && strpos($modSettings['pruningOptions'], ',') !== false)
-			list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneBanLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
-
-		if (!empty($modSettings['pruneErrorLog']))
-		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneErrorLog'] * 86400;
-
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}log_errors
-				WHERE log_time < {int:log_time}',
-				array(
-					'log_time' => $t,
-				)
-			);
-		}
-
-		if (!empty($modSettings['pruneModLog']))
-		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneModLog'] * 86400;
-
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}log_actions
-				WHERE log_time < {int:log_time}
-					AND id_log = {int:moderation_log}',
-				array(
-					'log_time' => $t,
-					'moderation_log' => 1,
-				)
-			);
-		}
-
-		if (!empty($modSettings['pruneBanLog']))
-		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneBanLog'] * 86400;
-
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}log_banned
-				WHERE log_time < {int:log_time}',
-				array(
-					'log_time' => $t,
-				)
-			);
-		}
-
-		if (!empty($modSettings['pruneReportLog']))
-		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneReportLog'] * 86400;
-
-			// This one is more complex then the other logs.  First we need to figure out which reports are too old.
-			$reports = array();
-			$result = $smcFunc['db_query']('', '
-				SELECT id_report
-				FROM {db_prefix}log_reported
-				WHERE time_started < {int:time_started}
-					AND closed = {int:closed}
-					AND ignore_all = {int:not_ignored}',
-				array(
-					'time_started' => $t,
-					'closed' => 1,
-					'not_ignored' => 0,
-				)
-			);
-
-			while ($row = $smcFunc['db_fetch_row']($result))
-				$reports[] = $row[0];
-
-			$smcFunc['db_free_result']($result);
-
-			if (!empty($reports))
-			{
-				// Now delete the reports...
-				$smcFunc['db_query']('', '
-					DELETE FROM {db_prefix}log_reported
-					WHERE id_report IN ({array_int:report_list})',
-					array(
-						'report_list' => $reports,
-					)
-				);
-				// And delete the comments for those reports...
-				$smcFunc['db_query']('', '
-					DELETE FROM {db_prefix}log_reported_comments
-					WHERE id_report IN ({array_int:report_list})',
-					array(
-						'report_list' => $reports,
-					)
-				);
-			}
-		}
-
-		if (!empty($modSettings['pruneScheduledTaskLog']))
-		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneScheduledTaskLog'] * 86400;
-
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}log_scheduled_tasks
-				WHERE time_run < {int:time_run}',
-				array(
-					'time_run' => $t,
-				)
-			);
-		}
-
-		if (!empty($modSettings['pruneSpiderHitLog']))
-		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneSpiderHitLog'] * 86400;
-
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}log_spider_hits
-				WHERE log_time < {int:log_time}',
-				array(
-					'log_time' => $t,
-				)
-			);
-		}
-	}
-
-	// Get rid of any paid subscriptions that were never actioned.
-	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}log_subscribed
-		WHERE end_time = {int:no_end_time}
-			AND status = {int:not_active}
-			AND start_time < {int:start_time}
-			AND payments_pending < {int:payments_pending}',
-		array(
-			'no_end_time' => 0,
-			'not_active' => 0,
-			'start_time' => time() - 60,
-			'payments_pending' => 1,
-		)
-	);
-
-	// Some OS's don't seem to clean out their sessions.
-	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}sessions
-		WHERE last_update < {int:last_update}',
-		array(
-			'last_update' => time() - 86400,
-		)
-	);
-
-	// Update the regex of top level domains with the IANA's latest official list
-	$smcFunc['db_insert']('insert', '{db_prefix}background_tasks',
-		array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'),
-		array('$sourcedir/tasks/UpdateTldRegex.php', 'Update_TLD_Regex', '', 0), array()
-	);
+	StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\BirthdayNotify');
 
 	return true;
 }
@@ -1598,7 +1319,7 @@ function scheduled_remove_temp_attachments()
 	if (!empty($modSettings['currentAttachmentUploadDir']))
 	{
 		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = smf_json_decode($modSettings['attachmentUploadDir'], true);
+			$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);
 
 		// Just use the current path for temp files.
 		$attach_dirs = $modSettings['attachmentUploadDir'];
@@ -1675,45 +1396,3 @@ function scheduled_remove_topic_redirect()
 
 	return true;
 }
-
-/**
- * Check for old drafts and remove them
- */
-function scheduled_remove_old_drafts()
-{
-	global $smcFunc, $sourcedir, $modSettings;
-
-	if (empty($modSettings['drafts_keep_days']))
-		return true;
-
-	// init
-	$drafts = array();
-
-	// We need this for language items
-	loadEssentialThemeData();
-
-	// Find all of the old drafts
-	$request = $smcFunc['db_query']('', '
-		SELECT id_draft
-		FROM {db_prefix}user_drafts
-		WHERE poster_time <= {int:poster_time_old}',
-		array(
-			'poster_time_old' => time() - (86400 * $modSettings['drafts_keep_days']),
-		)
-	);
-
-	while ($row = $smcFunc['db_fetch_row']($request))
-		$drafts[] = (int) $row[0];
-	$smcFunc['db_free_result']($request);
-
-	// If we have old one, remove them
-	if (count($drafts) > 0)
-	{
-		require_once($sourcedir . '/Drafts.php');
-		DeleteDraft($drafts, false);
-	}
-
-	return true;
-}
-
-?>

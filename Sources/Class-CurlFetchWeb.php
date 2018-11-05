@@ -1,5 +1,7 @@
 <?php
 /**
+ * A generic class to fetch data from the web via cURL.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -7,12 +9,8 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
-
 /**
  * Class curl_fetch_web_data
- * Simple cURL class to fetch a web page
  * Properly redirects even with safe mode and basedir restrictions
  * Can provide simple post options to a page
  *
@@ -24,9 +22,9 @@ if (!defined('SMF'))
  *  - $fetch_data = new cURL_fetch_web_data(array(CURLOPT_SSL_VERIFYPEER => 1), 5);
  *
  * Make the call
- *  - $fetch_data('https://www.simplemachines.org'); // fetch a page
- *  - $fetch_data('https://www.simplemachines.org', array('user' => 'name', 'password' => 'password')); // post to a page
- *  - $fetch_data('https://www.simplemachines.org', parameter1&parameter2&parameter3); // post to a page
+ *  - $fetch_data('https://storybb.org'); // fetch a page
+ *  - $fetch_data('https://storybb.org', array('user' => 'name', 'password' => 'password')); // post to a page
+ *  - $fetch_data('https://storybb.org', parameter1&parameter2&parameter3); // post to a page
  *
  * Get the data
  *  - $fetch_data->result('body'); // just the page content
@@ -340,5 +338,3 @@ class curl_fetch_web_data
 		return strlen($header);
 	}
 }
-
-?>

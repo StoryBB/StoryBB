@@ -1,1 +1,1 @@
-<a href="{{scripturl}}?action=helpadmin;help={{help}}" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="{{txt.help}}"></span></a>
+<a href="{{scripturl}}?action=helpadmin;help={{help}}" onclick="return reqOverlayDiv(this.href);" class="help{{#if align}} float{{align}}{{/if}}"><span class="generic_icons help" title="{{txt.help}}"></span>{{#if extrahelpstring}} {{{extrahelpstring}}}{{/if}}</a>

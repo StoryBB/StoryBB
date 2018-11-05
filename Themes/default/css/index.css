@@ -1,4 +1,3 @@
-/* You can find detailed information at https://wiki.simplemachines.org/smf/Curve2_CSS
 /* Index */
 html {
 	background: #3e5a78;
@@ -75,7 +74,7 @@ select {
 select option {
 	padding: 0 4px;
 }
-select[size], input.input_check, input.input_radio {
+select[size], input[type=checkbox], input[type=radio] {
 	height: auto;
 }
 input:hover, textarea:hover, button:hover, select:hover {
@@ -125,7 +124,7 @@ h1, h2, h3, h4, h5, h6 {
 	color: #444;
 }
 /* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
-input.input_check, input.input_radio {
+input[type=checkbox], input[type=radio] {
 	border: none;
 	background: none;
 	vertical-align: top;
@@ -134,7 +133,7 @@ input.input_check, input.input_radio {
 	display: none;
 }
 /* Give disabled text input elements a different background color. */
-input[disabled].input_text {
+input[disabled][type=text], input[disabled][type=email], input[disabled][type=search] {
 	background: #eee;
 }
 select[disabled] {
@@ -152,11 +151,11 @@ hr {
 	box-shadow: 0 1px 0 #bbb inset;
 }
 /* This is about links */
-a:link, a:visited, a.new_win:link, a.new_win:visited {
+a:link, a:visited {
 	color: #346;
 	text-decoration: none;
 }
-a:hover, a.new_win:hover {
+a:hover {
 	text-decoration: underline;
 	cursor: pointer;
 }
@@ -500,7 +499,6 @@ a img {
 	cursor: pointer;
 }
 .current_page {
-	padding: 0 4px 0 2px;
 	color: #b46100;
 	font-family: verdana, sans-serif;
 	font-weight: bold;
@@ -544,23 +542,6 @@ a img {
 /* Messages that somehow need to attract the attention. */
 .error, .alert {
 	color: red;
-}
-
-/* Calendar colors for birthdays, events and holidays */
-.birthday {
-	color: #920ac4;
-}
-
-.event {
-	color: #078907;
-}
-
-.holiday > span {
-	color: rgb(0, 92, 255);
-}
-/* Events that are currently selected on the calendar. Won't see it much, probably. */
-.sel_event {
-	font-weight: bold;
 }
 
 /* Colors for warnings */
@@ -633,8 +614,11 @@ dl.settings dt.windowbg {
 dl.settings dd {
 	width: 42%;
 	float: right;
-	overflow: auto;
+	overflow: visible;
 	margin: 0 0 3px 0;
+}
+dl.settings dd.fullwidth {
+	width: 100%;
 }
 dl.settings.report dd {
 	overflow: auto;
@@ -1098,7 +1082,7 @@ img.sort, .sort {
 	text-align: right;
 	min-width: 30em;
 }
-#search_form .input_text, #search_form select, #search_form .button_submit {
+#search_form input[type=text], #search_form input[type=email], #search_form input[type=search], #search_form select, #search_form .button_submit {
 	padding: 2px;
 	margin: 2px;
 	background: #fff;
@@ -1116,6 +1100,20 @@ img.sort, .sort {
 #search_form .button_submit:hover {
 	color: #a85400;
 	text-decoration: none;
+}
+/* The contact page */
+#contactform dl.settings {
+	max-width: 600px;
+	margin: 12px auto 0 auto;
+}
+#contactform dl.settings dt {
+	width: 20%;
+}
+#contactform dl.settings dd {
+	width: 75%;
+}
+#contactform input[type=text], #contactform input[type=email] {
+	width: 100%;
 }
 /* The logo and slogan. */
 #header {
@@ -1477,73 +1475,6 @@ ul li.greeting {
 	padding-bottom: 5px;
 }
 
-/* Styles for edit event section
----------------------------------------------------- */
-#post_event .roundframe {
-	padding: 12px 12%;
-	overflow: auto;
-}
-#post_event fieldset {
-	padding: 6px;
-	clear: both;
-}
-div.event_options {
-    line-height: 25px;
-    margin-top: 5px;
-}
-#post_event span.label {
-	margin: 0 0.5em 0 2px;
-	min-width: 60px;
-	display: inline-block;
-}
-
-.event_options_left {
-	display: inline-block;
-	width: 49%;
-	padding-right: 1em;
-	min-width: 238px;
-	box-sizing: border-box;
-}
-.event_options_right {
-	display: inline-block;
-	width: 50%;
-	box-sizing: border-box;
-}
-.event_options_left div, .event_options_right div {
-    min-height: 25px;
-    margin-bottom: 5px;
-}
-
-#post_event #event_main input {
-    margin: 0;
-}
-#evtitle {
-    max-width: 100%;
-}
-#event_time_input {
-    clear: left;
-}
-#event_time_input input[type="text"] {
-	width: 80px;
-	display: inline-block;
-}
-#post_event input[type="checkbox"] {
-    height: auto;
-    vertical-align: baseline;
-}
-#post_event input[disabled].input_text {
-	color: transparent;
-}
-#post_event select, #event_options input[type="text"], #tz {
-    max-width: calc(100% - 75px);
-}
-#post_event select, #event_location {
-    width: calc(100% - 75px);
-}
-#post_event .input_check + select {
-    max-width: calc(100% - 95px);
-}
-
 /* Styles for the recent messages section.
 ---------------------------------------------------- */
 
@@ -1607,6 +1538,9 @@ fieldset.merge_options {
 	width: 540px;
 	margin: 0 auto;
 }
+.login .login {
+	width: auto;
+}
 .popup_content .login {
 	width: 100%;
 }
@@ -1665,14 +1599,6 @@ dl.register_form dd {
 #confirm_buttons {
 	text-align: center;
 	padding: 12px 0;
-}
-.coppa_contact {
-	padding: 4px;
-	width: 32ex;
-	background: #fff;
-	color: #222;
-	margin-left: 5ex;
-	border: 1px solid #222;
 }
 .valid_input {
 	background: #f5fff0;
@@ -1743,9 +1669,6 @@ tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
 	margin: -8px 3px 0 0;
 }
 
-.generic_icons.gender_None {
-	background: none;
-}
 /* This is a small fix for dropmenu icons */
 .dropmenu .generic_icons, #profile_menu .generic_icons, .dropmenu img {
 	margin: -3px 8px 0 0;
@@ -1768,9 +1691,6 @@ tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
 .generic_icons.invalid {
 	background-position: -109px -5px;
 }
-.generic_icons.gender_Female {
-	background-position: -135px -5px;
-}
 .generic_icons.watch {
 	background-position: -239px -5px;
 }
@@ -1780,9 +1700,6 @@ tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
 }
 .generic_icons.general, .generic_icons.boards, .generic_icons.topics_views {
 	background-position: -31px -31px;
-}
-.generic_icons.gender_Male {
-	background-position: -57px -31px;
 }
 .generic_icons.features {
 	background-position: -83px -31px;
@@ -1812,7 +1729,7 @@ tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
 .generic_icons.previous_page {
 	background-position: -31px -57px;
 }
-.generic_icons.inbox {
+.generic_icons.inbox, .generic_icons.contact {
 	background-position: -57px -57px;
 }
 .generic_icons.www {
@@ -2320,7 +2237,7 @@ dl {
 	float: right;
 	width: 55%;
 	margin: 0 0 10px 2px;
-	overflow: auto;
+	overflow: visible;
 }
 .centericon {
 	vertical-align: middle;
@@ -2391,6 +2308,40 @@ dl {
 #warn_body{
 	width: 80%;
 	font-size: 0.9em;
+}
+#warning_progress {
+	height: 12pt;
+	z-index: 1;
+}
+#warning_progress.mute {
+	background-color: red;
+}
+#warning_progress.moderate {
+	background-color: orange;
+}
+#warning_progress.watch {
+	background-color: darkgreen;
+}
+#warning_progress.nothing {
+	background-color: green;
+}
+#warning_container {
+	font-size: 8pt;
+	height: 12pt;
+	width: 200px;
+	border: 1px solid black;
+	background-color: white;
+	padding: 1px;
+	position: relative;
+}
+#warning_text {
+	padding-top: 1pt;
+	width: 100%;
+	z-index: 2;
+	color: black;
+	position: absolute;
+	text-align: center;
+	font-weight: bold;
 }
 
 /* Styles for the statistics center.
@@ -2551,7 +2502,7 @@ dl.addrules dt.floatleft {
 #mlist .website_url {
 	width: 70px;
 }
-#mlist .icq, #mlist .aim, #mlist .yim, #mlist .skype {
+#mlist .skype {
 	width: 30px;
 }
 #mlist .posts {
@@ -2917,6 +2868,17 @@ h3 .collapse {
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
+.info .first_poster {
+	display: inline-block;
+}
+.info img.avatar.participation {
+	max-width: 20px;
+	max-height: 20px;
+	vertical-align: bottom;
+	margin-bottom: 5px;
+	margin-left: -30px;
+	margin-top: 0;
+}
 .info .msg_container {
 	display: inline-block;
 	vertical-align: middle;
@@ -2930,6 +2892,19 @@ h3 .collapse {
 	border: 1px solid #DDD;
 	margin-bottom: 3px;
 	margin-top: -1px;
+}
+/* Sub-Board tests (PH) */
+.more_sub_2 div {
+	display: inline-block;
+	width: calc(50% - 5px);
+}
+.more_sub_4 div {
+	display: inline-block;
+	width: calc(25% - 5px);
+}
+.more_sub_redirect:before,
+.more_sub_new:before {
+	content: "(PH)";
 }
 /* Child boards */
 .children {
@@ -3176,14 +3151,6 @@ div#pollmoderation {
 }
 #edit_poll dl.poll_options dd {
 	width: 65%;
-}
-
-/* Linked events */
-.event_title {
-	font-size: larger;
-}
-.event_title + a {
-	margin-left: 1em;
 }
 
 /* On to the posts */
@@ -3448,11 +3415,17 @@ ul.post_options li {
 #postDraftOptions .settings strong{
 	color: #555;
 }
-#post_confirm_strip /* < That may be deprecated. */, #shortcuts {
+#shortcuts {
 	padding: 12px 0;
 }
 #post_confirm_buttons .smalltext {
 	padding: 0 10px;
+}
+#post_confirm_buttons {
+	float: right;
+}
+#post_confirm_buttons .button_submit {
+	float: none;
 }
 .post_verification {
 	margin-top: 6px;
@@ -3680,7 +3653,7 @@ p.information img {
 }
 .atwho-view ul li {
 	display: block;
-	padding: 5px 10px;
+	padding: 5px;
 	border-bottom: 1px solid #DDD;
 	cursor: pointer;
 }
@@ -3688,6 +3661,20 @@ p.information img {
 	font-size: smaller;
 	color: #777;
 	font-weight: normal;
+}
+.atwho-view li span {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+}
+.atwho-view li span.avatar {
+	width: 24px;
+	height: 24px;
+	margin-right: 5px;
+}
+.atwho-view li span img {
+	max-width: 24px;
+	max-height: 24px;
 }
 /* On/Off Icons (User) */
 .on, .off {
@@ -4196,16 +4183,51 @@ div#char_theme_wrapper,
 	opacity: 1;
 }
 
-/* Sub-Board tests (PH) */
-.more_sub_2 div {
-	display: inline-block;
-	width: calc(50% - 5px);
+/* Cookie policy */
+#cookie_footer {
+	position: fixed;
+	bottom: 0;
+	background: #e2e9f3;
+	width: 100%;
+	text-align: center;
+	box-shadow: 0px 5px 12px 3px rgba(0,0,0,0.75);
 }
-.more_sub_4 div {
-	display: inline-block;
-	width: calc(25% - 5px);
+#cookie_footer .cookie_content {
+	padding: 10px 8%;
 }
-.more_sub_redirect:before,
-.more_sub_new:before {
-	content: "(PH)";
+#cookie_footer .cookie_buttons a {
+	margin: 10px;
+}
+
+/* Autocomplete */
+.select2-container {
+	min-width: 200px;
+}
+.autocomplete-avatar {
+	width: 25px;
+	height: 25px;
+	background-position: 50%;
+	background-size: contain;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.autocomplete-avatar-lg {
+	width: 50px;
+	height: 50px;
+	background-position: 50%;
+	background-size: contain;
+	float: left;
+}
+.autocomplete-member {
+	display:inline-block;
+	vertical-align: middle;
+}
+.autocomplete-container {
+	margin-left: 55px;
+	height: 50px;
+}
+.autocomplete-character-account {
+	padding-top: 3px;
+	font-size: 0.9em;
 }

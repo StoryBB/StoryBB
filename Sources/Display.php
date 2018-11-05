@@ -2,7 +2,7 @@
 
 /**
  * This is perhaps the most important and probably most accessed file in all
- * of SMF.  This file controls topic, message, and attachment display.
+ * of StoryBB.  This file controls topic, message, and attachment display.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -10,9 +10,6 @@
  *
  * @version 3.0 Alpha 1
  */
-
-if (!defined('SMF'))
-	die('No direct access...');
 
 /**
  * The central part of the board - topic display.
@@ -724,7 +721,7 @@ function Display()
 				'bar_ndt' => $bar > 0 ? '<div class="bar" style="width: ' . $bar . '%;"></div>' : '',
 				'bar_width' => $barWide,
 				'option' => parse_bbc($option['label']),
-				'vote_button' => '<input type="' . ($pollinfo['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '" class="input_' . ($pollinfo['max_votes'] > 1 ? 'check' : 'radio') . '">'
+				'vote_button' => '<input type="' . ($pollinfo['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '">'
 			);
 		}
 
@@ -802,6 +799,24 @@ function Display()
 	// Guests can't mark topics read or for notifications, just can't sorry.
 	if (!$user_info['is_guest'] && !empty($messages))
 	{
+		// Additionally, if the current user has some alerts, try to mark any of these ones read.
+		if (!empty($user_info['alerts']))
+		{
+			// Clear any pending alerts.
+			$alerted = StoryBB\Model\Alert::find_alerts([
+				'content_type' => 'msg',
+				'content_id' => $messages,
+				'id_member' => $context['user']['id'],
+				'is_read' => 0
+			]);
+			if (!empty($alerted))
+			{
+				foreach ($alerted as $memID => $alerts)
+				{
+					StoryBB\Model\Alert::change_read($memID, $alerts, 1);
+				}
+			}
+		}
 		$mark_at_msg = max($messages);
 		if ($mark_at_msg >= $context['topicinfo']['id_last_msg'])
 			$mark_at_msg = $modSettings['maxMsgID'];
@@ -1093,40 +1108,24 @@ function Display()
 
 	if (!$user_info['is_guest'] && $context['can_reply'])
 	{
-		if (empty($user_profile[$context['user']['id']]))
-			loadMemberData($context['user']['id']);
-		loadMemberContext($context['user']['id']);
+		$possible_characters = get_user_possible_characters($user_info['id'], $board);
 
-		// Get the current characters.
-		$context['post_characters'] = get_user_possible_characters($context['user']['id'], $board_info['id']);
-
-		// Make sure we have some avatar to work with.
-		$context['current_avatar'] = '';
-		foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
-		{
-			if ($char_id == $user_info['id_character'])
-				$context['current_avatar'] = $character['avatar'];
-		}
-
-		addInlineJavaScript('
-			var characters = ' . json_encode($context['post_characters']) . ';
-			$("#quickReplyOptions .character_selector").on("change", function() {
-				var char_id = $(this).val();
-				if (characters.hasOwnProperty(char_id)) {
-					$("#quickReplyOptions .poster .avatar img").attr("src", characters[char_id].avatar);
-				}
-			}).trigger("change");
-		', true);
-	}
-
-	if (!$user_info['is_guest'] && $context['can_reply'] && empty($context['post_characters']))
-	{
-		if (!allowedTo('admin_forum'))
+		if (!isset($possible_characters[$user_info['id_character']]))
 		{
 			$context['can_reply'] = false;
 			$context['can_reply_unapproved'] = false;
 			$context['can_reply_approved'] = false;
 			$context['can_quote'] = false;
+		}
+		else
+		{
+			// Make sure we have some avatar to work with.
+			$context['current_avatar'] = '';
+			foreach ($memberContext[$context['user']['id']]['characters'] as $char_id => $character)
+			{
+				if ($char_id == $user_info['id_character'])
+					$context['current_avatar'] = $character['avatar'];
+			}
 		}
 	}
 
@@ -1273,25 +1272,25 @@ function Display()
 
 	// Load the drafts js file
 	if ($context['drafts_autosave'])
-		loadJavaScriptFile('drafts.js', array('defer' => false), 'smf_drafts');
+		loadJavaScriptFile('drafts.js', array('defer' => false), 'sbb_drafts');
 
 	// topic.js
-	loadJavaScriptFile('topic.js', array('defer' => false), 'smf_topic');
+	loadJavaScriptFile('topic.js', array('defer' => false), 'sbb_topic');
 
 	// quotedText.js
-	loadJavaScriptFile('quotedText.js', array('defer' => true), 'smf_quotedText');
+	loadJavaScriptFile('quotedText.js', array('defer' => true), 'sbb_quotedText');
 
 	// Mentions
 	if (!empty($modSettings['enable_mentions']) && allowedTo('mention'))
 	{
-		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'smf_atwho');
-		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'smf_caret');
-		loadJavaScriptFile('mentions.js', array('defer' => true), 'smf_mentions');
+		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'sbb_atwho');
+		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'sbb_caret');
+		loadJavaScriptFile('mentions.js', array('defer' => true), 'sbb_mentions');
 	}
 
 	// Some convenient template setup.
 	$context['sub_template'] = 'display_main';
-	register_helper([
+	StoryBB\Template::add_helper([
 		'getLikeText' => function($likes) {
 			global $txt, $context, $scripturl;
 			
@@ -1310,10 +1309,7 @@ function Display()
 	$context['viewing'] = '';
 	if (!empty($settings['display_who_viewing']))
 	{
-		$context['viewing'] = $settings['display_who_viewing'] == 1 ? 
-				count($context['view_members']) . ' ' . count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members']
-			:
-				empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
+		$context['viewing'] = $settings['display_who_viewing'] == 1 ? count($context['view_members']) . ' ' . count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members'] : empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
 	}
 	$context['messages'] = [];
 	$context['ignoredMsgs'] = [];
@@ -1744,5 +1740,3 @@ function QuickInTopicModeration()
 
 	redirectexit(!empty($topicGone) ? 'board=' . $board : 'topic=' . $topic . '.' . $_REQUEST['start']);
 }
-
-?>

@@ -10,8 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
+use StoryBB\Helper\Autocomplete;
 
 /**
  * Main dispatcher, the maintenance access point.
@@ -175,7 +174,8 @@ function MaintainMembers()
 	}
 	$smcFunc['db_free_result']($result);
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'smf_suggest');
+	Autocomplete::init('member', '#to');
+	Autocomplete::init('character', '#to_char');
 }
 
 /**
@@ -235,7 +235,7 @@ function MaintainFindFixErrors()
 
 /**
  * Wipes the whole cache directory.
- * This only applies to SMF's own cache directory, though.
+ * This only applies to StoryBB's own cache directory, though.
  */
 function MaintainCleanCache()
 {
@@ -482,7 +482,7 @@ function OptimizeTables()
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = 3;
 
-	// Only optimize the tables related to this smf install, not all the tables in the db
+	// Only optimize the tables related to this StoryBB install, not all the tables in the db
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
 
 	// Get a list of tables, as well as how many there are.
@@ -494,7 +494,7 @@ function OptimizeTables()
 	// If there aren't any tables then I believe that would mean the world has exploded...
 	$context['num_tables'] = count($tables);
 	if ($context['num_tables'] == 0)
-		fatal_error('You appear to be running SMF in a flat file mode... fantastic!', false);
+		fatal_error('You appear to be running StoryBB in a flat file mode... fantastic!', false);
 
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 
@@ -1074,8 +1074,7 @@ function AdminBoardRecount()
 /**
  * Perform a detailed version check.  A very good thing ;).
  * The function parses the comment headers in all files for their version information,
- * and outputs that for some javascript to check with simplemachines.org.
- * It does not connect directly with simplemachines.org, but rather expects the client to.
+ * and compares that to JSON pulled at some point from storybb.org previous.
  *
  * It requires the admin_forum permission.
  * Uses the view_versions admin area.
@@ -1093,7 +1092,6 @@ function VersionDetail()
 	$versionOptions = array(
 		'include_ssi' => true,
 		'include_subscriptions' => true,
-		'include_tasks' => true,
 		'sort_results' => true,
 	);
 	$version_info = getFileVersions($versionOptions);
@@ -1105,15 +1103,129 @@ function VersionDetail()
 		'template_versions' => $version_info['template_versions'],
 		'default_language_versions' => $version_info['default_language_versions'],
 		'default_known_languages' => array_keys($version_info['default_language_versions']),
-		'tasks_versions' => $version_info['tasks_versions'],
 	);
-
-	register_helper([
-		'array2js' => 'array2js',
-	]);
 
 	// Make it easier to manage for the template.
 	$context['forum_version'] = $forum_version;
+	$context['master_forum_version'] = '??';
+
+	// Get the forum package version.
+	$updates = getAdminFile('updates.json');
+	if (!empty($updates))
+	{
+		$context['master_forum_version'] = $updates['current_version'];
+	}
+
+	foreach ($context['file_versions'] as $path => $current_ver)
+	{
+		$context['file_versions'][$path] = ['current' => $current_ver, 'master' => '??', 'state' => 0];
+	}
+	foreach ($context['default_language_versions'] as $language_id => $files)
+	{
+		foreach ($files as $file_id => $current_ver)
+		{
+			$context['default_language_versions'][$language_id][$file_id] = ['current' => $current_ver, 'master' => '??', 'state' => 0];
+		}
+	}
+
+	$versions = getAdminFile('versions.json');
+	// Sift through the version numbers.
+	if (!empty($versions))
+	{
+		foreach ($versions['sources'] as $path => $master_ver)
+		{
+			if (!isset($context['file_versions'][$path]))
+			{
+				$context['file_versions'][$path] = ['current' => '??', 'master' => '??', 'state' => 0];
+			}
+			$context['file_versions'][$path]['master'] = $master_ver;
+		}
+		foreach ($versions['languages'] as $language_id => $language_ver)
+		{
+			foreach ($language_ver as $language_file => $language_file_ver)
+			{
+				list($language_file) = explode('.', $language_file);
+				if (!isset($context['default_language_versions'][$language_id][$language_file]))
+				{
+					$context['default_language_versions'][$language_id][$language_file] = ['current' => '??', 'master' => '??', 'state' => 0];
+				}
+				$context['default_language_versions'][$language_id][$language_file]['master'] = $language_file_ver;
+			}
+		}
+	}
+
+	// Pull out the headings - sources first.
+	$context['sources_versions'] = ['current' => '??', 'master' => '??'];
+	foreach ($context['file_versions'] as $version)
+	{
+		foreach (['current', 'master'] as $type)
+		{
+			if ($version[$type] != '??')
+			{
+				if ($context['sources_versions'][$type] == '??')
+				{
+					$context['sources_versions'][$type] = $version[$type];
+				}
+				else
+				{
+					if (version_compare($version[$type], $context['sources_versions'][$type], '<'))
+					{
+						$context['sources_versions'][$type] = trim($version[$type]);
+					}
+				}
+			}
+		}
+	}
+	foreach ($context['file_versions'] as $path => $version)
+	{
+		if ($version['current'] == '??')
+			continue;
+		if ($version['master'] == '??')
+			continue;
+
+		$context['file_versions'][$path]['state'] = version_compare($version['current'], $version['master']);
+	}
+	$context['sources_current'] = version_compare($context['master_forum_version'], $context['sources_versions']['current']);
+
+	// Headings for the language area.
+	$context['languages_versions'] = ['current' => '??', 'master' => '??'];
+	foreach ($context['default_language_versions'] as $language_id => $language_ver)
+	{
+		foreach ($language_ver as $language_file => $version)
+		{
+			foreach (['current', 'master'] as $type)
+			{
+				if ($version[$type] != '??')
+				{
+					if ($context['languages_versions'][$type] == '??')
+					{
+						$context['languages_versions'][$type] = $version[$type];
+					}
+					else
+					{
+						if (version_compare($version[$type], $context['languages_versions'][$type], '<'))
+						{
+							$context['languages_versions'][$type] = trim($version[$type]);
+						}
+					}
+				}
+			}
+		}
+	}
+	foreach ($context['default_language_versions'] as $language_id => $language_ver)
+	{
+		foreach ($language_ver as $language_file => $version)
+		{
+			if ($version['current'] == '??')
+				continue;
+			if ($version['master'] == '??')
+				continue;
+
+			$context['default_language_versions'][$language_id][$language_file]['state'] = version_compare($version['current'], $version['master']);
+
+		}
+	}
+	$context['languages_current'] = version_compare($context['master_forum_version'], $context['languages_versions']['current']);
 
 	$context['sub_template'] = 'admin_versions';
 	$context['page_title'] = $txt['admin_version_check'];
@@ -1124,26 +1236,57 @@ function VersionDetail()
  */
 function MaintainReattributePosts()
 {
-	global $sourcedir, $context, $txt;
+	global $sourcedir, $context, $txt, $smcFunc;
 
 	checkSession();
 
-	// Find the member.
-	require_once($sourcedir . '/Subs-Auth.php');
-	$members = findMembers($_POST['to']);
+	// Are we doing the member or a character?
+	if (!isset($_POST['reattribute_type']) || $_POST['reattribute_type'] == 'member')
+	{
+		$memID = isset($_POST['to']) ? (int) $_POST['to'] : 0;
+		$request = $smcFunc['db_query']('', '
+			SELECT id_member
+			FROM {db_prefix}members
+			WHERE id_member = {int:memID}',
+			[
+				'memID' => $memID,
+			]
+		);
+		if ($smcFunc['db_num_rows']($request) == 0)
+			fatal_lang_error('reattribute_cannot_find_member');
 
-	if (empty($members))
-		fatal_lang_error('reattribute_cannot_find_member');
+		$smcFunc['db_free_result']($request);
 
-	$memID = array_shift($members);
-	$memID = $memID['id'];
+		// The OOC character ID can be looked up inside reattributePosts.
+		$characterID = false;
+	}
+	else
+	{
+		// We're given a character ID - we need to find the member ID as well.
+		$characterID = isset($_POST['to_char']) ? (int) $_POST['to_char'] : 0;
+
+		$request = $smcFunc['db_query']('', '
+			SELECT mem.id_member, chars.id_character
+			FROM {db_prefix}characters AS chars
+				INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
+			WHERE id_character = {int:characterID}',
+			[
+				'characterID' => $characterID,
+			]
+		);
+		if ($smcFunc['db_num_rows']($request) == 0)
+			fatal_lang_error('reattribute_cannot_find_member');
+
+		list ($memID, $characterID) = $smcFunc['db_fetch_row']($request);
+		$smcFunc['db_free_result']($request);
+	}
 
 	$email = $_POST['type'] == 'email' ? $_POST['from_email'] : '';
 	$membername = $_POST['type'] == 'name' ? $_POST['from_name'] : '';
 
 	// Now call the reattribute function.
 	require_once($sourcedir . '/Subs-Members.php');
-	reattributePosts($memID, $email, $membername, !empty($_POST['posts']));
+	reattributePosts($memID, $characterID, $email, $membername, !empty($_POST['posts']));
 
 	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_reattribute_posts']));
 }
@@ -1750,7 +1893,7 @@ function list_integration_hooks()
 				'data' => array(
 					'db' => 'hook_name',
 				),
-				'sort' =>  array(
+				'sort' => array(
 					'default' => 'hook_name',
 					'reverse' => 'hook_name DESC',
 				),
@@ -1772,7 +1915,7 @@ function list_integration_hooks()
 							return $instance . $data['real_function'];
 					},
 				),
-				'sort' =>  array(
+				'sort' => array(
 					'default' => 'function_name',
 					'reverse' => 'function_name DESC',
 				),
@@ -1784,7 +1927,7 @@ function list_integration_hooks()
 				'data' => array(
 					'db' => 'file_name',
 				),
-				'sort' =>  array(
+				'sort' => array(
 					'default' => 'file_name',
 					'reverse' => 'file_name DESC',
 				),
@@ -1806,7 +1949,7 @@ function list_integration_hooks()
 					},
 					'class' => 'centertext',
 				),
-				'sort' =>  array(
+				'sort' => array(
 					'default' => 'status',
 					'reverse' => 'status DESC',
 				),
@@ -2143,5 +2286,3 @@ function get_hook_info_from_raw($rawData)
 
 	return $hookData;
 }
-
-?>

@@ -491,7 +491,7 @@ Moderation center: {REPORTLINK}
 		REPORTERNAME: The name of the person reporting the profile
 		PROFILELINK: The link to the profile that was reported
 		COMMENT: The comment left by the reporter.
- 	@description: When a user's profile is reported
+	@description: When a user's profile is reported
 */
 $txt['report_member_profile_subject'] = 'Reported profile: {MEMBERNAME}';
 $txt['report_member_profile_body'] = 'The profile of "{MEMBERNAME}" has been reported by {REPORTERNAME}.
@@ -509,7 +509,7 @@ The reporter has made the following comment:
 		MEMBERNAME: The display name of the reported user
 		COMMENTERNAME: The name of the person who added the comment
 		PROFILELINK: The link to the profile that was reported
- 	@description: When someone replies to a report about a profile, this can be sent to others who replied
+	@description: When someone replies to a report about a profile, this can be sent to others who replied
 */
 $txt['reply_to_member_report_subject'] = 'Follow-up to reported profile: {MEMBERNAME}';
 $txt['reply_to_member_report_body'] = 'Previously, the profile of {MEMBERNAME} was reported.
@@ -558,24 +558,6 @@ Before you can login, you first need to activate your account. To do so, please 
 {ACTIVATIONLINK}
 
 Should you have any problems with activation, please visit {ACTIVATIONLINKWITHOUTCODE} use the code "{ACTIVATIONCODE}".
-
-{REGARDS}';
-
-/**
-	@additional_params: register_coppa
-		REALNAME: The display name for the member receiving the email.
-		USERNAME: The user name for the member receiving the email.
-		PASSWORD: The password for the member.
-		COPPALINK:  The url link to the coppa form.
-		FORGOTPASSWORDLINK: The url to the "forgot password" page.
-	@description:
-*/
-$txt['register_coppa_subject'] = 'Welcome to {FORUMNAME}';
-$txt['register_coppa_body'] = 'Thank you for registering at {FORUMNAME}. Your username is {USERNAME}. If you forget your password, you can change it at {FORGOTPASSWORDLINK}
-
-Before you can login, the admin requires consent from your parent/guardian for you to join the community. You can obtain more information at the link below:
-
-{COPPALINK}
 
 {REGARDS}';
 
@@ -991,6 +973,25 @@ You have been mentioned in the post titled "{CONTENTSUBJECT}" by {MENTIONNAME}, 
 {REGARDS}';
 
 /**
+	@additional_params: contact_form_response
+		MSGSUBJECT: the original subject
+		NAME: the name given by the user
+		MSGRESPONSE: the response by the admin
+	@description: A response to people who used the contact form
+*/
+
+$txt['contact_form_response_subject'] = 'Contact Us - "{MSGSUBJECT}" [{FORUMNAME}]';
+$txt['contact_form_response_body'] = 'Hello {NAME},
+
+You recently left a message with our contact form, "{MSGSUBJECT}". Our admin team has reviewed your message and has a response:
+
+{MSGRESPONSE}
+
+We hope this answers your message, but if not please do get in touch with us. Please do NOT reply to this message - it will not get back to the admin.
+
+{REGARDS}';
+
+/**
 	@additional_params: happy_birthday
 		REALNAME: The real (display) name of the person receiving the birthday message.
 	@description: A message sent to members on their birthday.
@@ -1001,7 +1002,7 @@ $txtBirthdayEmails['happy_birthday_body'] = 'Dear {REALNAME},
 We here at {FORUMNAME} would like to wish you a happy birthday. May this day and the year to follow be full of joy.
 
 {REGARDS}';
-$txtBirthdayEmails['happy_birthday_author'] = '<a href="https://www.simplemachines.org/community/?action=profile;u=2676">Thantos</a>';
+$txtBirthdayEmails['happy_birthday_author'] = 'Thantos';
 
 $txtBirthdayEmails['karlbenson1_subject'] = 'On your Birthday...';
 $txtBirthdayEmails['karlbenson1_body'] = 'We could have sent you a birthday card. We could have sent you some flowers or a cake.
@@ -1019,7 +1020,7 @@ We would like to wish you a very special birthday.
 {REGARDS}
 
 //:: This message was automatically generated :://';
-$txtBirthdayEmails['karlbenson1_author'] = '<a href="https://www.simplemachines.org/community/?action=profile;u=63186">karlbenson</a>';
+$txtBirthdayEmails['karlbenson1_author'] = 'karlbenson';
 
 $txtBirthdayEmails['nite0859_subject'] = 'Happy Birthday!';
 $txtBirthdayEmails['nite0859_body'] = 'Your friends at {FORUMNAME} would like to take a moment of your time to wish you a happy birthday, {REALNAME}. If you have not done so recently, please visit our community in order for others to have the opportunity to pass along their warm regards.
@@ -1028,7 +1029,7 @@ Even though today is your birthday, {REALNAME}, we would like to remind you that
 
 Best Wishes,
 The Staff of {FORUMNAME}';
-$txtBirthdayEmails['nite0859_author'] = '<a href="https://www.simplemachines.org/community/?action=profile;u=46625">nite0859</a>';
+$txtBirthdayEmails['nite0859_author'] = 'nite0859';
 
 $txtBirthdayEmails['zwaldowski_subject'] = 'Birthday Wishes to {REALNAME}';
 $txtBirthdayEmails['zwaldowski_body'] = 'Dear {REALNAME},
@@ -1036,7 +1037,7 @@ $txtBirthdayEmails['zwaldowski_body'] = 'Dear {REALNAME},
 Another year in your life has passed. We at {FORUMNAME} hope it has been filled with happiness, and wish you luck in the coming one.
 
 {REGARDS}';
-$txtBirthdayEmails['zwaldowski_author'] = '<a href="https://www.simplemachines.org/community/?action=profile;u=72038">zwaldowski</a>';
+$txtBirthdayEmails['zwaldowski_author'] = 'zwaldowski';
 
 $txtBirthdayEmails['geezmo_subject'] = 'Happy birthday, {REALNAME}!';
 $txtBirthdayEmails['geezmo_body'] = 'Do you know who\'s having a birthday today, {REALNAME}?
@@ -1050,7 +1051,7 @@ You\'re now a year older but we hope you\'re a lot happier than last year.
 Enjoy your day today, {REALNAME}!
 
 - From your {FORUMNAME} family';
-$txtBirthdayEmails['geezmo_author'] = '<a href="https://www.simplemachines.org/community/?action=profile;u=48671">geezmo</a>';
+$txtBirthdayEmails['geezmo_author'] = 'geezmo';
 
 $txtBirthdayEmails['karlbenson2_subject'] = 'Your Birthday Greeting';
 $txtBirthdayEmails['karlbenson2_body'] = 'We hope your birthday is the best ever cloudy, sunny or whatever the weather.
@@ -1059,6 +1060,4 @@ Have lots of birthday cake and fun, and tell us what you have done.
 We hope this message brought you cheer, and make it last, until same time same place, next year.
 
 {REGARDS}';
-$txtBirthdayEmails['karlbenson2_author'] = '<a href="https://www.simplemachines.org/community/?action=profile;u=63186">karlbenson</a>';
-
-?>
+$txtBirthdayEmails['karlbenson2_author'] = 'karlbenson';

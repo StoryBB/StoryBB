@@ -11,8 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
-if (!defined('SMF'))
-	die('No direct access...');
+use StoryBB\Model\Attachment;
+use StoryBB\Helper\Environment;
 
 /**
  * The main 'Attachments and Avatars' management function.
@@ -118,8 +118,8 @@ function ManageAttachmentSettings($return_config = false)
 	// See if we can find if the server is set up to support the attachment limits
 	$post_max_size = ini_get('post_max_size');
 	$upload_max_filesize = ini_get('upload_max_filesize');
-	$testPM = !empty($post_max_size) ? (memoryReturnBytes($post_max_size) >= (isset($modSettings['attachmentPostLimit']) ? $modSettings['attachmentPostLimit'] * 1024 : 0)) : true;
-	$testUM = !empty($upload_max_filesize) ? (memoryReturnBytes($upload_max_filesize) >= (isset($modSettings['attachmentSizeLimit']) ? $modSettings['attachmentSizeLimit'] * 1024 : 0)) : true;
+	$testPM = !empty($post_max_size) ? (Environment::memoryReturnBytes($post_max_size) >= (isset($modSettings['attachmentPostLimit']) ? $modSettings['attachmentPostLimit'] * 1024 : 0)) : true;
+	$testUM = !empty($upload_max_filesize) ? (Environment::memoryReturnBytes($upload_max_filesize) >= (isset($modSettings['attachmentSizeLimit']) ? $modSettings['attachmentSizeLimit'] * 1024 : 0)) : true;
 
 	$config_vars = array(
 			// Are attachments enabled?
@@ -201,7 +201,7 @@ function ManageAttachmentSettings($return_config = false)
 			if (!empty($_POST['use_subdirectories_for_attachments']) && !empty($modSettings['attachment_basedirectories']))
 			{
 				if (!is_array($modSettings['attachment_basedirectories']))
-					$modSettings['attachment_basedirectories'] = smf_json_decode($modSettings['attachment_basedirectories'], true);
+					$modSettings['attachment_basedirectories'] = sbb_json_decode($modSettings['attachment_basedirectories'], true);
 			}
 			else
 				$modSettings['attachment_basedirectories'] = array();
@@ -289,30 +289,6 @@ function ManageAvatarSettings($return_config = false)
 			array('warning', !$context['valid_custom_avatar_dir'] ? 'custom_avatar_dir_wrong' : ''),
 			array('text', 'custom_avatar_dir', 40, 'subtext' => $txt['custom_avatar_dir_desc'], 'invalid' => !$context['valid_custom_avatar_dir']),
 			array('text', 'custom_avatar_url', 40),
-		// Grvatars?
-		array('title', 'gravatar_settings'),
-			array('check', 'gravatarEnabled'),
-			array('check', 'gravatarOverride'),
-			array('check', 'gravatarAllowExtraEmail'),
-		'',
-			array('select', 'gravatarMaxRating',
-				array(
-					'G' => $txt['gravatar_maxG'],
-					'PG' => $txt['gravatar_maxPG'],
-					'R' => $txt['gravatar_maxR'],
-					'X' => $txt['gravatar_maxX'],
-				),
-			),
-			array('select', 'gravatarDefault',
-				array(
-					'mm' => $txt['gravatar_mm'],
-					'identicon' => $txt['gravatar_identicon'],
-					'monsterid' => $txt['gravatar_monsterid'],
-					'wavatar' => $txt['gravatar_wavatar'],
-					'retro' => $txt['gravatar_retro'],
-					'blank' => $txt['gravatar_blank'],
-				),
-			),
 	);
 
 	call_integration_hook('integrate_modify_avatar_settings', array(&$config_vars));
@@ -366,14 +342,23 @@ function BrowseFiles()
 	global $context, $txt, $scripturl, $modSettings;
 	global $smcFunc, $sourcedir, $settings;
 
-	// Attachments or avatars?
-	$context['browse_type'] = isset($_REQUEST['avatars']) ? 'avatars' : (isset($_REQUEST['thumbs']) ? 'thumbs' : 'attachments');
-
+	// What type of thing are we doing?
 	$titles = array(
 		'attachments' => array('?action=admin;area=manageattachments;sa=browse', $txt['attachment_manager_attachments']),
 		'avatars' => array('?action=admin;area=manageattachments;sa=browse;avatars', $txt['attachment_manager_avatars']),
 		'thumbs' => array('?action=admin;area=manageattachments;sa=browse;thumbs', $txt['attachment_manager_thumbs']),
+		'exports' => array('?action=admin;area=manageattachments;sa=browse;exports', $txt['attachment_manager_exports']),
 	);
+
+	$context['browse_type'] = 'attachments';
+	foreach (array_keys($titles) as $type)
+	{
+		if (isset($_REQUEST[$type]))
+		{
+			$context['browse_type'] = $type;
+			break;
+		}
+	}
 
 	$list_title = $txt['attachment_manager_browse_files'] . ': ';
 	foreach ($titles as $browse_type => $details)
@@ -392,7 +377,7 @@ function BrowseFiles()
 		'id' => 'file_list',
 		'title' => $list_title,
 		'items_per_page' => $modSettings['defaultMaxListItems'],
-		'base_href' => $scripturl . '?action=admin;area=manageattachments;sa=browse' . ($context['browse_type'] === 'avatars' ? ';avatars' : ($context['browse_type'] === 'thumbs' ? ';thumbs' : '')),
+		'base_href' => $scripturl . '?action=admin;area=manageattachments;sa=browse' . ($context['browse_type'] !== 'attachments' ? ';' . $context['browse_type'] : ''),
 		'default_sort_col' => 'name',
 		'no_items_label' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ($context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments')) . '_no_entries'],
 		'get_items' => array(
@@ -418,12 +403,16 @@ function BrowseFiles()
 						$link = '<a href="';
 
 						// In case of a custom avatar URL attachments have a fixed directory.
-						if ($rowData['attachment_type'] == 1)
+						if ($rowData['attachment_type'] == Attachment::ATTACHMENT_AVATAR)
 							$link .= sprintf('%1$s/%2$s', $modSettings['custom_avatar_url'], $rowData['filename']);
 
 						// By default avatars are downloaded almost as attachments.
 						elseif ($context['browse_type'] == 'avatars')
 							$link .= sprintf('%1$s?action=dlattach;type=avatar;attach=%2$d', $scripturl, $rowData['id_attach']);
+
+						// Exports link to the profile page.
+						elseif ($context['browse_type'] == 'exports')
+							$link .= sprintf('%1$s?action=profile;area=export_data;u=%2$s;download=%3$s;%4$s=%5$s', $scripturl, $rowData['id_member'], $rowData['id_topic'], $context['session_var'], $context['session_id']);
 
 						// Normal attachments are always linked to a topic ID.
 						else
@@ -466,17 +455,17 @@ function BrowseFiles()
 			),
 			'member' => array(
 				'header' => array(
-					'value' => $context['browse_type'] == 'avatars' ? $txt['attachment_manager_member'] : $txt['posted_by'],
+					'value' => ($context['browse_type'] == 'avatars' || $context['browse_type'] == 'exports') ? $txt['attachment_manager_member'] : $txt['posted_by'],
 				),
 				'data' => array(
-					'function' => function($rowData) use ($scripturl, $smcFunc)
+					'function' => function($rowData) use ($scripturl, $context, $smcFunc)
 					{
 						// In case of an attachment, return the poster of the attachment.
 						if (empty($rowData['id_member']))
 							return $smcFunc['htmlspecialchars']($rowData['poster_name']);
 
 						// Otherwise it must be an avatar, return the link to the owner of it.
-						elseif (!empty($rowData['character_name']))
+						elseif (!empty($rowData['character_name']) && $context['browse_type'] != 'exports')
 							return $rowData['poster_name'] . ($rowData['poster_name'] != $rowData['character_name'] ? ' (' . $rowData['character_name'] . ')' : '');
 
 						else
@@ -499,15 +488,24 @@ function BrowseFiles()
 						$date = empty($rowData['poster_time']) ? $txt['never'] : timeformat($rowData['poster_time']);
 
 						// Add a link to the topic in case of an attachment.
-						if ($context['browse_type'] !== 'avatars')
+						if ($context['browse_type'] == 'exports')
+						{
+							if (!empty($rowData['character_name']))
+							{
+								$date .= '<br>' . sprintf($txt['attachment_manager_requested_by'], $rowData['character_name']);
+							}
+						}
+						elseif ($context['browse_type'] !== 'avatars')
+						{
 							$date .= sprintf('<br>%1$s <a href="%2$s?topic=%3$d.msg%4$d#msg%4$d">%5$s</a>', $txt['in'], $scripturl, $rowData['id_topic'], $rowData['id_msg'], $rowData['subject']);
+						}
 
 						return $date;
 					},
 				),
 				'sort' => array(
-					'default' => $context['browse_type'] === 'avatars' ? 'mem.last_login' : 'm.id_msg',
-					'reverse' => $context['browse_type'] === 'avatars' ? 'mem.last_login DESC' : 'm.id_msg DESC',
+					'default' => $context['browse_type'] === 'avatars' ? 'mem.last_login' : ($context['browse_type'] == 'exports' ? 'poster_time' : 'm.id_msg'),
+					'reverse' => $context['browse_type'] === 'avatars' ? 'mem.last_login DESC' : ($context['browse_type'] == 'exports' ? 'poster_time DESC' : 'm.id_msg DESC'),
 				),
 			),
 			'downloads' => array(
@@ -525,12 +523,12 @@ function BrowseFiles()
 			),
 			'check' => array(
 				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check">',
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<input type="checkbox" name="remove[%1$d]" class="input_check">',
+						'format' => '<input type="checkbox" name="remove[%1$d]">',
 						'params' => array(
 							'id_attach' => false,
 						),
@@ -586,6 +584,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 
 	// Choose a query depending on what we are viewing.
 	if ($browse_type === 'avatars')
+	{
 		$request = $smcFunc['db_query']('', '
 			SELECT
 				{string:blank_text} AS id_msg, COALESCE(mem.real_name, {string:not_applicable_text}) AS poster_name, chars.character_name,
@@ -595,10 +594,12 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = a.id_character)
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = chars.id_member)
 			WHERE a.id_character != {int:guest_id}
+				AND a.attachment_type != {int:export}
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:per_page}',
 			array(
 				'guest_id' => 0,
+				'export' => Attachment::ATTACHMENT_EXPORT,
 				'blank_text' => '',
 				'not_applicable_text' => $txt['not_applicable'],
 				'sort' => $sort,
@@ -606,7 +607,36 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 				'per_page' => $items_per_page,
 			)
 		);
+	}
+	elseif ($browse_type === 'exports')
+	{
+		$request = $smcFunc['db_query']('', '
+			SELECT
+				{string:blank_text} AS id_msg, COALESCE(mem.real_name, {string:not_applicable_text}) AS poster_name, COALESCE(requester.real_name, {string:blank_text}) AS character_name,
+				ue.requested_on AS poster_time, ue.id_export AS id_topic, mem.id_member, a.id_character, a.id_attach, a.filename, a.file_hash, a.attachment_type,
+				a.size, a.width, a.height, a.downloads, {string:blank_text} AS subject, 0 AS id_board
+			FROM {db_prefix}attachments AS a
+				LEFT JOIN {db_prefix}characters AS chars ON (chars.id_character = a.id_character)
+				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = chars.id_member)
+				INNER JOIN {db_prefix}user_exports AS ue ON (ue.id_attach = a.id_attach)
+				LEFT JOIN {db_prefix}members AS requester ON (ue.id_requester = requester.id_member)
+			WHERE a.id_character != {int:guest_id}
+				AND a.attachment_type = {int:export}
+			ORDER BY {raw:sort}
+			LIMIT {int:start}, {int:per_page}',
+			array(
+				'guest_id' => 0,
+				'export' => Attachment::ATTACHMENT_EXPORT,
+				'blank_text' => '',
+				'not_applicable_text' => $txt['not_applicable'],
+				'sort' => $sort,
+				'start' => $start,
+				'per_page' => $items_per_page,
+			)
+		);
+	}
 	else
+	{
 		$request = $smcFunc['db_query']('', '
 			SELECT
 				m.id_msg, COALESCE(mem.real_name, m.poster_name) AS poster_name, null AS character_name, m.poster_time, m.id_topic, m.id_member,
@@ -620,12 +650,13 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:per_page}',
 			array(
-				'attachment_type' => $browse_type == 'thumbs' ? '3' : '0',
+				'attachment_type' => $browse_type == 'thumbs' ? Attachment::ATTACHMENT_THUMBNAIL : Attachment::ATTACHMENT_STANDARD,
 				'sort' => $sort,
 				'start' => $start,
 				'per_page' => $items_per_page,
 			)
 		);
+	}
 	$files = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$files[] = $row;
@@ -665,7 +696,7 @@ function list_getNumFiles($browse_type)
 			WHERE a.attachment_type = {int:attachment_type}
 				AND a.id_character = {int:guest_id_member}',
 			array(
-				'attachment_type' => $browse_type === 'thumbs' ? '3' : '0',
+				'attachment_type' => $browse_type === 'thumbs' ? Attachment::ATTACHMENT_THUMBNAIL : Attachment::ATTACHMENT_STANDARD,
 				'guest_id_member' => 0,
 			)
 		);
@@ -690,7 +721,7 @@ function MaintainFiles()
 
 	$context['sub_template'] = 'admin_attachment_maintenance';
 
-	$attach_dirs = smf_json_decode($modSettings['attachmentUploadDir'], true);
+	$attach_dirs = sbb_json_decode($modSettings['attachmentUploadDir'], true);
 
 	// Get the number of attachments....
 	$request = $smcFunc['db_query']('', '
@@ -699,7 +730,7 @@ function MaintainFiles()
 		WHERE attachment_type = {int:attachment_type}
 			AND id_character = {int:guest_id_member}',
 		array(
-			'attachment_type' => 0,
+			'attachment_type' => Attachment::ATTACHMENT_STANDARD,
 			'guest_id_member' => 0,
 		)
 	);
@@ -711,14 +742,28 @@ function MaintainFiles()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments
-		WHERE id_character != {int:guest_id_member}',
+		WHERE id_character != {int:guest_id_member}
+			AND attachment_type != {int:export}',
 		array(
 			'guest_id_member' => 0,
+			'export' => Attachment::ATTACHMENT_EXPORT,
 		)
 	);
 	list ($context['num_avatars']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 	$context['num_avatars'] = comma_format($context['num_avatars'], 0);
+
+	$request = $smcFunc['db_query']('', '
+		SELECT COUNT(*)
+		FROM {db_prefix}attachments
+		WHERE attachment_type = {int:export}',
+		[
+			'export' => Attachment::ATTACHMENT_EXPORT,
+		]
+	);
+	list ($context['num_exports']) = $smcFunc['db_fetch_row']($request);
+	$smcFunc['db_free_result']($request);
+	$context['num_exports'] = comma_format($context['num_exports'], 0);
 
 	// Check the size of all the directories.
 	$request = $smcFunc['db_query']('', '
@@ -726,7 +771,7 @@ function MaintainFiles()
 		FROM {db_prefix}attachments
 		WHERE attachment_type != {int:type}',
 		array(
-			'type' => 1,
+			'type' => Attachment::ATTACHMENT_AVATAR,
 		)
 	);
 	list ($attachmentDirSize) = $smcFunc['db_fetch_row']($request);
@@ -743,7 +788,7 @@ function MaintainFiles()
 			AND attachment_type != {int:type}',
 		array(
 			'folder_id' => $modSettings['currentAttachmentUploadDir'],
-			'type' => 1,
+			'type' => Attachment::ATTACHMENT_AVATAR,
 		)
 	);
 	list ($current_dir_files, $current_dir_size) = $smcFunc['db_fetch_row']($request);
@@ -761,7 +806,7 @@ function MaintainFiles()
 
 	$context['attach_multiple_dirs'] = count($attach_dirs) > 1 ? true : false;
 	$context['attach_dirs'] = $attach_dirs;
-	$context['base_dirs'] = !empty($modSettings['attachment_basedirectories']) ? smf_json_decode($modSettings['attachment_basedirectories'], true) : array();
+	$context['base_dirs'] = !empty($modSettings['attachment_basedirectories']) ? sbb_json_decode($modSettings['attachment_basedirectories'], true) : array();
 	$context['checked'] = isset($_SESSION['checked']) ? $_SESSION['checked'] : true;
 	if (!empty($_SESSION['results']))
 	{
@@ -866,8 +911,21 @@ function RemoveAttachment()
 		call_integration_hook('integrate_attachment_remove', array(&$filesRemoved, $attachments));
 
 		if ($_REQUEST['type'] == 'avatars' && !empty($attachments))
+		{
 			removeAttachments(array('id_attach' => $attachments));
-		else if (!empty($attachments))
+		}
+		elseif ($_REQUEST['type'] == 'exports' && !empty($attachments))
+		{
+			removeAttachments(['id_attach' => $attachments]);
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}user_exports
+				WHERE id_attach IN ({array_int:attachments})',
+				[
+					'attachments' => $attachments,
+				]
+			);
+		}
+		elseif (!empty($attachments))
 		{
 			$messages = removeAttachments(array('id_attach' => $attachments), 'messages', true);
 
@@ -905,6 +963,8 @@ function RemoveAllAttachments()
 	checkSession('get', 'admin');
 
 	$messages = removeAttachments(array('attachment_type' => 0), '', true);
+
+	$smcFunc['db_query']('', 'DELETE FROM {db_prefix}user_exports');
 
 	if (!isset($_POST['notice']))
 		$_POST['notice'] = $txt['attachment_delete_admin'];
@@ -1170,7 +1230,7 @@ function RepairAttachments()
 					AND thumb.attachment_type = {int:thumbnail}
 					AND tparent.id_attach IS NULL',
 				array(
-					'thumbnail' => 3,
+					'thumbnail' => Attachment::ATTACHMENT_THUMBNAIL,
 					'substep' => $_GET['substep'],
 				)
 			);
@@ -1404,6 +1464,13 @@ function RepairAttachments()
 						'no_thumb' => 0,
 					)
 				);
+				$smcFunc['db_query']('', '
+					DELETE FROM {db_prefix}user_exports
+					WHERE id_attach IN ({array_int:to_remove})',
+					[
+						'to_remove' => $to_remove,
+					]
+				);
 			}
 
 			pauseAttachmentMaintenance($to_fix, $thumbnails);
@@ -1437,11 +1504,13 @@ function RepairAttachments()
 				WHERE a.id_attach BETWEEN {int:substep} AND {int:substep} + 499
 					AND a.id_character != {int:no_member}
 					AND a.id_msg = {int:no_msg}
+					AND a.attachment_type != {int:export}
 					AND chars.id_character IS NULL',
 				array(
 					'no_member' => 0,
 					'no_msg' => 0,
 					'substep' => $_GET['substep'],
+					'export' => Attachment::ATTACHMENT_EXPORT,
 				)
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -1519,7 +1588,7 @@ function RepairAttachments()
 					'no_msg' => 0,
 					'substep' => $_GET['substep'],
 					'ignore_ids' => $ignore_ids,
-					'attach_thumb' => array(0,3),
+					'attach_thumb' => [Attachment::ATTACHMENT_STANDARD, Attachment::ATTACHMENT_THUMBNAIL],
 				)
 			);
 			
@@ -1893,7 +1962,7 @@ function ManageAttachmentPaths()
 		$modSettings['attachment_basedirectories'] = array();
 
 	elseif (!is_array($modSettings['attachment_basedirectories']))
-		$modSettings['attachment_basedirectories'] = smf_json_decode($modSettings['attachment_basedirectories'], true);
+		$modSettings['attachment_basedirectories'] = sbb_json_decode($modSettings['attachment_basedirectories'], true);
 
 	$errors = array();
 
@@ -1970,7 +2039,7 @@ function ManageAttachmentPaths()
 						'attachment_basedirectories' => json_encode($modSettings['attachment_basedirectories']),
 						'basedirectory_for_attachments' => $base,
 					));
-					$modSettings['attachment_basedirectories'] = smf_json_decode($modSettings['attachment_basedirectories'], true);
+					$modSettings['attachment_basedirectories'] = sbb_json_decode($modSettings['attachment_basedirectories'], true);
 				}
 			}
 
@@ -2032,7 +2101,7 @@ function ManageAttachmentPaths()
 						{
 							unset($modSettings['attachment_basedirectories'][$id]);
 							updateSettings(array('attachment_basedirectories' => json_encode($modSettings['attachment_basedirectories'])));
-							$modSettings['attachment_basedirectories'] = smf_json_decode($modSettings['attachment_basedirectories'], true);
+							$modSettings['attachment_basedirectories'] = sbb_json_decode($modSettings['attachment_basedirectories'], true);
 						}
 					}
 					else
@@ -2065,7 +2134,7 @@ function ManageAttachmentPaths()
 		if ($_POST['current_dir'] != $modSettings['currentAttachmentUploadDir'] && !empty($modSettings['last_attachments_directory']) && (isset($modSettings['last_attachments_directory'][$_POST['current_dir']]) || isset($modSettings['last_attachments_directory'][0])))
 		{
 			if (!is_array($modSettings['last_attachments_directory']))
-				$modSettings['last_attachments_directory'] = smf_json_decode($modSettings['last_attachments_directory'], true);
+				$modSettings['last_attachments_directory'] = sbb_json_decode($modSettings['last_attachments_directory'], true);
 			$num = substr(strrchr($modSettings['attachmentUploadDir'][$_POST['current_dir']], '_'), 1);
 
 			if (is_numeric($num))
@@ -2253,7 +2322,7 @@ function ManageAttachmentPaths()
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return '<input type="radio" name="current_dir" value="' . $rowData['id'] . '"' . ($rowData['current'] ? ' checked' : '') . (!empty($rowData['disable_current']) ? ' disabled' : '') . ' class="input_radio">';
+						return '<input type="radio" name="current_dir" value="' . $rowData['id'] . '"' . ($rowData['current'] ? ' checked' : '') . (!empty($rowData['disable_current']) ? ' disabled' : '') . '>';
 					},
 					'style' => 'width: 10%;',
 					'class' => 'centercol',
@@ -2266,7 +2335,7 @@ function ManageAttachmentPaths()
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return '<input type="hidden" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"><input type="text" size="40" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"' . (!empty($rowData['disable_base_dir']) ? ' disabled' : '') . ' class="input_text" style="width: 100%">';
+						return '<input type="hidden" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"><input type="text" size="40" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"' . (!empty($rowData['disable_base_dir']) ? ' disabled' : '') . ' style="width: 100%">';
 					},
 					'style' => 'width: 40%;',
 				),
@@ -2315,7 +2384,6 @@ function ManageAttachmentPaths()
 			empty($errors['dir']) ? array(
 				'position' => 'top_of_list',
 				'value' => $txt['attach_dir_desc'],
-				'class' => 'information'
 			) : array(
 				'position' => 'top_of_list',
 				'value' => $txt['attach_dir_save_problem'] . '<br>' . implode('<br>', $errors['dir']),
@@ -2345,7 +2413,7 @@ function ManageAttachmentPaths()
 					'data' => array(
 						'function' => function($rowData)
 						{
-							return '<input type="radio" name="current_base_dir" value="' . $rowData['id'] . '"' . ($rowData['current'] ? ' checked' : '') . ' class="input_radio">';
+							return '<input type="radio" name="current_base_dir" value="' . $rowData['id'] . '"' . ($rowData['current'] ? ' checked' : '') . '>';
 						},
 						'style' => 'width: 10%;',
 						'class' => 'centercol',
@@ -2392,8 +2460,6 @@ function ManageAttachmentPaths()
 				empty($errors['base']) ? array(
 					'position' => 'top_of_list',
 					'value' => $txt['attach_dir_base_desc'],
-					'style' => 'padding: 5px 10px;',
-					'class' => 'windowbg2 smalltext'
 				) : array(
 					'position' => 'top_of_list',
 					'value' => $txt['attach_dir_save_problem'] . '<br>' . implode('<br>', $errors['base']),
@@ -2468,7 +2534,7 @@ function list_getAttachDirs()
 			'id' => $id,
 			'current' => $id == $modSettings['currentAttachmentUploadDir'],
 			'disable_current' => isset($modSettings['automanage_attachments']) && $modSettings['automanage_attachments'] > 1,
-			'disable_base_dir' =>  $is_base_dir && $sub_dirs > 0 && !empty($files) && empty($error) && empty($save_errors),
+			'disable_base_dir' => $is_base_dir && $sub_dirs > 0 && !empty($files) && empty($error) && empty($save_errors),
 			'path' => $dir,
 			'current_size' => !empty($expected_size[$id]) ? comma_format($expected_size[$id] / 1024, 0) : 0,
 			'num_files' => comma_format($expected_files[$id] - $sub_dirs, 0) . ($sub_dirs > 0 ? ' (' . $sub_dirs . ')' : ''),
@@ -2587,9 +2653,9 @@ function TransferAttachments()
 
 	checkSession();
 
-	$modSettings['attachmentUploadDir'] = smf_json_decode($modSettings['attachmentUploadDir'], true);
+	$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);
 	if (!empty($modSettings['attachment_basedirectories']))
-		$modSettings['attachment_basedirectories'] = smf_json_decode($modSettings['attachment_basedirectories'], true);
+		$modSettings['attachment_basedirectories'] = sbb_json_decode($modSettings['attachment_basedirectories'], true);
 	else
 		$modSettings['basedirectory_for_attachments'] = array();
 
@@ -2797,5 +2863,3 @@ function TransferAttachments()
 
 	redirectexit('action=admin;area=manageattachments;sa=maintenance#transfer');
 }
-
-?>
