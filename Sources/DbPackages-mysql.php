@@ -136,6 +136,7 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
 	foreach ($indexes as $index)
 	{
 		$columns = implode(',', $index['columns']);
+		$columns = str_replace(['(', ')'], '', $columns);
 
 		// Is it the primary?
 		if (isset($index['type']) && $index['type'] == 'primary')

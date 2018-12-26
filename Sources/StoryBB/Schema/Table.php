@@ -22,6 +22,8 @@ class Table
 	protected $indexes = [];
 	protected $opts = [];
 
+	protected static $table_cache = null;
+
 	private function __construct(string $table_name, array $columns, array $indexes = [], array $opts = [])
 	{
 		$this->table_name = $table_name;
@@ -42,5 +44,40 @@ class Table
 	public function get_table_name()
 	{
 		return $this->table_name;
+	}
+
+	public static function exists()
+	{
+		global $smcFunc, $db_prefix;
+		if (self::$table_cache === null)
+		{
+			self::$table_cache = $smcFunc['db_list_tables']();
+		}
+
+		return in_array($db_prefix . $this->table_name, self::$table_cache);
+	}
+
+	public function create()
+	{
+		global $smcFunc;
+
+		$columns = [];
+		foreach ($this->columns as $column)
+		{
+			$columns[] = $column->create_data();
+		}
+		$indexes = [];
+		foreach ($this->indexes as $index)
+		{
+			$indexes[] = $index->create_data();
+		}
+
+		$parameters = [];
+		if (!empty($opts['prefer_engine']))
+		{
+			$parameters['engine'] = reset($opts['prefer_engine']);
+		}
+
+		return $smcFunc['db_create_table']($this->table_name, $columns, $indexes, $parameters);
 	}
 }
