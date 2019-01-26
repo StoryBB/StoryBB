@@ -28,6 +28,7 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 
 	// Map some database specific functions, only do this once.
 	if (!isset($smcFunc['db_fetch_assoc']))
+	{
 		$smcFunc += array(
 			'db_query'                  => 'sbb_db_query',
 			'db_quote'                  => 'sbb_db_quote',
@@ -57,41 +58,7 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_error_insert'			=> 'sbb_db_error_insert',
 			'db_custom_order'			=> 'sbb_db_custom_order',
 		);
-
-	if (!empty($db_options['persist']))
-		$db_server = 'p:' . $db_server;
-
-	$connection = mysqli_init();
-
-	$flags = MYSQLI_CLIENT_FOUND_ROWS;
-
-	$success = false;
-
-	if ($connection) {
-		if (!empty($db_options['port']))
-			$success = mysqli_real_connect($connection, $db_server, $db_user, $db_passwd, '', $db_options['port'], null, $flags);
-		else
-			$success = mysqli_real_connect($connection, $db_server, $db_user, $db_passwd, '', 0, null, $flags);
 	}
-
-	// Something's wrong, show an error if its fatal (which we assume it is)
-	if ($success === false)
-	{
-		if (!empty($db_options['non_fatal']))
-			return null;
-		else
-			display_db_error();
-	}
-
-	// Select the database, unless told not to
-	if (empty($db_options['dont_select_db']) && !@mysqli_select_db($connection, $db_name) && empty($db_options['non_fatal']))
-		display_db_error();
-
-	mysqli_query($connection, "SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
-
-	mysqli_set_charset($connection, 'utf8mb4');
-
-	return $connection;
 }
 
 /**
@@ -130,8 +97,8 @@ function db_fix_prefix(&$db_prefix, $db_name)
  */
 function sbb_db_select($database, $connection = null)
 {
-	global $db_connection;
-	return mysqli_select_db($connection === null ? $db_connection : $connection, $database);
+	global $smcFunc;
+	$smcFunc['db']->select_db($database);
 }
 
 /**
@@ -508,54 +475,23 @@ function sbb_db_query($identifier, $db_string, $db_values = array(), $connection
 	return $ret;
 }
 
-/**
- * affected_rows
- * @param resource $connection A connection to use (if null, $db_connection is used)
- * @return int The number of rows affected by the last query
- */
 function sbb_db_affected_rows($connection = null)
 {
-	global $db_connection;
-
-	return mysqli_affected_rows($connection === null ? $db_connection : $connection);
+	global $smcFunc;
+	return $smcFunc['db']->affected_rows();
 }
 
-/**
- * Gets the ID of the most recently inserted row.
- *
- * @param resource $connection = null The connection (if null, $db_connection is used)
- * @return int The ID of the most recently inserted row
- */
+
 function sbb_db_insert_id($connection = null)
 {
-	global $db_connection;
-
-	// MySQL doesn't need the table or field information.
-	return mysqli_insert_id($connection === null ? $db_connection : $connection);
+	global $smcFunc;
+	return $smcFunc['db']->inserted_id();
 }
 
-/**
- * Do a transaction.
- *
- * @param string $type The step to perform (i.e. 'begin', 'commit', 'rollback')
- * @param resource $connection The connection to use (if null, $db_connection is used)
- * @return bool True if successful, false otherwise
- */
 function sbb_db_transaction($type = 'commit', $connection = null)
 {
-	global $db_connection;
-
-	// Decide which connection to use
-	$connection = $connection === null ? $db_connection : $connection;
-
-	if ($type == 'begin')
-		return @mysqli_query($connection, 'BEGIN');
-	elseif ($type == 'rollback')
-		return @mysqli_query($connection, 'ROLLBACK');
-	elseif ($type == 'commit')
-		return @mysqli_query($connection, 'COMMIT');
-
-	return false;
+	global $smcFunc;
+	return $smcFunc['db']->transaction($type);
 }
 
 /**
