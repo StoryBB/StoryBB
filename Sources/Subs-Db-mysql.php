@@ -523,25 +523,16 @@ function sbb_db_error($db_string, $connection = null)
 	{
 		if (in_array($query_errno, array(2006, 2013)) && $db_connection == $connection)
 		{
-			// Are we in SSI mode?  If so try that username and password first
-			if (STORYBB == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
+			try
 			{
-				if (empty($db_persist))
-					$db_connection = @mysqli_connect($db_server, $ssi_db_user, $ssi_db_passwd);
-				else
-					$db_connection = @mysqli_connect('p:' . $db_server, $ssi_db_user, $ssi_db_passwd);
+				// The DB object still has all the details, but try to reconnect.
+				$smcFunc['db']->connect();
+				$smcFunc['db']->select_db();
 			}
-			// Fall back to the regular username and password if need be
-			if (!$db_connection)
+			catch (\Exception $e)
 			{
-				if (empty($db_persist))
-					$db_connection = @mysqli_connect($db_server, $db_user, $db_passwd);
-				else
-					$db_connection = @mysqli_connect('p:' . $db_server, $db_user, $db_passwd);
-			}
-
-			if (!$db_connection || !@mysqli_select_db($db_connection, $db_name))
 				$db_connection = false;
+			}
 		}
 
 		if ($db_connection)
