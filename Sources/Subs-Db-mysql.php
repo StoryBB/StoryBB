@@ -312,7 +312,7 @@ function sbb_db_quote($db_string, $db_values, $connection = null)
 function sbb_db_query($identifier, $db_string, $db_values = array(), $connection = null)
 {
 	global $db_cache, $db_count, $db_connection, $db_show_debug, $time_start;
-	global $db_unbuffered, $db_callback, $modSettings;
+	global $db_unbuffered, $db_callback, $modSettings, $smcFunc;
 
 	// Comments that are allowed in a query are preg_removed.
 	static $allowed_comments_from = array(
@@ -332,31 +332,17 @@ function sbb_db_query($identifier, $db_string, $db_values = array(), $connection
 	$connection = $connection === null ? $db_connection : $connection;
 
 	// Get a connection if we are shutting down, sometimes the link is closed before sessions are written
-	if (!is_object($connection))
+	if (!$smcFunc['db']->connection_active())
 	{
-		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
-
-		// Are we in SSI mode?  If so try that username and password first
-		if (STORYBB == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
+		try
 		{
-			if (empty($db_persist))
-				$db_connection = @mysqli_connect($db_server, $ssi_db_user, $ssi_db_passwd);
-			else
-				$db_connection = @mysqli_connect('p:' . $db_server, $ssi_db_user, $ssi_db_passwd);
+			$smcFunc['db']->connect();
+			$smcFunc['db']->select_db();
 		}
-		// Fall back to the regular username and password if need be
-		if (!$db_connection)
+		catch (\Exception $e)
 		{
-			if (empty($db_persist))
-				$db_connection = @mysqli_connect($db_server, $db_user, $db_passwd);
-			else
-				$db_connection = @mysqli_connect('p:' . $db_server, $db_user, $db_passwd);
+			// Swallow the exception; we've just tried to reconnect if we knew we were disconnected.
 		}
-
-		if (!$db_connection || !@mysqli_select_db($db_connection, $db_name))
-			$db_connection = false;
-
-		$connection = $db_connection;
 	}
 
 	// One more query....
