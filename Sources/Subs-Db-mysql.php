@@ -284,18 +284,14 @@ function sbb_db_quote($db_string, $db_values, $connection = null)
 {
 	global $db_callback, $db_connection;
 
-	// Only bother if there's something to replace.
-	if (strpos($db_string, '{') !== false)
-	{
-		// This is needed by the callback function.
-		$db_callback = array($db_values, $connection === null ? $db_connection : $connection);
+	// This is needed by the callback function.
+	$db_callback = array($db_values, $connection === null ? $db_connection : $connection);
 
-		// Do the quoting and escaping
-		$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
+	// Do the quoting and escaping
+	$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
 
-		// Clear this global variable.
-		$db_callback = array();
-	}
+	// Clear this global variable.
+	$db_callback = array();
 
 	return $db_string;
 }
@@ -364,14 +360,7 @@ function sbb_db_query($identifier, $db_string, $db_values = array(), $connection
 
 	if (empty($db_values['security_override']) && (!empty($db_values) || strpos($db_string, '{db_prefix}') !== false))
 	{
-		// Pass some values to the global space for use in the callback function.
-		$db_callback = array($db_values, $connection);
-
-		// Inject the values passed to this function.
-		$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
-
-		// This shouldn't be residing in global space any longer.
-		$db_callback = array();
+		$db_string = sbb_db_quote($db_string, $db_values, $connection);
 	}
 
 	// Debugging.
