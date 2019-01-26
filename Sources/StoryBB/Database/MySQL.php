@@ -78,6 +78,12 @@ class MySQL implements DatabaseAdapter
 		$db_connection = $this->connection;
 	}
 
+	/**
+	 * Select database on the current connection.
+	 *
+	 * @param string $database The database
+	 * @return bool Whether the database was selected
+	 */
 	public function select_db(string $database = null)
 	{
 		if ($database === null)
@@ -134,5 +140,27 @@ class MySQL implements DatabaseAdapter
 		}
 
 		return @mysqli_query($this->connection, $ops[$type]);
+	}
+
+	public function create_database(string $db_name): bool
+	{
+		global $smcFunc;
+
+		$smcFunc['db_query']('', "
+			CREATE DATABASE IF NOT EXISTS `$db_name`",
+			array(
+				'security_override' => true,
+				'db_error_skip' => true,
+			)
+		);
+		try
+		{
+			$this->select_db($db_name);
+			return true;
+		}
+		catch (CouldNotSelectDatabaseException $e)
+		{
+			return false;
+		}
 	}
 }

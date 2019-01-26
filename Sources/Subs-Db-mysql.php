@@ -47,7 +47,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_transaction'            => 'sbb_db_transaction',
 			'db_error'                  => 'mysqli_error',
 			'db_errno'                  => 'mysqli_errno',
-			'db_select_db'              => 'sbb_db_select',
 			'db_title'                  => 'MySQLi',
 			'db_sybase'                 => false,
 			'db_case_sensitive'         => false,
@@ -86,19 +85,6 @@ function db_extend($type = 'extra')
 function db_fix_prefix(&$db_prefix, $db_name)
 {
 	$db_prefix = is_numeric(substr($db_prefix, 0, 1)) ? $db_name . '.' . $db_prefix : '`' . $db_name . '`.' . $db_prefix;
-}
-
-/**
- * Wrap mysqli_select_db so the connection does not need to be specified
- *
- * @param string &$database The database
- * @param object $connection The connection object (if null, $db_connection is used)
- * @return bool Whether the database was selected
- */
-function sbb_db_select($database, $connection = null)
-{
-	global $smcFunc;
-	$smcFunc['db']->select_db($database);
 }
 
 /**

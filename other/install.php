@@ -290,11 +290,20 @@ function load_database()
 			}
 		}
 
-		if (!empty($port))
-			$db_options['port'] = $port;
+		$db_options['port'] = (int) $port;
 
 		if (!$db_connection)
+		{
 			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
+
+			if ($db_connection)
+			{
+				$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+				$smcFunc['db']->set_prefix($db_prefix);
+				$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+				$smcFunc['db']->connect($db_options);
+			}
+		}
 	}
 }
 
@@ -747,7 +756,15 @@ function DatabaseSettings()
 		{
 			$db_error = @$smcFunc['db_error']();
 
-			$db_connection = sbb_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
+			$options = [
+				'non_fatal' => true,
+				'dont_select_db' => !$needsDB,
+			];
+			$db_connection = sbb_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, $options);
+			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+			$smcFunc['db']->set_prefix($db_prefix);
+			$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+			$smcFunc['db']->connect($options);
 			if ($db_connection != null)
 			{
 				$db_user = $_POST['db_prefix'] . $db_user;
@@ -773,37 +790,22 @@ function DatabaseSettings()
 		// Let's try that database on for size... assuming we haven't already lost the opportunity.
 		if ($db_name != '' && !$needsDB)
 		{
-			$smcFunc['db_query']('', "
-				CREATE DATABASE IF NOT EXISTS `$db_name`",
-				array(
-					'security_override' => true,
-					'db_error_skip' => true,
-				),
-				$db_connection
-			);
-
-			// Okay, let's try the prefix if it didn't work...
-			if (!$smcFunc['db_select_db']($db_name, $db_connection) && $db_name != '')
+			$created_db = $smcFunc['db']->create_database($db_name);
+			if (!$created_db)
 			{
-				$smcFunc['db_query']('', "
-					CREATE DATABASE IF NOT EXISTS `$_POST[db_prefix]$db_name`",
-					array(
-						'security_override' => true,
-						'db_error_skip' => true,
-					),
-					$db_connection
-				);
-
-				if ($smcFunc['db_select_db']($_POST['db_prefix'] . $db_name, $db_connection))
+				// Try to make a fallback instead.
+				$created_db = $smcFunc['db']->create_database($_POST['db_prefix'] . $db_name);
+				if ($created_db)
 				{
+					// This worked, let's save that.
 					$db_name = $_POST['db_prefix'] . $db_name;
 					updateSettingsFile(array('db_name' => $db_name));
 				}
 			}
 
-			// Okay, now let's try to connect...
-			if (!$smcFunc['db_select_db']($db_name, $db_connection))
+			if (!$created_db)
 			{
+				// Uh oh, this didn't work.
 				$incontext['error'] = sprintf($txt['error_db_database'], $db_name);
 				return false;
 			}
