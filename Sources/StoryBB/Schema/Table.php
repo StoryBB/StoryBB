@@ -12,6 +12,8 @@
 
 namespace StoryBB\Schema;
 
+use StoryBB\Schema\Database;
+
 /**
  * This class handles tables.
  */
@@ -46,7 +48,7 @@ class Table
 		return $this->table_name;
 	}
 
-	public static function exists()
+	public function exists()
 	{
 		global $smcFunc, $db_prefix;
 		if (self::$table_cache === null)
@@ -75,9 +77,33 @@ class Table
 		$parameters = [];
 		if (!empty($opts['prefer_engine']))
 		{
-			$parameters['engine'] = reset($opts['prefer_engine']);
+			$parameters['engine'] = $this->get_engine($opts['prefer_engine']);
+		}
+		else
+		{
+			$parameters['engine'] = $this->get_engine([]);
 		}
 
 		return $smcFunc['db_create_table']($this->table_name, $columns, $indexes, $parameters);
+	}
+
+	protected function get_engine(array $possible_engines)
+	{
+		$engines = Database::get_engines();
+		foreach ($possible_engines as $possible_engine)
+		{
+			if (in_array($possible_engine, $engines))
+			{
+				return $possible_engine;
+			}
+		}
+
+		// Provide a generic safe fallback.
+		return in_array('InnoDB', $engines) ? 'InnoDB' : 'MyISAM';
+	}
+
+	public function update()
+	{
+		global $smcFunc;
 	}
 }

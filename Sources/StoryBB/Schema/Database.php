@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Schema;
+
 use StoryBB\Schema\Schema;
 
 /**
@@ -25,14 +26,37 @@ class Database
 		$schema = Schema::get_schema();
 		foreach ($schema as $table)
 		{
-			if ($table->already_exists())
+			if ($table->exists())
 			{
-				// Update table.
+				$table->update();
 			}
 			else
 			{
 				$table->create();
 			}
 		}
+	}
+
+	public static function get_engines(): array
+	{
+		global $smcFunc;
+		static $engines = null;
+
+		if ($engines === null)
+		{
+			// Figure out which engines we have
+			$engines = [];
+			$get_engines = $smcFunc['db_query']('', 'SHOW ENGINES', array());
+
+			while ($row = $smcFunc['db_fetch_assoc']($get_engines))
+			{
+				if ($row['Support'] == 'YES' || $row['Support'] == 'DEFAULT')
+					$engines[] = $row['Engine'];
+			}
+
+			$smcFunc['db_free_result']($get_engines);
+		}
+
+		return $engines;
 	}
 }

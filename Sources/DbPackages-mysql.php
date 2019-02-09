@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Schema\Schema;
+use StoryBB\Schema\Database;
 
 /**
  * Add the file functions to the $smcFunc array.
@@ -153,26 +154,9 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
 	if (substr($table_query, -1) == ',')
 		$table_query = substr($table_query, 0, -1);
 
-	// Which engine do we want here?
-	if (empty($engines))
+	if (!isset($parameters['engine']))
 	{
-		// Figure out which engines we have
-		$get_engines = $smcFunc['db_query']('', 'SHOW ENGINES', array());
-
-		while ($row = $smcFunc['db_fetch_assoc']($get_engines))
-		{
-			if ($row['Support'] == 'YES' || $row['Support'] == 'DEFAULT')
-				$engines[] = $row['Engine'];
-		}
-
-		$smcFunc['db_free_result']($get_engines);
-	}
-
-	// If we don't have this engine, or didn't specify one, default to InnoDB or MyISAM
-	// depending on which one is available
-	if (!isset($parameters['engine']) || !in_array($parameters['engine'], $engines))
-	{
-		$parameters['engine'] = in_array('InnoDB', $engines) ? 'InnoDB' : 'MyISAM';
+		return false;
 	}
 
 	$table_query .= ') ENGINE=' . $parameters['engine'];

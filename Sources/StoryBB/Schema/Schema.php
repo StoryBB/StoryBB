@@ -11,6 +11,7 @@
  */
 
 namespace StoryBB\Schema;
+
 use StoryBB\Schema\Table;
 use StoryBB\Schema\Column;
 use StoryBB\Schema\Index;
