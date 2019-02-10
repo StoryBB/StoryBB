@@ -1774,7 +1774,7 @@ VALUES
   (8, 0, 0, 1, 'd', 1, 'birthdayemails', ''),
   (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', 'StoryBB\\Task\\Schedulable\\WeeklyMaintenance'),
   (10, 0, 120, 1, 'd', 1, 'paid_subscriptions', 'StoryBB\\Task\\Schedulable\\UpdatePaidSubs'),
-  (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', ''),
+  (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', 'StoryBB\\Task\\Schedulable\\RemoveTempAttachments'),
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', ''),
   (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', 'StoryBB\\Task\\Schedulable\\RemoveOldDrafts'),
   (14, 0, 300, 1, 'd', 0, 'clean_exports', 'StoryBB\\Task\\Schedulable\\CleanExports'),
