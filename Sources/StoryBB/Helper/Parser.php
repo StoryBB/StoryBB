@@ -47,7 +47,10 @@ class Parser
 			return '';
 
 		// Clean up any cut/paste issues we may have
-		$message = self::sanitizeMSCutPaste($message);
+		if ($message !== false)
+		{
+			$message = self::sanitizeMSCutPaste($message);
+		}
 
 		// If the load average is too high, don't parse the BBC.
 		if (!empty($context['load_average']) && !empty($modSettings['bbc']) && $context['load_average'] >= $modSettings['bbc'])
