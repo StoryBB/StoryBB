@@ -245,6 +245,9 @@ class Column
 	public function nullable()
 	{
 		$this->column['null'] = true;
+		if (isset($this->column['default'])) {
+			unset ($this->column['default']);
+		}
 
 		return $this;
 	}
