@@ -97,10 +97,6 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
 	$full_table_name = str_replace('{db_prefix}', $real_prefix, $table_name);
 	$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
-	// First - no way do we touch StoryBB tables.
-	if (in_array(strtolower($table_name), $reservedTables))
-		return false;
-
 	// Log that we'll want to remove this on uninstall.
 	$db_package_log[] = array('remove_table', $table_name);
 
