@@ -84,7 +84,16 @@ class Table
 			$parameters['engine'] = $this->get_engine([]);
 		}
 
-		return $smcFunc['db_create_table']($this->table_name, $columns, $indexes, $parameters);
+		if (!isset($smcFunc['db_create_table']))
+		{
+			db_extend('Packages');
+		}
+		$result = $smcFunc['db_create_table']('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
+		if ($result)
+		{
+			self::$table_cache[] = $db_prefix . $this->table_name;
+		}
+		return $result;
 	}
 
 	protected function get_engine(array $possible_engines)
