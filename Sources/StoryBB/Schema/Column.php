@@ -237,6 +237,18 @@ class Column
 	}
 
 	/**
+	 * Sets the column as being nullable.
+	 *
+	 * >@return object Returns the current instance so fluent interfacing can be used.
+	 */
+	public function nullable()
+	{
+		$this->column['null'] = true;
+
+		return $this;
+	}
+
+	/**
 	 * Sets the default value on the current field. Does not check the default is sane for all field types.
 	 *
 	 * @return object Returns the current instance so fluent interfacing can be used.
