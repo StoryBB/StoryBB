@@ -264,4 +264,17 @@ class Column
 
 		return $this;
 	}
+
+	/**
+	 * Returns an array suitable for db_create_table to create the table.
+	 *
+	 * @param string $column_name The name of the final column itself.
+	 * @return array Data for db_create_table
+	 */
+	public function create_data(string $column_name): array
+	{
+		$column = $this->column;
+		$column['name'] = $column_name;
+		return $column;
+	}
 }
