@@ -61,12 +61,12 @@ class Table
 
 	public function create()
 	{
-		global $smcFunc;
+		global $smcFunc, $db_prefix;
 
 		$columns = [];
-		foreach ($this->columns as $column)
+		foreach ($this->columns as $column_name => $column)
 		{
-			$columns[] = $column->create_data();
+			$columns[] = $column->create_data($column_name);
 		}
 		$indexes = [];
 		foreach ($this->indexes as $index)
