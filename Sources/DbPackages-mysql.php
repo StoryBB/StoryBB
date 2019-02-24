@@ -137,12 +137,18 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
 
 		// Is it the primary?
 		if (isset($index['type']) && $index['type'] == 'primary')
-			$table_query .= "\n\t" . 'PRIMARY KEY (' . implode(',', $index['columns']) . '),';
+			$table_query .= "\n\t" . 'PRIMARY KEY (' . implode(', ', $index['columns']) . '),';
 		else
 		{
 			if (empty($index['name']))
-				$index['name'] = implode('_', $index['columns']);
-			$table_query .= "\n\t" . (isset($index['type']) && $index['type'] == 'unique' ? 'UNIQUE' : 'KEY') . ' ' . $index['name'] . ' (' . $columns . '),';
+			{
+				$column_names = $index['columns'];
+				foreach ($column_names as $k => $v) {
+					$column_names[$k] = str_replace(['(', ')'], '', $v);
+				}
+				$index['name'] = implode('_', $column_names);
+			}
+			$table_query .= "\n\t" . (isset($index['type']) && $index['type'] == 'unique' ? 'UNIQUE' : 'KEY') . ' ' . $index['name'] . ' (' . implode(', ', $index['columns']) . '),';
 		}
 	}
 
