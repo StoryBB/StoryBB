@@ -187,6 +187,7 @@ class Column
 	{
 		return new Column([
 			'type' => 'varbinary',
+			'size' => $size,
 		]);
 	}
 
