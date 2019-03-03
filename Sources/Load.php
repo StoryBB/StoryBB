@@ -3127,6 +3127,7 @@ function loadDatabase()
 		{
 			// We intentionally want to swallow any DB exception here.
 			// If this doesn't work we're going to try with non SSI credentials.
+			$db_connection = false;
 		}
 	}
 
