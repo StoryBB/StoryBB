@@ -23,7 +23,7 @@ class IP
 	 * @param string $ip The IP address
 	 * @return bool True if the IP address is a valid IPv4 address
 	 */
-	public static function is_valid_ipv4($ip)
+	public static function is_valid_ipv4(string $ip): bool
 	{
 		return preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $ip) == 1;
 	}
@@ -34,7 +34,7 @@ class IP
 	 * @param string $ip The IP address
 	 * @return bool True if the IP address is a valid IPv6 address
 	 */
-	public static function is_valid_ipv6($ip)
+	public static function is_valid_ipv6(string $ip): bool
 	{
 		// Looking for :, it won't be valid without one.
 		if (strpos($ip, ':') === false)
@@ -50,7 +50,7 @@ class IP
 	 * @param string $ip
 	 * @return bool
 	 */
-	public static function is_valid($ip)
+	public static function is_valid(string $ip): bool
 	{
 		return filter_var($ip, FILTER_VALIDATE_IP) !== false;
 	}
@@ -61,7 +61,7 @@ class IP
 	 * @param string $ip The IP to get the hostname from
 	 * @return string The hostname
 	 */
-	public static function get_host($ip)
+	public static function get_host(string $ip): string
 	{
 		global $modSettings;
 
