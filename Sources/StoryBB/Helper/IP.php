@@ -45,6 +45,17 @@ class IP
 	}
 
 	/**
+	 * Identify whether the given string is a valid IPv4 or IPv6 address.
+	 *
+	 * @param string $ip
+	 * @return bool
+	 */
+	public static function is_valid($ip)
+	{
+		return filter_var($ip, FILTER_VALIDATE_IP) !== false;
+	}
+
+	/**
 	 * Lookup an IP; try shell_exec first because we can do a timeout on it.
 	 *
 	 * @param string $ip The IP to get the hostname from
