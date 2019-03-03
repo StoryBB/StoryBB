@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  * View a summary.
  * @param int $memID The ID of the member
@@ -95,7 +97,7 @@ function summary($memID)
 	{
 		// Make sure it's a valid ip address; otherwise, don't bother...
 		if (preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $memberContext[$memID]['ip']) == 1 && empty($modSettings['disableHostnameLookup']))
-			$context['member']['hostname'] = host_from_ip($memberContext[$memID]['ip']);
+			$context['member']['hostname'] = IP::get_host($memberContext[$memID]['ip']);
 		else
 			$context['member']['hostname'] = '';
 
