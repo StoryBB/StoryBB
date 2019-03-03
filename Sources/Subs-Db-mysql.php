@@ -322,7 +322,8 @@ function sbb_db_query($identifier, $db_string, $db_values = array(), $connection
 		}
 		catch (\Exception $e)
 		{
-			// Swallow the exception; we've just tried to reconnect if we knew we were disconnected.
+			// We're not connected, guess we're going nowhere.
+			sbb_db_error_backtrace('No longer connected to database.', $smcFunc['db_error'], true, __FILE__, __LINE__);
 		}
 	}
 
