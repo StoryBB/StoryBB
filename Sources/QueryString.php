@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  * Clean the request variables - add html entities to GET.
  *
@@ -225,7 +227,7 @@ function cleanRequest()
 		$_SERVER['is_cli'] = true;
 	}
 	// Perhaps we have a IPv6 address.
-	elseif (isValidIP($_SERVER['REMOTE_ADDR']))
+	elseif (IP::is_valid($_SERVER['REMOTE_ADDR']))
 	{
 		$_SERVER['REMOTE_ADDR'] = preg_replace('~^::ffff:(\d+\.\d+\.\d+\.\d+)~', '\1', $_SERVER['REMOTE_ADDR']);
 	}
@@ -291,7 +293,7 @@ function cleanRequest()
 		// Otherwise just use the only one.
 		elseif (preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown|::1|fe80::|fc00::)~', $_SERVER[$proxyIPheader]) == 0 || preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown|::1|fe80::|fc00::)~', $_SERVER['REMOTE_ADDR']) != 0)
 			$_SERVER['BAN_CHECK_IP'] = $_SERVER[$proxyIPheader];
-		elseif (!isValidIPv6($_SERVER[$proxyIPheader]) || preg_match('~::ffff:\d+\.\d+\.\d+\.\d+~', $_SERVER[$proxyIPheader]) !== 0)
+		elseif (!IP::is_valid_ipv6($_SERVER[$proxyIPheader]) || preg_match('~::ffff:\d+\.\d+\.\d+\.\d+~', $_SERVER[$proxyIPheader]) !== 0)
 		{
 			$_SERVER[$proxyIPheader] = preg_replace('~^::ffff:(\d+\.\d+\.\d+\.\d+)~', '\1', $_SERVER[$proxyIPheader]);
 
@@ -314,7 +316,7 @@ function cleanRequest()
 	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? (isset($smcFunc['htmlspecialchars']) ? $smcFunc['htmlspecialchars']($smcFunc['db_unescape_string']($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : htmlspecialchars($smcFunc['db_unescape_string']($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES)) : '';
 
 	// Some final checking.
-	if (!isValidIP($_SERVER['BAN_CHECK_IP']))
+	if (!IP::is_valid($_SERVER['BAN_CHECK_IP']))
 		$_SERVER['BAN_CHECK_IP'] = '';
 	if ($_SERVER['REMOTE_ADDR'] == 'unknown')
 		$_SERVER['REMOTE_ADDR'] = '';

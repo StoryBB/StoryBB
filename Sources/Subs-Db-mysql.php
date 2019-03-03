@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  *  Maps the implementations in this file (sbb_db_function_name)
  *  to the $smcFunc['db_function_name'] variable.
@@ -225,7 +227,7 @@ function sbb_db_replacement__callback($matches)
 		case 'inet':
 			if ($replacement == 'null' || $replacement == '')
 				return 'null';
-			if (!isValidIP($replacement))
+			if (!IP::is_valid($replacement))
 				sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			//we don't use the native support of mysql > 5.6.2
 			return sprintf('unhex(\'%1$s\')', bin2hex(inet_pton($replacement)));
@@ -240,7 +242,7 @@ function sbb_db_replacement__callback($matches)
 				{
 					if ($replacement == 'null' || $replacement == '')
 						$replacement[$key] = 'null';
-					if (!isValidIP($value))
+					if (!IP::is_valid($value))
 						sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 					$replacement[$key] = sprintf('unhex(\'%1$s\')', bin2hex(inet_pton($value)));
 				}

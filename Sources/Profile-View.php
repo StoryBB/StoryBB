@@ -1984,7 +1984,7 @@ function TrackIP($memID = 0)
 	if (isset($_REQUEST['searchip']))
 		$context['ip'] = trim($_REQUEST['searchip']);
 
-	if (isValidIP($context['ip']) === false)
+	if (IP::is_valid($context['ip']) === false)
 		fatal_lang_error('invalid_tracking_ip', false);
 
 	//mysql didn't support like search with varbinary

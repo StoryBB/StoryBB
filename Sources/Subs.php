@@ -13,6 +13,7 @@
 use LightnCandy\LightnCandy;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\IP;
 
 /**
  * Update some basic statistics.
@@ -1866,7 +1867,7 @@ function ip2range($fullip)
 	$ip_array = array();
 
 	// if ip 22.12.31.21
-	if (count($ip_parts) == 1 && isValidIP($fullip))
+	if (count($ip_parts) == 1 && IP::is_valid($fullip))
 	{
 		$ip_array['low'] = $fullip;
 		$ip_array['high'] = $fullip;
@@ -1879,7 +1880,7 @@ function ip2range($fullip)
 	}
 
 	// if ip 22.12.31.21-12.21.31.21
-	if (count($ip_parts) == 2 && isValidIP($ip_parts[0]) && isValidIP($ip_parts[1]))
+	if (count($ip_parts) == 2 && IP::is_valid($ip_parts[0]) && IP::is_valid($ip_parts[1]))
 	{
 		$ip_array['low'] = $ip_parts[0];
 		$ip_array['high'] = $ip_parts[1];
@@ -1887,8 +1888,8 @@ function ip2range($fullip)
 	}
 	elseif (count($ip_parts) == 2) // if ip 22.22.*-22.22.*
 	{
-		$valid_low = isValidIP($ip_parts[0]);
-		$valid_high = isValidIP($ip_parts[1]);
+		$valid_low = IP::is_valid($ip_parts[0]);
+		$valid_high = IP::is_valid($ip_parts[1]);
 		$count = 0;
 		$mode = (preg_match('/:/', $ip_parts[0]) > 0 ? ':' : '.');
 		$max = ($mode == ':' ? 'ffff' : '255');
@@ -1896,11 +1897,11 @@ function ip2range($fullip)
 		if(!$valid_low)
 		{
 			$ip_parts[0] = preg_replace('/\*/', '0', $ip_parts[0]);
-			$valid_low = isValidIP($ip_parts[0]);
+			$valid_low = IP::is_valid($ip_parts[0]);
 			while (!$valid_low)
 			{
 				$ip_parts[0] .= $mode . $min;
-				$valid_low = isValidIP($ip_parts[0]);
+				$valid_low = IP::is_valid($ip_parts[0]);
 				$count++;
 				if ($count > 9) break;
 			}
@@ -1910,11 +1911,11 @@ function ip2range($fullip)
 		if(!$valid_high)
 		{
 			$ip_parts[1] = preg_replace('/\*/', $max, $ip_parts[1]);
-			$valid_high = isValidIP($ip_parts[1]);
+			$valid_high = IP::is_valid($ip_parts[1]);
 			while (!$valid_high)
 			{
 				$ip_parts[1] .= $mode . $max;
-				$valid_high = isValidIP($ip_parts[1]);
+				$valid_high = IP::is_valid($ip_parts[1]);
 				$count++;
 				if ($count > 9) break;
 			}
@@ -2802,7 +2803,7 @@ function entity_fix__callback($matches)
  */
 function inet_ptod($ip_address)
 {
-	if (!isValidIP($ip_address))
+	if (!IP::is_valid($ip_address))
 		return $ip_address;
 
 	$bin = inet_pton($ip_address);
@@ -2926,19 +2927,6 @@ function sbb_json_decode($json, $returnAsArray = false, $logIt = true)
 	}
 
 	return $returnArray;
-}
-
-/**
- * Check the given String if he is a valid IPv4 or IPv6
- * return true or false
- *
- * @param string $IPString
- *
- * @return bool
- */
-function isValidIP($IPString)
-{
-	return filter_var($IPString, FILTER_VALIDATE_IP) !== false;
 }
 
 /**
