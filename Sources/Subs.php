@@ -1990,16 +1990,11 @@ function text2words($text, $max_chars = 20, $encrypt = false)
  * @param string $alt The alt text
  * @param string $label The $txt string to use as the label
  * @param string $custom Custom text/html to add to the img tag (only when using an actual image)
- * @param boolean $force_use Whether to force use of this when template_create_button is available
  * @return string The HTML to display the button
  */
-function create_button($name, $alt, $label = '', $custom = '', $force_use = false)
+function create_button($name, $alt, $label = '', $custom = '')
 {
 	global $settings, $txt;
-
-	// Does the current loaded theme have this and we are not forcing the usage of this function?
-	if (function_exists('template_create_button') && !$force_use)
-		return template_create_button($name, $alt, $label = '', $custom = '');
 
 	return '<span class="generic_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
 }
