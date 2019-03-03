@@ -272,7 +272,7 @@ function cleanRequest()
 				// Make sure it's in a valid range...
 				if (preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown|::1|fe80::|fc00::)~', $ip) != 0 && preg_match('~^((0|10|172\.(1[6-9]|2[0-9]|3[01])|192\.168|255|127)\.|unknown|::1|fe80::|fc00::)~', $_SERVER['REMOTE_ADDR']) == 0)
 				{
-					if (!isValidIPv6($_SERVER[$proxyIPheader]) || preg_match('~::ffff:\d+\.\d+\.\d+\.\d+~', $_SERVER[$proxyIPheader]) !== 0)
+					if (!IP::is_valid_ipv6($_SERVER[$proxyIPheader]) || preg_match('~::ffff:\d+\.\d+\.\d+\.\d+~', $_SERVER[$proxyIPheader]) !== 0)
 					{
 						$_SERVER[$proxyIPheader] = preg_replace('~^::ffff:(\d+\.\d+\.\d+\.\d+)~', '\1', $_SERVER[$proxyIPheader]);
 
@@ -320,22 +320,6 @@ function cleanRequest()
 		$_SERVER['BAN_CHECK_IP'] = '';
 	if ($_SERVER['REMOTE_ADDR'] == 'unknown')
 		$_SERVER['REMOTE_ADDR'] = '';
-}
-
-/**
- * Validates a IPv6 address. returns true if it is ipv6.
- *
- * @param string $ip The ip address to be validated
- * @return boolean Whether the specified IP is a valid IPv6 address
- */
-function isValidIPv6($ip)
-{
-	//looking for :
-	if (strpos($ip, ':') === false)
-		return false;
-
-	//check valid address
-	return inet_pton($ip);
 }
 
 /**

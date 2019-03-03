@@ -14,6 +14,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  * Attempt to start the session, unless it already has been.
  */
@@ -32,7 +34,7 @@ function loadSession()
 	{
 		$parsed_url = parse_url($boardurl);
 
-		if (preg_match('~^\d{1,3}(\.\d{1,3}){3}$~', $parsed_url['host']) == 0 && preg_match('~(?:[^\.]+\.)?([^\.]{2,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
+		if (!IP::is_valid_ipv4($parsed_url['host']) && preg_match('~(?:[^\.]+\.)?([^\.]{2,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
 			@ini_set('session.cookie_domain', '.' . $parts[1]);
 	}
 	// @todo Set the session cookie path?
