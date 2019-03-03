@@ -12,6 +12,7 @@
 
 namespace StoryBB;
 
+use StoryBB\Database\AdapterFactory;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Testwork\Hook\Scope\BeforeSuiteScope;
@@ -82,6 +83,12 @@ class Behat extends RawMinkContext implements Context
 		require_once($boarddir . '/Themes/default/languages/Install.english.php');
 
 		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, ['dont_select_db' => true]);
+
+		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+		$smcFunc['db']->set_prefix($db_prefix);
+		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+		$smcFunc['db']->connect($options);
+
 		if (empty($db_connection)) {
 			die('Database could not be connected - error given: ' . $smcFunc['db_error']());
 		}
@@ -104,7 +111,7 @@ class Behat extends RawMinkContext implements Context
 			],
 			$db_connection
 		);
-		$smcFunc['db_select_db']($db_name, $db_connection);
+		$smcFunc['db']->select_db($db_name);
 
 		$replaces = array(
 			'{$db_prefix}' => 'behat_' . $db_prefix,

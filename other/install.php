@@ -8,6 +8,9 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Schema\Schema;
+use StoryBB\Database\AdapterFactory;
+
 $GLOBALS['current_sbb_version'] = '3.0 Alpha 1';
 $GLOBALS['db_script_version'] = '3-0';
 
@@ -290,11 +293,21 @@ function load_database()
 			}
 		}
 
-		if (!empty($port))
-			$db_options['port'] = $port;
+		$db_options['port'] = (int) $port;
 
 		if (!$db_connection)
+		{
+			require_once(__DIR__ . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+			require_once(__DIR__ . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+			require_once(__DIR__ . '/vendor/autoload.php');
+
 			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
+
+			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+			$smcFunc['db']->set_prefix($db_prefix);
+			$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+			$smcFunc['db']->connect($db_options);
+		}
 	}
 }
 
@@ -618,7 +631,12 @@ function CheckFilesWritable()
 function DatabaseSettings()
 {
 	global $txt, $databases, $incontext, $smcFunc, $sourcedir;
-	global $db_server, $db_name, $db_user, $db_passwd;
+	global $db_server, $db_name, $db_user, $db_passwd, $db_connection;
+
+	// Load our autoloader stuff.
+	require_once(__DIR__ . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+	require_once(__DIR__ . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+	require_once(__DIR__ . '/vendor/autoload.php');
 
 	$incontext['sub_template'] = 'database_settings';
 	$incontext['page_title'] = $txt['db_settings'];
@@ -742,12 +760,25 @@ function DatabaseSettings()
 		$needsDB = !empty($databases[$db_type]['always_has_db']);
 		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
 
+		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+		$smcFunc['db']->set_prefix($db_prefix);
+		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+		$smcFunc['db']->connect(array('non_fatal' => true, 'dont_select_db' => !$needsDB));
+
 		// No dice?  Let's try adding the prefix they specified, just in case they misread the instructions ;)
-		if ($db_connection == null)
+		if ($db_connection === null)
 		{
 			$db_error = @$smcFunc['db_error']();
 
-			$db_connection = sbb_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
+			$options = [
+				'non_fatal' => true,
+				'dont_select_db' => !$needsDB,
+			];
+			$db_connection = sbb_db_initiate($db_server, $db_name, $_POST['db_prefix'] . $db_user, $db_passwd, $db_prefix, $options);
+			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+			$smcFunc['db']->set_prefix($db_prefix);
+			$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+			$smcFunc['db']->connect($options);
 			if ($db_connection != null)
 			{
 				$db_user = $_POST['db_prefix'] . $db_user;
@@ -773,37 +804,22 @@ function DatabaseSettings()
 		// Let's try that database on for size... assuming we haven't already lost the opportunity.
 		if ($db_name != '' && !$needsDB)
 		{
-			$smcFunc['db_query']('', "
-				CREATE DATABASE IF NOT EXISTS `$db_name`",
-				array(
-					'security_override' => true,
-					'db_error_skip' => true,
-				),
-				$db_connection
-			);
-
-			// Okay, let's try the prefix if it didn't work...
-			if (!$smcFunc['db_select_db']($db_name, $db_connection) && $db_name != '')
+			$created_db = $smcFunc['db']->create_database($db_name);
+			if (!$created_db)
 			{
-				$smcFunc['db_query']('', "
-					CREATE DATABASE IF NOT EXISTS `$_POST[db_prefix]$db_name`",
-					array(
-						'security_override' => true,
-						'db_error_skip' => true,
-					),
-					$db_connection
-				);
-
-				if ($smcFunc['db_select_db']($_POST['db_prefix'] . $db_name, $db_connection))
+				// Try to make a fallback instead.
+				$created_db = $smcFunc['db']->create_database($_POST['db_prefix'] . $db_name);
+				if ($created_db)
 				{
+					// This worked, let's save that.
 					$db_name = $_POST['db_prefix'] . $db_name;
 					updateSettingsFile(array('db_name' => $db_name));
 				}
 			}
 
-			// Okay, now let's try to connect...
-			if (!$smcFunc['db_select_db']($db_name, $db_connection))
+			if (!$created_db)
 			{
+				// Uh oh, this didn't work.
 				$incontext['error'] = sprintf($txt['error_db_database'], $db_name);
 				return false;
 			}
@@ -819,6 +835,10 @@ function DatabaseSettings()
 function ForumSettings()
 {
 	global $txt, $incontext, $databases, $db_type, $db_connection;
+
+	require_once(__DIR__ . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+	require_once(__DIR__ . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+	require_once(__DIR__ . '/vendor/autoload.php');
 
 	$incontext['sub_template'] = 'forum_settings';
 	$incontext['page_title'] = $txt['install_settings'];
@@ -846,8 +866,7 @@ function ForumSettings()
 	$incontext['ssl_chkbx_checked'] = false;
 
 	// If redirect in effect, force ssl ON
-	require_once(dirname(__FILE__) . '/vendor/autoload.php');
-	require_once(dirname(__FILE__) . '/Sources/Subs.php');
+	require_once(__DIR__ . '/Sources/Subs.php');
 
 	if (https_redirect_active($incontext['detected_url'])) {
 		$incontext['ssl_chkbx_protected'] = true;
@@ -955,15 +974,6 @@ function DatabasePopulation()
 	}
 	$modSettings['disableQueryCheck'] = true;
 
-	// We're doing UTF8, select it.
-	$smcFunc['db_query']('', '
-		SET NAMES {string:utf8}',
-		array(
-			'db_error_skip' => true,
-			'utf8' => (in_array($db_type, ['mysql', 'mysqli']) ? 'utf8mb4' : 'utf8'),
-		)
-	);
-
 	// Windows likes to leave the trailing slash, which yields to C:\path\to\StoryBB\/attachments...
 	if (substr(__DIR__, -1) == '\\')
 		$attachdir = __DIR__ . 'attachments';
@@ -990,50 +1000,6 @@ function DatabasePopulation()
 	}
 	$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], array('\\\\n' => '\\n'));
 
-	// MySQL-specific stuff - storage engine and UTF8 handling
-	if (substr($db_type, 0, 5) == 'mysql')
-	{
-		// Just in case the query fails for some reason...
-		$engines = array();
-
-		// Figure out storage engines - what do we have, etc.
-		$get_engines = $smcFunc['db_query']('', 'SHOW ENGINES', array());
-
-		while ($row = $smcFunc['db_fetch_assoc']($get_engines))
-		{
-			if ($row['Support'] == 'YES' || $row['Support'] == 'DEFAULT')
-				$engines[] = $row['Engine'];
-		}
-
-		// Done with this now
-		$smcFunc['db_free_result']($get_engines);
-
-		// InnoDB is better, so use it if possible...
-		$has_innodb = in_array('InnoDB', $engines);
-		$replaces['{$engine}'] = $has_innodb ? 'InnoDB' : 'MyISAM';
-		$replaces['{$memory}'] = (!$has_innodb && in_array('MEMORY', $engines)) ? 'MEMORY' : $replaces['{$engine}'];
-
-		// We're using UTF-8 setting, so add it to the table definitions.
-			$replaces['{$engine}'] .= ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
-			$replaces['{$memory}'] .= ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
-
-		// One last thing - if we don't have InnoDB, we can't do transactions...
-		if (!$has_innodb)
-		{
-			$replaces['START TRANSACTION;'] = '';
-			$replaces['COMMIT;'] = '';
-		}
-	}
-	else
-	{
-		$has_innodb = false;
-	}
-
-	// Read in the SQL.  Turn this on and that off... internationalize... etc.
-	$type = ($db_type == 'mysqli' ? 'mysql' : $db_type);
-	$sql_lines = explode("\n", strtr(implode(' ', file(dirname(__FILE__) . '/install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql')), $replaces));
-
-	// Execute the SQL.
 	$current_statement = '';
 	$exists = array();
 	$incontext['failures'] = array();
@@ -1043,6 +1009,36 @@ function DatabasePopulation()
 		'table_dups' => 0,
 		'insert_dups' => 0,
 	);
+
+	// Create all the tables we know we need.
+	$schema = Schema::get_tables();
+	foreach ($schema as $count => $table)
+	{
+		if (!$table->exists()) {
+			$result = $table->create();
+			if ($result)
+			{
+				$incontext['sql_results']['tables']++;
+			}
+			else
+			{
+				$incontext['failures'][$count] = $smcFunc['db_error']($db_connection);
+			}
+		}
+		else
+		{
+			$incontext['sql_results']['table_dups']++;
+			$exists[] = $table->get_table_name();
+		}
+	}
+
+	$smcFunc['db']->transaction('begin');
+
+	// Read in the SQL.  Turn this on and that off... internationalize... etc.
+	$type = ($db_type == 'mysqli' ? 'mysql' : $db_type);
+	$sql_lines = explode("\n", strtr(implode(' ', file(dirname(__FILE__) . '/install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql')), $replaces));
+
+	// Execute the SQL.
 	foreach ($sql_lines as $count => $line)
 	{
 		// No comments allowed!
@@ -1068,15 +1064,7 @@ function DatabasePopulation()
 
 		if ($smcFunc['db_query']('', $current_statement, array('security_override' => true, 'db_error_skip' => true), $db_connection) === false)
 		{
-			// Error 1050: Table already exists!
-			// @todo Needs to be made better!
-			if ((($db_type != 'mysql' && $db_type != 'mysqli') || $smcFunc['db_errno']($db_connection) == 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
-			{
-				$exists[] = $match[1];
-				$incontext['sql_results']['table_dups']++;
-			}
-			// Don't error on duplicate indexes
-			elseif (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
+			if (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 			{
 				// MySQLi requires a connection object.
 				$incontext['failures'][$count] = $smcFunc['db_error']($db_connection);
@@ -1084,9 +1072,7 @@ function DatabasePopulation()
 		}
 		else
 		{
-			if (preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
-				$incontext['sql_results']['tables']++;
-			elseif (preg_match('~^\s*INSERT INTO ([^\s\n\r]+?)~', $current_statement, $match) == 1)
+			if (preg_match('~^\s*INSERT INTO ([^\s\n\r]+?)~', $current_statement, $match) == 1)
 			{
 				preg_match_all('~\)[,;]~', $current_statement, $matches);
 				if (!empty($matches[0]))
@@ -1101,6 +1087,8 @@ function DatabasePopulation()
 		// Wait, wait, I'm still working here!
 		set_time_limit(60);
 	}
+
+	$smcFunc['db']->transaction('commit');
 
 	// Sort out the context for the SQL.
 	foreach ($incontext['sql_results'] as $key => $number)
@@ -1165,23 +1153,6 @@ function DatabasePopulation()
 			$newSettings,
 			array('variable')
 		);
-	}
-
-	// Let's optimize those new tables, but not on InnoDB, ok?
-	if (!$has_innodb)
-	{
-		db_extend();
-		$tables = $smcFunc['db_list_tables']($db_name, $db_prefix . '%');
-		foreach ($tables as $table)
-		{
-			$smcFunc['db_optimize_table']($table) != -1 or $db_messed = true;
-
-			if (!empty($db_messed))
-			{
-				$incontext['failures'][-1] = $smcFunc['db_error']();
-				break;
-			}
-		}
 	}
 
 	// MySQL specific stuff
