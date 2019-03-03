@@ -726,7 +726,7 @@ function createAttachment(&$attachmentOptions)
 	}
 
 	// Now that we have the attach id, let's rename this sucker and finish up.
-	$attachmentOptions['destination'] = getAttachmentFilename(basename($attachmentOptions['name']), $attachmentOptions['id'], $attachmentOptions['id_folder'], false, $attachmentOptions['file_hash']);
+	$attachmentOptions['destination'] = Attachment::get_filename(basename($attachmentOptions['name']), $attachmentOptions['id'], $attachmentOptions['id_folder'], $attachmentOptions['file_hash']);
 	rename($attachmentOptions['tmp_name'], $attachmentOptions['destination']);
 
 	// If it's not approved then add to the approval queue.
@@ -819,7 +819,7 @@ function createAttachment(&$attachmentOptions)
 					)
 				);
 
-				rename($thumb_path, getAttachmentFilename($thumb_filename, $attachmentOptions['thumb'], $modSettings['currentAttachmentUploadDir'], false, $thumb_file_hash));
+				rename($thumb_path, Attachment::get_filename($thumb_filename, $attachmentOptions['thumb'], $modSettings['currentAttachmentUploadDir'], $thumb_file_hash));
 			}
 		}
 	}
@@ -1157,7 +1157,7 @@ function loadAttachmentContext($id_msg, $attachments)
 				// A proper thumb doesn't exist yet? Create one!
 				if (empty($attachment['id_thumb']) || $attachment['thumb_width'] > $modSettings['attachmentThumbWidth'] || $attachment['thumb_height'] > $modSettings['attachmentThumbHeight'] || ($attachment['thumb_width'] < $modSettings['attachmentThumbWidth'] && $attachment['thumb_height'] < $modSettings['attachmentThumbHeight']))
 				{
-					$filename = getAttachmentFilename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
+					$filename = Attachment::get_filename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
 
 					require_once($sourcedir . '/Subs-Graphics.php');
 					if (createThumbnail($filename, $modSettings['attachmentThumbWidth'], $modSettings['attachmentThumbHeight']))
@@ -1214,7 +1214,7 @@ function loadAttachmentContext($id_msg, $attachments)
 								)
 							);
 
-							$thumb_realname = getAttachmentFilename($thumb_filename, $attachment['id_thumb'], $id_folder_thumb, false, $thumb_hash);
+							$thumb_realname = Attachment::get_filename($thumb_filename, $attachment['id_thumb'], $id_folder_thumb, $thumb_hash);
 							rename($filename . '_thumb', $thumb_realname);
 
 							// Do we need to remove an old thumbnail?
