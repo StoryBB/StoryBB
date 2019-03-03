@@ -21,4 +21,9 @@ class Attachment
 	const ATTACHMENT_AVATAR = 1;
 	const ATTACHMENT_THUMBNAIL = 3;
 	const ATTACHMENT_EXPORT = 4;
+
+	public static function get_new_filename($filename)
+	{
+		return sha1(md5($filename . time()) . mt_rand());
+	}
 }

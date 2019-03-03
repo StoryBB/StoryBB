@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Attachment;
+
 /**
  * Check if the current directory is still valid or not.
  * If not creates the new directory
@@ -680,7 +682,7 @@ function createAttachment(&$attachmentOptions)
 
 	// Get the hash if no hash has been given yet.
 	if (empty($attachmentOptions['file_hash']))
-		$attachmentOptions['file_hash'] = getAttachmentFilename($attachmentOptions['name'], false, null, true);
+		$attachmentOptions['file_hash'] = Attachment::get_new_filename($attachmentOptions['name']);
 
 	// Assuming no-one set the extension let's take a look at it.
 	if (empty($attachmentOptions['fileext']))
@@ -762,7 +764,7 @@ function createAttachment(&$attachmentOptions)
 
 			$thumb_filename = $attachmentOptions['name'] . '_thumb';
 			$thumb_size = filesize($attachmentOptions['destination'] . '_thumb');
-			$thumb_file_hash = getAttachmentFilename($thumb_filename, false, null, true);
+			$thumb_file_hash = Attachment::get_new_filename($thumb_filename);
 			$thumb_path = $attachmentOptions['destination'] . '_thumb';
 
 			// We should check the file size and count here since thumbs are added to the existing totals.
@@ -1189,7 +1191,7 @@ function loadAttachmentContext($id_msg, $attachments)
 							$thumb_mime = 'image/' . $thumb_ext;
 
 						$thumb_filename = $attachment['filename'] . '_thumb';
-						$thumb_hash = getAttachmentFilename($thumb_filename, false, null, true);
+						$thumb_hash = Attachment::get_new_filename($thumb_filename);
 
 						// Add this beauty to the database.
 						$attachment['id_thumb'] = $smcFunc['db_insert']('',
