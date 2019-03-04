@@ -57,7 +57,7 @@ class Wave
 
 		// Loop through all letters of the word $word.
 		$sound_word = '';
-		for ($i = 0; $i < strlen($word); $i++)
+		for ($i = 0, $wordlen = strlen($word); $i < $wordlen; $i++)
 		{
 			$sound_letter = implode('', file($settings['default_theme_dir'] . '/fonts/sound/' . $word[$i] . '.' . $sound_language . '.wav'));
 			if (strpos($sound_letter, 'data') === false)
