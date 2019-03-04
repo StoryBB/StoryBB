@@ -13,6 +13,7 @@
 use LightnCandy\LightnCandy;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\IP;
 
 /**
  * Update some basic statistics.
@@ -1792,64 +1793,6 @@ function custMinify($data, $type, $do_deferred = false)
 }
 
 /**
- * Get an attachment's encrypted filename. If $new is true, won't check for file existence.
- * @todo this currently returns the hash if new, and the full filename otherwise.
- * Something messy like that.
- * @todo and of course everything relies on this behavior and work around it. :P.
- * Converters included.
- *
- * @param string $filename The name of the file
- * @param int $attachment_id The ID of the attachment
- * @param string $dir Which directory it should be in (null to use current one)
- * @param bool $new Whether this is a new attachment
- * @param string $file_hash The file hash
- * @return string The path to the file
- */
-function getAttachmentFilename($filename, $attachment_id, $dir = null, $new = false, $file_hash = '')
-{
-	global $modSettings, $smcFunc;
-
-	// Just make up a nice hash...
-	if ($new)
-		return sha1(md5($filename . time()) . mt_rand());
-
-	// Just make sure that attachment id is only a int
-	$attachment_id = (int) $attachment_id;
-
-	// Grab the file hash if it wasn't added.
-	// Left this for legacy.
-	if ($file_hash === '')
-	{
-		$request = $smcFunc['db_query']('', '
-			SELECT file_hash
-			FROM {db_prefix}attachments
-			WHERE id_attach = {int:id_attach}',
-			array(
-				'id_attach' => $attachment_id,
-			));
-
-		if ($smcFunc['db_num_rows']($request) === 0)
-			return false;
-
-		list ($file_hash) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
-	}
-
-	// Still no hash? mmm...
-	if (empty($file_hash))
-		$file_hash = sha1(md5($filename . time()) . mt_rand());
-
-	// Are we using multiple directories?
-	if (is_array($modSettings['attachmentUploadDir']))
-		$path = $modSettings['attachmentUploadDir'][$dir];
-
-	else
-		$path = $modSettings['attachmentUploadDir'];
-
-	return $path . '/' . $attachment_id . '_' . $file_hash .'.dat';
-}
-
-/**
  * Convert a single IP to a ranged IP.
  * internal function used to convert a user-readable format to a format suitable for the database.
  *
@@ -1866,7 +1809,7 @@ function ip2range($fullip)
 	$ip_array = array();
 
 	// if ip 22.12.31.21
-	if (count($ip_parts) == 1 && isValidIP($fullip))
+	if (count($ip_parts) == 1 && IP::is_valid($fullip))
 	{
 		$ip_array['low'] = $fullip;
 		$ip_array['high'] = $fullip;
@@ -1879,7 +1822,7 @@ function ip2range($fullip)
 	}
 
 	// if ip 22.12.31.21-12.21.31.21
-	if (count($ip_parts) == 2 && isValidIP($ip_parts[0]) && isValidIP($ip_parts[1]))
+	if (count($ip_parts) == 2 && IP::is_valid($ip_parts[0]) && IP::is_valid($ip_parts[1]))
 	{
 		$ip_array['low'] = $ip_parts[0];
 		$ip_array['high'] = $ip_parts[1];
@@ -1887,8 +1830,8 @@ function ip2range($fullip)
 	}
 	elseif (count($ip_parts) == 2) // if ip 22.22.*-22.22.*
 	{
-		$valid_low = isValidIP($ip_parts[0]);
-		$valid_high = isValidIP($ip_parts[1]);
+		$valid_low = IP::is_valid($ip_parts[0]);
+		$valid_high = IP::is_valid($ip_parts[1]);
 		$count = 0;
 		$mode = (preg_match('/:/', $ip_parts[0]) > 0 ? ':' : '.');
 		$max = ($mode == ':' ? 'ffff' : '255');
@@ -1896,11 +1839,11 @@ function ip2range($fullip)
 		if(!$valid_low)
 		{
 			$ip_parts[0] = preg_replace('/\*/', '0', $ip_parts[0]);
-			$valid_low = isValidIP($ip_parts[0]);
+			$valid_low = IP::is_valid($ip_parts[0]);
 			while (!$valid_low)
 			{
 				$ip_parts[0] .= $mode . $min;
-				$valid_low = isValidIP($ip_parts[0]);
+				$valid_low = IP::is_valid($ip_parts[0]);
 				$count++;
 				if ($count > 9) break;
 			}
@@ -1910,11 +1853,11 @@ function ip2range($fullip)
 		if(!$valid_high)
 		{
 			$ip_parts[1] = preg_replace('/\*/', $max, $ip_parts[1]);
-			$valid_high = isValidIP($ip_parts[1]);
+			$valid_high = IP::is_valid($ip_parts[1]);
 			while (!$valid_high)
 			{
 				$ip_parts[1] .= $mode . $max;
-				$valid_high = isValidIP($ip_parts[1]);
+				$valid_high = IP::is_valid($ip_parts[1]);
 				$count++;
 				if ($count > 9) break;
 			}
@@ -1929,60 +1872,6 @@ function ip2range($fullip)
 	}
 
 	return $ip_array;
-}
-
-/**
- * Lookup an IP; try shell_exec first because we can do a timeout on it.
- *
- * @param string $ip The IP to get the hostname from
- * @return string The hostname
- */
-function host_from_ip($ip)
-{
-	global $modSettings;
-
-	if (($host = cache_get_data('hostlookup-' . $ip, 600)) !== null)
-		return $host;
-	$t = microtime(true);
-
-	// Try the Linux host command, perhaps?
-	if (!isset($host) && (strpos(strtolower(PHP_OS), 'win') === false || strpos(strtolower(PHP_OS), 'darwin') !== false) && mt_rand(0, 1) == 1)
-	{
-		if (!isset($modSettings['host_to_dis']))
-			$test = @shell_exec('host -W 1 ' . @escapeshellarg($ip));
-		else
-			$test = @shell_exec('host ' . @escapeshellarg($ip));
-
-		// Did host say it didn't find anything?
-		if (strpos($test, 'not found') !== false)
-			$host = '';
-		// Invalid server option?
-		elseif ((strpos($test, 'invalid option') || strpos($test, 'Invalid query name 1')) && !isset($modSettings['host_to_dis']))
-			updateSettings(array('host_to_dis' => 1));
-		// Maybe it found something, after all?
-		elseif (preg_match('~\s([^\s]+?)\.\s~', $test, $match) == 1)
-			$host = $match[1];
-	}
-
-	// This is nslookup; usually only Windows, but possibly some Unix?
-	if (!isset($host) && stripos(PHP_OS, 'win') !== false && strpos(strtolower(PHP_OS), 'darwin') === false && mt_rand(0, 1) == 1)
-	{
-		$test = @shell_exec('nslookup -timeout=1 ' . @escapeshellarg($ip));
-		if (strpos($test, 'Non-existent domain') !== false)
-			$host = '';
-		elseif (preg_match('~Name:\s+([^\s]+)~', $test, $match) == 1)
-			$host = $match[1];
-	}
-
-	// This is the last try :/.
-	if (!isset($host) || $host === false)
-		$host = @gethostbyaddr($ip);
-
-	// It took a long time, so let's cache it!
-	if (microtime(true) - $t > 0.5)
-		cache_put_data('hostlookup-' . $ip, $host, 600);
-
-	return $host;
 }
 
 /**
@@ -2043,16 +1932,11 @@ function text2words($text, $max_chars = 20, $encrypt = false)
  * @param string $alt The alt text
  * @param string $label The $txt string to use as the label
  * @param string $custom Custom text/html to add to the img tag (only when using an actual image)
- * @param boolean $force_use Whether to force use of this when template_create_button is available
  * @return string The HTML to display the button
  */
-function create_button($name, $alt, $label = '', $custom = '', $force_use = false)
+function create_button($name, $alt, $label = '', $custom = '')
 {
 	global $settings, $txt;
-
-	// Does the current loaded theme have this and we are not forcing the usage of this function?
-	if (function_exists('template_create_button') && !$force_use)
-		return template_create_button($name, $alt, $label = '', $custom = '');
 
 	return '<span class="generic_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
 }
@@ -2856,7 +2740,7 @@ function entity_fix__callback($matches)
  */
 function inet_ptod($ip_address)
 {
-	if (!isValidIP($ip_address))
+	if (!IP::is_valid($ip_address))
 		return $ip_address;
 
 	$bin = inet_pton($ip_address);
@@ -2980,19 +2864,6 @@ function sbb_json_decode($json, $returnAsArray = false, $logIt = true)
 	}
 
 	return $returnArray;
-}
-
-/**
- * Check the given String if he is a valid IPv4 or IPv6
- * return true or false
- *
- * @param string $IPString
- *
- * @return bool
- */
-function isValidIP($IPString)
-{
-	return filter_var($IPString, FILTER_VALIDATE_IP) !== false;
 }
 
 /**

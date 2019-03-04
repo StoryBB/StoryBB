@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  * View a summary.
  * @param int $memID The ID of the member
@@ -94,8 +96,8 @@ function summary($memID)
 	if (allowedTo('moderate_forum'))
 	{
 		// Make sure it's a valid ip address; otherwise, don't bother...
-		if (preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $memberContext[$memID]['ip']) == 1 && empty($modSettings['disableHostnameLookup']))
-			$context['member']['hostname'] = host_from_ip($memberContext[$memID]['ip']);
+		if (IP::is_valid_ipv4($memberContext[$memID]['ip']) && empty($modSettings['disableHostnameLookup']))
+			$context['member']['hostname'] = IP::get_host($memberContext[$memID]['ip']);
 		else
 			$context['member']['hostname'] = '';
 
@@ -1982,7 +1984,7 @@ function TrackIP($memID = 0)
 	if (isset($_REQUEST['searchip']))
 		$context['ip'] = trim($_REQUEST['searchip']);
 
-	if (isValidIP($context['ip']) === false)
+	if (IP::is_valid($context['ip']) === false)
 		fatal_lang_error('invalid_tracking_ip', false);
 
 	//mysql didn't support like search with varbinary

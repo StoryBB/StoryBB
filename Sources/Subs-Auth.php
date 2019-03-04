@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  * Sets the StoryBB-style login cookie and session based on the id_member and password passed.
  * - password should be already encrypted with the cookie salt.
@@ -172,7 +174,7 @@ function url_parts($local, $global)
 		$parsed_url['host'] = $modSettings['globalCookiesDomain'];
 
 	// Globalize cookies across domains (filter out IP-addresses)?
-	elseif ($global && preg_match('~^\d{1,3}(\.\d{1,3}){3}$~', $parsed_url['host']) == 0 && preg_match('~(?:[^\.]+\.)?([^\.]{2,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
+	elseif ($global && !IP::is_valid_ipv4($parsed_url['host']) && preg_match('~(?:[^\.]+\.)?([^\.]{2,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
 		$parsed_url['host'] = '.' . $parts[1];
 
 	// We shouldn't use a host at all if both options are off.

@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Attachment;
+
 /**
  * Check if the current directory is still valid or not.
  * If not creates the new directory
@@ -680,7 +682,7 @@ function createAttachment(&$attachmentOptions)
 
 	// Get the hash if no hash has been given yet.
 	if (empty($attachmentOptions['file_hash']))
-		$attachmentOptions['file_hash'] = getAttachmentFilename($attachmentOptions['name'], false, null, true);
+		$attachmentOptions['file_hash'] = Attachment::get_new_filename($attachmentOptions['name']);
 
 	// Assuming no-one set the extension let's take a look at it.
 	if (empty($attachmentOptions['fileext']))
@@ -724,7 +726,7 @@ function createAttachment(&$attachmentOptions)
 	}
 
 	// Now that we have the attach id, let's rename this sucker and finish up.
-	$attachmentOptions['destination'] = getAttachmentFilename(basename($attachmentOptions['name']), $attachmentOptions['id'], $attachmentOptions['id_folder'], false, $attachmentOptions['file_hash']);
+	$attachmentOptions['destination'] = Attachment::get_filename(basename($attachmentOptions['name']), $attachmentOptions['id'], $attachmentOptions['id_folder'], $attachmentOptions['file_hash']);
 	rename($attachmentOptions['tmp_name'], $attachmentOptions['destination']);
 
 	// If it's not approved then add to the approval queue.
@@ -762,7 +764,7 @@ function createAttachment(&$attachmentOptions)
 
 			$thumb_filename = $attachmentOptions['name'] . '_thumb';
 			$thumb_size = filesize($attachmentOptions['destination'] . '_thumb');
-			$thumb_file_hash = getAttachmentFilename($thumb_filename, false, null, true);
+			$thumb_file_hash = Attachment::get_new_filename($thumb_filename);
 			$thumb_path = $attachmentOptions['destination'] . '_thumb';
 
 			// We should check the file size and count here since thumbs are added to the existing totals.
@@ -817,7 +819,7 @@ function createAttachment(&$attachmentOptions)
 					)
 				);
 
-				rename($thumb_path, getAttachmentFilename($thumb_filename, $attachmentOptions['thumb'], $modSettings['currentAttachmentUploadDir'], false, $thumb_file_hash));
+				rename($thumb_path, Attachment::get_filename($thumb_filename, $attachmentOptions['thumb'], $modSettings['currentAttachmentUploadDir'], $thumb_file_hash));
 			}
 		}
 	}
@@ -1155,7 +1157,7 @@ function loadAttachmentContext($id_msg, $attachments)
 				// A proper thumb doesn't exist yet? Create one!
 				if (empty($attachment['id_thumb']) || $attachment['thumb_width'] > $modSettings['attachmentThumbWidth'] || $attachment['thumb_height'] > $modSettings['attachmentThumbHeight'] || ($attachment['thumb_width'] < $modSettings['attachmentThumbWidth'] && $attachment['thumb_height'] < $modSettings['attachmentThumbHeight']))
 				{
-					$filename = getAttachmentFilename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
+					$filename = Attachment::get_filename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
 
 					require_once($sourcedir . '/Subs-Graphics.php');
 					if (createThumbnail($filename, $modSettings['attachmentThumbWidth'], $modSettings['attachmentThumbHeight']))
@@ -1189,7 +1191,7 @@ function loadAttachmentContext($id_msg, $attachments)
 							$thumb_mime = 'image/' . $thumb_ext;
 
 						$thumb_filename = $attachment['filename'] . '_thumb';
-						$thumb_hash = getAttachmentFilename($thumb_filename, false, null, true);
+						$thumb_hash = Attachment::get_new_filename($thumb_filename);
 
 						// Add this beauty to the database.
 						$attachment['id_thumb'] = $smcFunc['db_insert']('',
@@ -1212,7 +1214,7 @@ function loadAttachmentContext($id_msg, $attachments)
 								)
 							);
 
-							$thumb_realname = getAttachmentFilename($thumb_filename, $attachment['id_thumb'], $id_folder_thumb, false, $thumb_hash);
+							$thumb_realname = Attachment::get_filename($thumb_filename, $attachment['id_thumb'], $id_folder_thumb, $thumb_hash);
 							rename($filename . '_thumb', $thumb_realname);
 
 							// Do we need to remove an old thumbnail?
