@@ -48,6 +48,16 @@ class Table
 		return $this->table_name;
 	}
 
+	public function get_columns()
+	{
+		return $this->columns;
+	}
+
+	public function get_indexes()
+	{
+		return $this->indexes;
+	}
+
 	public function exists()
 	{
 		global $smcFunc, $db_prefix;
@@ -111,8 +121,26 @@ class Table
 		return in_array('InnoDB', $engines) ? 'InnoDB' : 'MyISAM';
 	}
 
-	public function update()
+	public function update_to(Table $dest)
 	{
 		global $smcFunc;
+
+		$dest_columns = $dest->get_columns();
+		$dest_indexes = $dest->get_indexes();
+
+		$changes = [];
+
+		foreach ($dest_columns as $column_name => $column)
+		{
+			if (!isset($this->columns[$column_name]))
+			{
+				$changes['add_columns'][$column_name] = $column;
+			}
+			else
+			{
+				$change_column = $smcFunc['db_compare_column']($this->columns[$column_name], $column);
+				
+			}
+		}
 	}
 }

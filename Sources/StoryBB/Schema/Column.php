@@ -263,7 +263,30 @@ class Column
 		{
 			throw new InvalidColumnTypeException($this->column['type'] . ' cannot have a default value');
 		}
-		$this->column['default'] = $value;
+		if ($value === null)
+		{
+			unset ($this->column['default']);
+		}
+		else
+		{
+			$this->column['default'] = $value;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Sets the size value on the current field.
+	 *
+	 * @return object Returns the current instance so fluent interfacing can be used.
+	 */
+	public function size(int $size)
+	{
+		if (!in_array($this->column['type'], ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'char', 'varchar', 'varbinary']))
+		{
+			throw new InvalidColumnTypeException($this->column['type'] . ' cannot have a size');
+		}
+		$this->column['size'] = $size;
 
 		return $this;
 	}
