@@ -73,7 +73,7 @@ Default is to compile the template as PHP, which can be run as fast as possible 
 * <a href="https://zordius.github.io/HandlebarsCookbook/LC-FLAG_ERROR_LOG.html">FLAG_ERROR_LOG</a>
 * <a href="https://zordius.github.io/HandlebarsCookbook/LC-FLAG_ERROR_EXCEPTION.html">FLAG_ERROR_EXCEPTION</a>
 * <a href="https://zordius.github.io/HandlebarsCookbook/LC-FLAG_ERROR_SKIPPARTIAL.html">FLAG_ERROR_SKIPPARTIAL</a>
-* `FLAG_RENDER_DEBUG` : generate debug template to show error when rendering. With this flag, the performance of rendering may be slowed.
+* <a href="https://zordius.github.io/HandlebarsCookbook/LC-FLAG_RENDER_DEBUG.html">FLAG_RENDER_DEBUG</a>
 
 **JavaScript Compatibility**
 * <a href="https://zordius.github.io/HandlebarsCookbook/LC-FLAG_JSTRUE.html">FLAG_JSTRUE</a>
@@ -97,10 +97,9 @@ Default is to compile the template as PHP, which can be run as fast as possible 
 * <a href="https://zordius.github.io/HandlebarsCookbook/LC-FLAG_SLASH.html">FLAG_SLASH</a>
 * <a href="https://zordius.github.io/HandlebarsCookbook/LC-FLAG_ELSE.html">FLAG_ELSE</a>
 * `FLAG_RAWBLOCK`: support `{{{{raw_block}}}}any_char_or_{{foo}}_as_raw_string{{{{/raw_block}}}}`.
-* `FLAG_SPACECTL` : support space control `{{~ }}` or `{{ ~}}` in template. Otherwise, `{{~ }}` or `{{ ~}}` will cause template error.
 * `FLAG_HANDLEBARSLAMBDA` : support lambda logic as handlebars.js specification. And, the rendering performance will be worse.
 * `FLAG_SPVARS` : support special variables include @root, @index, @key, @first, @last. Otherwise, compile these variable names with default parsing logic.
-* `FLAG_HANDLEBARS` : support most handlebars extensions and also keep performance good, same with `FLAG_THIS` + `FLAG_PARENT` + `FLAG_HBESCAPE` + `FLAG_ADVARNAME` + `FLAG_SPACECTL` + `FLAG_NAMEDARG` + `FLAG_SPVARS` + `FLAG_SLASH` + `FLAG_ELSE` + `FLAG_RAWBLOCK`.
+* `FLAG_HANDLEBARS` : support most handlebars extensions and also keep performance good, same with `FLAG_THIS` + `FLAG_PARENT` + `FLAG_HBESCAPE` + `FLAG_ADVARNAME` + `FLAG_NAMEDARG` + `FLAG_SPVARS` + `FLAG_SLASH` + `FLAG_ELSE` + `FLAG_RAWBLOCK`.
 * `FLAG_HANDLEBARSJS` : support most handlebars.js + javascript behaviors and also keep performance good, same with `FLAG_JS` + `FLAG_HANDLEBARS`.
 * `FLAG_HANDLEBARSJS_FULL` : enable all supported handlebars.js behaviors but performance drop, same with `FLAG_HANDLEBARSJS` + `FLAG_INSTANCE` + `FLAG_RUNTIMEPARTIAL` + `FLAG_MUSTACHELOOKUP` + `FLAG_HANDLEBARSLAMBDA`.
 
@@ -431,10 +430,14 @@ Suggested Handlebars Template Practices
 
 * Prevent to use `{{#with}}` . I think `{{path.to.val}}` is more readable then `{{#with path.to}}{{val}}{{/with}}`; when using `{{#with}}` you will confusing on scope changing. `{{#with}}` only save you very little time when you access many variables under same path, but cost you a lot time when you need to understand then maintain a template.
 * use `{{{val}}}` when you do not require HTML escaped output on the value. It is better performance, too.
-* If you wanna display `{{`, use this: `{{#with "{{"}}{{.}}{{/with}}`.
 * Prevent to use custom helper if you want to reuse your template in different language. Or, you may need to implement different versions of helper in different languages.
 * For best performance, you should only use 'compile on demand' pattern when you are in development stage. Before you go to production, you can `LightnCandy::compile()` on all your templates, save all generated PHP codes, and deploy these generated files (You may need to maintain a build process for this) . **DO NOT COMPILE ON PRODUCTION** , it also a best practice for security. Adding cache for 'compile on demand' is not the best solution. If you want to build some library or framework based on LightnCandy, think about this scenario.
 * Recompile your templates when you upgrade LightnCandy every time.
+* Persistant ESCAPING practice of `{` or `}` for both handlebars and lightncandy:
+  * If you want to display atomic `}}` , you can just use it without any trick.  EX: `{{foo}}   }}`
+  * If you want to display `}` just after any handlebars token, you can use this: `{{#with "}"}}{{.}}{{/with}}` .  EX: `{{foo}}{{#with "}"}}{{.}}{{/with}}`
+  * If you want to display atomic `{` , you can just use it without any trick. EX: `{ and {{foo}}`.
+  * If you want to display `{{` , you can use `{{#with "{{"}}{{.}}{{/with}}`. EX: `{{#with "{{"}}{{.}}{{/with}}{{foo}}`
 
 Detail Feature list
 -------------------
@@ -500,8 +503,8 @@ Go http://handlebarsjs.com/ to see more feature description about handlebars.js.
 * `{{@../index}}` : access to parent loop index. (require `FLAG_SPVARS` and `FLAG_PARENT`)
 * `{{@../key}}` : access to parent loop key. (require `FLAG_SPVARS` and `FLAG_PARENT`)
 * `{{foo.[ba.r].[#spec].0.ok}}` : references to $CurrentConext['foo']['ba.r']['#spec'][0]['ok'] . (require `FLAG_ADVARNAME`)
-* `{{~any_valid_tag}}` : Space control, remove all previous spacing (includes CR/LF, tab, space; stop on any none spacing character) (require `FLAG_SPACECTL`)
-* `{{any_valid_tag~}}` : Space control, remove all next spacing (includes CR/LF, tab, space; stop on any none spacing character) (require `FLAG_SPACECTL`)
+* `{{~any_valid_tag}}` : Space control, remove all previous spacing (includes CR/LF, tab, space; stop on any none spacing character)
+* `{{any_valid_tag~}}` : Space control, remove all next spacing (includes CR/LF, tab, space; stop on any none spacing character)
 * `{{{helper var}}}` : Execute custom helper then render the result
 * `{{helper var}}` : Execute custom helper then render the HTML escaped result
 * `{{helper "str"}}` or `{{helper 'str'}}` : Execute custom helper with string arguments (require `FLAG_ADVARNAME`)
