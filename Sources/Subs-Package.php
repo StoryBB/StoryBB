@@ -547,17 +547,11 @@ function package_chmod($filename, $perm_state = 'writable', $track_change = fals
  * Get the contents of a URL, irrespective of allow_url_fopen.
  *
  * - reads the contents of an http or ftp address and retruns the page in a string
- * - will accept up to 3 page redirections (redirectio_level in the function call is private)
- * - if post_data is supplied, the value and length is posted to the given url as form data
- * - URL must be supplied in lowercase
  *
  * @param string $url The URL
- * @param string $post_data The data to post to the given URL
- * @param bool $keep_alive Whether to send keepalive info
- * @param int $redirection_level How many levels of redirection
  * @return string|false The fetched data or false on failure
  */
-function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection_level = 0)
+function fetch_web_data($url)
 {
 	global $webmaster_email, $sourcedir;
 	static $keep_alive_dom = null, $keep_alive_fp = null;
