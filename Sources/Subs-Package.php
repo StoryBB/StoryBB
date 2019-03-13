@@ -14,6 +14,7 @@
  */
 
 use StoryBB\Helper\Environment;
+use GuzzleHttp\Client;
 
 /**
  * Checks if the forum version matches any of the available versions from the package install xml.
@@ -546,17 +547,11 @@ function package_chmod($filename, $perm_state = 'writable', $track_change = fals
  * Get the contents of a URL, irrespective of allow_url_fopen.
  *
  * - reads the contents of an http or ftp address and retruns the page in a string
- * - will accept up to 3 page redirections (redirectio_level in the function call is private)
- * - if post_data is supplied, the value and length is posted to the given url as form data
- * - URL must be supplied in lowercase
  *
  * @param string $url The URL
- * @param string $post_data The data to post to the given URL
- * @param bool $keep_alive Whether to send keepalive info
- * @param int $redirection_level How many levels of redirection
  * @return string|false The fetched data or false on failure
  */
-function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection_level = 0)
+function fetch_web_data($url)
 {
 	global $webmaster_email, $sourcedir;
 	static $keep_alive_dom = null, $keep_alive_fp = null;
@@ -594,117 +589,16 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 		$ftp->close();
 	}
 	// More likely a standard HTTP URL, first try to use cURL if available
-	elseif (isset($match[1]) && $match[1] === 'http' && function_exists('curl_init'))
+	elseif (isset($match[1]) && $match[1] === 'http')
 	{
-		// Include the file containing the curl_fetch_web_data class.
-		require_once($sourcedir . '/Class-CurlFetchWeb.php');
-
-		$fetch_data = new curl_fetch_web_data();
-		$fetch_data->get_url_data($url, $post_data);
+		$client = new Client();
+		$http_request = $client->get($url);
+		$responseCode = $http_request->getStatusCode();
+		$data = (string) $http_request->getBody();
 
 		// no errors and a 200 result, then we have a good dataset, well we at least have data ;)
-		if ($fetch_data->result('code') == 200 && !$fetch_data->result('error'))
-			$data = $fetch_data->result('body');
-		else
+		if ($responseCode != 200 || empty($data))
 			return false;
-	}
-	// This is more likely; a standard HTTP URL.
-	elseif (isset($match[1]) && $match[1] == 'http')
-	{
-		if ($keep_alive && $match[3] == $keep_alive_dom)
-			$fp = $keep_alive_fp;
-		if (empty($fp))
-		{
-			// Open the socket on the port we want...
-			$fp = @fsockopen(($match[2] ? 'ssl://' : '') . $match[3], empty($match[5]) ? ($match[2] ? 443 : 80) : $match[5], $err, $err, 5);
-			if (!$fp)
-				return false;
-		}
-
-		if ($keep_alive)
-		{
-			$keep_alive_dom = $match[3];
-			$keep_alive_fp = $fp;
-		}
-
-		// I want this, from there, and I'm not going to be bothering you for more (probably.)
-		if (empty($post_data))
-		{
-			fwrite($fp, 'GET ' . ($match[6] !== '/' ? str_replace(' ', '%20', $match[6]) : '') . ' HTTP/1.0' . "\r\n");
-			fwrite($fp, 'Host: ' . $match[3] . (empty($match[5]) ? ($match[2] ? ':443' : '') : ':' . $match[5]) . "\r\n");
-			fwrite($fp, 'User-Agent: PHP/StoryBB' . "\r\n");
-			if ($keep_alive)
-				fwrite($fp, 'Connection: Keep-Alive' . "\r\n\r\n");
-			else
-				fwrite($fp, 'Connection: close' . "\r\n\r\n");
-		}
-		else
-		{
-			fwrite($fp, 'POST ' . ($match[6] !== '/' ? $match[6] : '') . ' HTTP/1.0' . "\r\n");
-			fwrite($fp, 'Host: ' . $match[3] . (empty($match[5]) ? ($match[2] ? ':443' : '') : ':' . $match[5]) . "\r\n");
-			fwrite($fp, 'User-Agent: PHP/StoryBB' . "\r\n");
-			if ($keep_alive)
-				fwrite($fp, 'Connection: Keep-Alive' . "\r\n");
-			else
-				fwrite($fp, 'Connection: close' . "\r\n");
-			fwrite($fp, 'Content-Type: application/x-www-form-urlencoded' . "\r\n");
-			fwrite($fp, 'Content-Length: ' . strlen($post_data) . "\r\n\r\n");
-			fwrite($fp, $post_data);
-		}
-
-		$response = fgets($fp, 768);
-
-		// Redirect in case this location is permanently or temporarily moved.
-		if ($redirection_level < 3 && preg_match('~^HTTP/\S+\s+30[127]~i', $response) === 1)
-		{
-			$header = '';
-			$location = '';
-			while (!feof($fp) && trim($header = fgets($fp, 4096)) != '')
-				if (strpos($header, 'Location:') !== false)
-					$location = trim(substr($header, strpos($header, ':') + 1));
-
-			if (empty($location))
-				return false;
-			else
-			{
-				if (!$keep_alive)
-					fclose($fp);
-				return fetch_web_data($location, $post_data, $keep_alive, $redirection_level + 1);
-			}
-		}
-
-		// Make sure we get a 200 OK.
-		elseif (preg_match('~^HTTP/\S+\s+20[01]~i', $response) === 0)
-			return false;
-
-		// Skip the headers...
-		while (!feof($fp) && trim($header = fgets($fp, 4096)) != '')
-		{
-			if (preg_match('~content-length:\s*(\d+)~i', $header, $match) != 0)
-				$content_length = $match[1];
-			elseif (preg_match('~connection:\s*close~i', $header) != 0)
-			{
-				$keep_alive_dom = null;
-				$keep_alive = false;
-			}
-
-			continue;
-		}
-
-		$data = '';
-		if (isset($content_length))
-		{
-			while (!feof($fp) && strlen($data) < $content_length)
-				$data .= fread($fp, $content_length - strlen($data));
-		}
-		else
-		{
-			while (!feof($fp))
-				$data .= fread($fp, 4096);
-		}
-
-		if (!$keep_alive)
-			fclose($fp);
 	}
 	else
 	{

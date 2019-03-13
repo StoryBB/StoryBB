@@ -14,6 +14,7 @@ use LightnCandy\LightnCandy;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
+use GuzzleHttp\Client;
 
 /**
  * Update some basic statistics.
@@ -1215,40 +1216,23 @@ function url_image_size($url)
 	}
 	else
 	{
-		// Try to connect to the server... give it half a second.
-		$temp = 0;
-		$fp = @fsockopen($match[1], 80, $temp, $temp, 0.5);
+		$client = new Client([
+			'connect_timeout' => 5,
+			'read_timeout' => 5,
+			'headers' => [
+				'Range' => '0-16383',
+			],
+		]);
+		$response = $client->get($url);
+		$response_code = $response->getStatusCode();
+		$body = (string) $response->getBody();
 
-		// Successful?  Continue...
-		if ($fp != false)
+		if (in_array($response_code, array(200, 206)) && !empty($body))
 		{
-			// Send the HEAD request (since we don't have to worry about chunked, HTTP/1.1 is fine here.)
-			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/StoryBB' . "\r\n" . 'Connection: close' . "\r\n\r\n");
-
-			// Read in the HTTP/1.1 or whatever.
-			$test = substr(fgets($fp, 11), -1);
-			fclose($fp);
-
-			// See if it returned a 404/403 or something.
-			if ($test < 4)
-			{
-				$size = @getimagesize($url);
-
-				// This probably means allow_url_fopen is off, let's try GD.
-				if ($size === false && function_exists('imagecreatefromstring'))
-				{
-					include_once($sourcedir . '/Subs-Package.php');
-
-					// It's going to hate us for doing this, but another request...
-					$image = @imagecreatefromstring(fetch_web_data($url));
-					if ($image !== false)
-					{
-						$size = array(imagesx($image), imagesy($image));
-						imagedestroy($image);
-					}
-				}
-			}
+			return get_image_size_from_string($body);
 		}
+		else
+			return false;
 	}
 
 	// If we didn't get it, we failed.
@@ -1261,6 +1245,65 @@ function url_image_size($url)
 
 	// Didn't work.
 	return $size;
+}
+
+/**
+ * Given raw binary data for an image, identify its image size and return.
+ *
+ * @param string $data Raw image bytes as a string
+ * @return array|false Returns array of [width, height] or false if couldn't identify image size
+ */
+function get_image_size_from_string($data)
+{
+	if (empty($data)) {
+		return false;
+	}
+	if (strpos($data, 'GIF8') === 0) {
+		// It's a GIF. Doesn't really matter which subformat though. Note that things are little endian.
+		$width = (ord(substr($data, 7, 1)) << 8) + (ord(substr($data, 6, 1)));
+		$height = (ord(substr($data, 9, 1)) << 8) + (ord(substr($data, 8, 1)));
+		if (!empty($width)) {
+			return array($width, $height);
+		}
+	}
+
+	if (strpos($data, "\x89PNG") === 0) {
+		// Seems to be a PNG. Let's look for the signature of the header chunk, minimum 12 bytes in. PNG max sizes are (signed) 32 bits each way.
+		$pos = strpos($data, 'IHDR');
+		if ($pos >= 12) {
+			$width = (ord(substr($data, $pos + 4, 1)) << 24) + (ord(substr($data, $pos + 5, 1)) << 16) + (ord(substr($data, $pos + 6, 1)) << 8) + (ord(substr($data, $pos + 7, 1)));
+			$height = (ord(substr($data, $pos + 8, 1)) << 24) + (ord(substr($data, $pos + 9, 1)) << 16) + (ord(substr($data, $pos + 10, 1)) << 8) + (ord(substr($data, $pos + 11, 1)));
+			if ($width > 0 && $height > 0) {
+				return array($width, $height);
+			}
+		}
+	}
+
+	if (strpos($data, "\xFF\xD8") === 0)
+	{
+		// JPEG? Hmm, JPEG is tricky. Well, we found the SOI marker as expected and an APP0 marker, so good chance it is JPEG compliant.
+		// Need to step through the file looking for JFIF blocks.
+		$pos = 2;
+		$filelen = strlen($data);
+		while ($pos < $filelen) {
+			$length = (ord(substr($data, $pos + 2, 1)) << 8) + (ord(substr($data, $pos + 3, 1)));
+			$block = substr($data, $pos, 2);
+			if ($block == "\xFF\xC0" || $block == "\xFF\xC2") {
+				break;
+			}
+			$pos += $length + 2;
+		}
+		if ($pos > 2) {
+			// Big endian. SOF block is marker (2 bytes), block size (2 bytes), bits/pixel density (1 byte), image height (2 bytes), image width (2 bytes)
+			$width = (ord(substr($data, $pos + 7, 1)) << 8) + (ord(substr($data, $pos + 8, 1)));
+			$height = (ord(substr($data, $pos + 5, 1)) << 8) + (ord(substr($data, $pos + 6, 1)));
+			if ($width > 0 && $height > 0) {
+				return array($width, $height);
+			}
+		}
+	}
+
+	return false;
 }
 
 /**
