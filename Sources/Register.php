@@ -13,6 +13,7 @@
  */
 
 use StoryBB\Model\Policy;
+use StoryBB\Helper\Wave;
 
 /**
  * Begin the registration process.
@@ -742,10 +743,7 @@ function VerificationCode()
 
 	elseif ($_REQUEST['format'] === '.wav')
 	{
-		require_once($sourcedir . '/Subs-Sound.php');
-
-		if (!createWaveFile($code))
-			header('HTTP/1.1 400 Bad Request');
+		Wave::create($code);
 	}
 
 	// We all die one day...

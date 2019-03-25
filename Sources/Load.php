@@ -11,6 +11,8 @@
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\Database\AdapterFactory;
+use StoryBB\Database\Exception as DatabaseException;
 
 /**
  * Load the $modSettings array.
@@ -3093,7 +3095,7 @@ function template_include($filename, $once = false)
 function loadDatabase()
 {
 	global $db_persist, $db_connection, $db_server, $db_user, $db_passwd;
-	global $db_type, $db_name, $ssi_db_user, $ssi_db_passwd, $sourcedir, $db_prefix, $db_port;
+	global $db_type, $db_name, $ssi_db_user, $ssi_db_passwd, $sourcedir, $db_prefix, $db_port, $smcFunc;
 
 	// Figure out what type of database we are using.
 	if (empty($db_type) || !file_exists($sourcedir . '/Subs-Db-' . $db_type . '.php'))
@@ -3111,22 +3113,41 @@ function loadDatabase()
 	// If we are in SSI try them first, but don't worry if it doesn't work, we have the normal username and password we can use.
 	if (STORYBB == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
 	{
-		$options = array_merge($db_options, array('persist' => $db_persist, 'non_fatal' => true, 'dont_select_db' => true));
+		try {
+			$options = array_merge($db_options, array('persist' => $db_persist, 'non_fatal' => true, 'dont_select_db' => true));
 
-		$db_connection = sbb_db_initiate($db_server, $db_name, $ssi_db_user, $ssi_db_passwd, $db_prefix, $options);
+			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
+
+			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+			$smcFunc['db']->set_prefix($db_prefix);
+			$smcFunc['db']->set_server($db_server, $db_name, $ssi_db_user, $ssi_db_passwd);
+			$smcFunc['db']->connect($options);
+		}
+		catch (DatabaseException $e)
+		{
+			// We intentionally want to swallow any DB exception here.
+			// If this doesn't work we're going to try with non SSI credentials.
+			$db_connection = false;
+		}
 	}
 
-	// Either we aren't in SSI mode, or it failed.
 	if (empty($db_connection))
 	{
-		$options = array_merge($db_options, array('persist' => $db_persist, 'dont_select_db' => STORYBB == 'SSI'));
+		try {
+			$options = array_merge($db_options, array('persist' => $db_persist, 'dont_select_db' => STORYBB == 'SSI'));
 
-		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
+			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
+
+			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+			$smcFunc['db']->set_prefix($db_prefix);
+			$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+			$smcFunc['db']->connect($options);
+		}
+		catch (DatabaseException $e)
+		{
+			display_db_error();
+		}
 	}
-
-	// Safe guard here, if there isn't a valid connection lets put a stop to it.
-	if (!$db_connection)
-		display_db_error();
 
 	// If in SSI mode fix up the prefix.
 	if (STORYBB == 'SSI')

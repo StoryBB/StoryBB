@@ -139,7 +139,7 @@ function showAttachment($force_attach = false)
 		}
 
 		// set filePath and ETag time
-		$file['filePath'] = getAttachmentFilename($file['filename'], $attachId, $file['id_folder'], false, $file['file_hash']);
+		$file['filePath'] = Attachment::get_filename($file['filename'], $attachId, $file['id_folder'], $file['file_hash']);
 		// ensure variant attachment compatibility
 		$filePath = pathinfo($file['filePath']);
 		$file['filePath'] = !file_exists($file['filePath']) ? substr($file['filePath'], 0, -(strlen($filePath['extension']) + 1)) : $file['filePath'];
@@ -168,7 +168,7 @@ function showAttachment($force_attach = false)
 				$attachId = $thumbFile['id_attach'];
 
 				// set filePath and ETag time
-				$thumbFile['filePath'] = getAttachmentFilename($thumbFile['filename'], $attachId, $thumbFile['id_folder'], false, $thumbFile['file_hash']);
+				$thumbFile['filePath'] = Attachment::get_filename($thumbFile['filename'], $attachId, $thumbFile['id_folder'], $thumbFile['file_hash']);
 				$thumbFile['etag'] = '"' . md5_file($thumbFile['filePath']) . '"';
 			}
 		}

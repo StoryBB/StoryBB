@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  *  Maps the implementations in this file (sbb_db_function_name)
  *  to the $smcFunc['db_function_name'] variable.
@@ -28,6 +30,7 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 
 	// Map some database specific functions, only do this once.
 	if (!isset($smcFunc['db_fetch_assoc']))
+	{
 		$smcFunc += array(
 			'db_query'                  => 'sbb_db_query',
 			'db_quote'                  => 'sbb_db_quote',
@@ -46,52 +49,16 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_transaction'            => 'sbb_db_transaction',
 			'db_error'                  => 'mysqli_error',
 			'db_errno'                  => 'mysqli_errno',
-			'db_select_db'              => 'sbb_db_select',
 			'db_title'                  => 'MySQLi',
-			'db_sybase'                 => false,
 			'db_case_sensitive'         => false,
 			'db_escape_wildcard_string' => 'sbb_db_escape_wildcard_string',
 			'db_is_resource'            => 'sbb_is_resource',
-			'db_ping'                   => 'mysqli_ping',
 			'db_fetch_all'              => 'sbb_db_fetch_all',
 			'db_error_insert'			=> 'sbb_db_error_insert',
 			'db_custom_order'			=> 'sbb_db_custom_order',
+			'db_list_tables'            => 'sbb_db_list_tables',
 		);
-
-	if (!empty($db_options['persist']))
-		$db_server = 'p:' . $db_server;
-
-	$connection = mysqli_init();
-
-	$flags = MYSQLI_CLIENT_FOUND_ROWS;
-
-	$success = false;
-
-	if ($connection) {
-		if (!empty($db_options['port']))
-			$success = mysqli_real_connect($connection, $db_server, $db_user, $db_passwd, '', $db_options['port'], null, $flags);
-		else
-			$success = mysqli_real_connect($connection, $db_server, $db_user, $db_passwd, '', 0, null, $flags);
 	}
-
-	// Something's wrong, show an error if its fatal (which we assume it is)
-	if ($success === false)
-	{
-		if (!empty($db_options['non_fatal']))
-			return null;
-		else
-			display_db_error();
-	}
-
-	// Select the database, unless told not to
-	if (empty($db_options['dont_select_db']) && !@mysqli_select_db($connection, $db_name) && empty($db_options['non_fatal']))
-		display_db_error();
-
-	mysqli_query($connection, "SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
-
-	mysqli_set_charset($connection, 'utf8mb4');
-
-	return $connection;
 }
 
 /**
@@ -119,19 +86,6 @@ function db_extend($type = 'extra')
 function db_fix_prefix(&$db_prefix, $db_name)
 {
 	$db_prefix = is_numeric(substr($db_prefix, 0, 1)) ? $db_name . '.' . $db_prefix : '`' . $db_name . '`.' . $db_prefix;
-}
-
-/**
- * Wrap mysqli_select_db so the connection does not need to be specified
- *
- * @param string &$database The database
- * @param object $connection The connection object (if null, $db_connection is used)
- * @return bool Whether the database was selected
- */
-function sbb_db_select($database, $connection = null)
-{
-	global $db_connection;
-	return mysqli_select_db($connection === null ? $db_connection : $connection, $database);
 }
 
 /**
@@ -273,7 +227,7 @@ function sbb_db_replacement__callback($matches)
 		case 'inet':
 			if ($replacement == 'null' || $replacement == '')
 				return 'null';
-			if (!isValidIP($replacement))
+			if (!IP::is_valid($replacement))
 				sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			//we don't use the native support of mysql > 5.6.2
 			return sprintf('unhex(\'%1$s\')', bin2hex(inet_pton($replacement)));
@@ -288,7 +242,7 @@ function sbb_db_replacement__callback($matches)
 				{
 					if ($replacement == 'null' || $replacement == '')
 						$replacement[$key] = 'null';
-					if (!isValidIP($value))
+					if (!IP::is_valid($value))
 						sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 					$replacement[$key] = sprintf('unhex(\'%1$s\')', bin2hex(inet_pton($value)));
 				}
@@ -317,18 +271,14 @@ function sbb_db_quote($db_string, $db_values, $connection = null)
 {
 	global $db_callback, $db_connection;
 
-	// Only bother if there's something to replace.
-	if (strpos($db_string, '{') !== false)
-	{
-		// This is needed by the callback function.
-		$db_callback = array($db_values, $connection === null ? $db_connection : $connection);
+	// This is needed by the callback function.
+	$db_callback = array($db_values, $connection === null ? $db_connection : $connection);
 
-		// Do the quoting and escaping
-		$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
+	// Do the quoting and escaping
+	$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
 
-		// Clear this global variable.
-		$db_callback = array();
-	}
+	// Clear this global variable.
+	$db_callback = array();
 
 	return $db_string;
 }
@@ -345,7 +295,7 @@ function sbb_db_quote($db_string, $db_values, $connection = null)
 function sbb_db_query($identifier, $db_string, $db_values = array(), $connection = null)
 {
 	global $db_cache, $db_count, $db_connection, $db_show_debug, $time_start;
-	global $db_unbuffered, $db_callback, $modSettings;
+	global $db_unbuffered, $db_callback, $modSettings, $smcFunc;
 
 	// Comments that are allowed in a query are preg_removed.
 	static $allowed_comments_from = array(
@@ -365,31 +315,18 @@ function sbb_db_query($identifier, $db_string, $db_values = array(), $connection
 	$connection = $connection === null ? $db_connection : $connection;
 
 	// Get a connection if we are shutting down, sometimes the link is closed before sessions are written
-	if (!is_object($connection))
+	if (!$smcFunc['db']->connection_active())
 	{
-		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
-
-		// Are we in SSI mode?  If so try that username and password first
-		if (STORYBB == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
+		try
 		{
-			if (empty($db_persist))
-				$db_connection = @mysqli_connect($db_server, $ssi_db_user, $ssi_db_passwd);
-			else
-				$db_connection = @mysqli_connect('p:' . $db_server, $ssi_db_user, $ssi_db_passwd);
+			$smcFunc['db']->connect();
+			$smcFunc['db']->select_db();
 		}
-		// Fall back to the regular username and password if need be
-		if (!$db_connection)
+		catch (\Exception $e)
 		{
-			if (empty($db_persist))
-				$db_connection = @mysqli_connect($db_server, $db_user, $db_passwd);
-			else
-				$db_connection = @mysqli_connect('p:' . $db_server, $db_user, $db_passwd);
+			// We're not connected, guess we're going nowhere.
+			sbb_db_error_backtrace('No longer connected to database.', $smcFunc['db_error'], true, __FILE__, __LINE__);
 		}
-
-		if (!$db_connection || !@mysqli_select_db($db_connection, $db_name))
-			$db_connection = false;
-
-		$connection = $db_connection;
 	}
 
 	// One more query....
@@ -411,14 +348,7 @@ function sbb_db_query($identifier, $db_string, $db_values = array(), $connection
 
 	if (empty($db_values['security_override']) && (!empty($db_values) || strpos($db_string, '{db_prefix}') !== false))
 	{
-		// Pass some values to the global space for use in the callback function.
-		$db_callback = array($db_values, $connection);
-
-		// Inject the values passed to this function.
-		$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
-
-		// This shouldn't be residing in global space any longer.
-		$db_callback = array();
+		$db_string = sbb_db_quote($db_string, $db_values, $connection);
 	}
 
 	// Debugging.
@@ -508,54 +438,23 @@ function sbb_db_query($identifier, $db_string, $db_values = array(), $connection
 	return $ret;
 }
 
-/**
- * affected_rows
- * @param resource $connection A connection to use (if null, $db_connection is used)
- * @return int The number of rows affected by the last query
- */
 function sbb_db_affected_rows($connection = null)
 {
-	global $db_connection;
-
-	return mysqli_affected_rows($connection === null ? $db_connection : $connection);
+	global $smcFunc;
+	return $smcFunc['db']->affected_rows();
 }
 
-/**
- * Gets the ID of the most recently inserted row.
- *
- * @param resource $connection = null The connection (if null, $db_connection is used)
- * @return int The ID of the most recently inserted row
- */
+
 function sbb_db_insert_id($connection = null)
 {
-	global $db_connection;
-
-	// MySQL doesn't need the table or field information.
-	return mysqli_insert_id($connection === null ? $db_connection : $connection);
+	global $smcFunc;
+	return $smcFunc['db']->inserted_id();
 }
 
-/**
- * Do a transaction.
- *
- * @param string $type The step to perform (i.e. 'begin', 'commit', 'rollback')
- * @param resource $connection The connection to use (if null, $db_connection is used)
- * @return bool True if successful, false otherwise
- */
 function sbb_db_transaction($type = 'commit', $connection = null)
 {
-	global $db_connection;
-
-	// Decide which connection to use
-	$connection = $connection === null ? $db_connection : $connection;
-
-	if ($type == 'begin')
-		return @mysqli_query($connection, 'BEGIN');
-	elseif ($type == 'rollback')
-		return @mysqli_query($connection, 'ROLLBACK');
-	elseif ($type == 'commit')
-		return @mysqli_query($connection, 'COMMIT');
-
-	return false;
+	global $smcFunc;
+	return $smcFunc['db']->transaction($type);
 }
 
 /**
@@ -601,25 +500,16 @@ function sbb_db_error($db_string, $connection = null)
 	{
 		if (in_array($query_errno, array(2006, 2013)) && $db_connection == $connection)
 		{
-			// Are we in SSI mode?  If so try that username and password first
-			if (STORYBB == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
+			try
 			{
-				if (empty($db_persist))
-					$db_connection = @mysqli_connect($db_server, $ssi_db_user, $ssi_db_passwd);
-				else
-					$db_connection = @mysqli_connect('p:' . $db_server, $ssi_db_user, $ssi_db_passwd);
+				// The DB object still has all the details, but try to reconnect.
+				$smcFunc['db']->connect();
+				$smcFunc['db']->select_db();
 			}
-			// Fall back to the regular username and password if need be
-			if (!$db_connection)
+			catch (\Exception $e)
 			{
-				if (empty($db_persist))
-					$db_connection = @mysqli_connect($db_server, $db_user, $db_passwd);
-				else
-					$db_connection = @mysqli_connect('p:' . $db_server, $db_user, $db_passwd);
-			}
-
-			if (!$db_connection || !@mysqli_select_db($db_connection, $db_name))
 				$db_connection = false;
+			}
 		}
 
 		if ($db_connection)
@@ -972,4 +862,37 @@ function sbb_db_custom_order($field, $array_values, $desc = false)
 
 	$return .= 'END';
 	return $return;
+}
+
+/**
+ * This function lists all tables in the database.
+ * The listing could be filtered according to $filter.
+ *
+ * @param string|boolean $db string The database name or false to use the current DB
+ * @param string|boolean $filter String to filter by or false to list all tables
+ * @return array An array of table names
+ */
+function sbb_db_list_tables($db = false, $filter = false)
+{
+	global $db_name, $smcFunc;
+
+	$db = $db == false ? $db_name : $db;
+	$db = trim($db);
+	$filter = $filter == false ? '' : ' LIKE \'' . $filter . '\'';
+
+	$request = $smcFunc['db_query']('', '
+		SHOW TABLES
+		FROM `{raw:db}`
+		{raw:filter}',
+		array(
+			'db' => $db[0] == '`' ? strtr($db, array('`' => '')) : $db,
+			'filter' => $filter,
+		)
+	);
+	$tables = array();
+	while ($row = $smcFunc['db_fetch_row']($request))
+		$tables[] = $row[0];
+	$smcFunc['db_free_result']($request);
+
+	return $tables;
 }

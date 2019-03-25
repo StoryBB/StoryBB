@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  * Check if the user is who he/she says he is
  * Makes sure the user is who they claim to be by requiring a password to be typed in every hour.
@@ -178,7 +180,7 @@ function is_not_banned($forceCheck = false)
 			// IP was valid, maybe there's also a hostname...
 			if (empty($modSettings['disableHostnameLookup']) && $user_info[$ip_number] != 'unknown')
 			{
-				$hostname = host_from_ip($user_info[$ip_number]);
+				$hostname = IP::get_host($user_info[$ip_number]);
 				if (strlen($hostname) > 0)
 				{
 					$ban_query[] = '({string:hostname' . $ip_number . '} LIKE bi.hostname)';

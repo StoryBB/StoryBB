@@ -1408,6 +1408,130 @@ VAREND
             ),
 
             Array(
+                'id' => 284,
+                'template' => '{{> foo}}',
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS | LightnCandy::FLAG_RUNTIMEPARTIAL,
+                    'partials' => Array('foo' => "12'34")
+                ),
+                'expected' => "12'34"
+            ),
+
+            Array(
+                'id' => 284,
+                'template' => '{{> (lookup foo 2)}}',
+                'data' => array('foo' => array('a', 'b', 'c')),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARS | LightnCandy::FLAG_RUNTIMEPARTIAL,
+                    'partials' => Array(
+                        'a' => '1st',
+                        'b' => '2nd',
+                        'c' => "3'r'd"
+                    )
+                ),
+                'expected' => "3'r'd"
+            ),
+
+            Array(
+                'id' => 289,
+                'template' => "1\n2\n{{~foo~}}\n3",
+                'data' => array('foo' => 'OK'),
+                'expected' => "1\n2OK3"
+            ),
+
+            Array(
+                'id' => 289,
+                'template' => "1\n2\n{{#test}}\n3TEST\n{{/test}}\n4",
+                'data' => array('test' => 1),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_RUNTIMEPARTIAL
+                ),
+                'expected' => "1\n2\n3TEST\n4"
+            ),
+
+            Array(
+                'id' => 289,
+                'template' => "1\n2\n{{~#test}}\n3TEST\n{{/test}}\n4",
+                'data' => array('test' => 1),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_RUNTIMEPARTIAL
+                ),
+                'expected' => "1\n23TEST\n4"
+            ),
+
+            Array(
+                'id' => 289,
+                'template' => "1\n2\n{{#>test}}\n3TEST\n{{/test}}\n4",
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_RUNTIMEPARTIAL
+                ),
+                'expected' => "1\n2\n3TEST\n4"
+            ),
+
+            Array(
+                'id' => 289,
+                'template' => "1\n2\n\n{{#>test}}\n3TEST\n{{/test}}\n4",
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_RUNTIMEPARTIAL
+                ),
+                'expected' => "1\n2\n\n3TEST\n4"
+            ),
+
+            Array(
+                'id' => 289,
+                'template' => "1\n2\n\n{{#>test~}}\n\n3TEST\n{{/test}}\n4",
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_RUNTIMEPARTIAL
+                ),
+                'expected' => "1\n2\n\n3TEST\n4"
+            ),
+
+            Array(
+                'id' => 290,
+                'template' => '{{foo}} }} OK',
+                'data' => Array(
+                  'foo' => 'YES',
+                ),
+                'expected' => 'YES }} OK'
+            ),
+
+            Array(
+                'id' => 290,
+                'template' => '{{foo}}{{#with "}"}}{{.}}{{/with}}OK',
+                'data' => Array(
+                  'foo' => 'YES',
+                ),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+                ),
+                'expected' => 'YES}OK'
+            ),
+
+            Array(
+                'id' => 290,
+                'template' => '{ {{foo}}',
+                'data' => Array(
+                  'foo' => 'YES',
+                ),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+                ),
+                'expected' => '{ YES'
+            ),
+
+            Array(
+                'id' => 290,
+                'template' => '{{#with "{{"}}{{.}}{{/with}}{{foo}}{{#with "{{"}}{{.}}{{/with}}',
+                'data' => Array(
+                  'foo' => 'YES',
+                ),
+                'options' => Array(
+                    'flags' => LightnCandy::FLAG_HANDLEBARSJS,
+                ),
+                'expected' => '{{YES{{'
+            ),
+
+            Array(
                 'template' => '{{testNull null undefined 1}}',
                 'data' => 'test',
                 'options' => Array(

@@ -12,6 +12,8 @@
 
 namespace StoryBB\Helper;
 
+use StoryBB\Helper\TLD;
+
 /**
  * Parse content according to its bbc and smiley content.
  */
@@ -45,7 +47,10 @@ class Parser
 			return '';
 
 		// Clean up any cut/paste issues we may have
-		$message = self::sanitizeMSCutPaste($message);
+		if ($message !== false)
+		{
+			$message = self::sanitizeMSCutPaste($message);
+		}
 
 		// If the load average is too high, don't parse the BBC.
 		if (!empty($context['load_average']) && !empty($modSettings['bbc']) && $context['load_average'] >= $modSettings['bbc'])
@@ -74,7 +79,7 @@ class Parser
 
 		// Ensure $modSettings['tld_regex'] contains a valid regex for the autolinker
 		if (!empty($modSettings['autoLinkUrls']) && empty($modSettings['tld_regex']))
-			StoryBB\Helper\TLD::set_tld_regex(true);
+			TLD::set_tld_regex(true);
 
 		// Allow mods access before entering the main parse_bbc loop
 		call_integration_hook('integrate_pre_parsebbc', array(&$message, &$smileys, &$cache_id, &$parse_tags));

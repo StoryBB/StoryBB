@@ -174,8 +174,8 @@ final class Iconv
             }
         } while ($loop);
 
-        if (isset(self::$alias[ $inCharset])) {
-            $inCharset = self::$alias[ $inCharset];
+        if (isset(self::$alias[$inCharset])) {
+            $inCharset = self::$alias[$inCharset];
         }
         if (isset(self::$alias[$outCharset])) {
             $outCharset = self::$alias[$outCharset];
@@ -248,9 +248,9 @@ final class Iconv
             }
             $str = explode(':', $str, 2);
 
-            if (2 === count($str)) {
+            if (2 === \count($str)) {
                 if (isset($headers[$str[0]])) {
-                    if (!is_array($headers[$str[0]])) {
+                    if (!\is_array($headers[$str[0]])) {
                         $headers[$str[0]] = array($headers[$str[0]]);
                     }
                     $headers[$str[0]][] = ltrim($str[1]);
@@ -285,14 +285,14 @@ final class Iconv
         }
 
         $i = 1;
-        $len = count($str);
+        $len = \count($str);
 
         while ($i < $len) {
             $c = strtolower($str[$i]);
             if ((ICONV_MIME_DECODE_CONTINUE_ON_ERROR & $mode)
               && 'utf-8' !== $c
               && !isset(self::$alias[$c])
-              && !self::loadMap('from.', $c,  $d)) {
+              && !self::loadMap('from.', $c, $d)) {
                 $d = false;
             } elseif ('B' === strtoupper($str[$i + 1])) {
                 $d = base64_decode($str[$i + 2]);
@@ -355,7 +355,7 @@ final class Iconv
 
     public static function iconv_mime_encode($fieldName, $fieldValue, $pref = null)
     {
-        if (!is_array($pref)) {
+        if (!\is_array($pref)) {
             $pref = array();
         }
 
@@ -385,8 +385,8 @@ final class Iconv
 
         $lineBreak = (int) $pref['line-length'];
         $lineStart = "=?{$pref['output-charset']}?{$scheme}?";
-        $lineLength = strlen($fieldName) + 2 + strlen($lineStart) + 2;
-        $lineOffset = strlen($lineStart) + 3;
+        $lineLength = \strlen($fieldName) + 2 + \strlen($lineStart) + 2;
+        $lineOffset = \strlen($lineStart) + 3;
         $lineData = '';
 
         $fieldValue = array();
@@ -416,7 +416,7 @@ final class Iconv
             }
 
             $lineData .= $c;
-            $Q && $lineLength += strlen($c);
+            $Q && $lineLength += \strlen($c);
         }
 
         if ('' !== $lineData) {
@@ -433,7 +433,7 @@ final class Iconv
     {
         static $hasXml = null;
         if (null === $hasXml) {
-            $hasXml = extension_loaded('xml');
+            $hasXml = \extension_loaded('xml');
         }
 
         if ($hasXml) {
@@ -452,7 +452,7 @@ final class Iconv
             return false;
         }
 
-        return strlen(utf8_decode($s));
+        return \strlen(utf8_decode($s));
     }
 
     public static function strlen2($s, $encoding = null)
@@ -468,7 +468,7 @@ final class Iconv
 
         $i = 0;
         $j = 0;
-        $len = strlen($s);
+        $len = \strlen($s);
 
         while ($i < $len) {
             $u = $s[$i] & "\xF0";
@@ -600,7 +600,7 @@ final class Iconv
 
         $u = $str;
         $i = $j = 0;
-        $len = strlen($str);
+        $len = \strlen($str);
 
         while ($i < $len) {
             if ($str[$i] < "\x80") {
@@ -636,7 +636,7 @@ final class Iconv
 
     private static function mapToUtf8(&$result, array $map, $str, $ignore)
     {
-        $len = strlen($str);
+        $len = \strlen($str);
         for ($i = 0; $i < $len; ++$i) {
             if (isset($str[$i + 1], $map[$str[$i].$str[$i + 1]])) {
                 $result .= $map[$str[$i].$str[++$i]];
@@ -662,7 +662,7 @@ final class Iconv
         }
 
         $i = 0;
-        $len = strlen($str);
+        $len = \strlen($str);
 
         while ($i < $len) {
             if ($str[$i] < "\x80") {
@@ -695,10 +695,14 @@ final class Iconv
                     } else {
                         return false;
                     }
+                } elseif ($ignore) {
+                    continue;
+                } else {
+                    return false;
                 }
 
                 $str = $uchr.substr($str, $i);
-                $len = strlen($str);
+                $len = \strlen($str);
                 $i = 0;
             } elseif (!$ignore) {
                 return false;
@@ -710,7 +714,7 @@ final class Iconv
 
     private static function qpByteCallback(array $m)
     {
-        return '='.strtoupper(dechex(ord($m[0])));
+        return '='.strtoupper(dechex(\ord($m[0])));
     }
 
     private static function pregOffset($offset)

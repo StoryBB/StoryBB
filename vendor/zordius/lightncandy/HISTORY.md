@@ -1,8 +1,15 @@
 HISTORY
 =======
 
+1.2.3 current master, not released
+   * align with handlebars.js 4.0.11
+
 1.2.2 current master, not released
-   * align with handlebars.js 4.0.10
+   * align with handlebars.js 4.0.11
+   * 6ef2efd8d9 fix LightnCandy::compilePartial() error when there is `'` in the partial
+   * 658244f864 better error message when a=b found without FLAG_NAMEDARG option
+   * a752abd855 **BREAK CHANGE** remove FLAG_SPACECTL option because it always enabled and useless
+   * 9615b44920 fix partial block stand alone detection issue
 
 1.2.1 https://github.com/zordius/lightncandy/tree/v1.2.1
    * align with handlebars.js 4.0.10

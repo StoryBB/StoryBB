@@ -11,6 +11,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  * Ban center. The main entrance point for all ban center functions.
  * It is accesssed by ?action=admin;area=ban.
@@ -538,8 +540,8 @@ function BanEdit()
 					$context['ban']['from_user'] = true;
 
 					// Would be nice if we could also ban the hostname.
-					if ((preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $context['ban_suggestions']['main_ip']) == 1 || isValidIPv6($context['ban_suggestions']['main_ip'])) && empty($modSettings['disableHostnameLookup']))
-						$context['ban_suggestions']['hostname'] = host_from_ip($context['ban_suggestions']['main_ip']);
+					if ((IP::is_valid_ipv4($context['ban_suggestions']['main_ip']) || IP::is_valid_ipv6($context['ban_suggestions']['main_ip'])) && empty($modSettings['disableHostnameLookup']))
+						$context['ban_suggestions']['hostname'] = IP::get_host($context['ban_suggestions']['main_ip']);
 
 					$context['ban_suggestions']['other_ips'] = banLoadAdditionalIPs($context['ban_suggestions']['member']['id']);
 				}

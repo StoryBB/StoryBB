@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\IP;
+
 /**
  * The main entrance point for the Manage Members screen.
  * As everyone else, it calls a function based on the given sub-action.
@@ -935,7 +937,7 @@ function MembersAwaitingActivation()
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return host_from_ip(inet_dtop($rowData['member_ip']));
+						return IP::get_host(inet_dtop($rowData['member_ip']));
 					},
 					'class' => 'smalltext',
 				),

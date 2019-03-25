@@ -22,7 +22,6 @@ function db_extra_init()
 			'db_backup_table' => 'sbb_db_backup_table',
 			'db_optimize_table' => 'sbb_db_optimize_table',
 			'db_table_sql' => 'sbb_db_table_sql',
-			'db_list_tables' => 'sbb_db_list_tables',
 			'db_get_version' => 'sbb_db_get_version',
 			'db_get_engine' => 'sbb_db_get_engine',
 		);
@@ -205,39 +204,6 @@ function sbb_db_optimize_table($table)
 	$total_change = isset($row['Data_free']) && $data_before > $row['Data_free'] ? $data_before / 1024 : 0;
 
 	return $total_change;
-}
-
-/**
- * This function lists all tables in the database.
- * The listing could be filtered according to $filter.
- *
- * @param string|boolean $db string The database name or false to use the current DB
- * @param string|boolean $filter String to filter by or false to list all tables
- * @return array An array of table names
- */
-function sbb_db_list_tables($db = false, $filter = false)
-{
-	global $db_name, $smcFunc;
-
-	$db = $db == false ? $db_name : $db;
-	$db = trim($db);
-	$filter = $filter == false ? '' : ' LIKE \'' . $filter . '\'';
-
-	$request = $smcFunc['db_query']('', '
-		SHOW TABLES
-		FROM `{raw:db}`
-		{raw:filter}',
-		array(
-			'db' => $db[0] == '`' ? strtr($db, array('`' => '')) : $db,
-			'filter' => $filter,
-		)
-	);
-	$tables = array();
-	while ($row = $smcFunc['db_fetch_row']($request))
-		$tables[] = $row[0];
-	$smcFunc['db_free_result']($request);
-
-	return $tables;
 }
 
 /**
