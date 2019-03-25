@@ -288,6 +288,7 @@ function sbb_main()
 		'autocomplete' => array('Autocomplete.php', 'Autocomplete'),
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
 		'characters' => array('Profile-Chars.php', 'CharacterList'),
+		'connect' => array('Connect.php', 'Connect'),
 		'contact' => array('Contact.php', 'Contact'),
 		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 		'dlattach' => array('ShowAttachments.php', 'showAttachment'),
