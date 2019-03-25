@@ -93,7 +93,6 @@ function AdminMain()
 					'icon' => 'features',
 					'subsections' => array(
 						'basic' => array($txt['mods_cat_features']),
-						'bbc' => array($txt['manageposts_bbc_settings']),
 						'layout' => array($txt['mods_cat_layout']),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle']),
@@ -155,8 +154,9 @@ function AdminMain()
 					'icon' => 'posts',
 					'subsections' => array(
 						'posts' => array($txt['manageposts_settings']),
-						'censor' => array($txt['admin_censored_words']),
 						'topics' => array($txt['manageposts_topic_settings']),
+						'censor' => array($txt['admin_censored_words']),
+						'bbc' => array($txt['manageposts_bbc_settings']),
 						'drafts' => array($txt['manage_drafts']),
 					),
 				),
