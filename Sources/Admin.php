@@ -240,10 +240,10 @@ function AdminMain()
 					'icon' => 'regcenter',
 					'permission' => array('admin_forum', 'moderate_forum'),
 					'subsections' => array(
+						'settings' => array($txt['settings'], 'admin_forum'),
 						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
 						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
 						'policies' => array($txt['admin_policies'], 'admin_forum'),
-						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
 				'paidsubscribe' => array(
