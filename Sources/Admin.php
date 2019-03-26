@@ -93,7 +93,6 @@ function AdminMain()
 					'icon' => 'features',
 					'subsections' => array(
 						'basic' => array($txt['mods_cat_features']),
-						'layout' => array($txt['mods_cat_layout']),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle']),
 						'alerts' => array($txt['notifications']),
@@ -614,7 +613,6 @@ function AdminSearchInternal()
 	$settings_search = array(
 		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
 		array('ModifyBBCSettings', 'area=featuresettings;sa=bbc'),
-		array('ModifyLayoutSettings', 'area=featuresettings;sa=layout'),
 		array('ModifySignatureSettings', 'area=featuresettings;sa=sig'),
 		array('ModifyAntispamSettings', 'area=antispam'),
 		array('ModifyWarningSettings', 'area=warnings'),

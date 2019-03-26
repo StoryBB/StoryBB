@@ -49,7 +49,6 @@ function ModifyFeatureSettings()
 
 	$subActions = array(
 		'basic' => 'ModifyBasicSettings',
-		'layout' => 'ModifyLayoutSettings',
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
@@ -137,6 +136,12 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			// Alerts stuff
 			array('check', 'enable_ajax_alerts'),
+		'',
+			// Pagination stuff.
+			array('int', 'defaultMaxMembers'),
+		'',
+			// Stuff that just is everywhere - today, search, online, etc.
+			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
 	);
 
 	// Get all the time zones.
@@ -175,50 +180,6 @@ function ModifyBasicSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=basic';
 	$context['settings_title'] = $txt['mods_cat_features'];
-
-	prepareDBSettingContext($config_vars);
-}
-
-/**
- * Allows modifying the global layout settings in the forum
- * Accessed through ?action=admin;area=featuresettings;sa=layout;
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyLayoutSettings($return_config = false)
-{
-	global $txt, $scripturl, $context;
-
-	$config_vars = array(
-			// Pagination stuff.
-			array('int', 'defaultMaxMembers'),
-		'',
-			// Stuff that just is everywhere - today, search, online, etc.
-			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
-	);
-
-	call_integration_hook('integrate_layout_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		call_integration_hook('integrate_save_layout_settings');
-
-		saveDBSettings($config_vars);
-		session_flash('success', $txt['settings_saved']);
-		writeLog();
-
-		redirectexit('action=admin;area=featuresettings;sa=layout');
-	}
-
-	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=layout';
-	$context['settings_title'] = $txt['mods_cat_layout'];
 
 	prepareDBSettingContext($config_vars);
 }
