@@ -167,11 +167,17 @@ function Login2()
 	if (isset($_SESSION['failed_login']) && $_SESSION['failed_login'] >= $modSettings['failed_login_threshold'] * 3)
 		fatal_lang_error('login_threshold_fail', 'login');
 
-	// Set up the cookie length.  (if it's invalid, just fall through and use the default.)
-	if (isset($_POST['cookieneverexp']) || (!empty($_POST['cookielength']) && $_POST['cookielength'] == -1))
-		$modSettings['cookieTime'] = 3153600;
-	elseif (!empty($_POST['cookielength']) && ($_POST['cookielength'] >= 1 && $_POST['cookielength'] <= 525600))
-		$modSettings['cookieTime'] = (int) $_POST['cookielength'];
+	// Set up for cookie expiry.
+	if (isset($_POST['cookieneverexp']))
+	{
+		$context['cookie_time'] = 189216000; // 6 years from now. 
+		$context['never_expire'] = true;
+	}
+	else
+	{
+		$context['cookie_time'] = 0; // Log out at end of session.
+		$context['never_expire'] = false;
+	}
 
 	loadLanguage('Login');
 	$context['sub_template'] = 'login_main';
@@ -179,7 +185,6 @@ function Login2()
 	// Set up the default/fallback stuff.
 	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user'])) : '';
 	$context['default_password'] = '';
-	$context['never_expire'] = $modSettings['cookieTime'] == 525600 || $modSettings['cookieTime'] == 3153600;
 	$context['login_errors'] = array($txt['error_occured']);
 	$context['page_title'] = $txt['login'];
 
@@ -219,7 +224,7 @@ function Login2()
 
 
 	// Are we using any sort of integration to validate the login?
-	if (in_array('retry', call_integration_hook('integrate_validate_login', array($_POST['user'], isset($_POST['passwrd']) ? $_POST['passwrd'] : null, $modSettings['cookieTime'])), true))
+	if (in_array('retry', call_integration_hook('integrate_validate_login', array($_POST['user'], isset($_POST['passwrd']) ? $_POST['passwrd'] : null, $context['cookie_time'])), true))
 	{
 		$context['login_errors'] = array($txt['incorrect_password']);
 		return;
@@ -449,13 +454,13 @@ function DoLogin()
 	require_once($sourcedir . '/Subs-Auth.php');
 
 	// Call login integration functions.
-	call_integration_hook('integrate_login', array($user_settings['member_name'], null, $modSettings['cookieTime']));
+	call_integration_hook('integrate_login', array($user_settings['member_name'], null, $context['cookie_time']));
 
 	// Get ready to set the cookie...
 	$user_info['id'] = $user_settings['id_member'];
 
 	// Bam!  Cookie set.  A session too, just in case.
-	setLoginCookie(60 * $modSettings['cookieTime'], $user_settings['id_member'], hash_salt($user_settings['passwd'], $user_settings['password_salt']));
+	setLoginCookie($context['cookie_time'], $user_settings['id_member'], hash_salt($user_settings['passwd'], $user_settings['password_salt']));
 
 	// Reset the login threshold.
 	if (isset($_SESSION['failed_login']))

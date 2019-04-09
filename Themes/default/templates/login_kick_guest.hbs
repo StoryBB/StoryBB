@@ -4,18 +4,17 @@
 				<h3 class="catbg">{{txt.warning}}</h3>
 			</div>
 
-<p class="information centertext">
-				{{#if context.kick_message}}{{{context.kick_message}}}{{else}}{{{txt.only_members_can_access}}}{{/if}}<br>
-
-
-	{{#if context.can_register}}
-		{{textTemplate txt.login_below_or_register (concat scripturl '?action=signup') context.forum_name_html_safe}}
-	{{else}}
-		{{txt.login_below}}
-    {{/if}}
+			<p class="information centertext">
+				{{#if context.kick_message}}{{{context.kick_message}}}{{else}}{{{txt.only_members_can_access}}}{{/if}}
+				{{#if context.can_register}}
+					{{textTemplate txt.login_below_or_register (concat scripturl '?action=signup') context.forum_name_html_safe}}
+				{{else}}
+					{{txt.login_below}}
+			    {{/if}}
+			</p>
 			<div class="cat_bar">
 				<h3 class="catbg">
-					<img src="', $settings['images_url'], '/icons/login_hd.png" alt="" class="icon">{{txt.login}}
+					<img src="{{settings.images_url}}/icons/login_hd.png" alt="" class="icon">{{txt.login}}
 				</h3>
 			</div>
 			<div class="roundframe noup">
@@ -24,8 +23,6 @@
 					<dd><input type="text" name="user" size="20"></dd>
 					<dt>{{txt.password}}:</dt>
 					<dd><input type="password" name="passwrd" size="20"></dd>
-					<dt>{{txt.mins_logged_in}}:</dt>
-					<dd><input type="text" name="cookielength" size="4" maxlength="4" value="{{modSettings.cookieTime}}"></dd>
 					<dt>{{txt.always_logged_in}}:</dt>
 					<dd><input type="checkbox" name="cookieneverexp" onclick="this.form.cookielength.disabled = this.checked;"></dd>
 				</dl>
@@ -34,9 +31,8 @@
 			</div>
 			{{session_form}}
 			{{token_form 'login'}}
-			<input type="hidden" name="hash_passwrd" value="">
 		</div>
 	</form>
-		<script>
-			document.forms.frmLogin.user.focus();
-		</script>
+	<script>
+		document.forms.frmLogin.user.focus();
+	</script>

@@ -40,7 +40,6 @@ $txt['pruneScheduledTaskLog'] = 'Remove scheduled task log entries older than';
 $txt['retention_policy_standard'] = 'Remove privacy-related items in logs after';
 $txt['retention_policy_sensitive'] = 'Remove more sensitive items in logs after';
 $txt['zero_means_zero'] = 'Setting this to 0 means purging these items after only a matter of hours.';
-$txt['cookieTime'] = 'Default login cookies length';
 $txt['localCookies'] = 'Enable local storage of cookies';
 $txt['globalCookies'] = 'Use subdomain independent cookies';
 $txt['globalCookiesDomain'] = 'Main domain used for subdomain independent cookies';
