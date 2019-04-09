@@ -4,18 +4,17 @@
 				<h3 class="catbg">{{txt.warning}}</h3>
 			</div>
 
-<p class="information centertext">
-				{{#if context.kick_message}}{{{context.kick_message}}}{{else}}{{{txt.only_members_can_access}}}{{/if}}<br>
-
-
-	{{#if context.can_register}}
-		{{textTemplate txt.login_below_or_register (concat scripturl '?action=signup') context.forum_name_html_safe}}
-	{{else}}
-		{{txt.login_below}}
-    {{/if}}
+			<p class="information centertext">
+				{{#if context.kick_message}}{{{context.kick_message}}}{{else}}{{{txt.only_members_can_access}}}{{/if}}
+				{{#if context.can_register}}
+					{{textTemplate txt.login_below_or_register (concat scripturl '?action=signup') context.forum_name_html_safe}}
+				{{else}}
+					{{txt.login_below}}
+			    {{/if}}
+			</p>
 			<div class="cat_bar">
 				<h3 class="catbg">
-					<img src="', $settings['images_url'], '/icons/login_hd.png" alt="" class="icon">{{txt.login}}
+					<img src="{{settings.images_url}}/icons/login_hd.png" alt="" class="icon">{{txt.login}}
 				</h3>
 			</div>
 			<div class="roundframe noup">
@@ -34,6 +33,6 @@
 			{{token_form 'login'}}
 		</div>
 	</form>
-		<script>
-			document.forms.frmLogin.user.focus();
-		</script>
+	<script>
+		document.forms.frmLogin.user.focus();
+	</script>

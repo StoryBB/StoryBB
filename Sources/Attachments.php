@@ -50,6 +50,7 @@ class Attachments
 		$this->_canPostAttachment = $context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment', $this->_board) || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments', $this->_board)));
 	}
 
+	// @todo is this even called?
 	public function call()
 	{
 		global $smcFunc, $sourcedir;
@@ -57,7 +58,7 @@ class Attachments
 		require_once($sourcedir . '/Subs-Attachments.php');
 
 		// Guest aren't welcome, sorry.
-		is_not_guest();
+		is_not_guest('', false);
 
 		// Need this. For reasons...
 		loadLanguage('Post');
