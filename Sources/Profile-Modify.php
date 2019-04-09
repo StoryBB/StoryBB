@@ -3520,7 +3520,7 @@ function profileReloadUser()
 	global $modSettings, $context, $cur_profile;
 
 	if (isset($_POST['passwrd2']) && $_POST['passwrd2'] != '')
-		setLoginCookie(60 * $modSettings['cookieTime'], $context['id_member'], hash_salt($_POST['passwrd1'], $cur_profile['password_salt']));
+		setLoginCookie(0, $context['id_member'], hash_salt($_POST['passwrd1'], $cur_profile['password_salt']));
 
 	loadUserSettings();
 	writeLog();
