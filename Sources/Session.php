@@ -25,7 +25,7 @@ function loadSession()
 
 	// Attempt to change a few PHP settings.
 	@ini_set('session.use_cookies', true);
-	@ini_set('session.use_only_cookies', false);
+	@ini_set('session.use_only_cookies', true);
 	@ini_set('url_rewriter.tags', '');
 	@ini_set('session.use_trans_sid', false);
 	@ini_set('arg_separator.output', '&amp;');

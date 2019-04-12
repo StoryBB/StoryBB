@@ -93,9 +93,6 @@ elseif (isset($_REQUEST['ssi_layers'], $ssi_layers) && ($_REQUEST['ssi_layers'] 
 if (isset($_REQUEST['context']))
 	die('No direct access...');
 
-// Primarily, this is to fix the URLs...
-ob_start('ob_sessrewrite');
-
 // Start the session... known to scramble SSI includes in cases...
 if (!headers_sent())
 	loadSession();
