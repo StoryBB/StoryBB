@@ -1003,13 +1003,6 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	if ($add)
 		$setLocation = $scripturl . ($setLocation != '' ? '?' . $setLocation : '');
 
-	// Put the session ID in.
-	if (defined('SID') && SID != '')
-		$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', $scripturl . '?' . SID . ';', $setLocation);
-	// Keep that debug in their for template debugging!
-	elseif (isset($_GET['debug']))
-		$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\\??/', $scripturl . '?debug;', $setLocation);
-
 	// Maybe integrations want to change where we are heading?
 	call_integration_hook('integrate_redirect', array(&$setLocation, &$refresh, &$permanent));
 
@@ -1060,29 +1053,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		// Was the page title set last minute? Also update the HTML safe one.
 		if (!empty($context['page_title']) && empty($context['page_title_html_safe']))
 			$context['page_title_html_safe'] = $smcFunc['htmlspecialchars'](un_htmlspecialchars($context['page_title'])) . (!empty($context['current_page']) ? ' - ' . $txt['page'] . ' ' . ($context['current_page'] + 1) : '');
-
-		// Start up the session URL fixer.
-		ob_start('ob_sessrewrite');
-
-		if (!empty($settings['output_buffers']) && is_string($settings['output_buffers']))
-			$buffers = explode(',', $settings['output_buffers']);
-		elseif (!empty($settings['output_buffers']))
-			$buffers = $settings['output_buffers'];
-		else
-			$buffers = array();
-
-		if (isset($modSettings['integrate_buffer']))
-			$buffers = array_merge(explode(',', $modSettings['integrate_buffer']), $buffers);
-
-		if (!empty($buffers))
-			foreach ($buffers as $function)
-			{
-				$call = call_helper($function, true);
-
-				// Is it valid?
-				if (!empty($call))
-					ob_start($call);
-			}
 
 		// Display the screen in the logical order.
 		template_header();
@@ -1466,12 +1436,6 @@ function template_header()
 	{
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-
-		// Are we debugging the template/html content?
-		if (!isset($_REQUEST['xml']) && isset($_GET['debug']) && !isBrowser('ie'))
-			header('Content-Type: application/xhtml+xml');
-		elseif (!isset($_REQUEST['xml']))
-			header('Content-Type: text/html; charset=UTF-8');
 	}
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
