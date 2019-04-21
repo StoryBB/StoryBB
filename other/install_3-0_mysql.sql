@@ -510,12 +510,12 @@ VALUES
 INSERT INTO {$db_prefix}scheduled_tasks
   (id_task, next_time, time_offset, time_regularity, time_unit, disabled, task, class)
 VALUES
-  (1, 0, 0, 2, 'h', 0, 'approval_notification', ''),
+  (1, 0, 0, 2, 'h', 0, 'approval_notification', 'StoryBB\\Task\\Schedulable\\ApprovalNotifications'),
   (3, 0, 60, 1, 'd', 0, 'daily_maintenance', 'StoryBB\\Task\\Schedulable\\DailyMaintenance'),
-  (5, 0, 0, 1, 'd', 0, 'daily_digest', ''),
-  (6, 0, 0, 1, 'w', 0, 'weekly_digest', ''),
-  (7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchStoryBBfiles', ''),
-  (8, 0, 0, 1, 'd', 1, 'birthdayemails', ''),
+  (5, 0, 0, 1, 'd', 0, 'daily_digest', 'StoryBB\\Task\\Schedulable\\DailyDigest'),
+  (6, 0, 0, 1, 'w', 0, 'weekly_digest', 'StoryBB\\Task\\Schedulable\\WeeklyDigest'),
+  (7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchStoryBBfiles', 'StoryBB\\Task\\Schedulable\\FetchStoryBBFiles'),
+  (8, 0, 0, 1, 'd', 1, 'birthdayemails', 'StoryBB\\Task\\Schuledable\\BirthdayNotify'),
   (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', 'StoryBB\\Task\\Schedulable\\WeeklyMaintenance'),
   (10, 0, 120, 1, 'd', 1, 'paid_subscriptions', 'StoryBB\\Task\\Schedulable\\UpdatePaidSubs'),
   (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', 'StoryBB\\Task\\Schedulable\\RemoveTempAttachments'),
