@@ -1915,7 +1915,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$recaptcha = new StoryBB\Helper\Verification\Recaptcha($modSettings['recaptcha_secret_key']);
 			if (!$recaptcha->verify())
 			{
-				$verification_errors[] = 'wrong_verification_code';
+				$verification_errors[] = 'recaptcha_not_complete';
 			}
 		}
 

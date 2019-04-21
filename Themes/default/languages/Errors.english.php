@@ -233,6 +233,7 @@ $txt['error_poll_few'] = 'You must have at least two choices!';
 $txt['error_poll_many'] = 'You must have no more than 256 choices.';
 $txt['error_need_qr_verification'] = 'Please complete the verification section below to complete your post.';
 $txt['error_wrong_verification_code'] = 'The letters you typed don\'t match the letters that were shown in the picture.';
+$txt['error_recaptcha_not_complete'] = 'Please complete the "I am not a robot" option.';
 $txt['error_wrong_verification_answer'] = 'You did not answer the verification questions correctly.';
 $txt['error_need_verification_code'] = 'Please enter the verification code below to continue to the results.';
 $txt['error_bad_file'] = 'Sorry but the file specified could not be opened: %1$s';
