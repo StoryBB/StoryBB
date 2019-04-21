@@ -1105,15 +1105,3 @@ function loadEssentialThemeData()
 	// Tell fatal_lang_error() to not reload the theme.
 	$context['theme_loaded'] = true;
 }
-
-/**
- * Happy birthday!!
- */
-function scheduled_birthdayemails()
-{
-	global $smcFunc;
-
-	StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\BirthdayNotify');
-
-	return true;
-}
