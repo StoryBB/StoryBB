@@ -124,7 +124,8 @@ class File extends API
 
 			// Write out the cache file, check that the cache write was successful; all the data must be written
 			// If it fails due to low diskspace, or other, remove the cache file
-			$fileSize = file_put_contents($cachedir . '/data_' . $key . '.php', $cache_data, LOCK_EX);
+			// Suppress the warning if we get one - we can legitimately get one if there's a data race.
+			$fileSize = @file_put_contents($cachedir . '/data_' . $key . '.php', $cache_data, LOCK_EX);
 			if ($fileSize !== strlen($cache_data))
 			{
 				@unlink($cachedir . '/data_' . $key . '.php');
