@@ -245,16 +245,18 @@
 						<span class="smalltext">{{{txt.mboards_moderators_desc}}}</span><br>
 					</dt>
 					<dd>
-						<input type="text" name="moderators" id="moderators" value="{{{context.board.moderator_list}}}" size="30">
-						<div id="moderator_container"></div>
+						<select name="moderators[]" id="moderators" multiple>
+							<option></option>
+						</select>
 					</dd>
 					<dt>
 						<strong>{{{txt.mboards_moderator_groups}}}:</strong><br>
 						<span class="smalltext">{{{txt.mboards_moderator_groups_desc}}}</span><br>
 					</dt>
 					<dd>
-						<input type="text" name="moderator_groups" id="moderator_groups" value="{{{context.board.moderator_groups_list}}}" size="30">
-						<div id="moderator_group_container"></div>
+						<select name="moderator_groups[]" id="moderator_groups" multiple>
+							<option></option>
+						</select>
 					</dd>
 				</dl>
 				<script>
@@ -393,50 +395,6 @@
 	</div>
 
 <script>
-	var oModeratorSuggest = new smc_AutoSuggest({
-		sSelf: 'oModeratorSuggest',
-		sSessionId: sbb_session_id,
-		sSessionVar: sbb_session_var,
-		sSuggestId: 'moderators',
-		sControlId: 'moderators',
-		sSearchType: 'member',
-		bItemList: true,
-		sPostName: 'moderator_list',
-		sURLMask: 'action=profile;u=%item_id%',
-		sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-		sItemListContainerId: 'moderator_container',
-		aListItems: [
-			{{#each context.board.moderators}}
-			{
-				sItemId: {{{json @key}}},
-				sItemName: {{{json .}}}
-			}{{#if (neq @key ../context.board.last_moderator_id)}},{{/if}}
-			{{/each}}
-		]
-	});
-
-	var oModeratorGroupSuggest = new smc_AutoSuggest({
-		sSelf: 'oModeratorGroupSuggest',
-		sSessionId: sbb_session_id,
-		sSessionVar: sbb_session_var,
-		sSuggestId: 'moderator_groups',
-		sControlId: 'moderator_groups',
-		sSearchType: 'membergroups',
-		bItemList: true,
-		sPostName: 'moderator_group_list',
-		sURLMask: 'action=groups;sa=members;group=%item_id%',
-		sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-		sItemListContainerId: 'moderator_group_container',
-		aListItems: [
-			{{#each context.board.moderator_groups}}
-				{
-					sItemId: {{{json @key}}},
-					sItemName: {{{json .}}}
-				}{{#if (neq @key ../context.board.last_moderator_group_id)}},{{/if}}
-			{{/each}}
-			]
-		});
-
 	function refreshOptions()
 	{
 		var redirect = document.getElementById("redirect_enable");
