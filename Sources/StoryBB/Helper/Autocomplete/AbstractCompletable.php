@@ -53,4 +53,9 @@ abstract class AbstractCompletable implements Completable
 	{
 		return '';
 	}
+
+	public function get_searchtype(): string
+	{
+		return strtolower(substr(static::class, strlen(__NAMESPACE__) + 1));
+	}
 }

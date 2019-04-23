@@ -56,7 +56,8 @@ class Autocomplete
 			'member' => 'StoryBB\\Helper\\Autocomplete\\Member',
 			'character' => 'StoryBB\\Helper\\Autocomplete\\Character',
 			'rawcharacter' => 'StoryBB\\Helper\\Autocomplete\\RawCharacter',
-			'group' => 'StoryBB\Helper\\Autocomplete\\Group',
+			'group' => 'StoryBB\\Helper\\Autocomplete\\Group',
+			'nonpostgroup' => 'StoryBB\\Helper\\Autocomplete\\NonPostGroup',
 		);
 
 		call_integration_hook('integrate_autocomplete', array(&$searchTypes));

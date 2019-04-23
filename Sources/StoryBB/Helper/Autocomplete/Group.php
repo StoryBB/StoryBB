@@ -17,6 +17,7 @@ class Group extends AbstractCompletable implements Completable
 	protected $post_count_groups = true;
 	protected $account_groups = true;
 	protected $character_groups = true;
+	protected $hidden = false;
 
 	protected function get_filters(): string
 	{
@@ -32,6 +33,10 @@ class Group extends AbstractCompletable implements Completable
 		if (!$this->character_groups)
 		{
 			$filters[] = 'is_character = 0';
+		}
+		if (!$hidden)
+		{
+			$filters[] = 'hidden != 2';
 		}
 		return !empty($filters) ? ' AND ' . implode(' AND ', $filters) : '';
 	}
@@ -151,7 +156,7 @@ $("' . $target . '").select2({
 			var query = {
 				action: "autocomplete",
 				term: params.term,
-				type: "group"
+				type: "' . $this->get_searchtype() . '"
 			}
 			query[sbb_session_var] = sbb_session_id;
 			return query;
