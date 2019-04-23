@@ -26,7 +26,7 @@ class Autocomplete
 	 * @param string $target CSS/jQuery selector to target, e.g. '#to'
 	 * @param int $maximum Maximum number of items allowed in the autocomplete
 	 */
-	public static function init(string $type, string $target, int $maximum = 1, $default = null)
+	public static function init(string $type, string $target, int $maximum = 1, array $default = null)
 	{
 		$searchTypes = self::get_registered_types();
 		if (!isset($searchTypes[$type]))
@@ -42,7 +42,7 @@ class Autocomplete
 
 		if (!empty($default))
 		{
-			$autocomplete->set_value($default);
+			$autocomplete->set_values($default);
 		}
 		addInlineJavaScript($autocomplete->get_js($target, $maximum), true);
 	}
@@ -55,7 +55,8 @@ class Autocomplete
 		$searchTypes = array(
 			'member' => 'StoryBB\\Helper\\Autocomplete\\Member',
 			'character' => 'StoryBB\\Helper\\Autocomplete\\Character',
-			'rawcharacter' => 'StoryBB\Helper\\Autocomplete\\RawCharacter',
+			'rawcharacter' => 'StoryBB\\Helper\\Autocomplete\\RawCharacter',
+			'group' => 'StoryBB\Helper\\Autocomplete\\Group',
 		);
 
 		call_integration_hook('integrate_autocomplete', array(&$searchTypes));

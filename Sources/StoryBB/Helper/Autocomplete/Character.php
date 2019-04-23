@@ -91,24 +91,31 @@ class Character extends AbstractCompletable implements Completable
 		return $result;
 	}
 
-	public function set_value($default_value)
+	public function set_values(array $default_value)
 	{
 		global $smcFunc;
 
-		$default_value = (int) $default_value;
+		$default_value = array_map('intval', $default_value);
+		$default_value = array_filter($default_value, function($x) {
+			return !empty($x);
+		});
 		if (empty($default_value))
 			return;
 
+		$this->default = [];
 		$request = $smcFunc['db_query']('', '
 			SELECT id_character, character_name
 			FROM {db_prefix}characters
-				WHERE is_main = 0
-			WHERE id_character = {int:default_value}',
+			WHERE id_character IN ({array_int:default_value})
+				AND is_main = 0',
 			[
 				'default_value' => $default_value,
 			]
 		);
-		$this->default = $smcFunc['db_fetch_assoc']($request);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$this->default[$row['id_character']] = $row;
+		}
 		$smcFunc['db_free_result']($request);
 	}
 
@@ -121,7 +128,8 @@ $("' . $target . '").select2({
 	dropdownAutoWidth: true,
 	width: "auto",
 	placeholder: ' . json_encode($txt['autocomplete_search_character']) . ',
-	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',
+	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',' . ($maximum > 1 ? '
+	maximumSelectionLength: ' . $maximum . ',' : '') . '
 	ajax: {
 		url: "' . $scripturl . '",
 		data: function (params) {
@@ -148,10 +156,13 @@ $("' . $target . '").select2({
 
 		if (!empty($this->default))
 		{
+			foreach ($this->default as $default)
+			{
+				$js .= '
+$("' . $target . '").append(new Option(' . json_encode($default['character_name']) . ', ' . $default['id_character'] . ', false, false));';
+			}
 			$js .= '
-var newOption = new Option(' . json_encode($this->default['character_name']) . ', ' . $this->default['id_character'] . ', false, false);
-$("' . $target . '").append(newOption).val(' . $this->default['id_character'] . ').trigger("change");
-';
+$("' . $target . '").val(' . json_encode(array_keys($this->default)) . ').trigger("change");';
 		}
 
 		return $js;

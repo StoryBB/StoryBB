@@ -47,7 +47,7 @@ abstract class AbstractCompletable implements Completable
 
 	abstract public function get_results(int $start = null, int $limit = null): array;
 
-	abstract public function set_value($default_value);
+	abstract public function set_values(array $default_value);
 
 	public function get_js(string $target, int $maximum = 1): string
 	{
