@@ -514,7 +514,7 @@ function removeCharactersFromGroups($characters, $groups)
 		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$log_inserts[] = ['group' => $group_names[$row['id_group']], 'member' => $row['id_member'], 'character' => $row['character_name']];
+		$log_inserts[] = ['group' => $group_names[$row['main_char_group']], 'member' => $row['id_member'], 'character' => $row['character_name']];
 	$smcFunc['db_free_result']($request);
 
 	$smcFunc['db_query']('', '

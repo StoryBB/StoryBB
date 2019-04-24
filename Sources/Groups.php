@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
+
 /**
  * Entry point function, permission checks, admin bars, etc.
  * It allows moderators and users to access the group showing functions.
@@ -285,7 +287,7 @@ function MembergroupMembers()
 		}
 	}
 	// Must be adding new members to the group...
-	elseif (isset($_REQUEST['add']) && (!empty($_REQUEST['toAdd']) || !empty($_REQUEST['member_add'])) && $context['group']['assignable'])
+	elseif (isset($_REQUEST['add']) && (!empty($_REQUEST['toAdd']) && is_array($_REQUEST['toAdd'])) && $context['group']['assignable'])
 	{
 		checkSession();
 		validateToken('mod-mgm');
@@ -293,84 +295,26 @@ function MembergroupMembers()
 		$member_query = array();
 		$member_parameters = array();
 
-		// Get all the members to be added... taking into account names can be quoted ;)
-		$_REQUEST['toAdd'] = strtr($smcFunc['htmlspecialchars']($_REQUEST['toAdd'], ENT_QUOTES), array('&quot;' => '"'));
-		preg_match_all('~"([^"]+)"~', $_REQUEST['toAdd'], $matches);
-		$member_names = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_REQUEST['toAdd']))));
-
-		foreach ($member_names as $index => $member_name)
+		$ids = [];
+		foreach ($_REQUEST['toAdd'] as $id)
 		{
-			$member_names[$index] = trim($smcFunc['strtolower']($member_names[$index]));
-
-			if (strlen($member_names[$index]) == 0)
-				unset($member_names[$index]);
+			$id = (int) $id;
+			if (!empty($id))
+			{
+				$ids[] = $id;
+			}
 		}
 
-		// If this is a character group we need to intercept it.
+		// Now let's do the assigning.
+		require_once($sourcedir . '/Subs-Membergroups.php');
+		// If this is a character group we need to do that slight
 		if ($context['group']['is_character'])
 		{
-			$character_ids = array();
-			if (!empty($_REQUEST['member_add']))
-			{
-				foreach ($_REQUEST['member_add'] as $id)
-				{
-					$val = explode(';char=', $id);
-					if (isset($val[1]) && $val[1] > 1)
-						$character_ids[] = (int) $val[1];
-				}
-				$_REQUEST['member_add'] = array();
-			}
-			if (!empty($character_ids)) {
-				require_once($sourcedir . '/Subs-Membergroups.php');
-				addCharactersToGroup($character_ids, $_REQUEST['group']);
-			}
+			addCharactersToGroup($ids, $_REQUEST['group']);
 		}
-
-		// Any passed by ID?
-		$member_ids = array();
-		if (!empty($_REQUEST['member_add']))
-			foreach ($_REQUEST['member_add'] as $id)
-				if ($id > 0)
-					$member_ids[] = (int) $id;
-
-		// Construct the query pelements.
-		if (!empty($member_ids))
+		else
 		{
-			$member_query[] = 'id_member IN ({array_int:member_ids})';
-			$member_parameters['member_ids'] = $member_ids;
-		}
-		if (!empty($member_names))
-		{
-			$member_query[] = 'LOWER(member_name) IN ({array_string:member_names})';
-			$member_query[] = 'LOWER(real_name) IN ({array_string:member_names})';
-			$member_parameters['member_names'] = $member_names;
-		}
-
-		$members = array();
-		if (!empty($member_query))
-		{
-			$request = $smcFunc['db_query']('', '
-				SELECT id_member
-				FROM {db_prefix}members
-				WHERE (' . implode(' OR ', $member_query) . ')
-					AND id_group != {int:id_group}
-					AND FIND_IN_SET({int:id_group}, additional_groups) = 0',
-				array_merge($member_parameters, array(
-					'id_group' => $_REQUEST['group'],
-				))
-			);
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$members[] = $row['id_member'];
-			$smcFunc['db_free_result']($request);
-		}
-
-		// @todo Add $_POST['additional'] to templates!
-
-		// Do the updates...
-		if (!empty($members))
-		{
-			require_once($sourcedir . '/Subs-Membergroups.php');
-			addMembersToGroup($members, $_REQUEST['group'], isset($_POST['additional']) || $context['group']['hidden'] ? 'only_additional' : 'auto', true);
+			addMembersToGroup($ids, $_REQUEST['group'], isset($_POST['additional']) || $context['group']['hidden'] ? 'only_additional' : 'auto', true);
 		}
 	}
 
@@ -398,7 +342,7 @@ function MembergroupMembers()
 
 	$context['sort_direction'] = isset($_REQUEST['desc']) ? 'down' : 'up';
 
-// Depending on whether this group is a character group or not...
+	// Depending on whether this group is a character group or not...
 	// we might have different queries...
 	if ($context['group']['is_character'])
 	{
@@ -498,7 +442,16 @@ function MembergroupMembers()
 	createToken('mod-mgm');
 
 	if ($context['group']['assignable'])
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
+	{
+		if ($context['group']['is_character'])
+		{
+			Autocomplete::init('character', '#toAdd', 0);
+		}
+		else
+		{
+			Autocomplete::init('member', '#toAdd', 0);
+		}
+	}
 }
 
 /**
