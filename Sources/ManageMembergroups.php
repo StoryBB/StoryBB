@@ -1306,8 +1306,6 @@ function EditMembergroup()
 	if (!empty($context['possible_icons']))
 		loadJavaScriptFile('icondropdown.js', array('validate' => true), 'sbb_icondropdown');
 
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
-
 	// Finally, get all the groups this could be inherited off.
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group, group_name
