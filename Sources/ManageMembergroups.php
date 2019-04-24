@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
+
 /**
  * Main dispatcher, the entrance point for all 'Manage Membergroup' actions.
  * It forwards to a function based on the given subaction, default being subaction 'index', or, without manage_membergroup
@@ -1086,7 +1088,6 @@ function EditMembergroup()
 		}
 
 		// Finally, moderators!
-		$moderator_string = isset($_POST['group_moderators']) ? trim($_POST['group_moderators']) : '';
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}group_moderators
 			WHERE id_group = {int:current_group}',
@@ -1094,65 +1095,35 @@ function EditMembergroup()
 				'current_group' => $_REQUEST['group'],
 			)
 		);
-		if ((!empty($moderator_string) || !empty($_POST['moderator_list'])) && $_POST['min_posts'] == -1 && $_REQUEST['group'] != 3)
+		if (!empty($_POST['group_moderators']) && is_array($_POST['group_moderators']) && $_POST['min_posts'] == -1 && $_REQUEST['group'] != 3)
 		{
 			$group_moderators = array();
 
-			// Get all the usernames from the string
-			if (!empty($moderator_string))
+			$moderators = array();
+			foreach ($_POST['group_moderators'] as $moderator)
 			{
-				$moderator_string = strtr(preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $smcFunc['htmlspecialchars']($moderator_string, ENT_QUOTES)), array('&quot;' => '"'));
-				preg_match_all('~"([^"]+)"~', $moderator_string, $matches);
-				$moderators = array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $moderator_string)));
-				for ($k = 0, $n = count($moderators); $k < $n; $k++)
+				$moderator = (int) $moderator;
+				if (!empty($moderator))
 				{
-					$moderators[$k] = trim($moderators[$k]);
-
-					if (strlen($moderators[$k]) == 0)
-						unset($moderators[$k]);
-				}
-
-				// Find all the id_member's for the member_name's in the list.
-				if (!empty($moderators))
-				{
-					$request = $smcFunc['db_query']('', '
-						SELECT id_member
-						FROM {db_prefix}members
-						WHERE member_name IN ({array_string:moderators}) OR real_name IN ({array_string:moderators})
-						LIMIT {int:count}',
-						array(
-							'moderators' => $moderators,
-							'count' => count($moderators),
-						)
-					);
-					while ($row = $smcFunc['db_fetch_assoc']($request))
-						$group_moderators[] = $row['id_member'];
-					$smcFunc['db_free_result']($request);
+					$moderators[] = $moderator;
 				}
 			}
 
-			if (!empty($_POST['moderator_list']))
+			if (!empty($moderators))
 			{
-				$moderators = array();
-				foreach ($_POST['moderator_list'] as $moderator)
-					$moderators[] = (int) $moderator;
-
-				if (!empty($moderators))
-				{
-					$request = $smcFunc['db_query']('', '
-						SELECT id_member
-						FROM {db_prefix}members
-						WHERE id_member IN ({array_int:moderators})
-						LIMIT {int:num_moderators}',
-						array(
-							'moderators' => $moderators,
-							'num_moderators' => count($moderators),
-						)
-					);
-					while ($row = $smcFunc['db_fetch_assoc']($request))
-						$group_moderators[] = $row['id_member'];
-					$smcFunc['db_free_result']($request);
-				}
+				$request = $smcFunc['db_query']('', '
+					SELECT id_member
+					FROM {db_prefix}members
+					WHERE id_member IN ({array_int:moderators})
+					LIMIT {int:num_moderators}',
+					array(
+						'moderators' => $moderators,
+						'num_moderators' => count($moderators),
+					)
+				);
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+					$group_moderators[] = $row['id_member'];
+				$smcFunc['db_free_result']($request);
 			}
 
 			// Make sure we don't have any duplicates first...
@@ -1242,10 +1213,7 @@ function EditMembergroup()
 		$context['group']['moderators'][$row['id_member']] = $row['real_name'];
 	$smcFunc['db_free_result']($request);
 
-	$context['group']['moderator_list'] = empty($context['group']['moderators']) ? '' : '&quot;' . implode('&quot;, &quot;', $context['group']['moderators']) . '&quot;';
-
-	if (!empty($context['group']['moderators']))
-		list ($context['group']['last_moderator_id']) = array_slice(array_keys($context['group']['moderators']), -1);
+	Autocomplete::init('member', '#group_moderators', 0, array_keys($context['group']['moderators']));
 
 	// Get a list of boards this membergroup is allowed to see.
 	$context['boards'] = array();
