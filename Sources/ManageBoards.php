@@ -689,7 +689,13 @@ function EditBoard2()
 		{
 			$moderators = array();
 			foreach ($_POST['moderators'] as $moderator)
-				$moderators[(int) $moderator] = (int) $moderator;
+			{
+				$moderator = (int) $moderator;
+				if (!empty($moderator))
+				{
+					$moderators[$moderator] = $moderator;
+				}
+			}
 			$boardOptions['moderators'] = $moderators;
 		}
 
@@ -697,7 +703,13 @@ function EditBoard2()
 		{
 			$moderator_groups = array();
 			foreach ($_POST['moderator_groups'] as $moderator_group)
-				$moderator_groups[(int) $moderator_group] = (int) $moderator_group;
+			{
+				$moderator_group = (int) $moderator_group;
+				if (!empty($moderator_group))
+				{
+					$moderator_groups[$moderator_group] = $moderator_group;
+				}
+			}
 			$boardOptions['moderator_groups'] = $moderator_groups;
 		}
 
