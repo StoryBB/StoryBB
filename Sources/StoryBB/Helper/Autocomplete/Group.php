@@ -17,7 +17,7 @@ class Group extends AbstractCompletable implements Completable
 	protected $post_count_groups = true;
 	protected $account_groups = true;
 	protected $character_groups = true;
-	protected $hidden = false;
+	protected $hidden_groups = false;
 
 	protected function get_filters(): string
 	{
@@ -34,7 +34,7 @@ class Group extends AbstractCompletable implements Completable
 		{
 			$filters[] = 'is_character = 0';
 		}
-		if (!$hidden)
+		if (!$this->hidden_groups)
 		{
 			$filters[] = 'hidden != 2';
 		}
