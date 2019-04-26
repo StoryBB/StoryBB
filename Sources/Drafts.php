@@ -483,7 +483,7 @@ function ShowDrafts($member_id, $topic = false, $draft_type = 0)
  * Returns an xml response to an autosave ajax request
  * provides the id of the draft saved and the time it was saved
  *
- * @param type $id_draft
+ * @param int $id_draft The draft's ID to return to the user interface
  */
 function XmlDraft($id_draft)
 {
@@ -504,8 +504,8 @@ function XmlDraft($id_draft)
  * Uses the showdraft template
  * Allows for the deleting and loading/editing of drafts
  *
- * @param type $memID
- * @param type $draft_type
+ * @param int $memID The member whose drafts should be loaded
+ * @param int $draft_type The type of draft, 0 for post drafts, 1 for PM drafts
  */
 function showProfileDrafts($memID, $draft_type = 0)
 {
@@ -658,7 +658,7 @@ function showProfileDrafts($memID, $draft_type = 0)
  * Uses the showpmdraft template
  * Allows for the deleting and loading/editing of drafts
  *
- * @param type $memID
+ * @param int $memID The member whose drafts should be loaded
  */
 function showPMDrafts($memID = -1)
 {

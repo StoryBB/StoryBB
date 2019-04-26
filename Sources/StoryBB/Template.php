@@ -20,12 +20,22 @@ use StoryBB\Template\Cache;
  */
 class Template
 {
+	/** @var array $helpers An array of defined helpers registered for template processing */
 	private static $helpers = [];
+
+	/** @var string $layout_loaded The name of the current loaded layout template */
 	private static $layout_loaded = '';
+
+	/** @var string $layout_template The raw layout template */
 	private static $layout_template = '';
+
+	/** @var string $layout_source An identifier for where the layout template came from (e.g. for caching) */
 	private static $layout_source = '';
+
+	/** @var array $layers The current template layers to be rendered before/after main content */
 	private static $layers = [];
 
+	/** @var array $debug An array storing processing details for the template core for debug purposes */
 	private static $debug = [
 		'template' => [],
 		'partial' => [],

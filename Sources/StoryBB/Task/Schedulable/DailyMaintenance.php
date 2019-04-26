@@ -35,6 +35,9 @@ class DailyMaintenance extends \StoryBB\Task\Schedulable
 		return true;
 	}
 
+	/**
+	 * If warnings are set to reduce over time, update users who previously had warnings.
+	 */
 	protected function update_warning_levels()
 	{
 		global $modSettings, $smcFunc;
@@ -100,6 +103,9 @@ class DailyMaintenance extends \StoryBB\Task\Schedulable
 		}
 	}
 
+	/**
+	 * Prune the login history to prevent it becoming too unwieldy.
+	 */
 	protected function prune_login_history()
 	{
 		global $smcFunc, $modSettings;
