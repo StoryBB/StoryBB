@@ -12,8 +12,35 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
-class Member extends AbstractCompletable implements Completable
+class Group extends AbstractCompletable implements Completable
 {
+	protected $post_count_groups = true;
+	protected $account_groups = true;
+	protected $character_groups = true;
+	protected $hidden_groups = false;
+
+	protected function get_filters(): string
+	{
+		$filters = [];
+		if (!$this->post_count_groups)
+		{
+			$filters[] = 'min_posts = -1';
+		}
+		if (!$this->account_groups)
+		{
+			$filters[] = 'is_character != 0';
+		}
+		if (!$this->character_groups)
+		{
+			$filters[] = 'is_character = 0';
+		}
+		if (!$this->hidden_groups)
+		{
+			$filters[] = 'hidden != 2';
+		}
+		return !empty($filters) ? ' AND ' . implode(' AND ', $filters) : '';
+	}
+
 	public function can_paginate(): bool
 	{
 		return true;
@@ -24,13 +51,12 @@ class Member extends AbstractCompletable implements Completable
 		global $smcFunc;
 
 		$request = $smcFunc['db_query']('', '
-			SELECT COUNT(id_member)
-			FROM {db_prefix}members
-			WHERE {raw:real_name} LIKE {string:search}
-				AND is_activated IN (1, 11)',
+			SELECT COUNT(id_group)
+			FROM {db_prefix}membergroups AS mg
+			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters(),
 			[
-				'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
-				'search' => $this->escape_term($this->term),
+				'group_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(group_name)' : 'group_name',
+				'search' => '%' . $this->escape_term($this->term) . '%',
 			]
 		);
 		list ($count) = $smcFunc['db_fetch_row']($request);
@@ -59,26 +85,26 @@ class Member extends AbstractCompletable implements Completable
 		$result = [];
 
 		$request = $smcFunc['db_query']('', '
-			SELECT mem.id_member, real_name, email_address, a.filename, mainchar.avatar
-			FROM {db_prefix}members AS mem
-				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
-				LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = mainchar.id_character AND a.attachment_type = 1)
-			WHERE {raw:real_name} LIKE {string:search}
-				AND is_activated IN (1, 11)
+			SELECT mg.id_group, mg.group_name, mg.icons
+			FROM {db_prefix}membergroups AS mg
+			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters() . '
 			LIMIT {int:start}, {int:limit}',
 			[
-				'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
-				'search' => $this->escape_term($this->term),
+				'group_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(group_name)' : 'group_name',
+				'search' => '%' . $this->escape_term($this->term) . '%',
 				'start' => $start,
 				'limit' => $limit,
 			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
+			$row['icons'] = explode('#', $row['icons']);
+			$row['icons'] = !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' .  $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '';
+
 			$result[] = [
-				'id' => $row['id_member'],
-				'text' => $row['real_name'],
-				'avatar' => set_avatar_data($row)['url'],
+				'id' => $row['id_group'],
+				'text' => $row['group_name'],
+				'icons' => $row['icons'],
 			];
 		}
 		$smcFunc['db_free_result']($request);
@@ -99,16 +125,16 @@ class Member extends AbstractCompletable implements Completable
 
 		$this->default = [];
 		$request = $smcFunc['db_query']('', '
-			SELECT id_member, real_name
-			FROM {db_prefix}members
-			WHERE id_member IN ({array_int:default_value})',
+			SELECT id_group, group_name
+			FROM {db_prefix}membergroups
+			WHERE id_group IN ({array_int:default_value})',
 			[
 				'default_value' => $default_value,
 			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$this->default[$row['id_member']] = $row;
+			$this->default[$row['id_group']] = $row;
 		}
 		$smcFunc['db_free_result']($request);
 	}
@@ -121,7 +147,7 @@ class Member extends AbstractCompletable implements Completable
 $("' . $target . '").select2({
 	dropdownAutoWidth: true,
 	width: "auto",
-	placeholder: ' . json_encode($txt['autocomplete_search_member']) . ',
+	placeholder: ' . json_encode($txt['autocomplete_search_group']) . ',
 	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',' . ($maximum > 1 ? '
 	maximumSelectionLength: ' . $maximum . ',' : '') . '
 	ajax: {
@@ -130,19 +156,19 @@ $("' . $target . '").select2({
 			var query = {
 				action: "autocomplete",
 				term: params.term,
-				type: "member"
+				type: "' . $this->get_searchtype() . '"
 			}
 			query[sbb_session_var] = sbb_session_id;
 			return query;
 		}
 	},
 	delay: 150,
-	templateResult: function(member) {
-		if (!member.avatar)
-			return member.text;
+	templateResult: function(group) {
+		if (!group.icons)
+			return group.text;
 
-		var $mem = $("<div class=\"autocomplete\"><div style=\"background-image:url(" + member.avatar + ")\" class=\"autocomplete-avatar\"></div><span class=\"autocomplete-member\">" + member.text + "</span></div>");
-		return $mem;
+		var $group = $("<div class=\"autocomplete\"><div class=\"autocomplete-container-group\"><div class=\"autocomplete-group\">" + group.text + "</div><div class=\"autocomplete-group-icons\">" + group.icons + "</div></div></div>");
+		return $group;
 	}
 });';
 
@@ -150,8 +176,8 @@ $("' . $target . '").select2({
 		{
 			foreach ($this->default as $default)
 			{
-			$js .= '
-$("' . $target . '").append(new Option(' . json_encode($default['real_name']) . ', ' . $default['id_member'] . ', false, false));';
+				$js .= '
+$("' . $target . '").append(new Option(' . json_encode($default['group_name']) . ', ' . $default['id_group'] . ', false, false));';
 			}
 			$js .= '
 $("' . $target . '").val(' . json_encode(array_keys($this->default)) . ').trigger("change");';

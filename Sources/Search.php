@@ -98,7 +98,7 @@ function PlushSearch1()
 	if (!empty($context['search_params']['maxage']))
 		$context['search_params']['maxage'] = (int) $context['search_params']['maxage'];
 
-	Autocomplete::init('rawcharacter', '#userspec', 1, !empty($context['search_params']['userspec']) ? $context['search_params']['userspec'] : 0);
+	Autocomplete::init('rawcharacter', '#userspec', 1, !empty($context['search_params']['userspec']) ? [$context['search_params']['userspec']] : [0]);
 
 	$context['search_params']['show_complete'] = !empty($context['search_params']['show_complete']);
 	$context['search_params']['subject_only'] = !empty($context['search_params']['subject_only']);

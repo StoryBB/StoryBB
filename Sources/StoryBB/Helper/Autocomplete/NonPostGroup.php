@@ -12,17 +12,7 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
-interface Completable
+class NonPostGroup extends Group implements Completable
 {
-	public function set_search_term(string $term);
-
-	public function can_paginate(): bool;
-
-	public function get_count(): int;
-
-	public function get_results(int $start = null, int $limit = null): array;
-
-	public function set_values(array $default_value);
-
-	public function get_js(string $target, int $maximum = 1): string;
+	protected $post_count_groups = false;
 }

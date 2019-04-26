@@ -55,8 +55,9 @@
 						<label for="group_moderators"><strong>{{{txt.moderators}}}:</strong></label>
 					</dt>
 					<dd>
-						<input type="text" name="group_moderators" id="group_moderators" value="{{{context.group.moderator_list}}}" size="30">
-						<div id="moderator_container"></div>
+						<select name="group_moderators[]" id="group_moderators" multiple>
+							<option></option>
+						</select>
 					</dd>
 					<dt id="group_hidden_text">
 						<label for="group_hidden_input"><strong>{{{txt.membergroups_edit_hidden}}}:</strong></label>
@@ -183,29 +184,6 @@
 			{{token_form 'admin-mmg'}}
 		</form>
 	</div>
-	<script>
-		var oModeratorSuggest = new smc_AutoSuggest({
-			sSelf: 'oModeratorSuggest',
-			sSessionId: sbb_session_id,
-			sSessionVar: sbb_session_var,
-			sSuggestId: 'group_moderators',
-			sControlId: 'group_moderators',
-			sSearchType: 'member',
-			bItemList: true,
-			sPostName: 'moderator_list',
-			sURLMask: 'action=profile;u=%item_id%',
-			sTextDeleteItem: {{{json txt.autosuggest_delete_item}}},
-			sItemListContainerId: 'moderator_container',
-			aListItems: [
-			{{#each context.group.moderators}}
-				{
-					sItemId: {{@key}},
-					sItemName: {{{json .}}}
-				}{{#unless (eq @key ../context.group.last_moderator_id)}},{{/unless}}
-			{{/each}}
-			]
-		});
-	</script>
 
 	{{#if context.group.allow_post_group}}
 	<script>
@@ -218,7 +196,7 @@
 			var group_hidden_text = document.getElementById('group_hidden_text');
 			var group_moderators_text = document.getElementById('group_moderators_text');
 
-			// If it\'s a moderator group, warn of possible problems... and remember the group type
+			// If it's a moderator group, warn of possible problems... and remember the group type
 			if (isChecked && is_moderator_group && !confirm({{{json txt.membergroups_swap_mod}}}))
 			{
 				isChecked = false;
