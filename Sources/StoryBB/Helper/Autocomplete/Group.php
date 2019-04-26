@@ -99,7 +99,7 @@ class Group extends AbstractCompletable implements Completable
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$row['icons'] = explode('#', $row['icons']);
-			$row['icons'] = !empty( $row['icons'][0]) && !empty( $row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' .  $row['icons'][1] . '" alt="*">',  $row['icons'][0]) : '';
+			$row['icons'] = !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' .  $row['icons'][1] . '" alt="*">',  $row['icons'][0]) : '';
 
 			$result[] = [
 				'id' => $row['id_group'],
