@@ -16,8 +16,13 @@ namespace StoryBB\Task\Schedulable;
  */
 class DailyDigest extends \StoryBB\Task\Schedulable
 {
+	/** @var int $is_weekly Whether this digest is running a daily (0) or weekly (1) since logic is almost identical */
 	protected $is_weekly = 0;
+
+	/** @var string $subject_line Which entry in $txt to use as the subject for digest emails */
 	protected $subject_line = 'digest_subject_daily';
+
+	/** @var string $intro_line Which entry in $txt to use as the intro text for digest emails */
 	protected $intro_line = 'digest_intro_daily';
 
 	/**
@@ -294,6 +299,9 @@ class DailyDigest extends \StoryBB\Task\Schedulable
 		return true;
 	}
 
+	/**
+	 * Mark all current items in the digest log as having been sent.
+	 */
 	protected function mark_done()
 	{
 		global $smcFunc;
