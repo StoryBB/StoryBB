@@ -9,6 +9,9 @@
  * @version 3.0 Alpha 1
  */
 
+/**
+ * Front end controller for the character sheet templates section in the admin area.
+ */
 function CharacterTemplates()
 {
 	$subactions = [
@@ -23,6 +26,9 @@ function CharacterTemplates()
 	$sa();
 }
 
+/**
+ * Front end controller for the character sheet template list in the admin panel.
+ */
 function char_template_list()
 {
 	global $smcFunc, $context, $txt;
@@ -45,6 +51,9 @@ function char_template_list()
 	$(\'.sortable\').sortable({handle: ".handle"});', true);
 }
 
+/**
+ * Front end controller for the character sheet template reordering tool in the admin panel.
+ */
 function char_template_reorder()
 {
 	global $smcFunc;
@@ -69,6 +78,9 @@ function char_template_reorder()
 	redirectexit('action=admin;area=templates');
 }
 
+/**
+ * Front end controller for handling adding a new character sheet template in the admin panel.
+ */
 function char_template_add()
 {
 	global $context, $txt, $sourcedir;
@@ -96,6 +108,9 @@ function char_template_add()
 	$context['sub_template'] = 'admin_character_template_edit';
 }
 
+/**
+ * Front end controller for editing a character sheet template in the admin panel.
+ */
 function char_template_edit()
 {
 	global $context, $txt, $sourcedir, $smcFunc;
@@ -138,6 +153,9 @@ function char_template_edit()
 	$context['sub_template'] = 'admin_character_template_edit';
 }
 
+/**
+ * Front end controller for saving a character sheet template in the admin panel.
+ */
 function char_template_save()
 {
 	global $context, $smcFunc, $sourcedir;
@@ -180,6 +198,9 @@ function char_template_save()
 	redirectexit('action=admin;area=templates');
 }
 
+/**
+ * Front end controller for showing the character sheet approval queue.
+ */
 function CharacterSheets()
 {
 	global $context, $smcFunc, $txt, $sourcedir, $scripturl;
@@ -344,6 +365,12 @@ function CharacterSheets()
 	$context['default_list'] = 'approval_queue';
 }
 
+/**
+ * Displaying/saving the character immersion settings page.
+ *
+ * @param bool $return_config If true, return the configuration rather than processing the page.
+ * @return array Returns the configuration definition if $return_config is set to true, otherwise does a page render/redirect
+ */
 function CharacterImmersion($return_config = false)
 {
 	global $txt, $scripturl, $context, $modSettings, $smcFunc, $language, $sourcedir;

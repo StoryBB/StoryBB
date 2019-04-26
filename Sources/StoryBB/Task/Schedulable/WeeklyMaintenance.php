@@ -35,6 +35,9 @@ class WeeklyMaintenance extends \StoryBB\Task\Schedulable
 		return true;
 	}
 
+	/**
+	 * Prunes a list of settings that if set to 0 in the settings table should be removed to save space.
+	 */
 	protected function prune_empty_settings()
 	{
 		global $smcFunc;
@@ -71,6 +74,9 @@ class WeeklyMaintenance extends \StoryBB\Task\Schedulable
 		);
 	}
 
+	/**
+	 * Prunes the error/moderation/ban/report/scheduled tasks logs as per the settings.
+	 */
 	protected function prune_logs()
 	{
 		global $modSettings, $smcFunc;
@@ -187,6 +193,9 @@ class WeeklyMaintenance extends \StoryBB\Task\Schedulable
 		}
 	}
 
+	/**
+	 * Cleans up any paid subscriptions that never got activated.
+	 */
 	protected function prune_pending_paid_subs()
 	{
 		global $smcFunc;
@@ -207,6 +216,9 @@ class WeeklyMaintenance extends \StoryBB\Task\Schedulable
 		);
 	}
 
+	/**
+	 * Provides some manual forcible garbage collection on sessions as some PHP builds don't.
+	 */
 	protected function prune_sessions()
 	{
 		global $smcFunc;

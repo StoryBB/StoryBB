@@ -15,6 +15,7 @@
  */
 class Mentions
 {
+	/** @var $char Defines the character used to indicate a mention, e.g. @user */
 	protected static $char = '@';
 
 	/**
@@ -85,6 +86,7 @@ class Mentions
 	 * @param int $content_id The ID of the specified content
 	 * @param array $members An array of members who have been mentioned
 	 * @param int $id_member The ID of the member who mentioned them
+	 * @param int $id_character The ID of the character who mentioned them
 	 */
 	public static function insertMentions($content_type, $content_id, array $members, $id_member, $id_character)
 	{
