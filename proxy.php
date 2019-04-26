@@ -196,6 +196,11 @@ class ProxyServer
 		))) === false ? 1 : null;
 	}
 
+	/**
+	 * Initiates a 301 redirect to the URL (presumably because proxying didn't/can't work)
+	 *
+	 * @param string $url The URL to be redirected to, sanitised by the parser
+	 */
 	protected function redirect(string $url)
 	{
 		header('Location: ' . un_htmlspecialchars($url), false, 301);
