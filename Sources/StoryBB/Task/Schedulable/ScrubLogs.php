@@ -19,6 +19,11 @@ class ScrubLogs extends \StoryBB\Task\Schedulable
 	/** @var $banned_ips The IPs we have listed as banned */
 	protected $banned_ips;
 
+	/**
+	 * Find all the ranges of banned IPs in the system so that logs won't be automatically purged for these.
+	 *
+	 * @return array An array of banned IP ranges where each item is an array of low/high IPs in the range
+	 */
 	protected function get_banned_ips(): array
 	{
 		global $smcFunc;
@@ -45,6 +50,7 @@ class ScrubLogs extends \StoryBB\Task\Schedulable
 
 	/**
 	 * Erase logs in the system after a given amount of days.
+	 *
 	 * @return bool True on success
 	 */
 	public function execute(): bool
@@ -102,7 +108,16 @@ class ScrubLogs extends \StoryBB\Task\Schedulable
 		return true;
 	}
 
-	protected function erase_log_table($table_name, $id_column, $ip_column, $time_column, $timestamp)
+	/**
+	 * Erase the relevant contents of a single log table.
+	 *
+	 * @param string $table_name The name of a generic log table to clean out (minus {db_prefix})
+	 * @param string $id_column The name of the column that is the primary key of the table
+	 * @param string $ip_column The name of the column that contains the IP address to be filtered
+	 * @param string $time_column The name of the column that contains the timestamp to check against
+	 * @param int $timestamp The timestamp of the most recent log entries to keep
+	 */
+	protected function erase_log_table(string $table_name, string $id_column, string $ip_column, string $time_column, int $timestamp)
 	{
 		global $smcFunc;
 
