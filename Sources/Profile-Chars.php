@@ -2339,7 +2339,7 @@ function char_move_account()
  * Move a character physically to another account.
  *
  * @param int $source_chr The ID of the character to be moved
- * @param int $dest_account The ID of the account to move the character to
+ * @param int $dest_acct The ID of the account to move the character to
  * @return mixed True on success, otherwise string indicating error type
  * @todo refactor this to emit exceptions rather than mixed return types
  */

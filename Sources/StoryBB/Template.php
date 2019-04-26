@@ -15,6 +15,9 @@ namespace StoryBB;
 use LightnCandy\LightnCandy;
 use StoryBB\Template\Cache;
 
+/**
+ * This class encapsulates all of the behaviours required by StoryBB's template system.
+ */
 class Template
 {
 	private static $helpers = [];
@@ -80,7 +83,7 @@ class Template
 	/**
 	 * Loads a template layout.
 	 *
-	 * @param string $partial Layout name, without root path or extension
+	 * @param string $layout Layout name, without root path or extension
 	 */
 	public static function set_layout($layout)
 	{
@@ -167,6 +170,14 @@ class Template
 		return '';
 	}
 
+	/**
+	 * Compile a given template and return the compiled version, optionally caching the result.
+	 *
+	 * @param string $template The raw template to be compiled
+	 * @param array $options Options for the underlying compiler, e.g. flags, additional helpers
+	 * @param string $cache_id The ID to use if caching
+	 * @return mixed A blob or instance representing the renderable/executable template (see also prepare)
+	 */
 	public static function compile(string $template, array $options = [], string $cache_id = '')
 	{
 		global $context, $cachedir, $modSettings;
@@ -210,6 +221,13 @@ class Template
 		return $phpStr;
 	}
 
+	/**
+	 * Wrapper function for injecting data into a renderable template once it has been compiled.
+	 *
+	 * @param mixed $phpStr Can either be the compiled template served from cache, or an instance of the template as an object
+	 * @param array $data The data to be inserted into the template
+	 * @return mixed The rendered template, should generally be a string
+	 */
 	public static function prepare($phpStr, array $data)
 	{
 		if (is_callable($phpStr))
@@ -221,6 +239,12 @@ class Template
 		return $renderer($data);
 	}
 
+	/**
+	 * Render the layout of the page with the supplied data (which may include pre-rendered components)
+	 * and output to the current output buffer/STDOUT/whatever is currently configured.
+	 *
+	 * @param array $data The data to render, typically including a 'content' entry for page content
+	 */
 	public static function render(array $data)
 	{
 		if (empty(self::$layout_template))
@@ -252,6 +276,12 @@ class Template
 		echo self::prepare($phpStr, $data);
 	}
 
+	/**
+	 * Render an entire page having had the base content pre-rendered (to get headers/footers plus
+	 * session messages to inject into that)
+	 *
+	 * @param string $content The main body of the page, previously rendered
+	 */
 	public static function render_page(string $content)
 	{
 		global $context, $settings, $scripturl, $txt, $modSettings, $maintenance, $user_info, $options;
@@ -310,6 +340,13 @@ class Template
 		]);
 	}
 
+	/**
+	 * Add a template to the list of templates to render for the current main page content
+	 *
+	 * @param string $name The template to add to the page list
+	 * @param string $position Where to place the new template
+	 * @param mixed $relative If placing the template before/after another, this is the one to place before/after
+	 */
 	public static function add(string $name, string $position = 'after', $relative = null)
 	{
 		global $context;
@@ -341,11 +378,23 @@ class Template
 		}
 	}
 
+	/**
+	 * Return the debug information collected so far during template rendering.
+	 *
+	 * @return array Debug statistics of current rendering
+	 */
 	public static function get_debug_info()
 	{
 		return self::$debug;
 	}
 
+	/**
+	 * Get the theme id where a given template (either for a partial, full or layout template) is
+	 * being served from.
+	 *
+	 * @param string $template_type 'partials', 'templates', or 'layouts' to identify which template type to look up
+	 * @param string $template_name The name of the template to query
+	 */
 	public static function get_theme_id(string $template_type, string $template_name): int
 	{
 		global $settings;
@@ -365,21 +414,39 @@ class Template
 		return 1; // Default theme ultimately used.
 	}
 
+	/**
+	 * Add a layer to the template stack to be unwrapped before/after the list of templates to make page content
+	 *
+	 * @param string $template_layer The name of the template layer to be added
+	 */
 	public static function add_layer(string $template_layer)
 	{
 		self::$layers[] = $template_layer;
 	}
 
+	/**
+	 * Remove a specified template from the template layer stack
+	 *
+	 * @param string $template_layer The name of the template layer to be removed
+	 */
 	public static function remove_layer(string $template_layer)
 	{
 		self::$layers = array_diff(self::$layers, [$template_layer]);
 	}
 
+	/**
+	 * Remove all template layers from the stack.
+	 */
 	public static function remove_all_layers()
 	{
 		self::$layers = [];
 	}
 
+	/**
+	 * Identify if there are any layers currently on the stack.
+	 *
+	 * @return bool True if there are layers on the stack
+	 */
 	public static function has_layers()
 	{
 		return !empty(self::$layers);
