@@ -1,5 +1,15 @@
 <?php
-// Version: 3.0 Alpha 1; Editor
+
+/**
+ * This file contains language strings for the editor.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
+ */
+
 global $editortxt;
 
 $editortxt['Bold'] = 'Bold';

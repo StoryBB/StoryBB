@@ -1,5 +1,14 @@
 <?php
-// Version: 3.0 Alpha 1; Manual
+
+/**
+ * This file contains language strings for the help pages.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
+ */
 
 /* Everything in this file is for the Simple Machines help manual
    If you are looking at translating the manual into another language

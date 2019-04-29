@@ -1,5 +1,14 @@
 <?php
-// Version: 3.0 Alpha 1; index
+
+/**
+ * This file contains language strings for the general site.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
+ */
 
 global $forum_copyright, $webmaster_email, $scripturl, $context, $boardurl;
 
