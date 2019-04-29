@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Any autocomplete handlers must implement this interface.
+ * Provide an autocomplete handler to match membergroups. This version by default matches all groups.
+ * Subclasses may exist to be more specific for convenience purposes.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,13 +13,30 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
+/**
+ * Provide an autocomplete handler to match membergroups. This version by default matches all groups.
+ * Subclasses may exist to be more specific for convenience purposes.
+ */
 class Group extends AbstractCompletable implements Completable
 {
+	/** @var bool $post_count_groups Sets out whether post count groups should be included as possible group matches */
 	protected $post_count_groups = true;
+
+	/** @var bool $account_groups Sets out whether account groups should be included as possible group matches */
 	protected $account_groups = true;
+
+	/** @var bool $character_groups Sets out whether character groups should be included as possible group matches */
 	protected $character_groups = true;
+
+	/** @var bool $hidden_groups Sets out whether hidden groups should be included as possible group matches */
 	protected $hidden_groups = false;
 
+	/**
+	 * Based on the filters set by the different properties (post count groups etc.) build the relevant SQL needed
+	 * to successfully filter out groups to return to the user.
+	 *
+	 * @return string A clause for SQL that filters out different types of groups as the class expects to do
+	 */
 	protected function get_filters(): string
 	{
 		$filters = [];
@@ -41,11 +59,21 @@ class Group extends AbstractCompletable implements Completable
 		return !empty($filters) ? ' AND ' . implode(' AND ', $filters) : '';
 	}
 
+	/**
+	 * Whether the results will be paginated on return.
+	 *
+	 * @return bool True if can be paginated.
+	 */
 	public function can_paginate(): bool
 	{
 		return true;
 	}
 
+	/**
+	 * Returns the number of results that match the search term.
+	 *
+	 * @return int Number of matching results
+	 */
 	public function get_count(): int
 	{
 		global $smcFunc;
@@ -65,6 +93,14 @@ class Group extends AbstractCompletable implements Completable
 		return (int) $count;
 	}
 
+	/**
+	 * Returns the actual results based on paginated through the filters search results.
+	 * Each result will contain id (group id), text (group name) and icons (group badge)
+	 *
+	 * @param int $start Where to start through the results list
+	 * @param int $limit How many to retrieve
+	 * @return array Array of results matching the search term
+	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
 		global $smcFunc, $modSettings, $settings;
@@ -112,6 +148,11 @@ class Group extends AbstractCompletable implements Completable
 		return $result;
 	}
 
+	/**
+	 * Sets existing values for populating a group autocomplete when editing a form.
+	 *
+	 * @param array $default_value An array of group ids to look up and populate into the autocomplete.
+	 */
 	public function set_values(array $default_value)
 	{
 		global $smcFunc;
@@ -139,6 +180,13 @@ class Group extends AbstractCompletable implements Completable
 		$smcFunc['db_free_result']($request);
 	}
 
+	/**
+	 * Provides the JavaScript to be embedded into the page to successfully initialise this widget.
+	 *
+	 * @param string $target The jQuery/JavaScript selector this should be applied to, e.g. #myselect
+	 * @param int $maximum The expected maximum of allowed entries; 0 for no limit.
+	 * @return string The JavaScript to initialise this widget.
+	 */
 	public function get_js(string $target, int $maximum = 1): string
 	{
 		global $scripturl, $txt;

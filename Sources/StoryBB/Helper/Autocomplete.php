@@ -24,7 +24,8 @@ class Autocomplete
 	 *
 	 * @param string $type Type of autocomplete, e.g. 'member'
 	 * @param string $target CSS/jQuery selector to target, e.g. '#to'
-	 * @param int $maximum Maximum number of items allowed in the autocomplete
+	 * @param int $maximum Maximum number of items allowed in the autocomplete (0 for no maximum)
+	 * @param array $default Default values to be inserted for pre-populated forms
 	 */
 	public static function init(string $type, string $target, int $maximum = 1, array $default = null)
 	{
@@ -48,7 +49,9 @@ class Autocomplete
 	}
 
 	/**
-	 * 
+	 * Get the list of known types of autocomplete, listing URL item -> class.
+	 *
+	 * @return array List of identifiers and their handler classes.
 	 */
 	public static function get_registered_types(): array
 	{
