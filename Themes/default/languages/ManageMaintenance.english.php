@@ -1,5 +1,14 @@
 <?php
-// Version: 3.0 Alpha 1; ManageMaintenance
+
+/**
+ * This file contains language strings for the maintenance area.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
+ */
 
 $txt['repair_zero_ids'] = 'Found topics and/or messages with topic or message IDs of 0.';
 $txt['repair_missing_topics'] = 'Message #%1$d is in non-existent topic #%2$d.';

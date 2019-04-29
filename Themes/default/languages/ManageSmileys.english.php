@@ -1,5 +1,14 @@
 <?php
-// Version: 3.0 Alpha 1; ManageSmileys
+
+/**
+ * This file contains language strings for the smileys management area.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
+ */
 
 $txt['setting_smileys_url'] = 'Base URL to the smiley folder';
 $txt['setting_smileys_dir'] = 'Absolute path to the smileys folder';

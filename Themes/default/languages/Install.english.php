@@ -1,5 +1,14 @@
 <?php
-// Version: 3.0 Alpha 1; Install
+
+/**
+ * This file contains language strings for the installer.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
+ */
 
 // These should be the same as those in index.language.php.
 $txt['lang_rtl'] = false;

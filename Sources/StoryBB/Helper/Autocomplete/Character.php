@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Any autocomplete handlers must implement this interface.
+ * Provide an autocomplete handler to match member characters.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,13 +12,26 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
+/**
+ * Provide an autocomplete handler to match member characters (not OOC characters)
+ */
 class Character extends AbstractCompletable implements Completable
 {
+	/**
+	 * Whether the results will be paginated on return.
+	 *
+	 * @return bool True if can be paginated.
+	 */
 	public function can_paginate(): bool
 	{
 		return true;
 	}
 
+	/**
+	 * Returns the number of results that match the search term.
+	 *
+	 * @return int Number of matching results
+	 */
 	public function get_count(): int
 	{
 		global $smcFunc;
@@ -41,6 +54,15 @@ class Character extends AbstractCompletable implements Completable
 		return (int) $count;
 	}
 
+	/**
+	 * Returns the actual results based on paginated through the filters search results.
+	 * Each result will contain id (character id), text and char_name (character name),
+	 * account_name (the underlying account name) and avatar (URL for character avatar)
+	 *
+	 * @param int $start Where to start through the results list
+	 * @param int $limit How many to retrieve
+	 * @return array Array of results matching the search term
+	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
 		global $smcFunc, $modSettings, $settings;
@@ -91,6 +113,11 @@ class Character extends AbstractCompletable implements Completable
 		return $result;
 	}
 
+	/**
+	 * Sets existing values for populating a character autocomplete when editing a form.
+	 *
+	 * @param array $default_value An array of character ids to look up and populate into the autocomplete.
+	 */
 	public function set_values(array $default_value)
 	{
 		global $smcFunc;
@@ -119,6 +146,13 @@ class Character extends AbstractCompletable implements Completable
 		$smcFunc['db_free_result']($request);
 	}
 
+	/**
+	 * Provides the JavaScript to be embedded into the page to successfully initialise this widget.
+	 *
+	 * @param string $target The jQuery/JavaScript selector this should be applied to, e.g. #myselect
+	 * @param int $maximum The expected maximum of allowed entries; 0 for no limit.
+	 * @return string The JavaScript to initialise this widget.
+	 */
 	public function get_js(string $target, int $maximum = 1): string
 	{
 		global $scripturl, $txt;
