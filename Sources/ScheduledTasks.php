@@ -558,7 +558,7 @@ function loadEssentialThemeData()
 		require_once($sourcedir . '/Subs.php');
 	}
 
-	loadLanguage('index+Modifications');
+	loadLanguage('index');
 
 	// Just in case it wasn't already set elsewhere.
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
