@@ -4,6 +4,7 @@ Settings.php
 Settings_bak.php
 cache/data*.php
 cache/template*.php
+cache/images/*
 *.*~
 attachments/
 custom_avatar/

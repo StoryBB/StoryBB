@@ -86,8 +86,9 @@ function validateSession($type = 'admin')
  * Message is what to tell them when asking them to login.
  *
  * @param string $message The message to display to the guest
+ * @param bool $redirect Whether to redirect (true) or simply render a login page (false)
  */
-function is_not_guest($message = '')
+function is_not_guest($message = '', bool $redirect = false)
 {
 	global $user_info, $txt, $context, $scripturl, $modSettings;
 
@@ -117,7 +118,7 @@ function is_not_guest($message = '')
 
 	// Apparently we're not in a position to handle this now. Let's go to a safer location for now.
 	// @todo this might need reworking
-	if (!StoryBB\Template::has_layers())
+	if ($redirect)
 	{
 		$_SESSION['login_url'] = $scripturl . '?' . $_SERVER['QUERY_STRING'];
 		redirectexit('action=login');

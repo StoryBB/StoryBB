@@ -1,5 +1,14 @@
 <?php
-// Version: 3.0 Alpha 1; index
+
+/**
+ * This file contains language strings for the general site.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
+ */
 
 global $forum_copyright, $webmaster_email, $scripturl, $context, $boardurl;
 
@@ -326,8 +335,6 @@ $txt['name_in_use'] = 'This name is already in use by another member.';
 $txt['total_members'] = 'Total Members';
 $txt['total_posts'] = 'Total Posts';
 $txt['total_topics'] = 'Total Topics';
-
-$txt['mins_logged_in'] = 'Minutes to stay logged in';
 
 $txt['preview'] = 'Preview';
 $txt['always_logged_in'] = 'Always stay logged in';
@@ -852,3 +859,4 @@ $txt['cookie_notice_more_info'] = 'More information';
 $txt['autocomplete_search_member'] = 'Search for a member';
 $txt['autocomplete_search_character'] = 'Search for a character';
 $txt['autocomplete_search_character_account'] = '(Account: %s)';
+$txt['autocomplete_search_group' ] = 'Search for a group';

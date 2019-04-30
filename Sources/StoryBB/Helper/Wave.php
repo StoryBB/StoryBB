@@ -112,6 +112,9 @@ class Wave
 		die();
 	}
 
+	/**
+	 * End execution with an appropriate header if the creation failed.
+	 */
 	public static function fail()
 	{
 		header('HTTP/1.1 400 Bad Request');

@@ -1,5 +1,14 @@
 <?php
-// Version: 3.0 Alpha 1; ManageSettings
+
+/**
+ * This file contains language strings for the generic settings pages.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
+ */
 
 global $scripturl;
 
@@ -40,7 +49,6 @@ $txt['pruneScheduledTaskLog'] = 'Remove scheduled task log entries older than';
 $txt['retention_policy_standard'] = 'Remove privacy-related items in logs after';
 $txt['retention_policy_sensitive'] = 'Remove more sensitive items in logs after';
 $txt['zero_means_zero'] = 'Setting this to 0 means purging these items after only a matter of hours.';
-$txt['cookieTime'] = 'Default login cookies length';
 $txt['localCookies'] = 'Enable local storage of cookies';
 $txt['globalCookies'] = 'Use subdomain independent cookies';
 $txt['globalCookiesDomain'] = 'Main domain used for subdomain independent cookies';

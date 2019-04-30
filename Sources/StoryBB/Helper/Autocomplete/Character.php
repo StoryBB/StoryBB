@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Any autocomplete handlers must implement this interface.
+ * Provide an autocomplete handler to match member characters.
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
@@ -12,13 +12,26 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
+/**
+ * Provide an autocomplete handler to match member characters (not OOC characters)
+ */
 class Character extends AbstractCompletable implements Completable
 {
+	/**
+	 * Whether the results will be paginated on return.
+	 *
+	 * @return bool True if can be paginated.
+	 */
 	public function can_paginate(): bool
 	{
 		return true;
 	}
 
+	/**
+	 * Returns the number of results that match the search term.
+	 *
+	 * @return int Number of matching results
+	 */
 	public function get_count(): int
 	{
 		global $smcFunc;
@@ -41,6 +54,15 @@ class Character extends AbstractCompletable implements Completable
 		return (int) $count;
 	}
 
+	/**
+	 * Returns the actual results based on paginated through the filters search results.
+	 * Each result will contain id (character id), text and char_name (character name),
+	 * account_name (the underlying account name) and avatar (URL for character avatar)
+	 *
+	 * @param int $start Where to start through the results list
+	 * @param int $limit How many to retrieve
+	 * @return array Array of results matching the search term
+	 */
 	public function get_results(int $start = null, int $limit = null): array
 	{
 		global $smcFunc, $modSettings, $settings;
@@ -91,27 +113,46 @@ class Character extends AbstractCompletable implements Completable
 		return $result;
 	}
 
-	public function set_value($default_value)
+	/**
+	 * Sets existing values for populating a character autocomplete when editing a form.
+	 *
+	 * @param array $default_value An array of character ids to look up and populate into the autocomplete.
+	 */
+	public function set_values(array $default_value)
 	{
 		global $smcFunc;
 
-		$default_value = (int) $default_value;
+		$default_value = array_map('intval', $default_value);
+		$default_value = array_filter($default_value, function($x) {
+			return !empty($x);
+		});
 		if (empty($default_value))
 			return;
 
+		$this->default = [];
 		$request = $smcFunc['db_query']('', '
 			SELECT id_character, character_name
 			FROM {db_prefix}characters
-				WHERE is_main = 0
-			WHERE id_character = {int:default_value}',
+			WHERE id_character IN ({array_int:default_value})
+				AND is_main = 0',
 			[
 				'default_value' => $default_value,
 			]
 		);
-		$this->default = $smcFunc['db_fetch_assoc']($request);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+		{
+			$this->default[$row['id_character']] = $row;
+		}
 		$smcFunc['db_free_result']($request);
 	}
 
+	/**
+	 * Provides the JavaScript to be embedded into the page to successfully initialise this widget.
+	 *
+	 * @param string $target The jQuery/JavaScript selector this should be applied to, e.g. #myselect
+	 * @param int $maximum The expected maximum of allowed entries; 0 for no limit.
+	 * @return string The JavaScript to initialise this widget.
+	 */
 	public function get_js(string $target, int $maximum = 1): string
 	{
 		global $scripturl, $txt;
@@ -121,7 +162,8 @@ $("' . $target . '").select2({
 	dropdownAutoWidth: true,
 	width: "auto",
 	placeholder: ' . json_encode($txt['autocomplete_search_character']) . ',
-	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',
+	allowClear: ' . ($maximum == 1 ? 'true' : 'false') . ',' . ($maximum > 1 ? '
+	maximumSelectionLength: ' . $maximum . ',' : '') . '
 	ajax: {
 		url: "' . $scripturl . '",
 		data: function (params) {
@@ -148,10 +190,13 @@ $("' . $target . '").select2({
 
 		if (!empty($this->default))
 		{
+			foreach ($this->default as $default)
+			{
+				$js .= '
+$("' . $target . '").append(new Option(' . json_encode($default['character_name']) . ', ' . $default['id_character'] . ', false, false));';
+			}
 			$js .= '
-var newOption = new Option(' . json_encode($this->default['character_name']) . ', ' . $this->default['id_character'] . ', false, false);
-$("' . $target . '").append(newOption).val(' . $this->default['id_character'] . ').trigger("change");
-';
+$("' . $target . '").val(' . json_encode(array_keys($this->default)) . ').trigger("change");';
 		}
 
 		return $js;

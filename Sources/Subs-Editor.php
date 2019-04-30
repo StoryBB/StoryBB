@@ -1915,7 +1915,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$recaptcha = new StoryBB\Helper\Verification\Recaptcha($modSettings['recaptcha_secret_key']);
 			if (!$recaptcha->verify())
 			{
-				$verification_errors[] = 'wrong_verification_code';
+				$verification_errors[] = 'recaptcha_not_complete';
 			}
 		}
 
@@ -2071,6 +2071,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
  * This keeps track of all registered handling functions for auto suggest functionality and passes execution to them.
  * @param bool $checkRegistered If set to something other than null, checks whether the callback function is registered
  * @return void|bool Returns whether the callback function is registered if $checkRegistered isn't null
+ * @deprecated Remove once #499 is fixed
  */
 function AutoSuggestHandler($checkRegistered = null)
 {
@@ -2109,6 +2110,7 @@ function AutoSuggestHandler($checkRegistered = null)
  * Search for a member - by real_name or member_name by default.
  *
  * @return array An array of information for displaying the suggestions
+ * @deprecated Remove once #499 is fixed
  */
 function AutoSuggest_Search_Member()
 {
@@ -2157,6 +2159,7 @@ function AutoSuggest_Search_Member()
  * Search for a membergroup by name
  *
  * @return array An array of information for displaying the suggestions
+ * @deprecated Remove once #499 is fixed
  */
 function AutoSuggest_Search_MemberGroups()
 {
@@ -2205,6 +2208,12 @@ function AutoSuggest_Search_MemberGroups()
 	return $xml_data;
 }
 
+/**
+ * Search for an IC character.
+ *
+ * @return array An array of information for displaying the suggestions
+ * @deprecated Remove once #499 is fixed
+ */
 function AutoSuggest_Search_Character()
 {
 	global $user_info, $smcFunc, $context;
@@ -2248,6 +2257,12 @@ function AutoSuggest_Search_Character()
 	return $xml_data;
 }
 
+/**
+ * Search for an IC or OOC character.
+ *
+ * @return array An array of information for displaying the suggestions
+ * @deprecated Remove once #499 is fixed
+ */
 function AutoSuggest_Search_RawCharacter()
 {
 	global $user_info, $smcFunc, $context;
@@ -2291,6 +2306,12 @@ function AutoSuggest_Search_RawCharacter()
 	return $xml_data;
 }
 
+/**
+ * Search for an IC character with additional member display.
+ *
+ * @return array An array of information for displaying the suggestions
+ * @deprecated Remove once #499 is fixed
+ */
 function AutoSuggest_Search_MemberChar()
 {
 	global $user_info, $smcFunc, $context;

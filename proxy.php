@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use GuzzleHttp\Client;
+
 define('STORYBB', 'proxy');
 
 /**
@@ -36,15 +38,13 @@ class ProxyServer
 	 */
 	public function __construct()
 	{
-		global $image_proxy_enabled, $image_proxy_maxsize, $image_proxy_secret, $cachedir, $sourcedir;
+		global $image_proxy_enabled, $image_proxy_maxsize, $image_proxy_secret, $cachedir, $boarddir;
 
 		require_once(dirname(__FILE__) . '/Settings.php');
-		require_once($sourcedir . '/Class-CurlFetchWeb.php');
-		require_once($sourcedir . '/Subs.php');
-
+		require_once($boarddir . '/vendor/autoload.php');
 
 		// Turn off all error reporting; any extra junk makes for an invalid image.
-		error_reporting(0);
+		//error_reporting(0);
 
 		$this->enabled = (bool) $image_proxy_enabled;
 		$this->maxSize = (int) $image_proxy_maxsize;
@@ -93,16 +93,22 @@ class ProxyServer
 	public function serve()
 	{
 		$request = $_GET['request'];
-		$cached_file = $this->getCachedPath($request);
-		$cached = json_decode(file_get_contents($cached_file), true);
-
 		// Did we get an error when trying to fetch the image
 		$response = $this->checkRequest();
-		if (!$response) {
+		if ($response === -1)
+		{
 			// Throw a 404
-			header('HTTP/1.0 404 Not Found');
+			send_http_status(404);
 			exit;
 		}
+		// Right, image not cached? Simply redirect, then.
+		if ($response === 0)
+		{
+			$this->redirect($request);
+		}
+
+		$cached_file = $this->getCachedPath($request);
+		$cached = json_decode(file_get_contents($cached_file), true);
 
 		// Is the cache expired?
 		if (!$cached || time() - $cached['time'] > (5 * 86400))
@@ -110,12 +116,12 @@ class ProxyServer
 			@unlink($cached_file);
 			if ($this->checkRequest())
 				$this->serve();
-			redirectexit($request);
+			$this->redirect($request);
 		}
 
 		// Right, image not cached? Simply redirect, then.
 		if (!$response)
-			redirectexit($request);
+			$this->redirect($request);
 
 		// Make sure we're serving an image
 		$contentParts = explode('/', !empty($cached['content_type']) ? $cached['content_type'] : '');
@@ -134,7 +140,7 @@ class ProxyServer
 	 * @param string $request The request to get the path for
 	 * @return string The hashed filepath for the specified request
 	 */
-	protected function getCachedPath($request)
+	protected function getCachedPath(string $request): string
 	{
 		return $this->cache . '/' . sha1($request . $this->secret);
 	}
@@ -146,7 +152,7 @@ class ProxyServer
 	 * @param string $request The image to check for in the cache
 	 * @return bool Whether or not the requested image is cached
 	 */
-	protected function isCached($request)
+	protected function isCached(string $request): bool
 	{
 		return file_exists($this->getCachedPath($request));
 	}
@@ -158,14 +164,12 @@ class ProxyServer
 	 * @param string $request The image to cache/validate
 	 * @return bool|int Whether the specified image was cached or error code when accessing
 	 */
-	protected function cacheImage($request)
+	protected function cacheImage(string $request)
 	{
-		$dest = $this->getCachedPath($request);
-
-		$curl = new curl_fetch_web_data(array(CURLOPT_BINARYTRANSFER => 1));
-		$request = $curl->get_url_data($request);
-		$responseCode = $request->result('code');
-		$response = $request->result();
+		$client = new Client();
+		$http_request = $client->get($request);
+		$responseCode = $http_request->getStatusCode();
+		$response = (string) $http_request->getBody();
 
 		if (empty($response))
 			return false;
@@ -174,23 +178,33 @@ class ProxyServer
 			return false;
 		}
 
-		$headers = $response['headers'];
-
 		// Make sure the url is returning an image
-		$contentParts = explode('/', !empty($headers['content-type']) ? $headers['content-type'] : '');
+		$content_type = $http_request->getHeader('Content-Type');
+		$contentParts = explode('/', !empty($content_type[0]) ? $content_type[0] : '');
 		if ($contentParts[0] != 'image')
 			return false;
 
 		// Validate the filesize
-		if ($response['size'] > ($this->maxSize * 1024))
+		if ($http_request->getBody()->getSize() > ($this->maxSize * 1024))
 			return false;
 
-		return file_put_contents($dest, json_encode(array(
-			'content_type' => $headers['content-type'],
-			'size' => $response['size'],
+		return file_put_contents($this->getCachedPath($request), json_encode(array(
+			'content_type' => $content_type[0],
+			'size' => $http_request->getBody()->getSize(),
 			'time' => time(),
-			'body' => base64_encode($response['body']),
+			'body' => base64_encode($response),
 		))) === false ? 1 : null;
+	}
+
+	/**
+	 * Initiates a 301 redirect to the URL (presumably because proxying didn't/can't work)
+	 *
+	 * @param string $url The URL to be redirected to, sanitised by the parser
+	 */
+	protected function redirect(string $url)
+	{
+		header('Location: ' . un_htmlspecialchars($url), false, 301);
+		exit;
 	}
 }
 

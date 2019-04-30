@@ -1,5 +1,14 @@
 <?php
-// Version: 3.0 Alpha 1; ManageMembers
+
+/**
+ * This file contains language strings for the manage-members area.
+ *
+ * @package StoryBB (storybb.org) - A roleplayer's forum software
+ * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @license 3-clause BSD (see accompanying LICENSE file)
+ *
+ * @version 3.0 Alpha 1
+ */
 
 global $context;
 
@@ -79,7 +88,9 @@ $txt['membergroups_members_title'] = 'Viewing Group';
 $txt['membergroups_members_group_members'] = 'Group Members';
 $txt['membergroups_members_no_members'] = 'This group is currently empty';
 $txt['membergroups_members_add_title'] = 'Add a member to this group';
+$txt['membergroups_members_add_char_title'] = 'Add a character to this group';
 $txt['membergroups_members_add_desc'] = 'List of Members to Add';
+$txt['membergroups_members_add_char_desc'] = 'List of Characters to Add';
 $txt['membergroups_members_add'] = 'Add Members';
 $txt['membergroups_members_remove'] = 'Remove from Group';
 $txt['membergroups_members_last_active'] = 'Last Active';

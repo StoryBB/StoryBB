@@ -222,7 +222,11 @@ function reqOverlayDiv(desktopURL, sHeader, sIcon)
 			oPopup_body.html(help_content);
 		},
 		error: function (xhr, textStatus, errorThrown) {
-			oPopup_body.html(textStatus);
+			if (xhr.status >= 500 && xhr.status <= 599) {
+				window.location.replace(desktopURL);
+			} else {
+				oPopup_body.html(textStatus);
+			}
 		}
 	});
 	return false;

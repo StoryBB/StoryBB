@@ -12,7 +12,7 @@
 
 namespace StoryBB\Helper\Verification;
 
-use curl_fetch_web_data;
+use GuzzleHttp\Client;
 
 /**
  * This class handles validation against ReCAPTCHA.
@@ -49,16 +49,16 @@ class Recaptcha
 			return false;
 		}
 
-		// So let us make the relevant call out to Google.
-		require_once($sourcedir . '/Class-CurlFetchWeb.php');
-
-		$curl = new curl_fetch_web_data();
-		$response = $curl->get_url_data('https://www.google.com/recaptcha/api/siteverify', [
-			'secret' => $this->secret_key,
-			'response' => $_POST['g-recaptcha-response'],
-			'remoteip' => $user_info['ip'],
+		$client = new Client();
+		$response = $client->post('https://www.google.com/recaptcha/api/siteverify', [
+			'form_params' => [
+				'secret' => $this->secret_key,
+				'response' => $_POST['g-recaptcha-response'],
+				'remoteip' => $user_info['ip'],
+			]
 		]);
-		$body = $response->result('body');
+		$body = (string) $response->getBody();
+
 		if (!empty($body))
 		{
 			$json = json_decode($body);

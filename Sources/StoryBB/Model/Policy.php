@@ -369,7 +369,9 @@ class Policy
 	/**
 	 * Mark the current user as having agreed to a policy.
 	 *
-	 * @param array List of policy types agreed to
+	 * @param array $agreed List of policy types agreed to
+	 * @param string $user_language The user's language to match policies against
+	 * @param int $user_id The user who is agreeing a policy
 	 */
 	public static function agree_to_policy(array $agreed, string $user_language, int $user_id)
 	{

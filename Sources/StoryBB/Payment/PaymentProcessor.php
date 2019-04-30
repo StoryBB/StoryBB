@@ -50,6 +50,13 @@ interface PaymentProcessor
 	 *
 	 * Called from Profile-Actions.php to return a unique set of fields for the given gateway
 	 * plus all the standard ones for the subscription form
+	 *
+	 * @param string $unique_id The unique ID of this gateway
+	 * @param array $sub_data Subscription data
+	 * @param int|float $value The amount of the subscription
+	 * @param string $period
+	 * @param string $return_url The URL to return the user to after processing the payment
+	 * @return array An array of data for the form
 	 */
 	public function fetchGatewayFields(string $unique_id, array $sub_data, $value, string $period, string $return_url): array;
 

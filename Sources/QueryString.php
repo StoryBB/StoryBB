@@ -598,34 +598,3 @@ function JavaScriptEscape($string)
 {
 	return StoryBB\Template\Helper\Text::jsEscape($string);
 }
-
-/**
- * Rewrite URLs to include the session ID.
- * What it does:
- * - rewrites the URLs outputted to have the session ID, if the user
- *   is not accepting cookies and is using a standard web browser.
- * - handles rewriting URLs for the queryless URLs option.
- * - can be turned off entirely by setting $scripturl to an empty
- *   string, ''. (it wouldn't work well like that anyway.)
- *
- * @param string $buffer The unmodified output buffer
- * @return string The modified buffer
- */
-function ob_sessrewrite($buffer)
-{
-	global $scripturl, $modSettings, $context;
-
-	// If $scripturl is set to nothing, or the SID is not defined (SSI?) just quit.
-	if ($scripturl == '' || !defined('SID'))
-		return $buffer;
-
-	// Do nothing if the session is cookied, or they are a crawler - guests are caught by redirectexit().
-	if (empty($_COOKIE) && SID != '' && !isBrowser('possibly_robot'))
-		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', '"' . $scripturl . '?' . SID . '&amp;', $buffer);
-	// Debugging templates, are we?
-	elseif (isset($_GET['debug']))
-		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '\\??/', '"' . $scripturl . '?debug;', $buffer);
-
-	// Return the changed buffer.
-	return $buffer;
-}

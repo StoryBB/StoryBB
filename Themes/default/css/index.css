@@ -4231,3 +4231,19 @@ div#char_theme_wrapper,
 	padding-top: 3px;
 	font-size: 0.9em;
 }
+.autocomplete-container-group {
+	max-height: 50px;
+}
+.autocomplete-group {
+	display: inline-block;
+	margin-bottom: 8px;
+	margin-right: 20px;
+	white-space: nowrap;
+}
+.autocomplete-group-icons {
+	float: right;
+	max-height: 50px;
+}
+.autocomplete-group-icons img {
+	white-space: nowrap;
+}

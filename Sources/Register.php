@@ -120,7 +120,7 @@ function Register($reg_errors = array())
 	{
 		$reg_fields = explode(',', $modSettings['registration_fields']);
 	}
-	if (!empty($modSettings['minimum_age']) && !empty($modSettings['age_on_registration']))
+	if (!empty($modSettings['minimum_age']) || !empty($modSettings['age_on_registration']))
 	{
 		$reg_fields[] = 'birthday_date';
 	}
@@ -164,6 +164,15 @@ function Register($reg_errors = array())
 	// Otherwise we have nothing to show.
 	else
 		$context['visual_verification'] = false;
+
+	if (!empty($modSettings['minimum_age']) || !empty($modSettings['age_on_registration']))
+	{
+		$context['member']['birth_date'] = [
+			'day' => isset($_POST['bday2']) ? $_POST['bday2'] : '',
+			'month' => isset($_POST['bday1']) ? $_POST['bday1'] : '',
+			'year' => isset($_POST['bday3']) ? $_POST['bday3'] : '',
+		];
+	}
 
 	$context += array(
 		'username' => isset($_POST['user']) ? $smcFunc['htmlspecialchars']($_POST['user']) : '',
@@ -225,13 +234,6 @@ function Register2()
 			loadLanguage('Errors');
 			$reg_errors[] = sprintf($txt['registration_require_policy'], $policy_name);
 		}
-	}
-
-	// Are they under age, and under age users are banned?
-	if (false && !empty($modSettings['minimum_age']))
-	{
-		loadLanguage('Errors');
-		fatal_lang_error('under_age_registration_prohibited', false, array($modSettings['minimum_age']));
 	}
 
 	// Check the time gate for miscreants. First make sure they came from somewhere that actually set it up.
@@ -328,29 +330,36 @@ function Register2()
 	}
 
 	// Handle a string as a birthdate...
-	if (isset($_POST['bday1'], $_POST['bday2'], $_POST['bday3']))
+	if (!empty($modSettings['minimum_age']) || !empty($modSettings['age_on_registration']))
 	{
+		if (!isset($_POST['bday1']))
+			$_POST['bday1'] = '';
+		if (!isset($_POST['bday2']))
+			$_POST['bday2'] = '';
+		if (!isset($_POST['bday3']))
+			$_POST['bday3'] = '';
+
 		// Make sure it's valid and if it is, handle it.
 		$_POST['birthdate'] = checkdate((int) $_POST['bday1'], (int) $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : (int) $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
-		if ($_POST['birthdate'] == '1004-01-01')
+		if ($_POST['birthdate'] == '1004-01-01' || $_POST['bday3'] <= 1004)
 		{
 			loadLanguage('Errors');
 			$reg_errors['invalid_dob'] = $txt['error_dob_required'];
 		}
+	}
 
-		// Also check if it's valid or not.
-		if (!empty($modSettings['minimum_age']) && !empty($modSettings['minimum_age_profile']) && $value != '1004-01-01')
+	// Also check if it's valid or not.
+	if (!empty($modSettings['minimum_age']) && $_POST['birthdate'] != '1004-01-01')
+	{
+		$datearray = getdate(forum_time());
+		$age = $datearray['year'] - $_POST['bday3'] - (($datearray['mon'] > $_POST['bday1'] || ($datearray['mon'] == $_POST['bday1'] && $datearray['mday'] >= $_POST['bday2'])) ? 0 : 1);
+		if ($age < (int) $modSettings['minimum_age'])
 		{
-			$datearray = getdate(forum_time());
-			$age = $datearray['year'] - $_POST['bday3'] - (($datearray['mon'] > $_POST['bday1'] || ($datearray['mon'] == $_POST['bday1'] && $datearray['mday'] >= $_POST['bday2'])) ? 0 : 1);
-			if ($age < (int) $modSettings['minimum_age'])
-			{
-				$reg_errors['invalid_dob'] = sprintf($txt['error_dob_not_old_enough'], $modSettings['minimum_age']);
-			}
-			else
-			{
-				$possible_strings[] = 'birthdate';
-			}
+			$reg_errors['invalid_dob'] = sprintf($txt['error_dob_not_old_enough'], $modSettings['minimum_age']);
+		}
+		else
+		{
+			$possible_strings[] = 'birthdate';
 		}
 	}
 
@@ -520,7 +529,7 @@ function Register2()
 	{
 		call_integration_hook('integrate_activate', array($regOptions['username']));
 
-		setLoginCookie(60 * $modSettings['cookieTime'], $memberID, hash_salt($regOptions['register_vars']['passwd'], $regOptions['register_vars']['password_salt']));
+		setLoginCookie(0, $memberID, hash_salt($regOptions['register_vars']['passwd'], $regOptions['register_vars']['password_salt']));
 
 		redirectexit('action=login2;sa=check;member=' . $memberID, $context['server']['needs_login_fix']);
 	}

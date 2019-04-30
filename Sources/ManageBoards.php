@@ -10,6 +10,8 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Helper\Autocomplete;
+
 /**
  * The main dispatcher; doesn't do anything, just delegates.
  * This is the main entry point for all the manageboards admin screens.
@@ -563,11 +565,6 @@ function EditBoard()
 		$context['board']['moderators'][$row['id_member']] = $row['real_name'];
 	$smcFunc['db_free_result']($request);
 
-	$context['board']['moderator_list'] = empty($context['board']['moderators']) ? '' : '&quot;' . implode('&quot;, &quot;', $context['board']['moderators']) . '&quot;';
-
-	if (!empty($context['board']['moderators']))
-		list ($context['board']['last_moderator_id']) = array_slice(array_keys($context['board']['moderators']), -1);
-
 	// Get all the groups assigned as moderators
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group
@@ -579,13 +576,8 @@ function EditBoard()
 	);
 	$context['board']['moderator_groups'] = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$context['board']['moderator_groups'][$row['id_group']] = $context['groups'][$row['id_group']]['name'];
+		$context['board']['moderator_groups'][$row['id_group']] = $row['id_group'];
 	$smcFunc['db_free_result']($request);
-
-	$context['board']['moderator_groups_list'] = empty($context['board']['moderator_groups']) ? '' : '&quot;' . implode('&quot;, &qout;', $context['board']['moderator_groups']) . '&quot;';
-
-	if (!empty($context['board']['moderator_groups']))
-		list ($context['board']['last_moderator_group_id']) = array_slice(array_keys($context['board']['moderator_groups']), -1);
 
 	// Get all the themes...
 	$request = $smcFunc['db_query']('', '
@@ -605,7 +597,8 @@ function EditBoard()
 	{
 		$context['sub_template'] = 'admin_boards_edit';
 		$context['page_title'] = $txt['boardsEdit'];
-		loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
+		Autocomplete::init('member', '#moderators', 0, array_keys($context['board']['moderators']));
+		Autocomplete::init('nonpostgroup', '#moderator_groups', 0, array_keys($context['board']['moderator_groups']));
 	}
 	else
 	{
@@ -692,23 +685,31 @@ function EditBoard2()
 		$boardOptions['board_name'] = parse_bbc($smcFunc['htmlspecialchars']($_POST['board_name']), false, '', $context['description_allowed_tags']);
 		$boardOptions['board_description'] = parse_bbc($smcFunc['htmlspecialchars']($_POST['desc']), false, '', $context['description_allowed_tags']);
 
-		$boardOptions['moderator_string'] = $_POST['moderators'];
-
-		if (isset($_POST['moderator_list']) && is_array($_POST['moderator_list']))
+		if (isset($_POST['moderators']) && is_array($_POST['moderators']))
 		{
 			$moderators = array();
-			foreach ($_POST['moderator_list'] as $moderator)
-				$moderators[(int) $moderator] = (int) $moderator;
+			foreach ($_POST['moderators'] as $moderator)
+			{
+				$moderator = (int) $moderator;
+				if (!empty($moderator))
+				{
+					$moderators[$moderator] = $moderator;
+				}
+			}
 			$boardOptions['moderators'] = $moderators;
 		}
 
-		$boardOptions['moderator_group_string'] = $_POST['moderator_groups'];
-
-		if (isset($_POST['moderator_group_list']) && is_array($_POST['moderator_group_list']))
+		if (isset($_POST['moderator_groups']) && is_array($_POST['moderator_groups']))
 		{
 			$moderator_groups = array();
-			foreach ($_POST['moderator_group_list'] as $moderator_group)
-				$moderator_groups[(int) $moderator_group] = (int) $moderator_group;
+			foreach ($_POST['moderator_groups'] as $moderator_group)
+			{
+				$moderator_group = (int) $moderator_group;
+				if (!empty($moderator_group))
+				{
+					$moderator_groups[$moderator_group] = $moderator_group;
+				}
+			}
 			$boardOptions['moderator_groups'] = $moderator_groups;
 		}
 
