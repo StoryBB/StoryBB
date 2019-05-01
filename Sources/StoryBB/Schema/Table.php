@@ -13,6 +13,7 @@
 namespace StoryBB\Schema;
 
 use StoryBB\Schema\Database;
+use StoryBB\Schema\InvalidIndexException;
 
 /**
  * This class handles tables. Specifically it models a single table and describes the columns and indexes
@@ -53,9 +54,78 @@ class Table
 		$this->indexes = $indexes;
 		$this->opts = $opts;
 
-		// Make sure all the columns requested in indexes are in the definition.
+		$this->check_index_columns();
+		$this->check_auto_increment();
+	}
 
-		// Make sure that if a column is defined as auto_increment, that it is also the primary key.
+	/**
+	 * Make sure all the columns requested in indexes are in the definition.
+	 */
+	protected function check_index_columns()
+	{
+		$index_contents = [];
+		foreach ($this->indexes as $indexnum => $index)
+		{
+			foreach ($index->get_raw_columns() as $id => $column)
+			{
+				if (is_numeric($id) && !is_numeric($column))
+				{
+					$index_contents[$indexnum][] = $column;
+				}
+				else
+				{
+					$index_contents[$indexnum][] = $id;
+				}
+			}
+		}
+		foreach ($index_contents as $indexnum => $index_columns)
+		{
+			foreach ($index_columns as $column)
+			{
+				if (!isset($this->columns[$column]))
+				{
+					throw new InvalidIndexException('Table ' . $this->get_table_name() . ' defines an index on column ' . $column . ' which does not exist');
+				}
+			}
+		}
+	}
+
+	/**
+	 * Make sure that if a column is defined as auto_increment, that it is also the primary key.
+	 */
+	protected function check_auto_increment()
+	{
+		$auto_increment = '';
+		foreach ($this->columns as $column_name => $column)
+		{
+			$column_data = $column->create_data($column_name);
+			if (!empty($column_data['auto']))
+			{
+				$auto_increment = $column_data['name'];
+				break;
+			}
+		}
+		if (empty($auto_increment))
+		{
+			return; // This table doesn't have an A_I column, no further checking needed.
+		}
+
+		foreach ($this->indexes as $index)
+		{
+			$raw_index = $index->create_data();
+			$raw_columns = $index->get_raw_columns();
+			if ($raw_index['type'] == 'primary')
+			{
+				// For autoincrement, it must either be the only column in the index, or if a multi-column index,
+				// it must be the first column. It must also be the full width of the column.
+				if (isset($raw_columns[0]) && $raw_columns[0] == $auto_increment)
+				{
+					return;
+				}
+			}
+		}
+
+		throw new InvalidIndexException('Table ' . $table . ' defines an autoincrement on ' . $auto_increment . ' but does not define the primary key as this column');
 	}
 
 	/**
@@ -204,9 +274,23 @@ class Table
 			}
 			else
 			{
-				$change_column = $smcFunc['db_compare_column']($this->columns[$column_name], $column);
-				
+				$change_column = $smcFunc['db_compare_column']($this->columns[$column_name], $column, $column_name);
+				if ($change_column)
+				{
+					$changes['change_columns'][$column_name] = $change_column;
+				}
 			}
+		}
+
+		$extra_indexes = $smcFunc['db_compare_indexes']($this->indexes, $dest_indexes);
+		if (!empty($extra_indexes))
+		{
+			$changes['add_indexes'] = $extra_indexes;
+		}
+
+		if (!empty($changes))
+		{
+			$smcFunc['db_change_table']('{db_prefix}' . $this->get_table_name(), $changes);
 		}
 	}
 }

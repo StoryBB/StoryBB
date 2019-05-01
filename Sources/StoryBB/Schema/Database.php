@@ -25,13 +25,18 @@ class Database
 	public static function update_schema()
 	{
 		global $smcFunc;
+		if (!isset($smcFunc['db_table_structure']))
+		{
+			db_extend('packages');
+		}
 
-		$schema = Schema::get_schema();
+		$schema = Schema::get_tables();
 		foreach ($schema as $table)
 		{
 			if ($table->exists())
 			{
-				$table->update();
+				$existing_table = $smcFunc['db_table_structure']('{db_prefix}' . $table->get_table_name());
+				$existing_table->update_to($table);
 			}
 			else
 			{

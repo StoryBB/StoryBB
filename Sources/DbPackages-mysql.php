@@ -34,6 +34,7 @@ function db_packages_init()
 			'db_create_table' => 'sbb_db_create_table',
 			'db_drop_table' => 'sbb_db_drop_table',
 			'db_table_structure' => 'sbb_db_table_structure',
+			'db_change_table' => 'sbb_db_change_table',
 			'db_compare_column' => 'sbb_db_compare_column',
 			'db_compare_indexes' => 'sbb_db_compare_indexes',
 			'db_list_columns' => 'sbb_db_list_columns',
@@ -764,6 +765,62 @@ function sbb_db_table_structure(string $table_name): Table
 }
 
 /**
+ * Action changes to a table based on the schema comparison tools.
+ *
+ * @param string $table_name The table's name
+ * @param array $changes A collection of all the changes to apply to the table at once
+ * @return mixed The query result from running the change query.
+ */
+function sbb_db_change_table(string $table_name, array $changes)
+{
+	global $smcFunc, $db_prefix;
+
+	$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
+
+	$sql_changes = [];
+
+	if (!empty($changes['add_columns']))
+	{
+		foreach ($changes['add_columns'] as $column_name => $column)
+		{
+			$column_info = $column->create_data($column_name);
+			$sql_changes[] = 'ADD COLUMN ' . sbb_db_create_query_column($column_info);
+		}
+	}
+	if (!empty($changes['change_columns']))
+	{
+		foreach ($changes['change_columns'] as $column_name => $column)
+		{
+			$column_info = $column->create_data($column_name);
+			$sql_changes[] = 'CHANGE COLUMN `' . $column_name . '` ' . sbb_db_create_query_column($column_info);
+		}
+	}
+	if (!empty($changes['add_indexes']))
+	{
+		foreach ($changes['add_indexes'] as $index)
+		{
+			$index_info = $index->create_data();
+			$column_names = $index_info['columns'];
+			foreach ($column_names as $k => $v) {
+				$column_names[$k] = str_replace(['(', ')'], '', $v);
+			}
+			$index_info['name'] = implode('_', $column_names);
+			$sql_changes[] = 'ADD ' . (isset($index_info['type']) && $index_info['type'] == 'unique' ? 'UNIQUE' : 'INDEX') . ' ' . $index_info['name'] . ' (' . implode(', ', $index_info['columns']) . ')';
+		}
+	}
+
+	// Now do the things to the thing!
+	$query = '
+		ALTER TABLE ' . $table_name . "\n\t\t" . implode(",\n\t\t", $sql_changes);
+
+	return $smcFunc['db_query']('', $query,
+		array(
+			'security_override' => true,
+		)
+	);
+}
+
+/**
  * Returns two lists, one of which types are compatible to convert to other types, and one which lists
  * which types are supersets of another type (e.g. bigint is a superset of tinyint)
  *
@@ -790,6 +847,10 @@ function sbb_db_compatible_types()
 	{
 	    foreach ($upgradeable as $upgrade)
 	    {
+	    	if ($type == $upgrade)
+	    	{
+	    		continue; // e.g. text is not a superset of text.
+	    	}
 		    $superset_types[$upgrade][$type] = true;
 	    }
 	}
@@ -812,11 +873,11 @@ function sbb_db_compare_column(Column $source, Column $dest, string $column_name
 	// These types are legal upgrades.
 	if ($compatible_types === null)
 	{
-		list($compatibilities, $superset_types) = sbb_db_compatible_types();
+		list($compatible_types, $superset_types) = sbb_db_compatible_types();
 	}
 
-	$source_data = $source->create_data();
-	$dest_data = $dest->create_data();
+	$source_data = $source->create_data($column_name);
+	$dest_data = $dest->create_data($column_name);
 
 	// Is the new column bigger than the old one? What about if the old column is a supertype of the new one?
 	$legal_upgrade = in_array($dest_data['type'], $compatible_types[$source_data['type']]);
@@ -833,7 +894,16 @@ function sbb_db_compare_column(Column $source, Column $dest, string $column_name
 	$size_differential = 0;
 	if (isset($source_data['size'], $dest_data['size']))
 	{
-		$size_differential = $source_data['size'] <=> $dest_data['size'];
+		if (!$type_change && $dest_data['size'] < $source_data['size'])
+		{
+			// The column is already big enough, that part doesn't need changing.
+			$dest_data['size'] = $source_data['size'];
+			$size_differential = 0;
+		}
+		else
+		{
+			$size_differential = $source_data['size'] <=> $dest_data['size'];
+		}
 	}
 
 	// Is there a default value?
@@ -841,7 +911,23 @@ function sbb_db_compare_column(Column $source, Column $dest, string $column_name
 	$default_change = false;
 	if (isset($source_data['default'], $dest_data['default']))
 	{
-
+		// They're both set, are they different?
+		if ($source_data['default'] != $dest_data['default'])
+		{
+			$default_change = true;
+		}
+	}
+	elseif (isset($source_data['default']))
+	{
+		// The new column doesn't have a default.
+		$default_change = true;
+		$default = null;
+	}
+	elseif (isset($dest_data['default']))
+	{
+		// The new column has a default but the original column doesn't.
+		$default_change = true;
+		$default = $dest_data['default'];
 	}
 
 	// Nullability change? Nullability is pre-known.
@@ -851,79 +937,143 @@ function sbb_db_compare_column(Column $source, Column $dest, string $column_name
 		$nullable = $dest_data['null'];
 	}
 
-	// Sign change?
+	// Sign change? We don't support that since it risks data loss except in very specific cases.
 	$signed = null;
 	if (empty($source_data['unsigned']) != empty($dest_data['unsigned']))
 	{
 		$signed = empty($dest_data['unsigned']);
 	}
-	$signed_change = $signed !== null;
-
-	// Are the column types the same?
-	switch ($source_data['type'])
+	if ($signed !== null)
 	{
-		case 'tinyint':
-		case 'smallint':
-		case 'mediumint':
-		case 'int':
-		case 'bigint':
-			if ($signed_change || $size_differential || isset($nullable) || isset($default))
+		throw new InvalidColumnTypeException('Changing signs of columns is not supported.');
+	}
+
+	// The rules per column change are really quite complex.
+	switch ($source_data['type'] . '->' . $dest_data['type'])
+	{
+		case 'tinyint->tinyint':
+		case 'smallint->smallint':
+		case 'mediumint->mediumint':
+		case 'int->int':
+		case 'bigint->bigint':
+			// We don't care about sign changes but we do for 'size', nullability or default value.
+			if ($size_differential || $default_change || isset($nullable))
 			{
-				
-			}
-			break;
-
-		case 'float':
-			break;
-
-		case 'char':
-			break;
-
-		case 'varchar':
-			break;
-
-		case 'text':
-			if ($type_change || isset($nullable))
-			{
-				// So this is currently a text column, it can either change its type and/or its nullability.
-				$column = $type_change ? Column::mediumtext() : Column::text();
-				if ($nullable)
+				$type = $source_data['type'];
+				$column = Column::$type(); // We're going to be resetting it to the max size for this column type.
+				if (!empty($dest_data['null']))
 				{
 					$column->nullable();
+				}
+				if (isset($dest_data['default']))
+				{
+					$column->default($dest_data['default']);
+				}
+				if (!empty($dest_data['auto']))
+				{
+					$column->auto_increment();
 				}
 				return $column;
 			}
 			break;
 
-		case 'mediumtext':
-			// If the current column is mediumtext, the only possible change we can have is to nullability.
+		case 'tinyint->float':
+		case 'smallint->float':
+		case 'mediumint->float':
+		case 'int->float':
+		case 'bigint->float':
+			// This is a forced type change.
+			return $dest;
+			break;
+
+		case 'tinyint->smallint':
+		case 'tinyint->mediumint':
+		case 'tinyint->int':
+		case 'tinyint->bigint':
+		case 'smallint->mediumint':
+		case 'smallint->int':
+		case 'smallint->bigint':
+		case 'mediumint->int':
+		case 'mediumint->bigint':
+		case 'int->bigint':
+			// This is a forced type change.
+			return $dest;
+			break;
+
+		case 'float->float':
+			// A change of default value or a change in nullability will apply a change.
+			if ($default_change || isset($nullable))
+			{
+				return $dest;
+			}
+			break;
+
+		case 'char->char':
+		case 'varchar->varchar':
+			// This isn't a type change but it might be a size, nullability or default value change.
+			if ($size_differential == -1 || $default_change || isset($nullable))
+			{
+				$type = $source_data['type'];
+				$column = Column::$type(max($source_data['size'], $dest_data['size']));
+				if (!empty($dest_data['null']))
+				{
+					$column->nullable();
+				}
+				if (array_key_exists('default', $dest_data))
+				{
+					$column->default($dest_data['default']);
+				}
+				else
+				{
+					$column->default(null);
+				}
+				return $column;
+			}
+			break;
+
+		case 'char->varchar':
+			// This is a type change but we need to make sure we don't do something like char(10) -> varchar(5).
+			$column = Column::varchar(max($source_data['size'], $dest_data['size']));
+			if (!empty($dest_data['null']))
+			{
+				$column->nullable();
+			}
+			if (isset($dest_data['default']))
+			{
+				$column->default($dest_data['default']);
+			}
+			return $column;
+			break;
+
+		case 'char->text':
+		case 'char->mediumtext':
+		case 'varchar->text':
+		case 'varchar->mediumtext':
+		case 'text->mediumtext':
+			// This can't help but be a forced change.
+			return $dest;
+			break;
+
+		case 'text->text':
+		case 'mediumtext->mediumtext':
+			// The only variation here is whether this has a change in nullability.
 			if (isset($nullable))
 			{
-				// Build a new column. Doesn't matter what the destination.
-				$column = Column::mediumtext();
-				if ($nullable)
-				{
-					$column->nullable();
-				}
-				return $column;
-			}
-			break;
-
-		case 'varbinary':
-			if (isset($default) || isset($nullable))
-			{
-				// A change of default value or a change in nullability will apply a change.
 				return $dest;
 			}
 			break;
 
-		case 'date':
-			if (isset($default) || isset($nullable))
+		case 'varbinary->varbinary':
+		case 'date->date':
+			// A change of default value or a change in nullability will apply a change.
+			if ($default_change || isset($nullable))
 			{
-				// A change of default value or a change in nullability will apply a change.
 				return $dest;
 			}
 			break;
+
+		default:
+			throw new InvalidColumnTypeException('Unrecognised change type from ' . $source_data['type'] . ' to ' . $dest_data['type']);
 	}
 
 	return false;
@@ -938,7 +1088,38 @@ function sbb_db_compare_column(Column $source, Column $dest, string $column_name
  */
 function sbb_db_compare_indexes(array $source_indexes, array $dest_indexes): array
 {
+	$new_indexes = [];
 
+	// Since we get the columns in pre-formatted manner (e.g. a partial column is already columnname(10) or similar)
+	// we can actually reduce the entire thing to a string in the correct order and do simple matching that way.
+	// E.g. an index on id_column, column(10) can easily be quickly string-matched as id_column~column(10).
+	$src = [];
+	$dest = [];
+
+	foreach ($source_indexes as $id => $index)
+	{
+		$index = $index->create_data();
+		$src[$id] = $index['type'] . '~' . implode('~', $index['columns']);
+	}
+	foreach ($dest_indexes as $id => $index)
+	{
+		$index = $index->create_data();
+		$dest[$id] = $index['type'] . '~' . implode('~', $index['columns']);
+	}
+
+	foreach ($dest as $id => $index_string)
+	{
+		if (!in_array($index_string, $src))
+		{
+			if ($dest_indexes[$id]->create_data()['type'] == 'primary')
+			{
+				throw new InvalidIndexException('Cannot redefine primary key');
+			}
+			$new_indexes[] = $dest_indexes[$id];
+		}
+	}
+
+	return $new_indexes;
 }
 
 /**

@@ -27,9 +27,10 @@ class Index
 	 *
 	 * @param array $columns Columns in internal format (a la parse_columns)
 	 * @param string $type Type of index to be produced
+	 * @param array $raw_columns The names of columns upon which this index is based
 	 * @return instance
 	 */
-	private function __construct(array $columns, string $type)
+	private function __construct(array $columns, string $type, array $raw_columns)
 	{
 		if (empty($columns))
 		{
@@ -43,6 +44,7 @@ class Index
 		$this->index = [
 			'columns' => $columns,
 			'type' => $type,
+			'raw_columns' => $raw_columns,
 		];
 	}
 
@@ -51,25 +53,29 @@ class Index
 	 * e.g. ['myfield, 'myfield2' => 15] -> ['myfield', 'myfield2(15)']
 	 *
 	 * @param array $columns An array of columns where values are columns, or key/values are partial columns.
+	 * @param bool $raw Whether to return these as just raw column names or parsed format.
 	 * @return array An array in SQL format
 	 */
-	protected static function parse_columns(array $columns): array
+	protected static function parse_columns(array $columns, bool $raw = false): array
 	{
 		$sqlcols = [];
+		$rawcols = [];
 		foreach ($columns as $id => $column)
 		{
 			if (is_numeric($id) && !is_numeric($column))
 			{
 				// This came in as a regular column for the array.
 				$sqlcols[] = $column;
+				$rawcols[] = $column;
 			}
 			else
 			{
 				$sqlcols[] = $id . '(' . $column . ')';
+				$rawcols[] = $id;
 			}
 		}
 
-		return $sqlcols;
+		return $raw ? $rawcols : $sqlcols;
 	}
 
 	/**
@@ -80,7 +86,7 @@ class Index
 	 */
 	public static function primary(array $columns)
 	{
-		return new self(self::parse_columns($columns), 'primary');
+		return new self(self::parse_columns($columns), 'primary', self::parse_columns($columns, true));
 	}
 
 	/**
@@ -91,7 +97,7 @@ class Index
 	 */
 	public static function key(array $columns)
 	{
-		return new self(self::parse_columns($columns), 'index');
+		return new self(self::parse_columns($columns), 'index', self::parse_columns($columns, true));
 	}
 
 	/**
@@ -102,7 +108,7 @@ class Index
 	 */
 	public static function unique(array $columns)
 	{
-		return new self(self::parse_columns($columns), 'unique');
+		return new self(self::parse_columns($columns), 'unique', self::parse_columns($columns, true));
 	}
 
 	/**
@@ -112,6 +118,19 @@ class Index
 	 */
 	public function create_data()
 	{
-		return $this->index;
+		return [
+			'columns' => $this->index['columns'],
+			'type' => $this->index['type'],
+		];
+	}
+
+	/**
+	 * Returns an array of raw columns this column is based off.
+	 *
+	 * @return array An array of raw column names without length parameters.
+	 */
+	public function get_raw_columns()
+	{
+		return $this->index['raw_columns'];
 	}
 }
