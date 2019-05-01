@@ -19,6 +19,7 @@ use StoryBB\Schema\InvalidColumnTypeException;
  */
 class Column
 {
+	/** @var array $column Storage of the settings of this column */
 	protected $column;
 
 	/**

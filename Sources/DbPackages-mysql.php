@@ -763,6 +763,12 @@ function sbb_db_table_structure(string $table_name): Table
 	return Table::make($unprefixed_name, $columns, $indexes);
 }
 
+/**
+ * Returns two lists, one of which types are compatible to convert to other types, and one which lists
+ * which types are supersets of another type (e.g. bigint is a superset of tinyint)
+ *
+ * @return array An array of two elements - an array of compatible types and an array of supersets
+ */
 function sbb_db_compatible_types()
 {
 	$compatible_types = [
@@ -794,9 +800,12 @@ function sbb_db_compatible_types()
 /**
  * Compares two column objects.
  *
+ * @param Column $source The structure of column that already exists
+ * @param Column $dest The structure of column requested to exist
+ * @param string $column_name The name of the column to prepare SQL
  * @return mixed false if no changes required, Column otherwise reflecting new column
  */
-function sbb_db_compare_column(Column $source, Column $dest)
+function sbb_db_compare_column(Column $source, Column $dest, string $column_name)
 {
 	static $compatible_types, $superset_types;
 
@@ -920,6 +929,13 @@ function sbb_db_compare_column(Column $source, Column $dest)
 	return false;
 }
 
+/**
+ * Compares a table's indexes against the list of indexes requested'
+ *
+ * @param array $source_indexes An array of indexes on the table already in the database
+ * @param array $dest_indexes An array of indexes the table should have
+ * @return array The array of indexes to be added so that all the indexes covered in $dest_indexes are covered
+ */
 function sbb_db_compare_indexes(array $source_indexes, array $dest_indexes): array
 {
 

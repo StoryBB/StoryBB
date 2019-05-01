@@ -19,6 +19,9 @@ use StoryBB\Schema\Schema;
  */
 class Database
 {
+	/**
+	 * Go through the defined schema, see if tables need creating or updating, and action those.
+	 */
 	public static function update_schema()
 	{
 		global $smcFunc;
@@ -37,6 +40,11 @@ class Database
 		}
 	}
 
+	/**
+	 * Get the available engines supported by the database system in use.
+	 *
+	 * @return array A list of engines supported by the underlying DB (currently MySQL only)
+	 */
 	public static function get_engines(): array
 	{
 		global $smcFunc;
