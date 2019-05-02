@@ -33,6 +33,10 @@ class Database
 		$schema = Schema::get_tables();
 		foreach ($schema as $table)
 		{
+			if (STORYBB == 'BACKGROUND')
+			{
+				echo 'Examining table `' . $table->get_table_name() . '`...', FROM_CLI ? "\n" : '<br>';
+			}
 			if ($table->exists())
 			{
 				$existing_table = $smcFunc['db_table_structure']('{db_prefix}' . $table->get_table_name());
