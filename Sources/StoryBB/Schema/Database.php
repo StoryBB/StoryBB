@@ -19,16 +19,28 @@ use StoryBB\Schema\Schema;
  */
 class Database
 {
+	/**
+	 * Go through the defined schema, see if tables need creating or updating, and action those.
+	 */
 	public static function update_schema()
 	{
 		global $smcFunc;
+		if (!isset($smcFunc['db_table_structure']))
+		{
+			db_extend('packages');
+		}
 
-		$schema = Schema::get_schema();
+		$schema = Schema::get_tables();
 		foreach ($schema as $table)
 		{
+			if (STORYBB == 'BACKGROUND')
+			{
+				echo 'Examining table `' . $table->get_table_name() . '`...', FROM_CLI ? "\n" : '<br>';
+			}
 			if ($table->exists())
 			{
-				$table->update();
+				$existing_table = $smcFunc['db_table_structure']('{db_prefix}' . $table->get_table_name());
+				$existing_table->update_to($table);
 			}
 			else
 			{
@@ -37,6 +49,11 @@ class Database
 		}
 	}
 
+	/**
+	 * Get the available engines supported by the database system in use.
+	 *
+	 * @return array A list of engines supported by the underlying DB (currently MySQL only)
+	 */
 	public static function get_engines(): array
 	{
 		global $smcFunc;
