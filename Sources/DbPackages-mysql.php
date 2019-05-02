@@ -890,6 +890,15 @@ function sbb_db_compare_column(Column $source, Column $dest, string $column_name
 		throw new InvalidColumnTypeException('Cannot convert ' . $source_data['type'] . ' to ' . $dest_data['type']);
 	}
 
+	if ($is_superset)
+	{
+		$dest_data['type'] = $source_data['type'];
+		if (isset($dest_data['size']))
+		{
+			$dest_data['size'] = max($source_data['size'], $dest_data['size']);
+		}
+	}
+
 	// Is there is a size differential?
 	$size_differential = 0;
 	if (isset($source_data['size'], $dest_data['size']))
