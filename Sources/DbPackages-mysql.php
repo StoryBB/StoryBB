@@ -845,14 +845,14 @@ function sbb_db_compatible_types()
 	$superset_types = [];
 	foreach ($compatible_types as $type => $upgradeable)
 	{
-	    foreach ($upgradeable as $upgrade)
-	    {
-	    	if ($type == $upgrade)
-	    	{
-	    		continue; // e.g. text is not a superset of text.
-	    	}
-		    $superset_types[$upgrade][$type] = true;
-	    }
+		foreach ($upgradeable as $upgrade)
+		{
+			if ($type == $upgrade)
+			{
+				continue; // e.g. text is not a superset of text.
+			}
+			$superset_types[$upgrade][$type] = true;
+		}
 	}
 
 	return [$compatible_types, $superset_types];
