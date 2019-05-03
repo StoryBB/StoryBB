@@ -21,8 +21,11 @@ class Database
 {
 	/**
 	 * Go through the defined schema, see if tables need creating or updating, and action those.
+	 *
+	 * @param bool $safe_mode If true, do not run the queries but instead return them.
+	 * @return If safe mode is enabled, return an array of queries.
 	 */
-	public static function update_schema()
+	public static function update_schema(bool $safe_mode = true)
 	{
 		global $smcFunc;
 		if (!isset($smcFunc['db_table_structure']))
@@ -30,6 +33,7 @@ class Database
 			db_extend('packages');
 		}
 
+		$queries = [];
 		$schema = Schema::get_tables();
 		foreach ($schema as $table)
 		{
@@ -40,12 +44,17 @@ class Database
 			if ($table->exists())
 			{
 				$existing_table = $smcFunc['db_table_structure']('{db_prefix}' . $table->get_table_name());
-				$existing_table->update_to($table);
+				$queries[] = $existing_table->update_to($table, $safe_mode);
 			}
 			else
 			{
-				$table->create();
+				$queries[] = $table->create($safe_mode);
 			}
+		}
+
+		if ($safe_mode)
+		{
+			return $queries;
 		}
 	}
 

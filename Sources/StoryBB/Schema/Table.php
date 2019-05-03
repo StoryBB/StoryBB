@@ -190,9 +190,10 @@ class Table
 	/**
 	 * Create the table defined in this object into the database.
 	 *
-	 * @return mixed False on creation, otherwise raw database result object
+	 * @param bool $safe_mode If true, return the query to be run rather than the result
+	 * @return mixed False on creation, otherwise raw database result object (or query in safe mode)
 	 */
-	public function create()
+	public function create(bool $safe_mode = false)
 	{
 		global $smcFunc, $db_prefix;
 
@@ -221,12 +222,20 @@ class Table
 		{
 			db_extend('Packages');
 		}
-		$result = $smcFunc['db_create_table']('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
-		if ($result)
+		if ($safe_mode)
 		{
-			self::$table_cache[] = $db_prefix . $this->table_name;
+			$parameters['safe_mode'] = true;
+			return $smcFunc['db_create_table']('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
 		}
-		return $result;
+		else
+		{
+			$result = $smcFunc['db_create_table']('{db_prefix}' . $this->table_name, $columns, $indexes, $parameters);
+			if ($result)
+			{
+				self::$table_cache[] = $db_prefix . $this->table_name;
+			}
+			return $result;
+		}
 	}
 
 	/**
@@ -256,8 +265,10 @@ class Table
 	 * to convert this table to.
 	 *
 	 * @param Table $dest The destination table object
+	 * @param bool $safe_mode If true, return the query to be executed rather than execute it
+	 * @return mixed If safe mode is active, return a string containing the query to run
 	 */
-	public function update_to(Table $dest)
+	public function update_to(Table $dest, bool $safe_mode = false)
 	{
 		global $smcFunc;
 
@@ -288,9 +299,15 @@ class Table
 			$changes['add_indexes'] = $extra_indexes;
 		}
 
+		$result = '';
 		if (!empty($changes))
 		{
-			$smcFunc['db_change_table']('{db_prefix}' . $this->get_table_name(), $changes);
+			$result = $smcFunc['db_change_table']('{db_prefix}' . $this->get_table_name(), $changes, $safe_mode);
+		}
+
+		if ($safe_mode)
+		{
+			return $result;
 		}
 	}
 }
