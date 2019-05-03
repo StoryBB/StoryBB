@@ -95,8 +95,6 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
 
 	static $engines = array();
 
-	$old_table_exists = false;
-
 	// Strip out the table name, we might not need it in some cases
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
 
@@ -107,28 +105,11 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
 	// Log that we'll want to remove this on uninstall.
 	$db_package_log[] = array('remove_table', $table_name);
 
-	// Slightly easier on MySQL than the others...
+	// If the table exists, abort - honestly, the schema system should be taking care of this anyway.
 	$tables = $smcFunc['db_list_tables']();
 	if (in_array($full_table_name, $tables))
 	{
-		// This is a sad day... drop the table? If not, return false (error) by default.
-		if ($if_exists == 'overwrite')
-			$smcFunc['db_drop_table']($table_name);
-		elseif ($if_exists == 'update')
-		{
-			$smcFunc['db_transaction']('begin');
-			$db_trans = true;
-			$smcFunc['db_drop_table']($table_name.'_old');
-			$smcFunc['db_query']('','
-				RENAME TABLE '. $table_name .' TO ' . $table_name . '_old',
-				array(
-					'security_override' => true,
-				)
-			);
-			$old_table_exists = true;
-		}
-		else
-			return $if_exists == 'ignore';
+		return $if_exists == 'ignore';
 	}
 
 	// Righty - let's do the damn thing!
@@ -177,41 +158,6 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
 			'security_override' => true,
 		)
 	);
-
-	// Fill the old data
-	if ($old_table_exists)
-	{	
-		$same_col = array();
-
-		$request = $smcFunc['db_query']('','
-			SELECT count(*), column_name
-			FROM information_schema.columns
-			WHERE table_name in ({string:table1},{string:table2}) AND table_schema = {string:schema}
-			GROUP BY column_name
-			HAVING count(*) > 1',
-			array (
-				'table1' => $table_name,
-				'table2' => $table_name.'_old',
-				'schema' => $db_name,
-			)
-		);
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-		{
-			$same_col[] = $row['column_name'];
-		}
-
-		$smcFunc['db_query']('','
-			INSERT INTO ' . $table_name .'('
-			. implode($same_col, ',') .
-			')
-			SELECT '. implode($same_col, ',') . '
-			FROM ' . $table_name . '_old',
-			array()
-		);
-
-		$smcFunc['db_drop_table']($table_name . '_old');
-	}
 
 	return true;
 }
@@ -1019,6 +965,7 @@ function sbb_db_compare_column(Column $source, Column $dest, string $column_name
 
 		case 'char->char':
 		case 'varchar->varchar':
+		case 'varbinary->varbinary':
 			// This isn't a type change but it might be a size, nullability or default value change.
 			if ($size_differential == -1 || $default_change || isset($nullable))
 			{
@@ -1072,7 +1019,6 @@ function sbb_db_compare_column(Column $source, Column $dest, string $column_name
 			}
 			break;
 
-		case 'varbinary->varbinary':
 		case 'date->date':
 			// A change of default value or a change in nullability will apply a change.
 			if ($default_change || isset($nullable))
