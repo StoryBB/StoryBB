@@ -15,11 +15,23 @@ define('FROM_CLI', empty($_SERVER['REQUEST_METHOD']));
 
 require_once(__DIR__ . '/../Settings.php');
 
+$safe_mode = true;
 if (!FROM_CLI)
 {
 	if (!isset($admin_cli_password) || !isset($_GET['secret']) || $_GET['secret'] !== $admin_cli_password)
 	{
 		die('Script can only be run from command line or with administrative CLI password');
+	}
+	if (isset($_GET['safe_mode']) && $_GET['safe_mode'] === 'false')
+	{
+		$safe_mode = false;
+	}
+}
+else
+{
+	if (in_array('--safe_mode=false', $argv))
+	{
+		$safe_mode = false;
 	}
 }
 
@@ -38,8 +50,37 @@ reloadSettings();
 require_once($sourcedir . '/Subs-Admin.php');
 updateSettingsFile(['maintenance' => 2]);
 
-StoryBB\Schema\Database::update_schema();
+$results = StoryBB\Schema\Database::update_schema($safe_mode);
 
 updateSettingsFile(['maintenance' => 0]);
 
-echo 'Schema is now up to date.';
+if ($safe_mode)
+{
+	foreach ($results as $resultid => $result)
+	{
+		if (empty($result))
+		{
+			unset($results[$resultid]);
+			continue;
+		}
+		$result = rtrim($result);
+		if (substr($result, -1) !== ';')
+		{
+			$results[$resultid] = $result . ';';
+		}
+	}
+
+	if (!empty($results))
+	{
+		$output = "The following queries would be run in non-safe mode:\n\n" . implode("\n\n", $results);
+		echo FROM_CLI ? $output . "\n\n" : str_replace("\n", '<br>');
+	}
+	else
+	{
+		echo 'Schema is already up to date.';
+	}
+}
+else
+{
+	echo 'Schema is now up to date.';
+}

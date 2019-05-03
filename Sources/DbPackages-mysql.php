@@ -149,8 +149,13 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
 		return false;
 	}
 
-	$table_query .= ') ENGINE=' . $parameters['engine'];
+	$table_query .= "\n" . ') ENGINE=' . $parameters['engine'];
 	$table_query .= ' DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci';
+
+	if (!empty($parameters['safe_mode']))
+	{
+		return $table_query;
+	}
 
 	// Create the table!
 	$smcFunc['db_query']('', $table_query,
@@ -715,9 +720,10 @@ function sbb_db_table_structure(string $table_name): Table
  *
  * @param string $table_name The table's name
  * @param array $changes A collection of all the changes to apply to the table at once
+ * @param bool $safe_mode If true, return the query rather than the result of running it.
  * @return mixed The query result from running the change query.
  */
-function sbb_db_change_table(string $table_name, array $changes)
+function sbb_db_change_table(string $table_name, array $changes, bool $safe_mode = false)
 {
 	global $smcFunc, $db_prefix;
 
@@ -758,6 +764,11 @@ function sbb_db_change_table(string $table_name, array $changes)
 	// Now do the things to the thing!
 	$query = '
 		ALTER TABLE ' . $table_name . "\n\t\t" . implode(",\n\t\t", $sql_changes);
+
+	if ($safe_mode)
+	{
+		return $query;
+	}
 
 	return $smcFunc['db_query']('', $query,
 		array(
