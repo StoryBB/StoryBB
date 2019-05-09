@@ -1322,6 +1322,69 @@ function Display()
 }
 
 /**
+ * Collect the correct text for separating between two posts, e.g. if they are a year apart,
+ * return '1 year later' or similar.
+ *
+ * @param int $previous The timestamp of the previous post to compare to the current post
+ * @param int $current The timestamp of the current post
+ * @return string Empty string if below threshold otherwise e.g. '1 year later'
+ */
+function display_get_separator_between(int $previous, int $current): string
+{
+	global $board_info, $modSettings;
+
+	if (empty($modSettings['timeBetweenPosts']))
+	{
+		return '';
+	}
+	$mindays = (int) $modSettings['timeBetweenPosts'] * 86400;
+
+	$return = '';
+	$difference = $current - $previous;
+	if ($difference < $mindays)
+	{
+		return '';
+	}
+
+	$board_type = !empty($modSettings['timeBetweenPostsBoards']) ? $modSettings['timeBetweenPostsBoards'] : 'ooc';
+	if ($board_type == 'ic' && !$board_info['in_character'])
+	{
+		return '';
+	}
+	if ($board_type == 'ooc' && $board_info['in_character'])
+	{
+		return '';
+	}
+
+	// I could make this a loop over an array but this is, surprisingly, quicker.
+	if ($difference > 31536000)
+	{
+		$years = round($difference / 31536000);
+		return numeric_context('post_separator_year', $years);
+	}
+
+	if ($difference > 2592000)
+	{
+		$months = round($difference / 2592000);
+		return numeric_context('post_separator_month', $months);
+	}
+
+	if ($difference > 604800)
+	{
+		$weeks = round($difference / 604800);
+		return numeric_context('post_separator_week', $weeks);
+	}
+
+	if ($difference > 86400)
+	{
+		$days = round($difference / 86400);
+		return numeric_context('post_separator_day', $days);
+	}
+
+	return $return;
+}
+
+/**
  * Callback for the message display.
  * It actually gets and prepares the message context.
  * This function will start over from the beginning if reset is set to true, which is
@@ -1337,6 +1400,7 @@ function prepareDisplayContext($reset = false)
 	global $user_profile;
 
 	static $counter = null;
+	static $last_time = null;
 
 	// If the query returned false, bail.
 	if ($messages_request == false)
@@ -1357,6 +1421,13 @@ function prepareDisplayContext($reset = false)
 		$smcFunc['db_free_result']($messages_request);
 		return false;
 	}
+
+	$message_separator = null;
+	if (!empty($last_time))
+	{
+		$message_separator = display_get_separator_between($last_time, (int) $message['poster_time']);
+	}
+	$last_time = (int) $message['poster_time'];
 
 	// $context['icon_sources'] says where each icon should come from - here we set up the ones which will always exist!
 	if (empty($context['icon_sources']))
@@ -1459,6 +1530,7 @@ function prepareDisplayContext($reset = false)
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time())),
 		'can_see_ip' => allowedTo('moderate_forum'),
 		'css_class' => $message['approved'] ? 'windowbg' : 'approvebg',
+		'separator' => $message_separator,
 	);
 
 	// Getting the poster is a little tricky. Start with whatever we have
