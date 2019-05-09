@@ -738,25 +738,25 @@ function comma_format($number, $override_decimal_count = false)
  */
 function numeric_context(string $string, $number, bool $commaise = true): string
 {
-    global $txt;
-    if (!isset($txt[$string]))
-        return '';
+	global $txt;
+	if (!isset($txt[$string]))
+		return '';
 
-    if (!is_array($txt[$string]))
-        return sprintf($txt[$string], $commaise ? comma_format($number) : $number);
+	if (!is_array($txt[$string]))
+		return sprintf($txt[$string], $commaise ? comma_format($number) : $number);
 
-    if (isset($txt[$string][$number]))
-        return sprintf($txt[$string][$number], $commaise ? comma_format($number) : $number);
+	if (isset($txt[$string][$number]))
+		return sprintf($txt[$string][$number], $commaise ? comma_format($number) : $number);
 
-    $numstring = (string) $number;
-    for ($i = strlen($numstring); $i > 0; $i--)
-    {
-        $trunc = 'x' . substr($numstring, -$i);
-        if (isset($txt[$string][$trunc]))
-            return sprintf($txt[$string][$trunc], $commaise ? comma_format($number) : $number);
-    }
+	$numstring = (string) $number;
+	for ($i = strlen($numstring); $i > 0; $i--)
+	{
+		$trunc = 'x' . substr($numstring, -$i);
+		if (isset($txt[$string][$trunc]))
+			return sprintf($txt[$string][$trunc], $commaise ? comma_format($number) : $number);
+	}
 
-    return sprintf($txt[$string]['x'], $commaise ? comma_format($number) : $number);
+	return sprintf($txt[$string]['x'], $commaise ? comma_format($number) : $number);
 }
 
 /**
