@@ -55,7 +55,7 @@
 							</dt>
 							<dd>
 								<input type="text" name="options[{{id}}]" id="options-{{id}}" value="{{label}}" size="80" maxlength="255">
-								{{#if (ne votes -1)}}{{votes}} {{../txt.votes}}{{/if}}
+								{{#if (neq votes -1)}}{{votes}} {{../txt.votes}}{{/if}}
 							</dd>
 						{{/each}}
 					</dl>

@@ -29,8 +29,8 @@
 				{{#each context.poll.options}}
 				<dt class="{{#if voted_this}}voted{{/if}}">{{option}}</dt>
 				<dd class="statsbar{{#if voted_this}} voted{{/if}}">
-				{{#if context.allow_results_view}}
-				{{option.bar_ndt}}
+				{{#if ../context.allow_results_view}}
+				{{{bar_ndt}}}
 				<span class="percentage">{{votes}} ({{percent}}%)</span>
 				{{/if}}
 				</dd>
@@ -44,7 +44,7 @@
 			{{#if context.poll.allowed_warning}}<p class="smallpadding">{{context.poll.allowed_warning}}</p>{{/if}}
 			<ul class="options">
 				{{#each context.poll.options}}
-				<li>{{vote_button}} <label for="{{id}}">{{option}}</label></li>
+				<li>{{{vote_button}}} <label for="{{id}}">{{option}}</label></li>
 				{{/each}}
 			</ul>
 			<div class="submitbutton">
@@ -53,14 +53,14 @@
 			</div>
 		</form>
 		{{#if context.poll.expire_time}}
-		<p><strong>', ($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']), ':</strong> ', $context['poll']['expire_time'], '</p>
+		<p><strong>{{#if context.poll.is_expired}}{{{txt.poll_expired_on}}}{{else}}{{{txt.poll_expires_on}}}{{/if}}:</strong> {{{context.poll.expire_time}}}</p>
 		{{/if}}
 		{{/if}}
 		</div>
 	</div>
 </div>
 <div id="pollmoderation">
-	{{>button_strip context.poll_buttons}}
+	{{>button_strip button_strip=context.poll_buttons}}
 </div>
 {{/if}}{{!-- end poll logic --}}
 
