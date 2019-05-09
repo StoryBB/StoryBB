@@ -1316,6 +1316,13 @@ ul li.greeting {
 	padding: 0;
 }
 
+.time-post-separator {
+	text-align: center;
+	margin: 18px 0;
+	font-size: 16pt;
+	color: #aaa;
+}
+
 /* the small stats */
 #index_common_stats {
 	margin: -4px 8px 6px 8px;

@@ -860,3 +860,12 @@ $txt['autocomplete_search_member'] = 'Search for a member';
 $txt['autocomplete_search_character'] = 'Search for a character';
 $txt['autocomplete_search_character_account'] = '(Account: %s)';
 $txt['autocomplete_search_group' ] = 'Search for a group';
+
+$txt['post_separator_day'][1] = '1 day later';
+$txt['post_separator_day']['x'] = '%1$d days later';
+$txt['post_separator_week'][1] = '1 week later';
+$txt['post_separator_week']['x'] = '%1$d weeks later';
+$txt['post_separator_month'][1] = '1 month later';
+$txt['post_separator_month']['x'] = '%1$d months later';
+$txt['post_separator_year'][1] = '1 year later';
+$txt['post_separator_year']['x'] = '%1$d years later';

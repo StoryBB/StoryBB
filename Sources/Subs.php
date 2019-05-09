@@ -705,6 +705,61 @@ function comma_format($number, $override_decimal_count = false)
 }
 
 /**
+ * Retrieves the appropriate language string for a number, optionally comma-formatting it.
+ *
+ * It assumes the language string is really an array:
+ *  $txt['language_string'][0] = 'There are no cookies.';
+ *  $txt['language_string'][1] = 'There is one cookie.';
+ *  $txt['language_string'][2] = 'There are two cookies.';
+ *  $txt['language_string']['x'] = 'There are %1$s cookies.';
+ *
+ * For more complex language cases:
+ *  $txt['ordinals'][0] = '0th';
+ *  $txt['ordinals'][1] = '1st';
+ *  $txt['ordinals'][2] = '2nd';
+ *  $txt['ordinals'][3] = '3rd';
+ *  $txt['ordinals']['x11'] = '%1$sth';
+ *  $txt['ordinals']['x12'] = '%1$sth';
+ *  $txt['ordinals']['x13'] = '%1$sth';
+ *  $txt['ordinals']['x1'] = '%1$sst';
+ *  $txt['ordinals']['x2'] = '%1$snd';
+ *  $txt['ordinals']['x3'] = '%1$srd';
+ *  $txt['ordinals']['x'] = '%1$sth';
+ *
+ * Match exact matches first (e.g. 1 in the above list)
+ * Then match longer versions with an x, before finally matching on x as the general fallback position.
+ *
+ * This function isn't called frequently enough for its performance to be massively sensitive, but it needs to be reasonably fast.
+ *
+ * @param string $string The language string to look up
+ * @param int $number The number to format into the string
+ * @param bool $commaise Whether to push the number through comma_format or not
+ * @return string The string, formatted correctly for the number
+ */
+function numeric_context(string $string, $number, bool $commaise = true): string
+{
+    global $txt;
+    if (!isset($txt[$string]))
+        return '';
+
+    if (!is_array($txt[$string]))
+        return sprintf($txt[$string], $commaise ? comma_format($number) : $number);
+
+    if (isset($txt[$string][$number]))
+        return sprintf($txt[$string][$number], $commaise ? comma_format($number) : $number);
+
+    $numstring = (string) $number;
+    for ($i = strlen($numstring); $i > 0; $i--)
+    {
+        $trunc = 'x' . substr($numstring, -$i);
+        if (isset($txt[$string][$trunc]))
+            return sprintf($txt[$string][$trunc], $commaise ? comma_format($number) : $number);
+    }
+
+    return sprintf($txt[$string]['x'], $commaise ? comma_format($number) : $number);
+}
+
+/**
  * Format a time to make it look purdy.
  *
  * - returns a pretty formatted version of time based on the user's format in $user_info['time_format'].
