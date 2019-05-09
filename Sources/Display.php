@@ -1331,9 +1331,27 @@ function Display()
  */
 function display_get_separator_between(int $previous, int $current): string
 {
+	global $board_info, $modSettings;
+
+	if (empty($modSettings['timeBetweenPosts']))
+	{
+		return '';
+	}
+	$mindays = (int) $modSettings['timeBetweenPosts'] * 86400;
+
 	$return = '';
 	$difference = $current - $previous;
-	if ($difference < 86400)
+	if ($difference < $mindays)
+	{
+		return '';
+	}
+
+	$board_type = !empty($modSettings['timeBetweenPostsBoards']) ? $modSettings['timeBetweenPostsBoards'] : 'ooc';
+	if ($board_type == 'ic' && !$board_info['in_character'])
+	{
+		return '';
+	}
+	if ($board_type == 'ooc' && $board_info['in_character'])
 	{
 		return '';
 	}

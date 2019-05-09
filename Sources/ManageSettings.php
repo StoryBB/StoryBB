@@ -135,6 +135,14 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'trackStats'),
 			array('check', 'hitStats'),
 		'',
+			// The time-between-posts divider.
+			array('int', 'timeBetweenPosts', 'subtext' => $txt['zero_to_disable']),
+			array('select', 'timeBetweenPostsBoards', [
+				'ic' => $txt['ic_boards_only'],
+				'ooc' => $txt['ooc_boards_only'],
+				'icooc' => $txt['ic_and_ooc_boards'],
+			]),
+		'',
 			// Option-ish things... miscellaneous sorta.
 			array('check', 'allow_disableAnnounce'),
 			array('check', 'disallow_sendBody'),
