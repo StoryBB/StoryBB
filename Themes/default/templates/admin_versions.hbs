@@ -21,10 +21,10 @@
 					</tr>
 				</thead>
 				<tbody>
-				    <tr class="windowbg">
+					<tr class="windowbg">
 						<td class="half_table">
-    						{{txt.admin_storybbpackage}}
-    					</td>
+							{{txt.admin_storybbpackage}}
+						</td>
 						<td class="quarter_table">
 							<em>{{context.forum_version}}</em>
 						</td>
@@ -38,7 +38,7 @@
 						</td>
 						<td class="quarter_table">
 							<em id="yourSources"><span class="{{#if (eq context.sources_current 1)}}alert{{else}}{{#if (eq context.sources_current 0)}}up-to-date{{else}}future{{/if}}{{/if}}">{{context.sources_versions.current}}</span></em>
-					    </td>
+						</td>
 						<td class="quarter_table">
 							<em id="currentSources">{{context.master_forum_version}}</em>
 						</td>
@@ -48,18 +48,18 @@
 
 			<table id="Sources" class="table_grid">
 			<tbody>
-	    {{#each context.file_versions}}
-    			<tr class="windowbg">
-    				<td class="half_table">
-    					{{@key}}
-    				</td>
-    				<td class="quarter_table">
-    					<em id="yourSources{{@key}}"><span class="{{#if (eq state -1)}}alert{{else}}{{#if (eq state 0)}}up-to-date{{else}}future{{/if}}{{/if}}">{{current}}</span></em>
-    				</td>
-    				<td class="quarter_table">
-    					<em id="currentSources{{@key}}">{{master}}</em>
-    				</td>
-    			</tr>
+		{{#each context.file_versions}}
+				<tr class="windowbg">
+					<td class="half_table">
+						{{@key}}
+					</td>
+					<td class="quarter_table">
+						<em id="yourSources{{@key}}"><span class="{{#if (eq state -1)}}alert{{else}}{{#if (eq state 0)}}up-to-date{{else}}future{{/if}}{{/if}}">{{current}}</span></em>
+					</td>
+					<td class="quarter_table">
+						<em id="currentSources{{@key}}">{{master}}</em>
+					</td>
+				</tr>
 		{{/each}}
 			</tbody>
 			</table>
@@ -82,7 +82,7 @@
 			<table id="Default" class="table_grid">
 				<tbody>
 
-        {{#each context.default_template_versions}}
+		{{#each context.default_template_versions}}
 				<tr class="windowbg">
 					<td class="half_table">
 						{{@key}}
@@ -94,7 +94,7 @@
 						<em id="currentDefault{{@key}}">??</em>
 					</td>
 				</tr>
-        {{/each}}
+		{{/each}}
 			</tbody>
 		</table>
 
@@ -117,8 +117,8 @@
 		<table id="Languages" class="table_grid">
 			<tbody>
 	{{#each context.default_language_versions}}
-	    {{#each .}}
-	            <tr class="windowbg">
+		{{#each .}}
+				<tr class="windowbg">
 					<td class="half_table">
 						{{@key}}.<em>{{../@key}}</em>.php
 					</td>
@@ -131,29 +131,29 @@
 				</tr>
 		{{/each}}
 	{{/each}}
-	        </tbody>
-        </table>
+			</tbody>
+		</table>
 	{{#if context.template_versions}}
-	    <table class="table_grid">
-    		<tbody>
-    			<tr class="windowbg">
-    				<td class="half_table">
-    					<a href="#" id="Templates-link">{{{txt.dvc_templates}}}</a>
-    				</td>
-    				<td class="quarter_table">
-    					<em id="yourTemplates">??</em>
-    				</td>
-    				<td class="quarter_table">
-    					<em id="currentTemplates">??</em>
-    				</td>
-    			</tr>
-    		</tbody>
-    	</table>
+		<table class="table_grid">
+			<tbody>
+				<tr class="windowbg">
+					<td class="half_table">
+						<a href="#" id="Templates-link">{{{txt.dvc_templates}}}</a>
+					</td>
+					<td class="quarter_table">
+						<em id="yourTemplates">??</em>
+					</td>
+					<td class="quarter_table">
+						<em id="currentTemplates">??</em>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 
 		<table id="Templates" class="table_grid">
 			<tbody>
-	    {{#each context.template_versions}}
-	        <tr class="windowbg">
+		{{#each context.template_versions}}
+			<tr class="windowbg">
 				<td class="half_table">
 					{{@key}}
 				</td>
@@ -164,8 +164,8 @@
 					<em id="currentTemplates{{@key}}">??</em>
 				</td>
 			</tr>
-            </tbody>
-        {{/each}}
+			</tbody>
+		{{/each}}
 		</table>
 	{{/if}}
 	</div>

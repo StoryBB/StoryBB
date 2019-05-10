@@ -42,8 +42,8 @@
 					<dd>{{txt.pm_search_between}}<input type="number" name="minage" value="{{#if context.search_params.minage}}{{context.search_params.minage}}{{else}}0{{/if}}" size="5" maxlength="5" min="0" max="9999">&nbsp;{{$txt.pm_search_between_and}}&nbsp;<input type="number" name="maxage" value="{{#if context.search_params.maxage}}{{context.search_params.maxage}}{{else}}9999{{/if}}" size="5" maxlength="5" min="0" max="9999"> {{txt.pm_search_between_days}}</dd>
 				</dl>';
 	{{#unless context.currently_using_labels}}
-		        <input type="submit" name="pm_search" value="{{txt.pm_search_go}}" class="button_submit">
-		        <br class="clear_right">
+				<input type="submit" name="pm_search" value="{{txt.pm_search_go}}" class="button_submit">
+				<br class="clear_right">
 			</div>
 		</fieldset>
 	{{/unless}}
@@ -61,11 +61,11 @@
 					<ul id="searchLabelsExpand">';
 
 		{{#each context.search_labels}}
-		                <li>
+						<li>
 							<label for="searchlabel_{{id}}"><input type="checkbox" id="searchlabel_{{id}}" name="searchlabel[{{id}}]" value="{{id}}"{{#if checked}} checked{{/if}}>
 							{{name}}</label>
 						</li>
-        {{/each}}
+		{{/each}}
 					</ul>
 				</div>
 				<p>

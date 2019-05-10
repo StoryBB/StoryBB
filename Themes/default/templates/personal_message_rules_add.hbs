@@ -42,10 +42,10 @@
 			+ '/option><option value="lab">{{txt.pm_rule_label}}<' + '/option><option value="del">{{txt.pm_rule_delete}}<'
 			+ '/option><' + '/select>&nbsp;<span id="labdiv' + actionNum + '" style="display: none;"><select name="labdef[' + actionNum + ']" id="labdef' + actionNum
 			+ '" onchange="rebuildRuleDesc();"><option value="">{{txt.pm_rule_sel_label}}<' + '/option>{{#each context.labels}}{{#if (neq id -1)}}<option value="{{id}}">{{name}}<' + '/option>{{/if}}{{/each}}'
-            + '<' + '/select><' + '/span><span id="actionAddHere"><' + '/span>');
+			+ '<' + '/select><' + '/span><span id="actionAddHere"><' + '/span>');
 		}
 		
-    	// Rebuild the rule description!
+		// Rebuild the rule description!
 		function rebuildRuleDesc()
 		{
 			// Start with nothing.

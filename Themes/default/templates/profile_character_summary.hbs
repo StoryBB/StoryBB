@@ -37,7 +37,7 @@
 			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=delete;{{session_url}}" class="button" onclick="return confirm({{{jsEscape txt.are_you_sure_delete_char}}});">{{{txt.delete_char}}}</a><br><br>
 			{{/if}}
 
-			{{#if (and context.user.can_admin (neq context.character.is_main '1'))}}		
+			{{#if (and context.user.can_admin (neq context.character.is_main '1'))}}
 			<a href="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=move_acct;{{session_url}}" class="button">{{{txt.move_char_action}}}</a><br><br>
 			{{/if}}
 

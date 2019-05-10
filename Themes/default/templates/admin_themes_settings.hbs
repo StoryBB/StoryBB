@@ -69,9 +69,9 @@
 					</dt>
 					<dd>
 						<select id="variant" name="options[default_variant]" onchange="changeVariant(this.value)">
-						    {{#each context.theme_variants}}
-						    <option value="{{@key}}" {{#if (eq ../context.default_variant @key)}} selected{{/if}}>{{label}}</option>
-						    {{/each}}
+							{{#each context.theme_variants}}
+							<option value="{{@key}}" {{#if (eq ../context.default_variant @key)}} selected{{/if}}>{{label}}</option>
+							{{/each}}
 						</select>
 					</dd>
 					<dt>
@@ -91,16 +91,16 @@
 				</h3>
 			</div>
 			<div class="windowbg2 noup">
-			    {{#each context.settings}}
+				{{#each context.settings}}
 				<dl class="settings">
-				    {{#unless (is_array .)}}{{!-- if we're a string or empty instead of an array, we are a header--}}
-				    {{#unless (eq @index 0)}}
-				    <hr>
-				    {{/unless}}
-				    <dt><b>{{.}}</b></dt><dd></dd>
-				    {{else}}
-				    
-				    <dt>
+					{{#unless (is_array .)}}{{!-- if we're a string or empty instead of an array, we are a header--}}
+					{{#unless (eq @index 0)}}
+					<hr>
+					{{/unless}}
+					<dt><b>{{.}}</b></dt><dd></dd>
+					{{else}}
+					
+					<dt>
 						<label for="{{id}}"><b>{{label}}</b></label>:
 						{{#if description}}
 						<br>
@@ -121,11 +121,11 @@
 							{{/each}}
 						</select>
 					</dd>
-					{{/if}}	
+					{{/if}} 
 					{{#if (eq type 'textarea')}}
 					<dd>
 						<textarea rows="4" style="width: 95%;" cols="40" name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}">{{value}}</textarea>
-           			</dd>
+					</dd>
 					{{/if}}
 					{{#if (or (eq type 'text') (eq type 'url'))}}
 					<dd>
@@ -134,11 +134,11 @@
 					{{/if}}
 					{{#if (eq type 'number')}}
 					<dd>
-						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}" max="{{max}}" step="{{step}}"	name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="5">
+						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}" max="{{max}}" step="{{step}}" name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="5">
 					</dd>
 					{{/if}}
 					
-				    {{/unless}}
+					{{/unless}}
 				</dl>
 				{{/each}}
 				<input type="submit" name="save" value="{{txt.save}}" class="button_submit">

@@ -24,7 +24,7 @@
 					</dl>
 					{{! Disable the reason textarea when the postRedirect checkbox is unchecked... }}
 					<label for="reset_subject"><input type="checkbox" name="reset_subject" id="reset_subject" onclick="document.getElementById('subjectArea').style.display = this.checked ? 'block' : 'none';"> {{{txt.movetopic_change_subject}}}.</label><br>
-   					<fieldset id="subjectArea" style="display: none;">
+					<fieldset id="subjectArea" style="display: none;">
 						<dl class="settings">
 							<dt><strong>{{{txt.movetopic_new_subject}}}:</strong></dt>
 							<dd><input type="text" name="custom_subject" size="30" value="{{{context.subject}}}"></dd>

@@ -8,7 +8,7 @@
 	<h2 class="display_title"><span id="top_subject">{{context.subject}}</span>{{#if context.is_locked}}<span class="generic_icons lock"></span>{{/if}}{{#if context.is_sticky}}<span class="generic_icons sticky"></span>{{/if}}</h2>
 	<p>{{txt.started_by}} {{context.topic_poster_name}}, {{{context.topic_started_time}}}</p>
 	{{#if context.viewing}}
-	    <p>{{{context.viewing}}} {{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}}{{txt.who_viewing_topic}}</p>
+		<p>{{{context.viewing}}} {{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}}{{txt.who_viewing_topic}}</p>
 	{{/if}}
 </div>{{!-- Show the anchor for the top and for the first message. If the first message is new, say so. --}}
 <a id="msg{{context.first_message}}"></a>{{#if context.first_new_message}}<a id="new"></a>{{/if}}
