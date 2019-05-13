@@ -120,9 +120,9 @@ function createMenu($menuData, $menuOptions = array())
 						elseif (isset($area['icon']) && file_exists($settings['default_theme_dir'] . '/images/admin/' . $area['icon']))
 							$menu_context['sections'][$section_id]['areas'][$area_id]['icon'] = '<img src="' . $settings['default_images_url'] . '/admin/' . $area['icon'] . '" alt="">';
 						elseif (isset($area['icon']))
-							$menu_context['sections'][$section_id]['areas'][$area_id]['icon'] = '<span class="generic_icons ' . $area['icon'] . '"></span>';
+							$menu_context['sections'][$section_id]['areas'][$area_id]['icon'] = '<span class="main_icons ' . $area['icon'] . '"></span>';
 						else
-							$menu_context['sections'][$section_id]['areas'][$area_id]['icon'] = '<span class="generic_icons ' . $area_id . '"></span>';
+							$menu_context['sections'][$section_id]['areas'][$area_id]['icon'] = '<span class="main_icons ' . $area_id . '"></span>';
 
 						if (isset($area['icon_class']) && empty($menu_context['sections'][$section_id]['areas'][$area_id]['icon']))
 							$menu_context['sections'][$section_id]['areas'][$area_id]['icon_class'] = $menu_context['current_action'] . '_menu_icon ' . $area['icon_class'];

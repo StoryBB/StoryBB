@@ -350,7 +350,7 @@ function CharacterSheets()
 				'data' => [
 					'function' => function ($rowData) use ($txt)
 					{
-						return $rowData['last_approval'] ? '<span class="generic_icons approve_button" title="' . $txt['yes'] . '"></span>' : '<span class="generic_icons unapprove_button" title="' . $txt['no'] . '"></span>';
+						return $rowData['last_approval'] ? '<span class="main_icons approve_button" title="' . $txt['yes'] . '"></span>' : '<span class="main_icons unapprove_button" title="' . $txt['no'] . '"></span>';
 					},
 					'class' => 'centercol',
 				],

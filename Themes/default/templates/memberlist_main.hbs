@@ -17,7 +17,7 @@
 				<tr class="title_bar">
 					{{#each context.columns}}
 						{{#if selected}}<th scope="col" class="{{@key}} {{class}} selected" style="width: auto;" {{#if colspan}} colspan="{{column}}"{{/if}}>
-							<a href="{{href}}" rel="nofollow">{{label}}</a><span class="generic_icons sort_{{context.sort_direction}}"></span></th>
+							<a href="{{href}}" rel="nofollow">{{label}}</a><span class="main_icons sort_{{context.sort_direction}}"></span></th>
 						{{else}}
 							<th scope="col" class="{{@key}} {{class}}" {{#if width}}style="width: {{width}}"{{/if}} {{#if colspan}} colspan="{{colspan}}"{{/if}}>
 							{{{link}}}</th>
@@ -40,7 +40,7 @@
 					</td>
 					<td class="lefttext">{{{link}}}</td>
 					{{#unless context.disabled_fields.website}}
-						<td class="centertext website_url"> {{#if website.url}}<a href="{{website.url}}" target="_blank" rel="noopener"><span class="generic_icons www" title="{{website.title}}"></span></a>{{/if}}</td>
+						<td class="centertext website_url"> {{#if website.url}}<a href="{{website.url}}" target="_blank" rel="noopener"><span class="main_icons www" title="{{website.title}}"></span></a>{{/if}}</td>
 					{{/unless}}
 					<td class="centertext reg_group">{{#if member.group}} {{group}}{{else}} {{post_group}}{{/if}}</td>
 					<td class="centertext reg_date">{{registered_date}}</td>

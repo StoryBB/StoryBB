@@ -15,7 +15,7 @@
 					{{#each context.not_selected.messages}}
 					<li class="windowbg" id="not_selected_{{id}}">
 						<div class="message_header">
-							<a class="split_icon floatright" href="{{../scripturl}}?action=splittopics;sa=selectTopics;subname={{{../context.topic.subject}}};topic={{../context.topic.id}}.{{../context.not_selected.start}};start2={{../context.selected.start}};move=down;msg={{id}}" onclick="return select('down', '{{id}}');"><span class="generic_icons split_sel" title="-&gt;"></span></a>{{textTemplate ../txt.post_by_member subject poster}}<br>
+							<a class="split_icon floatright" href="{{../scripturl}}?action=splittopics;sa=selectTopics;subname={{{../context.topic.subject}}};topic={{../context.topic.id}}.{{../context.not_selected.start}};start2={{../context.selected.start}};move=down;msg={{id}}" onclick="return select('down', '{{id}}');"><span class="main_icons split_sel" title="-&gt;"></span></a>{{textTemplate ../txt.post_by_member subject poster}}<br>
 							<em>{{{time}}}</em>
 						</div>
 						<div class="post">{{{body}}}</div>
@@ -40,7 +40,7 @@
 					{{#each context.selected.messages}}
 					<li class="windowbg" id="selected_{{id}}">
 						<div class="message_header">
-							<a class="split_icon floatleft" href="{{scripturl}}?action=splittopics;sa=selectTopics;subname={{{../context.topic.subject}}};topic={{../context.topic.id}}.{{../context.not_selected.start}};start2={{../context.selected.start}};move=up;msg={{id}}" onclick="return select('up', '{{id}}');"><span class="generic_icons split_desel" title="&lt;-"></span></a>{{textTemplate ../txt.post_by_member subject poster}}<br>
+							<a class="split_icon floatleft" href="{{scripturl}}?action=splittopics;sa=selectTopics;subname={{{../context.topic.subject}}};topic={{../context.topic.id}}.{{../context.not_selected.start}};start2={{../context.selected.start}};move=up;msg={{id}}" onclick="return select('up', '{{id}}');"><span class="main_icons split_desel" title="&lt;-"></span></a>{{textTemplate ../txt.post_by_member subject poster}}<br>
 							<em>{{{time}}}</em>
 						</div>
 						<div class="post">{{{body}}}</div>
@@ -110,7 +110,7 @@
 					newItem = document.createElement("LI");
 					newItem.className = "windowbg2";
 					newItem.id = curSection + "_" + curId;
-					newItem.innerHTML = "<div class=\"message_header\"><a class=\"split_icon float" + (curSection == "selected" ? "left" : "right") + "\" href=\"" + sbb_prepareScriptUrl(sbb_scripturl) + "action=splittopics;sa=selectTopics;subname={{{context.topic.subject}}};topic={{context.topic.id}}.{{context.not_selected_start}};start2={{context.selected.start}};move=" + (curSection == "selected" ? "up" : "down") + ";msg=" + curId + "\" onclick=\"return select('" + (curSection == "selected" ? "up" : "down") + "', " + curId + ");\"><span class=\"generic_icons split_" + (curSection == "selected" ? "de" : "") + "sel\" title=\"" + (curSection == "selected" ? "&lt;-" : "-&gt;") + "\"></span></a><strong>" + curChange.getElementsByTagName("subject")[0].firstChild.nodeValue + "</strong> {{{txt.by}}} <strong>" + curChange.getElementsByTagName("poster")[0].firstChild.nodeValue + "</strong><br><em>" + curChange.getElementsByTagName("time")[0].firstChild.nodeValue + "</em><div class=\"post\">" + curChange.getElementsByTagName("body")[0].firstChild.nodeValue + "</div></div>";
+					newItem.innerHTML = "<div class=\"message_header\"><a class=\"split_icon float" + (curSection == "selected" ? "left" : "right") + "\" href=\"" + sbb_prepareScriptUrl(sbb_scripturl) + "action=splittopics;sa=selectTopics;subname={{{context.topic.subject}}};topic={{context.topic.id}}.{{context.not_selected_start}};start2={{context.selected.start}};move=" + (curSection == "selected" ? "up" : "down") + ";msg=" + curId + "\" onclick=\"return select('" + (curSection == "selected" ? "up" : "down") + "', " + curId + ");\"><span class=\"main_icons split_" + (curSection == "selected" ? "de" : "") + "sel\" title=\"" + (curSection == "selected" ? "&lt;-" : "-&gt;") + "\"></span></a><strong>" + curChange.getElementsByTagName("subject")[0].firstChild.nodeValue + "</strong> {{{txt.by}}} <strong>" + curChange.getElementsByTagName("poster")[0].firstChild.nodeValue + "</strong><br><em>" + curChange.getElementsByTagName("time")[0].firstChild.nodeValue + "</em><div class=\"post\">" + curChange.getElementsByTagName("body")[0].firstChild.nodeValue + "</div></div>";
 
 					// So, where do we insert it?
 					if (typeof sInsertBeforeId == "string")

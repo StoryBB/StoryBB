@@ -31,10 +31,10 @@
 				<td><a href="{{{online.href}}}"><span class="{{#if (eq_coerce online.is_online 1)}}on{{else}}off{{/if}}" title="{{{online.text}}}"></span></a></td>
 
 				{{#if show_email}}
-				<td><a href="mailto:{{{email}}}" rel="nofollow"><span class="generic_icons mail icon" title="{{{../txt.email}}} {{{name}}}"></span></a></td>
+				<td><a href="mailto:{{{email}}}" rel="nofollow"><span class="main_icons mail icon" title="{{{../txt.email}}} {{{name}}}"></span></a></td>
 				{{/if}}
 
-				<td><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=lists;sa=ignore;remove={{id}};{{session_url}}"><span class="generic_icons delete" title="{{{../txt.ignore_remove}}}"></span></a></td>
+				<td><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=lists;sa=ignore;remove={{id}};{{session_url}}"><span class="main_icons delete" title="{{{../txt.ignore_remove}}}"></span></a></td>
 			</tr>
 			{{/each}}
 

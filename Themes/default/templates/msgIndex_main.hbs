@@ -107,11 +107,11 @@
 				<div class="info{{#if ../context.can_quick_mod}} info_block{{/if}}">
 					<div {{#if quick_mod.modify}}id="topic_{{first_post.id}}"  ondblclick="oQuickModifyTopic.modify_topic('{{id}}', '{{first_post.id}}');"{{/if}}>
 						<div class="icons floatright">
-							{{#if is_watched}}<span class="generic_icons watch" title="{{../txt.watching_this_topic}}"></span>{{/if}}
-							{{#if is_locked}}<span class="generic_icons lock"></span>{{/if}}
-							{{#if is_sticky}}<span class="generic_icons sticky"></span>{{/if}}
-							{{#if is_redirect}}<span class="generic_icons move"></span>{{/if}}
-							{{#if is_poll}}<span class="generic_icons poll"></span>{{/if}}
+							{{#if is_watched}}<span class="main_icons watch" title="{{../txt.watching_this_topic}}"></span>{{/if}}
+							{{#if is_locked}}<span class="main_icons lock"></span>{{/if}}
+							{{#if is_sticky}}<span class="main_icons sticky"></span>{{/if}}
+							{{#if is_redirect}}<span class="main_icons move"></span>{{/if}}
+							{{#if is_poll}}<span class="main_icons poll"></span>{{/if}}
 						</div>
 						<div class="first_poster">
 							{{{first_post.member.avatar.image}}}
@@ -198,7 +198,7 @@
 	<div id="mobile_action" class="popup_container">
 		<div class="popup_window description">
 			<div class="popup_heading">{{txt.mobile_action}}
-			<a href="javascript:void(0);" class="generic_icons hide_popup"></a></div>
+			<a href="javascript:void(0);" class="main_icons hide_popup"></a></div>
 			{{>button_strip button_strip=context.normal_buttons}}
 		</div>
 	</div>
