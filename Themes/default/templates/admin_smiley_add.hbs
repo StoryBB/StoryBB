@@ -7,10 +7,14 @@
 			<div class="windowbg2">
 				<ul>
 					<li>
-						<label for="method-existing"><input type="radio" onclick="switchType();" name="method" id="method-existing" value="existing" checked> {{{txt.smileys_add_existing}}}</label>
+						<label for="method-existing">
+							<input type="radio" onclick="switchType();" name="method" id="method-existing" value="existing" checked> {{{txt.smileys_add_existing}}}
+						</label>
 					</li>
 					<li>
-						<label for="method-upload"><input type="radio" onclick="switchType();" name="method" id="method-upload" value="upload"> {{{txt.smileys_add_upload}}}</label>
+						<label for="method-upload">
+							<input type="radio" onclick="switchType();" name="method" id="method-upload" value="upload"> {{{txt.smileys_add_upload}}}
+						</label>
 					</li>
 				</ul>
 				<br>
@@ -23,11 +27,11 @@
 							{{#unless context.filenames}}
 							<input type="text" name="smiley_filename" id="smiley_filename" value="{{{context.current_smiley.filename}}}" onchange="selectMethod('existing');">
 							{{else}}
-								<select name="smiley_filename" id="smiley_filename" onchange="updatePreview();selectMethod('existing');">
+							<select name="smiley_filename" id="smiley_filename" onchange="updatePreview();selectMethod('existing');">
 									{{#each context.filenames}}
-									<option value="{{id}}"{{#if selected}} selected{{/if}}>{{{id}}}</option>
+								<option value="{{id}}"{{#if selected}} selected{{/if}}>{{{id}}}</option>
 									{{/each}}
-								</select>
+							</select>
 							{{/unless}}
 
 							&nbsp; <img src="{{{modSettings.smileys_url}}}/{{context.current_smiley.filename}}" id="preview" alt="">

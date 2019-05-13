@@ -7,8 +7,10 @@
 			<dl class="register_form">
 				<dt>{{{txt.policy_type}}}:</dt>
 				<dd>{{get_text 'policy_type_' context.policy.policy_type}}</dd>
+
 				<dt><label for="policy_name">{{{txt.policy_name}}}:</label></dt>
 				<dd><input type="text" id="policy_name" name="policy_name" value="{{{context.policy_version.title}}}" required></dd>
+
 				<dt><label for="policy_desc">{{{txt.policy_desc}}}:</label></dt>
 				<dd><textarea id="policy_desc" name="policy_desc">{{{context.policy_version.description}}}</textarea></dd>
 			</dl>
@@ -16,8 +18,10 @@
 			<dl class="register_form">
 				<dt><label for="show_reg">{{{txt.policy_show_reg}}}:</label></dt>
 				<dd><input type="checkbox" value="1" id="show_reg" name="show_reg"{{#if (eq context.policy.show_reg '1')}} checked{{/if}}></dd>
+
 				<dt><label for="show_help">{{{txt.policy_show_help}}}:</label></dt>
 				<dd><input type="checkbox" value="1" id="show_help" name="show_help"{{#if (eq context.policy.show_help '1')}} checked{{/if}}></dd>
+
 				<dt><label for="show_footer">{{{txt.policy_show_footer}}}:</label></dt>
 				<dd><input type="checkbox" value="1" id="show_footer" name="show_footer"{{#if (eq context.policy.show_footer '1')}} checked{{/if}}></dd>
 			</dl>
@@ -25,6 +29,7 @@
 			<dl class="register_form">
 				<dt>{{{txt.last_updated}}}:</dt>
 				<dd>{{{context.policy_version.last_change_format}}}</dd>
+
 				<dt>{{{txt.policy_text}}}</dt>
 				<dd>{{{richtexteditor 'message' '' 'bbcBox'}}}</dd>
 			</dl>

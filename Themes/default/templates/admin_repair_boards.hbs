@@ -10,36 +10,36 @@
 				{{#if context.error_search}}
 					{{#if context.to_fix}}
 						{{{txt.errors_found}}}:
-						<ul>
+				<ul>
 						{{#each context.repair_errors}}
-							<li>{{{.}}}</li>
+					<li>{{{.}}}</li>
 						{{/each}}
-						</ul>
+				</ul>
 
-						<p>
-							{{{txt.errors_fix}}}
-						</p>
-						<p class="padding">
-							<strong><a href="{{scripturl}}?action=admin;area=repairboards;fixErrors;{{session_url}}">{{{txt.yes}}}</a> - <a href="{{scripturl}}?action=admin;area=maintain">{{{txt.no}}}</a></strong>
-						</p>
+				<p>
+					{{{txt.errors_fix}}}
+				</p>
+				<p class="padding">
+					<strong><a href="{{scripturl}}?action=admin;area=repairboards;fixErrors;{{session_url}}">{{{txt.yes}}}</a> - <a href="{{scripturl}}?action=admin;area=maintain">{{{txt.no}}}</a></strong>
+				</p>
 					{{else}}
-						<p>{{{txt.maintain_no_errors}}}</p>
-						<p class="padding">
-							<a href="{{scripturl}}?action=admin;area=maintain;sa=routine">{{{txt.maintain_return}}}</a>
-						</p>
+				<p>{{{txt.maintain_no_errors}}}</p>
+				<p class="padding">
+					<a href="{{scripturl}}?action=admin;area=maintain;sa=routine">{{{txt.maintain_return}}}</a>
+				</p>
 					{{/if}}
 				{{else}}
 					{{#if context.redirect_to_recount}}
-						<p>{{{txt.errors_do_recount}}}</p>
-						<form action="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
-							{{session_form}}
-							<input type="submit" name="recount" id="recount_now" value="{{{txt.errors_recount_now}}}">
-						</form>
+				<p>{{{txt.errors_do_recount}}}</p>
+				<form action="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
+					{{session_form}}
+					<input type="submit" name="recount" id="recount_now" value="{{{txt.errors_recount_now}}}">
+				</form>
 					{{else}}
-						<p>{{{txt.errors_fixed}}}</p>
-						<p class="padding">
-							<a href="{{scripturl}}?action=admin;area=maintain;sa=routine">{{{txt.maintain_return}}}</a>
-						</p>
+				<p>{{{txt.errors_fixed}}}</p>
+				<p class="padding">
+					<a href="{{scripturl}}?action=admin;area=maintain;sa=routine">{{{txt.maintain_return}}}</a>
+				</p>
 					{{/if}}
 				{{/if}}
 			</div>

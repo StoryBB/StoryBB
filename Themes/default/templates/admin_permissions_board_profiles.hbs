@@ -47,13 +47,13 @@
 			{{/each}}
 
 			{{#if context.edit_all}}
-			<input type="submit" name="save_changes" value="{{{txt.save}}}" class="button_submit">
+				<input type="submit" name="save_changes" value="{{{txt.save}}}" class="button_submit">
 			{{else}}
-			<a class="button_link" href="{{scripturl}}?action=admin;area=permissions;sa=board;edit;{{session_url}}">{{{txt.permissions_board_all}}}</a>
+				<a class="button_link" href="{{scripturl}}?action=admin;area=permissions;sa=board;edit;{{session_url}}">{{{txt.permissions_board_all}}}</a>
 			{{/if}}
 
-			{{session_form}}
-			{{token_form 'admin-mpb'}}
+				{{session_form}}
+				{{token_form 'admin-mpb'}}
 			</div>
 		</form>
 	</div>

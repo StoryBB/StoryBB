@@ -14,15 +14,18 @@
 					{{#unless (eq @index 0)}}
 					<hr>
 					{{/unless}}
-					<dt><b>{{.}}</b></dt><dd></dd>
+					<dt><b>{{.}}</b></dt>
+					<dd></dd>
 					{{else}}
 					<dt {{#if context.theme_options_reset}}style="width:50%"{{/if}}>
 						{{#if context.theme_options_reset}}
-						<span class="floatleft"><select name="', !empty($setting['default']) ? 'default_' : '', 'options_master[{{id}}]" onchange="this.form.options_{{id}}.disabled = this.selectedIndex != 1;">
-							<option value="0" selected>{{../txt.themeadmin_reset_options_none}}</option>
-							<option value="1">{{../txt.themeadmin_reset_options_change}}</option>
-							<option value="2">{{../txt.themeadmin_reset_options_default}}</option>
-						</select>&nbsp;</span>
+						<span class="floatleft">
+							<select name="', !empty($setting['default']) ? 'default_' : '', 'options_master[{{id}}]" onchange="this.form.options_{{id}}.disabled = this.selectedIndex != 1;">
+								<option value="0" selected>{{../txt.themeadmin_reset_options_none}}</option>
+								<option value="1">{{../txt.themeadmin_reset_options_change}}</option>
+								<option value="2">{{../txt.themeadmin_reset_options_default}}</option>
+							</select>&nbsp;
+						</span>
 						{{/if}}
 						<label for="options_{{id}}"><b>{{label}}</b></label>
 						{{#if description}}

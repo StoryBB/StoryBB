@@ -17,7 +17,7 @@
 							{{else}}
 								{{{txt.lfyi}}}
 							{{/if}}
-						</div>
+						</div>{{! dl? }}
 					</div>
 				</div>
 				<div id="supportVersionsTable" class="floatright">
@@ -44,6 +44,7 @@
 							{{! Display all the members who can administrate the forum. }}
 							<strong>{{txt.administrators}}:</strong>
 							{{{join context.administrators ', '}}}
+
 							{{! If we have lots of admins... don't show them all. }}
 							{{#if context.more_admins_link}}
 								({{{context.more_admins_link}}})
@@ -62,9 +63,9 @@
 					{{#each areas}}
 						{{#unless (eq @key "index")}}
 							{{#if icon_file}}
-								<a href="{{url}}" class="admin_group{{#if inactive}} inactive{{/if}}"><img class="large_admin_menu_icon_file" src="{{icon_file}}" alt="">{{label}}</a>
+					<a href="{{url}}" class="admin_group{{#if inactive}} inactive{{/if}}"><img class="large_admin_menu_icon_file" src="{{icon_file}}" alt="">{{label}}</a>
 							{{else}}
-								<a href="{{url}}"><span class="large_{{icon_class}}{{#if inactive}} inactive{{/if}}"></span>{{label}}</a>
+					<a href="{{url}}"><span class="large_{{icon_class}}{{#if inactive}} inactive{{/if}}"></span>{{label}}</a>
 							{{/if}}
 						{{/unless}}
 					{{/each}}

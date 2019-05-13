@@ -18,10 +18,10 @@
 			<tbody>
 			{{#if 2col}}
 				{{#each 2col}}
-					<tr class="windowbg">
-						<td class="equal_table">{{@key}}</td>
-						<td colspan="2">{{{.}}}</td>
-					</tr>
+				<tr class="windowbg">
+					<td class="equal_table">{{@key}}</td>
+					<td colspan="2">{{{.}}}</td>
+				</tr>
 				{{/each}}
 			{{/if}}
 			{{#if 3col}}
@@ -31,12 +31,12 @@
 					<td class="equal_table"><strong>{{{../txt.phpinfo_defaultsettings}}}</strong></td>
 				</tr>
 				{{#each 3col}}
-					<tr class="windowbg">
-						<td class="equal_table">{{@key}}</td>
-						{{#each .}}
-						<td class="equal_table">{{{.}}}</td>
-						{{/each}}
-					</tr>
+				<tr class="windowbg">
+					<td class="equal_table">{{@key}}</td>
+					{{#each .}}
+					<td class="equal_table">{{{.}}}</td>
+					{{/each}}
+				</tr>
 				{{/each}}
 			{{/if}}
 			</tbody>

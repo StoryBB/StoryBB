@@ -4,7 +4,11 @@
 			<input type="hidden" name="cat" value="{{{context.category.id}}}">
 			<div class="cat_bar">
 				<h3 class="catbg">
-					{{#if context.category.is_new}}{{{txt.mboards_new_cat_name}}}{{else}}{{{txt.catEdit}}}{{/if}}
+					{{#if context.category.is_new}}
+						{{{txt.mboards_new_cat_name}}}
+					{{else}}
+						{{{txt.catEdit}}}
+					{{/if}}
 				</h3>
 			</div>
 			<div class="windowbg2 noup">
@@ -30,6 +34,7 @@
 					<dd>
 						<input type="text" name="cat_name" value="{{{context.category.editable_name}}}" size="30">
 					</dd>
+
 					<dt>
 						<strong>{{{txt.mboards_description}}}</strong><br>
 						<span class="smalltext">{{{context.category_allowed_tags_desc}}}</span>
@@ -37,6 +42,7 @@
 					<dd>
 						<textarea name="cat_desc" rows="3" cols="35" style="width: 99%;">{{{context.category.description}}}</textarea>
 					</dd>
+
 					<dt>
 						<strong>{{{txt.collapse_enable}}}</strong><br>
 						<span class="smalltext">{{{txt.collapse_desc}}}</span>
@@ -49,22 +55,22 @@
 					{{#if context.custom_category_settings}}
 						{{#each context.custom_category_settings}}
 							{{#if (and dt dd)}}
-							<dt class="clear{{#unless (is_numeric @key)}} catset_{{@key}}{{/unless}}">
-								{{{dt}}}
-							</dt>
-							<dd{{#unless (is_numeric @key)}} class="catset_{{@key}}"{{/unless}}>
-								{{{dd}}}
-							</dd>
+					<dt class="clear{{#unless (is_numeric @key)}} catset_{{@key}}{{/unless}}">
+						{{{dt}}}
+					</dt>
+					<dd{{#unless (is_numeric @key)}} class="catset_{{@key}}"{{/unless}}>
+						{{{dd}}}
+					</dd>
 							{{/if}}
 						{{/each}}
 					{{/if}}
 				</dl>
 
 				{{#if context.category.is_new}}
-					<input type="submit" name="add" value="{{{txt.mboards_add_cat_button}}}" onclick="return !isEmptyText(this.form.cat_name);" class="button_submit">
+				<input type="submit" name="add" value="{{{txt.mboards_add_cat_button}}}" onclick="return !isEmptyText(this.form.cat_name);" class="button_submit">
 				{{else}}
-					<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.cat_name);" class="button_submit">
-					<input type="submit" name="delete" value="{{{txt.mboards_delete_cat}}}" data-confirm="{{{txt.catConfirm}}}" class="button_submit you_sure">
+				<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.cat_name);" class="button_submit">
+				<input type="submit" name="delete" value="{{{txt.mboards_delete_cat}}}" data-confirm="{{{txt.catConfirm}}}" class="button_submit you_sure">
 				{{/if}}
 
 				{{session_form}}
@@ -72,7 +78,7 @@
 
 				{{! If this category is empty we don't bother with the next confirmation screen. }}
 				{{#if context.category.is_empty}}
-					<input type="hidden" name="empty" value="1">
+				<input type="hidden" name="empty" value="1">
 				{{/if}}
 			</div>
 		</form>

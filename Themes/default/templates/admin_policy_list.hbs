@@ -15,24 +15,24 @@
 			</thead>
 			<tbody>
 				{{#each context.policies}}
-					<tr class="windowbg">
-						<td>{{get_text 'policy_type_' policy_type}}</td>
-						<td>
+				<tr class="windowbg">
+					<td>{{get_text 'policy_type_' policy_type}}</td>
+					<td>
 							{{#if versions}}
-								<ul>
-									{{#each versions}}
-									<li><a href="{{../scripturl}}?action=admin;area=regcenter;sa=policies;policy={{../@key}};lang={{language}}">{{{title}}}</a> [{{language}}]</li>
-									{{/each}}
-								</ul>
+						<ul>
+								{{#each versions}}
+							<li><a href="{{../scripturl}}?action=admin;area=regcenter;sa=policies;policy={{../@key}};lang={{language}}">{{{title}}}</a> [{{language}}]</li>
+								{{/each}}
+						</ul>
 							{{/if}}
 							{{#if no_language}}
 								{{#if versions}}<br>{{/if}}
 								{{{../txt.policy_language_no_version}}}
-								<ul>
+						<ul>
 									{{#each no_language}}
-									<li><a href="{{../scripturl}}?action=admin;area=regcenter;sa=policies;policy={{../@key}};lang={{.}}">{{.}}</a></li>
+							<li><a href="{{../scripturl}}?action=admin;area=regcenter;sa=policies;policy={{../@key}};lang={{.}}">{{.}}</a></li>
 									{{/each}}
-								</ul>
+						</ul>
 							{{/if}}
 						</td>
 						<td>

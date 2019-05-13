@@ -6,7 +6,7 @@
 			<div class="windowbg2">
 
 				{{#if context.char_templates}}
-					<ul class="sortable">
+				<ul class="sortable">
 					{{#each context.char_templates}}
 					<li class="character_group">
 						<div class="group_name"><a href="{{../scripturl}}?action=admin;area=templates;sa=edit;template_id={{@key}}">{{{template_name}}}</a></div>
@@ -14,9 +14,9 @@
 						<input type="hidden" name="template[{{@key}}]" value="{{@key}}">
 					</li>
 					{{/each}}
-					</ul>
+				</ul>
 				{{else}}
-					{{{txt.char_templates_none}}}
+				{{{txt.char_templates_none}}}
 				{{/if}}
 
 			</div>

@@ -4,7 +4,11 @@
 			<input type="hidden" name="boardid" value="{{{context.board.id}}}">
 			<div class="cat_bar">
 				<h3 class="catbg">
-					{{#if context.board.is_new}}{{{txt.mboards_new_board_name}}}{{else}}{{{txt.boardsEdit}}}{{/if}}
+					{{#if context.board.is_new}}
+					{{{txt.mboards_new_board_name}}}
+					{{else}}
+					{{{txt.boardsEdit}}}
+					{{/if}}
 				</h3>
 			</div>
 			<div class="windowbg2 noup">
@@ -31,7 +35,9 @@
 
 						{{! The first select box gives the user the option to position it before, after or as a child of another board. }}
 						<select id="order" name="placement" onchange="this.form.board_order.disabled = this.options[this.selectedIndex].value == '';">
-							{{#unless context.board.is_new}}<option value="">({{{txt.mboards_unchanged}}})</option>{{/unless}}
+							{{#unless context.board.is_new}}
+							<option value="">({{{txt.mboards_unchanged}}})</option>
+							{{/unless}}
 							<option value="after">{{{txt.mboards_order_after}}}...</option>
 							<option value="child">{{{txt.mboards_order_child_of}}}...</option>
 							<option value="before">{{{txt.mboards_order_before}}}...</option>
@@ -39,7 +45,8 @@
 
 						{{! The second select box lists all the boards in the category. }}
 						<select id="board_order" name="board_order"{{#unless context.board.is_new}} disabled{{/unless}}>
-							{{#unless context.board.is_new}}<option value="">({{{txt.mboards_unchanged}}})</option>{{/unless}}
+							{{#unless context.board.is_new}}
+							<option value="">({{{txt.mboards_unchanged}}})</option>{{/unless}}
 
 							{{#each context.board_order}}
 							<option{{#if selected}} selected{{/if}} value="{{id}}">{{{name}}}</option>
@@ -108,25 +115,25 @@
 								<td></td>
 							</tr>
 							{{#each context.groups_account}}
-								<tr>
-									<td>
-										<label for="groups_{{id}}_a">
-											<span{{#if (eq id '0')}} class="regular_members" title="{{{../txt.mboards_groups_regular_members}}}"{{/if}}>
-												{{{name}}}
-											</span>
-										</label>
-									</td>
-									<td>
-										<input type="radio" class="account" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}}>
-									</td>
-									<td>
-										<input type="radio" class="account" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}}>
-									</td>
-									<td>
-										<input type="radio" class="account" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}}>
-									</td>
-									<td></td>
-								</tr>
+							<tr>
+								<td>
+									<label for="groups_{{id}}_a">
+										<span{{#if (eq id '0')}} class="regular_members" title="{{{../txt.mboards_groups_regular_members}}}"{{/if}}>
+											{{{name}}}
+										</span>
+									</label>
+								</td>
+								<td>
+									<input type="radio" class="account" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}}>
+								</td>
+								<td>
+									<input type="radio" class="account" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}}>
+								</td>
+								<td>
+									<input type="radio" class="account" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}}>
+								</td>
+								<td></td>
+							</tr>
 							{{/each}}
 							<tr class="select_all_box">
 								<td>
@@ -146,33 +153,33 @@
 							</tr>
 
 							{{#if context.groups_character}}
-								<tr>
-									<td><br><b>{{{txt.membergroups_character}}}</b></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-							{{#each context.groups_character}}
-								<tr>
-									<td>
-										<label for="groups_{{id}}_a">
-											<span>
-												{{{name}}}
-											</span>
-										</label>
-									</td>
-									<td>
-										<input type="radio" class="character" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}}>
-									</td>
-									<td>
-										<input type="radio" class="character" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}}>
-									</td>
-									<td>
-										<input type="radio" class="character" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}}>
-									</td>
-									<td></td>
-								</tr>
-							{{/each}}
+							<tr>
+								<td><br><b>{{{txt.membergroups_character}}}</b></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+								{{#each context.groups_character}}
+							<tr>
+								<td>
+									<label for="groups_{{id}}_a">
+										<span>
+											{{{name}}}
+										</span>
+									</label>
+								</td>
+								<td>
+									<input type="radio" class="character" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}}>
+								</td>
+								<td>
+									<input type="radio" class="character" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}}>
+								</td>
+								<td>
+									<input type="radio" class="character" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}}>
+								</td>
+								<td></td>
+							</tr>
+								{{/each}}
 							<tr class="select_all_box">
 								<td>
 								</td>
@@ -220,8 +227,7 @@
 							{{/each}}
 
 							<tr class="select_all_box">
-								<td>
-								</td>
+								<td></td>
 								<td>
 									<input type="radio" name="select_all_post" onclick="selectAllRadioClass(this.form, 'groups', 'allow', 'post');">
 								</td>
@@ -236,7 +242,6 @@
 								</td>
 							</tr>
 						</table>
-
 					</dd>
 
 					{{! Options to choose moderators, specify as announcement board and choose whether to count posts here. }}
@@ -355,12 +360,12 @@
 					<dl class="settings">
 						{{#each context.custom_board_settings}}
 						{{#if (and dt dd)}}
-							<dt class="clear{{#unless (is_numeric @key)}} cbs_{{@key}}{{/unless}}">
-								{{{dt}}}
-							</dt>
-							<dd{{#unless (is_numeric @key)}} class="cbs_{{@key}}"{{/unless}}>
-								{{{dd}}}
-							</dd>
+						<dt class="clear{{#unless (is_numeric @key)}} cbs_{{@key}}{{/unless}}">
+							{{{dt}}}
+						</dt>
+						<dd{{#unless (is_numeric @key)}} class="cbs_{{@key}}"{{/unless}}>
+							{{{dd}}}
+						</dd>
 						{{/if}}
 						{{/each}}
 					</dl>
@@ -381,10 +386,10 @@
 				{{/if}}
 
 				{{#if context.board.is_new}}
-					<input type="hidden" name="cur_cat" value="{{{context.board.category}}}">
-					<input type="submit" name="add" value="{{{txt.mboards_new_board}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
+				<input type="hidden" name="cur_cat" value="{{{context.board.category}}}">
+				<input type="submit" name="add" value="{{{txt.mboards_new_board}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
 				{{else}}
-					<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
+				<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
 				{{/if}}
 
 				{{#if (and (not context.board.is_new) (not context.board.is_recycle))}}

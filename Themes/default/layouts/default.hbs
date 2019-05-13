@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html {{#if context.right_to_left}}dir="rtl" {{/if}}{{#if txt.lang_locale}} lang="{{locale txt.lang_locale}}"{{/if}}>
+<html{{#if context.right_to_left}} dir="rtl"{{/if}}{{#if txt.lang_locale}} lang="{{locale txt.lang_locale}}"{{/if}}>
 <head>
 	<meta charset="UTF-8">
 	
@@ -28,7 +28,7 @@
 	{{#if context.links.prev}}<link rel="perv" href="{{context.links.prev}}">{{/if}}
 	{{#if context.current_board}}<link rel="index" href="{{scripturl}}?board={{context.current_board}}.0">{{/if}}
 	{{{context.html_headers}}}
-	</head>
+</head>
 	{{!-- 
 	I apologise for the next line. -Yami
 	--}}
@@ -38,7 +38,7 @@
 		{{#if context.user.is_logged}}
 			<ul class="floatleft" id="top_info">
 				<li>
-					<a href="{{scripturl}}?action=profile" {{#if context.self_profile}} class="active"{{/if}} id="profile_menu_top" onclick="return false;">
+					<a href="{{scripturl}}?action=profile"{{#if context.self_profile}} class="active"{{/if}} id="profile_menu_top" onclick="return false;">
 						{{#if context.user.avatar}}{{{context.user.avatar.image}}}{{/if}}
 						{{context.user.name}}</a>
 					<div id="profile_menu" class="top_menu"></div>
@@ -75,12 +75,12 @@
 		
 		{{#if modSettings.userLanguage}}
 			{{#if (gt (count context.languages) 1)}}
-				<form id="languages_form" method="get" class="floatright">
-					<select id="language_select" name="language" onchange="this.form.submit()">
-						{{#each context.languages}}
-						<option value="{{filename}}"{{#if (eq context.user.language filename)}} selected{{/if}}>{{name}}</option>
-						{{/each}}
-					</select>
+			<form id="languages_form" method="get" class="floatright">
+				<select id="language_select" name="language" onchange="this.form.submit()">
+					{{#each context.languages}}
+					<option value="{{filename}}"{{#if (eq context.user.language filename)}} selected{{/if}}>{{name}}</option>
+					{{/each}}
+				</select>
 				<noscript>
 					<input type="submit" value="{{txt.quick_mod_go}}" />
 				</noscript>
@@ -103,75 +103,75 @@
 				<input type="hidden" name="advanced" value="0">
 			</form>
 		{{/if}}
-	</div>
-	
-	<div id="header">
-		<h1 class="forumtitle">
-			<a id="top" href="{{scripturl}}">{{#if context.header_logo_url_html_safe}}<img src="{{context.header_logo_url_html_safe}}" alt="{{context.forum_name_html_safe}}">{{else}}{{context.forum_name_html_safe}}{{/if}}</a>
-		</h1>
-		{{#if settings.site_slogan}}<div id="siteslogan" class="floatright">{{settings.site_slogan}}</div>{{else}}<img id="sbblogo" src="{{settings.images_url}}/StoryBB.svg" alt="StoryBB" title="StoryBB">{{/if}}
 		</div>
-		<div id="wrapper">
-			<div id="upper_section">
-				<div id="inner_section">
-					<div id="inner_wrap">
-						<div class="user">
-							{{context.current_time}}
+	
+		<div id="header">
+			<h1 class="forumtitle">
+				<a id="top" href="{{scripturl}}">{{#if context.header_logo_url_html_safe}}<img src="{{context.header_logo_url_html_safe}}" alt="{{context.forum_name_html_safe}}">{{else}}{{context.forum_name_html_safe}}{{/if}}</a>
+			</h1>
+			{{#if settings.site_slogan}}<div id="siteslogan" class="floatright">{{settings.site_slogan}}</div>{{else}}<img id="sbblogo" src="{{settings.images_url}}/StoryBB.svg" alt="StoryBB" title="StoryBB">{{/if}}
+			</div>
+			<div id="wrapper">
+				<div id="upper_section">
+					<div id="inner_section">
+						<div id="inner_wrap">
+							<div class="user">
+								{{context.current_time}}
+							</div>
+							<div class="news">
+								<h2>{{txt.news}}:</h2>
+								<p>{{context.random_news_line}}</p>
+							</div>
+							<hr class="clear">
 						</div>
-						<div class="news">
-							<h2>{{txt.news}}:</h2>
-							<p>{{context.random_news_line}}</p>
+						<a class="menu_icon mobile_user_menu"></a>
+						<div id="mobile_user_menu" class="popup_container">
+							<div class="popup_window description">
+								<div class="popup_heading">{{txt.mobile_user_menu}}
+								<a href="javascript:void(0);" class="generic_icons hide_popup"></a></div>
+								{{>menu}}
+							</div>
 						</div>
-						<hr class="clear">
+						<div id="main_menu">{{>menu}}</div>
+						{{> linktree}}
 					</div>
-					<a class="menu_icon mobile_user_menu"></a>
-					<div id="mobile_user_menu" class="popup_container">
-						<div class="popup_window description">
-							<div class="popup_heading">{{txt.mobile_user_menu}}
-							<a href="javascript:void(0);" class="generic_icons hide_popup"></a></div>
-							{{>menu}}
-						</div>
+				</div>
+				<div id="content_section">
+					<div id="main_content_section">
+						{{#if (and context.in_maintenance context.user.is_admin)}}
+							<div class="errorbox">
+								<dl>
+									<dt>
+										<strong id="error_serious">{{txt.forum_in_maintenance}}</strong>
+									</dt>
+									<dd class="error" id="error_list">
+										{{textTemplate txt.maintenance_page (concat scripturl '?action=admin;area=serversettings;' context.session_var '=' context.session_id)}}
+									</dd>
+								</dl>
+							</div>
+						{{/if}}
+						{{>status_messages}}
+						{{{content}}}
 					</div>
-					<div id="main_menu">{{>menu}}</div>
-					{{> linktree}}
 				</div>
 			</div>
-			<div id="content_section">
-				<div id="main_content_section">
-					{{#if (and context.in_maintenance context.user.is_admin)}}
-						<div class="errorbox">
-							<dl>
-								<dt>
-									<strong id="error_serious">{{txt.forum_in_maintenance}}</strong>
-								</dt>
-								<dd class="error" id="error_list">
-									{{textTemplate txt.maintenance_page (concat scripturl '?action=admin;area=serversettings;' context.session_var '=' context.session_id)}}
-								</dd>
-							</dl>
-						</div>
-					{{/if}}
-					{{>status_messages}}
-					{{{content}}}
-				</div>
-			</div>
 		</div>
-	</div>
-	
-	<div id="footer">
-		<ul>
-			<li class="floatright">
-				<a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
-				| <a href="{{scripturl}}?action=help">{{txt.help}}</a>
-				{{#each context.footer_links}}
-				| <a href="{{{link}}}">{{{title}}}</a>
-				{{/each}}
-				| <a href="#top_section">{{txt.go_up}} &#9650;</a>
-			</li>
-			<li class="copyright">{{{copyright}}}</li>
-		</ul>
-	</div>
+		
+		<div id="footer">
+			<ul>
+				<li class="floatright">
+					<a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
+					| <a href="{{scripturl}}?action=help">{{txt.help}}</a>
+					{{#each context.footer_links}}
+					| <a href="{{{link}}}">{{{title}}}</a>
+					{{/each}}
+					| <a href="#top_section">{{txt.go_up}} &#9650;</a>
+				</li>
+				<li class="copyright">{{{copyright}}}</li>
+			</ul>
+		</div>
 
-   {{{javascript deferred=1}}}
-   {{> cookie_footer}}
+	{{{javascript deferred=1}}}
+	{{> cookie_footer}}
 </body>
 </html>
