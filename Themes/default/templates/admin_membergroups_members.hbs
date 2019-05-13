@@ -33,10 +33,10 @@
 					{{! Any group moderators to show? }}
 					{{#if context.group.moderators}}
 					<dt>
-						<strong>', $txt['membergroups_members_group_moderators'], ':</strong>
+						<strong>{{{txt.membergroups_members_group_moderators}}}:</strong>
 					</dt>
 					<dd>
-						{{{join context.group.moderators_formatted ', '}}}
+						{{{join context.group.moderators_formatted ', '}}}{{! More php remains?}}
 					</dd>
 					{{/if}}
 
