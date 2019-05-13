@@ -377,13 +377,13 @@ tr[id^="operation_"] .table_grid {
 	width: 8%;
 }
 
-.generic_icons.select_above {
+.generic_icons.select_above::before {
 	background-position: -161px -5px;
 }
-.generic_icons.select_here {
+.generic_icons.select_here::before {
 	background-position: -187px -5px;
 }
-.generic_icons.select_below {
+.generic_icons.select_below::before {
 	background-position: -213px -5px;
 }
 
