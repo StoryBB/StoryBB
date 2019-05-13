@@ -16,8 +16,8 @@
 		</tr>
 	</thead>
 	<tbody>
-        {{#if context.show_delete}}
-        <tr class="windowbg">
+		{{#if context.show_delete}}
+		<tr class="windowbg">
 			<td colspan="5">{{txt.pm_alert_none}}</td>
 		</tr>
 		{{/if}}
@@ -30,8 +30,8 @@
 			{{#if is_replied_to}}<span class="generic_icons replied" title="{{txt.pm_replied}}"></span>{{else}}<span class="generic_icons im_off" title="{{txt.pm_read}}"></span>{{/if}}</td>
 			<td>{{{time}}}</td>
 			<td>{{#if (eq ../context.current_pm id)}}<img src="{{../settings.images_url}}/selected.png" alt="*">{{/if}}
-			    <a href="{{#unless (eq ../context.current_pm id)}}{{../scripturl}}?action=pm;pmid={{id}};kstart;f={{../context.folder}};start={{../context.start}};sort={{../context.sort_by}}{{#if (eq ../context.sort_direction 'up')}};{{else}};desc{{/if}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}}#msg{{id}}{{/unless}}">
-			        {{subject}}{{#if is_unread}}&nbsp;<span class="new_posts">{{../txt.new}}</span>{{/if}}</a></td>
+				<a href="{{#unless (eq ../context.current_pm id)}}{{../scripturl}}?action=pm;pmid={{id}};kstart;f={{../context.folder}};start={{../context.start}};sort={{../context.sort_by}}{{#if (eq ../context.sort_direction 'up')}};{{else}};desc{{/if}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}}#msg{{id}}{{/unless}}">
+					{{subject}}{{#if is_unread}}&nbsp;<span class="new_posts">{{../txt.new}}</span>{{/if}}</a></td>
 			<td>{{#if (eq ../context.from_or_to 'from')}}{{{member.link}}}{{else}}{{#if recipients.to}}{{{implode recipients.to}}}{{/if}}{{/if}}</td>
 			<td class="centercol table_icon"><input type="checkbox" name="pms[]" id="deletelisting{{id}}" value="{{id}}"{{#if is_selected}} checked{{/if}} onclick="if (document.getElementById('deletedisplay{{id}}')) document.getElementById('deletedisplay{{id}}').checked = this.checked;"></td>
 		</tr>

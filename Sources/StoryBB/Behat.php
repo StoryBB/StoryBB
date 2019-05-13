@@ -96,7 +96,7 @@ class Behat extends RawMinkContext implements Context
 
 		// Make a database.
 		$smcFunc['db_query']('', "
-            DROP DATABASE IF EXISTS `$db_name`",
+			DROP DATABASE IF EXISTS `$db_name`",
 			[
 				'security_override' => true,
 				'db_error_skip' => true,
@@ -104,7 +104,7 @@ class Behat extends RawMinkContext implements Context
 			$db_connection
 		);
 		$smcFunc['db_query']('', "
-            CREATE DATABASE `$db_name`",
+			CREATE DATABASE `$db_name`",
 			[
 				'security_override' => true,
 				'db_error_skip' => true,
@@ -315,7 +315,7 @@ class Behat extends RawMinkContext implements Context
 		foreach ($non_prefixed_tables as $table)
 		{
 			$smcFunc['db_query']('', '
-                DROP TABLE IF EXISTS {raw:table}',
+				DROP TABLE IF EXISTS {raw:table}',
 				array(
 					'table' => $table,
 				)
