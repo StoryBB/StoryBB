@@ -30,7 +30,7 @@
 						<select name="pid" onchange="document.forms.postmodForm.submit();">
 							{{#each context.profiles}}
 								{{#if can_modify}}
-									<option value="{{id}}"{{#if (eq id ../context.current_profile)}} selected{{/if}}>{{{name}}}</option>
+							<option value="{{id}}"{{#if (eq id ../context.current_profile)}} selected{{/if}}>{{{name}}}</option>
 								{{/if}}
 							{{/each}}
 						</select>
@@ -72,9 +72,9 @@
 							<th><span class="generic_icons post_moderation_deny"></span></th>
 
 							{{#if (eq modSettings.attachmentEnable '1')}}
-								<th><span class="generic_icons post_moderation_allow"></span></th>
-								<th><span class="generic_icons post_moderation_moderate"></span></th>
-								<th><span class="generic_icons post_moderation_deny"></span></th>
+							<th><span class="generic_icons post_moderation_allow"></span></th>
+							<th><span class="generic_icons post_moderation_moderate"></span></th>
+							<th><span class="generic_icons post_moderation_deny"></span></th>
 							{{/if}}
 						</tr>
 					</thead>
@@ -85,29 +85,53 @@
 									<span{{#if color}} style="color: {{color}}"{{/if}}>{{{name}}}</span>
 
 									{{#if children}}
-										<br><span class="smalltext">{{{../txt.permissions_includes_inherited}}}: &quot;{{{join children '&quot;, &quot;'}}}&quot;</span>
+									<br><span class="smalltext">{{{../txt.permissions_includes_inherited}}}: &quot;{{{join children '&quot;, &quot;'}}}&quot;</span>
 									{{/if}}
 								</td>
-								<td class="centercol"><input type="radio" name="new_topic[{{id}}]" value="allow"{{#if (eq new_topic 'allow')}} checked{{/if}}></td>
-								<td class="centercol"><input type="radio" name="new_topic[{{id}}]" value="moderate"{{#if (eq new_topic 'moderate')}} checked{{/if}}></td>
-								<td class="centercol"><input type="radio" name="new_topic[{{id}}]" value="disallow"{{#if (eq new_topic 'disallow')}} checked{{/if}}></td>
+								<td class="centercol">
+									<input type="radio" name="new_topic[{{id}}]" value="allow"{{#if (eq new_topic 'allow')}} checked{{/if}}>
+								</td>
+								<td class="centercol">
+									<input type="radio" name="new_topic[{{id}}]" value="moderate"{{#if (eq new_topic 'moderate')}} checked{{/if}}>
+								</td>
+								<td class="centercol">
+									<input type="radio" name="new_topic[{{id}}]" value="disallow"{{#if (eq new_topic 'disallow')}} checked{{/if}}>
+								</td>
 
 								{{#if (eq id -1)}}
-									<td colspan="3"></td>
+								<td colspan="3"></td>
 								{{else}}
-									<td class="centercol"><input type="radio" name="replies_own[{{id}}]" value="allow"{{#if (eq replies_own 'allow')}} checked{{/if}}></td>
-									<td class="centercol"><input type="radio" name="replies_own[{{id}}]" value="moderate"{{#if (eq replies_own 'moderate')}} checked{{/if}}></td>
-									<td class="centercol"><input type="radio" name="replies_own[{{id}}]" value="disallow"{{#if (eq replies_own 'disallow')}} checked{{/if}}></td>
+								<td class="centercol">
+									<input type="radio" name="replies_own[{{id}}]" value="allow"{{#if (eq replies_own 'allow')}} checked{{/if}}>
+								</td>
+								<td class="centercol">
+									<input type="radio" name="replies_own[{{id}}]" value="moderate"{{#if (eq replies_own 'moderate')}} checked{{/if}}>
+								</td>
+								<td class="centercol">
+									<input type="radio" name="replies_own[{{id}}]" value="disallow"{{#if (eq replies_own 'disallow')}} checked{{/if}}>
+								</td>
 								{{/if}}
 
-								<td class="centercol"><input type="radio" name="replies_any[{{id}}]" value="allow"{{#if (eq replies_any 'allow')}} checked{{/if}}></td>
-								<td class="centercol"><input type="radio" name="replies_any[{{id}}]" value="moderate"{{#if (eq replies_any 'moderate')}} checked{{/if}}></td>
-								<td class="centercol"><input type="radio" name="replies_any[{{id}}]" value="disallow"{{#if (eq replies_any 'disallow')}} checked{{/if}}></td>
+								<td class="centercol">
+									<input type="radio" name="replies_any[{{id}}]" value="allow"{{#if (eq replies_any 'allow')}} checked{{/if}}>
+								</td>
+								<td class="centercol">
+									<input type="radio" name="replies_any[{{id}}]" value="moderate"{{#if (eq replies_any 'moderate')}} checked{{/if}}>
+								</td>
+								<td class="centercol">
+									<input type="radio" name="replies_any[{{id}}]" value="disallow"{{#if (eq replies_any 'disallow')}} checked{{/if}}>
+								</td>
 
 								{{#if (eq ../modSettings.attachmentEnable '1')}}
-									<td class="centercol"><input type="radio" name="attachment[{{id}}]" value="allow"{{#if (eq attachment 'allow')}} checked{{/if}}></td>
-									<td class="centercol"><input type="radio" name="attachment[{{id}}]" value="moderate"{{#if (eq attachment 'moderate')}} checked{{/if}}></td>
-									<td class="centercol"><input type="radio" name="attachment[{{id}}]" value="disallow"{{#if (eq attachment 'disallow')}} checked{{/if}}></td>
+								<td class="centercol">
+									<input type="radio" name="attachment[{{id}}]" value="allow"{{#if (eq attachment 'allow')}} checked{{/if}}>
+								</td>
+								<td class="centercol">
+									<input type="radio" name="attachment[{{id}}]" value="moderate"{{#if (eq attachment 'moderate')}} checked{{/if}}>
+								</td>
+								<td class="centercol">
+									<input type="radio" name="attachment[{{id}}]" value="disallow"{{#if (eq attachment 'disallow')}} checked{{/if}}>
+								</td>
 								{{/if}}
 							</tr>
 						{{/each}}

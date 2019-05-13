@@ -6,11 +6,11 @@
 			</div>
 			<div class="roundframe noup">
 				<form class="login" action="{{context.login_url}}" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8">
-				    {{#if context.login_errors}}
-				    <div class="errorbox">{{#each context.login_errors}}{{.}}<br/>{{/each}}</div><br>
-				    {{/if}}
-				    {{#if context.description}}<div class="information">{{context.description}}</div>{{/if}}
-				    <dl>
+					{{#if context.login_errors}}
+					<div class="errorbox">{{#each context.login_errors}}{{.}}<br/>{{/each}}</div><br>
+					{{/if}}
+					{{#if context.description}}<div class="information">{{context.description}}</div>{{/if}}
+					<dl>
 						<dt>{{txt.username}}:</dt>
 						<dd><input type="text" id="{{#if context.from_ajax}}ajax_{{/if}}loginuser" name="user" size="20" value="{{context.default_username}}"></dd>
 						<dt>{{txt.password}}:</dt>
@@ -33,8 +33,8 @@
 						setTimeout(function() {
 							document.getElementById("{{#if context.from_ajax}}ajax_{{/if}}{{#if context.default_username}}loginpass{{else}}loginuser{{/if}}").focus();
 						}, 150);
-                	{{#if context.ajax_nonssl}}
-	                    form = $("#frmLogin");
+					{{#if context.ajax_nonssl}}
+						form = $("#frmLogin");
 						form.submit(function(e) {
 							e.preventDefault();
 							e.stopPropagation();

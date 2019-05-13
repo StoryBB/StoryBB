@@ -71,13 +71,19 @@
 				<p><strong>{{{txt.reattribute_guest_posts}}}</strong></p>
 				<dl class="settings">
 					<dt>
-						<label for="type_name"><input type="radio" name="type" id="type_name" value="name" checked>{{{txt.reattribute_username}}}</label>
+						<label for="type_name">
+							<input type="radio" name="type" id="type_name" value="name" checked>
+							{{{txt.reattribute_username}}}
+						</label>
 					</dt>
 					<dd>
 						<input type="text" name="from_name" id="from_name" value="" onclick="document.getElementById('type_name').checked = 'checked'; document.getElementById('from_email').value = '';">
 					</dd>
 					<dt>
-						<label for="type_email"><input type="radio" name="type" id="type_email" value="email">{{{txt.reattribute_email}}}</label>
+						<label for="type_email">
+							<input type="radio" name="type" id="type_email" value="email">
+							{{{txt.reattribute_email}}}
+						</label>
 						<div class="smalltext">{{{txt.reattribute_email_note}}}</div>
 					</dt>
 					<dd>
@@ -86,13 +92,19 @@
 				</dl>
 				<dl class="settings">
 					<dt>
-						<label for="to_member_radio"><input type="radio" name="reattribute_type" id="to_member_radio" value="member" checked> {{{txt.reattribute_current_member}}}:</label>
+						<label for="to_member_radio">
+							<input type="radio" name="reattribute_type" id="to_member_radio" value="member" checked>
+							{{{txt.reattribute_current_member}}}:
+						</label>
 					</dt>
 					<dd>
 						<select name="to" id="to"><option></option></select>
 					</dd>
 					<dt>
-						<label for="to_char_radio"><input type="radio" name="reattribute_type" id="to_char_radio" value="character"> {{{txt.reattribute_current_character}}}:</label>
+						<label for="to_char_radio">
+							<input type="radio" name="reattribute_type" id="to_char_radio" value="character">
+							{{{txt.reattribute_current_character}}}:
+						</label>
 					</dt>
 					<dd>
 						<select name="to_char" id="to_char" disabled><option></option></select>
@@ -102,30 +114,46 @@
 					<input type="checkbox" name="posts" id="posts" checked>
 					<label for="posts">{{{txt.reattribute_increase_posts}}}</label>
 				</p>
-				<input type="submit" id="do_attribute" value="{{{txt.reattribute}}}" onclick="if (!checkAttributeValidity()) return false;
-				return confirm(warningMessage);" class="button_submit">
+				<input type="submit" id="do_attribute" value="{{{txt.reattribute}}}" onclick="if (!checkAttributeValidity()) return false; return confirm(warningMessage);" class="button_submit">
 				{{session_form}}
 				{{token_form 'admin-maint'}}
 			</form>
 		</div>
 		<div class="cat_bar">
 			<h3 class="catbg">
-				<a href="{{scripturl}}?action=helpadmin;help=maintenance_members" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="{{{txt.help}}}"></span></a> {{{txt.maintain_members}}}
+				<a href="{{scripturl}}?action=helpadmin;help=maintenance_members" onclick="return reqOverlayDiv(this.href);" class="help">
+					<span class="generic_icons help" title="{{{txt.help}}}"></span>
+				</a>
+				{{{txt.maintain_members}}}
 			</h3>
 		</div>
 		<div class="windowbg2 noup">
 			<form action="{{scripturl}}?action=admin;area=maintain;sa=members;activity=purgeinactive" method="post" accept-charset="UTF-8" id="membersForm">
-				<p><a id="membersLink"></a>{{{txt.maintain_members_since1}}}
-				<select name="del_type">
-					<option value="activated" selected>{{{txt.maintain_members_activated}}}</option>
-					<option value="logged">{{{txt.maintain_members_logged_in}}}</option>
-				</select> {{{txt.maintain_members_since2}}} <input type="number" name="maxdays" value="30" size="3">{{{txt.maintain_members_since3}}}</p>
+				<p>
+					<a id="membersLink"></a>
+					{{{txt.maintain_members_since1}}}
+					<select name="del_type">
+						<option value="activated" selected>{{{txt.maintain_members_activated}}}</option>
+						<option value="logged">{{{txt.maintain_members_logged_in}}}</option>
+					</select>
+					{{{txt.maintain_members_since2}}}
+					<input type="number" name="maxdays" value="30" size="3">
+					{{{txt.maintain_members_since3}}}
+				</p>
 
-				<p><a href="#membersLink" onclick="swapMembers();"><img src="{{{settings.images_url}}}/selected.png" alt="+" id="membersIcon"></a> <a href="#membersLink" onclick="swapMembers();" id="membersText" style="font-weight: bold;">{{{txt.maintain_members_all}}}</a></p>
+				<p>
+					<a href="#membersLink" onclick="swapMembers();">
+						<img src="{{{settings.images_url}}}/selected.png" alt="+" id="membersIcon">
+					</a>
+					<a href="#membersLink" onclick="swapMembers();" id="membersText" style="font-weight: bold;">{{{txt.maintain_members_all}}}</a>
+				</p>
 				<div style="display: none; padding: 3px" id="membersPanel">
 
 				{{#each context.membergroups}}
-					<label for="groups{{id}}"><input type="checkbox" name="groups[{{id}}]" id="groups{{id}}" checked> {{{name}}}</label><br>
+					<label for="groups{{id}}">
+						<input type="checkbox" name="groups[{{id}}]" id="groups{{id}}" checked>
+						{{{name}}}
+					</label><br>
 				{{/each}}
 
 				</div>

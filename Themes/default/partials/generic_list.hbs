@@ -15,26 +15,26 @@
 {{/if}}
 
 {{#if cur_list.additional_rows.after_title}}
-    <div class="information flow_hidden">
-    {{>list_additional_rows cur_list.additional_rows.after_title}}
-    </div>
+	<div class="information flow_hidden">
+	{{>list_additional_rows cur_list.additional_rows.after_title}}
+	</div>
 {{/if}}
 {{#if cur_list.additional_rows.top_of_list}}
-    <div class="information flow_hidden">
-    {{>list_additional_rows cur_list.additional_rows.top_of_list}}
-    </div>
+	<div class="information flow_hidden">
+	{{>list_additional_rows cur_list.additional_rows.top_of_list}}
+	</div>
 {{/if}}
 {{#if cur_list.page_index}}
-    {{#if cur_list.items_per_page}}
-    <div class="floatleft">
+	{{#if cur_list.items_per_page}}
+	<div class="floatleft">
 		<div class="pagesection">{{{cur_list.page_index}}}</div>
 	</div>
-    {{/if}}
+	{{/if}}
 {{/if}}
 {{#if cur_list.additional_rows.above_column_headers}}
-    <div class="information flow_hidden">
-    {{>list_additional_rows cur_list.additional_rows.above_column_headers}}
-    </div>
+	<div class="information flow_hidden">
+	{{>list_additional_rows cur_list.additional_rows.above_column_headers}}
+	</div>
 {{/if}}
 <table class="table_grid" {{#if cur_list.width}} style="width:{{cur_list.width}}{{/if}}">
 {{#if (gt headerCount 2)}}
@@ -55,29 +55,29 @@
 				{{/if}}
 			</th>
 {{/each}}
-    	</tr>
+		</tr>
 	</thead>
 {{/if}}
 	<tbody>
 {{#unless cur_list.rows}}
-    {{#if cur_list.no_items_label}}
+	{{#if cur_list.no_items_label}}
 		<tr class="windowbg">
 			<td colspan="{{cur_list.num_columns}}" class="{{#if cur_list.no_items_align}}{{cur_list.no_items_align}}{{else}}centertext{{/if}}">{{{cur_list.no_items_label}}}</td>
 		</tr>
-    {{/if}}
+	{{/if}}
 {{/unless}}
 {{#each cur_list.rows}}
-        <tr class="windowbg {{class}}" {{#if style}} style="{{style}}"{{/if}} id="list_{{../cur_list.list_id}}_{{@key}}">
-    {{#each data}}
-            <td{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}>{{{value}}}</td>
-    {{/each}}
-        </tr>
+		<tr class="windowbg {{class}}" {{#if style}} style="{{style}}"{{/if}} id="list_{{../cur_list.list_id}}_{{@key}}">
+	{{#each data}}
+			<td{{#if class}} class="{{class}}"{{/if}}{{#if style}} style="{{style}}"{{/if}}>{{{value}}}</td>
+	{{/each}}
+		</tr>
 {{/each}}
 	</tbody>
 </table>
 
 {{#if (or cur_list.page_index cur_list.additional_rows.below_table_data)}}
-    {{#if cur_list.items_per_page}}
+	{{#if cur_list.items_per_page}}
 		<div class="flow_auto">
 			<div class="floatleft">
 				<div class="pagesection">{{{cur_list.page_index}}}</div>
@@ -86,11 +86,11 @@
 		</div>
 	{{/if}}
 	{{#if cur_list.additional_rows.below_table_data}}
-        {{>list_additional_rows cur_list.additional_rows.below_table_data}}
-    {{/if}}
+		{{>list_additional_rows cur_list.additional_rows.below_table_data}}
+	{{/if}}
 {{/if}}
 {{#if cur_list.additional_rows.bottom_of_list}}
-    {{>list_additional_rows cur_list.additional_rows.bottom_of_list}}
+	{{>list_additional_rows cur_list.additional_rows.bottom_of_list}}
 {{/if}}
 
 {{#if cur_list.form}}

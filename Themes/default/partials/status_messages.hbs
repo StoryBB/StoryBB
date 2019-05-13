@@ -1,11 +1,11 @@
-        {{#each context.session_flash}}
-            {{#if (eq @key 'error')}}
-                {{#each this}}<div class="errorbox">{{{.}}}</div>{{/each}}
-            {{/if}}
-            {{#if (eq @key 'warning')}}
-                {{#each this}}<div class="noticebox">{{{.}}}</div>{{/each}}
-            {{/if}}
-            {{#if (eq @key 'success')}}
-                {{#each this}}<div class="infobox">{{{.}}}</div>{{/each}}
-            {{/if}}
-        {{/each}}
+		{{#each context.session_flash}}
+			{{#if (eq @key 'error')}}
+				{{#each this}}<div class="errorbox">{{{.}}}</div>{{/each}}
+			{{/if}}
+			{{#if (eq @key 'warning')}}
+				{{#each this}}<div class="noticebox">{{{.}}}</div>{{/each}}
+			{{/if}}
+			{{#if (eq @key 'success')}}
+				{{#each this}}<div class="infobox">{{{.}}}</div>{{/each}}
+			{{/if}}
+		{{/each}}

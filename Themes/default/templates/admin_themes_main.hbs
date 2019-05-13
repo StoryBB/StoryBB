@@ -1,7 +1,9 @@
 <div id="admincenter">
-    <div class="cat_bar">
+	<div class="cat_bar">
 		<h3 class="catbg">
-			<a href="{{scripturl}}?action=helpadmin;help=themes" onclick="return reqOverlayDiv(this.href);" class="help"><span class="generic_icons help" title="{{txt.help}}"></span></a>
+			<a href="{{scripturl}}?action=helpadmin;help=themes" onclick="return reqOverlayDiv(this.href);" class="help">
+				<span class="generic_icons help" title="{{txt.help}}"></span>
+			</a>
 			{{txt.themeadmin_title}}
 		</h3>
 		</div>
@@ -28,9 +30,11 @@
 					</dt>
 					<dd>
 						<div id="known_themes_list">
-						    {{#each context.themes}}
-						    <label for="options-known_themes_{{id}}"><input type="checkbox" name="options[known_themes][]" id="options-known_themes_{{id}}" value="{{id}}"{{#if known}} checked{{/if}}> {{name}}</label><br>
-						    {{/each}}
+							{{#each context.themes}}
+							<label for="options-known_themes_{{id}}">
+								<input type="checkbox" name="options[known_themes][]" id="options-known_themes_{{id}}" value="{{id}}"{{#if known}} checked{{/if}}> {{name}}
+							</label><br>
+							{{/each}}
 						</div>
 						<a href="javascript:void(0);" onclick="document.getElementById('known_themes_list').style.display='block'; document.getElementById('known_themes_link').style.display = 'none'; return false; " id="known_themes_link" style="display: none;">[ {{txt.themeadmin_themelist_link}} ]</a>
 						<script>
@@ -44,10 +48,12 @@
 					<dd>
 						<select name="options[theme_guests]" id="theme_guests">
 						{{#each context.themes}}
-					    	<option value="{{id}}"{{#if (eq modSettings.theme_guests id)}} selected{{/if}}>{{name}}</option>
+							<option value="{{id}}"{{#if (eq modSettings.theme_guests id)}} selected{{/if}}>{{name}}</option>
 						{{/each}}
 						</select>
-						<span class="smalltext pick_theme"><a href="{{scripturl}}?action=theme;sa=pick;u=-1;{{session_url}}">{{txt.theme_select}}</a></span>
+						<span class="smalltext pick_theme">
+							<a href="{{scripturl}}?action=theme;sa=pick;u=-1;{{session_url}}">{{txt.theme_select}}</a>
+						</span>
 					</dd>
 					<dt>
 						<label for="theme_reset">{{txt.theme_reset}}</label>:
@@ -57,10 +63,12 @@
 							<option value="-1" selected>{{txt.theme_nochange}}</option>
 							<option value="0">{{txt.theme_forum_default}}</option>
 							{{#each context.themes}}
-    					    	<option value="{{id}}">{{name}}</option>
-    						{{/each}}
-    						</select>
-						<span class="smalltext pick_theme"><a href="{{scripturl}}?action=theme;sa=pick;u=0;{{session_url}}">{{txt.theme_select}}</a></span>
+							<option value="{{id}}">{{name}}</option>
+							{{/each}}
+							</select>
+						<span class="smalltext pick_theme">
+							<a href="{{scripturl}}?action=theme;sa=pick;u=0;{{session_url}}">{{txt.theme_select}}</a>
+						</span>
 					</dd>
 				</dl>
 				<input type="submit" name="save" value="{{txt.save}}" class="button_submit">
@@ -83,8 +91,8 @@
 				</h3>
 			</div>
 			<div class="windowbg2 noup">
-			    {{#if context.can_create_new}}
-			    <fieldset>
+				{{#if context.can_create_new}}
+				<fieldset>
 					<legend>{{{txt.theme_install_new}}}</legend>
 					<form action="{{scripturl}}?action=admin;area=theme;sa=install;do=copy" method="post" accept-charset="UTF-8" class="padding">
 						{{session_form}}
@@ -93,8 +101,8 @@
 						<input type="submit" name="save_copy" value="{{txt.save}}" class="button_submit">
 					</form>
 				</fieldset>
-			    {{/if}}
-			    <fieldset>
+				{{/if}}
+				<fieldset>
 					<legend>{{{txt.theme_install_dir}}}</legend>
 					<form action="{{scripturl}}?action=admin;area=theme;sa=install;do=dir" method="post" accept-charset="UTF-8" class="padding">
 						{{session_form}}

@@ -33,10 +33,10 @@
 					{{! Any group moderators to show? }}
 					{{#if context.group.moderators}}
 					<dt>
-						<strong>', $txt['membergroups_members_group_moderators'], ':</strong>
+						<strong>{{{txt.membergroups_members_group_moderators}}}:</strong>
 					</dt>
 					<dd>
-						{{{join context.group.moderators_formatted ', '}}}
+						{{{join context.group.moderators_formatted ', '}}}{{! More php remains?}}
 					</dd>
 					{{/if}}
 
@@ -52,24 +52,46 @@
 			<table class="table_grid">
 				<thead>
 					<tr class="title_bar">
-						<th><a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=name{{#if (and (eq context.sort_by 'name') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.name}}}{{#if (eq context.sort_by 'name')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
+						<th>
+							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=name{{#if (and (eq context.sort_by 'name') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.name}}}{{#if (eq context.sort_by 'name')}}
+								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+							</a>
+						</th>
 
 						{{#if (eq context.group.is_character '1')}}
 						<th>{{{txt.character_name_title}}}</th>
 						{{/if}}
 
 						{{#if context.can_send_email}}
-						<th><a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=email{{#if (and (eq context.sort_by 'email') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.email}}}{{#if (eq context.sort_by 'email')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
+						<th>
+							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=email{{#if (and (eq context.sort_by 'email') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.email}}}{{#if (eq context.sort_by 'email')}}
+								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+							</a>
+						</th>
 						{{/if}}
 
-						<th><a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=active{{#if (and (eq context.sort_by 'active') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.membergroups_members_last_active}}}{{#if (eq context.sort_by 'active')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
+						<th>
+							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=active{{#if (and (eq context.sort_by 'active') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.membergroups_members_last_active}}}{{#if (eq context.sort_by 'active')}}
+								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+							</a>
+						</th>
 
-						<th><a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=registered{{#if (and (eq context.sort_by 'registered') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.date_registered}}}{{#if (eq context.sort_by 'registered')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
+						<th>
+							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=registered{{#if (and (eq context.sort_by 'registered') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.date_registered}}}{{#if (eq context.sort_by 'registered')}}
+								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+							</a>
+						</th>
 
-						<th{{#unless context.group.assignable}} colspan="2"{{/unless}}><a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=posts{{#if (and (eq context.sort_by 'posts') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.posts}}}{{#if (eq context.sort_by 'posts')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a></th>
+						<th{{#unless context.group.assignable}} colspan="2"{{/unless}}>
+							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=posts{{#if (and (eq context.sort_by 'posts') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.posts}}}{{#if (eq context.sort_by 'posts')}}
+								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+							</a>
+						</th>
 
 						{{#if context.group.assignable}}
-						<th style="width: 4%"><input type="checkbox" onclick="invertAll(this, this.form);"></th>
+						<th style="width: 4%">
+							<input type="checkbox" onclick="invertAll(this, this.form);">
+						</th>
 						{{/if}}
 					</tr>
 				</thead>
@@ -85,24 +107,28 @@
 					<tr class="windowbg">
 						<td>{{{name}}}</td>
 						{{#if character}}
-							<td>{{{character}}}</td>
+						<td>{{{character}}}</td>
 						{{/if}}
 						{{#if ../context.can_send_email}}
-							<td>
-								<a href="mailto:{{{email}}}">{{{email}}}</a>
-							</td>
+						<td>
+							<a href="mailto:{{{email}}}">{{{email}}}</a>
+						</td>
 						{{/if}}
 						<td>{{{last_online}}}</td>
 						<td>{{{registered}}}</td>
 						{{#if ../context.group.assignable}}
-							<td>{{{posts}}}</td>
+						<td>{{{posts}}}</td>
 							{{#if (eq ../context.group.is_character '1')}}
-								<td style="width:4%"><input type="checkbox" name="rem[]" value="{{id_character}}"></td>
+						<td style="width:4%">
+							<input type="checkbox" name="rem[]" value="{{id_character}}">
+						</td>
 							{{else}}
-								<td style="width: 4%"><input type="checkbox" name="rem[]" value="{{id}}"{{#if (and (eq_coerce ../context.user.id id) (eq_coerce ../context.group.id 1))}} onclick="if (this.checked) return confirm('{{{../txt.membergroups_members_deadmin_confirm}}}')"{{/if}}></td>
+						<td style="width: 4%">
+							<input type="checkbox" name="rem[]" value="{{id}}"{{#if (and (eq_coerce ../context.user.id id) (eq_coerce ../context.group.id 1))}} onclick="if (this.checked) return confirm('{{{../txt.membergroups_members_deadmin_confirm}}}')"{{/if}}>
+						</td>
 							{{/if}}
 						{{else}}
-							<td colspan="2">{{{posts}}}</td>
+						<td colspan="2">{{{posts}}}</td>
 						{{/if}}
 					</tr>
 					{{/each}}
@@ -134,13 +160,15 @@
 			<div class="windowbg2">
 				<dl class="settings">
 					<dt>
-						<strong><label for="toAdd">
+						<strong>
+							<label for="toAdd">
 							{{#if (eq context.group.is_character '1')}}
 								{{{txt.membergroups_members_add_char_desc}}}:
 							{{else}}
 								{{{txt.membergroups_members_add_desc}}}:
 							{{/if}}
-						</label></strong>
+							</label>
+						</strong>
 					</dt>
 					<dd>
 						<select name="toAdd[]" id="toAdd" multiple>

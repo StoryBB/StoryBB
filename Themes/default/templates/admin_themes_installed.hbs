@@ -1,10 +1,10 @@
-<div id="admincenter">
+	<div id="admincenter">
 		<div class="cat_bar">
 			<h3 class="catbg">{{context.page_title}}</h3>
 		</div>
 		<div class="windowbg">
-		    {{#if context.error_message}}
-		    <p>
+			{{#if context.error_message}}
+			<p>
 				{{context.error_message}}
 			</p>
 			{{else}}
@@ -14,6 +14,6 @@
 			<p>
 				<a href="{{scripturl}}?action=admin;area=theme;sa=admin;{{session_url}}">{{txt.back}}</a>
 			</p>
-		    {{/if}}
-	    </div>
-</div>
+			{{/if}}
+		</div>
+	</div>

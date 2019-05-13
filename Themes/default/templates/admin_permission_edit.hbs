@@ -38,18 +38,18 @@
 
 			{{! If this is general permissions also show the default profile. }}
 			{{#if (eq context.permission_type 'membergroup')}}
-				{{> admin_permission_block permission_type='membergroup' permission_list=context.permissions.membergroup context=context txt=txt scripturl=scripturl}}
-				<br>
-				<div class="cat_bar">
-					<h3 class="catbg">{{{txt.permissions_board}}}</h3>
-				</div>
-				<div class="information">
-					{{{txt.permissions_board_desc}}}
-				</div>
+			{{> admin_permission_block permission_type='membergroup' permission_list=context.permissions.membergroup context=context txt=txt scripturl=scripturl}}
+			<br>
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.permissions_board}}}</h3>
+			</div>
+			<div class="information">
+				{{{txt.permissions_board_desc}}}
+			</div>
 
-				{{> admin_permission_block permission_type='board' permission_list=context.permissions.board context=context txt=txt scripturl=scripturl}}
+			{{> admin_permission_block permission_type='board' permission_list=context.permissions.board context=context txt=txt scripturl=scripturl}}
 			{{else}}
-				{{> admin_permission_block permission_type='board' permission_list=context.permissions.board context=context txt=txt scripturl=scripturl}}
+			{{> admin_permission_block permission_type='board' permission_list=context.permissions.board context=context txt=txt scripturl=scripturl}}
 			{{/if}}
 
 			{{#if context.profile.can_modify}}

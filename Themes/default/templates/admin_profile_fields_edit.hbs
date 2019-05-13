@@ -82,7 +82,7 @@
 					<legend>{{{txt.custom_edit_input}}}</legend>
 					<dl class="settings">
 						<dt>
-						<strong><label for="field_type">{{{txt.custom_edit_picktype}}}:</label></strong>
+							<strong><label for="field_type">{{{txt.custom_edit_picktype}}}:</label></strong>
 						</dt>
 						<dd>
 							<select name="field_type" id="field_type" onchange="updateInputBoxes();">
@@ -122,8 +122,8 @@
 							<div>
 								{{#each context.field.options}}
 									{{#if (gt @key 0)}}<br>{{/if}}
-									<input type="radio" name="default_select" value="{{@key}}"{{#if (eq ../context.field.default_select .)}} checked{{/if}}>
-									<input type="text" name="select_option[{{@key}}]" value="{{{.}}}">
+								<input type="radio" name="default_select" value="{{@key}}"{{#if (eq ../context.field.default_select .)}} checked{{/if}}>
+								<input type="text" name="select_option[{{@key}}]" value="{{{.}}}">
 								{{/each}}
 							<span id="addopt"></span>
 							[<a href="" onclick="addOption(); return false;">{{{txt.custom_edit_options_more}}}</a>]

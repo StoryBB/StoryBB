@@ -3,8 +3,8 @@
 	<h3 class="catbg">{{txt.pm_send_report}}</h3>
 </div>
 <div class="windowbg">
-    {{#each context.send_log.sent}}<span class="error">{{{.}}}</span><br>{{/each}}
-    {{#each context.send_log.failed}}<span class="error">{{{.}}}</span><br>{{/each}}
+	{{#each context.send_log.sent}}<span class="error">{{{.}}}</span><br>{{/each}}
+	{{#each context.send_log.failed}}<span class="error">{{{.}}}</span><br>{{/each}}
 </div><br>
 {{/if}}
 <div id="preview_section" {{#unless context.preview_message}} style="display: none;"{{/unless}}>
@@ -28,24 +28,24 @@
 <form action="{{scripturl}}?action=pm;sa=send2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);">
 		<div class="roundframe noup">
 			<br class="clear">
-            <div class="{{#if (eq context.error_type 'serious')}}errorbox{{else}}noticebox{{/if}}"{{#unless cntext.post_error.messages}} style="display: none"{{/unless}} id="errors">
-            	<dl>
-            		<dt>
-            			<strong id="error_serious">{{txt.error_while_submitting}}</strong>
-            		</dt>
-            		<dd class="error" id="error_list">
-            			{{#if context.post_error.messages}}{{implode context.post_error.messages '<br>'}}{{/if}}
-            		</dd>
-            	</dl>
-            </div>
-            {{#if modSettings.drafts_pm_enabled}}
-            <div id="draft_section" class="infobox"{{#unless context.draft_saved}} style="display: none;"{{/unless}}>
+			<div class="{{#if (eq context.error_type 'serious')}}errorbox{{else}}noticebox{{/if}}"{{#unless cntext.post_error.messages}} style="display: none"{{/unless}} id="errors">
+				<dl>
+					<dt>
+						<strong id="error_serious">{{txt.error_while_submitting}}</strong>
+					</dt>
+					<dd class="error" id="error_list">
+						{{#if context.post_error.messages}}{{implode context.post_error.messages '<br>'}}{{/if}}
+					</dd>
+				</dl>
+			</div>
+			{{#if modSettings.drafts_pm_enabled}}
+			<div id="draft_section" class="infobox"{{#unless context.draft_saved}} style="display: none;"{{/unless}}>
 				{{textTemplate txt.draft_pm_saved (concat scripturl '?action=pm;sa=showpmdrafts')}}
 				{{#if modSettings.drafts_keep_days}}<strong>{{textTemplate txt.draft_save_warning modSettings.drafts_keep_days}}</strong>{{/if}}
 			</div>
-            {{/if}}
-            <dl id="post_header">
-                <dt>
+			{{/if}}
+			<dl id="post_header">
+				<dt>
 					<span{{#if (or context.post_error.no_to context.post_error.bad_to)}} class="error"{{/if}} id="caption_to">{{txt.pm_to}}:</span>
 				</dt>
 				<dd id="pm_to" class="clear_right">
@@ -264,7 +264,7 @@
 					}{{#unless (eq @index (getNumItems context.recipients.bcc))}},{{/unless}}
 			{{/each}}
 			],
-		    sBccControlId: 'bcc_control',
+			sBccControlId: 'bcc_control',
 			sBccDivId: 'bcc_div',
 			sBccDivId2: 'bcc_div2',
 			sBccLinkId: 'bcc_link',

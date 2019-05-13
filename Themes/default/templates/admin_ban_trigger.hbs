@@ -37,6 +37,7 @@
 						<dd>
 							<input type="text" name="email" value="{{{context.ban_trigger.email.value}}}" size="44" onfocus="document.getElementById('email_check').checked = true;">
 						</dd>
+
 						<dt>
 							<input type="checkbox" name="ban_suggestions[]" id="user_check" value="user"{{#if context.ban_trigger.banneduser.selected}} checked{{/if}}>
 							<label for="user_check">{{{txt.ban_on_username}}}</label>:
@@ -46,8 +47,10 @@
 						</dd>
 					</dl>
 				</fieldset>
+
 				<input type="submit" name="{{#if context.ban_trigger.is_new}}add_new_trigger{{else}}edit_trigger{{/if}}" value="{{#if context.ban_trigger.is_new}}{{{txt.ban_add_trigger_submit}}}{{else}}{{{txt.ban_edit_trigger_submit}}}{{/if}}" class="button_submit">
 			</div>
+
 			<input type="hidden" name="bi" value="{{{context.ban_trigger.id}}}">
 			<input type="hidden" name="bg" value="{{{context.ban_trigger.group}}}">
 			{{session_form}}

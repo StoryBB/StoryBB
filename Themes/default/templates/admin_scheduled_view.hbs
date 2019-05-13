@@ -7,14 +7,14 @@
 						<strong id="error_serious">{{{txt.scheduled_tasks_were_run_errors}}}</strong>
 					</dt>
 					{{#each context.scheduled_errors}}
-						<dd class="error">
-							<strong>{{{title}}}</strong>
-							<ul>
-							{{#each errors}}
+					<dd class="error">
+						<strong>{{{title}}}</strong>
+						<ul>
+						{{#each errors}}
 							<li>{{{.}}}</li>
-							{{/each}}
-							</ul>
-						</dd>
+						{{/each}}
+						</ul>
+					</dd>
 					{{/each}}
 				</dl>
 			</div>

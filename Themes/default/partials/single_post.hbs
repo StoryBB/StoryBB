@@ -1,105 +1,105 @@
 <div class="{{css_class}}">
 	{{#if (not (eq id ../context.first_message))}}
-	    <a id="msg{{id}}"></a>{{#if first_new}}<a id="new"></a>{{/if}}
+		<a id="msg{{id}}"></a>{{#if first_new}}<a id="new"></a>{{/if}}
 	{{/if}}
-    <div class="post_wrapper">
-        <div class="poster">
-	        {{#if custom_fields.above_member}}
-	            <div class="custom_fields_above_member">
+	<div class="post_wrapper">
+		<div class="poster">
+			{{#if custom_fields.above_member}}
+				<div class="custom_fields_above_member">
 					<ul class="nolist">
 					{{#each custom_fields.above_member}}
-					    <li class="custom {{col_name}}">{{value}}</li>
+						<li class="custom {{col_name}}">{{value}}</li>
 					{{/each}}
 					</ul>
 				</div>
 			{{/if}}
 			<h4>
-			    {{#if (not member.is_guest)}}
-			        {{#if ../context.can_send_pm}}<a href="{{member.online.href}}" title="{{member.online.label}}">{{/if}}
-			        <span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{#if ../context.can_send_pm}}</a>{{/if}}
-			    {{/if}}
-			    {{{member.link}}}
+				{{#if (not member.is_guest)}}
+					{{#if ../context.can_send_pm}}<a href="{{member.online.href}}" title="{{member.online.label}}">{{/if}}
+					<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{#if ../context.can_send_pm}}</a>{{/if}}
+				{{/if}}
+				{{{member.link}}}
 			</h4>
 			<ul class="user_info">
-			    {{!-- avatar --}}
-			    {{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
-		        <li class="avatar">
+				{{!-- avatar --}}
+				{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
+				<li class="avatar">
 					<a href="{{member.href}}">{{{member.avatar.image}}}</a>
 				</li>
-			    {{/if}}
-			    {{#if custom_fields.below_avatar}}
-	            <div class="custom_fields_above_member">
+				{{/if}}
+				{{#if custom_fields.below_avatar}}
+				<div class="custom_fields_above_member">
 					<ul class="nolist">
 					{{#each custom_fields.below_avatar}}
-					    <li class="custom {{col_name}}">{{value}}</li>
+						<li class="custom {{col_name}}">{{value}}</li>
 					{{/each}}
 					</ul>
 				</div>
-	    		{{/if}}
-	    		{{#if (not member.is_guest)}}
-	    		<li class="icons">{{{member.group_icons}}}</li>
-	    		{{/if}}
-	    		{{#if member.group}}
-	    		<li class="membergroup">{{member.group}}</li>
-	    		{{/if}}
-	    		{{#if (not member.is_guest)}}
-	    		    {{#if (and member.post_group (or (not ../modSettings.hide_post_group) (not member.group)))}}
-	    		        <li class="postgroup">{{member.post_group}}</li>
-	    		    {{/if}}
-	    		    {{#if (not ../context.disabled_fields.posts)}}
-	    		        <li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>
-	    		    {{/if}}
-	    		    {{#if (and ../modSettings.show_blurb member.blurb)}}
-	    		        <li class="blurb">{{member.blurb}}</li>
-	    		    {{/if}}
-	    		    {{#if custom_fields.icons}}
-	    		        <li class="im_icons">
-	    					<ol>
-	    					{{#each custom_fields.icons}}
-	    					    <li class="custom {{col_name}}">{{{value}}}</li>
-	    					{{/each}}
-	    					</ol>
-	    				</li>
-	    		    {{/if}}
-	    		    {{#if member.show_profile_buttons}}
-	    		        <li class="profile">
+				{{/if}}
+				{{#if (not member.is_guest)}}
+				<li class="icons">{{{member.group_icons}}}</li>
+				{{/if}}
+				{{#if member.group}}
+				<li class="membergroup">{{member.group}}</li>
+				{{/if}}
+				{{#if (not member.is_guest)}}
+					{{#if (and member.post_group (or (not ../modSettings.hide_post_group) (not member.group)))}}
+						<li class="postgroup">{{member.post_group}}</li>
+					{{/if}}
+					{{#if (not ../context.disabled_fields.posts)}}
+						<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>
+					{{/if}}
+					{{#if (and ../modSettings.show_blurb member.blurb)}}
+						<li class="blurb">{{member.blurb}}</li>
+					{{/if}}
+					{{#if custom_fields.icons}}
+						<li class="im_icons">
+							<ol>
+							{{#each custom_fields.icons}}
+								<li class="custom {{col_name}}">{{{value}}}</li>
+							{{/each}}
+							</ol>
+						</li>
+					{{/if}}
+					{{#if member.show_profile_buttons}}
+						<li class="profile">
 							<ol class="profile_icons">
 							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-							    <li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener">
-							        <span class="generic_icons www centericon" title="{{member.website.title}}"></span>
-					            </a></li>
+								<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener">
+									<span class="generic_icons www centericon" title="{{member.website.title}}"></span>
+								</a></li>
 							{{/if}}
 							{{#if ../context.can_send_pm}}
-							    <li><a href="{{../scripturl}}?action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}">
-							        <span class="generic_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}"></span>
-							    </a></li>
+								<li><a href="{{../scripturl}}?action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}">
+									<span class="generic_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}"></span>
+								</a></li>
 							{{/if}}
 							{{#if (and member.show_email member.email)}}
-							    <li class="email"><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{../txt.email}}"></span></a></li>
+								<li class="email"><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{../txt.email}}"></span></a></li>
 							{{/if}}
-	    					</ol>
-	    				</li>
-	    		    {{/if}}
-	    		    {{#each custom_fields.standard}}
-	    				<li class="custom {{col_name}}">{{title}}:{{value}}</li>
-	    			{{/each}}
-	    		{{else}}
-	    		    {{#if (and member.email member.show_email)}}
-	    		       <li class="email"><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{../txt.email}}"></span></a></li>
-	    		    {{/if}}
-	    		{{/if}}
-	    		{{#if (and member.is_guest member.can_see_warning)}}
-	    			<li class="warning">{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
-	    				<span class="generic_icons warning_{{member.warning_status}}"></span> {{#if ../context.can_issue_warning}}</a>{{/if}}
-	    				<span class="warn_{{member.warning_status}}">{{get_text 'warn_' member.warning_status}}</span></li>';
-	    		{{/if}}
-	    		{{!--  Are there any custom fields to show at the bottom of the poster info? --}}
-	    		{{#each custom_fields.bottom_poster}}
+							</ol>
+						</li>
+					{{/if}}
+					{{#each custom_fields.standard}}
+						<li class="custom {{col_name}}">{{title}}:{{value}}</li>
+					{{/each}}
+				{{else}}
+					{{#if (and member.email member.show_email)}}
+					   <li class="email"><a href="mailto:{{member.email}}" rel="nofollow"><span class="generic_icons mail centericon" title="{{../txt.email}}"></span></a></li>
+					{{/if}}
+				{{/if}}
+				{{#if (and member.is_guest member.can_see_warning)}}
+					<li class="warning">{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
+						<span class="generic_icons warning_{{member.warning_status}}"></span> {{#if ../context.can_issue_warning}}</a>{{/if}}
+						<span class="warn_{{member.warning_status}}">{{get_text 'warn_' member.warning_status}}</span></li>';
+				{{/if}}
+				{{!--  Are there any custom fields to show at the bottom of the poster info? --}}
+				{{#each custom_fields.bottom_poster}}
 					<li class="custom {{col_name}}">{{title}}:{{value}}</li>
 				{{/each}}
-	    	</ul>
-    	</div>
-	    <div class="postarea">
+			</ul>
+		</div>
+		<div class="postarea">
 			<div class="keyinfo">
 				{{!-- Some people don't want subject ... The div is still required or quick edit breaks... --}}
 				<div id="subject_{{id}}" class="subject_title{{#unless ../modSettings.subject_toggle}} subject_hidden{{/unless}}">
@@ -164,7 +164,7 @@
 				{{/if}}
 			{{/unless}}
 			{{!-- aything below the attachments? --}}
-            {{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+			{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
 			<div class="under_message">
 			{{/if}}
 				{{#if ../context.can_report_moderator}}
@@ -172,12 +172,12 @@
 						<li class="report_link"><a href="{{../scripturl}}?action=reporttm;topic={{../context.current_topic}}.{{counter}};msg={{id}}">{{../txt.report_to_mod}}</a></li>
 					</ul>
 				{{/if}}
-	    		{{!-- Show the IP to this user for this post - because you can moderate? --}}
-	    		{{#if (and can_see_ip member.ip)}}
-		    		<ul class="floatright smalltext">
-		    		    <li class="poster_ip"><a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile;area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}{{/if}}">{{{../txt.ip}}}: {{member.ip}}</a></li>
-		    		</ul>
-	    		{{/if}}
+				{{!-- Show the IP to this user for this post - because you can moderate? --}}
+				{{#if (and can_see_ip member.ip)}}
+					<ul class="floatright smalltext">
+						<li class="poster_ip"><a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile;area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}{{/if}}">{{{../txt.ip}}}: {{member.ip}}</a></li>
+					</ul>
+				{{/if}}
 
 				{{#if ../modSettings.enable_likes}}
 					<ul class="floatleft">
@@ -253,7 +253,7 @@
 					{{/if}}
 				</ul>
 				{{/if}}
-            {{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+			{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
 			</div>
 			{{/if}}
 		</div>

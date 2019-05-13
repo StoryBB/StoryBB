@@ -76,28 +76,28 @@
 	</script>
 	<form class="flow_hidden" action="{{scripturl}}?action=pm;sa=pmactions;conversation;f={{context.folder}};start={{context.start}}{{#if (neq context.current_label_id -1)}};l={{context.current_label_id}}{{/if}}" method="post" accept-charset="UTF-8" name="pmFolder">
 
-	    {{>pm_subjects}}
-	    <div class="clear_right"><br></div>
+		{{>pm_subjects}}
+		<div class="clear_right"><br></div>
 
-	    <div class="pagesection">
-	        {{>button_strip button_strip=context.conversation_buttons direction='right'}}
-	    </div>
+		<div class="pagesection">
+			{{>button_strip button_strip=context.conversation_buttons direction='right'}}
+		</div>
 
-	    {{#if context.messages}}
+		{{#if context.messages}}
 
-	    <div class="cat_bar">
+		<div class="cat_bar">
 			<h3 class="catbg">
 				<span id="author">{{txt.author}}</span>
 				<span id="topic_title">{{txt.conversations}}</span>
 			</h3>
 		</div>
 
-	    <div class="pagesection">
-	    	{{>button_strip button_strip=context.conversation_buttons direction='right'}}
-	    </div>
+		<div class="pagesection">
+			{{>button_strip button_strip=context.conversation_buttons direction='right'}}
+		</div>
 
-	    {{#each context.messages}}
-	    <div class="windowbg">
+		{{#each context.messages}}
+		<div class="windowbg">
 			<div class="poster">
 				{{#if custom_fields.above_member}}
 				<div class="custom_fields_above_member">
@@ -253,14 +253,14 @@
 			<div class="moderatorbar">
 			</div>
 		</div>
-	    {{/each}}
+		{{/each}}
 
-    {{#if context.conversation_buttons}}
-    <div class="pagesection">
-    	{{>button_strip button_strip=context.conversation_buttons direction='right'}}
-    </div>
-    {{/if}}
-    <br>
-    {{/if}}
-    {{session_form}}
+	{{#if context.conversation_buttons}}
+	<div class="pagesection">
+		{{>button_strip button_strip=context.conversation_buttons direction='right'}}
+	</div>
+	{{/if}}
+	<br>
+	{{/if}}
+	{{session_form}}
 </form>

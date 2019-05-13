@@ -11,14 +11,14 @@
 	{{#if context.incorrect_password}}
 			<div class="error">{{txt.admin_incorrect_password}}</div>
 	{{/if}}
-            <strong>{{txt.password}}:</strong>
+			<strong>{{txt.password}}:</strong>
 			<input type="password" name="{{context.sessionCheckType}}_pass" size="24">
 			{{> helpicon help='securityDisable_why'}}
 			<br>
 			{{session_form}}
 			{{token_form 'admin-login'}}
 			<input type="submit" style="margin-top: 1em;" value="{{txt.login}}" class="button_submit">
-        	{{{context.post_data}}}
+			{{{context.post_data}}}
 		</div>
 	</div>
 	<input type="hidden" name="{{context.sessionCheckType}}_hash_pass" value="">

@@ -1,85 +1,85 @@
 {{#if (and settings.show_newsfader context.news_lines)}}
-    {{> newsfader}}
+	{{> newsfader}}
 {{/if}}
 <div id="boardindex_table" class="boardindex_table">
-    {{#each context.categories}}
-        {{#if (or this.boards this.is_collapsed)}}
-            {{! This category contains boards, or the category is collapsed, so we need to print it }}
-            <div class="main_container">
-                <div class="cat_bar{{#if is_collapsed}} collapsed{{/if}}" id="category_{{this.id}}">
-                    <h3 class="catbg">
-                        {{#if this.can_collapse}}
-                            <span id="category_{{this.id}}_upshrink" class="{{#if this.is_collapsed}}toggle_down{{else}}toggle_up{{/if}} floatright" data-collapsed="{{this.is_collapsed}}" title="{{#if this.is_collapsed}}{{../txt.hide_category}}{{else}}{{../txt.show_category}}{{/if}}" style="display:none"></span>
-                        {{/if}} {{! close this.can_collapse on line 8 }}
-                        {{{this.link}}}
-                    </h3>
-                    {{#if this.description}}<div class="desc">{{this.description}}</div>{{/if}}
-                </div>
-                <div id="category_{{this.id}}_boards" {{#if this.css_class}}{{{this.css_class}}}{{/if}}>
-                    {{!
-                        Each board in each category's boards has:
-            			new (is it new?), id, name, description, moderators (see below), link_moderators (just a list.),
-            			children (see below.), link_children (easier to use.), children_new (are they new?),
-            			topics (# of), posts (# of), link, href, and last_post. (see below.)
-            		}}
-                    {{#each this.boards}}
-                        <div id="board_{{this.id}}" class="up_contain {{#if this.css_class}}{{{this.css_class}}}{{/if}}">
-                            <div class="board_icon">
-                                <a href="{{#if (or this.is_redirect ../../context.user.is_guest)}}{{this.href}}{{else}}{{../../scripturl}}?action=unread;board={{this.id}}.0;children{{/if}}" class="board_{{this.board_class}}" {{#if this.board_tooltip}}title="{{this.board_tooltip}}"{{/if}}></a>
-                            </div>
-                            <div class="info">
-                                <a class="subject mobile_subject" href="{{this.href}}" id="b{{this.id}}">
-                                    {{this.name}}
-                                    <p class="board_description mobile_display">{{{this.description}}}</p>
-                                </a>
-                                {{! Does board have outstanding posts for approval? }}
-                                {{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
-                                    <a href="{{../../scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{session_url}}" title="{{textTemplate ../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a>
-                                {{/if}} {{! close if (and (or)) on line 32 }}
-                                <p class="board_description">{{{this.description}}}</p>
-                                
-                                {{! Show the "Moderators: ". Each has name, href, link, and id, but we're going to use link_moderators }}
-                                {{#if this.link_moderators}}
-                                    <p class="moderators">{{#if (eq (getNumItems this.link_moderators) 1)}}{{{../../txt.moderator}}}{{else}}{{../../txt.moderators}}{{/if}}: {{{join this.link_moderators ', '}}}</p>
-                                {{/if}} {{! close if board.link_moderators on line 38 }}
-                            {{! Show the Child Boards: ". (there's a link_children but board the new ones) }}
-                            {{#if this.children}}
-                                <div id="board_{{this.id}}_children" class="children{{#if settings.more_sub_row}}{{else}} more_sub_4p{{/if}}">
-                                    {{#each this.children}}
-                                        {{! Child board has one or more new posts, bold link for child board }}
-                                        <div {{#if this.new}}class="strong"{{/if}}>
-                                        {{#if (eq this.is_redirect '1')}}
-                                            <span class="more_sub_redirect"></span><a href="{{this.href}}" title="{{comma this.posts}} {{../../../txt.redirects}}{{#if this.short_description}} - {{this.short_description}}{{/if}}">{{this.name}}</a>
-                                        {{else}}
-                                            {{#if this.new}}<a href="{{../../../scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})"><span class="{{#if this.new}}more_sub_new{{else}}more_sun_no_new{{/if}}"></span></a>{{/if}}<a href="{{this.href}}" {{#if this.new}}class="board_new_posts"{{/if}} title="{{#if this.new}}{{../../../txt.new_posts}}{{else}}{{../../../txt.old_posts}}{{/if}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})">{{this.name}}</a>{{#if this.new}}<a href="{{../../../scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})"><span class="new_posts">{{../../../txt.new}}</span></a>{{/if}}
-                                        {{/if}} {{! close if this.is_redirect on line 61 }}
-                                        {{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
-                                            <span><a href="{{../../../scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{session_url}}" title="{{textTemplate ../../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a></span>
-                                        {{/if}} {{! close if (and (or)) on line 67 }}
-                                        </div>
-                                    {{/each}} {{! close each this.children on line 56 }}
-                                    </p>
-                                </div>
-                            {{/if}} {{! close if this.children on line 53 }}
-                            </div>
-                            {{! Show some basic information about the number of posts, etc. }}
-                            <div class="board_stats">
-                                <p>{{comma posts}} {{#if this.is_redirect}}{{../../txt.redirects}}{{else}}{{../../txt.posts}}<br> {{comma this.topics}} {{../../txt.board_topics}}{{/if}}</p>
-                            </div>
-                            <div class="lastpost {{#if this.last_post.id}}lpr_border{{else}}hidden{{/if}}">
-                                {{#if this.last_post.id}}
-                                    {{{this.last_post.member.avatar.image}}}
-                                {{/if}}
-                                {{#if this.last_post.id}}{{{this.last_post.last_post_message}}}{{/if}}
-                            </div>
-                        </div>
-                    {{/each}} {{! close each this.boards on line 21 }}
-                </div>
-            </div>
-        {{/if}}{{! close if (or (not this.boards) this.is_collapsed) on line 3 }}
-    {{/each}} {{! close each context.categories on line 2}}
+	{{#each context.categories}}
+		{{#if (or this.boards this.is_collapsed)}}
+			{{! This category contains boards, or the category is collapsed, so we need to print it }}
+			<div class="main_container">
+				<div class="cat_bar{{#if is_collapsed}} collapsed{{/if}}" id="category_{{this.id}}">
+					<h3 class="catbg">
+						{{#if this.can_collapse}}
+							<span id="category_{{this.id}}_upshrink" class="{{#if this.is_collapsed}}toggle_down{{else}}toggle_up{{/if}} floatright" data-collapsed="{{this.is_collapsed}}" title="{{#if this.is_collapsed}}{{../txt.hide_category}}{{else}}{{../txt.show_category}}{{/if}}" style="display:none"></span>
+						{{/if}} {{! close this.can_collapse on line 8 }}
+						{{{this.link}}}
+					</h3>
+					{{#if this.description}}<div class="desc">{{this.description}}</div>{{/if}}
+				</div>
+				<div id="category_{{this.id}}_boards" {{#if this.css_class}}{{{this.css_class}}}{{/if}}>
+					{{!
+						Each board in each category's boards has:
+						new (is it new?), id, name, description, moderators (see below), link_moderators (just a list.),
+						children (see below.), link_children (easier to use.), children_new (are they new?),
+						topics (# of), posts (# of), link, href, and last_post. (see below.)
+					}}
+					{{#each this.boards}}
+						<div id="board_{{this.id}}" class="up_contain {{#if this.css_class}}{{{this.css_class}}}{{/if}}">
+							<div class="board_icon">
+								<a href="{{#if (or this.is_redirect ../../context.user.is_guest)}}{{this.href}}{{else}}{{../../scripturl}}?action=unread;board={{this.id}}.0;children{{/if}}" class="board_{{this.board_class}}" {{#if this.board_tooltip}}title="{{this.board_tooltip}}"{{/if}}></a>
+							</div>
+							<div class="info">
+								<a class="subject mobile_subject" href="{{this.href}}" id="b{{this.id}}">
+									{{this.name}}
+									<p class="board_description mobile_display">{{{this.description}}}</p>
+								</a>
+								{{! Does board have outstanding posts for approval? }}
+								{{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
+									<a href="{{../../scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{session_url}}" title="{{textTemplate ../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a>
+								{{/if}} {{! close if (and (or)) on line 32 }}
+								<p class="board_description">{{{this.description}}}</p>
+								
+								{{! Show the "Moderators: ". Each has name, href, link, and id, but we're going to use link_moderators }}
+								{{#if this.link_moderators}}
+									<p class="moderators">{{#if (eq (getNumItems this.link_moderators) 1)}}{{{../../txt.moderator}}}{{else}}{{../../txt.moderators}}{{/if}}: {{{join this.link_moderators ', '}}}</p>
+								{{/if}} {{! close if board.link_moderators on line 38 }}
+							{{! Show the Child Boards: ". (there's a link_children but board the new ones) }}
+							{{#if this.children}}
+								<div id="board_{{this.id}}_children" class="children{{#if settings.more_sub_row}}{{else}} more_sub_4p{{/if}}">
+									{{#each this.children}}
+										{{! Child board has one or more new posts, bold link for child board }}
+										<div {{#if this.new}}class="strong"{{/if}}>
+										{{#if (eq this.is_redirect '1')}}
+											<span class="more_sub_redirect"></span><a href="{{this.href}}" title="{{comma this.posts}} {{../../../txt.redirects}}{{#if this.short_description}} - {{this.short_description}}{{/if}}">{{this.name}}</a>
+										{{else}}
+											{{#if this.new}}<a href="{{../../../scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})"><span class="{{#if this.new}}more_sub_new{{else}}more_sun_no_new{{/if}}"></span></a>{{/if}}<a href="{{this.href}}" {{#if this.new}}class="board_new_posts"{{/if}} title="{{#if this.new}}{{../../../txt.new_posts}}{{else}}{{../../../txt.old_posts}}{{/if}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})">{{this.name}}</a>{{#if this.new}}<a href="{{../../../scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})"><span class="new_posts">{{../../../txt.new}}</span></a>{{/if}}
+										{{/if}} {{! close if this.is_redirect on line 61 }}
+										{{#if (and this.can_approve_posts (or this.unapproved_posts this.unapproved_topics))}}
+											<span><a href="{{../../../scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{session_url}}" title="{{textTemplate ../../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a></span>
+										{{/if}} {{! close if (and (or)) on line 67 }}
+										</div>
+									{{/each}} {{! close each this.children on line 56 }}
+									</p>
+								</div>
+							{{/if}} {{! close if this.children on line 53 }}
+							</div>
+							{{! Show some basic information about the number of posts, etc. }}
+							<div class="board_stats">
+								<p>{{comma posts}} {{#if this.is_redirect}}{{../../txt.redirects}}{{else}}{{../../txt.posts}}<br> {{comma this.topics}} {{../../txt.board_topics}}{{/if}}</p>
+							</div>
+							<div class="lastpost {{#if this.last_post.id}}lpr_border{{else}}hidden{{/if}}">
+								{{#if this.last_post.id}}
+									{{{this.last_post.member.avatar.image}}}
+								{{/if}}
+								{{#if this.last_post.id}}{{{this.last_post.last_post_message}}}{{/if}}
+							</div>
+						</div>
+					{{/each}} {{! close each this.boards on line 21 }}
+				</div>
+			</div>
+		{{/if}}{{! close if (or (not this.boards) this.is_collapsed) on line 3 }}
+	{{/each}} {{! close each context.categories on line 2}}
 </div>
 {{#if context.user.is_logged}}
-    {{#if context.categories}}<div class="mark_read">{{>button_strip button_strip=context.mark_read_button txt=txt direction="right"}}</div>{{/if}}
+	{{#if context.categories}}<div class="mark_read">{{>button_strip button_strip=context.mark_read_button txt=txt direction="right"}}</div>{{/if}}
 {{/if}}
 {{>board_info_center}}

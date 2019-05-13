@@ -6,12 +6,24 @@
 			<div class="windowbg2">
 				<ul class="sortable">
 					{{#each context.groups.accounts}}
-						<li class="character_group">
-							<div class="group_name">{{#if online_color}}<span style="color:{{online_color}}">{{{group_name}}}</span>{{else}}{{{group_name}}}{{/if}}</div>
-							<div class="group_icons">{{#if parsed_icons}}{{{parsed_icons}}}{{else}}{{{../txt.no_badge}}}{{/if}}</div>
-							<img src="{{../settings.default_images_url}}/toggle.png" class="handle">
-							<input type="hidden" name="group[{{id_group}}]" value="{{id_group}}">
-						</li>
+					<li class="character_group">
+						<div class="group_name">
+							{{#if online_color}}
+							<span style="color:{{online_color}}">{{{group_name}}}</span>
+							{{else}}
+							{{{group_name}}}
+							{{/if}}
+						</div>
+						<div class="group_icons">
+							{{#if parsed_icons}}
+							{{{parsed_icons}}}
+							{{else}}
+							{{{../txt.no_badge}}}
+							{{/if}}
+						</div>
+						<img src="{{../settings.default_images_url}}/toggle.png" class="handle">
+						<input type="hidden" name="group[{{id_group}}]" value="{{id_group}}">
+					</li>
 					{{/each}}
 				</ul>
 			</div>
@@ -22,12 +34,24 @@
 			<div class="windowbg2">
 				<ul class="sortable">
 					{{#each context.groups.characters}}
-						<li class="character_group">
-							<div class="group_name">{{#if online_color}}<span style="color:{{online_color}}">{{{group_name}}}</span>{{else}}{{{group_name}}}{{/if}}</div>
-							<div class="group_icons">{{#if parsed_icons}}{{{parsed_icons}}}{{else}}{{{../txt.no_badge}}}{{/if}}</div>
-							<img src="{{../settings.default_images_url}}/toggle.png" class="handle">
-							<input type="hidden" name="group[{{id_group}}]" value="{{id_group}}">
-						</li>
+					<li class="character_group">
+						<div class="group_name">
+							{{#if online_color}}
+							<span style="color:{{online_color}}">{{{group_name}}}</span>
+							{{else}}
+							{{{group_name}}}
+							{{/if}}
+						</div>
+						<div class="group_icons">
+							{{#if parsed_icons}}
+							{{{parsed_icons}}}
+							{{else}}
+							{{{../txt.no_badge}}}
+							{{/if}}
+						</div>
+						<img src="{{../settings.default_images_url}}/toggle.png" class="handle">
+						<input type="hidden" name="group[{{id_group}}]" value="{{id_group}}">
+					</li>
 					{{/each}}
 				</ul>
 			</div>

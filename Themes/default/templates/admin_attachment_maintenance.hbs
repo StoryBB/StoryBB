@@ -7,20 +7,28 @@
 			<dl class="settings">
 				<dt><strong>{{{txt.attachment_total}}}:</strong></dt>
 				<dd>{{{context.num_attachments}}}</dd>
+
 				<dt><strong>{{{txt.attachment_total_exports}}}</strong></dt>
 				<dd>{{{context.num_exports}}}</dd>
+
 				<dt><strong>{{{txt.attachment_manager_total_avatars}}}:</strong></dt>
 				<dd>{{{context.num_avatars}}}</dd>
+
 				<dt><strong>{{{txt.attachmentdir_size}}}:</strong></dt>
 				<dd>{{{context.attachment_total_size}}} {{{txt.kilobyte}}}</dd>
+
 				<dt><strong>{{{txt.attach_current_dir}}}:</strong></dt>
 				<dd>{{{lookup modSettings.attachmentUploadDir modSettings.currentAttachmentUploadDir}}}</dd>
+
 				<dt><strong>{{{txt.attachmentdir_size_current}}}:</strong></dt>
 				<dd>{{{context.attachment_current_size}}} {{{txt.kilobyte}}}</dd>
+
 				<dt><strong>{{{txt.attachment_space}}}:</strong></dt>
 				<dd>{{#if context.attachment_space}}{{{context.attachment_space}}} {{{txt.kilobyte}}}{{else}}{{{txt.attachmentdir_size_not_set}}}{{/if}}</dd>
+
 				<dt><strong>{{{txt.attachmentdir_files_current}}}:</strong></dt>
 				<dd>{{{context.attachment_current_files}}}</dd>
+
 				<dt><strong>{{{txt.attachment_files}}}:</strong></dt>
 				<dd>{{#if context.attachment_files}}{{{context.attachment_files}}}{{else}}{{{txt.attachmentdir_files_not_set}}}{{/if}}</dd>
 			</dl>
@@ -43,8 +51,10 @@
 				<dl class="settings">
 					<dt>{{{txt.attachment_remove_old}}}</dt>
 					<dd><input type="number" name="age" value="25" size="4"> {{{txt.days_word}}}</dd>
+
 					<dt>{{{txt.attachment_pruning_message}}}</dt>
 					<dd><input type="text" name="notice" value="{{{txt.attachment_delete_admin}}}" size="40"></dd>
+
 					<input type="submit" name="remove" value="{{{txt.remove}}}" class="button_submit">
 					<input type="hidden" name="type" value="attachments">
 					{{session_form}}
@@ -55,8 +65,10 @@
 				<dl class="settings">
 					<dt>{{{txt.attachment_remove_size}}}</dt>
 					<dd><input type="number" name="size" id="size" value="100" size="4"> {{{txt.kilobyte}}}</dd>
+
 					<dt>{{{txt.attachment_pruning_message}}}</dt>
 					<dd><input type="text" name="notice" value="{{{txt.attachment_delete_admin}}}" size="40"></dd>
+
 					<input type="submit" name="remove" value="{{{txt.remove}}}" class="button_submit">
 					<input type="hidden" name="type" value="attachments">
 					{{session_form}}
@@ -67,6 +79,7 @@
 				<dl class="settings">
 					<dt>{{{txt.attachment_manager_avatars_older}}}</dt>
 					<dd><input type="number" name="age" value="45" size="4"> {{{txt.days_word}}}</dd>
+
 					<input type="submit" name="remove" value="{{{txt.remove}}}" class="button_submit">
 					<input type="hidden" name="type" value="avatars">
 					{{session_form}}
@@ -97,6 +110,7 @@
 						{{/each}}
 					</select>
 				</dd>
+
 				<dt>{{{txt.attachment_transfer_auto}}}</dt>
 				<dd>
 					<select name="auto">
@@ -112,6 +126,7 @@
 						{{/if}}
 					</select>
 				</dd>
+				
 				<dt>{{{txt.attachment_transfer_to}}}</dt>
 				<dd>
 					<select name="to">

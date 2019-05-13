@@ -33,8 +33,8 @@
 								<input type="hidden" name="last_msg" value="{{context.topic_last_message}}">
 								{{session_form}}
 								<input type="hidden" name="seqnum" value="{{context.form_sequence_number}}">
-		                        {{#if context.user.is_guest}}
-		                        <dl id="post_header">
+								{{#if context.user.is_guest}}
+								<dl id="post_header">
 									<dt>
 										{{txt.name}}:
 									</dt>
@@ -68,14 +68,14 @@
 								</script>
 								{{#if context.require_verification}}
 								<div class="post_verification">
-		        					<strong>{{txt.verification}}:</strong>
-		        					{{{captcha context.visual_verification_id}}}
-		        				</div>
+									<strong>{{txt.verification}}:</strong>
+									{{{captcha context.visual_verification_id}}}
+								</div>
 								{{/if}}
-		    				<br class="clear_right">
+							<br class="clear_right">
 							<span id="post_confirm_buttons">
-							    {{{richtextbuttons context.post_box_name}}}
-						    </span>
+								{{{richtextbuttons context.post_box_name}}}
+							</span>
 						</div>
 					</form>
 				</div>

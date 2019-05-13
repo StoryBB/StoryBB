@@ -4,7 +4,7 @@
 </div>
 {{/if}}
 <div id="admincenter">
-    <div class="cat_bar">
+	<div class="cat_bar">
 			<h3 class="catbg">{{txt.themeadmin_list_heading}}</h3>
 		</div>
 		<div class="information">
@@ -21,23 +21,30 @@
 					<span class="floatleft">
 						{{#if (or enable (eq_coerce id 1))}}<a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=list">{{name}}</a>{{else}}{{name}}{{/if}}{{#if version}}<em>{{version}}</em>{{/if}}
 					</span>
-					{{#if (neq id 1)}}<span class="floatright">
-					    <a href="{{../scripturl}}?action=admin;area=theme;sa=enable;th={{id}};{{session_url}};{{token_url 'admin-tre'}}{{#if enable}};disabled{{/if}}" data-confirm="{{#if enable}}{{../txt.theme_enable_confirm}}{{else}}{{../txt.theme_disable_confirm}}{{/if}}" class="you_sure">
-					        <span class="generic_icons {{#if enable}}disable{{else}}enable{{/if}}" title="{{#if enable}}{{../txt.theme_disable}}{{else}}{{../txt.theme_enable}}{{/if}}"></span></a>
-                        <a href="{{../scripturl}}?action=admin;area=theme;sa=remove;th={{id}};{{session_url}};{{token_url 'admin-tr'}}{{#if enable}};disabled{{/if}}" data-confirm="{{../txt.theme_remove_confirm}}" class="you_sure">
-					        <span class="generic_icons delete" title="{{../txt.theme_remove}}"></span></a>
-			        </span>{{/if}}
+					{{#if (neq id 1)}}
+					<span class="floatright">
+						<a href="{{../scripturl}}?action=admin;area=theme;sa=enable;th={{id}};{{session_url}};{{token_url 'admin-tre'}}{{#if enable}};disabled{{/if}}" data-confirm="{{#if enable}}{{../txt.theme_enable_confirm}}{{else}}{{../txt.theme_disable_confirm}}{{/if}}" class="you_sure">
+							<span class="generic_icons {{#if enable}}disable{{else}}enable{{/if}}" title="{{#if enable}}{{../txt.theme_disable}}{{else}}{{../txt.theme_enable}}{{/if}}"></span>
+						</a>
+						<a href="{{../scripturl}}?action=admin;area=theme;sa=remove;th={{id}};{{session_url}};{{token_url 'admin-tr'}}{{#if enable}};disabled{{/if}}" data-confirm="{{../txt.theme_remove_confirm}}" class="you_sure">
+							<span class="generic_icons delete" title="{{../txt.theme_remove}}"></span>
+						</a>
+					</span>
+					{{/if}}
 				</h3>
 				</div>
-			    <div class="windowbg2 noup">
+				<div class="windowbg2 noup">
 				<dl class="settings themes_list">
 					<dt>{{../txt.themeadmin_list_theme_dir}}:</dt>
 					<dd{{#unless valid_path}} class="error"{{/unless}}>{{theme_dir}}{{#unless valid_path}} {{../txt.themeadmin_list_invalid}}{{/unless}}</dd>
+
 					<dt>{{../txt.themeadmin_list_theme_url}}:</dt>
 					<dd>{{theme_url}}</dd>
+
 					<dt>{{../txt.themeadmin_list_images_url}}:</dt>
 					<dd>{{images_url}}</dd>
 					{{#if (or enable (eq_coerce id 1))}}
+
 					<dt><a href="{{../scripturl}}?action=admin;area=theme;th={{id}};{{session_url}};sa=list" class="button_submit floatleft">{{{../txt.settings}}}</a></dt>
 					{{/if}}
 				</dl>

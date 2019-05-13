@@ -6,9 +6,9 @@
 				</div>
 				<div id="register_screen" class="windowbg2 noup">
 
-            	{{#if context.registration_done}}
-            	<div class="infobox">{{{context.registration_done}}}</div>
-            	{{/if}}
+				{{#if context.registration_done}}
+				<div class="infobox">{{{context.registration_done}}}</div>
+				{{/if}}
 					<dl class="register_form" id="admin_register_form">
 						<dt>
 							<strong><label for="user_input">{{txt.admin_register_username}}:</label></strong>
@@ -41,22 +41,22 @@
 							<select name="group" id="group_select">
 
 		{{#each context.member_groups}}
-            					<option value="{{@key}}">{{.}}</option>
-        {{/each}}
+								<option value="{{@key}}">{{.}}</option>
+		{{/each}}
 							</select>
 						</dd>
 	{{/if}}
 
 	{{#if context.custom_fields_required}}
-	    {{#each context.custom_fields}}
+		{{#each context.custom_fields}}
 			{{if (gt show_reg 1)}}
 						<dt>
 							<strong{{#if is_error}}class="red"{{/if}}>{{name}}:</strong>
 							<span class="smalltext">{{desc}}</span>
 						</dt>
 						<dd>{{{field.input_html}}}</dd>
-        {{/each}}
-    {{/if}}
+		{{/each}}
+	{{/if}}
 						<dt>
 							<strong><label for="emailPassword_check">{{txt.admin_register_email_detail}}:</label></strong>
 							<span class="smalltext">{{txt.admin_register_email_detail_desc}}</span>

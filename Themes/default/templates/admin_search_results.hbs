@@ -16,12 +16,12 @@
 			{{#if context.search_results}}
 				<ol class="search_results">
 					{{#each context.search_results}}
-						<li>
-							<a href="{{{url}}}"><strong>{{{name}}}</strong></a> [{{{type_string}}}]
-							{{#if help}}
-								<p class="double_height">{{{help}}}</p>
-							{{/if}}
-						</li>
+					<li>
+						<a href="{{{url}}}"><strong>{{{name}}}</strong></a> [{{{type_string}}}]
+						{{#if help}}
+						<p class="double_height">{{{help}}}</p>
+						{{/if}}
+					</li>
 					{{/each}}
 				</ol>
 			{{else}}

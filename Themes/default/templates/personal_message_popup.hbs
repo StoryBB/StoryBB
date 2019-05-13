@@ -10,9 +10,9 @@
 			</div>
 		</div>
 		<div class="pm_unread">
-		    {{#unless context.unread_pms}}<div class="no_unread">{{{txt.pm_no_unread}}}</div>{{/unless}}
-		    {{#each context.unread_pms}}
-		    <div class="unread">
+			{{#unless context.unread_pms}}<div class="no_unread">{{{txt.pm_no_unread}}}</div>{{/unless}}
+			{{#each context.unread_pms}}
+			<div class="unread">
 				{{#if member}}{{{member.avatar.image}}}{{/if}}
 				<div class="details">
 					<div class="subject">{{{pm_link}}}</div>

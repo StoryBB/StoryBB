@@ -12,14 +12,14 @@
 					{{txt.pm_rule_title}}
 				</th>
 				<th class="centertext table_icon">
-				    {{#if context.rules}}
-				    <input type="checkbox" onclick="invertAll(this, this.form);">
-				    {{/if}}
+					{{#if context.rules}}
+					<input type="checkbox" onclick="invertAll(this, this.form);">
+					{{/if}}
 				</th>
 			</tr>
 		</thead>
 		<tbody>
-		    {{#unless context.rules}}<tr class="windowbg">
+			{{#unless context.rules}}<tr class="windowbg">
 				<td colspan="2">
 					{{txt.pm_rules_none}}
 				</td>

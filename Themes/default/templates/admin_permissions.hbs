@@ -100,14 +100,14 @@
 											{{#each columns}}
 												{{#each .}}{{! permissionGroup }}
 													{{#unless hidden}}
-														<option value="" disabled>[{{{name}}}]</option>';
+									<option value="" disabled>[{{{name}}}]</option>
 														{{#each permissions}}
 															{{#unless hidden}}
 																{{#if has_own_any}}
-																	<option value="{{../../../id}}/{{own.id}}">&nbsp;&nbsp;&nbsp;{{{name}}} ({{{own.name}}})</option>
-																	<option value="{{../../../id}}/{{any.id}}">&nbsp;&nbsp;&nbsp;{{{name}}} ({{{any.name}}})</option>
+									<option value="{{../../../id}}/{{own.id}}">&nbsp;{{{name}}} ({{{own.name}}})</option>
+									<option value="{{../../../id}}/{{any.id}}">&nbsp;{{{name}}} ({{{any.name}}})</option>
 																{{else}}
-																	<option value="{{../../../id}}/{{id}}">&nbsp;&nbsp;&nbsp;{{{name}}}</option>
+									<option value="{{../../../id}}/{{id}}">&nbsp;{{{name}}}</option>
 																{{/if}}
 															{{/unless}}
 														{{/each}}

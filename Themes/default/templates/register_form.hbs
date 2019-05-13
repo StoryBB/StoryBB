@@ -16,9 +16,9 @@
 		<div class="errorbox">
 			<span>{{txt.registration_errors_occurred}}</span>
 			<ul>
-			    {{#each context.registration_errors}}
-			    <li>{{.}}</li>
-			    {{/each}}
+				{{#each context.registration_errors}}
+				<li>{{.}}</li>
+				{{/each}}
 			</ul>
 		</div>
 		{{/if}}
@@ -174,14 +174,14 @@
 					</dd>
 				{{/if}}
 			{{/each}}
-		    {{#each context.custom_fields}}
-                <dt>
+			{{#each context.custom_fields}}
+				<dt>
 					<strong{{#if is_error}} class="red"{{/if}}>{{name}}</strong>
 					<span class="smalltext">{{desc}}</span>
 				</dt>
 				<dd>{{{input_html}}}</dd>
-		    {{/each}}
-		    {{#if (or context.profile_fields context.custom_fields)}}
+			{{/each}}
+			{{#if (or context.profile_fields context.custom_fields)}}
 					</dl>
 				</fieldset>
 			</div>

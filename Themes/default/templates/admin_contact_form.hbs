@@ -6,27 +6,32 @@
 					<dt>{{{txt.contact_form_sender}}}:</dt>
 					<dd>
 						{{#if context.contact.id_member}}
-							<a href="{{scripturl}}?action=profile;u={{context.contact.id_member}}">{{{context.contact.member_name}}}</a>
+						<a href="{{scripturl}}?action=profile;u={{context.contact.id_member}}">{{{context.contact.member_name}}}</a>
 						{{else}}
-							{{{context.contact.member_name}}}
+						{{{context.contact.member_name}}}
 						{{/if}}
 					</dd>
+
 					<dt>{{{txt.contact_form_email}}}:</dt>
 					<dd>
 						{{{context.contact.member_email}}}
 					</dd>
+
 					<dt>{{{txt.subject}}}:</dt>
 					<dd>{{{context.contact.subject}}}</dd>
+
 					<dt>{{{txt.message}}}:</dt>
 					<dd>{{{context.contact.message}}}</dd>
+
 					<dt>{{{txt.contact_form_sent_on}}}:</dt>
 					<dd>{{{context.contact.time_received_timeformat}}}</dd>
+
 					<dt>{{{txt.contact_form_status}}}:</dt>
 					<dd>
 						{{#if (eq context.contact.status '0')}}
-							<strong>{{{txt.contact_form_status_unanswered}}}</strong>
+						<strong>{{{txt.contact_form_status_unanswered}}}</strong>
 						{{else}}
-							{{{txt.contact_form_status_answered}}}
+						{{{txt.contact_form_status_answered}}}
 						{{/if}}
 					</dd>
 				</dl>
@@ -41,7 +46,10 @@
 						<dd>
 							<textarea name="reply"></textarea>
 						</dd>
-						<dt>&nbsp;</dt><dd></dd>
+
+						<dt>&nbsp;</dt>
+						<dd></dd>
+
 						<dt></dt>
 						<dd>
 							<input type="submit" name="save" value="{{{txt.send_message}}}" class="button_submit">

@@ -6,18 +6,18 @@
 		</div>
 		{{#if (and context.personal_messages (not context.search_params.show_complete))}}
 		<table class="table_grid">
-    	<thead>
-    		<tr class="title_bar">
-    			<th class="lefttext quarter_table">{{txt.date}}</th>
-    			<th class="lefttext half_table">{{txt.subject}}</th>
-    			<th class="lefttext quarter_table">{{txt.from}}</th>
-    		</tr>
-    	</thead>
-    	<tbody>
-	    {{/if}}
-	    {{#each context.personal_messages}}
-	    {{#if ../context.search_params.show_complete}}
-	    <div class="cat_bar">
+		<thead>
+			<tr class="title_bar">
+				<th class="lefttext quarter_table">{{txt.date}}</th>
+				<th class="lefttext half_table">{{txt.subject}}</th>
+				<th class="lefttext quarter_table">{{txt.from}}</th>
+			</tr>
+		</thead>
+		<tbody>
+		{{/if}}
+		{{#each context.personal_messages}}
+		{{#if ../context.search_params.show_complete}}
+		<div class="cat_bar">
 				<h3 class="catbg">
 					<span class="floatright">{{../txt.search_on}}: {{{time}}}</span>
 					<span class="floatleft">{{counter}}&nbsp;&nbsp;<a href="{{href}}">{{subject}}</a></span>
@@ -32,7 +32,7 @@
 					{{implode recipients.to}}
 				{{else}}
 				{{#if (eq ../context.folder 'sent')}}({{../txt.pm_undisclosed_recipients}}){{/if}}
-                {{/if}}
+				{{/if}}
 				</h3>
 			</div>
 			<div class="windowbg">
@@ -43,16 +43,16 @@
 					{{!--You can only reply if they are not a guest...--}}
 					{{#unless member.is_guest}}
 							<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u={{#unless (eq ../context.folder 'sent')}}{{member.id}}{{/unless}}">
-							    {{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
+								{{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
 							</a>{{{../context.menu_separator}}}
 							<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}">
-							    {{{create_button 'im_reply.png' 'reply' 'reply' 'class="centericon"'}}}
+								{{{create_button 'im_reply.png' 'reply' 'reply' 'class="centericon"'}}}
 							</a>{{{../context.menu_separator}}}
 					{{/unless}}
 					{{!-- This is for "forwarding" - even if the member is gone.--}}
 					{{else}}
-					    <a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u={{#unless (eq ../context.folder 'sent')}}{{member.id}}{{/unless}}">
-							    {{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
+						<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u={{#unless (eq ../context.folder 'sent')}}{{member.id}}{{/unless}}">
+								{{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
 							</a>{{{../context.menu_separator}}}
 					{{/if}}
 				</p>
@@ -65,9 +65,9 @@
 				<td>{{{member.link}}}</td>
 			</tr>
 			{{/if}}
-	    {{/each}}
-	    {{#if (and context.personal_messages (not context.search_params.show_complete))}}
-	    </tbody>
+		{{/each}}
+		{{#if (and context.personal_messages (not context.search_params.show_complete))}}
+		</tbody>
 	</table>
 	{{/if}}
 	{{#unless context.personal_messages}}
