@@ -65,17 +65,13 @@
 						<li class="profile">
 							<ol class="profile_icons">
 							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-								<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener">
-									<span class="main_icons www centericon" title="{{member.website.title}}"></span>
-								</a></li>
+								<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener" class="main_icons www centericon"></a></li>
 							{{/if}}
 							{{#if ../context.can_send_pm}}
-								<li><a href="{{../scripturl}}?action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}">
-									<span class="main_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}"></span>
-								</a></li>
+								<li><a href="{{../scripturl}}?action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}" class="main_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon"></a></li>
 							{{/if}}
 							{{#if (and member.show_email member.email)}}
-								<li class="email"><a href="mailto:{{member.email}}" rel="nofollow"><span class="main_icons mail centericon" title="{{../txt.email}}"></span></a></li>
+								<li class="email"><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{../txt.email}}"></a></li>
 							{{/if}}
 							</ol>
 						</li>
@@ -85,7 +81,7 @@
 					{{/each}}
 				{{else}}
 					{{#if (and member.email member.show_email)}}
-					   <li class="email"><a href="mailto:{{member.email}}" rel="nofollow"><span class="main_icons mail centericon" title="{{../txt.email}}"></span></a></li>
+					   <li class="email"><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{../txt.email}}"></a></li>
 					{{/if}}
 				{{/if}}
 				{{#if (and member.is_guest member.can_see_warning)}}
@@ -193,8 +189,8 @@
 				{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
 				<ul class="quickbuttons">
 					{{#if ../context.can_quote}}
-						<li><a href="{{../scripturl}}?action=post;quote={{id}};topic={{../context.current_topic}}.{{../context.start}};last_msg={{../context.topic_last_message}}" onclick="return oQuickReply.quote({{id}});"><span class="main_icons quote"></span>{{../txt.quote_action}}</a></li>
-						<li style="display:none;" id="quoteSelected_{{id}}"><a href="javascript:void(0)"><span class="main_icons quote_selected"></span>{{../txt.quote_selected_action}}</a></li>
+						<li><a href="{{../scripturl}}?action=post;quote={{id}};topic={{../context.current_topic}}.{{../context.start}};last_msg={{../context.topic_last_message}}" onclick="return oQuickReply.quote({{id}});" class="main_icons quote">{{../txt.quote_action}}</a></li>
+						<li style="display:none;" id="quoteSelected_{{id}}"><a href="javascript:void(0)" class="main_icons quote_selected">{{../txt.quote_selected_action}}</a></li>
 					{{/if}}
 					{{#if can_modify}}
 						<li class="quick_edit"><a title="{{../txt.modify_msg}}" class="modifybutton" id="modify_button_{{id}}" onclick="oQuickModify.modifyMsg('{{id}}', '{{#if ../modSettings.toggle_subject}}true{{else}}false{{/if}}')"><span class="main_icons quick_edit_button"></span>{{../txt.quick_edit}}</a></li>
@@ -203,7 +199,7 @@
 						<li class="post_options">{{../txt.post_options}}
 							<ul>
 								{{#if can_modify}}
-									<li><a href="{{../scripturl}}?action=post;msg={{id}};topic={{../context.current_topic}}.{{../context.start}}"><span class="main_icons modify_button"></span>{{../txt.modify}}</a></li>
+									<li><a href="{{../scripturl}}?action=post;msg={{id}};topic={{../context.current_topic}}.{{../context.start}}" class="main_icons modify_button">{{../txt.modify}}</a></li>
 								{{/if}}
 								{{#if (eq ../context.topic_first_message id)}}
 									{{#if ../context.can_delete}}
@@ -216,8 +212,8 @@
 								{{/if}}
 								{{#if can_switch_char}}
 								<li>
-									<a href="#" onclick="return false">
-										<span class="main_icons people"></span> {{../txt.switch_to_char_menu}}
+									<a href="#" onclick="return false" class="main_icons people">
+										{{../txt.switch_to_char_menu}}
 									</a>
 									<ul>
 										{{#each possible_characters}}
@@ -229,7 +225,7 @@
 								</li>
 								{{/if}}
 								{{#if (and ../context.can_split ../context.real_num_replies)}}
-								<li><a href="{{../scripturl}}?action=splittopics;topic={{../context.current_topic}}.0;at={{id}}"><span class="main_icons split_button"></span>{{../txt.split}}</a></li>
+								<li><a href="{{../scripturl}}?action=splittopics;topic={{../context.current_topic}}.0;at={{id}}" class="main_icons split_button">{{../txt.split}}</a></li>
 								{{/if}}
 							</ul>
 
@@ -237,16 +233,16 @@
 					{{/if}}
 
 					{{#unless (or (not ../context.can_issue_warning) is_message_author member.is_guest)}}
-						<li><a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}};msg={{id}}"><span class="main_icons warn_button"></span>{{../txt.issue_warning}}</a></li>
+						<li><a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}};msg={{id}}" class="main_icons warn_button">{{../txt.issue_warning}}</a></li>
 					{{/unless}}
 					{{#if ../context.can_restore_msg}}
-						<li><a href="{{../scripturl}}?action=restoretopic;msgs={{id}};{{session_url}}"><span class="main_icons restore_button"></span>{{../txt.restore_message}}</a></li>
+						<li><a href="{{../scripturl}}?action=restoretopic;msgs={{id}};{{session_url}}" class="main_icons restore_button">{{../txt.restore_message}}</a></li>
 					{{/if}}
 					{{#if can_approve}}
-						<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}"><span class="main_icons approve_button"></span>{{../txt.approve}}</a></li>
+						<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" class="main_icons approve_button">{{../txt.approve}}</a></li>
 					{{/if}}
 					{{#if can_unapprove}}
-						<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}"><span class="main_icons unapprove_button"></span>{{../txt.unapprove}}</a></li>
+						<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" class="main_icons unapprove_button">{{../txt.unapprove}}</a></li>
 					{{/if}}
 					{{#if can_remove}}
 						<li style="display: none;" id="in_topic_mod_check_{{id}}"></li>

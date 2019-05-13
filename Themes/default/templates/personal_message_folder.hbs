@@ -146,10 +146,10 @@
 					<li class="profile">
 						<ol class="profile_icons">
 							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-									<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener"><span class="main_icons www centericon" title="{{member.website.title}}"></span></a></li>
+									<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener" class="main_icons www centericon"></a></li>
 							{{/if}}
 							{{#if member.show_email}}
-								<li><a href="mailto:{{member.email}}" rel="nofollow"><span class="main_icons mail centericon" title="{{txt.email}}"></span></a></li>
+								<li><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{txt.email}}"></a></li>
 							{{/if}}
 							{{#if ../context.can_send_pm}}
 								<li><a href="{{../scripturl}}action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}">
@@ -215,12 +215,12 @@
 							{{#if ../context.can_send_pm}}
 								{{#unless member.is_guest}}
 									{{#if (gt number_recipients 1)}}
-										<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u=all"><span class="main_icons reply_all_button"></span>{{../txt.reply_to_all}}</a></li>
+										<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u=all" class="main_icons reply_all_button">{{../txt.reply_to_all}}</a></li>
 									{{/if}}
-									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}"><span class="main_icons reply_button"></span>{{../txt.reply}}</a></li>
-									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote{{#unless (eq ../context.folder 'sent')}};u={{member.id}}{{/unless}}"><span class="main_icons quote"></span>{{../txt.quote_action}}</a></li>
+									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}" class="main_icons reply_button">{{../txt.reply}}</a></li>
+									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote{{#unless (eq ../context.folder 'sent')}};u={{member.id}}{{/unless}}" class="main_icons quote">{{../txt.quote_action}}</a></li>
 								{{else}}
-								<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote"><span class="main_icons quote"></span>{{../txt.reply_quote}}</a></li>
+								<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote" class="main_icons quote">{{../txt.reply_quote}}</a></li>
 								{{/unless}}
 								<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{session_url}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.delete}}</a></li>
 							{{/if}}

@@ -34,9 +34,7 @@
 
 					{{#if move_link}}
 					<li>
-						<a href="{{move_link.href}}" title="{{{move_link.label}}}">
-							<span class="main_icons select_above"></span>
-						</a>
+						<a href="{{move_link.href}}" title="{{{move_link.label}}}" class="main_icons select_above"></a>
 					</li>
 					{{/if}}
 
@@ -66,7 +64,7 @@
 						{{#if move_links}}
 					<li class="windowbg" style="padding-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{add 5 (mul 30 move_links.0.child_level)}}px;">
 							{{#each move_links}}
-						<a href="{{href}}" class="move_links" title="{{{label}}}"><span class="main_icons select_{{class}}" title="{{{label}}}"></span></a>
+						<a href="{{href}}" class="move_links main_icons select_{{class}}" title="{{{label}}}"></a>
 							{{/each}}
 					</li>
 						{{/if}}

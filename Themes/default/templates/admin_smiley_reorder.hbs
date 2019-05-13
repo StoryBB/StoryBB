@@ -14,9 +14,7 @@
 
 				{{#each rows}}
 					{{#if ../../context.move_smiley}}
-				<a href="{{../../scripturl}}?action=admin;area=smileys;sa=setorder;location={{../id}};source={{{../../context.move_smiley}}};row={{this.0.row}};reorder=1;{{session_url}}">
-					<span class="main_icons select_below" title="{{{../../txt.smileys_move_here}}}"></span>
-				</a>
+				<a href="{{../../scripturl}}?action=admin;area=smileys;sa=setorder;location={{../id}};source={{{../../context.move_smiley}}};row={{this.0.row}};reorder=1;{{session_url}}" class="main_icons select_below" title="{{{../../txt.smileys_move_here}}}"></a>
 					{{/if}}
 
 					{{#each .}}
@@ -26,18 +24,14 @@
 				</a>
 						{{else}}
 				<img src="{{{../../../modSettings.smileys_url}}}/{{filename}}" style="padding: 2px;{{#if selected}} border: 2px solid red{{/if}};" alt="{{{description}}}">
-				<a href="{{scripturl}}?action=admin;area=smileys;sa=setorder;location={{../../id}};source={{../../../context.move_smiley}};after={{id}};reorder=1;{{session_url}}" title="{{{../../../txt.smileys_move_here}}}">
-					<span class="main_icons select_below" title="{{{txt.smileys_move_here}}}"></span>
-				</a>
+				<a href="{{scripturl}}?action=admin;area=smileys;sa=setorder;location={{../../id}};source={{../../../context.move_smiley}};after={{id}};reorder=1;{{session_url}}" title="{{{txt.smileys_move_here}}}" class="main_icons select_below"></a>
 						{{/unless}}
 					{{/each}}
 				<br>
 				{{/each}}
 
 				{{#if ../context.move_smiley}}
-				<a href="{{../scripturl}}?action=admin;area=smileys;sa=setorder;location={{id}};source={{../context.move_smiley}};row={{last_row}};reorder=1;{{session_url}}">
-					<span class="main_icons select_below" title="{{{../txt.smileys_move_here}}}"></span>
-				</a>
+				<a href="{{../scripturl}}?action=admin;area=smileys;sa=setorder;location={{id}};source={{../context.move_smiley}};row={{last_row}};reorder=1;{{session_url}}" class="main_icons select_below" title="{{{../txt.smileys_move_here}}}"></a>
 				{{/if}}
 			</div>
 			<input type="hidden" name="reorder" value="1">

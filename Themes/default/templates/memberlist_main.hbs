@@ -40,7 +40,7 @@
 					</td>
 					<td class="lefttext">{{{link}}}</td>
 					{{#unless context.disabled_fields.website}}
-						<td class="centertext website_url"> {{#if website.url}}<a href="{{website.url}}" target="_blank" rel="noopener"><span class="main_icons www" title="{{website.title}}"></span></a>{{/if}}</td>
+						<td class="centertext website_url"> {{#if website.url}}<a href="{{website.url}}" target="_blank" rel="noopener" class="main_icons www" title="{{website.title}}"></a>{{/if}}</td>
 					{{/unless}}
 					<td class="centertext reg_group">{{#if member.group}} {{group}}{{else}} {{post_group}}{{/if}}</td>
 					<td class="centertext reg_date">{{registered_date}}</td>

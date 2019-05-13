@@ -34,7 +34,7 @@
 					</div>
 					<div class="floatright">
 						<ul class="quickbuttons">
-							<li><a href="{{../scripturl}}?action=post;{{#if topic.id}}topic={{topic.id}}{{else}}board={{board.id}}{{/if}}.0;id_draft={{id_draft}}"><span class="main_icons reply_button"></span>{{{../txt.draft_edit}}}</a></li>
+							<li><a href="{{../scripturl}}?action=post;{{#if topic.id}}topic={{topic.id}}{{else}}board={{board.id}}{{/if}}.0;id_draft={{id_draft}}" class="main_icons reply_button">{{{../txt.draft_edit}}}</a></li>
 							<li><a href="{{../scripturl}}?action=profile;u={{../context.member.id}};area=showdrafts;delete={{id_draft}};{{session_url}}" data-confirm="{{{../txt.draft_remove}}}" class="you_sure"><span class="main_icons remove_button"></span>{{{../txt.draft_delete}}}</a></li>
 						</ul>
 					</div>

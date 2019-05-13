@@ -31,11 +31,11 @@
 					<ul class="quickbuttons">
 
 						{{#if can_reply}}
-						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}}"><span class="main_icons reply_button"></span>{{{../txt.reply}}}</a></li>
+						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}}" class="main_icons reply_button">{{{../txt.reply}}}</a></li>
 						{{/if}}
 
 						{{#if can_quote}}
-						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}};quote={{id}}"><span class="main_icons quote"></span>{{{../txt.quote_action}}}</a></li>
+						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}};quote={{id}}" class="main_icons quote">{{{../txt.quote_action}}}</a></li>
 						{{/if}}
 
 						{{#if can_delete}}

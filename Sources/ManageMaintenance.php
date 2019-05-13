@@ -1961,9 +1961,9 @@ function list_integration_hooks()
 				'value' => $txt['hooks_disable_instructions'] . '<br>
 					' . $txt['hooks_disable_legend'] . ':
 				<ul style="list-style: none;">
-					<li><span class="main_icons post_moderation_allow"></span> ' . $txt['hooks_disable_legend_exists'] . '</li>
-					<li><span class="main_icons post_moderation_moderate"></span> ' . $txt['hooks_disable_legend_disabled'] . '</li>
-					<li><span class="main_icons post_moderation_deny"></span> ' . $txt['hooks_disable_legend_missing'] . '</li>
+					<li class="main_icons post_moderation_allow"> ' . $txt['hooks_disable_legend_exists'] . '</li>
+					<li class="main_icons post_moderation_moderate"> ' . $txt['hooks_disable_legend_disabled'] . '</li>
+					<li class="main_icons post_moderation_deny"> ' . $txt['hooks_disable_legend_missing'] . '</li>
 				</ul>'
 			),
 		),

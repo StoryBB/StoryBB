@@ -18,8 +18,8 @@
 {{#if context.is_poll}}
 <div id="poll">
 	<div class="cat_bar">
-		<h3 class="catbg">
-			<span class="main_icons poll"></span>{{#if context.poll.is_locked}}<span class="main_icons lock"></span>{{/if}} {{context.poll.question}}
+		<h3 class="catbg main_icons poll">
+			{{#if context.poll.is_locked}}<span class="main_icons lock"></span>{{/if}} {{context.poll.question}}
 		</h3>
 	</div>
 	<div class="windowbg noup">

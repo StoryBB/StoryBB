@@ -40,13 +40,12 @@
 			<ul class="clear">
 				{{! Email is only visible if it's your profile or you have the moderate_forum permission @todo remove? }}
 				{{#if context.member.show_email}}
-					<li><a href="mailto:{{{context.member.email}}}" title="{{context.member.email}}" rel="nofollow"><span class="main_icons mail" title="{{txt.email}}"></span></a></li>
+					<li><a href="mailto:{{{context.member.email}}}" title="{{context.member.email}}" rel="nofollow" class="main_icons mail"></a></li>
 				{{/if}}
 
 				{{! Don't show an icon if they haven't specified a website. }}
 				{{#if (and context.member.website.url (not context.disabled_fields.website))}}
-					<li><a href="{{context.member.website.url}}" title="{{{context.member.website.title}}}" target="_blank" rel="noopener">
-						<span class="main_icons www" title="{{{context.member.website.title}}}"></span></a></li>
+					<li><a href="{{context.member.website.url}}" title="{{{context.member.website.title}}}" target="_blank" rel="noopener" class="main_icons www"></a></li>
 				{{/if}}
 
 				{{! Are there any custom profile fields as icons? }}
