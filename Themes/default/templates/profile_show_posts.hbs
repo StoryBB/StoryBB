@@ -31,15 +31,15 @@
 					<ul class="quickbuttons">
 
 						{{#if can_reply}}
-						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}}"><span class="generic_icons reply_button"></span>{{{../txt.reply}}}</a></li>
+						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}}" class="main_icons reply_button">{{{../txt.reply}}}</a></li>
 						{{/if}}
 
 						{{#if can_quote}}
-						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}};quote={{id}}"><span class="generic_icons quote"></span>{{{../txt.quote_action}}}</a></li>
+						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}};quote={{id}}" class="main_icons quote">{{{../txt.quote_action}}}</a></li>
 						{{/if}}
 
 						{{#if can_delete}}
-						<li><a href="{{../scripturl}}?action=deletemsg;msg={{id}};topic={{topic}};profile;u={{context.member.id}};start={{context.start}};{{session_url}}" data-confirm="{{{../txt.remove_message}}}" class="you_sure"><span class="generic_icons remove_button"></span>{{{../txt.remove}}}</a></li>
+						<li><a href="{{../scripturl}}?action=deletemsg;msg={{id}};topic={{topic}};profile;u={{context.member.id}};start={{context.start}};{{session_url}}" data-confirm="{{{../txt.remove_message}}}" class="you_sure"><span class="main_icons remove_button"></span>{{{../txt.remove}}}</a></li>
 						{{/if}}
 
 					</ul>

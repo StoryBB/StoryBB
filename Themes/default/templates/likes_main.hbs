@@ -1,6 +1,6 @@
 <ul class="floatleft">
 	{{#if context.data.can_like}}
-	<li class="like_button" id="{{context.data.type}}_{{context.data.id_content}}_likes"><a href="{{scripturl}}?action=likes;ltype={{context.data.type}};sa=like;like={{context.data.id_content}};{{session_url}}" class="{{context.data.type}}_like"><span class="generic_icons {{#if context.data.already_liked}}unlike{{else}}like{{/if}}"></span> {{#if context.data.already_liked}}{{txt.unlike}}{{else}}{{txt.like}}{{/if}}</a></li>
+	<li class="like_button" id="{{context.data.type}}_{{context.data.id_content}}_likes"><a href="{{scripturl}}?action=likes;ltype={{context.data.type}};sa=like;like={{context.data.id_content}};{{session_url}}" class="{{context.data.type}}_like"><span class="main_icons {{#if context.data.already_liked}}unlike{{else}}like{{/if}}"></span> {{#if context.data.already_liked}}{{txt.unlike}}{{else}}{{txt.like}}{{/if}}</a></li>
 	{{/if}}
 	{{#if (gt context.data.raw_count 0)}}
 		<li class="like_count smalltext"><a href="{{scripturl}}?action=likes;sa=view;ltype={{context.data.type}};js=1;like={{context.data.id_content}};{{session_url}}">{{textTemplate (get_text context.text) context.data.count}}</a></li>

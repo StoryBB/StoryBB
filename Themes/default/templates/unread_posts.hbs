@@ -18,13 +18,13 @@
 					<div id="topic_header" class="title_bar">
 						<div class="board_icon"></div>
 						<div class="info">
-							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=subject{{#if (and (eq context.sort_by 'subject') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.subject}}}{{#if (eq context.sort_by 'subject')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=subject{{#if (and (eq context.sort_by 'subject') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.subject}}}{{#if (eq context.sort_by 'subject')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
 						</div>
 						<div class="board_stats centertext">
-							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=replies{{#if (and (eq context.sort_by 'replies') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.replies}}}{{#if (eq context.sort_by 'replies')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=replies{{#if (and (eq context.sort_by 'replies') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.replies}}}{{#if (eq context.sort_by 'replies')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
 						</div>
 						<div class="lastpost">
-							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=last_post{{#if (and (eq context.sort_by 'last_post') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.last_post}}}{{#if (eq context.sort_by 'last_post')}} <span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=last_post{{#if (and (eq context.sort_by 'last_post') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.last_post}}}{{#if (eq context.sort_by 'last_post')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
 						</div>
 						<div class="moderation">
 							<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
@@ -39,9 +39,9 @@
 							<div class="info">
 								{{! // Now we handle the icons }}
 								<div class="icons floatright">
-									{{#if is_locked}} <span class="generic_icons lock"></span>{{/if}}
-									{{#if is_sticky}} <span class="generic_icons sticky"></span>{{/if}}
-									{{#if is_poll}} <span class="generic_icons poll"></span>{{/if}}
+									{{#if is_locked}} <span class="main_icons lock"></span>{{/if}}
+									{{#if is_sticky}} <span class="main_icons sticky"></span>{{/if}}
+									{{#if is_poll}} <span class="main_icons poll"></span>{{/if}}
 								</div>
 								<div class="first_poster">
 									{{{first_post.member.avatar.image}}}

@@ -11,7 +11,7 @@
 					{{#if context.notes}}
 						<ul class="moderation_notes">
 							{{#each context.notes}}
-								<li class="smalltext">{{#if can_delete}}<a href="{{{delete_href}}};{{token_url 'mod-modnote-del'}}" data-confirm="{{{../txt.mc_reportedp_delete_confirm}}}" class="you_sure"><span class="generic_icons delete"></span></a>{{/if}}{{{time}}} <strong>{{{author.link}}}:</strong> {{{text}}}</li>
+								<li class="smalltext">{{#if can_delete}}<a href="{{{delete_href}}};{{token_url 'mod-modnote-del'}}" data-confirm="{{{../txt.mc_reportedp_delete_confirm}}}" class="you_sure"><span class="main_icons delete"></span></a>{{/if}}{{{time}}} <strong>{{{author.link}}}:</strong> {{{text}}}</li>
 							{{/each}}
 						</ul>
 						<div class="pagesection notes">

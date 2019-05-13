@@ -1,8 +1,8 @@
 	{{! Managing buddies }}
 	<div id="edit_buddies">
 		<div class="cat_bar">
-			<h3 class="catbg">
-				<span class="generic_icons people icon"></span> {{{txt.editBuddies}}}
+			<h3 class="catbg main_icons people">
+				{{{txt.editBuddies}}}
 			</h3>
 		</div>
 		<table class="table_grid">
@@ -31,7 +31,7 @@
 					<td><a href="{{{online.href}}}"><span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{{online.text}}}"></span></a></td>
 
 					{{#if show_email}}
-					<td><a href="mailto:{{email}}" rel="nofollow"><span class="generic_icons mail icon" title="{{{../txt.email}}} {{{name}}}"></span></a></td>
+					<td><a href="mailto:{{email}}" rel="nofollow" class="main_icons mail icon" title="{{{../txt.email}}} {{{name}}}"></a></td>
 					{{/if}}
 
 					{{! Show the custom profile fields for this user. }}
@@ -39,7 +39,7 @@
 						<td class="lefttext">{{{lookup options @key}}}</td>
 					{{/each}}
 
-					<td><a href="{{../scripturl}}?action=profile;area=lists;sa=buddies;u={{{../context.id_member}}};remove={{id}};{{session_url}}"><span class="generic_icons delete" title="{{{../txt.buddy_remove}}}"></span></a></td>
+					<td><a href="{{../scripturl}}?action=profile;area=lists;sa=buddies;u={{{../context.id_member}}};remove={{id}};{{session_url}}" class="main_icons delete" title="{{{../txt.buddy_remove}}}"></a></td>
 				</tr>
 				{{/each}}
 			{{/unless}}

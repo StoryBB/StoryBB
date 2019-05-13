@@ -5,7 +5,7 @@
 {{/if}}
 {{!-- New topic info --}}
 <div id="display_head" class="information">
-	<h2 class="display_title"><span id="top_subject">{{context.subject}}</span>{{#if context.is_locked}}<span class="generic_icons lock"></span>{{/if}}{{#if context.is_sticky}}<span class="generic_icons sticky"></span>{{/if}}</h2>
+	<h2 class="display_title"><span id="top_subject">{{context.subject}}</span>{{#if context.is_locked}}<span class="main_icons lock"></span>{{/if}}{{#if context.is_sticky}}<span class="main_icons sticky"></span>{{/if}}</h2>
 	<p>{{txt.started_by}} {{context.topic_poster_name}}, {{{context.topic_started_time}}}</p>
 	{{#if context.viewing}}
 		<p>{{{context.viewing}}} {{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}}{{txt.who_viewing_topic}}</p>
@@ -18,8 +18,8 @@
 {{#if context.is_poll}}
 <div id="poll">
 	<div class="cat_bar">
-		<h3 class="catbg">
-			<span class="generic_icons poll"></span>{{#if context.poll.is_locked}}<span class="generic_icons lock"></span>{{/if}} {{context.poll.question}}
+		<h3 class="catbg main_icons poll">
+			{{#if context.poll.is_locked}}<span class="main_icons lock"></span>{{/if}} {{context.poll.question}}
 		</h3>
 	</div>
 	<div class="windowbg noup">
@@ -123,7 +123,7 @@
 <div id="mobile_action" class="popup_container">
 	<div class="popup_window description">
 		<div class="popup_heading">{{txt.mobile_action}}
-		<a href="javascript:void(0);" class="generic_icons hide_popup"></a></div>
+		<a href="javascript:void(0);" class="main_icons hide_popup"></a></div>
 		{{>button_strip button_strip=context.normal_buttons}}
 	</div>
 </div>
@@ -133,7 +133,7 @@
 <div id="mobile_moderation" class="popup_container">
 	<div class="popup_window description">
 		<div class="popup_heading">{{txt.mobile_moderation}}
-		<a href="javascript:void(0);" class="generic_icons hide_popup"></a></div>
+		<a href="javascript:void(0);" class="main_icons hide_popup"></a></div>
 		<div id="moderationbuttons_mobile">
 			{{>button_strip button_strip=context.mod_buttons direction='bottom'}}
 		</div>

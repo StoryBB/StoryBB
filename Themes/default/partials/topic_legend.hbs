@@ -3,12 +3,12 @@
 			<p class="floatright" id="message_index_jump_to">&nbsp;</p>
 			{{#unless context.no_topic_listing}}
 			<p class="floatleft">
-				{{#if modSettings.pollMode}}<span class="generic_icons poll centericon"></span> {{txt.poll}}{{/if}}<br>
+				{{#if modSettings.pollMode}}<span class="main_icons poll centericon"></span> {{txt.poll}}{{/if}}<br>
 				<img src="{{settings.images_url}}/post/moved.png" alt="" class="centericon sizefix"> {{txt.moved_topic}}<br>
 			</p>
 			<p>
-				<span class="generic_icons lock centericon"></span> {{txt.locked_topic}}<br>
-				<span class="generic_icons sticky centericon"></span> {{txt.sticky_topic}}<br>
+				<span class="main_icons lock centericon"></span> {{txt.locked_topic}}<br>
+				<span class="main_icons sticky centericon"></span> {{txt.sticky_topic}}<br>
 			</p>
 			{{/unless}}
 			{{#if context.jump_to}}

@@ -1990,7 +1990,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 /**
  * Creates an image/text button
  *
- * @param string $name The name of the button (should be a generic_icons class or the name of an image)
+ * @param string $name The name of the button (should be a main_icons class or the name of an image)
  * @param string $alt The alt text
  * @param string $label The $txt string to use as the label
  * @param string $custom Custom text/html to add to the img tag (only when using an actual image)
@@ -2000,7 +2000,7 @@ function create_button($name, $alt, $label = '', $custom = '')
 {
 	global $settings, $txt;
 
-	return '<span class="generic_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
+	return '<span class="main_icons ' . $name . '" alt="' . $txt[$alt] . '"></span>' . ($label != '' ? '&nbsp;<strong>' . $txt[$label] . '</strong>' : '');
 }
 
 /**
@@ -2233,9 +2233,9 @@ function setupMenuContext()
 				elseif (isset($button['icon']) && file_exists($settings['default_theme_dir'] . '/images/' . $button['icon']))
 					$button['icon'] = '<img src="' . $settings['default_images_url'] . '/' . $button['icon'] . '" alt="">';
 				elseif (isset($button['icon']))
-					$button['icon'] = '<span class="generic_icons ' . $button['icon'] . '"></span>';
+					$button['icon'] = '<span class="main_icons ' . $button['icon'] . '"></span>';
 				else
-					$button['icon'] = '<span class="generic_icons ' . $act . '"></span>';
+					$button['icon'] = '<span class="main_icons ' . $act . '"></span>';
 
 				$menu_buttons[$act] = $button;
 			}

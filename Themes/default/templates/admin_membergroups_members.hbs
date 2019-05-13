@@ -54,7 +54,7 @@
 					<tr class="title_bar">
 						<th>
 							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=name{{#if (and (eq context.sort_by 'name') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.name}}}{{#if (eq context.sort_by 'name')}}
-								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+								<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}
 							</a>
 						</th>
 
@@ -65,26 +65,26 @@
 						{{#if context.can_send_email}}
 						<th>
 							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=email{{#if (and (eq context.sort_by 'email') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.email}}}{{#if (eq context.sort_by 'email')}}
-								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+								<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}
 							</a>
 						</th>
 						{{/if}}
 
 						<th>
 							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=active{{#if (and (eq context.sort_by 'active') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.membergroups_members_last_active}}}{{#if (eq context.sort_by 'active')}}
-								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+								<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}
 							</a>
 						</th>
 
 						<th>
 							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=registered{{#if (and (eq context.sort_by 'registered') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.date_registered}}}{{#if (eq context.sort_by 'registered')}}
-								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+								<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}
 							</a>
 						</th>
 
 						<th{{#unless context.group.assignable}} colspan="2"{{/unless}}>
 							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=posts{{#if (and (eq context.sort_by 'posts') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.posts}}}{{#if (eq context.sort_by 'posts')}}
-								<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}
+								<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}
 							</a>
 						</th>
 

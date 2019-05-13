@@ -2,13 +2,13 @@
 	<thead>
 		<tr class="title_bar">
 			<th class="lefttext quarter_table" colspan="2">
-				<a href="{{scripturl}}?action=pm;f={{context.folder}};start={{context.start}};sort=date{{#if (and (eq context.sort_by 'date') (eq context.sort_direction 'up'))}};desc{{/if}}{{#if context.current_label_id}};l={{context.current_label_id}}{{/if}}">{{txt.date}}{{#if (eq context.sort_by 'date')}}<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+				<a href="{{scripturl}}?action=pm;f={{context.folder}};start={{context.start}};sort=date{{#if (and (eq context.sort_by 'date') (eq context.sort_direction 'up'))}};desc{{/if}}{{#if context.current_label_id}};l={{context.current_label_id}}{{/if}}">{{txt.date}}{{#if (eq context.sort_by 'date')}}<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
 			</th>
 			<th class="lefttext half_table">
-				<a href="{{scripturl}}?action=pm;f={{context.folder}};start={{context.start}};sort=subject{{#if (and (eq context.sort_by 'subject') (eq context.sort_direction 'up'))}};desc{{/if}}{{#if context.current_label_id}};l={{context.current_label_id}}{{/if}}">{{txt.subject}}{{#if (eq context.sort_by 'subject')}}<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+				<a href="{{scripturl}}?action=pm;f={{context.folder}};start={{context.start}};sort=subject{{#if (and (eq context.sort_by 'subject') (eq context.sort_direction 'up'))}};desc{{/if}}{{#if context.current_label_id}};l={{context.current_label_id}}{{/if}}">{{txt.subject}}{{#if (eq context.sort_by 'subject')}}<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
 			</th>
 			<th class="lefttext">
-				<a href="{{scripturl}}?action=pm;f={{context.folder}};start={{context.start}};sort=name{{#if (and (eq context.sort_by 'name') (eq context.sort_direction 'up'))}};desc{{/if}}{{#if context.current_label_id}};l={{context.current_label_id}}{{/if}}">{{#if (eq context.from_or_to 'from')}}{{txt.from}}{{else}}{{txt.to}}{{/if}}{{#if (eq context.sort_by 'name')}}<span class="generic_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+				<a href="{{scripturl}}?action=pm;f={{context.folder}};start={{context.start}};sort=name{{#if (and (eq context.sort_by 'name') (eq context.sort_direction 'up'))}};desc{{/if}}{{#if context.current_label_id}};l={{context.current_label_id}}{{/if}}">{{#if (eq context.from_or_to 'from')}}{{txt.from}}{{else}}{{txt.to}}{{/if}}{{#if (eq context.sort_by 'name')}}<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
 			</th>
 			<th class="centercol table_icon">
 				<input type="checkbox" onclick="invertAll(this, this.form);">
@@ -27,7 +27,7 @@
 			<script>
 				currentLabels[{{id}}] = {{{json labels}}};
 			</script>
-			{{#if is_replied_to}}<span class="generic_icons replied" title="{{txt.pm_replied}}"></span>{{else}}<span class="generic_icons im_off" title="{{txt.pm_read}}"></span>{{/if}}</td>
+			{{#if is_replied_to}}<span class="main_icons replied" title="{{txt.pm_replied}}"></span>{{else}}<span class="main_icons im_off" title="{{txt.pm_read}}"></span>{{/if}}</td>
 			<td>{{{time}}}</td>
 			<td>{{#if (eq ../context.current_pm id)}}<img src="{{../settings.images_url}}/selected.png" alt="*">{{/if}}
 				<a href="{{#unless (eq ../context.current_pm id)}}{{../scripturl}}?action=pm;pmid={{id}};kstart;f={{../context.folder}};start={{../context.start}};sort={{../context.sort_by}}{{#if (eq ../context.sort_direction 'up')}};{{else}};desc{{/if}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}}#msg{{id}}{{/unless}}">
