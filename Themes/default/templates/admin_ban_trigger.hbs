@@ -3,7 +3,11 @@
 		<form id="admin_form_wrapper" action="{{{context.form_url}}}" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
-					{{#if context.ban_trigger.is_new}}{{{txt.ban_add_trigger}}}{{else}}{{{txt.ban_edit_trigger_title}}}{{/if}}
+{{#if context.ban_trigger.is_new}}
+					{{{txt.ban_add_trigger}}}
+{{else}}
+					{{{txt.ban_edit_trigger_title}}}
+{{/if}}
 				</h3>
 			</div>
 			<div class="windowbg">
@@ -20,15 +24,15 @@
 							<input type="text" name="main_ip" value="{{{context.ban_trigger.ip.value}}}" size="44" onfocus="document.getElementById('main_ip_check').checked = true;">
 						</dd>
 
-						{{#if (neq modSettings.disableHotnameLookup '1')}}
-							<dt>
-								<input type="checkbox" name="ban_suggestions[]" id="hostname_check" value="hostname"{{#if context.ban_trigger.hostname.selected}} checked{{/if}}>
-								<label for="hostname_check">{{{txt.ban_on_hostname}}}</label>
-							</dt>
-							<dd>
-								<input type="text" name="hostname" value="{{{context.ban_trigger.hostname.value}}}" size="44" onfocus="document.getElementById('hostname_check').checked = true;">
-							</dd>
-						{{/if}}
+{{#if (neq modSettings.disableHotnameLookup '1')}}
+						<dt>
+							<input type="checkbox" name="ban_suggestions[]" id="hostname_check" value="hostname"{{#if context.ban_trigger.hostname.selected}} checked{{/if}}>
+							<label for="hostname_check">{{{txt.ban_on_hostname}}}</label>
+						</dt>
+						<dd>
+							<input type="text" name="hostname" value="{{{context.ban_trigger.hostname.value}}}" size="44" onfocus="document.getElementById('hostname_check').checked = true;">
+						</dd>
+{{/if}}
 
 						<dt>
 							<input type="checkbox" name="ban_suggestions[]" id="email_check" value="email"{{#if context.ban_trigger.email.selected}} checked{{/if}}>

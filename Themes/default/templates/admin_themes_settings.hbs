@@ -1,4 +1,4 @@
-<div id="admin_form_wrapper">
+	<div id="admin_form_wrapper">
 		<form action="{{scripturl}}?action=admin;area=theme;sa=list;th={{context.theme_settings.theme_id}}" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
@@ -6,7 +6,8 @@
 				</h3>
 			</div>
 			<br>
-			{{#if (eq context.theme_settings.theme_id -1)}}
+
+{{#if (eq context.theme_settings.theme_id -1)}}
 			<div class="cat_bar">
 				<h3 class="catbg config_hd">
 					{{txt.theme_edit}}
@@ -22,7 +23,7 @@
 					</li>
 				</ul>
 			</div>
-			{{/if}}
+{{/if}}
 				<div class="cat_bar">
 				<h3 class="catbg config_hd">
 					{{txt.theme_url_config}}
@@ -56,7 +57,8 @@
 					</dd>
 				</dl>
 			</div>
-			{{#if context.theme_variants}}
+
+{{#if context.theme_variants}}
 			<div class="cat_bar">
 				<h3 class="catbg config_hd">
 					{{txt.theme_variants}}
@@ -69,9 +71,10 @@
 					</dt>
 					<dd>
 						<select id="variant" name="options[default_variant]" onchange="changeVariant(this.value)">
-							{{#each context.theme_variants}}
+
+	{{#each context.theme_variants}}
 							<option value="{{@key}}" {{#if (eq ../context.default_variant @key)}} selected{{/if}}>{{label}}</option>
-							{{/each}}
+	{{/each}}
 						</select>
 					</dd>
 					<dt>
@@ -84,71 +87,80 @@
 				</dl>
 				<img src="{{context.default_variant.thumbnail}}" id="variant_preview" alt="">
 			</div>
-			{{/if}}
+{{/if}}
 			<div class="cat_bar">
 				<h3 class="catbg config_hd">
 					{{txt.theme_options}}
 				</h3>
 			</div>
 			<div class="windowbg2 noup">
-				{{#each context.settings}}
+
+{{#each context.settings}}
 				<dl class="settings">
-					{{#unless (is_array .)}}{{!-- if we're a string or empty instead of an array, we are a header--}}
-					{{#unless (eq @index 0)}}
+
+	{{! if we're a string or empty instead of an array, we are a header }}
+	{{#unless (is_array .)}}
+		{{#unless (eq @index 0)}}
 					<hr>
-					{{/unless}}
+		{{/unless}}
 					<dt><b>{{.}}</b></dt>
 					<dd></dd>
-					{{else}}
+	{{else}}
 					
 					<dt>
 						<label for="{{id}}"><b>{{label}}</b></label>:
-						{{#if description}}
+
+		{{#if description}}
 						<br>
 						<span class="smalltext">{{{description}}}</span>
-						{{/if}}
+		{{/if}}
 					</dt>
-					{{#if (eq type 'checkbox')}}
+
+		{{#if (eq type 'checkbox')}}
 					<dd>
 						<input type="hidden" name="{{#if default}}default_{{/if}}options[{{id}}]" value="0">
 						<input type="checkbox" name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}"{{#if value}} checked{{/if}} value="1">
 					</dd>
-					{{/if}}
-					{{#if (eq type 'list')}}
+		{{/if}}
+		{{#if (eq type 'list')}}
 					<dd>
 						<select name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}">
-							{{#each options}}
+
+			{{#each options}}
 							<option value="{{@key}}"{{#if (eq_coerce @key ../value)}} selected{{/if}}>{{.}}</option>
-							{{/each}}
+			{{/each}}
 						</select>
 					</dd>
-					{{/if}} 
-					{{#if (eq type 'textarea')}}
+		{{/if}} 
+
+		{{#if (eq type 'textarea')}}
 					<dd>
 						<textarea rows="4" style="width: 95%;" cols="40" name="{{#if default}}default_{{/if}}options[{{id}}]" id="{{id}}">{{value}}</textarea>
 					</dd>
-					{{/if}}
-					{{#if (or (eq type 'text') (eq type 'url'))}}
+		{{/if}}
+
+		{{#if (or (eq type 'text') (eq type 'url'))}}
 					<dd>
 						<input type="{{type}}" name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="{{#if size}}{{size}}{{else}}40{{/if}}">
 					</dd>
-					{{/if}}
-					{{#if (eq type 'number')}}
+		{{/if}}
+
+		{{#if (eq type 'number')}}
 					<dd>
 						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}" max="{{max}}" step="{{step}}" name="{{#if default}}default_{{/if}}options[{{id}}]" id="options_{{id}}" value="{{value}}" size="5">
 					</dd>
-					{{/if}}
-					
-					{{/unless}}
+		{{/if}}	
+	{{/unless}}
 				</dl>
-				{{/each}}
+{{/each}}
 				<input type="submit" name="save" value="{{txt.save}}" class="button_submit">
 				{{session_form}}
 				{{token_form 'admin-sts'}}
 			</div>
 		</form>
 	</div>
-	{{#if context.theme_variants}}
+
+{{#if context.theme_variants}}
 	<script>
 		var oThumbnails = {
 			{{#each context.theme_variants}}
@@ -156,4 +168,4 @@
 			{{/each}}
 		}
 		</script>
-	{{/if}}
+{{/if}}

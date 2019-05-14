@@ -16,41 +16,43 @@
 			</div>
 			<div class="windowbg2 noup">
 
-			{{#each context.categories}}
+{{#each context.categories}}
 				<div class="sub_bar">
 					<h3 class="subbg">{{{name}}}</h3>
 				</div>
 
-				{{#if boards}}
+	{{#if boards}}
 				<ul class="perm_boards flow_hidden">
 
-					{{#each boards}}
+		{{#each boards}}
 					<li class="flow_hidden">
 						<span class="perm_board floatleft">
 							<a href="{{scripturl}}?action=admin;area=manageboards;sa=board;boardid={{id}};rid=permissions;{{session_url}}">{{{repeat '-' child_level}}} {{{name}}}</a>
 						</span>
 						<span class="perm_boardprofile floatleft">
-							{{#if ../../context.edit_all}}
+
+			{{#if ../../context.edit_all}}
 							<select name="boardprofile[{{id}}]">
-								{{#each ../../context.profiles}}
+
+				{{#each ../../context.profiles}}
 								<option value="{{@key}}"{{#if (eq_coerce @key ../profile)}} selected{{/if}}>{{{name}}}</option>
-								{{/each}}
+				{{/each}}
 							</select>
-							{{else}}
+			{{else}}
 							<a href="{{scripturl}}?action=admin;area=permissions;sa=index;pid={{profile}};{{session_url}}">{{{profile_name}}}</a>
-							{{/if}}
+			{{/if}}
 						</span>
 					</li>
-					{{/each}}
+		{{/each}}
 				</ul>
-				{{/if}}
-			{{/each}}
+	{{/if}}
+{{/each}}
 
-			{{#if context.edit_all}}
+{{#if context.edit_all}}
 				<input type="submit" name="save_changes" value="{{{txt.save}}}" class="button_submit">
-			{{else}}
+{{else}}
 				<a class="button_link" href="{{scripturl}}?action=admin;area=permissions;sa=board;edit;{{session_url}}">{{{txt.permissions_board_all}}}</a>
-			{{/if}}
+{{/if}}
 
 				{{session_form}}
 				{{token_form 'admin-mpb'}}

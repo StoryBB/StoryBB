@@ -3,59 +3,89 @@
 	{{txt.post_becomesUnapproved}}
 </div>
 {{/if}}
+
 {{!-- New topic info --}}
 <div id="display_head" class="information">
-	<h2 class="display_title"><span id="top_subject">{{context.subject}}</span>{{#if context.is_locked}}<span class="main_icons lock"></span>{{/if}}{{#if context.is_sticky}}<span class="main_icons sticky"></span>{{/if}}</h2>
+	<h2 class="display_title">
+		<span id="top_subject">{{context.subject}}</span>
+		{{#if context.is_locked}}<span class="main_icons lock"></span>{{/if}}
+		{{#if context.is_sticky}}<span class="main_icons sticky"></span>{{/if}}
+	</h2>
 	<p>{{txt.started_by}} {{context.topic_poster_name}}, {{{context.topic_started_time}}}</p>
-	{{#if context.viewing}}
-		<p>{{{context.viewing}}} {{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}}{{txt.who_viewing_topic}}</p>
-	{{/if}}
-</div>{{!-- Show the anchor for the top and for the first message. If the first message is new, say so. --}}
-<a id="msg{{context.first_message}}"></a>{{#if context.first_new_message}}<a id="new"></a>{{/if}}
 
+{{#if context.viewing}}
+	<p>{{{context.viewing}}} {{txt.who_and}}{{context.view_num_guests}} {{#if (eq context.view_num_guests 1)}}{{txt.guest}}{{else}}{{txt.guests}}{{/if}}{{txt.who_viewing_topic}}</p>
+{{/if}}
+
+</div>
+
+{{!-- Show the anchor for the top and for the first message. If the first message is new, say so. --}}
+<a id="msg{{context.first_message}}"></a>
+{{#if context.first_new_message}}<a id="new"></a>{{/if}}
 
 {{!-- poll logic --}}
 {{#if context.is_poll}}
 <div id="poll">
 	<div class="cat_bar">
 		<h3 class="catbg main_icons poll">
-			{{#if context.poll.is_locked}}<span class="main_icons lock"></span>{{/if}} {{context.poll.question}}
+			{{#if context.poll.is_locked}}<span class="main_icons lock"></span>{{/if}}
+			{{context.poll.question}}
 		</h3>
 	</div>
 	<div class="windowbg noup">
 		<div id="poll_options">
-		{{#if (or context.poll.show_results (not context.allow_vote))}}
+
+	{{#if (or context.poll.show_results (not context.allow_vote))}}
 			<dl class="options">
-				{{#each context.poll.options}}
+
+		{{#each context.poll.options}}
 				<dt class="{{#if voted_this}}voted{{/if}}">{{option}}</dt>
 				<dd class="statsbar{{#if voted_this}} voted{{/if}}">
-				{{#if ../context.allow_results_view}}
+
+			{{#if ../context.allow_results_view}}
 				{{{bar_ndt}}}
 				<span class="percentage">{{votes}} ({{percent}}%)</span>
-				{{/if}}
-				</dd>
-				{{/each}}
-			</dl>
-			{{#if context.allow_results_view}}
-			<p><strong>{{txt.poll_total_voters}}:</strong> {{context.poll.total_votes}}</p>
 			{{/if}}
-		{{else}}
+				</dd>
+		{{/each}}
+
+			</dl>
+
+		{{#if context.allow_results_view}}
+			<p><strong>{{txt.poll_total_voters}}:</strong> {{context.poll.total_votes}}</p>
+		{{/if}}
+	{{else}}
 		<form action="{{scripturl}}?action=vote;topic={{context.current_topic}}.{{context.start}};poll='{{context.poll.id}}" method="post" accept-charset="UTF-8">
-			{{#if context.poll.allowed_warning}}<p class="smallpadding">{{context.poll.allowed_warning}}</p>{{/if}}
+
+		{{#if context.poll.allowed_warning}}
+			<p class="smallpadding">{{context.poll.allowed_warning}}</p>
+		{{/if}}
 			<ul class="options">
-				{{#each context.poll.options}}
+
+		{{#each context.poll.options}}
 				<li>{{{vote_button}}} <label for="{{id}}">{{option}}</label></li>
-				{{/each}}
+		{{/each}}
 			</ul>
 			<div class="submitbutton">
 				<input type="submit" value="{{txt.poll_vote}}" class="button_submit">
 				{{session_form}}
 			</div>
 		</form>
+
 		{{#if context.poll.expire_time}}
-		<p><strong>{{#if context.poll.is_expired}}{{{txt.poll_expired_on}}}{{else}}{{{txt.poll_expires_on}}}{{/if}}:</strong> {{{context.poll.expire_time}}}</p>
+		<p>
+			<strong>
+			{{#if context.poll.is_expired}}
+				{{{txt.poll_expired_on}}}
+			{{else}}
+				{{{txt.poll_expires_on}}}
+			{{/if}}:
+			</strong>
+			{{{context.poll.expire_time}}}
+		</p>
 		{{/if}}
-		{{/if}}
+	{{/if}}
+
 		</div>
 	</div>
 </div>
@@ -82,12 +112,14 @@
 {{!-- topic information - icon, subject, etc. --}}
 <div id="forumposts">
 	<form action="{{scripturl}}?action=quickmod2;topic={{context.current_topic}}.{{context.start}}" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" onsubmit="return onQuickModify.bInEditMode ? oQuickModify.modifySave('{{context.session_id}}', '{{context.session_var}}') : false">
-		{{#each context.messages}}
-			{{#if this.separator}}
-				{{>post_separator .}}
-			{{/if}}
-			{{>single_post .}}
-		{{/each}}
+
+{{#each context.messages}}
+	{{#if this.separator}}
+		{{>post_separator .}}
+	{{/if}}
+		{{>single_post .}}
+{{/each}}
+
 	</form>
 </div>
 
@@ -132,8 +164,10 @@
 {{#if (or context.can_moderate_forum context.user.is_mod)}}
 <div id="mobile_moderation" class="popup_container">
 	<div class="popup_window description">
-		<div class="popup_heading">{{txt.mobile_moderation}}
-		<a href="javascript:void(0);" class="main_icons hide_popup"></a></div>
+		<div class="popup_heading">
+			{{txt.mobile_moderation}}
+			<a href="javascript:void(0);" class="main_icons hide_popup"></a>
+		</div>
 		<div id="moderationbuttons_mobile">
 			{{>button_strip button_strip=context.mod_buttons direction='bottom'}}
 		</div>
@@ -145,52 +179,52 @@
 <script>
 {{#if context.can_remove_post}}
 	var oInTopicModeration = new InTopicModeration({
-					sSelf: 'oInTopicModeration',
-					sCheckboxContainerMask: 'in_topic_mod_check_',
-					aMessageIds: {{{json context.removableMessageIDs}}},
-					sSessionId: sbb_session_id,
-					sSessionVar: sbb_session_var,
-					sButtonStrip: 'moderationbuttons',
-					sButtonStripDisplay: 'moderationbuttons_strip',
-					bUseImageButton: false,
-					bCanRemove: {{#if context.can_remove_post}}true{{else}}false{{/if}},
-					sRemoveButtonLabel: {{{json txt.quickmod_delete_selected}}},
-					sRemoveButtonImage: 'delete_selected.png',
-					sRemoveButtonConfirm: {{{json txt.quickmod_confirm}}},
-					bCanRestore: {{#if context.can_restore_msg}}true{{else}}false{{/if}},
-					sRestoreButtonLabel: {{{json txt.quick_mod_restore}}},
-					sRestoreButtonImage: 'restore_selected.png',
-					sRestoreButtonConfirm: {{{json txt.quickmod_confirm}}},
-					bCanSplit: {{#if context.can_split}}true{{else}}false{{/if}},
-					sSplitButtonLabel: {{{json txt.quickmod_split_selected}}},
-					sSplitButtonImage: 'split_selected.png',
-					sSplitButtonConfirm: {{{json txt.quickmod_confirm}}},
-					sFormId: 'quickModForm'
-				});
+		sSelf: 'oInTopicModeration',
+		sCheckboxContainerMask: 'in_topic_mod_check_',
+		aMessageIds: {{{json context.removableMessageIDs}}},
+		sSessionId: sbb_session_id,
+		sSessionVar: sbb_session_var,
+		sButtonStrip: 'moderationbuttons',
+		sButtonStripDisplay: 'moderationbuttons_strip',
+		bUseImageButton: false,
+		bCanRemove: {{#if context.can_remove_post}}true{{else}}false{{/if}},
+		sRemoveButtonLabel: {{{json txt.quickmod_delete_selected}}},
+		sRemoveButtonImage: 'delete_selected.png',
+		sRemoveButtonConfirm: {{{json txt.quickmod_confirm}}},
+		bCanRestore: {{#if context.can_restore_msg}}true{{else}}false{{/if}},
+		sRestoreButtonLabel: {{{json txt.quick_mod_restore}}},
+		sRestoreButtonImage: 'restore_selected.png',
+		sRestoreButtonConfirm: {{{json txt.quickmod_confirm}}},
+		bCanSplit: {{#if context.can_split}}true{{else}}false{{/if}},
+		sSplitButtonLabel: {{{json txt.quickmod_split_selected}}},
+		sSplitButtonImage: 'split_selected.png',
+		sSplitButtonConfirm: {{{json txt.quickmod_confirm}}},
+		sFormId: 'quickModForm'
+	});
 				
 	var oInTopicModerationMobile = new InTopicModeration({
-					sSelf: 'oInTopicModerationMobile',
-					sCheckboxContainerMask: 'in_topic_mod_check_',
-					aMessageIds: {{{json context.removableMessageIDs}}},
-					sSessionId: sbb_session_id,
-					sSessionVar: sbb_session_var,
-					sButtonStrip: 'moderationbuttons_mobile',
-					sButtonStripDisplay: 'moderationbuttons_strip_mobile',
-					bUseImageButton: false,
-					bCanRemove: {{#if context.can_remove_post}}true{{else}}false{{/if}},
-					sRemoveButtonLabel: {{{json txt.quickmod_delete_selected}}},
-					sRemoveButtonImage: 'delete_selected.png',
-					sRemoveButtonConfirm: {{{json txt.quickmod_confirm}}},
-					bCanRestore: {{#if context.can_restore_msg}}true{{else}}false{{/if}},
-					sRestoreButtonLabel: {{{json txt.quick_mod_restore}}},
-					sRestoreButtonImage: 'restore_selected.png',
-					sRestoreButtonConfirm: '{{txt.quickmod_confirm}}',
-					bCanSplit: {{#if context.can_split}}true{{else}}false{{/if}},
-					sSplitButtonLabel: {{{json txt.quickmod_split_selected}}},
-					sSplitButtonImage: 'split_selected.png',
-					sSplitButtonConfirm: {{{json txt.quickmod_confirm}}},
-					sFormId: 'quickModForm'
-				});
+		sSelf: 'oInTopicModerationMobile',
+		sCheckboxContainerMask: 'in_topic_mod_check_',
+		aMessageIds: {{{json context.removableMessageIDs}}},
+		sSessionId: sbb_session_id,
+		sSessionVar: sbb_session_var,
+		sButtonStrip: 'moderationbuttons_mobile',
+		sButtonStripDisplay: 'moderationbuttons_strip_mobile',
+		bUseImageButton: false,
+		bCanRemove: {{#if context.can_remove_post}}true{{else}}false{{/if}},
+		sRemoveButtonLabel: {{{json txt.quickmod_delete_selected}}},
+		sRemoveButtonImage: 'delete_selected.png',
+		sRemoveButtonConfirm: {{{json txt.quickmod_confirm}}},
+		bCanRestore: {{#if context.can_restore_msg}}true{{else}}false{{/if}},
+		sRestoreButtonLabel: {{{json txt.quick_mod_restore}}},
+		sRestoreButtonImage: 'restore_selected.png',
+		sRestoreButtonConfirm: '{{txt.quickmod_confirm}}',
+		bCanSplit: {{#if context.can_split}}true{{else}}false{{/if}},
+		sSplitButtonLabel: {{{json txt.quickmod_split_selected}}},
+		sSplitButtonImage: 'split_selected.png',
+		sSplitButtonConfirm: {{{json txt.quickmod_confirm}}},
+		sFormId: 'quickModForm'
+	});
 {{/if}}
 	if ('XMLHttpRequest' in window)
 		{
@@ -200,15 +234,15 @@
 				bShowModify: {{#if modSettings.show_modify}}true{{else}}false{{/if}},
 				iTopicId: {{{json context.current_topic}}},
 				sTemplateBodyEdit: '<div id="quick_edit_body_container">' +
-						'<div id="error_box" class="error"></div>' +
-						'<textarea class="editor" name="message" rows="12" style="margin-bottom: 10px;">%body%</textarea><br>' +
-						'{{session_form}}' +
-						'<input type="hidden" name="topic" value="{{context.current_topic}}">' +
-						'<input type="hidden" name="msg" value="%msg_id%">' +
-						'<div class="righttext quickModifyMargin">' +
-							'<input type="submit" name="post" value="{{txt.save}}" onclick="return oQuickModify.modifySave(\'{{context.session_id}}\', \'{{context.session_var}}\');" accesskey="s" class="button_submit">&nbsp;&nbsp;<input type="submit" name="cancel" value="{{txt.modify_cancel}}" onclick="return oQuickModify.modifyCancel();" class="button_submit">' +
-						'</div>' +
-					'</div>',
+					'<div id="error_box" class="error"></div>' +
+					'<textarea class="editor" name="message" rows="12" style="margin-bottom: 10px;">%body%</textarea><br>' +
+					'{{session_form}}' +
+					'<input type="hidden" name="topic" value="{{context.current_topic}}">' +
+					'<input type="hidden" name="msg" value="%msg_id%">' +
+					'<div class="righttext quickModifyMargin">' +
+						'<input type="submit" name="post" value="{{txt.save}}" onclick="return oQuickModify.modifySave(\'{{context.session_id}}\', \'{{context.session_var}}\');" accesskey="s" class="button_submit">&nbsp;&nbsp;<input type="submit" name="cancel" value="{{txt.modify_cancel}}" onclick="return oQuickModify.modifyCancel();" class="button_submit">' +
+					'</div>' +
+				'</div>',
 				sTemplateSubjectEdit: {{{json '<input type="text" name="subject" value="%subject%" size="80" maxlength="80">'}}},
 				sTemplateBodyNormal: {{{json '%body%'}}},
 				sTemplateSubjectNormal: '<a href="{{scripturl}}?topic={{context.current_topic}}.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>',

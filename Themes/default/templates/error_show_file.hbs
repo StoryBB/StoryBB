@@ -7,14 +7,16 @@
 	</head>
 	<body>
 		<table class="errorfile_table">
-		{{#each context.file_data.contents}}
+
+{{#each context.file_data.contents}}
 			<tr>
 				<td class="righttext{{#if (eq ../context.file_data.target (add @index ../context.file_data.min))}} current{{/if}}">
 					{{#if (eq ../context.file_data.target (add @index ../context.file_data.min))}}==&gt;{{/if}}{{add @index ../context.file_data.min}}
 				</td>
 				<td style="white-space: nowrap;{{#if (eq ../context.file_data.target (add @index ../context.file_data.min))}} border: 1px solid black;border-width: 1px 1px 1px 0;{{/if}}">{{{.}}}</td>
 			</tr>
-		{{/each}}
+{{/each}}
+
 		</table>
 	</body>
 </html>

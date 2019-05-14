@@ -48,7 +48,8 @@
 
 			<table id="Sources" class="table_grid">
 				<tbody>
-		{{#each context.file_versions}}
+
+{{#each context.file_versions}}
 					<tr class="windowbg">
 						<td class="half_table">
 							{{@key}}
@@ -60,7 +61,7 @@
 							<em id="currentSources{{@key}}">{{master}}</em>
 						</td>
 					</tr>
-		{{/each}}
+{{/each}}
 				</tbody>
 			</table>
 			<table class="table_grid">
@@ -82,7 +83,7 @@
 			<table id="Default" class="table_grid">
 				<tbody>
 
-		{{#each context.default_template_versions}}
+{{#each context.default_template_versions}}
 					<tr class="windowbg">
 						<td class="half_table">
 							{{@key}}
@@ -94,7 +95,7 @@
 							<em id="currentDefault{{@key}}">??</em>
 						</td>
 					</tr>
-		{{/each}}
+{{/each}}
 				</tbody>
 			</table>
 
@@ -116,8 +117,9 @@
 
 			<table id="Languages" class="table_grid">
 				<tbody>
-	{{#each context.default_language_versions}}
-		{{#each .}}
+
+{{#each context.default_language_versions}}
+	{{#each .}}
 					<tr class="windowbg">
 						<td class="half_table">
 							{{@key}}.<em>{{../@key}}</em>.php
@@ -129,11 +131,12 @@
 							<em id="current{{@key}}.{{../@key}}">{{master}}</em>
 						</td>
 					</tr>
-		{{/each}}
 	{{/each}}
+{{/each}}
 				</tbody>
 			</table>
-	{{#if context.template_versions}}
+
+{{#if context.template_versions}}
 			<table class="table_grid">
 				<tbody>
 					<tr class="windowbg">
@@ -152,7 +155,8 @@
 
 			<table id="Templates" class="table_grid">
 				<tbody>
-		{{#each context.template_versions}}
+
+{{#each context.template_versions}}
 					<tr class="windowbg">
 						<td class="half_table">
 							{{@key}}
@@ -165,9 +169,9 @@
 						</td>
 					</tr>
 				</tbody>
-		{{/each}}
+	{{/each}}
 			</table>
-	{{/if}}
+{{/if}}
 		</div>
 	
 		<script>

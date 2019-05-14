@@ -10,12 +10,12 @@
 				{{{txt.edit_language_entries_primary}}}
 			</div>
 
-			{{! Not writable? }}
-			{{#if context.lang_file_not_writable_message}}
+{{! Not writable? }}
+{{#if context.lang_file_not_writable_message}}
 			<div class="errorbox">
 				{{{context.lang_file_not_writable_message}}}
 			</div>
-			{{/if}}
+{{/if}}
 
 			{{! Show the language entries. }}
 			<div class="windowbg">
@@ -40,10 +40,10 @@
 				{{token_form 'admin-mlang'}}
 				<input type="submit" name="save_main" value="{{{txt.save}}}"{{#if (or context.lang_file_not_writable_message context.file_entries)}} disabled{{/if}} class="button_submit">
 
-				{{! Allow deleting entries. Except English, that can't be deleted. }}
-				{{#unless (eq context.lang_id 'english')}}
+{{! Allow deleting entries. Except English, that can't be deleted. }}
+{{#unless (eq context.lang_id 'english')}}
 				<input type="submit" name="delete_main" value="{{{txt.delete}}}"{{#if (or context.lang_file_not_writable_message context.file_entries)}} disabled{{/if}} onclick="confirm('{{{txt.languages_delete_confirm}}}');" class="button_submit">
-				{{/unless}}
+{{/unless}}
 			</div>
 		</form>
 
@@ -57,13 +57,14 @@
 				{{{txt.edit_language_entries_file}}}:
 				<select name="tfid" onchange="if (this.value != -1) document.forms.entry_form.submit();">
 					<option value="-1">&nbsp;</option>
-					{{#each context.possible_files}}
+
+{{#each context.possible_files}}
 					<optgroup label="{{{name}}}">
-						{{#each files}}
+	{{#each files}}
 						<option value="{{../@key}}+{{id}}"{{#if selected}} selected{{/if}}> =&gt; {{{name}}}</option>
-						{{/each}}
+	{{/each}}
 					</optgroup>
-					{{/each}}
+{{/each}}
 				</select>
 				{{session_form}}
 				{{token_form 'admin-mlang'}}
@@ -71,19 +72,20 @@
 			</div>
 			<br class="clear">
 
-			{{! Is it not writable? Show an error. }}
-			{{#if context.entries_not_writable_message}}
+{{! Is it not writable? Show an error. }}
+{{#if context.entries_not_writable_message}}
 			<div class="errorbox">
 				{{{context.entries_not_writable_message}}}
 			</div>
-			{{/if}}
+{{/if}}
 
-			{{! Have some entries? }}
-			{{#if context.split_file_entries}}
+{{! Have some entries? }}
+{{#if context.split_file_entries}}
 			<div class="windowbg2">
 				<dl class="settings">
-					{{#each context.split_file_entries}}
-						{{#if (eq (count .) 1)}}
+
+	{{#each context.split_file_entries}}
+		{{#if (eq (count .) 1)}}
 					<dt>
 						<span class="smalltext">{{{this.0.key}}}</span>
 					</dt>
@@ -93,7 +95,7 @@
 						<textarea name="entry[{{{this.0.key}}}]" cols="40" rows="{{#if (lt this.0.rows 2)}}2{{else}}{{this.0.rows}}{{/if}}" style="width: 96%;">{{{this.0.value}}}</textarea>
 					</dt>
 					<dd></dd>
-						{{else}}
+		{{else}}
 					<dt>
 						<span class="smalltext">{{{this.0.key}}}</span>
 					</dt>
@@ -108,11 +110,11 @@
 						<input type="hidden" name="comp[{{{this.1.key}}}]" value="{{{this.1.value}}}">
 						<textarea name="entry[{{{this.1.key}}}]" cols="40" rows="{{#if (lt this.1.rows 2)}}2{{else}}{{this.1.rows}}{{/if}}" style="width: 96%;">{{{this.1.value}}}</textarea>
 					</dd>
-						{{/if}}
-					{{/each}}
+		{{/if}}
+	{{/each}}
 				</dl>
 				<input type="submit" name="save_entries" value="{{{txt.save}}}"{{#if context.entries_not_writable_message}} disabled{{/if}} class="button_submit">
 			</div>
-			{{/if}}
+{{/if}}
 		</form>
 	</div>

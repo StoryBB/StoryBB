@@ -15,32 +15,37 @@
 				</thead>
 				<tbody>
 
-					{{#each context.profiles}}
+{{#each context.profiles}}
 					<tr class="windowbg">
 						<td>
-							{{#if (and ../context.show_rename_boxes can_edit)}}
+
+	{{#if (and ../context.show_rename_boxes can_edit)}}
 							<input type="text" name="rename_profile[{{id}}]" value="{{{name}}}">
-							{{else}}
+	{{else}}
 							<a href="{{../scripturl}}?action=admin;area=permissions;sa=index;pid={{id}};{{session_url}}">{{{name}}}</a>
-							{{/if}}
+	{{/if}}
 						</td>
 						<td>
-							{{#if boards_text}}{{{boards_text}}}{{else}}{{{../txt.permissions_profile_used_by_none}}}{{/if}}
+	{{#if boards_text}}
+							{{{boards_text}}}
+	{{else}}
+							{{{../txt.permissions_profile_used_by_none}}}
+	{{/if}}
 						</td>
 						<td{{#if ../context.show_rename_boxes}} style="display:none"{{/if}}>
 							<input type="checkbox" name="delete_profile[]" value="{{id}}"{{#unless can_delete}}disabled{{/unless}}>
 						</td>
 					</tr>
-					{{/each}}
+{{/each}}
 				</tbody>
 			</table>
 			<div class="flow_auto righttext padding">
 				{{session_form}}
 				{{token_form 'admin-mpp'}}
 
-				{{#if context.can_edit_something}}
+{{#if context.can_edit_something}}
 				<input type="submit" name="rename" value="{{#unless context.show_rename_boxes}}{{{txt.permissions_profile_rename}}}{{else}}{{{txt.permissions_commit}}}{{/unless}}" class="button_submit">
-				{{/if}}
+{{/if}}
 
 				<input type="submit" name="delete" value="{{{txt.quickmod_delete_selected}}}" class="button_submit" {{#if context.show_rename_boxes}} style="display:none"{{/if}}/>
 			</div>
@@ -63,9 +68,10 @@
 					</dt>
 					<dd>
 						<select name="copy_from">
-							{{#each context.profiles}}
+
+{{#each context.profiles}}
 							<option value="{{@key}}#">{{{name}}}</option>
-							{{/each}}
+{{/each}}
 						</select>
 					</dd>
 				</dl>

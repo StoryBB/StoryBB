@@ -4,27 +4,28 @@
 			<input type="hidden" name="cat" value="{{{context.category.id}}}">
 			<div class="cat_bar">
 				<h3 class="catbg">
-					{{#if context.category.is_new}}
-						{{{txt.mboards_new_cat_name}}}
-					{{else}}
-						{{{txt.catEdit}}}
-					{{/if}}
+{{#if context.category.is_new}}
+					{{{txt.mboards_new_cat_name}}}
+{{else}}
+					{{{txt.catEdit}}}
+{{/if}}
 				</h3>
 			</div>
 			<div class="windowbg2 noup">
 				<dl class="settings">
-					{{! If this isn't the only category, let the user choose where this category should be positioned down the board index.}}
-					{{#if (gt (count context.category_order) 1)}}
+
+{{! If this isn't the only category, let the user choose where this category should be positioned down the board index.}}
+{{#if (gt (count context.category_order) 1)}}
 					<dt><strong>{{{txt.order}}}:</strong></dt>
 					<dd>
 						<select name="cat_order">
-							{{! Print every existing category into a select box. }}
-							{{#each context.category_order}}
+	{{! Print every existing category into a select box. }}
+	{{#each context.category_order}}
 							<option{{#if selected}} selected{{/if}} value="{{id}}">{{{name}}}</option>
-							{{/each}}
+	{{/each}}
 						</select>
 					</dd>
-					{{/if}}
+{{/if}}
 
 					{{! Allow the user to edit the category name and/or choose whether you can collapse the category. }}
 					<dt>
@@ -51,35 +52,35 @@
 						<input type="checkbox" name="collapse"{{#if context.category.can_collapse}} checked{{/if}}>
 					</dd>
 
-					{{! Show any category settings added by mods using the 'integrate_edit_category' hook. }}
-					{{#if context.custom_category_settings}}
-						{{#each context.custom_category_settings}}
-							{{#if (and dt dd)}}
+{{! Show any category settings added by mods using the 'integrate_edit_category' hook. }}
+{{#if context.custom_category_settings}}
+	{{#each context.custom_category_settings}}
+		{{#if (and dt dd)}}
 					<dt class="clear{{#unless (is_numeric @key)}} catset_{{@key}}{{/unless}}">
 						{{{dt}}}
 					</dt>
 					<dd{{#unless (is_numeric @key)}} class="catset_{{@key}}"{{/unless}}>
 						{{{dd}}}
 					</dd>
-							{{/if}}
-						{{/each}}
-					{{/if}}
+		{{/if}}
+	{{/each}}
+{{/if}}
 				</dl>
 
-				{{#if context.category.is_new}}
+{{#if context.category.is_new}}
 				<input type="submit" name="add" value="{{{txt.mboards_add_cat_button}}}" onclick="return !isEmptyText(this.form.cat_name);" class="button_submit">
-				{{else}}
+{{else}}
 				<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.cat_name);" class="button_submit">
 				<input type="submit" name="delete" value="{{{txt.mboards_delete_cat}}}" data-confirm="{{{txt.catConfirm}}}" class="button_submit you_sure">
-				{{/if}}
+{{/if}}
 
 				{{session_form}}
 				{{token_form context.token_check}}
 
-				{{! If this category is empty we don't bother with the next confirmation screen. }}
-				{{#if context.category.is_empty}}
+{{! If this category is empty we don't bother with the next confirmation screen. }}
+{{#if context.category.is_empty}}
 				<input type="hidden" name="empty" value="1">
-				{{/if}}
+{{/if}}
 			</div>
 		</form>
 	</div>

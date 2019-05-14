@@ -10,55 +10,64 @@
 <div id="admincenter">
 	<form id="admin_form_wrapper" action="{{context.post_url}}" method="post" accept-charset="UTF-8" {{#if context.force_form_onsubmit}} onsubmit="{{{context.force_form_onsubmit}}}"{{/if}}>
 
-		{{#if context.settings_title}}
+{{#if context.settings_title}}
 			<div class="cat_bar">
-				<h3 class="catbg">{{#if context.settings_title_help}}{{> helpicon help=context.settings_title_help}} {{/if}}{{{context.settings_title}}}</h3>
+				<h3 class="catbg">
+					{{#if context.settings_title_help}}{{> helpicon help=context.settings_title_help}} {{/if}}
+					{{{context.settings_title}}}
+				</h3>
 			</div>
-		{{/if}}
+{{/if}}
 		
-		{{#if context.settings_message}}
+{{#if context.settings_message}}
 		<div class="information">{{{context.settings_message}}}</div>
-		{{/if}}
+{{/if}}
 
 		<div class="windowbg2 noup">
 			<dl class="settings">
-			{{#each context.config_vars}}
-				{{#if (is_array .)}}
-					{{#if (eq type 'callback')}}
-						{{{dynamicpartial (concat 'admin_setting_' name)}}}
-					{{/if}}
-					{{! Headings }}
-					{{#if (eq type 'title')}}{{> admin_setting_title config_var=.}}{{/if}}
-					{{#if (eq type 'desc')}}{{> admin_setting_desc config_var=.}}{{/if}}
-					{{#if (eq type 'titledesc')}}{{> admin_setting_titledesc config_var=.}}{{/if}}
-					{{#if (eq type 'warning')}}{{> admin_setting_warning config_var=.}}{{/if}}
-					{{#if (eq type 'message')}}{{> admin_setting_message config_var=.}}{{/if}}
-					{{! Simple input types }}
-					{{#if (eq type 'check')}}{{> admin_setting_check config_var=.}}{{/if}}
-					{{#if (eq type 'int')}}{{> admin_setting_number config_var=.}}{{/if}}
-					{{#if (eq type 'float')}}{{> admin_setting_number config_var=.}}{{/if}}
-					{{#if (eq type 'email')}}{{> admin_setting_email config_var=.}}{{/if}}
-					{{#if (eq type 'text')}}{{> admin_setting_text config_var=.}}{{/if}}
-					{{#if (eq type 'large_text')}}{{> admin_setting_large_text config_var=.}}{{/if}}
-					{{#if (eq type 'password')}}{{> admin_setting_password config_var=.}}{{/if}}
-					{{#if (eq type 'select')}}{{> admin_setting_select config_var=.}}{{/if}}
-					{{! Convenient special types }}
-					{{#if (eq type 'boards')}}{{> admin_setting_boards config_var=.}}{{/if}}
-					{{#if (eq type 'permissions')}}{{> admin_setting_permissions config_var=. context=../context txt=../txt scripturl=../scripturl}}{{/if}}
-					{{#if (eq type 'bbc')}}{{> admin_setting_bbc config_var=. context=../context txt=../txt scripturl=../scripturl}}{{/if}}
-					{{#if (eq type 'var_message')}}{{> admin_setting_var_message config_var=.}}{{/if}}
-				{{else}}
-					{{#if (eq . '')}}
-						{{> admin_setting_divider}}
-					{{else}}
-						{{> admin_setting_plaintext text=.}}
-					{{/if}}
-				{{/if}}
-			{{/each}}
+
+{{#each context.config_vars}}
+	{{#if (is_array .)}}
+		{{#if (eq type 'callback')}}
+				{{{dynamicpartial (concat 'admin_setting_' name)}}}
+		{{/if}}
+
+				{{! Headings }}
+				{{#if (eq type 'title')}}{{> admin_setting_title config_var=.}}{{/if}}
+				{{#if (eq type 'desc')}}{{> admin_setting_desc config_var=.}}{{/if}}
+				{{#if (eq type 'titledesc')}}{{> admin_setting_titledesc config_var=.}}{{/if}}
+				{{#if (eq type 'warning')}}{{> admin_setting_warning config_var=.}}{{/if}}
+				{{#if (eq type 'message')}}{{> admin_setting_message config_var=.}}{{/if}}
+
+				{{! Simple input types }}
+				{{#if (eq type 'check')}}{{> admin_setting_check config_var=.}}{{/if}}
+				{{#if (eq type 'int')}}{{> admin_setting_number config_var=.}}{{/if}}
+				{{#if (eq type 'float')}}{{> admin_setting_number config_var=.}}{{/if}}
+				{{#if (eq type 'email')}}{{> admin_setting_email config_var=.}}{{/if}}
+				{{#if (eq type 'text')}}{{> admin_setting_text config_var=.}}{{/if}}
+				{{#if (eq type 'large_text')}}{{> admin_setting_large_text config_var=.}}{{/if}}
+				{{#if (eq type 'password')}}{{> admin_setting_password config_var=.}}{{/if}}
+				{{#if (eq type 'select')}}{{> admin_setting_select config_var=.}}{{/if}}
+
+				{{! Convenient special types }}
+				{{#if (eq type 'boards')}}{{> admin_setting_boards config_var=.}}{{/if}}
+				{{#if (eq type 'permissions')}}{{> admin_setting_permissions config_var=. context=../context txt=../txt scripturl=../scripturl}}{{/if}}
+				{{#if (eq type 'bbc')}}{{> admin_setting_bbc config_var=. context=../context txt=../txt scripturl=../scripturl}}{{/if}}
+				{{#if (eq type 'var_message')}}{{> admin_setting_var_message config_var=.}}{{/if}}
+	{{else}}
+		{{#if (eq . '')}}
+				{{> admin_setting_divider}}
+		{{else}}
+				{{> admin_setting_plaintext text=.}}
+		{{/if}}
+	{{/if}}
+{{/each}}
+
 			</dl>
-			{{#unless context.settings_save_dont_show}}
+
+{{#unless context.settings_save_dont_show}}
 				<input type="submit" value="{{{txt.save}}}"{{#if context.save_disabled}} disabled{{/if}}{{#if context.settings.save_onclick}} onclick="{{{context.settings_save_onclick}}}"{{/if}} class="button_submit">
-			{{/unless}}
+{{/unless}}
 		</div>
 		{{#if context.admin-ssc_token}}{{token_form 'admin-ssc'}}{{/if}}
 		{{#if context.admin-dbsc_token}}{{token_form 'admin-dbsc'}}{{/if}}

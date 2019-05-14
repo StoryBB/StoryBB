@@ -1,7 +1,7 @@
 	{{! Reorder smileys template. }}
 	<div id="admincenter">
 
-		{{#each context.smileys}}
+{{#each context.smileys}}
 		<form action="{{../scripturl}}?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">{{{title}}}</h3>
@@ -10,32 +10,40 @@
 				{{{description}}}
 			</div>
 			<div class="windowbg2">
-				<strong>{{#unless ../context.move_smiley}}{{{txt.smileys_move_select_smiley}}}{{else}}{{{../txt.smileys_move_select_destination}}}{{/unless}}...</strong><br>
+				<strong>
 
-				{{#each rows}}
-					{{#if ../../context.move_smiley}}
+	{{#unless ../context.move_smiley}}
+					{{{txt.smileys_move_select_smiley}}}
+	{{else}}
+					{{{../txt.smileys_move_select_destination}}}
+	{{/unless}}
+					...
+				</strong><br>
+
+	{{#each rows}}
+		{{#if ../../context.move_smiley}}
 				<a href="{{../../scripturl}}?action=admin;area=smileys;sa=setorder;location={{../id}};source={{{../../context.move_smiley}}};row={{this.0.row}};reorder=1;{{session_url}}" class="main_icons select_below" title="{{{../../txt.smileys_move_here}}}"></a>
-					{{/if}}
+		{{/if}}
 
-					{{#each .}}
-						{{#unless ../../../context.move_smiley}}
+		{{#each .}}
+			{{#unless ../../../context.move_smiley}}
 				<a href="{{../../../scripturl}}?action=admin;area=smileys;sa=setorder;move={{id}}">
 					<img src="{{{../../../modSettings.smileys_url}}}/{{filename}}" style="padding: 2px; border: 0px solid black;" alt="{{{description}}}">
 				</a>
-						{{else}}
+			{{else}}
 				<img src="{{{../../../modSettings.smileys_url}}}/{{filename}}" style="padding: 2px;{{#if selected}} border: 2px solid red{{/if}};" alt="{{{description}}}">
 				<a href="{{scripturl}}?action=admin;area=smileys;sa=setorder;location={{../../id}};source={{../../../context.move_smiley}};after={{id}};reorder=1;{{session_url}}" title="{{{txt.smileys_move_here}}}" class="main_icons select_below"></a>
-						{{/unless}}
-					{{/each}}
+			{{/unless}}
+		{{/each}}
 				<br>
-				{{/each}}
+	{{/each}}
 
-				{{#if ../context.move_smiley}}
+	{{#if ../context.move_smiley}}
 				<a href="{{../scripturl}}?action=admin;area=smileys;sa=setorder;location={{id}};source={{../context.move_smiley}};row={{last_row}};reorder=1;{{session_url}}" class="main_icons select_below" title="{{{../txt.smileys_move_here}}}"></a>
-				{{/if}}
+	{{/if}}
 			</div>
 			<input type="hidden" name="reorder" value="1">
 		</form>
-		{{/each}}
+{{/each}}
 
 	</div>

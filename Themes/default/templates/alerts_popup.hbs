@@ -11,19 +11,19 @@
 		</div>
 		<div class="alerts_unread">
 
-		{{#if context.unread_alerts}}
-			{{#each context.unread_alerts}}
-				<div class="unread">
-					{{#if sender}}{{{sender.avatar.image}}}{{/if}}
-					<div class="details">
-						{{#if icon}}{{{icon}}}{{/if}}
-						<span>{{{text}}}</span> - {{{time}}}
-					</div>
+{{#if context.unread_alerts}}
+	{{#each context.unread_alerts}}
+			<div class="unread">
+				{{#if sender}}{{{sender.avatar.image}}}{{/if}}
+				<div class="details">
+					{{#if icon}}{{{icon}}}{{/if}}
+					<span>{{{text}}}</span> - {{{time}}}
 				</div>
-			{{/each}}
-		{{else}}
-			<div class="no_unread">{{{txt.alerts_no_unread}}}</div>
-		{{/if}}
+			</div>
+	{{/each}}
+{{else}}
+		<div class="no_unread">{{{txt.alerts_no_unread}}}</div>
+{{/if}}
 
 		</div>
 		<script>

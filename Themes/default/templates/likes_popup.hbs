@@ -1,5 +1,6 @@
 <ul id="likes">
-	{{#each context.likers}}
+
+{{#each context.likers}}
 	<li>
 		{{{profile.avatar.image}}}
 		<span>
@@ -8,6 +9,7 @@
 		</span>
 		<span class="floatright">{{{time}}}</span>
 	</li>
-	{{/each}}
-	</ul>
-	<br class="clear">
+{{/each}}
+
+</ul>
+<br class="clear">

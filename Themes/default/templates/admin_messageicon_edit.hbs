@@ -9,14 +9,14 @@
 			<div class="windowbg2">
 				<dl class="settings">
 
-					{{#unless context.new_icon}}
+{{#unless context.new_icon}}
 					<dt>
 						<strong>{{{txt.smiley_preview}}}: </strong>
 					</dt>
 					<dd>
 						<img src="{{{context.icon.image_url}}}" alt="{{{context.icon.title}}}">
 					</dd>
-					{{/unless}}
+{{/unless}}
 
 					<dt>
 						<strong><label for="icon_filename">{{{txt.smileys_filename}}}</label>: </strong><br><span class="smalltext">{{{txt.icons_filename_all_png}}}</span>
@@ -37,13 +37,15 @@
 						<select name="icon_board" id="icon_board_select">
 							<option value="0"{{#unless context.icon.board_id}} selected{{/unless}}>{{{txt.icons_edit_icons_all_boards}}}</option>
 
-							{{#each context.categories}}
+{{#each context.categories}}
 							<optgroup label="{{{name}}}">
-								{{#each boards}}
-								<option value="{{id}}"{{#if selected}} selected{{/if}}>{{#if (gt child_level 0)}}{{repeat '==' child_level}}=&gt;{{/if}} {{{name}}}</option>
-								{{/each}}
+	{{#each boards}}
+								<option value="{{id}}"{{#if selected}} selected{{/if}}>
+									{{#if (gt child_level 0)}}{{repeat '==' child_level}}=&gt;{{/if}} {{{name}}}
+								</option>
+	{{/each}}
 							</optgroup>
-							{{/each}}
+{{/each}}
 
 						</select>
 					</dd>
@@ -54,20 +56,20 @@
 						<select name="icon_location" id="icon_location">
 							<option value="0"{{#unless context.icon.after}} selected{{/unless}}>{{{txt.icons_location_first_icon}}}</option>';
 
-							{{! Print the list of all the icons it can be put after... }}
-							{{#each context.icons}}
-								{{#unless (eq_coerce @key ../context.icon.id)}}
+{{! Print the list of all the icons it can be put after... }}
+{{#each context.icons}}
+	{{#unless (eq_coerce @key ../context.icon.id)}}
 								<option value="{{@key}}"{{#if (eq_coerce ../context.icon.after @key)}} selected{{/if}}>{{{../txt.icons_location_after}}}: {{{title}}}</option>
-								{{/unless}}
-							{{/each}}
+	{{/unless}}
+{{/each}}
 
 						</select>
 					</dd>
 				</dl>
 
-				{{#unless context.new_icon}}
+{{#unless context.new_icon}}
 				<input type="hidden" name="icon" value="{{context.icon.id}}">
-				{{/unless}}
+{{/unless}}
 
 				<input type="submit" name="icons_save" value="{{{txt.smileys_save}}}" class="button_submit">
 				{{session_form}}

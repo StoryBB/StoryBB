@@ -9,14 +9,15 @@
 					</div>
 					<div class="windowbg nopadding">
 						<div id="sbbAnnouncements">
-							{{#if context.admin_news.sbbAnnouncements.en}}
-								{{#each context.admin_news.sbbAnnouncements.en}}
+
+{{#if context.admin_news.sbbAnnouncements.en}}
+	{{#each context.admin_news.sbbAnnouncements.en}}
 								<dt><a href="{{href}}">{{subject}}</a> {{{../txt.on}}} {{time}}</dt>
 								<dd>{{message}}</dd>
-								{{/each}}
-							{{else}}
+	{{/each}}
+{{else}}
 								{{{txt.lfyi}}}
-							{{/if}}
+{{/if}}
 						</div>{{! dl? }}
 					</div>
 				</div>
@@ -33,11 +34,14 @@
 							<em><span class="{{#if context.admin_news.needs_update}}alert{{else}}up-to-date{{/if}}">{{context.forum_version}}</span></em><br>
 							{{txt.support_versions_current}}:
 							<em>StoryBB {{context.admin_news.current_version}}</em>
-							{{#if context.can_admin}}<a href="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=version">{{txt.version_check_more}}</a>{{/if}}<br><br>
+{{#if context.can_admin}}
+							<a href="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=version">{{txt.version_check_more}}</a>
+{{/if}}
+							<br><br>
 
-							{{#each context.current_versions}}
+{{#each context.current_versions}}
 							{{title}}: <em>{{version}}</em><br>
-							{{/each}}
+{{/each}}
 
 							<br>
 							
@@ -45,30 +49,30 @@
 							<strong>{{txt.administrators}}:</strong>
 							{{{join context.administrators ', '}}}
 
-							{{! If we have lots of admins... don't show them all. }}
-							{{#if context.more_admins_link}}
+{{! If we have lots of admins... don't show them all. }}
+{{#if context.more_admins_link}}
 								({{{context.more_admins_link}}})
-							{{/if}}
+{{/if}}
 
 						</div>
 					</div>
 				</div>
 			</div>
 
-			{{! Output the sections of the admin page }}
-			{{#each context.admin_menu.sections}}
+{{! Output the sections of the admin page }}
+{{#each context.admin_menu.sections}}
 				<fieldset id="group_{{@key}}" class="windowbg admin_group">
 					<legend>{{title}}</legend>
 
-					{{#each areas}}
-						{{#unless (eq @key "index")}}
-							{{#if icon_file}}
+	{{#each areas}}
+		{{#unless (eq @key "index")}}
+			{{#if icon_file}}
 					<a href="{{url}}" class="admin_group{{#if inactive}} inactive{{/if}}"><img class="large_admin_menu_icon_file" src="{{icon_file}}" alt="">{{label}}</a>
-							{{else}}
+			{{else}}
 					<a href="{{url}}"><span class="large_{{icon_class}}{{#if inactive}} inactive{{/if}}"></span>{{label}}</a>
-							{{/if}}
-						{{/unless}}
-					{{/each}}
+			{{/if}}
+		{{/unless}}
+	{{/each}}
 				</fieldset>
-			{{/each}}
+{{/each}}
 		</div>

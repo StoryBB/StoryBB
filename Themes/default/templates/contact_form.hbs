@@ -3,42 +3,46 @@
 			</div>
 			<form id="contactform" action="{{scripturl}}?action=contact" method="post" accept-charset="UTF-8">
 				<div class="roundframe">
-					{{#if context.contact.errors}}
+
+{{#if context.contact.errors}}
 					<div class="errorbox">
 						<strong>{{{txt.error_contact}}}</strong>
 						<ul>
-							{{#each context.contact.errors}}
+
+	{{#each context.contact.errors}}
 							<li>{{{.}}}</li>
-							{{/each}}
+	{{/each}}
 						</ul>
 					</div>
-					{{/if}}
+{{/if}}
 					<dl class="settings">
 						<dt>{{{txt.your_name}}}:</dt>
 						<dd>
-							{{#if context.user.is_guest}}
+
+{{#if context.user.is_guest}}
 							<input type="text" name="name" value="" required>
-							{{else}}
+{{else}}
 							{{{context.user.name}}}
-							{{/if}}
+{{/if}}
 						</dd>
 						<dt>{{{txt.your_email}}}:</dt>
 						<dd>
-							{{#if context.user.is_guest}}
+
+{{#if context.user.is_guest}}
 							<input type="email" name="email" value="" required>
-							{{else}}
+{{else}}
 							{{{context.user.email}}}
-							{{/if}}
+{{/if}}
 						</dd>
 						<dt>{{{txt.subject}}}:</dt>
 						<dd><input type="text" name="subject" value="" required></dd>
 						<dt>{{{txt.message}}}:</dt>
 						<dd><textarea name="message" required></textarea></dd>
 
-						{{#if context.visual_verification_id}}
+{{#if context.visual_verification_id}}
 						<dt>{{{txt.verification}}}:</dt>
 						<dd>{{{captcha context.visual_verification_id}}}</dd>
-						{{/if}}
+{{/if}}
 
 						<dt>&nbsp;</dt><dd></dd>
 						<dt></dt>

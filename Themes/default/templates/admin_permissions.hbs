@@ -2,15 +2,15 @@
 	<div id="admin_form_wrapper">
 		<form action="{{scripturl}}?action=admin;area=permissions;sa=quick" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm">
 
-			{{#if context.profile}}
+{{#if context.profile}}
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.permissions_for_profile}}}: &quot;{{{context.profile.name}}}&quot;</h3>
 			</div>
-			{{else}}
+{{else}}
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.permissions_title}}}</h3>
 			</div>
-			{{/if}}
+{{/if}}
 
 			<table class="table_grid">
 				<thead>
@@ -26,15 +26,16 @@
 					</tr>
 				</thead>
 				<tbody>
-					{{#each context.groups}}
+
+{{#each context.groups}}
 					<tr class="windowbg">
 						<td>
 							{{#if help}}{{> helpicon help=help}}{{/if}}&nbsp;<span>{{{name}}}</span>
 
-							{{#if children}}
+	{{#if children}}
 							<br>
 							<span class="smalltext">{{{../txt.permissions_includes_inherited}}}: &quot;{{{join children '&quot;, &quot;'}}}&quot;</span>
-							{{/if}}
+	{{/if}}
 						</td>
 						<td>{{#if can_search}}{{{link}}}{{else}}{{{num_members}}}{{/if}}</td>
 
@@ -44,12 +45,12 @@
 						<td>{{#if allow_modify}}<a href="{{../scripturl}}?action=admin;area=permissions;sa=modify;group={{id}}{{#if ../context.profile}};pid={{../context.profile.id}}{{/if}}">{{#if ../context.can_modify}}{{{../txt.permissions_modify}}}{{else}}{{{../txt.permissions_view}}}{{/if}}</a>{{/if}}</td>
 						<td class="centercol">{{#if (and allow_modify ../context.can_modify)}}<input type="checkbox" name="group[]" value="{{id}}">{{/if}}</td>
 					</tr>
-					{{/each}}
+{{/each}}
 				</tbody>
 			</table>
 			<br>
 
-			{{#if context.can_modify}}
+{{#if context.can_modify}}
 				<div class="cat_bar">
 					<h3 class="catbg">
 						<span id="permissions_panel_toggle" class="{{#if context.show_advanced_options}}toggle_up{{else}}toggle_down{{/if}} floatright" style="display: none;"></span>
@@ -78,11 +79,12 @@
 							<dd>
 								<select name="copy_from">
 									<option value="empty">({{{txt.permissions_select_membergroup}}})</option>
-									{{#each context.groups}}
-										{{#if (eq id -1)}}
+
+	{{#each context.groups}}
+		{{#if (eq id -1)}}
 										<option value="{{id}}">{{{name}}}</option>
-										{{/if}}
-									{{/each}}
+		{{/if}}
+	{{/each}}
 								</select>
 							</dd>
 							<dt>
@@ -95,27 +97,28 @@
 							<dd style="overflow:auto;">
 								<select name="permissions">
 									<option value="">({{{txt.permissions_select_permission}}})</option>
-									{{#each context.permissions}}{{! permissionType }}
-										{{#if (or (eq id 'board') (not ../context.profile))}}
-											{{#each columns}}
-												{{#each .}}{{! permissionGroup }}
-													{{#unless hidden}}
+
+	{{#each context.permissions}}{{! permissionType }}
+		{{#if (or (eq id 'board') (not ../context.profile))}}
+			{{#each columns}}
+				{{#each .}}{{! permissionGroup }}
+					{{#unless hidden}}
 									<option value="" disabled>[{{{name}}}]</option>
-														{{#each permissions}}
-															{{#unless hidden}}
-																{{#if has_own_any}}
+						{{#each permissions}}
+							{{#unless hidden}}
+								{{#if has_own_any}}
 									<option value="{{../../../id}}/{{own.id}}">&nbsp;{{{name}}} ({{{own.name}}})</option>
 									<option value="{{../../../id}}/{{any.id}}">&nbsp;{{{name}}} ({{{any.name}}})</option>
-																{{else}}
+								{{else}}
 									<option value="{{../../../id}}/{{id}}">&nbsp;{{{name}}}</option>
-																{{/if}}
-															{{/unless}}
-														{{/each}}
-													{{/unless}}
-												{{/each}}
-											{{/each}}
-										{{/if}}
-									{{/each}}
+								{{/if}}
+							{{/unless}}
+						{{/each}}
+					{{/unless}}
+				{{/each}}
+			{{/each}}
+		{{/if}}
+	{{/each}}
 								</select>
 							</dd>
 						</dl>
@@ -173,12 +176,12 @@
 					}
 				</script>
 
-				{{#if context.profile}}
+	{{#if context.profile}}
 				<input type="hidden" name="pid" value="{{context.profile.id}}">
-				{{/if}}
+	{{/if}}
 
 				{{session_form}}
 				{{token_form 'admin-mpq'}}
-			{{/if}}
+{{/if}}
 		</form>
 	</div>

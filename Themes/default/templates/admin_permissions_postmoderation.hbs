@@ -13,8 +13,8 @@
 				</dl>
 			</div>
 
-			{{! If we're not active, there's a bunch of stuff we don't need to show. }}
-			{{#if modSettings.postmod_active}}
+{{! If we're not active, there's a bunch of stuff we don't need to show. }}
+{{#if modSettings.postmod_active}}
 				<div class="information">{{{txt.permissions_post_moderation_deny_note}}}</div>
 
 				<div class="padding">
@@ -28,11 +28,11 @@
 						<br><br><br>
 						{{{txt.permissions_post_moderation_select}}}:
 						<select name="pid" onchange="document.forms.postmodForm.submit();">
-							{{#each context.profiles}}
-								{{#if can_modify}}
+	{{#each context.profiles}}
+		{{#if can_modify}}
 							<option value="{{id}}"{{#if (eq id ../context.current_profile)}} selected{{/if}}>{{{name}}}</option>
-								{{/if}}
-							{{/each}}
+		{{/if}}
+	{{/each}}
 						</select>
 						<input type="submit" value="{{{txt.go}}}" class="button_submit">
 					</span>
@@ -51,11 +51,11 @@
 								{{{txt.permissions_post_moderation_replies_any}}}
 							</th>
 
-							{{#if (eq modSettings.attachmentEnable '1')}}
+	{{#if (eq modSettings.attachmentEnable '1')}}
 								<th class="centercol" colspan="3">
 									{{{txt.permissions_post_moderation_attachments}}}
 								</th>
-							{{/if}}
+	{{/if}}
 						</tr>
 						<tr class="windowbg">
 							<th class="quarter_table">
@@ -71,22 +71,23 @@
 							<th><span class="main_icons post_moderation_moderate"></span></th>
 							<th><span class="main_icons post_moderation_deny"></span></th>
 
-							{{#if (eq modSettings.attachmentEnable '1')}}
+	{{#if (eq modSettings.attachmentEnable '1')}}
 							<th><span class="main_icons post_moderation_allow"></span></th>
 							<th><span class="main_icons post_moderation_moderate"></span></th>
 							<th><span class="main_icons post_moderation_deny"></span></th>
-							{{/if}}
+	{{/if}}
 						</tr>
 					</thead>
 					<tbody>
-						{{#each context.profile_groups}}
+
+	{{#each context.profile_groups}}
 							<tr class="windowbg">
 								<td class="half_table">
 									<span{{#if color}} style="color: {{color}}"{{/if}}>{{{name}}}</span>
 
-									{{#if children}}
+		{{#if children}}
 									<br><span class="smalltext">{{{../txt.permissions_includes_inherited}}}: &quot;{{{join children '&quot;, &quot;'}}}&quot;</span>
-									{{/if}}
+		{{/if}}
 								</td>
 								<td class="centercol">
 									<input type="radio" name="new_topic[{{id}}]" value="allow"{{#if (eq new_topic 'allow')}} checked{{/if}}>
@@ -98,9 +99,9 @@
 									<input type="radio" name="new_topic[{{id}}]" value="disallow"{{#if (eq new_topic 'disallow')}} checked{{/if}}>
 								</td>
 
-								{{#if (eq id -1)}}
+		{{#if (eq id -1)}}
 								<td colspan="3"></td>
-								{{else}}
+		{{else}}
 								<td class="centercol">
 									<input type="radio" name="replies_own[{{id}}]" value="allow"{{#if (eq replies_own 'allow')}} checked{{/if}}>
 								</td>
@@ -110,7 +111,7 @@
 								<td class="centercol">
 									<input type="radio" name="replies_own[{{id}}]" value="disallow"{{#if (eq replies_own 'disallow')}} checked{{/if}}>
 								</td>
-								{{/if}}
+		{{/if}}
 
 								<td class="centercol">
 									<input type="radio" name="replies_any[{{id}}]" value="allow"{{#if (eq replies_any 'allow')}} checked{{/if}}>
@@ -122,7 +123,7 @@
 									<input type="radio" name="replies_any[{{id}}]" value="disallow"{{#if (eq replies_any 'disallow')}} checked{{/if}}>
 								</td>
 
-								{{#if (eq ../modSettings.attachmentEnable '1')}}
+		{{#if (eq ../modSettings.attachmentEnable '1')}}
 								<td class="centercol">
 									<input type="radio" name="attachment[{{id}}]" value="allow"{{#if (eq attachment 'allow')}} checked{{/if}}>
 								</td>
@@ -132,12 +133,12 @@
 								<td class="centercol">
 									<input type="radio" name="attachment[{{id}}]" value="disallow"{{#if (eq attachment 'disallow')}} checked{{/if}}>
 								</td>
-								{{/if}}
+		{{/if}}
 							</tr>
-						{{/each}}
+	{{/each}}
 					</tbody>
 				</table>
-			{{/if}}
+{{/if}}
 			<div class="righttext padding">
 				<input type="submit" name="save_changes" value="{{{txt.permissions_commit}}}" class="button_submit">
 				{{token_form 'admin-mppm'}}

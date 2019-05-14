@@ -17,27 +17,31 @@
 		<tr class="title_bar">
 			<td colspan="3">
 				&nbsp;&nbsp;{{txt.apply_filter_of_type}}:
-				{{#each context.error_types}}
-					{{#unless (eq @index 0)}}&nbsp;|&nbsp;{{/unless}}
-					{{#if this.is_selected}}<img src="{{../settings.images_url}}/selected.png" alt="">{{/if}}
-					<a href="{{this.url}}" {{#if this.is_selected}}style="font-weight: bold;"{{/if}} title="{{this.description}}">{{{this.label}}}</a>
-				{{/each}}
+
+{{#each context.error_types}}
+				{{#unless (eq @index 0)}}&nbsp;|&nbsp;{{/unless}}
+				{{#if this.is_selected}}<img src="{{../settings.images_url}}/selected.png" alt="">{{/if}}
+				<a href="{{this.url}}" {{#if this.is_selected}}style="font-weight: bold;"{{/if}} title="{{this.description}}">{{{this.label}}}</a>
+{{/each}}
 			</td>
 		</tr>
-		{{#if context.has_filter}}
+
+{{#if context.has_filter}}
 			<tr>
 				<td colspan="3" class="windowbg">
-					<strong>&nbsp;&nbsp;{{txt.applying_filter}}:</strong> {{context.filter.entity}} {{context.filter.value.html}}&nbsp;&nbsp;[<a href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq context.sort_direction 'down')}};desc{{/if}}">{{txt.clear_filter}}</a>]
+					<strong>&nbsp;&nbsp;{{txt.applying_filter}}:</strong>
+					{{context.filter.entity}} {{context.filter.value.html}}&nbsp;&nbsp;[<a href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq context.sort_direction 'down')}};desc{{/if}}">{{txt.clear_filter}}</a>]
 				</td>
 			</tr>
-		{{/if}}
+{{/if}}
 		<tr>
 			<td colspan="3" class="righttext" style="padding: 4px 8px;">
 				<label for="check_all1"><strong>{{txt.check_all}}</strong></label>&nbsp;
 				<input type="checkbox" id="check_all1" onclick="invertAll(this, this.form, 'delete[]'); this.form.check_all2.checked = this.checked;">
 			</td>
 		</tr>
-		{{#each context.errors}}
+
+{{#each context.errors}}
 			<tr class="windowbg">
 				<td>
 					<div style="float: left; width: 50%; line-height: 1.8em; padding: 0 4px 4px 4px; vertical-align: bottom;">
@@ -45,16 +49,18 @@
 						<strong>{{{this.member.link}}}</strong><br>
 						<a href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}}{{#if ../context.has_filter}}{{../context.filter.href}}{{/if}}" title="{{../txt.reverse_direction}}" class="main_icons sort_{{../context.sort_direction}}"></a>
 						{{{this.time}}}<br>
-						{{#if this.member.ip}}
-							<a href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=ip;value={{this.member.ip}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_ip}}" class="main_icons filter centericon"></a>
-							<strong><a href="{{scripturl}}?action=trackip;searchip={{this.member.ip}}">{{this.member.ip}}</a></strong>&nbsp;&nbsp;<br>
-						{{/if}}
+
+	{{#if this.member.ip}}
+						<a href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=ip;value={{this.member.ip}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_ip}}" class="main_icons filter centericon"></a>
+						<strong><a href="{{scripturl}}?action=trackip;searchip={{this.member.ip}}">{{this.member.ip}}</a></strong>&nbsp;&nbsp;<br>
+	{{/if}}
 					</div>
 					<div style="float: left; width: 50%; line-height: 1.8em; padding: 0 4px;">
-						{{#if this.member.session}}
-							<a href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=session;value={{this.member.session}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_session}}" class="main_icons filter centericon"></a>
-							{{this.member.session}}<br>
-						{{/if}}
+
+	{{#if this.member.session}}
+						<a href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=session;value={{this.member.session}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_session}}" class="main_icons filter centericon"></a>
+						{{this.member.session}}<br>
+	{{/if}}
 						<a href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=error_type;value={{this.error_type.type}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_type}}" class="main_icons filter centericon"></a>
 						{{../txt.error_type}}: {{this.error_type.name}}<br>
 						<a style="display: table-cell; padding: 4px 0; width: 20px; vertical-align: top;" href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=message;value={{this.message.href}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_message}}" class="main_icons filter"></a>
@@ -64,7 +70,8 @@
 						<a style="display: table-cell; padding: 4px; width: 20px; vertical-align: top;" href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=url;value={{this.url.href}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_url}}" class="main_icons filter"></a>
 						<a style="display: table-cell;" href="{{this.url.html}}">{{this.url.html}}</a>
 					</div>
-					{{#if this.file}}
+
+	{{#if this.file}}
 						<div style="float: left; width: 100%; padding: 4px 0; line-height: 1.6em; border-top: 1px solid #e3e3e3;">
 							<a style="display: table-cell; padding: 4px; width: 20px; vertical-align: top;" href="{{scripturl}}?action=admin;area=logs;sa=errorlog{{#if (eq ../context.sort_direction 'down')}};desc{{/if}};filter=file;value={{this.file.search}}" title="{{../txt.apply_filter}}: {{../txt.filter_only_file}}" class="main_icons filter"></a>
 							<div>
@@ -72,17 +79,17 @@
 								{{../txt.line}}: {{this.file.line}}
 							</div>
 						</div>
-					{{/if}}
+	{{/if}}
 				</td>
 				<td class="checkbox_column">
 					<input type="checkbox" name="delete[]" value="{{this.id}}">
 				</td>
 			</tr>
-		{{else}}
+{{else}}
 			<tr class="windowbg">
 				<td class="centertext" colspan="2">{{txt.errlog_no_entries}}</td>
 			</tr>
-		{{/each}}
+{{/each}}
 		<tr>
 			<td colspan="3" class="righttext" style="padding-right: 1.2ex">
 				<label for="check_all2"><strong>{{txt.check_all}}</strong></label>&nbsp;

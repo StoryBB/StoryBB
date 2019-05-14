@@ -13,15 +13,15 @@
 						<span {{#if context.group.online_color}} style="color: {{context.group.online_color}};"{{/if}}>{{{context.group.name}}}</span> {{{context.group.icons}}}
 					</dd>
 
-					{{! Any description to show? }}
-					{{#if context.group.description}}
+{{! Any description to show? }}
+{{#if context.group.description}}
 					<dt>
 						<strong>{{{txt.membergroups_members_description}}}:</strong>
 					</dt>
 					<dd>
 						{{{context.group.description}}}
 					</dd>
-					{{/if}}
+{{/if}}
 
 					<dt>
 						<strong>{{{txt.membergroups_members_top}}}:</strong>
@@ -30,15 +30,15 @@
 						{{{context.total_members}}}
 					</dd>
 
-					{{! Any group moderators to show? }}
-					{{#if context.group.moderators}}
+{{! Any group moderators to show? }}
+{{#if context.group.moderators}}
 					<dt>
 						<strong>{{{txt.membergroups_members_group_moderators}}}:</strong>
 					</dt>
 					<dd>
 						{{{join context.group.moderators_formatted ', '}}}{{! More php remains?}}
 					</dd>
-					{{/if}}
+{{/if}}
 
 				</dl>
 			</div>
@@ -58,17 +58,17 @@
 							</a>
 						</th>
 
-						{{#if (eq context.group.is_character '1')}}
+{{#if (eq context.group.is_character '1')}}
 						<th>{{{txt.character_name_title}}}</th>
-						{{/if}}
+{{/if}}
 
-						{{#if context.can_send_email}}
+{{#if context.can_send_email}}
 						<th>
 							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=email{{#if (and (eq context.sort_by 'email') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.email}}}{{#if (eq context.sort_by 'email')}}
 								<span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}
 							</a>
 						</th>
-						{{/if}}
+{{/if}}
 
 						<th>
 							<a href="{{scripturl}}?action={{context.current_action}}{{#if context.admin_area}};area={{context.admin_area}}{{/if}};sa=members;start={{context.start}};sort=active{{#if (and (eq context.sort_by 'active') (eq context.sort_direction 'up'))}};desc{{/if}};group={{context.group.id}}">{{{txt.membergroups_members_last_active}}}{{#if (eq context.sort_by 'active')}}
@@ -88,73 +88,76 @@
 							</a>
 						</th>
 
-						{{#if context.group.assignable}}
+{{#if context.group.assignable}}
 						<th style="width: 4%">
 							<input type="checkbox" onclick="invertAll(this, this.form);">
 						</th>
-						{{/if}}
+{{/if}}
 					</tr>
 				</thead>
 				<tbody>
 
-					{{#unless context.members}}
+{{#unless context.members}}
 					<tr class="windowbg">
 						<td colspan="{{#if (eq context.group.is_character '1')}}7{{else}}6{{/if}}">{{{txt.membergroups_members_no_members}}}</td>
 					</tr>
-					{{/unless}}
+{{/unless}}
 
-					{{#each context.members}}
+{{#each context.members}}
 					<tr class="windowbg">
 						<td>{{{name}}}</td>
-						{{#if character}}
+	{{#if character}}
 						<td>{{{character}}}</td>
-						{{/if}}
-						{{#if ../context.can_send_email}}
+	{{/if}}
+
+	{{#if ../context.can_send_email}}
 						<td>
 							<a href="mailto:{{{email}}}">{{{email}}}</a>
 						</td>
-						{{/if}}
+	{{/if}}
 						<td>{{{last_online}}}</td>
 						<td>{{{registered}}}</td>
-						{{#if ../context.group.assignable}}
+
+	{{#if ../context.group.assignable}}
 						<td>{{{posts}}}</td>
-							{{#if (eq ../context.group.is_character '1')}}
+
+		{{#if (eq ../context.group.is_character '1')}}
 						<td style="width:4%">
 							<input type="checkbox" name="rem[]" value="{{id_character}}">
 						</td>
-							{{else}}
+		{{else}}
 						<td style="width: 4%">
 							<input type="checkbox" name="rem[]" value="{{id}}"{{#if (and (eq_coerce ../context.user.id id) (eq_coerce ../context.group.id 1))}} onclick="if (this.checked) return confirm('{{{../txt.membergroups_members_deadmin_confirm}}}')"{{/if}}>
 						</td>
-							{{/if}}
-						{{else}}
+		{{/if}}
+	{{else}}
 						<td colspan="2">{{{posts}}}</td>
-						{{/if}}
+	{{/if}}
 					</tr>
-					{{/each}}
+{{/each}}
 
 				</tbody>
 			</table>
 
-			{{#if context.group.assignable}}
+{{#if context.group.assignable}}
 			<div class="floatright">
 				<input type="submit" name="remove" value="{{{txt.membergroups_members_remove}}}" class="button_submit">
 			</div>
-			{{/if}}
+{{/if}}
 
 			<div class="pagesection flow_hidden">
 				<div class="floatleft">{{{context.page_index}}}</div>
 			</div>
 			<br>
 
-			{{#if context.group.assignable}}
+{{#if context.group.assignable}}
 			<div class="cat_bar">
 				<h3 class="catbg">
-					{{#if (eq context.group.is_character '1')}}
-						{{{txt.membergroups_members_add_char_title}}}
-					{{else}}
-						{{{txt.membergroups_members_add_title}}}
-					{{/if}}
+	{{#if (eq context.group.is_character '1')}}
+					{{{txt.membergroups_members_add_char_title}}}
+	{{else}}
+					{{{txt.membergroups_members_add_title}}}
+	{{/if}}
 				</h3>
 			</div>
 			<div class="windowbg2">
@@ -162,11 +165,12 @@
 					<dt>
 						<strong>
 							<label for="toAdd">
-							{{#if (eq context.group.is_character '1')}}
+
+	{{#if (eq context.group.is_character '1')}}
 								{{{txt.membergroups_members_add_char_desc}}}:
-							{{else}}
+	{{else}}
 								{{{txt.membergroups_members_add_desc}}}:
-							{{/if}}
+	{{/if}}
 							</label>
 						</strong>
 					</dt>
@@ -178,7 +182,7 @@
 				</dl>
 				<input type="submit" name="add" value="{{{txt.membergroups_members_add}}}" class="button_submit">
 			</div>
-			{{/if}}
+{{/if}}
 
 			{{session_form}}
 			{{token_form 'mod-mgm'}}

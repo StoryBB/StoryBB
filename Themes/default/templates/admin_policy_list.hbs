@@ -14,49 +14,49 @@
 				</tr>
 			</thead>
 			<tbody>
-				{{#each context.policies}}
+
+{{#each context.policies}}
 				<tr class="windowbg">
 					<td>{{get_text 'policy_type_' policy_type}}</td>
 					<td>
-							{{#if versions}}
+	{{#if versions}}
 						<ul>
-								{{#each versions}}
+		{{#each versions}}
 							<li><a href="{{../scripturl}}?action=admin;area=regcenter;sa=policies;policy={{../@key}};lang={{language}}">{{{title}}}</a> [{{language}}]</li>
-								{{/each}}
+		{{/each}}
 						</ul>
-							{{/if}}
-							{{#if no_language}}
-								{{#if versions}}<br>{{/if}}
-								{{{../txt.policy_language_no_version}}}
+	{{/if}}
+
+	{{#if no_language}}
+						{{#if versions}}<br>{{/if}}
+						{{{../txt.policy_language_no_version}}}
 						<ul>
-									{{#each no_language}}
+
+		{{#each no_language}}
 							<li><a href="{{../scripturl}}?action=admin;area=regcenter;sa=policies;policy={{../@key}};lang={{.}}">{{.}}</a></li>
-									{{/each}}
+		{{/each}}
 						</ul>
-							{{/if}}
+	{{/if}}
 						</td>
 						<td>
-							{{#if (eq show_footer '1')}}
-								{{{../txt.yes}}}
-							{{else}}
-								{{{../txt.no}}}
-							{{/if}}
+
+	{{#if (eq show_footer '1')}}
+							{{{../txt.yes}}}{{else}}{{../txt.no}}}
+	{{/if}}
 						<td>
-							{{#if (eq show_reg '1')}}
-								{{{../txt.yes}}}
-							{{else}}
-								{{{../txt.no}}}
-							{{/if}}
+
+	{{#if (eq show_reg '1')}}
+							{{{../txt.yes}}}{{else}}{{{../txt.no}}}
+	{{/if}}
 						</td>
 						<td>
-							{{#if (eq show_help '1')}}
-								{{{../txt.yes}}}
-							{{else}}
-								{{{../txt.no}}}
-							{{/if}}
+
+	{{#if (eq show_help '1')}}
+							{{{../txt.yes}}}{{else}}{{{../txt.no}}}
+	{{/if}}
 						</td>
 					</tr>
-				{{/each}}
+{{/each}}
 			</tbody>
 		</table>
 	</div>

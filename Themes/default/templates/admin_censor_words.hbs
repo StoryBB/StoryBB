@@ -5,11 +5,12 @@
 				</div>
 				<div class="windowbg2 noup">
 					<p>{{{txt.admin_censored_where}}}</p>
-					{{#each context.censored_words}}
+
+{{#each context.censored_words}}
 					<div class="block">
 						<input type="text" name="censor_vulgar[]" value="{{{@key}}}" size="30"> =&gt; <input type="text" name="censor_proper[]" value="{{{.}}}" size="30">
 					</div>
-					{{/each}}
+{{/each}}
 					<div class="block">
 						<input type="text" name="censor_vulgar[]" value="" size="30"> =&gt; <input type="text" name="censor_proper[]" value="" size="30">
 					</div>

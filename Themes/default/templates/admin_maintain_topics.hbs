@@ -64,22 +64,27 @@
 					<div style="display: none;" id="rotPanel" class="flow_hidden">
 						<div class="floatleft" style="width: 49%">
 
-						{{#each context.split_categories}}
-							{{#each .}}
+{{#each context.split_categories}}
+	{{#each .}}
 							<fieldset>
 								<legend>{{{name}}}</legend>
 								<ul>
-									{{#each boards}}
-									<li style="margin-{{#if context.right_to_left}}right{{else}}left{{/if}}: {{mul child_level 1.5}}em;"><label for="boards_{{id}}"><input type="checkbox" name="boards[{{id}}]" id="boards_{{id}}" checked>{{{name}}}</label></li>
-									{{/each}}
+		{{#each boards}}
+									<li style="margin-{{#if context.right_to_left}}right{{else}}left{{/if}}: {{mul child_level 1.5}}em;">
+										<label for="boards_{{id}}">
+											<input type="checkbox" name="boards[{{id}}]" id="boards_{{id}}" checked>{{{name}}}
+										</label>
+									</li>
+		{{/each}}
 								</ul>
 							</fieldset>
-							{{/each}}
-							{{#if (eq @index 0)}}
+	{{/each}}
+
+	{{#if (eq @index 0)}}
 							</div>
 							<div class="floatright" style="width: 49%;">
-							{{/if}}
-						{{/each}}
+	{{/if}}
+{{/each}}
 
 						</div>
 					</div>
@@ -112,33 +117,41 @@
 				<p><label for="id_board_from">{{{txt.move_topics_from}}}</label>
 				<select name="id_board_from" id="id_board_from">
 					<option disabled>({{{txt.move_topics_select_board}}})</option>
-					{{! Moving from this board }}
-					{{#each context.categories}}
+
+{{! Moving from this board }}
+{{#each context.categories}}
 					<optgroup label="{{{name}}}">
-						{{#each boards}}
+	{{#each boards}}
 						<option value="{{{id}}}"> {{repeat '==' child_level}}=&gt;&nbsp;{{{name}}}</option>
-						{{/each}}
+	{{/each}}
 					</optgroup>
-					{{/each}}
+{{/each}}
 				</select>
 				<label for="id_board_to">{{{txt.move_topics_to}}}</label>
 				<select name="id_board_to" id="id_board_to">
 					<option disabled>({{{txt.move_topics_select_board}}})</option>
-					{{! Moving to this board }}
-					{{#each context.categories}}
+
+{{! Moving to this board }}
+{{#each context.categories}}
 					<optgroup label="{{{name}}}">
-						{{#each boards}}
+	{{#each boards}}
 						<option value="{{{id}}}"> {{repeat '==' child_level}}=&gt;&nbsp;{{{name}}}</option>
-						{{/each}}
+	{{/each}}
 					</optgroup>
-					{{/each}}
+{{/each}}
 				</select></p>
 				<p>
 					{{{txt.move_topics_older_than}}}<input type="number" name="maxdays" value="30" size="3">{{{txt.manageposts_days}}}&nbsp;({{{txt.move_zero_all}}})
 				</p>
 				<p>
-					<label for="move_type_locked"><input type="checkbox" name="move_type_locked" id="move_type_locked" checked> {{{txt.move_type_locked}}}</label><br>
-					<label for="move_type_sticky"><input type="checkbox" name="move_type_sticky" id="move_type_sticky"> {{{txt.move_type_sticky}}}</label><br>
+					<label for="move_type_locked">
+						<input type="checkbox" name="move_type_locked" id="move_type_locked" checked>
+						{{{txt.move_type_locked}}}
+					</label><br>
+					<label for="move_type_sticky">
+						<input type="checkbox" name="move_type_sticky" id="move_type_sticky">
+						{{{txt.move_type_sticky}}}
+					</label><br>
 				</p>
 				<input type="submit" value="{{{txt.move_topics_now}}}" onclick="if (document.getElementById('id_board_from').options[document.getElementById('id_board_from').selectedIndex].disabled || document.getElementById('id_board_from').options[document.getElementById('id_board_to').selectedIndex].disabled) return false; var confirmText = '{{{txt.move_topics_confirm}}}'; return confirm(confirmText.replace(/%board_from%/, document.getElementById('id_board_from').options[document.getElementById('id_board_from').selectedIndex].text.replace(/^=+&gt;&nbsp;/, '')).replace(/%board_to%/, document.getElementById('id_board_to').options[document.getElementById('id_board_to').selectedIndex].text.replace(/^=+&gt;&nbsp;/, '')));" class="button_submit">
 				{{session_form}}

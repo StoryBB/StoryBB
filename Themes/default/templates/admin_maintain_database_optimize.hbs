@@ -8,18 +8,18 @@
 				{{{txt.database_numb_tables}}}<br>
 				{{{txt.database_optimize_attempt}}}<br>
 
-				{{! List each table being optimized...}}
-				{{#each context.optimized_tables}}
+{{! List each table being optimized...}}
+{{#each context.optimized_tables}}
 				{{textTemplate txt.database_optimizing name data_freed}}<br>
-				{{/each}}
+{{/each}}
 
 				{{! How did we go? }}
 				<br>
-				{{#unless context.num_tables_optimized}}
-					{{{txt.database_already_optimized}}}
-				{{else}}
-					{{context.num_tables_optimized}} {{{txt.database_optimized}}}
-				{{/unless}}
+{{#unless context.num_tables_optimized}}
+				{{{txt.database_already_optimized}}}
+{{else}}
+				{{context.num_tables_optimized}} {{{txt.database_optimized}}}
+{{/unless}}
 
 			</p>
 			<p><a href="{{scripturl}}?action=admin;area=maintain">{{{txt.maintain_return}}}</a></p>

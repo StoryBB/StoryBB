@@ -1,79 +1,85 @@
 	<div class="login">
-			<div class="cat_bar">
-				<h3 class="catbg">
-					<img src="{{settings.images_url}}/icons/login_hd.png" alt="" class="icon"> {{txt.login}}
-				</h3>
-			</div>
-			<div class="roundframe noup">
-				<form class="login" action="{{context.login_url}}" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8">
-					{{#if context.login_errors}}
-					<div class="errorbox">{{#each context.login_errors}}{{.}}<br/>{{/each}}</div><br>
-					{{/if}}
-					{{#if context.description}}<div class="information">{{context.description}}</div>{{/if}}
-					<dl>
-						<dt>{{txt.username}}:</dt>
-						<dd><input type="text" id="{{#if context.from_ajax}}ajax_{{/if}}loginuser" name="user" size="20" value="{{context.default_username}}"></dd>
-						<dt>{{txt.password}}:</dt>
-						<dd><input type="password" id="{{#if context.from_ajax}}ajax_{{/if}}loginpass" name="passwrd" value="{{context.default_password}}" size="20"></dd>
-					</dl>
-					<dl>
-						<dt>{{txt.always_logged_in}}:</dt>
-						<dd><input type="checkbox" name="cookieneverexp"{{#if context.never_expire}} checked{{/if}} onclick="this.form.cookielength.disabled = this.checked;"></dd>
-						{{#if context.login_show_undelete}}
-						<dt class="alert">{{txt.undelete_account}}:</dt>
-						<dd><input type="checkbox" name="undelete"></dd>
-						{{/if}}
-							</dl>
-					<p><input type="submit" value="{{txt.login}}" class="button_submit"></p>
-					<p class="smalltext"><a href="{{scripturl}}?action=reminder">{{txt.forgot_your_password}}</a></p>
-					<input type="hidden" name="hash_passwrd" value="">
-					{{session_form}}
-					{{token_form 'login'}}
-					<script>
-						setTimeout(function() {
-							document.getElementById("{{#if context.from_ajax}}ajax_{{/if}}{{#if context.default_username}}loginpass{{else}}loginuser{{/if}}").focus();
-						}, 150);
-					{{#if context.ajax_nonssl}}
-						form = $("#frmLogin");
-						form.submit(function(e) {
-							e.preventDefault();
-							e.stopPropagation();
-
-							$.ajax({
-								url: form.prop("action"),
-								method: "POST",
-								data: form.serialize(),
-								success: function(data) {
-									if (data.indexOf("<bo" + "dy") > -1) {
-										document.open();
-										document.write(data);
-										document.close();
-									}
-									else
-										form.parent().html($(data).find(".roundframe").html());
-								},
-								error: function(xhr) {
-									var data = xhr.responseText;
-									if (data.indexOf("<bo" + "dy") > -1) {
-										document.open();
-										document.write(data);
-										document.close();
-									}
-									else
-										form.parent().html($(data).filter("#fatal_error").html());
-								}
-							});
-
-							return false;
-						});
-						{{/if}}
-					</script>
-				</form>
-
-	<!-- It is a long story as to why we have this when we're clearly not going to use it. -->
-	{{#if context.from_ajax}}
-					<br>
-					<a href="javascript:self.close();"></a>
-	{{/if}}
-			</div>
+		<div class="cat_bar">
+			<h3 class="catbg">
+				<img src="{{settings.images_url}}/icons/login_hd.png" alt="" class="icon"> {{txt.login}}
+			</h3>
 		</div>
+		<div class="roundframe noup">
+			<form class="login" action="{{context.login_url}}" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8">
+
+{{#if context.login_errors}}
+				<div class="errorbox">{{#each context.login_errors}}{{.}}<br/>{{/each}}</div><br>
+{{/if}}
+
+{{#if context.description}}
+				<div class="information">{{context.description}}</div>
+{{/if}}
+				<dl>
+					<dt>{{txt.username}}:</dt>
+					<dd><input type="text" id="{{#if context.from_ajax}}ajax_{{/if}}loginuser" name="user" size="20" value="{{context.default_username}}"></dd>
+
+					<dt>{{txt.password}}:</dt>
+					<dd><input type="password" id="{{#if context.from_ajax}}ajax_{{/if}}loginpass" name="passwrd" value="{{context.default_password}}" size="20"></dd>
+				</dl>
+				<dl>
+					<dt>{{txt.always_logged_in}}:</dt>
+					<dd><input type="checkbox" name="cookieneverexp"{{#if context.never_expire}} checked{{/if}} onclick="this.form.cookielength.disabled = this.checked;"></dd>
+
+{{#if context.login_show_undelete}}
+					<dt class="alert">{{txt.undelete_account}}:</dt>
+					<dd><input type="checkbox" name="undelete"></dd>
+{{/if}}
+				</dl>
+				<p><input type="submit" value="{{txt.login}}" class="button_submit"></p>
+				<p class="smalltext"><a href="{{scripturl}}?action=reminder">{{txt.forgot_your_password}}</a></p>
+				<input type="hidden" name="hash_passwrd" value="">
+				{{session_form}}
+				{{token_form 'login'}}
+				<script>
+					setTimeout(function() {
+						document.getElementById("{{#if context.from_ajax}}ajax_{{/if}}{{#if context.default_username}}loginpass{{else}}loginuser{{/if}}").focus();
+					}, 150);
+				{{#if context.ajax_nonssl}}
+					form = $("#frmLogin");
+					form.submit(function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+
+						$.ajax({
+							url: form.prop("action"),
+							method: "POST",
+							data: form.serialize(),
+							success: function(data) {
+								if (data.indexOf("<bo" + "dy") > -1) {
+									document.open();
+									document.write(data);
+									document.close();
+								}
+								else
+									form.parent().html($(data).find(".roundframe").html());
+							},
+							error: function(xhr) {
+								var data = xhr.responseText;
+								if (data.indexOf("<bo" + "dy") > -1) {
+									document.open();
+									document.write(data);
+									document.close();
+								}
+								else
+									form.parent().html($(data).filter("#fatal_error").html());
+							}
+						});
+
+						return false;
+					});
+					{{/if}}
+				</script>
+			</form>
+
+<!-- It is a long story as to why we have this when we're clearly not going to use it. -->
+{{#if context.from_ajax}}
+			<br>
+			<a href="javascript:self.close();"></a>
+{{/if}}
+		</div>
+	</div>

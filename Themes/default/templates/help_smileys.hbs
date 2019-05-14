@@ -4,19 +4,20 @@
 			<div id="help_container">
 				<div id="helpmain" class="windowbg2">
 					<table>
-						{{#each context.smileys}}
-							<tr>
-								<td>
-									<img src="{{{image}}}" alt="{{{text}}}">
-								</td>
-								<td>{{{text}}}</td>
-								<td>
-									{{#each code}}
-									<span class="smiley_code">{{{.}}}</span>
-									{{/each}}
-								</td>
-							</tr>
-						{{/each}}
+
+{{#each context.smileys}}
+						<tr>
+							<td>
+								<img src="{{{image}}}" alt="{{{text}}}">
+							</td>
+							<td>{{{text}}}</td>
+							<td>
+	{{#each code}}
+								<span class="smiley_code">{{{.}}}</span>
+	{{/each}}
+							</td>
+						</tr>
+{{/each}}
 					</table>
 				</div>
 			</div>
