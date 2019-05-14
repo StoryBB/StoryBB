@@ -10,8 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-global $context;
-
 $txt['post_reply'] = 'Post reply';
 $txt['message_icon'] = 'Message icon';
 $txt['subject_not_filled'] = 'The subject field was not filled out. It is required.';
@@ -189,7 +187,6 @@ $txt['attached_uploadAll'] = 'Upload all';
 $txt['attached_attachedLeft'] = 'There are a few attachments left, please upload them or cancel them before posting.';
 $txt['attached_insertwidth'] = 'Insert width (px):';
 $txt['attached_insertheight'] = 'Insert height (px):';
-
 
 $txt['attach_php_error'] = 'Due to an error, your attachment could not be uploaded. Please contact the forum administrator if this problem continues.';
 $txt['php_upload_error_1'] = 'The uploaded file exceeds the upload_max_filesize directive in php.ini. Please contact your host if you are unable to correct this issue.';
