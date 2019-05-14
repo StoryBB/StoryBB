@@ -1559,14 +1559,14 @@ function template_header()
  */
 function theme_copyright()
 {
-	global $forum_copyright, $software_year, $forum_version;
+	global $txt, $software_year, $forum_version;
 
 	// Don't display copyright for things like SSI.
 	if (!isset($forum_version) || !isset($software_year))
 		return;
 
 	// Put in the version...
-	return sprintf($forum_copyright, $forum_version, $software_year);
+	return sprintf($txt['copyright'], $forum_version, $software_year);
 }
 
 /**
