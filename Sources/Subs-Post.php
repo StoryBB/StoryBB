@@ -1563,7 +1563,7 @@ function loadEmailTemplate($template, $replacements = array(), $lang = '', $load
 		'THEMEURL' => $settings['theme_url'],
 		'IMAGESURL' => $settings['images_url'],
 		'DEFAULT_THEMEURL' => $settings['default_theme_url'],
-		'REGARDS' => $txt['regards_team'],
+		'REGARDS' => str_replace('{forum_name}', $mbname, $txt['regards_team']),
 	);
 
 	// Split the replacements up into two arrays, for use with str_replace

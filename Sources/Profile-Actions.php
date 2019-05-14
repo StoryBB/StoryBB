@@ -655,7 +655,15 @@ function issueWarning($memID)
 
 	// Replace all the common variables in the templates.
 	foreach ($context['notification_templates'] as $k => $name)
-		$context['notification_templates'][$k]['body'] = strtr($name['body'], array('{MEMBER}' => un_htmlspecialchars($context['member']['name']), '{MESSAGE}' => '[url=' . $scripturl . '?msg=' . $context['warning_for_message'] . ']' . un_htmlspecialchars($context['warned_message_subject']) . '[/url]', '{SCRIPTURL}' => $scripturl, '{FORUMNAME}' => $mbname, '{REGARDS}' => $txt['regards_team']));
+	{
+		$context['notification_templates'][$k]['body'] = strtr($name['body'], [
+			'{MEMBER}' => un_htmlspecialchars($context['member']['name']),
+			'{MESSAGE}' => '[url=' . $scripturl . '?msg=' . $context['warning_for_message'] . ']' . un_htmlspecialchars($context['warned_message_subject']) . '[/url]',
+			'{SCRIPTURL}' => $scripturl,
+			'{FORUMNAME}' => $mbname,
+			'{REGARDS}' => str_replace('{forum_name}', $mbname, $txt['regards_team']),
+		]);
+	}
 
 	$context['sub_template'] = 'profile_warning_issue';
 }

@@ -10,8 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-global $context;
-
 $txt['most_online'] = 'Most Online';
 
 $txt['stats_center'] = 'Statistics Center';
@@ -48,4 +46,4 @@ $txt['ssi_comment'] = 'comment';
 $txt['ssi_comments'] = 'comments';
 $txt['ssi_write_comment'] = 'Write Comment';
 $txt['ssi_no_guests'] = 'You cannot specify a board that doesn\'t allow guests. Please check the board ID before trying again.';
-$txt['xml_rss_desc'] = 'Live information from ' . $context['forum_name'];
+$txt['xml_rss_desc'] = 'Live information from {forum_name}';

@@ -10,8 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-global $boardurl;
-
 // Some payment gateways need language specific information.
 $txt['lang_paypal'] = 'US';
 
@@ -71,7 +69,7 @@ StoryBB currently supports <strong>PayPal</strong> as the installed payment meth
 	&nbsp;&nbsp;&bull;&nbsp;&nbsp;You must provide your primary PayPal email address for validation purposes.<br><br>
 
 If you install a different payment gateway, you may need to set up a return URL for payment notification.   For all payment types, this return URL should be set as:<br><br>
-	&nbsp;&nbsp;&bull;&nbsp;&nbsp;<strong>' . $boardurl . '/subscriptions.php</strong><br><br>
+	&nbsp;&nbsp;&bull;&nbsp;&nbsp;<strong>{boardurl}/subscriptions.php</strong><br><br>
 You can normally find it in your customer panels, usually under the term &quot;Return URL&quot; or &quot;Callback URL&quot;.<br><br><br>';
 
 // View subscription strings.

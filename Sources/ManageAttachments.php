@@ -112,6 +112,9 @@ function ManageAttachmentSettings($return_config = false)
 	$txt['attach_current_dir_warning'] = $txt['attach_current_dir'] . $txt['attach_current_dir_warning'];
 	$txt['basedirectory_for_attachments_warning'] = $txt['basedirectory_for_attachments_current'] . $txt['basedirectory_for_attachments_warning'];
 
+	$txt['basedirectory_for_attachments_warning'] = str_replace('{scripturl}', $scripturl, $txt['basedirectory_for_attachments_warning']);
+	$txt['attach_current_dir_warning'] = str_replace('{scripturl}', $scripturl, $txt['attach_current_dir_warning']);
+
 	// Perform a test to see if the GD module or ImageMagick are installed.
 	$testImg = get_extension_funcs('gd') || class_exists('Imagick') || get_extension_funcs('MagickWand');
 
@@ -2483,7 +2486,7 @@ function ManageAttachmentPaths()
  */
 function list_getAttachDirs()
 {
-	global $smcFunc, $modSettings, $context, $txt;
+	global $smcFunc, $modSettings, $context, $txt, $scripturl;
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_folder, COUNT(id_attach) AS num_attach, SUM(size) AS size_attach
@@ -2538,7 +2541,7 @@ function list_getAttachDirs()
 			'path' => $dir,
 			'current_size' => !empty($expected_size[$id]) ? comma_format($expected_size[$id] / 1024, 0) : 0,
 			'num_files' => comma_format($expected_files[$id] - $sub_dirs, 0) . ($sub_dirs > 0 ? ' (' . $sub_dirs . ')' : ''),
-			'status' => ($is_base_dir ? $txt['attach_dir_basedir'] . '<br>' : '') . ($error ? '<div class="error">' : '') . sprintf($txt['attach_dir_' . $status], $context['session_id'], $context['session_var']) . ($error ? '</div>' : ''),
+			'status' => ($is_base_dir ? $txt['attach_dir_basedir'] . '<br>' : '') . ($error ? '<div class="error">' : '') . sprintf($txt['attach_dir_' . $status], $context['session_id'], $context['session_var'], $scripturl) . ($error ? '</div>' : ''),
 		);
 	}
 

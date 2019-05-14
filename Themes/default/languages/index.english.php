@@ -10,8 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-global $forum_copyright, $webmaster_email, $scripturl, $context, $boardurl;
-
 // Native name, please use full HTML entities to write your language's name.
 $txt['native_name'] = 'English';
 
@@ -157,7 +155,7 @@ $txt['notify'] = 'Notify';
 $txt['unnotify'] = 'Unnotify';
 $txt['notify_request'] = 'Do you want a notification email if someone replies to this topic?';
 // Use numeric entities in the below string.
-$txt['regards_team'] = "Regards,\nThe " . $context['forum_name'] . ' Team.';
+$txt['regards_team'] = "Regards,\nThe {forum_name} Team.";
 $txt['notify_replies'] = 'Notify of replies';
 $txt['move_topic'] = 'Move Topic';
 $txt['move_to'] = 'Move to';
@@ -237,12 +235,9 @@ $txt['error_invalid_characters_username'] = 'Invalid character used in Username.
 
 $txt['welcome_guest'] = 'Welcome, <strong>%1$s</strong>. Please <a href="%3$s" onclick="%4$s">login</a>.';
 
-//$txt['welcome_guest_register'] = 'Welcome, <strong>%1$s</strong>. Please <a href="' . $scripturl . '?action=login">login</a> or <a href="' . $scripturl . '?action=register">register</a>.';
 $txt['welcome_guest_register'] = 'Welcome to <strong>%2$s</strong>. Please <a href="%3$s" onclick="%4$s">login</a> or <a href="%5$s">sign up</a>.';
 
-$txt['please_login'] = 'Please <a href="' . $scripturl . '?action=login">login</a>.';
-$txt['login_or_register'] = 'Please <a href="' . $scripturl . '?action=login">login</a> or <a href="' . $scripturl . '?action=signup">signup</a>.';
-$txt['welcome_guest_activate'] = '<br>Did you miss your <a href="' . $scripturl . '?action=activate">activation email</a>?';
+$txt['welcome_guest_activate'] = '<br>Did you miss your <a href="{scripturl}?action=activate">activation email</a>?';
 // @todo the following to sprintf
 $txt['hello_member'] = 'Hey,';
 // Use numeric entities in the below string.
@@ -386,7 +381,6 @@ $txt['line'] = 'Line';
 
 $txt['template_parse_error'] = 'Template Parse Error!';
 $txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-$txt['template_parse_error_details'] = 'There was a problem loading the <pre><strong>%1$s</strong></pre> template or language file. Please check the syntax and try again - remember, single quotes (<pre>\'</pre>) often have to be escaped with a slash (<pre>\\</pre>). To see more specific error information from PHP, try <a href="' . $boardurl . '%1$s">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="' . $scripturl . '?theme=1">use the default theme</a>.';
 $txt['template_parse_errmsg'] = 'Unfortunately more information is not available at this time as to exactly what is wrong.';
 
 $txt['today'] = '<strong>Today</strong> at ';
@@ -484,7 +478,7 @@ $txt['status'] = 'Status';
 $txt['go_up'] = 'Go Up';
 $txt['go_down'] = 'Go Down';
 
-$forum_copyright = '<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">%1$s &copy; %2$s, StoryBB project</a>';
+$txt['copyright'] = '<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">%1$s &copy; %2$s, StoryBB project</a>';
 
 $txt['calendar_month'] = 'Month';
 $txt['calendar_year'] = 'Year';
@@ -600,7 +594,7 @@ $txt['report_to_mod'] = 'Report to moderator';
 $txt['report_profile'] = 'Report profile of %1$s';
 
 $txt['unread_topics_visit'] = 'Recent Unread Topics';
-$txt['unread_topics_visit_none'] = 'No unread topics found since your last visit. <a href="' . $scripturl . '?action=unread;all">Click here to try all unread topics</a>.';
+$txt['unread_topics_visit_none'] = 'No unread topics found since your last visit. <a href="{scripturl}?action=unread;all">Click here to try all unread topics</a>.';
 $txt['unread_topics_all'] = 'All Unread Topics';
 $txt['unread_replies'] = 'Updated Topics';
 

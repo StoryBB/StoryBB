@@ -257,7 +257,7 @@ function Who()
  */
 function determineActions($urls, $preferred_prefix = false)
 {
-	global $txt, $user_info, $modSettings, $smcFunc;
+	global $txt, $user_info, $modSettings, $smcFunc, $scripturl;
 
 	if (!allowedTo('who_view'))
 		return array();
@@ -527,6 +527,9 @@ function determineActions($urls, $preferred_prefix = false)
 		}
 		$smcFunc['db_free_result']($result);
 	}
+
+	foreach ($data as $k => $v)
+		$data[$k] = str_replace('{scripturl}', $scripturl, $v);
 
 	call_integration_hook('whos_online_after', array(&$urls, &$data));
 

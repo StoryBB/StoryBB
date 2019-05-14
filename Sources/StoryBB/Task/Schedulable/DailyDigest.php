@@ -184,7 +184,7 @@ class DailyDigest extends \StoryBB\Task\Schedulable
 				'move' => $txt['digest_mod_act_move'],
 				'merge' => $txt['digest_mod_act_merge'],
 				'split' => $txt['digest_mod_act_split'],
-				'bye' => $txt['regards_team'],
+				'bye' => str_replace('{forum_name}', $mbname, $txt['regards_team']),
 			);
 		}
 
@@ -274,7 +274,7 @@ class DailyDigest extends \StoryBB\Task\Schedulable
 				$email['body'] .= "\n";
 
 			// Then just say our goodbyes!
-			$email['body'] .= "\n\n" . $txt['regards_team'];
+			$email['body'] .= "\n\n" . str_replace('{forum_name}', $mbname, $txt['regards_team']);
 
 			// Send it - low priority!
 			StoryBB\Helper\Mail::send($email['email'], $email['subject'], $email['body'], null, 'digest', false, 4);

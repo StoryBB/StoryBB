@@ -483,14 +483,15 @@ function prepareMailingForPreview()
  */
 function ComposeMailing()
 {
-	global $txt, $sourcedir, $context, $smcFunc;
+	global $txt, $sourcedir, $context, $smcFunc, $scripturl;
 
 	// Setup the template!
 	$context['page_title'] = $txt['admin_newsletters'];
 	$context['sub_template'] = 'newsletter_compose';
 
 	$context['subject'] = !empty($_POST['subject']) ? $_POST['subject'] : $smcFunc['htmlspecialchars']($context['forum_name'] . ': ' . $txt['subject']);
-	$context['message'] = !empty($_POST['message']) ? $_POST['message'] : $smcFunc['htmlspecialchars']($txt['message'] . "\n\n" . $txt['regards_team'] . "\n\n" . '{$board_url}');
+	$context['message'] = !empty($_POST['message']) ? $_POST['message'] : $smcFunc['htmlspecialchars']($txt['message'] . "\n\n" . str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']) . "\n\n" . '{$board_url}');
+	$context['email_variables'] = str_replace('{scripturl}', $scripturl, $txt['email_variables']);
 
 	// Needed for the WYSIWYG editor.
 	require_once($sourcedir . '/Subs-Editor.php');

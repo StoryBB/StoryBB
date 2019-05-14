@@ -1131,11 +1131,11 @@ function PickTheme()
 			include($theme_data['theme_dir'] . '/languages/Settings.' . $language . '.php');
 		else
 		{
-			$txt['theme_thumbnail_href'] = $theme_data['images_url'] . '/thumbnail.png';
+			$txt['theme_thumbnail_href'] = '{images_url}/thumbnail.png';
 			$txt['theme_description'] = '';
 		}
 
-		$context['available_themes'][$id_theme]['thumbnail_href'] = $txt['theme_thumbnail_href'];
+		$context['available_themes'][$id_theme]['thumbnail_href'] = str_replace('{images_url}', $theme_data['images_url'], $txt['theme_thumbnail_href']);
 		$context['available_themes'][$id_theme]['description'] = $txt['theme_description'];
 
 		// Are there any variants?

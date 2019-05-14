@@ -350,8 +350,10 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_password',
 			'save_key' => 'passwd',
 			// Note this will only work if passwrd2 also exists!
-			'input_validate' => function(&$value) use ($sourcedir, $user_info, $smcFunc, $cur_profile)
+			'input_validate' => function(&$value) use ($sourcedir, $user_info, $smcFunc, $cur_profile, $modSettings)
 			{
+				global $txt;
+
 				// If we didn't try it then ignore it!
 				if ($value == '')
 					return false;
@@ -366,7 +368,12 @@ function loadProfileFields($force_reload = false)
 
 				// Were there errors?
 				if ($passwordErrors != null)
+				{
+					loadLanguage('Errors');
+					$txt['profile_error_password_short'] = numeric_context('profile_error_password_short_contextual', (empty($modSettings['password_strength']) ? 4 : 8));
+
 					return 'password_' . $passwordErrors;
+				}
 
 				// Set up the new password variable... ready for storage.
 				$value = hash_password($cur_profile['member_name'], un_htmlspecialchars($value));
@@ -1680,7 +1687,7 @@ function forumProfile($memID)
 		loadCustomFields($memID, 'forumprofile');
 
 	$context['sub_template'] = 'profile_options';
-	$context['page_desc'] = $txt['forumProfile_info'];
+	$context['page_desc'] = str_replace('{forum_name}', $context['forum_name_html_safe'], $txt['forumProfile_info']);
 	$context['show_preview_button'] = true;
 
 	setupProfileContext(

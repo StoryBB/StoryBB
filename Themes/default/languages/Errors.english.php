@@ -9,8 +9,6 @@
  * @version 3.0 Alpha 1
  */
 
-global $scripturl, $modSettings;
-
 $txt['no_access'] = 'You are not allowed to access this section';
 $txt['not_found'] = 'Sorry, this section isn\'t available at this time.';
 
@@ -21,7 +19,6 @@ $txt['topic_locked'] = 'This topic is locked, you are not allowed to post or mod
 $txt['no_password'] = 'Password field empty';
 $txt['already_a_user'] = 'The username you tried to use already exists.';
 $txt['cant_move'] = 'You are not allowed to move topics...';
-$txt['login_to_post'] = 'To post you must be logged in. If you don\'t have an account yet, please <a href="' . $scripturl . '?action=signup">sign up</a>.';
 $txt['passwords_dont_match'] = 'Passwords aren\'t the same.';
 $txt['register_to_use'] = 'Sorry, you must sign up before using this feature.';
 $txt['password_invalid_character'] = 'Invalid character used in password.';
@@ -313,7 +310,7 @@ $txt['profile_error_bad_avatar'] = 'The avatar you have selected is not a valid 
 $txt['profile_error_bad_avatar_invalid_url'] = 'The url you specified is invalid, please check it.';
 $txt['profile_error_bad_avatar_too_large'] = 'The image you\'re trying to use surpasses the max width/height settings, please use a smaller one.';
 $txt['profile_error_bad_avatar_fail_reencode'] = 'The image you uploaded was corrupted and the attempt to recover it failed.';
-$txt['profile_error_password_short'] = 'Your password must be at least ' . (empty($modSettings['password_strength']) ? 4 : 8) . ' characters long.';
+$txt['profile_error_password_short_contextual']['x'] = 'Your password must be at least %1$s characters long.';
 $txt['profile_error_password_restricted_words'] = 'Your password must not contain your username, email address or other commonly used words.';
 $txt['profile_error_password_chars'] = 'Your password must contain a mix of upper and lower case letters, as well as digits.';
 $txt['profile_error_already_requested_group'] = 'You already have an outstanding request for this group!';
