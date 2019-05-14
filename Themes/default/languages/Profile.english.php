@@ -10,8 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-global $context;
-
 // Some of the things from the popup need their own descriptions
 $txt['popup_summary'] = 'My Profile';
 $txt['popup_showposts'] = 'My Posts';
@@ -240,7 +238,7 @@ $txt['trackIP'] = 'IP Address';
 $txt['trackLogins'] = 'Logins';
 
 $txt['account_info'] = 'These are your account settings. This page holds all critical information that identifies you on this forum. For security reasons, you will need to enter your (current) password to make changes to this information.';
-$txt['forumProfile_info'] = 'You can change your personal information on this page. This information will be displayed throughout ' . $context['forum_name_html_safe'] . '. If you aren\'t comfortable with sharing some information, simply skip it - nothing here is required.';
+$txt['forumProfile_info'] = 'You can change your personal information on this page. This information will be displayed throughout {forum_name}. If you aren\'t comfortable with sharing some information, simply skip it - nothing here is required.';
 $txt['theme_info'] = 'This section allows you to customize the look and layout of the forum.';
 $txt['notification'] = 'Notifications';
 $txt['notification_info'] = 'StoryBB allows you to be notified of replies to posts, newly posted topics, and forum announcements. You can change those settings here, or oversee the topics and boards you are currently receiving notifications for.';
@@ -301,8 +299,6 @@ $txt['to_ask_password'] = 'to ask for your authentication details';
 $txt['user_email'] = 'Username/Email';
 
 // Use numeric entities in the below two strings.
-$txt['reminder_subject'] = 'New password for ' . $context['forum_name'];
-$txt['reminder_mail'] = 'This mail was sent because the \'forgot password\' function has been applied to your account. To set a new password, click the following link';
 $txt['reminder_sent'] = 'A mail has been sent to your email address. Click the link in that mail to set a new password.';
 $txt['reminder_set_password'] = 'Set Password';
 $txt['reminder_password_set'] = 'Password successfully set';
