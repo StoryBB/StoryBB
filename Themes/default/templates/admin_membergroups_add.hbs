@@ -13,7 +13,7 @@
 						<input type="text" name="group_name" id="group_name_input" size="30" required>
 					</dd>
 
-					{{#unless context.post_group}}
+{{#unless context.post_group}}
 					<dt>
 						<label for="group_level_input"><strong>{{{txt.char_group_level}}}:</strong></label>
 					</dt>
@@ -23,9 +23,9 @@
 							<option{{#if context.character_group}} selected{{/if}} value="1">{{{txt.char_group_level_char}}}</option>
 						</select>
 					</dd>
-					{{/unless}}
+{{/unless}}
 
-					{{#if context.undefined_group}}
+{{#if context.undefined_group}}
 					<dt>
 						<label for="group_type"><strong>{{{txt.membergroups_edit_group_type}}}</strong>:</label>
 					</dt>
@@ -37,12 +37,12 @@
 								{{{txt.membergroups_group_type_private}}}
 							</label><br>
 
-							{{#if context.allow_protected}}
+	{{#if context.allow_protected}}
 							<label for="group_type_protected">
 								<input type="radio" name="group_type" id="group_type_protected" value="1" onclick="swapPostGroup(0);">
 								{{{txt.membergroups_group_type_protected}}}
 							</label><br>
-							{{/if}}
+	{{/if}}
 
 							<label for="group_type_request">
 								<input type="radio" name="group_type" id="group_type_request" value="2" onclick="swapPostGroup(0);">
@@ -58,18 +58,18 @@
 							</label><br>
 						</fieldset>
 					</dd>
-					{{/if}}
+{{/if}}
 
-					{{#if (or context.post_group context.undefined_group)}}
+{{#if (or context.post_group context.undefined_group)}}
 					<dt id="min_posts_text">
 						<strong>{{{txt.membergroups_min_posts}}}:</strong>
 					</dt>
 					<dd>
 						<input type="number" name="min_posts" id="min_posts_input" size="5">
 					</dd>
-					{{/if}}
+{{/if}}
 
-					{{#if (not context.post_group)}}
+{{#if (not context.post_group)}}
 					<dt>
 						<label for="permission_base"><strong>{{{txt.membergroups_permissions}}}:</strong></label><br>
 						<span class="smalltext">{{{txt.membergroups_can_edit_later}}}</span>
@@ -83,17 +83,20 @@
 								<optgroup label="{{{txt.membergroups_regular}}}">
 									<option value="-1">{{{txt.membergroups_guests}}}</option>
 									<option value="0" selected>{{{txt.membergroups_members}}}</option>
-									{{#each context.account_groups}}
+
+	{{#each context.account_groups}}
 									<option value="{{id}}">{{{name}}}</option>
-									{{/each}}
+	{{/each}}
 								</optgroup>
-								{{#if context.character_groups}}
+
+	{{#if context.character_groups}}
 								<optgroup label="{{{txt.membergroups_character}}}">
-									{{#each context.character_groups}}
+
+		{{#each context.character_groups}}
 									<option value="{{id}}">{{{name}}}</option>
-									{{/each}}
+		{{/each}}
 								</optgroup>
-								{{/if}}
+	{{/if}}
 							</select>
 							<br>
 							<input type="radio" name="perm_type" id="perm_type_copy" value="copy">
@@ -102,17 +105,20 @@
 								<optgroup label="{{{txt.membergroups_regular}}}">
 									<option value="-1">{{{txt.membergroups_guests}}}</option>
 									<option value="0" selected>{{{txt.membergroups_members}}}</option>
-									{{#each context.account_groups}}
+
+	{{#each context.account_groups}}
 									<option value="{{id}}">{{{name}}}</option>
-									{{/each}}
+	{{/each}}
 								</optgroup>
-								{{#if context.character_groups}}
+
+	{{#if context.character_groups}}
 								<optgroup label="{{{txt.membergroups_character}}}">
-									{{#each context.character_groups}}
+
+		{{#each context.character_groups}}
 									<option value="{{id}}">{{{name}}}</option>
-									{{/each}}
+		{{/each}}
 								</optgroup>
-								{{/if}}
+	{{/if}}
 							</select>
 							<br>
 							<input type="radio" name="perm_type" id="perm_type_predefined" value="predefined">
@@ -125,11 +131,17 @@
 							</select>
 						</fieldset>
 					</dd>
-					{{/if}}
+{{/if}}
 
 					<dt>
 						<strong>{{{txt.membergroups_new_board}}}:</strong>
-						{{#if context.post_group}}<br><span class="smalltext" style="font-weight: normal">{{{txt.membergroups_new_board_post_groups}}}</span>{{/if}}
+
+{{#if context.post_group}}
+						<br>
+						<span class="smalltext" style="font-weight: normal">
+							{{{txt.membergroups_new_board_post_groups}}}
+						</span>
+{{/if}}
 					</dt>
 					<dd>
 						{{> admin_membergroups_boards_list collapse=false}}
@@ -138,7 +150,7 @@
 				<input type="submit" value="{{{txt.membergroups_add_group}}}" class="button_submit">
 			</div>
 
-			{{#if context.undefined_group}}
+{{#if context.undefined_group}}
 			<script>
 				function swapPostGroup(isChecked)
 				{
@@ -148,7 +160,7 @@
 				}
 				swapPostGroup({{#if context.post_group}}true{{else}}false{{/if}});
 			</script>
-			{{/if}}
+{{/if}}
 
 			{{session_form}}
 			{{token_form 'admin-mmg'}}

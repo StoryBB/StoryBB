@@ -5,12 +5,17 @@
 			</div>
 
 			<p class="information centertext">
-				{{#if context.kick_message}}{{{context.kick_message}}}{{else}}{{{txt.only_members_can_access}}}{{/if}}
-				{{#if context.can_register}}
-					{{textTemplate txt.login_below_or_register (concat scripturl '?action=signup') context.forum_name_html_safe}}
-				{{else}}
-					{{txt.login_below}}
-				{{/if}}
+{{#if context.kick_message}}
+				{{{context.kick_message}}}
+{{else}}
+				{{{txt.only_members_can_access}}}
+{{/if}}
+
+{{#if context.can_register}}
+				{{textTemplate txt.login_below_or_register (concat scripturl '?action=signup') context.forum_name_html_safe}}
+{{else}}
+				{{txt.login_below}}
+{{/if}}
 			</p>
 			<div class="cat_bar">
 				<h3 class="catbg">
@@ -21,13 +26,19 @@
 				<dl>
 					<dt>{{txt.username}}:</dt>
 					<dd><input type="text" name="user" size="20"></dd>
+
 					<dt>{{txt.password}}:</dt>
 					<dd><input type="password" name="passwrd" size="20"></dd>
+
 					<dt>{{txt.always_logged_in}}:</dt>
 					<dd><input type="checkbox" name="cookieneverexp" onclick="this.form.cookielength.disabled = this.checked;"></dd>
 				</dl>
-				<p class="centertext"><input type="submit" value="{{txt.login}}" class="button_submit"></p>
-				<p class="centertext smalltext"><a href="{{scripturl}}?action=reminder">{{txt.forgot_your_password}}</a></p>
+				<p class="centertext">
+					<input type="submit" value="{{txt.login}}" class="button_submit">
+				</p>
+				<p class="centertext smalltext">
+					<a href="{{scripturl}}?action=reminder">{{txt.forgot_your_password}}</a>
+				</p>
 			</div>
 			{{session_form}}
 			{{token_form 'login'}}

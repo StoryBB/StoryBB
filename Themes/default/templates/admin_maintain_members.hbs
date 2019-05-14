@@ -149,12 +149,12 @@
 				</p>
 				<div style="display: none; padding: 3px" id="membersPanel">
 
-				{{#each context.membergroups}}
+{{#each context.membergroups}}
 					<label for="groups{{id}}">
 						<input type="checkbox" name="groups[{{id}}]" id="groups{{id}}" checked>
 						{{{name}}}
 					</label><br>
-				{{/each}}
+{{/each}}
 
 				</div>
 				<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_members_confirm}}}" class="button_submit you_sure">

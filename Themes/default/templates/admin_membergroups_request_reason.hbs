@@ -7,8 +7,8 @@
 			<div class="windowbg">
 				<dl class="settings">
 
-				{{! Loop through and print out a reason box for each... }}
-				{{#each context.group_requests}}
+{{! Loop through and print out a reason box for each... }}
+{{#each context.group_requests}}
 					<dt>
 						<strong>{{textTemplate ../txt.mc_groupr_reason_desc member_link group_link}}:</strong>
 					</dt>
@@ -16,7 +16,7 @@
 						<input type="hidden" name="groupr[]" value="{{id}}">
 						<textarea name="groupreason[{{id}}]" rows="3" cols="40" style="min-width: 80%; max-width: 99%;"></textarea>
 					</dd>
-				{{/each}}
+{{/each}}
 
 				</dl>
 				<input type="submit" name="go" value="{{{txt.mc_groupr_submit}}}" class="button_submit">

@@ -5,17 +5,16 @@
 				<dl class="settings">
 					<dt>{{{txt.contact_form_sender}}}:</dt>
 					<dd>
-						{{#if context.contact.id_member}}
+
+{{#if context.contact.id_member}}
 						<a href="{{scripturl}}?action=profile;u={{context.contact.id_member}}">{{{context.contact.member_name}}}</a>
-						{{else}}
+{{else}}
 						{{{context.contact.member_name}}}
-						{{/if}}
+{{/if}}
 					</dd>
 
 					<dt>{{{txt.contact_form_email}}}:</dt>
-					<dd>
-						{{{context.contact.member_email}}}
-					</dd>
+					<dd>{{{context.contact.member_email}}}</dd>
 
 					<dt>{{{txt.subject}}}:</dt>
 					<dd>{{{context.contact.subject}}}</dd>
@@ -28,11 +27,11 @@
 
 					<dt>{{{txt.contact_form_status}}}:</dt>
 					<dd>
-						{{#if (eq context.contact.status '0')}}
+{{#if (eq context.contact.status '0')}}
 						<strong>{{{txt.contact_form_status_unanswered}}}</strong>
-						{{else}}
+{{else}}
 						{{{txt.contact_form_status_answered}}}
-						{{/if}}
+{{/if}}
 					</dd>
 				</dl>
 			</div>
@@ -60,21 +59,28 @@
 				{{session_form}}
 				{{token_form 'admin-contact'}}
 			</form>
-			{{#if context.contact.previous}}
+
+{{#if context.contact.previous}}
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.contact_form_previous_responses}}}</h3>
 			</div>
 			<div class="roundframe">
 				<dl class="settings">
-					{{#each context.contact.previous}}
+
+	{{#each context.contact.previous}}
 					<dt>
-						{{#if real_name}}{{{real_name}}}{{else}}{{{../txt.not_applicable}}}{{/if}}<br>
+		{{#if real_name}}
+						{{{real_name}}}
+		{{else}}
+						{{{../txt.not_applicable}}}
+		{{/if}}
+						<br>
 						{{{time_sent_format}}}
 					</dt>
 					<dd>
 						{{{response}}}
 					</dd>
-					{{/each}}
+	{{/each}}
 				</dl>
 			</div>
-			{{/if}}
+{{/if}}

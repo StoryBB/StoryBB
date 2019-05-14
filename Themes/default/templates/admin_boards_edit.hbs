@@ -4,11 +4,11 @@
 			<input type="hidden" name="boardid" value="{{{context.board.id}}}">
 			<div class="cat_bar">
 				<h3 class="catbg">
-					{{#if context.board.is_new}}
+{{#if context.board.is_new}}
 					{{{txt.mboards_new_board_name}}}
-					{{else}}
+{{else}}
 					{{{txt.boardsEdit}}}
-					{{/if}}
+{{/if}}
 				</h3>
 			</div>
 			<div class="windowbg2 noup">
@@ -20,14 +20,15 @@
 					</dt>
 					<dd>
 						<select name="new_cat" onchange="if (this.form.order) {this.form.order.disabled = this.options[this.selectedIndex].value != 0; this.form.board_order.disabled = this.options[this.selectedIndex].value != 0 || this.form.order.options[this.form.order.selectedIndex].value == '';}">
-							{{#each context.categories}}
+
+{{#each context.categories}}
 							<option{{#if selected}} selected{{/if}} value="{{id}}">{{{name}}}</option>
-							{{/each}}
+{{/each}}
 						</select>
 					</dd>
 
-					{{! If this isn't the only board in this category let the user choose where the board is to live. }}
-					{{#if (or (and context.board.is_new (gt (count context.board_order) 0)) (gt (count context.board_order) 1))}}
+{{! If this isn't the only board in this category let the user choose where the board is to live. }}
+{{#if (or (and context.board.is_new (gt (count context.board_order) 0)) (gt (count context.board_order) 1))}}
 					<dt>
 						<strong>{{{txt.order}}}:</strong>
 					</dt>
@@ -35,9 +36,10 @@
 
 						{{! The first select box gives the user the option to position it before, after or as a child of another board. }}
 						<select id="order" name="placement" onchange="this.form.board_order.disabled = this.options[this.selectedIndex].value == '';">
-							{{#unless context.board.is_new}}
+
+	{{#unless context.board.is_new}}
 							<option value="">({{{txt.mboards_unchanged}}})</option>
-							{{/unless}}
+	{{/unless}}
 							<option value="after">{{{txt.mboards_order_after}}}...</option>
 							<option value="child">{{{txt.mboards_order_child_of}}}...</option>
 							<option value="before">{{{txt.mboards_order_before}}}...</option>
@@ -45,16 +47,18 @@
 
 						{{! The second select box lists all the boards in the category. }}
 						<select id="board_order" name="board_order"{{#unless context.board.is_new}} disabled{{/unless}}>
-							{{#unless context.board.is_new}}
-							<option value="">({{{txt.mboards_unchanged}}})</option>{{/unless}}
 
-							{{#each context.board_order}}
+	{{#unless context.board.is_new}}
+							<option value="">({{{txt.mboards_unchanged}}})</option>
+	{{/unless}}
+
+	{{#each context.board_order}}
 							<option{{#if selected}} selected{{/if}} value="{{id}}">{{{name}}}</option>
-							{{/each}}
+	{{/each}}
 
 						</select>
 					</dd>
-					{{/if}}
+{{/if}}
 
 					{{! Options for board name and description. }}
 					<dt>
@@ -84,13 +88,14 @@
 					</dt>
 					<dd>
 						<select name="profile">'
-							{{#if context.board.is_new}}
-							<option value="-1">[{{{txt.permission_profile_inherit}}}]</option>
-							{{/if}}
 
-							{{#each context.profiles}}
+{{#if context.board.is_new}}
+							<option value="-1">[{{{txt.permission_profile_inherit}}}]</option>
+{{/if}}
+
+{{#each context.profiles}}
 							<option value="{{@key}}"{{#if (eq_coerce @key ../context.board.profile)}} selected{{/if}}>{{{name}}}</option>
-							{{/each}}
+{{/each}}
 						</select>
 					</dd>
 					<dt>
@@ -114,7 +119,8 @@
 								<td></td>
 								<td></td>
 							</tr>
-							{{#each context.groups_account}}
+
+{{#each context.groups_account}}
 							<tr>
 								<td>
 									<label for="groups_{{id}}_a">
@@ -134,7 +140,7 @@
 								</td>
 								<td></td>
 							</tr>
-							{{/each}}
+{{/each}}
 							<tr class="select_all_box">
 								<td>
 								</td>
@@ -152,14 +158,15 @@
 								</td>
 							</tr>
 
-							{{#if context.groups_character}}
+{{#if context.groups_character}}
 							<tr>
 								<td><br><b>{{{txt.membergroups_character}}}</b></td>
 								<td></td>
 								<td></td>
 								<td></td>
 							</tr>
-								{{#each context.groups_character}}
+
+	{{#each context.groups_character}}
 							<tr>
 								<td>
 									<label for="groups_{{id}}_a">
@@ -179,7 +186,7 @@
 								</td>
 								<td></td>
 							</tr>
-								{{/each}}
+	{{/each}}
 							<tr class="select_all_box">
 								<td>
 								</td>
@@ -196,7 +203,7 @@
 									<em>{{{txt.check_all}}}</em>
 								</td>
 							</tr>
-							{{/if}}
+{{/if}}
 
 							<tr>
 								<td><br><b>{{{txt.membergroups_post}}}</b></td>
@@ -204,7 +211,8 @@
 								<td></td>
 								<td></td>
 							</tr>
-							{{#each context.groups_post}}
+
+{{#each context.groups_post}}
 							<tr>
 								<td>
 									<label for="groups_{{id}}_a">
@@ -224,7 +232,7 @@
 								</td>
 								<td></td>
 							</tr>
-							{{/each}}
+{{/each}}
 
 							<tr class="select_all_box">
 								<td></td>
@@ -273,7 +281,7 @@
 				</script>
 				<hr>
 
-				{{#if (and (not context.board.is_recycle) (not context.board.topics))}}
+{{#if (and (not context.board.is_recycle) (not context.board.topics))}}
 					<dl class="settings">
 						<dt>
 							<strong{{#if context.board.topics}} style="color: gray;"{{/if}}>{{{txt.mboards_redirect}}}:</strong><br>
@@ -296,7 +304,7 @@
 						</dl>
 					</div>
 
-					{{#if context.board.redirect}}
+	{{#if context.board.redirect}}
 					<div id="reset_redirect_div">
 						<dl class="settings">
 							<dt>
@@ -309,8 +317,8 @@
 							</dd>
 						</dl>
 					</div>
-					{{/if}}
-				{{/if}}
+	{{/if}}
+{{/if}}
 
 				<div id="count_posts_div">
 					<dl class="settings">
@@ -353,48 +361,49 @@
 					</dl>
 				</div>
 
-				{{! Show any board settings added by mods using the 'integrate_edit_board' hook. }}
-				{{#if context.custom_board_settings}}
+{{! Show any board settings added by mods using the 'integrate_edit_board' hook. }}
+{{#if context.custom_board_settings}}
 				<hr>
 				<div id="custom_board_settings">
 					<dl class="settings">
-						{{#each context.custom_board_settings}}
-						{{#if (and dt dd)}}
+
+	{{#each context.custom_board_settings}}
+		{{#if (and dt dd)}}
 						<dt class="clear{{#unless (is_numeric @key)}} cbs_{{@key}}{{/unless}}">
 							{{{dt}}}
 						</dt>
 						<dd{{#unless (is_numeric @key)}} class="cbs_{{@key}}"{{/unless}}>
 							{{{dd}}}
 						</dd>
-						{{/if}}
-						{{/each}}
+		{{/if}}
+	{{/each}}
 					</dl>
 				</div>
-				{{/if}}
+{{/if}}
 
-				{{#if context.board.is_recycle}}
+{{#if context.board.is_recycle}}
 				<div class="noticebox">{{{txt.mboards_recycle_disabled_delete}}}</div>
-				{{/if}}
+{{/if}}
 
 				<input type="hidden" name="rid" value="{{{context.redirect_location}}}">
 				{{session_form}}
 				{{token_form context.token_check}}
 
-				{{! If this board has no children don't bother with the next confirmation screen. }}
-				{{#if context.board.no_children}}
+{{! If this board has no children don't bother with the next confirmation screen. }}
+{{#if context.board.no_children}}
 				<input type="hidden" name="no_children" value="1">
-				{{/if}}
+{{/if}}
 
-				{{#if context.board.is_new}}
+{{#if context.board.is_new}}
 				<input type="hidden" name="cur_cat" value="{{{context.board.category}}}">
 				<input type="submit" name="add" value="{{{txt.mboards_new_board}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
-				{{else}}
+{{else}}
 				<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
-				{{/if}}
+{{/if}}
 
-				{{#if (and (not context.board.is_new) (not context.board.is_recycle))}}
+{{#if (and (not context.board.is_new) (not context.board.is_recycle))}}
 				<input type="submit" name="delete" value="{{{txt.mboards_delete_board}}}" data-confirm="{{{txt.boardConfirm}}}" class="button_submit you_sure">
-				{{/if}}
+{{/if}}
 			</div>
 		</form>
 	</div>
@@ -411,18 +420,18 @@
 		document.getElementById("board_theme_div").style.display = redirectEnabled ? "none" : "";
 		document.getElementById("count_posts_div").style.display = redirectEnabled ? "none" : "";
 
-		{{#if (and (not context.board.topics) (not context.board.is_recycle))}}
+{{#if (and (not context.board.topics) (not context.board.is_recycle))}}
 			document.getElementById("redirect_address_div").style.display = redirectEnabled ? "" : "none";
 
-			{{#if context.board.redirect}}
+	{{#if context.board.redirect}}
 			document.getElementById("reset_redirect_div").style.display = redirectEnabled ? "" : "none";
-			{{/if}}
-		{{/if}}
+	{{/if}}
+{{/if}}
 
-		{{! Include any JavaScript added by mods using the 'integrate_edit_board' hook. }}
-		{{#if context.custom_refreshOptions}}
-			{{#each context.custom_refreshOptions}}{{{.}}}{{/each}}
-		{{/if}}
+{{! Include any JavaScript added by mods using the 'integrate_edit_board' hook. }}
+{{#if context.custom_refreshOptions}}
+	{{#each context.custom_refreshOptions}}{{{.}}}{{/each}}
+{{/if}}
 	}
 	refreshOptions();
 </script>

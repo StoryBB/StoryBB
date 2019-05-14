@@ -33,7 +33,8 @@
 				<dt>{{{txt.policy_text}}}</dt>
 				<dd>{{{richtexteditor 'message' '' 'bbcBox'}}}</dd>
 			</dl>
-			{{#if (eq context.policy.require_acceptance '1')}}
+
+{{#if (eq context.policy.require_acceptance '1')}}
 				<hr>
 				<dl class="register_form">
 					<dt>
@@ -51,7 +52,7 @@
 						<textarea name="policy_edit" id="policy_edit"></textarea>
 					</dd>
 				</dl>
-			{{/if}}
+{{/if}}
 			<hr>
 			<input type="submit" class="button_submit" name="save" value="{{{txt.save}}}">
 		</div>

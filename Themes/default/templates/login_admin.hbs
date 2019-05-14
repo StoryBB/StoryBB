@@ -8,9 +8,9 @@
 		</div>
 		<div class="roundframe centertext noup">
 
-	{{#if context.incorrect_password}}
+{{#if context.incorrect_password}}
 			<div class="error">{{txt.admin_incorrect_password}}</div>
-	{{/if}}
+{{/if}}
 			<strong>{{txt.password}}:</strong>
 			<input type="password" name="{{context.sessionCheckType}}_pass" size="24">
 			{{> helpicon help='securityDisable_why'}}

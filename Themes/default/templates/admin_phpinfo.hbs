@@ -6,7 +6,7 @@
 			</h3>
 		</div>
 
-		{{#each context.pinfo}}
+{{#each context.pinfo}}
 		<table id="{{@key}}" class="table_grid">
 			<thead>
 				<tr class="title_bar">
@@ -16,31 +16,34 @@
 				</tr>
 			</thead>
 			<tbody>
-			{{#if 2col}}
-				{{#each 2col}}
+
+	{{#if 2col}}
+		{{#each 2col}}
 				<tr class="windowbg">
 					<td class="equal_table">{{@key}}</td>
 					<td colspan="2">{{{.}}}</td>
 				</tr>
-				{{/each}}
-			{{/if}}
-			{{#if 3col}}
+		{{/each}}
+	{{/if}}
+	{{#if 3col}}
 				<tr class="title_bar">
 					<td class="equal_table"><strong>{{{../txt.phpinfo_itemsettings}}}</strong></td>
 					<td class="equal_table"><strong>{{{../txt.phpinfo_localsettings}}}</strong></td>
 					<td class="equal_table"><strong>{{{../txt.phpinfo_defaultsettings}}}</strong></td>
 				</tr>
-				{{#each 3col}}
+
+		{{#each 3col}}
 				<tr class="windowbg">
 					<td class="equal_table">{{@key}}</td>
-					{{#each .}}
+
+			{{#each .}}
 					<td class="equal_table">{{{.}}}</td>
-					{{/each}}
+			{{/each}}
 				</tr>
-				{{/each}}
-			{{/if}}
+		{{/each}}
+	{{/if}}
 			</tbody>
 		</table>
 		<br>
-		{{/each}}
+{{/each}}
 	</div>

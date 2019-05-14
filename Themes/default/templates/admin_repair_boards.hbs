@@ -6,14 +6,16 @@
 				</h3>
 			</div>
 			<div class="windowbg">
-				{{! Are we fixing issues, or just prompting? }}
-				{{#if context.error_search}}
-					{{#if context.to_fix}}
+
+{{! Are we fixing issues, or just prompting? }}
+{{#if context.error_search}}
+	{{#if context.to_fix}}
 						{{{txt.errors_found}}}:
 				<ul>
-						{{#each context.repair_errors}}
+
+		{{#each context.repair_errors}}
 					<li>{{{.}}}</li>
-						{{/each}}
+		{{/each}}
 				</ul>
 
 				<p>
@@ -22,30 +24,30 @@
 				<p class="padding">
 					<strong><a href="{{scripturl}}?action=admin;area=repairboards;fixErrors;{{session_url}}">{{{txt.yes}}}</a> - <a href="{{scripturl}}?action=admin;area=maintain">{{{txt.no}}}</a></strong>
 				</p>
-					{{else}}
+	{{else}}
 				<p>{{{txt.maintain_no_errors}}}</p>
 				<p class="padding">
 					<a href="{{scripturl}}?action=admin;area=maintain;sa=routine">{{{txt.maintain_return}}}</a>
 				</p>
-					{{/if}}
-				{{else}}
-					{{#if context.redirect_to_recount}}
+	{{/if}}
+{{else}}
+	{{#if context.redirect_to_recount}}
 				<p>{{{txt.errors_do_recount}}}</p>
 				<form action="{{scripturl}}?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
 					{{session_form}}
 					<input type="submit" name="recount" id="recount_now" value="{{{txt.errors_recount_now}}}">
 				</form>
-					{{else}}
+	{{else}}
 				<p>{{{txt.errors_fixed}}}</p>
 				<p class="padding">
 					<a href="{{scripturl}}?action=admin;area=maintain;sa=routine">{{{txt.maintain_return}}}</a>
 				</p>
-					{{/if}}
-				{{/if}}
+	{{/if}}
+{{/if}}
 			</div>
 		</div>
 
-		{{#if context.redirect_to_recount}}
+{{#if context.redirect_to_recount}}
 		<script>
 			var countdown = 5;
 			doAutoSubmit();
@@ -63,4 +65,4 @@
 				setTimeout("doAutoSubmit();", 1000);
 			}
 		</script>
-		{{/if}}
+{{/if}}

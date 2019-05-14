@@ -22,15 +22,17 @@
 						<strong><label for="smiley_filename">{{{txt.smileys_filename}}}</label>: </strong>
 					</dt>
 					<dd>
-						{{#unless context.filenames}}
+
+{{#unless context.filenames}}
 						<input type="text" name="smiley_filename" id="smiley_filename" value="{{{context.current_smiley.filename}}}">
-						{{else}}
+{{else}}
 						<select name="smiley_filename" id="smiley_filename" onchange="updatePreview();">
-							{{#each context.filenames}}
+
+	{{#each context.filenames}}
 							<option value="{{id}}"{{#if selected}} selected{{/if}}>{{id}}</option>
-							{{/each}}
+	{{/each}}
 						</select>
-						{{/unless}}
+{{/unless}}
 					</dd>
 					<dt>
 						<strong><label for="smiley_description">{{{txt.smileys_description}}}</label>: </strong>

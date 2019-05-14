@@ -8,9 +8,10 @@
 			<div class="windowbg">
 				<p>{{{txt.mboards_delete_cat_contains}}}:</p>
 				<ul>
-					{{#each context.category.children}}
+
+{{#each context.category.children}}
 					<li>{{{.}}}</li>
-					{{/each}}
+{{/each}}
 				</ul>
 			</div>
 			<div class="cat_bar">
@@ -22,11 +23,11 @@
 					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1"{{#if (eq (count context.category_order) 1)}} disabled{{/if}}>{{{txt.mboards_delete_option2}}}</label>:
 					<select name="cat_to"{{#unless (eq (count context.category_order) 1)}} disabled{{/unless}}>
 
-					{{#each context.category_order}}
-						{{#if (neq id 0)}}
+{{#each context.category_order}}
+	{{#if (neq id 0)}}
 						<option value="{{id}}">{{{true_name}}}</option>
-						{{/if}}
-					{{/each}}
+	{{/if}}
+{{/each}}
 
 					</select>
 				</p>

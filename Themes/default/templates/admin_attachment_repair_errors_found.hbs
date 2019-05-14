@@ -5,12 +5,13 @@
 			</div>
 			<div class="windowbg2 noup">
 				<p>{{{txt.repair_attachments_error_desc}}}</p>
-				{{#each context.repair_errors}}
-					{{#if (gt . '0')}}
+
+{{#each context.repair_errors}}
+	{{#if (gt . '0')}}
 					<input type="checkbox" name="to_fix[]" id="{{@key}}" value="{{@key}}">
 					<label for="{{@key}}">{{textTemplate (get_text (concat 'attach_repair_' @key)) .}}</label><br>
-					{{/if}}
-				{{/each}}
+	{{/if}}
+{{/each}}
 				<br>
 				<input type="submit" value="{{{txt.repair_attachments_continue}}}" class="button_submit">
 				<input type="submit" name="cancel" value="{{{txt.repair_attachments_cancel}}}" class="button_submit">

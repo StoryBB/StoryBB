@@ -1,16 +1,17 @@
-<form action="{{scripturl}}?action=activate;u={{context.member_id}}" method="post" accept-charset="UTF-8">
+		<form action="{{scripturl}}?action=activate;u={{context.member_id}}" method="post" accept-charset="UTF-8">
 			<div class="title_bar">
 				<h3 class="titlebg">{{context.page_title}}</h3>
 			</div>
 			<div class="roundframe">
-	{{#unless context.member_id}}
+
+{{#unless context.member_id}}
 				<dl>
-				<dt>{{txt.invalid_activation_username}}:</dt>
-				<dd><input type="text" name="user" size="30"></dd>
-	{{/unless}}
-				<dt>{{txt.invalid_activation_retry}}:</dt>
-				<dd><input type="text" name="code" size="30"></dd>
-			</dl>
-			<p><input type="submit" value="{{txt.invalid_activation_submit}}" class="button_submit"></p>
-		</div>
-	</form>
+					<dt>{{txt.invalid_activation_username}}:</dt>
+					<dd><input type="text" name="user" size="30"></dd>
+{{/unless}}
+					<dt>{{txt.invalid_activation_retry}}:</dt>
+					<dd><input type="text" name="code" size="30"></dd>
+				</dl>
+				<p><input type="submit" value="{{txt.invalid_activation_submit}}" class="button_submit"></p>
+			</div>
+		</form>

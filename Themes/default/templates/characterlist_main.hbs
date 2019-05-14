@@ -5,7 +5,7 @@
 			</h3>
 		</div>
 
-		{{#if context.filterable_groups}}
+{{#if context.filterable_groups}}
 		<div class="information">
 			<form action="{{scripturl}}?action=characters" method="post">
 				<a href="javascript:void(0);" id="filter_opts_link" onclick="$('#filter_opts').show(); $(this).hide(); return false;" class="toggle_down">{{{txt.filter_characters}}}</a>
@@ -14,7 +14,7 @@
 						<a href="javascript:void(0);" onclick="$(this).closest('fieldset').hide();$('#filter_opts_link').show(); return false;" class="toggle_up"> {{{txt.filter_characters}}}</a>
 					</legend>
 
-					{{#each context.filterable_groups}}
+	{{#each context.filterable_groups}}
 					<div class="filter_container">
 						<label>
 							<input type="checkbox"{{#if (is_array ../context.filter_groups)}}{{#if (in_array @key ../context.filter_groups)}} checked{{/if}}{{else}} disabled{{/if}} name="filter[]" value="{{@key}}">
@@ -22,9 +22,9 @@
 							<div class="group_badge">{{{parsed_icons}}}</div>
 						</label>
 					</div>
-					{{/each}}
+	{{/each}}
 
-					{{#if context.filter_characters_in_no_groups}}
+	{{#if context.filter_characters_in_no_groups}}
 					<div class="filter_container">
 						<label>
 							<input type="checkbox"{{#if (and context.filter_groups (not (is_array context.filter_groups)))}} checked{{/if}} name="filter[]" id="ungroup" value="-1" onchange="$('.filter_container input:not(#ungroup)').prop('disabled', this.checked)">
@@ -32,7 +32,7 @@
 							<div class="group_badge"></div>
 						</label>
 					</div>
-					{{/if}}
+	{{/if}}
 
 					<div class="clearfix">
 						<input type="submit" class="button_submit" value="{{{txt.apply_filter}}}">
@@ -40,22 +40,44 @@
 				</fieldset>
 			</form>
 		</div>
-		{{/if}}
+{{/if}}
 
-		{{#unless context.char_list}}
+{{#unless context.char_list}}
 		<div class="windowbg2">{{{txt.characters_none}}}</div>
-		{{else}}
+{{else}}
 			{{{context.page_index}}}
 			<div class="char_list_container">
-				{{#each context.char_list}}
+
+	{{#each context.char_list}}
 				<div class="windowbg2 char_list">
-					<div class="char_list_name"><a href="{{scripturl}}?action=profile;u={{id_member}};area=characters;char={{id_character}}">{{{character_name}}}</a></div>
-					<div class="char_list_avatar"><img src="{{{avatar}}}" class="avatar"></div>
-					<div class="char_list_group">{{#if group_title}}{{{group_title}}}{{else}}<em>{{{../txt.char_no_group}}}</em>{{/if}}</div>
-					<div class="char_list_posts">{{{../txt.member_postcount}}}: {{{posts}}}</div>
-					<div class="char_list_created">{{{date_created_format}}}</div>
-					<div class="char_list_sheet">{{#if (eq retired '1')}}{{{../txt.char_retired}}}{{else}}{{#if (gt char_sheet 0)}}<a href="{{../scripturl}}?action=profile;u={{id_member}};area=characters;char={{id_character}};sa=sheet">{{{../txt.char_sheet}}}</a>{{else}}<em>{{{../txt.char_sheet_none_short}}}</em>{{/if}}{{/if}}</div>
+					<div class="char_list_name">
+						<a href="{{scripturl}}?action=profile;u={{id_member}};area=characters;char={{id_character}}">{{{character_name}}}</a>
+					</div>
+					<div class="char_list_avatar">
+						<img src="{{{avatar}}}" class="avatar">
+					</div>
+					<div class="char_list_group">
+						{{#if group_title}}{{{group_title}}}{{else}}<em>{{{../txt.char_no_group}}}</em>{{/if}}
+					</div>
+					<div class="char_list_posts">
+						{{{../txt.member_postcount}}}: {{{posts}}}
+					</div>
+					<div class="char_list_created">
+						{{{date_created_format}}}
+					</div>
+					<div class="char_list_sheet">
+
+		{{#if (eq retired '1')}}
+						{{{../txt.char_retired}}}
+		{{else}}
+			{{#if (gt char_sheet 0)}}
+						<a href="{{../scripturl}}?action=profile;u={{id_member}};area=characters;char={{id_character}};sa=sheet">{{{../txt.char_sheet}}}</a>
+			{{else}}
+						<em>{{{../txt.char_sheet_none_short}}}</em>
+			{{/if}}
+		{{/if}}
+					</div>
 				</div>
-				{{/each}}
+	{{/each}}
 			</div>
-		{{/unless}}
+{{/unless}}

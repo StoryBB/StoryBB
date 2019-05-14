@@ -110,8 +110,14 @@
 					<div class="msearch_details floatright">
 						<fieldset>
 							<legend>{{{txt.activation_status}}}</legend>
-							<label for="activated-0"><input type="checkbox" name="activated[]" value="1" id="activated-0" checked> {{{txt.activated}}}</label>&nbsp;&nbsp;
-							<label for="activated-1"><input type="checkbox" name="activated[]" value="0" id="activated-1" checked> {{{txt.not_activated}}}</label>
+							<label for="activated-0">
+								<input type="checkbox" name="activated[]" value="1" id="activated-0" checked>
+								{{{txt.activated}}}
+							</label>&nbsp;&nbsp;
+							<label for="activated-1">
+								<input type="checkbox" name="activated[]" value="0" id="activated-1" checked>
+								{{{txt.not_activated}}}
+							</label>
 						</fieldset>
 					</div>
 				</div>
@@ -164,7 +170,7 @@
 				</thead>
 				<tbody>
 
-				{{#each context.postgroups}}
+{{#each context.postgroups}}
 					<tr class="windowbg">
 						<td>
 							{{{name}}}
@@ -173,7 +179,7 @@
 							<input type="checkbox" name="postgroups[]" value="{{id}}" checked>
 						</td>
 					</tr>
-				{{/each}}
+{{/each}}
 
 					<tr class="windowbg">
 						<td>
@@ -198,7 +204,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					{{#each context.charactergroups}}
+
+{{#each context.charactergroups}}
 					<tr class="windowbg">
 						<td>{{{name}}}</td>
 						<td class="centercol">
@@ -208,7 +215,7 @@
 							{{#if can_be_additional}}<input type="checkbox" name="charactergroups[2][]" value="{{id}}" checked>{{/if}}
 						</td>
 					</tr>
-					{{/each}}
+{{/each}}
 
 					<tr class="windowbg">
 						<td>

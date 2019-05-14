@@ -13,20 +13,22 @@
 			</form>
 		</div>
 		<div class="windowbg2 generic_list_wrapper">
-			{{#if context.search_results}}
-				<ol class="search_results">
-					{{#each context.search_results}}
-					<li>
-						<a href="{{{url}}}"><strong>{{{name}}}</strong></a> [{{{type_string}}}]
-						{{#if help}}
-						<p class="double_height">{{{help}}}</p>
-						{{/if}}
-					</li>
-					{{/each}}
-				</ol>
-			{{else}}
-				<p class="centertext">
-					<strong>{{{txt.admin_search_results_none}}}</strong>
-				</p>
-			{{/if}}
+
+{{#if context.search_results}}
+			<ol class="search_results">
+
+	{{#each context.search_results}}
+				<li>
+					<a href="{{{url}}}"><strong>{{{name}}}</strong></a> [{{{type_string}}}]
+		{{#if help}}
+					<p class="double_height">{{{help}}}</p>
+		{{/if}}
+				</li>
+	{{/each}}
+			</ol>
+{{else}}
+			<p class="centertext">
+				<strong>{{{txt.admin_search_results_none}}}</strong>
+			</p>
+{{/if}}
 		</div>

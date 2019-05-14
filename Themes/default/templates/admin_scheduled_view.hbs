@@ -1,28 +1,30 @@
-	{{! Viewing all scheduled tasks }}
-	{{#if context.tasks_were_run}}
-		{{#if context.scheduled_errors}}
+{{! Viewing all scheduled tasks }}
+{{#if context.tasks_were_run}}
+	{{#if context.scheduled_errors}}
 			<div class="errorbox" id="errors">
 				<dl>
 					<dt>
 						<strong id="error_serious">{{{txt.scheduled_tasks_were_run_errors}}}</strong>
 					</dt>
-					{{#each context.scheduled_errors}}
+
+		{{#each context.scheduled_errors}}
 					<dd class="error">
 						<strong>{{{title}}}</strong>
 						<ul>
-						{{#each errors}}
+
+			{{#each errors}}
 							<li>{{{.}}}</li>
-						{{/each}}
+			{{/each}}
 						</ul>
 					</dd>
-					{{/each}}
+		{{/each}}
 				</dl>
 			</div>
-		{{else}}
+	{{else}}
 			<div class="infobox">
 				{{{txt.scheduled_tasks_were_run}}}
 			</div>
-		{{/if}}
 	{{/if}}
+{{/if}}
 
-	{{{genericlist 'scheduled_tasks'}}}
+			{{{genericlist 'scheduled_tasks'}}}

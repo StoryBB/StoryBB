@@ -5,19 +5,21 @@
 			</div>
 			<div class="windowbg2">
 
-				{{#if context.char_templates}}
+{{#if context.char_templates}}
 				<ul class="sortable">
-					{{#each context.char_templates}}
+	{{#each context.char_templates}}
 					<li class="character_group">
-						<div class="group_name"><a href="{{../scripturl}}?action=admin;area=templates;sa=edit;template_id={{@key}}">{{{template_name}}}</a></div>
+						<div class="group_name">
+							<a href="{{../scripturl}}?action=admin;area=templates;sa=edit;template_id={{@key}}">{{{template_name}}}</a>
+						</div>
 						<img src="{{../settings.default_images_url}}/toggle.png" class="handle">
 						<input type="hidden" name="template[{{@key}}]" value="{{@key}}">
 					</li>
-					{{/each}}
+	{{/each}}
 				</ul>
-				{{else}}
+{{else}}
 				{{{txt.char_templates_none}}}
-				{{/if}}
+{{/if}}
 
 			</div>
 			<div class="floatright">

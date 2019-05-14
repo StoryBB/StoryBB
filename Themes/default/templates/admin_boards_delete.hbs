@@ -9,9 +9,10 @@
 			<div class="windowbg">
 				<p>{{{txt.mboards_delete_board_contains}}}</p>
 				<ul>
-					{{#each context.children}}
+
+{{#each context.children}}
 					<li>{{{node.name}}}</li>
-					{{/each}}
+{{/each}}
 				</ul>
 			</div>
 			<div class="cat_bar">
@@ -22,11 +23,12 @@
 					<label for="delete_action0"><input type="radio" id="delete_action0" name="delete_action" value="0" checked>{{{txt.mboards_delete_board_option1}}}</label><br>
 					<label for="delete_action1"><input type="radio" id="delete_action1" name="delete_action" value="1"{{#unless context.can_move_children}} disabled{{/unless}}>{{{txt.mboards_delete_board_option2}}}</label>:
 					<select name="board_to"{{#unless context.can_move_children}} disabled{{/unless}}>
-						{{#each context.board_order}}
-							{{#if (and (neq id ../context.board.id) (not is_child))}}
+
+{{#each context.board_order}}
+	{{#if (and (neq id ../context.board.id) (not is_child))}}
 						<option value="{{id}}">{{{name}}}</option>
-							{{/if}}
-						{{/each}}
+	{{/if}}
+{{/each}}
 					</select>
 				</p>
 				<input type="submit" name="delete" value="{{{txt.mboards_delete_confirm}}}" class="button_submit">

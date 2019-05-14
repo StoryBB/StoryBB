@@ -5,12 +5,14 @@
 				</h3>
 			</div>
 			<div class="roundframe noup">
-	{{#if context.tfa_error}}
+
+{{#if context.tfa_error}}
 				<div class="error">{{txt.tfa_code_invalid}}</div>
-	{{/if}}
-	{{#if context.tfa_backup_error}}
+{{/if}}
+
+{{#if context.tfa_backup_error}}
 				<div class="error">{{txt.tfa_backup_invalid}}</div>
-	{{/if}}
+{{/if}}
 				<form action="{{context.tfa_url}}" method="post" id="frmTfa">
 					<div id="tfaCode">
 						{{txt.tfa_login_desc}}<br>
@@ -19,7 +21,10 @@
 							<input type="text" name="tfa_code" style="width: 150px;" value="{{context.fa_value}}">
 							<input type="submit" class="button_submit" name="submit" value="{{txt.login}}" style="float: none; margin: 0;"><br />
 						</div><br />
-						<div><input type="checkbox" value="1" name="tfa_preserve" id="tfa_preserve"/><label for="tfa_preserve">&nbsp;{{txt.tfa_preserve}}</label></div>
+						<div>
+							<input type="checkbox" value="1" name="tfa_preserve" id="tfa_preserve"/>
+							<label for="tfa_preserve">&nbsp;{{txt.tfa_preserve}}</label>
+						</div>
 						<hr />
 						<input type="button" class="button_submit" name="backup" value="{{txt.tfa_backup}}" style="float: none; margin: 0;">
 					</div>
@@ -32,7 +37,8 @@
 				</form>
 				<script>
 						form = $("#frmTfa");
-	{{#if context.from_ajax}}
+
+{{#if context.from_ajax}}
 						form.submit(function(e) {
 							// If we are submitting backup code, let normal workflow follow since it redirects a couple times into a different page
 							if (form.find("input[name=tfa_backup]:first").val().length > 0)
@@ -50,7 +56,7 @@
 							});
 							return false;
 						});
-	{{/if}}
+{{/if}}
 						form.find("input[name=backup]").click(function(e) {
 							$("#tfaBackup").show();
 							$("#tfaCode").hide();
