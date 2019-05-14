@@ -10,8 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-global $context;
-
 $txt['groups'] = 'Groups';
 $txt['viewing_groups'] = 'Viewing Membergroups';
 
