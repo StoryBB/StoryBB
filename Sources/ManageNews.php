@@ -490,7 +490,7 @@ function ComposeMailing()
 	$context['sub_template'] = 'newsletter_compose';
 
 	$context['subject'] = !empty($_POST['subject']) ? $_POST['subject'] : $smcFunc['htmlspecialchars']($context['forum_name'] . ': ' . $txt['subject']);
-	$context['message'] = !empty($_POST['message']) ? $_POST['message'] : $smcFunc['htmlspecialchars']($txt['message'] . "\n\n" . $txt['regards_team'] . "\n\n" . '{$board_url}');
+	$context['message'] = !empty($_POST['message']) ? $_POST['message'] : $smcFunc['htmlspecialchars']($txt['message'] . "\n\n" . str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']) . "\n\n" . '{$board_url}');
 	$context['email_variables'] = str_replace('{scripturl}', $scripturl, $txt['email_variables']);
 
 	// Needed for the WYSIWYG editor.
