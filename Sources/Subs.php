@@ -1406,7 +1406,9 @@ function setupThemeContext($forceload = false)
 		$context['user']['total_time_logged_in'] = array('days' => 0, 'hours' => 0, 'minutes' => 0);
 
 		if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1)
-			$txt['welcome_guest'] .= $txt['welcome_guest_activate'];
+		{
+			$txt['welcome_guest_register'] .= str_replace('{scripturl}', $scripturl, $txt['welcome_guest_activate']);
+		}
 
 		// If we've upgraded recently, go easy on the passwords.
 		if (!empty($modSettings['disableHashTime']) && ($modSettings['disableHashTime'] == 1 || time() < $modSettings['disableHashTime']))
