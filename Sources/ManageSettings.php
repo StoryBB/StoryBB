@@ -43,7 +43,7 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = nu
  */
 function ModifyFeatureSettings()
 {
-	global $context, $txt, $settings;
+	global $context, $txt, $settings, $scripturl;
 
 	$context['page_title'] = $txt['modSettings_title'];
 
@@ -63,7 +63,7 @@ function ModifyFeatureSettings()
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['modSettings_title'],
 		'help' => 'featuresettings',
-		'description' => sprintf($txt['modSettings_desc'], $settings['theme_id'], $context['session_id'], $context['session_var']),
+		'description' => sprintf($txt['modSettings_desc'], $settings['theme_id'], $context['session_id'], $context['session_var'], $scripturl),
 		'tabs' => array(
 			'basic' => array(
 			),
@@ -1077,7 +1077,7 @@ function ModifySignatureSettings($return_config = false)
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=sig';
 	$context['settings_title'] = $txt['signature_settings'];
 
-	$context['settings_message'] = !empty($settings_applied) ? '<div class="infobox">' . $txt['signature_settings_applied'] . '</div>' : '<p class="centertext">' . sprintf($txt['signature_settings_warning'], $context['session_id'], $context['session_var']) . '</p>';
+	$context['settings_message'] = !empty($settings_applied) ? '<div class="infobox">' . $txt['signature_settings_applied'] . '</div>' : '<p class="centertext">' . sprintf($txt['signature_settings_warning'], $context['session_id'], $context['session_var'], $scripturl) . '</p>';
 
 	prepareDBSettingContext($config_vars);
 }

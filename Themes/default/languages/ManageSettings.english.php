@@ -10,9 +10,7 @@
  * @version 3.0 Alpha 1
  */
 
-global $scripturl;
-
-$txt['modSettings_desc'] = 'This page allows you to change the settings of features and basic options in your forum. Please see the <a href="' . $scripturl . '?action=admin;area=theme;sa=list;th=%1$s;%3$s=%2$s">theme settings</a> for more options. Click the help icons for more information about a setting.';
+$txt['modSettings_desc'] = 'This page allows you to change the settings of features and basic options in your forum. Please see the <a href="%4$s?action=admin;area=theme;sa=list;th=%1$s;%3$s=%2$s">theme settings</a> for more options. Click the help icons for more information about a setting.';
 
 $txt['pollMode'] = 'Poll mode';
 $txt['disable_polls'] = 'Disable polls';
@@ -206,7 +204,7 @@ $txt['setting_warning_show_all'] = 'All Users';
 
 $txt['signature_settings'] = 'Signature Settings';
 $txt['signature_settings_desc'] = 'Use the settings on this page to decide how member signatures should be treated in StoryBB.';
-$txt['signature_settings_warning'] = 'Note that settings are not applied to existing signatures by default. <a href="' . $scripturl . '?action=admin;area=featuresettings;sa=sig;apply;%2$s=%1$s">Run the process now</a>';
+$txt['signature_settings_warning'] = 'Note that settings are not applied to existing signatures by default. <a href="%3$s?action=admin;area=featuresettings;sa=sig;apply;%2$s=%1$s">Run the process now</a>';
 $txt['signature_settings_applied'] = 'The updated rules have been applied to the existing signatures.';
 $txt['signature_enable'] = 'Enable signatures';
 $txt['signature_max_length'] = 'Maximum allowed characters';
