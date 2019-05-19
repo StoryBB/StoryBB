@@ -10,33 +10,33 @@
 				<th scope="col" class="quarter_table">{{{txt.name}}}</th>
 				<th scope="col">{{{txt.status}}}</th>
 
-				{{#if context.show_ignore_email_address}}
+{{#if context.show_ignore_email_address}}
 				<th scope="col">{{{txt.email}}}</th>
-				{{/if}}
+{{/if}}
 
 				<th scope="col">{{{txt.ignore_remove}}}</th>
 			</tr>
 
-			{{! If they don't have anyone on their ignore list, don't list it! }}
-			{{#unless context.ignore_list}}
+{{! If they don't have anyone on their ignore list, don't list it! }}
+{{#unless context.ignore_list}}
 			<tr class="windowbg">
 				<td colspan="{{#if context.show_ignore_email_address}}4{{else}}3{{/if}}"><strong>{{{txt.no_ignore}}}</strong></td>
 			</tr>
-			{{/unless}}
+{{/unless}}
 
-			{{! Now loop through each account showing info on each. }}
-			{{#each context.ignore_list}}
+{{! Now loop through each account showing info on each. }}
+{{#each context.ignore_list}}
 			<tr class="windowbg">
 				<td>{{{link}}}</td>
 				<td><a href="{{{online.href}}}"><span class="{{#if (eq_coerce online.is_online 1)}}on{{else}}off{{/if}}" title="{{{online.text}}}"></span></a></td>
 
-				{{#if show_email}}
+	{{#if show_email}}
 				<td><a href="mailto:{{{email}}}" rel="nofollow" class="main_icons mail icon" title="{{{../txt.email}}} {{{name}}}"></a></td>
-				{{/if}}
+	{{/if}}
 
 				<td><a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=lists;sa=ignore;remove={{id}};{{session_url}}" class="main_icons delete" title="{{{../txt.ignore_remove}}}"></a></td>
 			</tr>
-			{{/each}}
+{{/each}}
 
 		</table>
 	</div>

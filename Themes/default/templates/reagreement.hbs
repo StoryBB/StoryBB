@@ -9,7 +9,8 @@
 			<p>{{{txt.updated_agreement_contact_admin}}}</p>
 			<br>
 			<dl class="register_form">
-				{{#each context.policies}}
+
+{{#each context.policies}}
 				<dt>
 					<strong><label for="policy_{{@key}}">{{textTemplate ../txt.registration_i_agree_to title}}:</label></strong>
 					{{#if revision_note}}<div class="smalltext">{{{../txt.updated_agreement_changed}}}<br>{{{revision_note}}}</div>{{/if}}
@@ -17,7 +18,7 @@
 				<dd>
 					<input type="checkbox" value="1" required name="policy_{{@key}}" id="policy_{{@key}}">
 				</dd>
-				{{/each}}
+{{/each}}
 			</dl>
 			<hr>
 			<input type="submit" name="save" value="{{{txt.update_agreement_accept}}}" class="button_submit">

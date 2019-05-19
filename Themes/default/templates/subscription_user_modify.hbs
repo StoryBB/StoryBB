@@ -13,8 +13,8 @@
 			</div>
 			<div class="windowbg">
 				<dl class="settings">
-					{{#if (eq context.action_type 'add')}}
 
+{{#if (eq context.action_type 'add')}}
 					<dt>
 						<strong>{{{txt.paid_username}}}:</strong><br>
 						<span class="smalltext">{{{txt.one_username}}}</span>
@@ -22,7 +22,7 @@
 					<dd>
 						<select name="new_subscriber" id="new_subscriber"><option></option></select>
 					</dd>
-					{{/if}}
+{{/if}}
 
 					<dt>
 						<strong>{{{txt.paid_status}}}:</strong>
@@ -38,27 +38,27 @@
 					<legend>{{{txt.start_date_and_time}}}</legend>
 					<select name="year" id="year" onchange="generateDays();">
 
-					{{! Show a list of all the years we allow... }}
-					{{#each context.year_range}}
+{{! Show a list of all the years we allow... }}
+{{#each context.year_range}}
 						<option value="{{.}}"{{#if (eq_coerce . ../context.sub.start.year)}} selected{{/if}}>{{.}}</option>
-					{{/each}}
+{{/each}}
 
 					</select>&nbsp;
 					{{{txt.calendar_month}}}&nbsp;
 					<select name="month" id="month" onchange="generateDays();">
 
-					{{#each context.month_range}}
+{{#each context.month_range}}
 						<option value="{{@key}}"{{#if (eq_coerce @key ../context.sub.start.month)}} selected{{/if}}>{{{.}}}</option>
-					{{/each}}
+{{/each}}
 
 					</select>&nbsp;
 					{{{txt.calendar_day}}}&nbsp;
 					<select name="day" id="day">
 
-					{{! This prints out all the days in the current month - this changes dynamically as we switch months. }}
-					{{#each context.day_start_range}}
+{{! This prints out all the days in the current month - this changes dynamically as we switch months. }}
+{{#each context.day_start_range}}
 						<option value="{{.}}"{{#if (eq_coerce . ../context.sub.start.day)}} selected{{/if}}>{{.}}</option>
-					{{/each}}
+{{/each}}
 
 					</select>
 					{{{txt.hour}}}: <input type="number" min="0" max="23" name="hour" value="{{{context.sub.start.hour}}}" size="2">
@@ -68,27 +68,27 @@
 					<legend>{{{txt.end_date_and_time}}}</legend>
 					<select name="yearend" id="yearend" onchange="generateDays('end');">
 
-					{{! Show a list of all the years we allow... }}
-					{{#each context.year_range}}
+{{! Show a list of all the years we allow... }}
+{{#each context.year_range}}
 						<option value="{{.}}"{{#if (eq_coerce . ../context.sub.end.year)}} selected{{/if}}>{{.}}</option>
-					{{/each}}
+{{/each}}
 
 					</select>&nbsp;
 					{{{txt.calendar_month}}}&nbsp;
 					<select name="monthend" id="monthend" onchange="generateDays('end');">
 
-					{{#each context.month_range}}
+{{#each context.month_range}}
 						<option value="{{@key}}"{{#if (eq_coerce @key ../context.sub.end.month)}} selected{{/if}}>{{{.}}}</option>
-					{{/each}}
+{{/each}}
 
 					</select>&nbsp;
 					{{{txt.calendar_day}}}&nbsp;
 					<select name="dayend" id="dayend">
 
-					{{! This prints out all the days in the current month - this changes dynamically as we switch months. }}
-					{{#each context.day_end_range}}
+{{! This prints out all the days in the current month - this changes dynamically as we switch months. }}
+{{#each context.day_end_range}}
 						<option value="{{.}}"{{#if (eq_coerce . ../context.sub.end.day)}} selected{{/if}}>{{.}}</option>
-					{{/each}}
+{{/each}}
 
 					</select>
 					{{{txt.hour}}}: <input type="number" min="0" max="23" name="hourend" value="{{{context.sub.end.hour}}}" size="2">
@@ -99,7 +99,7 @@
 			{{session_form}}
 		</form>
 
-		{{#if context.pending_payments}}
+{{#if context.pending_payments}}
 		<div class="cat_bar">
 			<h3 class="catbg">{{{txt.pending_payments}}}</h3>
 		</div>
@@ -111,7 +111,8 @@
 		</div>
 		<div class="windowbg">
 			<ul>
-				{{#each context.pending_payments}}
+
+	{{#each context.pending_payments}}
 				<li>
 					{{{desc}}}
 					<span class="floatleft">
@@ -121,9 +122,9 @@
 						<a href="{{../scripturl}}?action=admin;area=paidsubscribe;sa=modifyuser;lid={{../context.log_id}};pending={{@key}};remove">{{{../txt.pending_payments_remove}}}</a>
 					</span>
 				</li>
-				{{/each}}
+	{{/each}}
 			</ul>
 		</div>
-		{{/if}}
+{{/if}}
 
 	</div>

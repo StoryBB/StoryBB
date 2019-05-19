@@ -1,4 +1,4 @@
-<script>
+		<script>
 			function verifyAgree()
 			{
 				if (currentAuthMethod == 'passwd' && document.forms.registration.sbb_autov_pwmain.value != document.forms.registration.sbb_autov_pwverify.value)
@@ -12,7 +12,8 @@
 
 			var currentAuthMethod = 'passwd';
 		</script>
-		{{#if context.registration_errors}}
+
+{{#if context.registration_errors}}
 		<div class="errorbox">
 			<span>{{txt.registration_errors_occurred}}</span>
 			<ul>
@@ -21,7 +22,8 @@
 				{{/each}}
 			</ul>
 		</div>
-		{{/if}}
+{{/if}}
+
 		<form action="{{#if (eq modSettings.force_ssl 1)}}{{makeHTTPS scripturl}}{{else}}{{scripturl}}{{/if}}?action=signup2" method="post" accept-charset="UTF-8" name="registration" id="registration" onsubmit="return verifyAgree();">
 			<div class="cat_bar">
 				<h3 class="catbg">{{txt.registration_form}}</h3>
@@ -43,18 +45,20 @@
 						<dd>
 							<input type="email" name="email" required id="sbb_autov_reserve1" size="30" value="{{context.email}}">
 						</dd>
-						{{#if context.display_edit_real_name}}
+
+{{#if context.display_edit_real_name}}
 						<dt><strong><label for="real_name_box">{{{txt.char_register_nickname}}}:</label></strong></dt>
 						<dd>
 							<input type="text" id="real_name_box" name="real_name" required size="30" maxlength="200" value="{{{context.real_name}}}">
 						</dd>
-						{{/if}}
-						{{#if context.display_create_character}}
+{{/if}}
+
+{{#if context.display_create_character}}
 						<dt><strong><label for="first_char_box">{{{txt.char_register_charname}}}:</label></strong></dt>
 						<dd>
 							<input type="text" id="first_char_box" name="first_char" required size="30" maxlength="200" value="{{{context.first_char}}}">
 						</dd>
-						{{/if}}
+{{/if}}
 					</dl>
 					<dl class="register_form" id="password1_group">
 						<dt><strong><label for="sbb_autov_pwmain">{{txt.choose_pass}}:</label></strong></dt>
@@ -80,113 +84,138 @@
 							<input type="checkbox" name="notify_announcements" id="notify_announcements" {{#if context.notify_announcements}}checked="checked"{{/if}}>
 						</dd>
 					</dl>
-					{{#if context.profile_fields_required}}
+
+{{#if context.profile_fields_required}}
 					<dl class="register_form">
-					{{#each context.profile_fields_required}}
-						{{#if (eq type "callback")}}
-							{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
-						{{else}}
-							<dt>
-								<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
-								{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
-							</dt>
-							<dd>
-								{{preinput}}
-								{{#if (eq type "label")}}{{value}}{{/if}}
-								{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}}>{{/if}}
-								{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>{{/if}}
-								{{#if (eq type "select")}}
-									<select name="{{@key}}" id="{{@key}}">
-										{{#each options}}
-											<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
-										{{/each}}
-									</select>
-								{{/if}}
-								{{postinput}}
-							</dd>
-						{{/if}}
-					{{/each}}
+
+	{{#each context.profile_fields_required}}
+		{{#if (eq type "callback")}}
+						{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
+		{{else}}
+						<dt>
+							<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
+							{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
+						</dt>
+						<dd>
+							{{preinput}}
+							{{#if (eq type "label")}}{{value}}{{/if}}
+
+			{{#if (field_isText type)}}
+							<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}}>
+			{{/if}}
+
+			{{#if (eq type "check")}}
+							<input type="hidden" name="{{@key}}" value="0">
+							<input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>
+			{{/if}}
+
+			{{#if (eq type "select")}}
+							<select name="{{@key}}" id="{{@key}}">
+								{{#each options}}
+									<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
+								{{/each}}
+							</select>
+			{{/if}}
+							{{postinput}}
+						</dd>
+		{{/if}}
+	{{/each}}
 					</dl>
-					{{/if}}
-					{{#if (and context.custom_fields_required context.custom_fields)}}
-						<dl class="register_form">
-						{{#each context.custom_fields}}
-							{{#if (gt show_reg 1)}}
-							<dt>
-								<strong{{#if is_error}} class="red"{{/if}}>{{name}}:</strong>
-								<span class="smalltext">{{desc}}</span>
-							</dt>
-							<dd>{{input_html}}</dd>
-							{{/if}}
-						{{/each}}
-						</dl>
-					{{/if}}
+{{/if}}
+
+{{#if (and context.custom_fields_required context.custom_fields)}}
+					<dl class="register_form">
+
+	{{#each context.custom_fields}}
+		{{#if (gt show_reg 1)}}
+						<dt>
+							<strong{{#if is_error}} class="red"{{/if}}>{{name}}:</strong>
+							<span class="smalltext">{{desc}}</span>
+						</dt>
+						<dd>{{input_html}}</dd>
+		{{/if}}
+	{{/each}}
+					</dl>
+{{/if}}
 				</fieldset>
 			</div>
 
-			{{#if context.registration_policies}}
+{{#if context.registration_policies}}
 			<div class="title_bar title_top">
 				<h3 class="titlebg">{{{txt.site_policies}}}</h3>
 			</div>
 			<div class="roundframe noup">
 				<fieldset>
 					<dl class="register_form">
-						{{#each context.registration_policies}}
+
+	{{#each context.registration_policies}}
 						<dt><strong><label for="policy_{{@key}}">{{textTemplate ../txt.registration_i_agree_to .}}:</label></strong></dt>
 						<dd>
 							<input type="checkbox" value="1" required name="policy_{{@key}}" id="policy_{{@key}}">
 						</dd>
-						{{/each}}
+	{{/each}}
 					</dl>
 				</fieldset>
 			</div>
-			{{/if}}
+{{/if}}
 			
-			{{#if (or context.profile_fields context.custom_fields)}}
+{{#if (or context.profile_fields context.custom_fields)}}
 			<div class="title_bar title_top">
 				<h3 class="titlebg">{{txt.additional_information}}</h3>
 			</div>
 			<div class="roundframe noup">
 				<fieldset>
 					<dl class="register_form" id="custom_group">
-			{{/if}}
-			{{#each context.profile_fields}}
-				{{#if (eq type "callback")}}
-					{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
-				{{else}}
-					<dt>
-						<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
-						{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
-					</dt>
-					<dd>
-						{{preinput}}
-						{{#if (eq type "label")}}{{value}}{{/if}}
-						{{#if (field_isText type)}}<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}}>{{/if}}
-						{{#if (eq type "check")}}<input type="hidden" name="{{@key}}" value="0"><input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>{{/if}}
-						{{#if (eq type "select")}}
+{{/if}}
+
+{{#each context.profile_fields}}
+	{{#if (eq type "callback")}}
+						{{{dynamicpartial (concat 'profile_setting_' callback_func)}}}
+	{{else}}
+						<dt>
+							<strong{{#if is_error}} class="red"{{/if}}>{{label}}</strong>
+							{{#if subtext}}<span class="smalltext">{{subtext}}</span>{{/if}}
+						</dt>
+						<dd>
+							{{preinput}}
+							{{#if (eq type "label")}}{{value}}{{/if}}
+
+		{{#if (field_isText type)}}
+							<input type="{{#if (eq type "password")}}password{{else}}text{{/if}}" name="{{@key}}" id="{{@key}}" size="{{#if size}}{{size}}{{else}}30{{/if}}" value="{{value}}" {{input_attr}}>
+		{{/if}}
+
+		{{#if (eq type "check")}}
+							<input type="hidden" name="{{@key}}" value="0">
+							<input type="checkbox" name="{{@key}}" id="{{@key}}"{{#if value}} checked{{/if}} value="1" {{input_attr}}>
+		{{/if}}
+
+		{{#if (eq type "select")}}
 							<select name="{{@key}}" id="{{@key}}">
 								{{#each options}}
 									<option value="{{@key}}"{{#if (eq @key ../value)}} selected{{/if}}>{{.}}</option>
 								{{/each}}
 							</select>
-						{{/if}}
-						{{postinput}}
-					</dd>
-				{{/if}}
-			{{/each}}
-			{{#each context.custom_fields}}
+		{{/if}}
+							{{postinput}}
+						</dd>
+	{{/if}}
+{{/each}}
+
+{{#each context.custom_fields}}
 				<dt>
 					<strong{{#if is_error}} class="red"{{/if}}>{{name}}</strong>
 					<span class="smalltext">{{desc}}</span>
 				</dt>
 				<dd>{{{input_html}}}</dd>
-			{{/each}}
-			{{#if (or context.profile_fields context.custom_fields)}}
+{{/each}}
+
+{{#if (or context.profile_fields context.custom_fields)}}
 					</dl>
 				</fieldset>
 			</div>
-			{{/if}}
-			{{#if context.visual_verification}}
+{{/if}}
+
+{{#if context.visual_verification}}
 			<div class="title_bar title_top">
 				<h3 class="titlebg">{{txt.verification}}</h3>
 			</div>
@@ -195,10 +224,10 @@
 				{{{captcha context.visual_verification_id}}}
 				</fieldset>
 			</div>
-			{{/if}}
+{{/if}}
 			<div id="confirm_buttons" class="flow_auto">
 				<input type="submit" name="regSubmit" value="{{txt.register}}" tabindex="{{getTabindex}}" class="button_submit">
-				</div>
+			</div>
 			{{session_form}}
 			{{token_form 'register'}}
 			<input type="hidden" name="step" value="2">

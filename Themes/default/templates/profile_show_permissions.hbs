@@ -5,24 +5,24 @@
 		</h3>
 	</div>
 
-	{{#if context.member.has_all_permissions}}
+{{#if context.member.has_all_permissions}}
 		<div class="information">{{{txt.showPermissions_all}}}</div>
-	{{else}}
+{{else}}
 		<div class="information">{{{txt.showPermissions_help}}}</div>
 		<div id="permissions" class="flow_hidden">
 
-			{{#if context.no_access_boards}}
-				<div class="cat_bar">
-					<h3 class="catbg">{{{txt.showPermissions_restricted_boards}}}</h3>
-				</div>
-				<div class="windowbg smalltext">
-					{{{txt.showPermissions_restricted_boards_desc}}}:<br>
+	{{#if context.no_access_boards}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{{txt.showPermissions_restricted_boards}}}</h3>
+			</div>
+			<div class="windowbg smalltext">
+				{{{txt.showPermissions_restricted_boards_desc}}}:<br>
 
-					{{#each context.no_access_boards}}
-						<a href="{{scripturl}}?board={{id}}.0">{{{name}}}</a>{{#unless is_last}}, {{/unless}}
-					{{/each}}
-				</div>
-			{{/if}}
+				{{#each context.no_access_boards}}
+					<a href="{{scripturl}}?board={{id}}.0">{{{name}}}</a>{{#unless is_last}}, {{/unless}}
+				{{/each}}
+			</div>
+	{{/if}}
 
 			{{! General Permissions section. }}
 			<div class="tborder">
@@ -30,34 +30,36 @@
 					<h3 class="catbg">{{{txt.showPermissions_general}}}</h3>
 				</div>
 
-				{{#if context.member.permissions.general}}
-					<table class="table_grid">
-						<thead>
-							<tr class="title_bar">
-								<th class="lefttext half_table">{{{txt.showPermissions_permission}}}</th>
-								<th class="lefttext half_table">{{{txt.showPermissions_status}}}</th>
-							</tr>
-						</thead>
-						<tbody>
-						{{#each context.member.permissions.general}}
-							<tr class="windowbg">
-								<td title="{{id}}">
-									{{#if is_denied}}<del>{{{name}}}</del>{{else}}{{{name}}}{{/if}}
-								</td>
-								<td class="smalltext">
-									{{#if is_denied}}
-										<span class="alert">{{{../txt.showPermissions_denied}}}:&nbsp;{{{join groups.denied ', '}}}</span>
-									{{else}}
-										{{{../txt.showPermissions_given}}}:&nbsp;{{{join groups.allowed ', '}}}
-									{{/if}}
-								</td>
-							</tr>
-						{{/each}}
-						</tbody>
-					</table>
-				{{else}}
+	{{#if context.member.permissions.general}}
+				<table class="table_grid">
+					<thead>
+						<tr class="title_bar">
+							<th class="lefttext half_table">{{{txt.showPermissions_permission}}}</th>
+							<th class="lefttext half_table">{{{txt.showPermissions_status}}}</th>
+						</tr>
+					</thead>
+					<tbody>
+
+		{{#each context.member.permissions.general}}
+						<tr class="windowbg">
+							<td title="{{id}}">
+								{{#if is_denied}}<del>{{{name}}}</del>{{else}}{{{name}}}{{/if}}
+							</td>
+							<td class="smalltext">
+								{{#if is_denied}}
+									<span class="alert">{{{../txt.showPermissions_denied}}}:&nbsp;{{{join groups.denied ', '}}}</span>
+								{{else}}
+									{{{../txt.showPermissions_given}}}:&nbsp;{{{join groups.allowed ', '}}}
+								{{/if}}
+							</td>
+						</tr>
+		{{/each}}
+
+					</tbody>
+				</table>
+	{{else}}
 					<p class="windowbg2">{{{txt.showPermissions_none_general}}}</p>
-				{{/if}}
+	{{/if}}
 			</div><br>
 
 			{{! Board permission section. }}
@@ -67,46 +69,50 @@
 						<a id="board_permissions"></a>{{{txt.showPermissions_select}}}:
 						<select name="board" onchange="if (this.options[this.selectedIndex].value) this.form.submit();">
 							<option value="0"{{#unless context.board}} selected{{/unless}}>{{{txt.showPermissions_global}}}&nbsp;</option>
-							{{#if context.boards}}
-								<option value="" disabled>---------------------------</option>
-								{{#each context.boards}}
-								<option value="{{id}}"{{#if selected}} selected{{/if}}>{{{name}}} ({{{profile_name}}})</option>
-								{{/each}}
-							{{/if}}
+
+	{{#if context.boards}}
+							<option value="" disabled>---------------------------</option>
+							{{#each context.boards}}
+							<option value="{{id}}"{{#if selected}} selected{{/if}}>{{{name}}} ({{{profile_name}}})</option>
+							{{/each}}
+	{{/if}}
+
 						</select>
 					</h3>
 				</div>
 			</form>
 
-			{{#if context.member.permissions.board}}
-				<table class="table_grid">
-					<thead>
-						<tr class="title_bar">
-							<th class="lefttext half_table">{{{txt.showPermissions_permission}}}</th>
-							<th class="lefttext half_table">{{{txt.showPermissions_status}}}</th>
-						</tr>
-					</thead>
-					<tbody>
-					{{#each context.member.permissions.board}}
-						<tr class="windowbg">
-							<td title="{{id}}">
-								{{#if is_denied}}<del>{{{name}}}</del>{{else}}{{{name}}}{{/if}}
-							</td>
-							<td class="smalltext">
-								{{#if is_denied}}
-									<span class="alert">{{{../txt.showPermissions_denied}}}:&nbsp;{{{join groups.denied ', '}}}</span>
-								{{else}}
-									{{{../txt.showPermissions_given}}}: &nbsp;{{{join groups.allowed ', '}}}
-								{{/if}}
-							</td>
-						</tr>
+	{{#if context.member.permissions.board}}
+			<table class="table_grid">
+				<thead>
+					<tr class="title_bar">
+						<th class="lefttext half_table">{{{txt.showPermissions_permission}}}</th>
+						<th class="lefttext half_table">{{{txt.showPermissions_status}}}</th>
+					</tr>
+				</thead>
+				<tbody>
 
-					{{/each}}
-					</tbody>
-				</table>
-			{{else}}
-				<p class="windowbg2">{{{txt.showPermissions_none_board}}}</p>
-			{{/if}}
+		{{#each context.member.permissions.board}}
+					<tr class="windowbg">
+						<td title="{{id}}">
+							{{#if is_denied}}<del>{{{name}}}</del>{{else}}{{{name}}}{{/if}}
+						</td>
+						<td class="smalltext">
+							{{#if is_denied}}
+								<span class="alert">{{{../txt.showPermissions_denied}}}:&nbsp;{{{join groups.denied ', '}}}</span>
+							{{else}}
+								{{{../txt.showPermissions_given}}}: &nbsp;{{{join groups.allowed ', '}}}
+							{{/if}}
+						</td>
+					</tr>
+		{{/each}}
+
+				</tbody>
+			</table>
+		{{else}}
+			<p class="windowbg2">{{{txt.showPermissions_none_board}}}</p>
+		{{/if}}
+
 		</div>
 	</div>
-	{{/if}}
+{{/if}}

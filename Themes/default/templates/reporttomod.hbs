@@ -17,16 +17,17 @@
 			<h3 class="catbg">{{context.page_title}}</h3>
 		</div>
 		<div class="windowbg noup">
-			{{#if context.post_errors}}
-				<div id="error_box" class="errorbox">
-					<ul id="error_list">
-						{{#each context.post_errors}}
-							<li id="error_{{@key}}" class="error">{{.}}</li>
-						{{/each}}
-					</ul>
-					<div style="display:none" id="error_box" class="errorbox"></div>
-				</div>
-			{{/if}}
+
+{{#if context.post_errors}}
+			<div id="error_box" class="errorbox">
+				<ul id="error_list">
+					{{#each context.post_errors}}
+						<li id="error_{{@key}}" class="error">{{.}}</li>
+					{{/each}}
+				</ul>
+				<div style="display:none" id="error_box" class="errorbox"></div>
+			</div>
+{{/if}}
 			<p class="noticebox">{{context.notice}}</p>
 			<dl class="settings" id="report_post">
 				<dt>

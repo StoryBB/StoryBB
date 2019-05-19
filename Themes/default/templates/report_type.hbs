@@ -5,13 +5,14 @@
 		</div>
 		<div class="windowbg2 noup">
 			<dl class="settings report">
-				{{#each context.report_types}}
-					<dt>
-						<input type="radio" id="rt_{{id}}" name="rt" value="{{id}}"{{#if is_first}} checked{{/if}}>
-						<strong><label for="rt_{{id}}">{{title}}</label></strong>
-					</dt>
-					<dd>{{description}}</dd>
-				{{/each}}
+
+{{#each context.report_types}}
+				<dt>
+					<input type="radio" id="rt_{{id}}" name="rt" value="{{id}}"{{#if is_first}} checked{{/if}}>
+					<strong><label for="rt_{{id}}">{{title}}</label></strong>
+				</dt>
+				<dd>{{description}}</dd>
+{{/each}}
 			</dl>
 			<input type="submit" name="continue" value="{{txt.generate_reports_continue}}" class="button_submit">
 			{{session_form}}

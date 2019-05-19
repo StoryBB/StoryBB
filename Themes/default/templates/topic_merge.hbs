@@ -21,41 +21,43 @@
 			</div>
 			<div class="title_bar">
 				<h4 class="titlebg">
-				{{#if context.merge_categories}}
+
+{{#if context.merge_categories}}
 					<form action="{{scripturl}}?action=mergetopics;from={{context.origin_topic}};targetboard={{context.target_board}};board={{context.current_board}}.0" method="post" accept-charset="UTF-8" id="mergeSelectBoard">
 						{{{txt.target_below}}} ({{{txt.board}}}:&nbsp;
 						<select name="targetboard" onchange="this.form.submit();">
 
-							{{#each context.merge_categories}}
+	{{#each context.merge_categories}}
 							<optgroup label="{{{name}}}">
 								{{#each boards}}
 								<option value="{{id}}"{{#if selected}} selected{{/if}}>{{#if (gt child_level 0)}}{{repeat '==' (sub child_level 1)}}=&gt;{{/if}} {{{name}}}&nbsp;</option>
 								{{/each}}
 							</optgroup>
-							{{/each}}
+	{{/each}}
 						</select>)
 						<input type="hidden" name="from" value="{{context.origin_topic}}">
 						<input type="submit" value="{{{txt.go}}}" class="button_submit">
 					</form>
-				{{else}}
+{{else}}
 					{{{txt.target_below}}}
-				{{/if}}
+{{/if}}
 				</h4>
 			</div>
 
-			{{#if context.topics}}
+{{#if context.topics}}
 			<form action="{{scripturl}}?action=mergetopics;sa=options" method="post" accept-charset="UTF-8">
 				<div class="pagesection">
 					{{{context.page_index}}}
 				</div>
 				<div class="windowbg2">
 					<ul class="merge_topics">
-						{{#each context.topics}}
+
+	{{#each context.topics}}
 						<li>
 							<a href="{{../scripturl}}?action=mergetopics;sa=options;board={{{../context.current_board}}}.0;from={{{../context.origin_topic}}};to={{id}};{{session_url}}">{{{create_button 'merge' 'merge' ''}}}</a>&nbsp;
 							<a href="{{../scripturl}}?topic={{id}}.0" target="_blank" rel="noopener"> {{{subject}}}</a> {{{../txt.started_by}}} {{{poster.link}}}
 						</li>
-						{{/each}}
+	{{/each}}
 					</ul>
 					<input type="submit" value="{{{txt.merge}}}" class="button_submit">
 				</div>
@@ -63,9 +65,9 @@
 					{{{context.page_index}}}
 				</div>
 			</form>
-			{{else}}
-				<div class="windowbg2">{{{txt.topic_alert_none}}}</div>
-			{{/if}}
+{{else}}
+			<div class="windowbg2">{{{txt.topic_alert_none}}}</div>
+{{/if}}
 
 			<form action="{{scripturl}}?action=mergetopics;sa=options" method="post" accept-charset="UTF-8">
 				<br>

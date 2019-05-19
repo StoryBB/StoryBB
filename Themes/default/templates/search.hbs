@@ -6,11 +6,11 @@
 			</h3>
 		</div>
 
-		{{#if context.search_errors}}
+{{#if context.search_errors}}
 		<div class="errorbox">{{{ context.search_errors.messages '<br>'}}}</div>
-		{{/if}}
+{{/if}}
 
-		{{#if context.search_ignored}}
+{{#if context.search_ignored}}
 		<p class="noticebox">
 			{{#if (eq (getNumItems context.search_ignored) 1)}}
 				{{{txt.search_warning_ignored_word}}}:
@@ -19,7 +19,7 @@
 			{{/if}}
 			{{{join context.search_ignored ', '}}}
 		</p>
-		{{/if}}
+{{/if}}
 
 
 		<div id="advanced_search" class="roundframe">
@@ -30,9 +30,9 @@
 				<dd>
 					<input type="search" name="search" id="searchfor" value="{{{context.search_params.search}}}" maxlength="{{{context.search_string_limit}}}" size="40">
 
-					{{#unless modSettings.search_simple_fulltext}}
-						<br><em class="smalltext">{{{txt.search_example}}}</em>
-					{{/unless}}
+{{#unless modSettings.search_simple_fulltext}}
+					<br><em class="smalltext">{{{txt.search_example}}}</em>
+{{/unless}}
 				</dd>
 
 				<dt class="righttext"><label for="searchtype">{{{txt.search_match}}}:</label>
@@ -88,24 +88,24 @@
 			</script>
 			<input type="hidden" name="advanced" value="1">
 
-			{{! Require an image to be typed to save spamming? }}
-			{{#if context.require_verification}}
-				<p>
-					<strong>{{{txt.verification}}}:</strong>
-					{{{captcha context.visual_verification_id}}}
-				</p>
-			{{/if}}
+{{! Require an image to be typed to save spamming? }}
+{{#if context.require_verification}}
+			<p>
+				<strong>{{{txt.verification}}}:</strong>
+				{{{captcha context.visual_verification_id}}}
+			</p>
+{{/if}}
 
-			{{! If context.search_params_topic is a thing, we're search one topic only. }}
-			{{#if context.search_params.topic}}
-				<p>{{{txt.search_specific_topic}}} &quot;{{{context.search_topic_link}}}&quot;.</p>
-				<input type="hidden" name="topic" value="{{context.search_topic.id}}">
-				<input type="submit" name="b_search" value="{{{txt.search}}}" class="button_submit">
-			{{/if}}
+{{! If context.search_params_topic is a thing, we're search one topic only. }}
+{{#if context.search_params.topic}}
+			<p>{{{txt.search_specific_topic}}} &quot;{{{context.search_topic_link}}}&quot;.</p>
+			<input type="hidden" name="topic" value="{{context.search_topic.id}}">
+			<input type="submit" name="b_search" value="{{{txt.search}}}" class="button_submit">
+{{/if}}
 
 		</div>
 
-		{{#unless context.search_params.topic}}
+{{#unless context.search_params.topic}}
 		<fieldset class="flow_hidden">
 			<div class="roundframe alt">
 				<div class="title_bar">
@@ -116,20 +116,21 @@
 				</div>
 				<div class="flow_auto" id="advanced_panel_div"{{#if context.boards_check_all}} style="display:none">
 					<ul class="ignoreboards floatleft">
-						{{#each context.categories}}
-							<li class="category">
-								<a href="javascript:void(0);" onclick="selectBoards({{{json child_ids}}}, 'searchform'); return false">{{{name}}}</a>
-								<ul>
-								{{#each boards}}
-									<li class="board">
-										<label for="brd{{id}}" style="margin-{{#if context.right_to_left}}right{{else}}left{{/if}}: {{child_level}}em">
-											<input type="checkbox" id="brd{{id}}" name="brd{{id}}" value="brd{{id}}"{{#if selected}} checked{{/if}}> {{name}}
-										</label>
-									</li>
-								{{/each}}
-								</ul>
-							</li>
-						{{/each}}
+
+	{{#each context.categories}}
+						<li class="category">
+							<a href="javascript:void(0);" onclick="selectBoards({{{json child_ids}}}, 'searchform'); return false">{{{name}}}</a>
+							<ul>
+		{{#each boards}}
+								<li class="board">
+									<label for="brd{{id}}" style="margin-{{#if context.right_to_left}}right{{else}}left{{/if}}: {{child_level}}em">
+										<input type="checkbox" id="brd{{id}}" name="brd{{id}}" value="brd{{id}}"{{#if selected}} checked{{/if}}> {{name}}
+									</label>
+								</li>
+		{{/each}}
+							</ul>
+						</li>
+	{{/each}}
 					</ul>
 				</div>
 				<br class="clear">
@@ -164,6 +165,6 @@
 				]
 			});
 		</script>
-		{{/unless}}
+{{/unless}}
 
 	</form>

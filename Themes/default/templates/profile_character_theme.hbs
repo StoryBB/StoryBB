@@ -6,12 +6,13 @@
 	<div id="profileview" class="roundframe flow_auto">
 		<form id="char_theme_wrapper" action="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=theme" method="post">
 
-			{{#each context.themes}}
-				<div class="char_theme_container">
-					<button name="theme[{{{@key}}}]" class="button"><img src="{{{thumbnail}}}" alt=""></button>
-					{{{name}}}
-				</div>
-			{{/each}}
+{{#each context.themes}}
+			<div class="char_theme_container">
+				<button name="theme[{{{@key}}}]" class="button"><img src="{{{thumbnail}}}" alt=""></button>
+				{{{name}}}
+			</div>
+{{/each}}
+
 			{{session_form}}
 		</form>
 	</div>
