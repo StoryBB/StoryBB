@@ -1,4 +1,4 @@
-<div class="pm_bar">
+		<div class="pm_bar">
 			<div class="pm_sending block">
 				{{#if context.can_send_pm}}<a href="{{scripturl}}?action=pm;sa=send">{{{txt.pm_new_short}}}</a> | {{/if}}
 				{{#if context.can_draft}}<a href="{{scripturl}}?action=pm;sa=showpmdrafts">{{{txt.pm_drafts_short}}}</a>{{/if}}
@@ -10,8 +10,12 @@
 			</div>
 		</div>
 		<div class="pm_unread">
-			{{#unless context.unread_pms}}<div class="no_unread">{{{txt.pm_no_unread}}}</div>{{/unless}}
-			{{#each context.unread_pms}}
+
+{{#unless context.unread_pms}}
+			<div class="no_unread">{{{txt.pm_no_unread}}}</div>
+{{/unless}}
+
+{{#each context.unread_pms}}
 			<div class="unread">
 				{{#if member}}{{{member.avatar.image}}}{{/if}}
 				<div class="details">
@@ -27,5 +31,6 @@
 					</div>
 				</div>
 			</div>
-			{{/each}}
+{{/each}}
+
 		</div>

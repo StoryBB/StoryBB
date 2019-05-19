@@ -1,27 +1,29 @@
-<div class="cat_bar">
+		<div class="cat_bar">
 			<h3 class="catbg">{{txt.pm_search_results}}</h3>
 		</div>
 		<div class="pagesection">
 			{{{context.page_index}}}
 		</div>
-		{{#if (and context.personal_messages (not context.search_params.show_complete))}}
+
+{{#if (and context.personal_messages (not context.search_params.show_complete))}}
 		<table class="table_grid">
-		<thead>
-			<tr class="title_bar">
-				<th class="lefttext quarter_table">{{txt.date}}</th>
-				<th class="lefttext half_table">{{txt.subject}}</th>
-				<th class="lefttext quarter_table">{{txt.from}}</th>
-			</tr>
-		</thead>
-		<tbody>
-		{{/if}}
-		{{#each context.personal_messages}}
-		{{#if ../context.search_params.show_complete}}
+			<thead>
+				<tr class="title_bar">
+					<th class="lefttext quarter_table">{{txt.date}}</th>
+					<th class="lefttext half_table">{{txt.subject}}</th>
+					<th class="lefttext quarter_table">{{txt.from}}</th>
+				</tr>
+			</thead>
+			<tbody>
+{{/if}}
+
+{{#each context.personal_messages}}
+	{{#if ../context.search_params.show_complete}}
 		<div class="cat_bar">
-				<h3 class="catbg">
-					<span class="floatright">{{../txt.search_on}}: {{{time}}}</span>
-					<span class="floatleft">{{counter}}&nbsp;&nbsp;<a href="{{href}}">{{subject}}</a></span>
-				</h3>
+			<h3 class="catbg">
+				<span class="floatright">{{../txt.search_on}}: {{{time}}}</span>
+				<span class="floatleft">{{counter}}&nbsp;&nbsp;<a href="{{href}}">{{subject}}</a></span>
+			</h3>
 			</div>
 			<div class="cat_bar">
 				<h3 class="catbg">{{../txt.from}}: {{{member.link}}}, {{../txt.to}}: 
@@ -39,42 +41,48 @@
 				{{body}}
 				<p class="pm_reply righttext">
 
-				{{#if ../context.can_send_pm}}
-					{{!--You can only reply if they are not a guest...--}}
-					{{#unless member.is_guest}}
-							<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u={{#unless (eq ../context.folder 'sent')}}{{member.id}}{{/unless}}">
-								{{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
-							</a>{{{../context.menu_separator}}}
-							<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}">
-								{{{create_button 'im_reply.png' 'reply' 'reply' 'class="centericon"'}}}
-							</a>{{{../context.menu_separator}}}
-					{{/unless}}
-					{{!-- This is for "forwarding" - even if the member is gone.--}}
-					{{else}}
-						<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u={{#unless (eq ../context.folder 'sent')}}{{member.id}}{{/unless}}">
-								{{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
-							</a>{{{../context.menu_separator}}}
-					{{/if}}
+		{{#if ../context.can_send_pm}}
+			{{!--You can only reply if they are not a guest...--}}
+			{{#unless member.is_guest}}
+					<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u={{#unless (eq ../context.folder 'sent')}}{{member.id}}{{/unless}}">
+						{{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
+					</a>
+					{{{../context.menu_separator}}}
+					<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}">
+						{{{create_button 'im_reply.png' 'reply' 'reply' 'class="centericon"'}}}
+					</a>
+					{{{../context.menu_separator}}}
+			{{/unless}}
+		{{!-- This is for "forwarding" - even if the member is gone.--}}
+		{{else}}
+					<a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u={{#unless (eq ../context.folder 'sent')}}{{member.id}}{{/unless}}">
+						{{{create_button 'quote.png' 'reply_quote' 'reply_quote' 'class="centericon"'}}}
+					</a>{{{../context.menu_separator}}}
+		{{/if}}
 				</p>
 			</div>
-			{{else}} {{!-- simple list --}}
-			 {{!-- @todo No context at all of the search? --}}
-			 <tr class="windowbg">
+	{{else}}
+	{{!-- simple list --}}
+	{{!-- @todo No context at all of the search? --}}
+			<tr class="windowbg">
 				<td>{{{time}}}</td>
 				<td>{{{link}}}</td>
 				<td>{{{member.link}}}</td>
 			</tr>
-			{{/if}}
-		{{/each}}
-		{{#if (and context.personal_messages (not context.search_params.show_complete))}}
+	{{/if}}
+{{/each}}
+
+{{#if (and context.personal_messages (not context.search_params.show_complete))}}
 		</tbody>
 	</table>
-	{{/if}}
-	{{#unless context.personal_messages}}
-		<div class="windowbg">
-			<p class="centertext">{{txt.pm_search_none_found}}</p>
-		</div>
-	{{/unless}}
+{{/if}}
+
+{{#unless context.personal_messages}}
+	<div class="windowbg">
+		<p class="centertext">{{txt.pm_search_none_found}}</p>
+	</div>
+{{/unless}}
+
 	<div class="pagesection">
 		{{{context.page_index}}}
 	</div>

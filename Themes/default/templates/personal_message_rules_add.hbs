@@ -29,7 +29,7 @@
 		+ '" onkeyup="rebuildRuleDesc();" value=""><' + '/span><span id="defseldiv' + criteriaNum + '" style="display: none;"><select name="ruledefgroup[' + criteriaNum + ']" id="ruledefgroup' + criteriaNum + '" onchange="rebuildRuleDesc();"><option value="' + '">{{txt.pm_rule_sel_group}}<'
 		+ '/option>{{#each context.groups}}<option value="{{@key}}">{{.}}<' + '/option>{{/each}}' +  '<' + '/select><' + '/span><span id="criteriaAddHere"><' + '/span>');
 	}
-	 function addActionOption()
+	function addActionOption()
 		{
 			if (actionNum == 0)
 			{
@@ -130,7 +130,9 @@
 </script>
 <form action="{{scripturl}}?action=pm;sa=manrules;save;rid={{context.rid}}" method="post" accept-charset="UTF-8" name="addrule" id="addrule" class="flow_hidden">
 		<div class="cat_bar">
-			<h3 class="catbg">{{#if (eq context.rid 0)}}{{txt.pm_add_rule}}{{else}}{{txt.pm_edit_rule}}{{/if}}</h3>
+			<h3 class="catbg">
+				{{#if (eq context.rid 0)}}{{txt.pm_add_rule}}{{else}}{{txt.pm_edit_rule}}{{/if}}
+			</h3>
 		</div>
 		<div class="windowbg">
 			<dl class="addrules">
@@ -144,8 +146,10 @@
 			</dl>
 			<fieldset>
 				<legend>{{txt.pm_rule_criteria}}</legend>
-				{{#each context.rule.criteria}}
-					{{#unless t}}<div id="removeonjs1">{{/unless}}
+
+{{#each context.rule.criteria}}
+				{{#unless t}}<div id="removeonjs1">{{/unless}}
+
 				<select name="ruletype[{{@key}}]" id="ruletype{{@key}}" onchange="updateRuleDef({{@key}}); rebuildRuleDesc();">
 					<option value="">{{../txt.pm_rule_criteria_pick}}:</option>
 					{{#each ../context.criteriaTypes}}
@@ -165,7 +169,8 @@
 				</span>
 				<br>
 				{{#unless t}}</div>{{/unless}}
-				{{/each}}
+{{/each}}
+
 				<span id="criteriaAddHere"></span><br>
 				<a href="#" onclick="addCriteriaOption(); return false;" id="addonjs1" style="display: none;">({{txt.pm_rule_criteria_add}})</a>
 				<br><br>
@@ -177,8 +182,10 @@
 			</fieldset>
 			<fieldset>
 				<legend>{{txt.pm_rule_actions}}</legend>
-				{{#each context.rule.actions}}
-					{{#unless t}}<div id="removeonjs2">{{/unless}}
+
+{{#each context.rule.actions}}
+				{{#unless t}}<div id="removeonjs2">{{/unless}}
+
 				<select name="acttype[{{@key}}]" id="acttype{{@key}}" onchange="updateActionDef({{@key}}); rebuildRuleDesc();">
 					<option value="">{{../txt.pm_rule_sel_action}}:</option>
 					<option value="lab"{{#if (eq t 'lab')}} selected{{/if}}>{{../txt.pm_rule_label}}</option>
@@ -193,7 +200,8 @@
 					</select>
 				{{#unless t}}</div>{{/unless}}
 				<br>
-				{{/each}}
+{{/each}}
+
 				<span id="actionAddHere"></span><br>
 					<a href="#" onclick="addActionOption(); return false;" id="addonjs2" style="display: none;">{{txt.pm_rule_add_action}}</a>
 				</fieldset>

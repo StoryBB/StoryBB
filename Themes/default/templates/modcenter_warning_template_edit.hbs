@@ -44,15 +44,15 @@
 					</dd>
 				</dl>
 
-				{{#if context.template_data.can_edit_personal}}
+{{#if context.template_data.can_edit_personal}}
 				<input type="checkbox" name="make_personal" id="make_personal"{{#if context.template_data.personal}} checked{{/if}}>
-					<label for="make_personal">
-						<strong>{{{txt.mc_warning_template_personal}}}</strong>
-					</label>
-					<br>
-					<span class="smalltext">{{{txt.mc_warning_template_personal_desc}}}</span>
-					<br>
-				{{/if}}
+				<label for="make_personal">
+					<strong>{{{txt.mc_warning_template_personal}}}</strong>
+				</label>
+				<br>
+				<span class="smalltext">{{{txt.mc_warning_template_personal_desc}}}</span>
+				<br>
+{{/if}}
 
 				<hr>
 				<input type="submit" name="preview" id="preview_button" value="{{{txt.preview}}}" class="button_submit">

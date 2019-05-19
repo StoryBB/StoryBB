@@ -1,4 +1,4 @@
-<div id="announcement">
+	<div id="announcement">
 		<form action="{{scripturl}}?action=announce;sa=send" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<div class="windowbg2">
 				<p>{{txt.announce_sending}} <a href="{{scripturl}}?topic={{context.current_topic}}.0" target="_blank" rel="noopener">{{context.topic_subject}}</a></p>
@@ -21,20 +21,20 @@
 		</form>
 	</div>
 	<br>
-		<script>
-			var countdown = 2;
-			doAutoSubmit();
+	<script>
+		var countdown = 2;
+		doAutoSubmit();
 
-			function doAutoSubmit()
-			{
-				if (countdown == 0)
-					document.forms.autoSubmit.submit();
-				else if (countdown == -1)
-					return;
+		function doAutoSubmit()
+		{
+			if (countdown == 0)
+				document.forms.autoSubmit.submit();
+			else if (countdown == -1)
+				return;
 
-				document.forms.autoSubmit.b.value = "{{txt.announce_continue}} (" + countdown + ")";
-				countdown--;
+			document.forms.autoSubmit.b.value = "{{txt.announce_continue}} (" + countdown + ")";
+			countdown--;
 
-				setTimeout("doAutoSubmit();", 1000);
-			}
-		</script>
+			setTimeout("doAutoSubmit();", 1000);
+		}
+	</script>
