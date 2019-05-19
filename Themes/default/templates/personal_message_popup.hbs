@@ -16,8 +16,15 @@
 				{{#if member}}{{{member.avatar.image}}}{{/if}}
 				<div class="details">
 					<div class="subject">{{{pm_link}}}</div>
-					<div class="sender">{{#if replied_to_you}}<span class="main_icons replied centericon" style="margin-right: 4px" title="{{{txt.pm_you_were_replied_to}}}"></span>{{else}}<span class="main_icons im_off centericon" style="margin-right: 4px" title="{{{txt.pm_was_sent_to_you}}}"></span>{{/if}}
-					{{#if member}}{{{member.link}}}:{{{member_from}}} - {{{time}}}</div>{{/if}}
+					<div class="sender">
+
+	{{#if replied_to_you}}
+						<span class="main_icons replied centericon" style="margin-right: 4px" title="{{{txt.pm_you_were_replied_to}}}"></span>
+	{{else}}
+						<span class="main_icons im_off centericon" style="margin-right: 4px" title="{{{txt.pm_was_sent_to_you}}}"></span>
+	{{/if}}
+						{{#if member}}{{{member.link}}}:{{{member_from}}} - {{{time}}}{{/if}}
+					</div>
 				</div>
 			</div>
 			{{/each}}
