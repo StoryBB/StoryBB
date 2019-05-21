@@ -84,75 +84,94 @@ function ModifyLanguages()
 	// Create another one time token here.
 	createToken('admin-lang');
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'language_list',
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'base_href' => $scripturl . '?action=admin;area=languages',
 		'title' => $txt['edit_languages'],
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getLanguages',
-		),
-		'get_count' => array(
+		],
+		'get_count' =>[
 			'function' => 'list_getNumLanguages',
-		),
-		'columns' => array(
-			'default' => array(
-				'header' => array(
+		],
+		'columns' => [
+			'default' => [
+				'header' => [
 					'value' => $txt['languages_default'],
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData)
 					{
 						return '<input type="radio" name="def_language" value="' . $rowData['id'] . '"' . ($rowData['default'] ? ' checked' : '') . ' onclick="highlightSelected(\'list_language_list_' . $rowData['id'] . '\');">';
 					},
 					'style' => 'width: 8%;',
 					'class' => 'centercol',
-				),
-			),
-			'name' => array(
-				'header' => array(
+				],
+			],
+			'name' => [
+				'header' => [
 					'value' => $txt['languages_lang_name'],
-				),
-				'data' => array(
-					'function' => function($rowData) use ($scripturl)
+				],
+				'data' => [
+					'db_htmlsafe' => 'name',
+				],
+			],
+			'edit' => [
+				'header' => [
+					'value' => $txt['edit'],
+				],
+				'data' => [
+					'function' => function($rowData) use ($scripturl, $txt)
 					{
-						return sprintf('<a href="%1$s?action=admin;area=languages;sa=editlang;lid=%2$s">%3$s</a>', $scripturl, $rowData['id'], $rowData['name']);
+						return sprintf('<a href="%1$s?action=admin;area=languages;sa=editlang;lid=%2$s">%3$s</a>', $scripturl, $rowData['id'], $txt['edit']);
 					},
-				),
-			),
-			'count' => array(
-				'header' => array(
+				],
+			],
+			'count' => [
+				'header' => [
 					'value' => $txt['languages_users'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'count',
-				),
-			),
-			'locale' => array(
-				'header' => array(
+				],
+			],
+			'locale' => [
+				'header' => [
 					'value' => $txt['languages_locale'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'locale',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+			'rtl' => [
+				'header' => [
+					'value' => $txt['languages_right_to_left'],
+				],
+				'data' => [
+					'function' => function($rowData) use ($txt)
+					{
+						return $rowData['rtl'] ? $txt['yes'] : $txt['no'];
+					}
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=admin;area=languages',
 			'token' => 'admin-lang',
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'top_of_list',
 				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="set_default" value="' . $txt['save'] . '"' . (is_writable($boarddir . '/Settings.php') ? '' : ' disabled') . ' class="button_submit">',
-			),
-			array(
+			],
+			[
 				'position' => 'bottom_of_list',
 				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="set_default" value="' . $txt['save'] . '"' . (is_writable($boarddir . '/Settings.php') ? '' : ' disabled') . ' class="button_submit">',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// We want to highlight the selected language. Need some Javascript for this.
 	addInlineJavaScript('
@@ -228,6 +247,7 @@ function list_getLanguages()
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'en-us'),
 			'locale' => $general['locale'],
 			'name' => $general['native_name'] . (!empty($general['english_name']) && $general['english_name'] != $general['native_name'] ? ' (' . $general['english_name'] . ')' : ''),
+			'rtl' => !empty($general['is_rtl']),
 		);
 	}
 

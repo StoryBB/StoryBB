@@ -305,6 +305,7 @@ $txt['languages_lang_name'] = 'Language Name';
 $txt['languages_locale'] = 'Locale';
 $txt['languages_default'] = 'Default';
 $txt['languages_users'] = 'Users';
+$txt['languages_right_to_left'] = 'Right-to-Left';
 $txt['language_settings_writable'] = 'Warning: Settings.php is not writable so the default language setting cannot be saved.';
 $txt['edit_languages'] = 'Edit Languages';
 $txt['lang_file_not_writable'] = '<strong>Warning:</strong> The primary language file (%1$s) is not writable. You must make this writable before you can make any changes.';
