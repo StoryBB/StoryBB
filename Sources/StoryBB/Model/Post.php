@@ -41,7 +41,7 @@ class Post
 		// Set optional parameters to the default value.
 		$msgOptions['icon'] = empty($msgOptions['icon']) ? 'xx' : $msgOptions['icon'];
 		$msgOptions['smileys_enabled'] = !empty($msgOptions['smileys_enabled']);
-		$msgOptions['attachments'] = empty($msgOptions['attachments']) ? array() : $msgOptions['attachments'];
+		$msgOptions['attachments'] = empty($msgOptions['attachments']) ? [] : $msgOptions['attachments'];
 		$msgOptions['approved'] = isset($msgOptions['approved']) ? (int) $msgOptions['approved'] : 1;
 		$topicOptions['id'] = empty($topicOptions['id']) ? 0 : (int) $topicOptions['id'];
 		$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
@@ -311,7 +311,7 @@ class Post
 				array(
 					$msgOptions['id'],
 				),
-				array()
+				[]
 			);
 
 			Task::queue_adhoc('StoryBB\\Task\\Adhoc\\ApprovePostNotify', [
@@ -430,7 +430,7 @@ class Post
 		$topicOptions['sticky_mode'] = isset($topicOptions['sticky_mode']) ? $topicOptions['sticky_mode'] : null;
 
 		// This is longer than it has to be, but makes it so we only set/change what we have to.
-		$messages_columns = array();
+		$messages_columns = [];
 		if (isset($posterOptions['name']))
 			$messages_columns['poster_name'] = $posterOptions['name'];
 		if (isset($posterOptions['email']))
@@ -478,7 +478,7 @@ class Post
 		{
 			require_once($sourcedir . '/Mentions.php');
 
-			$oldmentions = array();
+			$oldmentions = [];
 
 			if (!empty($msgOptions['old_body']))
 			{

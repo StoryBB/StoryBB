@@ -136,7 +136,7 @@ class Behat extends RawMinkContext implements Context
 		if (substr($db_type, 0, 5) == 'mysql')
 		{
 			// Just in case the query fails for some reason...
-			$engines = array();
+			$engines = [];
 
 			// Figure out storage engines - what do we have, etc.
 			$get_engines = $smcFunc['db_query']('', 'SHOW ENGINES', []);
@@ -178,7 +178,7 @@ class Behat extends RawMinkContext implements Context
 
 		// Execute the SQL.
 		$current_statement = '';
-		$exists = array();
+		$exists = [];
 		$incontext['failures'] = [];
 		$incontext['sql_results'] = array(
 			'tables' => 0,

@@ -80,7 +80,7 @@ class TLD
 				$tmax = 26;
 				$skew = 38;
 				$damp = 700;
-				$output_parts = array();
+				$output_parts = [];
 
 				$input = str_replace(strtoupper($prefix), $prefix, $input);
 
@@ -98,7 +98,7 @@ class TLD
 					$bias = 72;
 					$idx = 0;
 					$char = 0x80;
-					$decoded = array();
+					$decoded = [];
 					$output = '';
 					$delim_pos = strrpos($encoded, '-');
 
@@ -263,7 +263,7 @@ class TLD
 			$first = mb_substr($string, 0, 1);
 
 			if (empty($index[$first]))
-				$index[$first] = array();
+				$index[$first] = [];
 
 			if (mb_strlen($string) > 1)
 			{
@@ -290,7 +290,7 @@ class TLD
 			// Absolute max length for a regex is 32768, but we might need wiggle room
 			$max_length = 30000;
 
-			$regex = array();
+			$regex = [];
 			$length = 0;
 
 			foreach ($index as $key => $value)
@@ -343,7 +343,7 @@ class TLD
 		};
 
 		// Now that the functions are defined, let's do this thing
-		$index = array();
+		$index = [];
 		$regex = '';
 
 		foreach ($strings as $string)
@@ -351,7 +351,7 @@ class TLD
 
 		if ($returnArray === true)
 		{
-			$regex = array();
+			$regex = [];
 			while (!empty($index))
 				$regex[] = '(?'.'>' . $index_to_regex($index, $delim) . ')';
 		}

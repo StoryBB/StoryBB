@@ -21,7 +21,7 @@ class Fulltext extends API
 	/**
 	 * @var array Which words are banned
 	 */
-	protected $bannedWords = array();
+	protected $bannedWords = [];
 
 	/**
 	 * @var int The minimum word length
@@ -47,7 +47,7 @@ class Fulltext extends API
 			return;
 		}
 
-		$this->bannedWords = empty($modSettings['search_banned_words']) ? array() : explode(',', $modSettings['search_banned_words']);
+		$this->bannedWords = empty($modSettings['search_banned_words']) ? [] : explode(',', $modSettings['search_banned_words']);
 		$this->min_word_length = $this->_getMinWordLength();
 	}
 
@@ -161,7 +161,7 @@ class Fulltext extends API
 		$query_select = array(
 			'id_msg' => 'm.id_msg',
 		);
-		$query_where = array();
+		$query_where = [];
 		$query_params = $search_data['params'];
 
 		if ($query_params['id_search'])

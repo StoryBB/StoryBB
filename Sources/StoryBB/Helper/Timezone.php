@@ -104,8 +104,8 @@ class Timezone
 		);
 
 		// Should we put time zones from certain countries at the top of the list?
-		$priority_countries = !empty($modSettings['timezone_priority_countries']) ? explode(',', $modSettings['timezone_priority_countries']) : array();
-		$priority_tzids = array();
+		$priority_countries = !empty($modSettings['timezone_priority_countries']) ? explode(',', $modSettings['timezone_priority_countries']) : [];
+		$priority_tzids = [];
 		foreach ($priority_countries as $country)
 		{
 			$country_tzids = @timezone_identifiers_list(DateTimeZone::PER_COUNTRY, strtoupper(trim($country)));
@@ -156,8 +156,8 @@ class Timezone
 		array_multisort($offsets, SORT_ASC, SORT_NUMERIC, $longitudes, SORT_ASC, SORT_NUMERIC, $zones);
 
 		// Build the final array of formatted values
-		$priority_timezones = array();
-		$timezones = array();
+		$priority_timezones = [];
+		$timezones = [];
 		foreach ($zones as $tzkey => $tzvalue)
 		{
 			date_timezone_set($date_when, timezone_open($tzvalue['tzid']));

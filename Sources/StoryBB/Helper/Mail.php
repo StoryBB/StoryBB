@@ -66,7 +66,7 @@ class Mail
 		// In honour of those days, it's still called the 'hotmail fix'.
 		if ($hotmail_fix === null)
 		{
-			$hotmail_to = array();
+			$hotmail_to = [];
 			foreach ($to_array as $i => $to_address)
 			{
 				if (preg_match('~@(att|comcast|bellsouth)\.[a-zA-Z\.]{2,6}$~i', $to_address) === 1)
