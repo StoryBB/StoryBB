@@ -74,7 +74,7 @@ function MessageMain()
 	if (isset($_GET['done']) && ($_GET['done'] == 'sent'))
 		$context['pm_sent'] = true;
 
-	$context['labels'] = array();
+	$context['labels'] = [];
 
 	// Load the label data.
 	if ($user_settings['new_pm'] || ($context['labels'] = cache_get_data('labelCounts:' . $user_info['id'], 720)) === null)
@@ -246,7 +246,7 @@ function messageIndexBar($area)
 		),
 		'labels' => array(
 			'title' => $txt['pm_labels'],
-			'areas' => array(),
+			'areas' => [],
 		),
 		'actions' => array(
 			'title' => $txt['pm_actions'],
@@ -389,7 +389,7 @@ function MessagePopup()
 			'not_read' => 0,
 		)
 	);
-	$pms = array();
+	$pms = [];
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$pms[] = $row[0];
 	$smcFunc['db_free_result']($request);
@@ -405,7 +405,7 @@ function MessagePopup()
 		}
 
 		// Now, actually fetch me some PMs. Make sure we track the senders, got some work to do for them.
-		$senders = array();
+		$senders = [];
 
 		$request = $smcFunc['db_query']('', '
 			SELECT pm.id_pm, pm.id_pm_head, COALESCE(mem.id_member, pm.id_member_from) AS id_member_from,
@@ -460,7 +460,7 @@ function MessageFolder()
 	$context['from_or_to'] = $context['folder'] != 'sent' ? 'from' : 'to';
 	$context['get_pmessage'] = 'prepareMessageContext';
 	$context['signature_enabled'] = substr($modSettings['signature_settings'], 0, 1) == 1;
-	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
+	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : [];
 
 	$labelJoin = '';
 	$labelQuery = '';
@@ -679,10 +679,10 @@ function MessageFolder()
 	);
 
 	// Load the id_pms and initialize recipients.
-	$pms = array();
-	$lastData = array();
-	$posters = $context['folder'] == 'sent' ? array($user_info['id']) : array();
-	$recipients = array();
+	$pms = [];
+	$lastData = [];
+	$posters = $context['folder'] == 'sent' ? array($user_info['id']) : [];
+	$recipients = [];
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -692,8 +692,8 @@ function MessageFolder()
 				$posters[$row['id_pm']] = $row['id_member_from'];
 			$pms[$row['id_pm']] = $row['id_pm'];
 			$recipients[$row['id_pm']] = array(
-				'to' => array(),
-				'bcc' => array()
+				'to' => [],
+				'bcc' => []
 			);
 		}
 
@@ -744,8 +744,8 @@ function MessageFolder()
 
 			if (!isset($recipients[$row['id_pm']]))
 				$recipients[$row['id_pm']] = array(
-					'to' => array(),
-					'bcc' => array()
+					'to' => [],
+					'bcc' => []
 				);
 			$display_pms[] = $row['id_pm'];
 			$posters[$row['id_pm']] = $row['id_member_from'];
@@ -766,9 +766,9 @@ function MessageFolder()
 				'pm_list' => $all_pms,
 			)
 		);
-		$context['message_labels'] = array();
-		$context['message_replied'] = array();
-		$context['message_unread'] = array();
+		$context['message_labels'] = [];
+		$context['message_replied'] = [];
+		$context['message_unread'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if ($context['folder'] == 'sent' || empty($row['bcc']))
@@ -815,7 +815,7 @@ function MessageFolder()
 		loadMemberData($posters);
 
 		// Get the order right.
-		$orderBy = array();
+		$orderBy = [];
 		foreach (array_reverse($pms) as $pm)
 			$orderBy[] = 'pm.id_pm = ' . $pm;
 
@@ -904,8 +904,8 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	static $temp_pm_selected = null;
 	if ($temp_pm_selected === null)
 	{
-		$temp_pm_selected = isset($_SESSION['pm_selected']) ? $_SESSION['pm_selected'] : array();
-		$_SESSION['pm_selected'] = array();
+		$temp_pm_selected = isset($_SESSION['pm_selected']) ? $_SESSION['pm_selected'] : [];
+		$_SESSION['pm_selected'] = [];
 	}
 
 	// Process the data for multiple messages.
@@ -1037,7 +1037,7 @@ function MessageSearch()
 	if (isset($_REQUEST['params']))
 	{
 		$temp_params = explode('|"|', base64_decode(strtr($_REQUEST['params'], array(' ' => '+'))));
-		$context['search_params'] = array();
+		$context['search_params'] = [];
 		foreach ($temp_params as $i => $data)
 		{
 			@list ($k, $v) = explode('|\'|', $data);
@@ -1065,8 +1065,8 @@ function MessageSearch()
 	$context['search_params']['show_complete'] = !empty($context['search_params']['show_complete']);
 
 	// Create the array of labels to be searched.
-	$context['search_labels'] = array();
-	$searchedLabels = isset($context['search_params']['labels']) && $context['search_params']['labels'] != '' ? explode(',', $context['search_params']['labels']) : array();
+	$context['search_labels'] = [];
+	$searchedLabels = isset($context['search_params']['labels']) && $context['search_params']['labels'] != '' ? explode(',', $context['search_params']['labels']) : [];
 	foreach ($context['labels'] as $label)
 	{
 		$context['search_labels'][] = array(
@@ -1083,7 +1083,7 @@ function MessageSearch()
 	if (!empty($context['search_errors']))
 	{
 		loadLanguage('Errors');
-		$context['search_errors']['messages'] = array();
+		$context['search_errors']['messages'] = [];
 		foreach ($context['search_errors'] as $search_error => $dummy)
 		{
 			if ($search_error == 'messages')
@@ -1125,7 +1125,7 @@ function MessageSearch2()
 	$maxMembersToSearch = 500;
 
 	// Extract all the search parameters.
-	$search_params = array();
+	$search_params = [];
 	if (isset($_REQUEST['params']))
 	{
 		$temp_params = explode('|"|', base64_decode(strtr($_REQUEST['params'], array(' ' => '+'))));
@@ -1162,7 +1162,7 @@ function MessageSearch2()
 		$search_params['userspec'] = isset($search_params['userspec']) ? $search_params['userspec'] : $_REQUEST['userspec'];
 
 	// This will be full of all kinds of parameters!
-	$searchq_parameters = array();
+	$searchq_parameters = [];
 
 	// If there's no specific user, then don't mention it in the main query.
 	if (empty($search_params['userspec']))
@@ -1186,8 +1186,8 @@ function MessageSearch2()
 		if (!empty($possible_users))
 		{
 			// We need to bring this into the query and do it nice and cleanly.
-			$where_params = array();
-			$where_clause = array();
+			$where_params = [];
+			$where_clause = [];
 			foreach ($possible_users as $k => $v)
 			{
 				$where_params['name_' . $k] = $v;
@@ -1216,7 +1216,7 @@ function MessageSearch2()
 			}
 			else
 			{
-				$memberlist = array();
+				$memberlist = [];
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$memberlist[] = $row['id_member'];
 				$userQuery = 'AND (pm.id_member_from IN ({array_int:member_list}) OR (pm.id_member_from = 0 AND ({raw:pm_from_name} LIKE {raw:guest_user_name_implode})))';
@@ -1256,7 +1256,7 @@ function MessageSearch2()
 				$_REQUEST['searchlabel'][$key] = (int) $id;
 		}
 		else
-			$_REQUEST['searchlabel'] = array();
+			$_REQUEST['searchlabel'] = [];
 
 		// Now that everything is cleaned up a bit, make the labels a param.
 		$search_params['labels'] = implode(',', $_REQUEST['searchlabel']);
@@ -1313,7 +1313,7 @@ function MessageSearch2()
 	$tempSearch = explode(' ', preg_replace('~(?:^|\s)(?:[-]?)"(?:[^"]+)"(?:$|\s)~u', ' ', $search_params['search']));
 
 	// A minus sign in front of a word excludes the word.... so...
-	$excludedWords = array();
+	$excludedWords = [];
 
 	// .. first, we check for things like -"some words", but not "-some words".
 	foreach ($matches[1] as $index => $word)
@@ -1354,7 +1354,7 @@ function MessageSearch2()
 	$searchArray = array_unique($searchArray);
 
 	// Create an array of replacements for highlighting.
-	$context['mark'] = array();
+	$context['mark'] = [];
 	foreach ($searchArray as $word)
 		$context['mark'][$word] = '<strong class="highlight">' . $word . '</strong>';
 
@@ -1373,13 +1373,13 @@ function MessageSearch2()
 		$context['search_params']['userspec'] = $smcFunc['htmlspecialchars']($context['search_params']['userspec']);
 
 	// Now we have all the parameters, combine them together for pagination and the like...
-	$context['params'] = array();
+	$context['params'] = [];
 	foreach ($search_params as $k => $v)
 		$context['params'][] = $k . '|\'|' . $v;
 	$context['params'] = base64_encode(implode('|"|', $context['params']));
 
 	// Compile the subject query part.
-	$andQueryParts = array();
+	$andQueryParts = [];
 
 	foreach ($searchWords as $index => $word)
 	{
@@ -1457,9 +1457,9 @@ function MessageSearch2()
 			'max' => $modSettings['search_results_per_page'],
 		))
 	);
-	$foundMessages = array();
-	$posters = array();
-	$head_pms = array();
+	$foundMessages = [];
+	$posters = [];
+	$head_pms = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$foundMessages[] = $row['id_pm'];
@@ -1487,7 +1487,7 @@ function MessageSearch2()
 				'limit' => count($head_pms),
 			)
 		);
-		$real_pm_ids = array();
+		$real_pm_ids = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$real_pm_ids[$row['id_pm_head']] = $row['id_pm'];
 		$smcFunc['db_free_result']($request);
@@ -1499,9 +1499,9 @@ function MessageSearch2()
 	// Sort out the page index.
 	$context['page_index'] = constructPageIndex($scripturl . '?action=pm;sa=search2;params=' . $context['params'], $_GET['start'], $numResults, $modSettings['search_results_per_page'], false);
 
-	$context['message_labels'] = array();
-	$context['message_replied'] = array();
-	$context['personal_messages'] = array();
+	$context['message_labels'] = [];
+	$context['message_replied'] = [];
+	$context['personal_messages'] = [];
 
 	if (!empty($foundMessages))
 	{
@@ -1557,7 +1557,7 @@ function MessageSearch2()
 					$context['message_labels'][$row['id_pm']][-1] = array('id' => -1, 'name' => $context['labels'][-1]['name']);
 				}
 
-				$row['labels'] = $row['labels'] == '' ? array() : explode(',', $row['labels']);
+				$row['labels'] = $row['labels'] == '' ? [] : explode(',', $row['labels']);
 			}
 		}
 
@@ -1793,8 +1793,8 @@ function MessagePost()
 	}
 
 	$context['recipients'] = array(
-		'to' => array(),
-		'bcc' => array(),
+		'to' => [],
+		'bcc' => [],
 	);
 
 	// Sending by ID?  Replying to all?  Fetch the real_name(s).
@@ -1858,7 +1858,7 @@ function MessagePost()
 		}
 
 		// Get a literal name list in case the user has JavaScript disabled.
-		$names = array();
+		$names = [];
 		foreach ($context['recipients']['to'] as $to)
 			$names[] = $to['name'];
 		$context['to_value'] = empty($names) ? '' : '&quot;' . implode('&quot;, &quot;', $names) . '&quot;';
@@ -1869,7 +1869,7 @@ function MessagePost()
 	// Set the defaults...
 	$context['subject'] = $form_subject;
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);
-	$context['post_error'] = array();
+	$context['post_error'] = [];
 
 	// And build the link tree.
 	$context['linktree'][] = array(
@@ -1950,7 +1950,7 @@ function MessageDrafts()
  * @param array $named_recipients
  * @param $recipient_ids
  */
-function messagePostError($error_types, $named_recipients, $recipient_ids = array())
+function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 {
 	global $txt, $context, $scripturl, $modSettings;
 	global $smcFunc, $user_info, $sourcedir;
@@ -1973,8 +1973,8 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 
 	// Got some known members?
 	$context['recipients'] = array(
-		'to' => array(),
-		'bcc' => array(),
+		'to' => [],
+		'bcc' => [],
 	);
 	if (!empty($recipient_ids['to']) || !empty($recipient_ids['bcc']))
 	{
@@ -2068,7 +2068,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	$context['error_type'] = 'minor';
 
 	$context['post_error'] = array(
-		'messages' => array(),
+		'messages' => [],
 		// @todo error handling: maybe fatal errors can be error_type => serious
 		'error_type' => '',
 	);
@@ -2152,7 +2152,7 @@ function MessagePost2()
 	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
 
 	// Initialize the errors we're about to make.
-	$post_errors = array();
+	$post_errors = [];
 
 	// Check whether we've gone over the limit of messages we can send per hour - fatal error if fails!
 	if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
@@ -2194,13 +2194,13 @@ function MessagePost2()
 		$_POST['recipient_to'] = explode(',', $_POST['u']);
 
 	// Construct the list of recipients.
-	$recipientList = array();
-	$namedRecipientList = array();
-	$namesNotFound = array();
+	$recipientList = [];
+	$namedRecipientList = [];
+	$namesNotFound = [];
 	foreach (array('to', 'bcc') as $recipientType)
 	{
 		// First, let's see if there's user ID's given.
-		$recipientList[$recipientType] = array();
+		$recipientList[$recipientType] = [];
 		if (!empty($_POST['recipient_' . $recipientType]) && is_array($_POST['recipient_' . $recipientType]))
 		{
 			foreach ($_POST['recipient_' . $recipientType] as $recipient)
@@ -2351,7 +2351,7 @@ function MessagePost2()
 				$context['send_log']['failed'][] = sprintf($txt['pm_error_user_not_found'], $name);
 		}
 
-		return messagePostError(array(), $namedRecipientList, $recipientList);
+		return messagePostError([], $namedRecipientList, $recipientList);
 	}
 
 	// Want to save this as a draft and think about it some more?
@@ -2365,7 +2365,7 @@ function MessagePost2()
 	elseif (!empty($modSettings['max_pm_recipients']) && count($recipientList['to']) + count($recipientList['bcc']) > $modSettings['max_pm_recipients'] && !allowedTo(array('moderate_forum', 'send_mail', 'admin_forum')))
 	{
 		$context['send_log'] = array(
-			'sent' => array(),
+			'sent' => [],
 			'failed' => array(sprintf($txt['pm_too_many_recipients'], $modSettings['max_pm_recipients'])),
 		);
 		return messagePostError($post_errors, $namedRecipientList, $recipientList);
@@ -2382,8 +2382,8 @@ function MessagePost2()
 		$context['send_log'] = sendpm($recipientList, $_REQUEST['subject'], $_REQUEST['message'], true, null, !empty($_REQUEST['pm_head']) ? (int) $_REQUEST['pm_head'] : 0);
 	else
 		$context['send_log'] = array(
-			'sent' => array(),
-			'failed' => array()
+			'sent' => [],
+			'failed' => []
 		);
 
 	// Mark the message as "replied to".
@@ -2445,7 +2445,7 @@ function MessageActionsApply()
 	// If we are in conversation, we may need to apply this to every message in the conversation.
 	if (isset($_REQUEST['conversation']))
 	{
-		$id_pms = array();
+		$id_pms = [];
 		foreach ($_REQUEST['pm_actions'] as $pm => $dummy)
 			$id_pms[] = (int) $pm;
 
@@ -2457,7 +2457,7 @@ function MessageActionsApply()
 				'id_pms' => $id_pms,
 			)
 		);
-		$pm_heads = array();
+		$pm_heads = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$pm_heads[$row['id_pm_head']] = $row['id_pm'];
 		$smcFunc['db_free_result']($request);
@@ -2479,10 +2479,10 @@ function MessageActionsApply()
 		$smcFunc['db_free_result']($request);
 	}
 
-	$to_delete = array();
-	$to_label = array();
-	$label_type = array();
-	$labels = array();
+	$to_delete = [];
+	$to_label = [];
+	$label_type = [];
+	$labels = [];
 	foreach ($_REQUEST['pm_actions'] as $pm => $action)
 	{
 		if ($action === 'delete')
@@ -2663,7 +2663,7 @@ function MessageActionsApply()
 			// Add new ones
 			if (!empty($labels_to_apply))
 			{
-				$inserts = array();
+				$inserts = [];
 				foreach ($labels_to_apply as $label)
 					$inserts[] = array($row['id_pm'], $label);
 
@@ -2671,7 +2671,7 @@ function MessageActionsApply()
 					'{db_prefix}pm_labeled_messages',
 					array('id_pm' => 'int', 'id_label' => 'int'),
 					$inserts,
-					array()
+					[]
 				);
 			}
 		}
@@ -2735,7 +2735,7 @@ function MessagePrune()
 		$deleteTime = max(0, time() - (86400 * (int) $_REQUEST['age']));
 
 		// Array to store the IDs in.
-		$toDelete = array();
+		$toDelete = [];
 
 		// Select all the messages they have sent older than $deleteTime.
 		$request = $smcFunc['db_query']('', '
@@ -2832,7 +2832,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 				'member_list' => $owner,
 				'is_deleted' => 1,
 				'not_deleted' => 0,
-				'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : array(),
+				'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : [],
 			)
 		);
 	}
@@ -2848,7 +2848,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 			array(
 				'member_list' => $owner,
 				'not_deleted' => 0,
-				'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : array(),
+				'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : [],
 			)
 		);
 		// ...And update the statistics accordingly - now including unread messages!.
@@ -2879,11 +2879,11 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 				'member_list' => $owner,
 				'is_deleted' => 1,
 				'not_deleted' => 0,
-				'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : array(),
+				'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : [],
 			)
 		);
 
-		$labels = array();
+		$labels = [];
 
 		// Get any labels that the owner may have applied to this PM
 		// The join is here to ensure we only get labels applied by the specified member(s)
@@ -2894,7 +2894,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 			WHERE l.id_member IN ({array_int:member_list})' . $where,
 			array(
 				'member_list' => $owner,
-				'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : array(),
+				'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : [],
 			)
 		);
 
@@ -2912,7 +2912,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 				WHERE id_label IN ({array_int:labels})' . $where,
 				array(
 					'labels' => $labels,
-					'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : array(),
+					'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : [],
 				)
 			);
 		}
@@ -2928,10 +2928,10 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 		array(
 			'not_deleted' => 0,
 			'is_deleted' => 1,
-			'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : array(),
+			'pm_list' => $personal_messages !== null ? array_unique($personal_messages) : [],
 		)
 	);
-	$remove_pms = array();
+	$remove_pms = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$remove_pms[] = $row['sender'];
 	$smcFunc['db_free_result']($request);
@@ -2987,7 +2987,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 	// If we know which PMs we're marking read, then we don't need label info
 	if ($personal_messages === null && $label !== null && $label != '-1')
 	{
-		$personal_messages = array();
+		$personal_messages = [];
 		$get_messages = $smcFunc['db_query']('', '
 			SELECT id_pm
 			FROM {db_prefix}pm_labeled_messages
@@ -3053,7 +3053,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 			if ($owner != $user_info['id'] || empty($row['id_pm']))
 				continue;
 
-			$this_labels = array();
+			$this_labels = [];
 
 			// Get all the labels
 			$result2 = $smcFunc['db_query']('', '
@@ -3109,10 +3109,10 @@ function ManageLabels()
 	$context['page_title'] = $txt['pm_manage_labels'];
 	$context['sub_template'] = 'personal_message_labels';
 
-	$the_labels = array();
-	$labels_to_add = array();
-	$labels_to_remove = array();
-	$label_updates = array();
+	$the_labels = [];
+	$labels_to_add = [];
+	$labels_to_remove = [];
+	$label_updates = [];
 
 	// Add all existing labels to the array to save, slashing them as necessary...
 	foreach ($context['labels'] as $label)
@@ -3126,8 +3126,8 @@ function ManageLabels()
 		checkSession();
 
 		// This will be for updating messages.
-		$message_changes = array();
-		$rule_changes = array();
+		$message_changes = [];
+		$rule_changes = [];
 
 		// Will most likely need this.
 		LoadRules();
@@ -3189,11 +3189,11 @@ function ManageLabels()
 		// Save any new labels
 		if (!empty($labels_to_add))
 		{
-			$inserts = array();
+			$inserts = [];
 			foreach ($labels_to_add AS $label)
 				$inserts[] = array($user_info['id'], $label);
 
-			$smcFunc['db_insert']('', '{db_prefix}pm_labels', array('id_member' => 'int', 'name' => 'string-30'), $inserts, array());
+			$smcFunc['db_insert']('', '{db_prefix}pm_labels', array('id_member' => 'int', 'name' => 'string-30'), $inserts, []);
 		}
 
 		// Update existing labels as needed
@@ -3250,7 +3250,7 @@ function ManageLabels()
 				)
 			);
 
-			$stranded_messages = array();
+			$stranded_messages = [];
 			while ($row = $smcFunc['db_fetch_assoc']($get_stranded_pms))
 			{
 				$stranded_messages[] = $row['id_pm'];
@@ -3445,7 +3445,7 @@ function ReportMessage()
 				'admin_group' => 1,
 			)
 		);
-		$context['admins'] = array();
+		$context['admins'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['admins'][$row['id_member']] = $row['real_name'];
 		$smcFunc['db_free_result']($request);
@@ -3496,7 +3496,7 @@ function ReportMessage()
 				'id_pm' => $context['pm_id'],
 			)
 		);
-		$recipients = array();
+		$recipients = [];
 		$hidden_recipients = 0;
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -3531,7 +3531,7 @@ function ReportMessage()
 		$memberFromName = un_htmlspecialchars($memberFromName);
 
 		// Prepare the message storage array.
-		$messagesToSend = array();
+		$messagesToSend = [];
 		// Loop through each admin, and add them to the right language pile...
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -3554,8 +3554,8 @@ function ReportMessage()
 					'subject' => ($smcFunc['strpos']($subject, $txt['pm_report_pm_subject']) === false ? $txt['pm_report_pm_subject'] : '') . un_htmlspecialchars($subject),
 					'body' => $report_body,
 					'recipients' => array(
-						'to' => array(),
-						'bcc' => array()
+						'to' => [],
+						'bcc' => []
 					),
 				);
 			}
@@ -3613,7 +3613,7 @@ function ManageRules()
 			'not_hidden' => 0,
 		)
 	);
-	$context['groups'] = array();
+	$context['groups'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Hide hidden groups!
@@ -3648,7 +3648,7 @@ function ManageRules()
 			// As with criteria - add a dummy action for "expansion".
 			$context['rule']['actions'][] = array('t' => '', 'v' => '');
 			
-			$members = array();
+			$members = [];
 			// Need to get member names!
 			foreach ($context['rule']['criteria'] as $k => $criteria)
 				if ($criteria['t'] == 'mid' && !empty($criteria['v']))
@@ -3673,8 +3673,8 @@ function ManageRules()
 			$context['rule'] = array(
 				'id' => '',
 				'name' => '',
-				'criteria' => array(),
-				'actions' => array(),
+				'criteria' => [],
+				'actions' => [],
 				'logic' => 'and',
 			);
 	}
@@ -3694,7 +3694,7 @@ function ManageRules()
 			fatal_lang_error('pm_rule_no_criteria', false);
 
 		// Let's do the criteria first - it's also hardest!
-		$criteria = array();
+		$criteria = [];
 		foreach ($_POST['ruletype'] as $ind => $type)
 		{
 			// Check everything is here...
@@ -3735,7 +3735,7 @@ function ManageRules()
 		}
 
 		// Also do the actions!
-		$actions = array();
+		$actions = [];
 		$doDelete = 0;
 		$isOr = $_POST['rule_logic'] == 'or' ? 1 : 0;
 		foreach ($_POST['acttype'] as $ind => $type)
@@ -3795,7 +3795,7 @@ function ManageRules()
 	elseif (isset($_POST['delselected']) && !empty($_POST['delrule']))
 	{
 		checkSession();
-		$toDelete = array();
+		$toDelete = [];
 		foreach ($_POST['delrule'] as $k => $v)
 			$toDelete[] = (int) $k;
 
@@ -3849,7 +3849,7 @@ function ApplyRules($all_messages = false)
 			'not_deleted' => 0,
 		)
 	);
-	$actions = array();
+	$actions = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		foreach ($context['rules'] as $rule)
@@ -3881,7 +3881,7 @@ function ApplyRules($all_messages = false)
 						{
 							// Get a basic pot started!
 							if (!isset($actions['labels'][$row['id_pm']]))
-								$actions['labels'][$row['id_pm']] = array();
+								$actions['labels'][$row['id_pm']] = [];
 							$actions['labels'][$row['id_pm']][] = $ruleAction['v'];
 						}
 					}
@@ -3901,7 +3901,7 @@ function ApplyRules($all_messages = false)
 		foreach ($actions['labels'] as $pm => $labels)
 		{
 			// Quickly check each label is valid!
-			$realLabels = array();
+			$realLabels = [];
 			foreach ($context['labels'] as $label)
 			{
 				if (in_array($label['id'], $labels) && $label['id'] != -1 || empty($options['pm_remove_inbox_label']))
@@ -3928,7 +3928,7 @@ function ApplyRules($all_messages = false)
 				}
 			}
 
-			$inserts = array();
+			$inserts = [];
 			// Now we insert the label info
 			foreach ($realLabels as $a_label)
 				$inserts[] = array($pm, $a_label);
@@ -3937,7 +3937,7 @@ function ApplyRules($all_messages = false)
 				'{db_prefix}pm_labeled_messages',
 				array('id_pm' => 'int', 'id_label' => 'int'),
 				$inserts,
-				array()
+				[]
 			);
 		}
 	}
@@ -3964,7 +3964,7 @@ function LoadRules($reload = false)
 			'current_member' => $user_info['id'],
 		)
 	);
-	$context['rules'] = array();
+	$context['rules'] = [];
 	// Simply fill in the data!
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{

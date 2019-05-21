@@ -233,7 +233,7 @@ function list_getMailQueue($start, $items_per_page, $sort)
 			'items_per_page' => $items_per_page,
 		)
 	);
-	$mails = array();
+	$mails = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Private PM/email subjects and similar shouldn't be shown in the mailbox area.
@@ -284,8 +284,8 @@ function ModifyMailSettings($return_config = false)
 	$body = $txtBirthdayEmails[(empty($modSettings['birthday_email']) ? 'happy_birthday' : $modSettings['birthday_email']) . '_body'];
 	$subject = $txtBirthdayEmails[(empty($modSettings['birthday_email']) ? 'happy_birthday' : $modSettings['birthday_email']) . '_subject'];
 
-	$emails = array();
-	$processedBirthdayEmails = array();
+	$emails = [];
+	$processedBirthdayEmails = [];
 	foreach ($txtBirthdayEmails as $key => $value)
 	{
 		$index = substr($key, 0, strrpos($key, '_'));

@@ -18,14 +18,14 @@ class Attachments
 	protected $_attchDir = '';
 	protected $_currentAttachmentUploadDir;
 	protected $_canPostAttachment;
-	protected $_generalErrors = array();
+	protected $_generalErrors = [];
 	protected $_initialError;
-	protected $_attachments = array();
-	protected $_attachResults = array();
-	protected $_attachSuccess = array();
+	protected $_attachments = [];
+	protected $_attachResults = [];
+	protected $_attachSuccess = [];
 	protected $_response = array(
 		'error' => true,
-		'data' => array(),
+		'data' => [],
 		'extra' => '',
 	);
 	protected $_subActions = array(
@@ -140,7 +140,7 @@ class Attachments
 		global $context, $modSettings, $smcFunc, $user_info, $txt;
 
 		if (!isset($_FILES['attachment']['name']))
-			$_FILES['attachment']['tmp_name'] = array();
+			$_FILES['attachment']['tmp_name'] = [];
 
 		// If there are attachments, calculate the total size and how many.
 		$context['attachments']['total_size'] = 0;
@@ -160,7 +160,7 @@ class Attachments
 
 		// Our infamous SESSION var, we are gonna have soo much fun with it!
 		if (!isset($_SESSION['temp_attachments']))
-			$_SESSION['temp_attachments'] = array();
+			$_SESSION['temp_attachments'] = [];
 
 		// Make sure we're uploading to the right place.
 		if (!empty($modSettings['automanage_attachments']))
@@ -180,7 +180,7 @@ class Attachments
 		// If this isn't a new post, check the current attachments.
 		if (empty($this->_generalErrors) && $this->_msg)
 		{
-			$context['attachments'] = array();
+			$context['attachments'] = [];
 			$request = $smcFunc['db_query']('', '
 				SELECT COUNT(*), SUM(size)
 				FROM {db_prefix}attachments
@@ -211,7 +211,7 @@ class Attachments
 				if (file_exists($_FILES['attachment']['tmp_name'][$n]))
 					unlink($_FILES['attachment']['tmp_name'][$n]);
 
-			$_FILES['attachment']['tmp_name'] = array();
+			$_FILES['attachment']['tmp_name'] = [];
 
 			// No point in going further with this.
 			return;
@@ -224,7 +224,7 @@ class Attachments
 				continue;
 
 			// First, let's first check for PHP upload errors.
-			$errors = array();
+			$errors = [];
 			if (!empty($_FILES['attachment']['error'][$n]))
 			{
 				if ($_FILES['attachment']['error'][$n] == 2)
@@ -260,7 +260,7 @@ class Attachments
 					'size' => $_FILES['attachment']['size'][$n],
 					'type' => $_FILES['attachment']['type'][$n],
 					'id_folder' => $modSettings['currentAttachmentUploadDir'],
-					'errors' => array(),
+					'errors' => [],
 				);
 
 				// Move the file to the attachments folder with a temp name for now.
@@ -305,7 +305,7 @@ class Attachments
 		//   id_folder => $modSettings['currentAttachmentUploadDir']
 		//   errors => An array of errors (use the index of the $txt variable for that error).
 		// Template changes can be done using "integrate_upload_template".
-		call_integration_hook('integrate_attachment_upload', array());
+		call_integration_hook('integrate_attachment_upload', []);
 	}
 
 	protected function createAtttach()
@@ -313,7 +313,7 @@ class Attachments
 		global $txt, $user_info, $modSettings;
 
 		// Create an empty session var to keep track of all the files we attached.
-		$SESSION['already_attached'] = array();
+		$SESSION['already_attached'] = [];
 
 		foreach ($_SESSION['temp_attachments'] as  $attachID => $attachment)
 		{
@@ -326,7 +326,7 @@ class Attachments
 				'mime_type' => isset($attachment['type']) ? $attachment['type'] : '',
 				'id_folder' => isset($attachment['id_folder']) ? $attachment['id_folder'] : $modSettings['currentAttachmentUploadDir'],
 				'approved' => !$modSettings['postmod_active'] || allowedTo('post_attachment'),
-				'errors' => array(),
+				'errors' => [],
 			);
 
 			if (empty($attachment['errors']))
@@ -383,7 +383,7 @@ class Attachments
 		unset($_SESSION['temp_attachments']);
 	}
 
-	protected function setResponse($data = array())
+	protected function setResponse($data = [])
 	{
 		global $txt;
 
@@ -430,7 +430,7 @@ class Attachments
 		// Set the header.
 		header('Content-Type: application/json; charset=UTF-8');
 
-		echo json_encode($this->_response ? $this->_response : array());
+		echo json_encode($this->_response ? $this->_response : []);
 
 		// Done.
 		obExit(false);

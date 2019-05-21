@@ -176,7 +176,7 @@ function ReportToModerator2()
 	checkSubmitOnce('check');
 
 	// No errors, yet.
-	$post_errors = array();
+	$post_errors = [];
 
 	// Check their session.
 	if (checkSession('post', '', false) != '')
@@ -196,7 +196,7 @@ function ReportToModerator2()
 	{
 		loadLanguage('Errors');
 
-		$context['post_errors'] = array();
+		$context['post_errors'] = [];
 		foreach ($post_errors as $post_error)
 			$context['post_errors'][$post_error] = $txt['error_' . $post_error];
 

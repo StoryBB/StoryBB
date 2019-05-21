@@ -116,7 +116,7 @@ function PermissionIndex()
 			'is_post_group' => false,
 			'color' => '',
 			'icons' => '',
-			'children' => array(),
+			'children' => [],
 			'num_permissions' => array(
 				'allowed' => 0,
 				// Can't deny guest permissions!
@@ -136,7 +136,7 @@ function PermissionIndex()
 			'is_post_group' => false,
 			'color' => '',
 			'icons' => '',
-			'children' => array(),
+			'children' => [],
 			'num_permissions' => array(
 				'allowed' => 0,
 				'denied' => 0
@@ -145,8 +145,8 @@ function PermissionIndex()
 		),
 	);
 
-	$postGroups = array();
-	$normalGroups = array();
+	$postGroups = [];
+	$normalGroups = [];
 
 	// Query the database defined membergroups.
 	$query = $smcFunc['db_query']('', '
@@ -183,7 +183,7 @@ function PermissionIndex()
 			'is_post_group' => $row['min_posts'] != -1,
 			'color' => empty($row['online_color']) ? '' : $row['online_color'],
 			'icons' => !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '',
-			'children' => array(),
+			'children' => [],
 			'num_permissions' => array(
 				'allowed' => $row['id_group'] == 1 ? '(' . $txt['permissions_all'] . ')' : 0,
 				'denied' => $row['id_group'] == 1 ? '(' . $txt['permissions_none'] . ')' : 0
@@ -264,7 +264,7 @@ function PermissionIndex()
 			' . (empty($context['hidden_permissions']) ? '' : ' WHERE permission NOT IN ({array_string:hidden_permissions})') . '
 			GROUP BY id_group, add_deny',
 			array(
-				'hidden_permissions' => !empty($context['hidden_permissions']) ? $context['hidden_permissions'] : array(),
+				'hidden_permissions' => !empty($context['hidden_permissions']) ? $context['hidden_permissions'] : [],
 			)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -281,7 +281,7 @@ function PermissionIndex()
 			GROUP BY id_profile, id_group, add_deny',
 			array(
 				'default_profile' => 1,
-				'hidden_permissions' => !empty($context['hidden_permissions']) ? $context['hidden_permissions'] : array(),
+				'hidden_permissions' => !empty($context['hidden_permissions']) ? $context['hidden_permissions'] : [],
 			)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -351,7 +351,7 @@ function PermissionByBoard()
 		checkSession('request');
 		validateToken('admin-mpb');
 
-		$changes = array();
+		$changes = [];
 		foreach ($_POST['boardprofile'] as $pBoard => $profile)
 		{
 			$changes[(int) $profile][] = (int) $pBoard;
@@ -383,13 +383,13 @@ function PermissionByBoard()
 	getBoardTree();
 
 	// Build the list of the boards.
-	$context['categories'] = array();
+	$context['categories'] = [];
 	foreach ($cat_tree as $catid => $tree)
 	{
 		$context['categories'][$catid] = array(
 			'name' => &$tree['node']['name'],
 			'id' => &$tree['node']['id'],
-			'boards' => array()
+			'boards' => []
 		);
 		foreach ($boardList[$catid] as $boardid)
 		{
@@ -430,7 +430,7 @@ function SetQuickGroups()
 		fatal_lang_error('permissions_only_one_option', false);
 
 	if (empty($_POST['group']) || !is_array($_POST['group']))
-		$_POST['group'] = array();
+		$_POST['group'] = [];
 
 	// Only accept numeric values for selected membergroups.
 	foreach ($_POST['group'] as $id => $group_id)
@@ -496,12 +496,12 @@ function SetQuickGroups()
 					'copy_from' => $_POST['copy_from'],
 				)
 			);
-			$target_perm = array();
+			$target_perm = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$target_perm[$row['permission']] = $row['add_deny'];
 			$smcFunc['db_free_result']($request);
 
-			$inserts = array();
+			$inserts = [];
 			foreach ($_POST['group'] as $group_id)
 				foreach ($target_perm as $perm => $add_deny)
 				{
@@ -522,7 +522,7 @@ function SetQuickGroups()
 					' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
 				array(
 					'group_list' => $_POST['group'],
-					'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
+					'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : [],
 				)
 			);
 
@@ -551,12 +551,12 @@ function SetQuickGroups()
 				'current_profile' => $bid,
 			)
 		);
-		$target_perm = array();
+		$target_perm = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$target_perm[$row['permission']] = $row['add_deny'];
 		$smcFunc['db_free_result']($request);
 
-		$inserts = array();
+		$inserts = [];
 		foreach ($_POST['group'] as $group_id)
 			foreach ($target_perm as $perm => $add_deny)
 			{
@@ -614,7 +614,7 @@ function SetQuickGroups()
 					array(
 						'current_group_list' => $_POST['group'],
 						'current_permission' => $permission,
-						'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
+						'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : [],
 					)
 				);
 			else
@@ -634,7 +634,7 @@ function SetQuickGroups()
 		else
 		{
 			$add_deny = $_POST['add_remove'] == 'add' ? '1' : '0';
-			$permChange = array();
+			$permChange = [];
 			foreach ($_POST['group'] as $groupID)
 			{
 				if ($groupID == -1 && in_array($permission, $context['non_guest_permissions']))
@@ -691,7 +691,7 @@ function ModifyMembergroup()
 
 	loadAllPermissions();
 	loadPermissionProfiles();
-	$context['hidden_perms'] = array();
+	$context['hidden_perms'] = [];
 
 	if ($context['group']['id'] > 0)
 	{
@@ -745,8 +745,8 @@ function ModifyMembergroup()
 
 	// Fetch the current permissions.
 	$permissions = array(
-		'membergroup' => array('allowed' => array(), 'denied' => array()),
-		'board' => array('allowed' => array(), 'denied' => array())
+		'membergroup' => array('allowed' => [], 'denied' => []),
+		'board' => array('allowed' => [], 'denied' => [])
 	);
 
 	// General permissions?
@@ -906,7 +906,7 @@ function ModifyMembergroup2()
 	if ($parent != -2)
 		fatal_lang_error('cannot_edit_permissions_inherited');
 
-	$givePerms = array('membergroup' => array(), 'board' => array());
+	$givePerms = array('membergroup' => [], 'board' => []);
 
 	// Guest group, we need illegal, guest permissions.
 	if ($_GET['group'] == -1)
@@ -944,7 +944,7 @@ function ModifyMembergroup2()
 			' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
 			array(
 				'current_group' => $_GET['group'],
-				'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
+				'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : [],
 			)
 		);
 
@@ -1020,11 +1020,11 @@ function setPermissionLevel($level, $group, $profile = 'null')
 
 	// Levels by group... restrict, standard, moderator, maintenance.
 	$groupLevels = array(
-		'board' => array('inherit' => array()),
-		'group' => array('inherit' => array())
+		'board' => array('inherit' => []),
+		'group' => array('inherit' => [])
 	);
 	// Levels by board... standard, publish, free.
-	$boardLevels = array('inherit' => array());
+	$boardLevels = array('inherit' => []);
 
 	// Restrictive - ie. guests.
 	$groupLevels['global']['restrict'] = array(
@@ -1195,7 +1195,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
 			array(
 				'current_group' => $group,
-				'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
+				'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : [],
 			)
 		);
 		$smcFunc['db_query']('', '
@@ -1208,7 +1208,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			)
 		);
 
-		$groupInserts = array();
+		$groupInserts = [];
 		foreach ($groupLevels['global'][$level] as $permission)
 			$groupInserts[] = array($group, $permission);
 
@@ -1219,7 +1219,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			array('id_group')
 		);
 
-		$boardInserts = array();
+		$boardInserts = [];
 		foreach ($groupLevels['board'][$level] as $permission)
 			$boardInserts[] = array(1, $group, $permission);
 
@@ -1251,7 +1251,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 
 		if (!empty($groupLevels['board'][$level]))
 		{
-			$boardInserts = array();
+			$boardInserts = [];
 			foreach ($groupLevels['board'][$level] as $permission)
 				$boardInserts[] = array($profile, $group, $permission);
 
@@ -1294,7 +1294,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		{
 			$group = $row[0];
 
-			$boardInserts = array();
+			$boardInserts = [];
 			foreach ($boardLevels[$level] as $permission)
 				$boardInserts[] = array($profile, $group, $permission);
 
@@ -1308,7 +1308,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		$smcFunc['db_free_result']($query);
 
 		// Add permissions for ungrouped members.
-		$boardInserts = array();
+		$boardInserts = [];
 		foreach ($boardLevels[$level] as $permission)
 			$boardInserts[] = array($profile, 0, $permission);
 
@@ -1446,8 +1446,8 @@ function loadAllPermissions()
 	loadIllegalGuestPermissions();
 
 	// Some permissions are hidden if features are off.
-	$hiddenPermissions = array();
-	$relabelPermissions = array(); // Permissions to apply a different label to.
+	$hiddenPermissions = [];
+	$relabelPermissions = []; // Permissions to apply a different label to.
 
 	if ($modSettings['warning_settings'][0] == 0)
 	{
@@ -1504,13 +1504,13 @@ function loadAllPermissions()
 	// Provide a practical way to modify permissions.
 	call_integration_hook('integrate_load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions));
 
-	$context['permissions'] = array();
-	$context['hidden_permissions'] = array();
+	$context['permissions'] = [];
+	$context['hidden_permissions'] = [];
 	foreach ($permissionList as $permissionType => $permissionList)
 	{
 		$context['permissions'][$permissionType] = array(
 			'id' => $permissionType,
-			'columns' => array()
+			'columns' => []
 		);
 		foreach ($permissionList as $permission => $permissionArray)
 		{
@@ -1540,7 +1540,7 @@ function loadAllPermissions()
 						'icon' => isset($txt['permissionicon_' . $group]) ? $txt['permissionicon_' . $group] : $txt['permissionicon'],
 						'help' => isset($txt['permissionhelp_' . $group]) ? $txt['permissionhelp_' . $group] : '',
 						'hidden' => false,
-						'permissions' => array()
+						'permissions' => []
 					);
 
 			$context['permissions'][$permissionType]['columns'][$position][$own_group]['permissions'][$permission] = array(
@@ -1604,7 +1604,7 @@ function loadAllPermissions()
  * @uses ManagePermissions language
  * @uses ManagePermissions template.
  */
-function init_inline_permissions($permissions, $excluded_groups = array())
+function init_inline_permissions($permissions, $excluded_groups = [])
 {
 	global $context, $txt, $modSettings, $smcFunc;
 
@@ -1725,7 +1725,7 @@ function save_inline_permissions($permissions)
 	// Check they can't do certain things.
 	loadIllegalPermissions();
 
-	$insertRows = array();
+	$insertRows = [];
 	foreach ($permissions as $permission)
 	{
 		if (!isset($_POST[$permission]))
@@ -1744,7 +1744,7 @@ function save_inline_permissions($permissions)
 		WHERE permission IN ({array_string:permissions})
 		' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
 		array(
-			'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
+			'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : [],
 			'permissions' => $permissions,
 		)
 	);
@@ -1759,7 +1759,7 @@ function save_inline_permissions($permissions)
 		);
 
 	// Do a full child update.
-	updateChildPermissions(array(), -1);
+	updateChildPermissions([], -1);
 
 	// Just in case we cached this.
 	updateSettings(array('settings_updated' => time()));
@@ -1779,7 +1779,7 @@ function loadPermissionProfiles()
 		array(
 		)
 	);
-	$context['profiles'] = array();
+	$context['profiles'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Format the label nicely.
@@ -1840,7 +1840,7 @@ function EditPermissionProfiles()
 				'copy_from' => $_POST['copy_from'],
 			)
 		);
-		$inserts = array();
+		$inserts = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$inserts[] = array($profile_id, $row['id_group'], $row['permission'], $row['add_deny']);
 		$smcFunc['db_free_result']($request);
@@ -1887,7 +1887,7 @@ function EditPermissionProfiles()
 		checkSession();
 		validateToken('admin-mpp');
 
-		$profiles = array();
+		$profiles = [];
 		foreach ($_POST['delete_profile'] as $profile)
 			if ($profile > 4)
 				$profiles[] = (int) $profile;
@@ -1978,9 +1978,9 @@ function updateChildPermissions($parents, $profile = null)
 			'not_inherited' => -2,
 		)
 	);
-	$children = array();
-	$parents = array();
-	$child_groups = array();
+	$children = [];
+	$parents = [];
+	$child_groups = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$children[$row['id_parent']][] = $row['id_group'];
@@ -2007,7 +2007,7 @@ function updateChildPermissions($parents, $profile = null)
 				'parent_list' => $parents,
 			)
 		);
-		$permissions = array();
+		$permissions = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			foreach ($children[$row['id_group']] as $child)
 				$permissions[] = array($child, $row['permission'], $row['add_deny']);
@@ -2049,7 +2049,7 @@ function updateChildPermissions($parents, $profile = null)
 				'current_profile' => $profile !== null && $profile ? $profile : 1,
 			)
 		);
-		$permissions = array();
+		$permissions = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			foreach ($children[$row['id_group']] as $child)
 				$permissions[] = array($child, $row['id_profile'], $row['permission'], $row['add_deny']);
@@ -2085,7 +2085,7 @@ function loadIllegalPermissions()
 {
 	global $context;
 
-	$context['illegal_permissions'] = array();
+	$context['illegal_permissions'] = [];
 	if (!allowedTo('admin_forum'))
 		$context['illegal_permissions'][] = 'admin_forum';
 	if (!allowedTo('manage_membergroups'))
@@ -2196,7 +2196,7 @@ function ModifyPostModeration()
 			'replies_own' => 'disallow',
 			'replies_any' => 'disallow',
 			'attachment' => 'disallow',
-			'children' => array(),
+			'children' => [],
 		),
 		0 => array(
 			'id' => 0,
@@ -2206,7 +2206,7 @@ function ModifyPostModeration()
 			'replies_own' => 'disallow',
 			'replies_any' => 'disallow',
 			'attachment' => 'disallow',
-			'children' => array(),
+			'children' => [],
 		),
 	);
 
@@ -2234,7 +2234,7 @@ function ModifyPostModeration()
 				'replies_own' => 'disallow',
 				'replies_any' => 'disallow',
 				'attachment' => 'disallow',
-				'children' => array(),
+				'children' => [],
 			);
 		}
 		elseif (isset($context['profile_groups'][$row['id_parent']]))
@@ -2243,7 +2243,7 @@ function ModifyPostModeration()
 	$smcFunc['db_free_result']($request);
 
 	// What are the permissions we are querying?
-	$all_permissions = array();
+	$all_permissions = [];
 	foreach ($mappings as $perm_set)
 		$all_permissions = array_merge($all_permissions, $perm_set);
 
@@ -2291,7 +2291,7 @@ function ModifyPostModeration()
 			);
 
 			// Do it group by group.
-			$new_permissions = array();
+			$new_permissions = [];
 			foreach ($context['profile_groups'] as $id => $group)
 			{
 				foreach ($mappings as $index => $data)

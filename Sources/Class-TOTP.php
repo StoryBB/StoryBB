@@ -29,7 +29,7 @@ class Auth
 	/**
 	 * @var array Internal lookup table
 	 */
-	private $lookup = array();
+	private $lookup = [];
 
 	/**
 	 * @var string Initialization key

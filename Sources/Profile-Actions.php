@@ -295,7 +295,7 @@ function issueWarning($memID)
 	list ($modSettings['warning_enable'], $modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
 
 	// This stores any legitimate errors.
-	$issueErrors = array();
+	$issueErrors = [];
 
 	// Doesn't hurt to be overly cautious.
 	if (empty($modSettings['warning_enable']) || ($context['user']['is_owner'] && !$cur_profile['warning']) || !allowedTo('issue_warning'))
@@ -385,7 +385,7 @@ function issueWarning($memID)
 					'name' => $context['forum_name_html_safe'],
 					'username' => $context['forum_name_html_safe'],
 				);
-				sendpm(array('to' => array($memID), 'bcc' => array()), $_POST['warn_sub'], $_POST['warn_body'], false, $from);
+				sendpm(array('to' => array($memID), 'bcc' => []), $_POST['warn_sub'], $_POST['warn_body'], false, $from);
 
 				// Log the notice!
 				$id_notice = $smcFunc['db_insert']('',
@@ -475,7 +475,7 @@ function issueWarning($memID)
 	if (!empty($issueErrors))
 	{
 		// Fill in the suite of errors.
-		$context['post_errors'] = array();
+		$context['post_errors'] = [];
 		foreach ($issueErrors as $error)
 			$context['post_errors'][] = $txt[$error];
 	}
@@ -621,7 +621,7 @@ function issueWarning($memID)
 	}
 
 	// Any custom templates?
-	$context['notification_templates'] = array();
+	$context['notification_templates'] = [];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT recipient_name AS template_title, body
@@ -722,7 +722,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 			'max' => $items_per_page,
 		)
 	);
-	$previous_warnings = array();
+	$previous_warnings = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$previous_warnings[] = array(
@@ -836,7 +836,7 @@ function deleteAccount2($memID)
 				)
 			);
 
-			$polls_to_update = array();
+			$polls_to_update = [];
 
 			while ($row = $smcFunc['db_fetch_assoc']($get_voted_polls))
 			{
@@ -906,7 +906,7 @@ function deleteAccount2($memID)
 						'recycle_board' => $recycle_board,
 					)
 				);
-				$topicIDs = array();
+				$topicIDs = [];
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$topicIDs[] = $row['id_topic'];
 				$smcFunc['db_free_result']($request);
@@ -927,7 +927,7 @@ function deleteAccount2($memID)
 						'recycle_board' => $recycle_board,
 					)
 				);
-				$topicIDs = array();
+				$topicIDs = [];
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 				{
 					$topicIDs[] = $row['id_topic'];
@@ -1051,7 +1051,7 @@ function subscriptions($memID)
 		// Work out the costs.
 		$costs = sbb_json_decode($sub['real_cost'], true);
 
-		$cost_array = array();
+		$cost_array = [];
 		if ($sub['real_length'] == 'F')
 		{
 			foreach ($costs as $duration => $cost)
@@ -1097,7 +1097,7 @@ function subscriptions($memID)
 			'selected_member' => $memID,
 		)
 	);
-	$context['current'] = array();
+	$context['current'] = [];
 	$admin_forum = allowedTo('admin_forum');
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -1213,7 +1213,7 @@ function subscriptions($memID)
 		}
 
 		// Setup the gateway context.
-		$context['gateways'] = array();
+		$context['gateways'] = [];
 		foreach ($gateways as $id => $gateway)
 		{
 			$fields = $gateways[$id]->fetchGatewayFields($context['sub']['id'] . '+' . $memID, $context['sub'], $context['value'], $period, $scripturl . '?action=profile;u=' . $memID . ';area=subscriptions;sub_id=' . $context['sub']['id'] . ';done');
@@ -1230,12 +1230,12 @@ function subscriptions($memID)
 		if (isset($context['current'][$context['sub']['id']]))
 		{
 			// What are the details like?
-			$current_pending = array();
+			$current_pending = [];
 			if ($context['current'][$context['sub']['id']]['pending_details'] != '')
 				$current_pending = sbb_json_decode($context['current'][$context['sub']['id']]['pending_details'], true);
 			// Don't get silly.
 			if (count($current_pending) > 9)
-				$current_pending = array();
+				$current_pending = [];
 			$pending_count = 0;
 			// Only record real pending payments as will otherwise confuse the admin!
 			foreach ($current_pending as $pending)

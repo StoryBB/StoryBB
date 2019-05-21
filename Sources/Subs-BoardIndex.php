@@ -70,10 +70,10 @@ function getBoardIndex($boardIndexOptions)
 
 	// Start with an empty array.
 	if ($boardIndexOptions['include_categories'])
-		$categories = array();
+		$categories = [];
 	else
-		$this_category = array();
-	$boards = array();
+		$this_category = [];
+	$boards = [];
 
 	// Run through the categories and boards (or only boards)....
 	while ($row_board = $smcFunc['db_fetch_assoc']($result_boards))
@@ -98,7 +98,7 @@ function getBoardIndex($boardIndexOptions)
 					'is_collapsed' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1 && !empty($options['collapse_category_' . $row_board['id_cat']]),
 					'can_collapse' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1,
 					'href' => $scripturl . '#c' . $row_board['id_cat'],
-					'boards' => array(),
+					'boards' => [],
 					'new' => false,
 					'css_class' => '',
 				);
@@ -131,12 +131,12 @@ function getBoardIndex($boardIndexOptions)
 					'type' => $row_board['is_redirect'] ? 'redirect' : 'board',
 					'name' => $row_board['board_name'],
 					'description' => $row_board['description'],
-					'moderators' => array(),
-					'moderator_groups' => array(),
-					'link_moderators' => array(),
-					'link_moderator_groups' => array(),
-					'children' => array(),
-					'link_children' => array(),
+					'moderators' => [],
+					'moderator_groups' => [],
+					'link_moderators' => [],
+					'link_moderator_groups' => [],
+					'children' => [],
+					'link_children' => [],
 					'children_new' => false,
 					'topics' => $row_board['num_topics'],
 					'posts' => $row_board['num_posts'],
@@ -215,7 +215,7 @@ function getBoardIndex($boardIndexOptions)
 		elseif (!empty($boardIndexOptions['countChildPosts']))
 		{
 			if (!isset($parent_map))
-				$parent_map = array();
+				$parent_map = [];
 
 			if (!isset($parent_map[$row_board['id_parent']]))
 				foreach ($this_category as $id => $board)

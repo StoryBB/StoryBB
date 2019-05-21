@@ -40,7 +40,7 @@ function BoardIndex()
 	$context['categories'] = getBoardIndex($boardIndexOptions);
 
 	// Now set up for the info center.
-	$context['info_center'] = array();
+	$context['info_center'] = [];
 
 	// Retrieve the latest posts if the theme settings require it.
 	if (!empty($settings['number_recent_posts']))
@@ -83,7 +83,7 @@ function BoardIndex()
 
 	// Are we showing all membergroups on the board index?
 	if (!empty($settings['show_group_key']))
-		$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups.php', 'cache_getMembergroupList', array());
+		$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups.php', 'cache_getMembergroupList', []);
 
 	// And back to normality.
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
@@ -100,7 +100,7 @@ function BoardIndex()
 
 	if (!empty($settings['show_newsfader']))
 	{
-		loadJavaScriptFile('slippry.min.js', array(), 'sbb_jquery_slippry');
-		loadCSSFile('slider.min.css', array(), 'sbb_jquery_slider');
+		loadJavaScriptFile('slippry.min.js', [], 'sbb_jquery_slippry');
+		loadCSSFile('slider.min.css', [], 'sbb_jquery_slider');
 	}
 }

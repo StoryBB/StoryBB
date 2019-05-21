@@ -201,7 +201,7 @@ function ModifySubscriptionSettings($return_config = false)
 		// Check the email addresses were actually email addresses.
 		if (!empty($_POST['paid_email_to']))
 		{
-			$email_addresses = array();
+			$email_addresses = [];
 			foreach (explode(',', $_POST['paid_email_to']) as $email)
 			{
 				$email = trim($email);
@@ -258,7 +258,7 @@ function ViewSubscriptions()
 		'get_items' => array(
 			'function' => function($start, $items_per_page) use ($context)
 			{
-				$subscriptions = array();
+				$subscriptions = [];
 				$counter = 0;
 				$start++;
 
@@ -423,7 +423,7 @@ function ModifySubscription()
 				'is_active' => 1,
 			)
 		);
-		$members = array();
+		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$id_member = array_shift($row);
@@ -448,7 +448,7 @@ function ModifySubscription()
 				list ($id_group, $add_groups) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
 
-			$changes = array();
+			$changes = [];
 
 			// Is their group changing? This subscription may not have changed primary group.
 			if (!empty($id_group))
@@ -564,7 +564,7 @@ function ModifySubscription()
 		validateToken('admin-pms');
 
 		// Yep, time to do additional groups.
-		$addgroups = array();
+		$addgroups = [];
 		if (!empty($_POST['addgroup']))
 			foreach ($_POST['addgroup'] as $id => $dummy)
 				$addgroups[] = (int) $id;
@@ -648,7 +648,7 @@ function ModifySubscription()
 				'unit' => 'D',
 			),
 			'prim_group' => 0,
-			'add_groups' => array(),
+			'add_groups' => [],
 			'active' => 1,
 			'repeatable' => 1,
 			'allow_partial' => 0,
@@ -739,7 +739,7 @@ function ModifySubscription()
 			'account_group' => 0,
 		)
 	);
-	$context['groups'] = array();
+	$context['groups'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['groups'][$row['id_group']] = $row['group_name'];
 	$smcFunc['db_free_result']($request);
@@ -791,7 +791,7 @@ function ViewSubscribedUsers()
 
 	// Are we searching for people?
 	$search_string = isset($_POST['ssearch']) && !empty($_POST['sub_search']) ? ' AND COALESCE(mem.real_name, {string:guest}) LIKE {string:search}' : '';
-	$search_vars = empty($_POST['sub_search']) ? array() : array('search' => '%' . $_POST['sub_search'] . '%', 'guest' => $txt['guest']);
+	$search_vars = empty($_POST['sub_search']) ? [] : array('search' => '%' . $_POST['sub_search'] . '%', 'guest' => $txt['guest']);
 
 	$listOptions = array(
 		'id' => 'subscribed_users_list',
@@ -954,7 +954,7 @@ function ViewSubscribedUsers()
  * @param array $search_vars An array of variables for the search string
  * @return int The number of subscribed users matching the given parameters
  */
-function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = array())
+function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = [])
 {
 	global $smcFunc;
 
@@ -989,7 +989,7 @@ function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = arr
  * @param array $search_vars The variables for the search string
  * @return array An array of information about the subscribed users matching the given parameters
  */
-function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $search_string, $search_vars = array())
+function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $search_string, $search_vars = [])
 {
 	global $smcFunc, $txt;
 
@@ -1012,7 +1012,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 			'max' => $items_per_page,
 		))
 	);
-	$subscribers = array();
+	$subscribers = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$subscribers[] = array(
 			'id' => $row['id_sublog'],
@@ -1189,7 +1189,7 @@ function ModifyUserSubscription()
 		// Do the actual deletes!
 		if (!empty($_REQUEST['delsub']))
 		{
-			$toDelete = array();
+			$toDelete = [];
 			foreach ($_REQUEST['delsub'] as $id => $dummy)
 				$toDelete[] = (int) $id;
 
@@ -1271,7 +1271,7 @@ function ModifyUserSubscription()
 		$smcFunc['db_free_result']($request);
 
 		// Any pending payments?
-		$context['pending_payments'] = array();
+		$context['pending_payments'] = [];
 		if (!empty($row['pending_details']))
 		{
 			$pending_details = sbb_json_decode($row['pending_details'], true);
@@ -1385,7 +1385,7 @@ function reapplySubscriptions($users)
 		$users = array($users);
 
 	// Get all the members current groups.
-	$groups = array();
+	$groups = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT id_member, id_group, additional_groups
 		FROM {db_prefix}members
@@ -1727,8 +1727,8 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 	);
 
 	// These variables will be handy, honest ;)
-	$removals = array();
-	$allowed = array();
+	$removals = [];
+	$allowed = [];
 	$old_id_group = 0;
 	$new_id_group = -1;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1846,7 +1846,7 @@ function loadSubscriptions()
 		array(
 		)
 	);
-	$context['subscriptions'] = array();
+	$context['subscriptions'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Pick a cost.

@@ -580,7 +580,7 @@ function loadProfileFields($force_reload = false)
 
 	call_integration_hook('integrate_load_profile_fields', array(&$profile_fields));
 
-	$disabled_fields = !empty($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
+	$disabled_fields = !empty($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : [];
 	// For each of the above let's take out the bits which don't apply - to save memory and security!
 	foreach ($profile_fields as $key => $field)
 	{
@@ -743,12 +743,12 @@ function saveProfileFields()
 	$old_profile = $cur_profile;
 
 	// This allows variables to call activities when they save - by default just to reload their settings
-	$context['profile_execute_on_save'] = array();
+	$context['profile_execute_on_save'] = [];
 	if ($context['user']['is_owner'])
 		$context['profile_execute_on_save']['reload_user'] = 'profileReloadUser';
 
 	// Assume we log nothing.
-	$context['log_changes'] = array();
+	$context['log_changes'] = [];
 
 	// Cycle through the profile fields working out what to do!
 	foreach ($profile_fields as $key => $field)
@@ -821,8 +821,8 @@ function saveProfileFields()
 
 			// Prepare additional groups for comparison.
 			$additional_groups = array(
-				'previous' => !empty($old_profile['additional_groups']) ? explode(',', $old_profile['additional_groups']) : array(),
-				'new' => !empty($_POST['additional_groups']) ? array_diff($_POST['additional_groups'], array(0)) : array(),
+				'previous' => !empty($old_profile['additional_groups']) ? explode(',', $old_profile['additional_groups']) : [],
+				'new' => !empty($_POST['additional_groups']) ? array_diff($_POST['additional_groups'], array(0)) : [],
 			);
 
 			sort($additional_groups['previous']);
@@ -892,16 +892,16 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 		$changeOther = allowedTo(array('profile_extra_any', 'profile_website_any', 'profile_signature_any'));
 
 	// Arrays of all the changes - makes things easier.
-	$profile_bools = array();
-	$profile_ints = array();
-	$profile_floats = array();
+	$profile_bools = [];
+	$profile_ints = [];
+	$profile_floats = [];
 	$profile_strings = array(
 		'buddy_list',
 		'ignore_boards',
 	);
 
 	if (isset($_POST['sa']) && $_POST['sa'] == 'ignoreboards' && empty($_POST['ignore_brd']))
-		$_POST['ignore_brd'] = array();
+		$_POST['ignore_brd'] = [];
 
 	unset($_POST['ignore_boards']); // Whatever it is set to is a dirty filthy thing.  Kinda like our minds.
 	if (isset($_POST['ignore_brd']))
@@ -985,13 +985,13 @@ function makeThemeChanges($memID, $id_theme)
 			'is_active' => 1,
 		)
 	);
-	$custom_fields = array();
+	$custom_fields = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$custom_fields[] = $row['col_name'];
 	$smcFunc['db_free_result']($request);
 
 	// These are the theme changes...
-	$themeSetArray = array();
+	$themeSetArray = [];
 	if (isset($_POST['options']) && is_array($_POST['options']))
 	{
 		foreach ($_POST['options'] as $opt => $val)
@@ -1010,7 +1010,7 @@ function makeThemeChanges($memID, $id_theme)
 		}
 	}
 
-	$erase_options = array();
+	$erase_options = [];
 	if (isset($_POST['default_options']) && is_array($_POST['default_options']))
 		foreach ($_POST['default_options'] as $opt => $val)
 		{
@@ -1120,7 +1120,7 @@ function makeNotificationChanges($memID)
 	// We are removing topic preferences
 	elseif (isset($_POST['remove_notify_topics']) && !empty($_POST['notify_topics']))
 	{
-		$prefs = array();
+		$prefs = [];
 		foreach ($_POST['notify_topics'] as $topic)
 			$prefs[] = 'topic_notify_' . $topic;
 		deleteNotifyPrefs($memID, $prefs);
@@ -1129,7 +1129,7 @@ function makeNotificationChanges($memID)
 	// We are removing board preferences
 	elseif (isset($_POST['remove_notify_board']) && !empty($_POST['notify_boards']))
 	{
-		$prefs = array();
+		$prefs = [];
 		foreach ($_POST['notify_boards'] as $board)
 			$prefs[] = 'board_notify_' . $board;
 		deleteNotifyPrefs($memID, $prefs);
@@ -1150,7 +1150,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 	global $context, $smcFunc, $user_profile, $user_info, $modSettings;
 	global $sourcedir;
 
-	$errors = array();
+	$errors = [];
 
 	if ($sanitize && isset($_POST['customfield']))
 		$_POST['customfield'] = htmlspecialchars__recursive($_POST['customfield']);
@@ -1168,8 +1168,8 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 			'area' => $area,
 		)
 	);
-	$changes = array();
-	$log_changes = array();
+	$changes = [];
+	$log_changes = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		/* This means don't save if:
@@ -1316,8 +1316,8 @@ function editBuddyIgnoreLists($memID)
 		'description' => $txt['buddy_ignore_desc'],
 		'icon' => 'profile_hd.png',
 		'tabs' => array(
-			'buddies' => array(),
-			'ignore' => array(),
+			'buddies' => [],
+			'ignore' => [],
 		),
 	);
 
@@ -1422,7 +1422,7 @@ function editBuddies($memID)
 	}
 
 	// Get all the users "buddies"...
-	$buddies = array();
+	$buddies = [];
 
 	// Gotta load the custom profile fields names.
 	$request = $smcFunc['db_query']('', '
@@ -1436,8 +1436,8 @@ function editBuddies($memID)
 		)
 	);
 
-	$context['custom_pf'] = array();
-	$disabled_fields = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
+	$context['custom_pf'] = [];
+	$disabled_fields = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		if (!isset($disabled_fields[$row['col_name']]))
 			$context['custom_pf'][$row['col_name']] = array(
@@ -1473,7 +1473,7 @@ function editBuddies($memID)
 	loadMemberData($buddies, false, 'profile');
 
 	// Setup the context for each buddy.
-	$context['buddies'] = array();
+	$context['buddies'] = [];
 	foreach ($buddies as $buddy)
 	{
 		loadMemberContext($buddy);
@@ -1606,7 +1606,7 @@ function editIgnoreList($memID)
 	}
 
 	// Initialise the list of members we're ignoring.
-	$ignored = array();
+	$ignored = [];
 
 	if (!empty($ignoreArray))
 	{
@@ -1632,7 +1632,7 @@ function editIgnoreList($memID)
 	loadMemberData($ignored, false, 'profile');
 
 	// Setup the context for each buddy.
-	$context['ignore_list'] = array();
+	$context['ignore_list'] = [];
 	foreach ($ignored as $ignore_member)
 	{
 		loadMemberContext($ignore_member);
@@ -1764,7 +1764,7 @@ function notification($memID)
 	global $txt, $context;
 
 	// Going to want this for consistency.
-	loadCSSFile('admin.css', array(), 'sbb_admin');
+	loadCSSFile('admin.css', [], 'sbb_admin');
 
 	// This is just a bootstrap for everything else.
 	$sa = array(
@@ -1807,13 +1807,13 @@ function alert_configuration($memID)
 
 	// What options are set
 	loadThemeOptions($memID);
-	loadJavaScriptFile('alertSettings.js', array(), 'sbb_alertSettings');
+	loadJavaScriptFile('alertSettings.js', [], 'sbb_alertSettings');
 
 	// Now load all the values for this user.
 	require_once($sourcedir . '/Subs-Notify.php');
 	$prefs = getNotifyPrefs($memID, '', $memID != 0);
 
-	$context['alert_prefs'] = !empty($prefs[$memID]) ? $prefs[$memID] : array();
+	$context['alert_prefs'] = !empty($prefs[$memID]) ? $prefs[$memID] : [];
 
 	$context['member'] += array(
 		'alert_timeout' => isset($context['alert_prefs']['alert_timeout']) ? $context['alert_prefs']['alert_timeout'] : 10,
@@ -1914,7 +1914,7 @@ function alert_configuration($memID)
 	if (!empty($memID))
 	{
 		require_once($sourcedir . '/Subs-Members.php');
-		$perms_cache = array();
+		$perms_cache = [];
 		$request = $smcFunc['db_query']('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}group_moderators
@@ -1972,7 +1972,7 @@ function alert_configuration($memID)
 		validateToken($context['token_check'], 'post');
 
 		// We need to step through the list of valid settings and figure out what the user has set.
-		$update_prefs = array();
+		$update_prefs = [];
 
 		// Now the group level options
 		foreach ($context['alert_group_options'] as $opt_group => $group)
@@ -2485,7 +2485,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 
 	require_once($sourcedir . '/Subs-Notify.php');
 	$prefs = getNotifyPrefs($memID);
-	$prefs = isset($prefs[$memID]) ? $prefs[$memID] : array();
+	$prefs = isset($prefs[$memID]) ? $prefs[$memID] : [];
 
 	// All the topics with notification on...
 	$request = $smcFunc['db_query']('', '
@@ -2516,7 +2516,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 			'items_per_page' => $items_per_page,
 		)
 	);
-	$notification_topics = array();
+	$notification_topics = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		censorText($row['subject']);
@@ -2558,7 +2558,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 
 	require_once($sourcedir . '/Subs-Notify.php');
 	$prefs = getNotifyPrefs($memID);
-	$prefs = isset($prefs[$memID]) ? $prefs[$memID] : array();
+	$prefs = isset($prefs[$memID]) ? $prefs[$memID] : [];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT b.id_board, b.name, COALESCE(lb.id_msg, 0) AS board_read, b.id_msg_updated
@@ -2574,7 +2574,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 			'sort' => $sort,
 		)
 	);
-	$notification_boards = array();
+	$notification_boards = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$notification_boards[] = array(
 			'id' => $row['id_board'],
@@ -2620,7 +2620,7 @@ function loadThemeOptions($memID)
 				'selected_member' => $memID,
 			)
 		);
-		$temp = array();
+		$temp = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if ($row['id_member'] == -1)
@@ -2666,12 +2666,12 @@ function ignoreboards($memID)
 		WHERE {query_see_board}
 			AND redirect = {string:empty_string}',
 		array(
-			'ignore_boards' => !empty($cur_profile['ignore_boards']) ? explode(',', $cur_profile['ignore_boards']) : array(),
+			'ignore_boards' => !empty($cur_profile['ignore_boards']) ? explode(',', $cur_profile['ignore_boards']) : [],
 			'empty_string' => '',
 		)
 	);
 	$context['num_boards'] = $smcFunc['db_num_rows']($request);
-	$context['categories'] = array();
+	$context['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// This category hasn't been set up yet..
@@ -2679,7 +2679,7 @@ function ignoreboards($memID)
 			$context['categories'][$row['id_cat']] = array(
 				'id' => $row['id_cat'],
 				'name' => $row['cat_name'],
-				'boards' => array()
+				'boards' => []
 			);
 
 		// Set this board up, and let the template know when it's a child.  (indent them..)
@@ -2696,7 +2696,7 @@ function ignoreboards($memID)
 	sortCategories($context['categories']);
 
 	// Now, let's sort the list of categories into the boards for templates that like that.
-	$temp_boards = array();
+	$temp_boards = [];
 	foreach ($context['categories'] as $category)
 	{
 		// Include a list of boards per category for easy toggling.
@@ -2714,14 +2714,14 @@ function ignoreboards($memID)
 		$max_boards = 2;
 
 	// Now, alternate them so they can be shown left and right ;).
-	$context['board_columns'] = array();
+	$context['board_columns'] = [];
 	for ($i = 0; $i < $max_boards; $i++)
 	{
 		$context['board_columns'][] = $temp_boards[$i];
 		if (isset($temp_boards[$i + $max_boards]))
 			$context['board_columns'][] = $temp_boards[$i + $max_boards];
 		else
-			$context['board_columns'][] = array();
+			$context['board_columns'][] = [];
 	}
 
 	$context['split_categories'] = array_chunk($context['categories'], ceil(count($context['categories']) / 2), true);
@@ -2739,7 +2739,7 @@ function profileLoadLanguages()
 {
 	global $context;
 
-	$context['profile_languages'] = array();
+	$context['profile_languages'] = [];
 
 	// Get our languages!
 	getLanguages();
@@ -2835,7 +2835,7 @@ function profileLoadSignatureData()
 		'max_image_width' => isset($sig_limits[5]) ? $sig_limits[5] : 0,
 		'max_image_height' => isset($sig_limits[6]) ? $sig_limits[6] : 0,
 		'max_font_size' => isset($sig_limits[7]) ? $sig_limits[7] : 0,
-		'bbc' => !empty($sig_bbc) ? explode(',', $sig_bbc) : array(),
+		'bbc' => !empty($sig_bbc) ? explode(',', $sig_bbc) : [],
 	);
 	// Kept this line in for backwards compatibility!
 	$context['max_signature_length'] = $context['signature_limits']['max_length'];
@@ -2855,7 +2855,7 @@ function profileLoadSignatureData()
 		if (empty($context['post_errors']))
 		{
 			loadLanguage('Errors');
-			$context['post_errors'] = array();
+			$context['post_errors'] = [];
 		}
 		$context['post_errors'][] = 'signature_not_yet_saved';
 		if ($validation !== true && $validation !== false)
@@ -2976,7 +2976,7 @@ function profileSaveGroups(&$value)
 	// Find the additional membergroups (if any)
 	if (isset($_POST['additional_groups']) && is_array($_POST['additional_groups']))
 	{
-		$additional_groups = array();
+		$additional_groups = [];
 		foreach ($_POST['additional_groups'] as $group_id)
 		{
 			$group_id = (int) $group_id;
@@ -3314,7 +3314,7 @@ function profileValidateSignature(&$value)
 		// Load all the signature limits.
 		list ($sig_limits, $sig_bbc) = explode(':', $modSettings['signature_settings']);
 		$sig_limits = explode(',', $sig_limits);
-		$disabledTags = !empty($sig_bbc) ? explode(',', $sig_bbc) : array();
+		$disabledTags = !empty($sig_bbc) ? explode(',', $sig_bbc) : [];
 
 		$unparsed_signature = strtr(un_htmlspecialchars($value), array("\r" => '', '&#039' => '\''));
 
@@ -3391,7 +3391,7 @@ function profileValidateSignature(&$value)
 				}
 			}
 
-			$replaces = array();
+			$replaces = [];
 			// Try to find all the images!
 			if (!empty($matches))
 			{
@@ -3629,8 +3629,8 @@ function groupMembership($memID)
 	);
 	// This beast will be our group holder.
 	$context['groups'] = array(
-		'member' => array(),
-		'available' => array()
+		'member' => [],
+		'available' => []
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{

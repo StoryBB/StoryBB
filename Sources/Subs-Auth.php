@@ -56,7 +56,7 @@ function setLoginCookie($cookie_length, $id, $password = '')
 	$data = empty($id) ? array(0, '', 0, $cookie_url[0], $cookie_url[1]) : array($id, $password, $expiry_time, $cookie_url[0], $cookie_url[1]);
 
 	// Allow mods to add custom info to the cookie
-	$custom_data = array();
+	$custom_data = [];
 	call_integration_hook('integrate_cookie_data', array($data, &$custom_data));
 
 	$data = json_encode(array_merge($data, $custom_data), JSON_FORCE_OBJECT);
@@ -106,7 +106,7 @@ function setLoginCookie($cookie_length, $id, $password = '')
 
 		// Backup and remove the old session.
 		$oldSessionData = $_SESSION;
-		$_SESSION = array();
+		$_SESSION = [];
 		session_destroy();
 
 		// Recreate and restore the new session.
@@ -245,7 +245,7 @@ function adminLogin($type = 'admin')
 	loadLanguage('Admin');
 
 	// Validate what type of session check this is.
-	$types = array();
+	$types = [];
 	call_integration_hook('integrate_validateSession', array(&$types));
 	$type = in_array($type, $types) || $type == 'moderate' ? $type : 'admin';
 
@@ -375,7 +375,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 		$names = explode(',', $names);
 
 	$maybe_email = false;
-	$names_list = array();
+	$names_list = [];
 	foreach ($names as $i => $name)
 	{
 		// Trim, and fix wildcards for each name.
@@ -397,7 +397,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 	$comparison = $use_wildcards ? 'LIKE' : '=';
 
 	// Nothing found yet.
-	$results = array();
+	$results = [];
 
 	// This ensures you can't search someones email address if you can't see it.
 	if (($use_wildcards || $maybe_email) && allowedTo('moderate_forum'))
@@ -523,7 +523,7 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
 {
 	global $sourcedir, $txt, $smcFunc, $user_info;
 
-	$errors = array();
+	$errors = [];
 
 	// Don't use too long a name.
 	if ($smcFunc['strlen']($username) > 25)
@@ -571,7 +571,7 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
  * @param array $restrict_in An array of restricted strings that cannot be part of the password (email address, username, etc.)
  * @return null|string Null if valid or a string indicating what the problem was
  */
-function validatePassword($password, $username, $restrict_in = array())
+function validatePassword($password, $username, $restrict_in = [])
 {
 	global $modSettings, $smcFunc;
 
@@ -622,7 +622,7 @@ function rebuildModCache()
 				'current_member' => $user_info['id'],
 			)
 		);
-		$groups = array();
+		$groups = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$groups[] = $row['id_group'];
 		$smcFunc['db_free_result']($request);
@@ -647,7 +647,7 @@ function rebuildModCache()
 	}
 
 	// What boards are they the moderator of?
-	$boards_mod = array();
+	$boards_mod = [];
 	if (!$user_info['is_guest'])
 	{
 		$request = $smcFunc['db_query']('', '

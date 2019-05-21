@@ -99,7 +99,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	);
 
 	// This prevents us from infinite looping if the hook or call produces an error.
-	$other_error_types = array();
+	$other_error_types = [];
 	if (empty($tried_hook))
 	{
 		$tried_hook = true;
@@ -164,7 +164,7 @@ function fatal_error($error, $log = 'general', $status = 500)
  * @param array $sprintf An array of data to be sprintf()'d into the specified message
  * @param int $status = false The HTTP status code associated with this error
  */
-function fatal_lang_error($error, $log = 'general', $sprintf = array(), $status = 403)
+function fatal_lang_error($error, $log = 'general', $sprintf = [], $status = 403)
 {
 	global $txt, $language, $user_info, $context;
 	static $fatal_error_called = false;
@@ -479,7 +479,7 @@ function set_fatal_error_headers()
  * @param string $error The error
  * @param array $sprintf An array of data to be sprintf()'d into the specified message
  */
-function log_error_online($error, $sprintf = array())
+function log_error_online($error, $sprintf = [])
 {
 	global $smcFunc, $user_info, $modSettings;
 

@@ -24,7 +24,7 @@ use StoryBB\Helper\IP;
  * @param array $db_options An array of database options
  * @return null|resource Returns null on failure if $db_options['non_fatal'] is true or a MySQL connection resource handle if the connection was successful.
  */
-function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options = array())
+function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options = [])
 {
 	global $smcFunc;
 
@@ -278,7 +278,7 @@ function sbb_db_quote($db_string, $db_values, $connection = null)
 	$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
 
 	// Clear this global variable.
-	$db_callback = array();
+	$db_callback = [];
 
 	return $db_string;
 }
@@ -288,11 +288,11 @@ function sbb_db_quote($db_string, $db_values, $connection = null)
  *
  * @param string $identifier An identifier.
  * @param string $db_string The database string
- * @param array $db_values = array() The values to be inserted into the string
+ * @param array $db_values = [] The values to be inserted into the string
  * @param resource $connection = null The connection to use (null to use $db_connection)
  * @return resource|bool Returns a MySQL result resource (for SELECT queries), true (for UPDATE queries) or false if the query failed
  */
-function sbb_db_query($identifier, $db_string, $db_values = array(), $connection = null)
+function sbb_db_query($identifier, $db_string, $db_values = [], $connection = null)
 {
 	global $db_cache, $db_count, $db_connection, $db_show_debug, $time_start;
 	global $db_unbuffered, $db_callback, $modSettings, $smcFunc;
@@ -359,13 +359,13 @@ function sbb_db_query($identifier, $db_string, $db_values = array(), $connection
 
 		// Initialize $db_cache if not already initialized.
 		if (!isset($db_cache))
-			$db_cache = array();
+			$db_cache = [];
 
 		if (!empty($_SESSION['debug_redirect']))
 		{
 			$db_cache = array_merge($_SESSION['debug_redirect'], $db_cache);
 			$db_count = count($db_cache) + 1;
-			$_SESSION['debug_redirect'] = array();
+			$_SESSION['debug_redirect'] = [];
 		}
 
 		// Don't overload it.
@@ -596,7 +596,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 	{
 		$with_returning = true;
 		if ($returnmode == 2)
-			$return_var = array();
+			$return_var = [];
 	}
 
 	// Inserting data as a single row can be done as a single array.
@@ -619,7 +619,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 	$indexed_columns = array_keys($columns);
 
 	// Here's where the variables are injected to the query.
-	$insertRows = array();
+	$insertRows = [];
 	foreach ($data as $dataRow)
 		$insertRows[] = sbb_db_quote($insertData, array_combine($indexed_columns, $dataRow), $connection);
 
@@ -679,7 +679,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 				$request = $smcFunc['db_query']('','
 					SELECT `'. $keys[0] . '` FROM ' . $table .'
 					WHERE ' . $where_string . ' LIMIT 1',
-					array()
+					[]
 				);
 				
 				if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
@@ -703,7 +703,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 			$return_var = sbb_db_insert_id() + count($insertRows) - 1;
 		elseif ($returnmode == 2 && empty($return_var))
 		{
-			$return_var = array();
+			$return_var = [];
 			$count = count($insertRows);
 			$start = sbb_db_insert_id();
 			for ($i = 0; $i < $count; $i++)
@@ -889,7 +889,7 @@ function sbb_db_list_tables($db = false, $filter = false)
 			'filter' => $filter,
 		)
 	);
-	$tables = array();
+	$tables = [];
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$tables[] = $row[0];
 	$smcFunc['db_free_result']($request);

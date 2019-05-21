@@ -22,8 +22,8 @@ function modifyCategory($category_id, $catOptions)
 {
 	global $sourcedir, $smcFunc;
 
-	$catUpdates = array();
-	$catParameters = array();
+	$catUpdates = [];
+	$catParameters = [];
 
 	$cat_id = $category_id;
 	call_integration_hook('integrate_pre_modify_category', array($cat_id, &$catOptions));
@@ -32,8 +32,8 @@ function modifyCategory($category_id, $catOptions)
 	if (isset($catOptions['move_after']))
 	{
 		// Store all categories in the proper order.
-		$cats = array();
-		$cat_order = array();
+		$cats = [];
+		$cat_order = [];
 
 		// Setting 'move_after' to '0' moves the category to the top.
 		if ($catOptions['move_after'] == 0)
@@ -203,7 +203,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 				'category_list' => $categories,
 			)
 		);
-		$boards_inside = array();
+		$boards_inside = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_inside[] = $row['id_board'];
 		$smcFunc['db_free_result']($request);

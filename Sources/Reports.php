@@ -131,7 +131,7 @@ function BoardReport()
 		array(
 		)
 	);
-	$moderators = array();
+	$moderators = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$moderators[$row['id_board']][] = $row['real_name'];
 	$smcFunc['db_free_result']($request);
@@ -144,7 +144,7 @@ function BoardReport()
 		array(
 		)
 	);
-	$moderator_groups = array();
+	$moderator_groups = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$moderator_groups[$row['id_board']][] = $row['group_name'];
 	$smcFunc['db_free_result']($request);
@@ -304,16 +304,16 @@ function BoardPermissionsReport()
 		WHERE ' . $board_clause . '
 		ORDER BY id_board',
 		array(
-			'boards' => isset($_REQUEST['boards']) ? $_REQUEST['boards'] : array(),
+			'boards' => isset($_REQUEST['boards']) ? $_REQUEST['boards'] : [],
 		)
 	);
-	$profiles = array();
+	$profiles = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$boards[$row['id_board']] = array(
 			'name' => $row['name'],
 			'profile' => $row['id_profile'],
-			'mod_groups' => array(),
+			'mod_groups' => [],
 		);
 		$profiles[] = $row['id_profile'];
 	}
@@ -346,7 +346,7 @@ function BoardPermissionsReport()
 			'admin_group' => 1,
 			'min_posts' => -1,
 			'newbie_group' => 4,
-			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : array(),
+			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : [],
 		)
 	);
 	if (!isset($_REQUEST['groups']) || in_array(-1, $_REQUEST['groups']) || in_array(0, $_REQUEST['groups']))
@@ -361,7 +361,7 @@ function BoardPermissionsReport()
 	setKeys('rows', $member_groups);
 
 	// Certain permissions should not really be shown.
-	$disabled_permissions = array();
+	$disabled_permissions = [];
 	if (!$modSettings['postmod_active'])
 	{
 		$disabled_permissions[] = 'approve_posts';
@@ -374,8 +374,8 @@ function BoardPermissionsReport()
 	call_integration_hook('integrate_reports_boardperm', array(&$disabled_permissions));
 
 	// Cache every permission setting, to make sure we don't miss any allows.
-	$permissions = array();
-	$board_permissions = array();
+	$permissions = [];
+	$board_permissions = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT id_profile, id_group, add_deny, permission
 		FROM {db_prefix}board_permissions
@@ -384,7 +384,7 @@ function BoardPermissionsReport()
 		ORDER BY id_profile, permission',
 		array(
 			'profile_list' => $profiles,
-			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : array(),
+			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : [],
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -432,7 +432,7 @@ function BoardPermissionsReport()
 				if ($id_group === 'col')
 					continue;
 
-				$group_permissions = isset($groups[$id_group]) ? $groups[$id_group] : array();
+				$group_permissions = isset($groups[$id_group]) ? $groups[$id_group] : [];
 
 				// Do we have any data for this group?
 				if (isset($group_permissions[$ID_PERM]))
@@ -497,7 +497,7 @@ function MemberGroupsReport()
 			$groups = array_merge(array(1), explode(',', $row['member_groups']));
 
 		if (trim($row['deny_member_groups']) == '')
-			$denyGroups = array();
+			$denyGroups = [];
 		else
 			$denyGroups = explode(',', $row['deny_member_groups']);
 
@@ -633,7 +633,7 @@ function GroupPermissionsReport()
 			'min_posts' => -1,
 			'newbie_group' => 4,
 			'moderator_group' => 3,
-			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : array(),
+			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : [],
 		)
 	);
 	if (!isset($_REQUEST['groups']) || in_array(-1, $_REQUEST['groups']) || in_array(0, $_REQUEST['groups']))
@@ -657,7 +657,7 @@ function GroupPermissionsReport()
 	addSeparator($txt['board_perms_permission']);
 
 	// Certain permissions should not really be shown.
-	$disabled_permissions = array();
+	$disabled_permissions = [];
 	if (empty($modSettings['warning_settings']) || $modSettings['warning_settings'][0] == 0)
 		$disabled_permissions[] = 'issue_warning';
 
@@ -671,11 +671,11 @@ function GroupPermissionsReport()
 		ORDER BY permission',
 		array(
 			'moderator_group' => 3,
-			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : array(),
+			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : [],
 		)
 	);
 	$lastPermission = null;
-	$curData = array();
+	$curData = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if (in_array($row['permission'], $disabled_permissions))
@@ -727,7 +727,7 @@ function StaffReport()
 		array(
 		)
 	);
-	$boards = array();
+	$boards = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$boards[$row['id_board']] = $row['name'];
 	$smcFunc['db_free_result']($request);
@@ -739,8 +739,8 @@ function StaffReport()
 		array(
 		)
 	);
-	$moderators = array();
-	$local_mods = array();
+	$moderators = [];
+	$local_mods = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$moderators[$row['id_member']][] = $row['id_board'];
@@ -828,7 +828,7 @@ function StaffReport()
 			'position' => isset($groups[$row['id_group']]) ? $groups[$row['id_group']] : $groups[0],
 			'posts' => $row['posts'],
 			'last_login' => timeformat($row['last_login']),
-			'moderates' => array(),
+			'moderates' => [],
 		);
 
 		// What do they moderate?
@@ -892,7 +892,7 @@ function newTable($title = '', $default_value = '', $shading = 'all', $width_nor
 			'normal' => $align_normal,
 			'shaded' => $align_shaded,
 		),
-		'data' => array(),
+		'data' => [],
 	);
 
 	$context['current_table'] = $context['table_count'];
@@ -1055,7 +1055,7 @@ function finishTables()
  * @param array $keys The keys
  * @param bool $reverse Whether we want to use the values as the keys
  */
-function setKeys($method = 'rows', $keys = array(), $reverse = false)
+function setKeys($method = 'rows', $keys = [], $reverse = false)
 {
 	global $context;
 

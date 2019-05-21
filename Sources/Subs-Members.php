@@ -81,8 +81,8 @@ function deleteMembers($users, $check_not_admin = false)
 			'limit' => count($users),
 		)
 	);
-	$admins = array();
-	$user_log_details = array();
+	$admins = [];
+	$user_log_details = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if ($row['is_admin'])
@@ -107,7 +107,7 @@ function deleteMembers($users, $check_not_admin = false)
 		return;
 
 	// Log the action - regardless of who is deleting it.
-	$log_changes = array();
+	$log_changes = [];
 	foreach ($user_log_details as $user)
 	{
 		$log_changes[] = array(
@@ -480,7 +480,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	require_once($sourcedir . '/Subs-Post.php');
 
 	// Put any errors in here.
-	$reg_errors = array();
+	$reg_errors = [];
 
 	// Registration from the admin center, let them sweat a little more.
 	if ($regOptions['interface'] == 'admin')
@@ -714,7 +714,7 @@ function registerMember(&$regOptions, $return_errors = false)
 			$regOptions['register_vars'][$var] = $value;
 
 	// Integrate optional user theme options to be set.
-	$theme_vars = array();
+	$theme_vars = [];
 	if (!empty($regOptions['theme_vars']))
 		foreach ($regOptions['theme_vars'] as $var => $value)
 			$theme_vars[$var] = $value;
@@ -737,8 +737,8 @@ function registerMember(&$regOptions, $return_errors = false)
 	call_integration_hook('integrate_register', array(&$regOptions, &$theme_vars, &$knownInts, &$knownFloats));
 	unset ($regOptions['register_vars']['first_char']);
 
-	$column_names = array();
-	$values = array();
+	$column_names = [];
+	$values = [];
 	foreach ($regOptions['register_vars'] as $var => $val)
 	{
 		$type = 'string';
@@ -828,7 +828,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	// Theme variables too?
 	if (!empty($theme_vars))
 	{
-		$inserts = array();
+		$inserts = [];
 		foreach ($theme_vars as $var => $val)
 			$inserts[] = array($memberID, $var, $val);
 		$smcFunc['db_insert']('insert',
@@ -1065,7 +1065,7 @@ function groupsAllowedTo($permission, $board_id = null)
 	// Admins are allowed to do anything.
 	$member_groups = array(
 		'allowed' => array(1),
-		'denied' => array(),
+		'denied' => [],
 	);
 
 	// Assume we're dealing with regular permissions (like profile_view).
@@ -1123,7 +1123,7 @@ function groupsAllowedTo($permission, $board_id = null)
 			$member_groups[$row['add_deny'] === '1' ? 'allowed' : 'denied'][] = $row['id_group'];
 		$smcFunc['db_free_result']($request);
 
-		$moderator_groups = array();
+		$moderator_groups = [];
 
 		// "Inherit" any moderator permissions as needed
 		if (isset($board_info['moderator_groups']))
@@ -1214,7 +1214,7 @@ function membersAllowedTo($permission, $board_id = null)
 			'member_group_denied_implode' => implode(', mem.additional_groups) != 0 OR FIND_IN_SET(', $member_groups['denied']),
 		)
 	);
-	$members = array();
+	$members = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$members[] = $row['id_member'];
 	$smcFunc['db_free_result']($request);
@@ -1305,7 +1305,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 		updateCharacterData($characterID, array('posts' => 'posts + ' . $messageCount));
 	}
 
-	$query_parts = array();
+	$query_parts = [];
 	if (!empty($email))
 		$query_parts[] = 'poster_email = {string:email_address}';
 	if (!empty($membername))
@@ -1424,7 +1424,7 @@ function BuddyListToggle()
  * @param bool $get_duplicates Whether to get duplicates (used for the admin member list)
  * @return array An array of information for displaying the list of members
  */
-function list_getMembers($start, $items_per_page, $sort, $where, $where_params = array(), $get_duplicates = false)
+function list_getMembers($start, $items_per_page, $sort, $where, $where_params = [], $get_duplicates = false)
 {
 	global $smcFunc;
 
@@ -1444,7 +1444,7 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 		))
 	);
 
-	$members = array();
+	$members = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$row['member_ip'] = inet_dtop($row['member_ip']);
@@ -1467,7 +1467,7 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
  * @param array $where_params An array of parameters for $where
  * @return int The number of members matching the given situation
  */
-function list_getNumMembers($where, $where_params = array())
+function list_getNumMembers($where, $where_params = [])
 {
 	global $smcFunc, $modSettings;
 
@@ -1502,11 +1502,11 @@ function populateDuplicateMembers(&$members)
 	global $smcFunc;
 
 	// This will hold all the ip addresses.
-	$ips = array();
+	$ips = [];
 	foreach ($members as $key => $member)
 	{
 		// Create the duplicate_members element.
-		$members[$key]['duplicate_members'] = array();
+		$members[$key]['duplicate_members'] = [];
 
 		// Store the IPs.
 		if (!empty($member['member_ip']))
@@ -1531,8 +1531,8 @@ function populateDuplicateMembers(&$members)
 			'ips' => $ips,
 		)
 	);
-	$duplicate_members = array();
-	$duplicate_ids = array();
+	$duplicate_members = [];
+	$duplicate_ids = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		//$duplicate_ids[] = $row['id_member'];
@@ -1570,7 +1570,7 @@ function populateDuplicateMembers(&$members)
 		)
 	);
 
-	$had_ips = array();
+	$had_ips = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$row['poster_ip'] = inet_dtop($row['poster_ip']);

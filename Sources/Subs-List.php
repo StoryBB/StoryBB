@@ -29,13 +29,13 @@ function createList($listOptions)
 	call_integration_hook('integrate_' . $listOptions['id'], array(&$listOptions));
 
 	// All the context data will be easily accessible by using a reference.
-	$context[$listOptions['id']] = array();
+	$context[$listOptions['id']] = [];
 	$list_context = &$context[$listOptions['id']];
 
 	// Figure out the sort.
 	if (empty($listOptions['default_sort_col']))
 	{
-		$list_context['sort'] = array();
+		$list_context['sort'] = [];
 		$sort = '1=1';
 	}
 	else
@@ -72,7 +72,7 @@ function createList($listOptions)
 			require_once($listOptions['get_count']['file']);
 
 		$call = call_helper($listOptions['get_count']['function'], true);
-		$list_context['total_num_items'] = call_user_func_array($call, empty($listOptions['get_count']['params']) ? array() : $listOptions['get_count']['params']);
+		$list_context['total_num_items'] = call_user_func_array($call, empty($listOptions['get_count']['params']) ? [] : $listOptions['get_count']['params']);
 
 		// Default the start to the beginning...sounds logical.
 		$list_context['start'] = isset($_REQUEST[$list_context['start_var_name']]) ? (int) $_REQUEST[$list_context['start_var_name']] : 0;
@@ -84,7 +84,7 @@ function createList($listOptions)
 	}
 
 	// Prepare the headers of the table.
-	$list_context['headers'] = array();
+	$list_context['headers'] = [];
 	foreach ($listOptions['columns'] as $column_id => $column)
 		$list_context['headers'][] = array(
 			'id' => $column_id,
@@ -106,17 +106,17 @@ function createList($listOptions)
 
 	// Call the function and include which items we want and in what order.
 	$call = call_helper($listOptions['get_items']['function'], true);
-	$list_items = call_user_func_array($call, array_merge(array($list_context['start'], $list_context['items_per_page'], $sort), empty($listOptions['get_items']['params']) ? array() : $listOptions['get_items']['params']));
-	$list_items = empty($list_items) ? array() : $list_items;
+	$list_items = call_user_func_array($call, array_merge(array($list_context['start'], $list_context['items_per_page'], $sort), empty($listOptions['get_items']['params']) ? [] : $listOptions['get_items']['params']));
+	$list_items = empty($list_items) ? [] : $list_items;
 
 	// Loop through the list items to be shown and construct the data values.
-	$list_context['rows'] = array();
+	$list_context['rows'] = [];
 	foreach ($list_items as $item_id => $list_item)
 	{
-		$cur_row = array();
+		$cur_row = [];
 		foreach ($listOptions['columns'] as $column_id => $column)
 		{
-			$cur_data = array();
+			$cur_data = [];
 
 			// A value straight from the database?
 			if (isset($column['data']['db']))
@@ -129,7 +129,7 @@ function createList($listOptions)
 			// Using sprintf is probably the most readable way of injecting data.
 			elseif (isset($column['data']['sprintf']))
 			{
-				$params = array();
+				$params = [];
 				foreach ($column['data']['sprintf']['params'] as $sprintf_param => $htmlsafe)
 					$params[] = $htmlsafe ? $smcFunc['htmlspecialchars']($list_item[$sprintf_param]) : $list_item[$sprintf_param];
 				$cur_data['value'] = vsprintf($column['data']['sprintf']['format'], $params);
@@ -196,7 +196,7 @@ function createList($listOptions)
 		$list_context['form'] = $listOptions['form'];
 
 		if (!isset($list_context['form']['hidden_fields']))
-			$list_context['form']['hidden_fields'] = array();
+			$list_context['form']['hidden_fields'] = [];
 
 		// Always add a session check field.
 		$list_context['form']['hidden_fields'][$context['session_var']] = $context['session_id'];
@@ -228,7 +228,7 @@ function createList($listOptions)
 	// A list can sometimes need a few extra rows above and below.
 	if (isset($listOptions['additional_rows']))
 	{
-		$list_context['additional_rows'] = array();
+		$list_context['additional_rows'] = [];
 		foreach ($listOptions['additional_rows'] as $row)
 		{
 			if (empty($row))
@@ -237,7 +237,7 @@ function createList($listOptions)
 			// Supported row positions: top_of_list, after_title,
 			// above_column_headers, below_table_data, bottom_of_list.
 			if (!isset($list_context['additional_rows'][$row['position']]))
-				$list_context['additional_rows'][$row['position']] = array();
+				$list_context['additional_rows'][$row['position']] = [];
 			$list_context['additional_rows'][$row['position']][] = $row;
 		}
 	}

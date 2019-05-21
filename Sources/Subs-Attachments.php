@@ -60,7 +60,7 @@ function automanage_attachments_check_directory()
 	if ($modSettings['automanage_attachments'] == 1)
 	{
 		if (!isset($modSettings['last_attachments_directory']))
-			$modSettings['last_attachments_directory'] = array();
+			$modSettings['last_attachments_directory'] = [];
 		if (!is_array($modSettings['last_attachments_directory']))
 			$modSettings['last_attachments_directory'] = sbb_json_decode($modSettings['last_attachments_directory'], true);
 		if (!isset($modSettings['last_attachments_directory'][$base_dir]))
@@ -363,15 +363,15 @@ function processAttachments()
 					unlink($attachment['tmp_name']);
 
 			$context['we_are_history'] = $txt['error_temp_attachments_flushed'];
-			$_SESSION['temp_attachments'] = array();
+			$_SESSION['temp_attachments'] = [];
 		}
 	}
 
 	if (!isset($_FILES['attachment']['name']))
-		$_FILES['attachment']['tmp_name'] = array();
+		$_FILES['attachment']['tmp_name'] = [];
 
 	if (!isset($_SESSION['temp_attachments']))
-		$_SESSION['temp_attachments'] = array();
+		$_SESSION['temp_attachments'] = [];
 
 	// Remember where we are at. If it's anywhere at all.
 	if (!$ignore_temp)
@@ -392,7 +392,7 @@ function processAttachments()
 			if (file_exists($_FILES['attachment']['tmp_name'][$n]))
 				unlink($_FILES['attachment']['tmp_name'][$n]);
 
-		$_FILES['attachment']['tmp_name'] = array();
+		$_FILES['attachment']['tmp_name'] = [];
 	}
 
 	// Loop through $_FILES['attachment'] array and move each file to the current attachments folder.
@@ -402,7 +402,7 @@ function processAttachments()
 			continue;
 
 		// First, let's first check for PHP upload errors.
-		$errors = array();
+		$errors = [];
 		if (!empty($_FILES['attachment']['error'][$n]))
 		{
 			if ($_FILES['attachment']['error'][$n] == 2)
@@ -431,7 +431,7 @@ function processAttachments()
 				'size' => $_FILES['attachment']['size'][$n],
 				'type' => $_FILES['attachment']['type'][$n],
 				'id_folder' => $modSettings['currentAttachmentUploadDir'],
-				'errors' => array(),
+				'errors' => [],
 			);
 
 			// Move the file to the attachments folder with a temp name for now.
@@ -469,7 +469,7 @@ function processAttachments()
 	//   id_folder => $modSettings['currentAttachmentUploadDir']
 	//   errors => An array of errors (use the index of the $txt variable for that error).
 	// Template changes can be done using "integrate_upload_template".
-	call_integration_hook('integrate_attachment_upload', array());
+	call_integration_hook('integrate_attachment_upload', []);
 }
 
 /**
@@ -739,7 +739,7 @@ function createAttachment(&$attachmentOptions)
 			array(
 				$attachmentOptions['id'], (int) $attachmentOptions['post'],
 			),
-			array()
+			[]
 		);
 
 	if (empty($modSettings['attachmentThumbnails']) || (empty($attachmentOptions['width']) && empty($attachmentOptions['height'])))
@@ -835,7 +835,7 @@ function createAttachment(&$attachmentOptions)
  *
  * @return boolean false on error or missing params.
  */
-function assignAttachments($attachIDs = array(), $msgID = 0)
+function assignAttachments($attachIDs = [], $msgID = 0)
 {
 	global $smcFunc;
 
@@ -984,9 +984,9 @@ function getRawAttachInfo($attachIDs)
 	global $smcFunc, $modSettings;
 
 	if (empty($attachIDs))
-		return array();
+		return [];
 
-	$return = array();
+	$return = [];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT a.id_attach, a.id_msg, a.id_character, a.size, a.mime_type, a.id_folder, a.filename' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : ',
@@ -1001,7 +1001,7 @@ function getRawAttachInfo($attachIDs)
 	);
 
 	if ($smcFunc['db_num_rows']($request) != 1)
-		return array();
+		return [];
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$return[$row['id_attach']] = array(
@@ -1030,7 +1030,7 @@ function getAttachMsgInfo($attachID)
 	global $smcFunc;
 
 	if (empty($attachID))
-		return array();
+		return [];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT a.id_msg AS msg, m.id_topic AS topic, m.id_board AS board
@@ -1044,7 +1044,7 @@ function getAttachMsgInfo($attachID)
 	);
 
 	if ($smcFunc['db_num_rows']($request) != 1)
-		return array();
+		return [];
 
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
@@ -1062,7 +1062,7 @@ function getAttachMsgInfo($attachID)
 function getAttachsByMsg($msgID = 0)
 {
 	global $modSettings, $smcFunc;
-	static $attached = array();
+	static $attached = [];
 
 	if (!isset($attached[$msgID]))
 	{
@@ -1082,7 +1082,7 @@ function getAttachsByMsg($msgID = 0)
 				'is_approved' => 1,
 			)
 		);
-		$temp = array();
+		$temp = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (!$row['approved'] && $modSettings['postmod_active'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
@@ -1116,10 +1116,10 @@ function loadAttachmentContext($id_msg, $attachments)
 	global $modSettings, $txt, $scripturl, $sourcedir, $smcFunc;
 
 	if (empty($attachments) || empty($attachments[$id_msg]))
-		return array();
+		return [];
 
 	// Set up the attachment info - based on code by Meriadoc.
-	$attachmentData = array();
+	$attachmentData = [];
 	$have_unapproved = false;
 	if (isset($attachments[$id_msg]) && !empty($modSettings['attachmentEnable']))
 	{

@@ -471,7 +471,7 @@ class Likes
 		global $smcFunc, $txt, $context, $memberContext;
 
 		// Firstly, load what we need. We already know we can see this, so that's something.
-		$context['likers'] = array();
+		$context['likers'] = [];
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member, like_time
 			FROM {db_prefix}user_likes

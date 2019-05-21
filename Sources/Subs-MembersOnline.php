@@ -44,9 +44,9 @@ function getMembersOnlineStats($membersOnlineOptions)
 
 	// Initialize the array that'll be returned later on.
 	$membersOnlineStats = array(
-		'users_online' => array(),
-		'list_users_online' => array(),
-		'online_groups' => array(),
+		'users_online' => [],
+		'list_users_online' => [],
+		'online_groups' => [],
 		'num_guests' => 0,
 		'num_robots' => 0,
 		'num_buddies' => 0,
@@ -203,7 +203,7 @@ function trackStatsUsersOnline($total_users_online)
 {
 	global $modSettings, $smcFunc;
 
-	$settingsToUpdate = array();
+	$settingsToUpdate = [];
 
 	// More members on now than ever were?  Update it!
 	if (!isset($modSettings['mostOnline']) || $total_users_online >= $modSettings['mostOnline'])

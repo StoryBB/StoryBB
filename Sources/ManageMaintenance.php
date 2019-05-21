@@ -31,10 +31,10 @@ function ManageMaintenance()
 		'title' => $txt['maintain_title'],
 		'description' => $txt['maintain_info'],
 		'tabs' => array(
-			'routine' => array(),
-			'database' => array(),
-			'members' => array(),
-			'topics' => array(),
+			'routine' => [],
+			'database' => [],
+			'members' => [],
+			'topics' => [],
 		),
 	);
 
@@ -196,13 +196,13 @@ function MaintainTopics()
 			'blank_redirect' => '',
 		)
 	);
-	$context['categories'] = array();
+	$context['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		if (!isset($context['categories'][$row['id_cat']]))
 			$context['categories'][$row['id_cat']] = array(
 				'name' => $row['cat_name'],
-				'boards' => array()
+				'boards' => []
 			);
 
 		$context['categories'][$row['id_cat']]['boards'][$row['id_board']] = array(
@@ -376,12 +376,12 @@ function ConvertMsgBody()
 		$context['continue_countdown'] = 3;
 		$context['sub_template'] = 'not_done';
 		$increment = 500;
-		$id_msg_exceeding = isset($_POST['id_msg_exceeding']) ? explode(',', $_POST['id_msg_exceeding']) : array();
+		$id_msg_exceeding = isset($_POST['id_msg_exceeding']) ? explode(',', $_POST['id_msg_exceeding']) : [];
 
 		$request = $smcFunc['db_query']('', '
 			SELECT COUNT(*) as count
 			FROM {db_prefix}messages',
-			array()
+			[]
 		);
 		list($max_msgs) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -436,7 +436,7 @@ function ConvertMsgBody()
 			else
 				$query_msg = $id_msg_exceeding;
 
-			$context['exceeding_messages'] = array();
+			$context['exceeding_messages'] = [];
 			$request = $smcFunc['db_query']('', '
 				SELECT id_msg, id_topic, subject
 				FROM {db_prefix}messages
@@ -487,7 +487,7 @@ function OptimizeTables()
 
 	// Get a list of tables, as well as how many there are.
 	$temp_tables = $smcFunc['db_list_tables'](false, $real_prefix . '%');
-	$tables = array();
+	$tables = [];
 	foreach ($temp_tables as $table)
 		$tables[] = array('table_name' => $table);
 
@@ -502,7 +502,7 @@ function OptimizeTables()
 	@set_time_limit(100);
 
 	// For each table....
-	$_SESSION['optimized_tables'] = !empty($_SESSION['optimized_tables']) ? $_SESSION['optimized_tables'] : array();
+	$_SESSION['optimized_tables'] = !empty($_SESSION['optimized_tables']) ? $_SESSION['optimized_tables'] : [];
 	for ($key = $_REQUEST['start']; $context['num_tables'] - 1; $key++)
 	{
 		if (empty($tables[$key]))
@@ -965,7 +965,7 @@ function AdminBoardRecount()
 					'id_msg_max' => $_REQUEST['start'] + $increment,
 				)
 			);
-			$boards = array();
+			$boards = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$boards[$row['id_board']][] = $row['id_msg'];
 			$smcFunc['db_free_result']($request);
@@ -1008,7 +1008,7 @@ function AdminBoardRecount()
 			'is_approved' => 1,
 		)
 	);
-	$realBoardCounts = array();
+	$realBoardCounts = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$realBoardCounts[$row['id_board']] = $row['local_last_msg'];
 	$smcFunc['db_free_result']($request);
@@ -1019,7 +1019,7 @@ function AdminBoardRecount()
 		array(
 		)
 	);
-	$resort_me = array();
+	$resort_me = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$row['local_last_msg'] = isset($realBoardCounts[$row['id_board']]) ? $realBoardCounts[$row['id_board']] : 0;
@@ -1029,7 +1029,7 @@ function AdminBoardRecount()
 
 	krsort($resort_me);
 
-	$lastModifiedMsg = array();
+	$lastModifiedMsg = [];
 	foreach ($resort_me as $rows)
 		foreach ($rows as $row)
 		{
@@ -1305,7 +1305,7 @@ function MaintainPurgeInactiveMembers()
 		checkSession();
 		validateToken('admin-maint');
 
-		$groups = array();
+		$groups = [];
 		foreach ($_POST['groups'] as $id => $dummy)
 			$groups[] = (int) $id;
 		$time_limit = (time() - ($_POST['maxdays'] * 24 * 3600));
@@ -1362,7 +1362,7 @@ function MaintainPurgeInactiveMembers()
 			WHERE ' . $where,
 			$where_vars
 		);
-		$members = array();
+		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (!$row['is_mod'] || !in_array(3, $groups))
@@ -1401,7 +1401,7 @@ function MaintainRemoveOldDrafts()
 
 	validateToken('admin-maint');
 
-	$drafts = array();
+	$drafts = [];
 
 	// Find all of the old drafts
 	$request = $smcFunc['db_query']('', '
@@ -1539,7 +1539,7 @@ function MaintainMassMoveTopics()
 			);
 
 			// Get the ids.
-			$topics = array();
+			$topics = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$topics[] = $row['id_topic'];
 
@@ -2008,7 +2008,7 @@ function list_integration_hooks()
  */
 function get_files_recursive($dir_path)
 {
-	$files = array();
+	$files = [];
 
 	if ($dh = opendir($dir_path))
 	{
@@ -2042,7 +2042,7 @@ function get_integration_hooks_data($start, $per_page, $sort)
 	global $boarddir, $sourcedir, $settings, $txt, $context, $scripturl;
 
 	$hooks = $temp_hooks = get_integration_hooks();
-	$hooks_data = $temp_data = $hook_status = array();
+	$hooks_data = $temp_data = $hook_status = [];
 
 	$files = get_files_recursive($sourcedir);
 	if (!empty($files))
@@ -2101,8 +2101,8 @@ function get_integration_hooks_data($start, $per_page, $sort)
 	);
 
 	$sort_options = $sort_types[$sort];
-	$sort = array();
-	$hooks_filters = array();
+	$sort = [];
+	$hooks_filters = [];
 
 	foreach ($hooks as $hook => $functions)
 		$hooks_filters[] = '<option' . ($context['current_filter'] == $hook ? ' selected ' : '') . ' value="' . $hook . '">' . $hook . '</option>';
@@ -2114,7 +2114,7 @@ function get_integration_hooks_data($start, $per_page, $sort)
 			hook_name_header.innerHTML += ' . JavaScriptEscape('<select style="margin-left:15px;" onchange="window.location=(\'' . $scripturl . '?action=admin;area=maintain;sa=hooks\' + (this.value ? \';filter=\' + this.value : \'\'));"><option value="">' . $txt['hooks_reset_filter'] . '</option>' . implode('', $hooks_filters) . '</select>') . ';
 		</script>';
 
-	$temp_data = array();
+	$temp_data = [];
 	$id = 0;
 
 	foreach ($hooks as $hook => $functions)
@@ -2203,7 +2203,7 @@ function get_integration_hooks()
 
 	if (!isset($integration_hooks))
 	{
-		$integration_hooks = array();
+		$integration_hooks = [];
 		foreach ($modSettings as $key => $value)
 		{
 			if (!empty($value) && substr($key, 0, 10) === 'integrate_')

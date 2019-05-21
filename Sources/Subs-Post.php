@@ -337,7 +337,7 @@ function fixTags(&$message)
 		// Find all the img tags - with or without width and height.
 		preg_match_all('~\[img(\s+width=\d+)?(\s+height=\d+)?(\s+width=\d+)?\](.+?)\[/img\]~is', $message, $matches, PREG_PATTERN_ORDER);
 
-		$replaces = array();
+		$replaces = [];
 		foreach ($matches[0] as $match => $dummy)
 		{
 			// If the width was after the height, handle it.
@@ -413,7 +413,7 @@ function fixTag(&$message, $myTag, $protocols, $embeddedUrl = false, $hasEqualSi
 	else
 		$domain_url = $boardurl . '/';
 
-	$replaces = array();
+	$replaces = [];
 
 	if ($hasEqualSign && $embeddedUrl)
 	{
@@ -493,15 +493,15 @@ function fixTag(&$message, $myTag, $protocols, $embeddedUrl = false, $hasEqualSi
  * @param bool $is_private Whether this is private
  * @return boolean Whether the message was added
  */
-function AddMailQueue($flush = false, $to_array = array(), $subject = '', $message = '', $headers = '', $send_html = false, $priority = 3, $is_private = false)
+function AddMailQueue($flush = false, $to_array = [], $subject = '', $message = '', $headers = '', $send_html = false, $priority = 3, $is_private = false)
 {
 	global $context, $smcFunc;
 
-	static $cur_insert = array();
+	static $cur_insert = [];
 	static $cur_insert_len = 0;
 
 	if ($cur_insert_len == 0)
-		$cur_insert = array();
+		$cur_insert = [];
 
 	// If we're flushing, make the final inserts - also if we're near the MySQL length limit!
 	if (($flush || $cur_insert_len > 800000) && !empty($cur_insert))
@@ -520,7 +520,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 			array('id_mail')
 		);
 
-		$cur_insert = array();
+		$cur_insert = [];
 		$context['flush_mail'] = false;
 	}
 
@@ -566,7 +566,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 			);
 
 			// Clear this out.
-			$cur_insert = array();
+			$cur_insert = [];
 			$cur_insert_len = 0;
 		}
 
@@ -604,8 +604,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 	// Initialize log array.
 	$log = array(
-		'failed' => array(),
-		'sent' => array()
+		'failed' => [],
+		'sent' => []
 	);
 
 	if ($from === null)
@@ -630,7 +630,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	call_integration_hook('integrate_personal_message', array(&$recipients, &$from, &$subject, &$message));
 
 	// Get a list of usernames and convert them to IDs.
-	$usernames = array();
+	$usernames = [];
 	foreach ($recipients as $rec_type => $rec)
 	{
 		foreach ($rec as $id => $member)
@@ -695,7 +695,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			'delete_pm' => 1,
 		)
 	);
-	$deletes = array();
+	$deletes = [];
 	// Check whether we have to apply anything...
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -720,7 +720,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 	// Load the membergrounp message limits.
 	// @todo Consider caching this?
-	static $message_limit_cache = array();
+	static $message_limit_cache = [];
 	if (!allowedTo('moderate_forum') && empty($message_limit_cache))
 	{
 		$request = $smcFunc['db_query']('', '
@@ -764,7 +764,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			'from_id' => $from['id'],
 		)
 	);
-	$notifications = array();
+	$notifications = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Don't do anything for members to be deleted!
@@ -772,7 +772,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			continue;
 
 		// Load the preferences for this member (if any)
-		$prefs = !empty($notifyPrefs[$row['id_member']]) ? $notifyPrefs[$row['id_member']] : array();
+		$prefs = !empty($notifyPrefs[$row['id_member']]) ? $notifyPrefs[$row['id_member']] : [];
 		$prefs = array_merge(array(
 			'pm_new' => 0,
 			'pm_reply' => 0,
@@ -879,8 +879,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			)
 		);
 
-		$insertRows = array();
-		$to_list = array();
+		$insertRows = [];
+		$to_list = [];
 		foreach ($all_to as $to)
 		{
 			$insertRows[] = array($id_pm, $to, in_array($to, $recipients['bcc']) ? 1 : 0, isset($deletes[$to]) ? 1 : 0, 1);
@@ -907,7 +907,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	else
 		$message = '';
 
-	$to_names = array();
+	$to_names = [];
 	if (count($to_list) > 1)
 	{
 		$request = $smcFunc['db_query']('', '
@@ -969,7 +969,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
  * @param array $members_only Are the only ones that will be sent the notification if they have it on.
  * @uses Post language file
  */
-function sendNotifications($topics, $type, $exclude = array(), $members_only = array())
+function sendNotifications($topics, $type, $exclude = [], $members_only = [])
 {
 	global $user_info, $smcFunc;
 
@@ -994,7 +994,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 			'topic_list' => $topics,
 		)
 	);
-	$task_rows = array();
+	$task_rows = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		// Clean it up.
@@ -1091,14 +1091,14 @@ function approvePosts($msgs, $approve = true, $notify = true)
 			'approved_state' => $approve ? 0 : 1,
 		)
 	);
-	$msgs = array();
-	$topics = array();
-	$topic_changes = array();
-	$board_changes = array();
-	$notification_topics = array();
-	$notification_posts = array();
-	$member_post_changes = array();
-	$char_post_changes = array();
+	$msgs = [];
+	$topics = [];
+	$topic_changes = [];
+	$board_changes = [];
+	$notification_topics = [];
+	$notification_posts = [];
+	$member_post_changes = [];
+	$char_post_changes = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Easy...
@@ -1249,7 +1249,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	// Finally, least importantly, notifications!
 	if ($approve)
 	{
-		$task_rows = array();
+		$task_rows = [];
 		foreach (array_merge($notification_topics, $notification_posts) as $topic)
 		{
 			StoryBB\Task::batch_queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
@@ -1286,7 +1286,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	// If unapproving add to the approval queue!
 	else
 	{
-		$msgInserts = array();
+		$msgInserts = [];
 		foreach ($msgs as $msg)
 			$msgInserts[] = array($msg);
 
@@ -1343,7 +1343,7 @@ function approveTopics($topics, $approve = true)
 			'approve_type' => $approve_type,
 		)
 	);
-	$msgs = array();
+	$msgs = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$msgs[] = $row['id_msg'];
 	$smcFunc['db_free_result']($request);
@@ -1389,7 +1389,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 				'approved' => 1,
 			)
 		);
-		$lastMsg = array();
+		$lastMsg = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$lastMsg[$row['id_board']] = $row['id_msg'];
 		$smcFunc['db_free_result']($request);
@@ -1401,7 +1401,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 			$lastMsg[$id_board] = $id_msg;
 	}
 
-	$parent_boards = array();
+	$parent_boards = [];
 	// Keep track of last modified dates.
 	$lastModified = $lastMsg;
 	// Get all the child boards for the parents, if they have some...
@@ -1436,8 +1436,8 @@ function updateLastMessages($setboards, $id_msg = 0)
 	// Note to help understand what is happening here. For parents we update the timestamp of the last message for determining
 	// whether there are child boards which have not been read. For the boards themselves we update both this and id_last_msg.
 
-	$board_updates = array();
-	$parent_updates = array();
+	$board_updates = [];
+	$parent_updates = [];
 	// Finally, to save on queries make the changes...
 	foreach ($parent_boards as $id => $msg)
 	{
@@ -1539,7 +1539,7 @@ function adminNotify($type, $memberID, $member_name = null)
  * @param bool $loadLang Whether to load the language file first
  * @return array An array containing the subject and body of the email template, with replacements made
  */
-function loadEmailTemplate($template, $replacements = array(), $lang = '', $loadLang = true)
+function loadEmailTemplate($template, $replacements = [], $lang = '', $loadLang = true)
 {
 	global $txt, $mbname, $scripturl, $settings;
 
@@ -1567,8 +1567,8 @@ function loadEmailTemplate($template, $replacements = array(), $lang = '', $load
 	);
 
 	// Split the replacements up into two arrays, for use with str_replace
-	$find = array();
-	$replace = array();
+	$find = [];
+	$replace = [];
 
 	foreach ($replacements as $f => $r)
 	{

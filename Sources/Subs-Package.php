@@ -270,7 +270,7 @@ function package_get_contents($filename)
 
 		// Windows doesn't seem to care about the memory_limit.
 		if (!empty($modSettings['package_disable_cache']) || $mem_check || stripos(PHP_OS, 'win') !== false)
-			$package_cache = array();
+			$package_cache = [];
 		else
 			$package_cache = false;
 	}
@@ -303,7 +303,7 @@ function package_put_contents($filename, $data, $testing = false)
 		$mem_check = Environment::setMemoryLimit('128M');
 
 		if (!empty($modSettings['package_disable_cache']) || $mem_check || stripos(PHP_OS, 'win') !== false)
-			$package_cache = array();
+			$package_cache = [];
 		else
 			$package_cache = false;
 	}
@@ -389,7 +389,7 @@ function package_flush_cache($trash = false)
 
 	if ($trash)
 	{
-		$package_cache = array();
+		$package_cache = [];
 		return;
 	}
 
@@ -405,7 +405,7 @@ function package_flush_cache($trash = false)
 		}
 	}
 
-	$package_cache = array();
+	$package_cache = [];
 }
 
 /**

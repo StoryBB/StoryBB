@@ -17,15 +17,15 @@
  * @param array $boardListOptions An array of options for the board list
  * @return array An array of board info
  */
-function getBoardList($boardListOptions = array())
+function getBoardList($boardListOptions = [])
 {
 	global $smcFunc, $sourcedir;
 
 	if (isset($boardListOptions['excluded_boards']) && isset($boardListOptions['included_boards']))
 		trigger_error('getBoardList(): Setting both excluded_boards and included_boards is not allowed.', E_USER_ERROR);
 
-	$where = array();
-	$where_parameters = array();
+	$where = [];
+	$where_parameters = [];
 	if (isset($boardListOptions['excluded_boards']))
 	{
 		$where[] = 'b.id_board NOT IN ({array_int:excluded_boards})';
@@ -59,7 +59,7 @@ function getBoardList($boardListOptions = array())
 		$where_parameters
 	);
 
-	$return_value = array();
+	$return_value = [];
 	if ($smcFunc['db_num_rows']($request) !== 0)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -68,7 +68,7 @@ function getBoardList($boardListOptions = array())
 				$return_value[$row['id_cat']] = array(
 					'id' => $row['id_cat'],
 					'name' => $row['cat_name'],
-					'boards' => array(),
+					'boards' => [],
 				);
 
 			$return_value[$row['id_cat']]['boards'][$row['id_board']] = array(
@@ -98,7 +98,7 @@ function child_boards($board)
 	global $txt;
 
 	// Sort the links into an array with new boards bold so it can be imploded.
-	$children = array();
+	$children = [];
 	/* Each child in each board's children has:
 			id, name, description, new (is it new?), topics (#), posts (#), href, link, and last_post. */
 	foreach ($board['children'] as $child)

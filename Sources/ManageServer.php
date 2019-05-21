@@ -239,7 +239,7 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 		$newval = strtr($boardurl, array('https://' => 'http://'));
 	updateSettingsFile(array('boardurl' => '\'' . addslashes($newval) . '\''));
 
-	$new_settings = array();
+	$new_settings = [];
 
 	// Check $smileys_url, but only if it points to a subfolder of $boardurl
 	if (BoardurlMatch($modSettings['smileys_url']))
@@ -363,9 +363,9 @@ function ModifyCookieSettings($return_config = false)
 		array('tfa_mode', $txt['tfa_mode'], 'db', 'select', array(
 			0 => $txt['tfa_mode_disabled'],
 			1 => $txt['tfa_mode_enabled'],
-		) + (empty($user_settings['tfa_secret']) ? array() : array(
+		) + (empty($user_settings['tfa_secret']) ? [] : array(
 			2 => $txt['tfa_mode_forced'],
-		)) + (empty($user_settings['tfa_secret']) ? array() : array(
+		)) + (empty($user_settings['tfa_secret']) ? [] : array(
 			3 => $txt['tfa_mode_forcedall'],
 		)), 'subtext' => $txt['tfa_mode_subtext'] . (empty($user_settings['tfa_secret']) ? '<br /><strong>' . $txt['tfa_mode_forced_help'] . '</strong>' : ''), 'tfa_mode'),
 	);
@@ -628,7 +628,7 @@ function prepareServerSettingsContext(&$config_vars)
 {
 	global $context, $modSettings, $smcFunc;
 
-	$context['config_vars'] = array();
+	$context['config_vars'] = [];
 	foreach ($config_vars as $identifier => $config_var)
 	{
 		if (!is_array($config_var) || !isset($config_var[1]))
@@ -653,7 +653,7 @@ function prepareServerSettingsContext(&$config_vars)
 				'help' => isset($config_var[5]) ? $config_var[5] : '',
 				'type' => $config_var[3],
 				'size' => empty($config_var[4]) ? 0 : $config_var[4],
-				'data' => isset($config_var[4]) && is_array($config_var[4]) && $config_var[3] != 'select' ? $config_var[4] : array(),
+				'data' => isset($config_var[4]) && is_array($config_var[4]) && $config_var[3] != 'select' ? $config_var[4] : [],
 				'name' => $config_var[0],
 				'value' => $config_var[2] == 'file' ? $smcFunc['htmlspecialchars']($$varname) : (isset($modSettings[$config_var[0]]) ? $smcFunc['htmlspecialchars']($modSettings[$config_var[0]]) : (in_array($config_var[3], array('int', 'float')) ? 0 : '')),
 				'disabled' => !empty($context['settings_not_writable']) || !empty($config_var['disabled']),
@@ -715,9 +715,9 @@ function prepareDBSettingContext(&$config_vars)
 
 	loadLanguage('Help');
 
-	$context['config_vars'] = array();
-	$inlinePermissions = array();
-	$bbcChoice = array();
+	$context['config_vars'] = [];
+	$inlinePermissions = [];
+	$bbcChoice = [];
 	$board_list = false;
 	foreach ($config_vars as $config_var)
 	{
@@ -771,10 +771,10 @@ function prepareDBSettingContext(&$config_vars)
 						$value = 0;
 						break;
 					case 'select':
-						$value = !empty($config_var['multiple']) ? json_encode(array()) : '';
+						$value = !empty($config_var['multiple']) ? json_encode([]) : '';
 						break;
 					case 'boards':
-						$value = array();
+						$value = [];
 						break;
 					default:
 						$value = '';
@@ -786,7 +786,7 @@ function prepareDBSettingContext(&$config_vars)
 				'help' => isset($helptxt[$config_var[1]]) ? $config_var[1] : '',
 				'type' => $config_var[0],
 				'size' => !empty($config_var['size']) ? $config_var['size'] : (!empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : (in_array($config_var[0], array('int', 'float')) ? 6 : 0)),
-				'data' => array(),
+				'data' => [],
 				'name' => $config_var[1],
 				'value' => $value,
 				'disabled' => false,
@@ -820,7 +820,7 @@ function prepareDBSettingContext(&$config_vars)
 				if ($config_var[0] == 'select' && !empty($config_var['multiple']))
 				{
 					$context['config_vars'][$config_var[1]]['name'] .= '[]';
-					$context['config_vars'][$config_var[1]]['value'] = !empty($context['config_vars'][$config_var[1]]['value']) ? sbb_json_decode($context['config_vars'][$config_var[1]]['value'], true) : array();
+					$context['config_vars'][$config_var[1]]['value'] = !empty($context['config_vars'][$config_var[1]]['value']) ? sbb_json_decode($context['config_vars'][$config_var[1]]['value'], true) : [];
 				}
 
 				// If it's associative
@@ -866,7 +866,7 @@ function prepareDBSettingContext(&$config_vars)
 	if (!empty($inlinePermissions) && allowedTo('manage_permissions'))
 	{
 		require_once($sourcedir . '/ManagePermissions.php');
-		init_inline_permissions($inlinePermissions, isset($context['permissions_excluded']) ? $context['permissions_excluded'] : array());
+		init_inline_permissions($inlinePermissions, isset($context['permissions_excluded']) ? $context['permissions_excluded'] : []);
 	}
 
 	if ($board_list)
@@ -892,7 +892,7 @@ function prepareDBSettingContext(&$config_vars)
 	{
 		// What are the options, eh?
 		$temp = parse_bbc(false);
-		$bbcTags = array();
+		$bbcTags = [];
 		foreach ($temp as $tag)
 			$bbcTags[] = $tag['tag'];
 
@@ -903,7 +903,7 @@ function prepareDBSettingContext(&$config_vars)
 		$numColumns = isset($context['num_bbc_columns']) ? $context['num_bbc_columns'] : 3;
 
 		// Start working out the context stuff.
-		$context['bbc_columns'] = array();
+		$context['bbc_columns'] = [];
 		$tagsPerColumn = ceil($totalTags / $numColumns);
 
 		$col = 0;
@@ -927,7 +927,7 @@ function prepareDBSettingContext(&$config_vars)
 		{
 			$context['config_vars'][$bbc] += array(
 				'bbc_title' => isset($txt['bbc_title_' . $bbc]) ? $txt['bbc_title_' . $bbc] : $txt['bbcTagsToUse_select'],
-				'bbc_disabled' => empty($modSettings['bbc_disabled_' . $bbc]) ? array() : $modSettings['bbc_disabled_' . $bbc],
+				'bbc_disabled' => empty($modSettings['bbc_disabled_' . $bbc]) ? [] : $modSettings['bbc_disabled_' . $bbc],
 				'all_selected' => empty($modSettings['bbc_disabled_' . $bbc]),
 			);
 		}
@@ -997,7 +997,7 @@ function saveSettings(&$config_vars)
 	$config_bools = array('db_persist', 'maintenance', 'image_proxy_enabled');
 
 	// Now sort everything into a big array, and figure out arrays and etc.
-	$new_settings = array();
+	$new_settings = [];
 	// Figure out which config vars we're saving here...
 	foreach ($config_vars as $var)
 	{
@@ -1046,7 +1046,7 @@ function saveSettings(&$config_vars)
 	updateSettingsFile($new_settings);
 
 	// Now loop through the remaining (database-based) settings.
-	$new_settings = array();
+	$new_settings = [];
 	foreach ($config_vars as $config_var)
 	{
 		// We just saved the file-based settings, so skip their definitions.
@@ -1088,7 +1088,7 @@ function saveDBSettings(&$config_vars)
 
 	validateToken('admin-dbsc');
 
-	$inlinePermissions = array();
+	$inlinePermissions = [];
 	foreach ($config_vars as $var)
 	{
 		if (!isset($var[1]) || (!isset($_POST[$var[1]]) && $var[0] != 'check' && $var[0] != 'permissions' && $var[0] != 'boards' && ($var[0] != 'bbc' || !isset($_POST[$var[1] . '_enabledTags']))))
@@ -1100,10 +1100,10 @@ function saveDBSettings(&$config_vars)
 		// Select boxes!
 		elseif ($var[0] == 'select' && in_array($_POST[$var[1]], array_keys($var[2])))
 			$setArray[$var[1]] = $_POST[$var[1]];
-		elseif ($var[0] == 'select' && !empty($var['multiple']) && array_intersect($_POST[$var[1]], array_keys($var[2])) != array())
+		elseif ($var[0] == 'select' && !empty($var['multiple']) && array_intersect($_POST[$var[1]], array_keys($var[2])) != [])
 		{
 			// For security purposes we validate this line by line.
-			$lOptions = array();
+			$lOptions = [];
 			foreach ($_POST[$var[1]] as $invar)
 				if (in_array($invar, array_keys($var[2])))
 					$lOptions[] = $invar;
@@ -1116,7 +1116,7 @@ function saveDBSettings(&$config_vars)
 			// We just need a simple list of valid boards, nothing more.
 			if ($board_list === null)
 			{
-				$board_list = array();
+				$board_list = [];
 				$request = $smcFunc['db_query']('', '
 					SELECT id_board
 					FROM {db_prefix}boards');
@@ -1126,7 +1126,7 @@ function saveDBSettings(&$config_vars)
 				$smcFunc['db_free_result']($request);
 			}
 
-			$lOptions = array();
+			$lOptions = [];
 
 			if (!empty($_POST[$var[1]]))
 				foreach ($_POST[$var[1]] as $invar => $dummy)
@@ -1174,12 +1174,12 @@ function saveDBSettings(&$config_vars)
 		elseif ($var[0] == 'bbc')
 		{
 
-			$bbcTags = array();
+			$bbcTags = [];
 			foreach (parse_bbc(false) as $tag)
 				$bbcTags[] = $tag['tag'];
 
 			if (!isset($_POST[$var[1] . '_enabledTags']))
-				$_POST[$var[1] . '_enabledTags'] = array();
+				$_POST[$var[1] . '_enabledTags'] = [];
 			elseif (!is_array($_POST[$var[1] . '_enabledTags']))
 				$_POST[$var[1] . '_enabledTags'] = array($_POST[$var[1] . '_enabledTags']);
 

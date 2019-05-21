@@ -61,7 +61,7 @@ function getServerVersions($checkFor)
 
 	loadLanguage('Admin');
 
-	$versions = array();
+	$versions = [];
 
 	if (in_array('php', $checkFor))
 		$versions['php'] = array('title' => $txt['support_versions_php'], 'version' => PHP_VERSION, 'more' => '?action=admin;area=serversettings;sa=phpinfo');
@@ -147,10 +147,10 @@ function getFileVersions(&$versionOptions)
 	$lang_dir = $settings['default_theme_dir'] . '/languages';
 
 	$version_info = array(
-		'file_versions' => array(),
-		'default_template_versions' => array(),
-		'template_versions' => array(),
-		'default_language_versions' => array(),
+		'file_versions' => [],
+		'default_template_versions' => [],
+		'template_versions' => [],
+		'default_language_versions' => [],
 	);
 
 	// Find the version in SSI.php's file header.
@@ -469,7 +469,7 @@ function updateAdminPreferences()
  * @param array $replacements An array of items to replace the variables in the template
  * @param array $additional_recipients An array of arrays of info for additional recipients. Should have 'id', 'email' and 'name' for each.
  */
-function emailAdmins($template, $replacements = array(), $additional_recipients = array())
+function emailAdmins($template, $replacements = [], $additional_recipients = [])
 {
 	global $smcFunc, $sourcedir, $language, $modSettings;
 
@@ -492,7 +492,7 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 			'members' => $members,
 		)
 	);
-	$emails_sent = array();
+	$emails_sent = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if (empty($prefs[$row['id_member']]['announcements']))

@@ -407,7 +407,7 @@ function checkActivation()
 	global $context, $txt, $scripturl, $user_settings, $modSettings;
 
 	if (!isset($context['login_errors']))
-		$context['login_errors'] = array();
+		$context['login_errors'] = [];
 
 	// What is the true activation status of this account?
 	$activation_status = $user_settings['is_activated'] > 10 ? $user_settings['is_activated'] - 10 : $user_settings['is_activated'];

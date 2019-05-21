@@ -74,7 +74,7 @@ function UnapprovedPosts()
 	{
 		$delete_own_boards = boardsAllowedTo('remove_own');
 		$delete_any_boards = boardsAllowedTo('remove_any');
-		$delete_own_replies = array();
+		$delete_own_replies = [];
 	}
 	else
 	{
@@ -83,7 +83,7 @@ function UnapprovedPosts()
 		$delete_own_replies = boardsAllowedTo('delete_own_replies');
 	}
 
-	$toAction = array();
+	$toAction = [];
 	// Check if we have something to do?
 	if (isset($_GET['approve']))
 		$toAction[] = (int) $_GET['approve'];
@@ -123,8 +123,8 @@ function UnapprovedPosts()
 				'not_approved' => 0,
 			)
 		);
-		$toAction = array();
-		$details = array();
+		$toAction = [];
+		$details = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// If it's not within what our view is ignore it...
@@ -156,7 +156,7 @@ function UnapprovedPosts()
 			$toAction[] = $anItem;
 
 			// All clear. What have we got now, what, what?
-			$details[$anItem] = array();
+			$details[$anItem] = [];
 			$details[$anItem]["subject"] = $row['subject'];
 			$details[$anItem]["topic"] = $row['id_topic'];
 			$details[$anItem]["member"] = ($context['current_view'] == 'topics') ? $row['id_member_started'] : $row['id_member'];
@@ -254,7 +254,7 @@ function UnapprovedPosts()
 			'limit' => $limit,
 		)
 	);
-	$context['unapproved_items'] = array();
+	$context['unapproved_items'] = [];
 	for ($i = 1; $row = $smcFunc['db_fetch_assoc']($request); $i++)
 	{
 		// Can delete is complicated, let's solve it first... is it their own post?
@@ -325,7 +325,7 @@ function UnapprovedAttachments()
 		$approve_query = ' AND 1=0';
 
 	// Get together the array of things to act on, if any.
-	$attachments = array();
+	$attachments = [];
 	if (isset($_GET['approve']))
 		$attachments[] = (int) $_GET['approve'];
 	elseif (isset($_GET['delete']))
@@ -365,7 +365,7 @@ function UnapprovedAttachments()
 				'attachment_type' => 0,
 			)
 		);
-		$attachments = array();
+		$attachments = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$attachments[] = $row['id_attach'];
 		$smcFunc['db_free_result']($request);
@@ -570,7 +570,7 @@ function list_getUnapprovedAttachments($start, $items_per_page, $sort, $approve_
 		)
 	);
 
-	$unapproved_items = array();
+	$unapproved_items = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$unapproved_items[] = array(
@@ -738,7 +738,7 @@ function approveAllData()
 			'not_approved' => 0,
 		)
 	);
-	$msgs = array();
+	$msgs = [];
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$msgs[] = $row[0];
 	$smcFunc['db_free_result']($request);
@@ -758,7 +758,7 @@ function approveAllData()
 			'not_approved' => 0,
 		)
 	);
-	$attaches = array();
+	$attaches = [];
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$attaches[] = $row[0];
 	$smcFunc['db_free_result']($request);

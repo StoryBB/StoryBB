@@ -107,13 +107,13 @@ function ManageBoardsMain()
 
 	$context['move_board'] = !empty($_REQUEST['move']) && isset($boards[(int) $_REQUEST['move']]) ? (int) $_REQUEST['move'] : 0;
 
-	$context['categories'] = array();
+	$context['categories'] = [];
 	foreach ($cat_tree as $catid => $tree)
 	{
 		$context['categories'][$catid] = array(
 			'name' => &$tree['node']['name'],
 			'id' => &$tree['node']['id'],
-			'boards' => array()
+			'boards' => []
 		);
 		$move_cat = !empty($context['move_board']) && $boards[$context['move_board']]['category'] == $catid;
 		foreach ($boardList[$catid] as $boardid)
@@ -140,7 +140,7 @@ function ManageBoardsMain()
 		{
 			$prev_child_level = 0;
 			$prev_board = 0;
-			$stack = array();
+			$stack = [];
 			// Just a shortcut, this is the same for all the urls
 			$security = $context['session_var'] . '=' . $context['session_id'] . ';' . $context['admin-bm-' . $context['move_board'] . '_token_var'] . '=' . $context['admin-bm-' . $context['move_board'] . '_token'];
 			foreach ($boardList[$catid] as $boardid)
@@ -174,7 +174,7 @@ function ManageBoardsMain()
 				elseif ($difference < 0)
 				{
 					if (empty($context['categories'][$catid]['boards'][$prev_board]['move_links']))
-						$context['categories'][$catid]['boards'][$prev_board]['move_links'] = array();
+						$context['categories'][$catid]['boards'][$prev_board]['move_links'] = [];
 					for ($i = 0; $i < -$difference; $i++)
 						if (($temp = array_pop($stack)) != null)
 							array_unshift($context['categories'][$catid]['boards'][$prev_board]['move_links'], $temp);
@@ -261,7 +261,7 @@ function EditCategory()
 			'editable_name' => html_to_bbc($cat_tree[$_REQUEST['cat']]['node']['name']),
 			'description' => html_to_bbc($cat_tree[$_REQUEST['cat']]['node']['description']),
 			'can_collapse' => !empty($cat_tree[$_REQUEST['cat']]['node']['can_collapse']),
-			'children' => array(),
+			'children' => [],
 			'is_empty' => empty($cat_tree[$_REQUEST['cat']]['children'])
 		);
 
@@ -323,7 +323,7 @@ function EditCategory2()
 	// Add a new category or modify an existing one..
 	if (isset($_POST['edit']) || isset($_POST['add']))
 	{
-		$catOptions = array();
+		$catOptions = [];
 
 		if (isset($_POST['cat_order']))
 			$catOptions['move_after'] = (int) $_POST['cat_order'];
@@ -410,10 +410,10 @@ function EditBoard()
 		// Some things that need to be setup for a new board.
 		$curBoard = array(
 			'member_groups' => array(0, -1),
-			'deny_groups' => array(),
+			'deny_groups' => [],
 			'category' => (int) $_REQUEST['cat']
 		);
-		$context['board_order'] = array();
+		$context['board_order'] = [];
 		$context['board'] = array(
 			'is_new' => true,
 			'id' => 0,
@@ -543,7 +543,7 @@ function EditBoard()
 	}
 
 	// Get other available categories.
-	$context['categories'] = array();
+	$context['categories'] = [];
 	foreach ($cat_tree as $catID => $tree)
 		$context['categories'][] = array(
 			'id' => $catID == $curBoard['category'] ? 0 : $catID,
@@ -560,7 +560,7 @@ function EditBoard()
 			'current_board' => $_REQUEST['boardid'],
 		)
 	);
-	$context['board']['moderators'] = array();
+	$context['board']['moderators'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['board']['moderators'][$row['id_member']] = $row['real_name'];
 	$smcFunc['db_free_result']($request);
@@ -574,7 +574,7 @@ function EditBoard()
 			'current_board' => $_REQUEST['boardid'],
 		)
 	);
-	$context['board']['moderator_groups'] = array();
+	$context['board']['moderator_groups'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['board']['moderator_groups'][$row['id_group']] = $row['id_group'];
 	$smcFunc['db_free_result']($request);
@@ -588,7 +588,7 @@ function EditBoard()
 			'name' => 'name',
 		)
 	);
-	$context['themes'] = array();
+	$context['themes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['themes'][] = $row;
 	$smcFunc['db_free_result']($request);
@@ -634,7 +634,7 @@ function EditBoard2()
 	// Mode: modify aka. don't delete.
 	if (isset($_POST['edit']) || isset($_POST['add']))
 	{
-		$boardOptions = array();
+		$boardOptions = [];
 
 		// Move this board to a new category?
 		if (!empty($_POST['new_cat']))
@@ -657,8 +657,8 @@ function EditBoard2()
 		$boardOptions['posts_count'] = isset($_POST['count']);
 		$boardOptions['override_theme'] = isset($_POST['override_theme']);
 		$boardOptions['board_theme'] = (int) $_POST['boardtheme'];
-		$boardOptions['access_groups'] = array();
-		$boardOptions['deny_groups'] = array();
+		$boardOptions['access_groups'] = [];
+		$boardOptions['deny_groups'] = [];
 
 		if (!empty($_POST['groups']))
 			foreach ($_POST['groups'] as $group => $action)
@@ -687,7 +687,7 @@ function EditBoard2()
 
 		if (isset($_POST['moderators']) && is_array($_POST['moderators']))
 		{
-			$moderators = array();
+			$moderators = [];
 			foreach ($_POST['moderators'] as $moderator)
 			{
 				$moderator = (int) $moderator;
@@ -701,7 +701,7 @@ function EditBoard2()
 
 		if (isset($_POST['moderator_groups']) && is_array($_POST['moderator_groups']))
 		{
-			$moderator_groups = array();
+			$moderator_groups = [];
 			foreach ($_POST['moderator_groups'] as $moderator_group)
 			{
 				$moderator_group = (int) $moderator_group;

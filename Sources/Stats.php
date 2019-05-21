@@ -54,7 +54,7 @@ function DisplayStats()
 			obExit(false);
 
 		$context['sub_template'] = 'xml_stats';
-		$context['yearly'] = array();
+		$context['yearly'] = [];
 
 		if (empty($month) || empty($year))
 			return;
@@ -261,13 +261,13 @@ function DisplayStats()
 				'is_approved' => 1,
 			)
 		);
-		$topic_ids = array();
+		$topic_ids = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topic_ids[] = $row['id_topic'];
 		$smcFunc['db_free_result']($request);
 	}
 	else
-		$topic_ids = array();
+		$topic_ids = [];
 
 	// Topic replies top 10.
 	$topic_reply_result = $smcFunc['db_query']('', '
@@ -335,13 +335,13 @@ function DisplayStats()
 				'no_views' => 0,
 			)
 		);
-		$topic_ids = array();
+		$topic_ids = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topic_ids[] = $row['id_topic'];
 		$smcFunc['db_free_result']($request);
 	}
 	else
-		$topic_ids = array();
+		$topic_ids = [];
 
 	// Topic views top 10.
 	$topic_view_result = $smcFunc['db_query']('', '
@@ -410,7 +410,7 @@ function DisplayStats()
 				'recycle_board' => $modSettings['recycle_board'],
 			)
 		);
-		$members = array();
+		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[$row['id_member_started']] = $row['hits'];
 		$smcFunc['db_free_result']($request);
@@ -477,7 +477,7 @@ function DisplayStats()
 		'title' => $txt['top_time_online'],
 		'data' => [],
 	];
-	$temp2 = array();
+	$temp2 = [];
 	$max_time_online = 1;
 	while ($row_members = $smcFunc['db_fetch_assoc']($members_result))
 	{
@@ -613,10 +613,10 @@ function DisplayStats()
 			YEAR(date) AS stats_year, MONTH(date) AS stats_month, SUM(hits) AS hits, SUM(registers) AS registers, SUM(chars) AS chars, SUM(topics) AS topics, SUM(posts) AS posts, MAX(most_on) AS most_on, COUNT(*) AS num_days
 		FROM {db_prefix}log_activity
 		GROUP BY stats_year, stats_month',
-		array()
+		[]
 	);
 
-	$context['yearly'] = array();
+	$context['yearly'] = [];
 	while ($row_months = $smcFunc['db_fetch_assoc']($months_result))
 	{
 		$ID_MONTH = $row_months['stats_year'] . sprintf('%02d', $row_months['stats_month']);
@@ -632,7 +632,7 @@ function DisplayStats()
 				'most_members_online' => 0,
 				'hits' => 0,
 				'num_months' => 0,
-				'months' => array(),
+				'months' => [],
 				'expanded' => false,
 				'current_year' => $row_months['stats_year'] == date('Y'),
 			);
@@ -654,7 +654,7 @@ function DisplayStats()
 			'most_members_online' => comma_format($row_months['most_on']),
 			'hits' => comma_format($row_months['hits']),
 			'num_days' => $row_months['num_days'],
-			'days' => array(),
+			'days' => [],
 			'expanded' => $expanded
 		);
 
@@ -670,7 +670,7 @@ function DisplayStats()
 
 	krsort($context['yearly']);
 
-	$context['collapsed_years'] = array();
+	$context['collapsed_years'] = [];
 	foreach ($context['yearly'] as $year => $data)
 	{
 		// This gets rid of the filesort on the query ;).
@@ -691,8 +691,8 @@ function DisplayStats()
 	if (empty($_SESSION['expanded_stats']))
 		return;
 
-	$condition_text = array();
-	$condition_params = array();
+	$condition_text = [];
+	$condition_params = [];
 	foreach ($_SESSION['expanded_stats'] as $year => $months)
 		if (!empty($months))
 		{
@@ -717,7 +717,7 @@ function DisplayStats()
  * @param string $condition_string An SQL condition string
  * @param array $condition_parameters Parameters for $condition_string
  */
-function getDailyStats($condition_string, $condition_parameters = array())
+function getDailyStats($condition_string, $condition_parameters = [])
 {
 	global $context, $smcFunc;
 

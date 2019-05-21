@@ -215,7 +215,7 @@ function RemoveOldTopics2()
 			AND t.id_board IN ({array_int:boards})',
 		$condition_params
 	);
-	$topics = array();
+	$topics = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$topics[] = $row['id_topic'];
 	$smcFunc['db_free_result']($request);
@@ -299,7 +299,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		if ($smcFunc['db_num_rows']($request) > 0)
 		{
 			// Get topics that will be recycled.
-			$recycleTopics = array();
+			$recycleTopics = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
 				if (function_exists('apache_reset_timeout'))
@@ -360,7 +360,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	if ($searchAPI->supportsMethod('topicsRemoved'))
 		$searchAPI->topicsRemoved($topics);
 
-	$adjustBoards = array();
+	$adjustBoards = [];
 
 	// Find out how many posts we are deleting.
 	$request = $smcFunc['db_query']('', '
@@ -436,7 +436,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			'limit' => count($topics),
 		)
 	);
-	$polls = array();
+	$polls = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$polls[] = $row['id_poll'];
 	$smcFunc['db_free_result']($request);
@@ -479,8 +479,8 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	{
 		$customIndexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
 
-		$words = array();
-		$messages = array();
+		$words = [];
+		$messages = [];
 		$request = $smcFunc['db_query']('', '
 			SELECT id_msg, body
 			FROM {db_prefix}messages
@@ -557,7 +557,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	updateStats('topic');
 
 	require_once($sourcedir . '/Subs-Post.php');
-	$updates = array();
+	$updates = [];
 	foreach ($adjustBoards as $stats)
 		$updates[] = $stats['id_board'];
 	updateLastMessages($updates);
@@ -1031,8 +1031,8 @@ function RestoreTopic()
 	// We need this file.
 	require_once($sourcedir . '/MoveTopic.php');
 
-	$unfound_messages = array();
-	$topics_to_restore = array();
+	$unfound_messages = [];
+	$topics_to_restore = [];
 
 	// Restoring messages?
 	if (!empty($_REQUEST['msgs']))
@@ -1055,8 +1055,8 @@ function RestoreTopic()
 			)
 		);
 
-		$actioned_messages = array();
-		$previous_topics = array();
+		$actioned_messages = [];
+		$previous_topics = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// Restoring the first post means topic.
@@ -1075,14 +1075,14 @@ function RestoreTopic()
 			$previous_topics[] = $row['id_previous_topic'];
 			if (empty($actioned_messages[$row['id_previous_topic']]))
 				$actioned_messages[$row['id_previous_topic']] = array(
-					'msgs' => array(),
+					'msgs' => [],
 					'count_posts' => $row['count_posts'],
 					'subject' => $row['subject'],
 					'previous_board' => $row['id_previous_board'],
 					'possible_prev_board' => $row['possible_prev_board'],
 					'current_topic' => $row['id_topic'],
 					'current_board' => $row['id_board'],
-					'members' => array(),
+					'members' => [],
 				);
 
 			$actioned_messages[$row['id_previous_topic']]['msgs'][$row['id_msg']] = $row['subject'];
@@ -1108,7 +1108,7 @@ function RestoreTopic()
 					'previous_topics' => $previous_topics,
 				)
 			);
-			$previous_topics = array();
+			$previous_topics = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$previous_topics[$row['id_topic']] = array(
 					'board' => $row['id_board'],
@@ -1118,7 +1118,7 @@ function RestoreTopic()
 		}
 
 		// Restore each topic.
-		$messages = array();
+		$messages = [];
 		foreach ($actioned_messages as $topic => $data)
 		{
 			// If we have topics we are going to restore the whole lot ignore them.
@@ -1458,7 +1458,7 @@ function mergePosts($msgs, $from_topic, $target_topic)
 	updateStats('message');
 
 	// Subject cache?
-	$cache_updates = array();
+	$cache_updates = [];
 	if ($target_first_msg != $target_topic_data['id_first_msg'])
 		$cache_updates[] = $target_topic_data['id_first_msg'];
 	if (!empty($source_topic_data['id_first_msg']) && $from_first_msg != $source_topic_data['id_first_msg'])

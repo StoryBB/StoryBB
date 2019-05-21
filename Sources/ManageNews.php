@@ -269,7 +269,7 @@ function list_getNews()
 {
 	global $modSettings;
 
-	$admin_current_news = array();
+	$admin_current_news = [];
 	// Ready the current news.
 	foreach (explode("\n", $modSettings['news']) as $id => $line)
 		$admin_current_news[$id] = array(
@@ -309,9 +309,9 @@ function SelectMailingMembers()
 
 	$context['sub_template'] = 'newsletter_pick_users';
 
-	$context['groups'] = array();
-	$postGroups = array();
-	$normalGroups = array();
+	$context['groups'] = [];
+	$postGroups = [];
+	$normalGroups = [];
 
 	// As post groups are disabled then we need to give a "ungrouped members" option.
 	$context['groups'][0] = array(
@@ -515,11 +515,11 @@ function ComposeMailing()
 	if (isset($context['preview']))
 	{
 		require_once($sourcedir . '/Subs-Post.php');
-		$context['recipients']['members'] = !empty($_POST['members']) ? explode(',', $_POST['members']) : array();
-		$context['recipients']['exclude_members'] = !empty($_POST['exclude_members']) ? explode(',', $_POST['exclude_members']) : array();
-		$context['recipients']['groups'] = !empty($_POST['groups']) ? explode(',', $_POST['groups']) : array();
-		$context['recipients']['exclude_groups'] = !empty($_POST['exclude_groups']) ? explode(',', $_POST['exclude_groups']) : array();
-		$context['recipients']['emails'] = !empty($_POST['emails']) ? explode(';', $_POST['emails']) : array();
+		$context['recipients']['members'] = !empty($_POST['members']) ? explode(',', $_POST['members']) : [];
+		$context['recipients']['exclude_members'] = !empty($_POST['exclude_members']) ? explode(',', $_POST['exclude_members']) : [];
+		$context['recipients']['groups'] = !empty($_POST['groups']) ? explode(',', $_POST['groups']) : [];
+		$context['recipients']['exclude_groups'] = !empty($_POST['exclude_groups']) ? explode(',', $_POST['exclude_groups']) : [];
+		$context['recipients']['emails'] = !empty($_POST['emails']) ? explode(';', $_POST['emails']) : [];
 		$context['email_force'] = !empty($_POST['email_force']) ? 1 : 0;
 		$context['total_emails'] = !empty($_POST['total_emails']) ? (int) $_POST['total_emails'] : 0;
 		$context['send_pm'] = !empty($_POST['send_pm']) ? 1 : 0;
@@ -529,7 +529,7 @@ function ComposeMailing()
 	}
 
 	// Start by finding any members!
-	$toClean = array();
+	$toClean = [];
 	if (!empty($_POST['members']))
 		$toClean[] = 'members';
 	if (!empty($_POST['exclude_members']))
@@ -558,7 +558,7 @@ function ComposeMailing()
 
 	if (isset($_POST['member_list']) && is_array($_POST['member_list']))
 	{
-		$members = array();
+		$members = [];
 		foreach ($_POST['member_list'] as $member_id)
 			$members[] = (int) $member_id;
 		$_POST['members'] = implode(',', $members);
@@ -566,7 +566,7 @@ function ComposeMailing()
 
 	if (isset($_POST['exclude_member_list']) && is_array($_POST['exclude_member_list']))
 	{
-		$members = array();
+		$members = [];
 		foreach ($_POST['exclude_member_list'] as $member_id)
 			$members[] = (int) $member_id;
 		$_POST['exclude_members'] = implode(',', $members);
@@ -610,8 +610,8 @@ function ComposeMailing()
 			'blank_string' => '',
 		)
 	);
-	$condition_array = array();
-	$condition_array_params = array();
+	$condition_array = [];
+	$condition_array_params = [];
 	$count = 0;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -729,11 +729,11 @@ function SendMailing($clean_only = false)
 
 	// Create our main context.
 	$context['recipients'] = array(
-		'groups' => array(),
-		'exclude_groups' => array(),
-		'members' => array(),
-		'exclude_members' => array(),
-		'emails' => array(),
+		'groups' => [],
+		'exclude_groups' => [],
+		'members' => [],
+		'exclude_members' => [],
+		'emails' => [],
 	);
 
 	// Have we any excluded members?
@@ -904,11 +904,11 @@ function SendMailing($clean_only = false)
 	{
 		// Need to build quite a query!
 		$sendQuery = '(';
-		$sendParams = array();
+		$sendParams = [];
 		if (!empty($context['recipients']['groups']))
 		{
 			// Take the long route...
-			$queryBuild = array();
+			$queryBuild = [];
 			foreach ($context['recipients']['groups'] as $group)
 			{
 				$sendParams['group_' . $group] = $group;
@@ -962,7 +962,7 @@ function SendMailing($clean_only = false)
 				'is_activated' => 1,
 			))
 		);
-		$rows = array();
+		$rows = [];
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
 			$rows[$row['id_member']] = $row;
@@ -1016,7 +1016,7 @@ function SendMailing($clean_only = false)
 			if (!$context['send_pm'])
 				StoryBB\Helper\Mail::send($row['email_address'], $subject, $message, null, 'news', !empty($_POST['send_html']), 5);
 			else
-				sendpm(array('to' => array($row['id_member']), 'bcc' => array()), $subject, $message);
+				sendpm(array('to' => array($row['id_member']), 'bcc' => []), $subject, $message);
 		}
 	}
 
@@ -1025,7 +1025,7 @@ function SendMailing($clean_only = false)
 	if (empty($context['recipients']['emails']) && ($context['start'] >= $context['total_members']))
 	{
 		// Log this into the admin log.
-		logAction('newsletter', array(), 'admin');
+		logAction('newsletter', [], 'admin');
 		$_SESSION['newsletter_sent'] = 'queue_done';
 		redirectexit('action=admin;area=news;sa=mailingmembers');
 	}

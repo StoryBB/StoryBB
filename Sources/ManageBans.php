@@ -302,7 +302,7 @@ function list_getBans($start, $items_per_page, $sort)
 			'limit' => $items_per_page,
 		)
 	);
-	$bans = array();
+	$bans = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$bans[] = $row;
 
@@ -573,7 +573,7 @@ function BanEdit()
 		}
 	}
 
-	loadJavaScriptFile('suggest.js', array(), 'sbb_suggest');
+	loadJavaScriptFile('suggest.js', [], 'sbb_suggest');
 	$context['sub_template'] = 'admin_ban_manage';
 
 }
@@ -591,7 +591,7 @@ function list_getBanItems($start = 0, $items_per_page = 0, $sort = 0, $ban_group
 {
 	global $context, $smcFunc, $scripturl;
 
-	$ban_items = array();
+	$ban_items = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT
 			bi.id_ban, bi.hostname, bi.email_address, bi.id_member, bi.hits,
@@ -719,11 +719,11 @@ function banLoadAdditionalIPs($member_id)
 	// Borrowing a few language strings from profile.
 	loadLanguage('Profile');
 
-	$search_list = array();
+	$search_list = [];
 	call_integration_hook('integrate_load_addtional_ip_ban', array(&$search_list));
 	$search_list += array('ips_in_messages' => 'banLoadAdditionalIPsMember', 'ips_in_errors' => 'banLoadAdditionalIPsError');
 
-	$return = array();
+	$return = [];
 	foreach ($search_list as $key => $callable)
 		if (is_callable($callable))
 		{
@@ -752,7 +752,7 @@ function banLoadAdditionalIPsMember($member_id)
 	global $smcFunc;
 
 	// Find some additional IP's used by this member.
-	$message_ips = array();
+	$message_ips = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT DISTINCT poster_ip
 		FROM {db_prefix}messages
@@ -780,7 +780,7 @@ function banLoadAdditionalIPsError($member_id)
 {
 	global $smcFunc;
 
-	$error_ips = array();
+	$error_ips = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT DISTINCT ip
 		FROM {db_prefix}log_errors
@@ -808,7 +808,7 @@ function banEdit2()
 	checkSession();
 	validateToken('admin-bet');
 
-	$context['ban_errors'] = array();
+	$context['ban_errors'] = [];
 
 	// Adding or editing a ban group
 	if (isset($_POST['add_ban']) || isset($_POST['modify_ban']))
@@ -855,7 +855,7 @@ function banEdit2()
 	// Something went wrong somewhere... Oh well, let's go back.
 	if (!empty($context['ban_errors']))
 	{
-		$context['ban_suggestions'] = !empty($saved_triggers) ? $saved_triggers : array();
+		$context['ban_suggestions'] = !empty($saved_triggers) ? $saved_triggers : [];
 		$context['ban']['from_user'] = true;
 		$context['ban_suggestions'] = array_merge($context['ban_suggestions'], getMemberData((int) $_REQUEST['u']));
 
@@ -864,7 +864,7 @@ function banEdit2()
 			$context['ban_suggestions']['other_ips'] = banLoadAdditionalIPs($context['ban_suggestions']['member']['id']);
 		return BanEdit();
 	}
-	$context['ban_suggestions']['saved_triggers'] = !empty($saved_triggers) ? $saved_triggers : array();
+	$context['ban_suggestions']['saved_triggers'] = !empty($saved_triggers) ? $saved_triggers : [];
 
 	if (isset($_POST['ban_items']))
 	{
@@ -893,7 +893,7 @@ function banEdit2()
  *
  * @return array|bool An array with the triggers if there were errors or false on success
  */
-function saveTriggers($suggestions = array(), $ban_group, $member = 0, $ban_id = 0)
+function saveTriggers($suggestions = [], $ban_group, $member = 0, $ban_id = 0)
 {
 	global $context;
 
@@ -938,7 +938,7 @@ function saveTriggers($suggestions = array(), $ban_group, $member = 0, $ban_id =
  * @param bool|int $group_id The ID of the group these triggers are associated with or false if deleting them from all groups
  * @return bool Always returns true
  */
-function removeBanTriggers($items_ids = array(), $group_id = false)
+function removeBanTriggers($items_ids = [], $group_id = false)
 {
 	global $smcFunc, $scripturl;
 
@@ -951,8 +951,8 @@ function removeBanTriggers($items_ids = array(), $group_id = false)
 	if (!is_array($items_ids))
 		$items_ids = array($items_ids);
 
-	$log_info = array();
-	$ban_items = array();
+	$log_info = [];
+	$ban_items = [];
 
 	// First order of business: Load up the info so we can log this...
 	$request = $smcFunc['db_query']('', '
@@ -1091,7 +1091,7 @@ function removeBanGroups($group_ids)
  * @param array $ids Empty array to clear the ban log or the IDs of the log entries to remove
  * @return bool Returns true if successful or false if $ids is invalid
  */
-function removeBanLogs($ids = array())
+function removeBanLogs($ids = [])
 {
 	global $smcFunc;
 
@@ -1138,8 +1138,8 @@ function validateTriggers(&$triggers)
 	if (empty($triggers))
 		$context['ban_errors'][] = 'ban_empty_triggers';
 
-	$ban_triggers = array();
-	$log_info = array();
+	$ban_triggers = [];
+	$log_info = [];
 
 	foreach ($triggers as $key => $value)
 	{
@@ -1277,7 +1277,7 @@ function validateTriggers(&$triggers)
  * @param array $logs The log data
  * @return bool Whether or not the action was successful
  */
-function addTriggers($group_id = 0, $triggers = array(), $logs = array())
+function addTriggers($group_id = 0, $triggers = [], $logs = [])
 {
 	global $smcFunc, $context;
 
@@ -1303,7 +1303,7 @@ function addTriggers($group_id = 0, $triggers = array(), $logs = array())
 		'ip_high' => 'inet',
 	);
 
-	$insertTriggers = array();
+	$insertTriggers = [];
 	foreach ($triggers as $key => $trigger)
 	{
 		// Exceptions, exceptions, exceptions...always exceptions... :P
@@ -1342,7 +1342,7 @@ function addTriggers($group_id = 0, $triggers = array(), $logs = array())
  * @param array $trigger An array of triggers
  * @param array $logs An array of log info
  */
-function updateTriggers($ban_item = 0, $group_id = 0, $trigger = array(), $logs = array())
+function updateTriggers($ban_item = 0, $group_id = 0, $trigger = [], $logs = [])
 {
 	global $smcFunc, $context;
 
@@ -1424,7 +1424,7 @@ function logTriggersUpdates($logs, $new = true, $removal = false)
  * @param array $ban_info An array of info about the ban group. Should have name and may also have an id.
  * @return int The ban group's ID
  */
-function updateBanGroup($ban_info = array())
+function updateBanGroup($ban_info = [])
 {
 	global $smcFunc, $context;
 
@@ -1513,7 +1513,7 @@ function updateBanGroup($ban_info = array())
  * @param array $ban_info An array containing 'name', which is the name of the ban group
  * @return int The ban group's ID
  */
-function insertBanGroup($ban_info = array())
+function insertBanGroup($ban_info = [])
 {
 	global $smcFunc, $context;
 
@@ -1607,7 +1607,7 @@ function BanEditTrigger()
 		redirectexit('action=admin;area=ban;sa=edit' . (!empty($ban_group) ? ';bg=' . $ban_group : ''));
 	}
 
-	loadJavaScriptFile('suggest.js', array(), 'sbb_suggest');
+	loadJavaScriptFile('suggest.js', [], 'sbb_suggest');
 
 	if (empty($ban_id))
 	{
@@ -1903,7 +1903,7 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 			'max' => $items_per_page,
 		)
 	);
-	$ban_triggers = array();
+	$ban_triggers = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$ban_triggers[] = $row;
 	$smcFunc['db_free_result']($request);
@@ -2124,7 +2124,7 @@ function list_getBanLogEntries($start, $items_per_page, $sort)
 			'items' => $items_per_page,
 		)
 	);
-	$log_entries = array();
+	$log_entries = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$row['ip'] = $row['ip'] === null ? $dash : inet_dtop($row['ip']);
@@ -2230,9 +2230,9 @@ function updateBanMembers()
 {
 	global $smcFunc;
 
-	$updates = array();
-	$allMembers = array();
-	$newMembers = array();
+	$updates = [];
+	$allMembers = [];
+	$newMembers = [];
 
 	// Start by getting all active bans - it's quicker doing this in parts...
 	$request = $smcFunc['db_query']('', '
@@ -2249,9 +2249,9 @@ function updateBanMembers()
 			'blank_string' => '',
 		)
 	);
-	$memberIDs = array();
-	$memberEmails = array();
-	$memberEmailWild = array();
+	$memberIDs = [];
+	$memberEmails = [];
+	$memberEmailWild = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if ($row['id_member'])
@@ -2268,8 +2268,8 @@ function updateBanMembers()
 	$smcFunc['db_free_result']($request);
 
 	// Build up the query.
-	$queryPart = array();
-	$queryValues = array();
+	$queryPart = [];
+	$queryValues = [];
 	if (!empty($memberIDs))
 	{
 		$queryPart[] = 'mem.id_member IN ({array_string:member_ids})';
@@ -2365,7 +2365,7 @@ function getMemberData($id)
 {
 	global $smcFunc;
 
-	$suggestions = array();
+	$suggestions = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT id_member, real_name, member_ip, email_address
 		FROM {db_prefix}members

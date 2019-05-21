@@ -206,7 +206,7 @@ function ShowAdminHelp()
 		fatal_lang_error('no_access', false);
 
 	if (!isset($helptxt))
-		$helptxt = array();
+		$helptxt = [];
 
 	// Load the admin help language file and template.
 	loadLanguage('Help');

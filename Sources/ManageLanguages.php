@@ -199,7 +199,7 @@ function list_getLanguages()
 {
 	global $settings, $smcFunc, $language, $context, $txt;
 
-	$languages = array();
+	$languages = [];
 	// Keep our old entries.
 	$old_txt = $txt;
 	$backup_actual_theme_dir = $settings['actual_theme_dir'];
@@ -282,7 +282,7 @@ function ModifyLanguageSettings($return_config = false)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = array(
-		'language' => array('language', $txt['default_language'], 'file', 'select', array(), null, 'disabled' => $settings_not_writable),
+		'language' => array('language', $txt['default_language'], 'file', 'select', [], null, 'disabled' => $settings_not_writable),
 		array('userLanguage', $txt['userLanguage'], 'db', 'check', null, 'userLanguage'),
 	);
 
@@ -369,7 +369,7 @@ function ModifyLanguage()
 	$smcFunc['db_free_result']($request);
 
 	// This will be where we look
-	$lang_dirs = array();
+	$lang_dirs = [];
 
 	// Does a hook need to add in some additional places to look for languages?
 	call_integration_hook('integrate_modifylanguages', array(&$themes, &$lang_dirs));
@@ -390,7 +390,7 @@ function ModifyLanguage()
 	$current_file = $file_id ? $lang_dirs[$theme_id] . '/' . $file_id . '.' . $context['lang_id'] . '.php' : '';
 
 	// Now for every theme get all the files and stick them in context!
-	$context['possible_files'] = array();
+	$context['possible_files'] = [];
 	foreach ($lang_dirs as $theme => $theme_dir)
 	{
 		// Open it up.
@@ -405,7 +405,7 @@ function ModifyLanguage()
 				$context['possible_files'][$theme] = array(
 					'id' => $theme,
 					'name' => $themes[$theme]['name'],
-					'files' => array(),
+					'files' => [],
 				);
 
 			$context['possible_files'][$theme]['files'][] = array(
@@ -518,7 +518,7 @@ function ModifyLanguage()
 	$txt = $old_txt;
 
 	// Are we saving?
-	$save_strings = array();
+	$save_strings = [];
 	if (isset($_POST['save_entries']) && !empty($_POST['entry']))
 	{
 		checkSession();
@@ -538,7 +538,7 @@ function ModifyLanguage()
 	{
 		$context['entries_not_writable_message'] = is_writable($current_file) ? '' : sprintf($txt['lang_entries_not_writable'], $current_file);
 
-		$entries = array();
+		$entries = [];
 		// We can't just require it I'm afraid - otherwise we pass in all kinds of variables!
 		$multiline_cache = '';
 		foreach (file($current_file) as $line)
@@ -572,9 +572,9 @@ function ModifyLanguage()
 		}
 
 		// These are the entries we can definitely save.
-		$final_saves = array();
+		$final_saves = [];
 
-		$context['file_entries'] = array();
+		$context['file_entries'] = [];
 		foreach ($entries as $entryKey => $entryValue)
 		{
 			// Ignore some things we set separately.
@@ -594,7 +594,7 @@ function ModifyLanguage()
 				$cur_index = 0;
 				$save_cache = array(
 					'enabled' => false,
-					'entries' => array(),
+					'entries' => [],
 				);
 				foreach ($entryValue['entry'] as $id => $subValue)
 				{
@@ -629,7 +629,7 @@ function ModifyLanguage()
 				if ($save_cache['enabled'])
 				{
 					// Format the string, checking the indexes first.
-					$items = array();
+					$items = [];
 					$cur_index = 0;
 					foreach ($save_cache['entries'] as $k2 => $v2)
 					{

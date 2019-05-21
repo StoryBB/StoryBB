@@ -197,8 +197,8 @@ function SavePMDraft(&$post_errors, $recipientList)
 	// determine who this is being sent to
 	if (isset($_REQUEST['xml']))
 	{
-		$recipientList['to'] = isset($_POST['recipient_to']) ? explode(',', $_POST['recipient_to']) : array();
-		$recipientList['bcc'] = isset($_POST['recipient_bcc']) ? explode(',', $_POST['recipient_bcc']) : array();
+		$recipientList['to'] = isset($_POST['recipient_to']) ? explode(',', $_POST['recipient_to']) : [];
+		$recipientList['bcc'] = isset($_POST['recipient_bcc']) ? explode(',', $_POST['recipient_bcc']) : [];
 	}
 	elseif (!empty($draft_info['to_list']) && empty($recipientList))
 		$recipientList = sbb_json_decode($draft_info['to_list'], true);
@@ -366,7 +366,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 			$recipients['bcc'] = array_map('intval', $recipients['bcc']);
 
 			// pretend we messed up to populate the pm message form
-			messagePostError(array(), array(), $recipients);
+			messagePostError([], [], $recipients);
 			return true;
 		}
 	}
@@ -425,7 +425,7 @@ function ShowDrafts($member_id, $topic = false, $draft_type = 0)
 	if (($draft_type === 0 && empty($context['drafts_save'])) || ($draft_type === 1 && empty($context['drafts_pm_save'])) || empty($member_id))
 		return false;
 
-	$context['drafts'] = array();
+	$context['drafts'] = [];
 
 	// has a specific draft has been selected?  Load it up if there is not a message already in the editor
 	if (isset($_REQUEST['id_draft']) && empty($_POST['subject']) && empty($_POST['message']))
@@ -600,7 +600,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 
 	// Start counting at the number of the first message displayed.
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
-	$context['posts'] = array();
+	$context['posts'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Censor....
@@ -756,7 +756,7 @@ function showPMDrafts($memID = -1)
 
 	// Start counting at the number of the first message displayed.
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
-	$context['posts'] = array();
+	$context['posts'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Censor....
@@ -775,10 +775,10 @@ function showPMDrafts($memID = -1)
 
 		// Have they provide who this will go to?
 		$recipients = array(
-			'to' => array(),
-			'bcc' => array(),
+			'to' => [],
+			'bcc' => [],
 		);
-		$recipient_ids = (!empty($row['to_list'])) ? sbb_json_decode($row['to_list'], true) : array();
+		$recipient_ids = (!empty($row['to_list'])) ? sbb_json_decode($row['to_list'], true) : [];
 
 		// @todo ... this is a bit ugly since it runs an extra query for every message, do we want this?
 		// at least its only for draft PM's and only the user can see them ... so not heavily used .. still
