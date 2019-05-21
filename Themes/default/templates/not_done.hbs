@@ -8,19 +8,19 @@
 			<div class="windowbg2 noup">
 				{{{txt.not_done_reason}}}
 
-				{{#if context.continue_percent}}
+{{#if context.continue_percent}}
 				<div class="progress_bar">
 					<div class="full_bar">{{{context.continue_percent}}}%</div>
 					<div class="green_percent" style="width: {{{context.continue_percent}}}%;">&nbsp;</div>
 				</div>
-				{{/if}}
+{{/if}}
 
-				{{#if context.substep_enabled}}
+{{#if context.substep_enabled}}
 				<div class="progress_bar">
 					<div class="full_bar">{{{context.substep_title}}} ({{{context.substep_continue_percent}}}%)</div>
 					<div class="blue_percent" style="width: {{{context.substep_continue_percent}}}%;">&nbsp;</div>
 				</div>
-				{{/if}}
+{{/if}}
 
 				<form action="{{{scripturl}}}{{{context.continue_get_data}}}" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 					<input type="submit" name="cont" value="{{{txt.not_done_continue}}}" class="button_submit">

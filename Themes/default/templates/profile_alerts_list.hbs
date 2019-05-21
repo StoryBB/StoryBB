@@ -5,15 +5,15 @@
 			</h3>
 		</div>
 
-		{{#unless context.alerts}}
-			<div class="information">
-				{{{txt.alerts_none}}}
-			</div>
-		{{else}}
-			<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=showalerts;save" method="post" accept-charset="UTF-8" id="mark_all">
-				<table id="alerts" class="table_grid">
+{{#unless context.alerts}}
+		<div class="information">
+			{{{txt.alerts_none}}}
+		</div>
+{{else}}
+		<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=showalerts;save" method="post" accept-charset="UTF-8" id="mark_all">
+			<table id="alerts" class="table_grid">
 
-				{{#each context.alerts}}
+	{{#each context.alerts}}
 				<tr class="windowbg">
 					<td>{{{text}}}</td>
 					<td>{{{time}}}</td>
@@ -25,7 +25,7 @@
 						</ul>
 					</td>
 				</tr>
-				{{/each}}
+	{{/each}}
 
 			</table>
 			<div class="pagesection">
@@ -44,4 +44,4 @@
 				</div>
 			</div>
 		</form>
-		{{/unless}}
+{{/unless}}

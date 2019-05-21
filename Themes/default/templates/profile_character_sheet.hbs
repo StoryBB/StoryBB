@@ -5,49 +5,49 @@
 				</h3>
 			</div>
 
-			{{#if context.character.sheet_details.sheet_text}}
-				{{#unless context.character.sheet_details.id_approver}}
-					<div class="noticebox">
-						{{{txt.char_sheet_not_approved}}}
-						{{#if context.character.sheet_details.approval_state}}
-							{{{txt.char_sheet_waiting_approval}}}
-						{{/if}}
-					</div>
-				{{/unless}}
+{{#if context.character.sheet_details.sheet_text}}
+	{{#unless context.character.sheet_details.id_approver}}
+			<div class="noticebox">
+				{{{txt.char_sheet_not_approved}}}
+				{{#if context.character.sheet_details.approval_state}}
+					{{{txt.char_sheet_waiting_approval}}}
+				{{/if}}
+			</div>
+	{{/unless}}
 
-				{{> button_strip button_strip=context.sheet_buttons txt=txt direction='right'}}
+			{{> button_strip button_strip=context.sheet_buttons txt=txt direction='right'}}
 
-				<div class="clear"></div>
-				<div class="windowbg">
-					{{{context.character.sheet_details.sheet_text}}}
+			<div class="clear"></div>
+			<div class="windowbg">
+				{{{context.character.sheet_details.sheet_text}}}
+			</div>
+{{else}}
+			<div class="windowbg2">
+				{{{txt.char_sheet_none}}}
+			</div>
+
+			{{> button_strip button_strip=context.sheet_buttons txt=txt direction='right'}}
+
+			<div class="clear"></div>
+{{/if}}
+
+{{#if context.show_sheet_comments}}
+			<br>
+			<div class="cat_bar">
+				<h3 class="catbg">
+					{{{txt.char_sheet_comments}}}
+				</h3>
+			</div>
+			<div id="quickReplyOptions">
+				<div class="roundframe">
+					<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=sheet" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);">
+						{{{richtexteditor 'message' 'smileyBox_message' 'bbcBox_message'}}}
+						<br class="clear_right">
+						<span id="post_confirm_buttons">
+							<input type="submit" value="{{{txt.char_sheet_add_comment}}}" name="post" class="button_submit">
+							{{session_form}}
+						</span>
+					</form>
 				</div>
-			{{else}}
-				<div class="windowbg2">
-					{{{txt.char_sheet_none}}}
-				</div>
-
-				{{> button_strip button_strip=context.sheet_buttons txt=txt direction='right'}}
-
-				<div class="clear"></div>
-			{{/if}}
-
-			{{#if context.show_sheet_comments}}
-				<br>
-				<div class="cat_bar">
-					<h3 class="catbg">
-						{{{txt.char_sheet_comments}}}
-					</h3>
-				</div>
-				<div id="quickReplyOptions">
-					<div class="roundframe">
-						<form action="{{scripturl}}?action=profile;u={{context.id_member}};area=characters;char={{context.character.id_character}};sa=sheet" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(this);">
-							{{{richtexteditor 'message' 'smileyBox_message' 'bbcBox_message'}}}
-							<br class="clear_right">
-							<span id="post_confirm_buttons">
-								<input type="submit" value="{{{txt.char_sheet_add_comment}}}" name="post" class="button_submit">
-								{{session_form}}
-							</span>
-						</form>
-					</div>
-				</div>
-			{{/if}}
+			</div>
+{{/if}}

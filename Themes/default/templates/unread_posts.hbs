@@ -5,101 +5,105 @@
 			<input type="hidden" name="qaction" value="markread">
 			<input type="hidden" name="redirect_url" value="action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}}">
 
-			{{#if context.topics}}
-				<div class="pagesection">
-					{{{context.menu_separator}}}<a href="#bot" class="topbottom floatleft">{{{txt.go_down}}}</a>
-					<div class="pagelinks floatleft">{{{context.page_index}}}</div>
-					{{#if context.recent_buttons}}
-						{{> button_strip button_strip=context.recent_buttons txt=txt direction='right'}}
-					{{/if}}
-				</div>
+{{#if context.topics}}
+			<div class="pagesection">
+				{{{context.menu_separator}}}<a href="#bot" class="topbottom floatleft">{{{txt.go_down}}}</a>
+				<div class="pagelinks floatleft">{{{context.page_index}}}</div>
 
-				<div id="unread">
-					<div id="topic_header" class="title_bar">
-						<div class="board_icon"></div>
+	{{#if context.recent_buttons}}
+				{{> button_strip button_strip=context.recent_buttons txt=txt direction='right'}}
+	{{/if}}
+			</div>
+
+			<div id="unread">
+				<div id="topic_header" class="title_bar">
+					<div class="board_icon"></div>
+					<div class="info">
+						<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=subject{{#if (and (eq context.sort_by 'subject') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.subject}}}{{#if (eq context.sort_by 'subject')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+					</div>
+					<div class="board_stats centertext">
+						<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=replies{{#if (and (eq context.sort_by 'replies') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.replies}}}{{#if (eq context.sort_by 'replies')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+					</div>
+					<div class="lastpost">
+						<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=last_post{{#if (and (eq context.sort_by 'last_post') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.last_post}}}{{#if (eq context.sort_by 'last_post')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+					</div>
+					<div class="moderation">
+						<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
+					</div>
+				</div>
+				<div id="topic_container">
+
+	{{#each context.topics}}
+					<div class="{{{css_class}}}">
+						<div class="board_icon">
+							<img src="{{{first_post.icon_url}}}" alt="">
+						</div>
 						<div class="info">
-							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=subject{{#if (and (eq context.sort_by 'subject') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.subject}}}{{#if (eq context.sort_by 'subject')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+							{{! // Now we handle the icons }}
+							<div class="icons floatright">
+								{{#if is_locked}} <span class="main_icons lock"></span>{{/if}}
+								{{#if is_sticky}} <span class="main_icons sticky"></span>{{/if}}
+								{{#if is_poll}} <span class="main_icons poll"></span>{{/if}}
+							</div>
+							<div class="first_poster">
+								{{{first_post.member.avatar.image}}}
+								{{#if (eq_coerce is_posted_in 1)}}<img src="{{{../context.user.avatar.href}}}" class="avatar participation" alt="{{{../txt.participation_caption}}}" title="{{{../txt.participation_caption}}}">{{/if}}
+							</div>
+							<div class="msg_container">
+								<div class="recent_title">
+									<a href="{{{new_href}}}" id="newicon{{{first_post.id}}}"><span class="new_posts">{{{../txt.new}}}</span></a>
+									{{#if is_sticky}}<strong>{{/if}}<span class="preview" title="{{#if modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}"><span id="msg_{{first_post.id}}">{{{first_post.link}}}</span></span>{{#if is_sticky}}</strong>{{/if}}
+								</div>
+								<div>
+									{{{first_post.started_by}}}
+									<small id="pages{{{first_post.id}}}">&nbsp;{{{pages}}}</small>
+								</div>
+							</div>
 						</div>
 						<div class="board_stats centertext">
-							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=replies{{#if (and (eq context.sort_by 'replies') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.replies}}}{{#if (eq context.sort_by 'replies')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+							<p>
+								{{{replies}}} {{{../txt.replies}}}
+								<br>
+								{{{views}}} {{{../txt.views}}}
+							</p>
 						</div>
 						<div class="lastpost">
-							<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=last_post{{#if (and (eq context.sort_by 'last_post') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.last_post}}}{{#if (eq context.sort_by 'last_post')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
+							{{{last_post.member.avatar.image}}}
+							{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}
 						</div>
+
 						<div class="moderation">
-							<input type="checkbox" onclick="invertAll(this, this.form, 'topics[]');">
+							<input type="checkbox" name="topics[]" value="{{id}}">
 						</div>
+
 					</div>
-					<div id="topic_container">
-					{{#each context.topics}}
-						<div class="{{{css_class}}}">
-							<div class="board_icon">
-								<img src="{{{first_post.icon_url}}}" alt="">
-							</div>
-							<div class="info">
-								{{! // Now we handle the icons }}
-								<div class="icons floatright">
-									{{#if is_locked}} <span class="main_icons lock"></span>{{/if}}
-									{{#if is_sticky}} <span class="main_icons sticky"></span>{{/if}}
-									{{#if is_poll}} <span class="main_icons poll"></span>{{/if}}
-								</div>
-								<div class="first_poster">
-									{{{first_post.member.avatar.image}}}
-									{{#if (eq_coerce is_posted_in 1)}}<img src="{{{../context.user.avatar.href}}}" class="avatar participation" alt="{{{../txt.participation_caption}}}" title="{{{../txt.participation_caption}}}">{{/if}}
-								</div>
-								<div class="msg_container">
-									<div class="recent_title">
-										<a href="{{{new_href}}}" id="newicon{{{first_post.id}}}"><span class="new_posts">{{{../txt.new}}}</span></a>
-										{{#if is_sticky}}<strong>{{/if}}<span class="preview" title="{{#if modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}"><span id="msg_{{first_post.id}}">{{{first_post.link}}}</span></span>{{#if is_sticky}}</strong>{{/if}}
-									</div>
-									<div>
-										{{{first_post.started_by}}}
-										<small id="pages{{{first_post.id}}}">&nbsp;{{{pages}}}</small>
-									</div>
-								</div>
-							</div>
-							<div class="board_stats centertext">
-								<p>
-									{{{replies}}} {{{../txt.replies}}}
-									<br>
-									{{{views}}} {{{../txt.views}}}
-								</p>
-							</div>
-							<div class="lastpost">
-								{{{last_post.member.avatar.image}}}
-								{{textTemplate ../txt.last_post_topic (concat '<a href="' last_post.href '">' last_post.time '</a>') last_post.member.link}}
-							</div>
+	{{/each}}
 
-							<div class="moderation">
-								<input type="checkbox" name="topics[]" value="{{id}}">
-							</div>
-
-						</div>
-					{{/each}}
-					{{#unless context.topics}}
-						<div style="display:none"></div>
-					{{/unless}}
-					</div>
+	{{#unless context.topics}}
+					<div style="display:none"></div>
+	{{/unless}}
 				</div>
+			</div>
 
-				<div class="pagesection">
-					{{#if context.recent_buttons}}
-						{{> button_strip button_strip=context.recent_buttons txt=txt direction='right'}}
-					{{/if}}
-					{{{context.menu_separator}}}<a href="#recent" class="topbottom floatleft">{{{txt.go_up}}}</a>
-					<div class="pagelinks">{{{context.page_index}}}</div>
-				</div>
+			<div class="pagesection">
 
-			{{else}}
-				<div class="cat_bar">
-					<h3 class="catbg centertext">
-						{{#if context.showing_all_topics}}{{{txt.topic_alert_none}}}{{else}}{{{txt.unread_topics_visit_none}}}{{/if}}
-					</h3>
-				</div>
-			{{/if}}
+	{{#if context.recent_buttons}}
+					{{> button_strip button_strip=context.recent_buttons txt=txt direction='right'}}
+	{{/if}}
+				{{{context.menu_separator}}}<a href="#recent" class="topbottom floatleft">{{{txt.go_up}}}</a>
+				<div class="pagelinks">{{{context.page_index}}}</div>
+			</div>
+
+{{else}}
+			<div class="cat_bar">
+				<h3 class="catbg centertext">
+					{{#if context.showing_all_topics}}{{{txt.topic_alert_none}}}{{else}}{{{txt.unread_topics_visit_none}}}{{/if}}
+				</h3>
+			</div>
+{{/if}}
 		</form>
 	</div>
 
-	{{#unless context.no_topic_listing}}
-		{{> topic_legend}}
-	{{/unless}}
+{{#unless context.no_topic_listing}}
+	{{> topic_legend}}
+{{/unless}}

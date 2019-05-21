@@ -18,27 +18,29 @@
 	</div>
 	<br>
 
-	{{! The table inbetween the first and second table shows links to the whois server for every region. }}
-	{{#if context.single_ip}}
-		<div class="cat_bar">
-			<h3 class="catbg">{{{txt.whois_title}}} {{{context.ip}}}</h3>
-		</div>
-		<div class="windowbg2 noup">
-			{{#each context.whois_servers}}
-			<a href="{{{url}}}" target="_blank" rel="noopener"{{#if ../context.auto_whois_server}}{{#if (eq ../context.auto_whois_server.name name)}} style="font-weight: bold;"{{/if}}{{/if}}>{{{name}}}</a><br>
-			{{/each}}
-		</div>
-		<br>
-	{{/if}}
+{{! The table inbetween the first and second table shows links to the whois server for every region. }}
+{{#if context.single_ip}}
+	<div class="cat_bar">
+		<h3 class="catbg">{{{txt.whois_title}}} {{{context.ip}}}</h3>
+	</div>
+	<div class="windowbg2 noup">
+
+	{{#each context.whois_servers}}
+		<a href="{{{url}}}" target="_blank" rel="noopener"{{#if ../context.auto_whois_server}}{{#if (eq ../context.auto_whois_server.name name)}} style="font-weight: bold;"{{/if}}{{/if}}>{{{name}}}</a><br>
+	{{/each}}
+
+	</div>
+	<br>
+{{/if}}
 
 	{{! The second table lists all the members who have been logged as using this IP address. }}
 	<div class="cat_bar">
 		<h3 class="catbg">{{{txt.members_from_ip}}} {{{context.ip}}}</h3>
 	</div>
 
-	{{#unless context.ips}}
+{{#unless context.ips}}
 		<p class="windowbg2 description"><em>{{{txt.no_members_from_ip}}}</em></p>
-	{{else}}
+{{else}}
 		<table class="table_grid">
 			<thead>
 				<tr class="title_bar">
@@ -48,24 +50,25 @@
 			</thead>
 			<tbody>
 
-			{{! Loop through each of the members and display them. }}
-			{{#each context.ips}}
+	{{! Loop through each of the members and display them. }}
+	{{#each context.ips}}
 				<tr class="windowbg">
 					<td><a href="{{{../context.base_url}}};searchip={{@key}}">{{@key}}</a></td>
 					<td>{{{join . ', '}}}</td>
 				</tr>
-			{{/each}}
+	{{/each}}
+
 			</tbody>
 		</table>
-	{{/unless}}
+{{/unless}}
 
 	<br>
 	{{genericlist 'track_message_list'}}
 	<br>
 	{{genericlist 'track_user_list'}}
 
-	{{! 3rd party integrations may have added additional tracking. }}
-	{{#each context.additional_track_lists}}
-		<br>
-		{{genericlist .}}
-	{{/each}}
+{{! 3rd party integrations may have added additional tracking. }}
+{{#each context.additional_track_lists}}
+	<br>
+	{{genericlist .}}
+{{/each}}

@@ -83,8 +83,7 @@
 			{{>button_strip button_strip=context.conversation_buttons direction='right'}}
 		</div>
 
-		{{#if context.messages}}
-
+{{#if context.messages}}
 		<div class="cat_bar">
 			<h3 class="catbg">
 				<span id="author">{{txt.author}}</span>
@@ -96,10 +95,11 @@
 			{{>button_strip button_strip=context.conversation_buttons direction='right'}}
 		</div>
 
-		{{#each context.messages}}
+	{{#each context.messages}}
 		<div class="windowbg">
 			<div class="poster">
-				{{#if custom_fields.above_member}}
+
+		{{#if custom_fields.above_member}}
 				<div class="custom_fields_above_member">
 					<ul class="nolist">
 						{{#each custom_fields.above_member}}
@@ -107,18 +107,25 @@
 						{{/each}}
 					</ul>
 				</div>
-				{{/if}}
+		{{/if}}
+
 				<h4>
 					<a id="msg{{id}}"></a>
-					{{#unless member.is_guest}}<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span> {{{member.link}}}{{/unless}}
+
+		{{#unless member.is_guest}}
+					<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span> {{{member.link}}}
+		{{/unless}}
+
 				</h4>
 				<ul class="user_info">
-					{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
+
+		{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
 					<li class="avatar">
 						<a href="{{../scripturl}}?action=profile;u={{member.id}}">{{{member.avatar.image}}}</a>
 					</li>
-					{{/if}}
-					{{#if custom_fields.below_avatar}}
+		{{/if}}
+
+		{{#if custom_fields.below_avatar}}
 					<div class="custom_fields_above_member">
 						<ul class="nolist">
 							{{#each custom_fields.below_avatar}}
@@ -126,39 +133,62 @@
 							{{/each}}
 						</ul>
 					</div>
-					{{/if}}
-					{{#unless member.is_guest}}<li class="icons">{{{member.ooc_group.badges}}}</li>{{/unless}}
-					{{#if member.ooc_group.title}}<li class="membergroup">{{{member.ooc_group.title}}}</li>{{/if}}
-					{{#unless member.is_guest}}
-						{{#unless ../modSettings.hide_post_group}}{{#if member.post_group}}<li class="postgroup">{{member.post_group}}</li>{{/if}}{{/unless}}
-						{{#unless ../context.disabled_fields.posts}}<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>{{/unless}}
-						{{#if custom_fields.icons}}
-						<li class="im_icons">
-							<ol>
-								{{#each custom_fields.icons}}
-								<li class="custom {{col_name}}">{{{value}}}</li>
-								{{/each}}
-							</ol>
-						</li>
-						{{/if}}
-					{{/unless}}
-					{{#if member.show_profile_buttons}}
-					<li class="profile">
-						<ol class="profile_icons">
-							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-									<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener" class="main_icons www centericon"></a></li>
-							{{/if}}
-							{{#if member.show_email}}
-								<li><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{txt.email}}"></a></li>
-							{{/if}}
-							{{#if ../context.can_send_pm}}
-								<li><a href="{{../scripturl}}action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}">
-									<span class="main_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}"></span></a></li>
-							{{/if}}
+		{{/if}}
+
+		{{#unless member.is_guest}}
+					<li class="icons">{{{member.ooc_group.badges}}}</li>
+		{{/unless}}
+
+		{{#if member.ooc_group.title}}
+					<li class="membergroup">{{{member.ooc_group.title}}}</li>
+		{{/if}}
+
+		{{#unless member.is_guest}}
+			{{#unless ../modSettings.hide_post_group}}
+				{{#if member.post_group}}
+					<li class="postgroup">{{member.post_group}}</li>
+				{{/if}}
+			{{/unless}}
+
+			{{#unless ../context.disabled_fields.posts}}
+					<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>
+			{{/unless}}
+
+			{{#if custom_fields.icons}}
+					<li class="im_icons">
+						<ol>
+							{{#each custom_fields.icons}}
+							<li class="custom {{col_name}}">{{{value}}}</li>
+							{{/each}}
 						</ol>
 					</li>
-					{{/if}}
-					{{#if custom_fields.standard}}
+			{{/if}}
+		{{/unless}}
+
+		{{#if member.show_profile_buttons}}
+					<li class="profile">
+						<ol class="profile_icons">
+
+			{{#if (and member.website.url (not ../context.disabled_fields.website))}}
+							<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener" class="main_icons www centericon"></a></li>
+			{{/if}}
+
+			{{#if member.show_email}}
+							<li><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{txt.email}}"></a></li>
+			{{/if}}
+
+			{{#if ../context.can_send_pm}}
+							<li>
+								<a href="{{../scripturl}}action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}">
+									<span class="main_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}"></span>
+								</a>
+							</li>
+			{{/if}}
+						</ol>
+					</li>
+		{{/if}}
+
+		{{#if custom_fields.standard}}
 					<li class="im_icons">
 						<ol>
 							{{#each custom_fields.standard}}
@@ -166,13 +196,17 @@
 							{{/each}}
 						</ol>
 					</li>
-					{{/if}}
-					{{#if member.can_see_warning}}
-					<li class="warning">{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
-					<span class="main_icons warning_{{member.warning_status}}"></span>{{#if ../context.can_issue_warning}}</a>{{/if}}
-					<span class="warn_{{member.warning_status}}">{{get_text (concat 'warn_' member.warning_status)}}</span></li>
-					{{/if}}
-					{{#if custom_fields.bottom_poster}}
+		{{/if}}
+
+		{{#if member.can_see_warning}}
+					<li class="warning">
+						{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
+						<span class="main_icons warning_{{member.warning_status}}"></span>{{#if ../context.can_issue_warning}}</a>{{/if}}
+						<span class="warn_{{member.warning_status}}">{{get_text (concat 'warn_' member.warning_status)}}</span>
+					</li>
+		{{/if}}
+
+		{{#if custom_fields.bottom_poster}}
 					<li class="im_icons">
 						<ol>
 							{{#each custom_fields.bottom_poster}}
@@ -180,9 +214,11 @@
 							{{/each}}
 						</ol>
 					</li>
-				{{/if}}
+		{{/if}}
+
 				</ul>
-			</div>
+			</div><!-- .poster -->
+
 			<div class="postarea">
 				<div class="flow_hidden">
 					<div class="keyinfo">
@@ -203,31 +239,37 @@
 				</div>
 				<div class="post">
 					<div class="inner" id="msg_{{id}}">{{{body}}}</div>
-					{{#if (or can_report ../context.can_send_pm)}}
+
+		{{#if (or can_report ../context.can_send_pm)}}
 					<div class="under_message">
-						{{#if (and can_see_ip member.ip)}}
+
+			{{#if (and can_see_ip member.ip)}}
 						<a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile{{/if}};area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}">{{{../txt.ip}}}: {{member.ip}}</a>
-						{{/if}}
-						{{#if can_report}}
+			{{/if}}
+
+			{{#if can_report}}
 						<a href="{{../scripturl}}?action=pm;sa=report;l={{../context.current_label_id}};pmsg={{id}}" class="floatright">{{../txt.pm_report_to_admin}}</a>
-						{{/if}}
+			{{/if}}
+
 						<ul class="quickbuttons">
-							{{#if ../context.can_send_pm}}
-								{{#unless member.is_guest}}
-									{{#if (gt number_recipients 1)}}
-										<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u=all" class="main_icons reply_all_button">{{../txt.reply_to_all}}</a></li>
+
+			{{#if ../context.can_send_pm}}
+				{{#unless member.is_guest}}
+					{{#if (gt number_recipients 1)}}
+							<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u=all" class="main_icons reply_all_button">{{../txt.reply_to_all}}</a></li>
 									{{/if}}
-									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}" class="main_icons reply_button">{{../txt.reply}}</a></li>
-									<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote{{#unless (eq ../context.folder 'sent')}};u={{member.id}}{{/unless}}" class="main_icons quote">{{../txt.quote_action}}</a></li>
-								{{else}}
-								<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote" class="main_icons quote">{{../txt.reply_quote}}</a></li>
-								{{/unless}}
-								<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{session_url}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.delete}}</a></li>
-							{{/if}}
+							<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}" class="main_icons reply_button">{{../txt.reply}}</a></li>
+							<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote{{#unless (eq ../context.folder 'sent')}};u={{member.id}}{{/unless}}" class="main_icons quote">{{../txt.quote_action}}</a></li>
+					{{else}}
+							<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote" class="main_icons quote">{{../txt.reply_quote}}</a></li>
+				{{/unless}}
+							<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{session_url}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.delete}}</a></li>
+			{{/if}}
 						</ul>
 					</div>
-					{{/if}}
-					{{#if custom_fields.above_signature}}
+		{{/if}}
+
+		{{#if custom_fields.above_signature}}
 					<div class="custom_fields_above_signature">
 						<ul class="nolist">
 							{{#each custom_fields.above_signature}}
@@ -235,11 +277,13 @@
 							{{/each}}
 						</ul>
 					</div>
-					{{/if}}
-					{{#if (and member.signature (not ../options.show_no_signatures) context.signatures_enabled)}}
+		{{/if}}
+
+		{{#if (and member.signature (not ../options.show_no_signatures) context.signatures_enabled)}}
 					<div class="signature">{{{member.signature}}}</div>
-					{{/if}}
-					{{#if custom_fields.below_signature}}
+		{{/if}}
+
+		{{#if custom_fields.below_signature}}
 					<div class="custom_fields_below_signature">
 						<ul class="nolist">
 							{{#each custom_fields.below_signature}}
@@ -247,20 +291,21 @@
 							{{/each}}
 						</ul>
 					</div>
-					{{/if}}
+		{{/if}}
+
 				</div>
 			</div>
-			<div class="moderatorbar">
-			</div>
+			<div class="moderatorbar"></div>
 		</div>
-		{{/each}}
+	{{/each}}
 
 	{{#if context.conversation_buttons}}
-	<div class="pagesection">
-		{{>button_strip button_strip=context.conversation_buttons direction='right'}}
-	</div>
+		<div class="pagesection">
+			{{>button_strip button_strip=context.conversation_buttons direction='right'}}
+		</div>
 	{{/if}}
 	<br>
-	{{/if}}
+{{/if}}
+
 	{{session_form}}
 </form>

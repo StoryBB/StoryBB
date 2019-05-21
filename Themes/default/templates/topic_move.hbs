@@ -12,27 +12,37 @@
 						</dt>
 						<dd>
 							<select name="toboard">
-								{{#each context.categories}}
+
+{{#each context.categories}}
 								<optgroup label="{{{name}}}">
-									{{#each boards}}
+	{{#each boards}}
 									<option value="{{id}}"{{#if selected}} selected{{/if}}{{#if (eq id ../../context.current_board)}} disabled{{/if}}>{{#if (gt child_level 0)}}{{repeat '==' (sub child_level 1)}}=&gt; {{/if}}{{{name}}}</option>
-									{{/each}}
+	{{/each}}
 								</optgroup>
-								{{/each}}
+{{/each}}
 							</select>
 						</dd>
 					</dl>
 					{{! Disable the reason textarea when the postRedirect checkbox is unchecked... }}
-					<label for="reset_subject"><input type="checkbox" name="reset_subject" id="reset_subject" onclick="document.getElementById('subjectArea').style.display = this.checked ? 'block' : 'none';"> {{{txt.movetopic_change_subject}}}.</label><br>
+					<label for="reset_subject">
+						<input type="checkbox" name="reset_subject" id="reset_subject" onclick="document.getElementById('subjectArea').style.display = this.checked ? 'block' : 'none';">
+						{{{txt.movetopic_change_subject}}}.
+					</label><br>
 					<fieldset id="subjectArea" style="display: none;">
 						<dl class="settings">
 							<dt><strong>{{{txt.movetopic_new_subject}}}:</strong></dt>
 							<dd><input type="text" name="custom_subject" size="30" value="{{{context.subject}}}"></dd>
 						</dl>
-						<label for="enforce_subject"><input type="checkbox" name="enforce_subject" id="enforce_subject"> {{{txt.movetopic_change_all_subjects}}}.</label>
+						<label for="enforce_subject">
+							<input type="checkbox" name="enforce_subject" id="enforce_subject">
+							{{{txt.movetopic_change_all_subjects}}}.
+						</label>
 					</fieldset>
 
-					<label for="postRedirect"><input type="checkbox" name="postRedirect" id="postRedirect"{{#if context.is_approved}} checked{{/if}} onclick="{{#unless context.is_approved}}if (this.checked && !confirm('{{{txt.move_topic_unapproved_js}}}')) return false; {{/unless}} document.getElementById('reasonArea').style.display = this.checked ? 'block' : 'none';"> {{{txt.post_redirection}}}.</label>
+					<label for="postRedirect">
+						<input type="checkbox" name="postRedirect" id="postRedirect"{{#if context.is_approved}} checked{{/if}} onclick="{{#unless context.is_approved}}if (this.checked && !confirm('{{{txt.move_topic_unapproved_js}}}')) return false; {{/unless}} document.getElementById('reasonArea').style.display = this.checked ? 'block' : 'none';">
+						{{{txt.post_redirection}}}.
+					</label>
 					<fieldset id="reasonArea" style="margin-top: 1ex;{{#unless context.is_approved}}display: none;{{/unless}}">
 						<dl class="settings">
 							<dt>
@@ -48,7 +58,7 @@
 								<input type="checkbox" name="redirect_topic" id="redirect_topic" checked>
 							</dd>
 
-							{{#if (eq modSettings.allow_expire_redirect '1')}}
+{{#if (eq modSettings.allow_expire_redirect '1')}}
 							<dt>
 								{{{txt.redirect_topic_expires}}}
 							</dt>
@@ -62,9 +72,9 @@
 									<option value="86400">{{{txt.two_months}}}</option>
 								</select>
 							</dd>
-							{{else}}
-								<input type="hidden" name="redirect_expires" value="0">
-							{{/if}}
+{{else}}
+							<input type="hidden" name="redirect_expires" value="0">
+{{/if}}
 						</dl>
 					</fieldset>
 
@@ -72,9 +82,9 @@
 				</div>
 			</div>
 
-			{{#if context.back_to_topic}}
+{{#if context.back_to_topic}}
 			<input type="hidden" name="goback" value="1">
-			{{/if}}
+{{/if}}
 
 			{{session_form}}
 			<input type="hidden" name="seqnum" value="{{{context.form_sequence_number}}}">

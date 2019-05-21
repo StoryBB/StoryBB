@@ -9,6 +9,7 @@
 			<tr class="title_bar">
 				<th scope="col" class="quarter_table">{{{txt.name}}}</th>
 				<th scope="col">{{{txt.status}}}</th>
+
 				{{#if context.show_buddy_email_address}}<th scope="col">{{{txt.email}}}</th>{{/if}}
 
 				{{#each context.custom_pf}}
@@ -18,31 +19,32 @@
 				<th scope="col">{{{txt.remove}}}</th>
 			</tr>
 
-			{{#unless context.buddies}}
-				{{! If they don't have any buddies don't list them! }}
-				<tr class="windowbg">
-					<td colspan="{{context.columns_colspan}}"><strong>{{{txt.no_buddies}}}</strong></td>
-				</tr>
-			{{else}}
-				{{! Now loop through each buddy showing info on each. }}
-				{{#each context.buddies}}
-				<tr class="windowbg">
-					<td>{{{link}}}</td>
-					<td><a href="{{{online.href}}}"><span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{{online.text}}}"></span></a></td>
+{{! If they don't have any buddies don't list them! }}
+{{#unless context.buddies}}
+			<tr class="windowbg">
+				<td colspan="{{context.columns_colspan}}"><strong>{{{txt.no_buddies}}}</strong></td>
+			</tr>
+{{else}}
+	{{! Now loop through each buddy showing info on each. }}
+	{{#each context.buddies}}
+			<tr class="windowbg">
+				<td>{{{link}}}</td>
+				<td><a href="{{{online.href}}}"><span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{{online.text}}}"></span></a></td>
 
-					{{#if show_email}}
-					<td><a href="mailto:{{email}}" rel="nofollow" class="main_icons mail icon" title="{{{../txt.email}}} {{{name}}}"></a></td>
-					{{/if}}
+		{{#if show_email}}
+				<td><a href="mailto:{{email}}" rel="nofollow" class="main_icons mail icon" title="{{{../txt.email}}} {{{name}}}"></a></td>
+		{{/if}}
 
-					{{! Show the custom profile fields for this user. }}
-					{{#each ../context.custom_pf}}
-						<td class="lefttext">{{{lookup options @key}}}</td>
-					{{/each}}
+		{{! Show the custom profile fields for this user. }}
+		{{#each ../context.custom_pf}}
+				<td class="lefttext">{{{lookup options @key}}}</td>
+		{{/each}}
 
-					<td><a href="{{../scripturl}}?action=profile;area=lists;sa=buddies;u={{{../context.id_member}}};remove={{id}};{{session_url}}" class="main_icons delete" title="{{{../txt.buddy_remove}}}"></a></td>
-				</tr>
-				{{/each}}
-			{{/unless}}
+				<td><a href="{{../scripturl}}?action=profile;area=lists;sa=buddies;u={{{../context.id_member}}};remove={{id}};{{session_url}}" class="main_icons delete" title="{{{../txt.buddy_remove}}}"></a></td>
+			</tr>
+	{{/each}}
+{{/unless}}
+
 		</table>
 	</div>
 

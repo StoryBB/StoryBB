@@ -1,49 +1,55 @@
 		<div id="posting_as">{{textTemplate txt.you_are_posting_as user_info.character_name}}</div>
 		<div id="my_account" class="chars_container">
 			<ul>
-				{{#each context.current_characters}}
-					{{#if (eq is_main '1')}}
-						<li>
-							<div class="character">
-								<span class="avatar">
-									{{#if avatar}}<img src="{{{avatar}}}" alt="">{{else}}<img src="{{../seetings.images_url}}/default.png" alt="">{{/if}}
-								</span>
-								<a href="{{../scripturl}}{{character_url}}">{{{character_name}}}</a>
-								(<abbr title="{{{../txt.main_char_desc}}}">{{{../txt.main_char}}}</abbr>)
-								{{#if (neq @key ../user_info.id_character)}}
-									<span class="switch">
-										<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" class="button">{{{../txt.switch_chars}}}</a>
-									</span>
-								{{/if}}
-							</div>
-						</li>
-					{{/if}}
-				{{/each}}
+
+{{#each context.current_characters}}
+	{{#if (eq is_main '1')}}
+				<li>
+					<div class="character">
+						<span class="avatar">
+							{{#if avatar}}<img src="{{{avatar}}}" alt="">{{else}}<img src="{{../seetings.images_url}}/default.png" alt="">{{/if}}
+						</span>
+						<a href="{{../scripturl}}{{character_url}}">{{{character_name}}}</a>
+						(<abbr title="{{{../txt.main_char_desc}}}">{{{../txt.main_char}}}</abbr>)
+
+		{{#if (neq @key ../user_info.id_character)}}
+						<span class="switch">
+							<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" class="button">{{{../txt.switch_chars}}}</a>
+						</span>
+		{{/if}}
+
+					</div>
+				</li>
+	{{/if}}
+{{/each}}
+
 			</ul>
 		</div>
 		<div id="my_characters">{{{txt.my_characters}}}</div>
 		<div id="chars_container" class="chars_container">
 			<ul>
-				{{#each context.current_characters}}
-					{{#if (and (neq is_main '1') (neq retired '1'))}}
-						<li>
-							<div class="character">
-								<span class="avatar">
-									{{#if avatar}}<img src="{{{avatar}}}" alt="">{{else}}<img src="{{../seetings.images_url}}/default.png" alt="">{{/if}}
-								</span>
-								<a href="{{../scripturl}}{{character_url}}">{{{character_name}}}</a>
-								{{#if (neq @key ../user_info.id_character)}}
-									<span class="switch">
-										<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" class="button">{{{../txt.switch_chars}}}</a>
-									</span>
-								{{/if}}
-								<span class="switch">
-									<a class="button" href="{{../scripturl}}{{character_url}};sa=sheet">{{{../txt.char_sheet_link}}}</a>
-								</span>
-							</div>
-						</li>
-					{{/if}}
-				{{/each}}
+
+{{#each context.current_characters}}
+	{{#if (and (neq is_main '1') (neq retired '1'))}}
+				<li>
+					<div class="character">
+						<span class="avatar">
+							{{#if avatar}}<img src="{{{avatar}}}" alt="">{{else}}<img src="{{../seetings.images_url}}/default.png" alt="">{{/if}}
+						</span>
+						<a href="{{../scripturl}}{{character_url}}">{{{character_name}}}</a>
+
+		{{#if (neq @key ../user_info.id_character)}}
+							<span class="switch">
+								<span data-href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=char_switch;char={{@key}};{{session_url}}" class="button">{{{../txt.switch_chars}}}</a>
+							</span>
+		{{/if}}
+						<span class="switch">
+							<a class="button" href="{{../scripturl}}{{character_url}};sa=sheet">{{{../txt.char_sheet_link}}}</a>
+						</span>
+					</div>
+				</li>
+	{{/if}}
+{{/each}}
 			</ul>
 		</div>
 		<br>

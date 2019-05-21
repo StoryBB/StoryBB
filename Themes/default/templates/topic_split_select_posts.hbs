@@ -12,7 +12,8 @@
 					<span id="pageindex_not_selected">{{{context.not_selected.page_index}}}</span>
 				</div>
 				<ul id="messages_not_selected" class="split_messages smalltext">
-					{{#each context.not_selected.messages}}
+
+{{#each context.not_selected.messages}}
 					<li class="windowbg" id="not_selected_{{id}}">
 						<div class="message_header">
 							<a class="split_icon floatright" href="{{../scripturl}}?action=splittopics;sa=selectTopics;subname={{{../context.topic.subject}}};topic={{../context.topic.id}}.{{../context.not_selected.start}};start2={{../context.selected.start}};move=down;msg={{id}}" onclick="return select('down', '{{id}}');"><span class="main_icons split_sel" title="-&gt;"></span></a>{{textTemplate ../txt.post_by_member subject poster}}<br>
@@ -20,7 +21,7 @@
 						</div>
 						<div class="post">{{{body}}}</div>
 					</li>
-					{{/each}}
+{{/each}}
 					<li class="dummy"></li>
 				</ul>
 			</div>
@@ -37,7 +38,8 @@
 					<span id="pageindex_selected">{{{context.selected.page_index}}}</span>
 				</div>
 				<ul id="messages_selected" class="split_messages smalltext">
-					{{#each context.selected.messages}}
+
+{{#each context.selected.messages}}
 					<li class="windowbg" id="selected_{{id}}">
 						<div class="message_header">
 							<a class="split_icon floatleft" href="{{scripturl}}?action=splittopics;sa=selectTopics;subname={{{../context.topic.subject}}};topic={{../context.topic.id}}.{{../context.not_selected.start}};start2={{../context.selected.start}};move=up;msg={{id}}" onclick="return select('up', '{{id}}');"><span class="main_icons split_desel" title="&lt;-"></span></a>{{textTemplate ../txt.post_by_member subject poster}}<br>
@@ -45,7 +47,7 @@
 						</div>
 						<div class="post">{{{body}}}</div>
 					</li>
-					{{/each}}
+{{/each}}
 					<li class="dummy"></li>
 				</ul>
 			</div>

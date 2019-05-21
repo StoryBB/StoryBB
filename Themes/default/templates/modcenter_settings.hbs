@@ -1,6 +1,7 @@
 	{{! Moderation settings. }}
 	<div id="modcenter">
-	{{#if context.can_moderate_approvals}}
+
+{{#if context.can_moderate_approvals}}
 		<form action="{{scripturl}}?action=moderate;area=settings" method="post" accept-charset="UTF-8">
 			<div class="windowbg">
 				<dl class="settings">
@@ -16,9 +17,9 @@
 				<input type="submit" name="save" value="{{{txt.save}}}" class="button_submit">
 			</div>
 		</form>
-	{{else}}
+{{else}}
 		<div class="windowbg">
 			<div class="centertext">{{{txt.mc_no_settings}}}</div>
 		</div>
-	{{/if}}
+{{/if}}
 	</div>

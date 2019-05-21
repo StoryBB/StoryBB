@@ -1,46 +1,47 @@
-	{{! Showing a user's drafts }}
+		{{! Showing a user's drafts }}
 		<div class="cat_bar">
 			<h3 class="catbg">
 				{{{txt.drafts}}} - {{{context.member.name}}}
 			</h3>
 		</div>
-		{{#if context.page_index}}
+
+{{#if context.page_index}}
 		<div class="pagesection">
 			<div class="pagelinks">{{{context.page_index}}}</div>
 		</div>
-		{{/if}}
+{{/if}}
 
-		{{! No drafts? Just show an informative message. }}
-		{{#unless context.drafts}}
-			<div class="windowbg2 centertext">
-				{{{txt.draft_none}}}
+{{! No drafts? Just show an informative message. }}
+{{#unless context.drafts}}
+		<div class="windowbg2 centertext">
+			{{{txt.draft_none}}}
+		</div>
+{{else}}
+{{! For every draft to be displayed, give it its own div, and show the important details of the draft. }}
+	{{#each context.drafts}}
+		<div class="windowbg">
+			<div class="counter">{{{counter}}}</div>
+			<div class="topic_details">
+				<h5><strong><a href="{{scripturl}}?board={{board.id}}.0">{{{board.name}}}</a> / {{{topic.link}}}</strong> &nbsp; &nbsp;
+
+				{{#if sticky}}<span class="main_icons sticky" title="{{{../txt.sticky_topic}}}"></span>{{/if}}
+
+				{{#if locked}}<span class="main_icons lock" title="{{{../txt.locked_topic}}}"></span>{{/if}}
+				</h5>
+				<span class="smalltext">&#171;&nbsp;<strong>{{{../txt.on}}}:</strong> {{{time}}}&nbsp;&#187;</span>
 			</div>
-		{{else}}
-		{{! For every draft to be displayed, give it its own div, and show the important details of the draft. }}
-			{{#each context.drafts}}
-				<div class="windowbg">
-					<div class="counter">{{{counter}}}</div>
-					<div class="topic_details">
-						<h5><strong><a href="{{scripturl}}?board={{board.id}}.0">{{{board.name}}}</a> / {{{topic.link}}}</strong> &nbsp; &nbsp;
-
-						{{#if sticky}}<span class="main_icons sticky" title="{{{../txt.sticky_topic}}}"></span>{{/if}}
-
-						{{#if locked}}<span class="main_icons lock" title="{{{../txt.locked_topic}}}"></span>{{/if}}
-						</h5>
-						<span class="smalltext">&#171;&nbsp;<strong>{{{../txt.on}}}:</strong> {{{time}}}&nbsp;&#187;</span>
-					</div>
-					<div class="list_posts">
-						{{{body}}}
-					</div>
-					<div class="floatright">
-						<ul class="quickbuttons">
-							<li><a href="{{../scripturl}}?action=post;{{#if topic.id}}topic={{topic.id}}{{else}}board={{board.id}}{{/if}}.0;id_draft={{id_draft}}" class="main_icons reply_button">{{{../txt.draft_edit}}}</a></li>
-							<li><a href="{{../scripturl}}?action=profile;u={{../context.member.id}};area=showdrafts;delete={{id_draft}};{{session_url}}" data-confirm="{{{../txt.draft_remove}}}" class="you_sure"><span class="main_icons remove_button"></span>{{{../txt.draft_delete}}}</a></li>
-						</ul>
-					</div>
-				</div>
-			{{/each}}
-		{{/unless}}
+			<div class="list_posts">
+				{{{body}}}
+			</div>
+			<div class="floatright">
+				<ul class="quickbuttons">
+					<li><a href="{{../scripturl}}?action=post;{{#if topic.id}}topic={{topic.id}}{{else}}board={{board.id}}{{/if}}.0;id_draft={{id_draft}}" class="main_icons reply_button">{{{../txt.draft_edit}}}</a></li>
+					<li><a href="{{../scripturl}}?action=profile;u={{../context.member.id}};area=showdrafts;delete={{id_draft}};{{session_url}}" data-confirm="{{{../txt.draft_remove}}}" class="you_sure"><span class="main_icons remove_button"></span>{{{../txt.draft_delete}}}</a></li>
+				</ul>
+			</div>
+		</div>
+	{{/each}}
+{{/unless}}
 
 		<div class="pagesection">
 			<div class="pagelinks">{{{context.page_index}}}</div>
