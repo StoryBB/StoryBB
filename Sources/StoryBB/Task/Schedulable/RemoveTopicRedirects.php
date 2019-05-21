@@ -25,7 +25,7 @@ class RemoveTopicRedirects extends \StoryBB\Task\Schedulable
 		global $smcFunc, $sourcedir;
 
 		// init
-		$topics = array();
+		$topics = [];
 
 		// Find all of the old MOVE topic notices that were set to expire
 		$request = $smcFunc['db_query']('', '

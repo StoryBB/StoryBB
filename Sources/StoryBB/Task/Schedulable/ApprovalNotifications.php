@@ -36,8 +36,8 @@ class ApprovalNotifications extends \StoryBB\Task\Schedulable
 			array(
 			)
 		);
-		$notices = array();
-		$profiles = array();
+		$notices = [];
+		$profiles = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// If this is no longer around we'll ignore it.
@@ -86,7 +86,7 @@ class ApprovalNotifications extends \StoryBB\Task\Schedulable
 				'profile_list' => $profiles,
 			)
 		);
-		$perms = array();
+		$perms = [];
 		$addGroups = array(1);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -103,8 +103,8 @@ class ApprovalNotifications extends \StoryBB\Task\Schedulable
 		$smcFunc['db_free_result']($request);
 
 		// Grab the moderators if they have permission!
-		$mods = array();
-		$members = array();
+		$mods = [];
+		$members = [];
 		if (in_array(2, $addGroups))
 		{
 			$request = $smcFunc['db_query']('', '
@@ -136,7 +136,7 @@ class ApprovalNotifications extends \StoryBB\Task\Schedulable
 				'additional_group_list_implode' => implode(', additional_groups) != 0 OR FIND_IN_SET(', $addGroups),
 			)
 		);
-		$members = array();
+		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// Check whether they are interested.
