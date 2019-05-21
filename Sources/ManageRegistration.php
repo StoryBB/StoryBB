@@ -319,7 +319,7 @@ function ManagePolicies()
 				else
 				{
 					// Fall back to English which we really should have.
-					$policy_details['title'] = $policy['versions']['english']['title'];
+					$policy_details['title'] = $policy['versions']['en-us']['title'];
 				}
 
 				// Policy description is optional.

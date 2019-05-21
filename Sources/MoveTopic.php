@@ -99,9 +99,9 @@ function MoveTopic()
 
 	if ($user_info['language'] != $language)
 	{
-		loadLanguage('index', $language);
+		loadLanguage('General', $language);
 		$temp = $txt['movetopic_default'];
-		loadLanguage('index');
+		loadLanguage('General');
 
 		$txt['movetopic_default'] = $temp;
 	}
@@ -217,9 +217,9 @@ function MoveTopic2()
 						$context['response_prefix'] = $txt['response_prefix'];
 					else
 					{
-						loadLanguage('index', $language, false);
+						loadLanguage('General', $language, false);
 						$context['response_prefix'] = $txt['response_prefix'];
-						loadLanguage('index');
+						loadLanguage('General');
 					}
 					cache_put_data('response_prefix', $context['response_prefix'], 600);
 				}
@@ -256,7 +256,7 @@ function MoveTopic2()
 	{
 		// Should be in the boardwide language.
 		if ($user_info['language'] != $language)
-			loadLanguage('index', $language);
+			loadLanguage('General', $language);
 
 		$_POST['reason'] = $smcFunc['htmlspecialchars']($_POST['reason'], ENT_QUOTES);
 		preparsecode($_POST['reason']);

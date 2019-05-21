@@ -161,7 +161,7 @@ function ModifyLanguages()
 		$("tr.highlight2").removeClass("highlight2");
 		$("#" + box).addClass("highlight2");
 	}
-	highlightSelected("list_language_list_' . ($language == '' ? 'english' : $language) . '");', true);
+	highlightSelected("list_language_list_' . ($language == '' ? 'en-us' : $language) . '");', true);
 
 	// Display a warning if we cannot edit the default setting.
 	if (!is_writable($boarddir . '/Settings.php'))
@@ -220,14 +220,14 @@ function list_getLanguages()
 	foreach ($context['languages'] as $lang)
 	{
 		// Load the file to get the character set.
-		require($settings['default_theme_dir'] . '/languages/index.' . $lang['filename'] . '.php');
+		$general = json_decode(file_get_contents($settings['default_theme_dir'] . '/languages/' . $lang['filename'] . '/' . $lang['filename'] . '.json'), true);
 
 		$languages[$lang['filename']] = array(
 			'id' => $lang['filename'],
 			'count' => 0,
-			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
-			'locale' => $txt['lang_locale'],
-			'name' => $smcFunc['ucwords'](strtr($lang['filename'], array('_' => ' ', '-utf8' => ''))),
+			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'en-us'),
+			'locale' => $general['locale'],
+			'name' => $general['native_name'] . (!empty($general['english_name']) && $general['english_name'] != $general['native_name'] ? ' (' . $general['english_name'] . ')' : ''),
 		);
 	}
 
@@ -245,8 +245,8 @@ function list_getLanguages()
 		if (empty($row['lngfile']) || !isset($languages[$row['lngfile']]))
 			$row['lngfile'] = $language;
 
-		if (!isset($languages[$row['lngfile']]) && isset($languages['english']))
-			$languages['english']['count'] += $row['num_users'];
+		if (!isset($languages[$row['lngfile']]) && isset($languages['en-us']))
+			$languages['en-us']['count'] += $row['num_users'];
 		elseif (isset($languages[$row['lngfile']]))
 			$languages[$row['lngfile']]['count'] += $row['num_users'];
 	}
@@ -397,22 +397,34 @@ function ModifyLanguage()
 		$dir = dir($theme_dir);
 		while ($entry = $dir->read())
 		{
-			// We're only after the files for this language.
-			if (preg_match('~^([A-Za-z]+)\.' . $context['lang_id'] . '\.php$~', $entry, $matches) == 0)
+			if ($entry[0] == '.')
+			{
+				continue;
+			}
+
+			if (!is_dir($theme_dir . '/' . $entry) || !file_exists($theme_dir . '/' . $entry . '/' . $entry . '.json'))
 				continue;
 
-			if (!isset($context['possible_files'][$theme]))
-				$context['possible_files'][$theme] = array(
-					'id' => $theme,
-					'name' => $themes[$theme]['name'],
-					'files' => array(),
-				);
+			foreach (scandir($theme_dir . '/' . $entry) as $file)
+			{
+				if (!preg_match('/^([A-Z][A-Za-z0-9]+)\.php$/', $file, $matches))
+				{
+					continue;
+				}
 
-			$context['possible_files'][$theme]['files'][] = array(
-				'id' => $matches[1],
-				'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
-				'selected' => $theme_id == $theme && $file_id == $matches[1],
-			);
+				if (!isset($context['possible_files'][$theme]))
+					$context['possible_files'][$theme] = array(
+						'id' => $theme,
+						'name' => $themes[$theme]['name'],
+						'files' => array(),
+					);
+
+				$context['possible_files'][$theme]['files'][] = array(
+					'id' => $matches[1],
+					'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
+					'selected' => $theme_id == $theme && $file_id == $matches[1],
+				);
+			}
 		}
 		$dir->close();
 		usort($context['possible_files'][$theme]['files'], function($val1, $val2)
@@ -422,7 +434,7 @@ function ModifyLanguage()
 	}
 
 	// We no longer wish to speak this language.
-	if (!empty($_POST['delete_main']) && $context['lang_id'] != 'english')
+	if (!empty($_POST['delete_main']) && $context['lang_id'] != 'en-us')
 	{
 		checkSession();
 		validateToken('admin-mlang');
@@ -469,11 +481,11 @@ function ModifyLanguage()
 			cache_put_data('known_languages', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 		}
 
-		// Sixth, if we deleted the default language, set us back to english?
+		// Sixth, if we deleted the default language, set us back to English?
 		if ($context['lang_id'] == $language)
 		{
 			require_once($sourcedir . '/Subs-Admin.php');
-			$language = 'english';
+			$language = 'en-us';
 			updateSettingsFile(array('language' => '\'' . $language . '\''));
 		}
 
@@ -504,18 +516,14 @@ function ModifyLanguage()
 	}
 
 	// Quickly load index language entries.
-	$old_txt = $txt;
-	require($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
-	$context['lang_file_not_writable_message'] = is_writable($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php') ? '' : sprintf($txt['lang_file_not_writable'], $settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
+	$language_manifest = @json_decode(file_get_contents($settings['default_theme_dir'] . '/languages/' . $context['lang_id'] . '/' . $context['lang_id'] . '.json'), true);
+	$context['lang_file_not_writable_message'] = '';
 	// Setup the primary settings context.
 	$context['primary_settings'] = array(
-		'name' => $smcFunc['ucwords'](strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
-		'locale' => $txt['lang_locale'],
-		'rtl' => $txt['lang_rtl'],
+		'name' => $language_manifest['native_name'],
+		'locale' => $language_manifest['locale'],
+		'rtl' => !empty($language_manifest['is_rtl']),
 	);
-
-	// Restore normal service.
-	$txt = $old_txt;
 
 	// Are we saving?
 	$save_strings = array();

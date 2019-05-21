@@ -520,9 +520,9 @@ function Display()
 			$context['response_prefix'] = $txt['response_prefix'];
 		else
 		{
-			loadLanguage('index', $language, false);
+			loadLanguage('General', $language, false);
 			$context['response_prefix'] = $txt['response_prefix'];
-			loadLanguage('index');
+			loadLanguage('General');
 		}
 		cache_put_data('response_prefix', $context['response_prefix'], 600);
 	}

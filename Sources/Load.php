@@ -2193,7 +2193,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		if (isset($_REQUEST[$extra]))
 			$requiresXML = true;
 
-	loadLanguage('index');
+	loadLanguage('General');
 
 	// Output is fully XML, so no need for the index template.
 	if (isset($_REQUEST['xml']) && (in_array($context['current_action'], $xmlActions) || $requiresXML))
@@ -2644,8 +2644,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		$lang = isset($user_info['language']) ? $user_info['language'] : $language;
 
 	// Do we want the English version of language file as fallback?
-	if (empty($modSettings['disable_language_fallback']) && $lang != 'english')
-		loadLanguage($template_name, 'english', false);
+	if (empty($modSettings['disable_language_fallback']) && $lang != 'en-us')
+		loadLanguage($template_name, 'en-us', false);
 
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
@@ -2683,27 +2683,54 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		$attempts[] = array($settings['default_theme_dir'], $template, $language, $settings['default_theme_url']);
 
 		// Fall back on the English language if none of the preferred languages can be found.
-		if (!in_array('english', array($lang, $language)))
+		if (!in_array('en-us', array($lang, $language)))
 		{
-			$attempts[] = array($settings['theme_dir'], $template, 'english', $settings['theme_url']);
-			$attempts[] = array($settings['default_theme_dir'], $template, 'english', $settings['default_theme_url']);
+			$attempts[] = array($settings['theme_dir'], $template, 'en-us', $settings['theme_url']);
+			$attempts[] = array($settings['default_theme_dir'], $template, 'en-us', $settings['default_theme_url']);
 		}
 
 		// Try to find the language file.
 		$found = false;
 		foreach ($attempts as $k => $file)
 		{
-			if (file_exists($file[0] . '/languages/' . $file[1] . '.' . $file[2] . '.php'))
+			if (file_exists($file[0] . '/languages/' . $file[2] . '/' . $file[1] . '.php'))
 			{
 				// Include it!
-				template_include($file[0] . '/languages/' . $file[1] . '.' . $file[2] . '.php');
+				template_include($file[0] . '/languages/' . $file[2] . '/' . $file[1] . '.php');
 
 				// Note that we found it.
 				$found = true;
 
 				// setlocale is required for basename() & pathinfo() to work properly on the selected language
-				if (!empty($txt['lang_locale']))
+				if ($file[1] == 'General')
+				{
+					try
+					{
+						if (!file_exists($file[0] . '/languages/' . $file[2] . '/' . $file[2] . '.json'))
+						{
+							throw new RuntimeException('Language ' . $file[2] . ' is missing its ' . $file[2] . '.json file');
+						}
+						$general = @json_decode(file_get_contents($file[0] . '/languages/' . $file[2] . '/' . $file[2] . '.json'), true);
+						if (!is_array($general) || !isset($general['locale'], $general['native_name']))
+						{
+							throw new RuntimeException('Language ' . $file[2] . ' has an invalid ' . $file[2] . '.json file');
+						}
+						$txt['lang_locale'] = $general['locale'];
+						$txt['lang_rtl'] = !empty($general['is_rtl']);
+						$txt['native_name'] = $general['native_name'];
+						$txt['english_name'] = !empty($general['english_name']) ? $general['english_name'] : $general['native_name'];
+					}
+					catch (Exception $e)
+					{
+						$txt['lang_locale'] = 'en_US';
+						$txt['lang_rtl'] = false;
+						$txt['native_name'] = 'English (debug)';
+						$txt['english_name'] = 'English (debug)';
+						log_error($e, 'template');
+						break;
+					}
 					setlocale(LC_CTYPE, $txt['lang_locale'] . '.utf8', $txt['lang_locale'] . '.UTF-8');
+				}
 				
 				break;
 			}
@@ -2744,7 +2771,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 	// Keep track of what we're up to soldier.
 	if ($db_show_debug === true)
-		$context['debug']['language_files'][] = $template_name . '.' . $lang . ' (' . $theme_name . ')';
+		$context['debug']['language_files'][] = $template_name . ' (' . $theme_name . '/' . $lang . ')';
 
 	// Remember what we have loaded, and in which language.
 	$already_loaded[$template_name] = $lang;
@@ -2891,48 +2918,29 @@ function getLanguages($use_cache = true)
 			$dir = dir($language_dir);
 			while ($entry = $dir->read())
 			{
-				// Look for the index language file... For good measure skip any "index.language-utf8.php" files
-				if (!preg_match('~^index\.(.+[^-utf8])\.php$~', $entry, $matches))
-					continue;
-
-				if (!empty($langList) && !empty($langList[$matches[1]]))
-					$langName = $langList[$matches[1]];
-
-				else
+				if ($entry[0] == '.')
 				{
-					$langName = $smcFunc['ucwords'](strtr($matches[1], array('_' => ' ')));
-
-					// Get the line we need.
-					$fp = @fopen($language_dir . '/' . $entry);
-
-					// Yay!
-					if ($fp)
-					{
-						while (($line = fgets($fp)) !== false)
-						{
-							preg_match('~\$txt\[\'native_name\'\] = \'(.+)\'\;~', $line, $matchNative);
-
-							// Set the language's name.
-							if (!empty($matchNative) && !empty($matchNative[1]))
-							{
-								$langName = un_htmlspecialchars($matchNative[1]);
-								break;
-							}
-						}
-
-						fclose($fp);
-					}
-
-					// Catch the language name.
-					$catchLang[$matches[1]] = $langName;
+					continue;
+				}
+				// If the JSON doesn't exist, don't load it.
+				if (!file_exists($language_dir . '/' . $entry . '/' . $entry . '.json'))
+				{
+					continue;
+				}
+				// If the language manifest JSON isn't valid, skip it.
+				$language_manifest = @json_decode(file_get_contents($language_dir . '/' . $entry . '/' . $entry . '.json'), true);
+				if (empty($language_manifest) || !is_array($language_manifest) || empty($language_manifest['native_name']))
+				{
+					continue;
 				}
 
+				$catchLang[$entry] = $language_manifest['native_name'];
+
 				// Build this language entry.
-				$context['languages'][$matches[1]] = array(
-					'name' => $langName,
+				$context['languages'][$entry] = array(
+					'name' => $language_manifest['native_name'],
 					'selected' => false,
-					'filename' => $matches[1],
-					'location' => $language_dir . '/index.' . $matches[1] . '.php',
+					'filename' => $entry,
 				);
 			}
 			$dir->close();

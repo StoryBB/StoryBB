@@ -1324,7 +1324,7 @@ function AdminApprove()
 	// Back to the user's language!
 	if (isset($current_language) && $current_language != $user_info['language'])
 	{
-		loadLanguage('index');
+		loadLanguage('General');
 		loadLanguage('ManageMembers');
 	}
 

@@ -19,7 +19,7 @@ class Wave
 {
 	/**
 	 * Creates a wave file that spells the letters of $word.
-	 * Tries the user's language first, and defaults to english.
+	 * Tries the user's language first, and defaults to English.
 	 * Used by VerificationCode() (Register.php).
 	 *
 	 * @param string $word
@@ -41,12 +41,12 @@ class Wave
 		mt_srand(end($tmp));
 
 		// Try to see if there's a sound font in the user's language.
-		if (file_exists($settings['default_theme_dir'] . '/fonts/sound/a.' . $user_info['language'] . '.wav'))
+		if (file_exists($settings['default_theme_dir'] . '/languages/' . $user_info['language'] . '/sound/a.wav'))
 			$sound_language = $user_info['language'];
 
 		// English should be there.
-		elseif (file_exists($settings['default_theme_dir'] . '/fonts/sound/a.english.wav'))
-			$sound_language = 'english';
+		elseif (file_exists($settings['default_theme_dir'] . '/languages/en-us/sound/a.wav'))
+			$sound_language = 'en-us';
 
 		// Guess not...
 		else
@@ -59,7 +59,7 @@ class Wave
 		$sound_word = '';
 		for ($i = 0, $wordlen = strlen($word); $i < $wordlen; $i++)
 		{
-			$sound_letter = implode('', file($settings['default_theme_dir'] . '/fonts/sound/' . $word[$i] . '.' . $sound_language . '.wav'));
+			$sound_letter = implode('', file($settings['default_theme_dir'] . '/languages/' . $sound_language . '/' . $word[$i] . '.wav'));
 			if (strpos($sound_letter, 'data') === false)
 				self::fail();
 

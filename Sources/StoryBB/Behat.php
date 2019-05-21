@@ -80,7 +80,11 @@ class Behat extends RawMinkContext implements Context
 		define('STORYBB', 1);
 
 		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
-		require_once($boarddir . '/Themes/default/languages/Install.english.php');
+		require_once($boarddir . '/Themes/default/languages/en-us/Install.php');
+		$txt['english_name'] = 'English';
+		$txt['native_name'] = 'English';
+		$txt['lang_locale'] = 'en_US';
+		$txt['lang_rtl'] = false;
 
 		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, ['dont_select_db' => true]);
 

@@ -944,7 +944,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	call_integration_hook('integrate_personal_message_after', array(&$id_pm, &$log, &$recipients, &$from, &$subject, &$message));
 
 	// Back to what we were on before!
-	loadLanguage('index+PersonalMessage');
+	loadLanguage('General+PersonalMessage');
 
 	// Add one to their unread and read message counts.
 	foreach ($all_to as $k => $id)

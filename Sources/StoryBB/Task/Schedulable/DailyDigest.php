@@ -166,7 +166,7 @@ class DailyDigest extends \StoryBB\Task\Schedulable
 		foreach ($langs as $lang)
 		{
 			loadLanguage('Post', $lang);
-			loadLanguage('index', $lang);
+			loadLanguage('General', $lang);
 			loadLanguage('EmailTemplates', $lang);
 			$langtxt[$lang] = array(
 				'subject' => $txt[$this->subject_line],

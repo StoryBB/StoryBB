@@ -42,7 +42,7 @@ $mbname = 'My Community';
  * The default language file set for the forum.
  * @var string
  */
-$language = 'english';
+$language = 'en-us';
 /**
  * URL to your forum's folder. (without the trailing /!)
  * @var string

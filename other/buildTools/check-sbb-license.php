@@ -16,7 +16,7 @@ $ignoreFiles = array(
 	'\./Sources/minify/[A-Za-z0-9/-]+\.php',
 
 	// Language Files are ignored as they don't use the License format.
-	'./Themes/default/languages/[A-Za-z0-9]+\.english\.php',
+	'./Themes/default/languages/[A-Za-z0-9]+\[A-Za-z0-9]+\.php',
 
 	// Cache and miscellaneous.
 	'\./cache/data_[A-Za-z0-9-_]\.php',

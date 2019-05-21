@@ -41,7 +41,7 @@
 				<input type="submit" name="save_main" value="{{{txt.save}}}"{{#if (or context.lang_file_not_writable_message context.file_entries)}} disabled{{/if}} class="button_submit">
 
 {{! Allow deleting entries. Except English, that can't be deleted. }}
-{{#unless (eq context.lang_id 'english')}}
+{{#unless (eq context.lang_id 'en-us')}}
 				<input type="submit" name="delete_main" value="{{{txt.delete}}}"{{#if (or context.lang_file_not_writable_message context.file_entries)}} disabled{{/if}} onclick="confirm('{{{txt.languages_delete_confirm}}}');" class="button_submit">
 {{/unless}}
 			</div>
