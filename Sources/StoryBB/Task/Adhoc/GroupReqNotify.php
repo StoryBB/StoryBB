@@ -34,7 +34,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 				'selected_group' => $this->_details['id_group'],
 			)
 		);
-		$moderators = array();
+		$moderators = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$moderators[] = $row['id_member'];
 		$smcFunc['db_free_result']($request);
@@ -47,7 +47,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 		if (!empty($moderators))
 		{
 			// Figure out who wants to be alerted/emailed about this
-			$data = array('alert' => array(), 'email' => array());
+			$data = array('alert' => [], 'email' => []);
 
 			require_once($sourcedir . '/Subs-Notify.php');
 			$prefs = getNotifyPrefs($moderators, 'request_group', true);
@@ -67,7 +67,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 
 			if (!empty($data['alert']))
 			{
-				$alert_rows = array();
+				$alert_rows = [];
 
 				foreach ($data['alert'] as $group_mod)
 				{
@@ -87,7 +87,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 				$smcFunc['db_insert']('insert', '{db_prefix}user_alerts',
 					array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
-					$alert_rows, array()
+					$alert_rows, []
 				);
 
 				updateMemberData($data['alert'], array('alerts' => '+'));
