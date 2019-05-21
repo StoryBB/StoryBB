@@ -42,7 +42,7 @@ function RepairBoards()
 		'title' => $txt['maintain_title'],
 		'help' => '',
 		'description' => $txt['maintain_info'],
-		'tabs' => array(),
+		'tabs' => [],
 	);
 
 	// Start displaying errors without fixing them.
@@ -57,7 +57,7 @@ function RepairBoards()
 	if (!isset($_GET['fixErrors']))
 	{
 		$context['error_search'] = true;
-		$context['repair_errors'] = array();
+		$context['repair_errors'] = [];
 		$context['to_fix'] = findForumErrors();
 
 		if (!empty($context['to_fix']))
@@ -72,7 +72,7 @@ function RepairBoards()
 	else
 	{
 		$context['error_search'] = false;
-		$context['to_fix'] = isset($_SESSION['repairboards_to_fix']) ? $_SESSION['repairboards_to_fix'] : array();
+		$context['to_fix'] = isset($_SESSION['repairboards_to_fix']) ? $_SESSION['repairboards_to_fix'] : [];
 
 		require_once($sourcedir . '/Subs-Boards.php');
 
@@ -466,7 +466,7 @@ function loadForumTests()
 						$row['id_poster'],
 						$row['poster_name'],
 					),
-					array()
+					[]
 				);
 			},
 			'force_fix' => array('stats_topics'),
@@ -1221,7 +1221,7 @@ function loadForumTests()
 			{
 				global $smcFunc;
 
-				$inserts = array();
+				$inserts = [];
 				while ($row = $smcFunc['db_fetch_assoc']($result))
 				{
 					foreach (text2words($row['subject']) as $word)
@@ -1234,7 +1234,7 @@ function loadForumTests()
 							$inserts,
 							array('word', 'id_topic')
 						);
-						$inserts = array();
+						$inserts = [];
 					}
 
 				}
@@ -1484,8 +1484,8 @@ function findForumErrors($do_fix = false)
 	// This may take some time...
 	@set_time_limit(600);
 
-	$to_fix = !empty($_SESSION['repairboards_to_fix']) ? $_SESSION['repairboards_to_fix'] : array();
-	$context['repair_errors'] = isset($_SESSION['repairboards_to_fix2']) ? $_SESSION['repairboards_to_fix2'] : array();
+	$to_fix = !empty($_SESSION['repairboards_to_fix']) ? $_SESSION['repairboards_to_fix'] : [];
+	$context['repair_errors'] = isset($_SESSION['repairboards_to_fix2']) ? $_SESSION['repairboards_to_fix2'] : [];
 
 	$_GET['step'] = empty($_GET['step']) ? 0 : (int) $_GET['step'];
 	$_GET['substep'] = empty($_GET['substep']) ? 0 : (int) $_GET['substep'];
@@ -1606,7 +1606,7 @@ function findForumErrors($do_fix = false)
 					// Are we simply getting a collection of ids?
 					if (isset($test['fix_collect']))
 					{
-						$ids = array();
+						$ids = [];
 						while ($row = $smcFunc['db_fetch_assoc']($request))
 							$ids[] = $row[$test['fix_collect']['index']];
 						if (!empty($ids))

@@ -95,7 +95,7 @@ function Vote()
 	elseif (!empty($row['change_vote']) && !$user_info['is_guest'] && empty($_POST['options']))
 	{
 		checkSession('request');
-		$pollOptions = array();
+		$pollOptions = [];
 
 		// Find out what they voted for before.
 		$request = $smcFunc['db_query']('', '
@@ -156,8 +156,8 @@ function Vote()
 	if (count($_REQUEST['options']) > $row['max_votes'])
 		fatal_lang_error('poll_too_many_votes', false, array($row['max_votes']));
 
-	$pollOptions = array();
-	$inserts = array();
+	$pollOptions = [];
+	$inserts = [];
 	foreach ($_REQUEST['options'] as $id)
 	{
 		$id = (int) $id;
@@ -376,7 +376,7 @@ function EditPoll()
 					'id_poll' => $pollinfo['id_poll'],
 				)
 			);
-			$context['choices'] = array();
+			$context['choices'] = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
 				// Get the highest id so we can add more without reusing.
@@ -467,7 +467,7 @@ function EditPoll()
 		{
 			loadLanguage('Errors');
 
-			$context['poll_error'] = array('messages' => array());
+			$context['poll_error'] = array('messages' => []);
 			foreach ($poll_errors as $poll_error)
 			{
 				$context['poll_error'][$poll_error] = true;
@@ -502,7 +502,7 @@ function EditPoll()
 					'id_poll' => $pollinfo['id_poll'],
 				)
 			);
-			$context['choices'] = array();
+			$context['choices'] = [];
 			$number = 1;
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
@@ -662,7 +662,7 @@ function EditPoll2()
 		// Previewing.
 		$_POST['preview'] = true;
 
-		$context['poll_error'] = array('messages' => array());
+		$context['poll_error'] = array('messages' => []);
 		foreach ($poll_errors as $poll_error)
 		{
 			$context['poll_error'][$poll_error] = true;
@@ -772,12 +772,12 @@ function EditPoll2()
 			'id_poll' => $bcinfo['id_poll'],
 		)
 	);
-	$choices = array();
+	$choices = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$choices[] = $row['id_choice'];
 	$smcFunc['db_free_result']($request);
 
-	$delete_options = array();
+	$delete_options = [];
 	foreach ($_POST['options'] as $k => $option)
 	{
 		// Make sure the key is numeric for sanity's sake.
@@ -819,7 +819,7 @@ function EditPoll2()
 				array(
 					$bcinfo['id_poll'], $k, $option, 0,
 				),
-				array()
+				[]
 			);
 	}
 

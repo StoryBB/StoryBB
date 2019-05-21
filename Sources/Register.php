@@ -20,7 +20,7 @@ use StoryBB\Helper\Wave;
  *
  * @param array $reg_errors Holds information about any errors that occurred
  */
-function Register($reg_errors = array())
+function Register($reg_errors = [])
 {
 	global $txt, $boarddir, $context, $modSettings, $user_info;
 	global $language, $scripturl, $smcFunc, $sourcedir, $cur_profile;
@@ -183,7 +183,7 @@ function Register($reg_errors = array())
 	);
 
 	// Were there any errors?
-	$context['registration_errors'] = array();
+	$context['registration_errors'] = [];
 	if (!empty($reg_errors))
 		$context['registration_errors'] = $reg_errors;
 
@@ -219,7 +219,7 @@ function Register2()
 		fatal_lang_error('register_ssl_required');
 
 	// Start collecting together any errors.
-	$reg_errors = array();
+	$reg_errors = [];
 
 	// You can't register if it's disabled.
 	if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 3)
@@ -391,8 +391,8 @@ function Register2()
 		'check_email_ban' => true,
 		'send_welcome_email' => !empty($modSettings['send_welcomeEmail']),
 		'require' => empty($modSettings['registration_method']) ? 'nothing' : ($modSettings['registration_method'] == 1 ? 'activation' : 'approval'),
-		'extra_register_vars' => array(),
-		'theme_vars' => array(),
+		'extra_register_vars' => [],
+		'theme_vars' => [],
 		'timezone' => !empty($modSettings['default_timezone']) ? $modSettings['default_timezone'] : '',
 		'reg_policies' => array_keys($policies),
 	);
@@ -414,7 +414,7 @@ function Register2()
 	// Registration options are always default options...
 	if (isset($_POST['default_options']))
 		$_POST['options'] = isset($_POST['options']) ? $_POST['options'] + $_POST['default_options'] : $_POST['default_options'];
-	$regOptions['theme_vars'] = isset($_POST['options']) && is_array($_POST['options']) ? $_POST['options'] : array();
+	$regOptions['theme_vars'] = isset($_POST['options']) && is_array($_POST['options']) ? $_POST['options'] : [];
 
 	// Make sure they are clean, dammit!
 	$regOptions['theme_vars'] = htmlspecialchars__recursive($regOptions['theme_vars']);
@@ -429,7 +429,7 @@ function Register2()
 			'is_active' => 1,
 		)
 	);
-	$custom_field_errors = array();
+	$custom_field_errors = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Don't allow overriding of the theme variables.

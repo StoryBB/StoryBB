@@ -161,7 +161,7 @@ function AdminRegister()
 		$smcFunc['db_free_result']($request);
 	}
 	else
-		$context['member_groups'] = array();
+		$context['member_groups'] = [];
 
 	// Basic stuff.
 	$context['sub_template'] = 'register_admin';
@@ -201,7 +201,7 @@ function SetReserved()
 	// Get the reserved word options and words.
 	$modSettings['reserveNames'] = str_replace('\n', "\n", $modSettings['reserveNames']);
 	$context['reserved_words'] = explode("\n", $modSettings['reserveNames']);
-	$context['reserved_word_options'] = array();
+	$context['reserved_word_options'] = [];
 	$context['reserved_word_options']['match_word'] = $modSettings['reserveWord'] == '1';
 	$context['reserved_word_options']['match_case'] = $modSettings['reserveCase'] == '1';
 	$context['reserved_word_options']['match_user'] = $modSettings['reserveUser'] == '1';

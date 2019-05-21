@@ -84,8 +84,8 @@ function SetCensor()
 		checkSession();
 		validateToken('admin-censor');
 
-		$censored_vulgar = array();
-		$censored_proper = array();
+		$censored_vulgar = [];
+		$censored_proper = [];
 
 		// Rip it apart, then split it into two arrays.
 		if (isset($_POST['censortext']))
@@ -142,7 +142,7 @@ function SetCensor()
 	$censor_vulgar = explode("\n", $modSettings['censor_vulgar']);
 	$censor_proper = explode("\n", $modSettings['censor_proper']);
 
-	$context['censored_words'] = array();
+	$context['censored_words'] = [];
 	for ($i = 0, $n = count($censor_vulgar); $i < $n; $i++)
 	{
 		if (empty($censor_vulgar[$i]))

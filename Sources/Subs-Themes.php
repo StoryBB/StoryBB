@@ -45,8 +45,8 @@ function get_single_theme($id)
 	);
 
 	// Make our known/enable themes a little easier to work with.
-	$knownThemes = !empty($modSettings['knownThemes']) ? explode(',', $modSettings['knownThemes']) : array();
-	$enableThemes = !empty($modSettings['enableThemes']) ? explode(',', $modSettings['enableThemes']) : array();
+	$knownThemes = !empty($modSettings['knownThemes']) ? explode(',', $modSettings['knownThemes']) : [];
+	$enableThemes = !empty($modSettings['enableThemes']) ? explode(',', $modSettings['enableThemes']) : [];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_theme, variable, value
@@ -93,8 +93,8 @@ function get_all_themes($enable_only = false)
 	global $modSettings, $context, $smcFunc;
 
 	// Make our known/enable themes a little easier to work with.
-	$knownThemes = !empty($modSettings['knownThemes']) ? explode(',', $modSettings['knownThemes']) : array();
-	$enableThemes = !empty($modSettings['enableThemes']) ? explode(',', $modSettings['enableThemes']) : array();
+	$knownThemes = !empty($modSettings['knownThemes']) ? explode(',', $modSettings['knownThemes']) : [];
+	$enableThemes = !empty($modSettings['enableThemes']) ? explode(',', $modSettings['enableThemes']) : [];
 
 	// List of all possible themes values.
 	$themeValues = array(
@@ -126,7 +126,7 @@ function get_all_themes($enable_only = false)
 		)
 	);
 
-	$context['themes'] = array();
+	$context['themes'] = [];
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -217,7 +217,7 @@ function get_theme_info($path)
  * @param array $to_install An array containing all values to be stored into the DB.
  * @return int The newly created theme ID.
  */
-function theme_install($to_install = array())
+function theme_install($to_install = [])
 {
 	global $smcFunc, $context, $themedir, $themeurl, $modSettings;
 	global $settings, $explicit_images;
@@ -296,7 +296,7 @@ function theme_install($to_install = array())
 	// Last minute changes? although, the actual array is a context value you might want to use the new ID.
 	call_integration_hook('integrate_theme_install', array(&$context['to_install'], $id_theme));
 
-	$inserts = array();
+	$inserts = [];
 	foreach ($context['to_install'] as $var => $val)
 	{
 		if (is_array($val))

@@ -195,7 +195,7 @@ function load_lang_file()
 {
 	global $txt, $incontext;
 
-	$incontext['detected_languages'] = array();
+	$incontext['detected_languages'] = [];
 
 	// Make sure the languages directory actually exists.
 	$langpath = __DIR__ . '/Themes/default/languages';
@@ -279,7 +279,7 @@ function load_database()
 	// Need this to check whether we need the database password.
 	require(dirname(__FILE__) . '/Settings.php');
 	if (empty($smcFunc))
-		$smcFunc = array();
+		$smcFunc = [];
 
 	$modSettings['disableQueryCheck'] = true;
 
@@ -381,7 +381,7 @@ function Welcome()
 	}
 
 	// Is some database support even compiled in?
-	$incontext['supported_databases'] = array();
+	$incontext['supported_databases'] = [];
 	foreach ($databases as $key => $db)
 	{
 		if ($db['supported'])
@@ -458,7 +458,7 @@ function CheckFilesWritable()
 	if (function_exists('apache_get_modules') && in_array('mod_security', apache_get_modules()))
 		$writable_files[] = file_exists(dirname(__FILE__) . '/.htaccess') ? '.htaccess' : '.';
 
-	$failed_files = array();
+	$failed_files = [];
 
 	// On linux, it's easy - just use is_writable!
 	if (substr(__FILE__, 1, 2) != ':\\')
@@ -543,7 +543,7 @@ function CheckFilesWritable()
 			$_POST['ftp_path'] = $_SESSION['installer_temp_ftp']['path'];
 		}
 
-		$incontext['ftp_errors'] = array();
+		$incontext['ftp_errors'] = [];
 		if (isset($_POST['ftp_username']))
 		{
 			$ftp = new \StoryBB\Helper\FTP($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
@@ -596,7 +596,7 @@ function CheckFilesWritable()
 				'path' => $_POST['ftp_path']
 			);
 
-			$failed_files_updated = array();
+			$failed_files_updated = [];
 
 			foreach ($failed_files as $file)
 			{
@@ -652,7 +652,7 @@ function DatabaseSettings()
 	$incontext['db']['name'] = '';
 	$incontext['db']['pass'] = '';
 	$incontext['db']['type'] = '';
-	$incontext['supported_databases'] = array();
+	$incontext['supported_databases'] = [];
 
 	$foundOne = false;
 	foreach ($databases as $key => $db)
@@ -756,7 +756,7 @@ function DatabaseSettings()
 
 		$modSettings['disableQueryCheck'] = true;
 		if (empty($smcFunc))
-			$smcFunc = array();
+			$smcFunc = [];
 
 		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
 
@@ -961,8 +961,8 @@ function DatabasePopulation()
 			'db_error_skip' => true,
 		)
 	);
-	$newSettings = array();
-	$modSettings = array();
+	$newSettings = [];
+	$modSettings = [];
 	if ($result !== false)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -1005,8 +1005,8 @@ function DatabasePopulation()
 	$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], array('\\\\n' => '\\n'));
 
 	$current_statement = '';
-	$exists = array();
-	$incontext['failures'] = array();
+	$exists = [];
+	$incontext['failures'] = [];
 	$incontext['sql_results'] = array(
 		'tables' => 0,
 		'inserts' => 0,
@@ -1164,8 +1164,8 @@ function DatabasePopulation()
 		return false;
 
 	// Find database user privileges.
-	$privs = array();
-	$get_privs = $smcFunc['db_query']('', 'SHOW PRIVILEGES', array());
+	$privs = [];
+	$get_privs = $smcFunc['db_query']('', 'SHOW PRIVILEGES', []);
 	while ($row = $smcFunc['db_fetch_assoc']($get_privs))
 	{
 		if ($row['Privilege'] == 'Alter')

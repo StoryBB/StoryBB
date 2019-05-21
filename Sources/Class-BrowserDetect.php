@@ -44,7 +44,7 @@ class browser_detector
 		global $context, $user_info;
 
 		// Init
-		$this->_browsers = array();
+		$this->_browsers = [];
 		$this->_is_mobile = false;
 
 		// Initialize some values we'll set differently if necessary...

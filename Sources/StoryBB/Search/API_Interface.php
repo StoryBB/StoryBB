@@ -27,7 +27,7 @@ interface API_Interface
 	 * @param array $query_params Any parameters for the query
 	 * @return boolean Whether or not the specified method is supported
 	 */
-	public function supportsMethod($methodName, $query_params = array());
+	public function supportsMethod($methodName, $query_params = []);
 
 	/**
 	 * Whether this method is valid for implementation or not

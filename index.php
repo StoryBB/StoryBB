@@ -58,13 +58,13 @@ if (!empty($maintenance) && $maintenance == 2)
 	display_maintenance_message();
 
 // Create a variable to store some StoryBB specific functions in.
-$smcFunc = array();
+$smcFunc = [];
 
 // Initiate the database connection and define some database functions to use.
 loadDatabase();
 
 // Load the settings from the settings table, and perform operations like optimizing.
-$context = array();
+$context = [];
 reloadSettings();
 // Clean the request variables, add slashes, etc.
 cleanRequest();
@@ -375,7 +375,7 @@ function sbb_main()
 		// No fallback action, huh?
 		else
 		{
-			fatal_lang_error('not_found', false, array(), 404);
+			fatal_lang_error('not_found', false, [], 404);
 		}
 	}
 

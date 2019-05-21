@@ -45,7 +45,7 @@ function getLastPosts($latestPostOptions)
 			'is_approved' => 1,
 		)
 	);
-	$posts = array();
+	$posts = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Censor the subject and post for the preview ;).

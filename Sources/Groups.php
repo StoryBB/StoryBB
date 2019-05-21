@@ -235,7 +235,7 @@ function MembergroupMembers()
 			'id_group' => $_REQUEST['group'],
 		)
 	);
-	$context['group']['moderators'] = array();
+	$context['group']['moderators'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$context['group']['moderators'][] = array(
@@ -292,8 +292,8 @@ function MembergroupMembers()
 		checkSession();
 		validateToken('mod-mgm');
 
-		$member_query = array();
-		$member_parameters = array();
+		$member_query = [];
+		$member_parameters = [];
 
 		$ids = [];
 		foreach ($_REQUEST['toAdd'] as $id)
@@ -411,7 +411,7 @@ function MembergroupMembers()
 			)
 		);
 	}
-	$context['members'] = array();
+	$context['members'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$row['member_ip'] = inet_dtop($row['member_ip']);
@@ -491,7 +491,7 @@ function GroupRequests()
 		foreach ($_POST['groupr'] as $k => $request)
 			$_POST['groupr'][$k] = (int) $request;
 
-		$log_changes = array();
+		$log_changes = [];
 
 		// If we are giving a reason (And why shouldn't we?), then we don't actually do much.
 		if ($_POST['req_action'] == 'reason')
@@ -523,7 +523,7 @@ function GroupRequests()
 					'status_open' => 0,
 				)
 			);
-			$request_list = array();
+			$request_list = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
 				if (!isset($log_changes[$row['id_request']]))
@@ -757,7 +757,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_pa
 			'max' => $items_per_page,
 		))
 	);
-	$group_requests = array();
+	$group_requests = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if (empty($row['reason']))

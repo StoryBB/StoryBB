@@ -113,7 +113,7 @@ function ShowReports()
 		validateToken('mod-report-close-all');
 
 		// All the ones to update...
-		$toClose = array();
+		$toClose = [];
 		foreach ($_POST['close'] as $rid)
 			$toClose[] = (int) $rid;
 
@@ -197,8 +197,8 @@ function ReportDetails()
 	$context['report'] = array(
 		'id' => $report['id_report'],
 		'report_href' => $scripturl . '?action=moderate;area=reported' . $context['report_type'] . ';rid=' . $report['id_report'],
-		'comments' => array(),
-		'mod_comments' => array(),
+		'comments' => [],
+		'mod_comments' => [],
 		'time_started' => timeformat($report['time_started']),
 		'last_updated' => timeformat($report['time_updated']),
 		'num_reports' => $report['num_reports'],

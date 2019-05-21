@@ -34,7 +34,7 @@ function reloadSettings()
 			array(
 			)
 		);
-		$modSettings = array();
+		$modSettings = [];
 		if (!$request)
 			display_db_error();
 		while ($row = $smcFunc['db_fetch_row']($request))
@@ -264,7 +264,7 @@ function reloadSettings()
 	);
 
 	// Define an array for content-related <meta> elements (e.g. description, keywords, Open Graph) for the HTML head.
-	$context['meta_tags'] = array();
+	$context['meta_tags'] = [];
 
 	// Define an array of allowed HTML tags.
 	$context['allowed_html_tags'] = array(
@@ -451,7 +451,7 @@ function loadUserSettings()
 		{
 			$id_member = 0;
 			$context['tfa_member'] = $user_settings;
-			$user_settings = array();
+			$user_settings = [];
 		}
 		// Are we forcing 2FA? Need to check if the user groups actually require 2FA
 		elseif (!empty($modSettings['tfa_mode']) && $modSettings['tfa_mode'] >= 2 && $id_member && empty($user_settings['tfa_secret']))
@@ -577,7 +577,7 @@ function loadUserSettings()
 		// This is what a guest's variables should be.
 		$username = '';
 		$user_info = array('groups' => array(-1));
-		$user_settings = array();
+		$user_settings = [];
 
 		if (isset($_COOKIE[$cookiename]) && empty($context['tfa_member']))
 			$_COOKIE[$cookiename] = '';
@@ -649,11 +649,11 @@ function loadUserSettings()
 		'unread_messages' => empty($user_settings['unread_messages']) ? 0 : $user_settings['unread_messages'],
 		'alerts' => empty($user_settings['alerts']) ? 0 : $user_settings['alerts'],
 		'total_time_logged_in' => empty($user_settings['total_time_logged_in']) ? 0 : $user_settings['total_time_logged_in'],
-		'buddies' => !empty($modSettings['enable_buddylist']) && !empty($user_settings['buddy_list']) ? explode(',', $user_settings['buddy_list']) : array(),
-		'ignoreboards' => !empty($user_settings['ignore_boards']) && !empty($modSettings['allow_ignore_boards']) ? explode(',', $user_settings['ignore_boards']) : array(),
-		'ignoreusers' => !empty($user_settings['pm_ignore_list']) ? explode(',', $user_settings['pm_ignore_list']) : array(),
+		'buddies' => !empty($modSettings['enable_buddylist']) && !empty($user_settings['buddy_list']) ? explode(',', $user_settings['buddy_list']) : [],
+		'ignoreboards' => !empty($user_settings['ignore_boards']) && !empty($modSettings['allow_ignore_boards']) ? explode(',', $user_settings['ignore_boards']) : [],
+		'ignoreusers' => !empty($user_settings['pm_ignore_list']) ? explode(',', $user_settings['pm_ignore_list']) : [],
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
-		'permissions' => array(),
+		'permissions' => [],
 		'policy_acceptance' => isset($user_settings['policy_acceptance']) ? $user_settings['policy_acceptance'] : 0,
 	);
 
@@ -750,7 +750,7 @@ function loadBoard()
 	$context['user']['is_mod'] = &$user_info['is_mod'];
 
 	// Start the linktree off empty..
-	$context['linktree'] = array();
+	$context['linktree'] = [];
 
 	// Have they by chance specified a message id but nothing else?
 	if (empty($_REQUEST['action']) && empty($topic) && empty($board) && !empty($_REQUEST['msg']))
@@ -795,7 +795,7 @@ function loadBoard()
 	// Load this board only if it is specified.
 	if (empty($board) && empty($topic))
 	{
-		$board_info = array('moderators' => array(), 'moderator_groups' => array());
+		$board_info = array('moderators' => [], 'moderator_groups' => []);
 		return;
 	}
 
@@ -849,8 +849,8 @@ function loadBoard()
 			// Basic operating information. (globals... :/)
 			$board_info = array(
 				'id' => $board,
-				'moderators' => array(),
-				'moderator_groups' => array(),
+				'moderators' => [],
+				'moderator_groups' => [],
 				'cat' => array(
 					'id' => $row['id_cat'],
 					'name' => $row['cname']
@@ -876,8 +876,8 @@ function loadBoard()
 			);
 
 			// Load the membergroups allowed, and check permissions.
-			$board_info['groups'] = $row['member_groups'] == '' ? array() : explode(',', $row['member_groups']);
-			$board_info['deny_groups'] = $row['deny_member_groups'] == '' ? array() : explode(',', $row['deny_member_groups']);
+			$board_info['groups'] = $row['member_groups'] == '' ? [] : explode(',', $row['member_groups']);
+			$board_info['deny_groups'] = $row['deny_member_groups'] == '' ? [] : explode(',', $row['deny_member_groups']);
 
 			do
 			{
@@ -936,8 +936,8 @@ function loadBoard()
 		{
 			// Otherwise the topic is invalid, there are no moderators, etc.
 			$board_info = array(
-				'moderators' => array(),
-				'moderator_groups' => array(),
+				'moderators' => [],
+				'moderator_groups' => [],
 				'error' => 'exist'
 			);
 			$topic = null;
@@ -1073,7 +1073,7 @@ function loadPermissions()
 				'member_groups' => $user_info['groups'],
 			)
 		);
-		$removals = array();
+		$removals = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (empty($row['add_deny']))
@@ -1201,14 +1201,14 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 
 	// Can't just look for no users :P.
 	if (empty($users))
-		return array();
+		return [];
 
 	// Pass the set value
 	$context['loadMemberContext_set'] = $set;
 
 	// Make sure it's an array.
 	$users = !is_array($users) ? array($users) : array_unique($users);
-	$loaded_ids = array();
+	$loaded_ids = [];
 
 	if (!$is_name && !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 3)
 	{
@@ -1284,7 +1284,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'users' => $users,
 			)
 		);
-		$new_loaded_ids = array();
+		$new_loaded_ids = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// If the image proxy is enabled, we still want the original URL when they're editing the profile...
@@ -1304,7 +1304,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				$row['member_ip2'] = inet_dtop($row['member_ip2']);
 			$new_loaded_ids[] = $row['id_member'];
 			$loaded_ids[] = $row['id_member'];
-			$row['options'] = array();
+			$row['options'] = [];
 			$user_profile[$row['id_member']] = $row;
 		}
 		$smcFunc['db_free_result']($request);
@@ -1395,7 +1395,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		foreach ($user_profile as $id_member => $member)
 		{
 			if (!isset($member['characters'])) {
-				$user_profile[$id_member]['characters'] = array();
+				$user_profile[$id_member]['characters'] = [];
 			} else {
 				uasort($user_profile[$id_member]['characters'], function ($a, $b) {
 					return $a['is_main'] ? -1 : ($a['character_name'] > $b['character_name'] ? 1 : ($a['character_name'] < $a['character_name'] ? -1 : 0));
@@ -1416,7 +1416,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		$smcFunc['db_free_result']($request);
 	}
 
-	$additional_mods = array();
+	$additional_mods = [];
 
 	// Are any of these users in groups assigned to moderate this board?
 	if (!empty($loaded_ids) && !empty($board_info['moderator_groups']) && $set === 'normal')
@@ -1491,8 +1491,8 @@ function loadMemberContext($user, $display_custom_fields = false)
 {
 	global $memberContext, $user_profile, $txt, $scripturl, $user_info;
 	global $context, $modSettings, $settings, $smcFunc;
-	static $dataLoaded = array();
-	static $loadedLanguages = array();
+	static $dataLoaded = [];
+	static $loadedLanguages = [];
 
 	// If this person's data is already loaded, skip it.
 	if (isset($dataLoaded[$user]))
@@ -1522,7 +1522,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 	$profile['icons'] = empty($profile['icons']) ? array('', '') : explode('#', $profile['icons']);
 	// Setup the buddy status here (One whole in_array call saved :P)
 	$profile['buddy'] = in_array($profile['id_member'], $user_info['buddies']);
-	$buddy_list = !empty($profile['buddy_list']) ? explode(',', $profile['buddy_list']) : array();
+	$buddy_list = !empty($profile['buddy_list']) ? explode(',', $profile['buddy_list']) : [];
 
 	if (!isset($profile['ooc_group']) && isset($profile['primary_group_id'], $profile['additional_groups']))
 	{
@@ -1553,7 +1553,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'show_email' => !$user_info['is_guest'] && ($user_info['id'] == $profile['id_member'] || allowedTo('moderate_forum')),
 		'registered' => empty($profile['date_registered']) ? $txt['not_applicable'] : timeformat($profile['date_registered']),
 		'registered_timestamp' => empty($profile['date_registered']) ? 0 : forum_time(true, $profile['date_registered']),
-		'characters' => !empty($profile['characters']) ? $profile['characters'] : array(),
+		'characters' => !empty($profile['characters']) ? $profile['characters'] : [],
 		'current_character' => !empty($profile['online_character']) ? $profile['online_character'] : 0,
 		'avatar' => '',
 	);
@@ -1608,7 +1608,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'warning' => $profile['warning'],
 			'warning_status' => !empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($modSettings['warning_watch']) && $modSettings['warning_watch'] <= $profile['warning'] ? 'watch' : (''))),
 			'local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),
-			'custom_fields' => array(),
+			'custom_fields' => [],
 			'ooc_group' => !empty($profile['ooc_group']) ? $profile['ooc_group'] : [
 				'title' => '',
 				'color' => '',
@@ -1654,7 +1654,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 	// Are we also loading the members custom fields into context?
 	if ($display_custom_fields && !empty($modSettings['displayFields']))
 	{
-		$memberContext[$user]['custom_fields'] = array();
+		$memberContext[$user]['custom_fields'] = [];
 
 		if (!isset($context['display_fields']))
 			$context['display_fields'] = sbb_json_decode($modSettings['displayFields'], true);
@@ -1666,7 +1666,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 			$value = $profile['options'][$custom['col_name']];
 
-			$fieldOptions = array();
+			$fieldOptions = [];
 			$currentKey = 0;
 
 			// Create a key => value array for multiple options fields
@@ -1725,7 +1725,7 @@ function loadMemberCustomFields($users, $params)
 	// Make sure it's an array.
 	$users = !is_array($users) ? array($users) : array_unique($users);
 	$params = !is_array($params) ? array($params) : array_unique($params);
-	$return = array();
+	$return = [];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT c.id_field, c.col_name, c.field_name, c.field_desc, c.field_type, c.field_order, c.field_length, c.field_options, c.mask, show_reg,
@@ -1743,7 +1743,7 @@ function loadMemberCustomFields($users, $params)
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$fieldOptions = array();
+		$fieldOptions = [];
 		$currentKey = 0;
 
 		// Create a key => value array for multiple options fields
@@ -1781,7 +1781,7 @@ function loadMemberCustomFields($users, $params)
 		else
 		{
 			if (!isset($return[$row['id_member']]))
-				$return[$row['id_member']] = array();
+				$return[$row['id_member']] = [];
 
 			$return[$row['id_member']][$row['variable']] = $row;
 		}
@@ -1885,9 +1885,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$flag = true;
 	}
 	elseif (($temp = cache_get_data('theme_settings-' . $id_theme, 90)) != null && time() - 60 > $modSettings['settings_updated'])
-		$themeData = $temp + array($member => array());
+		$themeData = $temp + array($member => []);
 	else
-		$themeData = array(-1 => array(), 0 => array(), $member => array());
+		$themeData = array(-1 => [], 0 => [], $member => []);
 
 	if (empty($flag))
 	{
@@ -1942,7 +1942,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$settings['actual_images_url'] = $settings['images_url'];
 	$settings['actual_theme_dir'] = $settings['theme_dir'];
 
-	$settings['template_dirs'] = array();
+	$settings['template_dirs'] = [];
 	// This theme first.
 	$settings['template_dirs'][] = $settings['theme_dir'];
 
@@ -2083,7 +2083,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			'name' => $txt['guest_title'],
 			'language' => $language,
 			'email' => '',
-			'ignoreusers' => array(),
+			'ignoreusers' => [],
 		);
 		// Note we should stuff $user_info with some guest values also...
 		$user_info = array(
@@ -2094,9 +2094,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 			'username' => $txt['guest_title'],
 			'language' => $language,
 			'email' => '',
-			'permissions' => array(),
-			'groups' => array(),
-			'ignoreusers' => array(),
+			'permissions' => [],
+			'groups' => [],
+			'ignoreusers' => [],
 			'possibly_robot' => true,
 			'time_offset' => 0,
 			'time_format' => $modSettings['time_format'],
@@ -2107,15 +2107,15 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (!isset($context['html_headers']))
 		$context['html_headers'] = '';
 	if (!isset($context['javascript_files']))
-		$context['javascript_files'] = array();
+		$context['javascript_files'] = [];
 	if (!isset($context['css_files']))
-		$context['css_files'] = array();
+		$context['css_files'] = [];
 	if (!isset($context['css_header']))
-		$context['css_header'] = array();
+		$context['css_header'] = [];
 	if (!isset($context['javascript_inline']))
-		$context['javascript_inline'] = array('standard' => array(), 'defer' => array());
+		$context['javascript_inline'] = array('standard' => [], 'defer' => []);
 	if (!isset($context['javascript_vars']))
-		$context['javascript_vars'] = array();
+		$context['javascript_vars'] = [];
 
 	$context['login_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl) . '?action=login2';
 	$context['menu_separator'] = ' ';
@@ -2136,7 +2136,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Set the top level linktree up.
 	// Note that if we're dealing with certain very early errors (e.g., login) the linktree might not be set yet...
 	if (empty($context['linktree']))
-		$context['linktree'] = array();
+		$context['linktree'] = [];
 	array_unshift($context['linktree'], array(
 		'url' => $scripturl,
 		'name' => $context['forum_name_html_safe']
@@ -2146,7 +2146,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['insert_after_template'] = '';
 
 	if (!isset($txt))
-		$txt = array();
+		$txt = [];
 
 	$simpleActions = array(
 		'helpadmin',
@@ -2251,7 +2251,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	loadCSSFile('responsive.css', array('force_current' => false, 'validate' => true, 'minimize' => true), 'sbb_responsive');
 
 	if ($context['right_to_left'])
-		loadCSSFile('rtl.css', array(), 'sbb_rtl');
+		loadCSSFile('rtl.css', [], 'sbb_rtl');
 
 	// We allow theme variants, because we're cool.
 	$context['theme_variant'] = '';
@@ -2274,9 +2274,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 		if (!empty($context['theme_variant']))
 		{
-			loadCSSFile('index' . $context['theme_variant'] . '.css', array(), 'sbb_index' . $context['theme_variant']);
+			loadCSSFile('index' . $context['theme_variant'] . '.css', [], 'sbb_index' . $context['theme_variant']);
 			if ($context['right_to_left'])
-				loadCSSFile('rtl' . $context['theme_variant'] . '.css', array(), 'sbb_rtl' . $context['theme_variant']);
+				loadCSSFile('rtl' . $context['theme_variant'] . '.css', [], 'sbb_rtl' . $context['theme_variant']);
 		}
 	}
 
@@ -2315,7 +2315,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	loadJavaScriptFile('sbb_jquery_plugins.js', array('minimize' => true), 'sbb_jquery_plugins');
 	if (!$user_info['is_guest'])
 	{
-		loadJavaScriptFile('jquery.custom-scrollbar.js', array(), 'sbb_jquery_scrollbar');
+		loadJavaScriptFile('jquery.custom-scrollbar.js', [], 'sbb_jquery_scrollbar');
 		loadCSSFile('jquery.custom-scrollbar.css', array('force_current' => false, 'validate' => true), 'sbb_scrollbar');
 	}
 
@@ -2432,7 +2432,7 @@ function loadTheme($id_theme = 0, $initialize = true)
  *  - ['minimize'] boolean to add your file to the main minimized file. Useful when you have a file thats loaded everywhere and for everyone.
  * @param string $id An ID to stick on the end of the filename for caching purposes
  */
-function loadCSSFile($fileName, $params = array(), $id = '')
+function loadCSSFile($fileName, $params = [], $id = '')
 {
 	global $settings, $context, $modSettings;
 
@@ -2529,7 +2529,7 @@ function addInlineCss($css)
  *
  * @param string $id An ID to stick on the end of the filename
  */
-function loadJavaScriptFile($fileName, $params = array(), $id = '')
+function loadJavaScriptFile($fileName, $params = [], $id = '')
 {
 	global $settings, $context, $modSettings;
 
@@ -2637,7 +2637,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 {
 	global $user_info, $language, $settings, $context, $modSettings;
 	global $db_show_debug, $sourcedir, $txt, $birthdayEmails, $txtBirthdayEmails;
-	static $already_loaded = array();
+	static $already_loaded = [];
 
 	// Default to the user's language.
 	if ($lang == '')
@@ -2751,7 +2751,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				$txt[$key . '_subject'] = $value['subject'];
 				$txt[$key . '_body'] = $value['body'];
 			}
-			$txt['emails'] = array();
+			$txt['emails'] = [];
 		}
 		// For sake of backward compatibility: $birthdayEmails is supposed to be
 		// empty in a normal install. If it isn't it means the forum is using
@@ -2765,7 +2765,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				$txtBirthdayEmails[$key . '_body'] = $value['body'];
 				$txtBirthdayEmails[$key . '_author'] = $value['author'];
 			}
-			$birthdayEmails = array();
+			$birthdayEmails = [];
 		}
 	}
 
@@ -2795,7 +2795,7 @@ function getBoardParents($id_parent)
 	// First check if we have this cached already.
 	if (($boards = cache_get_data('board_parents-' . $id_parent, 480)) === null)
 	{
-		$boards = array();
+		$boards = [];
 		$original_parent = $id_parent;
 
 		// Loop while the parent is non-zero.
@@ -2830,8 +2830,8 @@ function getBoardParents($id_parent)
 						'level' => $row['child_level'],
 						'groups' => explode(',', $row['member_groups']),
 						'deny_groups' => explode(',', $row['deny_member_groups']),
-						'moderators' => array(),
-						'moderator_groups' => array()
+						'moderators' => [],
+						'moderator_groups' => []
 					);
 				}
 				// If a moderator exists for this board, add that moderator for all children too.
@@ -2904,10 +2904,10 @@ function getLanguages($use_cache = true)
 		$language_directories = array_unique($language_directories);
 
 		// Get a list of languages.
-		$langList = !empty($modSettings['langList']) ? json_decode($modSettings['langList'], true) : array();
+		$langList = !empty($modSettings['langList']) ? json_decode($modSettings['langList'], true) : [];
 		$langList = is_array($langList) ? $langList : false;
 
-		$catchLang = array();
+		$catchLang = [];
 
 		foreach ($language_directories as $language_dir)
 		{
@@ -3025,7 +3025,7 @@ function template_include($filename, $once = false)
 	global $context, $settings, $txt, $scripturl, $modSettings;
 	global $boardurl, $boarddir, $sourcedir;
 	global $maintenance, $mtitle, $mmessage;
-	static $templates = array();
+	static $templates = [];
 
 	// We want to be able to figure out any errors...
 	@ini_set('track_errors', '1');
@@ -3116,7 +3116,7 @@ function loadDatabase()
 	// Load the file for the database.
 	require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
 
-	$db_options = array();
+	$db_options = [];
 
 	// Add in the port if needed
 	if (!empty($db_port))
@@ -3274,13 +3274,13 @@ function clean_cache($type = '')
  * @param array $data An array of raw info
  * @return array An array of avatar data
  */
-function set_avatar_data($data = array())
+function set_avatar_data($data = [])
 {
 	global $modSettings, $boardurl, $smcFunc, $image_proxy_enabled, $image_proxy_secret, $settings;
 
 	// Come on!
 	if (empty($data))
-		return array();
+		return [];
 
 	// Set a nice default var.
 	$image = '';

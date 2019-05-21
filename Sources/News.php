@@ -87,7 +87,7 @@ function ShowXmlFeed()
 			)
 		);
 		$total_cat_posts = 0;
-		$boards = array();
+		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$boards[] = $row['id_board'];
@@ -126,7 +126,7 @@ function ShowXmlFeed()
 			fatal_lang_error('no_board');
 
 		$total_posts = 0;
-		$boards = array();
+		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if ($num_boards == 1)
@@ -220,19 +220,19 @@ function ShowXmlFeed()
 
 	// Allow mods to add extra namespaces and tags to the feed/channel
 	$namespaces = array(
-		'rss' => array(),
+		'rss' => [],
 		'rss2' => array('atom' => 'http://www.w3.org/2005/Atom'),
 		'atom' => array('' => 'http://www.w3.org/2005/Atom'),
 	);
 	$extraFeedTags = array(
-		'rss' => array(),
-		'rss2' => array(),
-		'atom' => array(),
+		'rss' => [],
+		'rss2' => [],
+		'atom' => [],
 	);
 
 	// Allow mods to specify any keys that need special handling
-	$forceCdataKeys = array();
-	$nsKeys = array();
+	$forceCdataKeys = [];
+	$nsKeys = [];
 
 	// Remember this, just in case...
 	$orig_feed_meta = $feed_meta;
@@ -460,7 +460,7 @@ function cdata_parse($data, $ns = '', $force = false)
  * @param array $forceCdataKeys A list of keys on which to force cdata wrapping (used by mods, maybe)
  * @param array $nsKeys Key-value pairs of namespace prefixes to pass to cdata_parse() (used by mods, maybe)
  */
-function dumpTags($data, $i, $tag = null, $xml_format = '', $forceCdataKeys = array(), $nsKeys = array())
+function dumpTags($data, $i, $tag = null, $xml_format = '', $forceCdataKeys = [], $nsKeys = [])
 {
 	// Wrap the values of these keys into CDATA tags
 	$keysToCdata = array(
@@ -553,7 +553,7 @@ function getXmlMembers($xml_format)
 	global $scripturl, $smcFunc;
 
 	if (!allowedTo('view_mlist'))
-		return array();
+		return [];
 
 	// Find the most recent members.
 	$request = $smcFunc['db_query']('', '
@@ -565,7 +565,7 @@ function getXmlMembers($xml_format)
 			'limit' => $_GET['limit'],
 		)
 	);
-	$data = array();
+	$data = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Create a GUID for each member using the tag URI scheme
@@ -701,7 +701,7 @@ function getXmlNews($xml_format)
 		else
 			$done = true;
 	}
-	$data = array();
+	$data = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Limit the length of the message, if the option is set.
@@ -729,7 +729,7 @@ function getXmlNews($xml_format)
 					'is_approved' => 1,
 				)
 			);
-			$loaded_attachments = array();
+			$loaded_attachments = [];
 			while ($attach = $smcFunc['db_fetch_assoc']($attach_request))
 			{
 				// Include approved attachments only
@@ -950,13 +950,13 @@ function getXmlRecent($xml_format)
 		else
 			$done = true;
 	}
-	$messages = array();
+	$messages = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$messages[] = $row['id_msg'];
 	$smcFunc['db_free_result']($request);
 
 	if (empty($messages))
-		return array();
+		return [];
 
 	// Find the most recent posts this user can see.
 	$request = $smcFunc['db_query']('', '
@@ -982,7 +982,7 @@ function getXmlRecent($xml_format)
 			'message_list' => $messages,
 		)
 	);
-	$data = array();
+	$data = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Limit the length of the message, if the option is set.
@@ -1010,7 +1010,7 @@ function getXmlRecent($xml_format)
 					'is_approved' => 1,
 				)
 			);
-			$loaded_attachments = array();
+			$loaded_attachments = [];
 			while ($attach = $smcFunc['db_fetch_assoc']($attach_request))
 			{
 				// Include approved attachments only
@@ -1194,13 +1194,13 @@ function getXmlProfile($xml_format)
 
 	// You must input a valid user....
 	if (empty($_GET['u']) || !loadMemberData((int) $_GET['u']))
-		return array();
+		return [];
 
 	// Make sure the id is a number and not "I like trying to hack the database".
 	$_GET['u'] = (int) $_GET['u'];
 	// Load the member's contextual information!
 	if (!loadMemberContext($_GET['u']) || !allowedTo('profile_view'))
-		return array();
+		return [];
 
 	// Okay, I admit it, I'm lazy.  Stupid $_GET['u'] is long and hard to type.
 	$profile = &$memberContext[$_GET['u']];

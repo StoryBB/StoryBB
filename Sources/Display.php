@@ -136,9 +136,9 @@ function Display()
 		'current_topic' => $topic,
 		'current_board' => $board,
 	);
-	$topic_selects = array();
-	$topic_tables = array();
-	$context['topicinfo'] = array();
+	$topic_selects = [];
+	$topic_tables = [];
+	$context['topicinfo'] = [];
 	call_integration_hook('integrate_display_topic', array(&$topic_selects, &$topic_tables, &$topic_parameters));
 
 	// @todo Why isn't this cached?
@@ -345,7 +345,7 @@ function Display()
 
 	// Are we showing signatures - or disabled fields?
 	$context['signature_enabled'] = substr($modSettings['signature_settings'], 0, 1) == 1;
-	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
+	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : [];
 
 	// Censor the title...
 	censorText($context['topicinfo']['subject']);
@@ -358,8 +358,8 @@ function Display()
 	if (!empty($settings['display_who_viewing']))
 	{
 		// Start out with no one at all viewing it.
-		$context['view_members'] = array();
-		$context['view_members_list'] = array();
+		$context['view_members'] = [];
+		$context['view_members_list'] = [];
 		$context['view_num_hidden'] = 0;
 
 		// Search for members who have this topic set in their GET data.
@@ -474,7 +474,7 @@ function Display()
 	// Build a list of this board's moderators.
 	$context['moderators'] = &$board_info['moderators'];
 	$context['moderator_groups'] = &$board_info['moderator_groups'];
-	$context['link_moderators'] = array();
+	$context['link_moderators'] = [];
 	if (!empty($board_info['moderators']))
 	{
 		// Add a link for each moderator...
@@ -574,7 +574,7 @@ function Display()
 				'not_guest' => 0,
 			)
 		);
-		$pollOptions = array();
+		$pollOptions = [];
 		$realtotal = 0;
 		$pollinfo['has_voted'] = false;
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -637,7 +637,7 @@ function Display()
 			'total_votes' => $pollinfo['total'],
 			'change_vote' => !empty($pollinfo['change_vote']),
 			'is_locked' => !empty($pollinfo['voting_locked']),
-			'options' => array(),
+			'options' => [],
 			'lock' => allowedTo('poll_lock_any') || ($context['user']['started'] && allowedTo('poll_lock_own')),
 			'edit' => allowedTo('poll_edit_any') || ($context['user']['started'] && allowedTo('poll_edit_own')),
 			'remove' => allowedTo('poll_remove_any') || ($context['user']['started'] && allowedTo('poll_remove_own')),
@@ -726,7 +726,7 @@ function Display()
 		}
 
 		// Build the poll moderation button array.
-		$context['poll_buttons'] = array();
+		$context['poll_buttons'] = [];
 
 		if ($context['allow_return_vote'])
 			$context['poll_buttons']['vote'] = array('text' => 'poll_return_vote', 'image' => 'poll_options.png', 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start']);
@@ -781,8 +781,8 @@ function Display()
 		)
 	);
 
-	$messages = array();
-	$all_posters = array();
+	$messages = [];
+	$all_posters = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if (!empty($row['id_member']))
@@ -921,23 +921,23 @@ function Display()
 	}
 
 	// Get notification preferences
-	$context['topicinfo']['notify_prefs'] = array();
+	$context['topicinfo']['notify_prefs'] = [];
 	if (!empty($user_info['id']))
 	{
 		require_once($sourcedir . '/Subs-Notify.php');
 		$prefs = getNotifyPrefs($user_info['id'], array('topic_notify', 'topic_notify_' . $context['current_topic']), true);
-		$pref = !empty($prefs[$user_info['id']]) && $context['is_marked_notify'] ? $prefs[$user_info['id']] : array();
+		$pref = !empty($prefs[$user_info['id']]) && $context['is_marked_notify'] ? $prefs[$user_info['id']] : [];
 		$context['topicinfo']['notify_prefs'] = array(
 			'is_custom' => isset($pref['topic_notify_' . $topic]),
 			'pref' => isset($pref['topic_notify_' . $context['current_topic']]) ? $pref['topic_notify_' . $context['current_topic']] : (!empty($pref['topic_notify']) ? $pref['topic_notify'] : 0),
 		);
 	}
 
-	$context['topic_notification'] = !empty($user_info['id']) ? $context['topicinfo']['notify_prefs'] : array();
+	$context['topic_notification'] = !empty($user_info['id']) ? $context['topicinfo']['notify_prefs'] : [];
 	// 0 => unwatched, 1 => normal, 2 => receive alerts, 3 => receive emails
 	$context['topic_notification_mode'] = !$user_info['is_guest'] ? ($context['topic_unwatched'] ? 0 : ($context['topicinfo']['notify_prefs']['pref'] & 0x02 ? 3 : ($context['topicinfo']['notify_prefs']['pref'] & 0x01 ? 2 : 1))) : 0;
 
-	$context['loaded_attachments'] = array();
+	$context['loaded_attachments'] = [];
 
 	// If there _are_ messages here... (probably an error otherwise :!)
 	if (!empty($messages))
@@ -960,7 +960,7 @@ function Display()
 					'is_approved' => 1,
 				)
 			);
-			$temp = array();
+			$temp = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
 				if (!$row['approved'] && $modSettings['postmod_active'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
@@ -971,7 +971,7 @@ function Display()
 				$temp[$row['id_attach']]['board'] = $board;
 
 				if (!isset($context['loaded_attachments'][$row['id_msg']]))
-					$context['loaded_attachments'][$row['id_msg']] = array();
+					$context['loaded_attachments'][$row['id_msg']] = [];
 			}
 			$smcFunc['db_free_result']($request);
 
@@ -986,8 +986,8 @@ function Display()
 			'message_list' => $messages,
 			'new_from' => $context['topicinfo']['new_from'],
 		);
-		$msg_selects = array();
-		$msg_tables = array();
+		$msg_selects = [];
+		$msg_tables = [];
 		call_integration_hook('integrate_query_message', array(&$msg_selects, &$msg_tables, &$msg_parameters));
 
 		// What?  It's not like it *couldn't* be only guests in this topic...
@@ -1007,7 +1007,7 @@ function Display()
 
 		// And the likes
 		if (!empty($modSettings['enable_likes']))
-			$context['my_likes'] = $context['user']['is_guest'] ? array() : prepareLikesContext($topic);
+			$context['my_likes'] = $context['user']['is_guest'] ? [] : prepareLikesContext($topic);
 
 		// Go to the last message if the given time is beyond the time of the last message.
 		if (isset($context['start_from']) && $context['start_from'] >= $context['topicinfo']['num_replies'])
@@ -1026,7 +1026,7 @@ function Display()
 		$context['first_message'] = 0;
 		$context['first_new_message'] = false;
 
-		$context['likes'] = array();
+		$context['likes'] = [];
 	}
 
 	$context['jump_to'] = array(
@@ -1200,7 +1200,7 @@ function Display()
 		$context['icons'][count($context['icons']) - 1]['is_last'] = true;
 
 	// Build the normal button array.
-	$context['normal_buttons'] = array();
+	$context['normal_buttons'] = [];
 
 	if ($context['can_reply'])
 		$context['normal_buttons']['reply'] = array('text' => 'reply', 'image' => 'reply.png', 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'active' => true);
@@ -1236,7 +1236,7 @@ function Display()
 		);
 
 	// Build the mod button array
-	$context['mod_buttons'] = array();
+	$context['mod_buttons'] = [];
 
 	if ($context['can_move'])
 		$context['mod_buttons']['move'] = array('text' => 'move_topic', 'image' => 'admin_move.png', 'url' => $scripturl . '?action=movetopic;current_board=' . $context['current_board'] . ';topic=' . $context['current_topic'] . '.0');
@@ -1432,7 +1432,7 @@ function prepareDisplayContext($reset = false)
 	// $context['icon_sources'] says where each icon should come from - here we set up the ones which will always exist!
 	if (empty($context['icon_sources']))
 	{
-		$context['icon_sources'] = array();
+		$context['icon_sources'] = [];
 		foreach ($context['stable_icons'] as $icon)
 			$context['icon_sources'][$icon] = 'images_url';
 	}
@@ -1704,7 +1704,7 @@ function QuickInTopicModeration()
 	if (empty($_REQUEST['msgs']))
 		redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
 
-	$messages = array();
+	$messages = [];
 	foreach ($_REQUEST['msgs'] as $dummy)
 		$messages[] = (int) $dummy;
 
@@ -1770,7 +1770,7 @@ function QuickInTopicModeration()
 			'limit' => count($messages),
 		)
 	);
-	$messages = array();
+	$messages = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if (!$allowed_all && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + $modSettings['edit_disable_time'] * 60 < time())

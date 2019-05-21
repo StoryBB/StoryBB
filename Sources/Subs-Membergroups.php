@@ -61,7 +61,7 @@ function deleteMembergroups($groups)
 		return 'no_group_found';
 
 	// Make sure they don't try to delete a group attached to a paid subscription.
-	$subscriptions = array();
+	$subscriptions = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT id_subscribe, name, id_group, add_groups
 		FROM {db_prefix}subscriptions
@@ -180,7 +180,7 @@ function deleteMembergroups($groups)
 			'additional_groups_explode' => implode(', additional_groups) != 0 OR FIND_IN_SET(', $groups),
 		)
 	);
-	$updates = array();
+	$updates = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$updates[$row['additional_groups']][] = $row['id_member'];
 	$smcFunc['db_free_result']($request);
@@ -197,7 +197,7 @@ function deleteMembergroups($groups)
 			'member_groups_explode' => implode(', member_groups) != 0 OR FIND_IN_SET(', $groups),
 		)
 	);
-	$updates = array();
+	$updates = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$updates[$row['member_groups']][] = $row['id_board'];
 	$smcFunc['db_free_result']($request);
@@ -262,7 +262,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	// Before we get started, let's check we won't leave the admin group empty!
 	if ($groups === null || $groups == 1 || (is_array($groups) && in_array(1, $groups)))
 	{
-		$admins = array();
+		$admins = [];
 		listMembergroupMembers_Href($admins, 1);
 
 		// Remove any admins if there are too many.
@@ -323,7 +323,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 			'group_list' => $groups,
 		)
 	);
-	$group_names = array();
+	$group_names = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if ($row['min_posts'] != -1)
@@ -361,7 +361,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 		return false;
 
 	// First, reset those who have this as their primary group - this is the easy one.
-	$log_inserts = array();
+	$log_inserts = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT id_member, id_group
 		FROM {db_prefix}members AS members
@@ -401,7 +401,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 			'limit' => count($members),
 		)
 	);
-	$updates = array();
+	$updates = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// What log entries must we make for this one, eh?
@@ -632,7 +632,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 			'current_group' => $group,
 		)
 	);
-	$group_names = array();
+	$group_names = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if ($row['min_posts'] != -1)
@@ -856,7 +856,7 @@ function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 			'id_group' => $membergroup,
 		)
 	);
-	$members = array();
+	$members = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$members[$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 	$smcFunc['db_free_result']($request);
@@ -893,7 +893,7 @@ function cache_getMembergroupList()
 			'mod_group' => 3,
 		)
 	);
-	$groupCache = array();
+	$groupCache = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$groupCache[] = '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
 	$smcFunc['db_free_result']($request);
@@ -937,8 +937,8 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 	);
 
 	// Start collecting the data.
-	$groups = array();
-	$group_ids = array();
+	$groups = [];
+	$group_ids = [];
 	$context['can_moderate'] = allowedTo('manage_membergroups');
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -957,7 +957,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			'online_color' => $row['online_color'],
 			'type' => $row['group_type'],
 			'num_members' => $row['num_members'],
-			'moderators' => array(),
+			'moderators' => [],
 			'icons' => !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' . $row['icons'][1] . '" alt="*">', $row['icons'][0]) : $txt['membergroup_no_badge'],
 		);
 

@@ -28,8 +28,8 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 		$topicOptions = $this->_details['topicOptions'];
 		$posterOptions = $this->_details['posterOptions'];
 
-		$members = array();
-		$alert_rows = array();
+		$members = [];
+		$alert_rows = [];
 
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member, email_address, lngfile
@@ -41,7 +41,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 			)
 		);
 
-		$watched = array();
+		$watched = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$members[] = $row['id_member'];
@@ -101,7 +101,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 				$alert_rows,
-				array()
+				[]
 			);
 
 		return true;

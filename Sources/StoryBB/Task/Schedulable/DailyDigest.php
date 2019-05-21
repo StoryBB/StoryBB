@@ -51,9 +51,9 @@ class DailyDigest extends \StoryBB\Task\Schedulable
 				'is_activated' => 1,
 			)
 		);
-		$members = array();
-		$langs = array();
-		$notify = array();
+		$members = [];
+		$langs = [];
+		$notify = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (!isset($members[$row['id_member']]))
@@ -88,7 +88,7 @@ class DailyDigest extends \StoryBB\Task\Schedulable
 				'board_list' => $boards,
 			)
 		);
-		$boards = array();
+		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[$row['id_board']] = $row['name'];
 		$smcFunc['db_free_result']($request);
@@ -111,12 +111,12 @@ class DailyDigest extends \StoryBB\Task\Schedulable
 				'daily_value' => 2,
 			)
 		);
-		$types = array();
+		$types = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (!isset($types[$row['note_type']][$row['id_board']]))
 				$types[$row['note_type']][$row['id_board']] = array(
-					'lines' => array(),
+					'lines' => [],
 					'name' => $row['board_name'],
 					'id' => $row['id_board'],
 				);
@@ -150,7 +150,7 @@ class DailyDigest extends \StoryBB\Task\Schedulable
 					);
 			}
 
-			$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]['members'] = array();
+			$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]['members'] = [];
 			if (!empty($notify['topics'][$row['id_topic']]))
 				$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]['members'] = array_merge($types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]['members'], $notify['topics'][$row['id_topic']]);
 			if (!empty($notify['boards'][$row['id_board']]))
@@ -162,7 +162,7 @@ class DailyDigest extends \StoryBB\Task\Schedulable
 			return true;
 
 		// Let's load all the languages into a cache thingy.
-		$langtxt = array();
+		$langtxt = [];
 		foreach ($langs as $lang)
 		{
 			loadLanguage('Post', $lang);

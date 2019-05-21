@@ -673,7 +673,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 			$alert_rows,
-			array()
+			[]
 		);
 
 		updateMemberData($this->_details['id_member'], array('alerts' => '+'));

@@ -188,9 +188,9 @@ function displayDebug()
 	if (empty($_SESSION['view_queries']))
 		$_SESSION['view_queries'] = 0;
 	if (empty($context['debug']['language_files']))
-		$context['debug']['language_files'] = array();
+		$context['debug']['language_files'] = [];
 	if (empty($context['debug']['sheets']))
-		$context['debug']['sheets'] = array();
+		$context['debug']['sheets'] = [];
 
 	$files = get_included_files();
 	$total_size = 0;
@@ -241,8 +241,8 @@ function displayDebug()
 
 	if (!empty($modSettings['cache_enable']) && !empty($cache_hits))
 	{
-		$missed_entries = array();
-		$entries = array();
+		$missed_entries = [];
+		$entries = [];
 		$total_t = 0;
 		$total_s = 0;
 		foreach ($cache_hits as $cache_hit)
@@ -252,7 +252,7 @@ function displayDebug()
 			$total_s += $cache_hit['s'];
 		}
 		if (!isset($cache_misses))
-			$cache_misses = array();
+			$cache_misses = [];
 		foreach ($cache_misses as $missed)
 			$missed_entries[] = $missed['d'] . ' ' . $missed['k'];
 
@@ -316,10 +316,10 @@ function displayDebug()
  * @param array $stats An array of data
  * @return bool Whether or not the info was updated successfully
  */
-function trackStats($stats = array())
+function trackStats($stats = [])
 {
 	global $modSettings, $smcFunc;
-	static $cache_stats = array();
+	static $cache_stats = [];
 
 	if (empty($modSettings['trackStats']))
 		return false;
@@ -329,7 +329,7 @@ function trackStats($stats = array())
 		return false;
 
 	$setStringUpdate = '';
-	$insert_keys = array();
+	$insert_keys = [];
 	$date = strftime('%Y-%m-%d', forum_time(false));
 	$update_parameters = array(
 		'current_date' => $date,
@@ -363,7 +363,7 @@ function trackStats($stats = array())
 	}
 
 	// Don't do this again.
-	$cache_stats = array();
+	$cache_stats = [];
 
 	return true;
 }
@@ -374,11 +374,11 @@ function trackStats($stats = array())
  * @example logAction('remove', array('starter' => $id_member_started));
  *
  * @param string $action The action to log
- * @param array $extra = array() An array of additional data
+ * @param array $extra = [] An array of additional data
  * @param string $log_type What type of log ('admin', 'moderate', etc.)
  * @return int The ID of the row containing the logged data
  */
-function logAction($action, $extra = array(), $log_type = 'moderate')
+function logAction($action, $extra = [], $log_type = 'moderate')
 {
 	return logActions(array(array(
 		'action' => $action,
@@ -397,7 +397,7 @@ function logActions($logs)
 {
 	global $modSettings, $user_info, $smcFunc, $sourcedir;
 
-	$inserts = array();
+	$inserts = [];
 	$log_types = array(
 		'moderate' => 1,
 		'user' => 2,

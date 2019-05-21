@@ -207,7 +207,7 @@ function ManageAttachmentSettings($return_config = false)
 					$modSettings['attachment_basedirectories'] = sbb_json_decode($modSettings['attachment_basedirectories'], true);
 			}
 			else
-				$modSettings['attachment_basedirectories'] = array();
+				$modSettings['attachment_basedirectories'] = [];
 
 			if (!empty($_POST['use_subdirectories_for_attachments']) && !empty($_POST['basedirectory_for_attachments']) && !in_array($_POST['basedirectory_for_attachments'], $modSettings['attachment_basedirectories']))
 			{
@@ -660,7 +660,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 			)
 		);
 	}
-	$files = array();
+	$files = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$files[] = $row;
 	$smcFunc['db_free_result']($request);
@@ -809,7 +809,7 @@ function MaintainFiles()
 
 	$context['attach_multiple_dirs'] = count($attach_dirs) > 1 ? true : false;
 	$context['attach_dirs'] = $attach_dirs;
-	$context['base_dirs'] = !empty($modSettings['attachment_basedirectories']) ? sbb_json_decode($modSettings['attachment_basedirectories'], true) : array();
+	$context['base_dirs'] = !empty($modSettings['attachment_basedirectories']) ? sbb_json_decode($modSettings['attachment_basedirectories'], true) : [];
 	$context['checked'] = isset($_SESSION['checked']) ? $_SESSION['checked'] : true;
 	if (!empty($_SESSION['results']))
 	{
@@ -904,7 +904,7 @@ function RemoveAttachment()
 
 	if (!empty($_POST['remove']))
 	{
-		$attachments = array();
+		$attachments = [];
 		// There must be a quicker way to pass this safety test??
 		foreach ($_POST['remove'] as $removeID => $dummy)
 			$attachments[] = (int) $removeID;
@@ -1007,11 +1007,11 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 	global $modSettings, $smcFunc;
 
 	// @todo This might need more work!
-	$new_condition = array();
+	$new_condition = [];
 	$query_parameter = array(
 		'thumb_attachment_type' => 3,
 	);
-	$do_logging = array();
+	$do_logging = [];
 
 	if (is_array($condition))
 	{
@@ -1044,9 +1044,9 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 	}
 
 	// Delete it only if it exists...
-	$msgs = array();
-	$attach = array();
-	$parents = array();
+	$msgs = [];
+	$attach = [];
+	$parents = [];
 
 	// Get all the attachment names and id_msg's.
 	$request = $smcFunc['db_query']('', '
@@ -1183,7 +1183,7 @@ function RepairAttachments()
 			if (empty($_POST['to_fix']))
 				redirectexit('action=admin;area=manageattachments;sa=maintenance');
 
-			$_SESSION['attachments_to_fix'] = array();
+			$_SESSION['attachments_to_fix'] = [];
 			// @todo No need to do this I think.
 			foreach ($_POST['to_fix'] as $value)
 				$_SESSION['attachments_to_fix'][] = $value;
@@ -1203,7 +1203,7 @@ function RepairAttachments()
 		'files_without_attachment' => 0,
 	);
 
-	$to_fix = !empty($_SESSION['attachments_to_fix']) ? $_SESSION['attachments_to_fix'] : array();
+	$to_fix = !empty($_SESSION['attachments_to_fix']) ? $_SESSION['attachments_to_fix'] : [];
 	$context['repair_errors'] = isset($_SESSION['attachments_to_fix2']) ? $_SESSION['attachments_to_fix2'] : $context['repair_errors'];
 	$fix_errors = isset($_GET['fixErrors']) ? true : false;
 
@@ -1223,7 +1223,7 @@ function RepairAttachments()
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
-			$to_remove = array();
+			$to_remove = [];
 
 			$result = $smcFunc['db_query']('', '
 				SELECT thumb.id_attach, thumb.id_folder, thumb.filename, thumb.file_hash
@@ -1293,7 +1293,7 @@ function RepairAttachments()
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
-			$to_update = array();
+			$to_update = [];
 
 			$result = $smcFunc['db_query']('', '
 				SELECT a.id_attach
@@ -1350,8 +1350,8 @@ function RepairAttachments()
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 250)
 		{
-			$to_remove = array();
-			$errors_found = array();
+			$to_remove = [];
+			$errors_found = [];
 
 			$result = $smcFunc['db_query']('', '
 				SELECT id_attach, id_folder, filename, file_hash, size, attachment_type
@@ -1498,7 +1498,7 @@ function RepairAttachments()
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
-			$to_remove = array();
+			$to_remove = [];
 
 			$result = $smcFunc['db_query']('', '
 				SELECT a.id_attach, a.id_folder, a.filename, a.file_hash, a.attachment_type
@@ -1571,7 +1571,7 @@ function RepairAttachments()
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
-			$to_remove = array();
+			$to_remove = [];
 			$ignore_ids = array(0);
 			
 			// returns an array of ints of id_attach's that should not be deleted
@@ -1792,7 +1792,7 @@ function ApproveAttach()
 	// If it approve or delete?
 	$is_approve = !isset($_GET['sa']) || $_GET['sa'] != 'reject' ? true : false;
 
-	$attachments = array();
+	$attachments = [];
 	// If we are approving all ID's in a message , get the ID's.
 	if ($_GET['sa'] == 'all' && !empty($_GET['mid']))
 	{
@@ -1837,7 +1837,7 @@ function ApproveAttach()
 			'is_approved' => 0,
 		)
 	);
-	$attachments = array();
+	$attachments = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// We can only add it if we can approve in this board!
@@ -1893,7 +1893,7 @@ function ApproveAttachments($attachments)
 			'attachment_type' => 0,
 		)
 	);
-	$attachments = array();
+	$attachments = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Update the thumbnail too...
@@ -1962,12 +1962,12 @@ function ManageAttachmentPaths()
 
 	// Since this needs to be done eventually.
 	if (!isset($modSettings['attachment_basedirectories']))
-		$modSettings['attachment_basedirectories'] = array();
+		$modSettings['attachment_basedirectories'] = [];
 
 	elseif (!is_array($modSettings['attachment_basedirectories']))
 		$modSettings['attachment_basedirectories'] = sbb_json_decode($modSettings['attachment_basedirectories'], true);
 
-	$errors = array();
+	$errors = [];
 
 	// Saving?
 	if (isset($_REQUEST['save']))
@@ -1975,7 +1975,7 @@ function ManageAttachmentPaths()
 		checkSession();
 
 		$_POST['current_dir'] = (int) $_POST['current_dir'];
-		$new_dirs = array();
+		$new_dirs = [];
 		foreach ($_POST['dirs'] as $id => $path)
 		{
 			$error = '';
@@ -2297,7 +2297,7 @@ function ManageAttachmentPaths()
 	{
 		if (is_array($_SESSION['errors']))
 		{
-			$errors = array();
+			$errors = [];
 			if (!empty($_SESSION['errors']['dir']))
 				foreach ($_SESSION['errors']['dir'] as $error)
 					$errors['dir'][] = $smcFunc['htmlspecialchars']($error, ENT_QUOTES);
@@ -2498,8 +2498,8 @@ function list_getAttachDirs()
 		)
 	);
 
-	$expected_files = array();
-	$expected_size = array();
+	$expected_files = [];
+	$expected_size = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$expected_files[$row['id_folder']] = $row['num_attach'];
@@ -2507,7 +2507,7 @@ function list_getAttachDirs()
 	}
 	$smcFunc['db_free_result']($request);
 
-	$attachdirs = array();
+	$attachdirs = [];
 	foreach ($modSettings['attachmentUploadDir'] as $id => $dir)
 	{
 		// If there aren't any attachments in this directory this won't exist.
@@ -2570,7 +2570,7 @@ function list_getBaseDirs()
 	if (empty($modSettings['attachment_basedirectories']))
 		return;
 
-	$basedirs = array();
+	$basedirs = [];
 	// Get a list of the base directories.
 	foreach ($modSettings['attachment_basedirectories'] as $id => $dir)
 	{
@@ -2660,7 +2660,7 @@ function TransferAttachments()
 	if (!empty($modSettings['attachment_basedirectories']))
 		$modSettings['attachment_basedirectories'] = sbb_json_decode($modSettings['attachment_basedirectories'], true);
 	else
-		$modSettings['basedirectory_for_attachments'] = array();
+		$modSettings['basedirectory_for_attachments'] = [];
 
 	$_POST['from'] = (int) $_POST['from'];
 	$_POST['auto'] = !empty($_POST['auto']) ? (int) $_POST['auto'] : 0;
@@ -2668,7 +2668,7 @@ function TransferAttachments()
 	$start = !empty($_POST['empty_it']) ? 0 : $modSettings['attachmentDirFileLimit'];
 	$_SESSION['checked'] = !empty($_POST['empty_it']) ? true : false;
 	$limit = 501;
-	$results = array();
+	$results = [];
 	$dir_files = 0;
 	$current_progress = 0;
 	$total_moved = 0;
@@ -2770,7 +2770,7 @@ function TransferAttachments()
 				$break = true;
 
 			// Move them
-			$moved = array();
+			$moved = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
 				$source = Attachment::get_filename($row['filename'], $row['id_attach'], $row['id_folder'], $row['file_hash']);

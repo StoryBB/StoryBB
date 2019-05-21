@@ -36,10 +36,10 @@ class Parser
 	 * @param array $parse_tags If set, only parses these tags rather than all of them
 	 * @return string The parsed message
 	 */
-	public static function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
+	public static function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = [])
 	{
 		global $smcFunc, $txt, $scripturl, $context, $modSettings, $user_info, $sourcedir;
-		static $bbc_codes = array(), $itemcodes = array(), $no_autolink_tags = array();
+		static $bbc_codes = [], $itemcodes = [], $no_autolink_tags = [];
 		static $disabled;
 
 		// Don't waste cycles
@@ -74,7 +74,7 @@ class Parser
 		if (!empty($parse_tags) && !empty($bbc_codes))
 		{
 			$temp_bbc = $bbc_codes;
-			$bbc_codes = array();
+			$bbc_codes = [];
 		}
 
 		// Ensure $modSettings['tld_regex'] contains a valid regex for the autolinker
@@ -89,7 +89,7 @@ class Parser
 		{
 			if (!empty($modSettings['disabledBBC']))
 			{
-				$disabled = array();
+				$disabled = [];
 
 				$temp = explode(',', strtolower($modSettings['disabledBBC']));
 
@@ -736,7 +736,7 @@ class Parser
 			if (!isset($disabled['li']) && !isset($disabled['list']))
 			{
 				foreach ($itemcodes as $c => $dummy)
-					$bbc_codes[$c] = array();
+					$bbc_codes[$c] = [];
 			}
 
 			foreach ($codes as $code)
@@ -764,10 +764,10 @@ class Parser
 			$cache_t = microtime(true);
 		}
 
-		$open_tags = array();
+		$open_tags = [];
 		$message = strtr($message, array("\n" => '<br>'));
 
-		$alltags = array();
+		$alltags = [];
 		foreach ($bbc_codes as $section) {
 			foreach ($section as $code) {
 				$alltags[] = $code['tag'];
@@ -820,7 +820,7 @@ class Parser
 					preg_match_all('~&lt;img\s+src=((?:&quot;)?)((?:https?://|ftps?://)\S+?)\\1(?:\s+alt=(&quot;.*?&quot;|\S*?))?(?:\s?/)?&gt;~i', $data, $matches, PREG_PATTERN_ORDER);
 					if (!empty($matches[0]))
 					{
-						$replaces = array();
+						$replaces = [];
 						foreach ($matches[2] as $match => $imgtag)
 						{
 							$alt = empty($matches[3][$match]) ? '' : ' alt=' . preg_replace('~^&quot;|&quot;$~', '', $matches[3][$match]);
@@ -1053,7 +1053,7 @@ class Parser
 
 				$look_for = strtolower(substr($message, $pos + 2, $pos2 - $pos - 2));
 
-				$to_close = array();
+				$to_close = [];
 				$block_level = null;
 
 				do
@@ -1141,7 +1141,7 @@ class Parser
 
 				if (!empty($to_close))
 				{
-					$to_close = array();
+					$to_close = [];
 					$pos--;
 				}
 
@@ -1219,7 +1219,7 @@ class Parser
 				if (!empty($possible['parameters']))
 				{
 					// Build a regular expression for each parameter for the current tag.
-					$preg = array();
+					$preg = [];
 					foreach ($possible['parameters'] as $p => $info)
 						$preg[] = '(\s+' . $p . '=' . (empty($info['quoted']) ? '' : '&quot;') . (isset($info['match']) ? $info['match'] : '(.+?)') . (empty($info['quoted']) ? '' : '&quot;') . '\s*)' . (empty($info['optional']) ? '' : '?');
 
@@ -1249,7 +1249,7 @@ class Parser
 					if (!$match)
 						continue;
 
-					$params = array();
+					$params = [];
 					for ($i = 1, $n = count($matches); $i < $n; $i += 2)
 					{
 						$key = strtok(ltrim($matches[$i]), '=');
@@ -1285,7 +1285,7 @@ class Parser
 				else
 				{
 					$tag = $possible;
-					$params = array();
+					$params = [];
 				}
 				break;
 			}
@@ -1577,7 +1577,7 @@ class Parser
 
 				// For parsed content, we must recurse to avoid security problems.
 				if ($tag['type'] != 'unparsed_equals')
-					$data = parse_bbc($data, !empty($tag['parsed_tags_allowed']) ? false : true, '', !empty($tag['parsed_tags_allowed']) ? $tag['parsed_tags_allowed'] : array());
+					$data = parse_bbc($data, !empty($tag['parsed_tags_allowed']) ? false : true, '', !empty($tag['parsed_tags_allowed']) ? $tag['parsed_tags_allowed'] : []);
 
 				$tag['after'] = strtr($tag['after'], array('$1' => $data));
 
@@ -1632,7 +1632,7 @@ class Parser
 		if (!empty($parse_tags))
 		{
 			if (empty($temp_bbc))
-				$bbc_codes = array();
+				$bbc_codes = [];
 			else
 			{
 				$bbc_codes = $temp_bbc;
@@ -1656,7 +1656,7 @@ class Parser
 	public static function parse_smileys(string &$message)
 	{
 		global $modSettings, $txt, $user_info, $context, $smcFunc;
-		static $smileyPregSearch = null, $smileyPregReplacements = array();
+		static $smileyPregSearch = null, $smileyPregReplacements = [];
 
 		// No smiley set at all?!
 		if (trim($message) == '')
@@ -1676,9 +1676,9 @@ class Parser
 					array(
 					)
 				);
-				$smileysfrom = array();
-				$smileysto = array();
-				$smileysdescs = array();
+				$smileysfrom = [];
+				$smileysto = [];
+				$smileysdescs = [];
 				while ($row = $smcFunc['db_fetch_assoc']($result))
 				{
 					$smileysfrom[] = $row['code'];
@@ -1696,8 +1696,8 @@ class Parser
 			$non_breaking_space = '\x{A0}';
 
 			// This smiley regex makes sure it doesn't parse smileys within code tags (so [url=mailto:David@bla.com] doesn't parse the :D smiley)
-			$smileyPregReplacements = array();
-			$searchParts = array();
+			$smileyPregReplacements = [];
+			$searchParts = [];
 			$smileys_path = $smcFunc['htmlspecialchars']($modSettings['smileys_url'] . '/');
 
 			for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)

@@ -61,8 +61,8 @@ class UpdatePaidSubs extends \StoryBB\Task\Schedulable
 				'time_now' => time(),
 			)
 		);
-		$subs_reminded = array();
-		$members = array();
+		$subs_reminded = [];
+		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// If this is the first one load the important bits.
@@ -80,7 +80,7 @@ class UpdatePaidSubs extends \StoryBB\Task\Schedulable
 		// Load alert preferences
 		require_once($sourcedir . '/Subs-Notify.php');
 		$notifyPrefs = getNotifyPrefs(array_keys($members), 'paidsubs_expiring', true);
-		$alert_rows = array();
+		$alert_rows = [];
 		foreach ($members as $row)
 		{
 			$replacements = array(
@@ -123,7 +123,7 @@ class UpdatePaidSubs extends \StoryBB\Task\Schedulable
 				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 				$alert_rows,
-				array()
+				[]
 			);
 
 		// Mark the reminder as sent.

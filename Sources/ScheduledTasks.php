@@ -125,7 +125,7 @@ function AutoTask()
 						array(
 							$row['id_task'], time(), (int) $total_time,
 						),
-						array()
+						[]
 					);
 				}
 			}
@@ -242,8 +242,8 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			'limit' => $number,
 		)
 	);
-	$ids = array();
-	$emails = array();
+	$ids = [];
+	$emails = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// We want to delete these from the database ASAP, so just get the data and go.
@@ -293,7 +293,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		require_once($sourcedir . '/Subs-Post.php');
 
 	// Send each email, yea!
-	$failed_emails = array();
+	$failed_emails = [];
 	foreach ($emails as $email)
 	{
 		if (empty($modSettings['mail_type']) || $modSettings['smtp_host'] == '')
@@ -375,7 +375,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
  * @param string|array $tasks The ID of a single task or an array of tasks
  * @param bool $forceUpdate Whether to force the tasks to run now
  */
-function CalculateNextTrigger($tasks = array(), $forceUpdate = false)
+function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 {
 	global $modSettings, $smcFunc;
 
@@ -404,7 +404,7 @@ function CalculateNextTrigger($tasks = array(), $forceUpdate = false)
 			'tasks' => $tasks,
 		)
 	);
-	$tasks = array();
+	$tasks = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$next_time = next_time($row['time_regularity'], $row['time_unit'], $row['time_offset']);

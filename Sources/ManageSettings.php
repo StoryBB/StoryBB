@@ -17,7 +17,7 @@
  * @param array $subActions An array containing all possible subactions.
  * @param string $defaultAction The default action to be called if no valid subaction was found.
  */
-function loadGeneralSettingParameters($subActions = array(), $defaultAction = null)
+function loadGeneralSettingParameters($subActions = [], $defaultAction = null)
 {
 	global $context, $sourcedir;
 
@@ -124,7 +124,7 @@ function ModifyBasicSettings($return_config = false)
 			// Number formatting, timezones.
 			array('text', 'time_format'),
 			array('float', 'time_offset', 'subtext' => $txt['setting_time_offset_note'], 6, 'postinput' => $txt['hours'], 'step' => 0.25, 'min' => -23.5, 'max' => 23.5),
-			'default_timezone' => array('select', 'default_timezone', array()),
+			'default_timezone' => array('select', 'default_timezone', []),
 			array('text', 'timezone_priority_countries', 'subtext' => $txt['setting_timezone_priority_countries_note']),
 		'',
 			// Who's online?
@@ -227,7 +227,7 @@ function ModifyBBCSettings($return_config = false)
 	$context['page_title'] = $txt['manageposts_bbc_settings_title'];
 
 	// Make sure we check the right tags!
-	$modSettings['bbc_disabled_disabledBBC'] = empty($modSettings['disabledBBC']) ? array() : explode(',', $modSettings['disabledBBC']);
+	$modSettings['bbc_disabled_disabledBBC'] = empty($modSettings['disabledBBC']) ? [] : explode(',', $modSettings['disabledBBC']);
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -235,12 +235,12 @@ function ModifyBBCSettings($return_config = false)
 		checkSession();
 
 		// Clean up the tags.
-		$bbcTags = array();
+		$bbcTags = [];
 		foreach (parse_bbc(false) as $tag)
 			$bbcTags[] = $tag['tag'];
 
 		if (!isset($_POST['disabledBBC_enabledTags']))
-			$_POST['disabledBBC_enabledTags'] = array();
+			$_POST['disabledBBC_enabledTags'] = [];
 		elseif (!is_array($_POST['disabledBBC_enabledTags']))
 			$_POST['disabledBBC_enabledTags'] = array($_POST['disabledBBC_enabledTags']);
 		// Work out what is actually disabled!
@@ -472,7 +472,7 @@ function ModifyAntispamSettings($return_config = false)
 	getLanguages();
 
 	// Secondly, load any questions we currently have.
-	$context['question_answers'] = array();
+	$context['question_answers'] = [];
 	foreach ($context['languages'] as $lang_id => $lang)
 	{
 		$context['question_answers'][$lang_id] = [
@@ -557,11 +557,11 @@ function ModifyAntispamSettings($return_config = false)
 
 		// Handle verification questions.
 		$changes = array(
-			'insert' => array(),
-			'replace' => array(),
-			'delete' => array(),
+			'insert' => [],
+			'replace' => [],
+			'delete' => [],
 		);
-		$qs_per_lang = array();
+		$qs_per_lang = [];
 		foreach (array_keys($context['question_answers']) as $lang_id)
 		{
 			// If we had some questions for this language before, but don't now, delete everything from that language.
@@ -601,7 +601,7 @@ function ModifyAntispamSettings($return_config = false)
 						continue;
 					}
 					// Now get them and check that they might be viable.
-					$answers = array();
+					$answers = [];
 					foreach ($_POST['answer'][$lang_id][$q_id] as $answer)
 						if (!empty($answer) && trim($answer) !== '')
 							$answers[] = $smcFunc['htmlspecialchars'](trim($answer));
@@ -780,7 +780,7 @@ function ModifySignatureSettings($return_config = false)
 	// Load all the signature settings.
 	list ($sig_limits, $sig_bbc) = explode(':', $modSettings['signature_settings']);
 	$sig_limits = explode(',', $sig_limits);
-	$disabledTags = !empty($sig_bbc) ? explode(',', $sig_bbc) : array();
+	$disabledTags = !empty($sig_bbc) ? explode(',', $sig_bbc) : [];
 
 	// Applying to ALL signatures?!!
 	if (isset($_GET['apply']))
@@ -804,7 +804,7 @@ function ModifySignatureSettings($return_config = false)
 
 		while (!$done)
 		{
-			$changes = array();
+			$changes = [];
 
 			$request = $smcFunc['db_query']('', '
 				SELECT id_member, signature
@@ -863,7 +863,7 @@ function ModifySignatureSettings($return_config = false)
 				// Stupid images - this is stupidly, stupidly challenging.
 				if ((!empty($sig_limits[3]) || !empty($sig_limits[5]) || !empty($sig_limits[6])))
 				{
-					$replaces = array();
+					$replaces = [];
 					$img_count = 0;
 					// Get all BBC tags...
 					preg_match_all('~\[img(\s+width=([\d]+))?(\s+height=([\d]+))?(\s+width=([\d]+))?\s*\](?:<br>)*([^<">]+?)(?:<br>)*\[/img\]~i', $sig, $matches);
@@ -887,7 +887,7 @@ function ModifySignatureSettings($return_config = false)
 					// Try to find all the images!
 					if (!empty($matches))
 					{
-						$image_count_holder = array();
+						$image_count_holder = [];
 						foreach ($matches[0] as $key => $image)
 						{
 							$width = -1;
@@ -1041,16 +1041,16 @@ function ModifySignatureSettings($return_config = false)
 		checkSession();
 
 		// Clean up the tag stuff!
-		$bbcTags = array();
+		$bbcTags = [];
 		foreach (parse_bbc(false) as $tag)
 			$bbcTags[] = $tag['tag'];
 
 		if (!isset($_POST['signature_bbc_enabledTags']))
-			$_POST['signature_bbc_enabledTags'] = array();
+			$_POST['signature_bbc_enabledTags'] = [];
 		elseif (!is_array($_POST['signature_bbc_enabledTags']))
 			$_POST['signature_bbc_enabledTags'] = array($_POST['signature_bbc_enabledTags']);
 
-		$sig_limits = array();
+		$sig_limits = [];
 		foreach ($context['signature_settings'] as $key => $value)
 		{
 			if ($key == 'allow_smileys')
@@ -1066,7 +1066,7 @@ function ModifySignatureSettings($return_config = false)
 		$_POST['signature_settings'] = implode(',', $sig_limits) . ':' . implode(',', array_diff($bbcTags, $_POST['signature_bbc_enabledTags']));
 
 		// Even though we have practically no settings let's keep the convention going!
-		$save_vars = array();
+		$save_vars = [];
 		$save_vars[] = array('text', 'signature_settings');
 
 		saveDBSettings($save_vars);
@@ -1150,7 +1150,7 @@ function ShowCustomProfiles()
 		$changes['disabled_profile_fields'] = empty($disable_fields) ? '' : implode(',', array_keys($disable_fields));
 
 		// Things we want to show on registration?
-		$reg_fields = array();
+		$reg_fields = [];
 		if (!empty($_POST['reg']))
 		{
 			foreach ($_POST['reg'] as $value)
@@ -1391,14 +1391,14 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 {
 	global $txt, $modSettings, $smcFunc;
 
-	$list = array();
+	$list = [];
 
 	if ($standardFields)
 	{
 		$standard_fields = array('website', 'timezone', 'posts', 'warning_status');
 		$fields_no_registration = array('posts', 'warning_status');
-		$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
-		$registration_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : array();
+		$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : [];
+		$registration_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : [];
 
 		foreach ($standard_fields as $field)
 			$list[] = array(
@@ -1493,7 +1493,7 @@ function EditCustomProfiles()
 				'current_field' => $context['fid'],
 			)
 		);
-		$context['field'] = array();
+		$context['field'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if ($row['field_type'] == 'textarea')
@@ -1637,7 +1637,7 @@ function EditCustomProfiles()
 
 		// Select options?
 		$field_options = '';
-		$newOptions = array();
+		$newOptions = [];
 		$default = isset($_POST['default_check']) && $_POST['field_type'] == 'check' ? 1 : '';
 		if (!empty($_POST['select_option']) && ($_POST['field_type'] == 'select' || $_POST['field_type'] == 'radio'))
 		{
@@ -1680,7 +1680,7 @@ function EditCustomProfiles()
 				$col_name = $initial_col_name = 'cust_' . mt_rand(1, 9999);
 
 			// Make sure this is unique.
-			$current_fields = array();
+			$current_fields = [];
 			$request = $smcFunc['db_query']('', '
 				SELECT id_field, col_name
 				FROM {db_prefix}custom_fields');
@@ -1722,8 +1722,8 @@ function EditCustomProfiles()
 			// Otherwise - if the select is edited may need to adjust!
 			elseif ($_POST['field_type'] == 'select' || $_POST['field_type'] == 'radio')
 			{
-				$optionChanges = array();
-				$takenKeys = array();
+				$optionChanges = [];
+				$takenKeys = [];
 				// Work out what's changed!
 				foreach ($context['field']['options'] as $k => $option)
 				{
@@ -1893,7 +1893,7 @@ function EditCustomProfiles()
 			)
 		);
 
-		$fields = array();
+		$fields = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$fields[] = array(
@@ -1905,7 +1905,7 @@ function EditCustomProfiles()
 				'placement' => !empty($row['placement']) ? $row['placement'] : '0',
 				'enclose' => !empty($row['enclose']) ? $row['enclose'] : '',
 				'mlist' => $row['show_mlist'],
-				'options' => (!empty($row['field_options']) ? explode(',', $row['field_options']) : array()),
+				'options' => (!empty($row['field_options']) ? explode(',', $row['field_options']) : []),
 			);
 		}
 		$smcFunc['db_free_result']($request);
@@ -1930,7 +1930,7 @@ function custFieldsMaxOrder()
 	$result = $smcFunc['db_query']('', '
 			SELECT MAX(field_order)
 			FROM {db_prefix}custom_fields',
-			array()
+			[]
 		);
 
 	list ($order_count) = $smcFunc['db_fetch_row']($result);
@@ -2022,7 +2022,7 @@ function ModifyLogSettings($return_config = false)
 
 		if (!empty($_POST['pruningOptions']))
 		{
-			$vals = array();
+			$vals = [];
 			foreach ($config_vars as $index => $dummy)
 			{
 				if (!is_array($dummy) || $index == 'pruningOptions' || !in_array($dummy[1], $prune_toggle))
@@ -2065,7 +2065,7 @@ function ModifyAlertsSettings()
 	// Dummy settings for the template...
 	$modSettings['allow_disableAnnounce'] = false;
 	$context['user']['is_owner'] = false;
-	$context['member'] = array();
+	$context['member'] = [];
 	$context['id_member'] = 0;
 	$context['menu_item_selected'] = 'alerts';
 	$context['token_check'] = 'noti-admin';

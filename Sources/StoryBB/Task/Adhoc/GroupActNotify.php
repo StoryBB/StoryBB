@@ -38,9 +38,9 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 				'request_list' => $this->_details['request_list'],
 			)
 		);
-		$affected_users = array();
-		$members = array();
-		$alert_rows = array();
+		$affected_users = [];
+		$members = [];
+		$alert_rows = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$members[] = $row['id_member'];
@@ -51,7 +51,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 			{
 				// Hack in blank permissions so that allowedTo() will fail.
 				require_once($sourcedir . '/Security.php');
-				$user_info['permissions'] = array();
+				$user_info['permissions'] = [];
 
 				// For the moddlog
 				$user_info['id'] = $this->_details['member_id'];
@@ -147,7 +147,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 						'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string',
 					),
 					$alert_rows,
-					array()
+					[]
 				);
 		}
 

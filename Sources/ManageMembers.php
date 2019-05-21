@@ -54,7 +54,7 @@ function ViewMembers()
 			'is_activated' => 1,
 		)
 	);
-	$context['activation_numbers'] = array();
+	$context['activation_numbers'] = [];
 	$context['awaiting_activation'] = 0;
 	$context['awaiting_approval'] = 0;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -80,7 +80,7 @@ function ViewMembers()
 		'title' => $txt['admin_members'],
 		'help' => 'view_members',
 		'description' => $txt['admin_members_list'],
-		'tabs' => array(),
+		'tabs' => [],
 	);
 
 	$context['tabs'] = array(
@@ -175,7 +175,7 @@ function ViewMemberlist()
 				'can_be_additional' => false
 			)
 		);
-		$context['postgroups'] = array();
+		$context['postgroups'] = [];
 		$context['charactergroups'] = [];
 
 		$request = $smcFunc['db_query']('', '
@@ -269,7 +269,7 @@ function ViewMemberlist()
 
 		call_integration_hook('integrate_view_members_params', array(&$params));
 
-		$search_params = array();
+		$search_params = [];
 		if ($context['sub_action'] == 'query' && !empty($_REQUEST['params']) && empty($_POST['types']))
 			$search_params = sbb_json_decode(base64_decode($_REQUEST['params']), true);
 		elseif (!empty($_POST))
@@ -292,8 +292,8 @@ function ViewMemberlist()
 		// @todo Validate a little more.
 
 		// Loop through every field of the form.
-		$query_parts = array();
-		$where_params = array();
+		$query_parts = [];
+		$where_params = [];
 		foreach ($params as $param_name => $param_info)
 		{
 			// Not filled in?
@@ -374,7 +374,7 @@ function ViewMemberlist()
 		}
 
 		// Set up the membergroup query part.
-		$mg_query_parts = array();
+		$mg_query_parts = [];
 
 		// Primary membergroups, but only if at least was was not selected.
 		if (!empty($search_params['membergroups'][1]) && count($context['membergroups']) != count($search_params['membergroups'][1]))
@@ -468,7 +468,7 @@ function ViewMemberlist()
 			'function' => 'list_getMembers',
 			'params' => array(
 				isset($where) ? $where : '1=1',
-				isset($where_params) ? $where_params : array(),
+				isset($where_params) ? $where_params : [],
 			),
 		),
 		'get_count' => array(
@@ -476,7 +476,7 @@ function ViewMemberlist()
 			'function' => 'list_getNumMembers',
 			'params' => array(
 				isset($where) ? $where : '1=1',
-				isset($where_params) ? $where_params : array(),
+				isset($where_params) ? $where_params : [],
 			),
 		),
 		'columns' => array(
@@ -675,7 +675,7 @@ function SearchMembers()
 			'can_be_additional' => false
 		)
 	);
-	$context['postgroups'] = array();
+	$context['postgroups'] = [];
 	$context['charactergroups'] = [];
 
 	$request = $smcFunc['db_query']('', '
@@ -741,7 +741,7 @@ function MembersAwaitingActivation()
 	$context['current_filter'] = isset($_REQUEST['filter']) && in_array($_REQUEST['filter'], $context['allowed_filters']) && !empty($context['activation_numbers'][$_REQUEST['filter']]) ? (int) $_REQUEST['filter'] : -1;
 
 	// Sort out the different sub areas that we can actually filter by.
-	$context['available_filters'] = array();
+	$context['available_filters'] = [];
 	foreach ($context['activation_numbers'] as $type => $amount)
 	{
 		// We have some of these...
@@ -966,7 +966,7 @@ function MembersAwaitingActivation()
 				'data' => array(
 					'function' => function($rowData) use ($scripturl, $txt)
 					{
-						$member_links = array();
+						$member_links = [];
 						foreach ($rowData['duplicate_members'] as $member)
 						{
 							if ($member['id'])
@@ -1102,7 +1102,7 @@ function AdminApprove()
 	// Coming from checkboxes - validate the members passed through to us.
 	else
 	{
-		$members = array();
+		$members = [];
 		foreach ($_POST['todoAction'] as $id)
 			$members[] = (int) $id;
 		$condition = '
@@ -1118,7 +1118,7 @@ function AdminApprove()
 		array(
 			'activated_status' => $current_filter,
 			'time_before' => empty($timeBefore) ? 0 : $timeBefore,
-			'members' => empty($members) ? array() : $members,
+			'members' => empty($members) ? [] : $members,
 		)
 	);
 
@@ -1128,8 +1128,8 @@ function AdminApprove()
 	if ($member_count == 0)
 		redirectexit('action=admin;area=viewmembers;sa=browse;type=' . $_REQUEST['type'] . ';sort=' . $_REQUEST['sort'] . ';filter=' . $current_filter . ';start=' . $_REQUEST['start']);
 
-	$member_info = array();
-	$members = array();
+	$member_info = [];
+	$members = [];
 	// Fill the info array.
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -1156,7 +1156,7 @@ function AdminApprove()
 			array(
 				'is_activated' => 1,
 				'time_before' => empty($timeBefore) ? 0 : $timeBefore,
-				'members' => empty($members) ? array() : $members,
+				'members' => empty($members) ? [] : $members,
 				'activated_status' => $current_filter,
 				'blank_string' => '',
 			)
@@ -1224,7 +1224,7 @@ function AdminApprove()
 					'selected_member' => $member['id'],
 					'validation_code' => $validation_code,
 					'time_before' => empty($timeBefore) ? 0 : $timeBefore,
-					'members' => empty($members) ? array() : $members,
+					'members' => empty($members) ? [] : $members,
 				)
 			);
 

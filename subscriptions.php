@@ -36,7 +36,7 @@ if (empty($modSettings['paid_enabled']))
 	exit;
 
 // If we have some custom people who find out about problems load them here.
-$notify_users = array();
+$notify_users = [];
 if (!empty($modSettings['paid_email_to']))
 {
 	foreach (explode(',', $modSettings['paid_email_to']) as $email)

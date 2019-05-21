@@ -56,7 +56,7 @@ function updateReport($action, $value, $report_id)
 	$report_id = (array) $report_id;
 
 	// Set up the data for the log...
-	$extra = array();
+	$extra = [];
 
 	if ($context['report_type'] == 'posts')
 	{
@@ -178,7 +178,7 @@ function getReports($closed = 0)
 	global $smcFunc, $context, $user_info, $scripturl, $txt;
 
 	// Lonely, standalone var.
-	$reports = array();
+	$reports = [];
 
 	// By George, that means we are in a position to get the reports, golly good.
 	if ($context['report_type'] == 'members')
@@ -221,8 +221,8 @@ function getReports($closed = 0)
 		);
 	}
 
-	$report_ids = array();
-	$report_boards_ids = array();
+	$report_ids = [];
+	$report_boards_ids = [];
 	$i = 0;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -230,7 +230,7 @@ function getReports($closed = 0)
 		$reports[$row['id_report']] = array(
 			'id' => $row['id_report'],
 			'report_href' => $scripturl . '?action=moderate;area=reported' . $context['report_type'] . ';sa=details;rid=' . $row['id_report'],
-			'comments' => array(),
+			'comments' => [],
 			'time_started' => timeformat($row['time_started']),
 			'last_updated' => timeformat($row['time_updated']),
 			'num_reports' => $row['num_reports'],
@@ -279,7 +279,7 @@ function getReports($closed = 0)
 	if (!empty($report_boards_ids))
 	{
 		$report_boards_ids = array_unique($report_boards_ids);
-		$board_names = array();
+		$board_names = [];
 		$request = $smcFunc['db_query']('', '
 			SELECT id_board, name
 			FROM {db_prefix}boards
@@ -378,7 +378,7 @@ function recountOpenReports($type)
 	$smcFunc['db_free_result']($request);
 
 	$arr = ($type == 'members' ? 'member_reports' : 'reports');
-	$_SESSION['rc'] = array_merge(!empty($_SESSION['rc']) ? $_SESSION['rc'] : array(),
+	$_SESSION['rc'] = array_merge(!empty($_SESSION['rc']) ? $_SESSION['rc'] : [],
 		array(
 			'id' => $user_info['id'],
 			'time' => time(),
@@ -461,8 +461,8 @@ function getReportComments($report_id)
 		return false;
 
 	$report = array(
-		'comments' => array(),
-		'mod_comments' => array()
+		'comments' => [],
+		'mod_comments' => []
 	);
 
 	// So what bad things do the reporters have to say about it?

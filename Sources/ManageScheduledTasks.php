@@ -120,7 +120,7 @@ function ScheduledTasks()
 	if (isset($_REQUEST['run']) && isset($_POST['run_task']))
 	{
 		// Lets figure out which ones they want to run.
-		$tasks = array();
+		$tasks = [];
 		foreach ($_POST['run_task'] as $task => $dummy)
 			$tasks[] = (int) $task;
 
@@ -341,7 +341,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 		array(
 		)
 	);
-	$known_tasks = array();
+	$known_tasks = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Find the next for regularity - don't offset as it's always server time!
@@ -607,7 +607,7 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 			'items' => $items_per_page,
 		)
 	);
-	$log_entries = array();
+	$log_entries = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$log_entries[] = array(
 			'id' => $row['id_log'],

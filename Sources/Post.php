@@ -22,7 +22,7 @@
  *
  *  @param array $post_errors Holds any errors found while tyring to post
  */
-function Post($post_errors = array())
+function Post($post_errors = [])
 {
 	global $txt, $scripturl, $topic, $modSettings, $board;
 	global $user_info, $context, $settings;
@@ -179,7 +179,7 @@ function Post($post_errors = array())
 	$context['show_approval'] = allowedTo('approve_posts') && $context['becomes_approved'] && (empty($topic) || !empty($topic_approved)) ? 2 : (allowedTo('approve_posts') ? 1 : 0);
 
 	// An array to hold all the attachments for this topic.
-	$context['current_attachments'] = array();
+	$context['current_attachments'] = [];
 
 	// Clear out prior attachment activity when starting afresh
 	if (empty ($_REQUEST['message']) && empty ($_REQUEST['preview'])) {
@@ -321,10 +321,10 @@ function Post($post_errors = array())
 		{
 			$context['question'] = isset($_REQUEST['question']) ? $smcFunc['htmlspecialchars'](trim($_REQUEST['question'])) : '';
 
-			$context['choices'] = array();
+			$context['choices'] = [];
 			$choice_id = 0;
 
-			$_POST['options'] = empty($_POST['options']) ? array() : htmlspecialchars__recursive($_POST['options']);
+			$_POST['options'] = empty($_POST['options']) ? [] : htmlspecialchars__recursive($_POST['options']);
 			foreach ($_POST['options'] as $option)
 			{
 				if (trim($option) == '')
@@ -605,7 +605,7 @@ function Post($post_errors = array())
 			$context['show_approval'] = allowedTo('approve_posts');
 
 		// Sort the attachments so they are in the order saved
-		$temp = array();
+		$temp = [];
 		foreach ($attachment_stuff as $attachment)
 		{
 			if ($attachment['filesize'] >= 0 && !empty($modSettings['attachmentEnable']))
@@ -763,7 +763,7 @@ function Post($post_errors = array())
 							unlink($attachment['tmp_name']);
 				}
 				$post_errors[] = 'temp_attachments_gone';
-				$_SESSION['temp_attachments'] = array();
+				$_SESSION['temp_attachments'] = [];
 			}
 			// Hmm, coming in fresh and there are files in session.
 			elseif ($context['current_action'] != 'post2' || !empty($_POST['from_qr']))
@@ -795,7 +795,7 @@ function Post($post_errors = array())
 						$delete_url = $scripturl . '?action=post;board=' . $board . ';delete_temp';
 
 					// Compile a list of the files to show the user.
-					$file_list = array();
+					$file_list = [];
 					foreach ($_SESSION['temp_attachments'] as $attachID => $attachment)
 						if (strpos($attachID, 'post_tmp_' . $user_info['id']) !== false)
 							$file_list[] = $attachment['name'];
@@ -1043,7 +1043,7 @@ function Post($post_errors = array())
 		// If they've unchecked an attachment, they may still want to attach that many more files, but don't allow more than num_allowed_attachments.
 		$context['num_allowed_attachments'] = empty($modSettings['attachmentNumPerPostLimit']) ? 50 : min($modSettings['attachmentNumPerPostLimit'] - count($context['current_attachments']), $modSettings['attachmentNumPerPostLimit']);
 		$context['can_post_attachment_unapproved'] = allowedTo('post_attachment');
-		$context['attachment_restrictions'] = array();
+		$context['attachment_restrictions'] = [];
 		$context['allowed_extensions'] = strtr(strtolower($modSettings['attachmentExtensions']), array(',' => ', '));
 		$attachmentRestrictionTypes = array('attachmentNumPerPostLimit', 'attachmentPostLimit', 'attachmentSizeLimit');
 		foreach ($attachmentRestrictionTypes as $type)
@@ -1142,7 +1142,7 @@ function Post($post_errors = array())
 	var current_board = '. (empty($context['current_board']) ? 'null' : $context['current_board']) . ';', false);
 
 	// Now let's set up the fields for the posting form header...
-	$context['posting_fields'] = array();
+	$context['posting_fields'] = [];
 
 	// Guests must supply their name and email.
 	if (isset($context['name']) && isset($context['email']))
@@ -1240,7 +1240,7 @@ function Post2()
 	checkSubmitOnce('check');
 
 	// No errors as yet.
-	$post_errors = array();
+	$post_errors = [];
 
 	// If the session has timed out, let the user re-submit their form.
 	if (checkSession('post', '', false) != '')
@@ -1268,8 +1268,8 @@ function Post2()
 	// First check to see if they are trying to delete any current attachments.
 	if (isset($_POST['attach_del']))
 	{
-		$keep_temp = array();
-		$keep_ids = array();
+		$keep_temp = [];
+		$keep_ids = [];
 		foreach ($_POST['attach_del'] as $dummy)
 			if (strpos($dummy, 'post_tmp_' . $user_info['id']) !== false)
 				$keep_temp[] = $dummy;
@@ -1663,7 +1663,7 @@ function Post2()
 		if (!isset($_POST['question']) || trim($_POST['question']) == '')
 			$post_errors[] = 'no_question';
 
-		$_POST['options'] = empty($_POST['options']) ? array() : htmltrim__recursive($_POST['options']);
+		$_POST['options'] = empty($_POST['options']) ? [] : htmltrim__recursive($_POST['options']);
 
 		// Get rid of empty ones.
 		foreach ($_POST['options'] as $k => $option)
@@ -1782,8 +1782,8 @@ function Post2()
 	// ...or attach a new file...
 	if (empty($ignore_temp) && $context['can_post_attachment'] && !empty($_SESSION['temp_attachments']) && empty($_POST['from_qr']))
 	{
-		$attachIDs = array();
-		$attach_errors = array();
+		$attachIDs = [];
+		$attach_errors = [];
 		if (!empty($context['we_are_history']))
 			$attach_errors[] = '<dd>' . $txt['error_temp_attachments_flushed'] . '<br><br></dd>';
 
@@ -1869,7 +1869,7 @@ function Post2()
 
 		// Create each answer choice.
 		$i = 0;
-		$pollOptions = array();
+		$pollOptions = [];
 		foreach ($_POST['options'] as $option)
 		{
 			$pollOptions[] = array($id_poll, $i, $option);
@@ -1911,7 +1911,7 @@ function Post2()
 		'body' => $_POST['message'],
 		'icon' => preg_replace('~[\./\\\\*:"\'<>]~', '', $_POST['icon']),
 		'smileys_enabled' => !isset($_POST['ns']),
-		'attachments' => empty($attachIDs) ? array() : $attachIDs,
+		'attachments' => empty($attachIDs) ? [] : $attachIDs,
 		'approved' => $becomesApproved,
 	);
 	$topicOptions = array(
@@ -2112,7 +2112,7 @@ function AnnouncementSelectMembergroup()
 	foreach ($groups as $id => $group)
 		$groups[$id] = (int) $group;
 
-	$context['groups'] = array();
+	$context['groups'] = [];
 	if (in_array(0, $groups))
 	{
 		$context['groups'][0] = array(
@@ -2259,9 +2259,9 @@ function AnnouncementSend()
 			redirectexit('board=' . $board . '.0');
 	}
 
-	$announcements = array();
+	$announcements = [];
 	// Loop through all members that'll receive an announcement in this batch.
-	$rows = array();
+	$rows = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$rows[$row['id_member']] = $row;
@@ -2295,7 +2295,7 @@ function AnnouncementSend()
 				'subject' => $emaildata['subject'],
 				'body' => $emaildata['body'],
 				'is_html' => $emaildata['is_html'],
-				'recipients' => array(),
+				'recipients' => [],
 			);
 		}
 
@@ -2355,7 +2355,7 @@ function getTopic()
 			'approved' => 1,
 		)
 	);
-	$context['previous_posts'] = array();
+	$context['previous_posts'] = [];
 	$context['ignored_posts'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -2568,7 +2568,7 @@ function JavaScriptModify()
 		$moderationAction = $row['id_member'] != $user_info['id'];
 	}
 
-	$post_errors = array();
+	$post_errors = [];
 	if (isset($_POST['subject']) && $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['subject'])) !== '')
 	{
 		$_POST['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
@@ -2772,7 +2772,7 @@ function JavaScriptModify()
 		{
 			$context['message'] = array(
 				'id' => $row['id_msg'],
-				'errors' => array(),
+				'errors' => [],
 				'error_in_subject' => in_array('no_subject', $post_errors),
 				'error_in_body' => in_array('no_message', $post_errors) || in_array('long_message', $post_errors),
 			);

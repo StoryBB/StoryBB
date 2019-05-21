@@ -35,10 +35,10 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		$posterOptions = $this->_details['posterOptions'];
 		$type = $this->_details['type'];
 
-		$members = array();
-		$quotedMembers = array();
-		$done_members = array();
-		$alert_rows = array();
+		$members = [];
+		$quotedMembers = [];
+		$done_members = [];
+		$alert_rows = [];
 
 		if ($type == 'reply' || $type == 'topic')
 		{
@@ -73,10 +73,10 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 			)
 		);
 
-		$watched = array();
+		$watched = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$groups = array_merge(array($row['id_group'], $row['id_post_group']), (empty($row['additional_groups']) ? array() : explode(',', $row['additional_groups'])));
+			$groups = array_merge(array($row['id_group'], $row['id_post_group']), (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
 			if (!in_array(1, $groups) && count(array_intersect($groups, explode(',', $row['member_groups']))) == 0)
 				continue;
 
@@ -217,7 +217,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
 			),
 			array($topicOptions['id'], $msgOptions['id'], $type, $posterOptions['id']),
-			array()
+			[]
 		);
 
 		// Insert the alerts if any
@@ -228,7 +228,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 				$alert_rows,
-				array()
+				[]
 			);
 
 			$members = [];
@@ -357,7 +357,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 			$id_msgs[$k] = (int) $id_msg;
 
 		if (empty($id_msgs))
-			return array();
+			return [];
 
 		// Get the messages
 		$request = $smcFunc['db_query']('', '
@@ -372,7 +372,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 			)
 		);
 
-		$members = array();
+		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if ($posterOptions['id'] == $row['id_member'])

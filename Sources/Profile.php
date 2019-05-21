@@ -17,7 +17,7 @@
  *
  * @param array $post_errors Any errors that occurred
  */
-function ModifyProfile($post_errors = array())
+function ModifyProfile($post_errors = [])
 {
 	global $txt, $scripturl, $user_info, $context, $sourcedir, $user_profile, $cur_profile;
 	global $modSettings, $memberContext, $profile_vars, $post_errors, $user_settings;
@@ -122,7 +122,7 @@ function ModifyProfile($post_errors = array())
 					'function' => 'profile_popup',
 					'permission' => array(
 						'own' => 'is_not_guest',
-						'any' => array(),
+						'any' => [],
 					),
 					'select' => 'summary',
 				),
@@ -130,7 +130,7 @@ function ModifyProfile($post_errors = array())
 					'function' => 'alerts_popup',
 					'permission' => array(
 						'own' => 'is_not_guest',
-						'any' => array(),
+						'any' => [],
 					),
 					'select' => 'summary',
 				),
@@ -139,7 +139,7 @@ function ModifyProfile($post_errors = array())
 					'file' => 'Profile-Chars.php',
 					'permission' => array(
 						'own' => 'is_not_guest',
-						'any' => array(),
+						'any' => [],
 					),
 					'enabled' => $context['user']['is_owner'],
 					'select' => 'summary',
@@ -149,7 +149,7 @@ function ModifyProfile($post_errors = array())
 					'file' => 'Profile-Chars.php',
 					'permission' => array(
 						'own' => 'is_not_guest',
-						'any' => array(),
+						'any' => [],
 					),
 					'enabled' => $context['user']['is_owner'],
 					'select' => 'summary',
@@ -159,7 +159,7 @@ function ModifyProfile($post_errors = array())
 					'file' => 'Profile-Chars.php',
 					'permission' => array(
 						'own' => 'is_not_guest',
-						'any' => array(),
+						'any' => [],
 					),
 					'enabled' => $context['user']['is_owner'],
 					'select' => 'summary',
@@ -198,7 +198,7 @@ function ModifyProfile($post_errors = array())
 					'enabled' => !empty($modSettings['drafts_post_enabled']) && $context['user']['is_owner'],
 					'permission' => array(
 						'own' => 'is_not_guest',
-						'any' => array(),
+						'any' => [],
 					),
 				),
 				'showalerts' => array(
@@ -208,7 +208,7 @@ function ModifyProfile($post_errors = array())
 					'icon' => 'alerts',
 					'permission' => array(
 						'own' => 'is_not_guest',
-						'any' => array(),
+						'any' => [],
 					),
 				),
 				'permissions' => array(
@@ -371,7 +371,7 @@ function ModifyProfile($post_errors = array())
 					),
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
-						'any' => array(),
+						'any' => [],
 					),
 				),
 				'groupmembership' => array(
@@ -409,7 +409,7 @@ function ModifyProfile($post_errors = array())
 					'custom_url' => $scripturl . '?action=pm;sa=send',
 					'icon' => 'personal_message',
 					'permission' => array(
-						'own' => array(),
+						'own' => [],
 						'any' => array('pm_send'),
 					),
 				),
@@ -418,7 +418,7 @@ function ModifyProfile($post_errors = array())
 					'custom_url' => $scripturl . '?action=reporttm;' . $context['session_var'] . '=' . $context['session_id'],
 					'icon' => 'warning',
 					'permission' => array(
-						'own' => array(),
+						'own' => [],
 						'any' => array('report_user'),
 					),
 				),
@@ -430,7 +430,7 @@ function ModifyProfile($post_errors = array())
 					'icon' => 'warning',
 					'token' => 'profile-iw%u',
 					'permission' => array(
-						'own' => array(),
+						'own' => [],
 						'any' => array('issue_warning'),
 					),
 				),
@@ -440,7 +440,7 @@ function ModifyProfile($post_errors = array())
 					'icon' => 'ban',
 					'enabled' => $cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups'])),
 					'permission' => array(
-						'own' => array(),
+						'own' => [],
 						'any' => array('manage_bans'),
 					),
 				),
@@ -476,7 +476,7 @@ function ModifyProfile($post_errors = array())
 					'token' => 'profile-aa%u',
 					'token_type' => 'get',
 					'permission' => array(
-						'own' => array(),
+						'own' => [],
 						'any' => array('moderate_forum'),
 					),
 				),
@@ -533,7 +533,7 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 	call_integration_hook('integrate_pre_profile_areas', array(&$profile_areas));
 
 	// Do some cleaning ready for the menu function.
-	$context['password_areas'] = array();
+	$context['password_areas'] = [];
 	$current_area = isset($_REQUEST['area']) ? $_REQUEST['area'] : '';
 
 	foreach ($profile_areas as $section_id => $section)
@@ -583,7 +583,7 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 	$context['completed_save'] = false;
 	$context['do_preview'] = isset($_REQUEST['preview_signature']);
 
-	$security_checks = array();
+	$security_checks = [];
 	$found_area = false;
 	foreach ($profile_areas as $section_id => $section)
 	{
@@ -684,8 +684,8 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 	loadJavaScriptFile('profile.js', array('defer' => false), 'sbb_profile');
 
 	// These will get populated soon!
-	$post_errors = array();
-	$profile_vars = array();
+	$post_errors = [];
+	$profile_vars = [];
 
 	// Right - are we saving - if so let's save the old data first.
 	if ($context['completed_save'])
@@ -795,7 +795,7 @@ span.character_' . $id_character . ' { background-image: url(' . $character['ava
 			// Anything worth logging?
 			if (!empty($context['log_changes']) && !empty($modSettings['modlog_enabled']))
 			{
-				$log_changes = array();
+				$log_changes = [];
 				require_once($sourcedir . '/Logging.php');
 				foreach ($context['log_changes'] as $k => $v)
 					$log_changes[] = array(
@@ -921,7 +921,7 @@ function profile_popup($memID)
 	call_integration_hook('integrate_profile_popup', array(&$profile_items));
 
 	// Now check if these items are available
-	$context['profile_items'] = array();
+	$context['profile_items'] = [];
 	$menu_context = &$context[$context['profile_menu_name']]['sections'];
 	foreach ($profile_items as $item)
 	{
@@ -956,7 +956,7 @@ function alerts_popup($memID)
 	StoryBB\Template::remove_all_layers();
 	$template = StoryBB\Template::set_layout('raw');
 
-	$context['unread_alerts'] = array();
+	$context['unread_alerts'] = [];
 	if (empty($_REQUEST['counter']) || (int) $_REQUEST['counter'] < $cur_profile['alerts'])
 	{
 		// Now fetch me my unread alerts, pronto!
@@ -1003,7 +1003,7 @@ function loadCustomFields($memID, $area = 'summary')
 			'area' => $area,
 		)
 	);
-	$context['custom_fields'] = array();
+	$context['custom_fields'] = [];
 	$context['custom_fields_required'] = false;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
