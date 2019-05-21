@@ -42,7 +42,7 @@ function db_packages_init()
 			'db_remove_column' => 'sbb_db_remove_column',
 			'db_remove_index' => 'sbb_db_remove_index',
 		);
-		$db_package_log = array();
+		$db_package_log = [];
 	}
 
 	// We setup an array of StoryBB tables we can't do auto-remove on - in case a mod writer cocks it up!
@@ -89,11 +89,11 @@ function db_packages_init()
  * @param string $error
  * @return boolean Whether or not the operation was successful
  */
-function sbb_db_create_table($table_name, $columns, $indexes = array(), $parameters = array(), $if_exists = 'ignore', $error = 'fatal')
+function sbb_db_create_table($table_name, $columns, $indexes = [], $parameters = [], $if_exists = 'ignore', $error = 'fatal')
 {
 	global $reservedTables, $smcFunc, $db_package_log, $db_prefix, $db_name;
 
-	static $engines = array();
+	static $engines = [];
 
 	// Strip out the table name, we might not need it in some cases
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
@@ -176,7 +176,7 @@ function sbb_db_create_table($table_name, $columns, $indexes = array(), $paramet
  * @param bool $bypass_checks
  * @return boolean Whether or not the operation was successful
  */
-function sbb_db_drop_table($table_name, $parameters = array(), $error = 'fatal', $bypass_checks = false)
+function sbb_db_drop_table($table_name, $parameters = [], $error = 'fatal', $bypass_checks = false)
 {
 	global $reservedTables, $smcFunc, $db_prefix;
 
@@ -219,7 +219,7 @@ function sbb_db_drop_table($table_name, $parameters = array(), $error = 'fatal',
  * @param string $error
  * @return boolean Whether or not the operation was successful
  */
-function sbb_db_add_column($table_name, $column_info, $parameters = array(), $if_exists = 'update', $error = 'fatal')
+function sbb_db_add_column($table_name, $column_info, $parameters = [], $if_exists = 'update', $error = 'fatal')
 {
 	global $smcFunc, $db_package_log, $db_prefix;
 
@@ -265,7 +265,7 @@ function sbb_db_add_column($table_name, $column_info, $parameters = array(), $if
  * @param string $error
  * @return boolean Whether or not the operation was successful
  */
-function sbb_db_remove_column($table_name, $column_name, $parameters = array(), $error = 'fatal')
+function sbb_db_remove_column($table_name, $column_name, $parameters = [], $error = 'fatal')
 {
 	global $smcFunc, $db_prefix;
 
@@ -361,7 +361,7 @@ function sbb_db_change_column($table_name, $old_column, $column_info)
  * @param string $error
  * @return boolean Whether or not the operation was successful
  */
-function sbb_db_add_index($table_name, $index_info, $parameters = array(), $if_exists = 'update', $error = 'fatal')
+function sbb_db_add_index($table_name, $index_info, $parameters = [], $if_exists = 'update', $error = 'fatal')
 {
 	global $smcFunc, $db_package_log, $db_prefix;
 
@@ -432,7 +432,7 @@ function sbb_db_add_index($table_name, $index_info, $parameters = array(), $if_e
  * @param string $error
  * @return boolean Whether or not the operation was successful
  */
-function sbb_db_remove_index($table_name, $index_name, $parameters = array(), $error = 'fatal')
+function sbb_db_remove_index($table_name, $index_name, $parameters = [], $error = 'fatal')
 {
 	global $smcFunc, $db_prefix;
 
@@ -1096,7 +1096,7 @@ function sbb_db_compare_indexes(array $source_indexes, array $dest_indexes): arr
  * @param array $parameters Not used?
  * @return array An array of column names or detailed column info, depending on $detail
  */
-function sbb_db_list_columns($table_name, $detail = false, $parameters = array())
+function sbb_db_list_columns($table_name, $detail = false, $parameters = [])
 {
 	global $smcFunc, $db_prefix;
 
@@ -1109,7 +1109,7 @@ function sbb_db_list_columns($table_name, $detail = false, $parameters = array()
 			'table_name' => substr($table_name, 0, 1) == '`' ? $table_name : '`' . $table_name . '`',
 		)
 	);
-	$columns = array();
+	$columns = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		if (!$detail)
@@ -1164,7 +1164,7 @@ function sbb_db_list_columns($table_name, $detail = false, $parameters = array()
  * @param array $parameters Not used?
  * @return array An array of index names or a detailed array of index info, depending on $detail
  */
-function sbb_db_list_indexes($table_name, $detail = false, $parameters = array())
+function sbb_db_list_indexes($table_name, $detail = false, $parameters = [])
 {
 	global $smcFunc, $db_prefix;
 
@@ -1177,7 +1177,7 @@ function sbb_db_list_indexes($table_name, $detail = false, $parameters = array()
 			'table_name' => substr($table_name, 0, 1) == '`' ? $table_name : '`' . $table_name . '`',
 		)
 	);
-	$indexes = array();
+	$indexes = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		if (!$detail)
@@ -1200,7 +1200,7 @@ function sbb_db_list_indexes($table_name, $detail = false, $parameters = array()
 				$indexes[$row['Key_name']] = array(
 					'name' => $row['Key_name'],
 					'type' => $type,
-					'columns' => array(),
+					'columns' => [],
 				);
 			}
 

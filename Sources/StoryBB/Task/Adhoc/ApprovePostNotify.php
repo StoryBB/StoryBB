@@ -29,8 +29,8 @@ class ApprovePostNotify extends \StoryBB\Task\Adhoc
 		$posterOptions = $this->_details['posterOptions'];
 		$type = $this->_details['type'];
 
-		$members = array();
-		$alert_rows = array();
+		$members = [];
+		$alert_rows = [];
 
 		// We need to know who can approve this post.
 		require_once($sourcedir . '/Subs-Members.php');
@@ -45,7 +45,7 @@ class ApprovePostNotify extends \StoryBB\Task\Adhoc
 			)
 		);
 
-		$watched = array();
+		$watched = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$members[] = $row['id_member'];
@@ -108,7 +108,7 @@ class ApprovePostNotify extends \StoryBB\Task\Adhoc
 				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 				$alert_rows,
-				array()
+				[]
 			);
 
 		return true;

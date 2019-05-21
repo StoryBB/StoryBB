@@ -52,7 +52,7 @@ class FTP
 		// Initialize variables.
 		$this->connection = 'no_connection';
 		$this->error = false;
-		$this->pasv = array();
+		$this->pasv = [];
 
 		if ($ftp_server !== null)
 			$this->connect($ftp_server, $ftp_port, $ftp_user, $ftp_pass);

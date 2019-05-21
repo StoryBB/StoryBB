@@ -74,14 +74,14 @@ function PlushSearch1()
 		$temp_params2 = @gzuncompress($temp_params);
 		$temp_params = explode('|"|', !empty($temp_params2) ? $temp_params2 : $temp_params);
 
-		$context['search_params'] = array();
+		$context['search_params'] = [];
 		foreach ($temp_params as $i => $data)
 		{
 			@list ($k, $v) = explode('|\'|', $data);
 			$context['search_params'][$k] = $v;
 		}
 		if (isset($context['search_params']['brd']))
-			$context['search_params']['brd'] = $context['search_params']['brd'] == '' ? array() : explode(',', $context['search_params']['brd']);
+			$context['search_params']['brd'] = $context['search_params']['brd'] == '' ? [] : explode(',', $context['search_params']['brd']);
 	}
 
 	if (isset($_REQUEST['search']))
@@ -107,7 +107,7 @@ function PlushSearch1()
 	if (!empty($context['search_errors']))
 	{
 		loadLanguage('Errors');
-		$context['search_errors']['messages'] = array();
+		$context['search_errors']['messages'] = [];
 		foreach ($context['search_errors'] as $search_error => $dummy)
 		{
 			if ($search_error === 'messages')
@@ -133,7 +133,7 @@ function PlushSearch1()
 	);
 	$context['num_boards'] = $smcFunc['db_num_rows']($request);
 	$context['boards_check_all'] = true;
-	$context['categories'] = array();
+	$context['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// This category hasn't been set up yet..
@@ -141,7 +141,7 @@ function PlushSearch1()
 			$context['categories'][$row['id_cat']] = array(
 				'id' => $row['id_cat'],
 				'name' => $row['cat_name'],
-				'boards' => array()
+				'boards' => []
 			);
 
 		// Set this board up, and let the template know when it's a child.  (indent them..)
@@ -162,7 +162,7 @@ function PlushSearch1()
 	sortCategories($context['categories']);
 
 	// Now, let's sort the list of categories into the boards for templates that like that.
-	$temp_boards = array();
+	$temp_boards = [];
 	foreach ($context['categories'] as $category)
 	{
 		$temp_boards[] = array(
@@ -180,14 +180,14 @@ function PlushSearch1()
 		$max_boards = 2;
 
 	// Now, alternate them so they can be shown left and right ;).
-	$context['board_columns'] = array();
+	$context['board_columns'] = [];
 	for ($i = 0; $i < $max_boards; $i++)
 	{
 		$context['board_columns'][] = $temp_boards[$i];
 		if (isset($temp_boards[$i + $max_boards]))
 			$context['board_columns'][] = $temp_boards[$i + $max_boards];
 		else
-			$context['board_columns'][] = array();
+			$context['board_columns'][] = [];
 	}
 
 	if (!empty($_REQUEST['topic']))
@@ -292,7 +292,7 @@ function PlushSearch2()
 
 	call_integration_hook('integrate_search_weights', array(&$weight_factors));
 
-	$weight = array();
+	$weight = [];
 	$weight_total = 0;
 	foreach ($weight_factors as $weight_factor => $value)
 	{
@@ -311,7 +311,7 @@ function PlushSearch2()
 	$maxMessageResults = empty($modSettings['search_max_results']) ? 0 : $modSettings['search_max_results'] * 5;
 
 	// Start with no errors.
-	$context['search_errors'] = array();
+	$context['search_errors'] = [];
 
 	// Number of pages hard maximum - normally not set at all.
 	$modSettings['search_max_results'] = empty($modSettings['search_max_results']) ? 200 * $modSettings['search_results_per_page'] : (int) $modSettings['search_max_results'];
@@ -336,7 +336,7 @@ function PlushSearch2()
 
 	// $search_params will carry all settings that differ from the default search parameters.
 	// That way, the URLs involved in a search page will be kept as short as possible.
-	$search_params = array();
+	$search_params = [];
 
 	if (isset($_REQUEST['params']))
 	{
@@ -354,7 +354,7 @@ function PlushSearch2()
 		}
 
 		if (isset($search_params['brd']))
-			$search_params['brd'] = empty($search_params['brd']) ? array() : explode(',', $search_params['brd']);
+			$search_params['brd'] = empty($search_params['brd']) ? [] : explode(',', $search_params['brd']);
 	}
 
 	// Store whether simple search was used (needed if the user wants to do another query).
@@ -445,7 +445,7 @@ function PlushSearch2()
 		if (!empty($_REQUEST['brd']))
 			$_REQUEST['brd'] = strpos($_REQUEST['brd'], ',') !== false ? explode(',', $_REQUEST['brd']) : array($_REQUEST['brd']);
 		else
-			$_REQUEST['brd'] = isset($_REQUEST['sd_brd']) ? array($_REQUEST['sd_brd']) : array();
+			$_REQUEST['brd'] = isset($_REQUEST['sd_brd']) ? array($_REQUEST['sd_brd']) : [];
 	}
 
 	// Make sure all boards are integers.
@@ -473,13 +473,13 @@ function PlushSearch2()
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('topic_gone', false);
 
-		$search_params['brd'] = array();
+		$search_params['brd'] = [];
 		list ($search_params['brd'][0]) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 	}
 	// Select all boards you've selected AND are allowed to see.
 	elseif ($user_info['is_admin'] && (!empty($search_params['advanced']) || !empty($_REQUEST['brd'])))
-		$search_params['brd'] = empty($_REQUEST['brd']) ? array() : $_REQUEST['brd'];
+		$search_params['brd'] = empty($_REQUEST['brd']) ? [] : $_REQUEST['brd'];
 	else
 	{
 		$see_board = empty($search_params['advanced']) ? 'query_wanna_see_board' : 'query_see_board';
@@ -493,11 +493,11 @@ function PlushSearch2()
 			array(
 				'boards_allowed_to_see' => $user_info[$see_board],
 				'empty_string' => '',
-				'selected_search_boards' => empty($_REQUEST['brd']) ? array() : $_REQUEST['brd'],
+				'selected_search_boards' => empty($_REQUEST['brd']) ? [] : $_REQUEST['brd'],
 				'recycle_board_id' => $modSettings['recycle_board'],
 			)
 		);
-		$search_params['brd'] = array();
+		$search_params['brd'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$search_params['brd'][] = $row['id_board'];
 		$smcFunc['db_free_result']($request);
@@ -612,10 +612,10 @@ function PlushSearch2()
 	$wordArray = explode(' ', $smcFunc['htmlspecialchars'](un_htmlspecialchars($wordArray), ENT_QUOTES));
 
 	// A minus sign in front of a word excludes the word.... so...
-	$excludedWords = array();
-	$excludedIndexWords = array();
-	$excludedSubjectWords = array();
-	$excludedPhrases = array();
+	$excludedWords = [];
+	$excludedIndexWords = [];
+	$excludedSubjectWords = [];
+	$excludedPhrases = [];
 
 	// .. first, we check for things like -"some words", but not "-some words".
 	foreach ($matches[1] as $index => $word)
@@ -642,7 +642,7 @@ function PlushSearch2()
 	// The remaining words and phrases are all included.
 	$searchArray = array_merge($phraseArray, $wordArray);
 
-	$context['search_ignored'] = array();
+	$context['search_ignored'] = [];
 	// Trim everything and make sure there are no words that are the same.
 	foreach ($searchArray as $index => $value)
 	{
@@ -665,13 +665,13 @@ function PlushSearch2()
 	$searchArray = array_slice(array_unique($searchArray), 0, 10);
 
 	// Create an array of replacements for highlighting.
-	$context['mark'] = array();
+	$context['mark'] = [];
 	foreach ($searchArray as $word)
 		$context['mark'][$word] = '<strong class="highlight">' . $word . '</strong>';
 
 	// Initialize two arrays storing the words that have to be searched for.
-	$orParts = array();
-	$searchWords = array();
+	$orParts = [];
+	$searchWords = [];
 
 	// Make sure at least one word is being searched for.
 	if (empty($searchArray))
@@ -696,11 +696,11 @@ function PlushSearch2()
 	foreach ($orParts as $orIndex => $andParts)
 	{
 		$searchWords[$orIndex] = array(
-			'indexed_words' => array(),
-			'words' => array(),
-			'subject_words' => array(),
-			'all_words' => array(),
-			'complex_words' => array(),
+			'indexed_words' => [],
+			'words' => [],
+			'subject_words' => [],
+			'all_words' => [],
+			'complex_words' => [],
 		);
 
 		// Sort the indexed words (large words -> small words -> excluded words).
@@ -787,7 +787,7 @@ function PlushSearch2()
 		$temp_params['brd'] = implode(',', $temp_params['brd']);
 	if (isset($temp_params['userspec']))
 		$temp_params['userspec'] = implode(',', $temp_params['userspec']);
-	$context['params'] = array();
+	$context['params'] = [];
 	foreach ($temp_params as $k => $v)
 		$context['params'][] = $k . '|\'|' . $v;
 
@@ -832,14 +832,14 @@ function PlushSearch2()
 	$query_params = array_merge($search_params, array(
 		'min_msg_id' => isset($minMsgID) ? (int) $minMsgID : 0,
 		'max_msg_id' => isset($maxMsgID) ? (int) $maxMsgID : 0,
-		'memberlist' => !empty($memberlist) ? $memberlist : array(),
+		'memberlist' => !empty($memberlist) ? $memberlist : [],
 	));
 
 	// Can this search rely on the API given the parameters?
 	if ($searchAPI->supportsMethod('searchQuery', $query_params))
 	{
-		$participants = array();
-		$searchArray = array();
+		$participants = [];
+		$searchArray = [];
 
 		$num_results = $searchAPI->searchQuery($query_params, $searchWords, $excludedIndexWords, $participants, $searchArray);
 	}
@@ -873,15 +873,15 @@ function PlushSearch2()
 			if ($search_params['subject_only'])
 			{
 				// We do this to try and avoid duplicate keys on databases not supporting INSERT IGNORE.
-				$inserts = array();
+				$inserts = [];
 				foreach ($searchWords as $orIndex => $words)
 				{
-					$subject_query_params = array();
+					$subject_query_params = [];
 					$subject_query = array(
 						'from' => '{db_prefix}topics AS t',
-						'inner_join' => array(),
-						'left_join' => array(),
-						'where' => array(),
+						'inner_join' => [],
+						'left_join' => [],
+						'where' => [],
 					);
 
 					if ($modSettings['postmod_active'])
@@ -1018,14 +1018,14 @@ function PlushSearch2()
 						'id_search' => $_SESSION['search_cache']['id_search'],
 						'relevance' => '0',
 					),
-					'weights' => array(),
+					'weights' => [],
 					'from' => '{db_prefix}topics AS t',
 					'inner_join' => array(
 						'{db_prefix}messages AS m ON (m.id_topic = t.id_topic)'
 					),
-					'left_join' => array(),
-					'where' => array(),
-					'group_by' => array(),
+					'left_join' => [],
+					'where' => [],
+					'group_by' => [],
 					'parameters' => array(
 						'min_msg' => $minMsg,
 						'recent_message' => $recentMsg,
@@ -1073,7 +1073,7 @@ function PlushSearch2()
 				$numSubjectResults = 0;
 				if (empty($search_params['topic']))
 				{
-					$inserts = array();
+					$inserts = [];
 					// Create a temporary table to store some preliminary results in.
 					$smcFunc['db_search_query']('drop_tmp_log_search_topics', '
 						DROP TABLE IF EXISTS {db_prefix}tmp_log_search_topics',
@@ -1104,10 +1104,10 @@ function PlushSearch2()
 					{
 						$subject_query = array(
 							'from' => '{db_prefix}topics AS t',
-							'inner_join' => array(),
-							'left_join' => array(),
-							'where' => array(),
-							'params' => array(),
+							'inner_join' => [],
+							'left_join' => [],
+							'where' => [],
+							'params' => [],
 						);
 
 						$numTables = 0;
@@ -1249,7 +1249,7 @@ function PlushSearch2()
 				// We building an index?
 				if ($searchAPI->supportsMethod('indexedWordQuery', $query_params))
 				{
-					$inserts = array();
+					$inserts = [];
 					$smcFunc['db_search_query']('drop_tmp_log_search_messages', '
 						DROP TABLE IF EXISTS {db_prefix}tmp_log_search_messages',
 						array(
@@ -1295,9 +1295,9 @@ function PlushSearch2()
 									'topic' => !empty($search_params['topic']) ? $search_params['topic'] : 0,
 									'min_msg_id' => !empty($minMsgID) ? $minMsgID : 0,
 									'max_msg_id' => !empty($maxMsgID) ? $maxMsgID : 0,
-									'excluded_phrases' => !empty($excludedPhrases) ? $excludedPhrases : array(),
-									'excluded_index_words' => !empty($excludedIndexWords) ? $excludedIndexWords : array(),
-									'excluded_subject_words' => !empty($excludedSubjectWords) ? $excludedSubjectWords : array(),
+									'excluded_phrases' => !empty($excludedPhrases) ? $excludedPhrases : [],
+									'excluded_index_words' => !empty($excludedIndexWords) ? $excludedIndexWords : [],
+									'excluded_subject_words' => !empty($excludedSubjectWords) ? $excludedSubjectWords : [],
 								),
 							);
 
@@ -1355,11 +1355,11 @@ function PlushSearch2()
 				// Not using an index? All conditions have to be carried over.
 				else
 				{
-					$orWhere = array();
+					$orWhere = [];
 					$count = 0;
 					foreach ($searchWords as $orIndex => $words)
 					{
-						$where = array();
+						$where = [];
 						foreach ($words['all_words'] as $regularWord)
 						{
 							$where[] = 'm.body' . (in_array($regularWord, $excludedWords) ? ' NOT' : '') . (empty($modSettings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:all_word_body_' . $count . '}';
@@ -1437,7 +1437,7 @@ function PlushSearch2()
 					// We love to handle non-good databases that don't support our ignore!
 					if (!$smcFunc['db_support_ignore'])
 					{
-						$inserts = array();
+						$inserts = [];
 						while ($row = $smcFunc['db_fetch_row']($ignoreRequest))
 						{
 							// No duplicates!
@@ -1452,7 +1452,7 @@ function PlushSearch2()
 						// Now put them in!
 						if (!empty($inserts))
 						{
-							$query_columns = array();
+							$query_columns = [];
 							foreach ($main_query['select'] as $k => $v)
 								$query_columns[$k] = 'int';
 
@@ -1483,7 +1483,7 @@ function PlushSearch2()
 						}
 					$relevance = substr($relevance, 0, -3) . ') / ' . $weight_total . ' AS relevance';
 
-					$usedIDs = array_flip(empty($inserts) ? array() : array_keys($inserts));
+					$usedIDs = array_flip(empty($inserts) ? [] : array_keys($inserts));
 					$ignoreRequest = $smcFunc['db_search_query']('insert_log_search_results_sub_only', ($smcFunc['db_support_ignore'] ? ( '
 						INSERT IGNORE INTO {db_prefix}log_search_results
 							(id_search, id_topic, relevance, id_msg, num_matches)') : '') . '
@@ -1508,7 +1508,7 @@ function PlushSearch2()
 					// Once again need to do the inserts if the database don't support ignore!
 					if (!$smcFunc['db_support_ignore'])
 					{
-						$inserts = array();
+						$inserts = [];
 						while ($row = $smcFunc['db_fetch_row']($ignoreRequest))
 						{
 							// No duplicates!
@@ -1541,7 +1541,7 @@ function PlushSearch2()
 		}
 
 		// *** Retrieve the results to be shown on the page
-		$participants = array();
+		$participants = [];
 		$request = $smcFunc['db_search_query']('', '
 			SELECT ' . (empty($search_params['topic']) ? 'lsr.id_topic' : $search_params['topic'] . ' AS id_topic') . ', lsr.id_msg, lsr.relevance, lsr.num_matches
 			FROM {db_prefix}log_search_results AS lsr' . ($search_params['sort'] == 'num_replies' ? '
@@ -1562,7 +1562,7 @@ function PlushSearch2()
 			$context['topics'][$row['id_msg']] = array(
 				'relevance' => round($row['relevance'] / 10, 1) . '%',
 				'num_matches' => $row['num_matches'],
-				'matches' => array(),
+				'matches' => [],
 			);
 			// By default they didn't participate in the topic!
 			$participants[$row['id_topic']] = false;
@@ -1603,7 +1603,7 @@ function PlushSearch2()
 				'limit' => count($context['topics']),
 			)
 		);
-		$posters = array();
+		$posters = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$posters[] = $row['id_member'];
 		$smcFunc['db_free_result']($request);
@@ -1647,7 +1647,7 @@ function PlushSearch2()
 
 		// If there are no results that means the things in the cache got deleted, so pretend we have no topics anymore.
 		if ($smcFunc['db_num_rows']($messages_request) == 0)
-			$context['topics'] = array();
+			$context['topics'] = [];
 
 		// If we want to know who participated in what then load this now.
 		if (!$user_info['is_guest'])
@@ -1681,7 +1681,7 @@ function PlushSearch2()
 	$context['key_words'] = &$searchArray;
 
 	// Setup the default topic icons... for checking they exist and the like!
-	$context['icon_sources'] = array();
+	$context['icon_sources'] = [];
 	foreach ($context['stable_icons'] as $icon)
 		$context['icon_sources'][$icon] = 'images_url';
 
@@ -1966,7 +1966,7 @@ function prepareSearchContext($reset = false)
 
 	$output['matches'][] = array(
 		'id' => $message['id_msg'],
-		'attachment' => array(),
+		'attachment' => [],
 		'member' => $memberContext[$message['id_member']],
 		'icon' => $message['icon'],
 		'icon_url' => $settings[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.png',

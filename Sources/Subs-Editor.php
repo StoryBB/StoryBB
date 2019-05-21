@@ -69,7 +69,7 @@ function html_to_bbc($text)
 	if (!empty($matches[0]))
 	{
 		// Load all the smileys.
-		$names = array();
+		$names = [];
 		foreach ($matches[1] as $file)
 			$names[] = $file;
 		$names = array_unique($names);
@@ -84,7 +84,7 @@ function html_to_bbc($text)
 					'smiley_filenames' => $names,
 				)
 			);
-			$mappings = array();
+			$mappings = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$mappings[$row['filename']] = $smcFunc['htmlspecialchars']($row['code']);
 			$smcFunc['db_free_result']($request);
@@ -107,7 +107,7 @@ function html_to_bbc($text)
 
 	$parts = preg_split('~(<[A-Za-z]+\s*[^<>]*?style="?[^<>"]+"?[^<>]*?(?:/?)>|</[A-Za-z]+>)~', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
 	$replacement = '';
-	$stack = array();
+	$stack = [];
 
 	foreach ($parts as $part)
 	{
@@ -349,7 +349,7 @@ function html_to_bbc($text)
 
 		// Now work out what the attributes are.
 		$attribs = fetchTagAttributes($matches[1]);
-		$tags = array();
+		$tags = [];
 		$sizes_equivalence = array(1 => '8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt');
 		foreach ($attribs as $s => $v)
 		{
@@ -899,7 +899,7 @@ function html_to_bbc($text)
  */
 function fetchTagAttributes($text)
 {
-	$attribs = array();
+	$attribs = [];
 	$key = $value = '';
 	$tag_state = 0; // 0 = key, 1 = attribute with no string, 2 = attribute with string
 	for ($i = 0, $n = strlen($text); $i < $n; $i++)
@@ -965,12 +965,12 @@ function legalise_bbc($text)
 		return $text;
 
 	// A list of tags that's disabled by the admin.
-	$disabled = empty($modSettings['disabledBBC']) ? array() : array_flip(explode(',', strtolower($modSettings['disabledBBC'])));
+	$disabled = empty($modSettings['disabledBBC']) ? [] : array_flip(explode(',', strtolower($modSettings['disabledBBC'])));
 
 	// Get a list of all the tags that are not disabled.
 	$all_tags = parse_bbc(false);
-	$valid_tags = array();
-	$self_closing_tags = array();
+	$valid_tags = [];
+	$self_closing_tags = [];
 	foreach ($all_tags as $tag)
 	{
 		if (!isset($disabled[$tag['tag']]))
@@ -1052,13 +1052,13 @@ function legalise_bbc($text)
 		$inNoBbc = false;
 
 		// A buffer containing all opened inline elements.
-		$inlineElements = array();
+		$inlineElements = [];
 
 		// A buffer containing all opened block elements.
-		$blockElements = array();
+		$blockElements = [];
 
 		// A buffer containing the opened inline elements that might compete.
-		$competingElements = array();
+		$competingElements = [];
 
 		// $i: text, $i + 1: '[', $i + 2: '/', $i + 3: tag, $i + 4: tag tail.
 		for ($i = 0, $n = count($parts) - 1; $i < $n; $i += 5)
@@ -1093,7 +1093,7 @@ function legalise_bbc($text)
 					if (!empty($inlineElements))
 					{
 						$parts[$i] .= '[/' . implode('][/', array_reverse($inlineElements)) . ']';
-						//$inlineElements = array();
+						//$inlineElements = [];
 					}
 
 					$inCode = true;
@@ -1123,7 +1123,7 @@ function legalise_bbc($text)
 					if (!empty($inlineElements))
 					{
 						$parts[$i] .= '[/' . implode('][/', array_reverse($inlineElements)) . ']';
-						//$inlineElements = array();
+						//$inlineElements = [];
 					}
 
 					$inNoBbc = true;
@@ -1200,7 +1200,7 @@ function legalise_bbc($text)
 						if ($isCompetingTag)
 						{
 							if (!isset($competingElements[$tag]))
-								$competingElements[$tag] = array();
+								$competingElements[$tag] = [];
 
 							$competingElements[$tag][] = $parts[$i + 4];
 
@@ -1223,7 +1223,7 @@ function legalise_bbc($text)
 					// Close the elements that should've been closed by closing this tag.
 					if (!empty($blockElements))
 					{
-						$addClosingTags = array();
+						$addClosingTags = [];
 						while ($element = array_pop($blockElements))
 						{
 							if ($element === $tag)
@@ -1416,12 +1416,12 @@ function getMessageIcons($board_id)
 					'board_id' => $board_id,
 				)
 			);
-			$icon_data = array();
+			$icon_data = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$icon_data[] = $row;
 			$smcFunc['db_free_result']($request);
 
-			$icons = array();
+			$icons = [];
 			foreach ($icon_data as $icon)
 			{
 				$icons[$icon['filename']] = array(
@@ -1470,9 +1470,9 @@ function create_control_richedit($editorOptions)
 		loadCSSFile('jquery.sceditor.css', array('force_current' => false, 'validate' => true), 'sbb_jquery_sceditor');
 
 		// JS makes the editor go round
-		loadJavaScriptFile('editor.js', array(), 'sbb_editor');
-		loadJavaScriptFile('jquery.sceditor.bbcode.min.js', array(), 'sbb_sceditor_bbcode');
-		loadJavaScriptFile('jquery.sceditor.storybb.js', array(), 'sbb_sceditor_storybb');
+		loadJavaScriptFile('editor.js', [], 'sbb_editor');
+		loadJavaScriptFile('jquery.sceditor.bbcode.min.js', [], 'sbb_sceditor_bbcode');
+		loadJavaScriptFile('jquery.sceditor.storybb.js', [], 'sbb_sceditor_storybb');
 		addInlineJavaScript('
 		var sbb_smileys_url = \'' . $settings['smileys_url'] . '\';
 		var bbc_quote_from = \'' . addcslashes($txt['quote_from'], "'") . '\';
@@ -1497,7 +1497,7 @@ function create_control_richedit($editorOptions)
 		'form' => isset($editorOptions['form']) ? $editorOptions['form'] : 'postmodify',
 		'bbc_level' => !empty($editorOptions['bbc_level']) ? $editorOptions['bbc_level'] : 'full',
 		'preview_type' => isset($editorOptions['preview_type']) ? (int) $editorOptions['preview_type'] : 1,
-		'labels' => !empty($editorOptions['labels']) ? $editorOptions['labels'] : array(),
+		'labels' => !empty($editorOptions['labels']) ? $editorOptions['labels'] : [],
 		'locale' => !empty($txt['lang_locale']) && substr($txt['lang_locale'], 0, 5) != 'en_US' ? $txt['lang_locale'] : '',
 		'required' => !empty($editorOptions['required']),
 	);
@@ -1514,7 +1514,7 @@ function create_control_richedit($editorOptions)
 				'description' => $txt['bold'],
 			),
 		*/
-		$context['bbc_tags'] = array();
+		$context['bbc_tags'] = [];
 		$context['bbc_tags'][] = array(
 			array(
 				'code' => 'bold',
@@ -1532,7 +1532,7 @@ function create_control_richedit($editorOptions)
 				'code' => 'strike',
 				'description' => $editortxt['strike']
 			),
-			array(),
+			[],
 			array(
 				'code' => 'pre',
 				'description' => $editortxt['preformatted']
@@ -1563,7 +1563,7 @@ function create_control_richedit($editorOptions)
 				'code' => 'floatright',
 				'description' => $editortxt['float_right']
 			),
-			array(),
+			[],
 			array(
 				'code' => 'image',
 				'description' => $editortxt['image']
@@ -1576,7 +1576,7 @@ function create_control_richedit($editorOptions)
 				'code' => 'email',
 				'description' => $editortxt['insert_email']
 			),
-			array(),
+			[],
 			array(
 				'code' => 'superscript',
 				'description' => $editortxt['superscript']
@@ -1585,7 +1585,7 @@ function create_control_richedit($editorOptions)
 				'code' => 'subscript',
 				'description' => $editortxt['subscript']
 			),
-			array(),
+			[],
 			array(
 				'code' => 'table',
 				'description' => $editortxt['table']
@@ -1598,7 +1598,7 @@ function create_control_richedit($editorOptions)
 				'code' => 'quote',
 				'description' => $editortxt['bbc_quote']
 			),
-			array(),
+			[],
 			array(
 				'code' => 'bulletlist',
 				'description' => $editortxt['list_unordered']
@@ -1632,7 +1632,7 @@ function create_control_richedit($editorOptions)
 		// Show the toggle?
 		if (empty($modSettings['disable_wysiwyg']))
 		{
-			$context['bbc_tags'][count($context['bbc_tags']) - 1][] = array();
+			$context['bbc_tags'][count($context['bbc_tags']) - 1][] = [];
 			$context['bbc_tags'][count($context['bbc_tags']) - 1][] = array(
 				'code' => 'unformat',
 				'description' => $editortxt['unformat_text'],
@@ -1644,7 +1644,7 @@ function create_control_richedit($editorOptions)
 		}
 
 		// Generate a list of buttons that shouldn't be shown - this should be the fastest way to do this.
-		$disabled_tags = array();
+		$disabled_tags = [];
 		if (!empty($modSettings['disabledBBC']))
 			$disabled_tags = explode(',', $modSettings['disabledBBC']);
 
@@ -1665,12 +1665,12 @@ function create_control_richedit($editorOptions)
 
 		$bbcodes_styles = '';
 		$context['bbcodes_handlers'] = '';
-		$context['bbc_toolbar'] = array();
+		$context['bbc_toolbar'] = [];
 		foreach ($context['bbc_tags'] as $row => $tagRow)
 		{
 			if (!isset($context['bbc_toolbar'][$row]))
-				$context['bbc_toolbar'][$row] = array();
-			$tagsRow = array();
+				$context['bbc_toolbar'][$row] = [];
+			$tagsRow = [];
 			foreach ($tagRow as $tag)
 			{
 				if ((!empty($tag['code'])) && empty($context['disabled_tags'][$tag['code']]))
@@ -1698,14 +1698,14 @@ function create_control_richedit($editorOptions)
 				else
 				{
 					$context['bbc_toolbar'][$row][] = implode(',', $tagsRow);
-					$tagsRow = array();
+					$tagsRow = [];
 				}
 			}
 
 			if ($row == 0)
 			{
 				$context['bbc_toolbar'][$row][] = implode(',', $tagsRow);
-				$tagsRow = array();
+				$tagsRow = [];
 				if (!isset($context['disabled_tags']['font']))
 					$tagsRow[] = 'font';
 				if (!isset($context['disabled_tags']['size']))
@@ -1715,7 +1715,7 @@ function create_control_richedit($editorOptions)
 			}
 			elseif ($row == 1 && empty($modSettings['disable_wysiwyg']))
 			{
-				$tmp = array();
+				$tmp = [];
 				$tagsRow[] = 'removeformat';
 				$tagsRow[] = 'source';
 				if (!empty($tmp))
@@ -1737,8 +1737,8 @@ function create_control_richedit($editorOptions)
 	if (empty($context['smileys']) && empty($editorOptions['disable_smiley_box']))
 	{
 		$context['smileys'] = array(
-			'postform' => array(),
-			'popup' => array(),
+			'postform' => [],
+			'popup' => [],
 		);
 
 		if (($temp = cache_get_data('posting_smileys', 480)) == null)
@@ -1795,7 +1795,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	{
 		// Some javascript ma'am?
 		if (!empty($verificationOptions['override_visual']) || (!empty($modSettings['visual_verification_type']) && !isset($verificationOptions['override_visual'])))
-			loadJavaScriptFile('captcha.js', array(), 'sbb_captcha');
+			loadJavaScriptFile('captcha.js', [], 'sbb_captcha');
 
 		$verificationOptions['use_graphic_library'] = in_array('gd', get_loaded_extensions());
 
@@ -1818,7 +1818,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			'max_errors' => isset($verificationOptions['max_errors']) ? $verificationOptions['max_errors'] : 3,
 			'image_href' => $scripturl . '?action=verificationcode;vid=' . $verificationOptions['id'] . ';rand=' . md5(mt_rand()),
 			'text_value' => '',
-			'questions' => array(),
+			'questions' => [],
 			'can_recaptcha' => !empty($modSettings['recaptcha_enabled']) && !empty($modSettings['recaptcha_site_key']) && !empty($modSettings['recaptcha_secret_key']),
 		);
 	$thisVerification = &$context['controls']['verification'][$verificationOptions['id']];
@@ -1854,11 +1854,11 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$request = $smcFunc['db_query']('', '
 				SELECT id_question, lngfile, question, answers
 				FROM {db_prefix}qanda',
-				array()
+				[]
 			);
 			$modSettings['question_id_cache'] = array(
-				'questions' => array(),
-				'langs' => array(),
+				'questions' => [],
+				'langs' => [],
 			);
 			// This is like Captain Kirk climbing a mountain in some ways. This is L's fault, mkay? :P
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1880,7 +1880,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	}
 
 	if (!isset($_SESSION[$verificationOptions['id'] . '_vv']))
-		$_SESSION[$verificationOptions['id'] . '_vv'] = array();
+		$_SESSION[$verificationOptions['id'] . '_vv'] = [];
 
 	// Do we need to refresh the verification?
 	if (!$do_test && (!empty($_SESSION[$verificationOptions['id'] . '_vv']['did_pass']) || empty($_SESSION[$verificationOptions['id'] . '_vv']['count']) || $_SESSION[$verificationOptions['id'] . '_vv']['count'] > 3) && empty($verificationOptions['dont_refresh']))
@@ -1892,7 +1892,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	if (($thisVerification['show_visual'] && empty($_SESSION[$verificationOptions['id'] . '_vv']['code'])) || ($thisVerification['number_questions'] && empty($_SESSION[$verificationOptions['id'] . '_vv']['q'])))
 		$force_refresh = true;
 
-	$verification_errors = array();
+	$verification_errors = [];
 	// Start with any testing.
 	if ($do_test)
 	{
@@ -1923,7 +1923,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$verification_errors[] = 'wrong_verification_code';
 		if ($thisVerification['number_questions'])
 		{
-			$incorrectQuestions = array();
+			$incorrectQuestions = [];
 			foreach ($_SESSION[$verificationOptions['id'] . '_vv']['q'] as $q)
 			{
 				// We don't have this question any more, thus no answers.
@@ -1970,7 +1970,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		$_SESSION[$verificationOptions['id'] . '_vv']['count'] = 0;
 		$_SESSION[$verificationOptions['id'] . '_vv']['errors'] = 0;
 		$_SESSION[$verificationOptions['id'] . '_vv']['did_pass'] = false;
-		$_SESSION[$verificationOptions['id'] . '_vv']['q'] = array();
+		$_SESSION[$verificationOptions['id'] . '_vv']['q'] = [];
 		$_SESSION[$verificationOptions['id'] . '_vv']['code'] = '';
 
 		// Make our magic empty field.
@@ -1998,14 +1998,14 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		if ($thisVerification['number_questions'])
 		{
 			// Attempt to try the current page's language, followed by the user's preference, followed by the site default.
-			$possible_langs = array();
+			$possible_langs = [];
 			if (isset($_SESSION['language']))
 				$possible_langs[] = strtr($_SESSION['language'], array('-utf8' => ''));
 			if (!empty($user_info['language']));
 			$possible_langs[] = $user_info['language'];
 			$possible_langs[] = $language;
 
-			$questionIDs = array();
+			$questionIDs = [];
 			foreach ($possible_langs as $lang)
 			{
 				$lang = strtr($lang, array('-utf8' => ''));
@@ -2023,7 +2023,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	else
 	{
 		// Same questions as before.
-		$questionIDs = !empty($_SESSION[$verificationOptions['id'] . '_vv']['q']) ? $_SESSION[$verificationOptions['id'] . '_vv']['q'] : array();
+		$questionIDs = !empty($_SESSION[$verificationOptions['id'] . '_vv']['q']) ? $_SESSION[$verificationOptions['id'] . '_vv']['q'] : [];
 		$thisVerification['text_value'] = !empty($_REQUEST[$verificationOptions['id'] . '_vv']['code']) ? $smcFunc['htmlspecialchars']($_REQUEST[$verificationOptions['id'] . '_vv']['code']) : '';
 	}
 
@@ -2038,7 +2038,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	// Have we got some questions to load?
 	if (!empty($questionIDs))
 	{
-		$_SESSION[$verificationOptions['id'] . '_vv']['q'] = array();
+		$_SESSION[$verificationOptions['id'] . '_vv']['q'] = [];
 		foreach ($questionIDs as $q)
 		{
 			// Bit of a shortcut this.
@@ -2096,7 +2096,7 @@ function AutoSuggestHandler($checkRegistered = null)
 	StoryBB\Template::set_layout('raw');
 
 	// Any parameters?
-	$context['search_param'] = isset($_REQUEST['search_param']) ? sbb_json_decode(base64_decode($_REQUEST['search_param']), true) : array();
+	$context['search_param'] = isset($_REQUEST['search_param']) ? sbb_json_decode(base64_decode($_REQUEST['search_param']), true) : [];
 
 	if (isset($_REQUEST['suggest_type'], $_REQUEST['search']) && isset($searchTypes[$_REQUEST['suggest_type']]))
 	{
@@ -2136,7 +2136,7 @@ function AutoSuggest_Search_Member()
 	$xml_data = array(
 		'items' => array(
 			'identifier' => 'item',
-			'children' => array(),
+			'children' => [],
 		),
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -2189,7 +2189,7 @@ function AutoSuggest_Search_MemberGroups()
 	$xml_data = array(
 		'items' => array(
 			'identifier' => 'item',
-			'children' => array(),
+			'children' => [],
 		),
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))

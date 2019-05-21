@@ -39,7 +39,7 @@ function getLastPost()
 		)
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
-		return array();
+		return [];
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
@@ -79,7 +79,7 @@ function RecentPosts()
 	if (isset($_REQUEST['start']) && $_REQUEST['start'] > 95)
 		$_REQUEST['start'] = 95;
 
-	$query_parameters = array();
+	$query_parameters = [];
 	if (!empty($_REQUEST['c']) && empty($board))
 	{
 		$_REQUEST['c'] = explode(',', $_REQUEST['c']);
@@ -125,7 +125,7 @@ function RecentPosts()
 			)
 		);
 		$total_cat_posts = 0;
-		$boards = array();
+		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$boards[] = $row['id_board'];
@@ -169,7 +169,7 @@ function RecentPosts()
 			)
 		);
 		$total_posts = 0;
-		$boards = array();
+		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$boards[] = $row['id_board'];
@@ -298,7 +298,7 @@ function RecentPosts()
 			else
 				$done = true;
 		}
-		$messages = array();
+		$messages = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$messages[] = $row['id_msg'];
 		$smcFunc['db_free_result']($request);
@@ -309,7 +309,7 @@ function RecentPosts()
 	// Nothing here... Or at least, nothing you can see...
 	if (empty($messages))
 	{
-		$context['posts'] = array();
+		$context['posts'] = [];
 		return;
 	}
 
@@ -340,8 +340,8 @@ function RecentPosts()
 		)
 	);
 	$counter = $_REQUEST['start'] + 1;
-	$context['posts'] = array();
-	$board_ids = array('own' => array(), 'any' => array());
+	$context['posts'] = [];
+	$board_ids = array('own' => [], 'any' => []);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Censor everything.
@@ -490,12 +490,12 @@ function UnreadTopics()
 		fatal_lang_error('loadavg_unread_disabled', false);
 
 	// Parameters for the main query.
-	$query_parameters = array();
+	$query_parameters = [];
 
 	// Are we specifying any specific board?
 	if (isset($_REQUEST['children']) && (!empty($board) || !empty($_REQUEST['boards'])))
 	{
-		$boards = array();
+		$boards = [];
 
 		if (!empty($_REQUEST['boards']))
 		{
@@ -556,7 +556,7 @@ function UnreadTopics()
 				'board_list' => $_REQUEST['boards'],
 			)
 		);
-		$boards = array();
+		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
 		$smcFunc['db_free_result']($request);
@@ -584,7 +584,7 @@ function UnreadTopics()
 				'id_cat' => $_REQUEST['c'],
 			)
 		);
-		$boards = array();
+		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
 		$smcFunc['db_free_result']($request);
@@ -609,7 +609,7 @@ function UnreadTopics()
 				'recycle_board' => (int) $modSettings['recycle_board'],
 			)
 		);
-		$boards = array();
+		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
 		$smcFunc['db_free_result']($request);
@@ -690,7 +690,7 @@ function UnreadTopics()
 	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread_posts' : 'unread_replies';
 
 	// Setup the default topic icons... for checking they exist and the like ;)
-	$context['icon_sources'] = array();
+	$context['icon_sources'] = [];
 	foreach ($context['stable_icons'] as $icon)
 		$context['icon_sources'][$icon] = 'images_url';
 
@@ -847,7 +847,7 @@ function UnreadTopics()
 			require_once($sourcedir . '/Subs-Boards.php');
 			markBoardsRead(empty($boards) ? $board : $boards);
 
-			$context['topics'] = array();
+			$context['topics'] = [];
 			$context['no_topic_listing'] = true;
 			if ($context['querystring_board_limits'] == ';start=%1$d')
 				$context['querystring_board_limits'] = '';
@@ -937,7 +937,7 @@ function UnreadTopics()
 				markBoardsRead(empty($boards) ? $board : $boards);
 			}
 
-			$context['topics'] = array();
+			$context['topics'] = [];
 			$context['no_topic_listing'] = true;
 			if ($context['querystring_board_limits'] == ';start=%d')
 				$context['querystring_board_limits'] = '';
@@ -1100,7 +1100,7 @@ function UnreadTopics()
 
 		if ($num_topics == 0)
 		{
-			$context['topics'] = array();
+			$context['topics'] = [];
 			$context['no_topic_listing'] = true;
 			if ($context['querystring_board_limits'] == ';start=%d')
 				$context['querystring_board_limits'] = '';
@@ -1150,7 +1150,7 @@ function UnreadTopics()
 				))
 			);
 
-		$topics = array();
+		$topics = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topics[] = $row['id_topic'];
 		$smcFunc['db_free_result']($request);
@@ -1158,7 +1158,7 @@ function UnreadTopics()
 		// Sanity... where have you gone?
 		if (empty($topics))
 		{
-			$context['topics'] = array();
+			$context['topics'] = [];
 			$context['no_topic_listing'] = true;
 			if ($context['querystring_board_limits'] == ';start=%d')
 				$context['querystring_board_limits'] = '';
@@ -1193,8 +1193,8 @@ function UnreadTopics()
 		);
 	}
 
-	$context['topics'] = array();
-	$topic_ids = array();
+	$context['topics'] = [];
+	$topic_ids = [];
 	$recycle_board = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0;
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))

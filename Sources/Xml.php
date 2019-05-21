@@ -110,7 +110,7 @@ function newspreview()
 
 	require_once($sourcedir . '/Subs-Post.php');
 
-	$errors = array();
+	$errors = [];
 	$news = !isset($_POST['news']) ? '' : $smcFunc['htmlspecialchars']($_POST['news'], ENT_QUOTES);
 	if (empty($news))
 		$errors[] = array('value' => 'no_news');
@@ -144,7 +144,7 @@ function newsletterpreview()
 	require_once($sourcedir . '/ManageNews.php');
 	loadLanguage('Errors');
 
-	$context['post_error']['messages'] = array();
+	$context['post_error']['messages'] = [];
 	$context['send_pm'] = !empty($_POST['send_pm']) ? 1 : 0;
 	$context['send_html'] = !empty($_POST['send_html']) ? 1 : 0;
 
@@ -177,7 +177,7 @@ function sig_preview()
 	// Borrowed from loadAttachmentContext in Display.php
 	$can_change = $is_owner ? allowedTo(array('profile_extra_any', 'profile_extra_own')) : allowedTo('profile_extra_any');
 
-	$errors = array();
+	$errors = [];
 	if (!empty($user) && $can_change)
 	{
 		$request = $smcFunc['db_query']('', '
@@ -215,7 +215,7 @@ function sig_preview()
 
 	$context['xml_data']['signatures'] = array(
 			'identifier' => 'signature',
-			'children' => array()
+			'children' => []
 		);
 	if (isset($current_signature))
 		$context['xml_data']['signatures']['children'][] = array(
@@ -253,7 +253,7 @@ function warning_preview()
 	loadLanguage('Errors');
 	loadLanguage('ModerationCenter');
 
-	$context['post_error']['messages'] = array();
+	$context['post_error']['messages'] = [];
 	if (allowedTo('issue_warning'))
 	{
 		$warning_body = !empty($_POST['body']) ? trim(censorText($_POST['body'])) : '';

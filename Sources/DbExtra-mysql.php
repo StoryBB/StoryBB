@@ -273,7 +273,7 @@ function sbb_db_table_sql($tableName)
 			'table' => $tableName,
 		)
 	);
-	$indexes = array();
+	$indexes = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		// IS this a primary key, unique index, or regular index?
@@ -281,7 +281,7 @@ function sbb_db_table_sql($tableName)
 
 		// Is this the first column in the index?
 		if (empty($indexes[$row['Key_name']]))
-			$indexes[$row['Key_name']] = array();
+			$indexes[$row['Key_name']] = [];
 
 		// A sub part, like only indexing 15 characters of a varchar.
 		if (!empty($row['Sub_part']))

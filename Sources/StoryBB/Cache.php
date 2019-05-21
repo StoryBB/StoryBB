@@ -88,7 +88,7 @@ class Cache
 			if (empty($value))
 			{
 				if (!is_array($cache_misses))
-					$cache_misses = array();
+					$cache_misses = [];
 
 				$cache_count_misses = isset($cache_count_misses) ? $cache_count_misses + 1 : 1;
 				$cache_misses[$cache_count_misses] = array('k' => $original_key, 'd' => 'get');
@@ -130,7 +130,7 @@ class Cache
 	public static function list_available()
 	{
 		global $sourcedir;
-		$apis = array();
+		$apis = [];
 		if ($dh = opendir($sourcedir . '/StoryBB/Cache'))
 		{
 			while (($file = readdir($dh)) !== false)

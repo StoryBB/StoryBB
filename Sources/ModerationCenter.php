@@ -39,7 +39,7 @@ function ModerationMain($dont_call = false)
 	loadLanguage('ModerationCenter');
 	loadCSSFile('admin.css', [], 'admin');
 
-	$context['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
+	$context['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : [];
 	$context['robot_no_index'] = true;
 
 	// This is the menu structure - refer to Subs-Menu.php for the details.
@@ -241,7 +241,7 @@ function ModerationHome()
 {
 	global $txt, $context, $options;
 
-	loadJavaScriptFile('admin.js', array(), 'sbb_admin');
+	loadJavaScriptFile('admin.js', [], 'sbb_admin');
 
 	$context['page_title'] = $txt['moderation_center'];
 	$context['sub_template'] = 'modcenter_home';
@@ -250,7 +250,7 @@ function ModerationHome()
 	ModBlockNotes();
 
 	// Load what blocks the user actually can see...
-	$valid_blocks = array();
+	$valid_blocks = [];
 
 	if ($context['can_moderate_groups'])
 		$valid_blocks['g'] = 'GroupRequests';
@@ -270,7 +270,7 @@ function ModerationHome()
 
 	call_integration_hook('integrate_mod_centre_blocks', array(&$valid_blocks));
 
-	$context['mod_blocks'] = array();
+	$context['mod_blocks'] = [];
 	foreach ($valid_blocks as $k => $block)
 	{
 		$block = 'ModBlock' . $block;
@@ -278,7 +278,7 @@ function ModerationHome()
 			$context['mod_blocks'][] = $block();
 	}
 
-	$context['admin_prefs'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
+	$context['admin_prefs'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : [];
 }
 
 /**
@@ -301,7 +301,7 @@ function ModBlockWatchedUsers()
 				'warning_watch' => $modSettings['warning_watch'],
 			)
 		);
-		$watched_users = array();
+		$watched_users = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$watched_users[] = $row;
 		$smcFunc['db_free_result']($request);
@@ -309,7 +309,7 @@ function ModBlockWatchedUsers()
 		cache_put_data('recent_user_watches', $watched_users, 240);
 	}
 
-	$context['watched_users'] = array();
+	$context['watched_users'] = [];
 	foreach ($watched_users as $user)
 	{
 		$context['watched_users'][] = array(
@@ -448,7 +448,7 @@ function ModBlockNotes()
 				'offset' => $offset,
 			)
 		);
-		$moderator_notes = array();
+		$moderator_notes = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$moderator_notes[] = $row;
 		$smcFunc['db_free_result']($request);
@@ -461,7 +461,7 @@ function ModBlockNotes()
 	$context['page_index'] = constructPageIndex($scripturl . '?action=moderate;area=index;notes', $_GET['start'], $moderator_notes_total, 10);
 	$context['start'] = $_GET['start'];
 
-	$context['notes'] = array();
+	$context['notes'] = [];
 	foreach ($moderator_notes as $note)
 	{
 		$context['notes'][] = array(
@@ -492,7 +492,7 @@ function ModBlockReportedPosts()
 
 	// Got the info already?
 	$cachekey = md5(json_encode($user_info['mod_cache']['bq']));
-	$context['reported_posts'] = array();
+	$context['reported_posts'] = [];
 	if ($user_info['mod_cache']['bq'] == '0=1')
 		return 'modcenter_reported_posts';
 
@@ -517,7 +517,7 @@ function ModBlockReportedPosts()
 				'not_ignored' => 0,
 			)
 		);
-		$reported_posts = array();
+		$reported_posts = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$reported_posts[] = $row;
 		$smcFunc['db_free_result']($request);
@@ -526,7 +526,7 @@ function ModBlockReportedPosts()
 		cache_put_data('reported_posts_' . $cachekey, $reported_posts, 90);
 	}
 
-	$context['reported_posts'] = array();
+	$context['reported_posts'] = [];
 	foreach ($reported_posts as $i => $row)
 	{
 		$context['reported_posts'][] = array(
@@ -555,7 +555,7 @@ function ModBlockGroupRequests()
 {
 	global $context, $user_info, $scripturl, $smcFunc;
 
-	$context['group_requests'] = array();
+	$context['group_requests'] = [];
 	// Make sure they can even moderate someone!
 	if ($user_info['mod_cache']['gq'] == '0=1')
 		return 'group_requests_block';
@@ -606,7 +606,7 @@ function ModBlockReportedMembers()
 
 	// Got the info already?
 	$cachekey = md5(json_encode((int) allowedTo('moderate_forum')));
-	$context['reported_users'] = array();
+	$context['reported_users'] = [];
 	if (!allowedTo('moderate_forum'))
 		return 'modcenter_reported_users';
 
@@ -630,7 +630,7 @@ function ModBlockReportedMembers()
 				'not_ignored' => 0,
 			)
 		);
-		$reported_users = array();
+		$reported_users = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$reported_users[] = $row;
 		$smcFunc['db_free_result']($request);
@@ -639,7 +639,7 @@ function ModBlockReportedMembers()
 		cache_put_data('reported_users_' . $cachekey, $reported_users, 90);
 	}
 
-	$context['reported_users'] = array();
+	$context['reported_users'] = [];
 	foreach ($reported_users as $i => $row)
 	{
 		$context['reported_users'][] = array(
@@ -739,7 +739,7 @@ function ReportedMembers()
 		checkSession();
 
 		// All the ones to update...
-		$toClose = array();
+		$toClose = [];
 		foreach ($_POST['close'] as $rid)
 			$toClose[] = (int) $rid;
 
@@ -755,7 +755,7 @@ function ReportedMembers()
 				)
 			);
 
-			$logs = array();
+			$logs = [];
 			while ($reports = $smcFunc['db_fetch_assoc']($request))
 			{
 				$logs[] = array(
@@ -828,8 +828,8 @@ function ReportedMembers()
 			'max' => 10,
 		)
 	);
-	$context['reports'] = array();
-	$report_ids = array();
+	$context['reports'] = [];
+	$report_ids = [];
 	for ($i = 0; $row = $smcFunc['db_fetch_assoc']($request); $i++)
 	{
 		$report_ids[] = $row['id_report'];
@@ -842,7 +842,7 @@ function ReportedMembers()
 				'link' => $row['id_user'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_user'] . '">' . $row['user_name'] . '</a>' : $row['user_name'],
 				'href' => $scripturl . '?action=profile;u=' . $row['id_user'],
 			),
-			'comments' => array(),
+			'comments' => [],
 			'time_started' => timeformat($row['time_started']),
 			'last_updated' => timeformat($row['time_updated']),
 			'num_reports' => $row['num_reports'],
@@ -968,7 +968,7 @@ function ViewWatchedUsers()
 	{
 		checkSession(!is_array($_REQUEST['delete']) ? 'get' : 'post');
 
-		$toDelete = array();
+		$toDelete = [];
 		if (!is_array($_REQUEST['delete']))
 			$toDelete[] = (int) $_REQUEST['delete'];
 		else
@@ -988,7 +988,7 @@ function ViewWatchedUsers()
 	if (!$context['view_posts'])
 	{
 		$approve_query = '';
-		$delete_boards = array();
+		$delete_boards = [];
 	}
 	else
 	{
@@ -1123,7 +1123,7 @@ function ViewWatchedUsers()
 				'value' => '
 					<input type="submit" name="delete_selected" value="' . $txt['quickmod_delete_selected'] . '" class="button_submit">',
 				'class' => 'floatright',
-			) : array(),
+			) : [],
 		),
 	);
 
@@ -1207,8 +1207,8 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 			'max' => $items_per_page,
 		)
 	);
-	$watched_users = array();
-	$members = array();
+	$watched_users = [];
+	$members = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$watched_users[$row['id_member']] = array(
@@ -1239,7 +1239,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 				'is_approved' => 1,
 			)
 		);
-		$latest_posts = array();
+		$latest_posts = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$latest_posts[$row['id_member']] = $row['last_post_id'];
 
@@ -1345,7 +1345,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 			'max' => $items_per_page,
 		)
 	);
-	$member_posts = array();
+	$member_posts = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$row['subject'] = censorText($row['subject']);
@@ -1617,7 +1617,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 			'sort' => $sort,
 		)
 	);
-	$warnings = array();
+	$warnings = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$warnings[] = array(
@@ -1838,7 +1838,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 			'current_member' => $user_info['id'],
 		)
 	);
-	$templates = array();
+	$templates = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$templates[] = array(
@@ -1987,7 +1987,7 @@ function ModifyWarningTemplate()
 		}
 		else
 		{
-			$context['warning_errors'] = array();
+			$context['warning_errors'] = [];
 			$context['template_data']['title'] = !empty($_POST['template_title']) ? $_POST['template_title'] : '';
 			$context['template_data']['body'] = !empty($_POST['template_body']) ? $_POST['template_body'] : $txt['mc_warning_template_body_default'];
 			$context['template_data']['personal'] = !empty($_POST['make_personal']);

@@ -16,7 +16,7 @@
  * @param array $menuOptions An array of menu options
  * @return boolean|array False if nothing to show or an array of info about the selected menu item
  */
-function createMenu($menuData, $menuOptions = array())
+function createMenu($menuData, $menuOptions = [])
 {
 	global $context, $settings, $txt, $scripturl, $user_info;
 
@@ -51,7 +51,7 @@ function createMenu($menuData, $menuOptions = array())
 	$context['max_menu_id'] = isset($context['max_menu_id']) ? $context['max_menu_id'] + 1 : 1;
 
 	// This will be all the data for this menu - and we'll make a shortcut to it to aid readability here.
-	$context['menu_data_' . $context['max_menu_id']] = array();
+	$context['menu_data_' . $context['max_menu_id']] = [];
 	$menu_context = &$context['menu_data_' . $context['max_menu_id']];
 
 	// What is the general action of this menu (i.e. $scripturl?action=XXXX.
@@ -75,7 +75,7 @@ function createMenu($menuData, $menuOptions = array())
 	if (empty($menuOptions['disable_url_session_check']))
 		$menu_context['extra_parameters'] .= ';' . $context['session_var'] . '=' . $context['session_id'];
 
-	$include_data = array();
+	$include_data = [];
 
 	// Now setup the context correctly.
 	foreach ($menuData as $section_id => $section)
@@ -144,7 +144,7 @@ function createMenu($menuData, $menuOptions = array())
 						// Did it have subsections?
 						if (!empty($area['subsections']))
 						{
-							$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'] = array();
+							$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'] = [];
 							$first_sa = $last_sa = null;
 							foreach ($area['subsections'] as $sa => $sub)
 							{

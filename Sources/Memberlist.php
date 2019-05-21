@@ -39,7 +39,7 @@ function Memberlist()
 	);
 
 	// Set up the sort links.
-	$context['sort_links'] = array();
+	$context['sort_links'] = [];
 	foreach ($subActions as $act => $text)
 	{
 		$context['sort_links'][] = array(
@@ -107,7 +107,7 @@ function Memberlist()
 		$context['columns'] += $context['custom_profile_fields']['columns'];
 
 	$context['colspan'] = 0;
-	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
+	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : [];
 	foreach ($context['columns'] as $key => $column)
 	{
 		if (isset($context['disabled_fields'][$key]) || (isset($column['link_with']) && isset($context['disabled_fields'][$column['link_with']])))
@@ -192,7 +192,7 @@ function MLAll()
 			$memberlist_cache = array(
 				'last_update' => time(),
 				'num_members' => $smcFunc['db_num_rows']($request),
-				'index' => array(),
+				'index' => [],
 			);
 
 			for ($i = 0, $n = $smcFunc['db_num_rows']($request); $i < $n; $i += $cache_step_size)
@@ -391,7 +391,7 @@ function MLSearch()
 			'field_type_select' => 'select',
 		)
 	);
-	$context['custom_search_fields'] = array();
+	$context['custom_search_fields'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['custom_search_fields'][$row['col_name']] = array(
 			'colname' => $row['col_name'],
@@ -452,8 +452,8 @@ function MLSearch()
 		}
 		else
 		{
-			$fields = array();
-			$search_fields = array();
+			$fields = [];
+			$search_fields = [];
 		}
 
 		// Search for websites.
@@ -479,7 +479,7 @@ function MLSearch()
 			foreach ($fields as $key => $field)
 				$fields[$key] = 'LOWER(' . $field . ')';
 
-		$customJoin = array();
+		$customJoin = [];
 		$customCount = 10;
 
 		// Any custom fields to search for - these being tricky?
@@ -603,14 +603,14 @@ function printMemberListRows($request)
 	if ($most_posts == 0)
 		$most_posts = 1;
 
-	$members = array();
+	$members = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$members[] = $row['id_member'];
 
 	// Load all the members for display.
 	loadMemberData($members);
 
-	$context['members'] = array();
+	$context['members'] = [];
 	foreach ($members as $member)
 	{
 		if (!loadMemberContext($member))
@@ -659,7 +659,7 @@ function getCustFieldsMList()
 {
 	global $smcFunc;
 
-	$cpf = array();
+	$cpf = [];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT col_name, field_name, field_desc, field_type, bbc, enclose

@@ -28,7 +28,7 @@ class Mentions
 	 * @param array $members Whether to limit to a specific sect of members
 	 * @return array An array of arrays containing info about each member mentioned
 	 */
-	public static function getMentionsByContent($content_type, $content_id, array $members = array())
+	public static function getMentionsByContent($content_type, $content_id, array $members = [])
 	{
 		global $smcFunc;
 
@@ -52,7 +52,7 @@ class Mentions
 				'members' => $members,
 			)
 		);
-		$members = array();
+		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[$row['dest_chr']] = array(
 				'id_member' => $row['id_member'],
@@ -140,7 +140,7 @@ class Mentions
 		$possible_names = self::getPossibleMentions($body);
 
 		if (empty($possible_names) || !allowedTo('mention'))
-			return array();
+			return [];
 
 		$request = $smcFunc['db_query']('', '
 			SELECT chars.id_character, chars.id_member, chars.character_name,
@@ -154,7 +154,7 @@ class Mentions
 				'count' => count($possible_names),
 			)
 		);
-		$members = array();
+		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (stripos($body, static::$char . $row['character_name']) === false)
@@ -202,7 +202,7 @@ class Mentions
 		while (preg_match('~\[quote[^\]]*\](.+?)\[\/quote\]~s', $body))
 			$body = preg_replace('~\[quote[^\]]*\](.+?)\[\/quote\]~s', '', $body);
 
-		$matches = array();
+		$matches = [];
 		$string = str_split($body);
 		$depth = 0;
 		foreach ($string as $k => $char)
@@ -210,7 +210,7 @@ class Mentions
 			if ($char == static::$char && ($k == 0 || trim($string[$k - 1]) == ''))
 			{
 				$depth++;
-				$matches[] = array();
+				$matches[] = [];
 			}
 			elseif ($char == "\n")
 				$depth = 0;
@@ -231,7 +231,7 @@ class Mentions
 
 		// Names can have spaces, other breaks, or they can't...we try to match every possible
 		// combination.
-		$names = array();
+		$names = [];
 		foreach ($matches as $match)
 		{
 			$match = preg_split('/([^\w])/', $match, -1, PREG_SPLIT_DELIM_CAPTURE);

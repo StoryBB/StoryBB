@@ -80,7 +80,7 @@ require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Subs.php');
 
 // Create a variable to store some StoryBB specific functions in.
-$smcFunc = array();
+$smcFunc = [];
 
 // This is our general bootstrap, a la SSI.php but with a few differences.
 unset ($db_show_debug);
@@ -210,7 +210,7 @@ function perform_task($task_details)
 	// All background tasks need to be classes.
 	elseif (class_exists($task_details['task_class']) && is_subclass_of($task_details['task_class'], 'StoryBB\\Task\\Adhoc'))
 	{
-		$details = empty($task_details['task_data']) ? array() : json_decode($task_details['task_data'], true);
+		$details = empty($task_details['task_data']) ? [] : json_decode($task_details['task_data'], true);
 		$bgtask = new $task_details['task_class']($details);
 		return $bgtask->execute();
 	}

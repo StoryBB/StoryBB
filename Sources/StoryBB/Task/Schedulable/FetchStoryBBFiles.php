@@ -32,7 +32,7 @@ class FetchStoryBBFiles extends \StoryBB\Task\Schedulable
 			)
 		);
 
-		$js_files = array();
+		$js_files = [];
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{

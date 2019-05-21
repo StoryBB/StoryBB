@@ -29,7 +29,7 @@ function getNotifyPrefs($members, $prefs = '', $process_default = false)
 	if (!empty($prefs))
 		$prefs = is_array($prefs) ? $prefs : (array) $prefs;
 
-	$result = array();
+	$result = [];
 
 	// We want to now load the default, which is stored with a member id of 0.
 	$members[] = 0;
@@ -68,14 +68,14 @@ function getNotifyPrefs($members, $prefs = '', $process_default = false)
  * @param int $memID The user whose preferences you are setting
  * @param array $prefs An array key of pref -> value
  */
-function setNotifyPrefs($memID, $prefs = array())
+function setNotifyPrefs($memID, $prefs = [])
 {
 	global $smcFunc;
 
 	if (empty($prefs) || !is_int($memID))
 		return;
 
-	$update_rows = array();
+	$update_rows = [];
 	foreach ($prefs as $k => $v)
 		$update_rows[] = array($memID, $k, $v);
 

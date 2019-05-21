@@ -146,7 +146,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				$parameter1 = (int) $parameter1;
 				$parameter2 = text2words($parameter2);
 
-				$inserts = array();
+				$inserts = [];
 				foreach ($parameter2 as $word)
 					$inserts[] = array($word, $parameter1);
 
@@ -199,7 +199,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 						'min_posts' => -1,
 					)
 				);
-				$postgroups = array();
+				$postgroups = [];
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$postgroups[$row['id_group']] = $row['min_posts'];
 				$smcFunc['db_free_result']($request);
@@ -265,7 +265,7 @@ function updateMemberData($members, $data)
 {
 	global $modSettings, $user_info, $smcFunc, $sourcedir;
 
-	$parameters = array();
+	$parameters = [];
 	if (is_array($members))
 	{
 		$condition = 'id_member IN ({array_int:members})';
@@ -317,7 +317,7 @@ function updateMemberData($members, $data)
 				$member_names = array($user_info['username']);
 			else
 			{
-				$member_names = array();
+				$member_names = [];
 				$request = $smcFunc['db_query']('', '
 					SELECT member_name
 					FROM {db_prefix}members
@@ -358,13 +358,13 @@ function updateMemberData($members, $data)
 			{
 				$val = 'CASE ';
 				foreach ($members as $k => $v)
-					$val .= 'WHEN id_member = ' . $v . ' THEN '. count(fetch_alerts($v, false, 0, array(), false)) . ' ';
+					$val .= 'WHEN id_member = ' . $v . ' THEN '. count(fetch_alerts($v, false, 0, [], false)) . ' ';
 				$val = $val . ' END';
 				$type = 'raw';
 			}
 			else
 			{
-				$blub = fetch_alerts($members, false, 0, array(), false);
+				$blub = fetch_alerts($members, false, 0, [], false);
 				$val = count($blub);
 			}
 		}
@@ -494,7 +494,7 @@ function updateSettings($changeArray, $update = false)
 	if (empty($changeArray) || !is_array($changeArray))
 		return;
 
-	$toRemove = array();
+	$toRemove = [];
 
 	// Go check if there is any setting to be removed.
 	foreach ($changeArray as $k => $v)
@@ -538,7 +538,7 @@ function updateSettings($changeArray, $update = false)
 		return;
 	}
 
-	$replaceArray = array();
+	$replaceArray = [];
 	foreach ($changeArray as $variable => $value)
 	{
 		// Don't bother if it's already like that ;).
@@ -973,7 +973,7 @@ function dateformat(int $year, int $month, int $day, string $format = ''): strin
 function un_htmlspecialchars($string)
 {
 	global $context;
-	static $translation = array();
+	static $translation = [];
 
 	if (empty($translation))
 		$translation = array_flip(get_html_translation_table(HTML_SPECIALCHARS, ENT_QUOTES, 'UTF-8')) + array('&#039;' => '\'', '&#39;' => '\'', '&nbsp;' => ' ');
@@ -1376,7 +1376,7 @@ function setupThemeContext($forceload = false)
 		if (allowedTo('moderate_forum'))
 			$context['unapproved_members'] = !empty($modSettings['unapprovedMembers']) ? $modSettings['unapprovedMembers'] : 0;
 
-		$context['user']['avatar'] = array();
+		$context['user']['avatar'] = [];
 
 		// Uploaded avatar?
 		if ($user_info['avatar']['url'] == '' && !empty($user_info['avatar']['id_attach']))
@@ -1402,7 +1402,7 @@ function setupThemeContext($forceload = false)
 	{
 		$context['user']['messages'] = 0;
 		$context['user']['unread_messages'] = 0;
-		$context['user']['avatar'] = array();
+		$context['user']['avatar'] = [];
 		$context['user']['total_time_logged_in'] = array('days' => 0, 'hours' => 0, 'minutes' => 0);
 
 		if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1)
@@ -1588,8 +1588,8 @@ function template_javascript($do_deferred = false)
 	// Use this hook to minify/optimize Javascript files and vars
 	call_integration_hook('integrate_pre_javascript_output', array(&$do_deferred));
 
-	$toMinify = array();
-	$toMinifyDefer = array();
+	$toMinify = [];
+	$toMinifyDefer = [];
 
 	$return = '';
 
@@ -1700,8 +1700,8 @@ function template_css()
 	// Use this hook to minify/optimize CSS files
 	call_integration_hook('integrate_pre_css_output');
 
-	$toMinify = array();
-	$normal = array();
+	$toMinify = [];
+	$normal = [];
 	$return = '';
 
 	foreach ($context['css_files'] as $id => $file)
@@ -1870,7 +1870,7 @@ function ip2range($fullip)
 		$fullip = '255.255.255.255';
 
 	$ip_parts = explode('-', $fullip);
-	$ip_array = array();
+	$ip_array = [];
 
 	// if ip 22.12.31.21
 	if (count($ip_parts) == 1 && IP::is_valid($fullip))
@@ -1962,7 +1962,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	if ($encrypt)
 	{
 		$possible_chars = array_flip(array_merge(range(46, 57), range(65, 90), range(97, 122)));
-		$returned_ints = array();
+		$returned_ints = [];
 		foreach ($words as $word)
 		{
 			if (($word = trim($word, '-_\'')) !== '')
@@ -1979,7 +1979,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	else
 	{
 		// Trim characters before and after and add slashes for database insertion.
-		$returned_words = array();
+		$returned_words = [];
 		foreach ($words as $word)
 			if (($word = trim($word, '-_\'')) !== '')
 				$returned_words[] = $max_chars === null ? $word : substr($word, 0, $max_chars);
@@ -2047,7 +2047,7 @@ function setupMenuContext()
 			addInlineJavaScript('
 	var new_alert_title = "' . $context['forum_name'] . '";
 	var alert_timeout = ' . $timeout . ';');
-			loadJavaScriptFile('alerts.js', array(), 'sbb_alerts');
+			loadJavaScriptFile('alerts.js', [], 'sbb_alerts');
 		}
 	}
 
@@ -2142,7 +2142,7 @@ function setupMenuContext()
 				'icon' => 'mlist',
 				'href' => $scripturl . '?action=characters',
 				'show' => $context['allow_memberlist'],
-				'sub_buttons' => array(),
+				'sub_buttons' => [],
 			),
 			'mlist' => array(
 				'title' => $txt['members_title'],
@@ -2193,7 +2193,7 @@ function setupMenuContext()
 		call_integration_hook('integrate_menu_buttons', array(&$buttons));
 
 		// Now we put the buttons in the context so the theme can use them.
-		$menu_buttons = array();
+		$menu_buttons = [];
 		foreach ($buttons as $act => $button)
 			if (!empty($button['show']))
 			{
@@ -2295,7 +2295,7 @@ function setupMenuContext()
 		$query = $smcFunc['db_query']('', '
 			SELECT COUNT(id_error)
 			FROM {db_prefix}log_errors',
-			array()
+			[]
 		);
 
 		list($errors) = $smcFunc['db_fetch_row']($query);
@@ -2367,7 +2367,7 @@ function sbb_seed_generator()
  * @param array $parameters An array of parameters this hook implements
  * @return array The results of the functions
  */
-function call_integration_hook($hook, $parameters = array())
+function call_integration_hook($hook, $parameters = [])
 {
 	global $modSettings, $settings, $boarddir, $sourcedir, $db_show_debug;
 	global $context, $txt;
@@ -2377,9 +2377,9 @@ function call_integration_hook($hook, $parameters = array())
 
 	// Need to have some control.
 	if (!isset($context['instances']))
-		$context['instances'] = array();
+		$context['instances'] = [];
 
-	$results = array();
+	$results = [];
 	if (empty($modSettings[$hook]))
 		return $results;
 
@@ -2473,7 +2473,7 @@ function add_integration_function($hook, $function, $permanent = true, $file = '
 	}
 
 	// Make current function list usable.
-	$functions = empty($modSettings[$hook]) ? array() : explode(',', $modSettings[$hook]);
+	$functions = empty($modSettings[$hook]) ? [] : explode(',', $modSettings[$hook]);
 
 	// Do nothing, if it's already there.
 	if (in_array($integration_call, $functions))
@@ -2531,7 +2531,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 	}
 
 	// Turn the function list into something usable.
-	$functions = empty($modSettings[$hook]) ? array() : explode(',', $modSettings[$hook]);
+	$functions = empty($modSettings[$hook]) ? [] : explode(',', $modSettings[$hook]);
 
 	// You can only remove it if it's available.
 	if (!in_array($integration_call, $functions))
@@ -2595,7 +2595,7 @@ function call_helper($string, $return = false)
 				if ($db_show_debug === true)
 				{
 					if (!isset($context['debug']['instances']))
-						$context['debug']['instances'] = array();
+						$context['debug']['instances'] = [];
 
 					$context['debug']['instances'][$class] = $class;
 				}
@@ -2653,7 +2653,7 @@ function prepareLikesContext($topic)
 
 	// Make sure we have something to work with.
 	if (empty($topic))
-		return array();
+		return [];
 
 
 	// We already know the number of likes per message, we just want to know whether the current user liked it or not.
@@ -2663,7 +2663,7 @@ function prepareLikesContext($topic)
 
 	if (($temp = cache_get_data($cache_key, $ttl)) === null)
 	{
-		$temp = array();
+		$temp = [];
 		$request = $smcFunc['db_query']('', '
 			SELECT content_id
 			FROM {db_prefix}user_likes AS l
@@ -2879,7 +2879,7 @@ function sbb_json_decode($json, $returnAsArray = false, $logIt = true)
 
 	// Come on...
 	if (empty($json) || !is_string($json))
-		return array();
+		return [];
 
 	$returnArray = @json_decode($json, $returnAsArray);
 
@@ -2924,7 +2924,7 @@ function sbb_json_decode($json, $returnAsArray = false, $logIt = true)
 			log_error($txt['json_'. $jsonError], 'critical');
 
 		// Everyone expects an array.
-		return array();
+		return [];
 	}
 
 	return $returnArray;
@@ -3034,8 +3034,8 @@ function build_query_board($userid)
 {
 	global $user_info, $modSettings, $smcFunc;
 
-	$query_part = array();
-	$groups = array();
+	$query_part = [];
+	$groups = [];
 	$is_admin = false;
 	$mod_cache;
 	$ignoreboards;
@@ -3075,10 +3075,10 @@ function build_query_board($userid)
 
 		$is_admin = in_array(1, $groups);
 
-		$ignoreboards = !empty($row['ignore_boards']) && !empty($modSettings['allow_ignore_boards']) ? explode(',', $row['ignore_boards']) : array();
+		$ignoreboards = !empty($row['ignore_boards']) && !empty($modSettings['allow_ignore_boards']) ? explode(',', $row['ignore_boards']) : [];
 
 		// What boards are they the moderator of?
-		$boards_mod = array();
+		$boards_mod = [];
 
 		$request = $smcFunc['db_query']('', '
 			SELECT id_board

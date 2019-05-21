@@ -59,7 +59,7 @@ function MoveTopic()
 	}
 
 	$context['move_any'] = $user_info['is_admin'] || $modSettings['topic_move_any'];
-	$boards = array();
+	$boards = [];
 
 	if (!$context['move_any'])
 	{
@@ -317,7 +317,7 @@ function MoveTopic2()
 				'is_approved' => 1,
 			)
 		);
-		$posters = array();
+		$posters = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (!isset($posters[$row['id_member']]))
@@ -375,7 +375,7 @@ function moveTopics($topics, $toBoard)
 	if (is_numeric($topics))
 		$topics = array($topics);
 
-	$fromBoards = array();
+	$fromBoards = [];
 
 	// Destination board empty or equal to 0?
 	if (empty($toBoard))
@@ -443,7 +443,7 @@ function moveTopics($topics, $toBoard)
 			'topics' => $topics,
 		)
 	);
-	$log_topics = array();
+	$log_topics = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$log_topics[] = array($row['id_topic'], $row['id_member'], $row['id_msg'], (is_null($row['unwatched']) ? 0 : $row['unwatched']));
@@ -458,7 +458,7 @@ function moveTopics($topics, $toBoard)
 				array('id_topic', 'id_member')
 			);
 
-			$log_topics = array();
+			$log_topics = [];
 		}
 	}
 	$smcFunc['db_free_result']($request);
@@ -549,7 +549,7 @@ function moveTopics($topics, $toBoard)
 				'not_approved' => 0,
 			)
 		);
-		$approval_msgs = array();
+		$approval_msgs = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$approval_msgs[] = $row['id_msg'];
 		$smcFunc['db_free_result']($request);
@@ -575,7 +575,7 @@ function moveTopics($topics, $toBoard)
 				'topics' => $topics,
 			)
 		);
-		$topicMaxMin = array();
+		$topicMaxMin = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$topicMaxMin[$row['id_topic']] = array(

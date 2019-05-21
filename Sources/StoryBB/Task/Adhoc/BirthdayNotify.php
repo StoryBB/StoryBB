@@ -47,11 +47,11 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 		);
 
 		// Group them by languages.
-		$birthdays = array();
+		$birthdays = [];
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
 			if (!isset($birthdays[$row['lngfile']]))
-				$birthdays[$row['lngfile']] = array();
+				$birthdays[$row['lngfile']] = [];
 			$birthdays[$row['lngfile']][$row['id_member']] = array(
 				'name' => $row['real_name'],
 				'email' => $row['email_address']
@@ -124,7 +124,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 						'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string',
 					),
 					$alert_rows,
-					array()
+					[]
 				);
 		}
 

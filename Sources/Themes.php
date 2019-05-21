@@ -195,7 +195,7 @@ function ThemeList()
 		// Calling the almighty power of global vars!
 		get_all_themes(false);
 
-		$setValues = array();
+		$setValues = [];
 		foreach ($context['themes'] as $id => $theme)
 		{
 			if (file_exists($_POST['reset_dir'] . '/' . basename($theme['theme_dir'])))
@@ -264,7 +264,7 @@ function SetThemeOptions()
 				'theme_dir' => 'theme_dir',
 			)
 		);
-		$context['themes'] = array();
+		$context['themes'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (!isset($context['themes'][$row['id_theme']]))
@@ -297,7 +297,7 @@ function SetThemeOptions()
 			array(
 			)
 		);
-		$customFields = array();
+		$customFields = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$customFields[] = $row['col_name'];
 		$smcFunc['db_free_result']($request);
@@ -311,7 +311,7 @@ function SetThemeOptions()
 			GROUP BY id_theme',
 			array(
 				'no_member' => 0,
-				'custom_fields' => empty($customFields) ? array() : $customFields,
+				'custom_fields' => empty($customFields) ? [] : $customFields,
 			)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -336,17 +336,17 @@ function SetThemeOptions()
 		validateToken('admin-sto');
 
 		if (empty($_POST['options']))
-			$_POST['options'] = array();
+			$_POST['options'] = [];
 		if (empty($_POST['default_options']))
-			$_POST['default_options'] = array();
+			$_POST['default_options'] = [];
 
 		// Set up the sql query.
-		$setValues = array();
+		$setValues = [];
 
 		foreach ($_POST['options'] as $opt => $val)
 			$setValues[] = array(-1, $_GET['th'], $opt, is_array($val) ? implode(',', $val) : $val);
 
-		$old_settings = array();
+		$old_settings = [];
 		foreach ($_POST['default_options'] as $opt => $val)
 		{
 			$old_settings[] = $opt;
@@ -389,12 +389,12 @@ function SetThemeOptions()
 		checkSession();
 		validateToken('admin-sto');
 
-		$_POST['options'] = empty($_POST['options']) ? array() : $_POST['options'];
-		$_POST['options_master'] = empty($_POST['options_master']) ? array() : $_POST['options_master'];
-		$_POST['default_options'] = empty($_POST['default_options']) ? array() : $_POST['default_options'];
-		$_POST['default_options_master'] = empty($_POST['default_options_master']) ? array() : $_POST['default_options_master'];
+		$_POST['options'] = empty($_POST['options']) ? [] : $_POST['options'];
+		$_POST['options_master'] = empty($_POST['options_master']) ? [] : $_POST['options_master'];
+		$_POST['default_options'] = empty($_POST['default_options']) ? [] : $_POST['default_options'];
+		$_POST['default_options_master'] = empty($_POST['default_options_master']) ? [] : $_POST['default_options_master'];
 
-		$old_settings = array();
+		$old_settings = [];
 		foreach ($_POST['default_options'] as $opt => $val)
 		{
 			if ($_POST['default_options_master'][$opt] == 0)
@@ -516,7 +516,7 @@ function SetThemeOptions()
 				array(
 				)
 			);
-			$customFields = array();
+			$customFields = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$customFields[] = $row['col_name'];
 			$smcFunc['db_free_result']($request);
@@ -531,7 +531,7 @@ function SetThemeOptions()
 			array(
 				'no_member' => 0,
 				'current_theme' => $_GET['th'],
-				'custom_fields' => empty($customFields) ? array() : $customFields,
+				'custom_fields' => empty($customFields) ? [] : $customFields,
 			)
 		);
 
@@ -568,7 +568,7 @@ function SetThemeOptions()
 				'guest_member' => -1,
 			)
 		);
-		$context['theme_options'] = array();
+		$context['theme_options'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['theme_options'][$row['variable']] = $row['value'];
 		$smcFunc['db_free_result']($request);
@@ -577,7 +577,7 @@ function SetThemeOptions()
 	}
 	else
 	{
-		$context['theme_options'] = array();
+		$context['theme_options'] = [];
 		$context['theme_options_reset'] = true;
 	}
 
@@ -656,7 +656,7 @@ function SetThemeSettings()
 	$context['theme_settings'] = StoryBB\Model\Theme::get_theme_settings();
 
 	// Load the variants separately...
-	$settings['theme_variants'] = array();
+	$settings['theme_variants'] = [];
 	if (file_exists($settings['theme_dir'] . '/index.template.php'))
 	{
 		$file_contents = implode('', file($settings['theme_dir'] . '/index.template.php'));
@@ -671,9 +671,9 @@ function SetThemeSettings()
 		validateToken('admin-sts');
 
 		if (empty($_POST['options']))
-			$_POST['options'] = array();
+			$_POST['options'] = [];
 		if (empty($_POST['default_options']))
-			$_POST['default_options'] = array();
+			$_POST['default_options'] = [];
 
 		// Make sure items are cast correctly.
 		foreach ($context['theme_settings'] as $item)
@@ -696,7 +696,7 @@ function SetThemeSettings()
 		}
 
 		// Set up the sql query.
-		$inserts = array();
+		$inserts = [];
 		foreach ($_POST['options'] as $opt => $val)
 			$inserts[] = array(0, $_GET['th'], $opt, is_array($val) ? implode(',', $val) : $val);
 		foreach ($_POST['default_options'] as $opt => $val)
@@ -757,7 +757,7 @@ function SetThemeSettings()
 	// Do we support variants?
 	if (!empty($settings['theme_variants']))
 	{
-		$context['theme_variants'] = array();
+		$context['theme_variants'] = [];
 		foreach ($settings['theme_variants'] as $variant)
 		{
 			// Have any text, old chap?
@@ -1022,7 +1022,7 @@ function PickTheme()
 	}
 
 	// Get the theme name and descriptions.
-	$context['available_themes'] = array();
+	$context['available_themes'] = [];
 	if (!empty($modSettings['knownThemes']))
 	{
 		$request = $smcFunc['db_query']('', '
@@ -1093,7 +1093,7 @@ function PickTheme()
 	$smcFunc['db_free_result']($request);
 
 	// Get any member variant preferences.
-	$variant_preferences = array();
+	$variant_preferences = [];
 	if ($context['current_member'] > 0)
 	{
 		$request = $smcFunc['db_query']('', '
@@ -1114,7 +1114,7 @@ function PickTheme()
 
 	// Save the setting first.
 	$current_images_url = $settings['images_url'];
-	$current_theme_variants = !empty($settings['theme_variants']) ? $settings['theme_variants'] : array();
+	$current_theme_variants = !empty($settings['theme_variants']) ? $settings['theme_variants'] : [];
 
 	foreach ($context['available_themes'] as $id_theme => $theme_data)
 	{
@@ -1144,7 +1144,7 @@ function PickTheme()
 			$file_contents = implode('', file($theme_data['theme_dir'] . '/index.template.php'));
 			if (preg_match('~\$settings\[\'theme_variants\'\]\s*=(.+?);~', $file_contents, $matches))
 			{
-				$settings['theme_variants'] = array();
+				$settings['theme_variants'] = [];
 
 				// Fill settings up.
 				eval('global $settings;' . $matches[0]);
@@ -1153,7 +1153,7 @@ function PickTheme()
 				{
 					loadLanguage('Settings');
 
-					$context['available_themes'][$id_theme]['variants'] = array();
+					$context['available_themes'][$id_theme]['variants'] = [];
 					foreach ($settings['theme_variants'] as $variant)
 						$context['available_themes'][$id_theme]['variants'][$variant] = array(
 							'label' => isset($txt['variant_' . $variant]) ? $txt['variant_' . $variant] : $variant,
@@ -1426,7 +1426,7 @@ function SetJavaScript()
 	// If this is the admin preferences the passed value will just be an element of it.
 	if ($_GET['var'] == 'admin_preferences')
 	{
-		$options['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
+		$options['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : [];
 		// New thingy...
 		if (isset($_GET['admin_key']) && strlen($_GET['admin_key']) < 5)
 			$options['admin_preferences'][$_GET['admin_key']] = $_GET['val'];

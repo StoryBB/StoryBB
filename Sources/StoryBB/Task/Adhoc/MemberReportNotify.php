@@ -41,7 +41,7 @@ class MemberReportNotify extends \StoryBB\Task\Adhoc
 			'alert' => 0x01,
 			'email' => 0x02,
 		);
-		$notifies = array();
+		$notifies = [];
 
 		foreach ($prefs as $member => $pref_option)
 		{
@@ -54,7 +54,7 @@ class MemberReportNotify extends \StoryBB\Task\Adhoc
 		if (!empty($notifies['alert']))
 		{
 			// Alerts are relatively easy.
-			$insert_rows = array();
+			$insert_rows = [];
 			foreach ($notifies['alert'] as $member)
 			{
 				$insert_rows[] = array(
@@ -97,7 +97,7 @@ class MemberReportNotify extends \StoryBB\Task\Adhoc
 			loadEssentialThemeData();
 
 			// First, get everyone's language and details.
-			$emails = array();
+			$emails = [];
 			$request = $smcFunc['db_query']('', '
 				SELECT id_member, lngfile, email_address
 				FROM {db_prefix}members

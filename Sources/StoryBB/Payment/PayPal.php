@@ -104,7 +104,7 @@ class PayPal implements PaymentProcessor
 		$return_data = array(
 			'form' => 'https://www.' . (!empty($modSettings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com/cgi-bin/webscr',
 			'id' => 'paypal',
-			'hidden' => array(),
+			'hidden' => [],
 			'title' => $txt['paypal'],
 			'desc' => $txt['paid_confirm_paypal'],
 			'submit' => $txt['paid_paypal_order'],

@@ -21,12 +21,12 @@ class Custom extends API
 	/**
 	 * @var array Index settings
 	 */
-	protected $indexSettings = array();
+	protected $indexSettings = [];
 
 	/**
 	 * @var array An array of banned words
 	 */
-	protected $bannedWords = array();
+	protected $bannedWords = [];
 
 	/**
 	 * @var int|null Minimum word length (null for no minimum)
@@ -57,7 +57,7 @@ class Custom extends API
 
 		$this->indexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
 
-		$this->bannedWords = empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
+		$this->bannedWords = empty($modSettings['search_stopwords']) ? [] : explode(',', $modSettings['search_stopwords']);
 		$this->min_word_length = $this->indexSettings['bytes_per_word'];
 	}
 
@@ -145,9 +145,9 @@ class Custom extends API
 		$query_select = array(
 			'id_msg' => 'm.id_msg',
 		);
-		$query_inner_join = array();
-		$query_left_join = array();
-		$query_where = array();
+		$query_inner_join = [];
+		$query_left_join = [];
+		$query_where = [];
 		$query_params = $search_data['params'];
 
 		if ($query_params['id_search'])
@@ -232,7 +232,7 @@ class Custom extends API
 
 		$customIndexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
 
-		$inserts = array();
+		$inserts = [];
 		foreach (text2words($msgOptions['body'], $customIndexSettings['bytes_per_word'], true) as $word)
 			$inserts[] = array($word, $msgOptions['id']);
 
@@ -255,7 +255,7 @@ class Custom extends API
 		if (isset($msgOptions['body']))
 		{
 			$customIndexSettings = sbb_json_decode($modSettings['search_custom_index_config'], true);
-			$stopwords = empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
+			$stopwords = empty($modSettings['search_stopwords']) ? [] : explode(',', $modSettings['search_stopwords']);
 			$old_body = isset($msgOptions['old_body']) ? $msgOptions['old_body'] : '';
 
 			// create thew new and old index
@@ -284,7 +284,7 @@ class Custom extends API
 			// Add the new words to be indexed.
 			if (!empty($inserted_words))
 			{
-				$inserts = array();
+				$inserts = [];
 				foreach ($inserted_words as $word)
 					$inserts[] = array($word, $msgOptions['id']);
 				$smcFunc['db_insert']('insert',

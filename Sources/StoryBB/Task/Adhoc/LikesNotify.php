@@ -45,7 +45,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 			{
 				// Before we assign the author, let's just check that the author can see the board this is in...
 				// as it'd suck to notify someone their post was liked when in a board they can't see.
-				$groups = array_merge(array($row['id_group'], $row['id_post_group']), (empty($row['additional_groups']) ? array() : explode(',', $row['additional_groups'])));
+				$groups = array_merge(array($row['id_group'], $row['id_post_group']), (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
 				$allowed = explode(',', $row['member_groups']);
 				$ignored_members = explode(',', $row['pm_ignore_list']);
 
@@ -113,7 +113,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 		$smcFunc['db_free_result']($request);
 
 		// Issue, update, move on.
-		$extra = array();
+		$extra = [];
 		if (!empty($row['id_character']) && empty($row['is_main']))
 			$extra['chars_dest'] = $row['id_character'];
 

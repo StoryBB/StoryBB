@@ -81,7 +81,7 @@ function Who()
 
 	$context['sort_direction'] = isset($_REQUEST['asc']) || (isset($_REQUEST['sort_dir']) && $_REQUEST['sort_dir'] == 'asc') ? 'up' : 'down';
 
-	$conditions = array();
+	$conditions = [];
 	if (!allowedTo('moderate_forum'))
 		$conditions[] = '(COALESCE(mem.show_online, 1) = 1)';
 
@@ -137,9 +137,9 @@ function Who()
 			'limit' => $modSettings['defaultMaxMembers'],
 		)
 	);
-	$context['members'] = array();
-	$member_ids = array();
-	$url_data = array();
+	$context['members'] = [];
+	$member_ids = [];
+	$url_data = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$actions = sbb_json_decode($row['url'], true);
@@ -232,7 +232,7 @@ function Who()
 	$context['can_send_pm'] = allowedTo('pm_send');
 
 	// any profile fields disabled?
-	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
+	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : [];
 
 }
 
@@ -260,7 +260,7 @@ function determineActions($urls, $preferred_prefix = false)
 	global $txt, $user_info, $modSettings, $smcFunc, $scripturl;
 
 	if (!allowedTo('who_view'))
-		return array();
+		return [];
 	loadLanguage('Who');
 
 	// Actions that require a specific permission level.
@@ -293,11 +293,11 @@ function determineActions($urls, $preferred_prefix = false)
 		$url_list = $urls;
 
 	// These are done to later query these in large chunks. (instead of one by one.)
-	$topic_ids = array();
-	$profile_ids = array();
-	$board_ids = array();
+	$topic_ids = [];
+	$profile_ids = [];
+	$board_ids = [];
 
-	$data = array();
+	$data = [];
 	foreach ($url_list as $k => $url)
 	{
 		// Get the request parameters..

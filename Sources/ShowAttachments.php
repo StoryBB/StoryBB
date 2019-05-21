@@ -146,7 +146,7 @@ function showAttachment($force_attach = false)
 		$file['etag'] = '"' . md5_file($file['filePath']) . '"';
 
 		// now get the thumbfile!
-		$thumbFile = array();
+		$thumbFile = [];
 		if (!empty($file['id_thumb']))
 		{
 			$request = $smcFunc['db_query']('', '

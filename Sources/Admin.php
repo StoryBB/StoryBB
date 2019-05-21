@@ -25,8 +25,8 @@ function AdminMain()
 
 	// Load the language and templates....
 	loadLanguage('Admin');
-	loadJavaScriptFile('admin.js', array(), 'sbb_admin');
-	loadCSSFile('admin.css', array(), 'sbb_admin');
+	loadJavaScriptFile('admin.js', [], 'sbb_admin');
+	loadCSSFile('admin.css', [], 'sbb_admin');
 
 	$context['show_admin_search'] = $context['user']['is_admin'];
 
@@ -36,7 +36,7 @@ function AdminMain()
 	require_once($sourcedir . '/Subs-Menu.php');
 
 	// Some preferences.
-	$context['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : array();
+	$context['admin_preferences'] = !empty($options['admin_preferences']) ? sbb_json_decode($options['admin_preferences'], true) : [];
 
 	/** @var array $admin_areas Defines the menu structure for the admin center. See {@link Subs-Menu.php Subs-Menu.php} for details! */
 	$admin_areas = array(
@@ -288,7 +288,7 @@ function AdminMain()
 					'icon' => 'paid',
 					'function' => 'ManagePaidSubscriptions',
 					'permission' => 'admin_forum',
-					'subsections' => empty($modSettings['paid_enabled']) ? array() : array(
+					'subsections' => empty($modSettings['paid_enabled']) ? [] : array(
 						'view' => array($txt['paid_subs_view']),
 						'settings' => array($txt['settings']),
 					),
@@ -313,7 +313,7 @@ function AdminMain()
 					'function' => 'CharacterTemplates',
 					'icon' => 'quick_edit_button',
 					'permission' => array('admin_forum'),
-					'subsections' => array(),
+					'subsections' => [],
 				),
 				'sheets' => [
 					'label' => $txt['char_sheet_admin'],
@@ -321,7 +321,7 @@ function AdminMain()
 					'function' => 'CharacterSheets',
 					'icon' => 'package_ops',
 					'permission' => array('admin_forum'),
-					'subsections' => array(),
+					'subsections' => [],
 				],
 			),
 		),
@@ -570,7 +570,7 @@ function AdminSearch()
 	}
 
 	if (trim($context['search_term']) == '')
-		$context['search_results'] = array();
+		$context['search_results'] = [];
 	else
 		call_helper($subActions[$context['search_type']]);
 }
@@ -673,7 +673,7 @@ function AdminSearchInternal()
 	}
 
 	$context['page_title'] = $txt['admin_search_results'];
-	$context['search_results'] = array();
+	$context['search_results'] = [];
 
 	$search_term = strtolower(un_htmlspecialchars($context['search_term']));
 	// Go through all the search data trying to find this text!

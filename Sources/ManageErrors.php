@@ -128,7 +128,7 @@ function ViewErrorLog()
 		$query = $smcFunc['db_query']('', '
 			SELECT COUNT(id_error)
 			FROM {db_prefix}log_errors',
-			array()
+			[]
 		);
 
 		list($context['num_errors']) = $smcFunc['db_fetch_row']($query);
@@ -148,8 +148,8 @@ function ViewErrorLog()
 			'max' => $modSettings['defaultMaxListItems'],
 		)
 	);
-	$context['errors'] = array();
-	$members = array();
+	$context['errors'] = [];
+	$members = [];
 
 	for ($i = 0; $row = $smcFunc['db_fetch_assoc']($request); $i++)
 	{
@@ -179,7 +179,7 @@ function ViewErrorLog()
 				'type' => $row['error_type'],
 				'name' => isset($txt['errortype_' . $row['error_type']]) ? $txt['errortype_' . $row['error_type']] : $row['error_type'],
 			),
-			'file' => array(),
+			'file' => [],
 		);
 		if (!empty($row['file']) && !empty($row['line']))
 		{
@@ -263,7 +263,7 @@ function ViewErrorLog()
 			$context['filter']['value']['html'] = &$filter['value']['sql'];
 	}
 
-	$context['error_types'] = array();
+	$context['error_types'] = [];
 
 	$context['error_types']['all'] = array(
 		'label' => $txt['errortype_all'],

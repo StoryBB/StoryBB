@@ -59,7 +59,7 @@ function ViewModlog()
 		);
 
 		$log_type = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'adminlog' ? 'admin' : 'moderate';
-		logAction('clearlog_' . $log_type, array(), $log_type);
+		logAction('clearlog_' . $log_type, [], $log_type);
 
 	}
 	elseif (!empty($_POST['remove']) && isset($_POST['delete']) && $context['can_delete'])
@@ -284,7 +284,7 @@ function ViewModlog()
 	);
 
 	// Overriding this with a hook?
-	$moderation_menu_name = array();
+	$moderation_menu_name = [];
 	call_integration_hook('integrate_viewModLog', array(&$listOptions, &$moderation_menu_name));
 
 	createToken('mod-ml');
@@ -315,7 +315,7 @@ function ViewModlog()
  * @param int $log_type The log type (1 for mod log, 3 for admin log)
  * @param bool $ignore_boards Whether to ignore board restrictions
  */
-function list_getModLogEntryCount($query_string = '', $query_params = array(), $log_type = 1, $ignore_boards = false)
+function list_getModLogEntryCount($query_string = '', $query_params = [], $log_type = 1, $ignore_boards = false)
 {
 	global $smcFunc, $user_info;
 
@@ -357,7 +357,7 @@ function list_getModLogEntryCount($query_string = '', $query_params = array(), $
  * @param bool $ignore_boards Whether to ignore board restrictions
  * @return array An array of info about the mod log entries
  */
-function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '', $query_params = array(), $log_type = 1, $ignore_boards = false)
+function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '', $query_params = [], $log_type = 1, $ignore_boards = false)
 {
 	global $scripturl, $txt, $smcFunc, $user_info;
 
@@ -393,17 +393,17 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	);
 
 	// Arrays for decoding objects into.
-	$topics = array();
-	$boards = array();
-	$members = array();
-	$messages = array();
-	$entries = array();
+	$topics = [];
+	$boards = [];
+	$members = [];
+	$messages = [];
+	$entries = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		$row['extra'] = sbb_json_decode($row['extra'], true);
 
 		// Corrupt?
-		$row['extra'] = is_array($row['extra']) ? $row['extra'] : array();
+		$row['extra'] = is_array($row['extra']) ? $row['extra'] : [];
 
 		// Add on some of the column stuff info
 		if (!empty($row['id_board']))

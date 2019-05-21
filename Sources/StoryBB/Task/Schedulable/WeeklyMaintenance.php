@@ -138,7 +138,7 @@ class WeeklyMaintenance extends \StoryBB\Task\Schedulable
 			$t = time() - $modSettings['pruneReportLog'] * 86400;
 
 			// This one is more complex then the other logs.  First we need to figure out which reports are too old.
-			$reports = array();
+			$reports = [];
 			$result = $smcFunc['db_query']('', '
 				SELECT id_report
 				FROM {db_prefix}log_reported

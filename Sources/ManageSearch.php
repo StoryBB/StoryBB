@@ -190,7 +190,7 @@ function EditSearchMethod()
 			)
 		);
 
-		$context['fulltext_index'] = array();
+		$context['fulltext_index'] = [];
 
 		// Go back to the default search method.
 		if (!empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext')
@@ -456,7 +456,7 @@ function CreateMessageIndex()
 			$stop = time() + 3;
 			while (time() < $stop)
 			{
-				$inserts = array();
+				$inserts = [];
 				$request = $smcFunc['db_query']('', '
 					SELECT id_msg, body
 					FROM {db_prefix}messages
@@ -520,7 +520,7 @@ function CreateMessageIndex()
 			$context['step'] = 3;
 		else
 		{
-			$stop_words = $context['start'] === 0 || empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
+			$stop_words = $context['start'] === 0 || empty($modSettings['search_stopwords']) ? [] : explode(',', $modSettings['search_stopwords']);
 			$stop = time() + 3;
 			$context['sub_template'] = 'search_create_index_progress';
 			$max_messages = ceil(60 * $modSettings['totalMessages'] / 100);
@@ -592,7 +592,7 @@ function loadSearchAPIs()
 {
 	global $sourcedir, $txt;
 
-	$apis = array();
+	$apis = [];
 	if ($dh = opendir($sourcedir . '/StoryBB/Search'))
 	{
 		while (($file = readdir($dh)) !== false)
@@ -647,7 +647,7 @@ function detectFulltextIndex()
 		array(
 		)
 	);
-	$context['fulltext_index'] = array();
+	$context['fulltext_index'] = [];
 	if ($request !== false || $smcFunc['db_num_rows']($request) != 0)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))

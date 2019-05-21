@@ -30,7 +30,7 @@ function validateSession($type = 'admin')
 	is_not_guest();
 
 	// Validate what type of session check this is.
-	$types = array();
+	$types = [];
 	call_integration_hook('integrate_validateSession', array(&$types));
 	$type = in_array($type, $types) || $type == 'moderate' ? $type : 'admin';
 
@@ -69,7 +69,7 @@ function validateSession($type = 'admin')
 
 	// Better be sure to remember the real referer
 	if (empty($_SESSION['request_referer']))
-		$_SESSION['request_referer'] = isset($_SERVER['HTTP_REFERER']) ? @parse_url($_SERVER['HTTP_REFERER']) : array();
+		$_SESSION['request_referer'] = isset($_SERVER['HTTP_REFERER']) ? @parse_url($_SERVER['HTTP_REFERER']) : [];
 	elseif (empty($_POST))
 		unset($_SESSION['request_referer']);
 
@@ -167,7 +167,7 @@ function is_not_banned($forceCheck = false)
 			'email' => $user_info['email'],
 		);
 
-		$ban_query = array();
+		$ban_query = [];
 		$ban_query_vars = array('current_time' => time());
 		$flag_is_activated = false;
 
@@ -242,7 +242,7 @@ function is_not_banned($forceCheck = false)
 
 		// Mark the cannot_access and cannot_post bans as being 'hit'.
 		if (isset($_SESSION['ban']['cannot_access']) || isset($_SESSION['ban']['cannot_post']) || isset($_SESSION['ban']['cannot_login']))
-			log_ban(array_merge(isset($_SESSION['ban']['cannot_access']) ? $_SESSION['ban']['cannot_access']['ids'] : array(), isset($_SESSION['ban']['cannot_post']) ? $_SESSION['ban']['cannot_post']['ids'] : array(), isset($_SESSION['ban']['cannot_login']) ? $_SESSION['ban']['cannot_login']['ids'] : array()));
+			log_ban(array_merge(isset($_SESSION['ban']['cannot_access']) ? $_SESSION['ban']['cannot_access']['ids'] : [], isset($_SESSION['ban']['cannot_post']) ? $_SESSION['ban']['cannot_post']['ids'] : [], isset($_SESSION['ban']['cannot_login']) ? $_SESSION['ban']['cannot_login']['ids'] : []));
 
 		// If for whatever reason the is_activated flag seems wrong, do a little work to clear it up.
 		if ($user_info['id'] && (($user_settings['is_activated'] >= 10 && !$flag_is_activated)
@@ -309,7 +309,7 @@ function is_not_banned($forceCheck = false)
 		$user_info['username'] = '';
 		$user_info['is_guest'] = true;
 		$user_info['is_admin'] = false;
-		$user_info['permissions'] = array();
+		$user_info['permissions'] = [];
 		$user_info['id'] = 0;
 		$context['user'] = array(
 			'id' => 0,
@@ -360,7 +360,7 @@ function is_not_banned($forceCheck = false)
 		$user_info['username'] = '';
 		$user_info['is_guest'] = true;
 		$user_info['is_admin'] = false;
-		$user_info['permissions'] = array();
+		$user_info['permissions'] = [];
 		$user_info['id'] = 0;
 		$context['user'] = array(
 			'id' => 0,
@@ -401,7 +401,7 @@ function banPermissions()
 
 	// Somehow they got here, at least take away all permissions...
 	if (isset($_SESSION['ban']['cannot_access']))
-		$user_info['permissions'] = array();
+		$user_info['permissions'] = [];
 	// Okay, well, you can watch, but don't touch a thing.
 	elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $user_info['warning']))
 	{
@@ -487,7 +487,7 @@ function banPermissions()
  * @param array $ban_ids The IDs of the bans
  * @param string $email The email address associated with the user that triggered this hit
  */
-function log_ban($ban_ids = array(), $email = null)
+function log_ban($ban_ids = [], $email = null)
 {
 	global $user_info, $smcFunc;
 
@@ -532,7 +532,7 @@ function isBannedEmail($email, $restriction, $error)
 		return;
 
 	// Let's start with the bans based on your IP/hostname/memberID...
-	$ban_ids = isset($_SESSION['ban'][$restriction]) ? $_SESSION['ban'][$restriction]['ids'] : array();
+	$ban_ids = isset($_SESSION['ban'][$restriction]) ? $_SESSION['ban'][$restriction]['ids'] : [];
 	$ban_reason = isset($_SESSION['ban'][$restriction]) ? $_SESSION['ban'][$restriction]['reason'] : '';
 
 	// ...and add to that the email address you're trying to register.
@@ -639,7 +639,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	if (isset($_SESSION['request_referer']))
 		$referrer = $_SESSION['request_referer'];
 	else
-		$referrer = isset($_SERVER['HTTP_REFERER']) ? @parse_url($_SERVER['HTTP_REFERER']) : array();
+		$referrer = isset($_SERVER['HTTP_REFERER']) ? @parse_url($_SERVER['HTTP_REFERER']) : [];
 	if (!empty($referrer['host']))
 	{
 		if (strpos($_SERVER['HTTP_HOST'], ':') !== false)
@@ -846,7 +846,7 @@ function checkSubmitOnce($action, $is_fatal = true)
 	global $context;
 
 	if (!isset($_SESSION['forms']))
-		$_SESSION['forms'] = array();
+		$_SESSION['forms'] = [];
 
 	// Register a form number and store it in the session stack. (use this on the page that has the form.)
 	if ($action == 'register')
@@ -1046,7 +1046,7 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 			return array(0);
 		else
 		{
-			$boards = array();
+			$boards = [];
 			foreach ($permissions as $permission)
 				$boards[$permission] = array(0);
 
@@ -1074,8 +1074,8 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 			'permissions' => $permissions,
 		)
 	);
-	$boards = array();
-	$deny_boards = array();
+	$boards = [];
+	$deny_boards = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if ($simple)
@@ -1103,11 +1103,11 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 		{
 			// never had it to start with
 			if (empty($boards[$permission]))
-				$boards[$permission] = array();
+				$boards[$permission] = [];
 			else
 			{
 				// Or it may have been removed
-				$deny_boards[$permission] = isset($deny_boards[$permission]) ? $deny_boards[$permission] : array();
+				$deny_boards[$permission] = isset($deny_boards[$permission]) ? $deny_boards[$permission] : [];
 				$boards[$permission] = array_unique(array_values(array_diff($boards[$permission], $deny_boards[$permission])));
 			}
 		}
@@ -1197,7 +1197,7 @@ function secureDirectory($path, $attachments = false)
 
 	$directoryname = basename($path);
 
-	$errors = array();
+	$errors = [];
 	$close = empty($attachments) ? '
 </Files>' : '
 	Allow from localhost

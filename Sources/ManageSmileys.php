@@ -183,7 +183,7 @@ function AddSmiley()
 		// If we are uploading - check all the smiley sets are writable!
 		if ($_POST['method'] != 'existing')
 		{
-			$writeErrors = array();
+			$writeErrors = [];
 			if (!is_writable($context['smileys_dir']))
 				$writeErrors[] = $context['smileys_dir'];
 
@@ -264,7 +264,7 @@ function AddSmiley()
 	}
 
 	// Get all possible filenames for the smileys.
-	$context['filenames'] = array();
+	$context['filenames'] = [];
 	if ($context['smileys_dir_found'])
 	{
 		$dir = dir($context['smileys_dir']);
@@ -612,7 +612,7 @@ function EditSmileys()
 		$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
 
 		// Get all possible filenames for the smileys.
-		$context['filenames'] = array();
+		$context['filenames'] = [];
 		if ($context['smileys_dir_found'])
 		{
 			$dir = dir($context['smileys_dir']);
@@ -670,7 +670,7 @@ function list_getSmileys($start, $items_per_page, $sort)
 			'sort' => $sort,
 		)
 	);
-	$smileys = array();
+	$smileys = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$smileys[] = $row;
 	$smcFunc['db_free_result']($request);
@@ -689,7 +689,7 @@ function list_getNumSmileys()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}smileys',
-		array()
+		[]
 	);
 	list($numSmileys) = $smcFunc['db_fetch_row'];
 	$smcFunc['db_free_result']($request);
@@ -786,10 +786,10 @@ function EditSmileyOrder()
 	);
 	$context['smileys'] = array(
 		'postform' => array(
-			'rows' => array(),
+			'rows' => [],
 		),
 		'popup' => array(
-			'rows' => array(),
+			'rows' => [],
 		),
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -869,7 +869,7 @@ function EditMessageIcons()
 	global $smcFunc, $scripturl, $sourcedir;
 
 	// Get a list of icons.
-	$context['icons'] = array();
+	$context['icons'] = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT m.id_icon, m.title, m.filename, m.icon_order, m.id_board, b.name AS board_name
 		FROM {db_prefix}message_icons AS m
@@ -906,7 +906,7 @@ function EditMessageIcons()
 		// Deleting icons?
 		if (isset($_POST['delete']) && !empty($_POST['checked_icons']))
 		{
-			$deleteIcons = array();
+			$deleteIcons = [];
 			foreach ($_POST['checked_icons'] as $icon)
 				$deleteIcons[] = (int) $icon;
 
@@ -964,8 +964,8 @@ function EditMessageIcons()
 			$context['icons'][$_GET['icon']]['board_id'] = (int) $_POST['icon_board'];
 
 			// Do a huge replace ;)
-			$iconInsert = array();
-			$iconInsert_new = array();
+			$iconInsert = [];
+			$iconInsert_new = [];
 			foreach ($context['icons'] as $id => $icon)
 			{
 				if ($id != 0)
@@ -1143,10 +1143,10 @@ function list_getMessageIcons($start, $items_per_page, $sort)
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 		WHERE ({query_see_board} OR b.id_board IS NULL)
 		ORDER BY m.icon_order',
-		array()
+		[]
 	);
 
-	$message_icons = array();
+	$message_icons = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$message_icons[] = $row;
 	$smcFunc['db_free_result']($request);

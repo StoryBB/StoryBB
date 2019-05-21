@@ -65,7 +65,7 @@ function cleanRequest()
 	if (strpos(ini_get('arg_separator.input'), ';') === false && !empty($_SERVER['QUERY_STRING']))
 	{
 		// Get rid of the old one! You don't know where it's been!
-		$_GET = array();
+		$_GET = [];
 
 		// Was this redirected? If so, get the REDIRECT_QUERY_STRING.
 		// Do not urldecode() the querystring.
@@ -241,7 +241,7 @@ function cleanRequest()
 
 	// Which headers are we going to check for Reverse Proxy IP headers?
 	if ($modSettings['proxy_ip_header'] == 'disabled')
-		$reverseIPheaders = array();
+		$reverseIPheaders = [];
 	elseif ($modSettings['proxy_ip_header'] == 'autodetect')
 		$reverseIPheaders = array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP');
 	else
@@ -330,7 +330,7 @@ function cleanRequest()
  */
 function convertIPv6toInts($ip)
 {
-	static $expanded = array();
+	static $expanded = [];
 
 	// Check if we have done this already.
 	if (isset($expanded[$ip]))
@@ -339,7 +339,7 @@ function convertIPv6toInts($ip)
 	// Expand the IP out.
 	$expanded_ip = explode(':', expandIPv6($ip));
 
-	$new_ip = array();
+	$new_ip = [];
 	foreach ($expanded_ip as $int)
 		$new_ip[] = hexdec($int);
 
@@ -358,7 +358,7 @@ function convertIPv6toInts($ip)
  */
 function expandIPv6($addr, $strict_check = true)
 {
-	static $converted = array();
+	static $converted = [];
 
 	// Check if we have done this already.
 	if (isset($converted[$addr]))
@@ -370,7 +370,7 @@ function expandIPv6($addr, $strict_check = true)
 		$part = explode('::', $addr);
 		$part[0] = explode(':', $part[0]);
 		$part[1] = explode(':', $part[1]);
-		$missing = array();
+		$missing = [];
 
 		for ($i = 0, $n = (8 - (count($part[0]) + count($part[1]))); $i < $n; $i++)
 			array_push($missing, '0000');
@@ -433,7 +433,7 @@ function escapestring__recursive($var)
 		return $smcFunc['db_escape_string']($var);
 
 	// Reindex the array with slashes.
-	$new_var = array();
+	$new_var = [];
 
 	// Add slashes to every element, even the indexes!
 	foreach ($var as $k => $v)
@@ -484,7 +484,7 @@ function urldecode__recursive($var, $level = 0)
 		return urldecode($var);
 
 	// Reindex the array...
-	$new_var = array();
+	$new_var = [];
 
 	// Add the htmlspecialchars to every element.
 	foreach ($var as $k => $v)
@@ -510,7 +510,7 @@ function unescapestring__recursive($var)
 		return $smcFunc['db_unescape_string']($var);
 
 	// Reindex the array without slashes, this time.
-	$new_var = array();
+	$new_var = [];
 
 	// Strip the slashes from every element.
 	foreach ($var as $k => $v)
@@ -536,7 +536,7 @@ function stripslashes__recursive($var, $level = 0)
 		return stripslashes($var);
 
 	// Reindex the array without slashes, this time.
-	$new_var = array();
+	$new_var = [];
 
 	// Strip the slashes from every element.
 	foreach ($var as $k => $v)

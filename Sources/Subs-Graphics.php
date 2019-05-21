@@ -572,7 +572,7 @@ if (!function_exists('imagecreatefrombmp'))
 		$palette_size = $header['offset'] - 54;
 		$info['ncolor'] = $palette_size / 4;
 
-		$palette = array();
+		$palette = [];
 
 		$palettedata = fread($fp, $palette_size);
 		$n = 0;
@@ -812,8 +812,8 @@ function showCodeImage($code)
 
 	// Get a list of the available fonts.
 	$font_dir = dir($settings['default_theme_dir'] . '/fonts');
-	$font_list = array();
-	$ttfont_list = array();
+	$font_list = [];
+	$ttfont_list = [];
 	$endian = unpack('v', pack('S', 0x00FF)) === 0x00FF;
 	while ($entry = $font_dir->read())
 	{
@@ -837,13 +837,13 @@ function showCodeImage($code)
 		if (in_array('AnonymousPro.ttf', $ttfont_list))
 			$ttfont_list = array('AnonymousPro.ttf');
 		else
-			$ttfont_list = empty($ttfont_list) ? array() : array($ttfont_list[0]);
+			$ttfont_list = empty($ttfont_list) ? [] : array($ttfont_list[0]);
 
 	}
 
 	// Create a list of characters to be shown.
-	$characters = array();
-	$loaded_fonts = array();
+	$characters = [];
+	$loaded_fonts = [];
 	for ($i = 0, $n = strlen($code); $i < $n; $i++)
 	{
 		$characters[$i] = array(
@@ -1094,7 +1094,7 @@ function showLetterImage($letter)
 
 	// Get a list of the available font directories.
 	$font_dir = dir($settings['default_theme_dir'] . '/fonts');
-	$font_list = array();
+	$font_list = [];
 	while ($entry = $font_dir->read())
 		if ($entry[0] !== '.' && is_dir($settings['default_theme_dir'] . '/fonts/' . $entry) && file_exists($settings['default_theme_dir'] . '/fonts/' . $entry . '/' . $letter . '.png'))
 			$font_list[] = $entry;
