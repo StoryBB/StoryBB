@@ -4,7 +4,10 @@
 			{{{txt.alert_prefs}}}
 		</h3>
 	</div>
-	<p class="information">{{#if context.description}}{{{context.description}}}{{else}}{{{txt.alert_prefs_desc}}}{{/if}}</p>
+	<p class="information">
+		{{#if context.description}}{{{context.description}}}{{else}}{{{txt.alert_prefs_desc}}}{{/if}}
+	</p>
+
 	<form action="{{scripturl}}?{{context.action}}" id="admin_form_wrapper" method="post" accept-charset="UTF-8" id="notify_options" class="flow_hidden">
 		<div class="cat_bar">
 			<h3 class="catbg">
@@ -13,26 +16,27 @@
 		</div>
 		<div class="windowbg2 noup">
 			<dl class="settings">
-				{{! Allow notification of announcements to be disabled? }}
-				{{#if (eq_coerce modSettings.allow_disableAnnounce 1)}}
-					<dt>
-						<label for="notify_announcements">{{{txt.notify_important_email}}}</label>
-					</dt>
-					<dd>
-						<input type="hidden" name="notify_announcements" value="0">
-						<input type="checkbox" id="notify_announcements" name="notify_announcements" value="1"{{#if (eq_coerce context.member.notify_announcements 1)}} checked{{/if}}>
-					</dd>
-				{{/if}}
 
-				{{! Allow AJAX notifications for the user. }}
-				{{#if (eq_coerce modSettings.enable_ajax_alerts 1)}}
-					<dt>
-						<label for="notify_send_body">{{{txt.notify_alert_timeout}}}</label>
-					</dt>
-					<dd>
-						<input type="number" size="4" id="notify_alert_timeout" name="opt_alert_timeout" min="0" value="{{context.member.alert_timeout}}">
-					</dd>
-				{{/if}}
+{{! Allow notification of announcements to be disabled? }}
+{{#if (eq_coerce modSettings.allow_disableAnnounce 1)}}
+				<dt>
+					<label for="notify_announcements">{{{txt.notify_important_email}}}</label>
+				</dt>
+				<dd>
+					<input type="hidden" name="notify_announcements" value="0">
+					<input type="checkbox" id="notify_announcements" name="notify_announcements" value="1"{{#if (eq_coerce context.member.notify_announcements 1)}} checked{{/if}}>
+				</dd>
+{{/if}}
+
+{{! Allow AJAX notifications for the user. }}
+{{#if (eq_coerce modSettings.enable_ajax_alerts 1)}}
+				<dt>
+					<label for="notify_send_body">{{{txt.notify_alert_timeout}}}</label>
+				</dt>
+				<dd>
+					<input type="number" size="4" id="notify_alert_timeout" name="opt_alert_timeout" min="0" value="{{context.member.alert_timeout}}">
+				</dd>
+{{/if}}
 
 			</dl>
 		</div>
@@ -42,73 +46,74 @@
 			</h3>
 		</div>
 		<table class="table_grid">
-			{{#each context.alert_groups}}
-				<tr class="title_bar">
-					<th>{{{title}}}</th>
-					<th>{{{../txt.receive_alert}}}</th>
-					<th>{{{../txt.receive_mail}}}</th>
-				</tr>
-				{{#if group_config}}
-					{{#each group_config}}
-						<tr class="windowbg">
-							<td colspan="3">
-								{{#if (eq position 'before')}}<label for="opt_{{this.1}}">{{{label}}}</label>{{/if}}
 
-								{{#if (eq this.0 'check')}}
-									<input type="checkbox" name="opt_{{this.1}}" id="opt_{{this.1}}"{{#if (eq_coerce value 1)}} checked{{/if}}>
-								{{/if}}
+{{#each context.alert_groups}}
+			<tr class="title_bar">
+				<th>{{{title}}}</th>
+				<th>{{{../txt.receive_alert}}}</th>
+				<th>{{{../txt.receive_mail}}}</th>
+			</tr>
 
-								{{#if (eq this.0 'select')}}
-									<select name="opt_{{this.1}}" id="opt_{{this.1}}">
-										{{#each opts}}
-											<option value="{{@key}}"{{#if (eq_coerce @key ../this.value)}} selected{{/if}}>{{{.}}}</option>
-										{{/each}}
-									</select>
-								{{/if}}
+	{{#if group_config}}
+		{{#each group_config}}
+			<tr class="windowbg">
+				<td colspan="3">
+					{{#if (eq position 'before')}}<label for="opt_{{this.1}}">{{{label}}}</label>{{/if}}
 
-								{{#if (eq position 'after')}}<label for="opt_{{this.1}}">{{{label}}}</label>{{/if}}
-							</td>
-						</tr>
-					{{/each}}
-				{{/if}}
-				{{#if options}}
-					{{#each options}}
-						<tr class="windowbg">
-							<td>{{{label}}} {{#if help}}{{> helpicon scripturl=../../scripturl txt=../../txt help=help align='right'}}{{/if}}</td>
-							<td class="centercol">
-								{{#if (eq alert 'always')}}
-									<input type="checkbox" checked disabled>
-								{{/if}}
-								{{#if (eq alert 'yes')}}
-									<input type="checkbox" name="alert_{{@key}}" checked>
-								{{/if}}
-								{{#if (eq alert 'no')}}
-									<input type="checkbox" name="alert_{{@key}}">
-								{{/if}}
-								{{#if (eq alert 'never')}}
-									<input type="checkbox" disabled>
-								{{/if}}
-							</td>
-							<td class="centercol">
-								{{#if (eq email 'always')}}
-									<input type="checkbox" checked disabled>
-								{{/if}}
-								{{#if (eq email 'yes')}}
-									<input type="checkbox" name="email_{{@key}}" checked>
-								{{/if}}
-								{{#if (eq email 'no')}}
-									<input type="checkbox" name="email_{{@key}}">
-								{{/if}}
-								{{#if (eq email 'never')}}
-									<input type="checkbox" disabled>
-								{{/if}}
-							</td>
-						</tr>
-					{{/each}}
-				{{/if}}
+			{{#if (eq this.0 'check')}}
+					<input type="checkbox" name="opt_{{this.1}}" id="opt_{{this.1}}"{{#if (eq_coerce value 1)}} checked{{/if}}>
+			{{/if}}
 
+			{{#if (eq this.0 'select')}}
+					<select name="opt_{{this.1}}" id="opt_{{this.1}}">
+						{{#each opts}}
+							<option value="{{@key}}"{{#if (eq_coerce @key ../this.value)}} selected{{/if}}>{{{.}}}</option>
+						{{/each}}
+					</select>
+			{{/if}}
 
-			{{/each}}
+					{{#if (eq position 'after')}}<label for="opt_{{this.1}}">{{{label}}}</label>{{/if}}
+				</td>
+			</tr>
+		{{/each}}
+	{{/if}}
+
+	{{#if options}}
+		{{#each options}}
+			<tr class="windowbg">
+				<td>{{{label}}} {{#if help}}{{> helpicon scripturl=../../scripturl txt=../../txt help=help align='right'}}{{/if}}</td>
+				<td class="centercol">
+					{{#if (eq alert 'always')}}
+						<input type="checkbox" checked disabled>
+					{{/if}}
+					{{#if (eq alert 'yes')}}
+						<input type="checkbox" name="alert_{{@key}}" checked>
+					{{/if}}
+					{{#if (eq alert 'no')}}
+						<input type="checkbox" name="alert_{{@key}}">
+					{{/if}}
+					{{#if (eq alert 'never')}}
+						<input type="checkbox" disabled>
+					{{/if}}
+				</td>
+				<td class="centercol">
+					{{#if (eq email 'always')}}
+						<input type="checkbox" checked disabled>
+					{{/if}}
+					{{#if (eq email 'yes')}}
+						<input type="checkbox" name="email_{{@key}}" checked>
+					{{/if}}
+					{{#if (eq email 'no')}}
+						<input type="checkbox" name="email_{{@key}}">
+					{{/if}}
+					{{#if (eq email 'never')}}
+						<input type="checkbox" disabled>
+					{{/if}}
+				</td>
+			</tr>
+		{{/each}}
+	{{/if}}
+{{/each}}
 <!--
 	foreach ($context['alert_types'] as $alert_group => $alerts)
 	{

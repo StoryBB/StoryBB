@@ -5,40 +5,46 @@
 	<div id="report_buttons">
 		{{>button_strip button_strip=context.report_buttons txt=txt direction="right"}}
 	</div>
-	{{#each context.tables}}
-		<table class="table_grid report_results">
-			{{#if title}}
-				<thead>
-					<tr class="title_bar">
-						<th scope="col" colspan="{{column_count}}">{{title}}</th>
-					</tr>
-				</thead>
+
+{{#each context.tables}}
+	<table class="table_grid report_results">
+
+	{{#if title}}
+		<thead>
+			<tr class="title_bar">
+				<th scope="col" colspan="{{column_count}}">{{title}}</th>
+			</tr>
+		</thead>
+	{{/if}}
+
+		<tbody>
+
+	{{#each this.data}}
+			<tr class="{{#if (and (eq @index 0) ../shading.top)}}windowbg table_caption{{else}}{{#if separator}}title_bar{{else}}windowbg{{/if}}{{/if}}">
+
+		{{#each this}}
+			{{#if separator}}
+				{{#if (eq @index 0)}}
+					<td colspan="{{../../column_count}}" class="smalltext">
+						{{{v}}}:
+					</td>
+				{{/if}}
+			{{else}}
+				{{#if (and (eq @index 0) ../../shading.left)}}
+					<td class="table_caption {{../../align.shaded}}text"{{#unless (eq ../../width.shaded 'auto')}} width="{{../../width.shaded}}"{{/unless}}>
+						{{#unless (eq v ../../default_value)}}{{#if v}}{{{v}}}:{{/if}}{{/unless}}
+					</td>
+				{{else}}
+					<td class="smalltext centertext" {{#unless (eq ../../width.normal 'auto')}}width="{{../../width.normal}}" {{/unless}} {{#if style}}style="{{style}}"{{/if}}>
+						{{{v}}}
+					</td>
+				{{/if}}
 			{{/if}}
-			<tbody>
-				{{#each this.data}}
-					<tr class="{{#if (and (eq @index 0) ../shading.top)}}windowbg table_caption{{else}}{{#if separator}}title_bar{{else}}windowbg{{/if}}{{/if}}">
-						{{#each this}}
-							{{#if separator}}
-								{{#if (eq @index 0)}}
-									<td colspan="{{../../column_count}}" class="smalltext">
-										{{{v}}}:
-									</td>
-								{{/if}}
-							{{else}}
-								{{#if (and (eq @index 0) ../../shading.left)}}
-									<td class="table_caption {{../../align.shaded}}text"{{#unless (eq ../../width.shaded 'auto')}} width="{{../../width.shaded}}"{{/unless}}>
-										{{#unless (eq v ../../default_value)}}{{#if v}}{{{v}}}:{{/if}}{{/unless}}
-									</td>
-								{{else}}
-									<td class="smalltext centertext" {{#unless (eq ../../width.normal 'auto')}}width="{{../../width.normal}}" {{/unless}} {{#if style}}style="{{style}}"{{/if}}>
-										{{{v}}}
-									</td>
-								{{/if}}
-							{{/if}}
-						{{/each}}
-					</tr>
-				{{/each}}
-			</tbody>
-		</table>
+		{{/each}}
+			</tr>
 	{{/each}}
+		</tbody>
+	</table>
+{{/each}}
+
 </div>

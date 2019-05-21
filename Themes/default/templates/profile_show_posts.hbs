@@ -8,52 +8,52 @@
 			<div class="pagelinks">{{{context.page_index}}}</div>
 		</div>
 
-		{{#each context.posts}}
-			<div class="{{css_class}}">
-				<div class="counter">{{{counter}}}</div>
-				<div class="topic_details">
-					<h5><strong><a href="{{../scripturl}}?board={{board.id}}.0">{{{board.name}}}</a> / <a href="{{../scripturl}}?topic={{topic}}.{{start}}#msg{{id}}">{{{subject}}}</a></strong></h5>
-					<span class="smalltext">{{{time}}}</span>
-				</div>
-				<div class="list_posts">
-
-					{{#unless approved}}
-					<div class="approve_post">
-						<em>{{{txt.post_awaiting_approval}}}</em>
-					</div>
-					{{/unless}}
-
-					{{{body}}}
-				</div>
-
-				{{#if (or can_reply can_quote can_delete)}}
-				<div class="floatright">
-					<ul class="quickbuttons">
-
-						{{#if can_reply}}
-						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}}" class="main_icons reply_button">{{{../txt.reply}}}</a></li>
-						{{/if}}
-
-						{{#if can_quote}}
-						<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}};quote={{id}}" class="main_icons quote">{{{../txt.quote_action}}}</a></li>
-						{{/if}}
-
-						{{#if can_delete}}
-						<li><a href="{{../scripturl}}?action=deletemsg;msg={{id}};topic={{topic}};profile;u={{context.member.id}};start={{context.start}};{{session_url}}" data-confirm="{{{../txt.remove_message}}}" class="you_sure"><span class="main_icons remove_button"></span>{{{../txt.remove}}}</a></li>
-						{{/if}}
-
-					</ul>
-				</div>
-				{{/if}}
-
+{{#each context.posts}}
+		<div class="{{css_class}}">
+			<div class="counter">{{{counter}}}</div>
+			<div class="topic_details">
+				<h5><strong><a href="{{../scripturl}}?board={{board.id}}.0">{{{board.name}}}</a> / <a href="{{../scripturl}}?topic={{topic}}.{{start}}#msg{{id}}">{{{subject}}}</a></strong></h5>
+				<span class="smalltext">{{{time}}}</span>
 			</div>
-		{{/each}}
+			<div class="list_posts">
 
-		{{#unless context.posts}}
-			<div class="windowbg2">
-				{{#if context.is_topics}}{{{txt.show_topics_none}}}{{else}}{{{txt.show_posts_none}}}{{/if}}
+	{{#unless approved}}
+				<div class="approve_post">
+					<em>{{{txt.post_awaiting_approval}}}</em>
+				</div>
+	{{/unless}}
+
+				{{{body}}}
 			</div>
-		{{/unless}}
+
+	{{#if (or can_reply can_quote can_delete)}}
+			<div class="floatright">
+				<ul class="quickbuttons">
+
+		{{#if can_reply}}
+					<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}}" class="main_icons reply_button">{{{../txt.reply}}}</a></li>
+		{{/if}}
+
+		{{#if can_quote}}
+					<li><a href="{{../scripturl}}?action=post;topic={{topic}}.{{start}};quote={{id}}" class="main_icons quote">{{{../txt.quote_action}}}</a></li>
+		{{/if}}
+
+		{{#if can_delete}}
+					<li><a href="{{../scripturl}}?action=deletemsg;msg={{id}};topic={{topic}};profile;u={{context.member.id}};start={{context.start}};{{session_url}}" data-confirm="{{{../txt.remove_message}}}" class="you_sure"><span class="main_icons remove_button"></span>{{{../txt.remove}}}</a></li>
+		{{/if}}
+
+				</ul>
+			</div>
+	{{/if}}
+
+		</div>
+{{/each}}
+
+{{#unless context.posts}}
+		<div class="windowbg2">
+			{{#if context.is_topics}}{{{txt.show_topics_none}}}{{else}}{{{txt.show_posts_none}}}{{/if}}
+		</div>
+{{/unless}}
 
 		<div class="pagesection">
 			<div class="pagelinks">{{{context.page_index}}}</div>

@@ -1,7 +1,7 @@
-	{{! Sending a newsletter. }}
-	{{#if context.newsletter_sent_msg}}
-		<div class="infobox">{{{context.newsletter_sent_msg}}}</div>
-	{{/if}}
+{{! Sending a newsletter. }}
+{{#if context.newsletter_sent_msg}}
+	<div class="infobox">{{{context.newsletter_sent_msg}}}</div>
+{{/if}}
 
 	<div id="admincenter">
 		<form action="{{scripturl}}?action=admin;area=news;sa=mailingcompose" method="post" id="admin_newsletters" class="flow_hidden" accept-charset="UTF-8">
@@ -18,11 +18,18 @@
 						<span class="smalltext">{{{txt.admin_news_select_group_desc}}}</span>
 					</dt>
 					<dd>
-						{{#each context.groups}}
-						<label for="groups_{{id}}"><input type="checkbox" name="groups[{{id}}]" id="groups_{{id}}" value="{{id}}" checked> {{{name}}}</label> <em>({{member_count}})</em><br>
-						{{/each}}
+
+{{#each context.groups}}
+						<label for="groups_{{id}}">
+							<input type="checkbox" name="groups[{{id}}]" id="groups_{{id}}" value="{{id}}" checked> {{{name}}}
+						</label>
+						<em>({{member_count}})</em><br>
+{{/each}}
 						<br>
-						<label for="checkAllGroups"><input type="checkbox" id="checkAllGroups" checked onclick="invertAll(this, this.form, 'groups');"> <em>{{{txt.check_all}}}</em></label>
+						<label for="checkAllGroups">
+							<input type="checkbox" id="checkAllGroups" checked onclick="invertAll(this, this.form, 'groups');">
+							<em>{{{txt.check_all}}}</em>
+						</label>
 					</dd>
 				</dl>
 				<div id="advanced_panel_header" class="title_bar">
@@ -56,9 +63,14 @@
 							<span class="smalltext">{{{txt.admin_news_select_excluded_groups_desc}}}</span>
 						</dt>
 						<dd>
-							{{#each context.groups}}
-							<label for="exclude_groups_{{id}}"><input type="checkbox" name="exclude_groups[{{id}}]" id="exclude_groups_{{id}}" value="{{id}}"> {{name}}</label> <em>({{member_count}})</em><br>
-							{{/each}}
+
+{{#each context.groups}}
+							<label for="exclude_groups_{{id}}">
+								<input type="checkbox" name="exclude_groups[{{id}}]" id="exclude_groups_{{id}}" value="{{id}}">
+								{{name}}
+							</label>
+							<em>({{member_count}})</em><br>
+{{/each}}
 							<br>
 							<label for="checkAllGroupsExclude"><input type="checkbox" id="checkAllGroupsExclude" onclick="invertAll(this, this.form, 'exclude_groups');"> <em>{{{txt.check_all}}}</em></label><br>
 						</dd>

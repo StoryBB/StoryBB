@@ -23,29 +23,29 @@
 			</dl>
 		</div>
 
-		{{! Do all the gateway options. }}
-		{{#each context.gateways}}
-			<div class="cat_bar">
-				<h3 class="catbg">{{{title}}}</h3>
-			</div>
-			<div class="windowbg">
-				{{{desc}}}<br>
-				<form action="{{{form}}}" method="post">
+{{! Do all the gateway options. }}
+{{#each context.gateways}}
+		<div class="cat_bar">
+			<h3 class="catbg">{{{title}}}</h3>
+		</div>
+		<div class="windowbg">
+			{{{desc}}}<br>
+			<form action="{{{form}}}" method="post">
 
-					{{#if javascript}}
-					<script>
-						{{{javascript}}}
-					</script>
-					{{/if}}
+	{{#if javascript}}
+				<script>
+					{{{javascript}}}
+				</script>
+	{{/if}}
 
-					{{#each hidden}}
-					<input type="hidden" id="{{id}}_{{@key}}" name="{{@key}}" value="{{{.}}}">
-					{{/each}}
+	{{#each hidden}}
+				<input type="hidden" id="{{id}}_{{@key}}" name="{{@key}}" value="{{{.}}}">
+	{{/each}}
 
-					<br><input type="submit" value="{{{submit}}}" class="button_submit">
-				</form>
-			</div>
-		{{/each}}
+				<br><input type="submit" value="{{{submit}}}" class="button_submit">
+			</form>
+		</div>
+{{/each}}
 
 	</div>
 	<br class="clear">

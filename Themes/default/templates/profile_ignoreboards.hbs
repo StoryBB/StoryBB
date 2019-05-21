@@ -8,22 +8,29 @@
 		<p class="information">{{{txt.ignoreboards_info}}}</p>
 		<div class="windowbg2">
 			<div class="flow_hidden">
-				{{#each context.split_categories}}
+
+{{#each context.split_categories}}
 				<ul class="ignoreboards {{#if (eq @index 0)}}floatleft{{else}}floatright{{/if}}">
-					{{#each .}}
+
+	{{#each .}}
 					<li class="category">
 						<a href="javascript:void(0);" onclick="selectBoards([{{{join child_ids ','}}}], 'creator'); return false;">{{{name}}}</a>
 						<ul>
-							{{#each boards}}
+
+			{{#each boards}}
 							<li class="board" style="margin-{{#if ../../../context.right_to_left}}right{{else}}left{{/if}}: {{child_level}}em;">
-								<label for="ignore_brd{{id}}"><input type="checkbox" id="brd{{id}}" name="ignore_brd[{{id}}]" value="{{id}}"{{#if selected}} checked{{/if}}> {{{name}}}</label>
+								<label for="ignore_brd{{id}}">
+									<input type="checkbox" id="brd{{id}}" name="ignore_brd[{{id}}]" value="{{id}}"{{#if selected}} checked{{/if}}>
+									{{{name}}}
+								</label>
 							</li>
-							{{/each}}
+			{{/each}}
+
 						</ul>
 					</li>
-					{{/each}}
+	{{/each}}
 				</ul>
-				{{/each}}
+{{/each}}
 
 			</div>
 			{{> profile_setting_save}}

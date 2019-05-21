@@ -4,13 +4,14 @@
 		</div>
 		<div class="roundframe">
 			<div>
-				{{#if context.tfa_backup}}
-					<div class="smalltext error">{{{txt.tfa_backup_used_desc}}}</div>
-				{{else}}
-					{{#if (eq modSettings.tfa_mode 2)}}
-						<div class="smalltext"><strong>{{{txt.tfa_forced_desc}}}</strong></div>
-					{{/if}}
-				{{/if}}
+
+{{#if context.tfa_backup}}
+				<div class="smalltext error">{{{txt.tfa_backup_used_desc}}}</div>
+{{else}}
+	{{#if (eq modSettings.tfa_mode 2)}}
+				<div class="smalltext"><strong>{{{txt.tfa_forced_desc}}}</strong></div>
+	{{/if}}
+{{/if}}
 
 				<div class="smalltext">{{{txt.tfa_desc}}}</div>
 				<div id="basicinfo" style="width: 60%">
@@ -40,9 +41,9 @@
 				</div>
 				<div class="clear"></div>
 
-				{{#if context.from_ajax}}
-					<br>
-					<a href="javascript:self.close();"></a>
-				{{/if}}
+{{#if context.from_ajax}}
+				<br>
+				<a href="javascript:self.close();"></a>
+{{/if}}
 			</div>
 		</div>

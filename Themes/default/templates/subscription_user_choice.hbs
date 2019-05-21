@@ -5,56 +5,56 @@
 				<h3 class="catbg">{{{txt.subscriptions}}}</h3>
 			</div>
 
-			{{#unless context.subscriptions}}
+{{#unless context.subscriptions}}
 			<div class="information">
 				{{{txt.paid_subs_none}}}
 			</div>
-			{{else}}
+{{else}}
 			<div class="information">
 				{{{txt.paid_subs_desc}}}
 			</div>
-			{{/unless}}
+{{/unless}}
 
-			{{! Print out all the subscriptions. }}
-			{{#each context.subscriptions}}
-				{{#if active}}
-				<div class="cat_bar">
-					<h3 class="catbg">{{{name}}}</h3>
-				</div>
-				<div class="windowbg">
-					<p><strong>{{{name}}}</strong></p>
-					<p class="smalltext">{{{desc}}}</p>
+{{! Print out all the subscriptions. }}
+{{#each context.subscriptions}}
+	{{#if active}}
+			<div class="cat_bar">
+				<h3 class="catbg">{{{name}}}</h3>
+			</div>
+			<div class="windowbg">
+				<p><strong>{{{name}}}</strong></p>
+				<p class="smalltext">{{{desc}}}</p>
 
-					{{#unless flexible}}
-						<div><strong>{{{../txt.paid_duration}}}:</strong> {{{length}}}</div>
-					{{/unless}}
+		{{#unless flexible}}
+				<div><strong>{{{../txt.paid_duration}}}:</strong> {{{length}}}</div>
+		{{/unless}}
 
-					{{#if ../context.user.is_owner}}
-						<strong>{{{../txt.paid_cost}}}:</strong>
+		{{#if ../context.user.is_owner}}
+				<strong>{{{../txt.paid_cost}}}:</strong>
 
-						{{#if flexible}}
-						<select name="cur[{{id}}]">
+			{{#if flexible}}
+				<select name="cur[{{id}}]">
 
-						{{! Print out the costs for this one. }}
-							{{#each costs}}
-							<option value="{{@key}}">{{textTemplate ../../modSettings.paid_currency_symbol .}}/{{get_text @key}}</option>
-							{{/each}}
+				{{! Print out the costs for this one. }}
+				{{#each costs}}
+					<option value="{{@key}}">{{textTemplate ../../modSettings.paid_currency_symbol .}}/{{get_text @key}}</option>
+				{{/each}}
 
-						</select>
-						{{else}}
-						{{textTemplate ../modSettings.paid_currency_symbol costs.fixed}}
-						{{/if}}
+				</select>
+			{{else}}
+				{{textTemplate ../modSettings.paid_currency_symbol costs.fixed}}
+			{{/if}}
 
-						<hr>
-						<input type="submit" name="sub_id[{{id}}]" value="{{{../txt.paid_order}}}" class="button_submit">
+				<hr>
+				<input type="submit" name="sub_id[{{id}}]" value="{{{../txt.paid_order}}}" class="button_submit">
 
-					{{else}}
-						<a href="{{../scripturl}}?action=admin;area=paidsubscribe;sa=modifyuser;sid={{id}};uid={{../context.member.id}}{{#if sublog}};lid={{sublog}}{{/if}}">{{#if sublog}}{{{../txt.paid_edit_subscription}}}{{else}}{{{../txt.paid_admin_add}}}{{/if}}</a>
-					{{/if}}
+		{{else}}
+				<a href="{{../scripturl}}?action=admin;area=paidsubscribe;sa=modifyuser;sid={{id}};uid={{../context.member.id}}{{#if sublog}};lid={{sublog}}{{/if}}">{{#if sublog}}{{{../txt.paid_edit_subscription}}}{{else}}{{{../txt.paid_admin_add}}}{{/if}}</a>
+		{{/if}}
 
-				</div>
-				{{/if}}
-			{{/each}}
+			</div>
+	{{/if}}
+{{/each}}
 
 		</form>
 		<br class="clear"/>
@@ -75,16 +75,16 @@
 			</thead>
 			<tbody>
 
-				{{#unless context.current}}
+{{#unless context.current}}
 				<tr class="windowbg">
 					<td colspan="4">
 						{{{txt.paid_none_yet}}}
 					</td>
 				</tr>
-				{{/unless}}
+{{/unless}}
 
-				{{#each context.current}}
-				{{#unless hide}}
+{{#each context.current}}
+	{{#unless hide}}
 				<tr class="windowbg">
 					<td>
 						{{#if can_modify}}<a href="{{../scripturl}}?action=admin;area=paidsubscribe;sa=modifyuser;lid={{id}}">{{{name}}}</a>{{else}}{{{name}}}{{/if}}
@@ -95,8 +95,8 @@
 					<td>{{{start}}}</td>
 					<td>{{{end}}}</td>
 				</tr>
-				{{/unless}}
-				{{/each}}
+	{{/unless}}
+{{/each}}
 			</tbody>
 		</table>
 	</div>

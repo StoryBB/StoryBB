@@ -1,16 +1,18 @@
 <div class="windowbg description" style="text-align: center;">
-	{{#if (or (isBrowser 'is_ie') (isBrowser 'is_ie11'))}}
+
+{{#if (or (isBrowser 'is_ie') (isBrowser 'is_ie11'))}}
 	<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" type="audio/x-wav">
 		<param name="AutoStart" value="1">
 		<param name="FileName" value="{{{context.verification_sound_href}}}">
 	</object>
-	{{else}}
+{{else}}
 	<audio src="{{context.verification_sound_href}}" controls>
 		<object type="audio/x-wav" data="{{{context.verification_sound_href}}}">
 			<a href="{{{context.verification_sound_href}}}" rel="nofollow">{{{context.verification_sound_href}}}</a>
 		</object>
 	</audio>
-	{{/if}}
+{{/if}}
+
 	<br>
 	<a href="{{context.verification_sound_href}};sound" rel="nofollow">{{txt.visual_verification_sound_again}}</a><br>
 	<a href="{{context.verification_sound_href}}" rel="nofollow">{{txt.visual_verification_sound_direct}}</a><br><br>

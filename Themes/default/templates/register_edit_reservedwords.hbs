@@ -7,8 +7,9 @@
 	</div>
 	<div class="windowbg2 noup">
 		<h4>{{txt.admin_reserved_line}}</h4>
-		<textarea cols="30" rows="6" name="reserved" id="reserved">{{#each context.reserved_words}}{{.}}
-{{/each}}</textarea>
+		<textarea cols="30" rows="6" name="reserved" id="reserved">
+			{{#each context.reserved_words}}{{.}}{{/each}}
+		</textarea>
 		<dl class="settings">
 			<dt>
 				<label for="matchword">{{txt.admin_match_whole}}</label>

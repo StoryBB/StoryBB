@@ -11,11 +11,13 @@
 					{{txt.announce_this_topic}} <a href="{{scripturl}}?topic={{context.current_topic}}.0">{{context.topic_subject}}</a>
 				</p>
 				<ul>
-					{{#each context.groups}}
+
+{{#each context.groups}}
 					<li>
 						<label for="who_{{id}}"><input type="checkbox" name="who[{{id}}]" id="who_{{id}}" value="{{id}}" checked> {{name}}</label> <em>({{member_count}})</em>
 					</li>
-					{{/each}}
+{{/each}}
+
 					<li>
 						<label for="checkall"><input type="checkbox" id="checkall" onclick="invertAll(this, this.form);" checked> <em>{{txt.check_all}}</em></label>
 					</li>

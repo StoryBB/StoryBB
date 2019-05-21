@@ -27,18 +27,19 @@
 						</tr>
 					</thead>
 					<tbody>
-					{{#each context.members}}
+
+{{#each context.members}}
 						<tr class="windowbg">
 							<td>
-								{{#unless is_guest}}
-									<span class="contact_info floatright">
-										{{#if ../context.can_send_pm}}<a href="{{{online.href}}}" title="{{{online.text}}}">{{/if}}
-											
-											<span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{online.text}}"></span>
+	{{#unless is_guest}}
+								<span class="contact_info floatright">
+									{{#if ../context.can_send_pm}}<a href="{{{online.href}}}" title="{{{online.text}}}">{{/if}}
+										
+									<span class="{{#if online.is_online}}on{{else}}off{{/if}}" title="{{online.text}}"></span>
 
-										{{#if ../context.can_send_pm}}</a>{{/if}}
-									</span>
-								{{/unless}}
+									{{#if ../context.can_send_pm}}</a>{{/if}}
+								</span>
+	{{/unless}}
 								<span class="member{{#if is_hidden}} hidden{{/if}}">
 									{{#if is_guest}}
 										{{{name}}}
@@ -46,17 +47,17 @@
 										<a href="{{{href}}}" title="{{../txt.profile_of}} {{{name}}}"{{#if color}} style="color: {{color}}"{{/if}}>{{{name}}}</a>
 									{{/if}}
 								</span>
-								{{#if ip}}
+	{{#if ip}}
 								(<a href="{{scripturl}}?action={{#if is_guest}}trackip{{else}}profile;area=tracking;sa=ip;u={{id}}{{/if}};searchip={{ip}}">{{ip}}</a>)
-								{{/if}}
+	{{/if}}
 							</td>
 							<td class="time">{{time}}</td>
 							<td>{{{action}}}</td>
 						</tr>
-					{{/each}}
+{{/each}}
 
-					{{! No members? }}
-					{{#unless context.members}}
+{{! No members? }}
+{{#unless context.members}}
 						<tr class="windowbg">
 							<td colspan="3">
 							{{#if (eq context.show_by "guests")}} {{txt.who_no_online_guests}} {{/if}}
@@ -64,7 +65,7 @@
 							{{#if (eq context.show_by "members")}} {{txt.who_no_online_members}} {{/if}}
 							</td>
 						</tr>
-					{{/unless}}
+{{/unless}}
 					</tbody>
 				</table>
 

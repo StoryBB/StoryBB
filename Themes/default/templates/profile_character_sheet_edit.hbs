@@ -8,16 +8,16 @@
 				<div id="post_area">
 					<div class="roundframe">
 
-						{{#if context.sheet_templates}}
-							{{{txt.char_templates_sel}}}
-							<select id="char_sheet_template">
-								<option>-- {{{txt.char_templates}}} --</option>
-								{{#each context.sheet_templates}}
-								<option value="{{@key}}">{{name}}</option>
-								{{/each}}
-							</select>
-							<a href="#" class="button" id="insert_char_template">{{{txt.char_templates_add}}}</a><br><br>
-						{{/if}}
+{{#if context.sheet_templates}}
+						{{{txt.char_templates_sel}}}
+						<select id="char_sheet_template">
+							<option>-- {{{txt.char_templates}}} --</option>
+							{{#each context.sheet_templates}}
+							<option value="{{@key}}">{{name}}</option>
+							{{/each}}
+						</select>
+						<a href="#" class="button" id="insert_char_template">{{{txt.char_templates_add}}}</a><br><br>
+{{/if}}
 
 						{{{richtexteditor 'message' '' 'bbcBox'}}}
 

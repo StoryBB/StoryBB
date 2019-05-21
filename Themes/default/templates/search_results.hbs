@@ -1,5 +1,5 @@
-	{{! The main search results page. }}
-	{{#if (or context.search_ignored (not context.topics))}}
+{{! The main search results page. }}
+{{#if (or context.search_ignored (not context.topics))}}
 		<div id="search_results">
 			<div class="cat_bar">
 				<h3 class="catbg">
@@ -8,16 +8,16 @@
 			</div>
 			<div class="roundframe">
 
-				{{#if context.search_ignored}}
-					<p>
-						{{#if (eq (getNumItems context.search_ignored) 1)}}
-							{{{txt.search_warning_ignored_word}}}:
-						{{else}}
-							{{{txt.search_warning_ignored_words}}}:
-						{{/if}}
-						{{{join context.search_ignored ', '}}}
-					</p>
-				{{/if}}
+	{{#if context.search_ignored}}
+				<p>
+					{{#if (eq (getNumItems context.search_ignored) 1)}}
+						{{{txt.search_warning_ignored_word}}}:
+					{{else}}
+						{{{txt.search_warning_ignored_words}}}:
+					{{/if}}
+					{{{join context.search_ignored ', '}}}
+				</p>
+	{{/if}}
 
 				<form action="{{scripturl}}?action=search2" method="post" accept-charset="UTF-8">
 					<dl class="settings">
@@ -39,17 +39,17 @@
 						<input type="hidden" name="sort" value="{{#if context.search_params.sort}}{{context.search_params.sort}}{{else}}relevance{{/if}}">
 					</div>
 
-					{{#each context.search_params.brd}}
+	{{#each context.search_params.brd}}
 					<input type="hidden" name="brd[{{.}}]" value="{{.}}">
-					{{/each}}
+	{{/each}}
 				</form>
 			</div>
 		</div>
 		<br>
-	{{/if}}
+{{/if}}
 
-	{{#if context.compact}}
-		{{! quick moderation }}
+{{! quick moderation }}
+{{#if context.compact}}
 		<form action="{{scripturl}}action=quickmod" method="post" accept-charset="UTF-8" name="topicForm">
 			<div class="cat_bar">
 				<h3 class="catbg">
@@ -60,64 +60,66 @@
 				</h3>
 			</div>
 
-			{{#if context.topics}}
-				<div class="pagesection">
-					<span>{{{context.page_index}}}</span>
-				</div>
-			{{else}}
-				<div class="roundframe">{{{txt.find_no_results}}}</div>
-			{{/if}}
+	{{#if context.topics}}
+			<div class="pagesection">
+				<span>{{{context.page_index}}}</span>
+			</div>
+	{{else}}
+			<div class="roundframe">{{{txt.find_no_results}}}</div>
+	{{/if}}
 
-			{{#each context.search_results}}
-				<div class="{{../css_class}}">
-					<div class="flow_auto">
-						{{#each matches}}
-							<div class="topic_details floatleft" style="width:94%">
-								<div class="counter">{{counter}}</div>
-								<h5>{{{../board.link}}} / <a href="{{scripturl}}?topic={{../id}}.msg{{id}}#msg{{id}}">{{{subject_highlighted}}}</a></h5>
-								<span class="smalltext">&#171;&nbsp;{{{../../txt.by}}}&nbsp;<strong>{{{member.link}}}</strong>&nbsp;{{{../../txt.on}}}&nbsp;{{{time}}}&nbsp;&#187;</span>
-							</div>
-							<div class="floatright">
-								<input type="checkbox" name="topics[]" value="{{../id}}">
-							</div>
+	{{#each context.search_results}}
+			<div class="{{../css_class}}">
+				<div class="flow_auto">
 
-							{{#if body_highlighted}}
-								<br class="clear">
-								<div class="list_posts double_heigiht">{{{body_highlighted}}}</div>
-							{{/if}}
-						{{/each}}
+		{{#each matches}}
+					<div class="topic_details floatleft" style="width:94%">
+						<div class="counter">{{counter}}</div>
+						<h5>{{{../board.link}}} / <a href="{{scripturl}}?topic={{../id}}.msg{{id}}#msg{{id}}">{{{subject_highlighted}}}</a></h5>
+						<span class="smalltext">&#171;&nbsp;{{{../../txt.by}}}&nbsp;<strong>{{{member.link}}}</strong>&nbsp;{{{../../txt.on}}}&nbsp;{{{time}}}&nbsp;&#187;</span>
 					</div>
-				</div>
-			{{/each}}
-
-			{{#if context.topics}}
-				<div class="pagesection">
-					<span>{{{context.page_index}}}</span>
-				</div>
-
-				<div style="padding: 4px;">
-					<div class="floatright flow_auto">
-						<select class="qaction" name="qaction"{{#if context.can_move}} onchange="this.form.move_to.disabled = (this.options[this.selectedIndex].value != 'move');"{{/if}}>
-							<option value="">--------</option>
-
-							{{#each context.qmod_action}}
-								<option value="{{{@key}}}">{{{.}}}</option>
-							{{/each}}
-						</select>
-
-						{{#if ../../context.can_move}}
-						<span id="quick_mod_jump_to">&nbsp;</span>
-						{{/if}}
-
-						<input type="hidden" name="redirect_url" value="{{scripturl}}?action=search2;params={{{context.params}}}">
-						<input type="submit" value="{{{txt.quick_mod_go}}}" onclick="return this.form.qaction.value != '' &amp;&amp; confirm('{{{txt.quickmod_confirm}}}');" class="button_submit" style="float: none;font-size: .8em;">
+					<div class="floatright">
+						<input type="checkbox" name="topics[]" value="{{../id}}">
 					</div>
-				</div>
+
+			{{#if body_highlighted}}
+					<br class="clear">
+					<div class="list_posts double_heigiht">{{{body_highlighted}}}</div>
 			{{/if}}
+		{{/each}}
+
+				</div>
+			</div>
+	{{/each}}
+
+	{{#if context.topics}}
+			<div class="pagesection">
+				<span>{{{context.page_index}}}</span>
+			</div>
+
+			<div style="padding: 4px;">
+				<div class="floatright flow_auto">
+					<select class="qaction" name="qaction"{{#if context.can_move}} onchange="this.form.move_to.disabled = (this.options[this.selectedIndex].value != 'move');"{{/if}}>
+						<option value="">--------</option>
+
+		{{#each context.qmod_action}}
+			<option value="{{{@key}}}">{{{.}}}</option>
+		{{/each}}
+					</select>
+
+		{{#if ../../context.can_move}}
+					<span id="quick_mod_jump_to">&nbsp;</span>
+		{{/if}}
+
+					<input type="hidden" name="redirect_url" value="{{scripturl}}?action=search2;params={{{context.params}}}">
+					<input type="submit" value="{{{txt.quick_mod_go}}}" onclick="return this.form.qaction.value != '' &amp;&amp; confirm('{{{txt.quickmod_confirm}}}');" class="button_submit" style="float: none;font-size: .8em;">
+				</div>
+			</div>
+	{{/if}}
 
 			{{session_form}}
 		</form>
-	{{else}}
+{{else}}
 		<div class="cat_bar">
 			<h3 class="catbg">
 				<span class="floatright">
@@ -127,82 +129,83 @@
 			</h3>
 		</div>
 
-		{{#if context.topics}}
-			<div class="pagesection">
-				<span>{{{context.page_index}}}</span>
-			</div>
-		{{else}}
-			<div class="information">{{{txt.search_no_results}}}</div>
-		{{/if}}
-
-		{{#each context.search_results}}
-			{{#each matches}}
-				<div class="{{{../css_class}}}">
-					<div class="counter">{{counter}}</div>
-					<div class="topic_details">
-						<h5>{{{../board.link}}} / <a href="{{scripturl}}?topic={{../id}}.{{start}};topicseen#msg{{id}}">{{{subject_highlighted}}}</a></h5>
-						<span class="smalltext">&#171;&nbsp;{{{../../txt.message}}} {{{../../txt.by}}} <strong>{{{member.link}}}</strong>&nbsp;{{{../../txt.on}}}&nbsp;<em>{{{time}}}</em>&nbsp;&#187;</span>
-					</div>
-					<div class="list_posts">{{{body_highlighted}}}</div>
-
-					{{#if ../can_reply}}
-						<ul class="quickbuttons">
-					{{/if}}
-
-						{{#if ../can_reply}}
-							<li><a href="{{scripturl}}?action=post;topic={{./id}}.{{start}}" class="main_icons reply_button">{{{../../txt.reply}}}</a></li>
-						{{/if}}
-
-						{{#if ../can_quote}}
-							<li><a href="{{scripturl}}?action=post;topic={{../id}}.{{start}};quote={{id}}" class="main_icons quote">{{{../../txt.quote_action}}}</a></li>
-						{{/if}}
-
-					{{#if ../can_reply}}
-						</ul>
-					{{/if}}
-					<br class="clear">
-				</div>
-			{{/each}}
-		{{/each}}
-
+	{{#if context.topics}}
 		<div class="pagesection">
-		<span>{{{context.page_index}}}</span>
+			<span>{{{context.page_index}}}</span>
 		</div>
+	{{else}}
+		<div class="information">{{{txt.search_no_results}}}</div>
 	{{/if}}
 
-	{{! Show a jump-to box for easy navigation. }}
-	<br class="clear">
-	<div class="smalltext righttext" id="search_jump_to">&nbsp;</div>
-	<script>
-		if (typeof(window.XMLHttpRequest) != "undefined")
-		{
-		{{#if (and context.compact context.topics context.can_move)}}
-			aJumpTo[aJumpTo.length] = new JumpTo({
-				sContainerId: "quick_mod_jump_to",
-				sClassName: "qaction",
-				sJumpToTemplate: "%dropdown_list%",
-				sCurBoardName: {{{json context.jump_to.board_name}}},
-				sBoardChildLevelIndicator: "==",
-				sBoardPrefix: "=> ",
-				sCatSeparator: "-----------------------------",
-				sCatPrefix: "",
-				bNoRedirect: true,
-				bDisabled: true,
-				sCustomName: "move_to"
-			});
+	{{#each context.search_results}}
+		{{#each matches}}
+		<div class="{{{../css_class}}}">
+			<div class="counter">{{counter}}</div>
+			<div class="topic_details">
+				<h5>{{{../board.link}}} / <a href="{{scripturl}}?topic={{../id}}.{{start}};topicseen#msg{{id}}">{{{subject_highlighted}}}</a></h5>
+				<span class="smalltext">&#171;&nbsp;{{{../../txt.message}}} {{{../../txt.by}}} <strong>{{{member.link}}}</strong>&nbsp;{{{../../txt.on}}}&nbsp;<em>{{{time}}}</em>&nbsp;&#187;</span>
+			</div>
+			<div class="list_posts">{{{body_highlighted}}}</div>
 
-		{{/if}}
-			aJumpTo[aJumpTo.length] = new JumpTo({
-				sContainerId: "search_jump_to",
-				sJumpToTemplate: '<label class="smalltext jump_to" for="%select_id%">' + {{{json context.jump_to.label}}} + '</label> %dropdown_list%',
-				iCurBoardId: 0,
-				iCurBoardChildLevel: 0,
-				sCurBoardName: {{{json context.jump_to.board_name}}},
-				sBoardChildLevelIndicator: "==",
-				sBoardPrefix: "=> ",
-				sCatSeparator: "-----------------------------",
-				sCatPrefix: "",
-				sGoButtonLabel: {{{json txt.quick_mod_go}}}
-			});
-		}
-	</script>
+			{{#if ../can_reply}}
+				<ul class="quickbuttons">
+			{{/if}}
+
+			{{#if ../can_reply}}
+					<li><a href="{{scripturl}}?action=post;topic={{./id}}.{{start}}" class="main_icons reply_button">{{{../../txt.reply}}}</a></li>
+			{{/if}}
+
+			{{#if ../can_quote}}
+					<li><a href="{{scripturl}}?action=post;topic={{../id}}.{{start}};quote={{id}}" class="main_icons quote">{{{../../txt.quote_action}}}</a></li>
+			{{/if}}
+
+			{{#if ../can_reply}}
+				</ul>
+			{{/if}}
+
+			<br class="clear">
+		</div>
+		{{/each}}
+	{{/each}}
+
+		<div class="pagesection">
+			<span>{{{context.page_index}}}</span>
+		</div>
+{{/if}}
+
+		{{! Show a jump-to box for easy navigation. }}
+		<br class="clear">
+		<div class="smalltext righttext" id="search_jump_to">&nbsp;</div>
+		<script>
+			if (typeof(window.XMLHttpRequest) != "undefined")
+			{
+			{{#if (and context.compact context.topics context.can_move)}}
+				aJumpTo[aJumpTo.length] = new JumpTo({
+					sContainerId: "quick_mod_jump_to",
+					sClassName: "qaction",
+					sJumpToTemplate: "%dropdown_list%",
+					sCurBoardName: {{{json context.jump_to.board_name}}},
+					sBoardChildLevelIndicator: "==",
+					sBoardPrefix: "=> ",
+					sCatSeparator: "-----------------------------",
+					sCatPrefix: "",
+					bNoRedirect: true,
+					bDisabled: true,
+					sCustomName: "move_to"
+				});
+
+			{{/if}}
+				aJumpTo[aJumpTo.length] = new JumpTo({
+					sContainerId: "search_jump_to",
+					sJumpToTemplate: '<label class="smalltext jump_to" for="%select_id%">' + {{{json context.jump_to.label}}} + '</label> %dropdown_list%',
+					iCurBoardId: 0,
+					iCurBoardChildLevel: 0,
+					sCurBoardName: {{{json context.jump_to.board_name}}},
+					sBoardChildLevelIndicator: "==",
+					sBoardPrefix: "=> ",
+					sCatSeparator: "-----------------------------",
+					sCatPrefix: "",
+					sGoButtonLabel: {{{json txt.quick_mod_go}}}
+				});
+			}
+		</script>

@@ -5,11 +5,11 @@
 				<h3 class="catbg">{{get_text 'paid_' context.action_type '_subscription'}}</h3>
 			</div>
 
-			{{#if context.disable_groups}}
+{{#if context.disable_groups}}
 			<div class="information">
 				<span class="alert">{{{txt.paid_mod_edit_note}}}</span>
 			</div>
-			{{/if}}
+{{/if}}
 
 			<div class="windowbg2">
 				<dl class="settings">
@@ -58,9 +58,11 @@
 					</dt>
 					<dd>
 
-						{{#each context.groups}}
-						<label for="addgroup_{{@key}}"><input type="checkbox" id="addgroup_{{@key}}" name="addgroup[{{@key}}]"{{#if (in_array @key ../context.sub.add_groups)}} checked{{/if}}{{#if context.disable_groups}} disabled{{/if}}>&nbsp;<span class="smalltext">{{{.}}}</span></label><br>
-						{{/each}}
+{{#each context.groups}}
+						<label for="addgroup_{{@key}}">
+							<input type="checkbox" id="addgroup_{{@key}}" name="addgroup[{{@key}}]"{{#if (in_array @key ../context.sub.add_groups)}} checked{{/if}}{{#if context.disable_groups}} disabled{{/if}}>&nbsp;<span class="smalltext">{{{.}}}</span>
+						</label><br>
+{{/each}}
 
 					</dd>
 					<dt>

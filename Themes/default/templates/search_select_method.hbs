@@ -4,7 +4,9 @@
 			<h3 class="catbg">{{{txt.search_method}}}</h3>
 		</div>
 		<div class="information">
-			<div class="smalltext" style="font-weight: normal;"><a href="{{scripturl}}?action=helpadmin;help=search_why_use_index" onclick="return reqOverlayDiv(this.href);">{{{txt.search_create_index_why}}}</a></div>
+			<div class="smalltext" style="font-weight: normal;">
+				<a href="{{scripturl}}?action=helpadmin;help=search_why_use_index" onclick="return reqOverlayDiv(this.href);">{{{txt.search_create_index_why}}}</a>
+			</div>
 		</div>
 		<form id="admin_form_wrapper" action="{{scripturl}}?action=admin;area=managesearch;sa=method" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
@@ -12,7 +14,8 @@
 			</div>
 			<div class="windowbg2 noup">
 				<dl class="settings">
-				{{#if context.table_info}}
+
+{{#if context.table_info}}
 					<dt>
 						<strong>{{{txt.search_method_messages_table_space}}}:</strong>
 					</dt>
@@ -25,12 +28,12 @@
 					<dd>
 						{{{context.table_info.index_length}}}
 					</dd>
-				{{/if}}
+{{/if}}
 				</dl>
 
-				{{#if context.double_index}}
-					<div class="noticebox">{{{txt.search_double_index}}}</div>
-				{{/if}}
+{{#if context.double_index}}
+				<div class="noticebox">{{{txt.search_double_index}}}</div>
+{{/if}}
 
 				<fieldset class="search_settings floatleft">
 					<legend>{{{txt.search_index}}}</legend>
@@ -40,26 +43,27 @@
 							{{{txt.search_index_none}}}
 						</dt>
 
-						{{#if context.supports_fulltext}}
+{{#if context.supports_fulltext}}
 						<dt>
 							<input type="radio" name="search_index" value="fulltext"{{#if (eq modSettings.search_index 'fulltext')}} checked{{/if}}{{#unless context.fulltext_index}} onclick="alert('{{{txt.search_method_fulltext_warning}}}'); selectRadioByName(this.form.search_index, 'fulltext');"{{/unless}}>
 							{{{txt.search_method_fulltext_index}}}
 						</dt>
 						<dd>
 							<span class="smalltext">
-							{{#if context.fulltext_index}}
+
+	{{#if context.fulltext_index}}
 								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_already_exist}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removefulltext;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_method_fulltext_remove}}}</a>]<br>
 								<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.fulltext_length}}}
-							{{else}}
-								{{#if context.cannot_create_fulltext}}
-									<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_fulltext_cannot_create}}}
-								{{else}}
-									<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_no_index_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createfulltext;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_method_fulltext_create}}}</a>]
-								{{/if}}
-							{{/if}}
+	{{else}}
+		{{#if context.cannot_create_fulltext}}
+								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_fulltext_cannot_create}}}
+		{{else}}
+								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_no_index_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createfulltext;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_method_fulltext_create}}}</a>]
+		{{/if}}
+	{{/if}}
 							</span>
 						</dd>
-						{{/if}}
+{{/if}}
 
 						<dt>
 							<input type="radio" name="search_index" value="custom"{{#if (eq modSettings.search_index 'custom')}} checked{{/if}}{{#unless context.custom_index}} onclick="alert('{{{txt.search_index_custom_warning}}}'); selectRadioByName(this.form.search_method, \'1\');"{{/unless}}>
@@ -67,39 +71,42 @@
 						</dt>
 						<dd>
 							<span class="smalltext">
-								{{#if context.custom_index}}
-									<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_already_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_remove}}}</a>]<br>
-									<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.custom_index_length}}}
-								{{else}}
-									{{#if context.partial_custom_index}}
-										<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_partial}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_remove}}}</a>] [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createmsgindex;resume;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_resume}}}</a>]<br>
-										<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.custom_index_length}}}
-									{{else}}
-										<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_no_index_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createmsgindex">{{{txt.search_index_create_custom}}}</a>]
-									{{/if}}
-								{{/if}}
+
+{{#if context.custom_index}}
+								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_already_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_remove}}}</a>]<br>
+								<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.custom_index_length}}}
+{{else}}
+	{{#if context.partial_custom_index}}
+								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_index_partial}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=removecustom;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_remove}}}</a>] [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createmsgindex;resume;{{session_url}};{{token_url 'admin-msm'}}">{{{txt.search_index_custom_resume}}}</a>]<br>
+								<strong>{{{txt.search_index_size}}}:</strong> {{{context.table_info.custom_index_length}}}
+	{{else}}
+								<strong>{{{txt.search_index_label}}}:</strong> {{{txt.search_method_no_index_exists}}} [<a href="{{scripturl}}?action=admin;area=managesearch;sa=createmsgindex">{{{txt.search_index_create_custom}}}</a>]
+	{{/if}}
+{{/if}}
 							</span>
 						</dd>
 
-						{{#each context.search_apis}}
-							{{#if (and label (not has_template))}}
-								<dt>
-									<input type="radio" name="search_index" value="{{{setting_index}}}"{{#if (eq ../modSettings.search_index setting_index)}} checked{{/if}}>
-									{{{label}}}
-								</dt>
-								{{#if desc}}
-									<dd>
-										<span class="smalltext">{{{desc}}}</span>
-									</dd>
-								{{/if}}
-							{{/if}}
-						{{/each}}
+{{#each context.search_apis}}
+	{{#if (and label (not has_template))}}
+						<dt>
+							<input type="radio" name="search_index" value="{{{setting_index}}}"{{#if (eq ../modSettings.search_index setting_index)}} checked{{/if}}>
+							{{{label}}}
+						</dt>
+		{{#if desc}}
+						<dd>
+							<span class="smalltext">{{{desc}}}</span>
+						</dd>
+		{{/if}}
+	{{/if}}
+{{/each}}
 					</dl>
 				</fieldset>
 				<fieldset class="search_settings floatright">
-				<legend>{{{txt.search_method}}}</legend>
-					<input type="checkbox" name="search_force_index" id="search_force_index_check" value="1"{{#if modSettings.force_index}} checked{{/if}}><label for="search_force_index_check">{{{txt.search_force_index}}}</label><br>
-					<input type="checkbox" name="search_match_words" id="search_match_words_check" value="1"{{#if modSettings.search_match_words}} checked{{/if}}><label for="search_match_words_check">{{{txt.search_match_words}}}</label>
+					<legend>{{{txt.search_method}}}</legend>
+					<input type="checkbox" name="search_force_index" id="search_force_index_check" value="1"{{#if modSettings.force_index}} checked{{/if}}>
+					<label for="search_force_index_check">{{{txt.search_force_index}}}</label><br>
+					<input type="checkbox" name="search_match_words" id="search_match_words_check" value="1"{{#if modSettings.search_match_words}} checked{{/if}}>
+					<label for="search_match_words_check">{{{txt.search_match_words}}}</label>
 				</fieldset>
 				<br class="clear">
 				<input type="submit" name="save" value="{{{txt.search_method_save}}}" class="button_submit">

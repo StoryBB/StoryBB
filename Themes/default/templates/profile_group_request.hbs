@@ -7,17 +7,17 @@
 		</div>
 		<p class="information">{{{txt.groupMembership_info}}}</p>
 
-		{{! Do we have an update message? }}
-		{{#if context.update_message}}
-			<div class="infobox">
-				{{{context.update_message}}}.
-			</div>
-		{{/if}}
+{{! Do we have an update message? }}
+{{#if context.update_message}}
+		<div class="infobox">
+			{{{context.update_message}}}.
+		</div>
+{{/if}}
 
 		<div id="groups">
 
-			{{! Requesting membership to a group? }}
-			{{#if context.group_request}}
+{{! Requesting membership to a group? }}
+{{#if context.group_request}}
 			<div class="groupmembership">
 				<div class="cat_bar">
 					<h3 class="catbg">{{{txt.request_group_membership}}}</h3>
@@ -31,83 +31,86 @@
 					</div>
 				</div>
 			</div>
-			{{else}}
-				<div class="title_bar">
-					<h3 class="titlebg">{{{txt.current_membergroups}}}</h3>
-				</div>
+{{else}}
+			<div class="title_bar">
+				<h3 class="titlebg">{{{txt.current_membergroups}}}</h3>
+			</div>
 
-				{{#each context.groups.member}}
-					<div class="windowbg" id="primdiv_{{id}}">
+	{{#each context.groups.member}}
+			<div class="windowbg" id="primdiv_{{id}}">
 
-						{{#if ../context.can_edit_primary}}
-						<input type="radio" name="primary" id="primary_{{id}}" value="{{id}}"{{#if is_primary}} checked{{/if}} onclick="highlightSelected('primdiv_{{id}}');"{{#unless can_be_primary}} disabled{{/unless}}>
-						{{/if}}
+		{{#if ../context.can_edit_primary}}
+				<input type="radio" name="primary" id="primary_{{id}}" value="{{id}}"{{#if is_primary}} checked{{/if}} onclick="highlightSelected('primdiv_{{id}}');"{{#unless can_be_primary}} disabled{{/unless}}>
+		{{/if}}
 
-						<label for="primary_{{id}}">
-							<strong>{{#if color}}<span style="color: {{color}}">{{{name}}}</span>{{else}}{{{name}}}{{/if}}</strong>
-							{{#if desc}}<br><span class="smalltext">{{{desc}}}</span>{{/if}}
-						</label>
+				<label for="primary_{{id}}">
+					<strong>{{#if color}}<span style="color: {{color}}">{{{name}}}</span>{{else}}{{{name}}}{{/if}}</strong>
+					{{#if desc}}<br><span class="smalltext">{{{desc}}}</span>{{/if}}
+				</label>
 
-						{{! Can they leave their group? }}
-						{{#if can_leave}}
-						<a href="{{../scripturl}}?action=profile;save;u={{../context.id_member}};area=groupmembership;{{session_url}};gid={{id}};{{token_url context.token_check}}">{{{../txt.leave_group}}}</a>
-						{{/if}}
+		{{! Can they leave their group? }}
+		{{#if can_leave}}
+				<a href="{{../scripturl}}?action=profile;save;u={{../context.id_member}};area=groupmembership;{{session_url}};gid={{id}};{{token_url context.token_check}}">{{{../txt.leave_group}}}</a>
+		{{/if}}
 
-					</div>
-				{{/each}}
+			</div>
+	{{/each}}
 
-				{{#if context.can_edit_primary}}
-				<div class="padding righttext">
-					<input type="submit" value="{{{txt.make_primary}}}" class="button_submit">
-				</div>
-				{{/if}}
+	{{#if context.can_edit_primary}}
+			<div class="padding righttext">
+				<input type="submit" value="{{{txt.make_primary}}}" class="button_submit">
+			</div>
+	{{/if}}
 
-				{{! Any groups they can join? }}
-				{{#if context.groups.available}}
-					<div class="title_bar">
-						<h3 class="titlebg">{{{txt.available_groups}}}</h3>
-					</div>
+	{{! Any groups they can join? }}
+	{{#if context.groups.available}}
+			<div class="title_bar">
+				<h3 class="titlebg">{{{txt.available_groups}}}</h3>
+			</div>
 
-					{{#each context.groups.available}}
-						<div class="windowbg">
-							<strong>{{#if color}}<span style="color: {{color}}">{{{name}}}</span>{{else}}{{{name}}}{{/if}}</strong>
-							{{#if desc}}<br><span class="smalltext">{{{desc}}}</span>{{/if}}
+		{{#each context.groups.available}}
+			<div class="windowbg">
+				<strong>{{#if color}}<span style="color: {{color}}">{{{name}}}</span>{{else}}{{{name}}}{{/if}}</strong>
+				{{#if desc}}<br><span class="smalltext">{{{desc}}}</span>{{/if}}
 
-							{{#if (eq_coerce type 3)}}
-								<a href="{{../scripturl}}?action=profile;save;u={{../context.id_member}};area=groupmembership;{{session_url}};gid={{id}};{{token_url ../context.token_check}}" class="button floatright">{{{../txt.join_group}}}</a>
-							{{/if}}
-							{{#if (eq_coerce type 2)}}
-								{{#if pending}}
-									<span class="floatright">{{{../txt.approval_pending}}}</span>
-								{{else}}
-									<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=groupmembership;request={{id}}" class="button floatright">{{{../txt.request_group}}}</a>
-								{{/if}}
-							{{/if}}
-						</div>
-					{{/each}}
-				{{/if}}
-
-				<script>
-				var prevClass = "";
-				var prevDiv = "";
-				function highlightSelected(box)
-				{
-					if (prevClass != "")
-					{
-						prevDiv.className = prevClass;
-					}
-					prevDiv = document.getElementById(box);
-					prevClass = prevDiv.className;
-
-					prevDiv.className = "windowbg";
-				}
-				{{#if context.highlight_primary}}
-				highlightSelected("primdiv_{{context.primary_group}}");
-				{{/if}}
-				</script>
+			{{#if (eq_coerce type 3)}}
+				<a href="{{../scripturl}}?action=profile;save;u={{../context.id_member}};area=groupmembership;{{session_url}};gid={{id}};{{token_url ../context.token_check}}" class="button floatright">{{{../txt.join_group}}}</a>
 			{{/if}}
 
-		</div>
+			{{#if (eq_coerce type 2)}}
+				{{#if pending}}
+					<span class="floatright">{{{../txt.approval_pending}}}</span>
+				{{else}}
+					<a href="{{../scripturl}}?action=profile;u={{../context.id_member}};area=groupmembership;request={{id}}" class="button floatright">{{{../txt.request_group}}}</a>
+				{{/if}}
+			{{/if}}
+
+			</div>
+
+		{{/each}}
+	{{/if}}
+
+			<script>
+			var prevClass = "";
+			var prevDiv = "";
+			function highlightSelected(box)
+			{
+				if (prevClass != "")
+				{
+					prevDiv.className = prevClass;
+				}
+				prevDiv = document.getElementById(box);
+				prevClass = prevDiv.className;
+
+				prevDiv.className = "windowbg";
+			}
+			{{#if context.highlight_primary}}
+			highlightSelected("primdiv_{{context.primary_group}}");
+			{{/if}}
+			</script>
+{{/if}}
+
+		</div><!-- #groups -->
 		{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
 		{{session_form}}
 

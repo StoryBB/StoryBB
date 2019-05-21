@@ -7,17 +7,20 @@
 	<div id="tracking" class="windowbg2 noup">
 		<dl class="settings noborder">
 			<dt>{{{txt.most_recent_ip}}}:
-				{{#if context.last_ip2}}<br>
+
+{{#if context.last_ip2}}
+				<br>
 				<span class="smalltext">(<a href="{{scripturl}}?action=helpadmin;help=whytwoip" onclick="return reqOverlayDiv(this.href);">{{{txt.why_two_ip_address}}}</a>)</span>
-				{{/if}}
+{{/if}}
+
 			</dt>
 			<dd>
-			<a href="{{scripturl}}?action=profile;area=tracking;sa=ip;searchip={{{context.last_ip}}};u={{{context.member.id}}}">{{{context.last_ip}}}</a>
+				<a href="{{scripturl}}?action=profile;area=tracking;sa=ip;searchip={{{context.last_ip}}};u={{{context.member.id}}}">{{{context.last_ip}}}</a>
 
-			{{! Second address detected? }}
-			{{#if context.last_ip2}}
+{{! Second address detected? }}
+{{#if context.last_ip2}}
 				<a href="{{scripturl}}?action=profile;area=tracking;sa=ip;searchip={{{context.last_ip2}}};u={{{context.member.id}}}">{{{context.last_ip2}}}</a>
-			{{/if}}
+{{/if}}
 			</dd>
 
 			{{! Lists of IP addresses used in messages / error messages. }}
