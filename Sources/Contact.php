@@ -22,9 +22,9 @@ function Contact()
 	$context['sub_template'] = 'contact_form';
 
 	require_once($sourcedir . '/Subs-Editor.php');
-	$verificationOptions = array(
+	$verificationOptions = [
 		'id' => 'contact',
-	);
+	];
 
 	$context['contact'] = [
 		'name' => '',
@@ -100,7 +100,7 @@ function Contact()
 			$alert_rows = [];
 			foreach ($admins as $id_member)
 			{
-				$alert_rows[] = array(
+				$alert_rows[] = [
 					'alert_time' => time(),
 					'id_member' => $id_member,
 					'id_member_started' => $context['user']['id'],
@@ -110,19 +110,19 @@ function Contact()
 					'content_action' => 'received',
 					'is_read' => 0,
 					'extra' => json_encode(['contact_link' => '?action=admin;area=contactform;sa=viewcontact;msg=' . $message]),
-				);
+				];
 			}
 
 			if (!empty($alert_rows))
 			{
 				$smcFunc['db_insert']('',
 					'{db_prefix}user_alerts',
-					array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
-						'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+					['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+						'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 					$alert_rows,
 					[]
 				);
-				updateMemberData($admins, array('alerts' => '+'));
+				updateMemberData($admins, ['alerts' => '+']);
 			}
 
 			// And send users on their way.

@@ -56,7 +56,7 @@ function SaveDraft(&$post_errors)
 	$draft['smileys_enabled'] = isset($_POST['ns']) ? (int) $_POST['ns'] : 0;
 	$draft['locked'] = isset($_POST['lock']) ? (int) $_POST['lock'] : 0;
 	$draft['sticky'] = isset($_POST['sticky']) ? (int) $_POST['sticky'] : 0;
-	$draft['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
+	$draft['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
 	$draft['body'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
 
 	// message and subject still need a bit more work
@@ -80,7 +80,7 @@ function SaveDraft(&$post_errors)
 				locked = {int:locked},
 				is_sticky = {int:is_sticky}
 			WHERE id_draft = {int:id_draft}',
-			array(
+			[
 				'id_topic' => $topic_id,
 				'id_board' => $board,
 				'poster_time' => time(),
@@ -91,7 +91,7 @@ function SaveDraft(&$post_errors)
 				'locked' => $draft['locked'],
 				'is_sticky' => $draft['sticky'],
 				'id_draft' => $id_draft,
-			)
+			]
 		);
 
 		// some items to return to the form
@@ -106,7 +106,7 @@ function SaveDraft(&$post_errors)
 	{
 		$id_draft = $smcFunc['db_insert']('',
 			'{db_prefix}user_drafts',
-			array(
+			[
 				'id_topic' => 'int',
 				'id_board' => 'int',
 				'type' => 'int',
@@ -118,8 +118,8 @@ function SaveDraft(&$post_errors)
 				'icon' => 'string-16',
 				'locked' => 'int',
 				'is_sticky' => 'int'
-			),
-			array(
+			],
+			[
 				$topic_id,
 				$board,
 				0,
@@ -131,10 +131,10 @@ function SaveDraft(&$post_errors)
 				$draft['icon'],
 				$draft['locked'],
 				$draft['sticky']
-			),
-			array(
+			],
+			[
 				'id_draft'
-			),
+			],
 			1
 		);
 
@@ -206,7 +206,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 	// prepare the data we got from the form
 	$reply_id = empty($_POST['replied_to']) ? 0 : (int) $_POST['replied_to'];
 	$draft['body'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
-	$draft['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
+	$draft['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
 
 	// message and subject always need a bit more work
 	preparsecode($draft['body']);
@@ -226,7 +226,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 				to_list = {string:to_list}
 			WHERE id_draft = {int:id_pm_draft}
 			LIMIT 1',
-			array(
+			[
 				'id_reply' => $reply_id,
 				'type' => 1,
 				'poster_time' => time(),
@@ -234,7 +234,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 				'body' => $draft['body'],
 				'id_pm_draft' => $id_pm_draft,
 				'to_list' => json_encode($recipientList),
-			)
+			]
 		);
 
 		// some items to return to the form
@@ -246,7 +246,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 	{
 		$id_pm_draft = $smcFunc['db_insert']('',
 			'{db_prefix}user_drafts',
-			array(
+			[
 				'id_reply' => 'int',
 				'type' => 'int',
 				'poster_time' => 'int',
@@ -254,8 +254,8 @@ function SavePMDraft(&$post_errors, $recipientList)
 				'subject' => 'string-255',
 				'body' => 'string-65534',
 				'to_list' => 'string-255',
-			),
-			array(
+			],
+			[
 				$reply_id,
 				1,
 				time(),
@@ -263,10 +263,10 @@ function SavePMDraft(&$post_errors, $recipientList)
 				$draft['subject'],
 				$draft['body'],
 				json_encode($recipientList),
-			),
-			array(
+			],
+			[
 				'id_draft'
-			),
+			],
 			1
 		);
 
@@ -321,12 +321,12 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 			AND type = {int:type}' . (!empty($modSettings['drafts_keep_days']) ? '
 			AND poster_time > {int:time}' : '') . '
 		LIMIT 1',
-		array(
+		[
 			'id_member' => $user_info['id'],
 			'id_draft' => $id_draft,
 			'type' => $type,
 			'time' => (!empty($modSettings['drafts_keep_days']) ? (time() - ($modSettings['drafts_keep_days'] * 86400)) : 0),
-		)
+		]
 	);
 
 	// no results?
@@ -389,7 +389,7 @@ function DeleteDraft($id_draft, $check = true)
 
 	// Only a single draft.
 	if (is_numeric($id_draft))
-		$id_draft = array($id_draft);
+		$id_draft = [$id_draft];
 
 	// can't delete nothing
 	if (empty($id_draft) || ($check && empty($user_info['id'])))
@@ -399,10 +399,10 @@ function DeleteDraft($id_draft, $check = true)
 		DELETE FROM {db_prefix}user_drafts
 		WHERE id_draft IN ({array_int:id_draft})' . ($check ? '
 			AND  id_member = {int:id_member}' : ''),
-		array(
+		[
 			'id_draft' => $id_draft,
 			'id_member' => empty($user_info['id']) ? -1 : $user_info['id'],
-		)
+		]
 	);
 }
 
@@ -441,12 +441,12 @@ function ShowDrafts($member_id, $topic = false, $draft_type = 0)
 			AND type = {int:draft_type}' . (!empty($modSettings['drafts_keep_days']) ? '
 			AND poster_time > {int:time}' : '') . '
 		ORDER BY poster_time DESC',
-		array(
+		[
 			'id_member' => $member_id,
 			'id_topic' => (int) $topic,
 			'draft_type' => $draft_type,
 			'time' => (!empty($modSettings['drafts_keep_days']) ? (time() - ($modSettings['drafts_keep_days'] * 86400)) : 0),
-		)
+		]
 	);
 
 	// add them to the draft array for display
@@ -459,21 +459,21 @@ function ShowDrafts($member_id, $topic = false, $draft_type = 0)
 		if ($draft_type === 0)
 		{
 			$tmp_subject = shorten_subject(stripslashes($row['subject']), 24); 
-			$context['drafts'][] = array(
+			$context['drafts'][] = [
 				'subject' => censorText($tmp_subject),
 				'poster_time' => timeformat($row['poster_time']),
 				'link' => '<a href="' . $scripturl . '?action=post;board=' . $row['id_board'] . ';' . (!empty($row['id_topic']) ? 'topic=' . $row['id_topic'] . '.0;' : '') . 'id_draft=' . $row['id_draft'] . '">' . $row['subject'] . '</a>',
-			);
+			];
 		}
 		// PM drafts
 		elseif ($draft_type === 1)
 		{
 			$tmp_subject = shorten_subject(stripslashes($row['subject']), 24);
-			$context['drafts'][] = array(
+			$context['drafts'][] = [
 				'subject' => censorText($tmp_subject),
 				'poster_time' => timeformat($row['poster_time']),
 				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;id_draft=' . $row['id_draft'] . '">' . (!empty($row['subject']) ? $row['subject'] : $txt['drafts_none']) . '</a>',
-			);
+			];
 		}
 	}
 	$smcFunc['db_free_result']($request);
@@ -527,11 +527,11 @@ function showProfileDrafts($memID, $draft_type = 0)
 				AND id_member = {int:id_member}
 				AND type = {int:draft_type}
 			LIMIT 1',
-			array(
+			[
 				'id_draft' => $id_delete,
 				'id_member' => $memID,
 				'draft_type' => $draft_type,
-			)
+			]
 		);
 
 		redirectexit('action=profile;u=' . $memID . ';area=showdrafts;start=' . $context['start']);
@@ -550,11 +550,11 @@ function showProfileDrafts($memID, $draft_type = 0)
 		WHERE id_member = {int:id_member}
 			AND type={int:draft_type}' . (!empty($modSettings['drafts_keep_days']) ? '
 			AND poster_time > {int:time}' : ''),
-		array(
+		[
 			'id_member' => $memID,
 			'draft_type' => $draft_type,
 			'time' => (!empty($modSettings['drafts_keep_days']) ? (time() - ($modSettings['drafts_keep_days'] * 86400)) : 0),
-		)
+		]
 	);
 	list ($msgCount) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -589,13 +589,13 @@ function showProfileDrafts($memID, $draft_type = 0)
 			AND poster_time > {int:time}' : '') . '
 		ORDER BY ud.id_draft ' . ($reverse ? 'ASC' : 'DESC') . '
 		LIMIT {int:start}, {int:max}',
-		array(
+		[
 			'current_member' => $memID,
 			'draft_type' => $draft_type,
 			'time' => (!empty($modSettings['drafts_keep_days']) ? (time() - ($modSettings['drafts_keep_days'] * 86400)) : 0),
 			'start' => $start,
 			'max' => $maxIndex,
-		)
+		]
 	);
 
 	// Start counting at the number of the first message displayed.
@@ -618,17 +618,17 @@ function showProfileDrafts($memID, $draft_type = 0)
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], 'draft' . $row['id_draft']);
 
 		// And the array...
-		$context['drafts'][$counter += $reverse ? -1 : 1] = array(
+		$context['drafts'][$counter += $reverse ? -1 : 1] = [
 			'body' => $row['body'],
 			'counter' => $counter,
-			'board' => array(
+			'board' => [
 				'name' => $row['bname'],
 				'id' => $row['id_board']
-			),
-			'topic' => array(
+			],
+			'topic' => [
 				'id' => $row['id_topic'],
 				'link' => empty($row['id']) ? $row['subject'] : '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
-			),
+			],
 			'subject' => $row['subject'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
@@ -636,7 +636,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 			'id_draft' => $row['id_draft'],
 			'locked' => (bool) $row['locked'],
 			'sticky' => (bool) $row['is_sticky'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -645,11 +645,11 @@ function showProfileDrafts($memID, $draft_type = 0)
 		$context['drafts'] = array_reverse($context['drafts'], true);
 
 	// Menu tab
-	$context[$context['profile_menu_name']]['tab_data'] = array(
+	$context[$context['profile_menu_name']]['tab_data'] = [
 		'title' => $txt['drafts_show'],
 		'description' => $txt['drafts_show_desc'],
 		'icon_class' => 'pm_icons inbox'
-	);
+	];
 	$context['sub_template'] = 'profile_show_drafts';
 }
 
@@ -680,11 +680,11 @@ function showPMDrafts($memID = -1)
 				AND id_member = {int:id_member}
 				AND type = {int:draft_type}
 			LIMIT 1',
-			array(
+			[
 				'id_draft' => $id_delete,
 				'id_member' => $memID,
 				'draft_type' => $draft_type,
-			)
+			]
 		);
 
 		// now redirect back to the list
@@ -710,11 +710,11 @@ function showPMDrafts($memID = -1)
 		WHERE id_member = {int:id_member}
 			AND type={int:draft_type}' . (!empty($modSettings['drafts_keep_days']) ? '
 			AND poster_time > {int:time}' : ''),
-		array(
+		[
 			'id_member' => $memID,
 			'draft_type' => $draft_type,
 			'time' => (!empty($modSettings['drafts_keep_days']) ? (time() - ($modSettings['drafts_keep_days'] * 86400)) : 0),
-		)
+		]
 	);
 	list ($msgCount) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -745,13 +745,13 @@ function showPMDrafts($memID = -1)
 			AND poster_time > {int:time}' : '') . '
 		ORDER BY ud.id_draft ' . ($reverse ? 'ASC' : 'DESC') . '
 		LIMIT {int:start}, {int:max}',
-		array(
+		[
 			'current_member' => $memID,
 			'draft_type' => $draft_type,
 			'time' => (!empty($modSettings['drafts_keep_days']) ? (time() - ($modSettings['drafts_keep_days'] * 86400)) : 0),
 			'start' => $start,
 			'max' => $maxIndex,
-		)
+		]
 	);
 
 	// Start counting at the number of the first message displayed.
@@ -774,10 +774,10 @@ function showPMDrafts($memID = -1)
 		$row['body'] = parse_bbc($row['body'], true, 'draft' . $row['id_draft']);
 
 		// Have they provide who this will go to?
-		$recipients = array(
+		$recipients = [
 			'to' => [],
 			'bcc' => [],
-		);
+		];
 		$recipient_ids = (!empty($row['to_list'])) ? sbb_json_decode($row['to_list'], true) : [];
 
 		// @todo ... this is a bit ugly since it runs an extra query for every message, do we want this?
@@ -792,9 +792,9 @@ function showPMDrafts($memID = -1)
 				SELECT id_member, real_name
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:member_list})',
-				array(
+				[
 					'member_list' => $allRecipients,
-				)
+				]
 			);
 			while ($result = $smcFunc['db_fetch_assoc']($request_2))
 			{
@@ -805,7 +805,7 @@ function showPMDrafts($memID = -1)
 		}
 
 		// Add the items to the array for template use
-		$context['drafts'][$counter += $reverse ? -1 : 1] = array(
+		$context['drafts'][$counter += $reverse ? -1 : 1] = [
 			'body' => $row['body'],
 			'counter' => $counter,
 			'subject' => $row['subject'],
@@ -815,7 +815,7 @@ function showPMDrafts($memID = -1)
 			'recipients' => $recipients,
 			'age' => floor((time() - $row['poster_time']) / 86400),
 			'remaining' => (!empty($modSettings['drafts_keep_days']) ? floor($modSettings['drafts_keep_days'] - ((time() - $row['poster_time']) / 86400)) : 0),
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -826,8 +826,8 @@ function showPMDrafts($memID = -1)
 	// off to the template we go
 	$context['page_title'] = $txt['drafts'];
 	$context['sub_template'] = 'personal_message_drafts';
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=pm;sa=showpmdrafts',
 		'name' => $txt['drafts'],
-	);
+	];
 }

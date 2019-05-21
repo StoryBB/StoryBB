@@ -379,25 +379,25 @@ function CharacterImmersion($return_config = false)
 	loadLanguage('ManageSettings');
 	require_once($sourcedir . '/ManageServer.php');
 
-	$config_vars = array(
-			array('select', 'characters_ic_may_post', array(
+	$config_vars = [
+			['select', 'characters_ic_may_post', [
 				'ic' => $txt['ic_boards_only'],
 				'icooc' => $txt['ic_and_ooc_boards'],
-			)),
-			array('select', 'characters_ooc_may_post', array(
+			]],
+			['select', 'characters_ooc_may_post', [
 				'ooc' => $txt['ooc_boards_only'],
 				'icooc' => $txt['ic_and_ooc_boards'],
-			)),
+			]],
 		'',
-			array('select', 'enable_immersive_mode', [
+			['select', 'enable_immersive_mode', [
 				'user_on' => $txt['enable_immersive_mode_user_on'],
 				'user_off' => $txt['enable_immersive_mode_user_off'],
 				'off' => $txt['enable_immersive_mode_off'],
 				'on' => $txt['enable_immersive_mode_on'],
-			]),
-	);
+			]],
+	];
 
-	call_integration_hook('integrate_immersion_settings', array(&$config_vars));
+	call_integration_hook('integrate_immersion_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;

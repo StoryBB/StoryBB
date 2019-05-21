@@ -61,7 +61,7 @@ function writeLog($force = false)
 
 	if (!empty($modSettings['who_enabled']))
 	{
-		$encoded_get = truncateArray($_GET) + array('USER_AGENT' => $_SERVER['HTTP_USER_AGENT']);
+		$encoded_get = truncateArray($_GET) + ['USER_AGENT' => $_SERVER['HTTP_USER_AGENT']];
 
 		// In the case of a dlattach action, session_var may not be set.
 		if (!isset($context['session_var']))
@@ -88,10 +88,10 @@ function writeLog($force = false)
 				DELETE FROM {db_prefix}log_online
 				WHERE log_time < {int:log_time}
 					AND session != {string:session}',
-				array(
+				[
 					'log_time' => time() - $modSettings['lastActive'] * 60,
 					'session' => $session_id,
-				)
+				]
 			);
 
 			// Cache when we did it last.
@@ -102,12 +102,12 @@ function writeLog($force = false)
 			UPDATE {db_prefix}log_online
 			SET log_time = {int:log_time}, ip = {inet:ip}, url = {string:url}
 			WHERE session = {string:session}',
-			array(
+			[
 				'log_time' => time(),
 				'ip' => $user_info['ip'],
 				'url' => $encoded_get,
 				'session' => $session_id,
-			)
+			]
 		);
 
 		// Guess it got deleted.
@@ -124,17 +124,17 @@ function writeLog($force = false)
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}log_online
 				WHERE ' . ($do_delete ? 'log_time < {int:log_time}' : '') . ($do_delete && !empty($user_info['id']) ? ' OR ' : '') . (empty($user_info['id']) ? '' : 'id_member = {int:current_member}'),
-				array(
+				[
 					'current_member' => $user_info['id'],
 					'log_time' => time() - $modSettings['lastActive'] * 60,
-				)
+				]
 			);
 
 		$smcFunc['db_insert']($do_delete ? 'ignore' : 'replace',
 			'{db_prefix}log_online',
-			array('session' => 'string', 'id_member' => 'int', 'id_character' => 'int', 'robot_name' => 'string', 'log_time' => 'int', 'ip' => 'inet', 'url' => 'string'),
-			array($session_id, $user_info['id'], $user_info['id_character'], empty($_SESSION['robot_name']) ? '' : $_SESSION['robot_name'], time(), $user_info['ip'], $encoded_get),
-			array('session')
+			['session' => 'string', 'id_member' => 'int', 'id_character' => 'int', 'robot_name' => 'string', 'log_time' => 'int', 'ip' => 'inet', 'url' => 'string'],
+			[$session_id, $user_info['id'], $user_info['id_character'], empty($_SESSION['robot_name']) ? '' : $_SESSION['robot_name'], time(), $user_info['ip'], $encoded_get],
+			['session']
 		);
 	}
 
@@ -146,7 +146,7 @@ function writeLog($force = false)
 		$_SESSION['timeOnlineUpdated'] = time();
 
 	// Set their login time, if not already done within the last minute.
-	if (STORYBB != 'SSI' && !empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('.xml', 'login2', 'logintfa'))))
+	if (STORYBB != 'SSI' && !empty($user_info['last_login']) && $user_info['last_login'] < time() - 60 && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml', 'login2', 'logintfa'])))
 	{
 		// Don't count longer than 15 minutes.
 		if (time() - $_SESSION['timeOnlineUpdated'] > 60 * 15)
@@ -157,12 +157,12 @@ function writeLog($force = false)
 			UPDATE {db_prefix}characters
 			SET last_active = {int:last_active}
 			WHERE id_character = {int:character}',
-			array(
+			[
 				'last_active' => time(),
 				'character' => $user_info['id_character'],
-			)
+			]
 		);
-		updateMemberData($user_info['id'], array('last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP'], 'total_time_logged_in' => $user_settings['total_time_logged_in']));
+		updateMemberData($user_info['id'], ['last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP'], 'total_time_logged_in' => $user_settings['total_time_logged_in']]);
 
 		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
 			cache_put_data('user_settings-' . $user_info['id'], $user_settings, 60);
@@ -198,7 +198,7 @@ function displayDebug()
 	{
 		if (file_exists($files[$i]))
 			$total_size += filesize($files[$i]);
-		$files[$i] = strtr($files[$i], array($boarddir => '.', $sourcedir => '(Sources)', $cachedir => '(Cache)', $settings['actual_theme_dir'] => '(Current Theme)'));
+		$files[$i] = strtr($files[$i], [$boarddir => '.', $sourcedir => '(Sources)', $cachedir => '(Cache)', $settings['actual_theme_dir'] => '(Current Theme)']);
 	}
 
 	$warnings = 0;
@@ -272,7 +272,7 @@ function displayDebug()
 			// Temporary tables created in earlier queries are not explainable.
 			if ($is_select)
 			{
-				foreach (array('log_topics_unread', 'topics_posted_in', 'tmp_log_search_topics', 'tmp_log_search_messages') as $tmp)
+				foreach (['log_topics_unread', 'topics_posted_in', 'tmp_log_search_topics', 'tmp_log_search_messages'] as $tmp)
 					if (strpos(trim($qq['q']), $tmp) !== false)
 					{
 						$is_select = false;
@@ -331,9 +331,9 @@ function trackStats($stats = [])
 	$setStringUpdate = '';
 	$insert_keys = [];
 	$date = strftime('%Y-%m-%d', forum_time(false));
-	$update_parameters = array(
+	$update_parameters = [
 		'current_date' => $date,
-	);
+	];
 	foreach ($cache_stats as $field => $change)
 	{
 		$setStringUpdate .= '
@@ -356,9 +356,9 @@ function trackStats($stats = [])
 	{
 		$smcFunc['db_insert']('ignore',
 			'{db_prefix}log_activity',
-			array_merge($insert_keys, array('date' => 'date')),
-			array_merge($cache_stats, array($date)),
-			array('date')
+			array_merge($insert_keys, ['date' => 'date']),
+			array_merge($cache_stats, [$date]),
+			['date']
 		);
 	}
 
@@ -380,11 +380,11 @@ function trackStats($stats = [])
  */
 function logAction($action, $extra = [], $log_type = 'moderate')
 {
-	return logActions(array(array(
+	return logActions([[
 		'action' => $action,
 		'log_type' => $log_type,
 		'extra' => $extra,
-	)));
+	]]);
 }
 
 /**
@@ -398,11 +398,11 @@ function logActions($logs)
 	global $modSettings, $user_info, $smcFunc, $sourcedir;
 
 	$inserts = [];
-	$log_types = array(
+	$log_types = [
 		'moderate' => 1,
 		'user' => 2,
 		'admin' => 3,
-	);
+	];
 
 	// Make sure this particular log is enabled first...
 	if (empty($modSettings['modlog_enabled']))
@@ -412,7 +412,7 @@ function logActions($logs)
 	if (empty($modSettings['adminlog_enabled']))
 		unset ($log_types['admin']);
 
-	call_integration_hook('integrate_log_types', array(&$log_types));
+	call_integration_hook('integrate_log_types', [&$log_types]);
 
 	foreach ($logs as $log)
 	{
@@ -445,24 +445,24 @@ function logActions($logs)
 
 		// @todo cache this?
 		// Is there an associated report on this?
-		if (in_array($log['action'], array('move', 'remove', 'split', 'merge')))
+		if (in_array($log['action'], ['move', 'remove', 'split', 'merge']))
 		{
 			$request = $smcFunc['db_query']('', '
 				SELECT id_report
 				FROM {db_prefix}log_reported
 				WHERE {raw:column_name} = {int:reported}
 				LIMIT 1',
-				array(
+				[
 					'column_name' => !empty($msg_id) ? 'id_msg' : 'id_topic',
 					'reported' => !empty($msg_id) ? $msg_id : $topic_id,
-			));
+			]);
 
 			// Alright, if we get any result back, update open reports.
 			if ($smcFunc['db_num_rows']($request) > 0)
 			{
 				require_once($sourcedir . '/ModerationCenter.php');
 				require_once($sourcedir . '/Subs-ReportedContent.php');
-				updateSettings(array('last_mod_report_action' => time()));
+				updateSettings(['last_mod_report_action' => time()]);
 				recountOpenReports('posts');
 			}
 			$smcFunc['db_free_result']($request);
@@ -497,20 +497,20 @@ function logActions($logs)
 		else
 			$memID = $user_info['id'];
 
-		$inserts[] = array(
+		$inserts[] = [
 			time(), $log_types[$log['log_type']], $memID, $user_info['ip'], $log['action'],
 			$board_id, $topic_id, $msg_id, json_encode($log['extra']),
-		);
+		];
 	}
 
 	$id_action = $smcFunc['db_insert']('',
 		'{db_prefix}log_actions',
-		array(
+		[
 			'log_time' => 'int', 'id_log' => 'int', 'id_member' => 'int', 'ip' => 'inet', 'action' => 'string',
 			'id_board' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string-65534',
-		),
+		],
 		$inserts,
-		array('id_action'),
+		['id_action'],
 		1
 	);
 

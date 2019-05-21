@@ -47,7 +47,7 @@ function Display()
 	if (count($_GET) > 2)
 		foreach ($_GET as $k => $v)
 		{
-			if (!in_array($k, array('topic', 'board', 'start', session_name())))
+			if (!in_array($k, ['topic', 'board', 'start', session_name()]))
 				$context['robot_no_index'] = true;
 		}
 
@@ -74,13 +74,13 @@ function Display()
 					AND (t2.approved = {int:is_approved} OR (t2.id_member_started != {int:id_member_started} AND t2.id_member_started = {int:current_member}))') . '
 				ORDER BY t2.is_sticky' . $order . ', t2.id_last_msg' . $order . '
 				LIMIT 1',
-				array(
+				[
 					'current_board' => $board,
 					'current_member' => $user_info['id'],
 					'current_topic' => $topic,
 					'is_approved' => 1,
 					'id_member_started' => 0,
-				)
+				]
 			);
 
 			// No more left.
@@ -96,12 +96,12 @@ function Display()
 						AND (approved = {int:is_approved} OR (id_member_started != {int:id_member_started} AND id_member_started = {int:current_member}))') . '
 					ORDER BY is_sticky' . $order . ', id_last_msg' . $order . '
 					LIMIT 1',
-					array(
+					[
 						'current_board' => $board,
 						'current_member' => $user_info['id'],
 						'is_approved' => 1,
 						'id_member_started' => 0,
-					)
+					]
 				);
 			}
 
@@ -123,23 +123,23 @@ function Display()
 			UPDATE {db_prefix}topics
 			SET num_views = num_views + 1
 			WHERE id_topic = {int:current_topic}',
-			array(
+			[
 				'current_topic' => $topic,
-			)
+			]
 		);
 
 		$_SESSION['last_read_topic'] = $topic;
 	}
 
-	$topic_parameters = array(
+	$topic_parameters = [
 		'current_member' => $user_info['id'],
 		'current_topic' => $topic,
 		'current_board' => $board,
-	);
+	];
 	$topic_selects = [];
 	$topic_tables = [];
 	$context['topicinfo'] = [];
-	call_integration_hook('integrate_display_topic', array(&$topic_selects, &$topic_tables, &$topic_parameters));
+	call_integration_hook('integrate_display_topic', [&$topic_selects, &$topic_tables, &$topic_parameters]);
 
 	// @todo Why isn't this cached?
 	// @todo if we get id_board in this query and cache it, we can save a query on posting
@@ -180,13 +180,13 @@ function Display()
 			// Mark this as read first
 			$smcFunc['db_insert']($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
 				'{db_prefix}log_topics',
-				array(
+				[
 					'id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int',
-				),
-				array(
+				],
+				[
 					$user_info['id'], $topic, $context['topicinfo']['id_first_msg'], $context['topicinfo']['unwatched'],
-				),
-				array('id_member', 'id_topic')
+				],
+				['id_member', 'id_topic']
 			);
 		}
 		redirectexit('topic=' . $context['topicinfo']['id_redirect_topic'] . '.0', false, true);
@@ -216,10 +216,10 @@ function Display()
 			WHERE id_topic = {int:current_topic}
 				AND id_member = {int:current_member}
 				AND approved = 0',
-			array(
+			[
 				'current_topic' => $topic,
 				'current_member' => $user_info['id'],
-			)
+			]
 		);
 		list ($myUnapprovedPosts) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -253,11 +253,11 @@ function Display()
 						LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})
 					WHERE t.id_topic = {int:current_topic}
 					LIMIT 1',
-					array(
+					[
 						'current_board' => $board,
 						'current_member' => $user_info['id'],
 						'current_topic' => $topic,
-					)
+					]
 				);
 				list ($new_from) = $smcFunc['db_fetch_row']($request);
 				$smcFunc['db_free_result']($request);
@@ -282,12 +282,12 @@ function Display()
 					WHERE poster_time < {int:timestamp}
 						AND id_topic = {int:current_topic}' . ($modSettings['postmod_active'] && $context['topicinfo']['unapproved_posts'] && !allowedTo('approve_posts') ? '
 						AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
-					array(
+					[
 						'current_topic' => $topic,
 						'current_member' => $user_info['id'],
 						'is_approved' => 1,
 						'timestamp' => $timestamp,
-					)
+					]
 				);
 				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
 				$smcFunc['db_free_result']($request);
@@ -314,13 +314,13 @@ function Display()
 					WHERE id_msg < {int:virtual_msg}
 						AND id_topic = {int:current_topic}' . ($modSettings['postmod_active'] && $context['topicinfo']['unapproved_posts'] && !allowedTo('approve_posts') ? '
 						AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
-					array(
+					[
 						'current_member' => $user_info['id'],
 						'current_topic' => $topic,
 						'virtual_msg' => $virtual_msg,
 						'is_approved' => 1,
 						'no_member' => 0,
-					)
+					]
 				);
 				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
 				$smcFunc['db_free_result']($request);
@@ -336,9 +336,9 @@ function Display()
 	if ($context['require_verification'])
 	{
 		require_once($sourcedir . '/Subs-Editor.php');
-		$verificationOptions = array(
+		$verificationOptions = [
 			'id' => 'post',
-		);
+		];
 		$context['require_verification'] = create_control_verification($verificationOptions);
 		$context['visual_verification_id'] = $verificationOptions['id'];
 	}
@@ -373,11 +373,11 @@ function Display()
 				LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
 				LEFT JOIN {db_prefix}membergroups AS cg ON (cg.id_group = chars.main_char_group)
 			WHERE INSTR(lo.url, {string:in_url_string}) > 0 OR lo.session = {string:session}',
-			array(
+			[
 				'reg_id_group' => 0,
 				'in_url_string' => '"topic":' . $topic,
 				'session' => $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id(),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -396,7 +396,7 @@ function Display()
 			// Add them both to the list and to the more detailed list.
 			if (!empty($row['show_online']) || allowedTo('moderate_forum'))
 				$context['view_members_list'][$row['log_time'] . $row['member_name']] = empty($row['show_online']) ? '<em>' . $link . '</em>' : $link;
-			$context['view_members'][$row['log_time'] . $row['member_name']] = array(
+			$context['view_members'][$row['log_time'] . $row['member_name']] = [
 				'id' => $row['id_member'],
 				'username' => $row['member_name'],
 				'name' => $row['real_name'],
@@ -405,7 +405,7 @@ function Display()
 				'link' => $link,
 				'is_buddy' => $is_buddy,
 				'hidden' => empty($row['show_online']),
-			);
+			];
 
 			if (empty($row['show_online']))
 				$context['view_num_hidden']++;
@@ -433,19 +433,19 @@ function Display()
 	$context['start'] = $_REQUEST['start'];
 
 	// This is information about which page is current, and which page we're on - in case you don't like the constructed page index. (again, wireles..)
-	$context['page_info'] = array(
+	$context['page_info'] = [
 		'current_page' => $_REQUEST['start'] / $context['messages_per_page'] + 1,
 		'num_pages' => floor(($context['total_visible_posts'] - 1) / $context['messages_per_page']) + 1,
-	);
+	];
 
 	// Figure out all the link to the next/prev/first/last/etc.
 	if (!($can_show_all && isset($_REQUEST['all'])))
 	{
-		$context['links'] = array(
+		$context['links'] = [
 			'first' => $_REQUEST['start'] >= $context['messages_per_page'] ? $scripturl . '?topic=' . $topic . '.0' : '',
 			'last' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? $scripturl . '?topic=' . $topic . '.' . (floor($context['total_visible_posts'] / $context['messages_per_page']) * $context['messages_per_page']) : '',
 			'up' => $scripturl . '?board=' . $board . '.0'
-		);
+		];
 	}
 
 	// If they are viewing all the posts, show all the posts, otherwise limit the number.
@@ -466,10 +466,10 @@ function Display()
 	}
 
 	// Build the link tree.
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?topic=' . $topic . '.0',
 		'name' => $context['topicinfo']['subject'],
-	);
+	];
 
 	// Build a list of this board's moderators.
 	$context['moderators'] = &$board_info['moderators'];
@@ -539,9 +539,9 @@ function Display()
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = p.id_member)
 			WHERE p.id_poll = {int:id_poll}
 			LIMIT 1',
-			array(
+			[
 				'id_poll' => $context['topicinfo']['id_poll'],
-			)
+			]
 		);
 		$pollinfo = $smcFunc['db_fetch_assoc']($request);
 		$smcFunc['db_free_result']($request);
@@ -551,10 +551,10 @@ function Display()
 			FROM {db_prefix}log_polls
 			WHERE id_poll = {int:id_poll}
 				AND id_member != {int:not_guest}',
-			array(
+			[
 				'id_poll' => $context['topicinfo']['id_poll'],
 				'not_guest' => 0,
-			)
+			]
 		);
 		list ($pollinfo['total']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -568,11 +568,11 @@ function Display()
 			FROM {db_prefix}poll_choices AS pc
 				LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_choice = pc.id_choice AND lp.id_poll = {int:id_poll} AND lp.id_member = {int:current_member} AND lp.id_member != {int:not_guest})
 			WHERE pc.id_poll = {int:id_poll}',
-			array(
+			[
 				'current_member' => $user_info['id'],
 				'id_poll' => $context['topicinfo']['id_poll'],
 				'not_guest' => 0,
-			)
+			]
 		);
 		$pollOptions = [];
 		$realtotal = 0;
@@ -630,7 +630,7 @@ function Display()
 		}
 
 		// Set up the basic poll information.
-		$context['poll'] = array(
+		$context['poll'] = [
 			'id' => $context['topicinfo']['id_poll'],
 			'image' => 'normal_' . (empty($pollinfo['voting_locked']) ? 'poll' : 'locked_poll'),
 			'question' => parse_bbc($pollinfo['question']),
@@ -645,13 +645,13 @@ function Display()
 			'is_expired' => !empty($pollinfo['expire_time']) && $pollinfo['expire_time'] < time(),
 			'expire_time' => !empty($pollinfo['expire_time']) ? timeformat($pollinfo['expire_time']) : 0,
 			'has_voted' => !empty($pollinfo['has_voted']),
-			'starter' => array(
+			'starter' => [
 				'id' => $pollinfo['id_member'],
 				'name' => $row['poster_name'],
 				'href' => $pollinfo['id_member'] == 0 ? '' : $scripturl . '?action=profile;u=' . $pollinfo['id_member'],
 				'link' => $pollinfo['id_member'] == 0 ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $pollinfo['id_member'] . '">' . $row['poster_name'] . '</a>'
-			)
-		);
+			]
+		];
 
 		// Make the lock, edit and remove permissions defined above more directly accessible.
 		$context['allow_lock_poll'] = $context['poll']['lock'];
@@ -713,7 +713,7 @@ function Display()
 			$barWide = $bar == 0 ? 1 : floor(($bar * 8) / 3);
 
 			// Now add it to the poll's contextual theme data.
-			$context['poll']['options'][$i] = array(
+			$context['poll']['options'][$i] = [
 				'id' => 'options-' . $i,
 				'percent' => $bar,
 				'votes' => $option['votes'],
@@ -722,29 +722,29 @@ function Display()
 				'bar_width' => $barWide,
 				'option' => parse_bbc($option['label']),
 				'vote_button' => '<input type="' . ($pollinfo['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '">'
-			);
+			];
 		}
 
 		// Build the poll moderation button array.
 		$context['poll_buttons'] = [];
 
 		if ($context['allow_return_vote'])
-			$context['poll_buttons']['vote'] = array('text' => 'poll_return_vote', 'image' => 'poll_options.png', 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start']);
+			$context['poll_buttons']['vote'] = ['text' => 'poll_return_vote', 'image' => 'poll_options.png', 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start']];
 
 		if ($context['show_view_results_button'])
-			$context['poll_buttons']['results'] = array('text' => 'poll_results', 'image' => 'poll_results.png', 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start'] . ';viewresults');
+			$context['poll_buttons']['results'] = ['text' => 'poll_results', 'image' => 'poll_results.png', 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start'] . ';viewresults'];
 
 		if ($context['allow_change_vote'])
-			$context['poll_buttons']['change_vote'] = array('text' => 'poll_change_vote', 'image' => 'poll_change_vote.png', 'url' => $scripturl . '?action=vote;topic=' . $context['current_topic'] . '.' . $context['start'] . ';poll=' . $context['poll']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+			$context['poll_buttons']['change_vote'] = ['text' => 'poll_change_vote', 'image' => 'poll_change_vote.png', 'url' => $scripturl . '?action=vote;topic=' . $context['current_topic'] . '.' . $context['start'] . ';poll=' . $context['poll']['id'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 		if ($context['allow_lock_poll'])
-			$context['poll_buttons']['lock'] = array('text' => (!$context['poll']['is_locked'] ? 'poll_lock' : 'poll_unlock'), 'image' => 'poll_lock.png', 'url' => $scripturl . '?action=lockvoting;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+			$context['poll_buttons']['lock'] = ['text' => (!$context['poll']['is_locked'] ? 'poll_lock' : 'poll_unlock'), 'image' => 'poll_lock.png', 'url' => $scripturl . '?action=lockvoting;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 		if ($context['allow_edit_poll'])
-			$context['poll_buttons']['edit'] = array('text' => 'poll_edit', 'image' => 'poll_edit.png', 'url' => $scripturl . '?action=editpoll;topic=' . $context['current_topic'] . '.' . $context['start']);
+			$context['poll_buttons']['edit'] = ['text' => 'poll_edit', 'image' => 'poll_edit.png', 'url' => $scripturl . '?action=editpoll;topic=' . $context['current_topic'] . '.' . $context['start']];
 
 		if ($context['can_remove_poll'])
-			$context['poll_buttons']['remove_poll'] = array('text' => 'poll_remove', 'image' => 'admin_remove_poll.png', 'custom' => 'data-confirm="' . $txt['poll_remove_warn'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+			$context['poll_buttons']['remove_poll'] = ['text' => 'poll_remove', 'image' => 'admin_remove_poll.png', 'custom' => 'data-confirm="' . $txt['poll_remove_warn'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 		// Allow mods to add additional buttons here
 		call_integration_hook('integrate_poll_buttons');
@@ -771,14 +771,14 @@ function Display()
 		AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')') . '
 		ORDER BY id_msg ' . ($ascending ? '' : 'DESC') . ($context['messages_per_page'] == -1 ? '' : '
 		LIMIT {int:start}, {int:max}'),
-		array(
+		[
 			'current_member' => $user_info['id'],
 			'current_topic' => $topic,
 			'is_approved' => 1,
 			'blank_id_member' => 0,
 			'start' => $start,
 			'max' => $limit,
-		)
+		]
 	);
 
 	$messages = [];
@@ -794,7 +794,7 @@ function Display()
 	if (!$user_info['is_guest'] && !in_array($context['user']['id'], $posters))
 		$posters[] = $context['user']['id'];
 
-	call_integration_hook('integrate_display_message_list', array(&$messages, &$posters));
+	call_integration_hook('integrate_display_message_list', [&$messages, &$posters]);
 
 	// Guests can't mark topics read or for notifications, just can't sorry.
 	if (!$user_info['is_guest'] && !empty($messages))
@@ -824,13 +824,13 @@ function Display()
 		{
 			$smcFunc['db_insert']($context['topicinfo']['new_from'] == 0 ? 'ignore' : 'replace',
 				'{db_prefix}log_topics',
-				array(
+				[
 					'id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int',
-				),
-				array(
+				],
+				[
 					$user_info['id'], $topic, $mark_at_msg, $context['topicinfo']['unwatched'],
-				),
-				array('id_member', 'id_topic')
+				],
+				['id_member', 'id_topic']
 			);
 		}
 
@@ -841,11 +841,11 @@ function Display()
 			WHERE (id_topic = {int:current_topic} OR id_board = {int:current_board})
 				AND id_member = {int:current_member}
 			LIMIT 2',
-			array(
+			[
 				'current_board' => $board,
 				'current_member' => $user_info['id'],
 				'current_topic' => $topic,
-			)
+			]
 		);
 		$do_once = true;
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -862,12 +862,12 @@ function Display()
 					SET sent = {int:is_not_sent}
 					WHERE (id_topic = {int:current_topic} OR id_board = {int:current_board})
 						AND id_member = {int:current_member}',
-					array(
+					[
 						'current_board' => $board,
 						'current_member' => $user_info['id'],
 						'current_topic' => $topic,
 						'is_not_sent' => 0,
-					)
+					]
 				);
 				$do_once = false;
 			}
@@ -889,11 +889,11 @@ function Display()
 					AND t.id_last_msg > COALESCE(lb.id_msg, 0)
 					AND t.id_last_msg > COALESCE(lt.id_msg, 0)' . (empty($_SESSION['id_msg_last_visit']) ? '' : '
 					AND t.id_last_msg > {int:id_msg_last_visit}'),
-				array(
+				[
 					'current_board' => $board,
 					'current_member' => $user_info['id'],
 					'id_msg_last_visit' => (int) $_SESSION['id_msg_last_visit'],
-				)
+				]
 			);
 			list ($numNewTopics) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -913,9 +913,9 @@ function Display()
 		{
 			$smcFunc['db_insert']('replace',
 				'{db_prefix}log_boards',
-				array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-				array($modSettings['maxMsgID'], $user_info['id'], $board),
-				array('id_member', 'id_board')
+				['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
+				[$modSettings['maxMsgID'], $user_info['id'], $board],
+				['id_member', 'id_board']
 			);
 		}
 	}
@@ -925,12 +925,12 @@ function Display()
 	if (!empty($user_info['id']))
 	{
 		require_once($sourcedir . '/Subs-Notify.php');
-		$prefs = getNotifyPrefs($user_info['id'], array('topic_notify', 'topic_notify_' . $context['current_topic']), true);
+		$prefs = getNotifyPrefs($user_info['id'], ['topic_notify', 'topic_notify_' . $context['current_topic']], true);
 		$pref = !empty($prefs[$user_info['id']]) && $context['is_marked_notify'] ? $prefs[$user_info['id']] : [];
-		$context['topicinfo']['notify_prefs'] = array(
+		$context['topicinfo']['notify_prefs'] = [
 			'is_custom' => isset($pref['topic_notify_' . $topic]),
 			'pref' => isset($pref['topic_notify_' . $context['current_topic']]) ? $pref['topic_notify_' . $context['current_topic']] : (!empty($pref['topic_notify']) ? $pref['topic_notify'] : 0),
-		);
+		];
 	}
 
 	$context['topic_notification'] = !empty($user_info['id']) ? $context['topicinfo']['notify_prefs'] : [];
@@ -954,11 +954,11 @@ function Display()
 					LEFT JOIN {db_prefix}attachments AS thumb ON (thumb.id_attach = a.id_thumb)') . '
 				WHERE a.id_msg IN ({array_int:message_list})
 					AND a.attachment_type = {int:attachment_type}',
-				array(
+				[
 					'message_list' => $messages,
 					'attachment_type' => 0,
 					'is_approved' => 1,
-				)
+				]
 			);
 			$temp = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -982,13 +982,13 @@ function Display()
 				$context['loaded_attachments'][$row['id_msg']][] = $row;
 		}
 
-		$msg_parameters = array(
+		$msg_parameters = [
 			'message_list' => $messages,
 			'new_from' => $context['topicinfo']['new_from'],
-		);
+		];
 		$msg_selects = [];
 		$msg_tables = [];
-		call_integration_hook('integrate_query_message', array(&$msg_selects, &$msg_tables, &$msg_parameters));
+		call_integration_hook('integrate_query_message', [&$msg_selects, &$msg_tables, &$msg_parameters]);
 
 		// What?  It's not like it *couldn't* be only guests in this topic...
 		loadMemberData($posters);
@@ -1029,18 +1029,18 @@ function Display()
 		$context['likes'] = [];
 	}
 
-	$context['jump_to'] = array(
+	$context['jump_to'] = [
 		'label' => addslashes(un_htmlspecialchars($txt['jump_to'])),
-		'board_name' => $smcFunc['htmlspecialchars'](strtr(strip_tags($board_info['name']), array('&amp;' => '&'))),
+		'board_name' => $smcFunc['htmlspecialchars'](strtr(strip_tags($board_info['name']), ['&amp;' => '&'])),
 		'child_level' => $board_info['child_level'],
-	);
+	];
 
 	// Set the callback.  (do you REALIZE how much memory all the messages would take?!?)
 	// This will be called from the template.
 	$context['get_message'] = 'prepareDisplayContext';
 
 	// Now set all the wonderful, wonderful permissions... like moderation ones...
-	$common_permissions = array(
+	$common_permissions = [
 		'can_approve' => 'approve_posts',
 		'can_ban' => 'manage_bans',
 		'can_sticky' => 'make_sticky',
@@ -1054,12 +1054,12 @@ function Display()
 		'can_restore_msg' => 'move_any',
 		'can_see_likes' => 'likes_view',
 		'can_like' => 'likes_like',
-	);
+	];
 	foreach ($common_permissions as $contextual => $perm)
 		$context[$contextual] = allowedTo($perm);
 
 	// Permissions with _any/_own versions.  $context[YYY] => ZZZ_any/_own.
-	$anyown_permissions = array(
+	$anyown_permissions = [
 		'can_move' => 'move',
 		'can_lock' => 'lock',
 		'can_delete' => 'remove',
@@ -1068,14 +1068,14 @@ function Display()
 		'can_reply' => 'post_reply',
 		'can_reply_unapproved' => 'post_unapproved_replies',
 		'can_view_warning' => 'profile_warning',
-	);
+	];
 	foreach ($anyown_permissions as $contextual => $perm)
 		$context[$contextual] = allowedTo($perm . '_any') || ($context['user']['started'] && allowedTo($perm . '_own'));
 
 	if (!$user_info['is_admin'] && $context['can_move'] && !$modSettings['topic_move_any'])
 	{
 		// We'll use this in a minute
-		$boards_allowed = array_diff(boardsAllowedTo('post_new'), array($board));
+		$boards_allowed = array_diff(boardsAllowedTo('post_new'), [$board]);
 
 		/* You can't move this unless you have permission
 			to start new topics on at least one other board */
@@ -1150,9 +1150,9 @@ function Display()
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_last_msg}
 			LIMIT 1',
-			array(
+			[
 				'id_last_msg' => $context['topicinfo']['id_last_msg'],
-			)
+			]
 		);
 
 		list ($lastPostTime) = $smcFunc['db_fetch_row']($request);
@@ -1169,12 +1169,12 @@ function Display()
 	require_once($sourcedir . '/Subs-Editor.php');
 
 	// Now create the editor.
-	$editorOptions = array(
+	$editorOptions = [
 		'id' => 'quickReply',
 		'value' => '',
-		'labels' => array(
+		'labels' => [
 			'post_button' => $txt['post'],
-		),
+		],
 		// add height and width for the editor
 		'height' => '250px',
 		'width' => '100%',
@@ -1182,7 +1182,7 @@ function Display()
 		'preview_type' => 1,
 		// This is required
 		'required' => true,
-	);
+	];
 	create_control_richedit($editorOptions);
 
 	// Store the ID.
@@ -1203,59 +1203,59 @@ function Display()
 	$context['normal_buttons'] = [];
 
 	if ($context['can_reply'])
-		$context['normal_buttons']['reply'] = array('text' => 'reply', 'image' => 'reply.png', 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'active' => true);
+		$context['normal_buttons']['reply'] = ['text' => 'reply', 'image' => 'reply.png', 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'active' => true];
 
 	if ($context['can_add_poll'])
-		$context['normal_buttons']['add_poll'] = array('text' => 'add_poll', 'image' => 'add_poll.png', 'url' => $scripturl . '?action=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']);
+		$context['normal_buttons']['add_poll'] = ['text' => 'add_poll', 'image' => 'add_poll.png', 'url' => $scripturl . '?action=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']];
 
 	if ($context['can_mark_unread'])
-		$context['normal_buttons']['mark_unread'] = array('text' => 'mark_unread', 'image' => 'markunread.png', 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+		$context['normal_buttons']['mark_unread'] = ['text' => 'mark_unread', 'image' => 'markunread.png', 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 	if ($context['can_set_notify'])
-		$context['normal_buttons']['notify'] = array(
+		$context['normal_buttons']['notify'] = [
 			'text' => 'notify_topic_' . $context['topic_notification_mode'],
-			'sub_buttons' => array(
-				array(
+			'sub_buttons' => [
+				[
 					'test' => 'can_unwatch',
 					'text' => 'notify_topic_0',
 					'url' => $scripturl . '?action=notifytopic;topic=' . $context['current_topic'] . ';mode=0;' . $context['session_var'] . '=' . $context['session_id'],
-				),
-				array(
+				],
+				[
 					'text' => 'notify_topic_1',
 					'url' => $scripturl . '?action=notifytopic;topic=' . $context['current_topic'] . ';mode=1;' . $context['session_var'] . '=' . $context['session_id'],
-				),
-				array(
+				],
+				[
 					'text' => 'notify_topic_2',
 					'url' => $scripturl . '?action=notifytopic;topic=' . $context['current_topic'] . ';mode=2;' . $context['session_var'] . '=' . $context['session_id'],
-				),
-				array(
+				],
+				[
 					'text' => 'notify_topic_3',
 					'url' => $scripturl . '?action=notifytopic;topic=' . $context['current_topic'] . ';mode=3;' . $context['session_var'] . '=' . $context['session_id'],
-				),
-			),
-		);
+				],
+			],
+		];
 
 	// Build the mod button array
 	$context['mod_buttons'] = [];
 
 	if ($context['can_move'])
-		$context['mod_buttons']['move'] = array('text' => 'move_topic', 'image' => 'admin_move.png', 'url' => $scripturl . '?action=movetopic;current_board=' . $context['current_board'] . ';topic=' . $context['current_topic'] . '.0');
+		$context['mod_buttons']['move'] = ['text' => 'move_topic', 'image' => 'admin_move.png', 'url' => $scripturl . '?action=movetopic;current_board=' . $context['current_board'] . ';topic=' . $context['current_topic'] . '.0'];
 
 	if ($context['can_delete'])
-		$context['mod_buttons']['delete'] = array('text' => 'remove_topic', 'image' => 'admin_rem.png', 'custom' => 'data-confirm="' . $txt['are_sure_remove_topic'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_var'] . '=' . $context['session_id']);
+		$context['mod_buttons']['delete'] = ['text' => 'remove_topic', 'image' => 'admin_rem.png', 'custom' => 'data-confirm="' . $txt['are_sure_remove_topic'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_var'] . '=' . $context['session_id']];
 
 	if ($context['can_lock'])
-		$context['mod_buttons']['lock'] = array('text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'image' => 'admin_lock.png', 'url' => $scripturl . '?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+		$context['mod_buttons']['lock'] = ['text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'image' => 'admin_lock.png', 'url' => $scripturl . '?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 	if ($context['can_sticky'])
-		$context['mod_buttons']['sticky'] = array('text' => empty($context['is_sticky']) ? 'set_sticky' : 'set_nonsticky', 'image' => 'admin_sticky.png', 'url' => $scripturl . '?action=sticky;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+		$context['mod_buttons']['sticky'] = ['text' => empty($context['is_sticky']) ? 'set_sticky' : 'set_nonsticky', 'image' => 'admin_sticky.png', 'url' => $scripturl . '?action=sticky;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 	if ($context['can_merge'])
-		$context['mod_buttons']['merge'] = array('text' => 'merge', 'image' => 'merge.png', 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']);
+		$context['mod_buttons']['merge'] = ['text' => 'merge', 'image' => 'merge.png', 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']];
 
 	// Restore topic. eh?  No monkey business.
 	if ($context['can_restore_topic'])
-		$context['mod_buttons']['restore_topic'] = array('text' => 'restore_topic', 'image' => '', 'url' => $scripturl . '?action=restoretopic;topics=' . $context['current_topic'] . ';' . $context['session_var'] . '=' . $context['session_id']);
+		$context['mod_buttons']['restore_topic'] = ['text' => 'restore_topic', 'image' => '', 'url' => $scripturl . '?action=restoretopic;topics=' . $context['current_topic'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 	// Show a message in case a recently posted message became unapproved.
 	$context['becomesUnapproved'] = !empty($_SESSION['becomesUnapproved']) ? true : false;
@@ -1266,26 +1266,26 @@ function Display()
 
 	// Allow adding new mod buttons easily.
 	// Note: $context['normal_buttons'] and $context['mod_buttons'] are added for backward compatibility with 2.0, but are deprecated and should not be used
-	call_integration_hook('integrate_display_buttons', array(&$context['normal_buttons']));
+	call_integration_hook('integrate_display_buttons', [&$context['normal_buttons']]);
 	// Note: integrate_mod_buttons is no more necessary and deprecated, but is kept for backward compatibility with 2.0
-	call_integration_hook('integrate_mod_buttons', array(&$context['mod_buttons']));
+	call_integration_hook('integrate_mod_buttons', [&$context['mod_buttons']]);
 
 	// Load the drafts js file
 	if ($context['drafts_autosave'])
-		loadJavaScriptFile('drafts.js', array('defer' => false), 'sbb_drafts');
+		loadJavaScriptFile('drafts.js', ['defer' => false], 'sbb_drafts');
 
 	// topic.js
-	loadJavaScriptFile('topic.js', array('defer' => false), 'sbb_topic');
+	loadJavaScriptFile('topic.js', ['defer' => false], 'sbb_topic');
 
 	// quotedText.js
-	loadJavaScriptFile('quotedText.js', array('defer' => true), 'sbb_quotedText');
+	loadJavaScriptFile('quotedText.js', ['defer' => true], 'sbb_quotedText');
 
 	// Mentions
 	if (!empty($modSettings['enable_mentions']) && allowedTo('mention'))
 	{
-		loadJavaScriptFile('jquery.atwho.min.js', array('defer' => true), 'sbb_atwho');
-		loadJavaScriptFile('jquery.caret.min.js', array('defer' => true), 'sbb_caret');
-		loadJavaScriptFile('mentions.js', array('defer' => true), 'sbb_mentions');
+		loadJavaScriptFile('jquery.atwho.min.js', ['defer' => true], 'sbb_atwho');
+		loadJavaScriptFile('jquery.caret.min.js', ['defer' => true], 'sbb_caret');
+		loadJavaScriptFile('mentions.js', ['defer' => true], 'sbb_mentions');
 	}
 
 	// Some convenient template setup.
@@ -1499,7 +1499,7 @@ function prepareDisplayContext($reset = false)
 	require_once($sourcedir . '/Subs-Attachments.php');
 
 	// Compose the memory eat- I mean message array.
-	$output = array(
+	$output = [
 		'attachment' => loadAttachmentContext($message['id_msg'], $context['loaded_attachments']),
 		'id' => $message['id_msg'],
 		'id_character' => $message['id_character'],
@@ -1512,12 +1512,12 @@ function prepareDisplayContext($reset = false)
 		'time' => timeformat($message['poster_time']),
 		'timestamp' => forum_time(true, $message['poster_time']),
 		'counter' => $counter,
-		'modified' => array(
+		'modified' => [
 			'time' => timeformat($message['modified_time']),
 			'timestamp' => forum_time(true, $message['modified_time']),
 			'name' => $message['modified_name'],
 			'reason' => $message['modified_reason']
-		),
+		],
 		'body' => $message['body'],
 		'new' => empty($message['is_read']),
 		'approved' => $message['approved'],
@@ -1530,7 +1530,7 @@ function prepareDisplayContext($reset = false)
 		'can_see_ip' => allowedTo('moderate_forum'),
 		'css_class' => $message['approved'] ? 'windowbg' : 'approvebg',
 		'separator' => $message_separator,
-	);
+	];
 
 	// Getting the poster is a little tricky. Start with whatever we have
 	// for the account as a whole and see if we can make a character out of it.
@@ -1630,12 +1630,12 @@ function prepareDisplayContext($reset = false)
 
 	// Are likes enable?
 	if (!empty($modSettings['enable_likes']))
-		$output['likes'] = array(
+		$output['likes'] = [
 			'id' => $message['id_msg'],
 			'count' => $message['likes'],
 			'you' => in_array($message['id_msg'], $context['my_likes']),
 			'can_like' => !$context['user']['is_guest'] && $message['id_member'] != $context['user']['id'] && !empty($context['can_like']),
-		);
+		];
 
 	// Is this user the message author?
 	$output['is_message_author'] = $message['id_member'] == $user_info['id'];
@@ -1657,7 +1657,7 @@ function prepareDisplayContext($reset = false)
 	else
 		$counter--;
 
-	call_integration_hook('integrate_prepare_display_context', array(&$output, &$message, $counter));
+	call_integration_hook('integrate_prepare_display_context', [&$output, &$message, $counter]);
 
 	return $output;
 }
@@ -1717,9 +1717,9 @@ function QuickInTopicModeration()
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:message}
 			LIMIT 1',
-			array(
+			[
 				'message' => min($messages),
-			)
+			]
 		);
 		list($subname) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -1738,9 +1738,9 @@ function QuickInTopicModeration()
 			FROM {db_prefix}topics
 			WHERE id_topic = {int:current_topic}
 			LIMIT 1',
-			array(
+			[
 				'current_topic' => $topic,
-			)
+			]
 		);
 		list ($starter) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -1762,12 +1762,12 @@ function QuickInTopicModeration()
 			AND id_topic = {int:current_topic}' . (!$allowed_all ? '
 			AND id_member = {int:current_member}' : '') . '
 		LIMIT {int:limit}',
-		array(
+		[
 			'current_member' => $user_info['id'],
 			'current_topic' => $topic,
 			'message_list' => $messages,
 			'limit' => count($messages),
-		)
+		]
 	);
 	$messages = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1775,7 +1775,7 @@ function QuickInTopicModeration()
 		if (!$allowed_all && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + $modSettings['edit_disable_time'] * 60 < time())
 			continue;
 
-		$messages[$row['id_msg']] = array($row['subject'], $row['id_member']);
+		$messages[$row['id_msg']] = [$row['subject'], $row['id_member']];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -1785,9 +1785,9 @@ function QuickInTopicModeration()
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
-		)
+		]
 	);
 	list ($first_message, $last_message) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -1806,7 +1806,7 @@ function QuickInTopicModeration()
 
 		// Log this moderation action ;).
 		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != $user_info['id']))
-			logAction('delete', array('topic' => $topic, 'subject' => $info[0], 'member' => $info[1], 'board' => $board));
+			logAction('delete', ['topic' => $topic, 'subject' => $info[0], 'member' => $info[1], 'board' => $board]);
 	}
 
 	redirectexit(!empty($topicGone) ? 'board=' . $board : 'topic=' . $topic . '.' . $_REQUEST['start']);

@@ -18,12 +18,12 @@ function db_search_init()
 	global $smcFunc;
 
 	if (!isset($smcFunc['db_search_query']) || $smcFunc['db_search_query'] != 'sbb_db_query')
-		$smcFunc += array(
+		$smcFunc += [
 			'db_search_query' => 'sbb_db_query',
 			'db_search_support' => 'sbb_db_search_support',
 			'db_create_word_search' => 'sbb_db_create_word_search',
 			'db_support_ignore' => true,
-		);
+		];
 }
 
 /**
@@ -34,7 +34,7 @@ function db_search_init()
  */
 function sbb_db_search_support($search_type)
 {
-	$supported_types = array('fulltext');
+	$supported_types = ['fulltext'];
 
 	return in_array($search_type, $supported_types);
 }
@@ -61,9 +61,9 @@ function sbb_db_create_word_search($size)
 			id_msg int(10) unsigned NOT NULL default {string:string_zero},
 			PRIMARY KEY (id_word, id_msg)
 		) ENGINE=InnoDB',
-		array(
+		[
 			'string_zero' => '0',
 			'size' => $size,
-		)
+		]
 	);
 }
