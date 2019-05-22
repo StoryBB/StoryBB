@@ -57,32 +57,32 @@ function ModifyLanguages()
 	global $sourcedir, $language, $boarddir;
 
 	// Setting a new default?
-	if (!empty($_POST['set_default']) && !empty($_POST['def_language']))
+	if (!empty($_GET['set_default']))
 	{
-		checkSession();
-		validateToken('admin-lang');
+		checkSession('get');
+		validateToken('admin-lang', 'get');
 
 		getLanguages();
 		$lang_exists = false;
 		foreach ($context['languages'] as $lang)
 		{
-			if ($_POST['def_language'] == $lang['filename'])
+			if ($_GET['set_default'] == $lang['filename'])
 			{
 				$lang_exists = true;
 				break;
 			}
 		}
 
-		if ($_POST['def_language'] != $language && $lang_exists)
+		if ($_GET['set_default'] != $language && $lang_exists)
 		{
 			require_once($sourcedir . '/Subs-Admin.php');
-			updateSettingsFile(array('language' => '\'' . $_POST['def_language'] . '\''));
-			$language = $_POST['def_language'];
+			updateSettingsFile(array('language' => '\'' . $_GET['set_default'] . '\''));
+			$language = $_GET['def_language'];
 		}
 	}
 
 	// Create another one time token here.
-	createToken('admin-lang');
+	createToken('admin-lang', 'get');
 
 	$listOptions = [
 		'id' => 'language_list',
@@ -102,9 +102,21 @@ function ModifyLanguages()
 					'class' => 'centercol',
 				],
 				'data' => [
-					'function' => function($rowData)
+					'function' => function($rowData) use ($scripturl, $context, $txt)
 					{
-						return '<input type="radio" name="def_language" value="' . $rowData['id'] . '"' . ($rowData['default'] ? ' checked' : '') . ' onclick="highlightSelected(\'list_language_list_' . $rowData['id'] . '\');">';
+						if ($rowData['default'])
+						{
+							return $txt['languages_current_default'];
+						}
+
+						$link = '<a class="button" href="{scripturl}?action=admin;area=languages;set_default={lang};{session};{token}">{text}</a>';
+						return strtr($link, [
+							'{scripturl}' => $scripturl,
+							'{lang}' => $rowData['id'],
+							'{session}' => $context['session_var'] . '=' . $context['session_id'],
+							'{token}' => $context['admin-lang_token_var'] . '=' . $context['admin-lang_token'],
+							'{text}' => $txt['languages_make_default'],
+						]);
 					},
 					'style' => 'width: 8%;',
 					'class' => 'centercol',
@@ -121,39 +133,47 @@ function ModifyLanguages()
 			'edit' => [
 				'header' => [
 					'value' => $txt['edit'],
+					'class' => 'centercol',
 				],
 				'data' => [
 					'function' => function($rowData) use ($scripturl, $txt)
 					{
 						return sprintf('<a href="%1$s?action=admin;area=languages;sa=editlang;lid=%2$s">%3$s</a>', $scripturl, $rowData['id'], $txt['edit']);
 					},
+					'class' => 'centercol',
 				],
 			],
 			'count' => [
 				'header' => [
 					'value' => $txt['languages_users'],
+					'class' => 'centercol',
 				],
 				'data' => [
 					'db_htmlsafe' => 'count',
+					'class' => 'centercol',
 				],
 			],
 			'locale' => [
 				'header' => [
 					'value' => $txt['languages_locale'],
+					'class' => 'centercol',
 				],
 				'data' => [
 					'db_htmlsafe' => 'locale',
+					'class' => 'centercol',
 				],
 			],
 			'rtl' => [
 				'header' => [
 					'value' => $txt['languages_right_to_left'],
+					'class' => 'centercol',
 				],
 				'data' => [
 					'function' => function($rowData) use ($txt)
 					{
 						return $rowData['rtl'] ? $txt['yes'] : $txt['no'];
-					}
+					},
+					'class' => 'centercol',
 				],
 			],
 		],
@@ -161,26 +181,7 @@ function ModifyLanguages()
 			'href' => $scripturl . '?action=admin;area=languages',
 			'token' => 'admin-lang',
 		],
-		'additional_rows' => [
-			[
-				'position' => 'top_of_list',
-				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="set_default" value="' . $txt['save'] . '"' . (is_writable($boarddir . '/Settings.php') ? '' : ' disabled') . ' class="button_submit">',
-			],
-			[
-				'position' => 'bottom_of_list',
-				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="set_default" value="' . $txt['save'] . '"' . (is_writable($boarddir . '/Settings.php') ? '' : ' disabled') . ' class="button_submit">',
-			],
-		],
 	];
-
-	// We want to highlight the selected language. Need some Javascript for this.
-	addInlineJavaScript('
-	function highlightSelected(box)
-	{
-		$("tr.highlight2").removeClass("highlight2");
-		$("#" + box).addClass("highlight2");
-	}
-	highlightSelected("list_language_list_' . ($language == '' ? 'en-us' : $language) . '");', true);
 
 	// Display a warning if we cannot edit the default setting.
 	if (!is_writable($boarddir . '/Settings.php'))
