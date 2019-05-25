@@ -149,6 +149,12 @@ class Theme
 	public static function get_theme_list(): array
 	{
 		global $smcFunc, $settings;
+		static $cache = null;
+
+		if ($cache !== null)
+		{
+			return $cache;
+		}
 
 		$request = $smcFunc['db_query']('', '
 			SELECT id_theme, variable, value
@@ -161,12 +167,12 @@ class Theme
 				'theme_dir' => 'theme_dir',
 			)
 		);
-		$themes = [];
+		$cache = [];
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$themes[$row['id_theme']][$row['variable']] = $row['value'];
+			$cache[$row['id_theme']][$row['variable']] = $row['value'];
 		$smcFunc['db_free_result']($request);
 
-		return $themes;
+		return $cache;
 	}
 }
