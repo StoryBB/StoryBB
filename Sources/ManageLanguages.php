@@ -96,7 +96,7 @@ function ModifyLanguages()
 		'get_items' => [
 			'function' => 'list_getLanguages',
 		],
-		'get_count' =>[
+		'get_count' => [
 			'function' => 'list_getNumLanguages',
 		],
 		'columns' => [
