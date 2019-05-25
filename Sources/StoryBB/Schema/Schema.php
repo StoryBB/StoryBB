@@ -307,7 +307,7 @@ class Schema
 				[
 					'id_delta' => Column::int()->auto_increment(),
 					'id_theme' => Column::tinyint(),
-					'id_lang' => Column::varchar(20),
+					'id_lang' => Column::varchar(5),
 					'lang_file' => Column::varchar(64),
 					'lang_var' => Column::varchar(20),
 					'lang_key' => Column::varchar(64),

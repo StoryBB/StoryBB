@@ -1,0 +1,55 @@
+	{{! Select which of the language files you wish to edit. }}
+	<div id="admincenter">
+		<div class="cat_bar">
+			<h3 class="catbg">
+				{{{txt.edit_languages}}}
+			</h3>
+		</div>
+		<div id="editlang_desc" class="information">
+			{{{txt.edit_language_entries_primary}}}
+		</div>
+
+		<div class="half_content">
+			<div class="title_bar">
+				<h3 class="titlebg">
+					{{{txt.default_language_sections}}}
+				</h3>
+			</div>
+			<div class="windowbg noup">
+{{#if context.possible_files.1}}
+				<h4>{{{txt.language_general_files}}}</h4>
+				<ul class="normallist">
+	{{#each context.possible_files.1.files.main_files}}
+					<li><a href="{{edit_link}}">{{{name}}}</a></li>
+	{{/each}}
+				</ul>
+
+				<h4>{{{txt.language_admin_files}}}</h4>
+				<ul class="normallist">
+	{{#each context.possible_files.1.files.admin_files}}
+					<li><a href="{{edit_link}}">{{{name}}}</a></li>
+	{{/each}}
+				</ul>
+{{/if}}
+			</div>
+		</div>
+
+		<div class="half_content">
+			<div class="title_bar">
+				<h3 class="titlebg">
+					{{{txt.language_other_files}}}
+				</h3>
+			</div>
+			<div class="windowbg noup">
+				{{{txt.configured_elsewhere}}}
+
+				<h4>{{{txt.admin_policies}}} ({{{context.primary_settings.name}}})</h4>
+				<ul class="normallist">
+{{#each context.policies}}
+					<li><a href="{{link}}">{{{name}}}</a></li>
+{{/each}}
+				</ul>
+				<a href="{{scripturl}}?action=admin;area=regcenter;sa=policies">{{{txt.all_site_policies}}}</a>
+			</div>
+		</div>
+	</div>

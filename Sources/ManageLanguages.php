@@ -10,6 +10,10 @@
  * @version 3.0 Alpha 1
  */
 
+use StoryBB\Model\Policy;
+use StoryBB\Model\Language;
+use StoryBB\Model\Theme;
+
 /**
  * This is the main function for the languages area.
  * It dispatches the requests.
@@ -349,45 +353,42 @@ function ModifyLanguageSettings($return_config = false)
  */
 function ModifyLanguage()
 {
-	global $settings, $context, $smcFunc, $txt, $modSettings, $boarddir, $sourcedir, $language;
+	global $settings, $context, $smcFunc, $txt, $modSettings, $boarddir, $sourcedir, $language, $scripturl;
 
 	loadLanguage('ManageSettings');
 
 	// Select the languages tab.
 	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'edit';
 	$context['page_title'] = $txt['edit_languages'];
-	$context['sub_template'] = 'admin_languages_edit';
 
-	$context['lang_id'] = $_GET['lid'];
-	list($theme_id, $file_id) = empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '+') === false ? array(1, '') : explode('+', $_REQUEST['tfid']);
+	$context['lang_id'] = isset($_GET['lid']) ? $_GET['lid'] : '';
+	list($theme_id, $file_id) = empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '_') === false ? array(1, '') : explode('_', $_REQUEST['tfid']);
 
 	// Clean the ID - just in case.
-	preg_match('~([A-Za-z0-9_-]+)~', $context['lang_id'], $matches);
-	$context['lang_id'] = $matches[1];
+	if (preg_match('~([A-Za-z0-9_-]+)~', $context['lang_id'], $matches))
+	{
+		$context['lang_id'] = $matches[1];
+	}
+	else
+	{
+		$context['lang_id'] = '';
+	}
 
 	// Get all the theme data.
-	$request = $smcFunc['db_query']('', '
-		SELECT id_theme, variable, value
-		FROM {db_prefix}themes
-		WHERE id_theme != {int:default_theme}
-			AND id_member = {int:no_member}
-			AND variable IN ({string:name}, {string:theme_dir})',
-		array(
-			'default_theme' => 1,
-			'no_member' => 0,
-			'name' => 'name',
-			'theme_dir' => 'theme_dir',
-		)
-	);
 	$themes = array(
 		1 => array(
 			'name' => $txt['dvc_default'],
 			'theme_dir' => $settings['default_theme_dir'],
 		),
 	);
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$themes[$row['id_theme']][$row['variable']] = $row['value'];
-	$smcFunc['db_free_result']($request);
+	foreach (Theme::get_theme_list() as $tid => $theme)
+	{
+		if (isset($themes[$tid]))
+		{
+			continue;
+		}
+		$themes[$tid] = $theme;
+	}
 
 	// This will be where we look
 	$lang_dirs = [];
@@ -408,7 +409,11 @@ function ModifyLanguage()
 			$images_dirs[$id] = $data['theme_dir'] . '/images/' . $context['lang_id'];
 	}
 
-	$current_file = $file_id ? $lang_dirs[$theme_id] . '/' . $file_id . '.' . $context['lang_id'] . '.php' : '';
+	$current_file = $file_id ? $lang_dirs[$theme_id] . '/' . $context['lang_id'] . '/' . $file_id . '.php' : '';
+	if (!file_exists($current_file))
+	{
+		$current_file = '';
+	}
 
 	// Now for every theme get all the files and stick them in context!
 	$context['possible_files'] = [];
@@ -433,107 +438,51 @@ function ModifyLanguage()
 					continue;
 				}
 
+				if ($matches[1] == 'EmailTemplates')
+				{
+					continue;
+				}
+
 				if (!isset($context['possible_files'][$theme]))
+				{
 					$context['possible_files'][$theme] = [
 						'id' => $theme,
 						'name' => $themes[$theme]['name'],
-						'files' => [],
+						'files' => [
+							'main_files' => [],
+							'admin_files' => [],
+							'all_files' => [],
+						]
 					];
+				}
 
-				$context['possible_files'][$theme]['files'][] = [
+				$file_entry = [
 					'id' => $matches[1],
 					'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
 					'selected' => $theme_id == $theme && $file_id == $matches[1],
+					'edit_link' => $scripturl . '?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . $theme . '_' . $matches[1],
 				];
+
+				$context['possible_files'][$theme]['files']['all_files'][] = $file_entry;
+
+				$is_admin = in_array($matches[1], ['Admin', 'Modlog']) || strpos($matches[1], 'Manage') === 0;
+				$file_block = $is_admin ? 'admin_files' : 'main_files';
+				$context['possible_files'][$theme]['files'][$file_block][$matches[1]] = $file_entry;
 			}
 		}
 		$dir->close();
-		usort($context['possible_files'][$theme]['files'], function($val1, $val2)
+		foreach (['all_files', 'main_files', 'admin_files'] as $fileset)
 		{
-			return strcmp($val1['name'], $val2['name']);
-		});
-	}
-
-	// We no longer wish to speak this language.
-	if (!empty($_POST['delete_main']) && $context['lang_id'] != 'en-us')
-	{
-		checkSession();
-		validateToken('admin-mlang');
-
-		// @todo Todo: FTP Controls?
-		require_once($sourcedir . '/Subs-Package.php');
-
-		// First, loop through the array to remove the files.
-		foreach ($lang_dirs as $curPath)
-		{
-			foreach ($context['possible_files'][1]['files'] as $lang)
-				if (file_exists($curPath . '/' . $lang['id'] . '.' . $context['lang_id'] . '.php'))
-					unlink($curPath . '/' . $lang['id'] . '.' . $context['lang_id'] . '.php');
-
-			// Check for the email template.
-			if (file_exists($curPath . '/EmailTemplates.' . $context['lang_id'] . '.php'))
-				unlink($curPath . '/EmailTemplates.' . $context['lang_id'] . '.php');
+			uasort($context['possible_files'][$theme]['files'][$fileset], function($val1, $val2)
+			{
+				return strcmp($val1['name'], $val2['name']);
+			});
 		}
-
-		// Second, the agreement file.
-		if (file_exists($boarddir . '/agreement.' . $context['lang_id'] . '.txt'))
-			unlink($boarddir . '/agreement.' . $context['lang_id'] . '.txt');
-
-		// Third, a related images folder, if it exists...
-		if (!empty($images_dirs))
-			foreach ($images_dirs as $curPath)
-				if (is_dir($curPath))
-					deltree($curPath);
-
-		// Fourth, members can no longer use this language.
-		$smcFunc['db_query']('', '
-			UPDATE {db_prefix}members
-			SET lngfile = {empty}
-			WHERE lngfile = {string:current_language}',
-			array(
-				'empty_string' => '',
-				'current_language' => $context['lang_id'],
-			)
+		// While we had the general strings sorted into their own bubble, we should put them first.
+		$context['possible_files'][$theme]['files']['main_files'] = array_merge(
+			['General' => $context['possible_files'][$theme]['files']['main_files']['General']],
+			$context['possible_files'][$theme]['files']['main_files']
 		);
-
-		// Fifth, update getLanguages() cache.
-		if (!empty($modSettings['cache_enable']))
-		{
-			cache_put_data('known_languages', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
-		}
-
-		// Sixth, if we deleted the default language, set us back to English?
-		if ($context['lang_id'] == $language)
-		{
-			require_once($sourcedir . '/Subs-Admin.php');
-			$language = 'en-us';
-			updateSettingsFile(array('language' => '\'' . $language . '\''));
-		}
-
-		// Seventh, get out of here.
-		redirectexit('action=admin;area=languages;sa=edit;' . $context['session_var'] . '=' . $context['session_id']);
-	}
-
-	// Saving primary settings?
-	$madeSave = false;
-	if (!empty($_POST['save_main']) && !$current_file)
-	{
-		checkSession();
-		validateToken('admin-mlang');
-
-		// Read in the current file.
-		$current_data = implode('', file($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php'));
-		// These are the replacements. old => new
-		$replace_array = array(
-			'~\$txt\[\'lang_locale\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_locale\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['locale']) . '\';',
-			'~\$txt\[\'lang_rtl\'\]\s=\s[A-Za-z0-9]+;~' => '$txt[\'lang_rtl\'] = ' . (!empty($_POST['rtl']) ? 'true' : 'false') . ';',
-		);
-		$current_data = preg_replace(array_keys($replace_array), array_values($replace_array), $current_data);
-		$fp = fopen($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php', 'w+');
-		fwrite($fp, $current_data);
-		fclose($fp);
-
-		$madeSave = true;
 	}
 
 	// Quickly load index language entries.
@@ -546,196 +495,104 @@ function ModifyLanguage()
 		'rtl' => !empty($language_manifest['is_rtl']),
 	);
 
-	// Are we saving?
-	$save_strings = [];
-	if (isset($_POST['save_entries']) && !empty($_POST['entry']))
-	{
-		checkSession();
-		validateToken('admin-mlang');
-
-		// Clean each entry!
-		foreach ($_POST['entry'] as $k => $v)
-		{
-			// Only try to save if it's changed!
-			if ($_POST['entry'][$k] != $_POST['comp'][$k])
-				$save_strings[$k] = cleanLangString($v, false);
-		}
-	}
-
 	// If we are editing a file work away at that.
 	if ($current_file)
 	{
-		$context['entries_not_writable_message'] = is_writable($current_file) ? '' : sprintf($txt['lang_entries_not_writable'], $current_file);
+		$master = Language::get_file_for_editing($current_file);
+		$delta = Language::get_language_changes((int) $theme_id, $context['lang_id'], $file_id);
+		$context['entries'] = [];
 
-		$entries = [];
-		// We can't just require it I'm afraid - otherwise we pass in all kinds of variables!
-		$multiline_cache = '';
-		foreach (file($current_file) as $line)
+		foreach ($master as $lang_var => $lang_strings)
 		{
-			// Got a new entry?
-			if ($line[0] == '$' && !empty($multiline_cache))
+			foreach ($lang_strings as $lang_key => $lang_string)
 			{
-				preg_match('~\$(helptxt|txt|editortxt)\[\'(.+)\'\]\s?=\s?(.+);~ms', strtr($multiline_cache, array("\r" => '')), $matches);
-				if (!empty($matches[3]))
-				{
-					$entries[$matches[2]] = array(
-						'type' => $matches[1],
-						'full' => $matches[0],
-						'entry' => $matches[3],
-					);
-					$multiline_cache = '';
-				}
+				$context['entries'][$lang_var . '_' . $lang_key] = [
+					'link' => $scripturl . '?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . $theme_id . '_' . $file_id . ';eid=' . $lang_var . '_' . $lang_key,
+					'lang_var' => $lang_var,
+					'display' => $lang_key,
+					'master' => $lang_string,
+					'current' => isset($delta[$lang_var][$lang_key]) ? $delta[$lang_var][$lang_key] : '',
+				];
 			}
-			$multiline_cache .= $line;
-		}
-		// Last entry to add?
-		if ($multiline_cache)
-		{
-			preg_match('~\$(helptxt|txt|editortxt)\[\'(.+)\'\]\s?=\s?(.+);~ms', strtr($multiline_cache, array("\r" => '')), $matches);
-			if (!empty($matches[3]))
-				$entries[$matches[2]] = array(
-					'type' => $matches[1],
-					'full' => $matches[0],
-					'entry' => $matches[3],
-				);
 		}
 
-		// These are the entries we can definitely save.
-		$final_saves = [];
-
-		$context['file_entries'] = [];
-		foreach ($entries as $entryKey => $entryValue)
+		if (isset($_GET['eid']) && isset($context['entries'][$_GET['eid']]))
 		{
-			// Ignore some things we set separately.
-			$ignore_files = array('lang_locale', 'lang_rtl');
-			if (in_array($entryKey, $ignore_files))
-				continue;
-
-			// These are arrays that need breaking out.
-			$arrays = array('days', 'days_short', 'months', 'months_titles', 'months_short', 'happy_birthday_author', 'karlbenson1_author', 'nite0859_author', 'zwaldowski_author', 'geezmo_author', 'karlbenson2_author');
-			if (in_array($entryKey, $arrays))
+			$context['sub_template'] = 'admin_languages_edit_entry';
+			$context['current_entry'] = $context['entries'][$_GET['eid']];
+			if (empty($context['current_entry']['current']))
 			{
-				// Get off the first bits.
-				$entryValue['entry'] = substr($entryValue['entry'], strpos($entryValue['entry'], '(') + 1, strrpos($entryValue['entry'], ')') - strpos($entryValue['entry'], '('));
-				$entryValue['entry'] = explode(',', strtr($entryValue['entry'], array(' ' => '')));
+				$context['current_entry']['current'] = $context['current_entry']['master'];
+			}
 
-				// Now create an entry for each item.
-				$cur_index = 0;
-				$save_cache = array(
-					'enabled' => false,
-					'entries' => [],
-				);
-				foreach ($entryValue['entry'] as $id => $subValue)
+			// This is the path we might actually save something.
+			if (isset($_POST['save_entry']))
+			{
+				checkSession();
+				validateToken('admin-mlang');
+
+				if (is_array($context['current_entry']['master']))
 				{
-					// Is this a new index?
-					if (preg_match('~^(\d+)~', $subValue, $matches))
+					$entries = [];
+					if (!empty($_POST['entry_key']) && !empty($_POST['entry_value']) && is_array($_POST['entry_key']) && is_array($_POST['entry_value']))
 					{
-						$cur_index = $matches[1];
-						$subValue = substr($subValue, strpos($subValue, '\''));
-					}
-
-					// Clean up some bits.
-					$subValue = strtr($subValue, array('"' => '', '\'' => '', ')' => ''));
-
-					// Can we save?
-					if (isset($save_strings[$entryKey . '-+- ' . $cur_index]))
-					{
-						$save_cache['entries'][$cur_index] = strtr($save_strings[$entryKey . '-+- ' . $cur_index], array('\'' => ''));
-						$save_cache['enabled'] = true;
-					}
-					else
-						$save_cache['entries'][$cur_index] = $subValue;
-
-					$context['file_entries'][] = array(
-						'key' => $entryKey . '-+- ' . $cur_index,
-						'value' => $subValue,
-						'rows' => 1,
-					);
-					$cur_index++;
-				}
-
-				// Do we need to save?
-				if ($save_cache['enabled'])
-				{
-					// Format the string, checking the indexes first.
-					$items = [];
-					$cur_index = 0;
-					foreach ($save_cache['entries'] as $k2 => $v2)
-					{
-						// Manually show the custom index.
-						if ($k2 != $cur_index)
+						foreach ($_POST['entry_key'] as $k => $v)
 						{
-							$items[] = $k2 . ' => \'' . $v2 . '\'';
-							$cur_index = $k2;
+							if (trim($v) != '' && isset($_POST['entry_value'][$k]))
+							{
+								$entries[$v] = (string) $_POST['entry_value'][$k];
+							}
+						}
+						// Let's see if they are the same.
+						$master = $context['current_entry']['master'];
+						asort($master);
+						$current = $entries;
+						asort($current);
+						if ($master === $current)
+						{
+							Language::delete_current_entry((int) $theme_id, $context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display']);
 						}
 						else
-							$items[] = '\'' . $v2 . '\'';
-
-						$cur_index++;
+						{
+							Language::save_multiple_entry((int) $theme_id, $context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display'], $entries);
+						}
 					}
-					// Now create the string!
-					$final_saves[$entryKey] = array(
-						'find' => $entryValue['full'],
-						'replace' => '$' . $entryValue['type'] . '[\'' . $entryKey . '\'] = array(' . implode(', ', $items) . ');',
-					);
 				}
-			}
-			else
-			{
-				// Saving?
-				if (isset($save_strings[$entryKey]) && $save_strings[$entryKey] != $entryValue['entry'])
+				else
 				{
-					// @todo Fix this properly.
-					if ($save_strings[$entryKey] == '')
-						$save_strings[$entryKey] = '\'\'';
-
-					// Set the new value.
-					$entryValue['entry'] = $save_strings[$entryKey];
-					// And we know what to save now!
-					$final_saves[$entryKey] = array(
-						'find' => $entryValue['full'],
-						'replace' => '$' . $entryValue['type'] . '[\'' . $entryKey . '\'] = ' . $save_strings[$entryKey] . ';',
-					);
+					$entry = !empty($_POST['entry']) ? $_POST['entry'] : '';
+					if ($entry === $context['current_entry']['master'])
+					{
+						Language::delete_current_entry((int) $theme_id, $context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display']);
+					}
+					else
+					{
+						Language::save_single_entry((int) $theme_id, $context['lang_id'], $file_id, $context['current_entry']['lang_var'], $context['current_entry']['display'], $entry);
+					}
 				}
 
-				$editing_string = cleanLangString($entryValue['entry'], true);
-				$context['file_entries'][] = array(
-					'key' => $entryKey,
-					'value' => $editing_string,
-					'rows' => (int) (strlen($editing_string) / 38) + substr_count($editing_string, "\n") + 1,
-				);
+				session_flash('success', 'LANGUAGE CHANGES SAVED');
+				redirectexit('action=admin;area=languages;sa=editlang;lid=' . $context['lang_id']);
 			}
 		}
-
-		// Any saves to make?
-		if (!empty($final_saves))
+		else
 		{
-			checkSession();
-
-			$file_contents = implode('', file($current_file));
-			foreach ($final_saves as $save)
-				$file_contents = strtr($file_contents, array($save['find'] => $save['replace']));
-
-			// Save the actual changes.
-			$fp = fopen($current_file, 'w+');
-			fwrite($fp, strtr($file_contents, array("\r" => '')));
-			fclose($fp);
-
-			$madeSave = true;
+			$context['sub_template'] = 'admin_languages_edit_list';
 		}
-
-		// Another restore.
-		$txt = $old_txt;
 	}
-
-	// If we saved, redirect.
-	if ($madeSave)
-		redirectexit('action=admin;area=languages;sa=editlang;lid=' . $context['lang_id']);
-
-	if (!empty($context['file_entries']))
+	else
 	{
-		// We need to split this up into pairs for the template.
-		$context['split_file_entries'] = array_chunk($context['file_entries'], 2);
+		$context['sub_template'] = 'admin_languages_select';
+
+		loadLanguage('Login');
+		$context['policies'] = [];
+		foreach (Policy::get_policy_list() as $policy_type)
+		{
+			$context['policies'][] = [
+				'name' => $txt['policy_type_' . $policy_type['policy_type']],
+				'link' => $scripturl . '?action=admin;area=regcenter;sa=policies;policy=' . $policy_type['id_policy_type'] . ';lang=' . $context['lang_id'],
+			];
+		}
 	}
 
 	createToken('admin-mlang');

@@ -313,14 +313,28 @@ $txt['edit_languages'] = 'Edit Languages';
 $txt['lang_file_not_writable'] = '<strong>Warning:</strong> The primary language file (%1$s) is not writable. You must make this writable before you can make any changes.';
 $txt['lang_entries_not_writable'] = '<strong>Warning:</strong> The language file you wish to edit (%1$s) is not writable. You must make this writable before you can make any changes.';
 $txt['languages_ltr'] = 'Right to Left';
+$txt['language_master_value'] = 'Master value';
+$txt['language_current_value'] = 'Current value';
+$txt['language_master_values'] = 'Master values';
+$txt['language_current_values'] = 'Current values';
+$txt['language_new_value'] = 'New value';
+$txt['language_new_values'] = 'New values';
 
-$txt['edit_language_entries_primary'] = 'Below are the primary language settings for this language pack.';
+$txt['edit_language_entries_primary'] = 'You can select which set of language entries to review and edit below.';
 $txt['edit_language_entries'] = 'Edit Language Entries';
 $txt['edit_language_entries_file'] = 'Select entries to edit';
 $txt['languages_rtl'] = 'Enable &quot;Right to Left&quot; Mode';
+$txt['default_language_sections'] = 'Default Language Sections';
+$txt['language_general_files'] = 'General Language Sections';
+$txt['language_admin_files'] = 'Admin Language Sections';
+$txt['language_other_files'] = 'Other Language Content';
+$txt['configured_elsewhere'] = 'Some language content is configured elsewhere:';
+$txt['all_site_policies'] = 'All site policies';
 
-$txt['lang_file_desc_index'] = 'General Strings';
-$txt['lang_file_desc_EmailTemplates'] = 'Email Templates';
+$txt['lang_file_desc_General'] = 'General strings';
+$txt['lang_file_desc_ManagePaid'] = 'Paid subscriptions';
+$txt['lang_file_desc_Modlog'] = 'Moderation log';
+$txt['lang_file_desc_Who'] = 'Who\'s Online';
 
 $txt['languages_download'] = 'Download Language Pack';
 $txt['languages_download_note'] = 'This page lists all the files that are contained within the language pack and some useful information about each one. All files that have their associated check box marked will be copied.';

@@ -145,4 +145,28 @@ class Theme
 
 		return $theme_settings;
 	}
+
+	public static function get_theme_list(): array
+	{
+		global $smcFunc, $settings;
+
+		$request = $smcFunc['db_query']('', '
+			SELECT id_theme, variable, value
+			FROM {db_prefix}themes
+			WHERE id_member = {int:no_member}
+				AND variable IN ({string:name}, {string:theme_dir})',
+			array(
+				'no_member' => 0,
+				'name' => 'name',
+				'theme_dir' => 'theme_dir',
+			)
+		);
+		$themes = [];
+
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$themes[$row['id_theme']][$row['variable']] = $row['value'];
+		$smcFunc['db_free_result']($request);
+
+		return $themes;
+	}
 }

@@ -27,6 +27,7 @@ class Arrays
 			'join' => 'StoryBB\\Template\\Helper\\Arrays::join',
 			'in_array' => 'StoryBB\\Template\\Helper\\Arrays::in_array',
 			'is_array' => 'StoryBB\\Template\\Helper\\Arrays::is_array',
+			'array_key_exists' => 'StoryBB\\Template\\Helper\\Arrays::array_key_exists',
 			'getNumItems' => 'StoryBB\\Template\\Helper\\Arrays::count',
 			'count' => 'StoryBB\\Template\\Helper\\Arrays::count',
 			'keys' => 'StoryBB\\Template\\Helper\\Arrays::keys',
@@ -64,6 +65,23 @@ class Arrays
 	public static function is_array($item)
 	{
 		return is_array($item);
+	}
+
+	/**
+	 * Identifies if the 'needle' item exists as a key in the 'haystack'.
+	 *
+	 * @param array $haystack An array to look for an item
+	 * @param string|int $needle An item to look for as a key
+	 * @return bool True if $needle is a key in $haystack
+	 */
+	public static function array_key_exists($haystack, $needle): bool
+	{
+		if (!is_array($haystack) || (!is_int($needle) && (!is_string($needle))))
+		{
+			return false;
+		}
+
+		return isset($haystack[$needle]);
 	}
 
 	/**

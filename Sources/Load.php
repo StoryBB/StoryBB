@@ -13,6 +13,7 @@
 use LightnCandy\LightnCandy;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Database\Exception as DatabaseException;
+use StoryBB\Model\Language;
 
 /**
  * Load the $modSettings array.
@@ -2636,16 +2637,12 @@ function addInlineJavaScript($javascript, $defer = false)
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false)
 {
 	global $user_info, $language, $settings, $context, $modSettings;
-	global $db_show_debug, $sourcedir, $txt, $birthdayEmails, $txtBirthdayEmails;
+	global $db_show_debug, $sourcedir, $txt, $txtBirthdayEmails, $cachedir;
 	static $already_loaded = [];
 
 	// Default to the user's language.
 	if ($lang == '')
 		$lang = isset($user_info['language']) ? $user_info['language'] : $language;
-
-	// Do we want the English version of language file as fallback?
-	if (empty($modSettings['disable_language_fallback']) && $lang != 'en-us')
-		loadLanguage($template_name, 'en-us', false);
 
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
@@ -2665,82 +2662,50 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	// For each file open it up and write it out!
 	foreach (explode('+', $template_name) as $template)
 	{
-		// Obviously, the current theme is most important to check.
-		$attempts = array(
-			array($settings['theme_dir'], $template, $lang, $settings['theme_url']),
-			array($settings['theme_dir'], $template, $language, $settings['theme_url']),
-		);
-
-		// Do we have a base theme to worry about?
-		if (isset($settings['base_theme_dir']))
+		$path = $cachedir . '/lang/' . $settings['theme_id'] . '_' . $lang . '_' . $template . '.php';
+		// If it doesn't exist, try to make it.
+		if (!file_exists($path))
 		{
-			$attempts[] = array($settings['base_theme_dir'], $template, $lang, $settings['base_theme_url']);
-			$attempts[] = array($settings['base_theme_dir'], $template, $language, $settings['base_theme_url']);
+			Language::cache_language((int) $settings['theme_id'], $lang, $template);
 		}
 
-		// Fall back on the default theme if necessary.
-		$attempts[] = array($settings['default_theme_dir'], $template, $lang, $settings['default_theme_url']);
-		$attempts[] = array($settings['default_theme_dir'], $template, $language, $settings['default_theme_url']);
-
-		// Fall back on the English language if none of the preferred languages can be found.
-		if (!in_array('en-us', array($lang, $language)))
+		// If it still doesn't exist, abort!
+		if (!file_exists($path))
 		{
-			$attempts[] = array($settings['theme_dir'], $template, 'en-us', $settings['theme_url']);
-			$attempts[] = array($settings['default_theme_dir'], $template, 'en-us', $settings['default_theme_url']);
+			fatal_error('Language file ' . $template . ' for language ' . $lang . ' (theme ' . $theme_name . ')', 'template');
 		}
 
-		// Try to find the language file.
-		$found = false;
-		foreach ($attempts as $k => $file)
+		@include($path);
+
+		// setlocale is required for basename() & pathinfo() to work properly on the selected language
+		if ($template == 'General')
 		{
-			if (file_exists($file[0] . '/languages/' . $file[2] . '/' . $file[1] . '.php'))
+			try
 			{
-				// Include it!
-				template_include($file[0] . '/languages/' . $file[2] . '/' . $file[1] . '.php');
-
-				// Note that we found it.
-				$found = true;
-
-				// setlocale is required for basename() & pathinfo() to work properly on the selected language
-				if ($file[1] == 'General')
+				if (!file_exists($settings['default_theme_dir'] . '/languages/' . $lang . '/' . $lang . '.json'))
 				{
-					try
-					{
-						if (!file_exists($file[0] . '/languages/' . $file[2] . '/' . $file[2] . '.json'))
-						{
-							throw new RuntimeException('Language ' . $file[2] . ' is missing its ' . $file[2] . '.json file');
-						}
-						$general = @json_decode(file_get_contents($file[0] . '/languages/' . $file[2] . '/' . $file[2] . '.json'), true);
-						if (!is_array($general) || !isset($general['locale'], $general['native_name']))
-						{
-							throw new RuntimeException('Language ' . $file[2] . ' has an invalid ' . $file[2] . '.json file');
-						}
-						$txt['lang_locale'] = $general['locale'];
-						$txt['lang_rtl'] = !empty($general['is_rtl']);
-						$txt['native_name'] = $general['native_name'];
-						$txt['english_name'] = !empty($general['english_name']) ? $general['english_name'] : $general['native_name'];
-					}
-					catch (Exception $e)
-					{
-						$txt['lang_locale'] = 'en_US';
-						$txt['lang_rtl'] = false;
-						$txt['native_name'] = 'English (debug)';
-						$txt['english_name'] = 'English (debug)';
-						log_error($e, 'template');
-						break;
-					}
-					setlocale(LC_CTYPE, $txt['lang_locale'] . '.utf8', $txt['lang_locale'] . '.UTF-8');
+					throw new RuntimeException('Language ' . $lang . ' is missing its ' . $lang . '.json file');
 				}
-				
+				$general = @json_decode(file_get_contents($settings['default_theme_dir'] . '/languages/' . $lang . '/' . $lang . '.json'), true);
+				if (!is_array($general) || !isset($general['locale'], $general['native_name']))
+				{
+					throw new RuntimeException('Language ' . $file[2] . ' has an invalid ' . $file[2] . '.json file');
+				}
+				$txt['lang_locale'] = $general['locale'];
+				$txt['lang_rtl'] = !empty($general['is_rtl']);
+				$txt['native_name'] = $general['native_name'];
+				$txt['english_name'] = !empty($general['english_name']) ? $general['english_name'] : $general['native_name'];
+			}
+			catch (Exception $e)
+			{
+				$txt['lang_locale'] = 'en_US';
+				$txt['lang_rtl'] = false;
+				$txt['native_name'] = 'English (debug)';
+				$txt['english_name'] = 'English (debug)';
+				log_error($e, 'template');
 				break;
 			}
-		}
-
-		// That couldn't be found!  Log the error, but *try* to continue normally.
-		if (!$found && $fatal)
-		{
-			log_error(sprintf($txt['theme_language_error'], $template_name . '.' . $lang, 'template'));
-			break;
+			setlocale(LC_CTYPE, $txt['lang_locale'] . '.utf8', $txt['lang_locale'] . '.UTF-8');
 		}
 
 		// For the sake of backward compatibility
@@ -2752,20 +2717,6 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				$txt[$key . '_body'] = $value['body'];
 			}
 			$txt['emails'] = [];
-		}
-		// For sake of backward compatibility: $birthdayEmails is supposed to be
-		// empty in a normal install. If it isn't it means the forum is using
-		// something "old" (it may be the translation, it may be a mod) and this
-		// code (like the piece above) takes care of converting it to the new format
-		if (!empty($birthdayEmails))
-		{
-			foreach ($birthdayEmails as $key => $value)
-			{
-				$txtBirthdayEmails[$key . '_subject'] = $value['subject'];
-				$txtBirthdayEmails[$key . '_body'] = $value['body'];
-				$txtBirthdayEmails[$key . '_author'] = $value['author'];
-			}
-			$birthdayEmails = [];
 		}
 	}
 
