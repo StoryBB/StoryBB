@@ -571,7 +571,7 @@ function ModifyLanguage()
 					}
 				}
 
-				session_flash('success', 'LANGUAGE CHANGES SAVED');
+				session_flash('success', $txt['settings_saved']);
 				redirectexit('action=admin;area=languages;sa=editlang;lid=' . $context['lang_id']);
 			}
 		}
