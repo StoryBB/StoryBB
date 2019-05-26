@@ -319,6 +319,7 @@ $txt['language_master_values'] = 'Master values';
 $txt['language_current_values'] = 'Current values';
 $txt['language_new_value'] = 'New value';
 $txt['language_new_values'] = 'New values';
+$txt['language_add_new_entry'] = 'Add new entry';
 
 $txt['edit_language_entries_primary'] = 'You can select which set of language entries to review and edit below.';
 $txt['edit_language_entries'] = 'Edit Language Entries';

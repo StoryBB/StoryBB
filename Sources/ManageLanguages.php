@@ -519,6 +519,7 @@ function ModifyLanguage()
 		if (isset($_GET['eid']) && isset($context['entries'][$_GET['eid']]))
 		{
 			$context['sub_template'] = 'admin_languages_edit_entry';
+			loadJavaScriptFile('manage_languages.js', array('defer' => true, 'minimize' => false), 'manage_languages');
 			$context['current_entry'] = $context['entries'][$_GET['eid']];
 			if (empty($context['current_entry']['current']))
 			{

@@ -25,12 +25,13 @@
 	{{/each}}
 						</dl>
 						<br>{{{txt.language_new_values}}}:<br>
-						<dl>
+						<dl id="multilang" data-remove="{{{txt.remove}}}">
 	{{#each context.current_entry.current}}
-							<dt><input name="entry_key[]" type="text" value="{{@key}}"></dt>
+							<dt><button class="button" role="button">{{{../txt.remove}}}</button> <input name="entry_key[]" type="text" value="{{@key}}"></dt>
 							<dd><textarea name="entry_value[]">{{.}}</textarea></dd>
 	{{/each}}
 						</dl>
+						<button class="button" id="add-multilang">{{{txt.language_add_new_entry}}}
 {{else}}
 						{{{txt.language_master_value}}}: <i>{{context.current_entry.master}}</i><br>
 						{{{txt.language_new_value}}}:<br>
