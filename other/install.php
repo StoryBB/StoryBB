@@ -198,14 +198,21 @@ function load_lang_file()
 	$incontext['detected_languages'] = [];
 
 	// Make sure the languages directory actually exists.
-	if (file_exists(dirname(__FILE__) . '/Themes/default/languages'))
+	$langpath = __DIR__ . '/Themes/default/languages';
+	if (file_exists($langpath))
 	{
 		// Find all the "Install" language files in the directory.
-		$dir = dir(dirname(__FILE__) . '/Themes/default/languages');
+		$dir = dir($langpath);
 		while ($entry = $dir->read())
 		{
-			if (substr($entry, 0, 8) == 'Install.' && substr($entry, -4) == '.php')
-				$incontext['detected_languages'][$entry] = ucfirst(substr($entry, 8, strlen($entry) - 12));
+			if (is_dir($langpath . '/' . $entry) && file_exists($langpath . '/' . $entry . '/Install.php') && file_exists($lang_path . '/' . $entry . '/' . $entry . '.json'))
+			{
+				$json = @json_decode(file_get_contents($langpath . '/' . $entry . '/' . $entry . '.json'));
+				if (!empty($json) && !empty($json['native_name']))
+				{
+					$incontext['detected_languages'][$entry] = $json['native_name'];
+				}
+			}
 		}
 		$dir->close();
 	}
@@ -246,18 +253,18 @@ function load_lang_file()
 		$_SESSION['installer_temp_lang'] = $GLOBALS['HTTP_GET_VARS']['lang_file'];
 
 	// Make sure it exists, if it doesn't reset it.
-	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~[^\\w_\\-.]~', $_SESSION['installer_temp_lang']) === 1 || !file_exists(dirname(__FILE__) . '/Themes/default/languages/' . $_SESSION['installer_temp_lang']))
+	if (!isset($_SESSION['installer_temp_lang']) || preg_match('~^[a-z0-9_-]+$~i', $_SESSION['installer_temp_lang']) === 0 || !file_exists(__DIR__ . '/Themes/default/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php'))
 	{
 		// Use the first one...
 		list ($_SESSION['installer_temp_lang']) = array_keys($incontext['detected_languages']);
 
-		// If we have english and some other language, use the other language.  We Americans hate english :P.
-		if ($_SESSION['installer_temp_lang'] == 'Install.english.php' && count($incontext['detected_languages']) > 1)
+		// If we have English and some other language, use the other language.  We Americans hate English :P.
+		if ($_SESSION['installer_temp_lang'] == 'en-us' && count($incontext['detected_languages']) > 1)
 			list (, $_SESSION['installer_temp_lang']) = array_keys($incontext['detected_languages']);
 	}
 
 	// And now include the actual language file itself.
-	require_once(dirname(__FILE__) . '/Themes/default/languages/' . $_SESSION['installer_temp_lang']);
+	require_once(__DIR__ . '/Themes/default/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php');
 }
 
 // This handy function loads some settings and the like.
@@ -446,9 +453,6 @@ function CheckFilesWritable()
 		'Settings.php',
 		'Settings_bak.php',
 	);
-
-	foreach ($incontext['detected_languages'] as $lang => $temp)
-		$extra_files[] = 'Themes/default/languages/' . $lang;
 
 	// With mod_security installed, we could attempt to fix it with .htaccess.
 	if (function_exists('apache_get_modules') && in_array('mod_security', apache_get_modules()))

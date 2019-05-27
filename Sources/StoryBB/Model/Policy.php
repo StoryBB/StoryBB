@@ -32,7 +32,7 @@ class Policy
 
 		$policies = [];
 		$final_policies = [];
-		$versions_in_order = [$user_info['language'], $language, 'english'];
+		$versions_in_order = [$user_info['language'], $language, 'en-us'];
 
 		// Fetch all the policies.
 		$request = $smcFunc['db_query']('', '
@@ -289,7 +289,7 @@ class Policy
 
 		$policies = [];
 		$final_policies = [];
-		$versions_in_order = [$user_info['language'], $language, 'english'];
+		$versions_in_order = [$user_info['language'], $language, 'en-us'];
 
 		// Fetch all the policies.
 		$request = $smcFunc['db_query']('', '
@@ -384,7 +384,7 @@ class Policy
 
 		$policies = [];
 		$final_policies = [];
-		$versions_in_order = [$user_language, 'english'];
+		$versions_in_order = [$user_language, 'en-us'];
 
 		// Fetch all the policies.
 		$request = $smcFunc['db_query']('', '
@@ -492,7 +492,7 @@ class Policy
 			cache_put_data('footer_links', $footer_links, 300);
 		}
 
-		$versions = [$user_info['language'], $language, 'english'];
+		$versions = [$user_info['language'], $language, 'en-us'];
 
 		foreach ($footer_links as $policy_type => $languages)
 		{

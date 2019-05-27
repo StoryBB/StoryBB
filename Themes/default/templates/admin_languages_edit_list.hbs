@@ -1,53 +1,52 @@
 	{{! Edit language entries. Note that this doesn't always work because of PHP's max_post_vars setting. }}
 	<div id="admincenter">
-		<form action="{{scripturl}}?action=admin;area=languages;sa=editlang;lid={{context.lang_id}}" method="post" accept-charset="UTF-8">
-			<div class="cat_bar">
-				<h3 class="catbg">
-					{{{txt.edit_languages}}}
-				</h3>
-			</div>
-			<div id="editlang_desc" class="information">
-				{{{txt.edit_language_entries_primary}}}
-			</div>
+		<div class="cat_bar">
+			<h3 class="catbg">
+				{{{txt.edit_languages}}}
+			</h3>
+		</div>
+		<div id="editlang_desc" class="information">
+			{{{txt.edit_language_entries_primary}}}
+		</div>
 
-{{! Not writable? }}
-{{#if context.lang_file_not_writable_message}}
-			<div class="errorbox">
-				{{{context.lang_file_not_writable_message}}}
-			</div>
-{{/if}}
-
-			{{! Show the language entries. }}
-			<div class="windowbg">
-				<fieldset>
-					<legend>{{{context.primary_settings.name}}}</legend>
-					<dl class="settings">
-						<dt>
-							<label for="locale">{{{txt.languages_locale}}}:</label>
-						</dt>
-						<dd>
-							<input type="text" name="locale" id="locale" size="20" value="{{{context.primary_settings.locale}}}"{{#if context.file_entries}} disabled{{/if}}>
-						</dd>
-						<dt>
-							<label for="rtl">{{{txt.languages_rtl}}}:</label>
-						</dt>
-						<dd>
-							<input type="checkbox" name="rtl" id="rtl"{{#if context.primary_settings.rtl}} checked{{/if}}{{#if context.file_entries}} disabled{{/if}}>
-						</dd>
+		<div class="windowbg">
+			<dl class="settings">
+{{#each context.entries}}
+				<dt>
+					<a href="{{{link}}}">{{display}}</a>
+				</dt>
+				<dd>
+	{{#if (is_array master)}}
+					<i>{{../txt.language_master_values}}:</i>
+					<dl>
+		{{#each master}}
+						<dt>{{@key}}</dt>
+						<dd>{{.}}</dd>
+		{{/each}}
 					</dl>
-				</fieldset>
-				{{session_form}}
-				{{token_form 'admin-mlang'}}
-				<input type="submit" name="save_main" value="{{{txt.save}}}"{{#if (or context.lang_file_not_writable_message context.file_entries)}} disabled{{/if}} class="button_submit">
+		{{#if current}}
+					<br><i>{{../txt.language_current_values}}:</i>
+					<dl>
+		{{#each current}}
+						<dt>{{@key}}</dt>
+						<dd>{{.}}</dd>
+		{{/each}}
+					</dl>
+		{{/if}}
+	{{else}}
+					<i>{{../txt.language_master_value}}:</i> {{master}}
+		{{#if current}}
+					<br>
+					<i>{{../txt.language_current_value}}:</i> {{current}}
+		{{/if}}
+	{{/if}}
+				</dd>
+{{/each}}
+			</dl>
+		</div>
 
-{{! Allow deleting entries. Except English, that can't be deleted. }}
-{{#unless (eq context.lang_id 'english')}}
-				<input type="submit" name="delete_main" value="{{{txt.delete}}}"{{#if (or context.lang_file_not_writable_message context.file_entries)}} disabled{{/if}} onclick="confirm('{{{txt.languages_delete_confirm}}}');" class="button_submit">
-{{/unless}}
-			</div>
-		</form>
 
-		<form action="{{scripturl}}?action=admin;area=languages;sa=editlang;lid={{context.lang_id}};entries" id="entry_form" method="post" accept-charset="UTF-8">
+		<form action="{{scripturl}}?action=admin;area=languages;sa=editlang;lid={{context.lang_id}}" id="entry_form" method="post" accept-charset="UTF-8">
 			<div class="cat_bar">
 				<h3 class="catbg">
 					{{{txt.edit_language_entries}}}
@@ -113,7 +112,6 @@
 		{{/if}}
 	{{/each}}
 				</dl>
-				<input type="submit" name="save_entries" value="{{{txt.save}}}"{{#if context.entries_not_writable_message}} disabled{{/if}} class="button_submit">
 			</div>
 {{/if}}
 		</form>

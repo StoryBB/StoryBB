@@ -303,6 +303,22 @@ class Schema
 					Index::primary(['id_group', 'id_member']),
 				]
 			),
+			Table::make('language_delta',
+				[
+					'id_delta' => Column::int()->auto_increment(),
+					'id_theme' => Column::tinyint(),
+					'id_lang' => Column::varchar(5),
+					'lang_file' => Column::varchar(64),
+					'lang_var' => Column::varchar(20),
+					'lang_key' => Column::varchar(64),
+					'lang_string' => Column::text(),
+					'is_multi' => Column::tinyint(),
+				],
+				[
+					Index::primary(['id_delta']),
+					Index::unique(['id_theme', 'id_lang', 'lang_file', 'lang_var', 'lang_key']),
+				]
+			),
 			Table::make('log_actions',
 				[
 					'id_action' => Column::int()->auto_increment(),

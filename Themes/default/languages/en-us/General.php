@@ -10,14 +10,6 @@
  * @version 3.0 Alpha 1
  */
 
-// Native name, please use full HTML entities to write your language's name.
-$txt['native_name'] = 'English';
-
-// Locale (strftime)
-$txt['lang_locale'] = 'en_US';
-
-// Character set and right to left?
-$txt['lang_rtl'] = false;
 // Number format.
 $txt['number_format'] = '1,234.00';
 
