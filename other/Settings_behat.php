@@ -170,11 +170,6 @@ $boarddir = dirname(__FILE__);
  * @var string
  */
 $sourcedir = dirname(__FILE__) . '/Sources';
-/**
- * Path to the tasks directory.
- * @var string
- */
-$tasksdir = $sourcedir . '/tasks';
 
 // Make sure the paths are correct... at least try to fix them.
 if (!file_exists($boarddir) && file_exists(dirname(__FILE__) . '/subscriptions.php'))
