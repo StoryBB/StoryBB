@@ -141,7 +141,7 @@ function getServerVersions($checkFor)
  */
 function getFileVersions(&$versionOptions)
 {
-	global $boarddir, $sourcedir, $settings, $tasksdir;
+	global $boarddir, $sourcedir, $settings;
 
 	// Default place to find the languages would be the default theme dir.
 	$lang_dir = $settings['default_theme_dir'] . '/languages';

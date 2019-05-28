@@ -170,11 +170,6 @@ $boarddir = dirname(__FILE__);
  * @var string
  */
 $sourcedir = dirname(__FILE__) . '/Sources';
-/**
- * Path to the tasks directory.
- * @var string
- */
-$tasksdir = $sourcedir . '/tasks';
 
 if (file_exists(dirname(__FILE__) . '/install.php'))
 {
