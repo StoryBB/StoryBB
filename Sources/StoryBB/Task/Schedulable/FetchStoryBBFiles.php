@@ -11,6 +11,8 @@
 
 namespace StoryBB\Task\Schedulable;
 
+use GuzzleHttp\Client;
+
 /**
  * Fetch the latest version info/news from storybb.org.
  */
@@ -45,9 +47,6 @@ class FetchStoryBBFiles extends \StoryBB\Task\Schedulable
 
 		$smcFunc['db_free_result']($request);
 
-		// We're gonna need fetch_web_data() to pull this off.
-		require_once($sourcedir . '/Subs-Package.php');
-
 		// Just in case we run into a problem.
 		loadEssentialThemeData();
 		loadLanguage('Errors', $language, false);
@@ -59,10 +58,12 @@ class FetchStoryBBFiles extends \StoryBB\Task\Schedulable
 			$url = $server . (!empty($file['path']) ? $file['path'] : $file['path']) . $file['filename'] . (!empty($file['parameters']) ? '?' . $file['parameters'] : '');
 
 			// Get the file
-			$file_data = fetch_web_data($url);
+			$client = new Client();
+			$http_request = $client->get($url);
+			$file_data = (string) $http_request->getBody();
 
 			// If we got an error - give up - the site might be down. And if we should happen to be coming from elsewhere, let's also make a note of it.
-			if ($file_data === false)
+			if (empty($file_data))
 			{
 				$context['scheduled_errors']['fetchStoryBBiles'][] = sprintf($txt['st_cannot_retrieve_file'], $url);
 				log_error(sprintf($txt['st_cannot_retrieve_file'], $url));

@@ -16,6 +16,7 @@
  */
 
 use StoryBB\Helper\Environment;
+use GuzzleHttp\Client
 
 /**
  * downloads a file from a url and stores it locally for avatar use by id_member.
@@ -309,7 +310,9 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 	$fp_destination = fopen($destination, 'wb');
 	if ($fp_destination && (substr($source, 0, 7) == 'http://' || substr($source, 0, 8) == 'https://'))
 	{
-		$fileContents = fetch_web_data($source);
+		$client = new Client();
+		$http_request = $client->get($source);
+		$fileContents = (string) $http_request->getBody();
 
 		fwrite($fp_destination, $fileContents);
 		fclose($fp_destination);
