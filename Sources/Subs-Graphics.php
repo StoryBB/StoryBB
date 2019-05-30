@@ -16,7 +16,7 @@
  */
 
 use StoryBB\Helper\Environment;
-use GuzzleHttp\Client
+use GuzzleHttp\Client;
 
 /**
  * downloads a file from a url and stores it locally for avatar use by id_member.
