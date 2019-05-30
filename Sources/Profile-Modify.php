@@ -16,6 +16,7 @@ use StoryBB\Model\Alert;
 use StoryBB\Model\Attachment;
 use StoryBB\Helper\Timezone;
 use StoryBB\Helper\Autocomplete;
+use GuzzleHttp\Client;
 
 /**
  * This defines every profile field known to man.
@@ -3082,10 +3083,14 @@ function profileSaveAvatarData(&$value)
 		require_once($sourcedir . '/Subs-Package.php');
 
 		$url = parse_url($_POST['userpicpersonal']);
-		$contents = fetch_web_data($url['scheme'] . '://' . $url['host'] . (empty($url['port']) ? '' : ':' . $url['port']) . str_replace(' ', '%20', trim($url['path'])));
+		$rebuilt_url = $url['scheme'] . '://' . $url['host'] . (empty($url['port']) ? '' : ':' . $url['port']) . str_replace(' ', '%20', trim($url['path']));
+
+		$client = new Client();
+		$http_request = $client->get($rebuilt_url);
+		$contents = (string) $http_request->getBody();
 
 		$new_filename = $uploadDir . '/' . Attachment::get_new_filename('avatar_tmp_' . $memID);
-		if ($contents != false && $tmpAvatar = fopen($new_filename, 'wb'))
+		if (!empty($contents) && $tmpAvatar = fopen($new_filename, 'wb'))
 		{
 			fwrite($tmpAvatar, $contents);
 			fclose($tmpAvatar);

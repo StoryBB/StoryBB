@@ -13,6 +13,7 @@
 namespace StoryBB\Helper;
 
 use StoryBB\Task;
+use GuzzleHttp\Client;
 
 /**
  * This class handles the TLD regex processing for linking to URLs.
@@ -45,11 +46,12 @@ class TLD
 		// Should we get a new copy of the official list of TLDs?
 		if ($update)
 		{
-			require_once($sourcedir . '/Subs-Package.php');
-			$tlds = fetch_web_data('https://data.iana.org/TLD/tlds-alpha-by-domain.txt');
+			$client = new Client();
+			$http_request = $client->get('https://data.iana.org/TLD/tlds-alpha-by-domain.txt');
+			$tlds = (string) $http_request->getBody();
 
 			// If the Internet Assigned Numbers Authority can't be reached, the Internet is gone. We're probably running on a server hidden in a bunker deep underground to protect it from marauding bandits roaming on the surface. We don't want to waste precious electricity on pointlessly repeating background tasks, so we'll wait until the next regularly scheduled update to see if civilization has been restored.
-			if ($tlds === false)
+			if (empty($tlds))
 				$postapocalypticNightmare = true;
 		}
 		// If we aren't updating and the regex is valid, we're done
