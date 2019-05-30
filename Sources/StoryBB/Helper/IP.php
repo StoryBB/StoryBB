@@ -108,4 +108,109 @@ class IP
 
 		return $host;
 	}
+
+	/**
+	 * Convert a single IP to a ranged IP.
+	 * internal function used to convert a user-readable format to a format suitable for the database.
+	 *
+	 * @param string $fullip The full IP
+	 * @return array An array of IP parts
+	 */
+	public static function to_range($fullip)
+	{
+		// Pretend that 'unknown' is 255.255.255.255. (since that can't be an IP anyway.)
+		if ($fullip == 'unknown')
+			$fullip = '255.255.255.255';
+
+		$ip_parts = explode('-', $fullip);
+		$ip_array = [];
+
+		// if ip 22.12.31.21
+		if (count($ip_parts) == 1 && self::is_valid($fullip))
+		{
+			$ip_array['low'] = $fullip;
+			$ip_array['high'] = $fullip;
+			return $ip_array;
+		} // if ip 22.12.* -> 22.12.* - 22.12.*
+		elseif (count($ip_parts) == 1)
+		{
+			$ip_parts[0] = $fullip;
+			$ip_parts[1] = $fullip;
+		}
+
+		// if ip 22.12.31.21-12.21.31.21
+		if (count($ip_parts) == 2 && self::is_valid($ip_parts[0]) && self::is_valid($ip_parts[1]))
+		{
+			$ip_array['low'] = $ip_parts[0];
+			$ip_array['high'] = $ip_parts[1];
+			return $ip_array;
+		}
+		elseif (count($ip_parts) == 2) // if ip 22.22.*-22.22.*
+		{
+			$valid_low = self::is_valid($ip_parts[0]);
+			$valid_high = self::is_valid($ip_parts[1]);
+			$count = 0;
+			$mode = (preg_match('/:/', $ip_parts[0]) > 0 ? ':' : '.');
+			$max = ($mode == ':' ? 'ffff' : '255');
+			$min = 0;
+			if(!$valid_low)
+			{
+				$ip_parts[0] = preg_replace('/\*/', '0', $ip_parts[0]);
+				$valid_low = self::is_valid($ip_parts[0]);
+				while (!$valid_low)
+				{
+					$ip_parts[0] .= $mode . $min;
+					$valid_low = self::is_valid($ip_parts[0]);
+					$count++;
+					if ($count > 9) break;
+				}
+			}
+
+			$count = 0;
+			if(!$valid_high)
+			{
+				$ip_parts[1] = preg_replace('/\*/', $max, $ip_parts[1]);
+				$valid_high = self::is_valid($ip_parts[1]);
+				while (!$valid_high)
+				{
+					$ip_parts[1] .= $mode . $max;
+					$valid_high = self::is_valid($ip_parts[1]);
+					$count++;
+					if ($count > 9) break;
+				}
+			}
+
+			if($valid_high && $valid_low)
+			{
+				$ip_array['low'] = $ip_parts[0];
+				$ip_array['high'] = $ip_parts[1];
+			}
+
+		}
+
+		return $ip_array;
+	}
+
+	/**
+	 * Convert a range of given IP number into a single string.
+	 * It's practically the reverse function of to_range().
+	 *
+	 * @example
+	 * IP::from_range(array(10, 10, 10, 0), array(10, 10, 20, 255)) returns '10.10.10-20.*
+	 *
+	 * @param array $low The low end of the range in IPv4 format
+	 * @param array $high The high end of the range in IPv4 format
+	 * @return string A string indicating the range
+	 */
+	public function from_range($low, $high)
+	{
+		$low = inet_dtop($low);
+		$high = inet_dtop($high);
+
+		if ($low == '255.255.255.255') return 'unknown';
+		if ($low == $high)
+			return $low;
+		else
+			return $low . '-' . $high;
+	}
 }

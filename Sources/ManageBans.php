@@ -646,7 +646,7 @@ function list_getBanItems($start = 0, $items_per_page = 0, $sort = 0, $ban_group
 			if (!empty($row['ip_high']))
 			{
 				$ban_items[$row['id_ban']]['type'] = 'ip';
-				$ban_items[$row['id_ban']]['ip'] = range2ip($row['ip_low'], $row['ip_high']);
+				$ban_items[$row['id_ban']]['ip'] = IP::from_range($row['ip_low'], $row['ip_high']);
 			}
 			elseif (!empty($row['hostname']))
 			{
@@ -979,7 +979,7 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 			if (!empty($row['ip_high']))
 			{
 				$ban_items[$row['id_ban']]['type'] = 'ip';
-				$ban_items[$row['id_ban']]['ip'] = range2ip($row['ip_low'], $row['ip_high']);
+				$ban_items[$row['id_ban']]['ip'] = IP::from_range($row['ip_low'], $row['ip_high']);
 
 				$is_range = (strpos($ban_items[$row['id_ban']]['ip'], '-') !== false || strpos($ban_items[$row['id_ban']]['ip'], '*') !== false);
 
@@ -1151,7 +1151,7 @@ function validateTriggers(&$triggers)
 			if ($key == 'main_ip')
 			{
 				$value = trim($value);
-				$ip_parts = ip2range($value);
+				$ip_parts = IP::to_range($value);
 				if (!checkExistingTriggerIP($ip_parts, $value))
 					$context['ban_errors'][] = 'invalid_ip';
 				else
@@ -1237,7 +1237,7 @@ function validateTriggers(&$triggers)
 				foreach ($values as $val)
 				{
 					$val = trim($val);
-					$ip_parts = ip2range($val);
+					$ip_parts = IP::to_range($val);
 					if (!checkExistingTriggerIP($ip_parts, $val))
 						$context['ban_errors'][] = 'invalid_ip';
 					else
@@ -1659,7 +1659,7 @@ function BanEditTrigger()
 			'id' => $row['id_ban'],
 			'group' => $row['id_ban_group'],
 			'ip' => array(
-				'value' => empty($row['ip_low']) ? '' : range2ip($row['ip_low'], $row['ip_high']),
+				'value' => empty($row['ip_low']) ? '' : IP::from_range($row['ip_low'], $row['ip_high']),
 				'selected' => !empty($row['ip_low']),
 			),
 			'hostname' => array(
@@ -1803,7 +1803,7 @@ function BanBrowseTriggers()
 		$listOptions['columns']['banned_entity']['data'] = array(
 			'function' => function($rowData)
 			{
-				return range2ip(
+				return IP::from_range(
 					$rowData['ip_low'],
 					$rowData['ip_high']
 				);
@@ -2153,29 +2153,6 @@ function list_getNumBanLogEntries()
 	$smcFunc['db_free_result']($request);
 
 	return $num_entries;
-}
-
-/**
- * Convert a range of given IP number into a single string.
- * It's practically the reverse function of ip2range().
- *
- * @example
- * range2ip(array(10, 10, 10, 0), array(10, 10, 20, 255)) returns '10.10.10-20.*
- *
- * @param array $low The low end of the range in IPv4 format
- * @param array $high The high end of the range in IPv4 format
- * @return string A string indicating the range
- */
-function range2ip($low, $high)
-{
-	$low = inet_dtop($low);
-	$high = inet_dtop($high);
-
-	if ($low == '255.255.255.255') return 'unknown';
-	if ($low == $high)
-		return $low;
-	else
-		return $low . '-' . $high;
 }
 
 /**
