@@ -168,11 +168,17 @@ $txt['post_awaiting_approval'] = 'Note: This message is awaiting approval by a m
 $txt['there_are_unapproved_topics'] = 'There are %1$s topics and %2$s posts awaiting approval in this board. Click <a href="%3$s">here</a> to view them all.';
 $txt['send_message'] = 'Send message';
 
-$txt['msg_alert_no_messages'] = 'you don\'t have any message';
-$txt['msg_alert_one_message'] = 'you have <a href="%1$s">1 message</a>';
-$txt['msg_alert_many_message'] = 'you have <a href="%1$s">%2$d messages</a>';
-$txt['msg_alert_one_new'] = '1 is new';
-$txt['msg_alert_many_new'] = '%1$d are new';
+$txt['msg_alert'] = [
+	0 => 'you don\'t have any messages',
+	1 => 'you have <a href="{url}">1 message</a>',
+	'x' => 'you have <a href="{url}">%1$s messages</a>',
+];
+$txt['msg_alert_new'] = [
+	0 => 'none are new',
+	1 => '1 is new',
+	'x' => '%1$s are new',
+];
+
 $txt['new_alert'] = 'New Alert';
 $txt['remove_message'] = 'Remove this post';
 $txt['remove_message_question'] = 'Remove this post?';
@@ -346,8 +352,11 @@ $txt['search_match'] = 'Match';
 $txt['forum_in_maintenance'] = 'Your forum is in Maintenance Mode. Only administrators can currently log in.';
 $txt['maintenance_page'] = 'You can turn off Maintenance Mode from the <a href="%1$s">Server Settings</a> area.';
 
-$txt['read_one_time'] = 'Read 1 time';
-$txt['read_many_times'] = 'Read %1$d times';
+$txt['read_times'] = [
+	1 => 'Read once',
+	2 => 'Read twice',
+	'x' => 'Read %1$s times',
+];
 
 $txt['forum_stats'] = 'Forum Stats';
 $txt['latest_member'] = 'Latest Member';
@@ -482,7 +491,18 @@ $txt['movetopic_change_all_subjects'] = 'Change every message\'s subject';
 $txt['move_topic_unapproved_js'] = 'Warning! This topic has not yet been approved.\\n\\nIt is not recommended that you create a redirection topic unless you intend to approve the post immediately following the move.';
 $txt['movetopic_auto_board'] = '[BOARD]';
 $txt['movetopic_auto_topic'] = '[TOPIC LINK]';
-$txt['movetopic_default'] = 'This topic has been moved to ' . $txt['movetopic_auto_board'] . ".\n\n" . $txt['movetopic_auto_topic'];
+$txt['movetopic_default'] = "This topic has been moved to [BOARD].\n\n[TOPIC LINK]";
+$txt['mergetopic_default'] = 'This topic has been merged into [TOPIC LINK].';
+$txt['merge_select_target_board'] = 'Select the target board of the merged topic';
+$txt['merge_select_poll'] = 'Select which poll the merged topic should have';
+$txt['merge_topic_list'] = 'Select topics to be merged';
+$txt['merge_select_subject'] = 'Select subject of merged topic';
+$txt['merge_custom_subject'] = 'Custom subject';
+$txt['merge_include_notifications'] = 'Include notifications?';
+$txt['merge_check'] = 'Merge?';
+$txt['merge_no_poll'] = 'No poll';
+$txt['merge_why'] = 'Please enter a brief description as to why these topics are being merged.';
+$txt['merged_subject'] = '[MERGED] %1$s';
 $txt['movetopic_redirect'] = 'Redirect to the moved topic';
 
 $txt['post_redirection'] = 'Post a redirection topic';
@@ -576,11 +596,15 @@ $txt['like_error'] = 'There was an error with your request.';
 $txt['like_disable'] = 'Likes feature is disabled.';
 $txt['not_valid_like_type'] = 'The liked type is not a valid type.';
 // Translators, if you need to make more strings to suit your language, e.g. $txt['likes_2'] = 'Two people like this', please do so.
-$txt['likes_1'] = '%1$s person likes this.';
-$txt['likes_n'] = '%1$s people like this.';
-$txt['you_likes_0'] = 'You like this.';
-$txt['you_likes_1'] = 'You and %1$s other person like this.';
-$txt['you_likes_n'] = 'You and %1$s other people like this.';
+$txt['likes_n'] = [
+	1 => '1 person likes this.',
+	'x' => '%1$s people like this.',
+];
+$txt['you_likes_n'] = [
+	0 => 'You like this.',
+	1 => 'You and 1 other person likes this.',
+	'x' => 'You and %1$s other people like this.',
+];
 
 $txt['report_to_mod'] = 'Report to moderator';
 $txt['report_profile'] = 'Report profile of %1$s';
@@ -611,18 +635,6 @@ $txt['buddy'] = 'Buddy';
 $txt['buddies'] = 'Buddies';
 $txt['most_online_ever'] = 'Most Online Ever';
 $txt['most_online_today'] = 'Most Online Today';
-
-$txt['merge_select_target_board'] = 'Select the target board of the merged topic';
-$txt['merge_select_poll'] = 'Select which poll the merged topic should have';
-$txt['merge_topic_list'] = 'Select topics to be merged';
-$txt['merge_select_subject'] = 'Select subject of merged topic';
-$txt['merge_custom_subject'] = 'Custom subject';
-$txt['merge_include_notifications'] = 'Include notifications?';
-$txt['merge_check'] = 'Merge?';
-$txt['merge_no_poll'] = 'No poll';
-$txt['merge_why'] = 'Please enter a brief description as to why these topics are being merged.';
-$txt['merged_subject'] = '[MERGED] %1$s';
-$txt['mergetopic_default'] = 'This topic has been merged into ' . $txt['movetopic_auto_topic'] . '.';
 
 $txt['response_prefix'] = 'Re: ';
 $txt['current_icon'] = 'Current Icon';

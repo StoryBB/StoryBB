@@ -507,7 +507,7 @@ function Display()
 	// Set the topic's information for the template.
 	$context['subject'] = $context['topicinfo']['subject'];
 	$context['num_views'] = comma_format($context['topicinfo']['num_views']);
-	$context['num_views_text'] = $context['num_views'] == 1 ? $txt['read_one_time'] : sprintf($txt['read_many_times'], $context['num_views']);
+	$context['num_views_text'] = numeric_context('read_times', $context['num_views']);
 	$context['mark_unread_time'] = !empty($virtual_msg) ? $virtual_msg : $context['topicinfo']['new_from'];
 
 	// Set a canonical URL for this page.
@@ -1294,15 +1294,14 @@ function Display()
 		'getLikeText' => function($likes) {
 			global $txt, $context, $scripturl;
 			
-			$base = 'likes_';
+			$base = 'likes_n';
 			$count = $likes['count'];
 			if ($likes['you'])
 			{
 				$base = 'you_' . $base;
 				$count--;
 			}
-			$base .= (isset($txt[$base . $count])) ? $count : 'n';
-			return sprintf($txt[$base], comma_format($count));
+			return numeric_context($base, $count);
 		}
 	]);
 
