@@ -168,11 +168,17 @@ $txt['post_awaiting_approval'] = 'Note: This message is awaiting approval by a m
 $txt['there_are_unapproved_topics'] = 'There are %1$s topics and %2$s posts awaiting approval in this board. Click <a href="%3$s">here</a> to view them all.';
 $txt['send_message'] = 'Send message';
 
-$txt['msg_alert_no_messages'] = 'you don\'t have any message';
-$txt['msg_alert_one_message'] = 'you have <a href="%1$s">1 message</a>';
-$txt['msg_alert_many_message'] = 'you have <a href="%1$s">%2$d messages</a>';
-$txt['msg_alert_one_new'] = '1 is new';
-$txt['msg_alert_many_new'] = '%1$d are new';
+$txt['msg_alert'] = [
+	0 => 'you don\'t have any messages',
+	1 => 'you have <a href="{url}">1 message</a>',
+	'x' => 'you have <a href="{url}">%1$s messages</a>',
+];
+$txt['msg_alert_new'] = [
+	0 => 'none are new',
+	1 => '1 is new',
+	'x' => '%1$s are new',
+];
+
 $txt['new_alert'] = 'New Alert';
 $txt['remove_message'] = 'Remove this post';
 $txt['remove_message_question'] = 'Remove this post?';
