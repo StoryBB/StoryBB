@@ -585,11 +585,15 @@ $txt['like_error'] = 'There was an error with your request.';
 $txt['like_disable'] = 'Likes feature is disabled.';
 $txt['not_valid_like_type'] = 'The liked type is not a valid type.';
 // Translators, if you need to make more strings to suit your language, e.g. $txt['likes_2'] = 'Two people like this', please do so.
-$txt['likes_1'] = '%1$s person likes this.';
-$txt['likes_n'] = '%1$s people like this.';
-$txt['you_likes_0'] = 'You like this.';
-$txt['you_likes_1'] = 'You and %1$s other person like this.';
-$txt['you_likes_n'] = 'You and %1$s other people like this.';
+$txt['likes_n'] = [
+	1 => '1 person likes this.',
+	'x' => '%1$s people like this.',
+];
+$txt['you_likes_n'] = [
+	0 => 'You like this.',
+	1 => 'You and 1 other person likes this.',
+	'x' => 'You and %1$s other people like this.',
+];
 
 $txt['report_to_mod'] = 'Report to moderator';
 $txt['report_profile'] = 'Report profile of %1$s';

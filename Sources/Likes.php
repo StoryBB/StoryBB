@@ -509,9 +509,7 @@ class Likes
 			$context['likers'][$liker]['time'] = !empty($dummy['timestamp']) ? timeformat($dummy['timestamp']) : '';
 		}
 
-		$count = count($context['likers']);
-		$title_base = isset($txt['likes_' . $count]) ? 'likes_' . $count : 'likes_n';
-		$context['page_title'] = strip_tags(sprintf($txt[$title_base], '', comma_format($count)));
+		$context['page_title'] = strip_tags(numeric_context('likes_n', count($context['likers'])));
 
 		// Lastly, setting up for display.
 		loadLanguage('Help'); // For the close window button.
@@ -589,13 +587,13 @@ class Likes
 				$context['data'] = $this->_data;
 				$context['some_likes'] = !empty($context['data']['count']);
 				$context['data']['raw_count'] = (int) $context['data']['count'];
-				$context['text'] = 'likes_';
+				$context['text'] = 'likes_n';
 				if ($context['data']['already_liked'])
 				{
 					$context['text'] = 'you_' . $context['text'];
 					$context['data']['count']--;
 				}
-				$context['text'] .= (isset($txt[$context['text'] . $context['data']['count']]) ? $context['data']['count'] : 'n');
+				$context['text'] = numeric_context($context['text'], $context['data']['count']);
 				$context['data']['count'] = comma_format($context['data']['count']);
 
 				$context['sub_template'] = 'likes_main';

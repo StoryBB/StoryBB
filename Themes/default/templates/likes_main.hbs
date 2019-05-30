@@ -12,7 +12,7 @@
 {{#if (gt context.data.raw_count 0)}}
 	<li class="like_count smalltext">
 		<a href="{{scripturl}}?action=likes;sa=view;ltype={{context.data.type}};js=1;like={{context.data.id_content}};{{session_url}}">
-			{{textTemplate (get_text context.text) context.data.count}}
+			{{{context.text}}}
 		</a>
 	</li>
 {{/if}}

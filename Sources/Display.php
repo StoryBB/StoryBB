@@ -1294,15 +1294,14 @@ function Display()
 		'getLikeText' => function($likes) {
 			global $txt, $context, $scripturl;
 			
-			$base = 'likes_';
+			$base = 'likes_n';
 			$count = $likes['count'];
 			if ($likes['you'])
 			{
 				$base = 'you_' . $base;
 				$count--;
 			}
-			$base .= (isset($txt[$base . $count])) ? $count : 'n';
-			return sprintf($txt[$base], comma_format($count));
+			return numeric_context($base, $count);
 		}
 	]);
 
