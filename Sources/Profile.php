@@ -495,7 +495,6 @@ function ModifyProfile($post_errors = [])
 	);
 
 	addInlineCss('
-span.char_avatar { width: 25px; height: 25px; background-size: contain !important; background-position: 50% 50%; }
 span.char_unknown { background-image: url(' . $settings['images_url'] . '/default.png); }');
 
 	$char_sheet_override = allowedTo('admin_forum') || $context['user']['is_owner'];

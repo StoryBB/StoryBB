@@ -1658,8 +1658,13 @@ tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
 .generic_menu {
 	margin: 5px 0;
 }
-/* Some lovely generic icons.
+/* Some lovely icons.
 ------------------------------------------------- */
+img.icon.char_avatar {
+	max-width: 25px;
+	max-height: 25px;
+}
+
 .main_icons::before {
 	width: 16px;
 	height: 16px;
@@ -1668,6 +1673,11 @@ tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
 	vertical-align: middle;
 	content: "";
 }
+
+.main_icons.char_avatar::before {
+	background: none;
+}
+
 /* Small fix for topics */
 .quickbuttons span.main_icons {
 	margin: -3px 3px 0 1px;
