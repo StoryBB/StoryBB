@@ -100,12 +100,6 @@ function AdminMain()
 						'alerts' => array($txt['notifications']),
 					),
 				),
-				'antispam' => array(
-					'label' => $txt['antispam_title'],
-					'file' => 'ManageSettings.php',
-					'function' => 'ModifyAntispamSettings',
-					'icon' => 'security',
-				),
 				'languages' => array(
 					'label' => $txt['language_configuration'],
 					'file' => 'ManageLanguages.php',
@@ -260,27 +254,6 @@ function AdminMain()
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
 				),
-				'warnings' => array(
-					'label' => $txt['warnings'],
-					'file' => 'ManageSettings.php',
-					'function' => 'ModifyWarningSettings',
-					'icon' => 'warning',
-					'inactive' => $modSettings['warning_settings'][0] == 0,
-					'permission' => array('admin_forum'),
-				),
-				'ban' => array(
-					'label' => $txt['ban_title'],
-					'file' => 'ManageBans.php',
-					'function' => 'Ban',
-					'icon' => 'ban',
-					'permission' => 'manage_bans',
-					'subsections' => array(
-						'list' => array($txt['ban_edit_list']),
-						'add' => array($txt['ban_add_new']),
-						'browse' => array($txt['ban_trigger_browse']),
-						'log' => array($txt['ban_log']),
-					),
-				),
 				'paidsubscribe' => array(
 					'label' => $txt['paid_subscriptions'],
 					'inactive' => empty($modSettings['paid_enabled']),
@@ -325,6 +298,39 @@ function AdminMain()
 				],
 			),
 		),
+		'moderation' => [
+			'title' => $txt['admin_moderation'],
+			'permission' => ['admin_forum'],
+			'areas' => [
+				'antispam' => [
+					'label' => $txt['antispam_title'],
+					'file' => 'ManageSettings.php',
+					'function' => 'ModifyAntispamSettings',
+					'icon' => 'security',
+				],
+				'warnings' => [
+					'label' => $txt['warnings'],
+					'file' => 'ManageSettings.php',
+					'function' => 'ModifyWarningSettings',
+					'icon' => 'warning',
+					'inactive' => $modSettings['warning_settings'][0] == 0,
+					'permission' => ['admin_forum'],
+				],
+				'ban' => [
+					'label' => $txt['ban_title'],
+					'file' => 'ManageBans.php',
+					'function' => 'Ban',
+					'icon' => 'ban',
+					'permission' => 'manage_bans',
+					'subsections' => [
+						'list' => [$txt['ban_edit_list']],
+						'add' => [$txt['ban_add_new']],
+						'browse' => [$txt['ban_trigger_browse']],
+						'log' => [$txt['ban_log']],
+					],
+				],
+			]
+		],
 		'maintenance' => array(
 			'title' => $txt['admin_maintenance'],
 			'permission' => array('admin_forum'),
