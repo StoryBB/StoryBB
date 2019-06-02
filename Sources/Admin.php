@@ -91,26 +91,26 @@ function AdminMain()
 					'file' => 'ManageSettings.php',
 					'function' => 'ModifyFeatureSettings',
 					'icon' => 'features',
-					'subsections' => array(
-						'basic' => array($txt['mods_cat_features']),
-						'bbc' => array($txt['manageposts_bbc_settings']),
-						'layout' => array($txt['mods_cat_layout']),
-						'sig' => array($txt['signature_settings_short']),
-						'profile' => array($txt['custom_profile_shorttitle']),
-						'alerts' => array($txt['notifications']),
-					),
+					'subsections' => [
+						'basic' => [$txt['mods_cat_features']],
+						'bbc' => [$txt['manageposts_bbc_settings']],
+						'layout' => [$txt['mods_cat_layout']],
+						'sig' => [$txt['signature_settings_short']],
+						'profile' => [$txt['custom_profile_shorttitle']],
+						'alerts' => [$txt['notifications']],
+					],
 				),
-				'languages' => array(
+				'languages' => [
 					'label' => $txt['language_configuration'],
 					'file' => 'ManageLanguages.php',
 					'function' => 'ManageLanguages',
 					'icon' => 'languages',
-					'subsections' => array(
-						'edit' => array($txt['language_edit']),
-						'settings' => array($txt['language_settings']),
-					),
-				),
-				'theme' => array(
+					'subsections' => [
+						'edit' => [$txt['language_edit']],
+						'settings' => [$txt['language_settings']],
+					],
+				],
+				'theme' => [
 					'label' => $txt['theme_admin'],
 					'file' => 'Themes.php',
 					'function' => 'ThemesMain',
@@ -239,15 +239,15 @@ function AdminMain()
 					'file' => 'ManageRegistration.php',
 					'function' => 'RegCenter',
 					'icon' => 'regcenter',
-					'permission' => array('admin_forum', 'moderate_forum'),
-					'subsections' => array(
-						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
-						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
-						'policies' => array($txt['admin_policies'], 'admin_forum'),
-						'settings' => array($txt['settings'], 'admin_forum'),
-					),
-				),
-				'paidsubscribe' => array(
+					'permission' => ['admin_forum', 'moderate_forum'],
+					'subsections' => [
+						'register' => [$txt['admin_browse_register_new'], 'moderate_forum'],
+						'reservednames' => [$txt['admin_reserved_set'], 'admin_forum'],
+						'policies' => [$txt['admin_policies'], 'admin_forum'],
+						'settings' => [$txt['settings'], 'admin_forum'],
+					],
+				],
+				'paidsubscribe' => [
 					'label' => $txt['paid_subscriptions'],
 					'inactive' => empty($modSettings['paid_enabled']),
 					'file' => 'ManagePaid.php',
@@ -289,7 +289,7 @@ function AdminMain()
 					'permission' => ['admin_forum'],
 					'subsections' => [],
 				],
-			),
+			],
 		),
 		'moderation' => [
 			'title' => $txt['admin_moderation'],
@@ -324,7 +324,7 @@ function AdminMain()
 				],
 			]
 		],
-		'maintenance' => array(
+		'maintenance' => [
 			'title' => $txt['admin_maintenance'],
 			'permission' => ['admin_forum'],
 			'areas' => [
@@ -369,11 +369,11 @@ function AdminMain()
 					'file' => 'ManageMail.php',
 					'function' => 'ManageMail',
 					'icon' => 'mail',
-					'subsections' => array(
-						'browse' => array($txt['mailqueue_browse'], 'admin_forum'),
-						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
-					),
-				),
+					'subsections' => [
+						'browse' => [$txt['mailqueue_browse'], 'admin_forum'],
+						'settings' => [$txt['mailqueue_settings'], 'admin_forum'],
+					],
+				],
 				'reports' => [
 					'label' => $txt['generate_reports'],
 					'file' => 'Reports.php',
