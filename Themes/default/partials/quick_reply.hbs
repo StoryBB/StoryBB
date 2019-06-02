@@ -1,4 +1,4 @@
-<a id="quickreply"></a>
+		<a id="quickreply"></a>
 		<div class="tborder" id="quickreplybox">
 			<div class="cat_bar">
 				<h3 class="catbg">
@@ -8,7 +8,8 @@
 			<div id="quickReplyOptions">
 				<form action="{{scripturl}}?board={{context.current_board}};action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
 					<div class="roundframe">
-						{{#unless context.user.is_guest}}
+
+{{#unless context.user.is_guest}}
 						<div class="poster">
 							<h4>{{textTemplate txt.posting_as user_info.character_name}}</h4>
 							<ul class="user_info">
@@ -17,72 +18,77 @@
 								</li>
 							</ul>
 						</div>
-						{{/unless}}
+{{/unless}}
+
 						<div class="postarea">
 							{{#if context.is_locked}}<p class="alert smalltext">{{txt.quick_reply_warning}}</p>{{/if}}
 							{{#if context.oldTopicError}}<p class="alert smalltext">{{textTemplate txt.error_old_topic modSettings.oldTopicDays}}</p>{{/if}}
 							{{#unless context.can_reply_approved}}<em>{{txt.wait_for_approval}}</em>{{/unless}}
 							{{#if (and context.can_reply_approved context.require_verification)}}<br>{{/if}}
-								<input type="hidden" name="topic" value="{{context.current_topic}}">
-								<input type="hidden" name="subject" value="{{context.response_prefix}}{{context.subject}}">
-								<input type="hidden" name="icon" value="xx">
-								<input type="hidden" name="from_qr" value="1">
-								<input type="hidden" name="notify" value="{{#if (or context.is_marked_notify options.auto_notify)}}1{{else}}0{{/if}}">
-								<input type="hidden" name="not_approved" value="{{#if (eq_coerce context.can_reply_approved 1)}}0{{else}}1{{/if}}">
-								<input type="hidden" name="goback" value="{{#unless options.return_to_post}}0{{else}}1{{/unless}}">
-								<input type="hidden" name="last_msg" value="{{context.topic_last_message}}">
-								{{session_form}}
-								<input type="hidden" name="seqnum" value="{{context.form_sequence_number}}">
-								{{#if context.user.is_guest}}
-								<dl id="post_header">
-									<dt>
-										{{txt.name}}:
-									</dt>
-									<dd>
-										<input type="text" name="guestname" size="25" value="{{context.name}}">
-									</dd>
-									<dt>
-										{{txt.email}}:
-									</dt>
-									<dd>
-										<input type="email" name="email" size="25" value="{{context.email}}" required>
-									</dd>
-								</dl>
-								{{/if}}
-								{{{richtexteditor context.post_box_name 'smileyBox_message' 'bbcBox_message'}}}
-								<script>
-									function insertQuoteFast(messageid)
-									{
-										getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + messageid + ';xml;pb={{context.post_box_name}};mode=' + (oEditorHandle_{{context.post_box_name}}.bRichTextEnabled ? 1 : 0), onDocReceived);
-										return false;
-									}
-									function onDocReceived(XMLDoc)
-									{
-										var text = '';
-										for (var i = 0, n = XMLDoc.getElementsByTagName('quote')[0].childNodes.length; i < n; i++)
-											text += XMLDoc.getElementsByTagName('quote')[0].childNodes[i].nodeValue;
-										$("#{{context.post_box_name}}").data("sceditor").InsertText(text);
-		
-										ajax_indicator(false);
-									}
-								</script>
-								{{#if context.require_verification}}
-								<div class="post_verification">
-									<strong>{{txt.verification}}:</strong>
-									{{{captcha context.visual_verification_id}}}
-								</div>
-								{{/if}}
+							<input type="hidden" name="topic" value="{{context.current_topic}}">
+							<input type="hidden" name="subject" value="{{context.response_prefix}}{{context.subject}}">
+							<input type="hidden" name="icon" value="xx">
+							<input type="hidden" name="from_qr" value="1">
+							<input type="hidden" name="notify" value="{{#if (or context.is_marked_notify options.auto_notify)}}1{{else}}0{{/if}}">
+							<input type="hidden" name="not_approved" value="{{#if (eq_coerce context.can_reply_approved 1)}}0{{else}}1{{/if}}">
+							<input type="hidden" name="goback" value="{{#unless options.return_to_post}}0{{else}}1{{/unless}}">
+							<input type="hidden" name="last_msg" value="{{context.topic_last_message}}">
+							{{session_form}}
+							<input type="hidden" name="seqnum" value="{{context.form_sequence_number}}">
+
+{{#if context.user.is_guest}}
+							<dl id="post_header">
+								<dt>
+									{{txt.name}}:
+								</dt>
+								<dd>
+									<input type="text" name="guestname" size="25" value="{{context.name}}">
+								</dd>
+								<dt>
+									{{txt.email}}:
+								</dt>
+								<dd>
+									<input type="email" name="email" size="25" value="{{context.email}}" required>
+								</dd>
+							</dl>
+{{/if}}
+							{{{richtexteditor context.post_box_name 'smileyBox_message' 'bbcBox_message'}}}
+							<script>
+								function insertQuoteFast(messageid)
+								{
+									getXMLDocument(sbb_prepareScriptUrl(sbb_scripturl) + 'action=quotefast;quote=' + messageid + ';xml;pb={{context.post_box_name}};mode=' + (oEditorHandle_{{context.post_box_name}}.bRichTextEnabled ? 1 : 0), onDocReceived);
+									return false;
+								}
+								function onDocReceived(XMLDoc)
+								{
+									var text = '';
+									for (var i = 0, n = XMLDoc.getElementsByTagName('quote')[0].childNodes.length; i < n; i++)
+										text += XMLDoc.getElementsByTagName('quote')[0].childNodes[i].nodeValue;
+									$("#{{context.post_box_name}}").data("sceditor").InsertText(text);
+	
+									ajax_indicator(false);
+								}
+							</script>
+
+{{#if context.require_verification}}
+							<div class="post_verification">
+								<strong>{{txt.verification}}:</strong>
+								{{{captcha context.visual_verification_id}}}
+							</div>
+{{/if}}
+
 							<br class="clear_right">
 							<span id="post_confirm_buttons">
 								{{{richtextbuttons context.post_box_name}}}
 							</span>
 						</div><!-- .postarea -->
-					</div>
+					</div><!-- .roundframe -->
 				</form>
-			</div>
-		</div>
+			</div><!-- #quickReplyOptions -->
+		</div><!-- #quickreplybox -->
 		<br class="clear">
-		{{#if context.drafts_autosave}}
+
+{{#if context.drafts_autosave}}
 		<script>
 				var oDraftAutoSave = new sbb_DraftAutoSave({
 					sSelf: 'oDraftAutoSave',
@@ -94,22 +100,23 @@
 					iFreq: {{#if modSettings.masterAutoSaveDraftsDelay}}{{modSettings.masterAutoSaveDraftsDelay}} * 1000{{else}}60000{{/if}}
 				});
 			</script>
-			{{/if}}
+{{/if}}
+
 			<script>
-					var oQuickReply = new QuickReply({
-						bDefaultCollapsed: false,
-						iTopicId: '{{context.current_topic}}',
-						iStart: '{{context.start}}',
-						sScriptUrl: sbb_scripturl,
-						sImagesUrl: sbb_images_url,
-						sContainerId: "quickReplyOptions",
-						sImageId: "quickReplyExpand",
-						sClassCollapsed: "toggle_up",
-						sClassExpanded: "toggle_down",
-						sJumpAnchor: "quickreply",
-						bIsFull: true
-					});
-					var oEditorID = "{{context.post_box_name}}";
-					var oEditorObject = oEditorHandle_{{context.post_box_name}};
-					var oJumpAnchor = "quickreply";
-				</script>
+				var oQuickReply = new QuickReply({
+					bDefaultCollapsed: false,
+					iTopicId: '{{context.current_topic}}',
+					iStart: '{{context.start}}',
+					sScriptUrl: sbb_scripturl,
+					sImagesUrl: sbb_images_url,
+					sContainerId: "quickReplyOptions",
+					sImageId: "quickReplyExpand",
+					sClassCollapsed: "toggle_up",
+					sClassExpanded: "toggle_down",
+					sJumpAnchor: "quickreply",
+					bIsFull: true
+				});
+				var oEditorID = "{{context.post_box_name}}";
+				var oEditorObject = oEditorHandle_{{context.post_box_name}};
+				var oJumpAnchor = "quickreply";
+			</script>

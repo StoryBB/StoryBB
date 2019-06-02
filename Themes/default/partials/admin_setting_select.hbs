@@ -2,13 +2,15 @@
 		<dd{{#if config_var.force_div_id}} id="{{config_var.force_div_id}}_dd"{{/if}}>
 			{{{config_var.preinput}}}
 			<select name="{{config_var.name}}" id="{{config_var.name}}" {{{config_var.javascript}}}{{#if config_var.disabled}} disabled{{/if}}{{#if config_var.multiple}} multiple {{#if (gt config_var.size 0)}} size="{{config_var.size}}"{{/if}}{{/if}}>
-				{{#each config_var.data}}
-					{{#if ../config_var.multiple}}
-						<option value="{{0}}"{{#if (in_array ./0 ../config_var.value)}} selected{{/if}}>{{{1}}}</option>
-					{{else}}
-						<option value="{{0}}"{{#if (eq (concat ' ' ./0) (concat ' ' ../config_var.value))}} selected{{/if}}>{{{1}}}</option>
-					{{/if}}
-				{{/each}}
+
+{{#each config_var.data}}
+	{{#if ../config_var.multiple}}
+				<option value="{{0}}"{{#if (in_array ./0 ../config_var.value)}} selected{{/if}}>{{{1}}}</option>
+	{{else}}
+				<option value="{{0}}"{{#if (eq (concat ' ' ./0) (concat ' ' ../config_var.value))}} selected{{/if}}>{{{1}}}</option>
+	{{/if}}
+{{/each}}
+
 			</select>
 			{{{config_var.postinput}}}
 		</dd>

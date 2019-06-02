@@ -3,15 +3,16 @@
 	{{! If an error occurred while trying to save previously, give the user some info. }}
 	<div class="errorbox"{{#unless context.post_errors}} style="display:none"{{/unless}} id="profile_error">
 
-		{{#if context.post_errors}}
-			<span>{{#if context.custom_error_title}}{{{context.custom_error_title}}}{{else}}{{{txt.profile_errors_occurred}}}{{/if}}:</span>
-			<ul id="list_errors">
+{{#if context.post_errors}}
+		<span>{{#if context.custom_error_title}}{{{context.custom_error_title}}}{{else}}{{{txt.profile_errors_occurred}}}{{/if}}:</span>
+		<ul id="list_errors">
 
-			{{! Cycle through each error and display an error message. }}
-			{{#each context.post_errors}}
-				<li>{{get_text (concat 'profile_error_' .)}}</li>
-			{{/each}}
+	{{! Cycle through each error and display an error message. }}
+	{{#each context.post_errors}}
+			<li>{{get_text (concat 'profile_error_' .)}}</li>
+	{{/each}}
 
-			</ul>
-		{{/if}}
+		</ul>
+{{/if}}
+
 	</div>

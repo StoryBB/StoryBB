@@ -8,17 +8,19 @@
 	<div class="windowbg2" id="reported_posts_panel">
 		<div class="modbox">
 			<ul>
-				{{#each context.reported_posts}}
+
+{{#each context.reported_posts}}
 				<li>
 					<span class="smalltext">{{textTemplate ../txt.mc_post_report report_link author.link}}</span>
 				</li>
-				{{/each}}
+{{/each}}
 
-				{{#unless context.reported_posts}}
+{{#unless context.reported_posts}}
 				<li>
 					<strong class="smalltext">{{{txt.mc_recent_reports_none}}}</strong>
 				</li>
-				{{/unless}}
+{{/unless}}
+
 			</ul>
 		</div>
 	</div>

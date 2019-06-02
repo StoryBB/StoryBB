@@ -1,40 +1,45 @@
-		{{#each context.theme_options}}
-			{{#if (not (is_array .))}}
+{{#each context.theme_options}}
+	{{#if (not (is_array .))}}
 				</dl>
 				<hr>
 				<dl class="settings">
-				{{#if (neq . '')}}
+
+		{{#if (neq . '')}}
 					<dt><b>{{{.}}}</b></dt>
 					<dd></dd>
-				{{/if}}
-			{{else}}
-				<dt>
-					<label for="{{id}}">{{{label}}}</label>
-					{{#if description}}
+		{{/if}}
+
+	{{else}}
+					<dt>
+						<label for="{{id}}">{{{label}}}</label>
+
+		{{#if description}}
 						<br><span class="smalltext">{{{description}}}</span>
-					{{/if}}
-				</dt>
-				<dd>
-					{{#if (eq type 'checkbox')}}
+		{{/if}}
+
+					</dt>
+					<dd>
+
+		{{#if (eq type 'checkbox')}}
 						<input type="hidden" name="default_options[{{id}}]" value="0">
 						<input type="checkbox" name="default_options[{{id}}]" id="{{id}}"{{#if (eq_coerce user_value 1)}} checked{{/if}} value="1">
-					{{/if}}
+		{{/if}}
 
-					{{#if (eq type 'list')}}
+		{{#if (eq type 'list')}}
 						&nbsp;<select class="floatleft" name="default_options[{{id}}]" id="{{id}}">
-							{{#each options}}
+			{{#each options}}
 							<option value="{{@key}}"{{#if (eq_coerce @key ../user_value)}} selected{{/if}}>{{{.}}}</option>
-							{{/each}}
+			{{/each}}
 						</select>
-					{{/if}}
+		{{/if}}
 
-					{{#if (eq type 'number')}}
+		{{#if (eq type 'number')}}
 						<input type="number" min="{{#if min}}{{min}}{{else}}0{{/if}}"{{#if max}} max="{{max}}"{{/if}}{{#if step}} step="{{step}}"{{/if}} name="default_options[{{id}}]" id="{{id}}" value="{{{user_value}}}" size="5">
-					{{/if}}
+		{{/if}}
 
-					{{#if (or (eq type 'url') (eq type 'text'))}}
+		{{#if (or (eq type 'url') (eq type 'text'))}}
 						<input type="{{type}}" name="default_options[{{id}}]" id="{{id}}" name="default_options[{{id}}]" value="{{{user_value}}}">
-					{{/if}}
-				</dd>
-			{{/if}}
-		{{/each}}
+		{{/if}}
+					</dd>
+	{{/if}}
+{{/each}}

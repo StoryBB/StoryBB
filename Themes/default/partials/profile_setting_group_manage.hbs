@@ -1,18 +1,20 @@
 		<dt>
 			<strong>{{{txt.primary_membergroup}}}: </strong><br>
-			<span class="smalltext">{{> helpicon help='moderator_why_missing' extrahelpstring=txt.moderator_why_missing}}</span>
+			<span class="smalltext">
+				{{> helpicon help='moderator_why_missing' extrahelpstring=txt.moderator_why_missing}}
+			</span>
 		</dt>
 		<dd>
 			<select name="id_group"{{#if (and context.user.is_owner (eq_coerce context.member.group_id 1))}} onchange="if (this.value != 1 &amp;&amp; !confirm('{{{txt.deadmin_confirm}}}')) this.value = 1;"{{/if}})>
 
-				{{! Fill the select box with all primary member groups that can be assigned to a member. }}
-				{{#each context.member_groups}}
-					{{#if can_be_primary}}
-						<option value="{{id}}"{{#if is_primary}} selected{{/if}}>
-							{{{name}}}
-						</option>
-					{{/if}}
-				{{/each}}
+{{! Fill the select box with all primary member groups that can be assigned to a member. }}
+{{#each context.member_groups}}
+	{{#if can_be_primary}}
+				<option value="{{id}}"{{#if is_primary}} selected{{/if}}>
+					{{{name}}}
+				</option>
+	{{/if}}
+{{/each}}
 
 			</select>
 		</dd>
@@ -23,13 +25,16 @@
 			<span id="additional_groupsList">
 				<input type="hidden" name="additional_groups[]" value="0">
 
-				{{! For each membergroup show a checkbox so members can be assigned to more than one group. }}
-				{{#each context.member_groups}}
-					{{#if can_be_additional}}
-					<label for="additional_groups-{{id}}">
-						<input type="checkbox" name="additional_groups[]" value="{{id}}" id="additional_groups-{{id}}"{{#if is_additional}} checked{{/if}}> {{{name}}}</label><br>
-					{{/if}}
-				{{/each}}
+{{! For each membergroup show a checkbox so members can be assigned to more than one group. }}
+{{#each context.member_groups}}
+	{{#if can_be_additional}}
+				<label for="additional_groups-{{id}}">
+					<input type="checkbox" name="additional_groups[]" value="{{id}}" id="additional_groups-{{id}}"{{#if is_additional}} checked{{/if}}>
+					{{{name}}}
+				</label><br>
+	{{/if}}
+{{/each}}
+
 			</span>
 			<a href="javascript:void(0);" onclick="document.getElementById('additional_groupsList').style.display = 'block'; document.getElementById('additional_groupsLink').style.display = 'none'; return false;" id="additional_groupsLink" style="display: none;" class="toggle_down">{{{txt.additional_membergroups_show}}}</a>
 			<script>

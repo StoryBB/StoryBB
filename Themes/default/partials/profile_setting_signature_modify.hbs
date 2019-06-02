@@ -18,19 +18,21 @@
 		<dd>
 			<textarea class="editor" onkeyup="calcCharLeft();" id="signature" name="signature" rows="5" cols="50" style="min-width: 50%; max-width: 99%;">{{{context.member.signature}}}</textarea><br>
 
-			{{! Is there is a limit at all? }}
-			{{#if (gt context.signature_limits.max_length 0)}}
-				<span class="smalltext">{{textTemplate txt.max_sig_characters context.signature_limits.max_length}}
-				<span id="signatureLeft">{{context.signature_limits.max_length}}</span></span><br>
-			{{/if}}
+{{! Is there is a limit at all? }}
+{{#if (gt context.signature_limits.max_length 0)}}
+			<span class="smalltext">
+				{{textTemplate txt.max_sig_characters context.signature_limits.max_length}}
+				<span id="signatureLeft">{{context.signature_limits.max_length}}</span>
+			</span><br>
+{{/if}}
 
-			{{#if context.show_preview_button}}
-				<input type="button" name="preview_signature" id="preview_button" value="{{{txt.preview_signature}}}" class="button_submit">
-			{{/if}}
+{{#if context.show_preview_button}}
+			<input type="button" name="preview_signature" id="preview_button" value="{{{txt.preview_signature}}}" class="button_submit">
+{{/if}}
 
-			{{#if context.signature_warning}}
-				<span class="smalltext">{{{context.signature_warning}}}</span>
-			{{/if}}
+{{#if context.signature_warning}}
+			<span class="smalltext">{{{context.signature_warning}}}</span>
+{{/if}}
 
 			{{! Some javascript used to count how many characters have been used so far in the signature. }}
 			<script>

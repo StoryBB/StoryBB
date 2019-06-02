@@ -8,17 +8,19 @@
 	<div class="windowbg2" id="reported_users_panel">
 		<div class="modbox">
 			<ul>
-				{{#each context.reported_users}}
+
+{{#each context.reported_users}}
 				<li>
 					<span class="smalltext">{{{user.link}}}</span>
 				</li>
-				{{/each}}
+{{/each}}
 
-				{{#unless context.reported_users}}
+{{#unless context.reported_users}}
 				<li>
 					<strong class="smalltext">{{{txt.mc_reported_users_none}}}</strong>
 				</li>
-				{{/unless}}
+{{/unless}}
+
 			</ul>
 		</div>
 	</div>

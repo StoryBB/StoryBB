@@ -11,11 +11,12 @@
 					{{comma context.num_robots}} {{#if (eq context.num_robots 1)}}{{txt.robot}}{{else}}{{txt.robots}}{{/if}}
 				{{#if context.show_who}}</a>{{/if}}
 
-				{{#if context.users_online}}
+{{#if context.users_online}}
 				<br>
 				{{textTemplate txt.users_active modSettings.lastActive}}: {{{join context.list_users_online ',&nbsp;'}}}
 				{{#if (and settings.show_group_key context.membergroups)}}
 				<span class="membergroups">{{{join context.membergroups ', '}}}</span>
 				{{/if}}
-				{{/if}}
+{{/if}}
+
 			</p>

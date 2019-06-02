@@ -2,34 +2,37 @@
 	{{#if (eq cur_list.list_menu.style 'tabs')}}
 		<table style="margin-{{cur_list.list_menu.position}}: 10px; width: 100%;">
 			<tr>
+
 				{{#if (eq cur_list.list_menu.position 'right')}}<td>&nbsp;</td>{{/if}}
 				<td class="{{cur_list.list_menu.position}}text">
 					<table>
 						<tr>
 							<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirror{{else}}main{{/if}}tab_{{#if context.right_to_left}}last{{else}}first{{/if}}">&nbsp;</td>
 
-							{{#each cur_list.list_menu.links}}
-								{{#if is_selected}}
-									<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirror{{else}}main{{/if}}tab_active_{{#if context.right_to_left}}last{{else}}first{{/if}}">&nbsp;</td>
-									<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirrortab{{else}}maintab{{/if}}_active_back">
-										{{{link_html}}}
-									</td>
-									<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirror{{else}}main{{/if}}tab_active_{{#if context.right_to_left}}first{{else}}last{{/if}}">&nbsp;</td>
-								{{else}}
-									<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirror{{else}}main{{/if}}tab_back">
-										{{{link_html}}}
-									</td>
-								{{/if}}
-							{{/each}}
+		{{#each cur_list.list_menu.links}}
+			{{#if is_selected}}
+							<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirror{{else}}main{{/if}}tab_active_{{#if context.right_to_left}}last{{else}}first{{/if}}">&nbsp;</td>
+							<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirrortab{{else}}maintab{{/if}}_active_back">
+								{{{link_html}}}
+							</td>
+							<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirror{{else}}main{{/if}}tab_active_{{#if context.right_to_left}}first{{else}}last{{/if}}">&nbsp;</td>
+			{{else}}
+							<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirror{{else}}main{{/if}}tab_back">
+								{{{link_html}}}
+							</td>
+			{{/if}}
+		{{/each}}
 
 							<td class="{{#if (eq cur_list.list_menu.tab_direction 'top')}}mirror{{else}}main{{/if}}tab_{{#if context.right_to_left}}first{{else}}last{{/if}}">&nbsp;</td>
 						</tr>
 					</table>
 				</td>
 				{{#if (eq cur_list.list_menu.position 'left')}}<td>&nbsp;</td>{{/if}}
+
 			</tr>
 		</table>
 	{{/if}}
+
 	{{#if (eq cur_list.list_menu.style 'buttons')}}
 		<table style="margin-{{cur_list.list_menu.position}}: 10px; width: 100%;">
 			<tr>

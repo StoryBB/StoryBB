@@ -1,5 +1,5 @@
-	{{! Configuring Q&A in the admin area}}
-	{{#each context.question_answers}}
+{{! Configuring Q&A in the admin area}}
+{{#each context.question_answers}}
 		<dt id="qa_dt_{{@key}}" class="qa_link">
 			<a href="javascript:void(0);">[ {{{name}}} ]</a>
 		</dt>
@@ -12,20 +12,26 @@
 				<dd>
 					<strong>{{{../txt.setup_verification_answer}}}</strong>
 				</dd>
-				{{#if questions}}
-					{{#each questions}}
-						<dt>
-							<input type="text" name="question[{{../@key}}][{{@key}}]" value="{{{question}}}" size="50" class="verification_question">
-						</dt>
-						<dd>
-							{{#each answers}}
-								<input type="text" name="answer[{{../../@key}}][{{../@key}}][]" value="{{{.}}}" size="50" class="verification_answer">
-							{{/each}}
-							<div class="qa_add_answer"><a href="javascript:void(0);" onclick="return addAnswer(this);">[ {{{../../txt.setup_verification_add_answer}}} ]</a></div>
-						</dd>
-					{{/each}}
-				{{/if}}
+
+	{{#if questions}}
+		{{#each questions}}
+				<dt>
+					<input type="text" name="question[{{../@key}}][{{@key}}]" value="{{{question}}}" size="50" class="verification_question">
+				</dt>
+				<dd>
+
+			{{#each answers}}
+					<input type="text" name="answer[{{../../@key}}][{{../@key}}][]" value="{{{.}}}" size="50" class="verification_answer">
+			{{/each}}
+
+					<div class="qa_add_answer">
+						<a href="javascript:void(0);" onclick="return addAnswer(this);">[ {{{../../txt.setup_verification_add_answer}}} ]</a>
+					</div>
+				</dd>
+		{{/each}}
+	{{/if}}
+
 				<dt class="qa_add_question"><a href="javascript:void(0);">[ {{{../txt.setup_verification_add_more}}} ]</a></dt>
 			</dl>
 		</fieldset>
-	{{/each}}
+{{/each}}

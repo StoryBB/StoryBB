@@ -4,14 +4,16 @@
 			<a href="#" class="board_selector"[ {{{txt.select_boards_from_list}}} ]</a>
 			<fieldset>
 				<legend class="board_selector"><a href="#">{{{txt.select_boards_from_list}}}</a></legend>
-				{{#each context.board_list}}
+
+{{#each context.board_list}}
 					<strong>{{name}}</strong>
 					<ul>
-					{{#each boards}}
+	{{#each boards}}
 						<li><label><input type="checkbox" name="{{../../config_var.name}}[{{id}}]" value="1"{{#if (in_array id ../../config_var.value)}} checked{{/if}}> {{{repeat '&nbsp; &nbsp;' child_level}}}{{{name}}}</label></li>
-					{{/each}}
+	{{/each}}
 					</ul>
-				{{/each}}
+{{/each}}
+
 			</fieldset>
 			{{{config_var.postinput}}}
 		</dd>

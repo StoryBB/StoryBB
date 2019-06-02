@@ -1,5 +1,4 @@
-<textarea class="editor" name="{{editor_id}}" id="{{editor_id}}" cols="600" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" 
-style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if (or context.post_error.no_message context.post_error.long_message)}}border: 1px solid red;{{/if}}"{{#if context.editor.required}} required{{/if}}>{{{editor_context.value}}}</textarea>
+		<textarea class="editor" name="{{editor_id}}" id="{{editor_id}}" cols="600" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" onchange="storeCaret(this);" style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if (or context.post_error.no_message context.post_error.long_message)}}border: 1px solid red;{{/if}}"{{#if context.editor.required}} required{{/if}}>{{{editor_context.value}}}</textarea>
 		<div id="{{editor_id}}_resizer" class="richedit_resize"></div>
 		<input type="hidden" name="{{editor_id}}_mode" id="{{editor_id}}_mode" value="0">
 		<script>
@@ -91,4 +90,4 @@ style="width: {{editor_context.width}}; height: {{editor_context.height}};{{#if 
 					oBBCBox: null
 				});
 				sbb_editorArray[sbb_editorArray.length] = oEditorHandle_{{editor_id}};
-			</script>
+		</script>

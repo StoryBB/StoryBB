@@ -4,15 +4,17 @@
 			<fieldset id="{{config_var.name}}">
 				<legend>{{{config_var.bbc_title}}}</legend>
 				<ul>
-				{{#each context.bbc_columns}}
-					{{#each .}}
-						<li class="list_bbc floatleft">
-							<input type="checkbox" name="{{../../config_var.name}}_enabledTags[]" id="tag_{{../../config_var.name}}_{{tag}}" value="{{tag}}"{{#unless (in_array tag ../../config_var.bbc_disabled)}} checked{{/unless}}>
-							<label for="tag_{{../../config_var.name}}_{{tag}}">{{tag}}</label>
-							{{#if show_help}} (<a href="{{../../scripturl}}?action=helpadmin;help=tag_{{tag}}" onclick="return reqOverlayDiv(this.href);">?</a>){{/if}}
-						</li>
-					{{/each}}
-				{{/each}}
+
+{{#each context.bbc_columns}}
+	{{#each .}}
+					<li class="list_bbc floatleft">
+						<input type="checkbox" name="{{../../config_var.name}}_enabledTags[]" id="tag_{{../../config_var.name}}_{{tag}}" value="{{tag}}"{{#unless (in_array tag ../../config_var.bbc_disabled)}} checked{{/unless}}>
+						<label for="tag_{{../../config_var.name}}_{{tag}}">{{tag}}</label>
+						{{#if show_help}} (<a href="{{../../scripturl}}?action=helpadmin;help=tag_{{tag}}" onclick="return reqOverlayDiv(this.href);">?</a>){{/if}}
+					</li>
+	{{/each}}
+{{/each}}
+
 				</ul>
 				<input type="checkbox" id="bbc_{{config_var.name}}_select_all" onclick="invertAll(this, this.form, '{{config_var.name}}_enabledTags');"{{#if config_var.all_selected}} checked{{/if}}> <label for="bbc_{{config_var.name}}_select_all"><em>{{{txt.bbcTagsToUse_select_all}}}</em></label>
 			</fieldset>
