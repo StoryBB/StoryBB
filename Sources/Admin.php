@@ -116,13 +116,6 @@ function AdminMain()
 						'settings' => array($txt['language_settings']),
 					),
 				),
-				'current_theme' => array(
-					'label' => $txt['theme_current_settings'],
-					'file' => 'Themes.php',
-					'function' => 'ThemesMain',
-					'custom_url' => $scripturl . '?action=admin;area=theme;sa=list;th=' . $settings['theme_id'],
-					'icon' => 'current_theme',
-				),
 				'theme' => array(
 					'label' => $txt['theme_admin'],
 					'file' => 'Themes.php',
