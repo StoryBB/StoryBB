@@ -501,6 +501,12 @@ $txt['censor_clickadd'] = 'Add another word';
 $txt['layout_controls'] = 'Forum';
 $txt['logs'] = 'Logs';
 $txt['generate_reports'] = 'Reports';
+$txt['generate_reports_index'] = 'Reports List';
+$txt['gr_type_boards'] = 'Boards';
+$txt['gr_type_board_perms'] = 'Board Permissions';
+$txt['gr_type_member_groups'] = 'Membergroups';
+$txt['gr_type_group_perms'] = 'Group Permissions';
+$txt['gr_type_staff'] = 'Staff';
 
 $txt['update_available'] = 'Update Available';
 $txt['update_message'] = 'You\'re using an outdated version of StoryBB, which contains some bugs which have since been fixed.

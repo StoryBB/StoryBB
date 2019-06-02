@@ -72,12 +72,12 @@ function ReportsMain()
 		);
 
 	// If they haven't chosen a report type which is valid, send them off to the report type chooser!
-	if (empty($_REQUEST['rt']) || !isset($context['report_types'][$_REQUEST['rt']]))
+	if (empty($_REQUEST['sa']) || !isset($context['report_types'][$_REQUEST['sa']]))
 	{
 		$context['sub_template'] = 'report_type';
 		return;
 	}
-	$context['report_type'] = $_REQUEST['rt'];
+	$context['report_type'] = $_REQUEST['sa'];
 
 	// What are valid templates for showing reports?
 	$reportTemplates = array(
