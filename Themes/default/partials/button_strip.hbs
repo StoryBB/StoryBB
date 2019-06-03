@@ -1,20 +1,26 @@
 <div class="buttonlist{{#if direction}} float{{direction}}{{/if}}">
-	{{#each button_strip}}
+
+{{#each button_strip}}
 		<a class="button button_strip_{{@key}}{{#if active}} active{{/if}}{{class}}" {{#if url}}href="{{url}}"{{/if}} {{{custom}}}>{{lookup ../txt text}}</a>
-		{{#if sub_buttons}}
+
+	{{#if sub_buttons}}
 		<div class="top_menu dropmenu {{@key}}_dropdown">
 			<div class="viewport">
 				<div class="overview">
-				{{#each sub_buttons}}
-					<a href="{{url}}"><strong>{{{lookup ../../txt text}}}</strong>
+
+		{{#each sub_buttons}}
+					<a href="{{url}}">
+						<strong>{{{lookup ../../txt text}}}</strong>
 						{{#if (get_text text '_desc')}}
 							<br><span>{{{get_text text '_desc'}}}</span>
 						{{/if}}
 					</a>
-				{{/each}}
+		{{/each}}
+
 				</div>
 			</div>
 		</div>
-		{{/if}}
-	{{/each}}
+	{{/if}}
+{{/each}}
+
 </div>

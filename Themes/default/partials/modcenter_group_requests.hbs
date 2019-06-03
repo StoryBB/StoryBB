@@ -9,17 +9,17 @@
 		<div class="modbox">
 			<ul>
 
-				{{#each context.group_requests}}
+{{#each context.group_requests}}
 				<li class="smalltext">
 					<a href="{{{request_href}}}">{{{group.name}}}</a> {{{txt.mc_groupr_by}}} {{{member.link}}}
 				</li>
-				{{/each}}
+{{/each}}
 
-				{{#unless context.group_requests}}
+{{#unless context.group_requests}}
 				<li>
 					<strong class="smalltext">{{{txt.mc_group_requests_none}}}</strong>
 				</li>
-				{{/unless}}
+{{/unless}}
 
 			</ul>
 		</div>

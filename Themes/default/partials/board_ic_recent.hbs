@@ -4,28 +4,31 @@
 			</h4>
 		</div>
 		<div id="recent_posts_content">
-		{{#if (gt settings.number_recent_posts 1)}}
-			{{#if context.latest_posts}}
-				<table id="ic_recentposts">
-					<tr class="windowbg">
-						<th class="recentpost">{{txt.message}}</th>
-						<th class="recentposter">{{txt.author}}</th>
-						<th class="recentboard">{{txt.board}}</th>
-						<th class="recenttime">{{txt.date}}</th>
-					</tr>
-					{{#each context.latest_posts}}
-					<tr class="windowbg">
-							<td class="recentpost"><strong>{{{link}}}</strong></td>
-							<td class="recentposter">{{{poster.link}}}</td>
-							<td class="recentboard">{{{board.link}}}</td>
-							<td class="recenttime">{{{time}}}</td>
-						</tr>
-					{{/each}}
-				</table>
-			{{/if}}
-		{{else}}
-		<p id="infocenter_onepost" class="inline">
-			<a href="{{scripturl}}?action=recent">{{txt.recent_view}}</a>&nbsp;{{textTemplate txt.is_recent_updated (concat '&quot;' context.latest_post.link '&quot;') context.latest_post.time}}<br>
-		</p>
-		{{/if}}
+
+{{#if (gt settings.number_recent_posts 1)}}
+	{{#if context.latest_posts}}
+			<table id="ic_recentposts">
+				<tr class="windowbg">
+					<th class="recentpost">{{txt.message}}</th>
+					<th class="recentposter">{{txt.author}}</th>
+					<th class="recentboard">{{txt.board}}</th>
+					<th class="recenttime">{{txt.date}}</th>
+				</tr>
+
+		{{#each context.latest_posts}}
+				<tr class="windowbg">
+					<td class="recentpost"><strong>{{{link}}}</strong></td>
+					<td class="recentposter">{{{poster.link}}}</td>
+					<td class="recentboard">{{{board.link}}}</td>
+					<td class="recenttime">{{{time}}}</td>
+				</tr>
+		{{/each}}
+
+			</table>
+	{{/if}}
+{{else}}
+			<p id="infocenter_onepost" class="inline">
+				<a href="{{scripturl}}?action=recent">{{txt.recent_view}}</a>&nbsp;{{textTemplate txt.is_recent_updated (concat '&quot;' context.latest_post.link '&quot;') context.latest_post.time}}<br>
+			</p>
+{{/if}}
 		</div>

@@ -6,10 +6,10 @@
 		<dd>
 			<select name="easyformat" id="easyformat" onchange="document.forms.creator.time_format.value = this.options[this.selectedIndex].value;" style="margin-bottom: 4px;">
 
-			{{! Help the user by showing a list of common time formats. }}
-			{{#each context.easy_timeformats}}
+{{! Help the user by showing a list of common time formats. }}
+{{#each context.easy_timeformats}}
 				<option value="{{{format}}}" {{#if (eq format ../context.member.time_format)}} selected{{/if}}>{{{title}}}</option>
-			{{/each}}
+{{/each}}
 
 			</select><br>
 			<input type="text" name="time_format" id="time_format" value="{{{context.member.time_format}}}" size="30">

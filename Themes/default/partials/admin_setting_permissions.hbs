@@ -12,16 +12,21 @@
 					</dt>
 					<dd>
 					</dd>
-					{{#each (lookup context config_var.name)}}
-						<dt>
-							<span class="perms"><input type="radio" name="{{../config_var.name}}[{{id}}]" value="on"{{#if (eq status 'on')}} checked{{/if}}></span>
-							<span class="perms"><input type="radio" name="{{../config_var.name}}[{{id}}]" value="off"{{#if (eq status 'off')}} checked{{/if}}></span>
-							<span class="perms"><input type="radio" name="{{../config_var.name}}[{{id}}]" value="deny"{{#if (eq status 'deny')}} checked{{/if}}></span>
-						</dt>
-						<dd>
-							<span{{#if is_postgroup}} style="font-style: italic;"{{/if}}>{{{name}}}</span>
-						</dd>
-					{{/each}}
+
+{{#each (lookup context config_var.name)}}
+					<dt>
+						<span class="perms"><input type="radio" name="{{../config_var.name}}[{{id}}]" value="on"{{#if (eq status 'on')}} checked{{/if}}></span>
+						<span class="perms"><input type="radio" name="{{../config_var.name}}[{{id}}]" value="off"{{#if (eq status 'off')}} checked{{/if}}></span>
+						<span class="perms"><input type="radio" name="{{../config_var.name}}[{{id}}]" value="deny"{{#if <dt>
+						<span class="perms"><input type="radio" name="{{../config_var.name}}[{{id}}]" value="on"{{#if (eq status 'on')}} checked{{/if}}></span>
+						<span class="perms"><input type="radio" name="{{../config_var.name}}[{{id}}]" value="off"{{#if (eq status 'off')}} checked{{/if}}></span>
+						<span class="perms"><input type="radio" name="{{../config_var.name}}[{{id}}]" value="deny"{{#if (eq status 'deny')}} checked{{/if}}></span>
+					</dt>
+					<dd>
+						<span{{#if is_postgroup}} style="font-style: italic;"{{/if}}>{{{name}}}</span>
+					</dd>
+{{/each}}
+
 				</dl>
 			</fieldset>
 			<a href="javascript:void(0);" onclick="document.getElementById('perms_{{config_var.name}}').style.display = 'block'; document.getElementById('perms_{{config_var.name}}_groups_link').style.display = 'none'; return false;" id="perms_{{config_var.name}}_groups_link" style="display: none;" class="toggle_down"> {{{txt.avatar_select_permission}}}</a>

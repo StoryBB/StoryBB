@@ -1,48 +1,48 @@
 	<span class="pages">{{{txt.pages}}}</span>
 
-	{{! Show the "prev page" link. (>prev page< 1 ... 6 7 [8] 9 10 ... 15 next page) }}
-	{{#if (gt previous_page -1)}}
-		<a class="navPages main_icons previous_page" href="{{textTemplate base_url previous_page}}"></a>
-	{{/if}}
+{{! Show the "prev page" link. (>prev page< 1 ... 6 7 [8] 9 10 ... 15 next page) }}
+{{#if (gt previous_page -1)}}
+	<a class="navPages main_icons previous_page" href="{{textTemplate base_url previous_page}}"></a>
+{{/if}}
 
-	{{! Show the first page. (prev page >1< ... 6 7 [8] 9 10 ... 15) }}
-	{{#if (gt start (mul num_per_page continuous_numbers))}}
-		<a class="navPages" href="{{textTemplate base_url 0}}">1</a>
-	{{/if}}
+{{! Show the first page. (prev page >1< ... 6 7 [8] 9 10 ... 15) }}
+{{#if (gt start (mul num_per_page continuous_numbers))}}
+	<a class="navPages" href="{{textTemplate base_url 0}}">1</a>
+{{/if}}
 
-	{{! Show the ... after the first page.  (prev page 1 >...< 6 7 [8] 9 10 ... 15 next page) }}
-	{{#if (gt start (mul num_per_page (add continuous_numbers 1)))}}
-		<span class="expand_pages" onclick="expandPages(this, {{{jsEscape (concat '&lt;a class=&quot;navPages&quot; href=&quot;' base_url '&quot;&gt;%2$s&lt;/a&gt; ')}}}, {{num_per_page}}, {{sub start (mul num_per_page continuous_numbers)}}, {{num_per_page}})"> ... </span>
-	{{/if}}
+{{! Show the ... after the first page.  (prev page 1 >...< 6 7 [8] 9 10 ... 15 next page) }}
+{{#if (gt start (mul num_per_page (add continuous_numbers 1)))}}
+	<span class="expand_pages" onclick="expandPages(this, {{{jsEscape (concat '&lt;a class=&quot;navPages&quot; href=&quot;' base_url '&quot;&gt;%2$s&lt;/a&gt; ')}}}, {{num_per_page}}, {{sub start (mul num_per_page continuous_numbers)}}, {{num_per_page}})"> ... </span>
+{{/if}}
 
-	{{! Show the pages before the current one. (prev page 1 ... >6 7< [8] 9 10 ... 15 next page) }}
-	{{#each range_before}}
-		<a class="navPages" href="{{textTemplate ../base_url .}}">{{@key}}</a>
-	{{/each}}
+{{! Show the pages before the current one. (prev page 1 ... >6 7< [8] 9 10 ... 15 next page) }}
+{{#each range_before}}
+	<a class="navPages" href="{{textTemplate ../base_url .}}">{{@key}}</a>
+{{/each}}
 
-	{{! Show the current page. (prev page 1 ... 6 7 >[8]< 9 10 ... 15 next page) }}
-	{{#if actually_on_current_page}}
-		<span class="current_page">{{current_page_display}}</span>
-	{{else}}
-		<a class="navPages" href="{{textTemplate base_url start}}">{{current_page_display}}</a>
-	{{/if}}
+{{! Show the current page. (prev page 1 ... 6 7 >[8]< 9 10 ... 15 next page) }}
+{{#if actually_on_current_page}}
+	<span class="current_page">{{current_page_display}}</span>
+{{else}}
+	<a class="navPages" href="{{textTemplate base_url start}}">{{current_page_display}}</a>
+{{/if}}
 
-	{{! Show the pages after the current one... (prev page 1 ... 6 7 [8] >9 10< ... 15 next page) }}
-	{{#each range_after}}
-		<a class="navPages" href="{{textTemplate ../base_url .}}">{{@key}}</a>
-	{{/each}}
+{{! Show the pages after the current one... (prev page 1 ... 6 7 [8] >9 10< ... 15 next page) }}
+{{#each range_after}}
+	<a class="navPages" href="{{textTemplate ../base_url .}}">{{@key}}</a>
+{{/each}}
 
-	{{! Show the '...' part near the end. (prev page 1 ... 6 7 [8] 9 10 >...< 15 next page) }}
-	{{#if (gt max_index (add start (mul num_per_page (add continuous_numbers 1))))}}
-		<span class="expand_pages" onclick="expandPages(this, {{{jsEscape (concat '&lt;a class=&quot;navPages&quot; href=&quot;' base_url '&quot;&gt;%2$s&lt;/a&gt; ')}}}, {{add start (mul num_per_page (add continuous_numbers 1))}}, {{max_index}}, {{num_per_page}})"> ... </span>
-	{{/if}}
+{{! Show the '...' part near the end. (prev page 1 ... 6 7 [8] 9 10 >...< 15 next page) }}
+{{#if (gt max_index (add start (mul num_per_page (add continuous_numbers 1))))}}
+	<span class="expand_pages" onclick="expandPages(this, {{{jsEscape (concat '&lt;a class=&quot;navPages&quot; href=&quot;' base_url '&quot;&gt;%2$s&lt;/a&gt; ')}}}, {{add start (mul num_per_page (add continuous_numbers 1))}}, {{max_index}}, {{num_per_page}})"> ... </span>
+{{/if}}
 
-	{{! Show the last number in the list. (prev page 1 ... 6 7 [8] 9 10 ... >15<  next page) }}
-	{{#if (gt max_index (add start (mul num_per_page continuous_numbers)))}}
-		<a class="navPages" href="{{textTemplate base_url max_index}}">{{max_pages}}</a>
-	{{/if}}
+{{! Show the last number in the list. (prev page 1 ... 6 7 [8] 9 10 ... >15<  next page) }}
+{{#if (gt max_index (add start (mul num_per_page continuous_numbers)))}}
+	<a class="navPages" href="{{textTemplate base_url max_index}}">{{max_pages}}</a>
+{{/if}}
 
-	{{! Show the "next page" link. (prev page 1 ... 6 7 [8] 9 10 ... 15 >next page<) }}
-	{{#if (gt next_page -1)}}
-		<a class="navPages main_icons next_page" href="{{textTemplate base_url next_page}}"></a>
-	{{/if}}
+{{! Show the "next page" link. (prev page 1 ... 6 7 [8] 9 10 ... 15 >next page<) }}
+{{#if (gt next_page -1)}}
+	<a class="navPages main_icons next_page" href="{{textTemplate base_url next_page}}"></a>
+{{/if}}

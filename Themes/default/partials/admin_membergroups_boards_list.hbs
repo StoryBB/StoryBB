@@ -3,7 +3,7 @@
 		<legend>{{{txt.membergroups_new_board_desc}}}</legend>
 		<ul class="padding floatleft">
 
-		{{#each context.categories}}
+{{#each context.categories}}
 			<li class="category">
 				<strong>{{{name}}}</strong>
 				<span class="select_all_box">
@@ -17,28 +17,35 @@
 				</span>
 				<ul style="width:100%" id="boards_list_{{id}}">
 
-					{{#each boards}}
+	{{#each boards}}
 					<li class="board" style="width:100%">
 						<span style="margin-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{child_level}}em;">{{{name}}}: </span>
 						<span style="width:50%;float:right">
-							<input type="radio" name="boardaccess[{{id}}]" id="allow_brd{{id}}" value="allow"{{#if allow}} checked{{/if}}> <label for="allow_brd{{id}}">{{{../../txt.permissions_option_on}}}</label>
-							<input type="radio" name="boardaccess[{{id}}]" id="ignore_brd{{id}}" value="ignore"{{#unless (or allow deny)}} checked{{/unless}}> <label for="ignore_brd{{id}}">{{{../../txt.permissions_option_off}}}</label>
-							<input type="radio" name="boardaccess[{{id}}]" id="deny_brd{{id}}" value="deny"{{#if deny}} checked{{/if}}> <label for="deny_brd{{id}}">{{{../../txt.permissions_option_deny}}}</label>
+							<input type="radio" name="boardaccess[{{id}}]" id="allow_brd{{id}}" value="allow"{{#if allow}} checked{{/if}}>
+							<label for="allow_brd{{id}}">{{{../../txt.permissions_option_on}}}</label>
+							<input type="radio" name="boardaccess[{{id}}]" id="ignore_brd{{id}}" value="ignore"{{#unless (or allow deny)}} checked{{/unless}}>
+							<label for="ignore_brd{{id}}">{{{../../txt.permissions_option_off}}}</label>
+							<input type="radio" name="boardaccess[{{id}}]" id="deny_brd{{id}}" value="deny"{{#if deny}} checked{{/if}}>
+							<label for="deny_brd{{id}}">{{{../../txt.permissions_option_deny}}}</label>
 						</span>
 					</li>
-					{{/each}}
-					</ul>
-				</li>
-		{{/each}}
+	{{/each}}
+
+				</ul>
+			</li>
+{{/each}}
 
 		</ul>
 
 		<br class="clear">
 		<span class="select_all_box">
 			<em>{{{txt.all}}}: </em>
-			<input type="radio" name="select_all" id="allow_all" onclick="selectAllRadio(this, this.form, 'boardaccess', 'allow');"> <label for="allow_all">{{{txt.board_perms_allow}}}</label>
-			<input type="radio" name="select_all" id="ignore_all" onclick="selectAllRadio(this, this.form, 'boardaccess', 'ignore');"> <label for="ignore_all">{{{txt.board_perms_ignore}}}</label>
-			<input type="radio" name="select_all" id="deny_all" onclick="selectAllRadio(this, this.form, 'boardaccess', 'deny');"> <label for="deny_all">{{{txt.board_perms_deny}}}</label>
+			<input type="radio" name="select_all" id="allow_all" onclick="selectAllRadio(this, this.form, 'boardaccess', 'allow');">
+			<label for="allow_all">{{{txt.board_perms_allow}}}</label>
+			<input type="radio" name="select_all" id="ignore_all" onclick="selectAllRadio(this, this.form, 'boardaccess', 'ignore');">
+			<label for="ignore_all">{{{txt.board_perms_ignore}}}</label>
+			<input type="radio" name="select_all" id="deny_all" onclick="selectAllRadio(this, this.form, 'boardaccess', 'deny');">
+			<label for="deny_all">{{{txt.board_perms_deny}}}</label>
 		</span>
 	</fieldset>
 	<script>
@@ -49,10 +56,10 @@
 		});
 	</script>
 
-	{{#if collapse}}
+{{#if collapse}}
 		<a href="javascript:void(0);" onclick="document.getElementById('visible_boards').style.display = 'block'; document.getElementById('visible_boards_link').style.display = 'none'; return false;" id="visible_boards_link" style="display: none;">[ {{{txt.membergroups_select_visible_boards}}} ]</a>
 		<script>
 			document.getElementById("visible_boards_link").style.display = "";
 			document.getElementById("visible_boards").style.display = "none";
 		</script>
-	{{/if}}
+{{/if}}

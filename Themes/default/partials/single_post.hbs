@@ -1,33 +1,41 @@
 <div class="{{css_class}}">
-	{{#if (not (eq id ../context.first_message))}}
-		<a id="msg{{id}}"></a>{{#if first_new}}<a id="new"></a>{{/if}}
-	{{/if}}
+
+{{#if (not (eq id ../context.first_message))}}
+	<a id="msg{{id}}"></a>{{#if first_new}}<a id="new"></a>{{/if}}
+{{/if}}
+
 	<div class="post_wrapper">
 		<div class="poster">
-			{{#if custom_fields.above_member}}
-				<div class="custom_fields_above_member">
-					<ul class="nolist">
-					{{#each custom_fields.above_member}}
-						<li class="custom {{col_name}}">{{value}}</li>
-					{{/each}}
-					</ul>
-				</div>
-			{{/if}}
+
+{{#if custom_fields.above_member}}
+			<div class="custom_fields_above_member">
+				<ul class="nolist">
+				{{#each custom_fields.above_member}}
+					<li class="custom {{col_name}}">{{value}}</li>
+				{{/each}}
+				</ul>
+			</div>
+{{/if}}
+
 			<h4>
-				{{#if (not member.is_guest)}}
-					{{#if ../context.can_send_pm}}<a href="{{member.online.href}}" title="{{member.online.label}}">{{/if}}
-					<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{#if ../context.can_send_pm}}</a>{{/if}}
-				{{/if}}
+
+{{#if (not member.is_guest)}}
+				{{#if ../context.can_send_pm}}<a href="{{member.online.href}}" title="{{member.online.label}}">{{/if}}
+				<span class="{{#if member.online.is_online}}on{{else}}off{{/if}}" title="{{member.online.text}}"></span>{{#if ../context.can_send_pm}}</a>{{/if}}
+{{/if}}
+
 				{{{member.link}}}
 			</h4>
 			<ul class="user_info">
-				{{!-- avatar --}}
-				{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
+
+{{! avatar }}
+{{#if (and ../modSettings.show_user_images (not ../options.show_no_avatars) member.avatar.image)}}
 				<li class="avatar">
 					<a href="{{member.href}}">{{{member.avatar.image}}}</a>
 				</li>
-				{{/if}}
-				{{#if custom_fields.below_avatar}}
+{{/if}}
+
+{{#if custom_fields.below_avatar}}
 				<div class="custom_fields_above_member">
 					<ul class="nolist">
 					{{#each custom_fields.below_avatar}}
@@ -35,64 +43,84 @@
 					{{/each}}
 					</ul>
 				</div>
-				{{/if}}
-				{{#if (not member.is_guest)}}
+				{{! div inside an ul? }}
+{{/if}}
+
+{{#if (not member.is_guest)}}
 				<li class="icons">{{{member.group_icons}}}</li>
-				{{/if}}
-				{{#if member.group}}
+{{/if}}
+
+{{#if member.group}}
 				<li class="membergroup">{{member.group}}</li>
-				{{/if}}
-				{{#if (not member.is_guest)}}
-					{{#if (and member.post_group (or (not ../modSettings.hide_post_group) (not member.group)))}}
-						<li class="postgroup">{{member.post_group}}</li>
-					{{/if}}
-					{{#if (not ../context.disabled_fields.posts)}}
-						<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>
-					{{/if}}
-					{{#if (and ../modSettings.show_blurb member.blurb)}}
-						<li class="blurb">{{member.blurb}}</li>
-					{{/if}}
-					{{#if custom_fields.icons}}
-						<li class="im_icons">
-							<ol>
-							{{#each custom_fields.icons}}
-								<li class="custom {{col_name}}">{{{value}}}</li>
-							{{/each}}
-							</ol>
-						</li>
-					{{/if}}
-					{{#if member.show_profile_buttons}}
-						<li class="profile">
-							<ol class="profile_icons">
-							{{#if (and member.website.url (not ../context.disabled_fields.website))}}
-								<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener" class="main_icons www centericon"></a></li>
-							{{/if}}
-							{{#if ../context.can_send_pm}}
-								<li><a href="{{../scripturl}}?action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}" class="main_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon"></a></li>
-							{{/if}}
-							{{#if (and member.show_email member.email)}}
-								<li class="email"><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{../txt.email}}"></a></li>
-							{{/if}}
-							</ol>
-						</li>
-					{{/if}}
-					{{#each custom_fields.standard}}
-						<li class="custom {{col_name}}">{{title}}:{{value}}</li>
+{{/if}}
+
+{{#if (not member.is_guest)}}
+	{{#if (and member.post_group (or (not ../modSettings.hide_post_group) (not member.group)))}}
+				<li class="postgroup">{{member.post_group}}</li>
+	{{/if}}
+
+	{{#if (not ../context.disabled_fields.posts)}}
+				<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>
+	{{/if}}
+
+	{{#if (and ../modSettings.show_blurb member.blurb)}}
+				<li class="blurb">{{member.blurb}}</li>
+	{{/if}}
+
+	{{#if custom_fields.icons}}
+				<li class="im_icons">
+					<ol>
+					{{#each custom_fields.icons}}
+						<li class="custom {{col_name}}">{{{value}}}</li>
 					{{/each}}
-				{{else}}
-					{{#if (and member.email member.show_email)}}
-					   <li class="email"><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{../txt.email}}"></a></li>
-					{{/if}}
-				{{/if}}
-				{{#if (and member.is_guest member.can_see_warning)}}
-					<li class="warning">{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
-						<span class="main_icons warning_{{member.warning_status}}"></span> {{#if ../context.can_issue_warning}}</a>{{/if}}
-						<span class="warn_{{member.warning_status}}">{{get_text 'warn_' member.warning_status}}</span></li>';
-				{{/if}}
-				{{!--  Are there any custom fields to show at the bottom of the poster info? --}}
-				{{#each custom_fields.bottom_poster}}
-					<li class="custom {{col_name}}">{{title}}:{{value}}</li>
-				{{/each}}
+					</ol>
+				</li>
+	{{/if}}
+
+	{{#if member.show_profile_buttons}}
+				<li class="profile">
+					<ol class="profile_icons">
+
+		{{#if (and member.website.url (not ../context.disabled_fields.website))}}
+						<li><a href="{{member.website.url}}" title="{{member.website.title}}" target="_blank" rel="noopener" class="main_icons www centericon"></a></li>
+		{{/if}}
+
+		{{#if ../context.can_send_pm}}
+						<li><a href="{{../scripturl}}?action=pm;sa=send;u={{member.id}}" title="{{#if member.online.is_online}}{{../txt.pm_online}}{{else}}{{../txt.pm_offline}}{{/if}}" class="main_icons im_{{#if member.online.is_online}}on{{else}}off{{/if}} centericon"></a></li>
+		{{/if}}
+
+		{{#if (and member.show_email member.email)}}
+						<li class="email"><a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{../txt.email}}"></a></li>
+		{{/if}}
+					</ol>
+				</li>
+	{{/if}}
+
+	{{#each custom_fields.standard}}
+				<li class="custom {{col_name}}">{{title}}:{{value}}</li>
+	{{/each}}
+
+{{else}}
+	{{#if (and member.email member.show_email)}}
+				<li class="email">
+					<a href="mailto:{{member.email}}" rel="nofollow" class="main_icons mail centericon" title="{{../txt.email}}"></a>
+				</li>
+	{{/if}}
+{{/if}}
+
+{{#if (and member.is_guest member.can_see_warning)}}
+				<li class="warning">
+					{{#if ../context.can_issue_warning}}<a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}}">{{/if}}
+						<span class="main_icons warning_{{member.warning_status}}"></span>
+					{{#if ../context.can_issue_warning}}</a>{{/if}}
+					<span class="warn_{{member.warning_status}}">{{get_text 'warn_' member.warning_status}}</span>
+				</li>
+{{/if}}
+
+{{!--  Are there any custom fields to show at the bottom of the poster info? --}}
+{{#each custom_fields.bottom_poster}}
+				<li class="custom {{col_name}}">{{title}}:{{value}}</li>
+{{/each}}
 			</ul>
 		</div>
 		<div class="postarea">
@@ -117,165 +145,218 @@
 					</span>
 				</h5>
 				<div id="msg_{{id}}_quick_mod"{{#if is_ignored}} style="display:none"{{/if}}></div>
-				{{#if is_ignored}}
-					<div id="msg_{{id}}_ignored_prompt">
-						{{{../txt.ignoring_user}}}
-						<a href="#" id="msg_{{id}}_ignored_link" style="display: none;">{{{../txt.show_ignore_user_post}}}</a>
-					</div>
-				{{/if}}
+
+{{#if is_ignored}}
+				<div id="msg_{{id}}_ignored_prompt">
+					{{{../txt.ignoring_user}}}
+					<a href="#" id="msg_{{id}}_ignored_link" style="display: none;">{{{../txt.show_ignore_user_post}}}</a>
+				</div>
+{{/if}}
+
 			</div>
 			<div class="post">
-				{{#unless (or (neq member.id ../context.user.id) approved)}}
-					<div class="approve_post">
-						{{../txt.post_awaiting_approval}}
-					</div>
-				{{/unless}}
+
+{{#unless (or (neq member.id ../context.user.id) approved)}}
+				<div class="approve_post">
+					{{../txt.post_awaiting_approval}}
+				</div>
+{{/unless}}
+
 				<div class="inner" data-msgid="{{id}}" id="msg_{{id}}">{{{body}}}</div>
 			</div>
-			{{#unless ../modSettings.dont_show_attach_under_post}}
-				{{#if attachment}}
-					<div id="msg_{{id}}_footer" class="attachments"{{#if is_ignored}} style="display:none"{{/if}}>
-						{{#each attachment}}
-							<div class="attached" data-index="{{@index}}" data-breakrow="{{{breakRow @index '5' 'br'}}}">
-								{{#if is_image}}
-									<div class="attachments_top">
-										{{#if thumbnail.has_thumb}}
-											<a href="{{href}};image" id="link_{{id}}" onclick="{{thumbnail.javascript}}"><img src="{{thumbnail.href}}" alt="" id="thumb_{{id}}" class="atc_img"></a>
-										{{else}}
-											<img src="{{href}};image" alt="" width="{{width}}" height="{{height}}" class="atc_img">
-										{{/if}}
-									</div>
-								{{/if}}
-								<div class="attachments_bot">
-									<a href="{{href}}"><img src="{{../../settings.images_url}}/icons/clip.png" class="centericon" alt="*">&nbsp;{{name}}</a> 
-									{{#if (and ../../context.can_approve (not is_approved))}}
-									[<a href="{{../../scripturl}}?action=attachapprove;sa=approve;aid={{id}};{{session_url}}">{{../../txt.approve}}</a>]&nbsp;|&nbsp;[<a href="{{../../scripturl}}?action=attachapprove;sa=reject;aid={{id}};{{session_url}}">{{{../../txt.delete}}}</a>] 
-									{{/if}}
-									<br>{{size}}, {{#if is_image}}{{real_width}}x{{real_height}}<br>{{textTemplate ../../txt.attach_viewed downloads}}{{else}}<br>{{textTemplate ../../txt.attach_downloaded downloads}}{{/if}}
-								</div>
-							</div>
-							{{{breakRow @index '5' '<br>'}}}
-						{{/each}}
+
+{{#unless ../modSettings.dont_show_attach_under_post}}
+	{{#if attachment}}
+			<div id="msg_{{id}}_footer" class="attachments"{{#if is_ignored}} style="display:none"{{/if}}>
+
+		{{#each attachment}}
+				<div class="attached" data-index="{{@index}}" data-breakrow="{{{breakRow @index '5' 'br'}}}">
+
+			{{#if is_image}}
+					<div class="attachments_top">
+						{{#if thumbnail.has_thumb}}
+							<a href="{{href}};image" id="link_{{id}}" onclick="{{thumbnail.javascript}}"><img src="{{thumbnail.href}}" alt="" id="thumb_{{id}}" class="atc_img"></a>
+						{{else}}
+							<img src="{{href}};image" alt="" width="{{width}}" height="{{height}}" class="atc_img">
+						{{/if}}
 					</div>
-				{{/if}}
-			{{/unless}}
-			{{!-- aything below the attachments? --}}
-			{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
-			<div class="under_message">
 			{{/if}}
-				{{#if ../context.can_report_moderator}}
-					<ul class="floatright smalltext">
-						<li class="report_link"><a href="{{../scripturl}}?action=reporttm;topic={{../context.current_topic}}.{{counter}};msg={{id}}">{{../txt.report_to_mod}}</a></li>
-					</ul>
-				{{/if}}
-				{{!-- Show the IP to this user for this post - because you can moderate? --}}
-				{{#if (and can_see_ip member.ip)}}
-					<ul class="floatright smalltext">
-						<li class="poster_ip"><a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile;area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}{{/if}}">{{{../txt.ip}}}: {{member.ip}}</a></li>
-					</ul>
-				{{/if}}
 
-				{{#if ../modSettings.enable_likes}}
-					<ul class="floatleft">
-						{{#if likes.can_like}}
-							<li class="like_button" id="msg_{{id}}_likes"{{#if is_ignoring}} style="display:none"{{/if}}><a href="{{../scripturl}}?action=likes;ltype=msg;sa=like;like={{id}};{{session_url}}" class="msg_like"><span class="main_icons {{#if likes.you}}unlike{{else}}like{{/if}}"></span> {{#if likes.you}}{{../txt.unlike}}{{else}}{{../txt.like}}{{/if}}</a></li>
+					<div class="attachments_bot">
+						<a href="{{href}}"><img src="{{../../settings.images_url}}/icons/clip.png" class="centericon" alt="*">&nbsp;{{name}}</a> 
+						{{#if (and ../../context.can_approve (not is_approved))}}
+						[<a href="{{../../scripturl}}?action=attachapprove;sa=approve;aid={{id}};{{session_url}}">{{../../txt.approve}}</a>]&nbsp;|&nbsp;[<a href="{{../../scripturl}}?action=attachapprove;sa=reject;aid={{id}};{{session_url}}">{{{../../txt.delete}}}</a>] 
 						{{/if}}
-						{{#if (and likes.count ../context.can_see_likes)}}
-							<li class="like_count smalltext"><a href="{{scripturl}}?action=likes;sa=view;ltype=msg;like={{id}};{{session_url}}">{{{getLikeText likes}}}</a></li>
-						{{/if}}
-					</ul>
-				{{/if}}
-				{{!-- quick buttons --}}
-				{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
-				<ul class="quickbuttons">
-					{{#if ../context.can_quote}}
-						<li><a href="{{../scripturl}}?action=post;quote={{id}};topic={{../context.current_topic}}.{{../context.start}};last_msg={{../context.topic_last_message}}" onclick="return oQuickReply.quote({{id}});" class="main_icons quote">{{../txt.quote_action}}</a></li>
-						<li style="display:none;" id="quoteSelected_{{id}}"><a href="javascript:void(0)" class="main_icons quote_selected">{{../txt.quote_selected_action}}</a></li>
-					{{/if}}
-					{{#if can_modify}}
-						<li class="quick_edit"><a title="{{../txt.modify_msg}}" class="modifybutton" id="modify_button_{{id}}" onclick="oQuickModify.modifyMsg('{{id}}', '{{#if ../modSettings.toggle_subject}}true{{else}}false{{/if}}')"><span class="main_icons quick_edit_button"></span>{{../txt.quick_edit}}</a></li>
-					{{/if}}
-					{{#if (or can_approve can_unapprove can_modify can_remove ../context.can_split ../context.can_restore_msg)}}
-						<li class="post_options">{{../txt.post_options}}
-							<ul>
-								{{#if can_modify}}
-									<li><a href="{{../scripturl}}?action=post;msg={{id}};topic={{../context.current_topic}}.{{../context.start}}" class="main_icons modify_button">{{../txt.modify}}</a></li>
-								{{/if}}
-								{{#if (eq ../context.topic_first_message id)}}
-									{{#if ../context.can_delete}}
-										<li><a href="{{../scripturl}}?action=removetopic2;topic={{../context.current_topic}}.{{../context.start}};{{session_url}}" data-confirm="{{../txt.are_sure_remove_topic}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.remove_topic}}</a></li>
-									{{/if}}
-								{{else}}
-									{{#if can_remove}}
-										<li><a href="{{../scripturl}}?action=deletemsg;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" data-confirm="{{../txt.remove_message_question}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.remove}}</a></li>
-									{{/if}}
-								{{/if}}
-								{{#if can_switch_char}}
-								<li>
-									<a href="#" onclick="return false" class="main_icons people">
-										{{../txt.switch_to_char_menu}}
-									</a>
-									<ul>
-										{{#each possible_characters}}
-										<li>
-											<a href="{{../scripturl}}?action=reattributepost;topic={{../../context.current_topic}};msg={{../id}};char={{@key}};{{session_url}}">{{{name}}}</a>
-										</li>
-										{{/each}}
-									</ul>
-								</li>
-								{{/if}}
-								{{#if (and ../context.can_split ../context.real_num_replies)}}
-								<li><a href="{{../scripturl}}?action=splittopics;topic={{../context.current_topic}}.0;at={{id}}" class="main_icons split_button">{{../txt.split}}</a></li>
-								{{/if}}
-							</ul>
+						<br>{{size}}, {{#if is_image}}{{real_width}}x{{real_height}}<br>{{textTemplate ../../txt.attach_viewed downloads}}{{else}}<br>{{textTemplate ../../txt.attach_downloaded downloads}}{{/if}}
+					</div>
+				</div>
+				{{{breakRow @index '5' '<br>'}}}
+		{{/each}}
 
-						</li>
-					{{/if}}
-
-					{{#unless (or (not ../context.can_issue_warning) is_message_author member.is_guest)}}
-						<li><a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}};msg={{id}}" class="main_icons warn_button">{{../txt.issue_warning}}</a></li>
-					{{/unless}}
-					{{#if ../context.can_restore_msg}}
-						<li><a href="{{../scripturl}}?action=restoretopic;msgs={{id}};{{session_url}}" class="main_icons restore_button">{{../txt.restore_message}}</a></li>
-					{{/if}}
-					{{#if can_approve}}
-						<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" class="main_icons approve_button">{{../txt.approve}}</a></li>
-					{{/if}}
-					{{#if can_unapprove}}
-						<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" class="main_icons unapprove_button">{{../txt.unapprove}}</a></li>
-					{{/if}}
-					{{#if can_remove}}
-						<li style="display: none;" id="in_topic_mod_check_{{id}}"></li>
-					{{/if}}
-				</ul>
-				{{/if}}
-			{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
 			</div>
+	{{/if}}
+{{/unless}}
+
+{{!-- aything below the attachments? --}}
+{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+			<div class="under_message">
+{{/if}}
+
+{{#if ../context.can_report_moderator}}
+				<ul class="floatright smalltext">
+					<li class="report_link"><a href="{{../scripturl}}?action=reporttm;topic={{../context.current_topic}}.{{counter}};msg={{id}}">{{../txt.report_to_mod}}</a></li>
+				</ul>
+{{/if}}
+
+{{!-- Show the IP to this user for this post - because you can moderate? --}}
+{{#if (and can_see_ip member.ip)}}
+				<ul class="floatright smalltext">
+					<li class="poster_ip">
+						<a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile;area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}{{/if}}">{{{../txt.ip}}}: {{member.ip}}</a>
+					</li>
+				</ul>
+{{/if}}
+
+{{#if ../modSettings.enable_likes}}
+				<ul class="floatleft">
+
+	{{#if likes.can_like}}
+					<li class="like_button" id="msg_{{id}}_likes"{{#if is_ignoring}} style="display:none"{{/if}}>
+						<a href="{{../scripturl}}?action=likes;ltype=msg;sa=like;like={{id}};{{session_url}}" class="msg_like">
+							<span class="main_icons {{#if likes.you}}unlike{{else}}like{{/if}}"></span>
+							{{#if likes.you}}{{../txt.unlike}}{{else}}{{../txt.like}}{{/if}}
+						</a>
+					</li>
+	{{/if}}
+
+	{{#if (and likes.count ../context.can_see_likes)}}
+					<li class="like_count smalltext">
+						<a href="{{scripturl}}?action=likes;sa=view;ltype=msg;like={{id}};{{session_url}}">{{{getLikeText likes}}}</a>
+					</li>
+	{{/if}}
+
+				</ul>
+{{/if}}
+
+{{!-- quick buttons --}}
+{{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+				<ul class="quickbuttons">
+
+	{{#if ../context.can_quote}}
+					<li><a href="{{../scripturl}}?action=post;quote={{id}};topic={{../context.current_topic}}.{{../context.start}};last_msg={{../context.topic_last_message}}" onclick="return oQuickReply.quote({{id}});" class="main_icons quote">{{../txt.quote_action}}</a></li>
+					<li style="display:none;" id="quoteSelected_{{id}}">
+						<a href="javascript:void(0)" class="main_icons quote_selected">{{../txt.quote_selected_action}}</a>
+					</li>
+	{{/if}}
+
+	{{#if can_modify}}
+					<li class="quick_edit">
+						<a title="{{../txt.modify_msg}}" class="modifybutton" id="modify_button_{{id}}" onclick="oQuickModify.modifyMsg('{{id}}', '{{#if ../modSettings.toggle_subject}}true{{else}}false{{/if}}')"><span class="main_icons quick_edit_button"></span>{{../txt.quick_edit}}</a>
+					</li>
+	{{/if}}
+
+	{{#if (or can_approve can_unapprove can_modify can_remove ../context.can_split ../context.can_restore_msg)}}
+					<li class="post_options">{{../txt.post_options}}
+						<ul>
+
+		{{#if can_modify}}
+							<li><a href="{{../scripturl}}?action=post;msg={{id}};topic={{../context.current_topic}}.{{../context.start}}" class="main_icons modify_button">{{../txt.modify}}</a></li>
+		{{/if}}
+
+		{{#if (eq ../context.topic_first_message id)}}
+			{{#if ../context.can_delete}}
+							<li><a href="{{../scripturl}}?action=removetopic2;topic={{../context.current_topic}}.{{../context.start}};{{session_url}}" data-confirm="{{../txt.are_sure_remove_topic}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.remove_topic}}</a></li>
 			{{/if}}
+		{{else}}
+			{{#if can_remove}}
+							<li><a href="{{../scripturl}}?action=deletemsg;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" data-confirm="{{../txt.remove_message_question}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.remove}}</a></li>
+			{{/if}}
+		{{/if}}
+
+		{{#if can_switch_char}}
+							<li>
+								<a href="#" onclick="return false" class="main_icons people">
+									{{../txt.switch_to_char_menu}}
+								</a>
+								<ul>
+
+			{{#each possible_characters}}
+									<li>
+										<a href="{{../scripturl}}?action=reattributepost;topic={{../../context.current_topic}};msg={{../id}};char={{@key}};{{session_url}}">{{{name}}}</a>
+									</li>
+			{{/each}}
+
+								</ul>
+							</li>
+		{{/if}}
+
+		{{#if (and ../context.can_split ../context.real_num_replies)}}
+							<li><a href="{{../scripturl}}?action=splittopics;topic={{../context.current_topic}}.0;at={{id}}" class="main_icons split_button">{{../txt.split}}</a></li>
+		{{/if}}
+
+						</ul>
+
+					</li>
+	{{/if}}
+
+	{{#unless (or (not ../context.can_issue_warning) is_message_author member.is_guest)}}
+					<li><a href="{{../scripturl}}?action=profile;area=issuewarning;u={{member.id}};msg={{id}}" class="main_icons warn_button">{{../txt.issue_warning}}</a></li>
+	{{/unless}}
+
+	{{#if ../context.can_restore_msg}}
+					<li><a href="{{../scripturl}}?action=restoretopic;msgs={{id}};{{session_url}}" class="main_icons restore_button">{{../txt.restore_message}}</a></li>
+	{{/if}}
+
+	{{#if can_approve}}
+					<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" class="main_icons approve_button">{{../txt.approve}}</a></li>
+	{{/if}}
+
+	{{#if can_unapprove}}
+					<li><a href="{{../scripturl}}?action=moderate;area=postmod;sa=approve;topic={{../context.current_topic}}.{{../context.start}};msg={{id}};{{session_url}}" class="main_icons unapprove_button">{{../txt.unapprove}}</a></li>
+	{{/if}}
+
+	{{#if can_remove}}
+						<li style="display: none;" id="in_topic_mod_check_{{id}}"></li>
+	{{/if}}
+
+				</ul>
+{{/if}}
+
+{{#if (or ../context.can_report_moderator ../context.can_see_likes ../context.can_like can_approve ../context.can_reply can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
+			</div>
+{{/if}}
 		</div>
 		<div class="moderatorbar">
-			{{#if custom_fields.above_signature}}
-				<div class="custom_fields_above_signature">
-					<ul class="nolist">
-						{{#each custom_fields.above_signature}}
-						<li class="custom {{col_name}}">{{value}}</li>
-						{{/each}}
-					</ul>
-				</div>
-			{{/if}}
-			{{#if (and (not ../options.show_no_signatures) ../context.signature_enabled member.signature)}}
-				<div class="signature" id="msg_{{id}}_signature"{{#if is_ignoring}} style="display:none"{{/if}}>{{{member.signature}}}</div>
-			{{/if}}
-			{{#if custom_fields.below_signature}}
-				<div class="custom_fields_below_signature">
-					<ul class="nolist">
-						{{#each custom_fields.below_signature}}
-						<li class="custom {{col_name}}">{{value}}</li>
-						{{/each}}
-					</ul>
-				</div>
-			{{/if}}
+
+{{#if custom_fields.above_signature}}
+			<div class="custom_fields_above_signature">
+				<ul class="nolist">
+
+	{{#each custom_fields.above_signature}}
+					<li class="custom {{col_name}}">{{value}}</li>
+	{{/each}}
+
+				</ul>
+			</div>
+{{/if}}
+
+{{#if (and (not ../options.show_no_signatures) ../context.signature_enabled member.signature)}}
+			<div class="signature" id="msg_{{id}}_signature"{{#if is_ignoring}} style="display:none"{{/if}}>
+				{{{member.signature}}}
+			</div>
+{{/if}}
+
+{{#if custom_fields.below_signature}}
+			<div class="custom_fields_below_signature">
+				<ul class="nolist">
+					{{#each custom_fields.below_signature}}
+					<li class="custom {{col_name}}">{{value}}</li>
+					{{/each}}
+				</ul>
+			</div>
+{{/if}}
+
 		</div>
-	</div>
+	</div><!-- .post_wrapper -->
 </div>
 <hr class="post_separator">

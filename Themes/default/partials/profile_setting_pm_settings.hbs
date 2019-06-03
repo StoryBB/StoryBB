@@ -15,10 +15,10 @@
 			<select name="pm_receive_from" id="pm_receive_from">
 				<option value="0"{{#if (or (eq_coerce context.receive_from 0) (and (eq_coerce modSettings.enable_buddylist 0) (lt context.receive_from 3)))}} selected{{/if}}>{{{txt.pm_receive_from_everyone}}}</option>
 
-				{{#if (eq_coerce modSettings.enable_buddylist 1)}}
-					<option value="1"{{#if (eq_coerce context.receive_from 1)}} selected{{/if}}>{{{txt.pm_receive_from_ignore}}}</option>
-					<option value="2"{{#if (eq_coerce context.receive_from 2)}} selected{{/if}}>{{{txt.pm_receive_from_buddies}}}</option>
-				{{/if}}
+{{#if (eq_coerce modSettings.enable_buddylist 1)}}
+				<option value="1"{{#if (eq_coerce context.receive_from 1)}} selected{{/if}}>{{{txt.pm_receive_from_ignore}}}</option>
+				<option value="2"{{#if (eq_coerce context.receive_from 2)}} selected{{/if}}>{{{txt.pm_receive_from_buddies}}}</option>
+{{/if}}
 
 				<option value="3"{{#if (gt context.receive_from 2)}} selected{{/if}}>{{{txt.pm_receive_from_admins}}}</option>
 			</select>

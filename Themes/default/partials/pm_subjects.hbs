@@ -16,50 +16,78 @@
 		</tr>
 	</thead>
 	<tbody>
-		{{#if context.show_delete}}
+
+{{#if context.show_delete}}
 		<tr class="windowbg">
 			<td colspan="5">{{txt.pm_alert_none}}</td>
 		</tr>
-		{{/if}}
-		{{#each context.subjects}}
+{{/if}}
+
+{{#each context.subjects}}
 		<tr class="windowbg{{#if is_unread}} unread_pm{{/if}}">
 			<td class="table_icon">
-			<script>
-				currentLabels[{{id}}] = {{{json labels}}};
-			</script>
-			{{#if is_replied_to}}<span class="main_icons replied" title="{{txt.pm_replied}}"></span>{{else}}<span class="main_icons im_off" title="{{txt.pm_read}}"></span>{{/if}}</td>
+				<script>
+					currentLabels[{{id}}] = {{{json labels}}};
+				</script>
+
+	{{#if is_replied_to}}
+				<span class="main_icons replied" title="{{txt.pm_replied}}"></span>
+	{{else}}
+				<span class="main_icons im_off" title="{{txt.pm_read}}"></span>
+	{{/if}}
+
+			</td>
 			<td>{{{time}}}</td>
-			<td>{{#if (eq ../context.current_pm id)}}<img src="{{../settings.images_url}}/selected.png" alt="*">{{/if}}
+			<td>
+
+	{{#if (eq ../context.current_pm id)}}
+				<img src="{{../settings.images_url}}/selected.png" alt="*">
+	{{/if}}
 				<a href="{{#unless (eq ../context.current_pm id)}}{{../scripturl}}?action=pm;pmid={{id}};kstart;f={{../context.folder}};start={{../context.start}};sort={{../context.sort_by}}{{#if (eq ../context.sort_direction 'up')}};{{else}};desc{{/if}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}}#msg{{id}}{{/unless}}">
-					{{subject}}{{#if is_unread}}&nbsp;<span class="new_posts">{{../txt.new}}</span>{{/if}}</a></td>
+					{{subject}}{{#if is_unread}}&nbsp;<span class="new_posts">{{../txt.new}}</span>{{/if}}
+				</a>
+			</td>
 			<td>{{#if (eq ../context.from_or_to 'from')}}{{{member.link}}}{{else}}{{#if recipients.to}}{{{implode recipients.to}}}{{/if}}{{/if}}</td>
-			<td class="centercol table_icon"><input type="checkbox" name="pms[]" id="deletelisting{{id}}" value="{{id}}"{{#if is_selected}} checked{{/if}} onclick="if (document.getElementById('deletedisplay{{id}}')) document.getElementById('deletedisplay{{id}}').checked = this.checked;"></td>
+			<td class="centercol table_icon">
+				<input type="checkbox" name="pms[]" id="deletelisting{{id}}" value="{{id}}"{{#if is_selected}} checked{{/if}} onclick="if (document.getElementById('deletedisplay{{id}}')) document.getElementById('deletedisplay{{id}}').checked = this.checked;">
+			</td>
 		</tr>
-		{{/each}}
+{{/each}}
+
 	</tbody>
 </table>
 <div class="pagesection">
-	<div class="floatleft">{{{context.page_index}}}</div>
+	<div class="floatleft">
+		{{{context.page_index}}}
+	</div>
 	<div class="floatright">&nbsp;
-	{{#if context.show_delete}}
+
+{{#if context.show_delete}}
 	{{#if (and context.currently_using_labels (neq context.folder 'sent'))}}
-	<select name="pm_action" onchange="if (this.options[this.selectedIndex].value) this.form.submit();" onfocus="loadLabelChoices();">
-		<option value="">{{txt.pm_sel_label_title}}:</option>
-		<option value="" disabled>---------------</option>
-		<option value="" disabled>{{txt.pm_msg_label_apply}}:</option>
+		<select name="pm_action" onchange="if (this.options[this.selectedIndex].value) this.form.submit();" onfocus="loadLabelChoices();">
+			<option value="">{{txt.pm_sel_label_title}}:</option>
+			<option value="" disabled>---------------</option>
+			<option value="" disabled>{{txt.pm_msg_label_apply}}:</option>
+
 		{{#each context.labels}}
-		{{#if (eq ../context.current_label_id id)}}<option value="add_{{id}}">&nbsp;{{name}}</option>{{/if}}
+			{{#if (eq ../context.current_label_id id)}}<option value="add_{{id}}">&nbsp;{{name}}</option>{{/if}}
 		{{/each}}
-		<option value="" disabled>{{txt.pm_msg_label_remove}}:</option>
+
+			<option value="" disabled>{{txt.pm_msg_label_remove}}:</option>
+
 		{{#each context.labels}}
-		<option value="rem_{{id}}">&nbsp;{{name}}</option>
+			<option value="rem_{{id}}">&nbsp;{{name}}</option>
 		{{/each}}
-	</select>
+
+		</select>
 	{{/if}}
+
 	<noscript>
 		<input type="submit" value="{{txt.pm_apply}}" class="button_submit" style="float: none">
 	</noscript>
 	<input type="submit" name="del_selected" value="{{txt.quickmod_delete_selected}}" onclick="if (!confirm('{{txt.delete_selected_confirm}}')) return false;" class="button_submit" style="float: none">
-	{{/if}}
+
+{{/if}}
+
 	</div>
 </div>
