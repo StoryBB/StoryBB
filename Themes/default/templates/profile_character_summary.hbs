@@ -1,7 +1,7 @@
 	{{! Character profile page. }}
 	<div class="cat_bar">
 		<h3 class="catbg">
-			{{#if context.character.avatar}}<img class="icon" style="max-width: 25px; max-height: 25px;" src="{{{context.character.avatar}}}" alt="">{{/if}}
+			{{#if context.character.avatar}}<img class="icon char_avatar" src="{{{context.character.avatar}}}" alt="">{{/if}}
 			{{{context.character.character_name}}}
 			{{#if (eq context.character.retired '1')}} - {{{txt.char_retired}}}{{/if}}
 		</h3>
