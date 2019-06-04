@@ -44,8 +44,14 @@
             "type": "number"
         },
         {
-            "id": "more_sub_row",
-            "label": "more_sub_row"
+            "id": "sub_boards_columns",
+            "label": "sub_boards_columns",
+            "options": {
+                "2": 2,
+                "3": 3,
+                "4": 4
+            }
+
         },
         {
             "id": "show_stats_index",

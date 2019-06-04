@@ -736,7 +736,7 @@ VALUES (1, 'name', '{$default_theme_name}'),
   (1, 'newsfader_time', '3000'),
   (1, 'enable_news', '1'),
   (1, 'drafts_show_saved_enabled', '1'),
-  (1, 'more_sub_row', '0');
+  (1, 'sub_boards_columns', '2');
 
 INSERT INTO {$db_prefix}themes
   (id_member, id_theme, variable, value)
