@@ -666,3 +666,34 @@ h3.config_hd {
 .windowbg2.highlight2 {
 	background: #D0E7F8;
 }
+
+/* Edit language page */
+
+#editlang_desc {
+	margin-bottom: 8px;
+}
+
+.editlang_entries dt {
+	font-weight: bold;
+}
+
+.editlang_entries dd:not(:last-child) {
+	margin-bottom: 10px;
+}
+
+.editlang_entries a.main_icons::before {
+	margin-right: 4px;
+}
+
+.editlang_entries dl {
+	margin-left: 1.5em;
+}
+
+.editlang_entries dl dt {
+	margin-right: 10px;
+	float: left;
+}
+
+.editlang_entries dl dd {
+	overflow: hidden;
+}
