@@ -2755,10 +2755,6 @@ dl.addrules dt.floatleft {
 .generic_list_wrapper table.table_grid {
 	border-bottom: 1px solid #aaa;
 }
-
-div#editlang_desc {
-	margin-bottom: 8px;
-}
 .topic_details .smalltext {
 	font-size: 0.9em;
 }

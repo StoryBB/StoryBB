@@ -666,3 +666,43 @@ h3.config_hd {
 .windowbg2.highlight2 {
 	background: #D0E7F8;
 }
+
+/* Edit language page */
+
+#editlang_desc {
+	margin-bottom: 8px;
+}
+
+.settings.editlang_entries dt {
+	width: auto;
+	font-weight: bold;
+	margin-bottom: unset;
+	float: none;
+}
+
+.settings.editlang_entries dd {
+	width: auto;
+	float: none;
+}
+
+.settings.editlang_entries dd:not(:last-child) {
+	margin-bottom: 10px;
+}
+
+.settings.editlang_entries a.main_icons::before {
+	margin-right: 4px;
+}
+
+.settings.editlang_entries dl {
+	margin-left: 1.5em;
+}
+
+.settings.editlang_entries dl dt {
+	margin-right: 10px;
+	float: left;
+}
+
+.settings.editlang_entries dl dd {
+	overflow: hidden;
+	display: block;
+}
