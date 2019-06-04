@@ -290,7 +290,7 @@ function AdminMain()
 					'subsections' => [],
 				],
 			],
-		),
+		],
 		'moderation' => [
 			'title' => $txt['admin_moderation'],
 			'permission' => ['admin_forum'],
@@ -388,7 +388,7 @@ function AdminMain()
 						'staff' => [$txt['gr_type_staff'], 'admin_forum'],
 					],
 				],
-				'logs' => array(
+				'logs' => [
 					'label' => $txt['logs'],
 					'function' => 'AdminLogs',
 					'icon' => 'logs',
