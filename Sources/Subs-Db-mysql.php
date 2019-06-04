@@ -230,7 +230,7 @@ function sbb_db_replacement__callback($matches)
 			if (!IP::is_valid($replacement))
 				sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			//we don't use the native support of mysql > 5.6.2
-			return sprintf('unhex(\'%1$s\')', bin2hex(inet_pton($replacement)));
+			return sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($replacement)), 32, "0", STR_PAD_LEFT));
 
 		case 'array_inet':
 			if (is_array($replacement))
@@ -244,7 +244,7 @@ function sbb_db_replacement__callback($matches)
 						$replacement[$key] = 'null';
 					if (!IP::is_valid($value))
 						sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
-					$replacement[$key] = sprintf('unhex(\'%1$s\')', bin2hex(inet_pton($value)));
+					$replacement[$key] = sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($value)), 32, "0", STR_PAD_LEFT));
 				}
 
 				return implode(', ', $replacement);
