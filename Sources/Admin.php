@@ -99,7 +99,7 @@ function AdminMain()
 						'profile' => [$txt['custom_profile_shorttitle']],
 						'alerts' => [$txt['notifications']],
 					],
-				),
+				],
 				'languages' => [
 					'label' => $txt['language_configuration'],
 					'file' => 'ManageLanguages.php',
