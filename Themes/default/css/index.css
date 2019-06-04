@@ -2911,18 +2911,19 @@ h3 .collapse {
 	margin-bottom: 3px;
 	margin-top: -1px;
 }
-/* Sub-Board tests (PH) */
-.more_sub_2 div {
-	display: inline-block;
-	width: calc(50% - 5px);
+/* Sub-boards columns */
+.children {
+	display: flex;
+	flex-wrap: wrap;
 }
-.more_sub_4 div {
-	display: inline-block;
-	width: calc(25% - 5px);
+.children.2_columns li {
+	width: 50%;
 }
-.more_sub_redirect:before,
-.more_sub_new:before {
-	content: "(PH)";
+.children.3_columns li {
+	width: 33%;
+}
+.children.4_columns li {
+	width: 25%;
 }
 /* Child boards */
 .children {

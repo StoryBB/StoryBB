@@ -55,12 +55,12 @@
 
 			{{! Show the Child Boards: ". (there's a link_children but board the new ones) }}
 			{{#if this.children}}
-					<div id="board_{{this.id}}_children" class="children{{#if settings.more_sub_row}}{{else}} more_sub_4p{{/if}}">
+					<ul id="board_{{this.id}}_children" class="children {{settings.sub_boards_columns}}_columns">
 
 				{{#each this.children}}
 
 						{{! Child board has one or more new posts, bold link for child board }}
-						<div {{#if this.new}}class="strong"{{/if}}>
+						<li {{#if this.new}}class="strong"{{/if}}>
 
 					{{#if (eq this.is_redirect '1')}}
 							<span class="more_sub_redirect"></span>
@@ -84,11 +84,11 @@
 							<span><a href="{{../../../scripturl}}?action=moderate;area=postmod;sa={{#if (gt this.unapproved_topics 0)}}topics{{else}}posts{{/if}};brd={{this.id}};{{session_url}}" title="{{textTemplate ../../../txt.unapproved_posts this.unapproved_topics this.unapproved_posts}}" class="moderation_link">(!)</a></span>
 					{{/if}}
 
-						</div>
+						</li>
 				{{/each}} {{! close each this.children on line 60 }}
 
 						</p><!-- ??? -->
-					</div><!-- #board_{{this.id}}_children -->
+					</ul><!-- #board_{{this.id}}_children -->
 
 			{{/if}} {{! close if this.children on line 57 }}
 
