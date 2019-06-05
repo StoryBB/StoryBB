@@ -2911,6 +2911,7 @@ h3 .collapse {
 .children {
 	display: flex;
 	flex-wrap: wrap;
+	line-height: 1.3em;
 }
 .children.columns_2 li {
 	width: 50%;
@@ -2920,6 +2921,9 @@ h3 .collapse {
 }
 .children.columns_4 li {
 	width: 25%;
+}
+.children li + li:not(:last-child) {
+	margin-bottom: 5px;
 }
 /* Child boards */
 .children {
