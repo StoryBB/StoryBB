@@ -61,7 +61,7 @@ class Likes
 	 * => 'callback' callable optional, useful if you don't want to issue a separate hook for updating your data, it is called immediately after the data was inserted or deleted and before the actual hook. Uses call_helper(); so the same format for your function/method can be applied here.
 	 * => 'json' boolean optional defaults to false, if true the Like class will return a json object as response instead of HTML.
 	 */
-	protected $_validLikes = array(
+	protected $_validLikes = [
 		'can_see' => false,
 		'can_like' => false,
 		'redirect' => '',
@@ -69,7 +69,7 @@ class Likes
 		'flush_cache' => '',
 		'callback' => false,
 		'json' => false,
-	);
+	];
 
 	/**
 	 * @var array The current user info ($user_info).
@@ -121,13 +121,13 @@ class Likes
 		// Make sure the user can see and like your content.
 		$this->check();
 
-		$subActions = array(
+		$subActions = [
 			'like',
 			'view',
 			'delete',
 			'insert',
 			'_count',
-		);
+		];
 
 		// So at this point, whatever type of like the user supplied and the item of content in question,
 		// we know it exists, now we need to figure out what we're doing with that.
@@ -199,9 +199,9 @@ class Likes
 					INNER JOIN {db_prefix}boards AS b ON (m.id_board = b.id_board)
 				WHERE {query_see_board}
 					AND m.id_msg = {int:msg}',
-				array(
+				[
 					'msg' => $this->_content,
-				)
+				]
 			);
 			if ($smcFunc['db_num_rows']($request) == 1)
 				list ($this->_idTopic, $topicOwner) = $smcFunc['db_fetch_row']($request);
@@ -227,7 +227,7 @@ class Likes
 			// Otherwise, fill an array according to the docs for $this->_validLikes. Determine (however you need to) that the user can see and can_like the relevant liked content (and it exists) Remember that users can't like their own content.
 			// If the user cannot see it, return the appropriate key (can_see) as false. If the user can see it and can like it, you MUST return your type in the 'type' key back.
 			// See also issueLike() for further notes.
-			$can_like = call_integration_hook('integrate_valid_likes', array($this->_type, $this->_content, $this->_sa, $this->_js, $this->_extra));
+			$can_like = call_integration_hook('integrate_valid_likes', [$this->_type, $this->_content, $this->_sa, $this->_js, $this->_extra]);
 
 			$found = false;
 			if (!empty($can_like))
@@ -277,11 +277,11 @@ class Likes
 			WHERE content_id = {int:like_content}
 				AND content_type = {string:like_type}
 				AND id_member = {int:id_member}',
-			array(
+			[
 				'like_content' => $this->_content,
 				'like_type' => $this->_type,
 				'id_member' => $this->_user['id'],
-			)
+			]
 		);
 
 		// Are we calling this directly? if so, set a proper data for the response. Do note that __METHOD__ returns both the class name and the function name.
@@ -304,14 +304,14 @@ class Likes
 		$user = $this->_user;
 		$time = time();
 
-		call_integration_hook('integrate_issue_like_before', array(&$type, &$content, &$user, &$time));
+		call_integration_hook('integrate_issue_like_before', [&$type, &$content, &$user, &$time]);
 
 		// Insert the like.
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}user_likes',
-			array('content_id' => 'int', 'content_type' => 'string-6', 'id_member' => 'int', 'like_time' => 'int'),
-			array($content, $type, $user['id'], $time),
-			array('content_id', 'content_type', 'id_member')
+			['content_id' => 'int', 'content_type' => 'string-6', 'id_member' => 'int', 'like_time' => 'int'],
+			[$content, $type, $user['id'], $time],
+			['content_id', 'content_type', 'id_member']
 		);
 
 		// Add a background task to process sending alerts.
@@ -346,10 +346,10 @@ class Likes
 			FROM {db_prefix}user_likes
 			WHERE content_id = {int:like_content}
 				AND content_type = {string:like_type}',
-			array(
+			[
 				'like_content' => $this->_content,
 				'like_type' => $this->_type,
-			)
+			]
 		);
 		list ($this->_numLikes) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -379,11 +379,11 @@ class Likes
 			WHERE content_id = {int:like_content}
 				AND content_type = {string:like_type}
 				AND id_member = {int:id_member}',
-			array(
+			[
 				'like_content' => $this->_content,
 				'like_type' => $this->_type,
 				'id_member' => $this->_user['id'],
-			)
+			]
 		);
 		$this->_alreadyLiked = (bool) $smcFunc['db_num_rows']($request) != 0;
 		$smcFunc['db_free_result']($request);
@@ -407,11 +407,11 @@ class Likes
 			$call = call_helper($this->_validLikes['callback'], true);
 
 			if (!empty($call))
-				call_user_func_array($call, array($this));
+				call_user_func_array($call, [$this]);
 		}
 
 		// Sometimes there might be other things that need updating after we do this like.
-		call_integration_hook('integrate_issue_like', array($this));
+		call_integration_hook('integrate_issue_like', [$this]);
 
 		// Now some clean up. This is provided here for any like handlers that want to do any cache flushing.
 		// This way a like handler doesn't need to explicitly declare anything in integrate_issue_like, but do so
@@ -420,7 +420,7 @@ class Likes
 			cache_put_data($this->_validLikes['flush_cache'], null);
 
 		// All done, start building the data to pass as response.
-		$this->_data = array(
+		$this->_data = [
 			'id_topic' => !empty($this->_idTopic) ? $this->_idTopic : 0,
 			'id_content' => $this->_content,
 			'count' => $this->_numLikes,
@@ -428,7 +428,7 @@ class Likes
 			'can_see' => $this->_validLikes['can_see'],
 			'already_liked' => empty($this->_alreadyLiked),
 			'type' => $this->_type,
-		);
+		];
 	}
 
 	/**
@@ -448,10 +448,10 @@ class Likes
 			UPDATE {db_prefix}messages
 			SET likes = {int:num_likes}
 			WHERE id_msg = {int:id_msg}',
-			array(
+			[
 				'id_msg' => $this->_content,
 				'num_likes' => $this->_numLikes,
-			)
+			]
 		);
 
 		// Note that we could just as easily have cleared the cache here, or set up the redirection address
@@ -478,13 +478,13 @@ class Likes
 			WHERE content_id = {int:like_content}
 				AND content_type = {string:like_type}
 			ORDER BY like_time DESC',
-			array(
+			[
 				'like_content' => $this->_content,
 				'like_type' => $this->_type,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$context['likers'][$row['id_member']] = array('timestamp' => $row['like_time']);
+			$context['likers'][$row['id_member']] = ['timestamp' => $row['like_time']];
 
 		// Now to get member data, including avatars and so on.
 		$members = array_keys($context['likers']);
@@ -574,7 +574,7 @@ class Likes
 				redirectexit(!empty($this->_validLikes['redirect']) ? $this->_validLikes['redirect'] : '');
 
 			// These fine gentlemen all share the same template.
-			$generic = array('delete', 'insert', '_count');
+			$generic = ['delete', 'insert', '_count'];
 			if (in_array($this->_sa, $generic))
 			{
 				$context['sub_template'] = 'likes_result';
@@ -606,9 +606,9 @@ class Likes
 	 */
 	protected function jsonResponse()
 	{
-		$print = array(
+		$print = [
 			'data' => $this->_data,
-		);
+		];
 
 		// If there is an error, send it.
 		if ($this->_error)
@@ -620,7 +620,7 @@ class Likes
 		}
 
 		// Do you want to add something at the very last minute?
-		call_integration_hook('integrate_likes_json_response', array(&$print));
+		call_integration_hook('integrate_likes_json_response', [&$print]);
 
 		// Print the data.
 		sbb_serverResponse(json_encode($print));

@@ -30,13 +30,13 @@ function BoardIndex()
 
 	// Retrieve the categories and boards.
 	require_once($sourcedir . '/Subs-BoardIndex.php');
-	$boardIndexOptions = array(
+	$boardIndexOptions = [
 		'include_categories' => true,
 		'base_level' => 0,
 		'parent_id' => 0,
 		'set_latest_post' => true,
 		'countChildPosts' => !empty($modSettings['countChildPosts']),
-	);
+	];
 	$context['categories'] = getBoardIndex($boardIndexOptions);
 
 	// Now set up for the info center.
@@ -47,10 +47,10 @@ function BoardIndex()
 	{
 		if ($settings['number_recent_posts'] > 1)
 		{
-			$latestPostOptions = array(
+			$latestPostOptions = [
 				'number_posts' => $settings['number_recent_posts'],
-			);
-			$context['latest_posts'] = cache_quick_get('boardindex-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent.php', 'cache_getLastPosts', array($latestPostOptions));
+			];
+			$context['latest_posts'] = cache_quick_get('boardindex-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent.php', 'cache_getLastPosts', [$latestPostOptions]);
 		}
 
 		if (!empty($context['latest_posts']) || !empty($context['latest_post']))
@@ -67,11 +67,11 @@ function BoardIndex()
 
 	// Now the online stuff
 	require_once($sourcedir . '/Subs-MembersOnline.php');
-	$membersOnlineOptions = array(
+	$membersOnlineOptions = [
 		'show_hidden' => allowedTo('moderate_forum'),
 		'sort' => 'log_time',
 		'reverse_sort' => true,
-	);
+	];
 	$context += getMembersOnlineStats($membersOnlineOptions);
 	$context['show_buddies'] = !empty($user_info['buddies']);
 	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
@@ -89,9 +89,9 @@ function BoardIndex()
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 
 	// Mark read button
-	$context['mark_read_button'] = array(
-		'markread' => array('text' => 'mark_as_read', 'image' => 'markread.png', 'custom' => 'data-confirm="' . $txt['are_sure_mark_read'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=all;' . $context['session_var'] . '=' . $context['session_id']),
-	);
+	$context['mark_read_button'] = [
+		'markread' => ['text' => 'mark_as_read', 'image' => 'markread.png', 'custom' => 'data-confirm="' . $txt['are_sure_mark_read'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=all;' . $context['session_var'] . '=' . $context['session_id']],
+	];
 
 	$context['sub_template'] = 'board_main';
 

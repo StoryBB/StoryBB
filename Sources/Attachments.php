@@ -23,15 +23,15 @@ class Attachments
 	protected $_attachments = [];
 	protected $_attachResults = [];
 	protected $_attachSuccess = [];
-	protected $_response = array(
+	protected $_response = [
 		'error' => true,
 		'data' => [],
 		'extra' => '',
-	);
-	protected $_subActions = array(
+	];
+	protected $_subActions = [
 		'add',
 		'delete',
-	);
+	];
 	protected $_sa = false;
 
 	public function __construct()
@@ -70,11 +70,11 @@ class Attachments
 
 		// Just send a generic message.
 		else
-			$this->setResponse(array(
+			$this->setResponse([
 				'text' => $this->_sa == 'add' ? 'attach_error_title' : 'attached_file_deleted_error',
 				'type' => 'error',
 				'data' => false,
-			));
+			]);
 
 		// Back to the future, oh, to the browser!
 		$this->sendResponse();
@@ -91,35 +91,35 @@ class Attachments
 
 		// Need something to work with.
 		if (!$attachID || (!empty($_SESSION['already_attached']) && !isset($_SESSION['already_attached'][$attachID])))
-			return $this->setResponse(array(
+			return $this->setResponse([
 				'text' => 'attached_file_deleted_error',
 				'type' => 'error',
 				'data' => false,
-			));
+			]);
 
 		// Lets pass some params and see what happens :P
-		$affectedMessage = removeAttachments(array('id_attach' => $attachID), '', true, true);
+		$affectedMessage = removeAttachments(['id_attach' => $attachID], '', true, true);
 
 		// Gotta also remove the attachment from the session var.
 		unset($_SESSION['already_attached'][$attachID]);
 
 		// $affectedMessage returns an empty array array(0) which php treats as non empty... awesome...
-		$this->setResponse(array(
+		$this->setResponse([
 			'text' => !empty($affectedMessage) ? 'attached_file_deleted' : 'attached_file_deleted_error',
 			'type' => !empty($affectedMessage) ? 'info' : 'warning',
 			'data' => $affectedMessage,
-		));
+		]);
 	}
 
 	public function add()
 	{
 		// You gotta be able to post attachments.
 		if (!$this->_canPostAttachment)
-			return $this->setResponse(array(
+			return $this->setResponse([
 				'text' => 'attached_file_cannot',
 				'type' => 'error',
 				'data' => false,
-			));
+			]);
 
 		// Process them at once!
 		$this->processAttachments();
@@ -186,20 +186,20 @@ class Attachments
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:id_msg}
 					AND attachment_type = {int:attachment_type}',
-				array(
+				[
 					'id_msg' => (int) $this->_msg,
 					'attachment_type' => 0,
-				)
+				]
 			);
 			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
 		}
 
 		else
-			$context['attachments'] = array(
+			$context['attachments'] = [
 				'quantity' => 0,
 				'total_size' => 0,
-			);
+			];
 
 		// Check for other general errors here.
 
@@ -228,7 +228,7 @@ class Attachments
 			if (!empty($_FILES['attachment']['error'][$n]))
 			{
 				if ($_FILES['attachment']['error'][$n] == 2)
-					$errors[] = array('file_too_big', array($modSettings['attachmentSizeLimit']));
+					$errors[] = ['file_too_big', [$modSettings['attachmentSizeLimit']]];
 
 				else
 					log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['php_upload_error_' . $_FILES['attachment']['error'][$n]]);
@@ -254,14 +254,14 @@ class Attachments
 				if (function_exists('mime_content_type'))
 					$_FILES['attachment']['type'][$n] = mime_content_type($_FILES['attachment']['tmp_name'][$n]);
 
-				$_SESSION['temp_attachments'][$attachID] = array(
+				$_SESSION['temp_attachments'][$attachID] = [
 					'name' => $smcFunc['htmlspecialchars'](basename($_FILES['attachment']['name'][$n])),
 					'tmp_name' => $destName,
 					'size' => $_FILES['attachment']['size'][$n],
 					'type' => $_FILES['attachment']['type'][$n],
 					'id_folder' => $modSettings['currentAttachmentUploadDir'],
 					'errors' => [],
-				);
+				];
 
 				// Move the file to the attachments folder with a temp name for now.
 				if (@move_uploaded_file($_FILES['attachment']['tmp_name'][$n], $destName))
@@ -280,11 +280,11 @@ class Attachments
 			// Fill up a nice array with some data from the file and the errors encountered so far.
 			else
 			{
-				$_SESSION['temp_attachments'][$attachID] = array(
+				$_SESSION['temp_attachments'][$attachID] = [
 					'name' => $smcFunc['htmlspecialchars'](basename($_FILES['attachment']['name'][$n])),
 					'tmp_name' => $destName,
 					'errors' => $errors,
-				);
+				];
 
 				if (file_exists($_FILES['attachment']['tmp_name'][$n]))
 					unlink($_FILES['attachment']['tmp_name'][$n]);
@@ -317,7 +317,7 @@ class Attachments
 
 		foreach ($_SESSION['temp_attachments'] as  $attachID => $attachment)
 		{
-			$attachmentOptions = array(
+			$attachmentOptions = [
 				'post' => $this->_msg,
 				'poster' => $user_info['id'],
 				'name' => $attachment['name'],
@@ -327,7 +327,7 @@ class Attachments
 				'id_folder' => isset($attachment['id_folder']) ? $attachment['id_folder'] : $modSettings['currentAttachmentUploadDir'],
 				'approved' => !$modSettings['postmod_active'] || allowedTo('post_attachment'),
 				'errors' => [],
-			);
+			];
 
 			if (empty($attachment['errors']))
 			{	
@@ -349,7 +349,7 @@ class Attachments
 			else
 			{
 				// Sort out the errors for display and delete any associated files.
-				$log_these = array('attachments_no_create', 'attachments_no_write', 'attach_timeout', 'ran_out_of_space', 'cant_access_upload_path', 'attach_0_byte_file');
+				$log_these = ['attachments_no_create', 'attachments_no_write', 'attach_timeout', 'ran_out_of_space', 'cant_access_upload_path', 'attach_0_byte_file'];
 
 				foreach ($attachment['errors'] as $error)
 				{
@@ -388,11 +388,11 @@ class Attachments
 		global $txt;
 
 		// Some default values in case something is missed or neglected :P
-		$this->_response = array(
+		$this->_response = [
 			'text' => 'attach_php_error',
 			'type' => 'error',
 			'data' => false,
-		);
+		];
 
 		// Adding needs some VIP treatment.
 		if ($this->_sa == 'add')
@@ -407,10 +407,10 @@ class Attachments
 				foreach ($this->_attachResults as $k => $v)
 					$this->_attachResults[$k]['name'] = urlencode($this->_attachResults[$k]['name']);
 
-			$this->_response = array(
+			$this->_response = [
 				'files' => $this->_attachResults ? $this->_attachResults : false,
 				'generalErrors' => $this->_generalErrors ? $this->_generalErrors : false,
-			);
+			];
 		}
 
 		// Rest of us mere mortals gets no special treatment...

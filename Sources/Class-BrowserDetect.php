@@ -80,7 +80,7 @@ class browser_detector
 			$this->_browsers['possibly_robot'] = !empty($user_info['possibly_robot']);
 
 			// Robots shouldn't be logging in or registering.  So, they aren't a bot.  Better to be wrong than sorry (or people won't be able to log in!), anyway.
-			if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], array('login', 'login2', 'register', 'signup'))) || !$user_info['is_guest'])
+			if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], ['login', 'login2', 'register', 'signup'])) || !$user_info['is_guest'])
 				$this->_browsers['possibly_robot'] = false;
 		}
 		else
@@ -231,13 +231,13 @@ class browser_detector
 	 */
 	private function setupWebkit()
 	{
-		$this->_browsers += array(
+		$this->_browsers += [
 			'is_chrome' => strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false,
 			'is_iphone' => (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false) && strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') === false,
 			'is_blackberry' => stripos($_SERVER['HTTP_USER_AGENT'], 'BlackBerry') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'PlayBook') !== false,
 			'is_android' => strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false,
 			'is_nokia' => strpos($_SERVER['HTTP_USER_AGENT'], 'SymbianOS') !== false,
-		);
+		];
 
 		// blackberry, playbook, iphone, nokia, android and ipods set a mobile flag
 		if ($this->_browsers['is_iphone'] || $this->_browsers['is_blackberry'] || $this->_browsers['is_android'] || $this->_browsers['is_nokia'])
@@ -303,10 +303,10 @@ class browser_detector
 		}
 
 		// And some throwbacks to a bygone era, deposited here like cholesterol in your arteries
-		$this->_browsers += array(
+		$this->_browsers += [
 			'is_ie4' => !empty($this->_browsers['is_ie4']) && !$this->_browsers['is_web_tv'],
 			'is_mac_ie' => strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 5.') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'Mac') !== false
-		);
+		];
 
 		// Before IE8 we need to fix IE... lots!
 		$this->_browsers['ie_standards_fix'] = (($this->_browsers['is_ie6'] === true) || ($this->_browsers['is_ie7'] === true)) ? true : false;
@@ -368,7 +368,7 @@ class browser_detector
 		else
 		{
 			// add in any specific detection conversions here if you want a special body id e.g. 'is_opera9' => 'opera9'
-			$browser_priority = array(
+			$browser_priority = [
 				'is_ie6' => 'ie6',
 				'is_ie7' => 'ie7',
 				'is_ie8' => 'ie8',
@@ -385,7 +385,7 @@ class browser_detector
 				'is_opera12' => 'opera12',
 				'is_opera' => 'opera',
 				'is_konqueror' => 'konqueror',
-			);
+			];
 
 			$context['browser_body_id'] = 'storybb';
 			$active = array_reverse(array_keys($this->_browsers, true));
@@ -406,7 +406,7 @@ class browser_detector
 	 */
 	public function fillInformation()
 	{
-		$this->_browsers += array(
+		$this->_browsers += [
 			'is_opera' => false,
 			'is_opera6' => false,
 			'is_opera7' => false,
@@ -437,6 +437,6 @@ class browser_detector
 			'ie_standards_fix' => false,
 			'needs_size_fix' => false,
 			'possibly_robot' => false,
-		);
+		];
 	}
 }

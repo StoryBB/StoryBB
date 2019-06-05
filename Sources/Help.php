@@ -22,10 +22,10 @@ function ShowHelp()
 
 	loadLanguage('Manual');
 
-	$subActions = array(
+	$subActions = [
 		'index' => 'HelpIndex',
 		'smileys' => 'HelpSmileys',
-	);
+	];
 
 	$context['manual_sections'] = [
 		'smileys' => [
@@ -68,7 +68,7 @@ function ShowHelp()
 	$smcFunc['db_free_result']($request);
 
 	// CRUD $subActions as needed.
-	call_integration_hook('integrate_manage_help', array(&$subActions));
+	call_integration_hook('integrate_manage_help', [&$subActions]);
 
 	$context['subaction'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'index';
 	call_helper($subActions[$context['subaction']]);
@@ -84,10 +84,10 @@ function HelpIndex()
 	$context['canonical_url'] = $scripturl . '?action=help';
 
 	// Build the link tree.
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=help',
 		'name' => $txt['help'],
-	);
+	];
 
 	// Lastly, some minor template stuff.
 	$context['page_title'] = $txt['manual_storybb_user_help'];
@@ -150,14 +150,14 @@ function HelpSmileys()
 	global $smcFunc, $scripturl, $context, $txt, $modSettings;
 
 	// Build the link tree.
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=help',
 		'name' => $txt['help'],
-	);
-	$context['linktree'][] = array(
+	];
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=help;sa=smileys',
 		'name' => $txt['manual_smileys'],
-	);
+	];
 
 	$context['smileys'] = [];
 	$request = $smcFunc['db_query']('', '

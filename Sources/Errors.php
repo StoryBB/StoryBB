@@ -48,8 +48,8 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		return $error_message;
 
 	// Basically, htmlspecialchars it minus &. (for entities!)
-	$error_message = strtr($error_message, array('<' => '&lt;', '>' => '&gt;', '"' => '&quot;'));
-	$error_message = strtr($error_message, array('&lt;br /&gt;' => '<br>', '&lt;br&gt;' => '<br>', '&lt;b&gt;' => '<strong>', '&lt;/b&gt;' => '</strong>', "\n" => '<br>'));
+	$error_message = strtr($error_message, ['<' => '&lt;', '>' => '&gt;', '"' => '&quot;']);
+	$error_message = strtr($error_message, ['&lt;br /&gt;' => '<br>', '&lt;br&gt;' => '<br>', '&lt;b&gt;' => '<strong>', '&lt;/b&gt;' => '</strong>', "\n" => '<br>']);
 
 	// Add a file and line to the error message?
 	// Don't use the actual txt entries for file and line but instead use %1$s for file and %2$s for line
@@ -75,14 +75,14 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 
 	// Don't log the session hash in the url twice, it's a waste.
 	if (!empty($smcFunc['htmlspecialchars']))
-		$query_string = $smcFunc['htmlspecialchars']((STORYBB == 'SSI' || STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(array('~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'), array(';sesc', ''), $query_string));
+		$query_string = $smcFunc['htmlspecialchars']((STORYBB == 'SSI' || STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(['~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'], [';sesc', ''], $query_string));
 
 	// Just so we know what board error messages are from.
 	if (isset($_POST['board']) && !isset($_GET['board']))
 		$query_string .= ($query_string == '' ? 'board=' : ';board=') . $_POST['board'];
 
 	// What types of categories do we have?
-	$known_error_types = array(
+	$known_error_types = [
 		'general',
 		'critical',
 		'database',
@@ -96,7 +96,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		'backup',
 		'login',
 		'mail',
-	);
+	];
 
 	// This prevents us from infinite looping if the hook or call produces an error.
 	$other_error_types = [];
@@ -104,14 +104,14 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	{
 		$tried_hook = true;
 		// Allow the hook to change the error_type and know about the error.
-		call_integration_hook('integrate_error_types', array(&$other_error_types, &$error_type, $error_message, $file, $line));
+		call_integration_hook('integrate_error_types', [&$other_error_types, &$error_type, $error_message, $file, $line]);
 		$known_error_types += $other_error_types;
 	}
 	// Make sure the category that was specified is a valid one
 	$error_type = in_array($error_type, $known_error_types) && $error_type !== true ? $error_type : 'general';
 
 	// Don't log the same error countless times, as we can get in a cycle of depression...
-	$error_info = array($user_info['id'], time(), $user_info['ip'], $query_string, $error_message, (string) $sc, $error_type, $file, $line);
+	$error_info = [$user_info['id'], time(), $user_info['ip'], $query_string, $error_message, (string) $sc, $error_type, $file, $line];
 	if (empty($last_error) || $last_error != $error_info)
 	{
 		// Insert the error into the database.
@@ -267,7 +267,7 @@ function sbb_error_handler($error_level, $error_string, $file, $line)
 	$message = log_error($error_level . ': ' . $error_string, $error_type, $file, $line);
 
 	// Let's give integrations a chance to ouput a bit differently
-	call_integration_hook('integrate_output_error', array($message, $error_type, $error_level, $file, $line));
+	call_integration_hook('integrate_output_error', [$message, $error_type, $error_level, $file, $line]);
 
 	// Dying on these errors only causes MORE problems (blank pages!)
 	if ($file == 'Unknown')
@@ -498,9 +498,9 @@ function log_error_online($error, $sprintf = [])
 		SELECT url
 		FROM {db_prefix}log_online
 		WHERE session = {string:session}',
-		array(
+		[
 			'session' => $session_id,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) != 0)
 	{
@@ -515,10 +515,10 @@ function log_error_online($error, $sprintf = [])
 			UPDATE {db_prefix}log_online
 			SET url = {string:url}
 			WHERE session = {string:session}',
-			array(
+			[
 				'url' => json_encode($url),
 				'session' => $session_id,
-			)
+			]
 		);
 	}
 	$smcFunc['db_free_result']($request);
@@ -530,13 +530,13 @@ function log_error_online($error, $sprintf = [])
  */
 function send_http_status($code)
 {
-	$statuses = array(
+	$statuses = [
 		403 => 'Forbidden',
 		404 => 'Not Found',
 		410 => 'Gone',
 		500 => 'Internal Server Error',
 		503 => 'Service Unavailable'
-	);
+	];
 
 	$protocol = preg_match('~HTTP/1\.[01]~i', $_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
 

@@ -45,10 +45,10 @@ function Login()
 	$context['ajax_nonssl'] = !empty($context['from_ajax']) && (empty($modSettings['force_ssl']) || $modSettings['force_ssl'] == 2);
 
 	// Add the login chain to the link tree.
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=login',
 		'name' => $txt['login'],
-	);
+	];
 
 	// Set the login URL - will be used when the login process is done (but careful not to send us to an attachment).
 	if (isset($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'dlattach') === false && preg_match('~(board|topic)[=,]~', $_SESSION['old_url']) != 0)
@@ -103,7 +103,7 @@ function Login2()
 			trigger_error('Login2(): Cannot be logged in without a session or cookie', E_USER_ERROR);
 
 		$user_settings['password_salt'] = substr(md5(mt_rand()), 0, 4);
-		updateMemberData($user_info['id'], array('password_salt' => $user_settings['password_salt']));
+		updateMemberData($user_info['id'], ['password_salt' => $user_settings['password_salt']]);
 
 		// Preserve the 2FA cookie?
 		if (!empty($modSettings['tfa_mode']) && !empty($_COOKIE[$cookiename . '_tfa']))
@@ -185,33 +185,33 @@ function Login2()
 	// Set up the default/fallback stuff.
 	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user'])) : '';
 	$context['default_password'] = '';
-	$context['login_errors'] = array($txt['error_occured']);
+	$context['login_errors'] = [$txt['error_occured']];
 	$context['page_title'] = $txt['login'];
 
 	// Add the login chain to the link tree.
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=login',
 		'name' => $txt['login'],
-	);
+	];
 
 	// You forgot to type your username, dummy!
 	if (!isset($_POST['user']) || $_POST['user'] == '')
 	{
-		$context['login_errors'] = array($txt['need_username']);
+		$context['login_errors'] = [$txt['need_username']];
 		return;
 	}
 
 	// Hmm... maybe 'admin' will login with no password. Uhh... NO!
 	if (!isset($_POST['passwrd']) || $_POST['passwrd'] == '')
 	{
-		$context['login_errors'] = array($txt['no_password']);
+		$context['login_errors'] = [$txt['no_password']];
 		return;
 	}
 
 	// No funky symbols either.
 	if (preg_match('~[<>&"\'=\\\]~', preg_replace('~(&#(\\d{1,7}|x[0-9a-fA-F]{1,6});)~', '', $_POST['user'])) != 0)
 	{
-		$context['login_errors'] = array($txt['error_invalid_characters_username']);
+		$context['login_errors'] = [$txt['error_invalid_characters_username']];
 		return;
 	}
 
@@ -224,9 +224,9 @@ function Login2()
 
 
 	// Are we using any sort of integration to validate the login?
-	if (in_array('retry', call_integration_hook('integrate_validate_login', array($_POST['user'], isset($_POST['passwrd']) ? $_POST['passwrd'] : null, $context['cookie_time'])), true))
+	if (in_array('retry', call_integration_hook('integrate_validate_login', [$_POST['user'], isset($_POST['passwrd']) ? $_POST['passwrd'] : null, $context['cookie_time']]), true))
 	{
-		$context['login_errors'] = array($txt['incorrect_password']);
+		$context['login_errors'] = [$txt['incorrect_password']];
 		return;
 	}
 
@@ -237,9 +237,9 @@ function Login2()
 		FROM {db_prefix}members
 		WHERE ' . ($smcFunc['db_case_sensitive'] ? 'LOWER(member_name) = LOWER({string:user_name})' : 'member_name = {string:user_name}') . '
 		LIMIT 1',
-		array(
+		[
 			'user_name' => $smcFunc['db_case_sensitive'] ? strtolower($_POST['user']) : $_POST['user'],
-		)
+		]
 	);
 	// Probably mistyped or their email, try it as an email address. (member_name first, though!)
 	if ($smcFunc['db_num_rows']($request) == 0 && strpos($_POST['user'], '@') !== false)
@@ -252,16 +252,16 @@ function Login2()
 			FROM {db_prefix}members
 			WHERE email_address = {string:user_name}
 			LIMIT 1',
-			array(
+			[
 				'user_name' => $_POST['user'],
-			)
+			]
 		);
 	}
 
 	// Let them try again, it didn't match anything...
 	if ($smcFunc['db_num_rows']($request) == 0)
 	{
-		$context['login_errors'] = array($txt['username_no_exist']);
+		$context['login_errors'] = [$txt['username_no_exist']];
 		return;
 	}
 
@@ -286,7 +286,7 @@ function Login2()
 			// Log an error so we know that it didn't go well in the error log.
 			log_error($txt['incorrect_password'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', 'user');
 
-			$context['login_errors'] = array($txt['incorrect_password']);
+			$context['login_errors'] = [$txt['incorrect_password']];
 			return;
 		}
 	}
@@ -296,14 +296,14 @@ function Login2()
 		validatePasswordFlood($user_settings['id_member'], $user_settings['member_name'], $user_settings['passwd_flood'], true);
 
 		// If we got here then we can reset the flood counter.
-		updateMemberData($user_settings['id_member'], array('passwd_flood' => ''));
+		updateMemberData($user_settings['id_member'], ['passwd_flood' => '']);
 	}
 
 	// Correct password, but they've got no salt; fix it!
 	if ($user_settings['password_salt'] == '')
 	{
 		$user_settings['password_salt'] = substr(md5(mt_rand()), 0, 4);
-		updateMemberData($user_settings['id_member'], array('password_salt' => $user_settings['password_salt']));
+		updateMemberData($user_settings['id_member'], ['password_salt' => $user_settings['password_salt']]);
 	}
 
 	// Check their activation status.
@@ -351,7 +351,7 @@ function LoginTFA()
 
 		if (strlen($code) == $totp->getCodeLength() && $totp->validateCode($code))
 		{
-			updateMemberData($member['id_member'], array('last_login' => time()));
+			updateMemberData($member['id_member'], ['last_login' => time()]);
 
 			setTFACookie(3153600, $member['id_member'], hash_salt($member['tfa_backup'], $member['password_salt']), !empty($_POST['tfa_preserve']));
 			redirectexit();
@@ -375,11 +375,11 @@ function LoginTFA()
 		if (hash_verify_password($member['member_name'], $backup, $member['tfa_backup']))
 		{
 			// Get rid of their current TFA settings
-			updateMemberData($member['id_member'], array(
+			updateMemberData($member['id_member'], [
 				'tfa_secret' => '',
 				'tfa_backup' => '',
 				'last_login' => time(),
-			));
+			]);
 			setTFACookie(3153600, $member['id_member'], hash_salt($member['tfa_backup'], $member['password_salt']));
 			redirectexit('action=profile;area=tfasetup;backup');
 		}
@@ -396,7 +396,7 @@ function LoginTFA()
 	$context['sub_template'] = 'login_tfa';
 	$context['login_url'] = !empty($_SESSION['login_url']) ? $_SESSION['login_url'] : $scripturl;
 	$context['page_title'] = $txt['login'];
-	$context['tfa_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl) . '?action=logintfa';
+	$context['tfa_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, ['http://' => 'https://']) : $scripturl) . '?action=logintfa';
 }
 
 /**
@@ -420,8 +420,8 @@ function checkActivation()
 	{
 		if (isset($_REQUEST['undelete']))
 		{
-			updateMemberData($user_settings['id_member'], array('is_activated' => 1));
-			updateSettings(array('unapprovedMembers' => ($modSettings['unapprovedMembers'] > 0 ? $modSettings['unapprovedMembers'] - 1 : 0)));
+			updateMemberData($user_settings['id_member'], ['is_activated' => 1]);
+			updateSettings(['unapprovedMembers' => ($modSettings['unapprovedMembers'] > 0 ? $modSettings['unapprovedMembers'] - 1 : 0)]);
 		}
 		else
 		{
@@ -454,7 +454,7 @@ function DoLogin()
 	require_once($sourcedir . '/Subs-Auth.php');
 
 	// Call login integration functions.
-	call_integration_hook('integrate_login', array($user_settings['member_name'], null, $context['cookie_time']));
+	call_integration_hook('integrate_login', [$user_settings['member_name'], null, $context['cookie_time']]);
 
 	// Get ready to set the cookie...
 	$user_info['id'] = $user_settings['id_member'];
@@ -482,9 +482,9 @@ function DoLogin()
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
 			AND last_login = 0',
-		array(
+		[
 			'id_member' => $user_info['id'],
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 1)
 		$_SESSION['first_login'] = true;
@@ -493,7 +493,7 @@ function DoLogin()
 	$smcFunc['db_free_result']($request);
 
 	// You've logged in, haven't you?
-	$update = array('member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']);
+	$update = ['member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']];
 	if (empty($user_settings['tfa_secret']))
 		$update['last_login'] = time();
 	updateMemberData($user_info['id'], $update);
@@ -502,9 +502,9 @@ function DoLogin()
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}log_online
 		WHERE session = {string:session}',
-		array(
+		[
 			'session' => 'ip' . $user_info['ip'],
-		)
+		]
 	);
 	$_SESSION['log_time'] = 0;
 
@@ -512,15 +512,15 @@ function DoLogin()
 	if (!empty($modSettings['loginHistoryDays']))
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}member_logins',
-			array(
+			[
 				'id_member' => 'int', 'time' => 'int', 'ip' => 'inet', 'ip2' => 'inet',
-			),
-			array(
+			],
+			[
 				$user_info['id'], time(), $user_info['ip'], $user_info['ip2']
-			),
-			array(
+			],
+			[
 				'id_member', 'time'
-			)
+			]
 		);
 
 	// Just log you back out if it's in maintenance mode and you AREN'T an admin.
@@ -559,15 +559,15 @@ function Logout($internal = false, $redirect = true)
 	if (!$user_info['is_guest'])
 	{
 		// Pass the logout information to integrations.
-		call_integration_hook('integrate_logout', array($user_settings['member_name']));
+		call_integration_hook('integrate_logout', [$user_settings['member_name']]);
 
 		// If you log out, you aren't online anymore :P.
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member = {int:current_member}',
-			array(
+			[
 				'current_member' => $user_info['id'],
-			)
+			]
 		);
 	}
 
@@ -579,7 +579,7 @@ function Logout($internal = false, $redirect = true)
 	// And some other housekeeping while we're at it.
 	$salt = substr(md5(mt_rand()), 0, 4);
 	if (!empty($user_info['id']))
-		updateMemberData($user_info['id'], array('password_salt' => $salt));
+		updateMemberData($user_info['id'], ['password_salt' => $salt]);
 
 	if (!empty($modSettings['tfa_mode']) && !empty($user_info['id']) && !empty($_COOKIE[$cookiename . '_tfa']))
 	{
@@ -750,6 +750,6 @@ function validatePasswordFlood($id_member, $member_name, $password_flood_value =
 		fatal_lang_error('login_threshold_brute_fail', 'login', [$member_name]);
 
 	// Otherwise set the members data. If they correct on their first attempt then we actually clear it, otherwise we set it!
-	updateMemberData($id_member, array('passwd_flood' => $was_correct && $number_tries == 1 ? '' : $time_stamp . '|' . $number_tries));
+	updateMemberData($id_member, ['passwd_flood' => $was_correct && $number_tries == 1 ? '' : $time_stamp . '|' . $number_tries]);
 
 }

@@ -18,13 +18,13 @@ function db_extra_init()
 	global $smcFunc;
 
 	if (!isset($smcFunc['db_backup_table']) || $smcFunc['db_backup_table'] != 'sbb_db_backup_table')
-		$smcFunc += array(
+		$smcFunc += [
 			'db_backup_table' => 'sbb_db_backup_table',
 			'db_optimize_table' => 'sbb_db_optimize_table',
 			'db_table_sql' => 'sbb_db_table_sql',
 			'db_get_version' => 'sbb_db_get_version',
 			'db_get_engine' => 'sbb_db_get_engine',
-		);
+		];
 }
 
 /**
@@ -42,18 +42,18 @@ function sbb_db_backup_table($table, $backup_table)
 	// First, get rid of the old table.
 	$smcFunc['db_query']('', '
 		DROP TABLE IF EXISTS {raw:backup_table}',
-		array(
+		[
 			'backup_table' => $backup_table,
-		)
+		]
 	);
 
 	// Can we do this the quick way?
 	$result = $smcFunc['db_query']('', '
 		CREATE TABLE {raw:backup_table} LIKE {raw:table}',
-		array(
+		[
 			'backup_table' => $backup_table,
 			'table' => $table
-	));
+	]);
 	// If this failed, we go old school.
 	if ($result)
 	{
@@ -61,10 +61,10 @@ function sbb_db_backup_table($table, $backup_table)
 			INSERT INTO {raw:backup_table}
 			SELECT *
 			FROM {raw:table}',
-			array(
+			[
 				'backup_table' => $backup_table,
 				'table' => $table
-			));
+			]);
 
 		// Old school or no school?
 		if ($request)
@@ -74,9 +74,9 @@ function sbb_db_backup_table($table, $backup_table)
 	// At this point, the quick method failed.
 	$result = $smcFunc['db_query']('', '
 		SHOW CREATE TABLE {raw:table}',
-		array(
+		[
 			'table' => $table,
-		)
+		]
 	);
 	list (, $create) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -131,14 +131,14 @@ function sbb_db_backup_table($table, $backup_table)
 		ENGINE={raw:engine}' . (empty($charset) ? '' : ' CHARACTER SET {raw:charset}' . (empty($collate) ? '' : ' COLLATE {raw:collate}')) . '
 		SELECT *
 		FROM {raw:table}',
-		array(
+		[
 			'backup_table' => $backup_table,
 			'table' => $table,
 			'create' => $create,
 			'engine' => $engine,
 			'charset' => empty($charset) ? '' : $charset,
 			'collate' => empty($collate) ? '' : $collate,
-		)
+		]
 	);
 
 	if ($auto_inc != '')
@@ -149,11 +149,11 @@ function sbb_db_backup_table($table, $backup_table)
 		$smcFunc['db_query']('', '
 			ALTER TABLE {raw:backup_table}
 			CHANGE COLUMN {raw:column_detail} {raw:auto_inc}',
-			array(
+			[
 				'backup_table' => $backup_table,
 				'column_detail' => $match[1],
 				'auto_inc' => $auto_inc,
-			)
+			]
 		);
 	}
 
@@ -174,9 +174,9 @@ function sbb_db_optimize_table($table)
 	// Get how much overhead there is.
 	$request = $smcFunc['db_query']('', '
 			SHOW TABLE STATUS LIKE {string:table_name}',
-			array(
+			[
 				'table_name' => str_replace('_', '\_', $table),
-			)
+			]
 		);
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
@@ -184,9 +184,9 @@ function sbb_db_optimize_table($table)
 	$data_before = isset($row['Data_free']) ? $row['Data_free'] : 0;
 	$request = $smcFunc['db_query']('', '
 			OPTIMIZE TABLE `{raw:table}`',
-			array(
+			[
 				'table' => $table,
-			)
+			]
 		);
 	if (!$request)
 		return -1;
@@ -194,9 +194,9 @@ function sbb_db_optimize_table($table)
 	// How much left?
 	$request = $smcFunc['db_query']('', '
 			SHOW TABLE STATUS LIKE {string:table}',
-			array(
+			[
 				'table' => str_replace('_', '\_', $table),
-			)
+			]
 		);
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
@@ -231,9 +231,9 @@ function sbb_db_table_sql($tableName)
 	$result = $smcFunc['db_query']('', '
 		SHOW FIELDS
 		FROM `{raw:table}`',
-		array(
+		[
 			'table' => $tableName,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
@@ -269,9 +269,9 @@ function sbb_db_table_sql($tableName)
 	$result = $smcFunc['db_query']('', '
 		SHOW KEYS
 		FROM `{raw:table}`',
-		array(
+		[
 			'table' => $tableName,
-		)
+		]
 	);
 	$indexes = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -304,9 +304,9 @@ function sbb_db_table_sql($tableName)
 	$result = $smcFunc['db_query']('', '
 		SHOW TABLE STATUS
 		LIKE {string:table}',
-		array(
-			'table' => strtr($tableName, array('_' => '\\_', '%' => '\\%')),
-		)
+		[
+			'table' => strtr($tableName, ['_' => '\\_', '%' => '\\%']),
+		]
 	);
 	$row = $smcFunc['db_fetch_assoc']($result);
 	$smcFunc['db_free_result']($result);
@@ -332,8 +332,8 @@ function sbb_db_get_version()
 
 	$request = $smcFunc['db_query']('', '
 		SELECT VERSION()',
-		array(
-		)
+		[
+		]
 	);
 	list ($ver) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);

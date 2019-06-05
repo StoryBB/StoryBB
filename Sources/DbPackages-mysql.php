@@ -26,7 +26,7 @@ function db_packages_init()
 
 	if (!isset($smcFunc['db_create_table']) || $smcFunc['db_create_table'] != 'sbb_db_create_table')
 	{
-		$smcFunc += array(
+		$smcFunc += [
 			'db_add_column' => 'sbb_db_add_column',
 			'db_add_index' => 'sbb_db_add_index',
 			'db_calculate_type' => 'sbb_db_calculate_type',
@@ -41,7 +41,7 @@ function db_packages_init()
 			'db_list_indexes' => 'sbb_db_list_indexes',
 			'db_remove_column' => 'sbb_db_remove_column',
 			'db_remove_index' => 'sbb_db_remove_index',
-		);
+		];
 		$db_package_log = [];
 	}
 
@@ -103,7 +103,7 @@ function sbb_db_create_table($table_name, $columns, $indexes = [], $parameters =
 	$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
 	// Log that we'll want to remove this on uninstall.
-	$db_package_log[] = array('remove_table', $table_name);
+	$db_package_log[] = ['remove_table', $table_name];
 
 	// If the table exists, abort - honestly, the schema system should be taking care of this anyway.
 	$tables = $smcFunc['db_list_tables']();
@@ -159,9 +159,9 @@ function sbb_db_create_table($table_name, $columns, $indexes = [], $parameters =
 
 	// Create the table!
 	$smcFunc['db_query']('', $table_query,
-		array(
+		[
 			'security_override' => true,
-		)
+		]
 	);
 
 	return true;
@@ -197,9 +197,9 @@ function sbb_db_drop_table($table_name, $parameters = [], $error = 'fatal', $byp
 		$query = 'DROP TABLE ' . $table_name;
 		$smcFunc['db_query']('',
 			$query,
-			array(
+			[
 				'security_override' => true,
-			)
+			]
 		);
 
 		return true;
@@ -226,7 +226,7 @@ function sbb_db_add_column($table_name, $column_info, $parameters = [], $if_exis
 	$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
 	// Log that we will want to uninstall this!
-	$db_package_log[] = array('remove_column', $table_name, $column_info['name']);
+	$db_package_log[] = ['remove_column', $table_name, $column_info['name']];
 
 	// Does it exist - if so don't add it again!
 	$columns = $smcFunc['db_list_columns']($table_name, false);
@@ -248,9 +248,9 @@ function sbb_db_add_column($table_name, $column_info, $parameters = [], $if_exis
 		ALTER TABLE ' . $table_name . '
 		ADD ' . sbb_db_create_query_column($column_info) . (empty($column_info['auto']) ? '' : ' primary key');
 	$smcFunc['db_query']('', $query,
-		array(
+		[
 			'security_override' => true,
-		)
+		]
 	);
 
 	return true;
@@ -279,9 +279,9 @@ function sbb_db_remove_column($table_name, $column_name, $parameters = [], $erro
 			$smcFunc['db_query']('', '
 				ALTER TABLE ' . $table_name . '
 				DROP COLUMN ' . $column_name,
-				array(
+				[
 					'security_override' => true,
-				)
+				]
 			);
 
 			return true;
@@ -329,13 +329,13 @@ function sbb_db_change_column($table_name, $old_column, $column_info)
 		$column_info['type'] = $old_info['type'];
 	if (!isset($column_info['size']) || !is_numeric($column_info['size']))
 		$column_info['size'] = $old_info['size'];
-	if (!isset($column_info['unsigned']) || !in_array($column_info['type'], array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')))
+	if (!isset($column_info['unsigned']) || !in_array($column_info['type'], ['int', 'tinyint', 'smallint', 'mediumint', 'bigint']))
 		$column_info['unsigned'] = '';
 
 	list ($type, $size) = $smcFunc['db_calculate_type']($column_info['type'], $column_info['size']);
 
 	// Allow for unsigned integers (mysql only)
-	$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
+	$unsigned = in_array($type, ['int', 'tinyint', 'smallint', 'mediumint', 'bigint']) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
 
 	if ($size !== null)
 		$type = $type . '(' . $size . ')';
@@ -345,9 +345,9 @@ function sbb_db_change_column($table_name, $old_column, $column_info)
 		CHANGE COLUMN `' . $old_column . '` `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column_info['null']) ? 'NOT NULL' : '') . ' ' .
 			(!isset($column_info['default']) ? '' : 'default \'' . $smcFunc['db_escape_string']($column_info['default']) . '\'') . ' ' .
 			(empty($column_info['auto']) ? '' : 'auto_increment') . ' ',
-		array(
+		[
 			'security_override' => true,
-		)
+		]
 	);
 }
 
@@ -383,7 +383,7 @@ function sbb_db_add_index($table_name, $index_info, $parameters = [], $if_exists
 	}
 
 	// Log that we are going to want to remove this!
-	$db_package_log[] = array('remove_index', $table_name, $index_info['name']);
+	$db_package_log[] = ['remove_index', $table_name, $index_info['name']];
 
 	// Let's get all our indexes.
 	$indexes = $smcFunc['db_list_indexes']($table_name, true);
@@ -406,9 +406,9 @@ function sbb_db_add_index($table_name, $index_info, $parameters = [], $if_exists
 		$smcFunc['db_query']('', '
 			ALTER TABLE ' . $table_name . '
 			ADD PRIMARY KEY (' . $columns . ')',
-			array(
+			[
 				'security_override' => true,
-			)
+			]
 		);
 	}
 	else
@@ -416,9 +416,9 @@ function sbb_db_add_index($table_name, $index_info, $parameters = [], $if_exists
 		$smcFunc['db_query']('', '
 			ALTER TABLE ' . $table_name . '
 			ADD ' . (isset($index_info['type']) && $index_info['type'] == 'unique' ? 'UNIQUE' : 'INDEX') . ' ' . $index_info['name'] . ' (' . $columns . ')',
-			array(
+			[
 				'security_override' => true,
-			)
+			]
 		);
 	}
 }
@@ -450,9 +450,9 @@ function sbb_db_remove_index($table_name, $index_name, $parameters = [], $error 
 			$smcFunc['db_query']('', '
 				ALTER TABLE ' . $table_name . '
 				DROP PRIMARY KEY',
-				array(
+				[
 					'security_override' => true,
-				)
+				]
 			);
 
 			return true;
@@ -463,9 +463,9 @@ function sbb_db_remove_index($table_name, $index_name, $parameters = [], $error 
 			$smcFunc['db_query']('', '
 				ALTER TABLE ' . $table_name . '
 				DROP INDEX ' . $index_name,
-				array(
+				[
 					'security_override' => true,
-				)
+				]
 			);
 
 			return true;
@@ -492,15 +492,15 @@ function sbb_db_calculate_type($type_name, $type_size = null, $reverse = false)
 	// Generic => Specific.
 	if (!$reverse)
 	{
-		$types = array(
+		$types = [
 			'inet' => 'varbinary',
-		);
+		];
 	}
 	else
 	{
-		$types = array(
+		$types = [
 			'varbinary' => 'inet',
-		);
+		];
 	}
 
 	// Got it? Change it!
@@ -522,7 +522,7 @@ function sbb_db_calculate_type($type_name, $type_size = null, $reverse = false)
 			$type_name = $types[$type_name];
 	}
 
-	return array($type_name, $type_size);
+	return [$type_name, $type_size];
 }
 
 /**
@@ -771,9 +771,9 @@ function sbb_db_change_table(string $table_name, array $changes, bool $safe_mode
 	}
 
 	return $smcFunc['db_query']('', $query,
-		array(
+		[
 			'security_override' => true,
-		)
+		]
 	);
 }
 
@@ -1105,9 +1105,9 @@ function sbb_db_list_columns($table_name, $detail = false, $parameters = [])
 	$result = $smcFunc['db_query']('', '
 		SHOW FIELDS
 		FROM {raw:table_name}',
-		array(
+		[
 			'table_name' => substr($table_name, 0, 1) == '`' ? $table_name : '`' . $table_name . '`',
-		)
+		]
 	);
 	$columns = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -1135,14 +1135,14 @@ function sbb_db_list_columns($table_name, $detail = false, $parameters = [])
 				$size = null;
 			}
 
-			$columns[$row['Field']] = array(
+			$columns[$row['Field']] = [
 				'name' => $row['Field'],
 				'null' => $row['Null'] != 'YES' ? false : true,
 				'default' => isset($row['Default']) ? $row['Default'] : null,
 				'type' => $type,
 				'size' => $size,
 				'auto' => $auto,
-			);
+			];
 
 			if (isset($unsigned))
 			{
@@ -1173,9 +1173,9 @@ function sbb_db_list_indexes($table_name, $detail = false, $parameters = [])
 	$result = $smcFunc['db_query']('', '
 		SHOW KEYS
 		FROM {raw:table_name}',
-		array(
+		[
 			'table_name' => substr($table_name, 0, 1) == '`' ? $table_name : '`' . $table_name . '`',
-		)
+		]
 	);
 	$indexes = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -1197,11 +1197,11 @@ function sbb_db_list_indexes($table_name, $detail = false, $parameters = [])
 			// This is the first column we've seen?
 			if (empty($indexes[$row['Key_name']]))
 			{
-				$indexes[$row['Key_name']] = array(
+				$indexes[$row['Key_name']] = [
 					'name' => $row['Key_name'],
 					'type' => $type,
 					'columns' => [],
-				);
+				];
 			}
 
 			// Is it a partial index?
@@ -1241,7 +1241,7 @@ function sbb_db_create_query_column($column)
 	list ($type, $size) = $smcFunc['db_calculate_type']($column['type'], $column['size']);
 
 	// Allow unsigned integers (mysql only)
-	$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column['unsigned']) ? 'unsigned ' : '';
+	$unsigned = in_array($type, ['int', 'tinyint', 'smallint', 'mediumint', 'bigint']) && !empty($column['unsigned']) ? 'unsigned ' : '';
 
 	if ($size !== null)
 		$type = $type . '(' . $size . ')';
