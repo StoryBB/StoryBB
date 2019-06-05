@@ -2912,13 +2912,13 @@ h3 .collapse {
 	display: flex;
 	flex-wrap: wrap;
 }
-.children.2_columns li {
+.children.columns_2 li {
 	width: 50%;
 }
-.children.3_columns li {
+.children.columns_3 li {
 	width: 33%;
 }
-.children.4_columns li {
+.children.columns_4 li {
 	width: 25%;
 }
 /* Child boards */
