@@ -273,7 +273,6 @@ class Template
 
 		$phpStr = self::compile(self::$layout_template, [
 			'helpers' => [
-				'locale' => 'locale_helper',
 				'login_helper' => 'login_helper',
 				'javascript' => 'template_javascript',
 				'css' => function()
