@@ -430,6 +430,12 @@ function updateMemberData($members, $data)
 	}
 }
 
+/**
+ * Update data for a given character.
+ *
+ * @param int $char_id The character ID being updated.
+ * @param array $data The fields being updated for the character.
+ */
 function updateCharacterData($char_id, $data)
 {
 	global $smcFunc;
@@ -925,6 +931,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false, $proces
  * @param int $year The year to format
  * @param int $month The month to format
  * @param int $day The day to format
+ * @param string $format The format to use; empty string to use forum default
  * @return string The date formatted to a given user format
  */
 function dateformat(int $year, int $month, int $day, string $format = ''): string
@@ -2939,9 +2946,9 @@ function https_redirect_active($url)
 
 /**
  * Build query_wanna_see_board and query_see_board for a userid
- * 
- * Returns array with keys query_wanna_see_board and query_see_board
+ *
  * @param int $userid of the user
+ * @return array Array with keys query_wanna_see_board and query_see_board
  */
 function build_query_board($userid)
 {
@@ -3044,6 +3051,11 @@ function build_query_board($userid)
 	return $query_part;
 }
 
+/**
+ * Return the list of character groups that have at least 1 character in them with an approved character seet.
+ *
+ * @return array An array of groups
+ */
 function get_main_menu_groups()
 {
 	global $smcFunc;
@@ -3070,6 +3082,10 @@ function get_main_menu_groups()
 
 /**
  * Gets the list of possible characters applicable to a user right now.
+ *
+ * @param int $id_member The member whose characters we should look at.
+ * @param int $board_id The board ID in which we want to look at relevant characters.
+ * @return array An array of characters that could conceivably post in the current board based on IC/OOC rules.
  */
 function get_user_possible_characters($id_member, $board_id = 0)
 {
