@@ -2922,7 +2922,7 @@ h3 .collapse {
 .children.columns_4 li {
 	width: 25%;
 }
-.children li + li:not(:last-child) {
+.children li:not(:last-child) {
 	margin-bottom: 5px;
 }
 /* Child boards */
