@@ -1167,11 +1167,6 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		exit;
 }
 
-function locale_helper($lang_locale) 
-{
-	return new \LightnCandy\SafeString(str_replace("_", "-", substr($lang_locale, 0, strcspn($lang_locale, "."))));
-}
-
 function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
 {
 	return new \LightnCandy\SafeString(sprintf($string,

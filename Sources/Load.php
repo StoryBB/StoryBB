@@ -2706,6 +2706,8 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				break;
 			}
 			setlocale(LC_CTYPE, $txt['lang_locale'] . '.utf8', $txt['lang_locale'] . '.UTF-8');
+
+			$context['locale'] = str_replace("_", "-", substr($txt['lang_locale'], 0, strcspn($txt['lang_locale'], ".")));
 		}
 
 		// For the sake of backward compatibility
