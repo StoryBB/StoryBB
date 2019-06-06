@@ -50,7 +50,6 @@ function ModifyFeatureSettings()
 	$subActions = array(
 		'basic' => 'ModifyBasicSettings',
 		'bbc' => 'ModifyBBCSettings',
-		'layout' => 'ModifyLayoutSettings',
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
@@ -69,8 +68,6 @@ function ModifyFeatureSettings()
 			),
 			'bbc' => array(
 				'description' => $txt['manageposts_bbc_settings_description'],
-			),
-			'layout' => array(
 			),
 			'sig' => array(
 				'description' => $txt['signature_settings_desc'],
@@ -110,6 +107,11 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'allow_hideOnline'),
 			array('check', 'topic_move_any'),
 			array('int', 'defaultMaxListItems', 'step' => 1, 'min' => 1, 'max' => 999),
+			// Pagination stuff.
+			array('int', 'defaultMaxMembers'),
+		'',
+			// Stuff that just is everywhere - today, search, online, etc.
+			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
 		'',
 			// Jquery source
 			array('select', 'jquery_source', array('auto' => $txt['jquery_auto'], 'local' => $txt['jquery_local'], 'cdn' => $txt['jquery_cdn'], 'custom' => $txt['jquery_custom']), 'onchange' => 'if (this.value == \'custom\'){document.getElementById(\'jquery_custom\').disabled = false; } else {document.getElementById(\'jquery_custom\').disabled = true;}'),
@@ -255,50 +257,6 @@ function ModifyBBCSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=bbc';
 	$context['settings_title'] = $txt['manageposts_bbc_settings_title'];
-
-	prepareDBSettingContext($config_vars);
-}
-
-/**
- * Allows modifying the global layout settings in the forum
- * Accessed through ?action=admin;area=featuresettings;sa=layout;
- *
- * @param bool $return_config Whether or not to return the config_vars array (used for admin search)
- * @return void|array Returns nothing or returns the $config_vars array if $return_config is true
- */
-function ModifyLayoutSettings($return_config = false)
-{
-	global $txt, $scripturl, $context;
-
-	$config_vars = array(
-			// Pagination stuff.
-			array('int', 'defaultMaxMembers'),
-		'',
-			// Stuff that just is everywhere - today, search, online, etc.
-			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
-	);
-
-	call_integration_hook('integrate_layout_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		call_integration_hook('integrate_save_layout_settings');
-
-		saveDBSettings($config_vars);
-		session_flash('success', $txt['settings_saved']);
-		writeLog();
-
-		redirectexit('action=admin;area=featuresettings;sa=layout');
-	}
-
-	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=layout';
-	$context['settings_title'] = $txt['mods_cat_layout'];
 
 	prepareDBSettingContext($config_vars);
 }

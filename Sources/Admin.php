@@ -94,7 +94,6 @@ function AdminMain()
 					'subsections' => [
 						'basic' => [$txt['mods_cat_features']],
 						'bbc' => [$txt['manageposts_bbc_settings']],
-						'layout' => [$txt['mods_cat_layout']],
 						'sig' => [$txt['signature_settings_short']],
 						'profile' => [$txt['custom_profile_shorttitle']],
 						'alerts' => [$txt['notifications']],
@@ -608,7 +607,6 @@ function AdminSearchInternal()
 	$settings_search = [
 		['ModifyBasicSettings', 'area=featuresettings;sa=basic'],
 		['ModifyBBCSettings', 'area=featuresettings;sa=bbc'],
-		['ModifyLayoutSettings', 'area=featuresettings;sa=layout'],
 		['ModifySignatureSettings', 'area=featuresettings;sa=sig'],
 		['ModifyAntispamSettings', 'area=antispam'],
 		['ModifyWarningSettings', 'area=warnings'],
