@@ -241,10 +241,10 @@ function AdminMain()
 					'icon' => 'regcenter',
 					'permission' => ['admin_forum', 'moderate_forum'],
 					'subsections' => [
+						'settings' => [$txt['settings'], 'admin_forum'],
 						'register' => [$txt['admin_browse_register_new'], 'moderate_forum'],
 						'reservednames' => [$txt['admin_reserved_set'], 'admin_forum'],
 						'policies' => [$txt['admin_policies'], 'admin_forum'],
-						'settings' => [$txt['settings'], 'admin_forum'],
 					],
 				],
 				'paidsubscribe' => [
