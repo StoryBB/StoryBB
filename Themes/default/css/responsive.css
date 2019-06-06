@@ -548,7 +548,6 @@
 	}
 	#basicinfo, #detailedinfo {
 		width: 100%;
-		box-sizing: border-box;
 	}
 	#basicinfo {
 		margin: 0 0 5px 0; /* For UX */
