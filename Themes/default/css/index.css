@@ -2911,15 +2911,19 @@ h3 .collapse {
 .children {
 	display: flex;
 	flex-wrap: wrap;
+	line-height: 1.3em;
 }
-.children.2_columns li {
+.children.columns_2 li {
 	width: 50%;
 }
-.children.3_columns li {
+.children.columns_3 li {
 	width: 33%;
 }
-.children.4_columns li {
+.children.columns_4 li {
 	width: 25%;
+}
+.children li:not(:last-child) {
+	margin-bottom: 5px;
 }
 /* Child boards */
 .children {
