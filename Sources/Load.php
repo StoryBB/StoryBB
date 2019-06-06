@@ -2678,13 +2678,15 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		$theme_name = 'unknown';
 
 	// For each file open it up and write it out!
+	$theme_id = isset($settings['theme_id']) ? (int) $settings['theme_id'] : 1;
+
 	foreach (explode('+', $template_name) as $template)
 	{
-		$path = $cachedir . '/lang/' . $settings['theme_id'] . '_' . $lang . '_' . $template . '.php';
+		$path = $cachedir . '/lang/' . $theme_id . '_' . $lang . '_' . $template . '.php';
 		// If it doesn't exist, try to make it.
 		if (!file_exists($path))
 		{
-			Language::cache_language((int) $settings['theme_id'], $lang, $template);
+			Language::cache_language($theme_id, $lang, $template);
 		}
 
 		// If it still doesn't exist, abort!
