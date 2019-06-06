@@ -2637,7 +2637,8 @@ function addInlineJavaScript($javascript, $defer = false)
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false)
 {
 	global $user_info, $language, $settings, $context, $modSettings;
-	global $db_show_debug, $sourcedir, $txt, $txtBirthdayEmails, $cachedir;
+	global $db_show_debug, $sourcedir, $cachedir;
+	global $txt, $helptxt, $txtBirthdayEmails, $editortxt;
 	static $already_loaded = [];
 
 	// Default to the user's language.
@@ -2646,6 +2647,23 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
+
+	if (!is_array($txt))
+	{
+		$txt = [];
+	}
+	if (!is_array($helptxt))
+	{
+		$helptxt = [];
+	}
+	if (!is_array($txtBirthdayEmails))
+	{
+		$txtBirthdayEmails = [];
+	}
+	if (!is_array($editortxt))
+	{
+		$editortxt = [];
+	}
 
 	// Make sure we have $settings - if not we're in trouble and need to find it!
 	if (empty($settings['default_theme_dir']))
