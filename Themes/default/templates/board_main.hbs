@@ -74,9 +74,7 @@
 							<a href="{{this.href}}" {{#if this.new}}class="board_new_posts"{{/if}} title="{{#if this.new}}{{../../../txt.new_posts}}{{else}}{{../../../txt.old_posts}}{{/if}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})">{{this.name}}</a>
 
 						{{#if this.new}}
-							<a href="{{../../../scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})">
-								<span class="new_posts">{{../../../txt.new}}</span>
-							</a>
+							<a href="{{../../../scripturl}}?action=unread;board={{this.id}}" title="{{../../../txt.new_posts}} ({{../../../txt.board_topics}}: {{comma this.topics}}, {{../../../txt.posts}}: {{comma this.posts}})" class="new_posts">{{../../../txt.new}}</a>
 						{{/if}}
 					{{/if}} {{! close if this.is_redirect on line 65 }}
 

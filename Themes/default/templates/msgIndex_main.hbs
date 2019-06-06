@@ -158,7 +158,7 @@
 								<div class="message_index_title">
 
 		{{#if (and new ../context.user.is_logged)}}
-									<a href="{{new_href}}" id="newicon{{first_post.id}}"><span class="new_posts">{{../txt.new}}</span></a>
+									<a href="{{new_href}}" id="newicon{{first_post.id}}" class="new_posts">{{../txt.new}}</a>
 		{{/if}}
 									<span class="preview{{#if is_sticky}} bold_text{{/if}}" title="{{#if ../modSettings.message_index_preview_first}}{{{first_post.preview}}}{{else}}{{{last_post.preview}}}{{/if}}">
 										<span id="msg_{{first_post.id}}">
