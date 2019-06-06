@@ -93,7 +93,6 @@ function AdminMain()
 					'icon' => 'features',
 					'subsections' => [
 						'basic' => [$txt['mods_cat_features']],
-						'bbc' => [$txt['manageposts_bbc_settings']],
 						'sig' => [$txt['signature_settings_short']],
 						'profile' => [$txt['custom_profile_shorttitle']],
 						'alerts' => [$txt['notifications']],
@@ -147,8 +146,9 @@ function AdminMain()
 					'icon' => 'posts',
 					'subsections' => [
 						'posts' => [$txt['manageposts_settings']],
-						'censor' => [$txt['admin_censored_words']],
 						'topics' => [$txt['manageposts_topic_settings']],
+						'bbc' => [$txt['manageposts_bbc_settings']],
+						'censor' => [$txt['admin_censored_words']],
 						'drafts' => [$txt['manage_drafts']],
 					],
 				],
