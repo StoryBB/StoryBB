@@ -10,23 +10,13 @@ img, input, select, textarea {
 }
 
 /* Index */
-html {
-	background: #3e5a78;
-}
 body {
 	background: #e9eef2;
 	font: 83.33%/150% "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 	color: #4d4d4d;
-	margin: 0;
-	padding: 0;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
-}
-/* <p> is a possible exception for margins. Must test that one a bit. */
-p, ul, ol, li, dl, dd ,dt, fieldset, form {
-	padding: 0;
-	margin: 0;
 }
 ul, ol {
 	list-style: none;
@@ -156,11 +146,10 @@ hr {
 	margin: 12px 0;
 	height: 2px;
 	background: #fff;
-	background-color: #fff;
 	box-shadow: 0 1px 0 #bbb inset;
 }
 /* This is about links */
-a:link, a:visited {
+a {
 	color: #346;
 	text-decoration: none;
 }
@@ -1041,7 +1030,6 @@ img.sort, .sort {
 /* The framing graphics */
 /* The top bar. */
 #top_section {
-	margin: 0;
 	padding: 0 5%;
 	border-bottom: 1px solid #bbb;
 	box-shadow: 0 1px 4px rgba(0,0,0,0.16);
@@ -1054,7 +1042,6 @@ img.sort, .sort {
 	clear: both;
 }
 #top_info {
-	margin: 0;
 	padding: 5px 9px 4px 9px;
 	line-height: 1.3em;
 	width: auto;
@@ -1066,12 +1053,7 @@ img.sort, .sort {
 	float: left;
 	padding: 0;
 }
-/*#top_section ul li {
-	margin-bottom: 2px;
-	margin-right: 7px;
-	display: inline;
-	font-size: 0.9em;
-}*/
+
 .notice {
 	font-weight: bold;
 }
@@ -1146,7 +1128,6 @@ h1.forumtitle a {
 }
 /* Float these items to the right */
 #siteslogan, img#sbblogo {
-	margin: 0;
 	padding-right: 2px;
 	float: right;
 	line-height: 50px;
@@ -1167,7 +1148,6 @@ img#sbblogo {
 /* The user info, news, etc.*/
 #upper_section {
 	padding: 2px 2px 0 2px;
-	margin: 0;
 }
 #inner_section {
 	padding: 12px 10px 2px 10px;
@@ -1267,7 +1247,6 @@ ul li.greeting {
 /* The content section */
 #content_section {
 	margin: 0 auto;
-	padding: 0;
 	clear: both;
 }
 #main_content_section {
@@ -1309,7 +1288,6 @@ ul li.greeting {
 }
 .mark_read {
 	margin: -5px 0 16px 0;
-	padding: 0;
 	float: right;
 }
 .mark_read .buttonlist {
