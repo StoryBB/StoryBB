@@ -2718,7 +2718,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			}
 			catch (Exception $e)
 			{
-				$txt['lang_locale'] = 'en_US';
+				$txt['lang_locale'] = 'en-US';
 				$txt['lang_rtl'] = false;
 				$txt['native_name'] = 'English (debug)';
 				$txt['english_name'] = 'English (debug)';
