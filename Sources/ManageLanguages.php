@@ -507,7 +507,7 @@ function ModifyLanguage()
 			foreach ($lang_strings as $lang_key => $lang_string)
 			{
 				$context['entries'][$lang_var . '_' . $lang_key] = [
-					'link' => $scripturl . '?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . $theme_id . '_' . $file_id . ';eid=' . $lang_var . '_' . $lang_key,
+					'link' => $scripturl . '?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'] . ';tfid=' . $theme_id . '_' . $file_id . ';eid=' . $lang_var . '_' . urlencode($lang_key),
 					'lang_var' => $lang_var,
 					'display' => $lang_key,
 					'master' => $lang_string,
