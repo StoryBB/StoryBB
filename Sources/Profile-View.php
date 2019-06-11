@@ -44,7 +44,7 @@ function summary($memID)
 	// Menu tab
 	$context[$context['profile_menu_name']]['tab_data'] = array(
 		'title' => $txt['summary'],
-		'icon' => 'profile_hd.png'
+		'icon_class' => 'members main_icons'
 	);
 
 	// See if they have broken any warning levels...
@@ -555,7 +555,7 @@ function showPosts($memID)
 	$context[$context['profile_menu_name']]['tab_data'] = array(
 		'title' => $txt['showPosts'],
 		'description' => $txt['showPosts_help'],
-		'icon' => 'profile_hd.png',
+		'icon_class' => 'members main_icons',
 		'tabs' => array(
 			'messages' => array(
 			),
@@ -1366,7 +1366,7 @@ function statPanel($memID)
 	// Menu tab
 	$context[$context['profile_menu_name']]['tab_data'] = array(
 		'title' => $txt['statPanel_generalStats'] . ' - ' . $context['member']['name'],
-		'icon' => 'stats_info.png'
+		'icon_class' => 'user_stats main_icons'
 	);
 
 	// Number of topics started and Number polls started
@@ -1552,7 +1552,7 @@ function tracking($memID)
 	$context[$context['profile_menu_name']]['tab_data'] = array(
 		'title' => $txt['tracking'],
 		'description' => $txt['tracking_description'],
-		'icon' => 'profile_hd.png',
+		'icon_class' => 'members main_icons',
 		'tabs' => array(
 			'activity' => [],
 			'ip' => [],

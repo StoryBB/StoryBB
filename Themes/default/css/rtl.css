@@ -450,16 +450,6 @@ div#admin_menu {
 	float: right;
 }
 
-/* h3 HD Icons */
-h3.search_hd {
-	padding: 8px 45px 6px;
-	background-position : 99% 50%;
-}
-h3.profile_hd {
-	padding: 8px 50px 8px 0;
-	background-position : 99% 50%;
-}
-
 /* Activity by time */
 #activitytime {
 	clear: right;
