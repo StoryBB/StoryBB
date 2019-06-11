@@ -2189,7 +2189,7 @@ img.icon.char_avatar {
 	background-position: -135px -161px;
 }
 
-.main_icons.packages::before {
+.packages.main_icons::before, .attachment.main_icons::before {
 	background-position: -161px -161px;
 }
 

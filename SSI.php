@@ -2042,7 +2042,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = [], $out
 				'filesize' => round($row['filesize'] / 1024, 2) . $txt['kilobyte'],
 				'downloads' => $row['downloads'],
 				'href' => $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'],
-				'link' => '<img src="' . $settings['images_url'] . '/icons/clip.png" alt=""> <a href="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . '">' . $filename . '</a>',
+				'link' => '<a href="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . '" class="main_icons attachment">' . $filename . '</a>',
 				'is_image' => !empty($row['width']) && !empty($row['height']) && !empty($modSettings['attachmentShowImages']),
 			),
 			'topic' => array(

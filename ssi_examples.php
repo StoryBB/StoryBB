@@ -81,7 +81,7 @@ template_ssi_above();
 						<li><a href="#" onclick="showSSIBlock('ssi_recentAttachments'); return false;">Recent Attachments</a></li>
 					</ul>
 					<?php if ($user_info['is_admin']) { ?>
-					<h3>Advanced Functions <img class="help" title="Functions that require additional tweaking, not just copy and paste." src="<?php echo $settings['images_url']; ?>/helptopics.png" alt=""></h3>
+					<h3>Advanced Functions <span class="help main_icons" title="Functions that require additional tweaking, not just copy and paste."></span></h3>
 					<ul>
 						<li><a href="#" onclick="showSSIBlock('ssi_showPoll'); return false;">Show Single Poll</a></li>
 						<li><a href="#" onclick="showSSIBlock('ssi_fetchPosts'); return false;">Show Single Post</a></li>
