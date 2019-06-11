@@ -261,8 +261,8 @@ class Parser
 				),
 				array(
 					'tag' => 'b',
-					'before' => '<b>',
-					'after' => '</b>',
+					'before' => '<strong>',
+					'after' => '</strong>',
 				),
 				array(
 					'tag' => 'center',
