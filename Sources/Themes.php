@@ -686,12 +686,24 @@ function SetThemeSettings()
 			{
 				if (!isset($_POST[$option][$item['id']]))
 					continue;
-				// Checkbox.
+				elseif (isset($item['options']))
+				{
+					// Dropdown. If not a valid value, pick the first item in the list.
+					if (!isset($item['options'][$_POST[$option][$item['id']]]))
+					{
+						$_POST[$option][$item['id']] = array_keys($item['options'])[0];
+					}
+				}
 				elseif (empty($item['type']))
+				{
+					// Checkbox.
 					$_POST[$option][$item['id']] = $_POST[$option][$item['id']] ? 1 : 0;
-				// Number
+				}
 				elseif ($item['type'] == 'number')
+				{
+					// Number
 					$_POST[$option][$item['id']] = (int) $_POST[$option][$item['id']];
+				}
 			}
 		}
 
