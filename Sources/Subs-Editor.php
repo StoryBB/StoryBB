@@ -1326,43 +1326,6 @@ function legalise_bbc($text)
 }
 
 /**
- * Creates the javascript code for localization of the editor (SCEditor)
- */
-function loadLocale()
-{
-	global $context, $txt, $editortxt, $modSettings;
-
-	loadLanguage('Editor');
-
-	StoryBB\Template::remove_all_layers();
-	// Lets make sure we aren't going to output anything nasty.
-	@ob_end_clean();
-	@ob_start();
-
-	// If we don't have any locale better avoid broken js
-	if (empty($txt['lang_locale']))
-		die();
-
-	$file_data = '(function ($) {
-	\'use strict\';
-
-	$.sceditor.locale[' . javaScriptEscape($txt['lang_locale']) . '] = {';
-	foreach ($editortxt as $key => $val)
-		$file_data .= '
-		' . javaScriptEscape($key) . ': ' . javaScriptEscape($val) . ',';
-
-	$file_data .= '
-		dateFormat: "day.month.year"
-	}
-})(jQuery);';
-
-	// Make sure they know what type of file we are.
-	header('Content-Type: text/javascript');
-	echo $file_data;
-	obExit(false);
-}
-
-/**
  * Retrieves a list of message icons.
  * - Based on the settings, the array will either contain a list of default
  *   message icons or a list of custom message icons retrieved from the database.
@@ -1452,7 +1415,7 @@ function create_control_richedit($editorOptions)
 	global $context, $settings, $user_info, $scripturl;
 
 	// Load the Post language file... for the moment at least.
-	loadLanguage('Post');
+	loadLanguage('Post+Editor');
 
 	// Every control must have a ID!
 	assert(isset($editorOptions['id']));
@@ -1473,14 +1436,14 @@ function create_control_richedit($editorOptions)
 		loadJavaScriptFile('editor.js', [], 'sbb_editor');
 		loadJavaScriptFile('jquery.sceditor.bbcode.min.js', [], 'sbb_sceditor_bbcode');
 		loadJavaScriptFile('jquery.sceditor.storybb.js', [], 'sbb_sceditor_storybb');
+
+		addInlineJavaScript('$.sceditor.locale[' . javaScriptEscape($txt['lang_locale']) . '] = ' . json_encode($editortxt) . ';');
+
 		addInlineJavaScript('
 		var sbb_smileys_url = \'' . $settings['smileys_url'] . '\';
 		var bbc_quote_from = \'' . addcslashes($txt['quote_from'], "'") . '\';
 		var bbc_quote = \'' . addcslashes($txt['quote'], "'") . '\';
 		var bbc_search_on = \'' . addcslashes($txt['search_on'], "'") . '\';');
-		// editor language file
-		if (!empty($txt['lang_locale']) && $txt['lang_locale'] != 'en_US')
-			loadJavaScriptFile($scripturl . '?action=loadeditorlocale', array('external' => true), 'sceditor_language');
 	}
 
 	// Start off the editor...
@@ -1498,7 +1461,7 @@ function create_control_richedit($editorOptions)
 		'bbc_level' => !empty($editorOptions['bbc_level']) ? $editorOptions['bbc_level'] : 'full',
 		'preview_type' => isset($editorOptions['preview_type']) ? (int) $editorOptions['preview_type'] : 1,
 		'labels' => !empty($editorOptions['labels']) ? $editorOptions['labels'] : [],
-		'locale' => !empty($txt['lang_locale']) && substr($txt['lang_locale'], 0, 5) != 'en_US' ? $txt['lang_locale'] : '',
+		'locale' => !empty($txt['lang_locale']) ? $txt['lang_locale'] : 'en-US',
 		'required' => !empty($editorOptions['required']),
 	);
 
@@ -1518,98 +1481,98 @@ function create_control_richedit($editorOptions)
 		$context['bbc_tags'][] = array(
 			array(
 				'code' => 'bold',
-				'description' => $editortxt['bold'],
+				'description' => $editortxt['Bold'],
 			),
 			array(
 				'code' => 'italic',
-				'description' => $editortxt['italic'],
+				'description' => $editortxt['Italic'],
 			),
 			array(
 				'code' => 'underline',
-				'description' => $editortxt['underline']
+				'description' => $editortxt['Underline']
 			),
 			array(
 				'code' => 'strike',
-				'description' => $editortxt['strike']
+				'description' => $editortxt['Strikethrough']
 			),
 			[],
 			array(
 				'code' => 'pre',
-				'description' => $editortxt['preformatted']
+				'description' => $editortxt['Preformatted Text']
 			),
 			array(
 				'code' => 'left',
-				'description' => $editortxt['left_align']
+				'description' => $editortxt['Align left']
 			),
 			array(
 				'code' => 'center',
-				'description' => $editortxt['center']
+				'description' => $editortxt['Center']
 			),
 			array(
 				'code' => 'right',
-				'description' => $editortxt['right_align']
+				'description' => $editortxt['Align right']
 			),
 			array(
 				'code' => 'justify',
-				'description' => $editortxt['justify']
+				'description' => $editortxt['Justify']
 			),
 		);
 		$context['bbc_tags'][] = array(
 			array(
 				'code' => 'floatleft',
-				'description' => $editortxt['float_left']
+				'description' => $editortxt['Float left']
 			),
 			array(
 				'code' => 'floatright',
-				'description' => $editortxt['float_right']
+				'description' => $editortxt['Float right']
 			),
 			[],
 			array(
 				'code' => 'image',
-				'description' => $editortxt['image']
+				'description' => $editortxt['Insert an image']
 			),
 			array(
 				'code' => 'link',
-				'description' => $editortxt['hyperlink']
+				'description' => $editortxt['Insert a link']
 			),
 			array(
 				'code' => 'email',
-				'description' => $editortxt['insert_email']
+				'description' => $editortxt['Insert an email']
 			),
 			[],
 			array(
 				'code' => 'superscript',
-				'description' => $editortxt['superscript']
+				'description' => $editortxt['Superscript']
 			),
 			array(
 				'code' => 'subscript',
-				'description' => $editortxt['subscript']
+				'description' => $editortxt['Subscript']
 			),
 			[],
 			array(
 				'code' => 'table',
-				'description' => $editortxt['table']
+				'description' => $editortxt['Insert a table']
 			),
 			array(
 				'code' => 'code',
-				'description' => $editortxt['bbc_code']
+				'description' => $editortxt['Code']
 			),
 			array(
 				'code' => 'quote',
-				'description' => $editortxt['bbc_quote']
+				'description' => $editortxt['Insert a Quote']
 			),
 			[],
 			array(
 				'code' => 'bulletlist',
-				'description' => $editortxt['list_unordered']
+				'description' => $editortxt['Bullet list']
 			),
 			array(
 				'code' => 'orderedlist',
-				'description' => $editortxt['list_ordered']
+				'description' => $editortxt['Numbered list']
 			),
 			array(
 				'code' => 'horizontalrule',
-				'description' => $editortxt['horizontal_rule']
+				'description' => $editortxt['Insert a horizontal rule']
 			),
 		);
 
@@ -1635,11 +1598,11 @@ function create_control_richedit($editorOptions)
 			$context['bbc_tags'][count($context['bbc_tags']) - 1][] = [];
 			$context['bbc_tags'][count($context['bbc_tags']) - 1][] = array(
 				'code' => 'unformat',
-				'description' => $editortxt['unformat_text'],
+				'description' => $editortxt['Remove Formatting'],
 			);
 			$context['bbc_tags'][count($context['bbc_tags']) - 1][] = array(
 				'code' => 'toggle',
-				'description' => $editortxt['toggle_view'],
+				'description' => $editortxt['View source'],
 			);
 		}
 

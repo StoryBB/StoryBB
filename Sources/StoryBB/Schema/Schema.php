@@ -310,7 +310,7 @@ class Schema
 					'id_lang' => Column::varchar(5),
 					'lang_file' => Column::varchar(64),
 					'lang_var' => Column::varchar(20),
-					'lang_key' => Column::varchar(64),
+					'lang_key' => Column::varchar(100),
 					'lang_string' => Column::text(),
 					'is_multi' => Column::tinyint(),
 				],

@@ -12,9 +12,11 @@
 
 global $editortxt;
 
-$editortxt['Bold'] = 'Bold';
-$editortxt['Italic'] = 'Italic';
-$editortxt['Underline'] = 'Underline';
+// These items should not be changed no matter how tempting it seems.
+// SCEditor is very specific about this.
+$editortxt['Bold'] = 'Bold text';
+$editortxt['Italic'] = 'Italic text';
+$editortxt['Underline'] = 'Underlined text';
 $editortxt['Strikethrough'] = 'Strikethrough';
 $editortxt['Subscript'] = 'Subscript';
 $editortxt['Superscript'] = 'Superscript';
@@ -60,6 +62,9 @@ $editortxt['Insert a YouTube video'] = 'Insert a YouTube video';
 $editortxt['Insert current date'] = 'Insert current date';
 $editortxt['Insert current time'] = 'Insert current time';
 $editortxt['Print'] = 'Print';
-$editortxt['Preformatted Text'] = 'Preformatted Text';
 $editortxt['View source'] = 'View source';
 $editortxt['Pre'] = 'Preformatted text';
+$editortxt['Preformatted Text'] = 'Preformatted text';
+$editortxt['Float left'] = 'Float left';
+$editortxt['Float right'] = 'Float right';
+$editortxt['dateFormat'] = 'month.day.year';

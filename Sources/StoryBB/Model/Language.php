@@ -45,7 +45,7 @@ class Language
 
 		include($file);
 
-		foreach (['txt', 'helptxt', 'txtBirthdayEmails', 'editorTxt'] as $var)
+		foreach (['txt', 'helptxt', 'txtBirthdayEmails', 'editortxt'] as $var)
 		{
 			if (!empty($$var))
 			{
