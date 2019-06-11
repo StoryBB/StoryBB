@@ -21,7 +21,7 @@
 	{{/if}}
 
 	{{#if (or context.selected_tab.icon_class context.current_menu_context.tab_data.icon_class)}}
-				<span class="{{#if context.selected_tab.icon_class}}{{context.selected_tab.icon_class}}{{else}}{{context.current_menu_context.tab.icon_class}}{{/if}} icon"></span>
+				<span class="{{#if context.selected_tab.icon_class}}{{context.selected_tab.icon_class}}{{else}}{{context.current_menu_context.tab_data.icon_class}}{{/if}} icon"></span>
 	{{else}}
 		{{#if (or context.selected_tab.icon context.current_menu_context.tab_data.icon)}}
 				<img src="{{settings.images_url}}/icons/{{#if context.selected_tab.icon}}{{context.selected_tab.icon}}{{else}}{{context.current_menu_context.tab_data.icon}}{{/if}}" alt="" class="icon">
