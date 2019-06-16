@@ -598,7 +598,7 @@ function EditBoard()
 		$context['sub_template'] = 'admin_boards_edit';
 		$context['page_title'] = $txt['boardsEdit'];
 		Autocomplete::init('member', '#moderators', 0, array_keys($context['board']['moderators']));
-		Autocomplete::init('nonpostgroup', '#moderator_groups', 0, array_keys($context['board']['moderator_groups']));
+		Autocomplete::init('group', '#moderator_groups', 0, array_keys($context['board']['moderator_groups']));
 	}
 	else
 	{
