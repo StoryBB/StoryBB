@@ -91,8 +91,15 @@ function GroupList()
 					'value' => $txt['name'],
 				],
 				'data' => [
-					'function' => function($rowData) use ($scripturl)
+					'function' => function($rowData) use ($scripturl, $context, $txt)
 					{
+						static $template, $phpStr;
+						if ($template === null)
+						{
+							$template = StoryBB\Template::load_partial('helpicon');
+							$phpStr = StoryBB\Template::compile($template, [], 'partial-helpicon');
+						}
+
 						// Since the moderator group has no explicit members, no link is needed.
 						if ($rowData['id_group'] == 3)
 							$group_name = $rowData['group_name'];
@@ -112,9 +119,21 @@ function GroupList()
 
 						// Add a help option for moderator and administrator.
 						if ($rowData['id_group'] == 1)
-							$group_name .= sprintf(' (<a href="%1$s?action=helpadmin;help=membergroup_administrator" onclick="return reqOverlayDiv(this.href);">?</a>)', $scripturl);
+						{
+							$group_name .= ' ' . StoryBB\Template::prepare($phpStr, [
+								'help' => 'membergroup_administrator',
+								'scripturl' => $scripturl,
+								'txt' => $txt,
+							]);
+						}
 						elseif ($rowData['id_group'] == 3)
-							$group_name .= sprintf(' (<a href="%1$s?action=helpadmin;help=membergroup_moderator" onclick="return reqOverlayDiv(this.href);">?</a>)', $scripturl);
+						{
+							$group_name .= ' ' . StoryBB\Template::prepare($phpStr, [
+								'help' => 'membergroup_moderator',
+								'scripturl' => $scripturl,
+								'txt' => $txt,
+							]);
+						}
 
 						return $group_name;
 					},
