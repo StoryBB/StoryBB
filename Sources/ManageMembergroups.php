@@ -235,12 +235,6 @@ function MembergroupIndex()
 							$group_name = sprintf('<a href="%1$s?action=admin;area=membergroups;sa=members;group=%2$d"%3$s>%4$s</a>', $scripturl, $rowData['id_group'], $color_style, $rowData['group_name']);
 						}
 
-						// Add a help option for moderator and administrator.
-						if ($rowData['id_group'] == 1)
-							$group_name .= sprintf(' (<a href="%1$s?action=helpadmin;help=membergroup_administrator" onclick="return reqOverlayDiv(this.href);">?</a>)', $scripturl);
-						elseif ($rowData['id_group'] == 3)
-							$group_name .= sprintf(' (<a href="%1$s?action=helpadmin;help=membergroup_moderator" onclick="return reqOverlayDiv(this.href);">?</a>)', $scripturl);
-
 						return $group_name;
 					},
 				),
