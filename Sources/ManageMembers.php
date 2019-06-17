@@ -167,7 +167,7 @@ function ViewMemberlist()
 	// Check input after a member search has been submitted.
 	if ($context['sub_action'] == 'query')
 	{
-		// Retrieving the membergroups and postgroups.
+		// Retrieving the membergroups.
 		$context['membergroups'] = array(
 			array(
 				'id' => 0,
@@ -175,17 +175,15 @@ function ViewMemberlist()
 				'can_be_additional' => false
 			)
 		);
-		$context['postgroups'] = [];
 		$context['charactergroups'] = [];
 
 		$request = $smcFunc['db_query']('', '
-			SELECT id_group, group_name, min_posts, is_character
+			SELECT id_group, group_name, is_character
 			FROM {db_prefix}membergroups
 			WHERE id_group != {int:moderator_group}
-			ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
+			ORDER BY group_name',
 			array(
 				'moderator_group' => 3,
-				'newbie_group' => 4,
 			)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -196,16 +194,11 @@ function ViewMemberlist()
 					'name' => $row['group_name'],
 					'can_be_additional' => true
 				];
-			elseif ($row['min_posts'] == -1)
+			else
 				$context['membergroups'][] = array(
 					'id' => $row['id_group'],
 					'name' => $row['group_name'],
 					'can_be_additional' => true
-				);
-			else
-				$context['postgroups'][] = array(
-					'id' => $row['id_group'],
-					'name' => $row['group_name']
 				);
 		}
 		$smcFunc['db_free_result']($request);
@@ -280,7 +273,7 @@ function ViewMemberlist()
 				if (isset($_POST[$param_name]))
 					$search_params[$param_name] = $_POST[$param_name];
 			}
-			foreach (['membergroups', 'postgroups', 'charactergroups'] as $group_type)
+			foreach (['membergroups', 'charactergroups'] as $group_type)
 			{
 				if (isset($_POST[$group_type]))
 					$search_params[$group_type] = $_POST[$group_type];
@@ -416,13 +409,6 @@ function ViewMemberlist()
 		// Combine the one or two membergroup parts into one query part linked with an OR.
 		if (!empty($mg_query_parts))
 			$query_parts[] = '(' . implode(' OR ', $mg_query_parts) . ')';
-
-		// Get all selected post count related membergroups.
-		if (!empty($search_params['postgroups']) && count($search_params['postgroups']) != count($context['postgroups']))
-		{
-			$query_parts[] = 'id_post_group IN ({array_int:post_groups})';
-			$where_params['post_groups'] = $search_params['postgroups'];
-		}
 
 		// Combine the one or two membergroup parts into one query part linked with an OR.
 		if (!empty($mg_query_parts))
@@ -689,7 +675,7 @@ function SearchMembers()
 {
 	global $context, $txt, $smcFunc;
 
-	// Get a list of all the membergroups and postgroups that can be selected.
+	// Get a list of all the membergroups that can be selected.
 	$context['membergroups'] = array(
 		array(
 			'id' => 0,
@@ -697,17 +683,15 @@ function SearchMembers()
 			'can_be_additional' => false
 		)
 	);
-	$context['postgroups'] = [];
 	$context['charactergroups'] = [];
 
 	$request = $smcFunc['db_query']('', '
-		SELECT id_group, group_name, min_posts, is_character
+		SELECT id_group, group_name, is_character
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
-		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
+		ORDER BY group_name',
 		array(
 			'moderator_group' => 3,
-			'newbie_group' => 4,
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -718,16 +702,11 @@ function SearchMembers()
 				'name' => $row['group_name'],
 				'can_be_additional' => true
 			];
-		elseif ($row['min_posts'] == -1)
+		else
 			$context['membergroups'][] = array(
 				'id' => $row['id_group'],
 				'name' => $row['group_name'],
 				'can_be_additional' => true
-			);
-		else
-			$context['postgroups'][] = array(
-				'id' => $row['id_group'],
-				'name' => $row['group_name']
 			);
 	}
 	$smcFunc['db_free_result']($request);

@@ -159,38 +159,6 @@
 					</tr>
 				</tbody>
 			</table>
-			<table class="table_grid">
-				<thead>
-					<tr class="title_bar">
-						<th scope="col">
-							{{{txt.membergroups_postgroups}}}
-						</th>
-						<th class="quarter_table">&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody>
-
-{{#each context.postgroups}}
-					<tr class="windowbg">
-						<td>
-							{{{name}}}
-						</td>
-						<td class="centercol">
-							<input type="checkbox" name="postgroups[]" value="{{id}}" checked>
-						</td>
-					</tr>
-{{/each}}
-
-					<tr class="windowbg">
-						<td>
-							<em>{{{txt.check_all}}}</em>
-						</td>
-						<td class="centercol">
-							<input type="checkbox" onclick="invertAll(this, this.form, 'postgroups[]');" checked>
-						</td>
-					</tr>
-				</tbody>
-			</table>
 
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.member_characters_in_these_groups}}}</h3>
