@@ -65,7 +65,7 @@ function ModifyMembergroups()
  * Shows an overview of the current membergroups.
  * Called by ?action=admin;area=membergroups.
  * Requires the manage_membergroups permission.
- * Splits the membergroups in regular ones and post count based groups.
+ * Splits the membergroups in account and character based groups.
  * It also counts the number of members part of each membergroup.
  *
  * @uses ManageMembergroups template, main.
@@ -304,106 +304,6 @@ function MembergroupIndex()
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	// The third list shows the post count based groups.
-	$listOptions = array(
-		'id' => 'post_count_membergroups_list',
-		'title' => $txt['membergroups_post'],
-		'base_href' => $scripturl . '?action=admin;area=membergroups' . (isset($_REQUEST['sort']) ? ';sort=' . urlencode($_REQUEST['sort']) : '') . (isset($_REQUEST['sort2']) ? ';sort2=' . urlencode($_REQUEST['sort2']) : ''),
-		'default_sort_col' => 'required_posts',
-		'request_vars' => array(
-			'sort' => 'sort3',
-			'desc' => 'desc3',
-		),
-		'get_items' => array(
-			'file' => $sourcedir . '/Subs-Membergroups.php',
-			'function' => 'list_getMembergroups',
-			'params' => array(
-				'post_count',
-			),
-		),
-		'columns' => array(
-			'name' => array(
-				'header' => array(
-					'value' => $txt['membergroups_name'],
-				),
-				'data' => array(
-					'function' => function($rowData) use ($scripturl)
-					{
-						$colorStyle = empty($rowData['online_color']) ? '' : sprintf(' style="color: %1$s;"', $rowData['online_color']);
-						return sprintf('<a href="%1$s?action=moderate;area=viewgroups;sa=members;group=%2$d"%3$s>%4$s</a>', $scripturl, $rowData['id_group'], $colorStyle, $rowData['group_name']);
-					},
-				),
-				'sort' => array(
-					'default' => 'mg.group_name',
-					'reverse' => 'mg.group_name DESC',
-				),
-			),
-			'icons' => array(
-				'header' => array(
-					'value' => $txt['membergroups_icons'],
-				),
-				'data' => array(
-					'db' => 'icons',
-				),
-				'sort' => array(
-					'default' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, icons',
-					'reverse' => 'CASE WHEN mg.id_group < 4 THEN mg.id_group ELSE 4 END, icons DESC',
-				)
-			),
-			'members' => array(
-				'header' => array(
-					'value' => $txt['membergroups_members_top'],
-					'class' => 'centercol',
-				),
-				'data' => array(
-					'db' => 'num_members',
-					'class' => 'centercol',
-				),
-				'sort' => array(
-					'default' => '1 DESC',
-					'reverse' => '1',
-				),
-			),
-			'required_posts' => array(
-				'header' => array(
-					'value' => $txt['membergroups_min_posts'],
-					'class' => 'centercol',
-				),
-				'data' => array(
-					'db' => 'min_posts',
-					'class' => 'centercol',
-				),
-				'sort' => array(
-					'default' => 'mg.min_posts',
-					'reverse' => 'mg.min_posts DESC',
-				),
-			),
-			'modify' => array(
-				'header' => array(
-					'value' => $txt['modify'],
-					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=admin;area=membergroups;sa=edit;group=%1$d">' . $txt['membergroups_modify'] . '</a>',
-						'params' => array(
-							'id_group' => false,
-						),
-					),
-					'class' => 'centercol',
-				),
-			),
-		),
-		'additional_rows' => array(
-			array(
-				'position' => 'below_table_data',
-				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;postgroup">' . $txt['membergroups_add_group'] . '</a>',
-			),
-		),
-	);
-
-	createList($listOptions);
-
 	$context['sub_template'] = 'membergroups_main';
 }
 
@@ -441,7 +341,6 @@ function AddMembergroup()
 		checkSession();
 		validateToken('admin-mmg');
 
-		$postCountBasedGroup = isset($_POST['min_posts']) && (!isset($_POST['postgroup_based']) || !empty($_POST['postgroup_based']));
 		$_POST['group_type'] = !isset($_POST['group_type']) || $_POST['group_type'] < 0 || $_POST['group_type'] > 3 || ($_POST['group_type'] == 1 && !allowedTo('admin_forum')) ? 0 : (int) $_POST['group_type'];
 
 		call_integration_hook('integrate_pre_add_membergroup', []);
@@ -449,11 +348,11 @@ function AddMembergroup()
 		$id_group = $smcFunc['db_insert']('',
 			'{db_prefix}membergroups',
 			array(
-				'description' => 'string', 'group_name' => 'string-80', 'min_posts' => 'int',
+				'description' => 'string', 'group_name' => 'string-80',
 				'icons' => 'string', 'online_color' => 'string', 'group_type' => 'int', 'is_character' => 'int',
 			),
 			array(
-				'', $smcFunc['htmlspecialchars']($_POST['group_name'], ENT_QUOTES), ($postCountBasedGroup ? (int) $_POST['min_posts'] : '-1'),
+				'', $smcFunc['htmlspecialchars']($_POST['group_name'], ENT_QUOTES),
 				'1#icon.png', '', $_POST['group_type'], !empty($_POST['group_level']) ? 1 : 0,
 			),
 			array('id_group'),
@@ -461,10 +360,6 @@ function AddMembergroup()
 		);
 
 		call_integration_hook('integrate_add_membergroup', array($id_group, $postCountBasedGroup));
-
-		// Update the post groups now, if this is a post group!
-		if (isset($_POST['min_posts']))
-			updateStats('postgroups');
 
 		// You cannot set permissions for post groups as they are disabled.
 		if ($postCountBasedGroup)
@@ -647,8 +542,7 @@ function AddMembergroup()
 	$context['page_title'] = $txt['membergroups_new_group'];
 	$context['sub_template'] = 'admin_membergroups_add';
 	$context['character_group'] = isset($_REQUEST['charactergroup']) || !empty($_REQUEST['group_level']);
-	$context['post_group'] = isset($_REQUEST['postgroup']);
-	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']) && !isset($_REQUEST['charactergroup']);
+	$context['undefined_group'] = !isset($_REQUEST['generalgroup']) && !isset($_REQUEST['charactergroup']);
 	$context['allow_protected'] = allowedTo('admin_forum');
 
 	loadLanguage('ManagePermissions');
@@ -656,14 +550,12 @@ function AddMembergroup()
 	$result = $smcFunc['db_query']('', '
 		SELECT id_group, group_name, is_character
 		FROM {db_prefix}membergroups
-		WHERE (id_group > {int:moderator_group} OR id_group = {int:global_mod_group})
-			AND min_posts = {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
+		WHERE (id_group NOT IN ({int:admin_group}, {int:moderator_group}))' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
-		ORDER BY min_posts, id_group != {int:global_mod_group}, group_name',
+		ORDER BY group_name',
 		array(
 			'moderator_group' => 3,
-			'global_mod_group' => 2,
-			'min_posts' => -1,
+			'admin_group' => 1,
 			'is_protected' => 1,
 		)
 	);
@@ -850,15 +742,6 @@ function EditMembergroup()
 				fatal_lang_error('membergroup_cannot_inherit_account', false);
 			}
 		}
-		// Character groups can never be converted into post groups.
-		if ($current_group_is_character)
-		{
-			$_POST['min_posts'] = -1;
-			if (!empty($_POST['group_type']) && $_POST['group_type'] == -1)
-			{
-				$_POST['group_type'] = 0; // Force it to be a regular assigned group.
-			}
-		}
 
 		// Validate the session.
 		checkSession();
@@ -883,7 +766,6 @@ function EditMembergroup()
 
 		// Set variables to their proper value.
 		$_POST['max_messages'] = isset($_POST['max_messages']) ? (int) $_POST['max_messages'] : 0;
-		$_POST['min_posts'] = isset($_POST['min_posts']) && isset($_POST['group_type']) && $_POST['group_type'] == -1 && $_REQUEST['group'] > 3 ? abs($_POST['min_posts']) : ($_REQUEST['group'] == 4 ? 0 : -1);
 
 		$_POST['icons'] = '';
 		if (!empty($_POST['has_badge']) && !empty($_POST['icon_count']) && $_POST['icon_count'] > 0 && !empty($_POST['icon_image']))
@@ -893,7 +775,7 @@ function EditMembergroup()
 
 		$_POST['group_desc'] = isset($_POST['group_desc']) && ($_REQUEST['group'] == 1 || (isset($_POST['group_type']) && $_POST['group_type'] != -1)) ? trim($_POST['group_desc']) : '';
 		$_POST['group_type'] = !isset($_POST['group_type']) || $_POST['group_type'] < 0 || $_POST['group_type'] > 3 || ($_POST['group_type'] == 1 && !allowedTo('admin_forum')) ? 0 : (int) $_POST['group_type'];
-		$_POST['group_hidden'] = empty($_POST['group_hidden']) || $_POST['min_posts'] != -1 || $_REQUEST['group'] == 3 ? 0 : (int) $_POST['group_hidden'];
+		$_POST['group_hidden'] = empty($_POST['group_hidden']) || $_REQUEST['group'] == 3 ? 0 : (int) $_POST['group_hidden'];
 		$_POST['group_inherit'] = $_REQUEST['group'] > 1 && $_REQUEST['group'] != 3 && (empty($inherit_type) || $inherit_type != 1) ? (int) $_POST['group_inherit'] : -2;
 		$_POST['group_tfa_force'] = (empty($modSettings['tfa_mode']) || $modSettings['tfa_mode'] != 2 || empty($_POST['group_tfa_force'])) ? 0 : 1;
 
@@ -903,13 +785,12 @@ function EditMembergroup()
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}membergroups
 			SET group_name = {string:group_name}, online_color = {string:online_color},
-				max_messages = {int:max_messages}, min_posts = {int:min_posts}, icons = {string:icons},
+				max_messages = {int:max_messages}, icons = {string:icons},
 				description = {string:group_desc}, group_type = {int:group_type}, hidden = {int:group_hidden},
 				id_parent = {int:group_inherit}, tfa_required = {int:tfa_required}
 			WHERE id_group = {int:current_group}',
 			array(
 				'max_messages' => $_POST['max_messages'],
-				'min_posts' => $_POST['min_posts'],
 				'group_type' => $_POST['group_type'],
 				'group_hidden' => $_POST['group_hidden'],
 				'group_inherit' => $_POST['group_inherit'],
@@ -993,45 +874,7 @@ function EditMembergroup()
 			}
 		}
 
-		// Remove everyone from this group!
-		if ($_POST['min_posts'] != -1)
-		{
-			$smcFunc['db_query']('', '
-				UPDATE {db_prefix}members
-				SET id_group = {int:regular_member}
-				WHERE id_group = {int:current_group}',
-				array(
-					'regular_member' => 0,
-					'current_group' => (int) $_REQUEST['group'],
-				)
-			);
-
-			$request = $smcFunc['db_query']('', '
-				SELECT id_member, additional_groups
-				FROM {db_prefix}members
-				WHERE FIND_IN_SET({string:current_group}, additional_groups) != 0',
-				array(
-					'current_group' => (int) $_REQUEST['group'],
-				)
-			);
-			$updates = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$updates[$row['additional_groups']][] = $row['id_member'];
-			$smcFunc['db_free_result']($request);
-
-			foreach ($updates as $additional_groups => $memberArray)
-				updateMemberData($memberArray, array('additional_groups' => implode(',', array_diff(explode(',', $additional_groups), array((int) $_REQUEST['group'])))));
-
-			// Sorry, but post groups can't moderate boards
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}moderator_groups
-				WHERE id_group = {int:current_group}',
-				array(
-					'current_group' => (int) $_REQUEST['group'],
-				)
-			);
-		}
-		elseif ($_REQUEST['group'] != 3)
+		if ($_REQUEST['group'] != 3)
 		{
 			// Making it a hidden group? If so remove everyone with it as primary group (Actually, just make them additional).
 			if ($_POST['group_hidden'] == 2)
@@ -1108,7 +951,7 @@ function EditMembergroup()
 				'current_group' => $_REQUEST['group'],
 			)
 		);
-		if (!empty($_POST['group_moderators']) && is_array($_POST['group_moderators']) && $_POST['min_posts'] == -1 && $_REQUEST['group'] != 3)
+		if (!empty($_POST['group_moderators']) && is_array($_POST['group_moderators']) && $_REQUEST['group'] != 3)
 		{
 			$group_moderators = [];
 
@@ -1171,7 +1014,7 @@ function EditMembergroup()
 
 	// Fetch the current group information.
 	$request = $smcFunc['db_query']('', '
-		SELECT group_name, is_character, description, min_posts, online_color, max_messages, icons, group_type, hidden, id_parent, tfa_required
+		SELECT group_name, is_character, description, online_color, max_messages, icons, group_type, hidden, id_parent, tfa_required
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:current_group}
 		LIMIT 1',
@@ -1193,18 +1036,15 @@ function EditMembergroup()
 		'description' => $smcFunc['htmlspecialchars']($row['description'], ENT_QUOTES),
 		'editable_name' => $row['group_name'],
 		'color' => $row['online_color'],
-		'min_posts' => $row['min_posts'],
 		'max_messages' => $row['max_messages'],
 		'has_badge' => !empty($row['icons'][0]),
 		'badge_enabled' => true,
 		'icon_count' => (int) $row['icons'][0],
 		'icon_image' => isset($row['icons'][1]) ? $row['icons'][1] : '',
-		'is_post_group' => $row['min_posts'] != -1,
-		'type' => $row['min_posts'] != -1 ? 0 : $row['group_type'],
-		'hidden' => $row['min_posts'] == -1 ? $row['hidden'] : 0,
+		'type' => $row['group_type'],
+		'hidden' => $row['hidden'],
 		'inherited_from' => $row['id_parent'],
-		'allow_post_group' => $_REQUEST['group'] == 2 || $_REQUEST['group'] > 4,
-		'allow_delete' => $_REQUEST['group'] == 2 || $_REQUEST['group'] > 4,
+		'allow_delete' => !in_array($_REQUEST['group'], [1, 3]),
 		'allow_protected' => allowedTo('admin_forum'),
 		'tfa_required' => $row['tfa_required'],
 	);
@@ -1321,14 +1161,12 @@ function EditMembergroup()
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
-		WHERE id_group != {int:current_group}
-			AND min_posts = {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
+		WHERE id_group != {int:current_group}' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 			AND id_group NOT IN (1, 3)
 			AND id_parent = {int:not_inherited}',
 		array(
 			'current_group' => (int) $_REQUEST['group'],
-			'min_posts' => -1,
 			'not_inherited' => -2,
 			'is_protected' => 1,
 		)
@@ -1377,8 +1215,7 @@ function MembergroupBadges()
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group, group_name, online_color, icons, is_character
 		FROM {db_prefix}membergroups
-		WHERE min_posts = -1
-			AND id_group != {int:moderator_group}
+		WHERE id_group != {int:moderator_group}
 		ORDER BY badge_order',
 		[
 			'moderator_group' => 3
