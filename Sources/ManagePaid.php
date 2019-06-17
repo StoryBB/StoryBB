@@ -734,11 +734,9 @@ function ModifySubscription()
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
-			AND min_posts = {int:min_posts}
 			AND is_character = {int:account_group}',
 		array(
 			'moderator_group' => 3,
-			'min_posts' => -1,
 			'account_group' => 0,
 		)
 	);
