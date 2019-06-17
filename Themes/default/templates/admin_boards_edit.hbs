@@ -204,51 +204,6 @@
 								</td>
 							</tr>
 {{/if}}
-
-							<tr>
-								<td><br><strong>{{{txt.membergroups_post}}}</strong></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-
-{{#each context.groups_post}}
-							<tr>
-								<td>
-									<label for="groups_{{id}}_a">
-										<span>
-											{{{name}}}
-										</span>
-									</label>
-								</td>
-								<td>
-									<input type="radio" class="post" name="groups[{{id}}]" value="allow" id="groups_{{id}}_a"{{#if (in_array id ../context.board_managers)}} checked disabled{{else}}{{#if allow}} checked{{/if}}{{/if}}>
-								</td>
-								<td>
-									<input type="radio" class="post" name="groups[{{id}}]" value="ignore" id="groups_{{id}}_x"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if (and (not allow) (not deny))}} checked{{/if}}{{/if}}>
-								</td>
-								<td>
-									<input type="radio" class="post" name="groups[{{id}}]" value="deny" id="groups_{{id}}_d"{{#if (in_array id ../context.board_managers)}} disabled{{else}}{{#if deny}} checked{{/if}}{{/if}}>
-								</td>
-								<td></td>
-							</tr>
-{{/each}}
-
-							<tr class="select_all_box">
-								<td></td>
-								<td>
-									<input type="radio" name="select_all_post" onclick="selectAllRadioClass(this.form, 'groups', 'allow', 'post');">
-								</td>
-								<td>
-									<input type="radio" name="select_all_post" onclick="selectAllRadioClass(this.form, 'groups', 'ignore', 'post');">
-								</td>
-								<td>
-									<input type="radio" name="select_all_post" onclick="selectAllRadioClass(this.form, 'groups', 'deny', 'post');">
-								</td>
-								<td>
-									<em>{{{txt.check_all}}}</em>
-								</td>
-							</tr>
 						</table>
 					</dd>
 
