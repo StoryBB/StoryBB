@@ -310,7 +310,6 @@ function SelectMailingMembers()
 	$context['sub_template'] = 'newsletter_pick_users';
 
 	$context['groups'] = [];
-	$postGroups = [];
 	$normalGroups = [];
 
 	// As post groups are disabled then we need to give a "ungrouped members" option.
@@ -323,15 +322,11 @@ function SelectMailingMembers()
 
 	// Get all the extra groups as well as Administrator and Global Moderator.
 	$request = $smcFunc['db_query']('', '
-		SELECT mg.id_group, mg.group_name, mg.min_posts
+		SELECT mg.id_group, mg.group_name
 		FROM {db_prefix}membergroups AS mg
-		WHERE mg.min_posts = {int:min_posts}
-		GROUP BY mg.id_group, mg.min_posts, mg.group_name
-		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
-		array(
-			'min_posts' => -1,
-			'newbie_group' => 4,
-		)
+		GROUP BY mg.id_group, mg.group_name
+		ORDER BY mg.group_name',
+		array()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -341,29 +336,9 @@ function SelectMailingMembers()
 			'member_count' => 0,
 		);
 
-		if ($row['min_posts'] == -1)
-			$normalGroups[$row['id_group']] = $row['id_group'];
-		else
-			$postGroups[$row['id_group']] = $row['id_group'];
+		$normalGroups[$row['id_group']] = $row['id_group'];
 	}
 	$smcFunc['db_free_result']($request);
-
-	// If we have post groups, let's count the number of members...
-	if (!empty($postGroups))
-	{
-		$query = $smcFunc['db_query']('', '
-			SELECT mem.id_post_group AS id_group, COUNT(*) AS member_count
-			FROM {db_prefix}members AS mem
-			WHERE mem.id_post_group IN ({array_int:post_group_list})
-			GROUP BY mem.id_post_group',
-			array(
-				'post_group_list' => $postGroups,
-			)
-		);
-		while ($row = $smcFunc['db_fetch_assoc']($query))
-			$context['groups'][$row['id_group']]['member_count'] += $row['member_count'];
-		$smcFunc['db_free_result']($query);
-	}
 
 	if (!empty($normalGroups))
 	{
@@ -916,7 +891,6 @@ function SendMailing($clean_only = false)
 				if (!empty($group))
 				{
 					$queryBuild[] = 'FIND_IN_SET({int:group_' . $group . '}, mem.additional_groups) != 0';
-					$queryBuild[] = 'mem.id_post_group = {int:group_' . $group . '}';
 				}
 			}
 			if (!empty($queryBuild))
@@ -949,7 +923,7 @@ function SendMailing($clean_only = false)
 
 		// Get the smelly people - note we respect the id_member range as it gives us a quicker query.
 		$result = $smcFunc['db_query']('', '
-			SELECT mem.id_member, mem.email_address, mem.real_name, mem.id_group, mem.additional_groups, mem.id_post_group
+			SELECT mem.id_member, mem.email_address, mem.real_name, mem.id_group, mem.additional_groups
 			FROM {db_prefix}members AS mem
 			WHERE ' . $sendQuery . '
 				AND mem.is_activated = {int:is_activated}
@@ -981,10 +955,10 @@ function SendMailing($clean_only = false)
 
 			// What groups are we looking at here?
 			if (empty($row['additional_groups']))
-				$groups = array($row['id_group'], $row['id_post_group']);
+				$groups = array($row['id_group']);
 			else
 				$groups = array_merge(
-					array($row['id_group'], $row['id_post_group']),
+					array($row['id_group']),
 					explode(',', $row['additional_groups'])
 				);
 
