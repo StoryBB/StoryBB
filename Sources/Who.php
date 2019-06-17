@@ -123,7 +123,7 @@ function Who()
 			lo.robot_name
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (lo.id_member = mem.id_member)
-			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_member} THEN mem.id_post_group ELSE mem.id_group END)
+			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
 			LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
 			LEFT JOIN {db_prefix}membergroups AS cg ON (chars.main_char_group = cg.id_group)' . (!empty($conditions) ? '
 		WHERE ' . implode(' AND ', $conditions) : '') . '
