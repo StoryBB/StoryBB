@@ -225,7 +225,7 @@ function updateMemberData($members, $data)
 	$knownInts = array(
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'show_online', 'pm_receive_from', 'alerts',
-		'id_theme', 'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
+		'id_theme', 'is_activated', 'id_msg_last_visit', 'total_time_logged_in', 'warning',
 		'policy_acceptance',
 	);
 	$knownFloats = array(
@@ -2910,7 +2910,7 @@ function build_query_board($userid)
 	else
 	{
 		$request = $smcFunc['db_query']('', '
-				SELECT mem.ignore_boards, mem.id_group, mem.additional_groups, mem.id_post_group
+				SELECT mem.ignore_boards, mem.id_group, mem.additional_groups
 				FROM {db_prefix}members AS mem
 				WHERE mem.id_member = {int:id_member}
 				LIMIT 1',
@@ -2922,10 +2922,10 @@ function build_query_board($userid)
 		$row = $smcFunc['db_fetch_assoc']($request);
 
 		if (empty($row['additional_groups']))
-			$groups = array($row['id_group'], $row['id_post_group']);
+			$groups = array($row['id_group']);
 		else
 			$groups = array_merge(
-					array($row['id_group'], $row['id_post_group']),
+					array($row['id_group']),
 					explode(',', $row['additional_groups'])
 			);
 
