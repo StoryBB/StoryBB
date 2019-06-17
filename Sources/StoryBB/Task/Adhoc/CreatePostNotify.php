@@ -59,7 +59,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		// Find the people interested in receiving notifications for this topic
 		$request = $smcFunc['db_query']('', '
 			SELECT mem.id_member, ln.id_topic, ln.id_board, ln.sent, mem.email_address, b.member_groups,
-				mem.id_group, mem.id_post_group, mem.additional_groups, t.id_member_started, mem.pm_ignore_list,
+				mem.id_group, mem.additional_groups, t.id_member_started, mem.pm_ignore_list,
 				t.id_member_updated
 			FROM {db_prefix}log_notify AS ln
 				INNER JOIN {db_prefix}members AS mem ON (ln.id_member = mem.id_member)
@@ -76,7 +76,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		$watched = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$groups = array_merge(array($row['id_group'], $row['id_post_group']), (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
+			$groups = array_merge(array($row['id_group']), (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
 			if (!in_array(1, $groups) && count(array_intersect($groups, explode(',', $row['member_groups']))) == 0)
 				continue;
 
