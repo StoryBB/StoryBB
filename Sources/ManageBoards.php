@@ -471,34 +471,26 @@ function EditBoard()
 
 	// Load membergroups.
 	$request = $smcFunc['db_query']('', '
-		SELECT group_name, id_group, min_posts, is_character
+		SELECT group_name, id_group, is_character
 		FROM {db_prefix}membergroups
-		WHERE id_group > {int:moderator_group} OR id_group = {int:global_moderator}
-		ORDER BY min_posts, id_group != {int:global_moderator}, group_name',
+		WHERE id_group NOT IN ({int:admin_group}, {int:moderator_group})
+		ORDER BY group_name',
 		array(
+			'admin_group' => 1,
 			'moderator_group' => 3,
-			'global_moderator' => 2,
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		if ($_REQUEST['sa'] == 'newboard' && $row['min_posts'] == -1)
+		if ($_REQUEST['sa'] == 'newboard')
 			$curBoard['member_groups'][] = $row['id_group'];
 
-		if ($row['min_posts'] >= 0)
-		{
-			$group_type = 'groups_post';
-		}
-		else
-		{
-			$group_type = $row['is_character'] ? 'groups_character' : 'groups_account';
-		}
+		$group_type = $row['is_character'] ? 'groups_character' : 'groups_account';
 		$context['groups'][(int) $row['id_group']] = $context[$group_type][(int) $row['id_group']] = [
 			'id' => $row['id_group'],
 			'name' => trim($row['group_name']),
 			'allow' => in_array($row['id_group'], $curBoard['member_groups']),
 			'deny' => in_array($row['id_group'], $curBoard['deny_groups']),
-			'is_post_group' => $row['min_posts'] != -1,
 		];
 	}
 	$smcFunc['db_free_result']($request);
