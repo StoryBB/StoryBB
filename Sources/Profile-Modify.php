@@ -2781,15 +2781,12 @@ function profileLoadGroups()
 		SELECT group_name, id_group, hidden
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
-			AND min_posts = {int:min_posts}
 			AND is_character = 0' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
-		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
+		ORDER BY group_name',
 		array(
 			'moderator_group' => 3,
-			'min_posts' => -1,
 			'is_protected' => 1,
-			'newbie_group' => 4,
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -3620,7 +3617,6 @@ function groupMembership($memID)
 			LEFT JOIN {db_prefix}log_group_requests AS lgr ON (lgr.id_member = {int:selected_member} AND lgr.id_group = mg.id_group AND lgr.status = {int:status_open})
 		WHERE (mg.id_group IN ({array_int:group_list})
 			OR mg.group_type > {int:nonjoin_group_id})
-			AND mg.min_posts = {int:min_posts}
 			AND mg.id_group != {int:moderator_group}
 		ORDER BY group_name',
 		array(
@@ -3628,7 +3624,6 @@ function groupMembership($memID)
 			'selected_member' => $memID,
 			'status_open' => 0,
 			'nonjoin_group_id' => 1,
-			'min_posts' => -1,
 			'moderator_group' => 3,
 		)
 	);
