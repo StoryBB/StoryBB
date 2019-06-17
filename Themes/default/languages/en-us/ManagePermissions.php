@@ -285,8 +285,6 @@ $txt['permissionhelp_post_attachment'] = 'Attachments are files that are attache
 $txt['permissionicon'] = '';
 
 $txt['permission_by_board_desc'] = 'Here you can set which permissions profile a board uses. You can create new permission profiles from the &quot;Edit Profiles&quot; menu.';
-// Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
-$txt['permission_disable_postgroups_warning'] = 'Disabling this setting will remove permissions currently set to post count based groups.';
 
 $txt['permissions_post_moderation_desc'] = 'From this page, you can configure the ability to hold users\' posts before being visible to regular forum members, including which group or groups of users can approve them. Users whose posts are held for approval will still be able to see their posts, as well as replies from approvers, e.g. moderator feedback about making a post appropriate.';
 $txt['permissions_post_moderation_enable'] = 'Enable Post Moderation';

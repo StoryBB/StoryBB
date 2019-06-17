@@ -59,7 +59,6 @@ $txt['mboards_description_desc'] = 'A short description of your board. HTML is n
 $txt['mboards_cat_description_desc'] = 'A short description of your category. HTML is not allowed, you can use the following BBC tags: {allowed_tags}';
 $txt['mboards_groups'] = 'Allowed Groups';
 $txt['mboards_groups_regular_members'] = 'This group contains all members that have no primary group set.';
-$txt['mboards_groups_post_group'] = 'This group is a post count based group.';
 $txt['mboards_moderators'] = 'Moderators';
 $txt['mboards_moderators_desc'] = 'Additional members to have moderation privileges on this board. Note that administrators don\'t have to be listed here.';
 $txt['mboards_moderator_groups'] = 'Moderator Groups';
