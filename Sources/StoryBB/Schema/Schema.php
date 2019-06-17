@@ -674,7 +674,6 @@ class Schema
 					'group_name' => Column::varchar(80),
 					'description' => Column::text(),
 					'online_color' => Column::varchar(20),
-					'min_posts' => Column::mediumint()->signed()->default(-1),
 					'max_messages' => Column::smallint(),
 					'icons' => Column::varchar(255),
 					'group_type' => Column::tinyint(),
@@ -686,7 +685,6 @@ class Schema
 				],
 				[
 					Index::primary(['id_group']),
-					Index::key(['min_posts']),
 				]
 			),
 			Table::make('members',
@@ -729,7 +727,6 @@ class Schema
 					'validation_code' => Column::varchar(10),
 					'id_msg_last_visit' => Column::int(),
 					'additional_groups' => Column::varchar(255),
-					'id_post_group' => Column::smallint(),
 					'total_time_logged_in' => Column::int(),
 					'password_salt' => Column::varchar(255),
 					'ignore_boards' => Column::text(),
@@ -752,7 +749,6 @@ class Schema
 					Index::key(['posts']),
 					Index::key(['last_login']),
 					Index::key(['lngfile' => 30]),
-					Index::key(['id_post_group']),
 					Index::key(['warning']),
 					Index::key(['total_time_logged_in']),
 					Index::key(['id_theme']),
