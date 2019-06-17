@@ -113,7 +113,6 @@ function PermissionIndex()
 			'href' => '',
 			'link' => '',
 			'help' => 'membergroup_guests',
-			'is_post_group' => false,
 			'color' => '',
 			'icons' => '',
 			'children' => [],
@@ -133,7 +132,6 @@ function PermissionIndex()
 			'can_search' => false,
 			'href' => $scripturl . '?action=moderate;area=viewgroups;sa=members;group=0',
 			'help' => 'membergroup_regular_members',
-			'is_post_group' => false,
 			'color' => '',
 			'icons' => '',
 			'children' => [],
@@ -145,19 +143,15 @@ function PermissionIndex()
 		),
 	);
 
-	$postGroups = [];
 	$normalGroups = [];
 
 	// Query the database defined membergroups.
 	$query = $smcFunc['db_query']('', '
-		SELECT id_group, id_parent, group_name, min_posts, online_color, icons
+		SELECT id_group, id_parent, group_name, online_color, icons
 		FROM {db_prefix}membergroups
-		WHERE min_posts = {int:min_posts}
-		ORDER BY id_parent = {int:not_inherited} DESC, min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
+		ORDER BY id_parent = {int:not_inherited} DESC, group_name',
 		array(
-			'min_posts' => -1,
 			'not_inherited' => -2,
-			'newbie_group' => 4,
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($query))
@@ -180,7 +174,6 @@ function PermissionIndex()
 			'can_search' => $row['id_group'] != 3,
 			'href' => $scripturl . '?action=moderate;area=viewgroups;sa=members;group=' . $row['id_group'],
 			'help' => $row['id_group'] == 1 ? 'membergroup_administrator' : ($row['id_group'] == 3 ? 'membergroup_moderator' : ''),
-			'is_post_group' => $row['min_posts'] != -1,
 			'color' => empty($row['online_color']) ? '' : $row['online_color'],
 			'icons' => !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '',
 			'children' => [],
@@ -191,29 +184,9 @@ function PermissionIndex()
 			'access' => false,
 		);
 
-		if ($row['min_posts'] == -1)
-			$normalGroups[$row['id_group']] = $row['id_group'];
-		else
-			$postGroups[$row['id_group']] = $row['id_group'];
+		$normalGroups[$row['id_group']] = $row['id_group'];
 	}
 	$smcFunc['db_free_result']($query);
-
-	// Get the number of members in this post group.
-	if (!empty($postGroups))
-	{
-		$query = $smcFunc['db_query']('', '
-			SELECT id_post_group AS id_group, COUNT(*) AS num_members
-			FROM {db_prefix}members
-			WHERE id_post_group IN ({array_int:post_group_list})
-			GROUP BY id_post_group',
-			array(
-				'post_group_list' => $postGroups,
-			)
-		);
-		while ($row = $smcFunc['db_fetch_assoc']($query))
-			$context['groups'][$row['id_group']]['num_members'] += $row['num_members'];
-		$smcFunc['db_free_result']($query);
-	}
 
 	if (!empty($normalGroups))
 	{
@@ -1283,11 +1256,11 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		$query = $smcFunc['db_query']('', '
 			SELECT id_group
 			FROM {db_prefix}membergroups
-			WHERE id_group > {int:moderator_group}
-			ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
+			WHERE id_group NOT IN ({int:admin_group}, {int:moderator_group})
+			ORDER BY group_name',
 			array(
+				'admin_group' => 1,
 				'moderator_group' => 3,
-				'newbie_group' => 4,
 			)
 		);
 		while ($row = $smcFunc['db_fetch_row']($query))
@@ -1621,13 +1594,11 @@ function init_inline_permissions($permissions, $excluded_groups = [])
 			-1 => array(
 				'id' => -1,
 				'name' => $txt['membergroups_guests'],
-				'is_postgroup' => false,
 				'status' => 'off',
 			),
 			0 => array(
 				'id' => 0,
 				'name' => $txt['membergroups_members'],
-				'is_postgroup' => false,
 				'status' => 'off',
 			),
 		);
@@ -1649,17 +1620,14 @@ function init_inline_permissions($permissions, $excluded_groups = [])
 	$smcFunc['db_free_result']($request);
 
 	$request = $smcFunc['db_query']('', '
-		SELECT mg.id_group, mg.group_name, mg.min_posts, COALESCE(p.add_deny, -1) AS status, p.permission
+		SELECT mg.id_group, mg.group_name, COALESCE(p.add_deny, -1) AS status, p.permission
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}permissions AS p ON (p.id_group = mg.id_group AND p.permission IN ({array_string:permissions}))
 		WHERE mg.id_group NOT IN (1, 3)
 			AND mg.id_parent = {int:not_inherited}
-			AND mg.min_posts = {int:min_posts}
-		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
+		ORDER BY mg.group_name',
 		array(
 			'not_inherited' => -2,
-			'min_posts' => -1,
-			'newbie_group' => 4,
 			'permissions' => $permissions,
 		)
 	);
@@ -1671,7 +1639,6 @@ function init_inline_permissions($permissions, $excluded_groups = [])
 				$context[$permission][$row['id_group']] = array(
 					'id' => $row['id_group'],
 					'name' => $row['group_name'],
-					'is_postgroup' => $row['min_posts'] != -1,
 					'status' => 'off',
 				);
 
@@ -2215,11 +2182,9 @@ function ModifyPostModeration()
 		SELECT id_group, group_name, online_color, id_parent
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:admin_group}
-			AND min_posts = {int:min_posts}
 		ORDER BY id_parent ASC',
 		array(
 			'admin_group' => 1,
-			'min_posts' => -1,
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
