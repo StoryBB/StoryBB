@@ -33,7 +33,7 @@ class Mentions
 		global $smcFunc;
 
 		$request = $smcFunc['db_query']('', '
-			SELECT mem.id_member, mem.real_name, mem.email_address, mem.id_group, mem.id_post_group, mem.additional_groups,
+			SELECT mem.id_member, mem.real_name, mem.email_address, mem.id_group, mem.additional_groups,
 				mem.lngfile, ment.id_member AS id_mentioned_by, ment.real_name AS mentioned_by_name,
 				m.id_character AS dest_chr, chars.character_name AS dest_chr_name, chars.is_main AS dest_is_main,
 				m.mentioned_chr AS source_chr, chars_ment.character_name AS source_chr_name, chars_ment.is_main AS source_is_main,
@@ -62,7 +62,7 @@ class Mentions
 				'retired_chr' => $row['retired'],
 				'real_name' => $row['real_name'],
 				'email_address' => $row['email_address'],
-				'groups' => array_unique(array_merge(array($row['id_group'], $row['id_post_group']), explode(',', $row['additional_groups']))),
+				'groups' => array_unique(array_merge(array($row['id_group']), explode(',', $row['additional_groups']))),
 				'mentioned_by' => array(
 					'id' => $row['id_mentioned_by'],
 					'name' => $row['mentioned_by_name'],
