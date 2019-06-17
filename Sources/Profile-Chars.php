@@ -1068,13 +1068,11 @@ function profileLoadCharGroups()
 		SELECT group_name, id_group, hidden
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
-			AND min_posts = {int:min_posts}
 			AND is_character = 1' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
-		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
+		ORDER BY group_name',
 		array(
 			'moderator_group' => 3,
-			'min_posts' => -1,
 			'is_protected' => 1,
 			'newbie_group' => 4,
 		)
