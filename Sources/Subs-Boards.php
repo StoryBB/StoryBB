@@ -789,12 +789,10 @@ function modifyBoard($board_id, &$boardOptions)
 					FROM {db_prefix}membergroups
 					WHERE group_name IN ({array_string:moderator_group_list})
 						AND hidden = {int:visible}
-						AND min_posts = {int:negative_one}
 						AND id_group NOT IN ({array_int:invalid_groups})
 					LIMIT {int:limit}',
 					array(
 						'visible' => 0,
-						'negative_one' => -1,
 						'invalid_groups' => array(1, 3),
 						'moderator_group_list' => $moderator_groups,
 						'limit' => count($moderator_groups),
