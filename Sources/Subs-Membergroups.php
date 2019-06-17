@@ -213,9 +213,6 @@ function deleteMembergroups($groups)
 			)
 		);
 
-	// Recalculate the post groups, as they likely changed.
-	updateStats('postgroups');
-
 	// Make a note of the fact that the cache may be wrong.
 	$settings_update = array('settings_updated' => time());
 
@@ -293,8 +290,6 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 				'blank_string' => '',
 			)
 		);
-
-		updateStats('postgroups', $members);
 
 		// Log what just happened.
 		foreach ($members as $member)
@@ -423,9 +418,6 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 				'additional_groups' => implode(',', array_diff(explode(',', $additional_groups), $groups)),
 			)
 		);
-
-	// Their post groups may have changed now...
-	updateStats('postgroups', $members);
 
 	// Do the log.
 	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
@@ -724,9 +716,6 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 		trigger_error('addMembersToGroup(): Unknown type \'' . $type . '\'', E_USER_WARNING);
 
 	call_integration_hook('integrate_add_members_to_group', array($members, $group, &$group_names));
-
-	// Update their postgroup statistics.
-	updateStats('postgroups', $members);
 
 	// Log the data.
 	require_once($sourcedir . '/Logging.php');

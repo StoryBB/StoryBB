@@ -1367,10 +1367,6 @@ function AdminApprove()
 	// Update the member's stats. (but, we know the member didn't change their name.)
 	updateStats('member', false);
 
-	// If they haven't been deleted, update the post group statistics on them...
-	if (!in_array($_POST['todo'], array('delete', 'deleteemail', 'reject', 'rejectemail', 'remind')))
-		updateStats('postgroups', $members);
-
 	redirectexit('action=admin;area=viewmembers;sa=browse;type=' . $_REQUEST['type'] . ';sort=' . $_REQUEST['sort'] . ';filter=' . $current_filter . ';start=' . $_REQUEST['start']);
 }
 

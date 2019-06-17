@@ -34,10 +34,7 @@ use GuzzleHttp\Client;
  * 'subject' updates the log_search_subjects in the event of a topic being
  *  moved, removed or split.  parameter1 is the topicid, parameter2 is the new subject
  *
- * 'postgroups' case updates those members who match condition's
- *  post-based membergroups in the database (restricted by parameter1).
- *
- * @param string $type Stat type - can be 'member', 'message', 'topic', 'subject' or 'postgroups'
+ * @param string $type Stat type - can be 'member', 'message', 'topic', 'subject'
  * @param mixed $parameter1 A parameter for updating the stats
  * @param mixed $parameter2 A 2nd parameter for updating the stats
  */
@@ -180,61 +177,6 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 
 				updateSettings(array('totalTopics' => $row['total_topics'] === null ? 0 : $row['total_topics']));
 			}
-			break;
-
-		case 'postgroups':
-			// Parameter two is the updated columns: we should check to see if we base groups off any of these.
-			if ($parameter2 !== null && !in_array('posts', $parameter2))
-				return;
-
-			$postgroups = cache_get_data('updateStats:postgroups', 360);
-			if ($postgroups == null || $parameter1 == null)
-			{
-				// Fetch the postgroups!
-				$request = $smcFunc['db_query']('', '
-				SELECT id_group, min_posts
-				FROM {db_prefix}membergroups
-				WHERE min_posts != {int:min_posts}',
-					array(
-						'min_posts' => -1,
-					)
-				);
-				$postgroups = [];
-				while ($row = $smcFunc['db_fetch_assoc']($request))
-					$postgroups[$row['id_group']] = $row['min_posts'];
-				$smcFunc['db_free_result']($request);
-
-				// Sort them this way because if it's done with MySQL it causes a filesort :(.
-				arsort($postgroups);
-
-				cache_put_data('updateStats:postgroups', $postgroups, 360);
-			}
-
-			// Oh great, they've screwed their post groups.
-			if (empty($postgroups))
-				return;
-
-			// Set all membergroups from most posts to least posts.
-			$conditions = '';
-			$lastMin = 0;
-			foreach ($postgroups as $id => $min_posts)
-			{
-				$conditions .= '
-					WHEN posts >= ' . $min_posts . (!empty($lastMin) ? ' AND posts <= ' . $lastMin : '') . ' THEN ' . $id;
-				$lastMin = $min_posts;
-			}
-
-			// A big fat CASE WHEN... END is faster than a zillion UPDATE's ;).
-			$smcFunc['db_query']('', '
-			UPDATE {db_prefix}members
-			SET id_post_group = CASE ' . $conditions . '
-					ELSE 0
-				END' . ($parameter1 != null ? '
-			WHERE ' . (is_array($parameter1) ? 'id_member IN ({array_int:members})' : 'id_member = {int:members}') : ''),
-				array(
-					'members' => $parameter1,
-				)
-			);
 			break;
 
 		default:
@@ -408,8 +350,6 @@ function updateMemberData($members, $data)
 			$parameters
 		);
 	}
-
-	updateStats('postgroups', $members, array_keys($data));
 
 	// Clear any caching?
 	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && !empty($members))
