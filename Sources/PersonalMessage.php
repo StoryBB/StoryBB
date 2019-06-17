@@ -3602,13 +3602,11 @@ function ManageRules()
 		SELECT mg.id_group, mg.group_name, COALESCE(gm.id_member, 0) AS can_moderate, mg.hidden
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}group_moderators AS gm ON (gm.id_group = mg.id_group AND gm.id_member = {int:current_member})
-		WHERE mg.min_posts = {int:min_posts}
-			AND mg.id_group != {int:moderator_group}
+		WHERE mg.id_group != {int:moderator_group}
 			AND mg.hidden = {int:not_hidden}
 		ORDER BY mg.group_name',
 		array(
 			'current_member' => $user_info['id'],
-			'min_posts' => -1,
 			'moderator_group' => 3,
 			'not_hidden' => 0,
 		)
