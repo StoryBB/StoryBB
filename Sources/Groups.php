@@ -217,13 +217,12 @@ function MembergroupMembers()
 
 	// Load up the group details.
 	$request = $smcFunc['db_query']('', '
-		SELECT id_group AS id, group_name AS name, CASE WHEN min_posts = {int:min_posts} THEN 1 ELSE 0 END AS assignable, hidden, online_color,
-			is_character, icons, description, CASE WHEN min_posts != {int:min_posts} THEN 1 ELSE 0 END AS is_post_group, group_type
+		SELECT id_group AS id, group_name AS name, hidden, online_color,
+			is_character, icons, description, group_type
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:id_group}
 		LIMIT 1',
 		[
-			'min_posts' => -1,
 			'id_group' => $_REQUEST['group'],
 		]
 	);
@@ -234,6 +233,7 @@ function MembergroupMembers()
 	$smcFunc['db_free_result']($request);
 
 	// Fix the membergroup icons.
+	$context['group']['assignable'] = 1;
 	$context['group']['icons'] = explode('#', $context['group']['icons']);
 	$context['group']['icons'] = !empty($context['group']['icons'][0]) && !empty($context['group']['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' . $context['group']['icons'][1] . '" alt="*">', $context['group']['icons'][0]) : '';
 	$context['group']['can_moderate'] = allowedTo('manage_membergroups') && (allowedTo('admin_forum') || $context['group']['group_type'] != 1);
@@ -375,9 +375,9 @@ function MembergroupMembers()
 	{
 		// The where on the query is interesting. Non-moderators should only see people who are in this group as primary.
 		if ($context['group']['can_moderate'])
-			$where = $context['group']['is_post_group'] ? 'id_post_group = {int:group}' : 'id_group = {int:group} OR FIND_IN_SET({int:group}, additional_groups) != 0';
+			$where = 'id_group = {int:group} OR FIND_IN_SET({int:group}, additional_groups) != 0';
 		else
-			$where = $context['group']['is_post_group'] ? 'id_post_group = {int:group}' : 'id_group = {int:group}';
+			$where = 'id_group = {int:group}';
 	}
 
 	// Count members of the group.
