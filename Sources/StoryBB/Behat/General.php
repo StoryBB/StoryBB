@@ -496,7 +496,24 @@ class General extends RawMinkContext implements Context
 			$group_type = 0;
 			if (isset($group_to_create['group type']))
 			{
-				// @todo Put the group types in here.
+				switch($group_to_create['group type'])
+				{
+					case 'private':
+						$group_type = 0;
+						break;
+					case 'protected':
+						$group_type = 1;
+						break;
+					case 'requestable':
+						$group_type = 2;
+						break;
+					case 'joinable':
+					case 'free':
+						$group_type = 3;
+						break;
+					default:
+						throw new ExpectationException('Invalid group type "' . $group_to_create['group type'] . '" on line ' . $line, $this->getSession());
+				}
 			}
 
 			// Inserting the new group.
