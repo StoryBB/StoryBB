@@ -1965,7 +1965,7 @@ img.icon.char_avatar {
 	background-position: -5px -31px;
 }
 
-.main_icons.general::before, .main_icons.boards::before, .main_icons.topics_views::before {
+.general.main_icons::before, .boards.main_icons::before, .topics_views.main_icons::before, .user_stats.main_icons::before {
 	background-position: -31px -31px;
 }
 
@@ -2181,7 +2181,7 @@ img.icon.char_avatar {
 	background-position: -83px -161px;
 }
 
-.main_icons.permissions::before, .main_icons.signup::before {
+.permissions.main_icons::before, .signup.main_icons::before, .login.main_icons::before {
 	background-position: -109px -161px;
 }
 
@@ -2189,7 +2189,7 @@ img.icon.char_avatar {
 	background-position: -135px -161px;
 }
 
-.main_icons.packages::before {
+.packages.main_icons::before, .attachment.main_icons::before {
 	background-position: -161px -161px;
 }
 
@@ -2231,7 +2231,7 @@ img.icon.char_avatar {
 	background-position: -135px -187px;
 }
 
-.main_icons.frenemy::before {
+.frenemy.main_icons::before, .settings.main_icons::before {
 	background-position: -161px -187px;
 }
 
@@ -4389,10 +4389,6 @@ span.member.hidden {
 
 /* Icons (converted from img to css) */
 /* Stay here till I find a better place for you guys */
-h3.profile_hd {
-	background: url(../images/icons/profile_hd.png) 15px no-repeat;
-	padding: 8px 0 8px 50px;
-}
 
 .xx {
 	background: url(../images/post/xx.png) 2px no-repeat;

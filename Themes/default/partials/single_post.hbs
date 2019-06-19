@@ -179,7 +179,7 @@
 			{{/if}}
 
 					<div class="attachments_bot">
-						<a href="{{href}}"><img src="{{../../settings.images_url}}/icons/clip.png" class="centericon" alt="*">&nbsp;{{name}}</a> 
+						<a href="{{href}}" class="main_icons attachment">{{name}}</a> 
 						{{#if (and ../../context.can_approve (not is_approved))}}
 						[<a href="{{../../scripturl}}?action=attachapprove;sa=approve;aid={{id}};{{session_url}}">{{../../txt.approve}}</a>]&nbsp;|&nbsp;[<a href="{{../../scripturl}}?action=attachapprove;sa=reject;aid={{id}};{{session_url}}">{{{../../txt.delete}}}</a>] 
 						{{/if}}

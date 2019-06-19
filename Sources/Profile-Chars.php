@@ -743,7 +743,7 @@ function char_posts()
 	$context[$context['profile_menu_name']]['tab_data'] = array(
 		'title' => $txt['showPosts'],
 		'description' => $txt['showPosts_help_char'],
-		'icon' => 'profile_hd.png',
+		'icon_class' => 'members main_icons',
 		'tabs' => array(
 			'posts' => array(
 			),
@@ -1165,7 +1165,7 @@ function char_stats()
 	// Menu tab
 	$context[$context['profile_menu_name']]['tab_data'] = array(
 		'title' => $txt['statPanel_generalStats'] . ' - ' . $context['character']['character_name'],
-		'icon' => 'stats_info_hd.png'
+		'icon_class' => 'user_stats main_icons'
 	);
 
 	$context['linktree'][] = array(
