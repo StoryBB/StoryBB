@@ -54,18 +54,6 @@ function AdminMain()
 					'permission' => ['admin_forum'],
 					'select' => 'index'
 				],
-				'news' => [
-					'label' => $txt['news_title'],
-					'file' => 'ManageNews.php',
-					'function' => 'ManageNews',
-					'icon' => 'news',
-					'permission' => ['edit_news', 'send_mail', 'admin_forum'],
-					'subsections' => [
-						'editnews' => [$txt['admin_edit_news'], 'edit_news'],
-						'mailingmembers' => [$txt['admin_newsletters'], 'send_mail'],
-						'settings' => [$txt['settings'], 'admin_forum'],
-					],
-				],
 				'featuresettings' => [
 					'label' => $txt['modSettings_title'],
 					'file' => 'ManageSettings.php',
@@ -77,6 +65,18 @@ function AdminMain()
 						'sig' => [$txt['signature_settings_short']],
 						'profile' => [$txt['custom_profile_shorttitle']],
 						'alerts' => [$txt['notifications']],
+					],
+				],
+				'news' => [
+					'label' => $txt['news_title'],
+					'file' => 'ManageNews.php',
+					'function' => 'ManageNews',
+					'icon' => 'news',
+					'permission' => ['edit_news', 'send_mail', 'admin_forum'],
+					'subsections' => [
+						'editnews' => [$txt['admin_edit_news'], 'edit_news'],
+						'mailingmembers' => [$txt['admin_newsletters'], 'send_mail'],
+						'settings' => [$txt['settings'], 'admin_forum'],
 					],
 				],
 				'languages' => [
