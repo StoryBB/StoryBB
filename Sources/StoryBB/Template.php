@@ -321,7 +321,7 @@ class Template
 				$template = self::load_partial($layer . '_below', false);
 				if ($template)
 				{
-					$phpStr = self::compile($template, [], 'partial-' . $layer . 'below-' . self::get_theme_id('partials', $layer . 'below'));
+					$phpStr = self::compile($template, [], 'partial-' . $layer . '_below-' . self::get_theme_id('partials', $layer . 'below'));
 					$template_below .= new \LightnCandy\SafeString(self::prepare($phpStr, [
 						'context' => &$context,
 						'modSettings' => $modSettings,

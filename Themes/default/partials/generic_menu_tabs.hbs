@@ -53,19 +53,3 @@
 		<p class="information">{{{context.current_menu_context.tab_data.description}}}</p>
 	{{/if}}
 {{/if}}
-
-{{#if context.tabs}}
-		<div id="adm_submenus">
-			<ul class="dropmenu">
-
-	{{#each context.current_menu_context.tab_data.tabs}}
-		{{#unless this.disabled}}
-				<li>
-					<a{{#if this.is_selected}} class="active"{{/if}} href="{{#if this.url}}{{{this.url}}}{{else}}{{../context.current_menu_context.base_url}};area={{../context.current_menu_context.current_area}};sa={{@key}}{{/if}}{{{../context.current_menu_context.extra_parameters}}}{{#if this.add_params}}{{{this.add_params}}}{{/if}}">{{{this.label}}}</a>
-				</li>
-		{{/unless}}
-	{{/each}}
-
-			</ul>
-		</div>
-{{/if}}
