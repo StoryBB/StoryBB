@@ -38,8 +38,6 @@ $txt['cachedir'] = 'Cache Directory';
 $txt['admin_news'] = 'Enable News';
 $txt['admin_guest_post'] = 'Enable guest posting';
 $txt['admin_manage_members'] = 'Members';
-$txt['admin_main'] = 'Main';
-$txt['admin_config'] = 'Configuration';
 $txt['admin_version_check'] = 'Detailed version check';
 $txt['admin_storybbfile'] = 'StoryBB File';
 $txt['admin_storybbpackage'] = 'StoryBB Package';
@@ -284,7 +282,6 @@ $txt['member_characters_in_these_groups'] = 'Member has characters with these me
 $txt['membergroups'] = 'Membergroups';
 $txt['confirm_delete_members'] = 'Are you sure you want to delete the selected members?';
 
-$txt['support_title'] = 'Support';
 $txt['support_title'] = 'Support Information';
 $txt['support_versions_current'] = 'Current StoryBB version';
 $txt['support_versions_forum'] = 'Forum version';
