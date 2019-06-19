@@ -325,7 +325,7 @@ function list_getModLogEntryCount($query_string = '', $query_params = [], $log_t
 		SELECT COUNT(*)
 		FROM {db_prefix}log_actions AS lm
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lm.id_member)
-			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:reg_group_id} THEN mem.id_post_group ELSE mem.id_group END)
+			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = lm.id_board)
 			LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = lm.id_topic)
 		WHERE id_log = {int:log_type}
@@ -333,7 +333,6 @@ function list_getModLogEntryCount($query_string = '', $query_params = [], $log_t
 			. (!empty($query_string) ? '
 				AND ' . $query_string : ''),
 		array_merge($query_params, array(
-			'reg_group_id' => 0,
 			'log_type' => $log_type,
 			'modlog_query' => $modlog_query,
 		))
@@ -373,7 +372,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			mem.real_name, mg.group_name
 		FROM {db_prefix}log_actions AS lm
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lm.id_member)
-			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:reg_group_id} THEN mem.id_post_group ELSE mem.id_group END)
+			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = lm.id_board)
 			LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = lm.id_topic)
 			WHERE id_log = {int:log_type}
@@ -383,7 +382,6 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:max}',
 		array_merge($query_params, array(
-			'reg_group_id' => 0,
 			'log_type' => $log_type,
 			'modlog_query' => $modlog_query,
 			'sort' => $sort,

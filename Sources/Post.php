@@ -2126,7 +2126,7 @@ function AnnouncementSelectMembergroup()
 	$request = $smcFunc['db_query']('', '
 		SELECT mg.id_group, COUNT(mem.id_member) AS num_members
 		FROM {db_prefix}membergroups AS mg
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_group = mg.id_group OR FIND_IN_SET(mg.id_group, mem.additional_groups) != 0 OR mg.id_group = mem.id_post_group)
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_group = mg.id_group OR FIND_IN_SET(mg.id_group, mem.additional_groups) != 0)
 		WHERE mg.id_group IN ({array_int:group_list})
 		GROUP BY mg.id_group',
 		array(
@@ -2232,7 +2232,7 @@ function AnnouncementSend()
 	$request = $smcFunc['db_query']('', '
 		SELECT mem.id_member, mem.email_address, mem.lngfile
 		FROM {db_prefix}members AS mem
-		WHERE (mem.id_group IN ({array_int:group_list}) OR mem.id_post_group IN ({array_int:group_list}) OR FIND_IN_SET({raw:additional_group_list}, mem.additional_groups) != 0)
+		WHERE (mem.id_group IN ({array_int:group_list}) OR FIND_IN_SET({raw:additional_group_list}, mem.additional_groups) != 0)
 			AND mem.is_activated = {int:is_activated}
 			AND mem.id_member > {int:start}
 		ORDER BY mem.id_member

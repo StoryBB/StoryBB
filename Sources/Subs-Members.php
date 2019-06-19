@@ -656,7 +656,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'validation_code' => $validation_code,
 		'real_name' => $regOptions['username'],
 		'id_theme' => 0,
-		'id_post_group' => 4,
 		'lngfile' => '',
 		'buddy_list' => '',
 		'pm_ignore_list' => '',
@@ -690,19 +689,22 @@ function registerMember(&$regOptions, $return_errors = false)
 
 		// Check if this group is assignable.
 		$unassignableGroups = array(-1, 3);
-		$request = $smcFunc['db_query']('', '
-			SELECT id_group
-			FROM {db_prefix}membergroups
-			WHERE min_posts != {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
-				OR group_type = {int:is_protected}'),
-			array(
-				'min_posts' => -1,
-				'is_protected' => 1,
-			)
-		);
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$unassignableGroups[] = $row['id_group'];
-		$smcFunc['db_free_result']($request);
+		if (!allowedTo('admin_forum'))
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT id_group
+				FROM {db_prefix}membergroups
+				WHERE group_type = {int:is_protected}',
+				array(
+					'is_protected' => 1,
+				)
+			);
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+			{
+				$unassignableGroups[] = $row['id_group'];
+			}
+			$smcFunc['db_free_result']($request);
+		}
 
 		if (in_array($regOptions['register_vars']['id_group'], $unassignableGroups))
 			$regOptions['register_vars']['id_group'] = 0;
@@ -723,7 +725,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	$knownInts = array(
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'show_online',
-		'id_theme', 'is_activated', 'id_msg_last_visit', 'id_post_group', 'total_time_logged_in', 'warning',
+		'id_theme', 'is_activated', 'id_msg_last_visit', 'total_time_logged_in', 'warning',
 		'policy_acceptance',
 	);
 	$knownFloats = array(
@@ -1203,8 +1205,8 @@ function membersAllowedTo($permission, $board_id = null)
 		FROM {db_prefix}members AS mem' . ($include_moderators || $exclude_moderators ? '
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_member = mem.id_member AND mods.id_board = {int:board_id})
 			LEFT JOIN {db_prefix}moderator_groups AS modgs ON (modgs.id_group IN ({array_int:all_member_groups}))' : '') . '
-		WHERE (' . ($include_moderators ? 'mods.id_member IS NOT NULL OR modgs.id_group IS NOT NULL OR ' : '') . 'mem.id_group IN ({array_int:member_groups_allowed}) OR FIND_IN_SET({raw:member_group_allowed_implode}, mem.additional_groups) != 0 OR mem.id_post_group IN ({array_int:member_groups_allowed}))' . (empty($member_groups['denied']) ? '' : '
-			AND NOT (' . ($exclude_moderators ? 'mods.id_member IS NOT NULL OR modgs.id_group IS NOT NULL OR ' : '') . 'mem.id_group IN ({array_int:member_groups_denied}) OR FIND_IN_SET({raw:member_group_denied_implode}, mem.additional_groups) != 0 OR mem.id_post_group IN ({array_int:member_groups_denied}))'),
+		WHERE (' . ($include_moderators ? 'mods.id_member IS NOT NULL OR modgs.id_group IS NOT NULL OR ' : '') . 'mem.id_group IN ({array_int:member_groups_allowed}) OR FIND_IN_SET({raw:member_group_allowed_implode}, mem.additional_groups) != 0)' . (empty($member_groups['denied']) ? '' : '
+			AND NOT (' . ($exclude_moderators ? 'mods.id_member IS NOT NULL OR modgs.id_group IS NOT NULL OR ' : '') . 'mem.id_group IN ({array_int:member_groups_denied}) OR FIND_IN_SET({raw:member_group_denied_implode}, mem.additional_groups) != 0)'),
 		array(
 			'member_groups_allowed' => $member_groups['allowed'],
 			'member_groups_denied' => $member_groups['denied'],

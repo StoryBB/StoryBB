@@ -446,7 +446,7 @@ tr[id^="operation_"] .table_grid {
 #manage_boards dl textarea, #manage_boards dl table{
 	margin: 0 0 8px 0;
 }
-#manage_boards span.post_group, #manage_boards span.regular_members {
+#manage_boards span.regular_members {
 	border-bottom: 1px dotted #000;
 	cursor: help;
 }

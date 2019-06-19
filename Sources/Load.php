@@ -539,12 +539,12 @@ function loadUserSettings()
 
 		if (empty($user_settings['additional_groups']))
 			$user_info = [
-				'groups' => [$user_settings['id_group'], $user_settings['id_post_group']]
+				'groups' => [$user_settings['id_group']]
 			];
 		else
 			$user_info = [
 				'groups' => array_merge(
-					[$user_settings['id_group'], $user_settings['id_post_group']],
+					[$user_settings['id_group']],
 					explode(',', $user_settings['additional_groups'])
 				)
 			];
@@ -1231,14 +1231,12 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			COALESCE(lo.log_time, 0) AS is_online, COALESCE(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
 			mem.signature, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.date_registered, mem.website_title, mem.website_url,
-			mem.birthdate, mem.birthday_visibility, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.id_post_group, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
+			mem.birthdate, mem.birthday_visibility, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
 			mg.online_color AS member_group_color, COALESCE(mg.group_name, {string:blank_string}) AS member_group,
-			pg.online_color AS post_group_color, COALESCE(pg.group_name, {string:blank_string}) AS post_group,
 			mem.is_activated, mem.warning,
-			CASE WHEN mem.id_group = 0 OR mg.icons = {string:blank_string} THEN pg.icons ELSE mg.icons END AS icons';
+			CASE WHEN mem.id_group = 0 OR mg.icons = {empty} THEN {empty} ELSE mg.icons END AS icons';
 	$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
-			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
 			LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
 			LEFT JOIN {db_prefix}attachments AS a ON (a.id_character = chars.id_character AND a.attachment_type = 1)
@@ -1603,8 +1601,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'group' => $profile['member_group'],
 			'group_color' => $profile['member_group_color'],
 			'group_id' => $profile['id_group'],
-			'post_group' => $profile['post_group'],
-			'post_group_color' => $profile['post_group_color'],
 			'group_icons' => str_repeat('<img src="' . str_replace('$language', $context['user']['language'], isset($profile['icons'][1]) ? $group_icon_url : '') . '" alt="*">', empty($profile['icons'][0]) || empty($profile['icons'][1]) ? 0 : $profile['icons'][0]),
 			'warning' => $profile['warning'],
 			'warning_status' => !empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($modSettings['warning_watch']) && $modSettings['warning_watch'] <= $profile['warning'] ? 'watch' : (''))),

@@ -20,14 +20,12 @@ $txt['membergroups_modify'] = 'Modify';
 $txt['membergroups_add_group'] = 'Add group';
 $txt['membergroups_regular'] = 'Account groups';
 $txt['membergroups_character'] = 'Character groups';
-$txt['membergroups_post'] = 'Post count based groups';
 $txt['membergroups_guests_na'] = 'n/a';
 $txt['no_character_groups'] = 'There are no character groups configured.';
 
 $txt['membergroups_group_name'] = 'Membergroup name';
 $txt['membergroups_new_board'] = 'Visible Boards';
 $txt['membergroups_new_board_desc'] = 'Boards the membergroup can see';
-$txt['membergroups_new_board_post_groups'] = '<em>Note: normally, post groups don\'t need access because the group the member is in will give them access.</em>';
 $txt['membergroups_new_as_inherit'] = 'inherit from';
 $txt['membergroups_new_as_type'] = 'by type';
 $txt['membergroups_new_as_copy'] = 'based off of';
@@ -60,8 +58,6 @@ $txt['membergroups_group_type_private'] = 'Private <span class="smalltext">(Memb
 $txt['membergroups_group_type_protected'] = 'Protected <span class="smalltext">(Only administrators can manage and assign)</span>';
 $txt['membergroups_group_type_request'] = 'Requestable <span class="smalltext">(User may request membership)</span>';
 $txt['membergroups_group_type_free'] = 'Free <span class="smalltext">(User may leave and join group at will)</span>';
-$txt['membergroups_group_type_post'] = 'Post Based <span class="smalltext">(Membership based on post count)</span>';
-$txt['membergroups_min_posts'] = 'Required posts';
 $txt['membergroups_online_color'] = 'Color in online list';
 
 $txt['membergroup_no_badge'] = '(no badge)';
@@ -98,7 +94,6 @@ $txt['membergroups_members_description'] = 'Description';
 // Use javascript escaping in the below.
 $txt['membergroups_members_deadmin_confirm'] = 'Are you sure you wish to remove yourself from the Administration group?';
 
-$txt['membergroups_postgroups'] = 'Post groups';
 $txt['membergroups_select_permission_type'] = 'Select permission profile';
 $txt['membergroups_select_visible_boards'] = 'Show boards';
 $txt['membergroups_members_top'] = 'Members';

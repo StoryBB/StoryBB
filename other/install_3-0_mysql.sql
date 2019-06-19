@@ -361,15 +361,15 @@ VALUES ('cust_skype', 'Skype', 'Your Skype name', 'text', 32, '', 1, 'nohtml', 0
 #
 
 INSERT INTO {$db_prefix}membergroups
-  (id_group, group_name, description, online_color, min_posts, icons, group_type)
-VALUES (1, '{$default_administrator_group}', '', '#FF0000', -1, '5#iconadmin.png', 1),
-  (2, '{$default_global_moderator_group}', '', '#0000FF', -1, '5#icongmod.png', 0),
-  (3, '{$default_moderator_group}', '', '', -1, '5#iconmod.png', 0),
-  (4, '{$default_newbie_group}', '', '', 0, '1#icon.png', 0),
-  (5, '{$default_junior_group}', '', '', 50, '2#icon.png', 0),
-  (6, '{$default_full_group}', '', '', 100, '3#icon.png', 0),
-  (7, '{$default_senior_group}', '', '', 250, '4#icon.png', 0),
-  (8, '{$default_hero_group}', '', '', 500, '5#icon.png', 0);
+  (id_group, group_name, description, online_color, icons, group_type)
+VALUES (1, '{$default_administrator_group}', '', '#FF0000', '5#iconadmin.png', 1),
+  (2, '{$default_global_moderator_group}', '', '#0000FF', '5#icongmod.png', 0),
+  (3, '{$default_moderator_group}', '', '', '5#iconmod.png', 0),
+  (4, '{$default_newbie_group}', '', '', '1#icon.png', 0),
+  (5, '{$default_junior_group}', '', '', '2#icon.png', 0),
+  (6, '{$default_full_group}', '', '', '3#icon.png', 0),
+  (7, '{$default_senior_group}', '', '', '4#icon.png', 0),
+  (8, '{$default_hero_group}', '', '', '5#icon.png', 0);
 # --------------------------------------------------------
 
 #

@@ -65,7 +65,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 			mg.hidden, mg.group_type, mg.id_parent
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lo.id_member)
-			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:reg_mem_group} THEN mem.id_post_group ELSE mem.id_group END)
+			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
 			LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
 			LEFT JOIN {db_prefix}membergroups AS cg ON (cg.id_group = chars.main_char_group)',
 		array(

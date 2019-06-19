@@ -55,10 +55,6 @@
 {{/if}}
 
 {{#if (not member.is_guest)}}
-	{{#if (and member.post_group (or (not ../modSettings.hide_post_group) (not member.group)))}}
-				<li class="postgroup">{{member.post_group}}</li>
-	{{/if}}
-
 	{{#if (not ../context.disabled_fields.posts)}}
 				<li class="postcount">{{../txt.member_postcount}}: {{member.posts}}</li>
 	{{/if}}

@@ -122,11 +122,8 @@ class General extends RawMinkContext implements Context
 					$possible_groups = [];
 					$request = $smcFunc['db_query']('', '
                         SELECT id_group, group_name
-                        FROM {db_prefix}membergroups
-                        WHERE min_posts = {int:min_posts}',
-						[
-							'min_posts' => -1,
-						]
+                        FROM {db_prefix}membergroups',
+						[]
 					);
 					while ($row = $smcFunc['db_fetch_assoc']($request))
 					{
@@ -497,26 +494,37 @@ class General extends RawMinkContext implements Context
 			}
 
 			$group_type = 0;
-			$postcount = -1;
-			if (isset($group_to_create['group type']) && $group_to_create['group type'] == 'postcount')
+			if (isset($group_to_create['group type']))
 			{
-				if (!isset($group_to_create['postcount']) || $group_to_create['postcount'] < 0)
+				switch($group_to_create['group type'])
 				{
-					throw new ExpectationException('Invalid post count for group "' . $group_to_create['group_name'], $this->getSession());
+					case 'private':
+						$group_type = 0;
+						break;
+					case 'protected':
+						$group_type = 1;
+						break;
+					case 'requestable':
+						$group_type = 2;
+						break;
+					case 'joinable':
+					case 'free':
+						$group_type = 3;
+						break;
+					default:
+						throw new ExpectationException('Invalid group type "' . $group_to_create['group type'] . '" on line ' . $line, $this->getSession());
 				}
-				$postcount = (int) $group_to_create['postcount'];
-				$group_type = 3;
 			}
 
 			// Inserting the new group.
 			$id_group = $smcFunc['db_insert']('',
 				'{db_prefix}membergroups',
 				[
-					'description' => 'string', 'group_name' => 'string-80', 'min_posts' => 'int',
+					'description' => 'string', 'group_name' => 'string-80',
 					'icons' => 'string', 'online_color' => 'string', 'group_type' => 'int', 'is_character' => 'int',
 				],
 				[
-					'', $group_to_create['group_name'], $postcount,
+					'', $group_to_create['group_name'],
 					'1#icon.png', '', $group_type, $group_to_create['group level'] == 'character' ? 1 : 0,
 				],
 				['id_group'],

@@ -213,9 +213,6 @@ function deleteMembergroups($groups)
 			)
 		);
 
-	// Recalculate the post groups, as they likely changed.
-	updateStats('postgroups');
-
 	// Make a note of the fact that the cache may be wrong.
 	$settings_update = array('settings_updated' => time());
 
@@ -294,8 +291,6 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 			)
 		);
 
-		updateStats('postgroups', $members);
-
 		// Log what just happened.
 		foreach ($members as $member)
 			logAction('removed_all_groups', array('member' => $member), 'admin');
@@ -316,7 +311,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	// Fetch a list of groups members cannot be assigned to explicitly, and the group names of the ones we want.
 	$implicitGroups = array(-1, 0, 3);
 	$request = $smcFunc['db_query']('', '
-		SELECT id_group, group_name, min_posts
+		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group IN ({array_int:group_list})',
 		array(
@@ -326,10 +321,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	$group_names = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		if ($row['min_posts'] != -1)
-			$implicitGroups[] = $row['id_group'];
-		else
-			$group_names[$row['id_group']] = $row['group_name'];
+		$group_names[$row['id_group']] = $row['group_name'];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -424,9 +416,6 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 			)
 		);
 
-	// Their post groups may have changed now...
-	updateStats('postgroups', $members);
-
 	// Do the log.
 	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
 	{
@@ -487,7 +476,7 @@ function removeCharactersFromGroups($characters, $groups)
 		return false;
 
 	$request = $smcFunc['db_query']('', '
-		SELECT id_group, group_name, min_posts
+		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group IN ({array_int:current_group})',
 		[
@@ -625,7 +614,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	// Some groups just don't like explicitly having members.
 	$implicitGroups = array(-1, 0, 3);
 	$request = $smcFunc['db_query']('', '
-		SELECT id_group, group_name, min_posts
+		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:current_group}',
 		array(
@@ -635,10 +624,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	$group_names = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		if ($row['min_posts'] != -1)
-			$implicitGroups[] = $row['id_group'];
-		else
-			$group_names[$row['id_group']] = $row['group_name'];
+		$group_names[$row['id_group']] = $row['group_name'];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -725,9 +711,6 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 
 	call_integration_hook('integrate_add_members_to_group', array($members, $group, &$group_names));
 
-	// Update their postgroup statistics.
-	updateStats('postgroups', $members);
-
 	// Log the data.
 	require_once($sourcedir . '/Logging.php');
 	foreach ($members as $member)
@@ -810,7 +793,7 @@ function addCharactersToGroup($characters, $group)
 	$smcFunc['db_free_result']($request);
 
 	$request = $smcFunc['db_query']('', '
-		SELECT id_group, group_name, min_posts
+		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group = {int:current_group}',
 		[
@@ -883,12 +866,10 @@ function cache_getMembergroupList()
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups
-		WHERE min_posts = {int:min_posts}
-			AND hidden = {int:not_hidden}
+		WHERE hidden = {int:not_hidden}
 			AND id_group != {int:mod_group}
 		ORDER BY group_name',
 		array(
-			'min_posts' => -1,
 			'not_hidden' => 0,
 			'mod_group' => 3,
 		)
@@ -919,18 +900,16 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 	global $scripturl, $context, $settings, $smcFunc, $user_info, $txt;
 
 	$request = $smcFunc['db_query']('substring_membergroups', '
-		SELECT mg.id_group, mg.group_name, mg.min_posts, mg.description, mg.group_type, mg.online_color, mg.hidden,
+		SELECT mg.id_group, mg.group_name, mg.description, mg.group_type, mg.online_color, mg.hidden,
 			mg.icons, COALESCE(gm.id_member, 0) AS can_moderate, 0 AS num_members, is_character
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}group_moderators AS gm ON (gm.id_group = mg.id_group AND gm.id_member = {int:current_member})
-		WHERE mg.min_posts {raw:min_posts}
-			AND is_character = {int:is_character}' . (allowedTo('admin_forum') ? '' : '
+		WHERE is_character = {int:is_character}' . (allowedTo('admin_forum') ? '' : '
 			AND mg.id_group != {int:mod_group}') . '
 		ORDER BY {raw:sort}',
 		array(
 			'current_member' => $user_info['id'],
 			'is_character' => ($membergroup_type === 'character' ? 1 : 0),
-			'min_posts' => ($membergroup_type === 'post_count' ? '!= ' : '= ') . '-1',
 			'mod_group' => 3,
 			'sort' => $sort,
 		)
@@ -952,7 +931,6 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			'id_group' => $row['id_group'],
 			'group_name' => $row['group_name'],
 			'is_character' => $row['is_character'],
-			'min_posts' => $row['min_posts'],
 			'desc' => parse_bbc($row['description'], false, '', $context['description_allowed_tags']),
 			'online_color' => $row['online_color'],
 			'type' => $row['group_type'],
@@ -969,100 +947,78 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 	// If we found any membergroups, get the amount of members in them.
 	if (!empty($group_ids))
 	{
-		if ($membergroup_type === 'post_count')
+		$query = $smcFunc['db_query']('', '
+			SELECT id_group, COUNT(*) AS num_members
+			FROM {db_prefix}members
+			WHERE id_group IN ({array_int:group_list})
+			GROUP BY id_group',
+			array(
+				'group_list' => $group_ids,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($query))
+		{
+			if (isset($groups[$row['id_group']]))
+				$groups[$row['id_group']]['num_members'] += $row['num_members'];
+		}
+		$smcFunc['db_free_result']($query);
+
+		// And collect all the characters too.
+		$query = $smcFunc['db_query']('', '
+			SELECT main_char_group, COUNT(*) AS num_members
+			FROM {db_prefix}characters
+			WHERE main_char_group IN ({array_int:group_list})
+			GROUP BY main_char_group',
+			array(
+				'group_list' => $group_ids,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($query))
+		{
+			if (isset($groups[$row['main_char_group']]))
+				$groups[$row['main_char_group']]['num_members'] += $row['num_members'];
+		}
+		$smcFunc['db_free_result']($query);
+
+		if ($context['can_moderate'])
 		{
 			$query = $smcFunc['db_query']('', '
-				SELECT id_post_group AS id_group, COUNT(*) AS num_members
-				FROM {db_prefix}members
-				WHERE id_post_group IN ({array_int:group_list})
-				GROUP BY id_post_group',
+				SELECT mg.id_group, COUNT(*) AS num_members
+				FROM {db_prefix}membergroups AS mg
+					INNER JOIN {db_prefix}characters AS chars ON (chars.char_groups != {string:blank_string}
+						AND chars.main_char_group != mg.id_group
+						AND FIND_IN_SET(mg.id_group, chars.char_groups) != 0)
+				WHERE mg.id_group IN ({array_int:group_list})
+				GROUP BY mg.id_group',
 				array(
 					'group_list' => $group_ids,
+					'blank_string' => '',
 				)
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($query))
-			{
-				if (isset($groups[$row['id_group']]))
-					$groups[$row['id_group']]['num_members'] += $row['num_members'];
-			}
+				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			$smcFunc['db_free_result']($query);
 		}
 
-		else
+		// Only do additional groups if we can moderate...
+		if ($context['can_moderate'])
 		{
 			$query = $smcFunc['db_query']('', '
-				SELECT id_group, COUNT(*) AS num_members
-				FROM {db_prefix}members
-				WHERE id_group IN ({array_int:group_list})
-				GROUP BY id_group',
+				SELECT mg.id_group, COUNT(*) AS num_members
+				FROM {db_prefix}membergroups AS mg
+					INNER JOIN {db_prefix}members AS mem ON (mem.additional_groups != {string:blank_string}
+						AND mem.id_group != mg.id_group
+						AND FIND_IN_SET(mg.id_group, mem.additional_groups) != 0)
+				WHERE mg.id_group IN ({array_int:group_list})
+				GROUP BY mg.id_group',
 				array(
 					'group_list' => $group_ids,
+					'blank_string' => '',
 				)
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($query))
-			{
-				if (isset($groups[$row['id_group']]))
-					$groups[$row['id_group']]['num_members'] += $row['num_members'];
-			}
+				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			$smcFunc['db_free_result']($query);
-
-			// And collect all the characters too.
-			$query = $smcFunc['db_query']('', '
-				SELECT main_char_group, COUNT(*) AS num_members
-				FROM {db_prefix}characters
-				WHERE main_char_group IN ({array_int:group_list})
-				GROUP BY main_char_group',
-				array(
-					'group_list' => $group_ids,
-				)
-			);
-			while ($row = $smcFunc['db_fetch_assoc']($query))
-			{
-				if (isset($groups[$row['main_char_group']]))
-					$groups[$row['main_char_group']]['num_members'] += $row['num_members'];
-			}
-			$smcFunc['db_free_result']($query);
-
-			if ($context['can_moderate'])
-			{
-				$query = $smcFunc['db_query']('', '
-					SELECT mg.id_group, COUNT(*) AS num_members
-					FROM {db_prefix}membergroups AS mg
-						INNER JOIN {db_prefix}characters AS chars ON (chars.char_groups != {string:blank_string}
-							AND chars.main_char_group != mg.id_group
-							AND FIND_IN_SET(mg.id_group, chars.char_groups) != 0)
-					WHERE mg.id_group IN ({array_int:group_list})
-					GROUP BY mg.id_group',
-					array(
-						'group_list' => $group_ids,
-						'blank_string' => '',
-					)
-				);
-				while ($row = $smcFunc['db_fetch_assoc']($query))
-					$groups[$row['id_group']]['num_members'] += $row['num_members'];
-				$smcFunc['db_free_result']($query);
-			}
-
-			// Only do additional groups if we can moderate...
-			if ($context['can_moderate'])
-			{
-				$query = $smcFunc['db_query']('', '
-					SELECT mg.id_group, COUNT(*) AS num_members
-					FROM {db_prefix}membergroups AS mg
-						INNER JOIN {db_prefix}members AS mem ON (mem.additional_groups != {string:blank_string}
-							AND mem.id_group != mg.id_group
-							AND FIND_IN_SET(mg.id_group, mem.additional_groups) != 0)
-					WHERE mg.id_group IN ({array_int:group_list})
-					GROUP BY mg.id_group',
-					array(
-						'group_list' => $group_ids,
-						'blank_string' => '',
-					)
-				);
-				while ($row = $smcFunc['db_fetch_assoc']($query))
-					$groups[$row['id_group']]['num_members'] += $row['num_members'];
-				$smcFunc['db_free_result']($query);
-			}
 		}
 
 		$query = $smcFunc['db_query']('', '

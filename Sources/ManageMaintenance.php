@@ -1322,7 +1322,7 @@ function MaintainPurgeInactiveMembers()
 
 		// Need to get *all* groups then work out which (if any) we avoid.
 		$request = $smcFunc['db_query']('', '
-			SELECT id_group, group_name, min_posts
+			SELECT id_group, group_name
 			FROM {db_prefix}membergroups',
 			array(
 			)
@@ -1332,17 +1332,8 @@ function MaintainPurgeInactiveMembers()
 			// Avoid this one?
 			if (!in_array($row['id_group'], $groups))
 			{
-				// Post group?
-				if ($row['min_posts'] != -1)
-				{
-					$where .= ' AND mem.id_post_group != {int:id_post_group_' . $row['id_group'] . '}';
-					$where_vars['id_post_group_' . $row['id_group']] = $row['id_group'];
-				}
-				else
-				{
-					$where .= ' AND mem.id_group != {int:id_group_' . $row['id_group'] . '} AND FIND_IN_SET({int:id_group_' . $row['id_group'] . '}, mem.additional_groups) = 0';
-					$where_vars['id_group_' . $row['id_group']] = $row['id_group'];
-				}
+				$where .= ' AND mem.id_group != {int:id_group_' . $row['id_group'] . '} AND FIND_IN_SET({int:id_group_' . $row['id_group'] . '}, mem.additional_groups) = 0';
+				$where_vars['id_group_' . $row['id_group']] = $row['id_group'];
 			}
 		}
 		$smcFunc['db_free_result']($request);

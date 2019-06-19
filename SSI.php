@@ -956,7 +956,6 @@ function ssi_fetchGroupMembers($group_id = null, $output_method = 'echo')
 
 	$query_where = '
 		id_group = {int:id_group}
-		OR id_post_group = {int:id_group}
 		OR FIND_IN_SET({int:id_group}, additional_groups) != 0';
 
 	$query_where_params = array(

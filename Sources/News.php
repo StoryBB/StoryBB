@@ -1223,7 +1223,7 @@ function getXmlProfile($xml_format)
 				),
 				array(
 					'tag' => 'description',
-					'content' => isset($profile['group']) ? $profile['group'] : $profile['post_group'],
+					'content' => isset($profile['group']) ? $profile['group'] : '',
 				),
 				array(
 					'tag' => 'comments',
@@ -1263,7 +1263,7 @@ function getXmlProfile($xml_format)
 				array(
 					'tag' => 'summary',
 					'attributes' => array('type' => 'html'),
-					'content' => isset($profile['group']) ? $profile['group'] : $profile['post_group'],
+					'content' => isset($profile['group']) ? $profile['group'] : '',
 				),
 				array(
 					'tag' => 'author',

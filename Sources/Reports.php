@@ -335,12 +335,9 @@ function BoardPermissionsReport()
 		FROM {db_prefix}membergroups
 		WHERE ' . $group_clause . '
 			AND id_group != {int:admin_group}
-			AND min_posts = {int:min_posts}
-		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
+		ORDER BY group_name',
 		array(
 			'admin_group' => 1,
-			'min_posts' => -1,
-			'newbie_group' => 4,
 			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : [],
 		)
 	);
@@ -511,7 +508,6 @@ function MemberGroupsReport()
 		'name' => '',
 		'#sep#1' => $txt['member_group_settings'],
 		'color' => $txt['member_group_color'],
-		'min_posts' => $txt['member_group_min_posts'],
 		'max_messages' => $txt['member_group_max_messages'],
 		'icons' => $txt['member_group_icons'],
 		'group_level' => $txt['member_group_level'],
@@ -533,11 +529,11 @@ function MemberGroupsReport()
 
 	// Now start cycling the membergroups!
 	$request = $smcFunc['db_query']('', '
-		SELECT mg.id_group, mg.group_name, mg.online_color, mg.min_posts, mg.max_messages, mg.icons, mg.is_character,
+		SELECT mg.id_group, mg.group_name, mg.online_color, mg.max_messages, mg.icons, mg.is_character,
 			CASE WHEN bp.permission IS NOT NULL OR mg.id_group = {int:admin_group} THEN 1 ELSE 0 END AS can_moderate
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}board_permissions AS bp ON (bp.id_group = mg.id_group AND bp.id_profile = {int:default_profile} AND bp.permission = {string:moderate_board})
-		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
+		ORDER BY mg.group_name',
 		array(
 			'admin_group' => 1,
 			'default_profile' => 1,
@@ -552,7 +548,6 @@ function MemberGroupsReport()
 			'id_group' => -1,
 			'group_name' => $txt['membergroups_guests'],
 			'online_color' => '',
-			'min_posts' => -1,
 			'max_messages' => null,
 			'icons' => ''
 		),
@@ -560,7 +555,6 @@ function MemberGroupsReport()
 			'id_group' => 0,
 			'group_name' => $txt['membergroups_members'],
 			'online_color' => '',
-			'min_posts' => -1,
 			'max_messages' => null,
 			'icons' => ''
 		),
@@ -576,10 +570,9 @@ function MemberGroupsReport()
 		$group = array(
 			'name' => $row['group_name'],
 			'color' => empty($row['online_color']) ? '-' : '<span style="color: ' . $row['online_color'] . ';">' . $row['online_color'] . '</span>',
-			'min_posts' => $row['min_posts'] == -1 ? 'N/A' : $row['min_posts'],
 			'max_messages' => $row['max_messages'],
 			'icons' => !empty($row['icons'][0]) && !empty($row['icons'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/membericons/' . $row['icons'][1] . '" alt="*">', $row['icons'][0]) : '',
-			'group_level' => $row['min_posts'] == -1 ? (!empty($row['is_character']) ? $txt['member_group_level_char'] : $txt['member_group_level_account']) : $txt['member_group_postcount'],
+			'group_level' => !empty($row['is_character']) ? $txt['member_group_level_char'] : $txt['member_group_level_account'],
 		);
 
 		// Board permissions.
@@ -621,11 +614,9 @@ function GroupPermissionsReport()
 		FROM {db_prefix}membergroups
 		WHERE ' . $clause . '
 			AND id_group != {int:admin_group}
-			AND min_posts = {int:min_posts}
-		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
+		ORDER BY group_name',
 		array(
 			'admin_group' => 1,
-			'min_posts' => -1,
 			'newbie_group' => 4,
 			'moderator_group' => 3,
 			'groups' => isset($_REQUEST['groups']) ? $_REQUEST['groups'] : [],

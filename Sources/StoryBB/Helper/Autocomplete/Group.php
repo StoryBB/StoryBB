@@ -19,9 +19,6 @@ namespace StoryBB\Helper\Autocomplete;
  */
 class Group extends AbstractCompletable implements Completable
 {
-	/** @var bool $post_count_groups Sets out whether post count groups should be included as possible group matches */
-	protected $post_count_groups = true;
-
 	/** @var bool $account_groups Sets out whether account groups should be included as possible group matches */
 	protected $account_groups = true;
 
@@ -40,10 +37,6 @@ class Group extends AbstractCompletable implements Completable
 	protected function get_filters(): string
 	{
 		$filters = [];
-		if (!$this->post_count_groups)
-		{
-			$filters[] = 'min_posts = -1';
-		}
 		if (!$this->account_groups)
 		{
 			$filters[] = 'is_character != 0';

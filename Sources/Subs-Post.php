@@ -750,7 +750,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			(pm_receive_from = {int:buddies_only} AND FIND_IN_SET({string:from_id}, buddy_list) = 0) OR
 			(pm_receive_from = {int:not_on_ignore_list} AND FIND_IN_SET({string:from_id}, pm_ignore_list) != 0)') . ')') . ' AS ignored,
 			FIND_IN_SET({string:from_id}, buddy_list) != 0 AS is_buddy, is_activated,
-			additional_groups, id_group, id_post_group
+			additional_groups, id_group
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:recipients})
 		ORDER BY lngfile
@@ -782,7 +782,6 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		// We need to know this members groups.
 		$groups = explode(',', $row['additional_groups']);
 		$groups[] = $row['id_group'];
-		$groups[] = $row['id_post_group'];
 
 		$message_limit = -1;
 		// For each group see whether they've gone over their limit - assuming they're not an admin.

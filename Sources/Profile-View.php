@@ -2808,7 +2808,6 @@ function showPermissions($memID)
 	else
 		$curGroups = explode(',', $user_profile[$memID]['additional_groups']);
 	$curGroups[] = $user_profile[$memID]['id_group'];
-	$curGroups[] = $user_profile[$memID]['id_post_group'];
 
 	// Load a list of boards for the jump box - except the defaults.
 	$request = $smcFunc['db_query']('order_by_board_order', '
@@ -2867,10 +2866,9 @@ function showPermissions($memID)
 		FROM {db_prefix}permissions AS p
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = p.id_group)
 		WHERE p.id_group IN ({array_int:group_list})
-		ORDER BY p.add_deny DESC, p.permission, mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
+		ORDER BY p.add_deny DESC, p.permission, mg.group_name',
 		array(
 			'group_list' => $curGroups,
-			'newbie_group' => 4,
 		)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($result))
