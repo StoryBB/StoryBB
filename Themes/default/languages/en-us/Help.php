@@ -98,9 +98,6 @@ $helptxt['ban_members'] = '<strong>Ban Members</strong><br>
 	In the ban list, you simply type that IP address in, save, and they can no longer post from that location.<br>You can also
 	ban people through their email address.';
 
-$helptxt['modsettings'] = '<strong>Modification Settings</strong><br>
-	This page contains any settings added by modifications installed on your forum.';
-
 $helptxt['time_format'] = '<strong>Time Format</strong><br>
 	You have the ability to adjust how the time and date look for yourself. There are a lot of little letters, but it\'s quite simple.
 	The conventions follow PHP\'s strftime function and are described as below (more details can be found at <a href="https://php.net/manual/function.strftime.php" target="_blank" rel="noopener">php.net</a>).<br>
