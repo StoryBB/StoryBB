@@ -256,7 +256,7 @@ function createMenu($menuData, $menuOptions = [])
 	}
 
 	// Almost there - load the template and add to the template layers.
-	$menu_context['layer_name'] = (isset($menuOptions['layer_name']) ? $menuOptions['layer_name'] : 'generic_menu') . '_dropdown';
+	$menu_context['layer_name'] = (isset($menuOptions['layer_name']) ? $menuOptions['layer_name'] : 'generic_menu') . '_sidebar';
 	StoryBB\Template::add_layer($menu_context['layer_name']);
 
 	// Check we had something - for sanity sake.

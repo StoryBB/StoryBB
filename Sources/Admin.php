@@ -41,13 +41,31 @@ function AdminMain()
 	/** @var array $admin_areas Defines the menu structure for the admin center. See {@link Subs-Menu.php Subs-Menu.php} for details! */
 	$admin_areas = [
 		'forum' => [
-			'title' => $txt['admin_main'],
+			'title' => $txt['general_settings'],
 			'permission' => ['admin_forum', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_boards', 'manage_smileys', 'manage_attachments'],
 			'areas' => [
 				'index' => [
 					'label' => $txt['admin_center'],
 					'function' => 'AdminHome',
 					'icon' => 'administration',
+				],
+				'search' => [
+					'function' => 'AdminSearch',
+					'permission' => ['admin_forum'],
+					'select' => 'index'
+				],
+				'featuresettings' => [
+					'label' => $txt['modSettings_title'],
+					'file' => 'ManageSettings.php',
+					'function' => 'ModifyFeatureSettings',
+					'icon' => 'features',
+					'permission' => ['admin_forum'],
+					'subsections' => [
+						'basic' => [$txt['mods_cat_features']],
+						'sig' => [$txt['signature_settings_short']],
+						'profile' => [$txt['custom_profile_shorttitle']],
+						'alerts' => [$txt['notifications']],
+					],
 				],
 				'news' => [
 					'label' => $txt['news_title'],
@@ -59,43 +77,6 @@ function AdminMain()
 						'editnews' => [$txt['admin_edit_news'], 'edit_news'],
 						'mailingmembers' => [$txt['admin_newsletters'], 'send_mail'],
 						'settings' => [$txt['settings'], 'admin_forum'],
-					],
-				],
-				'contactform' => [
-					'label' => $txt['contact_us'],
-					'file' => 'ManageContact.php',
-					'function' => 'ManageContact',
-					'icon' => 'contact',
-					'permission' => ['admin_forum'],
-				],
-				'search' => [
-					'function' => 'AdminSearch',
-					'permission' => ['admin_forum'],
-					'select' => 'index'
-				],
-				'adminlogoff' => [
-					'label' => $txt['admin_logoff'],
-					'function' => 'AdminEndSession',
-					'enabled' => empty($modSettings['securityDisable']),
-					'icon' => 'exit',
-				],
-
-			],
-		],
-		'config' => [
-			'title' => $txt['admin_config'],
-			'permission' => ['admin_forum'],
-			'areas' => [
-				'featuresettings' => [
-					'label' => $txt['modSettings_title'],
-					'file' => 'ManageSettings.php',
-					'function' => 'ModifyFeatureSettings',
-					'icon' => 'features',
-					'subsections' => [
-						'basic' => [$txt['mods_cat_features']],
-						'sig' => [$txt['signature_settings_short']],
-						'profile' => [$txt['custom_profile_shorttitle']],
-						'alerts' => [$txt['notifications']],
 					],
 				],
 				'languages' => [
@@ -119,6 +100,19 @@ function AdminMain()
 						'list' => [$txt['themeadmin_list_title']],
 						'reset' => [$txt['themeadmin_reset_title']],
 					],
+				],
+				'contactform' => [
+					'label' => $txt['contact_us'],
+					'file' => 'ManageContact.php',
+					'function' => 'ManageContact',
+					'icon' => 'contact',
+					'permission' => ['admin_forum'],
+				],
+				'adminlogoff' => [
+					'label' => $txt['admin_logoff'],
+					'function' => 'AdminEndSession',
+					'enabled' => empty($modSettings['securityDisable']),
+					'icon' => 'exit',
 				],
 			],
 		],
@@ -395,8 +389,6 @@ function AdminMain()
 						'errorlog' => [$txt['errlog'], 'admin_forum', 'enabled' => !empty($modSettings['enableErrorLogging']), 'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc'],
 						'adminlog' => [$txt['admin_log'], 'admin_forum', 'enabled' => !empty($modSettings['adminlog_enabled'])],
 						'modlog' => [$txt['moderation_log'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])],
-						'banlog' => [$txt['ban_log'], 'manage_bans'],
-						'tasklog' => [$txt['scheduled_log'], 'admin_forum'],
 						'settings' => [$txt['log_settings'], 'admin_forum'],
 					],
 				],
@@ -518,14 +510,13 @@ function AdminHome()
 	// Set up for the template, like some convenient derefencing.
 	$context['admin_menu'] = $context[$context['admin_menu_name']];
 	$context['sub_template'] = 'admin_home';
-	$context['page_title'] = $context['admin_area'] == 'support' ? $txt['support_title'] : $txt['admin_center'];
-	if ($context['admin_area'] != 'support')
-		$context[$context['admin_menu_name']]['tab_data'] = [
-			'title' => $txt['admin_center'],
-			'help' => '',
-			'description' => '<strong>' . $txt['hello_guest'] . ' ' . $context['user']['name'] . '!</strong>
-						' . sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']),
-		];
+	$context['page_title'] = $txt['admin_center'];
+	$context[$context['admin_menu_name']]['tab_data'] = [
+		'title' => $txt['admin_center'],
+		'help' => '',
+		'description' => '<strong>' . $txt['hello_guest'] . ' ' . $context['user']['name'] . '!</strong>
+					' . sprintf($txt['admin_main_welcome'], $txt['admin_center'], $txt['help'], $txt['help']),
+	];
 
 	$context['admin_news'] = getAdminFile('updates.json');
 	if (empty($context['admin_news']))
@@ -539,7 +530,6 @@ function AdminHome()
 
 	if (!empty($context['admin_news']['current_version']))
 	{
-
 		$context['admin_news']['needs_update'] = version_compare(strtr($context['forum_version'], ['StoryBB ' => '']), $context['admin_news']['current_version'], '<');
 	}
 }
@@ -745,8 +735,6 @@ function AdminLogs()
 		'errorlog' => ['ManageErrors.php', 'ViewErrorLog'],
 		'adminlog' => ['Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['adminlog_enabled'])],
 		'modlog' => ['Modlog.php', 'ViewModlog', 'disabled' => empty($modSettings['modlog_enabled'])],
-		'banlog' => ['ManageBans.php', 'BanLog'],
-		'tasklog' => ['ManageScheduledTasks.php', 'TaskLog'],
 		'settings' => ['ManageSettings.php', 'ModifyLogSettings'],
 	];
 
@@ -769,12 +757,6 @@ function AdminLogs()
 			],
 			'modlog' => [
 				'description' => $txt['moderation_log_desc'],
-			],
-			'banlog' => [
-				'description' => $txt['ban_log_description'],
-			],
-			'tasklog' => [
-				'description' => $txt['scheduled_log_desc'],
 			],
 			'settings' => [
 				'description' => $txt['log_settings_desc'],

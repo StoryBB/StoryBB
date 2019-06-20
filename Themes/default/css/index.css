@@ -1899,6 +1899,45 @@ tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
 	margin: 5px 0;
 }
 
+.generic_menu_container {
+	display: flex;
+	flex-direction: row;
+}
+.generic_menu_container #admin_content {
+	width: 100%;
+}
+
+.generic_menu_container .generic_menu_sidebar {
+	width: 190px;
+	margin-right: 10px;
+}
+
+.generic_menu_sidebar h3.catbg {
+	font-size: 0.8em;
+	font-weight: normal;
+}
+.generic_menu_sidebar .windowbg {
+	padding: 4px;
+	font-size: 0.8em;
+}
+
+.generic_menu_sidebar .sidebar_area {
+	margin-bottom: 1em;
+}
+
+.generic_menu_sidebar a::before {
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	margin-right: 3px;
+	content: " ";
+}
+
+.generic_menu_sidebar a.chosen::before {
+	background: url(../images/selected.png) 0 0 no-repeat;
+}
+
+
 /* Some lovely icons.
 ------------------------------------------------- */
 img.icon.char_avatar {
