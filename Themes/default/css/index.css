@@ -1944,7 +1944,7 @@ img.icon.char_avatar {
 	width: 16px;
 	height: 16px;
 	display: inline-block;
-	background: url(../images/main_icons.png) no-repeat -5px -5px;
+	background: url(../images/icons/main_icons_sprite.png) no-repeat -5px -5px;
 	vertical-align: middle;
 	content: "";
 }
@@ -2376,7 +2376,7 @@ img.icon.char_avatar {
 .errorbox::before, .noticebox::before, .infobox::before {
 	width: 16px;
 	height: 16px;
-	background: url(../images/main_icons.png) no-repeat -57px -83px;
+	background: url(../images/icons/main_icons_sprite.png) no-repeat -57px -83px;
 	left: 10px;
 	content: '';
 	position: absolute;
