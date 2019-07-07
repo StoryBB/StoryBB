@@ -60,7 +60,6 @@ function ModifyFeatureSettings()
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['modSettings_title'],
-		'help' => 'featuresettings',
 		'description' => sprintf($txt['modSettings_desc'], $settings['theme_id'], $context['session_id'], $context['session_var'], $scripturl),
 		'tabs' => array(
 			'basic' => array(
