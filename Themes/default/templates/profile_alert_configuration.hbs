@@ -114,52 +114,6 @@
 		{{/each}}
 	{{/if}}
 {{/each}}
-<!--
-	foreach ($context['alert_types'] as $alert_group => $alerts)
-	{
-		echo '
-				<tr class="title_bar">
-					<th>', $txt['alert_group_' . $alert_group], '</th>
-					<th>', $txt['receive_alert'], '</th>
-					<th>', $txt['receive_mail'], '</th>
-				</tr>
-				<tr class="windowbg">';
-
-
-		foreach ($alerts as $alert_id => $alert_details)
-		{
-			echo '
-				<tr class="windowbg">
-					<td>', $txt['alert_' . $alert_id], isset($alert_details['help']) ? '<a href="' . $scripturl . '?action=helpadmin;help=' . $alert_details['help'] . '" onclick="return reqOverlayDiv(this.href);" class="help floatright"><span class="main_icons help" title="' . $txt['help'] . '"></span></a>' : '', '</td>';
-
-			foreach ($context['alert_bits'] as $type => $bitmask)
-			{
-				echo '
-					<td class="centercol">';
-				$this_value = isset($context['alert_prefs'][$alert_id]) ? $context['alert_prefs'][$alert_id] : 0;
-				switch ($alert_details[$type])
-				{
-					case 'always':
-						echo '
-						<input type="checkbox" checked disabled>';
-						break;
-					case 'yes':
-						echo '
-						<input type="checkbox" name="', $type, '_', $alert_id, '"', ($this_value & $bitmask) ? ' checked' : '', '>';
-						break;
-					case 'never':
-						echo '
-						<input type="checkbox" disabled>';
-						break;
-				}
-				echo '
-					</td>';
-			}
-
-			echo '
-				</tr>';
-		}
-	}-->
 
 		</table>
 		<br>
