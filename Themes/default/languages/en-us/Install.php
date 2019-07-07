@@ -68,11 +68,6 @@ $txt['default_policy_cookies_text'] = 'This page explains how {$forum_name} uses
 $txt['default_administrator_group'] = 'Administrator';
 $txt['default_global_moderator_group'] = 'Global Moderator';
 $txt['default_moderator_group'] = 'Moderator';
-$txt['default_newbie_group'] = 'Newbie';
-$txt['default_junior_group'] = 'Jr. Member';
-$txt['default_full_group'] = 'Full Member';
-$txt['default_senior_group'] = 'Sr. Member';
-$txt['default_hero_group'] = 'Hero Member';
 
 $txt['default_smiley_smiley'] = 'Smiley';
 $txt['default_wink_smiley'] = 'Wink';
