@@ -122,9 +122,11 @@ class ApprovalNotifications extends \StoryBB\Task\Schedulable
 			$smcFunc['db_free_result']($request);
 		}
 
+		// @todo People who are in groups who are group moderators of boards?
+
 		// Come along one and all... until we reject you ;)
 		$request = $smcFunc['db_query']('', '
-			SELECT id_member, real_name, email_address, lngfile, id_group, additional_groups, mod_prefs
+			SELECT id_member, real_name, email_address, lngfile, id_group, additional_groups
 			FROM {db_prefix}members
 			WHERE id_group IN ({array_int:additional_group_list})
 				OR FIND_IN_SET({raw:additional_group_list_implode}, additional_groups) != 0' . (empty($members) ? '' : '
@@ -139,14 +141,6 @@ class ApprovalNotifications extends \StoryBB\Task\Schedulable
 		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			// Check whether they are interested.
-			if (!empty($row['mod_prefs']))
-			{
-				list(,, $pref_binary) = explode('|', $row['mod_prefs']);
-				if (!($pref_binary & 4))
-					continue;
-			}
-
 			$members[$row['id_member']] = array(
 				'id' => $row['id_member'],
 				'groups' => array_merge(explode(',', $row['additional_groups']), array($row['id_group'])),
@@ -156,6 +150,17 @@ class ApprovalNotifications extends \StoryBB\Task\Schedulable
 			);
 		}
 		$smcFunc['db_free_result']($request);
+
+		// Now filter out the people who don't want it.
+		require_once($sourcedir . '/Subs-Notify.php');
+		$prefs = getNotifyPrefs(array_keys($members), 'approval_notify', true);
+		foreach ($members as $memberid => $member)
+		{
+			if (!isset($prefs[$memberid]['approval_notify']) || $prefs[$memberid]['approval_notify'] & 2 == 0)
+			{
+				unset ($members[$memberid]);
+			}
+		}
 
 		// Get the mailing stuff.
 		require_once($sourcedir . '/Subs-Post.php');

@@ -162,6 +162,7 @@ $txt['alert_group_moderation'] = 'Moderation';
 $txt['alert_unapproved_post'] = 'When an unapproved topic is created';
 $txt['alert_msg_report'] = 'When a message is reported';
 $txt['alert_msg_report_reply'] = 'When a post report I\'ve replied to gets replied to';
+$txt['alert_approval_notify'] = 'Remind me when there are things waiting for approval';
 $txt['alert_group_members'] = 'Members';
 $txt['alert_member_register'] = 'When a new person registers';
 $txt['alert_warn_any'] = 'When other members receive a warning';

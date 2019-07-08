@@ -706,7 +706,6 @@ class Schema
 					'buddy_list' => Column::text(),
 					'pm_ignore_list' => Column::varchar(255),
 					'pm_prefs' => Column::mediumint(),
-					'mod_prefs' => Column::varchar(20),
 					'passwd' => Column::varchar(64),
 					'email_address' => Column::varchar(255),
 					'birthdate' => Column::date()->default('1004-01-01'),
