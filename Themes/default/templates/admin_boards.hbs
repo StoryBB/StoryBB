@@ -5,12 +5,6 @@
 		</div>
 		<div class="windowbg2 noup">
 
-{{#if context.move_board}}
-			<div class="noticebox">
-				{{{context.move_title}}} [<a href="{{scripturl}}?action=admin;area=manageboards">{{{txt.mboards_cancel_moving}}}</a>]
-			</div>
-{{/if}}
-
 {{! No categories so show a label. }}
 {{#unless context.categories}}
 			<div class="windowbg centertext">
@@ -32,16 +26,10 @@
 			<form action="{{../scripturl}}?action=admin;area=manageboards;sa=newboard;cat={{id}}" method="post" accept-charset="UTF-8">
 				<ul id="category_{{id}}" class="nolist">
 
-	{{#if move_link}}
-					<li>
-						<a href="{{move_link.href}}" title="{{{move_link.label}}}" class="main_icons select_above"></a>
-					</li>
-	{{/if}}
-
 	{{! List through every board in the category, printing its name and link to modify the board. }}
 	{{#each boards}}
 					<li{{#if (and (eq ../../modSettings.recycle_enable '1') (eq ../../modSettings.recycle_board id))}} id="recycle_board"{{/if}} class="windowbg{{#if is_redirect}} redirect_board{{/if}}" style="padding-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{add 5 (mul 30 child_level)}}px;">
-						<span class="floatleft"><a{{#if move}} class="red"{{/if}} href="{{../../scripturl}}?board={{id}}.0">{{{name}}}</a>
+						<span class="floatleft"><a href="{{../../scripturl}}?board={{id}}.0">{{{name}}}</a>
 
 		{{#if (and (eq ../../modSettings.recycle_enable '1') (eq ../../modSettings.recycle_board id))}}
 							<a href="{{../../scripturl}}?action=admin;area=manageboards;sa=settings">
@@ -60,18 +48,9 @@
 		{{#if ../../context.can_manage_permissions}}
 							<a href="{{../../scripturl}}?action=admin;area=permissions;sa=index;pid={{permission_profile}};{{session_url}}" class="button">{{../../txt.mboards_permissions}}</a>
 		{{/if}}
-							<a href="{{../../scripturl}}?action=admin;area=manageboards;move={{id}}" class="button">{{{../../txt.mboards_move}}}</a>
 							<a href="{{../../scripturl}}?action=admin;area=manageboards;sa=board;boardid={{id}}" class="button">{{{../../txt.mboards_modify}}}</a>
 						</span><br style="clear: right;">
 					</li>
-
-		{{#if move_links}}
-					<li class="windowbg" style="padding-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{add 5 (mul 30 move_links.0.child_level)}}px;">
-			{{#each move_links}}
-						<a href="{{href}}" class="move_links main_icons select_{{class}}" title="{{{label}}}"></a>
-			{{/each}}
-					</li>
-		{{/if}}
 	{{/each}}
 
 				{{! Button to add a new board. }}
