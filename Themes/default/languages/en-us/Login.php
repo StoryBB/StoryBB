@@ -81,6 +81,7 @@ $txt['setting_registration_disabled'] = 'Registration Disabled';
 $txt['setting_registration_standard'] = 'Immediate Registration';
 $txt['setting_registration_activate'] = 'Email Activation';
 $txt['setting_registration_approval'] = 'Admin Approval';
+$txt['setting_remove_unapproved_accounts_days'] = 'Remove unapproved accounts after how many days?';
 $txt['setting_send_welcomeEmail'] = 'Send welcome email to new members';
 $txt['setting_show_cookie_notice'] = 'Show a cookie notice in the footer to guests';
 

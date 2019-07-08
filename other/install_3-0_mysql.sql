@@ -517,7 +517,8 @@ VALUES
   (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', 'StoryBB\\Task\\Schedulable\\RemoveTopicRedirects'),
   (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', 'StoryBB\\Task\\Schedulable\\RemoveOldDrafts'),
   (14, 0, 300, 1, 'd', 0, 'clean_exports', 'StoryBB\\Task\\Schedulable\\CleanExports'),
-  (15, 0, 360, 1, 'd', 0, 'scrub_logs', 'StoryBB\\Task\\Schedulable\\ScrubLogs');
+  (15, 0, 360, 1, 'd', 0, 'scrub_logs', 'StoryBB\\Task\\Schedulable\\ScrubLogs'),
+  (16, 0, 420, 1, 'd', 0, 'remove_unapproved_accts', 'StoryBB\\Task\\Schedulable\\RemoveUnapprovedAccounts');
 
 # --------------------------------------------------------
 
@@ -577,6 +578,7 @@ VALUES ('sbbVersion', '{$sbb_version}'),
   ('xmlnews_enable', '1'),
   ('xmlnews_maxlen', '255'),
   ('registration_method', '{$registration_method}'),
+  ('remove_unapproved_accounts_days', '7'),
   ('send_validation_onChange', '0'),
   ('send_welcomeEmail', '1'),
   ('allow_editDisplayName', '1'),
