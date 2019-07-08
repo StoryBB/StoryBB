@@ -228,6 +228,7 @@ function ModifyRegistrationSettings($return_config = false)
 
 	$config_vars = array(
 			array('select', 'registration_method', array($txt['setting_registration_standard'], $txt['setting_registration_activate'], $txt['setting_registration_approval'], $txt['setting_registration_disabled'])),
+			array('int', 'remove_unapproved_accounts_days', 'min' => 0, 'max' => 30, 'subtext' => $txt['zero_to_disable']),
 			array('check', 'send_welcomeEmail'),
 			array('select', 'registration_character', array(
 				'disabled' => $txt['setting_registration_character_disabled'],
