@@ -52,11 +52,6 @@ function ModerationMain($dont_call = false)
 					'function' => 'ModerationHome',
 					'icon' => 'administration',
 				),
-				'settings' => array(
-					'label' => $txt['mc_settings'],
-					'function' => 'ModerationSettings',
-					'icon' => 'features',
-				),
 				'modlogoff' => array(
 					'label' => $txt['mc_logoff'],
 					'function' => 'ModEndSession',
@@ -1999,59 +1994,6 @@ function ModifyWarningTemplate()
 	}
 
 	createToken('mod-wt');
-}
-
-/**
- * Change moderation preferences.
- */
-function ModerationSettings()
-{
-	global $context, $txt, $user_info;
-
-	// Some useful context stuff.
-	$context['page_title'] = $txt['mc_settings'];
-	$context['sub_template'] = 'modcenter_settings';
-	$context[$context['moderation_menu_name']]['tab_data'] = array(
-		'title' => $txt['mc_prefs_title'],
-		'help' => '',
-		'description' => $txt['mc_prefs_desc']
-	);
-
-	$pref_binary = 5;
-
-	// Are we saving?
-	if (isset($_POST['save']))
-	{
-		checkSession();
-		validateToken('mod-set');
-
-		/* Current format of mod_prefs is:
-			x|ABCD|yyy
-
-			WHERE:
-				x = Show report count on forum header.
-				ABCD = Block indexes to show on moderation main page.
-				yyy = Integer with the following bit status:
-					- yyy & 4 = Notify about posts awaiting approval.
-		*/
-
-		// Now check other options!
-		$pref_binary = 0;
-
-		if ($context['can_moderate_approvals'] && !empty($_POST['mod_notify_approval']))
-			$pref_binary |= 4;
-
-		// Put it all together.
-		$mod_prefs = '0||' . $pref_binary;
-		updateMemberData($user_info['id'], array('mod_prefs' => $mod_prefs));
-	}
-
-	// What blocks does the user currently have selected?
-	$context['mod_settings'] = array(
-		'notify_approval' => $pref_binary & 4,
-	);
-
-	createToken('mod-set');
 }
 
 /**
