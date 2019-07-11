@@ -119,7 +119,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 				'chars_src' => 'int', 'chars_dest' => 'int',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 			array($this->_details['time'], $author, $this->_details['sender_id'], $this->_details['sender_name'],
-				0, !empty($row['id_character']) && empty($row['is_main']) ? $row['id_character'],
+				0, !empty($row['id_character']) && empty($row['is_main']) ? $row['id_character'] : 0,
 				$this->_details['content_type'], $this->_details['content_id'], 'like', 0, ''),
 			array('id_alert')
 		);
