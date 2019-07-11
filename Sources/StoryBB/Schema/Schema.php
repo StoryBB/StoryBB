@@ -1154,6 +1154,8 @@ class Schema
 					'id_member' => Column::mediumint(),
 					'id_member_started' => Column::mediumint(),
 					'member_name' => Column::varchar(255),
+					'chars_src' => Column::int(),
+					'chars_dest' => Column::int(),
 					'content_type' => Column::varchar(255),
 					'content_id' => Column::int(),
 					'content_action' => Column::varchar(255),

@@ -649,6 +649,42 @@ function char_delete()
 		fatal_lang_error($context['user']['is_owner'] ? 'this_character_cannot_delete_active_self' : 'this_character_cannot_delete_active', false);
 	}
 
+	// Delete alerts attached to this character.
+	// But first, find all the members where this is relevant, and where they have unread alerts (so we can fix the alert count).
+	$result = $smcFunc['db_query']('', '
+		SELECT mem.id_member FROM {db_prefix}members AS mem
+		INNER JOIN {db_prefix}user_alerts AS a ON (a.id_member = mem.id_member)
+		WHERE a.is_read = {int:unread}
+		AND (a.chars_src = {int:chars_src} OR a.chars_dest = {int:chars_dest})
+		GROUP BY mem.id_member',
+		[
+			'unread' => 0,
+			'chars_src' => $context['character']['id_character'],
+			'chars_dest' => $context['character']['id_character'],
+		]
+	);
+	$members = [];
+	while ($row = $smcFunc['db_fetch_assoc']($result))
+	{
+		$members[] = $row['id_member'];
+	}
+	$smcFunc['db_free_result']($result);
+	// Having found all of the people whose alert counts need to be fixed, let's now purge all these alerts.
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}user_alerts
+		WHERE (chars_src = {int:chars_src} OR chars_dest = {int:chars_dest})',
+		[
+			'chars_src' => $context['character']['id_character'],
+			'chars_dest' => $context['character']['id_character'],
+		]
+	);
+	// And finally fix the counts of those members.
+	foreach ($members as $member)
+	{
+		$alert_count = Alert::count_for_member($member, true);
+		updateMemberData($member, ['alerts' => $alert_count]);
+	}
+
 	// So we can delete them.
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}characters
@@ -1830,11 +1866,12 @@ function char_sheet_approval()
 			'id_member' => $id_member,
 			'id_member_started' => $context['id_member'],
 			'member_name' => $context['member']['name'],
+			'chars_src' => $context['character']['id_character'],
 			'content_type' => 'member',
 			'content_id' => 0,
 			'content_action' => 'char_sheet_approval',
 			'is_read' => 0,
-			'extra' => json_encode(array('chars_src' => $context['character']['id_character'])),
+			'extra' => '',
 		);
 	}
 
@@ -1941,9 +1978,11 @@ function char_sheet_approve()
 	$smcFunc['db_insert']('',
 		'{db_prefix}user_alerts',
 		array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+			'chars_src' => 'int', 'chars_dest' => 'int',
 			'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 		array(time(), $context['id_member'], $context['user']['id'], '',
-			'member', 0, 'char_sheet_approved', 0, json_encode(array('chars_dest' => $context['character']['id_character']))),
+			0, $context['character']['id_character'],
+			'member', 0, 'char_sheet_approved', 0, ''),
 		[]
 	);
 	updateMemberData($context['id_member'], array('alerts' => '+'));

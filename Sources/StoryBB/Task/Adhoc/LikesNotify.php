@@ -113,16 +113,14 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 		$smcFunc['db_free_result']($request);
 
 		// Issue, update, move on.
-		$extra = [];
-		if (!empty($row['id_character']) && empty($row['is_main']))
-			$extra['chars_dest'] = $row['id_character'];
-
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}user_alerts',
 			array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+				'chars_src' => 'int', 'chars_dest' => 'int',
 				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 			array($this->_details['time'], $author, $this->_details['sender_id'], $this->_details['sender_name'],
-				$this->_details['content_type'], $this->_details['content_id'], 'like', 0, !empty($extra) ? json_encode($extra) : ''),
+				0, !empty($row['id_character']) && empty($row['is_main']) ? $row['id_character'] : 0,
+				$this->_details['content_type'], $this->_details['content_id'], 'like', 0, ''),
 			array('id_alert')
 		);
 

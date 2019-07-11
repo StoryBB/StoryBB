@@ -266,7 +266,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 	$alerts = [];
 	$request = $smcFunc['db_query']('', '
 		SELECT id_alert, alert_time, mem.id_member AS sender_id, COALESCE(mem.real_name, ua.member_name) AS sender_name,
-			content_type, content_id, content_action, is_read, extra
+			chars_src, chars_dest, content_type, content_id, content_action, is_read, extra
 		FROM {db_prefix}user_alerts AS ua
 			LEFT JOIN {db_prefix}members AS mem ON (ua.id_member_started = mem.id_member)
 		WHERE ua.id_member = {int:id_member}' . (!$all ? '
@@ -316,10 +316,10 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 	$char_accounts = [];
 	foreach ($alerts as $id_alert => $alert)
 	{
-		if (isset($alert['extra']['chars_src']))
-			$chars[$alert['extra']['chars_src']] = $txt['char_unknown'];
-		if (isset($alert['extra']['chars_dest']))
-			$chars[$alert['extra']['chars_dest']] = $txt['char_unknown'];
+		if (!empty($alert['chars_src']))
+			$chars[$alert['chars_src']] = $txt['char_unknown'];
+		if (!empty($alert['chars_dest']))
+			$chars[$alert['chars_dest']] = $txt['char_unknown'];
 		if (isset($alert['extra']['board']))
 			$boards[$alert['extra']['board']] = $txt['board_na'];
 		if (isset($alert['extra']['topic']))
@@ -414,17 +414,17 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 			$alerts[$id_alert]['sender'] = $memberContext[$alert['sender_id']];
 
 		// And additionally if we have a character, use that.
-		if (isset($alert['extra']['chars_src']))
+		if (!empty($alert['chars_src']))
 		{
-			if (!empty($memberContext[$alert['sender_id']]['characters'][$alert['extra']['chars_src']]))
+			if (!empty($memberContext[$alert['sender_id']]['characters'][$alert['chars_src']]))
 			{
-				$alerts[$id_alert]['sender']['avatar']['image'] = $memberContext[$alert['sender_id']]['characters'][$alert['extra']['chars_src']]['avatar'];
+				$alerts[$id_alert]['sender']['avatar']['image'] = $memberContext[$alert['sender_id']]['characters'][$alert['chars_src']]['avatar'];
 				$alerts[$id_alert]['sender']['avatar']['image'] = '<img class="avatar" src="' . $alerts[$id_alert]['sender']['avatar']['image'] . '" alt="">';
 			}
 		}
 
 		$string = 'alert_' . $alert['content_type'] . '_' . $alert['content_action'];
-		if (isset($alert['extra']['chars_dest']))
+		if (!empty($alert['chars_dest']))
 			$string .= 'chr';
 
 		if (isset($txt[$string]))
@@ -432,20 +432,20 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 			$extra = $alerts[$id_alert]['extra'];
 			$search = array('{member_link}', '{scripturl}');
 			$repl = array(!empty($alert['sender_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $alert['sender_id'] . '">' . $alert['sender_name'] . '</a>' : $alert['sender_name'], $scripturl);
-			if (isset($alert['extra']['chars_src']))
+			if (!empty($alert['chars_src']))
 			{
 				$search[] = '{char_link}';
-				$repl[] = $chars[$alert['extra']['chars_src']];
-				if (!empty($chars_sheets[$alert['extra']['chars_src']]))
+				$repl[] = $chars[$alert['chars_src']];
+				if (!empty($chars_sheets[$alert['chars_src']]))
 				{
 					$search[] = '#{char_sheet_link}';
-					$repl[] = $chars_sheets[$alert['extra']['chars_src']];
+					$repl[] = $chars_sheets[$alert['chars_src']];
 				}
 			}
-			if (isset($alert['extra']['chars_dest']))
+			if (!empty($alert['chars_dest']))
 			{
 				$search[] = '{your_chr}';
-				$repl[] = $chars[$alert['extra']['chars_dest']];
+				$repl[] = $chars[$alert['chars_dest']];
 			}
 			foreach ($extra as $k => $v)
 			{
