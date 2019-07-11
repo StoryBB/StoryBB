@@ -668,7 +668,7 @@ function char_delete()
 	{
 		$members[] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db_free_result']($result);
 	// Having found all of the people whose alert counts need to be fixed, let's now purge all these alerts.
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}user_alerts
