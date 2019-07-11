@@ -1830,11 +1830,12 @@ function char_sheet_approval()
 			'id_member' => $id_member,
 			'id_member_started' => $context['id_member'],
 			'member_name' => $context['member']['name'],
+			'chars_src' => $context['character']['id_character'],
 			'content_type' => 'member',
 			'content_id' => 0,
 			'content_action' => 'char_sheet_approval',
 			'is_read' => 0,
-			'extra' => json_encode(array('chars_src' => $context['character']['id_character'])),
+			'extra' => '',
 		);
 	}
 
@@ -1941,9 +1942,11 @@ function char_sheet_approve()
 	$smcFunc['db_insert']('',
 		'{db_prefix}user_alerts',
 		array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+			'chars_src' => 'int', 'chars_dest' => 'int',
 			'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 		array(time(), $context['id_member'], $context['user']['id'], '',
-			'member', 0, 'char_sheet_approved', 0, json_encode(array('chars_dest' => $context['character']['id_character']))),
+			0, $context['character']['id_character'],
+			'member', 0, 'char_sheet_approved', 0, ''),
 		[]
 	);
 	updateMemberData($context['id_member'], array('alerts' => '+'));

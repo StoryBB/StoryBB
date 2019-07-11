@@ -177,6 +177,8 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					// Only tell sender's information for new topics and replies
 					'id_member_started' => in_array($type, array('topic', 'reply')) ? $posterOptions['id'] : 0,
 					'member_name' => in_array($type, array('topic', 'reply')) ? $posterOptions['name'] : '',
+					'chars_src' => !empty($posterOptions['char_id']) ? $posterOptions['char_id'] : 0,
+					'chars_dest' => 0,
 					'content_type' => $content_type,
 					'content_id' => $topicOptions['id'],
 					'content_action' => $type,
@@ -188,10 +190,6 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 						'content_link' => $scripturl . '?topic=' . $topicOptions['id'] . '.new;topicseen#new',
 					],
 				];
-				if (!empty($posterOptions['char_id']))
-				{
-					$alert['extra']['chars_src'] = $posterOptions['char_id'];
-				}
 				$alert['extra'] = json_encode($alert['extra']);
 				$alert_rows[] = $alert;
 			}
@@ -223,9 +221,10 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		// Insert the alerts if any
 		if (!empty($alert_rows))
 		{
+			header('X-Debug: ' . json_encode($alert_rows));
 			$smcFunc['db_insert']('',
 				'{db_prefix}user_alerts',
-				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string', 'chars_src' => 'int', 'chars_dest' => 'int',
 					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
 				$alert_rows,
 				[]
@@ -285,6 +284,8 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'id_member' => $member['id_member'],
 					'id_member_started' => $posterOptions['id'],
 					'member_name' => $posterOptions['name'],
+					'chars_src' => 0,
+					'chars_dest' => 0,
 					'content_type' => 'msg',
 					'content_id' => $msgOptions['id'],
 					'content_action' => 'quote',
@@ -300,8 +301,8 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					$quoted_msg = reset($member['msgs']);
 					if (!$quoted_msg['is_main'])
 					{
-						$this_alert['extra']['chars_src'] = $posterOptions['char_id'];
-						$this_alert['extra']['chars_dest'] = $quoted_msg['id_character'];
+						$this_alert['chars_src'] = $posterOptions['char_id'];
+						$this_alert['chars_dest'] = $quoted_msg['id_character'];
 					}
 				}
 				$this_alert['extra'] = json_encode($this_alert['extra']);
@@ -441,19 +442,14 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'content_subject' => $msgOptions['subject'],
 					'content_link' => $scripturl . '?msg=' . $msgOptions['id'],
 				];
-				if (!empty($member['dest_chr']) && empty($member['dest_is_main']))
-				{
-					$extra['chars_dest'] = $member['dest_chr'];
-				}
-				if (!empty($member['mentioned_by']['source_chr']))
-				{
-					$extra['chars_src'] = $member['mentioned_by']['source_chr'];
-				}
+
 				$alert_rows[] = array(
 					'alert_time' => time(),
 					'id_member' => $member['id_member'],
 					'id_member_started' => $member['mentioned_by']['id'],
 					'member_name' => $member['mentioned_by']['name'],
+					'chars_src' => !empty($member['dest_chr']) && empty($member['dest_is_main']) ? $member['dest_chr'] : 0,
+					'chars_dest' => !empty($member['mentioned_by']['source_chr']) ? $member['mentioned_by']['source_chr'] : 0,
 					'content_type' => 'msg',
 					'content_id' => $msgOptions['id'],
 					'content_action' => 'mention',
