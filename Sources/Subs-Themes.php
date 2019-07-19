@@ -186,7 +186,6 @@ function get_theme_info($path)
 		fatal_lang_error('package_get_error_packageinfo_corrupt', false);
 	}
 
-	// Check for compatibility with 2.1 or greater.
 	if (empty($theme_info['storybb_version']))
 	{
 		remove_dir($path);

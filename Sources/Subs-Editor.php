@@ -1450,7 +1450,6 @@ function create_control_richedit($editorOptions)
 	$context['controls']['richedit'][$editorOptions['id']] = array(
 		'id' => $editorOptions['id'],
 		'value' => $editorOptions['value'],
-		'rich_value' => $editorOptions['value'], // 2.0 editor compatibility
 		'rich_active' => empty($modSettings['disable_wysiwyg']) && (!empty($options['wysiwyg_default']) || !empty($editorOptions['force_rich']) || !empty($_REQUEST[$editorOptions['id'] . '_mode'])),
 		'disable_smiley_box' => !empty($editorOptions['disable_smiley_box']),
 		'columns' => isset($editorOptions['columns']) ? $editorOptions['columns'] : 60,
@@ -1589,7 +1588,6 @@ function create_control_richedit($editorOptions)
 		);
 
 		// Allow mods to modify BBC buttons.
-		// Note: pass the array here is not necessary and is deprecated, but it is kept for backward compatibility with 2.0
 		call_integration_hook('integrate_bbc_buttons', array(&$context['bbc_tags'], &$editor_tag_map));
 
 		// Show the toggle?

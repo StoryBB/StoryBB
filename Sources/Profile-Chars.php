@@ -493,8 +493,7 @@ function char_edit()
 			{
 				$primary_group = isset($changes['main_char_group']) ? $changes['main_char_group'] : $context['character']['main_char_group'];
 				$additional_groups = isset($changes['char_groups']) ? $changes['char_groups'] : $context['character']['char_groups'];
-				// Note that like the 2.1 core hook, this is read only...
-				// But unlike the 2.1 core hook, we actually provide which account it is...
+
 				call_integration_hook('integrate_profile_profileSaveCharGroups', array($context['id_member'], $context['character']['id_character'], $primary_group, $additional_groups));
 			}
 

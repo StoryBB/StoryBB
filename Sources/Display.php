@@ -1264,9 +1264,7 @@ function Display()
 		unset($_SESSION['becomesUnapproved']);
 
 	// Allow adding new mod buttons easily.
-	// Note: $context['normal_buttons'] and $context['mod_buttons'] are added for backward compatibility with 2.0, but are deprecated and should not be used
 	call_integration_hook('integrate_display_buttons', [&$context['normal_buttons']]);
-	// Note: integrate_mod_buttons is no more necessary and deprecated, but is kept for backward compatibility with 2.0
 	call_integration_hook('integrate_mod_buttons', [&$context['mod_buttons']]);
 
 	// Load the drafts js file

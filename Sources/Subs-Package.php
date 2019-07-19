@@ -29,8 +29,8 @@ use GuzzleHttp\Client;
 function matchPackageVersion($version, $versions)
 {
 	// Make sure everything is lowercase and clean of spaces and unpleasant history.
-	$version = str_replace(array(' ', '2.0rc1-1'), array('', '2.0rc1.1'), strtolower($version));
-	$versions = explode(',', str_replace(array(' ', '2.0rc1-1'), array('', '2.0rc1.1'), strtolower($versions)));
+	$version = str_replace(' ', '', strtolower($version));
+	$versions = explode(',', str_replace(' ', '', strtolower($versions)));
 
 	// Perhaps we do accept anything?
 	if (in_array('all', $versions))

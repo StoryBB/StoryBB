@@ -1258,7 +1258,6 @@ else
 * This sets the X-Frame-Options header.
 *
 * @param string $override An option to override (either 'SAMEORIGIN' or 'DENY')
-* @since 2.1
 */
 function frameOptionsHeader($override = null)
 {

@@ -329,7 +329,6 @@ function loadUserSettings()
 
 	if (empty($id_member) && isset($_COOKIE[$cookiename]))
 	{
-		// First try 2.1 json-format cookie
 		$cookie_data = sbb_json_decode($_COOKIE[$cookiename], true, false);
 
 		// Malformed or was reset

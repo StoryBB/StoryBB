@@ -705,7 +705,6 @@ function prepareServerSettingsContext(&$config_vars)
 
 /**
  * Helper function, it sets up the context for database settings.
- * @todo see rev. 10406 from 2.1-requests
  *
  * @param array $config_vars An array of configuration variables
  */
@@ -1077,7 +1076,6 @@ function saveSettings(&$config_vars)
 
 /**
  * Helper function for saving database settings.
- * @todo see rev. 10406 from 2.1-requests
  *
  * @param array $config_vars An array of configuration variables
  */

@@ -43,7 +43,6 @@ function setLoginCookie($cookie_length, $id, $password = '')
 	// The cookie may already exist, and have been set with different options.
 	if (isset($_COOKIE[$cookiename]))
 	{
-		// First check for 2.1 json-format cookie
 		if (preg_match('~^{"0":\d+,"1":"[0-9a-f]*","2":\d+,"3":"[^"]+","4":"[^"]+"~', $_COOKIE[$cookiename]) === 1)
 			list(,,, $old_domain, $old_path) = sbb_json_decode($_COOKIE[$cookiename], true);
 
