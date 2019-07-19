@@ -56,7 +56,7 @@ class Behat extends RawMinkContext implements Context
 		// }
 
 		// Now make the installation.
-		$version = '3-0';
+		$version = '1-0';
 		$files = [
 			['Settings_behat.php', 'Settings.php'],
 			'install_' . $version . '_mysql.sql',
