@@ -1293,7 +1293,7 @@ function InstallCopy()
 		'name' => $name,
 		'images_url' => $themeurl . '/' . $name . '/images',
 		'version' => '1.0',
-		'install_for' => '3.0 - 3.0.99, ' . strtr($forum_version, array('StoryBB ' => '')),
+		'install_for' => '1.0 - 1.0.99, ' . strtr($forum_version, array('StoryBB ' => '')),
 	);
 
 	// Create the specific dir.

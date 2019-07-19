@@ -6,7 +6,7 @@
         "website": "https:\/\/storybb.org\/"
     },
     "theme_version": "1.0",
-    "storybb_version": "3.0",
+    "storybb_version": "1.0",
     "require_theme_strings": false,
     "disable_files": [],
     "theme_settings": [

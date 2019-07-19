@@ -18,7 +18,7 @@
  */
 
 $software_year = '2018';
-$forum_version = 'StoryBB 3.0 Alpha 1';
+$forum_version = 'StoryBB 1.0 Alpha 1';
 
 // Get everything started up...
 define('STORYBB', 1);

@@ -20,12 +20,12 @@ abstract class API implements API_Interface
 	/**
 	 * @var string The last version of StoryBB that this was tested on. Helps protect against API changes.
 	 */
-	public $version_compatible = 'StoryBB 3.0 Alpha 1';
+	public $version_compatible = 'StoryBB 1.0 Alpha 1';
 
 	/**
 	 * @var string The minimum StoryBB version that this will work with
 	 */
-	public $min_sbb_version = 'StoryBB 3.0 Alpha 1';
+	public $min_sbb_version = 'StoryBB 1.0 Alpha 1';
 
 	/**
 	 * @var bool Whether or not it's supported
