@@ -6,7 +6,7 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 // Try to handle it with the upper level index.php. (it should know what to do.)

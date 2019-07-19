@@ -7,7 +7,7 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 $txt['themeadmin_explain'] = 'Themes are the different looks and feels of your forum. These settings affect the selection of themes, and which themes guests and other members use.';
