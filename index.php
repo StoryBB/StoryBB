@@ -14,11 +14,11 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 $software_year = '2018';
-$forum_version = 'StoryBB 3.0 Alpha 1';
+$forum_version = 'StoryBB 1.0 Alpha 1';
 
 // Get everything started up...
 define('STORYBB', 1);

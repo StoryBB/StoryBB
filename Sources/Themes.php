@@ -24,7 +24,7 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 /**
@@ -1293,7 +1293,7 @@ function InstallCopy()
 		'name' => $name,
 		'images_url' => $themeurl . '/' . $name . '/images',
 		'version' => '1.0',
-		'install_for' => '3.0 - 3.0.99, ' . strtr($forum_version, array('StoryBB ' => '')),
+		'install_for' => '1.0 - 1.0.99, ' . strtr($forum_version, array('StoryBB ' => '')),
 	);
 
 	// Create the specific dir.

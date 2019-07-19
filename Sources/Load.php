@@ -7,7 +7,7 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 use LightnCandy\LightnCandy;
@@ -329,7 +329,6 @@ function loadUserSettings()
 
 	if (empty($id_member) && isset($_COOKIE[$cookiename]))
 	{
-		// First try 2.1 json-format cookie
 		$cookie_data = sbb_json_decode($_COOKIE[$cookiename], true, false);
 
 		// Malformed or was reset

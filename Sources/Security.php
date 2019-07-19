@@ -8,7 +8,7 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 use StoryBB\Helper\IP;
@@ -1258,7 +1258,6 @@ else
 * This sets the X-Frame-Options header.
 *
 * @param string $override An option to override (either 'SAMEORIGIN' or 'DENY')
-* @since 2.1
 */
 function frameOptionsHeader($override = null)
 {

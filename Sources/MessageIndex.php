@@ -8,7 +8,7 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 /**
@@ -759,7 +759,6 @@ function MessageIndex()
 	loadJavaScriptFile('topic.js', array('defer' => false), 'sbb_topic');
 
 	// Allow adding new buttons easily.
-	// Note: $context['normal_buttons'] is added for backward compatibility with 2.0, but is deprecated and should not be used
 	call_integration_hook('integrate_messageindex_buttons', array(&$context['normal_buttons']));
 }
 

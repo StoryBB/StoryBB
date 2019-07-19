@@ -7,14 +7,14 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 // @todo fix this
 // This defines two version types for checking the API's are compatible with this version of StoryBB.
 $GLOBALS['search_versions'] = array(
 	// This is the forum version but is repeated due to some people rewriting $forum_version.
-	'forum_version' => 'StoryBB 3.0 Alpha 1',
+	'forum_version' => 'StoryBB 1.0 Alpha 1',
 	// This is the minimum version of StoryBB that an API could have been written for to work. (strtr to stop accidentally updating version on release)
 	'search_version' => strtr('StoryBB 3+0=Alpha=1', array('+' => '.', '=' => ' ')),
 );

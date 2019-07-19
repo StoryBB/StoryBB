@@ -53,7 +53,7 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 /**
@@ -705,7 +705,6 @@ function prepareServerSettingsContext(&$config_vars)
 
 /**
  * Helper function, it sets up the context for database settings.
- * @todo see rev. 10406 from 2.1-requests
  *
  * @param array $config_vars An array of configuration variables
  */
@@ -1077,7 +1076,6 @@ function saveSettings(&$config_vars)
 
 /**
  * Helper function for saving database settings.
- * @todo see rev. 10406 from 2.1-requests
  *
  * @param array $config_vars An array of configuration variables
  */

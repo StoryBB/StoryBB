@@ -7,7 +7,7 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 namespace StoryBB\Cache;
@@ -20,12 +20,12 @@ abstract class API implements API_Interface
 	/**
 	 * @var string The last version of StoryBB that this was tested on. Helps protect against API changes.
 	 */
-	protected $version_compatible = 'StoryBB 3.0 Alpha 1';
+	protected $version_compatible = 'StoryBB 1.0 Alpha 1';
 
 	/**
 	 * @var string The minimum StoryBB version that this will work with
 	 */
-	protected $min_sbb_version = 'StoryBB 3.0 Alpha 1';
+	protected $min_sbb_version = 'StoryBB 1.0 Alpha 1';
 
 	/**
 	 * @var string The prefix for all keys.

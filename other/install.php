@@ -5,14 +5,14 @@
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
- * @version 3.0 Alpha 1
+ * @version 1.0 Alpha 1
  */
 
 use StoryBB\Schema\Schema;
 use StoryBB\Database\AdapterFactory;
 
-$GLOBALS['current_sbb_version'] = '3.0 Alpha 1';
-$GLOBALS['db_script_version'] = '3-0';
+$GLOBALS['current_sbb_version'] = '1.0 Alpha 1';
+$GLOBALS['db_script_version'] = '1-0';
 
 $GLOBALS['required_php_version'] = '7.0.0';
 
