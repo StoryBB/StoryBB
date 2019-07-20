@@ -15,6 +15,7 @@ $txt['permissions_modify'] = 'Modify';
 $txt['permissions_view'] = 'View';
 $txt['permissions_allowed'] = 'Allowed';
 $txt['permissions_denied'] = 'Denied';
+$txt['permissions_character_groups'] = 'Note that when a user is in immersive mode, the permissions of their current character groups are added to the permissions in the groups on their profile.';
 $txt['permission_cannot_edit'] = '<strong>Note:</strong> You cannot edit this permission profile as it is a predefined profile included within the forum software by default. If you wish to change the permissions of this profile you must first create a duplicate profile. You can carry out this task by clicking <a href="%1$s">here</a>.';
 
 $txt['permissions_for_profile'] = 'Permissions for Profile';

@@ -80,6 +80,8 @@ function PermissionIndex()
 
 	$context['page_title'] = $txt['permissions_title'];
 
+	loadLanguage('ManageMembers');
+
 	// Load all the permissions. We'll need them in the template.
 	loadAllPermissions();
 
@@ -142,12 +144,14 @@ function PermissionIndex()
 			'access' => false
 		),
 	);
+	$context['character_groups'] = [];
 
 	$normalGroups = [];
+	$characterGroups = [];
 
 	// Query the database defined membergroups.
 	$query = $smcFunc['db_query']('', '
-		SELECT id_group, id_parent, group_name, online_color, icons
+		SELECT id_group, id_parent, group_name, online_color, icons, is_character
 		FROM {db_prefix}membergroups
 		ORDER BY id_parent = {int:not_inherited} DESC, group_name',
 		array(
@@ -184,7 +188,14 @@ function PermissionIndex()
 			'access' => false,
 		);
 
-		$normalGroups[$row['id_group']] = $row['id_group'];
+		if (!empty($row['is_character']))
+		{
+			$characterGroups[$row['id_group']] = $row['id_group'];
+		}
+		else
+		{
+			$normalGroups[$row['id_group']] = $row['id_group'];
+		}
 	}
 	$smcFunc['db_free_result']($query);
 
@@ -220,6 +231,41 @@ function PermissionIndex()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($query))
 			$context['groups'][$row['id_group']]['num_members'] += $row['num_members'];
+		$smcFunc['db_free_result']($query);
+	}
+
+	if (!empty($characterGroups))
+	{
+		// First, the easy one!
+		$query = $smcFunc['db_query']('', '
+			SELECT main_char_group, COUNT(*) AS num_characters
+			FROM {db_prefix}characters
+			WHERE main_char_group IN ({array_int:character_group_list})
+			GROUP BY main_char_group',
+			array(
+				'character_group_list' => $characterGroups,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($query))
+			$context['groups'][$row['main_char_group']]['num_members'] += $row['num_characters'];
+		$smcFunc['db_free_result']($query);
+
+		// This one is slower, but it's okay... careful not to count twice!
+		$query = $smcFunc['db_query']('', '
+			SELECT mg.id_group, COUNT(*) AS num_characters
+			FROM {db_prefix}membergroups AS mg
+				INNER JOIN {db_prefix}characters AS chars ON (chars.char_groups != {string:blank_string}
+					AND chars.main_char_group != mg.id_group
+					AND FIND_IN_SET(mg.id_group, chars.char_groups) != 0)
+			WHERE mg.id_group IN ({array_int:character_group_list})
+			GROUP BY mg.id_group',
+			array(
+				'character_group_list' => $characterGroups,
+				'blank_string' => '',
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($query))
+			$context['groups'][$row['id_group']]['num_members'] += $row['num_characters'];
 		$smcFunc['db_free_result']($query);
 	}
 
@@ -294,6 +340,16 @@ function PermissionIndex()
 			'id' => $_REQUEST['pid'],
 			'name' => $context['profiles'][$_REQUEST['pid']]['name'],
 		);
+	}
+
+	// Having done all the processing, sift out character groups.
+	if (!empty($characterGroups))
+	{
+		foreach ($characterGroups as $group)
+		{
+			$context['character_groups'][$group] = $context['groups'][$group];
+			unset($context['groups'][$group]);
+		}
 	}
 
 	// We can modify any permission set apart from the read only, reply only and no polls ones as they are redefined.
@@ -409,6 +465,17 @@ function SetQuickGroups()
 	foreach ($_POST['group'] as $id => $group_id)
 		$_POST['group'][$id] = (int) $group_id;
 	$_POST['group'] = array_unique($_POST['group']);
+
+	// And now character groups, before we merge them back in...
+	// @todo can this mean character groups potentially could get perms they shouldn't have?
+	if (empty($_POST['charactergroup']) || !is_array($_POST['charactergroup']))
+		$_POST['charactergroup'] = [];
+
+	foreach ($_POST['charactergroup'] as $id => $group_id)
+		$_POST['charactergroup'][$id] = (int) $group_id;
+	$_POST['charactergroup'] = array_unique($_POST['charactergroup']);
+
+	$_POST['group'] = array_merge($_POST['group'], $_POST['charactergroup']);
 
 	if (empty($_REQUEST['pid']))
 		$_REQUEST['pid'] = 0;
