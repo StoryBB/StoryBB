@@ -786,6 +786,10 @@ ul li.greeting {
 	background: #fdfdfd;
 }
 
+.windowbg.selected {
+	border-color: #e09100;
+}
+
 .information {
 	background: #F8F8F8;
 	overflow: auto;
