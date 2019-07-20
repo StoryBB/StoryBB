@@ -814,10 +814,10 @@ p.information img {
 }
 
 /* This was named as "winfo" before, but its better named noup */
-.noup {
+.noup, .cat_bar + .windowbg, .cat_bar + .roundframe {
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
-	margin: 0 0 10px 0 !important;
+	margin-top: 0 !important;
 }
 
 .information.noup {
