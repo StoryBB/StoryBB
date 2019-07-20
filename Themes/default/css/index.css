@@ -1195,7 +1195,7 @@ a.button_submit {
 }
 
 .dropmenu li .active .amt, #top_info li .active .amt {
-	background: none;
+	background: rgba(0, 0, 0, 0.2);
 	color: inherit;
 }
 
