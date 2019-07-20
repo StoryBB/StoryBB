@@ -3,7 +3,7 @@
 		<div class="cat_bar">
 			<h3 class="catbg">{{{txt.attachment_stats}}}</h3>
 		</div>
-		<div class="windowbg2 noup">
+		<div class="windowbg noup">
 			<dl class="settings">
 				<dt><strong>{{{txt.attachment_total}}}:</strong></dt>
 				<dd>{{{context.num_attachments}}}</dd>
@@ -37,7 +37,7 @@
 		<div class="cat_bar">
 			<h3 class="catbg">{{{txt.attachment_integrity_check}}}</h3>
 		</div>
-		<div class="windowbg2 noup">
+		<div class="windowbg noup">
 			<form action="{{scripturl}}?action=admin;area=manageattachments;sa=repair;{{session_url}}" method="post" accept-charset="UTF-8">
 				<p>{{{txt.attachment_integrity_check_desc}}}</p>
 				<input type="submit" name="repair" value="{{{txt.attachment_check_now}}}" class="button_submit">
@@ -46,7 +46,7 @@
 		<div class="cat_bar">
 			<h3 class="catbg">{{{txt.attachment_pruning}}}</h3>
 		</div>
-		<div class="windowbg2 noup">
+		<div class="windowbg noup">
 			<form action="{{scripturl}}?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm('{{{txt.attachment_pruning_warning}}}');">
 				<dl class="settings">
 					<dt>{{{txt.attachment_remove_old}}}</dt>
@@ -97,7 +97,7 @@
 	<div class="noticebox">{{{context.results}}}</div>
 {{/if}}
 
-	<div class="windowbg2 noup">
+	<div class="windowbg noup">
 		<form action="{{scripturl}}?action=admin;area=manageattachments;sa=transfer" method="post" accept-charset="UTF-8">
 			<p>{{{txt.attachment_transfer_desc}}}</p>
 			<dl class="settings">

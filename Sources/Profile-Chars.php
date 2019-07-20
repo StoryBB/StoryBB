@@ -1626,10 +1626,10 @@ function char_sheet_history()
 	$context['sub_template'] = 'profile_character_sheet_history';
 
 	addInlineJavascript('
-	$(".click_collapse, .windowbg2 .sheet").hide();
+	$(".click_collapse, .windowbg .sheet").hide();
 	$(".click_expand, .click_collapse").on("click", function(e) {
 		e.preventDefault();
-		$(this).closest(".windowbg2").find(".click_expand, .click_collapse, .sheet").toggle();
+		$(this).closest(".windowbg").find(".click_expand, .click_collapse, .sheet").toggle();
 	});
 	', true);
 }
