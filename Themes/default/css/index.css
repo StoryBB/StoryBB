@@ -934,10 +934,6 @@ input, select {
 	height: 25px;
 }
 
-input[type="checkbox"] {
-	height: 13px;
-}
-
 /* Some browsers will actually render one */
 input[type="checkbox"], input[type="radio"] {
 	box-shadow: none;
