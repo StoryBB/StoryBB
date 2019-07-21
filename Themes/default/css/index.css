@@ -2100,6 +2100,10 @@ img.icon.char_avatar {
 	background: none;
 }
 
+a.main_icons:not(:empty)::before {
+	margin-right: 4px;
+}
+
 /* Small fix for topics */
 .quickbuttons span.main_icons {
 	margin: -3px 3px 0 1px;
@@ -2112,7 +2116,7 @@ img.icon.char_avatar {
 
 /* This is a small fix for dropmenu icons */
 .dropmenu .main_icons, #profile_menu .main_icons, .dropmenu img {
-	margin: -3px 8px 0 0;
+	margin: -3px 4px 0 0;
 	vertical-align: middle;
 }
 
