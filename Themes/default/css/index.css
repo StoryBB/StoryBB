@@ -3279,8 +3279,8 @@ img.smiley {
 }
 
 #quickReplyOptions .roundframe {
-	margin: 0;
-	padding: 8px 10% 12px 10%;
+	margin-top: 0;
+	padding: 12px 10%;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 }
@@ -3291,11 +3291,6 @@ img.smiley {
 }
 
 /* Edit post section */
-form#postmodify .roundframe {
-	padding: 12px 12%;
-	margin: 12px 0 0 0;
-}
-
 #post_header {
 	padding: 6px;
 	overflow: hidden;
