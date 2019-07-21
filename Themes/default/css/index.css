@@ -613,10 +613,6 @@ ul li.greeting {
 	padding-bottom: 2px;
 }
 
-.quickbuttons li input {
-	margin-top: 4px;
-}
-
 /* Dropdown part of quickbuttons */
 .quickbuttons li ul {
 	position: absolute;
@@ -934,11 +930,6 @@ input, select {
 	height: 25px;
 }
 
-/* Some browsers will actually render one */
-input[type="checkbox"], input[type="radio"] {
-	box-shadow: none;
-}
-
 select {
 	padding: 2px;
 }
@@ -1004,11 +995,14 @@ textarea, textarea.editor {
 	font-size: 1em;
 }
 
-/* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
+/* Checkboxes or radio buttons shouldn't have a border around them.
+ Some browsers will also render a box-shadow.
+ @todo: Any browsers actually render a border? */
 input[type=checkbox], input[type=radio] {
 	border: none;
 	background: none;
-	vertical-align: top;
+	vertical-align: middle;
+	box-shadow: none;
 }
 
 /* Give disabled text input elements a different background color. */
