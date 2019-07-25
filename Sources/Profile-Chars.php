@@ -778,7 +778,6 @@ function char_posts()
 	$context[$context['profile_menu_name']]['tab_data'] = array(
 		'title' => $txt['showPosts'],
 		'description' => $txt['showPosts_help_char'],
-		'icon_class' => 'members main_icons',
 		'tabs' => array(
 			'posts' => array(
 			),
@@ -1199,8 +1198,7 @@ function char_stats()
 	$context['num_posts'] = comma_format($context['character']['posts']);
 	// Menu tab
 	$context[$context['profile_menu_name']]['tab_data'] = array(
-		'title' => $txt['statPanel_generalStats'] . ' - ' . $context['character']['character_name'],
-		'icon_class' => 'user_stats main_icons'
+		'title' => $txt['statPanel_generalStats'] . ' - ' . $context['character']['character_name']
 	);
 
 	$context['linktree'][] = array(
@@ -1626,10 +1624,10 @@ function char_sheet_history()
 	$context['sub_template'] = 'profile_character_sheet_history';
 
 	addInlineJavascript('
-	$(".click_collapse, .windowbg2 .sheet").hide();
+	$(".click_collapse, .windowbg .sheet").hide();
 	$(".click_expand, .click_collapse").on("click", function(e) {
 		e.preventDefault();
-		$(this).closest(".windowbg2").find(".click_expand, .click_collapse, .sheet").toggle();
+		$(this).closest(".windowbg").find(".click_expand, .click_collapse, .sheet").toggle();
 	});
 	', true);
 }

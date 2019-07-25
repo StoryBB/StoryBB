@@ -1,6 +1,6 @@
 		{{! History of character sheets. }}
 		<div class="cat_bar">
-			<h3 class="catbg members main_icons">
+			<h3 class="catbg">
 				{{{txt.char_sheet}}} - {{{context.character.character_name}}} - {{{txt.char_sheet_history}}}
 			</h3>
 		</div>
@@ -8,14 +8,14 @@
 {{#each context.history_items}}
 	{{#if (is_numeric .)}}
 
-		<div class="windowbg2">
+		<div class="windowbg">
 			<span class="main_icons approve_button"></span> {{textTemplate ../txt.char_sheet_was_approved (concat '#version' .)}}
 		</div>
 
 	{{else}}
 		{{#if (eq type 'sheet')}}
 
-		<div class="windowbg2" id="version{{id_version}}">
+		<div class="windowbg" id="version{{id_version}}">
 			<div class="sheet_info">
 				<span class="main_icons modify_button"></span> {{textTemplate ../txt.char_sheet_updated created_time_format}}
 				({{{../txt.char_sheet_click_to_expand}}}{{{../txt.char_sheet_click_to_collapse}}})
@@ -27,7 +27,7 @@
 
 		{{else}}
 
-		<div class="windowbg2" id="comment{{id_comment}}">
+		<div class="windowbg" id="comment{{id_comment}}">
 			<div>
 				<span class="main_icons im_on"></span> <strong>{{#if real_name}}{{{real_name}}}{{else}}{{{../txt.char_unknown}}}{{/if}}</strong> - {{{time_posted_format}}}
 			</div>

@@ -1,36 +1,35 @@
-	<div class="tborder" id="topic_icons">
-		<div class="information">
-			<p class="floatright" id="message_index_jump_to">&nbsp;</p>
+	<div class="information" id="topic_legend">
+		<div class="floatright jump_to" id="message_index_jump_to"></div>
 
 {{#unless context.no_topic_listing}}
-			<p class="floatleft">
-				{{#if modSettings.pollMode}}<span class="main_icons poll centericon"></span> {{txt.poll}}{{/if}}<br>
-				<img src="{{settings.images_url}}/post/moved.png" alt="" class="centericon sizefix"> {{txt.moved_topic}}<br>
-			</p>
-			<p>
-				<span class="main_icons lock centericon"></span> {{txt.locked_topic}}<br>
-				<span class="main_icons sticky centericon"></span> {{txt.sticky_topic}}<br>
-			</p>
+		<ul class="topic_legend">
+
+	{{#if modSettings.pollMode}}
+			<li class="main_icons poll">{{txt.poll}}</li>
+	{{/if}}
+
+			<li class="main_icons moved_topic">{{txt.moved_topic}}</li>
+			<li class="main_icons lock">{{txt.locked_topic}}</li>
+			<li class="main_icons sticky">{{txt.sticky_topic}}</li>
+		</ul>
 {{/unless}}
 
 {{#if context.jump_to}}
-			<script>
-				if (typeof(window.XMLHttpRequest) != "undefined")
-					aJumpTo[aJumpTo.length] = new JumpTo({
-						sContainerId: "message_index_jump_to",
-						sJumpToTemplate: "<label class=\"smalltext jump_to\" for=\"%select_id%\">{{context.jump_to.label}}<" + "/label> %dropdown_list%",
-						iCurBoardId: {{context.current_board}},
-						iCurBoardChildLevel: {{context.jump_to.child_level}},
-						sCurBoardName: "{{context.jump_to.board_name}}",
-						sBoardChildLevelIndicator: "==",
-						sBoardPrefix: "=> ",
-						sCatSeparator: "-----------------------------",
-						sCatPrefix: "",
-						sGoButtonLabel: "{{txt.quick_mod_go}}"
-					});
-			</script>
+		<script>
+			if (typeof(window.XMLHttpRequest) != "undefined")
+				aJumpTo[aJumpTo.length] = new JumpTo({
+					sContainerId: "message_index_jump_to",
+					sJumpToTemplate: "<label class=\"smalltext jump_to\" for=\"%select_id%\">{{context.jump_to.label}}<" + "/label> %dropdown_list%",
+					iCurBoardId: {{context.current_board}},
+					iCurBoardChildLevel: {{context.jump_to.child_level}},
+					sCurBoardName: "{{context.jump_to.board_name}}",
+					sBoardChildLevelIndicator: "==",
+					sBoardPrefix: "=> ",
+					sCatSeparator: "-----------------------------",
+					sCatPrefix: "",
+					sGoButtonLabel: "{{txt.quick_mod_go}}"
+				});
+		</script>
 {{/if}}
 
-			<br class="clear">
-		</div>
 	</div>

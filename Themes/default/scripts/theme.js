@@ -1,6 +1,4 @@
 $(function() {
-	$('ul.dropmenu, ul.quickbuttons').superfish({delay : 250, speed: 100, sensitivity : 8, interval : 50, timeout : 1});
-
 	// tooltips
 	$('.preview').SBBtooltip();
 

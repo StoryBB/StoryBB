@@ -10,11 +10,11 @@
 
 {{#if (eq context.theme_settings.theme_id -1)}}
 			<div class="cat_bar">
-				<h3 class="catbg main_icons settings">
+				<h3 class="catbg">
 					{{txt.theme_edit}}
 				</h3>
 			</div>
-			<div class="windowbg2 noup">
+			<div class="windowbg noup">
 				<ul>
 					<li>
 						<a href="{{scripturl}}?action=admin;area=theme;th={{context.theme_settings.theme_id}};{{session_url}};sa=edit;filename=index.template.php">{{txt.theme_edit_index}}</a>
@@ -26,11 +26,11 @@
 			</div>
 {{/if}}
 				<div class="cat_bar">
-				<h3 class="catbg main_icons settings">
+				<h3 class="catbg">
 					{{txt.theme_url_config}}
 				</h3>
 			</div>
-			<div class="windowbg2 noup">
+			<div class="windowbg noup">
 				<dl class="settings">
 					<dt>
 						<label for="theme_name">{{txt.actual_theme_name}}</label>
@@ -61,11 +61,11 @@
 
 {{#if context.theme_variants}}
 			<div class="cat_bar">
-				<h3 class="catbg main_icons settings">
+				<h3 class="catbg">
 					{{txt.theme_variants}}
 				</h3>
 			</div>
-			<div class="windowbg2 noup">
+			<div class="windowbg noup">
 				<dl class="settings">
 					<dt>
 						<label for="variant">{{txt.theme_variants_default}}</label>:
@@ -90,11 +90,11 @@
 			</div>
 {{/if}}
 			<div class="cat_bar">
-				<h3 class="catbg main_icons settings">
+				<h3 class="catbg">
 					{{txt.theme_options}}
 				</h3>
 			</div>
-			<div class="windowbg2 noup">
+			<div class="windowbg noup">
 
 {{#each context.settings}}
 				<dl class="settings">

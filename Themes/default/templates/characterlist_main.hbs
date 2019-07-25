@@ -1,6 +1,6 @@
 		{{! The main character list (as opposed to member list) }}
 		<div class="cat_bar">
-			<h3 class="catbg main_icons mlist">
+			<h3 class="catbg">
 				{{{txt.chars_menu_title}}}
 			</h3>
 		</div>
@@ -43,13 +43,13 @@
 {{/if}}
 
 {{#unless context.char_list}}
-		<div class="windowbg2">{{{txt.characters_none}}}</div>
+		<div class="windowbg">{{{txt.characters_none}}}</div>
 {{else}}
 			{{{context.page_index}}}
 			<div class="char_list_container">
 
 	{{#each context.char_list}}
-				<div class="windowbg2 char_list">
+				<div class="windowbg char_list">
 					<div class="char_list_name">
 						<a href="{{scripturl}}?action=profile;u={{id_member}};area=characters;char={{id_character}}">{{{character_name}}}</a>
 					</div>
