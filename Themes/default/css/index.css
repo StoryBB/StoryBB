@@ -613,10 +613,6 @@ ul li.greeting {
 	padding-bottom: 2px;
 }
 
-.quickbuttons li input {
-	margin-top: 4px;
-}
-
 /* Dropdown part of quickbuttons */
 .quickbuttons li ul {
 	position: absolute;
@@ -734,7 +730,7 @@ ul li.greeting {
 	background: #F8F8F8;
 	border: 1px solid #c5c5c5;
 	border-radius: 7px;
-	box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
 	overflow: auto;
 }
 
@@ -934,10 +930,6 @@ input, select {
 	height: 25px;
 }
 
-input[type="checkbox"] {
-	height: 13px;
-}
-
 select {
 	padding: 2px;
 }
@@ -965,6 +957,24 @@ input:focus, textarea:focus, button:focus, select:focus, textarea.editor:focus {
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) inset;
 }
 
+/* Number inputs don't support size nor width, so let's set a default so [size] can be used */
+input[type="number"] {
+	padding-right: 0; /* Removes extra white space after arrows in some browsers */
+	width: calc(4ch + 15px + 0.8em);
+}
+input[type="number"][size="2"], input[type="number"][size="1"] {
+	width: calc(2ch + 15px + 0.8em);
+}
+input[type="number"][size="3"] {
+	width: calc(3ch + 15px + 0.8em);
+}
+input[type="number"][size="5"] {
+	width: calc(5ch + 15px + 0.8em);
+}
+input[type="number"][size="6"] {
+	width: calc(6ch + 15px + 0.8em);
+}
+
 /* Fieldsets are used to group elements. */
 fieldset {
 	padding: 18px;
@@ -985,11 +995,14 @@ textarea, textarea.editor {
 	font-size: 1em;
 }
 
-/* All input elements that are checkboxes or radio buttons shouldn't have a border around them. */
+/* Checkboxes or radio buttons shouldn't have a border around them.
+ Some browsers will also render a box-shadow.
+ @todo: Any browsers actually render a border? */
 input[type=checkbox], input[type=radio] {
 	border: none;
 	background: none;
-	vertical-align: top;
+	vertical-align: middle;
+	box-shadow: none;
 }
 
 /* Give disabled text input elements a different background color. */
@@ -1194,7 +1207,7 @@ a.button_submit {
 }
 
 .dropmenu li .active .amt, #top_info li .active .amt {
-	background: none;
+	background: rgba(0, 0, 0, 0.2);
 	color: inherit;
 }
 
@@ -1948,25 +1961,18 @@ body#help_popup {
 /* The jump to box */
 #display_jump_to {
 	padding: 11px 5px 5px 0;
-	margin: 0;
-	border: none;
 	float: right;
-	font-size: 1em;
-	background: none;
 }
 
 #display_jump_to select {
 	margin: 0 -12px 0 0;
-	padding: 2px;
 }
 
 #message_index_jump_to_select {
 	font-size: 1em;
-	padding: 0;
 }
 
 #message_index_jump_to .button_submit {
-	margin-top: 3px;
 	padding: 1px 6px;
 }
 
@@ -1981,7 +1987,7 @@ body#help_popup {
 	overflow: hidden;
 	border: 1px solid #ddd;
 	border-radius: 2px;
-	box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.08);
+	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.08);
 }
 
 .navigate_section ul li {
@@ -2058,6 +2064,10 @@ img.icon.char_avatar {
 	background: none;
 }
 
+.main_icons:not(:empty)::before {
+	margin-right: 4px;
+}
+
 .main_icons.moved_topic::before {
 	background: url(../images/post/moved.png) center;
 }
@@ -2074,7 +2084,7 @@ img.icon.char_avatar {
 
 /* This is a small fix for dropmenu icons */
 .dropmenu .main_icons, #profile_menu .main_icons, .dropmenu img {
-	margin: -3px 8px 0 0;
+	margin: -3px 4px 0 0;
 	vertical-align: middle;
 }
 
@@ -2801,10 +2811,6 @@ span.postby {
 	padding: 0;
 }
 
-#topic_header input {
-	margin-top: 5px !important;
-}
-
 #topic_container .windowbg {
 	border: 1px solid #ddd;
 	border-top: none;
@@ -2816,10 +2822,6 @@ span.postby {
 	padding: 0;
 	margin: 0;
 	overflow: hidden;
-}
-
-.icon img, .moderation input {
-	margin-top: 15px;
 }
 
 .icons, #messageindex .board_stats p, .lastpost p, #unread .board_stats p, #unreadreplies .board_stats p {
@@ -2866,7 +2868,7 @@ span.postby {
 	padding: 12px 16px;
 	border: 1px solid #ddd;
 	border-radius: 6px;
-	box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
 	overflow: auto;
 }
 
@@ -3226,8 +3228,8 @@ img.smiley {
 }
 
 #quickReplyOptions .roundframe {
-	margin: 0;
-	padding: 8px 10% 12px 10%;
+	margin-top: 0;
+	padding: 12px 10%;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 }
@@ -3238,11 +3240,6 @@ img.smiley {
 }
 
 /* Edit post section */
-form#postmodify .roundframe {
-	padding: 12px 12%;
-	margin: 12px 0 0 0;
-}
-
 #post_header {
 	padding: 6px;
 	overflow: hidden;
@@ -4562,7 +4559,7 @@ dl.stats dd span {
 	padding: 8px 20px 12px 20px;
 	border: 1px solid #ddd;
 	border-radius: 7px;
-	box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
 	overflow: auto;
 }
 
