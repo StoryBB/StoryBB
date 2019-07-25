@@ -786,12 +786,15 @@ ul li.greeting {
 	background: #fdfdfd;
 }
 
+.windowbg.chosen {
+	border-color: #e09100;
+}
+
 .information {
 	background: #F8F8F8;
 	overflow: auto;
 	padding-bottom: .5em;
 	border: 1px solid #ddd;
-	border-top: none;
 	border-radius: 0 0 7px 7px;
 	margin: 0 0 10px 0;
 	padding: 12px 9px 8px 9px;
@@ -810,20 +813,17 @@ p.information img {
 }
 
 /* This was named as "winfo" before, but its better named noup */
-.noup {
+.noup, .cat_bar + .windowbg, .cat_bar + .roundframe {
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
-	margin: 0 0 10px 0 !important;
+	margin-top: 0 !important;
+	box-shadow: none !important;
 }
 
 .information.noup {
 	border-radius: 0;
 	margin: 0 !important;
 	border-bottom: none;
-}
-
-.windowbg2.noup {
-	box-shadow: none;
 }
 
 /* Lists with settings use these a lot. */
@@ -1013,7 +1013,6 @@ select[disabled] {
 
 /* 7# Buttons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
 #frmLogin input.button_submit, #guest_form input.button_submit, #calendar_navigation input.button_submit, #mergeSelectBoard input.button_submit {
@@ -1509,7 +1508,6 @@ div.cat_bar {
 	border-radius: 6px 6px 0 0;
 	box-shadow: 0 16px 20px rgba(255, 255, 255, 0.15) inset;
 	text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.2);
-	margin-bottom: 1px;
 }
 
 .cat_bar h3 {
@@ -1638,15 +1636,15 @@ table.table_grid td {
 	cursor: default;
 }
 
-tr.windowbg td, tr.windowbg2 td, .table_grid tr td {
+tr.windowbg td, .table_grid tr td {
 	padding: 4px 8px;
 }
 
-.table_grid tr.windowbg2 td.centercol, .table_grid tr.windowbg td.centercol {
+.table_grid tr.windowbg td.centercol {
 	text-align: center;
 }
 
-tr.windowbg, tr.windowbg2 {
+tr.windowbg {
 	box-shadow: none;
 }
 
@@ -2743,8 +2741,7 @@ h3 .collapse {
 .up_contain {
 	overflow: hidden;
 	border: 1px solid #ddd;
-	margin-bottom: 3px;
-	margin-top: -1px;
+	margin-bottom: 2px;
 }
 
 /* Sub-boards */
@@ -2831,12 +2828,12 @@ span.postby {
 	margin-top: 5px !important;
 }
 
-#topic_container .windowbg, #topic_container .windowbg2 {
+#topic_container .windowbg {
 	border: 1px solid #ddd;
 	border-top: none;
 }
 
-#topic_container .board_icon, #topic_container .info, #topic_container .windowbg2, #topic_container .windowbg, #topic_container .board_stats, #topic_container .lastpost {
+#topic_container .board_icon, #topic_container .info, #topic_container .windowbg, #topic_container .board_stats, #topic_container .lastpost {
 	box-shadow: none;
 	border-radius: 0;
 	padding: 0;
@@ -2893,7 +2890,7 @@ span.postby {
 	padding: 0 2px;
 }
 
-.generic_list_wrapper, .windowbg, .windowbg2, #forumposts .approvebg, #forumposts .approvebg2 {
+.generic_list_wrapper, .windowbg, #forumposts .approvebg {
 	background: #f0f4f7;
 	margin: 12px 0 0 0;
 	padding: 12px 16px;
@@ -2904,32 +2901,32 @@ span.postby {
 }
 
 /* Special treatment for #forumposts area */
-#forumposts .windowbg, #forumposts .windowbg2, #forumposts .approvebg, #forumposts .approvebg2 {
+#forumposts .windowbg, #forumposts .approvebg {
 	overflow: visible;
 }
 
 /* Nobody wants locked topics to stand out much. */
-.windowbg.locked, .windowbg2.locked {
+.windowbg.locked {
 	background: #e7eaef;
 }
 
 /* Sticky topics get a different background */
-.windowbg.sticky, .windowbg2.sticky {
+.windowbg.sticky {
 	background: #cfdce8;
 }
 
 /* Locked AND sticky are a bit more technical */
-.windowbg.sticky.locked, .windowbg2.sticky.locked {
+.windowbg.sticky.locked {
 	background: #e8d8cf;
 }
 
 /* Awaiting approval is a bit special, topics first */
-.windowbg.approvetopic, .windowbg2.approvetopic {
+.windowbg.approvetopic {
 	background: #e4a17c;
 }
 
 /* Unapproved posts in approved topics */
-.windowbg.approvepost, .windowbg2.approvepost {
+.windowbg.approvepost {
 	background: #ffcbcb;
 }
 
@@ -2961,8 +2958,7 @@ span.postby {
 	background: #ffeaea;
 }
 
-#forumposts .approvebg2 {
-	color: #222;
+#forumposts .approvebg:nth-of-type(odd) {
 	background: #fff2f2;
 }
 
@@ -4944,7 +4940,7 @@ span.member.hidden {
 	margin-bottom: 0.25em;
 }
 
-#alerts tr.windowbg td, #alerts tr.windowbg2 td {
+#alerts tr.windowbg td {
 	border-right: 1px solid #ddd;
 }
 
@@ -5049,7 +5045,7 @@ div#manage_boards dl dd textarea[name=desc] {
 	display: block;
 }
 
-#groups .windowbg, #groups .windowbg2 {
+#groups .windowbg {
 	box-shadow: none;
 	border-radius: 0;
 	border-top: 0;

@@ -7,7 +7,7 @@
 
 {{! No posts? }}
 {{#unless context.unapproved_items}}
-			<div class="windowbg2">
+			<div class="windowbg">
 				<p class="centertext">{{#if (eq context.current_view 'topics')}}{{{txt.mc_unapproved_topics_none_found}}}{{else}}{{{txt.mc_unapproved_replies_none_found}}}{{/if}}</p>
 			</div>
 {{else}}
