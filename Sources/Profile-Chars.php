@@ -778,7 +778,6 @@ function char_posts()
 	$context[$context['profile_menu_name']]['tab_data'] = array(
 		'title' => $txt['showPosts'],
 		'description' => $txt['showPosts_help_char'],
-		'icon_class' => 'members main_icons',
 		'tabs' => array(
 			'posts' => array(
 			),
@@ -1199,8 +1198,7 @@ function char_stats()
 	$context['num_posts'] = comma_format($context['character']['posts']);
 	// Menu tab
 	$context[$context['profile_menu_name']]['tab_data'] = array(
-		'title' => $txt['statPanel_generalStats'] . ' - ' . $context['character']['character_name'],
-		'icon_class' => 'user_stats main_icons'
+		'title' => $txt['statPanel_generalStats'] . ' - ' . $context['character']['character_name']
 	);
 
 	$context['linktree'][] = array(
