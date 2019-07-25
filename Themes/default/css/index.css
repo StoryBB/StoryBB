@@ -1972,19 +1972,11 @@ body#help_popup {
 
 /* The navigation list (i.e. linktree) */
 .navigate_section {
-	padding: 3px 0 0 0;
-	float: left;
-	width: 100%;
-}
-
-#main_content_section .navigate_section {
-	margin: 4px 0 0 0;
-	padding: 0;
+	margin-top: 8px;
 }
 
 .navigate_section ul {
-	margin: 4px 0 0 0;
-	padding: 0 10px;
+	padding: 5px 10px 6px;
 	font-size: 0.9em;
 	overflow: hidden;
 	border: 1px solid #ddd;
@@ -1993,32 +1985,14 @@ body#help_popup {
 }
 
 .navigate_section ul li {
-	float: left;
-	padding-bottom: 3px;
-	line-height: 1.1em;
-	color: #444;
+	display: inline-block;
 	text-shadow: 1px 1px 0 #fff;
-}
-
-.navigate_section ul li a, .navigate_section ul li em {
-	padding: 4px 0 4px;
-	margin-top: -4px;
-	display: inline-block;
-}
-
-.navigate_section ul li span {
-	display: inline-block;
-	margin-top: 8px;
 }
 
 .navigate_section ul li .dividers {
 	color: #3f6b8c;
 	font: 83.33%/150% Arial, sans-serif;
-	padding: 0 2px 0 6px;
-}
-
-.navigate_section ul li .board_moderators a {
-	padding: 4px 0;
+	padding: 0 2px 0 4px;
 }
 
 /* "Unread posts" and "New replies" links */
@@ -2026,9 +2000,8 @@ body#help_popup {
 	float: right;
 }
 
-.navigate_section .unread_links a {
-	padding: 4px 0 4px 10px;
-	margin-top: 4px;
+.navigate_section .unread_links a:not(:last-child) {
+	margin-right: 10px;
 }
 
 .topic_pages {
@@ -2083,6 +2056,10 @@ img.icon.char_avatar {
 
 .main_icons.char_avatar::before {
 	background: none;
+}
+
+.main_icons.moved_topic::before {
+	background: url(../images/post/moved.png) center;
 }
 
 /* Small fix for topics */
@@ -2868,26 +2845,19 @@ span.postby {
 }
 
 /* Icons and jump to */
-#topic_icons::before {
-	display: block;
-	height: 8px;
-	clear: both;
-	content: '';
-}
-
-#topic_icons .information {
-	font-size: .9em;
+#topic_legend {
+	font-size: 0.9em;
 	border-radius: 4px;
+	padding: 8px 10px;
 }
 
-#topic_icons p {
-	padding: 0 12px 0 4px;
-	line-height: 2em;
+.topic_legend {
+	display: inline-block;
+	columns: 2;
 }
 
-/* Should lose this before RC1. It's a kludge. Can be fixed by new image */
-#topic_icons .floatleft img:first-child {
-	padding: 0 2px;
+.topic_legend li {
+	margin-bottom: 4px;
 }
 
 .generic_list_wrapper, .windowbg, #forumposts .approvebg {
