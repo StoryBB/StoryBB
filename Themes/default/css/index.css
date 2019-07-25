@@ -2093,7 +2093,7 @@ img.icon.char_avatar {
 	background: none;
 }
 
-a.main_icons:not(:empty)::before {
+.main_icons:not(:empty)::before {
 	margin-right: 4px;
 }
 
