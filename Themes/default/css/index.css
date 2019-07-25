@@ -2060,6 +2060,10 @@ img.icon.char_avatar {
 	background: none;
 }
 
+.main_icons.moved_topic::before {
+	background: url(../images/post/moved.png) center;
+}
+
 /* Small fix for topics */
 .quickbuttons span.main_icons {
 	margin: -3px 3px 0 1px;
@@ -2844,26 +2848,19 @@ span.postby {
 }
 
 /* Icons and jump to */
-#topic_icons::before {
-	display: block;
-	height: 8px;
-	clear: both;
-	content: '';
-}
-
-#topic_icons .information {
-	font-size: .9em;
+#topic_legend {
+	font-size: 0.9em;
 	border-radius: 4px;
+	padding: 8px 10px;
 }
 
-#topic_icons p {
-	padding: 0 12px 0 4px;
-	line-height: 2em;
+.topic_legend {
+	display: inline-block;
+	columns: 2;
 }
 
-/* Should lose this before RC1. It's a kludge. Can be fixed by new image */
-#topic_icons .floatleft img:first-child {
-	padding: 0 2px;
+.topic_legend li {
+	margin-bottom: 4px;
 }
 
 .generic_list_wrapper, .windowbg, .windowbg2, #forumposts .approvebg, #forumposts .approvebg2 {
