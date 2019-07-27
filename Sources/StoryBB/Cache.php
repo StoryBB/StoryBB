@@ -160,7 +160,7 @@ class Cache
 		return $apis;
 	}
 
-	public static function empty($type)
+	public static function flush($type)
 	{
 		// If we can't get to the API, can't do this.
 		if (empty(self::$cacheAPI))

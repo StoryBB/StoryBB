@@ -3229,7 +3229,7 @@ function cache_get_data($key, $ttl = 120)
  */
 function clean_cache($type = '')
 {
-	StoryBB\Cache::empty($type);
+	StoryBB\Cache::flush($type);
 }
 
 /**
