@@ -46,7 +46,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_unescape_string'        => 'stripslashes',
 			'db_server_info'            => 'sbb_db_get_server_info',
 			'db_affected_rows'          => 'sbb_db_affected_rows',
-			'db_transaction'            => 'sbb_db_transaction',
 			'db_error'                  => 'mysqli_error',
 			'db_errno'                  => 'mysqli_errno',
 			'db_title'                  => 'MySQLi',
@@ -449,12 +448,6 @@ function sbb_db_insert_id($connection = null)
 {
 	global $smcFunc;
 	return $smcFunc['db']->inserted_id();
-}
-
-function sbb_db_transaction($type = 'commit', $connection = null)
-{
-	global $smcFunc;
-	return $smcFunc['db']->transaction($type);
 }
 
 /**

@@ -315,7 +315,7 @@ class Behat extends RawMinkContext implements Context
 
 		$tables = $smcFunc['db_list_tables']();
 		$non_prefixed_tables = preg_grep('/^(?!behat_).*/i', $tables);
-		$smcFunc['db_transaction']('begin');
+		$smcFunc['db']->transaction('begin');
 		foreach ($non_prefixed_tables as $table)
 		{
 			$smcFunc['db_query']('', '
@@ -325,7 +325,7 @@ class Behat extends RawMinkContext implements Context
 				)
 			);
 		}
-		$smcFunc['db_transaction']('commit');
+		$smcFunc['db']->transaction('commit');
 
 		$pristine_tables = preg_grep('/^behat_/i', $tables);
 		foreach ($pristine_tables as $table)
