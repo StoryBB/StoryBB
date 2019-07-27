@@ -16,7 +16,7 @@ use StoryBB\Schema\InvalidIndexException;
 use StoryBB\Schema\InvalidIndexTypeException;
 
 /**
- * This class handles alerts.
+ * This class handles indexes.
  */
 class Index
 {
