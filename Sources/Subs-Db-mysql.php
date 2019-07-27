@@ -38,7 +38,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_fetch_row'              => 'mysqli_fetch_row',
 			'db_free_result'            => 'mysqli_free_result',
 			'db_insert'                 => 'sbb_db_insert',
-			'db_insert_id'              => 'sbb_db_insert_id',
 			'db_num_rows'               => 'mysqli_num_rows',
 			'db_data_seek'              => 'mysqli_data_seek',
 			'db_num_fields'             => 'mysqli_num_fields',
@@ -443,13 +442,6 @@ function sbb_db_affected_rows($connection = null)
 	return $smcFunc['db']->affected_rows();
 }
 
-
-function sbb_db_insert_id($connection = null)
-{
-	global $smcFunc;
-	return $smcFunc['db']->inserted_id();
-}
-
 /**
  * Database error!
  * Backtrace, log, try to fix.
@@ -640,7 +632,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 		$ai = 0;
 		for($i = 0; $i < $count; $i++)
 		{
-			$old_id = $smcFunc['db_insert_id']();
+			$old_id = $smcFunc['db']->inserted_id();
 			
 			$smcFunc['db_query']('', '
 				' . $queryTitle . ' INTO ' . $table . '(`' . implode('`, `', $indexed_columns) . '`)
@@ -652,7 +644,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 				),
 				$connection
 			);
-			$new_id = $smcFunc['db_insert_id']();
+			$new_id = $smcFunc['db']->inserted_id();
 			
 			if ($last_id != $new_id) //the inserted value was new
 			{
@@ -693,12 +685,12 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 	if ($with_returning)
 	{
 		if ($returnmode == 1 && empty($return_var))
-			$return_var = sbb_db_insert_id() + count($insertRows) - 1;
+			$return_var = $smcFunc['db']->inserted_id() + count($insertRows) - 1;
 		elseif ($returnmode == 2 && empty($return_var))
 		{
 			$return_var = [];
 			$count = count($insertRows);
-			$start = sbb_db_insert_id();
+			$start = $smcFunc['db']->inserted_id();
 			for ($i = 0; $i < $count; $i++)
 				$return_var[] = $start + $i;
 		}

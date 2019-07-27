@@ -2675,6 +2675,8 @@ function entity_fix__callback($matches)
 }
 
 /**
+ * Converts a normal notation IP address into packed binary format.
+ *
  * @param string $ip_address An IP address in IPv4, IPv6 or decimal notation
  * @return string|false The IP address in binary or false
  */
@@ -2688,6 +2690,8 @@ function inet_ptod($ip_address)
 }
 
 /**
+ * Convert a packed binary IP address to display format.
+ *
  * @param string $bin An IP address in IPv4, IPv6
  * @return string|false The IP address in presentation format or false on error
  */

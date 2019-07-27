@@ -293,7 +293,7 @@ function char_create()
 					0, 0],
 				['id_character']
 			);
-			$context['character']['id_character'] = $smcFunc['db_insert_id']();
+			$context['character']['id_character'] = $smcFunc['db']->inserted_id();
 			trackStats(array('chars' => '+'));
 
 			if (!empty($context['character']['sheet']))
