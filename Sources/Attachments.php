@@ -15,26 +15,50 @@
  */
 class Attachments
 {
+	/** @var int $_msg The message that attachments are connected to */
 	protected $_msg = 0;
+
+	/** @var int $_board The board that attachments are connected to */
 	protected $_board = null;
+
+	/** @var array $_attachmentUploadDir The collection of attachment folders */
 	protected $_attachmentUploadDir = false;
+
+	/** @var string $_attchDir The specific folder to store the attachment in */
 	protected $_attchDir = '';
+
+	/** @var string $_currentAttachmentUploadDir The current attachments folder */
 	protected $_currentAttachmentUploadDir;
+
+	/** @var bool $_canPostAttachment Whether the user has permission to post */
 	protected $_canPostAttachment;
+
+	/** @var array $_generalErrors Errors encountered during processing */
 	protected $_generalErrors = [];
-	protected $_initialError;
+
+	/** @var array $_attachments An array of current attachments */
 	protected $_attachments = [];
+
+	/** @var array $_attachResults Collection of results from current processing */
 	protected $_attachResults = [];
+
+	/** @var array $_attachSuccess Collection of success results from current processing */
 	protected $_attachSuccess = [];
+
+	/** @var array $_response Template response value */
 	protected $_response = [
 		'error' => true,
 		'data' => [],
 		'extra' => '',
 	];
+
+	/** @var array $_subActions Valid subactions */
 	protected $_subActions = [
 		'add',
 		'delete',
 	];
+
+	/** @var mixed $_sa The subaction to be used for routing attachment actions */
 	protected $_sa = false;
 
 	/**
