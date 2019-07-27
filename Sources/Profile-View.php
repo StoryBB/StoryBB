@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\IP;
+use StoryBB\Helper\Parser;
 
 /**
  * View a summary.
@@ -792,7 +793,7 @@ function showPosts($memID)
 		censorText($row['subject']);
 
 		// Do the code.
-		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		// And the array...
 		$context['posts'][$counter += $reverse ? -1 : 1] = array(
@@ -2572,8 +2573,8 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 			'member_link' => $txt['trackEdit_deleted_member'],
 			'action' => $row['action'],
 			'action_text' => $action_text,
-			'before' => !empty($extra['previous']) ? ($parse_bbc ? parse_bbc($extra['previous']) : $extra['previous']) : '',
-			'after' => !empty($extra['new']) ? ($parse_bbc ? parse_bbc($extra['new']) : $extra['new']) : '',
+			'before' => !empty($extra['previous']) ? ($parse_bbc ? Parser::parse_bbc($extra['previous']) : $extra['previous']) : '',
+			'after' => !empty($extra['new']) ? ($parse_bbc ? Parser::parse_bbc($extra['new']) : $extra['new']) : '',
 			'time' => timeformat($row['log_time']),
 		);
 	}

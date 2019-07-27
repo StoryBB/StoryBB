@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Examples of using SSI from outside StoryBB.
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -363,6 +365,9 @@ template_ssi_above();
 
 template_ssi_below();
 
+/**
+ * Render a demo header.
+ */
 function template_ssi_above()
 {
 	global $settings, $context, $scripturl;
@@ -465,6 +470,9 @@ function template_ssi_above()
 					<div id="liftup" class="flow_auto">';
 }
 
+/**
+ * Render a demo footer.
+ */
 function template_ssi_below()
 {
 	echo '
@@ -487,6 +495,11 @@ function template_ssi_below()
 </html>';
 }
 
+/**
+ * Render a sample homepage.
+ *
+ * @param string $method Which SSI rendering method to use
+ */
 function template_homepage_sample1($method = 'source')
 {
 	global $user_info, $boarddir;
@@ -547,6 +560,9 @@ function template_homepage_sample1($method = 'source')
 
 }
 
+/**
+ * Render part of the SSI content.
+ */
 function template_homepage_sample1_php()
 {
 	global $txt;
@@ -584,6 +600,9 @@ function template_homepage_sample1_php()
 
 }
 
+/**
+ * Render part of the SSI content.
+ */
 function template_homepage_sample1_html()
 {
 	$result = '

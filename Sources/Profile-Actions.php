@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * Set up data exports for users and list exports available.
  *
@@ -459,7 +461,7 @@ function issueWarning($memID)
 			require_once($sourcedir . '/Subs-Post.php');
 
 			preparsecode($warning_body);
-			$warning_body = parse_bbc($warning_body, true);
+			$warning_body = Parser::parse_bbc($warning_body, true);
 		}
 
 		// Try to remember some bits.

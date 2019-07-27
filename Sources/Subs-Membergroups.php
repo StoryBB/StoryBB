@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * Delete one of more membergroups.
  * Requires the manage_membergroups permission.
@@ -931,7 +933,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			'id_group' => $row['id_group'],
 			'group_name' => $row['group_name'],
 			'is_character' => $row['is_character'],
-			'desc' => parse_bbc($row['description'], false, '', $context['description_allowed_tags']),
+			'desc' => Parser::parse_bbc($row['description'], false, '', $context['description_allowed_tags']),
 			'online_color' => $row['online_color'],
 			'type' => $row['group_type'],
 			'num_members' => $row['num_members'],

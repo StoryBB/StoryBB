@@ -161,7 +161,7 @@ function fetch_task()
 			)
 		);
 		// Could we claim it? If so, return it back.
-		if ($smcFunc['db_affected_rows']() != 0)
+		if ($smcFunc['db']->affected_rows() != 0)
 		{
 			// Update the time and go back.
 			$row['claimed_time'] = time();

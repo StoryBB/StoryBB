@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * This function makes sure the requested subaction does exists, if it doesn't, it sets a default action or.
  *
@@ -927,7 +929,7 @@ function ModifySignatureSettings($return_config = false)
 
 		// Clean up the tag stuff!
 		$bbcTags = [];
-		foreach (parse_bbc(false) as $tag)
+		foreach (Parser::parse_bbc(false) as $tag)
 			$bbcTags[] = $tag['tag'];
 
 		if (!isset($_POST['signature_bbc_enabledTags']))

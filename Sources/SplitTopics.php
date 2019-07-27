@@ -12,6 +12,8 @@
  * Original module by Mach8 - We'll never forget you.
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * splits a topic into two topics.
  * delegates to the other functions (based on the URL parameter 'sa').
@@ -367,7 +369,7 @@ function SplitSelectTopics()
 		censorText($row['subject']);
 		censorText($row['body']);
 
-		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		$context['not_selected']['messages'][$row['id_msg']] = array(
 			'id' => $row['id_msg'],
@@ -407,7 +409,7 @@ function SplitSelectTopics()
 			censorText($row['subject']);
 			censorText($row['body']);
 
-			$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+			$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 			$context['selected']['messages'][$row['id_msg']] = array(
 				'id' => $row['id_msg'],

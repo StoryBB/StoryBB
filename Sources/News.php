@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * Outputs xml data representing recent information or a profile.
  * Can be passed 4 subactions which decide what is output:
@@ -456,6 +458,7 @@ function cdata_parse($data, $ns = '', $force = false)
  *
  * @param array $data The array to output as xml data
  * @param int $i The amount of indentation to use.
+ * @param array $tag The tag to render.
  * @param string $xml_format The format to use ('atom', 'rss', 'rss2' or empty for plain XML)
  * @param array $forceCdataKeys A list of keys on which to force cdata wrapping (used by mods, maybe)
  * @param array $nsKeys Key-value pairs of namespace prefixes to pass to cdata_parse() (used by mods, maybe)
@@ -708,7 +711,7 @@ function getXmlNews($xml_format)
 		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
 			$row['body'] = strtr($smcFunc['substr'](str_replace('<br>', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br>')) . '...';
 
-		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		censorText($row['body']);
 		censorText($row['subject']);
@@ -989,7 +992,7 @@ function getXmlRecent($xml_format)
 		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
 			$row['body'] = strtr($smcFunc['substr'](str_replace('<br>', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br>')) . '...';
 
-		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		censorText($row['body']);
 		censorText($row['subject']);

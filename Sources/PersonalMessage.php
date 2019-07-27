@@ -12,6 +12,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * This helps organize things...
  * @todo this should be a simple dispatcher....
@@ -992,7 +994,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	censorText($message['subject']);
 
 	// Run UBBC interpreter on the message.
-	$message['body'] = parse_bbc($message['body'], true, 'pm' . $message['id_pm']);
+	$message['body'] = Parser::parse_bbc($message['body'], true, 'pm' . $message['id_pm']);
 
 	// Send the array.
 	$output = array(
@@ -1597,7 +1599,7 @@ function MessageSearch2()
 			censorText($row['subject']);
 
 			// Parse out any BBC...
-			$row['body'] = parse_bbc($row['body'], true, 'pm' . $row['id_pm']);
+			$row['body'] = Parser::parse_bbc($row['body'], true, 'pm' . $row['id_pm']);
 
 			$href = $scripturl . '?action=pm;f=' . $context['folder'] . (isset($context['first_label'][$row['id_pm']]) ? ';l=' . $context['first_label'][$row['id_pm']] : '') . ';pmid=' . (isset($real_pm_ids[$head_pms[$row['id_pm']]]) ? $real_pm_ids[$head_pms[$row['id_pm']]] : $row['id_pm']) . '#msg' . $row['id_pm'];
 			$context['personal_messages'][] = array(
@@ -1766,7 +1768,7 @@ function MessagePost()
 			$form_message = '';
 
 		// Do the BBC thang on the message.
-		$row_quoted['body'] = parse_bbc($row_quoted['body'], true, 'pm' . $row_quoted['id_pm']);
+		$row_quoted['body'] = Parser::parse_bbc($row_quoted['body'], true, 'pm' . $row_quoted['id_pm']);
 
 		// Set up the quoted message array.
 		$context['quoted_message'] = array(
@@ -2052,7 +2054,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 			'subject' => $row_quoted['subject'],
 			'time' => timeformat($row_quoted['msgtime']),
 			'timestamp' => forum_time(true, $row_quoted['msgtime']),
-			'body' => parse_bbc($row_quoted['body'], true, 'pm' . $row_quoted['id_pm']),
+			'body' => Parser::parse_bbc($row_quoted['body'], true, 'pm' . $row_quoted['id_pm']),
 		);
 	}
 
@@ -2297,7 +2299,7 @@ function MessagePost2()
 		preparsecode($message);
 
 		// Make sure there's still some content left without the tags.
-		if ($smcFunc['htmltrim'](strip_tags(parse_bbc($smcFunc['htmlspecialchars']($message, ENT_QUOTES), false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
+		if ($smcFunc['htmltrim'](strip_tags(Parser::parse_bbc($smcFunc['htmlspecialchars']($message, ENT_QUOTES), false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
 
@@ -2327,7 +2329,7 @@ function MessagePost2()
 		preparsecode($context['preview_message'], true);
 
 		// Parse out the BBC if it is enabled.
-		$context['preview_message'] = parse_bbc($context['preview_message']);
+		$context['preview_message'] = Parser::parse_bbc($context['preview_message']);
 
 		// Censor, as always.
 		censorText($context['preview_subject']);
@@ -3025,7 +3027,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 	);
 
 	// If something wasn't marked as read, get the number of unread messages remaining.
-	if ($smcFunc['db_affected_rows']() > 0)
+	if ($smcFunc['db']->affected_rows() > 0)
 	{
 		if ($owner == $user_info['id'])
 		{

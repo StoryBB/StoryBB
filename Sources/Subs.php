@@ -973,16 +973,6 @@ function forum_time($use_user_offset = true, $timestamp = null)
 	return $timestamp + ($modSettings['time_offset'] + ($use_user_offset ? $user_info['time_offset'] : 0)) * 3600;
 }
 
-function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = [])
-{
-	return Parser::parse_bbc($message, $smileys, $cache_id, $parse_tags);
-}
-
-function parsesmileys(&$message)
-{
-	Parser::parse_smileys($message);
-}
-
 /**
  * Make sure the browser doesn't come back and repost the form data.
  * Should be used whenever anything is posted.
@@ -1114,6 +1104,16 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		exit;
 }
 
+/**
+ * Format the string for the header area when logged out.
+ *
+ * @param string $string The base language string
+ * @param string $guest_title The name for guests
+ * @param string $forum_name The forum name
+ * @param string $scripturl The $scripturl to link to
+ * @param string $login Title for the login popup modal
+ * @return \LightnCandy\SafeString The login link, fully formatted
+ */
 function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
 {
 	return new \LightnCandy\SafeString(sprintf($string,
@@ -1125,7 +1125,13 @@ function login_helper($string, $guest_title, $forum_name, $scripturl, $login)
 	));
 }
 
-function session_flash($status, $message)
+/**
+ * Add a notification to the session to be shown on the next page the user sees.
+ *
+ * @param string $status The status of the message (success, warning, error)
+ * @param string $message The message to show to the user
+ */
+function session_flash(string $status, string $message)
 {
 	if (!in_array($status, ['success', 'warning', 'error']))
 	{
@@ -1137,6 +1143,11 @@ function session_flash($status, $message)
 	}
 }
 
+/**
+ * Retrieve all the queued notifications from the user's session for this page load.
+ *
+ * @return array A map of status -> messages to be shown
+ */
 function session_flash_retrieve()
 {
 	$messages = [];
@@ -1302,7 +1313,7 @@ function setupThemeContext($forceload = false)
 			continue;
 
 		// Clean it up for presentation ;).
-		$context['news_lines'][$i] = parse_bbc(stripslashes(trim($context['news_lines'][$i])), true, 'news' . $i);
+		$context['news_lines'][$i] = Parser::parse_bbc(stripslashes(trim($context['news_lines'][$i])), true, 'news' . $i);
 	}
 	if (!empty($context['news_lines']))
 		$context['random_news_line'] = $context['news_lines'][mt_rand(0, count($context['news_lines']) - 1)];
@@ -2659,6 +2670,8 @@ function entity_fix__callback($matches)
 }
 
 /**
+ * Converts a normal notation IP address into packed binary format.
+ *
  * @param string $ip_address An IP address in IPv4, IPv6 or decimal notation
  * @return string|false The IP address in binary or false
  */
@@ -2672,6 +2685,8 @@ function inet_ptod($ip_address)
 }
 
 /**
+ * Convert a packed binary IP address to display format.
+ *
  * @param string $bin An IP address in IPv4, IPv6
  * @return string|false The IP address in presentation format or false on error
  */

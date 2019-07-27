@@ -10,30 +10,60 @@
  * @version 1.0 Alpha 1
  */
 
+/**
+ * Attachments handler.
+ */
 class Attachments
 {
+	/** @var int $_msg The message that attachments are connected to */
 	protected $_msg = 0;
+
+	/** @var int $_board The board that attachments are connected to */
 	protected $_board = null;
+
+	/** @var array $_attachmentUploadDir The collection of attachment folders */
 	protected $_attachmentUploadDir = false;
+
+	/** @var string $_attchDir The specific folder to store the attachment in */
 	protected $_attchDir = '';
+
+	/** @var string $_currentAttachmentUploadDir The current attachments folder */
 	protected $_currentAttachmentUploadDir;
+
+	/** @var bool $_canPostAttachment Whether the user has permission to post */
 	protected $_canPostAttachment;
+
+	/** @var array $_generalErrors Errors encountered during processing */
 	protected $_generalErrors = [];
-	protected $_initialError;
+
+	/** @var array $_attachments An array of current attachments */
 	protected $_attachments = [];
+
+	/** @var array $_attachResults Collection of results from current processing */
 	protected $_attachResults = [];
+
+	/** @var array $_attachSuccess Collection of success results from current processing */
 	protected $_attachSuccess = [];
+
+	/** @var array $_response Template response value */
 	protected $_response = [
 		'error' => true,
 		'data' => [],
 		'extra' => '',
 	];
+
+	/** @var array $_subActions Valid subactions */
 	protected $_subActions = [
 		'add',
 		'delete',
 	];
+
+	/** @var mixed $_sa The subaction to be used for routing attachment actions */
 	protected $_sa = false;
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct()
 	{
 		global $modSettings, $context;
@@ -50,7 +80,11 @@ class Attachments
 		$this->_canPostAttachment = $context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment', $this->_board) || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments', $this->_board)));
 	}
 
-	// @todo is this even called?
+	/**
+	 * Action dispatcher for attachments.
+	 *
+	 * @deprecated Appears not to be even called.
+	 */
 	public function call()
 	{
 		global $smcFunc, $sourcedir;
@@ -80,6 +114,9 @@ class Attachments
 		$this->sendResponse();
 	}
 
+	/**
+	 * Deletes an attachment based on request from user.
+	 */
 	public function delete()
 	{
 		global $sourcedir;
@@ -111,6 +148,9 @@ class Attachments
 		]);
 	}
 
+	/**
+	 * Adds an attachment.
+	 */
 	public function add()
 	{
 		// You gotta be able to post attachments.
@@ -308,6 +348,9 @@ class Attachments
 		call_integration_hook('integrate_attachment_upload', []);
 	}
 
+	/**
+	 * Underlying function for creating new attachments in the system.
+	 */
 	protected function createAtttach()
 	{
 		global $txt, $user_info, $modSettings;
@@ -383,6 +426,11 @@ class Attachments
 		unset($_SESSION['temp_attachments']);
 	}
 
+	/**
+	 * Configures an AJAX response from an attachment being added.
+	 *
+	 * @param array $data The data for the attachment to be returned.
+	 */
 	protected function setResponse($data = [])
 	{
 		global $txt;
@@ -419,6 +467,9 @@ class Attachments
 				$this->_response['text'] = $txt[$data['text']];
 	}
 
+	/**
+	 * Issues the AJAX response to the user.
+	 */
 	protected function sendResponse()
 	{
 		global $modSettings, $context;

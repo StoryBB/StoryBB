@@ -12,6 +12,9 @@
 
 namespace StoryBB\Database;
 
+/**
+ * Any database connector should implement this.
+ */
 interface DatabaseAdapter
 {
 

@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Helper\Parser;
 
 /**
  * The main dispatcher; doesn't do anything, just delegates.
@@ -329,8 +330,8 @@ function EditCategory2()
 			$catOptions['move_after'] = (int) $_POST['cat_order'];
 
 		// Change "This & That" to "This &amp; That" but don't change "&cent" to "&amp;cent;"...
-		$catOptions['cat_name'] = parse_bbc($smcFunc['htmlspecialchars']($_POST['cat_name']), false, '', $context['description_allowed_tags']);
-		$catOptions['cat_desc'] = parse_bbc($smcFunc['htmlspecialchars']($_POST['cat_desc']), false, '', $context['description_allowed_tags']);
+		$catOptions['cat_name'] = Parser::parse_bbc($smcFunc['htmlspecialchars']($_POST['cat_name']), false, '', $context['description_allowed_tags']);
+		$catOptions['cat_desc'] = Parser::parse_bbc($smcFunc['htmlspecialchars']($_POST['cat_desc']), false, '', $context['description_allowed_tags']);
 
 		$catOptions['is_collapsible'] = isset($_POST['collapse']);
 
@@ -674,8 +675,8 @@ function EditBoard2()
 			fatal_lang_error('too_many_groups', false);
 
 		// Do not allow HTML tags. Parse the string.
-		$boardOptions['board_name'] = parse_bbc($smcFunc['htmlspecialchars']($_POST['board_name']), false, '', $context['description_allowed_tags']);
-		$boardOptions['board_description'] = parse_bbc($smcFunc['htmlspecialchars']($_POST['desc']), false, '', $context['description_allowed_tags']);
+		$boardOptions['board_name'] = Parser::parse_bbc($smcFunc['htmlspecialchars']($_POST['board_name']), false, '', $context['description_allowed_tags']);
+		$boardOptions['board_description'] = Parser::parse_bbc($smcFunc['htmlspecialchars']($_POST['desc']), false, '', $context['description_allowed_tags']);
 
 		if (isset($_POST['moderators']) && is_array($_POST['moderators']))
 		{

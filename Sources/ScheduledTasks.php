@@ -74,7 +74,7 @@ function AutoTask()
 					'current_next_time' => $row['next_time'],
 				)
 			);
-			$affected_rows = $smcFunc['db_affected_rows']();
+			$affected_rows = $smcFunc['db']->affected_rows();
 
 			// What kind of task are we handling?
 			$task = false;
@@ -203,7 +203,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 				'last_send' => $modSettings['mail_next_send'],
 			)
 		);
-		if ($smcFunc['db_affected_rows']() == 0)
+		if ($smcFunc['db']->affected_rows() == 0)
 			return false;
 		$modSettings['mail_next_send'] = time() + $delay;
 	}

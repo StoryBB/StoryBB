@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * The main entrance point for the 'Posts and topics' screen.
  * Like all others, it checks permissions, then forwards to the right function
@@ -114,7 +116,7 @@ function ModifyBBCSettings($return_config = false)
 
 		// Clean up the tags.
 		$bbcTags = [];
-		foreach (parse_bbc(false) as $tag)
+		foreach (Parser::parse_bbc(false) as $tag)
 			$bbcTags[] = $tag['tag'];
 
 		if (!isset($_POST['disabledBBC_enabledTags']))

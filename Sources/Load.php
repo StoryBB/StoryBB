@@ -14,6 +14,7 @@ use LightnCandy\LightnCandy;
 use StoryBB\Database\AdapterFactory;
 use StoryBB\Database\Exception as DatabaseException;
 use StoryBB\Model\Language;
+use StoryBB\Helper\Parser;
 
 /**
  * Load the $modSettings array.
@@ -1351,7 +1352,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				'id_attach' => $row['id_attach'],
 				'avatar_original' => $row['avatar_original'],
 				'signature' => $row['signature'],
-				'sig_parsed' => !empty($row['signature']) ? parse_bbc($row['signature'], true, 'sig_char_' . $row['id_character']) : '',
+				'sig_parsed' => !empty($row['signature']) ? Parser::parse_bbc($row['signature'], true, 'sig_char_' . $row['id_character']) : '',
 				'id_theme' => $row['id_theme'],
 				'posts' => $row['posts'],
 				'age' => $row['age'],
@@ -1514,7 +1515,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 	// Set things up to be used before hand.
 	$profile['signature'] = str_replace(["\n", "\r"], ['<br>', ''], $profile['signature']);
-	$profile['signature'] = parse_bbc($profile['signature'], true, 'sig' . $profile['id_member']);
+	$profile['signature'] = Parser::parse_bbc($profile['signature'], true, 'sig' . $profile['id_member']);
 
 	$profile['is_online'] = (!empty($profile['show_online']) || allowedTo('moderate_forum')) && $profile['is_online'] > 0;
 	$profile['icons'] = empty($profile['icons']) ? ['', ''] : explode('#', $profile['icons']);
@@ -1676,7 +1677,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 			// BBC?
 			if ($custom['bbc'])
-				$value = parse_bbc($value);
+				$value = Parser::parse_bbc($value);
 			// ... or checkbox?
 			elseif (isset($custom['type']) && $custom['type'] == 'check')
 				$value = $value ? $txt['yes'] : $txt['no'];
@@ -1753,7 +1754,7 @@ function loadMemberCustomFields($users, $params)
 
 		// BBC?
 		if (!empty($row['bbc']))
-			$row['value'] = parse_bbc($row['value']);
+			$row['value'] = Parser::parse_bbc($row['value']);
 
 		// ... or checkbox?
 		elseif (isset($row['type']) && $row['type'] == 'check')
@@ -3229,7 +3230,7 @@ function cache_get_data($key, $ttl = 120)
  */
 function clean_cache($type = '')
 {
-	StoryBB\Cache::empty($type);
+	StoryBB\Cache::flush($type);
 }
 
 /**
@@ -3294,6 +3295,11 @@ function set_avatar_data($data = [])
 		];
 }
 
+/**
+ * Get the entire list of groups, their icons, color etc.
+ *
+ * @return array A list of groups, excluding hidden groups
+ */
 function get_char_membergroup_data()
 {
 	global $smcFunc, $settings, $context;
@@ -3345,6 +3351,12 @@ function get_char_membergroup_data()
 	return $groups;
 }
 
+/**
+ * Get the badge, colour and title based on the groups a poster is part of.
+ *
+ * @param array $group_list The list of groups an account or character contains.
+ * @return array Title, color, badges for the group list
+ */
 function get_labels_and_badges($group_list)
 {
 	global $settings, $context;

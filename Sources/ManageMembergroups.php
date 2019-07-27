@@ -1184,6 +1184,9 @@ function EditMembergroup()
 	createToken('admin-mmg');
 }
 
+/**
+ * Allows configuration of the membergroup badge order.
+ */
 function MembergroupBadges()
 {
 	global $smcFunc, $context, $txt, $settings;

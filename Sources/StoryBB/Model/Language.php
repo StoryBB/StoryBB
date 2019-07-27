@@ -65,6 +65,10 @@ class Language
 	/**
 	 * Loads the changes for a specific language file.
 	 *
+	 * @param int $theme_id The theme to load language changes from.
+	 * @param string $lang_id The language code to look up for, e.g. en-us
+	 * @param string $file_id The language file to load
+	 * @return array Customisations in the database for that file for that language
 	 */
 	public static function get_language_changes(int $theme_id, string $lang_id, string $file_id): array
 	{
@@ -98,6 +102,14 @@ class Language
 		return $language_delta;
 	}
 
+	/**
+	 * Loads a language file, applies its customisations, backfilling with English if needed,
+	 * then saves the result to the cache area.
+	 *
+	 * @param int $theme_id The theme to load language changes from.
+	 * @param string $lang_id The language code to look up for, e.g. en-us
+	 * @param string $lang_file The language file to load
+	 */
 	public static function cache_language(int $theme_id, string $lang_id, string $lang_file)
 	{
 		global $settings, $cachedir;
@@ -161,6 +173,14 @@ class Language
 		}
 	}
 
+	/**
+	 * Identifies the location of a given language file based on theme, language and file.
+	 *
+	 * @param int $theme_id The theme to load language data from.
+	 * @param string $lang_id The language code to look up for, e.g. en-us
+	 * @param string $file_id The language file to load
+	 * @return string Path to file, or empty string if not relevant or found
+	 */
 	public static function find_language_file(int $theme_id, string $lang_id, string $file_id): string
 	{
 		$themes = Theme::get_theme_list();
@@ -187,6 +207,12 @@ class Language
 
 	/**
 	 * Delete a language entry.
+	 *
+	 * @param int $theme_id The theme containing the entry to be removed
+	 * @param string $lang_id The language containing the entry to be removed, e.g. en-us
+	 * @param string $lang_file The language file containing the entry to be removed, e.g. Admin
+	 * @param string $lang_var The language variable to be updated, e.g. 'txt'
+	 * @param string $lang_key The key inside the language array to remove
 	 */
 	public static function delete_current_entry(int $theme_id, string $lang_id, string $lang_file, string $lang_var, string $lang_key)
 	{
@@ -212,7 +238,14 @@ class Language
 	}
 
 	/**
-	 * Save a single language entry.
+	 * Save a single language entry (when a string contains only one item)
+	 *
+	 * @param int $theme_id The theme containing the entry to be saved
+	 * @param string $lang_id The language containing the entry to be saved, e.g. en-us
+	 * @param string $lang_file The language file containing the entry to be saved, e.g. Admin
+	 * @param string $lang_var The language variable to be updated, e.g. 'txt'
+	 * @param string $lang_key The key inside the language array to remove
+	 * @param string $entry The single string to save
 	 */
 	public static function save_single_entry(int $theme_id, string $lang_id, string $lang_file, string $lang_var, string $lang_key, string $entry)
 	{
@@ -229,7 +262,14 @@ class Language
 	}
 
 	/**
-	 * Save a multiple language entry.
+	 * Save a multiple language entry, e.g. an entry like $txt['months'] that contains multiple strings.
+	 *
+	 * @param int $theme_id The theme containing the entry to be saved
+	 * @param string $lang_id The language containing the entry to be saved, e.g. en-us
+	 * @param string $lang_file The language file containing the entry to be saved, e.g. Admin
+	 * @param string $lang_var The language variable to be updated, e.g. 'txt'
+	 * @param string $lang_key The key inside the language array to remove
+	 * @param array $entry The multiple strings to save
 	 */
 	public static function save_multiple_entry(int $theme_id, string $lang_id, string $lang_file, string $lang_var, string $lang_key, array $entry)
 	{

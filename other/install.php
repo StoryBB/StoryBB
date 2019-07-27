@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * StoryBB Installer
+ *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
  * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
@@ -99,6 +101,9 @@ foreach ($incontext['steps'] as $num => $step)
 // Actually do the template stuff.
 installExit();
 
+/**
+ * Set up the variables for the current state.
+ */
 function initialize_inputs()
 {
 	global $databases, $incontext;
@@ -190,7 +195,9 @@ function initialize_inputs()
 	$_GET['step'] = (int) @$_GET['step'];
 }
 
-// Load the list of language files, and the current language file.
+/**
+ * Load the list of language files, and the current language file.
+ */
 function load_lang_file()
 {
 	global $txt, $incontext;
@@ -267,7 +274,9 @@ function load_lang_file()
 	require_once(__DIR__ . '/Themes/default/languages/' . $_SESSION['installer_temp_lang'] . '/Install.php');
 }
 
-// This handy function loads some settings and the like.
+/**
+ * This handy function loads some settings and the like.
+ */
 function load_database()
 {
 	global $db_prefix, $db_connection, $sourcedir, $smcFunc, $modSettings;
@@ -318,7 +327,11 @@ function load_database()
 	}
 }
 
-// This is called upon exiting the installer, for template etc.
+/**
+ * This is called upon exiting the installer, for template etc.
+ *
+ * @param bool $fallThrough Whether to show the output content or not.
+ */
 function installExit($fallThrough = false)
 {
 	global $incontext, $installurl, $txt;
@@ -353,6 +366,9 @@ function installExit($fallThrough = false)
 	die();
 }
 
+/**
+ * Installation step 1: welcome the user to the install process.
+ */
 function Welcome()
 {
 	global $incontext, $txt, $databases, $installurl;
@@ -437,6 +453,9 @@ function Welcome()
 	return false;
 }
 
+/**
+ * Installation step 2: check the files that StoryBB needs to be writable are writable
+ */
 function CheckFilesWritable()
 {
 	global $txt, $incontext;
@@ -632,6 +651,9 @@ function CheckFilesWritable()
 	return true;
 }
 
+/**
+ * Installation step 3: collect and verify the database settings
+ */
 function DatabaseSettings()
 {
 	global $txt, $databases, $incontext, $smcFunc, $sourcedir;
@@ -835,7 +857,9 @@ function DatabaseSettings()
 	return false;
 }
 
-// Let's start with basic forum type settings.
+/**
+ * Installation step 4: collect forum settings, e.g. forum name
+ */
 function ForumSettings()
 {
 	global $txt, $incontext, $databases, $db_type, $db_connection;
@@ -935,7 +959,9 @@ function ForumSettings()
 	return false;
 }
 
-// Step one: Do the SQL thang.
+/**
+ * Installation step 5: set up the database
+ */
 function DatabasePopulation()
 {
 	global $txt, $db_connection, $smcFunc, $databases, $modSettings, $db_type, $db_prefix, $incontext, $db_name, $boardurl, $language;
@@ -1188,7 +1214,9 @@ function DatabasePopulation()
 	return false;
 }
 
-// Ask for the administrator login information.
+/**
+ * Installation step 6: set up the administrator account on the installation
+ */
 function AdminAccount()
 {
 	global $txt, $db_type, $smcFunc, $incontext, $db_prefix, $db_passwd, $sourcedir, $boardurl, $cachedir;
@@ -1393,7 +1421,9 @@ function AdminAccount()
 	return false;
 }
 
-// Final step, clean up and a complete message!
+/**
+ * Installation step 7: finalise the install and clena up the installer files
+ */
 function DeleteInstall()
 {
 	global $txt, $incontext;
@@ -1540,6 +1570,11 @@ function DeleteInstall()
 	return false;
 }
 
+/**
+ * Updates the Settings.php file with content as the values are available.
+ *
+ * @param array $vars Contains the keys/values for the settings file.
+ */
 function updateSettingsFile($vars)
 {
 	// Modify Settings.php.
@@ -1618,7 +1653,9 @@ function updateSettingsFile($vars)
 	return true;
 }
 
-// Create an .htaccess file to prevent mod_security. StoryBB has filtering built-in.
+/**
+ * Attempts to configure the server to disable mod_security (something StoryBB doesn't need)
+ */
 function fixModSecurity()
 {
 	$htaccess_addition = '
@@ -1668,6 +1705,9 @@ function fixModSecurity()
 		return false;
 }
 
+/**
+ * Render the header of the install page.
+ */
 function template_install_above()
 {
 	global $incontext, $txt, $installurl;
@@ -1744,6 +1784,9 @@ function template_install_above()
 						<div class="panel">';
 }
 
+/**
+ * Renders the footer of the installer.
+ */
 function template_install_below()
 {
 	global $incontext, $txt;
@@ -1783,7 +1826,9 @@ function template_install_below()
 </html>';
 }
 
-// Welcome them to the wonderful world of StoryBB!
+/**
+ * Template content for the welcome message.
+ */
 function template_welcome_message()
 {
 	global $incontext, $txt;
@@ -1826,7 +1871,9 @@ function template_welcome_message()
 		</script>';
 }
 
-// A shortcut for any warning stuff.
+/**
+ * Template content for warnings that get displayed during installation.
+ */
 function template_warning_divs()
 {
 	global $txt, $incontext;
@@ -1855,6 +1902,9 @@ function template_warning_divs()
 	return empty($incontext['error']) && empty($incontext['warning']);
 }
 
+/**
+ * Template content for changing file permissions.
+ */
 function template_chmod_files()
 {
 	global $txt, $incontext;
@@ -1923,7 +1973,9 @@ function template_chmod_files()
 		<a href="', $incontext['form_url'], '">', $txt['error_message_click'], '</a> ', $txt['ftp_setup_again'];
 }
 
-// Get the database settings prepared.
+/**
+ * Template content for database settings.
+ */
 function template_database_settings()
 {
 	global $incontext, $txt;
@@ -2014,7 +2066,9 @@ function template_database_settings()
 		</table>';
 }
 
-// Stick in their forum settings.
+/**
+ * Template content for collecting forum settings.
+ */
 function template_forum_settings()
 {
 	global $incontext, $txt;
@@ -2077,7 +2131,9 @@ function template_forum_settings()
 	';
 }
 
-// Show results of the database population.
+/**
+ * Template content for populating the database.
+ */
 function template_populate_database()
 {
 	global $incontext, $txt;
@@ -2117,7 +2173,9 @@ function template_populate_database()
 	<input type="hidden" name="pop_done" value="1" />';
 }
 
-// Create the admin account.
+/**
+ * Template content for creating the admin content.
+ */
 function template_admin_account()
 {
 	global $incontext, $txt;
@@ -2173,7 +2231,9 @@ function template_admin_account()
 		</div>';
 }
 
-// Tell them it's done, and to delete.
+/**
+ * Template content for deleting the installer files.
+ */
 function template_delete_install()
 {
 	global $incontext, $installurl, $txt, $boardurl;

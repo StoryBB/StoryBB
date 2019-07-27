@@ -20,6 +20,7 @@ $GLOBALS['search_versions'] = array(
 );
 
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Helper\Parser;
 
 /**
  * Ask the user what they want to search for.
@@ -992,7 +993,7 @@ function PlushSearch2()
 						$numSubjectResults = count($inserts);
 					}
 					else
-						$numSubjectResults += $smcFunc['db_affected_rows']();
+						$numSubjectResults += $smcFunc['db']->affected_rows();
 
 					if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
 						break;
@@ -1219,7 +1220,7 @@ function PlushSearch2()
 							$numSubjectResults = count($inserts);
 						}
 						else
-							$numSubjectResults += $smcFunc['db_affected_rows']();
+							$numSubjectResults += $smcFunc['db']->affected_rows();
 
 						if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
 							break;
@@ -1317,7 +1318,7 @@ function PlushSearch2()
 								$indexedResults = count($inserts);
 							}
 							else
-								$indexedResults += $smcFunc['db_affected_rows']();
+								$indexedResults += $smcFunc['db']->affected_rows();
 
 							if (!empty($maxMessageResults) && $indexedResults >= $maxMessageResults)
 								break;
@@ -1466,7 +1467,7 @@ function PlushSearch2()
 						$_SESSION['search_cache']['num_results'] += count($inserts);
 					}
 					else
-						$_SESSION['search_cache']['num_results'] = $smcFunc['db_affected_rows']();
+						$_SESSION['search_cache']['num_results'] = $smcFunc['db']->affected_rows();
 				}
 
 				// Insert subject-only matches.
@@ -1533,7 +1534,7 @@ function PlushSearch2()
 						$_SESSION['search_cache']['num_results'] += count($inserts);
 					}
 					else
-						$_SESSION['search_cache']['num_results'] += $smcFunc['db_affected_rows']();
+						$_SESSION['search_cache']['num_results'] += $smcFunc['db']->affected_rows();
 				}
 				elseif ($_SESSION['search_cache']['num_results'] == -1)
 					$_SESSION['search_cache']['num_results'] = 0;
@@ -1771,7 +1772,7 @@ function prepareSearchContext($reset = false)
 		$charLimit = 50;
 
 		$message['body'] = strtr($message['body'], array("\n" => ' ', '<br>' => "\n"));
-		$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
+		$message['body'] = Parser::parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 		$message['body'] = strip_tags(strtr($message['body'], array('</div>' => '<br>', '</li>' => '<br>')), '<br>');
 
 		if ($smcFunc['strlen']($message['body']) > $charLimit)
@@ -1815,7 +1816,7 @@ function prepareSearchContext($reset = false)
 	else
 	{
 		// Run BBC interpreter on the message.
-		$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
+		$message['body'] = Parser::parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 	}
 
 	// Make sure we don't end up with a practically empty message body.

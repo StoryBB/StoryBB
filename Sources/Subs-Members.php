@@ -788,7 +788,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		],
 		['id_character']
 	);
-	$real_account = $smcFunc['db_insert_id']();
+	$real_account = $smcFunc['db']->inserted_id();
 
 	if (!empty($regOptions['extra_register_vars']['first_char']))
 	{
@@ -1328,7 +1328,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 			'member_name' => $membername,
 		)
 	);
-	$updated['messages'] = $smcFunc['db_affected_rows']();
+	$updated['messages'] = $smcFunc['db']->affected_rows();
 
 	// Did we update any messages?
 	if ($updated['messages'] > 0)
@@ -1343,7 +1343,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 				'memID' => $memID,
 			)
 		);
-		$updated['topics'] = $smcFunc['db_affected_rows']();
+		$updated['topics'] = $smcFunc['db']->affected_rows();
 
 		// Second, check for updated reports.
 		$smcFunc['db_query']('', '
@@ -1355,7 +1355,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 				'memID' => $memID,
 			)
 		);
-		$updated['reports'] = $smcFunc['db_affected_rows']();
+		$updated['reports'] = $smcFunc['db']->affected_rows();
 	}
 
 	// Allow mods with their own post tables to reattribute posts as well :)

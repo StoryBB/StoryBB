@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * Shows a listing of registered members.
  * - If a subaction is not specified, lists all registered members.
@@ -632,7 +634,7 @@ function printMemberListRows($request)
 				}
 
 				if ($column['bbc'] && !empty($context['members'][$member]['options'][$key]))
-					$context['members'][$member]['options'][$key] = strip_tags(parse_bbc($context['members'][$member]['options'][$key]));
+					$context['members'][$member]['options'][$key] = strip_tags(Parser::parse_bbc($context['members'][$member]['options'][$key]));
 
 				elseif ($column['type'] == 'check')
 					$context['members'][$member]['options'][$key] = $context['members'][$member]['options'][$key] == 0 ? $txt['no'] : $txt['yes'];

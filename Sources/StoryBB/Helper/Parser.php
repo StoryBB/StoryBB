@@ -65,7 +65,7 @@ class Parser
 		if (empty($modSettings['enableBBC']) && $message !== false)
 		{
 			if ($smileys === true)
-				parsesmileys($message);
+				self::parse_smileys($message);
 
 			return $message;
 		}
@@ -1577,7 +1577,7 @@ class Parser
 
 				// For parsed content, we must recurse to avoid security problems.
 				if ($tag['type'] != 'unparsed_equals')
-					$data = parse_bbc($data, !empty($tag['parsed_tags_allowed']) ? false : true, '', !empty($tag['parsed_tags_allowed']) ? $tag['parsed_tags_allowed'] : []);
+					$data = self::parse_bbc($data, !empty($tag['parsed_tags_allowed']) ? false : true, '', !empty($tag['parsed_tags_allowed']) ? $tag['parsed_tags_allowed'] : []);
 
 				$tag['after'] = strtr($tag['after'], array('$1' => $data));
 
@@ -1606,7 +1606,7 @@ class Parser
 		{
 			$message_parts = explode("\n", $message);
 			for ($i = 0, $n = count($message_parts); $i < $n; $i += 2)
-				parsesmileys($message_parts[$i]);
+				self::parse_smileys($message_parts[$i]);
 
 			$message = implode('', $message_parts);
 		}
@@ -1651,7 +1651,7 @@ class Parser
 	 * Caches the smileys from the database or array in memory.
 	 * Doesn't return anything, but rather modifies message directly.
 	 *
-	 * @param string &$message The message to parse smileys in
+	 * @param string $message The message to parse smileys in
 	 */
 	public static function parse_smileys(string &$message)
 	{

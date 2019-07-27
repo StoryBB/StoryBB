@@ -340,7 +340,7 @@ class Post
 					)
 				);
 
-				$flag = $smcFunc['db_affected_rows']() != 0;
+				$flag = $smcFunc['db']->affected_rows() != 0;
 			}
 
 			if (empty($flag))
@@ -572,7 +572,7 @@ class Post
 				)
 			);
 
-			$flag = $smcFunc['db_affected_rows']() != 0;
+			$flag = $smcFunc['db']->affected_rows() != 0;
 
 			if (empty($flag))
 			{

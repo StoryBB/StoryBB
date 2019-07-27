@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * Updates a report with the given parameters. Logs each action via logAction()
  *
@@ -266,7 +268,7 @@ function getReports($closed = 0)
 					'href' => $scripturl . '?action=profile;u=' . $row['id_author'],
 				),
 				'subject' => $row['subject'],
-				'body' => parse_bbc($row['body']),
+				'body' => Parser::parse_bbc($row['body']),
 			);
 		}
 
@@ -516,7 +518,7 @@ function getReportComments($report_id)
 	{
 		$report['mod_comments'][] = array(
 			'id' => $row['id_comment'],
-			'message' => parse_bbc($row['body']),
+			'message' => Parser::parse_bbc($row['body']),
 			'time' => timeformat($row['log_time']),
 			'can_edit' => allowedTo('admin_forum') || (($user_info['id'] == $row['id_member'])),
 			'member' => array(

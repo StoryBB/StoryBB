@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * The central part of the board - topic display.
  * This function loads the posts in a topic up so they can be displayed.
@@ -632,7 +634,7 @@ function Display()
 		$context['poll'] = [
 			'id' => $context['topicinfo']['id_poll'],
 			'image' => 'normal_' . (empty($pollinfo['voting_locked']) ? 'poll' : 'locked_poll'),
-			'question' => parse_bbc($pollinfo['question']),
+			'question' => Parser::parse_bbc($pollinfo['question']),
 			'total_votes' => $pollinfo['total'],
 			'change_vote' => !empty($pollinfo['change_vote']),
 			'is_locked' => !empty($pollinfo['voting_locked']),
@@ -719,7 +721,7 @@ function Display()
 				'voted_this' => $option['voted_this'] != -1,
 				'bar_ndt' => $bar > 0 ? '<div class="bar" style="width: ' . $bar . '%;"></div>' : '',
 				'bar_width' => $barWide,
-				'option' => parse_bbc($option['label']),
+				'option' => Parser::parse_bbc($option['label']),
 				'vote_button' => '<input type="' . ($pollinfo['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" id="options-' . $i . '" value="' . $i . '">'
 			];
 		}
@@ -1487,7 +1489,7 @@ function prepareDisplayContext($reset = false)
 	censorText($message['subject']);
 
 	// Run BBC interpreter on the message.
-	$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
+	$message['body'] = Parser::parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 
 	// If it's in the recycle bin we need to override whatever icon we did have.
 	if (!empty($board_info['recycle']))

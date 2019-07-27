@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * Handles showing the post screen, loading the post to be modified, and loading any post quoted.
  *
@@ -382,7 +384,7 @@ function Post($post_errors = [])
 			preparsecode($context['preview_message']);
 
 			// Do all bulletin board code tags, with or without smileys.
-			$context['preview_message'] = parse_bbc($context['preview_message'], isset($_REQUEST['ns']) ? 0 : 1);
+			$context['preview_message'] = Parser::parse_bbc($context['preview_message'], isset($_REQUEST['ns']) ? 0 : 1);
 			censorText($context['preview_message']);
 
 			if ($form_subject != '')
@@ -1640,7 +1642,7 @@ function Post2()
 		preparsecode($_POST['message']);
 
 		// Let's see if there's still some content left without the tags.
-		if ($smcFunc['htmltrim'](strip_tags(parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
+		if ($smcFunc['htmltrim'](strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
 
@@ -2223,7 +2225,7 @@ function AnnouncementSend()
 	censorText($context['topic_subject']);
 	censorText($message);
 
-	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($message, false, $id_msg), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+	$message = trim(un_htmlspecialchars(strip_tags(strtr(Parser::parse_bbc($message, false, $id_msg), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 	// We need this in order to be able send emails.
 	require_once($sourcedir . '/Subs-Post.php');
@@ -2361,7 +2363,7 @@ function getTopic()
 	{
 		// Censor, BBC, ...
 		censorText($row['body']);
-		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		// ...and store.
 		$is_ignored = !empty($modSettings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($row['id_member'], $context['user']['ignoreusers']);
@@ -2601,7 +2603,7 @@ function JavaScriptModify()
 
 			preparsecode($_POST['message']);
 
-			if ($smcFunc['htmltrim'](strip_tags(parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '')
+			if ($smcFunc['htmltrim'](strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '')
 			{
 				$post_errors[] = 'no_message';
 				unset($_POST['message']);
@@ -2750,7 +2752,7 @@ function JavaScriptModify()
 			censorText($context['message']['subject']);
 			censorText($context['message']['body']);
 
-			$context['message']['body'] = parse_bbc($context['message']['body'], $row['smileys_enabled'], $row['id_msg']);
+			$context['message']['body'] = Parser::parse_bbc($context['message']['body'], $row['smileys_enabled'], $row['id_msg']);
 		}
 		// Topic?
 		elseif (empty($post_errors))

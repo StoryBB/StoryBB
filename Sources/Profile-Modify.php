@@ -16,6 +16,7 @@ use StoryBB\Model\Alert;
 use StoryBB\Model\Attachment;
 use StoryBB\Helper\Timezone;
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Helper\Parser;
 use GuzzleHttp\Client;
 
 /**
@@ -1492,7 +1493,7 @@ function editBuddies($memID)
 				}
 
 				if ($column['bbc'] && !empty($context['buddies'][$buddy]['options'][$key]))
-					$context['buddies'][$buddy]['options'][$key] = strip_tags(parse_bbc($context['buddies'][$buddy]['options'][$key]));
+					$context['buddies'][$buddy]['options'][$key] = strip_tags(Parser::parse_bbc($context['buddies'][$buddy]['options'][$key]));
 
 				elseif ($column['type'] == 'check')
 					$context['buddies'][$buddy]['options'][$key] = $context['buddies'][$buddy]['options'][$key] == 0 ? $txt['no'] : $txt['yes'];
@@ -2862,7 +2863,7 @@ function profileLoadSignatureData()
 		censorText($context['member']['signature']);
 		$context['member']['current_signature'] = $context['member']['signature'];
 		censorText($signature);
-		$context['member']['signature_preview'] = parse_bbc($signature, true, 'sig' . $memberContext[$context['id_member']]);
+		$context['member']['signature_preview'] = Parser::parse_bbc($signature, true, 'sig' . $memberContext[$context['id_member']]);
 		$context['member']['signature'] = $_POST['signature'];
 	}
 
@@ -3336,7 +3337,7 @@ function profileValidateSignature(&$value)
 
 		// What about too many smileys!
 		$smiley_parsed = $unparsed_signature;
-		parsesmileys($smiley_parsed);
+		Parser::parse_smileys($smiley_parsed);
 		$smiley_count = substr_count(strtolower($smiley_parsed), '<img') - substr_count(strtolower($unparsed_signature), '<img');
 		if (!empty($sig_limits[4]) && $sig_limits[4] == -1 && $smiley_count > 0)
 			return 'signature_allow_smileys';

@@ -22,6 +22,12 @@ class Attachment
 	const ATTACHMENT_THUMBNAIL = 3;
 	const ATTACHMENT_EXPORT = 4;
 
+	/**
+	 * Create a new attachment file hash based on the filename itself and the current time.
+	 *
+	 * @param string $filename The name of the file
+	 * @return string A hash to serve as the basis of a new attachment file
+	 */
 	public static function get_new_filename($filename)
 	{
 		return sha1(md5($filename . time()) . mt_rand());
