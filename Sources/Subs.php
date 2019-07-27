@@ -973,11 +973,6 @@ function forum_time($use_user_offset = true, $timestamp = null)
 	return $timestamp + ($modSettings['time_offset'] + ($use_user_offset ? $user_info['time_offset'] : 0)) * 3600;
 }
 
-function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = [])
-{
-	return Parser::parse_bbc($message, $smileys, $cache_id, $parse_tags);
-}
-
 /**
  * Make sure the browser doesn't come back and repost the form data.
  * Should be used whenever anything is posted.
@@ -1318,7 +1313,7 @@ function setupThemeContext($forceload = false)
 			continue;
 
 		// Clean it up for presentation ;).
-		$context['news_lines'][$i] = parse_bbc(stripslashes(trim($context['news_lines'][$i])), true, 'news' . $i);
+		$context['news_lines'][$i] = Parser::parse_bbc(stripslashes(trim($context['news_lines'][$i])), true, 'news' . $i);
 	}
 	if (!empty($context['news_lines']))
 		$context['random_news_line'] = $context['news_lines'][mt_rand(0, count($context['news_lines']) - 1)];

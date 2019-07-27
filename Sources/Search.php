@@ -20,6 +20,7 @@ $GLOBALS['search_versions'] = array(
 );
 
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Helper\Parser;
 
 /**
  * Ask the user what they want to search for.
@@ -1771,7 +1772,7 @@ function prepareSearchContext($reset = false)
 		$charLimit = 50;
 
 		$message['body'] = strtr($message['body'], array("\n" => ' ', '<br>' => "\n"));
-		$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
+		$message['body'] = Parser::parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 		$message['body'] = strip_tags(strtr($message['body'], array('</div>' => '<br>', '</li>' => '<br>')), '<br>');
 
 		if ($smcFunc['strlen']($message['body']) > $charLimit)
@@ -1815,7 +1816,7 @@ function prepareSearchContext($reset = false)
 	else
 	{
 		// Run BBC interpreter on the message.
-		$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
+		$message['body'] = Parser::parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 	}
 
 	// Make sure we don't end up with a practically empty message body.

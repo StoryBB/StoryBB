@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * Sets and call a function based on the given subaction. Acts as a dispatcher function.
  * It requires the moderate_forum permission.
@@ -233,7 +235,7 @@ function ReportDetails()
 				'href' => $scripturl . '?action=profile;u=' . $report['id_author'],
 			),
 			'subject' => $report['subject'],
-			'body' => parse_bbc($report['body']),
+			'body' => Parser::parse_bbc($report['body']),
 		);
 	}
 

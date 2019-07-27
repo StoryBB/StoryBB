@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * Redirect to the user help ;).
  * It loads information needed for the help section.
@@ -135,7 +137,7 @@ function HelpPolicy()
 		'{$age}' => $modSettings['minimum_age'],
 		'{$cookiepolicy}' => $scripturl . '?action=help;sa=cookies',
 	];
-	$context['policy_text'] = parse_bbc(strtr($row['revision_text'], $replacements), false);
+	$context['policy_text'] = Parser::parse_bbc(strtr($row['revision_text'], $replacements), false);
 	$context['last_updated'] = timeformat($row['last_change']);
 
 	$context['page_title'] = $context['policy_name'];

@@ -56,6 +56,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * This is the main dispatcher. Sets up all the available sub-actions, all the tabs and selects
  * the appropriate one based on the sub-action.
@@ -890,7 +892,7 @@ function prepareDBSettingContext(&$config_vars)
 	if (!empty($bbcChoice))
 	{
 		// What are the options, eh?
-		$temp = parse_bbc(false);
+		$temp = Parser::parse_bbc(false);
 		$bbcTags = [];
 		foreach ($temp as $tag)
 			$bbcTags[] = $tag['tag'];
@@ -1173,7 +1175,7 @@ function saveDBSettings(&$config_vars)
 		{
 
 			$bbcTags = [];
-			foreach (parse_bbc(false) as $tag)
+			foreach (Parser::parse_bbc(false) as $tag)
 				$bbcTags[] = $tag['tag'];
 
 			if (!isset($_POST[$var[1] . '_enabledTags']))

@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Parser;
+
 /**
  * Get the latest posts of a forum.
  *
@@ -52,7 +54,7 @@ function getLastPosts($latestPostOptions)
 		censorText($row['subject']);
 		censorText($row['body']);
 
-		$row['body'] = strip_tags(strtr(parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br>' => '&#10;')));
+		$row['body'] = strip_tags(strtr(Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br>' => '&#10;')));
 		if ($smcFunc['strlen']($row['body']) > 128)
 			$row['body'] = $smcFunc['substr']($row['body'], 0, 128) . '...';
 

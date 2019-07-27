@@ -1577,7 +1577,7 @@ class Parser
 
 				// For parsed content, we must recurse to avoid security problems.
 				if ($tag['type'] != 'unparsed_equals')
-					$data = parse_bbc($data, !empty($tag['parsed_tags_allowed']) ? false : true, '', !empty($tag['parsed_tags_allowed']) ? $tag['parsed_tags_allowed'] : []);
+					$data = self::parse_bbc($data, !empty($tag['parsed_tags_allowed']) ? false : true, '', !empty($tag['parsed_tags_allowed']) ? $tag['parsed_tags_allowed'] : []);
 
 				$tag['after'] = strtr($tag['after'], array('$1' => $data));
 

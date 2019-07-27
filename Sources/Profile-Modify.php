@@ -1493,7 +1493,7 @@ function editBuddies($memID)
 				}
 
 				if ($column['bbc'] && !empty($context['buddies'][$buddy]['options'][$key]))
-					$context['buddies'][$buddy]['options'][$key] = strip_tags(parse_bbc($context['buddies'][$buddy]['options'][$key]));
+					$context['buddies'][$buddy]['options'][$key] = strip_tags(Parser::parse_bbc($context['buddies'][$buddy]['options'][$key]));
 
 				elseif ($column['type'] == 'check')
 					$context['buddies'][$buddy]['options'][$key] = $context['buddies'][$buddy]['options'][$key] == 0 ? $txt['no'] : $txt['yes'];
@@ -2863,7 +2863,7 @@ function profileLoadSignatureData()
 		censorText($context['member']['signature']);
 		$context['member']['current_signature'] = $context['member']['signature'];
 		censorText($signature);
-		$context['member']['signature_preview'] = parse_bbc($signature, true, 'sig' . $memberContext[$context['id_member']]);
+		$context['member']['signature_preview'] = Parser::parse_bbc($signature, true, 'sig' . $memberContext[$context['id_member']]);
 		$context['member']['signature'] = $_POST['signature'];
 	}
 

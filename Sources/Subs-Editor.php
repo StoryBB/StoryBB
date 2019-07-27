@@ -12,6 +12,7 @@
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\Helper\Parser;
 
 /**
  * !!!Compatibility!!!
@@ -968,7 +969,7 @@ function legalise_bbc($text)
 	$disabled = empty($modSettings['disabledBBC']) ? [] : array_flip(explode(',', strtolower($modSettings['disabledBBC'])));
 
 	// Get a list of all the tags that are not disabled.
-	$all_tags = parse_bbc(false);
+	$all_tags = Parser::parse_bbc(false);
 	$valid_tags = [];
 	$self_closing_tags = [];
 	foreach ($all_tags as $tag)
@@ -2006,7 +2007,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$row = &$modSettings['question_id_cache']['questions'][$q];
 			$thisVerification['questions'][] = array(
 				'id' => $q,
-				'q' => parse_bbc($row['question']),
+				'q' => Parser::parse_bbc($row['question']),
 				'is_error' => !empty($incorrectQuestions) && in_array($q, $incorrectQuestions),
 				// Remember a previous submission?
 				'a' => isset($_REQUEST[$verificationOptions['id'] . '_vv'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q]) ? $smcFunc['htmlspecialchars']($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q]) : '',
