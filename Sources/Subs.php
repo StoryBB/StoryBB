@@ -978,11 +978,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = [])
 	return Parser::parse_bbc($message, $smileys, $cache_id, $parse_tags);
 }
 
-function parsesmileys(&$message)
-{
-	Parser::parse_smileys($message);
-}
-
 /**
  * Make sure the browser doesn't come back and repost the form data.
  * Should be used whenever anything is posted.

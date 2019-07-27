@@ -65,7 +65,7 @@ class Parser
 		if (empty($modSettings['enableBBC']) && $message !== false)
 		{
 			if ($smileys === true)
-				parsesmileys($message);
+				self::parse_smileys($message);
 
 			return $message;
 		}
@@ -1606,7 +1606,7 @@ class Parser
 		{
 			$message_parts = explode("\n", $message);
 			for ($i = 0, $n = count($message_parts); $i < $n; $i += 2)
-				parsesmileys($message_parts[$i]);
+				self::parse_smileys($message_parts[$i]);
 
 			$message = implode('', $message_parts);
 		}

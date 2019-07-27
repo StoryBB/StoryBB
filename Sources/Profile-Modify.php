@@ -16,6 +16,7 @@ use StoryBB\Model\Alert;
 use StoryBB\Model\Attachment;
 use StoryBB\Helper\Timezone;
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Helper\Parser;
 use GuzzleHttp\Client;
 
 /**
@@ -3336,7 +3337,7 @@ function profileValidateSignature(&$value)
 
 		// What about too many smileys!
 		$smiley_parsed = $unparsed_signature;
-		parsesmileys($smiley_parsed);
+		Parser::parse_smileys($smiley_parsed);
 		$smiley_count = substr_count(strtolower($smiley_parsed), '<img') - substr_count(strtolower($unparsed_signature), '<img');
 		if (!empty($sig_limits[4]) && $sig_limits[4] == -1 && $smiley_count > 0)
 			return 'signature_allow_smileys';
