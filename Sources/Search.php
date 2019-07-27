@@ -992,7 +992,7 @@ function PlushSearch2()
 						$numSubjectResults = count($inserts);
 					}
 					else
-						$numSubjectResults += $smcFunc['db_affected_rows']();
+						$numSubjectResults += $smcFunc['db']->affected_rows();
 
 					if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
 						break;
@@ -1219,7 +1219,7 @@ function PlushSearch2()
 							$numSubjectResults = count($inserts);
 						}
 						else
-							$numSubjectResults += $smcFunc['db_affected_rows']();
+							$numSubjectResults += $smcFunc['db']->affected_rows();
 
 						if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
 							break;
@@ -1317,7 +1317,7 @@ function PlushSearch2()
 								$indexedResults = count($inserts);
 							}
 							else
-								$indexedResults += $smcFunc['db_affected_rows']();
+								$indexedResults += $smcFunc['db']->affected_rows();
 
 							if (!empty($maxMessageResults) && $indexedResults >= $maxMessageResults)
 								break;
@@ -1466,7 +1466,7 @@ function PlushSearch2()
 						$_SESSION['search_cache']['num_results'] += count($inserts);
 					}
 					else
-						$_SESSION['search_cache']['num_results'] = $smcFunc['db_affected_rows']();
+						$_SESSION['search_cache']['num_results'] = $smcFunc['db']->affected_rows();
 				}
 
 				// Insert subject-only matches.
@@ -1533,7 +1533,7 @@ function PlushSearch2()
 						$_SESSION['search_cache']['num_results'] += count($inserts);
 					}
 					else
-						$_SESSION['search_cache']['num_results'] += $smcFunc['db_affected_rows']();
+						$_SESSION['search_cache']['num_results'] += $smcFunc['db']->affected_rows();
 				}
 				elseif ($_SESSION['search_cache']['num_results'] == -1)
 					$_SESSION['search_cache']['num_results'] = 0;

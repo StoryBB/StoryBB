@@ -1001,7 +1001,7 @@ function removeMessage($message, $decreasePostCount = true)
 			'id_msg' => $message,
 		)
 	);
-	if ($smcFunc['db_affected_rows']() != 0)
+	if ($smcFunc['db']->affected_rows() != 0)
 	{
 		require_once($sourcedir . '/ModerationCenter.php');
 		updateSettings(array('last_mod_report_action' => time()));

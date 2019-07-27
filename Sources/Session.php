@@ -165,7 +165,7 @@ function sessionWrite($session_id, $data)
 	);
 
 	// If that didn't work, try inserting a new one.
-	if ($smcFunc['db_affected_rows']() == 0)
+	if ($smcFunc['db']->affected_rows() == 0)
 		$smcFunc['db_insert']('ignore',
 			'{db_prefix}sessions',
 			array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
@@ -173,7 +173,7 @@ function sessionWrite($session_id, $data)
 			array('session_id')
 		);
 
-	return ($smcFunc['db_affected_rows']() == 0 ? false : true);
+	return ($smcFunc['db']->affected_rows() == 0 ? false : true);
 }
 
 /**
@@ -225,5 +225,5 @@ function sessionGC($max_lifetime)
 		)
 	);
 
-	return ($smcFunc['db_affected_rows']() == 0 ? false : true);
+	return ($smcFunc['db']->affected_rows() == 0 ? false : true);
 }

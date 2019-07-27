@@ -44,7 +44,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_escape_string'          => 'addslashes',
 			'db_unescape_string'        => 'stripslashes',
 			'db_server_info'            => 'sbb_db_get_server_info',
-			'db_affected_rows'          => 'sbb_db_affected_rows',
 			'db_error'                  => 'mysqli_error',
 			'db_errno'                  => 'mysqli_errno',
 			'db_title'                  => 'MySQLi',
@@ -434,12 +433,6 @@ function sbb_db_query($identifier, $db_string, $db_values = [], $connection = nu
 		$db_cache[$db_count]['t'] = microtime(true) - $st;
 
 	return $ret;
-}
-
-function sbb_db_affected_rows($connection = null)
-{
-	global $smcFunc;
-	return $smcFunc['db']->affected_rows();
 }
 
 /**

@@ -1167,7 +1167,7 @@ function spamProtection($error_type, $only_return_result = false)
 	);
 
 	// If affected is 0 or 2, it was there already.
-	if ($smcFunc['db_affected_rows']() != 1)
+	if ($smcFunc['db']->affected_rows() != 1)
 	{
 		// Spammer!  You only have to wait a *few* seconds!
 		if (!$only_return_result)
