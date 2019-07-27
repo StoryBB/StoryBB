@@ -3294,6 +3294,11 @@ function set_avatar_data($data = [])
 		];
 }
 
+/**
+ * Get the entire list of groups, their icons, color etc.
+ *
+ * @return array A list of groups, excluding hidden groups
+ */
 function get_char_membergroup_data()
 {
 	global $smcFunc, $settings, $context;
@@ -3345,6 +3350,12 @@ function get_char_membergroup_data()
 	return $groups;
 }
 
+/**
+ * Get the badge, colour and title based on the groups a poster is part of.
+ *
+ * @param array $group_list The list of groups an account or character contains.
+ * @return array Title, color, badges for the group list
+ */
 function get_labels_and_badges($group_list)
 {
 	global $settings, $context;

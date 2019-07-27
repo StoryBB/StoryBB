@@ -17,6 +17,7 @@ namespace StoryBB\Template\Helper;
  */
 class Controls
 {
+	/** @var $menu_context Local storage for a menu to be rendered by the template */
 	protected static $menu_context;
 
 	/**

@@ -1651,7 +1651,7 @@ class Parser
 	 * Caches the smileys from the database or array in memory.
 	 * Doesn't return anything, but rather modifies message directly.
 	 *
-	 * @param string &$message The message to parse smileys in
+	 * @param string $message The message to parse smileys in
 	 */
 	public static function parse_smileys(string &$message)
 	{

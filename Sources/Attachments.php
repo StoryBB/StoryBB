@@ -10,6 +10,9 @@
  * @version 1.0 Alpha 1
  */
 
+/**
+ * Attachments handler.
+ */
 class Attachments
 {
 	protected $_msg = 0;
@@ -34,6 +37,9 @@ class Attachments
 	];
 	protected $_sa = false;
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct()
 	{
 		global $modSettings, $context;
@@ -50,7 +56,11 @@ class Attachments
 		$this->_canPostAttachment = $context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment', $this->_board) || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments', $this->_board)));
 	}
 
-	// @todo is this even called?
+	/**
+	 * Action dispatcher for attachments.
+	 *
+	 * @deprecated Appears not to be even called.
+	 */
 	public function call()
 	{
 		global $smcFunc, $sourcedir;
@@ -80,6 +90,9 @@ class Attachments
 		$this->sendResponse();
 	}
 
+	/**
+	 * Deletes an attachment based on request from user.
+	 */
 	public function delete()
 	{
 		global $sourcedir;
@@ -111,6 +124,9 @@ class Attachments
 		]);
 	}
 
+	/**
+	 * Adds an attachment.
+	 */
 	public function add()
 	{
 		// You gotta be able to post attachments.
@@ -308,6 +324,9 @@ class Attachments
 		call_integration_hook('integrate_attachment_upload', []);
 	}
 
+	/**
+	 * Underlying function for creating new attachments in the system.
+	 */
 	protected function createAtttach()
 	{
 		global $txt, $user_info, $modSettings;
@@ -383,6 +402,11 @@ class Attachments
 		unset($_SESSION['temp_attachments']);
 	}
 
+	/**
+	 * Configures an AJAX response from an attachment being added.
+	 *
+	 * @param array $data The data for the attachment to be returned.
+	 */
 	protected function setResponse($data = [])
 	{
 		global $txt;
@@ -419,6 +443,9 @@ class Attachments
 				$this->_response['text'] = $txt[$data['text']];
 	}
 
+	/**
+	 * Issues the AJAX response to the user.
+	 */
 	protected function sendResponse()
 	{
 		global $modSettings, $context;

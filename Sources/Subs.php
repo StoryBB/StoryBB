@@ -1114,6 +1114,16 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		exit;
 }
 
+/**
+ * Format the string for the header area when logged out.
+ *
+ * @param string $string The base language string
+ * @param string $guest_title The name for guests
+ * @param string $forum_name The forum name
+ * @param string $scripturl The $scripturl to link to
+ * @param string $login Title for the login popup modal
+ * @return \LightnCandy\SafeString The login link, fully formatted
+ */
 function login_helper($string, $guest_title, $forum_name, $scripturl, $login) 
 {
 	return new \LightnCandy\SafeString(sprintf($string,
@@ -1125,7 +1135,13 @@ function login_helper($string, $guest_title, $forum_name, $scripturl, $login)
 	));
 }
 
-function session_flash($status, $message)
+/**
+ * Add a notification to the session to be shown on the next page the user sees.
+ *
+ * @param string $status The status of the message (success, warning, error)
+ * @param string $message The message to show to the user
+ */
+function session_flash(string $status, string $message)
 {
 	if (!in_array($status, ['success', 'warning', 'error']))
 	{
@@ -1137,6 +1153,11 @@ function session_flash($status, $message)
 	}
 }
 
+/**
+ * Retrieve all the queued notifications from the user's session for this page load.
+ *
+ * @return array A map of status -> messages to be shown
+ */
 function session_flash_retrieve()
 {
 	$messages = [];

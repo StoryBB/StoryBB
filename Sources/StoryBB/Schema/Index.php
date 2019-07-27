@@ -20,6 +20,7 @@ use StoryBB\Schema\InvalidIndexTypeException;
  */
 class Index
 {
+	/** @var $index The properties of the index this object represents */
 	private $index;
 
 	/**

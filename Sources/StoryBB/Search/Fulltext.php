@@ -52,7 +52,13 @@ class Fulltext extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Check whether the specific search operation can be performed by this API.
+	 * The operations are the functions listed in the interface, if not supported
+	 * they need not be declared
+	 *
+	 * @param string $methodName The method
+	 * @param array $query_params Any parameters for the query
+	 * @return boolean Whether or not the specified method is supported
 	 */
 	public function supportsMethod($methodName, $query_params = null)
 	{
@@ -72,8 +78,6 @@ class Fulltext extends API
 	}
 
 	/**
-	 * fulltext_search::_getMinWordLength()
-	 *
 	 * What is the minimum word length full text supports?
 	 *
 	 * @return int The minimum word length
@@ -103,7 +107,13 @@ class Fulltext extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Callback function for usort used to sort the fulltext results.
+	 * the order of sorting is: large words, small words, large words that
+	 * are excluded from the search, small words that are excluded.
+	 *
+	 * @param string $a Word A
+	 * @param string $b Word B
+	 * @return int An integer indicating how the words should be sorted
 	 */
 	public function searchSort($a, $b)
 	{
@@ -116,7 +126,12 @@ class Fulltext extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Callback while preparing indexes for searching
+	 *
+	 * @param string $word A word to index
+	 * @param array $wordsSearch Search words
+	 * @param array $wordsExclude Words to exclude
+	 * @param bool $isExcluded Whether the specfied word should be excluded
 	 */
 	public function prepareIndexes($word, array &$wordsSearch, array &$wordsExclude, $isExcluded)
 	{
@@ -152,7 +167,11 @@ class Fulltext extends API
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Search for indexed words.
+	 *
+	 * @param array $words An array of words
+	 * @param array $search_data An array of search data
+	 * @return mixed
 	 */
 	public function indexedWordQuery(array $words, array $search_data)
 	{

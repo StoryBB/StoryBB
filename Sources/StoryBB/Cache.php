@@ -17,8 +17,16 @@ namespace StoryBB;
  */
 class Cache
 {
+	/** @var $cacheAPI The cache object */
 	private static $cacheAPI = null;
 
+	/**
+	 * Initialise the cache instance.
+	 *
+	 * @param string $overrideCache Manually specify a cache type to override configuration
+	 * @param bool $fallback_file Fall back to the file cache if the specified type can't be initialised
+	 * @return object Cache instance
+	 */
 	public static function initialize($overrideCache = null, $fallback_file = true)
 	{
 		global $cache_accelerator;
@@ -61,6 +69,13 @@ class Cache
 		}
 	}
 
+	/**
+	 * Gets a value from the cache.
+	 *
+	 * @param string $key The cache key
+	 * @param int $ttl The expected time-to-live for the cache item
+	 * @return mixed The cache value, or null if not found
+	 */
 	public static function get($key, $ttl = 120)
 	{
 		global $boardurl, $modSettings, $cache_enable, $cacheAPI;
@@ -101,7 +116,14 @@ class Cache
 		return empty($value) ? null : sbb_json_decode($value, true);
 	}
 
-	public static function put($key, $value, $ttl = 120)
+	/**
+	 * Puts a value into the cache.
+	 *
+	 * @param string $key Key to save into the cache
+	 * @param mixed $value The value to save
+	 * @param int $ttl The expected time-to-live for the cache item
+	 */
+	public static function put(string $key, $value, int $ttl = 120)
 	{
 		global $boardurl, $modSettings, $cache_enable, $cacheAPI;
 		global $cache_hits, $cache_count, $db_show_debug;
@@ -127,7 +149,12 @@ class Cache
 			$cache_hits[$cache_count]['t'] = microtime(true) - $st;
 	}
 
-	public static function list_available()
+	/**
+	 * List available cache types.
+	 *
+	 * @return array An array of cache ID to cache name.
+	 */
+	public static function list_available(): array
 	{
 		global $sourcedir;
 		$apis = [];
@@ -160,6 +187,11 @@ class Cache
 		return $apis;
 	}
 
+	/**
+	 * Empty out the cache if possible.
+	 *
+	 * @param string $type The type of data to be flushed specifically.
+	 */
 	public static function flush($type)
 	{
 		// If we can't get to the API, can't do this.
