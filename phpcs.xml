@@ -17,15 +17,12 @@
     <exclude-pattern>./Themes/default/css/minified.css</exclude-pattern>
     <exclude-pattern>./Themes/default/css/select2.css</exclude-pattern>
     <exclude-pattern>./Themes/default/css/select2.min.css</exclude-pattern>
-    <exclude-pattern>./Themes/default/scripts/datepair.min.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/dropzone.min.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/jquery-3.2.1.min.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/jquery-ui-1.12.1-sortable.min.js</exclude-pattern>
-    <exclude-pattern>./Themes/default/scripts/jquery-ui.datepicker.min.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/jquery.atwho.min.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/jquery.caret.min.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/jquery.sceditor.bbcode.min.js</exclude-pattern>
-    <exclude-pattern>./Themes/default/scripts/jquery.timepicker.min.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/minified.js</exclude-pattern>
     <exclude-pattern>./Themes/default/scripts/slippry.min.js</exclude-pattern>
 
