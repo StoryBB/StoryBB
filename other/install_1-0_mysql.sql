@@ -710,8 +710,8 @@ VALUES (':)', 'smiley.png', '{$default_smiley_smiley}', 0, 0),
   (':''(', 'cry.png', '{$default_cry_smiley}', 15, 0),
   ('>:D', 'evil.png', '{$default_evil_smiley}', 16, 1),
   ('^-^', 'azn.png', '{$default_azn_smiley}', 17, 1),
-  (':))', 'laugh.png', '{$default_laugh_smiley}', 19, 1),
-  ('O:-)', 'angel.png', '{$default_angel_smiley}', 21, 1);
+  (':))', 'laugh.png', '{$default_laugh_smiley}', 18, 1),
+  ('O:-)', 'angel.png', '{$default_angel_smiley}', 19, 1);
 # --------------------------------------------------------
 
 #
