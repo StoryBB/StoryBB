@@ -40,6 +40,7 @@ class RemoveUnapprovedAccounts extends \StoryBB\Task\Schedulable
 			[
 				'unactivated' => Account::ACCOUNT_NOTACTIVATED,
 				'unactivatedbanned' => Account::ACCOUNT_BANNED + Account::ACCOUNT_NOTACTIVATED,
+				'date_registered' => $date_registered,
 			]
 		);
 
