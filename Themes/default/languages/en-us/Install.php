@@ -87,9 +87,7 @@ $txt['default_kiss_smiley'] = 'Kiss';
 $txt['default_cry_smiley'] = 'Cry';
 $txt['default_evil_smiley'] = 'Evil';
 $txt['default_azn_smiley'] = 'Azn';
-$txt['default_afro_smiley'] = 'Afro';
 $txt['default_laugh_smiley'] = 'Laugh';
-$txt['default_police_smiley'] = 'Police';
 $txt['default_angel_smiley'] = 'Angel';
 
 $txt['error_message_click'] = 'Click here';
