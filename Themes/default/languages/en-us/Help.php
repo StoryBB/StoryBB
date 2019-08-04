@@ -418,11 +418,6 @@ $helptxt['membergroup_guests'] = 'The Guests membergroup is for all users that a
 $helptxt['membergroup_regular_members'] = 'The Regular Members are all members that are logged in, but that have no primary membergroup assigned.';
 $helptxt['membergroup_administrator'] = 'The administrator can, per definition, do anything and see any board. There are no permission settings for the administrator.';
 $helptxt['membergroup_moderator'] = 'The Moderator membergroup is a special membergroup. Permissions and settings assigned to this group apply to moderators but only <em>on the boards they moderate</em>. Outside these boards they\'re just like any other member. Note that permissions for this group also apply to any group assigned to moderate a board.';
-$helptxt['membergroups'] = 'In StoryBB there are two types of groups that your members can be part of. These are:
-	<ul class="normallist">
-		<li><strong>Regular Groups:</strong> A regular group is a group which members are not automatically placed. To assign a member to be in a group simply go to their profile and click &quot;Account Settings&quot;. From here you can assign them any number of regular groups to which they will be part.</li>
-		<li><strong>Post Groups:</strong> Unlike regular groups post based groups cannot be assigned. Instead, members are automatically assigned to a post based group when they reach the minimum number of posts required to be in that group.</li>
-	</ul>';
 
 $helptxt['membergroup_badge'] = 'When people post, either in their account or their characters, it\'s possible to display an icon, or group of icons, next to their avatar as a visual guide as to special things on their account. For example, administrators usually have an icon by their avatar to show people that they are administrators. Moderators usually have something similar, too.<br>
 <br>
