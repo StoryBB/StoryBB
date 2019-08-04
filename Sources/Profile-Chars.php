@@ -831,7 +831,7 @@ function char_posts()
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
 				INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 			WHERE m.id_character = {int:current_member}' . (!empty($board) ? '
-				AND t.id_board = {int:board}' : '') . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+				AND t.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 				AND t.approved = {int:is_approved}'),
 			array(
 				'current_member' => $context['character']['id_character'],
@@ -845,7 +845,7 @@ function char_posts()
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
 			WHERE m.id_character = {int:current_member}' . (!empty($board) ? '
-				AND m.id_board = {int:board}' : '') . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+				AND m.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 				AND m.approved = {int:is_approved}'),
 			array(
 				'current_member' => $context['character']['id_character'],
@@ -860,7 +860,7 @@ function char_posts()
 		SELECT MIN(id_msg), MAX(id_msg)
 		FROM {db_prefix}messages AS m
 		WHERE m.id_character = {int:current_member}' . (!empty($board) ? '
-			AND m.id_board = {int:board}' : '') . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+			AND m.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
 		array(
 			'current_member' => $context['character']['id_character'],
@@ -925,7 +925,7 @@ function char_posts()
 				WHERE m.id_character = {int:current_member}' . (!empty($board) ? '
 					AND t.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
-					AND {query_see_board}' . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+					AND {query_see_board}' . ($context['user']['is_owner'] ? '' : '
 					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
 				ORDER BY t.id_first_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
@@ -950,7 +950,7 @@ function char_posts()
 				WHERE m.id_character = {int:current_member}' . (!empty($board) ? '
 					AND b.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
-					AND {query_see_board}' . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+					AND {query_see_board}' . ($context['user']['is_owner'] ? '' : '
 					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
 				ORDER BY m.id_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,

@@ -55,7 +55,7 @@ function RemoveTopic2()
 		isAllowedTo('remove_any');
 
 	// Can they see the topic?
-	if ($modSettings['postmod_active'] && !$approved && $starter != $user_info['id'])
+	if (!$approved && $starter != $user_info['id'])
 		isAllowedTo('approve_posts');
 
 	// Ok, we got that far, but is it locked?
@@ -110,7 +110,7 @@ function DeleteMessage()
 	$smcFunc['db_free_result']($request);
 
 	// Verify they can see this!
-	if ($modSettings['postmod_active'] && !$approved && !empty($poster) && $poster != $user_info['id'])
+	if (!$approved && !empty($poster) && $poster != $user_info['id'])
 		isAllowedTo('approve_posts');
 
 	if ($poster == $user_info['id'])
@@ -637,7 +637,7 @@ function removeMessage($message, $decreasePostCount = true)
 		}
 
 		// Can't delete an unapproved message, if you can't see it!
-		if ($modSettings['postmod_active'] && !$row['approved'] && $row['id_member'] != $user_info['id'] && !(in_array(0, $delete_any) || in_array($row['id_board'], $delete_any)))
+		if (!$row['approved'] && $row['id_member'] != $user_info['id'] && !(in_array(0, $delete_any) || in_array($row['id_board'], $delete_any)))
 		{
 			$approve_posts = boardsAllowedTo('approve_posts');
 			if (!in_array(0, $approve_posts) && !in_array($row['id_board'], $approve_posts))
@@ -664,7 +664,7 @@ function removeMessage($message, $decreasePostCount = true)
 		else
 			isAllowedTo('delete_any');
 
-		if ($modSettings['postmod_active'] && !$row['approved'] && $row['id_member'] != $user_info['id'] && !allowedTo('delete_own'))
+		if (!$row['approved'] && $row['id_member'] != $user_info['id'] && !allowedTo('delete_own'))
 			isAllowedTo('approve_posts');
 	}
 
@@ -716,7 +716,7 @@ function removeMessage($message, $decreasePostCount = true)
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:id_topic}
 				AND id_msg != {int:id_msg}
-			ORDER BY ' . ($modSettings['postmod_active'] ? 'approved DESC, ' : '') . 'id_msg DESC
+			ORDER BY approved DESC, id_msg DESC
 			LIMIT 1',
 			array(
 				'id_topic' => $row['id_topic'],
@@ -730,7 +730,7 @@ function removeMessage($message, $decreasePostCount = true)
 			UPDATE {db_prefix}topics
 			SET
 				id_last_msg = {int:id_last_msg},
-				id_member_updated = {int:id_member_updated}' . (!$modSettings['postmod_active'] || $row['approved'] ? ',
+				id_member_updated = {int:id_member_updated}' . ($row['approved'] ? ',
 				num_replies = CASE WHEN num_replies = {int:no_replies} THEN 0 ELSE num_replies - 1 END' : ',
 				unapproved_posts = CASE WHEN unapproved_posts = {int:no_unapproved} THEN 0 ELSE unapproved_posts - 1 END') . '
 			WHERE id_topic = {int:id_topic}',

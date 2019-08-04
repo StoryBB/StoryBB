@@ -74,7 +74,7 @@ function SplitIndex()
 		SELECT m.subject, t.num_replies, t.unapproved_posts, t.id_first_msg, t.approved
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
-		WHERE m.id_msg = {int:split_at}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+		WHERE m.id_msg = {int:split_at}' . (allowedTo('approve_posts') ? '' : '
 			AND m.approved = 1') . '
 			AND m.id_topic = {int:current_topic}
 		LIMIT 1',
@@ -89,11 +89,11 @@ function SplitIndex()
 	$smcFunc['db_free_result']($request);
 
 	// If not approved validate they can see it.
-	if ($modSettings['postmod_active'] && !$approved)
+	if (!$approved)
 		isAllowedTo('approve_posts');
 
 	// If this topic has unapproved posts, we need to count them too...
-	if ($modSettings['postmod_active'] && allowedTo('approve_posts'))
+	if (allowedTo('approve_posts'))
 		$num_replies += $unapproved_posts - ($approved ? 0 : 1);
 
 	// Check if there is more than one message in the topic.  (there should be.)
@@ -243,7 +243,7 @@ function SplitSelectTopics()
 			SELECT id_msg
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}' . (empty($_SESSION['split_selection'][$topic]) ? '' : '
-				AND id_msg NOT IN ({array_int:no_split_msgs})') . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+				AND id_msg NOT IN ({array_int:no_split_msgs})') . (allowedTo('approve_posts') ? '' : '
 				AND approved = {int:is_approved}') . '
 			' . (empty($settings['view_newest_first']) ? '' : 'ORDER BY id_msg DESC') . '
 			LIMIT {int:start}, {int:messages_per_page}',
@@ -267,7 +267,7 @@ function SplitSelectTopics()
 				SELECT id_msg
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic}
-					AND id_msg IN ({array_int:split_msgs})' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					AND id_msg IN ({array_int:split_msgs})' . (allowedTo('approve_posts') ? '' : '
 					AND approved = {int:is_approved}') . '
 				' . (empty($options['view_newest_first']) ? '' : 'ORDER BY id_msg DESC') . '
 				LIMIT {int:start}, {int:messages_per_page}',
@@ -305,7 +305,7 @@ function SplitSelectTopics()
 			SELECT id_msg
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}
-				AND id_msg IN ({array_int:split_msgs})' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+				AND id_msg IN ({array_int:split_msgs})' . (allowedTo('approve_posts') ? '' : '
 				AND approved = {int:is_approved}'),
 			array(
 				'current_topic' => $topic,
@@ -323,7 +323,7 @@ function SplitSelectTopics()
 	$request = $smcFunc['db_query']('', '
 		SELECT ' . (empty($_SESSION['split_selection'][$topic]) ? '0' : 'm.id_msg IN ({array_int:split_msgs})') . ' AS is_selected, COUNT(*) AS num_messages
 		FROM {db_prefix}messages AS m
-		WHERE m.id_topic = {int:current_topic}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+		WHERE m.id_topic = {int:current_topic}' . (allowedTo('approve_posts') ? '' : '
 			AND approved = {int:is_approved}') . (empty($_SESSION['split_selection'][$topic]) ? '' : '
 		GROUP BY is_selected'),
 		array(
@@ -351,7 +351,7 @@ function SplitSelectTopics()
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . (empty($_SESSION['split_selection'][$topic]) ? '' : '
-			AND id_msg NOT IN ({array_int:no_split_msgs})') . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+			AND id_msg NOT IN ({array_int:no_split_msgs})') . (allowedTo('approve_posts') ? '' : '
 			AND approved = {int:is_approved}') . '
 		' . (empty($options['view_newest_first']) ? '' : 'ORDER BY m.id_msg DESC') . '
 		LIMIT {int:start}, {int:messages_per_page}',
@@ -391,7 +391,7 @@ function SplitSelectTopics()
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 			WHERE m.id_topic = {int:current_topic}
-				AND m.id_msg IN ({array_int:split_msgs})' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+				AND m.id_msg IN ({array_int:split_msgs})' . (allowedTo('approve_posts') ? '' : '
 				AND approved = {int:is_approved}') . '
 			' . (empty($options['view_newest_first']) ? '' : 'ORDER BY m.id_msg DESC') . '
 			LIMIT {int:start}, {int:messages_per_page}',
@@ -862,13 +862,8 @@ function MergeIndex()
 	$context['target_board'] = $_REQUEST['targetboard'];
 
 	// Prepare a handy query bit for approval...
-	if ($modSettings['postmod_active'])
-	{
-		$can_approve_boards = boardsAllowedTo('approve_posts');
-		$onlyApproved = $can_approve_boards !== array(0) && !in_array($_REQUEST['targetboard'], $can_approve_boards);
-	}
-	else
-		$onlyApproved = false;
+	$can_approve_boards = boardsAllowedTo('approve_posts');
+	$onlyApproved = $can_approve_boards !== array(0) && !in_array($_REQUEST['targetboard'], $can_approve_boards);
 
 	// How many topics are on this board?  (used for paging.)
 	$request = $smcFunc['db_query']('', '
@@ -1026,8 +1021,7 @@ function MergeExecute($topics = [])
 		$topics[$id] = (int) $topic;
 
 	// Joy of all joys, make sure they're not messing about with unapproved topics they can't see :P
-	if ($modSettings['postmod_active'])
-		$can_approve_boards = boardsAllowedTo('approve_posts');
+	$can_approve_boards = boardsAllowedTo('approve_posts');
 
 	// Get info about the topics and polls that will be merged.
 	$request = $smcFunc['db_query']('', '
@@ -1075,14 +1069,18 @@ function MergeExecute($topics = [])
 			);
 
 		// We can't see unapproved topics here?
-		if ($modSettings['postmod_active'] && !$row['approved'] && $can_approve_boards != array(0) && in_array($row['id_board'], $can_approve_boards))
+		if (!$row['approved'] && $can_approve_boards != array(0) && in_array($row['id_board'], $can_approve_boards))
 		{
 			unset($topics[$row['id_topic']]); // If we can't see it, we should not merge it and not adjust counts! Instead skip it.
 			continue;
-		}elseif (!$row['approved'])
+		} elseif (!$row['approved'])
+		{
 			$boardTotals[$row['id_board']]['unapproved_topics']++;
+		}
 		else
+		{
 			$boardTotals[$row['id_board']]['topics']++;
+		}
 
 		$boardTotals[$row['id_board']]['unapproved_posts'] += $row['unapproved_posts'];
 		$boardTotals[$row['id_board']]['posts'] += $row['num_replies'] + ($row['approved'] ? 1 : 0);

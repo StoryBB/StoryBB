@@ -1494,26 +1494,10 @@ function loadAllPermissions()
 		$hiddenPermissions[] = 'view_warning';
 	}
 
-	// Post moderation?
-	if (!$modSettings['postmod_active'])
-	{
-		$hiddenPermissions[] = 'approve_posts';
-		$hiddenPermissions[] = 'post_unapproved_topics';
-		$hiddenPermissions[] = 'post_unapproved_replies';
-		$hiddenPermissions[] = 'post_unapproved_attachments';
-	}
-	// If post moderation is enabled, these are named differently...
-	else
-	{
-		// Relabel the topics permissions
-		$relabelPermissions['post_new'] = 'auto_approve_topics';
-
-		// Relabel the reply permissions
-		$relabelPermissions['post_reply'] = 'auto_approve_replies';
-
-		// Relabel the attachment permissions
-		$relabelPermissions['post_attachment'] = 'auto_approve_attachments';
-	}
+	// Post moderation
+	$relabelPermissions['post_new'] = 'auto_approve_topics';
+	$relabelPermissions['post_reply'] = 'auto_approve_replies';
+	$relabelPermissions['post_attachment'] = 'auto_approve_attachments';
 
 	// Are attachments enabled?
 	if (empty($modSettings['attachmentEnable']))
@@ -2283,72 +2267,48 @@ function ModifyPostModeration()
 	{
 		validateToken('admin-mppm');
 
-		// First, are we saving a new value for enabled post moderation?
-		$new_setting = !empty($_POST['postmod_active']);
-		if ($new_setting != $modSettings['postmod_active'])
+		// Start by deleting all the permissions relevant.
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}board_permissions
+			WHERE id_profile = {int:current_profile}
+				AND permission IN ({array_string:permissions})
+				AND id_group IN ({array_int:profile_group_list})',
+			array(
+				'profile_group_list' => array_keys($context['profile_groups']),
+				'current_profile' => $context['current_profile'],
+				'permissions' => $all_permissions,
+			)
+		);
+
+		// Do it group by group.
+		$new_permissions = [];
+		foreach ($context['profile_groups'] as $id => $group)
 		{
-			if ($new_setting)
+			foreach ($mappings as $index => $data)
 			{
-				// Turning it on. This seems easy enough.
-				updateSettings(array('postmod_active' => 1));
-			}
-			else
-			{
-				// Turning it off. Not so straightforward. We have to turn off warnings to moderation level, and make everything approved.
-				updateSettings(array(
-					'postmod_active' => 0,
-					'warning_moderate' => 0,
-				));
-
-				require_once($sourcedir . '/PostModeration.php');
-				approveAllData();
-			}
-		}
-		elseif ($modSettings['postmod_active'])
-		{
-			// We're not saving a new setting - and if it's still enabled we have more work to do.
-
-			// Start by deleting all the permissions relevant.
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}board_permissions
-				WHERE id_profile = {int:current_profile}
-					AND permission IN ({array_string:permissions})
-					AND id_group IN ({array_int:profile_group_list})',
-				array(
-					'profile_group_list' => array_keys($context['profile_groups']),
-					'current_profile' => $context['current_profile'],
-					'permissions' => $all_permissions,
-				)
-			);
-
-			// Do it group by group.
-			$new_permissions = [];
-			foreach ($context['profile_groups'] as $id => $group)
-			{
-				foreach ($mappings as $index => $data)
+				if (isset($_POST[$index][$group['id']]))
 				{
-					if (isset($_POST[$index][$group['id']]))
+					if ($_POST[$index][$group['id']] == 'allow')
 					{
-						if ($_POST[$index][$group['id']] == 'allow')
-						{
-							// Give them both sets for fun.
-							$new_permissions[] = array($context['current_profile'], $group['id'], $data[0], 1);
-							$new_permissions[] = array($context['current_profile'], $group['id'], $data[1], 1);
-						}
-						elseif ($_POST[$index][$group['id']] == 'moderate')
-							$new_permissions[] = array($context['current_profile'], $group['id'], $data[1], 1);
+						// Give them both sets for fun.
+						$new_permissions[] = array($context['current_profile'], $group['id'], $data[0], 1);
+						$new_permissions[] = array($context['current_profile'], $group['id'], $data[1], 1);
 					}
+					elseif ($_POST[$index][$group['id']] == 'moderate')
+						$new_permissions[] = array($context['current_profile'], $group['id'], $data[1], 1);
 				}
 			}
+		}
 
-			// Insert new permissions.
-			if (!empty($new_permissions))
-				$smcFunc['db_insert']('',
-					'{db_prefix}board_permissions',
-					array('id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-					$new_permissions,
-					array('id_profile', 'id_group', 'permission')
-				);
+		// Insert new permissions.
+		if (!empty($new_permissions))
+		{
+			$smcFunc['db_insert']('',
+				'{db_prefix}board_permissions',
+				array('id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
+				$new_permissions,
+				array('id_profile', 'id_group', 'permission')
+			);
 		}
 	}
 

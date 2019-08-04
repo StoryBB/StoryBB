@@ -211,8 +211,8 @@ function PlushSearch1()
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 			WHERE t.id_topic = {int:search_topic_id}
-				AND {query_see_board}' . ($modSettings['postmod_active'] ? '
-				AND t.approved = {int:is_approved_true}' : '') . '
+				AND {query_see_board}
+				AND t.approved = {int:is_approved_true}
 			LIMIT 1',
 			array(
 				'is_approved_true' => 1,
@@ -388,8 +388,8 @@ function PlushSearch2()
 		$request = $smcFunc['db_query']('', '
 			SELECT ' . (empty($search_params['maxage']) ? '0, ' : 'COALESCE(MIN(id_msg), -1), ') . (empty($search_params['minage']) ? '0' : 'COALESCE(MAX(id_msg), -1)') . '
 			FROM {db_prefix}messages
-			WHERE 1=1' . ($modSettings['postmod_active'] ? '
-				AND approved = {int:is_approved_true}' : '') . (empty($search_params['minage']) ? '' : '
+			WHERE 1=1
+				AND approved = {int:is_approved_true}' . (empty($search_params['minage']) ? '' : '
 				AND poster_time <= {int:timestamp_minimum_age}') . (empty($search_params['maxage']) ? '' : '
 				AND poster_time >= {int:timestamp_maximum_age}'),
 			array(
@@ -462,8 +462,8 @@ function PlushSearch2()
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			WHERE t.id_topic = {int:search_topic_id}
-				AND {query_see_board}' . ($modSettings['postmod_active'] ? '
-				AND t.approved = {int:is_approved_true}' : '') . '
+				AND {query_see_board}
+				AND t.approved = {int:is_approved_true}
 			LIMIT 1',
 			array(
 				'search_topic_id' => $search_params['topic'],
@@ -885,8 +885,7 @@ function PlushSearch2()
 						'where' => [],
 					);
 
-					if ($modSettings['postmod_active'])
-						$subject_query['where'][] = 't.approved = {int:is_approved}';
+					$subject_query['where'][] = 't.approved = {int:is_approved}';
 
 					$numTables = 0;
 					$prev_join = 0;
@@ -1635,8 +1634,8 @@ function PlushSearch2()
 				LEFT JOIN {db_prefix}characters AS char_l ON (last_m.id_character = char_l.id_character)
 				LEFT JOIN {db_prefix}members AS first_mem ON (first_mem.id_member = first_m.id_member)
 				LEFT JOIN {db_prefix}members AS last_mem ON (last_mem.id_member = first_m.id_member)
-			WHERE m.id_msg IN ({array_int:message_list})' . ($modSettings['postmod_active'] ? '
-				AND m.approved = {int:is_approved}' : '') . '
+			WHERE m.id_msg IN ({array_int:message_list})
+				AND m.approved = {int:is_approved}
 			ORDER BY ' . $smcFunc['db_custom_order']('m.id_msg', $msg_list) . '
 			LIMIT {int:limit}',
 			array(

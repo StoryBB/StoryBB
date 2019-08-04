@@ -4,141 +4,130 @@
 			<div class="cat_bar">
 				<h3 class="catbg">{{{txt.permissions_post_moderation}}}</h3>
 			</div>
+			<div class="information">{{{txt.permissions_post_moderation_deny_note}}}</div>
 
-			{{! First, we have the bit where we can enable or disable this. }}
-			<div class="windowbg noup">
-				<dl class="settings">
-					<dt>{{{txt.permissions_post_moderation_enable}}}</dt>
-					<dd><input type="checkbox" name="postmod_active"{{#if modSettings.postmod_active}} checked{{/if}}></dd>
-				</dl>
+			<div class="padding">
+				<p class="smalltext floatleft">
+					<strong>{{{txt.permissions_post_moderation_legend}}}:</strong><br>
+					<span class="main_icons post_moderation_allow"></span>{{{txt.permissions_post_moderation_allow}}}<br>
+					<span class="main_icons post_moderation_moderate"></span>{{{txt.permissions_post_moderation_moderate}}}<br>
+					<span class="main_icons post_moderation_deny"></span>{{{txt.permissions_post_moderation_disallow}}}
+				</p>
+				<span class="righttext floatright">
+					<br><br><br>
+					{{{txt.permissions_post_moderation_select}}}:
+					<select name="pid" onchange="document.forms.postmodForm.submit();">
+{{#each context.profiles}}
+	{{#if can_modify}}
+						<option value="{{id}}"{{#if (eq id ../context.current_profile)}} selected{{/if}}>{{{name}}}</option>
+	{{/if}}
+{{/each}}
+					</select>
+					<input type="submit" value="{{{txt.go}}}" class="button_submit">
+				</span>
 			</div>
+			<table class="table_grid" id="postmod">
+				<thead>
+					<tr class="title_bar">
+						<th></th>
+						<th class="centercol" colspan="3">
+							{{{txt.permissions_post_moderation_new_topics}}}
+						</th>
+						<th class="centercol" colspan="3">
+							{{{txt.permissions_post_moderation_replies_own}}}
+						</th>
+						<th class="centercol" colspan="3">
+							{{{txt.permissions_post_moderation_replies_any}}}
+						</th>
 
-{{! If we're not active, there's a bunch of stuff we don't need to show. }}
-{{#if modSettings.postmod_active}}
-				<div class="information">{{{txt.permissions_post_moderation_deny_note}}}</div>
-
-				<div class="padding">
-					<p class="smalltext floatleft">
-						<strong>{{{txt.permissions_post_moderation_legend}}}:</strong><br>
-						<span class="main_icons post_moderation_allow"></span>{{{txt.permissions_post_moderation_allow}}}<br>
-						<span class="main_icons post_moderation_moderate"></span>{{{txt.permissions_post_moderation_moderate}}}<br>
-						<span class="main_icons post_moderation_deny"></span>{{{txt.permissions_post_moderation_disallow}}}
-					</p>
-					<span class="righttext floatright">
-						<br><br><br>
-						{{{txt.permissions_post_moderation_select}}}:
-						<select name="pid" onchange="document.forms.postmodForm.submit();">
-	{{#each context.profiles}}
-		{{#if can_modify}}
-							<option value="{{id}}"{{#if (eq id ../context.current_profile)}} selected{{/if}}>{{{name}}}</option>
-		{{/if}}
-	{{/each}}
-						</select>
-						<input type="submit" value="{{{txt.go}}}" class="button_submit">
-					</span>
-				</div>
-				<table class="table_grid" id="postmod">
-					<thead>
-						<tr class="title_bar">
-							<th></th>
+{{#if (eq modSettings.attachmentEnable '1')}}
 							<th class="centercol" colspan="3">
-								{{{txt.permissions_post_moderation_new_topics}}}
+								{{{txt.permissions_post_moderation_attachments}}}
 							</th>
-							<th class="centercol" colspan="3">
-								{{{txt.permissions_post_moderation_replies_own}}}
-							</th>
-							<th class="centercol" colspan="3">
-								{{{txt.permissions_post_moderation_replies_any}}}
-							</th>
-
-	{{#if (eq modSettings.attachmentEnable '1')}}
-								<th class="centercol" colspan="3">
-									{{{txt.permissions_post_moderation_attachments}}}
-								</th>
-	{{/if}}
-						</tr>
-						<tr class="windowbg">
-							<th class="quarter_table">
-								{{{txt.permissions_post_moderation_group}}}
-							</th>
-							<th><span class="main_icons post_moderation_allow"></span></th>
-							<th><span class="main_icons post_moderation_moderate"></span></th>
-							<th><span class="main_icons post_moderation_deny"></span></th>
-							<th><span class="main_icons post_moderation_allow"></span></th>
-							<th><span class="main_icons post_moderation_moderate"></span></th>
-							<th><span class="main_icons post_moderation_deny"></span></th>
-							<th><span class="main_icons post_moderation_allow"></span></th>
-							<th><span class="main_icons post_moderation_moderate"></span></th>
-							<th><span class="main_icons post_moderation_deny"></span></th>
-
-	{{#if (eq modSettings.attachmentEnable '1')}}
-							<th><span class="main_icons post_moderation_allow"></span></th>
-							<th><span class="main_icons post_moderation_moderate"></span></th>
-							<th><span class="main_icons post_moderation_deny"></span></th>
-	{{/if}}
-						</tr>
-					</thead>
-					<tbody>
-
-	{{#each context.profile_groups}}
-							<tr class="windowbg">
-								<td class="half_table">
-									<span{{#if color}} style="color: {{color}}"{{/if}}>{{{name}}}</span>
-
-		{{#if children}}
-									<br><span class="smalltext">{{{../txt.permissions_includes_inherited}}}: &quot;{{{join children '&quot;, &quot;'}}}&quot;</span>
-		{{/if}}
-								</td>
-								<td class="centercol">
-									<input type="radio" name="new_topic[{{id}}]" value="allow"{{#if (eq new_topic 'allow')}} checked{{/if}}>
-								</td>
-								<td class="centercol">
-									<input type="radio" name="new_topic[{{id}}]" value="moderate"{{#if (eq new_topic 'moderate')}} checked{{/if}}>
-								</td>
-								<td class="centercol">
-									<input type="radio" name="new_topic[{{id}}]" value="disallow"{{#if (eq new_topic 'disallow')}} checked{{/if}}>
-								</td>
-
-		{{#if (eq id -1)}}
-								<td colspan="3"></td>
-		{{else}}
-								<td class="centercol">
-									<input type="radio" name="replies_own[{{id}}]" value="allow"{{#if (eq replies_own 'allow')}} checked{{/if}}>
-								</td>
-								<td class="centercol">
-									<input type="radio" name="replies_own[{{id}}]" value="moderate"{{#if (eq replies_own 'moderate')}} checked{{/if}}>
-								</td>
-								<td class="centercol">
-									<input type="radio" name="replies_own[{{id}}]" value="disallow"{{#if (eq replies_own 'disallow')}} checked{{/if}}>
-								</td>
-		{{/if}}
-
-								<td class="centercol">
-									<input type="radio" name="replies_any[{{id}}]" value="allow"{{#if (eq replies_any 'allow')}} checked{{/if}}>
-								</td>
-								<td class="centercol">
-									<input type="radio" name="replies_any[{{id}}]" value="moderate"{{#if (eq replies_any 'moderate')}} checked{{/if}}>
-								</td>
-								<td class="centercol">
-									<input type="radio" name="replies_any[{{id}}]" value="disallow"{{#if (eq replies_any 'disallow')}} checked{{/if}}>
-								</td>
-
-		{{#if (eq ../modSettings.attachmentEnable '1')}}
-								<td class="centercol">
-									<input type="radio" name="attachment[{{id}}]" value="allow"{{#if (eq attachment 'allow')}} checked{{/if}}>
-								</td>
-								<td class="centercol">
-									<input type="radio" name="attachment[{{id}}]" value="moderate"{{#if (eq attachment 'moderate')}} checked{{/if}}>
-								</td>
-								<td class="centercol">
-									<input type="radio" name="attachment[{{id}}]" value="disallow"{{#if (eq attachment 'disallow')}} checked{{/if}}>
-								</td>
-		{{/if}}
-							</tr>
-	{{/each}}
-					</tbody>
-				</table>
 {{/if}}
+					</tr>
+					<tr class="windowbg">
+						<th class="quarter_table">
+							{{{txt.permissions_post_moderation_group}}}
+						</th>
+						<th><span class="main_icons post_moderation_allow"></span></th>
+						<th><span class="main_icons post_moderation_moderate"></span></th>
+						<th><span class="main_icons post_moderation_deny"></span></th>
+						<th><span class="main_icons post_moderation_allow"></span></th>
+						<th><span class="main_icons post_moderation_moderate"></span></th>
+						<th><span class="main_icons post_moderation_deny"></span></th>
+						<th><span class="main_icons post_moderation_allow"></span></th>
+						<th><span class="main_icons post_moderation_moderate"></span></th>
+						<th><span class="main_icons post_moderation_deny"></span></th>
+
+{{#if (eq modSettings.attachmentEnable '1')}}
+						<th><span class="main_icons post_moderation_allow"></span></th>
+						<th><span class="main_icons post_moderation_moderate"></span></th>
+						<th><span class="main_icons post_moderation_deny"></span></th>
+{{/if}}
+					</tr>
+				</thead>
+				<tbody>
+
+{{#each context.profile_groups}}
+						<tr class="windowbg">
+							<td class="half_table">
+								<span{{#if color}} style="color: {{color}}"{{/if}}>{{{name}}}</span>
+
+	{{#if children}}
+								<br><span class="smalltext">{{{../txt.permissions_includes_inherited}}}: &quot;{{{join children '&quot;, &quot;'}}}&quot;</span>
+	{{/if}}
+							</td>
+							<td class="centercol">
+								<input type="radio" name="new_topic[{{id}}]" value="allow"{{#if (eq new_topic 'allow')}} checked{{/if}}>
+							</td>
+							<td class="centercol">
+								<input type="radio" name="new_topic[{{id}}]" value="moderate"{{#if (eq new_topic 'moderate')}} checked{{/if}}>
+							</td>
+							<td class="centercol">
+								<input type="radio" name="new_topic[{{id}}]" value="disallow"{{#if (eq new_topic 'disallow')}} checked{{/if}}>
+							</td>
+
+	{{#if (eq id -1)}}
+							<td colspan="3"></td>
+	{{else}}
+							<td class="centercol">
+								<input type="radio" name="replies_own[{{id}}]" value="allow"{{#if (eq replies_own 'allow')}} checked{{/if}}>
+							</td>
+							<td class="centercol">
+								<input type="radio" name="replies_own[{{id}}]" value="moderate"{{#if (eq replies_own 'moderate')}} checked{{/if}}>
+							</td>
+							<td class="centercol">
+								<input type="radio" name="replies_own[{{id}}]" value="disallow"{{#if (eq replies_own 'disallow')}} checked{{/if}}>
+							</td>
+	{{/if}}
+
+							<td class="centercol">
+								<input type="radio" name="replies_any[{{id}}]" value="allow"{{#if (eq replies_any 'allow')}} checked{{/if}}>
+							</td>
+							<td class="centercol">
+								<input type="radio" name="replies_any[{{id}}]" value="moderate"{{#if (eq replies_any 'moderate')}} checked{{/if}}>
+							</td>
+							<td class="centercol">
+								<input type="radio" name="replies_any[{{id}}]" value="disallow"{{#if (eq replies_any 'disallow')}} checked{{/if}}>
+							</td>
+
+	{{#if (eq ../modSettings.attachmentEnable '1')}}
+							<td class="centercol">
+								<input type="radio" name="attachment[{{id}}]" value="allow"{{#if (eq attachment 'allow')}} checked{{/if}}>
+							</td>
+							<td class="centercol">
+								<input type="radio" name="attachment[{{id}}]" value="moderate"{{#if (eq attachment 'moderate')}} checked{{/if}}>
+							</td>
+							<td class="centercol">
+								<input type="radio" name="attachment[{{id}}]" value="disallow"{{#if (eq attachment 'disallow')}} checked{{/if}}>
+							</td>
+	{{/if}}
+						</tr>
+{{/each}}
+				</tbody>
+			</table>
+
 			<div class="righttext padding">
 				<input type="submit" name="save_changes" value="{{{txt.permissions_commit}}}" class="button_submit">
 				{{token_form 'admin-mppm'}}

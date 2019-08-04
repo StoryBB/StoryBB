@@ -204,9 +204,6 @@ function reloadSettings()
 			display_loadavg_error();
 	}
 
-	// Is post moderation alive and well? Everywhere else assumes this has been defined, so let's make sure it is.
-	$modSettings['postmod_active'] = !empty($modSettings['postmod_active']);
-
 	// Here to justify the name of this function. :P
 	// It should be added to the install and upgrade scripts.
 	// But since the converters need to be updated also. This is easier.
@@ -903,7 +900,7 @@ function loadBoard()
 
 			// If the board only contains unapproved posts and the user isn't an approver then they can't see any topics.
 			// If that is the case do an additional check to see if they have any topics waiting to be approved.
-			if ($board_info['num_topics'] == 0 && $modSettings['postmod_active'] && !allowedTo('approve_posts'))
+			if ($board_info['num_topics'] == 0 && !allowedTo('approve_posts'))
 			{
 				// Free the previous result
 				$smcFunc['db_free_result']($request);
@@ -2058,7 +2055,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			'is_admin' => &$user_info['is_admin'],
 			'is_mod' => &$user_info['is_mod'],
 			// A user can mod if they have permission to see the mod center, or they are a board/group/approval moderator.
-			'can_mod' => allowedTo('access_mod_center') || (!$user_info['is_guest'] && ($user_info['mod_cache']['gq'] != '0=1' || $user_info['mod_cache']['bq'] != '0=1' || ($modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap'])))),
+			'can_mod' => allowedTo('access_mod_center') || (!$user_info['is_guest'] && ($user_info['mod_cache']['gq'] != '0=1' || $user_info['mod_cache']['bq'] != '0=1' || (!empty($user_info['mod_cache']['ap'])))),
 			'name' => $user_info['username'],
 			'language' => $user_info['language'],
 			'email' => $user_info['email'],

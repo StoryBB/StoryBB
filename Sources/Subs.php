@@ -1988,12 +1988,12 @@ function setupMenuContext()
 					'poststopics' => array(
 						'title' => $txt['mc_unapproved_poststopics'],
 						'href' => $scripturl . '?action=moderate;area=postmod;sa=posts',
-						'show' => $modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
+						'show' => !empty($user_info['mod_cache']['ap']),
 					),
 					'attachments' => array(
 						'title' => $txt['mc_unapproved_attachments'],
 						'href' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
-						'show' => $modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
+						'show' => !empty($user_info['mod_cache']['ap']),
 					),
 					'reports' => array(
 						'title' => $txt['mc_reported_posts'],

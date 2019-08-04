@@ -77,7 +77,7 @@ class Attachments
 
 		$this->_attchDir = $context['attach_dir'] = $this->_attachmentUploadDir[$modSettings['currentAttachmentUploadDir']];
 
-		$this->_canPostAttachment = $context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment', $this->_board) || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments', $this->_board)));
+		$this->_canPostAttachment = $context['can_post_attachment'] = $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment', $this->_board) || ( allowedTo('post_unapproved_attachments', $this->_board)));
 	}
 
 	/**
@@ -368,7 +368,7 @@ class Attachments
 				'size' => isset($attachment['size']) ? $attachment['size'] : 0,
 				'mime_type' => isset($attachment['type']) ? $attachment['type'] : '',
 				'id_folder' => isset($attachment['id_folder']) ? $attachment['id_folder'] : $modSettings['currentAttachmentUploadDir'],
-				'approved' => !$modSettings['postmod_active'] || allowedTo('post_attachment'),
+				'approved' => allowedTo('post_attachment'),
 				'errors' => [],
 			];
 

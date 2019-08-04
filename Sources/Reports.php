@@ -354,14 +354,6 @@ function BoardPermissionsReport()
 
 	// Certain permissions should not really be shown.
 	$disabled_permissions = [];
-	if (!$modSettings['postmod_active'])
-	{
-		$disabled_permissions[] = 'approve_posts';
-		$disabled_permissions[] = 'post_unapproved_topics';
-		$disabled_permissions[] = 'post_unapproved_replies_own';
-		$disabled_permissions[] = 'post_unapproved_replies_any';
-		$disabled_permissions[] = 'post_unapproved_attachments';
-	}
 
 	call_integration_hook('integrate_reports_boardperm', array(&$disabled_permissions));
 

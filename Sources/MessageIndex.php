@@ -160,7 +160,7 @@ function MessageIndex()
 
 	// Set the variables up for the template.
 	$context['can_mark_notify'] = !$user_info['is_guest'];
-	$context['can_post_new'] = allowedTo('post_new') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_topics'));
+	$context['can_post_new'] = allowedTo('post_new') || allowedTo('post_unapproved_topics');
 	$context['can_post_poll'] = $modSettings['pollMode'] == '1' && allowedTo('poll_post') && $context['can_post_new'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['can_approve_posts'] = allowedTo('approve_posts');
@@ -324,7 +324,7 @@ function MessageIndex()
 				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)' : '') . ($context['sort_by'] === 'last_poster' ? '
 				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)' : '') . '
 				' . (!empty($message_index_tables) ? implode("\n\t\t\t\t", $message_index_tables) : '') . '
-			WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || $context['can_approve_posts'] ? '' : '
+			WHERE t.id_board = {int:current_board}' . ($context['can_approve_posts'] ? '' : '
 				AND (t.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR t.id_member_started = {int:current_member}') . ')') . '
 				' . (!empty($message_pre_index_wheres) ? 'AND ' . implode("\n\t\t\t\tAND ", $message_pre_index_wheres) : '') . '
 			ORDER BY is_sticky' . ($fake_ascending ? '' : ' DESC') . ', {raw:sort}' . ($ascending ? '' : ' DESC') . '
@@ -387,7 +387,7 @@ function MessageIndex()
 				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})') . '
 				' . (!empty($message_index_tables) ? implode("\n\t\t\t\t", $message_index_tables) : '') . '
-			WHERE ' . ($pre_query ? 't.id_topic IN ({array_int:topic_list})' : 't.id_board = {int:current_board}') . (!$modSettings['postmod_active'] || $context['can_approve_posts'] ? '' : '
+			WHERE ' . ($pre_query ? 't.id_topic IN ({array_int:topic_list})' : 't.id_board = {int:current_board}') . ($context['can_approve_posts'] ? '' : '
 				AND (t.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR t.id_member_started = {int:current_member}') . ')') . '
 				' . (!empty($message_index_wheres) ? 'AND ' . implode("\n\t\t\t\tAND ", $message_index_wheres) : '') . '
 			ORDER BY ' . ($pre_query ? $smcFunc['db_custom_order']('t.id_topic', $topic_ids) : 'is_sticky' . ($fake_ascending ? '' : ' DESC') . ', ' . $_REQUEST['sort'] . ($ascending ? '' : ' DESC')) . '
@@ -589,7 +589,7 @@ function MessageIndex()
 		$context['can_remove'] = allowedTo('remove_any');
 		$context['can_merge'] = allowedTo('merge_any');
 		// Ignore approving own topics as it's unlikely to come up...
-		$context['can_approve'] = $modSettings['postmod_active'] && allowedTo('approve_posts') && !empty($board_info['unapproved_topics']);
+		$context['can_approve'] = allowedTo('approve_posts') && !empty($board_info['unapproved_topics']);
 		// Can we restore topics?
 		$context['can_restore'] = allowedTo('move_any') && !empty($board_info['recycle']);
 
@@ -907,13 +907,13 @@ function QuickModeration()
 		{
 			if (!empty($board))
 			{
-				if ($row['id_board'] != $board || ($modSettings['postmod_active'] && !$row['approved'] && !allowedTo('approve_posts')))
+				if ($row['id_board'] != $board || (!$row['approved'] && !allowedTo('approve_posts')))
 					unset($_REQUEST['actions'][$row['id_topic']]);
 			}
 			else
 			{
 				// Don't allow them to act on unapproved posts they can't see...
-				if ($modSettings['postmod_active'] && !$row['approved'] && !in_array(0, $boards_can['approve_posts']) && !in_array($row['id_board'], $boards_can['approve_posts']))
+				if (!$row['approved'] && !in_array(0, $boards_can['approve_posts']) && !in_array($row['id_board'], $boards_can['approve_posts']))
 					unset($_REQUEST['actions'][$row['id_topic']]);
 				// Goodness, this is fun.  We need to validate the action.
 				elseif ($_REQUEST['actions'][$row['id_topic']] == 'sticky' && !in_array(0, $boards_can['make_sticky']) && !in_array($row['id_board'], $boards_can['make_sticky']))

@@ -72,7 +72,7 @@ function Display()
 					INNER JOIN {db_prefix}topics AS t2 ON (
 					(t2.id_last_msg ' . $gt_lt . ' t.id_last_msg AND t2.is_sticky ' . $gt_lt . '= t.is_sticky) OR t2.is_sticky ' . $gt_lt . ' t.is_sticky)
 				WHERE t.id_topic = {int:current_topic}
-					AND t2.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					AND t2.id_board = {int:current_board}' . (allowedTo('approve_posts') ? '' : '
 					AND (t2.approved = {int:is_approved} OR (t2.id_member_started != {int:id_member_started} AND t2.id_member_started = {int:current_member}))') . '
 				ORDER BY t2.is_sticky' . $order . ', t2.id_last_msg' . $order . '
 				LIMIT 1',
@@ -94,7 +94,7 @@ function Display()
 				$request = $smcFunc['db_query']('', '
 					SELECT id_topic
 					FROM {db_prefix}topics
-					WHERE id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					WHERE id_board = {int:current_board}' . (allowedTo('approve_posts') ? '' : '
 						AND (approved = {int:is_approved} OR (id_member_started != {int:id_member_started} AND id_member_started = {int:current_member}))') . '
 					ORDER BY is_sticky' . $order . ', id_last_msg' . $order . '
 					LIMIT 1',
@@ -206,11 +206,11 @@ function Display()
 	$context['topic_unwatched'] = isset($context['topicinfo']['unwatched']) ? $context['topicinfo']['unwatched'] : 0;
 
 	// Add up unapproved replies to get real number of replies...
-	if ($modSettings['postmod_active'] && $approve_posts)
+	if ($approve_posts)
 		$context['real_num_replies'] += $context['topicinfo']['unapproved_posts'] - ($context['topicinfo']['approved'] ? 0 : 1);
 
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
-	if ($modSettings['postmod_active'] && $context['topicinfo']['unapproved_posts'] && !$user_info['is_guest'] && !$approve_posts)
+	if ($context['topicinfo']['unapproved_posts'] && !$user_info['is_guest'] && !$approve_posts)
 	{
 		$request = $smcFunc['db_query']('', '
 			SELECT COUNT(id_member) AS my_unapproved_posts
@@ -282,7 +282,7 @@ function Display()
 					SELECT COUNT(*)
 					FROM {db_prefix}messages
 					WHERE poster_time < {int:timestamp}
-						AND id_topic = {int:current_topic}' . ($modSettings['postmod_active'] && $context['topicinfo']['unapproved_posts'] && !allowedTo('approve_posts') ? '
+						AND id_topic = {int:current_topic}' . ($context['topicinfo']['unapproved_posts'] && !allowedTo('approve_posts') ? '
 						AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
 					[
 						'current_topic' => $topic,
@@ -314,7 +314,7 @@ function Display()
 					SELECT COUNT(*)
 					FROM {db_prefix}messages
 					WHERE id_msg < {int:virtual_msg}
-						AND id_topic = {int:current_topic}' . ($modSettings['postmod_active'] && $context['topicinfo']['unapproved_posts'] && !allowedTo('approve_posts') ? '
+						AND id_topic = {int:current_topic}' . ($context['topicinfo']['unapproved_posts'] && !allowedTo('approve_posts') ? '
 						AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
 					[
 						'current_member' => $user_info['id'],
@@ -768,7 +768,7 @@ function Display()
 	$request = $smcFunc['db_query']('', '
 		SELECT id_msg, id_member, approved
 		FROM {db_prefix}messages
-		WHERE id_topic = {int:current_topic}' . (!$modSettings['postmod_active'] || $approve_posts ? '' : '
+		WHERE id_topic = {int:current_topic}' . ($approve_posts ? '' : '
 		AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')') . '
 		ORDER BY id_msg ' . ($ascending ? '' : 'DESC') . ($context['messages_per_page'] == -1 ? '' : '
 		LIMIT {int:start}, {int:max}'),
@@ -964,7 +964,7 @@ function Display()
 			$temp = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
-				if (!$row['approved'] && $modSettings['postmod_active'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
+				if (!$row['approved'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
 					continue;
 
 				$temp[$row['id_attach']] = $row;
@@ -1094,7 +1094,7 @@ function Display()
 	$context['can_add_poll'] &= $modSettings['pollMode'] == '1' && $context['topicinfo']['id_poll'] <= 0;
 	$context['can_remove_poll'] &= $modSettings['pollMode'] == '1' && $context['topicinfo']['id_poll'] > 0;
 	$context['can_reply'] &= empty($context['topicinfo']['locked']) || allowedTo('moderate_board');
-	$context['can_reply_unapproved'] &= $modSettings['postmod_active'] && (empty($context['topicinfo']['locked']) || allowedTo('moderate_board'));
+	$context['can_reply_unapproved'] &= (empty($context['topicinfo']['locked']) || allowedTo('moderate_board'));
 	$context['can_issue_warning'] &= $modSettings['warning_settings'][0] == 1;
 	// Handle approval flags...
 	$context['can_reply_approved'] = $context['can_reply'];
@@ -1523,7 +1523,7 @@ function prepareDisplayContext($reset = false)
 		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
 		'is_ignored' => !empty($modSettings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], $context['user']['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
-		'can_unapprove' => !empty($modSettings['postmod_active']) && $context['can_approve'] && $message['approved'],
+		'can_unapprove' => $context['can_approve'] && $message['approved'],
 		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time()))),
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time())),
 		'can_see_ip' => allowedTo('moderate_forum'),

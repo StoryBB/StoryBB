@@ -43,7 +43,7 @@ function MoveTopic()
 	$smcFunc['db_free_result']($request);
 
 	// Can they see it - if not approved?
-	if ($modSettings['postmod_active'] && !$context['is_approved'])
+	if (!$context['is_approved'])
 		isAllowedTo('approve_posts');
 
 	// Permission check!

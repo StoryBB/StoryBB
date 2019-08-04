@@ -2455,12 +2455,12 @@ function list_getTopicNotificationCount($memID)
 
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
-		FROM {db_prefix}log_notify AS ln' . (!$modSettings['postmod_active'] && $user_info['query_see_board'] === '1=1' ? '' : '
-			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic)') . ($user_info['query_see_board'] === '1=1' ? '' : '
-			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)') . '
-		WHERE ln.id_member = {int:selected_member}' . ($user_info['query_see_board'] === '1=1' ? '' : '
-			AND {query_see_board}') . ($modSettings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : ''),
+		FROM {db_prefix}log_notify AS ln
+			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic)
+			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
+		WHERE ln.id_member = {int:selected_member}
+			AND {query_see_board}
+			AND t.approved = {int:is_approved}',
 		array(
 			'selected_member' => $memID,
 			'is_approved' => 1,
@@ -2498,7 +2498,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 			COALESCE(mem2.real_name, ml.poster_name) AS last_real_name,
 			lt.unwatched
 		FROM {db_prefix}log_notify AS ln
-			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic' . ($modSettings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
+			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic AND t.approved = {int:is_approved})
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
