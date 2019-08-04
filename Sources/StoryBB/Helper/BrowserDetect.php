@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+namespace StoryBB\Helper;
+
 /**
  * Class browser_detector
  *  This class is an experiment for the job of correctly detecting browsers and settings needed for them.
@@ -23,7 +25,7 @@
  * - MS Edge
  * - Nokia
  */
-class browser_detector
+class BrowserDetect
 {
 	/**
 	 * @var array Holds all the browser information. Its contents will be placed into $context['browser']

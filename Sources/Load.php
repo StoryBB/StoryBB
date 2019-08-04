@@ -15,6 +15,7 @@ use StoryBB\Database\AdapterFactory;
 use StoryBB\Database\Exception as DatabaseException;
 use StoryBB\Model\Language;
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\BrowserDetect;
 
 /**
  * Load the $modSettings array.
@@ -1791,12 +1792,12 @@ function loadMemberCustomFields($users, $params)
 
 /**
  * Loads information about what browser the user is viewing with and places it in $context
- *  - uses the class from {@link Class-BrowserDetect.php}
+ *  - uses the class from {@link StoryBB\Helper\BrowserDetect}
  */
 function detectBrowser()
 {
 	// Load the current user's browser of choice
-	$detector = new browser_detector;
+	$detector = new BrowserDetect;
 	$detector->detectBrowser();
 }
 
