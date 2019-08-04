@@ -9,6 +9,8 @@
  * @version 1.0 Alpha 1
  */
 
+namespace StoryBB\Helper;
+
 /**
  * This really is a pseudo class, I couldn't justify having instance of it
  * while mentioning so I just made every method static
