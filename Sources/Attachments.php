@@ -83,7 +83,7 @@ class Attachments
 	/**
 	 * Action dispatcher for attachments.
 	 *
-	 * @deprecated Appears not to be even called.
+	 * Called somewhat indirectly from action=uploadattach.
 	 */
 	public function call()
 	{
