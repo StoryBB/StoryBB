@@ -42,7 +42,6 @@ function ModifyPermissions()
 	// Create the tabs for the template.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['permissions_title'],
-		'help' => 'permissions',
 		'description' => '',
 		'tabs' => array(
 			'index' => array(
