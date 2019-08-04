@@ -8,6 +8,8 @@
 
 {{#each context.groups.accounts}}
 					<li class="character_group">
+						<span class="draggable-handle"></span>
+
 						<div class="group_name">
 
 	{{#if online_color}}
@@ -24,7 +26,6 @@
 							{{{../txt.no_badge}}}
 	{{/if}}
 						</div>
-						<img src="{{../settings.default_images_url}}/toggle.png" class="handle">
 						<input type="hidden" name="group[{{id_group}}]" value="{{id_group}}">
 					</li>
 {{/each}}
@@ -39,6 +40,7 @@
 
 {{#each context.groups.characters}}
 					<li class="character_group">
+						<span class="draggable-handle"></span>
 						<div class="group_name">
 
 	{{#if online_color}}
@@ -55,7 +57,6 @@
 							{{{../txt.no_badge}}}
 	{{/if}}
 						</div>
-						<img src="{{../settings.default_images_url}}/toggle.png" class="handle">
 						<input type="hidden" name="group[{{id_group}}]" value="{{id_group}}">
 					</li>
 {{/each}}

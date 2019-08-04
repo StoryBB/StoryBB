@@ -1241,5 +1241,5 @@ function MembergroupBadges()
 	$context['sub_template'] = 'admin_membergroups_badges';
 	loadJavascriptFile('jquery-ui-1.12.1-sortable.min.js', ['default_theme' => true]);
 	addInlineJavascript('
-	$(\'.sortable\').sortable({handle: ".handle"});', true);
+	$(\'.sortable\').sortable({handle: ".draggable-handle"});', true);
 }

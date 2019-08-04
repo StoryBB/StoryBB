@@ -4932,10 +4932,26 @@ span.member.hidden {
 	min-width: 200px;
 }
 
-#admin_content .character_group .handle {
-	margin-top: -7px;
-	float: right;
-	cursor: ns-resize;
+span.draggable-handle {
+	content: '....';
+	width: 15px;
+	height: 24px;
+	display: inline-block;
+	overflow: hidden;
+	line-height: 5px;
+	padding: 3px 4px;
+	cursor: move;
+	vertical-align: middle;
+	margin-top: -.7em;
+	margin-right: .3em;
+	font-size: 12px;
+	font-family: sans-serif;
+	letter-spacing: 2px;
+	color: #cccccc;
+	text-shadow: 1px 0 1px black;
+}
+span.draggable-handle::after {
+	content: '.. .. .. ..';
 }
 
 /* Other */
