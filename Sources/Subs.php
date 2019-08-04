@@ -1294,7 +1294,7 @@ function setupThemeContext($forceload = false)
 	global $smcFunc;
 	static $loaded = false;
 
-	// Under SSI this function can be called more then once.  That can cause some problems.
+	// Under some cases this function can be called more then once.  That can cause some problems.
 	//   So only run the function once unless we are forced to run it again.
 	if ($loaded && !$forceload)
 		return;
@@ -1516,7 +1516,7 @@ function theme_copyright()
 {
 	global $txt, $software_year, $forum_version;
 
-	// Don't display copyright for things like SSI.
+	// Don't display copyright if we don't have the data..
 	if (!isset($forum_version) || !isset($software_year))
 		return;
 

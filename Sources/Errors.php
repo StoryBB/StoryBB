@@ -75,7 +75,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 
 	// Don't log the session hash in the url twice, it's a waste.
 	if (!empty($smcFunc['htmlspecialchars']))
-		$query_string = $smcFunc['htmlspecialchars']((STORYBB == 'SSI' || STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(['~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'], [';sesc', ''], $query_string));
+		$query_string = $smcFunc['htmlspecialchars']((STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(['~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'], [';sesc', ''], $query_string));
 
 	// Just so we know what board error messages are from.
 	if (isset($_POST['board']) && !isset($_GET['board']))
@@ -297,7 +297,7 @@ function sbb_error_handler($error_level, $error_string, $file, $line)
  */
 function setup_fatal_error_context($error_message, $error_code = null)
 {
-	global $context, $txt, $ssi_on_error_method;
+	global $context, $txt;
 	static $level = 0;
 
 	// Attempt to prevent a recursive loop.
@@ -306,7 +306,7 @@ function setup_fatal_error_context($error_message, $error_code = null)
 		return false;
 
 	// Maybe they came from dlattach or similar?
-	if (STORYBB != 'SSI' && STORYBB != 'BACKGROUND' && empty($context['theme_loaded']))
+	if (STORYBB != 'BACKGROUND' && empty($context['theme_loaded']))
 		loadTheme();
 
 	// Don't bother indexing errors mate...
@@ -323,27 +323,8 @@ function setup_fatal_error_context($error_message, $error_code = null)
 
 	$context['sub_template'] = 'error_fatal';
 
-	// If this is SSI, what do they want us to do?
-	if (STORYBB == 'SSI')
-	{
-		if (!empty($ssi_on_error_method) && $ssi_on_error_method !== true && is_callable($ssi_on_error_method))
-			$ssi_on_error_method();
-		elseif (empty($ssi_on_error_method) || $ssi_on_error_method !== true)
-		{
-			$template = StoryBB\Template::load('error_fatal');
-			$phpStr = StoryBB\Template::compile($template);
-			echo StoryBB\Template::prepare($phpStr, [
-				'context' => $context,
-				'txt' => $txt,
-			]);
-		}
-
-		// No layers?
-		if (empty($ssi_on_error_method) || $ssi_on_error_method !== true)
-			exit;
-	}
-	// Alternatively from the cron call?
-	elseif (STORYBB == 'BACKGROUND')
+	// From the cron call?
+	if (STORYBB == 'BACKGROUND')
 	{
 		// We can't rely on even having language files available.
 		if (defined('FROM_CLI') && FROM_CLI)
@@ -487,8 +468,8 @@ function log_error_online($error, $sprintf = [])
 	if (empty($modSettings['who_enabled']))
 		return;
 
-	// Maybe they came from SSI or similar where sessions are not recorded?
-	if (STORYBB == 'SSI' || STORYBB == 'BACKGROUND')
+	// Maybe they came from somewhere where sessions are not recorded?
+	if (STORYBB == 'BACKGROUND')
 		return;
 
 	$session_id = !empty($user_info['is_guest']) ? 'ip' . $user_info['ip'] : session_id();

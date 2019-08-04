@@ -293,7 +293,7 @@ $helptxt['localCookies'] = 'StoryBB uses cookies to store login information on t
 	Try this setting if you\'re experiencing problems with users getting logged out automatically.<hr>
 	Globally stored cookies are less secure when used on a shared webserver (like Tripod).<hr>
 	Local cookies don\'t work outside the forum directory so, if your forum is stored at www.myserver.com/forum, pages like www.myserver.com/index.php cannot access the account information.<br><br>
-	Global cookies are especially recommended when using SSI.php but work well for most sites on their own domain.';
+	Global cookies are generally recommended for most sites on their own domain.';
 $helptxt['enableBBC'] = 'Selecting this setting will allow your members to use Bulletin Board Code (BBC) throughout the forum, allowing users to format their posts with images, type formatting, and more.';
 $helptxt['time_offset'] = 'Not all forum administrators want their forum to use the same time zone as the server upon which it is hosted. Use this setting to specify the time difference (in hours) between the server time and the time to be used for the forum. Negative and decimal values are permitted.';
 $helptxt['default_timezone'] = 'The server time zone tells PHP where your server is located. You should ensure that this is set correctly, preferably to the country/city in which the server is located. You can find out more information on the <a href="https://php.net/manual/en/timezones.php" target="_blank" rel="noopener">PHP Site</a>.';

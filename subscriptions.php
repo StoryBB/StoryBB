@@ -12,15 +12,46 @@
  */
 
 // Start things rolling by getting StoryBB alive...
-$ssi_guest_access = true;
-if (!file_exists(dirname(__FILE__) . '/SSI.php'))
-	die('Cannot find SSI.php');
+define('STORYBB', 'BACKGROUND');
 
-require_once(dirname(__FILE__) . '/SSI.php');
+global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
+global $boardurl, $boarddir, $sourcedir, $webmaster_email;
+global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
+global $db_connection, $modSettings, $context, $sc, $user_info, $txt;
+global $smcFunc, $scripturl, $db_passwd, $cachedir;
+
+// Just being safe...
+foreach (array('cachedir') as $variable)
+	if (isset($GLOBALS[$variable]))
+		unset($GLOBALS[$variable]);
+
+// Get the forum's settings for database and file paths.
+require_once(dirname(__FILE__) . '/Settings.php');
+
+// Make absolutely sure the cache directory is defined.
+if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
+	$cachedir = $boarddir . '/cache';
+
+// Don't do john didley if the forum's been shut down competely.
+if ($maintenance == 2)
+	die($mmessage);
+
+require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
+require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
+require_once($boarddir . '/vendor/autoload.php');
+
+require_once($sourcedir . '/Errors.php');
+require_once($sourcedir . '/Load.php');
+require_once($sourcedir . '/Subs.php');
+
 require_once($sourcedir . '/ManagePaid.php');
-
-// For any admin emailing.
 require_once($sourcedir . '/Subs-Admin.php');
+
+$smcFunc = [];
+
+unset ($db_show_debug);
+loadDatabase();
+reloadSettings();
 
 loadLanguage('ManagePaid');
 
