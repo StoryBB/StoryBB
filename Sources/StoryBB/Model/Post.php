@@ -604,7 +604,7 @@ class Post
 		}
 
 		// Finally, if we are setting the approved state we need to do much more work :(
-		if isset($msgOptions['approved']))
+		if (isset($msgOptions['approved']))
 			approvePosts($msgOptions['id'], $msgOptions['approved']);
 
 		return true;

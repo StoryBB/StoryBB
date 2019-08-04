@@ -351,8 +351,8 @@ function DisplayStats()
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_board}' : '') . ')
 		WHERE {query_see_board}' . (!empty($topic_ids) ? '
-			AND t.id_topic IN ({array_int:topic_list})
-			AND t.approved = {int:is_approved}') . '
+			AND t.id_topic IN ({array_int:topic_list})' : '') . '
+			AND t.approved = {int:is_approved}
 		ORDER BY t.num_views DESC
 		LIMIT 10',
 		array(
