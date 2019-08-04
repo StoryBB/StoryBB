@@ -35,13 +35,17 @@ class Robot
 			'baiduspider' => 'baidu',
 			'bingbot' => 'bing',
 			'bingpreview' => 'bingpreview',
+			'duckduckbot' => 'duckduckgo',
+			'exabot' => 'exalead',
 			'facebookexternalhit' => 'facebook',
 			'facebot' => 'facebook',
 			'feedly' => 'feedly',
 			'googlebot' => 'google',
+			'google favicon' => 'google',
 			'ia_archiver' => 'alexa',
 			'magpie-crawler' => 'brandwatch',
 			'mediapartners-google' => 'googleadsense',
+			'megaindex' => 'megaindex',
 			'mj12bot' => 'majestic12',
 			'msnbot-media' => 'bingmedia',
 			'msnbot' => 'bing',
@@ -51,7 +55,7 @@ class Robot
 			'proximic' => 'proximic',
 			'scoutjet' => 'scoutjet',
 			'slackbot' => 'slack',
-			'sogou web spider' => 'sogou',
+			'sogou' => 'sogou',
 			'statuscake' => 'statuscake',
 			'teoma' => 'teoma',
 			'uptimerobot' => 'uptimerobot',
@@ -122,6 +126,14 @@ class Robot
 				'title' => 'Brandwatch',
 				'link' => 'https://www.brandwatch.com/legal/magpie-crawler/',
 			],
+			'duckduckgo' => [
+				'title' => 'DuckDuckGo',
+				'link' => 'http://duckduckgo.com/duckduckbot.html',
+			],
+			'exalead' => [
+				'title' => 'ExaLead',
+				'link' => 'https://www.exalead.com/search/webmasterguide',
+			],
 			'facebook' => [
 				'title' => 'Facebook',
 				'link' => 'https://developers.facebook.com/docs/sharing/webmasters/crawler',
@@ -141,6 +153,10 @@ class Robot
 			'majestic12' => [
 				'title' => 'Majestic12',
 				'link' => 'https://www.majestic12.co.uk/projects/dsearch/mj12bot.php',
+			],
+			'megaindex' => [
+				'title' => 'MegaIndex',
+				'link' => 'https://megaindex.com/crawler',
 			],
 			'netvibes' => [
 				'title' => 'Netvibes',
