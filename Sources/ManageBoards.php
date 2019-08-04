@@ -35,7 +35,6 @@ function ManageBoards()
 		'cat' => array('EditCategory', 'manage_boards'),
 		'cat2' => array('EditCategory2', 'manage_boards'),
 		'main' => array('ManageBoardsMain', 'manage_boards'),
-		'move' => array('ManageBoardsMain', 'manage_boards'),
 		'newcat' => array('EditCategory', 'manage_boards'),
 		'newboard' => array('EditBoard', 'manage_boards'),
 		'settings' => array('EditBoardSettings', 'admin_forum'),
@@ -84,26 +83,6 @@ function ManageBoardsMain()
 
 	require_once($sourcedir . '/Subs-Boards.php');
 
-	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'move' && in_array($_REQUEST['move_to'], array('child', 'before', 'after', 'top')))
-	{
-		checkSession('get');
-		validateToken('admin-bm-' . (int) $_REQUEST['src_board'], 'request');
-
-		if ($_REQUEST['move_to'] === 'top')
-			$boardOptions = array(
-				'move_to' => $_REQUEST['move_to'],
-				'target_category' => (int) $_REQUEST['target_cat'],
-				'move_first_child' => true,
-			);
-		else
-			$boardOptions = array(
-				'move_to' => $_REQUEST['move_to'],
-				'target_board' => (int) $_REQUEST['target_board'],
-				'move_first_child' => true,
-			);
-		modifyBoard((int) $_REQUEST['src_board'], $boardOptions);
-	}
-
 	getBoardTree();
 
 	$context['move_board'] = !empty($_REQUEST['move']) && isset($boards[(int) $_REQUEST['move']]) ? (int) $_REQUEST['move'] : 0;
@@ -129,73 +108,6 @@ function ManageBoardsMain()
 				'is_redirect' => !empty($boards[$boardid]['redirect']),
 				'in_character' => !empty($boards[$boardid]['in_character']),
 			);
-		}
-	}
-
-	if (!empty($context['move_board']))
-	{
-		createToken('admin-bm-' . $context['move_board'], 'request');
-
-		$context['move_title'] = sprintf($txt['mboards_select_destination'], $smcFunc['htmlspecialchars']($boards[$context['move_board']]['name']));
-		foreach ($cat_tree as $catid => $tree)
-		{
-			$prev_child_level = 0;
-			$prev_board = 0;
-			$stack = [];
-			// Just a shortcut, this is the same for all the urls
-			$security = $context['session_var'] . '=' . $context['session_id'] . ';' . $context['admin-bm-' . $context['move_board'] . '_token_var'] . '=' . $context['admin-bm-' . $context['move_board'] . '_token'];
-			foreach ($boardList[$catid] as $boardid)
-			{
-				if (!isset($context['categories'][$catid]['move_link']))
-					$context['categories'][$catid]['move_link'] = array(
-						'child_level' => 0,
-						'label' => $txt['mboards_order_before'] . ' \'' . $smcFunc['htmlspecialchars']($boards[$boardid]['name']) . '\'',
-						'href' => $scripturl . '?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_board=' . $boardid . ';move_to=before;' . $security,
-					);
-
-				if (!$context['categories'][$catid]['boards'][$boardid]['move'])
-				$context['categories'][$catid]['boards'][$boardid]['move_links'] = array(
-					array(
-						'child_level' => $boards[$boardid]['level'],
-						'label' => $txt['mboards_order_after'] . '\'' . $smcFunc['htmlspecialchars']($boards[$boardid]['name']) . '\'',
-						'href' => $scripturl . '?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_board=' . $boardid . ';move_to=after;' . $security,
-						'class' => $boards[$boardid]['level'] > 0 ? 'above' : 'below',
-					),
-					array(
-						'child_level' => $boards[$boardid]['level'] + 1,
-						'label' => $txt['mboards_order_child_of'] . ' \'' . $smcFunc['htmlspecialchars']($boards[$boardid]['name']) . '\'',
-						'href' => $scripturl . '?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_board=' . $boardid . ';move_to=child;' . $security,
-						'class' => 'here',
-					),
-				);
-
-				$difference = $boards[$boardid]['level'] - $prev_child_level;
-				if ($difference == 1)
-					array_push($stack, !empty($context['categories'][$catid]['boards'][$prev_board]['move_links']) ? array_shift($context['categories'][$catid]['boards'][$prev_board]['move_links']) : null);
-				elseif ($difference < 0)
-				{
-					if (empty($context['categories'][$catid]['boards'][$prev_board]['move_links']))
-						$context['categories'][$catid]['boards'][$prev_board]['move_links'] = [];
-					for ($i = 0; $i < -$difference; $i++)
-						if (($temp = array_pop($stack)) != null)
-							array_unshift($context['categories'][$catid]['boards'][$prev_board]['move_links'], $temp);
-				}
-
-				$prev_board = $boardid;
-				$prev_child_level = $boards[$boardid]['level'];
-
-			}
-			if (!empty($stack) && !empty($context['categories'][$catid]['boards'][$prev_board]['move_links']))
-				$context['categories'][$catid]['boards'][$prev_board]['move_links'] = array_merge($stack, $context['categories'][$catid]['boards'][$prev_board]['move_links']);
-			elseif (!empty($stack))
-				$context['categories'][$catid]['boards'][$prev_board]['move_links'] = $stack;
-
-			if (empty($boardList[$catid]))
-				$context['categories'][$catid]['move_link'] = array(
-					'child_level' => 0,
-					'label' => $txt['mboards_order_before'] . ' \'' . $smcFunc['htmlspecialchars']($tree['node']['name']) . '\'',
-					'href' => $scripturl . '?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_cat=' . $catid . ';move_to=top;' . $security,
-				);
 		}
 	}
 
