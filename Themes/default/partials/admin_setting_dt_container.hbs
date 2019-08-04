@@ -1,5 +1,5 @@
 		<dt{{#if config_var.force_div_id}} id="{{config_var.force_div_id}}"{{/if}}>
-			{{#if config_var.help}}{{> helpicon help=config_var.help}}{{/if}}
+			{{#if config_var.help}}{{> helpicon help=config_var.help scripturl=../scripturl}}{{/if}}
 			<span {{#if config_var.disabled}}style="color:#777777"{{/if}} {{#if config_var.invalid}}class="error"{{/if}}>
 				<label for="{{config_var.name}}">{{{config_var.label}}}</label>
 				{{#if config_var.subtext}}<br><span class="smalltext">{{{config_var.subtext}}}</span>{{/if}}
