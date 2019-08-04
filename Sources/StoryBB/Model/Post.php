@@ -56,9 +56,7 @@ class Post
 		$msgOptions['send_notifications'] = isset($msgOptions['send_notifications']) ? (bool) $msgOptions['send_notifications'] : true;
 
 		// We need to know if the topic is approved. If we're told that's great - if not find out.
-		if (!$modSettings['postmod_active'])
-			$topicOptions['is_approved'] = true;
-		elseif (!empty($topicOptions['id']) && !isset($topicOptions['is_approved']))
+		if (!empty($topicOptions['id']) && !isset($topicOptions['is_approved']))
 		{
 			$request = $smcFunc['db_query']('', '
 				SELECT approved
@@ -606,7 +604,7 @@ class Post
 		}
 
 		// Finally, if we are setting the approved state we need to do much more work :(
-		if ($modSettings['postmod_active'] && isset($msgOptions['approved']))
+		if (isset($msgOptions['approved']))
 			approvePosts($msgOptions['id'], $msgOptions['approved']);
 
 		return true;

@@ -295,8 +295,8 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 		AND b.id_board NOT IN ({array_int:exclude_boards})') . '
 		' . ($include_boards === null ? '' : '
 		AND b.id_board IN ({array_int:include_boards})') . '
-		AND {query_wanna_see_board}' . ($modSettings['postmod_active'] ? '
-		AND m.approved = {int:is_approved}' : '');
+		AND {query_wanna_see_board}
+		AND m.approved = {int:is_approved}';
 
 	$query_where_params = array(
 		'is_approved' => 1,
@@ -329,8 +329,8 @@ function ssi_fetchPosts($post_ids = [], $override_permissions = false, $output_m
 	// Restrict the posts required...
 	$query_where = '
 		m.id_msg IN ({array_int:message_list})' . ($override_permissions ? '' : '
-			AND {query_wanna_see_board}') . ($modSettings['postmod_active'] ? '
-			AND m.approved = {int:is_approved}' : '');
+			AND {query_wanna_see_board}') . '
+			AND m.approved = {int:is_approved}';
 	$query_where_params = array(
 		'message_list' => $post_ids,
 		'is_approved' => 1,
@@ -372,8 +372,8 @@ function ssi_queryPosts($query_where = '', $query_where_params = [], $query_limi
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = m.id_board AND lmr.id_member = {int:current_member})' : '') . '
 		WHERE 1=1 ' . ($override_permissions ? '' : '
-			AND {query_wanna_see_board}') . ($modSettings['postmod_active'] ? '
-			AND m.approved = {int:is_approved}' : '') . '
+			AND {query_wanna_see_board}') . '
+			AND m.approved = {int:is_approved}
 		' . (empty($query_where) ? '' : 'AND ' . $query_where) . '
 		ORDER BY ' . $query_order . '
 		' . ($query_limit == '' ? '' : 'LIMIT ' . $query_limit),
@@ -503,9 +503,9 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		WHERE t.id_last_msg >= {int:min_message_id}' . (empty($exclude_boards) ? '' : '
 			AND b.id_board NOT IN ({array_int:exclude_boards})') . '' . (empty($include_boards) ? '' : '
 			AND b.id_board IN ({array_int:include_boards})') . '
-			AND {query_wanna_see_board}' . ($modSettings['postmod_active'] ? '
+			AND {query_wanna_see_board}
 			AND t.approved = {int:is_approved}
-			AND ml.approved = {int:is_approved}' : '') . '
+			AND ml.approved = {int:is_approved}
 		ORDER BY t.id_last_msg DESC
 		LIMIT ' . $num_recent,
 		array(
@@ -752,8 +752,8 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 		$request = $smcFunc['db_query']('', '
 			SELECT id_topic
 			FROM {db_prefix}topics
-			WHERE num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0' . ($modSettings['postmod_active'] ? '
-				AND approved = {int:is_approved}' : '') . '
+			WHERE num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0
+				AND approved = {int:is_approved}
 			ORDER BY num_' . ($type != 'replies' ? 'views' : 'replies') . ' DESC
 			LIMIT {int:limit}',
 			array(
@@ -774,8 +774,8 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
-		WHERE {query_wanna_see_board}' . ($modSettings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : '') . (!empty($topic_ids) ? '
+		WHERE {query_wanna_see_board}
+			AND t.approved = {int:is_approved}' . (!empty($topic_ids) ? '
 			AND t.id_topic IN ({array_int:topic_list})' : '') . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_enable}' : '') . '
 		ORDER BY t.num_' . ($type != 'replies' ? 'views' : 'replies') . ' DESC
@@ -1233,7 +1233,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	$request = $smcFunc['db_query']('', '
 		SELECT p.id_poll, p.question, t.id_topic, p.max_votes, p.guest_vote, p.hide_results, p.expire_time
 		FROM {db_prefix}polls AS p
-			INNER JOIN {db_prefix}topics AS t ON (t.id_poll = p.id_poll' . ($modSettings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
+			INNER JOIN {db_prefix}topics AS t ON (t.id_poll = p.id_poll AND t.approved = {int:is_approved})
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)' . ($topPollInstead ? '
 			INNER JOIN {db_prefix}poll_choices AS pc ON (pc.id_poll = p.id_poll)' : '') . '
 			LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_poll = p.id_poll AND lp.id_member > {int:no_member} AND lp.id_member = {int:current_member})
@@ -1382,8 +1382,8 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 		WHERE t.id_topic = {int:current_topic}
 			AND {query_see_board}' . (!in_array(0, $boardsAllowed) ? '
-			AND b.id_board IN ({array_int:boards_allowed_see})' : '') . ($modSettings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : '') . '
+			AND b.id_board IN ({array_int:boards_allowed_see})' : '') . '
+			AND t.approved = {int:is_approved}
 		LIMIT 1',
 		array(
 			'current_topic' => $topic,
@@ -1589,8 +1589,8 @@ function ssi_pollVote()
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_poll = p.id_poll AND lp.id_member = {int:current_member})
 		WHERE p.id_poll = {int:current_poll}
-			AND {query_see_board}' . ($modSettings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : '') . '
+			AND {query_see_board}
+			AND t.approved = {int:is_approved}
 		LIMIT 1',
 		array(
 			'current_member' => $user_info['id'],
@@ -1780,8 +1780,8 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 		SELECT t.id_first_msg
 		FROM {db_prefix}topics as t
 		LEFT JOIN {db_prefix}boards as b ON (b.id_board = t.id_board)
-		WHERE t.id_board = {int:current_board}' . ($modSettings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : '') . '
+		WHERE t.id_board = {int:current_board}
+			AND t.approved = {int:is_approved}
 			AND {query_see_board}
 		ORDER BY t.id_first_msg DESC
 		LIMIT ' . $start . ', ' . $limit,
@@ -2012,7 +2012,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = [], $out
 		WHERE att.attachment_type = 0' . ($attachments_boards === array(0) ? '' : '
 			AND m.id_board IN ({array_int:boards_can_see})') . (!empty($attachment_ext) ? '
 			AND att.fileext IN ({array_string:attachment_ext})' : '') .
-			(!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+			(allowedTo('approve_posts') ? '' : '
 			AND t.approved = {int:is_approved}
 			AND m.approved = {int:is_approved}
 			AND att.approved = {int:is_approved}') . '

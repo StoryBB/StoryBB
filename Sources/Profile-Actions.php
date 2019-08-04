@@ -309,7 +309,7 @@ function issueWarning($memID)
 
 	// Make sure things which are disabled stay disabled.
 	$modSettings['warning_watch'] = !empty($modSettings['warning_watch']) ? $modSettings['warning_watch'] : 110;
-	$modSettings['warning_moderate'] = !empty($modSettings['warning_moderate']) && !empty($modSettings['postmod_active']) ? $modSettings['warning_moderate'] : 110;
+	$modSettings['warning_moderate'] = !empty($modSettings['warning_moderate']) ? $modSettings['warning_moderate'] : 110;
 	$modSettings['warning_mute'] = !empty($modSettings['warning_mute']) ? $modSettings['warning_mute'] : 110;
 
 	$context['warning_limit'] = allowedTo('admin_forum') ? 0 : $modSettings['user_limit'];

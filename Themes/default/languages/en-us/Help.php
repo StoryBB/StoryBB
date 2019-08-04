@@ -410,19 +410,12 @@ $helptxt['meta_keywords'] = 'These keywords are sent in the output of every page
 $helptxt['secret_why_blank'] = 'For your security, your password and the answer to your secret question are encrypted so that the StoryBB software will never tell you, or anyone else, what they are.';
 $helptxt['moderator_why_missing'] = 'Since moderation is done on a board-by-board basis, you have to make members moderators from the <a href="%1$s?action=admin;area=manageboards" target="_blank" rel="noopener">board management interface</a>.';
 
-$helptxt['permissions'] = 'Permissions are how you either allow groups to, or deny groups from, doing specific things.<br><br>You can modify multiple boards at once with the checkboxes, or look at the permissions for a specific group by clicking \'Modify.\'';
-$helptxt['permissions_board'] = 'If a board is set to \'Global,\' it means that the board will not have any special permissions. \'Local\' means it will have its own permissions - separate from the global ones. This allows you to have a board that has more or fewer permissions than another, without requiring you to set them for each and every board.';
 $helptxt['permissions_quickgroups'] = 'These allow you to use the &quot;default&quot; permission setups -  <em>standard</em> means \'nothing special\', <em>restrictive</em> means \'like a guest\', <em>moderator</em> means \'what a moderator has\', and lastly <em>maintenance</em> means \'permissions very close to those of an administrator\'.';
 $helptxt['permissions_deny'] = 'Denying permissions can be useful when you want to take away permission from certain members. You can add a membergroup with a \'deny\'-permission to the members you wish to deny a permission.<br><br><strong>Use with care</strong>, a denied permission will stay denied no matter what other membergroups the member is in.';
 $helptxt['membergroup_guests'] = 'The Guests membergroup is for all users that are not logged in.';
 $helptxt['membergroup_regular_members'] = 'The Regular Members are all members that are logged in, but that have no primary membergroup assigned.';
 $helptxt['membergroup_administrator'] = 'The administrator can, per definition, do anything and see any board. There are no permission settings for the administrator.';
 $helptxt['membergroup_moderator'] = 'The Moderator membergroup is a special membergroup. Permissions and settings assigned to this group apply to moderators but only <em>on the boards they moderate</em>. Outside these boards they\'re just like any other member. Note that permissions for this group also apply to any group assigned to moderate a board.';
-$helptxt['membergroups'] = 'In StoryBB there are two types of groups that your members can be part of. These are:
-	<ul class="normallist">
-		<li><strong>Regular Groups:</strong> A regular group is a group which members are not automatically placed. To assign a member to be in a group simply go to their profile and click &quot;Account Settings&quot;. From here you can assign them any number of regular groups to which they will be part.</li>
-		<li><strong>Post Groups:</strong> Unlike regular groups post based groups cannot be assigned. Instead, members are automatically assigned to a post based group when they reach the minimum number of posts required to be in that group.</li>
-	</ul>';
 
 $helptxt['membergroup_badge'] = 'When people post, either in their account or their characters, it\'s possible to display an icon, or group of icons, next to their avatar as a visual guide as to special things on their account. For example, administrators usually have an icon by their avatar to show people that they are administrators. Moderators usually have something similar, too.<br>
 <br>

@@ -229,10 +229,6 @@ function ModifyWarningSettings($return_config = false)
 	if ($return_config)
 		return $config_vars;
 
-	// Cannot use moderation if post moderation is not enabled.
-	if (!$modSettings['postmod_active'])
-		unset($config_vars['moderate']);
-
 	// Will need the utility functions from here.
 	require_once($sourcedir . '/ManageServer.php');
 
@@ -254,10 +250,9 @@ function ModifyWarningSettings($return_config = false)
 			// Need to add these, these weren't there before...
 			$vars = array(
 				'warning_watch' => 10,
+				'warning_moderate' => 35,
 				'warning_mute' => 60,
 			);
-			if ($modSettings['postmod_active'])
-				$vars['warning_moderate'] = 35;
 
 			foreach ($vars as $var => $value)
 			{
@@ -268,7 +263,7 @@ function ModifyWarningSettings($return_config = false)
 		else
 		{
 			$_POST['warning_watch'] = min($_POST['warning_watch'], 100);
-			$_POST['warning_moderate'] = $modSettings['postmod_active'] ? min($_POST['warning_moderate'], 100) : 0;
+			$_POST['warning_moderate'] = min($_POST['warning_moderate'], 100);
 			$_POST['warning_mute'] = min($_POST['warning_mute'], 100);
 		}
 

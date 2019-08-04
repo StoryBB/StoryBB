@@ -51,7 +51,6 @@ function ModifyMembergroups()
 	// Setup the admin tabs.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['membergroups_title'],
-		'help' => 'membergroups',
 		'description' => $txt['membergroups_description'],
 	);
 

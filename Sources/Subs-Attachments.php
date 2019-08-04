@@ -1085,7 +1085,7 @@ function getAttachsByMsg($msgID = 0)
 		$temp = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			if (!$row['approved'] && $modSettings['postmod_active'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
+			if (!$row['approved'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
 				continue;
 
 			$temp[$row['id_attach']] = $row;
