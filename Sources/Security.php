@@ -106,7 +106,7 @@ function is_not_guest($message = '', bool $redirect = false)
 		obExit(false);
 
 	// Attempt to detect if they came from dlattach.
-	if (STORYBB != 'SSI' && empty($context['theme_loaded']))
+	if (empty($context['theme_loaded']))
 		loadTheme();
 
 	// Never redirect to an attachment

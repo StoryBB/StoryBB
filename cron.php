@@ -33,7 +33,7 @@ global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist;
 global $db_connection, $modSettings, $context, $sc, $user_info, $txt;
-global $smcFunc, $ssi_db_user, $scripturl, $db_passwd, $cachedir;
+global $smcFunc, $scripturl, $db_passwd, $cachedir;
 
 define('TIME_START', microtime(true));
 
@@ -82,7 +82,7 @@ require_once($sourcedir . '/Subs.php');
 // Create a variable to store some StoryBB specific functions in.
 $smcFunc = [];
 
-// This is our general bootstrap, a la SSI.php but with a few differences.
+// This is our general bootstrap but a bit minimal.
 unset ($db_show_debug);
 loadDatabase();
 reloadSettings();

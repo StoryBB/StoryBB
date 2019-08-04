@@ -87,16 +87,6 @@ $db_user = 'root';
  */
 $db_passwd = '';
 /**
- * Database user for when connecting with SSI
- * @var string
- */
-$ssi_db_user = '';
-/**
- * Database password for when connecting with SSI
- * @var string
- */
-$ssi_db_passwd = '';
-/**
  * A prefix to put in front of your table names.
  * This helps to prevent conflicts
  * @var string

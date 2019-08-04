@@ -131,7 +131,6 @@ function getServerVersions($checkFor)
  * Search through source, theme and language files to determine their version.
  * Get detailed version information about the physical StoryBB files on the server.
  *
- * - the input parameter allows to set whether to include SSI.php and whether
  *   the results should be sorted.
  * - returns an array containing information on source files, templates and
  *   language files found in the default theme directory (grouped by language).
@@ -152,21 +151,6 @@ function getFileVersions(&$versionOptions)
 		'template_versions' => [],
 		'default_language_versions' => [],
 	);
-
-	// Find the version in SSI.php's file header.
-	if (!empty($versionOptions['include_ssi']) && file_exists($boarddir . '/SSI.php'))
-	{
-		$fp = fopen($boarddir . '/SSI.php', 'rb');
-		$header = fread($fp, 4096);
-		fclose($fp);
-
-		// The comment looks rougly like... that.
-		if (preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $header, $match) == 1)
-			$version_info['file_versions']['SSI.php'] = trim($match[1]);
-		// Not found!  This is bad.
-		else
-			$version_info['file_versions']['SSI.php'] = '??';
-	}
 
 	// Do the paid subscriptions handler?
 	if (!empty($versionOptions['include_subscriptions']) && file_exists($boarddir . '/subscriptions.php'))

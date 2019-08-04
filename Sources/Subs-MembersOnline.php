@@ -12,7 +12,7 @@
 
 /**
  * Retrieve a list and several other statistics of the users currently online.
- * Used by the board index and SSI.
+ * Used by the board index.
  * Also returns the membergroups of the users that are currently online.
  * (optionally) hides members that chose to hide their online presence.
  * @param array $membersOnlineOptions An array of options for the list

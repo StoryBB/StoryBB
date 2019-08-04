@@ -446,7 +446,7 @@ function sbb_db_error($db_string, $connection = null)
 {
 	global $txt, $context, $sourcedir, $webmaster_email, $modSettings;
 	global $db_connection, $db_persist;
-	global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
+	global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug;
 	global $smcFunc;
 
 	// Get the file and line numbers.

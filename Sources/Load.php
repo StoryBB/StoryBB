@@ -494,12 +494,11 @@ function loadUserSettings()
 	if ($id_member != 0)
 	{
 		// Let's not update the last visit time in these cases...
-		// 1. SSI doesn't count as visiting the forum.
-		// 2. RSS feeds and XMLHTTP requests don't count either.
-		// 3. If it was set within this session, no need to set it again.
-		// 4. New session, yet updated < five hours ago? Maybe cache can help.
-		// 5. We're still logging in or authenticating
-		if (STORYBB != 'SSI' && !isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml', 'login2', 'logintfa'])) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
+		// 1. RSS feeds and XMLHTTP requests don't count either.
+		// 2. If it was set within this session, no need to set it again.
+		// 3. New session, yet updated < five hours ago? Maybe cache can help.
+		// 4. We're still logging in or authenticating
+		if (!isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['.xml', 'login2', 'logintfa'])) && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
 		{
 			// @todo can this be cached?
 			// Do a quick query to make sure this isn't a mistake.
@@ -1950,8 +1949,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		return;
 
 	// Check to see if we're forcing SSL
-	if (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] == 2 && empty($maintenance) &&
-		!httpsOn() && STORYBB != 'SSI')
+	if (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] == 2 && empty($maintenance) && !httpsOn())
 	{
 		if (isset($_GET['sslRedirect']))
 		{
@@ -1987,7 +1985,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 
 		// Hmm... check #2 - is it just different by a www?  Send them to the correct place!!
-		if (empty($do_fix) && strtr($detected_url, ['://' => '://www.']) == $boardurl && (empty($_GET) || count($_GET) == 1) && STORYBB != 'SSI')
+		if (empty($do_fix) && strtr($detected_url, ['://' => '://www.']) == $boardurl && (empty($_GET) || count($_GET) == 1))
 		{
 			// Okay, this seems weird, but we don't want an endless loop - this will make $_GET not empty ;).
 			if (empty($_GET))
@@ -3066,7 +3064,7 @@ function template_include($filename, $once = false)
 function loadDatabase()
 {
 	global $db_persist, $db_connection, $db_server, $db_user, $db_passwd;
-	global $db_type, $db_name, $ssi_db_user, $ssi_db_passwd, $sourcedir, $db_prefix, $db_port, $smcFunc;
+	global $db_type, $db_name, $sourcedir, $db_prefix, $db_port, $smcFunc;
 
 	if (empty($smcFunc))
 	{
@@ -3086,48 +3084,20 @@ function loadDatabase()
 	if (!empty($db_port))
 		$db_options['port'] = $db_port;
 
-	// If we are in SSI try them first, but don't worry if it doesn't work, we have the normal username and password we can use.
-	if (STORYBB == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
-	{
-		try {
-			$options = array_merge($db_options, ['persist' => $db_persist, 'non_fatal' => true, 'dont_select_db' => true]);
+	try {
+		$options = array_merge($db_options, ['persist' => $db_persist]);
 
-			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
+		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
 
-			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
-			$smcFunc['db']->set_prefix($db_prefix);
-			$smcFunc['db']->set_server($db_server, $db_name, $ssi_db_user, $ssi_db_passwd);
-			$smcFunc['db']->connect($options);
-		}
-		catch (DatabaseException $e)
-		{
-			// We intentionally want to swallow any DB exception here.
-			// If this doesn't work we're going to try with non SSI credentials.
-			$db_connection = false;
-		}
+		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
+		$smcFunc['db']->set_prefix($db_prefix);
+		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
+		$smcFunc['db']->connect($options);
 	}
-
-	if (empty($db_connection))
+	catch (DatabaseException $e)
 	{
-		try {
-			$options = array_merge($db_options, ['persist' => $db_persist, 'dont_select_db' => STORYBB == 'SSI']);
-
-			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $options);
-
-			$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
-			$smcFunc['db']->set_prefix($db_prefix);
-			$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
-			$smcFunc['db']->connect($options);
-		}
-		catch (DatabaseException $e)
-		{
-			display_db_error();
-		}
+		display_db_error();
 	}
-
-	// If in SSI mode fix up the prefix.
-	if (STORYBB == 'SSI')
-		db_fix_prefix($db_prefix, $db_name);
 }
 
 /**
