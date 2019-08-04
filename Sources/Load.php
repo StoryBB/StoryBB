@@ -2606,10 +2606,10 @@ function addJavaScriptVar($key, $value, $escape = false)
  *
  * - only use this if you have to, generally external JS files are better, but for very small scripts
  *   or for scripts that require help from PHP/whatever, this can be useful.
- * - all code added with this function is added to the same <script> tag so do make sure your JS is clean!
+ * - all code added with this function is added to the same script tag so do make sure your JS is clean!
  *
  * @param string $javascript Some JS code
- * @param bool $defer Whether the script should load in <head> or before the closing <html> tag
+ * @param bool $defer Whether the script should load in head or before the closing html tag
  * @return void|bool Adds the code to one of the $context['javascript_inline'] arrays or returns if no JS was specified
  */
 function addInlineJavaScript($javascript, $defer = false)
