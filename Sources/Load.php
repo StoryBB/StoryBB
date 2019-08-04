@@ -15,6 +15,7 @@ use StoryBB\Database\AdapterFactory;
 use StoryBB\Database\Exception as DatabaseException;
 use StoryBB\Model\Language;
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\BrowserDetect;
 
 /**
  * Load the $modSettings array.
@@ -1791,12 +1792,12 @@ function loadMemberCustomFields($users, $params)
 
 /**
  * Loads information about what browser the user is viewing with and places it in $context
- *  - uses the class from {@link Class-BrowserDetect.php}
+ *  - uses the class from {@link StoryBB\Helper\BrowserDetect}
  */
 function detectBrowser()
 {
 	// Load the current user's browser of choice
-	$detector = new browser_detector;
+	$detector = new BrowserDetect;
 	$detector->detectBrowser();
 }
 
@@ -2492,7 +2493,7 @@ function loadCSSFile($fileName, $params = [], $id = '')
  *
  * - only use this if you have to, generally external css files are better, but for very small changes
  *   or for scripts that require help from PHP/whatever, this can be useful.
- * - all code added with this function is added to the same <style> tag so do make sure your css is valid!
+ * - all code added with this function is added to the same style tag so do make sure your css is valid!
  *
  * @param string $css Some css code
  * @return void|bool Adds the CSS to the $context['css_header'] array or returns if no CSS is specified
@@ -2605,10 +2606,10 @@ function addJavaScriptVar($key, $value, $escape = false)
  *
  * - only use this if you have to, generally external JS files are better, but for very small scripts
  *   or for scripts that require help from PHP/whatever, this can be useful.
- * - all code added with this function is added to the same <script> tag so do make sure your JS is clean!
+ * - all code added with this function is added to the same script tag so do make sure your JS is clean!
  *
  * @param string $javascript Some JS code
- * @param bool $defer Whether the script should load in <head> or before the closing <html> tag
+ * @param bool $defer Whether the script should load in head or before the closing html tag
  * @return void|bool Adds the code to one of the $context['javascript_inline'] arrays or returns if no JS was specified
  */
 function addInlineJavaScript($javascript, $defer = false)

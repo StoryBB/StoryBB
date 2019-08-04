@@ -12,6 +12,7 @@
 
 namespace StoryBB\Model;
 
+use StoryBB\Helper\Mentions;
 use StoryBB\Task;
 
 /**
@@ -35,8 +36,6 @@ class Post
 	public static function create(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		global $user_info, $txt, $modSettings, $smcFunc, $sourcedir;
-
-		require_once($sourcedir . '/Mentions.php');
 
 		// Set optional parameters to the default value.
 		$msgOptions['icon'] = empty($msgOptions['icon']) ? 'xx' : $msgOptions['icon'];
@@ -115,9 +114,9 @@ class Post
 
 		if (!empty($modSettings['enable_mentions']))
 		{
-			$msgOptions['mentioned_members'] = \Mentions::getMentionedMembers($msgOptions['body']);
+			$msgOptions['mentioned_members'] = Mentions::getMentionedMembers($msgOptions['body']);
 			if (!empty($msgOptions['mentioned_members']))
-				$msgOptions['body'] = \Mentions::getBody($msgOptions['body'], $msgOptions['mentioned_members']);
+				$msgOptions['body'] = Mentions::getBody($msgOptions['body'], $msgOptions['mentioned_members']);
 		}
 
 		// It's do or die time: forget any user aborts!
@@ -476,8 +475,6 @@ class Post
 
 		if (!empty($modSettings['enable_mentions']) && isset($msgOptions['body']))
 		{
-			require_once($sourcedir . '/Mentions.php');
-
 			$oldmentions = [];
 
 			if (!empty($msgOptions['old_body']))
@@ -492,8 +489,8 @@ class Post
 					unset($msgOptions['old_body']);
 			}
 
-			$mentions = \Mentions::getMentionedMembers($msgOptions['body']);
-			$messages_columns['body'] = $msgOptions['body'] = \Mentions::getBody($msgOptions['body'], $mentions);
+			$mentions = Mentions::getMentionedMembers($msgOptions['body']);
+			$messages_columns['body'] = $msgOptions['body'] = Mentions::getBody($msgOptions['body'], $mentions);
 
 			// Remove the poster.
 			if (isset($mentions[$user_info['id']]))

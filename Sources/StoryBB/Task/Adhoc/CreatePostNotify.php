@@ -11,7 +11,7 @@
 
 namespace StoryBB\Task\Adhoc;
 
-use Mentions;
+use StoryBB\Helper\Mentions;
 
 /**
  * This file contains background notification code for any create post action.
@@ -27,7 +27,6 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		global $smcFunc, $sourcedir, $scripturl, $language, $modSettings;
 
 		require_once($sourcedir . '/Subs-Post.php');
-		require_once($sourcedir . '/Mentions.php');
 		require_once($sourcedir . '/Subs-Notify.php');
 
 		$msgOptions = $this->_details['msgOptions'];
