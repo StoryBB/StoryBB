@@ -2493,7 +2493,7 @@ function loadCSSFile($fileName, $params = [], $id = '')
  *
  * - only use this if you have to, generally external css files are better, but for very small changes
  *   or for scripts that require help from PHP/whatever, this can be useful.
- * - all code added with this function is added to the same <style> tag so do make sure your css is valid!
+ * - all code added with this function is added to the same style tag so do make sure your css is valid!
  *
  * @param string $css Some css code
  * @return void|bool Adds the CSS to the $context['css_header'] array or returns if no CSS is specified
