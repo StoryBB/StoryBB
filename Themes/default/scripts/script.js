@@ -1569,3 +1569,21 @@ function markAlertsRead(obj) {
 	);
 	return false;
 }
+
+function markAlertRead(obj) {
+	$(obj).closest('.unread').slideUp();
+	$.get(
+		$(obj).data('url'),
+		function(data) {
+			ajax_indicator(false);
+			var alertscount = parseInt($("#alerts_menu_top span.amt").text().trim());
+			if (alertscount > 1) {
+				alertscount--;
+				$("#alerts_menu_top span.amt").text(alertscount);
+			} else {
+				$("#alerts_menu_top span.amt").remove();
+			}
+		}
+	);
+	return false;
+}

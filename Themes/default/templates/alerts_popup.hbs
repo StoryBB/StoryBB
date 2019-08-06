@@ -19,6 +19,7 @@
 					{{#if icon}}{{{icon}}}{{/if}}
 					<span>{{{text}}}</span> - {{{time}}}
 				</div>
+				<button class="read_alert" data-url="{{../scripturl}}?action=profile;area=notification;sa=markread;alert={{@key}};{{session_url}}" onclick="return markAlertRead(this)" title="{{{../txt.mark_read_short}}}"></button>
 			</div>
 	{{/each}}
 {{else}}
