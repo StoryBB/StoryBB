@@ -1582,6 +1582,7 @@ function markAlertRead(obj) {
 				$("#alerts_menu_top span.amt").text(alertscount);
 			} else {
 				$("#alerts_menu_top span.amt").remove();
+				$("#alerts_menu").html(data);
 			}
 		}
 	);
