@@ -2097,14 +2097,20 @@ function alert_markread($memID)
 	// We only want to output our little layer here.
 	StoryBB\Template::set_layout('raw');
 	StoryBB\Template::remove_all_layers();
-	$context['sub_template'] = 'alerts_all_read';
+
+	if (isset($_GET['alert']))
+	{
+		$alert = (int) $_GET['alert'];
+	}
 
 	loadLanguage('Alerts');
 
 	// Now we're all set up.
 	is_not_guest();
 	if (!$context['user']['is_owner'])
+	{
 		fatal_error('no_access');
+	}
 
 	checkSession('get');
 
@@ -2113,15 +2119,32 @@ function alert_markread($memID)
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}user_alerts
 		SET is_read = {int:now}
-		WHERE id_member = {int:current_member}
+		WHERE id_member = {int:current_member}' . ($alert ? '
+			AND id_alert = {int:alert}' : '') . '
 			AND is_read = 0',
 		array(
 			'now' => time(),
 			'current_member' => $memID,
+			'alert' => $alert,
 		)
 	);
 
-	updateMemberData($memID, array('alerts' => 0));
+	if ($alert)
+	{
+		// If we managed a specific ID, we need to process that a little differently.
+		if ($smcFunc['db']->affected_rows())
+		{
+			updateMemberData($memID, array('alerts' => '-'));
+		}
+	}
+	else
+	{
+		// We marked everything read.
+		updateMemberData($memID, array('alerts' => 0));
+	}
+
+	$context['sub_template'] = 'alerts_popup';
+	alerts_popup($memID);
 }
 
 /**

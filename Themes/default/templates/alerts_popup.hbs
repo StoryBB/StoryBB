@@ -19,6 +19,7 @@
 					{{#if icon}}{{{icon}}}{{/if}}
 					<span>{{{text}}}</span> - {{{time}}}
 				</div>
+				<button class="read_alert" data-url="{{../scripturl}}?action=profile;area=notification;sa=markread;alert={{@key}};{{session_url}}" onclick="return markAlertRead(this)" title="{{{../txt.mark_read_short}}}"></button>
 			</div>
 	{{/each}}
 {{else}}
@@ -26,17 +27,3 @@
 {{/if}}
 
 		</div>
-		<script>
-		function markAlertsRead(obj) {
-			ajax_indicator(true);
-			$.get(
-				obj.href,
-				function(data) {
-					ajax_indicator(false);
-					$("#alerts_menu_top span.amt").remove();
-					$("#alerts_menu div.alerts_unread").html(data);
-				}
-			);
-			return false;
-		}
-		</script>

@@ -1496,6 +1496,17 @@ a.button_submit {
 	vertical-align: top;
 }
 
+.top_menu .alerts_unread .unread {
+	position: relative;
+}
+
+.top_menu .alerts_unread .unread button {
+	position: absolute;
+	bottom: 3px;
+	right: 3px;
+	cursor: pointer;
+}
+
 #pm_menu .subject {
 	font-weight: bold;
 }
