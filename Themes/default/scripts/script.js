@@ -1556,3 +1556,16 @@ $(function()
 		$('#cookie_footer').slideUp('fast');
 	});
 });
+
+function markAlertsRead(obj) {
+	ajax_indicator(true);
+	$.get(
+		obj.href,
+		function(data) {
+			ajax_indicator(false);
+			$("#alerts_menu_top span.amt").remove();
+			$("#alerts_menu div.alerts_unread").html(data);
+		}
+	);
+	return false;
+}
