@@ -1,0 +1,28 @@
+	{{! The main plugins page. }}
+
+	<div class="information">
+		{{#each context.filter_plugins}}
+			<a {{#if (eq @key ../context.current_filter)}} class="active"{{/if}}href="{{../scripturl}}?action=admin;area=plugins;sa=list;filter={{@key}}">{{textTemplate (get_text (concat 'plugins_' @key)) .}}</a>
+		{{/each}}
+	</div>
+
+{{#if (eq (count context.available_plugins) 0)}}
+	<div class="windowbg">{{{txt.no_plugins}}}</div>
+{{else}}
+	<div class="plugin-group">
+	{{#each context.available_plugins}}
+		<fieldset>
+			<legend>{{{name}}}</legend>
+		{{#if (eq status 'install_errors')}}
+				<div class="noticebox">
+					<ul>
+			{{#each install_errors}}
+						<li>{{{textTemplate (get_text (concat 'error_' .))}}}</li>
+			{{/each}}
+					</ul>
+				</div>
+		{{/if}}
+		</fieldset>
+	{{/each}}
+	</div>
+{{/if}}
