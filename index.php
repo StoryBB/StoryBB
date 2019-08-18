@@ -352,7 +352,7 @@ function sbb_main()
 	);
 
 	// Allow modifying $actionArray easily.
-	call_integration_hook('integrate_actions', array(&$actionArray));
+	(new \StoryBB\Hook\Mutatable\ActionList($actionArray))->execute();
 
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($_REQUEST['action']) || !isset($actionArray[$_REQUEST['action']]))

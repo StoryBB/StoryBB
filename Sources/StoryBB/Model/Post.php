@@ -163,7 +163,7 @@ class Post
 			);
 
 		// What if we want to export new posts out to a CMS?
-		call_integration_hook('integrate_after_create_post', array($msgOptions, $topicOptions, $posterOptions, $message_columns, $message_parameters));
+		(new \StoryBB\Hook\Observable\PostCreated($msgOptions, $topicOptions, $posterOptions, $message_columns, $message_parameters))->execute();
 
 		// Insert a new topic (if the topicID was left empty.)
 		if ($new_topic)
