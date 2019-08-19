@@ -17,6 +17,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Hook\Mutatable;
+
 $software_year = '2018';
 $forum_version = 'StoryBB 1.0 Alpha 1';
 
@@ -352,7 +354,7 @@ function sbb_main()
 	);
 
 	// Allow modifying $actionArray easily.
-	(new \StoryBB\Hook\Mutatable\ActionList($actionArray))->execute();
+	(new Mutatable\ActionList($actionArray))->execute();
 
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($_REQUEST['action']) || !isset($actionArray[$_REQUEST['action']]))

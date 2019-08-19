@@ -13,6 +13,7 @@
 namespace StoryBB\Model;
 
 use StoryBB\Helper\Mentions;
+use StoryBB\Hook\Observable;
 use StoryBB\Task;
 
 /**
@@ -163,7 +164,7 @@ class Post
 			);
 
 		// What if we want to export new posts out to a CMS?
-		(new \StoryBB\Hook\Observable\PostCreated($msgOptions, $topicOptions, $posterOptions, $message_columns, $message_parameters))->execute();
+		(new Observable\Post\Created($msgOptions, $topicOptions, $posterOptions, $message_columns, $message_parameters))->execute();
 
 		// Insert a new topic (if the topicID was left empty.)
 		if ($new_topic)
