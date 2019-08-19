@@ -23,4 +23,9 @@ abstract class Hookable
 	{
 		Manager::execute($this);
 	}
+
+	final public function __toString(): string
+	{
+		return static::class;
+	}
 }

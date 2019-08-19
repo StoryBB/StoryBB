@@ -30,6 +30,8 @@ class Manager
 
 	public static function execute(Hookable $hook)
 	{
+		global $context, $db_show_debug;
+
 		$classname = get_class($hook);
 		if (!isset(static::$hooks[$classname]))
 		{
@@ -42,6 +44,10 @@ class Manager
 			{
 				if (is_callable($hookpoint))
 				{
+					if ($db_show_debug === true)
+					{
+						$context['debug']['hooks'][] = $hook;
+					}
 					call_user_func($hookpoint, $hook);
 				}
 			}
