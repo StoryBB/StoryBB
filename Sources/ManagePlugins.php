@@ -77,6 +77,8 @@ function PluginsList()
 		{
 			$context['available_plugins'][] = [
 				'name' => $plugin->name(),
+				'author' => $plugin->author(),
+				'description' => $plugin->description(),
 				'status' => $type,
 				'install_errors' => $type === 'install_errors' ? $plugin->install_errors() : [],
 			];

@@ -39,25 +39,25 @@ class Plugin
 			return;
 		}
 
-		if (empty($manifest->plugin))
+		if (empty($this->manifest->plugin))
 		{
 			$this->set_default_manifest();
 			$this->install_errors[] = 'manifest_invalid_id';
 			return;
 		}
-		if ($manifest->plugin != $this->pluginfolder)
+		if ($this->manifest->plugin != $this->pluginfolder)
 		{
 			$this->set_default_manifest();
 			$this->install_errors[] = 'invalid_plugin_path';
 			return;
 		}
 
-		if (empty($manifest->author))
+		if (empty($this->manifest->author))
 		{
 			$this->install_errors[] = 'manifest_no_author';
 			$this->manifest->author = '???';
 		}
-		if (empty($manifest->name))
+		if (empty($this->manifest->name))
 		{
 			$this->install_errors[] = 'manifest_no_name';
 			$this->manifest->name = $this->pluginfolder;
@@ -68,11 +68,16 @@ class Plugin
 			$this->install_errors[] = 'manifest_no_version';
 			$this->manifest->version = '???';
 		}
+
+		if (empty($this->manifest->description))
+		{
+			$this->manifest->description = '';
+		}
 	}
 
 	public function installable(): bool
 	{
-		return empty($this->install_errors);
+		return empty($this->install_errors) && !$this->enabled();
 	}
 
 	public function install_errors(): array
@@ -80,7 +85,7 @@ class Plugin
 		return $this->install_errors;
 	}
 
-	public function is_enabled(): bool
+	public function enabled(): bool
 	{
 		global $context;
 		return isset($context['enabled_plugins'][$this->pluginfolder]);
@@ -106,6 +111,12 @@ class Plugin
 	{
 		global $smcFunc;
 		return $smcFunc['htmlspecialchars']($this->manifest->author);
+	}
+
+	public function description(): string
+	{
+		global $smcFunc;
+		return $smcFunc['htmlspecialchars']($this->manifest->description);
 	}
 
 	public function version(): string

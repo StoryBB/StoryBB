@@ -22,6 +22,21 @@
 					</ul>
 				</div>
 		{{/if}}
+		{{#if description}}
+			<div class="plugin-description">{{{description}}}
+		{{/if}}
+			<div class="plugin-author">{{{../txt.written_by}}} {{{author}}}</div>
+			<div class="plugin-actions">
+		{{#if (eq status 'enabled')}}
+			<button>DISABLE</button>
+		{{/if}}
+		{{#if (eq status 'disabled')}}
+			<button>ENABLE</button>
+		{{/if}}
+		{{#if (or (eq status 'install_errors') (eq status 'disabled'))}}
+			<button>REMOVE</button>
+		{{/if}}
+			</div>
 		</fieldset>
 	{{/each}}
 	</div>
