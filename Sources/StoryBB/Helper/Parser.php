@@ -574,7 +574,7 @@ class Parser
 					'tag' => 'quote',
 					'parameters' => array(
 						'author' => array('match' => '([^<>]{1,192}?)'),
-						'link' => array('match' => '(?:board=\d+;)?((?:topic|threadid)=[\dmsg#\./]{1,40}(?:;start=[\dmsg#\./]{1,40})?|msg=\d+?|action=profile;u=\d+)'),
+						'link' => array('match' => '(?:board=\d+;)?((?:topic)=[\dmsg#\./]{1,40}(?:;start=[\dmsg#\./]{1,40})?|msg=\d+?|action=profile;u=\d+)'),
 						'date' => array('match' => '(\d+)', 'validate' => 'timeformat'),
 					),
 					'before' => '<blockquote><cite><a href="' . $scripturl . '?{link}">' . $txt['quote_from'] . ': {author} ' . $txt['search_on'] . ' {date}</a></cite>',
