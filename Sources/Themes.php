@@ -87,7 +87,7 @@ function ThemesMain()
 	}
 
 	// CRUD $subActions as needed.
-	call_integration_hook('integrate_manage_themes', array(&$subActions));
+	routing_integration_hook('integrate_manage_themes', array(&$subActions));
 
 	// Whatever you decide to do, clean the minify cache.
 	cache_put_data('minimized_css', null);

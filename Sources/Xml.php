@@ -30,7 +30,7 @@ function XMLhttpMain()
 	]);
 
 	// Easy adding of sub actions.
-	call_integration_hook('integrate_XMLhttpMain_subActions', array(&$subActions));
+	routing_integration_hook('integrate_XMLhttpMain_subActions', array(&$subActions));
 
 	if (!isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]))
 		fatal_lang_error('no_access', false);

@@ -2230,6 +2230,18 @@ function sbb_seed_generator()
 }
 
 /**
+ * This functions exactly the same as call_integration_hook but allows for classifying hooks
+ * that are for routing purposes rather than modifying runtime state.
+ * @param string $hook The hook name
+ * @param array $parameters An array of parameters this hook implements
+ * @return array The results of the functions
+ */
+function routing_integration_hook($hook, $parameters = [])
+{
+	return call_integration_hook($hook, $parameters);
+}
+
+/**
  * Process functions of an integration hook.
  * calls all functions of the given hook.
  * supports static class method calls.

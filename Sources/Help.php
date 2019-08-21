@@ -70,7 +70,7 @@ function ShowHelp()
 	$smcFunc['db_free_result']($request);
 
 	// CRUD $subActions as needed.
-	call_integration_hook('integrate_manage_help', [&$subActions]);
+	routing_integration_hook('integrate_manage_help', [&$subActions]);
 
 	$context['subaction'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'index';
 	call_helper($subActions[$context['subaction']]);

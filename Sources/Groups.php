@@ -54,7 +54,7 @@ function Groups()
 	}
 
 	// CRUD $subActions as needed.
-	call_integration_hook('integrate_manage_groups', [&$subActions]);
+	routing_integration_hook('integrate_manage_groups', [&$subActions]);
 
 	// Call the actual function.
 	call_helper($subActions[$_REQUEST['sa']][0]);
