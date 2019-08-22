@@ -3125,14 +3125,6 @@ div#pollmoderation {
 	clear: right;
 }
 
-.messageicon {
-	display: inline-block;
-}
-
-.messageicon img {
-	vertical-align: middle;
-}
-
 .keyinfo h5 {
 	padding: 1px 0 5px 0;
 	line-height: 1.5em;
