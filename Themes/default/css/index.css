@@ -2709,9 +2709,7 @@ h3 .collapse {
 	max-height: 40px;
 	display: inline-block;
 	vertical-align: middle;
-	margin-right: 10px;
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin: 10px;
 }
 
 .info .first_poster {
@@ -2822,12 +2820,16 @@ span.postby {
 	padding: 0;
 }
 
+#topic_header div:first-of-type {
+	padding-left: 10px;
+}
+
 #topic_container .windowbg {
 	border: 1px solid #ddd;
 	border-top: none;
 }
 
-#topic_container .board_icon, #topic_container .info, #topic_container .windowbg, #topic_container .board_stats, #topic_container .lastpost {
+#topic_container .info, #topic_container .windowbg, #topic_container .board_stats, #topic_container .lastpost {
 	box-shadow: none;
 	border-radius: 0;
 	padding: 0;
