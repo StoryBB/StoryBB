@@ -368,34 +368,12 @@ VALUES (1, '{$default_administrator_group}', '', '#FF0000', '5#iconadmin.png', 1
 # --------------------------------------------------------
 
 #
-# Dumping data for table `message_icons`
-#
-
-# // @todo i18n
-INSERT INTO {$db_prefix}message_icons
-  (filename, title, icon_order)
-VALUES ('xx', 'Standard', '0'),
-  ('thumbup', 'Thumb Up', '1'),
-  ('thumbdown', 'Thumb Down', '2'),
-  ('exclamation', 'Exclamation point', '3'),
-  ('question', 'Question mark', '4'),
-  ('lamp', 'Lamp', '5'),
-  ('smiley', 'Smiley', '6'),
-  ('angry', 'Angry', '7'),
-  ('cheesy', 'Cheesy', '8'),
-  ('grin', 'Grin', '9'),
-  ('sad', 'Sad', '10'),
-  ('wink', 'Wink', '11'),
-  ('poll', 'Poll', '12');
-# --------------------------------------------------------
-
-#
 # Dumping data for table `messages`
 #
 
 INSERT INTO {$db_prefix}messages
-  (id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, modified_name, body, icon)
-VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'StoryBB', 'info@storybb.org', '', '{$default_topic_message}', 'xx');
+  (id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, modified_name, body)
+VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'StoryBB', 'info@storybb.org', '', '{$default_topic_message}');
 # --------------------------------------------------------
 
 #
