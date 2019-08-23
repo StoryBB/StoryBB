@@ -54,7 +54,6 @@ function SaveDraft(&$post_errors)
 
 	// prepare any data from the form
 	$topic_id = empty($_REQUEST['topic']) ? 0 : (int) $_REQUEST['topic'];
-	$draft['icon'] = empty($_POST['icon']) ? 'xx' : preg_replace('~[\./\\\\*:"\'<>]~', '', $_POST['icon']);
 	$draft['smileys_enabled'] = isset($_POST['ns']) ? (int) $_POST['ns'] : 0;
 	$draft['locked'] = isset($_POST['lock']) ? (int) $_POST['lock'] : 0;
 	$draft['sticky'] = isset($_POST['sticky']) ? (int) $_POST['sticky'] : 0;
@@ -78,7 +77,6 @@ function SaveDraft(&$post_errors)
 				subject = {string:subject},
 				smileys_enabled = {int:smileys_enabled},
 				body = {string:body},
-				icon = {string:icon},
 				locked = {int:locked},
 				is_sticky = {int:is_sticky}
 			WHERE id_draft = {int:id_draft}',
@@ -89,7 +87,6 @@ function SaveDraft(&$post_errors)
 				'subject' => $draft['subject'],
 				'smileys_enabled' => (int) $draft['smileys_enabled'],
 				'body' => $draft['body'],
-				'icon' => $draft['icon'],
 				'locked' => $draft['locked'],
 				'is_sticky' => $draft['sticky'],
 				'id_draft' => $id_draft,
@@ -117,7 +114,6 @@ function SaveDraft(&$post_errors)
 				'subject' => 'string-255',
 				'smileys_enabled' => 'int',
 				'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : 'string-65534'),
-				'icon' => 'string-16',
 				'locked' => 'int',
 				'is_sticky' => 'int'
 			],
@@ -130,7 +126,6 @@ function SaveDraft(&$post_errors)
 				$draft['subject'],
 				$draft['smileys_enabled'],
 				$draft['body'],
-				$draft['icon'],
 				$draft['locked'],
 				$draft['sticky']
 			],
@@ -315,7 +310,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 
 	// load in this draft from the DB
 	$request = $smcFunc['db_query']('', '
-		SELECT is_sticky, locked, smileys_enabled, icon, body , subject,
+		SELECT is_sticky, locked, smileys_enabled, body , subject,
 			id_board, id_draft, id_reply, to_list
 		FROM {db_prefix}user_drafts
 		WHERE id_draft = {int:id_draft}' . ($check ? '
@@ -348,7 +343,6 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 			$context['sticky'] = !empty($draft_info['is_sticky']) ? $draft_info['is_sticky'] : '';
 			$context['locked'] = !empty($draft_info['locked']) ? $draft_info['locked'] : '';
 			$context['use_smileys'] = !empty($draft_info['smileys_enabled']) ? true : false;
-			$context['icon'] = !empty($draft_info['icon']) ? $draft_info['icon'] : 'xx';
 			$context['message'] = !empty($draft_info['body']) ? str_replace('<br>', "\n", un_htmlspecialchars(stripslashes($draft_info['body']))) : '';
 			$context['subject'] = !empty($draft_info['subject']) ? stripslashes($draft_info['subject']) : '';
 			$context['board'] = !empty($draft_info['id_board']) ? $draft_info['id_board'] : '';
@@ -583,7 +577,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 	$request = $smcFunc['db_query']('', '
 		SELECT
 			b.id_board, b.name AS bname,
-			ud.id_member, ud.id_draft, ud.body, ud.smileys_enabled, ud.subject, ud.poster_time, ud.icon, ud.id_topic, ud.locked, ud.is_sticky
+			ud.id_member, ud.id_draft, ud.body, ud.smileys_enabled, ud.subject, ud.poster_time, ud.id_topic, ud.locked, ud.is_sticky
 		FROM {db_prefix}user_drafts AS ud
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = ud.id_board AND {query_see_board})
 		WHERE ud.id_member = {int:current_member}
@@ -634,7 +628,6 @@ function showProfileDrafts($memID, $draft_type = 0)
 			'subject' => $row['subject'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
-			'icon' => $row['icon'],
 			'id_draft' => $row['id_draft'],
 			'locked' => (bool) $row['locked'],
 			'sticky' => (bool) $row['is_sticky'],
