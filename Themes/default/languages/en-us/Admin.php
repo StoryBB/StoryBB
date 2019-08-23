@@ -114,7 +114,7 @@ $txt['lfyi'] = 'You are unable to connect to storybb.org\'s latest news file.';
 
 $txt['manage_search'] = 'Search';
 
-$txt['smileys_manage'] = 'Smileys and Message Icons';
+$txt['smileys_manage'] = 'Smileys';
 $txt['theme_admin'] = 'Themes and Layout';
 $txt['registration_center'] = 'Registration';
 
@@ -643,7 +643,6 @@ $txt['search_method'] = 'Search Method';
 $txt['smileys_add'] = 'Add Smiley';
 $txt['smileys_edit'] = 'Edit Smileys';
 $txt['smileys_set_order'] = 'Set Smiley order';
-$txt['icons_edit_message_icons'] = 'Message Icons';
 
 $txt['membergroups_new_group'] = 'Add Membergroup';
 $txt['membergroups_edit_groups'] = 'Edit Membergroups';

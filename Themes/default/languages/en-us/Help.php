@@ -180,10 +180,7 @@ $helptxt['theme_settings'] = '<strong>Theme Settings</strong><br>
 	also options that affect the layout of a theme on your forum. Most themes will have a variety of user configurable settings, allowing you to adapt a theme
 	to suit your individual forum needs.';
 $helptxt['smileys'] = '<strong>Smiley Center</strong><br>
-	Here you can add and remove smileys, and smiley sets. If a smiley is present in one set, it should be present in all sets - otherwise, it might
-	get confusing for your users using different sets.<br><br>
-
-	You are also able to edit message icons from here, if you have them enabled on the settings page.';
+	Here you can add and remove smileys';
 
 $helptxt['serversettings'] = '<strong>Server Settings</strong><br>
 	Here you can perform some core configuration for your forum. This page includes the database and url settings, as well as other
