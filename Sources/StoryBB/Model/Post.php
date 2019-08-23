@@ -47,7 +47,7 @@ class Post
 		$topicOptions['sticky_mode'] = isset($topicOptions['sticky_mode']) ? $topicOptions['sticky_mode'] : null;
 		$topicOptions['redirect_expires'] = isset($topicOptions['redirect_expires']) ? $topicOptions['redirect_expires'] : null;
 		$topicOptions['redirect_topic'] = isset($topicOptions['redirect_topic']) ? $topicOptions['redirect_topic'] : null;
-		$topicOptions['is_moved'] = !empty($topicOptions['is_moved']) ? $topicOptions['is_moved'] : null,
+		$topicOptions['is_moved'] = !empty($topicOptions['is_moved']) ? $topicOptions['is_moved'] : null;
 		$posterOptions['id'] = empty($posterOptions['id']) ? 0 : (int) $posterOptions['id'];
 		$posterOptions['ip'] = empty($posterOptions['ip']) ? $user_info['ip'] : $posterOptions['ip'];
 		$posterOptions['char_id'] = empty($posterOptions['char_id']) ? 0 : (int) $posterOptions['char_id'];
