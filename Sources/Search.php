@@ -1617,11 +1617,11 @@ function PlushSearch2()
 		$messages_request = $smcFunc['db_query']('', '
 			SELECT
 				m.id_msg, m.subject, m.poster_name, m.poster_email, m.poster_time, m.id_member,
-				m.icon, m.poster_ip, m.body, m.smileys_enabled, m.modified_time, m.modified_name,
-				first_m.id_msg AS first_msg, first_m.subject AS first_subject, first_m.icon AS first_icon, first_m.poster_time AS first_poster_time,
+				m.poster_ip, m.body, m.smileys_enabled, m.modified_time, m.modified_name,
+				first_m.id_msg AS first_msg, first_m.subject AS first_subject, first_m.poster_time AS first_poster_time,
 				first_mem.id_member AS first_member_id, m.id_character, COALESCE(char_f.character_name, first_mem.real_name, first_m.poster_name) AS first_member_name,
 				last_m.id_msg AS last_msg, last_m.poster_time AS last_poster_time, last_mem.id_member AS last_member_id,
-				COALESCE(char_l.character_name, last_mem.real_name, last_m.poster_name) AS last_member_name, last_m.icon AS last_icon, last_m.subject AS last_subject,
+				COALESCE(char_l.character_name, last_mem.real_name, last_m.poster_name) AS last_member_name, last_m.subject AS last_subject,
 				t.id_topic, t.is_sticky, t.locked, t.id_poll, t.num_replies, t.num_views,
 				b.id_board, b.name AS board_name, c.id_cat, c.name AS cat_name
 			FROM {db_prefix}messages AS m
@@ -1679,11 +1679,6 @@ function PlushSearch2()
 		cache_put_data('search_start:' . ($user_info['is_guest'] ? $user_info['ip'] : $user_info['id']), null, 90);
 
 	$context['key_words'] = &$searchArray;
-
-	// Setup the default topic icons... for checking they exist and the like!
-	$context['icon_sources'] = [];
-	foreach ($context['stable_icons'] as $icon)
-		$context['icon_sources'][$icon] = 'images_url';
 
 	$context['page_title'] = $txt['search_results'];
 
@@ -1821,33 +1816,6 @@ function prepareSearchContext($reset = false)
 	// Make sure we don't end up with a practically empty message body.
 	$message['body'] = preg_replace('~^(?:&nbsp;)+$~', '', $message['body']);
 
-	if (!empty($recycle_board) && $message['id_board'] == $recycle_board)
-	{
-		$message['first_icon'] = 'recycled';
-		$message['last_icon'] = 'recycled';
-		$message['icon'] = 'recycled';
-	}
-
-	// Sadly, we need to check the icon ain't broke.
-	if (!empty($modSettings['messageIconChecks_enable']))
-	{
-		if (!isset($context['icon_sources'][$message['first_icon']]))
-			$context['icon_sources'][$message['first_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $message['first_icon'] . '.png') ? 'images_url' : 'default_images_url';
-		if (!isset($context['icon_sources'][$message['last_icon']]))
-			$context['icon_sources'][$message['last_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $message['last_icon'] . '.png') ? 'images_url' : 'default_images_url';
-		if (!isset($context['icon_sources'][$message['icon']]))
-			$context['icon_sources'][$message['icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $message['icon'] . '.png') ? 'images_url' : 'default_images_url';
-	}
-	else
-	{
-		if (!isset($context['icon_sources'][$message['first_icon']]))
-			$context['icon_sources'][$message['first_icon']] = 'images_url';
-		if (!isset($context['icon_sources'][$message['last_icon']]))
-			$context['icon_sources'][$message['last_icon']] = 'images_url';
-		if (!isset($context['icon_sources'][$message['icon']]))
-			$context['icon_sources'][$message['icon']] = 'images_url';
-	}
-
 	// Do we have quote tag enabled?
 	$quote_enabled = empty($modSettings['disabledBBC']) || !in_array('quote', explode(',', $modSettings['disabledBBC']));
 
@@ -1880,8 +1848,6 @@ function prepareSearchContext($reset = false)
 			'subject' => $message['first_subject'],
 			'href' => $scripturl . '?topic=' . $message['id_topic'] . '.0',
 			'link' => '<a href="' . $scripturl . '?topic=' . $message['id_topic'] . '.0">' . $message['first_subject'] . '</a>',
-			'icon' => $message['first_icon'],
-			'icon_url' => $settings[$context['icon_sources'][$message['first_icon']]] . '/post/' . $message['first_icon'] . '.png',
 			'member' => array(
 				'id' => $message['first_member_id'],
 				'name' => $message['first_member_name'],
@@ -1896,8 +1862,6 @@ function prepareSearchContext($reset = false)
 			'subject' => $message['last_subject'],
 			'href' => $scripturl . '?topic=' . $message['id_topic'] . ($message['num_replies'] == 0 ? '.0' : '.msg' . $message['last_msg']) . '#msg' . $message['last_msg'],
 			'link' => '<a href="' . $scripturl . '?topic=' . $message['id_topic'] . ($message['num_replies'] == 0 ? '.0' : '.msg' . $message['last_msg']) . '#msg' . $message['last_msg'] . '">' . $message['last_subject'] . '</a>',
-			'icon' => $message['last_icon'],
-			'icon_url' => $settings[$context['icon_sources'][$message['last_icon']]] . '/post/' . $message['last_icon'] . '.png',
 			'member' => array(
 				'id' => $message['last_member_id'],
 				'name' => $message['last_member_name'],
@@ -1968,8 +1932,6 @@ function prepareSearchContext($reset = false)
 		'id' => $message['id_msg'],
 		'attachment' => [],
 		'member' => $memberContext[$message['id_member']],
-		'icon' => $message['icon'],
-		'icon_url' => $settings[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.png',
 		'subject' => $message['subject'],
 		'subject_highlighted' => $subject_highlighted,
 		'time' => timeformat($message['poster_time']),

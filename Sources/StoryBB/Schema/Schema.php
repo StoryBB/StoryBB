@@ -783,19 +783,6 @@ class Schema
 					Index::key(['id_member']),
 				]
 			),
-			Table::make('message_icons',
-				[
-					'id_icon' => Column::smallint()->auto_increment(),
-					'title' => Column::varchar(80),
-					'filename' => Column::varchar(80),
-					'id_board' => Column::smallint(),
-					'icon_order' => Column::smallint(),
-				],
-				[
-					Index::primary(['id_icon']),
-					Index::key(['id_board']),
-				]
-			),
 			Table::make('messages',
 				[
 					'id_msg' => Column::int()->auto_increment(),
@@ -815,7 +802,6 @@ class Schema
 					'modified_name' => Column::varchar(255),
 					'modified_reason' => Column::varchar(255),
 					'body' => Column::text(),
-					'icon' => Column::varchar(16)->default('xx'),
 					'approved' => Column::tinyint()->default(1),
 					'likes' => Column::smallint(),
 				],
@@ -1191,7 +1177,6 @@ class Schema
 					'subject' => Column::varchar(255),
 					'smileys_enabled' => Column::tinyint()->default(1),
 					'body' => Column::mediumtext(),
-					'icon' => Column::varchar(16)->default('xx'),
 					'locked' => Column::tinyint(),
 					'is_sticky' => Column::tinyint(),
 					'to_list' => Column::varchar(255),

@@ -249,9 +249,6 @@ function reloadSettings()
 	// A bug in some versions of IIS under CGI (older ones) makes cookie setting not work with Location: headers.
 	$context['server']['needs_login_fix'] = $context['server']['is_cgi'] && $context['server']['is_iis'];
 
-	// Define a list of icons used across multiple places.
-	$context['stable_icons'] = ['xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'poll', 'moved', 'recycled', 'clip'];
-
 	// Define an array for custom profile fields placements.
 	$context['cust_profile_fields_placement'] = [
 		'standard',
