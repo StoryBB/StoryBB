@@ -2057,11 +2057,6 @@ img.icon.char_avatar {
 	max-height: 25px;
 }
 
-.xx {
-	background: url(../images/post/xx.png) 2px no-repeat;
-	padding: 25px 6px 25px 18px;
-}
-
 .main_icons::before {
 	width: 16px;
 	height: 16px;
