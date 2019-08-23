@@ -2284,19 +2284,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'help_popup_heading_text' => JavaScriptEscape($txt['help_popup']),
 	];
 
-	// Add the JQuery library to the list of files to load.
-	if (isset($modSettings['jquery_source']) && $modSettings['jquery_source'] == 'cdn')
-		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', ['external' => true], 'sbb_jquery');
-
-	elseif (isset($modSettings['jquery_source']) && $modSettings['jquery_source'] == 'local')
-		loadJavaScriptFile('jquery-3.2.1.min.js', ['seed' => false], 'sbb_jquery');
-
-	elseif (isset($modSettings['jquery_source'], $modSettings['jquery_custom']) && $modSettings['jquery_source'] == 'custom')
-		loadJavaScriptFile($modSettings['jquery_custom'], ['external' => true], 'sbb_jquery');
-
-	// Auto loading? template_javascript() will take care of the local half of this.
-	else
-		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', ['external' => true], 'sbb_jquery');
+	// Load the JQuery library. template_javascript() will take care of the local half of this.
+	loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', ['external' => true], 'sbb_jquery');
 
 	// Queue our JQuery plugins!
 	loadJavaScriptFile('sbb_jquery_plugins.js', ['minimize' => true], 'sbb_jquery_plugins');
