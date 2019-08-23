@@ -81,7 +81,7 @@ $txt['cannot_manage_bans'] = 'You\'re not allowed to change the list of bans.';
 $txt['cannot_manage_boards'] = 'You are not allowed to manage boards and categories.';
 $txt['cannot_manage_membergroups'] = 'You don\'t have permission to modify or assign membergroups.';
 $txt['cannot_manage_permissions'] = 'You don\'t have permission to manage permissions.';
-$txt['cannot_manage_smileys'] = 'You\'re not allowed to manage smileys and message icons.';
+$txt['cannot_manage_smileys'] = 'You\'re not allowed to manage smileys.';
 $txt['cannot_merge_any'] = 'You aren\'t allowed to merge topics on one of the selected board(s).';
 $txt['cannot_merge_redirect'] = 'One or more of the topics you have selected is a redirect topic and cannot be merged.';
 $txt['cannot_moderate_forum'] = 'You are not allowed to moderate this forum.';
@@ -322,10 +322,6 @@ $txt['profile_error_custom_field_regex_fail'] = 'The regex verification returned
 $txt['under_age_registration_prohibited'] = 'Sorry, but users under the age of %1$d are not allowed to register on this forum.';
 $txt['error_too_quickly'] = 'You went through registration a bit too quickly, faster than should normally be possible. Please give it a moment and try again.';
 $txt['mysql_error_space'] = ' - check database storage space or contact the server administrator.';
-
-$txt['icon_not_found'] = 'The icon image could not be found in the default theme - please ensure the image has been uploaded and try again.';
-$txt['icon_after_itself'] = 'The icon cannot be positioned after itself.';
-$txt['icon_name_too_long'] = 'Icon filenames cannot be more than 16 characters long';
 
 $txt['name_censored'] = 'Sorry, the name you tried to use, %1$s, contains words which have been censored. Please try another name.';
 

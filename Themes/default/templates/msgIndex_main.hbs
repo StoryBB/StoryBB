@@ -103,7 +103,6 @@
 			<div class="title_bar" id="topic_header">
 
 	{{#if context.topics}}
-				<div class="board_icon">&nbsp;</div>
 				<div class="info">
 					{{{context.topics_headers.subject}}} / {{{context.topics_headers.starter}}}
 				</div>
@@ -135,9 +134,6 @@
 
 	{{#each context.topics}}
 				<div class="{{css_class}}">
-					<div class="board_icon">
-						<img src="{{first_post.icon_url}}" alt="">
-					</div>
 					<div class="info{{#if ../context.can_quick_mod}} info_block{{/if}}">
 						<div {{#if quick_mod.modify}}id="topic_{{first_post.id}}"  ondblclick="oQuickModifyTopic.modify_topic('{{id}}', '{{first_post.id}}');"{{/if}}>
 							<div class="icons floatright">

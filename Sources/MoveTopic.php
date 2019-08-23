@@ -276,7 +276,6 @@ function MoveTopic2()
 		$msgOptions = array(
 			'subject' => $txt['moved'] . ': ' . $subject,
 			'body' => $_POST['reason'],
-			'icon' => 'moved',
 			'smileys_enabled' => 1,
 		);
 		$topicOptions = array(
@@ -285,6 +284,7 @@ function MoveTopic2()
 			'mark_as_read' => true,
 			'redirect_expires' => $redirect_expires,
 			'redirect_topic' => $redirect_topic,
+			'is_moved' => 1,
 		);
 		$posterOptions = array(
 			'id' => $user_info['id'],

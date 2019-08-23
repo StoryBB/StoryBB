@@ -638,9 +638,7 @@ $txt['most_online_today'] = 'Most Online Today';
 
 $txt['response_prefix'] = 'Re: ';
 $txt['current_icon'] = 'Current Icon';
-$txt['message_icon'] = 'Message Icon';
 
-$txt['smileys_current'] = 'Current Smiley Set';
 $txt['smileys_none'] = 'No Smileys';
 $txt['smileys_forum_board_default'] = 'Forum/Board Default';
 

@@ -97,7 +97,6 @@ sbb_DraftAutoSave.prototype.draftSave = function ()
 		'id_draft=' + (('id_draft' in document.forms.postmodify.elements) ? parseInt(document.forms.postmodify.elements['id_draft'].value) : 0),
 		'subject=' + escape(document.forms.postmodify['subject'].value.php_to8bit()).replace(/\+/g, "%2B"),
 		'message=' + escape(sPostdata.php_to8bit()).replace(/\+/g, "%2B"),
-		'icon=' + escape(document.forms.postmodify['icon'].value.php_to8bit()).replace(/\+/g, "%2B"),
 		'save_draft=true',
 		sbb_session_var + '=' + sbb_session_id,
 	];

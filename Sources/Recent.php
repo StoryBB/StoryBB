@@ -691,11 +691,6 @@ function UnreadTopics()
 
 	$context['sub_template'] = $_REQUEST['action'] == 'unread' ? 'unread_posts' : 'unread_replies';
 
-	// Setup the default topic icons... for checking they exist and the like ;)
-	$context['icon_sources'] = [];
-	foreach ($context['stable_icons'] as $icon)
-		$context['icon_sources'][$icon] = 'images_url';
-
 	$is_topics = $_REQUEST['action'] == 'unread';
 
 	// This part is the same for each query.
@@ -705,7 +700,7 @@ function UnreadTopics()
 				ml.poster_time AS last_poster_time, COALESCE(charss.character_name, mems.real_name, ms.poster_name) AS first_poster_name,
 				COALESCE(charsl.character_name, meml.real_name, ml.poster_name) AS last_poster_name,
 				charss.id_character AS first_character_id, charsl.id_character AS last_character_id, ml.subject AS last_subject,
-				ml.icon AS last_icon, ms.icon AS first_icon, t.id_poll, t.is_sticky, t.locked, ml.modified_time AS last_modified_time,
+				t.id_poll, t.is_sticky, t.locked, ml.modified_time AS last_modified_time,
 				COALESCE(lt.id_msg, lmr.id_msg, -1) + 1 AS new_from, SUBSTRING(ml.body, 1, 385) AS last_body,
 				SUBSTRING(ms.body, 1, 385) AS first_body, ml.smileys_enabled AS last_smileys, ms.smileys_enabled AS first_smileys, t.id_first_msg, t.id_last_msg';
 
@@ -1262,24 +1257,6 @@ function UnreadTopics()
 		else
 			$pages = '';
 
-		// We need to check the topic icons exist... you can never be too sure!
-		if (!empty($modSettings['messageIconChecks_enable']))
-		{
-			// First icon first... as you'd expect.
-			if (!isset($context['icon_sources'][$row['first_icon']]))
-				$context['icon_sources'][$row['first_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['first_icon'] . '.png') ? 'images_url' : 'default_images_url';
-			// Last icon... last... duh.
-			if (!isset($context['icon_sources'][$row['last_icon']]))
-				$context['icon_sources'][$row['last_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['last_icon'] . '.png') ? 'images_url' : 'default_images_url';
-		}
-
-		// Force the recycling icon if appropriate
-		if ($recycle_board == $row['id_board'])
-		{
-			$row['first_icon'] = 'recycled';
-			$row['last_icon'] = 'recycled';
-		}
-
 		// Reference the main color class.
 		$colorClass = 'windowbg';
 
@@ -1306,8 +1283,6 @@ function UnreadTopics()
 				'timestamp' => forum_time(true, $row['first_poster_time']),
 				'subject' => $row['first_subject'],
 				'preview' => $row['first_body'],
-				'icon' => $row['first_icon'],
-				'icon_url' => $settings[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.png',
 				'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0;topicseen',
 				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;topicseen">' . $row['first_subject'] . '</a>'
 			),
@@ -1323,8 +1298,6 @@ function UnreadTopics()
 				'timestamp' => forum_time(true, $row['last_poster_time']),
 				'subject' => $row['last_subject'],
 				'preview' => $row['last_body'],
-				'icon' => $row['last_icon'],
-				'icon_url' => $settings[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.png',
 				'href' => $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';topicseen#msg' . $row['id_last_msg'],
 				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';topicseen#msg' . $row['id_last_msg'] . '" rel="nofollow">' . $row['last_subject'] . '</a>'
 			),
@@ -1337,8 +1310,6 @@ function UnreadTopics()
 			'css_class' => $colorClass,
 			'is_poll' => $modSettings['pollMode'] == '1' && $row['id_poll'] > 0,
 			'is_posted_in' => false,
-			'icon' => $row['first_icon'],
-			'icon_url' => $settings[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.png',
 			'subject' => $row['first_subject'],
 			'pages' => $pages,
 			'replies' => comma_format($row['num_replies']),

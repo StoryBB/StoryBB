@@ -1009,15 +1009,6 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 		)
 	);
 
-	// Delete any message icons that only appear on these boards.
-	$smcFunc['db_query']('', '
-		DELETE FROM {db_prefix}message_icons
-		WHERE id_board IN ({array_int:boards_to_remove})',
-		array(
-			'boards_to_remove' => $boards_to_remove,
-		)
-	);
-
 	// Delete the boards.
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}boards

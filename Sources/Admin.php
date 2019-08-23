@@ -167,7 +167,6 @@ function AdminMain()
 						'addsmiley' => [$txt['smileys_add']],
 						'editsmileys' => [$txt['smileys_edit']],
 						'setorder' => [$txt['smileys_set_order']],
-						'editicons' => [$txt['icons_edit_message_icons'], 'enabled' => !empty($modSettings['messageIcons_enable'])],
 						'settings' => [$txt['settings']],
 					],
 				],

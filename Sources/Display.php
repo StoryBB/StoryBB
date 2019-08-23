@@ -995,7 +995,7 @@ function Display()
 		loadMemberData($posters);
 		$messages_request = $smcFunc['db_query']('', '
 			SELECT
-				id_msg, icon, subject, poster_time, poster_ip, id_member, modified_time, modified_name, modified_reason, body,
+				id_msg, subject, poster_time, poster_ip, id_member, modified_time, modified_name, modified_reason, body,
 				smileys_enabled, poster_name, poster_email, approved, likes,
 				id_msg_modified < {int:new_from} AS is_read, id_character
 				' . (!empty($msg_selects) ? (', ' . implode(', ', $msg_selects)) : '') . '
@@ -1166,7 +1166,7 @@ function Display()
 	checkSubmitOnce('register');
 	$context['name'] = isset($_SESSION['guest_name']) ? $_SESSION['guest_name'] : '';
 	$context['email'] = isset($_SESSION['guest_email']) ? $_SESSION['guest_email'] : '';
-	// Needed for the editor and message icons.
+	// Needed for the editor.
 	require_once($sourcedir . '/Subs-Editor.php');
 
 	// Now create the editor.
@@ -1193,12 +1193,6 @@ function Display()
 	$context['show_bbc'] = true;
 	$context['attached'] = '';
 	$context['make_poll'] = isset($_REQUEST['poll']);
-
-	// Message icons - customized icons are off?
-	$context['icons'] = getMessageIcons($board);
-
-	if (!empty($context['icons']))
-		$context['icons'][count($context['icons']) - 1]['is_last'] = true;
 
 	// Build the normal button array.
 	$context['normal_buttons'] = [];
@@ -1427,24 +1421,6 @@ function prepareDisplayContext($reset = false)
 	}
 	$last_time = (int) $message['poster_time'];
 
-	// $context['icon_sources'] says where each icon should come from - here we set up the ones which will always exist!
-	if (empty($context['icon_sources']))
-	{
-		$context['icon_sources'] = [];
-		foreach ($context['stable_icons'] as $icon)
-			$context['icon_sources'][$icon] = 'images_url';
-	}
-
-	// Message Icon Management... check the images exist.
-	if (empty($modSettings['messageIconChecks_disable']))
-	{
-		// If the current icon isn't known, then we need to do something...
-		if (!isset($context['icon_sources'][$message['icon']]))
-			$context['icon_sources'][$message['icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $message['icon'] . '.png') ? 'images_url' : 'default_images_url';
-	}
-	elseif (!isset($context['icon_sources'][$message['icon']]))
-		$context['icon_sources'][$message['icon']] = 'images_url';
-
 	// If you're a lazy bum, you probably didn't give a subject...
 	$message['subject'] = $message['subject'] != '' ? $message['subject'] : $txt['no_subject'];
 
@@ -1491,10 +1467,6 @@ function prepareDisplayContext($reset = false)
 	// Run BBC interpreter on the message.
 	$message['body'] = Parser::parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 
-	// If it's in the recycle bin we need to override whatever icon we did have.
-	if (!empty($board_info['recycle']))
-		$message['icon'] = 'recycled';
-
 	require_once($sourcedir . '/Subs-Attachments.php');
 
 	// Compose the memory eat- I mean message array.
@@ -1505,8 +1477,6 @@ function prepareDisplayContext($reset = false)
 		'href' => $scripturl . '?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'],
 		'link' => '<a href="' . $scripturl . '?msg=' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',
 		'member' => $memberContext[$message['id_member']],
-		'icon' => $message['icon'],
-		'icon_url' => $settings[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.png',
 		'subject' => $message['subject'],
 		'time' => timeformat($message['poster_time']),
 		'timestamp' => forum_time(true, $message['poster_time']),
@@ -1618,13 +1588,6 @@ function prepareDisplayContext($reset = false)
 	$output['can_switch_char'] = !empty($output['possible_characters']) && $output['can_modify'];
 	if (!$output['can_switch_char']) {
 		unset ($output['possible_characters']);
-	}
-
-	// Does the file contains any attachments? if so, change the icon.
-	if (!empty($output['attachment']))
-	{
-		$output['icon'] = 'clip';
-		$output['icon_url'] = $settings[$context['icon_sources'][$output['icon']]] . '/post/' . $output['icon'] . '.png';
 	}
 
 	// Are likes enable?

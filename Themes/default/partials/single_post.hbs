@@ -126,9 +126,6 @@
 					<a href="{{href}}" rel="nofollow">{{{subject}}}</a>
 				</div>
 				<h5>
-					<span class="messageicon"{{#if (eq icon_url (concat ../settings.images_url '/post/xx.png'))}} style="position: absolute; z-index: -1;"{{/if}}>
-						<img src="{{icon_url}}" alt=""{{#if can_modify}} id="msg_icon_{{id}}"{{/if}}>
-					</span>
 					<a href="{{href}}" rel="nofollow" title="{{#if counter}}{{textTemplate reply_number counter ' - '}}{{/if}}{{{subject}}}" class="smalltext">{{{time}}}</a>
 
 					<span class="page_number floatright">

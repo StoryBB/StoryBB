@@ -291,11 +291,6 @@ function MessageIndex()
 	else
 		$fake_ascending = false;
 
-	// Setup the default topic icons...
-	$context['icon_sources'] = [];
-	foreach ($context['stable_icons'] as $icon)
-		$context['icon_sources'][$icon] = 'images_url';
-
 	$topic_ids = [];
 	$context['topics'] = [];
 
@@ -365,10 +360,10 @@ function MessageIndex()
 				' . ( $enableParticipation ? ' COALESCE(( SELECT 1 FROM {db_prefix}messages AS parti WHERE t.id_topic = parti.id_topic and parti.id_member = {int:current_member} LIMIT 1) , 0) as is_posted_in,
 				'	: '') . '
 				t.id_last_msg, t.approved, t.unapproved_posts, ml.poster_time AS last_poster_time, t.id_redirect_topic,
-				ml.id_msg_modified, ml.subject AS last_subject, ml.icon AS last_icon,
+				ml.id_msg_modified, ml.subject AS last_subject,
 				ml.poster_name AS last_member_name, ml.id_member AS last_id_member, cl.avatar, meml.email_address, cf.avatar AS first_member_avatar, memf.email_address AS first_member_mail, COALESCE(af.id_attach, 0) AS first_member_id_attach, af.filename AS first_member_filename, af.attachment_type AS first_member_attach_type, COALESCE(al.id_attach, 0) AS last_member_id_attach, al.filename AS last_member_filename, al.attachment_type AS last_member_attach_type,
 				COALESCE(cl.character_name, meml.real_name, ml.poster_name) AS last_display_name, t.id_first_msg,
-				mf.poster_time AS first_poster_time, mf.subject AS first_subject, mf.icon AS first_icon,
+				mf.poster_time AS first_poster_time, mf.subject AS first_subject,
 				mf.poster_name AS first_member_name, mf.id_member AS first_id_member,
 				cf.id_character AS first_character, cl.id_character AS last_character,
 				COALESCE(cf.character_name, memf.real_name, mf.poster_name) AS first_display_name, ' . (!empty($modSettings['preview_characters']) ? '
@@ -461,25 +456,6 @@ function MessageIndex()
 			else
 				$pages = '';
 
-			// We need to check the topic icons exist...
-			if (!empty($modSettings['messageIconChecks_enable']))
-			{
-				if (!isset($context['icon_sources'][$row['first_icon']]))
-					$context['icon_sources'][$row['first_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['first_icon'] . '.png') ? 'images_url' : 'default_images_url';
-				if (!isset($context['icon_sources'][$row['last_icon']]))
-					$context['icon_sources'][$row['last_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['last_icon'] . '.png') ? 'images_url' : 'default_images_url';
-			}
-			else
-			{
-				if (!isset($context['icon_sources'][$row['first_icon']]))
-					$context['icon_sources'][$row['first_icon']] = 'images_url';
-				if (!isset($context['icon_sources'][$row['last_icon']]))
-					$context['icon_sources'][$row['last_icon']] = 'images_url';
-			}
-
-			if (!empty($board_info['recycle']))
-				$row['first_icon'] = 'recycled';
-
 			// Is this topic pending approval, or does it have any posts pending approval?
 			if ($context['can_approve_posts'] && $row['unapproved_posts'])
 				$colorClass .= (!$row['approved'] ? ' approvetopic' : ' approvepost');
@@ -508,8 +484,6 @@ function MessageIndex()
 					'timestamp' => forum_time(true, $row['first_poster_time']),
 					'subject' => $row['first_subject'],
 					'preview' => $row['first_body'],
-					'icon' => $row['first_icon'],
-					'icon_url' => $settings[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.png',
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['first_subject'] . '</a>',
 				),
@@ -526,8 +500,6 @@ function MessageIndex()
 					'timestamp' => forum_time(true, $row['last_poster_time']),
 					'subject' => $row['last_subject'],
 					'preview' => $row['last_body'],
-					'icon' => $row['last_icon'],
-					'icon_url' => $settings[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.png',
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
 				),
@@ -537,8 +509,6 @@ function MessageIndex()
 				'is_poll' => $modSettings['pollMode'] == '1' && $row['id_poll'] > 0,
 				'is_posted_in' => ($enableParticipation ? $row['is_posted_in'] : false),
 				'is_watched' => false,
-				'icon' => $row['first_icon'],
-				'icon_url' => $settings[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.png',
 				'subject' => $row['first_subject'],
 				'new' => $row['new_from'] <= $row['id_msg_modified'],
 				'new_from' => $row['new_from'],
