@@ -3,10 +3,6 @@
 {{#if (browser 'is_firefox')}}
 	window.addEventListener("pageshow", reActivate, false);
 {{/if}}
-	var icon_urls = {
-		{{#each context.icons}}'{{value}}':'{{url}}'{{#unless is_last}},{{/unless}}
-		{{/each}}
-	};
 </script>
 <form action="{{scripturl}}?action={{{context.destination}}};{{#if context.current_board}}board={{context.current_board}}{{/if}}" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="{{#unless context.becomes_approved}}alert('{{txt.js_post_will_require_approval}}');{{/unless}}submitonce(this);" enctype="multipart/form-data">
 	<div id="preview_section"{{#unless context.preview_message}} style="display: none;"{{/unless}}>
@@ -425,7 +421,7 @@
 				}
 				// @todo Currently not sending poll options and option checkboxes.
 				var x = new Array();
-				var textFields = ['subject', '{{context.post_box_name}}', '{{context.session_var}}', 'icon', 'guestname', 'email', 'question', 'topic'];
+				var textFields = ['subject', '{{context.post_box_name}}', '{{context.session_var}}', 'guestname', 'email', 'question', 'topic'];
 				var numericFields = [
 					'board', 'topic', 'last_msg',
 					'poll_max_votes', 'poll_expire', 'poll_change_vote', 'poll_hide'

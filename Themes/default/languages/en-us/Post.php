@@ -11,7 +11,6 @@
  */
 
 $txt['post_reply'] = 'Post reply';
-$txt['message_icon'] = 'Message icon';
 $txt['subject_not_filled'] = 'The subject field was not filled out. It is required.';
 $txt['message_body_not_filled'] = 'The message body was not filled out. It is required.';
 // Use numeric entities in the below string.
@@ -21,13 +20,6 @@ $txt['disable_smileys'] = 'Disable smileys';
 $txt['dont_use_smileys'] = 'Don\'t use smileys.';
 // Escape any single quotes in here twice.. 'it\'s' -> 'it\\\'s'.
 $txt['posted_on'] = 'Posted on';
-$txt['standard'] = 'Standard';
-$txt['thumbs_up'] = 'Thumb Up';
-$txt['thumbs_down'] = 'Thumb Down';
-$txt['exclamation_point'] = 'Exclamation point';
-$txt['question_mark'] = 'Question mark';
-$txt['icon_poll'] = 'Poll';
-$txt['lamp'] = 'Lamp';
 $txt['add_smileys'] = 'Add smileys';
 $txt['topic_notify_no'] = 'There are no topics with notification.';
 // post_too_long seems unused (duplicate in Errors: error_post_too_long

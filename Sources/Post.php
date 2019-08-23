@@ -311,8 +311,6 @@ function Post($post_errors = [])
 				$_REQUEST['subject'] = '';
 			if (!isset($_REQUEST['message']))
 				$_REQUEST['message'] = '';
-			if (!isset($_REQUEST['icon']))
-				$_REQUEST['icon'] = 'xx';
 
 			// They are previewing if they asked to preview (i.e. came from quick reply).
 			$really_previewing = !empty($_POST['preview']);
@@ -417,8 +415,6 @@ function Post($post_errors = [])
 		$context['notify'] = !empty($_REQUEST['notify']);
 		$context['use_smileys'] = !isset($_REQUEST['ns']);
 
-		$context['icon'] = isset($_REQUEST['icon']) ? preg_replace('~[\./\\\\*\':"<>]~', '', $_REQUEST['icon']) : 'xx';
-
 		// Set the destination action for submission.
 		$context['destination'] = 'post2;start=' . $_REQUEST['start'] . (isset($_REQUEST['msg']) ? ';msg=' . $_REQUEST['msg'] . ';' . $context['session_var'] . '=' . $context['session_id'] : '') . (isset($_REQUEST['poll']) ? ';poll' : '');
 		$context['submit_label'] = isset($_REQUEST['msg']) ? $txt['save'] : $txt['post'];
@@ -430,7 +426,7 @@ function Post($post_errors = [])
 			$request = $smcFunc['db_query']('', '
 				SELECT
 					m.id_member, m.modified_time, m.smileys_enabled, m.body,
-					m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
+					m.poster_name, m.poster_email, m.subject, m.approved,
 					COALESCE(a.size, -1) AS filesize, a.filename, a.id_attach,
 					a.approved AS attachment_approved, t.id_member_started AS id_member_poster,
 					m.poster_time, log.id_action
@@ -548,7 +544,7 @@ function Post($post_errors = [])
 		$request = $smcFunc['db_query']('', '
 			SELECT
 				m.id_member, m.modified_time, m.modified_name, m.modified_reason, m.smileys_enabled, m.body,
-				m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
+				m.poster_name, m.poster_email, m.subject, m.approved,
 				COALESCE(a.size, -1) AS filesize, a.filename, a.id_attach, a.mime_type, a.id_thumb,
 				a.approved AS attachment_approved, t.id_member_started AS id_member_poster,
 				m.poster_time, log.id_action
@@ -612,7 +608,6 @@ function Post($post_errors = [])
 
 		// Check the boxes that should be checked.
 		$context['use_smileys'] = !empty($row['smileys_enabled']);
-		$context['icon'] = $row['icon'];
 
 		// Show an "approve" box if the user can approve it, and the message isn't approved.
 		if (!$row['approved'] && !$context['show_approval'])
@@ -657,7 +652,6 @@ function Post($post_errors = [])
 	{
 		// By default....
 		$context['use_smileys'] = true;
-		$context['icon'] = 'xx';
 
 		if ($user_info['is_guest'])
 		{
@@ -984,7 +978,7 @@ function Post($post_errors = [])
 		ShowDrafts($user_info['id'], $topic);
 	}
 
-	// Needed for the editor and message icons.
+	// Needed for the editor.
 	require_once($sourcedir . '/Subs-Editor.php');
 
 	// Now create the editor.
@@ -1008,45 +1002,6 @@ function Post($post_errors = [])
 
 	$context['attached'] = '';
 	$context['make_poll'] = isset($_REQUEST['poll']);
-
-	// Message icons - customized icons are off?
-	$context['icons'] = getMessageIcons($board);
-
-	if (!empty($context['icons']))
-		$context['icons'][count($context['icons']) - 1]['is_last'] = true;
-
-	// Are we starting a poll? if set the poll icon as selected if its available
-	if (isset($_REQUEST['poll']))
-	{
-		foreach ($context['icons'] as $icons)
-		{
-			if (isset($icons['value']) && $icons['value'] == 'poll')
-			{
-				// if found we are done
-				$context['icon'] = 'poll';
-				break;
-			}
-		}
-	}
-
-	$context['icon_url'] = '';
-	for ($i = 0, $n = count($context['icons']); $i < $n; $i++)
-	{
-		$context['icons'][$i]['selected'] = $context['icon'] == $context['icons'][$i]['value'];
-		if ($context['icons'][$i]['selected'])
-			$context['icon_url'] = $context['icons'][$i]['url'];
-	}
-	if (empty($context['icon_url']))
-	{
-		$context['icon_url'] = $settings[file_exists($settings['theme_dir'] . '/images/post/' . $context['icon'] . '.png') ? 'images_url' : 'default_images_url'] . '/post/' . $context['icon'] . '.png';
-		array_unshift($context['icons'], array(
-			'value' => $context['icon'],
-			'name' => $txt['current_icon'],
-			'url' => $context['icon_url'],
-			'is_last' => empty($context['icons']),
-			'selected' => true,
-		));
-	}
 
 	if (!empty($topic) && !empty($modSettings['topicSummaryPosts']))
 		getTopic();
@@ -1180,21 +1135,6 @@ function Post($post_errors = [])
 		'dt' => '<span id="caption_subject"' . (isset($context['post_error']['no_subject']) ? ' class="error"' : '') . '>' . $txt['subject'] . '</span>',
 		'dd' => '<input type="text" name="subject" value="' . $context['subject'] . '" size="80" maxlength="80" required>',
 	);
-
-	// Icons are fun.
-	$context['posting_fields']['icon'] = array(
-		'dt' => $txt['message_icon'],
-		'dd' => '<select name="icon" id="icon" onchange="showimage()">',
-	);
-	foreach ($context['icons'] as $icon)
-	{
-		$context['posting_fields']['icon']['dd'] .= '
-							<option value="' . $icon['value'] . '"' . ($icon['value'] == $context['icon'] ? ' selected' : '') . '>' . $icon['name'] . '</option>';
-	}
-	$context['posting_fields']['icon']['dd'] .= '
-						</select>
-						<img id="icons" src="' . $context['icon_url'] . '">';
-
 
 	// Finally, load the template.
 	if (!isset($_REQUEST['xml']))
@@ -1905,25 +1845,11 @@ function Post2()
 	// Creating a new topic?
 	$newTopic = empty($_REQUEST['msg']) && empty($topic);
 
-	// Check the icon.
-	if (!isset($_POST['icon']))
-		$_POST['icon'] = 'xx';
-
-	else
-	{
-		$_POST['icon'] = $smcFunc['htmlspecialchars']($_POST['icon']);
-
-		// Need to figure it out if this is a valid icon name.
-		if ((!file_exists($settings['theme_dir'] . '/images/post/' . $_POST['icon'] . '.png')) && (!file_exists($settings['default_theme_dir'] . '/images/post/' . $_POST['icon'] . '.png')))
-			$_POST['icon'] = 'xx';
-	}
-
 	// Collect all parameters for the creation or modification of a post.
 	$msgOptions = array(
 		'id' => empty($_REQUEST['msg']) ? 0 : (int) $_REQUEST['msg'],
 		'subject' => $_POST['subject'],
 		'body' => $_POST['message'],
-		'icon' => preg_replace('~[\./\\\\*:"\'<>]~', '', $_POST['icon']),
 		'smileys_enabled' => !isset($_POST['ns']),
 		'attachments' => empty($attachIDs) ? [] : $attachIDs,
 		'approved' => $becomesApproved,
@@ -2535,7 +2461,7 @@ function JavaScriptModify()
 	$request = $smcFunc['db_query']('', '
 		SELECT
 			t.locked, t.num_replies, t.id_member_started, t.id_first_msg,
-			m.id_msg, m.id_member, m.poster_time, m.subject, m.smileys_enabled, m.body, m.icon,
+			m.id_msg, m.id_member, m.poster_time, m.subject, m.smileys_enabled, m.body,
 			m.modified_time, m.modified_name, m.modified_reason, m.approved,
 			m.poster_name, m.poster_email
 		FROM {db_prefix}messages AS m
@@ -2557,7 +2483,7 @@ function JavaScriptModify()
 	$smcFunc['db_free_result']($request);
 
 	// Change either body or subject requires permissions to modify messages.
-	if (isset($_POST['message']) || isset($_POST['subject']) || isset($_REQUEST['icon']))
+	if (isset($_POST['message']) || isset($_POST['subject']))
 	{
 		if (!empty($row['locked']))
 			isAllowedTo('moderate_board');
@@ -2657,7 +2583,6 @@ function JavaScriptModify()
 			'id' => $row['id_msg'],
 			'subject' => isset($_POST['subject']) ? $_POST['subject'] : null,
 			'body' => isset($_POST['message']) ? $_POST['message'] : null,
-			'icon' => isset($_REQUEST['icon']) ? preg_replace('~[\./\\\\*\':"<>]~', '', $_REQUEST['icon']) : null,
 			'modify_reason' => (isset($_POST['modify_reason']) ? $_POST['modify_reason'] : ''),
 		);
 		$topicOptions = array(
@@ -2674,8 +2599,8 @@ function JavaScriptModify()
 			'update_post_count' => !$user_info['is_guest'] && !isset($_REQUEST['msg']) && $board_info['posts_count'],
 		);
 
-		// Only consider marking as editing if they have edited the subject, message or icon.
-		if ((isset($_POST['subject']) && $_POST['subject'] != $row['subject']) || (isset($_POST['message']) && $_POST['message'] != $row['body']) || (isset($_REQUEST['icon']) && $_REQUEST['icon'] != $row['icon']))
+		// Only consider marking as editing if they have edited the subject or message..
+		if ((isset($_POST['subject']) && $_POST['subject'] != $row['subject']) || (isset($_POST['message']) && $_POST['message'] != $row['body']))
 		{
 			// And even then only if the time has passed...
 			if (time() - $row['poster_time'] > $modSettings['edit_wait_time'] || $user_info['id'] != $row['id_member'])

@@ -13,7 +13,7 @@
 use StoryBB\Helper\Parser;
 
 /**
- * The main handler and designator for AJAX stuff - jumpto, message icons and previews
+ * The main handler and designator for AJAX stuff - jumpto and previews
  */
 function XMLhttpMain()
 {
@@ -21,7 +21,6 @@ function XMLhttpMain()
 
 	$subActions = array(
 		'jumpto' => 'GetJumpTo',
-		'messageicons' => 'ListMessageIcons',
 		'previews' => 'RetrievePreview',
 	);
 
@@ -63,20 +62,6 @@ function GetJumpTo()
 
 	StoryBB\Template::set_layout('xml');
 	$context['sub_template'] = 'xml_jumpto';
-}
-
-/**
- * Gets a list of available message icons and sends the info to the template for display
- */
-function ListMessageIcons()
-{
-	global $context, $sourcedir, $board;
-
-	require_once($sourcedir . '/Subs-Editor.php');
-	$context['icons'] = getMessageIcons($board);
-
-	StoryBB\Template::set_layout('xml');
-	$context['sub_template'] = 'xml_message_icons';
 }
 
 /**

@@ -38,7 +38,6 @@ class Post
 		global $user_info, $txt, $modSettings, $smcFunc, $sourcedir;
 
 		// Set optional parameters to the default value.
-		$msgOptions['icon'] = empty($msgOptions['icon']) ? 'xx' : $msgOptions['icon'];
 		$msgOptions['smileys_enabled'] = !empty($msgOptions['smileys_enabled']);
 		$msgOptions['attachments'] = empty($msgOptions['attachments']) ? [] : $msgOptions['attachments'];
 		$msgOptions['approved'] = isset($msgOptions['approved']) ? (int) $msgOptions['approved'] : 1;
@@ -48,6 +47,7 @@ class Post
 		$topicOptions['sticky_mode'] = isset($topicOptions['sticky_mode']) ? $topicOptions['sticky_mode'] : null;
 		$topicOptions['redirect_expires'] = isset($topicOptions['redirect_expires']) ? $topicOptions['redirect_expires'] : null;
 		$topicOptions['redirect_topic'] = isset($topicOptions['redirect_topic']) ? $topicOptions['redirect_topic'] : null;
+		$topicOptions['is_moved'] = !empty($topicOptions['is_moved']) ? $topicOptions['is_moved'] : null,
 		$posterOptions['id'] = empty($posterOptions['id']) ? 0 : (int) $posterOptions['id'];
 		$posterOptions['ip'] = empty($posterOptions['ip']) ? $user_info['ip'] : $posterOptions['ip'];
 		$posterOptions['char_id'] = empty($posterOptions['char_id']) ? 0 : (int) $posterOptions['char_id'];
@@ -125,13 +125,13 @@ class Post
 		$message_columns = array(
 			'id_board' => 'int', 'id_topic' => 'int', 'id_creator' => 'int', 'id_member' => 'int', 'id_character' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : (empty($modSettings['max_messageLength']) ? 'string' : 'string-65534')),
 			'poster_name' => 'string-255', 'poster_email' => 'string-255', 'poster_time' => 'int', 'poster_ip' => 'inet',
-			'smileys_enabled' => 'int', 'modified_name' => 'string', 'icon' => 'string-16', 'approved' => 'int',
+			'smileys_enabled' => 'int', 'modified_name' => 'string', 'approved' => 'int',
 		);
 
 		$message_parameters = array(
 			$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $posterOptions['id'], $posterOptions['char_id'], $msgOptions['subject'], $msgOptions['body'],
 			$posterOptions['name'], $posterOptions['email'], time(), $posterOptions['ip'],
-			$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['icon'], $msgOptions['approved'],
+			$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['approved'],
 		);
 
 		// What if we want to do anything with posts?
@@ -172,13 +172,13 @@ class Post
 				'id_board' => 'int', 'id_member_started' => 'int', 'id_member_updated' => 'int', 'id_first_msg' => 'int',
 				'id_last_msg' => 'int', 'locked' => 'int', 'is_sticky' => 'int', 'num_views' => 'int',
 				'id_poll' => 'int', 'unapproved_posts' => 'int', 'approved' => 'int',
-				'redirect_expires' => 'int', 'id_redirect_topic' => 'int',
+				'redirect_expires' => 'int', 'id_redirect_topic' => 'int', 'is_moved' => 'int',
 			);
 			$topic_parameters = array(
 				$topicOptions['board'], $posterOptions['id'], $posterOptions['id'], $msgOptions['id'],
 				$msgOptions['id'], $topicOptions['lock_mode'] === null ? 0 : $topicOptions['lock_mode'], $topicOptions['sticky_mode'] === null ? 0 : $topicOptions['sticky_mode'], 0,
 				$topicOptions['poll'] === null ? 0 : $topicOptions['poll'], $msgOptions['approved'] ? 0 : 1, $msgOptions['approved'],
-				$topicOptions['redirect_expires'] === null ? 0 : $topicOptions['redirect_expires'], $topicOptions['redirect_topic'] === null ? 0 : $topicOptions['redirect_topic'],
+				$topicOptions['redirect_expires'] === null ? 0 : $topicOptions['redirect_expires'], $topicOptions['redirect_topic'] === null ? 0 : $topicOptions['redirect_topic'], $topicOptions['is_moved'] === null ? 0 : $topicOptions['is_moved'],
 			);
 
 			call_integration_hook('integrate_before_create_topic', array(&$msgOptions, &$topicOptions, &$posterOptions, &$topic_columns, &$topic_parameters));
@@ -432,8 +432,6 @@ class Post
 			$messages_columns['poster_name'] = $posterOptions['name'];
 		if (isset($posterOptions['email']))
 			$messages_columns['poster_email'] = $posterOptions['email'];
-		if (isset($msgOptions['icon']))
-			$messages_columns['icon'] = $msgOptions['icon'];
 		if (isset($msgOptions['subject']))
 			$messages_columns['subject'] = $msgOptions['subject'];
 		if (isset($msgOptions['body']))
