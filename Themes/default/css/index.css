@@ -2075,7 +2075,7 @@ img.icon.char_avatar {
 }
 
 .main_icons.moved_topic::before {
-	background: url(../images/post/moved.png) center;
+	background: url(../images/moved.png) center;
 }
 
 /* Small fix for topics */

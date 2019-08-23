@@ -728,7 +728,7 @@ $(function() {
 		e.preventDefault();
 		var title = $(this).parent().text(),
 			url = $(this).attr('href') + ';js=1';
-		return reqOverlayDiv(url, title, 'post/thumbup.png');
+		return reqOverlayDiv(url, title, 'thumbup.png');
 	});
 
 	// Message likes.
