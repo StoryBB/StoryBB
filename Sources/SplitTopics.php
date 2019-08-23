@@ -1404,7 +1404,6 @@ function MergeExecute($topics = [])
 			$redirect_subject = sprintf($txt['merged_subject'], $topic_data[$this_old_topic]['subject']);
 
 			$msgOptions = array(
-				'icon' => 'moved',
 				'subject' => $redirect_subject,
 				'body' => $reason,
 				'approved' => 1,
@@ -1415,6 +1414,7 @@ function MergeExecute($topics = [])
 				'lock_mode' => 1,
 				'board' => $topic_data[$this_old_topic]['board'],
 				'mark_as_read' => true,
+				'is_moved' => 1,
 			);
 
 			// So we have to make the post. We need to do *this* here so we don't foul up indexes later

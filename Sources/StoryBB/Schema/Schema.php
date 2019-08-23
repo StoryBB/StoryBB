@@ -1134,6 +1134,7 @@ class Schema
 					'id_redirect_topic' => Column::mediumint(),
 					'unapproved_posts' => Column::smallint(),
 					'approved' => Column::tinyint()->default(1),
+					'is_moved' => Column::tinyint(),
 				],
 				[
 					Index::primary(['id_topic']),

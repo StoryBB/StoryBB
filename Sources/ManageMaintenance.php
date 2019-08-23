@@ -1455,12 +1455,12 @@ function MaintainMassMoveTopics()
 
 	// The big WHERE clause
 	$conditions = 'WHERE t.id_board = {int:id_board_from}
-		AND m.icon != {string:moved}';
+		AND t.is_moved = {int:moved}';
 
 	// DB parameters
 	$params = array(
 		'id_board_from' => $id_board_from,
-		'moved' => 'moved',
+		'moved' => 1,
 	);
 
 	// Only moving topics not posted in for x days?

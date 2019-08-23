@@ -179,10 +179,10 @@ function RemoveOldTopics2()
 	if ($_POST['delete_type'] == 'moved')
 	{
 		$condition .= '
-			AND m.icon = {string:icon}
 			AND t.locked = {int:locked}
-			AND t.redirect_expires = {int:not_expiring}';
-		$condition_params['icon'] = 'moved';
+			AND t.redirect_expires = {int:not_expiring}
+			AND t.is_moved = {int:moved}';
+		$condition_params['moved'] = 1;
 		$condition_params['locked'] = 1;
 		$condition_params['not_expiring'] = 0;
 	}
@@ -191,9 +191,9 @@ function RemoveOldTopics2()
 	{
 		// Exclude moved/merged notices since we have another option for those...
 		$condition .= '
-			AND t.icon != {string:icon}
+			AND t.is_moved != {int:moved}
 			AND t.locked = {int:locked}';
-		$condition_params['icon'] = 'moved';
+		$condition_params['moved'] = 1;
 		$condition_params['locked'] = 1;
 	}
 
@@ -583,7 +583,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 	$request = $smcFunc['db_query']('', '
 		SELECT
-			m.id_member, m.id_character, m.icon, m.poster_time, m.subject,' . (empty($modSettings['search_custom_index_config']) ? '' : ' m.body,') . '
+			m.id_member, m.id_character, m.poster_time, m.subject,' . (empty($modSettings['search_custom_index_config']) ? '' : ' m.body,') . '
 			m.approved, t.id_topic, t.id_first_msg, t.id_last_msg, t.num_replies, t.id_board,
 			t.id_member_started AS id_member_poster,
 			b.count_posts
@@ -763,7 +763,8 @@ function removeMessage($message, $decreasePostCount = true)
 
 	// If recycle topics has been set, make a copy of this message in the recycle board.
 	// Make sure we're not recycling messages that are already on the recycle board.
-	if (!empty($modSettings['recycle_enable']) && $row['id_board'] != $modSettings['recycle_board'] && $row['icon'] != 'recycled')
+	// @todo Fix this
+	if (!empty($modSettings['recycle_enable']) && $row['id_board'] != $modSettings['recycle_board'])
 	{
 		// Check if the recycle board exists and if so get the read status.
 		$request = $smcFunc['db_query']('', '
