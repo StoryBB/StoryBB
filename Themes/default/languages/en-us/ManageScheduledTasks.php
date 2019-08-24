@@ -51,6 +51,8 @@ $txt['scheduled_task_scrub_logs'] = 'Scrub logs for privacy';
 $txt['scheduled_task_desc_scrub_logs'] = 'Removes privacy-related data from logs. Should not be disabled.';
 $txt['scheduled_task_remove_unapproved_accts'] = 'Remove unapproved accounts';
 $txt['scheduled_task_desc_remove_unapproved_accts'] = 'Removed accounts that have not been approved. Should not be disabled.';
+$txt['scheduled_task_remove_old_alerts'] = 'Remove Old Alerts';
+$txt['scheduled_task_desc_remove_old_alerts'] = 'Removes read alerts once they have been read at least a week. Should not be disabled.';
 
 $txt['scheduled_task_reg_starting'] = 'Starting at %1$s';
 $txt['scheduled_task_reg_repeating'] = 'repeating every %1$d %2$s';

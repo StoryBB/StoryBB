@@ -496,7 +496,8 @@ VALUES
   (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', 'StoryBB\\Task\\Schedulable\\RemoveOldDrafts'),
   (14, 0, 300, 1, 'd', 0, 'clean_exports', 'StoryBB\\Task\\Schedulable\\CleanExports'),
   (15, 0, 360, 1, 'd', 0, 'scrub_logs', 'StoryBB\\Task\\Schedulable\\ScrubLogs'),
-  (16, 0, 420, 1, 'd', 0, 'remove_unapproved_accts', 'StoryBB\\Task\\Schedulable\\RemoveUnapprovedAccounts');
+  (16, 0, 420, 1, 'd', 0, 'remove_unapproved_accts', 'StoryBB\\Task\\Schedulable\\RemoveUnapprovedAccounts'),
+  (17, 0, 480, 1, 'd', 0, 'remove_old_alerts', 'StoryBB\\Task\\Schedulable\\RemoveOldAlerts');
 
 # --------------------------------------------------------
 
