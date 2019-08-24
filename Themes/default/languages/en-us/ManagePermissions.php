@@ -287,19 +287,6 @@ $txt['permissionicon'] = '';
 
 $txt['permission_by_board_desc'] = 'Here you can set which permissions profile a board uses. You can create new permission profiles from the &quot;Edit Profiles&quot; menu.';
 
-$txt['permissions_post_moderation_desc'] = 'From this page, you can configure the ability to hold users\' posts before being visible to regular forum members, including which group or groups of users can approve them. Users whose posts are held for approval will still be able to see their posts, as well as replies from approvers, e.g. moderator feedback about making a post appropriate.';
-$txt['permissions_post_moderation_deny_note'] = 'Note that you cannot apply the &quot;deny&quot; permission from this page. Please edit the permissions directly if you wish to apply a deny permission.';
-$txt['permissions_post_moderation_select'] = 'Select Profile';
-$txt['permissions_post_moderation_new_topics'] = 'New Topics';
-$txt['permissions_post_moderation_replies_own'] = 'Own Replies';
-$txt['permissions_post_moderation_replies_any'] = 'Any Replies';
-$txt['permissions_post_moderation_attachments'] = 'Attachments';
-$txt['permissions_post_moderation_legend'] = 'Legend';
-$txt['permissions_post_moderation_allow'] = 'Can create';
-$txt['permissions_post_moderation_moderate'] = 'Can create but requires approval';
-$txt['permissions_post_moderation_disallow'] = 'Cannot create';
-$txt['permissions_post_moderation_group'] = 'Group';
-
 $txt['auto_approve_topics'] = 'Post new topics, without requiring approval';
 $txt['auto_approve_replies'] = 'Post replies to topics, without requiring approval';
 $txt['auto_approve_attachments'] = 'Post attachments, without requiring approval';
