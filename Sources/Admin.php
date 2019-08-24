@@ -223,7 +223,6 @@ function AdminMain()
 						'index' => [$txt['permissions_groups'], 'manage_permissions'],
 						'board' => [$txt['permissions_boards'], 'manage_permissions'],
 						'profiles' => [$txt['permissions_profiles'], 'manage_permissions'],
-						'postmod' => [$txt['permissions_post_moderation'], 'manage_permissions'],
 					],
 				],
 				'regcenter' => [
