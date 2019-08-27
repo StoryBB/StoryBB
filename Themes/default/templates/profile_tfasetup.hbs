@@ -30,7 +30,7 @@
 							<strong>{{{txt.tfa_step3}}}</strong><br />
 							{{#if context.tfa_error}}<div class="error smalltext">{{{txt.tfa_code_invalid}}}</div>{{/if}}
 							<input type="text" name="tfa_code" style="width: 200px;"{{#if context.tfa_error}} class="error"{{/if}}{{#if context.tfa_value}} value="{{{context.tfa_value}}}">
-							<input type="submit" name="save" value="{{{txt.tfa_enable}}}" class="button_submit" style="float: none;" />
+							<input type="submit" name="save" value="{{{txt.tfa_enable}}}" style="float: none;" />
 						</div>
 						{{token_form context.token_check}}
 						{{session_form}}

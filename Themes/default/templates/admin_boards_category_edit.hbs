@@ -68,10 +68,10 @@
 				</dl>
 
 {{#if context.category.is_new}}
-				<input type="submit" name="add" value="{{{txt.mboards_add_cat_button}}}" onclick="return !isEmptyText(this.form.cat_name);" class="button_submit">
+				<input type="submit" name="add" value="{{{txt.mboards_add_cat_button}}}" onclick="return !isEmptyText(this.form.cat_name);">
 {{else}}
-				<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.cat_name);" class="button_submit">
-				<input type="submit" name="delete" value="{{{txt.mboards_delete_cat}}}" data-confirm="{{{txt.catConfirm}}}" class="button_submit you_sure">
+				<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.cat_name);">
+				<input type="submit" name="delete" value="{{{txt.mboards_delete_cat}}}" data-confirm="{{{txt.catConfirm}}}" class="you_sure">
 {{/if}}
 
 				{{session_form}}

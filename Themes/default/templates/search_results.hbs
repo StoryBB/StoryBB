@@ -29,7 +29,7 @@
 						</dd>
 					</dl>
 					<div class="flow_auto" >
-						<input type="submit" name="edit_search" value="{{{txt.search_adjust_submit}}}" class="button_submit">
+						<input type="submit" name="edit_search" value="{{{txt.search_adjust_submit}}}">
 						<input type="hidden" name="searchtype" value="{{#if context.search_params.searchtype}}{{context.search_params.searchtype}}{{else}}0{{/if}}">
 						<input type="hidden" name="userspec" value="{{{context.search_params.userspec}}}">
 						<input type="hidden" name="show_complete" value="{{#if context.search_params.show_complete}}1{{else}}0{{/if}}">
@@ -112,7 +112,7 @@
 		{{/if}}
 
 					<input type="hidden" name="redirect_url" value="{{scripturl}}?action=search2;params={{{context.params}}}">
-					<input type="submit" value="{{{txt.quick_mod_go}}}" onclick="return this.form.qaction.value != '' &amp;&amp; confirm('{{{txt.quickmod_confirm}}}');" class="button_submit" style="float: none;font-size: .8em;">
+					<input type="submit" value="{{{txt.quick_mod_go}}}" onclick="return this.form.qaction.value != '' &amp;&amp; confirm('{{{txt.quickmod_confirm}}}');" style="float: none;font-size: .8em;">
 				</div>
 			</div>
 	{{/if}}

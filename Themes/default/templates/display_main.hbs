@@ -67,7 +67,7 @@
 		{{/each}}
 			</ul>
 			<div class="submitbutton">
-				<input type="submit" value="{{txt.poll_vote}}" class="button_submit">
+				<input type="submit" value="{{txt.poll_vote}}">
 				{{session_form}}
 			</div>
 		</form>
@@ -240,7 +240,7 @@
 					'<input type="hidden" name="topic" value="{{context.current_topic}}">' +
 					'<input type="hidden" name="msg" value="%msg_id%">' +
 					'<div class="righttext quickModifyMargin">' +
-						'<input type="submit" name="post" value="{{txt.save}}" onclick="return oQuickModify.modifySave(\'{{context.session_id}}\', \'{{context.session_var}}\');" accesskey="s" class="button_submit">&nbsp;&nbsp;<input type="submit" name="cancel" value="{{txt.modify_cancel}}" onclick="return oQuickModify.modifyCancel();" class="button_submit">' +
+						'<input type="submit" name="post" value="{{txt.save}}" onclick="return oQuickModify.modifySave(\'{{context.session_id}}\', \'{{context.session_var}}\');" accesskey="s">&nbsp;&nbsp;<input type="submit" name="cancel" value="{{txt.modify_cancel}}" onclick="return oQuickModify.modifyCancel();">' +
 					'</div>' +
 				'</div>',
 				sTemplateSubjectEdit: {{{json '<input type="text" name="subject" value="%subject%" size="80" maxlength="80">'}}},

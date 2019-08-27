@@ -540,7 +540,7 @@ function EditSmileys()
 							<option value="delete">' . $txt['smileys_remove'] . '</option>
 						</select>
 						<noscript>
-							<input type="submit" name="perform_action" value="' . $txt['go'] . '" class="button_submit">
+							<input type="submit" name="perform_action" value="' . $txt['go'] . '">
 						</noscript>',
 					'class' => 'righttext',
 				),

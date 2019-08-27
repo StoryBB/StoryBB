@@ -1118,7 +1118,7 @@ function ViewWatchedUsers()
 			$context['view_posts'] ? array(
 				'position' => 'bottom_of_list',
 				'value' => '
-					<input type="submit" name="delete_selected" value="' . $txt['quickmod_delete_selected'] . '" class="button_submit">',
+					<input type="submit" name="delete_selected" value="' . $txt['quickmod_delete_selected'] . '">',
 				'class' => 'floatright',
 			) : [],
 		),
@@ -1550,7 +1550,7 @@ function ViewWarningLog()
 				'value' => '
 					' . $txt['modlog_search'] . ':
 					<input type="text" name="search" size="18" value="' . $smcFunc['htmlspecialchars']($context['search']['string']) . '">
-					<input type="submit" name="is_search" value="' . $txt['modlog_go'] . '" class="button_submit">',
+					<input type="submit" name="is_search" value="' . $txt['modlog_go'] . '">',
 				'class' => 'floatright',
 			),
 		),
@@ -1765,11 +1765,11 @@ function ViewWarningTemplates()
 		'additional_rows' => array(
 			array(
 				'position' => 'bottom_of_list',
-				'value' => '&nbsp;<input type="submit" name="delete" value="' . $txt['mc_warning_template_delete'] . '" data-confirm="' . $txt['mc_warning_template_delete_confirm'] . '" class="button_submit you_sure">',
+				'value' => '&nbsp;<input type="submit" name="delete" value="' . $txt['mc_warning_template_delete'] . '" data-confirm="' . $txt['mc_warning_template_delete_confirm'] . '" class="you_sure">',
 			),
 			array(
 				'position' => 'bottom_of_list',
-				'value' => '<input type="submit" name="add" value="' . $txt['mc_warning_template_add'] . '" class="button_submit">',
+				'value' => '<input type="submit" name="add" value="' . $txt['mc_warning_template_add'] . '">',
 			),
 		),
 	);

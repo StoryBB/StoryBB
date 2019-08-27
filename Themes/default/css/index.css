@@ -339,7 +339,7 @@ h3.largetext {
 	min-width: 30em;
 }
 
-#search_form input[type=text], #search_form input[type=email], #search_form input[type=search], #search_form select, #search_form .button_submit {
+#search_form input[type=text], #search_form input[type=email], #search_form input[type=search], #search_form select, #search_form input[type="submit"] {
 	padding: 2px;
 	margin: 2px;
 	background: #fff;
@@ -353,11 +353,11 @@ h3.largetext {
 	margin: 1px;
 }
 
-#search_form .button_submit {
+#search_form input[type="submit"] {
 	color: #333;
 }
 
-#search_form .button_submit:hover {
+#search_form input[type="submit"]:hover {
 	color: #a85400;
 	text-decoration: none;
 }
@@ -1024,12 +1024,12 @@ select[disabled] {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-#frmLogin input.button_submit, #guest_form input.button_submit, #calendar_navigation input.button_submit, #mergeSelectBoard input.button_submit {
+#frmLogin input[type="submit"], #guest_form input[type="submit"], #calendar_navigation input[type="submit"], #mergeSelectBoard input[type="submit"] {
 	float: none;
 	margin-left: inherit;
 }
 
-.button_submit, .button_reset, .button_link {
+.button_submit, input[type="submit"], .button_reset, .button_link {
 	margin: 0 0 0 12px;
 	padding: 0 4px;
 	float: right;
@@ -1041,7 +1041,7 @@ select[disabled] {
 	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-.button_submit:hover, .button_reset:hover, .button_link:hover {
+.button_submit:hover, input[type="submit"]:hover, .button_reset:hover, .button_link:hover {
 	color: #af6700;
 	border: 1px solid #ddd;
 	border-left: 1px solid #bbb;
@@ -1118,14 +1118,14 @@ a.button_submit {
 }
 
 /* Background of buttons */
-.button_submit, .button_reset, .button_link, .topbottom, .dropmenu li ul, .top_menu, .dropmenu li li:hover, .button, .dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover, #top_section, #search_form .button_submit, .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
+.button_submit, input[type="submit"], .button_reset, .button_link, .topbottom, .dropmenu li ul, .top_menu, .dropmenu li li:hover, .button, .dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover, #top_section, #search_form input[type="submit"], .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
 	background: #fff;
 	/* fallback for some browsers */
 	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
 }
 
 /* Well some of them have different gradient effect on hover */
-.button:hover, .button_submit:hover, .button_reset:hover, .button_link:hover, .topbottom:hover, #search_form .button_submit:hover, .quickbuttons li:hover {
+.button:hover, .button_submit:hover, input[type="submit"]:hover, .button_reset:hover, .button_link:hover, .topbottom:hover, #search_form input[type="submit"]:hover, .quickbuttons li:hover {
 	background: #fff;
 	background-image: linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
 }
@@ -1979,7 +1979,7 @@ body#help_popup {
 	font-size: 1em;
 }
 
-#message_index_jump_to .button_submit {
+#message_index_jump_to input[type="submit"] {
 	padding: 1px 6px;
 }
 
@@ -2846,7 +2846,7 @@ span.postby {
 }
 
 /* Investigate default select and button sizing. Something is slightly off there.*/
-.qaction.button_submit {
+input[type="submit"].qaction {
 	margin: 1px 4px 0 4px;
 }
 
@@ -3346,7 +3346,7 @@ ul.post_options li {
 	float: right;
 }
 
-#post_confirm_buttons .button_submit {
+#post_confirm_buttons .button_submit, #post_confirm_buttons input[type="submit"] {
 	float: none;
 }
 

@@ -94,7 +94,7 @@
 			</dl>
 {{/if}}
 
-			<input type="submit" name="save" value="{{#if context.submit_button_text}}{{{context.submit_button_text}}}{{else}}{{{txt.change_profile}}}{{/if}}" class="button_submit">
+			<input type="submit" name="save" value="{{#if context.submit_button_text}}{{{context.submit_button_text}}}{{else}}{{{txt.change_profile}}}{{/if}}">
 
 			{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
 			{{session_form}}

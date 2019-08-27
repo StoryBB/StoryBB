@@ -26,7 +26,7 @@
 				<div>
 					<strong{{#if (or context.modify_error.bad_password context.modify_error.no_password)}} class="error"{{/if}}>{{{txt.current_password}}}: </strong>
 					<input type="password" name="oldpasswrd" size="20">&nbsp;&nbsp;&nbsp;&nbsp;
-					<input type="submit" value="{{{txt.yes}}}" class="button_submit">
+					<input type="submit" value="{{{txt.yes}}}">
 
 					{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
 					{{session_form}}
@@ -83,7 +83,7 @@
 					</label>
 				</div>
 				<div>
-					<input type="submit" value="{{{txt.delete}}}" class="button_submit">
+					<input type="submit" value="{{{txt.delete}}}">
 
 					{{#if context.token_check}}{{token_form context.token_check}}{{/if}}
 					{{session_form}}

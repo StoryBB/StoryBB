@@ -179,10 +179,10 @@
 {{/if}}
 
 				</dl>
-				<input type="submit" name="save" value="{{{txt.membergroups_edit_save}}}" class="button_submit">
+				<input type="submit" name="save" value="{{{txt.membergroups_edit_save}}}">
 
 {{#if context.group.allow_delete}}
-				<input type="submit" name="delete" value="{{{txt.membergroups_delete}}}" data-confirm="{{#if context.is_moderator_group}}{{{txt.membergroups_confirm_delete_mod}}}{{else}}{{{txt.membergroups_confirm_delete}}}{{/if}}" class="button_submit you_sure">
+				<input type="submit" name="delete" value="{{{txt.membergroups_delete}}}" data-confirm="{{#if context.is_moderator_group}}{{{txt.membergroups_confirm_delete_mod}}}{{else}}{{{txt.membergroups_confirm_delete}}}{{/if}}" class="you_sure">
 {{/if}}
 			</div>
 			{{session_form}}
