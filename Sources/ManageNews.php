@@ -164,7 +164,7 @@ function EditNews()
 				'data' => array(
 					'function' => function($news)
 					{
-						return '<div id="box_preview_' . $news['id'] . '" style="overflow: auto; width: 100%; height: 10ex;">' . $news['parsed'] . '</div>';
+						return '<div id="box_preview_' . $news['id'] . '">' . $news['parsed'] . '</div>';
 					},
 					'style' => 'width: 45%;',
 				),

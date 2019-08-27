@@ -1,6 +1,6 @@
 	{{! This shows the topics that are generally unread. }}
 	<div id="recent" class="main_content">
-		<form action="{{scripturl}}?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
+		<form action="{{scripturl}}?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm">
 			{{session_form}}
 			<input type="hidden" name="qaction" value="markread">
 			<input type="hidden" name="redirect_url" value="action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}}">

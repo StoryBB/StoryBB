@@ -15,10 +15,10 @@
 						<option value="deny">{{{../txt.board_perms_deny}}}</option>
 					</select>
 				</span>
-				<ul style="width:100%" id="boards_list_{{id}}">
+				<ul id="boards_list_{{id}}">
 
 	{{#each boards}}
-					<li class="board" style="width:100%">
+					<li class="board">
 						<span style="margin-{{#if ../../context.right_to_left}}right{{else}}left{{/if}}: {{child_level}}em;">{{{name}}}: </span>
 						<span style="width:50%;float:right">
 							<input type="radio" name="boardaccess[{{id}}]" id="allow_brd{{id}}" value="allow"{{#if allow}} checked{{/if}}>

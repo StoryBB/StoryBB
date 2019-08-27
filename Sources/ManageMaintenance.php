@@ -1951,7 +1951,7 @@ function list_integration_hooks()
 				'position' => 'after_title',
 				'value' => $txt['hooks_disable_instructions'] . '<br>
 					' . $txt['hooks_disable_legend'] . ':
-				<ul style="list-style: none;">
+				<ul>
 					<li class="main_icons post_moderation_allow"> ' . $txt['hooks_disable_legend_exists'] . '</li>
 					<li class="main_icons post_moderation_moderate"> ' . $txt['hooks_disable_legend_disabled'] . '</li>
 					<li class="main_icons post_moderation_deny"> ' . $txt['hooks_disable_legend_missing'] . '</li>

@@ -931,7 +931,7 @@ function ViewSubscribedUsers()
 				'position' => 'top_of_list',
 				'value' => '
 					<div class="flow_auto">
-						<input type="submit" name="ssearch" value="' . $txt['search_sub'] . '" style="margin-top: 3px;">
+						<input type="submit" name="ssearch" value="' . $txt['search_sub'] . '">
 						<input type="text" name="sub_search" value="" class="floatright">
 					</div>
 				',
