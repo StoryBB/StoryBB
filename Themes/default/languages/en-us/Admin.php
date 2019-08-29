@@ -661,26 +661,6 @@ $txt['admin_policies'] = 'Site Policies';
 $txt['paid_subscriptions'] = 'Paid Subscriptions';
 $txt['paid_subs_view'] = 'View Subscriptions';
 
-$txt['hooks_title_list'] = 'Integration Hooks';
-$txt['hooks_field_hook_name'] = 'Hook Name';
-$txt['hooks_field_function_name'] = 'Function Name';
-$txt['hooks_field_function_method'] = 'Function is a method and its class is instantiated';
-$txt['hooks_field_function'] = 'Function';
-$txt['hooks_field_included_file'] = 'Included file';
-$txt['hooks_field_file_name'] = 'File Name';
-$txt['hooks_field_hook_exists'] = 'Status';
-$txt['hooks_active'] = 'Exists';
-$txt['hooks_disabled'] = 'Disabled';
-$txt['hooks_missing'] = 'Not found';
-$txt['hooks_no_hooks'] = 'There are currently no hooks in the system.';
-$txt['hooks_button_remove'] = 'Remove';
-$txt['hooks_disable_instructions'] = 'Click on the status icon to enable or disable the hook';
-$txt['hooks_disable_legend'] = 'Legend';
-$txt['hooks_disable_legend_exists'] = 'the hook exists and is active';
-$txt['hooks_disable_legend_disabled'] = 'the hook exists but has been disabled';
-$txt['hooks_disable_legend_missing'] = 'the hook has not been found';
-$txt['hooks_reset_filter'] = 'No filter';
-
 $txt['board_perms_allow'] = 'Allow';
 $txt['board_perms_ignore'] = 'Ignore';
 $txt['board_perms_deny'] = 'Deny';

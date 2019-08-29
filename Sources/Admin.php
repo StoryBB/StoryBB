@@ -342,7 +342,6 @@ function AdminMain()
 						'database' => [$txt['maintain_sub_database'], 'admin_forum'],
 						'members' => [$txt['maintain_sub_members'], 'admin_forum'],
 						'topics' => [$txt['maintain_sub_topics'], 'admin_forum'],
-						'hooks' => [$txt['hooks_title_list'], 'admin_forum'],
 					],
 				],
 				'scheduledtasks' => [
