@@ -172,11 +172,11 @@ function ScheduledTasks()
 				$total_time = round(microtime(true) - $start_time, 3);
 				Scheduler::log_completed((int) $row['id_task'], $total_time);
 
-				session_flash('success', sprintf($txt['scheduled_tasks_ran_successfully'], $row['task']));
+				session_flash('success', sprintf($txt['scheduled_tasks_ran_successfully'], $task->get_name()));
 			}
 			catch (Exception $e)
 			{
-				session_flash('error', sprintf($txt['scheduled_tasks_ran_errors'], $row['task'], $e->getMessage()));
+				session_flash('error', sprintf($txt['scheduled_tasks_ran_errors'], $task->get_name(), $e->getMessage()));
 			}
 		}
 		$smcFunc['db_free_result']($request);
