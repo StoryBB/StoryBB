@@ -438,15 +438,8 @@ function ModifyDraftSettings($return_config = false)
 		$_POST['drafts_autosave_frequency'] = !isset($_POST['drafts_autosave_frequency']) || $_POST['drafts_autosave_frequency'] < 30 ? 30 : $_POST['drafts_autosave_frequency'];
 
 		// Also disable the scheduled task if we're not using it.
-		$smcFunc['db_query']('', '
-			UPDATE {db_prefix}scheduled_tasks
-			SET disabled = {int:disabled}
-			WHERE task = {string:task}',
-			array(
-				'disabled' => !empty($_POST['drafts_keep_days']) ? 0 : 1,
-				'task' => 'remove_old_drafts',
-			)
-		);
+		Scheduler::set_enabled_state('StoryBB\\Task\\Schedulable\\RemoveOldDrafts', !empty($_POST['drafts_keep_days']));
+
 		require_once($sourcedir . '/ScheduledTasks.php');
 		CalculateNextTrigger();
 

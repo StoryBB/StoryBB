@@ -17,6 +17,26 @@ namespace StoryBB\Task\Schedulable;
 class RemoveTopicRedirects extends \StoryBB\Task\Schedulable
 {
 	/**
+	 * Get the human-readable name for this task.
+	 * @return string The human readable name.
+	 */
+	public function get_name(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_remove_topic_redirect'];
+	}
+
+	/**
+	 * Get the human-readable description for this task.
+	 * @return string The task description.
+	 */
+	public function get_description(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_desc_remove_topic_redirect'];
+	}
+
+	/**
 	 * Check for and remove move topic notices that have expired.
 	 * @return bool True on success
 	 */
