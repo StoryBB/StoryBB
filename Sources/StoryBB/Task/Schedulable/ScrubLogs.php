@@ -20,6 +20,26 @@ class ScrubLogs extends \StoryBB\Task\Schedulable
 	protected $banned_ips;
 
 	/**
+	 * Get the human-readable name for this task.
+	 * @return string The human readable name.
+	 */
+	public function get_name(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_scrub_logs'];
+	}
+
+	/**
+	 * Get the human-readable description for this task.
+	 * @return string The task description.
+	 */
+	public function get_description(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_desc_scrub_logs'];
+	}
+
+	/**
 	 * Find all the ranges of banned IPs in the system so that logs won't be automatically purged for these.
 	 *
 	 * @return array An array of banned IP ranges where each item is an array of low/high IPs in the range

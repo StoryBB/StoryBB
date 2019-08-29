@@ -19,6 +19,26 @@ use GuzzleHttp\Client;
 class FetchStoryBBFiles extends \StoryBB\Task\Schedulable
 {
 	/**
+	 * Get the human-readable name for this task.
+	 * @return string The human readable name.
+	 */
+	public function get_name(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_fetchStoryBBfiles'];
+	}
+
+	/**
+	 * Get the human-readable description for this task.
+	 * @return string The task description.
+	 */
+	public function get_description(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_desc_fetchStoryBBfiles'];
+	}
+
+	/**
 	 * Fetch the latest version info/news from storybb.org.
 	 * @return bool True on success
 	 */

@@ -17,6 +17,26 @@ namespace StoryBB\Task\Schedulable;
 class RemoveTempAttachments extends \StoryBB\Task\Schedulable
 {
 	/**
+	 * Get the human-readable name for this task.
+	 * @return string The human readable name.
+	 */
+	public function get_name(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_remove_temp_attachments'];
+	}
+
+	/**
+	 * Get the human-readable description for this task.
+	 * @return string The task description.
+	 */
+	public function get_description(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_desc_remove_temp_attachments'];
+	}
+
+	/**
 	 * Check for un-posted attachments and remove them.
 	 * This function uses opendir cycling through all the attachments
 	 *

@@ -19,6 +19,26 @@ use StoryBB\Task;
 class RemoveOldAlerts extends \StoryBB\Task\Schedulable
 {
 	/**
+	 * Get the human-readable name for this task.
+	 * @return string The human readable name.
+	 */
+	public function get_name(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_remove_old_alerts'];
+	}
+
+	/**
+	 * Get the human-readable description for this task.
+	 * @return string The task description.
+	 */
+	public function get_description(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_desc_remove_old_alerts'];
+	}
+
+	/**
 	 * Remove read alerts after a reasonable period.
 	 * @return bool True on success
 	 */

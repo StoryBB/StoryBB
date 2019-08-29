@@ -299,7 +299,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 	global $smcFunc, $txt;
 
 	$request = $smcFunc['db_query']('', '
-		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, task
+		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, class
 		FROM {db_prefix}scheduled_tasks',
 		array(
 		)
@@ -311,11 +311,12 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 		$offset = sprintf($txt['scheduled_task_reg_starting'], date('H:i', $row['time_offset']));
 		$repeating = sprintf($txt['scheduled_task_reg_repeating'], $row['time_regularity'], $txt['scheduled_task_reg_unit_' . $row['time_unit']]);
 
+		$task = class_exists($row['class']) ? new $row['class'] : false;
+
 		$known_tasks[] = array(
 			'id' => $row['id_task'],
-			'function' => $row['task'],
-			'name' => isset($txt['scheduled_task_' . $row['task']]) ? $txt['scheduled_task_' . $row['task']] : $row['task'],
-			'desc' => isset($txt['scheduled_task_desc_' . $row['task']]) ? $txt['scheduled_task_desc_' . $row['task']] : '',
+			'name' => $task ? $task->get_name() : $row['class'],
+			'desc' => $task ? $task->get_description() : '',
 			'next_time' => $row['disabled'] ? $txt['scheduled_tasks_na'] : timeformat(($row['next_time'] == 0 ? time() : $row['next_time']), true, 'server'),
 			'disabled' => $row['disabled'],
 			'checked_state' => $row['disabled'] ? '' : 'checked',
@@ -403,7 +404,7 @@ function EditTask()
 
 	// Load the task, understand? Que? Que?
 	$request = $smcFunc['db_query']('', '
-		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, task
+		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, class
 		FROM {db_prefix}scheduled_tasks
 		WHERE id_task = {int:id_task}',
 		array(
@@ -417,11 +418,11 @@ function EditTask()
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
+		$task = class_exists($row['class']) ? new $row['class'] : false;
 		$context['task'] = array(
 			'id' => $row['id_task'],
-			'function' => $row['task'],
-			'name' => isset($txt['scheduled_task_' . $row['task']]) ? $txt['scheduled_task_' . $row['task']] : $row['task'],
-			'desc' => isset($txt['scheduled_task_desc_' . $row['task']]) ? $txt['scheduled_task_desc_' . $row['task']] : '',
+			'name' => $task ? $task->get_name() : $row['class'],
+			'desc' => $task ? $task->get_description() : '',
 			'next_time' => $row['disabled'] ? $txt['scheduled_tasks_na'] : timeformat($row['next_time'] == 0 ? time() : $row['next_time'], true, 'server'),
 			'disabled' => (bool) $row['disabled'],
 			'offset' => $row['time_offset'],
@@ -559,7 +560,7 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 	global $smcFunc, $txt;
 
 	$request = $smcFunc['db_query']('', '
-		SELECT lst.id_log, lst.id_task, lst.time_run, lst.time_taken, st.task
+		SELECT lst.id_log, lst.id_task, lst.time_run, lst.time_taken, st.class
 		FROM {db_prefix}log_scheduled_tasks AS lst
 			INNER JOIN {db_prefix}scheduled_tasks AS st ON (st.id_task = lst.id_task)
 		ORDER BY {raw:sort}
@@ -572,12 +573,15 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 	);
 	$log_entries = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$task = class_exists($row['class']) ? new $class : false;
 		$log_entries[] = array(
 			'id' => $row['id_log'],
-			'name' => isset($txt['scheduled_task_' . $row['task']]) ? $txt['scheduled_task_' . $row['task']] : $row['task'],
+			'name' => $task ? $task->get_name() : $row['class'],
 			'time_run' => $row['time_run'],
 			'time_taken' => $row['time_taken'],
 		);
+	}
 	$smcFunc['db_free_result']($request);
 
 	return $log_entries;
