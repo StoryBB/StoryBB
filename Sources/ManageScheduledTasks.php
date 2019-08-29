@@ -281,9 +281,8 @@ function ScheduledTasks()
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	$context['sub_template'] = 'admin_scheduled_view';
-
-	$context['tasks_were_run'] = isset($_GET['done']);
+	$context['sub_template'] = 'generic_list_page';
+	$context['default_list'] = 'scheduled_tasks';
 }
 
 /**

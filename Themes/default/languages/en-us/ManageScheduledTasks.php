@@ -19,8 +19,6 @@ $txt['scheduled_tasks_enabled'] = 'Enabled';
 $txt['scheduled_tasks_run_now'] = 'Run Now';
 $txt['scheduled_tasks_save_changes'] = 'Save Changes';
 $txt['scheduled_tasks_time_offset'] = '<strong>Note:</strong> All times given below are <em>server time</em> and do not take any time offsets setup within StoryBB into account.';
-$txt['scheduled_tasks_were_run'] = 'All selected tasks were completed';
-$txt['scheduled_tasks_were_run_errors'] = 'All selected tasks were completed but some had errors:';
 
 $txt['scheduled_tasks_ran_successfully'] = 'Task "%1$s" ran successfully.';
 $txt['scheduled_tasks_ran_errors'] = 'Task "%1$s" encountered errors: %2$s';
