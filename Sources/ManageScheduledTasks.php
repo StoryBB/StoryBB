@@ -129,7 +129,7 @@ function ScheduledTasks()
 
 		// Load up the tasks.
 		$request = $smcFunc['db_query']('', '
-			SELECT id_task, task, class
+			SELECT id_task, class
 			FROM {db_prefix}scheduled_tasks
 			WHERE id_task IN ({array_int:tasks})
 			LIMIT {int:limit}',

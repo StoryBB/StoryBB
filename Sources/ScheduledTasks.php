@@ -29,7 +29,7 @@ function AutoTask()
 
 		// Select the next task to do.
 		$request = $smcFunc['db_query']('', '
-			SELECT id_task, task, next_time, time_offset, time_regularity, time_unit, class
+			SELECT id_task, next_time, time_offset, time_regularity, time_unit, class
 			FROM {db_prefix}scheduled_tasks
 			WHERE disabled = {int:not_disabled}
 				AND next_time <= {int:current_time}

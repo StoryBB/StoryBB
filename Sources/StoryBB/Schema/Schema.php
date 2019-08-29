@@ -1026,14 +1026,12 @@ class Schema
 					'time_regularity' => Column::smallint(),
 					'time_unit' => Column::varchar(1)->default('h'),
 					'disabled' => Column::tinyint(),
-					'task' => Column::varchar(24),
 					'class' => Column::varchar(255),
 				],
 				[
 					Index::primary(['id_task']),
 					Index::key(['next_time']),
 					Index::key(['disabled']),
-					Index::unique(['task']),
 				]
 			),
 			Table::make('settings',
