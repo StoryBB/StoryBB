@@ -47,9 +47,7 @@ class RemoveTempAttachments extends \StoryBB\Task\Schedulable
 			{
 				loadEssentialThemeData();
 				loadLanguage('Post');
-				$context['scheduled_errors']['remove_temp_attachments'][] = $txt['cant_access_upload_path'] . ' (' . $attach_dir . ')';
-				log_error($txt['cant_access_upload_path'] . ' (' . $attach_dir . ')', 'critical');
-				return false;
+				throw new Exception($txt['cant_access_upload_path'] . ' (' . $attach_dir . ')');
 			}
 
 			while ($file = readdir($dir))

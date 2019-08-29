@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Model\Attachment;
+use StoryBB\Task\Scheduler;
 
 /**
  * This function works out what to do!
@@ -87,46 +88,23 @@ function AutoTask()
 				}
 			}
 
-			// Default StoryBB task or old mods?
-			elseif (function_exists('scheduled_' . $row['task']))
-				$task = 'scheduled_' . $row['task'];
-
 			// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!
 			if (!empty($task) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
 			{
 				ignore_user_abort(true);
 
-				// Get the callable.
-				if (is_object($task))
+				// Try to run the task.
+				try
 				{
-					$completed = $task->execute();
+					$start_time = microtime(true);
+					$task->execute();
+
+					$total_time = round(microtime(true) - $start_time, 3);
+					Scheduler::log_completed((int) $row['id_task'], $total_time);
 				}
-				else
+				catch (Exception $e)
 				{
-					$callable_task = call_helper($task, true);
-
-					// Perform the task.
-					if (!empty($callable_task))
-						$completed = call_user_func($callable_task);
-
-					else
-						$completed = false;
-				}
-
-				// Log that we did it ;)
-				if ($completed)
-				{
-					$total_time = round(microtime(true) - $time_start, 3);
-					$smcFunc['db_insert']('',
-						'{db_prefix}log_scheduled_tasks',
-						array(
-							'id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float',
-						),
-						array(
-							$row['id_task'], time(), (int) $total_time,
-						),
-						[]
-					);
+					log_error($e->getMessage(), 'critical');
 				}
 			}
 		}

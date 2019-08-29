@@ -22,6 +22,9 @@ $txt['scheduled_tasks_time_offset'] = '<strong>Note:</strong> All times given be
 $txt['scheduled_tasks_were_run'] = 'All selected tasks were completed';
 $txt['scheduled_tasks_were_run_errors'] = 'All selected tasks were completed but some had errors:';
 
+$txt['scheduled_tasks_ran_successfully'] = 'Task "%1$s" ran successfully.';
+$txt['scheduled_tasks_ran_errors'] = 'Task "%1$s" encountered errors: %2$s';
+
 $txt['scheduled_tasks_na'] = 'N/A';
 $txt['scheduled_task_approval_notification'] = 'Approval Notifications';
 $txt['scheduled_task_desc_approval_notification'] = 'Send out emails to all moderators summarizing posts awaiting approval.';

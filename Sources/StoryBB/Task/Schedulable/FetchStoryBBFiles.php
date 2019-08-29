@@ -65,9 +65,7 @@ class FetchStoryBBFiles extends \StoryBB\Task\Schedulable
 			// If we got an error - give up - the site might be down. And if we should happen to be coming from elsewhere, let's also make a note of it.
 			if (empty($file_data))
 			{
-				$context['scheduled_errors']['fetchStoryBBiles'][] = sprintf($txt['st_cannot_retrieve_file'], $url);
-				log_error(sprintf($txt['st_cannot_retrieve_file'], $url));
-				return false;
+				throw new Exception(sprintf($txt['st_cannot_retrieve_file'], $url));
 			}
 
 			// Save the file to the database.

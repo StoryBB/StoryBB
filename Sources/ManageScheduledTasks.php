@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Task\Scheduler;
+
 /**
  * Scheduled tasks management dispatcher. This function checks permissions and delegates
  * to the appropriate function based on the sub-action.
@@ -72,6 +74,7 @@ function ScheduledTasks()
 	// ... ironically I don't like pickle. </grudge>
 	$context['sub_template'] = 'admin_scheduled_view';
 	$context['page_title'] = $txt['maintain_tasks'];
+	loadLanguage('ManageScheduledTasks');
 
 	// Saving changes?
 	if (isset($_REQUEST['save']) && isset($_POST['enable_task']))
@@ -151,12 +154,6 @@ function ScheduledTasks()
 				}
 			}
 
-			// Default StoryBB task or old mods?
-			elseif (function_exists('scheduled_' . $row['task']))
-				$task = 'scheduled_' . $row['task'];
-
-			$start_time = microtime(true);
-
 			// The functions got to exist for us to use it.
 			if (empty($task))
 				continue;
@@ -166,59 +163,25 @@ function ScheduledTasks()
 			if (function_exists('apache_reset_timeout'))
 				@apache_reset_timeout();
 
-			// Get the callable.
-			if (is_object($task))
+			// Try to run the task.
+			try
 			{
-				$completed = $task->execute();
-			}
-			else
-			{
-				$callable_task = call_helper($task, true);
+				$start_time = microtime(true);
+				$task->execute();
 
-				// Perform the task.
-				if (!empty($callable_task))
-					$completed = call_user_func($callable_task);
-
-				else
-					$completed = false;
-			}
-
-			// Log that we did it ;)
-			if ($completed)
-			{
 				$total_time = round(microtime(true) - $start_time, 3);
-				$smcFunc['db_insert']('',
-					'{db_prefix}log_scheduled_tasks',
-					array('id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float'),
-					array($row['id_task'], time(), $total_time),
-					array('id_task')
-				);
+				Scheduler::log_completed((int) $row['id_task'], $total_time);
+
+				session_flash('success', sprintf($txt['scheduled_tasks_ran_successfully'], $row['task']));
+			}
+			catch (Exception $e)
+			{
+				session_flash('error', sprintf($txt['scheduled_tasks_ran_errors'], $row['task'], $e->getMessage()));
 			}
 		}
 		$smcFunc['db_free_result']($request);
 
-		// If we had any errors, push them to session so we can pick them up next time to tell the user.
-		if (!empty($context['scheduled_errors']))
-			$_SESSION['st_error'] = $context['scheduled_errors'];
-
-		redirectexit('action=admin;area=scheduledtasks;done');
-	}
-
-	if (isset($_SESSION['st_error']))
-	{
-		$context['scheduled_errors'] = $_SESSION['st_error'];
-		unset ($_SESSION['st_error']);
-	}
-
-	// Make life easier for templates.
-	if (!empty($context['scheduled_errors']))
-	{
-		foreach ($context['scheduled_errors'] as $task_id => $errors) {
-			$context['scheduled_errors'][$task_id] = [
-				'title' => isset($txt['scheduled_task_' . $task_id]) ? $txt['scheduled_task_' . $task_id] : $task_id,
-				'errors' => $errors,
-			];
-		}
+		redirectexit('action=admin;area=scheduledtasks');
 	}
 
 	$listOptions = array(
