@@ -351,7 +351,7 @@ function AdminMain()
 					'icon' => 'scheduled',
 					'function' => 'ManageScheduledTasks',
 					'subsections' => [
-						'tasks' => [$txt['maintain_tasks'], 'admin_forum'],
+						'tasks' => [$txt['scheduled_task_list'], 'admin_forum'],
 						'tasklog' => [$txt['scheduled_log'], 'admin_forum'],
 					],
 				],

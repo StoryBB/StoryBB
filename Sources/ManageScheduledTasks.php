@@ -186,7 +186,7 @@ function ScheduledTasks()
 
 	$listOptions = array(
 		'id' => 'scheduled_tasks',
-		'title' => $txt['maintain_tasks'],
+		'title' => $txt['scheduled_task_list'],
 		'base_href' => $scripturl . '?action=admin;area=scheduledtasks',
 		'get_items' => array(
 			'function' => 'list_getScheduledTasks',
@@ -270,10 +270,6 @@ function ScheduledTasks()
 				'value' => '
 					<input type="submit" name="save" value="' . $txt['scheduled_tasks_save_changes'] . '" class="button_submit">
 					<input type="submit" name="run" value="' . $txt['scheduled_tasks_run_now'] . '" class="button_submit">',
-			),
-			array(
-				'position' => 'after_title',
-				'value' => $txt['scheduled_tasks_time_offset'],
 			),
 		),
 	);
@@ -526,10 +522,6 @@ function TaskLog()
 				'value' => '
 					<input type="submit" name="removeAll" value="' . $txt['scheduled_log_empty_log'] . '" data-confirm="' . $txt['scheduled_log_empty_log_confirm'] . '" class="button_submit you_sure">',
 			),
-			array(
-				'position' => 'after_title',
-				'value' => $txt['scheduled_tasks_time_offset'],
-			),
 		),
 	);
 
@@ -573,7 +565,7 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 	$log_entries = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$task = class_exists($row['class']) ? new $class : false;
+		$task = class_exists($row['class']) ? new $row['class'] : false;
 		$log_entries[] = array(
 			'id' => $row['id_log'],
 			'name' => $task ? $task->get_name() : $row['class'],
