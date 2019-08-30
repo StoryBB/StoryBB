@@ -14,7 +14,7 @@ namespace StoryBB\Task\Schedulable;
 /**
  * Cleaning up old drafts.
  */
-class RemoveOldDrafts extends \StoryBB\Task\Schedulable
+class RemoveOldDrafts implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

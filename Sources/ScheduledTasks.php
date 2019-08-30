@@ -79,13 +79,9 @@ function AutoTask()
 
 			// What kind of task are we handling?
 			$task = false;
-			if (!empty($row['class']) && class_exists($row['class']))
+			if (!empty($row['class']) && class_exists($row['class']) && is_subclass_of($row['class'], 'StoryBB\\Task\\Schedulable'))
 			{
-				$refl = new ReflectionClass($row['class']);
-				if ($refl->isSubclassOf('StoryBB\\Task\\Schedulable'))
-				{
-					$task = new $row['class'];
-				}
+				$task = new $row['class'];
 			}
 
 			// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!

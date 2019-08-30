@@ -14,7 +14,7 @@ namespace StoryBB\Task\Schedulable;
 /**
  * Send out a daily email of all subscribed topics.
  */
-class DailyDigest extends \StoryBB\Task\Schedulable
+class DailyDigest implements \StoryBB\Task\Schedulable
 {
 	/** @var int $is_weekly Whether this digest is running a daily (0) or weekly (1) since logic is almost identical */
 	protected $is_weekly = 0;

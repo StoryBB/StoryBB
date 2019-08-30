@@ -145,13 +145,9 @@ function ScheduledTasks()
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$task = false;
-			if (!empty($row['class']) && class_exists($row['class']))
+			if (!empty($row['class']) && class_exists($row['class']) && is_subclass_of($row['class'], 'StoryBB\\Task\\Schedulable'))
 			{
-				$refl = new ReflectionClass($row['class']);
-				if ($refl->isSubclassOf('StoryBB\\Task\\Schedulable'))
-				{
-					$task = new $row['class'];
-				}
+				$task = new $row['class'];
 			}
 
 			// The functions got to exist for us to use it.

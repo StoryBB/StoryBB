@@ -14,7 +14,7 @@ namespace StoryBB\Task\Schedulable;
 /**
  * Send out notifications of things that need approving.
  */
-class ApprovalNotifications extends \StoryBB\Task\Schedulable
+class ApprovalNotifications implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.
