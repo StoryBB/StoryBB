@@ -16,7 +16,7 @@ use StoryBB\Model\Account;
 /**
  * Check for and remove move topic notices that have expired.
  */
-class RemoveUnapprovedAccounts extends \StoryBB\Task\Schedulable
+class RemoveUnapprovedAccounts implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

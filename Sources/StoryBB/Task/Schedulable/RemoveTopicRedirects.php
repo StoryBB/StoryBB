@@ -14,7 +14,7 @@ namespace StoryBB\Task\Schedulable;
 /**
  * Check for and remove move topic notices that have expired.
  */
-class RemoveTopicRedirects extends \StoryBB\Task\Schedulable
+class RemoveTopicRedirects implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

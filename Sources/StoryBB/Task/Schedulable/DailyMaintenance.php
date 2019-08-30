@@ -16,7 +16,7 @@ use StoryBB\Task;
 /**
  * Daily maintenance.
  */
-class DailyMaintenance extends \StoryBB\Task\Schedulable
+class DailyMaintenance implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

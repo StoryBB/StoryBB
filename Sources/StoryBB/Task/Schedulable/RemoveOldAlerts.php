@@ -16,7 +16,7 @@ use StoryBB\Task;
 /**
  * Remove read alerts after a reasonable period.
  */
-class RemoveOldAlerts extends \StoryBB\Task\Schedulable
+class RemoveOldAlerts implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

@@ -16,7 +16,7 @@ use GuzzleHttp\Client;
 /**
  * Fetch the latest version info/news from storybb.org.
  */
-class FetchStoryBBFiles extends \StoryBB\Task\Schedulable
+class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

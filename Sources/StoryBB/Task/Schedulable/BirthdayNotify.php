@@ -16,7 +16,7 @@ use StoryBB\Task;
 /**
  * Queue up another run of the birthday email sender.
  */
-class BirthdayNotify extends \StoryBB\Task\Schedulable
+class BirthdayNotify implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

@@ -14,7 +14,7 @@ namespace StoryBB\Task\Schedulable;
 /**
  * Perform the standard checks on expiring/near expiring subscriptions.
  */
-class UpdatePaidSubs extends \StoryBB\Task\Schedulable
+class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 {
 	/**
 	 * Get the human-readable name for this task.

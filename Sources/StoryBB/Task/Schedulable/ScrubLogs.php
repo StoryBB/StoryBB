@@ -14,7 +14,7 @@ namespace StoryBB\Task\Schedulable;
 /**
  * Erase logs in the system after a given amount of days.
  */
-class ScrubLogs extends \StoryBB\Task\Schedulable
+class ScrubLogs implements \StoryBB\Task\Schedulable
 {
 	/** @var $banned_ips The IPs we have listed as banned */
 	protected $banned_ips;
