@@ -487,6 +487,16 @@ function log_error_online($error, $sprintf = [])
 	{
 		list ($url) = $smcFunc['db_fetch_row']($request);
 		$url = sbb_json_decode($url, true);
+
+		$error = trim($error);
+		if ($pos = strpos($error, "\n"))
+		{
+			$error = substr($error, 0, $pos);
+		}
+		if (strlen($error) > 100)
+		{
+			$error = substr($error, 0, 100) . '...';
+		}
 		$url['error'] = $error;
 
 		if (!empty($sprintf))

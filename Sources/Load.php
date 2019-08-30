@@ -249,9 +249,6 @@ function reloadSettings()
 	// A bug in some versions of IIS under CGI (older ones) makes cookie setting not work with Location: headers.
 	$context['server']['needs_login_fix'] = $context['server']['is_cgi'] && $context['server']['is_iis'];
 
-	// Define a list of icons used across multiple places.
-	$context['stable_icons'] = ['xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'poll', 'moved', 'recycled', 'clip'];
-
 	// Define an array for custom profile fields placements.
 	$context['cust_profile_fields_placement'] = [
 		'standard',
@@ -2287,19 +2284,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'help_popup_heading_text' => JavaScriptEscape($txt['help_popup']),
 	];
 
-	// Add the JQuery library to the list of files to load.
-	if (isset($modSettings['jquery_source']) && $modSettings['jquery_source'] == 'cdn')
-		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', ['external' => true], 'sbb_jquery');
-
-	elseif (isset($modSettings['jquery_source']) && $modSettings['jquery_source'] == 'local')
-		loadJavaScriptFile('jquery-3.2.1.min.js', ['seed' => false], 'sbb_jquery');
-
-	elseif (isset($modSettings['jquery_source'], $modSettings['jquery_custom']) && $modSettings['jquery_source'] == 'custom')
-		loadJavaScriptFile($modSettings['jquery_custom'], ['external' => true], 'sbb_jquery');
-
-	// Auto loading? template_javascript() will take care of the local half of this.
-	else
-		loadJavaScriptFile('https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js', ['external' => true], 'sbb_jquery');
+	// Load the JQuery library.
+	loadJavaScriptFile('jquery-3.2.1.min.js', ['seed' => false], 'sbb_jquery');
 
 	// Queue our JQuery plugins!
 	loadJavaScriptFile('sbb_jquery_plugins.js', ['minimize' => true], 'sbb_jquery_plugins');

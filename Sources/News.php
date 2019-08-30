@@ -668,7 +668,7 @@ function getXmlNews($xml_format)
 		$request = $smcFunc['db_query']('', '
 			SELECT
 				m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.modified_time,
-				m.icon, t.id_topic, t.id_board, t.num_replies,
+				t.id_topic, t.id_board, t.num_replies,
 				b.name AS bname,
 				COALESCE(mem.id_member, 0) AS id_member,
 				COALESCE(mem.email_address, m.poster_email) AS poster_email,
@@ -965,7 +965,7 @@ function getXmlRecent($xml_format)
 	$request = $smcFunc['db_query']('', '
 		SELECT
 			m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.id_topic, t.id_board,
-			b.name AS bname, t.num_replies, m.id_member, m.icon, mf.id_member AS id_first_member,
+			b.name AS bname, t.num_replies, m.id_member, mf.id_member AS id_first_member,
 			COALESCE(mem.real_name, m.poster_name) AS poster_name, mf.subject AS first_subject,
 			COALESCE(memf.real_name, mf.poster_name) AS first_poster_name,
 			COALESCE(mem.email_address, m.poster_email) AS poster_email, m.modified_time

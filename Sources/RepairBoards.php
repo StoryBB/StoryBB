@@ -377,7 +377,6 @@ function loadForumTests()
 							'poster_ip' => 'inet',
 							'smileys_enabled' => 'int',
 							'body' => 'string-65534',
-							'icon' => 'string-16',
 							'approved' => 'int',
 						),
 						array(
@@ -391,7 +390,6 @@ function loadForumTests()
 							'127.0.0.1',
 							1,
 							$txt['salvaged_poll_message_body'],
-							'xx',
 							1,
 						),
 						array('id_msg'),
@@ -511,7 +509,6 @@ function loadForumTests()
 						'poster_ip' => 'inet',
 						'smileys_enabled' => 'int',
 						'body' => 'string-65534',
-						'icon' => 'string-16',
 						'approved' => 'int',
 					),
 					array(
@@ -525,7 +522,6 @@ function loadForumTests()
 						'127.0.0.1',
 						1,
 						$txt['salvaged_poll_message_body'],
-						'xx',
 						1,
 					),
 					array('id_msg'),

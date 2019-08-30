@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Task\Scheduler;
 
 /**
  * The main entrance point for the 'Paid Subscription' screen, calling
@@ -186,15 +187,7 @@ function ModifySubscriptionSettings($return_config = false)
 		if ($old != $new)
 		{
 			// So we're changing this fundamental status. Great.
-			$smcFunc['db_query']('', '
-				UPDATE {db_prefix}scheduled_tasks
-				SET disabled = {int:disabled}
-				WHERE task = {string:task}',
-				array(
-					'disabled' => $new ? 0 : 1,
-					'task' => 'paid_subscriptions',
-				)
-			);
+			Scheduler::set_enabled_state('StoryBB\\Task\\Schedulable\\UpdatePaidSubs', $enabled);
 
 			// This may well affect the next trigger, whether we're enabling or not.
 			require_once($sourcedir . '/ScheduledTasks.php');

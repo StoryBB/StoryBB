@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Task\Scheduler;
+
 /**
  * Scheduled tasks management dispatcher. This function checks permissions and delegates
  * to the appropriate function based on the sub-action.
@@ -72,6 +74,7 @@ function ScheduledTasks()
 	// ... ironically I don't like pickle. </grudge>
 	$context['sub_template'] = 'admin_scheduled_view';
 	$context['page_title'] = $txt['maintain_tasks'];
+	loadLanguage('ManageScheduledTasks');
 
 	// Saving changes?
 	if (isset($_REQUEST['save']) && isset($_POST['enable_task']))
@@ -126,7 +129,7 @@ function ScheduledTasks()
 
 		// Load up the tasks.
 		$request = $smcFunc['db_query']('', '
-			SELECT id_task, task, class
+			SELECT id_task, class
 			FROM {db_prefix}scheduled_tasks
 			WHERE id_task IN ({array_int:tasks})
 			LIMIT {int:limit}',
@@ -142,20 +145,10 @@ function ScheduledTasks()
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			$task = false;
-			if (!empty($row['class']) && class_exists($row['class']))
+			if (!empty($row['class']) && class_exists($row['class']) && is_subclass_of($row['class'], 'StoryBB\\Task\\Schedulable'))
 			{
-				$refl = new ReflectionClass($row['class']);
-				if ($refl->isSubclassOf('StoryBB\\Task\\Schedulable'))
-				{
-					$task = new $row['class'];
-				}
+				$task = new $row['class'];
 			}
-
-			// Default StoryBB task or old mods?
-			elseif (function_exists('scheduled_' . $row['task']))
-				$task = 'scheduled_' . $row['task'];
-
-			$start_time = microtime(true);
 
 			// The functions got to exist for us to use it.
 			if (empty($task))
@@ -166,64 +159,30 @@ function ScheduledTasks()
 			if (function_exists('apache_reset_timeout'))
 				@apache_reset_timeout();
 
-			// Get the callable.
-			if (is_object($task))
+			// Try to run the task.
+			try
 			{
-				$completed = $task->execute();
-			}
-			else
-			{
-				$callable_task = call_helper($task, true);
+				$start_time = microtime(true);
+				$task->execute();
 
-				// Perform the task.
-				if (!empty($callable_task))
-					$completed = call_user_func($callable_task);
-
-				else
-					$completed = false;
-			}
-
-			// Log that we did it ;)
-			if ($completed)
-			{
 				$total_time = round(microtime(true) - $start_time, 3);
-				$smcFunc['db_insert']('',
-					'{db_prefix}log_scheduled_tasks',
-					array('id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float'),
-					array($row['id_task'], time(), $total_time),
-					array('id_task')
-				);
+				Scheduler::log_completed((int) $row['id_task'], $total_time);
+
+				session_flash('success', sprintf($txt['scheduled_tasks_ran_successfully'], $task->get_name()));
+			}
+			catch (Exception $e)
+			{
+				session_flash('error', sprintf($txt['scheduled_tasks_ran_errors'], $task->get_name(), $e->getMessage()));
 			}
 		}
 		$smcFunc['db_free_result']($request);
 
-		// If we had any errors, push them to session so we can pick them up next time to tell the user.
-		if (!empty($context['scheduled_errors']))
-			$_SESSION['st_error'] = $context['scheduled_errors'];
-
-		redirectexit('action=admin;area=scheduledtasks;done');
-	}
-
-	if (isset($_SESSION['st_error']))
-	{
-		$context['scheduled_errors'] = $_SESSION['st_error'];
-		unset ($_SESSION['st_error']);
-	}
-
-	// Make life easier for templates.
-	if (!empty($context['scheduled_errors']))
-	{
-		foreach ($context['scheduled_errors'] as $task_id => $errors) {
-			$context['scheduled_errors'][$task_id] = [
-				'title' => isset($txt['scheduled_task_' . $task_id]) ? $txt['scheduled_task_' . $task_id] : $task_id,
-				'errors' => $errors,
-			];
-		}
+		redirectexit('action=admin;area=scheduledtasks');
 	}
 
 	$listOptions = array(
 		'id' => 'scheduled_tasks',
-		'title' => $txt['maintain_tasks'],
+		'title' => $txt['scheduled_task_list'],
 		'base_href' => $scripturl . '?action=admin;area=scheduledtasks',
 		'get_items' => array(
 			'function' => 'list_getScheduledTasks',
@@ -308,19 +267,14 @@ function ScheduledTasks()
 					<input type="submit" name="save" value="' . $txt['scheduled_tasks_save_changes'] . '" class="button_submit">
 					<input type="submit" name="run" value="' . $txt['scheduled_tasks_run_now'] . '" class="button_submit">',
 			),
-			array(
-				'position' => 'after_title',
-				'value' => $txt['scheduled_tasks_time_offset'],
-			),
 		),
 	);
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
-	$context['sub_template'] = 'admin_scheduled_view';
-
-	$context['tasks_were_run'] = isset($_GET['done']);
+	$context['sub_template'] = 'generic_list_page';
+	$context['default_list'] = 'scheduled_tasks';
 }
 
 /**
@@ -336,7 +290,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 	global $smcFunc, $txt;
 
 	$request = $smcFunc['db_query']('', '
-		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, task
+		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, class
 		FROM {db_prefix}scheduled_tasks',
 		array(
 		)
@@ -348,11 +302,12 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 		$offset = sprintf($txt['scheduled_task_reg_starting'], date('H:i', $row['time_offset']));
 		$repeating = sprintf($txt['scheduled_task_reg_repeating'], $row['time_regularity'], $txt['scheduled_task_reg_unit_' . $row['time_unit']]);
 
+		$task = class_exists($row['class']) ? new $row['class'] : false;
+
 		$known_tasks[] = array(
 			'id' => $row['id_task'],
-			'function' => $row['task'],
-			'name' => isset($txt['scheduled_task_' . $row['task']]) ? $txt['scheduled_task_' . $row['task']] : $row['task'],
-			'desc' => isset($txt['scheduled_task_desc_' . $row['task']]) ? $txt['scheduled_task_desc_' . $row['task']] : '',
+			'name' => $task ? $task->get_name() : $row['class'],
+			'desc' => $task ? $task->get_description() : '',
 			'next_time' => $row['disabled'] ? $txt['scheduled_tasks_na'] : timeformat(($row['next_time'] == 0 ? time() : $row['next_time']), true, 'server'),
 			'disabled' => $row['disabled'],
 			'checked_state' => $row['disabled'] ? '' : 'checked',
@@ -440,7 +395,7 @@ function EditTask()
 
 	// Load the task, understand? Que? Que?
 	$request = $smcFunc['db_query']('', '
-		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, task
+		SELECT id_task, next_time, time_offset, time_regularity, time_unit, disabled, class
 		FROM {db_prefix}scheduled_tasks
 		WHERE id_task = {int:id_task}',
 		array(
@@ -454,11 +409,11 @@ function EditTask()
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
+		$task = class_exists($row['class']) ? new $row['class'] : false;
 		$context['task'] = array(
 			'id' => $row['id_task'],
-			'function' => $row['task'],
-			'name' => isset($txt['scheduled_task_' . $row['task']]) ? $txt['scheduled_task_' . $row['task']] : $row['task'],
-			'desc' => isset($txt['scheduled_task_desc_' . $row['task']]) ? $txt['scheduled_task_desc_' . $row['task']] : '',
+			'name' => $task ? $task->get_name() : $row['class'],
+			'desc' => $task ? $task->get_description() : '',
 			'next_time' => $row['disabled'] ? $txt['scheduled_tasks_na'] : timeformat($row['next_time'] == 0 ? time() : $row['next_time'], true, 'server'),
 			'disabled' => (bool) $row['disabled'],
 			'offset' => $row['time_offset'],
@@ -563,10 +518,6 @@ function TaskLog()
 				'value' => '
 					<input type="submit" name="removeAll" value="' . $txt['scheduled_log_empty_log'] . '" data-confirm="' . $txt['scheduled_log_empty_log_confirm'] . '" class="button_submit you_sure">',
 			),
-			array(
-				'position' => 'after_title',
-				'value' => $txt['scheduled_tasks_time_offset'],
-			),
 		),
 	);
 
@@ -596,7 +547,7 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 	global $smcFunc, $txt;
 
 	$request = $smcFunc['db_query']('', '
-		SELECT lst.id_log, lst.id_task, lst.time_run, lst.time_taken, st.task
+		SELECT lst.id_log, lst.id_task, lst.time_run, lst.time_taken, st.class
 		FROM {db_prefix}log_scheduled_tasks AS lst
 			INNER JOIN {db_prefix}scheduled_tasks AS st ON (st.id_task = lst.id_task)
 		ORDER BY {raw:sort}
@@ -609,12 +560,15 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 	);
 	$log_entries = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		$task = class_exists($row['class']) ? new $row['class'] : false;
 		$log_entries[] = array(
 			'id' => $row['id_log'],
-			'name' => isset($txt['scheduled_task_' . $row['task']]) ? $txt['scheduled_task_' . $row['task']] : $row['task'],
+			'name' => $task ? $task->get_name() : $row['class'],
 			'time_run' => $row['time_run'],
 			'time_taken' => $row['time_taken'],
 		);
+	}
 	$smcFunc['db_free_result']($request);
 
 	return $log_entries;

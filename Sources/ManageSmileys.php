@@ -23,19 +23,11 @@ function ManageSmileys()
 
 	$subActions = array(
 		'addsmiley' => 'AddSmiley',
-		'editicon' => 'EditMessageIcons',
-		'editicons' => 'EditMessageIcons',
 		'editsmileys' => 'EditSmileys',
 		'modifysmiley' => 'EditSmileys',
 		'setorder' => 'EditSmileyOrder',
 		'settings' => 'EditSmileySettings',
 	);
-
-	if (empty($modSettings['messageIcons_enable']))
-	{
-		unset($subActions['editicon']);
-		unset($subActions['editicons']);
-	}
 
 	// Default the sub-action to 'edit smiley settings'.
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'editsmileys';
@@ -59,18 +51,11 @@ function ManageSmileys()
 			'setorder' => array(
 				'description' => $txt['smiley_setorder_explain'],
 			),
-			'editicons' => array(
-				'description' => $txt['icons_edit_icons_explain'],
-			),
 			'settings' => array(
 				'description' => $txt['smiley_settings_explain'],
 			),
 		),
 	);
-
-	// Some settings may not be enabled, disallow these from the tabs as appropriate.
-	if (empty($modSettings['messageIcons_enable']))
-		$context[$context['admin_menu_name']]['tab_data']['tabs']['editicons']['disabled'] = true;
 
 	call_integration_hook('integrate_manage_smileys', array(&$subActions));
 
@@ -97,9 +82,6 @@ function EditSmileySettings($return_config = false)
 			array('text', 'smileys_url', 40),
 			array('warning', !is_dir($context['smileys_dir']) ? 'setting_smileys_dir_wrong' : ''),
 			array('text', 'smileys_dir', 'invalid' => !$context['smileys_dir_found'], 40),
-		'',
-			// Message icons.
-			array('check', 'messageIcons_enable', 'subtext' => $txt['setting_messageIcons_enable_note']),
 	);
 
 	call_integration_hook('integrate_modify_smiley_settings', array(&$config_vars));
@@ -145,7 +127,7 @@ function AddSmiley()
 
 	$context['sub_template'] = 'admin_smiley_add';
 
-	// Get a list of all known smiley sets.
+	// Get a list of all known smileys.
 	$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
 	$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
 
@@ -180,7 +162,7 @@ function AddSmiley()
 			fatal_lang_error('smiley_not_unique');
 		$smcFunc['db_free_result']($request);
 
-		// If we are uploading - check all the smiley sets are writable!
+		// If we are uploading - check the smiley folder is writable!
 		if ($_POST['method'] != 'existing')
 		{
 			$writeErrors = [];
@@ -607,7 +589,7 @@ function EditSmileys()
 	elseif ($context['sub_action'] == 'modifysmiley')
 	{
 		$context['sub_template'] = 'admin_smiley_edit';
-		// Get a list of all known smiley sets.
+		// Get a list of all known smileys.
 		$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
 		$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
 
@@ -858,298 +840,4 @@ function EditSmileyOrder()
 
 	cache_put_data('parsing_smileys', null, 480);
 	cache_put_data('posting_smileys', null, 480);
-}
-
-/**
- * Handles editing message icons
- */
-function EditMessageIcons()
-{
-	global $context, $settings, $txt;
-	global $smcFunc, $scripturl, $sourcedir;
-
-	// Get a list of icons.
-	$context['icons'] = [];
-	$request = $smcFunc['db_query']('', '
-		SELECT m.id_icon, m.title, m.filename, m.icon_order, m.id_board, b.name AS board_name
-		FROM {db_prefix}message_icons AS m
-			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
-		WHERE ({query_see_board} OR b.id_board IS NULL)
-		ORDER BY m.icon_order',
-		array(
-		)
-	);
-	$last_icon = 0;
-	$trueOrder = 0;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-	{
-		$context['icons'][$row['id_icon']] = array(
-			'id' => $row['id_icon'],
-			'title' => $row['title'],
-			'filename' => $row['filename'],
-			'image_url' => $settings[file_exists($settings['theme_dir'] . '/images/post/' . $row['filename'] . '.png') ? 'actual_images_url' : 'default_images_url'] . '/post/' . $row['filename'] . '.png',
-			'board_id' => $row['id_board'],
-			'board' => empty($row['board_name']) ? $txt['icons_edit_icons_all_boards'] : $row['board_name'],
-			'order' => $row['icon_order'],
-			'true_order' => $trueOrder++,
-			'after' => $last_icon,
-		);
-		$last_icon = $row['id_icon'];
-	}
-	$smcFunc['db_free_result']($request);
-
-	// Submitting a form?
-	if (isset($_POST['icons_save']) || isset($_POST['delete']))
-	{
-		checkSession();
-
-		// Deleting icons?
-		if (isset($_POST['delete']) && !empty($_POST['checked_icons']))
-		{
-			$deleteIcons = [];
-			foreach ($_POST['checked_icons'] as $icon)
-				$deleteIcons[] = (int) $icon;
-
-			// Do the actual delete!
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}message_icons
-				WHERE id_icon IN ({array_int:icon_list})',
-				array(
-					'icon_list' => $deleteIcons,
-				)
-			);
-		}
-		// Editing/Adding an icon?
-		elseif ($context['sub_action'] == 'editicon' && isset($_GET['icon']))
-		{
-			$_GET['icon'] = (int) $_GET['icon'];
-
-			// Do some preperation with the data... like check the icon exists *somewhere*
-			if (strpos($_POST['icon_filename'], '.png') !== false)
-				$_POST['icon_filename'] = substr($_POST['icon_filename'], 0, -4);
-			if (!file_exists($settings['default_theme_dir'] . '/images/post/' . $_POST['icon_filename'] . '.png'))
-				fatal_lang_error('icon_not_found');
-			// There is a 16 character limit on message icons...
-			elseif (strlen($_POST['icon_filename']) > 16)
-				fatal_lang_error('icon_name_too_long');
-			elseif ($_POST['icon_location'] == $_GET['icon'] && !empty($_GET['icon']))
-				fatal_lang_error('icon_after_itself');
-
-			// First do the sorting... if this is an edit reduce the order of everything after it by one ;)
-			if ($_GET['icon'] != 0)
-			{
-				$oldOrder = $context['icons'][$_GET['icon']]['true_order'];
-				foreach ($context['icons'] as $id => $data)
-					if ($data['true_order'] > $oldOrder)
-						$context['icons'][$id]['true_order']--;
-			}
-
-			// If there are no existing icons and this is a new one, set the id to 1 (mainly for non-mysql)
-			if (empty($_GET['icon']) && empty($context['icons']))
-				$_GET['icon'] = 1;
-
-			// Get the new order.
-			$newOrder = $_POST['icon_location'] == 0 ? 0 : $context['icons'][$_POST['icon_location']]['true_order'] + 1;
-			// Do the same, but with the one that used to be after this icon, done to avoid conflict.
-			foreach ($context['icons'] as $id => $data)
-				if ($data['true_order'] >= $newOrder)
-					$context['icons'][$id]['true_order']++;
-
-			// Finally set the current icon's position!
-			$context['icons'][$_GET['icon']]['true_order'] = $newOrder;
-
-			// Simply replace the existing data for the other bits.
-			$context['icons'][$_GET['icon']]['title'] = $_POST['icon_description'];
-			$context['icons'][$_GET['icon']]['filename'] = $_POST['icon_filename'];
-			$context['icons'][$_GET['icon']]['board_id'] = (int) $_POST['icon_board'];
-
-			// Do a huge replace ;)
-			$iconInsert = [];
-			$iconInsert_new = [];
-			foreach ($context['icons'] as $id => $icon)
-			{
-				if ($id != 0)
-				{
-					$iconInsert[] = array($id, $icon['board_id'], $icon['title'], $icon['filename'], $icon['true_order']);
-				}
-				else
-				{
-					$iconInsert_new[] = array($icon['board_id'], $icon['title'], $icon['filename'], $icon['true_order']);
-				}
-			}
-
-			$smcFunc['db_insert']('replace',
-				'{db_prefix}message_icons',
-				array('id_icon' => 'int', 'id_board' => 'int', 'title' => 'string-80', 'filename' => 'string-80', 'icon_order' => 'int'),
-				$iconInsert,
-				array('id_icon')
-			);
-
-			if (!empty($iconInsert_new))
-			{
-				$smcFunc['db_insert']('replace',
-					'{db_prefix}message_icons',
-					array('id_board' => 'int', 'title' => 'string-80', 'filename' => 'string-80', 'icon_order' => 'int'),
-					$iconInsert_new,
-					array('id_icon')
-				);
-			}
-		}
-
-		// Unless we're adding a new thing, we'll escape
-		if (!isset($_POST['add']))
-			redirectexit('action=admin;area=smileys;sa=editicons');
-	}
-
-	$context[$context['admin_menu_name']]['current_subsection'] = 'editicons';
-
-	$listOptions = array(
-		'id' => 'message_icon_list',
-		'title' => $txt['icons_edit_message_icons'],
-		'base_href' => $scripturl . '?action=admin;area=smileys;sa=editicons',
-		'get_items' => array(
-			'function' => 'list_getMessageIcons',
-		),
-		'no_items_label' => $txt['icons_no_entries'],
-		'columns' => array(
-			'icon' => array(
-				'data' => array(
-					'function' => function ($rowData) use ($settings, $smcFunc)
-					{
-						$images_url = $settings[file_exists(sprintf('%1$s/images/post/%2$s.png', $settings['theme_dir'], $rowData['filename'])) ? 'actual_images_url' : 'default_images_url'];
-						return sprintf('<img src="%1$s/post/%2$s.png" alt="%3$s">', $images_url, $rowData['filename'], $smcFunc['htmlspecialchars']($rowData['title']));
-					},
-					'class' => 'centercol',
-				),
-			),
-			'filename' => array(
-				'header' => array(
-					'value' => $txt['smileys_filename'],
-				),
-				'data' => array(
-					'sprintf' => array(
-						'format' => '%1$s.png',
-						'params' => array(
-							'filename' => true,
-						),
-					),
-				),
-			),
-			'tooltip' => array(
-				'header' => array(
-					'value' => $txt['smileys_description'],
-				),
-				'data' => array(
-					'db_htmlsafe' => 'title',
-				),
-			),
-			'board' => array(
-				'header' => array(
-					'value' => $txt['icons_board'],
-				),
-				'data' => array(
-					'function' => function ($rowData) use ($txt)
-					{
-						return empty($rowData['board_name']) ? $txt['icons_edit_icons_all_boards'] : $rowData['board_name'];
-					},
-				),
-			),
-			'modify' => array(
-				'header' => array(
-					'value' => $txt['smileys_modify'],
-					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=admin;area=smileys;sa=editicon;icon=%1$s">' . $txt['smileys_modify'] . '</a>',
-						'params' => array(
-							'id_icon' => false,
-						),
-					),
-					'class' => 'centercol',
-				),
-			),
-			'check' => array(
-				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
-					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
-						'format' => '<input type="checkbox" name="checked_icons[]" value="%1$d">',
-						'params' => array(
-							'id_icon' => false,
-						),
-					),
-					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
-			'href' => $scripturl . '?action=admin;area=smileys;sa=editicons',
-		),
-		'additional_rows' => array(
-			array(
-				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete" value="' . $txt['quickmod_delete_selected'] . '" class="button_submit"> <a class="button_link" href="' . $scripturl . '?action=admin;area=smileys;sa=editicon">' . $txt['icons_add_new'] . '</a>',
-			),
-		),
-	);
-
-	require_once($sourcedir . '/Subs-List.php');
-	createList($listOptions);
-	$context['default_list'] = 'message_icon_list';
-	$context['sub_template'] = 'generic_list_page';
-
-	// If we're adding/editing an icon we'll need a list of boards
-	if ($context['sub_action'] == 'editicon' || isset($_POST['add']))
-	{
-		// Force the sub_template just in case.
-		$context['sub_template'] = 'admin_messageicon_edit';
-
-		$context['new_icon'] = !isset($_GET['icon']);
-
-		// Get the properties of the current icon from the icon list.
-		if (!$context['new_icon'])
-			$context['icon'] = $context['icons'][$_GET['icon']];
-		else
-			$context['icon'] = ['id' => 0];
-
-		// Get a list of boards needed for assigning this icon to a specific board.
-		$boardListOptions = array(
-			'use_permissions' => true,
-			'selected_board' => isset($context['icon']['board_id']) ? $context['icon']['board_id'] : 0,
-		);
-		require_once($sourcedir . '/Subs-MessageIndex.php');
-		$context['categories'] = getBoardList($boardListOptions);
-	}
-}
-
-/**
- * Callback function for createList().
- *
- * @param int $start The item to start with (not used here)
- * @param int $items_per_page The number of items to display per page (not used here)
- * @param string $sort A string indicating how to sort the items (not used here)
- * @return array An array of information about message icons
- */
-function list_getMessageIcons($start, $items_per_page, $sort)
-{
-	global $smcFunc;
-
-	$request = $smcFunc['db_query']('', '
-		SELECT m.id_icon, m.title, m.filename, m.icon_order, m.id_board, b.name AS board_name
-		FROM {db_prefix}message_icons AS m
-			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
-		WHERE ({query_see_board} OR b.id_board IS NULL)
-		ORDER BY m.icon_order',
-		[]
-	);
-
-	$message_icons = [];
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$message_icons[] = $row;
-	$smcFunc['db_free_result']($request);
-
-	return $message_icons;
 }

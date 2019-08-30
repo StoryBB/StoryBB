@@ -116,7 +116,7 @@ $txt['lfyi'] = 'You are unable to connect to storybb.org\'s latest news file.';
 
 $txt['manage_search'] = 'Search';
 
-$txt['smileys_manage'] = 'Smileys and Message Icons';
+$txt['smileys_manage'] = 'Smileys';
 $txt['theme_admin'] = 'Themes and Layout';
 $txt['registration_center'] = 'Registration';
 
@@ -229,10 +229,11 @@ $txt['maintain_done'] = 'The maintenance task \'%1$s\' was executed successfully
 $txt['maintain_no_errors'] = 'Congratulations, no errors were found. Thanks for checking.';
 
 $txt['maintain_tasks'] = 'Scheduled Tasks';
-$txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by StoryBB.';
+$txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by StoryBB. <strong>Note:</strong> All times given below are <em>server time</em> and do not take any time offsets setup within StoryBB into account.';
+$txt['scheduled_task_list'] = 'Task List';
 
 $txt['scheduled_log'] = 'Task Log';
-$txt['scheduled_log_desc'] = 'This log shows all the scheduled tasks that have been run on your forum.';
+$txt['scheduled_log_desc'] = 'This log shows all the scheduled tasks that have been run on your forum. (All times given are <em>server time</em>.)';
 $txt['admin_log'] = 'Administration Log';
 $txt['admin_log_desc'] = 'Lists administrative tasks that have been performed by admins of your forum.';
 $txt['moderation_log'] = 'Moderation Log';
@@ -645,7 +646,6 @@ $txt['search_method'] = 'Search Method';
 $txt['smileys_add'] = 'Add Smiley';
 $txt['smileys_edit'] = 'Edit Smileys';
 $txt['smileys_set_order'] = 'Set Smiley order';
-$txt['icons_edit_message_icons'] = 'Message Icons';
 
 $txt['membergroups_new_group'] = 'Add Membergroup';
 $txt['membergroups_edit_groups'] = 'Edit Membergroups';
@@ -662,26 +662,6 @@ $txt['admin_policies'] = 'Site Policies';
 
 $txt['paid_subscriptions'] = 'Paid Subscriptions';
 $txt['paid_subs_view'] = 'View Subscriptions';
-
-$txt['hooks_title_list'] = 'Integration Hooks';
-$txt['hooks_field_hook_name'] = 'Hook Name';
-$txt['hooks_field_function_name'] = 'Function Name';
-$txt['hooks_field_function_method'] = 'Function is a method and its class is instantiated';
-$txt['hooks_field_function'] = 'Function';
-$txt['hooks_field_included_file'] = 'Included file';
-$txt['hooks_field_file_name'] = 'File Name';
-$txt['hooks_field_hook_exists'] = 'Status';
-$txt['hooks_active'] = 'Exists';
-$txt['hooks_disabled'] = 'Disabled';
-$txt['hooks_missing'] = 'Not found';
-$txt['hooks_no_hooks'] = 'There are currently no hooks in the system.';
-$txt['hooks_button_remove'] = 'Remove';
-$txt['hooks_disable_instructions'] = 'Click on the status icon to enable or disable the hook';
-$txt['hooks_disable_legend'] = 'Legend';
-$txt['hooks_disable_legend_exists'] = 'the hook exists and is active';
-$txt['hooks_disable_legend_disabled'] = 'the hook exists but has been disabled';
-$txt['hooks_disable_legend_missing'] = 'the hook has not been found';
-$txt['hooks_reset_filter'] = 'No filter';
 
 $txt['board_perms_allow'] = 'Allow';
 $txt['board_perms_ignore'] = 'Ignore';

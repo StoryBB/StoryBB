@@ -167,7 +167,6 @@ function AdminMain()
 						'addsmiley' => [$txt['smileys_add']],
 						'editsmileys' => [$txt['smileys_edit']],
 						'setorder' => [$txt['smileys_set_order']],
-						'editicons' => [$txt['icons_edit_message_icons'], 'enabled' => !empty($modSettings['messageIcons_enable'])],
 						'settings' => [$txt['settings']],
 					],
 				],
@@ -224,7 +223,6 @@ function AdminMain()
 						'index' => [$txt['permissions_groups'], 'manage_permissions'],
 						'board' => [$txt['permissions_boards'], 'manage_permissions'],
 						'profiles' => [$txt['permissions_profiles'], 'manage_permissions'],
-						'postmod' => [$txt['permissions_post_moderation'], 'manage_permissions'],
 					],
 				],
 				'regcenter' => [
@@ -344,7 +342,6 @@ function AdminMain()
 						'database' => [$txt['maintain_sub_database'], 'admin_forum'],
 						'members' => [$txt['maintain_sub_members'], 'admin_forum'],
 						'topics' => [$txt['maintain_sub_topics'], 'admin_forum'],
-						'hooks' => [$txt['hooks_title_list'], 'admin_forum'],
 					],
 				],
 				'scheduledtasks' => [
@@ -353,7 +350,7 @@ function AdminMain()
 					'icon' => 'scheduled',
 					'function' => 'ManageScheduledTasks',
 					'subsections' => [
-						'tasks' => [$txt['maintain_tasks'], 'admin_forum'],
+						'tasks' => [$txt['scheduled_task_list'], 'admin_forum'],
 						'tasklog' => [$txt['scheduled_log'], 'admin_forum'],
 					],
 				],

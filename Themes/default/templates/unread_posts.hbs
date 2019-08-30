@@ -17,7 +17,6 @@
 
 			<div id="unread">
 				<div id="topic_header" class="title_bar">
-					<div class="board_icon"></div>
 					<div class="info">
 						<a href="{{scripturl}}?action=unread{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}};sort=subject{{#if (and (eq context.sort_by 'subject') (eq context.sort_direction 'up'))}};desc{{/if}}">{{{txt.subject}}}{{#if (eq context.sort_by 'subject')}} <span class="main_icons sort_{{context.sort_direction}}"></span>{{/if}}</a>
 					</div>
@@ -35,9 +34,6 @@
 
 	{{#each context.topics}}
 					<div class="{{{css_class}}}">
-						<div class="board_icon">
-							<img src="{{{first_post.icon_url}}}" alt="">
-						</div>
 						<div class="info">
 							{{! // Now we handle the icons }}
 							<div class="icons floatright">

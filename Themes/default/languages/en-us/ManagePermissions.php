@@ -120,8 +120,8 @@ $txt['permissionname_manage_boards'] = 'Manage boards and categories';
 $txt['permissionhelp_manage_boards'] = 'This permission allows creation, editing and removal of boards and categories.';
 $txt['permissionname_manage_attachments'] = 'Manage attachments and avatars';
 $txt['permissionhelp_manage_attachments'] = 'This permission allows access to the attachment center, where all forum attachments and avatars are listed and can be removed.';
-$txt['permissionname_manage_smileys'] = 'Manage smileys and message icons';
-$txt['permissionhelp_manage_smileys'] = 'This allows access to the smiley center. In the smiley center you can add, edit and remove smileys and smiley sets. If you\'ve enabled customized message icons you are also able to add and edit message icons with this permission.';
+$txt['permissionname_manage_smileys'] = 'Manage smileys';
+$txt['permissionhelp_manage_smileys'] = 'This allows access to the smiley center. In the smiley center you can add, edit and remove smileys.';
 $txt['permissionname_edit_news'] = 'Edit news';
 $txt['permissionhelp_edit_news'] = 'The news function allows a random news line to appear on each screen. In order to use the news function, enabled it in the forum settings.';
 $txt['permissionname_access_mod_center'] = 'Access the moderation center';
@@ -286,19 +286,6 @@ $txt['permissionhelp_post_attachment'] = 'Attachments are files that are attache
 $txt['permissionicon'] = '';
 
 $txt['permission_by_board_desc'] = 'Here you can set which permissions profile a board uses. You can create new permission profiles from the &quot;Edit Profiles&quot; menu.';
-
-$txt['permissions_post_moderation_desc'] = 'From this page, you can configure the ability to hold users\' posts before being visible to regular forum members, including which group or groups of users can approve them. Users whose posts are held for approval will still be able to see their posts, as well as replies from approvers, e.g. moderator feedback about making a post appropriate.';
-$txt['permissions_post_moderation_deny_note'] = 'Note that you cannot apply the &quot;deny&quot; permission from this page. Please edit the permissions directly if you wish to apply a deny permission.';
-$txt['permissions_post_moderation_select'] = 'Select Profile';
-$txt['permissions_post_moderation_new_topics'] = 'New Topics';
-$txt['permissions_post_moderation_replies_own'] = 'Own Replies';
-$txt['permissions_post_moderation_replies_any'] = 'Any Replies';
-$txt['permissions_post_moderation_attachments'] = 'Attachments';
-$txt['permissions_post_moderation_legend'] = 'Legend';
-$txt['permissions_post_moderation_allow'] = 'Can create';
-$txt['permissions_post_moderation_moderate'] = 'Can create but requires approval';
-$txt['permissions_post_moderation_disallow'] = 'Cannot create';
-$txt['permissions_post_moderation_group'] = 'Group';
 
 $txt['auto_approve_topics'] = 'Post new topics, without requiring approval';
 $txt['auto_approve_replies'] = 'Post replies to topics, without requiring approval';

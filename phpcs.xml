@@ -5,7 +5,6 @@
     <file>.</file>
 
     <!-- Don't include anything that comes from Composer; they don't have to follow our rules -->
-    <exclude-pattern>Sources/minify/*</exclude-pattern>
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>Themes/default/scripts/select2/*</exclude-pattern>
 

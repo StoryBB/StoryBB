@@ -16,8 +16,28 @@ use GuzzleHttp\Client;
 /**
  * Fetch the latest version info/news from storybb.org.
  */
-class FetchStoryBBFiles extends \StoryBB\Task\Schedulable
+class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 {
+	/**
+	 * Get the human-readable name for this task.
+	 * @return string The human readable name.
+	 */
+	public function get_name(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_fetchStoryBBfiles'];
+	}
+
+	/**
+	 * Get the human-readable description for this task.
+	 * @return string The task description.
+	 */
+	public function get_description(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_desc_fetchStoryBBfiles'];
+	}
+
 	/**
 	 * Fetch the latest version info/news from storybb.org.
 	 * @return bool True on success
@@ -65,9 +85,7 @@ class FetchStoryBBFiles extends \StoryBB\Task\Schedulable
 			// If we got an error - give up - the site might be down. And if we should happen to be coming from elsewhere, let's also make a note of it.
 			if (empty($file_data))
 			{
-				$context['scheduled_errors']['fetchStoryBBiles'][] = sprintf($txt['st_cannot_retrieve_file'], $url);
-				log_error(sprintf($txt['st_cannot_retrieve_file'], $url));
-				return false;
+				throw new Exception(sprintf($txt['st_cannot_retrieve_file'], $url));
 			}
 
 			// Save the file to the database.

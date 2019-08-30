@@ -368,34 +368,12 @@ VALUES (1, '{$default_administrator_group}', '', '#FF0000', '5#iconadmin.png', 1
 # --------------------------------------------------------
 
 #
-# Dumping data for table `message_icons`
-#
-
-# // @todo i18n
-INSERT INTO {$db_prefix}message_icons
-  (filename, title, icon_order)
-VALUES ('xx', 'Standard', '0'),
-  ('thumbup', 'Thumb Up', '1'),
-  ('thumbdown', 'Thumb Down', '2'),
-  ('exclamation', 'Exclamation point', '3'),
-  ('question', 'Question mark', '4'),
-  ('lamp', 'Lamp', '5'),
-  ('smiley', 'Smiley', '6'),
-  ('angry', 'Angry', '7'),
-  ('cheesy', 'Cheesy', '8'),
-  ('grin', 'Grin', '9'),
-  ('sad', 'Sad', '10'),
-  ('wink', 'Wink', '11'),
-  ('poll', 'Poll', '12');
-# --------------------------------------------------------
-
-#
 # Dumping data for table `messages`
 #
 
 INSERT INTO {$db_prefix}messages
-  (id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, modified_name, body, icon)
-VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'StoryBB', 'info@storybb.org', '', '{$default_topic_message}', 'xx');
+  (id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, modified_name, body)
+VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'StoryBB', 'info@storybb.org', '', '{$default_topic_message}');
 # --------------------------------------------------------
 
 #
@@ -503,22 +481,23 @@ VALUES
 #
 
 INSERT INTO {$db_prefix}scheduled_tasks
-  (id_task, next_time, time_offset, time_regularity, time_unit, disabled, task, class)
+  (id_task, next_time, time_offset, time_regularity, time_unit, disabled, class)
 VALUES
-  (1, 0, 0, 2, 'h', 0, 'approval_notification', 'StoryBB\\Task\\Schedulable\\ApprovalNotifications'),
-  (3, 0, 60, 1, 'd', 0, 'daily_maintenance', 'StoryBB\\Task\\Schedulable\\DailyMaintenance'),
-  (5, 0, 0, 1, 'd', 0, 'daily_digest', 'StoryBB\\Task\\Schedulable\\DailyDigest'),
-  (6, 0, 0, 1, 'w', 0, 'weekly_digest', 'StoryBB\\Task\\Schedulable\\WeeklyDigest'),
-  (7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchStoryBBfiles', 'StoryBB\\Task\\Schedulable\\FetchStoryBBFiles'),
-  (8, 0, 0, 1, 'd', 1, 'birthdayemails', 'StoryBB\\Task\\Schuledable\\BirthdayNotify'),
-  (9, 0, 0, 1, 'w', 0, 'weekly_maintenance', 'StoryBB\\Task\\Schedulable\\WeeklyMaintenance'),
-  (10, 0, 120, 1, 'd', 1, 'paid_subscriptions', 'StoryBB\\Task\\Schedulable\\UpdatePaidSubs'),
-  (11, 0, 120, 1, 'd', 0, 'remove_temp_attachments', 'StoryBB\\Task\\Schedulable\\RemoveTempAttachments'),
-  (12, 0, 180, 1, 'd', 0, 'remove_topic_redirect', 'StoryBB\\Task\\Schedulable\\RemoveTopicRedirects'),
-  (13, 0, 240, 1, 'd', 0, 'remove_old_drafts', 'StoryBB\\Task\\Schedulable\\RemoveOldDrafts'),
-  (14, 0, 300, 1, 'd', 0, 'clean_exports', 'StoryBB\\Task\\Schedulable\\CleanExports'),
-  (15, 0, 360, 1, 'd', 0, 'scrub_logs', 'StoryBB\\Task\\Schedulable\\ScrubLogs'),
-  (16, 0, 420, 1, 'd', 0, 'remove_unapproved_accts', 'StoryBB\\Task\\Schedulable\\RemoveUnapprovedAccounts');
+  (1, 0, 0, 2, 'h', 0, 'StoryBB\\Task\\Schedulable\\ApprovalNotifications'),
+  (3, 0, 60, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\DailyMaintenance'),
+  (5, 0, 0, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\DailyDigest'),
+  (6, 0, 0, 1, 'w', 0, 'StoryBB\\Task\\Schedulable\\WeeklyDigest'),
+  (7, 0, {$sched_task_offset}, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\FetchStoryBBFiles'),
+  (8, 0, 0, 1, 'd', 1, 'StoryBB\\Task\\Schuledable\\BirthdayNotify'),
+  (9, 0, 0, 1, 'w', 0, 'StoryBB\\Task\\Schedulable\\WeeklyMaintenance'),
+  (10, 0, 120, 1, 'd', 1, 'StoryBB\\Task\\Schedulable\\UpdatePaidSubs'),
+  (11, 0, 120, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\RemoveTempAttachments'),
+  (12, 0, 180, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\RemoveTopicRedirects'),
+  (13, 0, 240, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\RemoveOldDrafts'),
+  (14, 0, 300, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\CleanExports'),
+  (15, 0, 360, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\ScrubLogs'),
+  (16, 0, 420, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\RemoveUnapprovedAccounts'),
+  (17, 0, 480, 1, 'd', 0, 'StoryBB\\Task\\Schedulable\\RemoveOldAlerts');
 
 # --------------------------------------------------------
 

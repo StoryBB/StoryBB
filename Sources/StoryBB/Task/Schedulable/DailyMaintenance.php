@@ -16,8 +16,28 @@ use StoryBB\Task;
 /**
  * Daily maintenance.
  */
-class DailyMaintenance extends \StoryBB\Task\Schedulable
+class DailyMaintenance implements \StoryBB\Task\Schedulable
 {
+	/**
+	 * Get the human-readable name for this task.
+	 * @return string The human readable name.
+	 */
+	public function get_name(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_daily_maintenance'];
+	}
+
+	/**
+	 * Get the human-readable description for this task.
+	 * @return string The task description.
+	 */
+	public function get_description(): string
+	{
+		global $txt;
+		return $txt['scheduled_task_desc_daily_maintenance'];
+	}
+
 	/**
 	 * Daily maintenance.
 	 * @return bool True on success
