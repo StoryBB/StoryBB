@@ -2012,7 +2012,7 @@ function findSearchAPI()
 	// We don't even have the default? Abort, we can't fix this.
 	if (empty($backends['standard']))
 	{
-        fatal_lang_error('search_api_missing');
+		fatal_lang_error('search_api_missing');
 	}
 
 	return $backends['standard']['instance'];
