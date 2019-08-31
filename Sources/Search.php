@@ -706,7 +706,7 @@ function PlushSearch2()
 
 		// Sort the indexed words (large words -> small words -> excluded words).
 		if ($searchAPI->supportsMethod('searchSort'))
-			usort($orParts[$orIndex], 'searchSort');
+			usort($orParts[$orIndex], [$searchAPI, 'searchSort']);
 
 		foreach ($orParts[$orIndex] as $word)
 		{
@@ -2016,21 +2016,4 @@ function findSearchAPI()
 	}
 
 	return $backends['standard']['instance'];
-}
-
-/**
- * This function compares the length of two strings plus a little.
- * What it does:
- * - callback function for usort used to sort the fulltext results.
- * - passes sorting duty to the current API.
- *
- * @param string $a
- * @param string $b
- * @return int
- */
-function searchSort($a, $b)
-{
-	global $searchAPI;
-
-	return $searchAPI->searchSort($a, $b);
 }
