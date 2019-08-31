@@ -134,6 +134,7 @@ class ClassManager
 				catch (\Exception $e)
 				{
 					// We don't really care if this happens.
+					continue;
 				}
 			}
 		}
