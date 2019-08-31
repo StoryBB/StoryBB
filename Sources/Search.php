@@ -1995,24 +1995,27 @@ function findSearchAPI()
 	// Search has a special database set.
 	db_extend('search');
 
+	require_once($sourcedir . '/ManageSearch.php');
+	$backends = loadSearchAPIs();
+
 	// Create an instance of the search API and check it is valid for this version of StoryBB.
 	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
-	$search_class_name = '\\StoryBB\\Search\\' . ucfirst(strtolower($modSettings['search_index']));
-	if (!class_exists($search_class_name))
-		fatal_lang_error('search_api_missing');
-	$searchAPI = new $search_class_name();
-
-	// An invalid Search API.
-	if (!$searchAPI || !($searchAPI instanceof \StoryBB\Search\API_Interface) || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()))
+	if (isset($backends[$modSettings['search_index']]) && $backends[$modSettings['search_index']]['instance']->isValid())
 	{
-		// Log the error.
-		loadLanguage('Errors');
-		log_error(sprintf($txt['search_api_not_compatible'], 'SearchAPI-' . ucwords($modSettings['search_index']) . '.php'), 'critical');
-
-		$searchAPI = new \StoryBB\Search\Standard();
+		return $backends[$modSettings['search_index']]['instance'];
 	}
 
-	return $searchAPI;
+	// We couldn't load a valid instance, log it and return.
+	loadLanguage('Errors');
+	log_error(sprintf($txt['search_api_not_compatible'], $modSettings['search_index']), 'critical');
+
+	// We don't even have the default? Abort, we can't fix this.
+	if (empty($backends['standard']))
+	{
+        fatal_lang_error('search_api_missing');
+	}
+
+	return $backends['standard']['instance'];
 }
 
 /**

@@ -15,8 +15,18 @@ namespace StoryBB\Search;
 /**
  * Standard non full index, non custom index search
  */
-class Standard extends API
+class Standard extends AbstractSearchable implements Searchable
 {
+	/**
+	 * Returns the name of the search index.
+	 */
+	public function getName(): string
+	{
+		global $txt;
+		loadLanguage('Search');
+		return $txt['search_index_none'];
+	}
+
 	/**
 	 * Check whether the specific search operation can be performed by this API.
 	 * The operations are the functions listed in the interface, if not supported
@@ -30,5 +40,15 @@ class Standard extends API
 	{
 		// Always fall back to the standard search method.
 		return false;
+	}
+
+	/**
+	 * Whether this method is valid for implementation or not
+	 *
+	 * @return bool Whether or not this method is valid
+	 */
+	public function isValid()
+	{
+		return true;
 	}
 }

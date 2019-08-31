@@ -12,11 +12,23 @@
 
 namespace StoryBB\Search;
 
+use StoryBB\Discoverable;
+
 /**
  * These methods should all be implemented for a search backend to successfully implement post searching.
  */
-interface API_Interface
+interface Searchable extends Discoverable
 {
+	/**
+	 * Returns the name of the search index.
+	 */
+	public function getName(): string;
+
+	/**
+	 * Returns the description of the search index.
+	 */
+	public function getDescription(): string;
+
 	/**
 	 * Check whether the specific search operation can be performed by this API.
 	 * The operations are the functions listed in the interface, if not supported

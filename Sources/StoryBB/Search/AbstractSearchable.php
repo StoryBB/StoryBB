@@ -15,7 +15,7 @@ namespace StoryBB\Search;
 /**
  * The generic search class has a number of functions, most backends should override most of these.
  */
-abstract class API implements API_Interface
+abstract class AbstractSearchable
 {
 	/**
 	 * @var string The last version of StoryBB that this was tested on. Helps protect against API changes.
@@ -33,12 +33,31 @@ abstract class API implements API_Interface
 	public $is_supported = true;
 
 	/**
+	 * @var bool Whether this backend has a template associated with it
+	 */
+	public $has_template = true;
+
+	/**
+	 * Returns the name of the search index.
+	 */
+	abstract public function getName(): string;
+
+	/**
+	 * Returns the description of the search index.
+	 */
+	public function getDescription(): string
+	{
+		return '';
+	}
+
+	/**
 	 * Whether this method is valid for implementation or not
 	 *
 	 * @return bool Whether or not this method is valid
 	 */
 	public function isValid()
 	{
+		return false;
 	}
 
 	/**
