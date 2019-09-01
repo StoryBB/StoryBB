@@ -12,10 +12,12 @@
 
 namespace StoryBB\Payment;
 
+use StoryBB\Discoverable;
+
 /**
  * This interface defines what a payment processor must implement.
  */
-interface PaymentProcessor
+interface PaymentProcessor extends Discoverable
 {
 	/**
 	 * Returns a short title for display.

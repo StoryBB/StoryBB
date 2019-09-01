@@ -13,6 +13,7 @@
 namespace StoryBB\Helper;
 
 use Exception;
+use StoryBB\ClassManager;
 
 /**
  * A helper to make setting up those pesky autocompletes easier.
@@ -55,14 +56,12 @@ class Autocomplete
 	 */
 	public static function get_registered_types(): array
 	{
-		$searchTypes = array(
-			'member' => 'StoryBB\\Helper\\Autocomplete\\Member',
-			'character' => 'StoryBB\\Helper\\Autocomplete\\Character',
-			'rawcharacter' => 'StoryBB\\Helper\\Autocomplete\\RawCharacter',
-			'group' => 'StoryBB\\Helper\\Autocomplete\\Group',
-		);
+		$searchTypes = [];
+		foreach (ClassManager::get_classes_implementing('StoryBB\\Helper\\Autocomplete\\Completable') as $class)
+		{
+			$searchTypes[strtolower(substr(strrchr($class, '\\'), 1))] = $class;
+		}
 
-		call_integration_hook('integrate_autocomplete', array(&$searchTypes));
 		return $searchTypes;
 	}
 }

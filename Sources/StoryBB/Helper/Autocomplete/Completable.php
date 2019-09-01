@@ -12,10 +12,12 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
+use StoryBB\Discoverable;
+
 /**
  * Any autocomplete handlers must implement this interface.
  */
-interface Completable
+interface Completable extends Discoverable
 {
 	/**
 	 * Set the term for an existing search to match against.
