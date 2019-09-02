@@ -38,6 +38,6 @@ To get started, <a href="https://www.clahub.com/agreements/StoryBB/StoryBB">sign
 * mbstring
 * iconv
 * Imagick or MagickWand for ImageMagick support
-* APC/APCu/memcache/SQLite 3/xcache/Zend SHM cache
+* APCu/memcache/Redis/SQLite 3/Zend SHM cache
 
 Please, feel free to play around. That's what we're doing. ;)

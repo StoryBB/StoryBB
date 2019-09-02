@@ -171,4 +171,14 @@ class Memcache extends API
 				$("#cache_memcached").prop("disabled", cache_type != "memcache");
 			});';
 	}
+
+	/**
+	 * Return the version of the Memcache server.
+	 *
+	 * @return string Version number
+	 */
+	public function getVersion(): string
+	{
+		return $this->memcache->getVersion();
+	}
 }

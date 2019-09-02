@@ -196,4 +196,14 @@ abstract class API implements API_Interface
 	public function cacheSettings(array &$config_vars)
 	{
 	}
+
+	/**
+	 * Specify the version of the cache backend (notionally of whatever service is serving cache)
+	 *
+	 * @return string Version number
+	 */
+	public function getVersion(): string
+	{
+		return '';
+	}
 }
