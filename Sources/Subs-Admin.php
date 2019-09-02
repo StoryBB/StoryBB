@@ -105,22 +105,43 @@ function getServerVersions($checkFor)
 		}
 
 		// We already know it's ImageMagick and the website isn't needed...
-		$im_version = str_replace(array('ImageMagick ', ' https://www.imagemagick.org'), '', $im_version);
-		$versions['imagemagick'] = array('title' => $txt['support_versions_imagemagick'], 'version' => $im_version . ' (' . $extension_version . ')');
+		$im_version = str_replace(['ImageMagick ', ' https://www.imagemagick.org'], '', $im_version);
+		$versions['imagemagick'] = ['title' => $txt['support_versions_imagemagick'], 'version' => $im_version . ' (' . $extension_version . ')'];
 	}
-
-	// If we're using memcache we need the server info.
-	$memcache_version = '???';
-	if (!empty($cache_accelerator) && ($cache_accelerator == 'memcached' || $cache_accelerator == 'memcache') && !empty($cache_memcached) && !empty($cacheAPI))
-		$memcache_version = $cacheAPI->getVersion();
 
 	// Check to see if we have any accelerators installed...
 	if (in_array('phpa', $checkFor) && isset($_PHPA))
-		$versions['phpa'] = array('title' => 'ionCube PHP-Accelerator', 'version' => $_PHPA['VERSION']);
+	{
+		$versions['phpa'] = ['title' => 'ionCube PHP-Accelerator', 'version' => $_PHPA['VERSION']];
+	}
 	if (in_array('apcu', $checkFor) && extension_loaded('apcu'))
-		$versions['apcu'] = array('title' => 'Alternative PHP Cache', 'version' => phpversion('apcu'));
+	{
+		$versions['apcu'] = ['title' => 'Alternative PHP Cache', 'version' => phpversion('apcu')];
+	}
 	if (in_array('memcache', $checkFor) && function_exists('memcache_set'))
-		$versions['memcache'] = array('title' => 'Memcached', 'version' => $memcache_version);
+	{
+		// If we're using memcache we need the server info.
+		$memcache_version = '';
+		if (!empty($cache_accelerator) && ($cache_accelerator == 'memcached' || $cache_accelerator == 'memcache') && !empty($cache_memcached) && !empty($cacheAPI))
+		{
+			$memcache_version = $cacheAPI->getVersion();
+		}
+		$versions['memcache'] = ['title' => 'Memcached', 'version' => $memcache_version ? $memcache_version : '???'];
+	}
+	if (in_array('redis', $checkFor) && class_exists('Redis'))
+	{
+		$versions['redis'] = ['title' => 'Redis', 'version' => phpversion('redis') . ' (client)'];
+
+		$redis = new \StoryBB\Cache\Redis;
+		if ($redis->isSupported())
+		{
+			$redisversion = $redis->getVersion();
+			if (!empty($redisversion))
+			{
+				$versions['redis']['version'] .= ' ' . $redisversion . ' (server)';
+			}
+		}
+	}
 
 	return $versions;
 }
