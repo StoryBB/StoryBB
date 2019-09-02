@@ -181,11 +181,6 @@ function ThemeList()
 
 	if (isset($_REQUEST['th']))
 		return SetThemeSettings();
-		
-	if (isset($_GET['done']))
-		$context['done'] = $_GET['done'];
-	else
-		$context['done'] = false;
 
 	if (isset($_POST['save']))
 	{
@@ -824,7 +819,8 @@ function RemoveTheme()
 		remove_dir($theme_info['theme_dir']);
 
 	// Go back to the list page.
-	redirectexit('action=admin;area=theme;sa=list;' . $context['session_var'] . '=' . $context['session_id'] . ';done=removing');
+	session_flash('success', $txt['theme_confirmed_removing']);
+	redirectexit('action=admin;area=theme;sa=list;' . $context['session_var'] . '=' . $context['session_id']);
 }
 
 /**
@@ -832,7 +828,7 @@ function RemoveTheme()
  */
 function EnableTheme()
 {
-	global $modSettings, $context;
+	global $modSettings, $context, $txt;
 
 	checkSession('get');
 
@@ -858,7 +854,8 @@ function EnableTheme()
 	updateSettings(array('enableThemes' => $enableThemes));
 
 	// Done!
-	redirectexit('action=admin;area=theme;sa=list;' . $context['session_var'] . '=' . $context['session_id'] . ';done=' . (isset($_GET['disabled']) ? 'disabling' : 'enabling'));
+	session_flash('success', isset($_GET['disabled']) ? $txt['theme_confirmed_disabling'] : $txt['theme_confirmed_enabling']);
+	redirectexit('action=admin;area=theme;sa=list;' . $context['session_var'] . '=' . $context['session_id']);
 }
 
 /**
