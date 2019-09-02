@@ -117,8 +117,8 @@ function getServerVersions($checkFor)
 	// Check to see if we have any accelerators installed...
 	if (in_array('phpa', $checkFor) && isset($_PHPA))
 		$versions['phpa'] = array('title' => 'ionCube PHP-Accelerator', 'version' => $_PHPA['VERSION']);
-	if (in_array('apc', $checkFor) && extension_loaded('apc'))
-		$versions['apc'] = array('title' => 'Alternative PHP Cache', 'version' => phpversion('apc'));
+	if (in_array('apcu', $checkFor) && extension_loaded('apcu'))
+		$versions['apcu'] = array('title' => 'Alternative PHP Cache', 'version' => phpversion('apcu'));
 	if (in_array('memcache', $checkFor) && function_exists('memcache_set'))
 		$versions['memcache'] = array('title' => 'Memcached', 'version' => $memcache_version);
 

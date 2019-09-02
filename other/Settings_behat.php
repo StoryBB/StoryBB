@@ -101,7 +101,7 @@ $db_persist = 0;
 /********* Cache Info *********/
 /**
  * Select a cache system. You want to leave this up to the cache area of the admin panel for
- * proper detection of apc, memcached, output_cache, file, etc
+ * proper detection of APCu, memcached, output_cache, file, etc
  * (you can add more with a mod).
  * @var string
  */

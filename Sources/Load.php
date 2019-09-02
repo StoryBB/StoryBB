@@ -3138,7 +3138,6 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  * - Uses the cache engine chosen in the ACP and saved in settings.php
  * - It supports:
  *	 memcache: https://php.net/memcache
- *	 APC: https://php.net/apc
  *   APCu: https://php.net/book.apcu
  *	 Zend: http://files.zend.com/help/Zend-Platform/output_cache_functions.htm
  *	 Zend: http://files.zend.com/help/Zend-Platform/zend_cache_functions.htm

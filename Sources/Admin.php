@@ -494,7 +494,7 @@ function AdminHome()
 		'imagemagick',
 		'db_server',
 		'phpa',
-		'apc',
+		'apcu',
 		'memcache',
 		'php',
 		'server',
