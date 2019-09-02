@@ -496,7 +496,6 @@ function AdminHome()
 		'phpa',
 		'apc',
 		'memcache',
-		'xcache',
 		'php',
 		'server',
 	];

@@ -52,7 +52,7 @@ function getAdminFile(string $filename, string $path = '')
 
 /**
  * Get a list of versions that are currently installed on the server.
- * @param array $checkFor An array of what to check versions for - can contain one or more of 'gd', 'imagemagick', 'db_server', 'phpa', 'memcache', 'xcache', 'apc', 'php' or 'server'
+ * @param array $checkFor An array of what to check versions for - can contain one or more of 'gd', 'imagemagick', 'db_server', 'phpa', 'memcache', 'apc', 'php' or 'server'
  * @return array An array of versions (keys are same as what was in $checkFor, values are the versions)
  */
 function getServerVersions($checkFor)
@@ -121,8 +121,6 @@ function getServerVersions($checkFor)
 		$versions['apc'] = array('title' => 'Alternative PHP Cache', 'version' => phpversion('apc'));
 	if (in_array('memcache', $checkFor) && function_exists('memcache_set'))
 		$versions['memcache'] = array('title' => 'Memcached', 'version' => $memcache_version);
-	if (in_array('xcache', $checkFor) && function_exists('xcache_set'))
-		$versions['xcache'] = array('title' => 'XCache', 'version' => XCACHE_VERSION);
 
 	return $versions;
 }

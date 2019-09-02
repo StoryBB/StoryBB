@@ -3137,7 +3137,6 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  * - It may "miss" so shouldn't be depended on
  * - Uses the cache engine chosen in the ACP and saved in settings.php
  * - It supports:
- *	 Xcache: https://xcache.lighttpd.net/wiki/XcacheApi
  *	 memcache: https://php.net/memcache
  *	 APC: https://php.net/apc
  *   APCu: https://php.net/book.apcu
@@ -3177,7 +3176,7 @@ function cache_get_data($key, $ttl = 120)
  *  - If no type is specified will perform a complete cache clearing
  * For cache engines that do not distinguish on types, a full cache flush will be done
  *
- * @param string $type The cache type ('memcached', 'apc', 'xcache', 'zend' or something else for StoryBB's file cache)
+ * @param string $type The cache type ('memcached', 'apc', 'zend' or something else that maps to StoryBB\Cache\*)
  */
 function clean_cache($type = '')
 {
