@@ -117,18 +117,4 @@ interface API_Interface
 	 * @return void No return is needed.
 	 */
 	public function cacheSettings(array &$config_vars);
-
-	/**
-	 * Gets the latest version of StoryBB this is compatible with.
-	 *
-	 * @return string the value of $key.
-	 */
-	public function getCompatibleVersion();
-
-	/**
-	 * Gets the min version that we support.
-	 *
-	 * @return string the value of $key.
-	 */
-	public function getMinimumVersion();
 }

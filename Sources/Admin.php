@@ -342,7 +342,6 @@ function AdminMain()
 						'database' => [$txt['maintain_sub_database'], 'admin_forum'],
 						'members' => [$txt['maintain_sub_members'], 'admin_forum'],
 						'topics' => [$txt['maintain_sub_topics'], 'admin_forum'],
-						'hooks' => [$txt['hooks_title_list'], 'admin_forum'],
 					],
 				],
 				'scheduledtasks' => [
@@ -351,7 +350,7 @@ function AdminMain()
 					'icon' => 'scheduled',
 					'function' => 'ManageScheduledTasks',
 					'subsections' => [
-						'tasks' => [$txt['maintain_tasks'], 'admin_forum'],
+						'tasks' => [$txt['scheduled_task_list'], 'admin_forum'],
 						'tasklog' => [$txt['scheduled_log'], 'admin_forum'],
 					],
 				],
@@ -495,9 +494,9 @@ function AdminHome()
 		'imagemagick',
 		'db_server',
 		'phpa',
-		'apc',
+		'apcu',
 		'memcache',
-		'xcache',
+		'redis',
 		'php',
 		'server',
 	];

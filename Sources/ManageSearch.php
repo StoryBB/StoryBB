@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\ClassManager;
+
 /**
  * Main entry point for the admin search settings screen.
  * It checks permissions, and it forwards to the appropriate function based on
@@ -590,44 +592,26 @@ function CreateMessageIndex()
  */
 function loadSearchAPIs()
 {
-	global $sourcedir, $txt;
-
-	$apis = [];
-	if ($dh = opendir($sourcedir . '/StoryBB/Search'))
+	$backends = [];
+	foreach (ClassManager::get_classes_implementing('StoryBB\\Search\\Searchable') as $class)
 	{
-		while (($file = readdir($dh)) !== false)
+		$instance = new $class;
+		if (!$instance->is_supported)
 		{
-			if (is_file($sourcedir . '/' . $file) && preg_match('~^(?!API)([A-Z][a-z0-9_-]+)\.php$~', $file, $matches))
-			{
-				// Check this is definitely a valid API!
-				$fp = fopen($sourcedir . '/' . $file, 'rb');
-				$header = fread($fp, 4096);
-				fclose($fp);
-
-				if (strpos($header, 'class ' . $matches[1] . ' extends API') !== false)
-				{
-					$search_class_name = '\\StoryBB\\Search\\' . $matches[1];
-					$index_name = strtolower($matches[1]);
-					$searchAPI = new $search_class_name();
-
-					// No Support?  NEXT!
-					if (!$searchAPI->is_supported)
-						continue;
-
-					$apis[$index_name] = array(
-						'filename' => $file,
-						'setting_index' => $index_name,
-						'has_template' => in_array($index_name, array('custom', 'fulltext', 'standard')),
-						'label' => $index_name && isset($txt['search_index_' . $index_name]) ? $txt['search_index_' . $index_name] : '',
-						'desc' => $index_name && isset($txt['search_index_' . $index_name . '_desc']) ? $txt['search_index_' . $index_name . '_desc'] : '',
-					);
-				}
-			}
+			continue;
 		}
+		$backend = substr(strrchr($class, '\\'), 1);
+		$backend_name = strtolower($backend);
+		$backends[$backend_name] = [
+			'setting_index' => $backend_name,
+			'instance' => $instance,
+			'has_template' => $instance->has_template,
+			'label' => $instance->getName(),
+			'desc' => $instance->getDescription(),
+		];
 	}
-	closedir($dh);
 
-	return $apis;
+	return $backends;
 }
 
 /**

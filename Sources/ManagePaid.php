@@ -11,7 +11,9 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\ClassManager;
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Task\Scheduler;
 
 /**
  * The main entrance point for the 'Paid Subscription' screen, calling
@@ -186,15 +188,7 @@ function ModifySubscriptionSettings($return_config = false)
 		if ($old != $new)
 		{
 			// So we're changing this fundamental status. Great.
-			$smcFunc['db_query']('', '
-				UPDATE {db_prefix}scheduled_tasks
-				SET disabled = {int:disabled}
-				WHERE task = {string:task}',
-				array(
-					'disabled' => $new ? 0 : 1,
-					'task' => 'paid_subscriptions',
-				)
-			);
+			Scheduler::set_enabled_state('StoryBB\\Task\\Schedulable\\UpdatePaidSubs', $enabled);
 
 			// This may well affect the next trigger, whether we're enabling or not.
 			require_once($sourcedir . '/ScheduledTasks.php');
@@ -1948,14 +1942,15 @@ function loadSubscriptions()
  */
 function loadPaymentGateways()
 {
-	$gateways = [
-		'paypal' => [
-			'class' => 'StoryBB\\Payment\\PayPal',
-			'code' => 'paypal',
-		],
-	];
-
-	call_integration_hook('integrate_payment_processors', array(&$gateways));
+	$gateways = [];
+	foreach (ClassManager::get_classes_implementing('StoryBB\\Payment\\PaymentProcessor') as $class)
+	{
+		$code = substr(strrchr($class, '\\'), 1);
+		$gateways[$code] = [
+			'class' => $class,
+			'code' => $code,
+		];
+	}
 
 	return $gateways;
 }
