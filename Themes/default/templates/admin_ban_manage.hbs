@@ -148,7 +148,7 @@
 				</fieldset>
 {{/if}}
 
-				<input type="submit" name="{{#if context.ban.is_new}}add_ban{{else}}modify_ban{{/if}}" value="{{#if context.ban.is_new}}{{{txt.ban_add}}}{{else}}{{{txt.ban_modify}}}{{/if}}" class="button_submit">
+				<input type="submit" name="{{#if context.ban.is_new}}add_ban{{else}}modify_ban{{/if}}" value="{{#if context.ban.is_new}}{{{txt.ban_add}}}{{else}}{{{txt.ban_modify}}}{{/if}}">
 				<input type="hidden" name="old_expire" value="{{{context.ban.expiration.days}}}">
 				<input type="hidden" name="bg" value="{{{context.ban.id}}}">
 

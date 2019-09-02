@@ -88,7 +88,7 @@
 
 						</div>
 					</div>
-					<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_old_confirm}}}" class="button_submit you_sure">
+					<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_old_confirm}}}" class="you_sure">
 					{{session_form}}
 					{{token_form 'admin-maint'}}
 				</form>
@@ -103,7 +103,7 @@
 				<p>
 					{{{txt.maintain_old_drafts_days}}}&nbsp;<input type="number" name="draftdays" value="{{#if modSettings.drafts_keep_days}}{{modSettings.drafts_keep_days}}{{else}}30{{/if}}" size="3">&nbsp;{{{txt.days_word}}}
 				</p>
-				<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_old_drafts_confirm}}}" class="button_submit you_sure">
+				<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_old_drafts_confirm}}}" class="you_sure">
 
 				{{session_form}}
 				{{token_form 'admin-maint'}}
@@ -153,7 +153,7 @@
 						{{{txt.move_type_sticky}}}
 					</label><br>
 				</p>
-				<input type="submit" value="{{{txt.move_topics_now}}}" onclick="if (document.getElementById('id_board_from').options[document.getElementById('id_board_from').selectedIndex].disabled || document.getElementById('id_board_from').options[document.getElementById('id_board_to').selectedIndex].disabled) return false; var confirmText = '{{{txt.move_topics_confirm}}}'; return confirm(confirmText.replace(/%board_from%/, document.getElementById('id_board_from').options[document.getElementById('id_board_from').selectedIndex].text.replace(/^=+&gt;&nbsp;/, '')).replace(/%board_to%/, document.getElementById('id_board_to').options[document.getElementById('id_board_to').selectedIndex].text.replace(/^=+&gt;&nbsp;/, '')));" class="button_submit">
+				<input type="submit" value="{{{txt.move_topics_now}}}" onclick="if (document.getElementById('id_board_from').options[document.getElementById('id_board_from').selectedIndex].disabled || document.getElementById('id_board_from').options[document.getElementById('id_board_to').selectedIndex].disabled) return false; var confirmText = '{{{txt.move_topics_confirm}}}'; return confirm(confirmText.replace(/%board_from%/, document.getElementById('id_board_from').options[document.getElementById('id_board_from').selectedIndex].text.replace(/^=+&gt;&nbsp;/, '')).replace(/%board_to%/, document.getElementById('id_board_to').options[document.getElementById('id_board_to').selectedIndex].text.replace(/^=+&gt;&nbsp;/, '')));">
 				{{session_form}}
 				{{token_form 'admin-maint'}}
 			</form>

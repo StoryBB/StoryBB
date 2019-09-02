@@ -164,7 +164,7 @@ function EditNews()
 				'data' => array(
 					'function' => function($news)
 					{
-						return '<div id="box_preview_' . $news['id'] . '" style="overflow: auto; width: 100%; height: 10ex;">' . $news['parsed'] . '</div>';
+						return '<div id="box_preview_' . $news['id'] . '">' . $news['parsed'] . '</div>';
 					},
 					'style' => 'width: 45%;',
 				),
@@ -199,8 +199,8 @@ function EditNews()
 				<span id="moreNewsItems_link" class="floatleft" style="display: none;">
 					<a class="button_link" href="javascript:void(0);" onclick="addNewsItem(); return false;">' . $txt['editnews_clickadd'] . '</a>
 				</span>
-				<input type="submit" name="save_items" value="' . $txt['save'] . '" class="button_submit">
-				<input type="submit" name="delete_selection" value="' . $txt['editnews_remove_selected'] . '" data-confirm="' . $txt['editnews_remove_confirm'] . '" class="button_submit you_sure">',
+				<input type="submit" name="save_items" value="' . $txt['save'] . '">
+				<input type="submit" name="delete_selection" value="' . $txt['editnews_remove_selected'] . '" data-confirm="' . $txt['editnews_remove_confirm'] . '" class="you_sure">',
 			),
 		),
 		'javascript' => '

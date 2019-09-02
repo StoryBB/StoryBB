@@ -40,8 +40,8 @@
 
 {{#if (gte (getNumItems context.labels) 2)}}
 		<div class="padding">
-			<input type="submit" name="save" value="{{txt.save}}" class="button_submit">
-			<input type="submit" name="delete" value="{{txt.quickmod_delete_selected}}" data-confirm="{{txt.pm_labels_delete}}" class="button_submit you_sure">
+			<input type="submit" name="save" value="{{txt.save}}">
+			<input type="submit" name="delete" value="{{txt.quickmod_delete_selected}}" data-confirm="{{txt.pm_labels_delete}}" class="you_sure">
 		</div>
 {{/if}}
 
@@ -63,7 +63,7 @@
 					<input type="text" id="add_label" name="label" value="" size="30" maxlength="30">
 				</dd>
 			</dl>
-			<input type="submit" name="add" value="{{txt.pm_label_add_new}}" class="button_submit">
+			<input type="submit" name="add" value="{{txt.pm_label_add_new}}">
 		</div>
 		{{session_form}}
 	</form><br>

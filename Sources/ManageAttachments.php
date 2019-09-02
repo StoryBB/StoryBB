@@ -551,11 +551,11 @@ function BrowseFiles()
 		'additional_rows' => array(
 			array(
 				'position' => 'above_table_headers',
-				'value' => '<input type="submit" name="remove_submit" class="button_submit you_sure" value="' . $txt['quickmod_delete_selected'] . '" data-confirm="' . $txt['confirm_delete_attachments'] . '">',
+				'value' => '<input type="submit" name="remove_submit" class="you_sure" value="' . $txt['quickmod_delete_selected'] . '" data-confirm="' . $txt['confirm_delete_attachments'] . '">',
 			),
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="remove_submit" class="button_submit you_sure" value="' . $txt['quickmod_delete_selected'] . '" data-confirm="' . $txt['confirm_delete_attachments'] . '">',
+				'value' => '<input type="submit" name="remove_submit" class="you_sure" value="' . $txt['quickmod_delete_selected'] . '" data-confirm="' . $txt['confirm_delete_attachments'] . '">',
 			),
 		),
 	);
@@ -2338,7 +2338,7 @@ function ManageAttachmentPaths()
 				'data' => array(
 					'function' => function($rowData)
 					{
-						return '<input type="hidden" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"><input type="text" size="40" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"' . (!empty($rowData['disable_base_dir']) ? ' disabled' : '') . ' style="width: 100%">';
+						return '<input type="hidden" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"><input type="text" size="40" name="dirs[' . $rowData['id'] . ']" value="' . $rowData['path'] . '"' . (!empty($rowData['disable_base_dir']) ? ' disabled' : '') . '>';
 					},
 					'style' => 'width: 40%;',
 				),
@@ -2381,8 +2381,8 @@ function ManageAttachmentPaths()
 				'position' => 'below_table_data',
 				'value' => '
 				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-				<input type="submit" name="save" value="' . $txt['save'] . '" class="button_submit">
-				<input type="submit" name="new_path" value="' . $txt['attach_add_path'] . '" class="button_submit">',
+				<input type="submit" name="save" value="' . $txt['save'] . '">
+				<input type="submit" name="new_path" value="' . $txt['attach_add_path'] . '">',
 			),
 			empty($errors['dir']) ? array(
 				'position' => 'top_of_list',
@@ -2457,8 +2457,8 @@ function ManageAttachmentPaths()
 			'additional_rows' => array(
 				array(
 					'position' => 'below_table_data',
-					'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="save2" value="' . $txt['save'] . '" class="button_submit">
-					<input type="submit" name="new_base_path" value="' . $txt['attach_add_path'] . '" class="button_submit">',
+					'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="save2" value="' . $txt['save'] . '">
+					<input type="submit" name="new_base_path" value="' . $txt['attach_add_path'] . '">',
 				),
 				empty($errors['base']) ? array(
 					'position' => 'top_of_list',

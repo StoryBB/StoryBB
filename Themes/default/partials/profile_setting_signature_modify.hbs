@@ -16,7 +16,7 @@
 			<span class="smalltext">{{{txt.sig_info}}}</span>
 		</dt>
 		<dd>
-			<textarea class="editor" onkeyup="calcCharLeft();" id="signature" name="signature" rows="5" cols="50" style="min-width: 50%; max-width: 99%;">{{{context.member.signature}}}</textarea><br>
+			<textarea class="editor" onkeyup="calcCharLeft();" id="signature" name="signature" rows="5" cols="50" style="min-width: 50%;">{{{context.member.signature}}}</textarea><br>
 
 {{! Is there is a limit at all? }}
 {{#if (gt context.signature_limits.max_length 0)}}
