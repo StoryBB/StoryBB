@@ -16,7 +16,7 @@ namespace StoryBB\Search;
  * Class fulltext_search
  * Used for fulltext index searching
  */
-class Fulltext extends API
+class Fulltext extends AbstractSearchable implements Searchable
 {
 	/**
 	 * @var array Which words are banned
@@ -49,6 +49,26 @@ class Fulltext extends API
 
 		$this->bannedWords = empty($modSettings['search_banned_words']) ? [] : explode(',', $modSettings['search_banned_words']);
 		$this->min_word_length = $this->_getMinWordLength();
+	}
+
+	/**
+	 * Whether this method is valid for implementation or not
+	 *
+	 * @return bool Whether or not this method is valid
+	 */
+	public function isValid()
+	{
+		return true; // @todo?
+	}
+
+	/**
+	 * Returns the name of the search index.
+	 */
+	public function getName(): string
+	{
+		global $txt;
+		loadLanguage('Search');
+		return $txt['search_method_fulltext_index'];
 	}
 
 	/**

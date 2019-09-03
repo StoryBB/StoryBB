@@ -136,10 +136,6 @@ function MaintainDatabase()
  */
 function MaintainRoutine()
 {
-	global $context, $txt;
-
-	if (isset($_GET['done']) && $_GET['done'] == 'recount')
-		$context['maintenance_finished'] = $txt['maintain_recount'];
 }
 
 /**
@@ -1065,7 +1061,8 @@ function AdminBoardRecount()
 	require_once($sourcedir . '/ScheduledTasks.php');
 	CalculateNextTrigger();
 
-	redirectexit('action=admin;area=maintain;sa=routine;done=recount');
+	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_recount']));
+	redirectexit('action=admin;area=maintain;sa=routine');
 }
 
 /**

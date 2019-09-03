@@ -138,7 +138,7 @@ function DeleteMessage()
 
 	// We want to redirect back to recent action.
 	if (isset($_REQUEST['modcenter']))
-		redirectexit('action=moderate;area=reportedposts;done');
+		redirectexit('action=moderate;area=reportedposts');
 	elseif (isset($_REQUEST['recent']))
 		redirectexit('action=recent');
 	elseif (isset($_REQUEST['profile'], $_REQUEST['start'], $_REQUEST['u']))

@@ -72,10 +72,6 @@ function MessageMain()
 		);
 	}
 
-	// a previous message was sent successfully? show a small indication.
-	if (isset($_GET['done']) && ($_GET['done'] == 'sent'))
-		$context['pm_sent'] = true;
-
 	$context['labels'] = [];
 
 	// Load the label data.
@@ -2413,7 +2409,8 @@ function MessagePost2()
 	// Message sent successfully?
 	if (!empty($context['send_log']) && empty($context['send_log']['failed']))
 	{
-		$context['current_label_redirect'] = $context['current_label_redirect'] . ';done=sent';
+		$context['current_label_redirect'] = $context['current_label_redirect'];
+		session_flash('success', $txt['pm_sent']);
 
 		// If we had a PM draft for this one, then its time to remove it since it was just sent
 		if ($context['drafts_pm_save'] && !empty($_POST['id_pm_draft']))

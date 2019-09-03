@@ -46,7 +46,7 @@
 			{{/if}}
 
 				<hr>
-				<input type="submit" name="sub_id[{{id}}]" value="{{{../txt.paid_order}}}" class="button_submit">
+				<input type="submit" name="sub_id[{{id}}]" value="{{{../txt.paid_order}}}">
 
 		{{else}}
 				<a href="{{../scripturl}}?action=admin;area=paidsubscribe;sa=modifyuser;sid={{id}};uid={{../context.member.id}}{{#if sublog}};lid={{sublog}}{{/if}}">{{#if sublog}}{{{../txt.paid_edit_subscription}}}{{else}}{{{../txt.paid_admin_add}}}{{/if}}</a>

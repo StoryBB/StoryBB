@@ -18,16 +18,6 @@ namespace StoryBB\Cache;
 abstract class API implements API_Interface
 {
 	/**
-	 * @var string The last version of StoryBB that this was tested on. Helps protect against API changes.
-	 */
-	protected $version_compatible = 'StoryBB 1.0 Alpha 1';
-
-	/**
-	 * @var string The minimum StoryBB version that this will work with
-	 */
-	protected $min_sbb_version = 'StoryBB 1.0 Alpha 1';
-
-	/**
 	 * @var string The prefix for all keys.
 	 */
 	protected $prefix = '';
@@ -208,22 +198,12 @@ abstract class API implements API_Interface
 	}
 
 	/**
-	 * Gets the latest version of StoryBB this is compatible with.
+	 * Specify the version of the cache backend (notionally of whatever service is serving cache)
 	 *
-	 * @return string the value of $key.
+	 * @return string Version number
 	 */
-	public function getCompatibleVersion()
+	public function getVersion(): string
 	{
-		return $this->version_compatible;
-	}
-
-	/**
-	 * Gets the min version that we support.
-	 *
-	 * @return string the value of $key.
-	 */
-	public function getMinimumVersion()
-	{
-		return $this->min_sbb_version;
+		return '';
 	}
 }

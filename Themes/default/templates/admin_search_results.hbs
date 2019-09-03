@@ -5,7 +5,7 @@
 					<span id="quick_search" class="floatright">
 						<input type="search" name="search_term" value="{{{context.search_term}}}">
 						<input type="hidden" name="search_type" value="{{{context.search_type}}}">
-						<input type="submit" name="search_go" value="{{{txt.admin_search_results_again}}}" class="button_submit">
+						<input type="submit" name="search_go" value="{{{txt.admin_search_results_again}}}">
 					</span>
 					<span class="main_icons filter"></span>
 					<span id="quick_search_results">&nbsp;{{textTemplate txt.admin_search_results_desc context.search_term}}</span>
@@ -21,7 +21,7 @@
 				<li>
 					<a href="{{{url}}}"><strong>{{{name}}}</strong></a> [{{{type_string}}}]
 		{{#if help}}
-					<p class="double_height">{{{help}}}</p>
+					<p class="results_desc">{{{help}}}</p>
 		{{/if}}
 				</li>
 	{{/each}}

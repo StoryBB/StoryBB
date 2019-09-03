@@ -16,7 +16,7 @@ namespace StoryBB\Search;
  * Used for the "custom search index" option
  * Class custom_search
  */
-class Custom extends API
+class Custom extends AbstractSearchable implements Searchable
 {
 	/**
 	 * @var array Index settings
@@ -59,6 +59,16 @@ class Custom extends API
 
 		$this->bannedWords = empty($modSettings['search_stopwords']) ? [] : explode(',', $modSettings['search_stopwords']);
 		$this->min_word_length = $this->indexSettings['bytes_per_word'];
+	}
+
+	/**
+	 * Returns the name of the search index.
+	 */
+	public function getName(): string
+	{
+		global $txt;
+		loadLanguage('Search');
+		return $txt['search_index_custom'];
 	}
 
 	/**

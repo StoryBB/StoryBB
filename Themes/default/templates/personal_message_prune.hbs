@@ -8,14 +8,14 @@
 				<input type="text" name="age" size="3" value="14">
 				{{txt.pm_prune_desc2}}
 			</p>
-			<input type="submit" value="{{txt.delete}}" class="button_submit">
+			<input type="submit" value="{{txt.delete}}">
 			{{session_form}}
 		</form>
 	</div>
 	<div class="windowbg">
 		<form action="{{scripturl}}?action=pm;sa=removeall2" method="post" onsubmit="return confirm('{{txt.pm_remove_all_warning}}');">
 			<p>{{txt.pm_remove_all}}</p>
-			<input type="submit" value="{{txt.delete_all_prune}}" class="button_submit">
+			<input type="submit" value="{{txt.delete_all_prune}}">
 			{{session_form}}
 		</form>
 	</div>

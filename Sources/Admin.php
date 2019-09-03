@@ -509,9 +509,9 @@ function AdminHome()
 		'imagemagick',
 		'db_server',
 		'phpa',
-		'apc',
+		'apcu',
 		'memcache',
-		'xcache',
+		'redis',
 		'php',
 		'server',
 	];

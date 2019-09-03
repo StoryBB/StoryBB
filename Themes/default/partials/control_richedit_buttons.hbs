@@ -1,16 +1,16 @@
-	<input type="submit" value="{{#if editor_context.labels.post_button}}{{editor_context.labels.post_button}}{{else}}{{txt.post}}{{/if}}" name="post" onclick="return submitThisOnce(this);" class="button_submit">
+	<input type="submit" value="{{#if editor_context.labels.post_button}}{{editor_context.labels.post_button}}{{else}}{{txt.post}}{{/if}}" name="post" onclick="return submitThisOnce(this);">
 
 {{#if editor_context.preview_type}}
-	<input type="submit" name="preview" value="{{#if editor_context.labels.preview_button}}{{editor_context.labels.preview_button}}{{else}}{{txt.preview}}{{/if}}" onclick="{{#if (eq editor_context.preview_type 2)}}return event.ctrlKey || previewPost();{{else}}return submitThisOnce(this);{{/if}}" class="button_submit">
+	<input type="submit" name="preview" value="{{#if editor_context.labels.preview_button}}{{editor_context.labels.preview_button}}{{else}}{{txt.preview}}{{/if}}" onclick="{{#if (eq editor_context.preview_type 2)}}return event.ctrlKey || previewPost();{{else}}return submitThisOnce(this);{{/if}}">
 {{/if}}
 
 {{#if context.drafts_pm_save}}
-	<input type="submit" name="save_draft" value="{{txt.draft_save}}" onclick="submitThisOnce(this);" accesskey="d" class="button_submit">
+	<input type="submit" name="save_draft" value="{{txt.draft_save}}" onclick="submitThisOnce(this);" accesskey="d">
 	<input type="hidden" id="id_pm_draft" name="id_pm_draft" value="{{#if context.id_pm_draft}}{{context.id_pm_draft}}{{else}}0{{/if}}">
 {{/if}}
 
 {{#if context.drafts_save}}
-	<input type="submit" name="save_draft" value="{{txt.draft_save}}" onclick="return confirm({{jsEscape txt.draft_save_note}}) && submitThisOnce(this);" class="button_submit">
+	<input type="submit" name="save_draft" value="{{txt.draft_save}}" onclick="return confirm({{jsEscape txt.draft_save_note}}) && submitThisOnce(this);">
 	<input type="hidden" id="id_draft" name="id_draft" value="{{#if context.id_draft}}{{context.id_draft}}{{else}}0{{/if}}">
 {{/if}}
 

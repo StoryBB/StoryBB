@@ -351,13 +351,13 @@
 
 {{#if context.board.is_new}}
 				<input type="hidden" name="cur_cat" value="{{{context.board.category}}}">
-				<input type="submit" name="add" value="{{{txt.mboards_new_board}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
+				<input type="submit" name="add" value="{{{txt.mboards_new_board}}}" onclick="return !isEmptyText(this.form.board_name);">
 {{else}}
-				<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.board_name);" class="button_submit">
+				<input type="submit" name="edit" value="{{{txt.modify}}}" onclick="return !isEmptyText(this.form.board_name);">
 {{/if}}
 
 {{#if (and (not context.board.is_new) (not context.board.is_recycle))}}
-				<input type="submit" name="delete" value="{{{txt.mboards_delete_board}}}" data-confirm="{{{txt.boardConfirm}}}" class="button_submit you_sure">
+				<input type="submit" name="delete" value="{{{txt.mboards_delete_board}}}" data-confirm="{{{txt.boardConfirm}}}" class="you_sure">
 {{/if}}
 			</div>
 		</form>

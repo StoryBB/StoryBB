@@ -194,4 +194,25 @@ class Redis extends API
 		$config_vars[] = $txt['cache_redis_settings'];
 		$config_vars[] = array('cache_redis', $txt['cache_redis_server'], 'file', 'text', 0, 'cache_redis', 'postinput' => '<br /><div class="smalltext"><em>' . $txt['cache_redis_server_subtext'] . '</em></div>');
 	}
+
+	/**
+	 * Get server version.
+	 *
+	 * @return string The version of the Redis server
+	 */
+	public function getVersion(): string
+	{
+		if (!$this->isSupported())
+		{
+			return '';
+		}
+
+		if (!$this->connect())
+		{
+			return '';
+		}
+
+		$info = $this->redis->info();
+		return !empty($info['redis_version']) ? $info['redis_version'] : '';
+	}
 }

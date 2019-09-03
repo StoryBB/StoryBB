@@ -15,7 +15,7 @@ namespace StoryBB\Helper\Autocomplete;
 /**
  * Any autocomplete handlers probably should extend this class.
  */
-abstract class AbstractCompletable implements Completable
+abstract class AbstractCompletable
 {
 	/** @var string $term The search term to be matched to find completions for */
 	protected $term = null;

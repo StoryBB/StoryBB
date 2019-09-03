@@ -6,7 +6,7 @@
 		<div class="windowbg noup">
 			<form action="{{scripturl}}?action=admin;area=maintain;sa=database;activity=optimize" method="post" accept-charset="UTF-8">
 				<p>{{{txt.maintain_optimize_info}}}</p>
-				<input type="submit" value="{{{txt.maintain_run_now}}}" class="button_submit">
+				<input type="submit" value="{{{txt.maintain_run_now}}}">
 				{{session_form}}
 				{{token_form 'admin-maint'}}
 			</form>
@@ -22,7 +22,7 @@
 	{{#if context.convert_to_suggest}}
 				<p class="infobox">{{{txt.convert_to_suggest_text}}}</p>
 	{{/if}}
-				<input type="submit" name="evaluate_conversion" value="{{{txt.maintain_run_now}}}" class="button_submit">
+				<input type="submit" name="evaluate_conversion" value="{{{txt.maintain_run_now}}}">
 				{{session_form}}
 				{{token_form 'admin-maint'}}
 			</form>

@@ -114,7 +114,7 @@
 					<input type="checkbox" name="posts" id="posts" checked>
 					<label for="posts">{{{txt.reattribute_increase_posts}}}</label>
 				</p>
-				<input type="submit" id="do_attribute" value="{{{txt.reattribute}}}" onclick="if (!checkAttributeValidity()) return false; return confirm(warningMessage);" class="button_submit">
+				<input type="submit" id="do_attribute" value="{{{txt.reattribute}}}" onclick="if (!checkAttributeValidity()) return false; return confirm(warningMessage);">
 				{{session_form}}
 				{{token_form 'admin-maint'}}
 			</form>
@@ -155,7 +155,7 @@
 {{/each}}
 
 				</div>
-				<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_members_confirm}}}" class="button_submit you_sure">
+				<input type="submit" value="{{{txt.maintain_old_remove}}}" data-confirm="{{{txt.maintain_members_confirm}}}" class="you_sure">
 				{{session_form}}
 				{{token_form 'admin-maint'}}
 			</form>
@@ -166,7 +166,7 @@
 		<div class="windowbg noup">
 			<form action="{{scripturl}}?action=admin;area=maintain;sa=members;activity=recountposts" method="post" accept-charset="UTF-8" id="membersRecountForm">
 				<p>{{{txt.maintain_recountposts_info}}}</p>
-				<input type="submit" value="{{{txt.maintain_run_now}}}" class="button_submit">
+				<input type="submit" value="{{{txt.maintain_run_now}}}">
 				{{session_form}}
 				{{token_form 'admin-maint'}}
 			</form>

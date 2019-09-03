@@ -1,7 +1,7 @@
 	{{! This shows the topics that have at some point been replied to, and now have unread posts. }}
 	<div id="recent">
 
-		<form action="{{scripturl}}?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0;">
+		<form action="{{scripturl}}?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm">
 			{{session_form}}
 			<input type="hidden" name="qaction" value="markread">
 			<input type="hidden" name="redirect_url" value="action=unreadreplies{{#if context.showing_all_topics}};all{{/if}}{{{context.querystring_board_limits}}}">
