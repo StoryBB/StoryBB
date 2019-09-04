@@ -25,3 +25,7 @@ $txt['plugins_install_errors'] = 'Incompatible (%1$s)';
 $txt['error_manifest_invalid_id'] = 'The plugin does not indicate a valid plugin ID';
 
 $txt['written_by'] = 'Written by:';
+
+$txt['enable_plugin'] = 'Enable Plugin';
+$txt['disable_plugin'] = 'Disable Plugin';
+$txt['remove_plugin'] = 'Remove Plugin';

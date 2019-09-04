@@ -101,6 +101,11 @@ class Plugin
 		];
 	}
 
+	public function folder(): string
+	{
+		return $this->pluginfolder;
+	}
+
 	public function name(): string
 	{
 		global $smcFunc;

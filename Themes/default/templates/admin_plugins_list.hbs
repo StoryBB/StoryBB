@@ -10,9 +10,10 @@
 	<div class="windowbg">{{{txt.no_plugins}}}</div>
 {{else}}
 	<div class="plugin-group">
+		<form>
 	{{#each context.available_plugins}}
-		<fieldset>
-			<legend>{{{name}}}</legend>
+			<fieldset>
+				<legend>{{{name}}}</legend>
 		{{#if (eq status 'install_errors')}}
 				<div class="noticebox">
 					<ul>
@@ -22,22 +23,27 @@
 					</ul>
 				</div>
 		{{/if}}
-		{{#if description}}
-			<div class="plugin-description">{{{description}}}
-		{{/if}}
-			<div class="plugin-author">{{{../txt.written_by}}} {{{author}}}</div>
-			<div class="plugin-actions">
+
+				<div class="plugin-actions">
 		{{#if (eq status 'enabled')}}
-			<button>DISABLE</button>
+					<button type="submit" name="disable" value="{{{id}}}" class="plugin-disable" title="{{{../txt.disable_plugin}}}">{{{../txt.disable_plugin}}}</button>
 		{{/if}}
 		{{#if (eq status 'disabled')}}
-			<button>ENABLE</button>
+					<button type="submit" name="enable" value="{{{id}}}" class="plugin-enable" title="{{{../txt.enable_plugin}}}">{{{../txt.enable_plugin}}}</button>
 		{{/if}}
 		{{#if (or (eq status 'install_errors') (eq status 'disabled'))}}
-			<button>REMOVE</button>
+					<button type="submit" name="remove" value="{{{id}}}" class="plugin-remove" title="{{{../txt.remove_plugin}}}">{{{../txt.remove_plugin}}}</button>
 		{{/if}}
-			</div>
-		</fieldset>
+				</div>
+
+		{{#if description}}
+				<div class="plugin-description">{{{description}}}
+		{{/if}}
+				<div class="plugin-author">{{{../txt.written_by}}} {{{author}}}</div>
+			</fieldset>
 	{{/each}}
+			{{session_form}}
+			{{token_form 'admin-plugin'}}
+		</form>
 	</div>
 {{/if}}

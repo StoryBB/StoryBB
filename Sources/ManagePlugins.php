@@ -31,6 +31,7 @@ function PluginsHome()
 
 	$subActions = [
 		'list' => 'PluginsList',
+		'action' => 'PluginAction',
 	];
 
 	// By default do the basic settings.
@@ -41,7 +42,7 @@ function PluginsHome()
 
 function PluginsList()
 {
-	global $txt, $context, $boarddir, $maintenance, $smcFunc;
+	global $txt, $context, $boarddir, $smcFunc, $scripturl;
 
 	$pluginsdir = Manager::get_plugin_dir();
 
@@ -77,6 +78,7 @@ function PluginsList()
 		{
 			$context['available_plugins'][] = [
 				'name' => $plugin->name(),
+				'id' => $plugin->folder(),
 				'author' => $plugin->author(),
 				'description' => $plugin->description(),
 				'status' => $type,
@@ -84,4 +86,13 @@ function PluginsList()
 			];
 		}
 	}
+
+	$context['form_action'] = $scripturl, $
+
+	createToken('admin-plugin');
+}
+
+function PluginAction()
+{
+	global $txt, $context;
 }
