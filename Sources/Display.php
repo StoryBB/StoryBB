@@ -1204,7 +1204,7 @@ function Display()
 		$context['normal_buttons']['add_poll'] = ['text' => 'add_poll', 'image' => 'add_poll.png', 'url' => $scripturl . '?action=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']];
 
 	if ($context['can_mark_unread'])
-		$context['normal_buttons']['mark_unread'] = ['text' => 'mark_unread', 'image' => 'markunread.png', 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
+		$context['normal_buttons']['mark_unread'] = ['text' => 'mark_unread', 'image' => 'markunread.png', 'url' => $scripturl . '?action=markasread;sa=topic;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 	if ($context['can_set_notify'])
 		$context['normal_buttons']['notify'] = [

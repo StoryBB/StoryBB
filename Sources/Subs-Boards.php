@@ -221,47 +221,23 @@ function MarkRead()
 		$topicinfo = $smcFunc['db_fetch_assoc']($result);
 		$smcFunc['db_free_result']($result);
 
-		if (!empty($_GET['t']))
-		{
-			// If they read the whole topic, go back to the beginning.
-			if ($_GET['t'] >= $topicinfo['id_last_msg'])
-				$earlyMsg = 0;
-			// If they want to mark the whole thing read, same.
-			elseif ($_GET['t'] <= $topicinfo['id_first_msg'])
-				$earlyMsg = 0;
-			// Otherwise, get the latest message before the named one.
-			else
-			{
-				$result = $smcFunc['db_query']('', '
-					SELECT MAX(id_msg)
-					FROM {db_prefix}messages
-					WHERE id_topic = {int:current_topic}
-						AND id_msg >= {int:id_first_msg}
-						AND id_msg < {int:topic_msg_id}',
-					array(
-						'current_topic' => $topic,
-						'topic_msg_id' => (int) $_GET['t'],
-						'id_first_msg' => $topicinfo['id_first_msg'],
-					)
-				);
-				list ($earlyMsg) = $smcFunc['db_fetch_row']($result);
-				$smcFunc['db_free_result']($result);
-			}
-		}
 		// Marking read from first page?  That's the whole topic.
-		elseif ($_REQUEST['start'] == 0)
+		if ($_REQUEST['start'] == 0)
 			$earlyMsg = 0;
 		else
 		{
+			$canSeeUnapproved = allowedTo('approve_posts');
 			$result = $smcFunc['db_query']('', '
 				SELECT id_msg
 				FROM {db_prefix}messages
-				WHERE id_topic = {int:current_topic}
+				WHERE id_topic = {int:current_topic} ' . ($canSeeUnapproved ? '' : '
+					AND (m.approved = 1 OR m.id_member = {int:member}') . '
 				ORDER BY id_msg
 				LIMIT {int:start}, 1',
 				array(
 					'current_topic' => $topic,
 					'start' => (int) $_REQUEST['start'],
+					'member' => $user_info['id'],
 				)
 			);
 			list ($earlyMsg) = $smcFunc['db_fetch_row']($result);
