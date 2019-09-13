@@ -42,7 +42,6 @@ $txt['smileys_location_form'] = 'Post form';
 $txt['smileys_location_hidden'] = 'Hidden';
 $txt['smileys_location_popup'] = 'More';
 $txt['smileys_modify'] = 'Modify';
-$txt['smileys_not_found_in_set'] = 'Smiley not found in set(s)';
 $txt['smileys_default_description'] = '(Insert a description)';
 $txt['smiley_new'] = 'Add new smiley';
 $txt['smiley_modify_existing'] = 'Modify smiley';
