@@ -3062,7 +3062,10 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 	*/
 	if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < $level || !is_array($cache_block = cache_get_data($key, 3600)) || (!empty($cache_block['refresh_eval']) && eval($cache_block['refresh_eval'])) || (!empty($cache_block['expires']) && $cache_block['expires'] < time()))
 	{
-		require_once($sourcedir . '/' . $file);
+		if (!empty($file))
+		{
+			require_once($sourcedir . '/' . $file);
+		}
 		$cache_block = call_user_func_array($function, $params);
 
 		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= $level)
