@@ -346,6 +346,12 @@ $txt['seconds'] = 'seconds';
 $txt['hour'] = 'Hour';
 $txt['days_word'] = 'days';
 
+$txt['days_ago'] = [
+	0 => 'less than 1 day ago',
+	1 => '1 day ago',
+	'x' => '%1$s days ago',
+];
+
 $txt['search_for'] = 'Search for';
 $txt['search_match'] = 'Match';
 

@@ -21,7 +21,7 @@
 					<strong>{{subject}}</strong>&nbsp;
 				</h5>
 				<span class="smalltext">
-					&#171;&nbsp;<strong>{{../txt.draft_saved_on}}:</strong> {{textTemplate ../txt.draft_days_ago age}}{{#if remaining}}, {{textTemplate ../txt.draft_retain remaining}}{{/if}}&#187;
+					&#171;&nbsp;<strong>{{../txt.draft_saved_on}}:</strong> {{{days_ago_string}}}{{#if remaining}}, {{textTemplate ../txt.draft_retain remaining}}{{/if}}&#187;
 				</span><br>
 				<span class="smalltext">
 					&#171;&nbsp;<strong>{{../txt.to}}:</strong> {{join recipients.to ', '}}&nbsp;&#187;

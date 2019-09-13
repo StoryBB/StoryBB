@@ -810,6 +810,7 @@ function showPMDrafts($memID = -1)
 			'recipients' => $recipients,
 			'age' => floor((time() - $row['poster_time']) / 86400),
 			'remaining' => (!empty($modSettings['drafts_keep_days']) ? floor($modSettings['drafts_keep_days'] - ((time() - $row['poster_time']) / 86400)) : 0),
+			'days_ago_string' => numeric_context('days_ago', floor((time() - $row['poster_time']) / 86400)),
 		];
 	}
 	$smcFunc['db_free_result']($request);

@@ -590,13 +590,9 @@ function ViewMemberlist()
 							if (empty($num_days_difference))
 								$difference = $txt['viewmembers_today'];
 
-							// Yesterday.
-							elseif ($num_days_difference == 1)
-								$difference = sprintf('1 %1$s', $txt['viewmembers_day_ago']);
-
 							// X days ago.
 							else
-								$difference = sprintf('%1$d %2$s', $num_days_difference, $txt['viewmembers_days_ago']);
+								$difference = numeric_context('days_ago', (int) floor($num_days_difference));
 						}
 
 						// Show it in italics if they're not activated...

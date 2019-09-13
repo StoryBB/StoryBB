@@ -24,7 +24,6 @@ $txt['draft_load'] = 'Load drafts';
 $txt['draft_hide'] = 'Hide drafts';
 $txt['draft_delete'] = 'Delete draft';
 $txt['draft_saved_on'] = 'Draft last saved';
-$txt['draft_days_ago'] = '%s days ago';
 $txt['draft_retain'] = 'this will be retained for %s more days';
 $txt['draft_remove'] = 'Remove this draft';
 $txt['draft_saved'] = 'The contents have been saved as a draft, and will be accessible from the <a href="%1$s">Show Drafts area</a> of your profile.';
