@@ -144,6 +144,8 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			// Alerts stuff
 			array('check', 'enable_ajax_alerts'),
+		'',
+			array('text', 'analytics_google_id', 'subtext' => $txt['analytics_google_id_sub']),
 	);
 
 	// Get all the time zones.
@@ -170,6 +172,12 @@ function ModifyBasicSettings($return_config = false)
 		// Prevent absurd boundaries here - make it a day tops.
 		if (isset($_POST['lastActive']))
 			$_POST['lastActive'] = min((int) $_POST['lastActive'], 1440);
+
+		// Just to try to cut down obvious problems...
+		if (isset($_POST['analytics_google_id']))
+		{
+			$_POST['analytics_google_id'] = trim($_POST['analytics_google_id']);
+		}
 
 		call_integration_hook('integrate_save_basic_settings');
 
