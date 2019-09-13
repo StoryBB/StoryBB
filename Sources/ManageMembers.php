@@ -592,7 +592,7 @@ function ViewMemberlist()
 
 							// X days ago.
 							else
-								$difference = numeric_context('days_ago', (int)floor($num_days_difference));
+								$difference = numeric_context('days_ago', (int) floor($num_days_difference));
 						}
 
 						// Show it in italics if they're not activated...
