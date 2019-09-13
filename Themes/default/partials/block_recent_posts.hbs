@@ -1,0 +1,20 @@
+{{#if latest_posts}}
+	<table id="ic_recentposts">
+		<tr class="windowbg">
+			<th class="recentpost">{{txt.message}}</th>
+			<th class="recentposter">{{txt.author}}</th>
+			<th class="recentboard">{{txt.board}}</th>
+			<th class="recenttime">{{txt.date}}</th>
+		</tr>
+
+	{{#each latest_posts}}
+		<tr class="windowbg">
+			<td class="recentpost"><strong>{{{link}}}</strong></td>
+			<td class="recentposter">{{{poster.link}}}</td>
+			<td class="recentboard">{{{board.link}}}</td>
+			<td class="recenttime">{{{time}}}</td>
+		</tr>
+	{{/each}}
+
+	</table>
+{{/if}}
