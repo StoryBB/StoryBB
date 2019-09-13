@@ -30,6 +30,7 @@ class Misc
 			'json' => 'StoryBB\\Template\\Helper\\Misc::json',
 			'breakRow' => 'StoryBB\\Template\\Helper\\Misc::breakrow',
 			'is_numeric' => 'StoryBB\\Template\\Helper\\Misc::is_numeric',
+			'block_region' => 'StoryBB\\Template\\Helper\\Misc::block_region',
 		]);
 	}
 
@@ -108,5 +109,60 @@ class Misc
 	public static function is_numeric($x)
 	{
 		return is_numeric($x);
+	}
+
+	/**
+	 * Outputs the blocks known to be relevant in the named section of the page.
+	 *
+	 * @param string $region The name of the block region
+	 * @return string The HTML to be inserted into the block region
+	 */
+	public static function block_region($region)
+	{
+		global $context;
+
+		if (empty($context['page_blocks'][$region]))
+		{
+			return '';
+		}
+
+		$block_context = [
+			'region' => $region,
+			'instances' => [],
+		];
+
+		$template_cache = [];
+		$compiled_cache = [];
+
+		foreach ($context['page_blocks'][$region] as $instance_id => $instance)
+		{
+			$partial_name = $instance->get_render_template();
+
+			if (!isset($template_cache[$partial_name]))
+			{
+				$template_cache[$partial_name] = \StoryBB\Template::load_partial($partial_name);
+			}
+			$template = $template_cache[$partial_name];
+
+			if (!isset($compiled_cache[$partial_name]))
+			{
+				$compiled_cache[$partial_name] = \StoryBB\Template::compile($template, [], $partial_name . \StoryBB\Template::get_theme_id('partials', $partial_name));
+			}
+			$phpStr = $compiled_cache[$partial_name];
+
+			$block_context['instances'][] = \StoryBB\Template::prepare($phpStr, [
+				'instance' => $instance_id,
+				'title' => new \LightnCandy\SafeString($instance->get_block_title()),
+				'content' => new \LightnCandy\SafeString($instance->get_block_content()),
+			]);
+		}
+
+		$template_region = \StoryBB\Template::load_partial('block_region');
+		$phpStr = \StoryBB\Template::compile($template_region, [], 'block_region' . \StoryBB\Template::get_theme_id('partials', 'block_region'));
+
+		return new \LightnCandy\SafeString(\StoryBB\Template::prepare($phpStr, [
+			'region' => $region,
+			'instances' => $block_context['instances'],
+		]));
 	}
 }
