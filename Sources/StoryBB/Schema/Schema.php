@@ -120,6 +120,20 @@ class Schema
 					Index::key(['ip_low', 'ip_high']),
 				]
 			),
+			Table::make('block_instances',
+				[
+					'id_instance' => Column::mediumint()->auto_increment(),
+					'class' => Column::varchar(255),
+					'visibility' => Column::text(),
+					'configuration' => Column::text(),
+					'region' => Column::varchar(255),
+					'position' => Column::smallint(),
+					'active' => Column::tinyint(),
+				],
+				[
+					Index::primary(['id_instance']),
+				]
+			),
 			Table::make('board_permissions',
 				[
 					'id_group' => Column::smallint()->signed(),
