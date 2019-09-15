@@ -21,6 +21,7 @@ $GLOBALS['search_versions'] = array(
 
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\Verification;
 
 /**
  * Ask the user what they want to search for.
@@ -58,12 +59,7 @@ function PlushSearch1()
 	$context['require_verification'] = $user_info['is_guest'] && !empty($modSettings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']);
 	if ($context['require_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
-		$verificationOptions = array(
-			'id' => 'search',
-		);
-		$context['require_verification'] = create_control_verification($verificationOptions);
-		$context['visual_verification_id'] = $verificationOptions['id'];
+		$context['visual_verification'] = Verification::get('search')->id();
 	}
 
 	// If you got back from search2 by using the linktree, you get your original search parameters back.
@@ -117,7 +113,7 @@ function PlushSearch1()
 			if ($search_error == 'string_too_long')
 				$txt['error_string_too_long'] = sprintf($txt['error_string_too_long'], $context['search_string_limit']);
 
-			$context['search_errors']['messages'][] = $txt['error_' . $search_error];
+			$context['search_errors']['messages'][] = isset($txt['error_' . $search_error]) ? $txt['error_' . $search_error] : $search_error;
 		}
 	}
 
@@ -763,13 +759,9 @@ function PlushSearch2()
 			$context['search_errors']['need_verification_code'] = true;
 		else
 		{
-			require_once($sourcedir . '/Subs-Editor.php');
-			$verificationOptions = array(
-				'id' => 'search',
-			);
-			$context['require_verification'] = create_control_verification($verificationOptions, true);
+			$context['require_verification'] = Verification::get('search')->verify();
 
-			if (is_array($context['require_verification']))
+			if (!empty($context['require_verification']))
 			{
 				foreach ($context['require_verification'] as $error)
 					$context['search_errors'][$error] = true;
