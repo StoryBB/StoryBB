@@ -278,11 +278,10 @@ class Questions extends AbstractVerifiable implements Verifiable
 			// If we had some questions for this language before, but don't now, delete everything from that language.
 			if ((!isset($_POST['question'][$lang_id]) || !is_array($_POST['question'][$lang_id])) && !empty($context['question_answers'][$lang_id]['questions']))
 			{
-				$changes['delete'] = array_merge($questions['delete'], $context['qa_by_lang'][$lang_id]);
+				$changes['delete'] = array_merge($changes['delete'], array_keys($context['question_answers'][$lang_id]['questions']));
 			}
-
 			// Now step through and see if any existing questions no longer exist.
-			if (!empty($context['question_answers'][$lang_id]['questions']))
+			elseif (!empty($context['question_answers'][$lang_id]['questions']))
 			{
 				foreach (array_keys($context['question_answers'][$lang_id]['questions']) as $q_id)
 				{
@@ -416,5 +415,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 		{
 			$_POST['qa_verification_number'] = $count_questions;
 		}
+
+		cache_put_data('verificationQuestions', null, 300);
 	}
 }

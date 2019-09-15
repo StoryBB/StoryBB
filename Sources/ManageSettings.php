@@ -387,8 +387,6 @@ function ModifyAntispamSettings($return_config = false)
 		saveDBSettings($save_vars);
 		session_flash('success', $txt['settings_saved']);
 
-		cache_put_data('verificationQuestions', null, 300);
-
 		redirectexit('action=admin;area=antispam');
 	}
 
