@@ -28,6 +28,7 @@ class Controls
 	{
 		return ([
 			'captcha' => 'StoryBB\\Template\\Helper\\Controls::captcha',
+			'verification' => 'StoryBB\\Template\\Helper\\Controls::verification',
 			'richtexteditor' => 'StoryBB\\Template\\Helper\\Controls::richtexteditor',
 			'richtextbuttons' => 'StoryBB\\Template\\Helper\\Controls::richedit_buttons',
 			'genericlist' => 'StoryBB\\Template\\Helper\\Controls::genericlist',
@@ -51,13 +52,32 @@ class Controls
 		$verify_context['total_items'] = count($verify_context['questions']) + ($verify_context['show_visual'] || $verify_context['can_recaptcha'] ? 1 : 0);
 		$verify_context['hidden_input_name'] = $verify_context['empty_field'] ? $_SESSION[$verify_id . '_vv']['empty_field'] : '';
 
-		$template = StoryBB\Template::load_partial('control_visual_verification');
-		$phpStr = StoryBB\Template::compile($template, [], 'visual_verification-' . \StoryBB\Template::get_theme_id('partials', 'control_visual_verification'));
-		return new \LightnCandy\SafeString(StoryBB\Template::prepare($phpStr, [
+		$template = \StoryBB\Template::load_partial('control_visual_verification');
+		$phpStr = \StoryBB\Template::compile($template, [], 'visual_verification-' . \StoryBB\Template::get_theme_id('partials', 'control_visual_verification'));
+		return new \LightnCandy\SafeString(\StoryBB\Template::prepare($phpStr, [
 			'verify_id' => $verify_id,
 			'verify_context' => $verify_context,
 			'txt' => $txt,
 		]));	
+	}
+
+	/**
+	 * Return the HTML necessary for a CAPTCHA to be diplayed.
+	 * @param string $verify_id The internal ID of a CAPTCHA
+	 * @return string|SafeString A string to be exported to display the CAPTCHA
+	 */
+	public static function verification($verify_id)
+	{
+		global $txt;
+
+		$verification = StoryBB\Helper\Verification::get($verify_id);
+		$template = StoryBB\Template::load_partial('control_verification');
+		$phpStr = StoryBB\Template::compile($template, [], 'control_verification-' . \StoryBB\Template::get_theme_id('partials', 'conntrol_verification'));
+		return new \LightnCandy\SafeString(\StoryBB\Template::prepare($phpStr, [
+			'verify_id' => $verify_id,
+			'instances' => $verification->get_renders(),
+			'txt' => $txt,
+		]));
 	}
 
 	/**
