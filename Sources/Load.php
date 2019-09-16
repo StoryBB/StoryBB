@@ -2824,10 +2824,10 @@ function getBoardParents($id_parent)
  */
 function getLanguages($use_cache = true)
 {
-	global $context, $smcFunc, $settings, $modSettings;
+	global $context, $smcFunc, $settings, $modSettings, $language;
 
 	// Either we don't use the cache, or its expired.
-	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) == null)
+	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) === null)
 	{
 		// If we don't have our ucwords function defined yet, let's load the settings data.
 		if (empty($smcFunc['ucwords']))
@@ -2903,6 +2903,21 @@ function getLanguages($use_cache = true)
 			cache_put_data('known_languages', $context['languages'], !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 	}
 
+	if ($use_cache)
+	{
+		$langs = !empty($modSettings['languages_available']) ? explode(',', $modSettings['languages_available']) : [];
+		if (empty($langs))
+		{
+			$langs[] = $language;
+		}
+		foreach (array_keys($context['languages']) as $lang)
+		{
+			if (!in_array($lang, $langs))
+			{
+				unset ($context['languages'][$lang]);
+			}
+		}
+	}
 	return $context['languages'];
 }
 
