@@ -84,10 +84,7 @@ function AdminMain()
 					'file' => 'ManageLanguages.php',
 					'function' => 'ManageLanguages',
 					'icon' => 'languages',
-					'subsections' => [
-						'edit' => [$txt['language_edit']],
-						'settings' => [$txt['language_settings']],
-					],
+					'subsections' => [],
 				],
 				'theme' => [
 					'label' => $txt['theme_admin'],
@@ -611,7 +608,6 @@ function AdminSearchInternal()
 		['ModifyCookieSettings', 'area=serversettings;sa=cookie'],
 		['ModifyGeneralSecuritySettings', 'area=serversettings;sa=security'],
 		['ModifyCacheSettings', 'area=serversettings;sa=cache'],
-		['ModifyLanguageSettings', 'area=languages;sa=settings'],
 		['ModifyRegistrationSettings', 'area=regcenter;sa=settings'],
 		['ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'],
 		['ModifyLogSettings', 'area=logs;sa=settings'],

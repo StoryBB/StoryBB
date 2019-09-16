@@ -32,7 +32,6 @@ function ManageLanguages()
 
 	$subActions = array(
 		'edit' => 'ModifyLanguages',
-		'settings' => 'ModifyLanguageSettings',
 		'editlang' => 'ModifyLanguage',
 	);
 
@@ -61,32 +60,64 @@ function ModifyLanguages()
 	global $sourcedir, $language, $boarddir;
 
 	// Setting a new default?
-	if (!empty($_GET['set_default']))
+	if (!empty($_POST['set_default']) && !empty($_POST['default_language']))
 	{
-		checkSession('get');
-		validateToken('admin-lang', 'get');
+		checkSession();
+		validateToken('admin-lang');
 
 		getLanguages();
 		$lang_exists = false;
 		foreach ($context['languages'] as $lang)
 		{
-			if ($_GET['set_default'] == $lang['filename'])
+			if ($_POST['default_language'] == $lang['filename'])
 			{
 				$lang_exists = true;
 				break;
 			}
 		}
 
-		if ($_GET['set_default'] != $language && $lang_exists)
+		// First, fix the default language situation.
+		if ($_POST['default_language'] != $language && $lang_exists)
 		{
 			require_once($sourcedir . '/Subs-Admin.php');
-			updateSettingsFile(array('language' => '\'' . $_GET['set_default'] . '\''));
-			$language = $_GET['def_language'];
+			updateSettingsFile(['language' => $_POST['default_language']]);
+			$language = $_POST['default_language'];
 		}
+
+		// Now to fix a few things.
+		if (!empty($_POST['userLanguage']))
+		{
+			$newsettings = ['userLanguage' => 1];
+			$newavailable = [];
+			$selectedavailable = !empty($_POST['available']) ? (array) $_POST['available'] : [];
+			foreach (array_keys($selectedavailable) as $lang_id)
+			{
+				if (isset($context['languages'][$lang_id]))
+				{
+					$newavailable[] = $lang_id;
+				}
+			}
+			if (empty($newavailable))
+			{
+				$newavailable[] = $language;
+			}
+			$newsettings['languages_available'] = implode(',', $newavailable);
+		}
+		else
+		{
+			$newsettings = [
+				'userLanguage' => 0,
+				'languages_available' => $language,
+			];
+		}
+		updateSettings($newsettings);
+
+		session_flash('success', $txt['settings_saved']);
+		redirectexit($scripturl . '?action=admin;area=languages');
 	}
 
 	// Create another one time token here.
-	createToken('admin-lang', 'get');
+	createToken('admin-lang');
 
 	$listOptions = [
 		'id' => 'language_list',
@@ -100,6 +131,18 @@ function ModifyLanguages()
 			'function' => 'list_getNumLanguages',
 		],
 		'columns' => [
+			'available' => array(
+				'header' => array(
+					'value' => $txt['languages_available'],
+				),
+				'data' => array(
+					'function' => function($rowData)
+					{
+						return '<input type="checkbox" name="available[' . $rowData['id'] . ']" value="1"' . (!empty($rowData['available']) ? ' checked' : '') . '>';
+					},
+					'style' => 'text-align: center; width: 8%',
+				),
+			),
 			'default' => [
 				'header' => [
 					'value' => $txt['languages_default'],
@@ -108,19 +151,7 @@ function ModifyLanguages()
 				'data' => [
 					'function' => function($rowData) use ($scripturl, $context, $txt)
 					{
-						if ($rowData['default'])
-						{
-							return $txt['languages_current_default'];
-						}
-
-						$link = '<a class="button" href="{scripturl}?action=admin;area=languages;set_default={lang};{session};{token}">{text}</a>';
-						return strtr($link, [
-							'{scripturl}' => $scripturl,
-							'{lang}' => $rowData['id'],
-							'{session}' => $context['session_var'] . '=' . $context['session_id'],
-							'{token}' => $context['admin-lang_token_var'] . '=' . $context['admin-lang_token'],
-							'{text}' => $txt['languages_make_default'],
-						]);
+						return '<input type="radio" name="default_language" value="' . $rowData['id'] . '"' . ($rowData['default'] ? ' checked' : '') . '>';
 					},
 					'style' => 'width: 8%;',
 					'class' => 'centercol',
@@ -185,6 +216,17 @@ function ModifyLanguages()
 			'href' => $scripturl . '?action=admin;area=languages',
 			'token' => 'admin-lang',
 		],
+		'additional_rows' => [
+			[
+				'position' => 'below_table_data',
+				'value' => '<label><input type="checkbox" name="userLanguage"' . (!empty($modSettings['userLanguage']) ? ' checked' : '') . '>' . $txt['userLanguage'] . '</label>',
+				'style' => 'text-align: right',
+			],
+			[
+				'position' => 'below_table_data',
+				'value' => '<input type="submit" name="set_default" value="' . $txt['save'] . '">',
+			],
+		],
 	];
 
 	// Display a warning if we cannot edit the default setting.
@@ -209,7 +251,7 @@ function ModifyLanguages()
  */
 function list_getNumLanguages()
 {
-	return count(getLanguages());
+	return count(getLanguages(false));
 }
 
 /**
@@ -221,7 +263,13 @@ function list_getNumLanguages()
  */
 function list_getLanguages()
 {
-	global $settings, $smcFunc, $language, $context, $txt;
+	global $settings, $smcFunc, $language, $context, $txt, $modSettings;
+
+	$available = !empty($modSettings['languages_available']) ? explode(',', $modSettings['languages_available']) : [];
+	if (empty($available))
+	{
+		$available[] = !empty($language) ? $language : 'en-us';
+	}
 
 	$languages = [];
 	// Keep our old entries.
@@ -249,6 +297,7 @@ function list_getLanguages()
 		$languages[$lang['filename']] = array(
 			'id' => $lang['filename'],
 			'count' => 0,
+			'available' => $language == $lang['filename'] || in_array($lang['filename'], $available),
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'en-us'),
 			'locale' => $general['locale'],
 			'name' => $general['native_name'] . (!empty($general['english_name']) && $general['english_name'] != $general['native_name'] ? ' (' . $general['english_name'] . ')' : ''),
@@ -261,8 +310,7 @@ function list_getLanguages()
 		SELECT lngfile, COUNT(*) AS num_users
 		FROM {db_prefix}members
 		GROUP BY lngfile',
-		array(
-		)
+		[]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -282,70 +330,6 @@ function list_getLanguages()
 
 	// Return how many we have.
 	return $languages;
-}
-
-/**
- * Edit language related settings.
- *
- * @param bool $return_config Whether to return the $config_vars array (used in admin search)
- * @return void|array Returns nothing or the $config_vars array if $return_config is true
- */
-function ModifyLanguageSettings($return_config = false)
-{
-	global $scripturl, $context, $txt, $boarddir, $sourcedir;
-
-	// We'll want to save them someday.
-	require_once $sourcedir . '/ManageServer.php';
-
-	// Warn the user if the backup of Settings.php failed.
-	$settings_not_writable = !is_writable($boarddir . '/Settings.php');
-	$settings_backup_fail = !@is_writable($boarddir . '/Settings_bak.php') || !@copy($boarddir . '/Settings.php', $boarddir . '/Settings_bak.php');
-
-	/* If you're writing a mod, it's a bad idea to add things here....
-	For each option:
-		variable name, description, type (constant), size/possible values, helptext.
-	OR	an empty string for a horizontal rule.
-	OR	a string for a titled section. */
-	$config_vars = array(
-		'language' => array('language', $txt['default_language'], 'file', 'select', [], null, 'disabled' => $settings_not_writable),
-		array('userLanguage', $txt['userLanguage'], 'db', 'check', null, 'userLanguage'),
-	);
-
-	call_integration_hook('integrate_language_settings', array(&$config_vars));
-
-	if ($return_config)
-		return $config_vars;
-
-	// Get our languages. No cache
-	getLanguages(false);
-	foreach ($context['languages'] as $lang)
-		$config_vars['language'][4][$lang['filename']] = array($lang['filename'], $lang['name']);
-
-	// Saving settings?
-	if (isset($_REQUEST['save']))
-	{
-		checkSession();
-
-		call_integration_hook('integrate_save_language_settings', array(&$config_vars));
-
-		saveSettings($config_vars);
-		if (!$settings_not_writable && !$settings_backup_fail)
-			session_flash('success', $txt['settings_saved']);
-		redirectexit('action=admin;area=languages;sa=settings');
-	}
-
-	// Setup the template stuff.
-	$context['post_url'] = $scripturl . '?action=admin;area=languages;sa=settings;save';
-	$context['settings_title'] = $txt['language_settings'];
-	$context['save_disabled'] = $settings_not_writable;
-
-	if ($settings_not_writable)
-		$context['settings_message'] = '<div class="centertext"><strong>' . $txt['settings_not_writable'] . '</strong></div><br>';
-	elseif ($settings_backup_fail)
-		$context['settings_message'] = '<div class="centertext"><strong>' . $txt['admin_backup_fail'] . '</strong></div><br>';
-
-	// Fill the config array.
-	prepareServerSettingsContext($config_vars);
 }
 
 /**

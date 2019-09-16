@@ -293,9 +293,8 @@ $txt['standard_profile_field_timezone'] = 'Timezone';
 
 $txt['languages_lang_name'] = 'Language Name';
 $txt['languages_locale'] = 'Locale';
+$txt['languages_available'] = 'Available';
 $txt['languages_default'] = 'Default';
-$txt['languages_current_default'] = 'Currently default';
-$txt['languages_make_default'] = 'Make default';
 $txt['languages_users'] = 'Users';
 $txt['languages_right_to_left'] = 'Right-to-Left';
 $txt['language_settings_writable'] = 'Warning: Settings.php is not writable so the default language setting cannot be saved.';

@@ -241,8 +241,6 @@ $txt['userlog_enabled'] = 'Enable the profile edits log';
 
 $txt['mailqueue_title'] = 'Mail';
 
-$txt['default_language'] = 'Default forum language';
-
 $txt['maintenance_subject'] = 'Subject for display';
 $txt['maintenance_message'] = 'Message for display';
 
@@ -588,7 +586,6 @@ $txt['language_configuration'] = 'Languages';
 $txt['language_description'] = 'This section allows you to edit languages installed on your forum, download new ones from the StoryBB website.';
 $txt['language_edit'] = 'Edit Languages';
 $txt['language_add'] = 'Add Language';
-$txt['language_settings'] = 'Settings';
 $txt['could_not_language_backup'] = 'A backup could not be made before removing this language pack. No changes have been made at this time as a result (either change the permissions so Packages/backup can be written to, or turn off backups - not recommended)';
 
 $txt['advanced'] = 'Advanced';
