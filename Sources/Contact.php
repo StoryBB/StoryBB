@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Helper\Verification;
+
 /**
  * Display and process the contact form.
  * @return void
@@ -20,11 +22,6 @@ function Contact()
 
 	$context['page_title'] = $txt['contact_us'];
 	$context['sub_template'] = 'contact_form';
-
-	require_once($sourcedir . '/Subs-Editor.php');
-	$verificationOptions = [
-		'id' => 'contact',
-	];
 
 	$context['contact'] = [
 		'name' => '',
@@ -65,7 +62,7 @@ function Contact()
 		// What about CAPTCHA?
 		if ($context['user']['is_guest'])
 		{
-			$context['require_verification'] = create_control_verification($verificationOptions, true);
+			$context['require_verification'] = Verification::get('contact')->verify();
 			if (is_array($context['require_verification']))
 			{
 				loadLanguage('Errors');
@@ -131,11 +128,10 @@ function Contact()
 		}
 	}
 
-	$context['visual_verification_id'] = '';
+	$context['visual_verification'] = '';
 	if ($context['user']['is_guest'])
 	{
-		$context['require_verification'] = create_control_verification($verificationOptions);
-		$context['visual_verification_id'] = $verificationOptions['id'];
+		$context['visual_verification'] = Verification::get('contact')->id();
 	}
 
 	createToken('contact');

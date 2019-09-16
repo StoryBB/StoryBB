@@ -59,7 +59,7 @@ class Wave
 		$sound_word = '';
 		for ($i = 0, $wordlen = strlen($word); $i < $wordlen; $i++)
 		{
-			$sound_letter = implode('', file($settings['default_theme_dir'] . '/languages/' . $sound_language . '/' . $word[$i] . '.wav'));
+			$sound_letter = implode('', file($settings['default_theme_dir'] . '/languages/' . $sound_language . '/sound/' . $word[$i] . '.wav'));
 			if (strpos($sound_letter, 'data') === false)
 				self::fail();
 

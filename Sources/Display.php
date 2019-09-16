@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\Verification;
 
 /**
  * The central part of the board - topic display.
@@ -337,12 +338,7 @@ function Display()
 	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
-		$verificationOptions = [
-			'id' => 'post',
-		];
-		$context['require_verification'] = create_control_verification($verificationOptions);
-		$context['visual_verification_id'] = $verificationOptions['id'];
+		$context['visual_verification'] = Verification::get('post')->id();
 	}
 
 	// Are we showing signatures - or disabled fields?
