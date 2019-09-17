@@ -482,8 +482,8 @@ $txt['pm_online'] = 'Personal Message (Online)';
 $txt['pm_offline'] = 'Personal Message (Offline)';
 $txt['status'] = 'Status';
 
-$txt['go_up'] = 'Go Up';
-$txt['go_down'] = 'Go Down';
+$txt['go_up'] = 'Go up';
+$txt['go_down'] = 'Go down';
 
 $txt['copyright'] = '<a href="http://storybb.org" title="StoryBB" target="_blank" rel="noopener">%1$s &copy; %2$s, StoryBB project</a>';
 

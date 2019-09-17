@@ -194,10 +194,15 @@
 				{{#each context.footer_links}}
 				| <a href="{{{link}}}">{{{title}}}</a>
 				{{/each}}
-				| <a href="#top_section">{{txt.go_up}} &#9650;</a>
+
 			</li>
 			<li class="copyright">{{{copyright}}}</li>
 		</ul>
+
+		<div class="jump_buttons">
+			<a href="#top_section" title="{{txt.go_up}}" class="go_up"></a>
+			<a href="#footer" title="{{txt.go_down}}" class="go_down"></a>
+		</div>
 	</div>
 
 	{{{javascript deferred=1}}}
