@@ -187,11 +187,11 @@ function MembergroupIndex()
 		'additional_rows' => array(
 			array(
 				'position' => 'above_table_headers',
-				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
+				'value' => '<a class="button" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
 			),
 			array(
 				'position' => 'below_table_data',
-				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
+				'value' => '<a class="button" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>',
 			),
 		),
 	);
@@ -291,11 +291,11 @@ function MembergroupIndex()
 		'additional_rows' => array(
 			array(
 				'position' => 'above_table_headers',
-				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;charactergroup">' . $txt['membergroups_add_group'] . '</a>',
+				'value' => '<a class="button" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;charactergroup">' . $txt['membergroups_add_group'] . '</a>',
 			),
 			array(
 				'position' => 'below_table_data',
-				'value' => '<a class="button_link" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;charactergroup">' . $txt['membergroups_add_group'] . '</a>',
+				'value' => '<a class="button" href="' . $scripturl . '?action=admin;area=membergroups;sa=add;charactergroup">' . $txt['membergroups_add_group'] . '</a>',
 			),
 		),
 	);

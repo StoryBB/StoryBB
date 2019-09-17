@@ -1066,15 +1066,11 @@ select[disabled] {
 	margin-left: inherit;
 }
 
-.button_submit, input[type="submit"], .button_reset, .button_link {
+.button_submit, input[type="submit"] {
 	float: right;
 }
-.button_submit:hover, input[type="submit"]:hover, .button_reset:hover, .button_link:hover {
+.button_submit:hover, input[type="submit"]:hover {
 	color: #af6700;
-}
-
-a.button_link {
-	color: #000;
 }
 
 a.button_submit {
@@ -1086,13 +1082,13 @@ a.button_submit {
 }
 
 /* Assortment of backgrounds that are the same as buttons */
-.button_submit, .button_reset, .button_link, .dropmenu li ul, .top_menu, .dropmenu li li:hover, .dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover, #top_section, .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
+.button_submit, .dropmenu li ul, .top_menu, .dropmenu li li:hover, .dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover, #top_section, .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
 	background: #fff;
 	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
 }
 
 /* Well some of them have different gradient effect on hover */
-.button_submit:hover, .button_reset:hover, .button_link:hover, .quickbuttons li:hover {
+.button_submit:hover, .quickbuttons li:hover {
 	background-image: linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
 }
 

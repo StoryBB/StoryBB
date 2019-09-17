@@ -40,7 +40,7 @@
 }
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-.button_submit, input[type="submit"], .button_reset, .button_link {
+.button_submit, input[type="submit"] {
 	margin: 0 2px;
 }
 
@@ -177,7 +177,7 @@ img#sbblogo {
 }
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-.button_submit, input[type="submit"], .button_reset, .button_link {
+.button_submit, input[type="submit"] {
 	float: left;
 }
 /* The framing graphics */
