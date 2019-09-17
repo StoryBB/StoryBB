@@ -498,20 +498,30 @@ ul li.greeting {
 	background: #3e5a78;
 	border-top: 3px solid #b2b6bd;
 	flex: none;
-}
-
-#footer li, #footer p, #footer a {
 	font-size: 0.9em;
 	color: #fff;
+	text-align: right;
+}
+
+#footer a {
+	color: inherit;
 }
 
 #footer ul {
 	padding: 0 5px;
 }
 
-#footer li.copyright {
-	display: block;
-	font-family: Verdana, sans-serif;
+#footer li {
+	display: inline-block;
+}
+
+#footer li + li:not(.copyright)::before {
+	content: " • ";
+	margin: 0 2px;
+}
+
+#footer .copyright {
+	float: left;
 }
 
 #footerfix {

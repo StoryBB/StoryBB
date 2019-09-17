@@ -188,12 +188,17 @@
 		
 	<div id="footer">
 		<ul>
-			<li class="floatright">
+			<li class="contact">
 				<a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
-				| <a href="{{scripturl}}?action=help">{{txt.help}}</a>
-				{{#each context.footer_links}}
-				| <a href="{{{link}}}">{{{title}}}</a>
-				{{/each}}
+			</li>
+			<li class="help">
+				<a href="{{scripturl}}?action=help">{{txt.help}}</a>
+			</li>
+			<li>
+
+{{#each context.footer_links}}
+				<a href="{{{link}}}">{{{title}}}</a>
+{{/each}}
 
 			</li>
 			<li class="copyright">{{{copyright}}}</li>
