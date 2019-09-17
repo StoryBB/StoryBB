@@ -1021,7 +1021,7 @@ select[disabled] {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-.button, input[type="button"], input[type="submit"] {
+.button, .buttonrow > *, input[type="button"], input[type="submit"] {
 	display: inline-block;
 	text-transform: uppercase;
 	cursor: pointer;
@@ -1037,7 +1037,7 @@ select[disabled] {
 	background: #fff;
 	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
 }
-.button:hover, input[type="button"]:hover, input[type="submit"]:hover {
+.button:hover, .buttonrow > :hover, input[type="button"]:hover, input[type="submit"]:hover {
 	color: #af6700;
 	text-decoration: none;
 	border-color: gainsboro;
@@ -1049,14 +1049,14 @@ select[disabled] {
 .pagesection .button {
 	color: #346;
 }
-.button.active, input[type="button"].active, input[type="submit"].active {
+.button.active, .buttonrow > .active, input[type="button"].active, input[type="submit"].active {
 	background: #557ea0;
 	color: #fff;
 	font-weight: bold;
 	border-color: #558080;
 	text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
 }
-.button.active:hover, input[type="button"].active:hover, input[type="submit"].active:hover {
+.button.active:hover, .buttonrow > .active:hover, input[type="button"].active:hover, input[type="submit"].active:hover {
 	color: #ffc187;
 	background: #557ea0;
 }
@@ -1103,18 +1103,24 @@ a.button_submit {
 }
 
 /* In a .buttonrow, the buttons are joined together */
-.buttonrow .button {
-	display: table-cell;
+.buttonrow {
+	display: inline-flex;
 }
-
-.buttonrow .button:not(:first-child) {
+.buttonrow > * {
+	text-transform: none;
+}
+.buttonrow > *:not(:first-child) {
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
+	border-left-color: rgba(255, 255, 255, 0.5);
 }
-
-.buttonrow .button:not(:last-child) {
+.buttonrow > *:not(:last-child) {
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
+}
+.buttonrow > *:hover {
+	border-top: 1px solid gainsboro;
+	border-bottom: 1px solid #9a9a9a;
 }
 
 /* The "new" indicator */
