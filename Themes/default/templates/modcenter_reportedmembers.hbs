@@ -20,7 +20,7 @@
 				<li><a href="{{{report_href}}}">{{{create_button 'details' 'mc_reportedp_details' 'mc_reportedp_details'}}}</a></li>
 
 				<li>
-					<a href="{{scripturl}}?action=moderate;area=reportedmembers;sa=handle;ignore={{#if (eq ignore '1')}}0{{else}}1{{/if}};rid={{id}};start={{../context.start}};{{session_url}};{{token_url 'mod-report-ignore'}}" {{#if (neq ignore '1')}} class="you_sure" data-confirm="{{{json ../txt.mc_reportedp_ignore_confirm}}}"{{/if}}>
+					<a href="{{scripturl}}?action=moderate;area=reportedmembers;sa=handle;ignore={{#if (eq ignore '1')}}0{{else}}1{{/if}};rid={{id}};start={{../context.start}};{{session_url}};{{token_url 'mod-report-ignore'}}" {{#if (neq ignore '1')}} class="you_sure" data-confirm="{{../txt.mc_reportedp_ignore_confirm}}"{{/if}}>
 						{{#if (eq ignore '1')}}{{{create_button 'ignore' 'mc_reportedp_unignore' 'mc_reportedp_unignore'}}}{{else}}{{{create_button 'ignore' 'mc_reportedp_ignore' 'mc_reportedp_ignore'}}}{{/if}}
 					</a>
 				</li>
