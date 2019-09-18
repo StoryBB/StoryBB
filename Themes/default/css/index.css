@@ -296,12 +296,21 @@ h3.largetext {
 	font-weight: bold;
 }
 
+/* For cases where we want to spotlight something specific, e.g. an amount */
+.amt {
+	margin-left: 3px;
+	padding: 0 5px;
+	color: white;
+	background: #6d90ad;
+	border-radius: 8px;
+}
+
 /* 4# Theme frames and other fixed elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* The top bar. */
 #top_section {
-	padding: 0 5%;
+	padding: 5px calc(5% + 7px);
 	border-bottom: 1px solid #bbb;
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
 	background: #fff;
@@ -314,26 +323,14 @@ h3.largetext {
 	clear: both;
 }
 
-#top_info {
-	padding: 5px 9px 4px 9px;
-	line-height: 1.3em;
-	width: auto;
-}
-
 #profile_menu_top > img.avatar {
 	max-height: 18px;
 	max-width: 18px;
-	margin: 2px 5px 0 0;
-	float: left;
-	padding: 0;
-}
-
-#languages_form {
-	padding: 4px 0 0 0;
+	margin-right: 4px;
+	vertical-align: middle;
 }
 
 #search_form {
-	padding: 4px 0 0 0;
 	text-align: right;
 	min-width: 30em;
 }
@@ -1082,7 +1079,7 @@ a.button_submit {
 }
 
 /* Assortment of backgrounds that are the same as buttons */
-.button_submit, .dropmenu li ul, .top_menu, .dropmenu li li:hover, .dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover, #top_section, .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
+.button_submit, .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
 	background: #fff;
 	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
 }
@@ -1168,49 +1165,70 @@ a.button_submit {
 
 /* 8# Menus and dropdown menus
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
+/* The basics */
 .dropmenu, #top_info {
+	font-size: 0.9em;
 	position: relative;
 }
 
-/* Level 1 button background. */
-.dropmenu li, #top_info > li {
-	display: inline-block;
-	margin: 0 2px 0 1px;
-	padding: 0 0 0.3em 0;
-	font-size: 0.9em;
-	line-height: 1.9em;
+.dropmenu ul, .top_menu {
+	display: none;
+	position: absolute;
+	z-index: 90;
+	width: 18.2em;
 }
 
-/* For cases where we want to spotlight something specific to an item, e.g. an amount */
-.amt {
-	margin-left: 3px;
-	padding: 0 5px;
-	color: white;
-	background: #6d90ad;
-	border-radius: 8px;
-}
-
-.dropmenu li .active .amt, #top_info li .active .amt {
-	background: rgba(0, 0, 0, 0.2);
-	color: inherit;
-}
-
-#top_info .top_menu.visible {
+.dropmenu li:hover > ul, .dropmenu li:focus-within > ul, .top_menu.visible {
 	display: block;
 }
 
-/* Needed for new PM notifications. */
-.dropmenu li strong {
-	color: #333;
+.dropmenu ul ul {
+	left: calc(100% - 0.4em);
+	top: 0;
 }
 
-.dropmenu li a, #top_info > li > a {
-	padding: 0 7px 0 7px;
-	margin: 0;
+/* Now let's make it pretty */
+.dropmenu > li, #top_info > li {
+	display: inline-block;
+}
+
+.dropmenu ul, .top_menu {
+	padding: 0.4em;
+	border: solid 1px #999;
+	border-left: solid 1px #bbb;
+	border-top: solid 1px #ccc;
+	border-radius: 4px;
+	box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dropmenu a, #top_info > li > a {
+	padding: 4px 7px 3px;
 	display: block;
 	border: 1px solid transparent;
 	border-radius: 4px;
+}
+
+/* Menu and top_section backgrounds */
+.dropmenu ul,
+.dropmenu li li a:focus,
+.dropmenu li li a:hover,
+#top_section, .top_menu {
+	background: #fff;
+	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
+}
+
+/* Level 1 hover effects. */
+.dropmenu > li > a:hover,
+.dropmenu > li:focus-within > a, .dropmenu > li:hover > a,
+.dropmenu > li > a:focus,
+#top_info > li > a:hover, #top_info > li > a.open {
+	background: #597b9f;
+	border: 1px solid #4a6b8c;
+	color: #fff;
+	cursor: pointer;
+	text-decoration: none;
+	box-shadow: 0 4px 4px rgba(255, 255, 255, 0.1) inset;
+	text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.5);
 }
 
 /* Level 1 active button. */
@@ -1223,62 +1241,39 @@ a.button_submit {
 	text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
 }
 
-/* Level 1 hover effects. */
-.dropmenu li a:hover, .dropmenu li:hover a, .dropmenu li a:focus, #top_info > li > a:hover, #top_info > li:hover > a, #top_info > li > a.open {
-	background: #597b9f;
-	border: 1px solid #4a6b8c;
-	color: #fff;
-	cursor: pointer;
-	text-decoration: none;
-	box-shadow: 0 4px 4px rgba(255, 255, 255, 0.1) inset;
-	text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.5);
-}
-
-/* Level 1 active button. */
-.dropmenu li a.active:hover, .dropmenu li:hover a.active {
-	background: orange;
-	border: 1px solid #e09100;
+.dropmenu li a.active:hover, .dropmenu li a.active:focus-within {
 	color: #444;
-	box-shadow: 0 5px 5px rgba(255, 255, 255, 0.2) inset;
 	text-shadow: none;
 }
 
-/* Levels 2 and 3 submenu wrapper. */
-.dropmenu li ul, .top_menu {
-	z-index: 90;
-	position: absolute;
-	display: none;
-	width: 18.2em;
-	padding: 0.5em;
-	font-weight: normal;
-	border: solid 1px #999;
-	border-left: solid 1px #bbb;
-	border-top: solid 1px #ccc;
-	border-radius: 4px;
-	box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.3);
-	background: #fff;
+.dropmenu .active .amt, #top_info .active .amt {
+	color: inherit;
+	background: rgba(0, 0, 0, 0.25);
 }
 
-/* Level 2 link background. */
-.dropmenu li li {
-	margin: 0;
-	padding: 0;
-	width: 17em;
-	font-size: 1em;
-	border-radius: 3px;
+/* 2nd level and up */
+.dropmenu li li a {
 	border: 1px solid transparent;
-}
-
-/* Necessary to allow highlighting of 1st level while hovering over submenu. */
-.dropmenu li:hover li a, .dropmenu li li a {
-	background: none;
-	padding: 0 9px;
+	padding: 5px 8px;
 	color: #346;
-	border: none;
-	line-height: 2.2em;
 }
 
-.dropmenu li li a > img {
+.dropmenu li li a:hover, .dropmenu li li a:focus {
+	color: #333;
+	text-decoration: none;
+	border: 1px solid #cfcfcf;
+	border-top: 1px solid #d4dee6;
+}
+
+.dropmenu li li.subsections > a::after {
+	position: absolute;
+	padding: 5px 0;
+	right: 10px;
+	font: 83.33%/150% Arial, sans-serif;
+	content: '\25ba';
+}
+
+.dropmenu li img {
 	vertical-align: middle;
 }
 
@@ -1302,68 +1297,6 @@ a.button_submit {
 
 .top_menu .login input {
 	width: 90%;
-}
-
-/* Note: The next declarations are for keyboard access with js disabled. */
-.dropmenu ul a:focus, .dropmenu ul ul a:focus {
-	margin-left: 9990px;
-	border: none;
-	width: 17em;
-}
-
-.dropmenu ul ul a:focus {
-	margin-left: 19950px;
-}
-
-/* Cancel those for hover and/or js access. */
-.dropmenu ul li:hover a:focus, .dropmenu ul li a:focus {
-	margin-left: 0;
-	width: auto;
-}
-
-/* Level 3 submenu wrapper positioning. */
-.dropmenu li ul ul {
-	margin: -2em 0 0 15.3em;
-}
-
-/* Level 3 maintains font-size the same as Level 2. */
-.dropmenu li li li a {
-	font-size: 1em;
-}
-
-/* Levels 2 and 3 hover effects. */
-.dropmenu li li:hover {
-	border: none;
-}
-
-.dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover {
-	color: #333;
-	text-decoration: none;
-	border: 1px solid #cfcfcf;
-	border-top: 1px solid #d4dee6;
-}
-
-/* Reposition Level 2 submenu as visible on hover. */
-.dropmenu li:hover ul {
-	display: block;
-}
-
-/* Hiding Level 3 submenu off hover. */
-.dropmenu li:hover ul ul, .dropmenu li ul ul, .dropmenu li:hover ul ul ul, .dropmenu li ul ul ul {
-	left: -9999px;
-}
-
-/* Reposition as visible on hover. */
-.dropmenu li li:hover ul, .dropmenu li li ul {
-	left: -14px;
-}
-
-.dropmenu li li.subsections > a::after {
-	position: absolute;
-	padding: 5px 0;
-	right: 10px;
-	font: 83.33%/150% Arial, sans-serif;
-	content: '\25ba';
 }
 
 /* Highlighting of current section */
