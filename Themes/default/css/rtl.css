@@ -240,22 +240,6 @@ ul.quickbuttons {
 	float: left;
 	clear: left;
 }
-ul.quickbuttons li {
-	float: right;
-}
-.quickbuttons li:last-child, .quickbuttons li:last-child:hover {
-	border-radius: 4px 1px 1px 4px;
-	padding-bottom: 0;
-}
-.quickbuttons li:first-child, .quickbuttons li:first-child:hover {
-	border-radius: 1px 4px 4px 1px;
-	padding-bottom: 0;
-	line-height: 1.9em;
-}
-.quickbuttons li.quick_edit, .quickbuttons li.post_options {
-	line-height: 1.9em;
-	position: relative;
-}
 .quickbuttons li ul {
 	text-align: right;
 }

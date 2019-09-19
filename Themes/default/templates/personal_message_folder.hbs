@@ -241,23 +241,23 @@
 						<a href="{{../scripturl}}?action={{#if member.is_guest}}trackip{{else}}profile{{/if}};area=tracking;sa=ip;u={{member.id}};searchip={{member.ip}}">{{{../txt.ip}}}: {{member.ip}}</a>
 			{{/if}}
 
-			{{#if can_report}}
-						<a href="{{../scripturl}}?action=pm;sa=report;l={{../context.current_label_id}};pmsg={{id}}" class="floatright">{{../txt.pm_report_to_admin}}</a>
-			{{/if}}
-
-						<ul class="quickbuttons">
+						<ul class="quickbuttons buttonrow">
 
 			{{#if ../context.can_send_pm}}
 				{{#unless member.is_guest}}
 					{{#if (gt number_recipients 1)}}
 							<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote;u=all" class="main_icons reply_all_button">{{../txt.reply_to_all}}</a></li>
-									{{/if}}
+					{{/if}}
 							<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};u={{member.id}}" class="main_icons reply_button">{{../txt.reply}}</a></li>
 							<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote{{#unless (eq ../context.folder 'sent')}};u={{member.id}}{{/unless}}" class="main_icons quote">{{../txt.quote_action}}</a></li>
 					{{else}}
 							<li><a href="{{../scripturl}}?action=pm;sa=send;f={{../context.folder}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};pmsg={{id}};quote" class="main_icons quote">{{../txt.reply_quote}}</a></li>
 				{{/unless}}
-							<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{session_url}}" data-confirm="{{txt.remove_message_question}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.delete}}</a></li>
+							<li><a href="{{../scripturl}}?action=pm;sa=pmactions;pm_actions%5b{{id}}%5D=delete;f={{../context.folder}};start={{../context.start}}{{#if (neq ../context.current_label_id -1)}};l={{../context.current_label_id}}{{/if}};{{session_url}}" data-confirm="{{txt.remove_message_question}}" class="you_sure main_icons remove_button">{{../txt.delete}}</a></li>
+
+				{{#if can_report}}
+							<li><a href="{{../scripturl}}?action=pm;sa=report;l={{../context.current_label_id}};pmsg={{id}}" class="main_icons moderate">{{../txt.pm_report_to_admin}}</a></li>
+				{{/if}}
 			{{/if}}
 						</ul>
 					</div>

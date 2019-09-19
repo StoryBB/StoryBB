@@ -26,20 +26,26 @@
 				<div class="list_posts">
 					<div class="post">{{{body}}}</div>
 				</div>
-				<span class="floatright">
-					<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{{../context.current_view}}};start={{{../context.start}}};{{session_url}};approve={{id}}">
-						{{{create_button 'approve' 'approve' 'approve'}}}
-					</a>
+				<ul class="quickbuttons buttonrow">
+					<li>
+						<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{{../context.current_view}}};start={{{../context.start}}};{{session_url}};approve={{id}}">
+							{{{create_button 'approve' 'approve' 'approve'}}}
+						</a>
+					</li>
 
 	{{#if can_delete}}
-					{{{../context.menu_separator}}}
-					<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{{../context.current_view}}};start={{../context.start}};{{session_url}};delete={{id}}">
-						{{{create_button 'delete' 'remove_message' 'remove'}}}
-					</a>
+					<li>
+						{{{../context.menu_separator}}}
+						<a href="{{../scripturl}}?action=moderate;area=postmod;sa={{{../context.current_view}}};start={{../context.start}};{{session_url}};delete={{id}}">
+							{{{create_button 'delete' 'remove_message' 'remove'}}}
+						</a>
+					</li>
 	{{/if}}
 
-					<input type="checkbox" name="item[]" value="{{id}}" checked>
-				</span>
+					<li>
+						<input type="checkbox" name="item[]" value="{{id}}" checked>
+					</li>
+				</ul>
 			</div>
 {{/each}}
 

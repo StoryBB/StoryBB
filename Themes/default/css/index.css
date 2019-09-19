@@ -543,154 +543,9 @@ ul li.greeting {
 	border-top: 1px solid #ddd;
 }
 
-/* The quickbuttons */
-.quickbuttons {
-	margin: 11px 0 0 0;
-	padding: 0 0 4px 0;
-	clear: right;
-	float: right;
-	text-align: right;
-}
-
-.quickbuttons li {
-	float: left;
-	display: inline;
-	margin: 0;
-	font-size: 0.9em;
-	height: 23px;
-	border: 1px solid #ddd;
-	border-right: 1px solid #bbb;
-	border-bottom: 1px solid #9a9a9a;
-	border-radius: 1px;
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-	padding: 0 1px 0 1px;
-	color: #222;
-	overflow: visible;
-}
-
-.quickbuttons li a {
-	padding: 0 4px 0 5px;
-	display: block;
-	line-height: 1.9em;
-	float: left;
-}
-
-.quickbuttons li a, .quickbuttons li a:hover {
-	text-decoration: none;
-	color: #222;
-}
-
-.quickbuttons li:first-child, .quickbuttons li:first-child:hover {
-	border-radius: 4px 1px 1px 4px;
-	padding-bottom: 0;
-}
-
-.quickbuttons li:last-child, .quickbuttons li:last-child:hover {
-	border-radius: 1px 4px 4px 1px;
-	padding-bottom: 0;
-	line-height: 1.9em;
-}
-
-.quickbuttons li:hover {
-	border: 1px solid #ddd;
-	border-right: 1px solid #bbb;
-	border-bottom: 1px solid #9a9a9a;
-	border-radius: 1px;
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.quickbuttons li a img {
-	padding-bottom: 2px;
-}
-
-/* Dropdown part of quickbuttons */
-.quickbuttons li ul {
-	position: absolute;
-	top: 1.9em;
-	z-index: 90;
-	padding: 0.5em;
-	font-weight: normal;
-	text-align: left;
-	border: solid 1px #999;
-	border-left: solid 1px #9a9a9a;
-	border-top: solid 1px #bbb;
-	border-radius: 4px 2px 4px 0;
-	box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.2);
-}
-
-.quickbuttons li ul {
-	display: none;
-	right: -1px;
-}
-
-.quickbuttons li:hover ul {
-	display: block;
-}
-
-.quickbuttons li ul li, .quickbuttons li:hover ul li {
-	display: block;
-	background: none;
-	box-shadow: none;
-	width: 12em;
-	border: 1px solid transparent;
-	border-radius: 3px;
-}
-
-.quickbuttons li ul li:hover {
-	border: 1px solid #cfcfcf;
-	border-top: 1px solid #d4dee6;
-	border-bottom: 1px solid #cbdae6;
-}
-
-.quickbuttons ul li a, .quickbuttons ul li a:focus {
-	display: block;
-	line-height: 2.2em;
-	width: 12em;
-}
-
-/* Sub buttons doesn't need to be effected by first-child/last-child */
-.quickbuttons li > ul > li {
-	border-radius: 3px !important;
-}
-
-/* Note: The next declarations are for keyboard access with js disabled. */
-.quickbuttons ul li a:focus {
-	margin: 0 -9910px 0 9910px;
-}
-
-/* Cancel for hover and/or js access. */
-.quickbuttons ul li:hover a:focus, .quickbuttons ul li a:focus {
-	margin: 0;
-}
-
-.quickbuttons li ul ul {
-	right: 12em;
-	top: auto;
-	margin-right: 10px;
-}
-
-/* Fixes for quickbuttons
-	 Fix for quote on reply box */
+/* Fix for quote on reply box */
 #post_modify {
 	border-radius: 4px;
-}
-
-.quickbuttons li.inline_mod_check {
-	padding: 1px 1px 1px 1px;
-}
-
-.quickbuttons li.quick_edit, .quickbuttons li.post_options {
-	line-height: 1.9em;
-	position: relative;
-}
-
-.quickbuttons li.post_options {
-	padding: 0 4px 0 4px;
-	cursor: pointer;
-}
-
-.quickbuttons li.post_options > a {
-	padding: 0 4px 0 4px;
 }
 
 .quickModifyMargin {
@@ -1020,7 +875,6 @@ select[disabled] {
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
 .button, .buttonrow > *, input[type="button"], input[type="submit"] {
 	display: inline-block;
-	text-transform: uppercase;
 	cursor: pointer;
 	border: 1px solid gainsboro;
 	border-right: 1px solid #bbb;
@@ -1058,6 +912,9 @@ select[disabled] {
 	background: #557ea0;
 }
 
+.button, .button_submit, input[type="submit"], input[type="button"], input[type="submit"] {
+	text-transform: uppercase;
+}
 #frmLogin input[type="submit"], #guest_form input[type="submit"], #mergeSelectBoard input[type="submit"] {
 	float: none;
 	margin-left: inherit;
@@ -1079,13 +936,13 @@ a.button_submit {
 }
 
 /* Assortment of backgrounds that are the same as buttons */
-.button_submit, .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
+.button_submit, .popup_window {
 	background: #fff;
 	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
 }
 
 /* Well some of them have different gradient effect on hover */
-.button_submit:hover, .quickbuttons li:hover {
+.button_submit:hover {
 	background-image: linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
 }
 
@@ -1103,9 +960,6 @@ a.button_submit {
 .buttonrow {
 	display: inline-flex;
 }
-.buttonrow > * {
-	text-transform: none;
-}
 .buttonrow > *:not(:first-child) {
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
@@ -1116,7 +970,7 @@ a.button_submit {
 	border-bottom-right-radius: 0;
 }
 .buttonrow > *:hover {
-	border-top: 1px solid gainsboro;
+	border-top: 1px solid #dcdcdc;
 	border-bottom: 1px solid #9a9a9a;
 }
 
@@ -1178,8 +1032,13 @@ a.button_submit {
 	width: 18.2em;
 }
 
-.dropmenu li:hover > ul, .dropmenu li:focus-within > ul, .top_menu.visible {
+.dropmenu li:hover > ul, .dropmenu li:focus-within > ul, .top_menu.visible,
+.dropmenu ul:hover {
 	display: block;
+}
+
+.dropmenu ul li {
+	position: relative;
 }
 
 .dropmenu ul ul {
@@ -1438,6 +1297,56 @@ a.button_submit {
 #adm_submenus {
 	margin: 0 0 6px 0;
 	overflow: hidden;
+}
+
+/* The quickbuttons */
+.quickbuttons {
+	margin-top: 11px;
+	clear: right;
+	float: right;
+	font-size: 0.9em;
+}
+
+.quickbuttons li {
+	color: #222;
+	padding: 0;
+	position: relative;
+}
+
+.quickbuttons li a {
+	padding: 3px 5px;
+	display: block;
+}
+
+.quickbuttons li a, .quickbuttons li a:hover {
+	text-decoration: none;
+	color: inherit;
+}
+
+.quickbuttons > li > a {
+	border: none;
+}
+
+.quickbuttons > li > a:hover, .quickbuttons > li > a:focus,
+.quickbuttons > li:focus-within > a, .quickbuttons > li:hover > a {
+	color: inherit;
+	background: inherit;
+	border: none;
+}
+
+.quickbuttons ul {
+	top: 100%;
+	right: 0;
+	width: 12em;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.quickbuttons ul ul {
+	left: 100%;
+	top: 0;
+	right: unset;
+	border-top-right-radius: 4px;
 }
 
 /* 9# Titles and categories
@@ -1969,19 +1878,8 @@ img.icon.char_avatar {
 	background: url(../images/moved.png) center;
 }
 
-/* Small fix for topics */
-.quickbuttons span.main_icons {
-	margin: -3px 3px 0 1px;
-}
-
-.quickbuttons span.main_icons.quote,
-.quickbuttons span.main_icons.quote_selected {
-	margin: -8px 3px 0 0;
-}
-
 /* This is a small fix for dropmenu icons */
 .dropmenu .main_icons, #profile_menu .main_icons, .dropmenu img {
-	margin: -3px 4px 0 0;
 	vertical-align: middle;
 }
 
