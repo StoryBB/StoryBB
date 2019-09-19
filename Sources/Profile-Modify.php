@@ -14,7 +14,6 @@
 
 use StoryBB\Model\Alert;
 use StoryBB\Model\Attachment;
-use StoryBB\Helper\Timezone;
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
 use GuzzleHttp\Client;
@@ -180,7 +179,7 @@ function loadProfileFields($force_reload = false)
 			'input_validate' => function(&$value) use ($txt, $user_info, $modSettings, $cur_profile, $context)
 			{
 				// Bad date!  Go try again - please?
-				if (($value = strtotime($value)) === -1)
+				if (($value = strtotime($value)) === false)
 				{
 					$value = $cur_profile['date_registered'];
 					return $txt['invalid_registration'] . ' ' . strftime('%d %b %Y ' . (strpos($user_info['time_format'], '%H') !== false ? '%I:%M:%S %p' : '%H:%M:%S'), forum_time(false));
@@ -518,35 +517,19 @@ function loadProfileFields($force_reload = false)
 			},
 		),
 		'time_format' => array(
-			'type' => 'callback',
-			'callback_func' => 'timeformat_modify',
+			'type' => 'select',
+			'options' => array_merge(['' => $txt['timeformat_default']], \StoryBB\Helper\Datetime::list_dateformats()),
+			// 'callback_func' => 'timeformat_modify',
 			'permission' => 'profile_extra',
-			'preload' => function() use (&$context, $user_info, $txt, $cur_profile, $modSettings)
-			{
-				$context['easy_timeformats'] = array(
-					array('format' => '', 'title' => $txt['timeformat_default']),
-					array('format' => '%B %d, %Y, %I:%M:%S %p', 'title' => $txt['timeformat_easy1']),
-					array('format' => '%B %d, %Y, %H:%M:%S', 'title' => $txt['timeformat_easy2']),
-					array('format' => '%Y-%m-%d, %H:%M:%S', 'title' => $txt['timeformat_easy3']),
-					array('format' => '%d %B %Y, %H:%M:%S', 'title' => $txt['timeformat_easy4']),
-					array('format' => '%d-%m-%Y, %H:%M:%S', 'title' => $txt['timeformat_easy5'])
-				);
-
-				$context['member']['time_format'] = $cur_profile['time_format'];
-				$context['current_forum_time'] = timeformat(time() - $user_info['time_offset'] * 3600, false);
-				$context['current_forum_time_js'] = strftime('%Y,' . ((int) strftime('%m', time() + $modSettings['time_offset'] * 3600) - 1) . ',%d,%H,%M,%S', time() + $modSettings['time_offset'] * 3600);
-				$context['current_forum_time_hour'] = (int) strftime('%H', forum_time(false));
-				return true;
-			},
 		),
 		'timezone' => array(
 			'type' => 'select',
-			'options' => Timezone::list_timezones(),
+			'options' => \StoryBB\Helper\Datetime::list_timezones(),
 			'permission' => 'profile_extra',
 			'label' => $txt['timezone'],
 			'input_validate' => function($value)
 			{
-				$tz = Timezone::list_timezones();
+				$tz = \StoryBB\Helper\Datetime::list_timezones();
 				if (!isset($tz[$value]))
 					return 'bad_timezone';
 

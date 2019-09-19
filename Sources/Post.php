@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\Verification;
 
 /**
  * Handles showing the post screen, loading the post to be modified, and loading any post quoted.
@@ -892,12 +893,7 @@ function Post($post_errors = [])
 	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
-		$verificationOptions = array(
-			'id' => 'post',
-		);
-		$context['require_verification'] = create_control_verification($verificationOptions);
-		$context['visual_verification_id'] = $verificationOptions['id'];
+		$context['visual_verification'] = Verification::get('post')->id();
 	}
 
 	// If they came from quick reply, and have to enter verification details, give them some notice.
@@ -1207,9 +1203,11 @@ function Post2()
 		$verificationOptions = array(
 			'id' => 'post',
 		);
-		$context['require_verification'] = create_control_verification($verificationOptions, true);
-		if (is_array($context['require_verification']))
+		$context['require_verification'] = Verification::get('post')->verify();
+		if (!empty($context['require_verification']))
+		{
 			$post_errors = array_merge($post_errors, $context['require_verification']);
+		}
 	}
 
 	require_once($sourcedir . '/Subs-Post.php');

@@ -39,9 +39,9 @@
 						<dt>{{{txt.message}}}:</dt>
 						<dd><textarea name="message" required></textarea></dd>
 
-{{#if context.visual_verification_id}}
+{{#if context.visual_verification}}
 						<dt>{{{txt.verification}}}:</dt>
-						<dd>{{{captcha context.visual_verification_id}}}</dd>
+						<dd>{{{verification context.visual_verification}}}</dd>
 {{/if}}
 
 						<dt>&nbsp;</dt><dd></dd>

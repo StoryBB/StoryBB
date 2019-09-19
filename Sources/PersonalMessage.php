@@ -13,6 +13,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\Verification;
 
 /**
  * This helps organize things...
@@ -1910,11 +1911,7 @@ function MessagePost()
 	$context['require_verification'] = !$user_info['is_admin'] && !empty($modSettings['pm_posts_verification']) && $user_info['posts'] < $modSettings['pm_posts_verification'];
 	if ($context['require_verification'])
 	{
-		$verificationOptions = array(
-			'id' => 'pm',
-		);
-		$context['require_verification'] = create_control_verification($verificationOptions);
-		$context['visual_verification_id'] = $verificationOptions['id'];
+		$context['visual_verification'] = Verification::get('pm')->id();
 	}
 
 	call_integration_hook('integrate_pm_post');
@@ -2109,12 +2106,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 	$context['require_verification'] = !$user_info['is_admin'] && !empty($modSettings['pm_posts_verification']) && $user_info['posts'] < $modSettings['pm_posts_verification'];
 	if ($context['require_verification'] && !isset($_REQUEST['xml']))
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
-		$verificationOptions = array(
-			'id' => 'pm',
-		);
-		$context['require_verification'] = create_control_verification($verificationOptions);
-		$context['visual_verification_id'] = $verificationOptions['id'];
+		$context['visual_verification'] = Verification::get('pm')->id();
 	}
 
 	$context['to_value'] = empty($named_recipients['to']) ? '' : '&quot;' . implode('&quot;, &quot;', $named_recipients['to']) . '&quot;';
@@ -2302,14 +2294,12 @@ function MessagePost2()
 	// Wrong verification code?
 	if (!$user_info['is_admin'] && !isset($_REQUEST['xml']) && !empty($modSettings['pm_posts_verification']) && $user_info['posts'] < $modSettings['pm_posts_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
-		$verificationOptions = array(
-			'id' => 'pm',
-		);
-		$context['require_verification'] = create_control_verification($verificationOptions, true);
+		$context['require_verification'] = Verification::get('pm')->verify();
 
-		if (is_array($context['require_verification']))
+		if (!empty($context['require_verification']))
+		{
 			$post_errors = array_merge($post_errors, $context['require_verification']);
+		}
 	}
 
 	// If they did, give a chance to make ammends.

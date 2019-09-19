@@ -14,6 +14,7 @@
 
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Wave;
+use StoryBB\Helper\Verification;
 
 /**
  * Begin the registration process.
@@ -154,12 +155,7 @@ function Register($reg_errors = [])
 	// Generate a visual verification code to make sure the user is no bot.
 	if (!empty($modSettings['reg_verification']))
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
-		$verificationOptions = array(
-			'id' => 'register',
-		);
-		$context['visual_verification'] = create_control_verification($verificationOptions);
-		$context['visual_verification_id'] = $verificationOptions['id'];
+		$context['visual_verification'] = Verification::get('signup')->id();
 	}
 	// Otherwise we have nothing to show.
 	else
@@ -249,17 +245,10 @@ function Register2()
 	// Check whether the visual verification code was entered correctly.
 	if (!empty($modSettings['reg_verification']))
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
-		$verificationOptions = array(
-			'id' => 'register',
-		);
-		$context['visual_verification'] = create_control_verification($verificationOptions, true);
-
-		if (is_array($context['visual_verification']))
+		$context['visual_verification_errors'] = Verification::get('signup')->verify();
+		foreach ($context['visual_verification_errors'] as $error)
 		{
-			loadLanguage('Errors');
-			foreach ($context['visual_verification'] as $error)
-				$reg_errors[] = $txt['error_' . $error];
+			$reg_errors[] = $error;
 		}
 	}
 
@@ -272,7 +261,6 @@ function Register2()
 	// Collect all extra registration fields someone might have filled in.
 	$possible_strings = array(
 		'first_char',
-		'time_format',
 		'buddy_list',
 		'pm_ignore_list',
 		'avatar',

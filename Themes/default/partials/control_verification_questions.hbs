@@ -1,0 +1,6 @@
+{{#each questions}}
+		<div class="smalltext">
+			{{{q}}}:<br>
+			<input type="text" name="{{{../verify_id}}}_vv[q][{{id}}]" size="30" value="{{{a}}}"{{#if is_error}} style="border: 1px red solid"{{/if}} required>
+		</div>
+{{/each}}

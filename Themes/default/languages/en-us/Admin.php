@@ -123,8 +123,6 @@ $txt['registration_center'] = 'Registration';
 $txt['viewmembers_name'] = 'Username (display name)';
 $txt['viewmembers_online'] = 'Last Online';
 $txt['viewmembers_today'] = 'Today';
-$txt['viewmembers_day_ago'] = 'day ago';
-$txt['viewmembers_days_ago'] = 'days ago';
 
 $txt['display_name'] = 'Display name';
 $txt['email_address'] = 'Email Address';
@@ -244,8 +242,6 @@ $txt['adminlog_enabled'] = 'Enable the administration log';
 $txt['userlog_enabled'] = 'Enable the profile edits log';
 
 $txt['mailqueue_title'] = 'Mail';
-
-$txt['default_language'] = 'Default forum language';
 
 $txt['maintenance_subject'] = 'Subject for display';
 $txt['maintenance_message'] = 'Message for display';
@@ -473,6 +469,7 @@ $txt['repair_attachments_no_errors'] = 'No errors were found';
 $txt['repair_attachments_error_desc'] = 'The following errors were found during maintenance. Check the box next to the errors you wish to fix and hit continue.';
 $txt['repair_attachments_continue'] = 'Continue';
 $txt['repair_attachments_cancel'] = 'Cancel';
+// @todo fix these for contextual
 $txt['attach_repair_missing_thumbnail_parent'] = '%1$d thumbnails are missing a parent attachment';
 $txt['attach_repair_parent_missing_thumbnail'] = '%1$d parents are flagged as having thumbnails but don\'t';
 $txt['attach_repair_file_missing_on_disk'] = '%1$d attachments/avatars have an entry but no longer exist on disk';
@@ -591,7 +588,6 @@ $txt['language_configuration'] = 'Languages';
 $txt['language_description'] = 'This section allows you to edit languages installed on your forum, download new ones from the StoryBB website.';
 $txt['language_edit'] = 'Edit Languages';
 $txt['language_add'] = 'Add Language';
-$txt['language_settings'] = 'Settings';
 $txt['could_not_language_backup'] = 'A backup could not be made before removing this language pack. No changes have been made at this time as a result (either change the permissions so Packages/backup can be written to, or turn off backups - not recommended)';
 
 $txt['advanced'] = 'Advanced';

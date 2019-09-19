@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\ClassManager;
 
 /**
  * This function makes sure the requested subaction does exists, if it doesn't, it sets a default action or.
@@ -117,7 +118,7 @@ function ModifyBasicSettings($return_config = false)
 			array('text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50),
 		'',
 			// Number formatting, timezones.
-			array('text', 'time_format'),
+			array('select', 'time_format', \StoryBB\Helper\Datetime::list_dateformats()),
 			array('float', 'time_offset', 'subtext' => $txt['setting_time_offset_note'], 6, 'postinput' => $txt['hours'], 'step' => 0.25, 'min' => -23.5, 'max' => 23.5),
 			'default_timezone' => array('select', 'default_timezone', []),
 			array('text', 'timezone_priority_countries', 'subtext' => $txt['setting_timezone_priority_countries_note']),
@@ -144,6 +145,8 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			// Alerts stuff
 			array('check', 'enable_ajax_alerts'),
+		'',
+			array('text', 'analytics_google_id', 'subtext' => $txt['analytics_google_id_sub']),
 	);
 
 	// Get all the time zones.
@@ -170,6 +173,12 @@ function ModifyBasicSettings($return_config = false)
 		// Prevent absurd boundaries here - make it a day tops.
 		if (isset($_POST['lastActive']))
 			$_POST['lastActive'] = min((int) $_POST['lastActive'], 1440);
+
+		// Just to try to cut down obvious problems...
+		if (isset($_POST['analytics_google_id']))
+		{
+			$_POST['analytics_google_id'] = trim($_POST['analytics_google_id']);
+		}
 
 		call_integration_hook('integrate_save_basic_settings');
 
@@ -308,10 +317,6 @@ function ModifyAntispamSettings($return_config = false)
 	loadLanguage('Help');
 	loadLanguage('ManageSettings');
 
-	// Generate a sample registration image.
-	$context['use_graphic_library'] = in_array('gd', get_loaded_extensions());
-	$context['verification_image_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand());
-
 	$config_vars = array(
 				array('check', 'reg_verification'),
 				array('check', 'search_enable_captcha'),
@@ -323,20 +328,25 @@ function ModifyAntispamSettings($return_config = false)
 				'pm1' => array('int', 'max_pm_recipients', 'subtext' => $txt['max_pm_recipients_note']),
 				'pm2' => array('int', 'pm_posts_verification', 'subtext' => $txt['pm_posts_verification_note']),
 				'pm3' => array('int', 'pm_posts_per_hour', 'subtext' => $txt['pm_posts_per_hour_note']),
-			// Visual verification.
-			array('titledesc', 'configure_verification_means'),
-				'vv' => array('select', 'visual_verification_type', array($txt['setting_image_verification_off'], $txt['setting_image_verification_vsimple'], $txt['setting_image_verification_simple'], $txt['setting_image_verification_medium'], $txt['setting_image_verification_high'], $txt['setting_image_verification_extreme']), 'subtext' => $txt['setting_visual_verification_type_desc'], 'onchange' => $context['use_graphic_library'] ? 'refreshImages();' : ''),
-			// reCAPTCHA
-			array('titledesc', 'recaptcha_configure'),
-				array('check', 'recaptcha_enabled', 'subtext' => $txt['recaptcha_enable_desc']),
-				array('text', 'recaptcha_site_key', 'subtext' => $txt['recaptcha_site_key_desc']),
-				array('text', 'recaptcha_secret_key', 'subtext' => $txt['recaptcha_secret_key_desc']),
-				array('select', 'recaptcha_theme', array('light' => $txt['recaptcha_theme_light'], 'dark' => $txt['recaptcha_theme_dark'])),
-			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
-			array('titledesc', 'setup_verification_questions'),
-				array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
-				array('callback', 'question_answer_list'),
 	);
+
+	$verifiables = [];
+	foreach (ClassManager::get_classes_implementing('StoryBB\\Helper\\Verifiable\\Verifiable') as $class)
+	{
+		$verifiable = new $class('admin');
+		foreach ($verifiable->get_settings() as $setting_id => $setting)
+		{
+			if (is_numeric($setting_id))
+			{
+				$config_vars[] = $setting;
+			}
+			else
+			{
+				$config_vars[$setting_id] = $setting;
+			}
+		}
+		$verifiables[] = $verifiable;
+	}
 
 	call_integration_hook('integrate_spam_settings', array(&$config_vars));
 
@@ -345,73 +355,6 @@ function ModifyAntispamSettings($return_config = false)
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
-
-	// Firstly, figure out what languages we're dealing with, and do a little processing for the form's benefit.
-	getLanguages();
-
-	// Secondly, load any questions we currently have.
-	$context['question_answers'] = [];
-	foreach ($context['languages'] as $lang_id => $lang)
-	{
-		$context['question_answers'][$lang_id] = [
-			'name' => $lang['name'],
-			'questions' => [],
-		];
-	}
-	$request = $smcFunc['db_query']('', '
-		SELECT id_question, lngfile, question, answers
-		FROM {db_prefix}qanda'
-	);
-	$questions = 1;
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-	{
-		$lang = strtr($row['lngfile'], array('-utf8' => ''));
-		if (!isset($context['question_answers'][$lang_id]))
-		{
-			continue;
-		}
-		$context['question_answers'][$lang_id]['questions'][$row['id_question']] = [
-			'question' => $row['question'],
-			'answers' => sbb_json_decode($row['answers'], true),
-		];
-		$questions++;
-	}
-	$smcFunc['db_free_result']($request);
-
-	// If the user has insisted on questions, but hasn't put anything in for the default forum language, warn them.
-	if (!empty($modSettings['qa_verification_number']) && (empty($context['question_answers'][$language]) || empty($context['question_answers'][$language]['questions'])))
-	{
-		if (empty($context['settings_insert_above']))
-			$context['settings_insert_above'] = '';
-
-		$context['settings_insert_above'] .= '<div class="noticebox">' . sprintf($txt['question_not_defined'], $context['languages'][$language]['name']) . '</div>';
-	}
-
-	// Thirdly, push some JavaScript for the form to make it work.
-	addInlineJavaScript('
-	var nextrow = ' . $questions . ';
-	$(".qa_link a").click(function() {
-		var id = $(this).parent().attr("id").substring(6);
-		$("#qa_fs_" + id).show();
-		$(this).parent().hide();
-	});
-	$(".qa_fieldset legend a").click(function() {
-		var id = $(this).closest("fieldset").attr("id").substring(6);
-		$("#qa_dt_" + id).show();
-		$(this).closest("fieldset").hide();
-	});
-	$(".qa_add_question a").click(function() {
-		var id = $(this).closest("fieldset").attr("id").substring(6);
-		$(\'<dt><input type="text" name="question[\' + id + \'][\' + nextrow + \']" value="" size="50" class="verification_question"></dt><dd><input type="text" name="answer[\' + id + \'][\' + nextrow + \'][]" value="" size="50" class="verification_answer" / ><div class="qa_add_answer"><a href="javascript:void(0);" onclick="return addAnswer(this);">[ \' + ' . JavaScriptEscape($txt['setup_verification_add_answer']) . ' + \' ]</a></div></dd>\').insertBefore($(this).parent());
-		nextrow++;
-	});
-	function addAnswer(obj)
-	{
-		var attr = $(obj).closest("dd").find(".verification_answer:last").attr("name");
-		$(\'<input type="text" name="\' + attr + \'" value="" size="50" class="verification_answer">\').insertBefore($(obj).closest("div"));
-		return false;
-	}
-	$("#qa_dt_' . strtr($language, array('-utf8' => '')) . ' a").click();', true);
 
 	// Will need the utility functions from here.
 	require_once($sourcedir . '/ManageServer.php');
@@ -433,130 +376,10 @@ function ModifyAntispamSettings($return_config = false)
 
 		$save_vars[] = array('text', 'pm_spam_settings');
 
-		// Handle verification questions.
-		$changes = array(
-			'insert' => [],
-			'replace' => [],
-			'delete' => [],
-		);
-		$qs_per_lang = [];
-		foreach (array_keys($context['question_answers']) as $lang_id)
+		foreach ($verifiables as $verifiable)
 		{
-			// If we had some questions for this language before, but don't now, delete everything from that language.
-			if ((!isset($_POST['question'][$lang_id]) || !is_array($_POST['question'][$lang_id])) && !empty($context['question_answers'][$lang_id]['questions']))
-				$changes['delete'] = array_merge($questions['delete'], $context['qa_by_lang'][$lang_id]);
-
-			// Now step through and see if any existing questions no longer exist.
-			if (!empty($context['question_answers'][$lang_id]['questions']))
-				foreach (array_keys($context['question_answers'][$lang_id]['questions']) as $q_id)
-					if (empty($_POST['question'][$lang_id][$q_id]))
-						$changes['delete'][] = $q_id;
-
-			// Now let's see if there are new questions or ones that need updating.
-			if (isset($_POST['question'][$lang_id]))
-			{
-				foreach ($_POST['question'][$lang_id] as $q_id => $question)
-				{
-					// Ignore junky ids.
-					$q_id = (int) $q_id;
-					if ($q_id <= 0)
-						continue;
-
-					// Check the question isn't empty (because they want to delete it?)
-					if (empty($question) || trim($question) == '')
-					{
-						if (isset($context['question_answers'][$lang_id]['questions'][$q_id]))
-							$changes['delete'][] = $q_id;
-						continue;
-					}
-					$question = $smcFunc['htmlspecialchars'](trim($question));
-
-					// Get the answers. Firstly check there actually might be some.
-					if (!isset($_POST['answer'][$lang_id][$q_id]) || !is_array($_POST['answer'][$lang_id][$q_id]))
-					{
-						if (isset($context['question_answers'][$lang_id]['questions'][$q_id]))
-							$changes['delete'][] = $q_id;
-						continue;
-					}
-					// Now get them and check that they might be viable.
-					$answers = [];
-					foreach ($_POST['answer'][$lang_id][$q_id] as $answer)
-						if (!empty($answer) && trim($answer) !== '')
-							$answers[] = $smcFunc['htmlspecialchars'](trim($answer));
-					if (empty($answers))
-					{
-						if (isset($context['question_answers'][$lang_id]['questions'][$q_id]))
-							$changes['delete'][] = $q_id;
-						continue;
-					}
-					$answers = json_encode($answers);
-
-					// At this point we know we have a question and some answers. What are we doing with it?
-					if (!isset($context['question_answers'][$lang_id]['questions'][$q_id]))
-					{
-						// New question. Now, we don't want to randomly consume ids, so we'll set those, rather than trusting the browser's supplied ids.
-						$changes['insert'][] = array($lang_id, $question, $answers);
-					}
-					else
-					{
-						// It's an existing question. Let's see what's changed, if anything.
-						if ($question != $context['question_answers'][$lang_id]['questions'][$q_id]['question'] || $answers != $context['question_answers'][$lang_id]['questions'][$q_id]['answers'])
-							$changes['replace'][$q_id] = array('lngfile' => $lang_id, 'question' => $question, 'answers' => $answers);
-					}
-
-					if (!isset($qs_per_lang[$lang_id]))
-						$qs_per_lang[$lang_id] = 0;
-					$qs_per_lang[$lang_id]++;
-				}
-			}
+			$verifiable->put_settings($save_vars);
 		}
-
-		// OK, so changes?
-		if (!empty($changes['delete']))
-		{
-			$smcFunc['db_query']('', '
-				DELETE FROM {db_prefix}qanda
-				WHERE id_question IN ({array_int:questions})',
-				array(
-					'questions' => $changes['delete'],
-				)
-			);
-		}
-
-		if (!empty($changes['replace']))
-		{
-			foreach ($changes['replace'] as $q_id => $question)
-			{
-				$smcFunc['db_query']('', '
-					UPDATE {db_prefix}qanda
-					SET lngfile = {string:lngfile},
-						question = {string:question},
-						answers = {string:answers}
-					WHERE id_question = {int:id_question}',
-					array(
-						'id_question' => $q_id,
-						'lngfile' => $question['lngfile'],
-						'question' => $question['question'],
-						'answers' => $question['answers'],
-					)
-				);
-			}
-		}
-
-		if (!empty($changes['insert']))
-		{
-			$smcFunc['db_insert']('insert',
-				'{db_prefix}qanda',
-				array('lngfile' => 'string-50', 'question' => 'string-255', 'answers' => 'string-65534'),
-				$changes['insert'],
-				array('id_question')
-			);
-		}
-
-		// Lastly, the count of messages needs to be no more than the lowest number of questions for any one language.
-		$count_questions = empty($qs_per_lang) ? 0 : min($qs_per_lang);
-		if (empty($count_questions) || $_POST['qa_verification_number'] > $count_questions)
-			$_POST['qa_verification_number'] = $count_questions;
 
 		call_integration_hook('integrate_save_spam_settings', array(&$save_vars));
 
@@ -564,31 +387,8 @@ function ModifyAntispamSettings($return_config = false)
 		saveDBSettings($save_vars);
 		session_flash('success', $txt['settings_saved']);
 
-		cache_put_data('verificationQuestions', null, 300);
-
 		redirectexit('action=admin;area=antispam');
 	}
-
-	$character_range = array_merge(range('A', 'H'), array('K', 'M', 'N', 'P', 'R'), range('T', 'Y'));
-	$_SESSION['visual_verification_code'] = '';
-	for ($i = 0; $i < 6; $i++)
-		$_SESSION['visual_verification_code'] .= $character_range[array_rand($character_range)];
-
-	// Some javascript for CAPTCHA.
-	$context['settings_post_javascript'] = '';
-	if ($context['use_graphic_library'])
-		$context['settings_post_javascript'] .= '
-		function refreshImages()
-		{
-			var imageType = document.getElementById(\'visual_verification_type\').value;
-			document.getElementById(\'verification_image\').src = \'' . $context['verification_image_href'] . ';type=\' + imageType;
-		}';
-
-	// Show the image itself, or text saying we can't.
-	if ($context['use_graphic_library'])
-		$config_vars['vv']['postinput'] = '<br><img src="' . $context['verification_image_href'] . ';type=' . (empty($modSettings['visual_verification_type']) ? 0 : $modSettings['visual_verification_type']) . '" alt="' . $txt['setting_image_verification_sample'] . '" id="verification_image"><br>';
-	else
-		$config_vars['vv']['postinput'] = '<br><span class="smalltext">' . $txt['setting_image_verification_nogd'] . '</span>';
 
 	// Hack for PM spam settings.
 	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);

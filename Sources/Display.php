@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\Helper\Verification;
 
 /**
  * The central part of the board - topic display.
@@ -337,12 +338,7 @@ function Display()
 	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
-		require_once($sourcedir . '/Subs-Editor.php');
-		$verificationOptions = [
-			'id' => 'post',
-		];
-		$context['require_verification'] = create_control_verification($verificationOptions);
-		$context['visual_verification_id'] = $verificationOptions['id'];
+		$context['visual_verification'] = Verification::get('post')->id();
 	}
 
 	// Are we showing signatures - or disabled fields?
@@ -1204,7 +1200,7 @@ function Display()
 		$context['normal_buttons']['add_poll'] = ['text' => 'add_poll', 'image' => 'add_poll.png', 'url' => $scripturl . '?action=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']];
 
 	if ($context['can_mark_unread'])
-		$context['normal_buttons']['mark_unread'] = ['text' => 'mark_unread', 'image' => 'markunread.png', 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
+		$context['normal_buttons']['mark_unread'] = ['text' => 'mark_unread', 'image' => 'markunread.png', 'url' => $scripturl . '?action=markasread;sa=topic;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_var'] . '=' . $context['session_id']];
 
 	if ($context['can_set_notify'])
 		$context['normal_buttons']['notify'] = [

@@ -66,8 +66,7 @@ a img {
 /* 2# Basic definitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-
-body {
+body, html {
 	background: #e9eef2;
 	font: 83.33%/150% "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 	color: #4d4d4d;
@@ -338,19 +337,8 @@ h3.largetext {
 	text-align: right;
 	min-width: 30em;
 }
-
-#search_form input[type=text], #search_form input[type=email], #search_form input[type=search], #search_form select, #search_form input[type="submit"] {
-	padding: 2px;
-	margin: 2px;
-	background: #fff;
-	border: 1px solid #ddd;
-	border-left: 1px solid #bbb;
-	border-top: 1px solid #9a9a9a;
-	box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.07), -3px -3px 6px rgba(255, 255, 255, 0.8) inset;
-}
-
-#search_form select, #language_select {
-	margin: 1px;
+#search_form input, #search_form select {
+	margin-left: 4px;
 }
 
 #search_form input[type="submit"] {
@@ -359,7 +347,6 @@ h3.largetext {
 
 #search_form input[type="submit"]:hover {
 	color: #a85400;
-	text-decoration: none;
 }
 
 /* The contact page */
@@ -498,20 +485,30 @@ ul li.greeting {
 	background: #3e5a78;
 	border-top: 3px solid #b2b6bd;
 	flex: none;
-}
-
-#footer li, #footer p, #footer a {
 	font-size: 0.9em;
 	color: #fff;
+	text-align: right;
+}
+
+#footer a {
+	color: inherit;
 }
 
 #footer ul {
 	padding: 0 5px;
 }
 
-#footer li.copyright {
-	display: block;
-	font-family: Verdana, sans-serif;
+#footer li {
+	display: inline-block;
+}
+
+#footer li + li:not(.copyright)::before {
+	content: " • ";
+	margin: 0 2px;
+}
+
+#footer .copyright {
+	float: left;
 }
 
 #footerfix {
@@ -1024,136 +1021,106 @@ select[disabled] {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
-#frmLogin input[type="submit"], #guest_form input[type="submit"], #calendar_navigation input[type="submit"], #mergeSelectBoard input[type="submit"] {
+.button, .buttonrow > *, input[type="button"], input[type="submit"] {
+	display: inline-block;
+	text-transform: uppercase;
+	cursor: pointer;
+	border: 1px solid gainsboro;
+	border-right: 1px solid #bbb;
+	border-left: 1px solid #bbb;
+	border-bottom: 1px solid #9a9a9a;
+	border-radius: 3px;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+	padding: 0.3rem 0.6rem 0.25rem;
+	color: #444;
+	font-size: 0.9rem;
+	background: #fff;
+	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
+}
+.button:hover, .buttonrow > :hover, input[type="button"]:hover, input[type="submit"]:hover {
+	color: #af6700;
+	text-decoration: none;
+	border-color: gainsboro;
+	border-left-color: #bbb;
+	border-top-color: #9a9a9a;
+	background-image: linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
+	box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.07), -1px -2px 4px rgba(255, 255, 255, 0.33) inset;
+}
+.pagesection .button {
+	color: #346;
+}
+.button.active, .buttonrow > .active, input[type="button"].active, input[type="submit"].active {
+	background: #557ea0;
+	color: #fff;
+	font-weight: bold;
+	border-color: #558080;
+	text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+.button.active:hover, .buttonrow > .active:hover, input[type="button"].active:hover, input[type="submit"].active:hover {
+	color: #ffc187;
+	background: #557ea0;
+}
+
+#frmLogin input[type="submit"], #guest_form input[type="submit"], #mergeSelectBoard input[type="submit"] {
 	float: none;
 	margin-left: inherit;
 }
 
-.button_submit, input[type="submit"], .button_reset, .button_link {
-	margin: 0 0 0 12px;
-	padding: 0 4px;
+.button_submit, input[type="submit"] {
 	float: right;
-	cursor: pointer;
-	border: 1px solid #ddd;
-	border-right: 1px solid #bbb;
-	border-bottom: 1px solid #aaa;
-	border-radius: 3px;
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
-
-.button_submit:hover, input[type="submit"]:hover, .button_reset:hover, .button_link:hover {
+.button_submit:hover, input[type="submit"]:hover {
 	color: #af6700;
-	border: 1px solid #ddd;
-	border-left: 1px solid #bbb;
-	border-top: 1px solid #aaa;
-	box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.07), -1px -2px 4px rgba(255, 255, 255, 0.33) inset;
-}
-
-a.button_link {
-	color: #000;
-	padding: 1px 5px;
-	margin: 0 !important;
-	font-size: 0.9em;
-}
-
-.button_link:hover {
-	text-decoration: none;
 }
 
 a.button_submit {
 	margin-top: 15px;
-	text-decoration: none;
-	display: inline-block;
-	min-width: 0;
-}
-
-.button {
-	display: inline-block;
-	text-transform: uppercase;
-	cursor: pointer;
-	border: 1px solid #ddd;
-	border-right: 1px solid #bbb;
-	border-bottom: 1px solid #aaa;
-	border-radius: 3px;
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-	padding: 0 8px;
-	margin: 0 0 0 5px;
-	overflow: visible;
-	color: #444;
-	font-size: 0.8em;
-	height: 2.2em;
-	line-height: 2.2em;
-}
-
-/* Keep a consistent size when wrapped in pagesection. */
-.pagesection .button {
-	font-size: 0.889em;
-	color: #346;
-}
-
-.button:hover {
-	color: #af6700;
-	text-decoration: none;
-	border: 1px solid #ddd;
-	border-left: 1px solid #bbb;
-	border-top: 1px solid #aaa;
-	box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.07), -1px -2px 4px rgba(255, 255, 255, 0.33) inset;
-}
-
-.button.active {
-	background: #557ea0;
-	color: #fff;
-	font-weight: bold;
-	border: 1px solid #558080;
-	text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
-}
-
-.button.active:hover {
-	color: #ffc187;
-	background: #557ea0;
 }
 
 .button.last {
 	margin-top: 9px;
 }
 
-/* Background of buttons */
-.button_submit, input[type="submit"], .button_reset, .button_link, .topbottom, .dropmenu li ul, .top_menu, .dropmenu li li:hover, .button, .dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover, #top_section, #search_form input[type="submit"], .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
+/* Assortment of backgrounds that are the same as buttons */
+.button_submit, .dropmenu li ul, .top_menu, .dropmenu li li:hover, .dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover, #top_section, .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
 	background: #fff;
-	/* fallback for some browsers */
 	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
 }
 
 /* Well some of them have different gradient effect on hover */
-.button:hover, .button_submit:hover, input[type="submit"]:hover, .button_reset:hover, .button_link:hover, .topbottom:hover, #search_form input[type="submit"]:hover, .quickbuttons li:hover {
-	background: #fff;
+.button_submit:hover, .quickbuttons li:hover {
 	background-image: linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
 }
 
 /* Styles for the standard button lists. */
 .buttonlist, .buttonrow {
-	z-index: 100;
-	padding: 5px 0 5px 0;
-	margin: 5px 0 5px 0;
+	padding: 5px 0;
+	margin: 5px 0;
+}
+
+.buttonlist .button + .button, .buttonlist .button + input[type="submit"] {
+	margin-left: 5px;
 }
 
 /* In a .buttonrow, the buttons are joined together */
 .buttonrow {
-	margin-left: 5px;
+	display: inline-flex;
 }
-
-.buttonrow .button {
-	display: table-cell;
+.buttonrow > * {
+	text-transform: none;
 }
-
-.buttonrow .button:not(:first-child) {
+.buttonrow > *:not(:first-child) {
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
+	border-left-color: rgba(255, 255, 255, 0.5);
 }
-
-.buttonrow .button:not(:last-child) {
+.buttonrow > *:not(:last-child) {
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
+}
+.buttonrow > *:hover {
+	border-top: 1px solid gainsboro;
+	border-bottom: 1px solid #9a9a9a;
 }
 
 /* The "new" indicator */
@@ -1175,6 +1142,28 @@ a.button_submit {
 
 .children .new_posts {
 	margin-left: 5px;
+}
+
+.jump_buttons {
+	position: fixed;
+	right: 10px;
+	bottom: 7px;
+	width: 21px;
+}
+.jump_buttons a {
+	background-image: url("../images/icons/main_icons_sprite.png"), linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
+	background-position: -159px -3px;
+	border-radius: 3px;
+	border: 1px solid #bbb;
+	width: 21px;
+	height: 21px;
+	display: inline-block;
+}
+.jump_buttons a.go_down {
+	background-position: -211px -3px;
+}
+.jump_buttons.bottom .go_down, .jump_buttons.top .go_up {
+	display: none;
 }
 
 /* 8# Menus and dropdown menus
@@ -1942,29 +1931,6 @@ body#help_popup {
 	content: ']';
 }
 
-/* Go up and go down links. */
-.topbottom {
-	display: block;
-	cursor: pointer;
-	border: 1px solid #ddd;
-	border-right: 1px solid #bbb;
-	border-bottom: 1px solid #9a9a9a;
-	border-radius: 3px;
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-	padding: 2px 7px 1px 7px;
-	margin: 5px 8px 0 0;
-	color: #222;
-}
-
-.topbottom:hover {
-	text-decoration: none;
-	color: #af6700;
-	border: 1px solid #ddd;
-	border-left: 1px solid #bbb;
-	border-top: 1px solid #9a9a9a;
-	box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.07), -1px -2px 4px rgba(255, 255, 255, 0.33) inset;
-}
-
 /* The jump to box */
 #display_jump_to {
 	padding: 11px 5px 5px 0;
@@ -1977,10 +1943,6 @@ body#help_popup {
 
 #message_index_jump_to_select {
 	font-size: 1em;
-}
-
-#message_index_jump_to input[type="submit"] {
-	padding: 1px 6px;
 }
 
 /* The navigation list (i.e. linktree) */

@@ -2,6 +2,9 @@
 <html{{#if context.right_to_left}} dir="rtl"{{/if}} lang="{{context.locale}}">
 <head>
 	<meta charset="UTF-8">
+	{{#if modSettings.analytics_google_id}}
+		{{> analytics_google ga_measurement_id=modSettings.analytics_google_id}}
+	{{/if}}
 	
 	{{{css}}}
 	{{{javascript deferred=0}}}
@@ -98,7 +101,7 @@
 		
 {{#if context.allow_search}}
 			<form id="search_form" class="floatright" action="{{scripturl}}?action=search2" method="post" accept-charset="UTF-8">
-				<input type="search" name="search" value="">&nbsp;
+				<input type="search" name="search" value="">
 				<select name="search_selection">
 					<option value="all">{{txt.search_entireforum}}</option>
 	{{#if context.current_topic}}
@@ -185,16 +188,26 @@
 		
 	<div id="footer">
 		<ul>
-			<li class="floatright">
+			<li class="contact">
 				<a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
-				| <a href="{{scripturl}}?action=help">{{txt.help}}</a>
-				{{#each context.footer_links}}
-				| <a href="{{{link}}}">{{{title}}}</a>
-				{{/each}}
-				| <a href="#top_section">{{txt.go_up}} &#9650;</a>
 			</li>
+			<li class="help">
+				<a href="{{scripturl}}?action=help">{{txt.help}}</a>
+			</li>
+			
+{{#each context.footer_links}}
+			<li>
+				<a href="{{{link}}}">{{{title}}}</a>
+			</li>
+{{/each}}
+
 			<li class="copyright">{{{copyright}}}</li>
 		</ul>
+
+		<div class="jump_buttons">
+			<a href="#top_section" title="{{txt.go_up}}" class="go_up"></a>
+			<a href="#footer" title="{{txt.go_down}}" class="go_down"></a>
+		</div>
 	</div>
 
 	{{{javascript deferred=1}}}
