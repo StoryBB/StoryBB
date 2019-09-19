@@ -98,33 +98,6 @@ $helptxt['ban_members'] = '<strong>Ban Members</strong><br>
 	In the ban list, you simply type that IP address in, save, and they can no longer post from that location.<br>You can also
 	ban people through their email address.';
 
-$helptxt['time_format'] = '<strong>Time Format</strong><br>
-	You have the ability to adjust how the time and date look for yourself. There are a lot of little letters, but it\'s quite simple.
-	The conventions follow PHP\'s strftime function and are described as below (more details can be found at <a href="https://php.net/manual/function.strftime.php" target="_blank" rel="noopener">php.net</a>).<br>
-	<br>
-	The following characters are recognized in the format string: <br>
-	<span class="smalltext">
-	&nbsp;&nbsp;%a - abbreviated weekday name<br>
-	&nbsp;&nbsp;%A - full weekday name<br>
-	&nbsp;&nbsp;%b - abbreviated month name<br>
-	&nbsp;&nbsp;%B - full month name<br>
-	&nbsp;&nbsp;%d - day of the month (01 to 31) <br>
-	&nbsp;&nbsp;%D<strong>*</strong> - same as %m/%d/%y <br>
-	&nbsp;&nbsp;%e<strong>*</strong> - day of the month (1 to 31) <br>
-	&nbsp;&nbsp;%H - hour using a 24-hour clock (range 00 to 23) <br>
-	&nbsp;&nbsp;%I - hour using a 12-hour clock (range 01 to 12) <br>
-	&nbsp;&nbsp;%m - month as a number (01 to 12) <br>
-	&nbsp;&nbsp;%M - minute as a number <br>
-	&nbsp;&nbsp;%p - either &quot;am&quot; or &quot;pm&quot; according to the given time<br>
-	&nbsp;&nbsp;%R<strong>*</strong> - time in 24 hour notation <br>
-	&nbsp;&nbsp;%S - second as a decimal number <br>
-	&nbsp;&nbsp;%T<strong>*</strong> - current time, equal to %H:%M:%S <br>
-	&nbsp;&nbsp;%y - 2 digit year (00 to 99) <br>
-	&nbsp;&nbsp;%Y - 4 digit year<br>
-	&nbsp;&nbsp;%% - a literal \'%\' character <br>
-	<br>
-	<em>* Does not work on Windows-based servers.</em></span>';
-
 $helptxt['registrations'] = '<strong>Registration Management</strong><br>
 	This page contains all the functions that could be necessary to manage new registrations on the forum. It contains up to four
 	pages which are visible depending on your forum settings. These are:<br><br>

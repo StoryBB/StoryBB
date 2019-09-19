@@ -45,7 +45,6 @@ $txt['default_topic_message'] = 'Welcome to StoryBB!<br><br>We hope you enjoy us
 $txt['default_board_name'] = 'General Discussion';
 $txt['default_board_description'] = 'Feel free to talk about anything and everything in this board.';
 $txt['default_category_name'] = 'General Category';
-$txt['default_time_format'] = '%b %d, %Y, %I:%M %p';
 $txt['default_news'] = 'StoryBB - Just Installed!';
 $txt['default_reserved_names'] = 'Admin\nWebmaster\nGuest\nroot';
 $txt['default_theme_name'] = 'StoryBB Default Theme - Curve2';

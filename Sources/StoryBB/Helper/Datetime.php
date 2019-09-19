@@ -15,7 +15,7 @@ namespace StoryBB\Helper;
 /**
  * Support functions for timezones.
  */
-class Timezone
+class Datetime
 {
 
 	/**
@@ -246,5 +246,24 @@ class Timezone
 		}
 
 		return $tz_abbrev;
+	}
+
+	/**
+	 * Get a list of valid date/time formats.
+	 *
+	 * @return array Array of format -> descriptions.
+	 */
+	public static function list_dateformats()
+	{
+		global $txt;
+		loadLanguage('Profile');
+
+		return [
+			'%B %d, %Y, %I:%M:%S %p' => $txt['timeformat_easy1'], // January 1, 2000, 12:00:00am
+			'%B %d, %Y, %H:%M:%S' => $txt['timeformat_easy2'],    // January 1, 2000, 00:00:00
+			'%Y-%m-%d, %H:%M:%S' => $txt['timeformat_easy3'],     // 2000-01-01, 00:00:00
+			'%d %B %Y, %H:%M:%S' => $txt['timeformat_easy4'],     // 1 January 2000, 00:00:00
+			'%d-%m-%Y, %H:%M:%S' => $txt['timeformat_easy5'],     // 1-January-2000, 00:00:00
+		];
 	}
 }
