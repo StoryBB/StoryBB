@@ -1020,6 +1020,7 @@ function DatabasePopulation()
 		'{$current_time}' => time(),
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
 		'{$registration_method}' => isset($_POST['reg_mode']) ? $_POST['reg_mode'] : 0,
+		'{$default_time_format}' => array_keys(\StoryBB\Helper\Datetime::list_dateformats())[0],
 	);
 
 	foreach ($txt as $key => $value)

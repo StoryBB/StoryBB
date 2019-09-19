@@ -118,7 +118,7 @@ function ModifyBasicSettings($return_config = false)
 			array('text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50),
 		'',
 			// Number formatting, timezones.
-			array('text', 'time_format'),
+			array('select', 'time_format', \StoryBB\Helper\Datetime::list_dateformats()),
 			array('float', 'time_offset', 'subtext' => $txt['setting_time_offset_note'], 6, 'postinput' => $txt['hours'], 'step' => 0.25, 'min' => -23.5, 'max' => 23.5),
 			'default_timezone' => array('select', 'default_timezone', []),
 			array('text', 'timezone_priority_countries', 'subtext' => $txt['setting_timezone_priority_countries_note']),
