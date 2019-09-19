@@ -1132,10 +1132,6 @@ a.button_submit {
 	content: '\25ba';
 }
 
-.dropmenu li img {
-	vertical-align: middle;
-}
-
 /* The profile/pm menus are declared off .dropmenu li ul for consistency but have other characteristics. */
 .top_menu {
 	width: 25em;
@@ -1777,10 +1773,6 @@ body#help_popup {
 #display_jump_to {
 	padding: 11px 5px 5px 0;
 	float: right;
-}
-
-#display_jump_to select {
-	margin: 0 -12px 0 0;
 }
 
 #message_index_jump_to_select {
@@ -3945,10 +3937,6 @@ a.moderation_link, a.moderation_link:visited {
 
 #reported_posts .main_icons, #reported_members .main_icons {
 	margin: -3px 1px 0 0;
-}
-
-#reported_posts .quickbuttons li a, #reported_members .quickbuttons li a {
-	background: none;
 }
 
 #modcenter .main_icons {
