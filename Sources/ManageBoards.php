@@ -56,7 +56,7 @@ function ManageBoards()
 		),
 	);
 
-	call_integration_hook('integrate_manage_boards', array(&$subActions));
+	routing_integration_hook('integrate_manage_boards', array(&$subActions));
 
 	// Default to sub action 'main' or 'settings' depending on permissions.
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('manage_boards') ? 'main' : 'settings');

@@ -55,7 +55,7 @@ function ModifyPermissions()
 		),
 	);
 
-	call_integration_hook('integrate_manage_permissions', array(&$subActions));
+	routing_integration_hook('integrate_manage_permissions', array(&$subActions));
 
 	call_helper($subActions[$_REQUEST['sa']][0]);
 }

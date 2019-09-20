@@ -55,7 +55,7 @@ function ManageScheduledTasks()
 		),
 	);
 
-	call_integration_hook('integrate_manage_scheduled_tasks', array(&$subActions));
+	routing_integration_hook('integrate_manage_scheduled_tasks', array(&$subActions));
 
 	// Call it.
 	call_helper($subActions[$context['sub_action']]);

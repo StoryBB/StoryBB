@@ -111,7 +111,7 @@ function ModifySettings()
 
 	$context['settings_not_writable'] = $settings_not_writable;
 
-	call_integration_hook('integrate_server_settings', array(&$subActions));
+	routing_integration_hook('integrate_server_settings', array(&$subActions));
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);

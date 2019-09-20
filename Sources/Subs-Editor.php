@@ -1677,7 +1677,7 @@ function AutoSuggestHandler($checkRegistered = null)
 		'memberchar' => 'MemberChar',
 	);
 
-	call_integration_hook('integrate_autosuggest', array(&$searchTypes));
+	routing_integration_hook('integrate_autosuggest', array(&$searchTypes));
 
 	// If we're just checking the callback function is registered return true or false.
 	if ($checkRegistered != null)

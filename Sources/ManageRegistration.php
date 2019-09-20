@@ -67,7 +67,7 @@ function RegCenter()
 		)
 	);
 
-	call_integration_hook('integrate_manage_registrations', array(&$subActions));
+	routing_integration_hook('integrate_manage_registrations', array(&$subActions));
 
 	// Finally, get around to calling the function...
 	call_helper($subActions[$context['sub_action']][0]);

@@ -53,7 +53,7 @@ function ReportsMain()
 		'staff' => 'StaffReport',
 	);
 
-	call_integration_hook('integrate_report_types');
+	routing_integration_hook('integrate_report_types');
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['generate_reports'],

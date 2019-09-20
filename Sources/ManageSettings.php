@@ -79,7 +79,7 @@ function ModifyFeatureSettings()
 		),
 	);
 
-	call_integration_hook('integrate_modify_features', array(&$subActions));
+	routing_integration_hook('integrate_modify_features', array(&$subActions));
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);

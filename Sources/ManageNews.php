@@ -35,7 +35,7 @@ function ManageNews()
 		'settings' => array('ModifyNewsSettings', 'admin_forum'),
 	);
 
-	call_integration_hook('integrate_manage_news', array(&$subActions));
+	routing_integration_hook('integrate_manage_news', array(&$subActions));
 
 	// Default to sub action 'main' or 'settings' depending on permissions.
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('edit_news') ? 'editnews' : (allowedTo('send_mail') ? 'mailingmembers' : 'settings'));
