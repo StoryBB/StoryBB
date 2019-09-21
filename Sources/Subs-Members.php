@@ -12,6 +12,7 @@
 
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Environment;
+use StoryBB\Hook\Observable;
 
 /**
  * Delete one or more members.
@@ -446,7 +447,7 @@ function deleteMembers($users, $check_not_admin = false)
 	$smcFunc['db_free_result']($request);
 
 	// Integration rocks!
-	call_integration_hook('integrate_delete_members', array($users));
+	(new Observable\Account\Deleted($users))->execute();
 
 	updateStats('member');
 
