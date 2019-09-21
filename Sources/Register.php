@@ -15,6 +15,7 @@
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Wave;
 use StoryBB\Helper\Verification;
+use StoryBB\Hook\Observable;
 
 /**
  * Begin the registration process.
@@ -515,7 +516,7 @@ function Register2()
 	}
 	else
 	{
-		call_integration_hook('integrate_activate', array($regOptions['username']));
+		(new Observable\Account\Activated($ergOptions['username'], $memberID))->execute();
 
 		setLoginCookie(0, $memberID, hash_salt($regOptions['register_vars']['passwd'], $regOptions['register_vars']['password_salt']));
 
@@ -656,7 +657,7 @@ function Activate()
 	}
 
 	// Let the integration know that they've been activated!
-	call_integration_hook('integrate_activate', array($row['member_name']));
+	(new Observable\Account\Activated($row['member_name'], $row['id_member']))->execute();
 
 	// Validation complete - update the database!
 	updateMemberData($row['id_member'], array('is_activated' => 1, 'validation_code' => ''));

@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\Hook\Observable;
 
 /**
  * Set up data exports for users and list exports available.
@@ -262,7 +263,7 @@ function activateAccount($memID)
 		}
 
 		// Let the integrations know of the activation.
-		call_integration_hook('integrate_activate', array($user_profile[$memID]['member_name']));
+		(new Observable\Account\Activated($user_profile[$memID]['member_name'], $memID))->execute();
 
 		// Actually update this member now, as it guarantees the unapproved count can't get corrupted.
 		updateMemberData($context['id_member'], array('is_activated' => $user_profile[$memID]['is_activated'] >= 10 ? 11 : 1, 'validation_code' => ''));
