@@ -561,7 +561,7 @@ function Logout($internal = false, $redirect = true)
 	if (!$user_info['is_guest'])
 	{
 		// Pass the logout information to integrations.
-		call_integration_hook('integrate_logout', [$user_settings['member_name']]);
+		(new Observable\Account\LoggedOut($user_settings['member_name'], $user_info['id']))->execute();
 
 		// If you log out, you aren't online anymore :P.
 		$smcFunc['db_query']('', '
