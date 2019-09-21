@@ -3117,9 +3117,6 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 
 	// @todo Why are we doing this if caching is disabled?
 
-	if (function_exists('call_integration_hook'))
-		call_integration_hook('pre_cache_quick_get', [&$key, &$file, &$function, &$params, &$level]);
-
 	/* Refresh the cache if either:
 		1. Caching is disabled.
 		2. The cache level isn't high enough.
@@ -3139,9 +3136,6 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 	// Some cached data may need a freshening up after retrieval.
 	if (!empty($cache_block['post_retri_eval']))
 		eval($cache_block['post_retri_eval']);
-
-	if (function_exists('call_integration_hook'))
-		call_integration_hook('post_cache_quick_get', [&$cache_block]);
 
 	return $cache_block['data'];
 }

@@ -110,9 +110,6 @@ class Cache
 			}
 		}
 
-		if (function_exists('call_integration_hook') && isset($value))
-			call_integration_hook('cache_get_data', array(&$key, &$ttl, &$value));
-
 		return empty($value) ? null : sbb_json_decode($value, true);
 	}
 
@@ -141,9 +138,6 @@ class Cache
 		// The API will handle the rest.
 		$value = $value === null ? null : json_encode($value);
 		self::$cacheAPI->putData($key, $value, $ttl);
-
-		if (function_exists('call_integration_hook'))
-			call_integration_hook('cache_put_data', array(&$key, &$value, &$ttl));
 
 		if (isset($db_show_debug) && $db_show_debug === true)
 			$cache_hits[$cache_count]['t'] = microtime(true) - $st;
