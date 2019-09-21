@@ -33,6 +33,12 @@ class Manager
 		global $context, $db_show_debug;
 
 		$classname = get_class($hook);
+
+		if ($db_show_debug === true)
+		{
+			$context['debug']['hooks'][] = str_replace('StoryBB\\Hook\\', '', $classname);
+		}
+
 		if (!isset(static::$hooks[$classname]))
 		{
 			return;
@@ -44,10 +50,6 @@ class Manager
 			{
 				if (is_callable($hookpoint))
 				{
-					if ($db_show_debug === true)
-					{
-						$context['debug']['hooks'][] = $hook;
-					}
 					call_user_func($hookpoint, $hook);
 				}
 			}
