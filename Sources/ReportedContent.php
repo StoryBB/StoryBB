@@ -58,7 +58,7 @@ function ReportedContent()
 	);
 
 	// Go ahead and add your own sub-actions.
-	call_integration_hook('integrate_reported_' . $context['report_type'], array(&$subActions));
+	routing_integration_hook('integrate_reported_' . $context['report_type'], array(&$subActions));
 
 	// By default we call the open sub-action.
 	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))

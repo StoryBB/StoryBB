@@ -79,7 +79,7 @@ function ModifyFeatureSettings()
 		),
 	);
 
-	call_integration_hook('integrate_modify_features', array(&$subActions));
+	routing_integration_hook('integrate_modify_features', array(&$subActions));
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);
@@ -160,7 +160,7 @@ function ModifyBasicSettings($return_config = false)
 	else
 		unset($config_vars['default_timezone']);
 
-	call_integration_hook('integrate_modify_basic_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_basic_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -180,7 +180,7 @@ function ModifyBasicSettings($return_config = false)
 			$_POST['analytics_google_id'] = trim($_POST['analytics_google_id']);
 		}
 
-		call_integration_hook('integrate_save_basic_settings');
+		settings_integration_hook('integrate_save_basic_settings');
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);
@@ -229,7 +229,7 @@ function ModifyWarningSettings($return_config = false)
 				'rem2' => array('int', 'warning_decrement', 'subtext' => $txt['setting_warning_decrement_note'] . ' ' . $txt['zero_to_disable']),
 		);
 
-	call_integration_hook('integrate_warning_settings', array(&$config_vars));
+	settings_integration_hook('integrate_warning_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -282,7 +282,7 @@ function ModifyWarningSettings($return_config = false)
 		$save_vars[] = array('text', 'warning_settings');
 		unset($save_vars['enable'], $save_vars['rem1'], $save_vars['rem2']);
 
-		call_integration_hook('integrate_save_warning_settings', array(&$save_vars));
+		settings_integration_hook('integrate_save_warning_settings', array(&$save_vars));
 
 		saveDBSettings($save_vars);
 		session_flash('success', $txt['settings_saved']);
@@ -348,7 +348,7 @@ function ModifyAntispamSettings($return_config = false)
 		$verifiables[] = $verifiable;
 	}
 
-	call_integration_hook('integrate_spam_settings', array(&$config_vars));
+	settings_integration_hook('integrate_spam_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -381,7 +381,7 @@ function ModifyAntispamSettings($return_config = false)
 			$verifiable->put_settings($save_vars);
 		}
 
-		call_integration_hook('integrate_save_spam_settings', array(&$save_vars));
+		settings_integration_hook('integrate_save_spam_settings', array(&$save_vars));
 
 		// Now save.
 		saveDBSettings($save_vars);
@@ -444,7 +444,7 @@ function ModifySignatureSettings($return_config = false)
 			array('bbc', 'signature_bbc'),
 	);
 
-	call_integration_hook('integrate_signature_settings', array(&$config_vars));
+	settings_integration_hook('integrate_signature_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -739,7 +739,7 @@ function ModifySignatureSettings($return_config = false)
 				$sig_limits[] = !empty($_POST['signature_' . $key]) ? max(1, (int) $_POST['signature_' . $key]) : 0;
 		}
 
-		call_integration_hook('integrate_save_signature_settings', array(&$sig_limits, &$bbcTags));
+		settings_integration_hook('integrate_save_signature_settings', array(&$sig_limits, &$bbcTags));
 
 		$_POST['signature_settings'] = implode(',', $sig_limits) . ':' . implode(',', array_diff($bbcTags, $_POST['signature_bbc_enabledTags']));
 
@@ -1661,7 +1661,7 @@ function ModifyLogSettings($return_config = false)
 	// We want to be toggling some of these for a nice user experience. If you want to add yours to the list of those magically hidden when the 'pruning' option is off, add to this.
 	$prune_toggle = array('pruneErrorLog', 'pruneModLog', 'pruneBanLog', 'pruneReportLog', 'pruneScheduledTaskLog');
 
-	call_integration_hook('integrate_prune_settings', array(&$config_vars, &$prune_toggle, false));
+	settings_integration_hook('integrate_prune_settings', array(&$config_vars, &$prune_toggle, false));
 
 	if ($return_config)
 		return $config_vars;
@@ -1696,7 +1696,7 @@ function ModifyLogSettings($return_config = false)
 			array('text', 'pruningOptions')
 		);
 
-		call_integration_hook('integrate_prune_settings', array(&$savevar, &$prune_toggle, true));
+		settings_integration_hook('integrate_prune_settings', array(&$savevar, &$prune_toggle, true));
 
 		if (!empty($_POST['pruningOptions']))
 		{

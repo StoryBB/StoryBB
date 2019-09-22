@@ -81,7 +81,7 @@ function ManageMaintenance()
 		),
 	);
 
-	call_integration_hook('integrate_manage_maintenance', array(&$subActions));
+	routing_integration_hook('integrate_manage_maintenance', array(&$subActions));
 
 	// Yep, sub-action time!
 	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))

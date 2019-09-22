@@ -62,7 +62,7 @@ function ManageSearch()
 		),
 	);
 
-	call_integration_hook('integrate_manage_search', array(&$subActions));
+	routing_integration_hook('integrate_manage_search', array(&$subActions));
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);

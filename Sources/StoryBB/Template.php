@@ -14,6 +14,7 @@ namespace StoryBB;
 
 use LightnCandy\LightnCandy;
 use StoryBB\Template\Cache;
+use StoryBB\Plugin\Manager;
 
 /**
  * This class encapsulates all of the behaviours required by StoryBB's template system.
@@ -42,6 +43,9 @@ class Template
 		'cache_hit' => [],
 		'cache_miss' => [],
 	];
+
+	/** @var array $paths An array listing the paths that things can live in, which may include plugins */
+	private static $paths = null;
 
 	/**
 	 * Set up the default helpers.
@@ -91,6 +95,38 @@ class Template
 	}
 
 	/**
+	 * Builds the list of paths that can be searched in
+	 */
+	protected static function refresh_paths()
+	{
+		global $settings, $context;
+
+		if (static::$paths !== null)
+		{
+			return;
+		}
+
+		static::$paths = [
+			'layout' => Manager::get_plugin_template_layouts(),
+			'template' => Manager::get_plugin_templates(),
+			'partial' => Manager::get_plugin_template_partials(),
+		];
+
+		// And the fallbacks.
+		if ($settings['theme_dir'] !== $settings['default_theme_dir'])
+		{
+			static::$paths['layout']['theme'] = $settings['theme_dir'] . '/layouts';
+			static::$paths['template']['theme'] = $settings['theme_dir'] . '/templates';
+			static::$paths['partial']['theme'] = $settings['theme_dir'] . '/partials';
+		}
+
+		// And always fall back to the default theme.
+		static::$paths['layout']['default'] = $settings['default_theme_dir'] . '/layouts';
+		static::$paths['template']['default'] = $settings['default_theme_dir'] . '/templates';
+		static::$paths['partial']['default'] = $settings['default_theme_dir'] . '/partials';
+	}
+
+	/**
 	 * Loads a template layout.
 	 *
 	 * @param string $layout Layout name, without root path or extension
@@ -106,12 +142,9 @@ class Template
 			return;
 		}
 
-		$paths = [
-			'theme' => $settings['theme_dir'] . '/layouts',
-			'default' => $settings['default_theme_dir'] . '/layouts',
-		];
+		static::refresh_paths();
 
-		foreach ($paths as $source => $path) {
+		foreach (static::$paths['layout'] as $source => $path) {
 			if (file_exists($path) && file_exists($path . '/' . $layout . '.hbs')) {
 				self::$layout_loaded = $layout;
 				self::$layout_template = file_get_contents($path . '/' . $layout . '.hbs');
@@ -136,12 +169,9 @@ class Template
 	{
 		global $settings;
 
-		$paths = [
-			'theme' => $settings['theme_dir'] . '/templates',
-			'default' => $settings['default_theme_dir'] . '/templates',
-		];
+		static::refresh_paths();
 
-		foreach ($paths as $source => $path) {
+		foreach (static::$paths['template'] as $source => $path) {
 			if (file_exists($path) && file_exists($path . '/' . $template . '.hbs')) {
 				self::$debug['template'][] = $template . ' (' . $source . ')';
 				return file_get_contents($path . '/' . $template . '.hbs');
@@ -162,12 +192,9 @@ class Template
 	{
 		global $settings;
 
-		$paths = [
-			'theme' => $settings['theme_dir'] . '/partials',
-			'default' => $settings['default_theme_dir'] . '/partials',
-		];
+		static::refresh_paths();
 
-		foreach ($paths as $source => $path) {
+		foreach (static::$paths['partial'] as $source => $path) {
 			if (file_exists($path) && file_exists($path . '/' . $partial . '.hbs')) {
 				self::$debug['partial'][$partial] = $partial . ' (' . $source . ')';
 				return file_get_contents($path . '/' . $partial . '.hbs');

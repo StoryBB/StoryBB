@@ -74,7 +74,7 @@ function Ban()
 		),
 	);
 
-	call_integration_hook('integrate_manage_bans', array(&$subActions));
+	routing_integration_hook('integrate_manage_bans', array(&$subActions));
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);

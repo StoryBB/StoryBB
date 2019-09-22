@@ -179,7 +179,7 @@ function ManageAttachmentSettings($return_config = false)
 	base_dir.addEventListener("change", toggleSubDir, false);
 	toggleSubDir();';
 
-	call_integration_hook('integrate_modify_attachment_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_attachment_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -234,7 +234,7 @@ function ManageAttachmentSettings($return_config = false)
 			}
 		}
 
-		call_integration_hook('integrate_save_attachment_settings');
+		settings_integration_hook('integrate_save_attachment_settings');
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);
@@ -294,7 +294,7 @@ function ManageAvatarSettings($return_config = false)
 			array('text', 'custom_avatar_url', 40),
 	);
 
-	call_integration_hook('integrate_modify_avatar_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_avatar_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -314,7 +314,7 @@ function ManageAvatarSettings($return_config = false)
 		if (empty($_POST['custom_avatar_url']))
 			$_POST['custom_avatar_url'] = $boardurl . '/custom_avatar';
 
-		call_integration_hook('integrate_save_avatar_settings');
+		settings_integration_hook('integrate_save_avatar_settings');
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);

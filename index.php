@@ -17,6 +17,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Hook\Mutatable;
+
 $software_year = '2018';
 $forum_version = 'StoryBB 1.0 Alpha 1';
 
@@ -189,40 +191,19 @@ function sbb_main()
 		// Action and board are both empty... BoardIndex! Unless someone else wants to do something different.
 		if (empty($board) && empty($topic))
 		{
-			if (!empty($modSettings['integrate_default_action']))
-			{
-				$defaultAction = explode(',', $modSettings['integrate_default_action']);
-
-				// Sorry, only one default action is needed.
-				$defaultAction = $defaultAction[0];
-
-				$call = call_helper($defaultAction, true);
-
-				if (!empty($call))
-					return $call;
-			}
-
-			// No default action huh? then go to our good old BoardIndex.
-			else
-			{
-				require_once($sourcedir . '/BoardIndex.php');
-
-				return 'BoardIndex';
-			}
+			$_REQUEST['action'] = !empty($modSettings['integrate_default_action']) ? $modSettings['integrate_default_action'] : 'forum';
 		}
 
 		// Topic is empty, and action is empty.... MessageIndex!
 		elseif (empty($topic))
 		{
-			require_once($sourcedir . '/MessageIndex.php');
-			return 'MessageIndex';
+			$_REQUEST['action'] = 'board';
 		}
 
 		// Board is not empty... topic is not empty... action is empty.. Display!
 		else
 		{
-			require_once($sourcedir . '/Display.php');
-			return 'Display';
+			$_REQUEST['action'] = 'topic';
 		}
 	}
 
@@ -243,6 +224,7 @@ function sbb_main()
 		'announce' => array('Post.php', 'AnnounceTopic'),
 		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
 		'autocomplete' => array('Autocomplete.php', 'Autocomplete'),
+		'board' => array('MessageIndex.php', 'MessageIndex'),
 		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
 		'characters' => array('Profile-Chars.php', 'CharacterList'),
 		'contact' => array('Contact.php', 'Contact'),
@@ -250,6 +232,7 @@ function sbb_main()
 		'dlattach' => array('ShowAttachments.php', 'showAttachment'),
 		'editpoll' => array('Poll.php', 'EditPoll'),
 		'editpoll2' => array('Poll.php', 'EditPoll2'),
+		'forum' => array('BoardIndex.php', 'BoardIndex'),
 		'groups' => array('Groups.php', 'Groups'),
 		'help' => array('Help.php', 'ShowHelp'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
@@ -296,6 +279,7 @@ function sbb_main()
 		'stats' => array('Stats.php', 'DisplayStats'),
 		'sticky' => array('Topic.php', 'Sticky'),
 		'theme' => array('Themes.php', 'ThemesMain'),
+		'topic' => array('Display.php', 'Display'),
 		'trackip' => array('Profile-View.php', 'trackIP'),
 		'unread' => array('Recent.php', 'UnreadTopics'),
 		'unreadreplies' => array('Recent.php', 'UnreadTopics'),
@@ -310,10 +294,10 @@ function sbb_main()
 	);
 
 	// Allow modifying $actionArray easily.
-	call_integration_hook('integrate_actions', array(&$actionArray));
+	(new Mutatable\ActionList($actionArray))->execute();
 
 	// Get the function and file to include - if it's not there, do the board index.
-	if (!isset($_REQUEST['action']) || !isset($actionArray[$_REQUEST['action']]))
+	if (!isset($actionArray[$_REQUEST['action']]))
 	{
 		if (!empty($modSettings['integrate_fallback_action']))
 		{
@@ -336,7 +320,10 @@ function sbb_main()
 	}
 
 	// Otherwise, it was set - so let's go to that action.
-	require_once($sourcedir . '/' . $actionArray[$_REQUEST['action']][0]);
+	if (!empty($actionArray[$_REQUEST['action']][0]))
+	{
+		require_once($sourcedir . '/' . $actionArray[$_REQUEST['action']][0]);
+	}
 
 	// Do the right thing.
 	return call_helper($actionArray[$_REQUEST['action']][1], true);

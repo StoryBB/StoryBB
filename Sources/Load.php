@@ -16,6 +16,8 @@ use StoryBB\Database\Exception as DatabaseException;
 use StoryBB\Model\Language;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\BrowserDetect;
+use StoryBB\Hook\Manager as HookManager;
+use StoryBB\Plugin\Manager as PluginManager;
 
 /**
  * Load the $modSettings array.
@@ -59,6 +61,27 @@ function reloadSettings()
 
 		if (!empty($cache_enable))
 			cache_put_data('modSettings', $modSettings, 90);
+	}
+
+	$context['enabled_plugins'] = [];
+	if (!empty($modSettings['enabled_plugins']))
+	{
+		$context['enabled_plugins'] = PluginManager::get_enabled_plugins();
+
+		$additional_autoload = PluginManager::get_plugin_sources();
+		if (!empty($additional_autoload))
+		{
+			$autoloader = include(__DIR__ . '/../vendor/autoload.php');
+			$autoloader->addPsr4('', $additional_autoload, false);
+		}
+
+		foreach ($context['enabled_plugins'] as $plugin)
+		{
+			foreach ($plugin['hooks'] as $hook => $hookable)
+			{
+				HookManager::register($hook, $hookable['priority'], $hookable['callable']);
+			}
+		}
 	}
 
 	// Let's make sure we have these settings set up.
@@ -3117,9 +3140,6 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 
 	// @todo Why are we doing this if caching is disabled?
 
-	if (function_exists('call_integration_hook'))
-		call_integration_hook('pre_cache_quick_get', [&$key, &$file, &$function, &$params, &$level]);
-
 	/* Refresh the cache if either:
 		1. Caching is disabled.
 		2. The cache level isn't high enough.
@@ -3139,9 +3159,6 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 	// Some cached data may need a freshening up after retrieval.
 	if (!empty($cache_block['post_retri_eval']))
 		eval($cache_block['post_retri_eval']);
-
-	if (function_exists('call_integration_hook'))
-		call_integration_hook('post_cache_quick_get', [&$cache_block]);
 
 	return $cache_block['data'];
 }

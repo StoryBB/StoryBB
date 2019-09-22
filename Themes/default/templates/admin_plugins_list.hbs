@@ -1,0 +1,49 @@
+	{{! The main plugins page. }}
+
+	<div class="information">
+		{{#each context.filter_plugins}}
+			<a {{#if (eq @key ../context.current_filter)}} class="active"{{/if}}href="{{../scripturl}}?action=admin;area=plugins;sa=list;filter={{@key}}">{{textTemplate (get_text (concat 'plugins_' @key)) .}}</a>
+		{{/each}}
+	</div>
+
+{{#if (eq (count context.available_plugins) 0)}}
+	<div class="windowbg">{{{txt.no_plugins}}}</div>
+{{else}}
+	<div class="plugin-group">
+		<form action="{{context.form_action}}" method="post">
+	{{#each context.available_plugins}}
+			<fieldset>
+				<legend>{{{name}}}</legend>
+		{{#if (eq status 'install_errors')}}
+				<div class="noticebox">
+					<ul>
+			{{#each install_errors}}
+						<li>{{{textTemplate (get_text (concat 'error_' .))}}} ({{{.}}})</li>
+			{{/each}}
+					</ul>
+				</div>
+		{{/if}}
+
+				<div class="plugin-actions">
+		{{#if (eq status 'enabled')}}
+					<button type="submit" name="disable" value="{{{id}}}" class="plugin-disable" title="{{{../txt.disable_plugin}}}">{{{../txt.disable_plugin}}}</button>
+		{{/if}}
+		{{#if (eq status 'disabled')}}
+					<button type="submit" name="enable" value="{{{id}}}" class="plugin-enable" title="{{{../txt.enable_plugin}}}">{{{../txt.enable_plugin}}}</button>
+		{{/if}}
+		{{#if (or (eq status 'install_errors') (eq status 'disabled'))}}
+					<button type="submit" name="remove" value="{{{id}}}" class="plugin-remove" title="{{{../txt.remove_plugin}}}">{{{../txt.remove_plugin}}}</button>
+		{{/if}}
+				</div>
+
+		{{#if description}}
+				<div class="plugin-description">{{{description}}}
+		{{/if}}
+				<div class="plugin-author">{{{../txt.written_by}}} {{{author}}}</div>
+			</fieldset>
+	{{/each}}
+			{{session_form}}
+			{{token_form 'admin-plugin'}}
+		</form>
+	</div>
+{{/if}}

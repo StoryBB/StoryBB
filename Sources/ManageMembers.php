@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\IP;
+use StoryBB\Hook\Observable;
 
 /**
  * The main entrance point for the Manage Members screen.
@@ -33,7 +34,7 @@ function ViewMembers()
 		'query' => array('ViewMemberlist', 'moderate_forum'),
 	);
 
-	call_integration_hook('integrate_manage_members', array(&$subActions));
+	routing_integration_hook('integrate_manage_members', array(&$subActions));
 
 	// Default to sub action 'index' or 'settings' depending on permissions.
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'all';
@@ -1159,11 +1160,10 @@ function AdminApprove()
 			)
 		);
 
-		// Do we have to let the integration code know about the activations?
-		if (!empty($modSettings['integrate_activate']))
+		// Let integrations/plugins know about activation.
+		foreach ($member_info as $member)
 		{
-			foreach ($member_info as $member)
-				call_integration_hook('integrate_activate', array($member['username']));
+			(new Observable\Account\Activated($member['username'], $member['id']))->execute();
 		}
 
 		// Check for email.

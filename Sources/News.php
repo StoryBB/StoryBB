@@ -190,7 +190,7 @@ function ShowXmlFeed()
 	);
 
 	// Easy adding of sub actions
-	call_integration_hook('integrate_xmlfeeds', array(&$subActions));
+	routing_integration_hook('integrate_xmlfeeds', array(&$subActions));
 
 	if (empty($_GET['sa']) || !isset($subActions[$_GET['sa']]))
 		$_GET['sa'] = 'recent';

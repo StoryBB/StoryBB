@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\Hook\Observable;
+
 /**
  * Ask them for their login information. (shows a page for the user to type
  *  in their username and password.)
@@ -454,7 +456,7 @@ function DoLogin()
 	require_once($sourcedir . '/Subs-Auth.php');
 
 	// Call login integration functions.
-	call_integration_hook('integrate_login', [$user_settings['member_name'], null, $context['cookie_time']]);
+	(new Observable\Account\LoggedIn($user_settings['member_name'], $user_settings['id_member'], $context['cookie_time']))->execute();
 
 	// Get ready to set the cookie...
 	$user_info['id'] = $user_settings['id_member'];
@@ -559,7 +561,7 @@ function Logout($internal = false, $redirect = true)
 	if (!$user_info['is_guest'])
 	{
 		// Pass the logout information to integrations.
-		call_integration_hook('integrate_logout', [$user_settings['member_name']]);
+		(new Observable\Account\LoggedOut($user_settings['member_name'], $user_info['id']))->execute();
 
 		// If you log out, you aren't online anymore :P.
 		$smcFunc['db_query']('', '

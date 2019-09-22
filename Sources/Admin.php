@@ -395,6 +395,21 @@ function AdminMain()
 				],
 			],
 		],
+		'plugins' => [
+			'title' => $txt['admin_plugins'],
+			'permission' => ['admin_forum'],
+			'areas' => [
+				'plugins' => [
+					'label' => $txt['admin_plugins'],
+					'file' => 'ManagePlugins.php',
+					'function' => 'PluginsHome',
+					'icon' => 'package',
+					'subsections' => [
+						'list' => [$txt['admin_plugins_list']],
+					],
+				],
+			],
+		],
 	];
 
 	// Any files to include for administration?

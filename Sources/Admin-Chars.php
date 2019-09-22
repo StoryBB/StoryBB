@@ -397,7 +397,7 @@ function CharacterImmersion($return_config = false)
 			]],
 	];
 
-	call_integration_hook('integrate_immersion_settings', [&$config_vars]);
+	settings_integration_hook('integrate_immersion_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -407,7 +407,7 @@ function CharacterImmersion($return_config = false)
 	{
 		checkSession();
 
-		call_integration_hook('integrate_save_immersion_settings');
+		settings_integration_hook('integrate_save_immersion_settings');
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);

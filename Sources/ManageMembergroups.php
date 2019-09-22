@@ -54,7 +54,7 @@ function ModifyMembergroups()
 		'description' => $txt['membergroups_description'],
 	);
 
-	call_integration_hook('integrate_manage_membergroups', array(&$subActions));
+	routing_integration_hook('integrate_manage_membergroups', array(&$subActions));
 
 	// Call the right function.
 	call_helper($subActions[$_REQUEST['sa']][0]);

@@ -45,7 +45,7 @@ function ManageLanguages()
 		'description' => $txt['language_description'],
 	);
 
-	call_integration_hook('integrate_manage_languages', array(&$subActions));
+	routing_integration_hook('integrate_manage_languages', array(&$subActions));
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);
