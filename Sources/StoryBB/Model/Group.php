@@ -17,6 +17,11 @@ namespace StoryBB\Model;
  */
 class Group
 {
+	const GUEST = -1;
+	const UNGROUPED_ACCOUNT = 0;
+	const ADMINISTRATOR = 1;
+	const BOARD_MODERATOR = 3;
+
 	/**
 	 * Identifies whether a given group is a character-based or account based.
 	 *
