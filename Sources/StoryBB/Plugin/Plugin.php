@@ -12,6 +12,8 @@
 
 namespace StoryBB\Plugin;
 
+use stdClass;
+
 class Plugin
 {
 	private $path = '';
@@ -73,6 +75,29 @@ class Plugin
 		{
 			$this->manifest->description = '';
 		}
+
+		if (!empty($this->manifest->hooks) && is_object($this->manifest->hooks))
+		{
+			foreach (get_object_vars($this->manifest->hooks) as $hook_class => $hook_details)
+			{
+				if (!class_exists($hook_class))
+				{
+					$this->install_errors[] = 'missing_hook';
+					break;
+				}
+
+				if (empty($hook_details->callable))
+				{
+					$this->install_errors[] = 'missing_hook_callable';
+					break;
+				}
+
+				if (empty($hook_detail->priority))
+				{
+					$this->manifest->hooks->$hook_class->priority = 50;
+				}
+			}
+		}
 	}
 
 	public function installable(): bool
@@ -98,6 +123,7 @@ class Plugin
 			'plugin' => $this->pluginfolder,
 			'author' => '???',
 			'version' => '???',
+			'description' => '',
 		];
 	}
 
@@ -128,5 +154,10 @@ class Plugin
 	{
 		global $smcFunc;
 		return $smcFunc['htmlspecialchars']($this->manifest->version);
+	}
+
+	public function hooks(): stdClass
+	{
+		return !empty($this->manifest->hooks) ? $this->manifest->hooks : new stdClass;
 	}
 }

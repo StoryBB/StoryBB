@@ -44,8 +44,7 @@ function PluginsList()
 {
 	global $txt, $context, $boarddir, $smcFunc, $scripturl;
 
-	$pluginsdir = Manager::get_plugin_dir();
-
+	// 1. Some initial setup, and getting the list of enabled plugins.
 	$context['sub_template'] = 'admin_plugins_list';
 	$context['page_title'] = $txt['plugin_manager'];
 
@@ -62,13 +61,13 @@ function PluginsList()
 	foreach ($available_plugins as $id => $plugin)
 	{
 		$type = 'disabled';
-		if (!$plugin->installable())
-		{
-			$type = 'install_errors';
-		}
-		elseif ($plugin->enabled())
+		if ($plugin->enabled())
 		{
 			$type = 'enabled';
+		}
+		elseif (!$plugin->installable())
+		{
+			$type = 'install_errors';
 		}
 
 		$context['filter_plugins']['all']++;
@@ -87,7 +86,7 @@ function PluginsList()
 		}
 	}
 
-	$context['form_action'] = $scripturl, $
+	$context['form_action'] = $scripturl . '?action=admin;area=plugins;sa=action';
 
 	createToken('admin-plugin');
 }
@@ -95,4 +94,41 @@ function PluginsList()
 function PluginAction()
 {
 	global $txt, $context;
+
+	$available_plugins = Manager::get_available_plugins();
+
+	checkSession();
+	validateToken('admin-plugin');
+
+	if (isset($_POST['remove']))
+	{
+
+		redirectexit('action=admin;area=plugins');
+	}
+
+	if (isset($_POST['enable']))
+	{
+		if (isset($available_plugins[$_POST['enable']]))
+		{
+			$plugin = $available_plugins[$_POST['enable']];
+			if ($plugin->installable())
+			{
+				Manager::enable_plugin($plugin);
+			}
+		}
+		redirectexit('action=admin;area=plugins');
+	}
+
+	if (isset($_POST['disable']))
+	{
+		if (isset($available_plugins[$_POST['disable']]))
+		{
+			$plugin = $available_plugins[$_POST['disable']];
+			if ($plugin->enabled())
+			{
+				Manager::disable_plugin($plugin);
+			}
+		}
+		redirectexit('action=admin;area=plugins');
+	}
 }

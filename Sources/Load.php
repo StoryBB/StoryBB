@@ -16,6 +16,8 @@ use StoryBB\Database\Exception as DatabaseException;
 use StoryBB\Model\Language;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\BrowserDetect;
+use StoryBB\Hook\Manager as HookManager;
+use StoryBB\Plugin\Manager as PluginManager;
 
 /**
  * Load the $modSettings array.
@@ -59,6 +61,27 @@ function reloadSettings()
 
 		if (!empty($cache_enable))
 			cache_put_data('modSettings', $modSettings, 90);
+	}
+
+	$context['enabled_plugins'] = [];
+	if (!empty($modSettings['enabled_plugins']))
+	{
+		$context['enabled_plugins'] = PluginManager::get_enabled_plugins();
+
+		$additional_autoload = PluginManager::get_plugin_sources();
+		if (!empty($additional_autoload))
+		{
+			$autoloader = include(__DIR__ . '/../vendor/autoload.php');
+			$autoloader->addPsr4('', $additional_autoload, false);
+		}
+
+		foreach ($context['enabled_plugins'] as $plugin)
+		{
+			foreach ($plugin['hooks'] as $hook => $hookable)
+			{
+				HookManager::register($hook, $hookable['priority'], $hookable['callable']);
+			}
+		}
 	}
 
 	// Let's make sure we have these settings set up.

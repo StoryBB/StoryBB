@@ -10,7 +10,7 @@
 	<div class="windowbg">{{{txt.no_plugins}}}</div>
 {{else}}
 	<div class="plugin-group">
-		<form>
+		<form action="{{context.form_action}}" method="post">
 	{{#each context.available_plugins}}
 			<fieldset>
 				<legend>{{{name}}}</legend>
@@ -18,7 +18,7 @@
 				<div class="noticebox">
 					<ul>
 			{{#each install_errors}}
-						<li>{{{textTemplate (get_text (concat 'error_' .))}}}</li>
+						<li>{{{textTemplate (get_text (concat 'error_' .))}}} ({{{.}}})</li>
 			{{/each}}
 					</ul>
 				</div>
