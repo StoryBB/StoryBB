@@ -68,7 +68,7 @@ a img {
 
 body, html {
 	background: #e9eef2;
-	font: 83.33%/150% "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
+	font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 	color: #4d4d4d;
 	display: flex;
 	flex-direction: column;
