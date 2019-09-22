@@ -327,29 +327,29 @@ fieldset.admin_group .inactive {
 
 button.plugin-enable, button.plugin-disable, button.plugin-remove {
 	cursor: pointer;
-    border: none;
-    box-shadow: none;
-    width: 48px;
-    height: 48px;
-    text-indent: -1000em;
+	border: none;
+	box-shadow: none;
+	width: 48px;
+	height: 48px;
+	text-indent: -1000em;
 }
 
 button.plugin-enable {
-    background: url('../images/switch_off.png') 0 0 no-repeat;
+	background: url('../images/switch_off.png') 0 0 no-repeat;
 }
 
 button.plugin-disable {
-    background: url('../images/switch_on.png') 0 0 no-repeat;
+	background: url('../images/switch_on.png') 0 0 no-repeat;
 }
 
 button.plugin-remove {
-    background: url('../images/switch_remove.png') 50% 50% no-repeat;
-    background-size: 38px;
-    border-radius: 50%;
-    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.25);
-    width: 36px;
-    height: 36px;
-    margin: 6px;
+	background: url('../images/switch_remove.png') 50% 50% no-repeat;
+	background-size: 38px;
+	border-radius: 50%;
+	box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.25);
+	width: 36px;
+	height: 36px;
+	margin: 6px;
 }
 
 /* Styles for the file permissions section. */
