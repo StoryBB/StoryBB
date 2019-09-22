@@ -286,7 +286,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	}
 
 	// Before we get started, let's check we won't leave the admin group empty!
-	if ($groups === null || $groups == 1 || (is_array($groups) && in_array(1, $groups)))
+	if ($groups === null || $groups == Group::ADMINISTRATOR || (is_array($groups) && in_array(Group::ADMINISTRATOR, $groups)))
 	{
 		$admins = [];
 		listMembergroupMembers_Href($admins, 1);
@@ -762,7 +762,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 			[
 				'member_list' => $members,
 				'id_group' => $group,
-				'regular_group' => 0,
+				'regular_group' => Group::UNGROUPED_ACCOUNT,
 			]
 		);
 	}
