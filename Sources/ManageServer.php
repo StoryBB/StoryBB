@@ -163,7 +163,7 @@ function ModifyGeneralSettings($return_config = false)
 		array('image_proxy_maxsize', $txt['image_proxy_maxsize'], 'file', 'int', null, 'image_proxy_maxsize'),
 	);
 
-	call_integration_hook('integrate_general_settings', array(&$config_vars));
+	settings_integration_hook('integrate_general_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -175,7 +175,7 @@ function ModifyGeneralSettings($return_config = false)
 	// Saving settings?
 	if (isset($_REQUEST['save']))
 	{
-		call_integration_hook('integrate_save_general_settings');
+		settings_integration_hook('integrate_save_general_settings');
 
 		// Ensure all URLs are aligned with the new force_ssl setting
 		// Treat unset like 0
@@ -392,7 +392,7 @@ function ModifyCookieSettings($return_config = false)
 	if (empty($user_settings['tfa_secret']))
 		addInlineJavaScript('');
 
-	call_integration_hook('integrate_cookie_settings', array(&$config_vars));
+	settings_integration_hook('integrate_cookie_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -403,7 +403,7 @@ function ModifyCookieSettings($return_config = false)
 	// Saving settings?
 	if (isset($_REQUEST['save']))
 	{
-		call_integration_hook('integrate_save_cookie_settings');
+		settings_integration_hook('integrate_save_cookie_settings');
 
 		// Local and global do not play nicely together.
 		if (!empty($_POST['localCookies']) && empty($_POST['globalCookies']))
@@ -489,7 +489,7 @@ function ModifyGeneralSecuritySettings($return_config = false)
 			array('text', 'proxy_ip_servers'),
 	);
 
-	call_integration_hook('integrate_general_security_settings', array(&$config_vars));
+	settings_integration_hook('integrate_general_security_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -500,7 +500,7 @@ function ModifyGeneralSecuritySettings($return_config = false)
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);
 
-		call_integration_hook('integrate_save_general_security_settings');
+		settings_integration_hook('integrate_save_general_security_settings');
 
 		writeLog();
 		redirectexit('action=admin;area=serversettings;sa=security;' . $context['session_var'] . '=' . $context['session_id']);
@@ -551,7 +551,7 @@ function ModifyCacheSettings($return_config = false)
 			$("#cache_accelerator").change();
 		});';
 
-	call_integration_hook('integrate_modify_cache_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_cache_settings', array(&$config_vars));
 
 	// Maybe we have some additional settings from the selected accelerator.
 	if (!empty($detected))
@@ -573,7 +573,7 @@ function ModifyCacheSettings($return_config = false)
 	// Saving again?
 	if (isset($_GET['save']))
 	{
-		call_integration_hook('integrate_save_cache_settings');
+		settings_integration_hook('integrate_save_cache_settings');
 
 		saveSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);

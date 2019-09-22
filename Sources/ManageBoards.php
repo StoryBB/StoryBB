@@ -734,7 +734,7 @@ function EditBoardSettings($return_config = false)
 			array('check', 'allow_ignore_boards'),
 	);
 
-	call_integration_hook('integrate_modify_board_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_board_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -758,7 +758,7 @@ function EditBoardSettings($return_config = false)
 	{
 		checkSession();
 
-		call_integration_hook('integrate_save_board_settings');
+		settings_integration_hook('integrate_save_board_settings');
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);

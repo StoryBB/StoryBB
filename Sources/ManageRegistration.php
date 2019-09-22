@@ -243,7 +243,7 @@ function ModifyRegistrationSettings($return_config = false)
 			array('check', 'show_cookie_notice'),
 	);
 
-	call_integration_hook('integrate_modify_registration_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_registration_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -255,7 +255,7 @@ function ModifyRegistrationSettings($return_config = false)
 	{
 		checkSession();
 
-		call_integration_hook('integrate_save_registration_settings');
+		settings_integration_hook('integrate_save_registration_settings');
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);

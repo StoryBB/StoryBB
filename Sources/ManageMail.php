@@ -312,7 +312,7 @@ function ModifyMailSettings($return_config = false)
 			'birthday_body' => array('var_message', 'birthday_body', 'var_message' => nl2br($body), 'disabled' => true, 'size' => ceil(strlen($body) / 25)),
 	);
 
-	call_integration_hook('integrate_modify_mail_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_mail_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -330,7 +330,7 @@ function ModifyMailSettings($return_config = false)
 
 		// We don't want to save the subject and body previews.
 		unset($config_vars['birthday_subject'], $config_vars['birthday_body']);
-		call_integration_hook('integrate_save_mail_settings');
+		settings_integration_hook('integrate_save_mail_settings');
 
 		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=mailqueue;sa=settings');

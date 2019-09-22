@@ -84,7 +84,7 @@ function EditSmileySettings($return_config = false)
 			array('text', 'smileys_dir', 'invalid' => !$context['smileys_dir_found'], 40),
 	);
 
-	call_integration_hook('integrate_modify_smiley_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_smiley_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -100,7 +100,7 @@ function EditSmileySettings($return_config = false)
 	{
 		checkSession();
 
-		call_integration_hook('integrate_save_smiley_settings');
+		settings_integration_hook('integrate_save_smiley_settings');
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);

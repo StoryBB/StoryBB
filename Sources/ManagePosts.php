@@ -97,7 +97,7 @@ function ModifyBBCSettings($return_config = false)
 	$context['settings_post_javascript'] = '
 		toggleBBCDisabled(\'disabledBBC\', ' . (empty($modSettings['enableBBC']) ? 'true' : 'false') . ');';
 
-	call_integration_hook('integrate_modify_bbc_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_bbc_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -126,7 +126,7 @@ function ModifyBBCSettings($return_config = false)
 		// Work out what is actually disabled!
 		$_POST['disabledBBC'] = implode(',', array_diff($bbcTags, $_POST['disabledBBC_enabledTags']));
 
-		call_integration_hook('integrate_save_bbc_settings', array($bbcTags));
+		settings_integration_hook('integrate_save_bbc_settings', array($bbcTags));
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);
@@ -277,7 +277,7 @@ function ModifyPostSettings($return_config = false)
 			array('int', 'preview_characters', 'subtext' => $txt['zero_to_disable'], 'postinput' => $txt['preview_characters_units']),
 	);
 
-	call_integration_hook('integrate_modify_post_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_post_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -311,7 +311,7 @@ function ModifyPostSettings($return_config = false)
 		if (!empty($_POST['preview_characters']))
 			$_POST['preview_characters'] = (int) min(max(0, $_POST['preview_characters']), 512);
 
-		call_integration_hook('integrate_save_post_settings');
+		settings_integration_hook('integrate_save_post_settings');
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);
@@ -365,7 +365,7 @@ function ModifyTopicSettings($return_config = false)
 			array('check', 'message_index_preview_first', 'subtext' => $txt['message_index_preview_first_desc']),
 	);
 
-	call_integration_hook('integrate_modify_topic_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_topic_settings', array(&$config_vars));
 
 	if ($return_config)
 		return $config_vars;
@@ -380,7 +380,7 @@ function ModifyTopicSettings($return_config = false)
 	if (isset($_GET['save']))
 	{
 		checkSession();
-		call_integration_hook('integrate_save_topic_settings');
+		settings_integration_hook('integrate_save_topic_settings');
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);
