@@ -68,7 +68,7 @@ a img {
 
 body, html {
 	background: #e9eef2;
-	font: 83.33%/150% "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
+	font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 	color: #4d4d4d;
 	display: flex;
 	flex-direction: column;
@@ -296,12 +296,21 @@ h3.largetext {
 	font-weight: bold;
 }
 
+/* For cases where we want to spotlight something specific, e.g. an amount */
+.amt {
+	margin-left: 3px;
+	padding: 0 5px;
+	color: white;
+	background: #6d90ad;
+	border-radius: 8px;
+}
+
 /* 4# Theme frames and other fixed elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* The top bar. */
 #top_section {
-	padding: 0 5%;
+	padding: 5px calc(5% + 7px);
 	border-bottom: 1px solid #bbb;
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
 	background: #fff;
@@ -314,26 +323,14 @@ h3.largetext {
 	clear: both;
 }
 
-#top_info {
-	padding: 5px 9px 4px 9px;
-	line-height: 1.3em;
-	width: auto;
-}
-
 #profile_menu_top > img.avatar {
 	max-height: 18px;
 	max-width: 18px;
-	margin: 2px 5px 0 0;
-	float: left;
-	padding: 0;
-}
-
-#languages_form {
-	padding: 4px 0 0 0;
+	margin-right: 4px;
+	vertical-align: middle;
 }
 
 #search_form {
-	padding: 4px 0 0 0;
 	text-align: right;
 	min-width: 30em;
 }
@@ -546,154 +543,9 @@ ul li.greeting {
 	border-top: 1px solid #ddd;
 }
 
-/* The quickbuttons */
-.quickbuttons {
-	margin: 11px 0 0 0;
-	padding: 0 0 4px 0;
-	clear: right;
-	float: right;
-	text-align: right;
-}
-
-.quickbuttons li {
-	float: left;
-	display: inline;
-	margin: 0;
-	font-size: 0.9em;
-	height: 23px;
-	border: 1px solid #ddd;
-	border-right: 1px solid #bbb;
-	border-bottom: 1px solid #9a9a9a;
-	border-radius: 1px;
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-	padding: 0 1px 0 1px;
-	color: #222;
-	overflow: visible;
-}
-
-.quickbuttons li a {
-	padding: 0 4px 0 5px;
-	display: block;
-	line-height: 1.9em;
-	float: left;
-}
-
-.quickbuttons li a, .quickbuttons li a:hover {
-	text-decoration: none;
-	color: #222;
-}
-
-.quickbuttons li:first-child, .quickbuttons li:first-child:hover {
-	border-radius: 4px 1px 1px 4px;
-	padding-bottom: 0;
-}
-
-.quickbuttons li:last-child, .quickbuttons li:last-child:hover {
-	border-radius: 1px 4px 4px 1px;
-	padding-bottom: 0;
-	line-height: 1.9em;
-}
-
-.quickbuttons li:hover {
-	border: 1px solid #ddd;
-	border-right: 1px solid #bbb;
-	border-bottom: 1px solid #9a9a9a;
-	border-radius: 1px;
-	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.quickbuttons li a img {
-	padding-bottom: 2px;
-}
-
-/* Dropdown part of quickbuttons */
-.quickbuttons li ul {
-	position: absolute;
-	top: 1.9em;
-	z-index: 90;
-	padding: 0.5em;
-	font-weight: normal;
-	text-align: left;
-	border: solid 1px #999;
-	border-left: solid 1px #9a9a9a;
-	border-top: solid 1px #bbb;
-	border-radius: 4px 2px 4px 0;
-	box-shadow: 2px 3px 3px rgba(0, 0, 0, 0.2);
-}
-
-.quickbuttons li ul {
-	display: none;
-	right: -1px;
-}
-
-.quickbuttons li:hover ul {
-	display: block;
-}
-
-.quickbuttons li ul li, .quickbuttons li:hover ul li {
-	display: block;
-	background: none;
-	box-shadow: none;
-	width: 12em;
-	border: 1px solid transparent;
-	border-radius: 3px;
-}
-
-.quickbuttons li ul li:hover {
-	border: 1px solid #cfcfcf;
-	border-top: 1px solid #d4dee6;
-	border-bottom: 1px solid #cbdae6;
-}
-
-.quickbuttons ul li a, .quickbuttons ul li a:focus {
-	display: block;
-	line-height: 2.2em;
-	width: 12em;
-}
-
-/* Sub buttons doesn't need to be effected by first-child/last-child */
-.quickbuttons li > ul > li {
-	border-radius: 3px !important;
-}
-
-/* Note: The next declarations are for keyboard access with js disabled. */
-.quickbuttons ul li a:focus {
-	margin: 0 -9910px 0 9910px;
-}
-
-/* Cancel for hover and/or js access. */
-.quickbuttons ul li:hover a:focus, .quickbuttons ul li a:focus {
-	margin: 0;
-}
-
-.quickbuttons li ul ul {
-	right: 12em;
-	top: auto;
-	margin-right: 10px;
-}
-
-/* Fixes for quickbuttons
-	 Fix for quote on reply box */
+/* Fix for quote on reply box */
 #post_modify {
 	border-radius: 4px;
-}
-
-.quickbuttons li.inline_mod_check {
-	padding: 1px 1px 1px 1px;
-}
-
-.quickbuttons li.quick_edit, .quickbuttons li.post_options {
-	line-height: 1.9em;
-	position: relative;
-}
-
-.quickbuttons li.post_options {
-	padding: 0 4px 0 4px;
-	cursor: pointer;
-}
-
-.quickbuttons li.post_options > a {
-	padding: 0 4px 0 4px;
 }
 
 .quickModifyMargin {
@@ -1023,7 +875,6 @@ select[disabled] {
 /* Buttons should be styled a bit differently, in order to make them look more button'ish. */
 .button, .buttonrow > *, input[type="button"], input[type="submit"] {
 	display: inline-block;
-	text-transform: uppercase;
 	cursor: pointer;
 	border: 1px solid gainsboro;
 	border-right: 1px solid #bbb;
@@ -1061,6 +912,9 @@ select[disabled] {
 	background: #557ea0;
 }
 
+.button, .button_submit, input[type="submit"], input[type="button"], input[type="submit"] {
+	text-transform: uppercase;
+}
 #frmLogin input[type="submit"], #guest_form input[type="submit"], #mergeSelectBoard input[type="submit"] {
 	float: none;
 	margin-left: inherit;
@@ -1082,13 +936,13 @@ a.button_submit {
 }
 
 /* Assortment of backgrounds that are the same as buttons */
-.button_submit, .dropmenu li ul, .top_menu, .dropmenu li li:hover, .dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover, #top_section, .quickbuttons li, .quickbuttons li ul, .quickbuttons li ul li:hover, .quickbuttons ul li a:focus, .popup_window {
+.button_submit, .popup_window {
 	background: #fff;
 	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
 }
 
 /* Well some of them have different gradient effect on hover */
-.button_submit:hover, .quickbuttons li:hover {
+.button_submit:hover {
 	background-image: linear-gradient(to bottom, #FFFFFF 0%, #E2E9F3 70%);
 }
 
@@ -1106,9 +960,6 @@ a.button_submit {
 .buttonrow {
 	display: inline-flex;
 }
-.buttonrow > * {
-	text-transform: none;
-}
 .buttonrow > *:not(:first-child) {
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
@@ -1119,7 +970,7 @@ a.button_submit {
 	border-bottom-right-radius: 0;
 }
 .buttonrow > *:hover {
-	border-top: 1px solid gainsboro;
+	border-top: 1px solid #dcdcdc;
 	border-bottom: 1px solid #9a9a9a;
 }
 
@@ -1168,49 +1019,75 @@ a.button_submit {
 
 /* 8# Menus and dropdown menus
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
+/* The basics */
 .dropmenu, #top_info {
+	font-size: 0.9em;
 	position: relative;
 }
 
-/* Level 1 button background. */
-.dropmenu li, #top_info > li {
-	display: inline-block;
-	margin: 0 2px 0 1px;
-	padding: 0 0 0.3em 0;
-	font-size: 0.9em;
-	line-height: 1.9em;
+.dropmenu ul, .top_menu {
+	display: none;
+	position: absolute;
+	z-index: 90;
+	width: 18.2em;
 }
 
-/* For cases where we want to spotlight something specific to an item, e.g. an amount */
-.amt {
-	margin-left: 3px;
-	padding: 0 5px;
-	color: white;
-	background: #6d90ad;
-	border-radius: 8px;
-}
-
-.dropmenu li .active .amt, #top_info li .active .amt {
-	background: rgba(0, 0, 0, 0.2);
-	color: inherit;
-}
-
-#top_info .top_menu.visible {
+.dropmenu li:hover > ul, .dropmenu li:focus-within > ul, .top_menu.visible,
+.dropmenu ul:hover {
 	display: block;
 }
 
-/* Needed for new PM notifications. */
-.dropmenu li strong {
-	color: #333;
+.dropmenu ul li {
+	position: relative;
 }
 
-.dropmenu li a, #top_info > li > a {
-	padding: 0 7px 0 7px;
-	margin: 0;
+.dropmenu ul ul {
+	left: calc(100% - 0.4em);
+	top: 0;
+}
+
+/* Now let's make it pretty */
+.dropmenu > li, #top_info > li {
+	display: inline-block;
+}
+
+.dropmenu ul, .top_menu {
+	padding: 0.4em;
+	border: solid 1px #999;
+	border-left: solid 1px #bbb;
+	border-top: solid 1px #ccc;
+	border-radius: 4px;
+	box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dropmenu a, #top_info > li > a {
+	padding: 4px 7px 3px;
 	display: block;
 	border: 1px solid transparent;
 	border-radius: 4px;
+}
+
+/* Menu and top_section backgrounds */
+.dropmenu ul,
+.dropmenu li li a:focus,
+.dropmenu li li a:hover,
+#top_section, .top_menu {
+	background: #fff;
+	background-image: linear-gradient(to bottom, #E2E9F3 0%, #FFFFFF 70%);
+}
+
+/* Level 1 hover effects. */
+.dropmenu > li > a:hover,
+.dropmenu > li:focus-within > a, .dropmenu > li:hover > a,
+.dropmenu > li > a:focus,
+#top_info > li > a:hover, #top_info > li > a.open {
+	background: #597b9f;
+	border: 1px solid #4a6b8c;
+	color: #fff;
+	cursor: pointer;
+	text-decoration: none;
+	box-shadow: 0 4px 4px rgba(255, 255, 255, 0.1) inset;
+	text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.5);
 }
 
 /* Level 1 active button. */
@@ -1223,63 +1100,36 @@ a.button_submit {
 	text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
 }
 
-/* Level 1 hover effects. */
-.dropmenu li a:hover, .dropmenu li:hover a, .dropmenu li a:focus, #top_info > li > a:hover, #top_info > li:hover > a, #top_info > li > a.open {
-	background: #597b9f;
-	border: 1px solid #4a6b8c;
-	color: #fff;
-	cursor: pointer;
-	text-decoration: none;
-	box-shadow: 0 4px 4px rgba(255, 255, 255, 0.1) inset;
-	text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.5);
-}
-
-/* Level 1 active button. */
-.dropmenu li a.active:hover, .dropmenu li:hover a.active {
-	background: orange;
-	border: 1px solid #e09100;
+.dropmenu li a.active:hover, .dropmenu li a.active:focus-within {
 	color: #444;
-	box-shadow: 0 5px 5px rgba(255, 255, 255, 0.2) inset;
 	text-shadow: none;
 }
 
-/* Levels 2 and 3 submenu wrapper. */
-.dropmenu li ul, .top_menu {
-	z-index: 90;
-	position: absolute;
-	display: none;
-	width: 18.2em;
-	padding: 0.5em;
-	font-weight: normal;
-	border: solid 1px #999;
-	border-left: solid 1px #bbb;
-	border-top: solid 1px #ccc;
-	border-radius: 4px;
-	box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.3);
-	background: #fff;
+.dropmenu .active .amt, #top_info .active .amt {
+	color: inherit;
+	background: rgba(0, 0, 0, 0.25);
 }
 
-/* Level 2 link background. */
-.dropmenu li li {
-	margin: 0;
-	padding: 0;
-	width: 17em;
-	font-size: 1em;
-	border-radius: 3px;
+/* 2nd level and up */
+.dropmenu li li a {
 	border: 1px solid transparent;
-}
-
-/* Necessary to allow highlighting of 1st level while hovering over submenu. */
-.dropmenu li:hover li a, .dropmenu li li a {
-	background: none;
-	padding: 0 9px;
+	padding: 5px 8px;
 	color: #346;
-	border: none;
-	line-height: 2.2em;
 }
 
-.dropmenu li li a > img {
-	vertical-align: middle;
+.dropmenu li li a:hover, .dropmenu li li a:focus {
+	color: #333;
+	text-decoration: none;
+	border: 1px solid #cfcfcf;
+	border-top: 1px solid #d4dee6;
+}
+
+.dropmenu li li.subsections > a::after {
+	position: absolute;
+	padding: 5px 0;
+	right: 10px;
+	font: 83.33%/150% Arial, sans-serif;
+	content: '\25ba';
 }
 
 /* The profile/pm menus are declared off .dropmenu li ul for consistency but have other characteristics. */
@@ -1302,68 +1152,6 @@ a.button_submit {
 
 .top_menu .login input {
 	width: 90%;
-}
-
-/* Note: The next declarations are for keyboard access with js disabled. */
-.dropmenu ul a:focus, .dropmenu ul ul a:focus {
-	margin-left: 9990px;
-	border: none;
-	width: 17em;
-}
-
-.dropmenu ul ul a:focus {
-	margin-left: 19950px;
-}
-
-/* Cancel those for hover and/or js access. */
-.dropmenu ul li:hover a:focus, .dropmenu ul li a:focus {
-	margin-left: 0;
-	width: auto;
-}
-
-/* Level 3 submenu wrapper positioning. */
-.dropmenu li ul ul {
-	margin: -2em 0 0 15.3em;
-}
-
-/* Level 3 maintains font-size the same as Level 2. */
-.dropmenu li li li a {
-	font-size: 1em;
-}
-
-/* Levels 2 and 3 hover effects. */
-.dropmenu li li:hover {
-	border: none;
-}
-
-.dropmenu li li:hover > a, .dropmenu li li a:focus, .dropmenu li li a:hover {
-	color: #333;
-	text-decoration: none;
-	border: 1px solid #cfcfcf;
-	border-top: 1px solid #d4dee6;
-}
-
-/* Reposition Level 2 submenu as visible on hover. */
-.dropmenu li:hover ul {
-	display: block;
-}
-
-/* Hiding Level 3 submenu off hover. */
-.dropmenu li:hover ul ul, .dropmenu li ul ul, .dropmenu li:hover ul ul ul, .dropmenu li ul ul ul {
-	left: -9999px;
-}
-
-/* Reposition as visible on hover. */
-.dropmenu li li:hover ul, .dropmenu li li ul {
-	left: -14px;
-}
-
-.dropmenu li li.subsections > a::after {
-	position: absolute;
-	padding: 5px 0;
-	right: 10px;
-	font: 83.33%/150% Arial, sans-serif;
-	content: '\25ba';
 }
 
 /* Highlighting of current section */
@@ -1505,6 +1293,56 @@ a.button_submit {
 #adm_submenus {
 	margin: 0 0 6px 0;
 	overflow: hidden;
+}
+
+/* The quickbuttons */
+.quickbuttons {
+	margin-top: 11px;
+	clear: right;
+	float: right;
+	font-size: 0.9em;
+}
+
+.quickbuttons li {
+	color: #222;
+	padding: 0;
+	position: relative;
+}
+
+.quickbuttons li a {
+	padding: 3px 5px;
+	display: block;
+}
+
+.quickbuttons li a, .quickbuttons li a:hover {
+	text-decoration: none;
+	color: inherit;
+}
+
+.quickbuttons > li > a {
+	border: none;
+}
+
+.quickbuttons > li > a:hover, .quickbuttons > li > a:focus,
+.quickbuttons > li:focus-within > a, .quickbuttons > li:hover > a {
+	color: inherit;
+	background: inherit;
+	border: none;
+}
+
+.quickbuttons ul {
+	top: 100%;
+	right: 0;
+	width: 12em;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.quickbuttons ul ul {
+	left: 100%;
+	top: 0;
+	right: unset;
+	border-top-right-radius: 4px;
 }
 
 /* 9# Titles and categories
@@ -1937,10 +1775,6 @@ body#help_popup {
 	float: right;
 }
 
-#display_jump_to select {
-	margin: 0 -12px 0 0;
-}
-
 #message_index_jump_to_select {
 	font-size: 1em;
 }
@@ -2036,19 +1870,8 @@ img.icon.char_avatar {
 	background: url(../images/moved.png) center;
 }
 
-/* Small fix for topics */
-.quickbuttons span.main_icons {
-	margin: -3px 3px 0 1px;
-}
-
-.quickbuttons span.main_icons.quote,
-.quickbuttons span.main_icons.quote_selected {
-	margin: -8px 3px 0 0;
-}
-
 /* This is a small fix for dropmenu icons */
 .dropmenu .main_icons, #profile_menu .main_icons, .dropmenu img {
-	margin: -3px 4px 0 0;
 	vertical-align: middle;
 }
 
@@ -4114,10 +3937,6 @@ a.moderation_link, a.moderation_link:visited {
 
 #reported_posts .main_icons, #reported_members .main_icons {
 	margin: -3px 1px 0 0;
-}
-
-#reported_posts .quickbuttons li a, #reported_members .quickbuttons li a {
-	background: none;
 }
 
 #modcenter .main_icons {

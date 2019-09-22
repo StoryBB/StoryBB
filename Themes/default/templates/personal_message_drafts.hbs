@@ -33,9 +33,9 @@
 			<div class="list_posts">
 				{{body}}
 			</div>
-			<ul class="quickbuttons">
+			<ul class="quickbuttons buttonrow">
 				<li><a href="{{../scripturl}}?action=pm;sa=showpmdrafts;id_draft={{id_draft}};{{session_url}}" class="main_icons modifybutton">{{../txt.draft_edit}}</a></li>
-				<li><a href="{{../scripturl}}?action=pm;sa=showpmdrafts;delete={{id_draft}};{{session_url}}" data-confirm="{{../txt.draft_remove}}?" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.draft_delete}}</a></li>
+				<li><a href="{{../scripturl}}?action=pm;sa=showpmdrafts;delete={{id_draft}};{{session_url}}" data-confirm="{{../txt.draft_remove}}?" class="you_sure main_icons remove_button">{{../txt.draft_delete}}</a></li>
 			</ul>
 		</div>
 {{/each}}

@@ -233,10 +233,12 @@
 
 {{!-- quick buttons --}}
 {{#if (or can_approve can_unapprove ../context.can_reply ../context.can_modify can_remove ../context.can_split ../context.can_restore_msg ../context.can_quote)}}
-				<ul class="quickbuttons">
+				<ul class="quickbuttons dropmenu buttonrow">
 
 	{{#if ../context.can_quote}}
-					<li><a href="{{../scripturl}}?action=post;quote={{id}};topic={{../context.current_topic}}.{{../context.start}};last_msg={{../context.topic_last_message}}" onclick="return oQuickReply.quote({{id}});" class="main_icons quote">{{../txt.quote_action}}</a></li>
+					<li>
+						<a href="{{../scripturl}}?action=post;quote={{id}};topic={{../context.current_topic}}.{{../context.start}};last_msg={{../context.topic_last_message}}" onclick="return oQuickReply.quote({{id}});" class="main_icons quote">{{../txt.quote_action}}</a>
+					</li>
 					<li style="display:none;" id="quoteSelected_{{id}}">
 						<a href="javascript:void(0)" class="main_icons quote_selected">{{../txt.quote_selected_action}}</a>
 					</li>
@@ -244,12 +246,13 @@
 
 	{{#if can_modify}}
 					<li class="quick_edit">
-						<a title="{{../txt.modify_msg}}" class="modifybutton" id="modify_button_{{id}}" onclick="oQuickModify.modifyMsg('{{id}}', '{{#if ../modSettings.toggle_subject}}true{{else}}false{{/if}}')"><span class="main_icons quick_edit_button"></span>{{../txt.quick_edit}}</a>
+						<a href title="{{../txt.modify_msg}}" class="modifybutton main_icons quick_edit_button" id="modify_button_{{id}}" onclick="oQuickModify.modifyMsg('{{id}}', '{{#if ../modSettings.toggle_subject}}true{{else}}false{{/if}}')">{{../txt.quick_edit}}</a>
 					</li>
 	{{/if}}
 
 	{{#if (or can_approve can_unapprove can_modify can_remove ../context.can_split ../context.can_restore_msg)}}
-					<li class="post_options">{{../txt.post_options}}
+					<li class="post_options">
+						<a href="#">{{../txt.post_options}}</a>
 						<ul>
 
 		{{#if can_modify}}
@@ -258,7 +261,7 @@
 
 		{{#if (eq ../context.topic_first_message id)}}
 			{{#if ../context.can_delete}}
-							<li><a href="{{../scripturl}}?action=removetopic2;topic={{../context.current_topic}}.{{../context.start}};{{session_url}}" data-confirm="{{../txt.are_sure_remove_topic}}" class="you_sure"><span class="main_icons remove_button"></span>{{../txt.remove_topic}}</a></li>
+							<li><a href="{{../scripturl}}?action=removetopic2;topic={{../context.current_topic}}.{{../context.start}};{{session_url}}" data-confirm="{{../txt.are_sure_remove_topic}}" class="you_sure main_icons remove_button">{{../txt.remove_topic}}</a></li>
 			{{/if}}
 		{{else}}
 			{{#if can_remove}}

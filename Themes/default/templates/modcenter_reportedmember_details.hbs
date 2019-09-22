@@ -11,24 +11,28 @@
 					<span class="floatleft">
 						{{textTemplate txt.mc_modreport_summary context.report.num_reports context.report.last_updated}}
 					</span>
-					<span class="floatright">
-						<a href="{{scripturl}}?action=moderate;area=reportedmembers;sa=handle;ignore={{#if (eq context.report.ignore '1')}}0{{else}}1{{/if}};rid={{context.report.id}};{{session_url}};{{token_url 'mod-report-ignore'}}" class="button{{#if (neq context.report.ignore '1')}} you_sure{{/if}}"{{#if (neq context.report.ignore '1')}} data-confirm="{{{txt.mc_reportedp_ignore_confirm}}}"{{/if}}>
+					<ul class="quickbuttons buttonrow">
+						<li>
+							<a href="{{scripturl}}?action=moderate;area=reportedmembers;sa=handle;ignore={{#if (eq context.report.ignore '1')}}0{{else}}1{{/if}};rid={{context.report.id}};{{session_url}};{{token_url 'mod-report-ignore'}}"{{#if (neq context.report.ignore '1')}} class="you_sure"{{/if}}{{#if (neq context.report.ignore '1')}} data-confirm="{{{txt.mc_reportedp_ignore_confirm}}}"{{/if}}>
 
 {{#if (eq context.report.ignore '1')}}
-						{{{create_button 'ignore' 'mc_reportedp_unignore' 'mc_reportedp_unignore'}}}
+								{{{create_button 'ignore' 'mc_reportedp_unignore' 'mc_reportedp_unignore'}}}
 {{else}}
-						{{{create_button 'ignore' 'mc_reportedp_ignore' 'mc_reportedp_ignore'}}}
+								{{{create_button 'ignore' 'mc_reportedp_ignore' 'mc_reportedp_ignore'}}}
 {{/if}}
-						</a>
-						<a href="{{scripturl}}?action=moderate;area=reportedmembers;sa=handle;closed={{#if (eq context.report.closed '1')}}0{{else}}1{{/if}};rid={{context.report.id}};{{session_url}};{{token_url 'mod-report-closed'}}" class="button">
+							</a>
+						</li>
+						<li>
+							<a href="{{scripturl}}?action=moderate;area=reportedmembers;sa=handle;closed={{#if (eq context.report.closed '1')}}0{{else}}1{{/if}};rid={{context.report.id}};{{session_url}};{{token_url 'mod-report-closed'}}">
 
 {{#if (eq context.report.closed '1')}}
-						{{{create_button 'close' 'mc_reportedp_open' 'mc_reportedp_open'}}}
+								{{{create_button 'close' 'mc_reportedp_open' 'mc_reportedp_open'}}}
 {{else}}
-						{{{create_button 'close' 'mc_reportedp_close' 'mc_reportedp_close'}}}
+								{{{create_button 'close' 'mc_reportedp_close' 'mc_reportedp_close'}}}
 {{/if}}
-						</a>
-					</span>
+							</a>
+						</li>
+					</ul>
 				</h3>
 			</div>
 			<br>
@@ -83,7 +87,7 @@
 				</div>
 				<textarea rows="2" cols="60" style="width: 60%;" name="mod_comment"></textarea>
 				<div class="padding">
-					<input type="submit" name="add_comment" value="{{{txtmc_modreport_add_mod_comment}}}">
+					<input type="submit" name="add_comment" value="{{{txt.mc_modreport_add_mod_comment}}}">
 					{{token_form 'mod-reportC-add'}}
 				</div>
 			</div>
