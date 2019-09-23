@@ -4569,7 +4569,7 @@ span.member.hidden {
 }
 
 /* Hide this from desktop users sshh... our little sekrit */
-.mobile_buttons, .mobile_display {
+.mobile_menu, .mobile_buttons, .mobile_display {
 	display: none;
 }
 
