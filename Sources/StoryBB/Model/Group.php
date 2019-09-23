@@ -37,10 +37,10 @@ class Group
 			FROM {db_prefix}membergroups
 			WHERE id_group = {int:group}
 			LIMIT {int:limit}',
-			array(
+			[
 				'group' => $group,
 				'limit' => 1,
-			)
+			]
 		);
 		$is_character_group = false;
 		if ($row = $smcFunc['db_fetch_assoc']($request))
