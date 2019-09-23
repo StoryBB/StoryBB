@@ -45,9 +45,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 	switch ($type)
 	{
 		case 'member':
-			$changes = array(
+			$changes = [
 				'memberlist_updated' => time(),
-			);
+			];
 
 			// #1 latest member ID, #2 the real name for a new registration.
 			if (is_numeric($parameter1))
@@ -55,7 +55,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				$changes['latestMember'] = $parameter1;
 				$changes['latestRealName'] = $parameter2;
 
-				updateSettings(array('totalMembers' => true), true);
+				updateSettings(['totalMembers' => true], true);
 			}
 
 			// We need to calculate the totals.
@@ -66,9 +66,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				SELECT COUNT(*), MAX(id_member)
 				FROM {db_prefix}members
 				WHERE is_activated = {int:is_activated}',
-					array(
+					[
 						'is_activated' => 1,
-					)
+					]
 				);
 				list ($changes['totalMembers'], $changes['latestMember']) = $smcFunc['db_fetch_row']($result);
 				$smcFunc['db_free_result']($result);
@@ -79,9 +79,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				FROM {db_prefix}members
 				WHERE id_member = {int:id_member}
 				LIMIT 1',
-					array(
+					[
 						'id_member' => (int) $changes['latestMember'],
-					)
+					]
 				);
 				list ($changes['latestRealName']) = $smcFunc['db_fetch_row']($result);
 				$smcFunc['db_free_result']($result);
@@ -91,9 +91,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				SELECT COUNT(*)
 				FROM {db_prefix}members
 				WHERE is_activated IN ({array_int:activation_status})',
-					array(
-						'activation_status' => array(3, 4),
-					)
+					[
+						'activation_status' => [3, 4],
+					]
 				);
 				list ($changes['unapprovedMembers']) = $smcFunc['db_fetch_row']($result);
 				$smcFunc['db_free_result']($result);
@@ -103,7 +103,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 
 		case 'message':
 			if ($parameter1 === true && $parameter2 !== null)
-				updateSettings(array('totalMessages' => true, 'maxMsgID' => $parameter2), true);
+				updateSettings(['totalMessages' => true, 'maxMsgID' => $parameter2], true);
 			else
 			{
 				// SUM and MAX on a smaller table is better for InnoDB tables.
@@ -112,18 +112,18 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				FROM {db_prefix}boards
 				WHERE redirect = {string:blank_redirect}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 					AND id_board != {int:recycle_board}' : ''),
-					array(
+					[
 						'recycle_board' => isset($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
 						'blank_redirect' => '',
-					)
+					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($result);
 				$smcFunc['db_free_result']($result);
 
-				updateSettings(array(
+				updateSettings([
 					'totalMessages' => $row['total_messages'] === null ? 0 : $row['total_messages'],
 					'maxMsgID' => $row['max_msg_id'] === null ? 0 : $row['max_msg_id']
-				));
+				]);
 			}
 			break;
 
@@ -132,9 +132,9 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_search_subjects
 			WHERE id_topic = {int:id_topic}',
-				array(
+				[
 					'id_topic' => (int) $parameter1,
-				)
+				]
 			);
 
 			// Insert the new subject.
@@ -145,21 +145,21 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 
 				$inserts = [];
 				foreach ($parameter2 as $word)
-					$inserts[] = array($word, $parameter1);
+					$inserts[] = [$word, $parameter1];
 
 				if (!empty($inserts))
 					$smcFunc['db_insert']('ignore',
 						'{db_prefix}log_search_subjects',
-						array('word' => 'string', 'id_topic' => 'int'),
+						['word' => 'string', 'id_topic' => 'int'],
 						$inserts,
-						array('word', 'id_topic')
+						['word', 'id_topic']
 					);
 			}
 			break;
 
 		case 'topic':
 			if ($parameter1 === true)
-				updateSettings(array('totalTopics' => true), true);
+				updateSettings(['totalTopics' => true], true);
 			else
 			{
 				// Get the number of topics - a SUM is better for InnoDB tables.
@@ -168,14 +168,14 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				SELECT SUM(num_topics + unapproved_topics) AS total_topics
 				FROM {db_prefix}boards' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 				WHERE id_board != {int:recycle_board}' : ''),
-					array(
+					[
 						'recycle_board' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
-					)
+					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($result);
 				$smcFunc['db_free_result']($result);
 
-				updateSettings(array('totalTopics' => $row['total_topics'] === null ? 0 : $row['total_topics']));
+				updateSettings(['totalTopics' => $row['total_topics'] === null ? 0 : $row['total_topics']]);
 			}
 			break;
 
@@ -222,20 +222,20 @@ function updateMemberData($members, $data)
 	}
 
 	// Everything is assumed to be a string unless it's in the below.
-	$knownInts = array(
+	$knownInts = [
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
 		'new_pm', 'pm_prefs', 'show_online', 'pm_receive_from', 'alerts',
 		'id_theme', 'is_activated', 'id_msg_last_visit', 'total_time_logged_in', 'warning',
 		'policy_acceptance',
-	);
-	$knownFloats = array(
+	];
+	$knownFloats = [
 		'time_offset',
-	);
+	];
 
 	if (!empty($modSettings['integrate_change_member_data']))
 	{
 		// Only a few member variables are really interesting for integration.
-		$integration_vars = array(
+		$integration_vars = [
 			'member_name',
 			'real_name',
 			'email_address',
@@ -248,7 +248,7 @@ function updateMemberData($members, $data)
 			'time_offset',
 			'avatar',
 			'lngfile',
-		);
+		];
 		$vars_to_integrate = array_intersect($integration_vars, array_keys($data));
 
 		// Only proceed if there are any variables left to call the integration function.
@@ -256,7 +256,7 @@ function updateMemberData($members, $data)
 		{
 			// Fetch a list of member_names if necessary
 			if ((!is_array($members) && $members === $user_info['id']) || (is_array($members) && count($members) == 1 && in_array($user_info['id'], $members)))
-				$member_names = array($user_info['username']);
+				$member_names = [$user_info['username']];
 			else
 			{
 				$member_names = [];
@@ -273,7 +273,7 @@ function updateMemberData($members, $data)
 
 			if (!empty($member_names))
 				foreach ($vars_to_integrate as $var)
-					call_integration_hook('integrate_change_member_data', array($member_names, $var, &$data[$var], &$knownInts, &$knownFloats));
+					call_integration_hook('integrate_change_member_data', [$member_names, $var, &$data[$var], &$knownInts, &$knownFloats]);
 		}
 	}
 
@@ -317,7 +317,7 @@ function updateMemberData($members, $data)
 		}
 
 		// Ensure posts, instant_messages, and unread_messages don't overflow or underflow.
-		if (in_array($var, array('posts', 'instant_messages', 'unread_messages')))
+		if (in_array($var, ['posts', 'instant_messages', 'unread_messages']))
 		{
 			if (preg_match('~^' . $var . ' (\+ |- |\+ -)([\d]+)~', $val, $match))
 			{
@@ -355,7 +355,7 @@ function updateMemberData($members, $data)
 	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && !empty($members))
 	{
 		if (!is_array($members))
-			$members = array($members);
+			$members = [$members];
 
 		foreach ($members as $member)
 		{
@@ -456,9 +456,9 @@ function updateSettings($changeArray, $update = false)
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}settings
 			WHERE variable IN ({array_string:remove})',
-			array(
+			[
 				'remove' => $toRemove,
-			)
+			]
 		);
 
 	// In some cases, this may be better and faster, but for large sets we don't want so many UPDATEs.
@@ -470,10 +470,10 @@ function updateSettings($changeArray, $update = false)
 				UPDATE {db_prefix}settings
 				SET value = {' . ($value === false || $value === true ? 'raw' : 'string') . ':value}
 				WHERE variable = {string:variable}',
-				array(
+				[
 					'value' => $value === true ? 'value + 1' : ($value === false ? 'value - 1' : $value),
 					'variable' => $variable,
-				)
+				]
 			);
 			$modSettings[$variable] = $value === true ? $modSettings[$variable] + 1 : ($value === false ? $modSettings[$variable] - 1 : $value);
 		}
@@ -494,7 +494,7 @@ function updateSettings($changeArray, $update = false)
 		elseif (!isset($modSettings[$variable]) && empty($value))
 			continue;
 
-		$replaceArray[] = array($variable, $value);
+		$replaceArray[] = [$variable, $value];
 
 		$modSettings[$variable] = $value;
 	}
@@ -504,9 +504,9 @@ function updateSettings($changeArray, $update = false)
 
 	$smcFunc['db_insert']('replace',
 		'{db_prefix}settings',
-		array('variable' => 'string-255', 'value' => 'string-65534'),
+		['variable' => 'string-255', 'value' => 'string-65534'],
 		$replaceArray,
-		array('variable')
+		['variable']
 	);
 
 	// Kill the cache - it needs redoing now, but we won't bother ourselves with that here.
@@ -791,14 +791,14 @@ function timeformat($log_time, $show_today = true, $offset_type = false, $proces
 			$str = str_replace('%p', (strftime('%H', $time) < 12 ? $txt['time_am'] : $txt['time_pm']), $str);
 		}
 
-		foreach (array('%a', '%A', '%b', '%B') as $token)
+		foreach (['%a', '%A', '%b', '%B'] as $token)
 			if (strpos($str, $token) !== false)
 				$str = str_replace($token, strftime($token, $time), $str);
 	}
 	else
 	{
 		// Do-it-yourself time localization.  Fun.
-		foreach (array('%a' => 'days_short', '%A' => 'days', '%b' => 'months_short', '%B' => 'months') as $token => $text_label)
+		foreach (['%a' => 'days_short', '%A' => 'days', '%b' => 'months_short', '%B' => 'months'] as $token => $text_label)
 			if (strpos($str, $token) !== false)
 				$str = str_replace($token, $txt[$text_label][(int) strftime($token === '%a' || $token === '%A' ? '%w' : '%m', $time)], $str);
 
@@ -868,7 +868,7 @@ function un_htmlspecialchars($string)
 	static $translation = [];
 
 	if (empty($translation))
-		$translation = array_flip(get_html_translation_table(HTML_SPECIALCHARS, ENT_QUOTES, 'UTF-8')) + array('&#039;' => '\'', '&#39;' => '\'', '&nbsp;' => ' ');
+		$translation = array_flip(get_html_translation_table(HTML_SPECIALCHARS, ENT_QUOTES, 'UTF-8')) + ['&#039;' => '\'', '&#39;' => '\'', '&nbsp;' => ' '];
 
 	return strtr($string, $translation);
 }
@@ -941,7 +941,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$setLocation = $scripturl . ($setLocation != '' ? '?' . $setLocation : '');
 
 	// Maybe integrations want to change where we are heading?
-	call_integration_hook('integrate_redirect', array(&$setLocation, &$refresh, &$permanent));
+	call_integration_hook('integrate_redirect', [&$setLocation, &$refresh, &$permanent]);
 
 	// Set the header.
 	header('Location: ' . str_replace(' ', '%20', $setLocation), true, $permanent ? 301 : 302);
@@ -1042,7 +1042,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	$_SESSION['USER_AGENT'] = empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT'];
 
 	// Hand off the output to the portal, etc. we're integrated with.
-	call_integration_hook('integrate_exit', array($do_footer));
+	call_integration_hook('integrate_exit', [$do_footer]);
 
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index)
@@ -1150,7 +1150,7 @@ function url_image_size($url)
 		$response_code = $response->getStatusCode();
 		$body = (string) $response->getBody();
 
-		if (in_array($response_code, array(200, 206)) && !empty($body))
+		if (in_array($response_code, [200, 206]) && !empty($body))
 		{
 			return get_image_size_from_string($body);
 		}
@@ -1186,7 +1186,7 @@ function get_image_size_from_string($data)
 		$width = (ord(substr($data, 7, 1)) << 8) + (ord(substr($data, 6, 1)));
 		$height = (ord(substr($data, 9, 1)) << 8) + (ord(substr($data, 8, 1)));
 		if (!empty($width)) {
-			return array($width, $height);
+			return [$width, $height];
 		}
 	}
 
@@ -1197,7 +1197,7 @@ function get_image_size_from_string($data)
 			$width = (ord(substr($data, $pos + 4, 1)) << 24) + (ord(substr($data, $pos + 5, 1)) << 16) + (ord(substr($data, $pos + 6, 1)) << 8) + (ord(substr($data, $pos + 7, 1)));
 			$height = (ord(substr($data, $pos + 8, 1)) << 24) + (ord(substr($data, $pos + 9, 1)) << 16) + (ord(substr($data, $pos + 10, 1)) << 8) + (ord(substr($data, $pos + 11, 1)));
 			if ($width > 0 && $height > 0) {
-				return array($width, $height);
+				return [$width, $height];
 			}
 		}
 	}
@@ -1221,7 +1221,7 @@ function get_image_size_from_string($data)
 			$width = (ord(substr($data, $pos + 7, 1)) << 8) + (ord(substr($data, $pos + 8, 1)));
 			$height = (ord(substr($data, $pos + 5, 1)) << 8) + (ord(substr($data, $pos + 6, 1)));
 			if ($width > 0 && $height > 0) {
-				return array($width, $height);
+				return [$width, $height];
 			}
 		}
 	}
@@ -1290,18 +1290,18 @@ function setupThemeContext($forceload = false)
 			$context['user']['avatar']['image'] = '<img src="' . $context['user']['avatar']['href'] . '" alt="" class="avatar">';
 
 		// Figure out how long they've been logged in.
-		$context['user']['total_time_logged_in'] = array(
+		$context['user']['total_time_logged_in'] = [
 			'days' => floor($user_info['total_time_logged_in'] / 86400),
 			'hours' => floor(($user_info['total_time_logged_in'] % 86400) / 3600),
 			'minutes' => floor(($user_info['total_time_logged_in'] % 3600) / 60)
-		);
+		];
 	}
 	else
 	{
 		$context['user']['messages'] = 0;
 		$context['user']['unread_messages'] = 0;
 		$context['user']['avatar'] = [];
-		$context['user']['total_time_logged_in'] = array('days' => 0, 'hours' => 0, 'minutes' => 0);
+		$context['user']['total_time_logged_in'] = ['days' => 0, 'hours' => 0, 'minutes' => 0];
 
 		if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1)
 		{
@@ -1329,18 +1329,18 @@ function setupThemeContext($forceload = false)
 img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: ' . $modSettings['avatar_max_height'] . 'px; }');
 
 	// This looks weird, but it's because BoardIndex.php references the variable.
-	$context['common_stats']['latest_member'] = array(
+	$context['common_stats']['latest_member'] = [
 		'id' => $modSettings['latestMember'],
 		'name' => $modSettings['latestRealName'],
 		'href' => $scripturl . '?action=profile;u=' . $modSettings['latestMember'],
 		'link' => '<a href="' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . '">' . $modSettings['latestRealName'] . '</a>',
-	);
-	$context['common_stats'] = array(
+	];
+	$context['common_stats'] = [
 		'total_posts' => comma_format($modSettings['totalMessages']),
 		'total_topics' => comma_format($modSettings['totalTopics']),
 		'total_members' => comma_format($modSettings['totalMembers']),
 		'latest_member' => $context['common_stats']['latest_member'],
-	);
+	];
 	$context['common_stats']['boardindex_total_posts'] = sprintf($txt['boardindex_total_posts'], $context['common_stats']['total_posts'], $context['common_stats']['total_topics'], $context['common_stats']['total_members']);
 
 	if (!isset($context['page_title']))
@@ -1351,27 +1351,27 @@ img.avatar { max-width: ' . $modSettings['avatar_max_width'] . 'px; max-height: 
 	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? $smcFunc['htmlspecialchars']($modSettings['meta_keywords']) : '';
 
 	// Content related meta tags, including Open Graph
-	$context['meta_tags'][] = array('property' => 'og:site_name', 'content' => $context['forum_name']);
-	$context['meta_tags'][] = array('property' => 'og:title', 'content' => $context['page_title_html_safe']);
+	$context['meta_tags'][] = ['property' => 'og:site_name', 'content' => $context['forum_name']];
+	$context['meta_tags'][] = ['property' => 'og:title', 'content' => $context['page_title_html_safe']];
 
 	if (!empty($context['meta_keywords']))
-		$context['meta_tags'][] = array('name' => 'keywords', 'content' => $context['meta_keywords']);
+		$context['meta_tags'][] = ['name' => 'keywords', 'content' => $context['meta_keywords']];
 
 	if (!empty($context['canonical_url']))
-		$context['meta_tags'][] = array('property' => 'og:url', 'content' => $context['canonical_url']);
+		$context['meta_tags'][] = ['property' => 'og:url', 'content' => $context['canonical_url']];
 
 	if (!empty($settings['og_image']))
-		$context['meta_tags'][] = array('property' => 'og:image', 'content' => $settings['og_image']);
+		$context['meta_tags'][] = ['property' => 'og:image', 'content' => $settings['og_image']];
 
 	if (!empty($context['meta_description']))
 	{
-		$context['meta_tags'][] = array('property' => 'og:description', 'content' => $context['meta_description']);
-		$context['meta_tags'][] = array('name' => 'description', 'content' => $context['meta_description']);
+		$context['meta_tags'][] = ['property' => 'og:description', 'content' => $context['meta_description']];
+		$context['meta_tags'][] = ['name' => 'description', 'content' => $context['meta_description']];
 	}
 	else
 	{
-		$context['meta_tags'][] = array('property' => 'og:description', 'content' => $context['page_title_html_safe']);
-		$context['meta_tags'][] = array('name' => 'description', 'content' => $context['page_title_html_safe']);
+		$context['meta_tags'][] = ['property' => 'og:description', 'content' => $context['page_title_html_safe']];
+		$context['meta_tags'][] = ['name' => 'description', 'content' => $context['page_title_html_safe']];
 	}
 
 	call_integration_hook('integrate_theme_context');
@@ -1401,10 +1401,10 @@ function template_header()
 	if ($show_warnings)
 	{
 		// Check files that shouldn't be there for security reasons.
-		$securityFiles = array('install.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
+		$securityFiles = ['install.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~'];
 
 		// Add your own files.
-		call_integration_hook('integrate_security_files', array(&$securityFiles));
+		call_integration_hook('integrate_security_files', [&$securityFiles]);
 		foreach ($securityFiles as $i => $securityFile)
 		{
 			if (!file_exists($boarddir . '/' . $securityFile))
@@ -1484,7 +1484,7 @@ function template_javascript($do_deferred = false)
 	$do_deferred = !empty($do_deferred['hash']['deferred']);
 
 	// Use this hook to minify/optimize Javascript files and vars
-	call_integration_hook('integrate_pre_javascript_output', array(&$do_deferred));
+	call_integration_hook('integrate_pre_javascript_output', [&$do_deferred]);
 
 	$toMinify = [];
 	$toMinifyDefer = [];
@@ -1646,7 +1646,7 @@ function template_css()
 	if ($db_show_debug === true)
 	{
 		// Try to keep only what's useful.
-		$repl = array($boardurl . '/Themes/' => '', $boardurl . '/' => '');
+		$repl = [$boardurl . '/Themes/' => '', $boardurl . '/' => ''];
 		foreach ($context['css_files'] as $file)
 			$context['debug']['sheets'][] = strtr($file['fileName'], $repl);
 	}
@@ -1679,7 +1679,7 @@ function custMinify($data, $type, $do_deferred = false)
 {
 	global $sourcedir, $settings, $txt;
 
-	$types = array('css', 'js');
+	$types = ['css', 'js'];
 	$type = !empty($type) && in_array($type, $types) ? $type : false;
 	$data = !empty($data) ? $data : false;
 
@@ -1767,7 +1767,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	global $smcFunc, $context;
 
 	// Step 1: Remove entities/things we don't consider words:
-	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, array('<br>' => ' ')));
+	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, ['<br>' => ' ']));
 
 	// Step 2: Entities we left to letters, where applicable, lowercase.
 	$words = un_htmlspecialchars($smcFunc['strtolower']($words));
@@ -1833,7 +1833,7 @@ function setupMenuContext()
 
 	// Set up the menu privileges.
 	$context['allow_search'] = !empty($modSettings['allow_guestAccess']) ? allowedTo('search_posts') : (!$user_info['is_guest'] && allowedTo('search_posts'));
-	$context['allow_admin'] = allowedTo(array('admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_attachments', 'manage_smileys'));
+	$context['allow_admin'] = allowedTo(['admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_attachments', 'manage_smileys']);
 
 	$context['allow_memberlist'] = allowedTo('view_mlist');
 	$context['allow_moderation_center'] = $context['user']['can_mod'];
@@ -1870,131 +1870,131 @@ function setupMenuContext()
 	// All the buttons we can possible want and then some, try pulling the final list of buttons from cache first.
 	if (($menu_buttons = cache_get_data('menu_buttons-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $modSettings['settings_updated'])
 	{
-		$buttons = array(
-			'home' => array(
+		$buttons = [
+			'home' => [
 				'title' => $txt['home'],
 				'href' => $scripturl,
 				'show' => true,
-				'sub_buttons' => array(
-				),
+				'sub_buttons' => [
+				],
 				'is_last' => $context['right_to_left'],
-			),
-			'search' => array(
+			],
+			'search' => [
 				'title' => $txt['search'],
 				'href' => $scripturl . '?action=search',
 				'show' => $context['allow_search'],
-				'sub_buttons' => array(
-				),
-			),
-			'admin' => array(
+				'sub_buttons' => [
+				],
+			],
+			'admin' => [
 				'badge' => 0,
 				'title' => $txt['admin'],
 				'href' => $scripturl . '?action=admin',
 				'show' => $context['allow_admin'],
-				'sub_buttons' => array(
-					'featuresettings' => array(
+				'sub_buttons' => [
+					'featuresettings' => [
 						'title' => $txt['modSettings_title'],
 						'href' => $scripturl . '?action=admin;area=featuresettings',
 						'show' => allowedTo('admin_forum'),
-					),
-					'errorlog' => array(
+					],
+					'errorlog' => [
 						'title' => $txt['errlog'],
 						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
 						'show' => allowedTo('admin_forum') && !empty($modSettings['enableErrorLogging']),
-					),
-					'permissions' => array(
+					],
+					'permissions' => [
 						'title' => $txt['edit_permissions'],
 						'href' => $scripturl . '?action=admin;area=permissions',
 						'show' => allowedTo('manage_permissions'),
-					),
-					'memberapprove' => array(
+					],
+					'memberapprove' => [
 						'title' => $txt['approve_members_waiting'],
 						'href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
 						'show' => !empty($context['unapproved_members']),
-					),
-					'contactform' => array(
+					],
+					'contactform' => [
 						'title' => $txt['contact_us'],
 						'href' => $scripturl . '?action=admin;area=contactform',
 						'show' => allowedTo('admin_forum'),
 						'is_last' => true,
-					),
-				),
-			),
-			'moderate' => array(
+					],
+				],
+			],
+			'moderate' => [
 				'title' => $txt['moderate'],
 				'href' => $scripturl . '?action=moderate',
 				'show' => $context['allow_moderation_center'],
-				'sub_buttons' => array(
-					'modlog' => array(
+				'sub_buttons' => [
+					'modlog' => [
 						'title' => $txt['modlog_view'],
 						'href' => $scripturl . '?action=moderate;area=modlog',
 						'show' => !empty($modSettings['modlog_enabled']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
-					),
-					'poststopics' => array(
+					],
+					'poststopics' => [
 						'title' => $txt['mc_unapproved_poststopics'],
 						'href' => $scripturl . '?action=moderate;area=postmod;sa=posts',
 						'show' => !empty($user_info['mod_cache']['ap']),
-					),
-					'attachments' => array(
+					],
+					'attachments' => [
 						'title' => $txt['mc_unapproved_attachments'],
 						'href' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
 						'show' => !empty($user_info['mod_cache']['ap']),
-					),
-					'reports' => array(
+					],
+					'reports' => [
 						'title' => $txt['mc_reported_posts'],
 						'href' => $scripturl . '?action=moderate;area=reportedposts',
 						'show' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
-					),
-					'reported_members' => array(
+					],
+					'reported_members' => [
 						'title' => $txt['mc_reported_members'],
 						'href' => $scripturl . '?action=moderate;area=reportedmembers',
 						'show' => allowedTo('moderate_forum'),
 						'is_last' => true,
-					)
-				),
-			),
-			'characters' => array(
+					]
+				],
+			],
+			'characters' => [
 				'title' => $txt['chars_menu_title'],
 				'icon' => 'mlist',
 				'href' => $scripturl . '?action=characters',
 				'show' => $context['allow_memberlist'],
 				'sub_buttons' => [],
-			),
-			'mlist' => array(
+			],
+			'mlist' => [
 				'title' => $txt['members_title'],
 				'href' => $scripturl . '?action=mlist',
 				'show' => $context['allow_memberlist'],
-				'sub_buttons' => array(
-					'mlist_view' => array(
+				'sub_buttons' => [
+					'mlist_view' => [
 						'title' => $txt['mlist_menu_view'],
 						'href' => $scripturl . '?action=mlist',
 						'show' => true,
-					),
-					'mlist_search' => array(
+					],
+					'mlist_search' => [
 						'title' => $txt['mlist_search'],
 						'href' => $scripturl . '?action=mlist;sa=search',
 						'show' => true,
 						'is_last' => true,
-					),
-				),
-			),
-			'signup' => array(
+					],
+				],
+			],
+			'signup' => [
 				'title' => $txt['register'],
 				'href' => $scripturl . '?action=signup',
 				'show' => $user_info['is_guest'] && $context['can_register'],
-				'sub_buttons' => array(
-				),
+				'sub_buttons' => [
+				],
 				'is_last' => !$context['right_to_left'],
-			),
-			'logout' => array(
+			],
+			'logout' => [
 				'title' => $txt['logout'],
 				'href' => $scripturl . '?action=logout;%1$s=%2$s',
 				'show' => !$user_info['is_guest'],
-				'sub_buttons' => array(
-				),
+				'sub_buttons' => [
+				],
 				'is_last' => !$context['right_to_left'],
-			),
-		);
+			],
+		];
 
 		foreach (get_main_menu_groups() as $id => $group_name)
 		{
@@ -2006,7 +2006,7 @@ function setupMenuContext()
 		}
 
 		// Allow editing menu buttons easily.
-		call_integration_hook('integrate_menu_buttons', array(&$buttons));
+		call_integration_hook('integrate_menu_buttons', [&$buttons]);
 
 		// Now we put the buttons in the context so the theme can use them.
 		$menu_buttons = [];
@@ -2158,7 +2158,7 @@ function setupMenuContext()
 
 	// Not all actions are simple.
 	if (!empty($needs_action_hook))
-		call_integration_hook('integrate_current_action', array(&$current_action));
+		call_integration_hook('integrate_current_action', [&$current_action]);
 
 	if (isset($context['menu_buttons'][$current_action]))
 		$context['menu_buttons'][$current_action]['active_button'] = true;
@@ -2171,7 +2171,7 @@ function setupMenuContext()
  */
 function sbb_seed_generator()
 {
-	updateSettings(array('rand_seed' => (float) microtime() * 1000000));
+	updateSettings(['rand_seed' => (float) microtime() * 1000000]);
 }
 
 /**
@@ -2246,7 +2246,7 @@ function call_integration_hook($hook, $parameters = [])
 			if (strpos($function, '|') !== false)
 			{
 				list ($file, $string) = explode('|', $function);
-				$absPath = empty($settings['theme_dir']) ? (strtr(trim($file), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir))) : (strtr(trim($file), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir'])));
+				$absPath = empty($settings['theme_dir']) ? (strtr(trim($file), ['$boarddir' => $boarddir, '$sourcedir' => $sourcedir])) : (strtr(trim($file), ['$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir']]));
 				log_error(sprintf($txt['hook_fail_call_to'], $string, $absPath), 'general');
 			}
 
@@ -2291,9 +2291,9 @@ function add_integration_function($hook, $function, $permanent = true, $file = '
 			SELECT value
 			FROM {db_prefix}settings
 			WHERE variable = {string:variable}',
-			array(
+			[
 				'variable' => $hook,
-			)
+			]
 		);
 		list ($current_functions) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -2304,12 +2304,12 @@ function add_integration_function($hook, $function, $permanent = true, $file = '
 			if (in_array($integration_call, $current_functions))
 				return;
 
-			$permanent_functions = array_merge($current_functions, array($integration_call));
+			$permanent_functions = array_merge($current_functions, [$integration_call]);
 		}
 		else
-			$permanent_functions = array($integration_call);
+			$permanent_functions = [$integration_call];
 
-		updateSettings(array($hook => implode(',', $permanent_functions)));
+		updateSettings([$hook => implode(',', $permanent_functions)]);
 	}
 
 	// Make current function list usable.
@@ -2355,9 +2355,9 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 		SELECT value
 		FROM {db_prefix}settings
 		WHERE variable = {string:variable}',
-		array(
+		[
 			'variable' => $hook,
-		)
+		]
 	);
 	list ($current_functions) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -2367,7 +2367,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 		$current_functions = explode(',', $current_functions);
 
 		if (in_array($integration_call, $current_functions))
-			updateSettings(array($hook => implode(',', array_diff($current_functions, array($integration_call)))));
+			updateSettings([$hook => implode(',', array_diff($current_functions, [$integration_call]))]);
 	}
 
 	// Turn the function list into something usable.
@@ -2377,7 +2377,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 	if (!in_array($integration_call, $functions))
 		return;
 
-	$functions = array_diff($functions, array($integration_call));
+	$functions = array_diff($functions, [$integration_call]);
 	$modSettings[$hook] = implode(',', $functions);
 }
 
@@ -2441,12 +2441,12 @@ function call_helper($string, $return = false)
 				}
 			}
 
-			$func = array($context['instances'][$class], $method);
+			$func = [$context['instances'][$class], $method];
 		}
 
 		// Right then. This is a call to a static method.
 		else
-			$func = array($class, $method);
+			$func = [$class, $method];
 	}
 
 	// Nope! just a plain regular function.
@@ -2511,10 +2511,10 @@ function prepareLikesContext($topic)
 			WHERE l.id_member = {int:current_user}
 				AND l.content_type = {literal:msg}
 				AND m.id_topic = {int:topic}',
-			array(
+			[
 				'current_user' => $user,
 				'topic' => $topic,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$temp[] = (int) $row['content_id'];
@@ -2547,7 +2547,7 @@ function replaceEntities__callback($matches)
 		return '';
 
 	// Quote, Ampersand, Apostrophe, Less/Greater Than get html replaced
-	if (in_array($num, array(0x22, 0x26, 0x27, 0x3C, 0x3E)))
+	if (in_array($num, [0x22, 0x26, 0x27, 0x3C, 0x3E]))
 	{
 		return '&#' . $num . ';';
 	}
@@ -2691,7 +2691,7 @@ function sbb_chmod($file, $value = 0)
 	$isWritable = false;
 
 	// Set different modes.
-	$chmodValues = $isDir ? array(0750, 0755, 0775, 0777) : array(0644, 0664, 0666);
+	$chmodValues = $isDir ? [0750, 0755, 0775, 0777] : [0644, 0664, 0666];
 
 	foreach($chmodValues as $val)
 	{
@@ -2820,7 +2820,7 @@ function ssl_cert_found($url)
 	
 	// Next, check the ssl stream context for certificate info 
 	$result = false;
-	$context = stream_context_create(array("ssl" => array("capture_peer_cert" => true, "verify_peer" => true, "allow_self_signed" => true)));
+	$context = stream_context_create(["ssl" => ["capture_peer_cert" => true, "verify_peer" => true, "allow_self_signed" => true]]);
 	$stream = @stream_socket_client($url, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
 	if ($stream !== false)
 	{
@@ -2898,18 +2898,18 @@ function build_query_board($userid)
 				FROM {db_prefix}members AS mem
 				WHERE mem.id_member = {int:id_member}
 				LIMIT 1',
-				array(
+				[
 					'id_member' => $userid,
-				)
+				]
 			);
 
 		$row = $smcFunc['db_fetch_assoc']($request);
 
 		if (empty($row['additional_groups']))
-			$groups = array($row['id_group']);
+			$groups = [$row['id_group']];
 		else
 			$groups = array_merge(
-					array($row['id_group']),
+					[$row['id_group']],
 					explode(',', $row['additional_groups'])
 			);
 
@@ -2928,9 +2928,9 @@ function build_query_board($userid)
 			SELECT id_board
 			FROM {db_prefix}moderators
 			WHERE id_member = {int:current_member}',
-			array(
+			[
 				'current_member' => $userid,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
@@ -2941,9 +2941,9 @@ function build_query_board($userid)
 			SELECT id_board
 			FROM {db_prefix}moderator_groups
 			WHERE id_group IN({array_int:groups})',
-			array(
+			[
 				'groups' => $groups,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];

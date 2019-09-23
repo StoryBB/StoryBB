@@ -38,7 +38,7 @@ global $smcFunc, $scripturl, $db_passwd, $cachedir;
 define('TIME_START', microtime(true));
 
 // Just being safe...
-foreach (array('cachedir') as $variable)
+foreach (['cachedir'] as $variable)
 	if (isset($GLOBALS[$variable]))
 		unset($GLOBALS[$variable]);
 
@@ -112,9 +112,9 @@ while ($task_details = fetch_task())
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}background_tasks
 			WHERE id_task = {int:task}',
-			array(
+			[
 				'task' => $task_details['id_task'],
-			)
+			]
 		);
 	}
 }
@@ -141,9 +141,9 @@ function fetch_task()
 		FROM {db_prefix}background_tasks
 		WHERE claimed_time < {int:claim_limit}
 		LIMIT 1',
-		array(
+		[
 			'claim_limit' => time() - MAX_CLAIM_THRESHOLD,
-		)
+		]
 	);
 	if ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -154,11 +154,11 @@ function fetch_task()
 			SET claimed_time = {int:new_claimed}
 			WHERE id_task = {int:task}
 				AND claimed_time = {int:old_claimed}',
-			array(
+			[
 				'new_claimed' => time(),
 				'task' => $row['id_task'],
 				'old_claimed' => $row['claimed_time'],
-			)
+			]
 		);
 		// Could we claim it? If so, return it back.
 		if ($smcFunc['db']->affected_rows() != 0)
@@ -195,7 +195,7 @@ function perform_task($task_details)
 	// This indicates the file to load.
 	if (!empty($task_details['task_file']))
 	{
-		$include = strtr(trim($task_details['task_file']), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir));
+		$include = strtr(trim($task_details['task_file']), ['$boarddir' => $boarddir, '$sourcedir' => $sourcedir]);
 		if (file_exists($include))
 			require_once($include);
 	}

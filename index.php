@@ -32,7 +32,7 @@ $time_start = microtime(true);
 ob_start();
 
 // Do some cleaning, just in case.
-foreach (array('cachedir') as $variable)
+foreach (['cachedir'] as $variable)
 	if (isset($GLOBALS[$variable]))
 		unset($GLOBALS[$variable], $GLOBALS[$variable]);
 
@@ -143,8 +143,8 @@ function sbb_main()
 	if (!empty($topic) && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
 		fatal_lang_error('not_a_topic', false);
 
-	$no_stat_actions = array('autocomplete', 'dlattach', 'jsoption', 'likes', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery');
-	call_integration_hook('integrate_pre_log_stats', array(&$no_stat_actions));
+	$no_stat_actions = ['autocomplete', 'dlattach', 'jsoption', 'likes', 'suggest', '.xml', 'xmlhttp', 'verificationcode', 'viewquery'];
+	call_integration_hook('integrate_pre_log_stats', [&$no_stat_actions]);
 	// Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
 	if (empty($_REQUEST['action']) || !in_array($_REQUEST['action'], $no_stat_actions))
 	{
@@ -153,7 +153,7 @@ function sbb_main()
 
 		// Track forum statistics and hits...?
 		if (!empty($modSettings['hitStats']))
-			trackStats(array('hits' => '+'));
+			trackStats(['hits' => '+']);
 	}
 	unset($no_stat_actions);
 
@@ -161,7 +161,7 @@ function sbb_main()
 	if (!empty($maintenance) && !allowedTo('admin_forum'))
 	{
 		// You can only login.... otherwise, you're getting the "maintenance mode" display.
-		if (isset($_REQUEST['action']) && (in_array($_REQUEST['action'], array('login2', 'logintfa', 'logout'))))
+		if (isset($_REQUEST['action']) && (in_array($_REQUEST['action'], ['login2', 'logintfa', 'logout'])))
 		{
 			require_once($sourcedir . '/LogInOut.php');
 			return ($_REQUEST['action'] == 'login2' ? 'Login2' : ($_REQUEST['action'] == 'logintfa' ? 'LoginTFA' : 'Logout'));
@@ -171,7 +171,7 @@ function sbb_main()
 			return 'InMaintenance';
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('login', 'login2', 'logintfa', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'))))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], ['login', 'login2', 'logintfa', 'reminder', 'activate', 'help', 'helpadmin', 'verificationcode', 'signup', 'signup2'])))
 		return 'KickGuest';
 
 	// Apply policy settings if appropriate.
@@ -218,80 +218,80 @@ function sbb_main()
 	}
 
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
-	$actionArray = array(
-		'activate' => array('Register.php', 'Activate'),
-		'admin' => array('Admin.php', 'AdminMain'),
-		'announce' => array('Post.php', 'AnnounceTopic'),
-		'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
-		'autocomplete' => array('Autocomplete.php', 'Autocomplete'),
-		'board' => array('MessageIndex.php', 'MessageIndex'),
-		'buddy' => array('Subs-Members.php', 'BuddyListToggle'),
-		'characters' => array('Profile-Chars.php', 'CharacterList'),
-		'contact' => array('Contact.php', 'Contact'),
-		'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
-		'dlattach' => array('ShowAttachments.php', 'showAttachment'),
-		'editpoll' => array('Poll.php', 'EditPoll'),
-		'editpoll2' => array('Poll.php', 'EditPoll2'),
-		'forum' => array('BoardIndex.php', 'BoardIndex'),
-		'groups' => array('Groups.php', 'Groups'),
-		'help' => array('Help.php', 'ShowHelp'),
-		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
-		'jsmodify' => array('Post.php', 'JavaScriptModify'),
-		'jsoption' => array('Themes.php', 'SetJavaScript'),
-		'likes' => array('Likes.php', 'Likes::call#'),
-		'lock' => array('Topic.php', 'LockTopic'),
-		'lockvoting' => array('Poll.php', 'LockVoting'),
-		'login' => array('LogInOut.php', 'Login'),
-		'login2' => array('LogInOut.php', 'Login2'),
-		'logintfa' => array('LogInOut.php', 'LoginTFA'),
-		'logout' => array('LogInOut.php', 'Logout'),
-		'markasread' => array('Subs-Boards.php', 'MarkRead'),
-		'mergetopics' => array('SplitTopics.php', 'MergeTopics'),
-		'mlist' => array('Memberlist.php', 'Memberlist'),
-		'moderate' => array('ModerationCenter.php', 'ModerationMain'),
-		'movetopic' => array('MoveTopic.php', 'MoveTopic'),
-		'movetopic2' => array('MoveTopic.php', 'MoveTopic2'),
-		'notify' => array('Notify.php', 'Notify'),
-		'notifyboard' => array('Notify.php', 'BoardNotify'),
-		'notifytopic' => array('Notify.php', 'TopicNotify'),
-		'pm' => array('PersonalMessage.php', 'MessageMain'),
-		'post' => array('Post.php', 'Post'),
-		'post2' => array('Post.php', 'Post2'),
-		'profile' => array('Profile.php', 'ModifyProfile'),
-		'quotefast' => array('Post.php', 'QuoteFast'),
-		'quickmod' => array('MessageIndex.php', 'QuickModeration'),
-		'quickmod2' => array('Display.php', 'QuickInTopicModeration'),
-		'reattributepost' => array('Profile-Chars.php', 'ReattributePost'),
-		'reagreement' => array('Reagreement.php', 'Reagreement'),
-		'recent' => array('Recent.php', 'RecentPosts'),
-		'reminder' => array('Reminder.php', 'RemindMe'),
-		'removepoll' => array('Poll.php', 'RemovePoll'),
-		'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
-		'reporttm' => array('ReportToMod.php', 'ReportToModerator'),
-		'restoretopic' => array('RemoveTopic.php', 'RestoreTopic'),
-		'search' => array('Search.php', 'PlushSearch1'),
-		'search2' => array('Search.php', 'PlushSearch2'),
-		'sendactivation' => array('Register.php', 'SendActivation'),
-		'signup' => array('Register.php', 'Register'),
-		'signup2' => array('Register.php', 'Register2'),
-		'suggest' => array('Subs-Editor.php', 'AutoSuggestHandler'),
-		'splittopics' => array('SplitTopics.php', 'SplitTopics'),
-		'stats' => array('Stats.php', 'DisplayStats'),
-		'sticky' => array('Topic.php', 'Sticky'),
-		'theme' => array('Themes.php', 'ThemesMain'),
-		'topic' => array('Display.php', 'Display'),
-		'trackip' => array('Profile-View.php', 'trackIP'),
-		'unread' => array('Recent.php', 'UnreadTopics'),
-		'unreadreplies' => array('Recent.php', 'UnreadTopics'),
-		'uploadAttach' => array('Attachments.php', 'Attachments::call#'),
-		'verificationcode' => array('Register.php', 'VerificationCode'),
-		'viewprofile' => array('Profile.php', 'ModifyProfile'),
-		'vote' => array('Poll.php', 'Vote'),
-		'viewquery' => array('ViewQuery.php', 'ViewQuery'),
-		'who' => array('Who.php', 'Who'),
-		'.xml' => array('News.php', 'ShowXmlFeed'),
-		'xmlhttp' => array('Xml.php', 'XMLhttpMain'),
-	);
+	$actionArray = [
+		'activate' => ['Register.php', 'Activate'],
+		'admin' => ['Admin.php', 'AdminMain'],
+		'announce' => ['Post.php', 'AnnounceTopic'],
+		'attachapprove' => ['ManageAttachments.php', 'ApproveAttach'],
+		'autocomplete' => ['Autocomplete.php', 'Autocomplete'],
+		'board' => ['MessageIndex.php', 'MessageIndex'],
+		'buddy' => ['Subs-Members.php', 'BuddyListToggle'],
+		'characters' => ['Profile-Chars.php', 'CharacterList'],
+		'contact' => ['Contact.php', 'Contact'],
+		'deletemsg' => ['RemoveTopic.php', 'DeleteMessage'],
+		'dlattach' => ['ShowAttachments.php', 'showAttachment'],
+		'editpoll' => ['Poll.php', 'EditPoll'],
+		'editpoll2' => ['Poll.php', 'EditPoll2'],
+		'forum' => ['BoardIndex.php', 'BoardIndex'],
+		'groups' => ['Groups.php', 'Groups'],
+		'help' => ['Help.php', 'ShowHelp'],
+		'helpadmin' => ['Help.php', 'ShowAdminHelp'],
+		'jsmodify' => ['Post.php', 'JavaScriptModify'],
+		'jsoption' => ['Themes.php', 'SetJavaScript'],
+		'likes' => ['Likes.php', 'Likes::call#'],
+		'lock' => ['Topic.php', 'LockTopic'],
+		'lockvoting' => ['Poll.php', 'LockVoting'],
+		'login' => ['LogInOut.php', 'Login'],
+		'login2' => ['LogInOut.php', 'Login2'],
+		'logintfa' => ['LogInOut.php', 'LoginTFA'],
+		'logout' => ['LogInOut.php', 'Logout'],
+		'markasread' => ['Subs-Boards.php', 'MarkRead'],
+		'mergetopics' => ['SplitTopics.php', 'MergeTopics'],
+		'mlist' => ['Memberlist.php', 'Memberlist'],
+		'moderate' => ['ModerationCenter.php', 'ModerationMain'],
+		'movetopic' => ['MoveTopic.php', 'MoveTopic'],
+		'movetopic2' => ['MoveTopic.php', 'MoveTopic2'],
+		'notify' => ['Notify.php', 'Notify'],
+		'notifyboard' => ['Notify.php', 'BoardNotify'],
+		'notifytopic' => ['Notify.php', 'TopicNotify'],
+		'pm' => ['PersonalMessage.php', 'MessageMain'],
+		'post' => ['Post.php', 'Post'],
+		'post2' => ['Post.php', 'Post2'],
+		'profile' => ['Profile.php', 'ModifyProfile'],
+		'quotefast' => ['Post.php', 'QuoteFast'],
+		'quickmod' => ['MessageIndex.php', 'QuickModeration'],
+		'quickmod2' => ['Display.php', 'QuickInTopicModeration'],
+		'reattributepost' => ['Profile-Chars.php', 'ReattributePost'],
+		'reagreement' => ['Reagreement.php', 'Reagreement'],
+		'recent' => ['Recent.php', 'RecentPosts'],
+		'reminder' => ['Reminder.php', 'RemindMe'],
+		'removepoll' => ['Poll.php', 'RemovePoll'],
+		'removetopic2' => ['RemoveTopic.php', 'RemoveTopic2'],
+		'reporttm' => ['ReportToMod.php', 'ReportToModerator'],
+		'restoretopic' => ['RemoveTopic.php', 'RestoreTopic'],
+		'search' => ['Search.php', 'PlushSearch1'],
+		'search2' => ['Search.php', 'PlushSearch2'],
+		'sendactivation' => ['Register.php', 'SendActivation'],
+		'signup' => ['Register.php', 'Register'],
+		'signup2' => ['Register.php', 'Register2'],
+		'suggest' => ['Subs-Editor.php', 'AutoSuggestHandler'],
+		'splittopics' => ['SplitTopics.php', 'SplitTopics'],
+		'stats' => ['Stats.php', 'DisplayStats'],
+		'sticky' => ['Topic.php', 'Sticky'],
+		'theme' => ['Themes.php', 'ThemesMain'],
+		'topic' => ['Display.php', 'Display'],
+		'trackip' => ['Profile-View.php', 'trackIP'],
+		'unread' => ['Recent.php', 'UnreadTopics'],
+		'unreadreplies' => ['Recent.php', 'UnreadTopics'],
+		'uploadAttach' => ['Attachments.php', 'Attachments::call#'],
+		'verificationcode' => ['Register.php', 'VerificationCode'],
+		'viewprofile' => ['Profile.php', 'ModifyProfile'],
+		'vote' => ['Poll.php', 'Vote'],
+		'viewquery' => ['ViewQuery.php', 'ViewQuery'],
+		'who' => ['Who.php', 'Who'],
+		'.xml' => ['News.php', 'ShowXmlFeed'],
+		'xmlhttp' => ['Xml.php', 'XMLhttpMain'],
+	];
 
 	// Allow modifying $actionArray easily.
 	(new Mutatable\ActionList($actionArray))->execute();

@@ -2908,11 +2908,11 @@ function getLanguages($use_cache = true)
 				$catchLang[$entry] = $language_manifest['native_name'];
 
 				// Build this language entry.
-				$context['languages'][$entry] = array(
+				$context['languages'][$entry] = [
 					'name' => $language_manifest['native_name'],
 					'selected' => false,
 					'filename' => $entry,
-				);
+				];
 			}
 			$dir->close();
 		}
