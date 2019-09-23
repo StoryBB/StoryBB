@@ -128,9 +128,9 @@ function sessionRead($session_id)
 		FROM {db_prefix}sessions
 		WHERE session_id = {string:session_id}
 		LIMIT 1',
-		array(
+		[
 			'session_id' => $session_id,
-		)
+		]
 	);
 	list ($sess_data) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -157,20 +157,20 @@ function sessionWrite($session_id, $data)
 		UPDATE {db_prefix}sessions
 		SET data = {string:data}, last_update = {int:last_update}
 		WHERE session_id = {string:session_id}',
-		array(
+		[
 			'last_update' => time(),
 			'data' => $data,
 			'session_id' => $session_id,
-		)
+		]
 	);
 
 	// If that didn't work, try inserting a new one.
 	if ($smcFunc['db']->affected_rows() == 0)
 		$smcFunc['db_insert']('ignore',
 			'{db_prefix}sessions',
-			array('session_id' => 'string', 'data' => 'string', 'last_update' => 'int'),
-			array($session_id, $data, time()),
-			array('session_id')
+			['session_id' => 'string', 'data' => 'string', 'last_update' => 'int'],
+			[$session_id, $data, time()],
+			['session_id']
 		);
 
 	return ($smcFunc['db']->affected_rows() == 0 ? false : true);
@@ -193,9 +193,9 @@ function sessionDestroy($session_id)
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}sessions
 		WHERE session_id = {string:session_id}',
-		array(
+		[
 			'session_id' => $session_id,
-		)
+		]
 	);
 
 	return true;
@@ -220,9 +220,9 @@ function sessionGC($max_lifetime)
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}sessions
 		WHERE last_update < {int:last_update}',
-		array(
+		[
 			'last_update' => time() - $max_lifetime,
-		)
+		]
 	);
 
 	return ($smcFunc['db']->affected_rows() == 0 ? false : true);

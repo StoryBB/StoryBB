@@ -73,16 +73,16 @@ function loadProfileFields($force_reload = false)
 
 	*/
 
-	$profile_fields = array(
-		'avatar_choice' => array(
+	$profile_fields = [
+		'avatar_choice' => [
 			'type' => 'callback',
 			'callback_func' => 'avatar_select',
 			// This handles the permissions too.
 			'preload' => 'profileLoadAvatarData',
 			'input_validate' => 'profileSaveAvatarData',
 			'save_key' => 'avatar',
-		),
-		'birthday_date' => array(
+		],
+		'birthday_date' => [
 			'type' => 'callback',
 			'callback_func' => 'birthday_date',
 			'permission' => 'profile_extra',
@@ -159,18 +159,18 @@ function loadProfileFields($force_reload = false)
 				return true;
 			},
 			'link_with' => 'birthday',
-		),
-		'birthday_visibility' => array(
+		],
+		'birthday_visibility' => [
 			'type' => 'select',
-			'options' => array(
+			'options' => [
 				0 => $txt['birthday_visibility_adminonly'],
 				1 => $txt['birthday_visibility_daymonth'],
 				2 => $txt['birthday_visibility_fulldate'],
-			),
+			],
 			'permission' => 'profile_extra',
 			'link_with' => 'birthday',
-		),
-		'date_registered' => array(
+		],
+		'date_registered' => [
 			'type' => 'date',
 			'value' => empty($cur_profile['date_registered']) ? $txt['not_applicable'] : strftime('%Y-%m-%d', $cur_profile['date_registered'] + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600),
 			'label' => $txt['date_registered'],
@@ -192,8 +192,8 @@ function loadProfileFields($force_reload = false)
 
 				return true;
 			},
-		),
-		'email_address' => array(
+		],
+		'email_address' => [
 			'type' => 'email',
 			'label' => $txt['user_email_address'],
 			'subtext' => $txt['valid_email'],
@@ -229,17 +229,17 @@ function loadProfileFields($force_reload = false)
 
 				return $isValid;
 			},
-		),
+		],
 		// Selecting group membership is a complicated one so we treat it separate!
-		'id_group' => array(
+		'id_group' => [
 			'type' => 'callback',
 			'callback_func' => 'group_manage',
 			'permission' => 'manage_membergroups',
 			'preload' => 'profileLoadGroups',
 			'log_change' => true,
 			'input_validate' => 'profileSaveGroups',
-		),
-		'id_theme' => array(
+		],
+		'id_theme' => [
 			'type' => 'callback',
 			'callback_func' => 'theme_pick',
 			'permission' => 'profile_extra',
@@ -251,18 +251,18 @@ function loadProfileFields($force_reload = false)
 					FROM {db_prefix}themes
 					WHERE id_theme = {int:id_theme}
 						AND variable = {string:variable}
-					LIMIT 1', array(
+					LIMIT 1', [
 						'id_theme' => $cur_profile['id_theme'],
 						'variable' => 'name',
-					)
+					]
 				);
 				list ($name) = $smcFunc['db_fetch_row']($request);
 				$smcFunc['db_free_result']($request);
 
-				$context['member']['theme'] = array(
+				$context['member']['theme'] = [
 					'id' => $cur_profile['id_theme'],
 					'name' => empty($cur_profile['id_theme']) ? $txt['theme_forum_default'] : $name
-				);
+				];
 				return true;
 			},
 			'input_validate' => function(&$value)
@@ -270,15 +270,15 @@ function loadProfileFields($force_reload = false)
 				$value = (int) $value;
 				return true;
 			},
-		),
-		'immersive_mode' => array(
+		],
+		'immersive_mode' => [
 			'type' => 'check',
 			'label' => $txt['immersive_mode'],
 			'subtext' => $txt['immersive_mode_desc'],
 			'permission' => 'profile_identity',
 			'enabled' => in_array($modSettings['enable_immersive_mode'], ['user_on', 'user_off']),
-		),
-		'lngfile' => array(
+		],
+		'lngfile' => [
 			'type' => 'select',
 			'options' => function() use (&$context)
 			{
@@ -306,9 +306,9 @@ function loadProfileFields($force_reload = false)
 					return false;
 				}
 			},
-		),
+		],
 		// The username is not always editable - so adjust it as such.
-		'member_name' => array(
+		'member_name' => [
 			'type' => allowedTo('admin_forum') && isset($_GET['changeusername']) ? 'text' : 'label',
 			'label' => $txt['username'],
 			'subtext' => allowedTo('admin_forum') && !isset($_GET['changeusername']) ? '[<a href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=account;changeusername" style="font-style: italic;">' . $txt['username_change'] . '</a>]' : '',
@@ -324,7 +324,7 @@ function loadProfileFields($force_reload = false)
 
 					// Maybe they are trying to change their password as well?
 					$resetPassword = true;
-					if (isset($_POST['passwrd1']) && $_POST['passwrd1'] != '' && isset($_POST['passwrd2']) && $_POST['passwrd1'] == $_POST['passwrd2'] && validatePassword($_POST['passwrd1'], $value, array($cur_profile['real_name'], $user_info['username'], $user_info['name'], $user_info['email'])) == null)
+					if (isset($_POST['passwrd1']) && $_POST['passwrd1'] != '' && isset($_POST['passwrd2']) && $_POST['passwrd1'] == $_POST['passwrd2'] && validatePassword($_POST['passwrd1'], $value, [$cur_profile['real_name'], $user_info['username'], $user_info['name'], $user_info['email']]) == null)
 						$resetPassword = false;
 
 					// Do the reset... this will send them an email too.
@@ -333,16 +333,16 @@ function loadProfileFields($force_reload = false)
 					elseif ($value !== null)
 					{
 						validateUsername($context['id_member'], trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $value)));
-						updateMemberData($context['id_member'], array('member_name' => $value));
+						updateMemberData($context['id_member'], ['member_name' => $value]);
 
 						// Call this here so any integrated systems will know about the name change (resetPassword() takes care of this if we're letting StoryBB generate the password)
-						call_integration_hook('integrate_reset_pass', array($cur_profile['member_name'], $value, $_POST['passwrd1']));
+						call_integration_hook('integrate_reset_pass', [$cur_profile['member_name'], $value, $_POST['passwrd1']]);
 					}
 				}
 				return false;
 			},
-		),
-		'passwrd1' => array(
+		],
+		'passwrd1' => [
 			'type' => 'password',
 			'label' => ucwords($txt['choose_pass']),
 			'subtext' => $txt['password_strength'],
@@ -365,7 +365,7 @@ function loadProfileFields($force_reload = false)
 
 				// Let's get the validation function into play...
 				require_once($sourcedir . '/Subs-Auth.php');
-				$passwordErrors = validatePassword($value, $cur_profile['member_name'], array($cur_profile['real_name'], $user_info['username'], $user_info['name'], $user_info['email']));
+				$passwordErrors = validatePassword($value, $cur_profile['member_name'], [$cur_profile['real_name'], $user_info['username'], $user_info['name'], $user_info['email']]);
 
 				// Were there errors?
 				if ($passwordErrors != null)
@@ -381,17 +381,17 @@ function loadProfileFields($force_reload = false)
 
 				return true;
 			},
-		),
-		'passwrd2' => array(
+		],
+		'passwrd2' => [
 			'type' => 'password',
 			'label' => ucwords($txt['verify_pass']),
 			'size' => 20,
 			'value' => '',
 			'permission' => 'profile_password',
 			'is_dummy' => true,
-		),
+		],
 		// This does ALL the pm settings
-		'pm_prefs' => array(
+		'pm_prefs' => [
 			'type' => 'callback',
 			'callback_func' => 'pm_settings',
 			'permission' => 'pm_read',
@@ -410,8 +410,8 @@ function loadProfileFields($force_reload = false)
 
 				return true;
 			},
-		),
-		'posts' => array(
+		],
+		'posts' => [
 			'type' => 'int',
 			'label' => $txt['profile_posts'],
 			'log_change' => true,
@@ -422,16 +422,16 @@ function loadProfileFields($force_reload = false)
 				if (!is_numeric($value))
 					return 'digits_only';
 				else
-					$value = $value != '' ? strtr($value, array(',' => '', '.' => '', ' ' => '')) : 0;
+					$value = $value != '' ? strtr($value, [',' => '', '.' => '', ' ' => '']) : 0;
 				return true;
 			},
-		),
-		'real_name' => array(
+		],
+		'real_name' => [
 			'type' => allowedTo('profile_displayed_name_own') || allowedTo('profile_displayed_name_any') || allowedTo('moderate_forum') ? 'text' : 'label',
 			'label' => $txt['name'],
 			'subtext' => $txt['display_name_desc'],
 			'log_change' => true,
-			'input_attr' => array('maxlength="60"'),
+			'input_attr' => ['maxlength="60"'],
 			'permission' => 'profile_displayed_name',
 			'enabled' => allowedTo('profile_displayed_name_own') || allowedTo('profile_displayed_name_any') || allowedTo('moderate_forum'),
 			'input_validate' => function(&$value) use ($context, $smcFunc, $sourcedir, $cur_profile)
@@ -450,15 +450,15 @@ function loadProfileFields($force_reload = false)
 				}
 				return true;
 			},
-		),
-		'secret_question' => array(
+		],
+		'secret_question' => [
 			'type' => 'text',
 			'label' => $txt['secret_question'],
 			'subtext' => $txt['secret_desc'],
 			'size' => 50,
 			'permission' => 'profile_password',
-		),
-		'secret_answer' => array(
+		],
+		'secret_answer' => [
 			'type' => 'text',
 			'label' => $txt['secret_answer'],
 			'subtext' => $txt['secret_desc2'],
@@ -471,23 +471,23 @@ function loadProfileFields($force_reload = false)
 				$value = $value != '' ? md5($value) : '';
 				return true;
 			},
-		),
-		'signature' => array(
+		],
+		'signature' => [
 			'type' => 'callback',
 			'callback_func' => 'signature_modify',
 			'permission' => 'profile_signature',
 			'enabled' => substr($modSettings['signature_settings'], 0, 1) == 1,
 			'preload' => 'profileLoadSignatureData',
 			'input_validate' => 'profileValidateSignature',
-		),
-		'show_online' => array(
+		],
+		'show_online' => [
 			'type' => 'check',
 			'label' => $txt['show_online'],
 			'permission' => 'profile_identity',
 			'enabled' => !empty($modSettings['allow_hideOnline']) || allowedTo('moderate_forum'),
-		),
+		],
 		// Pretty much a dummy entry - it populates all the theme settings.
-		'theme_settings' => array(
+		'theme_settings' => [
 			'type' => 'callback',
 			'callback_func' => 'theme_settings',
 			'permission' => 'profile_extra',
@@ -502,8 +502,8 @@ function loadProfileFields($force_reload = false)
 
 				return true;
 			},
-		),
-		'tfa' => array(
+		],
+		'tfa' => [
 			'type' => 'callback',
 			'callback_func' => 'tfa',
 			'permission' => 'profile_password',
@@ -511,18 +511,18 @@ function loadProfileFields($force_reload = false)
 			'preload' => function() use (&$context, $cur_profile, $modSettings, $scripturl)
 			{
 				$context['tfa_enabled'] = !empty($cur_profile['tfa_secret']);
-				$context['tfa_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl) . '?action=profile;area=tfasetup';
+				$context['tfa_url'] = (!empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, ['http://' => 'https://']) : $scripturl) . '?action=profile;area=tfasetup';
 
 				return true;
 			},
-		),
-		'time_format' => array(
+		],
+		'time_format' => [
 			'type' => 'select',
 			'options' => array_merge(['' => $txt['timeformat_default']], \StoryBB\Helper\Datetime::list_dateformats()),
 			// 'callback_func' => 'timeformat_modify',
 			'permission' => 'profile_extra',
-		),
-		'timezone' => array(
+		],
+		'timezone' => [
 			'type' => 'select',
 			'options' => \StoryBB\Helper\Datetime::list_timezones(),
 			'permission' => 'profile_extra',
@@ -535,16 +535,16 @@ function loadProfileFields($force_reload = false)
 
 				return true;
 			},
-		),
-		'website_title' => array(
+		],
+		'website_title' => [
 			'type' => 'text',
 			'label' => $txt['website_title'],
 			'subtext' => $txt['include_website_url'],
 			'size' => 50,
 			'permission' => 'profile_website',
 			'link_with' => 'website',
-		),
-		'website_url' => array(
+		],
+		'website_url' => [
 			'type' => 'url',
 			'label' => $txt['website_url'],
 			'subtext' => $txt['complete_url'],
@@ -560,17 +560,17 @@ function loadProfileFields($force_reload = false)
 				return true;
 			},
 			'link_with' => 'website',
-		),
-	);
+		],
+	];
 
-	call_integration_hook('integrate_load_profile_fields', array(&$profile_fields));
+	call_integration_hook('integrate_load_profile_fields', [&$profile_fields]);
 
 	$disabled_fields = !empty($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : [];
 	// For each of the above let's take out the bits which don't apply - to save memory and security!
 	foreach ($profile_fields as $key => $field)
 	{
 		// Do we have permission to do this?
-		if (isset($field['permission']) && !allowedTo(($context['user']['is_owner'] ? array($field['permission'] . '_own', $field['permission'] . '_any') : $field['permission'] . '_any')) && !allowedTo($field['permission']))
+		if (isset($field['permission']) && !allowedTo(($context['user']['is_owner'] ? [$field['permission'] . '_own', $field['permission'] . '_any'] : $field['permission'] . '_any')) && !allowedTo($field['permission']))
 			unset($profile_fields[$key]);
 
 		// Is it enabled?
@@ -598,7 +598,7 @@ function setupProfileContext($fields)
 	$context['profile_javascript'] = '';
 	$context['profile_onsubmit_javascript'] = '';
 
-	call_integration_hook('integrate_setup_profile_context', array(&$fields));
+	call_integration_hook('integrate_setup_profile_context', [&$fields]);
 
 	// Make sure we have this!
 	loadProfileFields(true);
@@ -710,7 +710,7 @@ function setupProfileContext($fields)
 	if (!empty($context['menu_item_selected']) && !empty($context['id_member']))
 	{
 		$context['profile_submit_url'] = !empty($context['profile_custom_submit_url']) ? $context['profile_custom_submit_url'] : $scripturl . '?action=profile;area=' . $context['menu_item_selected'] . ';u=' . $context['id_member'];
-		$context['profile_submit_url'] = !empty($context['require_password']) && !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($context['profile_submit_url'], array('http://' => 'https://')) : $context['profile_submit_url'];
+		$context['profile_submit_url'] = !empty($context['require_password']) && !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($context['profile_submit_url'], ['http://' => 'https://']) : $context['profile_submit_url'];
 	}
 }
 
@@ -784,10 +784,10 @@ function saveProfileFields()
 
 			// Are we logging it?
 			if (!empty($field['log_change']) && isset($old_profile[$key]))
-				$context['log_changes'][$key] = array(
+				$context['log_changes'][$key] = [
 					'previous' => $old_profile[$key],
 					'new' => $_POST[$key],
-				);
+				];
 		}
 
 		// Logging group changes are a bit different...
@@ -798,17 +798,17 @@ function saveProfileFields()
 			// Any changes to primary group?
 			if ($_POST['id_group'] != $old_profile['id_group'])
 			{
-				$context['log_changes']['id_group'] = array(
+				$context['log_changes']['id_group'] = [
 					'previous' => !empty($old_profile[$key]) && isset($context['member_groups'][$old_profile[$key]]) ? $context['member_groups'][$old_profile[$key]]['name'] : '',
 					'new' => !empty($_POST[$key]) && isset($context['member_groups'][$_POST[$key]]) ? $context['member_groups'][$_POST[$key]]['name'] : '',
-				);
+				];
 			}
 
 			// Prepare additional groups for comparison.
-			$additional_groups = array(
+			$additional_groups = [
 				'previous' => !empty($old_profile['additional_groups']) ? explode(',', $old_profile['additional_groups']) : [],
-				'new' => !empty($_POST['additional_groups']) ? array_diff($_POST['additional_groups'], array(0)) : [],
-			);
+				'new' => !empty($_POST['additional_groups']) ? array_diff($_POST['additional_groups'], [0]) : [],
+			];
 
 			sort($additional_groups['previous']);
 			sort($additional_groups['new']);
@@ -835,7 +835,7 @@ function saveProfileFields()
 
 	// @todo Temporary
 	if ($context['user']['is_owner'])
-		$changeOther = allowedTo(array('profile_extra_any', 'profile_extra_own'));
+		$changeOther = allowedTo(['profile_extra_any', 'profile_extra_own']);
 	else
 		$changeOther = allowedTo('profile_extra_any');
 	if ($changeOther && empty($post_errors))
@@ -871,19 +871,19 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 	// Permissions...
 	if ($context['user']['is_owner'])
 	{
-		$changeOther = allowedTo(array('profile_extra_any', 'profile_extra_own', 'profile_website_any', 'profile_website_own', 'profile_signature_any', 'profile_signature_own'));
+		$changeOther = allowedTo(['profile_extra_any', 'profile_extra_own', 'profile_website_any', 'profile_website_own', 'profile_signature_any', 'profile_signature_own']);
 	}
 	else
-		$changeOther = allowedTo(array('profile_extra_any', 'profile_website_any', 'profile_signature_any'));
+		$changeOther = allowedTo(['profile_extra_any', 'profile_website_any', 'profile_signature_any']);
 
 	// Arrays of all the changes - makes things easier.
 	$profile_bools = [];
 	$profile_ints = [];
 	$profile_floats = [];
-	$profile_strings = array(
+	$profile_strings = [
 		'buddy_list',
 		'ignore_boards',
-	);
+	];
 
 	if (isset($_POST['sa']) && $_POST['sa'] == 'ignoreboards' && empty($_POST['ignore_brd']))
 		$_POST['ignore_brd'] = [];
@@ -892,7 +892,7 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 	if (isset($_POST['ignore_brd']))
 	{
 		if (!is_array($_POST['ignore_brd']))
-			$_POST['ignore_brd'] = array($_POST['ignore_brd']);
+			$_POST['ignore_brd'] = [$_POST['ignore_brd']];
 
 		foreach ($_POST['ignore_brd'] as $k => $d)
 		{
@@ -941,7 +941,7 @@ function makeThemeChanges($memID, $id_theme)
 {
 	global $modSettings, $smcFunc, $context, $user_info;
 
-	$reservedVars = array(
+	$reservedVars = [
 		'actual_theme_url',
 		'actual_images_url',
 		'base_theme_dir',
@@ -955,7 +955,7 @@ function makeThemeChanges($memID, $id_theme)
 		'theme_dir',
 		'theme_id',
 		'theme_url',
-	);
+	];
 
 	// Can't change reserved vars.
 	if ((isset($_POST['options']) && count(array_intersect(array_keys($_POST['options']), $reservedVars)) != 0) || (isset($_POST['default_options']) && count(array_intersect(array_keys($_POST['default_options']), $reservedVars)) != 0))
@@ -966,9 +966,9 @@ function makeThemeChanges($memID, $id_theme)
 		SELECT col_name
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:is_active}',
-		array(
+		[
 			'is_active' => 1,
-		)
+		]
 	);
 	$custom_fields = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -991,7 +991,7 @@ function makeThemeChanges($memID, $id_theme)
 			elseif ($opt == 'allow_no_censored')
 				continue;
 
-			$themeSetArray[] = array($memID, $id_theme, $opt, is_array($val) ? implode(',', $val) : $val);
+			$themeSetArray[] = [$memID, $id_theme, $opt, is_array($val) ? implode(',', $val) : $val];
 		}
 	}
 
@@ -1009,7 +1009,7 @@ function makeThemeChanges($memID, $id_theme)
 			elseif ($opt == 'allow_no_censored' && !$user_info['is_admin'] && !$context['user']['is_owner'])
 					continue;
 
-			$themeSetArray[] = array($memID, 1, $opt, is_array($val) ? implode(',', $val) : $val);
+			$themeSetArray[] = [$memID, 1, $opt, is_array($val) ? implode(',', $val) : $val];
 			$erase_options[] = $opt;
 		}
 
@@ -1020,9 +1020,9 @@ function makeThemeChanges($memID, $id_theme)
 		{
 			$smcFunc['db_insert']('replace',
 				'{db_prefix}themes',
-				array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
+				['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 				$themeSetArray,
-				array('id_member', 'id_theme', 'variable')
+				['id_member', 'id_theme', 'variable']
 			);
 		}
 
@@ -1033,11 +1033,11 @@ function makeThemeChanges($memID, $id_theme)
 				WHERE id_theme != {int:id_theme}
 					AND variable IN ({array_string:erase_variables})
 					AND id_member = {int:id_member}',
-				array(
+				[
 					'id_theme' => 1,
 					'id_member' => $memID,
 					'erase_variables' => $erase_options
-				)
+				]
 			);
 		}
 
@@ -1067,16 +1067,16 @@ function makeNotificationChanges($memID)
 			$_POST['notify_boards'][$index] = (int) $id;
 
 		// id_board = 0 is reserved for topic notifications.
-		$_POST['notify_boards'] = array_diff($_POST['notify_boards'], array(0));
+		$_POST['notify_boards'] = array_diff($_POST['notify_boards'], [0]);
 
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_notify
 			WHERE id_board IN ({array_int:board_list})
 				AND id_member = {int:selected_member}',
-			array(
+			[
 				'board_list' => $_POST['notify_boards'],
 				'selected_member' => $memID,
-			)
+			]
 		);
 	}
 
@@ -1087,19 +1087,19 @@ function makeNotificationChanges($memID)
 			$_POST['notify_topics'][$index] = (int) $id;
 
 		// Make sure there are no zeros left.
-		$_POST['notify_topics'] = array_diff($_POST['notify_topics'], array(0));
+		$_POST['notify_topics'] = array_diff($_POST['notify_topics'], [0]);
 
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_notify
 			WHERE id_topic IN ({array_int:topic_list})
 				AND id_member = {int:selected_member}',
-			array(
+			[
 				'topic_list' => $_POST['notify_topics'],
 				'selected_member' => $memID,
-			)
+			]
 		);
 		foreach ($_POST['notify_topics'] as $topic)
-			setNotifyPrefs($memID, array('topic_notify_' . $topic => 0));
+			setNotifyPrefs($memID, ['topic_notify_' . $topic => 0]);
 	}
 
 	// We are removing topic preferences
@@ -1148,10 +1148,10 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 		FROM {db_prefix}custom_fields
 		WHERE ' . $where . '
 			AND active = {int:is_active}',
-		array(
+		[
 			'is_active' => 1,
 			'area' => $area,
-		)
+		]
 	);
 	$changes = [];
 	$log_changes = [];
@@ -1230,23 +1230,23 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 		// Did it change?
 		if (!isset($user_profile[$memID]['options'][$row['col_name']]) || $user_profile[$memID]['options'][$row['col_name']] !== $value)
 		{
-			$log_changes[] = array(
+			$log_changes[] = [
 				'action' => 'customfield_' . $row['col_name'],
 				'log_type' => 'user',
-				'extra' => array(
+				'extra' => [
 					'previous' => !empty($user_profile[$memID]['options'][$row['col_name']]) ? $user_profile[$memID]['options'][$row['col_name']] : '',
 					'new' => $value,
 					'applicator' => $user_info['id'],
 					'member_affected' => $memID,
-				),
-			);
-			$changes[] = array(1, $row['col_name'], $value, $memID);
+				],
+			];
+			$changes[] = [1, $row['col_name'], $value, $memID];
 			$user_profile[$memID]['options'][$row['col_name']] = $value;
 		}
 	}
 	$smcFunc['db_free_result']($request);
 
-	$hook_errors = call_integration_hook('integrate_save_custom_profile_fields', array(&$changes, &$log_changes, &$errors, $returnErrors, $memID, $area, $sanitize));
+	$hook_errors = call_integration_hook('integrate_save_custom_profile_fields', [&$changes, &$log_changes, &$errors, $returnErrors, $memID, $area, $sanitize]);
 
 	if (!empty($hook_errors) && is_array($hook_errors))
 		$errors = array_merge($errors, $hook_errors);
@@ -1256,9 +1256,9 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 	{
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}themes',
-			array('id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534', 'id_member' => 'int'),
+			['id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534', 'id_member' => 'int'],
 			$changes,
-			array('id_theme', 'variable', 'id_member')
+			['id_theme', 'variable', 'id_member']
 		);
 		if (!empty($log_changes) && !empty($modSettings['modlog_enabled']))
 		{
@@ -1288,22 +1288,22 @@ function editBuddyIgnoreLists($memID)
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['can_send_email'] = allowedTo('moderate_forum');
 
-	$subActions = array(
-		'buddies' => array('editBuddies', $txt['editBuddies']),
-		'ignore' => array('editIgnoreList', $txt['editIgnoreList']),
-	);
+	$subActions = [
+		'buddies' => ['editBuddies', $txt['editBuddies']],
+		'ignore' => ['editIgnoreList', $txt['editIgnoreList']],
+	];
 
 	$context['list_area'] = isset($_GET['sa']) && isset($subActions[$_GET['sa']]) ? $_GET['sa'] : 'buddies';
 
 	// Create the tabs for the template.
-	$context[$context['profile_menu_name']]['tab_data'] = array(
+	$context[$context['profile_menu_name']]['tab_data'] = [
 		'title' => $txt['editBuddyIgnoreLists'],
 		'description' => $txt['buddy_ignore_desc'],
-		'tabs' => array(
+		'tabs' => [
 			'buddies' => [],
 			'ignore' => [],
-		),
-	);
+		],
+	];
 
 	// Pass on to the actual function.
 	$context['sub_template'] = $subActions[$context['list_area']][0];
@@ -1339,7 +1339,7 @@ function editBuddies($memID)
 	{
 		checkSession('get');
 
-		call_integration_hook('integrate_remove_buddy', array($memID));
+		call_integration_hook('integrate_remove_buddy', [$memID]);
 
 		// Heh, I'm lazy, do it the easy way...
 		foreach ($buddiesArray as $key => $buddy)
@@ -1351,7 +1351,7 @@ function editBuddies($memID)
 
 		// Make the changes.
 		$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
-		updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+		updateMemberData($memID, ['buddy_list' => $user_profile[$memID]['buddy_list']]);
 
 		if ($saved)
 		{
@@ -1380,7 +1380,7 @@ function editBuddies($memID)
 		}
 		$new_buddy = array_diff($new_buddy, $buddiesArray);
 
-		call_integration_hook('integrate_add_buddies', array($memID, &$new_buddy));
+		call_integration_hook('integrate_add_buddies', [$memID, &$new_buddy]);
 
 		if (!empty($new_buddy))
 		{
@@ -1389,7 +1389,7 @@ function editBuddies($memID)
 
 			// Now update the current users buddy list.
 			$user_profile[$memID]['buddy_list'] = implode(',', $buddiesArray);
-			updateMemberData($memID, array('buddy_list' => $user_profile[$memID]['buddy_list']));
+			updateMemberData($memID, ['buddy_list' => $user_profile[$memID]['buddy_list']]);
 		}
 
 		if ($saved)
@@ -1414,22 +1414,22 @@ function editBuddies($memID)
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:active}
 			AND private < {int:private_level}',
-		array(
+		[
 			'active' => 1,
 			'private_level' => 2,
-		)
+		]
 	);
 
 	$context['custom_pf'] = [];
 	$disabled_fields = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		if (!isset($disabled_fields[$row['col_name']]))
-			$context['custom_pf'][$row['col_name']] = array(
+			$context['custom_pf'][$row['col_name']] = [
 				'label' => $row['field_name'],
 				'type' => $row['field_type'],
 				'bbc' => !empty($row['bbc']),
 				'enclose' => $row['enclose'],
-			);
+			];
 
 	$smcFunc['db_free_result']($request);
 
@@ -1441,10 +1441,10 @@ function editBuddies($memID)
 			WHERE id_member IN ({array_int:buddy_list})
 			ORDER BY real_name
 			LIMIT {int:buddy_list_count}',
-			array(
+			[
 				'buddy_list' => $buddiesArray,
 				'buddy_list_count' => substr_count($user_profile[$memID]['buddy_list'], ',') + 1,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 			$buddies[] = $row['id_member'];
@@ -1483,12 +1483,12 @@ function editBuddies($memID)
 
 				// Enclosing the user input within some other text?
 				if (!empty($column['enclose']) && !empty($context['buddies'][$buddy]['options'][$key]))
-					$context['buddies'][$buddy]['options'][$key] = strtr($column['enclose'], array(
+					$context['buddies'][$buddy]['options'][$key] = strtr($column['enclose'], [
 						'{SCRIPTURL}' => $scripturl,
 						'{IMAGES_URL}' => $settings['images_url'],
 						'{DEFAULT_IMAGES_URL}' => $settings['default_images_url'],
 						'{INPUT}' => $context['buddies'][$buddy]['options'][$key],
-					));
+					]);
 			}
 		}
 	}
@@ -1497,7 +1497,7 @@ function editBuddies($memID)
 
 	Autocomplete::init('member', '#new_buddy');
 
-	call_integration_hook('integrate_view_buddies', array($memID));
+	call_integration_hook('integrate_view_buddies', [$memID]);
 }
 
 /**
@@ -1535,7 +1535,7 @@ function editIgnoreList($memID)
 
 		// Make the changes.
 		$user_profile[$memID]['pm_ignore_list'] = implode(',', $ignoreArray);
-		updateMemberData($memID, array('pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']));
+		updateMemberData($memID, ['pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']]);
 
 		if ($saved)
 		{
@@ -1564,7 +1564,7 @@ function editIgnoreList($memID)
 		}
 		$new_ignore = array_diff($new_ignore, $ignoreArray);
 
-		call_integration_hook('integrate_add_ignore', array($memID, &$new_ignore));
+		call_integration_hook('integrate_add_ignore', [$memID, &$new_ignore]);
 
 		if (!empty($new_ignore))
 		{
@@ -1573,7 +1573,7 @@ function editIgnoreList($memID)
 
 			// Now update the current users buddy list.
 			$user_profile[$memID]['pm_ignore_list'] = implode(',', $ignoreArray);
-			updateMemberData($memID, array('pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']));
+			updateMemberData($memID, ['pm_ignore_list' => $user_profile[$memID]['pm_ignore_list']]);
 		}
 
 		if ($saved)
@@ -1600,10 +1600,10 @@ function editIgnoreList($memID)
 			WHERE id_member IN ({array_int:ignore_list})
 			ORDER BY real_name
 			LIMIT {int:ignore_list_count}',
-			array(
+			[
 				'ignore_list' => $ignoreArray,
 				'ignore_list_count' => substr_count($user_profile[$memID]['pm_ignore_list'], ',') + 1,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 			$ignored[] = $row['id_member'];
@@ -1638,14 +1638,14 @@ function account($memID)
 	global $context, $txt;
 
 	loadThemeOptions($memID);
-	if (allowedTo(array('profile_identity_own', 'profile_identity_any', 'profile_password_own', 'profile_password_any')))
+	if (allowedTo(['profile_identity_own', 'profile_identity_any', 'profile_password_own', 'profile_password_any']))
 		loadCustomFields($memID, 'account');
 
 	$context['sub_template'] = 'profile_options';
 	$context['page_desc'] = $txt['account_info'];
 
 	setupProfileContext(
-		array(
+		[
 			'member_name', 'real_name', 'date_registered', 'posts', 'lngfile', 'hr',
 			'id_group', 'hr',
 			'email_address', 'show_online', 'hr',
@@ -1653,7 +1653,7 @@ function account($memID)
 			'tfa', 'hr',
 			'passwrd1', 'passwrd2', 'hr',
 			'secret_question', 'secret_answer',
-		)
+		]
 	);
 }
 
@@ -1667,7 +1667,7 @@ function forumProfile($memID)
 	global $context, $txt;
 
 	loadThemeOptions($memID);
-	if (allowedTo(array('profile_forum_own', 'profile_forum_any')))
+	if (allowedTo(['profile_forum_own', 'profile_forum_any']))
 		loadCustomFields($memID, 'forumprofile');
 
 	$context['sub_template'] = 'profile_options';
@@ -1675,12 +1675,12 @@ function forumProfile($memID)
 	$context['show_preview_button'] = true;
 
 	setupProfileContext(
-		array(
+		[
 			'avatar_choice', 'hr',
 			'birthday_date', 'birthday_visibility', 'hr',
 			'signature', 'hr',
 			'website_title', 'website_url',
-		)
+		]
 	);
 }
 
@@ -1696,7 +1696,7 @@ function theme($memID)
 	$context['theme_options'] = StoryBB\Model\Theme::get_user_options();
 
 	loadThemeOptions($memID);
-	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
+	if (allowedTo(['profile_extra_own', 'profile_extra_any']))
 		loadCustomFields($memID, 'theme');
 
 	$context['sub_template'] = 'profile_options';
@@ -1731,10 +1731,10 @@ function theme($memID)
 	}
 
 	setupProfileContext(
-		array(
+		[
 			'time_format', 'timezone',
 			'theme_settings',
-		)
+		]
 	);
 }
 
@@ -1751,21 +1751,21 @@ function notification($memID)
 	loadCSSFile('admin.css', [], 'sbb_admin');
 
 	// This is just a bootstrap for everything else.
-	$sa = array(
+	$sa = [
 		'alerts' => 'alert_configuration',
 		'markread' => 'alert_markread',
 		'topics' => 'alert_notifications_topics',
 		'boards' => 'alert_notifications_boards',
-	);
+	];
 
 	$subAction = !empty($_GET['sa']) && isset($sa[$_GET['sa']]) ? $_GET['sa'] : 'alerts';
 
 	$context['sub_template'] = $sa[$subAction];
-	$context[$context['profile_menu_name']]['tab_data'] = array(
+	$context[$context['profile_menu_name']]['tab_data'] = [
 		'title' => $txt['notification'],
 		'help' => '',
 		'description' => $txt['notification_info'],
-	);
+	];
 	$sa[$subAction]($memID);
 }
 
@@ -1799,77 +1799,77 @@ function alert_configuration($memID)
 
 	$context['alert_prefs'] = !empty($prefs[$memID]) ? $prefs[$memID] : [];
 
-	$context['member'] += array(
+	$context['member'] += [
 		'alert_timeout' => isset($context['alert_prefs']['alert_timeout']) ? $context['alert_prefs']['alert_timeout'] : 10,
 		'notify_announcements' => isset($context['alert_prefs']['announcements']) ? $context['alert_prefs']['announcements'] : 0,
-	);
+	];
 
 	// Now for the exciting stuff.
 	// We have groups of items, each item has both an alert and an email key as well as an optional help string.
 	// Valid values for these keys are 'always', 'yes', 'never'; if using always or never you should add a help string.
-	$alert_types = array(
-		'board' => array(
-			'topic_notify' => array('alert' => 'yes', 'email' => 'yes'),
-			'board_notify' => array('alert' => 'yes', 'email' => 'yes'),
-		),
-		'msg' => array(
-			'msg_mention' => array('alert' => 'yes', 'email' => 'yes'),
-			'msg_quote' => array('alert' => 'yes', 'email' => 'yes'),
-			'msg_like' => array('alert' => 'yes', 'email' => 'never'),
-			'unapproved_reply' => array('alert' => 'yes', 'email' => 'yes'),
-		),
-		'pm' => array(
-			'pm_new' => array('alert' => 'never', 'email' => 'yes', 'help' => 'alert_pm_new', 'permission' => array('name' => 'pm_read', 'is_board' => false)),
-			'pm_reply' => array('alert' => 'never', 'email' => 'yes', 'help' => 'alert_pm_new', 'permission' => array('name' => 'pm_send', 'is_board' => false)),
-		),
-		'groupr' => array(
-			'groupr_approved' => array('alert' => 'always', 'email' => 'yes'),
-			'groupr_rejected' => array('alert' => 'always', 'email' => 'yes'),
-		),
-		'moderation' => array(
-			'unapproved_post' => array('alert' => 'yes', 'email' => 'yes', 'permission' => array('name' => 'approve_posts', 'is_board' => true)),
-			'msg_report' => array('alert' => 'yes', 'email' => 'yes', 'permission' => array('name' => 'moderate_board', 'is_board' => true)),
-			'msg_report_reply' => array('alert' => 'yes', 'email' => 'yes', 'permission' => array('name' => 'moderate_board', 'is_board' => true)),
-			'member_report' => array('alert' => 'yes', 'email' => 'yes', 'permission' => array('name' => 'moderate_forum', 'is_board' => false)),
-			'member_report_reply' => array('alert' => 'yes', 'email' => 'yes', 'permission' => array('name' => 'moderate_forum', 'is_board' => false)),
-			'approval_notify' => array('alert' => 'never', 'email' => 'yes', 'permission' => array('name' => 'approve_posts', 'is_board' => true)),
-		),
-		'members' => array(
-			'member_register' => array('alert' => 'yes', 'email' => 'yes', 'permission' => array('name' => 'moderate_forum', 'is_board' => false)),
-			'request_group' => array('alert' => 'yes', 'email' => 'yes'),
-			'warn_any' => array('alert' => 'yes', 'email' => 'yes', 'permission' => array('name' => 'issue_warning', 'is_board' => false)),
-			'buddy_request'  => array('alert' => 'yes', 'email' => 'never'),
-			'birthday'  => array('alert' => 'yes', 'email' => 'yes'),
-		),
-		'paidsubs' => array(
-			'paidsubs_expiring' => array('alert' => 'yes', 'email' => 'yes'),
-		),
-	);
-	$group_options = array(
-		'board' => array(
-			array('check', 'msg_auto_notify', 'position' => 'after'),
-			array('check', 'msg_receive_body', 'position' => 'after'),
-			array('select', 'msg_notify_pref', 'position' => 'before', 'opts' => array(
+	$alert_types = [
+		'board' => [
+			'topic_notify' => ['alert' => 'yes', 'email' => 'yes'],
+			'board_notify' => ['alert' => 'yes', 'email' => 'yes'],
+		],
+		'msg' => [
+			'msg_mention' => ['alert' => 'yes', 'email' => 'yes'],
+			'msg_quote' => ['alert' => 'yes', 'email' => 'yes'],
+			'msg_like' => ['alert' => 'yes', 'email' => 'never'],
+			'unapproved_reply' => ['alert' => 'yes', 'email' => 'yes'],
+		],
+		'pm' => [
+			'pm_new' => ['alert' => 'never', 'email' => 'yes', 'help' => 'alert_pm_new', 'permission' => ['name' => 'pm_read', 'is_board' => false]],
+			'pm_reply' => ['alert' => 'never', 'email' => 'yes', 'help' => 'alert_pm_new', 'permission' => ['name' => 'pm_send', 'is_board' => false]],
+		],
+		'groupr' => [
+			'groupr_approved' => ['alert' => 'always', 'email' => 'yes'],
+			'groupr_rejected' => ['alert' => 'always', 'email' => 'yes'],
+		],
+		'moderation' => [
+			'unapproved_post' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'approve_posts', 'is_board' => true]],
+			'msg_report' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_board', 'is_board' => true]],
+			'msg_report_reply' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_board', 'is_board' => true]],
+			'member_report' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_forum', 'is_board' => false]],
+			'member_report_reply' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_forum', 'is_board' => false]],
+			'approval_notify' => ['alert' => 'never', 'email' => 'yes', 'permission' => ['name' => 'approve_posts', 'is_board' => true]],
+		],
+		'members' => [
+			'member_register' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'moderate_forum', 'is_board' => false]],
+			'request_group' => ['alert' => 'yes', 'email' => 'yes'],
+			'warn_any' => ['alert' => 'yes', 'email' => 'yes', 'permission' => ['name' => 'issue_warning', 'is_board' => false]],
+			'buddy_request'  => ['alert' => 'yes', 'email' => 'never'],
+			'birthday'  => ['alert' => 'yes', 'email' => 'yes'],
+		],
+		'paidsubs' => [
+			'paidsubs_expiring' => ['alert' => 'yes', 'email' => 'yes'],
+		],
+	];
+	$group_options = [
+		'board' => [
+			['check', 'msg_auto_notify', 'position' => 'after'],
+			['check', 'msg_receive_body', 'position' => 'after'],
+			['select', 'msg_notify_pref', 'position' => 'before', 'opts' => [
 				0 => $txt['alert_opt_msg_notify_pref_nothing'],
 				1 => $txt['alert_opt_msg_notify_pref_instant'],
 				2 => $txt['alert_opt_msg_notify_pref_first'],
 				3 => $txt['alert_opt_msg_notify_pref_daily'],
 				4 => $txt['alert_opt_msg_notify_pref_weekly'],
-			)),
-			array('select', 'msg_notify_type', 'position' => 'before', 'opts' => array(
+			]],
+			['select', 'msg_notify_type', 'position' => 'before', 'opts' => [
 				1 => $txt['notify_send_type_everything'],
 				2 => $txt['notify_send_type_everything_own'],
 				3 => $txt['notify_send_type_only_replies'],
 				4 => $txt['notify_send_type_nothing'],
-			)),
-		),
-		'pm' => array(
-			array('select', 'pm_notify', 'position' => 'before', 'opts' => array(
+			]],
+		],
+		'pm' => [
+			['select', 'pm_notify', 'position' => 'before', 'opts' => [
 				1 => $txt['email_notify_all'],
 				2 => $txt['email_notify_buddies'],
-			)),
-		),
-	);
+			]],
+		],
+	];
 
 	// Disable paid subscriptions at group level if they're disabled
 	if (empty($modSettings['paid_enabled']))
@@ -1893,7 +1893,7 @@ function alert_configuration($memID)
 
 	// Now, now, we could pass this through global but we should really get into the habit of
 	// passing content to hooks, not expecting hooks to splatter everything everywhere.
-	call_integration_hook('integrate_alert_types', array(&$alert_types, &$group_options));
+	call_integration_hook('integrate_alert_types', [&$alert_types, &$group_options]);
 
 	// Now we have to do some permissions testing - but only if we're not loading this from the admin center
 	if (!empty($memID))
@@ -1904,9 +1904,9 @@ function alert_configuration($memID)
 			SELECT COUNT(*)
 			FROM {db_prefix}group_moderators
 			WHERE id_member = {int:memID}',
-			array(
+			[
 				'memID' => $memID,
-			)
+			]
 		);
 
 		list ($can_mod) = $smcFunc['db_fetch_row']($request);
@@ -1946,10 +1946,10 @@ function alert_configuration($memID)
 	$context['alert_types'] = $alert_types;
 	$context['alert_group_options'] = $group_options;
 
-	$context['alert_bits'] = array(
+	$context['alert_bits'] = [
 		'alert' => 0x01,
 		'email' => 0x02,
-	);
+	];
 
 	if (isset($_POST['notify_submit']))
 	{
@@ -2105,11 +2105,11 @@ function alert_markread($memID)
 		WHERE id_member = {int:current_member}' . ($alert ? '
 			AND id_alert = {int:alert}' : '') . '
 			AND is_read = 0',
-		array(
+		[
 			'now' => time(),
 			'current_member' => $memID,
 			'alert' => $alert,
-		)
+		]
 	);
 
 	if ($alert)
@@ -2117,13 +2117,13 @@ function alert_markread($memID)
 		// If we managed a specific ID, we need to process that a little differently.
 		if ($smcFunc['db']->affected_rows())
 		{
-			updateMemberData($memID, array('alerts' => '-'));
+			updateMemberData($memID, ['alerts' => '-']);
 		}
 	}
 	else
 	{
 		// We marked everything read.
-		updateMemberData($memID, array('alerts' => 0));
+		updateMemberData($memID, ['alerts' => 0]);
 	}
 
 	$context['sub_template'] = 'alerts_popup';
@@ -2197,7 +2197,7 @@ function alert_notifications_topics($memID)
 	require_once($sourcedir . '/Subs-List.php');
 
 	// Do the topic notifications.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'topic_notification_list',
 		'width' => '100%',
 		'items_per_page' => $modSettings['defaultMaxListItems'],
@@ -2205,25 +2205,25 @@ function alert_notifications_topics($memID)
 		'no_items_align' => 'left',
 		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=notification;sa=topics',
 		'default_sort_col' => 'last_post',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getTopicNotifications',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getTopicNotificationCount',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'columns' => array(
-			'subject' => array(
-				'header' => array(
+			],
+		],
+		'columns' => [
+			'subject' => [
+				'header' => [
 					'value' => $txt['notifications_topics'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($topic) use ($txt)
 					{
 						$link = $topic['link'];
@@ -2235,95 +2235,95 @@ function alert_notifications_topics($memID)
 
 						return $link;
 					},
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'ms.subject',
 					'reverse' => 'ms.subject DESC',
-				),
-			),
-			'started_by' => array(
-				'header' => array(
+				],
+			],
+			'started_by' => [
+				'header' => [
 					'value' => $txt['started_by'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'poster_link',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'real_name_col',
 					'reverse' => 'real_name_col DESC',
-				),
-			),
-			'last_post' => array(
-				'header' => array(
+				],
+			],
+			'last_post' => [
+				'header' => [
 					'value' => $txt['last_post'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<span class="smalltext">%1$s<br>' . $txt['by'] . ' %2$s</span>',
-						'params' => array(
+						'params' => [
 							'updated' => false,
 							'poster_updated_link' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'ml.id_msg DESC',
 					'reverse' => 'ml.id_msg',
-				),
-			),
-			'alert' => array(
-				'header' => array(
+				],
+			],
+			'alert' => [
+				'header' => [
 					'value' => $txt['notify_what_how'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($topic) use ($txt)
 					{
 						$pref = $topic['notify_pref'];
 						$mode = !empty($topic['unwatched']) ? 0 : ($pref & 0x02 ? 3 : ($pref & 0x01 ? 2 : 1));
 						return $txt['notify_topic_' . $mode];
 					},
-				),
-			),
-			'delete' => array(
-				'header' => array(
+				],
+			],
+			'delete' => [
+				'header' => [
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'style' => 'width: 4%;',
 					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<input type="checkbox" name="notify_topics[]" value="%1$d">',
-						'params' => array(
+						'params' => [
 							'id' => false,
-						),
-					),
+						],
+					],
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=profile;area=notification;sa=topics',
 			'include_sort' => true,
 			'include_start' => true,
-			'hidden_fields' => array(
+			'hidden_fields' => [
 				'u' => $memID,
 				'sa' => $context['menu_item_selected'],
 				$context['session_var'] => $context['session_id'],
-			),
+			],
 			'token' => $context['token_check'],
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'bottom_of_list',
 				'value' => '<input type="submit" name="edit_notify_topics" value="' . $txt['notifications_update'] . '">
 							<input type="submit" name="remove_notify_topics" value="' . $txt['notification_remove_pref'] . '">',
 				'class' => 'floatright',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Create the notification list.
 	createList($listOptions);
@@ -2358,26 +2358,26 @@ function alert_notifications_boards($memID)
 	require_once($sourcedir . '/Subs-List.php');
 
 	// Fine, start with the board list.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'board_notification_list',
 		'width' => '100%',
 		'no_items_label' => $txt['notifications_boards_none'] . '<br><br>' . $txt['notifications_boards_howto'],
 		'no_items_align' => 'left',
 		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=notification;sa=boards',
 		'default_sort_col' => 'board_name',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getBoardNotifications',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'columns' => array(
-			'board_name' => array(
-				'header' => array(
+			],
+		],
+		'columns' => [
+			'board_name' => [
+				'header' => [
 					'value' => $txt['notifications_boards'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($board) use ($txt)
 					{
 						$link = $board['link'];
@@ -2387,63 +2387,63 @@ function alert_notifications_boards($memID)
 
 						return $link;
 					},
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'name',
 					'reverse' => 'name DESC',
-				),
-			),
-			'alert' => array(
-				'header' => array(
+				],
+			],
+			'alert' => [
+				'header' => [
 					'value' => $txt['notify_what_how'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($board) use ($txt)
 					{
 						$pref = $board['notify_pref'];
 						$mode = $pref & 0x02 ? 3 : ($pref & 0x01 ? 2 : 1);
 						return $txt['notify_board_' . $mode];
 					},
-				),
-			),
-			'delete' => array(
-				'header' => array(
+				],
+			],
+			'delete' => [
+				'header' => [
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'style' => 'width: 4%;',
 					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<input type="checkbox" name="notify_boards[]" value="%1$d">',
-						'params' => array(
+						'params' => [
 							'id' => false,
-						),
-					),
+						],
+					],
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=profile;area=notification;sa=boards',
 			'include_sort' => true,
 			'include_start' => true,
-			'hidden_fields' => array(
+			'hidden_fields' => [
 				'u' => $memID,
 				'sa' => $context['menu_item_selected'],
 				$context['session_var'] => $context['session_id'],
-			),
+			],
 			'token' => $context['token_check'],
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'bottom_of_list',
 				'value' => '<input type="submit" name="edit_notify_boards" value="' . $txt['notifications_update'] . '">
 							<input type="submit" name="remove_notify_boards" value="' . $txt['notification_remove_pref'] . '">',
 				'class' => 'floatright',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Create the board notification list.
 	createList($listOptions);
@@ -2467,10 +2467,10 @@ function list_getTopicNotificationCount($memID)
 		WHERE ln.id_member = {int:selected_member}
 			AND {query_see_board}
 			AND t.approved = {int:is_approved}',
-		array(
+		[
 			'selected_member' => $memID,
 			'is_approved' => 1,
-		)
+		]
 	);
 	list ($totalNotifications) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -2515,21 +2515,21 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 		WHERE ln.id_member = {int:selected_member}
 		ORDER BY {raw:sort}
 		LIMIT {int:offset}, {int:items_per_page}',
-		array(
+		[
 			'current_member' => $user_info['id'],
 			'is_approved' => 1,
 			'selected_member' => $memID,
 			'sort' => $sort,
 			'offset' => $start,
 			'items_per_page' => $items_per_page,
-		)
+		]
 	);
 	$notification_topics = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		censorText($row['subject']);
 
-		$notification_topics[] = array(
+		$notification_topics[] = [
 			'id' => $row['id_topic'],
 			'poster_link' => empty($row['id_member']) ? $row['real_name_col'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name_col'] . '</a>',
 			'poster_updated_link' => empty($row['id_member_updated']) ? $row['last_real_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_updated'] . '">' . $row['last_real_name'] . '</a>',
@@ -2544,7 +2544,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 			'board_link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 			'notify_pref' => isset($prefs['topic_notify_' . $row['id_topic']]) ? $prefs['topic_notify_' . $row['id_topic']] : (!empty($prefs['topic_notify']) ? $prefs['topic_notify'] : 0),
 			'unwatched' => $row['unwatched'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -2576,22 +2576,22 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 		WHERE ln.id_member = {int:selected_member}
 			AND {query_see_board}
 		ORDER BY {raw:sort}',
-		array(
+		[
 			'current_member' => $user_info['id'],
 			'selected_member' => $memID,
 			'sort' => $sort,
-		)
+		]
 	);
 	$notification_boards = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$notification_boards[] = array(
+		$notification_boards[] = [
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
 			'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 			'new' => $row['board_read'] < $row['id_msg_updated'],
 			'notify_pref' => isset($prefs['board_notify_' . $row['id_board']]) ? $prefs['board_notify_' . $row['id_board']] : (!empty($prefs['board_notify']) ? $prefs['board_notify'] : 0),
-		);
+		];
 	$smcFunc['db_free_result']($request);
 
 	return $notification_boards;
@@ -2623,10 +2623,10 @@ function loadThemeOptions($memID)
 			FROM {db_prefix}themes
 			WHERE id_theme IN (1, {int:member_theme})
 				AND id_member IN (-1, {int:selected_member})',
-			array(
+			[
 				'member_theme' => (int) $cur_profile['id_theme'],
 				'selected_member' => $memID,
-			)
+			]
 		);
 		$temp = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -2673,10 +2673,10 @@ function ignoreboards($memID)
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 		WHERE {query_see_board}
 			AND redirect = {string:empty_string}',
-		array(
+		[
 			'ignore_boards' => !empty($cur_profile['ignore_boards']) ? explode(',', $cur_profile['ignore_boards']) : [],
 			'empty_string' => '',
-		)
+		]
 	);
 	$context['num_boards'] = $smcFunc['db_num_rows']($request);
 	$context['categories'] = [];
@@ -2684,19 +2684,19 @@ function ignoreboards($memID)
 	{
 		// This category hasn't been set up yet..
 		if (!isset($context['categories'][$row['id_cat']]))
-			$context['categories'][$row['id_cat']] = array(
+			$context['categories'][$row['id_cat']] = [
 				'id' => $row['id_cat'],
 				'name' => $row['cat_name'],
 				'boards' => []
-			);
+			];
 
 		// Set this board up, and let the template know when it's a child.  (indent them..)
-		$context['categories'][$row['id_cat']]['boards'][$row['id_board']] = array(
+		$context['categories'][$row['id_cat']]['boards'][$row['id_board']] = [
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'child_level' => $row['child_level'],
 			'selected' => (bool) $row['is_ignored'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -2710,10 +2710,10 @@ function ignoreboards($memID)
 		// Include a list of boards per category for easy toggling.
 		$context['categories'][$category['id']]['child_ids'] = array_keys($category['boards']);
 
-		$temp_boards[] = array(
+		$temp_boards[] = [
 			'name' => $category['name'],
 			'child_ids' => array_keys($category['boards'])
-		);
+		];
 		$temp_boards = array_merge($temp_boards, array_values($category['boards']));
 	}
 
@@ -2755,7 +2755,7 @@ function profileLoadLanguages()
 	// Setup our languages.
 	foreach ($context['languages'] as $lang)
 	{
-		$context['profile_languages'][$lang['filename']] = strtr($lang['name'], array('-utf8' => ''));
+		$context['profile_languages'][$lang['filename']] = strtr($lang['name'], ['-utf8' => '']);
 	}
 	ksort($context['profile_languages']);
 
@@ -2772,15 +2772,15 @@ function profileLoadGroups()
 {
 	global $cur_profile, $txt, $context, $smcFunc, $user_settings;
 
-	$context['member_groups'] = array(
-		0 => array(
+	$context['member_groups'] = [
+		0 => [
 			'id' => 0,
 			'name' => $txt['no_primary_membergroup'],
 			'is_primary' => $cur_profile['id_group'] == 0,
 			'can_be_additional' => false,
 			'can_be_primary' => true,
-		)
-	);
+		]
+	];
 	$curGroups = explode(',', $cur_profile['additional_groups']);
 
 	// Load membergroups, but only those groups the user can assign.
@@ -2791,10 +2791,10 @@ function profileLoadGroups()
 			AND is_character = 0' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 		ORDER BY group_name',
-		array(
+		[
 			'moderator_group' => 3,
 			'is_protected' => 1,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -2802,14 +2802,14 @@ function profileLoadGroups()
 		if ($row['id_group'] == 1 && !allowedTo('admin_forum'))
 			continue;
 
-		$context['member_groups'][$row['id_group']] = array(
+		$context['member_groups'][$row['id_group']] = [
 			'id' => $row['id_group'],
 			'name' => $row['group_name'],
 			'is_primary' => $cur_profile['id_group'] == $row['id_group'],
 			'is_additional' => in_array($row['id_group'], $curGroups),
 			'can_be_additional' => true,
 			'can_be_primary' => $row['hidden'] != 2,
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -2832,7 +2832,7 @@ function profileLoadSignatureData()
 	$sig_limits = explode(',', $sig_limits);
 
 	$context['signature_enabled'] = isset($sig_limits[0]) ? $sig_limits[0] : 0;
-	$context['signature_limits'] = array(
+	$context['signature_limits'] = [
 		'max_length' => isset($sig_limits[1]) ? $sig_limits[1] : 0,
 		'max_lines' => isset($sig_limits[2]) ? $sig_limits[2] : 0,
 		'max_images' => isset($sig_limits[3]) ? $sig_limits[3] : 0,
@@ -2841,7 +2841,7 @@ function profileLoadSignatureData()
 		'max_image_height' => isset($sig_limits[6]) ? $sig_limits[6] : 0,
 		'max_font_size' => isset($sig_limits[7]) ? $sig_limits[7] : 0,
 		'bbc' => !empty($sig_bbc) ? explode(',', $sig_bbc) : [],
-	);
+	];
 	// Kept this line in for backwards compatibility!
 	$context['max_signature_length'] = $context['signature_limits']['max_length'];
 	// Warning message for signature image limits?
@@ -2852,7 +2852,7 @@ function profileLoadSignatureData()
 		$context['signature_warning'] = sprintf($txt['profile_error_signature_max_image_' . ($context['signature_limits']['max_image_width'] ? 'width' : 'height')], $context['signature_limits'][$context['signature_limits']['max_image_width'] ? 'max_image_width' : 'max_image_height']);
 
 	if (empty($context['do_preview']))
-		$context['member']['signature'] = empty($cur_profile['signature']) ? '' : str_replace(array('<br>', '<', '>', '"', '\''), array("\n", '&lt;', '&gt;', '&quot;', '&#039;'), $cur_profile['signature']);
+		$context['member']['signature'] = empty($cur_profile['signature']) ? '' : str_replace(['<br>', '<', '>', '"', '\''], ["\n", '&lt;', '&gt;', '&quot;', '&#039;'], $cur_profile['signature']);
 	else
 	{
 		$signature = !empty($_POST['signature']) ? $_POST['signature'] : '';
@@ -2889,35 +2889,35 @@ function profileLoadAvatarData()
 	if (empty($context['member']['avatar']))
 		$context['member']['avatar'] = [];
 
-	$context['member']['avatar'] += array(
+	$context['member']['avatar'] += [
 		'custom' => stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://') ? $cur_profile['avatar'] : 'http://',
 		'selection' => $cur_profile['avatar'] == '' || (stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://')) ? '' : $cur_profile['avatar'],
 		'allow_upload' => allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
 		'allow_external' => allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
-	);
+	];
 
 	if ($cur_profile['avatar'] == '' && $cur_profile['id_attach'] > 0 && $context['member']['avatar']['allow_upload'])
 	{
-		$context['member']['avatar'] += array(
+		$context['member']['avatar'] += [
 			'choice' => 'upload',
 			'server_pic' => 'blank.png',
 			'external' => 'http://'
-		);
+		];
 		$context['member']['avatar']['href'] = empty($cur_profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $cur_profile['filename'];
 	}
 	// Use "avatar_original" here so we show what the user entered even if the image proxy is enabled
 	elseif ((stristr($cur_profile['avatar'], 'http://') || stristr($cur_profile['avatar'], 'https://')) && $context['member']['avatar']['allow_external'])
-		$context['member']['avatar'] += array(
+		$context['member']['avatar'] += [
 			'choice' => 'external',
 			'server_pic' => 'blank.png',
 			'external' => $cur_profile['avatar_original']
-		);
+		];
 	else
-		$context['member']['avatar'] += array(
+		$context['member']['avatar'] += [
 			'choice' => 'none',
 			'server_pic' => 'blank.png',
 			'external' => 'http://'
-		);
+		];
 
 	// Second level selected avatar...
 	$context['avatar_selected'] = substr(strrchr($context['member']['avatar']['server_pic'], '/'), 1); // @todo remove?
@@ -2941,11 +2941,11 @@ function profileSaveGroups(&$value)
 			SELECT id_group
 			FROM {db_prefix}membergroups
 			WHERE group_type = {int:is_protected}',
-			array(
+			[
 				'is_protected' => 1,
-			)
+			]
 		);
-		$protected_groups = array(1);
+		$protected_groups = [1];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$protected_groups[] = $row['id_group'];
 		$smcFunc['db_free_result']($request);
@@ -2972,7 +2972,7 @@ function profileSaveGroups(&$value)
 		$_POST['additional_groups'] = array_diff($_POST['additional_groups'], $char_groups);
 
 	// The account page allows the change of your id_group - but not to a protected group!
-	if (empty($protected_groups) || count(array_intersect(array((int) $value, $old_profile['id_group']), $protected_groups)) == 0)
+	if (empty($protected_groups) || count(array_intersect([(int) $value, $old_profile['id_group']], $protected_groups)) == 0)
 		$value = (int) $value;
 	// ... otherwise it's the old group sir.
 	else
@@ -3018,10 +3018,10 @@ function profileSaveGroups(&$value)
 				WHERE (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0)
 					AND id_member != {int:selected_member}
 				LIMIT 1',
-				array(
+				[
 					'admin_group' => 1,
 					'selected_member' => $context['id_member'],
-				)
+				]
 			);
 			list ($another) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -3037,11 +3037,11 @@ function profileSaveGroups(&$value)
 		if ($context['user']['is_owner'])
 			$_SESSION['mc']['time'] = 0;
 		else
-			updateSettings(array('settings_updated' => time()));
+			updateSettings(['settings_updated' => time()]);
 	}
 
 	// Announce to any hooks that we have changed groups, but don't allow them to change it.
-	call_integration_hook('integrate_profile_profileSaveGroups', array($value, $additional_groups));
+	call_integration_hook('integrate_profile_profileSaveGroups', [$value, $additional_groups]);
 
 	return true;
 }
@@ -3114,7 +3114,7 @@ function profileSaveAvatarData(&$value)
 		$cur_profile['attachment_type'] = 0;
 		$cur_profile['filename'] = '';
 
-		removeAttachments(array('id_character' => $context['character']['id_character']));
+		removeAttachments(['id_character' => $context['character']['id_character']]);
 	}
 	elseif ($value == 'external' && allowedTo('profile_remote_avatar') && (stripos($_POST['userpicpersonal'], 'http://') === 0 || stripos($_POST['userpicpersonal'], 'https://') === 0) && empty($modSettings['avatar_download_external']))
 	{
@@ -3124,7 +3124,7 @@ function profileSaveAvatarData(&$value)
 		$cur_profile['filename'] = '';
 
 		// Remove any attached avatar...
-		removeAttachments(array('id_character' => $context['character']['id_character']));
+		removeAttachments(['id_character' => $context['character']['id_character']]);
 
 		$profile_vars['avatar'] = str_replace(' ', '%20', preg_replace('~action(?:=|%3d)(?!dlattach)~i', 'action-', $_POST['userpicpersonal']));
 
@@ -3242,12 +3242,12 @@ function profileSaveAvatarData(&$value)
 					}
 				}
 
-				$extensions = array(
+				$extensions = [
 					'1' => 'gif',
 					'2' => 'jpg',
 					'3' => 'png',
 					'6' => 'bmp'
-				);
+				];
 
 				$extension = isset($extensions[$sizes[2]]) ? $extensions[$sizes[2]] : 'bmp';
 				$mime_type = 'image/' . ($extension === 'jpg' ? 'jpeg' : ($extension === 'bmp' ? 'x-ms-bmp' : $extension));
@@ -3256,19 +3256,19 @@ function profileSaveAvatarData(&$value)
 				$file_hash = '';
 
 				// Remove previous attachments this member might have had.
-				removeAttachments(array('id_character' => $context['character']['id_character']));
+				removeAttachments(['id_character' => $context['character']['id_character']]);
 
 				$cur_profile['id_attach'] = $smcFunc['db_insert']('',
 					'{db_prefix}attachments',
-					array(
+					[
 						'id_character' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'fileext' => 'string', 'size' => 'int',
 						'width' => 'int', 'height' => 'int', 'mime_type' => 'string', 'id_folder' => 'int',
-					),
-					array(
+					],
+					[
 						$context['character']['id_character'], 1, $destName, $file_hash, $extension, filesize($_FILES['attachment']['tmp_name']),
 						(int) $width, (int) $height, $mime_type, $id_folder,
-					),
-					array('id_attach'),
+					],
+					['id_attach'],
 					1
 				);
 
@@ -3279,7 +3279,7 @@ function profileSaveAvatarData(&$value)
 				if (!rename($_FILES['attachment']['tmp_name'], $destinationPath))
 				{
 					// I guess a man can try.
-					removeAttachments(array('id_character' => $memID));
+					removeAttachments(['id_character' => $memID]);
 					fatal_lang_error('attach_timeout', 'critical');
 				}
 
@@ -3325,7 +3325,7 @@ function profileValidateSignature(&$value)
 		$sig_limits = explode(',', $sig_limits);
 		$disabledTags = !empty($sig_bbc) ? explode(',', $sig_bbc) : [];
 
-		$unparsed_signature = strtr(un_htmlspecialchars($value), array("\r" => '', '&#039' => '\''));
+		$unparsed_signature = strtr(un_htmlspecialchars($value), ["\r" => '', '&#039' => '\'']);
 
 		// Too many lines?
 		if (!empty($sig_limits[2]) && substr_count($unparsed_signature, "\n") >= $sig_limits[2])
@@ -3500,7 +3500,7 @@ function profileValidateEmail($email, $memID = 0)
 {
 	global $smcFunc;
 
-	$email = strtr($email, array('&#039;' => '\''));
+	$email = strtr($email, ['&#039;' => '\'']);
 
 	// Check the name and email for validity.
 	if (trim($email) == '')
@@ -3515,10 +3515,10 @@ function profileValidateEmail($email, $memID = 0)
 		WHERE ' . ($memID != 0 ? 'id_member != {int:selected_member} AND ' : '') . '
 			email_address = {string:email_address}
 		LIMIT 1',
-		array(
+		[
 			'selected_member' => $memID,
 			'email_address' => $email,
-		)
+		]
 	);
 
 	if ($smcFunc['db_num_rows']($request) > 0)
@@ -3555,11 +3555,11 @@ function profileSendActivation()
 	if (empty($profile_vars['email_address']))
 		return;
 
-	$replacements = array(
+	$replacements = [
 		'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $context['id_member'] . ';code=' . $profile_vars['validation_code'],
 		'ACTIVATIONCODE' => $profile_vars['validation_code'],
 		'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $context['id_member'],
-	);
+	];
 
 	// Send off the email.
 	$emaildata = loadEmailTemplate('activate_reactivate', $replacements, empty($cur_profile['lngfile']) || empty($modSettings['userLanguage']) ? $language : $cur_profile['lngfile']);
@@ -3569,12 +3569,12 @@ function profileSendActivation()
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}log_online
 		WHERE id_member = {int:selected_member}',
-		array(
+		[
 			'selected_member' => $context['id_member'],
-		)
+		]
 	);
 	$_SESSION['log_time'] = 0;
-	$_SESSION['login_' . $cookiename] = json_encode(array(0, '', 0));
+	$_SESSION['login_' . $cookiename] = json_encode([0, '', 0]);
 
 	if (isset($_COOKIE[$cookiename]))
 		$_COOKIE[$cookiename] = '';
@@ -3611,7 +3611,7 @@ function groupMembership($memID)
 
 	// Ensure the query doesn't croak!
 	if (empty($groups))
-		$groups = array(0);
+		$groups = [0];
 	// Just to be sure...
 	foreach ($groups as $k => $v)
 		$groups[$k] = (int) $v;
@@ -3626,19 +3626,19 @@ function groupMembership($memID)
 			OR mg.group_type > {int:nonjoin_group_id})
 			AND mg.id_group != {int:moderator_group}
 		ORDER BY group_name',
-		array(
+		[
 			'group_list' => $groups,
 			'selected_member' => $memID,
 			'status_open' => 0,
 			'nonjoin_group_id' => 1,
 			'moderator_group' => 3,
-		)
+		]
 	);
 	// This beast will be our group holder.
-	$context['groups'] = array(
+	$context['groups'] = [
 		'member' => [],
 		'available' => []
-	);
+	];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Can they edit their primary group?
@@ -3649,7 +3649,7 @@ function groupMembership($memID)
 		if (((!$context['can_manage_protected'] && $row['group_type'] == 1) || (!$context['can_manage_membergroups'] && $row['group_type'] == 0)) && $row['id_group'] != $context['primary_group'])
 			continue;
 
-		$context['groups'][in_array($row['id_group'], $groups) ? 'member' : 'available'][$row['id_group']] = array(
+		$context['groups'][in_array($row['id_group'], $groups) ? 'member' : 'available'][$row['id_group']] = [
 			'id' => $row['id_group'],
 			'name' => $row['group_name'],
 			'desc' => $row['description'],
@@ -3660,12 +3660,12 @@ function groupMembership($memID)
 			'can_be_primary' => $row['hidden'] != 2,
 			// Anything more than this needs to be done through account settings for security.
 			'can_leave' => $row['id_group'] != 1 && $row['group_type'] > 1 ? true : false,
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
 	// Add registered members on the end.
-	$context['groups']['member'][0] = array(
+	$context['groups']['member'][0] = [
 		'id' => 0,
 		'name' => $txt['regular_members'],
 		'desc' => $txt['regular_members_desc'],
@@ -3673,7 +3673,7 @@ function groupMembership($memID)
 		'is_primary' => $context['primary_group'] == 0 ? true : false,
 		'can_be_primary' => true,
 		'can_leave' => 0,
-	);
+	];
 
 	// No changing primary one unless you have enough groups!
 	if (count($context['groups']['member']) < 2)
@@ -3732,10 +3732,10 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			FROM {db_prefix}membergroups
 			WHERE id_group = {int:current_group}
 			LIMIT {int:limit}',
-			array(
+			[
 				'current_group' => $group_id,
 				'limit' => 1,
-			)
+			]
 		);
 		list ($is_protected) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -3749,10 +3749,10 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 		SELECT id_group, group_type, hidden, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group IN ({int:group_list}, {int:current_group})',
-		array(
+		[
 			'group_list' => $group_id,
 			'current_group' => $old_profile['id_group'],
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -3803,11 +3803,11 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			WHERE id_group = {int:selected_group}
 				AND permission = {string:admin_forum}
 				AND add_deny = {int:not_denied}',
-			array(
+			[
 				'selected_group' => $group_id,
 				'not_denied' => 1,
 				'admin_forum' => 'admin_forum',
-			)
+			]
 		);
 		list ($disallow) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -3825,11 +3825,11 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			WHERE id_member = {int:selected_member}
 				AND id_group = {int:selected_group}
 				AND status = {int:status_open}',
-			array(
+			[
 				'selected_member' => $memID,
 				'selected_group' => $group_id,
 				'status_open' => 0,
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) != 0)
 			fatal_lang_error('profile_error_already_requested_group');
@@ -3838,15 +3838,15 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 		// Log the request.
 		$smcFunc['db_insert']('',
 			'{db_prefix}log_group_requests',
-			array(
+			[
 				'id_member' => 'int', 'id_group' => 'int', 'time_applied' => 'int', 'reason' => 'string-65534',
 				'status' => 'int', 'id_member_acted' => 'int', 'member_name_acted' => 'string', 'time_acted' => 'int', 'act_reason' => 'string',
-			),
-			array(
+			],
+			[
 				$memID, $group_id, time(), $_POST['reason'],
 				0, 0, '', 0, '',
-			),
-			array('id_request')
+			],
+			['id_request']
 		);
 
 		// Add a background task to handle notifying people of this request
@@ -3907,9 +3907,9 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 	if ($context['user']['is_owner'])
 		$_SESSION['mc']['time'] = 0;
 	else
-		updateSettings(array('settings_updated' => time()));
+		updateSettings(['settings_updated' => time()]);
 
-	updateMemberData($memID, array('id_group' => $newPrimary, 'additional_groups' => $addGroups));
+	updateMemberData($memID, ['id_group' => $newPrimary, 'additional_groups' => $addGroups]);
 
 	return $changeType;
 }
@@ -3958,10 +3958,10 @@ function tfasetup($memID)
 				$backup = substr(sha1(mt_rand()), 0, 16);
 				$backup_encrypted = hash_password($user_settings['member_name'], $backup);
 
-				updateMemberData($memID, array(
+				updateMemberData($memID, [
 					'tfa_secret' => $_SESSION['tfa_secret'],
 					'tfa_backup' => $backup_encrypted,
-				));
+				]);
 
 				setTFACookie(3153600, $memID, hash_salt($backup_encrypted, $user_settings['password_salt']));
 
@@ -3994,10 +3994,10 @@ function tfasetup($memID)
 	}
 	elseif (isset($_REQUEST['disable']))
 	{
-		updateMemberData($memID, array(
+		updateMemberData($memID, [
 			'tfa_secret' => '',
 			'tfa_backup' => '',
-		));
+		]);
 		redirectexit('action=profile;area=account;u=' . $memID);
 	}
 	else

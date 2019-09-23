@@ -31,7 +31,7 @@ function validateSession($type = 'admin')
 
 	// Validate what type of session check this is.
 	$types = [];
-	call_integration_hook('integrate_validateSession', array(&$types));
+	call_integration_hook('integrate_validateSession', [&$types]);
 	$type = in_array($type, $types) || $type == 'moderate' ? $type : 'admin';
 
 	// If we're using XML give an additional ten minutes grace as an admin can't log on in XML mode.
@@ -56,7 +56,7 @@ function validateSession($type = 'admin')
 
 		checkSession();
 
-		$good_password = in_array(true, call_integration_hook('integrate_verify_password', array($user_info['username'], $_POST[$type . '_pass'], false)), true);
+		$good_password = in_array(true, call_integration_hook('integrate_verify_password', [$user_info['username'], $_POST[$type . '_pass'], false]), true);
 
 		// Password correct?
 		if ($good_password || hash_verify_password($user_info['username'], $_POST[$type . '_pass'], $user_info['passwd']))
@@ -159,20 +159,20 @@ function is_not_banned($forceCheck = false)
 	if ($forceCheck || !isset($_SESSION['ban']) || empty($modSettings['banLastUpdated']) || ($_SESSION['ban']['last_checked'] < $modSettings['banLastUpdated']) || $_SESSION['ban']['id_member'] != $user_info['id'] || $_SESSION['ban']['ip'] != $user_info['ip'] || $_SESSION['ban']['ip2'] != $user_info['ip2'] || (isset($user_info['email'], $_SESSION['ban']['email']) && $_SESSION['ban']['email'] != $user_info['email']))
 	{
 		// Innocent until proven guilty.  (but we know you are! :P)
-		$_SESSION['ban'] = array(
+		$_SESSION['ban'] = [
 			'last_checked' => time(),
 			'id_member' => $user_info['id'],
 			'ip' => $user_info['ip'],
 			'ip2' => $user_info['ip2'],
 			'email' => $user_info['email'],
-		);
+		];
 
 		$ban_query = [];
-		$ban_query_vars = array('current_time' => time());
+		$ban_query_vars = ['current_time' => time()];
 		$flag_is_activated = false;
 
 		// Check both IP addresses.
-		foreach (array('ip', 'ip2') as $ip_number)
+		foreach (['ip', 'ip2'] as $ip_number)
 		{
 			if ($ip_number == 'ip2' && $user_info['ip2'] == $user_info['ip'])
 				continue;
@@ -207,12 +207,12 @@ function is_not_banned($forceCheck = false)
 		// Check the ban, if there's information.
 		if (!empty($ban_query))
 		{
-			$restrictions = array(
+			$restrictions = [
 				'cannot_access',
 				'cannot_login',
 				'cannot_post',
 				'cannot_register',
-			);
+			];
 			$request = $smcFunc['db_query']('', '
 				SELECT bi.id_ban, bi.email_address, bi.id_member, bg.cannot_access, bg.cannot_register,
 					bg.cannot_post, bg.cannot_login, bg.reason, COALESCE(bg.expire_time, 0) AS expire_time
@@ -267,12 +267,12 @@ function is_not_banned($forceCheck = false)
 				AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time})
 				AND bg.cannot_access = {int:cannot_access}
 			LIMIT {int:limit}',
-			array(
+			[
 				'cannot_access' => 1,
 				'ban_list' => $bans,
 				'current_time' => time(),
 				'limit' => count($bans),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -298,9 +298,9 @@ function is_not_banned($forceCheck = false)
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}log_online
 				WHERE id_member = {int:current_member}',
-				array(
+				[
 					'current_member' => $user_info['id'],
-				)
+				]
 			);
 
 		// 'Log' the user out.  Can't have any funny business... (save the name!)
@@ -311,7 +311,7 @@ function is_not_banned($forceCheck = false)
 		$user_info['is_admin'] = false;
 		$user_info['permissions'] = [];
 		$user_info['id'] = 0;
-		$context['user'] = array(
+		$context['user'] = [
 			'id' => 0,
 			'username' => '',
 			'name' => $txt['guest_title'],
@@ -321,7 +321,7 @@ function is_not_banned($forceCheck = false)
 			'is_mod' => false,
 			'can_mod' => false,
 			'language' => $user_info['language'],
-		);
+		];
 
 		// A goodbye present.
 		require_once($sourcedir . '/Subs-Auth.php');
@@ -349,9 +349,9 @@ function is_not_banned($forceCheck = false)
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member = {int:current_member}',
-			array(
+			[
 				'current_member' => $user_info['id'],
-			)
+			]
 		);
 
 		// 'Log' the user out.  Can't have any funny business... (save the name!)
@@ -362,7 +362,7 @@ function is_not_banned($forceCheck = false)
 		$user_info['is_admin'] = false;
 		$user_info['permissions'] = [];
 		$user_info['id'] = 0;
-		$context['user'] = array(
+		$context['user'] = [
 			'id' => 0,
 			'username' => '',
 			'name' => $txt['guest_title'],
@@ -372,7 +372,7 @@ function is_not_banned($forceCheck = false)
 			'is_mod' => false,
 			'can_mod' => false,
 			'language' => $user_info['language'],
-		);
+		];
 
 		// Clean all traces of the request.
 		$_GET['action'] = '';
@@ -405,7 +405,7 @@ function banPermissions()
 	// Okay, well, you can watch, but don't touch a thing.
 	elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $user_info['warning']))
 	{
-		$denied_permissions = array(
+		$denied_permissions = [
 			'pm_send',
 			'poll_post',
 			'poll_add_own', 'poll_add_any',
@@ -425,21 +425,21 @@ function banPermissions()
 			'lock_own', 'lock_any',
 			'remove_own', 'remove_any',
 			'post_unapproved_topics', 'post_unapproved_replies_own', 'post_unapproved_replies_any',
-		);
-		call_integration_hook('integrate_post_ban_permissions', array(&$denied_permissions));
+		];
+		call_integration_hook('integrate_post_ban_permissions', [&$denied_permissions]);
 		$user_info['permissions'] = array_diff($user_info['permissions'], $denied_permissions);
 	}
 	// Are they absolutely under moderation?
 	elseif (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $user_info['warning'])
 	{
 		// Work out what permissions should change...
-		$permission_change = array(
+		$permission_change = [
 			'post_new' => 'post_unapproved_topics',
 			'post_reply_own' => 'post_unapproved_replies_own',
 			'post_reply_any' => 'post_unapproved_replies_any',
 			'post_attachment' => 'post_unapproved_attachments',
-		);
-		call_integration_hook('integrate_warn_permissions', array(&$permission_change));
+		];
+		call_integration_hook('integrate_warn_permissions', [&$permission_change]);
 		foreach ($permission_change as $old => $new)
 		{
 			if (!in_array($old, $user_info['permissions']))
@@ -497,9 +497,9 @@ function log_ban($ban_ids = [], $email = null)
 
 	$smcFunc['db_insert']('',
 		'{db_prefix}log_banned',
-		array('id_member' => 'int', 'ip' => 'inet', 'email' => 'string', 'log_time' => 'int'),
-		array($user_info['id'], $user_info['ip'], ($email === null ? ($user_info['is_guest'] ? '' : $user_info['email']) : $email), time()),
-		array('id_ban_log')
+		['id_member' => 'int', 'ip' => 'inet', 'email' => 'string', 'log_time' => 'int'],
+		[$user_info['id'], $user_info['ip'], ($email === null ? ($user_info['is_guest'] ? '' : $user_info['email']) : $email), time()],
+		['id_ban_log']
 	);
 
 	// One extra point for these bans.
@@ -508,9 +508,9 @@ function log_ban($ban_ids = [], $email = null)
 			UPDATE {db_prefix}ban_items
 			SET hits = hits + 1
 			WHERE id_ban IN ({array_int:ban_ids})',
-			array(
+			[
 				'ban_ids' => $ban_ids,
-			)
+			]
 		);
 }
 
@@ -543,11 +543,11 @@ function isBannedEmail($email, $restriction, $error)
 		WHERE {string:email} LIKE bi.email_address
 			AND (bg.' . $restriction . ' = {int:cannot_access} OR bg.cannot_access = {int:cannot_access})
 			AND (bg.expire_time IS NULL OR bg.expire_time >= {int:now})',
-		array(
+		[
 			'email' => $email,
 			'cannot_access' => 1,
 			'now' => time(),
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -739,12 +739,12 @@ function createToken($action, $type = 'post')
 	$token = md5(mt_rand() . session_id() . (string) microtime() . $modSettings['rand_seed'] . $type);
 	$token_var = substr(preg_replace('~^\d+~', '', md5(mt_rand() . (string) microtime() . mt_rand())), 0, mt_rand(7, 12));
 
-	$_SESSION['token'][$type . '-' . $action] = array($token_var, md5($token . $_SERVER['HTTP_USER_AGENT']), time(), $token);
+	$_SESSION['token'][$type . '-' . $action] = [$token_var, md5($token . $_SERVER['HTTP_USER_AGENT']), time(), $token];
 
 	$context[$action . '_token'] = $token;
 	$context[$action . '_token_var'] = $token_var;
 
-	return array($action . '_token_var' => $token_var, $action . '_token' => $token);
+	return [$action . '_token_var' => $token_var, $action . '_token' => $token];
 }
 
 /**
@@ -872,7 +872,7 @@ function checkSubmitOnce($action, $is_fatal = true)
 	}
 	// Don't check, just free the stack number.
 	elseif ($action == 'free' && isset($_REQUEST['seqnum']) && in_array($_REQUEST['seqnum'], $_SESSION['forms']))
-		$_SESSION['forms'] = array_diff($_SESSION['forms'], array($_REQUEST['seqnum']));
+		$_SESSION['forms'] = array_diff($_SESSION['forms'], [$_REQUEST['seqnum']]);
 	elseif ($action != 'free')
 		trigger_error('checkSubmitOnce(): Invalid action \'' . $action . '\'', E_USER_WARNING);
 }
@@ -916,7 +916,7 @@ function allowedTo($permission, $boards = null)
 			return false;
 	}
 	elseif (!is_array($boards))
-		$boards = array($boards);
+		$boards = [$boards];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT MIN(bp.add_deny) AS add_deny
@@ -929,13 +929,13 @@ function allowedTo($permission, $boards = null)
 			AND bp.permission IN ({array_string:permission_list})
 			AND (mods.id_member IS NOT NULL OR modgs.id_group IS NOT NULL OR bp.id_group != {int:moderator_group})
 		GROUP BY b.id_board',
-		array(
+		[
 			'current_member' => $user_info['id'],
 			'board_list' => $boards,
 			'group_list' => $user_info['groups'],
 			'moderator_group' => 3,
 			'permission_list' => $permission,
-		)
+		]
 	);
 
 	// Make sure they can do it on all of the boards.
@@ -965,7 +965,7 @@ function isAllowedTo($permission, $boards = null)
 {
 	global $user_info, $txt;
 
-	$heavy_permissions = array(
+	$heavy_permissions = [
 		'admin_forum',
 		'manage_attachments',
 		'manage_smileys',
@@ -975,12 +975,12 @@ function isAllowedTo($permission, $boards = null)
 		'manage_bans',
 		'manage_membergroups',
 		'manage_permissions',
-	);
+	];
 
 	// Make it an array, even if a string was passed.
 	$permission = (array) $permission;
 
-	call_integration_hook('integrate_heavy_permissions_session', array(&$heavy_permissions));
+	call_integration_hook('integrate_heavy_permissions_session', [&$heavy_permissions]);
 
 	// Check the permission and return an error...
 	if (!allowedTo($permission, $boards))
@@ -1031,7 +1031,7 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 
 	// Arrays are nice, most of the time.
 	if (!is_array($permissions))
-		$permissions = array($permissions);
+		$permissions = [$permissions];
 
 	/*
 	 * If not $simple, the resultant array becomes split into the multiple
@@ -1043,19 +1043,19 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 	if ($user_info['is_admin'])
 	{
 		if ($simple)
-			return array(0);
+			return [0];
 		else
 		{
 			$boards = [];
 			foreach ($permissions as $permission)
-				$boards[$permission] = array(0);
+				$boards[$permission] = [0];
 
 			return $boards;
 		}
 	}
 
 	// All groups the user is in except 'moderator'.
-	$groups = array_diff($user_info['groups'], array(3));
+	$groups = array_diff($user_info['groups'], [3]);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT b.id_board, bp.add_deny' . ($simple ? '' : ', bp.permission') . '
@@ -1067,12 +1067,12 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 			AND bp.permission IN ({array_string:permissions})
 			AND (mods.id_member IS NOT NULL OR modgs.id_group IS NOT NULL OR bp.id_group != {int:moderator_group})' .
 			($check_access ? ' AND {query_see_board}' : ''),
-		array(
+		[
 			'current_member' => $user_info['id'],
 			'group_list' => $groups,
 			'moderator_group' => 3,
 			'permissions' => $permissions,
-		)
+		]
 	);
 	$boards = [];
 	$deny_boards = [];
@@ -1129,14 +1129,14 @@ function spamProtection($error_type, $only_return_result = false)
 	global $modSettings, $user_info, $smcFunc;
 
 	// Certain types take less/more time.
-	$timeOverrides = array(
+	$timeOverrides = [
 		'login' => 2,
 		'register' => 2,
 		'remind' => 30,
 		'sendmail' => $modSettings['spamWaitTime'] * 5,
 		'reporttm' => $modSettings['spamWaitTime'] * 4,
 		'search' => !empty($modSettings['search_floodcontrol_time']) ? $modSettings['search_floodcontrol_time'] : 1,
-	);
+	];
 
 
 	// Moderators are free...
@@ -1145,25 +1145,25 @@ function spamProtection($error_type, $only_return_result = false)
 	else
 		$timeLimit = 2;
 
-	call_integration_hook('integrate_spam_protection', array(&$timeOverrides, &$timeLimit));
+	call_integration_hook('integrate_spam_protection', [&$timeOverrides, &$timeLimit]);
 
 	// Delete old entries...
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}log_floodcontrol
 		WHERE log_time < {int:log_time}
 			AND log_type = {string:log_type}',
-		array(
+		[
 			'log_time' => time() - $timeLimit,
 			'log_type' => $error_type,
-		)
+		]
 	);
 
 	// Add a new entry, deleting the old if necessary.
 	$smcFunc['db_insert']('replace',
 		'{db_prefix}log_floodcontrol',
-		array('ip' => 'inet', 'log_time' => 'int', 'log_type' => 'string'),
-		array($user_info['ip'], time(), $error_type),
-		array('ip', 'log_type')
+		['ip' => 'inet', 'log_time' => 'int', 'log_type' => 'string'],
+		[$user_info['ip'], time(), $error_type],
+		['ip', 'log_type']
 	);
 
 	// If affected is 0 or 2, it was there already.
@@ -1171,7 +1171,7 @@ function spamProtection($error_type, $only_return_result = false)
 	{
 		// Spammer!  You only have to wait a *few* seconds!
 		if (!$only_return_result)
-			fatal_lang_error($error_type . '_WaitTime_broken', false, array($timeLimit));
+			fatal_lang_error($error_type . '_WaitTime_broken', false, [$timeLimit]);
 
 		return true;
 	}
@@ -1266,7 +1266,7 @@ function frameOptionsHeader($override = null)
 	$option = 'SAMEORIGIN';
 	if (is_null($override) && !empty($modSettings['frame_security']))
 		$option = $modSettings['frame_security'];
-	elseif (in_array($override, array('SAMEORIGIN', 'DENY')))
+	elseif (in_array($override, ['SAMEORIGIN', 'DENY']))
 		$option = $override;
 
 	// Don't bother setting the header if we have disabled it.

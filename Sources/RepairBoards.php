@@ -38,12 +38,12 @@ function RepairBoards()
 	loadLanguage('ManageMaintenance');
 
 	// Make sure the tabs stay nice.
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['maintain_title'],
 		'help' => '',
 		'description' => $txt['maintain_info'],
 		'tabs' => [],
-	);
+	];
 
 	// Start displaying errors without fixing them.
 	if (isset($_GET['fixErrors']))
@@ -80,9 +80,9 @@ function RepairBoards()
 		findForumErrors(true);
 
 		// Note that we've changed everything possible ;)
-		updateSettings(array(
+		updateSettings([
 			'settings_updated' => time(),
-		));
+		]);
 		updateStats('message');
 		updateStats('topic');
 
@@ -175,9 +175,9 @@ function loadForumTests()
 	*/
 
 	// This great array contains all of our error checks, fixes, etc etc etc.
-	$errorTests = array(
+	$errorTests = [
 		// Make a last-ditch-effort check to get rid of topics with zeros..
-		'zero_topics' => array(
+		'zero_topics' => [
 			'check_query' => '
 				SELECT COUNT(*)
 				FROM {db_prefix}topics
@@ -188,9 +188,9 @@ function loadForumTests()
 				SET id_topic = NULL
 				WHERE id_topic = 0',
 			'message' => 'repair_zero_ids',
-		),
+		],
 		// ... and same with messages.
-		'zero_messages' => array(
+		'zero_messages' => [
 			'check_query' => '
 				SELECT COUNT(*)
 				FROM {db_prefix}messages
@@ -201,15 +201,15 @@ function loadForumTests()
 				SET id_msg = NULL
 				WHERE id_msg = 0',
 			'message' => 'repair_zero_ids',
-		),
+		],
 		// Find messages that don't have existing topics.
-		'missing_topics' => array(
-			'substeps' => array(
+		'missing_topics' => [
+			'substeps' => [
 				'step_size' => 1000,
 				'step_max' => '
 					SELECT MAX(id_topic)
 					FROM {db_prefix}messages'
-			),
+			],
 			'check_query' => '
 				SELECT m.id_topic, m.id_msg
 				FROM {db_prefix}messages AS m
@@ -241,17 +241,17 @@ function loadForumTests()
 					UPDATE {db_prefix}topics
 					SET id_first_msg = 0
 					WHERE id_first_msg = {int:id_first_msg}',
-					array(
+					[
 						'id_first_msg' => $row['myid_first_msg'],
-					)
+					]
 				);
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}topics
 					SET id_last_msg = 0
 					WHERE id_last_msg = {int:id_last_msg}',
-					array(
+					[
 						'id_last_msg' => $row['myid_last_msg'],
-					)
+					]
 				);
 
 				$memberStartedID = (int) getMsgMemberID($row['myid_first_msg']);
@@ -259,23 +259,23 @@ function loadForumTests()
 
 				$newTopicID = $smcFunc['db_insert']('',
 					'{db_prefix}topics',
-					array(
+					[
 						'id_board' => 'int',
 						'id_member_started' => 'int',
 						'id_member_updated' => 'int',
 						'id_first_msg' => 'int',
 						'id_last_msg' => 'int',
 						'num_replies' => 'int'
-					),
-					array(
+					],
+					[
 						$row['id_board'],
 						$memberStartedID,
 						$memberUpdatedID,
 						$row['myid_first_msg'],
 						$row['myid_last_msg'],
 						$row['my_num_replies']
-					),
-					array('id_topic'),
+					],
+					['id_topic'],
 					1
 				);
 
@@ -283,24 +283,24 @@ function loadForumTests()
 					UPDATE {db_prefix}messages
 					SET id_topic = {int:newTopicID}, id_board = {int:board_id}
 					WHERE id_topic = {int:topic_id}',
-					array(
+					[
 						'board_id' => $row['id_board'],
 						'topic_id' => $row['id_topic'],
 						'newTopicID' => $newTopicID,
-					)
+					]
 				);
 			},
-			'force_fix' => array('stats_topics'),
-			'messages' => array('repair_missing_topics', 'id_msg', 'id_topic'),
-		),
+			'force_fix' => ['stats_topics'],
+			'messages' => ['repair_missing_topics', 'id_msg', 'id_topic'],
+		],
 		// Find topics with no messages.
-		'missing_messages' => array(
-			'substeps' => array(
+		'missing_messages' => [
+			'substeps' => [
 				'step_size' => 1000,
 				'step_max' => '
 					SELECT MAX(id_topic)
 					FROM {db_prefix}topics'
-			),
+			],
 			'check_query' => '
 				SELECT t.id_topic, COUNT(m.id_msg) AS num_msg
 				FROM {db_prefix}topics AS t
@@ -309,36 +309,36 @@ function loadForumTests()
 				GROUP BY t.id_topic
 				HAVING COUNT(m.id_msg) = 0',
 			// Remove all topics that have zero messages in the messages table.
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_topic',
 				'process' => function ($topics) use ($smcFunc)
 				{
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}topics
 						WHERE id_topic IN ({array_int:topics})',
-						array(
+						[
 							'topics' => $topics,
-						)
+						]
 					);
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_topics
 						WHERE id_topic IN ({array_int:topics})',
-						array(
+						[
 							'topics' => $topics,
-						)
+						]
 					);
 
 				},
-			),
-			'messages' => array('repair_missing_messages', 'id_topic'),
-		),
-		'poll_options_missing_poll' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_messages', 'id_topic'],
+		],
+		'poll_options_missing_poll' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_poll)
 					FROM {db_prefix}poll_choices'
-			),
+			],
 			'check_query' => '
 				SELECT o.id_poll, count(*) as amount, t.id_topic, t.id_board, t.id_member_started AS id_poster, m.member_name AS poster_name
 				FROM {db_prefix}poll_choices AS o
@@ -366,7 +366,7 @@ function loadForumTests()
 				if(empty($row['id_topic'])) {
 					$newMessageID = $smcFunc['db_insert']('',
 						'{db_prefix}messages',
-						array(
+						[
 							'id_board' => 'int',
 							'id_topic' => 'int',
 							'poster_time' => 'int',
@@ -378,8 +378,8 @@ function loadForumTests()
 							'smileys_enabled' => 'int',
 							'body' => 'string-65534',
 							'approved' => 'int',
-						),
-						array(
+						],
+						[
 							$row['id_board'],
 							0,
 							time(),
@@ -391,14 +391,14 @@ function loadForumTests()
 							1,
 							$txt['salvaged_poll_message_body'],
 							1,
-						),
-						array('id_msg'),
+						],
+						['id_msg'],
 						1
 					);
 
 					$row['id_topic'] = $smcFunc['db_insert']('',
 						'{db_prefix}topics',
-						array(
+						[
 							'id_board' => 'int',
 							'id_poll' => 'int',
 							'id_member_started' => 'int',
@@ -406,8 +406,8 @@ function loadForumTests()
 							'id_first_msg' => 'int',
 							'id_last_msg' => 'int',
 							'num_replies' => 'int',
-						),
-						array(
+						],
+						[
 							$row['id_board'],
 							$row['id_poll'],
 							$row['id_poster'],
@@ -415,8 +415,8 @@ function loadForumTests()
 							$newMessageID,
 							$newMessageID,
 							0,
-						),
-						array('id_topic'),
+						],
+						['id_topic'],
 						1
 					);
 
@@ -424,11 +424,11 @@ function loadForumTests()
 						UPDATE {db_prefix}messages
 					SET id_topic = {int:newTopicID}, id_board = {int:id_board}
 						WHERE id_msg = {int:newMessageID}',
-						array(
+						[
 							'id_board' => $row['id_board'],
 							'newTopicID' => $row['id_topic'],
 							'newMessageID' => $newMessageID,
-						)
+						]
 					);
 
 					updateStats('subject', $row['id_topic'], $txt['salvaged_poll_topic_name']);
@@ -436,7 +436,7 @@ function loadForumTests()
 
 				$smcFunc['db_insert']('',
 					'{db_prefix}polls',
-					array(
+					[
 						'id_poll' => 'int',
 						'question' => 'string-255',
 						'voting_locked' => 'int',
@@ -449,8 +449,8 @@ function loadForumTests()
 						'reset_poll' => 'int',
 						'id_member' => 'int',
 						'poster_name' => 'string-255',
-					),
-					array(
+					],
+					[
 						$row['id_poll'],
 						$txt['salvaged_poll_question'],
 						1,
@@ -463,20 +463,20 @@ function loadForumTests()
 						0,
 						$row['id_poster'],
 						$row['poster_name'],
-					),
+					],
 					[]
 				);
 			},
-			'force_fix' => array('stats_topics'),
-			'messages' => array('repair_poll_options_missing_poll', 'id_poll', 'amount'),
-		),
-		'polls_missing_topics' => array(
-			'substeps' => array(
+			'force_fix' => ['stats_topics'],
+			'messages' => ['repair_poll_options_missing_poll', 'id_poll', 'amount'],
+		],
+		'polls_missing_topics' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_poll)
 					FROM {db_prefix}polls'
-			),
+			],
 			'check_query' => '
 				SELECT p.id_poll, p.id_member, p.poster_name, t.id_board
 				FROM {db_prefix}polls AS p
@@ -498,7 +498,7 @@ function loadForumTests()
 
 				$newMessageID = $smcFunc['db_insert']('',
 					'{db_prefix}messages',
-					array(
+					[
 						'id_board' => 'int',
 						'id_topic' => 'int',
 						'poster_time' => 'int',
@@ -510,8 +510,8 @@ function loadForumTests()
 						'smileys_enabled' => 'int',
 						'body' => 'string-65534',
 						'approved' => 'int',
-					),
-					array(
+					],
+					[
 						$row['id_board'],
 						0,
 						time(),
@@ -523,14 +523,14 @@ function loadForumTests()
 						1,
 						$txt['salvaged_poll_message_body'],
 						1,
-					),
-					array('id_msg'),
+					],
+					['id_msg'],
 					1
 				);
 
 				$newTopicID = $smcFunc['db_insert']('',
 					'{db_prefix}topics',
-					array(
+					[
 						'id_board' => 'int',
 						'id_poll' => 'int',
 						'id_member_started' => 'int',
@@ -538,8 +538,8 @@ function loadForumTests()
 						'id_first_msg' => 'int',
 						'id_last_msg' => 'int',
 						'num_replies' => 'int',
-					),
-					array(
+					],
+					[
 						$row['id_board'],
 						$row['id_poll'],
 						$row['id_member'],
@@ -547,8 +547,8 @@ function loadForumTests()
 						$newMessageID,
 						$newMessageID,
 						0,
-					),
-					array('id_topic'),
+					],
+					['id_topic'],
 					1
 				);
 
@@ -556,25 +556,25 @@ function loadForumTests()
 					UPDATE {db_prefix}messages
 				SET id_topic = {int:newTopicID}, id_board = {int:id_board}
 					WHERE id_msg = {int:newMessageID}',
-					array(
+					[
 						'id_board' => $row['id_board'],
 						'newTopicID' => $newTopicID,
 						'newMessageID' => $newMessageID,
-					)
+					]
 				);
 
 				updateStats('subject', $newTopicID, $txt['salvaged_poll_topic_name']);
 			},
-			'force_fix' => array('stats_topics'),
-			'messages' => array('repair_polls_missing_topics', 'id_poll', 'id_topic'),
-		),
-		'stats_topics' => array(
-			'substeps' => array(
+			'force_fix' => ['stats_topics'],
+			'messages' => ['repair_polls_missing_topics', 'id_poll', 'id_topic'],
+		],
+		'stats_topics' => [
+			'substeps' => [
 				'step_size' => 200,
 				'step_max' => '
 					SELECT MAX(id_topic)
 					FROM {db_prefix}topics'
-			),
+			],
 			'check_query' => '
 				SELECT
 					t.id_topic, t.id_first_msg, t.id_last_msg,
@@ -611,14 +611,14 @@ function loadForumTests()
 						id_member_started = {int:memberStartedID}, id_last_msg = {int:myid_last_msg},
 						id_member_updated = {int:memberUpdatedID}, approved = {int:firstmsg_approved}
 					WHERE id_topic = {int:topic_id}',
-					array(
+					[
 						'myid_first_msg' => $row['myid_first_msg'],
 						'memberStartedID' => $memberStartedID,
 						'myid_last_msg' => $row['myid_last_msg'],
 						'memberUpdatedID' => $memberUpdatedID,
 						'firstmsg_approved' => $row['firstmsg_approved'],
 						'topic_id' => $row['id_topic'],
-					)
+					]
 				);
 			},
 			'message_function' => function ($row) use ($txt, &$context)
@@ -636,15 +636,15 @@ function loadForumTests()
 
 				return true;
 			},
-		),
+		],
 		// Find topics with incorrect num_replies.
-		'stats_topics2' => array(
-			'substeps' => array(
+		'stats_topics2' => [
+			'substeps' => [
 				'step_size' => 300,
 				'step_max' => '
 					SELECT MAX(id_topic)
 					FROM {db_prefix}topics'
-			),
+			],
 			'check_query' => '
 				SELECT
 					t.id_topic, t.num_replies, mf.approved,
@@ -668,10 +668,10 @@ function loadForumTests()
 					UPDATE {db_prefix}topics
 					SET num_replies = {int:my_num_replies}
 					WHERE id_topic = {int:topic_id}',
-					array(
+					[
 						'my_num_replies' => $row['my_num_replies'],
 						'topic_id' => $row['id_topic'],
-					)
+					]
 				);
 			},
 			'message_function' => function ($row)
@@ -687,15 +687,15 @@ function loadForumTests()
 
 				return true;
 			},
-		),
+		],
 		// Find topics with incorrect unapproved_posts.
-		'stats_topics3' => array(
-			'substeps' => array(
+		'stats_topics3' => [
+			'substeps' => [
 				'step_size' => 1000,
 				'step_max' => '
 					SELECT MAX(id_topic)
 					FROM {db_prefix}topics'
-			),
+			],
 			'check_query' => '
 				SELECT
 					t.id_topic, t.unapproved_posts, COUNT(mu.id_msg) AS my_unapproved_posts
@@ -714,22 +714,22 @@ function loadForumTests()
 					UPDATE {db_prefix}topics
 					SET unapproved_posts = {int:my_unapproved_posts}
 					WHERE id_topic = {int:topic_id}',
-					array(
+					[
 						'my_unapproved_posts' => $row['my_unapproved_posts'],
 						'topic_id' => $row['id_topic'],
-					)
+					]
 				);
 			},
-			'messages' => array('repair_stats_topics_4', 'id_topic', 'unapproved_posts'),
-		),
+			'messages' => ['repair_stats_topics_4', 'id_topic', 'unapproved_posts'],
+		],
 		// Find topics with nonexistent boards.
-		'missing_boards' => array(
-			'substeps' => array(
+		'missing_boards' => [
+			'substeps' => [
 				'step_size' => 1000,
 				'step_max' => '
 					SELECT MAX(id_topic)
 					FROM {db_prefix}topics'
-			),
+			],
 			'check_query' => '
 				SELECT t.id_topic, t.id_board
 				FROM {db_prefix}topics AS t
@@ -755,9 +755,9 @@ function loadForumTests()
 
 				$newBoardID = $smcFunc['db_insert']('',
 					'{db_prefix}boards',
-					array('id_cat' => 'int', 'name' => 'string', 'description' => 'string', 'num_topics' => 'int', 'num_posts' => 'int', 'member_groups' => 'string'),
-					array($salvageCatID, $txt['salvaged_board_name'], $txt['salvaged_board_description'], $row['my_num_topics'], $row['my_num_posts'], '1'),
-					array('id_board'),
+					['id_cat' => 'int', 'name' => 'string', 'description' => 'string', 'num_topics' => 'int', 'num_posts' => 'int', 'member_groups' => 'string'],
+					[$salvageCatID, $txt['salvaged_board_name'], $txt['salvaged_board_description'], $row['my_num_topics'], $row['my_num_posts'], '1'],
+					['id_board'],
 					1
 				);
 
@@ -765,32 +765,32 @@ function loadForumTests()
 					UPDATE {db_prefix}topics
 					SET id_board = {int:newBoardID}
 					WHERE id_board = {int:board_id}',
-					array(
+					[
 						'newBoardID' => $newBoardID,
 						'board_id' => $row['id_board'],
-					)
+					]
 				);
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}messages
 					SET id_board = {int:newBoardID}
 					WHERE id_board = {int:board_id}',
-					array(
+					[
 						'newBoardID' => $newBoardID,
 						'board_id' => $row['id_board'],
-					)
+					]
 				);
 			},
-			'messages' => array('repair_missing_boards', 'id_topic', 'id_board'),
-		),
+			'messages' => ['repair_missing_boards', 'id_topic', 'id_board'],
+		],
 		// Find boards with nonexistent categories.
-		'missing_categories' => array(
+		'missing_categories' => [
 			'check_query' => '
 				SELECT b.id_board, b.id_cat
 				FROM {db_prefix}boards AS b
 					LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 				WHERE c.id_cat IS NULL
 				ORDER BY b.id_cat, b.id_board',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_cat',
 				'process' => function ($cats)
 				{
@@ -800,23 +800,23 @@ function loadForumTests()
 						UPDATE {db_prefix}boards
 						SET id_cat = {int:salvageCatID}
 						WHERE id_cat IN ({array_int:categories})',
-						array(
+						[
 							'salvageCatID' => $salvageCatID,
 							'categories' => $cats,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_categories', 'id_board', 'id_cat'),
-		),
+			],
+			'messages' => ['repair_missing_categories', 'id_board', 'id_cat'],
+		],
 		// Find messages with nonexistent members.
-		'missing_posters' => array(
-			'substeps' => array(
+		'missing_posters' => [
+			'substeps' => [
 				'step_size' => 2000,
 				'step_max' => '
 					SELECT MAX(id_msg)
 					FROM {db_prefix}messages'
-			),
+			],
 			'check_query' => '
 				SELECT m.id_msg, m.id_member
 				FROM {db_prefix}messages AS m
@@ -826,7 +826,7 @@ function loadForumTests()
 					AND m.id_msg BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				ORDER BY m.id_msg',
 			// Last step-make sure all non-guest posters still exist.
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_msg',
 				'process' => function ($msgs)
 				{
@@ -835,17 +835,17 @@ function loadForumTests()
 						UPDATE {db_prefix}messages
 						SET id_member = {int:guest_id}
 						WHERE id_msg IN ({array_int:msgs})',
-						array(
+						[
 							'msgs' => $msgs,
 							'guest_id' => 0,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_posters', 'id_msg', 'id_member'),
-		),
+			],
+			'messages' => ['repair_missing_posters', 'id_msg', 'id_member'],
+		],
 		// Find boards with nonexistent parents.
-		'missing_parents' => array(
+		'missing_parents' => [
 			'check_query' => '
 				SELECT b.id_board, b.id_parent
 				FROM {db_prefix}boards AS b
@@ -853,7 +853,7 @@ function loadForumTests()
 				WHERE b.id_parent != 0
 					AND (p.id_board IS NULL OR p.id_board = b.id_board)
 				ORDER BY b.id_parent, b.id_board',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_parent',
 				'process' => function ($parents)
 				{
@@ -863,23 +863,23 @@ function loadForumTests()
 						UPDATE {db_prefix}boards
 						SET id_parent = {int:salvageBoardID}, id_cat = {int:salvageCatID}, child_level = 1
 						WHERE id_parent IN ({array_int:parents})',
-						array(
+						[
 							'salvageBoardID' => $salvageBoardID,
 							'salvageCatID' => $salvageCatID,
 							'parents' => $parents,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_parents', 'id_board', 'id_parent'),
-		),
-		'missing_polls' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_parents', 'id_board', 'id_parent'],
+		],
+		'missing_polls' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_poll)
 					FROM {db_prefix}topics'
-			),
+			],
 			'check_query' => '
 				SELECT t.id_poll, t.id_topic
 				FROM {db_prefix}topics AS t
@@ -887,7 +887,7 @@ function loadForumTests()
 				WHERE t.id_poll != 0
 					AND t.id_poll BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND p.id_poll IS NULL',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_poll',
 				'process' => function ($polls)
 				{
@@ -896,28 +896,28 @@ function loadForumTests()
 						UPDATE {db_prefix}topics
 						SET id_poll = 0
 						WHERE id_poll IN ({array_int:polls})',
-						array(
+						[
 							'polls' => $polls,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_polls', 'id_topic', 'id_poll'),
-		),
-		'missing_log_topics' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_polls', 'id_topic', 'id_poll'],
+		],
+		'missing_log_topics' => [
+			'substeps' => [
 				'step_size' => 150,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}log_topics'
-			),
+			],
 			'check_query' => '
 				SELECT lt.id_topic
 				FROM {db_prefix}log_topics AS lt
 					LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = lt.id_topic)
 				WHERE t.id_topic IS NULL
 					AND lt.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_topic',
 				'process' => function ($topics)
 				{
@@ -925,21 +925,21 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_topics
 						WHERE id_topic IN ({array_int:topics})',
-						array(
+						[
 							'topics' => $topics,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_log_topics', 'id_topic'),
-		),
-		'missing_log_topics_members' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_log_topics', 'id_topic'],
+		],
+		'missing_log_topics_members' => [
+			'substeps' => [
 				'step_size' => 150,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}log_topics'
-			),
+			],
 			'check_query' => '
 				SELECT lt.id_member
 				FROM {db_prefix}log_topics AS lt
@@ -947,7 +947,7 @@ function loadForumTests()
 				WHERE mem.id_member IS NULL
 					AND lt.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY lt.id_member',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_member',
 				'process' => function ($members)
 				{
@@ -955,21 +955,21 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_topics
 						WHERE id_member IN ({array_int:members})',
-						array(
+						[
 							'members' => $members,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_log_topics_members', 'id_member'),
-		),
-		'missing_log_boards' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_log_topics_members', 'id_member'],
+		],
+		'missing_log_boards' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}log_boards'
-			),
+			],
 			'check_query' => '
 				SELECT lb.id_board
 				FROM {db_prefix}log_boards AS lb
@@ -977,7 +977,7 @@ function loadForumTests()
 				WHERE b.id_board IS NULL
 					AND lb.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY lb.id_board',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_board',
 				'process' => function ($boards)
 				{
@@ -985,21 +985,21 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_boards
 						WHERE id_board IN ({array_int:boards})',
-						array(
+						[
 							'boards' => $boards,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_log_boards', 'id_board'),
-		),
-		'missing_log_boards_members' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_log_boards', 'id_board'],
+		],
+		'missing_log_boards_members' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}log_boards'
-			),
+			],
 			'check_query' => '
 				SELECT lb.id_member
 				FROM {db_prefix}log_boards AS lb
@@ -1007,28 +1007,28 @@ function loadForumTests()
 				WHERE mem.id_member IS NULL
 					AND lb.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY lb.id_member',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_member',
 				'process' => function ($members) use ($smcFunc)
 				{
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_boards
 						WHERE id_member IN ({array_int:members})',
-						array(
+						[
 							'members' => $members,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_log_boards_members', 'id_member'),
-		),
-		'missing_log_mark_read' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_log_boards_members', 'id_member'],
+		],
+		'missing_log_mark_read' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}log_mark_read'
-			),
+			],
 			'check_query' => '
 				SELECT lmr.id_board
 				FROM {db_prefix}log_mark_read AS lmr
@@ -1036,28 +1036,28 @@ function loadForumTests()
 				WHERE b.id_board IS NULL
 					AND lmr.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY lmr.id_board',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_board',
 				'process' => function ($boards) use ($smcFunc)
 				{
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_mark_read
 						WHERE id_board IN ({array_int:boards})',
-						array(
+						[
 							'boards' => $boards,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_log_mark_read', 'id_board'),
-		),
-		'missing_log_mark_read_members' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_log_mark_read', 'id_board'],
+		],
+		'missing_log_mark_read_members' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}log_mark_read'
-			),
+			],
 			'check_query' => '
 				SELECT lmr.id_member
 				FROM {db_prefix}log_mark_read AS lmr
@@ -1065,28 +1065,28 @@ function loadForumTests()
 				WHERE mem.id_member IS NULL
 					AND lmr.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY lmr.id_member',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_member',
 				'process' => function ($members) use ($smcFunc)
 				{
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_mark_read
 						WHERE id_member IN ({array_int:members})',
-						array(
+						[
 							'members' => $members,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_log_mark_read_members', 'id_member'),
-		),
-		'missing_pms' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_log_mark_read_members', 'id_member'],
+		],
+		'missing_pms' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_pm)
 					FROM {db_prefix}pm_recipients'
-			),
+			],
 			'check_query' => '
 				SELECT pmr.id_pm
 				FROM {db_prefix}pm_recipients AS pmr
@@ -1094,28 +1094,28 @@ function loadForumTests()
 				WHERE pm.id_pm IS NULL
 					AND pmr.id_pm BETWEEN {STEP_LOW} AND {STEP_HIGH}
 				GROUP BY pmr.id_pm',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_pm',
 				'process' => function ($pms) use ($smcFunc)
 				{
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}pm_recipients
 						WHERE id_pm IN ({array_int:pms})',
-						array(
+						[
 							'pms' => $pms,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_pms', 'id_pm'),
-		),
-		'missing_recipients' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_pms', 'id_pm'],
+		],
+		'missing_recipients' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}pm_recipients'
-			),
+			],
 			'check_query' => '
 				SELECT pmr.id_member
 				FROM {db_prefix}pm_recipients AS pmr
@@ -1124,7 +1124,7 @@ function loadForumTests()
 					AND pmr.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND mem.id_member IS NULL
 				GROUP BY pmr.id_member',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_member',
 				'process' => function ($members)
 				{
@@ -1132,21 +1132,21 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}pm_recipients
 						WHERE id_member IN ({array_int:members})',
-						array(
+						[
 							'members' => $members,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_recipients', 'id_member'),
-		),
-		'missing_senders' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_recipients', 'id_member'],
+		],
+		'missing_senders' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_pm)
 					FROM {db_prefix}personal_messages'
-			),
+			],
 			'check_query' => '
 				SELECT pm.id_pm, pm.id_member_from
 				FROM {db_prefix}personal_messages AS pm
@@ -1154,7 +1154,7 @@ function loadForumTests()
 				WHERE pm.id_member_from != 0
 					AND pm.id_pm BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND mem.id_member IS NULL',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_pm',
 				'process' => function ($guestMessages)
 				{
@@ -1163,20 +1163,20 @@ function loadForumTests()
 						UPDATE {db_prefix}personal_messages
 						SET id_member_from = 0
 						WHERE id_pm IN ({array_int:guestMessages})',
-						array(
+						[
 							'guestMessages' => $guestMessages,
-						));
+						]);
 				},
-			),
-			'messages' => array('repair_missing_senders', 'id_pm', 'id_member_from'),
-		),
-		'missing_notify_members' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_senders', 'id_pm', 'id_member_from'],
+		],
+		'missing_notify_members' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}log_notify'
-			),
+			],
 			'check_query' => '
 				SELECT ln.id_member
 				FROM {db_prefix}log_notify AS ln
@@ -1184,28 +1184,28 @@ function loadForumTests()
 				WHERE ln.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND mem.id_member IS NULL
 				GROUP BY ln.id_member',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_member',
 				'process' => function ($members) use ($smcFunc)
 				{
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_notify
 						WHERE id_member IN ({array_int:members})',
-						array(
+						[
 							'members' => $members,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_notify_members', 'id_member'),
-		),
-		'missing_cached_subject' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_notify_members', 'id_member'],
+		],
+		'missing_cached_subject' => [
+			'substeps' => [
 				'step_size' => 100,
 				'step_max' => '
 					SELECT MAX(id_topic)
 					FROM {db_prefix}topics'
-			),
+			],
 			'check_query' => '
 				SELECT t.id_topic, fm.subject
 				FROM {db_prefix}topics AS t
@@ -1221,14 +1221,14 @@ function loadForumTests()
 				while ($row = $smcFunc['db_fetch_assoc']($result))
 				{
 					foreach (text2words($row['subject']) as $word)
-						$inserts[] = array($word, $row['id_topic']);
+						$inserts[] = [$word, $row['id_topic']];
 					if (count($inserts) > 500)
 					{
 						$smcFunc['db_insert']('ignore',
 							'{db_prefix}log_search_subjects',
-							array('word' => 'string', 'id_topic' => 'int'),
+							['word' => 'string', 'id_topic' => 'int'],
 							$inserts,
-							array('word', 'id_topic')
+							['word', 'id_topic']
 						);
 						$inserts = [];
 					}
@@ -1238,9 +1238,9 @@ function loadForumTests()
 				if (!empty($inserts))
 					$smcFunc['db_insert']('ignore',
 						'{db_prefix}log_search_subjects',
-						array('word' => 'string', 'id_topic' => 'int'),
+						['word' => 'string', 'id_topic' => 'int'],
 						$inserts,
-						array('word', 'id_topic')
+						['word', 'id_topic']
 					);
 			},
 			'message_function' => function ($row)
@@ -1255,21 +1255,21 @@ function loadForumTests()
 
 				return false;
 			},
-		),
-		'missing_topic_for_cache' => array(
-			'substeps' => array(
+		],
+		'missing_topic_for_cache' => [
+			'substeps' => [
 				'step_size' => 50,
 				'step_max' => '
 					SELECT MAX(id_topic)
 					FROM {db_prefix}log_search_subjects'
-			),
+			],
 			'check_query' => '
 				SELECT lss.id_topic, lss.word
 				FROM {db_prefix}log_search_subjects AS lss
 					LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = lss.id_topic)
 				WHERE lss.id_topic BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND t.id_topic IS NULL',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_topic',
 				'process' => function ($deleteTopics)
 				{
@@ -1277,21 +1277,21 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_search_subjects
 						WHERE id_topic IN ({array_int:deleteTopics})',
-						array(
+						[
 							'deleteTopics' => $deleteTopics,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_topic_for_cache', 'word'),
-		),
-		'missing_member_vote' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_topic_for_cache', 'word'],
+		],
+		'missing_member_vote' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}log_polls'
-			),
+			],
 			'check_query' => '
 				SELECT lp.id_poll, lp.id_member
 				FROM {db_prefix}log_polls AS lp
@@ -1299,7 +1299,7 @@ function loadForumTests()
 				WHERE lp.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND lp.id_member > 0
 					AND mem.id_member IS NULL',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_member',
 				'process' => function ($members)
 				{
@@ -1307,28 +1307,28 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_polls
 						WHERE id_member IN ({array_int:members})',
-						array(
+						[
 							'members' => $members,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_log_poll_member', 'id_poll', 'id_member'),
-		),
-		'missing_log_poll_vote' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_log_poll_member', 'id_poll', 'id_member'],
+		],
+		'missing_log_poll_vote' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_poll)
 					FROM {db_prefix}log_polls'
-			),
+			],
 			'check_query' => '
 				SELECT lp.id_poll, lp.id_member
 				FROM {db_prefix}log_polls AS lp
 					LEFT JOIN {db_prefix}polls AS p ON (p.id_poll = lp.id_poll)
 				WHERE lp.id_poll BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND p.id_poll IS NULL',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_poll',
 				'process' => function ($polls)
 				{
@@ -1336,28 +1336,28 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_polls
 						WHERE id_poll IN ({array_int:polls})',
-						array(
+						[
 							'polls' => $polls,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_missing_log_poll_vote', 'id_member', 'id_poll'),
-		),
-		'report_missing_comments' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_missing_log_poll_vote', 'id_member', 'id_poll'],
+		],
+		'report_missing_comments' => [
+			'substeps' => [
 				'step_size' => 500,
 				'step_max' => '
 					SELECT MAX(id_report)
 					FROM {db_prefix}log_reported'
-			),
+			],
 			'check_query' => '
 				SELECT lr.id_report, lr.subject
 				FROM {db_prefix}log_reported AS lr
 					LEFT JOIN {db_prefix}log_reported_comments AS lrc ON (lrc.id_report = lr.id_report)
 				WHERE lr.id_report BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND lrc.id_report IS NULL',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_report',
 				'process' => function ($reports)
 				{
@@ -1365,28 +1365,28 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_reported
 						WHERE id_report IN ({array_int:reports})',
-						array(
+						[
 							'reports' => $reports,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_report_missing_comments', 'id_report', 'subject'),
-		),
-		'comments_missing_report' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_report_missing_comments', 'id_report', 'subject'],
+		],
+		'comments_missing_report' => [
+			'substeps' => [
 				'step_size' => 200,
 				'step_max' => '
 					SELECT MAX(id_report)
 					FROM {db_prefix}log_reported_comments'
-			),
+			],
 			'check_query' => '
 				SELECT lrc.id_report, lrc.membername
 				FROM {db_prefix}log_reported_comments AS lrc
 					LEFT JOIN {db_prefix}log_reported AS lr ON (lr.id_report = lrc.id_report)
 				WHERE lrc.id_report BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND lr.id_report IS NULL',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_report',
 				'process' => function ($reports)
 				{
@@ -1394,21 +1394,21 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_reported_comments
 						WHERE id_report IN ({array_int:reports})',
-						array(
+						[
 							'reports' => $reports,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_comments_missing_report', 'id_report', 'membername'),
-		),
-		'group_request_missing_member' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_comments_missing_report', 'id_report', 'membername'],
+		],
+		'group_request_missing_member' => [
+			'substeps' => [
 				'step_size' => 200,
 				'step_max' => '
 					SELECT MAX(id_member)
 					FROM {db_prefix}log_group_requests'
-			),
+			],
 			'check_query' => '
 				SELECT lgr.id_member
 				FROM {db_prefix}log_group_requests AS lgr
@@ -1416,7 +1416,7 @@ function loadForumTests()
 				WHERE lgr.id_member BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND mem.id_member IS NULL
 				GROUP BY lgr.id_member',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_member',
 				'process' => function ($members)
 				{
@@ -1424,21 +1424,21 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_group_requests
 						WHERE id_member IN ({array_int:members})',
-						array(
+						[
 							'members' => $members,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_group_request_missing_member', 'id_member'),
-		),
-		'group_request_missing_group' => array(
-			'substeps' => array(
+			],
+			'messages' => ['repair_group_request_missing_member', 'id_member'],
+		],
+		'group_request_missing_group' => [
+			'substeps' => [
 				'step_size' => 200,
 				'step_max' => '
 					SELECT MAX(id_group)
 					FROM {db_prefix}log_group_requests'
-			),
+			],
 			'check_query' => '
 				SELECT lgr.id_group
 				FROM {db_prefix}log_group_requests AS lgr
@@ -1446,7 +1446,7 @@ function loadForumTests()
 				WHERE lgr.id_group BETWEEN {STEP_LOW} AND {STEP_HIGH}
 					AND mg.id_group IS NULL
 				GROUP BY lgr.id_group',
-			'fix_collect' => array(
+			'fix_collect' => [
 				'index' => 'id_group',
 				'process' => function ($groups)
 				{
@@ -1454,15 +1454,15 @@ function loadForumTests()
 					$smcFunc['db_query']('', '
 						DELETE FROM {db_prefix}log_group_requests
 						WHERE id_group IN ({array_int:groups})',
-						array(
+						[
 							'groups' => $groups,
-						)
+						]
 					);
 				},
-			),
-			'messages' => array('repair_group_request_missing_group', 'id_group'),
-		),
-	);
+			],
+			'messages' => ['repair_group_request_missing_group', 'id_group'],
+		],
+	];
 }
 
 /**
@@ -1516,8 +1516,8 @@ function findForumErrors($do_fix = false)
 			$step_size = isset($test['substeps']['step_size']) ? $test['substeps']['step_size'] : 100;
 			$request = $smcFunc['db_query']('',
 				$test['substeps']['step_max'],
-				array(
-				)
+				[
+				]
 			);
 			list ($step_max) = $smcFunc['db_fetch_row']($request);
 
@@ -1541,9 +1541,9 @@ function findForumErrors($do_fix = false)
 
 			// Do the test...
 			$request = $smcFunc['db_query']('',
-				isset($test['substeps']) ? strtr($test[$test_query], array('{STEP_LOW}' => $_GET['substep'], '{STEP_HIGH}' => $_GET['substep'] + $step_size - 1)) : $test[$test_query],
-				array(
-				)
+				isset($test['substeps']) ? strtr($test[$test_query], ['{STEP_LOW}' => $_GET['substep'], '{STEP_HIGH}' => $_GET['substep'] + $step_size - 1]) : $test[$test_query],
+				[
+				]
 			);
 
 			// Does it need a fix?
@@ -1616,8 +1616,8 @@ function findForumErrors($do_fix = false)
 					elseif (isset($test['fix_it_query']))
 						$smcFunc['db_query']('',
 							$test['fix_it_query'],
-							array(
-							)
+							[
+							]
 						);
 
 					// Do we have some processing to do?
@@ -1714,9 +1714,9 @@ function createSalvageArea()
 		FROM {db_prefix}categories
 		WHERE name = {string:cat_name}
 		LIMIT 1',
-		array(
+		[
 			'cat_name' => $txt['salvaged_category_name'],
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($result) != 0)
 		list ($salvageCatID) = $smcFunc['db_fetch_row']($result);
@@ -1726,9 +1726,9 @@ function createSalvageArea()
 	{
 		$salvageCatID = $smcFunc['db_insert']('',
 			'{db_prefix}categories',
-			array('name' => 'string-255', 'cat_order' => 'int'),
-			array($txt['salvaged_category_name'], -1),
-			array('id_cat'),
+			['name' => 'string-255', 'cat_order' => 'int'],
+			[$txt['salvaged_category_name'], -1],
+			['id_cat'],
 			1
 		);
 
@@ -1746,10 +1746,10 @@ function createSalvageArea()
 		WHERE id_cat = {int:id_cat}
 			AND name = {string:board_name}
 		LIMIT 1',
-		array(
+		[
 			'id_cat' => $salvageCatID,
 			'board_name' => $txt['salvaged_board_name'],
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($result) != 0)
 		list ($salvageBoardID) = $smcFunc['db_fetch_row']($result);
@@ -1759,9 +1759,9 @@ function createSalvageArea()
 	{
 		$salvageBoardID = $smcFunc['db_insert']('',
 			'{db_prefix}boards',
-			array('name' => 'string-255', 'description' => 'string-255', 'id_cat' => 'int', 'member_groups' => 'string', 'board_order' => 'int', 'redirect' => 'string'),
-			array($txt['salvaged_board_name'], $txt['salvaged_board_description'], $salvageCatID, '1', -1, ''),
-			array('id_board'),
+			['name' => 'string-255', 'description' => 'string-255', 'id_cat' => 'int', 'member_groups' => 'string', 'board_order' => 'int', 'redirect' => 'string'],
+			[$txt['salvaged_board_name'], $txt['salvaged_board_description'], $salvageCatID, '1', -1, ''],
+			['id_board'],
 			1
 		);
 

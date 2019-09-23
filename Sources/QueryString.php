@@ -72,7 +72,7 @@ function cleanRequest()
 		$_SERVER['QUERY_STRING'] = substr($_SERVER['QUERY_STRING'], 0, 5) === 'url=/' ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING'];
 
 		// Replace ';' with '&' and '&something&' with '&something=&'.  (this is done for compatibility...)
-		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
+		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr($_SERVER['QUERY_STRING'], [';?' => '&', ';' => '&', '%00' => '', "\0" => ''])), $_GET);
 	}
 	elseif (strpos(ini_get('arg_separator.input'), ';') !== false)
 	{
@@ -239,9 +239,9 @@ function cleanRequest()
 	if ($modSettings['proxy_ip_header'] == 'disabled')
 		$reverseIPheaders = [];
 	elseif ($modSettings['proxy_ip_header'] == 'autodetect')
-		$reverseIPheaders = array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP');
+		$reverseIPheaders = ['HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP'];
 	else
-		$reverseIPheaders = array($modSettings['proxy_ip_header']);
+		$reverseIPheaders = [$modSettings['proxy_ip_header']];
 
 	// Find the user's IP address. (but don't let it give you 'unknown'!)
 	foreach ($reverseIPheaders as $proxyIPheader)

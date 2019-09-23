@@ -19,17 +19,17 @@ function XMLhttpMain()
 {
 	StoryBB\Template::set_layout('raw');
 
-	$subActions = array(
+	$subActions = [
 		'jumpto' => 'GetJumpTo',
 		'previews' => 'RetrievePreview',
-	);
+	];
 
 	StoryBB\Template::add_helper([
 		'cleanXml' => 'cleanXml',
 	]);
 
 	// Easy adding of sub actions.
-	routing_integration_hook('integrate_XMLhttpMain_subActions', array(&$subActions));
+	routing_integration_hook('integrate_XMLhttpMain_subActions', [&$subActions]);
 
 	if (!isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]))
 		fatal_lang_error('no_access', false);
@@ -46,10 +46,10 @@ function GetJumpTo()
 
 	// Find the boards/categories they can see.
 	require_once($sourcedir . '/Subs-MessageIndex.php');
-	$boardListOptions = array(
+	$boardListOptions = [
 		'use_permissions' => true,
 		'selected_board' => isset($context['current_board']) ? $context['current_board'] : 0,
-	);
+	];
 	$context['jump_to'] = getBoardList($boardListOptions);
 
 	// Make the board safe for display.
@@ -73,12 +73,12 @@ function RetrievePreview()
 {
 	global $context;
 
-	$items = array(
+	$items = [
 		'newspreview',
 		'newsletterpreview',
 		'sig_preview',
 		'warning_preview',
-	);
+	];
 
 	$context['sub_template'] = 'xml_generic';
 
@@ -100,24 +100,24 @@ function newspreview()
 	$errors = [];
 	$news = !isset($_POST['news']) ? '' : $smcFunc['htmlspecialchars']($_POST['news'], ENT_QUOTES);
 	if (empty($news))
-		$errors[] = array('value' => 'no_news');
+		$errors[] = ['value' => 'no_news'];
 	else
 		preparsecode($news);
 
-	$context['xml_data'] = array(
-		'news' => array(
+	$context['xml_data'] = [
+		'news' => [
 			'identifier' => 'parsedNews',
-			'children' => array(
-				array(
+			'children' => [
+				[
 					'value' => Parser::parse_bbc($news),
-				),
-			),
-		),
-		'errors' => array(
+				],
+			],
+		],
+		'errors' => [
 			'identifier' => 'error',
 			'children' => $errors
-		),
-	);
+		],
+	];
 }
 
 /**
@@ -162,7 +162,7 @@ function sig_preview()
 
 	// @todo Temporary
 	// Borrowed from loadAttachmentContext in Display.php
-	$can_change = $is_owner ? allowedTo(array('profile_extra_any', 'profile_extra_own')) : allowedTo('profile_extra_any');
+	$can_change = $is_owner ? allowedTo(['profile_extra_any', 'profile_extra_own']) : allowedTo('profile_extra_any');
 
 	$errors = [];
 	if (!empty($user) && $can_change)
@@ -172,9 +172,9 @@ function sig_preview()
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}
 			LIMIT 1',
-			array(
+			[
 				'id_member' => $user,
-			)
+			]
 		);
 		list($current_signature) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -185,7 +185,7 @@ function sig_preview()
 		$validation = profileValidateSignature($preview_signature);
 
 		if ($validation !== true && $validation !== false)
-			$errors[] = array('value' => $txt['profile_error_' . $validation], 'attributes' => array('type' => 'error'));
+			$errors[] = ['value' => $txt['profile_error_' . $validation], 'attributes' => ['type' => 'error']];
 
 		censorText($preview_signature);
 		$preview_signature = Parser::parse_bbc($preview_signature, true, 'sig' . $user);
@@ -193,40 +193,40 @@ function sig_preview()
 	elseif (!$can_change)
 	{
 		if ($is_owner)
-			$errors[] = array('value' => $txt['cannot_profile_extra_own'], 'attributes' => array('type' => 'error'));
+			$errors[] = ['value' => $txt['cannot_profile_extra_own'], 'attributes' => ['type' => 'error']];
 		else
-			$errors[] = array('value' => $txt['cannot_profile_extra_any'], 'attributes' => array('type' => 'error'));
+			$errors[] = ['value' => $txt['cannot_profile_extra_any'], 'attributes' => ['type' => 'error']];
 	}
 	else
-		$errors[] = array('value' => $txt['no_user_selected'], 'attributes' => array('type' => 'error'));
+		$errors[] = ['value' => $txt['no_user_selected'], 'attributes' => ['type' => 'error']];
 
-	$context['xml_data']['signatures'] = array(
+	$context['xml_data']['signatures'] = [
 			'identifier' => 'signature',
 			'children' => []
-		);
+		];
 	if (isset($current_signature))
-		$context['xml_data']['signatures']['children'][] = array(
+		$context['xml_data']['signatures']['children'][] = [
 					'value' => $current_signature,
-					'attributes' => array('type' => 'current'),
-				);
+					'attributes' => ['type' => 'current'],
+				];
 	if (isset($preview_signature))
-		$context['xml_data']['signatures']['children'][] = array(
+		$context['xml_data']['signatures']['children'][] = [
 					'value' => $preview_signature,
-					'attributes' => array('type' => 'preview'),
-				);
+					'attributes' => ['type' => 'preview'],
+				];
 	if (!empty($errors))
-		$context['xml_data']['errors'] = array(
+		$context['xml_data']['errors'] = [
 			'identifier' => 'error',
 			'children' => array_merge(
-				array(
-					array(
+				[
+					[
 						'value' => $txt['profile_errors_occurred'],
-						'attributes' => array('type' => 'errors_occurred'),
-					),
-				),
+						'attributes' => ['type' => 'errors_occurred'],
+					],
+				],
 				$errors
 			),
-		);
+		];
 }
 
 /**
@@ -265,18 +265,18 @@ function warning_preview()
 			* - {SCRIPTURL} - Web address of forum.
 			* - {REGARDS} - Standard email sign-off.
 			*/
-			$find = array(
+			$find = [
 				'{MEMBER}',
 				'{FORUMNAME}',
 				'{SCRIPTURL}',
 				'{REGARDS}',
-			);
-			$replace = array(
+			];
+			$replace = [
 				$user_info['name'],
 				$mbname,
 				$scripturl,
 				str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']),
-			);
+			];
 			$warning_body = str_replace($find, $replace, $warning_body);
 		}
 
@@ -288,7 +288,7 @@ function warning_preview()
 		$context['preview_message'] = $warning_body;
 	}
 	else
-		$context['post_error']['messages'][] = array('value' => $txt['cannot_issue_warning'], 'attributes' => array('type' => 'error'));
+		$context['post_error']['messages'][] = ['value' => $txt['cannot_issue_warning'], 'attributes' => ['type' => 'error']];
 
 	StoryBB\Template::set_layout('xml');
 	$context['sub_template'] = 'xml_warning_preview';

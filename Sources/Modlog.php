@@ -53,9 +53,9 @@ function ViewModlog()
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_actions
 			WHERE id_log = {int:moderate_log}',
-			array(
+			[
 				'moderate_log' => $context['log_type'],
-			)
+			]
 		);
 
 		$log_type = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'adminlog' ? 'admin' : 'moderate';
@@ -73,22 +73,22 @@ function ViewModlog()
 			WHERE id_log = {int:moderate_log}
 				AND id_action IN ({array_string:delete_actions})
 				AND action NOT LIKE {string:clearlog}',
-			array(
+			[
 				'delete_actions' => array_unique($_POST['delete']),
 				'moderate_log' => $context['log_type'],
 				'clearlog' => 'clearlog_%',
-			)
+			]
 		);
 	}
 
 	// Do the column stuff!
-	$sort_types = array(
+	$sort_types = [
 		'action' => 'lm.action',
 		'time' => 'lm.log_time',
 		'member' => 'mem.real_name',
 		'group' => 'mg.group_name',
 		'ip' => 'lm.ip',
-	);
+	];
 
 	// Setup the direction stuff...
 	$context['order'] = isset($_REQUEST['sort']) && isset($sort_types[$_REQUEST['sort']]) ? $_REQUEST['sort'] : 'time';
@@ -96,17 +96,17 @@ function ViewModlog()
 	// If we're coming from a search, get the variables.
 	if (!empty($_REQUEST['params']) && empty($_REQUEST['is_search']))
 	{
-		$search_params = base64_decode(strtr($_REQUEST['params'], array(' ' => '+')));
+		$search_params = base64_decode(strtr($_REQUEST['params'], [' ' => '+']));
 		$search_params = sbb_json_decode($search_params, true);
 	}
 
 	// This array houses all the valid search types.
-	$searchTypes = array(
-		'action' => array('sql' => 'lm.action', 'label' => $txt['modlog_action']),
-		'member' => array('sql' => 'mem.real_name', 'label' => $txt['modlog_member']),
-		'group' => array('sql' => 'mg.group_name', 'label' => $txt['modlog_position']),
-		'ip' => array('sql' => 'lm.ip', 'label' => $txt['modlog_ip'])
-	);
+	$searchTypes = [
+		'action' => ['sql' => 'lm.action', 'label' => $txt['modlog_action']],
+		'member' => ['sql' => 'mem.real_name', 'label' => $txt['modlog_member']],
+		'group' => ['sql' => 'mg.group_name', 'label' => $txt['modlog_position']],
+		'ip' => ['sql' => 'lm.ip', 'label' => $txt['modlog_ip']]
+	];
 
 	if (!isset($search_params['string']) || (!empty($_REQUEST['search']) && $search_params['string'] != $_REQUEST['search']))
 		$search_params_string = empty($_REQUEST['search']) ? '' : $_REQUEST['search'];
@@ -119,18 +119,18 @@ function ViewModlog()
 		$search_params_type = $search_params['type'];
 
 	$search_params_column = $searchTypes[$search_params_type]['sql'];
-	$search_params = array(
+	$search_params = [
 		'string' => $search_params_string,
 		'type' => $search_params_type,
-	);
+	];
 
 	// Setup the search context.
 	$context['search_params'] = empty($search_params['string']) ? '' : base64_encode(json_encode($search_params));
-	$context['search'] = array(
+	$context['search'] = [
 		'string' => $search_params['string'],
 		'type' => $search_params['type'],
 		'label' => $searchTypes[$search_params_type]['label'],
-	);
+	];
 
 	// If they are searching by action, then we must do some manual intervention to search in their language!
 	if ($search_params['type'] == 'action' && !empty($search_params['string']))
@@ -149,127 +149,127 @@ function ViewModlog()
 	require_once($sourcedir . '/Subs-List.php');
 
 	// This is all the information required for a watched user listing.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'moderation_log_list',
 		'width' => '100%',
 		'items_per_page' => $context['displaypage'],
 		'no_items_label' => $txt['modlog_' . ($context['log_type'] == 3 ? 'admin_log_' : '') . 'no_entries_found'],
 		'base_href' => $scripturl . $context['url_start'] . (!empty($context['search_params']) ? ';params=' . $context['search_params'] : ''),
 		'default_sort_col' => 'time',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getModLogEntries',
-			'params' => array(
+			'params' => [
 				(!empty($search_params['string']) ? ' INSTR({raw:sql_type}, {string:search_string})' : ''),
-				array('sql_type' => $search_params_column, 'search_string' => $search_params['string']),
+				['sql_type' => $search_params_column, 'search_string' => $search_params['string']],
 				$context['log_type'],
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getModLogEntryCount',
-			'params' => array(
+			'params' => [
 				(!empty($search_params['string']) ? ' INSTR({raw:sql_type}, {string:search_string})' : ''),
-				array('sql_type' => $search_params_column, 'search_string' => $search_params['string']),
+				['sql_type' => $search_params_column, 'search_string' => $search_params['string']],
 				$context['log_type'],
-			),
-		),
+			],
+		],
 		// This assumes we are viewing by user.
-		'columns' => array(
-			'action' => array(
-				'header' => array(
+		'columns' => [
+			'action' => [
+				'header' => [
 					'value' => $txt['modlog_action'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'action_text',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lm.action',
 					'reverse' => 'lm.action DESC',
-				),
-			),
-			'time' => array(
-				'header' => array(
+				],
+			],
+			'time' => [
+				'header' => [
 					'value' => $txt['modlog_date'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lm.log_time DESC',
 					'reverse' => 'lm.log_time',
-				),
-			),
-			'moderator' => array(
-				'header' => array(
+				],
+			],
+			'moderator' => [
+				'header' => [
 					'value' => $txt['modlog_member'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'moderator_link',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'mem.real_name',
 					'reverse' => 'mem.real_name DESC',
-				),
-			),
-			'position' => array(
-				'header' => array(
+				],
+			],
+			'position' => [
+				'header' => [
 					'value' => $txt['modlog_position'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'position',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'mg.group_name',
 					'reverse' => 'mg.group_name DESC',
-				),
-			),
-			'ip' => array(
-				'header' => array(
+				],
+			],
+			'ip' => [
+				'header' => [
 					'value' => $txt['modlog_ip'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'ip',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lm.ip',
 					'reverse' => 'lm.ip DESC',
-				),
-			),
-			'delete' => array(
-				'header' => array(
+				],
+			],
+			'delete' => [
+				'header' => [
 					'value' => '<input type="checkbox" name="all" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function ($entry)
 					{
 						return '<input type="checkbox" name="delete[]" value="' . $entry['id'] . '"' . ($entry['editable'] ? '' : ' disabled') . '>';
 					},
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . $context['url_start'],
 			'include_sort' => true,
 			'include_start' => true,
-			'hidden_fields' => array(
+			'hidden_fields' => [
 				$context['session_var'] => $context['session_id'],
 				'params' => $context['search_params']
-			),
+			],
 			'token' => 'mod-ml',
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'below_table_data',
 				'value' => '
 					' . $txt['modlog_search'] . ' (' . $txt['modlog_by'] . ': ' . $context['search']['label'] . '):
@@ -279,13 +279,13 @@ function ViewModlog()
 					<input type="submit" name="remove" value="' . $txt['modlog_remove'] . '" data-confirm="' . $txt['modlog_remove_selected_confirm'] . '" class="you_sure">
 					<input type="submit" name="removeall" value="' . $txt['modlog_removeall'] . '" data-confirm="' . $txt['modlog_remove_all_confirm'] . '" class="you_sure">' : ''),
 				'class' => 'floatright',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Overriding this with a hook?
 	$moderation_menu_name = [];
-	call_integration_hook('integrate_viewModLog', array(&$listOptions, &$moderation_menu_name));
+	call_integration_hook('integrate_viewModLog', [&$listOptions, &$moderation_menu_name]);
 
 	createToken('mod-ml');
 
@@ -299,11 +299,11 @@ function ViewModlog()
 	if (!empty($moderation_menu_name))
 		$context[$context['moderation_menu_name']]['tab_data'] = $moderation_menu_name;
 	elseif (isset($context['moderation_menu_name']))
-		$context[$context['moderation_menu_name']]['tab_data'] = array(
+		$context[$context['moderation_menu_name']]['tab_data'] = [
 			'title' => $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log'],
 			'help' => $context['log_type'] == 3 ? 'adminlog' : 'modlog',
 			'description' => $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log_desc']
-		);
+		];
 }
 
 /**
@@ -319,7 +319,7 @@ function list_getModLogEntryCount($query_string = '', $query_params = [], $log_t
 {
 	global $smcFunc, $user_info;
 
-	$modlog_query = allowedTo('admin_forum') || $user_info['mod_cache']['bq'] == '1=1' ? '1=1' : (($user_info['mod_cache']['bq'] == '0=1' || $ignore_boards) ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr($user_info['mod_cache']['bq'], array('id_board' => 'b.id_board')) . ' AND ' . strtr($user_info['mod_cache']['bq'], array('id_board' => 't.id_board'))));
+	$modlog_query = allowedTo('admin_forum') || $user_info['mod_cache']['bq'] == '1=1' ? '1=1' : (($user_info['mod_cache']['bq'] == '0=1' || $ignore_boards) ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr($user_info['mod_cache']['bq'], ['id_board' => 'b.id_board']) . ' AND ' . strtr($user_info['mod_cache']['bq'], ['id_board' => 't.id_board'])));
 
 	$result = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
@@ -332,10 +332,10 @@ function list_getModLogEntryCount($query_string = '', $query_params = [], $log_t
 			AND {raw:modlog_query}'
 			. (!empty($query_string) ? '
 				AND ' . $query_string : ''),
-		array_merge($query_params, array(
+		array_merge($query_params, [
 			'log_type' => $log_type,
 			'modlog_query' => $modlog_query,
-		))
+		])
 	);
 	list ($entry_count) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -360,7 +360,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 {
 	global $scripturl, $txt, $smcFunc, $user_info;
 
-	$modlog_query = allowedTo('admin_forum') || $user_info['mod_cache']['bq'] == '1=1' ? '1=1' : (($user_info['mod_cache']['bq'] == '0=1' || $ignore_boards) ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr($user_info['mod_cache']['bq'], array('id_board' => 'b.id_board')) . ' AND ' . strtr($user_info['mod_cache']['bq'], array('id_board' => 't.id_board'))));
+	$modlog_query = allowedTo('admin_forum') || $user_info['mod_cache']['bq'] == '1=1' ? '1=1' : (($user_info['mod_cache']['bq'] == '0=1' || $ignore_boards) ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr($user_info['mod_cache']['bq'], ['id_board' => 'b.id_board']) . ' AND ' . strtr($user_info['mod_cache']['bq'], ['id_board' => 't.id_board'])));
 
 	// Can they see the IP address?
 	$seeIP = allowedTo('moderate_forum');
@@ -381,13 +381,13 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				AND ' . $query_string : '') . '
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:max}',
-		array_merge($query_params, array(
+		array_merge($query_params, [
 			'log_type' => $log_type,
 			'modlog_query' => $modlog_query,
 			'sort' => $sort,
 			'start' => $start,
 			'max' => $items_per_page,
-		))
+		])
 	);
 
 	// Arrays for decoding objects into.
@@ -463,13 +463,13 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 		if ($row['action'] == 'ban' || $row['action'] == 'banremove')
 		{
 			$row['action_text'] = $txt['modlog_ac_ban' . ($row['action'] == 'banremove' ? '_remove' : '')];
-			foreach (array('member', 'email', 'ip_range', 'hostname') as $type)
+			foreach (['member', 'email', 'ip_range', 'hostname'] as $type)
 				if (isset($row['extra'][$type]))
 					$row['action_text'] .= $txt['modlog_ac_ban_trigger_' . $type];
 		}
 
 		// The array to go to the template. Note here that action is set to a "default" value of the action doesn't match anything in the descriptions. Allows easy adding of logging events with basic details.
-		$entries[$row['id_action']] = array(
+		$entries[$row['id_action']] = [
 			'id' => $row['id_action'],
 			'ip' => $seeIP ? inet_dtop($row['ip']) : $txt['logged'],
 			'position' => empty($row['real_name']) && empty($row['group_name']) ? $txt['guest'] : $row['group_name'],
@@ -480,7 +480,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			'extra' => $row['extra'],
 			'action' => $row['action'],
 			'action_text' => isset($row['action_text']) ? $row['action_text'] : '',
-		);
+		];
 	}
 	$smcFunc['db_free_result']($result);
 
@@ -491,10 +491,10 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			FROM {db_prefix}boards
 			WHERE id_board IN ({array_int:board_list})
 			LIMIT {int:limit}',
-			array(
+			[
 				'board_list' => array_keys($boards),
 				'limit' => count(array_keys($boards)),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -520,10 +520,10 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 			WHERE t.id_topic IN ({array_int:topic_list})
 			LIMIT {int:limit}',
-			array(
+			[
 				'topic_list' => array_keys($topics),
 				'limit' => count(array_keys($topics)),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -532,12 +532,12 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				$this_action = &$entries[$action];
 
 				// This isn't used in the current theme.
-				$this_action['topic'] = array(
+				$this_action['topic'] = [
 					'id' => $row['id_topic'],
 					'subject' => $row['subject'],
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>'
-				);
+				];
 
 				// Make the topic number into a link - dealing with splitting too.
 				if (isset($this_action['extra']['topic']) && $this_action['extra']['topic'] == $row['id_topic'])
@@ -556,10 +556,10 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			FROM {db_prefix}messages
 			WHERE id_msg IN ({array_int:message_list})
 			LIMIT {int:limit}',
-			array(
+			[
 				'message_list' => array_keys($messages),
 				'limit' => count(array_keys($messages)),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -568,12 +568,12 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 				$this_action = &$entries[$action];
 
 				// This isn't used in the current theme.
-				$this_action['message'] = array(
+				$this_action['message'] = [
 					'id' => $row['id_msg'],
 					'subject' => $row['subject'],
 					'href' => $scripturl . '?msg=' . $row['id_msg'],
 					'link' => '<a href="' . $scripturl . '?msg=' . $row['id_msg'] . '">' . $row['subject'] . '</a>',
-				);
+				];
 
 				// Make the message number into a link.
 				if (isset($this_action['extra']['message']) && $this_action['extra']['message'] == $row['id_msg'])
@@ -590,22 +590,22 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member_list})
 			LIMIT {int:limit}',
-			array(
+			[
 				'member_list' => array_keys($members),
 				'limit' => count(array_keys($members)),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			foreach ($members[$row['id_member']] as $action)
 			{
 				// Not used currently.
-				$entries[$action]['member'] = array(
+				$entries[$action]['member'] = [
 					'id' => $row['id_member'],
 					'name' => $row['real_name'],
 					'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
 					'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
-				);
+				];
 				// Make the member number into a name.
 				$entries[$action]['extra']['member'] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 			}
@@ -621,7 +621,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			$entries[$k]['extra']['message'] = '<a href="' . $scripturl . '?msg=' . $entry['extra']['message'] . '">' . $entry['extra']['message'] . '</a>';
 
 		// Mark up any deleted members, topics and boards.
-		foreach (array('board', 'board_from', 'board_to', 'member', 'topic', 'new_topic') as $type)
+		foreach (['board', 'board_from', 'board_to', 'member', 'topic', 'new_topic'] as $type)
 			if (!empty($entry['extra'][$type]) && is_numeric($entry['extra'][$type]))
 				$entries[$k]['extra'][$type] = sprintf($txt['modlog_id'], $entry['extra'][$type]);
 

@@ -102,7 +102,7 @@ function ViewQuery()
 		// Temporary tables created in earlier queries are not explainable.
 		if ($is_select_query)
 		{
-			foreach (array('log_topics_unread', 'topics_posted_in', 'tmp_log_search_topics', 'tmp_log_search_messages') as $tmp)
+			foreach (['log_topics_unread', 'topics_posted_in', 'tmp_log_search_topics', 'tmp_log_search_messages'] as $tmp)
 				if (strpos($select, $tmp) !== false)
 				{
 					$is_select_query = false;
@@ -132,8 +132,8 @@ function ViewQuery()
 		{
 			$result = $smcFunc['db_query']('', '
 				EXPLAIN ' . $select,
-				array(
-				)
+				[
+				]
 			);
 			if ($result === false)
 			{

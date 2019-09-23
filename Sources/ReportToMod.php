@@ -76,10 +76,10 @@ function ReportToModerator()
 			WHERE m.id_msg = {int:id_msg}
 				AND m.id_topic = {int:current_topic}
 			LIMIT 1',
-			array(
+			[
 				'current_topic' => $topic,
 				'id_msg' => $_REQUEST['msg'],
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($result) == 0)
 			fatal_lang_error('no_board', false);
@@ -101,9 +101,9 @@ function ReportToModerator()
 			SELECT id_member, real_name, member_name
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_user}',
-			array(
+			[
 				'current_user' => $_REQUEST['u'],
-			)
+			]
 		);
 
 		if ($smcFunc['db_num_rows']($result) == 0)
@@ -186,7 +186,7 @@ function ReportToModerator2()
 	if (!isset($_POST['comment']) || $smcFunc['htmltrim']($_POST['comment']) === '')
 		$post_errors[] = 'no_comment';
 
-	$poster_comment = strtr($smcFunc['htmlspecialchars']($_POST['comment']), array("\r" => '', "\t" => ''));
+	$poster_comment = strtr($smcFunc['htmlspecialchars']($_POST['comment']), ["\r" => '', "\t" => '']);
 
 	if ($smcFunc['strlen']($poster_comment) > 254)
 		$post_errors[] = 'post_too_long';
@@ -234,10 +234,10 @@ function reportPost($msg, $reason)
 		WHERE m.id_msg = {int:id_msg}
 			AND m.id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
 			'id_msg' => $_POST['msg'],
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_board', false);
@@ -250,11 +250,11 @@ function reportPost($msg, $reason)
 		WHERE id_msg = {int:id_msg}
 			AND (closed = {int:not_closed} OR ignore_all = {int:ignored})
 		ORDER BY ignore_all DESC',
-		array(
+		[
 			'id_msg' => $_POST['msg'],
 			'not_closed' => 0,
 			'ignored' => 1,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) != 0)
 		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
@@ -271,10 +271,10 @@ function reportPost($msg, $reason)
 			UPDATE {db_prefix}log_reported
 			SET num_reports = num_reports + 1, time_updated = {int:current_time}
 			WHERE id_report = {int:id_report}',
-			array(
+			[
 				'current_time' => time(),
 				'id_report' => $id_report,
-			)
+			]
 		);
 	// Otherwise, we shall make one!
 	else
@@ -284,16 +284,16 @@ function reportPost($msg, $reason)
 
 		$id_report = $smcFunc['db_insert']('',
 			'{db_prefix}log_reported',
-			array(
+			[
 				'id_msg' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'id_member' => 'int', 'membername' => 'string',
 				'subject' => 'string', 'body' => 'string', 'time_started' => 'int', 'time_updated' => 'int',
 				'num_reports' => 'int', 'closed' => 'int',
-			),
-			array(
+			],
+			[
 				$_POST['msg'], $message['id_topic'], $message['id_board'], $message['id_poster'], $message['real_name'],
 				$message['subject'], $message['body'], time(), time(), 1, 0,
-			),
-			array('id_report'),
+			],
+			['id_report'],
 			1
 		);
 	}
@@ -303,15 +303,15 @@ function reportPost($msg, $reason)
 	{
 		$smcFunc['db_insert']('',
 			'{db_prefix}log_reported_comments',
-			array(
+			[
 				'id_report' => 'int', 'id_member' => 'int', 'membername' => 'string',
 				'member_ip' => 'inet', 'comment' => 'string', 'time_sent' => 'int',
-			),
-			array(
+			],
+			[
 				$id_report, $user_info['id'], $user_info['name'],
 				$user_info['ip'], $reason, time(),
-			),
-			array('id_comment')
+			],
+			['id_comment']
 		);
 
 		// And get ready to notify people.
@@ -327,7 +327,7 @@ function reportPost($msg, $reason)
 	}
 
 	// Keep track of when the mod reports get updated, that way we know when we need to look again.
-	updateSettings(array('last_mod_report_action' => time()));
+	updateSettings(['last_mod_report_action' => time()]);
 
 	// Back to the post we reported!
 	session_flash('success', $txt['report_sent']);
@@ -351,9 +351,9 @@ function reportUser($id_member, $reason)
 		SELECT id_member, real_name, member_name
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}',
-		array(
+		[
 			'id_member' => $_POST['u']
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_user', false);
@@ -369,12 +369,12 @@ function reportUser($id_member, $reason)
 			AND id_msg = {int:not_a_reported_post}
 			AND (closed = {int:not_closed} OR ignore_all = {int:ignored})
 		ORDER BY ignore_all DESC',
-		array(
+		[
 			'id_member' => $_POST['u'],
 			'not_a_reported_post' => 0,
 			'not_closed' => 0,
 			'ignored' => 1,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) != 0)
 		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
@@ -391,26 +391,26 @@ function reportUser($id_member, $reason)
 			UPDATE {db_prefix}log_reported
 			SET num_reports = num_reports + 1, time_updated = {int:current_time}
 			WHERE id_report = {int:id_report}',
-			array(
+			[
 				'current_time' => time(),
 				'id_report' => $id_report,
-			)
+			]
 		);
 	// Otherwise, we shall make one!
 	else
 	{
 		$id_report = $smcFunc['db_insert']('',
 			'{db_prefix}log_reported',
-			array(
+			[
 				'id_msg' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'id_member' => 'int', 'membername' => 'string',
 				'subject' => 'string', 'body' => 'string', 'time_started' => 'int', 'time_updated' => 'int',
 				'num_reports' => 'int', 'closed' => 'int',
-			),
-			array(
+			],
+			[
 				0, 0, 0, $user['id_member'], $user_name,
 				'', '', time(), time(), 1, 0,
-			),
-			array('id_report'),
+			],
+			['id_report'],
 			1
 		);
 	}
@@ -420,15 +420,15 @@ function reportUser($id_member, $reason)
 	{
 		$smcFunc['db_insert']('',
 			'{db_prefix}log_reported_comments',
-			array(
+			[
 				'id_report' => 'int', 'id_member' => 'int', 'membername' => 'string',
 				'member_ip' => 'inet', 'comment' => 'string', 'time_sent' => 'int',
-			),
-			array(
+			],
+			[
 				$id_report, $user_info['id'], $user_info['name'],
 				$user_info['ip'], $reason, time(),
-			),
-			array('id_comment')
+			],
+			['id_comment']
 		);
 
 		// And get ready to notify people.
@@ -444,7 +444,7 @@ function reportUser($id_member, $reason)
 	}
 
 	// Keep track of when the mod reports get updated, that way we know when we need to look again.
-	updateSettings(array('last_mod_report_action' => time()));
+	updateSettings(['last_mod_report_action' => time()]);
 
 	// Back to the post we reported!
 	session_flash('success', $txt['report_sent']);

@@ -30,9 +30,9 @@ function MessageIndex()
 			UPDATE {db_prefix}boards
 			SET num_posts = num_posts + 1
 			WHERE id_board = {int:current_board}',
-			array(
+			[
 				'current_board' => $board,
-			)
+			]
 		);
 
 		redirectexit($board_info['redirect']);
@@ -80,7 +80,7 @@ function MessageIndex()
 		$session_name = session_name();
 		foreach ($_GET as $k => $v)
 		{
-			if (!in_array($k, array('board', 'start', $session_name)))
+			if (!in_array($k, ['board', 'start', $session_name]))
 				$context['robot_no_index'] = true;
 		}
 	}
@@ -96,7 +96,7 @@ function MessageIndex()
 	}
 
 	// We only know these.
-	if (isset($_REQUEST['sort']) && !in_array($_REQUEST['sort'], array('subject', 'starter', 'last_poster', 'replies', 'views', 'first_post', 'last_post')))
+	if (isset($_REQUEST['sort']) && !in_array($_REQUEST['sort'], ['subject', 'starter', 'last_poster', 'replies', 'views', 'first_post', 'last_post']))
 		$_REQUEST['sort'] = 'last_post';
 
 	// Make sure the starting place makes sense and construct the page index.
@@ -113,19 +113,19 @@ function MessageIndex()
 
 	if (!($can_show_all && isset($_REQUEST['all'])))
 	{
-		$context['links'] = array(
+		$context['links'] = [
 			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?board=' . $board . '.0' : '',
 			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?board=' . $board . '.' . ($_REQUEST['start'] - $context['topics_per_page']) : '',
 			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . ($_REQUEST['start'] + $context['topics_per_page']) : '',
 			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . (floor(($board_info['total_topics'] - 1) / $context['topics_per_page']) * $context['topics_per_page']) : '',
 			'up' => $board_info['parent'] == 0 ? $scripturl . '?' : $scripturl . '?board=' . $board_info['parent'] . '.0'
-		);
+		];
 	}
 
-	$context['page_info'] = array(
+	$context['page_info'] = [
 		'current_page' => $_REQUEST['start'] / $context['topics_per_page'] + 1,
 		'num_pages' => floor(($board_info['total_topics'] - 1) / $context['topics_per_page']) + 1
-	);
+	];
 
 	if (isset($_REQUEST['all']) && $can_show_all)
 	{
@@ -173,13 +173,13 @@ function MessageIndex()
 	}
 
 	require_once($sourcedir . '/Subs-BoardIndex.php');
-	$boardIndexOptions = array(
+	$boardIndexOptions = [
 		'include_categories' => false,
 		'base_level' => $board_info['child_level'] + 1,
 		'parent_id' => $board_info['id'],
 		'set_latest_post' => false,
 		'countChildPosts' => !empty($modSettings['countChildPosts']),
-	);
+	];
 	$context['boards'] = getBoardIndex($boardIndexOptions);
 
 	// Nosey, nosey - who's viewing this topic?
@@ -199,11 +199,11 @@ function MessageIndex()
 				LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
 				LEFT JOIN {db_prefix}membergroups AS cg ON (cg.id_group = chars.main_char_group)
 			WHERE INSTR(lo.url, {string:in_url_string}) > 0 OR lo.session = {string:session}',
-			array(
+			[
 				'reg_member_group' => 0,
 				'in_url_string' => '"board":' . $board,
 				'session' => $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id(),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -222,7 +222,7 @@ function MessageIndex()
 			if (!empty($row['show_online']) || allowedTo('moderate_forum'))
 				$context['view_members_list'][$row['log_time'] . $row['member_name']] = empty($row['show_online']) ? '<em>' . $link . '</em>' : $link;
 			// @todo why are we filling this array of data that are just counted (twice) and discarded? ???
-			$context['view_members'][$row['log_time'] . $row['member_name']] = array(
+			$context['view_members'][$row['log_time'] . $row['member_name']] = [
 				'id' => $row['id_member'],
 				'username' => $row['member_name'],
 				'name' => $row['real_name'],
@@ -231,7 +231,7 @@ function MessageIndex()
 				'link' => $link,
 				'is_buddy' => $is_buddy,
 				'hidden' => empty($row['show_online']),
-			);
+			];
 
 			if (empty($row['show_online']))
 				$context['view_num_hidden']++;
@@ -245,7 +245,7 @@ function MessageIndex()
 	}
 
 	// Default sort methods.
-	$sort_methods = array(
+	$sort_methods = [
 		'subject' => 'mf.subject',
 		'starter' => 'COALESCE(memf.real_name, mf.poster_name)',
 		'last_poster' => 'COALESCE(meml.real_name, ml.poster_name)',
@@ -253,7 +253,7 @@ function MessageIndex()
 		'views' => 't.num_views',
 		'first_post' => 't.id_topic',
 		'last_post' => 't.id_last_msg'
-	);
+	];
 
 	// They didn't pick one, default to by last post descending.
 	if (!isset($_REQUEST['sort']) || !isset($sort_methods[$_REQUEST['sort']]))
@@ -274,7 +274,7 @@ function MessageIndex()
 	$txt['starter'] = $txt['started_by'];
 
 	// Bring in any changes we want to make before the query.
-	call_integration_hook('integrate_pre_messageindex', array(&$sort_methods));
+	call_integration_hook('integrate_pre_messageindex', [&$sort_methods]);
 
 	foreach ($sort_methods as $key => $val)
 		$context['topics_headers'][$key] = '<a href="' . $scripturl . '?board=' . $context['current_board'] . '.' . $context['start'] . ';sort=' . $key . ($context['sort_by'] == $key && $context['sort_direction'] == 'up' ? ';desc' : '') . '">' . $txt[$key] . ($context['sort_by'] == $key ? '<span class="sort sort_' . $context['sort_direction'] . '"></span>' : '') . '</a>';
@@ -298,7 +298,7 @@ function MessageIndex()
 	$pre_query = $start > 0;
 	if ($pre_query && $context['maxindex'] > 0)
 	{
-		$message_pre_index_parameters = array(
+		$message_pre_index_parameters = [
 			'current_board' => $board,
 			'current_member' => $user_info['id'],
 			'is_approved' => 1,
@@ -306,15 +306,15 @@ function MessageIndex()
 			'start' => $start,
 			'maxindex' => $context['maxindex'],
 			'sort' => $_REQUEST['sort'],
-		);
+		];
 		$message_pre_index_tables = [];
 		$message_pre_index_wheres = [];
-		call_integration_hook('integrate_message_pre_index', array(&$message_pre_index_tables, &$message_pre_index_parameters, &$message_pre_index_wheres));
+		call_integration_hook('integrate_message_pre_index', [&$message_pre_index_tables, &$message_pre_index_parameters, &$message_pre_index_wheres]);
 
 		$request = $smcFunc['db_query']('', '
 			SELECT t.id_topic
 			FROM {db_prefix}topics AS t' . ($context['sort_by'] === 'last_poster' ? '
-				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)' : (in_array($context['sort_by'], array('starter', 'subject')) ? '
+				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)' : (in_array($context['sort_by'], ['starter', 'subject']) ? '
 				INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)' : '')) . ($context['sort_by'] === 'starter' ? '
 				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)' : '') . ($context['sort_by'] === 'last_poster' ? '
 				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)' : '') . '
@@ -337,7 +337,7 @@ function MessageIndex()
 		// For search engine effectiveness we'll link guests differently.
 		$context['pageindex_multiplier'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
 
-		$message_index_parameters = array(
+		$message_index_parameters = [
 			'current_board' => $board,
 			'current_member' => $user_info['id'],
 			'topic_list' => $topic_ids,
@@ -345,11 +345,11 @@ function MessageIndex()
 			'find_set_topics' => implode(',', $topic_ids),
 			'start' => $start,
 			'maxindex' => $context['maxindex'],
-		);
+		];
 		$message_index_selects = [];
 		$message_index_tables = [];
 		$message_index_wheres = [];
-		call_integration_hook('integrate_message_index', array(&$message_index_selects, &$message_index_tables, &$message_index_parameters, &$message_index_wheres, &$topic_ids));
+		call_integration_hook('integrate_message_index', [&$message_index_selects, &$message_index_tables, &$message_index_parameters, &$message_index_wheres, &$topic_ids]);
 
 		$enableParticipation = empty($user_info['is_guest']);
 
@@ -406,7 +406,7 @@ function MessageIndex()
 			if (!empty($modSettings['preview_characters']))
 			{
 				// Limit them to $modSettings['preview_characters'] characters
-				$row['first_body'] = strip_tags(strtr(Parser::parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), array('<br>' => '&#10;')));
+				$row['first_body'] = strip_tags(strtr(Parser::parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), ['<br>' => '&#10;']));
 				if ($smcFunc['strlen']($row['first_body']) > $modSettings['preview_characters'])
 					$row['first_body'] = $smcFunc['substr']($row['first_body'], 0, $modSettings['preview_characters']) . '...';
 
@@ -422,7 +422,7 @@ function MessageIndex()
 				}
 				else
 				{
-					$row['last_body'] = strip_tags(strtr(Parser::parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), array('<br>' => '&#10;')));
+					$row['last_body'] = strip_tags(strtr(Parser::parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), ['<br>' => '&#10;']));
 					if ($smcFunc['strlen']($row['last_body']) > $modSettings['preview_characters'])
 						$row['last_body'] = $smcFunc['substr']($row['last_body'], 0, $modSettings['preview_characters']) . '...';
 
@@ -469,40 +469,40 @@ function MessageIndex()
 				$colorClass .= ' locked';
 
 			// 'Print' the topic info.
-			$context['topics'][$row['id_topic']] = array_merge($row, array(
+			$context['topics'][$row['id_topic']] = array_merge($row, [
 				'id' => $row['id_topic'],
-				'first_post' => array(
+				'first_post' => [
 					'id' => $row['id_first_msg'],
-					'member' => array(
+					'member' => [
 						'username' => $row['first_member_name'],
 						'name' => $row['first_display_name'],
 						'id' => $row['first_id_member'],
 						'href' => !empty($row['first_id_member']) ? $scripturl . '?action=profile;u=' . $row['first_id_member'] : '',
 						'link' => !empty($row['first_id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['first_id_member'] . (!empty($row['first_character']) ? ';area=characters;char=' . $row['first_character'] : '') . '" title="' . $txt['profile_of'] . ' ' . $row['first_display_name'] . '" class="preview">' . $row['first_display_name'] . '</a>' : $row['first_display_name'],
-					),
+					],
 					'time' => timeformat($row['first_poster_time']),
 					'timestamp' => forum_time(true, $row['first_poster_time']),
 					'subject' => $row['first_subject'],
 					'preview' => $row['first_body'],
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['first_subject'] . '</a>',
-				),
-				'last_post' => array(
+				],
+				'last_post' => [
 					'id' => $row['id_last_msg'],
-					'member' => array(
+					'member' => [
 						'username' => $row['last_member_name'],
 						'name' => $row['last_display_name'],
 						'id' => $row['last_id_member'],
 						'href' => !empty($row['last_id_member']) ? $scripturl . '?action=profile;u=' . $row['last_id_member'] : '',
 						'link' => !empty($row['last_id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['last_id_member'] . (!empty($row['last_character']) ? ';area=characters;char=' . $row['last_character'] : '') . '">' . $row['last_display_name'] . '</a>' : $row['last_display_name'],
-					),
+					],
 					'time' => timeformat($row['last_poster_time']),
 					'timestamp' => forum_time(true, $row['last_poster_time']),
 					'subject' => $row['last_subject'],
 					'preview' => $row['last_body'],
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
-				),
+				],
 				'is_sticky' => !empty($row['is_sticky']),
 				'is_locked' => !empty($row['locked']),
 				'is_redirect' => !empty($row['id_redirect_topic']),
@@ -520,21 +520,21 @@ function MessageIndex()
 				'approved' => $row['approved'],
 				'unapproved_posts' => $row['unapproved_posts'],
 				'css_class' => $colorClass,
-			));
+			]);
 
 			// Last post member avatar
-			$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data(array(
+			$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data([
 				'avatar' => $row['avatar'],
 				'email' => $row['email_address'],
 				'filename' => !empty($row['last_member_filename']) ? $row['last_member_filename'] : '',
-			));
+			]);
 
 			// First post member avatar
-			$context['topics'][$row['id_topic']]['first_post']['member']['avatar'] = set_avatar_data(array(
+			$context['topics'][$row['id_topic']]['first_post']['member']['avatar'] = set_avatar_data([
 				'avatar' => $row['first_member_avatar'],
 				'email' => $row['first_member_mail'],
 				'filename' => !empty($row['first_member_filename']) ? $row['first_member_filename'] : '',
-			));
+			]);
 		}
 		$smcFunc['db_free_result']($result);
 
@@ -543,11 +543,11 @@ function MessageIndex()
 			$context['topics'] = array_reverse($context['topics'], true);
 	}
 
-	$context['jump_to'] = array(
+	$context['jump_to'] = [
 		'label' => addslashes(un_htmlspecialchars($txt['jump_to'])),
-		'board_name' => $smcFunc['htmlspecialchars'](strtr(strip_tags($board_info['name']), array('&amp;' => '&'))),
+		'board_name' => $smcFunc['htmlspecialchars'](strtr(strip_tags($board_info['name']), ['&amp;' => '&'])),
 		'child_level' => $board_info['child_level'],
-	);
+	];
 
 	// Is Quick Moderation active/needed?
 	if (!empty($context['topics']))
@@ -578,14 +578,14 @@ function MessageIndex()
 		foreach ($context['topics'] as $t => $topic)
 		{
 			$started = $topic['first_post']['member']['id'] == $user_info['id'];
-			$context['topics'][$t]['quick_mod'] = array(
+			$context['topics'][$t]['quick_mod'] = [
 				'lock' => allowedTo('lock_any') || ($started && allowedTo('lock_own')),
 				'sticky' => allowedTo('make_sticky'),
 				'move' => (allowedTo('move_any') || ($started && allowedTo('move_own')) && $context['can_move_any']),
 				'modify' => allowedTo('modify_any') || ($started && allowedTo('modify_own')),
 				'remove' => allowedTo('remove_any') || ($started && allowedTo('remove_own')),
 				'approve' => $context['can_approve'] && $topic['unapproved_posts']
-			);
+			];
 			$context['can_lock'] |= ($started && allowedTo('lock_own'));
 			$context['can_move'] |= ($started && allowedTo('move_own') && $context['can_move_any']);
 			$context['can_remove'] |= ($started && allowedTo('remove_own'));
@@ -597,7 +597,7 @@ function MessageIndex()
 
 	if (!empty($context['can_quick_mod']))
 	{
-		$context['qmod_actions'] = array('approve', 'remove', 'lock', 'sticky', 'move', 'merge', 'restore', 'markread');
+		$context['qmod_actions'] = ['approve', 'remove', 'lock', 'sticky', 'move', 'merge', 'restore', 'markread'];
 		call_integration_hook('integrate_quick_mod_actions');
 	}
 
@@ -606,9 +606,9 @@ function MessageIndex()
 	{
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}log_boards',
-			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-			array($modSettings['maxMsgID'], $user_info['id'], $board),
-			array('id_member', 'id_board')
+			['id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'],
+			[$modSettings['maxMsgID'], $user_info['id'], $board],
+			['id_member', 'id_board']
 		);
 
 		if (!empty($board_info['parent_boards']))
@@ -618,11 +618,11 @@ function MessageIndex()
 				SET id_msg = {int:id_msg}
 				WHERE id_member = {int:current_member}
 					AND id_board IN ({array_int:board_list})',
-				array(
+				[
 					'current_member' => $user_info['id'],
 					'board_list' => array_keys($board_info['parent_boards']),
 					'id_msg' => $modSettings['maxMsgID'],
-				)
+				]
 			);
 
 			// We've seen all these boards now!
@@ -639,11 +639,11 @@ function MessageIndex()
 			FROM {db_prefix}log_notify
 			WHERE id_member = {int:current_member}
 				AND (' . (!empty($context['topics']) ? 'id_topic IN ({array_int:topics}) OR ' : '') . 'id_board = {int:current_board})',
-			array(
+			[
 				'current_board' => $board,
 				'topics' => !empty($context['topics']) ? array_keys($context['topics']) : [],
 				'current_member' => $user_info['id'],
-			)
+			]
 		);
 		$context['is_marked_notify'] = false; // this is for the *board* only
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -665,16 +665,16 @@ function MessageIndex()
 				SET sent = {int:is_sent}
 				WHERE id_member = {int:current_member}
 					AND id_board = {int:current_board}',
-				array(
+				[
 					'current_board' => $board,
 					'current_member' => $user_info['id'],
 					'is_sent' => 0,
-				)
+				]
 			);
 		}
 
 		require_once($sourcedir . '/Subs-Notify.php');
-		$pref = getNotifyPrefs($user_info['id'], array('board_notify', 'board_notify_' . $board), true);
+		$pref = getNotifyPrefs($user_info['id'], ['board_notify', 'board_notify_' . $board], true);
 		$pref = !empty($pref[$user_info['id']]) ? $pref[$user_info['id']] : [];
 		$pref = isset($pref['board_notify_' . $board]) ? $pref['board_notify_' . $board] : (!empty($pref['board_notify']) ? $pref['board_notify'] : 0);
 		$context['board_notification_mode'] = !$context['is_marked_notify'] ? 1 : ($pref & 0x02 ? 3 : ($pref & 0x01 ? 2 : 1));
@@ -699,39 +699,39 @@ function MessageIndex()
 	$context['normal_buttons'] = [];
 	
 	if ($context['can_post_new'])
-		$context['normal_buttons']['new_topic'] = array('text' => 'new_topic', 'image' => 'new_topic.png', 'lang' => true, 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0', 'active' => true);
+		$context['normal_buttons']['new_topic'] = ['text' => 'new_topic', 'image' => 'new_topic.png', 'lang' => true, 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0', 'active' => true];
 	
 	if ($context['can_post_poll'])
-		$context['normal_buttons']['post_poll'] = array('text' => 'new_poll', 'image' => 'new_poll.png', 'lang' => true, 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0;poll');
+		$context['normal_buttons']['post_poll'] = ['text' => 'new_poll', 'image' => 'new_poll.png', 'lang' => true, 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0;poll'];
 	
 	if (!$context['user']['is_logged'])
-		$context['normal_buttons']['markread'] = array('text' => 'mark_read_short', 'image' => 'markread.png', 'lang' => true, 'custom' => 'data-confirm="' . $txt['are_sure_mark_read'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_var'] . '=' . $context['session_id']);
+		$context['normal_buttons']['markread'] = ['text' => 'mark_read_short', 'image' => 'markread.png', 'lang' => true, 'custom' => 'data-confirm="' . $txt['are_sure_mark_read'] . '"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_var'] . '=' . $context['session_id']];
 
 	if ($context['can_mark_notify'])
-		$context['normal_buttons']['notify'] = array(
+		$context['normal_buttons']['notify'] = [
 			'lang' => true,
 			'text' => 'notify_board_' . $context['board_notification_mode'],
-			'sub_buttons' => array(
-				array(
+			'sub_buttons' => [
+				[
 					'text' => 'notify_board_1',
 					'url' => $scripturl . '?action=notifyboard;board=' . $board . ';mode=1;' . $context['session_var'] . '=' . $context['session_id'],
-				),
-				array(
+				],
+				[
 					'text' => 'notify_board_2',
 					'url' => $scripturl . '?action=notifyboard;board=' . $board . ';mode=2;' . $context['session_var'] . '=' . $context['session_id'],
-				),
-				array(
+				],
+				[
 					'text' => 'notify_board_3',
 					'url' => $scripturl . '?action=notifyboard;board=' . $board . ';mode=3;' . $context['session_var'] . '=' . $context['session_id'],
-				),
-			),
-		);
+				],
+			],
+		];
 
 	// Javascript for inline editing.
-	loadJavaScriptFile('topic.js', array('defer' => false), 'sbb_topic');
+	loadJavaScriptFile('topic.js', ['defer' => false], 'sbb_topic');
 
 	// Allow adding new buttons easily.
-	call_integration_hook('integrate_messageindex_buttons', array(&$context['normal_buttons']));
+	call_integration_hook('integrate_messageindex_buttons', [&$context['normal_buttons']]);
 }
 
 /**
@@ -764,17 +764,17 @@ function QuickModeration()
 
 	if (!empty($board))
 	{
-		$boards_can = array(
-			'make_sticky' => allowedTo('make_sticky') ? array($board) : [],
-			'move_any' => allowedTo('move_any') ? array($board) : [],
-			'move_own' => allowedTo('move_own') ? array($board) : [],
-			'remove_any' => allowedTo('remove_any') ? array($board) : [],
-			'remove_own' => allowedTo('remove_own') ? array($board) : [],
-			'lock_any' => allowedTo('lock_any') ? array($board) : [],
-			'lock_own' => allowedTo('lock_own') ? array($board) : [],
-			'merge_any' => allowedTo('merge_any') ? array($board) : [],
-			'approve_posts' => allowedTo('approve_posts') ? array($board) : [],
-		);
+		$boards_can = [
+			'make_sticky' => allowedTo('make_sticky') ? [$board] : [],
+			'move_any' => allowedTo('move_any') ? [$board] : [],
+			'move_own' => allowedTo('move_own') ? [$board] : [],
+			'remove_any' => allowedTo('remove_any') ? [$board] : [],
+			'remove_own' => allowedTo('remove_own') ? [$board] : [],
+			'lock_any' => allowedTo('lock_any') ? [$board] : [],
+			'lock_own' => allowedTo('lock_own') ? [$board] : [],
+			'merge_any' => allowedTo('merge_any') ? [$board] : [],
+			'approve_posts' => allowedTo('approve_posts') ? [$board] : [],
+		];
 
 		$redirect_url = 'board=' . $board . '.' . $_REQUEST['start'];
 	}
@@ -784,7 +784,7 @@ function QuickModeration()
 		 * @todo Ugly. There's no getting around this, is there?
 		 * @todo Maybe just do this on the actions people want to use?
 		 */
-		$boards_can = boardsAllowedTo(array('make_sticky', 'move_any', 'move_own', 'remove_any', 'remove_own', 'lock_any', 'lock_own', 'merge_any', 'approve_posts'), true, false);
+		$boards_can = boardsAllowedTo(['make_sticky', 'move_any', 'move_own', 'remove_any', 'remove_own', 'lock_any', 'lock_own', 'merge_any', 'approve_posts'], true, false);
 
 		$redirect_url = isset($_POST['redirect_url']) ? $_POST['redirect_url'] : (isset($_SESSION['old_url']) ? $_SESSION['old_url'] : '');
 	}
@@ -795,7 +795,7 @@ function QuickModeration()
 		// Don't count this board, if it's specified
 		if (!empty($board))
 		{
-			$boards_can['post_new'] = array_diff(boardsAllowedTo('post_new'), array($board));
+			$boards_can['post_new'] = array_diff(boardsAllowedTo('post_new'), [$board]);
 		}
 		else
 		{
@@ -868,10 +868,10 @@ function QuickModeration()
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:action_topic_ids})
 			LIMIT {int:limit}',
-			array(
+			[
 				'action_topic_ids' => array_keys($_REQUEST['actions']),
 				'limit' => count($_REQUEST['actions']),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -904,7 +904,7 @@ function QuickModeration()
 	}
 
 	$stickyCache = [];
-	$moveCache = array(0 => [], 1 => []);
+	$moveCache = [0 => [], 1 => []];
 	$removeCache = [];
 	$lockCache = [];
 	$markCache = [];
@@ -943,7 +943,7 @@ function QuickModeration()
 	if (empty($board))
 		$affectedBoards = [];
 	else
-		$affectedBoards = array($board => array(0, 0));
+		$affectedBoards = [$board => [0, 0]];
 
 	// Do all the stickies...
 	if (!empty($stickyCache))
@@ -952,10 +952,10 @@ function QuickModeration()
 			UPDATE {db_prefix}topics
 			SET is_sticky = CASE WHEN is_sticky = {int:is_sticky} THEN 0 ELSE 1 END
 			WHERE id_topic IN ({array_int:sticky_topic_ids})',
-			array(
+			[
 				'sticky_topic_ids' => $stickyCache,
 				'is_sticky' => 1,
-			)
+			]
 		);
 
 		// Get the board IDs and Sticky status
@@ -964,10 +964,10 @@ function QuickModeration()
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:sticky_topic_ids})
 			LIMIT {int:limit}',
-			array(
+			[
 				'sticky_topic_ids' => $stickyCache,
 				'limit' => count($stickyCache),
-			)
+			]
 		);
 		$stickyCacheBoards = [];
 		$stickyCacheStatus = [];
@@ -990,11 +990,11 @@ function QuickModeration()
 			WHERE t.id_topic IN ({array_int:move_topic_ids})' . (!empty($board) && !allowedTo('move_any') ? '
 				AND t.id_member_started = {int:current_member}' : '') . '
 			LIMIT {int:limit}',
-			array(
+			[
 				'current_member' => $user_info['id'],
 				'move_topic_ids' => $moveCache[0],
 				'limit' => count($moveCache[0])
-			)
+			]
 		);
 		$moveTos = [];
 		$moveCache2 = [];
@@ -1015,7 +1015,7 @@ function QuickModeration()
 			$moveTos[$to][] = $row['id_topic'];
 
 			// For reporting...
-			$moveCache2[] = array($row['id_topic'], $row['id_board'], $to);
+			$moveCache2[] = [$row['id_topic'], $row['id_board'], $to];
 		}
 		$smcFunc['db_free_result']($request);
 
@@ -1035,9 +1035,9 @@ function QuickModeration()
 				SELECT id_board, count_posts
 				FROM {db_prefix}boards
 				WHERE id_board IN ({array_int:move_boards})',
-				array(
+				[
 					'move_boards' => array_keys($moveTos),
-				)
+				]
 			);
 
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1067,9 +1067,9 @@ function QuickModeration()
 					SELECT id_member, id_topic
 					FROM {db_prefix}messages
 					WHERE id_topic IN ({array_int:moved_topic_ids})',
-					array(
+					[
 						'moved_topic_ids' => array_keys($topicRecounts),
-					)
+					]
 				);
 
 				while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1087,7 +1087,7 @@ function QuickModeration()
 
 				// And now update them member's post counts
 				foreach ($members as $id_member => $post_adj)
-					updateMemberData($id_member, array('posts' => 'posts + ' . $post_adj));
+					updateMemberData($id_member, ['posts' => 'posts + ' . $post_adj]);
 
 			}
 		}
@@ -1103,11 +1103,11 @@ function QuickModeration()
 			WHERE id_topic IN ({array_int:removed_topic_ids})' . (!empty($board) && !allowedTo('remove_any') ? '
 				AND id_member_started = {int:current_member}' : '') . '
 			LIMIT {int:limit}',
-			array(
+			[
 				'current_member' => $user_info['id'],
 				'removed_topic_ids' => $removeCache,
 				'limit' => count($removeCache),
-			)
+			]
 		);
 
 		$removeCache = [];
@@ -1126,7 +1126,7 @@ function QuickModeration()
 			foreach ($removeCache as $topic)
 			{
 				// Only log the topic ID if it's not in the recycle board.
-				logAction('remove', array((empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $removeCacheBoards[$topic] ? 'topic' : 'old_topic_id') => $topic, 'board' => $removeCacheBoards[$topic]));
+				logAction('remove', [(empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $removeCacheBoards[$topic] ? 'topic' : 'old_topic_id') => $topic, 'board' => $removeCacheBoards[$topic]]);
 				sendNotifications($topic, 'remove');
 			}
 
@@ -1145,11 +1145,11 @@ function QuickModeration()
 			WHERE id_topic IN ({array_int:approve_topic_ids})
 				AND approved = {int:not_approved}
 			LIMIT {int:limit}',
-			array(
+			[
 				'approve_topic_ids' => $approveCache,
 				'not_approved' => 0,
 				'limit' => count($approveCache),
-			)
+			]
 		);
 		$approveCache = [];
 		$approveCacheMembers = [];
@@ -1168,7 +1168,7 @@ function QuickModeration()
 
 			// Time for some logging!
 			foreach ($approveCache as $topic)
-				logAction('approve_topic', array('topic' => $topic, 'member' => $approveCacheMembers[$topic]));
+				logAction('approve_topic', ['topic' => $topic, 'member' => $approveCacheMembers[$topic]]);
 		}
 	}
 
@@ -1188,11 +1188,11 @@ function QuickModeration()
 					AND id_member_started = {int:current_member}
 					AND locked IN (2, 0)
 				LIMIT {int:limit}',
-				array(
+				[
 					'current_member' => $user_info['id'],
 					'locked_topic_ids' => $lockCache,
 					'limit' => count($lockCache),
-				)
+				]
 			);
 			$lockCache = [];
 			$lockCacheBoards = [];
@@ -1211,10 +1211,10 @@ function QuickModeration()
 				FROM {db_prefix}topics
 				WHERE id_topic IN ({array_int:locked_topic_ids})
 				LIMIT {int:limit}',
-				array(
+				[
 					'locked_topic_ids' => $lockCache,
 					'limit' => count($lockCache)
-				)
+				]
 			);
 			$lockCacheBoards = [];
 			while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -1233,10 +1233,10 @@ function QuickModeration()
 				UPDATE {db_prefix}topics
 				SET locked = CASE WHEN locked = {int:is_locked} THEN ' . (allowedTo('lock_any') ? '1' : '2') . ' ELSE 0 END
 				WHERE id_topic IN ({array_int:locked_topic_ids})',
-				array(
+				[
 					'locked_topic_ids' => $lockCache,
 					'is_locked' => 0,
-				)
+				]
 			);
 		}
 	}
@@ -1248,10 +1248,10 @@ function QuickModeration()
 			FROM {db_prefix}log_topics
 			WHERE id_topic IN ({array_int:selected_topics})
 				AND id_member = {int:current_user}',
-			array(
+			[
 				'selected_topics' => $markCache,
 				'current_user' => $user_info['id'],
-			)
+			]
 		);
 		$logged_topics = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1260,13 +1260,13 @@ function QuickModeration()
 
 		$markArray = [];
 		foreach ($markCache as $topic)
-			$markArray[] = array($modSettings['maxMsgID'], $user_info['id'], $topic, (isset($logged_topics[$topic]) ? $logged_topics[$topic] : 0));
+			$markArray[] = [$modSettings['maxMsgID'], $user_info['id'], $topic, (isset($logged_topics[$topic]) ? $logged_topics[$topic] : 0)];
 
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}log_topics',
-			array('id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int', 'unwatched' => 'int'),
+			['id_msg' => 'int', 'id_member' => 'int', 'id_topic' => 'int', 'unwatched' => 'int'],
 			$markArray,
-			array('id_member', 'id_topic')
+			['id_member', 'id_topic']
 		);
 	}
 
@@ -1276,17 +1276,17 @@ function QuickModeration()
 		if (!isset($topic[0]))
 			break;
 
-		logAction('move', array('topic' => $topic[0], 'board_from' => $topic[1], 'board_to' => $topic[2]));
+		logAction('move', ['topic' => $topic[0], 'board_from' => $topic[1], 'board_to' => $topic[2]]);
 		sendNotifications($topic[0], 'move');
 	}
 	foreach ($lockCache as $topic)
 	{
-		logAction($lockStatus[$topic] ? 'lock' : 'unlock', array('topic' => $topic, 'board' => $lockCacheBoards[$topic]));
+		logAction($lockStatus[$topic] ? 'lock' : 'unlock', ['topic' => $topic, 'board' => $lockCacheBoards[$topic]]);
 		sendNotifications($topic, $lockStatus[$topic] ? 'lock' : 'unlock');
 	}
 	foreach ($stickyCache as $topic)
 	{
-		logAction($stickyCacheStatus[$topic] ? 'unsticky' : 'sticky', array('topic' => $topic, 'board' => $stickyCacheBoards[$topic]));
+		logAction($stickyCacheStatus[$topic] ? 'unsticky' : 'sticky', ['topic' => $topic, 'board' => $stickyCacheBoards[$topic]]);
 		sendNotifications($topic, 'sticky');
 	}
 

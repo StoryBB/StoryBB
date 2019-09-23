@@ -77,7 +77,7 @@ function showAttachment($force_attach = false)
 	{
 		// Do we have a hook wanting to use our attachment system? We use $attachRequest to prevent accidental usage of $request.
 		$attachRequest = null;
-		call_integration_hook('integrate_download_request', array(&$attachRequest));
+		call_integration_hook('integrate_download_request', [&$attachRequest]);
 		if (!is_null($attachRequest) && $smcFunc['db_is_resource']($attachRequest))
 			$request = $attachRequest;
 
@@ -89,9 +89,9 @@ function showAttachment($force_attach = false)
 				FROM {db_prefix}attachments
 				WHERE id_attach = {int:attach}
 				LIMIT 1',
-				array(
+				[
 					'attach' => $attachId,
-				)
+				]
 			);
 		}
 
@@ -122,10 +122,10 @@ function showAttachment($force_attach = false)
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})
 				WHERE a.id_attach = {int:attach}
 				LIMIT 1',
-				array(
+				[
 					'attach' => $attachId,
 					'current_topic' => $attachTopic,
-				)
+				]
 			);
 
 			// The provided topic must match the one stored in the DB for this particular attachment, also.
@@ -154,9 +154,9 @@ function showAttachment($force_attach = false)
 				FROM {db_prefix}attachments
 				WHERE id_attach = {int:thumb_id}
 				LIMIT 1',
-				array(
+				[
 					'thumb_id' => $file['id_thumb'],
-				)
+				]
 			);
 
 			$thumbFile = $smcFunc['db_fetch_assoc']($request);
@@ -175,7 +175,7 @@ function showAttachment($force_attach = false)
 
 		// Cache it.
 		if (!empty($file) || !empty($thumbFile))
-			cache_put_data('attachment_lookup_id-' . $file['id_attach'], array($file, $thumbFile), mt_rand(850, 900));
+			cache_put_data('attachment_lookup_id-' . $file['id_attach'], [$file, $thumbFile], mt_rand(850, 900));
 	}
 
 	// Replace the normal file with its thumbnail if it has one!
@@ -235,9 +235,9 @@ function showAttachment($force_attach = false)
 			UPDATE {db_prefix}attachments
 			SET downloads = downloads + 1
 			WHERE id_attach = {int:id_attach}',
-			array(
+			[
 				'id_attach' => $attachId,
-			)
+			]
 		);
 
 	// Send the attachment headers.
@@ -257,8 +257,8 @@ function showAttachment($force_attach = false)
 		unset($_REQUEST['image']);
 
 	// Does this have a mime type?
-	elseif (!empty($file['mime_type']) && (isset($_REQUEST['image']) || !in_array($file['fileext'], array('jpg', 'gif', 'jpeg', 'x-ms-bmp', 'png', 'psd', 'tiff', 'iff'))))
-		header('Content-Type: ' . strtr($file['mime_type'], array('image/bmp' => 'image/x-ms-bmp')));
+	elseif (!empty($file['mime_type']) && (isset($_REQUEST['image']) || !in_array($file['fileext'], ['jpg', 'gif', 'jpeg', 'x-ms-bmp', 'png', 'psd', 'tiff', 'iff'])))
+		header('Content-Type: ' . strtr($file['mime_type'], ['image/bmp' => 'image/x-ms-bmp']));
 
 	else
 	{
@@ -284,7 +284,7 @@ function showAttachment($force_attach = false)
 		header('Content-Disposition: ' . $disposition . '; filename="' . $file['filename'] . '"');
 
 	// If this has an "image extension" - but isn't actually an image - then ensure it isn't cached cause of silly IE.
-	if (!isset($_REQUEST['image']) && in_array($file['fileext'], array('gif', 'jpg', 'bmp', 'png', 'jpeg', 'tiff')))
+	if (!isset($_REQUEST['image']) && in_array($file['fileext'], ['gif', 'jpg', 'bmp', 'png', 'jpeg', 'tiff']))
 		header('Cache-Control: no-cache');
 
 	else

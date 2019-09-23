@@ -29,7 +29,7 @@ function on_allowed_reagreement_actions(): bool
 		],
 		'reagreement' => true,
 	];
-	call_integration_hook('integration_reagreement_actions', array(&$allowed_actions));
+	call_integration_hook('integration_reagreement_actions', [&$allowed_actions]);
 
 	if (!empty($_REQUEST['action']) && isset($allowed_actions[$_REQUEST['action']]))
 	{

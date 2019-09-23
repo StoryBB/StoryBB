@@ -28,13 +28,13 @@ function summary($memID)
 	$context['sub_template'] = 'profile_summary';
 
 	// Set up the stuff and load the user.
-	$context += array(
+	$context += [
 		'page_title' => sprintf($txt['profile_of_username'], $memberContext[$memID]['name']),
 		'can_send_pm' => allowedTo('pm_send'),
 		'can_have_buddy' => allowedTo('profile_identity_own') && !empty($modSettings['enable_buddylist']),
 		'can_issue_warning' => allowedTo('issue_warning') && $modSettings['warning_settings'][0] == 1,
 		'can_view_warning' => (allowedTo('moderate_forum') || allowedTo('issue_warning') || allowedTo('view_warning_any') || ($context['user']['is_owner'] && allowedTo('view_warning_own')) && $modSettings['warning_settings'][0] === 1)
-	);
+	];
 	$context['member'] = &$memberContext[$memID];
 
 	// Set a canonical URL for this page.
@@ -43,9 +43,9 @@ function summary($memID)
 	// Are there things we don't show?
 	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : [];
 	// Menu tab
-	$context[$context['profile_menu_name']]['tab_data'] = array(
+	$context[$context['profile_menu_name']]['tab_data'] = [
 		'title' => $txt['summary']
-	);
+	];
 
 	// See if they have broken any warning levels...
 	list ($modSettings['warning_enable'], $modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
@@ -124,7 +124,7 @@ function summary($memID)
 	{
 		$context['activate_type'] = $context['member']['is_activated'];
 		// What should the link text be?
-		$context['activate_link_text'] = in_array($context['member']['is_activated'], array(3, 4, 5, 13, 14, 15)) ? $txt['account_approve'] : $txt['account_activate'];
+		$context['activate_link_text'] = in_array($context['member']['is_activated'], [3, 4, 5, 13, 14, 15]) ? $txt['account_approve'] : $txt['account_activate'];
 
 		// Should we show a custom message?
 		$context['activate_message'] = isset($txt['account_activate_method_' . $context['member']['is_activated'] % 10]) ? $txt['account_activate_method_' . $context['member']['is_activated'] % 10] : $txt['account_not_activated'];
@@ -147,9 +147,9 @@ function summary($memID)
 		$context['can_edit_ban'] = allowedTo('manage_bans');
 
 		$ban_query = [];
-		$ban_query_vars = array(
+		$ban_query_vars = [
 			'time' => time(),
-		);
+		];
 		$ban_query[] = 'id_member = ' . $context['member']['id'];
 		$ban_query[] = ' {inet:ip} BETWEEN bi.ip_low and bi.ip_high';
 		$ban_query_vars['ip'] = $memberContext[$memID]['ip'];
@@ -179,7 +179,7 @@ function summary($memID)
 		{
 			// Work out what restrictions we actually have.
 			$ban_restrictions = [];
-			foreach (array('access', 'login', 'post') as $type)
+			foreach (['access', 'login', 'post'] as $type)
 				if ($row['cannot_' . $type])
 					$ban_restrictions[] = $txt['ban_type_' . $type];
 
@@ -190,15 +190,15 @@ function summary($memID)
 			// Prepare the link for context.
 			$ban_explanation = sprintf($txt['user_cannot_due_to'], implode(', ', $ban_restrictions), '<a href="' . $scripturl . '?action=admin;area=ban;sa=edit;bg=' . $row['id_ban_group'] . '">' . $row['name'] . '</a>');
 
-			$context['member']['bans'][$row['id_ban_group']] = array(
+			$context['member']['bans'][$row['id_ban_group']] = [
 				'reason' => empty($row['reason']) ? '' : '<br><br><strong>' . $txt['ban_reason'] . ':</strong> ' . $row['reason'],
-				'cannot' => array(
+				'cannot' => [
 					'access' => !empty($row['cannot_access']),
 					'post' => !empty($row['cannot_post']),
 					'login' => !empty($row['cannot_login']),
-				),
+				],
 				'explanation' => $ban_explanation,
-			);
+			];
 		}
 		$smcFunc['db_free_result']($request);
 	}
@@ -274,12 +274,12 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 		ORDER BY id_alert DESC' . (!empty($counter) && empty($pagination) ? '
 		LIMIT {int:counter}' : '') . (!empty($pagination) && empty($counter) ? '
 		LIMIT {int:start}, {int:maxIndex}' : ''),
-		array(
+		[
 			'id_member' => $memID,
 			'counter' => $counter,
 			'start' => !empty($pagination['start']) ? $pagination['start'] : 0,
 			'maxIndex' => !empty($pagination['maxIndex']) ? $pagination['maxIndex'] : 0,
-		)
+		]
 	);
 
 	$senders = [];
@@ -306,7 +306,7 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 	loadLanguage('Alerts');
 
 	// Hooks might want to do something snazzy around their own content types - including enforcing permissions if appropriate.
-	call_integration_hook('integrate_fetch_alerts', array(&$alerts));
+	call_integration_hook('integrate_fetch_alerts', [&$alerts]);
 
 	// For anything that wants us to check board or topic access, let's do that.
 	$boards = [];
@@ -336,9 +336,9 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 			FROM {db_prefix}boards AS b
 			WHERE ' . $query_see_board . '
 				AND id_board IN ({array_int:boards})',
-			array(
+			[
 				'boards' => array_keys($boards),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[$row['id_board']] = '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>';
@@ -352,9 +352,9 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 				INNER JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)
 			WHERE ' . $query_see_board . '
 				AND t.id_topic IN ({array_int:topics})',
-			array(
+			[
 				'topics' => array_keys($topics),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topics[$row['id_topic']] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>';
@@ -368,9 +368,9 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 				INNER JOIN {db_prefix}boards AS b ON (m.id_board = b.id_board)
 			WHERE ' . $query_see_board . '
 				AND m.id_msg IN ({array_int:msgs})',
-			array(
+			[
 				'msgs' => array_keys($msgs),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$msgs[$row['id_msg']] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
@@ -383,9 +383,9 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 			SELECT chars.id_character, chars.id_member, chars.character_name
 			FROM {db_prefix}characters AS chars
 			WHERE id_character IN ({array_int:chars})',
-			array(
+			[
 				'chars' => array_keys($chars),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -430,8 +430,8 @@ function fetch_alerts($memID, $all = false, $counter = 0, $pagination = [], $wit
 		if (isset($txt[$string]))
 		{
 			$extra = $alerts[$id_alert]['extra'];
-			$search = array('{member_link}', '{scripturl}');
-			$repl = array(!empty($alert['sender_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $alert['sender_id'] . '">' . $alert['sender_name'] . '</a>' : $alert['sender_name'], $scripturl);
+			$search = ['{member_link}', '{scripturl}'];
+			$repl = [!empty($alert['sender_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $alert['sender_id'] . '">' . $alert['sender_name'] . '</a>' : $alert['sender_name'], $scripturl];
 			if (!empty($alert['chars_src']))
 			{
 				$search[] = '{char_link}';
@@ -476,7 +476,7 @@ function showAlerts($memID)
 	$count = alert_count($memID);
 
 	// Get the alerts.
-	$context['alerts'] = fetch_alerts($memID, true, false, array('start' => $start, 'maxIndex' => $maxIndex));
+	$context['alerts'] = fetch_alerts($memID, true, false, ['start' => $start, 'maxIndex' => $maxIndex]);
 	$toMark = false;
 	$action = '';
 
@@ -552,27 +552,27 @@ function showPosts($memID)
 	$context['current_member'] = $memID;
 
 	// Create the tabs for the template.
-	$context[$context['profile_menu_name']]['tab_data'] = array(
+	$context[$context['profile_menu_name']]['tab_data'] = [
 		'title' => $txt['showPosts'],
 		'description' => $txt['showPosts_help'],
-		'tabs' => array(
-			'messages' => array(
-			),
-			'topics' => array(
-			),
-			'unwatchedtopics' => array(
-			),
-			'attach' => array(
-			),
-		),
-	);
+		'tabs' => [
+			'messages' => [
+			],
+			'topics' => [
+			],
+			'unwatchedtopics' => [
+			],
+			'attach' => [
+			],
+		],
+	];
 
 	// Shortcut used to determine which $txt['show*'] string to use for the title, based on the SA
-	$title = array(
+	$title = [
 		'attach' => 'Attachments',
 		'unwatchedtopics' => 'Unwatched',
 		'topics' => 'Topics'
-	);
+	];
 
 	// Set the page title
 	if (isset($_GET['sa']) && array_key_exists($_GET['sa'], $title))
@@ -608,9 +608,9 @@ function showPosts($memID)
 			SELECT subject, id_member, id_topic, id_board
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}',
-			array(
+			[
 				'id_msg' => (int) $_GET['delete'],
-			)
+			]
 		);
 		$info = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -625,7 +625,7 @@ function showPosts($memID)
 
 		// Add it to the mod log.
 		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != $user_info['id']))
-			logAction('delete', array('topic' => $info[2], 'subject' => $info[0], 'member' => $info[1], 'board' => $info[3]));
+			logAction('delete', ['topic' => $info[2], 'subject' => $info[0], 'member' => $info[1], 'board' => $info[3]]);
 
 		// Back to... where we are now ;).
 		redirectexit('action=profile;u=' . $memID . ';area=showposts;start=' . $_GET['start']);
@@ -643,11 +643,11 @@ function showPosts($memID)
 			WHERE t.id_member_started = {int:current_member}' . (!empty($board) ? '
 				AND t.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 				AND t.approved = {int:is_approved}'),
-			array(
+			[
 				'current_member' => $memID,
 				'is_approved' => 1,
 				'board' => $board,
-			)
+			]
 		);
 	else
 		$request = $smcFunc['db_query']('', '
@@ -657,11 +657,11 @@ function showPosts($memID)
 			WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
 				AND m.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 				AND m.approved = {int:is_approved}'),
-			array(
+			[
 				'current_member' => $memID,
 				'is_approved' => 1,
 				'board' => $board,
-			)
+			]
 		);
 	list ($msgCount) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -672,11 +672,11 @@ function showPosts($memID)
 		WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
 			AND m.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
-		array(
+		[
 			'current_member' => $memID,
 			'is_approved' => 1,
 			'board' => $board,
-		)
+		]
 	);
 	list ($min_msg_member, $max_msg_member) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -738,13 +738,13 @@ function showPosts($memID)
 					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
 				ORDER BY t.id_first_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT {int:start}, {int:max}',
-				array(
+				[
 					'current_member' => $memID,
 					'is_approved' => 1,
 					'board' => $board,
 					'start' => $start,
 					'max' => $maxIndex,
-				)
+				]
 			);
 		}
 		else
@@ -765,13 +765,13 @@ function showPosts($memID)
 					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
 				ORDER BY m.id_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT {int:start}, {int:max}',
-				array(
+				[
 					'current_member' => $memID,
 					'is_approved' => 1,
 					'board' => $board,
 					'start' => $start,
 					'max' => $maxIndex,
-				)
+				]
 			);
 		}
 
@@ -785,7 +785,7 @@ function showPosts($memID)
 	// Start counting at the number of the first message displayed.
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 	$context['posts'] = [];
-	$board_ids = array('own' => [], 'any' => []);
+	$board_ids = ['own' => [], 'any' => []];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Censor....
@@ -796,17 +796,17 @@ function showPosts($memID)
 		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		// And the array...
-		$context['posts'][$counter += $reverse ? -1 : 1] = array(
+		$context['posts'][$counter += $reverse ? -1 : 1] = [
 			'body' => $row['body'],
 			'counter' => $counter,
-			'category' => array(
+			'category' => [
 				'name' => $row['cname'],
 				'id' => $row['id_cat']
-			),
-			'board' => array(
+			],
+			'board' => [
 				'name' => $row['bname'],
 				'id' => $row['id_board']
-			),
+			],
 			'topic' => $row['id_topic'],
 			'subject' => $row['subject'],
 			'start' => 'msg' . $row['id_msg'],
@@ -819,7 +819,7 @@ function showPosts($memID)
 			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($modSettings['edit_disable_time']) || $row['poster_time'] + $modSettings['edit_disable_time'] * 60 >= time()),
 			'approved' => $row['approved'],
 			'css_class' => $row['approved'] ? 'windowbg' : 'approvebg',
-		);
+		];
 
 		if ($user_info['id'] == $row['id_member_started'])
 			$board_ids['own'][$row['id_board']][] = $counter;
@@ -833,25 +833,25 @@ function showPosts($memID)
 
 	// These are all the permissions that are different from board to board..
 	if ($context['is_topics'])
-		$permissions = array(
-			'own' => array(
+		$permissions = [
+			'own' => [
 				'post_reply_own' => 'can_reply',
-			),
-			'any' => array(
+			],
+			'any' => [
 				'post_reply_any' => 'can_reply',
-			)
-		);
+			]
+		];
 	else
-		$permissions = array(
-			'own' => array(
+		$permissions = [
+			'own' => [
 				'post_reply_own' => 'can_reply',
 				'delete_own' => 'can_delete',
-			),
-			'any' => array(
+			],
+			'any' => [
 				'post_reply_any' => 'can_reply',
 				'delete_any' => 'can_delete',
-			)
-		);
+			]
+		];
 
 	// For every permission in the own/any lists...
 	foreach ($permissions as $type => $list)
@@ -906,111 +906,111 @@ function showAttachments($memID)
 
 	// Make sure we can't actually see anything...
 	if (empty($boardsAllowed))
-		$boardsAllowed = array(-1);
+		$boardsAllowed = [-1];
 
 	require_once($sourcedir . '/Subs-List.php');
 	$context['sub_template'] = 'profile_show_attachments';
 
 	// This is all the information required to list attachments.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'attachments',
 		'width' => '100%',
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'no_items_label' => $txt['show_attachments_none'],
 		'base_href' => $scripturl . '?action=profile;area=showposts;sa=attach;u=' . $memID,
 		'default_sort_col' => 'filename',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getAttachments',
-			'params' => array(
+			'params' => [
 				$boardsAllowed,
 				$memID,
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getNumAttachments',
-			'params' => array(
+			'params' => [
 				$boardsAllowed,
 				$memID,
-			),
-		),
-		'data_check' => array(
+			],
+		],
+		'data_check' => [
 			'class' => function($data)
 			{
 				return $data['approved'] ? '' : 'approvebg';
 			}
-		),
-		'columns' => array(
-			'filename' => array(
-				'header' => array(
+		],
+		'columns' => [
+			'filename' => [
+				'header' => [
 					'value' => $txt['show_attach_filename'],
 					'class' => 'lefttext',
 					'style' => 'width: 25%;',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?action=dlattach;topic=%1$d.0;attach=%2$d">%3$s</a>',
-						'params' => array(
+						'params' => [
 							'topic' => true,
 							'id' => true,
 							'filename' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'a.filename',
 					'reverse' => 'a.filename DESC',
-				),
-			),
-			'downloads' => array(
-				'header' => array(
+				],
+			],
+			'downloads' => [
+				'header' => [
 					'value' => $txt['show_attach_downloads'],
 					'style' => 'width: 12%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'downloads',
 					'comma_format' => true,
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'a.downloads',
 					'reverse' => 'a.downloads DESC',
-				),
-			),
-			'subject' => array(
-				'header' => array(
+				],
+			],
+			'subject' => [
+				'header' => [
 					'value' => $txt['message'],
 					'class' => 'lefttext',
 					'style' => 'width: 30%;',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?msg=%1$d">%2$s</a>',
-						'params' => array(
+						'params' => [
 							'msg' => true,
 							'subject' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'm.subject',
 					'reverse' => 'm.subject DESC',
-				),
-			),
-			'posted' => array(
-				'header' => array(
+				],
+			],
+			'posted' => [
+				'header' => [
 					'value' => $txt['show_attach_posted'],
 					'class' => 'lefttext',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'posted',
 					'timeformat' => true,
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'm.poster_time',
 					'reverse' => 'm.poster_time DESC',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
 	// Create the request list.
 	createList($listOptions);
@@ -1045,7 +1045,7 @@ function list_getAttachments($start, $items_per_page, $sort, $boardsAllowed, $me
 			AND m.approved = {int:is_approved}') . '
 		ORDER BY {raw:sort}
 		LIMIT {int:offset}, {int:limit}',
-		array(
+		[
 			'boards_list' => $boardsAllowed,
 			'attachment_type' => 0,
 			'no_message' => 0,
@@ -1055,11 +1055,11 @@ function list_getAttachments($start, $items_per_page, $sort, $boardsAllowed, $me
 			'sort' => $sort,
 			'offset' => $start,
 			'limit' => $items_per_page,
-		)
+		]
 	);
 	$attachments = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$attachments[] = array(
+		$attachments[] = [
 			'id' => $row['id_attach'],
 			'filename' => $row['filename'],
 			'downloads' => $row['downloads'],
@@ -1070,7 +1070,7 @@ function list_getAttachments($start, $items_per_page, $sort, $boardsAllowed, $me
 			'board' => $row['id_board'],
 			'board_name' => $row['name'],
 			'approved' => $row['approved'],
-		);
+		];
 
 	$smcFunc['db_free_result']($request);
 
@@ -1100,14 +1100,14 @@ function list_getNumAttachments($boardsAllowed, $memID)
 			AND b.id_board = {int:board}' : '') . (!in_array(0, $boardsAllowed) ? '
 			AND b.id_board IN ({array_int:boards_list})' : '') . ($context['user']['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
-		array(
+		[
 			'boards_list' => $boardsAllowed,
 			'attachment_type' => 0,
 			'no_message' => 0,
 			'current_member' => $memID,
 			'is_approved' => 1,
 			'board' => $board,
-		)
+		]
 	);
 	list ($attachCount) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -1131,104 +1131,104 @@ function showUnwatched($memID)
 	require_once($sourcedir . '/Subs-List.php');
 
 	// And here they are: the topics you don't like
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'unwatched_topics',
 		'width' => '100%',
 		'items_per_page' => (empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page'])) ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'],
 		'no_items_label' => $txt['unwatched_topics_none'],
 		'base_href' => $scripturl . '?action=profile;area=showposts;sa=unwatchedtopics;u=' . $memID,
 		'default_sort_col' => 'started_on',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getUnwatched',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getNumUnwatched',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'columns' => array(
-			'subject' => array(
-				'header' => array(
+			],
+		],
+		'columns' => [
+			'subject' => [
+				'header' => [
 					'value' => $txt['subject'],
 					'class' => 'lefttext',
 					'style' => 'width: 30%;',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?topic=%1$d.0">%2$s</a>',
-						'params' => array(
+						'params' => [
 							'id_topic' => false,
 							'subject' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'm.subject',
 					'reverse' => 'm.subject DESC',
-				),
-			),
-			'started_by' => array(
-				'header' => array(
+				],
+			],
+			'started_by' => [
+				'header' => [
 					'value' => $txt['started_by'],
 					'style' => 'width: 15%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'started_by',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'mem.real_name',
 					'reverse' => 'mem.real_name DESC',
-				),
-			),
-			'started_on' => array(
-				'header' => array(
+				],
+			],
+			'started_on' => [
+				'header' => [
 					'value' => $txt['on'],
 					'class' => 'lefttext',
 					'style' => 'width: 20%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'started_on',
 					'timeformat' => true,
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'm.poster_time',
 					'reverse' => 'm.poster_time DESC',
-				),
-			),
-			'last_post_by' => array(
-				'header' => array(
+				],
+			],
+			'last_post_by' => [
+				'header' => [
 					'value' => $txt['last_post'],
 					'style' => 'width: 15%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'last_post_by',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'mem.real_name',
 					'reverse' => 'mem.real_name DESC',
-				),
-			),
-			'last_post_on' => array(
-				'header' => array(
+				],
+			],
+			'last_post_on' => [
+				'header' => [
 					'value' => $txt['on'],
 					'class' => 'lefttext',
 					'style' => 'width: 20%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'last_post_on',
 					'timeformat' => true,
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'm.poster_time',
 					'reverse' => 'm.poster_time DESC',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
 	// Create the request list.
 	createList($listOptions);
@@ -1256,19 +1256,19 @@ function list_getUnwatched($start, $items_per_page, $sort, $memID)
 		FROM {db_prefix}log_topics as lt
 			LEFT JOIN {db_prefix}topics as t ON (lt.id_topic = t.id_topic)
 			LEFT JOIN {db_prefix}boards as b ON (t.id_board = b.id_board)
-			LEFT JOIN {db_prefix}messages as m ON (t.id_first_msg = m.id_msg)' . (in_array($sort, array('mem.real_name', 'mem.real_name DESC', 'mem.poster_time', 'mem.poster_time DESC')) ? '
+			LEFT JOIN {db_prefix}messages as m ON (t.id_first_msg = m.id_msg)' . (in_array($sort, ['mem.real_name', 'mem.real_name DESC', 'mem.poster_time', 'mem.poster_time DESC']) ? '
 			LEFT JOIN {db_prefix}members as mem ON (m.id_member = mem.id_member)' : '') . '
 		WHERE lt.id_member = {int:current_member}
 			AND unwatched = 1
 			AND {query_see_board}
 		ORDER BY {raw:sort}
 		LIMIT {int:offset}, {int:limit}',
-		array(
+		[
 			'current_member' => $memID,
 			'sort' => $sort,
 			'offset' => $start,
 			'limit' => $items_per_page,
-		)
+		]
 	);
 
 	$topics = [];
@@ -1289,9 +1289,9 @@ function list_getUnwatched($start, $items_per_page, $sort, $memID)
 				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)
 				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)
 			WHERE t.id_topic IN ({array_int:topics})',
-			array(
+			[
 				'topics' => $topics,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topicsInfo[] = $row;
@@ -1320,9 +1320,9 @@ function list_getNumUnwatched($memID)
 		WHERE id_member = {int:current_member}
 			AND unwatched = 1
 			AND {query_see_board}',
-		array(
+		[
 			'current_member' => $memID,
-		)
+		]
 	);
 	list ($unwatchedCount) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -1363,9 +1363,9 @@ function statPanel($memID)
 	$context['time_logged_in'] = ($timeDays > 0 ? $timeDays . $txt['totalTimeLogged2'] : '') . ($timeHours > 0 ? $timeHours . $txt['totalTimeLogged3'] : '') . floor(($user_profile[$memID]['total_time_logged_in'] % 3600) / 60) . $txt['totalTimeLogged4'];
 	$context['num_posts'] = comma_format($user_profile[$memID]['posts']);
 	// Menu tab
-	$context[$context['profile_menu_name']]['tab_data'] = array(
+	$context[$context['profile_menu_name']]['tab_data'] = [
 		'title' => $txt['statPanel_generalStats'] . ' - ' . $context['member']['name']
-	);
+	];
 
 	// Number of topics started and Number polls started
 	$result = $smcFunc['db_query']('', '
@@ -1373,11 +1373,11 @@ function statPanel($memID)
 		FROM {db_prefix}topics
 		WHERE id_member_started = {int:current_member}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 			AND id_board != {int:recycle_board}' : ''),
-		array(
+		[
 			'current_member' => $memID,
 			'recycle_board' => $modSettings['recycle_board'],
 			'no_poll' => 0,
-		)
+		]
 	);
 	list ($context['num_topics'], $context['num_polls']) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -1387,9 +1387,9 @@ function statPanel($memID)
 		SELECT COUNT(DISTINCT id_poll)
 		FROM {db_prefix}log_polls
 		WHERE id_member = {int:current_member}',
-		array(
+		[
 			'current_member' => $memID,
-		)
+		]
 	);
 	list ($context['num_votes']) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -1411,15 +1411,15 @@ function statPanel($memID)
 		GROUP BY b.id_board
 		ORDER BY message_count DESC
 		LIMIT 10',
-		array(
+		[
 			'current_member' => $memID,
 			'count_enabled' => 0,
-		)
+		]
 	);
 	$context['popular_boards'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
-		$context['popular_boards'][$row['id_board']] = array(
+		$context['popular_boards'][$row['id_board']] = [
 			'id' => $row['id_board'],
 			'posts' => $row['message_count'],
 			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
@@ -1427,7 +1427,7 @@ function statPanel($memID)
 			'posts_percent' => $user_profile[$memID]['posts'] == 0 ? 0 : ($row['message_count'] * 100) / $user_profile[$memID]['posts'],
 			'total_posts' => $row['num_posts'],
 			'total_posts_member' => $user_profile[$memID]['posts'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($result);
 
@@ -1443,14 +1443,14 @@ function statPanel($memID)
 		GROUP BY b.id_board, b.num_posts
 		ORDER BY percentage DESC
 		LIMIT 10',
-		array(
+		[
 			'current_member' => $memID,
-		)
+		]
 	);
 	$context['board_activity'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
-		$context['board_activity'][$row['id_board']] = array(
+		$context['board_activity'][$row['id_board']] = [
 			'id' => $row['id_board'],
 			'posts' => $row['message_count'],
 			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
@@ -1458,7 +1458,7 @@ function statPanel($memID)
 			'percent' => comma_format((float) $row['percentage'], 2),
 			'posts_percent' => (float) $row['percentage'],
 			'total_posts' => $row['num_posts'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($result);
 
@@ -1471,11 +1471,11 @@ function statPanel($memID)
 		WHERE id_member = {int:current_member}' . ($modSettings['totalMessages'] > 100000 ? '
 			AND id_topic > {int:top_ten_thousand_topics}' : '') . '
 		GROUP BY hour',
-		array(
+		[
 			'current_member' => $memID,
 			'top_ten_thousand_topics' => $modSettings['totalTopics'] - 10000,
 			'time_offset' => (($user_info['time_offset'] + $modSettings['time_offset']) * 3600),
-		)
+		]
 	);
 	$maxPosts = $realPosts = 0;
 	$context['posts_by_time'] = [];
@@ -1487,13 +1487,13 @@ function statPanel($memID)
 		$maxPosts = max($row['post_count'], $maxPosts);
 		$realPosts += $row['post_count'];
 
-		$context['posts_by_time'][$row['hour']] = array(
+		$context['posts_by_time'][$row['hour']] = [
 			'hour' => $row['hour'],
 			'hour_format' => stripos($user_info['time_format'], '%p') === false ? $row['hour'] : date('g a', mktime($row['hour'])),
 			'posts' => $row['post_count'],
 			'posts_percent' => 0,
 			'is_last' => $row['hour'] == 23,
-		);
+		];
 	}
 	$smcFunc['db_free_result']($result);
 
@@ -1501,14 +1501,14 @@ function statPanel($memID)
 		for ($hour = 0; $hour < 24; $hour++)
 		{
 			if (!isset($context['posts_by_time'][$hour]))
-				$context['posts_by_time'][$hour] = array(
+				$context['posts_by_time'][$hour] = [
 					'hour' => $hour,
 					'hour_format' => stripos($user_info['time_format'], '%p') === false ? $hour : date('g a', mktime($hour)),
 					'posts' => 0,
 					'posts_percent' => 0,
 					'relative_percent' => 0,
 					'is_last' => $hour == 23,
-				);
+				];
 			else
 			{
 				$context['posts_by_time'][$hour]['posts_percent'] = round(($context['posts_by_time'][$hour]['posts'] * 100) / $realPosts);
@@ -1520,7 +1520,7 @@ function statPanel($memID)
 	ksort($context['posts_by_time']);
 
 	// Custom stats (just add a template_layer to add it to the template!)
-	call_integration_hook('integrate_profile_stats', array($memID));
+	call_integration_hook('integrate_profile_stats', [$memID]);
 }
 
 /**
@@ -1532,13 +1532,13 @@ function tracking($memID)
 {
 	global $context, $txt, $modSettings, $user_profile;
 
-	$subActions = array(
-		'activity' => array('trackActivity', $txt['trackActivity'], 'moderate_forum'),
-		'ip' => array('TrackIP', $txt['trackIP'], 'moderate_forum'),
-		'edits' => array('trackEdits', $txt['trackEdits'], 'moderate_forum'),
-		'groupreq' => array('trackGroupReq', $txt['trackGroupRequests'], 'approve_group_requests'),
-		'logins' => array('TrackLogins', $txt['trackLogins'], 'moderate_forum'),
-	);
+	$subActions = [
+		'activity' => ['trackActivity', $txt['trackActivity'], 'moderate_forum'],
+		'ip' => ['TrackIP', $txt['trackIP'], 'moderate_forum'],
+		'edits' => ['trackEdits', $txt['trackEdits'], 'moderate_forum'],
+		'groupreq' => ['trackGroupReq', $txt['trackGroupRequests'], 'approve_group_requests'],
+		'logins' => ['TrackLogins', $txt['trackLogins'], 'moderate_forum'],
+	];
 
 	foreach ($subActions as $sa => $action)
 	{
@@ -1547,17 +1547,17 @@ function tracking($memID)
 	}
 
 	// Create the tabs for the template.
-	$context[$context['profile_menu_name']]['tab_data'] = array(
+	$context[$context['profile_menu_name']]['tab_data'] = [
 		'title' => $txt['tracking'],
 		'description' => $txt['tracking_description'],
-		'tabs' => array(
+		'tabs' => [
 			'activity' => [],
 			'ip' => [],
 			'edits' => [],
 			'groupreq' => [],
 			'logins' => [],
-		),
-	);
+		],
+	];
 
 	// Moderation must be on to track edits.
 	if (empty($modSettings['userlog_enabled']))
@@ -1604,79 +1604,79 @@ function trackActivity($memID)
 	$context['member']['name'] = $user_profile[$memID]['real_name'];
 
 	// Set the options for the list component.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'track_user_list',
 		'title' => $txt['errors_by'] . ' ' . $context['member']['name'],
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'no_items_label' => $txt['no_errors_from_user'],
 		'base_href' => $scripturl . '?action=profile;area=tracking;sa=user;u=' . $memID,
 		'default_sort_col' => 'date',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getUserErrors',
-			'params' => array(
+			'params' => [
 				'le.id_member = {int:current_member}',
-				array('current_member' => $memID),
-			),
-		),
-		'get_count' => array(
+				['current_member' => $memID],
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getUserErrorCount',
-			'params' => array(
+			'params' => [
 				'id_member = {int:current_member}',
-				array('current_member' => $memID),
-			),
-		),
-		'columns' => array(
-			'ip_address' => array(
-				'header' => array(
+				['current_member' => $memID],
+			],
+		],
+		'columns' => [
+			'ip_address' => [
+				'header' => [
 					'value' => $txt['ip_address'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?action=profile;area=tracking;sa=ip;searchip=%1$s;u=' . $memID . '">%1$s</a>',
-						'params' => array(
+						'params' => [
 							'ip' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'le.ip',
 					'reverse' => 'le.ip DESC',
-				),
-			),
-			'message' => array(
-				'header' => array(
+				],
+			],
+			'message' => [
+				'header' => [
 					'value' => $txt['message'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '%1$s<br><a href="%2$s">%2$s</a>',
-						'params' => array(
+						'params' => [
 							'message' => false,
 							'url' => false,
-						),
-					),
-				),
-			),
-			'date' => array(
-				'header' => array(
+						],
+					],
+				],
+			],
+			'date' => [
+				'header' => [
 					'value' => $txt['date'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'le.id_error DESC',
 					'reverse' => 'le.id_error',
-				),
-			),
-		),
-		'additional_rows' => array(
-			array(
+				],
+			],
+		],
+		'additional_rows' => [
+			[
 				'position' => 'after_title',
 				'value' => $txt['errors_desc'],
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Create the list for viewing.
 	require_once($sourcedir . '/Subs-List.php');
@@ -1690,9 +1690,9 @@ function trackActivity($memID)
 			SELECT MAX(id_msg)
 			FROM {db_prefix}messages AS m
 			WHERE m.id_member = {int:current_member}',
-			array(
+			[
 				'current_member' => $memID,
-			)
+			]
 		);
 		list ($max_msg_member) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -1702,10 +1702,10 @@ function trackActivity($memID)
 	}
 
 	// Default to at least the ones we know about.
-	$ips = array(
+	$ips = [
 		$user_profile[$memID]['member_ip'],
 		$user_profile[$memID]['member_ip2'],
-	);
+	];
 
 	// @todo cache this
 	// Get all IP addresses this user has used for his messages.
@@ -1716,11 +1716,11 @@ function trackActivity($memID)
 		' . (isset($min_msg_member) ? '
 			AND id_msg >= {int:min_msg_member} AND id_msg <= {int:max_msg_member}' : '') . '
 		GROUP BY poster_ip',
-		array(
+		[
 			'current_member' => $memID,
 			'min_msg_member' => !empty($min_msg_member) ? $min_msg_member : 0,
 			'max_msg_member' => !empty($max_msg_member) ? $max_msg_member : 0,
-		)
+		]
 	);
 	$context['ips'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1736,9 +1736,9 @@ function trackActivity($memID)
 		FROM {db_prefix}log_errors
 		WHERE id_member = {int:current_member}
 		GROUP BY ip',
-		array(
+		[
 			'current_member' => $memID,
-		)
+		]
 	);
 	$context['error_ips'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1760,10 +1760,10 @@ function trackActivity($memID)
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 			WHERE m.poster_ip IN ({array_inet:ip_list})
 				AND mem.id_member != {int:current_member}',
-			array(
+			[
 				'current_member' => $memID,
 				'ip_list' => $ips,
-			)
+			]
 		);
 		$message_members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1777,10 +1777,10 @@ function trackActivity($memID)
 				SELECT id_member, real_name
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:message_members})',
-				array(
+				[
 					'message_members' => $message_members,
 					'ip_list' => $ips,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
@@ -1792,10 +1792,10 @@ function trackActivity($memID)
 			FROM {db_prefix}members
 			WHERE id_member != {int:current_member}
 				AND member_ip IN ({array_inet:ip_list})',
-			array(
+			[
 				'current_member' => $memID,
 				'ip_list' => $ips,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['members_in_range'][$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
@@ -1852,23 +1852,23 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 		WHERE ' . $where . '
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:max}',
-		array_merge($where_vars, array(
+		array_merge($where_vars, [
 			'guest_title' => $txt['guest_title'],
 			'sort' => $sort,
 			'start' => $start,
 			'max' => $items_per_page,
-		))
+		])
 	);
 	$error_messages = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$error_messages[] = array(
+		$error_messages[] = [
 			'ip' => inet_dtop($row['ip']),
 			'member_link' => $row['id_member'] > 0 ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>' : $row['display_name'],
-			'message' => strtr($row['message'], array('&lt;span class=&quot;remove&quot;&gt;' => '', '&lt;/span&gt;' => '')),
+			'message' => strtr($row['message'], ['&lt;span class=&quot;remove&quot;&gt;' => '', '&lt;/span&gt;' => '']),
 			'url' => $row['url'],
 			'time' => timeformat($row['log_time']),
 			'timestamp' => forum_time(true, $row['log_time']),
-		);
+		];
 	$smcFunc['db_free_result']($request);
 
 	return $error_messages;
@@ -1924,27 +1924,27 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 		WHERE {query_see_board} AND ' . $where . '
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:max}',
-		array_merge($where_vars, array(
+		array_merge($where_vars, [
 			'sort' => $sort,
 			'start' => $start,
 			'max' => $items_per_page,
-		))
+		])
 	);
 	$messages = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$messages[] = array(
+		$messages[] = [
 			'ip' => inet_dtop($row['poster_ip']),
 			'member_link' => empty($row['id_member']) ? $row['display_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>',
-			'board' => array(
+			'board' => [
 				'id' => $row['id_board'],
 				'href' => $scripturl . '?board=' . $row['id_board']
-			),
+			],
 			'topic' => $row['id_topic'],
 			'id' => $row['id_msg'],
 			'subject' => $row['subject'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time'])
-		);
+		];
 	$smcFunc['db_free_result']($request);
 
 	return $messages;
@@ -1997,9 +1997,9 @@ function TrackIP($memID = 0)
 		SELECT id_member, real_name AS display_name, member_ip
 		FROM {db_prefix}members
 		WHERE member_ip ' . $ip_string,
-		array(
+		[
 			'ip_address' => $ip_var,
-		)
+		]
 	);
 	$context['ips'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -2015,7 +2015,7 @@ function TrackIP($memID = 0)
 	require_once($sourcedir . '/Subs-List.php');
 
 	// Start with the user messages.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'track_message_list',
 		'title' => $txt['messages_from_ip'] . ' ' . $context['ip'],
 		'start_var_name' => 'messageStart',
@@ -2023,87 +2023,87 @@ function TrackIP($memID = 0)
 		'no_items_label' => $txt['no_messages_from_ip'],
 		'base_href' => $context['base_url'] . ';searchip=' . $context['ip'],
 		'default_sort_col' => 'date',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getIPMessages',
-			'params' => array(
+			'params' => [
 				'm.poster_ip ' . $ip_string,
-				array('ip_address' => $ip_var),
-			),
-		),
-		'get_count' => array(
+				['ip_address' => $ip_var],
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getIPMessageCount',
-			'params' => array(
+			'params' => [
 				'm.poster_ip ' . $ip_string,
-				array('ip_address' => $ip_var),
-			),
-		),
-		'columns' => array(
-			'ip_address' => array(
-				'header' => array(
+				['ip_address' => $ip_var],
+			],
+		],
+		'columns' => [
+			'ip_address' => [
+				'header' => [
 					'value' => $txt['ip_address'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $context['base_url'] . ';searchip=%1$s">%1$s</a>',
-						'params' => array(
+						'params' => [
 							'ip' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'm.poster_ip',
 					'reverse' => 'm.poster_ip DESC',
-				),
-			),
-			'poster' => array(
-				'header' => array(
+				],
+			],
+			'poster' => [
+				'header' => [
 					'value' => $txt['poster'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'member_link',
-				),
-			),
-			'subject' => array(
-				'header' => array(
+				],
+			],
+			'subject' => [
+				'header' => [
 					'value' => $txt['subject'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?topic=%1$s.msg%2$s#msg%2$s" rel="nofollow">%3$s</a>',
-						'params' => array(
+						'params' => [
 							'topic' => false,
 							'id' => false,
 							'subject' => false,
-						),
-					),
-				),
-			),
-			'date' => array(
-				'header' => array(
+						],
+					],
+				],
+			],
+			'date' => [
+				'header' => [
 					'value' => $txt['date'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'm.id_msg DESC',
 					'reverse' => 'm.id_msg',
-				),
-			),
-		),
-		'additional_rows' => array(
-			array(
+				],
+			],
+		],
+		'additional_rows' => [
+			[
 				'position' => 'after_title',
 				'value' => $txt['messages_from_ip_desc'],
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Create the messages list.
 	createList($listOptions);
 
 	// Set the options for the error lists.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'track_user_list',
 		'title' => $txt['errors_from_ip'] . ' ' . $context['ip'],
 		'start_var_name' => 'errorStart',
@@ -2111,123 +2111,123 @@ function TrackIP($memID = 0)
 		'no_items_label' => $txt['no_errors_from_ip'],
 		'base_href' => $context['base_url'] . ';searchip=' . $context['ip'],
 		'default_sort_col' => 'date2',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getUserErrors',
-			'params' => array(
+			'params' => [
 				'le.ip ' . $ip_string,
-				array('ip_address' => $ip_var),
-			),
-		),
-		'get_count' => array(
+				['ip_address' => $ip_var],
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getUserErrorCount',
-			'params' => array(
+			'params' => [
 				'ip ' . $ip_string,
-				array('ip_address' => $ip_var),
-			),
-		),
-		'columns' => array(
-			'ip_address2' => array(
-				'header' => array(
+				['ip_address' => $ip_var],
+			],
+		],
+		'columns' => [
+			'ip_address2' => [
+				'header' => [
 					'value' => $txt['ip_address'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $context['base_url'] . ';searchip=%1$s">%1$s</a>',
-						'params' => array(
+						'params' => [
 							'ip' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'le.ip',
 					'reverse' => 'le.ip DESC',
-				),
-			),
-			'display_name' => array(
-				'header' => array(
+				],
+			],
+			'display_name' => [
+				'header' => [
 					'value' => $txt['display_name'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'member_link',
-				),
-			),
-			'message' => array(
-				'header' => array(
+				],
+			],
+			'message' => [
+				'header' => [
 					'value' => $txt['message'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '%1$s<br><a href="%2$s">%2$s</a>',
-						'params' => array(
+						'params' => [
 							'message' => false,
 							'url' => false,
-						),
-					),
-				),
-			),
-			'date2' => array(
-				'header' => array(
+						],
+					],
+				],
+			],
+			'date2' => [
+				'header' => [
 					'value' => $txt['date'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'le.id_error DESC',
 					'reverse' => 'le.id_error',
-				),
-			),
-		),
-		'additional_rows' => array(
-			array(
+				],
+			],
+		],
+		'additional_rows' => [
+			[
 				'position' => 'after_title',
 				'value' => $txt['errors_from_ip_desc'],
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Create the error list.
 	createList($listOptions);
 
 	// Allow 3rd party integrations to add in their own lists or whatever.
 	$context['additional_track_lists'] = [];
-	call_integration_hook('integrate_profile_trackip', array($ip_string, $ip_var));
+	call_integration_hook('integrate_profile_trackip', [$ip_string, $ip_var]);
 
 	$context['single_ip'] = strpos($context['ip'], '*') === false;
 	if ($context['single_ip'])
 	{
-		$context['whois_servers'] = array(
-			'afrinic' => array(
+		$context['whois_servers'] = [
+			'afrinic' => [
 				'name' => $txt['whois_afrinic'],
 				'url' => 'https://www.afrinic.net/cgi-bin/whois?searchtext=' . $context['ip'],
-				'range' => array(41, 154, 196),
-			),
-			'apnic' => array(
+				'range' => [41, 154, 196],
+			],
+			'apnic' => [
 				'name' => $txt['whois_apnic'],
 				'url' => 'https://wq.apnic.net/apnic-bin/whois.pl?searchtext=' . $context['ip'],
-				'range' => array(58, 59, 60, 61, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
-					125, 126, 133, 150, 153, 163, 171, 202, 203, 210, 211, 218, 219, 220, 221, 222),
-			),
-			'arin' => array(
+				'range' => [58, 59, 60, 61, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+					125, 126, 133, 150, 153, 163, 171, 202, 203, 210, 211, 218, 219, 220, 221, 222],
+			],
+			'arin' => [
 				'name' => $txt['whois_arin'],
 				'url' => 'https://whois.arin.net/rest/ip/' . $context['ip'],
-				'range' => array(7, 24, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 96, 97, 98, 99,
+				'range' => [7, 24, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 96, 97, 98, 99,
 					128, 129, 130, 131, 132, 134, 135, 136, 137, 138, 139, 140, 142, 143, 144, 146, 147, 148, 149,
 					152, 155, 156, 157, 158, 159, 160, 161, 162, 164, 165, 166, 167, 168, 169, 170, 172, 173, 174,
-					192, 198, 199, 204, 205, 206, 207, 208, 209, 216),
-			),
-			'lacnic' => array(
+					192, 198, 199, 204, 205, 206, 207, 208, 209, 216],
+			],
+			'lacnic' => [
 				'name' => $txt['whois_lacnic'],
 				'url' => 'https://lacnic.net/cgi-bin/lacnic/whois?query=' . $context['ip'],
-				'range' => array(186, 187, 189, 190, 191, 200, 201),
-			),
-			'ripe' => array(
+				'range' => [186, 187, 189, 190, 191, 200, 201],
+			],
+			'ripe' => [
 				'name' => $txt['whois_ripe'],
 				'url' => 'https://apps.db.ripe.net/search/query.html?searchtext=' . $context['ip'],
-				'range' => array(62, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-					141, 145, 151, 188, 193, 194, 195, 212, 213, 217),
-			),
-		);
+				'range' => [62, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
+					141, 145, 151, 188, 193, 194, 195, 212, 213, 217],
+			],
+		];
 
 		foreach ($context['whois_servers'] as $whois)
 		{
@@ -2258,56 +2258,56 @@ function TrackLogins($memID = 0)
 		$context['base_url'] = $scripturl . '?action=profile;area=tracking;sa=ip;u=' . $memID;
 
 	// Start with the user messages.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'track_logins_list',
 		'title' => $txt['trackLogins'],
 		'no_items_label' => $txt['trackLogins_none_found'],
 		'base_href' => $context['base_url'],
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getLogins',
-			'params' => array(
+			'params' => [
 				'id_member = {int:current_member}',
-				array('current_member' => $memID),
-			),
-		),
-		'get_count' => array(
+				['current_member' => $memID],
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getLoginCount',
-			'params' => array(
+			'params' => [
 				'id_member = {int:current_member}',
-				array('current_member' => $memID),
-			),
-		),
-		'columns' => array(
-			'time' => array(
-				'header' => array(
+				['current_member' => $memID],
+			],
+		],
+		'columns' => [
+			'time' => [
+				'header' => [
 					'value' => $txt['date'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time',
-				),
-			),
-			'ip' => array(
-				'header' => array(
+				],
+			],
+			'ip' => [
+				'header' => [
 					'value' => $txt['ip_address'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $context['base_url'] . ';searchip=%1$s">%1$s</a> (<a href="' . $context['base_url'] . ';searchip=%2$s">%2$s</a>) ',
-						'params' => array(
+						'params' => [
 							'ip' => false,
 							'ip2' => false
-						),
-					),
-				),
-			),
-		),
-		'additional_rows' => array(
-			array(
+						],
+					],
+				],
+			],
+		],
+		'additional_rows' => [
+			[
 				'position' => 'after_title',
 				'value' => $txt['trackLogins_desc'],
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Create the messages list.
 	createList($listOptions);
@@ -2331,9 +2331,9 @@ function list_getLoginCount($where, $where_vars = [])
 		SELECT COUNT(*) AS message_count
 		FROM {db_prefix}member_logins
 		WHERE id_member = {int:id_member}',
-		array(
+		[
 			'id_member' => $where_vars['current_member'],
-		)
+		]
 	);
 	list ($count) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -2360,17 +2360,17 @@ function list_getLogins($start, $items_per_page, $sort, $where, $where_vars = []
 		FROM {db_prefix}member_logins
 		WHERE id_member = {int:id_member}
 		ORDER BY time DESC',
-		array(
+		[
 			'id_member' => $where_vars['current_member'],
-		)
+		]
 	);
 	$logins = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$logins[] = array(
+		$logins[] = [
 			'time' => timeformat($row['time']),
 			'ip' => inet_dtop($row['ip']),
 			'ip2' => inet_dtop($row['ip2']),
-		);
+		];
 	$smcFunc['db_free_result']($request);
 
 	return $logins;
@@ -2391,84 +2391,84 @@ function trackEdits($memID)
 	$request = $smcFunc['db_query']('', '
 		SELECT col_name, field_name, bbc
 		FROM {db_prefix}custom_fields',
-		array(
-		)
+		[
+		]
 	);
 	$context['custom_field_titles'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$context['custom_field_titles']['customfield_' . $row['col_name']] = array(
+		$context['custom_field_titles']['customfield_' . $row['col_name']] = [
 			'title' => $row['field_name'],
 			'parse_bbc' => $row['bbc'],
-		);
+		];
 	$smcFunc['db_free_result']($request);
 
 	// Set the options for the error lists.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'edit_list',
 		'title' => $txt['trackEdits'],
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'no_items_label' => $txt['trackEdit_no_edits'],
 		'base_href' => $scripturl . '?action=profile;area=tracking;sa=edits;u=' . $memID,
 		'default_sort_col' => 'time',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getProfileEdits',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getProfileEditCount',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'columns' => array(
-			'action' => array(
-				'header' => array(
+			],
+		],
+		'columns' => [
+			'action' => [
+				'header' => [
 					'value' => $txt['trackEdit_action'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'action_text',
-				),
-			),
-			'before' => array(
-				'header' => array(
+				],
+			],
+			'before' => [
+				'header' => [
 					'value' => $txt['trackEdit_before'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'before',
-				),
-			),
-			'after' => array(
-				'header' => array(
+				],
+			],
+			'after' => [
+				'header' => [
 					'value' => $txt['trackEdit_after'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'after',
-				),
-			),
-			'time' => array(
-				'header' => array(
+				],
+			],
+			'time' => [
+				'header' => [
 					'value' => $txt['date'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'id_action DESC',
 					'reverse' => 'id_action',
-				),
-			),
-			'applicator' => array(
-				'header' => array(
+				],
+			],
+			'applicator' => [
+				'header' => [
 					'value' => $txt['trackEdit_applicator'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'member_link',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
 	// Create the error list.
 	createList($listOptions);
@@ -2492,10 +2492,10 @@ function list_getProfileEditCount($memID)
 		FROM {db_prefix}log_actions
 		WHERE id_log = {int:log_type}
 			AND id_member = {int:owner}',
-		array(
+		[
 			'log_type' => 2,
 			'owner' => $memID,
-		)
+		]
 	);
 	list ($edit_count) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -2525,13 +2525,13 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 			AND id_member = {int:owner}
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:max}',
-		array(
+		[
 			'log_type' => 2,
 			'owner' => $memID,
 			'sort' => $sort,
 			'start' => $start,
 			'max' => $items_per_page,
-		)
+		]
 	);
 	$edits = [];
 	$members = [];
@@ -2566,7 +2566,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 		// Parse BBC?
 		$parse_bbc = isset($context['custom_field_titles'][$row['action']]) && $context['custom_field_titles'][$row['action']]['parse_bbc'] ? true : false;
 
-		$edits[] = array(
+		$edits[] = [
 			'id' => $row['id_action'],
 			'ip' => inet_dtop($row['ip']),
 			'id_member' => !empty($extra['applicator']) ? $extra['applicator'] : 0,
@@ -2576,7 +2576,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 			'before' => !empty($extra['previous']) ? ($parse_bbc ? Parser::parse_bbc($extra['previous']) : $extra['previous']) : '',
 			'after' => !empty($extra['new']) ? ($parse_bbc ? Parser::parse_bbc($extra['new']) : $extra['new']) : '',
 			'time' => timeformat($row['log_time']),
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -2588,9 +2588,9 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 				id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:members})',
-			array(
+			[
 				'members' => $members,
-			)
+			]
 		);
 		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -2617,65 +2617,65 @@ function trackGroupReq($memID)
 	require_once($sourcedir . '/Subs-List.php');
 
 	// Set the options for the error lists.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'request_list',
 		'title' => sprintf($txt['trackGroupRequests_title'], $context['member']['name']),
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'no_items_label' => $txt['requested_none'],
 		'base_href' => $scripturl . '?action=profile;area=tracking;sa=groupreq;u=' . $memID,
 		'default_sort_col' => 'time_applied',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getGroupRequests',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getGroupRequestsCount',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'columns' => array(
-			'group' => array(
-				'header' => array(
+			],
+		],
+		'columns' => [
+			'group' => [
+				'header' => [
 					'value' => $txt['requested_group'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'group_name',
-				),
-			),
-			'group_reason' => array(
-				'header' => array(
+				],
+			],
+			'group_reason' => [
+				'header' => [
 					'value' => $txt['requested_group_reason'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'group_reason',
-				),
-			),
-			'time_applied' => array(
-				'header' => array(
+				],
+			],
+			'time_applied' => [
+				'header' => [
 					'value' => $txt['requested_group_time'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time_applied',
 					'timeformat' => true,
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'time_applied DESC',
 					'reverse' => 'time_applied',
-				),
-			),
-			'outcome' => array(
-				'header' => array(
+				],
+			],
+			'outcome' => [
+				'header' => [
 					'value' => $txt['requested_group_outcome'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'outcome',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
 	// Create the error list.
 	createList($listOptions);
@@ -2699,9 +2699,9 @@ function list_getGroupRequestsCount($memID)
 		FROM {db_prefix}log_group_requests AS lgr
 		WHERE id_member = {int:memID}
 			AND ' . ($user_info['mod_cache']['gq'] == '1=1' ? $user_info['mod_cache']['gq'] : 'lgr.' . $user_info['mod_cache']['gq']),
-		array(
+		[
 			'memID' => $memID,
-		)
+		]
 	);
 	list ($report_count) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -2735,20 +2735,20 @@ function list_getGroupRequests($start, $items_per_page, $sort, $memID)
 			AND ' . ($user_info['mod_cache']['gq'] == '1=1' ? $user_info['mod_cache']['gq'] : 'lgr.' . $user_info['mod_cache']['gq']) . '
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:max}',
-		array(
+		[
 			'memID' => $memID,
 			'sort' => $sort,
 			'start' => $start,
 			'max' => $items_per_page,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$this_req = array(
+		$this_req = [
 			'group_name' => empty($row['online_color']) ? $row['group_name'] : '<span style="color:' . $row['online_color'] . '">' . $row['group_name'] . '</span>',
 			'group_reason' => $row['reason'],
 			'time_applied' => $row['time_applied'],
-		);
+		];
 		switch ($row['status'])
 		{
 			case 0:
@@ -2813,29 +2813,29 @@ function showPermissions($memID)
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board AND mods.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}moderator_groups AS modgs ON (modgs.id_board = b.id_board AND modgs.id_group IN ({array_int:current_groups}))
 		WHERE {query_see_board}',
-		array(
+		[
 			'current_member' => $memID,
 			'current_groups' => $curGroups,
-		)
+		]
 	);
 	$context['boards'] = [];
 	$context['no_access_boards'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		if (count(array_intersect($curGroups, explode(',', $row['member_groups']))) === 0 && !$row['is_mod'])
-			$context['no_access_boards'][] = array(
+			$context['no_access_boards'][] = [
 				'id' => $row['id_board'],
 				'name' => $row['name'],
 				'is_last' => false,
-			);
+			];
 		elseif ($row['id_profile'] != 1 || $row['is_mod'])
-			$context['boards'][$row['id_board']] = array(
+			$context['boards'][$row['id_board']] = [
 				'id' => $row['id_board'],
 				'name' => $row['name'],
 				'selected' => $board == $row['id_board'],
 				'profile' => $row['id_profile'],
 				'profile_name' => $context['profiles'][$row['id_profile']]['name'],
-			);
+			];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -2845,10 +2845,10 @@ function showPermissions($memID)
 	if (!empty($context['no_access_boards']))
 		$context['no_access_boards'][count($context['no_access_boards']) - 1]['is_last'] = true;
 
-	$context['member']['permissions'] = array(
+	$context['member']['permissions'] = [
 		'general' => [],
 		'board' => []
-	);
+	];
 
 	// If you're an admin we know you can do everything, we might as well leave.
 	$context['member']['has_all_permissions'] = in_array(1, $curGroups);
@@ -2864,9 +2864,9 @@ function showPermissions($memID)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = p.id_group)
 		WHERE p.id_group IN ({array_int:group_list})
 		ORDER BY p.add_deny DESC, p.permission, mg.group_name',
-		array(
+		[
 			'group_list' => $curGroups,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
@@ -2878,23 +2878,23 @@ function showPermissions($memID)
 			$denied[] = $row['permission'];
 
 		// Permissions that end with _own or _any consist of two parts.
-		if (in_array(substr($row['permission'], -4), array('_own', '_any')) && isset($txt['permissionname_' . substr($row['permission'], 0, -4)]))
+		if (in_array(substr($row['permission'], -4), ['_own', '_any']) && isset($txt['permissionname_' . substr($row['permission'], 0, -4)]))
 			$name = $txt['permissionname_' . substr($row['permission'], 0, -4)] . ' - ' . $txt['permissionname_' . $row['permission']];
 		else
 			$name = $txt['permissionname_' . $row['permission']];
 
 		// Add this permission if it doesn't exist yet.
 		if (!isset($context['member']['permissions']['general'][$row['permission']]))
-			$context['member']['permissions']['general'][$row['permission']] = array(
+			$context['member']['permissions']['general'][$row['permission']] = [
 				'id' => $row['permission'],
-				'groups' => array(
+				'groups' => [
 					'allowed' => [],
 					'denied' => []
-				),
+				],
 				'name' => $name,
 				'is_denied' => false,
 				'is_global' => true,
-			);
+			];
 
 		// Add the membergroup to either the denied or the allowed groups.
 		$context['member']['permissions']['general'][$row['permission']]['groups'][empty($row['add_deny']) ? 'denied' : 'allowed'][] = $row['id_group'] == 0 ? $txt['membergroups_members'] : $row['group_name'];
@@ -2916,13 +2916,13 @@ function showPermissions($memID)
 		WHERE bp.id_profile = {raw:current_profile}
 			AND bp.id_group IN ({array_int:group_list}' . (empty($board) ? ')' : ', {int:moderator_group})
 			AND (mods.id_member IS NOT NULL OR modgs.id_group IS NOT NULL OR bp.id_group != {int:moderator_group})'),
-		array(
+		[
 			'current_board' => $board,
 			'group_list' => $curGroups,
 			'current_member' => $memID,
 			'current_profile' => empty($board) ? '1' : 'b.id_profile',
 			'moderator_group' => 3,
-		)
+		]
 	);
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -2932,23 +2932,23 @@ function showPermissions($memID)
 			continue;
 
 		// The name of the permission using the format 'permission name' - 'own/any topic/event/etc.'.
-		if (in_array(substr($row['permission'], -4), array('_own', '_any')) && isset($txt['permissionname_' . substr($row['permission'], 0, -4)]))
+		if (in_array(substr($row['permission'], -4), ['_own', '_any']) && isset($txt['permissionname_' . substr($row['permission'], 0, -4)]))
 			$name = $txt['permissionname_' . substr($row['permission'], 0, -4)] . ' - ' . $txt['permissionname_' . $row['permission']];
 		else
 			$name = $txt['permissionname_' . $row['permission']];
 
 		// Create the structure for this permission.
 		if (!isset($context['member']['permissions']['board'][$row['permission']]))
-			$context['member']['permissions']['board'][$row['permission']] = array(
+			$context['member']['permissions']['board'][$row['permission']] = [
 				'id' => $row['permission'],
-				'groups' => array(
+				'groups' => [
 					'allowed' => [],
 					'denied' => []
-				),
+				],
 				'name' => $name,
 				'is_denied' => false,
 				'is_global' => empty($board),
-			);
+			];
 
 		$context['member']['permissions']['board'][$row['permission']]['groups'][empty($row['add_deny']) ? 'denied' : 'allowed'][$row['id_group']] = $row['id_group'] == 0 ? $txt['membergroups_members'] : $row['group_name'];
 
@@ -2979,81 +2979,81 @@ function viewWarning($memID)
 	require_once($sourcedir . '/Subs-List.php');
 	require_once($sourcedir . '/Profile-Actions.php');
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'view_warnings',
 		'title' => $txt['profile_viewwarning_previous_warnings'],
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'no_items_label' => $txt['profile_viewwarning_no_warnings'],
 		'base_href' => $scripturl . '?action=profile;area=viewwarning;sa=user;u=' . $memID,
 		'default_sort_col' => 'log_time',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getUserWarnings',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getUserWarningCount',
-			'params' => array(
+			'params' => [
 				$memID,
-			),
-		),
-		'columns' => array(
-			'log_time' => array(
-				'header' => array(
+			],
+		],
+		'columns' => [
+			'log_time' => [
+				'header' => [
 					'value' => $txt['profile_warning_previous_time'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lc.log_time DESC',
 					'reverse' => 'lc.log_time',
-				),
-			),
-			'reason' => array(
-				'header' => array(
+				],
+			],
+			'reason' => [
+				'header' => [
 					'value' => $txt['profile_warning_previous_reason'],
 					'style' => 'width: 50%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'reason',
-				),
-			),
-			'level' => array(
-				'header' => array(
+				],
+			],
+			'level' => [
+				'header' => [
 					'value' => $txt['profile_warning_previous_level'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'counter',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lc.counter DESC',
 					'reverse' => 'lc.counter',
-				),
-			),
-		),
-		'additional_rows' => array(
-			array(
+				],
+			],
+		],
+		'additional_rows' => [
+			[
 				'position' => 'after_title',
 				'value' => $txt['profile_viewwarning_desc'],
 				'class' => 'smalltext',
 				'style' => 'padding: 2ex;',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Create the list for viewing.
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
 
 	// Create some common text bits for the template.
-	$context['level_effects'] = array(
+	$context['level_effects'] = [
 		0 => '',
 		$modSettings['warning_watch'] => $txt['profile_warning_effect_own_watched'],
 		$modSettings['warning_moderate'] => $txt['profile_warning_effect_own_moderated'],
 		$modSettings['warning_mute'] => $txt['profile_warning_effect_own_muted'],
-	);
+	];
 	$context['current_level'] = 0;
 	foreach ($context['level_effects'] as $limit => $dummy)
 		if ($context['member']['warning'] >= $limit)
@@ -3062,12 +3062,12 @@ function viewWarning($memID)
 	$context['current_level_effects'] = $context['level_effects'][$context['current_level']];
 
 	// Convert levels to classes
-	$context['warning_classes'] = array(
+	$context['warning_classes'] = [
 		0 => 'nothing',
 		$modSettings['warning_watch'] => 'watch',
 		$modSettings['warning_moderate'] => 'moderate',
 		$modSettings['warning_mute'] => 'mute',
-	);
+	];
 
 	// Work out the starting color.
 	$context['current_class'] = $context['warning_classes'][0];
