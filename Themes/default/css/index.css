@@ -1010,6 +1010,9 @@ a.button_submit {
 	height: 21px;
 	display: inline-block;
 }
+.jump_buttons a:hover {
+	border-color: #9c9c9c;
+}
 .jump_buttons a.go_down {
 	background-position: -211px -3px;
 }
