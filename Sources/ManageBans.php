@@ -29,14 +29,14 @@ function Ban()
 
 	isAllowedTo('manage_bans');
 
-	$subActions = array(
+	$subActions = [
 		'add' => 'BanEdit',
 		'browse' => 'BanBrowseTriggers',
 		'edittrigger' => 'BanEditTrigger',
 		'edit' => 'BanEdit',
 		'list' => 'BanList',
 		'log' => 'BanLog',
-	);
+	];
 
 	// Default the sub-action to 'view ban list'.
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'list';
@@ -45,36 +45,36 @@ function Ban()
 	$context['sub_action'] = $_REQUEST['sa'];
 
 	// Tabs for browsing the different ban functions.
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['ban_title'],
 		'help' => 'ban_members',
 		'description' => $txt['ban_description'],
-		'tabs' => array(
-			'list' => array(
+		'tabs' => [
+			'list' => [
 				'description' => $txt['ban_description'],
 				'href' => $scripturl . '?action=admin;area=ban;sa=list',
 				'is_selected' => $_REQUEST['sa'] == 'list' || $_REQUEST['sa'] == 'edit' || $_REQUEST['sa'] == 'edittrigger',
-			),
-			'add' => array(
+			],
+			'add' => [
 				'description' => $txt['ban_description'],
 				'href' => $scripturl . '?action=admin;area=ban;sa=add',
 				'is_selected' => $_REQUEST['sa'] == 'add',
-			),
-			'browse' => array(
+			],
+			'browse' => [
 				'description' => $txt['ban_trigger_browse_description'],
 				'href' => $scripturl . '?action=admin;area=ban;sa=browse',
 				'is_selected' => $_REQUEST['sa'] == 'browse',
-			),
-			'log' => array(
+			],
+			'log' => [
 				'description' => $txt['ban_log_description'],
 				'href' => $scripturl . '?action=admin;area=ban;sa=log',
 				'is_selected' => $_REQUEST['sa'] == 'log',
 				'is_last' => true,
-			),
-		),
-	);
+			],
+		],
+	];
 
-	routing_integration_hook('integrate_manage_bans', array(&$subActions));
+	routing_integration_hook('integrate_manage_bans', [&$subActions]);
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);
@@ -107,7 +107,7 @@ function BanList()
 		removeBanTriggers($_POST['remove']);
 
 		// No more caching this ban!
-		updateSettings(array('banLastUpdated' => time()));
+		updateSettings(['banLastUpdated' => time()]);
 
 		// Some members might be unbanned now. Update the members table.
 		updateBanMembers();
@@ -119,79 +119,79 @@ function BanList()
 	else
 		$context['ban_time_format'] = $matches[0];
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'ban_list',
 		'title' => $txt['ban_title'],
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'base_href' => $scripturl . '?action=admin;area=ban;sa=list',
 		'default_sort_col' => 'added',
 		'default_sort_dir' => 'desc',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getBans',
-		),
-		'get_count' => array(
+		],
+		'get_count' => [
 			'function' => 'list_getNumBans',
-		),
+		],
 		'no_items_label' => $txt['ban_no_entries'],
-		'columns' => array(
-			'name' => array(
-				'header' => array(
+		'columns' => [
+			'name' => [
+				'header' => [
 					'value' => $txt['ban_name'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'name',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'bg.name',
 					'reverse' => 'bg.name DESC',
-				),
-			),
-			'notes' => array(
-				'header' => array(
+				],
+			],
+			'notes' => [
+				'header' => [
 					'value' => $txt['ban_notes'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'notes',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'LENGTH(bg.notes) > 0 DESC, bg.notes',
 					'reverse' => 'LENGTH(bg.notes) > 0, bg.notes DESC',
-				),
-			),
-			'reason' => array(
-				'header' => array(
+				],
+			],
+			'reason' => [
+				'header' => [
 					'value' => $txt['ban_reason'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'reason',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'LENGTH(bg.reason) > 0 DESC, bg.reason',
 					'reverse' => 'LENGTH(bg.reason) > 0, bg.reason DESC',
-				),
-			),
-			'added' => array(
-				'header' => array(
+				],
+			],
+			'added' => [
+				'header' => [
 					'value' => $txt['ban_added'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData) use ($context)
 					{
 						return timeformat($rowData['ban_time'], empty($context['ban_time_format']) ? true : $context['ban_time_format']);
 					},
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'bg.ban_time',
 					'reverse' => 'bg.ban_time DESC',
-				),
-			),
-			'expires' => array(
-				'header' => array(
+				],
+			],
+			'expires' => [
+				'header' => [
 					'value' => $txt['ban_expires'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData) use ($txt)
 					{
 						// This ban never expires...whahaha.
@@ -206,69 +206,69 @@ function BanList()
 						else
 							return sprintf('%1$d&nbsp;%2$s', ceil(($rowData['expire_time'] - time()) / (60 * 60 * 24)), $txt['ban_days']);
 					},
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'COALESCE(bg.expire_time, 1=1) DESC, bg.expire_time DESC',
 					'reverse' => 'COALESCE(bg.expire_time, 1=1), bg.expire_time',
-				),
-			),
-			'num_triggers' => array(
-				'header' => array(
+				],
+			],
+			'num_triggers' => [
+				'header' => [
 					'value' => $txt['ban_triggers'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'num_triggers',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'num_triggers DESC',
 					'reverse' => 'num_triggers',
-				),
-			),
-			'actions' => array(
-				'header' => array(
+				],
+			],
+			'actions' => [
+				'header' => [
 					'value' => $txt['ban_actions'],
 					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?action=admin;area=ban;sa=edit;bg=%1$d">' . $txt['modify'] . '</a>',
-						'params' => array(
+						'params' => [
 							'id_ban_group' => false,
-						),
-					),
+						],
+					],
 					'class' => 'centercol',
-				),
-			),
-			'check' => array(
-				'header' => array(
+				],
+			],
+			'check' => [
+				'header' => [
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<input type="checkbox" name="remove[]" value="%1$d">',
-						'params' => array(
+						'params' => [
 							'id_ban_group' => false,
-						),
-					),
+						],
+					],
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=admin;area=ban;sa=list',
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'top_of_list',
 				'value' => '<input type="submit" name="removeBans" value="' . $txt['ban_remove_selected'] . '" data-confirm="' . $txt['ban_remove_selected_confirm'] . '" class="you_sure">',
-			),
-			array(
+			],
+			[
 				'position' => 'bottom_of_list',
 				'value' => '<input type="submit" name="removeBans" value="' . $txt['ban_remove_selected'] . '" data-confirm="' . $txt['ban_remove_selected_confirm'] . '" class="you_sure">',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
@@ -296,11 +296,11 @@ function list_getBans($start, $items_per_page, $sort)
 		GROUP BY bg.id_ban_group, bg.name, bg.ban_time, bg.expire_time, bg.reason, bg.notes
 		ORDER BY {raw:sort}
 		LIMIT {int:offset}, {int:limit}',
-		array(
+		[
 			'sort' => $sort,
 			'offset' => $start,
 			'limit' => $items_per_page,
-		)
+		]
 	);
 	$bans = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -323,8 +323,8 @@ function list_getNumBans()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*) AS num_bans
 		FROM {db_prefix}ban_groups',
-		array(
-		)
+		[
+		]
 	);
 	list ($numBans) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -371,33 +371,33 @@ function BanEdit()
 			// We're going to want this for making our list.
 			require_once($sourcedir . '/Subs-List.php');
 
-			$listOptions = array(
+			$listOptions = [
 				'id' => 'ban_items',
 				'base_href' => $scripturl . '?action=admin;area=ban;sa=edit;bg=' . $ban_group_id,
 				'no_items_label' => $txt['ban_no_triggers'],
 				'items_per_page' => $modSettings['defaultMaxListItems'],
-				'get_items' => array(
+				'get_items' => [
 					'function' => 'list_getBanItems',
-					'params' => array(
+					'params' => [
 						'ban_group_id' => $ban_group_id,
-					),
-				),
-				'get_count' => array(
+					],
+				],
+				'get_count' => [
 					'function' => 'list_getNumBanItems',
-					'params' => array(
+					'params' => [
 						'ban_group_id' => $ban_group_id,
-					),
-				),
-				'columns' => array(
-					'type' => array(
-						'header' => array(
+					],
+				],
+				'columns' => [
+					'type' => [
+						'header' => [
 							'value' => $txt['ban_banned_entity'],
 							'style' => 'width: 60%;text-align: left;',
-						),
-						'data' => array(
+						],
+						'data' => [
 							'function' => function($ban_item) use ($txt)
 							{
-								if (in_array($ban_item['type'], array('ip', 'hostname', 'email')))
+								if (in_array($ban_item['type'], ['ip', 'hostname', 'email']))
 									return '<strong>' . $txt[$ban_item['type']] . ':</strong>&nbsp;' . $ban_item[$ban_item['type']];
 								elseif ($ban_item['type'] == 'user')
 									return '<strong>' . $txt['username'] . ':</strong>&nbsp;' . $ban_item['user']['link'];
@@ -405,110 +405,110 @@ function BanEdit()
 									return '<strong>' . $txt['unknown'] . ':</strong>&nbsp;' . $ban_item['no_bantype_selected'];
 							},
 							'style' => 'text-align: left;',
-						),
-					),
-					'hits' => array(
-						'header' => array(
+						],
+					],
+					'hits' => [
+						'header' => [
 							'value' => $txt['ban_hits'],
 							'style' => 'width: 15%; text-align: center;',
-						),
-						'data' => array(
+						],
+						'data' => [
 							'db' => 'hits',
 							'style' => 'text-align: center;',
-						),
-					),
-					'id' => array(
-						'header' => array(
+						],
+					],
+					'id' => [
+						'header' => [
 							'value' => $txt['ban_actions'],
 							'style' => 'width: 15%; text-align: center;',
-						),
-						'data' => array(
+						],
+						'data' => [
 							'function' => function($ban_item) use ($txt, $context, $scripturl)
 							{
 								return '<a href="' . $scripturl . '?action=admin;area=ban;sa=edittrigger;bg=' . $context['ban_group_id'] . ';bi=' . $ban_item['id'] . '">' . $txt['ban_edit_trigger'] . '</a>';
 							},
 							'style' => 'text-align: center;',
-						),
-					),
-					'checkboxes' => array(
-						'header' => array(
+						],
+					],
+					'checkboxes' => [
+						'header' => [
 							'value' => '<input type="checkbox" onclick="invertAll(this, this.form, \'ban_items\');">',
 							'style' => 'width: 5%; text-align: center;',
-						),
-						'data' => array(
-							'sprintf' => array(
+						],
+						'data' => [
+							'sprintf' => [
 								'format' => '<input type="checkbox" name="ban_items[]" value="%1$d">',
-								'params' => array(
+								'params' => [
 									'id' => false,
-								),
-							),
+								],
+							],
 							'style' => 'text-align: center;',
-						),
-					),
-				),
-				'form' => array(
+						],
+					],
+				],
+				'form' => [
 					'href' => $scripturl . '?action=admin;area=ban;sa=edit;bg=' . $ban_group_id,
-				),
-				'additional_rows' => array(
-					array(
+				],
+				'additional_rows' => [
+					[
 						'position' => 'above_table_headers',
 						'value' => '
 						<input type="submit" name="remove_selection" value="' . $txt['ban_remove_selected_triggers'] . '"> <a class="button" href="' . $scripturl . '?action=admin;area=ban;sa=edittrigger;bg=' . $ban_group_id . '">' . $txt['ban_add_trigger'] . '</a>',
 						'style' => 'text-align: right;',
-					),
-					array(
+					],
+					[
 						'position' => 'above_table_headers',
 						'value' => '
 						<input type="hidden" name="bg" value="' . $ban_group_id . '">
 						<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 						<input type="hidden" name="' . $context['admin-bet_token_var'] . '" value="' . $context['admin-bet_token'] . '">',
-					),
-					array(
+					],
+					[
 						'position' => 'below_table_data',
 						'value' => '
 						<input type="submit" name="remove_selection" value="' . $txt['ban_remove_selected_triggers'] . '"> <a class="button" href="' . $scripturl . '?action=admin;area=ban;sa=edittrigger;bg=' . $ban_group_id . '">' . $txt['ban_add_trigger'] . '</a>',
 						'style' => 'text-align: right;',
-					),
-					array(
+					],
+					[
 						'position' => 'below_table_data',
 						'value' => '
 						<input type="hidden" name="bg" value="' . $ban_group_id . '">
 						<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 						<input type="hidden" name="' . $context['admin-bet_token_var'] . '" value="' . $context['admin-bet_token'] . '">',
-					),
-				),
-			);
+					],
+				],
+			];
 			createList($listOptions);
 		}
 		// Not an existing one, then it's probably a new one.
 		else
 		{
-			$context['ban'] = array(
+			$context['ban'] = [
 				'id' => 0,
 				'name' => '',
-				'expiration' => array(
+				'expiration' => [
 					'status' => 'never',
 					'days' => 0
-				),
+				],
 				'reason' => '',
 				'notes' => '',
 				'ban_days' => 0,
-				'cannot' => array(
+				'cannot' => [
 					'access' => true,
 					'post' => false,
 					'register' => false,
 					'login' => false,
-				),
+				],
 				'is_new' => true,
-			);
-			$context['ban_suggestions'] = array(
+			];
+			$context['ban_suggestions'] = [
 				'main_ip' => '',
 				'hostname' => '',
 				'email' => '',
-				'member' => array(
+				'member' => [
 					'id' => 0,
-				),
-			);
+				],
+			];
 
 			// Overwrite some of the default form values if a user ID was given.
 			if (!empty($_REQUEST['u']))
@@ -518,9 +518,9 @@ function BanEdit()
 					FROM {db_prefix}members
 					WHERE id_member = {int:current_user}
 					LIMIT 1',
-					array(
+					[
 						'current_user' => (int) $_REQUEST['u'],
-					)
+					]
 				);
 				if ($smcFunc['db_num_rows']($request) > 0)
 				{
@@ -555,9 +555,9 @@ function BanEdit()
 					FROM {db_prefix}messages
 					WHERE id_msg = {int:message}
 					LIMIT 1',
-					array(
+					[
 						'message' => (int) $_REQUEST['msg'],
-					)
+					]
 				);
 				if ($smcFunc['db_num_rows']($request) > 0)
 				{
@@ -603,11 +603,11 @@ function list_getBanItems($start = 0, $items_per_page = 0, $sort = 0, $ban_group
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = bi.id_member)
 		WHERE bg.id_ban_group = {int:current_ban}
 		LIMIT {int:start}, {int:items_per_page}',
-		array(
+		[
 			'current_ban' => $ban_group_id,
 			'start' => $start,
 			'items_per_page' => $items_per_page,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('ban_not_found', false);
@@ -616,33 +616,33 @@ function list_getBanItems($start = 0, $items_per_page = 0, $sort = 0, $ban_group
 	{
 		if (!isset($context['ban']))
 		{
-			$context['ban'] = array(
+			$context['ban'] = [
 				'id' => $row['id_ban_group'],
 				'name' => $row['name'],
-				'expiration' => array(
+				'expiration' => [
 					'status' => $row['expire_time'] === null ? 'never' : ($row['expire_time'] < time() ? 'expired' : 'one_day'),
 					'days' => $row['expire_time'] > time() ? floor(($row['expire_time'] - time()) / 86400) : 0
-				),
+				],
 				'reason' => $row['reason'],
 				'notes' => $row['notes'],
-				'cannot' => array(
+				'cannot' => [
 					'access' => !empty($row['cannot_access']),
 					'post' => !empty($row['cannot_post']),
 					'register' => !empty($row['cannot_register']),
 					'login' => !empty($row['cannot_login']),
-				),
+				],
 				'is_new' => false,
 				'hostname' => '',
 				'email' => '',
-			);
+			];
 		}
 
 		if (!empty($row['id_ban']))
 		{
-			$ban_items[$row['id_ban']] = array(
+			$ban_items[$row['id_ban']] = [
 				'id' => $row['id_ban'],
 				'hits' => $row['hits'],
-			);
+			];
 			if (!empty($row['ip_high']))
 			{
 				$ban_items[$row['id_ban']]['type'] = 'ip';
@@ -661,12 +661,12 @@ function list_getBanItems($start = 0, $items_per_page = 0, $sort = 0, $ban_group
 			elseif (!empty($row['id_member']))
 			{
 				$ban_items[$row['id_ban']]['type'] = 'user';
-				$ban_items[$row['id_ban']]['user'] = array(
+				$ban_items[$row['id_ban']]['user'] = [
 					'id' => $row['id_member'],
 					'name' => $row['real_name'],
 					'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
 					'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
-				);
+				];
 			}
 			// Invalid ban (member probably doesn't exist anymore).
 			else
@@ -698,9 +698,9 @@ function list_getNumBanItems()
 			LEFT JOIN {db_prefix}ban_items AS bi ON (bi.id_ban_group = bg.id_ban_group)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = bi.id_member)
 		WHERE bg.id_ban_group = {int:current_ban}',
-		array(
+		[
 			'current_ban' => $ban_group_id,
-		)
+		]
 	);
 	list($banNumber) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -720,8 +720,8 @@ function banLoadAdditionalIPs($member_id)
 	loadLanguage('Profile');
 
 	$search_list = [];
-	call_integration_hook('integrate_load_addtional_ip_ban', array(&$search_list));
-	$search_list += array('ips_in_messages' => 'banLoadAdditionalIPsMember', 'ips_in_errors' => 'banLoadAdditionalIPsError');
+	call_integration_hook('integrate_load_addtional_ip_ban', [&$search_list]);
+	$search_list += ['ips_in_messages' => 'banLoadAdditionalIPsMember', 'ips_in_errors' => 'banLoadAdditionalIPsError'];
 
 	$return = [];
 	foreach ($search_list as $key => $callable)
@@ -759,9 +759,9 @@ function banLoadAdditionalIPsMember($member_id)
 		WHERE id_member = {int:current_user}
 			AND poster_ip IS NOT NULL
 		ORDER BY poster_ip',
-		array(
+		[
 			'current_user' => $member_id,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$message_ips[] = inet_dtop($row['poster_ip']);
@@ -787,9 +787,9 @@ function banLoadAdditionalIPsError($member_id)
 		WHERE id_member = {int:current_user}
 			AND ip IS NOT NULL
 		ORDER BY ip',
-		array(
+		[
 			'current_user' => $member_id,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$error_ips[] = inet_dtop($row['ip']);
@@ -817,16 +817,16 @@ function banEdit2()
 		$ban_info['id'] = isset($_REQUEST['bg']) ? (int) $_REQUEST['bg'] : 0;
 		$ban_info['is_new'] = empty($ban_info['id']);
 		$ban_info['expire_date'] = !empty($_POST['expire_date']) ? (int) $_POST['expire_date'] : 0;
-		$ban_info['expiration'] = array(
-			'status' => isset($_POST['expiration']) && in_array($_POST['expiration'], array('never', 'one_day', 'expired')) ? $_POST['expiration'] : 'never',
+		$ban_info['expiration'] = [
+			'status' => isset($_POST['expiration']) && in_array($_POST['expiration'], ['never', 'one_day', 'expired']) ? $_POST['expiration'] : 'never',
 			'days' => $ban_info['expire_date'],
-		);
+		];
 		$ban_info['db_expiration'] = $ban_info['expiration']['status'] == 'never' ? 'NULL' : ($ban_info['expiration']['status'] == 'one_day' ? time() + 24 * 60 * 60 * $ban_info['expire_date'] : 0);
 		$ban_info['full_ban'] = empty($_POST['full_ban']) ? 0 : 1;
 		$ban_info['reason'] = !empty($_POST['reason']) ? $smcFunc['htmlspecialchars']($_POST['reason'], ENT_QUOTES) : '';
 		$ban_info['name'] = !empty($_POST['ban_name']) ? $smcFunc['htmlspecialchars']($_POST['ban_name'], ENT_QUOTES) : '';
 		$ban_info['notes'] = isset($_POST['notes']) ? $smcFunc['htmlspecialchars']($_POST['notes'], ENT_QUOTES) : '';
-		$ban_info['notes'] = str_replace(array("\r", "\n", '  '), array('', '<br>', '&nbsp; '), $ban_info['notes']);
+		$ban_info['notes'] = str_replace(["\r", "\n", '  '], ['', '<br>', '&nbsp; '], $ban_info['notes']);
 		$ban_info['cannot']['access'] = empty($ban_info['full_ban']) ? 0 : 1;
 		$ban_info['cannot']['post'] = !empty($ban_info['full_ban']) || empty($_POST['cannot_post']) ? 0 : 1;
 		$ban_info['cannot']['register'] = !empty($ban_info['full_ban']) || empty($_POST['cannot_register']) ? 0 : 1;
@@ -875,7 +875,7 @@ function banEdit2()
 	}
 
 	// Register the last modified date.
-	updateSettings(array('banLastUpdated' => time()));
+	updateSettings(['banLastUpdated' => time()]);
 
 	// Update the member table to represent the new ban situation.
 	updateBanMembers();
@@ -897,14 +897,14 @@ function saveTriggers($suggestions = [], $ban_group, $member = 0, $ban_id = 0)
 {
 	global $context;
 
-	$triggers = array(
+	$triggers = [
 		'main_ip' => '',
 		'hostname' => '',
 		'email' => '',
-		'member' => array(
+		'member' => [
 			'id' => $member,
-		)
-	);
+		]
+	];
 
 	foreach ($suggestions as $key => $value)
 	{
@@ -949,7 +949,7 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 		return false;
 
 	if (!is_array($items_ids))
-		$items_ids = array($items_ids);
+		$items_ids = [$items_ids];
 
 	$log_info = [];
 	$ban_items = [];
@@ -963,9 +963,9 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 		FROM {db_prefix}ban_items AS bi
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = bi.id_member)
 		WHERE bi.id_ban IN ({array_int:ban_list})',
-		array(
+		[
 			'ban_list' => $items_ids,
-		)
+		]
 	);
 
 	// Get all the info for the log
@@ -973,9 +973,9 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 	{
 		if (!empty($row['id_ban']))
 		{
-			$ban_items[$row['id_ban']] = array(
+			$ban_items[$row['id_ban']] = [
 				'id' => $row['id_ban'],
-			);
+			];
 			if (!empty($row['ip_high']))
 			{
 				$ban_items[$row['id_ban']]['type'] = 'ip';
@@ -983,42 +983,42 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 
 				$is_range = (strpos($ban_items[$row['id_ban']]['ip'], '-') !== false || strpos($ban_items[$row['id_ban']]['ip'], '*') !== false);
 
-				$log_info[] = array(
+				$log_info[] = [
 					'bantype' => ($is_range ? 'ip_range' : 'main_ip'),
 					'value' => $ban_items[$row['id_ban']]['ip'],
-				);
+				];
 			}
 			elseif (!empty($row['hostname']))
 			{
 				$ban_items[$row['id_ban']]['type'] = 'hostname';
 				$ban_items[$row['id_ban']]['hostname'] = str_replace('%', '*', $row['hostname']);
-				$log_info[] = array(
+				$log_info[] = [
 					'bantype' => 'hostname',
 					'value' => $row['hostname'],
-				);
+				];
 			}
 			elseif (!empty($row['email_address']))
 			{
 				$ban_items[$row['id_ban']]['type'] = 'email';
 				$ban_items[$row['id_ban']]['email'] = str_replace('%', '*', $row['email_address']);
-				$log_info[] = array(
+				$log_info[] = [
 					'bantype' => 'email',
 					'value' => $ban_items[$row['id_ban']]['email'],
-				);
+				];
 			}
 			elseif (!empty($row['id_member']))
 			{
 				$ban_items[$row['id_ban']]['type'] = 'user';
-				$ban_items[$row['id_ban']]['user'] = array(
+				$ban_items[$row['id_ban']]['user'] = [
 					'id' => $row['id_member'],
 					'name' => $row['real_name'],
 					'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
 					'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>',
-				);
-				$log_info[] = array(
+				];
+				$log_info[] = [
 					'bantype' => 'user',
 					'value' => $row['id_member'],
-				);
+				];
 			}
 		}
 	}
@@ -1034,10 +1034,10 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 			DELETE FROM {db_prefix}ban_items
 			WHERE id_ban IN ({array_int:ban_list})
 				AND id_ban_group = {int:ban_group}',
-			array(
+			[
 				'ban_list' => $items_ids,
 				'ban_group' => $group_id,
-			)
+			]
 		);
 	}
 	elseif (!empty($items_ids))
@@ -1045,9 +1045,9 @@ function removeBanTriggers($items_ids = [], $group_id = false)
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}ban_items
 			WHERE id_ban IN ({array_int:ban_list})',
-			array(
+			[
 				'ban_list' => $items_ids,
-			)
+			]
 		);
 	}
 
@@ -1066,7 +1066,7 @@ function removeBanGroups($group_ids)
 	global $smcFunc;
 
 	if (!is_array($group_ids))
-		$group_ids = array($group_ids);
+		$group_ids = [$group_ids];
 
 	$group_ids = array_unique($group_ids);
 
@@ -1076,9 +1076,9 @@ function removeBanGroups($group_ids)
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}ban_groups
 		WHERE id_ban_group IN ({array_int:ban_list})',
-		array(
+		[
 			'ban_list' => $group_ids,
-		)
+		]
 	);
 
 	return true;
@@ -1098,13 +1098,13 @@ function removeBanLogs($ids = [])
 	if (empty($ids))
 		$smcFunc['db_query']('truncate_table', '
 			TRUNCATE {db_prefix}log_banned',
-			array(
-			)
+			[
+			]
 		);
 	else
 	{
 		if (!is_array($ids))
-			$ids = array($ids);
+			$ids = [$ids];
 
 		$ids = array_unique($ids);
 
@@ -1114,9 +1114,9 @@ function removeBanLogs($ids = [])
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_banned
 			WHERE id_ban_log IN ({array_int:ban_list})',
-			array(
+			[
 				'ban_list' => $ids,
-			)
+			]
 		);
 	}
 
@@ -1156,10 +1156,10 @@ function validateTriggers(&$triggers)
 					$context['ban_errors'][] = 'invalid_ip';
 				else
 				{
-					$ban_triggers['main_ip'] = array(
+					$ban_triggers['main_ip'] = [
 						'ip_low' => $ip_parts['low'],
 						'ip_high' => $ip_parts['high']
-					);
+					];
 				}
 			}
 			elseif ($key == 'hostname')
@@ -1186,10 +1186,10 @@ function validateTriggers(&$triggers)
 					WHERE (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0)
 						AND email_address LIKE {string:email}
 					LIMIT 1',
-					array(
+					[
 						'admin_group' => 1,
 						'email' => $value,
-					)
+					]
 				);
 				if ($smcFunc['db_num_rows']($request) != 0)
 					$context['ban_errors'][] = 'no_ban_admin';
@@ -1208,10 +1208,10 @@ function validateTriggers(&$triggers)
 					FROM {db_prefix}members
 					WHERE member_name = {string:username} OR real_name = {string:username}
 					LIMIT 1',
-					array(
+					[
 						'admin_group' => 1,
 						'username' => $user,
-					)
+					]
 				);
 				if ($smcFunc['db_num_rows']($request) == 0)
 					$context['ban_errors'][] = 'invalid_username';
@@ -1226,13 +1226,13 @@ function validateTriggers(&$triggers)
 				else
 					$ban_triggers['user']['id_member'] = $value;
 			}
-			elseif (in_array($key, array('ips_in_messages', 'ips_in_errors')))
+			elseif (in_array($key, ['ips_in_messages', 'ips_in_errors']))
 			{
 				// Special case, those two are arrays themselves
 				$values = array_unique($value);
 				// Don't add the main IP again.
 				if (isset($triggers['main_ip']))
-					$values = array_diff($values, array($triggers['main_ip']));
+					$values = array_diff($values, [$triggers['main_ip']]);
 				unset($value);
 				foreach ($values as $val)
 				{
@@ -1242,15 +1242,15 @@ function validateTriggers(&$triggers)
 						$context['ban_errors'][] = 'invalid_ip';
 					else
 					{
-						$ban_triggers[$key][] = array(
+						$ban_triggers[$key][] = [
 							'ip_low' => $ip_parts['low'],
 							'ip_high' => $ip_parts['high'],
-						);
+						];
 
-						$log_info[] = array(
+						$log_info[] = [
 							'value' => $val,
 							'bantype' => 'ip_range',
-						);
+						];
 					}
 				}
 			}
@@ -1258,13 +1258,13 @@ function validateTriggers(&$triggers)
 				$context['ban_errors'][] = 'no_bantype_selected';
 
 			if (isset($value) && !is_array($value))
-				$log_info[] = array(
+				$log_info[] = [
 					'value' => $value,
 					'bantype' => $key,
-				);
+				];
 		}
 	}
-	return array('ban_triggers' => $ban_triggers, 'log_info' => $log_info);
+	return ['ban_triggers' => $ban_triggers, 'log_info' => $log_info];
 }
 
 /**
@@ -1285,29 +1285,29 @@ function addTriggers($group_id = 0, $triggers = [], $logs = [])
 		$context['ban_errors'][] = 'ban_id_empty';
 
 	// Preset all values that are required.
-	$values = array(
+	$values = [
 		'id_ban_group' => $group_id,
 		'hostname' => '',
 		'email_address' => '',
 		'id_member' => 0,
 		'ip_low' => 'null',
 		'ip_high' => 'null',
-	);
+	];
 
-	$insertKeys = array(
+	$insertKeys = [
 		'id_ban_group' => 'int',
 		'hostname' => 'string',
 		'email_address' => 'string',
 		'id_member' => 'int',
 		'ip_low' => 'inet',
 		'ip_high' => 'inet',
-	);
+	];
 
 	$insertTriggers = [];
 	foreach ($triggers as $key => $trigger)
 	{
 		// Exceptions, exceptions, exceptions...always exceptions... :P
-		if (in_array($key, array('ips_in_messages', 'ips_in_errors')))
+		if (in_array($key, ['ips_in_messages', 'ips_in_errors']))
 			foreach ($trigger as $real_trigger)
 				$insertTriggers[] = array_merge($values, $real_trigger);
 		else
@@ -1324,7 +1324,7 @@ function addTriggers($group_id = 0, $triggers = [], $logs = [])
 		'{db_prefix}ban_items',
 		$insertKeys,
 		$insertTriggers,
-		array('id_ban')
+		['id_ban']
 	);
 
 	logTriggersUpdates($logs, true);
@@ -1357,14 +1357,14 @@ function updateTriggers($ban_item = 0, $group_id = 0, $trigger = [], $logs = [])
 		return;
 
 	// Preset all values that are required.
-	$values = array(
+	$values = [
 		'id_ban_group' => $group_id,
 		'hostname' => '',
 		'email_address' => '',
 		'id_member' => 0,
 		'ip_low' => 'null',
 		'ip_high' => 'null',
-	);
+	];
 
 	$trigger = array_merge($values, $trigger);
 
@@ -1375,10 +1375,10 @@ function updateTriggers($ban_item = 0, $group_id = 0, $trigger = [], $logs = [])
 			ip_low = {inet:ip_low}, ip_high = {inet:ip_high}
 		WHERE id_ban = {int:ban_item}
 			AND id_ban_group = {int:id_ban_group}',
-		array_merge($trigger, array(
+		array_merge($trigger, [
 			'id_ban_group' => $group_id,
 			'ban_item' => $ban_item,
-		))
+		])
 	);
 
 	logTriggersUpdates($logs, false);
@@ -1398,22 +1398,22 @@ function logTriggersUpdates($logs, $new = true, $removal = false)
 	if (empty($logs))
 		return;
 
-	$log_name_map = array(
+	$log_name_map = [
 		'main_ip' => 'ip_range',
 		'hostname' => 'hostname',
 		'email' => 'email',
 		'user' => 'member',
 		'ip_range' => 'ip_range',
-	);
+	];
 
 	// Log the addion of the ban entries into the moderation log.
 	foreach ($logs as $log)
-		logAction('ban' . ($removal == true ? 'remove' : ''), array(
+		logAction('ban' . ($removal == true ? 'remove' : ''), [
 			$log_name_map[$log['bantype']] => $log['value'],
 			'new' => empty($new) ? 0 : 1,
 			'remove' => empty($removal) ? 0 : 1,
 			'type' => $log['bantype'],
-		));
+		]);
 }
 
 /**
@@ -1443,9 +1443,9 @@ function updateBanGroup($ban_info = [])
 			FROM {db_prefix}ban_groups
 			WHERE id_ban_group = {int:ban_group}
 			LIMIT 1',
-			array(
+			[
 				'ban_group' => $ban_info['id']
-			)
+			]
 		);
 
 		if ($smcFunc['db_num_rows']($request) == 0)
@@ -1462,10 +1462,10 @@ function updateBanGroup($ban_info = [])
 			WHERE name = {string:new_ban_name}
 				AND id_ban_group != {int:ban_group}
 			LIMIT 1',
-			array(
+			[
 				'ban_group' => empty($ban_info['id']) ? 0 : $ban_info['id'],
 				'new_ban_name' => $ban_info['name'],
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) != 0)
 			$context['ban_errors'][] = 'ban_name_exists';
@@ -1487,7 +1487,7 @@ function updateBanGroup($ban_info = [])
 			cannot_register = {int:cannot_register},
 			cannot_login = {int:cannot_login}
 		WHERE id_ban_group = {int:id_ban_group}',
-		array(
+		[
 			'expiration' => $ban_info['db_expiration'],
 			'cannot_access' => $ban_info['cannot']['access'],
 			'cannot_post' => $ban_info['cannot']['post'],
@@ -1497,7 +1497,7 @@ function updateBanGroup($ban_info = [])
 			'ban_name' => $ban_info['name'],
 			'reason' => $ban_info['reason'],
 			'notes' => $ban_info['notes'],
-		)
+		]
 	);
 
 	return $ban_info['id'];
@@ -1530,9 +1530,9 @@ function insertBanGroup($ban_info = [])
 			FROM {db_prefix}ban_groups
 			WHERE name = {string:new_ban_name}' . '
 			LIMIT 1',
-			array(
+			[
 				'new_ban_name' => $ban_info['name'],
-			)
+			]
 		);
 
 		if ($smcFunc['db_num_rows']($request) == 1)
@@ -1546,15 +1546,15 @@ function insertBanGroup($ban_info = [])
 	// Yes yes, we're ready to add now.
 	$ban_info['id'] = $smcFunc['db_insert']('',
 		'{db_prefix}ban_groups',
-		array(
+		[
 			'name' => 'string-20', 'ban_time' => 'int', 'expire_time' => 'raw', 'cannot_access' => 'int', 'cannot_register' => 'int',
 			'cannot_post' => 'int', 'cannot_login' => 'int', 'reason' => 'string-255', 'notes' => 'string-65534',
-		),
-		array(
+		],
+		[
 			$ban_info['name'], time(), $ban_info['db_expiration'], $ban_info['cannot']['access'], $ban_info['cannot']['register'],
 			$ban_info['cannot']['post'], $ban_info['cannot']['login'], $ban_info['reason'], $ban_info['notes'],
-		),
-		array('id_ban_group'),
+		],
+		['id_ban_group'],
 		1
 	);
 
@@ -1611,27 +1611,27 @@ function BanEditTrigger()
 
 	if (empty($ban_id))
 	{
-		$context['ban_trigger'] = array(
+		$context['ban_trigger'] = [
 			'id' => 0,
 			'group' => $ban_group,
-			'ip' => array(
+			'ip' => [
 				'value' => '',
 				'selected' => true,
-			),
-			'hostname' => array(
+			],
+			'hostname' => [
 				'selected' => false,
 				'value' => '',
-			),
-			'email' => array(
+			],
+			'email' => [
 				'value' => '',
 				'selected' => false,
-			),
-			'banneduser' => array(
+			],
+			'banneduser' => [
 				'value' => '',
 				'selected' => false,
-			),
+			],
 			'is_new' => true,
-		);
+		];
 	}
 	else
 	{
@@ -1645,37 +1645,37 @@ function BanEditTrigger()
 			WHERE bi.id_ban = {int:ban_item}
 				AND bi.id_ban_group = {int:ban_group}
 			LIMIT 1',
-			array(
+			[
 				'ban_item' => $ban_id,
 				'ban_group' => $ban_group,
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('ban_not_found', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
 		$smcFunc['db_free_result']($request);
 
-		$context['ban_trigger'] = array(
+		$context['ban_trigger'] = [
 			'id' => $row['id_ban'],
 			'group' => $row['id_ban_group'],
-			'ip' => array(
+			'ip' => [
 				'value' => empty($row['ip_low']) ? '' : IP::from_range($row['ip_low'], $row['ip_high']),
 				'selected' => !empty($row['ip_low']),
-			),
-			'hostname' => array(
+			],
+			'hostname' => [
 				'value' => str_replace('%', '*', $row['hostname']),
 				'selected' => !empty($row['hostname']),
-			),
-			'email' => array(
+			],
+			'email' => [
 				'value' => str_replace('%', '*', $row['email_address']),
 				'selected' => !empty($row['email_address'])
-			),
-			'banneduser' => array(
+			],
+			'banneduser' => [
 				'value' => $row['member_name'],
 				'selected' => !empty($row['member_name'])
-			),
+			],
 			'is_new' => false,
-		);
+		];
 	}
 
 	createToken('admin-bet');
@@ -1704,103 +1704,103 @@ function BanBrowseTriggers()
 			updateBanMembers();
 
 		// Make sure the ban cache is refreshed.
-		updateSettings(array('banLastUpdated' => time()));
+		updateSettings(['banLastUpdated' => time()]);
 	}
 
-	$context['selected_entity'] = isset($_REQUEST['entity']) && in_array($_REQUEST['entity'], array('ip', 'hostname', 'email', 'member')) ? $_REQUEST['entity'] : 'ip';
+	$context['selected_entity'] = isset($_REQUEST['entity']) && in_array($_REQUEST['entity'], ['ip', 'hostname', 'email', 'member']) ? $_REQUEST['entity'] : 'ip';
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'ban_trigger_list',
 		'title' => $txt['ban_trigger_browse'],
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'base_href' => $scripturl . '?action=admin;area=ban;sa=browse;entity=' . $context['selected_entity'],
 		'default_sort_col' => 'banned_entity',
 		'no_items_label' => $txt['ban_no_triggers'],
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getBanTriggers',
-			'params' => array(
+			'params' => [
 				$context['selected_entity'],
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getNumBanTriggers',
-			'params' => array(
+			'params' => [
 				$context['selected_entity'],
-			),
-		),
-		'columns' => array(
-			'banned_entity' => array(
-				'header' => array(
+			],
+		],
+		'columns' => [
+			'banned_entity' => [
+				'header' => [
 					'value' => $txt['ban_banned_entity'],
-				),
-			),
-			'ban_name' => array(
-				'header' => array(
+				],
+			],
+			'ban_name' => [
+				'header' => [
 					'value' => $txt['ban_name'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?action=admin;area=ban;sa=edit;bg=%1$d">%2$s</a>',
-						'params' => array(
+						'params' => [
 							'id_ban_group' => false,
 							'name' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'bg.name',
 					'reverse' => 'bg.name DESC',
-				),
-			),
-			'hits' => array(
-				'header' => array(
+				],
+			],
+			'hits' => [
+				'header' => [
 					'value' => $txt['ban_hits'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'hits',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'bi.hits DESC',
 					'reverse' => 'bi.hits',
-				),
-			),
-			'check' => array(
-				'header' => array(
+				],
+			],
+			'check' => [
+				'header' => [
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<input type="checkbox" name="remove[]" value="%1$d">',
-						'params' => array(
+						'params' => [
 							'id_ban' => false,
-						),
-					),
+						],
+					],
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=admin;area=ban;sa=browse;entity=' . $context['selected_entity'],
 			'include_start' => true,
 			'include_sort' => true,
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'above_column_headers',
 				'value' => '<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=ip">' . ($context['selected_entity'] == 'ip' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['ip'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=hostname">' . ($context['selected_entity'] == 'hostname' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['hostname'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=email">' . ($context['selected_entity'] == 'email' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['email'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=member">' . ($context['selected_entity'] == 'member' ? '<img src="' . $settings['images_url'] . '/selected.png" alt="&gt;"> ' : '') . $txt['username'] . '</a>',
-			),
-			array(
+			],
+			[
 				'position' => 'bottom_of_list',
 				'value' => '<input type="submit" name="remove_triggers" value="' . $txt['ban_remove_selected_triggers'] . '" data-confirm="' . $txt['ban_remove_selected_triggers_confirm'] . '" class="you_sure">',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Specific data for the first column depending on the selected entity.
 	if ($context['selected_entity'] === 'ip')
 	{
-		$listOptions['columns']['banned_entity']['data'] = array(
+		$listOptions['columns']['banned_entity']['data'] = [
 			'function' => function($rowData)
 			{
 				return IP::from_range(
@@ -1808,53 +1808,53 @@ function BanBrowseTriggers()
 					$rowData['ip_high']
 				);
 			},
-		);
-		$listOptions['columns']['banned_entity']['sort'] = array(
+		];
+		$listOptions['columns']['banned_entity']['sort'] = [
 			'default' => 'bi.ip_low, bi.ip_high, bi.ip_low',
 			'reverse' => 'bi.ip_low DESC, bi.ip_high DESC',
-		);
+		];
 	}
 	elseif ($context['selected_entity'] === 'hostname')
 	{
-		$listOptions['columns']['banned_entity']['data'] = array(
+		$listOptions['columns']['banned_entity']['data'] = [
 			'function' => function($rowData) use ($smcFunc)
 			{
-				return strtr($smcFunc['htmlspecialchars']($rowData['hostname']), array('%' => '*'));
+				return strtr($smcFunc['htmlspecialchars']($rowData['hostname']), ['%' => '*']);
 			},
-		);
-		$listOptions['columns']['banned_entity']['sort'] = array(
+		];
+		$listOptions['columns']['banned_entity']['sort'] = [
 			'default' => 'bi.hostname',
 			'reverse' => 'bi.hostname DESC',
-		);
+		];
 	}
 	elseif ($context['selected_entity'] === 'email')
 	{
-		$listOptions['columns']['banned_entity']['data'] = array(
+		$listOptions['columns']['banned_entity']['data'] = [
 			'function' => function($rowData) use ($smcFunc)
 			{
-				return strtr($smcFunc['htmlspecialchars']($rowData['email_address']), array('%' => '*'));
+				return strtr($smcFunc['htmlspecialchars']($rowData['email_address']), ['%' => '*']);
 			},
-		);
-		$listOptions['columns']['banned_entity']['sort'] = array(
+		];
+		$listOptions['columns']['banned_entity']['sort'] = [
 			'default' => 'bi.email_address',
 			'reverse' => 'bi.email_address DESC',
-		);
+		];
 	}
 	elseif ($context['selected_entity'] === 'member')
 	{
-		$listOptions['columns']['banned_entity']['data'] = array(
-			'sprintf' => array(
+		$listOptions['columns']['banned_entity']['data'] = [
+			'sprintf' => [
 				'format' => '<a href="' . $scripturl . '?action=profile;u=%1$d">%2$s</a>',
-				'params' => array(
+				'params' => [
 					'id_member' => false,
 					'real_name' => false,
-				),
-			),
-		);
-		$listOptions['columns']['banned_entity']['sort'] = array(
+				],
+			],
+		];
+		$listOptions['columns']['banned_entity']['sort'] = [
 			'default' => 'mem.real_name',
 			'reverse' => 'mem.real_name DESC',
-		);
+		];
 	}
 
 	// Create the list.
@@ -1879,11 +1879,11 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 {
 	global $smcFunc;
 
-	$where = array(
+	$where = [
 		'ip' => 'bi.ip_low is not null',
 		'hostname' => 'bi.hostname != {string:blank_string}',
 		'email' => 'bi.email_address != {string:blank_string}',
-	);
+	];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT
@@ -1896,12 +1896,12 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 		WHERE ' . $where[$trigger_type]) . '
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:max}',
-		array(
+		[
 			'blank_string' => '',
 			'sort' => $sort,
 			'start' => $start,
 			'max' => $items_per_page,
-		)
+		]
 	);
 	$ban_triggers = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1921,20 +1921,20 @@ function list_getNumBanTriggers($trigger_type)
 {
 	global $smcFunc;
 
-	$where = array(
+	$where = [
 		'ip' => 'bi.ip_low is not null',
 		'hostname' => 'bi.hostname != {string:blank_string}',
 		'email' => 'bi.email_address != {string:blank_string}',
-	);
+	];
 
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}ban_items AS bi' . ($trigger_type === 'member' ? '
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = bi.id_member)' : '
 		WHERE ' . $where[$trigger_type]),
-		array(
+		[
 			'blank_string' => '',
-		)
+		]
 	);
 	list ($num_triggers) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -1971,119 +1971,119 @@ function BanLog()
 		}
 	}
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'ban_log',
 		'title' => $txt['ban_log'],
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'base_href' => $context['admin_area'] == 'ban' ? $scripturl . '?action=admin;area=ban;sa=log' : $scripturl . '?action=admin;area=logs;sa=banlog',
 		'default_sort_col' => 'date',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getBanLogEntries',
-		),
-		'get_count' => array(
+		],
+		'get_count' => [
 			'function' => 'list_getNumBanLogEntries',
-		),
+		],
 		'no_items_label' => $txt['ban_log_no_entries'],
-		'columns' => array(
-			'ip' => array(
-				'header' => array(
+		'columns' => [
+			'ip' => [
+				'header' => [
 					'value' => $txt['ban_log_ip'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?action=trackip;searchip=%1$s">%1$s</a>',
-						'params' => array(
+						'params' => [
 							'ip' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'lb.ip',
 					'reverse' => 'lb.ip DESC',
-				),
-			),
-			'email' => array(
-				'header' => array(
+				],
+			],
+			'email' => [
+				'header' => [
 					'value' => $txt['ban_log_email'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'email',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lb.email = \'\', lb.email',
 					'reverse' => 'lb.email != \'\', lb.email DESC',
-				),
-			),
-			'member' => array(
-				'header' => array(
+				],
+			],
+			'member' => [
+				'header' => [
 					'value' => $txt['ban_log_member'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?action=profile;u=%1$d">%2$s</a>',
-						'params' => array(
+						'params' => [
 							'id_member' => false,
 							'real_name' => false,
-						),
-					),
-				),
-				'sort' => array(
+						],
+					],
+				],
+				'sort' => [
 					'default' => 'COALESCE(mem.real_name, 1=1), mem.real_name',
 					'reverse' => 'COALESCE(mem.real_name, 1=1) DESC, mem.real_name DESC',
-				),
-			),
-			'date' => array(
-				'header' => array(
+				],
+			],
+			'date' => [
+				'header' => [
 					'value' => $txt['ban_log_date'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData)
 					{
 						return timeformat($rowData['log_time']);
 					},
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lb.log_time DESC',
 					'reverse' => 'lb.log_time',
-				),
-			),
-			'check' => array(
-				'header' => array(
+				],
+			],
+			'check' => [
+				'header' => [
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<input type="checkbox" name="remove[]" value="%1$d">',
-						'params' => array(
+						'params' => [
 							'id_ban_log' => false,
-						),
-					),
+						],
+					],
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $context['admin_area'] == 'ban' ? $scripturl . '?action=admin;area=ban;sa=log' : $scripturl . '?action=admin;area=logs;sa=banlog',
 			'include_start' => true,
 			'include_sort' => true,
 			'token' => 'admin-bl',
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'top_of_list',
 				'value' => '
 					<input type="submit" name="removeSelected" value="' . $txt['ban_log_remove_selected'] . '" data-confirm="' . $txt['ban_log_remove_selected_confirm'] . '" class="you_sure">
 					<input type="submit" name="removeAll" value="' . $txt['ban_log_remove_all'] . '" data-confirm="' . $txt['ban_log_remove_all_confirm'] . '" class="you_sure">',
-			),
-			array(
+			],
+			[
 				'position' => 'bottom_of_list',
 				'value' => '
 					<input type="submit" name="removeSelected" value="' . $txt['ban_log_remove_selected'] . '" data-confirm="' . $txt['ban_log_remove_selected_confirm'] . '" class="you_sure">
 					<input type="submit" name="removeAll" value="' . $txt['ban_log_remove_all'] . '" data-confirm="' . $txt['ban_log_remove_all_confirm'] . '" class="you_sure">',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	createToken('admin-bl');
 
@@ -2116,13 +2116,13 @@ function list_getBanLogEntries($start, $items_per_page, $sort)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lb.id_member)
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:items}',
-		array(
+		[
 			'blank_string' => '',
 			'dash' => $dash,
 			'sort' => $sort,
 			'start' => $start,
 			'items' => $items_per_page,
-		)
+		]
 	);
 	$log_entries = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -2146,8 +2146,8 @@ function list_getNumBanLogEntries()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_banned AS lb',
-		array(
-		)
+		[
+		]
 	);
 	list ($num_entries) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -2171,10 +2171,10 @@ function checkExistingTriggerIP($ip_array, $fullip = '')
 	if (empty($ip_array['low']) || empty($ip_array['high']))
 		return false;
 
-	$values = array(
+	$values = [
 		'ip_low' => $ip_array['low'],
 		'ip_high' => $ip_array['high']
-	);
+	];
 
 
 	$request = $smcFunc['db_query']('', '
@@ -2189,10 +2189,10 @@ function checkExistingTriggerIP($ip_array, $fullip = '')
 	if ($smcFunc['db_num_rows']($request) != 0)
 	{
 		list ($error_id_ban, $error_ban_name) = $smcFunc['db_fetch_row']($request);
-		fatal_lang_error('ban_trigger_already_exists', false, array(
+		fatal_lang_error('ban_trigger_already_exists', false, [
 			$fullip,
 			'<a href="' . $scripturl . '?action=admin;area=ban;sa=edit;bg=' . $error_id_ban . '">' . $error_ban_name . '</a>',
-		));
+		]);
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -2219,12 +2219,12 @@ function updateBanMembers()
 		WHERE (bi.id_member > {int:no_member} OR bi.email_address != {string:blank_string})
 			AND bg.cannot_access = {int:cannot_access_on}
 			AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time})',
-		array(
+		[
 			'no_member' => 0,
 			'cannot_access_on' => 1,
 			'current_time' => time(),
 			'blank_string' => '',
-		)
+		]
 	);
 	$memberIDs = [];
 	$memberEmails = [];
@@ -2294,9 +2294,9 @@ function updateBanMembers()
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member IN ({array_int:new_banned_members})',
-			array(
+			[
 				'new_banned_members' => $newMembers,
-			)
+			]
 		);
 
 	// Find members that are wrongfully marked as banned.
@@ -2307,11 +2307,11 @@ function updateBanMembers()
 			LEFT JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group AND bg.cannot_access = {int:cannot_access_activated} AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time}))
 		WHERE (bi.id_ban IS NULL OR bg.id_ban_group IS NULL)
 			AND mem.is_activated >= {int:ban_flag}',
-		array(
+		[
 			'cannot_access_activated' => 1,
 			'current_time' => time(),
 			'ban_flag' => 10,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -2326,7 +2326,7 @@ function updateBanMembers()
 
 	if (!empty($updates))
 		foreach ($updates as $newStatus => $members)
-			updateMemberData($members, array('is_activated' => $newStatus));
+			updateMemberData($members, ['is_activated' => $newStatus]);
 
 	// Update the latest member and our total members as banning may change them.
 	updateStats('member');
@@ -2348,9 +2348,9 @@ function getMemberData($id)
 		FROM {db_prefix}members
 		WHERE id_member = {int:current_user}
 		LIMIT 1',
-		array(
+		[
 			'current_user' => $id,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{

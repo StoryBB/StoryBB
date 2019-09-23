@@ -34,59 +34,59 @@ function ViewErrorLog()
 	loadLanguage('ManageMaintenance');
 
 	// You can filter by any of the following columns:
-	$filters = array(
-		'id_member' => array(
+	$filters = [
+		'id_member' => [
 			'txt' => $txt['username'],
 			'operator' => '=',
 			'datatype' => 'int',
-		),
-		'ip' => array(
+		],
+		'ip' => [
 			'txt' => $txt['ip_address'],
 			'operator' => '=',
 			'datatype' => 'inet',
-		),
-		'session' => array(
+		],
+		'session' => [
 			'txt' => $txt['session'],
 			'operator' => 'LIKE',
 			'datatype' => 'string',
-		),
-		'url' => array(
+		],
+		'url' => [
 			'txt' => $txt['error_url'],
 			'operator' => 'LIKE',
 			'datatype' => 'string',
-		),
-		'message' => array(
+		],
+		'message' => [
 			'txt' => $txt['error_message'],
 			'operator' => 'LIKE',
 			'datatype' => 'string',
-		),
-		'error_type' => array(
+		],
+		'error_type' => [
 			'txt' => $txt['error_type'],
 			'operator' => 'LIKE',
 			'datatype' => 'string',
-		),
-		'file' => array(
+		],
+		'file' => [
 			'txt' => $txt['file'],
 			'operator' => 'LIKE',
 			'datatype' => 'string',
-		),
-		'line' => array(
+		],
+		'line' => [
 			'txt' => $txt['line'],
 			'operator' => '=',
 			'datatype' => 'int',
-		),
-	);
+		],
+	];
 
 	// Set up the filtering...
 	if (isset($_GET['value'], $_GET['filter']) && isset($filters[$_GET['filter']]))
-		$filter = array(
+		$filter = [
 			'variable' => $_GET['filter'],
-			'value' => array(
-				'sql' => in_array($_GET['filter'], array('message', 'url', 'file')) ? base64_decode(strtr($_GET['value'], array(' ' => '+'))) : $smcFunc['db_escape_wildcard_string']($_GET['value']),
-			),
+			'value' => [
+				'sql' => in_array($_GET['filter'], ['message', 'url', 'file']) ? base64_decode(strtr($_GET['value'], [' ' => '+'])) : $smcFunc['db_escape_wildcard_string']($_GET['value']),
+			],
 			'href' => ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'],
 			'entity' => $filters[$_GET['filter']]['txt']
-		);
+		];
 
 	// Deleting, are we?
 	if (isset($_POST['delall']) || isset($_POST['delete']))
@@ -97,9 +97,9 @@ function ViewErrorLog()
 		SELECT COUNT(*)
 		FROM {db_prefix}log_errors' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' ' . $filters[$_GET['filter']]['operator'] . ' {' . $filters[$_GET['filter']]['datatype'] . ':filter}' : ''),
-		array(
+		[
 			'filter' => isset($filter) ? $filter['value']['sql'] : '',
-		)
+		]
 	);
 	list ($num_errors) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -142,11 +142,11 @@ function ViewErrorLog()
 		WHERE ' . $filter['variable'] . ' ' . $filters[$_GET['filter']]['operator'] . ' {' . $filters[$_GET['filter']]['datatype'] . ':filter}' : '') . '
 		ORDER BY id_error ' . ($context['sort_direction'] == 'down' ? 'DESC' : '') . '
 		LIMIT {int:start}, {int:max}',
-		array(
+		[
 			'filter' => isset($filter) ? $filter['value']['sql'] : '',
 			'start' => $_GET['start'],
 			'max' => $modSettings['defaultMaxListItems'],
-		)
+		]
 	);
 	$context['errors'] = [];
 	$members = [];
@@ -156,43 +156,43 @@ function ViewErrorLog()
 		$search_message = preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '%', $smcFunc['db_escape_wildcard_string']($row['message']));
 		if ($search_message == $filter['value']['sql'])
 			$search_message = $smcFunc['db_escape_wildcard_string']($row['message']);
-		$show_message = strtr(strtr(preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '$1', $row['message']), array("\r" => '', '<br>' => "\n", '<' => '&lt;', '>' => '&gt;', '"' => '&quot;')), array("\n" => '<br>'));
+		$show_message = strtr(strtr(preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '$1', $row['message']), ["\r" => '', '<br>' => "\n", '<' => '&lt;', '>' => '&gt;', '"' => '&quot;']), ["\n" => '<br>']);
 
-		$context['errors'][$row['id_error']] = array(
-			'member' => array(
+		$context['errors'][$row['id_error']] = [
+			'member' => [
 				'id' => $row['id_member'],
 				'ip' => inet_dtop($row['ip']),
 				'session' => $row['session']
-			),
+			],
 			'time' => timeformat($row['log_time']),
 			'timestamp' => $row['log_time'],
-			'url' => array(
+			'url' => [
 				'html' => $smcFunc['htmlspecialchars'](strpos($row['url'], 'cron.php') === false ? (substr($row['url'], 0, 1) == '?' ? $scripturl : '') . $row['url'] : $row['url']),
 				'href' => base64_encode($smcFunc['db_escape_wildcard_string']($row['url']))
-			),
-			'message' => array(
+			],
+			'message' => [
 				'html' => $show_message,
 				'href' => base64_encode($search_message)
-			),
+			],
 			'id' => $row['id_error'],
-			'error_type' => array(
+			'error_type' => [
 				'type' => $row['error_type'],
 				'name' => isset($txt['errortype_' . $row['error_type']]) ? $txt['errortype_' . $row['error_type']] : $row['error_type'],
-			),
+			],
 			'file' => [],
-		);
+		];
 		if (!empty($row['file']) && !empty($row['line']))
 		{
 			// Eval'd files rarely point to the right location and cause havoc for linking, so don't link them.
 			$linkfile = strpos($row['file'], 'eval') === false || strpos($row['file'], '?') === false; // De Morgan's Law.  Want this true unless both are present.
 
-			$context['errors'][$row['id_error']]['file'] = array(
+			$context['errors'][$row['id_error']]['file'] = [
 				'file' => $row['file'],
 				'line' => $row['line'],
 				'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'],
 				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this.href, 600, 480, false);">' . $row['file'] . '</a>' : $row['file'],
 				'search' => base64_encode($row['file']),
-			);
+			];
 		}
 
 		// Make a list of members to load later.
@@ -209,21 +209,21 @@ function ViewErrorLog()
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member_list})
 			LIMIT {int:members}',
-			array(
+			[
 				'member_list' => $members,
 				'members' => count($members),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[$row['id_member']] = $row;
 		$smcFunc['db_free_result']($request);
 
 		// This is a guest...
-		$members[0] = array(
+		$members[0] = [
 			'id_member' => 0,
 			'member_name' => '',
 			'real_name' => $txt['guest_title']
-		);
+		];
 
 		// Go through each error and tack the data on.
 		foreach ($context['errors'] as $id => $dummy)
@@ -249,15 +249,15 @@ function ViewErrorLog()
 			$context['filter']['value']['html'] = '<a href="' . $scripturl . '?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 		}
 		elseif ($filter['variable'] == 'url')
-			$context['filter']['value']['html'] = '\'' . strtr($smcFunc['htmlspecialchars']((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '\'';
+			$context['filter']['value']['html'] = '\'' . strtr($smcFunc['htmlspecialchars']((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), ['\_' => '_']) . '\'';
 		elseif ($filter['variable'] == 'message')
 		{
-			$context['filter']['value']['html'] = '\'' . strtr($smcFunc['htmlspecialchars']($filter['value']['sql']), array("\n" => '<br>', '&lt;br /&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '\'';
+			$context['filter']['value']['html'] = '\'' . strtr($smcFunc['htmlspecialchars']($filter['value']['sql']), ["\n" => '<br>', '&lt;br /&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\']) . '\'';
 			$context['filter']['value']['html'] = preg_replace('~&amp;lt;span class=&amp;quot;remove&amp;quot;&amp;gt;(.+?)&amp;lt;/span&amp;gt;~', '$1', $context['filter']['value']['html']);
 		}
 		elseif ($filter['variable'] == 'error_type')
 		{
-			$context['filter']['value']['html'] = '\'' . strtr($smcFunc['htmlspecialchars']($filter['value']['sql']), array("\n" => '<br>', '&lt;br /&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '\'';
+			$context['filter']['value']['html'] = '\'' . strtr($smcFunc['htmlspecialchars']($filter['value']['sql']), ["\n" => '<br>', '&lt;br /&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\']) . '\'';
 		}
 		else
 			$context['filter']['value']['html'] = &$filter['value']['sql'];
@@ -265,12 +265,12 @@ function ViewErrorLog()
 
 	$context['error_types'] = [];
 
-	$context['error_types']['all'] = array(
+	$context['error_types']['all'] = [
 		'label' => $txt['errortype_all'],
 		'description' => isset($txt['errortype_all_desc']) ? $txt['errortype_all_desc'] : '',
 		'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : ''),
 		'is_selected' => empty($filter),
-	);
+	];
 
 	$sum = 0;
 	// What type of errors do we have and how many do we have?
@@ -279,21 +279,21 @@ function ViewErrorLog()
 		FROM {db_prefix}log_errors
 		GROUP BY error_type
 		ORDER BY error_type = {string:critical_type} DESC, error_type ASC',
-		array(
+		[
 			'critical_type' => 'critical',
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Total errors so far?
 		$sum += $row['num_errors'];
 
-		$context['error_types'][$sum] = array(
+		$context['error_types'][$sum] = [
 			'label' => (isset($txt['errortype_' . $row['error_type']]) ? $txt['errortype_' . $row['error_type']] : $row['error_type']) . ' (' . $row['num_errors'] . ')',
 			'description' => isset($txt['errortype_' . $row['error_type'] . '_desc']) ? $txt['errortype_' . $row['error_type'] . '_desc'] : '',
 			'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . ';filter=error_type;value=' . $row['error_type'],
 			'is_selected' => isset($filter) && $filter['value']['sql'] == $smcFunc['db_escape_wildcard_string']($row['error_type']),
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -333,17 +333,17 @@ function deleteErrors()
 	if (isset($_POST['delall']) && !isset($filter))
 		$smcFunc['db_query']('truncate_table', '
 			TRUNCATE {db_prefix}log_errors',
-			array(
-			)
+			[
+			]
 		);
 	// Deleting all with a filter?
 	elseif (isset($_POST['delall']) && isset($filter))
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_errors
 			WHERE ' . $filter['variable'] . ' LIKE {string:filter}',
-			array(
+			[
 				'filter' => $filter['value']['sql'],
-			)
+			]
 		);
 	// Just specific errors?
 	elseif (!empty($_POST['delete']))
@@ -351,9 +351,9 @@ function deleteErrors()
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_errors
 			WHERE id_error IN ({array_int:error_list})',
-			array(
+			[
 				'error_list' => array_unique($_POST['delete']),
-			)
+			]
 		);
 
 		// Go back to where we were.
@@ -391,7 +391,7 @@ function ViewFile()
 
 	// Make sure the file we are looking for is one they are allowed to look at
 	if ($ext != '.php' || (strpos($file, $real_board) === false && strpos($file, $real_source) === false) || ($basename == 'settings.php' || $basename == 'settings_bak.php') || strpos($file, $real_cache) !== false || !is_readable($file))
-		fatal_lang_error('error_bad_file', true, array($smcFunc['htmlspecialchars']($file)));
+		fatal_lang_error('error_bad_file', true, [$smcFunc['htmlspecialchars']($file)]);
 
 	// get the min and max lines
 	$min = $line - 20 <= 0 ? 1 : $line - 20;
@@ -407,12 +407,12 @@ function ViewFile()
 
 	$file_data = array_slice($file_data, $min - 1, $max - $min);
 
-	$context['file_data'] = array(
+	$context['file_data'] = [
 		'contents' => $file_data,
 		'min' => $min,
 		'target' => $line,
-		'file' => strtr($file, array('"' => '\\"')),
-	);
+		'file' => strtr($file, ['"' => '\\"']),
+	];
 
 	StoryBB\Template::set_layout('raw');
 	StoryBB\Template::remove_all_layers();
@@ -433,16 +433,16 @@ function ViewFile()
 function highlight_php_code($code)
 {
 	// Remove special characters.
-	$code = un_htmlspecialchars(strtr($code, array('<br />' => "\n", '<br>' => "\n", "\t" => 'STORYBB_TAB();', '&#91;' => '[')));
+	$code = un_htmlspecialchars(strtr($code, ['<br />' => "\n", '<br>' => "\n", "\t" => 'STORYBB_TAB();', '&#91;' => '[']));
 
 	$oldlevel = error_reporting(0);
 
-	$buffer = str_replace(array("\n", "\r"), '', @highlight_string($code, true));
+	$buffer = str_replace(["\n", "\r"], '', @highlight_string($code, true));
 
 	error_reporting($oldlevel);
 
 	// Yes, I know this is kludging it, but this is the best way to preserve tabs from PHP :P.
 	$buffer = preg_replace('~STORYBB_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<pre style="display: inline;">' . "\t" . '</pre>', $buffer);
 
-	return strtr($buffer, array('\'' => '&#039;', '<code>' => '', '</code>' => ''));
+	return strtr($buffer, ['\'' => '&#039;', '<code>' => '', '</code>' => '']);
 }

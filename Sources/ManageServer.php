@@ -75,11 +75,11 @@ function ModifySettings()
 	isAllowedTo('admin_forum');
 
 	// Load up all the tabs...
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['admin_server_settings'],
 		'help' => 'serversettings',
 		'description' => $txt['admin_basic_settings'],
-	);
+	];
 
 	checkSession('request');
 
@@ -88,13 +88,13 @@ function ModifySettings()
 
 	$context['page_title'] = $txt['admin_server_settings'];
 
-	$subActions = array(
+	$subActions = [
 		'general' => 'ModifyGeneralSettings',
 		'cookie' => 'ModifyCookieSettings',
 		'security' => 'ModifyGeneralSecuritySettings',
 		'cache' => 'ModifyCacheSettings',
 		'phpinfo' => 'ShowPHPinfoSettings',
-	);
+	];
 
 	// By default we're editing the core settings
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'general';
@@ -111,7 +111,7 @@ function ModifySettings()
 
 	$context['settings_not_writable'] = $settings_not_writable;
 
-	routing_integration_hook('integrate_server_settings', array(&$subActions));
+	routing_integration_hook('integrate_server_settings', [&$subActions]);
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);
@@ -145,25 +145,25 @@ function ModifyGeneralSettings($return_config = false)
 		variable name, description, type (constant), size/possible values, helptext, optional 'min' (minimum value for float/int, defaults to 0), optional 'max' (maximum value for float/int), optional 'step' (amount to increment/decrement value for float/int)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
-	$config_vars = array(
-		array('mbname', $txt['admin_title'], 'file', 'text', 30),
+	$config_vars = [
+		['mbname', $txt['admin_title'], 'file', 'text', 30],
 		'',
-		array('maintenance', $txt['admin_maintain'], 'file', 'check'),
-		array('mtitle', $txt['maintenance_subject'], 'file', 'text', 36),
-		array('mmessage', $txt['maintenance_message'], 'file', 'text', 36),
+		['maintenance', $txt['admin_maintain'], 'file', 'check'],
+		['mtitle', $txt['maintenance_subject'], 'file', 'text', 36],
+		['mmessage', $txt['maintenance_message'], 'file', 'text', 36],
 		'',
-		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'text', 30),
+		['webmaster_email', $txt['admin_webmaster_email'], 'file', 'text', 30],
 		'',
-		array('debug_templates', $txt['debug_templates'], 'db', 'check', 'null', 'debug_templates'),
-		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
+		['debug_templates', $txt['debug_templates'], 'db', 'check', 'null', 'debug_templates'],
+		['disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'],
 		'',
-		array('force_ssl', $txt['force_ssl'], 'db', 'select', array($txt['force_ssl_off'], $txt['force_ssl_auth'], $txt['force_ssl_complete']), 'force_ssl', 'disabled' => $disable_force_ssl),
-		array('image_proxy_enabled', $txt['image_proxy_enabled'], 'file', 'check', null, 'image_proxy_enabled'),
-		array('image_proxy_secret', $txt['image_proxy_secret'], 'file', 'text', 30, 'image_proxy_secret'),
-		array('image_proxy_maxsize', $txt['image_proxy_maxsize'], 'file', 'int', null, 'image_proxy_maxsize'),
-	);
+		['force_ssl', $txt['force_ssl'], 'db', 'select', [$txt['force_ssl_off'], $txt['force_ssl_auth'], $txt['force_ssl_complete']], 'force_ssl', 'disabled' => $disable_force_ssl],
+		['image_proxy_enabled', $txt['image_proxy_enabled'], 'file', 'check', null, 'image_proxy_enabled'],
+		['image_proxy_secret', $txt['image_proxy_secret'], 'file', 'text', 30, 'image_proxy_secret'],
+		['image_proxy_maxsize', $txt['image_proxy_maxsize'], 'file', 'int', null, 'image_proxy_maxsize'],
+	];
 
-	settings_integration_hook('integrate_general_settings', array(&$config_vars));
+	settings_integration_hook('integrate_general_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -236,10 +236,10 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 
 	// Check $boardurl
 	if ($new_force_ssl == 2)
-		$newval = strtr($boardurl, array('http://' => 'https://'));
+		$newval = strtr($boardurl, ['http://' => 'https://']);
 	else
-		$newval = strtr($boardurl, array('https://' => 'http://'));
-	updateSettingsFile(array('boardurl' => '\'' . addslashes($newval) . '\''));
+		$newval = strtr($boardurl, ['https://' => 'http://']);
+	updateSettingsFile(['boardurl' => '\'' . addslashes($newval) . '\'']);
 
 	$new_settings = [];
 
@@ -247,9 +247,9 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 	if (BoardurlMatch($modSettings['smileys_url']))
 	{
 		if ($new_force_ssl == 2)
-			$newval = strtr($modSettings['smileys_url'], array('http://' => 'https://'));
+			$newval = strtr($modSettings['smileys_url'], ['http://' => 'https://']);
 		else
-			$newval = strtr($modSettings['smileys_url'], array('https://' => 'http://'));
+			$newval = strtr($modSettings['smileys_url'], ['https://' => 'http://']);
 		$new_settings['smileys_url'] = $newval;
 	}
 
@@ -258,9 +258,9 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 	if (isset($modSettings['custom_avatar_url']) && BoardurlMatch($modSettings['custom_avatar_url']))
 	{
 		if ($new_force_ssl == 2)
-			$newval = strtr($modSettings['custom_avatar_url'], array('http://' => 'https://'));
+			$newval = strtr($modSettings['custom_avatar_url'], ['http://' => 'https://']);
 		else
-			$newval = strtr($modSettings['custom_avatar_url'], array('https://' => 'http://'));
+			$newval = strtr($modSettings['custom_avatar_url'], ['https://' => 'http://']);
 		$new_settings['custom_avatar_url'] = $newval;
 	}
 
@@ -275,11 +275,11 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 		  FROM {db_prefix}themes
 		 WHERE variable in ({string:themeurl}, {string:imagesurl})
 		   AND id_member = {int:zero}',
-		array(
+		[
 			'themeurl' => 'theme_url',
 			'imagesurl' => 'images_url',
 			'zero' => 0,
-		)
+		]
 	);
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -288,21 +288,21 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 		if (BoardurlMatch($row['value']))
 		{
 			if ($new_force_ssl == 2)
-				$newval = strtr($row['value'], array('http://' => 'https://'));
+				$newval = strtr($row['value'], ['http://' => 'https://']);
 			else
-				$newval = strtr($row['value'], array('https://' => 'http://'));
+				$newval = strtr($row['value'], ['https://' => 'http://']);
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}themes
 				   SET value = {string:theme_val}
 				 WHERE variable = {string:theme_var}
 				   AND id_theme = {string:theme_id}
 				   AND id_member = {int:zero}',
-				array(
+				[
 					'theme_val' => $newval,
 					'theme_var' => $row['variable'],
 					'theme_id' => $row['id_theme'],
 					'zero' => 0,
-				)
+				]
 			);
 		}
 	}
@@ -325,8 +325,8 @@ function BoardurlMatch($url = '')
 	global $boardurl;
 
 	// Strip the schemes
-	$urlpath = strtr($url, array('http://' => '', 'https://' => ''));
-	$boardurlpath = strtr($boardurl, array('http://' => '', 'https://' => ''));
+	$urlpath = strtr($url, ['http://' => '', 'https://' => '']);
+	$boardurlpath = strtr($boardurl, ['http://' => '', 'https://' => '']);
 
 	// If leftmost portion of path matches boardurl, return true
 	$result = strpos($urlpath, $boardurlpath);
@@ -347,30 +347,30 @@ function ModifyCookieSettings($return_config = false)
 	global $context, $scripturl, $txt, $sourcedir, $modSettings, $cookiename, $user_settings, $boardurl, $smcFunc;
 
 	// Define the variables we want to edit.
-	$config_vars = array(
+	$config_vars = [
 		// Cookies...
-		array('cookiename', $txt['cookie_name'], 'file', 'text', 20),
-		array('localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies'),
-		array('globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies'),
-		array('globalCookiesDomain', $txt['globalCookiesDomain'], 'db', 'text', false, 'globalCookiesDomain'),
-		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !httpsOn()),
-		array('httponlyCookies', $txt['httponlyCookies'], 'db', 'check', false, 'httponlyCookies'),
+		['cookiename', $txt['cookie_name'], 'file', 'text', 20],
+		['localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies'],
+		['globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies'],
+		['globalCookiesDomain', $txt['globalCookiesDomain'], 'db', 'text', false, 'globalCookiesDomain'],
+		['secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !httpsOn()],
+		['httponlyCookies', $txt['httponlyCookies'], 'db', 'check', false, 'httponlyCookies'],
 		'',
 		// Sessions
-		array('databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'),
-		array('databaseSession_loose', $txt['databaseSession_loose'], 'db', 'check', false, 'databaseSession_loose'),
-		array('databaseSession_lifetime', $txt['databaseSession_lifetime'], 'db', 'int', false, 'databaseSession_lifetime', 'postinput' => $txt['seconds']),
+		['databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'],
+		['databaseSession_loose', $txt['databaseSession_loose'], 'db', 'check', false, 'databaseSession_loose'],
+		['databaseSession_lifetime', $txt['databaseSession_lifetime'], 'db', 'int', false, 'databaseSession_lifetime', 'postinput' => $txt['seconds']],
 		'',
 		// 2FA
-		array('tfa_mode', $txt['tfa_mode'], 'db', 'select', array(
+		['tfa_mode', $txt['tfa_mode'], 'db', 'select', [
 			0 => $txt['tfa_mode_disabled'],
 			1 => $txt['tfa_mode_enabled'],
-		) + (empty($user_settings['tfa_secret']) ? [] : array(
+		] + (empty($user_settings['tfa_secret']) ? [] : [
 			2 => $txt['tfa_mode_forced'],
-		)) + (empty($user_settings['tfa_secret']) ? [] : array(
+		]) + (empty($user_settings['tfa_secret']) ? [] : [
 			3 => $txt['tfa_mode_forcedall'],
-		)), 'subtext' => $txt['tfa_mode_subtext'] . (empty($user_settings['tfa_secret']) ? '<br /><strong>' . $txt['tfa_mode_forced_help'] . '</strong>' : ''), 'tfa_mode'),
-	);
+		]), 'subtext' => $txt['tfa_mode_subtext'] . (empty($user_settings['tfa_secret']) ? '<br /><strong>' . $txt['tfa_mode_forced_help'] . '</strong>' : ''), 'tfa_mode'],
+	];
 
 	addInlineJavaScript('
 	function hideGlobalCookies()
@@ -392,7 +392,7 @@ function ModifyCookieSettings($return_config = false)
 	if (empty($user_settings['tfa_secret']))
 		addInlineJavaScript('');
 
-	settings_integration_hook('integrate_cookie_settings', array(&$config_vars));
+	settings_integration_hook('integrate_cookie_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -439,16 +439,16 @@ function ModifyCookieSettings($return_config = false)
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}membergroups
 				SET tfa_required = {int:zero}',
-				array(
+				[
 					'zero' => 0,
-				)
+				]
 			);
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}members
 				SET tfa_secret = {string:empty}, tfa_backup = {string:empty}',
-				array(
+				[
 					'empty' => '',
-				)
+				]
 			);
 		}
 
@@ -470,26 +470,26 @@ function ModifyGeneralSecuritySettings($return_config = false)
 {
 	global $txt, $scripturl, $context;
 
-	$config_vars = array(
-			array('int', 'failed_login_threshold'),
-			array('int', 'loginHistoryDays', 'subtext' => $txt['zero_to_disable']),
+	$config_vars = [
+			['int', 'failed_login_threshold'],
+			['int', 'loginHistoryDays', 'subtext' => $txt['zero_to_disable']],
 		'',
-			array('check', 'securityDisable'),
-			array('check', 'securityDisable_moderate'),
+			['check', 'securityDisable'],
+			['check', 'securityDisable_moderate'],
 		'',
 			// Reactive on email, and approve on delete
-			array('check', 'send_validation_onChange'),
+			['check', 'send_validation_onChange'],
 		'',
 			// Password strength.
-			array('select', 'password_strength', array($txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high'])),
+			['select', 'password_strength', [$txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high']]],
 		'',
-			array('select', 'frame_security', array('SAMEORIGIN' => $txt['setting_frame_security_SAMEORIGIN'], 'DENY' => $txt['setting_frame_security_DENY'], 'DISABLE' => $txt['setting_frame_security_DISABLE'])),
+			['select', 'frame_security', ['SAMEORIGIN' => $txt['setting_frame_security_SAMEORIGIN'], 'DENY' => $txt['setting_frame_security_DENY'], 'DISABLE' => $txt['setting_frame_security_DISABLE']]],
 		'',
-			array('select', 'proxy_ip_header', array('disabled' => $txt['setting_proxy_ip_header_disabled'], 'autodetect' => $txt['setting_proxy_ip_header_autodetect'], 'HTTP_X_FORWARDED_FOR' => 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP' => 'HTTP_CLIENT_IP', 'HTTP_X_REAL_IP' => 'HTTP_X_REAL_IP', 'CF-Connecting-IP' => 'CF-Connecting-IP')),
-			array('text', 'proxy_ip_servers'),
-	);
+			['select', 'proxy_ip_header', ['disabled' => $txt['setting_proxy_ip_header_disabled'], 'autodetect' => $txt['setting_proxy_ip_header_autodetect'], 'HTTP_X_FORWARDED_FOR' => 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP' => 'HTTP_CLIENT_IP', 'HTTP_X_REAL_IP' => 'HTTP_X_REAL_IP', 'CF-Connecting-IP' => 'CF-Connecting-IP']],
+			['text', 'proxy_ip_servers'],
+	];
 
-	settings_integration_hook('integrate_general_security_settings', array(&$config_vars));
+	settings_integration_hook('integrate_general_security_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -529,21 +529,21 @@ function ModifyCacheSettings($return_config = false)
 	if (empty($detected))
 	{
 		$txt['cache_settings_message'] = $txt['caching_information'] . '<br><br>' . $txt['detected_no_caching'];
-		$cache_level = array($txt['cache_off']);
+		$cache_level = [$txt['cache_off']];
 		$detected['none'] = $txt['cache_off'];
 	}
 	else
 	{
 		$txt['cache_settings_message'] = $txt['caching_information'] . '<br><br>' . sprintf($txt['detected_accelerators'], implode(', ', $detected));
-		$cache_level = array($txt['cache_off'], $txt['cache_level1'], $txt['cache_level2'], $txt['cache_level3']);
+		$cache_level = [$txt['cache_off'], $txt['cache_level1'], $txt['cache_level2'], $txt['cache_level3']];
 	}
 
 	// Define the variables we want to edit.
-	$config_vars = array(
+	$config_vars = [
 		// Only a few settings, but they are important
-		array('cache_enable', $txt['cache_enable'], 'file', 'select', $cache_level, 'cache_enable'),
-		array('cache_accelerator', $txt['cache_accelerator'], 'file', 'select', $detected),
-	);
+		['cache_enable', $txt['cache_enable'], 'file', 'select', $cache_level, 'cache_enable'],
+		['cache_accelerator', $txt['cache_accelerator'], 'file', 'select', $detected],
+	];
 
 	// some javascript to enable / disable certain settings if the option is not selected
 	$context['settings_post_javascript'] = '
@@ -551,7 +551,7 @@ function ModifyCacheSettings($return_config = false)
 			$("#cache_accelerator").change();
 		});';
 
-	settings_integration_hook('integrate_modify_cache_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_cache_settings', [&$config_vars]);
 
 	// Maybe we have some additional settings from the selected accelerator.
 	if (!empty($detected))
@@ -560,10 +560,10 @@ function ModifyCacheSettings($return_config = false)
 		{
 			$cache_class_name = 'StoryBB\\Cache\\' . $tryCache;
 
-			if (is_callable(array($cache_class_name, 'cacheSettings')))
+			if (is_callable([$cache_class_name, 'cacheSettings']))
 			{
 				$testAPI = new $cache_class_name();
-				call_user_func_array(array($testAPI, 'cacheSettings'), array(&$config_vars));
+				call_user_func_array([$testAPI, 'cacheSettings'], [&$config_vars]);
 			}
 		}
 	}
@@ -579,7 +579,7 @@ function ModifyCacheSettings($return_config = false)
 		session_flash('success', $txt['settings_saved']);
 
 		// We need to save the $cache_enable to $modSettings as well
-		updatesettings(array('cache_enable' => (int) $_POST['cache_enable']));
+		updatesettings(['cache_enable' => (int) $_POST['cache_enable']]);
 
 		// exit so we reload our new settings on the page
 		redirectexit('action=admin;area=serversettings;sa=cache;' . $context['session_var'] . '=' . $context['session_id']);
@@ -650,21 +650,21 @@ function prepareServerSettingsContext(&$config_vars)
 				$config_var[1] = substr($config_var[1], 0, $divPos);
 			}
 
-			$context['config_vars'][$config_var[0]] = array(
+			$context['config_vars'][$config_var[0]] = [
 				'label' => $config_var[1],
 				'help' => isset($config_var[5]) ? $config_var[5] : '',
 				'type' => $config_var[3],
 				'size' => empty($config_var[4]) ? 0 : $config_var[4],
 				'data' => isset($config_var[4]) && is_array($config_var[4]) && $config_var[3] != 'select' ? $config_var[4] : [],
 				'name' => $config_var[0],
-				'value' => $config_var[2] == 'file' ? $smcFunc['htmlspecialchars']($$varname) : (isset($modSettings[$config_var[0]]) ? $smcFunc['htmlspecialchars']($modSettings[$config_var[0]]) : (in_array($config_var[3], array('int', 'float')) ? 0 : '')),
+				'value' => $config_var[2] == 'file' ? $smcFunc['htmlspecialchars']($$varname) : (isset($modSettings[$config_var[0]]) ? $smcFunc['htmlspecialchars']($modSettings[$config_var[0]]) : (in_array($config_var[3], ['int', 'float']) ? 0 : '')),
 				'disabled' => !empty($context['settings_not_writable']) || !empty($config_var['disabled']),
 				'invalid' => false,
 				'subtext' => !empty($config_var['subtext']) ? $config_var['subtext'] : $subtext,
 				'javascript' => '',
 				'preinput' => !empty($config_var['preinput']) ? $config_var['preinput'] : '',
 				'postinput' => !empty($config_var['postinput']) ? $config_var['postinput'] : '',
-			);
+			];
 
 			// Handle min/max/step if necessary
 			if ($config_var[3] == 'int' || $config_var[3] == 'float')
@@ -692,7 +692,7 @@ function prepareServerSettingsContext(&$config_vars)
 				else
 				{
 					foreach ($config_var[4] as $key => $item)
-						$context['config_vars'][$config_var[0]]['data'][] = array($key, $item);
+						$context['config_vars'][$config_var[0]]['data'][] = [$key, $item];
 				}
 			}
 		}
@@ -782,11 +782,11 @@ function prepareDBSettingContext(&$config_vars)
 				}
 			}
 
-			$context['config_vars'][$config_var[1]] = array(
+			$context['config_vars'][$config_var[1]] = [
 				'label' => isset($config_var['text_label']) ? $config_var['text_label'] : (isset($txt[$config_var[1]]) ? $txt[$config_var[1]] : (isset($config_var[3]) && !is_array($config_var[3]) ? $config_var[3] : '')),
 				'help' => isset($helptxt[$config_var[1]]) ? $config_var[1] : '',
 				'type' => $config_var[0],
-				'size' => !empty($config_var['size']) ? $config_var['size'] : (!empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : (in_array($config_var[0], array('int', 'float')) ? 6 : 0)),
+				'size' => !empty($config_var['size']) ? $config_var['size'] : (!empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : (in_array($config_var[0], ['int', 'float']) ? 6 : 0)),
 				'data' => [],
 				'name' => $config_var[1],
 				'value' => $value,
@@ -796,7 +796,7 @@ function prepareDBSettingContext(&$config_vars)
 				'var_message' => !empty($config_var['message']) && isset($txt[$config_var['message']]) ? $txt[$config_var['message']] : '',
 				'preinput' => isset($config_var['preinput']) ? $config_var['preinput'] : '',
 				'postinput' => isset($config_var['postinput']) ? $config_var['postinput'] : '',
-			);
+			];
 
 			// Handle min/max/step if necessary
 			if ($config_var[0] == 'int' || $config_var[0] == 'float')
@@ -830,7 +830,7 @@ function prepareDBSettingContext(&$config_vars)
 				else
 				{
 					foreach ($config_var[2] as $key => $item)
-						$context['config_vars'][$config_var[1]]['data'][] = array($key, $item);
+						$context['config_vars'][$config_var[1]]['data'][] = [$key, $item];
 				}
 			}
 
@@ -914,11 +914,11 @@ function prepareDBSettingContext(&$config_vars)
 			if ($i % $tagsPerColumn == 0 && $i != 0)
 				$col++;
 
-			$context['bbc_columns'][$col][] = array(
+			$context['bbc_columns'][$col][] = [
 				'tag' => $tag,
 				// @todo  'tag_' . ?
 				'show_help' => isset($helptxt[$tag]),
-			);
+			];
 
 			$i++;
 		}
@@ -926,15 +926,15 @@ function prepareDBSettingContext(&$config_vars)
 		// Now put whatever BBC options we may have into context too!
 		foreach ($bbcChoice as $bbc)
 		{
-			$context['config_vars'][$bbc] += array(
+			$context['config_vars'][$bbc] += [
 				'bbc_title' => isset($txt['bbc_title_' . $bbc]) ? $txt['bbc_title_' . $bbc] : $txt['bbcTagsToUse_select'],
 				'bbc_disabled' => empty($modSettings['bbc_disabled_' . $bbc]) ? [] : $modSettings['bbc_disabled_' . $bbc],
 				'all_selected' => empty($modSettings['bbc_disabled_' . $bbc]),
-			);
+			];
 		}
 	}
 
-	call_integration_hook('integrate_prepare_db_settings', array(&$config_vars));
+	call_integration_hook('integrate_prepare_db_settings', [&$config_vars]);
 	createToken('admin-dbsc');
 
 	$context['sub_template'] = 'admin_settings';
@@ -971,12 +971,12 @@ function saveSettings(&$config_vars)
 	}
 
 	// Any passwords?
-	$config_passwords = array(
+	$config_passwords = [
 		'db_passwd',
-	);
+	];
 
 	// All the strings to write.
-	$config_strs = array(
+	$config_strs = [
 		'mtitle', 'mmessage',
 		'language', 'mbname', 'boardurl',
 		'cookiename',
@@ -985,16 +985,16 @@ function saveSettings(&$config_vars)
 		'boarddir', 'sourcedir',
 		'cachedir', 'cachedir_sqlite', 'cache_accelerator', 'cache_memcached', 'cache_redis',
 		'image_proxy_secret',
-	);
+	];
 
 	// All the numeric variables.
-	$config_ints = array(
+	$config_ints = [
 		'cache_enable',
 		'image_proxy_maxsize',
-	);
+	];
 
 	// All the checkboxes
-	$config_bools = array('db_persist', 'maintenance', 'image_proxy_enabled');
+	$config_bools = ['db_persist', 'maintenance', 'image_proxy_enabled'];
 
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = [];
@@ -1053,7 +1053,7 @@ function saveSettings(&$config_vars)
 		if (!is_array($config_var) || $config_var[2] == 'file')
 			continue;
 
-		$new_setting = array($config_var[3], $config_var[0]);
+		$new_setting = [$config_var[3], $config_var[0]];
 
 		// Select options need carried over, too.
 		if (isset($config_var[4]))
@@ -1161,7 +1161,7 @@ function saveDBSettings(&$config_vars)
 				$setArray[$var[1]] = min($var['max'], $setArray[$var[1]]);
 		}
 		// Text!
-		elseif (in_array($var[0], array('text', 'large_text', 'color', 'date', 'datetime', 'datetime-local', 'email', 'month', 'time')))
+		elseif (in_array($var[0], ['text', 'large_text', 'color', 'date', 'datetime', 'datetime-local', 'email', 'month', 'time']))
 			$setArray[$var[1]] = $_POST[$var[1]];
 		// Passwords!
 		elseif ($var[0] == 'password')
@@ -1180,7 +1180,7 @@ function saveDBSettings(&$config_vars)
 			if (!isset($_POST[$var[1] . '_enabledTags']))
 				$_POST[$var[1] . '_enabledTags'] = [];
 			elseif (!is_array($_POST[$var[1] . '_enabledTags']))
-				$_POST[$var[1] . '_enabledTags'] = array($_POST[$var[1] . '_enabledTags']);
+				$_POST[$var[1] . '_enabledTags'] = [$_POST[$var[1] . '_enabledTags']];
 
 			$setArray[$var[1]] = implode(',', array_diff($bbcTags, $_POST[$var[1] . '_enabledTags']));
 		}
@@ -1238,7 +1238,7 @@ function ShowPHPinfoSettings()
 		if (preg_match('~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~', $line, $val))
 			$pinfo[$category][$val[1]] = $val[2];
 		elseif (preg_match('~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~', $line, $val))
-			$pinfo[$category][$val[1]] = array($txt['phpinfo_localsettings'] => $val[2], $txt['phpinfo_defaultsettings'] => $val[3]);
+			$pinfo[$category][$val[1]] = [$txt['phpinfo_localsettings'] => $val[2], $txt['phpinfo_defaultsettings'] => $val[3]];
 	}
 
 	// load it in to context and display it

@@ -24,18 +24,18 @@ function ManageNews()
 	global $context, $txt;
 
 	// First, let's do a quick permissions check for the best error message possible.
-	isAllowedTo(array('edit_news', 'send_mail', 'admin_forum'));
+	isAllowedTo(['edit_news', 'send_mail', 'admin_forum']);
 
 	// Format: 'sub-action' => array('function', 'permission')
-	$subActions = array(
-		'editnews' => array('EditNews', 'edit_news'),
-		'mailingmembers' => array('SelectMailingMembers', 'send_mail'),
-		'mailingcompose' => array('ComposeMailing', 'send_mail'),
-		'mailingsend' => array('SendMailing', 'send_mail'),
-		'settings' => array('ModifyNewsSettings', 'admin_forum'),
-	);
+	$subActions = [
+		'editnews' => ['EditNews', 'edit_news'],
+		'mailingmembers' => ['SelectMailingMembers', 'send_mail'],
+		'mailingcompose' => ['ComposeMailing', 'send_mail'],
+		'mailingsend' => ['SendMailing', 'send_mail'],
+		'settings' => ['ModifyNewsSettings', 'admin_forum'],
+	];
 
-	routing_integration_hook('integrate_manage_news', array(&$subActions));
+	routing_integration_hook('integrate_manage_news', [&$subActions]);
 
 	// Default to sub action 'main' or 'settings' depending on permissions.
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('edit_news') ? 'editnews' : (allowedTo('send_mail') ? 'mailingmembers' : 'settings'));
@@ -44,21 +44,21 @@ function ManageNews()
 	isAllowedTo($subActions[$_REQUEST['sa']][1]);
 
 	// Create the tabs for the template.
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['news_title'],
 		'help' => 'edit_news',
 		'description' => $txt['admin_news_desc'],
-		'tabs' => array(
-			'editnews' => array(
-			),
-			'mailingmembers' => array(
+		'tabs' => [
+			'editnews' => [
+			],
+			'mailingmembers' => [
 				'description' => $txt['news_mailing_desc'],
-			),
-			'settings' => array(
+			],
+			'settings' => [
 				'description' => $txt['news_settings_desc'],
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Force the right area...
 	if (substr($_REQUEST['sa'], 0, 7) == 'mailing')
@@ -98,7 +98,7 @@ function EditNews()
 				unset($temp_news[$i]);
 
 		// Update the database.
-		updateSettings(array('news' => implode("\n", $temp_news)));
+		updateSettings(['news' => implode("\n", $temp_news)]);
 
 		$context['saved_successful'] = true;
 
@@ -121,7 +121,7 @@ function EditNews()
 		}
 
 		// Send the new news to the database.
-		updateSettings(array('news' => implode("\n", $_POST['news'])));
+		updateSettings(['news' => implode("\n", $_POST['news'])]);
 
 		$context['saved_successful'] = true;
 
@@ -135,17 +135,17 @@ function EditNews()
 	$context['page_title'] = $txt['admin_edit_news'];
 
 	// Use the standard templates for showing this.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'news_lists',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getNews',
-		),
-		'columns' => array(
-			'news' => array(
-				'header' => array(
+		],
+		'columns' => [
+			'news' => [
+				'header' => [
 					'value' => $txt['admin_edit_news'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($news)
 					{
 						if (is_numeric($news['id']))
@@ -155,26 +155,26 @@ function EditNews()
 							return $news['unparsed'];
 					},
 					'style' => 'width: 50%;',
-				),
-			),
-			'preview' => array(
-				'header' => array(
+				],
+			],
+			'preview' => [
+				'header' => [
 					'value' => $txt['preview'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($news)
 					{
 						return '<div id="box_preview_' . $news['id'] . '">' . $news['parsed'] . '</div>';
 					},
 					'style' => 'width: 45%;',
-				),
-			),
-			'check' => array(
-				'header' => array(
+				],
+			],
+			'check' => [
+				'header' => [
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($news)
 					{
 						if (is_numeric($news['id']))
@@ -183,17 +183,17 @@ function EditNews()
 							return '';
 					},
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=admin;area=news;sa=editnews',
-			'hidden_fields' => array(
+			'hidden_fields' => [
 				$context['session_var'] => $context['session_id'],
-			),
-		),
-		'additional_rows' => array(
-			array(
+			],
+		],
+		'additional_rows' => [
+			[
 				'position' => 'bottom_of_list',
 				'value' => '
 				<span id="moreNewsItems_link" class="floatleft" style="display: none;">
@@ -201,8 +201,8 @@ function EditNews()
 				</span>
 				<input type="submit" name="save_items" value="' . $txt['save'] . '">
 				<input type="submit" name="delete_selection" value="' . $txt['editnews_remove_selected'] . '" data-confirm="' . $txt['editnews_remove_confirm'] . '" class="you_sure">',
-			),
-		),
+			],
+		],
 		'javascript' => '
 					document.getElementById(\'list_news_lists_last\').style.display = "none";
 					document.getElementById("moreNewsItems_link").style.display = "";
@@ -253,7 +253,7 @@ function EditNews()
 						</tr>') . ');
 						make_preview_btn(last_preview);
 					}',
-	);
+	];
 
 	// Create the request list.
 	createList($listOptions);
@@ -274,18 +274,18 @@ function list_getNews()
 	$admin_current_news = [];
 	// Ready the current news.
 	foreach (explode("\n", $modSettings['news']) as $id => $line)
-		$admin_current_news[$id] = array(
+		$admin_current_news[$id] = [
 			'id' => $id,
 			'unparsed' => un_preparsecode($line),
 			'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', Parser::parse_bbc($line)),
-		);
+		];
 
-	$admin_current_news['last'] = array(
+	$admin_current_news['last'] = [
 		'id' => 'last',
 		'unparsed' => '<div id="moreNewsItems"></div>
 		<noscript><textarea rows="3" cols="65" name="news[]" style="width: 85%;"></textarea></noscript>',
 		'parsed' => '<div id="moreNewsItems_preview"></div>',
-	);
+	];
 
 	return $admin_current_news;
 }
@@ -315,11 +315,11 @@ function SelectMailingMembers()
 	$normalGroups = [];
 
 	// As post groups are disabled then we need to give a "ungrouped members" option.
-	$context['groups'][0] = array(
+	$context['groups'][0] = [
 		'id' => 0,
 		'name' => $txt['membergroups_members'],
 		'member_count' => 0,
-	);
+	];
 	$normalGroups[0] = 0;
 
 	// Get all the extra groups as well as Administrator and Global Moderator.
@@ -328,15 +328,15 @@ function SelectMailingMembers()
 		FROM {db_prefix}membergroups AS mg
 		GROUP BY mg.id_group, mg.group_name
 		ORDER BY mg.group_name',
-		array()
+		[]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$context['groups'][$row['id_group']] = array(
+		$context['groups'][$row['id_group']] = [
 			'id' => $row['id_group'],
 			'name' => $row['group_name'],
 			'member_count' => 0,
-		);
+		];
 
 		$normalGroups[$row['id_group']] = $row['id_group'];
 	}
@@ -350,9 +350,9 @@ function SelectMailingMembers()
 			FROM {db_prefix}members
 			WHERE id_group IN ({array_int:normal_group_list})
 			GROUP BY id_group',
-			array(
+			[
 				'normal_group_list' => $normalGroups,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($query))
 			$context['groups'][$row['id_group']]['member_count'] += $row['member_count'];
@@ -367,10 +367,10 @@ function SelectMailingMembers()
 					AND FIND_IN_SET(mg.id_group, mem.additional_groups) != 0)
 			WHERE mg.id_group IN ({array_int:normal_group_list})
 			GROUP BY mg.id_group',
-			array(
+			[
 				'normal_group_list' => $normalGroups,
 				'blank_string' => '',
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($query))
 			$context['groups'][$row['id_group']]['member_count'] += $row['member_count'];
@@ -382,15 +382,15 @@ function SelectMailingMembers()
 		SELECT COUNT(DISTINCT id_member) AS num_distinct_mods
 		FROM {db_prefix}moderators
 		LIMIT 1',
-		array(
-		)
+		[
+		]
 	);
 	list ($context['groups'][3]['member_count']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 
-	loadJavaScriptFile('suggest.js', array('defer' => false), 'sbb_suggest');
+	loadJavaScriptFile('suggest.js', ['defer' => false], 'sbb_suggest');
 }
 
 /**
@@ -402,18 +402,18 @@ function prepareMailingForPreview()
 	global $context, $modSettings, $scripturl, $user_info, $txt;
 	loadLanguage('Errors');
 
-	$processing = array('preview_subject' => 'subject', 'preview_message' => 'message');
+	$processing = ['preview_subject' => 'subject', 'preview_message' => 'message'];
 
 	// Use the default time format.
 	$user_info['time_format'] = $modSettings['time_format'];
 
-	$variables = array(
+	$variables = [
 		'{$board_url}',
 		'{$current_time}',
 		'{$latest_member.link}',
 		'{$latest_member.id}',
 		'{$latest_member.name}'
-	);
+	];
 
 	$html = $context['send_html'];
 
@@ -440,13 +440,13 @@ function prepareMailingForPreview()
 
 		// Replace in all the standard things.
 		$context[$key] = str_replace($variables,
-			array(
+			[
 				!empty($context['send_html']) ? '<a href="' . $scripturl . '">' . $scripturl . '</a>' : $scripturl,
 				timeformat(forum_time(), false),
 				!empty($context['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $cleanLatestMember),
 				$modSettings['latestMember'],
 				$cleanLatestMember
-			), $context[$key]);
+			], $context[$key]);
 	}
 }
 
@@ -474,17 +474,17 @@ function ComposeMailing()
 	require_once($sourcedir . '/Subs-Editor.php');
 
 	// Now create the editor.
-	$editorOptions = array(
+	$editorOptions = [
 		'id' => 'message',
 		'value' => $context['message'],
 		'height' => '175px',
 		'width' => '100%',
-		'labels' => array(
+		'labels' => [
 			'post_button' => $txt['sendtopic_send'],
-		),
+		],
 		'preview_type' => 2,
 		'required' => true,
-	);
+	];
 	create_control_richedit($editorOptions);
 	// Store the ID for old compatibility.
 	$context['post_box_name'] = $editorOptions['id'];
@@ -517,7 +517,7 @@ function ComposeMailing()
 		foreach ($toClean as $type)
 		{
 			// Remove the quotes.
-			$_POST[$type] = strtr($_POST[$type], array('\\"' => '"'));
+			$_POST[$type] = strtr($_POST[$type], ['\\"' => '"']);
 
 			preg_match_all('~"([^"]+)"~', $_POST[$type], $matches);
 			$_POST[$type] = array_unique(array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $_POST[$type]))));
@@ -563,11 +563,11 @@ function ComposeMailing()
 			INNER JOIN {db_prefix}members AS mem ON (bi.id_member = mem.id_member)
 		WHERE (bg.cannot_access = {int:cannot_access} OR bg.cannot_login = {int:cannot_login})
 			AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time})',
-		array(
+		[
 			'cannot_access' => 1,
 			'cannot_login' => 1,
 			'current_time' => time(),
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['recipients']['exclude_members'][] = $row['id_member'];
@@ -580,12 +580,12 @@ function ComposeMailing()
 		WHERE (bg.cannot_access = {int:cannot_access} OR bg.cannot_login = {int:cannot_login})
 			AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time})
 			AND bi.email_address != {string:blank_string}',
-		array(
+		[
 			'cannot_access' => 1,
 			'cannot_login' => 1,
 			'current_time' => time(),
 			'blank_string' => '',
-		)
+		]
 	);
 	$condition_array = [];
 	$condition_array_params = [];
@@ -618,9 +618,9 @@ function ComposeMailing()
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}moderators AS mods ON (mods.id_member = mem.id_member)
 			WHERE mem.is_activated = {int:is_activated}',
-			array(
+			[
 				'is_activated' => 1,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -637,8 +637,8 @@ function ComposeMailing()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}members',
-		array(
-		)
+		[
+		]
 	);
 	list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -693,8 +693,8 @@ function SendMailing($clean_only = false)
 		$request = $smcFunc['db_query']('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}members',
-			array(
-			)
+			[
+			]
 		);
 		list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -705,13 +705,13 @@ function SendMailing($clean_only = false)
 	}
 
 	// Create our main context.
-	$context['recipients'] = array(
+	$context['recipients'] = [
 		'groups' => [],
 		'exclude_groups' => [],
 		'members' => [],
 		'exclude_members' => [],
 		'emails' => [],
-	);
+	];
 
 	// Have we any excluded members?
 	if (!empty($_POST['exclude_members']))
@@ -764,7 +764,7 @@ function SendMailing($clean_only = false)
 	// Finally - emails!
 	if (!empty($_POST['emails']))
 	{
-		$addressed = array_unique(explode(';', strtr($_POST['emails'], array("\n" => ';', "\r" => ';', ',' => ';'))));
+		$addressed = array_unique(explode(';', strtr($_POST['emails'], ["\n" => ';', "\r" => ';', ',' => ';'])));
 		foreach ($addressed as $curmem)
 		{
 			$curmem = trim($curmem);
@@ -792,7 +792,7 @@ function SendMailing($clean_only = false)
 	{
 		// Prepare the message for HTML.
 		if (!empty($_POST['parse_html']))
-			$_POST['message'] = str_replace(array("\n", '  '), array('<br>' . "\n", '&nbsp; '), $_POST['message']);
+			$_POST['message'] = str_replace(["\n", '  '], ['<br>' . "\n", '&nbsp; '], $_POST['message']);
 
 		// This is here to prevent spam filters from tagging this as spam.
 		if (preg_match('~\<html~i', $_POST['message']) == 0)
@@ -813,41 +813,41 @@ function SendMailing($clean_only = false)
 	// Use the default time format.
 	$user_info['time_format'] = $modSettings['time_format'];
 
-	$variables = array(
+	$variables = [
 		'{$board_url}',
 		'{$current_time}',
 		'{$latest_member.link}',
 		'{$latest_member.id}',
 		'{$latest_member.name}'
-	);
+	];
 
 	// We might need this in a bit
 	$cleanLatestMember = empty($_POST['send_html']) || $context['send_pm'] ? un_htmlspecialchars($modSettings['latestRealName']) : $modSettings['latestRealName'];
 
 	// Replace in all the standard things.
 	$_POST['message'] = str_replace($variables,
-		array(
+		[
 			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '">' . $scripturl . '</a>' : $scripturl,
 			timeformat(forum_time(), false),
 			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $scripturl . '?action=profile;u=' . $modSettings['latestMember']),
 			$modSettings['latestMember'],
 			$cleanLatestMember
-		), $_POST['message']);
+		], $_POST['message']);
 	$_POST['subject'] = str_replace($variables,
-		array(
+		[
 			$scripturl,
 			timeformat(forum_time(), false),
 			$modSettings['latestRealName'],
 			$modSettings['latestMember'],
 			$modSettings['latestRealName']
-		), $_POST['subject']);
+		], $_POST['subject']);
 
-	$from_member = array(
+	$from_member = [
 		'{$member.email}',
 		'{$member.link}',
 		'{$member.id}',
 		'{$member.name}'
-	);
+	];
 
 	// If we still have emails, do them first!
 	$i = 0;
@@ -864,12 +864,12 @@ function SendMailing($clean_only = false)
 		if ($context['send_pm'])
 			continue;
 
-		$to_member = array(
+		$to_member = [
 			$email,
 			!empty($_POST['send_html']) ? '<a href="mailto:' . $email . '">' . $email . '</a>' : $email,
 			'??',
 			$email
-		);
+		];
 
 		StoryBB\Helper\Mail::send($email, str_replace($from_member, $to_member, $_POST['subject']), str_replace($from_member, $to_member, $_POST['message']), null, 'news', !empty($_POST['send_html']), 5);
 
@@ -931,12 +931,12 @@ function SendMailing($clean_only = false)
 				AND mem.is_activated = {int:is_activated}
 			ORDER BY mem.id_member ASC
 			LIMIT {int:start}, {int:atonce}',
-			array_merge($sendParams, array(
+			array_merge($sendParams, [
 				'start' => $context['start'],
 				'atonce' => $num_at_once,
 				'regular_group' => 0,
 				'is_activated' => 1,
-			))
+			])
 		);
 		$rows = [];
 		while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -957,10 +957,10 @@ function SendMailing($clean_only = false)
 
 			// What groups are we looking at here?
 			if (empty($row['additional_groups']))
-				$groups = array($row['id_group']);
+				$groups = [$row['id_group']];
 			else
 				$groups = array_merge(
-					array($row['id_group']),
+					[$row['id_group']],
 					explode(',', $row['additional_groups'])
 				);
 
@@ -973,26 +973,26 @@ function SendMailing($clean_only = false)
 
 			// Replace the member-dependant variables
 			$message = str_replace($from_member,
-				array(
+				[
 					$row['email_address'],
 					!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $cleanMemberName . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $row['id_member'] . ']' . $cleanMemberName . '[/url]' : $scripturl . '?action=profile;u=' . $row['id_member']),
 					$row['id_member'],
 					$cleanMemberName,
-				), $_POST['message']);
+				], $_POST['message']);
 
 			$subject = str_replace($from_member,
-				array(
+				[
 					$row['email_address'],
 					$row['real_name'],
 					$row['id_member'],
 					$row['real_name'],
-				), $_POST['subject']);
+				], $_POST['subject']);
 
 			// Send the actual email - or a PM!
 			if (!$context['send_pm'])
 				StoryBB\Helper\Mail::send($row['email_address'], $subject, $message, null, 'news', !empty($_POST['send_html']), 5);
 			else
-				sendpm(array('to' => array($row['id_member']), 'bcc' => []), $subject, $message);
+				sendpm(['to' => [$row['id_member']], 'bcc' => []], $subject, $message);
 		}
 	}
 
@@ -1028,14 +1028,14 @@ function ModifyNewsSettings($return_config = false)
 {
 	global $context, $sourcedir, $txt, $scripturl;
 
-	$config_vars = array(
+	$config_vars = [
 			// Just the remaining settings.
-			array('check', 'xmlnews_enable', 'onclick' => 'document.getElementById(\'xmlnews_maxlen\').disabled = !this.checked;'),
-			array('int', 'xmlnews_maxlen', 'subtext' => $txt['xmlnews_maxlen_note'], 10),
-			array('check', 'xmlnews_attachments', 'subtext' => $txt['xmlnews_attachments_note']),
-	);
+			['check', 'xmlnews_enable', 'onclick' => 'document.getElementById(\'xmlnews_maxlen\').disabled = !this.checked;'],
+			['int', 'xmlnews_maxlen', 'subtext' => $txt['xmlnews_maxlen_note'], 10],
+			['check', 'xmlnews_attachments', 'subtext' => $txt['xmlnews_attachments_note']],
+	];
 
-	settings_integration_hook('integrate_modify_news_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_news_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
