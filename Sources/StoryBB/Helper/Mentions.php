@@ -48,15 +48,15 @@ class Mentions
 			WHERE content_type = {string:type}
 				AND content_id = {int:id}' . (!empty($members) ? '
 				AND chars.id_character IN ({array_int:members})' : ''),
-			array(
+			[
 				'type' => $content_type,
 				'id' => $content_id,
 				'members' => $members,
-			)
+			]
 		);
 		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$members[$row['dest_chr']] = array(
+			$members[$row['dest_chr']] = [
 				'id_member' => $row['id_member'],
 				'dest_chr' => $row['dest_chr'],
 				'dest_character_name' => $row['dest_chr_name'],
@@ -64,16 +64,16 @@ class Mentions
 				'retired_chr' => $row['retired'],
 				'real_name' => $row['real_name'],
 				'email_address' => $row['email_address'],
-				'groups' => array_unique(array_merge(array($row['id_group']), explode(',', $row['additional_groups']))),
-				'mentioned_by' => array(
+				'groups' => array_unique(array_merge([$row['id_group']], explode(',', $row['additional_groups']))),
+				'mentioned_by' => [
 					'id' => $row['id_mentioned_by'],
 					'name' => $row['mentioned_by_name'],
 					'source_chr' => $row['source_chr'],
 					'source_chr_name' => $row['source_chr_name'],
 					'source_is_main' => $row['source_is_main'],
-				),
+				],
 				'lngfile' => $row['lngfile'],
-			);
+			];
 		$smcFunc['db_free_result']($request);
 
 		return $members;
@@ -94,14 +94,14 @@ class Mentions
 	{
 		global $smcFunc;
 
-		call_integration_hook('mention_insert_' . $content_type, array($content_id, &$members));
+		call_integration_hook('mention_insert_' . $content_type, [$content_id, &$members]);
 
 		foreach ($members as $member)
 			$smcFunc['db_insert']('ignore',
 				'{db_prefix}mentions',
-				array('content_id' => 'int', 'content_type' => 'string', 'id_member' => 'int', 'id_mentioned' => 'int', 'id_character' => 'int', 'mentioned_chr' => 'int', 'time' => 'int'),
-				array((int) $content_id, $content_type, $id_member, $member['id_member'], $id_character, $member['id_character'], time()),
-				array('content_id', 'content_type', 'id_mentioned')
+				['content_id' => 'int', 'content_type' => 'string', 'id_member' => 'int', 'id_mentioned' => 'int', 'id_character' => 'int', 'mentioned_chr' => 'int', 'time' => 'int'],
+				[(int) $content_id, $content_type, $id_member, $member['id_member'], $id_character, $member['id_character'], time()],
+				['content_id', 'content_type', 'id_mentioned']
 			);
 	}
 
@@ -151,10 +151,10 @@ class Mentions
 			WHERE character_name IN ({array_string:names})
 			ORDER BY LENGTH(character_name) DESC
 			LIMIT {int:count}',
-			array(
+			[
 				'names' => $possible_names,
 				'count' => count($possible_names),
-			)
+			]
 		);
 		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))

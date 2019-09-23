@@ -53,7 +53,7 @@ class Datetime
 
 		// Prefer and give custom descriptions for these time zones
 		// If the description is left empty, it will be filled in with the names of matching cities
-		$timezone_descriptions = array(
+		$timezone_descriptions = [
 			'America/Adak' => 'Aleutian Islands',
 			'Pacific/Marquesas' => 'Marquesas Islands',
 			'Pacific/Gambier' => 'Gambier Islands',
@@ -101,7 +101,7 @@ class Datetime
 			'Pacific/Auckland' => 'Auckland, McMurdo Station',
 			'Pacific/Kwajalein' => 'Marshall Islands',
 			'Pacific/Chatham' => 'Chatham Islands',
-		);
+		];
 
 		// Should we put time zones from certain countries at the top of the list?
 		$priority_countries = !empty($modSettings['timezone_priority_countries']) ? explode(',', $modSettings['timezone_priority_countries']) : [];
@@ -147,7 +147,7 @@ class Datetime
 
 			// Keep track of the location and offset for this tzid
 			$tzid_parts = explode('/', $tzid);
-			$zones[$tzkey]['locations'][] = str_replace(array('St_', '_'), array('St. ', ' '), array_pop($tzid_parts));
+			$zones[$tzkey]['locations'][] = str_replace(['St_', '_'], ['St. ', ' '], array_pop($tzid_parts));
 			$offsets[$tzkey] = $tzinfo[0]['offset'];
 			$longitudes[$tzkey] = empty($longitudes[$tzkey]) ? $tzgeo['longitude'] : $longitudes[$tzkey];
 		}
@@ -175,7 +175,7 @@ class Datetime
 
 		$timezones = array_merge(
 			$priority_timezones,
-			array('' => '(Forum Default)', 'UTC' => 'UTC - Coordinated Universal Time'),
+			['' => '(Forum Default)', 'UTC' => 'UTC - Coordinated Universal Time'],
 			$timezones
 		);
 
@@ -198,7 +198,7 @@ class Datetime
 		if (strspn($tz_abbrev, '+-') > 0)
 		{
 			// To get on this list, a time zone must be historically stable and must not observe daylight saving time
-			$missing_tz_abbrs = array(
+			$missing_tz_abbrs = [
 				'Antarctica/Casey' => 'CAST',
 				'Antarctica/Davis' => 'DAVT',
 				'Antarctica/DumontDUrville' => 'DDUT',
@@ -222,7 +222,7 @@ class Datetime
 				'Europe/Istanbul' => 'TRT',
 				'Europe/Minsk' => 'MSK',
 				'Indian/Kerguelen' => 'TFT',
-			);
+			];
 
 			if (!empty($missing_tz_abbrs[$tzid]))
 				$tz_abbrev = $missing_tz_abbrs[$tzid];

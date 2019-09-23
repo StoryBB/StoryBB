@@ -82,7 +82,7 @@ class Parser
 			TLD::set_tld_regex(true);
 
 		// Allow mods access before entering the main parse_bbc loop
-		call_integration_hook('integrate_pre_parsebbc', array(&$message, &$smileys, &$cache_id, &$parse_tags));
+		call_integration_hook('integrate_pre_parsebbc', [&$message, &$smileys, &$cache_id, &$parse_tags]);
 
 		// Sift out the bbc for a performance improvement.
 		if (empty($bbc_codes) || $message === false || !empty($parse_tags))
@@ -183,33 +183,33 @@ class Parser
 				  parsed_equals parameter, if desired.
 			*/
 
-			$codes = array(
-				array(
+			$codes = [
+				[
 					'tag' => 'abbr',
 					'type' => 'unparsed_equals',
 					'before' => '<abbr title="$1">',
 					'after' => '</abbr>',
 					'quoted' => 'optional',
 					'disabled_after' => ' ($1)',
-				),
-				array(
+				],
+				[
 					'tag' => 'anchor',
 					'type' => 'unparsed_equals',
 					'test' => '[#]?([A-Za-z][A-Za-z0-9_\-]*)\]',
 					'before' => '<span id="post_$1">',
 					'after' => '</span>',
-				),
-				array(
+				],
+				[
 					'tag' => 'attach',
 					'type' => 'unparsed_content',
-					'parameters' => array(
-						'name' => array('optional' => true),
-						'type' => array('optional' => true),
-						'alt' => array('optional' => true),
-						'title' => array('optional' => true),
-						'width' => array('optional' => true, 'match' => '(\d+)'),
-						'height' => array('optional' => true, 'match' => '(\d+)'),
-					),
+					'parameters' => [
+						'name' => ['optional' => true],
+						'type' => ['optional' => true],
+						'alt' => ['optional' => true],
+						'title' => ['optional' => true],
+						'width' => ['optional' => true, 'match' => '(\d+)'],
+						'height' => ['optional' => true, 'match' => '(\d+)'],
+					],
 					'content' => '$1',
 					'validate' => function (&$tag, &$data, $disabled, $params) use ($modSettings, $context, $sourcedir, $txt)
 					{
@@ -258,25 +258,25 @@ class Parser
 						// Gotta append what we just did.
 						$data = $returnContext;
 					},
-				),
-				array(
+				],
+				[
 					'tag' => 'b',
 					'before' => '<strong>',
 					'after' => '</strong>',
-				),
-				array(
+				],
+				[
 					'tag' => 'center',
 					'before' => '<div class="centertext">',
 					'after' => '</div>',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'character',
 					'type' => 'unparsed_equals',
 					'before' => '<a href="' . $scripturl . '?action=characters;char=$1" class="mention" data-mention="$1">@',
 					'after' => '</a>',
-				),
-				array(
+				],
+				[
 					'tag' => 'code',
 					'type' => 'unparsed_content',
 					'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> <a class="codeoperation sbb_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
@@ -294,8 +294,8 @@ class Parser
 						}
 					},
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'code',
 					'type' => 'unparsed_equals_content',
 					'content' => '<div class="codeheader"><span class="code floatleft">' . $txt['code'] . '</span> ($2) <a class="codeoperation sbb_select_text">' . $txt['code_select'] . '</a></div><code class="bbc_code">$1</code>',
@@ -313,34 +313,34 @@ class Parser
 						}
 					},
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'color',
 					'type' => 'unparsed_equals',
 					'test' => '(#[\da-fA-F]{3}|#[\da-fA-F]{6}|[A-Za-z]{1,20}|rgb\((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\s?,\s?){2}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\))\]',
 					'before' => '<span style="color: $1;" class="bbc_color">',
 					'after' => '</span>',
-				),
-				array(
+				],
+				[
 					'tag' => 'email',
 					'type' => 'unparsed_content',
 					'content' => '<a href="mailto:$1" class="bbc_email">$1</a>',
 					// @todo Should this respect guest_hideContacts?
 					'validate' => function (&$tag, &$data, $disabled)
 					{
-						$data = strtr($data, array('<br>' => ''));
+						$data = strtr($data, ['<br>' => '']);
 					},
-				),
-				array(
+				],
+				[
 					'tag' => 'email',
 					'type' => 'unparsed_equals',
 					'before' => '<a href="mailto:$1" class="bbc_email">',
 					'after' => '</a>',
 					// @todo Should this respect guest_hideContacts?
-					'disallow_children' => array('email', 'ftp', 'url', 'iurl'),
+					'disallow_children' => ['email', 'ftp', 'url', 'iurl'],
 					'disabled_after' => ' ($1)',
-				),
-				array(
+				],
+				[
 					'tag' => 'float',
 					'type' => 'unparsed_equals',
 					'test' => '(left|right)(\s+max=\d+(?:%|px|em|rem|ex|pt|pc|ch|vw|vh|vmin|vmax|cm|mm|in)?)?\]',
@@ -359,47 +359,47 @@ class Parser
 					},
 					'trim' => 'outside',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'font',
 					'type' => 'unparsed_equals',
 					'test' => '[A-Za-z0-9_,\-\s]+?\]',
 					'before' => '<span style="font-family: $1;" class="bbc_font">',
 					'after' => '</span>',
-				),
-				array(
+				],
+				[
 					'tag' => 'html',
 					'type' => 'unparsed_content',
 					'content' => '<div>$1</div>',
 					'block_level' => true,
 					'disabled_content' => '$1',
-				),
-				array(
+				],
+				[
 					'tag' => 'hr',
 					'type' => 'closed',
 					'content' => '<hr>',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'i',
 					'before' => '<i>',
 					'after' => '</i>',
-				),
-				array(
+				],
+				[
 					'tag' => 'img',
 					'type' => 'unparsed_content',
-					'parameters' => array(
-						'alt' => array('optional' => true),
-						'title' => array('optional' => true),
-						'width' => array('optional' => true, 'value' => ' width="$1"', 'match' => '(\d+)'),
-						'height' => array('optional' => true, 'value' => ' height="$1"', 'match' => '(\d+)'),
-					),
+					'parameters' => [
+						'alt' => ['optional' => true],
+						'title' => ['optional' => true],
+						'width' => ['optional' => true, 'value' => ' width="$1"', 'match' => '(\d+)'],
+						'height' => ['optional' => true, 'value' => ' height="$1"', 'match' => '(\d+)'],
+					],
 					'content' => '<img src="$1" alt="{alt}" title="{title}"{width}{height} class="bbc_img resized">',
 					'validate' => function (&$tag, &$data, $disabled)
 					{
 						global $image_proxy_enabled, $image_proxy_secret, $boardurl;
 
-						$data = strtr($data, array('<br>' => ''));
+						$data = strtr($data, ['<br>' => '']);
 						$scheme = parse_url($data, PHP_URL_SCHEME);
 						if ($image_proxy_enabled)
 						{
@@ -413,8 +413,8 @@ class Parser
 							$data = '//' . ltrim($data, ':/');
 					},
 					'disabled_content' => '($1)',
-				),
-				array(
+				],
+				[
 					'tag' => 'img',
 					'type' => 'unparsed_content',
 					'content' => '<img src="$1" alt="" class="bbc_img">',
@@ -422,7 +422,7 @@ class Parser
 					{
 						global $image_proxy_enabled, $image_proxy_secret, $boardurl;
 
-						$data = strtr($data, array('<br>' => ''));
+						$data = strtr($data, ['<br>' => '']);
 						$scheme = parse_url($data, PHP_URL_SCHEME);
 						if ($image_proxy_enabled)
 						{
@@ -436,20 +436,20 @@ class Parser
 							$data = '//' . ltrim($data, ':/');
 					},
 					'disabled_content' => '($1)',
-				),
-				array(
+				],
+				[
 					'tag' => 'iurl',
 					'type' => 'unparsed_content',
 					'content' => '<a href="$1" class="bbc_link">$1</a>',
 					'validate' => function (&$tag, &$data, $disabled)
 					{
-						$data = strtr($data, array('<br>' => ''));
+						$data = strtr($data, ['<br>' => '']);
 						$scheme = parse_url($data, PHP_URL_SCHEME);
 						if (empty($scheme))
 							$data = '//' . ltrim($data, ':/');
 					},
-				),
-				array(
+				],
+				[
 					'tag' => 'iurl',
 					'type' => 'unparsed_equals',
 					'quoted' => 'optional',
@@ -466,57 +466,57 @@ class Parser
 								$data = '//' . ltrim($data, ':/');
 						}
 					},
-					'disallow_children' => array('email', 'ftp', 'url', 'iurl'),
+					'disallow_children' => ['email', 'ftp', 'url', 'iurl'],
 					'disabled_after' => ' ($1)',
-				),
-				array(
+				],
+				[
 					'tag' => 'justify',
 					'before' => '<div align="justify">',
 					'after' => '</div>',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'left',
 					'before' => '<div style="text-align: left;">',
 					'after' => '</div>',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'li',
 					'before' => '<li>',
 					'after' => '</li>',
 					'trim' => 'outside',
-					'require_parents' => array('list'),
+					'require_parents' => ['list'],
 					'block_level' => true,
 					'disabled_before' => '',
 					'disabled_after' => '<br>',
-				),
-				array(
+				],
+				[
 					'tag' => 'list',
 					'before' => '<ul class="bbc_list">',
 					'after' => '</ul>',
 					'trim' => 'inside',
-					'require_children' => array('li', 'list'),
+					'require_children' => ['li', 'list'],
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'list',
-					'parameters' => array(
-						'type' => array('match' => '(none|disc|circle|square|decimal|decimal-leading-zero|lower-roman|upper-roman|lower-alpha|upper-alpha|lower-greek|upper-greek|lower-latin|upper-latin|hebrew|armenian|georgian|cjk-ideographic|hiragana|katakana|hiragana-iroha|katakana-iroha)'),
-					),
+					'parameters' => [
+						'type' => ['match' => '(none|disc|circle|square|decimal|decimal-leading-zero|lower-roman|upper-roman|lower-alpha|upper-alpha|lower-greek|upper-greek|lower-latin|upper-latin|hebrew|armenian|georgian|cjk-ideographic|hiragana|katakana|hiragana-iroha|katakana-iroha)'],
+					],
 					'before' => '<ul class="bbc_list" style="list-style-type: {type};">',
 					'after' => '</ul>',
 					'trim' => 'inside',
-					'require_children' => array('li'),
+					'require_children' => ['li'],
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'ltr',
 					'before' => '<bdo dir="ltr">',
 					'after' => '</bdo>',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'me',
 					'type' => 'unparsed_equals',
 					'before' => '<div class="meaction">* $1 ',
@@ -525,41 +525,41 @@ class Parser
 					'block_level' => true,
 					'disabled_before' => '/me ',
 					'disabled_after' => '<br>',
-				),
-				array(
+				],
+				[
 					'tag' => 'member',
 					'type' => 'unparsed_equals',
 					'before' => '<a href="' . $scripturl . '?action=profile;u=$1" class="mention" data-mention="$1">@',
 					'after' => '</a>',
-				),
-				array(
+				],
+				[
 					'tag' => 'nobbc',
 					'type' => 'unparsed_content',
 					'content' => '$1',
-				),
-				array(
+				],
+				[
 					'tag' => 'pre',
 					'before' => '<pre>',
 					'after' => '</pre>',
-				),
-				array(
+				],
+				[
 					'tag' => 'quote',
 					'before' => '<blockquote><cite>' . $txt['quote'] . '</cite>',
 					'after' => '</blockquote>',
 					'trim' => 'both',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'quote',
-					'parameters' => array(
-						'author' => array('match' => '(.{1,192}?)', 'quoted' => true),
-					),
+					'parameters' => [
+						'author' => ['match' => '(.{1,192}?)', 'quoted' => true],
+					],
 					'before' => '<blockquote><cite>' . $txt['quote_from'] . ': {author}</cite>',
 					'after' => '</blockquote>',
 					'trim' => 'both',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'quote',
 					'type' => 'parsed_equals',
 					'before' => '<blockquote><cite>' . $txt['quote_from'] . ': $1</cite>',
@@ -567,56 +567,56 @@ class Parser
 					'trim' => 'both',
 					'quoted' => 'optional',
 					// Don't allow everything to be embedded with the author name.
-					'parsed_tags_allowed' => array('url', 'iurl', 'ftp'),
+					'parsed_tags_allowed' => ['url', 'iurl', 'ftp'],
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'quote',
-					'parameters' => array(
-						'author' => array('match' => '([^<>]{1,192}?)'),
-						'link' => array('match' => '(?:board=\d+;)?((?:topic)=[\dmsg#\./]{1,40}(?:;start=[\dmsg#\./]{1,40})?|msg=\d+?|action=profile;u=\d+)'),
-						'date' => array('match' => '(\d+)', 'validate' => 'timeformat'),
-					),
+					'parameters' => [
+						'author' => ['match' => '([^<>]{1,192}?)'],
+						'link' => ['match' => '(?:board=\d+;)?((?:topic)=[\dmsg#\./]{1,40}(?:;start=[\dmsg#\./]{1,40})?|msg=\d+?|action=profile;u=\d+)'],
+						'date' => ['match' => '(\d+)', 'validate' => 'timeformat'],
+					],
 					'before' => '<blockquote><cite><a href="' . $scripturl . '?{link}">' . $txt['quote_from'] . ': {author} ' . $txt['search_on'] . ' {date}</a></cite>',
 					'after' => '</blockquote>',
 					'trim' => 'both',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'quote',
-					'parameters' => array(
-						'author' => array('match' => '(.{1,192}?)'),
-					),
+					'parameters' => [
+						'author' => ['match' => '(.{1,192}?)'],
+					],
 					'before' => '<blockquote><cite>' . $txt['quote_from'] . ': {author}</cite>',
 					'after' => '</blockquote>',
 					'trim' => 'both',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'right',
 					'before' => '<div style="text-align: right;">',
 					'after' => '</div>',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'rtl',
 					'before' => '<bdo dir="rtl">',
 					'after' => '</bdo>',
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 's',
 					'before' => '<s>',
 					'after' => '</s>',
-				),
-				array(
+				],
+				[
 					'tag' => 'size',
 					'type' => 'unparsed_equals',
 					'test' => '([1-9][\d]?p[xt]|small(?:er)?|large[r]?|x[x]?-(?:small|large)|medium|(0\.[1-9]|[1-9](\.[\d][\d]?)?)?em)\]',
 					'before' => '<span style="font-size: $1;" class="bbc_size">',
 					'after' => '</span>',
-				),
-				array(
+				],
+				[
 					'tag' => 'size',
 					'type' => 'unparsed_equals',
 					'test' => '[1-7]\]',
@@ -624,67 +624,67 @@ class Parser
 					'after' => '</span>',
 					'validate' => function (&$tag, &$data, $disabled)
 					{
-						$sizes = array(1 => 0.7, 2 => 1.0, 3 => 1.35, 4 => 1.45, 5 => 2.0, 6 => 2.65, 7 => 3.95);
+						$sizes = [1 => 0.7, 2 => 1.0, 3 => 1.35, 4 => 1.45, 5 => 2.0, 6 => 2.65, 7 => 3.95];
 						$data = $sizes[$data] . 'em';
 					},
-				),
-				array(
+				],
+				[
 					'tag' => 'sub',
 					'before' => '<sub>',
 					'after' => '</sub>',
-				),
-				array(
+				],
+				[
 					'tag' => 'sup',
 					'before' => '<sup>',
 					'after' => '</sup>',
-				),
-				array(
+				],
+				[
 					'tag' => 'table',
 					'before' => '<table class="bbc_table">',
 					'after' => '</table>',
 					'trim' => 'inside',
-					'require_children' => array('tr'),
+					'require_children' => ['tr'],
 					'block_level' => true,
-				),
-				array(
+				],
+				[
 					'tag' => 'td',
 					'before' => '<td>',
 					'after' => '</td>',
-					'require_parents' => array('tr'),
+					'require_parents' => ['tr'],
 					'trim' => 'outside',
 					'block_level' => true,
 					'disabled_before' => '',
 					'disabled_after' => '',
-				),
-				array(
+				],
+				[
 					'tag' => 'tr',
 					'before' => '<tr>',
 					'after' => '</tr>',
-					'require_parents' => array('table'),
-					'require_children' => array('td'),
+					'require_parents' => ['table'],
+					'require_children' => ['td'],
 					'trim' => 'both',
 					'block_level' => true,
 					'disabled_before' => '',
 					'disabled_after' => '',
-				),
-				array(
+				],
+				[
 					'tag' => 'u',
 					'before' => '<u>',
 					'after' => '</u>',
-				),
-				array(
+				],
+				[
 					'tag' => 'url',
 					'type' => 'unparsed_content',
 					'content' => '<a href="$1" class="bbc_link" target="_blank" rel="noopener">$1</a>',
 					'validate' => function (&$tag, &$data, $disabled)
 					{
-						$data = strtr($data, array('<br>' => ''));
+						$data = strtr($data, ['<br>' => '']);
 						$scheme = parse_url($data, PHP_URL_SCHEME);
 						if (empty($scheme))
 							$data = '//' . ltrim($data, ':/');
 					},
-				),
-				array(
+				],
+				[
 					'tag' => 'url',
 					'type' => 'unparsed_equals',
 					'quoted' => 'optional',
@@ -696,20 +696,20 @@ class Parser
 						if (empty($scheme))
 							$data = '//' . ltrim($data, ':/');
 					},
-					'disallow_children' => array('email', 'ftp', 'url', 'iurl'),
+					'disallow_children' => ['email', 'ftp', 'url', 'iurl'],
 					'disabled_after' => ' ($1)',
-				),
-			);
+				],
+			];
 
 			// Inside these tags autolink is not recommendable.
-			$no_autolink_tags = array(
+			$no_autolink_tags = [
 				'url',
 				'iurl',
 				'email',
-			);
+			];
 
 			// Let mods add new BBC without hassle.
-			call_integration_hook('integrate_bbc_codes', array(&$codes, &$no_autolink_tags));
+			call_integration_hook('integrate_bbc_codes', [&$codes, &$no_autolink_tags]);
 
 			// This is mainly for the bbc manager, so it's easy to add tags above.  Custom BBC should be added above this line.
 			if ($message === false)
@@ -723,7 +723,7 @@ class Parser
 			}
 
 			// So the parser won't skip them.
-			$itemcodes = array(
+			$itemcodes = [
 				'*' => 'disc',
 				'@' => 'disc',
 				'+' => 'square',
@@ -732,7 +732,7 @@ class Parser
 				'o' => 'circle',
 				'O' => 'circle',
 				'0' => 'circle',
-			);
+			];
 			if (!isset($disabled['li']) && !isset($disabled['list']))
 			{
 				foreach ($itemcodes as $c => $dummy)
@@ -765,7 +765,7 @@ class Parser
 		}
 
 		$open_tags = [];
-		$message = strtr($message, array("\n" => '<br>'));
+		$message = strtr($message, ["\n" => '<br>']);
 
 		$alltags = [];
 		foreach ($bbc_codes as $section) {
@@ -801,16 +801,16 @@ class Parser
 					$data = preg_replace('~&lt;a\s+href=((?:&quot;)?)((?:https?://|ftps?://|mailto:|tel:)\S+?)\\1&gt;(.*?)&lt;/a&gt;~i', '[url=&quot;$2&quot;]$3[/url]', $data);
 
 					// <br> should be empty.
-					$empty_tags = array('br', 'hr');
+					$empty_tags = ['br', 'hr'];
 					foreach ($empty_tags as $tag)
-						$data = str_replace(array('&lt;' . $tag . '&gt;', '&lt;' . $tag . '/&gt;', '&lt;' . $tag . ' /&gt;'), '<' . $tag . '>', $data);
+						$data = str_replace(['&lt;' . $tag . '&gt;', '&lt;' . $tag . '/&gt;', '&lt;' . $tag . ' /&gt;'], '<' . $tag . '>', $data);
 
 					// b, u, i, s, pre... basic tags.
-					$closable_tags = array('b', 'u', 'i', 's', 'em', 'ins', 'del', 'pre', 'blockquote', 'strong');
+					$closable_tags = ['b', 'u', 'i', 's', 'em', 'ins', 'del', 'pre', 'blockquote', 'strong'];
 					foreach ($closable_tags as $tag)
 					{
 						$diff = substr_count($data, '&lt;' . $tag . '&gt;') - substr_count($data, '&lt;/' . $tag . '&gt;');
-						$data = strtr($data, array('&lt;' . $tag . '&gt;' => '<' . $tag . '>', '&lt;/' . $tag . '&gt;' => '</' . $tag . '>'));
+						$data = strtr($data, ['&lt;' . $tag . '&gt;' => '<' . $tag . '>', '&lt;/' . $tag . '&gt;' => '</' . $tag . '>']);
 
 						if ($diff > 0)
 							$data = substr($data, 0, -1) . str_repeat('</' . $tag . '>', $diff) . substr($data, -1);
@@ -993,7 +993,7 @@ class Parser
 								else
 									$fullUrl = $url;
 
-								return '[url=&quot;' . str_replace(array('[', ']'), array('&#91;', '&#93;'), $fullUrl) . '&quot;]' . $url . '[/url]';
+								return '[url=&quot;' . str_replace(['[', ']'], ['&#91;', '&#93;'], $fullUrl) . '&quot;]' . $url . '[/url]';
 							}, $data);
 						}
 
@@ -1025,7 +1025,7 @@ class Parser
 					}
 				}
 
-				$data = strtr($data, array("\t" => '&nbsp;&nbsp;&nbsp;'));
+				$data = strtr($data, ["\t" => '&nbsp;&nbsp;&nbsp;']);
 
 				// If it wasn't changed, no copying or other boring stuff has to happen!
 				if ($data != substr($message, $last_pos, $pos - $last_pos))
@@ -1176,7 +1176,7 @@ class Parser
 				elseif (isset($possible['type']))
 				{
 					// Do we need an equal sign?
-					if (in_array($possible['type'], array('unparsed_equals', 'unparsed_commas', 'unparsed_commas_content', 'unparsed_equals_content', 'parsed_equals')) && $next_c != '=')
+					if (in_array($possible['type'], ['unparsed_equals', 'unparsed_commas', 'unparsed_commas_content', 'unparsed_equals_content', 'parsed_equals']) && $next_c != '=')
 						continue;
 					// Maybe we just want a /...
 					if ($possible['type'] == 'closed' && $next_c != ']' && substr($message, $pos + 1 + $pt_strlen, 2) != '/]' && substr($message, $pos + 1 + $pt_strlen, 3) != ' /]')
@@ -1212,7 +1212,7 @@ class Parser
 							$quote_alt = !$quote_alt;
 					}
 					// Add a class to the quote to style alternating blockquotes
-					$possible['before'] = strtr($possible['before'], array('<blockquote>' => '<blockquote class="bbc_' . ($quote_alt ? 'alternate' : 'standard') . '_quote">'));
+					$possible['before'] = strtr($possible['before'], ['<blockquote>' => '<blockquote class="bbc_' . ($quote_alt ? 'alternate' : 'standard') . '_quote">']);
 				}
 
 				// This is long, but it makes things much easier and cleaner.
@@ -1254,14 +1254,14 @@ class Parser
 					{
 						$key = strtok(ltrim($matches[$i]), '=');
 						if (isset($possible['parameters'][$key]['value']))
-							$params['{' . $key . '}'] = strtr($possible['parameters'][$key]['value'], array('$1' => $matches[$i + 1]));
+							$params['{' . $key . '}'] = strtr($possible['parameters'][$key]['value'], ['$1' => $matches[$i + 1]]);
 						elseif (isset($possible['parameters'][$key]['validate']))
 							$params['{' . $key . '}'] = $possible['parameters'][$key]['validate']($matches[$i + 1]);
 						else
 							$params['{' . $key . '}'] = $matches[$i + 1];
 
 						// Just to make sure: replace any $ or { so they can't interpolate wrongly.
-						$params['{' . $key . '}'] = strtr($params['{' . $key . '}'], array('$' => '&#036;', '{' => '&#123;'));
+						$params['{' . $key . '}'] = strtr($params['{' . $key . '}'], ['$' => '&#036;', '{' => '&#123;']);
 					}
 
 					foreach ($possible['parameters'] as $p => $info)
@@ -1293,7 +1293,7 @@ class Parser
 			// Item codes are complicated buggers... they are implicit [li]s and can make [list]s!
 			if ($smileys !== false && $tag === null && isset($itemcodes[$message[$pos + 1]]) && $message[$pos + 2] == ']' && !isset($disabled['list']) && !isset($disabled['li']))
 			{
-				if ($message[$pos + 1] == '0' && !in_array($message[$pos - 1], array(';', ' ', "\t", "\n", '>')))
+				if ($message[$pos + 1] == '0' && !in_array($message[$pos - 1], [';', ' ', "\t", "\n", '>']))
 					continue;
 
 				$tag = $itemcodes[$message[$pos + 1]];
@@ -1301,13 +1301,13 @@ class Parser
 				// First let's set up the tree: it needs to be in a list, or after an li.
 				if ($inside === null || ($inside['tag'] != 'list' && $inside['tag'] != 'li'))
 				{
-					$open_tags[] = array(
+					$open_tags[] = [
 						'tag' => 'list',
 						'after' => '</ul>',
 						'block_level' => true,
-						'require_children' => array('li'),
+						'require_children' => ['li'],
 						'disallow_children' => isset($inside['disallow_children']) ? $inside['disallow_children'] : null,
-					);
+					];
 					$code = '<ul class="bbc_list">';
 				}
 				// We're in a list item already: another itemcode?  Close it first.
@@ -1320,13 +1320,13 @@ class Parser
 					$code = '';
 
 				// Now we open a new tag.
-				$open_tags[] = array(
+				$open_tags[] = [
 					'tag' => 'li',
 					'after' => '</li>',
 					'trim' => 'outside',
 					'block_level' => true,
 					'disallow_children' => isset($inside['disallow_children']) ? $inside['disallow_children'] : null,
-				);
+				];
 
 				// First, open the tag...
 				$code .= '<li' . ($tag == '' ? '' : ' type="' . $tag . '"') . '>';
@@ -1446,7 +1446,7 @@ class Parser
 				if (isset($tag['validate']))
 					$tag['validate']($tag, $data, $disabled, $params);
 
-				$code = strtr($tag['content'], array('$1' => $data));
+				$code = strtr($tag['content'], ['$1' => $data]);
 				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 3 + $tag_strlen);
 
 				$pos += strlen($code) - 1 + 2;
@@ -1477,10 +1477,10 @@ class Parser
 				if ($pos3 === false)
 					continue;
 
-				$data = array(
+				$data = [
 					substr($message, $pos2 + ($quoted == false ? 1 : 7), $pos3 - ($pos2 + ($quoted == false ? 1 : 7))),
 					substr($message, $pos1, $pos2 - $pos1)
-				);
+				];
 
 				if (!empty($tag['block_level']) && substr($data[0], 0, 4) == '<br>')
 					$data[0] = substr($data[0], 4);
@@ -1489,7 +1489,7 @@ class Parser
 				if (isset($tag['validate']))
 					$tag['validate']($tag, $data, $disabled, $params);
 
-				$code = strtr($tag['content'], array('$1' => $data[0], '$2' => $data[1]));
+				$code = strtr($tag['content'], ['$1' => $data[0], '$2' => $data[1]]);
 				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos3 + 3 + $tag_strlen);
 				$pos += strlen($code) - 1 + 2;
 			}
@@ -1520,7 +1520,7 @@ class Parser
 
 				$code = $tag['content'];
 				foreach ($data as $k => $d)
-					$code = strtr($code, array('$' . ($k + 1) => trim($d)));
+					$code = strtr($code, ['$' . ($k + 1) => trim($d)]);
 				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos3 + 3 + $tag_strlen);
 				$pos += strlen($code) - 1 + 2;
 			}
@@ -1538,14 +1538,14 @@ class Parser
 
 				// Fix after, for disabled code mainly.
 				foreach ($data as $k => $d)
-					$tag['after'] = strtr($tag['after'], array('$' . ($k + 1) => trim($d)));
+					$tag['after'] = strtr($tag['after'], ['$' . ($k + 1) => trim($d)]);
 
 				$open_tags[] = $tag;
 
 				// Replace them out, $1, $2, $3, $4, etc.
 				$code = $tag['before'];
 				foreach ($data as $k => $d)
-					$code = strtr($code, array('$' . ($k + 1) => trim($d)));
+					$code = strtr($code, ['$' . ($k + 1) => trim($d)]);
 				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + 1);
 				$pos += strlen($code) - 1 + 2;
 			}
@@ -1579,11 +1579,11 @@ class Parser
 				if ($tag['type'] != 'unparsed_equals')
 					$data = self::parse_bbc($data, !empty($tag['parsed_tags_allowed']) ? false : true, '', !empty($tag['parsed_tags_allowed']) ? $tag['parsed_tags_allowed'] : []);
 
-				$tag['after'] = strtr($tag['after'], array('$1' => $data));
+				$tag['after'] = strtr($tag['after'], ['$1' => $data]);
 
 				$open_tags[] = $tag;
 
-				$code = strtr($tag['before'], array('$1' => $data));
+				$code = strtr($tag['before'], ['$1' => $data]);
 				$message = substr($message, 0, $pos) . "\n" . $code . "\n" . substr($message, $pos2 + ($quoted == false ? 1 : 7));
 				$pos += strlen($code) - 1 + 2;
 			}
@@ -1613,16 +1613,16 @@ class Parser
 
 		// No smileys, just get rid of the markers.
 		else
-			$message = strtr($message, array("\n" => ''));
+			$message = strtr($message, ["\n" => '']);
 
 		if ($message !== '' && $message[0] === ' ')
 			$message = '&nbsp;' . substr($message, 1);
 
 		// Cleanup whitespace.
-		$message = strtr($message, array('  ' => ' &nbsp;', "\r" => '', "\n" => '<br>', '<br> ' => '<br>&nbsp;', '&#13;' => "\n"));
+		$message = strtr($message, ['  ' => ' &nbsp;', "\r" => '', "\n" => '<br>', '<br> ' => '<br>&nbsp;', '&#13;' => "\n"]);
 
 		// Allow mods access to what parse_bbc created
-		call_integration_hook('integrate_post_parsebbc', array(&$message, &$smileys, &$cache_id, &$parse_tags));
+		call_integration_hook('integrate_post_parsebbc', [&$message, &$smileys, &$cache_id, &$parse_tags]);
 
 		// Cache the output if it took some time...
 		if (isset($cache_key, $cache_t) && microtime(true) - $cache_t > 0.05)
@@ -1673,8 +1673,8 @@ class Parser
 					SELECT code, filename, description
 					FROM {db_prefix}smileys
 					ORDER BY LENGTH(code) DESC',
-					array(
-					)
+					[
+					]
 				);
 				$smileysfrom = [];
 				$smileysto = [];
@@ -1687,7 +1687,7 @@ class Parser
 				}
 				$smcFunc['db_free_result']($result);
 
-				cache_put_data('parsing_smileys', array($smileysfrom, $smileysto, $smileysdescs), 480);
+				cache_put_data('parsing_smileys', [$smileysfrom, $smileysto, $smileysdescs], 480);
 			}
 			else
 				list ($smileysfrom, $smileysto, $smileysdescs) = $temp;
@@ -1703,7 +1703,7 @@ class Parser
 			for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 			{
 				$specialChars = $smcFunc['htmlspecialchars']($smileysfrom[$i], ENT_QUOTES);
-				$smileyCode = '<img src="' . $smileys_path . $smileysto[$i] . '" alt="' . strtr($specialChars, array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')). '" title="' . strtr($smcFunc['htmlspecialchars']($smileysdescs[$i]), array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')) . '" class="smiley">';
+				$smileyCode = '<img src="' . $smileys_path . $smileysto[$i] . '" alt="' . strtr($specialChars, [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']). '" title="' . strtr($smcFunc['htmlspecialchars']($smileysdescs[$i]), [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']) . '" class="smiley">';
 
 				$smileyPregReplacements[$smileysfrom[$i]] = $smileyCode;
 
@@ -1743,7 +1743,7 @@ class Parser
 			return $string;
 
 		// UTF-8 occurences of MS special characters
-		$findchars_utf8 = array(
+		$findchars_utf8 = [
 			"\xe2\x80\x9a",	// single low-9 quotation mark
 			"\xe2\x80\x9e",	// double low-9 quotation mark
 			"\xe2\x80\xa6",	// horizontal ellipsis
@@ -1753,10 +1753,10 @@ class Parser
 			"\xe2\x80\x9d",	// right double curly quote
 			"\xe2\x80\x93",	// en dash
 			"\xe2\x80\x94",	// em dash
-		);
+		];
 
 		// safe replacements
-		$replacechars = array(
+		$replacechars = [
 			',',	// &sbquo;
 			',,',	// &bdquo;
 			'...',	// &hellip;
@@ -1766,7 +1766,7 @@ class Parser
 			'"',	// &rdquo;
 			'-',	// &ndash;
 			'--',	// &mdash;
-		);
+		];
 
 		return str_replace($findchars_utf8, $replacechars, $string);
 	}

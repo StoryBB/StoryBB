@@ -76,7 +76,7 @@ class FTP
 			$ftp_server = substr($ftp_server, 7);
 		elseif (strpos($ftp_server, 'https://') === 0)
 			$ftp_server = substr($ftp_server, 8);
-		$ftp_server = strtr($ftp_server, array('/' => '', ':' => '', '@' => ''));
+		$ftp_server = strtr($ftp_server, ['/' => '', ':' => '', '@' => '']);
 
 		// Connect to the FTP server.
 		$this->connection = @fsockopen($ftp_server, $ftp_port, $err, $err, 5);
@@ -161,7 +161,7 @@ class FTP
 		$is_writable = false;
 
 		// Set different modes.
-		$chmod_values = $is_dir ? array(0750, 0755, 0775, 0777) : array(0644, 0664, 0666);
+		$chmod_values = $is_dir ? [0750, 0755, 0775, 0777] : [0644, 0664, 0666];
 
 		foreach ($chmod_values as $val)
 		{
@@ -266,7 +266,7 @@ class FTP
 		}
 
 		// This is pretty simple - store it for later use ;).
-		$this->pasv = array('ip' => $match[1] . '.' . $match[2] . '.' . $match[3] . '.' . $match[4], 'port' => $match[5] * 256 + $match[6]);
+		$this->pasv = ['ip' => $match[1] . '.' . $match[2] . '.' . $match[3] . '.' . $match[4], 'port' => $match[5] * 256 + $match[6]];
 
 		return true;
 	}
@@ -332,7 +332,7 @@ class FTP
 
 		// Connect, assuming we've got a connection.
 		$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
-		if (!$fp || !$this->check_response(array(150, 125)))
+		if (!$fp || !$this->check_response([150, 125]))
 		{
 			$this->error = 'bad_response';
 			@fclose($fp);
@@ -376,7 +376,7 @@ class FTP
 
 		// Check for 257!
 		if (preg_match('~^257 "(.+?)" ~', $response, $match) != 0)
-			$current_dir = strtr($match[1], array('""' => '"'));
+			$current_dir = strtr($match[1], ['""' => '"']);
 		else
 			$current_dir = '';
 
@@ -442,7 +442,7 @@ class FTP
 			{
 				$username = $match[1];
 
-				$path = strtr($_SERVER['DOCUMENT_ROOT'], array('/home/' . $match[1] . '/' => '', '/home2/' . $match[1] . '/' => ''));
+				$path = strtr($_SERVER['DOCUMENT_ROOT'], ['/home/' . $match[1] . '/' => '', '/home2/' . $match[1] . '/' => '']);
 
 				if (substr($path, -1) == '/')
 					$path = substr($path, 0, -1);
@@ -453,7 +453,7 @@ class FTP
 			elseif (strpos($filesystem_path, '/var/www/') === 0)
 				$path = substr($filesystem_path, 8);
 			else
-				$path = strtr(strtr($filesystem_path, array('\\' => '/')), array($_SERVER['DOCUMENT_ROOT'] => ''));
+				$path = strtr(strtr($filesystem_path, ['\\' => '/']), [$_SERVER['DOCUMENT_ROOT'] => '']);
 		}
 		else
 			$path = '';
@@ -474,7 +474,7 @@ class FTP
 		elseif (is_resource($this->connection))
 			$found_path = true;
 
-		return array($username, $path, isset($found_path));
+		return [$username, $path, isset($found_path)];
 	}
 
 	/**
