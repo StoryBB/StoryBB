@@ -105,9 +105,9 @@ function automanage_attachments_check_directory()
 		$modSettings['currentAttachmentUploadDir'] = array_search($updir, $modSettings['attachmentUploadDir']);
 		$context['attach_dir'] = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
 
-		updateSettings(array(
+		updateSettings([
 			'currentAttachmentUploadDir' => $modSettings['currentAttachmentUploadDir'],
-		));
+		]);
 	}
 
 	return $outputCreation;
@@ -176,10 +176,10 @@ function automanage_attachments_create_directory($updir)
 		$modSettings['currentAttachmentUploadDir'] = max(array_keys($modSettings['attachmentUploadDir'])) + 1;
 		$modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']] = $updir;
 
-		updateSettings(array(
+		updateSettings([
 			'attachmentUploadDir' => json_encode($modSettings['attachmentUploadDir']),
 			'currentAttachmentUploadDir' => $modSettings['currentAttachmentUploadDir'],
-		), true);
+		], true);
 		$modSettings['attachmentUploadDir'] = sbb_json_decode($modSettings['attachmentUploadDir'], true);
 	}
 
@@ -224,10 +224,10 @@ function automanage_attachments_by_space()
 	if (automanage_attachments_create_directory($updir))
 	{
 		$modSettings['currentAttachmentUploadDir'] = array_search($updir, $modSettings['attachmentUploadDir']);
-		updateSettings(array(
+		updateSettings([
 			'last_attachments_directory' => json_encode($modSettings['last_attachments_directory']),
 			'currentAttachmentUploadDir' => $modSettings['currentAttachmentUploadDir'],
-		));
+		]);
 		$modSettings['last_attachments_directory'] = sbb_json_decode($modSettings['last_attachments_directory'], true);
 
 		return true;
@@ -326,19 +326,19 @@ function processAttachments()
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:id_msg}
 					AND attachment_type = {int:attachment_type}',
-				array(
+				[
 					'id_msg' => (int) $_REQUEST['msg'],
 					'attachment_type' => 0,
-				)
+				]
 			);
 			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
 		}
 		else
-			$context['attachments'] = array(
+			$context['attachments'] = [
 				'quantity' => 0,
 				'total_size' => 0,
-			);
+			];
 	}
 
 	// Hmm. There are still files in session.
@@ -375,12 +375,12 @@ function processAttachments()
 
 	// Remember where we are at. If it's anywhere at all.
 	if (!$ignore_temp)
-		$_SESSION['temp_attachments']['post'] = array(
+		$_SESSION['temp_attachments']['post'] = [
 			'msg' => !empty($_REQUEST['msg']) ? $_REQUEST['msg'] : 0,
 			'last_msg' => !empty($_REQUEST['last_msg']) ? $_REQUEST['last_msg'] : 0,
 			'topic' => !empty($topic) ? $topic : 0,
 			'board' => !empty($board) ? $board : 0,
-		);
+		];
 
 	// If we have an initial error, lets just display it.
 	if (!empty($initial_error))
@@ -406,7 +406,7 @@ function processAttachments()
 		if (!empty($_FILES['attachment']['error'][$n]))
 		{
 			if ($_FILES['attachment']['error'][$n] == 2)
-				$errors[] = array('file_too_big', array($modSettings['attachmentSizeLimit']));
+				$errors[] = ['file_too_big', [$modSettings['attachmentSizeLimit']]];
 			elseif ($_FILES['attachment']['error'][$n] == 6)
 				log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['php_upload_error_6'], 'critical');
 			else
@@ -425,14 +425,14 @@ function processAttachments()
 			if (function_exists('mime_content_type'))
 				$_FILES['attachment']['type'][$n] = mime_content_type($_FILES['attachment']['tmp_name'][$n]);
 
-			$_SESSION['temp_attachments'][$attachID] = array(
+			$_SESSION['temp_attachments'][$attachID] = [
 				'name' => $smcFunc['htmlspecialchars'](basename($_FILES['attachment']['name'][$n])),
 				'tmp_name' => $destName,
 				'size' => $_FILES['attachment']['size'][$n],
 				'type' => $_FILES['attachment']['type'][$n],
 				'id_folder' => $modSettings['currentAttachmentUploadDir'],
 				'errors' => [],
-			);
+			];
 
 			// Move the file to the attachments folder with a temp name for now.
 			if (@move_uploaded_file($_FILES['attachment']['tmp_name'][$n], $destName))
@@ -446,11 +446,11 @@ function processAttachments()
 		}
 		else
 		{
-			$_SESSION['temp_attachments'][$attachID] = array(
+			$_SESSION['temp_attachments'][$attachID] = [
 				'name' => $smcFunc['htmlspecialchars'](basename($_FILES['attachment']['name'][$n])),
 				'tmp_name' => $destName,
 				'errors' => $errors,
-			);
+			];
 
 			if (file_exists($_FILES['attachment']['tmp_name'][$n]))
 				unlink($_FILES['attachment']['tmp_name'][$n]);
@@ -498,7 +498,7 @@ function attachmentChecks($attachID)
 
 	// Let's get their attention.
 	if (!empty($error))
-		fatal_lang_error('attach_check_nag', 'debug', array($error));
+		fatal_lang_error('attach_check_nag', 'debug', [$error]);
 
 	// Just in case this slipped by the first checks, we stop it here and now
 	if ($_SESSION['temp_attachments'][$attachID]['size'] == 0)
@@ -544,10 +544,10 @@ function attachmentChecks($attachID)
 				FROM {db_prefix}attachments
 				WHERE id_folder = {int:folder_id}
 					AND attachment_type != {int:type}',
-				array(
+				[
 					'folder_id' => $modSettings['currentAttachmentUploadDir'],
 					'type' => 1,
-				)
+				]
 			);
 			list ($context['dir_files'], $context['dir_size']) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -561,7 +561,7 @@ function attachmentChecks($attachID)
 		{
 			require_once($sourcedir . '/Subs-Admin.php');
 			emailAdmins('admin_attachments_full');
-			updateSettings(array('attachment_full_notified' => 1));
+			updateSettings(['attachment_full_notified' => 1]);
 		}
 
 		// // No room left.... What to do now???
@@ -596,11 +596,11 @@ function attachmentChecks($attachID)
 	// Is the file too big?
 	$context['attachments']['total_size'] += $_SESSION['temp_attachments'][$attachID]['size'];
 	if (!empty($modSettings['attachmentSizeLimit']) && $_SESSION['temp_attachments'][$attachID]['size'] > $modSettings['attachmentSizeLimit'] * 1024)
-		$_SESSION['temp_attachments'][$attachID]['errors'][] = array('file_too_big', array(comma_format($modSettings['attachmentSizeLimit'], 0)));
+		$_SESSION['temp_attachments'][$attachID]['errors'][] = ['file_too_big', [comma_format($modSettings['attachmentSizeLimit'], 0)]];
 
 	// Check the total upload size for this post...
 	if (!empty($modSettings['attachmentPostLimit']) && $context['attachments']['total_size'] > $modSettings['attachmentPostLimit'] * 1024)
-		$_SESSION['temp_attachments'][$attachID]['errors'][] = array('attach_max_total_file_size', array(comma_format($modSettings['attachmentPostLimit'], 0), comma_format($modSettings['attachmentPostLimit'] - (($context['attachments']['total_size'] - $_SESSION['temp_attachments'][$attachID]['size']) / 1024), 0)));
+		$_SESSION['temp_attachments'][$attachID]['errors'][] = ['attach_max_total_file_size', [comma_format($modSettings['attachmentPostLimit'], 0), comma_format($modSettings['attachmentPostLimit'] - (($context['attachments']['total_size'] - $_SESSION['temp_attachments'][$attachID]['size']) / 1024), 0)]];
 
 	// Have we reached the maximum number of files we are allowed?
 	$context['attachments']['quantity']++;
@@ -610,7 +610,7 @@ function attachmentChecks($attachID)
 		$modSettings['attachmentNumPerPostLimit'] = 50;
 
 	if (!empty($modSettings['attachmentNumPerPostLimit']) && $context['attachments']['quantity'] > $modSettings['attachmentNumPerPostLimit'])
-		$_SESSION['temp_attachments'][$attachID]['errors'][] = array('attachments_limit_per_post', array($modSettings['attachmentNumPerPostLimit']));
+		$_SESSION['temp_attachments'][$attachID]['errors'][] = ['attachments_limit_per_post', [$modSettings['attachmentNumPerPostLimit']]];
 
 	// File extension check
 	if (!empty($modSettings['attachmentCheckExtensions']))
@@ -621,8 +621,8 @@ function attachmentChecks($attachID)
 
 		if (!in_array(strtolower(substr(strrchr($_SESSION['temp_attachments'][$attachID]['name'], '.'), 1)), $allowed))
 		{
-			$allowed_extensions = strtr(strtolower($modSettings['attachmentExtensions']), array(',' => ', '));
-			$_SESSION['temp_attachments'][$attachID]['errors'][] = array('cant_upload_type', array($allowed_extensions));
+			$allowed_extensions = strtr(strtolower($modSettings['attachmentExtensions']), [',' => ', ']);
+			$_SESSION['temp_attachments'][$attachID]['errors'][] = ['cant_upload_type', [$allowed_extensions]];
 		}
 	}
 
@@ -693,7 +693,7 @@ function createAttachment(&$attachmentOptions)
 	}
 
 	// Last chance to change stuff!
-	call_integration_hook('integrate_createAttachment', array(&$attachmentOptions));
+	call_integration_hook('integrate_createAttachment', [&$attachmentOptions]);
 
 	// Make sure the folder is valid...
 	$tmp = is_array($modSettings['attachmentUploadDir']) ? $modSettings['attachmentUploadDir'] : sbb_json_decode($modSettings['attachmentUploadDir'], true);
@@ -703,17 +703,17 @@ function createAttachment(&$attachmentOptions)
 
 	$attachmentOptions['id'] = $smcFunc['db_insert']('',
 		'{db_prefix}attachments',
-		array(
+		[
 			'id_folder' => 'int', 'id_msg' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40', 'fileext' => 'string-8',
 			'size' => 'int', 'width' => 'int', 'height' => 'int',
 			'mime_type' => 'string-20', 'approved' => 'int',
-		),
-		array(
+		],
+		[
 			(int) $attachmentOptions['id_folder'], (int) $attachmentOptions['post'], $attachmentOptions['name'], $attachmentOptions['file_hash'], $attachmentOptions['fileext'],
 			(int) $attachmentOptions['size'], (empty($attachmentOptions['width']) ? 0 : (int) $attachmentOptions['width']), (empty($attachmentOptions['height']) ? '0' : (int) $attachmentOptions['height']),
 			(!empty($attachmentOptions['mime_type']) ? $attachmentOptions['mime_type'] : ''), (int) $attachmentOptions['approved'],
-		),
-		array('id_attach'),
+		],
+		['id_attach'],
 		1
 	);
 
@@ -733,12 +733,12 @@ function createAttachment(&$attachmentOptions)
 	if (!$attachmentOptions['approved'])
 		$smcFunc['db_insert']('',
 			'{db_prefix}approval_queue',
-			array(
+			[
 				'id_attach' => 'int', 'id_msg' => 'int',
-			),
-			array(
+			],
+			[
 				$attachmentOptions['id'], (int) $attachmentOptions['post'],
-			),
+			],
 			[]
 		);
 
@@ -795,15 +795,15 @@ function createAttachment(&$attachmentOptions)
 			// To the database we go!
 			$attachmentOptions['thumb'] = $smcFunc['db_insert']('',
 				'{db_prefix}attachments',
-				array(
+				[
 					'id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40', 'fileext' => 'string-8',
 					'size' => 'int', 'width' => 'int', 'height' => 'int', 'mime_type' => 'string-20', 'approved' => 'int',
-				),
-				array(
+				],
+				[
 					$modSettings['currentAttachmentUploadDir'], (int) $attachmentOptions['post'], 3, $thumb_filename, $thumb_file_hash, $attachmentOptions['fileext'],
 					$thumb_size, $thumb_width, $thumb_height, $thumb_mime, (int) $attachmentOptions['approved'],
-				),
-				array('id_attach'),
+				],
+				['id_attach'],
 				1
 			);
 
@@ -813,10 +813,10 @@ function createAttachment(&$attachmentOptions)
 					UPDATE {db_prefix}attachments
 					SET id_thumb = {int:id_thumb}
 					WHERE id_attach = {int:id_attach}',
-					array(
+					[
 						'id_thumb' => $attachmentOptions['thumb'],
 						'id_attach' => $attachmentOptions['id'],
-					)
+					]
 				);
 
 				rename($thumb_path, Attachment::get_filename($thumb_filename, $attachmentOptions['thumb'], $modSettings['currentAttachmentUploadDir'], $thumb_file_hash));
@@ -844,7 +844,7 @@ function assignAttachments($attachIDs = [], $msgID = 0)
 		return false;
 
 	// "I see what is right and approve, but I do what is wrong."
-	call_integration_hook('integrate_assign_attachments', array(&$attachIDs, &$msgID));
+	call_integration_hook('integrate_assign_attachments', [&$attachIDs, &$msgID]);
 
 	// One last check
 	if (empty($attachIDs))
@@ -855,10 +855,10 @@ function assignAttachments($attachIDs = [], $msgID = 0)
 		UPDATE {db_prefix}attachments
 		SET id_msg = {int:id_msg}
 		WHERE id_attach IN ({array_int:attach_ids})',
-		array(
+		[
 			'id_msg' => $msgID,
 			'attach_ids' => $attachIDs,
-		)
+		]
 	);
 
 	return true;
@@ -885,7 +885,7 @@ function parseAttachBBC($attachID = 0)
 	$msgID = !empty($_REQUEST['msg']) ? (int) $_REQUEST['msg'] : 0;
 
 	// Perhaps someone else wants to do the honors? Yes, this also includes dealing with previews ;)
-	$externalParse = call_integration_hook('integrate_pre_parseAttachBBC', array($attachID, $msgID));
+	$externalParse = call_integration_hook('integrate_pre_parseAttachBBC', [$attachID, $msgID]);
 
 	// "I am innocent of the blood of this just person: see ye to it."
 	if (!empty($externalParse) && (is_string($externalParse) || is_array($externalParse)))
@@ -966,7 +966,7 @@ function parseAttachBBC($attachID = 0)
 		$context['show_attach_under_post'][$attachID] = $attachID;
 
 	// Last minute changes?
-	call_integration_hook('integrate_post_parseAttachBBC', array(&$attachContext));
+	call_integration_hook('integrate_post_parseAttachBBC', [&$attachContext]);
 
 	// Don't do any logic with the loaded data, leave it to whoever called this function.
 	return $attachContext;
@@ -995,16 +995,16 @@ function getRawAttachInfo($attachIDs)
 				LEFT JOIN {db_prefix}attachments AS thumb ON (thumb.id_attach = a.id_thumb)') . '
 		WHERE a.id_attach IN ({array_int:attach_ids})
 		LIMIT 1',
-		array(
+		[
 			'attach_ids' => (array) $attachIDs,
-		)
+		]
 	);
 
 	if ($smcFunc['db_num_rows']($request) != 1)
 		return [];
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$return[$row['id_attach']] = array(
+		$return[$row['id_attach']] = [
 			'name' => $smcFunc['htmlspecialchars']($row['filename']),
 			'size' => $row['size'],
 			'attachID' => $row['id_attach'],
@@ -1012,7 +1012,7 @@ function getRawAttachInfo($attachIDs)
 			'approved' => 1,
 			'mime_type' => $row['mime_type'],
 			'thumb' => $row['id_thumb'],
-		);
+		];
 	$smcFunc['db_free_result']($request);
 
 	return $return;
@@ -1038,9 +1038,9 @@ function getAttachMsgInfo($attachID)
 			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
 		WHERE id_attach = {int:id_attach}
 		LIMIT 1',
-		array(
+		[
 			'id_attach' => (int) $attachID,
-		)
+		]
 	);
 
 	if ($smcFunc['db_num_rows']($request) != 1)
@@ -1076,11 +1076,11 @@ function getAttachsByMsg($msgID = 0)
 				LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
 			WHERE a.attachment_type = {int:attachment_type}
 				'. (!empty($msgID) ? 'AND a.id_msg = {int:message_id}' : '') . '',
-			array(
+			[
 				'message_id' => $msgID,
 				'attachment_type' => 0,
 				'is_approved' => 1,
-			)
+			]
 		);
 		$temp = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1125,7 +1125,7 @@ function loadAttachmentContext($id_msg, $attachments)
 	{
 		foreach ($attachments[$id_msg] as $i => $attachment)
 		{
-			$attachmentData[$i] = array(
+			$attachmentData[$i] = [
 				'id' => $attachment['id_attach'],
 				'name' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($attachment['filename'])),
 				'downloads' => $attachment['downloads'],
@@ -1137,7 +1137,7 @@ function loadAttachmentContext($id_msg, $attachments)
 				'is_approved' => $attachment['approved'],
 				'topic' => $attachment['topic'],
 				'board' => $attachment['board'],
-			);
+			];
 
 			// If something is unapproved we'll note it so we can sort them.
 			if (!$attachment['approved'])
@@ -1196,9 +1196,9 @@ function loadAttachmentContext($id_msg, $attachments)
 						// Add this beauty to the database.
 						$attachment['id_thumb'] = $smcFunc['db_insert']('',
 							'{db_prefix}attachments',
-							array('id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'size' => 'int', 'width' => 'int', 'height' => 'int', 'fileext' => 'string', 'mime_type' => 'string'),
-							array($id_folder_thumb, $id_msg, 3, $thumb_filename, $thumb_hash, (int) $thumb_size, (int) $attachment['thumb_width'], (int) $attachment['thumb_height'], $thumb_ext, $thumb_mime),
-							array('id_attach'),
+							['id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string', 'file_hash' => 'string', 'size' => 'int', 'width' => 'int', 'height' => 'int', 'fileext' => 'string', 'mime_type' => 'string'],
+							[$id_folder_thumb, $id_msg, 3, $thumb_filename, $thumb_hash, (int) $thumb_size, (int) $attachment['thumb_width'], (int) $attachment['thumb_height'], $thumb_ext, $thumb_mime],
+							['id_attach'],
 							1
 						);
 						$old_id_thumb = $attachment['id_thumb'];
@@ -1208,10 +1208,10 @@ function loadAttachmentContext($id_msg, $attachments)
 								UPDATE {db_prefix}attachments
 								SET id_thumb = {int:id_thumb}
 								WHERE id_attach = {int:id_attach}',
-								array(
+								[
 									'id_thumb' => $attachment['id_thumb'],
 									'id_attach' => $attachment['id_attach'],
-								)
+								]
 							);
 
 							$thumb_realname = Attachment::get_filename($thumb_filename, $attachment['id_thumb'], $id_folder_thumb, $thumb_hash);
@@ -1221,7 +1221,7 @@ function loadAttachmentContext($id_msg, $attachments)
 							if (!empty($old_id_thumb))
 							{
 								require_once($sourcedir . '/ManageAttachments.php');
-								removeAttachments(array('id_attach' => $old_id_thumb), '', false, false);
+								removeAttachments(['id_attach' => $old_id_thumb], '', false, false);
 							}
 						}
 					}
@@ -1236,10 +1236,10 @@ function loadAttachmentContext($id_msg, $attachments)
 			}
 
 			if (!empty($attachment['id_thumb']))
-				$attachmentData[$i]['thumbnail'] = array(
+				$attachmentData[$i]['thumbnail'] = [
 					'id' => $attachment['id_thumb'],
 					'href' => $scripturl . '?action=dlattach;topic=' . $attachment['topic'] . '.0;attach=' . $attachment['id_thumb'] . ';image',
-				);
+				];
 			$attachmentData[$i]['thumbnail']['has_thumb'] = !empty($attachment['id_thumb']);
 
 			// If thumbnails are disabled, check the maximum size of the image.

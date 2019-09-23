@@ -47,11 +47,11 @@ function updateReport($action, $value, $report_id)
 		SET  {raw:action} = {string:value}
 		'. (is_array($report_id) ? 'WHERE id_report IN ({array_int:id_report})' : 'WHERE id_report = {int:id_report}') .'
 			' . $board_query,
-		array(
+		[
 			'action' => $action,
 			'value' => $value,
 			'id_report' => $report_id,
-		)
+		]
 	);
 
 	// From now on, lets work with arrays, makes life easier.
@@ -67,18 +67,18 @@ function updateReport($action, $value, $report_id)
 			SELECT id_board, id_topic, id_msg, id_report
 			FROM {db_prefix}log_reported
 			WHERE id_report IN ({array_int:id_report})',
-			array(
+			[
 				'id_report' => $report_id,
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$extra[$row['id_report']] = array(
+			$extra[$row['id_report']] = [
 				'report' => $row['id_report'],
 				'board' => $row['id_board'],
 				'message' => $row['id_msg'],
 				'topic' => $row['id_topic'],
-			);
+			];
 
 		$smcFunc['db_free_result']($request);
 	}
@@ -88,16 +88,16 @@ function updateReport($action, $value, $report_id)
 			SELECT id_report, id_member, membername
 			FROM {db_prefix}log_reported
 			WHERE id_report IN ({array_int:id_report})',
-			array(
+			[
 				'id_report' => $report_id,
-			)
+			]
 		);
 
 		while($row = $smcFunc['db_fetch_assoc']($request))
-			$extra[$row['id_report']] = array(
+			$extra[$row['id_report']] = [
 				'report' => $row['id_report'],
 				'member' => $row['id_member'],
-			);
+			];
 
 		$smcFunc['db_free_result']($request);
 	}
@@ -117,7 +117,7 @@ function updateReport($action, $value, $report_id)
 			logAction($log_report . '_report', $report);
 
 	// Time to update.
-	updateSettings(array('last_mod_report_action' => time()));
+	updateSettings(['last_mod_report_action' => time()]);
 	recountOpenReports($context['report_type']);
 }
 
@@ -159,9 +159,9 @@ function countReports($closed = 0)
 		FROM {db_prefix}log_reported AS lr
 		WHERE lr.closed = {int:view_closed}
 			AND ' . $and,
-		array(
+		[
 			'view_closed' => (int) $closed,
-		)
+		]
 	);
 	list ($total_reports) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -195,11 +195,11 @@ function getReports($closed = 0)
 				AND lr.id_board = 0
 			ORDER BY lr.time_updated DESC
 			LIMIT {int:start}, {int:max}',
-			array(
+			[
 				'view_closed' => (int) $closed,
 				'start' => $context['start'],
 				'max' => 10,
-			)
+			]
 		);
 	}
 	else
@@ -215,11 +215,11 @@ function getReports($closed = 0)
 				AND ' . ($user_info['mod_cache']['bq'] == '1=1' || $user_info['mod_cache']['bq'] == '0=1' ? $user_info['mod_cache']['bq'] : 'lr.' . $user_info['mod_cache']['bq']) . '
 			ORDER BY lr.time_updated DESC
 			LIMIT {int:start}, {int:max}',
-			array(
+			[
 				'view_closed' => (int) $closed,
 				'start' => $context['start'],
 				'max' => 10,
-			)
+			]
 		);
 	}
 
@@ -229,7 +229,7 @@ function getReports($closed = 0)
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		$report_ids[] = $row['id_report'];
-		$reports[$row['id_report']] = array(
+		$reports[$row['id_report']] = [
 			'id' => $row['id_report'],
 			'report_href' => $scripturl . '?action=moderate;area=reported' . $context['report_type'] . ';sa=details;rid=' . $row['id_report'],
 			'comments' => [],
@@ -238,38 +238,38 @@ function getReports($closed = 0)
 			'num_reports' => $row['num_reports'],
 			'closed' => $row['closed'],
 			'ignore' => $row['ignore_all']
-		);
+		];
 
 		if ($context['report_type'] == 'members')
 		{
-			$extraDetails = array(
-				'user' => array(
+			$extraDetails = [
+				'user' => [
 					'id' => $row['id_user'],
 					'name' => $row['user_name'],
 					'link' => $row['id_user'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_user'] . '">' . $row['user_name'] . '</a>' : $row['user_name'],
 					'href' => $scripturl . '?action=profile;u=' . $row['id_user'],
-				),
-			);
+				],
+			];
 		}
 		else
 		{
 			$report_boards_ids[] = $row['id_board'];
-			$extraDetails = array(
-				'topic' => array(
+			$extraDetails = [
+				'topic' => [
 					'id' => $row['id_topic'],
 					'id_msg' => $row['id_msg'],
 					'id_board' => $row['id_board'],
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-				),
-				'author' => array(
+				],
+				'author' => [
 					'id' => $row['id_author'],
 					'name' => $row['author_name'],
 					'link' => $row['id_author'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_author'] . '">' . $row['author_name'] . '</a>' : $row['author_name'],
 					'href' => $scripturl . '?action=profile;u=' . $row['id_author'],
-				),
+				],
 				'subject' => $row['subject'],
 				'body' => Parser::parse_bbc($row['body']),
-			);
+			];
 		}
 
 		$reports[$row['id_report']] = array_merge($reports[$row['id_report']], $extraDetails);
@@ -286,9 +286,9 @@ function getReports($closed = 0)
 			SELECT id_board, name
 			FROM {db_prefix}boards
 			WHERE id_board IN ({array_int:boards})',
-			array(
+			[
 				'boards' => $report_boards_ids,
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -310,23 +310,23 @@ function getReports($closed = 0)
 			FROM {db_prefix}log_reported_comments AS lrc
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lrc.id_member)
 			WHERE lrc.id_report IN ({array_int:report_list})',
-			array(
+			[
 				'report_list' => $report_ids,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$reports[$row['id_report']]['comments'][] = array(
+			$reports[$row['id_report']]['comments'][] = [
 				'id' => $row['id_comment'],
 				'message' => $row['comment'],
 				'time' => timeformat($row['time_sent']),
-				'member' => array(
+				'member' => [
 					'id' => $row['id_member'],
 					'name' => empty($row['reporter']) ? $txt['guest'] : $row['reporter'],
 					'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['reporter'] . '</a>' : (empty($row['reporter']) ? $txt['guest'] : $row['reporter']),
 					'href' => $row['id_member'] ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
-				),
-			);
+				],
+			];
 		}
 		$smcFunc['db_free_result']($request);
 
@@ -370,22 +370,22 @@ function recountOpenReports($type)
 			AND ignore_all = {int:not_ignored}
 			AND id_board' . ($type == 'members' ? '' : '!') . '= {int:not_a_reported_post}'
 			. $bq,
-		array(
+		[
 			'not_closed' => 0,
 			'not_ignored' => 0,
 			'not_a_reported_post' => 0,
-		)
+		]
 	);
 	list ($open_reports) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
 
 	$arr = ($type == 'members' ? 'member_reports' : 'reports');
 	$_SESSION['rc'] = array_merge(!empty($_SESSION['rc']) ? $_SESSION['rc'] : [],
-		array(
+		[
 			'id' => $user_info['id'],
 			'time' => time(),
 			$arr => $open_reports,
-		));
+		]);
 
 	return $open_reports;
 }
@@ -415,9 +415,9 @@ function getReportDetails($report_id)
 			WHERE lr.id_report = {int:id_report}
 				AND lr.id_board = 0
 			LIMIT 1',
-			array(
+			[
 				'id_report' => $report_id,
-			)
+			]
 		);
 	}
 	else
@@ -432,9 +432,9 @@ function getReportDetails($report_id)
 			WHERE lr.id_report = {int:id_report}
 				AND ' . ($user_info['mod_cache']['bq'] == '1=1' || $user_info['mod_cache']['bq'] == '0=1' ? $user_info['mod_cache']['bq'] : 'lr.' . $user_info['mod_cache']['bq']) . '
 			LIMIT 1',
-			array(
+			[
 				'id_report' => $report_id,
-			)
+			]
 		);
 	}
 
@@ -462,10 +462,10 @@ function getReportComments($report_id)
 	if (empty($report_id))
 		return false;
 
-	$report = array(
+	$report = [
 		'comments' => [],
 		'mod_comments' => []
-	);
+	];
 
 	// So what bad things do the reporters have to say about it?
 	$request = $smcFunc['db_query']('', '
@@ -474,25 +474,25 @@ function getReportComments($report_id)
 		FROM {db_prefix}log_reported_comments AS lrc
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lrc.id_member)
 		WHERE lrc.id_report = {int:id_report}',
-		array(
+		[
 			'id_report' => $report_id,
-		)
+		]
 	);
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$comment = array(
+		$comment = [
 			'id' => $row['id_comment'],
-			'message' => strtr($row['comment'], array("\n" => '<br>')),
+			'message' => strtr($row['comment'], ["\n" => '<br>']),
 			'time' => timeformat($row['time_sent']),
-			'member' => array(
+			'member' => [
 				'id' => $row['id_member'],
 				'name' => empty($row['reporter']) ? $txt['guest'] : $row['reporter'],
 				'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['reporter'] . '</a>' : (empty($row['reporter']) ? $txt['guest'] : $row['reporter']),
 				'href' => $row['id_member'] ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
 				'ip' => !empty($row['member_ip']) && allowedTo('moderate_forum') ? '<a href="' . $scripturl . '?action=trackip;searchip=' . inet_dtop($row['member_ip']) . '">' . inet_dtop($row['member_ip']) . '</a>' : '',
-			),
-		);
+			],
+		];
 		if (empty($comment['member']['id']) && !empty($comment['member']['ip']))
 		{
 			$comment['member']['link'] .= ' (' . $comment['member']['ip'] . ')';
@@ -509,25 +509,25 @@ function getReportComments($report_id)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
 		WHERE lc.id_notice = {int:id_report}
 			AND lc.comment_type = {literal:reportc}',
-		array(
+		[
 			'id_report' => $report_id,
-		)
+		]
 	);
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$report['mod_comments'][] = array(
+		$report['mod_comments'][] = [
 			'id' => $row['id_comment'],
 			'message' => Parser::parse_bbc($row['body']),
 			'time' => timeformat($row['log_time']),
 			'can_edit' => allowedTo('admin_forum') || (($user_info['id'] == $row['id_member'])),
-			'member' => array(
+			'member' => [
 				'id' => $row['id_member'],
 				'name' => $row['moderator'],
 				'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['moderator'] . '</a>' : $row['moderator'],
 				'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
-			),
-		);
+			],
+		];
 	}
 
 	$smcFunc['db_free_result']($request);
@@ -554,9 +554,9 @@ function getCommentModDetails($comment_id)
 		FROM {db_prefix}log_comments
 		WHERE id_comment = {int:id_comment}
 			AND comment_type = {literal:reportc}',
-		array(
+		[
 			'id_comment' => $comment_id,
-		)
+		]
 	);
 
 	$comment = $smcFunc['db_fetch_assoc']($request);
@@ -584,16 +584,16 @@ function saveModComment($report_id, $data)
 	if (empty($data))
 		return false;
 
-	$data = array_merge(array($user_info['id'], $user_info['name'], 'reportc', ''), $data);
+	$data = array_merge([$user_info['id'], $user_info['name'], 'reportc', ''], $data);
 
 	$last_comment = $smcFunc['db_insert']('',
 		'{db_prefix}log_comments',
-		array(
+		[
 			'id_member' => 'int', 'member_name' => 'string', 'comment_type' => 'string', 'recipient_name' => 'string',
 			'id_notice' => 'int', 'body' => 'string', 'log_time' => 'int',
-		),
+		],
 		$data,
-		array('id_comment'),
+		['id_comment'],
 		1
 	);
 
@@ -602,7 +602,7 @@ function saveModComment($report_id, $data)
 	if ($context['report_type'] == 'members')
 	{
 		$prefix = 'Member';
-		$data = array(
+		$data = [
 			'report_id' => $report_id,
 			'user_id' => $report['id_user'],
 			'user_name' => $report['user_name'],
@@ -610,12 +610,12 @@ function saveModComment($report_id, $data)
 			'sender_name' => $context['user']['name'],
 			'comment_id' => $last_comment,
 			'time' => time(),
-		);
+		];
 	}
 	else
 	{
 		$prefix = 'Msg';
-		$data = array(
+		$data = [
 			'report_id' => $report_id,
 			'comment_id' => $last_comment,
 			'msg_id' => $report['id_msg'],
@@ -624,7 +624,7 @@ function saveModComment($report_id, $data)
 			'sender_id' => $user_info['id'],
 			'sender_name' => $user_info['name'],
 			'time' => time(),
-		);
+		];
 	}
 
 	// And get ready to notify people.
@@ -652,10 +652,10 @@ function editModComment($comment_id, $edited_comment)
 		UPDATE {db_prefix}log_comments
 		SET  body = {string:body}
 		WHERE id_comment = {int:id_comment}',
-		array(
+		[
 			'body' => $edited_comment,
 			'id_comment' => $comment_id,
-		)
+		]
 	);
 	return true;
 }
@@ -676,9 +676,9 @@ function deleteModComment($comment_id)
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}log_comments
 		WHERE id_comment = {int:comment_id}',
-		array(
+		[
 			'comment_id' => $comment_id,
-		)
+		]
 	);
 
 }

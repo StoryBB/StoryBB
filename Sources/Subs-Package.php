@@ -79,7 +79,7 @@ function deltree($dir, $delete_dir = true)
 	{
 		if ($delete_dir && isset($package_ftp))
 		{
-			$ftp_file = strtr($dir, array($_SESSION['pack_ftp']['root'] => ''));
+			$ftp_file = strtr($dir, [$_SESSION['pack_ftp']['root'] => '']);
 			if (!is_dir($dir))
 				$package_ftp->chmod($ftp_file, 0777);
 			$package_ftp->unlink($ftp_file);
@@ -90,7 +90,7 @@ function deltree($dir, $delete_dir = true)
 
 	while ($entryname = readdir($current_dir))
 	{
-		if (in_array($entryname, array('.', '..')))
+		if (in_array($entryname, ['.', '..']))
 			continue;
 
 		if (is_dir($dir . '/' . $entryname))
@@ -100,7 +100,7 @@ function deltree($dir, $delete_dir = true)
 			// Here, 755 doesn't really matter since we're deleting it anyway.
 			if (isset($package_ftp))
 			{
-				$ftp_file = strtr($dir . '/' . $entryname, array($_SESSION['pack_ftp']['root'] => ''));
+				$ftp_file = strtr($dir . '/' . $entryname, [$_SESSION['pack_ftp']['root'] => '']);
 
 				if (!is_writable($dir . '/' . $entryname))
 					$package_ftp->chmod($ftp_file, 0777);
@@ -121,7 +121,7 @@ function deltree($dir, $delete_dir = true)
 	{
 		if (isset($package_ftp))
 		{
-			$ftp_file = strtr($dir, array($_SESSION['pack_ftp']['root'] => ''));
+			$ftp_file = strtr($dir, [$_SESSION['pack_ftp']['root'] => '']);
 			if (!is_writable($dir . '/' . $entryname))
 				$package_ftp->chmod($ftp_file, 0777);
 			$package_ftp->unlink($ftp_file);
@@ -152,7 +152,7 @@ function mktree($strPath, $mode)
 		if (!is_writable($strPath) && $mode !== false)
 		{
 			if (isset($package_ftp))
-				$package_ftp->chmod(strtr($strPath, array($_SESSION['pack_ftp']['root'] => '')), $mode);
+				$package_ftp->chmod(strtr($strPath, [$_SESSION['pack_ftp']['root'] => '']), $mode);
 			else
 				sbb_chmod($strPath, $mode);
 		}
@@ -173,13 +173,13 @@ function mktree($strPath, $mode)
 	if (!is_writable(dirname($strPath)) && $mode !== false)
 	{
 		if (isset($package_ftp))
-			$package_ftp->chmod(dirname(strtr($strPath, array($_SESSION['pack_ftp']['root'] => ''))), $mode);
+			$package_ftp->chmod(dirname(strtr($strPath, [$_SESSION['pack_ftp']['root'] => ''])), $mode);
 		else
 			sbb_chmod(dirname($strPath), $mode);
 	}
 
 	if ($mode !== false && isset($package_ftp))
-		return $package_ftp->create_dir(strtr($strPath, array($_SESSION['pack_ftp']['root'] => '')));
+		return $package_ftp->create_dir(strtr($strPath, [$_SESSION['pack_ftp']['root'] => '']));
 	elseif ($mode === false)
 	{
 		$test = @opendir(dirname($strPath));
@@ -227,11 +227,11 @@ function copytree($source, $destination)
 
 	while ($entryname = readdir($current_dir))
 	{
-		if (in_array($entryname, array('.', '..')))
+		if (in_array($entryname, ['.', '..']))
 			continue;
 
 		if (isset($package_ftp))
-			$ftp_file = strtr($destination . '/' . $entryname, array($_SESSION['pack_ftp']['root'] => ''));
+			$ftp_file = strtr($destination . '/' . $entryname, [$_SESSION['pack_ftp']['root'] => '']);
 
 		if (is_file($source . '/' . $entryname))
 		{
@@ -295,7 +295,7 @@ function package_get_contents($filename)
 function package_put_contents($filename, $data, $testing = false)
 {
 	global $package_ftp, $package_cache, $modSettings;
-	static $text_filetypes = array('php', 'txt', '.js', 'css', 'vbs', 'tml', 'htm');
+	static $text_filetypes = ['php', 'txt', '.js', 'css', 'vbs', 'tml', 'htm'];
 
 	if (!isset($package_cache))
 	{
@@ -309,7 +309,7 @@ function package_put_contents($filename, $data, $testing = false)
 	}
 
 	if (isset($package_ftp))
-		$ftp_file = strtr($filename, array($_SESSION['pack_ftp']['root'] => ''));
+		$ftp_file = strtr($filename, [$_SESSION['pack_ftp']['root'] => '']);
 
 	if (!file_exists($filename) && isset($package_ftp))
 		$package_ftp->create_file($ftp_file);
@@ -353,7 +353,7 @@ function package_put_contents($filename, $data, $testing = false)
 function package_flush_cache($trash = false)
 {
 	global $package_ftp, $package_cache;
-	static $text_filetypes = array('php', 'txt', '.js', 'css', 'vbs', 'tml', 'htm');
+	static $text_filetypes = ['php', 'txt', '.js', 'css', 'vbs', 'tml', 'htm'];
 
 	if (empty($package_cache))
 		return;
@@ -362,7 +362,7 @@ function package_flush_cache($trash = false)
 	foreach ($package_cache as $filename => $data)
 	{
 		if (isset($package_ftp))
-			$ftp_file = strtr($filename, array($_SESSION['pack_ftp']['root'] => ''));
+			$ftp_file = strtr($filename, [$_SESSION['pack_ftp']['root'] => '']);
 
 		if (!file_exists($filename) && isset($package_ftp))
 			$package_ftp->create_file($ftp_file);
@@ -502,7 +502,7 @@ function package_chmod($filename, $perm_state = 'writable', $track_change = fals
 	// Otherwise we do have FTP?
 	elseif ($package_ftp !== false && !empty($_SESSION['pack_ftp']))
 	{
-		$ftp_file = strtr($filename, array($_SESSION['pack_ftp']['root'] => ''));
+		$ftp_file = strtr($filename, [$_SESSION['pack_ftp']['root'] => '']);
 
 		// This looks odd, but it's an attempt to work around PHP suExec.
 		if (!file_exists($filename) && $perm_state == 'writable')

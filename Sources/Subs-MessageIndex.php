@@ -65,18 +65,18 @@ function getBoardList($boardListOptions = [])
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (!isset($return_value[$row['id_cat']]))
-				$return_value[$row['id_cat']] = array(
+				$return_value[$row['id_cat']] = [
 					'id' => $row['id_cat'],
 					'name' => $row['cat_name'],
 					'boards' => [],
-				);
+				];
 
-			$return_value[$row['id_cat']]['boards'][$row['id_board']] = array(
+			$return_value[$row['id_cat']]['boards'][$row['id_board']] = [
 				'id' => $row['id_board'],
 				'name' => $row['board_name'],
 				'child_level' => $row['child_level'],
 				'selected' => isset($boardListOptions['selected_board']) && $boardListOptions['selected_board'] == $row['id_board'],
-			);
+			];
 		}
 	}
 	$smcFunc['db_free_result']($request);

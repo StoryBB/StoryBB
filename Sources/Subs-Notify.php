@@ -39,10 +39,10 @@ function getNotifyPrefs($members, $prefs = '', $process_default = false)
 		FROM {db_prefix}user_alerts_prefs
 		WHERE id_member IN ({array_int:members})' . (!empty($prefs) ? '
 			AND alert_pref IN ({array_string:prefs})' : ''),
-		array(
+		[
 			'members' => $members,
 			'prefs' => $prefs,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -77,13 +77,13 @@ function setNotifyPrefs($memID, $prefs = [])
 
 	$update_rows = [];
 	foreach ($prefs as $k => $v)
-		$update_rows[] = array($memID, $k, $v);
+		$update_rows[] = [$memID, $k, $v];
 
 	$smcFunc['db_insert']('replace',
 		'{db_prefix}user_alerts_prefs',
-		array('id_member' => 'int', 'alert_pref' => 'string', 'alert_value' => 'int'),
+		['id_member' => 'int', 'alert_pref' => 'string', 'alert_value' => 'int'],
 		$update_rows,
-		array('id_member', 'alert_pref')
+		['id_member', 'alert_pref']
 	);
 }
 
@@ -104,9 +104,9 @@ function deleteNotifyPrefs($memID, array $prefs)
 		DELETE FROM {db_prefix}user_alerts_prefs
 		WHERE id_member = {int:member}
 			AND alert_pref IN ({array_string:prefs})',
-		array(
+		[
 			'member' => $memID,
 			'prefs' => $prefs,
-		)
+		]
 	);
 }

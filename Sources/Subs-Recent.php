@@ -41,11 +41,11 @@ function getLastPosts($latestPostOptions)
 			AND m.approved = {int:is_approved}
 		ORDER BY m.id_msg DESC
 		LIMIT ' . $latestPostOptions['number_posts'],
-		array(
+		[
 			'likely_max_msg' => max(0, $modSettings['maxMsgID'] - 50 * $latestPostOptions['number_posts']),
 			'recycle_board' => $modSettings['recycle_board'],
 			'is_approved' => 1,
-		)
+		]
 	);
 	$posts = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -54,25 +54,25 @@ function getLastPosts($latestPostOptions)
 		censorText($row['subject']);
 		censorText($row['body']);
 
-		$row['body'] = strip_tags(strtr(Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br>' => '&#10;')));
+		$row['body'] = strip_tags(strtr(Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), ['<br>' => '&#10;']));
 		if ($smcFunc['strlen']($row['body']) > 128)
 			$row['body'] = $smcFunc['substr']($row['body'], 0, 128) . '...';
 
 		// Build the array.
-		$posts[] = array(
-			'board' => array(
+		$posts[] = [
+			'board' => [
 				'id' => $row['id_board'],
 				'name' => $row['board_name'],
 				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['board_name'] . '</a>'
-			),
+			],
 			'topic' => $row['id_topic'],
-			'poster' => array(
+			'poster' => [
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
 				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'],
 				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>'
-			),
+			],
 			'subject' => $row['subject'],
 			'short_subject' => shorten_subject($row['subject'], 24),
 			'preview' => $row['body'],
@@ -81,7 +81,7 @@ function getLastPosts($latestPostOptions)
 			'raw_timestamp' => $row['poster_time'],
 			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ';topicseen#msg' . $row['id_msg'],
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ';topicseen#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>'
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -95,7 +95,7 @@ function getLastPosts($latestPostOptions)
  */
 function cache_getLastPosts($latestPostOptions)
 {
-	return array(
+	return [
 		'data' => getLastPosts($latestPostOptions),
 		'expires' => time() + 60,
 		'post_retri_eval' => '
@@ -104,5 +104,5 @@ function cache_getLastPosts($latestPostOptions)
 				$cache_block[\'data\'][$k][\'time\'] = timeformat($post[\'raw_timestamp\']);
 				$cache_block[\'data\'][$k][\'timestamp\'] = forum_time(true, $post[\'raw_timestamp\']);
 			}',
-	);
+	];
 }

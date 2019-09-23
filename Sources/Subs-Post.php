@@ -29,11 +29,11 @@ function preparsecode(&$message, $previewing = false)
 	// Clean up after nobbc ;).
 	$message = preg_replace_callback('~\[nobbc\](.+?)\[/nobbc\]~is', function($a)
 	{
-		return '[nobbc]' . strtr($a[1], array('[' => '&#91;', ']' => '&#93;', ':' => '&#58;', '@' => '&#64;')) . '[/nobbc]';
+		return '[nobbc]' . strtr($a[1], ['[' => '&#91;', ']' => '&#93;', ':' => '&#58;', '@' => '&#64;']) . '[/nobbc]';
 	}, $message);
 
 	// Remove \r's... they're evil!
-	$message = strtr($message, array("\r" => ''));
+	$message = strtr($message, ["\r" => '']);
 
 	// You won't believe this - but too many periods upsets apache it seems!
 	$message = preg_replace('~\.{100,}~', '...', $message);
@@ -110,7 +110,7 @@ function preparsecode(&$message, $previewing = false)
 	{
 		if (allowedTo('admin_forum'))
 			$message = preg_replace_callback('~\[html\](.+?)\[/html\]~is', function($m) {
-				return '[html]' . strtr(un_htmlspecialchars($m[1]), array("\n" => '&#13;', '  ' => ' &#32;', '[' => '&#91;', ']' => '&#93;')) . '[/html]';
+				return '[html]' . strtr(un_htmlspecialchars($m[1]), ["\n" => '&#13;', '  ' => ' &#32;', '[' => '&#91;', ']' => '&#93;']) . '[/html]';
 			}, $message);
 
 		// We should edit them out, or else if an admin edits the message they will get shown...
@@ -138,7 +138,7 @@ function preparsecode(&$message, $previewing = false)
 	if ($list_open - $list_close > 0)
 		$message = $message . str_repeat('[/list]', $list_open - $list_close);
 
-	$mistake_fixes = array(
+	$mistake_fixes = [
 		// Find [table]s not followed by [tr].
 		'~\[table\](?![\s' . $non_breaking_space . ']*\[tr\])~su' => '[table][tr]',
 		// Find [tr]s not followed by [td].
@@ -182,17 +182,17 @@ function preparsecode(&$message, $previewing = false)
 		'~\[_(li|/li|td|tr|/tr)_\]~' => '[$1]',
 		// Images with no real url.
 		'~\[img\]https?://.{0,7}\[/img\]~' => '',
-	);
+	];
 
 	// Fix up some use of tables without [tr]s, etc. (it has to be done more than once to catch it all.)
 	for ($j = 0; $j < 3; $j++)
 		$message = preg_replace(array_keys($mistake_fixes), $mistake_fixes, $message);
 
 	// Remove empty bbc from the sections outside the code tags
-	$allowedEmpty = array(
+	$allowedEmpty = [
 		'anchor',
 		'td',
-	);
+	];
 
 	require_once($sourcedir . '/Subs.php');
 
@@ -211,12 +211,12 @@ function preparsecode(&$message, $previewing = false)
 
 	// Restore white space entities
 	if (!$previewing)
-		$message = strtr($message, array('  ' => '&nbsp; ', "\n" => '<br>', "\xC2\xA0" => '&nbsp;'));
+		$message = strtr($message, ['  ' => '&nbsp; ', "\n" => '<br>', "\xC2\xA0" => '&nbsp;']);
 	else
-		$message = strtr($message, array('  ' => '&nbsp; ', "\xC2\xA0" => '&nbsp;'));
+		$message = strtr($message, ['  ' => '&nbsp; ', "\xC2\xA0" => '&nbsp;']);
 
 	// Now let's quickly clean up things that will slow our parser (which are common in posted code.)
-	$message = strtr($message, array('[]' => '&#91;]', '[&#039;' => '&#91;&#039;'));
+	$message = strtr($message, ['[]' => '&#91;]', '[&#039;' => '&#91;&#039;']);
 }
 
 /**
@@ -247,7 +247,7 @@ function un_preparsecode($message)
 
 	$message = preg_replace_callback('~\[html\](.+?)\[/html\]~i', function($m) use ($smcFunc)
 	{
-		return "[html]" . strtr($smcFunc['htmlspecialchars']("$m[1]", ENT_QUOTES), array("\\&quot;" => "&quot;", "&amp;#13;" => "<br>", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]")) . "[/html]";
+		return "[html]" . strtr($smcFunc['htmlspecialchars']("$m[1]", ENT_QUOTES), ["\\&quot;" => "&quot;", "&amp;#13;" => "<br>", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]"]) . "[/html]";
 	}, $message);
 
 	if (!empty($code_tags))
@@ -270,58 +270,58 @@ function fixTags(&$message)
 	// WARNING: Editing the below can cause large security holes in your forum.
 	// Edit only if you are sure you know what you are doing.
 
-	$fixArray = array(
+	$fixArray = [
 		// [img]http://...[/img] or [img width=1]http://...[/img]
-		array(
+		[
 			'tag' => 'img',
-			'protocols' => array('http', 'https'),
+			'protocols' => ['http', 'https'],
 			'embeddedUrl' => false,
 			'hasEqualSign' => false,
 			'hasExtra' => true,
-		),
+		],
 		// [url]http://...[/url]
-		array(
+		[
 			'tag' => 'url',
-			'protocols' => array('http', 'https'),
+			'protocols' => ['http', 'https'],
 			'embeddedUrl' => false,
 			'hasEqualSign' => false,
-		),
+		],
 		// [url=http://...]name[/url]
-		array(
+		[
 			'tag' => 'url',
-			'protocols' => array('http', 'https'),
+			'protocols' => ['http', 'https'],
 			'embeddedUrl' => true,
 			'hasEqualSign' => true,
-		),
+		],
 		// [iurl]http://...[/iurl]
-		array(
+		[
 			'tag' => 'iurl',
-			'protocols' => array('http', 'https'),
+			'protocols' => ['http', 'https'],
 			'embeddedUrl' => false,
 			'hasEqualSign' => false,
-		),
+		],
 		// [iurl=http://...]name[/iurl]
-		array(
+		[
 			'tag' => 'iurl',
-			'protocols' => array('http', 'https'),
+			'protocols' => ['http', 'https'],
 			'embeddedUrl' => true,
 			'hasEqualSign' => true,
-		),
+		],
 		// [ftp]ftp://...[/ftp]
-		array(
+		[
 			'tag' => 'ftp',
-			'protocols' => array('ftp', 'ftps'),
+			'protocols' => ['ftp', 'ftps'],
 			'embeddedUrl' => false,
 			'hasEqualSign' => false,
-		),
+		],
 		// [ftp=ftp://...]name[/ftp]
-		array(
+		[
 			'tag' => 'ftp',
-			'protocols' => array('ftp', 'ftps'),
+			'protocols' => ['ftp', 'ftps'],
 			'embeddedUrl' => true,
 			'hasEqualSign' => true,
-		),
-	);
+		],
+	];
 
 	// Fix each type of tag.
 	foreach ($fixArray as $param)
@@ -514,12 +514,12 @@ function AddMailQueue($flush = false, $to_array = [], $subject = '', $message = 
 		// Dump the data...
 		$smcFunc['db_insert']('',
 			'{db_prefix}mail_queue',
-			array(
+			[
 				'time_sent' => 'int', 'recipient' => 'string-255', 'body' => 'string', 'subject' => 'string-255',
 				'headers' => 'string-65534', 'send_html' => 'int', 'priority' => 'int', 'private' => 'int',
-			),
+			],
 			$cur_insert,
-			array('id_mail')
+			['id_mail']
 		);
 
 		$cur_insert = [];
@@ -536,10 +536,10 @@ function AddMailQueue($flush = false, $to_array = [], $subject = '', $message = 
 			SET value = {string:nextSendTime}
 			WHERE variable = {literal:mail_next_send}
 				AND value = {string:no_outstanding}',
-			array(
+			[
 				'nextSendTime' => $nextSendTime,
 				'no_outstanding' => '0',
-			)
+			]
 		);
 
 		return true;
@@ -559,12 +559,12 @@ function AddMailQueue($flush = false, $to_array = [], $subject = '', $message = 
 			// Flush out what we have so far.
 			$smcFunc['db_insert']('',
 				'{db_prefix}mail_queue',
-				array(
+				[
 					'time_sent' => 'int', 'recipient' => 'string-255', 'body' => 'string', 'subject' => 'string-255',
 					'headers' => 'string-65534', 'send_html' => 'int', 'priority' => 'int', 'private' => 'int',
-				),
+				],
 				$cur_insert,
-				array('id_mail')
+				['id_mail']
 			);
 
 			// Clear this out.
@@ -573,7 +573,7 @@ function AddMailQueue($flush = false, $to_array = [], $subject = '', $message = 
 		}
 
 		// Now add the current insert to the array...
-		$cur_insert[] = array(time(), (string) $to, (string) $message, (string) $subject, (string) $headers, ($send_html ? 1 : 0), $priority, (int) $is_private);
+		$cur_insert[] = [time(), (string) $to, (string) $message, (string) $subject, (string) $headers, ($send_html ? 1 : 0), $priority, (int) $is_private];
 		$cur_insert_len += $this_insert_len;
 	}
 
@@ -605,31 +605,31 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	loadLanguage('PersonalMessage');
 
 	// Initialize log array.
-	$log = array(
+	$log = [
 		'failed' => [],
 		'sent' => []
-	);
+	];
 
 	if ($from === null)
-		$from = array(
+		$from = [
 			'id' => $user_info['id'],
 			'name' => $user_info['name'],
 			'username' => $user_info['username']
-		);
+		];
 
 	// This is the one that will go in their inbox.
 	$htmlmessage = $smcFunc['htmlspecialchars']($message, ENT_QUOTES);
 	preparsecode($htmlmessage);
-	$htmlsubject = strtr($smcFunc['htmlspecialchars']($subject), array("\r" => '', "\n" => '', "\t" => ''));
+	$htmlsubject = strtr($smcFunc['htmlspecialchars']($subject), ["\r" => '', "\n" => '', "\t" => '']);
 	if ($smcFunc['strlen']($htmlsubject) > 100)
 		$htmlsubject = $smcFunc['substr']($htmlsubject, 0, 100);
 
 	// Make sure is an array
 	if (!is_array($recipients))
-		$recipients = array($recipients);
+		$recipients = [$recipients];
 
 	// Integrated PMs
-	call_integration_hook('integrate_personal_message', array(&$recipients, &$from, &$subject, &$message));
+	call_integration_hook('integrate_personal_message', [&$recipients, &$from, &$subject, &$message]);
 
 	// Get a list of usernames and convert them to IDs.
 	$usernames = [];
@@ -650,9 +650,9 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			SELECT id_member, member_name
 			FROM {db_prefix}members
 			WHERE ' . ($smcFunc['db_case_sensitive'] ? 'LOWER(member_name)' : 'member_name') . ' IN ({array_string:usernames})',
-			array(
+			[
 				'usernames' => array_keys($usernames),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			if (isset($usernames[$smcFunc['strtolower']($row['member_name'])]))
@@ -692,10 +692,10 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		FROM {db_prefix}pm_rules
 		WHERE id_member IN ({array_int:to_members})
 			AND delete_pm = {int:delete_pm}',
-		array(
+		[
 			'to_members' => $all_to,
 			'delete_pm' => 1,
-		)
+		]
 	);
 	$deletes = [];
 	// Check whether we have to apply anything...
@@ -728,8 +728,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		$request = $smcFunc['db_query']('', '
 			SELECT id_group, max_messages
 			FROM {db_prefix}membergroups',
-			array(
-			)
+			[
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$message_limit_cache[$row['id_group']] = $row['max_messages'];
@@ -742,7 +742,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 	// Load their alert preferences
 	require_once($sourcedir . '/Subs-Notify.php');
-	$notifyPrefs = getNotifyPrefs($all_to, array('pm_new', 'pm_reply', 'pm_notify'), true);
+	$notifyPrefs = getNotifyPrefs($all_to, ['pm_new', 'pm_reply', 'pm_notify'], true);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT
@@ -757,14 +757,14 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		WHERE id_member IN ({array_int:recipients})
 		ORDER BY lngfile
 		LIMIT {int:count_recipients}',
-		array(
+		[
 			'not_on_ignore_list' => 1,
 			'buddies_only' => 2,
 			'admins_only' => 3,
 			'recipients' => $all_to,
 			'count_recipients' => count($all_to),
 			'from_id' => $from['id'],
-		)
+		]
 	);
 	$notifications = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -775,11 +775,11 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 		// Load the preferences for this member (if any)
 		$prefs = !empty($notifyPrefs[$row['id_member']]) ? $notifyPrefs[$row['id_member']] : [];
-		$prefs = array_merge(array(
+		$prefs = array_merge([
 			'pm_new' => 0,
 			'pm_reply' => 0,
 			'pm_notify' => 0,
-		), $prefs);
+		], $prefs);
 
 		// We need to know this members groups.
 		$groups = explode(',', $row['additional_groups']);
@@ -845,15 +845,15 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	// Insert the message itself and then grab the last insert id.
 	$id_pm = $smcFunc['db_insert']('',
 		'{db_prefix}personal_messages',
-		array(
+		[
 			'id_pm_head' => 'int', 'id_member_from' => 'int', 'deleted_by_sender' => 'int',
 			'from_name' => 'string-255', 'msgtime' => 'int', 'subject' => 'string-255', 'body' => 'string-65534',
-		),
-		array(
+		],
+		[
 			$pm_head, $from['id'], ($store_outbox ? 0 : 1),
 			$from['username'], time(), $htmlsubject, $htmlmessage,
-		),
-		array('id_pm'),
+		],
+		['id_pm'],
 		1
 	);
 
@@ -866,36 +866,36 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 				UPDATE {db_prefix}personal_messages
 				SET id_pm_head = {int:id_pm_head}
 				WHERE id_pm = {int:id_pm_head}',
-				array(
+				[
 					'id_pm_head' => $id_pm,
-				)
+				]
 			);
 
 		// Some people think manually deleting personal_messages is fun... it's not. We protect against it though :)
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}pm_recipients
 			WHERE id_pm = {int:id_pm}',
-			array(
+			[
 				'id_pm' => $id_pm,
-			)
+			]
 		);
 
 		$insertRows = [];
 		$to_list = [];
 		foreach ($all_to as $to)
 		{
-			$insertRows[] = array($id_pm, $to, in_array($to, $recipients['bcc']) ? 1 : 0, isset($deletes[$to]) ? 1 : 0, 1);
+			$insertRows[] = [$id_pm, $to, in_array($to, $recipients['bcc']) ? 1 : 0, isset($deletes[$to]) ? 1 : 0, 1];
 			if (!in_array($to, $recipients['bcc']))
 				$to_list[] = $to;
 		}
 
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}pm_recipients',
-			array(
+			[
 				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'deleted' => 'int', 'is_new' => 'int'
-			),
+			],
 			$insertRows,
-			array('id_pm', 'id_member')
+			['id_pm', 'id_member']
 		);
 	}
 
@@ -903,7 +903,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	if (empty($modSettings['disallow_sendBody']))
 	{
 		censorText($message);
-		$message = trim(un_htmlspecialchars(strip_tags(strtr(Parser::parse_bbc($smcFunc['htmlspecialchars']($message), false), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+		$message = trim(un_htmlspecialchars(strip_tags(strtr(Parser::parse_bbc($smcFunc['htmlspecialchars']($message), false), ['<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']']))));
 	}
 	else
 		$message = '';
@@ -915,22 +915,22 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			SELECT real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:to_members})',
-			array(
+			[
 				'to_members' => $to_list,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$to_names[] = un_htmlspecialchars($row['real_name']);
 		$smcFunc['db_free_result']($request);
 	}
-	$replacements = array(
+	$replacements = [
 		'SUBJECT' => $subject,
 		'MESSAGE' => $message,
 		'SENDER' => un_htmlspecialchars($from['name']),
 		'READLINK' => $scripturl . '?action=pm;pmsg=' . $id_pm . '#msg' . $id_pm,
 		'REPLYLINK' => $scripturl . '?action=pm;sa=send;f=inbox;pmsg=' . $id_pm . ';quote;u=' . $from['id'],
 		'TOLIST' => implode(', ', $to_names),
-	);
+	];
 	$email_template = 'new_pm' . (empty($modSettings['disallow_sendBody']) ? '_body' : '') . (!empty($to_names) ? '_tolist' : '');
 
 	foreach ($notifications as $lang => $notification_list)
@@ -942,7 +942,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	}
 
 	// Integrated After PMs
-	call_integration_hook('integrate_personal_message_after', array(&$id_pm, &$log, &$recipients, &$from, &$subject, &$message));
+	call_integration_hook('integrate_personal_message_after', [&$id_pm, &$log, &$recipients, &$from, &$subject, &$message]);
 
 	// Back to what we were on before!
 	loadLanguage('General+PersonalMessage');
@@ -952,7 +952,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		if (isset($deletes[$id]))
 			unset($all_to[$k]);
 	if (!empty($all_to))
-		updateMemberData($all_to, array('instant_messages' => '+', 'unread_messages' => '+', 'new_pm' => 1));
+		updateMemberData($all_to, ['instant_messages' => '+', 'unread_messages' => '+', 'new_pm' => 1]);
 
 	return $log;
 }
@@ -979,7 +979,7 @@ function sendNotifications($topics, $type, $exclude = [], $members_only = [])
 		return;
 	// It must be an array - it must!
 	if (!is_array($topics))
-		$topics = array($topics);
+		$topics = [$topics];
 
 	// Get the subject and body...
 	$result = $smcFunc['db_query']('', '
@@ -991,9 +991,9 @@ function sendNotifications($topics, $type, $exclude = [], $members_only = [])
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ml.id_member)
 		WHERE t.id_topic IN ({array_int:topic_list})
 		LIMIT 1',
-		array(
+		[
 			'topic_list' => $topics,
-		)
+		]
 	);
 	$task_rows = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -1002,23 +1002,23 @@ function sendNotifications($topics, $type, $exclude = [], $members_only = [])
 		censorText($row['subject']);
 		censorText($row['body']);
 		$row['subject'] = un_htmlspecialchars($row['subject']);
-		$row['body'] = trim(un_htmlspecialchars(strip_tags(strtr(Parser::parse_bbc($row['body'], false, $row['id_last_msg']), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+		$row['body'] = trim(un_htmlspecialchars(strip_tags(strtr(Parser::parse_bbc($row['body'], false, $row['id_last_msg']), ['<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']']))));
 
 		StoryBB\Task::batch_queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
-			'msgOptions' => array(
+			'msgOptions' => [
 				'id' => $row['id_msg'],
 				'subject' => $row['subject'],
 				'body' => $row['body'],
-			),
-			'topicOptions' => array(
+			],
+			'topicOptions' => [
 				'id' => $row['id_topic'],
 				'board' => $row['id_board'],
-			),
+			],
 			// Kinda cheeky, but for any action the originator is usually the current user
-			'posterOptions' => array(
+			'posterOptions' => [
 				'id' => $user_info['id'],
 				'name' => $user_info['name'],
-			),
+			],
 			'type' => $type,
 			'members_only' => $members_only,
 		]);
@@ -1071,7 +1071,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	global $smcFunc;
 
 	if (!is_array($msgs))
-		$msgs = array($msgs);
+		$msgs = [$msgs];
 
 	if (empty($msgs))
 		return false;
@@ -1087,10 +1087,10 @@ function approvePosts($msgs, $approve = true, $notify = true)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_msg IN ({array_int:message_list})
 			AND m.approved = {int:approved_state}',
-		array(
+		[
 			'message_list' => $msgs,
 			'approved_state' => $approve ? 0 : 1,
-		)
+		]
 	);
 	$msgs = [];
 	$topics = [];
@@ -1108,19 +1108,19 @@ function approvePosts($msgs, $approve = true, $notify = true)
 
 		// Ensure our change array exists already.
 		if (!isset($topic_changes[$row['id_topic']]))
-			$topic_changes[$row['id_topic']] = array(
+			$topic_changes[$row['id_topic']] = [
 				'id_last_msg' => $row['id_last_msg'],
 				'approved' => $row['topic_approved'],
 				'replies' => 0,
 				'unapproved_posts' => 0,
-			);
+			];
 		if (!isset($board_changes[$row['id_board']]))
-			$board_changes[$row['id_board']] = array(
+			$board_changes[$row['id_board']] = [
 				'posts' => 0,
 				'topics' => 0,
 				'unapproved_posts' => 0,
 				'unapproved_topics' => 0,
-			);
+			];
 
 		// If it's the first message then the topic state changes!
 		if ($row['id_msg'] == $row['id_first_msg'])
@@ -1131,7 +1131,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 			$board_changes[$row['id_board']]['topics'] += $approve ? 1 : -1;
 
 			// Note we need to ensure we announce this topic!
-			$notification_topics[] = array(
+			$notification_topics[] = [
 				'body' => $row['body'],
 				'subject' => $row['subject'],
 				'name' => $row['poster_name'],
@@ -1140,7 +1140,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 				'msg' => $row['id_first_msg'],
 				'poster' => $row['id_member'],
 				'new_topic' => true,
-			);
+			];
 		}
 		else
 		{
@@ -1148,7 +1148,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 
 			// This will be a post... but don't notify unless it's not followed by approved ones.
 			if ($row['id_msg'] > $row['id_last_msg'])
-				$notification_posts[$row['id_topic']] = array(
+				$notification_posts[$row['id_topic']] = [
 					'id' => $row['id_msg'],
 					'body' => $row['body'],
 					'subject' => $row['subject'],
@@ -1158,7 +1158,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 					'poster' => $row['id_member'],
 					'new_topic' => false,
 					'msg' => $row['id_msg'],
-				);
+				];
 		}
 
 		// If this is being approved and id_msg is higher than the current id_last_msg then it changes.
@@ -1190,10 +1190,10 @@ function approvePosts($msgs, $approve = true, $notify = true)
 		UPDATE {db_prefix}messages
 		SET approved = {int:approved_state}
 		WHERE id_msg IN ({array_int:message_list})',
-		array(
+		[
 			'message_list' => $msgs,
 			'approved_state' => $approve ? 1 : 0,
-		)
+		]
 	);
 
 	// If we were unapproving find the last msg in the topics...
@@ -1205,10 +1205,10 @@ function approvePosts($msgs, $approve = true, $notify = true)
 			WHERE id_topic IN ({array_int:topic_list})
 				AND approved = {int:approved}
 			GROUP BY id_topic',
-			array(
+			[
 				'topic_list' => $topics,
 				'approved' => 1,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topic_changes[$row['id_topic']]['id_last_msg'] = $row['id_last_msg'];
@@ -1222,13 +1222,13 @@ function approvePosts($msgs, $approve = true, $notify = true)
 			SET approved = {int:approved}, unapproved_posts = unapproved_posts + {int:unapproved_posts},
 				num_replies = num_replies + {int:num_replies}, id_last_msg = {int:id_last_msg}
 			WHERE id_topic = {int:id_topic}',
-			array(
+			[
 				'approved' => $changes['approved'],
 				'unapproved_posts' => $changes['unapproved_posts'],
 				'num_replies' => $changes['replies'],
 				'id_last_msg' => $changes['id_last_msg'],
 				'id_topic' => $id,
-			)
+			]
 		);
 
 	// ... finally the boards...
@@ -1238,13 +1238,13 @@ function approvePosts($msgs, $approve = true, $notify = true)
 			SET num_posts = num_posts + {int:num_posts}, unapproved_posts = unapproved_posts + {int:unapproved_posts},
 				num_topics = num_topics + {int:num_topics}, unapproved_topics = unapproved_topics + {int:unapproved_topics}
 			WHERE id_board = {int:id_board}',
-			array(
+			[
 				'num_posts' => $changes['posts'],
 				'unapproved_posts' => $changes['unapproved_posts'],
 				'num_topics' => $changes['topics'],
 				'unapproved_topics' => $changes['unapproved_topics'],
 				'id_board' => $id,
-			)
+			]
 		);
 
 	// Finally, least importantly, notifications!
@@ -1254,19 +1254,19 @@ function approvePosts($msgs, $approve = true, $notify = true)
 		foreach (array_merge($notification_topics, $notification_posts) as $topic)
 		{
 			StoryBB\Task::batch_queue_adhoc('StoryBB\\Task\\Adhoc\\CreatePostNotify', [
-				'msgOptions' => array(
+				'msgOptions' => [
 					'id' => $topic['msg'],
 					'body' => $topic['body'],
 					'subject' => $topic['subject'],
-				),
-				'topicOptions' => array(
+				],
+				'topicOptions' => [
 					'id' => $topic['topic'],
 					'board' => $topic['board'],
-				),
-				'posterOptions' => array(
+				],
+				'posterOptions' => [
 					'id' => $topic['poster'],
 					'name' => $topic['name'],
-				),
+				],
 				'type' => $topic['new_topic'] ? 'topic' : 'reply',
 			]);
 		}
@@ -1278,10 +1278,10 @@ function approvePosts($msgs, $approve = true, $notify = true)
 			DELETE FROM {db_prefix}approval_queue
 			WHERE id_msg IN ({array_int:message_list})
 				AND id_attach = {int:id_attach}',
-			array(
+			[
 				'message_list' => $msgs,
 				'id_attach' => 0,
-			)
+			]
 		);
 	}
 	// If unapproving add to the approval queue!
@@ -1289,13 +1289,13 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	{
 		$msgInserts = [];
 		foreach ($msgs as $msg)
-			$msgInserts[] = array($msg);
+			$msgInserts[] = [$msg];
 
 		$smcFunc['db_insert']('ignore',
 			'{db_prefix}approval_queue',
-			array('id_msg' => 'int'),
+			['id_msg' => 'int'],
 			$msgInserts,
-			array('id_msg')
+			['id_msg']
 		);
 	}
 
@@ -1305,10 +1305,10 @@ function approvePosts($msgs, $approve = true, $notify = true)
 	// Post count for the members?
 	if (!empty($member_post_changes))
 		foreach ($member_post_changes as $id_member => $count_change)
-			updateMemberData($id_member, array('posts' => 'posts ' . ($approve ? '+' : '-') . ' ' . $count_change));
+			updateMemberData($id_member, ['posts' => 'posts ' . ($approve ? '+' : '-') . ' ' . $count_change]);
 	if (!empty($char_post_changes))
 		foreach ($char_post_changes as $id_char => $count_change)
-			updateCharacterData($id_char, array('posts' => 'posts ' . ($approve ? '+' : '-') . ' ' . $count_change));
+			updateCharacterData($id_char, ['posts' => 'posts ' . ($approve ? '+' : '-') . ' ' . $count_change]);
 
 	return true;
 }
@@ -1326,7 +1326,7 @@ function approveTopics($topics, $approve = true)
 	global $smcFunc;
 
 	if (!is_array($topics))
-		$topics = array($topics);
+		$topics = [$topics];
 
 	if (empty($topics))
 		return false;
@@ -1339,10 +1339,10 @@ function approveTopics($topics, $approve = true)
 		FROM {db_prefix}messages
 		WHERE id_topic IN ({array_int:topic_list})
 			AND approved = {int:approve_type}',
-		array(
+		[
 			'topic_list' => $topics,
 			'approve_type' => $approve_type,
-		)
+		]
 	);
 	$msgs = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1373,7 +1373,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 		return false;
 
 	if (!is_array($setboards))
-		$setboards = array($setboards);
+		$setboards = [$setboards];
 
 	// If we don't know the id_msg we need to find it.
 	if (!$id_msg)
@@ -1385,10 +1385,10 @@ function updateLastMessages($setboards, $id_msg = 0)
 			WHERE id_board IN ({array_int:board_list})
 				AND approved = {int:approved}
 			GROUP BY id_board',
-			array(
+			[
 				'board_list' => $setboards,
 				'approved' => 1,
-			)
+			]
 		);
 		$lastMsg = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1443,7 +1443,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 	foreach ($parent_boards as $id => $msg)
 	{
 		if (!isset($parent_updates[$msg]))
-			$parent_updates[$msg] = array($id);
+			$parent_updates[$msg] = [$id];
 		else
 			$parent_updates[$msg][] = $id;
 	}
@@ -1451,11 +1451,11 @@ function updateLastMessages($setboards, $id_msg = 0)
 	foreach ($lastMsg as $id => $msg)
 	{
 		if (!isset($board_updates[$msg . '-' . $lastModified[$id]]))
-			$board_updates[$msg . '-' . $lastModified[$id]] = array(
+			$board_updates[$msg . '-' . $lastModified[$id]] = [
 				'id' => $msg,
 				'updated' => $lastModified[$id],
-				'boards' => array($id)
-			);
+				'boards' => [$id]
+			];
 
 		else
 			$board_updates[$msg . '-' . $lastModified[$id]]['boards'][] = $id;
@@ -1469,10 +1469,10 @@ function updateLastMessages($setboards, $id_msg = 0)
 			SET id_msg_updated = {int:id_msg_updated}
 			WHERE id_board IN ({array_int:board_list})
 				AND id_msg_updated < {int:id_msg_updated}',
-			array(
+			[
 				'board_list' => $boards,
 				'id_msg_updated' => $id_msg,
-			)
+			]
 		);
 	}
 	foreach ($board_updates as $board_data)
@@ -1481,11 +1481,11 @@ function updateLastMessages($setboards, $id_msg = 0)
 			UPDATE {db_prefix}boards
 			SET id_last_msg = {int:id_last_msg}, id_msg_updated = {int:id_msg_updated}
 			WHERE id_board IN ({array_int:board_list})',
-			array(
+			[
 				'board_list' => $board_data['boards'],
 				'id_last_msg' => $board_data['id'],
 				'id_msg_updated' => $board_data['updated'],
-			)
+			]
 		);
 	}
 }
@@ -1514,9 +1514,9 @@ function adminNotify($type, $memberID, $member_name = null)
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}
 			LIMIT 1',
-			array(
+			[
 				'id_member' => $memberID,
-			)
+			]
 		);
 		list ($member_name) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -1549,23 +1549,23 @@ function loadEmailTemplate($template, $replacements = [], $lang = '', $loadLang 
 		loadLanguage('EmailTemplates', $lang);
 
 	if (!isset($txt[$template . '_subject']) || !isset($txt[$template . '_body']))
-		fatal_lang_error('email_no_template', 'template', array($template));
+		fatal_lang_error('email_no_template', 'template', [$template]);
 
-	$ret = array(
+	$ret = [
 		'subject' => $txt[$template . '_subject'],
 		'body' => $txt[$template . '_body'],
 		'is_html' => !empty($txt[$template . '_html']),
-	);
+	];
 
 	// Add in the default replacements.
-	$replacements += array(
+	$replacements += [
 		'FORUMNAME' => $mbname,
 		'SCRIPTURL' => $scripturl,
 		'THEMEURL' => $settings['theme_url'],
 		'IMAGESURL' => $settings['images_url'],
 		'DEFAULT_THEMEURL' => $settings['default_theme_url'],
 		'REGARDS' => str_replace('{forum_name}', $mbname, $txt['regards_team']),
-	);
+	];
 
 	// Split the replacements up into two arrays, for use with str_replace
 	$find = [];

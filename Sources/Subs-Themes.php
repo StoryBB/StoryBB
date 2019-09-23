@@ -28,21 +28,21 @@ function get_single_theme($id)
 	$id = (int) $id;
 
 	// List of all possible values.
-	$themeValues = array(
+	$themeValues = [
 		'theme_dir',
 		'images_url',
 		'theme_url',
 		'name',
 		'version',
 		'install_for',
-	);
+	];
 
 	// Make changes if you really want it.
-	call_integration_hook('integrate_get_single_theme', array(&$themeValues, $id));
+	call_integration_hook('integrate_get_single_theme', [&$themeValues, $id]);
 
-	$single = array(
+	$single = [
 		'id' => $id,
-	);
+	];
 
 	// Make our known/enable themes a little easier to work with.
 	$knownThemes = !empty($modSettings['knownThemes']) ? explode(',', $modSettings['knownThemes']) : [];
@@ -54,11 +54,11 @@ function get_single_theme($id)
 		WHERE variable IN ({array_string:theme_values})
 			AND id_theme = ({int:id_theme})
 			AND id_member = {int:no_member}',
-		array(
+		[
 			'theme_values' => $themeValues,
 			'id_theme' => $id,
 			'no_member' => 0,
-		)
+		]
 	);
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -97,17 +97,17 @@ function get_all_themes($enable_only = false)
 	$enableThemes = !empty($modSettings['enableThemes']) ? explode(',', $modSettings['enableThemes']) : [];
 
 	// List of all possible themes values.
-	$themeValues = array(
+	$themeValues = [
 		'theme_dir',
 		'images_url',
 		'theme_url',
 		'name',
 		'version',
 		'install_for',
-	);
+	];
 
 	// Make changes if you really want it.
-	call_integration_hook('integrate_get_all_themes', array(&$themeValues, $enable_only));
+	call_integration_hook('integrate_get_all_themes', [&$themeValues, $enable_only]);
 
 	// So, what is it going to be?
 	$query_where = $enable_only ? $enableThemes : $knownThemes;
@@ -119,11 +119,11 @@ function get_all_themes($enable_only = false)
 		WHERE variable IN ({array_string:theme_values})
 			AND id_theme IN ({array_string:query_where})
 			AND id_member = {int:no_member}',
-		array(
+		[
 			'query_where' => $query_where,
 			'theme_values' => $themeValues,
 			'no_member' => 0,
-		)
+		]
 	);
 
 	$context['themes'] = [];
@@ -193,7 +193,7 @@ function get_theme_info($path)
 	}
 
 	// So, we have an install tag which is cool and stuff but we also need to check it and match your current StoryBB version...
-	$the_version = strtr($forum_version, array('StoryBB ' => ''));
+	$the_version = strtr($forum_version, ['StoryBB ' => '']);
 
 	// The theme isn't compatible with the current StoryBB version.
 	if (!matchPackageVersion($the_version, $theme_info['storybb_version']))
@@ -239,12 +239,12 @@ function theme_install($to_install = [])
 				AND variable = {string:name}
 				AND value LIKE {string:name_value}
 			LIMIT 1',
-			array(
+			[
 				'no_member' => 0,
 				'name' => 'name',
 				'version' => 'version',
 				'name_value' => '%' . $context['to_install']['name'] . '%',
-			)
+			]
 		);
 
 		$to_update = $smcFunc['db_fetch_assoc']($request);
@@ -260,11 +260,11 @@ function theme_install($to_install = [])
 						SET value = {string:new_value}
 						WHERE variable = {string:version}
 							AND id_theme = {int:id_theme}',
-						array(
+						[
 							'new_value' => $context['to_install']['version'],
 							'version' => 'version',
 							'id_theme' => $to_update['id_theme'],
-						)
+						]
 					);
 
 					// Done with the update, tell the user about it.
@@ -275,7 +275,7 @@ function theme_install($to_install = [])
 				case 0: // This is exactly the same theme.
 				case -1: // The one being installed is older than the one already installed.
 				default: // Any other possible result.
-					fatal_lang_error('package_get_error_theme_no_new_version', false, array($context['to_install']['version'], $to_update['version']));
+					fatal_lang_error('package_get_error_theme_no_new_version', false, [$context['to_install']['version'], $to_update['version']]);
 			}
 	}
 
@@ -283,8 +283,8 @@ function theme_install($to_install = [])
 	$result = $smcFunc['db_query']('', '
 		SELECT MAX(id_theme)
 		FROM {db_prefix}themes',
-		array(
-		)
+		[
+		]
 	);
 	list ($id_theme) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -293,7 +293,7 @@ function theme_install($to_install = [])
 	$id_theme++;
 
 	// Last minute changes? although, the actual array is a context value you might want to use the new ID.
-	call_integration_hook('integrate_theme_install', array(&$context['to_install'], $id_theme));
+	call_integration_hook('integrate_theme_install', [&$context['to_install'], $id_theme]);
 
 	$inserts = [];
 	foreach ($context['to_install'] as $var => $val)
@@ -301,21 +301,21 @@ function theme_install($to_install = [])
 		if (is_array($val))
 			continue;
 
-		$inserts[] = array($id_theme, $var, $val);
+		$inserts[] = [$id_theme, $var, $val];
 	}
 
 	if (!empty($inserts))
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}themes',
-			array('id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
+			['id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
 			$inserts,
-			array('id_theme', 'variable')
+			['id_theme', 'variable']
 		);
 
 	// Update the known and enable Theme's settings.
-	$known = strtr($modSettings['knownThemes'] . ',' . $id_theme, array(',,' => ','));
-	$enable = strtr($modSettings['enableThemes'] . ',' . $id_theme, array(',,' => ','));
-	updateSettings(array('knownThemes' => $known, 'enableThemes' => $enable));
+	$known = strtr($modSettings['knownThemes'] . ',' . $id_theme, [',,' => ',']);
+	$enable = strtr($modSettings['enableThemes'] . ',' . $id_theme, [',,' => ',']);
+	updateSettings(['knownThemes' => $known, 'enableThemes' => $enable]);
 
 	return $id_theme;
 }
@@ -372,9 +372,9 @@ function remove_theme($themeID)
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}themes
 		WHERE id_theme = {int:current_theme}',
-		array(
+		[
 			'current_theme' => $themeID,
-		)
+		]
 	);
 
 	// Update users preferences.
@@ -382,10 +382,10 @@ function remove_theme($themeID)
 		UPDATE {db_prefix}members
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',
-		array(
+		[
 			'default_theme' => 0,
 			'current_theme' => $themeID,
-		)
+		]
 	);
 
 	// Update characters settings too.
@@ -393,10 +393,10 @@ function remove_theme($themeID)
 		UPDATE {db_prefix}characters
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',
-		array(
+		[
 			'default_theme' => 0,
 			'current_theme' => $themeID,
-		)
+		]
 	);
 
 	// Some boards may have it as preferred theme.
@@ -404,32 +404,32 @@ function remove_theme($themeID)
 		UPDATE {db_prefix}boards
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',
-		array(
+		[
 			'default_theme' => 0,
 			'current_theme' => $themeID,
-		)
+		]
 	);
 
 	// Remove it from the list of known themes.
-	$known = array_diff($known, array($themeID));
+	$known = array_diff($known, [$themeID]);
 
 	// And the enable list too.
-	$enable = array_diff($enable, array($themeID));
+	$enable = array_diff($enable, [$themeID]);
 
 	// Back to good old comma separated string.
-	$known = strtr(implode(',', $known), array(',,' => ','));
-	$enable = strtr(implode(',', $enable), array(',,' => ','));
+	$known = strtr(implode(',', $known), [',,' => ',']);
+	$enable = strtr(implode(',', $enable), [',,' => ',']);
 
 	// Clear any cache of them having been minified before.
 	cache_put_data('minimized_'. $themeID .'_css', null, 0);
 	cache_put_data('minimized_'. $themeID .'_js', null, 0);
 
 	// Update the enableThemes list.
-	updateSettings(array('enableThemes' => $enable, 'knownThemes' => $known));
+	updateSettings(['enableThemes' => $enable, 'knownThemes' => $known]);
 
 	// Fix it if the theme was the overall default theme.
 	if ($modSettings['theme_guests'] == $themeID)
-		updateSettings(array('theme_guests' => '1'));
+		updateSettings(['theme_guests' => '1']);
 
 	return true;
 }

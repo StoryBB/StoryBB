@@ -32,10 +32,10 @@ function getBoardIndex($boardIndexOptions)
 
 	// For performance, track the latest post while going through the boards.
 	if (!empty($boardIndexOptions['set_latest_post']))
-		$latest_post = array(
+		$latest_post = [
 			'timestamp' => 0,
 			'ref' => 0,
-		);
+		];
 
 	// Find all boards and categories, as well as related information.  This will be sorted by the natural order of boards and categories, which we control.
 	$result_boards = $smcFunc['db_query']('', '
@@ -61,11 +61,11 @@ function getBoardIndex($boardIndexOptions)
 			AND b.child_level >= {int:child_level}') : '
 			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)) . '
 			ORDER BY ' . (!empty($boardIndexOptions['include_categories']) ? 'c.cat_order, ' : '') . 'b.child_level, b.board_order',
-		array(
+		[
 			'current_member' => $user_info['id'],
 			'child_level' => $boardIndexOptions['base_level'],
 			'blank_string' => '',
-		)
+		]
 	);
 
 	// Start with an empty array.
@@ -91,7 +91,7 @@ function getBoardIndex($boardIndexOptions)
 			// Haven't set this category yet.
 			if (empty($categories[$row_board['id_cat']]))
 			{
-				$categories[$row_board['id_cat']] = array(
+				$categories[$row_board['id_cat']] = [
 					'id' => $row_board['id_cat'],
 					'name' => $row_board['cat_name'],
 					'description' => $row_board['cat_desc'],
@@ -101,7 +101,7 @@ function getBoardIndex($boardIndexOptions)
 					'boards' => [],
 					'new' => false,
 					'css_class' => '',
-				);
+				];
 				$categories[$row_board['id_cat']]['link'] = '<a id="c' . $row_board['id_cat'] . '"></a>' . (!$context['user']['is_guest'] ? '<a href="' . $scripturl . '?action=unread;c=' . $row_board['id_cat'] . '" title="' . sprintf($txt['new_posts_in_category'], strip_tags($row_board['cat_name'])) . '">' . $row_board['cat_name'] . '</a>' : $row_board['cat_name']);
 			}
 
@@ -125,7 +125,7 @@ function getBoardIndex($boardIndexOptions)
 				// Not a child.
 				$isChild = false;
 
-				$this_category[$row_board['id_board']] = array(
+				$this_category[$row_board['id_board']] = [
 					'new' => empty($row_board['is_read']),
 					'id' => $row_board['id_board'],
 					'type' => $row_board['is_redirect'] ? 'redirect' : 'board',
@@ -143,12 +143,12 @@ function getBoardIndex($boardIndexOptions)
 					'is_redirect' => !empty($row_board['is_redirect']),
 					'unapproved_topics' => $row_board['unapproved_topics'],
 					'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
-					'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
+					'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == [0] || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
 					'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
 					'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
 					'board_class' => 'off',
 					'css_class' => '',
-				);
+				];
 
 				// We can do some of the figuring-out-what-icon now.
 				// For certain types of thing we also set up what the tooltip is.
@@ -175,7 +175,7 @@ function getBoardIndex($boardIndexOptions)
 			// A valid child!
 			$isChild = true;
 
-			$this_category[$row_board['id_parent']]['children'][$row_board['id_board']] = array(
+			$this_category[$row_board['id_parent']]['children'][$row_board['id_board']] = [
 				'id' => $row_board['id_board'],
 				'name' => $row_board['board_name'],
 				'description' => $row_board['description'],
@@ -186,10 +186,10 @@ function getBoardIndex($boardIndexOptions)
 				'is_redirect' => $row_board['is_redirect'],
 				'unapproved_topics' => $row_board['unapproved_topics'],
 				'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
-				'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
+				'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == [0] || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
 				'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>'
-			);
+			];
 
 			// Counting child board posts is... slow :/.
 			if (!empty($boardIndexOptions['countChildPosts']) && !$row_board['is_redirect'])
@@ -223,8 +223,8 @@ function getBoardIndex($boardIndexOptions)
 					if (!isset($board['children'][$row_board['id_parent']]))
 						continue;
 
-					$parent_map[$row_board['id_parent']] = array(&$this_category[$id], &$this_category[$id]['children'][$row_board['id_parent']]);
-					$parent_map[$row_board['id_board']] = array(&$this_category[$id], &$this_category[$id]['children'][$row_board['id_parent']]);
+					$parent_map[$row_board['id_parent']] = [&$this_category[$id], &$this_category[$id]['children'][$row_board['id_parent']]];
+					$parent_map[$row_board['id_board']] = [&$this_category[$id], &$this_category[$id]['children'][$row_board['id_parent']]];
 
 					break;
 				}
@@ -248,27 +248,27 @@ function getBoardIndex($boardIndexOptions)
 		// Prepare the subject, and make sure it's not too long.
 		censorText($row_board['subject']);
 		$row_board['short_subject'] = shorten_subject($row_board['subject'], 24);
-		$this_last_post = array(
+		$this_last_post = [
 			'id' => $row_board['id_msg'],
 			'time' => $row_board['poster_time'] > 0 ? timeformat($row_board['poster_time']) : $txt['not_applicable'],
 			'timestamp' => forum_time(true, $row_board['poster_time']),
 			'subject' => $row_board['short_subject'],
-			'member' => array(
+			'member' => [
 				'id' => $row_board['id_member'],
 				'username' => $row_board['poster_name'] != '' ? $row_board['poster_name'] : $txt['not_applicable'],
 				'name' => $row_board['real_name'],
 				'href' => $row_board['poster_name'] != '' && !empty($row_board['id_member']) ? $scripturl . '?action=profile;u=' . $row_board['id_member'] . (!empty($row_board['id_character']) ? ';area=characters;char=' . $row_board['id_character'] : '') : '',
 				'link' => $row_board['poster_name'] != '' ? (!empty($row_board['id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row_board['id_member'] . (!empty($row_board['id_character']) ? ';area=characters;char=' . $row_board['id_character'] : '') . '">' . $row_board['real_name'] . '</a>' : $row_board['real_name']) : $txt['not_applicable'],
-			),
+			],
 			'start' => 'msg' . $row_board['new_from'],
 			'topic' => $row_board['id_topic']
-		);
+		];
 
-		$this_last_post['member']['avatar'] = set_avatar_data(array(
+		$this_last_post['member']['avatar'] = set_avatar_data([
 			'avatar' => $row_board['avatar'],
 			'email' => $row_board['email_address'],
 			'filename' => !empty($row_board['member_filename']) ? $row_board['member_filename'] : '',
-		));
+		]);
 
 		// Provide the href and link.
 		if ($row_board['subject'] != '')
@@ -305,10 +305,10 @@ function getBoardIndex($boardIndexOptions)
 
 		// Determine a global most recent topic.
 		if (!empty($boardIndexOptions['set_latest_post']) && !empty($row_board['poster_time']) && $row_board['poster_time'] > $latest_post['timestamp'] && !$ignoreThisBoard)
-			$latest_post = array(
+			$latest_post = [
 				'timestamp' => $row_board['poster_time'],
 				'ref' => &$this_category[$isChild ? $row_board['id_parent'] : $row_board['id_board']]['last_post'],
-			);
+			];
 	}
 	$smcFunc['db_free_result']($result_boards);
 
@@ -373,9 +373,9 @@ function getBoardIndex($boardIndexOptions)
 
 	// I can't remember why but trying to make a ternary to get this all in one line is actually a Very Bad Idea.
 	if ($boardIndexOptions['include_categories'])
-		call_integration_hook('integrate_getboardtree', array($boardIndexOptions, &$categories));
+		call_integration_hook('integrate_getboardtree', [$boardIndexOptions, &$categories]);
 	else
-		call_integration_hook('integrate_getboardtree', array($boardIndexOptions, &$this_category));
+		call_integration_hook('integrate_getboardtree', [$boardIndexOptions, &$this_category]);
 
 	return $boardIndexOptions['include_categories'] ? $categories : $this_category;
 }

@@ -59,7 +59,7 @@ function createMenu($menuData, $menuOptions = [])
 
 	// Allow extend *any* menu with a single hook
 	if (!empty($menu_context['current_action']))
-		call_integration_hook('integrate_' . $menu_context['current_action'] . '_areas', array(&$menuData));
+		call_integration_hook('integrate_' . $menu_context['current_action'] . '_areas', [&$menuData]);
 
 	// What is the current area selected?
 	if (isset($menuOptions['current_area']) || isset($_GET['area']))
@@ -107,7 +107,7 @@ function createMenu($menuData, $menuOptions = [])
 						if (!isset($menu_context['sections'][$section_id]))
 							$menu_context['sections'][$section_id]['title'] = $section['title'];
 
-						$menu_context['sections'][$section_id]['areas'][$area_id] = array('label' => isset($area['label']) ? $area['label'] : $txt[$area_id]);
+						$menu_context['sections'][$section_id]['areas'][$area_id] = ['label' => isset($area['label']) ? $area['label'] : $txt[$area_id]];
 						// We'll need the ID as well...
 						$menu_context['sections'][$section_id]['id'] = $section_id;
 						// Does it have a custom URL?
@@ -133,10 +133,10 @@ function createMenu($menuData, $menuOptions = [])
 							elseif ((substr($area['icon'], -4) === '.png' || substr($area['icon'], -4) === '.gif') && file_exists($settings['default_theme_dir'] . '/images/admin/big/' . $area['icon']))
 								$menu_context['sections'][$section_id]['areas'][$area_id]['icon_file'] = $settings['default_theme_url'] . '/images/admin/big/' . $area['icon'];
 
-							$menu_context['sections'][$section_id]['areas'][$area_id]['icon_class'] = $menu_context['current_action'] . '_menu_icon ' . str_replace(array('.png', '.gif'), '', $area['icon']);
+							$menu_context['sections'][$section_id]['areas'][$area_id]['icon_class'] = $menu_context['current_action'] . '_menu_icon ' . str_replace(['.png', '.gif'], '', $area['icon']);
 						}
 						else
-							$menu_context['sections'][$section_id]['areas'][$area_id]['icon_class'] = $menu_context['current_action'] . '_menu_icon ' . str_replace(array('.png', '.gif'), '', $area_id);
+							$menu_context['sections'][$section_id]['areas'][$area_id]['icon_class'] = $menu_context['current_action'] . '_menu_icon ' . str_replace(['.png', '.gif'], '', $area_id);
 
 						// Some areas may be listed but not active, which we show as greyed out.
 						$menu_context['sections'][$section_id]['areas'][$area_id]['inactive'] = !empty($area['inactive']);
@@ -153,7 +153,7 @@ function createMenu($menuData, $menuOptions = [])
 									if ($first_sa == null)
 										$first_sa = $sa;
 
-									$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'][$sa] = array('label' => $sub[0]);
+									$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'][$sa] = ['label' => $sub[0]];
 									// Custom URL?
 									if (isset($sub['url']))
 										$menu_context['sections'][$section_id]['areas'][$area_id]['subsections'][$sa]['url'] = $sub['url'];
@@ -264,12 +264,12 @@ function createMenu($menuData, $menuOptions = [])
 		return false;
 
 	// Finally - return information on the selected item.
-	$include_data += array(
+	$include_data += [
 		'current_action' => $menu_context['current_action'],
 		'current_area' => $menu_context['current_area'],
 		'current_section' => $menu_context['current_section'],
 		'current_subsection' => !empty($menu_context['current_subsection']) ? $menu_context['current_subsection'] : '',
-	);
+	];
 
 	foreach ($menu_context['sections'] as $section_id => $section) {
 		foreach ($section['areas'] as $area_id => $area) {
