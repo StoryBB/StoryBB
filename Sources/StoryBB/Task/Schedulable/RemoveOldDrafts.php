@@ -55,9 +55,9 @@ class RemoveOldDrafts implements \StoryBB\Task\Schedulable
 			SELECT id_draft
 			FROM {db_prefix}user_drafts
 			WHERE poster_time <= {int:poster_time_old}',
-			array(
+			[
 				'poster_time_old' => time() - (86400 * $modSettings['drafts_keep_days']),
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_row']($request))

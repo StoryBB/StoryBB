@@ -50,19 +50,19 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 		$request = $smcFunc['db_query']('', '
 			SELECT id_file, filename, path, parameters
 			FROM {db_prefix}admin_info_files',
-			array(
-			)
+			[
+			]
 		);
 
 		$js_files = [];
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$js_files[$row['id_file']] = array(
+			$js_files[$row['id_file']] = [
 				'filename' => $row['filename'],
 				'path' => $row['path'],
 				'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode($forum_version)),
-			);
+			];
 		}
 
 		$smcFunc['db_free_result']($request);
@@ -93,10 +93,10 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 				UPDATE {db_prefix}admin_info_files
 				SET data = SUBSTRING({string:file_data}, 1, 65534)
 				WHERE id_file = {int:id_file}',
-				array(
+				[
 					'id_file' => $ID_FILE,
 					'file_data' => $file_data,
-				)
+				]
 			);
 		}
 		return true;

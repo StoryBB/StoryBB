@@ -56,18 +56,18 @@ class WeeklyDigest extends \StoryBB\Task\Schedulable\DailyDigest
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_digest
 			WHERE daily != {int:not_daily}',
-			array(
+			[
 				'not_daily' => 0,
-			)
+			]
 		);
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}log_digest
 			SET daily = {int:daily_value}
 			WHERE daily = {int:not_daily}',
-			array(
+			[
 				'daily_value' => 2,
 				'not_daily' => 0,
-			)
+			]
 		);
 	}
 }

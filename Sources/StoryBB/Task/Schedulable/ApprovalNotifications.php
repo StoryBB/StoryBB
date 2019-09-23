@@ -53,8 +53,8 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = aq.id_msg)
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)',
-			array(
-			)
+			[
+			]
 		);
 		$notices = [];
 		$profiles = [];
@@ -73,10 +73,10 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 				$type = 'msg';
 
 			// Add it to the array otherwise.
-			$notices[$row['id_board']][$type][] = array(
+			$notices[$row['id_board']][$type][] = [
 				'subject' => $row['subject'],
 				'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-			);
+			];
 
 			// Store the profile for a bit later.
 			$profiles[$row['id_board']] = $row['id_profile'];
@@ -86,8 +86,8 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 		// Delete it all!
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}approval_queue',
-			array(
-			)
+			[
+			]
 		);
 
 		// If nothing quit now.
@@ -102,12 +102,12 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 			FROM {db_prefix}board_permissions
 			WHERE permission = {literal:approve_posts}
 				AND id_profile IN ({array_int:profile_list})',
-			array(
+			[
 				'profile_list' => $profiles,
-			)
+			]
 		);
 		$perms = [];
-		$addGroups = array(1);
+		$addGroups = [1];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			// Sorry guys, but we have to ignore guests AND members - it would be too many otherwise.
@@ -130,8 +130,8 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 			$request = $smcFunc['db_query']('', '
 				SELECT id_member, id_board
 				FROM {db_prefix}moderators',
-				array(
-				)
+				[
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
@@ -152,22 +152,22 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 				OR FIND_IN_SET({raw:additional_group_list_implode}, additional_groups) != 0' . (empty($members) ? '' : '
 				OR id_member IN ({array_int:member_list})') . '
 			ORDER BY lngfile',
-			array(
+			[
 				'additional_group_list' => $addGroups,
 				'member_list' => $members,
 				'additional_group_list_implode' => implode(', additional_groups) != 0 OR FIND_IN_SET(', $addGroups),
-			)
+			]
 		);
 		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$members[$row['id_member']] = array(
+			$members[$row['id_member']] = [
 				'id' => $row['id_member'],
-				'groups' => array_merge(explode(',', $row['additional_groups']), array($row['id_group'])),
+				'groups' => array_merge(explode(',', $row['additional_groups']), [$row['id_group']]),
 				'language' => $row['lngfile'],
 				'email' => $row['email_address'],
 				'name' => $row['real_name'],
-			);
+			];
 		}
 		$smcFunc['db_free_result']($request);
 
@@ -243,10 +243,10 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 			if ($emailbody == '')
 				continue;
 
-			$replacements = array(
+			$replacements = [
 				'REALNAME' => $member['name'],
 				'BODY' => $emailbody,
-			);
+			];
 
 			$emaildata = loadEmailTemplate('scheduled_approval', $replacements, $current_language);
 

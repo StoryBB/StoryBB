@@ -66,10 +66,10 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = ln.id_member)
 				LEFT JOIN {db_prefix}topics AS t ON (ln.id_topic != {int:empty_topic} AND t.id_topic = ln.id_topic)
 			WHERE mem.is_activated = {int:is_activated}',
-			array(
+			[
 				'empty_topic' => 0,
 				'is_activated' => 1,
-			)
+			]
 		);
 		$members = [];
 		$langs = [];
@@ -78,12 +78,12 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 		{
 			if (!isset($members[$row['id_member']]))
 			{
-				$members[$row['id_member']] = array(
+				$members[$row['id_member']] = [
 					'email' => $row['email_address'],
 					'name' => $row['member_name'],
 					'id' => $row['id_member'],
 					'lang' => $row['lngfile'],
-				);
+				];
 				$langs[$row['lngfile']] = $row['lngfile'];
 			}
 
@@ -104,9 +104,9 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 			SELECT id_board, name
 			FROM {db_prefix}boards
 			WHERE id_board IN ({array_int:board_list})',
-			array(
+			[
 				'board_list' => $boards,
-			)
+			]
 		);
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -126,48 +126,48 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			WHERE ' . ($this->is_weekly ? 'ld.daily != {int:daily_value}' : 'ld.daily IN (0, 2)'),
-			array(
+			[
 				'board_list' => array_keys($boards),
 				'daily_value' => 2,
-			)
+			]
 		);
 		$types = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
 			if (!isset($types[$row['note_type']][$row['id_board']]))
-				$types[$row['note_type']][$row['id_board']] = array(
+				$types[$row['note_type']][$row['id_board']] = [
 					'lines' => [],
 					'name' => $row['board_name'],
 					'id' => $row['id_board'],
-				);
+				];
 
 			if ($row['note_type'] == 'reply')
 			{
 				if (isset($types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]))
 					$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]['count']++;
 				else
-					$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']] = array(
+					$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']] = [
 						'id' => $row['id_topic'],
 						'subject' => un_htmlspecialchars($row['subject']),
 						'count' => 1,
-					);
+					];
 			}
 			elseif ($row['note_type'] == 'topic')
 			{
 				if (!isset($types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]))
-					$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']] = array(
+					$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']] = [
 						'id' => $row['id_topic'],
 						'subject' => un_htmlspecialchars($row['subject']),
-					);
+					];
 			}
 			else
 			{
 				if (!isset($types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]))
-					$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']] = array(
+					$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']] = [
 						'id' => $row['id_topic'],
 						'subject' => un_htmlspecialchars($row['subject']),
 						'starter' => $row['id_member_started'],
-					);
+					];
 			}
 
 			$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]['members'] = [];
@@ -188,7 +188,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 			loadLanguage('Post', $lang);
 			loadLanguage('General', $lang);
 			loadLanguage('EmailTemplates', $lang);
-			$langtxt[$lang] = array(
+			$langtxt[$lang] = [
 				'subject' => $txt[$this->subject_line],
 				'intro' => sprintf($txt[$this->intro_line], $mbname),
 				'new_topics' => $txt['digest_new_topics'],
@@ -205,12 +205,12 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 				'merge' => $txt['digest_mod_act_merge'],
 				'split' => $txt['digest_mod_act_split'],
 				'bye' => str_replace('{forum_name}', $mbname, $txt['regards_team']),
-			);
+			];
 		}
 
 		// The preferred way...
 		require_once($sourcedir . '/Subs-Notify.php');
-		$prefs = getNotifyPrefs(array_keys($members), array('msg_notify_type', 'msg_notify_pref'), true);
+		$prefs = getNotifyPrefs(array_keys($members), ['msg_notify_type', 'msg_notify_pref'], true);
 
 		// Right - send out the silly things - this will take quite some space!
 		foreach ($members as $mid => $member)
@@ -223,11 +223,11 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 				continue;
 
 			// Do the start stuff!
-			$email = array(
+			$email = [
 				'subject' => $mbname . ' - ' . $langtxt[$lang]['subject'],
 				'body' => $member['name'] . ',' . "\n\n" . $langtxt[$lang]['intro'] . "\n" . $scripturl . '?action=profile;area=notification;u=' . $member['id'] . "\n",
 				'email' => $member['email'],
-			);
+			];
 
 			// All new topics?
 			if (isset($types['topic']))
@@ -309,10 +309,10 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 			UPDATE {db_prefix}log_notify
 			SET sent = {int:is_sent}
 			WHERE id_member IN ({array_int:member_list})',
-			array(
+			[
 				'member_list' => $members,
 				'is_sent' => 1,
-			)
+			]
 		);
 
 		// Log we've done it...
@@ -330,18 +330,18 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_digest
 			WHERE daily = {int:daily_value}',
-			array(
+			[
 				'daily_value' => 2,
-			)
+			]
 		);
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}log_digest
 			SET daily = {int:both_value}
 			WHERE daily = {int:no_value}',
-			array(
+			[
 				'both_value' => 1,
 				'no_value' => 0,
-			)
+			]
 		);
 	}
 }
