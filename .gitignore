@@ -3,6 +3,7 @@
 Settings.php
 Settings_bak.php
 cache/class_cache.php
+cache/plugin_cache.php
 cache/data*.php
 cache/template*.php
 cache/lang/*.php
