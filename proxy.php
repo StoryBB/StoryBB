@@ -188,12 +188,12 @@ class ProxyServer
 		if ($http_request->getBody()->getSize() > ($this->maxSize * 1024))
 			return false;
 
-		return file_put_contents($this->getCachedPath($request), json_encode(array(
+		return file_put_contents($this->getCachedPath($request), json_encode([
 			'content_type' => $content_type[0],
 			'size' => $http_request->getBody()->getSize(),
 			'time' => time(),
 			'body' => base64_encode($response),
-		))) === false ? 1 : null;
+		])) === false ? 1 : null;
 	}
 
 	/**

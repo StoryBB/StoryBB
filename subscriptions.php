@@ -21,7 +21,7 @@ global $db_connection, $modSettings, $context, $sc, $user_info, $txt;
 global $smcFunc, $scripturl, $db_passwd, $cachedir;
 
 // Just being safe...
-foreach (array('cachedir') as $variable)
+foreach (['cachedir'] as $variable)
 	if (isset($GLOBALS[$variable]))
 		unset($GLOBALS[$variable]);
 
@@ -71,11 +71,11 @@ $notify_users = [];
 if (!empty($modSettings['paid_email_to']))
 {
 	foreach (explode(',', $modSettings['paid_email_to']) as $email)
-		$notify_users[] = array(
+		$notify_users[] = [
 			'email' => $email,
 			'name' => $txt['who_member'],
 			'id' => 0,
-		);
+		];
 }
 
 // We need to see whether we can find the correct payment gateway,
@@ -112,9 +112,9 @@ $request = $smcFunc['db_query']('', '
 	SELECT id_member, member_name, real_name, email_address
 	FROM {db_prefix}members
 	WHERE id_member = {int:current_member}',
-	array(
+	[
 		'current_member' => $member_id,
-	)
+	]
 );
 // Didn't find them?
 if ($smcFunc['db_num_rows']($request) === 0)
@@ -127,9 +127,9 @@ $request = $smcFunc['db_query']('', '
 	SELECT cost, length, name
 	FROM {db_prefix}subscriptions
 	WHERE id_subscribe = {int:current_subscription}',
-	array(
+	[
 		'current_subscription' => $subscription_id,
-	)
+	]
 );
 
 // Didn't find it?
@@ -146,10 +146,10 @@ $request = $smcFunc['db_query']('', '
 	WHERE id_subscribe = {int:current_subscription}
 		AND id_member = {int:current_member}
 	LIMIT 1',
-	array(
+	[
 		'current_subscription' => $subscription_id,
 		'current_member' => $member_id,
-	)
+	]
 );
 if ($smcFunc['db_num_rows']($request) === 0)
 	generateSubscriptionError(sprintf($txt['paid_count_not_find_subscription_log'], $member_id, $subscription_id));
@@ -182,24 +182,24 @@ if ($gatewayClass->isRefund())
 		WHERE id_subscribe = {int:current_subscription}
 			AND id_member = {int:current_member}
 			AND status = {int:status}',
-		array(
+		[
 			'current_time' => $subscription_act,
 			'current_subscription' => $subscription_id,
 			'current_member' => $member_id,
 			'status' => $status,
-		)
+		]
 	);
 
 	// Receipt?
 	if (!empty($modSettings['paid_email']) && $modSettings['paid_email'] == 2)
 	{
-		$replacements = array(
+		$replacements = [
 			'NAME' => $subscription_info['name'],
 			'REFUNDNAME' => $member_info['member_name'],
 			'REFUNDUSER' => $member_info['real_name'],
 			'PROFILELINK' => $scripturl . '?action=profile;u=' . $member_id,
 			'DATE' => timeformat(time(), false),
-		);
+		];
 
 		emailAdmins('paid_subscription_refund', $replacements, $notify_users);
 	}
@@ -235,11 +235,11 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 			UPDATE {db_prefix}log_subscribed
 			SET payments_pending = {int:payments_pending}, pending_details = {string:pending_details}
 			WHERE id_sublog = {int:current_subscription_item}',
-			array(
+			[
 				'payments_pending' => $subscription_info['payments_pending'],
 				'current_subscription_item' => $subscription_info['id_sublog'],
 				'pending_details' => $subscription_info['pending_details'],
-			)
+			]
 		);
 	}
 
@@ -280,7 +280,7 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 	// Send a receipt?
 	if (!empty($modSettings['paid_email']) && $modSettings['paid_email'] == 2 && $notify)
 	{
-		$replacements = array(
+		$replacements = [
 			'NAME' => $subscription_info['name'],
 			'SUBNAME' => $member_info['member_name'],
 			'SUBUSER' => $member_info['real_name'],
@@ -288,7 +288,7 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 			'PRICE' => sprintf($modSettings['paid_currency_symbol'], $total_cost),
 			'PROFILELINK' => $scripturl . '?action=profile;u=' . $member_id,
 			'DATE' => timeformat(time(), false),
-		);
+		];
 
 		emailAdmins('paid_subscription_new', $replacements, $notify_users);
 	}
@@ -324,9 +324,9 @@ function generateSubscriptionError($text)
 	// Send an email?
 	if (!empty($modSettings['paid_email']))
 	{
-		$replacements = array(
+		$replacements = [
 			'ERROR' => $text,
-		);
+		];
 
 		emailAdmins('paid_subscription_error', $replacements, $notify_users);
 	}

@@ -28,8 +28,8 @@ if (!defined('STORYBB'))
 require_once('Sources/StoryBB/Helper/FTP.php');
 
 // Database info.
-$databases = array(
-	'mysql' => array(
+$databases = [
+	'mysql' => [
 		'name' => 'MySQL',
 		'version' => '5.5.3',
 		'version_check' => 'return min(mysqli_get_server_info($db_connection), mysqli_get_client_info());',
@@ -46,8 +46,8 @@ $databases = array(
 			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
 			return true;
 		},
-	),
-);
+	],
+];
 
 // Initialize everything and load the language files.
 initialize_inputs();
@@ -58,15 +58,15 @@ $installurl = $_SERVER['PHP_SELF'];
 
 // All the steps in detail.
 // Number,Name,Function,Progress Weight.
-$incontext['steps'] = array(
-	0 => array(1, $txt['install_step_welcome'], 'Welcome', 0),
-	1 => array(2, $txt['install_step_writable'], 'CheckFilesWritable', 10),
-	2 => array(3, $txt['install_step_databaseset'], 'DatabaseSettings', 15),
-	3 => array(4, $txt['install_step_forum'], 'ForumSettings', 40),
-	4 => array(5, $txt['install_step_databasechange'], 'DatabasePopulation', 15),
-	5 => array(6, $txt['install_step_admin'], 'AdminAccount', 20),
-	6 => array(7, $txt['install_step_delete'], 'DeleteInstall', 0),
-);
+$incontext['steps'] = [
+	0 => [1, $txt['install_step_welcome'], 'Welcome', 0],
+	1 => [2, $txt['install_step_writable'], 'CheckFilesWritable', 10],
+	2 => [3, $txt['install_step_databaseset'], 'DatabaseSettings', 15],
+	3 => [4, $txt['install_step_forum'], 'ForumSettings', 40],
+	4 => [5, $txt['install_step_databasechange'], 'DatabasePopulation', 15],
+	5 => [6, $txt['install_step_admin'], 'AdminAccount', 20],
+	6 => [7, $txt['install_step_delete'], 'DeleteInstall', 0],
+];
 
 // Default title...
 $incontext['page_title'] = $txt['storybb_installer'];
@@ -297,7 +297,7 @@ function load_database()
 	{
 		require_once($sourcedir . '/Subs-Db-' . $db_type . '.php');
 
-		$db_options = array('persist' => $db_persist);
+		$db_options = ['persist' => $db_persist];
 		$port = '';
 
 		// Figure out the port...
@@ -463,7 +463,7 @@ function CheckFilesWritable()
 	$incontext['page_title'] = $txt['ftp_checking_writable'];
 	$incontext['sub_template'] = 'chmod_files';
 
-	$writable_files = array(
+	$writable_files = [
 		'attachments',
 		'custom_avatar',
 		'cache',
@@ -471,7 +471,7 @@ function CheckFilesWritable()
 		'Themes',
 		'Settings.php',
 		'Settings_bak.php',
-	);
+	];
 
 	// With mod_security installed, we could attempt to fix it with .htaccess.
 	if (function_exists('apache_get_modules') && in_array('mod_security', apache_get_modules()))
@@ -595,25 +595,25 @@ function CheckFilesWritable()
 				$_POST['ftp_username'] = $username;
 
 			// Set the username etc, into context.
-			$incontext['ftp'] = array(
+			$incontext['ftp'] = [
 				'server' => isset($_POST['ftp_server']) ? $_POST['ftp_server'] : 'localhost',
 				'port' => isset($_POST['ftp_port']) ? $_POST['ftp_port'] : '21',
 				'username' => isset($_POST['ftp_username']) ? $_POST['ftp_username'] : '',
 				'path' => isset($_POST['ftp_path']) ? $_POST['ftp_path'] : '/',
 				'path_msg' => !empty($found_path) ? $txt['ftp_path_found_info'] : $txt['ftp_path_info'],
-			);
+			];
 
 			return false;
 		}
 		else
 		{
-			$_SESSION['installer_temp_ftp'] = array(
+			$_SESSION['installer_temp_ftp'] = [
 				'server' => $_POST['ftp_server'],
 				'port' => $_POST['ftp_port'],
 				'username' => $_POST['ftp_username'],
 				'password' => $_POST['ftp_password'],
 				'path' => $_POST['ftp_path']
-			);
+			];
 
 			$failed_files_updated = [];
 
@@ -639,9 +639,9 @@ function CheckFilesWritable()
 				$incontext['failed_files'] = $failed_files_updated;
 
 				// Set the username etc, into context.
-				$incontext['ftp'] = $_SESSION['installer_temp_ftp'] += array(
+				$incontext['ftp'] = $_SESSION['installer_temp_ftp'] += [
 					'path_msg' => $txt['ftp_path_info'],
-				);
+				];
 
 				return false;
 			}
@@ -737,7 +737,7 @@ function DatabaseSettings()
 		}
 
 		// Take care of these variables...
-		$vars = array(
+		$vars = [
 			'db_type' => $db_type,
 			'db_name' => $_POST['db_name'],
 			'db_user' => $_POST['db_user'],
@@ -746,7 +746,7 @@ function DatabaseSettings()
 			'db_prefix' => $db_prefix,
 			// The cookiename is special; we want it to be the same if it ever needs to be reinstalled with the same info.
 			'cookiename' => 'SBBCookie' . abs(crc32($_POST['db_name'] . preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix'])) % 1000),
-		);
+		];
 
 		// Only set the port if we're not using the default
 		if (!empty($_POST['db_port']))
@@ -784,12 +784,12 @@ function DatabaseSettings()
 
 		// Attempt a connection.
 		$needsDB = !empty($databases[$db_type]['always_has_db']);
-		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, array('non_fatal' => true, 'dont_select_db' => !$needsDB));
+		$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, ['non_fatal' => true, 'dont_select_db' => !$needsDB]);
 
 		$smcFunc['db'] = AdapterFactory::get_adapter($db_type);
 		$smcFunc['db']->set_prefix($db_prefix);
 		$smcFunc['db']->set_server($db_server, $db_name, $db_user, $db_passwd);
-		$smcFunc['db']->connect(array('non_fatal' => true, 'dont_select_db' => !$needsDB));
+		$smcFunc['db']->connect(['non_fatal' => true, 'dont_select_db' => !$needsDB]);
 
 		// No dice?  Let's try adding the prefix they specified, just in case they misread the instructions ;)
 		if ($db_connection === null)
@@ -808,7 +808,7 @@ function DatabaseSettings()
 			if ($db_connection != null)
 			{
 				$db_user = $_POST['db_prefix'] . $db_user;
-				updateSettingsFile(array('db_user' => $db_user));
+				updateSettingsFile(['db_user' => $db_user]);
 			}
 		}
 
@@ -839,7 +839,7 @@ function DatabaseSettings()
 				{
 					// This worked, let's save that.
 					$db_name = $_POST['db_prefix'] . $db_name;
-					updateSettingsFile(array('db_name' => $db_name));
+					updateSettingsFile(['db_name' => $db_name]);
 				}
 			}
 
@@ -919,21 +919,21 @@ function ForumSettings()
 
 		//Make sure boardurl is aligned with ssl setting
 		if (empty($_POST['force_ssl']))
-			$_POST['boardurl'] = strtr($_POST['boardurl'], array('https://' => 'http://'));
+			$_POST['boardurl'] = strtr($_POST['boardurl'], ['https://' => 'http://']);
 		else
-			$_POST['boardurl'] = strtr($_POST['boardurl'], array('http://' => 'https://'));		
+			$_POST['boardurl'] = strtr($_POST['boardurl'], ['http://' => 'https://']);		
 
 		// Save these variables.
-		$vars = array(
+		$vars = [
 			'boardurl' => $_POST['boardurl'],
 			'boarddir' => addslashes(dirname(__FILE__)),
 			'sourcedir' => addslashes(dirname(__FILE__)) . '/Sources',
 			'cachedir' => addslashes(dirname(__FILE__)) . '/cache',
-			'mbname' => strtr($_POST['mbname'], array('\"' => '"')),
+			'mbname' => strtr($_POST['mbname'], ['\"' => '"']),
 			'language' => substr($_SESSION['installer_temp_lang'], 8, -4),
 			'image_proxy_secret' => substr(sha1(mt_rand()), 0, 20),
 			'image_proxy_enabled' => !empty($_POST['force_ssl']),
-		);
+		];
 
 		// Must save!
 		if (!updateSettingsFile($vars) && substr(__FILE__, 1, 2) == ':\\')
@@ -982,9 +982,9 @@ function DatabasePopulation()
 	$result = $smcFunc['db_query']('', '
 		SELECT variable, value
 		FROM {db_prefix}settings',
-		array(
+		[
 			'db_error_skip' => true,
-		)
+		]
 	);
 	$newSettings = [];
 	$modSettings = [];
@@ -1009,10 +1009,10 @@ function DatabasePopulation()
 	else
 		$attachdir = __DIR__ . '/attachments';
 
-	$replaces = array(
+	$replaces = [
 		'{$db_prefix}' => $db_prefix,
 		'{$language}' => $language,
-		'{$attachdir}' => json_encode(array(1 => $smcFunc['db_escape_string']($attachdir))),
+		'{$attachdir}' => json_encode([1 => $smcFunc['db_escape_string']($attachdir)]),
 		'{$boarddir}' => $smcFunc['db_escape_string'](dirname(__FILE__)),
 		'{$boardurl}' => $boardurl,
 		'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
@@ -1021,24 +1021,24 @@ function DatabasePopulation()
 		'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
 		'{$registration_method}' => isset($_POST['reg_mode']) ? $_POST['reg_mode'] : 0,
 		'{$default_time_format}' => array_keys(\StoryBB\Helper\Datetime::list_dateformats())[0],
-	);
+	];
 
 	foreach ($txt as $key => $value)
 	{
 		if (substr($key, 0, 8) == 'default_')
 			$replaces['{$' . $key . '}'] = $smcFunc['db_escape_string']($value);
 	}
-	$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], array('\\\\n' => '\\n'));
+	$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], ['\\\\n' => '\\n']);
 
 	$current_statement = '';
 	$exists = [];
 	$incontext['failures'] = [];
-	$incontext['sql_results'] = array(
+	$incontext['sql_results'] = [
 		'tables' => 0,
 		'inserts' => 0,
 		'table_dups' => 0,
 		'insert_dups' => 0,
-	);
+	];
 
 	// Create all the tables we know we need.
 	$schema = Schema::get_tables();
@@ -1092,7 +1092,7 @@ function DatabasePopulation()
 			continue;
 		}
 
-		if ($smcFunc['db_query']('', $current_statement, array('security_override' => true, 'db_error_skip' => true), $db_connection) === false)
+		if ($smcFunc['db_query']('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
 		{
 			if (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 			{
@@ -1138,21 +1138,21 @@ function DatabasePopulation()
 		$globalCookies = false;
 
 		// Okay... let's see.  Using a subdomain other than www.? (not a perfect check.)
-		if ($matches[2] != '' && (strpos(substr($matches[2], 1), '.') === false || in_array($matches[1], array('forum', 'board', 'community', 'forums', 'support', 'chat', 'help', 'talk', 'boards', 'www'))))
+		if ($matches[2] != '' && (strpos(substr($matches[2], 1), '.') === false || in_array($matches[1], ['forum', 'board', 'community', 'forums', 'support', 'chat', 'help', 'talk', 'boards', 'www'])))
 			$globalCookies = true;
 		// If there's a / in the middle of the path, or it starts with ~... we want local.
 		if (isset($matches[3]) && strlen($matches[3]) > 3 && (substr($matches[3], 0, 2) == '/~' || strpos(substr($matches[3], 1), '/') !== false))
 			$localCookies = true;
 
 		if ($globalCookies)
-			$newSettings[] = array('globalCookies', '1');
+			$newSettings[] = ['globalCookies', '1'];
 		if ($localCookies)
-			$newSettings[] = array('localCookies', '1');
+			$newSettings[] = ['localCookies', '1'];
 	}
 
 	// Are we enabling SSL?
 	if (!empty($_POST['force_ssl']))
-		$newSettings[] = array('force_ssl', 2);
+		$newSettings[] = ['force_ssl', 2];
 
 	// Setting a timezone is required.
 	if (!isset($modSettings['default_timezone']) && function_exists('date_default_timezone_set'))
@@ -1172,16 +1172,16 @@ function DatabasePopulation()
 		}
 
 		if (date_default_timezone_set($timezone_id))
-			$newSettings[] = array('default_timezone', $timezone_id);
+			$newSettings[] = ['default_timezone', $timezone_id];
 	}
 
 	if (!empty($newSettings))
 	{
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}settings',
-			array('variable' => 'string-255', 'value' => 'string-65534'),
+			['variable' => 'string-255', 'value' => 'string-65534'],
 			$newSettings,
-			array('variable')
+			['variable']
 		);
 	}
 
@@ -1266,10 +1266,10 @@ function AdminAccount()
 		FROM {db_prefix}members
 		WHERE id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0
 		LIMIT 1',
-		array(
+		[
 			'db_error_skip' => true,
 			'admin_group' => 1,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) != 0)
 		$incontext['skip'] = 1;
@@ -1299,7 +1299,7 @@ function AdminAccount()
 
 		// Update the webmaster's email?
 		if (!empty($_POST['server_email']) && (empty($webmaster_email) || $webmaster_email == 'noreply@myserver.com'))
-			updateSettingsFile(array('webmaster_email' => $_POST['server_email']));
+			updateSettingsFile(['webmaster_email' => $_POST['server_email']]);
 
 		// Work out whether we're going to have dodgy characters and remove them.
 		$invalid_characters = preg_match('~[<>&"\'=\\\]~', $_POST['username']) != 0;
@@ -1310,11 +1310,11 @@ function AdminAccount()
 			FROM {db_prefix}members
 			WHERE member_name = {string:username} OR email_address = {string:email}
 			LIMIT 1',
-			array(
+			[
 				'username' => stripslashes($_POST['username']),
 				'email' => stripslashes($_POST['email']),
 				'db_error_skip' => true,
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($result) != 0)
 		{
@@ -1359,7 +1359,7 @@ function AdminAccount()
 
 			$incontext['member_id'] = $smcFunc['db_insert']('',
 				$db_prefix . 'members',
-				array(
+				[
 					'member_name' => 'string-25', 'real_name' => 'string-25', 'passwd' => 'string', 'email_address' => 'string',
 					'id_group' => 'int', 'posts' => 'int', 'date_registered' => 'int',
 					'password_salt' => 'string', 'lngfile' => 'string', 'avatar' => 'string',
@@ -1368,8 +1368,8 @@ function AdminAccount()
 					'signature' => 'string', 'secret_question' => 'string',
 					'additional_groups' => 'string', 'ignore_boards' => 'string',
 					'policy_acceptance' => 'int',
-				),
-				array(
+				],
+				[
 					stripslashes($_POST['username']), stripslashes($_POST['username']), $_POST['password1'], stripslashes($_POST['email']),
 					1, 0, time(),
 					$incontext['member_salt'], '', '',
@@ -1378,8 +1378,8 @@ function AdminAccount()
 					'', '',
 					'', '',
 					StoryBB\Model\Policy::POLICY_CURRENTLYACCEPTED,
-				),
-				array('id_member'),
+				],
+				['id_member'],
 				1
 			);
 
@@ -1457,27 +1457,27 @@ function DeleteInstall()
 
 		$smcFunc['db_query']('', '
 			SET NAMES {string:db_character_set}',
-			array(
+			[
 			'db_character_set' => 'UTF-8',
 				'db_error_skip' => true,
-			)
+			]
 		);
 
 	// As track stats is by default enabled let's add some activity.
 	$smcFunc['db_insert']('ignore',
 		'{db_prefix}log_activity',
-		array('date' => 'date', 'topics' => 'int', 'posts' => 'int', 'registers' => 'int'),
-		array(strftime('%Y-%m-%d', time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0)),
-		array('date')
+		['date' => 'date', 'topics' => 'int', 'posts' => 'int', 'registers' => 'int'],
+		[strftime('%Y-%m-%d', time()), 1, 1, (!empty($incontext['member_id']) ? 1 : 0)],
+		['date']
 	);
 
 	// We're going to want our lovely $modSettings now.
 	$request = $smcFunc['db_query']('', '
 		SELECT variable, value
 		FROM {db_prefix}settings',
-		array(
+		[
 			'db_error_skip' => true,
-		)
+		]
 	);
 	// Only proceed if we can load the data.
 	if ($request)
@@ -1495,10 +1495,10 @@ function DeleteInstall()
 		SELECT value
 		FROM {db_prefix}settings
 		WHERE variable = {string:db_sessions}',
-		array(
+		[
 			'db_sessions' => 'databaseSession_enable',
 			'db_error_skip' => true,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($result) != 0)
 		list ($db_sessions) = $smcFunc['db_fetch_row']($result);
@@ -1512,13 +1512,13 @@ function DeleteInstall()
 
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}sessions',
-			array(
+			[
 				'session_id' => 'string', 'last_update' => 'int', 'data' => 'string',
-			),
-			array(
+			],
+			[
 				session_id(), time(), 'USER_AGENT|s:' . strlen($_SERVER['HTTP_USER_AGENT']) . ':"' . $_SERVER['HTTP_USER_AGENT'] . '";admin_time|i:' . time() . ';',
-			),
-			array('session_id')
+			],
+			['session_id']
 		);
 	}
 
@@ -1537,9 +1537,9 @@ function DeleteInstall()
 		WHERE id_msg = 1
 			AND modified_time = 0
 		LIMIT 1',
-		array(
+		[
 			'db_error_skip' => true,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 		updateStats('subject', 1, htmlspecialchars($txt['default_topic_subject']));
@@ -1556,7 +1556,7 @@ function DeleteInstall()
 		// We've just installed!
 		$user_info['ip'] = $_SERVER['REMOTE_ADDR'];
 		$user_info['id'] = isset($incontext['member_id']) ? $incontext['member_id'] : 0;
-		logAction('install', array('version' => $forum_version), 'admin');
+		logAction('install', ['version' => $forum_version], 'admin');
 	}
 
 	// Some final context for the template.
@@ -1564,9 +1564,9 @@ function DeleteInstall()
 	$incontext['probably_delete_install'] = isset($_SESSION['installer_temp_ftp']) || is_writable(dirname(__FILE__)) || is_writable(__FILE__);
 
 	// Update hash's cost to an appropriate setting
-	updateSettings(array(
+	updateSettings([
 		'bcrypt_hash_cost' => hash_benchmark(),
-	));
+	]);
 
 	return false;
 }

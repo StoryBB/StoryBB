@@ -11,7 +11,7 @@
  */
 
 // Stuff we will ignore.
-$ignoreFiles = array(
+$ignoreFiles = [
 	// Minify Stuff.
 	'\./Sources/minify/[A-Za-z0-9/-]+\.php',
 
@@ -20,7 +20,7 @@ $ignoreFiles = array(
 
 	// Cache and miscellaneous.
 	'\./cache/data_[A-Za-z0-9-_]\.php',
-);
+];
 
 // No file? Thats bad.
 if (!isset($_SERVER['argv'], $_SERVER['argv'][1]))
@@ -54,13 +54,13 @@ $file = fopen($currentFile, 'r');
 $contents = fread($file, 4000);
 
 // How the license file should look, in a regex type format.
-$match = array(
+$match = [
 	0 => ' \* @package StoryBB \(storybb.org\) - A roleplayer\'s forum software' . '[\r]?\n',
 	1 => ' \* @copyright \d{4} StoryBB and individual contributors \(see contributors.txt\)' . '[\r]?\n',
 	2 => ' \* @license 3-clause BSD \(see accompanying LICENSE file\)' . '[\r]?\n',
 	3 => ' \*' . '[\r]?\n',
 	4 => ' \* @version',
-);
+];
 
 // Just see if the license is there.
 if (!preg_match('~' . implode('', $match) . '~i', $contents))
@@ -79,7 +79,7 @@ if (!preg_match('~' . implode('', $versionMatch) . '~i', $contents))
 	die('Error: The version is incorrect in ' . $currentFile . "\n");
 
 // Special check, ugprade.php, install.php copyright templates.
-if (in_array($currentFile, array('./other/upgrade.php', './other/install.php')))
+if (in_array($currentFile, ['./other/upgrade.php', './other/install.php']))
 {
 	// The code is fairly well into it, just get the entire contents.
 	$upgradeFile = file_get_contents($currentFile);
