@@ -23,9 +23,9 @@ class Scheduler
 
 		$smcFunc['db_insert']('',
 			'{db_prefix}log_scheduled_tasks',
-			array('id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float'),
-			array($task_id, time(), $time_taken),
-			array('id_task')
+			['id_task' => 'int', 'time_run' => 'int', 'time_taken' => 'float'],
+			[$task_id, time(), $time_taken],
+			['id_task']
 		);
 	}
 
@@ -37,10 +37,10 @@ class Scheduler
 			UPDATE {db_prefix}scheduled_tasks
 			SET disabled = {int:disabled}
 			WHERE class = {string:class}',
-			array(
+			[
 				'disabled' => $enabled_state ? 0 : 1,
 				'class' => 'StoryBB\\Task\\Schedulable\\UpdatePaidSubs',
-			)
+			]
 		);
 	}
 }

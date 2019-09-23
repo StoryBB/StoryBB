@@ -87,7 +87,7 @@ class Cache
 		$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
 		if (isset($db_show_debug) && $db_show_debug === true)
 		{
-			$cache_hits[$cache_count] = array('k' => $key, 'd' => 'get');
+			$cache_hits[$cache_count] = ['k' => $key, 'd' => 'get'];
 			$st = microtime(true);
 			$original_key = $key;
 		}
@@ -106,7 +106,7 @@ class Cache
 					$cache_misses = [];
 
 				$cache_count_misses = isset($cache_count_misses) ? $cache_count_misses + 1 : 1;
-				$cache_misses[$cache_count_misses] = array('k' => $original_key, 'd' => 'get');
+				$cache_misses[$cache_count_misses] = ['k' => $original_key, 'd' => 'get'];
 			}
 		}
 
@@ -131,7 +131,7 @@ class Cache
 		$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
 		if (isset($db_show_debug) && $db_show_debug === true)
 		{
-			$cache_hits[$cache_count] = array('k' => $key, 'd' => 'put', 's' => $value === null ? 0 : strlen(json_encode($value)));
+			$cache_hits[$cache_count] = ['k' => $key, 'd' => 'put', 's' => $value === null ? 0 : strlen(json_encode($value))];
 			$st = microtime(true);
 		}
 

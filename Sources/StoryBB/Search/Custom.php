@@ -36,7 +36,7 @@ class Custom extends AbstractSearchable implements Searchable
 	/**
 	 * @var array Which databases support this method
 	 */
-	protected $supported_databases = array('mysql');
+	protected $supported_databases = ['mysql'];
 
 	/**
 	 * Constructor function
@@ -175,9 +175,9 @@ class Custom extends AbstractSearchable implements Searchable
 	{
 		global $modSettings, $smcFunc;
 
-		$query_select = array(
+		$query_select = [
 			'id_msg' => 'm.id_msg',
-		);
+		];
 		$query_inner_join = [];
 		$query_left_join = [];
 		$query_where = [];
@@ -190,7 +190,7 @@ class Custom extends AbstractSearchable implements Searchable
 		foreach ($words['words'] as $regularWord)
 		{
 			$query_where[] = 'm.body' . (in_array($regularWord, $query_params['excluded_words']) ? ' NOT' : '') . (empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : ' RLIKE ') . '{string:complex_body_' . $count . '}';
-			$query_params['complex_body_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($regularWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $regularWord), '\\\'') . '[[:>:]]';
+			$query_params['complex_body_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($regularWord, ['_' => '\\_', '%' => '\\%']) . '%' : '[[:<:]]' . addcslashes(preg_replace(['/([\[\]$.+*?|{}()])/'], ['[$1]'], $regularWord), '\\\'') . '[[:>:]]';
 		}
 
 		if ($query_params['user_query'])
@@ -210,14 +210,14 @@ class Custom extends AbstractSearchable implements Searchable
 			foreach ($query_params['excluded_phrases'] as $phrase)
 			{
 				$query_where[] = 'subject NOT ' . (empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : ' RLIKE ') . '{string:exclude_subject_phrase_' . $count . '}';
-				$query_params['exclude_subject_phrase_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($phrase, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $phrase), '\\\'') . '[[:>:]]';
+				$query_params['exclude_subject_phrase_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($phrase, ['_' => '\\_', '%' => '\\%']) . '%' : '[[:<:]]' . addcslashes(preg_replace(['/([\[\]$.+*?|{}()])/'], ['[$1]'], $phrase), '\\\'') . '[[:>:]]';
 			}
 		$count = 0;
 		if (!empty($query_params['excluded_subject_words']) && empty($modSettings['search_force_index']))
 			foreach ($query_params['excluded_subject_words'] as $excludedWord)
 			{
 				$query_where[] = 'subject NOT ' . (empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : ' RLIKE ') . '{string:exclude_subject_words_' . $count . '}';
-				$query_params['exclude_subject_words_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($excludedWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $excludedWord), '\\\'') . '[[:>:]]';
+				$query_params['exclude_subject_words_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($excludedWord, ['_' => '\\_', '%' => '\\%']) . '%' : '[[:<:]]' . addcslashes(preg_replace(['/([\[\]$.+*?|{}()])/'], ['[$1]'], $excludedWord), '\\\'') . '[[:>:]]';
 			}
 
 		$numTables = 0;
@@ -273,14 +273,14 @@ class Custom extends AbstractSearchable implements Searchable
 
 		$inserts = [];
 		foreach (text2words($msgOptions['body'], $customIndexSettings['bytes_per_word'], true) as $word)
-			$inserts[] = array($word, $msgOptions['id']);
+			$inserts[] = [$word, $msgOptions['id']];
 
 		if (!empty($inserts))
 			$smcFunc['db_insert']('ignore',
 				'{db_prefix}log_search_words',
-				array('id_word' => 'int', 'id_msg' => 'int'),
+				['id_word' => 'int', 'id_msg' => 'int'],
 				$inserts,
-				array('id_word', 'id_msg')
+				['id_word', 'id_msg']
 			);
 	}
 
@@ -319,10 +319,10 @@ class Custom extends AbstractSearchable implements Searchable
 					DELETE FROM {db_prefix}log_search_words
 					WHERE id_msg = {int:id_msg}
 						AND id_word IN ({array_int:removed_words})',
-					array(
+					[
 						'removed_words' => $removed_words,
 						'id_msg' => $msgOptions['id'],
-					)
+					]
 				);
 			}
 
@@ -331,12 +331,12 @@ class Custom extends AbstractSearchable implements Searchable
 			{
 				$inserts = [];
 				foreach ($inserted_words as $word)
-					$inserts[] = array($word, $msgOptions['id']);
+					$inserts[] = [$word, $msgOptions['id']];
 				$smcFunc['db_insert']('insert',
 					'{db_prefix}log_search_words',
-					array('id_word' => 'string', 'id_msg' => 'int'),
+					['id_word' => 'string', 'id_msg' => 'int'],
 					$inserts,
-					array('id_word', 'id_msg')
+					['id_word', 'id_msg']
 				);
 			}
 		}

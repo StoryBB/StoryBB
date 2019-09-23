@@ -169,7 +169,7 @@ class Controls
 
 				// Did this not even exist - or do we not have a label?
 				if (!isset($tab_context['tabs'][$id]))
-					$tab_context['tabs'][$id] = array('label' => $tab['label']);
+					$tab_context['tabs'][$id] = ['label' => $tab['label']];
 				elseif (!isset($tab_context['tabs'][$id]['label']))
 					$tab_context['tabs'][$id]['label'] = $tab['label'];
 

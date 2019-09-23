@@ -51,23 +51,23 @@ class PayPal implements PaymentProcessor
 	{
 		global $txt;
 
-		$setting_data = array(
-			array(
+		$setting_data = [
+			[
 				'email', 'paypal_email',
 				'subtext' => $txt['paypal_email_desc'],
 				'size' => 60
-			),
-			array(
+			],
+			[
 				'email', 'paypal_additional_emails',
 				'subtext' => $txt['paypal_additional_emails_desc'],
 				'size' => 60
-			),
-			array(
+			],
+			[
 				'email', 'paypal_sandbox_email',
 				'subtext' => $txt['paypal_sandbox_email_desc'],
 				'size' => 60
-			),
-		);
+			],
+		];
 
 		return $setting_data;
 	}
@@ -101,7 +101,7 @@ class PayPal implements PaymentProcessor
 	{
 		global $modSettings, $txt, $boardurl;
 
-		$return_data = array(
+		$return_data = [
 			'form' => 'https://www.' . (!empty($modSettings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com/cgi-bin/webscr',
 			'id' => 'paypal',
 			'hidden' => [],
@@ -109,7 +109,7 @@ class PayPal implements PaymentProcessor
 			'desc' => $txt['paid_confirm_paypal'],
 			'submit' => $txt['paid_paypal_order'],
 			'javascript' => '',
-		);
+		];
 
 		// All the standard bits.
 		$return_data['hidden']['business'] = $modSettings['paypal_email'];
@@ -222,10 +222,10 @@ class PayPal implements PaymentProcessor
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
 			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
 			curl_setopt($curl, CURLOPT_FORBID_REUSE, 1);
-			curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+			curl_setopt($curl, CURLOPT_HTTPHEADER, [
 				'Host: www.' . (!empty($modSettings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com',
 				'Connection: close'
-			));
+			]);
 
 			// Fetch the data returned as a string.
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -393,10 +393,10 @@ class PayPal implements PaymentProcessor
 				UPDATE {db_prefix}log_subscribed
 				SET vendor_ref = {string:vendor_ref}
 				WHERE id_sublog = {int:current_subscription}',
-				array(
+				[
 					'current_subscription' => $subscription_id,
 					'vendor_ref' => $_POST['subscr_id'],
-				)
+				]
 			);
 		}
 
@@ -423,9 +423,9 @@ class PayPal implements PaymentProcessor
 			FROM {db_prefix}log_subscribed
 			WHERE vendor_ref = {string:vendor_ref}
 			LIMIT 1',
-			array(
+			[
 				'vendor_ref' => $_POST['subscr_id'],
-			)
+			]
 		);
 		// No joy?
 		if ($smcFunc['db_num_rows']($request) == 0)
@@ -440,9 +440,9 @@ class PayPal implements PaymentProcessor
 						INNER JOIN {db_prefix}members AS mem ON (mem.id_member = ls.id_member)
 					WHERE mem.email_address = {string:payer_email}
 					LIMIT 1',
-					array(
+					[
 						'payer_email' => $_POST['payer_email'],
-					)
+					]
 				);
 				if ($smcFunc['db_num_rows']($request) === 0)
 					return false;

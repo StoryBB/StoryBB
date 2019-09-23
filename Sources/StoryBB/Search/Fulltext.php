@@ -31,7 +31,7 @@ class Fulltext extends AbstractSearchable implements Searchable
 	/**
 	 * @var array Which databases support this method?
 	 */
-	protected $supported_databases = array('mysql');
+	protected $supported_databases = ['mysql'];
 
 	/**
 	 * The constructor function
@@ -110,9 +110,9 @@ class Fulltext extends AbstractSearchable implements Searchable
 		$request = $smcFunc['db_search_query']('max_fulltext_length', '
 			SHOW VARIABLES
 			LIKE {string:fulltext_minimum_word_length}',
-			array(
+			[
 				'fulltext_minimum_word_length' => 'ft_min_word_len',
-			)
+			]
 		);
 		if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
 		{
@@ -197,9 +197,9 @@ class Fulltext extends AbstractSearchable implements Searchable
 	{
 		global $modSettings, $smcFunc;
 
-		$query_select = array(
+		$query_select = [
 			'id_msg' => 'm.id_msg',
-		);
+		];
 		$query_where = [];
 		$query_params = $search_data['params'];
 
@@ -211,7 +211,7 @@ class Fulltext extends AbstractSearchable implements Searchable
 			foreach ($words['words'] as $regularWord)
 			{
 				$query_where[] = 'm.body' . (in_array($regularWord, $query_params['excluded_words']) ? ' NOT' : '') . (empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : 'RLIKE') . '{string:complex_body_' . $count . '}';
-				$query_params['complex_body_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($regularWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $regularWord), '\\\'') . '[[:>:]]';
+				$query_params['complex_body_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($regularWord, ['_' => '\\_', '%' => '\\%']) . '%' : '[[:<:]]' . addcslashes(preg_replace(['/([\[\]$.+*?|{}()])/'], ['[$1]'], $regularWord), '\\\'') . '[[:>:]]';
 			}
 
 		if ($query_params['user_query'])
@@ -231,14 +231,14 @@ class Fulltext extends AbstractSearchable implements Searchable
 			foreach ($query_params['excluded_phrases'] as $phrase)
 			{
 				$query_where[] = 'subject NOT ' . (empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : 'RLIKE') . '{string:exclude_subject_phrase_' . $count . '}';
-				$query_params['exclude_subject_phrase_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($phrase, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $phrase), '\\\'') . '[[:>:]]';
+				$query_params['exclude_subject_phrase_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($phrase, ['_' => '\\_', '%' => '\\%']) . '%' : '[[:<:]]' . addcslashes(preg_replace(['/([\[\]$.+*?|{}()])/'], ['[$1]'], $phrase), '\\\'') . '[[:>:]]';
 			}
 		$count = 0;
 		if (!empty($query_params['excluded_subject_words']) && empty($modSettings['search_force_index']))
 			foreach ($query_params['excluded_subject_words'] as $excludedWord)
 			{
 				$query_where[] = 'subject NOT ' . (empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : 'RLIKE') . '{string:exclude_subject_words_' . $count . '}';
-				$query_params['exclude_subject_words_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($excludedWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $excludedWord), '\\\'') . '[[:>:]]';
+				$query_params['exclude_subject_words_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($excludedWord, ['_' => '\\_', '%' => '\\%']) . '%' : '[[:<:]]' . addcslashes(preg_replace(['/([\[\]$.+*?|{}()])/'], ['[$1]'], $excludedWord), '\\\'') . '[[:>:]]';
 			}
 
 		if (!empty($modSettings['search_simple_fulltext']))

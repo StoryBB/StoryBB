@@ -195,10 +195,10 @@ class MySQL implements DatabaseAdapter
 
 		$smcFunc['db_query']('', "
 			CREATE DATABASE IF NOT EXISTS `$db_name`",
-			array(
+			[
 				'security_override' => true,
 				'db_error_skip' => true,
-			)
+			]
 		);
 		try
 		{
