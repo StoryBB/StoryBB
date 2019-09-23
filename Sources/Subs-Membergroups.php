@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\Model\Group;
+use StoryBB\Hook\Observable;
 
 /**
  * Delete one of more membergroups.
@@ -116,7 +117,8 @@ function deleteMembergroups($groups)
 	}
 	$smcFunc['db_free_result']($request);
 
-	call_integration_hook('integrate_delete_membergroups', [$groups]);
+	// Notify any plugins that this has happened.
+	(new Observable\Group\Deleted($groups))->execute();
 
 	// Remove the membergroups themselves.
 	$smcFunc['db_query']('', '
