@@ -5,19 +5,26 @@ $(function() {
 	// find all nested linked images and turn off the border
 	$('a.bbc_link img.bbc_img').parent().css('border', '0');
 
-	// Let jump_buttons know where the page is
-	$(window).scroll(function() {
-		var scroll_percent = $(window).scrollTop() / ($(document).height() - $(window).height()) * 100;
+});
 
-		if (scroll_percent > 75)
-			$('.jump_buttons').removeClass('top').addClass('bottom');
+// Let jump_buttons know where the page is
+$(window).on('load scroll', function() {
+	var scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
 
-		else if (scroll_percent < 25)
-			$('.jump_buttons').removeClass('bottom').addClass('top');
+	// Only show the buttons if there is something to scroll
+	if ($(document).height() - $(window).height() > 500)
+		$('.jump_buttons').show();
 
-		else
-			$('.jump_buttons').removeClass('top bottom');
-	});
+	// Top of the page
+	if ($(window).scrollTop() < 600)
+		$('.jump_buttons').removeClass('bottom').addClass('top');
+
+	// Bottom of the page
+	else if (scrollBottom < 600)
+		$('.jump_buttons').removeClass('top').addClass('bottom');
+
+	else
+		$('.jump_buttons').removeClass('top bottom');
 });
 
 // The purpose of this code is to fix the height of overflow: auto blocks, because some browsers can't figure it out for themselves.
