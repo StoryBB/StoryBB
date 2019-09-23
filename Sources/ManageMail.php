@@ -30,24 +30,24 @@ function ManageMail()
 
 	$context['page_title'] = $txt['mailqueue_title'];
 
-	$subActions = array(
+	$subActions = [
 		'browse' => 'BrowseMailQueue',
 		'clear' => 'ClearMailQueue',
 		'settings' => 'ModifyMailSettings',
-	);
+	];
 
 	// By default we want to browse
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'browse';
 	$context['sub_action'] = $_REQUEST['sa'];
 
 	// Load up all the tabs...
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['mailqueue_title'],
 		'help' => '',
 		'description' => $txt['mailqueue_desc'],
-	);
+	];
 
-	routing_integration_hook('integrate_manage_mail', array(&$subActions));
+	routing_integration_hook('integrate_manage_mail', [&$subActions]);
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);
@@ -69,9 +69,9 @@ function BrowseMailQueue()
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}mail_queue
 			WHERE id_mail IN ({array_int:mail_ids})',
-			array(
+			[
 				'mail_ids' => $_REQUEST['delete'],
-			)
+			]
 		);
 	}
 
@@ -79,8 +79,8 @@ function BrowseMailQueue()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*) AS queue_size, MIN(time_sent) AS oldest
 		FROM {db_prefix}mail_queue',
-		array(
-		)
+		[
+		]
 	);
 	list ($mailQueueSize, $mailOldest) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -88,59 +88,59 @@ function BrowseMailQueue()
 	$context['oldest_mail'] = empty($mailOldest) ? $txt['mailqueue_oldest_not_available'] : time_since(time() - $mailOldest);
 	$context['mail_queue_size'] = comma_format($mailQueueSize);
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'mail_queue',
 		'title' => $txt['mailqueue_browse'],
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'base_href' => $scripturl . '?action=admin;area=mailqueue',
 		'default_sort_col' => 'age',
 		'no_items_label' => $txt['mailqueue_no_items'],
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getMailQueue',
-		),
-		'get_count' => array(
+		],
+		'get_count' => [
 			'function' => 'list_getMailQueueSize',
-		),
-		'columns' => array(
-			'subject' => array(
-				'header' => array(
+		],
+		'columns' => [
+			'subject' => [
+				'header' => [
 					'value' => $txt['mailqueue_subject'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData) use ($smcFunc)
 					{
 						return $smcFunc['strlen']($rowData['subject']) > 50 ? sprintf('%1$s...', $smcFunc['htmlspecialchars']($smcFunc['substr']($rowData['subject'], 0, 47))) : $smcFunc['htmlspecialchars']($rowData['subject']);
 					},
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'subject',
 					'reverse' => 'subject DESC',
-				),
-			),
-			'recipient' => array(
-				'header' => array(
+				],
+			],
+			'recipient' => [
+				'header' => [
 					'value' => $txt['mailqueue_recipient'],
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="mailto:%1$s">%1$s</a>',
-						'params' => array(
+						'params' => [
 							'recipient' => true,
-						),
-					),
+						],
+					],
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'recipient',
 					'reverse' => 'recipient DESC',
-				),
-			),
-			'priority' => array(
-				'header' => array(
+				],
+			],
+			'priority' => [
+				'header' => [
 					'value' => $txt['mailqueue_priority'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData) use ($txt)
 					{
 						// We probably have a text label with your priority.
@@ -150,57 +150,57 @@ function BrowseMailQueue()
 						return isset($txt[$txtKey]) ? $txt[$txtKey] : $txt['mq_mpriority_1'];
 					},
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'priority',
 					'reverse' => 'priority DESC',
-				),
-			),
-			'age' => array(
-				'header' => array(
+				],
+			],
+			'age' => [
+				'header' => [
 					'value' => $txt['mailqueue_age'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData)
 					{
 						return time_since(time() - $rowData['time_sent']);
 					},
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'time_sent',
 					'reverse' => 'time_sent DESC',
-				),
-			),
-			'check' => array(
-				'header' => array(
+				],
+			],
+			'check' => [
+				'header' => [
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData)
 					{
 						return '<input type="checkbox" name="delete[]" value="' . $rowData['id_mail'] . '">';
 					},
 					'class' => 'smalltext',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=admin;area=mailqueue',
 			'include_start' => true,
 			'include_sort' => true,
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'top_of_list',
 				'value' => '<input type="submit" name="delete_redirects" value="' . $txt['quickmod_delete_selected'] . '" data-confirm="' . $txt['quickmod_confirm'] . '" class="you_sure"><a class="you_sure" href="' . $scripturl . '?action=admin;area=mailqueue;sa=clear;' . $context['session_var'] . '=' . $context['session_id'] . '" data-confirm="' . $txt['mailqueue_clear_list_warning'] . '">' . $txt['mailqueue_clear_list'] . '</a> ',
-			),
-			array(
+			],
+			[
 				'position' => 'bottom_of_list',
 				'value' => '<input type="submit" name="delete_redirects" value="' . $txt['quickmod_delete_selected'] . '" data-confirm="' . $txt['quickmod_confirm'] . '" class="you_sure"><a class="you_sure" href="' . $scripturl . '?action=admin;area=mailqueue;sa=clear;' . $context['session_var'] . '=' . $context['session_id'] . '" data-confirm="' . $txt['mailqueue_clear_list_warning'] . '">' . $txt['mailqueue_clear_list'] . '</a> ',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
@@ -227,11 +227,11 @@ function list_getMailQueue($start, $items_per_page, $sort)
 		FROM {db_prefix}mail_queue
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:items_per_page}',
-		array(
+		[
 			'start' => $start,
 			'sort' => $sort,
 			'items_per_page' => $items_per_page,
-		)
+		]
 	);
 	$mails = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -260,8 +260,8 @@ function list_getMailQueueSize()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*) AS queue_size
 		FROM {db_prefix}mail_queue',
-		array(
-		)
+		[
+		]
 	);
 	list ($mailQueueSize) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -295,24 +295,24 @@ function ModifyMailSettings($return_config = false)
 	foreach ($processedBirthdayEmails as $index => $dummy)
 		$emails[$index] = $index;
 
-	$config_vars = array(
+	$config_vars = [
 			// Mail queue stuff, this rocks ;)
-			array('int', 'mail_limit', 'subtext' => $txt['zero_to_disable']),
-			array('int', 'mail_quantity'),
+			['int', 'mail_limit', 'subtext' => $txt['zero_to_disable']],
+			['int', 'mail_quantity'],
 		'',
 			// SMTP stuff.
-			array('select', 'mail_type', array($txt['mail_type_default'], 'SMTP', 'SMTP - STARTTLS')),
-			array('text', 'smtp_host'),
-			array('text', 'smtp_port'),
-			array('text', 'smtp_username'),
-			array('password', 'smtp_password'),
+			['select', 'mail_type', [$txt['mail_type_default'], 'SMTP', 'SMTP - STARTTLS']],
+			['text', 'smtp_host'],
+			['text', 'smtp_port'],
+			['text', 'smtp_username'],
+			['password', 'smtp_password'],
 		'',
-			array('select', 'birthday_email', $emails, 'value' => !empty($modSettings['birthday_email']) ? $modSettings['birthday_email'] : 'happy_birthday', 'javascript' => 'onchange="fetch_birthday_preview()"'),
-			'birthday_subject' => array('var_message', 'birthday_subject', 'var_message' => $processedBirthdayEmails[empty($modSettings['birthday_email']) ? 'happy_birthday' : $modSettings['birthday_email']]['subject'], 'disabled' => true, 'size' => strlen($subject) + 3),
-			'birthday_body' => array('var_message', 'birthday_body', 'var_message' => nl2br($body), 'disabled' => true, 'size' => ceil(strlen($body) / 25)),
-	);
+			['select', 'birthday_email', $emails, 'value' => !empty($modSettings['birthday_email']) ? $modSettings['birthday_email'] : 'happy_birthday', 'javascript' => 'onchange="fetch_birthday_preview()"'],
+			'birthday_subject' => ['var_message', 'birthday_subject', 'var_message' => $processedBirthdayEmails[empty($modSettings['birthday_email']) ? 'happy_birthday' : $modSettings['birthday_email']]['subject'], 'disabled' => true, 'size' => strlen($subject) + 3],
+			'birthday_body' => ['var_message', 'birthday_body', 'var_message' => nl2br($body), 'disabled' => true, 'size' => ceil(strlen($body) / 25)],
+	];
 
-	settings_integration_hook('integrate_modify_mail_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_mail_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -385,8 +385,8 @@ function ClearMailQueue()
 		$request = $smcFunc['db_query']('', '
 			SELECT COUNT(*) AS queue_size
 			FROM {db_prefix}mail_queue',
-			array(
-			)
+			[
+			]
 		);
 		list ($_GET['te']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);

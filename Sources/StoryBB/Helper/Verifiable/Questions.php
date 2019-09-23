@@ -210,7 +210,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 		$questions = 1;
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$lang = strtr($row['lngfile'], array('-utf8' => ''));
+			$lang = strtr($row['lngfile'], ['-utf8' => '']);
 			if (!isset($context['question_answers'][$lang_id]))
 			{
 				continue;
@@ -267,11 +267,11 @@ class Questions extends AbstractVerifiable implements Verifiable
 		global $context, $txt, $smcFunc;
 
 		// Handle verification questions.
-		$changes = array(
+		$changes = [
 			'insert' => [],
 			'replace' => [],
 			'delete' => [],
-		);
+		];
 		$qs_per_lang = [];
 		foreach (array_keys($context['question_answers']) as $lang_id)
 		{
@@ -347,14 +347,14 @@ class Questions extends AbstractVerifiable implements Verifiable
 					if (!isset($context['question_answers'][$lang_id]['questions'][$q_id]))
 					{
 						// New question. Now, we don't want to randomly consume ids, so we'll set those, rather than trusting the browser's supplied ids.
-						$changes['insert'][] = array($lang_id, $question, $answers);
+						$changes['insert'][] = [$lang_id, $question, $answers];
 					}
 					else
 					{
 						// It's an existing question. Let's see what's changed, if anything.
 						if ($question != $context['question_answers'][$lang_id]['questions'][$q_id]['question'] || $answers != $context['question_answers'][$lang_id]['questions'][$q_id]['answers'])
 						{
-							$changes['replace'][$q_id] = array('lngfile' => $lang_id, 'question' => $question, 'answers' => $answers);
+							$changes['replace'][$q_id] = ['lngfile' => $lang_id, 'question' => $question, 'answers' => $answers];
 						}
 					}
 
@@ -373,9 +373,9 @@ class Questions extends AbstractVerifiable implements Verifiable
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}qanda
 				WHERE id_question IN ({array_int:questions})',
-				array(
+				[
 					'questions' => $changes['delete'],
-				)
+				]
 			);
 		}
 
@@ -389,12 +389,12 @@ class Questions extends AbstractVerifiable implements Verifiable
 						question = {string:question},
 						answers = {string:answers}
 					WHERE id_question = {int:id_question}',
-					array(
+					[
 						'id_question' => $q_id,
 						'lngfile' => $question['lngfile'],
 						'question' => $question['question'],
 						'answers' => $question['answers'],
-					)
+					]
 				);
 			}
 		}
@@ -403,9 +403,9 @@ class Questions extends AbstractVerifiable implements Verifiable
 		{
 			$smcFunc['db_insert']('insert',
 				'{db_prefix}qanda',
-				array('lngfile' => 'string-50', 'question' => 'string-255', 'answers' => 'string-65534'),
+				['lngfile' => 'string-50', 'question' => 'string-255', 'answers' => 'string-65534'],
 				$changes['insert'],
-				array('id_question')
+				['id_question']
 			);
 		}
 

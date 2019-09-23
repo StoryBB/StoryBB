@@ -45,30 +45,30 @@ function downloadAvatar($url, $charID, $max_width, $max_height)
 		return false;
 
 	require_once($sourcedir . '/ManageAttachments.php');
-	removeAttachments(array('id_character' => $charID));
+	removeAttachments(['id_character' => $charID]);
 
 	$id_folder = 1;
 	$avatar_hash = '';
 	$attachID = $smcFunc['db_insert']('',
 		'{db_prefix}attachments',
-		array(
+		[
 			'id_character' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-255', 'fileext' => 'string-8', 'size' => 'int',
 			'id_folder' => 'int',
-		),
-		array(
+		],
+		[
 			$charID, 1, $destName, $avatar_hash, $ext, 1,
 			$id_folder,
-		),
-		array('id_attach'),
+		],
+		['id_attach'],
 		1
 	);
 
 	// Retain this globally in case the script wants it.
-	$modSettings['new_avatar_data'] = array(
+	$modSettings['new_avatar_data'] = [
 		'id' => $attachID,
 		'filename' => $destName,
 		'type' => 1,
-	);
+	];
 
 	$destName = $modSettings['custom_avatar_dir'] . '/' . $destName . '.tmp';
 
@@ -96,13 +96,13 @@ function downloadAvatar($url, $charID, $max_width, $max_height)
 				SET size = {int:filesize}, width = {int:width}, height = {int:height},
 					mime_type = {string:mime_type}
 				WHERE id_attach = {int:current_attachment}',
-				array(
+				[
 					'filesize' => filesize($destName),
 					'width' => (int) $width,
 					'height' => (int) $height,
 					'current_attachment' => $attachID,
 					'mime_type' => $mime_type,
-				)
+				]
 			);
 			return true;
 		}
@@ -114,9 +114,9 @@ function downloadAvatar($url, $charID, $max_width, $max_height)
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}attachments
 			WHERE id_attach = {int:current_attachment}',
-			array(
+			[
 				'current_attachment' => $attachID,
-			)
+			]
 		);
 
 		@unlink($destName . '.tmp');
@@ -296,13 +296,13 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 {
 	global $sourcedir;
 
-	static $default_formats = array(
+	static $default_formats = [
 		'1' => 'gif',
 		'2' => 'jpeg',
 		'3' => 'png',
 		'6' => 'bmp',
 		'15' => 'wbmp'
-	);
+	];
 
 	require_once($sourcedir . '/Subs-Package.php');
 
@@ -331,12 +331,12 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 			fclose($fp_source);
 		}
 		else
-			$sizes = array(-1, -1, -1);
+			$sizes = [-1, -1, -1];
 		fclose($fp_destination);
 	}
 	// We can't get to the file.
 	else
-		$sizes = array(-1, -1, -1);
+		$sizes = [-1, -1, -1];
 
 	// See if we have -or- can get the needed memory for this operation
 	// ImageMagick isn't subject to PHP's memory limits :)
@@ -385,13 +385,13 @@ function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $
 
 	if (checkImagick() || checkMagickWand())
 	{
-		static $default_formats = array(
+		static $default_formats = [
 			'1' => 'gif',
 			'2' => 'jpeg',
 			'3' => 'png',
 			'6' => 'bmp',
 			'15' => 'wbmp'
-		);
+		];
 		$preferred_format = empty($preferred_format) || !isset($default_formats[$preferred_format]) ? 2 : $preferred_format;
 
 		if (checkImagick())
@@ -794,16 +794,16 @@ function showCodeImage($code)
 
 	// What color is the background - generally white unless we're on "hard".
 	if ($simpleBGColor)
-		$background_color = array(255, 255, 255);
+		$background_color = [255, 255, 255];
 	else
-		$background_color = isset($settings['verification_background']) ? $settings['verification_background'] : array(236, 237, 243);
+		$background_color = isset($settings['verification_background']) ? $settings['verification_background'] : [236, 237, 243];
 
 	// The color of the characters shown (red, green, blue).
 	if ($simpleFGColor)
-		$foreground_color = array(0, 0, 0);
+		$foreground_color = [0, 0, 0];
 	else
 	{
-		$foreground_color = array(64, 101, 136);
+		$foreground_color = [64, 101, 136];
 
 		// Has the theme author requested a custom color?
 		if (isset($settings['verification_foreground']))
@@ -835,12 +835,12 @@ function showCodeImage($code)
 	// For non-hard things don't even change fonts.
 	if (!$varyFonts)
 	{
-		$font_list = array($font_list[0]);
+		$font_list = [$font_list[0]];
 		// Try use Screenge if we can - it looks good!
 		if (in_array('AnonymousPro.ttf', $ttfont_list))
-			$ttfont_list = array('AnonymousPro.ttf');
+			$ttfont_list = ['AnonymousPro.ttf'];
 		else
-			$ttfont_list = empty($ttfont_list) ? [] : array($ttfont_list[0]);
+			$ttfont_list = empty($ttfont_list) ? [] : [$ttfont_list[0]];
 
 	}
 
@@ -849,10 +849,10 @@ function showCodeImage($code)
 	$loaded_fonts = [];
 	for ($i = 0, $n = strlen($code); $i < $n; $i++)
 	{
-		$characters[$i] = array(
+		$characters[$i] = [
 			'id' => $code{$i},
 			'font' => array_rand($font_list),
-		);
+		];
 
 		$loaded_fonts[$characters[$i]['font']] = null;
 	}
@@ -927,14 +927,14 @@ function showCodeImage($code)
 			if ($fontColorType == 'cyclic')
 			{
 				// Here we'll pick from a set of acceptance types.
-				$colors = array(
-					array(10, 120, 95),
-					array(46, 81, 29),
-					array(4, 22, 154),
-					array(131, 9, 130),
-					array(0, 0, 0),
-					array(143, 39, 31),
-				);
+				$colors = [
+					[10, 120, 95],
+					[46, 81, 29],
+					[4, 22, 154],
+					[131, 9, 130],
+					[0, 0, 0],
+					[143, 39, 31],
+				];
 				if (!isset($last_index))
 					$last_index = -1;
 				$new_index = $last_index;
@@ -944,9 +944,9 @@ function showCodeImage($code)
 				$last_index = $new_index;
 			}
 			elseif ($fontColorType == 'random')
-				$char_fg_color = array(mt_rand(max($foreground_color[0] - 2, 0), $foreground_color[0]), mt_rand(max($foreground_color[1] - 2, 0), $foreground_color[1]), mt_rand(max($foreground_color[2] - 2, 0), $foreground_color[2]));
+				$char_fg_color = [mt_rand(max($foreground_color[0] - 2, 0), $foreground_color[0]), mt_rand(max($foreground_color[1] - 2, 0), $foreground_color[1]), mt_rand(max($foreground_color[2] - 2, 0), $foreground_color[2])];
 			else
-				$char_fg_color = array($foreground_color[0], $foreground_color[1], $foreground_color[2]);
+				$char_fg_color = [$foreground_color[0], $foreground_color[1], $foreground_color[2]];
 
 			if (!empty($can_do_ttf))
 			{

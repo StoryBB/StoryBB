@@ -27,61 +27,61 @@ function ManageMaintenance()
 	loadLanguage('ManageMaintenance');
 
 	// This uses admin tabs - as it should!
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['maintain_title'],
 		'description' => $txt['maintain_info'],
-		'tabs' => array(
+		'tabs' => [
 			'routine' => [],
 			'database' => [],
 			'members' => [],
 			'topics' => [],
-		),
-	);
+		],
+	];
 
 	// So many things you can do - but frankly I won't let you - just these!
-	$subActions = array(
-		'routine' => array(
+	$subActions = [
+		'routine' => [
 			'function' => 'MaintainRoutine',
 			'template' => 'admin_maintain_routine',
-			'activities' => array(
+			'activities' => [
 				'version' => 'VersionDetail',
 				'repair' => 'MaintainFindFixErrors',
 				'recount' => 'AdminBoardRecount',
 				'logs' => 'MaintainEmptyUnimportantLogs',
 				'cleancache' => 'MaintainCleanCache',
 				'cleantemplatecache' => 'MaintainCleanTemplateCache',
-			),
-		),
-		'database' => array(
+			],
+		],
+		'database' => [
 			'function' => 'MaintainDatabase',
 			'template' => 'admin_maintain_database',
-			'activities' => array(
+			'activities' => [
 				'optimize' => 'OptimizeTables',
 				'convertutf8' => 'ConvertUtf8',
 				'convertmsgbody' => 'ConvertMsgBody',
-			),
-		),
-		'members' => array(
+			],
+		],
+		'members' => [
 			'function' => 'MaintainMembers',
 			'template' => 'admin_maintain_members',
-			'activities' => array(
+			'activities' => [
 				'reattribute' => 'MaintainReattributePosts',
 				'purgeinactive' => 'MaintainPurgeInactiveMembers',
 				'recountposts' => 'MaintainRecountPosts',
-			),
-		),
-		'topics' => array(
+			],
+		],
+		'topics' => [
 			'function' => 'MaintainTopics',
 			'template' => 'admin_maintain_topics',
-			'activities' => array(
+			'activities' => [
 				'massmove' => 'MaintainMassMoveTopics',
 				'pruneold' => 'MaintainRemoveOldPosts',
 				'olddrafts' => 'MaintainRemoveOldDrafts',
-			),
-		),
-	);
+			],
+		],
+	];
 
-	routing_integration_hook('integrate_manage_maintenance', array(&$subActions));
+	routing_integration_hook('integrate_manage_maintenance', [&$subActions]);
 
 	// Yep, sub-action time!
 	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
@@ -149,21 +149,21 @@ function MaintainMembers()
 	$result = $smcFunc['db_query']('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups',
-		array(
-		)
+		[
+		]
 	);
-	$context['membergroups'] = array(
-		array(
+	$context['membergroups'] = [
+		[
 			'id' => 0,
 			'name' => $txt['maintain_members_ungrouped']
-		),
-	);
+		],
+	];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
-		$context['membergroups'][] = array(
+		$context['membergroups'][] = [
 			'id' => $row['id_group'],
 			'name' => $row['group_name']
-		);
+		];
 	}
 	$smcFunc['db_free_result']($result);
 
@@ -185,24 +185,24 @@ function MaintainTopics()
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 		WHERE {query_see_board}
 			AND redirect = {string:blank_redirect}',
-		array(
+		[
 			'blank_redirect' => '',
-		)
+		]
 	);
 	$context['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		if (!isset($context['categories'][$row['id_cat']]))
-			$context['categories'][$row['id_cat']] = array(
+			$context['categories'][$row['id_cat']] = [
 				'name' => $row['cat_name'],
 				'boards' => []
-			);
+			];
 
-		$context['categories'][$row['id_cat']]['boards'][$row['id_board']] = array(
+		$context['categories'][$row['id_cat']]['boards'][$row['id_board']] = [
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'child_level' => $row['child_level']
-		);
+		];
 	}
 	$smcFunc['db_free_result']($result);
 
@@ -295,7 +295,7 @@ function MaintainEmptyUnimportantLogs()
 	$smcFunc['db_query']('truncate_table', '
 		TRUNCATE {db_prefix}log_search_results');
 
-	updateSettings(array('search_pointer' => 0));
+	updateSettings(['search_pointer' => 0]);
 
 	session_flash('success', sprintf($txt['maintain_done'], $txt['maintain_logs']));
 }
@@ -337,13 +337,13 @@ function ConvertMsgBody()
 
 		// Make it longer so we can do their limit.
 		if ($body_type == 'text')
-			$smcFunc['db_change_column']('{db_prefix}messages', 'body', array('type' => 'mediumtext'));
+			$smcFunc['db_change_column']('{db_prefix}messages', 'body', ['type' => 'mediumtext']);
 		// Shorten the column so we can have a bit (literally per record) less space occupied
 		else
-			$smcFunc['db_change_column']('{db_prefix}messages', 'body', array('type' => 'text'));
+			$smcFunc['db_change_column']('{db_prefix}messages', 'body', ['type' => 'text']);
 
 		// 3rd party integrations may be interested in knowning about this.
-		call_integration_hook('integrate_convert_msgbody', array($body_type));
+		call_integration_hook('integrate_convert_msgbody', [$body_type]);
 
 		$colData = $smcFunc['db_list_columns']('{db_prefix}messages', true);
 		foreach ($colData as $column)
@@ -389,10 +389,10 @@ function ConvertMsgBody()
 				FROM {db_prefix}messages
 				WHERE id_msg BETWEEN {int:start} AND {int:start} + {int:increment}
 					AND LENGTH(body) > 65535',
-				array(
+				[
 					'start' => $_REQUEST['start'],
 					'increment' => $increment - 1,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$id_msg_exceeding[] = $row['id_msg'];
@@ -434,9 +434,9 @@ function ConvertMsgBody()
 				SELECT id_msg, id_topic, subject
 				FROM {db_prefix}messages
 				WHERE id_msg IN ({array_int:messages})',
-				array(
+				[
 					'messages' => $query_msg,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$context['exceeding_messages'][] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
@@ -482,7 +482,7 @@ function OptimizeTables()
 	$temp_tables = $smcFunc['db_list_tables'](false, $real_prefix . '%');
 	$tables = [];
 	foreach ($temp_tables as $table)
-		$tables[] = array('table_name' => $table);
+		$tables[] = ['table_name' => $table];
 
 	// If there aren't any tables then I believe that would mean the world has exploded...
 	$context['num_tables'] = count($tables);
@@ -523,10 +523,10 @@ function OptimizeTables()
 		$data_freed = $smcFunc['db_optimize_table']($tables[$key]['table_name']);
 
 		if ($data_freed > 0)
-			$_SESSION['optimized_tables'][] = array(
+			$_SESSION['optimized_tables'][] = [
 				'name' => $tables[$key]['table_name'],
 				'data_freed' => $data_freed,
-			);
+			];
 	}
 
 	// Number of tables, etc...
@@ -578,8 +578,8 @@ function AdminBoardRecount()
 	$request = $smcFunc['db_query']('', '
 		SELECT MAX(id_topic)
 		FROM {db_prefix}topics',
-		array(
-		)
+		[
+		]
 	);
 	list ($max_topics) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -607,21 +607,21 @@ function AdminBoardRecount()
 					AND t.id_topic <= {int:max_id}
 				GROUP BY t.id_topic
 				HAVING CASE WHEN COUNT(ma.id_msg) >= 1 THEN COUNT(ma.id_msg) - 1 ELSE 0 END != MAX(t.num_replies)',
-				array(
+				[
 					'is_approved' => 1,
 					'start' => $_REQUEST['start'],
 					'max_id' => $_REQUEST['start'] + $increment,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}topics
 					SET num_replies = {int:num_replies}
 					WHERE id_topic = {int:id_topic}',
-					array(
+					[
 						'num_replies' => $row['real_num_replies'],
 						'id_topic' => $row['id_topic'],
-					)
+					]
 				);
 			$smcFunc['db_free_result']($request);
 
@@ -635,21 +635,21 @@ function AdminBoardRecount()
 					AND t.id_topic <= {int:max_id}
 				GROUP BY t.id_topic
 				HAVING COUNT(mu.id_msg) != MAX(t.unapproved_posts)',
-				array(
+				[
 					'not_approved' => 0,
 					'start' => $_REQUEST['start'],
 					'max_id' => $_REQUEST['start'] + $increment,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}topics
 					SET unapproved_posts = {int:unapproved_posts}
 					WHERE id_topic = {int:id_topic}',
-					array(
+					[
 						'unapproved_posts' => $row['real_unapproved_posts'],
 						'id_topic' => $row['id_topic'],
-					)
+					]
 				);
 			$smcFunc['db_free_result']($request);
 
@@ -678,10 +678,10 @@ function AdminBoardRecount()
 				UPDATE {db_prefix}boards
 				SET num_posts = {int:num_posts}
 				WHERE redirect = {string:redirect}',
-				array(
+				[
 					'num_posts' => 0,
 					'redirect' => '',
-				)
+				]
 			);
 
 		while ($_REQUEST['start'] < $max_topics)
@@ -693,21 +693,21 @@ function AdminBoardRecount()
 					AND m.id_topic <= {int:id_topic_max}
 					AND m.approved = {int:is_approved}
 				GROUP BY m.id_board',
-				array(
+				[
 					'id_topic_min' => $_REQUEST['start'],
 					'id_topic_max' => $_REQUEST['start'] + $increment,
 					'is_approved' => 1,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}boards
 					SET num_posts = num_posts + {int:real_num_posts}
 					WHERE id_board = {int:id_board}',
-					array(
+					[
 						'id_board' => $row['id_board'],
 						'real_num_posts' => $row['real_num_posts'],
-					)
+					]
 				);
 			$smcFunc['db_free_result']($request);
 
@@ -735,9 +735,9 @@ function AdminBoardRecount()
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}boards
 				SET num_topics = {int:num_topics}',
-				array(
+				[
 					'num_topics' => 0,
-				)
+				]
 			);
 
 		while ($_REQUEST['start'] < $max_topics)
@@ -749,21 +749,21 @@ function AdminBoardRecount()
 					AND t.id_topic > {int:id_topic_min}
 					AND t.id_topic <= {int:id_topic_max}
 				GROUP BY t.id_board',
-				array(
+				[
 					'is_approved' => 1,
 					'id_topic_min' => $_REQUEST['start'],
 					'id_topic_max' => $_REQUEST['start'] + $increment,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}boards
 					SET num_topics = num_topics + {int:real_num_topics}
 					WHERE id_board = {int:id_board}',
-					array(
+					[
 						'id_board' => $row['id_board'],
 						'real_num_topics' => $row['real_num_topics'],
-					)
+					]
 				);
 			$smcFunc['db_free_result']($request);
 
@@ -791,9 +791,9 @@ function AdminBoardRecount()
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}boards
 				SET unapproved_posts = {int:unapproved_posts}',
-				array(
+				[
 					'unapproved_posts' => 0,
-				)
+				]
 			);
 
 		while ($_REQUEST['start'] < $max_topics)
@@ -805,21 +805,21 @@ function AdminBoardRecount()
 					AND m.id_topic <= {int:id_topic_max}
 					AND m.approved = {int:is_approved}
 				GROUP BY m.id_board',
-				array(
+				[
 					'id_topic_min' => $_REQUEST['start'],
 					'id_topic_max' => $_REQUEST['start'] + $increment,
 					'is_approved' => 0,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}boards
 					SET unapproved_posts = unapproved_posts + {int:unapproved_posts}
 					WHERE id_board = {int:id_board}',
-					array(
+					[
 						'id_board' => $row['id_board'],
 						'unapproved_posts' => $row['real_unapproved_posts'],
-					)
+					]
 				);
 			$smcFunc['db_free_result']($request);
 
@@ -847,9 +847,9 @@ function AdminBoardRecount()
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}boards
 				SET unapproved_topics = {int:unapproved_topics}',
-				array(
+				[
 					'unapproved_topics' => 0,
-				)
+				]
 			);
 
 		while ($_REQUEST['start'] < $max_topics)
@@ -861,21 +861,21 @@ function AdminBoardRecount()
 					AND t.id_topic > {int:id_topic_min}
 					AND t.id_topic <= {int:id_topic_max}
 				GROUP BY t.id_board',
-				array(
+				[
 					'is_approved' => 0,
 					'id_topic_min' => $_REQUEST['start'],
 					'id_topic_max' => $_REQUEST['start'] + $increment,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}boards
 					SET unapproved_topics = unapproved_topics + {int:real_unapproved_topics}
 					WHERE id_board = {int:id_board}',
-					array(
+					[
 						'id_board' => $row['id_board'],
 						'real_unapproved_topics' => $row['real_unapproved_topics'],
-					)
+					]
 				);
 			$smcFunc['db_free_result']($request);
 
@@ -906,12 +906,12 @@ function AdminBoardRecount()
 				LEFT JOIN {db_prefix}pm_recipients AS pmr ON (mem.id_member = pmr.id_member AND pmr.deleted = {int:is_not_deleted})
 			GROUP BY mem.id_member
 			HAVING COUNT(pmr.id_pm) != MAX(mem.instant_messages)',
-			array(
+			[
 				'is_not_deleted' => 0,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			updateMemberData($row['id_member'], array('instant_messages' => $row['real_num']));
+			updateMemberData($row['id_member'], ['instant_messages' => $row['real_num']]);
 		$smcFunc['db_free_result']($request);
 
 		$request = $smcFunc['db_query']('', '
@@ -921,13 +921,13 @@ function AdminBoardRecount()
 				LEFT JOIN {db_prefix}pm_recipients AS pmr ON (mem.id_member = pmr.id_member AND pmr.deleted = {int:is_not_deleted} AND pmr.is_read = {int:is_not_read})
 			GROUP BY mem.id_member
 			HAVING COUNT(pmr.id_pm) != MAX(mem.unread_messages)',
-			array(
+			[
 				'is_not_deleted' => 0,
 				'is_not_read' => 0,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			updateMemberData($row['id_member'], array('unread_messages' => $row['real_num']));
+			updateMemberData($row['id_member'], ['unread_messages' => $row['real_num']]);
 		$smcFunc['db_free_result']($request);
 
 		if (microtime(true) - $time_start > 3)
@@ -953,10 +953,10 @@ function AdminBoardRecount()
 					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic AND t.id_board != m.id_board)
 				WHERE m.id_msg > {int:id_msg_min}
 					AND m.id_msg <= {int:id_msg_max}',
-				array(
+				[
 					'id_msg_min' => $_REQUEST['start'],
 					'id_msg_max' => $_REQUEST['start'] + $increment,
-				)
+				]
 			);
 			$boards = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -968,10 +968,10 @@ function AdminBoardRecount()
 					UPDATE {db_prefix}messages
 					SET id_board = {int:id_board}
 					WHERE id_msg IN ({array_int:id_msg_array})',
-					array(
+					[
 						'id_msg_array' => $messages,
 						'id_board' => $board_id,
-					)
+					]
 				);
 
 			$_REQUEST['start'] += $increment;
@@ -997,9 +997,9 @@ function AdminBoardRecount()
 		FROM {db_prefix}messages AS m
 		WHERE m.approved = {int:is_approved}
 		GROUP BY m.id_board',
-		array(
+		[
 			'is_approved' => 1,
-		)
+		]
 	);
 	$realBoardCounts = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1009,8 +1009,8 @@ function AdminBoardRecount()
 	$request = $smcFunc['db_query']('', '
 		SELECT /*!40001 SQL_NO_CACHE */ id_board, id_parent, id_last_msg, child_level, id_msg_updated
 		FROM {db_prefix}boards',
-		array(
-		)
+		[
+		]
 	);
 	$resort_me = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1038,11 +1038,11 @@ function AdminBoardRecount()
 					UPDATE {db_prefix}boards
 					SET id_last_msg = {int:id_last_msg}, id_msg_updated = {int:id_msg_updated}
 					WHERE id_board = {int:id_board}',
-					array(
+					[
 						'id_last_msg' => $row['local_last_msg'],
 						'id_msg_updated' => $curLastModifiedMsg,
 						'id_board' => $row['id_board'],
-					)
+					]
 				);
 
 			// Parent boards inherit the latest modified message of their children.
@@ -1083,21 +1083,21 @@ function VersionDetail()
 
 	// Call the function that'll get all the version info we need.
 	require_once($sourcedir . '/Subs-Admin.php');
-	$versionOptions = array(
+	$versionOptions = [
 		'include_ssi' => true,
 		'include_subscriptions' => true,
 		'sort_results' => true,
-	);
+	];
 	$version_info = getFileVersions($versionOptions);
 
 	// Add the new info to the template context.
-	$context += array(
+	$context += [
 		'file_versions' => $version_info['file_versions'],
 		'default_template_versions' => $version_info['default_template_versions'],
 		'template_versions' => $version_info['template_versions'],
 		'default_language_versions' => $version_info['default_language_versions'],
 		'default_known_languages' => array_keys($version_info['default_language_versions']),
-	);
+	];
 
 	// Make it easier to manage for the template.
 	$context['forum_version'] = $forum_version;
@@ -1303,9 +1303,9 @@ function MaintainPurgeInactiveMembers()
 		foreach ($_POST['groups'] as $id => $dummy)
 			$groups[] = (int) $id;
 		$time_limit = (time() - ($_POST['maxdays'] * 24 * 3600));
-		$where_vars = array(
+		$where_vars = [
 			'time_limit' => $time_limit,
-		);
+		];
 		if ($_POST['del_type'] == 'activated')
 		{
 			$where = 'mem.date_registered < {int:time_limit} AND mem.is_activated = {int:is_activated}';
@@ -1318,8 +1318,8 @@ function MaintainPurgeInactiveMembers()
 		$request = $smcFunc['db_query']('', '
 			SELECT id_group, group_name
 			FROM {db_prefix}membergroups',
-			array(
-			)
+			[
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -1393,9 +1393,9 @@ function MaintainRemoveOldDrafts()
 		SELECT id_draft
 		FROM {db_prefix}user_drafts
 		WHERE poster_time <= {int:poster_time_old}',
-		array(
+		[
 			'poster_time_old' => time() - (86400 * $_POST['draftdays']),
-		)
+		]
 	);
 
 	while ($row = $smcFunc['db_fetch_row']($request))
@@ -1452,10 +1452,10 @@ function MaintainMassMoveTopics()
 		AND t.is_moved = {int:moved}';
 
 	// DB parameters
-	$params = array(
+	$params = [
 		'id_board_from' => $id_board_from,
 		'moved' => 1,
-	);
+	];
 
 	// Only moving topics not posted in for x days?
 	if (!empty($max_days))
@@ -1612,8 +1612,8 @@ function MaintainRecountPosts()
 			JOIN {db_prefix}boards AS b on m.id_board = b.id_board
 			WHERE m.id_member != 0
 				AND b.count_posts = 0',
-			array(
-			)
+			[
+			]
 		);
 
 		// save it so we don't do this again for this task
@@ -1633,12 +1633,12 @@ function MaintainRecountPosts()
 			' . (!empty($modSettings['recycle_enable']) ? ' AND b.id_board != {int:recycle}' : '') . '
 		GROUP BY m.id_member
 		LIMIT {int:start}, {int:number}',
-		array(
+		[
 			'start' => $_REQUEST['start'],
 			'number' => $increment,
 			'recycle' => $modSettings['recycle_board'],
 			'zero' => 0,
-		)
+		]
 	);
 	$total_rows = $smcFunc['db_num_rows']($request);
 
@@ -1649,10 +1649,10 @@ function MaintainRecountPosts()
 			UPDATE {db_prefix}members
 			SET posts = {int:posts}
 			WHERE id_member = {int:row}',
-			array(
+			[
 				'row' => $row['id_member'],
 				'posts' => $row['posts'],
-			)
+			]
 		);
 	}
 	$smcFunc['db_free_result']($request);
@@ -1667,12 +1667,12 @@ function MaintainRecountPosts()
 			AND b.id_board != {int:recycle}' : '') . '
 		GROUP BY m.id_character
 		LIMIT {int:start}, {int:number}',
-		array(
+		[
 			'start' => $_REQUEST['start'],
 			'number' => $increment,
 			'recycle' => $modSettings['recycle_board'],
 			'zero' => 0,
-		)
+		]
 	);
 	$total_rows = $smcFunc['db_num_rows']($request);
 
@@ -1683,10 +1683,10 @@ function MaintainRecountPosts()
 			UPDATE {db_prefix}characters
 			SET posts = {int:posts}
 			WHERE id_character = {int:row}',
-			array(
+			[
 				'row' => $row['id_character'],
 				'posts' => $row['posts'],
-			)
+			]
 		);
 	}
 	$smcFunc['db_free_result']($request);
@@ -1720,12 +1720,12 @@ function MaintainRecountPosts()
 			AND b.count_posts = {int:zero}
 			' . (!empty($modSettings['recycle_enable']) ? ' AND b.id_board != {int:recycle}' : '') . '
 		GROUP BY m.id_member',
-		array(
+		[
 			'zero' => 0,
 			'string_zero' => '0',
 			'db_error_skip' => true,
 			'recycle' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
-		)
+		]
 	) !== false;
 
 	if ($createTemporary)
@@ -1738,9 +1738,9 @@ function MaintainRecountPosts()
 			ON res.id_member = mem.id_member
 			WHERE res.id_member IS null
 				AND mem.posts != {int:zero}',
-			array(
+			[
 				'zero' => 0,
-			)
+			]
 		);
 
 		// set the post count to zero for any delinquents we may have found
@@ -1750,10 +1750,10 @@ function MaintainRecountPosts()
 				UPDATE {db_prefix}members
 				SET posts = {int:zero}
 				WHERE id_member = {int:row}',
-				array(
+				[
 					'row' => $row['id_member'],
 					'zero' => 0,
-				)
+				]
 			);
 		}
 		$smcFunc['db_free_result']($request);
@@ -1772,12 +1772,12 @@ function MaintainRecountPosts()
 			AND m.id_board = b.id_board ' . (!empty($modSettings['recycle_enable']) ? '
 			AND b.id_board != {int:recycle}' : '') . '
 		GROUP BY m.id_character',
-		array(
+		[
 			'zero' => 0,
 			'string_zero' => '0',
 			'db_error_skip' => true,
 			'recycle' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
-		)
+		]
 	) !== false;
 
 	if ($createTemporaryChar)
@@ -1790,9 +1790,9 @@ function MaintainRecountPosts()
 			ON res.id_character = chars.id_character
 			WHERE res.id_character IS null
 				AND chars.posts != {int:zero}',
-			array(
+			[
 				'zero' => 0,
-			)
+			]
 		);
 
 		// set the post count to zero for any delinquents we may have found
@@ -1802,10 +1802,10 @@ function MaintainRecountPosts()
 				UPDATE {db_prefix}characters
 				SET posts = {int:zero}
 				WHERE id_character = {int:row}',
-				array(
+				[
 					'row' => $row['id_character'],
 					'zero' => 0,
-				)
+				]
 			);
 		}
 		$smcFunc['db_free_result']($request);

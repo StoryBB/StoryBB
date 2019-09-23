@@ -36,12 +36,12 @@ function SplitTopics()
 	require_once($sourcedir . '/Subs-Boards.php');
 	require_once($sourcedir . '/Subs-Post.php');
 
-	$subActions = array(
+	$subActions = [
 		'selectTopics' => 'SplitSelectTopics',
 		'execute' => 'SplitExecute',
 		'index' => 'SplitIndex',
 		'splitSelection' => 'SplitSelectionExecute',
-	);
+	];
 
 	// ?action=splittopics;sa=LETSBREAKIT won't work, sorry.
 	if (empty($_REQUEST['sa']) || !isset($subActions[$_REQUEST['sa']]))
@@ -78,10 +78,10 @@ function SplitIndex()
 			AND m.approved = 1') . '
 			AND m.id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
 			'split_at' => $_GET['at'],
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('cant_find_messages');
@@ -105,10 +105,10 @@ function SplitIndex()
 		return SplitSelectTopics();
 
 	// Basic template information....
-	$context['message'] = array(
+	$context['message'] = [
 		'id' => $_GET['at'],
 		'subject' => $_REQUEST['subname']
-	);
+	];
 	$context['sub_template'] = 'topic_split_ask';
 	$context['page_title'] = $txt['split'];
 }
@@ -152,10 +152,10 @@ function SplitExecute()
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}
 				AND id_msg >= {int:split_at}',
-			array(
+			[
 				'current_topic' => $topic,
 				'split_at' => $_POST['at'],
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$messagesToBeSplit[] = $row['id_msg'];
@@ -197,22 +197,22 @@ function SplitSelectTopics()
 	if (isset($_REQUEST['subname_enc']))
 		$_REQUEST['subname'] = urldecode($_REQUEST['subname_enc']);
 
-	$context['not_selected'] = array(
+	$context['not_selected'] = [
 		'num_messages' => 0,
 		'start' => empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'],
 		'messages' => [],
-	);
+	];
 
-	$context['selected'] = array(
+	$context['selected'] = [
 		'num_messages' => 0,
 		'start' => empty($_REQUEST['start2']) ? 0 : (int) $_REQUEST['start2'],
 		'messages' => [],
-	);
+	];
 
-	$context['topic'] = array(
+	$context['topic'] = [
 		'id' => $topic,
 		'subject' => urlencode($_REQUEST['subname']),
-	);
+	];
 
 	// Some stuff for our favorite template.
 	$context['new_subject'] = $_REQUEST['subname'];
@@ -235,10 +235,10 @@ function SplitSelectTopics()
 	// Get the message ID's from before the move.
 	if (isset($_REQUEST['xml']))
 	{
-		$original_msgs = array(
+		$original_msgs = [
 			'not_selected' => [],
 			'selected' => [],
-		);
+		];
 		$request = $smcFunc['db_query']('', '
 			SELECT id_msg
 			FROM {db_prefix}messages
@@ -247,13 +247,13 @@ function SplitSelectTopics()
 				AND approved = {int:is_approved}') . '
 			' . (empty($settings['view_newest_first']) ? '' : 'ORDER BY id_msg DESC') . '
 			LIMIT {int:start}, {int:messages_per_page}',
-			array(
+			[
 				'current_topic' => $topic,
 				'no_split_msgs' => empty($_SESSION['split_selection'][$topic]) ? [] : $_SESSION['split_selection'][$topic],
 				'is_approved' => 1,
 				'start' => $context['not_selected']['start'],
 				'messages_per_page' => $context['messages_per_page'],
-			)
+			]
 		);
 		// You can't split the last message off.
 		if (empty($context['not_selected']['start']) && $smcFunc['db_num_rows']($request) <= 1 && $_REQUEST['move'] == 'down')
@@ -271,13 +271,13 @@ function SplitSelectTopics()
 					AND approved = {int:is_approved}') . '
 				' . (empty($options['view_newest_first']) ? '' : 'ORDER BY id_msg DESC') . '
 				LIMIT {int:start}, {int:messages_per_page}',
-				array(
+				[
 					'current_topic' => $topic,
 					'split_msgs' => $_SESSION['split_selection'][$topic],
 					'is_approved' => 1,
 					'start' => $context['selected']['start'],
 					'messages_per_page' => $context['messages_per_page'],
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$original_msgs['selected'][] = $row['id_msg'];
@@ -293,7 +293,7 @@ function SplitSelectTopics()
 		if ($_REQUEST['move'] == 'reset')
 			$_SESSION['split_selection'][$topic] = [];
 		elseif ($_REQUEST['move'] == 'up')
-			$_SESSION['split_selection'][$topic] = array_diff($_SESSION['split_selection'][$topic], array($_REQUEST['msg']));
+			$_SESSION['split_selection'][$topic] = array_diff($_SESSION['split_selection'][$topic], [$_REQUEST['msg']]);
 		else
 			$_SESSION['split_selection'][$topic][] = $_REQUEST['msg'];
 	}
@@ -307,11 +307,11 @@ function SplitSelectTopics()
 			WHERE id_topic = {int:current_topic}
 				AND id_msg IN ({array_int:split_msgs})' . (allowedTo('approve_posts') ? '' : '
 				AND approved = {int:is_approved}'),
-			array(
+			[
 				'current_topic' => $topic,
 				'split_msgs' => $_SESSION['split_selection'][$topic],
 				'is_approved' => 1,
-			)
+			]
 		);
 		$_SESSION['split_selection'][$topic] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -326,11 +326,11 @@ function SplitSelectTopics()
 		WHERE m.id_topic = {int:current_topic}' . (allowedTo('approve_posts') ? '' : '
 			AND approved = {int:is_approved}') . (empty($_SESSION['split_selection'][$topic]) ? '' : '
 		GROUP BY is_selected'),
-		array(
+		[
 			'current_topic' => $topic,
 			'split_msgs' => !empty($_SESSION['split_selection'][$topic]) ? $_SESSION['split_selection'][$topic] : [],
 			'is_approved' => 1,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context[empty($row['is_selected']) || $row['is_selected'] == 'f' ? 'not_selected' : 'selected']['num_messages'] = $row['num_messages'];
@@ -341,9 +341,9 @@ function SplitSelectTopics()
 		$context['selected']['start'] = $context['selected']['num_messages'] <= $context['messages_per_page'] ? 0 : ($context['selected']['num_messages'] - (($context['selected']['num_messages'] % $context['messages_per_page']) == 0 ? $context['messages_per_page'] : ($context['selected']['num_messages'] % $context['messages_per_page'])));
 
 	// Build a page list of the not-selected topics...
-	$context['not_selected']['page_index'] = constructPageIndex($scripturl . '?action=splittopics;sa=selectTopics;subname=' . strtr(urlencode($_REQUEST['subname']), array('%' => '%%')) . ';topic=' . $topic . '.%1$d;start2=' . $context['selected']['start'], $context['not_selected']['start'], $context['not_selected']['num_messages'], $context['messages_per_page'], true);
+	$context['not_selected']['page_index'] = constructPageIndex($scripturl . '?action=splittopics;sa=selectTopics;subname=' . strtr(urlencode($_REQUEST['subname']), ['%' => '%%']) . ';topic=' . $topic . '.%1$d;start2=' . $context['selected']['start'], $context['not_selected']['start'], $context['not_selected']['num_messages'], $context['messages_per_page'], true);
 	// ...and one of the selected topics.
-	$context['selected']['page_index'] = constructPageIndex($scripturl . '?action=splittopics;sa=selectTopics;subname=' . strtr(urlencode($_REQUEST['subname']), array('%' => '%%')) . ';topic=' . $topic . '.' . $context['not_selected']['start'] . ';start2=%1$d', $context['selected']['start'], $context['selected']['num_messages'], $context['messages_per_page'], true);
+	$context['selected']['page_index'] = constructPageIndex($scripturl . '?action=splittopics;sa=selectTopics;subname=' . strtr(urlencode($_REQUEST['subname']), ['%' => '%%']) . ';topic=' . $topic . '.' . $context['not_selected']['start'] . ';start2=%1$d', $context['selected']['start'], $context['selected']['num_messages'], $context['messages_per_page'], true);
 
 	// Get the messages and stick them into an array.
 	$request = $smcFunc['db_query']('', '
@@ -355,13 +355,13 @@ function SplitSelectTopics()
 			AND approved = {int:is_approved}') . '
 		' . (empty($options['view_newest_first']) ? '' : 'ORDER BY m.id_msg DESC') . '
 		LIMIT {int:start}, {int:messages_per_page}',
-		array(
+		[
 			'current_topic' => $topic,
 			'no_split_msgs' => !empty($_SESSION['split_selection'][$topic]) ? $_SESSION['split_selection'][$topic] : [],
 			'is_approved' => 1,
 			'start' => $context['not_selected']['start'],
 			'messages_per_page' => $context['messages_per_page'],
-		)
+		]
 	);
 	$context['messages'] = [];
 	for ($counter = 0; $row = $smcFunc['db_fetch_assoc']($request); $counter++)
@@ -371,14 +371,14 @@ function SplitSelectTopics()
 
 		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
-		$context['not_selected']['messages'][$row['id_msg']] = array(
+		$context['not_selected']['messages'][$row['id_msg']] = [
 			'id' => $row['id_msg'],
 			'subject' => $row['subject'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'body' => $row['body'],
 			'poster' => $row['real_name'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -395,13 +395,13 @@ function SplitSelectTopics()
 				AND approved = {int:is_approved}') . '
 			' . (empty($options['view_newest_first']) ? '' : 'ORDER BY m.id_msg DESC') . '
 			LIMIT {int:start}, {int:messages_per_page}',
-			array(
+			[
 				'current_topic' => $topic,
 				'split_msgs' => $_SESSION['split_selection'][$topic],
 				'is_approved' => 1,
 				'start' => $context['selected']['start'],
 				'messages_per_page' => $context['messages_per_page'],
-			)
+			]
 		);
 		$context['messages'] = [];
 		for ($counter = 0; $row = $smcFunc['db_fetch_assoc']($request); $counter++)
@@ -411,14 +411,14 @@ function SplitSelectTopics()
 
 			$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
-			$context['selected']['messages'][$row['id_msg']] = array(
+			$context['selected']['messages'][$row['id_msg']] = [
 				'id' => $row['id_msg'],
 				'subject' => $row['subject'],
 				'time' => timeformat($row['poster_time']),
 				'timestamp' => forum_time(true, $row['poster_time']),
 				'body' => $row['body'],
 				'poster' => $row['real_name']
-			);
+			];
 		}
 		$smcFunc['db_free_result']($request);
 	}
@@ -426,16 +426,16 @@ function SplitSelectTopics()
 	// The XMLhttp method only needs the stuff that changed, so let's compare.
 	if (isset($_REQUEST['xml']))
 	{
-		$changes = array(
-			'remove' => array(
+		$changes = [
+			'remove' => [
 				'not_selected' => array_diff($original_msgs['not_selected'], array_keys($context['not_selected']['messages'])),
 				'selected' => array_diff($original_msgs['selected'], array_keys($context['selected']['messages'])),
-			),
-			'insert' => array(
+			],
+			'insert' => [
 				'not_selected' => array_diff(array_keys($context['not_selected']['messages']), $original_msgs['not_selected']),
 				'selected' => array_diff(array_keys($context['selected']['messages']), $original_msgs['selected']),
-			),
-		);
+			],
+		];
 
 		$context['changes'] = [];
 		foreach ($changes as $change_type => $change_array)
@@ -446,11 +446,11 @@ function SplitSelectTopics()
 
 				foreach ($msg_array as $id_msg)
 				{
-					$context['changes'][$change_type . $id_msg] = array(
+					$context['changes'][$change_type . $id_msg] = [
 						'id' => $id_msg,
 						'type' => $change_type,
 						'section' => $section,
-					);
+					];
 					if ($change_type == 'insert')
 						$context['changes']['insert' . $id_msg]['insert_value'] = $context[$section]['messages'][$id_msg];
 				}
@@ -513,9 +513,9 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:id_topic}
 		LIMIT 1',
-		array(
+		[
 			'id_topic' => $split1_ID_TOPIC,
-		)
+		]
 	);
 	list ($id_board, $split1_approved) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -531,10 +531,10 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		GROUP BY m.approved
 		ORDER BY m.approved DESC
 		LIMIT 2',
-		array(
+		[
 			'id_topic' => $split1_ID_TOPIC,
 			'no_msg_list' => $splitMessages,
-		)
+		]
 	);
 	// You can't select ALL the messages!
 	if ($smcFunc['db_num_rows']($request) == 0)
@@ -581,10 +581,10 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		GROUP BY id_topic, approved
 		ORDER BY approved DESC
 		LIMIT 2',
-		array(
+		[
 			'msg_list' => $splitMessages,
 			'id_topic' => $split1_ID_TOPIC,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -631,7 +631,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	// We're off to insert the new topic!  Use 0 for now to avoid UNIQUE errors.
 	$split2_ID_TOPIC = $smcFunc['db_insert']('',
 			'{db_prefix}topics',
-			array(
+			[
 				'id_board' => 'int',
 				'id_member_started' => 'int',
 				'id_member_updated' => 'int',
@@ -641,19 +641,19 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 				'unapproved_posts' => 'int',
 				'approved' => 'int',
 				'is_sticky' => 'int',
-			),
-			array(
+			],
+			[
 				(int) $id_board, $split2_firstMem, $split2_lastMem, 0,
 				0, $split2_replies, $split2_unapprovedposts, (int) $split2_approved, 0,
-			),
-			array('id_topic'),
+			],
+			['id_topic'],
 			1
 		);
 	if ($split2_ID_TOPIC <= 0)
 		fatal_lang_error('cant_insert_topic');
 
 	// Move the messages over to the other topic.
-	$new_subject = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($new_subject)), array("\r" => '', "\n" => '', "\t" => ''));
+	$new_subject = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($new_subject)), ["\r" => '', "\n" => '', "\t" => '']);
 	// Check the subject length.
 	if ($smcFunc['strlen']($new_subject) > 100)
 		$new_subject = $smcFunc['substr']($new_subject, 0, 100);
@@ -666,13 +666,13 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 				id_topic = {int:id_topic},
 				subject = CASE WHEN id_msg = {int:split_first_msg} THEN {string:new_subject} ELSE {string:new_subject_replies} END
 			WHERE id_msg IN ({array_int:split_msgs})',
-			array(
+			[
 				'split_msgs' => $splitMessages,
 				'id_topic' => $split2_ID_TOPIC,
 				'new_subject' => $new_subject,
 				'split_first_msg' => $split2_first_msg,
 				'new_subject_replies' => $txt['response_prefix'] . $new_subject,
-			)
+			]
 		);
 
 		// Cache the new topics subject... we can do it now as all the subjects are the same!
@@ -684,10 +684,10 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		UPDATE {db_prefix}log_reported
 		SET id_topic = {int:id_topic}
 		WHERE id_msg IN ({array_int:split_msgs})',
-		array(
+		[
 			'split_msgs' => $splitMessages,
 			'id_topic' => $split2_ID_TOPIC,
-		)
+		]
 	);
 
 	// Mess with the old topic's first, last, and number of messages.
@@ -701,7 +701,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			id_member_updated = {int:id_member_updated},
 			unapproved_posts = {int:unapproved_posts}
 		WHERE id_topic = {int:id_topic}',
-		array(
+		[
 			'num_replies' => $split1_replies,
 			'id_first_msg' => $split1_first_msg,
 			'id_last_msg' => $split1_last_msg,
@@ -709,7 +709,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			'id_member_updated' => $split1_lastMem,
 			'unapproved_posts' => $split1_unapprovedposts,
 			'id_topic' => $split1_ID_TOPIC,
-		)
+		]
 	);
 
 	// Now, put the first/last message back to what they should be.
@@ -719,11 +719,11 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			id_first_msg = {int:id_first_msg},
 			id_last_msg = {int:id_last_msg}
 		WHERE id_topic = {int:id_topic}',
-		array(
+		[
 			'id_first_msg' => $split2_first_msg,
 			'id_last_msg' => $split2_last_msg,
 			'id_topic' => $split2_ID_TOPIC,
-		)
+		]
 	);
 
 	// If the new topic isn't approved ensure the first message flags this just in case.
@@ -733,11 +733,11 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			SET approved = {int:approved}
 			WHERE id_msg = {int:id_msg}
 				AND id_topic = {int:id_topic}',
-			array(
+			[
 				'approved' => 0,
 				'id_msg' => $split2_first_msg,
 				'id_topic' => $split2_ID_TOPIC,
-			)
+			]
 		);
 
 	// The board has more topics now (Or more unapproved ones!).
@@ -747,9 +747,9 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			num_topics = num_topics + 1' : '
 			unapproved_topics = unapproved_topics + 1') . '
 		WHERE id_board = {int:id_board}',
-		array(
+		[
 			'id_board' => $id_board,
-		)
+		]
 	);
 
 	// Copy log topic entries.
@@ -758,21 +758,21 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		SELECT id_member, id_msg, unwatched
 		FROM {db_prefix}log_topics
 		WHERE id_topic = {int:id_topic}',
-		array(
+		[
 			'id_topic' => (int) $split1_ID_TOPIC,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{
 		$replaceEntries = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$replaceEntries[] = array($row['id_member'], $split2_ID_TOPIC, $row['id_msg'], $row['unwatched']);
+			$replaceEntries[] = [$row['id_member'], $split2_ID_TOPIC, $row['id_msg'], $row['unwatched']];
 
 		$smcFunc['db_insert']('ignore',
 			'{db_prefix}log_topics',
-			array('id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'),
+			['id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 			$replaceEntries,
-			array('id_member', 'id_topic')
+			['id_member', 'id_topic']
 		);
 		unset($replaceEntries);
 	}
@@ -782,7 +782,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	updateStats('topic');
 	updateLastMessages($id_board);
 
-	logAction('split', array('topic' => $split1_ID_TOPIC, 'new_topic' => $split2_ID_TOPIC, 'board' => $id_board));
+	logAction('split', ['topic' => $split1_ID_TOPIC, 'new_topic' => $split2_ID_TOPIC, 'board' => $id_board]);
 
 	// Notify people that this topic has been split?
 	sendNotifications($split1_ID_TOPIC, 'split');
@@ -790,11 +790,11 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	// If there's a search index that needs updating, update it...
 	require_once($sourcedir . '/Search.php');
 	$searchAPI = findSearchAPI();
-	if (is_callable(array($searchAPI, 'topicSplit')))
+	if (is_callable([$searchAPI, 'topicSplit']))
 		$searchAPI->topicSplit($split2_ID_TOPIC, $splitMessages);
 
 	// Maybe we want to let an external CMS know about this split
-	$split1 = array(
+	$split1 = [
 		'num_replies' => $split1_replies,
 		'id_first_msg' => $split1_first_msg,
 		'id_last_msg' => $split1_last_msg,
@@ -802,8 +802,8 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		'id_member_updated' => $split1_lastMem,
 		'unapproved_posts' => $split1_unapprovedposts,
 		'id_topic' => $split1_ID_TOPIC,
-	);
-	$split2 = array(
+	];
+	$split2 = [
 		'num_replies' => $split2_replies,
 		'id_first_msg' => $split2_first_msg,
 		'id_last_msg' => $split2_last_msg,
@@ -811,8 +811,8 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		'id_member_updated' => $split2_lastMem,
 		'unapproved_posts' => $split2_unapprovedposts,
 		'id_topic' => $split2_ID_TOPIC,
-	);
-	call_integration_hook('integrate_split_topic', array($split1, $split2, $new_subject, $id_board));
+	];
+	call_integration_hook('integrate_split_topic', [$split1, $split2, $new_subject, $id_board]);
 
 	// Return the ID of the newly created topic.
 	return $split2_ID_TOPIC;
@@ -827,12 +827,12 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
  */
 function MergeTopics()
 {
-	$subActions = array(
+	$subActions = [
 		'done' => 'MergeDone',
 		'execute' => 'MergeExecute',
 		'index' => 'MergeIndex',
 		'options' => 'MergeExecute',
-	);
+	];
 
 	// ?action=mergetopics;sa=LETSBREAKIT won't work, sorry.
 	if (empty($_REQUEST['sa']) || !isset($subActions[$_REQUEST['sa']]))
@@ -863,7 +863,7 @@ function MergeIndex()
 
 	// Prepare a handy query bit for approval...
 	$can_approve_boards = boardsAllowedTo('approve_posts');
-	$onlyApproved = $can_approve_boards !== array(0) && !in_array($_REQUEST['targetboard'], $can_approve_boards);
+	$onlyApproved = $can_approve_boards !== [0] && !in_array($_REQUEST['targetboard'], $can_approve_boards);
 
 	// How many topics are on this board?  (used for paging.)
 	$request = $smcFunc['db_query']('', '
@@ -871,10 +871,10 @@ function MergeIndex()
 		FROM {db_prefix}topics AS t
 		WHERE t.id_board = {int:id_board}' . ($onlyApproved ? '
 			AND t.approved = {int:is_approved}' : ''),
-		array(
+		[
 			'id_board' => $_REQUEST['targetboard'],
 			'is_approved' => 1,
-		)
+		]
 	);
 	list ($topiccount) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -891,11 +891,11 @@ function MergeIndex()
 			AND t.id_board = {int:current_board}' . ($onlyApproved ? '
 			AND t.approved = {int:is_approved}' : '') . '
 		LIMIT 1',
-		array(
+		[
 			'current_board' => $board,
 			'id_topic' => $_GET['from'],
 			'is_approved' => 1,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_board');
@@ -920,10 +920,10 @@ function MergeIndex()
 		require_once($sourcedir . '/Subs-MessageIndex.php');
 
 		// Set up a couple of options for our board list
-		$options = array(
+		$options = [
 			'not_redirection' => true,
 			'selected_board' => $context['target_board'],
-		);
+		];
 
 		// Only include these boards in the list (0 means you're an admin')
 		if (!in_array(0, $merge_boards))
@@ -944,7 +944,7 @@ function MergeIndex()
 			AND t.approved = {int:is_approved}' : '') . '
 		ORDER BY {raw:sort}
 		LIMIT {int:offset}, {int:limit}',
-		array(
+		[
 			'id_board' => $_REQUEST['targetboard'],
 			'id_topic' => $_GET['from'],
 			'sort' => 't.is_sticky DESC, t.id_last_msg DESC',
@@ -952,24 +952,24 @@ function MergeIndex()
 			'limit' => $modSettings['defaultMaxTopics'],
 			'is_approved' => 1,
 			'not_redirect' => 0,
-		)
+		]
 	);
 	$context['topics'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		censorText($row['subject']);
 
-		$context['topics'][] = array(
+		$context['topics'][] = [
 			'id' => $row['id_topic'],
-			'poster' => array(
+			'poster' => [
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
 				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'],
 				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" target="_blank" rel="noopener">' . $row['poster_name'] . '</a>'
-			),
+			],
 			'subject' => $row['subject'],
 			'js_subject' => addcslashes(addslashes($row['subject']), '/')
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -1006,7 +1006,7 @@ function MergeExecute($topics = [])
 
 	// Handle URLs from MergeIndex.
 	if (!empty($_GET['from']) && !empty($_GET['to']))
-		$topics = array((int) $_GET['from'], (int) $_GET['to']);
+		$topics = [(int) $_GET['from'], (int) $_GET['to']];
 
 	// If we came from a form, the topic IDs came by post.
 	if (!empty($_POST['topics']) && is_array($_POST['topics']))
@@ -1037,10 +1037,10 @@ function MergeExecute($topics = [])
 		WHERE t.id_topic IN ({array_int:topic_list})
 		ORDER BY t.id_first_msg
 		LIMIT {int:limit}',
-		array(
+		[
 			'topic_list' => $topics,
 			'limit' => count($topics),
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) < 2)
 		fatal_lang_error('no_topic_id');
@@ -1061,15 +1061,15 @@ function MergeExecute($topics = [])
 
 		// Make a note for the board counts...
 		if (!isset($boardTotals[$row['id_board']]))
-			$boardTotals[$row['id_board']] = array(
+			$boardTotals[$row['id_board']] = [
 				'posts' => 0,
 				'topics' => 0,
 				'unapproved_posts' => 0,
 				'unapproved_topics' => 0
-			);
+			];
 
 		// We can't see unapproved topics here?
-		if (!$row['approved'] && $can_approve_boards != array(0) && in_array($row['id_board'], $can_approve_boards))
+		if (!$row['approved'] && $can_approve_boards != [0] && in_array($row['id_board'], $can_approve_boards))
 		{
 			unset($topics[$row['id_topic']]); // If we can't see it, we should not merge it and not adjust counts! Instead skip it.
 			continue;
@@ -1089,26 +1089,26 @@ function MergeExecute($topics = [])
 		if (isset($_POST['postRedirect']))
 			$boardTotals[$row['id_board']]['topics']--;
 
-		$topic_data[$row['id_topic']] = array(
+		$topic_data[$row['id_topic']] = [
 			'id' => $row['id_topic'],
 			'board' => $row['id_board'],
 			'poll' => $row['id_poll'],
 			'num_views' => $row['num_views'],
 			'subject' => $row['subject'],
-			'started' => array(
+			'started' => [
 				'time' => timeformat($row['time_started']),
 				'timestamp' => forum_time(true, $row['time_started']),
 				'href' => empty($row['id_member_started']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member_started'],
 				'link' => empty($row['id_member_started']) ? $row['name_started'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_started'] . '">' . $row['name_started'] . '</a>'
-			),
-			'updated' => array(
+			],
+			'updated' => [
 				'time' => timeformat($row['time_updated']),
 				'timestamp' => forum_time(true, $row['time_updated']),
 				'href' => empty($row['id_member_updated']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member_updated'],
 				'link' => empty($row['id_member_updated']) ? $row['name_updated'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_updated'] . '">' . $row['name_updated'] . '</a>'
-			),
+			],
 			'approved' => $row['approved']
-		);
+		];
 		$num_views += $row['num_views'];
 		$boards[] = $row['id_board'];
 
@@ -1161,11 +1161,11 @@ function MergeExecute($topics = [])
 			AND {query_see_board}' . (!in_array(0, $merge_boards) ? '
 			AND b.id_board IN ({array_int:merge_boards})' : '') . '
 		LIMIT {int:limit}',
-		array(
+		[
 			'boards' => $boards,
 			'merge_boards' => $merge_boards,
 			'limit' => count($boards),
-		)
+		]
 	);
 	// If the number of boards that's in the output isn't exactly the same as we've put in there, you're in trouble.
 	if ($smcFunc['db_num_rows']($request) != count($boards))
@@ -1183,21 +1183,21 @@ function MergeExecute($topics = [])
 					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 				WHERE p.id_poll IN ({array_int:polls})
 				LIMIT {int:limit}',
-				array(
+				[
 					'polls' => $polls,
 					'limit' => count($polls),
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$context['polls'][] = array(
+				$context['polls'][] = [
 					'id' => $row['id_poll'],
-					'topic' => array(
+					'topic' => [
 						'id' => $row['id_topic'],
 						'subject' => $row['subject']
-					),
+					],
 					'question' => $row['question'],
 					'selected' => $row['id_topic'] == $firstTopic
-				);
+				];
 			$smcFunc['db_free_result']($request);
 		}
 		if (count($boards) > 1)
@@ -1208,17 +1208,17 @@ function MergeExecute($topics = [])
 				WHERE id_board IN ({array_int:boards})
 				ORDER BY name
 				LIMIT {int:limit}',
-				array(
+				[
 					'boards' => $boards,
 					'limit' => count($boards),
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$context['boards'][] = array(
+				$context['boards'][] = [
 					'id' => $row['id_board'],
 					'name' => $row['name'],
 					'selected' => $row['id_board'] == $topic_data[$firstTopic]['board']
-				);
+				];
 			$smcFunc['db_free_result']($request);
 		}
 
@@ -1240,12 +1240,12 @@ function MergeExecute($topics = [])
 	$target_poll = count($polls) > 1 ? (int) $_POST['poll'] : (count($polls) == 1 ? $polls[0] : 0);
 	if ($target_poll > 0 && !in_array($target_poll, $polls))
 		fatal_lang_error('no_access', false);
-	$deleted_polls = empty($target_poll) ? $polls : array_diff($polls, array($target_poll));
+	$deleted_polls = empty($target_poll) ? $polls : array_diff($polls, [$target_poll]);
 
 	// Determine the subject of the newly merged topic - was a custom subject specified?
 	if (empty($_POST['subject']) && isset($_POST['custom_subject']) && $_POST['custom_subject'] != '')
 	{
-		$target_subject = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
+		$target_subject = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['custom_subject'])), ["\r" => '', "\n" => '', "\t" => '']);
 		// Keep checking the length.
 		if ($smcFunc['strlen']($target_subject) > 100)
 			$target_subject = $smcFunc['substr']($target_subject, 0, 100);
@@ -1268,9 +1268,9 @@ function MergeExecute($topics = [])
 		WHERE id_topic IN ({array_int:topics})
 		GROUP BY approved
 		ORDER BY approved DESC',
-		array(
+		[
 			'topics' => $topics,
-		)
+		]
 	);
 	$topic_approved = 1;
 	$first_msg = 0;
@@ -1310,12 +1310,12 @@ function MergeExecute($topics = [])
 	// Ensure we have a board stat for the target board.
 	if (!isset($boardTotals[$target_board]))
 	{
-		$boardTotals[$target_board] = array(
+		$boardTotals[$target_board] = [
 			'posts' => 0,
 			'topics' => 0,
 			'unapproved_posts' => 0,
 			'unapproved_topics' => 0
-		);
+		];
 	}
 
 	// Fix the topic count stuff depending on what the new one counts as.
@@ -1331,10 +1331,10 @@ function MergeExecute($topics = [])
 		WHERE id_msg IN ({int:first_msg}, {int:last_msg})
 		ORDER BY id_msg
 		LIMIT 2',
-		array(
+		[
 			'first_msg' => $first_msg,
 			'last_msg' => $last_msg,
-		)
+		]
 	);
 	list ($member_started) = $smcFunc['db_fetch_row']($request);
 	list ($member_updated) = $smcFunc['db_fetch_row']($request);
@@ -1350,9 +1350,9 @@ function MergeExecute($topics = [])
 		SELECT id_msg
 		FROM {db_prefix}messages
 		WHERE id_topic IN ({array_int:topic_list})',
-		array(
+		[
 			'topic_list' => $topics,
-	));
+	]);
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$affected_msgs[] = $row[0];
 	$smcFunc['db_free_result']($request);
@@ -1360,7 +1360,7 @@ function MergeExecute($topics = [])
 	// Assign the first topic ID to be the merged topic.
 	$id_topic = min($topics);
 
-	$deleted_topics = array_diff($topics, array($id_topic));
+	$deleted_topics = array_diff($topics, [$id_topic]);
 	$updated_topics = [];
 
 	// Create stub topics out of the remaining topics.
@@ -1370,17 +1370,17 @@ function MergeExecute($topics = [])
 		$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}log_search_subjects
 		WHERE id_topic IN ({array_int:deleted_topics})',
-			array(
+			[
 				'deleted_topics' => $deleted_topics,
-			)
+			]
 		);
 	}
 
 	require_once($sourcedir . '/Subs-Post.php');
-	$posterOptions = array(
+	$posterOptions = [
 		'id' => $user_info['id'],
 		'update_post_count' => false,
-	);
+	];
 
 	// We only need to do this if we're posting redirection topics...
 	if (isset($_POST['postRedirect']))
@@ -1389,9 +1389,9 @@ function MergeExecute($topics = [])
 		preparsecode($_POST['reason']);
 
 		// Add a URL onto the message.
-		$reason = strtr($_POST['reason'], array(
+		$reason = strtr($_POST['reason'], [
 			$txt['movetopic_auto_topic'] => '[iurl=' . $scripturl . '?topic=' . $id_topic . '.0]' . $target_subject . '[/iurl]'
-		));
+		]);
 
 		// Automatically remove this MERGED redirection topic in the future?
 		$redirect_expires = !empty($_POST['redirect_expires']) ? ((int) ($_POST['redirect_expires'] * 60) + time()) : 0;
@@ -1403,19 +1403,19 @@ function MergeExecute($topics = [])
 		{
 			$redirect_subject = sprintf($txt['merged_subject'], $topic_data[$this_old_topic]['subject']);
 
-			$msgOptions = array(
+			$msgOptions = [
 				'subject' => $redirect_subject,
 				'body' => $reason,
 				'approved' => 1,
-			);
-			$topicOptions = array(
+			];
+			$topicOptions = [
 				'id' => $this_old_topic,
 				'is_approved' => true,
 				'lock_mode' => 1,
 				'board' => $topic_data[$this_old_topic]['board'],
 				'mark_as_read' => true,
 				'is_moved' => 1,
-			);
+			];
 
 			// So we have to make the post. We need to do *this* here so we don't foul up indexes later
 			// and we have to fix them up later once everything else has happened.
@@ -1452,13 +1452,13 @@ function MergeExecute($topics = [])
 			subject = {string:subject}') . '
 		WHERE id_topic IN ({array_int:topic_list})' . (!empty($updated_topics) ? '
 			AND id_msg NOT IN ({array_int:merge_msg})' : ''),
-		array(
+		[
 			'topic_list' => $topics,
 			'id_topic' => $id_topic,
 			'merge_msg' => $updated_topics,
 			'target_board' => $target_board,
 			'subject' => $context['response_prefix'] . $target_subject,
-		)
+		]
 	);
 
 	// Any reported posts should reflect the new board.
@@ -1468,11 +1468,11 @@ function MergeExecute($topics = [])
 			id_topic = {int:id_topic},
 			id_board = {int:target_board}
 		WHERE id_topic IN ({array_int:topics_list})',
-		array(
+		[
 			'topics_list' => $topics,
 			'id_topic' => $id_topic,
 			'target_board' => $target_board,
-		)
+		]
 	);
 
 	// Change the subject of the first message...
@@ -1480,10 +1480,10 @@ function MergeExecute($topics = [])
 		UPDATE {db_prefix}messages
 		SET subject = {string:target_subject}
 		WHERE id_msg = {int:first_msg}',
-		array(
+		[
 			'first_msg' => $first_msg,
 			'target_subject' => $target_subject,
-		)
+		]
 	);
 
 	// Merge log topic entries.
@@ -1493,21 +1493,21 @@ function MergeExecute($topics = [])
 		FROM {db_prefix}log_topics
 		WHERE id_topic IN ({array_int:topics})
 		GROUP BY id_member, unwatched',
-		array(
+		[
 			'topics' => $topics,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{
 		$replaceEntries = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$replaceEntries[] = array($row['id_member'], $id_topic, $row['new_id_msg'], $row['unwatched']);
+			$replaceEntries[] = [$row['id_member'], $id_topic, $row['new_id_msg'], $row['unwatched']];
 
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}log_topics',
-			array('id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'),
+			['id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 			$replaceEntries,
-			array('id_member', 'id_topic')
+			['id_member', 'id_topic']
 		);
 		unset($replaceEntries);
 
@@ -1515,9 +1515,9 @@ function MergeExecute($topics = [])
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_topics
 			WHERE id_topic IN ({array_int:deleted_topics})',
-			array(
+			[
 				'deleted_topics' => $deleted_topics,
-			)
+			]
 		);
 	}
 	$smcFunc['db_free_result']($request);
@@ -1531,30 +1531,30 @@ function MergeExecute($topics = [])
 			FROM {db_prefix}log_notify
 			WHERE id_topic IN ({array_int:topics_list})
 			GROUP BY id_member',
-			array(
+			[
 				'topics_list' => $notifications,
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) > 0)
 		{
 			$replaceEntries = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$replaceEntries[] = array($row['id_member'], $id_topic, 0, $row['sent']);
+				$replaceEntries[] = [$row['id_member'], $id_topic, 0, $row['sent']];
 
 			$smcFunc['db_insert']('replace',
 					'{db_prefix}log_notify',
-					array('id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'sent' => 'int'),
+					['id_member' => 'int', 'id_topic' => 'int', 'id_board' => 'int', 'sent' => 'int'],
 					$replaceEntries,
-					array('id_member', 'id_topic', 'id_board')
+					['id_member', 'id_topic', 'id_board']
 				);
 			unset($replaceEntries);
 
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}log_topics
 				WHERE id_topic IN ({array_int:deleted_topics})',
-				array(
+				[
 					'deleted_topics' => $deleted_topics,
-				)
+				]
 			);
 		}
 		$smcFunc['db_free_result']($request);
@@ -1566,23 +1566,23 @@ function MergeExecute($topics = [])
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}polls
 			WHERE id_poll IN ({array_int:deleted_polls})',
-			array(
+			[
 				'deleted_polls' => $deleted_polls,
-			)
+			]
 		);
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}poll_choices
 			WHERE id_poll IN ({array_int:deleted_polls})',
-			array(
+			[
 				'deleted_polls' => $deleted_polls,
-			)
+			]
 		);
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_polls
 			WHERE id_poll IN ({array_int:deleted_polls})',
-			array(
+			[
 				'deleted_polls' => $deleted_polls,
-			)
+			]
 		);
 	}
 
@@ -1597,13 +1597,13 @@ function MergeExecute($topics = [])
 				num_posts = CASE WHEN {int:posts} > num_posts THEN 0 ELSE num_posts - {int:posts} END,
 				unapproved_posts = CASE WHEN {int:unapproved_posts} > unapproved_posts THEN 0 ELSE unapproved_posts - {int:unapproved_posts} END
 			WHERE id_board = {int:id_board}',
-			array(
+			[
 				'id_board' => $id_board,
 				'topics' => $stats['topics'],
 				'unapproved_topics' => $stats['unapproved_topics'],
 				'posts' => $stats['posts'],
 				'unapproved_posts' => $stats['unapproved_posts'],
-			)
+			]
 		);
 	}
 
@@ -1613,9 +1613,9 @@ function MergeExecute($topics = [])
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:id_topic}
 		LIMIT 1',
-		array(
+		[
 			'id_topic' => $id_topic,
-		)
+		]
 	);
 	list($id_board) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -1640,12 +1640,12 @@ function MergeExecute($topics = [])
 					id_redirect_topic = {int:redirect_topic},
 					redirect_expires = {int:redirect_expires}
 				WHERE id_topic = {int:old_topic}',
-				array(
+				[
 					'current_user' => $user_info['id'],
 					'old_topic' => $old_topic,
 					'redirect_topic' => $redirect_topic,
 					'redirect_expires' => $redirect_expires
-				)
+				]
 			);
 		}
 	}
@@ -1655,9 +1655,9 @@ function MergeExecute($topics = [])
 		UPDATE {db_prefix}topics
 		SET id_poll = 0
 		WHERE id_topic IN ({array_int:deleted_topics})',
-		array(
+		[
 			'deleted_topics' => $deleted_topics
-		)
+		]
 	);
 
 	// Delete any remaining data regarding these topics, this is done before changing the properties of the merged topic (else we get duplicate keys)...
@@ -1685,7 +1685,7 @@ function MergeExecute($topics = [])
 			is_sticky = {int:is_sticky},
 			approved = {int:approved}
 		WHERE id_topic = {int:id_topic}',
-		array(
+		[
 			'id_board' => $target_board,
 			'is_sticky' => $is_sticky,
 			'approved' => $topic_approved,
@@ -1698,7 +1698,7 @@ function MergeExecute($topics = [])
 			'num_replies' => $num_replies,
 			'unapproved_posts' => $num_unapproved,
 			'num_views' => $num_views,
-		)
+		]
 	);
 
 	// Update all the statistics.
@@ -1706,7 +1706,7 @@ function MergeExecute($topics = [])
 	updateStats('subject', $id_topic, $target_subject);
 	updateLastMessages($boards);
 
-	logAction('merge', array('topic' => $id_topic, 'board' => $id_board));
+	logAction('merge', ['topic' => $id_topic, 'board' => $id_board]);
 
 	// Notify people that these topics have been merged?
 	sendNotifications($id_topic, 'merge');
@@ -1714,11 +1714,11 @@ function MergeExecute($topics = [])
 	// If there's a search index that needs updating, update it...
 	require_once($sourcedir . '/Search.php');
 	$searchAPI = findSearchAPI();
-	if (is_callable(array($searchAPI, 'topicMerge')))
-		$searchAPI->topicMerge($id_topic, $topics, $affected_msgs, empty($_POST['enforce_subject']) ? null : array($context['response_prefix'], $target_subject));
+	if (is_callable([$searchAPI, 'topicMerge']))
+		$searchAPI->topicMerge($id_topic, $topics, $affected_msgs, empty($_POST['enforce_subject']) ? null : [$context['response_prefix'], $target_subject]);
 
 	// Merging is the sort of thing an external CMS might want to know about
-	$merged_topic = array(
+	$merged_topic = [
 		'id_board' => $target_board,
 		'is_sticky' => $is_sticky,
 		'approved' => $topic_approved,
@@ -1732,8 +1732,8 @@ function MergeExecute($topics = [])
 		'unapproved_posts' => $num_unapproved,
 		'num_views' => $num_views,
 		'subject' => $target_subject,
-	);
-	call_integration_hook('integrate_merge_topic', array($merged_topic, $updated_topics, $deleted_topics, $deleted_polls));
+	];
+	call_integration_hook('integrate_merge_topic', [$merged_topic, $updated_topics, $deleted_topics, $deleted_polls]);
 
 	// Send them to the all done page.
 	redirectexit('action=mergetopics;sa=done;to=' . $id_topic . ';targetboard=' . $target_board);

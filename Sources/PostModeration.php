@@ -26,18 +26,18 @@ function PostModerationMain()
 	require_once($sourcedir . '/ModerationCenter.php');
 
 	// Allowed sub-actions, you know the drill by now!
-	$subActions = array(
+	$subActions = [
 		'approve' => 'ApproveMessage',
 		'attachments' => 'UnapprovedAttachments',
 		'replies' => 'UnapprovedPosts',
 		'topics' => 'UnapprovedPosts',
-	);
+	];
 
 	// Pick something valid...
 	if (!isset($_REQUEST['sa']) || !isset($subActions[$_REQUEST['sa']]))
 		$_REQUEST['sa'] = 'replies';
 
-	routing_integration_hook('integrate_post_moderation', array(&$subActions));
+	routing_integration_hook('integrate_post_moderation', [&$subActions]);
 
 	call_helper($subActions[$_REQUEST['sa']]);
 }
@@ -59,11 +59,11 @@ function UnapprovedPosts()
 	// @todo Put a message saying we're filtered?
 	if (isset($_REQUEST['brd']))
 	{
-		$filter_board = array((int) $_REQUEST['brd']);
-		$approve_boards = $approve_boards == array(0) ? $filter_board : array_intersect($approve_boards, $filter_board);
+		$filter_board = [(int) $_REQUEST['brd']];
+		$approve_boards = $approve_boards == [0] ? $filter_board : array_intersect($approve_boards, $filter_board);
 	}
 
-	if ($approve_boards == array(0))
+	if ($approve_boards == [0])
 		$approve_query = '';
 	elseif (!empty($approve_boards))
 		$approve_query = ' AND m.id_board IN (' . implode(',', $approve_boards) . ')';
@@ -120,10 +120,10 @@ function UnapprovedPosts()
 			WHERE m.id_msg IN ({array_int:message_list})
 				AND m.approved = {int:not_approved}
 				AND {query_see_board}',
-			array(
+			[
 				'message_list' => $toAction,
 				'not_approved' => 0,
-			)
+			]
 		);
 		$toAction = [];
 		$details = [];
@@ -135,7 +135,7 @@ function UnapprovedPosts()
 
 			$can_add = false;
 			// If we're approving this is simple.
-			if ($curAction == 'approve' && ($any_array == array(0) || in_array($row['id_board'], $any_array)))
+			if ($curAction == 'approve' && ($any_array == [0] || in_array($row['id_board'], $any_array)))
 			{
 				$can_add = true;
 			}
@@ -143,13 +143,13 @@ function UnapprovedPosts()
 			elseif ($curAction == 'delete')
 			{
 				// Own post is easy!
-				if ($row['id_member'] == $user_info['id'] && ($delete_own_boards == array(0) || in_array($row['id_board'], $delete_own_boards)))
+				if ($row['id_member'] == $user_info['id'] && ($delete_own_boards == [0] || in_array($row['id_board'], $delete_own_boards)))
 					$can_add = true;
 				// Is it a reply to their own topic?
-				elseif ($row['id_member'] == $row['id_member_started'] && $row['id_msg'] != $row['id_first_msg'] && ($delete_own_replies == array(0) || in_array($row['id_board'], $delete_own_replies)))
+				elseif ($row['id_member'] == $row['id_member_started'] && $row['id_msg'] != $row['id_first_msg'] && ($delete_own_replies == [0] || in_array($row['id_board'], $delete_own_replies)))
 					$can_add = true;
 				// Someone elses?
-				elseif ($row['id_member'] != $user_info['id'] && ($delete_any_boards == array(0) || in_array($row['id_board'], $delete_any_boards)))
+				elseif ($row['id_member'] != $user_info['id'] && ($delete_any_boards == [0] || in_array($row['id_board'], $delete_any_boards)))
 					$can_add = true;
 			}
 
@@ -189,9 +189,9 @@ function UnapprovedPosts()
 		WHERE m.approved = {int:not_approved}
 			AND {query_see_board}
 			' . $approve_query,
-		array(
+		[
 			'not_approved' => 0,
-		)
+		]
 	);
 	list ($context['total_unapproved_posts']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -204,9 +204,9 @@ function UnapprovedPosts()
 		WHERE m.approved = {int:not_approved}
 			AND {query_see_board}
 			' . $approve_query,
-		array(
+		[
 			'not_approved' => 0,
-		)
+		]
 	);
 	list ($context['total_unapproved_topics']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -218,11 +218,11 @@ function UnapprovedPosts()
 	$context['start'] = $_GET['start'];
 
 	// We have enough to make some pretty tabs!
-	$context[$context['moderation_menu_name']]['tab_data'] = array(
+	$context[$context['moderation_menu_name']]['tab_data'] = [
 		'title' => $txt['mc_unapproved_posts'],
 		'help' => 'postmod',
 		'description' => $txt['mc_unapproved_posts_desc'],
-	);
+	];
 
 	// Update the tabs with the correct number of posts.
 	$context['menu_data_' . $context['moderation_menu_id']]['sections']['posts']['areas']['postmod']['subsections']['posts']['label'] .= ' (' . $context['total_unapproved_posts'] . ')';
@@ -250,28 +250,28 @@ function UnapprovedPosts()
 			AND {query_see_board}
 			' . $approve_query . '
 		LIMIT {int:start}, {int:limit}',
-		array(
+		[
 			'not_approved' => 0,
 			'start' => $context['start'],
 			'limit' => $limit,
-		)
+		]
 	);
 	$context['unapproved_items'] = [];
 	for ($i = 1; $row = $smcFunc['db_fetch_assoc']($request); $i++)
 	{
 		// Can delete is complicated, let's solve it first... is it their own post?
-		if ($row['id_member'] == $user_info['id'] && ($delete_own_boards == array(0) || in_array($row['id_board'], $delete_own_boards)))
+		if ($row['id_member'] == $user_info['id'] && ($delete_own_boards == [0] || in_array($row['id_board'], $delete_own_boards)))
 			$can_delete = true;
 		// Is it a reply to their own topic?
-		elseif ($row['id_member'] == $row['id_member_started'] && $row['id_msg'] != $row['id_first_msg'] && ($delete_own_replies == array(0) || in_array($row['id_board'], $delete_own_replies)))
+		elseif ($row['id_member'] == $row['id_member_started'] && $row['id_msg'] != $row['id_first_msg'] && ($delete_own_replies == [0] || in_array($row['id_board'], $delete_own_replies)))
 			$can_delete = true;
 		// Someone elses?
-		elseif ($row['id_member'] != $user_info['id'] && ($delete_any_boards == array(0) || in_array($row['id_board'], $delete_any_boards)))
+		elseif ($row['id_member'] != $user_info['id'] && ($delete_any_boards == [0] || in_array($row['id_board'], $delete_any_boards)))
 			$can_delete = true;
 		else
 			$can_delete = false;
 
-		$context['unapproved_items'][] = array(
+		$context['unapproved_items'][] = [
 			'id' => $row['id_msg'],
 			'counter' => $context['start'] + $i,
 			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
@@ -279,27 +279,27 @@ function UnapprovedPosts()
 			'subject' => $row['subject'],
 			'body' => Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']),
 			'time' => timeformat($row['poster_time']),
-			'poster' => array(
+			'poster' => [
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
 				'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>' : $row['poster_name'],
 				'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
-			),
-			'topic' => array(
+			],
+			'topic' => [
 				'id' => $row['id_topic'],
-			),
-			'board' => array(
+			],
+			'board' => [
 				'id' => $row['id_board'],
 				'name' => $row['board_name'],
 				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['board_name'] . '</a>',
-			),
-			'category' => array(
+			],
+			'category' => [
 				'id' => $row['id_cat'],
 				'name' => $row['cat_name'],
 				'link' => '<a href="' . $scripturl . '#c' . $row['id_cat'] . '">' . $row['cat_name'] . '</a>',
-			),
+			],
 			'can_delete' => $can_delete,
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -319,7 +319,7 @@ function UnapprovedAttachments()
 	// Once again, permissions are king!
 	$approve_boards = boardsAllowedTo('approve_posts');
 
-	if ($approve_boards == array(0))
+	if ($approve_boards == [0])
 		$approve_query = '';
 	elseif (!empty($approve_boards))
 		$approve_query = ' AND m.id_board IN (' . implode(',', $approve_boards) . ')';
@@ -361,11 +361,11 @@ function UnapprovedAttachments()
 				AND a.attachment_type = {int:attachment_type}
 				AND {query_see_board}
 				' . $approve_query,
-			array(
+			[
 				'attachments' => $attachments,
 				'not_approved' => 0,
 				'attachment_type' => 0,
-			)
+			]
 		);
 		$attachments = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -378,131 +378,131 @@ function UnapprovedAttachments()
 			if ($curAction == 'approve')
 				ApproveAttachments($attachments);
 			else
-				removeAttachments(array('id_attach' => $attachments, 'do_logging' => true));
+				removeAttachments(['id_attach' => $attachments, 'do_logging' => true]);
 		}
 	}
 
 	require_once($sourcedir . '/Subs-List.php');
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'mc_unapproved_attach',
 		'width' => '100%',
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'no_items_label' => $txt['mc_unapproved_attachments_none_found'],
 		'base_href' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
 		'default_sort_col' => 'attach_name',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getUnapprovedAttachments',
-			'params' => array(
+			'params' => [
 				$approve_query,
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getNumUnapprovedAttachments',
-			'params' => array(
+			'params' => [
 				$approve_query,
-			),
-		),
-		'columns' => array(
-			'attach_name' => array(
-				'header' => array(
+			],
+		],
+		'columns' => [
+			'attach_name' => [
+				'header' => [
 					'value' => $txt['mc_unapproved_attach_name'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'filename',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'a.filename',
 					'reverse' => 'a.filename DESC',
-				),
-			),
-			'attach_size' => array(
-				'header' => array(
+				],
+			],
+			'attach_size' => [
+				'header' => [
 					'value' => $txt['mc_unapproved_attach_size'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'size',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'a.size',
 					'reverse' => 'a.size DESC',
-				),
-			),
-			'attach_poster' => array(
-				'header' => array(
+				],
+			],
+			'attach_poster' => [
+				'header' => [
 					'value' => $txt['mc_unapproved_attach_poster'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($data)
 					{
 						return $data['poster']['link'];
 					},
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'm.id_member',
 					'reverse' => 'm.id_member DESC',
-				),
-			),
-			'date' => array(
-				'header' => array(
+				],
+			],
+			'date' => [
+				'header' => [
 					'value' => $txt['date'],
 					'style' => 'width: 18%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time',
 					'class' => 'smalltext',
 					'style' => 'white-space:nowrap;',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'm.poster_time',
 					'reverse' => 'm.poster_time DESC',
-				),
-			),
-			'message' => array(
-				'header' => array(
+				],
+			],
+			'message' => [
+				'header' => [
 					'value' => $txt['post'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($data)
 					{
 						return '<a href="' . $data['message']['href'] . '">' . shorten_subject($data['message']['subject'], 20) . '</a>';
 					},
 					'class' => 'smalltext',
 					'style' => 'width:15em;',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'm.subject',
 					'reverse' => 'm.subject DESC',
-				),
-			),
-			'action' => array(
-				'header' => array(
+				],
+			],
+			'action' => [
+				'header' => [
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" checked>',
 					'style' => 'width: 4%;',
 					'class' => 'centercol',
-				),
-				'data' => array(
-					'sprintf' => array(
+				],
+				'data' => [
+					'sprintf' => [
 						'format' => '<input type="checkbox" name="item[]" value="%1$d" checked>',
-						'params' => array(
+						'params' => [
 							'id' => false,
-						),
-					),
+						],
+					],
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
 			'include_sort' => true,
 			'include_start' => true,
-			'hidden_fields' => array(
+			'hidden_fields' => [
 				$context['session_var'] => $context['session_id'],
-			),
+			],
 			'token' => 'mod-ap',
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'bottom_of_list',
 				'value' => '
 					<select name="do" onchange="if (this.value != 0 &amp;&amp; confirm(\'' . $txt['mc_unapproved_sure'] . '\')) submit();">
@@ -513,9 +513,9 @@ function UnapprovedAttachments()
 					</select>
 					<noscript><input type="submit" name="ml_go" value="' . $txt['go'] . '"></noscript>',
 				'class' => 'floatright',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	// Create the request list.
 	createToken('mod-ap');
@@ -524,11 +524,11 @@ function UnapprovedAttachments()
 	$context['sub_template'] = 'generic_list_page';
 	$context['default_list'] = 'mc_unapproved_attach';
 
-	$context[$context['moderation_menu_name']]['tab_data'] = array(
+	$context[$context['moderation_menu_name']]['tab_data'] = [
 		'title' => $txt['mc_unapproved_attachments'],
 		'help' => '',
 		'description' => $txt['mc_unapproved_attachments_desc']
-	);
+	];
 }
 
 /**
@@ -562,49 +562,49 @@ function list_getUnapprovedAttachments($start, $items_per_page, $sort, $approve_
 			{raw:approve_query}
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:items_per_page}',
-		array(
+		[
 			'not_approved' => 0,
 			'attachment_type' => 0,
 			'start' => $start,
 			'sort' => $sort,
 			'items_per_page' => $items_per_page,
 			'approve_query' => $approve_query,
-		)
+		]
 	);
 
 	$unapproved_items = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$unapproved_items[] = array(
+		$unapproved_items[] = [
 			'id' => $row['id_attach'],
 			'filename' => $row['filename'],
 			'size' => round($row['size'] / 1024, 2),
 			'time' => timeformat($row['poster_time']),
-			'poster' => array(
+			'poster' => [
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
 				'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['poster_name'] . '</a>' : $row['poster_name'],
 				'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
-			),
-			'message' => array(
+			],
+			'message' => [
 				'id' => $row['id_msg'],
 				'subject' => $row['subject'],
 				'body' => Parser::parse_bbc($row['body']),
 				'time' => timeformat($row['poster_time']),
 				'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
-			),
-			'topic' => array(
+			],
+			'topic' => [
 				'id' => $row['id_topic'],
-			),
-			'board' => array(
+			],
+			'board' => [
 				'id' => $row['id_board'],
 				'name' => $row['board_name'],
-			),
-			'category' => array(
+			],
+			'category' => [
 				'id' => $row['id_cat'],
 				'name' => $row['cat_name'],
-			),
-		);
+			],
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -632,10 +632,10 @@ function list_getNumUnapprovedAttachments($approve_query)
 			AND a.attachment_type = {int:attachment_type}
 			AND {query_see_board}
 			' . $approve_query,
-		array(
+		[
 			'not_approved' => 0,
 			'attachment_type' => 0,
-		)
+		]
 	);
 	list ($total_unapproved_attachments) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -665,10 +665,10 @@ function ApproveMessage()
 		WHERE m.id_msg = {int:id_msg}
 			AND m.id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
 			'id_msg' => $_REQUEST['msg'],
-		)
+		]
 	);
 	list ($starter, $first_msg, $poster, $subject, $approved) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -679,14 +679,14 @@ function ApproveMessage()
 		approveTopics($topic, !$approved);
 
 		if ($starter != $user_info['id'])
-			logAction(($approved ? 'un' : '') . 'approve_topic', array('topic' => $topic, 'subject' => $subject, 'member' => $starter, 'board' => $board));
+			logAction(($approved ? 'un' : '') . 'approve_topic', ['topic' => $topic, 'subject' => $subject, 'member' => $starter, 'board' => $board]);
 	}
 	else
 	{
 		approvePosts($_REQUEST['msg'], !$approved);
 
 		if ($poster != $user_info['id'])
-			logAction(($approved ? 'un' : '') . 'approve', array('topic' => $topic, 'subject' => $subject, 'member' => $poster, 'board' => $board));
+			logAction(($approved ? 'un' : '') . 'approve', ['topic' => $topic, 'subject' => $subject, 'member' => $poster, 'board' => $board]);
 	}
 
 	redirectexit('topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg']);
@@ -710,7 +710,7 @@ function approveMessages($messages, $messageDetails, $current_view = 'replies')
 		// and tell the world about it
 		foreach ($messages as $topic)
 		{
-			logAction('approve_topic', array('topic' => $topic, 'subject' => $messageDetails[$topic]['subject'], 'member' => $messageDetails[$topic]['member'], 'board' => $messageDetails[$topic]['board']));
+			logAction('approve_topic', ['topic' => $topic, 'subject' => $messageDetails[$topic]['subject'], 'member' => $messageDetails[$topic]['member'], 'board' => $messageDetails[$topic]['board']]);
 		}
 	}
 	else
@@ -719,7 +719,7 @@ function approveMessages($messages, $messageDetails, $current_view = 'replies')
 		// and tell the world about it again
 		foreach ($messages as $post)
 		{
-			logAction('approve', array('topic' => $messageDetails[$post]['topic'], 'subject' => $messageDetails[$post]['subject'], 'member' => $messageDetails[$post]['member'], 'board' => $messageDetails[$post]['board']));
+			logAction('approve', ['topic' => $messageDetails[$post]['topic'], 'subject' => $messageDetails[$post]['subject'], 'member' => $messageDetails[$post]['member'], 'board' => $messageDetails[$post]['board']]);
 		}
 	}
 }
@@ -736,9 +736,9 @@ function approveAllData()
 		SELECT id_msg
 		FROM {db_prefix}messages
 		WHERE approved = {int:not_approved}',
-		array(
+		[
 			'not_approved' => 0,
-		)
+		]
 	);
 	$msgs = [];
 	while ($row = $smcFunc['db_fetch_row']($request))
@@ -756,9 +756,9 @@ function approveAllData()
 		SELECT id_attach
 		FROM {db_prefix}attachments
 		WHERE approved = {int:not_approved}',
-		array(
+		[
 			'not_approved' => 0,
-		)
+		]
 	);
 	$attaches = [];
 	while ($row = $smcFunc['db_fetch_row']($request))
@@ -792,16 +792,16 @@ function removeMessages($messages, $messageDetails, $current_view = 'replies')
 		// and tell the world about it
 		foreach ($messages as $topic)
 			// Note, only log topic ID in native form if it's not gone forever.
-			logAction('remove', array(
-				(empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $messageDetails[$topic]['board'] ? 'topic' : 'old_topic_id') => $topic, 'subject' => $messageDetails[$topic]['subject'], 'member' => $messageDetails[$topic]['member'], 'board' => $messageDetails[$topic]['board']));
+			logAction('remove', [
+				(empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $messageDetails[$topic]['board'] ? 'topic' : 'old_topic_id') => $topic, 'subject' => $messageDetails[$topic]['subject'], 'member' => $messageDetails[$topic]['member'], 'board' => $messageDetails[$topic]['board']]);
 	}
 	else
 	{
 		foreach ($messages as $post)
 		{
 			removeMessage($post);
-			logAction('delete', array(
-				(empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $messageDetails[$post]['board'] ? 'topic' : 'old_topic_id') => $messageDetails[$post]['topic'], 'subject' => $messageDetails[$post]['subject'], 'member' => $messageDetails[$post]['member'], 'board' => $messageDetails[$post]['board']));
+			logAction('delete', [
+				(empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $messageDetails[$post]['board'] ? 'topic' : 'old_topic_id') => $messageDetails[$post]['topic'], 'subject' => $messageDetails[$post]['subject'], 'member' => $messageDetails[$post]['member'], 'board' => $messageDetails[$post]['board']]);
 		}
 	}
 }

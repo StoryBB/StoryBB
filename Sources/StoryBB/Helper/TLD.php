@@ -182,7 +182,7 @@ class TLD
 		// Otherwise, use the 2012 list of gTLDs and ccTLDs for now and schedule a background update
 		else
 		{
-			$tlds = array('com', 'net', 'org', 'edu', 'gov', 'mil', 'aero', 'asia', 'biz', 'cat',
+			$tlds = ['com', 'net', 'org', 'edu', 'gov', 'mil', 'aero', 'asia', 'biz', 'cat',
 				'coop', 'info', 'int', 'jobs', 'mobi', 'museum', 'name', 'post', 'pro', 'tel',
 				'travel', 'xxx', 'ac', 'ad', 'ae', 'af', 'ag', 'ai', 'al', 'am', 'an', 'ao', 'aq',
 				'ar', 'as', 'at', 'au', 'aw', 'ax', 'az', 'ba', 'bb', 'bd', 'be', 'bf', 'bg', 'bh',
@@ -202,7 +202,7 @@ class TLD
 				'so', 'sr', 'ss', 'st', 'su', 'sv', 'sx', 'sy', 'sz', 'tc', 'td', 'tf', 'tg', 'th',
 				'tj', 'tk', 'tl', 'tm', 'tn', 'to', 'tp', 'tr', 'tt', 'tv', 'tw', 'tz', 'ua', 'ug',
 				'uk', 'us', 'uy', 'uz', 'va', 'vc', 've', 'vg', 'vi', 'vn', 'vu', 'wf', 'ws', 'ye',
-				'yt', 'yu', 'za', 'zm', 'zw');
+				'yt', 'yu', 'za', 'zm', 'zw'];
 
 			// Schedule a background update, unless civilization has collapsed and/or we are having connectivity issues.
 			$schedule_update = empty($postapocalypticNightmare);
@@ -212,7 +212,7 @@ class TLD
 		$tld_regex = self::build_regex($tlds);
 
 		// Remember the new regex in $modSettings
-		updateSettings(array('tld_regex' => $tld_regex));
+		updateSettings(['tld_regex' => $tld_regex]);
 
 		// Schedule a background update if we need one
 		if (!empty($schedule_update))

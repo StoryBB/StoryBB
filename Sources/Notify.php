@@ -40,25 +40,25 @@ function BoardNotify()
 		$alertPref = $mode <= 1 ? 0 : ($mode == 2 ? 1 : 3);
 
 		require_once($sourcedir . '/Subs-Notify.php');
-		setNotifyPrefs($user_info['id'], array('board_notify_' . $board => $alertPref));
+		setNotifyPrefs($user_info['id'], ['board_notify_' . $board => $alertPref]);
 
 		if ($mode > 1)
 			// Turn notification on.  (note this just blows smoke if it's already on.)
 			$smcFunc['db_insert']('ignore',
 				'{db_prefix}log_notify',
-				array('id_member' => 'int', 'id_board' => 'int'),
-				array($user_info['id'], $board),
-				array('id_member', 'id_board')
+				['id_member' => 'int', 'id_board' => 'int'],
+				[$user_info['id'], $board],
+				['id_member', 'id_board']
 			);
 		else
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}log_notify
 				WHERE id_member = {int:current_member}
 				AND id_board = {int:current_board}',
-				array(
+				[
 					'current_board' => $board,
 					'current_member' => $user_info['id'],
-				)
+				]
 			);
 
 	}
@@ -66,14 +66,14 @@ function BoardNotify()
 	// Back to the board!
 	if (isset($_GET['xml']))
 	{
-		$context['xml_data']['errors'] = array(
+		$context['xml_data']['errors'] = [
 			'identifier' => 'error',
-			'children' => array(
-				array(
+			'children' => [
+				[
 					'value' => 0,
-				),
-			),
-		);
+				],
+			],
+		];
 		StoryBB\Template::set_layout('raw');
 		$context['sub_template'] = 'xml_generic';
 	}
@@ -111,22 +111,22 @@ function TopicNotify()
 				FROM {db_prefix}log_topics
 				WHERE id_member = {int:current_user}
 					AND id_topic = {int:current_topic}',
-				array(
+				[
 					'current_user' => $user_info['id'],
 					'current_topic' => $topic,
-				)
+				]
 			);
 			$log = $smcFunc['db_fetch_assoc']($request);
 			$smcFunc['db_free_result']($request);
 			if (empty($log))
 			{
 				$insert = true;
-				$log = array(
+				$log = [
 					'id_member' => $user_info['id'],
 					'id_topic' => $topic,
 					'id_msg' => 0,
 					'unwatched' => empty($mode) ? 1 : 0,
-				);
+				];
 			}
 			else
 			{
@@ -136,24 +136,24 @@ function TopicNotify()
 
 			$smcFunc['db_insert']($insert ? 'insert' : 'replace',
 				'{db_prefix}log_topics',
-				array(
+				[
 					'id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'unwatched' => 'int',
-				),
+				],
 				$log,
-				array('id_member', 'id_topic')
+				['id_member', 'id_topic']
 			);
 
 			require_once($sourcedir . '/Subs-Notify.php');
-			setNotifyPrefs($user_info['id'], array('topic_notify_' . $log['id_topic'] => $alertPref));
+			setNotifyPrefs($user_info['id'], ['topic_notify_' . $log['id_topic'] => $alertPref]);
 
 			if ($mode > 1)
 			{
 				// Turn notification on.  (note this just blows smoke if it's already on.)
 				$smcFunc['db_insert']('ignore',
 					'{db_prefix}log_notify',
-					array('id_member' => 'int', 'id_topic' => 'int'),
-					array($user_info['id'], $log['id_topic']),
-					array('id_member', 'id_board')
+					['id_member' => 'int', 'id_topic' => 'int'],
+					[$user_info['id'], $log['id_topic']],
+					['id_member', 'id_board']
 				);
 			}
 			else
@@ -161,10 +161,10 @@ function TopicNotify()
 					DELETE FROM {db_prefix}log_notify
 					WHERE id_topic = {int:topic}
 						AND id_member = {int:member}',
-					array(
+					[
 						'topic' => $log['id_topic'],
 						'member' => $user_info['id'],
-					));
+					]);
 
 		}
 	}
@@ -172,14 +172,14 @@ function TopicNotify()
 	// Back to the topic.
 	if (isset($_GET['xml']))
 	{
-		$context['xml_data']['errors'] = array(
+		$context['xml_data']['errors'] = [
 			'identifier' => 'error',
-			'children' => array(
-				array(
+			'children' => [
+				[
 					'value' => 0,
-				),
-			),
-		);
+				],
+			],
+		];
 		StoryBB\Template::set_layout('raw');
 		$context['sub_template'] = 'xml_generic';
 	}

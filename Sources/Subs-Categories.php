@@ -26,7 +26,7 @@ function modifyCategory($category_id, $catOptions)
 	$catParameters = [];
 
 	$cat_id = $category_id;
-	call_integration_hook('integrate_pre_modify_category', array($cat_id, &$catOptions));
+	call_integration_hook('integrate_pre_modify_category', [$cat_id, &$catOptions]);
 
 	// Wanna change the categories position?
 	if (isset($catOptions['move_after']))
@@ -44,8 +44,8 @@ function modifyCategory($category_id, $catOptions)
 			SELECT id_cat, cat_order
 			FROM {db_prefix}categories
 			ORDER BY cat_order',
-			array(
-			)
+			[
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -64,10 +64,10 @@ function modifyCategory($category_id, $catOptions)
 					UPDATE {db_prefix}categories
 					SET cat_order = {int:new_order}
 					WHERE id_cat = {int:current_category}',
-					array(
+					[
 						'new_order' => $index,
 						'current_category' => $cat,
-					)
+					]
 				);
 
 		// If the category order changed, so did the board order.
@@ -95,7 +95,7 @@ function modifyCategory($category_id, $catOptions)
 	}
 
 	$cat_id = $category_id;
-	call_integration_hook('integrate_modify_category', array($cat_id, &$catUpdates, &$catParameters));
+	call_integration_hook('integrate_modify_category', [$cat_id, &$catUpdates, &$catParameters]);
 
 	// Do the updates (if any).
 	if (!empty($catUpdates))
@@ -106,13 +106,13 @@ function modifyCategory($category_id, $catOptions)
 				' . implode(',
 				', $catUpdates) . '
 			WHERE id_cat = {int:current_category}',
-			array_merge($catParameters, array(
+			array_merge($catParameters, [
 				'current_category' => $category_id,
-			))
+			])
 		);
 
 		if (empty($catOptions['dont_log']))
-			logAction('edit_cat', array('catname' => isset($catOptions['cat_name']) ? $catOptions['cat_name'] : $category_id), 'admin');
+			logAction('edit_cat', ['catname' => isset($catOptions['cat_name']) ? $catOptions['cat_name'] : $category_id], 'admin');
 	}
 }
 
@@ -142,30 +142,30 @@ function createCategory($catOptions)
 	// Don't log an edit right after.
 	$catOptions['dont_log'] = true;
 
-	$cat_columns = array(
+	$cat_columns = [
 		'name' => 'string-48',
 		'description' => 'string',
-	);
-	$cat_parameters = array(
+	];
+	$cat_parameters = [
 		$catOptions['cat_name'],
 		$catOptions['cat_desc'],
-	);
+	];
 
-	call_integration_hook('integrate_create_category', array(&$catOptions, &$cat_columns, &$cat_parameters));
+	call_integration_hook('integrate_create_category', [&$catOptions, &$cat_columns, &$cat_parameters]);
 
 	// Add the category to the database.
 	$category_id = $smcFunc['db_insert']('',
 		'{db_prefix}categories',
 		$cat_columns,
 		$cat_parameters,
-		array('id_cat'),
+		['id_cat'],
 		1
 	);
 
 	// Set the given properties to the newly created category.
 	modifyCategory($category_id, $catOptions);
 
-	logAction('add_cat', array('catname' => $catOptions['cat_name']), 'admin');
+	logAction('add_cat', ['catname' => $catOptions['cat_name']], 'admin');
 
 	// Return the database ID of the category.
 	return $category_id;
@@ -190,7 +190,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 
 	getBoardTree();
 
-	call_integration_hook('integrate_delete_category', array($categories, &$moveBoardsTo));
+	call_integration_hook('integrate_delete_category', [$categories, &$moveBoardsTo]);
 
 	// With no category set to move the boards to, delete them all.
 	if ($moveBoardsTo === null)
@@ -199,9 +199,9 @@ function deleteCategories($categories, $moveBoardsTo = null)
 			SELECT id_board
 			FROM {db_prefix}boards
 			WHERE id_cat IN ({array_int:category_list})',
-			array(
+			[
 				'category_list' => $categories,
-			)
+			]
 		);
 		$boards_inside = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -222,24 +222,24 @@ function deleteCategories($categories, $moveBoardsTo = null)
 			UPDATE {db_prefix}boards
 			SET id_cat = {int:new_parent_cat}
 			WHERE id_cat IN ({array_int:category_list})',
-			array(
+			[
 				'category_list' => $categories,
 				'new_parent_cat' => $moveBoardsTo,
-			)
+			]
 		);
 
 	// Do the deletion of the category itself
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}categories
 		WHERE id_cat IN ({array_int:category_list})',
-		array(
+		[
 			'category_list' => $categories,
-		)
+		]
 	);
 
 	// Log what we've done.
 	foreach ($categories as $category)
-		logAction('delete_cat', array('catname' => $cat_tree[$category]['node']['name']), 'admin');
+		logAction('delete_cat', ['catname' => $cat_tree[$category]['node']['name']], 'admin');
 
 	// Get all boards back into the right order.
 	reorderBoards();

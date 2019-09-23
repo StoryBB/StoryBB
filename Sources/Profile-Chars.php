@@ -64,10 +64,10 @@ function char_switch($memID, $char = null, $return = false)
 		WHERE id_character = {int:id_character}
 			AND id_member = {int:id_member}
 			AND retired = 0',
-		array(
+		[
 			'id_character' => $char,
 			'id_member' => $memID,
-		)
+		]
 	);
 	$found = $smcFunc['db_num_rows']($result) > 0;
 	$smcFunc['db_free_result']($result);
@@ -84,30 +84,30 @@ function char_switch($memID, $char = null, $return = false)
 		UPDATE {db_prefix}members
 		SET current_character = {int:id_character}
 		WHERE id_member = {int:id_member}',
-		array(
+		[
 			'id_character' => $char,
 			'id_member' => $memID,
-		)
+		]
 	);
 	// Now the online log too.
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}log_online
 		SET id_character = {int:id_character}
 		WHERE id_member = {int:id_member}',
-		array(
+		[
 			'id_character' => $char,
 			'id_member' => $memID,
-		)
+		]
 	);
 	// And last active
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}characters
 		SET last_active = {int:last_active}
 		WHERE id_character = {int:character}',
-		array(
+		[
 			'last_active' => time(),
 			'character' => $char,
-		)
+		]
 	);
 
 	// If caching would have cached the user's record, nuke it.
@@ -168,15 +168,15 @@ function character_profile($memID)
 		$context['character']['retire_eligible'] = false; // Can't retire if you're logged in as them
 	}
 
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'name' => $txt['chars_menu_title'],
 		'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . '#user_char_list',
-	);
-	$context['linktree'][] = array(
+	];
+	$context['linktree'][] = [
 		'name' => $context['character']['character_name'],
 		'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=profile;char=' . $char_id,
-	);
-	$subactions = array(
+	];
+	$subactions = [
 		'edit' => 'char_edit',
 		'theme' => 'char_theme',
 		'sheet' => 'char_sheet',
@@ -192,7 +192,7 @@ function character_profile($memID)
 		'posts' => 'char_posts',
 		'topics' => 'char_posts',
 		'stats' => 'char_stats',
-	);
+	];
 	if (isset($_GET['sa'], $subactions[$_GET['sa']])) {
 		$func = $subactions[$_GET['sa']];
 		return $func();
@@ -204,10 +204,10 @@ function character_profile($memID)
 		FROM {db_prefix}themes
 		WHERE id_theme = {int:id_theme}
 			AND variable = {string:variable}
-		LIMIT 1', array(
+		LIMIT 1', [
 			'id_theme' => $theme_id,
 			'variable' => 'name',
-		)
+		]
 	);
 	list ($context['character']['theme_name']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -266,9 +266,9 @@ function char_create()
 				SELECT COUNT(*)
 				FROM {db_prefix}characters
 				WHERE character_name LIKE {string:new_name}',
-				array(
+				[
 					'new_name' => $context['character']['character_name'],
-				)
+				]
 			);
 			list ($matching_names) = $smcFunc['db_fetch_row']($result);
 			$smcFunc['db_free_result']($result);
@@ -295,7 +295,7 @@ function char_create()
 				['id_character']
 			);
 			$context['character']['id_character'] = $smcFunc['db']->inserted_id();
-			trackStats(array('chars' => '+'));
+			trackStats(['chars' => '+']);
 
 			if (!empty($context['character']['sheet']))
 			{
@@ -314,18 +314,18 @@ function char_create()
 	}
 
 	// Now create the editor.
-	$editorOptions = array(
+	$editorOptions = [
 		'id' => 'message',
 		'value' => un_preparsecode($context['character']['sheet']),
-		'labels' => array(
+		'labels' => [
 			'post_button' => $txt['save'],
-		),
+		],
 		// add height and width for the editor
 		'height' => '500px',
 		'width' => '80%',
 		'preview_type' => 0,
 		'required' => true,
-	);
+	];
 	create_control_richedit($editorOptions);
 
 	load_char_sheet_templates();
@@ -354,7 +354,7 @@ function char_edit()
 	}
 
 	$context['sub_template'] = 'profile_character_edit';
-	loadJavascriptFile('chars.js', array('default_theme' => true), 'chars');
+	loadJavascriptFile('chars.js', ['default_theme' => true], 'chars');
 
 	$context['character']['groups_editable'] = false;
 	if (allowedTo('manage_membergroups') && !$context['character']['is_main'])
@@ -370,32 +370,32 @@ function char_edit()
 	$context['form_errors'] = [];
 	$default_avatar = $settings['images_url'] . '/default.png';
 
-	$context['character']['avatar_settings'] = array(
+	$context['character']['avatar_settings'] = [
 		'custom' => stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://') ? $context['character']['avatar'] : 'http://',
 		'selection' => $context['character']['avatar'] == '' || (stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://')) ? '' : $context['character']['avatar'],
 		'allow_upload' => allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
 		'allow_external' => allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any')),
-	);
+	];
 
 	if ((!empty($context['character']['avatar']) && $context['character']['avatar'] != $default_avatar) && $context['character']['id_attach'] > 0 && $context['character']['avatar_settings']['allow_upload'])
 	{
-		$context['character']['avatar_settings'] += array(
+		$context['character']['avatar_settings'] += [
 			'choice' => 'upload',
 			'external' => 'http://'
-		);
+		];
 		$context['character']['avatar'] = $modSettings['custom_avatar_url'] . '/' . $context['character']['avatar_filename'];
 	}
 	// Use "avatar_original" here so we show what the user entered even if the image proxy is enabled
 	elseif ((stristr($context['character']['avatar'], 'http://') || stristr($context['character']['avatar'], 'https://')) && $context['character']['avatar_settings']['allow_external'] && $context['character']['avatar'] != $default_avatar)
-		$context['character']['avatar_settings'] += array(
+		$context['character']['avatar_settings'] += [
 			'choice' => 'external',
 			'external' => $context['character']['avatar_original']
-		);
+		];
 	else
-		$context['character']['avatar_settings'] += array(
+		$context['character']['avatar_settings'] += [
 			'choice' => 'none',
 			'external' => 'http://'
-		);
+		];
 
 	$context['character']['avatar_settings']['is_url'] = (strpos($context['character']['avatar_settings']['external'], 'https://') === 0) || (strpos($context['character']['avatar_settings']['external'], 'http://') === 0);
 
@@ -430,10 +430,10 @@ function char_edit()
 				FROM {db_prefix}characters
 				WHERE character_name LIKE {string:new_name}
 					AND id_character != {int:char}',
-				array(
+				[
 					'new_name' => $new_name,
 					'char' => $context['character']['id_character'],
-				)
+				]
 			);
 			list ($matching_names) = $smcFunc['db_fetch_row']($result);
 			$smcFunc['db_free_result']($result);
@@ -486,7 +486,7 @@ function char_edit()
 			if ($context['character']['is_main'])
 			{
 				if (isset($changes['character_name']))
-					updateMemberData($context['id_member'], array('real_name' => $changes['character_name']));
+					updateMemberData($context['id_member'], ['real_name' => $changes['character_name']]);
 			}
 
 			// Notify any hooks that there are groups changes.
@@ -495,21 +495,21 @@ function char_edit()
 				$primary_group = isset($changes['main_char_group']) ? $changes['main_char_group'] : $context['character']['main_char_group'];
 				$additional_groups = isset($changes['char_groups']) ? $changes['char_groups'] : $context['character']['char_groups'];
 
-				call_integration_hook('integrate_profile_profileSaveCharGroups', array($context['id_member'], $context['character']['id_character'], $primary_group, $additional_groups));
+				call_integration_hook('integrate_profile_profileSaveCharGroups', [$context['id_member'], $context['character']['id_character'], $primary_group, $additional_groups]);
 			}
 
 			if (!empty($modSettings['userlog_enabled'])) {
 				$rows = [];
 				foreach ($changes as $key => $new_value)
 				{
-					$change_array = array(
+					$change_array = [
 						'previous' => $context['character'][$key],
 						'new' => $changes[$key],
 						'applicator' => $context['user']['id'],
 						'member_affected' => $context['id_member'],
 						'id_character' => $context['character']['id_character'],
 						'character_name' => !empty($changes['character_name']) ? $changes['character_name'] : $context['character']['character_name'],
-					);
+					];
 					if ($key == 'main_char_group')
 					{
 						$change_array['previous'] = $context['member_groups'][$context['character'][$key]]['name'];
@@ -530,7 +530,7 @@ function char_edit()
 						$change_array['previous'] = implode(', ', $previous);
 						$change_array['new'] = implode(', ', $new);
 					}
-					$rows[] = array(
+					$rows[] = [
 						'id_log' => 2, // 2 = profile edits log
 						'log_time' => time(),
 						'id_member' => $context['id_member'],
@@ -540,14 +540,14 @@ function char_edit()
 						'id_topic' => 0,
 						'id_msg' => 0,
 						'extra' => json_encode($change_array),
-					);
+					];
 				}
 				if (!empty($rows)) {
 					$smcFunc['db_insert']('insert',
 						'{db_prefix}log_actions',
-						array('id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int',
+						['id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int',
 							'ip' => 'inet', 'action' => 'string', 'id_board' => 'int',
-							'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string'),
+							'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string'],
 						$rows,
 						[]
 					);
@@ -574,11 +574,11 @@ function char_edit()
 	// Get it ready for the editor.
 	$form_value = un_preparsecode($form_value);
 	censorText($form_value);
-	$form_value = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_value);
+	$form_value = str_replace(['"', '<', '>', '&nbsp;'], ['&quot;', '&lt;', '&gt;', ' '], $form_value);
 	$context['character']['signature_parsed'] = Parser::parse_bbc($context['character']['signature'], true, 'sig_char_' . $context['character']['id_character']);
 
 	require_once($sourcedir . '/Subs-Editor.php');
-	$editorOptions = array(
+	$editorOptions = [
 		'id' => 'char_signature',
 		'value' => $form_value,
 		'disable_smiley_box' => false,
@@ -587,7 +587,7 @@ function char_edit()
 		'width' => '80%',
 		'preview_type' => 0,
 		'required' => true,
-	);
+	];
 	create_control_richedit($editorOptions);
 
 	createToken('edit-char' . $context['character']['id_character'], 'post');
@@ -621,9 +621,9 @@ function char_delete()
 		SELECT COUNT(id_msg)
 		FROM {db_prefix}messages
 		WHERE id_character = {int:char}',
-		array(
+		[
 			'char' => $context['character']['id_character'],
-		)
+		]
 	);
 	list ($count) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -638,9 +638,9 @@ function char_delete()
 		SELECT current_character
 		FROM {db_prefix}members
 		WHERE id_member = {int:member}',
-		array(
+		[
 			'member' => $context['id_member'],
-		)
+		]
 	);
 	list ($current_character) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -689,9 +689,9 @@ function char_delete()
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}characters
 		WHERE id_character = {int:char}',
-		array(
+		[
 			'char' => $context['character']['id_character'],
-		)
+		]
 	);
 
 	redirectexit('action=profile;u=' . $context['id_member']);
@@ -712,12 +712,12 @@ function char_theme()
 	$known_themes = explode(',', $modSettings['knownThemes']);
 	$context['themes'] = [];
 	foreach ($known_themes as $id_theme) {
-		$context['themes'][$id_theme] = array(
+		$context['themes'][$id_theme] = [
 			'name' => '',
 			'theme_dir' => '',
 			'images_url' => '',
 			'thumbnail' => ''
-		);
+		];
 	}
 
 	$request = $smcFunc['db_query']('', '
@@ -725,9 +725,9 @@ function char_theme()
 		FROM {db_prefix}themes
 		WHERE id_member = 0
 			AND variable IN ({array_string:vars})',
-		array(
-			'vars' => array('name', 'images_url', 'theme_dir'),
-		)
+		[
+			'vars' => ['name', 'images_url', 'theme_dir'],
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
@@ -738,7 +738,7 @@ function char_theme()
 		if (empty($theme['name']) || empty($theme['images_url']) || !file_exists($theme['theme_dir']))
 			unset ($context['themes'][$id_theme]);
 
-		foreach (array('.png', '.gif', '.jpg') as $ext)
+		foreach (['.png', '.gif', '.jpg'] as $ext)
 			if (file_exists($theme['theme_dir'] . '/images/thumbnail' . $ext))
 			{
 				$context['themes'][$id_theme]['thumbnail'] = $theme['images_url'] . '/thumbnail' . $ext;
@@ -755,7 +755,7 @@ function char_theme()
 		list($id_theme) = array_keys($_POST['theme']);
 		if (isset($context['themes'][$id_theme]))
 		{
-			updateCharacterData($context['character']['id_character'], array('id_theme' => $id_theme));
+			updateCharacterData($context['character']['id_character'], ['id_theme' => $id_theme]);
 			redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 		}
 	}
@@ -776,38 +776,38 @@ function char_posts()
 	$context['sub_template'] = 'profile_character_posts';
 
 	// Create the tabs for the template.
-	$context[$context['profile_menu_name']]['tab_data'] = array(
+	$context[$context['profile_menu_name']]['tab_data'] = [
 		'title' => $txt['showPosts'],
 		'description' => $txt['showPosts_help_char'],
-		'tabs' => array(
-			'posts' => array(
-			),
-			'topics' => array(
-			),
-		),
-	);
+		'tabs' => [
+			'posts' => [
+			],
+			'topics' => [
+			],
+		],
+	];
 
 	// Shortcut used to determine which $txt['show*'] string to use for the title, based on the SA
-	$title = array(
+	$title = [
 		'posts' => 'Posts',
 		'topics' => 'Topics'
-	);
+	];
 
 	// Set the page title
 	if (isset($_GET['sa']) && array_key_exists($_GET['sa'], $title))
 	{
-		$context['linktree'][] = array(
+		$context['linktree'][] = [
 			'name' => $txt['show' . $title[$_GET['sa']] . '_char'],
 			'url' => $scripturl . '?action=profile;area=characters;char=' . $context['character']['id_character'] . ';sa=' . $_GET['sa'] . ';u=' . $context['id_member'],
-		);
+		];
 		$context['page_title'] = $txt['show' . $title[$_GET['sa']]];
 	}
 	else
 	{
-		$context['linktree'][] = array(
+		$context['linktree'][] = [
 			'name' => $txt['showPosts_char'],
 			'url' => $scripturl . '?action=profile;area=characters;char=' . $context['character']['id_character'] . ';sa=posts;u=' . $context['id_member'],
-		);
+		];
 		$context['page_title'] = $txt['showPosts'];
 	}
 
@@ -833,11 +833,11 @@ function char_posts()
 			WHERE m.id_character = {int:current_member}' . (!empty($board) ? '
 				AND t.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 				AND t.approved = {int:is_approved}'),
-			array(
+			[
 				'current_member' => $context['character']['id_character'],
 				'is_approved' => 1,
 				'board' => $board,
-			)
+			]
 		);
 	else
 		$request = $smcFunc['db_query']('', '
@@ -847,11 +847,11 @@ function char_posts()
 			WHERE m.id_character = {int:current_member}' . (!empty($board) ? '
 				AND m.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 				AND m.approved = {int:is_approved}'),
-			array(
+			[
 				'current_member' => $context['character']['id_character'],
 				'is_approved' => 1,
 				'board' => $board,
-			)
+			]
 		);
 	list ($msgCount) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -862,11 +862,11 @@ function char_posts()
 		WHERE m.id_character = {int:current_member}' . (!empty($board) ? '
 			AND m.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
-		array(
+		[
 			'current_member' => $context['character']['id_character'],
 			'is_approved' => 1,
 			'board' => $board,
-		)
+		]
 	);
 	list ($min_msg_member, $max_msg_member) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -929,11 +929,11 @@ function char_posts()
 					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
 				ORDER BY t.id_first_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
-				array(
+				[
 					'current_member' => $context['character']['id_character'],
 					'is_approved' => 1,
 					'board' => $board,
-				)
+				]
 			);
 		}
 		else
@@ -954,11 +954,11 @@ function char_posts()
 					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
 				ORDER BY m.id_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
-				array(
+				[
 					'current_member' => $context['character']['id_character'],
 					'is_approved' => 1,
 					'board' => $board,
-				)
+				]
 			);
 		}
 
@@ -972,7 +972,7 @@ function char_posts()
 	// Start counting at the number of the first message displayed.
 	$counter = $reverse ? $context['start'] + $maxIndex + 1 : $context['start'];
 	$context['posts'] = [];
-	$board_ids = array('own' => [], 'any' => []);
+	$board_ids = ['own' => [], 'any' => []];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Censor....
@@ -983,17 +983,17 @@ function char_posts()
 		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		// And the array...
-		$context['posts'][$counter += $reverse ? -1 : 1] = array(
+		$context['posts'][$counter += $reverse ? -1 : 1] = [
 			'body' => $row['body'],
 			'counter' => $counter,
-			'category' => array(
+			'category' => [
 				'name' => $row['cname'],
 				'id' => $row['id_cat']
-			),
-			'board' => array(
+			],
+			'board' => [
 				'name' => $row['bname'],
 				'id' => $row['id_board']
-			),
+			],
 			'topic' => $row['id_topic'],
 			'subject' => $row['subject'],
 			'start' => 'msg' . $row['id_msg'],
@@ -1006,7 +1006,7 @@ function char_posts()
 			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($modSettings['edit_disable_time']) || $row['poster_time'] + $modSettings['edit_disable_time'] * 60 >= time()),
 			'approved' => $row['approved'],
 			'css_class' => $row['approved'] ? 'windowbg' : 'approvebg',
-		);
+		];
 
 		if ($user_info['id'] == $row['id_member_started'])
 			$board_ids['own'][$row['id_board']][] = $counter;
@@ -1020,25 +1020,25 @@ function char_posts()
 
 	// These are all the permissions that are different from board to board..
 	if ($context['is_topics'])
-		$permissions = array(
-			'own' => array(
+		$permissions = [
+			'own' => [
 				'post_reply_own' => 'can_reply',
-			),
-			'any' => array(
+			],
+			'any' => [
 				'post_reply_any' => 'can_reply',
-			)
-		);
+			]
+		];
 	else
-		$permissions = array(
-			'own' => array(
+		$permissions = [
+			'own' => [
 				'post_reply_own' => 'can_reply',
 				'delete_own' => 'can_delete',
-			),
-			'any' => array(
+			],
+			'any' => [
 				'post_reply_any' => 'can_reply',
 				'delete_any' => 'can_delete',
-			)
-		);
+			]
+		];
 
 	// For every permission in the own/any lists...
 	foreach ($permissions as $type => $list)
@@ -1087,15 +1087,15 @@ function profileLoadCharGroups()
 {
 	global $cur_profile, $txt, $context, $smcFunc, $user_settings;
 
-	$context['member_groups'] = array(
-		0 => array(
+	$context['member_groups'] = [
+		0 => [
 			'id' => 0,
 			'name' => $txt['no_primary_character_group'],
 			'is_primary' => $context['character']['main_char_group'] == 0,
 			'can_be_additional' => false,
 			'can_be_primary' => true,
-		)
-	);
+		]
+	];
 	$curGroups = explode(',', $context['character']['char_groups']);
 
 	// Load membergroups, but only those groups the user can assign.
@@ -1106,22 +1106,22 @@ function profileLoadCharGroups()
 			AND is_character = 1' . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 		ORDER BY group_name',
-		array(
+		[
 			'moderator_group' => 3,
 			'is_protected' => 1,
 			'newbie_group' => 4,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$context['member_groups'][$row['id_group']] = array(
+		$context['member_groups'][$row['id_group']] = [
 			'id' => $row['id_group'],
 			'name' => $row['group_name'],
 			'is_primary' => $context['character']['main_char_group'] == $row['id_group'],
 			'is_additional' => in_array($row['id_group'], $curGroups),
 			'can_be_additional' => true,
 			'can_be_primary' => $row['hidden'] != 2,
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -1198,14 +1198,14 @@ function char_stats()
 
 	$context['num_posts'] = comma_format($context['character']['posts']);
 	// Menu tab
-	$context[$context['profile_menu_name']]['tab_data'] = array(
+	$context[$context['profile_menu_name']]['tab_data'] = [
 		'title' => $txt['statPanel_generalStats'] . ' - ' . $context['character']['character_name']
-	);
+	];
 
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'name' => $txt['char_stats'],
 		'url' => $scripturl . '?action=profile;area=characters;char=' . $context['character']['id_character'] . ';sa=stats;u=' . $context['id_member'],
-	);
+	];
 
 	// Number of topics started.
 	$result = $smcFunc['db_query']('', '
@@ -1214,10 +1214,10 @@ function char_stats()
 		INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 		WHERE m.id_character = {int:id_character}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 			AND t.id_board != {int:recycle_board}' : ''),
-		array(
+		[
 			'id_character' => $context['character']['id_character'],
 			'recycle_board' => $modSettings['recycle_board'],
-		)
+		]
 	);
 	list ($context['num_topics']) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -1235,15 +1235,15 @@ function char_stats()
 		GROUP BY b.id_board
 		ORDER BY message_count DESC
 		LIMIT 10',
-		array(
+		[
 			'id_character' => $context['character']['id_character'],
 			'count_enabled' => 0,
-		)
+		]
 	);
 	$context['popular_boards'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
-		$context['popular_boards'][$row['id_board']] = array(
+		$context['popular_boards'][$row['id_board']] = [
 			'id' => $row['id_board'],
 			'posts' => $row['message_count'],
 			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
@@ -1251,7 +1251,7 @@ function char_stats()
 			'posts_percent' => $context['character']['posts'] == 0 ? 0 : ($row['message_count'] * 100) / $context['character']['posts'],
 			'total_posts' => $row['num_posts'],
 			'total_posts_char' => $context['character']['posts'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($result);
 
@@ -1267,14 +1267,14 @@ function char_stats()
 		GROUP BY b.id_board, b.num_posts
 		ORDER BY percentage DESC
 		LIMIT 10',
-		array(
+		[
 			'id_character' => $context['character']['id_character'],
-		)
+		]
 	);
 	$context['board_activity'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
-		$context['board_activity'][$row['id_board']] = array(
+		$context['board_activity'][$row['id_board']] = [
 			'id' => $row['id_board'],
 			'posts' => $row['message_count'],
 			'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
@@ -1282,7 +1282,7 @@ function char_stats()
 			'percent' => comma_format((float) $row['percentage'], 2),
 			'posts_percent' => (float) $row['percentage'],
 			'total_posts' => $row['num_posts'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($result);
 
@@ -1295,11 +1295,11 @@ function char_stats()
 		WHERE id_character = {int:id_character}' . ($modSettings['totalMessages'] > 100000 ? '
 			AND id_topic > {int:top_ten_thousand_topics}' : '') . '
 		GROUP BY hour',
-		array(
+		[
 			'id_character' => $context['character']['id_character'],
 			'top_ten_thousand_topics' => $modSettings['totalTopics'] - 10000,
 			'time_offset' => (($user_info['time_offset'] + $modSettings['time_offset']) * 3600),
-		)
+		]
 	);
 	$maxPosts = $realPosts = 0;
 	$context['posts_by_time'] = [];
@@ -1311,13 +1311,13 @@ function char_stats()
 		$maxPosts = max($row['post_count'], $maxPosts);
 		$realPosts += $row['post_count'];
 
-		$context['posts_by_time'][$row['hour']] = array(
+		$context['posts_by_time'][$row['hour']] = [
 			'hour' => $row['hour'],
 			'hour_format' => stripos($user_info['time_format'], '%p') === false ? $row['hour'] : date('g a', mktime($row['hour'])),
 			'posts' => $row['post_count'],
 			'posts_percent' => 0,
 			'is_last' => $row['hour'] == 23,
-		);
+		];
 	}
 	$smcFunc['db_free_result']($result);
 
@@ -1325,14 +1325,14 @@ function char_stats()
 		for ($hour = 0; $hour < 24; $hour++)
 		{
 			if (!isset($context['posts_by_time'][$hour]))
-				$context['posts_by_time'][$hour] = array(
+				$context['posts_by_time'][$hour] = [
 					'hour' => $hour,
 					'hour_format' => stripos($user_info['time_format'], '%p') === false ? $hour : date('g a', mktime($hour)),
 					'posts' => 0,
 					'posts_percent' => 0,
 					'relative_percent' => 0,
 					'is_last' => $hour == 23,
-				);
+				];
 			else
 			{
 				$context['posts_by_time'][$hour]['posts_percent'] = round(($context['posts_by_time'][$hour]['posts'] * 100) / $realPosts);
@@ -1370,9 +1370,9 @@ function char_sheet()
 			WHERE id_character = {int:character}
 			ORDER BY id_version DESC
 			LIMIT 1',
-			array(
+			[
 				'character' => $context['character']['id_character'],
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) > 0)
 		{
@@ -1395,9 +1395,9 @@ function char_sheet()
 				// WE GAHT ONE!!!!!!!!!
 				$smcFunc['db_insert']('insert',
 					'{db_prefix}character_sheet_comments',
-					array('id_character' => 'int', 'id_author' => 'int', 'time_posted' => 'int', 'sheet_comment' => 'string'),
-					array($context['character']['id_character'], $context['user']['id'], time(), $message),
-					array('id_comment')
+					['id_character' => 'int', 'id_author' => 'int', 'time_posted' => 'int', 'sheet_comment' => 'string'],
+					[$context['character']['id_character'], $context['user']['id'], time(), $message],
+					['id_comment']
 				);
 				redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 			}
@@ -1409,9 +1409,9 @@ function char_sheet()
 			SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
 			FROM {db_prefix}character_sheet_versions
 			WHERE id_version = {int:version}',
-			array(
+			[
 				'version' => $context['character']['char_sheet'],
-			)
+			]
 		);
 		$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
 		$smcFunc['db_free_result']($request);
@@ -1423,10 +1423,10 @@ function char_sheet()
 		$context['character']['sheet_details']['sheet_text'] = '';
 	}
 
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'name' => $txt['char_sheet'],
 		'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet;char=' . $context['character']['id_character'],
-	);
+	];
 
 	$context['page_title'] = $txt['char_sheet'] . ' - ' . $context['character']['character_name'];
 	$context['sub_template'] = 'profile_character_sheet';
@@ -1436,53 +1436,53 @@ function char_sheet()
 	if ($context['user']['is_owner'] || allowedTo('admin_forum'))
 	{
 		// Always have an edit button
-		$context['sheet_buttons']['edit'] = array(
+		$context['sheet_buttons']['edit'] = [
 			'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_edit;char=' . $context['character']['id_character'],
 			'text' => 'char_sheet_edit',
-		);
+		];
 		// Only have a history button if there's actually some history
 		if (!empty($context['character']['sheet_details']['sheet_text']))
 		{
-			$context['sheet_buttons']['history'] = array(
+			$context['sheet_buttons']['history'] = [
 				'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_history;char=' . $context['character']['id_character'],
 				'text' => 'char_sheet_history',
-			);
+			];
 			// Only have a send-for-approval button if it hasn't been approved
 			// and it hasn't yet been sent for approval either
 			if (empty($context['character']['sheet_details']['id_approver']) && empty($context['character']['sheet_details']['approval_state']))
 			{
-				$context['sheet_buttons']['send_for_approval'] = array(
+				$context['sheet_buttons']['send_for_approval'] = [
 					'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_approval;char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
 					'text' => 'char_sheet_send_for_approval',
-				);
+				];
 			}
 		}
 		// Compare to last approved only if we had a previous approval and the
 		// current one isn't approved right now
 		if (empty($context['character']['sheet_details']['id_approver']) && !empty($context['character']['char_sheet']))
 		{
-			$context['sheet_buttons']['compare'] = array(
+			$context['sheet_buttons']['compare'] = [
 				'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_compare;char=' . $context['character']['id_character'],
 				'text' => 'char_sheet_compare',
-			);
+			];
 		}
 		// And the infamous approve button
 		if (!empty($context['character']['sheet_details']['sheet_text']) && empty($context['character']['sheet_details']['id_approver']) && allowedTo('admin_forum'))
 		{
-			$context['sheet_buttons']['approve'] = array(
+			$context['sheet_buttons']['approve'] = [
 				'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_approve;version=' . $context['character']['sheet_details']['id_version'] . ';char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
 				'text' => 'char_sheet_approve',
 				'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['char_sheet_approve_are_you_sure']) . ')"',
-			);
+			];
 		}
 		// And if it's pending approval and we might want to kick it back?
 		if (!empty($context['character']['sheet_details']['approval_state']) && empty($context['character']['sheet_details']['id_approver']) && allowedTo('admin_forum'))
 		{
-			$context['sheet_buttons']['reject'] = array(
+			$context['sheet_buttons']['reject'] = [
 				'url' => $scripturl . '?action=profile;u=' . $context['id_member'] . ';area=characters;sa=sheet_reject;version=' . $context['character']['sheet_details']['id_version'] . ';char=' . $context['character']['id_character'] . ';' . $context['session_var'] . '=' . $context['session_id'],
 				'text' => 'char_sheet_reject',
 				'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['char_sheet_reject_are_you_sure']) . ')"',
-			);
+			];
 		}
 
 		// And since this is the owner or admin, we should look at comments.
@@ -1496,9 +1496,9 @@ function char_sheet()
 				FROM {db_prefix}character_sheet_versions
 				WHERE id_approver != 0
 					AND id_character = {int:character}',
-					array(
+					[
 						'character' => $context['character']['id_character'],
-					)
+					]
 				);
 			if ($row = $smcFunc['db_fetch_assoc']($request))
 			{
@@ -1514,10 +1514,10 @@ function char_sheet()
 				WHERE id_character = {int:character}
 					AND time_posted > {int:approval}
 				ORDER BY id_comment DESC',
-				array(
+				[
 					'character' => $context['character']['id_character'],
 					'approval' => $last_approved,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
@@ -1532,18 +1532,18 @@ function char_sheet()
 		require_once($sourcedir . '/Subs-Editor.php');
 
 		// Now create the editor.
-		$editorOptions = array(
+		$editorOptions = [
 			'id' => 'message',
 			'value' => '',
-			'labels' => array(
+			'labels' => [
 				'post_button' => $txt['save'],
-			),
+			],
 			// add height and width for the editor
 			'height' => '175px',
 			'width' => '100%',
 			'preview_type' => 0,
 			'required' => true,
-		);
+		];
 		create_control_richedit($editorOptions);
 	}
 }
@@ -1573,9 +1573,9 @@ function char_sheet_history()
 		LEFT JOIN {db_prefix}members AS mem ON (csv.id_version = mem.id_member)
 		WHERE csv.id_character = {int:char}
 		ORDER BY NULL',
-		array(
+		[
 			'char' => $context['character']['id_character'],
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -1602,9 +1602,9 @@ function char_sheet_history()
 		LEFT JOIN {db_prefix}members AS mem ON (csc.id_author = mem.id_member)
 		WHERE csc.id_character = {int:char}
 		ORDER BY NULL',
-		array(
+		[
 			'char' => $context['character']['id_character'],
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -1657,9 +1657,9 @@ function char_sheet_edit()
 		WHERE id_character = {int:character}
 		ORDER BY id_version DESC
 		LIMIT 1',
-		array(
+		[
 			'character' => $context['character']['id_character'],
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{
@@ -1689,15 +1689,15 @@ function char_sheet_edit()
 				// It's different, good. So insert it, making it await approval.
 				$smcFunc['db_insert']('insert',
 					'{db_prefix}character_sheet_versions',
-					array(
+					[
 						'sheet_text' => 'string', 'id_character' => 'int', 'id_member' => 'int',
 						'created_time' => 'int', 'id_approver' => 'int', 'approved_time' => 'int', 'approval_state' => 'int'
-					),
-					array(
+					],
+					[
 						$message, $context['character']['id_character'], $context['user']['id'],
 						time(), 0, 0, 0
-					),
-					array('id_version')
+					],
+					['id_version']
 				);
 				// Mark previous versions of the character sheet as not awaited approval.
 				mark_char_sheet_unapproved($context['character']['id_character']);
@@ -1708,18 +1708,18 @@ function char_sheet_edit()
 	}
 
 	// Now create the editor.
-	$editorOptions = array(
+	$editorOptions = [
 		'id' => 'message',
 		'value' => !empty($context['character']['sheet_details']['sheet_text']) ? un_preparsecode($context['character']['sheet_details']['sheet_text']) : '',
-		'labels' => array(
+		'labels' => [
 			'post_button' => $txt['save'],
-		),
+		],
 		// add height and width for the editor
 		'height' => '500px',
 		'width' => '100%',
 		'preview_type' => 0,
 		'required' => true,
-	);
+	];
 	create_control_richedit($editorOptions);
 
 	load_char_sheet_templates();
@@ -1744,10 +1744,10 @@ function char_sheet_edit()
 			WHERE id_character = {int:character}
 				AND time_posted > {int:last_approved_time}
 			ORDER BY NULL',
-			array(
+			[
 				'character' => $context['character']['id_character'],
 				'last_approved_time' => $context['character']['sheet_details']['created_time'],
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -1779,10 +1779,10 @@ function load_char_sheet_templates()
 		ORDER BY position ASC');
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$context['sheet_templates'][$row['id_template']] = array(
+		$context['sheet_templates'][$row['id_template']] = [
 			'name' => $row['template_name'],
 			'body' => un_preparsecode($row['template']),
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 }
@@ -1813,9 +1813,9 @@ function char_sheet_approval()
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_approver != 0
 			AND id_character = {int:character}',
-			array(
+			[
 				'character' => $context['character']['id_character'],
-			)
+			]
 		);
 	if ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -1830,10 +1830,10 @@ function char_sheet_approval()
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_version > {int:last_approved}
 			AND id_character = {int:character}',
-			array(
+			[
 				'last_approved' => $last_approved,
 				'character' => $context['character']['id_character'],
-			)
+			]
 		);
 	$row = $smcFunc['db_fetch_assoc']($request);
 	if (empty($row))
@@ -1847,9 +1847,9 @@ function char_sheet_approval()
 		UPDATE {db_prefix}character_sheet_versions
 		SET approval_state = 1
 		WHERE id_version = {int:version}',
-		array(
+		[
 			'version' => $row['highest_id'],
-		)
+		]
 	);
 
 	// Now notify peoples that this is a thing.
@@ -1859,7 +1859,7 @@ function char_sheet_approval()
 	$alert_rows = [];
 	foreach ($admins as $id_member)
 	{
-		$alert_rows[] = array(
+		$alert_rows[] = [
 			'alert_time' => time(),
 			'id_member' => $id_member,
 			'id_member_started' => $context['id_member'],
@@ -1870,19 +1870,19 @@ function char_sheet_approval()
 			'content_action' => 'char_sheet_approval',
 			'is_read' => 0,
 			'extra' => '',
-		);
+		];
 	}
 
 	if (!empty($alert_rows))
 	{
 		$smcFunc['db_insert']('',
 			'{db_prefix}user_alerts',
-			array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
-				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 			$alert_rows,
 			[]
 		);
-		updateMemberData($admins, array('alerts' => '+'));
+		updateMemberData($admins, ['alerts' => '+']);
 	}
 
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
@@ -1909,9 +1909,9 @@ function char_sheet_approve()
 		SELECT id_character, id_approver, approval_state
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_version = {int:version}',
-		array(
+		[
 			'version' => $version,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 	{
@@ -1936,10 +1936,10 @@ function char_sheet_approve()
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_version > {int:version}
 			AND id_character = {int:character}',
-		array(
+		[
 			'version' => $version,
 			'character' => $context['character']['id_character'],
-		)
+		]
 	);
 	list ($count) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -1954,36 +1954,36 @@ function char_sheet_approve()
 			approved_time = {int:time},
 			approval_state = {int:zero}
 		WHERE id_version = {int:version}',
-		array(
+		[
 			'approver' => $context['user']['id'],
 			'time' => time(),
 			'zero' => 0,
 			'version' => $version,
-		)
+		]
 	);
 	// And the character...
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}characters
 		SET char_sheet = {int:version}
 		WHERE id_character = {int:character}',
-		array(
+		[
 			'version' => $version,
 			'character' => $context['character']['id_character'],
-		)
+		]
 	);
 
 	// And send the character sheet owner an alert.
 	$smcFunc['db_insert']('',
 		'{db_prefix}user_alerts',
-		array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+		['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 			'chars_src' => 'int', 'chars_dest' => 'int',
-			'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
-		array(time(), $context['id_member'], $context['user']['id'], '',
+			'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
+		[time(), $context['id_member'], $context['user']['id'], '',
 			0, $context['character']['id_character'],
-			'member', 0, 'char_sheet_approved', 0, ''),
+			'member', 0, 'char_sheet_approved', 0, ''],
 		[]
 	);
-	updateMemberData($context['id_member'], array('alerts' => '+'));
+	updateMemberData($context['id_member'], ['alerts' => '+']);
 
 	redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 }
@@ -2034,10 +2034,10 @@ function char_sheet_compare()
 			AND id_version > {int:current_version}
 		ORDER BY id_version DESC
 		LIMIT 1',
-		array(
+		[
 			'character' => $context['character']['id_character'],
 			'current_version' => $context['character']['char_sheet'],
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 	{
@@ -2051,9 +2051,9 @@ function char_sheet_compare()
 		SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_version = {int:current_version}',
-		array(
+		[
 			'current_version' => $context['character']['char_sheet'],
-		)
+		]
 	);
 	$context['character']['original_sheet'] = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
@@ -2079,9 +2079,9 @@ function mark_char_sheet_unapproved($char)
 		UPDATE {db_prefix}character_sheet_versions
 		SET approval_state = 0
 		WHERE id_character = {int:char}',
-		array(
+		[
 			'char' => (int) $char,
-		)
+		]
 	);
 }
 
@@ -2127,9 +2127,9 @@ function char_merge_account($memID)
 			SELECT id_member
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}',
-			array(
+			[
 				'id_member' => (int) $_POST['merge_acct'],
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('cannot_merge_not_found', false);
@@ -2160,7 +2160,7 @@ function merge_char_accounts($source, $dest)
 	if ($source == $dest)
 		return 'no_same';
 
-	$loaded = loadMemberData(array($source, $dest));
+	$loaded = loadMemberData([$source, $dest]);
 	if (!in_array($source, $loaded) || !in_array($dest, $loaded))
 		return 'no_exist';
 
@@ -2195,12 +2195,12 @@ function merge_char_accounts($source, $dest)
 		SET id_member = {int:dest}
 		WHERE id_member = {int:source}
 			AND id_character != {int:source_main}',
-		array(
+		[
 			'source' => $source,
 			'source_main' => $source_main,
 			'dest' => $dest,
 			'dest_main' => $dest_main,
-		)
+		]
 	);
 
 	// Move posts over - main
@@ -2210,12 +2210,12 @@ function merge_char_accounts($source, $dest)
 			id_character = {int:dest_main}
 		WHERE id_member = {int:source}
 			AND id_character = {int:source_main}',
-		array(
+		[
 			'source' => $source,
 			'source_main' => $source_main,
 			'dest' => $dest,
 			'dest_main' => $dest_main,
-		)
+		]
 	);
 
 	// Move posts over - characters (i.e. whatever's left)
@@ -2223,10 +2223,10 @@ function merge_char_accounts($source, $dest)
 		UPDATE {db_prefix}messages
 		SET id_member = {int:dest}
 		WHERE id_member = {int:source}',
-		array(
+		[
 			'source' => $source,
 			'dest' => $dest,
-		)
+		]
 	);
 
 	// Fix post counts of destination accounts
@@ -2235,29 +2235,29 @@ function merge_char_accounts($source, $dest)
 		$total_posts += $char['posts'];
 
 	if (!empty($total_posts))
-		updateMemberData($dest, array('posts' => 'posts + ' . $total_posts));
+		updateMemberData($dest, ['posts' => 'posts + ' . $total_posts]);
 
 	if (!empty($user_profile[$source]['characters'][$source_main]['posts']))
-		updateCharacterData($dest_main, array('posts' => 'posts + ' . $user_profile[$source]['characters'][$source_main]['posts']));
+		updateCharacterData($dest_main, ['posts' => 'posts + ' . $user_profile[$source]['characters'][$source_main]['posts']]);
 
 	// Reassign topics
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}topics
 		SET id_member_started = {int:dest}
 		WHERE id_member_started = {int:source}',
-		array(
+		[
 			'source' => $source,
 			'dest' => $dest,
-		)
+		]
 	);
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}topics
 		SET id_member_updated = {int:dest}
 		WHERE id_member_updated = {int:source}',
-		array(
+		[
 			'source' => $source,
 			'dest' => $dest,
-		)
+		]
 	);
 
 	// Move PMs - sent items
@@ -2265,10 +2265,10 @@ function merge_char_accounts($source, $dest)
 		UPDATE {db_prefix}personal_messages
 		SET id_member_from = {int:dest}
 		WHERE id_member_from = {int:source}',
-		array(
+		[
 			'source' => $source,
 			'dest' => $dest,
-		)
+		]
 	);
 
 	// Move PMs - received items
@@ -2278,13 +2278,13 @@ function merge_char_accounts($source, $dest)
 		SELECT id_pm, bcc, is_read, is_new, deleted
 		FROM {db_prefix}pm_recipients
 		WHERE id_member = {int:source}',
-		array(
+		[
 			'source' => $source,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$rows[] = array(
+		$rows[] = [
 			'id_pm' => $row['id_pm'],
 			'id_member' => $dest,
 			'bcc' => $row['bcc'],
@@ -2292,19 +2292,19 @@ function merge_char_accounts($source, $dest)
 			'is_new' => $row['is_new'],
 			'deleted' => $row['deleted'],
 			'is_inbox' => 1,
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 	if (!empty($rows))
 	{
 		$smcFunc['db_insert']('ignore',
 			'{db_prefix}pm_recipients',
-			array(
+			[
 				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'is_read' => 'int',
 				'is_new' => 'int', 'deleted' => 'int', 'is_inbox' => 'int',
-			),
+			],
 			$rows,
-			array('id_pm', 'id_member')
+			['id_pm', 'id_member']
 		);
 	}
 
@@ -2383,7 +2383,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	global $user_profile, $sourcedir, $smcFunc, $modSettings;
 
 	// First, establish that both exist.
-	$loaded = loadMemberData(array($dest_acct));
+	$loaded = loadMemberData([$dest_acct]);
 	if (!in_array($dest_acct, $loaded))
 		return 'not_found';
 
@@ -2542,9 +2542,9 @@ function CharacterList()
 			FROM {db_prefix}characters AS chars
 			INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
 			WHERE id_character = {int:id_character}',
-			array(
+			[
 				'id_character' => $_GET['char'],
-			)
+			]
 		);
 		$redirect = '';
 		if ($smcFunc['db_num_rows']($result))
@@ -2562,10 +2562,10 @@ function CharacterList()
 	$context['filter_characters_in_no_groups'] = allowedTo('admin_forum');
 	$context['page_title'] = $txt['chars_menu_title'];
 	$context['sub_template'] = 'characterlist_main';
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'name' => $txt['chars_menu_title'],
 		'url' => $scripturl . '?action=characters',
-	);
+	];
 
 	if (isset($_GET['sa']) && $_GET['sa'] == 'sheets')
 		return CharacterSheetList();
@@ -2602,12 +2602,12 @@ function CharacterList()
 		}
 	}
 
-	$clauses = array(
+	$clauses = [
 		'chars.is_main = {int:not_main}',
-	);
-	$vars = array(
+	];
+	$vars = [
 		'not_main' => 0,
-	);
+	];
 
 	$filter_url = '';
 	if (!empty($context['filter_groups']))
@@ -2674,7 +2674,7 @@ function CharacterList()
 
 			$row['date_created_format'] = timeformat($row['date_created']);
 
-			$groups = !empty($row['main_char_group']) ? array($row['main_char_group']) : [];
+			$groups = !empty($row['main_char_group']) ? [$row['main_char_group']] : [];
 			$groups = array_merge($groups, explode(',', $row['char_groups']));
 			$details = get_labels_and_badges($groups);
 			$row['group_title'] = $details['title'];

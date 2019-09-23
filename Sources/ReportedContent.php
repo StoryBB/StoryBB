@@ -38,27 +38,27 @@ function ReportedContent()
 	$context['page_title'] = $txt['mc_reported_' . $context['report_type']];
 
 	// Put the open and closed options into tabs, because we can...
-	$context[$context['moderation_menu_name']]['tab_data'] = array(
+	$context[$context['moderation_menu_name']]['tab_data'] = [
 		'title' => $txt['mc_reported_' . $context['report_type']],
 		'help' => '',
 		'description' => $txt['mc_reported_' . $context['report_type'] . '_desc'],
-	);
+	];
 
 	// This comes under the umbrella of moderating posts.
 	if ($context['report_type'] == 'members' || $user_info['mod_cache']['bq'] == '0=1')
 		isAllowedTo('moderate_forum');
 
-	$subActions = array(
+	$subActions = [
 		'show' => 'ShowReports',
 		'closed' => 'ShowClosedReports',
 		'handle' => 'HandleReport', // Deals with closing/opening reports.
 		'details' => 'ReportDetails', // Shows a single report and its comments.
 		'handlecomment' => 'HandleComment', // CRUD actions for moderator comments.
 		'editcomment' => 'EditComment',
-	);
+	];
 
 	// Go ahead and add your own sub-actions.
-	routing_integration_hook('integrate_reported_' . $context['report_type'], array(&$subActions));
+	routing_integration_hook('integrate_reported_' . $context['report_type'], [&$subActions]);
 
 	// By default we call the open sub-action.
 	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
@@ -196,7 +196,7 @@ function ReportDetails()
 		fatal_lang_error('mc_no_modreport_found');
 
 	// Build the report data - basic details first, then extra stuff based on the type
-	$context['report'] = array(
+	$context['report'] = [
 		'id' => $report['id_report'],
 		'report_href' => $scripturl . '?action=moderate;area=reported' . $context['report_type'] . ';rid=' . $report['id_report'],
 		'comments' => [],
@@ -206,37 +206,37 @@ function ReportDetails()
 		'num_reports' => $report['num_reports'],
 		'closed' => $report['closed'],
 		'ignore' => $report['ignore_all']
-	);
+	];
 
 	// Different reports have different "extra" data attached to them
 	if ($context['report_type'] == 'members')
 	{
-		$extraDetails = array(
-			'user' => array(
+		$extraDetails = [
+			'user' => [
 				'id' => $report['id_user'],
 				'name' => $report['user_name'],
 				'link' => $report['id_user'] ? '<a href="' . $scripturl . '?action=profile;u=' . $report['id_user'] . '">' . $report['user_name'] . '</a>' : $report['user_name'],
 				'href' => $scripturl . '?action=profile;u=' . $report['id_user'],
-			),
-		);
+			],
+		];
 	}
 	else
 	{
-		$extraDetails = array(
+		$extraDetails = [
 			'topic_id' => $report['id_topic'],
 			'board_id' => $report['id_board'],
 			'message_id' => $report['id_msg'],
 			'message_href' => $scripturl . '?msg=' . $report['id_msg'],
 			'message_link' => '<a href="' . $scripturl . '?msg=' . $report['id_msg'] . '">' . $report['subject'] . '</a>',
-			'author' => array(
+			'author' => [
 				'id' => $report['id_author'],
 				'name' => $report['author_name'],
 				'link' => $report['id_author'] ? '<a href="' . $scripturl . '?action=profile;u=' . $report['id_author'] . '">' . $report['author_name'] . '</a>' : $report['author_name'],
 				'href' => $scripturl . '?action=profile;u=' . $report['id_author'],
-			),
+			],
 			'subject' => $report['subject'],
 			'body' => Parser::parse_bbc($report['body']),
-		);
+		];
 	}
 
 	$context['report'] = array_merge($context['report'], $extraDetails);
@@ -258,109 +258,109 @@ function ReportDetails()
 		$user_id_length = strlen((string) $context['report']['user']['id']);
 		$member = 's:6:"member";s:' . $user_id_length . ':"' . $context['report']['user']['id'] . '";}';
 
-		$params = array(
+		$params = [
 			'lm.extra LIKE {raw:member}
 				AND lm.action LIKE {raw:report}',
-			array('member' => '\'%' . $member . '\'', 'report' => '\'%_user_report\''),
+			['member' => '\'%' . $member . '\'', 'report' => '\'%_user_report\''],
 			1,
 			true,
-		);
+		];
 	}
 	else
 	{
-		$params = array(
+		$params = [
 			'lm.id_topic = {int:id_topic}
 				AND lm.id_board != {int:not_a_reported_post}',
-			array('id_topic' => $context['report']['topic_id'], 'not_a_reported_post' => 0),
+			['id_topic' => $context['report']['topic_id'], 'not_a_reported_post' => 0],
 			1,
-		);
+		];
 	}
 
 	// This is all the information from the moderation log.
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'moderation_actions_list',
 		'title' => $txt['mc_modreport_modactions'],
 		'items_per_page' => 15,
 		'no_items_label' => $txt['modlog_no_entries_found'],
 		'base_href' => $scripturl . '?action=moderate;area=reported' . $context['report_type'] . ';sa=details;rid=' . $context['report']['id'],
 		'default_sort_col' => 'time',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getModLogEntries',
 			'params' => $params,
-		),
-		'get_count' => array(
+		],
+		'get_count' => [
 			'function' => 'list_getModLogEntryCount',
 			'params' => $params,
-		),
+		],
 		// This assumes we are viewing by user.
-		'columns' => array(
-			'action' => array(
-				'header' => array(
+		'columns' => [
+			'action' => [
+				'header' => [
 					'value' => $txt['modlog_action'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'action_text',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lm.action',
 					'reverse' => 'lm.action DESC',
-				),
-			),
-			'time' => array(
-				'header' => array(
+				],
+			],
+			'time' => [
+				'header' => [
 					'value' => $txt['modlog_date'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'time',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lm.log_time',
 					'reverse' => 'lm.log_time DESC',
-				),
-			),
-			'moderator' => array(
-				'header' => array(
+				],
+			],
+			'moderator' => [
+				'header' => [
 					'value' => $txt['modlog_member'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'moderator_link',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'mem.real_name',
 					'reverse' => 'mem.real_name DESC',
-				),
-			),
-			'position' => array(
-				'header' => array(
+				],
+			],
+			'position' => [
+				'header' => [
 					'value' => $txt['modlog_position'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'position',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'mg.group_name',
 					'reverse' => 'mg.group_name DESC',
-				),
-			),
-			'ip' => array(
-				'header' => array(
+				],
+			],
+			'ip' => [
+				'header' => [
 					'value' => $txt['modlog_ip'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'ip',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'lm.ip',
 					'reverse' => 'lm.ip DESC',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
 	// Create the watched user list.
 	createList($listOptions);
@@ -413,7 +413,7 @@ function HandleComment()
 
 		$new_comment = trim($smcFunc['htmlspecialchars']($_POST['mod_comment']));
 
-		saveModComment($report_id, array($report_id, $new_comment, time()));
+		saveModComment($report_id, [$report_id, $new_comment, time()]);
 
 		// Everything went better than expected!
 		session_flash('success', $txt['report_action_message_saved']);

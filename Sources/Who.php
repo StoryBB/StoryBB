@@ -36,29 +36,29 @@ function Who()
 	loadLanguage('Who');
 
 	// Sort out... the column sorting.
-	$sort_methods = array(
+	$sort_methods = [
 		'user' => 'mem.real_name',
 		'time' => 'lo.log_time'
-	);
+	];
 
-	$show_methods = array(
+	$show_methods = [
 		'members' => '(lo.id_member != 0)',
 		'guests' => '(lo.id_member = 0 AND lo.robot_name = {empty})',
 		'all' => '1=1',
 		'robots' => '(lo.robot_name != {empty})',
-	);
+	];
 
 	// Store the sort methods and the show types for use in the template.
-	$context['sort_methods'] = array(
+	$context['sort_methods'] = [
 		'user' => $txt['who_user'],
 		'time' => $txt['who_time'],
-	);
-	$context['show_methods'] = array(
+	];
+	$context['show_methods'] = [
 		'all' => $txt['who_show_all'],
 		'members' => $txt['who_show_members_only'],
 		'guests' => $txt['who_show_guests_only'],
 		'robots' => $txt['who_show_robots_only'],
-	);
+	];
 
 	// Does the user prefer a different sort direction?
 	if (isset($_REQUEST['sort']) && isset($sort_methods[$_REQUEST['sort']]))
@@ -105,8 +105,8 @@ function Who()
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (lo.id_member = mem.id_member)' . (!empty($conditions) ? '
 		WHERE ' . implode(' AND ', $conditions) : ''),
-		array(
-		)
+		[
+		]
 	);
 	list ($totalMembers) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -129,13 +129,13 @@ function Who()
 		WHERE ' . implode(' AND ', $conditions) : '') . '
 		ORDER BY {raw:sort_method} {raw:sort_direction}
 		LIMIT {int:offset}, {int:limit}',
-		array(
+		[
 			'regular_member' => 0,
 			'sort_method' => $sort_method,
 			'sort_direction' => $context['sort_direction'] == 'up' ? 'ASC' : 'DESC',
 			'offset' => $context['start'],
 			'limit' => $modSettings['defaultMaxMembers'],
-		)
+		]
 	);
 	$context['members'] = [];
 	$member_ids = [];
@@ -147,20 +147,20 @@ function Who()
 			continue;
 
 		// Send the information to the template.
-		$context['members'][$row['session']] = array(
+		$context['members'][$row['session']] = [
 			'id' => $row['id_member'],
 			'id_character' => $row['id_character'],
 			'ip' => allowedTo('moderate_forum') ? inet_dtop($row['ip']) : '',
 			// It is *going* to be today or yesterday, so why keep that information in there?
-			'time' => strtr(timeformat($row['log_time']), array($txt['today'] => '', $txt['yesterday'] => '')),
+			'time' => strtr(timeformat($row['log_time']), [$txt['today'] => '', $txt['yesterday'] => '']),
 			'timestamp' => forum_time(true, $row['log_time']),
 			'query' => $actions,
 			'is_hidden' => $row['show_online'] == 0,
 			'robot_name' => $row['robot_name'],
 			'color' => empty($row['online_color']) ? '' : $row['online_color']
-		);
+		];
 
-		$url_data[$row['session']] = array($row['url'], $row['id_member'], $row['robot_name']);
+		$url_data[$row['session']] = [$row['url'], $row['id_member'], $row['robot_name']];
 		$member_ids[] = $row['id_member'];
 	}
 	$smcFunc['db_free_result']($request);
@@ -169,7 +169,7 @@ function Who()
 	loadMemberData($member_ids);
 
 	// Load up the guest user.
-	$memberContext[0] = array(
+	$memberContext[0] = [
 		'id' => 0,
 		'name' => $txt['guest_title'],
 		'group' => $txt['guest_title'],
@@ -177,16 +177,16 @@ function Who()
 		'link' => $txt['guest_title'],
 		'email' => $txt['guest_title'],
 		'is_guest' => true
-	);
+	];
 
 	$url_data = determineActions($url_data);
 
 	// Setup the linktree and page title (do it down here because the language files are now loaded..)
 	$context['page_title'] = $txt['who_title'];
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=who',
 		'name' => $txt['who_title']
-	);
+	];
 
 	// Put it in the context variables.
 	$robot = new \StoryBB\Model\Robot;
@@ -264,31 +264,31 @@ function determineActions($urls, $preferred_prefix = false)
 	loadLanguage('Who');
 
 	// Actions that require a specific permission level.
-	$allowedActions = array(
-		'admin' => array('moderate_forum', 'manage_membergroups', 'manage_bans', 'admin_forum', 'manage_permissions', 'send_mail', 'manage_attachments', 'manage_smileys', 'manage_boards', 'edit_news'),
-		'ban' => array('manage_bans'),
-		'boardrecount' => array('admin_forum'),
-		'editnews' => array('edit_news'),
-		'mailing' => array('send_mail'),
-		'maintain' => array('admin_forum'),
-		'manageattachments' => array('manage_attachments'),
-		'manageboards' => array('manage_boards'),
-		'mlist' => array('view_mlist'),
-		'moderate' => array('access_mod_center', 'moderate_forum', 'manage_membergroups'),
-		'optimizetables' => array('admin_forum'),
-		'repairboards' => array('admin_forum'),
-		'search' => array('search_posts'),
-		'search2' => array('search_posts'),
-		'setcensor' => array('moderate_forum'),
-		'setreserve' => array('moderate_forum'),
-		'stats' => array('view_stats'),
-		'viewErrorLog' => array('admin_forum'),
-		'viewmembers' => array('moderate_forum'),
-	);
-	call_integration_hook('who_allowed', array(&$allowedActions));
+	$allowedActions = [
+		'admin' => ['moderate_forum', 'manage_membergroups', 'manage_bans', 'admin_forum', 'manage_permissions', 'send_mail', 'manage_attachments', 'manage_smileys', 'manage_boards', 'edit_news'],
+		'ban' => ['manage_bans'],
+		'boardrecount' => ['admin_forum'],
+		'editnews' => ['edit_news'],
+		'mailing' => ['send_mail'],
+		'maintain' => ['admin_forum'],
+		'manageattachments' => ['manage_attachments'],
+		'manageboards' => ['manage_boards'],
+		'mlist' => ['view_mlist'],
+		'moderate' => ['access_mod_center', 'moderate_forum', 'manage_membergroups'],
+		'optimizetables' => ['admin_forum'],
+		'repairboards' => ['admin_forum'],
+		'search' => ['search_posts'],
+		'search2' => ['search_posts'],
+		'setcensor' => ['moderate_forum'],
+		'setreserve' => ['moderate_forum'],
+		'stats' => ['view_stats'],
+		'viewErrorLog' => ['admin_forum'],
+		'viewmembers' => ['moderate_forum'],
+	];
+	call_integration_hook('who_allowed', [&$allowedActions]);
 
 	if (!is_array($urls))
-		$url_list = array(array($urls, $user_info['id']));
+		$url_list = [[$urls, $user_info['id']]];
 	else
 		$url_list = $urls;
 
@@ -385,10 +385,10 @@ function determineActions($urls, $preferred_prefix = false)
 						AND {query_see_board}
 						AND m.approved = {int:is_approved}
 					LIMIT 1',
-					array(
+					[
 						'is_approved' => 1,
 						'id_msg' => $msgid,
-					)
+					]
 				);
 				list ($id_topic, $subject) = $smcFunc['db_fetch_row']($result);
 				$data[$k] = sprintf($txt['whopost_' . $actions['action']], $id_topic, $subject);
@@ -432,7 +432,7 @@ function determineActions($urls, $preferred_prefix = false)
 		}
 
 		// Maybe the action is integrated into another system?
-		if (count($integrate_actions = call_integration_hook('integrate_whos_online', array($actions))) > 0)
+		if (count($integrate_actions = call_integration_hook('integrate_whos_online', [$actions])) > 0)
 		{
 			foreach ($integrate_actions as $integrate_action)
 			{
@@ -463,11 +463,11 @@ function determineActions($urls, $preferred_prefix = false)
 				AND t.id_topic IN ({array_int:topic_list})
 				AND t.approved = {int:is_approved}
 			LIMIT {int:limit}',
-			array(
+			[
 				'topic_list' => array_keys($topic_ids),
 				'is_approved' => 1,
 				'limit' => count($topic_ids),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
@@ -487,10 +487,10 @@ function determineActions($urls, $preferred_prefix = false)
 			WHERE {query_see_board}
 				AND b.id_board IN ({array_int:board_list})
 			LIMIT {int:limit}',
-			array(
+			[
 				'board_list' => array_keys($board_ids),
 				'limit' => count($board_ids),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
@@ -511,9 +511,9 @@ function determineActions($urls, $preferred_prefix = false)
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member_list})
 			LIMIT ' . count($profile_ids),
-			array(
+			[
 				'member_list' => array_keys($profile_ids),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
@@ -531,7 +531,7 @@ function determineActions($urls, $preferred_prefix = false)
 	foreach ($data as $k => $v)
 		$data[$k] = str_replace('{scripturl}', $scripturl, $v);
 
-	call_integration_hook('whos_online_after', array(&$urls, &$data));
+	call_integration_hook('whos_online_after', [&$urls, &$data]);
 
 	if (!is_array($urls))
 		return isset($data[0]) ? $data[0] : false;

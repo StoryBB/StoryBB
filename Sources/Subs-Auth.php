@@ -48,15 +48,15 @@ function setLoginCookie($cookie_length, $id, $password = '')
 
 		// Out with the old, in with the new!
 		if (isset($old_domain) && $old_domain != $cookie_url[0] || isset($old_path) && $old_path != $cookie_url[1])
-			sbb_setcookie($cookiename, json_encode(array(0, '', 0, $old_domain, $old_path), JSON_FORCE_OBJECT), 1, $old_path, $old_domain);
+			sbb_setcookie($cookiename, json_encode([0, '', 0, $old_domain, $old_path], JSON_FORCE_OBJECT), 1, $old_path, $old_domain);
 	}
 
 	// Get the data and path to set it on.
-	$data = empty($id) ? array(0, '', 0, $cookie_url[0], $cookie_url[1]) : array($id, $password, $expiry_time, $cookie_url[0], $cookie_url[1]);
+	$data = empty($id) ? [0, '', 0, $cookie_url[0], $cookie_url[1]] : [$id, $password, $expiry_time, $cookie_url[0], $cookie_url[1]];
 
 	// Allow mods to add custom info to the cookie
 	$custom_data = [];
-	call_integration_hook('integrate_cookie_data', array($data, &$custom_data));
+	call_integration_hook('integrate_cookie_data', [$data, &$custom_data]);
 
 	$data = json_encode(array_merge($data, $custom_data), JSON_FORCE_OBJECT);
 
@@ -76,7 +76,7 @@ function setLoginCookie($cookie_length, $id, $password = '')
 		foreach ($aliases as $alias)
 		{
 			// Fake the $boardurl so we can set a different cookie.
-			$alias = strtr(trim($alias), array('http://' => '', 'https://' => ''));
+			$alias = strtr(trim($alias), ['http://' => '', 'https://' => '']);
 			$boardurl = 'http://' . $alias;
 
 			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
@@ -137,7 +137,7 @@ function setTFACookie($cookie_length, $id, $secret, $preserve = false)
 		$cookie_length = 81600 * 30;
 
 	// Get the data and path to set it on.
-	$data = json_encode(empty($id) ? array(0, '', 0, $cookie_url[0], $cookie_url[1], false) : array($id, $secret, time() + $cookie_length, $cookie_url[0], $cookie_url[1], $preserve), JSON_FORCE_OBJECT);
+	$data = json_encode(empty($id) ? [0, '', 0, $cookie_url[0], $cookie_url[1], false] : [$id, $secret, time() + $cookie_length, $cookie_url[0], $cookie_url[1], $preserve], JSON_FORCE_OBJECT);
 
 	// Set the cookie, $_COOKIE, and session variable.
 	sbb_setcookie($identifier, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0]);
@@ -184,7 +184,7 @@ function url_parts($local, $global)
 	elseif (!isset($parsed_url['host']) || strpos($parsed_url['host'], '.') === false)
 		$parsed_url['host'] = '';
 
-	return array($parsed_url['host'], $parsed_url['path'] . '/');
+	return [$parsed_url['host'], $parsed_url['path'] . '/'];
 }
 
 /**
@@ -245,7 +245,7 @@ function adminLogin($type = 'admin')
 
 	// Validate what type of session check this is.
 	$types = [];
-	call_integration_hook('integrate_validateSession', array(&$types));
+	call_integration_hook('integrate_validateSession', [&$types]);
 	$type = in_array($type, $types) || $type == 'moderate' ? $type : 'admin';
 
 	// They used a wrong password, log it and unset that.
@@ -274,7 +274,7 @@ function adminLogin($type = 'admin')
 		$context['post_data'] .= adminLogin_outputPostVars($k, $v);
 
 	// Now we'll use the admin_login sub template of the Login template.
-	$context['form_scripturl'] = !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, array('http://' => 'https://')) : $scripturl;
+	$context['form_scripturl'] = !empty($modSettings['force_ssl']) && $modSettings['force_ssl'] < 2 ? strtr($scripturl, ['http://' => 'https://']) : $scripturl;
 	$context['sub_template'] = 'login_admin';
 
 	// And title the page something like "Login".
@@ -304,7 +304,7 @@ function adminLogin_outputPostVars($k, $v)
 
 	if (!is_array($v))
 		return '
-<input type="hidden" name="' . $smcFunc['htmlspecialchars']($k) . '" value="' . strtr($v, array('"' => '&quot;', '<' => '&lt;', '>' => '&gt;')) . '">';
+<input type="hidden" name="' . $smcFunc['htmlspecialchars']($k) . '" value="' . strtr($v, ['"' => '&quot;', '<' => '&lt;', '>' => '&gt;']) . '">';
 	else
 	{
 		$ret = '';
@@ -384,9 +384,9 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 
 		// Make it so standard wildcards will work. (* and ?)
 		if ($use_wildcards)
-			$names[$i] = strtr($names[$i], array('%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '\'' => '&#039;'));
+			$names[$i] = strtr($names[$i], ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '\'' => '&#039;']);
 		else
-			$names[$i] = strtr($names[$i], array('\'' => '&#039;'));
+			$names[$i] = strtr($names[$i], ['\'' => '&#039;']);
 		
 		$names_list[] = '{string:lookup_name_' . $i . '}';
 		$where_params['lookup_name_' . $i] = $names[$i];
@@ -422,21 +422,21 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 			' . ($buddies_only ? 'AND id_member IN ({array_int:buddy_list})' : '') . '
 			AND is_activated IN (1, 11)
 		LIMIT {int:limit}',
-		array_merge($where_params, array(
+		array_merge($where_params, [
 			'buddy_list' => $user_info['buddies'],
 			'limit' => $max,
-		))
+		])
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$results[$row['id_member']] = array(
+		$results[$row['id_member']] = [
 			'id' => $row['id_member'],
 			'name' => $row['real_name'],
 			'username' => $row['member_name'],
 			'email' => allowedTo('moderate_forum') ? $row['email_address'] : '',
 			'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -468,9 +468,9 @@ function resetPassword($memID, $username = null)
 		SELECT member_name, email_address, lngfile
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}',
-		array(
+		[
 			'id_member' => $memID,
-		)
+		]
 	);
 	list ($user, $email, $lngfile) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -491,17 +491,17 @@ function resetPassword($memID, $username = null)
 		validateUsername($memID, $user);
 
 		// Update the database...
-		updateMemberData($memID, array('member_name' => $user, 'passwd' => $newPassword_sha1));
+		updateMemberData($memID, ['member_name' => $user, 'passwd' => $newPassword_sha1]);
 	}
 	else
-		updateMemberData($memID, array('passwd' => $newPassword_sha1));
+		updateMemberData($memID, ['passwd' => $newPassword_sha1]);
 
-	call_integration_hook('integrate_reset_pass', array($old_user, $user, $newPassword));
+	call_integration_hook('integrate_reset_pass', [$old_user, $user, $newPassword]);
 
-	$replacements = array(
+	$replacements = [
 		'USERNAME' => $user,
 		'PASSWORD' => $newPassword,
-	);
+	];
 
 	$emaildata = loadEmailTemplate('change_password', $replacements, empty($lngfile) || empty($modSettings['userLanguage']) ? $language : $lngfile);
 
@@ -526,24 +526,24 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
 
 	// Don't use too long a name.
 	if ($smcFunc['strlen']($username) > 25)
-		$errors[] = array('lang', 'error_long_name');
+		$errors[] = ['lang', 'error_long_name'];
 
 	// No name?!  How can you register with no name?
 	if ($username == '')
-		$errors[] = array('lang', 'need_username');
+		$errors[] = ['lang', 'need_username'];
 
 	// Only these characters are permitted.
-	if (in_array($username, array('_', '|')) || preg_match('~[<>&"\'=\\\\]~', preg_replace('~&#(?:\\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $username)) != 0 || strpos($username, '[code') !== false || strpos($username, '[/code') !== false)
-		$errors[] = array('lang', 'error_invalid_characters_username');
+	if (in_array($username, ['_', '|']) || preg_match('~[<>&"\'=\\\\]~', preg_replace('~&#(?:\\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $username)) != 0 || strpos($username, '[code') !== false || strpos($username, '[/code') !== false)
+		$errors[] = ['lang', 'error_invalid_characters_username'];
 
 	if (stristr($username, $txt['guest_title']) !== false)
-		$errors[] = array('lang', 'username_reserved', 'general', array($txt['guest_title']));
+		$errors[] = ['lang', 'username_reserved', 'general', [$txt['guest_title']]];
 
 	if ($check_reserved_name)
 	{
 		require_once($sourcedir . '/Subs-Members.php');
 		if (isReservedName($username, $memID, false))
-			$errors[] = array('done', '(' . $smcFunc['htmlspecialchars']($username) . ') ' . $txt['name_in_use']);
+			$errors[] = ['done', '(' . $smcFunc['htmlspecialchars']($username) . ') ' . $txt['name_in_use']];
 	}
 
 	if ($return_error)
@@ -617,9 +617,9 @@ function rebuildModCache()
 			SELECT id_group
 			FROM {db_prefix}group_moderators
 			WHERE id_member = {int:current_member}',
-			array(
+			[
 				'current_member' => $user_info['id'],
-			)
+			]
 		);
 		$groups = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -653,9 +653,9 @@ function rebuildModCache()
 			SELECT id_board
 			FROM {db_prefix}moderators
 			WHERE id_member = {int:current_member}',
-			array(
+			[
 				'current_member' => $user_info['id'],
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
@@ -666,9 +666,9 @@ function rebuildModCache()
 			SELECT id_board
 			FROM {db_prefix}moderator_groups
 			WHERE id_group IN({array_int:groups})',
-			array(
+			[
 				'groups' => $user_info['groups'],
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
@@ -680,7 +680,7 @@ function rebuildModCache()
 
 	$mod_query = empty($boards_mod) ? '0=1' : 'b.id_board IN (' . implode(',', $boards_mod) . ')';
 
-	$_SESSION['mc'] = array(
+	$_SESSION['mc'] = [
 		'time' => time(),
 		// This looks a bit funny but protects against the login redirect.
 		'id' => $user_info['id'] && $user_info['name'] ? $user_info['id'] : 0,
@@ -690,7 +690,7 @@ function rebuildModCache()
 		'ap' => boardsAllowedTo('approve_posts'),
 		'mb' => $boards_mod,
 		'mq' => $mod_query,
-	);
+	];
 	call_integration_hook('integrate_mod_cache');
 
 	$user_info['mod_cache'] = $_SESSION['mc'];
@@ -722,7 +722,7 @@ function sbb_setcookie($name, $value = '', $expire = 0, $path = '', $domain = ''
 		$secure = !empty($modSettings['secureCookies']);
 
 	// Intercept cookie?
-	call_integration_hook('integrate_cookie', array($name, $value, $expire, $path, $domain, $secure, $httponly));
+	call_integration_hook('integrate_cookie', [$name, $value, $expire, $path, $domain, $secure, $httponly]);
 
 	// This function is pointless if we have PHP >= 5.2.
 	return setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
@@ -742,9 +742,9 @@ function hash_password($username, $password, $cost = null)
 
 	$cost = empty($cost) ? (empty($modSettings['bcrypt_hash_cost']) ? 10 : $modSettings['bcrypt_hash_cost']) : $cost;
 
-	return password_hash($smcFunc['strtolower']($username) . $password, PASSWORD_BCRYPT, array(
+	return password_hash($smcFunc['strtolower']($username) . $password, PASSWORD_BCRYPT, [
 		'cost' => $cost,
-	));
+	]);
 }
 
 /**

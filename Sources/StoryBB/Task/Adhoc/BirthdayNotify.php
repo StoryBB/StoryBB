@@ -39,11 +39,11 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 				AND MONTH(birthdate) = {int:month}
 				AND DAYOFMONTH(birthdate) = {int:day}
 				AND YEAR(birthdate) > {int:year}',
-			array(
+			[
 				'year' => 1004,
 				'month' => $month,
 				'day' => $day,
-			)
+			]
 		);
 
 		// Group them by languages.
@@ -52,10 +52,10 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 		{
 			if (!isset($birthdays[$row['lngfile']]))
 				$birthdays[$row['lngfile']] = [];
-			$birthdays[$row['lngfile']][$row['id_member']] = array(
+			$birthdays[$row['lngfile']][$row['id_member']] = [
 				'name' => $row['real_name'],
 				'email' => $row['email_address']
-			);
+			];
 		}
 		$smcFunc['db_free_result']($result);
 
@@ -75,16 +75,16 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 				$txt['happy_birthday_body'] = $txtBirthdayEmails[$greeting . '_body'];
 				require_once($sourcedir . '/Subs-Notify.php');
 
-				$prefs = getNotifyPrefs(array_keys($members), array('birthday'), true);
+				$prefs = getNotifyPrefs(array_keys($members), ['birthday'], true);
 
 				foreach ($members as $member_id => $member)
 				{
 					$pref = !empty($prefs[$member_id]['birthday']) ? $prefs[$member_id]['birthday'] : 0;
 
 					// Let's load replacements ahead
-					$replacements = array(
+					$replacements = [
 						'REALNAME' => $member['name'],
-					);
+					];
 
 					if ($pref & 0x01)
 					{
@@ -92,16 +92,16 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 						// For the alerts, we need to replace \n line breaks with <br> line breaks.
 						// For space saving sake, we'll be removing extra line breaks
 						$alertdata['body'] = preg_replace("~\s*[\r\n]+\s*~", '<br>', $alertdata['body']);
-						$alert_rows[] = array(
+						$alert_rows[] = [
 							'alert_time' => time(),
 							'id_member' => $member_id,
 							'content_type' => 'birthday',
 							'content_id' => 0,
 							'content_action' => 'msg',
 							'is_read' => 0,
-							'extra' => json_encode(array('happy_birthday' => $alertdata['body'])),
-						);
-						updateMemberData($member_id, array('alerts' => '+'));
+							'extra' => json_encode(['happy_birthday' => $alertdata['body']]),
+						];
+						updateMemberData($member_id, ['alerts' => '+']);
 					}
 
 					if ($pref & 0x02)
@@ -119,10 +119,10 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 			if (!empty($alert_rows))
 				$smcFunc['db_insert']('',
 					'{db_prefix}user_alerts',
-					array(
+					[
 						'alert_time' => 'int', 'id_member' => 'int', 'content_type' => 'string',
 						'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string',
-					),
+					],
 					$alert_rows,
 					[]
 				);

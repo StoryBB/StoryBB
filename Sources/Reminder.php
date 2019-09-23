@@ -23,12 +23,12 @@ function RemindMe()
 	$context['robot_no_index'] = true;
 
 	// Delegation can be useful sometimes.
-	$subActions = array(
+	$subActions = [
 		'picktype' => 'RemindPick',
 		'secret2' => 'SecretAnswer2',
 		'setpassword' => 'setPassword',
 		'setpassword2' => 'setPassword2'
-	);
+	];
 
 	// Any subaction?  If none, fall through to the main template, which will ask for one.
 	if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]))
@@ -72,7 +72,7 @@ function RemindPick()
 
 	// Make sure we are not being slammed
 	// Don't call this if you're coming from the "Choose a reminder type" page - otherwise you'll likely get an error
-	if (!isset($_POST['reminder_type']) || !in_array($_POST['reminder_type'], array('email', 'secret')))
+	if (!isset($_POST['reminder_type']) || !in_array($_POST['reminder_type'], ['email', 'secret']))
 	{
 		spamProtection('remind');
 	}
@@ -127,12 +127,12 @@ function RemindPick()
 		$password = generateValidationCode();
 
 		require_once($sourcedir . '/Subs-Post.php');
-		$replacements = array(
+		$replacements = [
 			'REALNAME' => $row['real_name'],
 			'REMINDLINK' => $scripturl . '?action=reminder;sa=setpassword;u=' . $row['id_member'] . ';code=' . $password,
 			'IP' => $user_info['ip'],
 			'MEMBERNAME' => $row['member_name'],
-		);
+		];
 
 		$emaildata = loadEmailTemplate('forgot_password', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
 		$context['description'] = $txt['reminder_sent'];
@@ -140,7 +140,7 @@ function RemindPick()
 		StoryBB\Helper\Mail::send($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'reminder', $emaildata['is_html'], 1);
 
 		// Set the password in the database.
-		updateMemberData($row['id_member'], array('validation_code' => substr(md5($password), 0, 10)));
+		updateMemberData($row['id_member'], ['validation_code' => substr(md5($password), 0, 10)]);
 
 		// Set up the template.
 		$context['sub_template'] = 'reminder_sent';
@@ -156,10 +156,10 @@ function RemindPick()
 
 	// No we're here setup the context for template number 2!
 	$context['sub_template'] = 'reminder_pick';
-	$context['current_member'] = array(
+	$context['current_member'] = [
 		'id' => $row['id_member'],
 		'name' => $row['member_name'],
-	);
+	];
 }
 
 /**
@@ -176,14 +176,14 @@ function setPassword()
 		fatal_lang_error('no_access', false);
 
 	// Fill the context array.
-	$context += array(
+	$context += [
 		'page_title' => $txt['reminder_set_password'],
 		'sub_template' => 'reminder_set_password',
 		'code' => $_REQUEST['code'],
 		'memID' => (int) $_REQUEST['u']
-	);
+	];
 
-	loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
+	loadJavaScriptFile('register.js', ['defer' => false], 'sbb_register');
 
 	// Tokens!
 	createToken('remind-sp');
@@ -220,11 +220,11 @@ function setPassword2()
 			AND is_activated = {int:is_activated}
 			AND validation_code != {string:blank_string}
 		LIMIT 1',
-		array(
+		[
 			'id_member' => $_POST['u'],
 			'is_activated' => 1,
 			'blank_string' => '',
-		)
+		]
 	);
 
 	// Does this user exist at all?
@@ -236,7 +236,7 @@ function setPassword2()
 
 	// Is the password actually valid?
 	require_once($sourcedir . '/Subs-Auth.php');
-	$passwordError = validatePassword($_POST['passwrd1'], $username, array($email));
+	$passwordError = validatePassword($_POST['passwrd1'], $username, [$email]);
 
 	// What - it's not?
 	if ($passwordError != null)
@@ -257,18 +257,18 @@ function setPassword2()
 	validatePasswordFlood($_POST['u'], $flood_value, true);
 
 	// User validated.  Update the database!
-	updateMemberData($_POST['u'], array('validation_code' => '', 'passwd' => hash_password($username, $_POST['passwrd1'])));
+	updateMemberData($_POST['u'], ['validation_code' => '', 'passwd' => hash_password($username, $_POST['passwrd1'])]);
 
-	call_integration_hook('integrate_reset_pass', array($username, $username, $_POST['passwrd1']));
+	call_integration_hook('integrate_reset_pass', [$username, $username, $_POST['passwrd1']]);
 
-	$context += array(
+	$context += [
 		'page_title' => $txt['reminder_password_set'],
 		'sub_template' => 'login_main',
 		'default_username' => $username,
 		'default_password' => $_POST['passwrd1'],
 		'never_expire' => false,
 		'description' => $txt['reminder_password_set']
-	);
+	];
 
 	createToken('login');
 }
@@ -295,9 +295,9 @@ function SecretAnswerInput()
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
 		LIMIT 1',
-		array(
+		[
 			'id_member' => (int) $_REQUEST['uid'],
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('username_no_exist', false);
@@ -316,7 +316,7 @@ function SecretAnswerInput()
 
 	$context['sub_template'] = 'reminder_ask_question';
 	createToken('remind-sai');
-	loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
+	loadJavaScriptFile('register.js', ['defer' => false], 'sbb_register');
 }
 
 /**
@@ -341,9 +341,9 @@ function SecretAnswer2()
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
 		LIMIT 1',
-		array(
+		[
 			'id_member' => $_REQUEST['uid'],
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('username_no_exist', false);
@@ -368,26 +368,26 @@ function SecretAnswer2()
 
 	// Make sure they have a strong enough password.
 	require_once($sourcedir . '/Subs-Auth.php');
-	$passwordError = validatePassword($_POST['passwrd1'], $row['member_name'], array($row['email_address']));
+	$passwordError = validatePassword($_POST['passwrd1'], $row['member_name'], [$row['email_address']]);
 
 	// Invalid?
 	if ($passwordError != null)
 		fatal_lang_error('profile_error_password_' . $passwordError, false);
 
 	// Alright, so long as 'yer sure.
-	updateMemberData($row['id_member'], array('passwd' => hash_password($row['member_name'], $_POST['passwrd1'])));
+	updateMemberData($row['id_member'], ['passwd' => hash_password($row['member_name'], $_POST['passwrd1'])]);
 
-	call_integration_hook('integrate_reset_pass', array($row['member_name'], $row['member_name'], $_POST['passwrd1']));
+	call_integration_hook('integrate_reset_pass', [$row['member_name'], $row['member_name'], $_POST['passwrd1']]);
 
 	// Tell them it went fine.
-	$context += array(
+	$context += [
 		'page_title' => $txt['reminder_password_set'],
 		'sub_template' => 'login_main',
 		'default_username' => $row['member_name'],
 		'default_password' => $_POST['passwrd1'],
 		'never_expire' => false,
 		'description' => $txt['reminder_password_set']
-	);
+	];
 
 	createToken('login');
 }

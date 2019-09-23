@@ -50,36 +50,36 @@ function ModifyFeatureSettings()
 
 	$context['page_title'] = $txt['modSettings_title'];
 
-	$subActions = array(
+	$subActions = [
 		'basic' => 'ModifyBasicSettings',
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
 		'alerts' => 'ModifyAlertsSettings',
-	);
+	];
 
 	loadGeneralSettingParameters($subActions, 'basic');
 
 	// Load up all the tabs...
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['modSettings_title'],
 		'description' => sprintf($txt['modSettings_desc'], $settings['theme_id'], $context['session_id'], $context['session_var'], $scripturl),
-		'tabs' => array(
-			'basic' => array(
-			),
-			'sig' => array(
+		'tabs' => [
+			'basic' => [
+			],
+			'sig' => [
 				'description' => $txt['signature_settings_desc'],
-			),
-			'profile' => array(
+			],
+			'profile' => [
 				'description' => $txt['custom_profile_desc'],
-			),
-			'alerts' => array(
+			],
+			'alerts' => [
 				'description' => $txt['notifications_desc'],
-			),
-		),
-	);
+			],
+		],
+	];
 
-	routing_integration_hook('integrate_modify_features', array(&$subActions));
+	routing_integration_hook('integrate_modify_features', [&$subActions]);
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);
@@ -96,58 +96,58 @@ function ModifyBasicSettings($return_config = false)
 {
 	global $txt, $scripturl, $context, $modSettings;
 
-	$config_vars = array(
+	$config_vars = [
 			// Basic stuff, titles, permissions...
-			array('check', 'allow_guestAccess'),
-			array('check', 'enable_likes'),
-			array('check', 'enable_mentions'),
-			array('check', 'enable_buddylist'),
-			array('check', 'allow_hideOnline'),
-			array('check', 'topic_move_any'),
-			array('int', 'defaultMaxListItems', 'step' => 1, 'min' => 1, 'max' => 999),
+			['check', 'allow_guestAccess'],
+			['check', 'enable_likes'],
+			['check', 'enable_mentions'],
+			['check', 'enable_buddylist'],
+			['check', 'allow_hideOnline'],
+			['check', 'topic_move_any'],
+			['int', 'defaultMaxListItems', 'step' => 1, 'min' => 1, 'max' => 999],
 			// Pagination stuff.
-			array('int', 'defaultMaxMembers'),
+			['int', 'defaultMaxMembers'],
 		'',
 			// Stuff that just is everywhere - today, search, online, etc.
-			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
+			['select', 'todayMod', [$txt['today_disabled'], $txt['today_only'], $txt['yesterday_today']]],
 		'',
 			// css and js minification.
-			array('check', 'minimize_files'),
+			['check', 'minimize_files'],
 		'',
 			// SEO stuff
-			array('text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50),
+			['text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note'], 'size' => 50],
 		'',
 			// Number formatting, timezones.
-			array('select', 'time_format', \StoryBB\Helper\Datetime::list_dateformats()),
-			array('float', 'time_offset', 'subtext' => $txt['setting_time_offset_note'], 6, 'postinput' => $txt['hours'], 'step' => 0.25, 'min' => -23.5, 'max' => 23.5),
-			'default_timezone' => array('select', 'default_timezone', []),
-			array('text', 'timezone_priority_countries', 'subtext' => $txt['setting_timezone_priority_countries_note']),
+			['select', 'time_format', \StoryBB\Helper\Datetime::list_dateformats()],
+			['float', 'time_offset', 'subtext' => $txt['setting_time_offset_note'], 6, 'postinput' => $txt['hours'], 'step' => 0.25, 'min' => -23.5, 'max' => 23.5],
+			'default_timezone' => ['select', 'default_timezone', []],
+			['text', 'timezone_priority_countries', 'subtext' => $txt['setting_timezone_priority_countries_note']],
 		'',
 			// Who's online?
-			array('check', 'who_enabled'),
-			array('int', 'lastActive', 6, 'postinput' => $txt['minutes']),
+			['check', 'who_enabled'],
+			['int', 'lastActive', 6, 'postinput' => $txt['minutes']],
 		'',
 			// Statistics.
-			array('check', 'trackStats'),
-			array('check', 'hitStats'),
+			['check', 'trackStats'],
+			['check', 'hitStats'],
 		'',
 			// The time-between-posts divider.
-			array('int', 'timeBetweenPosts', 'subtext' => $txt['zero_to_disable']),
-			array('select', 'timeBetweenPostsBoards', [
+			['int', 'timeBetweenPosts', 'subtext' => $txt['zero_to_disable']],
+			['select', 'timeBetweenPostsBoards', [
 				'ic' => $txt['ic_boards_only'],
 				'ooc' => $txt['ooc_boards_only'],
 				'icooc' => $txt['ic_and_ooc_boards'],
-			]),
+			]],
 		'',
 			// Option-ish things... miscellaneous sorta.
-			array('check', 'allow_disableAnnounce'),
-			array('check', 'disallow_sendBody'),
+			['check', 'allow_disableAnnounce'],
+			['check', 'disallow_sendBody'],
 		'',
 			// Alerts stuff
-			array('check', 'enable_ajax_alerts'),
+			['check', 'enable_ajax_alerts'],
 		'',
-			array('text', 'analytics_google_id', 'subtext' => $txt['analytics_google_id_sub']),
-	);
+			['text', 'analytics_google_id', 'subtext' => $txt['analytics_google_id_sub']],
+	];
 
 	// Get all the time zones.
 	if (function_exists('timezone_identifiers_list') && function_exists('date_default_timezone_set'))
@@ -160,7 +160,7 @@ function ModifyBasicSettings($return_config = false)
 	else
 		unset($config_vars['default_timezone']);
 
-	settings_integration_hook('integrate_modify_basic_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_basic_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -214,22 +214,22 @@ function ModifyWarningSettings($return_config = false)
 	// We need the existing ones for this
 	list ($currently_enabled, $modSettings['user_limit'], $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);
 
-	$config_vars = array(
+	$config_vars = [
 			// Warning system?
-			'enable' => array('check', 'warning_enable'),
-	);
+			'enable' => ['check', 'warning_enable'],
+	];
 
 	if (!empty($modSettings['warning_settings']) && $currently_enabled)
-		$config_vars += array(
+		$config_vars += [
 			'',
-				array('int', 'warning_watch', 'subtext' => $txt['setting_warning_watch_note'] . ' ' . $txt['zero_to_disable']),
-				'moderate' => array('int', 'warning_moderate', 'subtext' => $txt['setting_warning_moderate_note'] . ' ' . $txt['zero_to_disable']),
-				array('int', 'warning_mute', 'subtext' => $txt['setting_warning_mute_note'] . ' ' . $txt['zero_to_disable']),
-				'rem1' => array('int', 'user_limit', 'subtext' => $txt['setting_user_limit_note']),
-				'rem2' => array('int', 'warning_decrement', 'subtext' => $txt['setting_warning_decrement_note'] . ' ' . $txt['zero_to_disable']),
-		);
+				['int', 'warning_watch', 'subtext' => $txt['setting_warning_watch_note'] . ' ' . $txt['zero_to_disable']],
+				'moderate' => ['int', 'warning_moderate', 'subtext' => $txt['setting_warning_moderate_note'] . ' ' . $txt['zero_to_disable']],
+				['int', 'warning_mute', 'subtext' => $txt['setting_warning_mute_note'] . ' ' . $txt['zero_to_disable']],
+				'rem1' => ['int', 'user_limit', 'subtext' => $txt['setting_user_limit_note']],
+				'rem2' => ['int', 'warning_decrement', 'subtext' => $txt['setting_warning_decrement_note'] . ' ' . $txt['zero_to_disable']],
+		];
 
-	settings_integration_hook('integrate_warning_settings', array(&$config_vars));
+	settings_integration_hook('integrate_warning_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -253,15 +253,15 @@ function ModifyWarningSettings($return_config = false)
 		elseif (!$currently_enabled && !empty($_POST['warning_enable']))
 		{
 			// Need to add these, these weren't there before...
-			$vars = array(
+			$vars = [
 				'warning_watch' => 10,
 				'warning_moderate' => 35,
 				'warning_mute' => 60,
-			);
+			];
 
 			foreach ($vars as $var => $value)
 			{
-				$config_vars[] = array('int', $var);
+				$config_vars[] = ['int', $var];
 				$_POST[$var] = $value;
 			}
 		}
@@ -279,10 +279,10 @@ function ModifyWarningSettings($return_config = false)
 		// Fix the warning setting array!
 		$_POST['warning_settings'] = (!empty($_POST['warning_enable']) ? 1 : 0) . ',' . min(100, $_POST['user_limit']) . ',' . min(100, $_POST['warning_decrement']);
 		$save_vars = $config_vars;
-		$save_vars[] = array('text', 'warning_settings');
+		$save_vars[] = ['text', 'warning_settings'];
 		unset($save_vars['enable'], $save_vars['rem1'], $save_vars['rem2']);
 
-		settings_integration_hook('integrate_save_warning_settings', array(&$save_vars));
+		settings_integration_hook('integrate_save_warning_settings', [&$save_vars]);
 
 		saveDBSettings($save_vars);
 		session_flash('success', $txt['settings_saved']);
@@ -296,11 +296,11 @@ function ModifyWarningSettings($return_config = false)
 	$context['settings_title'] = $txt['warnings'];
 	$context['page_title'] = $txt['warnings'];
 
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['warnings'],
 		'help' => '',
 		'description' => $txt['warnings_desc'],
-	);
+	];
 
 	prepareDBSettingContext($config_vars);
 }
@@ -317,18 +317,18 @@ function ModifyAntispamSettings($return_config = false)
 	loadLanguage('Help');
 	loadLanguage('ManageSettings');
 
-	$config_vars = array(
-				array('check', 'reg_verification'),
-				array('check', 'search_enable_captcha'),
+	$config_vars = [
+				['check', 'reg_verification'],
+				['check', 'search_enable_captcha'],
 				// This, my friend, is a cheat :p
-				'guest_verify' => array('check', 'guests_require_captcha', 'subtext' => $txt['setting_guests_require_captcha_desc']),
-				array('int', 'posts_require_captcha', 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0){ document.getElementById(\'guests_require_captcha\').checked = true; document.getElementById(\'guests_require_captcha\').disabled = true;} else {document.getElementById(\'guests_require_captcha\').disabled = false;}'),
+				'guest_verify' => ['check', 'guests_require_captcha', 'subtext' => $txt['setting_guests_require_captcha_desc']],
+				['int', 'posts_require_captcha', 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0){ document.getElementById(\'guests_require_captcha\').checked = true; document.getElementById(\'guests_require_captcha\').disabled = true;} else {document.getElementById(\'guests_require_captcha\').disabled = false;}'],
 			'',
 			// PM Settings
-				'pm1' => array('int', 'max_pm_recipients', 'subtext' => $txt['max_pm_recipients_note']),
-				'pm2' => array('int', 'pm_posts_verification', 'subtext' => $txt['pm_posts_verification_note']),
-				'pm3' => array('int', 'pm_posts_per_hour', 'subtext' => $txt['pm_posts_per_hour_note']),
-	);
+				'pm1' => ['int', 'max_pm_recipients', 'subtext' => $txt['max_pm_recipients_note']],
+				'pm2' => ['int', 'pm_posts_verification', 'subtext' => $txt['pm_posts_verification_note']],
+				'pm3' => ['int', 'pm_posts_per_hour', 'subtext' => $txt['pm_posts_per_hour_note']],
+	];
 
 	$verifiables = [];
 	foreach (ClassManager::get_classes_implementing('StoryBB\\Helper\\Verifiable\\Verifiable') as $class)
@@ -348,7 +348,7 @@ function ModifyAntispamSettings($return_config = false)
 		$verifiables[] = $verifiable;
 	}
 
-	settings_integration_hook('integrate_spam_settings', array(&$config_vars));
+	settings_integration_hook('integrate_spam_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -374,14 +374,14 @@ function ModifyAntispamSettings($return_config = false)
 		$save_vars = $config_vars;
 		unset($save_vars['pm1'], $save_vars['pm2'], $save_vars['pm3'], $save_vars['guest_verify']);
 
-		$save_vars[] = array('text', 'pm_spam_settings');
+		$save_vars[] = ['text', 'pm_spam_settings'];
 
 		foreach ($verifiables as $verifiable)
 		{
 			$verifiable->put_settings($save_vars);
 		}
 
-		settings_integration_hook('integrate_save_spam_settings', array(&$save_vars));
+		settings_integration_hook('integrate_save_spam_settings', [&$save_vars]);
 
 		// Now save.
 		saveDBSettings($save_vars);
@@ -407,10 +407,10 @@ function ModifyAntispamSettings($return_config = false)
 	$context['settings_title'] = $txt['antispam_Settings'];
 	$context['page_title'] = $txt['antispam_title'];
 
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['antispam_title'],
 		'description' => $txt['antispam_Settings_desc'],
-	);
+	];
 
 	prepareDBSettingContext($config_vars);
 }
@@ -425,26 +425,26 @@ function ModifySignatureSettings($return_config = false)
 {
 	global $context, $txt, $modSettings, $sig_start, $smcFunc, $scripturl;
 
-	$config_vars = array(
+	$config_vars = [
 			// Are signatures even enabled?
-			array('check', 'signature_enable'),
+			['check', 'signature_enable'],
 		'',
 			// Tweaking settings!
-			array('int', 'signature_max_length', 'subtext' => $txt['zero_for_no_limit']),
-			array('int', 'signature_max_lines', 'subtext' => $txt['zero_for_no_limit']),
-			array('int', 'signature_max_font_size', 'subtext' => $txt['zero_for_no_limit']),
-			array('check', 'signature_allow_smileys', 'onclick' => 'document.getElementById(\'signature_max_smileys\').disabled = !this.checked;'),
-			array('int', 'signature_max_smileys', 'subtext' => $txt['zero_for_no_limit']),
+			['int', 'signature_max_length', 'subtext' => $txt['zero_for_no_limit']],
+			['int', 'signature_max_lines', 'subtext' => $txt['zero_for_no_limit']],
+			['int', 'signature_max_font_size', 'subtext' => $txt['zero_for_no_limit']],
+			['check', 'signature_allow_smileys', 'onclick' => 'document.getElementById(\'signature_max_smileys\').disabled = !this.checked;'],
+			['int', 'signature_max_smileys', 'subtext' => $txt['zero_for_no_limit']],
 		'',
 			// Image settings.
-			array('int', 'signature_max_images', 'subtext' => $txt['signature_max_images_note']),
-			array('int', 'signature_max_image_width', 'subtext' => $txt['zero_for_no_limit']),
-			array('int', 'signature_max_image_height', 'subtext' => $txt['zero_for_no_limit']),
+			['int', 'signature_max_images', 'subtext' => $txt['signature_max_images_note']],
+			['int', 'signature_max_image_width', 'subtext' => $txt['zero_for_no_limit']],
+			['int', 'signature_max_image_height', 'subtext' => $txt['zero_for_no_limit']],
 		'',
-			array('bbc', 'signature_bbc'),
-	);
+			['bbc', 'signature_bbc'],
+	];
 
-	settings_integration_hook('integrate_signature_settings', array(&$config_vars));
+	settings_integration_hook('integrate_signature_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -474,8 +474,8 @@ function ModifySignatureSettings($return_config = false)
 		$request = $smcFunc['db_query']('', '
 			SELECT MAX(id_member)
 			FROM {db_prefix}members',
-			array(
-			)
+			[
+			]
 		);
 		list ($context['max_member']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -490,15 +490,15 @@ function ModifySignatureSettings($return_config = false)
 				WHERE id_member BETWEEN {int:step} AND {int:step} + 49
 					AND id_group != {int:admin_group}
 					AND FIND_IN_SET({int:admin_group}, additional_groups) = 0',
-				array(
+				[
 					'admin_group' => 1,
 					'step' => $_GET['step'],
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
 				// Apply all the rules we can realistically do.
-				$sig = strtr($row['signature'], array('<br>' => "\n"));
+				$sig = strtr($row['signature'], ['<br>' => "\n"]);
 
 				// Max characters...
 				if (!empty($sig_limits[1]))
@@ -513,7 +513,7 @@ function ModifySignatureSettings($return_config = false)
 						{
 							$count++;
 							if ($count >= $sig_limits[2])
-								$sig = substr($sig, 0, $i) . strtr(substr($sig, $i), array("\n" => ' '));
+								$sig = substr($sig, 0, $i) . strtr(substr($sig, $i), ["\n" => ' ']);
 						}
 					}
 				}
@@ -663,8 +663,8 @@ function ModifySignatureSettings($return_config = false)
 					$sig = preg_replace('~\[/(?:' . implode('|', $disabledTags) . ')\]~i', '', $sig);
 				}
 
-				$sig = strtr($sig, array("\n" => '<br>'));
-				call_integration_hook('integrate_apply_signature_settings', array(&$sig, $sig_limits, $disabledTags));
+				$sig = strtr($sig, ["\n" => '<br>']);
+				call_integration_hook('integrate_apply_signature_settings', [&$sig, $sig_limits, $disabledTags]);
 				if ($sig != $row['signature'])
 					$changes[$row['id_member']] = $sig;
 			}
@@ -680,10 +680,10 @@ function ModifySignatureSettings($return_config = false)
 						UPDATE {db_prefix}members
 						SET signature = {string:signature}
 						WHERE id_member = {int:id_member}',
-						array(
+						[
 							'id_member' => $id,
 							'signature' => $sig,
-						)
+						]
 					);
 			}
 
@@ -694,7 +694,7 @@ function ModifySignatureSettings($return_config = false)
 		$settings_applied = true;
 	}
 
-	$context['signature_settings'] = array(
+	$context['signature_settings'] = [
 		'enable' => isset($sig_limits[0]) ? $sig_limits[0] : 0,
 		'max_length' => isset($sig_limits[1]) ? $sig_limits[1] : 0,
 		'max_lines' => isset($sig_limits[2]) ? $sig_limits[2] : 0,
@@ -704,7 +704,7 @@ function ModifySignatureSettings($return_config = false)
 		'max_image_width' => isset($sig_limits[5]) ? $sig_limits[5] : 0,
 		'max_image_height' => isset($sig_limits[6]) ? $sig_limits[6] : 0,
 		'max_font_size' => isset($sig_limits[7]) ? $sig_limits[7] : 0,
-	);
+	];
 
 	// Temporarily make each setting a modSetting!
 	foreach ($context['signature_settings'] as $key => $value)
@@ -726,7 +726,7 @@ function ModifySignatureSettings($return_config = false)
 		if (!isset($_POST['signature_bbc_enabledTags']))
 			$_POST['signature_bbc_enabledTags'] = [];
 		elseif (!is_array($_POST['signature_bbc_enabledTags']))
-			$_POST['signature_bbc_enabledTags'] = array($_POST['signature_bbc_enabledTags']);
+			$_POST['signature_bbc_enabledTags'] = [$_POST['signature_bbc_enabledTags']];
 
 		$sig_limits = [];
 		foreach ($context['signature_settings'] as $key => $value)
@@ -739,13 +739,13 @@ function ModifySignatureSettings($return_config = false)
 				$sig_limits[] = !empty($_POST['signature_' . $key]) ? max(1, (int) $_POST['signature_' . $key]) : 0;
 		}
 
-		settings_integration_hook('integrate_save_signature_settings', array(&$sig_limits, &$bbcTags));
+		settings_integration_hook('integrate_save_signature_settings', [&$sig_limits, &$bbcTags]);
 
 		$_POST['signature_settings'] = implode(',', $sig_limits) . ':' . implode(',', array_diff($bbcTags, $_POST['signature_bbc_enabledTags']));
 
 		// Even though we have practically no settings let's keep the convention going!
 		$save_vars = [];
-		$save_vars[] = array('text', 'signature_settings');
+		$save_vars[] = ['text', 'signature_settings'];
 
 		saveDBSettings($save_vars);
 		session_flash('success', $txt['settings_saved']);
@@ -806,9 +806,9 @@ function ShowCustomProfiles()
 	$context['sub_template'] = 'admin_profile_fields';
 
 	// What about standard fields they can tweak?
-	$standard_fields = array('website', 'timezone', 'posts', 'warning_status');
+	$standard_fields = ['website', 'timezone', 'posts', 'warning_status'];
 	// What fields can't you put on the registration page?
-	$context['fields_no_registration'] = array('posts', 'warning_status');
+	$context['fields_no_registration'] = ['posts', 'warning_status'];
 
 	// Are we saving any standard field changes?
 	if (isset($_POST['save']))
@@ -851,32 +851,32 @@ function ShowCustomProfiles()
 
 	require_once($sourcedir . '/Subs-List.php');
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'standard_profile_fields',
 		'title' => $txt['standard_profile_title'],
 		'base_href' => $scripturl . '?action=admin;area=featuresettings;sa=profile',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getProfileFields',
-			'params' => array(
+			'params' => [
 				true,
-			),
-		),
-		'columns' => array(
-			'field' => array(
-				'header' => array(
+			],
+		],
+		'columns' => [
+			'field' => [
+				'header' => [
 					'value' => $txt['standard_profile_field'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db' => 'label',
 					'style' => 'width: 60%;',
-				),
-			),
-			'active' => array(
-				'header' => array(
+				],
+			],
+			'active' => [
+				'header' => [
 					'value' => $txt['custom_edit_active'],
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function ($rowData)
 					{
 						$isChecked = $rowData['disabled'] ? '' : ' checked';
@@ -885,14 +885,14 @@ function ShowCustomProfiles()
 					},
 					'style' => 'width: 20%;',
 					'class' => 'centercol',
-				),
-			),
-			'show_on_registration' => array(
-				'header' => array(
+				],
+			],
+			'show_on_registration' => [
+				'header' => [
 					'value' => $txt['custom_edit_registration'],
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function ($rowData)
 					{
 						$isChecked = $rowData['on_register'] && !$rowData['disabled'] ? ' checked' : '';
@@ -901,45 +901,45 @@ function ShowCustomProfiles()
 					},
 					'style' => 'width: 20%;',
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=admin;area=featuresettings;sa=profile',
 			'name' => 'standardProfileFields',
 			'token' => 'admin-scp',
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'below_table_data',
 				'value' => '<input type="submit" name="save" value="' . $txt['save'] . '">',
-			),
-		),
-	);
+			],
+		],
+	];
 	createList($listOptions);
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'custom_profile_fields',
 		'title' => $txt['custom_profile_title'],
 		'base_href' => $scripturl . '?action=admin;area=featuresettings;sa=profile',
 		'default_sort_col' => 'field_order',
 		'no_items_label' => $txt['custom_profile_none'],
 		'items_per_page' => 25,
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getProfileFields',
-			'params' => array(
+			'params' => [
 				false,
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getProfileFieldSize',
-		),
-		'columns' => array(
-			'field_order' => array(
-				'header' => array(
+		],
+		'columns' => [
+			'field_order' => [
+				'header' => [
 					'value' => $txt['custom_profile_fieldorder'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function ($rowData) use ($context, $txt, $scripturl)
 					{
 						$return = '<p class="centertext bold_text">'. $rowData['field_order'] .'<br />';
@@ -955,33 +955,33 @@ function ShowCustomProfiles()
 						return $return;
 					},
 					'style' => 'width: 12%;',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'field_order',
 					'reverse' => 'field_order DESC',
-				),
-			),
-			'field_name' => array(
-				'header' => array(
+				],
+			],
+			'field_name' => [
+				'header' => [
 					'value' => $txt['custom_profile_fieldname'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function ($rowData) use ($scripturl)
 					{
 						return sprintf('<a href="%1$s?action=admin;area=featuresettings;sa=profileedit;fid=%2$d">%3$s</a><div class="smalltext">%4$s</div>', $scripturl, $rowData['id_field'], $rowData['field_name'], $rowData['field_desc']);
 					},
 					'style' => 'width: 62%;',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'field_name',
 					'reverse' => 'field_name DESC',
-				),
-			),
-			'field_type' => array(
-				'header' => array(
+				],
+			],
+			'field_type' => [
+				'header' => [
 					'value' => $txt['custom_profile_fieldtype'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function ($rowData) use ($txt)
 					{
 						$textKey = sprintf('custom_profile_type_%1$s', $rowData['field_type']);
@@ -989,34 +989,34 @@ function ShowCustomProfiles()
 					},
 					'style' => 'width: 15%;',
 					'class' => 'hidden',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'field_type',
 					'reverse' => 'field_type DESC',
-				),
-			),
-			'active' => array(
-				'header' => array(
+				],
+			],
+			'active' => [
+				'header' => [
 					'value' => $txt['custom_profile_active'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function ($rowData) use ($txt)
 					{
 						return $rowData['active'] ? $txt['yes'] : $txt['no'];
 					},
 					'style' => 'width: 8%;',
 					'class' => 'hidden',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'active DESC',
 					'reverse' => 'active',
-				),
-			),
-			'placement' => array(
-				'header' => array(
+				],
+			],
+			'placement' => [
+				'header' => [
 					'value' => $txt['custom_profile_placement'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function ($rowData)
 					{
 						global $txt, $context;
@@ -1025,35 +1025,35 @@ function ShowCustomProfiles()
 					},
 					'style' => 'width: 8%;',
 					'class' => 'hidden',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'placement DESC',
 					'reverse' => 'placement',
-				),
-			),
-			'show_on_registration' => array(
-				'data' => array(
-					'sprintf' => array(
+				],
+			],
+			'show_on_registration' => [
+				'data' => [
+					'sprintf' => [
 						'format' => '<a href="' . $scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=%1$s">' . $txt['modify'] . '</a>',
-						'params' => array(
+						'params' => [
 							'id_field' => false,
-						),
-					),
+						],
+					],
 					'style' => 'width: 15%;',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=admin;area=featuresettings;sa=profileedit',
 			'name' => 'customProfileFields',
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'below_table_data',
 				'value' => '<input type="submit" name="new" value="' . $txt['custom_profile_make_new'] . '">',
-			),
-		),
-	);
+			],
+		],
+	];
 	createList($listOptions);
 }
 
@@ -1073,19 +1073,19 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 
 	if ($standardFields)
 	{
-		$standard_fields = array('website', 'timezone', 'posts', 'warning_status');
-		$fields_no_registration = array('posts', 'warning_status');
+		$standard_fields = ['website', 'timezone', 'posts', 'warning_status'];
+		$fields_no_registration = ['posts', 'warning_status'];
 		$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : [];
 		$registration_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : [];
 
 		foreach ($standard_fields as $field)
-			$list[] = array(
+			$list[] = [
 				'id' => $field,
 				'label' => isset($txt['standard_profile_field_' . $field]) ? $txt['standard_profile_field_' . $field] : (isset($txt[$field]) ? $txt[$field] : $field),
 				'disabled' => in_array($field, $disabled_fields),
 				'on_register' => in_array($field, $registration_fields) && !in_array($field, $fields_no_registration),
 				'can_show_register' => !in_array($field, $fields_no_registration),
-			);
+			];
 	}
 	else
 	{
@@ -1095,11 +1095,11 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 			FROM {db_prefix}custom_fields
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:items_per_page}',
-			array(
+			[
 				'sort' => $sort,
 				'start' => $start,
 				'items_per_page' => $items_per_page,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$list[] = $row;
@@ -1120,8 +1120,8 @@ function list_getProfileFieldSize()
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}custom_fields',
-		array(
-		)
+		[
+		]
 	);
 
 	list ($numProfileFields) = $smcFunc['db_fetch_row']($request);
@@ -1153,7 +1153,7 @@ function EditCustomProfiles()
 	loadLanguage('Profile');
 
 	// There's really only a few places we can go...
-	$move_to = array('up', 'down');
+	$move_to = ['up', 'down'];
 
 	// We need this for both moving and saving so put it right here.
 	$order_count = custFieldsMaxOrder();
@@ -1167,9 +1167,9 @@ function EditCustomProfiles()
 				bbc, mask, enclose, placement
 			FROM {db_prefix}custom_fields
 			WHERE id_field = {int:current_field}',
-			array(
+			[
 				'current_field' => $context['fid'],
-			)
+			]
 		);
 		$context['field'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1182,7 +1182,7 @@ function EditCustomProfiles()
 				$cols = 30;
 			}
 
-			$context['field'] = array(
+			$context['field'] = [
 				'name' => $row['field_name'],
 				'desc' => $row['field_desc'],
 				'col_name' => $row['col_name'],
@@ -1198,7 +1198,7 @@ function EditCustomProfiles()
 				'bbc' => $row['bbc'] ? true : false,
 				'default_check' => $row['field_type'] == 'check' && $row['default_value'] ? true : false,
 				'default_select' => $row['field_type'] == 'select' || $row['field_type'] == 'radio' ? $row['default_value'] : '',
-				'options' => strlen($row['field_options']) > 1 ? explode(',', $row['field_options']) : array('', '', ''),
+				'options' => strlen($row['field_options']) > 1 ? explode(',', $row['field_options']) : ['', '', ''],
 				'active' => $row['active'],
 				'private' => $row['private'],
 				'can_search' => $row['can_search'],
@@ -1206,14 +1206,14 @@ function EditCustomProfiles()
 				'regex' => substr($row['mask'], 0, 5) == 'regex' ? substr($row['mask'], 5) : '',
 				'enclose' => $row['enclose'],
 				'placement' => $row['placement'],
-			);
+			];
 		}
 		$smcFunc['db_free_result']($request);
 	}
 
 	// Setup the default values as needed.
 	if (empty($context['field']))
-		$context['field'] = array(
+		$context['field'] = [
 			'name' => '',
 			'col_name' => '???',
 			'desc' => '',
@@ -1229,7 +1229,7 @@ function EditCustomProfiles()
 			'bbc' => false,
 			'default_check' => false,
 			'default_select' => '',
-			'options' => array('', '', ''),
+			'options' => ['', '', ''],
 			'active' => true,
 			'private' => false,
 			'can_search' => false,
@@ -1237,7 +1237,7 @@ function EditCustomProfiles()
 			'regex' => '',
 			'enclose' => '',
 			'placement' => 0,
-		);
+		];
 
 	// Are we moving it?
 	if (isset($_GET['move']) && in_array($smcFunc['htmlspecialchars']($_GET['move']), $move_to))
@@ -1254,19 +1254,19 @@ function EditCustomProfiles()
 			UPDATE {db_prefix}custom_fields
 			SET field_order = {int:old_order}
 			WHERE field_order = {int:new_order}',
-			array(
+			[
 				'new_order' => $new_order,
 				'old_order' => $context['field']['order'],
-			)
+			]
 		);
 		$smcFunc['db_query']('','
 			UPDATE {db_prefix}custom_fields
 			SET field_order = {int:new_order}
 			WHERE id_field = {int:id_field}',
-			array(
+			[
 				'new_order' => $new_order,
 				'id_field' => $context['fid'],
-			)
+			]
 		);
 		redirectexit('action=admin;area=featuresettings;sa=profile'); // @todo perhaps a nice confirmation message, dunno.
 	}
@@ -1323,7 +1323,7 @@ function EditCustomProfiles()
 			{
 				// Clean, clean, clean...
 				$v = $smcFunc['htmlspecialchars']($v);
-				$v = strtr($v, array(',' => ''));
+				$v = strtr($v, [',' => '']);
 
 				// Nada, zip, etc...
 				if (trim($v) == '')
@@ -1348,7 +1348,7 @@ function EditCustomProfiles()
 		// Come up with the unique name?
 		if (empty($context['fid']))
 		{
-			$col_name = $smcFunc['substr'](strtr($_POST['field_name'], array(' ' => '')), 0, 6);
+			$col_name = $smcFunc['substr'](strtr($_POST['field_name'], [' ' => '']), 0, 6);
 			preg_match('~([\w\d_-]+)~', $col_name, $matches);
 
 			// If there is nothing to the name, then let's start out own - for foreign languages etc.
@@ -1391,10 +1391,10 @@ function EditCustomProfiles()
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:current_column}
 						AND id_member > {int:no_member}',
-					array(
+					[
 						'no_member' => 0,
 						'current_column' => $context['field']['col_name'],
-					)
+					]
 				);
 			}
 			// Otherwise - if the select is edited may need to adjust!
@@ -1427,12 +1427,12 @@ function EditCustomProfiles()
 							WHERE variable = {string:current_column}
 								AND value = {string:old_value}
 								AND id_member > {int:no_member}',
-							array(
+							[
 								'no_member' => 0,
 								'new_value' => $newOptions[$k],
 								'current_column' => $context['field']['col_name'],
 								'old_value' => $option,
-							)
+							]
 						);
 				}
 			}
@@ -1453,7 +1453,7 @@ function EditCustomProfiles()
 					can_search = {int:can_search}, bbc = {int:bbc}, mask = {string:mask},
 					enclose = {string:enclose}, placement = {int:placement}
 				WHERE id_field = {int:current_field}',
-				array(
+				[
 					'field_length' => $field_length,
 					'show_reg' => $show_reg,
 					'show_display' => $show_display,
@@ -1472,7 +1472,7 @@ function EditCustomProfiles()
 					'mask' => $mask,
 					'enclose' => $enclose,
 					'placement' => $placement,
-				)
+				]
 			);
 
 			// Just clean up any old selects - these are a pain!
@@ -1482,11 +1482,11 @@ function EditCustomProfiles()
 					WHERE variable = {string:current_column}
 						AND value NOT IN ({array_string:new_option_values})
 						AND id_member > {int:no_member}',
-					array(
+					[
 						'no_member' => 0,
 						'new_option_values' => $newOptions,
 						'current_column' => $context['field']['col_name'],
-					)
+					]
 				);
 		}
 		else
@@ -1496,21 +1496,21 @@ function EditCustomProfiles()
 
 			$smcFunc['db_insert']('',
 				'{db_prefix}custom_fields',
-				array(
+				[
 					'col_name' => 'string', 'field_name' => 'string', 'field_desc' => 'string',
 					'field_type' => 'string', 'field_length' => 'string', 'field_options' => 'string', 'field_order' => 'int',
 					'show_reg' => 'int', 'show_display' => 'int', 'show_mlist' => 'int', 'show_profile' => 'string',
 					'private' => 'int', 'active' => 'int', 'default_value' => 'string', 'can_search' => 'int',
 					'bbc' => 'int', 'mask' => 'string', 'enclose' => 'string', 'placement' => 'int',
-				),
-				array(
+				],
+				[
 					$col_name, $_POST['field_name'], $_POST['field_desc'],
 					$_POST['field_type'], $field_length, $field_options, $new_order,
 					$show_reg, $show_display, $show_mlist, $show_profile,
 					$private, $active, $default, $can_search,
 					$bbc, $mask, $enclose, $placement,
-				),
-				array('id_field')
+				],
+				['id_field']
 			);
 		}
 	}
@@ -1525,18 +1525,18 @@ function EditCustomProfiles()
 			DELETE FROM {db_prefix}themes
 			WHERE variable = {string:current_column}
 				AND id_member > {int:no_member}',
-			array(
+			[
 				'no_member' => 0,
 				'current_column' => $context['field']['col_name'],
-			)
+			]
 		);
 		// Finally - the field itself is gone!
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}custom_fields
 			WHERE id_field = {int:current_field}',
-			array(
+			[
 				'current_field' => $context['fid'],
-			)
+			]
 		);
 
 		// Re-arrange the order.
@@ -1544,9 +1544,9 @@ function EditCustomProfiles()
 			UPDATE {db_prefix}custom_fields
 			SET field_order = field_order - 1
 			WHERE field_order > {int:current_order}',
-			array(
+			[
 				'current_order' => $context['field']['order'],
-			)
+			]
 		);
 	}
 
@@ -1563,20 +1563,20 @@ function EditCustomProfiles()
 				AND private != {int:not_owner_only}
 				AND private != {int:not_admin_only}
 			ORDER BY field_order',
-			array(
+			[
 				'is_displayed' => 1,
 				'active' => 1,
 				'not_owner_only' => 2,
 				'not_admin_only' => 3,
-			)
+			]
 		);
 
 		$fields = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$fields[] = array(
-				'col_name' => strtr($row['col_name'], array('|' => '', ';' => '')),
-				'title' => strtr($row['field_name'], array('|' => '', ';' => '')),
+			$fields[] = [
+				'col_name' => strtr($row['col_name'], ['|' => '', ';' => '']),
+				'title' => strtr($row['field_name'], ['|' => '', ';' => '']),
 				'type' => $row['field_type'],
 				'order' => $row['field_order'],
 				'bbc' => $row['bbc'] ? '1' : '0',
@@ -1584,11 +1584,11 @@ function EditCustomProfiles()
 				'enclose' => !empty($row['enclose']) ? $row['enclose'] : '',
 				'mlist' => $row['show_mlist'],
 				'options' => (!empty($row['field_options']) ? explode(',', $row['field_options']) : []),
-			);
+			];
 		}
 		$smcFunc['db_free_result']($request);
 
-		updateSettings(array('displayFields' => json_encode($fields)));
+		updateSettings(['displayFields' => json_encode($fields)]);
 		session_flash('success', $txt['settings_saved']);
 		redirectexit('action=admin;area=featuresettings;sa=profile');
 	}
@@ -1631,37 +1631,37 @@ function ModifyLogSettings($return_config = false)
 
 	$context['page_title'] = $txt['log_settings'];
 
-	$config_vars = array(
-			array('check', 'modlog_enabled', 'help' => 'modlog'),
-			array('check', 'adminlog_enabled', 'help' => 'adminlog'),
-			array('check', 'userlog_enabled', 'help' => 'userlog'),
+	$config_vars = [
+			['check', 'modlog_enabled', 'help' => 'modlog'],
+			['check', 'adminlog_enabled', 'help' => 'adminlog'],
+			['check', 'userlog_enabled', 'help' => 'userlog'],
 			// The error log is a wonderful thing.
-			array('title', 'errlog', 'desc' => $txt['error_log_desc']),
-			array('check', 'enableErrorLogging'),
-			array('check', 'enableErrorQueryLogging'),
-			array('check', 'log_ban_hits'),
+			['title', 'errlog', 'desc' => $txt['error_log_desc']],
+			['check', 'enableErrorLogging'],
+			['check', 'enableErrorQueryLogging'],
+			['check', 'log_ban_hits'],
 			// Even do the pruning?
-			array('title', 'pruning_title', 'desc' => $txt['pruning_desc']),
+			['title', 'pruning_title', 'desc' => $txt['pruning_desc']],
 			// The array indexes are there so we can remove/change them before saving.
-			'pruningOptions' => array('check', 'pruningOptions'),
+			'pruningOptions' => ['check', 'pruningOptions'],
 		'',
 			// Various logs that could be pruned.
-			array('int', 'pruneErrorLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Error log.
-			array('int', 'pruneModLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Moderation log.
-			array('int', 'pruneBanLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Ban hit log.
-			array('int', 'pruneReportLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Report to moderator log.
-			array('int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']), // Log of the scheduled tasks and how long they ran.
+			['int', 'pruneErrorLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']], // Error log.
+			['int', 'pruneModLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']], // Moderation log.
+			['int', 'pruneBanLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']], // Ban hit log.
+			['int', 'pruneReportLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']], // Report to moderator log.
+			['int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_to_disable']], // Log of the scheduled tasks and how long they ran.
 			// If you add any additional logs make sure to add them after this point.  Additionally, make sure you add them to the weekly scheduled task.
 			// Mod Developers: Do NOT use the pruningOptions master variable for this as StoryBB Core may overwrite your setting in the future!
 		'',
-			array('int', 'retention_policy_standard', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_means_zero']),
-			array('int', 'retention_policy_sensitive', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_means_zero']),
-	);
+			['int', 'retention_policy_standard', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_means_zero']],
+			['int', 'retention_policy_sensitive', 'postinput' => $txt['days_word'], 'subtext' => $txt['zero_means_zero']],
+	];
 
 	// We want to be toggling some of these for a nice user experience. If you want to add yours to the list of those magically hidden when the 'pruning' option is off, add to this.
-	$prune_toggle = array('pruneErrorLog', 'pruneModLog', 'pruneBanLog', 'pruneReportLog', 'pruneScheduledTaskLog');
+	$prune_toggle = ['pruneErrorLog', 'pruneModLog', 'pruneBanLog', 'pruneReportLog', 'pruneScheduledTaskLog'];
 
-	settings_integration_hook('integrate_prune_settings', array(&$config_vars, &$prune_toggle, false));
+	settings_integration_hook('integrate_prune_settings', [&$config_vars, &$prune_toggle, false]);
 
 	if ($return_config)
 		return $config_vars;
@@ -1686,17 +1686,17 @@ function ModifyLogSettings($return_config = false)
 		checkSession();
 
 		// Because of the excitement attached to combining pruning log items, we need to duplicate everything here.
-		$savevar = array(
-			array('check', 'modlog_enabled'),
-			array('check', 'adminlog_enabled'),
-			array('check', 'userlog_enabled'),
-			array('check', 'enableErrorLogging'),
-			array('check', 'enableErrorQueryLogging'),
-			array('check', 'log_ban_hits'),
-			array('text', 'pruningOptions')
-		);
+		$savevar = [
+			['check', 'modlog_enabled'],
+			['check', 'adminlog_enabled'],
+			['check', 'userlog_enabled'],
+			['check', 'enableErrorLogging'],
+			['check', 'enableErrorQueryLogging'],
+			['check', 'log_ban_hits'],
+			['text', 'pruningOptions']
+		];
 
-		settings_integration_hook('integrate_prune_settings', array(&$savevar, &$prune_toggle, true));
+		settings_integration_hook('integrate_prune_settings', [&$savevar, &$prune_toggle, true]);
 
 		if (!empty($_POST['pruningOptions']))
 		{

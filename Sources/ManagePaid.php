@@ -30,17 +30,17 @@ function ManagePaidSubscriptions()
 	loadLanguage('ManagePaid');
 
 	if (!empty($modSettings['paid_enabled']))
-		$subActions = array(
-			'modify' => array('ModifySubscription', 'admin_forum'),
-			'modifyuser' => array('ModifyUserSubscription', 'admin_forum'),
-			'settings' => array('ModifySubscriptionSettings', 'admin_forum'),
-			'view' => array('ViewSubscriptions', 'admin_forum'),
-			'viewsub' => array('ViewSubscribedUsers', 'admin_forum'),
-		);
+		$subActions = [
+			'modify' => ['ModifySubscription', 'admin_forum'],
+			'modifyuser' => ['ModifyUserSubscription', 'admin_forum'],
+			'settings' => ['ModifySubscriptionSettings', 'admin_forum'],
+			'view' => ['ViewSubscriptions', 'admin_forum'],
+			'viewsub' => ['ViewSubscribedUsers', 'admin_forum'],
+		];
 	else
-		$subActions = array(
-			'settings' => array('ModifySubscriptionSettings', 'admin_forum'),
-		);
+		$subActions = [
+			'settings' => ['ModifySubscriptionSettings', 'admin_forum'],
+		];
 
 	// Default the sub-action to 'view subscriptions', but only if they have already set things up..
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($modSettings['paid_currency_symbol']) && !empty($modSettings['paid_enabled']) ? 'view' : 'settings');
@@ -51,22 +51,22 @@ function ManagePaidSubscriptions()
 	$context['page_title'] = $txt['paid_subscriptions'];
 
 	// Tabs for browsing the different subscription functions.
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['paid_subscriptions'],
 		'help' => '',
 		'description' => $txt['paid_subscriptions_desc'],
-	);
+	];
 	if (!empty($modSettings['paid_enabled']))
-		$context[$context['admin_menu_name']]['tab_data']['tabs'] = array(
-			'view' => array(
+		$context[$context['admin_menu_name']]['tab_data']['tabs'] = [
+			'view' => [
 				'description' => $txt['paid_subs_view_desc'],
-			),
-			'settings' => array(
+			],
+			'settings' => [
 				'description' => $txt['paid_subs_settings_desc'],
-			),
-		);
+			],
+		];
 
-	routing_integration_hook('integrate_manage_subscriptions', array(&$subActions));
+	routing_integration_hook('integrate_manage_subscriptions', [&$subActions]);
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']][0]);
@@ -89,21 +89,21 @@ function ModifySubscriptionSettings($return_config = false)
 	{
 		// If the currency is set to something different then we need to set it to other for this to work and set it back shortly.
 		$modSettings['paid_currency'] = !empty($modSettings['paid_currency_code']) ? $modSettings['paid_currency_code'] : '';
-		if (!empty($modSettings['paid_currency_code']) && !in_array($modSettings['paid_currency_code'], array('usd', 'eur', 'gbp', 'cad', 'aud')))
+		if (!empty($modSettings['paid_currency_code']) && !in_array($modSettings['paid_currency_code'], ['usd', 'eur', 'gbp', 'cad', 'aud']))
 			$modSettings['paid_currency'] = 'other';
 
 		// These are all the default settings.
-		$config_vars = array(
-				array('check', 'paid_enabled'),
+		$config_vars = [
+				['check', 'paid_enabled'],
 			'',
-				array('select', 'paid_email', array(0 => $txt['paid_email_no'], 1 => $txt['paid_email_error'], 2 => $txt['paid_email_all']), 'subtext' => $txt['paid_email_desc']),
-				array('email', 'paid_email_to', 'subtext' => $txt['paid_email_to_desc'], 'size' => 60),
+				['select', 'paid_email', [0 => $txt['paid_email_no'], 1 => $txt['paid_email_error'], 2 => $txt['paid_email_all']], 'subtext' => $txt['paid_email_desc']],
+				['email', 'paid_email_to', 'subtext' => $txt['paid_email_to_desc'], 'size' => 60],
 			'',
-				'dummy_currency' => array('select', 'paid_currency', array('usd' => $txt['usd'], 'eur' => $txt['eur'], 'gbp' => $txt['gbp'], 'cad' => $txt['cad'], 'aud' => $txt['aud'], 'other' => $txt['other']), 'javascript' => 'onchange="toggleOther();"'),
-				array('text', 'paid_currency_code', 'subtext' => $txt['paid_currency_code_desc'], 'size' => 5, 'force_div_id' => 'custom_currency_code_div'),
-				array('text', 'paid_currency_symbol', 'subtext' => $txt['paid_currency_symbol_desc'], 'size' => 8, 'force_div_id' => 'custom_currency_symbol_div'),
-				array('check', 'paidsubs_test', 'subtext' => $txt['paidsubs_test_desc'], 'onclick' => 'return document.getElementById(\'paidsubs_test\').checked ? confirm(\'' . $txt['paidsubs_test_confirm'] . '\') : true;'),
-		);
+				'dummy_currency' => ['select', 'paid_currency', ['usd' => $txt['usd'], 'eur' => $txt['eur'], 'gbp' => $txt['gbp'], 'cad' => $txt['cad'], 'aud' => $txt['aud'], 'other' => $txt['other']], 'javascript' => 'onchange="toggleOther();"'],
+				['text', 'paid_currency_code', 'subtext' => $txt['paid_currency_code_desc'], 'size' => 5, 'force_div_id' => 'custom_currency_code_div'],
+				['text', 'paid_currency_symbol', 'subtext' => $txt['paid_currency_symbol_desc'], 'size' => 8, 'force_div_id' => 'custom_currency_symbol_div'],
+				['check', 'paidsubs_test', 'subtext' => $txt['paidsubs_test_desc'], 'onclick' => 'return document.getElementById(\'paidsubs_test\').checked ? confirm(\'' . $txt['paidsubs_test_confirm'] . '\') : true;'],
+		];
 
 		// Now load all the other gateway settings.
 		$gateways = loadPaymentGateways();
@@ -113,7 +113,7 @@ function ModifySubscriptionSettings($return_config = false)
 			$setting_data = $gatewayClass->getGatewaySettings();
 			if (!empty($setting_data))
 			{
-				$config_vars[] = array('title', $gatewayClass->getShortTitle(), 'text_label' => $gatewayClass->getDisplayTitle());
+				$config_vars[] = ['title', $gatewayClass->getShortTitle(), 'text_label' => $gatewayClass->getDisplayTitle()];
 				$config_vars = array_merge($config_vars, $setting_data);
 			}
 		}
@@ -159,9 +159,9 @@ function ModifySubscriptionSettings($return_config = false)
 	}
 	else
 	{
-		$config_vars = array(
-			array('check', 'paid_enabled'),
-		);
+		$config_vars = [
+			['check', 'paid_enabled'],
+		];
 		$context['settings_title'] = $txt['paid_subscriptions'];
 	}
 
@@ -247,12 +247,12 @@ function ViewSubscriptions()
 	$context['page_title'] = $txt['paid_subs_view'];
 	loadSubscriptions();
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'subscription_list',
 		'title' => $txt['subscriptions'],
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'base_href' => $scripturl . '?action=admin;area=paidsubscribe;sa=view',
-		'get_items' => array(
+		'get_items' => [
 			'function' => function($start, $items_per_page) use ($context)
 			{
 				$subscriptions = [];
@@ -270,115 +270,115 @@ function ViewSubscriptions()
 				}
 				return $subscriptions;
 			},
-		),
-		'get_count' => array(
+		],
+		'get_count' => [
 			'function' => function() use ($context)
 			{
 				return count($context['subscriptions']);
 			},
-		),
+		],
 		'no_items_label' => $txt['paid_none_yet'],
-		'columns' => array(
-			'name' => array(
-				'header' => array(
+		'columns' => [
+			'name' => [
+				'header' => [
 					'value' => $txt['paid_name'],
 					'style' => 'width: 35%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData) use ($scripturl)
 					{
 						return sprintf('<a href="%1$s?action=admin;area=paidsubscribe;sa=viewsub;sid=%2$s">%3$s</a>', $scripturl, $rowData['id'], $rowData['name']);
 					},
-				),
-			),
-			'cost' => array(
-				'header' => array(
+				],
+			],
+			'cost' => [
+				'header' => [
 					'value' => $txt['paid_cost'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData) use ($txt)
 					{
 						return $rowData['flexible'] ? '<em>' . $txt['flexible'] . '</em>' : $rowData['cost'] . ' / ' . $rowData['length'];
 					},
-				),
-			),
-			'pending' => array(
-				'header' => array(
+				],
+			],
+			'pending' => [
+				'header' => [
 					'value' => $txt['paid_pending'],
 					'style' => 'width: 18%;',
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'pending',
 					'class' => 'centercol',
-				),
-			),
-			'finished' => array(
-				'header' => array(
+				],
+			],
+			'finished' => [
+				'header' => [
 					'value' => $txt['paid_finished'],
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'finished',
 					'class' => 'centercol',
-				),
-			),
-			'total' => array(
-				'header' => array(
+				],
+			],
+			'total' => [
+				'header' => [
 					'value' => $txt['paid_active'],
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'total',
 					'class' => 'centercol',
-				),
-			),
-			'is_active' => array(
-				'header' => array(
+				],
+			],
+			'is_active' => [
+				'header' => [
 					'value' => $txt['paid_is_active'],
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData) use ($txt)
 					{
 						return '<span style="color: ' . ($rowData['active'] ? 'green' : 'red') . '">' . ($rowData['active'] ? $txt['yes'] : $txt['no']) . '</span>';
 					},
 					'class' => 'centercol',
-				),
-			),
-			'modify' => array(
-				'data' => array(
+				],
+			],
+			'modify' => [
+				'data' => [
 					'function' => function($rowData) use ($txt, $scripturl)
 					{
 						return '<a href="' . $scripturl . '?action=admin;area=paidsubscribe;sa=modify;sid=' . $rowData['id'] . '">' . $txt['modify'] . '</a>';
 					},
 					'class' => 'centercol',
-				),
-			),
-			'delete' => array(
-				'data' => array(
+				],
+			],
+			'delete' => [
+				'data' => [
 					'function' => function($rowData) use ($scripturl, $txt)
 					{
 						return '<a href="' . $scripturl . '?action=admin;area=paidsubscribe;sa=modify;delete;sid=' . $rowData['id'] . '">' . $txt['delete'] . '</a>';
 					},
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=admin;area=paidsubscribe;sa=modify',
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'above_table_headers',
 				'value' => '<input type="submit" name="add" value="' . $txt['paid_add_subscription'] . '">',
-			),
-			array(
+			],
+			[
 				'position' => 'below_table_data',
 				'value' => '<input type="submit" name="add" value="' . $txt['paid_add_subscription'] . '">',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
@@ -415,10 +415,10 @@ function ModifySubscription()
 				INNER JOIN {db_prefix}members AS mem ON (ls.id_member = mem.id_member)
 			WHERE id_subscribe = {int:current_subscription}
 				AND status = {int:is_active}',
-			array(
+			[
 				'current_subscription' => $context['sub_id'],
 				'is_active' => 1,
-			)
+			]
 		);
 		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -435,9 +435,9 @@ function ModifySubscription()
 				SELECT id_group, add_groups
 				FROM {db_prefix}subscriptions
 				WHERE id_subscribe = {int:current_subscription}',
-				array(
+				[
 					'current_subscription' => $context['sub_id'],
-				)
+				]
 			);
 			$id_group = 0;
 			$add_groups = '';
@@ -483,21 +483,21 @@ function ModifySubscription()
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}subscriptions
 			WHERE id_subscribe = {int:current_subscription}',
-			array(
+			[
 				'current_subscription' => $context['sub_id'],
-			)
+			]
 		);
 
 		// And delete any subscriptions to it to clear the phantom data too.
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_subscribed
 			WHERE id_subscribe = {int:current_subscription}',
-			array(
+			[
 				'current_subscription' => $context['sub_id'],
-			)
+			]
 		);
 
-		call_integration_hook('integrate_delete_subscription', array($context['sub_id']));
+		call_integration_hook('integrate_delete_subscription', [$context['sub_id']]);
 
 		redirectexit('action=admin;area=paidsubscribe;view');
 	}
@@ -518,12 +518,12 @@ function ModifySubscription()
 		if ($_POST['duration_type'] == 'fixed')
 		{
 			// There are sanity check limits on these things.
-			$limits = array(
+			$limits = [
 				'D' => 90,
 				'W' => 52,
 				'M' => 24,
 				'Y' => 5,
-			);
+			];
 			if (empty($_POST['span_unit']) || empty($limits[$_POST['span_unit']]) || empty($_POST['span_value']) || $_POST['span_value'] < 1)
 				fatal_lang_error('paid_invalid_duration', false);
 
@@ -534,7 +534,7 @@ function ModifySubscription()
 			$span = $_POST['span_value'] . $_POST['span_unit'];
 
 			// Sort out the cost.
-			$cost = array('fixed' => sprintf('%01.2f', strtr($_POST['cost'], ',', '.')));
+			$cost = ['fixed' => sprintf('%01.2f', strtr($_POST['cost'], ',', '.'))];
 
 			// There needs to be something.
 			if (empty($_POST['span_value']) || empty($_POST['cost']))
@@ -545,12 +545,12 @@ function ModifySubscription()
 		{
 			$span = 'F';
 
-			$cost = array(
+			$cost = [
 				'day' => sprintf('%01.2f', strtr($_POST['cost_day'], ',', '.')),
 				'week' => sprintf('%01.2f', strtr($_POST['cost_week'], ',', '.')),
 				'month' => sprintf('%01.2f', strtr($_POST['cost_month'], ',', '.')),
 				'year' => sprintf('%01.2f', strtr($_POST['cost_year'], ',', '.')),
-			);
+			];
 
 			if (empty($_POST['cost_day']) && empty($_POST['cost_week']) && empty($_POST['cost_month']) && empty($_POST['cost_year']))
 				fatal_lang_error('paid_all_freq_blank');
@@ -572,17 +572,17 @@ function ModifySubscription()
 		{
 			$id_subscribe = $smcFunc['db_insert']('',
 				'{db_prefix}subscriptions',
-				array(
+				[
 					'name' => 'string-60', 'description' => 'string-255', 'active' => 'int', 'length' => 'string-4', 'cost' => 'string',
 					'id_group' => 'int', 'add_groups' => 'string-40', 'repeatable' => 'int', 'allow_partial' => 'int', 'email_complete' => 'string',
 					'reminder' => 'int',
-				),
-				array(
+				],
+				[
 					$_POST['name'], $_POST['desc'], $isActive, $span, $cost,
 					$_POST['prim_group'], $addgroups, $isRepeatable, $allowpartial, $emailComplete,
 					$reminder,
-				),
-				array('id_subscribe'),
+				],
+				['id_subscribe'],
 				1
 			);
 		}
@@ -595,10 +595,10 @@ function ModifySubscription()
 				FROM {db_prefix}log_subscribed
 				WHERE id_subscribe = {int:current_subscription}
 					AND status = {int:is_active}',
-				array(
+				[
 					'current_subscription' => $context['sub_id'],
 					'is_active' => 1,
-				)
+				]
 			);
 			list ($disableGroups) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -610,7 +610,7 @@ function ModifySubscription()
 					add_groups = {string:additional_groups}') . ', repeatable = {int:repeatable}, allow_partial = {int:allow_partial},
 					email_complete = {string:email_complete}, reminder = {int:reminder}
 				WHERE id_subscribe = {int:current_subscription}',
-				array(
+				[
 					'is_active' => $isActive,
 					'id_group' => !empty($_POST['prim_group']) ? $_POST['prim_group'] : 0,
 					'repeatable' => $isRepeatable,
@@ -623,10 +623,10 @@ function ModifySubscription()
 					'cost' => $cost,
 					'additional_groups' => !empty($addgroups) ? $addgroups : '',
 					'email_complete' => $emailComplete,
-				)
+				]
 			);
 		}
-		call_integration_hook('integrate_save_subscription', array(($context['action_type'] == 'add' ? $id_subscribe : $context['sub_id']), $_POST['name'], $_POST['desc'], $isActive, $span, $cost, $_POST['prim_group'], $addgroups, $isRepeatable, $allowpartial, $emailComplete, $reminder));
+		call_integration_hook('integrate_save_subscription', [($context['action_type'] == 'add' ? $id_subscribe : $context['sub_id']), $_POST['name'], $_POST['desc'], $isActive, $span, $cost, $_POST['prim_group'], $addgroups, $isRepeatable, $allowpartial, $emailComplete, $reminder]);
 
 		redirectexit('action=admin;area=paidsubscribe;view');
 	}
@@ -634,16 +634,16 @@ function ModifySubscription()
 	// Defaults.
 	if ($context['action_type'] == 'add')
 	{
-		$context['sub'] = array(
+		$context['sub'] = [
 			'name' => '',
 			'desc' => '',
-			'cost' => array(
+			'cost' => [
 				'fixed' => 0,
-			),
-			'span' => array(
+			],
+			'span' => [
 				'value' => '',
 				'unit' => 'D',
-			),
+			],
 			'prim_group' => 0,
 			'add_groups' => [],
 			'active' => 1,
@@ -652,7 +652,7 @@ function ModifySubscription()
 			'duration' => 'fixed',
 			'email_complete' => '',
 			'reminder' => 0,
-		);
+		];
 	}
 	// Otherwise load up all the details.
 	else
@@ -662,9 +662,9 @@ function ModifySubscription()
 			FROM {db_prefix}subscriptions
 			WHERE id_subscribe = {int:current_subscription}
 			LIMIT 1',
-			array(
+			[
 				'current_subscription' => $context['sub_id'],
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -687,14 +687,14 @@ function ModifySubscription()
 			else
 				$isFlexible = false;
 
-			$context['sub'] = array(
+			$context['sub'] = [
 				'name' => $row['name'],
 				'desc' => $row['description'],
 				'cost' => sbb_json_decode($row['cost'], true),
-				'span' => array(
+				'span' => [
 					'value' => $span_value,
 					'unit' => $span_unit,
-				),
+				],
 				'prim_group' => $row['id_group'],
 				'add_groups' => explode(',', $row['add_groups']),
 				'active' => (int) $row['active'],
@@ -703,7 +703,7 @@ function ModifySubscription()
 				'duration' => $isFlexible ? 'flexible' : 'fixed',
 				'email_complete' => $smcFunc['htmlspecialchars']($row['email_complete']),
 				'reminder' => $row['reminder'],
-			);
+			];
 		}
 		$smcFunc['db_free_result']($request);
 
@@ -713,10 +713,10 @@ function ModifySubscription()
 			FROM {db_prefix}log_subscribed
 			WHERE id_subscribe = {int:current_subscription}
 				AND status = {int:is_active}',
-			array(
+			[
 				'current_subscription' => $context['sub_id'],
 				'is_active' => 1,
-			)
+			]
 		);
 		list ($context['disable_groups']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -729,10 +729,10 @@ function ModifySubscription()
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
 			AND is_character = {int:account_group}',
-		array(
+		[
 			'moderator_group' => 3,
 			'account_group' => 0,
-		)
+		]
 	);
 	$context['groups'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -767,161 +767,161 @@ function ViewSubscribedUsers()
 		SELECT id_subscribe, name, description, cost, length, id_group, add_groups, active
 		FROM {db_prefix}subscriptions
 		WHERE id_subscribe = {int:current_subscription}',
-		array(
+		[
 			'current_subscription' => $context['sub_id'],
-		)
+		]
 	);
 	// Something wrong?
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_access', false);
 	// Do the subscription context.
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$context['subscription'] = array(
+	$context['subscription'] = [
 		'id' => $row['id_subscribe'],
 		'name' => $row['name'],
 		'desc' => $row['description'],
 		'active' => $row['active'],
-	);
+	];
 	$smcFunc['db_free_result']($request);
 
 	// Are we searching for people?
 	$search_string = isset($_POST['ssearch']) && !empty($_POST['sub_search']) ? ' AND COALESCE(mem.real_name, {string:guest}) LIKE {string:search}' : '';
-	$search_vars = empty($_POST['sub_search']) ? [] : array('search' => '%' . $_POST['sub_search'] . '%', 'guest' => $txt['guest']);
+	$search_vars = empty($_POST['sub_search']) ? [] : ['search' => '%' . $_POST['sub_search'] . '%', 'guest' => $txt['guest']];
 
-	$listOptions = array(
+	$listOptions = [
 		'id' => 'subscribed_users_list',
 		'title' => sprintf($txt['view_users_subscribed'], $row['name']),
 		'items_per_page' => $modSettings['defaultMaxListItems'],
 		'base_href' => $scripturl . '?action=admin;area=paidsubscribe;sa=viewsub;sid=' . $context['sub_id'],
 		'default_sort_col' => 'name',
-		'get_items' => array(
+		'get_items' => [
 			'function' => 'list_getSubscribedUsers',
-			'params' => array(
+			'params' => [
 				$context['sub_id'],
 				$search_string,
 				$search_vars,
-			),
-		),
-		'get_count' => array(
+			],
+		],
+		'get_count' => [
 			'function' => 'list_getSubscribedUserCount',
-			'params' => array(
+			'params' => [
 				$context['sub_id'],
 				$search_string,
 				$search_vars,
-			),
-		),
+			],
+		],
 		'no_items_label' => $txt['no_subscribers'],
-		'columns' => array(
-			'name' => array(
-				'header' => array(
+		'columns' => [
+			'name' => [
+				'header' => [
 					'value' => $txt['who_member'],
 					'style' => 'width: 20%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData) use ($scripturl, $txt)
 					{
 						return $rowData['id_member'] == 0 ? $txt['guest'] : '<a href="' . $scripturl . '?action=profile;u=' . $rowData['id_member'] . '">' . $rowData['name'] . '</a>';
 					},
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'name',
 					'reverse' => 'name DESC',
-				),
-			),
-			'status' => array(
-				'header' => array(
+				],
+			],
+			'status' => [
+				'header' => [
 					'value' => $txt['paid_status'],
 					'style' => 'width: 10%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'status_text',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'status',
 					'reverse' => 'status DESC',
-				),
-			),
-			'payments_pending' => array(
-				'header' => array(
+				],
+			],
+			'payments_pending' => [
+				'header' => [
 					'value' => $txt['paid_payments_pending'],
 					'style' => 'width: 15%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'pending',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'payments_pending',
 					'reverse' => 'payments_pending DESC',
-				),
-			),
-			'start_time' => array(
-				'header' => array(
+				],
+			],
+			'start_time' => [
+				'header' => [
 					'value' => $txt['start_date'],
 					'style' => 'width: 20%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'start_date',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'start_time',
 					'reverse' => 'start_time DESC',
-				),
-			),
-			'end_time' => array(
-				'header' => array(
+				],
+			],
+			'end_time' => [
+				'header' => [
 					'value' => $txt['end_date'],
 					'style' => 'width: 20%;',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'db_htmlsafe' => 'end_date',
 					'class' => 'smalltext',
-				),
-				'sort' => array(
+				],
+				'sort' => [
 					'default' => 'end_time',
 					'reverse' => 'end_time DESC',
-				),
-			),
-			'modify' => array(
-				'header' => array(
+				],
+			],
+			'modify' => [
+				'header' => [
 					'style' => 'width: 10%;',
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData) use ($scripturl, $txt)
 					{
 						return '<a href="' . $scripturl . '?action=admin;area=paidsubscribe;sa=modifyuser;lid=' . $rowData['id'] . '">' . $txt['modify'] . '</a>';
 					},
 					'class' => 'centercol',
-				),
-			),
-			'delete' => array(
-				'header' => array(
+				],
+			],
+			'delete' => [
+				'header' => [
 					'style' => 'width: 4%;',
 					'class' => 'centercol',
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData)
 					{
 						return '<input type="checkbox" name="delsub[' . $rowData['id'] . ']">';
 					},
 					'class' => 'centercol',
-				),
-			),
-		),
-		'form' => array(
+				],
+			],
+		],
+		'form' => [
 			'href' => $scripturl . '?action=admin;area=paidsubscribe;sa=modifyuser;sid=' . $context['sub_id'],
-		),
-		'additional_rows' => array(
-			array(
+		],
+		'additional_rows' => [
+			[
 				'position' => 'below_table_data',
 				'value' => '
 					<input type="submit" name="add" value="' . $txt['add_subscriber'] . '">
 					<input type="submit" name="finished" value="' . $txt['complete_selected'] . '" data-confirm="' . $txt['complete_are_sure'] . '" class="you_sure">
 					<input type="submit" name="delete" value="' . $txt['delete_selected'] . '" data-confirm="' . $txt['delete_are_sure'] . '" class="you_sure">
 				',
-			),
-			array(
+			],
+			[
 				'position' => 'top_of_list',
 				'value' => '
 					<div class="flow_auto">
@@ -929,9 +929,9 @@ function ViewSubscribedUsers()
 						<input type="text" name="sub_search" value="" class="floatright">
 					</div>
 				',
-			),
-		),
-	);
+			],
+		],
+	];
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
@@ -960,11 +960,11 @@ function list_getSubscribedUserCount($id_sub, $search_string, $search_vars = [])
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ls.id_member)
 		WHERE ls.id_subscribe = {int:current_subscription} ' . $search_string . '
 			AND (ls.end_time != {int:no_end_time} OR ls.payments_pending != {int:no_pending_payments})',
-		array_merge($search_vars, array(
+		array_merge($search_vars, [
 			'current_subscription' => $id_sub,
 			'no_end_time' => 0,
 			'no_pending_payments' => 0,
-		))
+		])
 	);
 	list ($memberCount) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -997,7 +997,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 			AND (ls.end_time != {int:no_end_time} OR ls.payments_pending != {int:no_payments_pending})
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:max}',
-		array_merge($search_vars, array(
+		array_merge($search_vars, [
 			'current_subscription' => $id_sub,
 			'no_end_time' => 0,
 			'no_payments_pending' => 0,
@@ -1005,11 +1005,11 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 			'sort' => $sort,
 			'start' => $start,
 			'max' => $items_per_page,
-		))
+		])
 	);
 	$subscribers = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$subscribers[] = array(
+		$subscribers[] = [
 			'id' => $row['id_sublog'],
 			'id_member' => $row['id_member'],
 			'name' => $row['name'],
@@ -1018,7 +1018,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 			'pending' => $row['payments_pending'],
 			'status' => $row['status'],
 			'status_text' => $row['status'] == 0 ? ($row['payments_pending'] == 0 ? $txt['paid_finished'] : $txt['paid_pending']) : $txt['paid_active'],
-		);
+		];
 	$smcFunc['db_free_result']($request);
 
 	return $subscribers;
@@ -1049,9 +1049,9 @@ function ModifyUserSubscription()
 			SELECT id_subscribe
 			FROM {db_prefix}log_subscribed
 			WHERE id_sublog = {int:current_log_item}',
-			array(
+			[
 				'current_log_item' => $context['log_id'],
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('no_access', false);
@@ -1089,9 +1089,9 @@ function ModifyUserSubscription()
 				FROM {db_prefix}members
 				WHERE id_member = {int:id_member}
 				LIMIT 1',
-				array(
+				[
 					'id_member' => !empty($_POST['new_subscriber']) ? (int) $_POST['new_subscriber'] : 0,
-				)
+				]
 			);
 			if ($smcFunc['db_num_rows']($request) == 0)
 				fatal_lang_error('error_member_not_found');
@@ -1105,10 +1105,10 @@ function ModifyUserSubscription()
 				FROM {db_prefix}log_subscribed
 				WHERE id_subscribe = {int:current_subscription}
 					AND id_member = {int:current_member}',
-				array(
+				[
 					'current_subscription' => $context['sub_id'],
 					'current_member' => $id_member,
-				)
+				]
 			);
 			if ($smcFunc['db_num_rows']($request) != 0)
 				fatal_lang_error('member_already_subscribed');
@@ -1121,15 +1121,15 @@ function ModifyUserSubscription()
 			{
 				$smcFunc['db_insert']('',
 					'{db_prefix}log_subscribed',
-					array(
+					[
 						'id_subscribe' => 'int', 'id_member' => 'int', 'old_id_group' => 'int', 'start_time' => 'int',
 						'end_time' => 'int', 'status' => 'int',
-					),
-					array(
+					],
+					[
 						$context['sub_id'], $id_member, $id_group, $starttime,
 						$endtime, $status,
-					),
-					array('id_sublog')
+					],
+					['id_sublog']
 				);
 			}
 		}
@@ -1140,9 +1140,9 @@ function ModifyUserSubscription()
 				SELECT id_member, status
 				FROM {db_prefix}log_subscribed
 				WHERE id_sublog = {int:current_log_item}',
-				array(
+				[
 					'current_log_item' => $context['log_id'],
-				)
+				]
 			);
 			if ($smcFunc['db_num_rows']($request) == 0)
 				fatal_lang_error('no_access', false);
@@ -1163,12 +1163,12 @@ function ModifyUserSubscription()
 					UPDATE {db_prefix}log_subscribed
 					SET start_time = {int:start_time}, end_time = {int:end_time}, status = {int:status}
 					WHERE id_sublog = {int:current_log_item}',
-					array(
+					[
 						'start_time' => $starttime,
 						'end_time' => $endtime,
 						'status' => $status,
 						'current_log_item' => $context['log_id'],
-					)
+					]
 				);
 			}
 		}
@@ -1192,9 +1192,9 @@ function ModifyUserSubscription()
 				SELECT id_subscribe, id_member
 				FROM {db_prefix}log_subscribed
 				WHERE id_sublog IN ({array_int:subscription_list})',
-				array(
+				[
 					'subscription_list' => $toDelete,
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				removeSubscription($row['id_subscribe'], $row['id_member'], isset($_REQUEST['delete']));
@@ -1206,26 +1206,26 @@ function ModifyUserSubscription()
 	// Default attributes.
 	if ($context['action_type'] == 'add')
 	{
-		$context['sub'] = array(
+		$context['sub'] = [
 			'id' => 0,
-			'start' => array(
+			'start' => [
 				'year' => (int) strftime('%Y', time()),
 				'month' => (int) strftime('%m', time()),
 				'day' => (int) strftime('%d', time()),
 				'hour' => (int) strftime('%H', time()),
 				'min' => (int) strftime('%M', time()) < 10 ? '0' . (int) strftime('%M', time()) : (int) strftime('%M', time()),
 				'last_day' => 0,
-			),
-			'end' => array(
+			],
+			'end' => [
 				'year' => (int) strftime('%Y', time()),
 				'month' => (int) strftime('%m', time()),
 				'day' => (int) strftime('%d', time()),
 				'hour' => (int) strftime('%H', time()),
 				'min' => (int) strftime('%M', time()) < 10 ? '0' . (int) strftime('%M', time()) : (int) strftime('%M', time()),
 				'last_day' => 0,
-			),
+			],
 			'status' => 1,
-		);
+		];
 		$context['sub']['start']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['start']['month'] == 12 ? 1 : $context['sub']['start']['month'] + 1, 0, $context['sub']['start']['month'] == 12 ? $context['sub']['start']['year'] + 1 : $context['sub']['start']['year']));
 		$context['sub']['end']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['end']['month'] == 12 ? 1 : $context['sub']['end']['month'] + 1, 0, $context['sub']['end']['month'] == 12 ? $context['sub']['end']['year'] + 1 : $context['sub']['end']['year']));
 
@@ -1235,9 +1235,9 @@ function ModifyUserSubscription()
 				SELECT real_name
 				FROM {db_prefix}members
 				WHERE id_member = {int:current_member}',
-				array(
+				[
 					'current_member' => (int) $_GET['uid'],
-				)
+				]
 			);
 			list ($context['sub']['username']) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -1255,10 +1255,10 @@ function ModifyUserSubscription()
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ls.id_member)
 			WHERE ls.id_sublog = {int:current_subscription_item}
 			LIMIT 1',
-			array(
+			[
 				'current_subscription_item' => $context['log_id'],
 				'blank_string' => '',
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('no_access', false);
@@ -1283,16 +1283,16 @@ function ModifyUserSubscription()
 						foreach ($costs as $duration => $cost)
 						{
 							if ($cost != 0 && $cost == $pending[1] && $duration == $pending[2])
-								$context['pending_payments'][$id] = array(
+								$context['pending_payments'][$id] = [
 									'desc' => sprintf($modSettings['paid_currency_symbol'], $cost . '/' . $txt[$duration]),
-								);
+								];
 						}
 					}
 					elseif ($costs['fixed'] == $pending[1])
 					{
-						$context['pending_payments'][$id] = array(
+						$context['pending_payments'][$id] = [
 							'desc' => sprintf($modSettings['paid_currency_symbol'], $costs['fixed']),
-						);
+						];
 					}
 				}
 			}
@@ -1317,10 +1317,10 @@ function ModifyUserSubscription()
 							UPDATE {db_prefix}log_subscribed
 							SET payments_pending = payments_pending - 1, pending_details = {string:pending_details}
 							WHERE id_sublog = {int:current_subscription_item}',
-							array(
+							[
 								'current_subscription_item' => $context['log_id'],
 								'pending_details' => $new_details,
-							)
+							]
 						);
 
 						// Reload
@@ -1331,27 +1331,27 @@ function ModifyUserSubscription()
 		}
 
 		$context['sub_id'] = $row['id_subscribe'];
-		$context['sub'] = array(
+		$context['sub'] = [
 			'id' => 0,
-			'start' => array(
+			'start' => [
 				'year' => (int) strftime('%Y', $row['start_time']),
 				'month' => (int) strftime('%m', $row['start_time']),
 				'day' => (int) strftime('%d', $row['start_time']),
 				'hour' => (int) strftime('%H', $row['start_time']),
 				'min' => (int) strftime('%M', $row['start_time']) < 10 ? '0' . (int) strftime('%M', $row['start_time']) : (int) strftime('%M', $row['start_time']),
 				'last_day' => 0,
-			),
-			'end' => array(
+			],
+			'end' => [
 				'year' => (int) strftime('%Y', $row['end_time']),
 				'month' => (int) strftime('%m', $row['end_time']),
 				'day' => (int) strftime('%d', $row['end_time']),
 				'hour' => (int) strftime('%H', $row['end_time']),
 				'min' => (int) strftime('%M', $row['end_time']) < 10 ? '0' . (int) strftime('%M', $row['end_time']) : (int) strftime('%M', $row['end_time']),
 				'last_day' => 0,
-			),
+			],
 			'status' => $row['status'],
 			'username' => $row['username'],
-		);
+		];
 		$context['sub']['start']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['start']['month'] == 12 ? 1 : $context['sub']['start']['month'] + 1, 0, $context['sub']['start']['month'] == 12 ? $context['sub']['start']['year'] + 1 : $context['sub']['start']['year']));
 		$context['sub']['end']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['sub']['end']['month'] == 12 ? 1 : $context['sub']['end']['month'] + 1, 0, $context['sub']['end']['month'] == 12 ? $context['sub']['end']['year'] + 1 : $context['sub']['end']['year']));
 	}
@@ -1377,7 +1377,7 @@ function reapplySubscriptions($users)
 
 	// Make it an array.
 	if (!is_array($users))
-		$users = array($users);
+		$users = [$users];
 
 	// Get all the members current groups.
 	$groups = [];
@@ -1385,16 +1385,16 @@ function reapplySubscriptions($users)
 		SELECT id_member, id_group, additional_groups
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:user_list})',
-		array(
+		[
 			'user_list' => $users,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$groups[$row['id_member']] = array(
+		$groups[$row['id_member']] = [
 			'primary' => $row['id_group'],
 			'additional' => explode(',', $row['additional_groups']),
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -1404,10 +1404,10 @@ function reapplySubscriptions($users)
 			INNER JOIN {db_prefix}subscriptions AS s ON (s.id_subscribe = ls.id_subscribe)
 		WHERE ls.id_member IN ({array_int:user_list})
 			AND ls.end_time > {int:current_time}',
-		array(
+		[
 			'user_list' => $users,
 			'current_time' => time(),
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -1440,11 +1440,11 @@ function reapplySubscriptions($users)
 			SET id_group = {int:primary_group}, additional_groups = {string:additional_groups}
 			WHERE id_member = {int:current_member}
 			LIMIT 1',
-			array(
+			[
 				'primary_group' => $group['primary'],
 				'current_member' => $id,
 				'additional_groups' => $addgroups,
-			)
+			]
 		);
 	}
 }
@@ -1503,11 +1503,11 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 		WHERE id_subscribe = {int:current_subscription}
 			AND id_member = {int:current_member}
 			AND status = {int:is_active}',
-		array(
+		[
 			'current_subscription' => $id_subscribe,
 			'current_member' => $id_member,
 			'is_active' => 1,
-		)
+		]
 	);
 
 	if ($smcFunc['db_num_rows']($request) != 0)
@@ -1531,12 +1531,12 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 			UPDATE {db_prefix}log_subscribed
 			SET end_time = {int:end_time}, start_time = {int:start_time}, reminder_sent = {int:no_reminder_sent}
 			WHERE id_sublog = {int:current_subscription_item}',
-			array(
+			[
 				'end_time' => $endtime,
 				'start_time' => $starttime,
 				'current_subscription_item' => $id_sublog,
 				'no_reminder_sent' => 0,
-			)
+			]
 		);
 
 		return;
@@ -1548,9 +1548,9 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 		SELECT m.id_group, m.additional_groups
 		FROM {db_prefix}members AS m
 		WHERE m.id_member = {int:current_member}',
-		array(
+		[
 			'current_member' => $id_member,
-		)
+		]
 	);
 
 	// Just in case the member doesn't exist.
@@ -1590,11 +1590,11 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 		UPDATE {db_prefix}members
 		SET id_group = {int:primary_group}, additional_groups = {string:additional_groups}
 		WHERE id_member = {int:current_member}',
-		array(
+		[
 			'primary_group' => $id_group,
 			'current_member' => $id_member,
 			'additional_groups' => $newAddGroups,
-		)
+		]
 	);
 
 	// Now log the subscription - maybe we have a dorment subscription we can restore?
@@ -1603,10 +1603,10 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 		FROM {db_prefix}log_subscribed
 		WHERE id_subscribe = {int:current_subscription}
 			AND id_member = {int:current_member}',
-		array(
+		[
 			'current_subscription' => $id_subscribe,
 			'current_member' => $id_member,
-		)
+		]
 	);
 
 	/**
@@ -1633,14 +1633,14 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 			UPDATE {db_prefix}log_subscribed
 			SET start_time = {int:start_time}, end_time = {int:end_time}, old_id_group = {int:old_id_group}, status = {int:is_active}, reminder_sent = {int:no_reminder_sent}
 			WHERE id_sublog = {int:current_subscription_item}',
-			array(
+			[
 				'start_time' => $starttime,
 				'end_time' => $endtime,
 				'old_id_group' => $old_id_group,
 				'is_active' => 1,
 				'no_reminder_sent' => 0,
 				'current_subscription_item' => $id_sublog,
-			)
+			]
 		);
 
 		return;
@@ -1659,15 +1659,15 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 
 	$smcFunc['db_insert']('',
 		'{db_prefix}log_subscribed',
-		array(
+		[
 			'id_subscribe' => 'int', 'id_member' => 'int', 'old_id_group' => 'int', 'start_time' => 'int',
 			'end_time' => 'int', 'status' => 'int', 'pending_details' => 'string',
-		),
-		array(
+		],
+		[
 			$id_subscribe, $id_member, $old_id_group, $starttime,
 			$endtime, 1, '',
-		),
-		array('id_sublog')
+		],
+		['id_sublog']
 	);
 }
 
@@ -1689,9 +1689,9 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 		SELECT m.id_group, m.additional_groups
 		FROM {db_prefix}members AS m
 		WHERE m.id_member = {int:current_member}',
-		array(
+		[
 			'current_member' => $id_member,
-		)
+		]
 	);
 
 	// Just in case of errors.
@@ -1700,9 +1700,9 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_subscribed
 			WHERE id_member = {int:current_member}',
-			array(
+			[
 				'current_member' => $id_member,
-			)
+			]
 		);
 		return;
 	}
@@ -1715,10 +1715,10 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 		FROM {db_prefix}log_subscribed
 		WHERE id_member = {int:current_member}
 			AND status = {int:is_active}',
-		array(
+		[
 			'current_member' => $id_member,
 			'is_active' => 1,
-		)
+		]
 	);
 
 	// These variables will be handy, honest ;)
@@ -1789,11 +1789,11 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 		UPDATE {db_prefix}members
 		SET id_group = {int:primary_group}, additional_groups = {string:existing_groups}
 		WHERE id_member = {int:current_member}',
-		array(
+		[
 			'primary_group' => $id_group,
 			'current_member' => $id_member,
 			'existing_groups' => $existingGroups,
-		)
+		]
 	);
 
 	// Disable the subscription.
@@ -1803,11 +1803,11 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 			SET status = {int:not_active}
 			WHERE id_member = {int:current_member}
 				AND id_subscribe = {int:current_subscription}',
-			array(
+			[
 				'not_active' => 0,
 				'current_member' => $id_member,
 				'current_subscription' => $id_subscribe,
-			)
+			]
 		);
 	// Otherwise delete it!
 	else
@@ -1815,10 +1815,10 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 			DELETE FROM {db_prefix}log_subscribed
 			WHERE id_member = {int:current_member}
 				AND id_subscribe = {int:current_subscription}',
-			array(
+			[
 				'current_member' => $id_member,
 				'current_subscription' => $id_subscribe,
-			)
+			]
 		);
 }
 
@@ -1838,8 +1838,8 @@ function loadSubscriptions()
 	$request = $smcFunc['db_query']('', '
 		SELECT id_subscribe, name, description, cost, length, id_group, add_groups, active, repeatable
 		FROM {db_prefix}subscriptions',
-		array(
-		)
+		[
+		]
 	);
 	$context['subscriptions'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1881,7 +1881,7 @@ function loadSubscriptions()
 		else
 			$length = '??';
 
-		$context['subscriptions'][$row['id_subscribe']] = array(
+		$context['subscriptions'][$row['id_subscribe']] = [
 			'id' => $row['id_subscribe'],
 			'name' => $row['name'],
 			'desc' => $row['description'],
@@ -1898,7 +1898,7 @@ function loadSubscriptions()
 			'add_groups' => $row['add_groups'],
 			'flexible' => $row['length'] == 'F' ? true : false,
 			'repeatable' => $row['repeatable'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -1907,8 +1907,8 @@ function loadSubscriptions()
 		SELECT COUNT(id_sublog) AS member_count, id_subscribe, status
 		FROM {db_prefix}log_subscribed
 		GROUP BY id_subscribe, status',
-		array(
-		)
+		[
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -1924,8 +1924,8 @@ function loadSubscriptions()
 		SELECT SUM(payments_pending) AS total_pending, id_subscribe
 		FROM {db_prefix}log_subscribed
 		GROUP BY id_subscribe',
-		array(
-		)
+		[
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{

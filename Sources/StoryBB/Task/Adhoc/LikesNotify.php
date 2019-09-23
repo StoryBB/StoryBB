@@ -37,15 +37,15 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 					INNER JOIN {db_prefix}boards AS b ON (m.id_board = b.id_board)
 					INNER JOIN {db_prefix}characters AS chars ON (m.id_character = chars.id_character AND chars.retired = 0)
 				WHERE id_msg = {int:msg}',
-				array(
+				[
 					'msg' => $this->_details['content_id'],
-				)
+				]
 			);
 			if ($row = $smcFunc['db_fetch_assoc']($request))
 			{
 				// Before we assign the author, let's just check that the author can see the board this is in...
 				// as it'd suck to notify someone their post was liked when in a board they can't see.
-				$groups = array_merge(array($row['id_group']), (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
+				$groups = array_merge([$row['id_group']], (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
 				$allowed = explode(',', $row['member_groups']);
 				$ignored_members = explode(',', $row['pm_ignore_list']);
 
@@ -58,7 +58,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 		else
 		{
 			// This isn't something we know natively how to support. Call the hooks, if they're dealing with it, return false, otherwise return the user id.
-			$hook_results = call_integration_hook('integrate_find_like_author', array($this->_details['content_type'], $this->_details['content_id']));
+			$hook_results = call_integration_hook('integrate_find_like_author', [$this->_details['content_type'], $this->_details['content_id']]);
 			foreach ($hook_results as $result)
 				if (!empty($result))
 				{
@@ -100,12 +100,12 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 				AND content_type = {string:content_type}
 				AND content_id = {int:content_id}
 				AND content_action = {string:content_action}',
-			array(
+			[
 				'id_member' => $author,
 				'content_type' => $this->_details['content_type'],
 				'content_id' => $this->_details['content_id'],
 				'content_action' => 'like',
-			)
+			]
 		);
 
 		if ($smcFunc['db_num_rows']($request) > 0)
@@ -115,16 +115,16 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 		// Issue, update, move on.
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}user_alerts',
-			array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
 				'chars_src' => 'int', 'chars_dest' => 'int',
-				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
-			array($this->_details['time'], $author, $this->_details['sender_id'], $this->_details['sender_name'],
+				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
+			[$this->_details['time'], $author, $this->_details['sender_id'], $this->_details['sender_name'],
 				0, !empty($row['id_character']) && empty($row['is_main']) ? $row['id_character'] : 0,
-				$this->_details['content_type'], $this->_details['content_id'], 'like', 0, ''),
-			array('id_alert')
+				$this->_details['content_type'], $this->_details['content_id'], 'like', 0, ''],
+			['id_alert']
 		);
 
-		updateMemberData($author, array('alerts' => '+'));
+		updateMemberData($author, ['alerts' => '+']);
 
 		return true;
 	}

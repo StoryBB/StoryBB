@@ -71,9 +71,9 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 				SELECT id_member, warning
 				FROM {db_prefix}members
 				WHERE warning > {int:no_warning}',
-				array(
+				[
 					'no_warning' => 0,
-				)
+				]
 			);
 			$members = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -90,20 +90,20 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 					WHERE id_recipient IN ({array_int:member_list})
 						AND comment_type = {string:warning}
 					GROUP BY id_recipient',
-					array(
+					[
 						'member_list' => array_keys($members),
 						'warning' => 'warning',
-					)
+					]
 				);
 				$member_changes = [];
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 				{
 					// More than 24 hours ago?
 					if ($row['last_warning'] <= time() - 86400)
-						$member_changes[] = array(
+						$member_changes[] = [
 							'id' => $row['id_recipient'],
 							'warning' => $members[$row['id_recipient']] >= $modSettings['warning_decrement'] ? $members[$row['id_recipient']] - $modSettings['warning_decrement'] : 0,
-						);
+						];
 				}
 				$smcFunc['db_free_result']($request);
 
@@ -114,10 +114,10 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 							UPDATE {db_prefix}members
 							SET warning = {int:warning}
 							WHERE id_member = {int:id_member}',
-							array(
+							[
 								'warning' => $change['warning'],
 								'id_member' => $change['id'],
-							)
+							]
 						);
 			}
 		}
@@ -134,8 +134,8 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}member_logins
 			WHERE time < {int:oldLogins}',
-			array(
+			[
 				'oldLogins' => time() - (!empty($modSettings['loginHistoryDays']) ? 60 * 60 * 24 * $modSettings['loginHistoryDays'] : 2592000),
-		));
+		]);
 	}
 }

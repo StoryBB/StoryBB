@@ -87,7 +87,7 @@ class Text
 	{
 		global $scripturl;
 
-		return '\'' . strtr($string, array(
+		return '\'' . strtr($string, [
 			"\r" => '',
 			"\n" => '\\n',
 			"\t" => '\\t',
@@ -98,7 +98,7 @@ class Text
 			'<body>' => '<bo\'+\'dy>',
 			'<a href' => '<a hr\'+\'ef',
 			$scripturl => '\' + sbb_scripturl + \'',
-		)) . '\'';
+		]) . '\'';
 	}
 
 	/**

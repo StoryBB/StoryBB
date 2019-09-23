@@ -35,10 +35,10 @@ function AutoTask()
 				AND next_time <= {int:current_time}
 			ORDER BY next_time ASC
 			LIMIT 1',
-			array(
+			[
 				'not_disabled' => 0,
 				'current_time' => time(),
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) != 0)
 		{
@@ -69,11 +69,11 @@ function AutoTask()
 				SET next_time = {int:next_time}
 				WHERE id_task = {int:id_task}
 					AND next_time = {int:current_next_time}',
-				array(
+				[
 					'next_time' => $next_time,
 					'id_task' => $row['id_task'],
 					'current_next_time' => $row['next_time'],
-				)
+				]
 			);
 			$affected_rows = $smcFunc['db']->affected_rows();
 
@@ -113,9 +113,9 @@ function AutoTask()
 			WHERE disabled = {int:not_disabled}
 			ORDER BY next_time ASC
 			LIMIT 1',
-			array(
+			[
 				'not_disabled' => 0,
-			)
+			]
 		);
 		// No new task scheduled yet?
 		if ($smcFunc['db_num_rows']($request) === 0)
@@ -124,7 +124,7 @@ function AutoTask()
 			list ($nextEvent) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 
-		updateSettings(array('next_task_time' => $nextEvent));
+		updateSettings(['next_task_time' => $nextEvent]);
 	}
 
 	// Shall we return?
@@ -172,10 +172,10 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			SET value = {string:next_mail_send}
 			WHERE variable = {literal:mail_next_send}
 				AND value = {string:last_send}',
-			array(
+			[
 				'next_mail_send' => time() + $delay,
 				'last_send' => $modSettings['mail_next_send'],
-			)
+			]
 		);
 		if ($smcFunc['db']->affected_rows() == 0)
 			return false;
@@ -203,7 +203,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			return false;
 
 		// Reflect that we're about to send some, do it now to be safe.
-		updateSettings(array('mail_recent' => $mt . '|' . $mn));
+		updateSettings(['mail_recent' => $mt . '|' . $mn]);
 	}
 
 	// Now we know how many we're sending, let's send them.
@@ -212,9 +212,9 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		FROM {db_prefix}mail_queue
 		ORDER BY priority ASC, id_mail ASC
 		LIMIT {int:limit}',
-		array(
+		[
 			'limit' => $number,
-		)
+		]
 	);
 	$ids = [];
 	$emails = [];
@@ -222,7 +222,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	{
 		// We want to delete these from the database ASAP, so just get the data and go.
 		$ids[] = $row['id_mail'];
-		$emails[] = array(
+		$emails[] = [
 			'to' => $row['recipient'],
 			'body' => $row['body'],
 			'subject' => $row['subject'],
@@ -230,7 +230,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			'send_html' => $row['send_html'],
 			'time_sent' => $row['time_sent'],
 			'private' => $row['private'],
-		);
+		];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -239,9 +239,9 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}mail_queue
 			WHERE id_mail IN ({array_int:mail_list})',
-			array(
+			[
 				'mail_list' => $ids,
-			)
+			]
 		);
 
 	// Don't believe we have any left?
@@ -253,10 +253,10 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			SET value = {string:no_send}
 			WHERE variable = {literal:mail_next_send}
 				AND value = {string:last_mail_send}',
-			array(
+			[
 				'no_send' => '0',
 				'last_mail_send' => $modSettings['mail_next_send'],
-			)
+			]
 		);
 	}
 
@@ -272,15 +272,15 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	{
 		if (empty($modSettings['mail_type']) || $modSettings['smtp_host'] == '')
 		{
-			$email['subject'] = strtr($email['subject'], array("\r" => '', "\n" => ''));
+			$email['subject'] = strtr($email['subject'], ["\r" => '', "\n" => '']);
 			if (!empty($modSettings['mail_strip_carriage']))
 			{
-				$email['body'] = strtr($email['body'], array("\r" => ''));
-				$email['headers'] = strtr($email['headers'], array("\r" => ''));
+				$email['body'] = strtr($email['body'], ["\r" => '']);
+				$email['headers'] = strtr($email['headers'], ["\r" => '']);
 			}
 
 			// No point logging a specific error here, as we have no language. PHP error is helpful anyway...
-			$result = mail(strtr($email['to'], array("\r" => '', "\n" => '')), $email['subject'], $email['body'], $email['headers']);
+			$result = mail(strtr($email['to'], ["\r" => '', "\n" => '']), $email['subject'], $email['body'], $email['headers']);
 
 			// Try to stop a timeout, this would be bad...
 			@set_time_limit(300);
@@ -288,11 +288,11 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 				@apache_reset_timeout();
 		}
 		else
-			$result = StoryBB\Helper\Mail::send_smtp(array($email['to']), $email['subject'], $email['body'], $email['headers']);
+			$result = StoryBB\Helper\Mail::send_smtp([$email['to']], $email['subject'], $email['body'], $email['headers']);
 
 		// Hopefully it sent?
 		if (!$result)
-			$failed_emails[] = array($email['to'], $email['body'], $email['subject'], $email['headers'], $email['send_html'], $email['time_sent'], $email['private']);
+			$failed_emails[] = [$email['to'], $email['body'], $email['subject'], $email['headers'], $email['send_html'], $email['time_sent'], $email['private']];
 	}
 
 	// Any emails that didn't send?
@@ -301,9 +301,9 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		// Update the failed attempts check.
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}settings',
-			array('variable' => 'string', 'value' => 'string'),
-			array('mail_failed_attempts', empty($modSettings['mail_failed_attempts']) ? 1 : ++$modSettings['mail_failed_attempts']),
-			array('variable')
+			['variable' => 'string', 'value' => 'string'],
+			['mail_failed_attempts', empty($modSettings['mail_failed_attempts']) ? 1 : ++$modSettings['mail_failed_attempts']],
+			['variable']
 		);
 
 		// If we have failed to many times, tell mail to wait a bit and try again.
@@ -313,17 +313,17 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 				SET value = {string:next_mail_send}
 				WHERE variable = {literal:mail_next_send}
 					AND value = {string:last_send}',
-				array(
+				[
 					'next_mail_send' => time() + 60,
 					'last_send' => $modSettings['mail_next_send'],
-			));
+			]);
 
 		// Add our email back to the queue, manually.
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}mail_queue',
-			array('recipient' => 'string', 'body' => 'string', 'subject' => 'string', 'headers' => 'string', 'send_html' => 'string', 'time_sent' => 'string', 'private' => 'int'),
+			['recipient' => 'string', 'body' => 'string', 'subject' => 'string', 'headers' => 'string', 'send_html' => 'string', 'time_sent' => 'string', 'private' => 'int'],
 			$failed_emails,
-			array('id_mail')
+			['id_mail']
 		);
 
 		return false;
@@ -334,10 +334,10 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			UPDATE {db_prefix}settings
 			SET value = {string:zero}
 			WHERE variable = {string:mail_failed_attempts}',
-			array(
+			[
 				'zero' => '0',
 				'mail_failed_attempts' => 'mail_failed_attempts',
-		));
+		]);
 
 	// Had something to send...
 	return true;
@@ -355,7 +355,7 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 
 	$task_query = '';
 	if (!is_array($tasks))
-		$tasks = array($tasks);
+		$tasks = [$tasks];
 
 	// Actually have something passed?
 	if (!empty($tasks))
@@ -373,10 +373,10 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 		FROM {db_prefix}scheduled_tasks
 		WHERE disabled = {int:no_disabled}
 			' . $task_query,
-		array(
+		[
 			'no_disabled' => 0,
 			'tasks' => $tasks,
-		)
+		]
 	);
 	$tasks = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -401,15 +401,15 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 			UPDATE {db_prefix}scheduled_tasks
 			SET next_time = {int:next_time}
 			WHERE id_task = {int:id_task}',
-			array(
+			[
 				'next_time' => $time,
 				'id_task' => $id,
-			)
+			]
 		);
 
 	// If the next task is now different update.
 	if ($modSettings['next_task_time'] != $nextTaskTime)
-		updateSettings(array('next_task_time' => $nextTaskTime));
+		updateSettings(['next_task_time' => $nextTaskTime]);
 }
 
 /**
@@ -493,17 +493,17 @@ function loadEssentialThemeData()
 		FROM {db_prefix}themes
 		WHERE id_member = {int:no_member}
 			AND id_theme IN (1, {int:theme_guests})',
-		array(
+		[
 			'no_member' => 0,
 			'theme_guests' => !empty($modSettings['theme_guests']) ? $modSettings['theme_guests'] : 1,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
 		$settings[$row['variable']] = $row['value'];
 
 		// Is this the default theme?
-		if (in_array($row['variable'], array('theme_dir', 'theme_url', 'images_url')) && $row['id_theme'] == '1')
+		if (in_array($row['variable'], ['theme_dir', 'theme_url', 'images_url']) && $row['id_theme'] == '1')
 			$settings['default_' . $row['variable']] = $row['value'];
 	}
 	$smcFunc['db_free_result']($result);
@@ -511,7 +511,7 @@ function loadEssentialThemeData()
 	// Check we have some directories setup.
 	if (empty($settings['template_dirs']))
 	{
-		$settings['template_dirs'] = array($settings['theme_dir']);
+		$settings['template_dirs'] = [$settings['theme_dir']];
 
 		// Based on theme (if there is one).
 		if (!empty($settings['base_theme_dir']))

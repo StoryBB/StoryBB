@@ -34,10 +34,10 @@ class RegisterNotify extends \StoryBB\Task\Adhoc
 		$prefs = getNotifyPrefs($members, 'member_register', true);
 
 		// So now we find out who wants what.
-		$alert_bits = array(
+		$alert_bits = [
 			'alert' => 0x01,
 			'email' => 0x02,
-		);
+		];
 		$notifies = [];
 
 		foreach ($prefs as $member => $pref_option)
@@ -54,7 +54,7 @@ class RegisterNotify extends \StoryBB\Task\Adhoc
 			$insert_rows = [];
 			foreach ($notifies['alert'] as $member)
 			{
-				$insert_rows[] = array(
+				$insert_rows[] = [
 					'alert_time' => $this->_details['time'],
 					'id_member' => $member,
 					'id_member_started' => $this->_details['new_member_id'],
@@ -64,20 +64,20 @@ class RegisterNotify extends \StoryBB\Task\Adhoc
 					'content_action' => 'register_' . $this->_details['notify_type'],
 					'is_read' => 0,
 					'extra' => '',
-				);
+				];
 			}
 
 			$smcFunc['db_insert']('insert',
 				'{db_prefix}user_alerts',
-				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int',
+				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int',
 					'member_name' => 'string', 'content_type' => 'string', 'content_id' => 'int',
-					'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+					'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 				$insert_rows,
-				array('id_alert')
+				['id_alert']
 			);
 
 			// And update the count of alerts for those people.
-			updateMemberData($notifies['alert'], array('alerts' => '+'));
+			updateMemberData($notifies['alert'], ['alerts' => '+']);
 		}
 
 		// Secondly, anyone who wants emails.
@@ -94,9 +94,9 @@ class RegisterNotify extends \StoryBB\Task\Adhoc
 				SELECT id_member, lngfile, email_address
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:members})',
-				array(
+				[
 					'members' => $notifies['email'],
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
@@ -109,10 +109,10 @@ class RegisterNotify extends \StoryBB\Task\Adhoc
 			// Second, iterate through each language, load the relevant templates and set up sending.
 			foreach ($emails as $this_lang => $recipients)
 			{
-				$replacements = array(
+				$replacements = [
 					'USERNAME' => $this->_details['new_member_name'],
 					'PROFILELINK' => $scripturl . '?action=profile;u=' . $this->_details['new_member_id']
-				);
+				];
 				$emailtype = 'admin_notify';
 
 				// If they need to be approved add more info...

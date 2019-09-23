@@ -43,7 +43,7 @@ function DisplayStats()
 		$month = (int) substr($_REQUEST['collapse'], 4);
 		$year = (int) substr($_REQUEST['collapse'], 0, 4);
 		if (!empty($_SESSION['expanded_stats'][$year]))
-			$_SESSION['expanded_stats'][$year] = array_diff($_SESSION['expanded_stats'][$year], array($month));
+			$_SESSION['expanded_stats'][$year] = array_diff($_SESSION['expanded_stats'][$year], [$month]);
 	}
 
 	// Handle the XMLHttpRequest.
@@ -59,23 +59,23 @@ function DisplayStats()
 		if (empty($month) || empty($year))
 			return;
 
-		getDailyStats('YEAR(date) = {int:year} AND MONTH(date) = {int:month}', array('year' => $year, 'month' => $month));
-		$context['yearly'][$year]['months'][$month]['date'] = array(
+		getDailyStats('YEAR(date) = {int:year} AND MONTH(date) = {int:month}', ['year' => $year, 'month' => $month]);
+		$context['yearly'][$year]['months'][$month]['date'] = [
 			'month' => sprintf('%02d', $month),
 			'year' => $year,
-		);
+		];
 		return;
 	}
 
 	loadLanguage('Stats');
 	$context['sub_template'] = 'stats_main';
-	loadJavaScriptFile('stats.js', array('default_theme' => true, 'defer' => false), 'sbb_stats');
+	loadJavaScriptFile('stats.js', ['default_theme' => true, 'defer' => false], 'sbb_stats');
 
 	// Build the link tree......
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=stats',
 		'name' => $txt['stats_center']
-	);
+	];
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['stats_center'];
 
 	$context['show_member_list'] = allowedTo('view_mlist');
@@ -86,8 +86,8 @@ function DisplayStats()
 			SUM(posts) AS posts, SUM(topics) AS topics, SUM(registers) AS registers,
 			SUM(most_on) AS most_on, MIN(date) AS date, SUM(hits) AS hits
 		FROM {db_prefix}log_activity',
-		array(
-		)
+		[
+		]
 	);
 	$row = $smcFunc['db_fetch_assoc']($result);
 	$smcFunc['db_free_result']($result);
@@ -107,8 +107,8 @@ function DisplayStats()
 	$result = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_online',
-		array(
-		)
+		[
+		]
 	);
 	list ($context['users_online']) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -118,9 +118,9 @@ function DisplayStats()
 		SELECT COUNT(*)
 		FROM {db_prefix}boards AS b
 		WHERE b.redirect = {string:blank_redirect}',
-		array(
+		[
 			'blank_redirect' => '',
-		)
+		]
 	);
 	list ($context['num_boards']) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -128,8 +128,8 @@ function DisplayStats()
 	$result = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}categories AS c',
-		array(
-		)
+		[
+		]
 	);
 	list ($context['num_categories']) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -142,10 +142,10 @@ function DisplayStats()
 	$context['num_members'] = comma_format($modSettings['totalMembers']);
 	$context['num_posts'] = comma_format($modSettings['totalMessages']);
 	$context['num_topics'] = comma_format($modSettings['totalTopics']);
-	$context['most_members_online'] = array(
+	$context['most_members_online'] = [
 		'number' => comma_format($modSettings['mostOnline']),
 		'date' => timeformat($modSettings['mostDate'])
-	);
+	];
 	$context['latest_member'] = &$context['common_stats']['latest_member'];
 
 	$date = strftime('%Y-%m-%d', forum_time(false));
@@ -156,9 +156,9 @@ function DisplayStats()
 		FROM {db_prefix}log_activity
 		WHERE date = {date:today_date}
 		LIMIT 1',
-		array(
+		[
 			'today_date' => $date,
-		)
+		]
 	);
 	list ($context['online_today']) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -174,9 +174,9 @@ function DisplayStats()
 		WHERE posts > {int:no_posts}
 		ORDER BY posts DESC
 		LIMIT 10',
-		array(
+		[
 			'no_posts' => 0,
-		)
+		]
 	);
 	$context['stats_blocks']['posters'] = [
 		'icon' => 'posters',
@@ -186,13 +186,13 @@ function DisplayStats()
 	$max_num_posts = 1;
 	while ($row_members = $smcFunc['db_fetch_assoc']($members_result))
 	{
-		$context['stats_blocks']['posters']['data'][] = array(
+		$context['stats_blocks']['posters']['data'][] = [
 			'name' => $row_members['real_name'],
 			'id' => $row_members['id_member'],
 			'num' => $row_members['posts'],
 			'href' => $scripturl . '?action=profile;u=' . $row_members['id_member'],
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
-		);
+		];
 
 		if ($max_num_posts < $row_members['posts'])
 			$max_num_posts = $row_members['posts'];
@@ -214,10 +214,10 @@ function DisplayStats()
 			AND b.redirect = {string:blank_redirect}
 		ORDER BY num_posts DESC
 		LIMIT 10',
-		array(
+		[
 			'recycle_board' => $modSettings['recycle_board'],
 			'blank_redirect' => '',
-		)
+		]
 	);
 	$context['stats_blocks']['boards'] = [
 		'icon' => 'boards',
@@ -227,13 +227,13 @@ function DisplayStats()
 	$max_num_posts = 1;
 	while ($row_board = $smcFunc['db_fetch_assoc']($boards_result))
 	{
-		$context['stats_blocks']['boards']['data'][] = array(
+		$context['stats_blocks']['boards']['data'][] = [
 			'id' => $row_board['id_board'],
 			'name' => $row_board['name'],
 			'num' => $row_board['num_posts'],
 			'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
 			'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['name'] . '</a>'
-		);
+		];
 
 		if ($max_num_posts < $row_board['num_posts'])
 			$max_num_posts = $row_board['num_posts'];
@@ -256,10 +256,10 @@ function DisplayStats()
 				AND approved = {int:is_approved}
 			ORDER BY num_replies DESC
 			LIMIT 100',
-			array(
+			[
 				'no_replies' => 0,
 				'is_approved' => 1,
-			)
+			]
 		);
 		$topic_ids = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -281,11 +281,11 @@ function DisplayStats()
 			AND t.approved = {int:is_approved}' : '') . '
 		ORDER BY t.num_replies DESC
 		LIMIT 10',
-		array(
+		[
 			'topic_list' => $topic_ids,
 			'recycle_board' => $modSettings['recycle_board'],
 			'is_approved' => 1,
-		)
+		]
 	);
 	$context['stats_blocks']['topics_replies'] = [
 		'icon' => 'topics_replies',
@@ -297,19 +297,19 @@ function DisplayStats()
 	{
 		censorText($row_topic_reply['subject']);
 
-		$context['stats_blocks']['topics_replies']['data'][] = array(
+		$context['stats_blocks']['topics_replies']['data'][] = [
 			'id' => $row_topic_reply['id_topic'],
-			'board' => array(
+			'board' => [
 				'id' => $row_topic_reply['id_board'],
 				'name' => $row_topic_reply['name'],
 				'href' => $scripturl . '?board=' . $row_topic_reply['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row_topic_reply['id_board'] . '.0">' . $row_topic_reply['name'] . '</a>'
-			),
+			],
 			'subject' => $row_topic_reply['subject'],
 			'num' => $row_topic_reply['num_replies'],
 			'href' => $scripturl . '?topic=' . $row_topic_reply['id_topic'] . '.0',
 			'link' => '<a href="' . $scripturl . '?topic=' . $row_topic_reply['id_topic'] . '.0">' . $row_topic_reply['subject'] . '</a>'
-		);
+		];
 
 		if ($max_num_replies < $row_topic_reply['num_replies'])
 			$max_num_replies = $row_topic_reply['num_replies'];
@@ -331,9 +331,9 @@ function DisplayStats()
 			WHERE num_views != {int:no_views}
 			ORDER BY num_views DESC
 			LIMIT 100',
-			array(
+			[
 				'no_views' => 0,
-			)
+			]
 		);
 		$topic_ids = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -355,11 +355,11 @@ function DisplayStats()
 			AND t.approved = {int:is_approved}
 		ORDER BY t.num_views DESC
 		LIMIT 10',
-		array(
+		[
 			'topic_list' => $topic_ids,
 			'recycle_board' => $modSettings['recycle_board'],
 			'is_approved' => 1,
-		)
+		]
 	);
 	$context['stats_blocks']['topics_views'] = [
 		'icon' => 'topics_views',
@@ -371,19 +371,19 @@ function DisplayStats()
 	{
 		censorText($row_topic_views['subject']);
 
-		$context['stats_blocks']['topics_views']['data'][] = array(
+		$context['stats_blocks']['topics_views']['data'][] = [
 			'id' => $row_topic_views['id_topic'],
-			'board' => array(
+			'board' => [
 				'id' => $row_topic_views['id_board'],
 				'name' => $row_topic_views['name'],
 				'href' => $scripturl . '?board=' . $row_topic_views['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row_topic_views['id_board'] . '.0">' . $row_topic_views['name'] . '</a>'
-			),
+			],
 			'subject' => $row_topic_views['subject'],
 			'num' => $row_topic_views['num_views'],
 			'href' => $scripturl . '?topic=' . $row_topic_views['id_topic'] . '.0',
 			'link' => '<a href="' . $scripturl . '?topic=' . $row_topic_views['id_topic'] . '.0">' . $row_topic_views['subject'] . '</a>'
-		);
+		];
 
 		if ($max_num < $row_topic_views['num_views'])
 			$max_num = $row_topic_views['num_views'];
@@ -406,9 +406,9 @@ function DisplayStats()
 			GROUP BY id_member_started
 			ORDER BY hits DESC
 			LIMIT 20',
-			array(
+			[
 				'recycle_board' => $modSettings['recycle_board'],
-			)
+			]
 		);
 		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -419,7 +419,7 @@ function DisplayStats()
 	}
 
 	if (empty($members))
-		$members = array(0 => 0);
+		$members = [0 => 0];
 
 	// Topic poster top 10.
 	$members_result = $smcFunc['db_query']('', '
@@ -427,9 +427,9 @@ function DisplayStats()
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:member_list})
 		LIMIT 10',
-		array(
+		[
 			'member_list' => array_keys($members),
-		)
+		]
 	);
 	$context['stats_blocks']['starters'] = [
 		'icon' => 'starters',
@@ -440,13 +440,13 @@ function DisplayStats()
 	while ($row_members = $smcFunc['db_fetch_assoc']($members_result))
 	{
 		$i = array_search($row_members['id_member'], array_keys($members));
-		$context['stats_blocks']['starters']['data'][$i] = array(
+		$context['stats_blocks']['starters']['data'][$i] = [
 			'name' => $row_members['real_name'],
 			'id' => $row_members['id_member'],
 			'num' => $members[$row_members['id_member']],
 			'href' => $scripturl . '?action=profile;u=' . $row_members['id_member'],
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
-		);
+		];
 
 		if ($max_num < $members[$row_members['id_member']])
 			$max_num = $members[$row_members['id_member']];
@@ -468,9 +468,9 @@ function DisplayStats()
 		WHERE id_member IN ({array_int:member_list_cached})' : '') . '
 		ORDER BY total_time_logged_in DESC
 		LIMIT 20',
-		array(
+		[
 			'member_list_cached' => $temp,
-		)
+		]
 	);
 	$context['stats_blocks']['time_online'] = [
 		'icon' => 'time_online',
@@ -497,14 +497,14 @@ function DisplayStats()
 			$timelogged .= $timeHours . $txt['totalTimeLogged6'];
 		$timelogged .= floor(($row_members['total_time_logged_in'] % 3600) / 60) . $txt['totalTimeLogged7'];
 
-		$context['stats_blocks']['time_online']['data'][] = array(
+		$context['stats_blocks']['time_online']['data'][] = [
 			'id' => $row_members['id_member'],
 			'name' => $row_members['real_name'],
 			'num' => $timelogged,
 			'seconds_online' => $row_members['total_time_logged_in'],
 			'href' => $scripturl . '?action=profile;u=' . $row_members['id_member'],
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
-		);
+		];
 
 		if ($max_time_online < $row_members['total_time_logged_in'])
 			$max_time_online = $row_members['total_time_logged_in'];
@@ -538,23 +538,23 @@ function DisplayStats()
 				AND t.approved = {int:is_approved}
 			ORDER BY m.likes DESC
 			LIMIT 10',
-			array(
+			[
 				'recycle_board' => $modSettings['recycle_board'],
 				'is_approved' => 1,
-			)
+			]
 		);
 
 		while ($row_liked_message = $smcFunc['db_fetch_assoc']($liked_messages))
 		{
 			censorText($row_liked_message['subject']);
 
-			$context['stats_blocks']['liked_messages']['data'][] = array(
+			$context['stats_blocks']['liked_messages']['data'][] = [
 				'id' => $row_liked_message['id_topic'],
 				'subject' => $row_liked_message['subject'],
 				'num' => $row_liked_message['likes'],
 				'href' => $scripturl . '?msg=' . $row_liked_message['id_msg'],
 				'link' => '<a href="' . $scripturl . '?msg=' . $row_liked_message['id_msg'] .'">' . $row_liked_message['subject'] . '</a>'
-			);
+			];
 
 			if ($max_liked_message < $row_liked_message['likes'])
 				$max_liked_message = $row_liked_message['likes'];
@@ -581,21 +581,21 @@ function DisplayStats()
 			GROUP BY m.id_member, mem.real_name
 			ORDER BY count DESC
 			LIMIT 10',
-			array(
+			[
 				'no_posts' => 0,
 				'zero' => 0,
-			)
+			]
 		);
 
 		while ($row_liked_users = $smcFunc['db_fetch_assoc']($liked_users))
 		{
-			$context['stats_blocks']['liked_users']['data'][] = array(
+			$context['stats_blocks']['liked_users']['data'][] = [
 				'id' => $row_liked_users['liked_user'],
 				'num' => $row_liked_users['count'],
 				'href' => $scripturl . '?action=profile;u=' . $row_liked_users['liked_user'],
 				'name' => $row_liked_users['real_name'],
 				'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_liked_users['liked_user'] . '">' . $row_liked_users['real_name'] . '</a>',
-			);
+			];
 
 			if ($max_liked_users < $row_liked_users['count'])
 				$max_liked_users = $row_liked_users['count'];
@@ -623,7 +623,7 @@ function DisplayStats()
 		$expanded = !empty($_SESSION['expanded_stats'][$row_months['stats_year']]) && in_array($row_months['stats_month'], $_SESSION['expanded_stats'][$row_months['stats_year']]);
 
 		if (!isset($context['yearly'][$row_months['stats_year']]))
-			$context['yearly'][$row_months['stats_year']] = array(
+			$context['yearly'][$row_months['stats_year']] = [
 				'year' => $row_months['stats_year'],
 				'new_topics' => 0,
 				'new_posts' => 0,
@@ -635,14 +635,14 @@ function DisplayStats()
 				'months' => [],
 				'expanded' => false,
 				'current_year' => $row_months['stats_year'] == date('Y'),
-			);
+			];
 
-		$context['yearly'][$row_months['stats_year']]['months'][(int) $row_months['stats_month']] = array(
+		$context['yearly'][$row_months['stats_year']]['months'][(int) $row_months['stats_month']] = [
 			'id' => $ID_MONTH,
-			'date' => array(
+			'date' => [
 				'month' => sprintf('%02d', $row_months['stats_month']),
 				'year' => $row_months['stats_year']
-			),
+			],
 			'href' => $scripturl . '?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $ID_MONTH . '#m' . $ID_MONTH,
 			'link' => '<a href="' . $scripturl . '?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $ID_MONTH . '#m' . $ID_MONTH . '">' . $txt['months'][(int) $row_months['stats_month']] . ' ' . $row_months['stats_year'] . '</a>',
 			'month' => $txt['months'][(int) $row_months['stats_month']],
@@ -656,7 +656,7 @@ function DisplayStats()
 			'num_days' => $row_months['num_days'],
 			'days' => [],
 			'expanded' => $expanded
-		);
+		];
 
 		$context['yearly'][$row_months['stats_year']]['new_topics'] += $row_months['topics'];
 		$context['yearly'][$row_months['stats_year']]['new_posts'] += $row_months['posts'];
@@ -730,7 +730,7 @@ function getDailyStats($condition_string, $condition_parameters = [])
 		$condition_parameters
 	);
 	while ($row_days = $smcFunc['db_fetch_assoc']($days_result))
-		$context['yearly'][$row_days['stats_year']]['months'][(int) $row_days['stats_month']]['days'][] = array(
+		$context['yearly'][$row_days['stats_year']]['months'][(int) $row_days['stats_month']]['days'][] = [
 			'day' => sprintf('%02d', $row_days['stats_day']),
 			'month' => sprintf('%02d', $row_days['stats_month']),
 			'year' => $row_days['stats_year'],
@@ -740,6 +740,6 @@ function getDailyStats($condition_string, $condition_parameters = [])
 			'new_members' => comma_format($row_days['registers']),
 			'most_members_online' => comma_format($row_days['most_on']),
 			'hits' => comma_format($row_days['hits'])
-		);
+		];
 	$smcFunc['db_free_result']($days_result);
 }

@@ -64,9 +64,9 @@ class Post
 				FROM {db_prefix}topics
 				WHERE id_topic = {int:id_topic}
 				LIMIT 1',
-				array(
+				[
 					'id_topic' => $topicOptions['id'],
-				)
+				]
 			);
 			list ($topicOptions['is_approved']) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -88,9 +88,9 @@ class Post
 					FROM {db_prefix}members
 					WHERE id_member = {int:id_member}
 					LIMIT 1',
-					array(
+					[
 						'id_member' => $posterOptions['id'],
-					)
+					]
 				);
 				// Couldn't find the current poster?
 				if ($smcFunc['db_num_rows']($request) == 0)
@@ -123,27 +123,27 @@ class Post
 
 		$new_topic = empty($topicOptions['id']);
 
-		$message_columns = array(
+		$message_columns = [
 			'id_board' => 'int', 'id_topic' => 'int', 'id_creator' => 'int', 'id_member' => 'int', 'id_character' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : (empty($modSettings['max_messageLength']) ? 'string' : 'string-65534')),
 			'poster_name' => 'string-255', 'poster_email' => 'string-255', 'poster_time' => 'int', 'poster_ip' => 'inet',
 			'smileys_enabled' => 'int', 'modified_name' => 'string', 'approved' => 'int',
-		);
+		];
 
-		$message_parameters = array(
+		$message_parameters = [
 			$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $posterOptions['id'], $posterOptions['char_id'], $msgOptions['subject'], $msgOptions['body'],
 			$posterOptions['name'], $posterOptions['email'], time(), $posterOptions['ip'],
 			$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['approved'],
-		);
+		];
 
 		// What if we want to do anything with posts?
-		call_integration_hook('integrate_create_post', array(&$msgOptions, &$topicOptions, &$posterOptions, &$message_columns, &$message_parameters));
+		call_integration_hook('integrate_create_post', [&$msgOptions, &$topicOptions, &$posterOptions, &$message_columns, &$message_parameters]);
 
 		// Insert the post.
 		$msgOptions['id'] = $smcFunc['db_insert']('',
 			'{db_prefix}messages',
 			$message_columns,
 			$message_parameters,
-			array('id_msg'),
+			['id_msg'],
 			1
 		);
 
@@ -157,10 +157,10 @@ class Post
 				UPDATE {db_prefix}attachments
 				SET id_msg = {int:id_msg}
 				WHERE id_attach IN ({array_int:attachment_list})',
-				array(
+				[
 					'attachment_list' => $msgOptions['attachments'],
 					'id_msg' => $msgOptions['id'],
-				)
+				]
 			);
 
 		// What if we want to export new posts out to a CMS?
@@ -169,26 +169,26 @@ class Post
 		// Insert a new topic (if the topicID was left empty.)
 		if ($new_topic)
 		{
-			$topic_columns = array(
+			$topic_columns = [
 				'id_board' => 'int', 'id_member_started' => 'int', 'id_member_updated' => 'int', 'id_first_msg' => 'int',
 				'id_last_msg' => 'int', 'locked' => 'int', 'is_sticky' => 'int', 'num_views' => 'int',
 				'id_poll' => 'int', 'unapproved_posts' => 'int', 'approved' => 'int',
 				'redirect_expires' => 'int', 'id_redirect_topic' => 'int', 'is_moved' => 'int',
-			);
-			$topic_parameters = array(
+			];
+			$topic_parameters = [
 				$topicOptions['board'], $posterOptions['id'], $posterOptions['id'], $msgOptions['id'],
 				$msgOptions['id'], $topicOptions['lock_mode'] === null ? 0 : $topicOptions['lock_mode'], $topicOptions['sticky_mode'] === null ? 0 : $topicOptions['sticky_mode'], 0,
 				$topicOptions['poll'] === null ? 0 : $topicOptions['poll'], $msgOptions['approved'] ? 0 : 1, $msgOptions['approved'],
 				$topicOptions['redirect_expires'] === null ? 0 : $topicOptions['redirect_expires'], $topicOptions['redirect_topic'] === null ? 0 : $topicOptions['redirect_topic'], $topicOptions['is_moved'] === null ? 0 : $topicOptions['is_moved'],
-			);
+			];
 
-			call_integration_hook('integrate_before_create_topic', array(&$msgOptions, &$topicOptions, &$posterOptions, &$topic_columns, &$topic_parameters));
+			call_integration_hook('integrate_before_create_topic', [&$msgOptions, &$topicOptions, &$posterOptions, &$topic_columns, &$topic_parameters]);
 
 			$topicOptions['id'] = $smcFunc['db_insert']('',
 				'{db_prefix}topics',
 				$topic_columns,
 				$topic_parameters,
-				array('id_topic'),
+				['id_topic'],
 				1
 			);
 
@@ -199,9 +199,9 @@ class Post
 				$smcFunc['db_query']('', '
 					DELETE FROM {db_prefix}messages
 					WHERE id_msg = {int:id_msg}',
-					array(
+					[
 						'id_msg' => $msgOptions['id'],
-					)
+					]
 				);
 
 				return false;
@@ -212,48 +212,48 @@ class Post
 				UPDATE {db_prefix}messages
 				SET id_topic = {int:id_topic}
 				WHERE id_msg = {int:id_msg}',
-				array(
+				[
 					'id_topic' => $topicOptions['id'],
 					'id_msg' => $msgOptions['id'],
-				)
+				]
 			);
 
 			// There's been a new topic AND a new post today.
-			trackStats(array('topics' => '+', 'posts' => '+'));
+			trackStats(['topics' => '+', 'posts' => '+']);
 
 			updateStats('topic', true);
 			updateStats('subject', $topicOptions['id'], $msgOptions['subject']);
 
 			// What if we want to export new topics out to a CMS?
-			call_integration_hook('integrate_create_topic', array(&$msgOptions, &$topicOptions, &$posterOptions));
+			call_integration_hook('integrate_create_topic', [&$msgOptions, &$topicOptions, &$posterOptions]);
 		}
 		// The topic already exists, it only needs a little updating.
 		else
 		{
-			$update_parameters = array(
+			$update_parameters = [
 				'poster_id' => $posterOptions['id'],
 				'id_msg' => $msgOptions['id'],
 				'locked' => $topicOptions['lock_mode'],
 				'is_sticky' => $topicOptions['sticky_mode'],
 				'id_topic' => $topicOptions['id'],
 				'counter_increment' => 1,
-			);
+			];
 			if ($msgOptions['approved'])
-				$topics_columns = array(
+				$topics_columns = [
 					'id_member_updated = {int:poster_id}',
 					'id_last_msg = {int:id_msg}',
 					'num_replies = num_replies + {int:counter_increment}',
-				);
+				];
 			else
-				$topics_columns = array(
+				$topics_columns = [
 					'unapproved_posts = unapproved_posts + {int:counter_increment}',
-				);
+				];
 			if ($topicOptions['lock_mode'] !== null)
 				$topics_columns[] = 'locked = {int:locked}';
 			if ($topicOptions['sticky_mode'] !== null)
 				$topics_columns[] = 'is_sticky = {int:is_sticky}';
 
-			call_integration_hook('integrate_modify_topic', array(&$topics_columns, &$update_parameters, &$msgOptions, &$topicOptions, &$posterOptions));
+			call_integration_hook('integrate_modify_topic', [&$topics_columns, &$update_parameters, &$msgOptions, &$topicOptions, &$posterOptions]);
 
 			// Update the number of replies and the lock/sticky status.
 			$smcFunc['db_query']('', '
@@ -265,7 +265,7 @@ class Post
 			);
 
 			// One new post has been added today.
-			trackStats(array('posts' => '+'));
+			trackStats(['posts' => '+']);
 		}
 
 		// Creating is modifying...in a way.
@@ -274,9 +274,9 @@ class Post
 			UPDATE {db_prefix}messages
 			SET id_msg_modified = {int:id_msg}
 			WHERE id_msg = {int:id_msg}',
-			array(
+			[
 				'id_msg' => $msgOptions['id'],
-			)
+			]
 		);
 
 		// Increase the number of posts and topics on the board.
@@ -285,9 +285,9 @@ class Post
 				UPDATE {db_prefix}boards
 				SET num_posts = num_posts + 1' . ($new_topic ? ', num_topics = num_topics + 1' : '') . '
 				WHERE id_board = {int:id_board}',
-				array(
+				[
 					'id_board' => $topicOptions['board'],
-				)
+				]
 			);
 		else
 		{
@@ -295,20 +295,20 @@ class Post
 				UPDATE {db_prefix}boards
 				SET unapproved_posts = unapproved_posts + 1' . ($new_topic ? ', unapproved_topics = unapproved_topics + 1' : '') . '
 				WHERE id_board = {int:id_board}',
-				array(
+				[
 					'id_board' => $topicOptions['board'],
-				)
+				]
 			);
 
 			// Add to the approval queue too.
 			$smcFunc['db_insert']('',
 				'{db_prefix}approval_queue',
-				array(
+				[
 					'id_msg' => 'int',
-				),
-				array(
+				],
+				[
 					$msgOptions['id'],
-				),
+				],
 				[]
 			);
 
@@ -331,11 +331,11 @@ class Post
 					SET id_msg = {int:id_msg}
 					WHERE id_member = {int:current_member}
 						AND id_topic = {int:id_topic}',
-					array(
+					[
 						'current_member' => $posterOptions['id'],
 						'id_msg' => $msgOptions['id'],
 						'id_topic' => $topicOptions['id'],
-					)
+					]
 				);
 
 				$flag = $smcFunc['db']->affected_rows() != 0;
@@ -345,9 +345,9 @@ class Post
 			{
 				$smcFunc['db_insert']('ignore',
 					'{db_prefix}log_topics',
-					array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-					array($topicOptions['id'], $posterOptions['id'], $msgOptions['id']),
-					array('id_topic', 'id_member')
+					['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'],
+					[$topicOptions['id'], $posterOptions['id'], $msgOptions['id']],
+					['id_topic', 'id_member']
 				);
 			}
 		}
@@ -364,7 +364,7 @@ class Post
 		// If there's a custom search index, it may need updating...
 		require_once($sourcedir . '/Search.php');
 		$searchAPI = findSearchAPI();
-		if (is_callable(array($searchAPI, 'postCreated')))
+		if (is_callable([$searchAPI, 'postCreated']))
 			$searchAPI->postCreated($msgOptions, $topicOptions, $posterOptions);
 
 		// Increase the post counter for the user that created the post.
@@ -373,7 +373,7 @@ class Post
 			// Are you the one that happened to create this post?
 			if ($user_info['id'] == $posterOptions['id'])
 				$user_info['posts']++;
-			updateMemberData($posterOptions['id'], array('posts' => '+'));
+			updateMemberData($posterOptions['id'], ['posts' => '+']);
 		}
 		if ($msgOptions['approved'] && !empty($posterOptions['char_id']) && !empty($posterOptions['update_post_count'])) {
 			updateCharacterData($posterOptions['char_id'], ['posts' => '+']);
@@ -446,9 +446,9 @@ class Post
 					SELECT body
 					FROM {db_prefix}messages
 					WHERE id_msg = {int:id_msg}',
-					array(
+					[
 						'id_msg' => $msgOptions['id'],
-					)
+					]
 				);
 				list ($msgOptions['old_body']) = $smcFunc['db_fetch_row']($request);
 				$smcFunc['db_free_result']($request);
@@ -465,10 +465,10 @@ class Post
 			$messages_columns['smileys_enabled'] = empty($msgOptions['smileys_enabled']) ? 0 : 1;
 
 		// Which columns need to be ints?
-		$messageInts = array('modified_time', 'id_msg_modified', 'smileys_enabled');
-		$update_parameters = array(
+		$messageInts = ['modified_time', 'id_msg_modified', 'smileys_enabled'];
+		$update_parameters = [
 			'id_msg' => $msgOptions['id'],
-		);
+		];
 
 		if (!empty($modSettings['enable_mentions']) && isset($msgOptions['body']))
 		{
@@ -480,7 +480,7 @@ class Post
 
 				if (isset($match[1]) && isset($match[2]) && is_array($match[1]) && is_array($match[2]))
 					foreach ($match[1] as $i => $oldID)
-						$oldmentions[$oldID] = array('id' => $oldID, 'real_name' => $match[2][$i]);
+						$oldmentions[$oldID] = ['id' => $oldID, 'real_name' => $match[2][$i]];
 
 				if (empty($modSettings['search_custom_index_config']))
 					unset($msgOptions['old_body']);
@@ -511,7 +511,7 @@ class Post
 			}
 		}
 
-		call_integration_hook('integrate_modify_post', array(&$messages_columns, &$update_parameters, &$msgOptions, &$topicOptions, &$posterOptions, &$messageInts));
+		call_integration_hook('integrate_modify_post', [&$messages_columns, &$update_parameters, &$msgOptions, &$topicOptions, &$posterOptions, &$messageInts]);
 
 		foreach ($messages_columns as $var => $val)
 		{
@@ -541,12 +541,12 @@ class Post
 					locked = {raw:locked},
 					id_poll = {raw:id_poll}
 				WHERE id_topic = {int:id_topic}',
-				array(
+				[
 					'is_sticky' => $topicOptions['sticky_mode'] === null ? 'is_sticky' : (int) $topicOptions['sticky_mode'],
 					'locked' => $topicOptions['lock_mode'] === null ? 'locked' : (int) $topicOptions['lock_mode'],
 					'id_poll' => $topicOptions['poll'] === null ? 'id_poll' : (int) $topicOptions['poll'],
 					'id_topic' => $topicOptions['id'],
-				)
+				]
 			);
 		}
 
@@ -559,11 +559,11 @@ class Post
 				SET id_msg = {int:id_msg}
 				WHERE id_member = {int:current_member}
 					AND id_topic = {int:id_topic}',
-				array(
+				[
 					'current_member' => $user_info['id'],
 					'id_msg' => $modSettings['maxMsgID'],
 					'id_topic' => $topicOptions['id'],
-				)
+				]
 			);
 
 			$flag = $smcFunc['db']->affected_rows() != 0;
@@ -572,9 +572,9 @@ class Post
 			{
 				$smcFunc['db_insert']('ignore',
 					'{db_prefix}log_topics',
-					array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-					array($topicOptions['id'], $user_info['id'], $modSettings['maxMsgID']),
-					array('id_topic', 'id_member')
+					['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'],
+					[$topicOptions['id'], $user_info['id'], $modSettings['maxMsgID']],
+					['id_topic', 'id_member']
 				);
 			}
 		}
@@ -582,7 +582,7 @@ class Post
 		// If there's a custom search index, it needs to be modified...
 		require_once($sourcedir . '/Search.php');
 		$searchAPI = findSearchAPI();
-		if (is_callable(array($searchAPI, 'postModified')))
+		if (is_callable([$searchAPI, 'postModified']))
 			$searchAPI->postModified($msgOptions, $topicOptions, $posterOptions);
 
 		if (isset($msgOptions['subject']))
@@ -593,9 +593,9 @@ class Post
 				FROM {db_prefix}topics
 				WHERE id_first_msg = {int:id_first_msg}
 				LIMIT 1',
-				array(
+				[
 					'id_first_msg' => $msgOptions['id'],
-				)
+				]
 			);
 			if ($smcFunc['db_num_rows']($request) == 1)
 				updateStats('subject', $topicOptions['id'], $msgOptions['subject']);

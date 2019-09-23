@@ -30,9 +30,9 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 			SELECT id_member
 			FROM {db_prefix}group_moderators
 			WHERE id_group = {int:selected_group}',
-			array(
+			[
 				'selected_group' => $this->_details['id_group'],
-			)
+			]
 		);
 		$moderators = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -47,7 +47,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 		if (!empty($moderators))
 		{
 			// Figure out who wants to be alerted/emailed about this
-			$data = array('alert' => [], 'email' => []);
+			$data = ['alert' => [], 'email' => []];
 
 			require_once($sourcedir . '/Subs-Notify.php');
 			$prefs = getNotifyPrefs($moderators, 'request_group', true);
@@ -71,7 +71,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 
 				foreach ($data['alert'] as $group_mod)
 				{
-					$alert_rows[] = array(
+					$alert_rows[] = [
 						'alert_time' => $this->_details['time'],
 						'id_member' => $group_mod,
 						'id_member_started' => $this->_details['id_member'],
@@ -80,17 +80,17 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 						'content_id' => 0,
 						'content_action' => 'group_request',
 						'is_read' => 0,
-						'extra' => json_encode(array('group_name' => $this->_details['group_name'])),
-					);
+						'extra' => json_encode(['group_name' => $this->_details['group_name']]),
+					];
 				}
 
 				$smcFunc['db_insert']('insert', '{db_prefix}user_alerts',
-					array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
-					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+					['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 					$alert_rows, []
 				);
 
-				updateMemberData($data['alert'], array('alerts' => '+'));
+				updateMemberData($data['alert'], ['alerts' => '+']);
 			}
 
 			if (!empty($data['email']))
@@ -104,20 +104,20 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 					FROM {db_prefix}members
 					WHERE id_member IN ({array_int:moderator_list})
 					ORDER BY lngfile',
-					array(
+					[
 						'moderator_list' => $moderators,
-					)
+					]
 				);
 
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 				{
-					$replacements = array(
+					$replacements = [
 						'RECPNAME' => $row['member_name'],
 						'APPYNAME' => $this->_details['member_name'],
 						'GROUPNAME' => $this->_details['group_name'],
 						'REASON' => $this->_details['reason'],
 						'MODLINK' => $scripturl . '?action=moderate;area=groups;sa=requests',
-					);
+					];
 
 					$emaildata = loadEmailTemplate('request_membership', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
 					StoryBB\Helper\Mail::send($row['email_address'], $emaildata['subject'], $emaildata['body'], null, 'groupreq' . $this->_details['id_group'], $emaildata['is_html'], 2);

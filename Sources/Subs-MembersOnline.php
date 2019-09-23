@@ -23,14 +23,14 @@ function getMembersOnlineStats($membersOnlineOptions)
 	global $smcFunc, $scripturl, $user_info, $modSettings, $txt;
 
 	// The list can be sorted in several ways.
-	$allowed_sort_options = array(
+	$allowed_sort_options = [
 		'', // No sorting.
 		'log_time',
 		'real_name',
 		'show_online',
 		'online_color',
 		'group_name',
-	);
+	];
 	// Default the sorting method to 'most recent online members first'.
 	if (!isset($membersOnlineOptions['sort']))
 	{
@@ -43,7 +43,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		trigger_error('Sort method for getMembersOnlineStats() function is not allowed', E_USER_NOTICE);
 
 	// Initialize the array that'll be returned later on.
-	$membersOnlineStats = array(
+	$membersOnlineStats = [
 		'users_online' => [],
 		'list_users_online' => [],
 		'online_groups' => [],
@@ -52,7 +52,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		'num_buddies' => 0,
 		'num_users_hidden' => 0,
 		'num_users_online' => 0,
-	);
+	];
 
 	// Load the users online right now.
 	$robot = new \StoryBB\Model\Robot;
@@ -68,9 +68,9 @@ function getMembersOnlineStats($membersOnlineOptions)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
 			LEFT JOIN {db_prefix}characters AS chars ON (lo.id_character = chars.id_character)
 			LEFT JOIN {db_prefix}membergroups AS cg ON (cg.id_group = chars.main_char_group)',
-		array(
+		[
 			'reg_mem_group' => 0,
-		)
+		]
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -121,7 +121,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		}
 
 		// A lot of useful information for each member.
-		$membersOnlineStats['users_online'][$row[$membersOnlineOptions['sort']] . '_' . $row['member_name']] = array(
+		$membersOnlineStats['users_online'][$row[$membersOnlineOptions['sort']] . '_' . $row['member_name']] = [
 			'id' => $row['id_member'],
 			'username' => $row['member_name'],
 			'name' => $row['real_name'],
@@ -131,21 +131,21 @@ function getMembersOnlineStats($membersOnlineOptions)
 			'is_buddy' => $is_buddy,
 			'hidden' => empty($row['show_online']),
 			'is_last' => false,
-		);
+		];
 
 		// This is the compact version, simply implode it to show.
 		$membersOnlineStats['list_users_online'][$row[$membersOnlineOptions['sort']] . '_' . $row['member_name']] = empty($row['show_online']) ? '<em>' . $link . '</em>' : $link;
 
 		// Store all distinct (primary) membergroups that are shown.
 		if (!isset($membersOnlineStats['online_groups'][$row['id_group']]))
-			$membersOnlineStats['online_groups'][$row['id_group']] = array(
+			$membersOnlineStats['online_groups'][$row['id_group']] = [
 				'id' => $row['id_group'],
 				'name' => $row['group_name'],
 				'color' => $row['online_color'],
 				'hidden' => $row['hidden'],
 				'type' => $row['group_type'],
 				'parent' => $row['id_parent'],
-			);
+			];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -156,7 +156,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		foreach ($robot_finds as $id => $this_robot)
 		{
 			$link = $this_robot['title'] . ($this_robot['count'] > 1 ? ' (' . $this_robot['count'] . ')' : '');
-			$membersOnlineStats['users_online'][$sort . '_' . $id] = array(
+			$membersOnlineStats['users_online'][$sort . '_' . $id] = [
 				'id' => 0,
 				'username' => $id,
 				'name' => $this_robot['title'],
@@ -166,7 +166,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 				'is_buddy' => false,
 				'hidden' => false,
 				'is_last' => false,
-			);
+			];
 			$membersOnlineStats['list_users_online'][$sort . '_' . $id] = $link;
 		}
 	}
@@ -207,10 +207,10 @@ function trackStatsUsersOnline($total_users_online)
 
 	// More members on now than ever were?  Update it!
 	if (!isset($modSettings['mostOnline']) || $total_users_online >= $modSettings['mostOnline'])
-		$settingsToUpdate = array(
+		$settingsToUpdate = [
 			'mostOnline' => $total_users_online,
 			'mostDate' => time()
-		);
+		];
 
 	$date = strftime('%Y-%m-%d', forum_time(false));
 
@@ -222,9 +222,9 @@ function trackStatsUsersOnline($total_users_online)
 			FROM {db_prefix}log_activity
 			WHERE date = {date:date}
 			LIMIT 1',
-			array(
+			[
 				'date' => $date,
-			)
+			]
 		);
 
 		// The log_activity hasn't got an entry for today?
@@ -232,9 +232,9 @@ function trackStatsUsersOnline($total_users_online)
 		{
 			$smcFunc['db_insert']('ignore',
 				'{db_prefix}log_activity',
-				array('date' => 'date', 'most_on' => 'int'),
-				array($date, $total_users_online),
-				array('date')
+				['date' => 'date', 'most_on' => 'int'],
+				[$date, $total_users_online],
+				['date']
 			);
 		}
 		// There's an entry in log_activity on today...
@@ -243,7 +243,7 @@ function trackStatsUsersOnline($total_users_online)
 			list ($modSettings['mostOnlineToday']) = $smcFunc['db_fetch_row']($request);
 
 			if ($total_users_online > $modSettings['mostOnlineToday'])
-				trackStats(array('most_on' => $total_users_online));
+				trackStats(['most_on' => $total_users_online]);
 
 			$total_users_online = max($total_users_online, $modSettings['mostOnlineToday']);
 		}
@@ -256,7 +256,7 @@ function trackStatsUsersOnline($total_users_online)
 	// Highest number of users online today?
 	elseif ($total_users_online > $modSettings['mostOnlineToday'])
 	{
-		trackStats(array('most_on' => $total_users_online));
+		trackStats(['most_on' => $total_users_online]);
 		$settingsToUpdate['mostOnlineToday'] = $total_users_online;
 	}
 

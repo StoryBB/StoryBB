@@ -39,11 +39,11 @@ function Vote()
 			LEFT JOIN {db_prefix}log_polls AS lp ON (p.id_poll = lp.id_poll AND lp.id_member = {int:current_member} AND lp.id_member != {int:not_guest})
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_member' => $user_info['id'],
 			'current_topic' => $topic,
 			'not_guest' => 0,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('poll_error', false);
@@ -103,10 +103,10 @@ function Vote()
 			FROM {db_prefix}log_polls
 			WHERE id_member = {int:current_member}
 				AND id_poll = {int:id_poll}',
-			array(
+			[
 				'current_member' => $user_info['id'],
 				'id_poll' => $row['id_poll'],
-			)
+			]
 		);
 		while ($choice = $smcFunc['db_fetch_row']($request))
 			$pollOptions[] = $choice[0];
@@ -122,11 +122,11 @@ function Vote()
 				WHERE id_poll = {int:id_poll}
 					AND id_choice IN ({array_int:poll_options})
 					AND votes > {int:votes}',
-				array(
+				[
 					'poll_options' => $pollOptions,
 					'id_poll' => $row['id_poll'],
 					'votes' => 0,
-				)
+				]
 			);
 
 			// Delete off the log.
@@ -134,10 +134,10 @@ function Vote()
 				DELETE FROM {db_prefix}log_polls
 				WHERE id_member = {int:current_member}
 					AND id_poll = {int:id_poll}',
-				array(
+				[
 					'current_member' => $user_info['id'],
 					'id_poll' => $row['id_poll'],
-				)
+				]
 			);
 		}
 
@@ -154,7 +154,7 @@ function Vote()
 
 	// Too many options checked!
 	if (count($_REQUEST['options']) > $row['max_votes'])
-		fatal_lang_error('poll_too_many_votes', false, array($row['max_votes']));
+		fatal_lang_error('poll_too_many_votes', false, [$row['max_votes']]);
 
 	$pollOptions = [];
 	$inserts = [];
@@ -163,15 +163,15 @@ function Vote()
 		$id = (int) $id;
 
 		$pollOptions[] = $id;
-		$inserts[] = array($row['id_poll'], $user_info['id'], $id);
+		$inserts[] = [$row['id_poll'], $user_info['id'], $id];
 	}
 
 	// Add their vote to the tally.
 	$smcFunc['db_insert']('insert',
 		'{db_prefix}log_polls',
-		array('id_poll' => 'int', 'id_member' => 'int', 'id_choice' => 'int'),
+		['id_poll' => 'int', 'id_member' => 'int', 'id_choice' => 'int'],
 		$inserts,
-		array('id_poll', 'id_member', 'id_choice')
+		['id_poll', 'id_member', 'id_choice']
 	);
 
 	$smcFunc['db_query']('', '
@@ -179,10 +179,10 @@ function Vote()
 		SET votes = votes + 1
 		WHERE id_poll = {int:id_poll}
 			AND id_choice IN ({array_int:poll_options})',
-		array(
+		[
 			'poll_options' => $pollOptions,
 			'id_poll' => $row['id_poll'],
-		)
+		]
 	);
 
 	// If it's a guest don't let them vote again.
@@ -198,9 +198,9 @@ function Vote()
 			UPDATE {db_prefix}polls
 			SET num_guest_voters = num_guest_voters + 1
 			WHERE id_poll = {int:id_poll}',
-			array(
+			[
 				'id_poll' => $row['id_poll'],
-			)
+			]
 		);
 
 		require_once($sourcedir . '/Subs-Auth.php');
@@ -209,7 +209,7 @@ function Vote()
 	}
 
 	// Maybe let a social networking mod log this, or something?
-	call_integration_hook('integrate_poll_vote', array(&$row['id_poll'], &$pollOptions));
+	call_integration_hook('integrate_poll_vote', [&$row['id_poll'], &$pollOptions]);
 
 	// Return to the post...
 	redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
@@ -237,9 +237,9 @@ function LockVoting()
 			INNER JOIN {db_prefix}polls AS p ON (p.id_poll = t.id_poll)
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
-		)
+		]
 	);
 	list ($memberID, $pollID, $voting_locked) = $smcFunc['db_fetch_row']($request);
 
@@ -268,13 +268,13 @@ function LockVoting()
 		UPDATE {db_prefix}polls
 		SET voting_locked = {int:voting_locked}
 		WHERE id_poll = {int:id_poll}',
-		array(
+		[
 			'voting_locked' => $voting_locked,
 			'id_poll' => $pollID,
-		)
+		]
 	);
 
-	logAction(($voting_locked ? '' : 'un') . 'lock_poll', array('topic' => $topic));
+	logAction(($voting_locked ? '' : 'un') . 'lock_poll', ['topic' => $topic]);
 
 	redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
 }
@@ -315,9 +315,9 @@ function EditPoll()
 			LEFT JOIN {db_prefix}polls AS p ON (p.id_poll = t.id_poll)
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
-		)
+		]
 	);
 
 	// Assume the the topic exists, right?
@@ -351,7 +351,7 @@ function EditPoll()
 		$question = $smcFunc['htmlspecialchars']($_POST['question']);
 
 		// Basic theme info...
-		$context['poll'] = array(
+		$context['poll'] = [
 			'id' => $pollinfo['id_poll'],
 			'question' => $question,
 			'hide_results' => empty($_POST['poll_hide']) ? 0 : $_POST['poll_hide'],
@@ -359,7 +359,7 @@ function EditPoll()
 			'guest_vote' => isset($_POST['poll_guest_vote']),
 			'guest_vote_allowed' => in_array(-1, $groupsAllowedVote['allowed']),
 			'max_votes' => empty($_POST['poll_max_votes']) ? '1' : max(1, $_POST['poll_max_votes']),
-		);
+		];
 
 		// Start at number one with no last id to speak of.
 		$number = 1;
@@ -372,9 +372,9 @@ function EditPoll()
 				SELECT label, votes, id_choice
 				FROM {db_prefix}poll_choices
 				WHERE id_poll = {int:id_poll}',
-				array(
+				[
 					'id_poll' => $pollinfo['id_poll'],
-				)
+				]
 			);
 			$context['choices'] = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -390,13 +390,13 @@ function EditPoll()
 				censorText($row['label']);
 
 				// Add the choice!
-				$context['choices'][$row['id_choice']] = array(
+				$context['choices'][$row['id_choice']] = [
 					'id' => $row['id_choice'],
 					'number' => $number++,
 					'votes' => $row['votes'],
 					'label' => $row['label'],
 					'is_last' => false
-				);
+				];
 			}
 			$smcFunc['db_free_result']($request);
 		}
@@ -417,13 +417,13 @@ function EditPoll()
 			if (isset($context['choices'][$id]))
 				$context['choices'][$id]['label'] = $label;
 			elseif ($label != '')
-				$context['choices'][] = array(
+				$context['choices'][] = [
 					'id' => $last_id++,
 					'number' => $number++,
 					'label' => $label,
 					'votes' => -1,
 					'is_last' => $count++ == $totalPostOptions && $totalPostOptions > 1 ? true : false,
-				);
+				];
 		}
 
 		// Make sure we have two choices for sure!
@@ -431,24 +431,24 @@ function EditPoll()
 		{
 			// Need two?
 			if ($totalPostOptions == 0)
-				$context['choices'][] = array(
+				$context['choices'][] = [
 					'id' => $last_id++,
 					'number' => $number++,
 					'label' => '',
 					'votes' => -1,
 					'is_last' => false
-				);
+				];
 			$poll_errors[] = 'poll_few';
 		}
 
 		// Always show one extra box...
-		$context['choices'][] = array(
+		$context['choices'][] = [
 			'id' => $last_id++,
 			'number' => $number++,
 			'label' => '',
 			'votes' => -1,
 			'is_last' => true
-		);
+		];
 
 		$context['last_choice_id'] = $last_id;
 
@@ -467,7 +467,7 @@ function EditPoll()
 		{
 			loadLanguage('Errors');
 
-			$context['poll_error'] = array('messages' => []);
+			$context['poll_error'] = ['messages' => []];
 			foreach ($poll_errors as $poll_error)
 			{
 				$context['poll_error'][$poll_error] = true;
@@ -478,7 +478,7 @@ function EditPoll()
 	else
 	{
 		// Basic theme info...
-		$context['poll'] = array(
+		$context['poll'] = [
 			'id' => $pollinfo['id_poll'],
 			'question' => $pollinfo['question'],
 			'hide_results' => $pollinfo['hide_results'],
@@ -486,7 +486,7 @@ function EditPoll()
 			'change_vote' => !empty($pollinfo['change_vote']),
 			'guest_vote' => !empty($pollinfo['guest_vote']),
 			'guest_vote_allowed' => in_array(-1, $groupsAllowedVote['allowed']),
-		);
+		];
 
 		// Poll expiration time?
 		$context['poll']['expiration'] = empty($pollinfo['expire_time']) || !$context['can_moderate_poll'] ? '' : ceil($pollinfo['expire_time'] <= time() ? -1 : ($pollinfo['expire_time'] - time()) / (3600 * 24));
@@ -498,9 +498,9 @@ function EditPoll()
 				SELECT label, votes, id_choice
 				FROM {db_prefix}poll_choices
 				WHERE id_poll = {int:id_poll}',
-				array(
+				[
 					'id_poll' => $pollinfo['id_poll'],
-				)
+				]
 			);
 			$context['choices'] = [];
 			$number = 1;
@@ -508,33 +508,33 @@ function EditPoll()
 			{
 				censorText($row['label']);
 
-				$context['choices'][$row['id_choice']] = array(
+				$context['choices'][$row['id_choice']] = [
 					'id' => $row['id_choice'],
 					'number' => $number++,
 					'votes' => $row['votes'],
 					'label' => $row['label'],
 					'is_last' => false
-				);
+				];
 			}
 			$smcFunc['db_free_result']($request);
 
 			$last_id = max(array_keys($context['choices'])) + 1;
 
 			// Add an extra choice...
-			$context['choices'][] = array(
+			$context['choices'][] = [
 				'id' => $last_id,
 				'number' => $number,
 				'votes' => -1,
 				'label' => '',
 				'is_last' => true
-			);
+			];
 			$context['last_choice_id'] = $last_id;
 		}
 		// New poll?
 		else
 		{
 			// Setup the default poll options.
-			$context['poll'] = array(
+			$context['poll'] = [
 				'id' => 0,
 				'question' => '',
 				'hide_results' => 0,
@@ -543,16 +543,16 @@ function EditPoll()
 				'guest_vote' => 0,
 				'guest_vote_allowed' => in_array(-1, $groupsAllowedVote['allowed']),
 				'expiration' => '',
-			);
+			];
 
 			// Make all five poll choices empty.
-			$context['choices'] = array(
-				array('id' => 0, 'number' => 1, 'votes' => -1, 'label' => '', 'is_last' => false),
-				array('id' => 1, 'number' => 2, 'votes' => -1, 'label' => '', 'is_last' => false),
-				array('id' => 2, 'number' => 3, 'votes' => -1, 'label' => '', 'is_last' => false),
-				array('id' => 3, 'number' => 4, 'votes' => -1, 'label' => '', 'is_last' => false),
-				array('id' => 4, 'number' => 5, 'votes' => -1, 'label' => '', 'is_last' => true)
-			);
+			$context['choices'] = [
+				['id' => 0, 'number' => 1, 'votes' => -1, 'label' => '', 'is_last' => false],
+				['id' => 1, 'number' => 2, 'votes' => -1, 'label' => '', 'is_last' => false],
+				['id' => 2, 'number' => 3, 'votes' => -1, 'label' => '', 'is_last' => false],
+				['id' => 3, 'number' => 4, 'votes' => -1, 'label' => '', 'is_last' => false],
+				['id' => 4, 'number' => 5, 'votes' => -1, 'label' => '', 'is_last' => true]
+			];
 			$context['last_choice_id'] = 4;
 		}
 	}
@@ -560,13 +560,13 @@ function EditPoll()
 
 	// Build the link tree.
 	censorText($pollinfo['subject']);
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?topic=' . $topic . '.0',
 		'name' => $pollinfo['subject'],
-	);
-	$context['linktree'][] = array(
+	];
+	$context['linktree'][] = [
 		'name' => $context['page_title'],
-	);
+	];
 
 	// Register this form in the session variables.
 	checkSubmitOnce('register');
@@ -613,9 +613,9 @@ function EditPoll2()
 			LEFT JOIN {db_prefix}polls AS p ON (p.id_poll = t.id_poll)
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_board');
@@ -662,7 +662,7 @@ function EditPoll2()
 		// Previewing.
 		$_POST['preview'] = true;
 
-		$context['poll_error'] = array('messages' => []);
+		$context['poll_error'] = ['messages' => []];
 		foreach ($poll_errors as $poll_error)
 		{
 			$context['poll_error'][$poll_error] = true;
@@ -721,7 +721,7 @@ function EditPoll2()
 				guest_vote = {int:guest_vote}' : '
 				hide_results = CASE WHEN expire_time = {int:expire_time_zero} AND {int:hide_results} = 2 THEN 1 ELSE {int:hide_results} END') . '
 			WHERE id_poll = {int:id_poll}',
-			array(
+			[
 				'change_vote' => $_POST['poll_change_vote'],
 				'hide_results' => $_POST['poll_hide'],
 				'expire_time' => !empty($_POST['poll_expire']) ? $_POST['poll_expire'] : 0,
@@ -730,7 +730,7 @@ function EditPoll2()
 				'expire_time_zero' => 0,
 				'id_poll' => $bcinfo['id_poll'],
 				'question' => $_POST['question'],
-			)
+			]
 		);
 	}
 	// Otherwise, let's get our poll going!
@@ -739,15 +739,15 @@ function EditPoll2()
 		// Create the poll.
 		$bcinfo['id_poll'] = $smcFunc['db_insert']('',
 			'{db_prefix}polls',
-			array(
+			[
 				'question' => 'string-255', 'hide_results' => 'int', 'max_votes' => 'int', 'expire_time' => 'int', 'id_member' => 'int',
 				'poster_name' => 'string-255', 'change_vote' => 'int', 'guest_vote' => 'int'
-			),
-			array(
+			],
+			[
 				$_POST['question'], $_POST['poll_hide'], $_POST['poll_max_votes'], $_POST['poll_expire'], $user_info['id'],
 				$user_info['username'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
-			),
-			array('id_poll'),
+			],
+			['id_poll'],
 			1
 		);
 
@@ -756,10 +756,10 @@ function EditPoll2()
 			UPDATE {db_prefix}topics
 			SET id_poll = {int:id_poll}
 			WHERE id_topic = {int:current_topic}',
-			array(
+			[
 				'current_topic' => $topic,
 				'id_poll' => $bcinfo['id_poll'],
-			)
+			]
 		);
 	}
 
@@ -768,9 +768,9 @@ function EditPoll2()
 		SELECT id_choice
 		FROM {db_prefix}poll_choices
 		WHERE id_poll = {int:id_poll}',
-		array(
+		[
 			'id_poll' => $bcinfo['id_poll'],
-		)
+		]
 	);
 	$choices = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -804,21 +804,21 @@ function EditPoll2()
 				SET label = {string:option_name}
 				WHERE id_poll = {int:id_poll}
 					AND id_choice = {int:id_choice}',
-				array(
+				[
 					'id_poll' => $bcinfo['id_poll'],
 					'id_choice' => $k,
 					'option_name' => $option,
-				)
+				]
 			);
 		else
 			$smcFunc['db_insert']('',
 				'{db_prefix}poll_choices',
-				array(
+				[
 					'id_poll' => 'int', 'id_choice' => 'int', 'label' => 'string-255', 'votes' => 'int',
-				),
-				array(
+				],
+				[
 					$bcinfo['id_poll'], $k, $option, 0,
-				),
+				],
 				[]
 			);
 	}
@@ -830,19 +830,19 @@ function EditPoll2()
 			DELETE FROM {db_prefix}log_polls
 			WHERE id_poll = {int:id_poll}
 				AND id_choice IN ({array_int:delete_options})',
-			array(
+			[
 				'delete_options' => $delete_options,
 				'id_poll' => $bcinfo['id_poll'],
-			)
+			]
 		);
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}poll_choices
 			WHERE id_poll = {int:id_poll}
 				AND id_choice IN ({array_int:delete_options})',
-			array(
+			[
 				'delete_options' => $delete_options,
 				'id_poll' => $bcinfo['id_poll'],
-			)
+			]
 		);
 	}
 
@@ -853,31 +853,31 @@ function EditPoll2()
 			UPDATE {db_prefix}polls
 			SET num_guest_voters = {int:no_votes}, reset_poll = {int:time}
 			WHERE id_poll = {int:id_poll}',
-			array(
+			[
 				'no_votes' => 0,
 				'id_poll' => $bcinfo['id_poll'],
 				'time' => time(),
-			)
+			]
 		);
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}poll_choices
 			SET votes = {int:no_votes}
 			WHERE id_poll = {int:id_poll}',
-			array(
+			[
 				'no_votes' => 0,
 				'id_poll' => $bcinfo['id_poll'],
-			)
+			]
 		);
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_polls
 			WHERE id_poll = {int:id_poll}',
-			array(
+			[
 				'id_poll' => $bcinfo['id_poll'],
-			)
+			]
 		);
 	}
 
-	call_integration_hook('integrate_poll_add_edit', array($bcinfo['id_poll'], $isEdit));
+	call_integration_hook('integrate_poll_add_edit', [$bcinfo['id_poll'], $isEdit]);
 
 	/* Log this edit, but don't go crazy.
 		Only specifically adding a poll	or resetting votes is logged.
@@ -885,17 +885,17 @@ function EditPoll2()
 	if (isset($_REQUEST['add']))
 	{
 		// Added a poll
-		logAction('add_poll', array('topic' => $topic));
+		logAction('add_poll', ['topic' => $topic]);
 	}
 	elseif (isset($_REQUEST['deletevotes']))
 	{
 		// Reset votes
-		logAction('reset_poll', array('topic' => $topic));
+		logAction('reset_poll', ['topic' => $topic]);
 	}
 	else
 	{
 		// Something else
-		logAction('editpoll', array('topic' => $topic));
+		logAction('editpoll', ['topic' => $topic]);
 	}
 
 	// Off we go.
@@ -930,9 +930,9 @@ function RemovePoll()
 				INNER JOIN {db_prefix}polls AS p ON (p.id_poll = t.id_poll)
 			WHERE t.id_topic = {int:current_topic}
 			LIMIT 1',
-			array(
+			[
 				'current_topic' => $topic,
-			)
+			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('no_access', false);
@@ -948,9 +948,9 @@ function RemovePoll()
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
-		)
+		]
 	);
 	list ($pollID) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -959,42 +959,42 @@ function RemovePoll()
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}log_polls
 		WHERE id_poll = {int:id_poll}',
-		array(
+		[
 			'id_poll' => $pollID,
-		)
+		]
 	);
 	// Remove all poll choices.
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}poll_choices
 		WHERE id_poll = {int:id_poll}',
-		array(
+		[
 			'id_poll' => $pollID,
-		)
+		]
 	);
 	// Remove the poll itself.
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}polls
 		WHERE id_poll = {int:id_poll}',
-		array(
+		[
 			'id_poll' => $pollID,
-		)
+		]
 	);
 	// Finally set the topic poll ID back to 0!
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}topics
 		SET id_poll = {int:no_poll}
 		WHERE id_topic = {int:current_topic}',
-		array(
+		[
 			'current_topic' => $topic,
 			'no_poll' => 0,
-		)
+		]
 	);
 
 	// A mod might have logged this (social network?), so let them remove, it too
-	call_integration_hook('integrate_poll_remove', array($pollID));
+	call_integration_hook('integrate_poll_remove', [$pollID]);
 
 	// Log this!
-	logAction('remove_poll', array('topic' => $topic));
+	logAction('remove_poll', ['topic' => $topic]);
 
 	// Take the moderator back to the topic.
 	redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);

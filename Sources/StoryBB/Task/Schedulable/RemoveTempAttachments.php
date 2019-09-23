@@ -57,7 +57,7 @@ class RemoveTempAttachments implements \StoryBB\Task\Schedulable
 		}
 		else
 		{
-			$attach_dirs = array($modSettings['attachmentUploadDir']);
+			$attach_dirs = [$modSettings['attachmentUploadDir']];
 		}
 
 		foreach ($attach_dirs as $attach_dir)

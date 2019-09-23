@@ -28,13 +28,13 @@ function ManagePostSettings()
 	isAllowedTo('admin_forum');
 	loadLanguage('Drafts');
 
-	$subActions = array(
+	$subActions = [
 		'posts' => 'ModifyPostSettings',
 		'topics' => 'ModifyTopicSettings',
 		'bbc' => 'ModifyBBCSettings',
 		'censor' => 'SetCensor',
 		'drafts' => 'ModifyDraftSettings',
-	);
+	];
 
 	// Default the sub-action to 'posts'.
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'posts';
@@ -42,30 +42,30 @@ function ManagePostSettings()
 	$context['page_title'] = $txt['manageposts_title'];
 
 	// Tabs for browsing the different post functions.
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['manageposts_title'],
 		'help' => 'posts_and_topics',
 		'description' => $txt['manageposts_description'],
-		'tabs' => array(
-			'posts' => array(
+		'tabs' => [
+			'posts' => [
 				'description' => $txt['manageposts_settings_description'],
-			),
-			'topics' => array(
+			],
+			'topics' => [
 				'description' => $txt['manageposts_topic_settings_description'],
-			),
-			'bbc' => array(
+			],
+			'bbc' => [
 				'description' => $txt['manageposts_bbc_settings_description'],
-			),
-			'censor' => array(
+			],
+			'censor' => [
 				'description' => $txt['admin_censored_desc'],
-			),
-			'drafts' => array(
+			],
+			'drafts' => [
 				'description' => $txt['drafts_show_desc'],
-			),
-		),
-	);
+			],
+		],
+	];
 
-	routing_integration_hook('integrate_manage_posts', array(&$subActions));
+	routing_integration_hook('integrate_manage_posts', [&$subActions]);
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);
@@ -84,20 +84,20 @@ function ModifyBBCSettings($return_config = false)
 {
 	global $context, $txt, $modSettings, $scripturl, $sourcedir;
 
-	$config_vars = array(
+	$config_vars = [
 			// Main tweaks
-			array('check', 'enableBBC'),
-			array('check', 'enableBBC', 0, 'onchange' => 'toggleBBCDisabled(\'disabledBBC\', !this.checked);'),
-			array('check', 'enablePostHTML'),
-			array('check', 'autoLinkUrls'),
+			['check', 'enableBBC'],
+			['check', 'enableBBC', 0, 'onchange' => 'toggleBBCDisabled(\'disabledBBC\', !this.checked);'],
+			['check', 'enablePostHTML'],
+			['check', 'autoLinkUrls'],
 		'',
-			array('bbc', 'disabledBBC'),
-	);
+			['bbc', 'disabledBBC'],
+	];
 
 	$context['settings_post_javascript'] = '
 		toggleBBCDisabled(\'disabledBBC\', ' . (empty($modSettings['enableBBC']) ? 'true' : 'false') . ');';
 
-	settings_integration_hook('integrate_modify_bbc_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_bbc_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -122,11 +122,11 @@ function ModifyBBCSettings($return_config = false)
 		if (!isset($_POST['disabledBBC_enabledTags']))
 			$_POST['disabledBBC_enabledTags'] = [];
 		elseif (!is_array($_POST['disabledBBC_enabledTags']))
-			$_POST['disabledBBC_enabledTags'] = array($_POST['disabledBBC_enabledTags']);
+			$_POST['disabledBBC_enabledTags'] = [$_POST['disabledBBC_enabledTags']];
 		// Work out what is actually disabled!
 		$_POST['disabledBBC'] = implode(',', array_diff($bbcTags, $_POST['disabledBBC_enabledTags']));
 
-		settings_integration_hook('integrate_save_bbc_settings', array($bbcTags));
+		settings_integration_hook('integrate_save_bbc_settings', [$bbcTags]);
 
 		saveDBSettings($config_vars);
 		session_flash('success', $txt['settings_saved']);
@@ -164,7 +164,7 @@ function SetCensor()
 		// Rip it apart, then split it into two arrays.
 		if (isset($_POST['censortext']))
 		{
-			$_POST['censortext'] = explode("\n", strtr($_POST['censortext'], array("\r" => '')));
+			$_POST['censortext'] = explode("\n", strtr($_POST['censortext'], ["\r" => '']));
 
 			foreach ($_POST['censortext'] as $c)
 				list ($censored_vulgar[], $censored_proper[]) = array_pad(explode('=', trim($c)), 2, '');
@@ -184,21 +184,21 @@ function SetCensor()
 			}
 			else
 			{
-				$censored_vulgar = explode("\n", strtr($_POST['censor_vulgar'], array("\r" => '')));
-				$censored_proper = explode("\n", strtr($_POST['censor_proper'], array("\r" => '')));
+				$censored_vulgar = explode("\n", strtr($_POST['censor_vulgar'], ["\r" => '']));
+				$censored_proper = explode("\n", strtr($_POST['censor_proper'], ["\r" => '']));
 			}
 		}
 
 		// Set the new arrays and settings in the database.
-		$updates = array(
+		$updates = [
 			'censor_vulgar' => implode("\n", $censored_vulgar),
 			'censor_proper' => implode("\n", $censored_proper),
 			'allow_no_censored' => empty($_POST['allow_no_censored']) ? '0' : '1',
 			'censorWholeWord' => empty($_POST['censorWholeWord']) ? '0' : '1',
 			'censorIgnoreCase' => empty($_POST['censorIgnoreCase']) ? '0' : '1',
-		);
+		];
 
-		call_integration_hook('integrate_save_censors', array(&$updates));
+		call_integration_hook('integrate_save_censors', [&$updates]);
 
 		$context['saved_successful'] = true;
 		updateSettings($updates);
@@ -209,7 +209,7 @@ function SetCensor()
 		require_once($sourcedir . '/Subs-Post.php');
 		$censorText = $smcFunc['htmlspecialchars']($_POST['censortest'], ENT_QUOTES);
 		preparsecode($censorText);
-		$context['censor_test'] = strtr(censorText($censorText), array('"' => '&quot;'));
+		$context['censor_test'] = strtr(censorText($censorText), ['"' => '&quot;']);
 	}
 
 	// Set everything up for the template to do its thang.
@@ -254,30 +254,30 @@ function ModifyPostSettings($return_config = false)
 	global $context, $txt, $modSettings, $scripturl, $sourcedir, $smcFunc, $db_type;
 
 	// All the settings...
-	$config_vars = array(
+	$config_vars = [
 			// Simple post options...
-			array('check', 'removeNestedQuotes'),
-			array('check', 'disable_wysiwyg'),
-			array('check', 'additional_options_collapsable'),
+			['check', 'removeNestedQuotes'],
+			['check', 'disable_wysiwyg'],
+			['check', 'additional_options_collapsable'],
 		'',
 			// Posting limits...
-			array('int', 'max_messageLength', 'subtext' => $txt['max_messageLength_zero'], 'postinput' => $txt['manageposts_characters']),
-			array('int', 'topicSummaryPosts', 'postinput' => $txt['manageposts_posts']),
+			['int', 'max_messageLength', 'subtext' => $txt['max_messageLength_zero'], 'postinput' => $txt['manageposts_characters']],
+			['int', 'topicSummaryPosts', 'postinput' => $txt['manageposts_posts']],
 		'',
 			// Posting time limits...
-			array('int', 'spamWaitTime', 'postinput' => $txt['manageposts_seconds']),
-			array('int', 'edit_wait_time', 'postinput' => $txt['manageposts_seconds']),
-			array('int', 'edit_disable_time', 'subtext' => $txt['zero_to_disable'], 'postinput' => $txt['manageposts_minutes']),
+			['int', 'spamWaitTime', 'postinput' => $txt['manageposts_seconds']],
+			['int', 'edit_wait_time', 'postinput' => $txt['manageposts_seconds']],
+			['int', 'edit_disable_time', 'subtext' => $txt['zero_to_disable'], 'postinput' => $txt['manageposts_minutes']],
 		'',
 			// Automagic image resizing.
-			array('int', 'max_image_width', 'subtext' => $txt['zero_for_no_limit']),
-			array('int', 'max_image_height', 'subtext' => $txt['zero_for_no_limit']),
+			['int', 'max_image_width', 'subtext' => $txt['zero_for_no_limit']],
+			['int', 'max_image_height', 'subtext' => $txt['zero_for_no_limit']],
 		'',
 			// First & Last message preview lengths
-			array('int', 'preview_characters', 'subtext' => $txt['zero_to_disable'], 'postinput' => $txt['preview_characters_units']),
-	);
+			['int', 'preview_characters', 'subtext' => $txt['zero_to_disable'], 'postinput' => $txt['preview_characters_units']],
+	];
 
-	settings_integration_hook('integrate_modify_post_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_post_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -304,7 +304,7 @@ function ModifyPostSettings($return_config = false)
 					$body_type = $column['type'];
 
 			if (isset($body_type) && ($_POST['max_messageLength'] > 65535 || $_POST['max_messageLength'] == 0) && $body_type == 'text')
-				fatal_lang_error('convert_to_mediumtext', false, array($scripturl . '?action=admin;area=maintain;sa=database'));
+				fatal_lang_error('convert_to_mediumtext', false, [$scripturl . '?action=admin;area=maintain;sa=database']);
 		}
 
 		// If we're changing the post preview length let's check its valid
@@ -342,30 +342,30 @@ function ModifyTopicSettings($return_config = false)
 	loadLanguage('ManageSettings');
 
 	// Here are all the topic settings.
-	$config_vars = array(
-			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
+	$config_vars = [
+			['select', 'pollMode', [$txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics']]],
 		'',
 			// Pagination etc...
-			array('int', 'oldTopicDays', 'postinput' => $txt['manageposts_days'], 'subtext' => $txt['zero_to_disable']),
-			array('int', 'defaultMaxTopics', 'postinput' => $txt['manageposts_topics']),
-			array('int', 'defaultMaxMessages', 'postinput' => $txt['manageposts_posts']),
+			['int', 'oldTopicDays', 'postinput' => $txt['manageposts_days'], 'subtext' => $txt['zero_to_disable']],
+			['int', 'defaultMaxTopics', 'postinput' => $txt['manageposts_topics']],
+			['int', 'defaultMaxMessages', 'postinput' => $txt['manageposts_posts']],
 		'',
 			// All, next/prev...
-			array('int', 'enableAllMessages', 'postinput' => $txt['manageposts_posts'], 'subtext' => $txt['enableAllMessages_zero']),
-			array('check', 'disableCustomPerPage'),
+			['int', 'enableAllMessages', 'postinput' => $txt['manageposts_posts'], 'subtext' => $txt['enableAllMessages_zero']],
+			['check', 'disableCustomPerPage'],
 		'',
 			// Topic related settings (show icons/avatars etc...)
-			array('check', 'subject_toggle'),
-			array('check', 'show_modify'),
-			array('check', 'show_profile_buttons'),
-			array('check', 'show_user_images'),
+			['check', 'subject_toggle'],
+			['check', 'show_modify'],
+			['check', 'show_profile_buttons'],
+			['check', 'show_user_images'],
 		'',
 			// First & Last message preview lengths
-			array('int', 'preview_characters', 'subtext' => $txt['zero_to_disable'], 'postinput' => $txt['preview_characters_units']),
-			array('check', 'message_index_preview_first', 'subtext' => $txt['message_index_preview_first_desc']),
-	);
+			['int', 'preview_characters', 'subtext' => $txt['zero_to_disable'], 'postinput' => $txt['preview_characters_units']],
+			['check', 'message_index_preview_first', 'subtext' => $txt['message_index_preview_first_desc']],
+	];
 
-	settings_integration_hook('integrate_modify_topic_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_topic_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;
@@ -409,16 +409,16 @@ function ModifyDraftSettings($return_config = false)
 	global $context, $txt, $sourcedir, $scripturl, $smcFunc;
 
 	// Here are all the draft settings, a bit lite for now, but we can add more :P
-	$config_vars = array(
+	$config_vars = [
 		// Draft settings ...
-		array('check', 'drafts_post_enabled'),
-		array('check', 'drafts_pm_enabled'),
-		array('check', 'drafts_show_saved_enabled', 'subtext' => $txt['drafts_show_saved_enabled_subnote']),
-		array('int', 'drafts_keep_days', 'postinput' => $txt['days_word'], 'subtext' => $txt['drafts_keep_days_subnote']),
+		['check', 'drafts_post_enabled'],
+		['check', 'drafts_pm_enabled'],
+		['check', 'drafts_show_saved_enabled', 'subtext' => $txt['drafts_show_saved_enabled_subnote']],
+		['int', 'drafts_keep_days', 'postinput' => $txt['days_word'], 'subtext' => $txt['drafts_keep_days_subnote']],
 		'',
-		array('check', 'drafts_autosave_enabled', 'subtext' => $txt['drafts_autosave_enabled_subnote']),
-		array('int', 'drafts_autosave_frequency', 'postinput' => $txt['manageposts_seconds'], 'subtext' => $txt['drafts_autosave_frequency_subnote']),
-	);
+		['check', 'drafts_autosave_enabled', 'subtext' => $txt['drafts_autosave_enabled_subnote']],
+		['int', 'drafts_autosave_frequency', 'postinput' => $txt['manageposts_seconds'], 'subtext' => $txt['drafts_autosave_frequency_subnote']],
+	];
 
 	if ($return_config)
 		return $config_vars;

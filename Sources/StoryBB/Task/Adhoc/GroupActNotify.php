@@ -34,9 +34,9 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 				INNER JOIN {db_prefix}membergroups AS mg ON (mg.id_group = lgr.id_group)
 			WHERE lgr.id_request IN ({array_int:request_list})
 			ORDER BY mem.lngfile',
-			array(
+			[
 				'request_list' => $this->_details['request_list'],
-			)
+			]
 		);
 		$affected_users = [];
 		$members = [];
@@ -62,7 +62,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 			}
 
 			// Build the required information array
-			$affected_users[] = array(
+			$affected_users[] = [
 				'rid' => $row['id_request'],
 				'member_id' => $row['id_member'],
 				'member_name' => $row['member_name'],
@@ -70,17 +70,17 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 				'group_name' => $row['group_name'],
 				'email' => $row['email_address'],
 				'language' => $row['lngfile'],
-			);
+			];
 		}
 		$smcFunc['db_free_result']($request);
 
 		// Ensure everyone who is online gets their changes right away.
-		updateSettings(array('settings_updated' => time()));
+		updateSettings(['settings_updated' => time()]);
 
 		if (!empty($affected_users))
 		{
 			require_once($sourcedir . '/Subs-Notify.php');
-			$prefs = getNotifyPrefs($members, array('groupr_approved', 'groupr_rejected'), true);
+			$prefs = getNotifyPrefs($members, ['groupr_approved', 'groupr_rejected'], true);
 
 			// They are being approved?
 			if ($this->_details['status'] == 'approve')
@@ -105,16 +105,16 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 
 				if ($pref & 0x01)
 				{
-					$alert_rows[] = array(
+					$alert_rows[] = [
 						'alert_time' => time(),
 						'id_member' => $user['member_id'],
 						'content_type' => 'groupr',
 						'content_id' => 0,
 						'content_action' => $pref_name,
 						'is_read' => 0,
-						'extra' => json_encode(array('group_name' => $user['group_name'], 'reason' => !empty($custom_reason) ? '<br><br>' . $custom_reason : '')),
-					);
-					updateMemberData($user['member_id'], array('alerts' => '+'));
+						'extra' => json_encode(['group_name' => $user['group_name'], 'reason' => !empty($custom_reason) ? '<br><br>' . $custom_reason : '']),
+					];
+					updateMemberData($user['member_id'], ['alerts' => '+']);
 				}
 
 				if ($pref & 0x02)
@@ -124,10 +124,10 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 					require_once($sourcedir . '/ScheduledTasks.php');
 					loadEssentialThemeData();
 
-					$replacements = array(
+					$replacements = [
 						'USERNAME' => $user['member_name'],
 						'GROUPNAME' => $user['group_name'],
-					);
+					];
 
 					if (!empty($custom_reason))
 						$replacements['REASON'] = $custom_reason;
@@ -142,10 +142,10 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 			if (!empty($alert_rows))
 				$smcFunc['db_insert']('',
 					'{db_prefix}user_alerts',
-					array(
+					[
 						'alert_time' => 'int', 'id_member' => 'int', 'content_type' => 'string',
 						'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string',
-					),
+					],
 					$alert_rows,
 					[]
 				);

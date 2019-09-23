@@ -64,10 +64,10 @@ function getServerVersions($checkFor)
 	$versions = [];
 
 	if (in_array('php', $checkFor))
-		$versions['php'] = array('title' => $txt['support_versions_php'], 'version' => PHP_VERSION, 'more' => '?action=admin;area=serversettings;sa=phpinfo');
+		$versions['php'] = ['title' => $txt['support_versions_php'], 'version' => PHP_VERSION, 'more' => '?action=admin;area=serversettings;sa=phpinfo'];
 
 	if (in_array('server', $checkFor))
-		$versions['server'] = array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']);
+		$versions['server'] = ['title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']];
 
 	// Now lets check for the Database.
 	if (in_array('db_server', $checkFor))
@@ -77,7 +77,7 @@ function getServerVersions($checkFor)
 			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
 		else
 		{
-			$versions['db_server'] = array('title' => $txt['support_versions_db'], 'version' => $smcFunc['db_get_engine']() . ' ' . $smcFunc['db_get_version']());
+			$versions['db_server'] = ['title' => $txt['support_versions_db'], 'version' => $smcFunc['db_get_engine']() . ' ' . $smcFunc['db_get_version']()];
 		}
 	}
 
@@ -85,7 +85,7 @@ function getServerVersions($checkFor)
 	if (in_array('gd', $checkFor) && function_exists('gd_info'))
 	{
 		$temp = gd_info();
-		$versions['gd'] = array('title' => $txt['support_versions_gd'], 'version' => $temp['GD Version']);
+		$versions['gd'] = ['title' => $txt['support_versions_gd'], 'version' => $temp['GD Version']];
 	}
 
 	// Why not have a look at ImageMagick? If it's installed, we should show version information for it too.
@@ -164,12 +164,12 @@ function getFileVersions(&$versionOptions)
 	// Default place to find the languages would be the default theme dir.
 	$lang_dir = $settings['default_theme_dir'] . '/languages';
 
-	$version_info = array(
+	$version_info = [
 		'file_versions' => [],
 		'default_template_versions' => [],
 		'template_versions' => [],
 		'default_language_versions' => [],
-	);
+	];
 
 	// Do the paid subscriptions handler?
 	if (!empty($versionOptions['include_subscriptions']) && file_exists($boarddir . '/subscriptions.php'))
@@ -210,9 +210,9 @@ function getFileVersions(&$versionOptions)
 	}
 
 	// Load all the files in the default template directory - and the current theme if applicable.
-	$directories = array('default_template_versions' => $settings['default_theme_dir']);
+	$directories = ['default_template_versions' => $settings['default_theme_dir']];
 	if ($settings['theme_id'] != 1)
-		$directories += array('template_versions' => $settings['theme_dir']);
+		$directories += ['template_versions' => $settings['theme_dir']];
 
 	foreach ($directories as $type => $dirname)
 	{
@@ -318,7 +318,7 @@ function updateSettingsFile($config_vars)
 
 	// remove any /r's that made there way in here
 	foreach ($settingsArray as $k => $dummy)
-		$settingsArray[$k] = strtr($dummy, array("\r" => '')) . "\n";
+		$settingsArray[$k] = strtr($dummy, ["\r" => '']) . "\n";
 
 	// go line by line and see whats changing
 	for ($i = 0, $n = count($settingsArray); $i < $n; $i++)
@@ -444,18 +444,18 @@ function updateAdminPreferences()
 		DELETE FROM {db_prefix}themes
 		WHERE id_theme != {int:default_theme}
 		AND variable = {string:admin_preferences}',
-		array(
+		[
 			'default_theme' => 1,
 			'admin_preferences' => 'admin_preferences',
-		)
+		]
 	);
 
 	// Update the themes table.
 	$smcFunc['db_insert']('replace',
 		'{db_prefix}themes',
-		array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-		array($user_info['id'], 1, 'admin_preferences', $options['admin_preferences']),
-		array('id_member', 'id_theme', 'variable')
+		['id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'],
+		[$user_info['id'], 1, 'admin_preferences', $options['admin_preferences']],
+		['id_member', 'id_theme', 'variable']
 	);
 
 	// Make sure we invalidate any cache.
@@ -491,9 +491,9 @@ function emailAdmins($template, $replacements = [], $additional_recipients = [])
 		SELECT id_member, member_name, real_name, lngfile, email_address
 		FROM {db_prefix}members
 		WHERE id_member IN({array_int:members})',
-		array(
+		[
 			'members' => $members,
-		)
+		]
 	);
 	$emails_sent = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))

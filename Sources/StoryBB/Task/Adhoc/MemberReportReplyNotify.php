@@ -33,10 +33,10 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 			WHERE id_notice = {int:report}
 				AND comment_type = {literal:reportc}
 				AND id_comment < {int:last_comment}',
-			array(
+			[
 				'report' => $this->_details['report_id'],
 				'last_comment' => $this->_details['comment_id'],
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$possible_members[] = $row[0];
@@ -46,7 +46,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 		if (!empty($possible_members))
 		{
 			$possible_members = array_flip(array_flip($possible_members));
-			$possible_members = array_diff($possible_members, array($this->_details['sender_id']));
+			$possible_members = array_diff($possible_members, [$this->_details['sender_id']]);
 		}
 		if (empty($possible_members))
 			return true;
@@ -61,10 +61,10 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 		$prefs = getNotifyPrefs($members, 'member_report_reply', true);
 
 		// So now we find out who wants what.
-		$alert_bits = array(
+		$alert_bits = [
 			'alert' => 0x01,
 			'email' => 0x02,
-		);
+		];
 		$notifies = [];
 
 		foreach ($prefs as $member => $pref_option)
@@ -83,7 +83,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 			$insert_rows = [];
 			foreach ($notifies['alert'] as $member)
 			{
-				$insert_rows[] = array(
+				$insert_rows[] = [
 					'alert_time' => $this->_details['time'],
 					'id_member' => $member,
 					'id_member_started' => $this->_details['sender_id'],
@@ -93,25 +93,25 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 					'content_action' => 'report_reply',
 					'is_read' => 0,
 					'extra' => json_encode(
-						array(
+						[
 							'report_link' => '?action=moderate;area=reportedmembers;sa=details;rid=' . $this->_details['report_id'], // We don't put $scripturl in these!
 							'user_name' => $this->_details['user_name'],
-						)
+						]
 					),
-				);
+				];
 			}
 
 			$smcFunc['db_insert']('insert',
 				'{db_prefix}user_alerts',
-				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int',
+				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int',
 					'member_name' => 'string', 'content_type' => 'string', 'content_id' => 'int',
-					'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+					'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 				$insert_rows,
-				array('id_alert')
+				['id_alert']
 			);
 
 			// And update the count of alerts for those people.
-			updateMemberData($notifies['alert'], array('alerts' => '+'));
+			updateMemberData($notifies['alert'], ['alerts' => '+']);
 		}
 
 		// Secondly, anyone who wants emails.
@@ -128,9 +128,9 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 				SELECT id_member, lngfile, email_address
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:members})',
-				array(
+				[
 					'members' => $notifies['email'],
-				)
+				]
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
@@ -143,12 +143,12 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 			// Iterate through each language, load the relevant templates and set up sending.
 			foreach ($emails as $this_lang => $recipients)
 			{
-				$replacements = array(
+				$replacements = [
 					'MEMBERNAME' => $this->_details['member_name'],
 					'COMMENTERNAME' => $this->_details['sender_name'],
 					'PROFILELINK' => $scripturl . 'action=profile;u=' . $this->_details['user_id'],
 					'REPORTLINK' => $scripturl . '?action=moderate;area=userreports;report=' . $this->_details['report_id'],
-				);
+				];
 
 				$emaildata = loadEmailTemplate('reply_to_user_reports', $replacements, empty($modSettings['userLanguage']) ? $language : $this_lang);
 

@@ -31,7 +31,7 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 	// Map some database specific functions, only do this once.
 	if (!isset($smcFunc['db_fetch_assoc']))
 	{
-		$smcFunc += array(
+		$smcFunc += [
 			'db_query'                  => 'sbb_db_query',
 			'db_quote'                  => 'sbb_db_quote',
 			'db_fetch_assoc'            => 'mysqli_fetch_assoc',
@@ -54,7 +54,7 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_error_insert'			=> 'sbb_db_error_insert',
 			'db_custom_order'			=> 'sbb_db_custom_order',
 			'db_list_tables'            => 'sbb_db_list_tables',
-		);
+		];
 	}
 }
 
@@ -214,7 +214,7 @@ function sbb_db_replacement__callback($matches)
 
 		case 'identifier':
 			// Backticks inside identifiers are supported as of MySQL 4.1. We don't need them for StoryBB.
-			return '`' . strtr($replacement, array('`' => '', '.' => '`.`')) . '`';
+			return '`' . strtr($replacement, ['`' => '', '.' => '`.`']) . '`';
 		break;
 
 		case 'raw':
@@ -269,7 +269,7 @@ function sbb_db_quote($db_string, $db_values, $connection = null)
 	global $db_callback, $db_connection;
 
 	// This is needed by the callback function.
-	$db_callback = array($db_values, $connection === null ? $db_connection : $connection);
+	$db_callback = [$db_values, $connection === null ? $db_connection : $connection];
 
 	// Do the quoting and escaping
 	$db_string = preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', 'sbb_db_replacement__callback', $db_string);
@@ -295,18 +295,18 @@ function sbb_db_query($identifier, $db_string, $db_values = [], $connection = nu
 	global $db_unbuffered, $db_callback, $modSettings, $smcFunc;
 
 	// Comments that are allowed in a query are preg_removed.
-	static $allowed_comments_from = array(
+	static $allowed_comments_from = [
 		'~\s+~s',
 		'~/\*!40001 SQL_NO_CACHE \*/~',
 		'~/\*!40000 USE INDEX \([A-Za-z\_]+?\) \*/~',
 		'~/\*!40100 ON DUPLICATE KEY UPDATE id_msg = \d+ \*/~',
-	);
-	static $allowed_comments_to = array(
+	];
+	static $allowed_comments_to = [
 		' ',
 		'',
 		'',
 		'',
-	);
+	];
 
 	// Decide which connection to use.
 	$connection = $connection === null ? $db_connection : $connection;
@@ -474,9 +474,9 @@ function sbb_db_error($db_string, $connection = null)
 		log_error($txt['database_error'] . ': ' . $query_error . (!empty($modSettings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
 
 	// Check for the "lost connection" or "deadlock found" errors - and try it just one more time.
-	if (in_array($query_errno, array(1205, 1213, 2006, 2013)))
+	if (in_array($query_errno, [1205, 1213, 2006, 2013]))
 	{
-		if (in_array($query_errno, array(2006, 2013)) && $db_connection == $connection)
+		if (in_array($query_errno, [2006, 2013]) && $db_connection == $connection)
 		{
 			try
 			{
@@ -498,7 +498,7 @@ function sbb_db_error($db_string, $connection = null)
 				$ret = $smcFunc['db_query']('', $db_string, false, false);
 
 				$new_errno = mysqli_errno($db_connection);
-				if ($ret !== false || in_array($new_errno, array(1205, 1213)))
+				if ($ret !== false || in_array($new_errno, [1205, 1213]))
 					break;
 			}
 
@@ -579,7 +579,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 
 	// Inserting data as a single row can be done as a single array.
 	if (!is_array($data[array_rand($data)]))
-		$data = array($data);
+		$data = [$data];
 
 	// Create the mold for a single row insert.
 	$insertData = '(';
@@ -612,10 +612,10 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 			VALUES
 				' . implode(',
 				', $insertRows),
-			array(
+			[
 				'security_override' => true,
 				'db_error_skip' => $table === $db_prefix . 'log_errors',
-			),
+			],
 			$connection
 		);
 	}
@@ -631,10 +631,10 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 				' . $queryTitle . ' INTO ' . $table . '(`' . implode('`, `', $indexed_columns) . '`)
 				VALUES
 					' . $insertRows[$i],
-				array(
+				[
 					'security_override' => true,
 					'db_error_skip' => $table === $db_prefix . 'log_errors',
-				),
+				],
 				$connection
 			);
 			$new_id = $smcFunc['db']->inserted_id();
@@ -709,7 +709,7 @@ function sbb_db_error_backtrace($error_message, $log_message = '', $error_type =
 	foreach (debug_backtrace() as $step)
 	{
 		// Found it?
-		if (strpos($step['function'], 'query') === false && !in_array(substr($step['function'], 0, 7), array('sbb_db_', 'preg_re', 'db_erro', 'call_us')) && strpos($step['function'], '__') !== 0)
+		if (strpos($step['function'], 'query') === false && !in_array(substr($step['function'], 0, 7), ['sbb_db_', 'preg_re', 'db_erro', 'call_us']) && strpos($step['function'], '__') !== 0)
 		{
 			$log_message .= '<br>Function: ' . $step['function'];
 			break;
@@ -724,7 +724,7 @@ function sbb_db_error_backtrace($error_message, $log_message = '', $error_type =
 
 	// A special case - we want the file and line numbers for debugging.
 	if ($error_type == 'return')
-		return array($file, $line);
+		return [$file, $line];
 
 	// Is always a critical error.
 	if (function_exists('log_error'))
@@ -752,16 +752,16 @@ function sbb_db_error_backtrace($error_message, $log_message = '', $error_type =
  */
 function sbb_db_escape_wildcard_string($string, $translate_human_wildcards = false)
 {
-	$replacements = array(
+	$replacements = [
 		'%' => '\%',
 		'_' => '\_',
 		'\\' => '\\\\',
-	);
+	];
 
 	if ($translate_human_wildcards)
-		$replacements += array(
+		$replacements += [
 			'*' => '%',
-		);
+		];
 
 	return strtr($string, $replacements);
 }
@@ -862,10 +862,10 @@ function sbb_db_list_tables($db = false, $filter = false)
 		SHOW TABLES
 		FROM `{raw:db}`
 		{raw:filter}',
-		array(
-			'db' => $db[0] == '`' ? strtr($db, array('`' => '')) : $db,
+		[
+			'db' => $db[0] == '`' ? strtr($db, ['`' => '']) : $db,
 			'filter' => $filter,
-		)
+		]
 	);
 	$tables = [];
 	while ($row = $smcFunc['db_fetch_row']($request))

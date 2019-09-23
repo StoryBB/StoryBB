@@ -82,7 +82,7 @@ class IP
 				$host = '';
 			// Invalid server option?
 			elseif ((strpos($test, 'invalid option') || strpos($test, 'Invalid query name 1')) && !isset($modSettings['host_to_dis']))
-				updateSettings(array('host_to_dis' => 1));
+				updateSettings(['host_to_dis' => 1]);
 			// Maybe it found something, after all?
 			elseif (preg_match('~\s([^\s]+?)\.\s~', $test, $match) == 1)
 				$host = $match[1];

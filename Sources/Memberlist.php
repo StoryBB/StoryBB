@@ -35,73 +35,73 @@ function Memberlist()
 
 	// $subActions array format:
 	// 'subaction' => array('label', 'function', 'is_selected')
-	$subActions = array(
-		'all' => array($txt['view_all_members'], 'MLAll', $context['listing_by'] == 'all'),
-		'search' => array($txt['mlist_search'], 'MLSearch', $context['listing_by'] == 'search'),
-	);
+	$subActions = [
+		'all' => [$txt['view_all_members'], 'MLAll', $context['listing_by'] == 'all'],
+		'search' => [$txt['mlist_search'], 'MLSearch', $context['listing_by'] == 'search'],
+	];
 
 	// Set up the sort links.
 	$context['sort_links'] = [];
 	foreach ($subActions as $act => $text)
 	{
-		$context['sort_links'][] = array(
+		$context['sort_links'][] = [
 			'label' => $text[0],
 			'action' => $act,
 			'selected' => $text[2],
-		);
+		];
 	}
 
 	$context['num_members'] = $modSettings['totalMembers'];
 
 	// Set up the columns...
-	$context['columns'] = array(
-		'is_online' => array(
+	$context['columns'] = [
+		'is_online' => [
 			'label' => $txt['status'],
-			'sort' => array(
+			'sort' => [
 				'down' => allowedTo('moderate_forum') ? 'COALESCE(lo.log_time, 1) ASC, real_name ASC' : 'CASE WHEN mem.show_online THEN COALESCE(lo.log_time, 1) ELSE 1 END ASC, real_name ASC',
 				'up' => allowedTo('moderate_forum') ? 'COALESCE(lo.log_time, 1) DESC, real_name DESC' : 'CASE WHEN mem.show_online THEN COALESCE(lo.log_time, 1) ELSE 1 END DESC, real_name DESC'
-			),
-		),
-		'real_name' => array(
+			],
+		],
+		'real_name' => [
 			'label' => $txt['name'],
 			'class' => 'lefttext',
-			'sort' => array(
+			'sort' => [
 				'down' => 'mem.real_name DESC',
 				'up' => 'mem.real_name ASC'
-			),
-		),
-		'website_url' => array(
+			],
+		],
+		'website_url' => [
 			'label' => $txt['website'],
 			'link_with' => 'website',
-			'sort' => array(
+			'sort' => [
 				'down' => 'LENGTH(mem.website_url) > 0 ASC, COALESCE(mem.website_url, 1=1) DESC, mem.website_url DESC',
 				'up' => 'LENGTH(mem.website_url) > 0 DESC, COALESCE(mem.website_url, 1=1) ASC, mem.website_url ASC'
-			),
-		),
-		'id_group' => array(
+			],
+		],
+		'id_group' => [
 			'label' => $txt['position'],
-			'sort' => array(
+			'sort' => [
 				'down' => 'COALESCE(mg.group_name, 1=1) DESC, mg.group_name DESC',
 				'up' => 'COALESCE(mg.group_name, 1=1) ASC, mg.group_name ASC'
-			),
-		),
-		'registered' => array(
+			],
+		],
+		'registered' => [
 			'label' => $txt['date_registered'],
-			'sort' => array(
+			'sort' => [
 				'down' => 'mem.date_registered DESC',
 				'up' => 'mem.date_registered ASC'
-			),
-		),
-		'posts' => array(
+			],
+		],
+		'posts' => [
 			'label' => $txt['posts'],
 			'colspan' => 2,
 			'default_sort_rev' => true,
-			'sort' => array(
+			'sort' => [
 				'down' => 'mem.posts DESC',
 				'up' => 'mem.posts ASC'
-			),
-		)
-	);
+			],
+		]
+	];
 
 	$context['custom_profile_fields'] = getCustFieldsMList();
 
@@ -124,19 +124,19 @@ function Memberlist()
 	// Aesthetic stuff.
 	end($context['columns']);
 
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=mlist',
 		'name' => $txt['members_list']
-	);
+	];
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 	$context['can_send_email'] = allowedTo('moderate_forum');
 
 	// Build the memberlist button array.
-	$context['memberlist_buttons'] = array(
-		'view_all_members' => array('text' => 'view_all_members', 'image' => 'mlist.png', 'url' => $scripturl . '?action=mlist' . ';sa=all', 'active' => true),
-		'mlist_search' => array('text' => 'mlist_search', 'image' => 'mlist.png', 'url' => $scripturl . '?action=mlist' . ';sa=search'),
-	);
+	$context['memberlist_buttons'] = [
+		'view_all_members' => ['text' => 'view_all_members', 'image' => 'mlist.png', 'url' => $scripturl . '?action=mlist' . ';sa=all', 'active' => true],
+		'mlist_search' => ['text' => 'mlist_search', 'image' => 'mlist.png', 'url' => $scripturl . '?action=mlist' . ';sa=search'],
+	];
 
 	// Allow mods to add additional buttons here
 	call_integration_hook('integrate_memberlist_buttons');
@@ -186,16 +186,16 @@ function MLAll()
 				FROM {db_prefix}members
 				WHERE is_activated = {int:is_activated}
 				ORDER BY real_name',
-				array(
+				[
 					'is_activated' => 1,
-				)
+				]
 			);
 
-			$memberlist_cache = array(
+			$memberlist_cache = [
 				'last_update' => time(),
 				'num_members' => $smcFunc['db_num_rows']($request),
 				'index' => [],
-			);
+			];
 
 			for ($i = 0, $n = $smcFunc['db_num_rows']($request); $i < $n; $i += $cache_step_size)
 			{
@@ -207,7 +207,7 @@ function MLAll()
 			$smcFunc['db_free_result']($request);
 
 			// Now we've got the cache...store it.
-			updateSettings(array('memberlist_cache' => json_encode($memberlist_cache)));
+			updateSettings(['memberlist_cache' => json_encode($memberlist_cache)]);
 		}
 
 		$context['num_members'] = $memberlist_cache['num_members'];
@@ -220,9 +220,9 @@ function MLAll()
 			SELECT COUNT(*)
 			FROM {db_prefix}members
 			WHERE is_activated = {int:is_activated}',
-			array(
+			[
 				'is_activated' => 1,
-			)
+			]
 		);
 		list ($context['num_members']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -244,10 +244,10 @@ function MLAll()
 			FROM {db_prefix}members
 			WHERE LOWER(SUBSTRING(real_name, 1, 1)) < {string:first_letter}
 				AND is_activated = {int:is_activated}',
-			array(
+			[
 				'is_activated' => 1,
 				'first_letter' => $_REQUEST['start'],
-			)
+			]
 		);
 		list ($_REQUEST['start']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -282,19 +282,19 @@ function MLAll()
 
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['page_title'] = sprintf($txt['viewing_members'], $context['start'], $context['end']);
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=mlist;sort=' . $_REQUEST['sort'] . ';start=' . $_REQUEST['start'],
 		'name' => &$context['page_title'],
 		'extra_after' => '(' . sprintf($txt['of_total_members'], $context['num_members']) . ')'
-	);
+	];
 
 	$limit = $_REQUEST['start'];
-	$query_parameters = array(
+	$query_parameters = [
 		'regular_id_group' => 0,
 		'is_activated' => 1,
 		'sort' => $context['columns'][$_REQUEST['sort']]['sort'][$context['sort_direction']],
 		'blank_string' => '',
-	);
+	];
 
 	// Using cache allows to narrow down the list to be retrieved.
 	if ($use_cache && $_REQUEST['sort'] === 'real_name' && !isset($_REQUEST['desc']))
@@ -337,11 +337,11 @@ function MLAll()
 			AND ' . $where) . '
 		ORDER BY {raw:sort}
 		LIMIT {int:start}, {int:max}',
-		array_merge($query_parameters, array(
+		array_merge($query_parameters, [
 			'sort' => $query_parameters['sort'],
 			'start' => $limit,
 			'max' => $modSettings['defaultMaxMembers'],
-		))
+		])
 	);
 	printMemberListRows($request);
 	$smcFunc['db_free_result']($request);
@@ -384,22 +384,22 @@ function MLSearch()
 			' . (allowedTo('admin_forum') ? '' : ' AND private < {int:private_level}') . '
 			AND can_search = {int:can_search}
 			AND (field_type = {string:field_type_text} OR field_type = {string:field_type_textarea} OR field_type = {string:field_type_select})',
-		array(
+		[
 			'active' => 1,
 			'can_search' => 1,
 			'private_level' => 2,
 			'field_type_text' => 'text',
 			'field_type_textarea' => 'textarea',
 			'field_type_select' => 'select',
-		)
+		]
 	);
 	$context['custom_search_fields'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$context['custom_search_fields'][$row['col_name']] = array(
+		$context['custom_search_fields'][$row['col_name']] = [
 			'colname' => $row['col_name'],
 			'name' => $row['field_name'],
 			'desc' => $row['field_desc'],
-		);
+		];
 	$smcFunc['db_free_result']($request);
 
 	// They're searching..
@@ -413,7 +413,7 @@ function MLSearch()
 
 		// No fields?  Use default...
 		if (empty($_POST['fields']))
-			$_POST['fields'] = array('name');
+			$_POST['fields'] = ['name'];
 
 		// Set defaults for how the results are sorted
 		if (!isset($_REQUEST['sort']) || !isset($context['columns'][$_REQUEST['sort']]))
@@ -438,18 +438,18 @@ function MLSearch()
 		$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
 		$context['sort_by'] = $_REQUEST['sort'];
 
-		$query_parameters = array(
+		$query_parameters = [
 			'regular_id_group' => 0,
 			'is_activated' => 1,
 			'blank_string' => '',
-			'search' => '%' . strtr($smcFunc['htmlspecialchars']($_POST['search'], ENT_QUOTES), array('_' => '\\_', '%' => '\\%', '*' => '%')) . '%',
+			'search' => '%' . strtr($smcFunc['htmlspecialchars']($_POST['search'], ENT_QUOTES), ['_' => '\\_', '%' => '\\%', '*' => '%']) . '%',
 			'sort' => $context['columns'][$_REQUEST['sort']]['sort'][$context['sort_direction']],
-		);
+		];
 
 		// Search for a name
 		if (in_array('name', $_POST['fields']))
 		{
-			$fields = allowedTo('moderate_forum') ? array('member_name', 'real_name') : array('real_name');
+			$fields = allowedTo('moderate_forum') ? ['member_name', 'real_name'] : ['real_name'];
 			$search_fields[] = 'name';
 		}
 		else
@@ -461,19 +461,19 @@ function MLSearch()
 		// Search for websites.
 		if (in_array('website', $_POST['fields']))
 		{
-			$fields += array(7 => 'website_title', 'website_url');
+			$fields += [7 => 'website_title', 'website_url'];
 			$search_fields[] = 'website';
 		}
 		// Search for groups.
 		if (in_array('group', $_POST['fields']))
 		{
-			$fields += array(9 => 'COALESCE(group_name, {string:blank_string})');
+			$fields += [9 => 'COALESCE(group_name, {string:blank_string})'];
 			$search_fields[] = 'group';
 		}
 		// Search for an email address?
 		if (in_array('email', $_POST['fields']) && allowedTo('moderate_forum'))
 		{
-			$fields += array(2 => 'email_address');
+			$fields += [2 => 'email_address'];
 			$search_fields[] = 'email';
 		}
 
@@ -492,7 +492,7 @@ function MLSearch()
 			{
 				$customJoin[] = 'LEFT JOIN {db_prefix}themes AS t' . $row['col_name'] . ' ON (t' . $row['col_name'] . '.variable = {string:t' . $row['col_name'] . '} AND t' . $row['col_name'] . '.id_theme = 1 AND t' . $row['col_name'] . '.id_member = mem.id_member)';
 				$query_parameters['t' . $row['col_name']] = $row['col_name'];
-				$fields += array($customCount++ => 'COALESCE(t' . $row['col_name'] . '.value, {string:blank_string})');
+				$fields += [$customCount++ => 'COALESCE(t' . $row['col_name'] . '.value, {string:blank_string})'];
 				$search_fields[] = $field;
 			}
 		}
@@ -530,10 +530,10 @@ function MLSearch()
 				AND mem.is_activated = {int:is_activated}
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:max}',
-			array_merge($query_parameters, array(
+			array_merge($query_parameters, [
 				'start' => $_REQUEST['start'],
 				'max' => $modSettings['defaultMaxMembers'],
-			))
+			])
 		);
 		printMemberListRows($request);
 		$smcFunc['db_free_result']($request);
@@ -541,22 +541,22 @@ function MLSearch()
 	else
 	{
 		// These are all the possible fields.
-		$context['search_fields'] = array(
+		$context['search_fields'] = [
 			'name' => $txt['mlist_search_name'],
 			'email' => $txt['mlist_search_email'],
 			'website' => $txt['mlist_search_website'],
 			'group' => $txt['mlist_search_group'],
-		);
+		];
 
 		// Sorry, but you can't search by email unless you can view emails
 		if (!allowedTo('moderate_forum'))
 		{
 			unset($context['search_fields']['email']);
-			$context['search_defaults'] = array('name');
+			$context['search_defaults'] = ['name'];
 		}
 		else
 		{
-			$context['search_defaults'] = array('name', 'email');
+			$context['search_defaults'] = ['name', 'email'];
 		}
 
 		foreach ($context['custom_search_fields'] as $field)
@@ -570,10 +570,10 @@ function MLSearch()
 	$(\'input[name="search"]\').focus();', true);
 	}
 
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=mlist;sa=search',
 		'name' => &$context['page_title']
-	);
+	];
 
 	// Highlight the correct button, too!
 	unset($context['memberlist_buttons']['view_all_members']['active']);
@@ -595,8 +595,8 @@ function printMemberListRows($request)
 	$result = $smcFunc['db_query']('', '
 		SELECT MAX(posts)
 		FROM {db_prefix}members',
-		array(
-		)
+		[
+		]
 	);
 	list ($most_posts) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db_free_result']($result);
@@ -641,12 +641,12 @@ function printMemberListRows($request)
 
 				// Enclosing the user input within some other text?
 				if (!empty($column['enclose']))
-					$context['members'][$member]['options'][$key] = strtr($column['enclose'], array(
+					$context['members'][$member]['options'][$key] = strtr($column['enclose'], [
 						'{SCRIPTURL}' => $scripturl,
 						'{IMAGES_URL}' => $settings['images_url'],
 						'{DEFAULT_IMAGES_URL}' => $settings['default_images_url'],
 						'{INPUT}' => $context['members'][$member]['options'][$key],
-					));
+					]);
 			}
 		}
 	}
@@ -669,35 +669,35 @@ function getCustFieldsMList()
 		WHERE active = {int:active}
 			AND show_mlist = {int:show}
 			AND private < {int:private_level}',
-		array(
+		[
 			'active' => 1,
 			'show' => 1,
 			'private_level' => 2,
-		)
+		]
 	);
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Get all the data we're gonna need.
-		$cpf['columns'][$row['col_name']] = array(
+		$cpf['columns'][$row['col_name']] = [
 			'label' => $row['field_name'],
 			'type' => $row['field_type'],
 			'bbc' => !empty($row['bbc']),
 			'enclose' => $row['enclose'],
-		);
+		];
 
 		// Get the right sort method depending on the cust field type.
 		if ($row['field_type'] != 'check')
-			$cpf['columns'][$row['col_name']]['sort'] = array(
+			$cpf['columns'][$row['col_name']]['sort'] = [
 				'down' => 'LENGTH(t' . $row['col_name'] . '.value) > 0 ASC, COALESCE(t' . $row['col_name'] . '.value, \'\') DESC',
 				'up' => 'LENGTH(t' . $row['col_name'] . '.value) > 0 DESC, COALESCE(t' . $row['col_name'] . '.value, \'\') ASC'
-			);
+			];
 
 		else
-			$cpf['columns'][$row['col_name']]['sort'] = array(
+			$cpf['columns'][$row['col_name']]['sort'] = [
 				'down' => 't' . $row['col_name'] . '.value DESC',
 				'up' => 't' . $row['col_name'] . '.value ASC'
-			);
+			];
 
 		$cpf['join'][$row['col_name']] = 'LEFT JOIN {db_prefix}themes AS t' . $row['col_name'] . ' ON (t' . $row['col_name'] . '.variable = {literal:' . $row['col_name'] . '} AND t' . $row['col_name'] . '.id_theme = 1 AND t' . $row['col_name'] . '.id_member = mem.id_member)';
 	}

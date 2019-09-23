@@ -46,7 +46,7 @@ class Mail
 		$mail_result = true;
 
 		// If the recipient list isn't an array, make it one.
-		$to_array = is_array($to) ? $to : array($to);
+		$to_array = is_array($to) ? $to : [$to];
 
 		// Make sure we actually have email addresses to send this to
 		foreach ($to_array as $k => $v)
@@ -72,7 +72,7 @@ class Mail
 				if (preg_match('~@(att|comcast|bellsouth)\.[a-zA-Z\.]{2,6}$~i', $to_address) === 1)
 				{
 					$hotmail_to[] = $to_address;
-					$to_array = array_diff($to_array, array($to_address));
+					$to_array = array_diff($to_array, [$to_address]);
 				}
 			}
 
@@ -91,13 +91,13 @@ class Mail
 		// Get rid of entities.
 		$subject = un_htmlspecialchars($subject);
 		// Make the message use the proper line breaks.
-		$message = str_replace(array("\r", "\n"), array('', $line_break), $message);
+		$message = str_replace(["\r", "\n"], ['', $line_break], $message);
 
 		// Make sure hotmail mails are sent as HTML so that HTML entities work.
 		if ($hotmail_fix && !$send_html)
 		{
 			$send_html = true;
-			$message = strtr($message, array($line_break => '<br>' . $line_break));
+			$message = strtr($message, [$line_break => '<br>' . $line_break]);
 			$message = preg_replace('~(' . preg_quote($scripturl, '~') . '(?:[?/][\w\-_%\.,\?&;=#]+)?)~', '<a href="$1">$1</a>', $message);
 		}
 
@@ -115,7 +115,7 @@ class Mail
 		$headers .= 'X-Mailer: StoryBB' . $line_break;
 
 		// Pass this to the integration before we start modifying the output -- it'll make it easier later.
-		if (in_array(false, call_integration_hook('integrate_outgoing_email', array(&$subject, &$message, &$headers, &$to_array)), true))
+		if (in_array(false, call_integration_hook('integrate_outgoing_email', [&$subject, &$message, &$headers, &$to_array]), true))
 			return false;
 
 		// Save the original message...
@@ -132,7 +132,7 @@ class Mail
 		// Sending HTML?  Let's plop in some basic stuff, then.
 		if ($send_html)
 		{
-			$no_html_message = un_htmlspecialchars(strip_tags(strtr($orig_message, array('</title>' => $line_break))));
+			$no_html_message = un_htmlspecialchars(strip_tags(strtr($orig_message, ['</title>' => $line_break])));
 
 			// But, then, dump it and use a plain one for dinosaur clients.
 			list(, $plain_message) = self::mimespecialchars($no_html_message, false, true, $line_break);
@@ -177,22 +177,22 @@ class Mail
 			else
 				$new_queue_stat = $last_mail_time . '|' . ((int) $mails_this_minute + 1);
 
-			updateSettings(array('mail_recent' => $new_queue_stat));
+			updateSettings(['mail_recent' => $new_queue_stat]);
 		}
 
 		// SMTP or sendmail?
 		if ($use_sendmail)
 		{
-			$subject = strtr($subject, array("\r" => '', "\n" => ''));
+			$subject = strtr($subject, ["\r" => '', "\n" => '']);
 			if (!empty($modSettings['mail_strip_carriage']))
 			{
-				$message = strtr($message, array("\r" => ''));
-				$headers = strtr($headers, array("\r" => ''));
+				$message = strtr($message, ["\r" => '']);
+				$headers = strtr($headers, ["\r" => '']);
 			}
 
 			foreach ($to_array as $to)
 			{
-				if (!mail(strtr($to, array("\r" => '', "\n" => '')), $subject, $message, $headers))
+				if (!mail(strtr($to, ["\r" => '', "\n" => '']), $subject, $message, $headers))
 				{
 					log_error(sprintf($txt['mail_send_unable'], $to), 'mail');
 					$mail_result = false;
@@ -273,7 +273,7 @@ class Mail
 			};
 
 			// Convert all 'special' characters to HTML entities.
-			return array($charset, preg_replace_callback('~([\x80-\x{10FFFF}])~u', $entityConvert, $string), '7bit');
+			return [$charset, preg_replace_callback('~([\x80-\x{10FFFF}])~u', $entityConvert, $string), '7bit'];
 		}
 
 		// We don't need to mess with the subject line if no special characters were in it..
@@ -290,11 +290,11 @@ class Mail
 			else
 				$string = chunk_split($string, 76, $line_break);
 
-			return array($charset, $string, 'base64');
+			return [$charset, $string, 'base64'];
 		}
 
 		else
-			return array($charset, $string, '7bit');
+			return [$charset, $string, '7bit'];
 	}
 
 	/**
@@ -320,7 +320,7 @@ class Mail
 		{
 			$socket = fsockopen($modSettings['smtp_host'], 110, $errno, $errstr, 2);
 			if (!$socket && (substr($modSettings['smtp_host'], 0, 5) == 'smtp.' || substr($modSettings['smtp_host'], 0, 11) == 'ssl://smtp.'))
-				$socket = fsockopen(strtr($modSettings['smtp_host'], array('smtp.' => 'pop.')), 110, $errno, $errstr, 2);
+				$socket = fsockopen(strtr($modSettings['smtp_host'], ['smtp.' => 'pop.']), 110, $errno, $errstr, 2);
 
 			if ($socket)
 			{
@@ -370,7 +370,7 @@ class Mail
 			$helo = $modSettings['smtp_host'];
 
 		// SMTP = 1, SMTP - STARTTLS = 2
-		if (in_array($modSettings['mail_type'], array(1, 2)) && $modSettings['smtp_username'] != '' && $modSettings['smtp_password'] != '')
+		if (in_array($modSettings['mail_type'], [1, 2]) && $modSettings['smtp_username'] != '' && $modSettings['smtp_password'] != '')
 		{
 			// EHLO could be understood to mean encrypted hello...
 			if (self::server_parse('EHLO ' . $helo, $socket, null, $response) == '250')
@@ -409,7 +409,7 @@ class Mail
 		}
 
 		// Fix the message for any lines beginning with a period! (the first is ignored, you see.)
-		$message = strtr($message, array("\r\n" . '.' => "\r\n" . '..'));
+		$message = strtr($message, ["\r\n" . '.' => "\r\n" . '..']);
 
 		// !! Theoretically, we should be able to just loop the RCPT TO.
 		$mail_to_array = array_values($mail_to_array);

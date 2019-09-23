@@ -53,10 +53,10 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 			FROM {db_prefix}log_subscribed
 			WHERE status = {int:is_active}
 				AND end_time < {int:time_now}',
-			array(
+			[
 				'is_active' => 1,
 				'time_now' => time(),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -74,12 +74,12 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 				AND ls.reminder_sent = {int:reminder_sent}
 				AND s.reminder > {int:reminder_wanted}
 				AND ls.end_time < ({int:time_now} + s.reminder * 86400)',
-			array(
+			[
 				'is_active' => 1,
 				'reminder_sent' => 0,
 				'reminder_wanted' => 0,
 				'time_now' => time(),
-			)
+			]
 		);
 		$subs_reminded = [];
 		$members = [];
@@ -103,12 +103,12 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 		$alert_rows = [];
 		foreach ($members as $row)
 		{
-			$replacements = array(
+			$replacements = [
 				'PROFILE_LINK' => $scripturl . '?action=profile;area=subscriptions;u=' . $row['id_member'],
 				'REALNAME' => $row['member_name'],
 				'SUBSCRIPTION' => $row['name'],
 				'END_DATE' => strip_tags(timeformat($row['end_time'])),
-			);
+			];
 
 			$emaildata = loadEmailTemplate('paid_subscription_reminder', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
 
@@ -118,7 +118,7 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 
 			if ($notifyPrefs[$row['id_member']] & 0x01)
 			{
-				$alert_rows[] = array(
+				$alert_rows[] = [
 					'alert_time' => time(),
 					'id_member' => $row['id_member'],
 					'id_member_started' => $row['id_member'],
@@ -127,12 +127,12 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 					'content_id' => $row['id_sublog'],
 					'content_action' => 'expiring',
 					'is_read' => 0,
-					'extra' => json_encode(array(
+					'extra' => json_encode([
 						'subscription_name' => $row['name'],
 						'end_time' => strip_tags(timeformat($row['end_time'])),
-					)),
-				);
-				updateMemberData($row['id_member'], array('alerts' => '+'));
+					]),
+				];
+				updateMemberData($row['id_member'], ['alerts' => '+']);
 			}
 		}
 
@@ -140,8 +140,8 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 		if (!empty($alert_rows))
 			$smcFunc['db_insert']('',
 				'{db_prefix}user_alerts',
-				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
-					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 				$alert_rows,
 				[]
 			);
@@ -152,10 +152,10 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 				UPDATE {db_prefix}log_subscribed
 				SET reminder_sent = {int:reminder_sent}
 				WHERE id_sublog IN ({array_int:subscription_list})',
-				array(
+				[
 					'subscription_list' => $subs_reminded,
 					'reminder_sent' => 1,
-				)
+				]
 			);
 
 		return true;

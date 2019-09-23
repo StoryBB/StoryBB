@@ -35,9 +35,9 @@ function MoveTopic()
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
-		)
+		]
 	);
 	list ($id_member_started, $context['subject'], $context['is_approved']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -63,7 +63,7 @@ function MoveTopic()
 
 	if (!$context['move_any'])
 	{
-		$boards = array_diff(boardsAllowedTo('post_new'), array($board));
+		$boards = array_diff(boardsAllowedTo('post_new'), [$board]);
 		if (empty($boards))
 		{
 			// No boards? Too bad...
@@ -71,9 +71,9 @@ function MoveTopic()
 		}
 	}
 
-	$options = array(
+	$options = [
 		'not_redirection' => true,
-	);
+	];
 
 	if (!empty($_SESSION['move_to_topic']) && $_SESSION['move_to_topic'] != $board)
 		$options['selected_board'] = $_SESSION['move_to_topic'];
@@ -86,14 +86,14 @@ function MoveTopic()
 
 	$context['page_title'] = $txt['move_topic'];
 
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?topic=' . $topic . '.0',
 		'name' => $context['subject'],
-	);
+	];
 
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'name' => $txt['move_topic'],
-	);
+	];
 
 	$context['back_to_topic'] = isset($_REQUEST['goback']);
 
@@ -147,9 +147,9 @@ function MoveTopic2()
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
-		)
+		]
 	);
 	list ($id_member_started, $id_first_msg, $context['is_approved']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -183,11 +183,11 @@ function MoveTopic2()
 			AND b.id_board = {int:to_board}
 			AND b.redirect = {string:blank_redirect}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
 			'to_board' => $_POST['toboard'],
 			'blank_redirect' => '',
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_board');
@@ -200,7 +200,7 @@ function MoveTopic2()
 	// Rename the topic...
 	if (isset($_POST['reset_subject'], $_POST['custom_subject']) && $_POST['custom_subject'] != '')
 	{
-		$_POST['custom_subject'] = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['custom_subject'])), array("\r" => '', "\n" => '', "\t" => ''));
+		$_POST['custom_subject'] = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['custom_subject'])), ["\r" => '', "\n" => '', "\t" => '']);
 		// Keep checking the length.
 		if ($smcFunc['strlen']($_POST['custom_subject']) > 100)
 			$_POST['custom_subject'] = $smcFunc['substr']($_POST['custom_subject'], 0, 100);
@@ -228,10 +228,10 @@ function MoveTopic2()
 					UPDATE {db_prefix}messages
 					SET subject = {string:subject}
 					WHERE id_topic = {int:current_topic}',
-					array(
+					[
 						'current_topic' => $topic,
 						'subject' => $context['response_prefix'] . $_POST['custom_subject'],
-					)
+					]
 				);
 			}
 
@@ -239,10 +239,10 @@ function MoveTopic2()
 				UPDATE {db_prefix}messages
 				SET subject = {string:custom_subject}
 				WHERE id_msg = {int:id_first_msg}',
-				array(
+				[
 					'id_first_msg' => $id_first_msg,
 					'custom_subject' => $_POST['custom_subject'],
-				)
+				]
 			);
 
 			// Fix the subject cache.
@@ -262,10 +262,10 @@ function MoveTopic2()
 		preparsecode($_POST['reason']);
 
 		// Add a URL onto the message.
-		$_POST['reason'] = strtr($_POST['reason'], array(
+		$_POST['reason'] = strtr($_POST['reason'], [
 			$txt['movetopic_auto_board'] => '[url=' . $scripturl . '?board=' . $_POST['toboard'] . '.0]' . $board_name . '[/url]',
 			$txt['movetopic_auto_topic'] => '[iurl]' . $scripturl . '?topic=' . $topic . '.0[/iurl]'
-		));
+		]);
 
 		// auto remove this MOVED redirection topic in the future?
 		$redirect_expires = !empty($_POST['redirect_expires']) ? ((int) ($_POST['redirect_expires'] * 60) + time()) : 0;
@@ -273,23 +273,23 @@ function MoveTopic2()
 		// redirect to the MOVED topic from topic list?
 		$redirect_topic = isset($_POST['redirect_topic']) ? $topic : 0;
 
-		$msgOptions = array(
+		$msgOptions = [
 			'subject' => $txt['moved'] . ': ' . $subject,
 			'body' => $_POST['reason'],
 			'smileys_enabled' => 1,
-		);
-		$topicOptions = array(
+		];
+		$topicOptions = [
 			'board' => $board,
 			'lock_mode' => 1,
 			'mark_as_read' => true,
 			'redirect_expires' => $redirect_expires,
 			'redirect_topic' => $redirect_topic,
 			'is_moved' => 1,
-		);
-		$posterOptions = array(
+		];
+		$posterOptions = [
 			'id' => $user_info['id'],
 			'update_post_count' => empty($pcounter),
-		);
+		];
 		createPost($msgOptions, $topicOptions, $posterOptions);
 	}
 
@@ -298,9 +298,9 @@ function MoveTopic2()
 		FROM {db_prefix}boards
 		WHERE id_board = {int:current_board}
 		LIMIT 1',
-		array(
+		[
 			'current_board' => $board,
-		)
+		]
 	);
 	list ($pcounter_from) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -312,10 +312,10 @@ function MoveTopic2()
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}
 				AND approved = {int:is_approved}',
-			array(
+			[
 				'current_topic' => $topic,
 				'is_approved' => 1,
-			)
+			]
 		);
 		$posters = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -331,10 +331,10 @@ function MoveTopic2()
 		{
 			// The board we're moving from counted posts, but not to.
 			if (empty($pcounter_from))
-				updateMemberData($id_member, array('posts' => 'posts - ' . $posts));
+				updateMemberData($id_member, ['posts' => 'posts - ' . $posts]);
 			// The reverse: from didn't, to did.
 			else
-				updateMemberData($id_member, array('posts' => 'posts + ' . $posts));
+				updateMemberData($id_member, ['posts' => 'posts + ' . $posts]);
 		}
 	}
 
@@ -343,7 +343,7 @@ function MoveTopic2()
 
 	// Log that they moved this topic.
 	if (!allowedTo('move_own') || $id_member_started != $user_info['id'])
-		logAction('move', array('topic' => $topic, 'board_from' => $board, 'board_to' => $_POST['toboard']));
+		logAction('move', ['topic' => $topic, 'board_from' => $board, 'board_to' => $_POST['toboard']]);
 	// Notify people that this topic has been moved?
 	sendNotifications($topic, 'move');
 
@@ -373,7 +373,7 @@ function moveTopics($topics, $toBoard)
 
 	// Only a single topic.
 	if (is_numeric($topics))
-		$topics = array($topics);
+		$topics = [$topics];
 
 	$fromBoards = [];
 
@@ -397,9 +397,9 @@ function moveTopics($topics, $toBoard)
 		FROM {db_prefix}topics
 		WHERE id_topic IN ({array_int:topics})
 		GROUP BY id_board, approved',
-		array(
+		[
 			'topics' => $topics,
-		)
+		]
 	);
 	// Num of rows = 0 -> no topics found. Num of rows > 1 -> topics are on multiple boards.
 	if ($smcFunc['db_num_rows']($request) == 0)
@@ -408,13 +408,13 @@ function moveTopics($topics, $toBoard)
 	{
 		if (!isset($fromBoards[$row['id_board']]['num_posts']))
 		{
-			$fromBoards[$row['id_board']] = array(
+			$fromBoards[$row['id_board']] = [
 				'num_posts' => 0,
 				'num_topics' => 0,
 				'unapproved_posts' => 0,
 				'unapproved_topics' => 0,
 				'id_board' => $row['id_board']
-			);
+			];
 		}
 		// Posts = (num_replies + 1) for each approved topic.
 		$fromBoards[$row['id_board']]['num_posts'] += $row['num_replies'] + ($row['approved'] ? $row['num_topics'] : 0);
@@ -438,24 +438,24 @@ function moveTopics($topics, $toBoard)
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = lmr.id_member)
 		WHERE t.id_topic IN ({array_int:topics})
 			AND lmr.id_msg > COALESCE(lt.id_msg, 0)',
-		array(
+		[
 			'protect_lmr_msg' => $SaveAServer,
 			'topics' => $topics,
-		)
+		]
 	);
 	$log_topics = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$log_topics[] = array($row['id_topic'], $row['id_member'], $row['id_msg'], (is_null($row['unwatched']) ? 0 : $row['unwatched']));
+		$log_topics[] = [$row['id_topic'], $row['id_member'], $row['id_msg'], (is_null($row['unwatched']) ? 0 : $row['unwatched'])];
 
 		// Prevent queries from getting too big. Taking some steam off.
 		if (count($log_topics) > 500)
 		{
 			$smcFunc['db_insert']('replace',
 				'{db_prefix}log_topics',
-				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'),
+				['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 				$log_topics,
-				array('id_topic', 'id_member')
+				['id_topic', 'id_member']
 			);
 
 			$log_topics = [];
@@ -469,9 +469,9 @@ function moveTopics($topics, $toBoard)
 		// Insert that information into the database!
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}log_topics',
-			array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'),
+			['id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int', 'unwatched' => 'int'],
 			$log_topics,
-			array('id_topic', 'id_member')
+			['id_topic', 'id_member']
 		);
 	}
 
@@ -490,13 +490,13 @@ function moveTopics($topics, $toBoard)
 				unapproved_posts = CASE WHEN {int:unapproved_posts} > unapproved_posts THEN 0 ELSE unapproved_posts - {int:unapproved_posts} END,
 				unapproved_topics = CASE WHEN {int:unapproved_topics} > unapproved_topics THEN 0 ELSE unapproved_topics - {int:unapproved_topics} END
 			WHERE id_board = {int:id_board}',
-			array(
+			[
 				'id_board' => $stats['id_board'],
 				'num_posts' => $stats['num_posts'],
 				'num_topics' => $stats['num_topics'],
 				'unapproved_posts' => $stats['unapproved_posts'],
 				'unapproved_topics' => $stats['unapproved_topics'],
-			)
+			]
 		);
 		$totalTopics += $stats['num_topics'];
 		$totalPosts += $stats['num_posts'];
@@ -512,14 +512,14 @@ function moveTopics($topics, $toBoard)
 			unapproved_posts = unapproved_posts + {int:total_unapproved_posts},
 			unapproved_topics = unapproved_topics + {int:total_unapproved_topics}') . '
 		WHERE id_board = {int:id_board}',
-		array(
+		[
 			'id_board' => $toBoard,
 			'total_topics' => $totalTopics,
 			'total_posts' => $totalPosts,
 			'total_unapproved_topics' => $totalUnapprovedTopics,
 			'total_unapproved_posts' => $totalUnapprovedPosts,
 			'no_unapproved' => 0,
-		)
+		]
 	);
 
 	// Move the topic.  Done.  :P
@@ -528,12 +528,12 @@ function moveTopics($topics, $toBoard)
 		SET id_board = {int:id_board}' . ($isRecycleDest ? ',
 			unapproved_posts = {int:no_unapproved}, approved = {int:is_approved}' : '') . '
 		WHERE id_topic IN ({array_int:topics})',
-		array(
+		[
 			'id_board' => $toBoard,
 			'topics' => $topics,
 			'is_approved' => 1,
 			'no_unapproved' => 0,
-		)
+		]
 	);
 
 	// If this was going to the recycle bin, check what messages are being recycled, and remove them from the queue.
@@ -544,10 +544,10 @@ function moveTopics($topics, $toBoard)
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topics})
 				and approved = {int:not_approved}',
-			array(
+			[
 				'topics' => $topics,
 				'not_approved' => 0,
-			)
+			]
 		);
 		$approval_msgs = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -560,10 +560,10 @@ function moveTopics($topics, $toBoard)
 				DELETE FROM {db_prefix}approval_queue
 				WHERE id_msg IN ({array_int:message_list})
 					AND id_attach = {int:id_attach}',
-				array(
+				[
 					'message_list' => $approval_msgs,
 					'id_attach' => 0,
-				)
+				]
 			);
 
 		// Get all the current max and mins.
@@ -571,17 +571,17 @@ function moveTopics($topics, $toBoard)
 			SELECT id_topic, id_first_msg, id_last_msg
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:topics})',
-			array(
+			[
 				'topics' => $topics,
-			)
+			]
 		);
 		$topicMaxMin = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$topicMaxMin[$row['id_topic']] = array(
+			$topicMaxMin[$row['id_topic']] = [
 				'min' => $row['id_first_msg'],
 				'max' => $row['id_last_msg'],
-			);
+			];
 		}
 		$smcFunc['db_free_result']($request);
 
@@ -591,9 +591,9 @@ function moveTopics($topics, $toBoard)
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topics})
 			GROUP BY id_topic',
-			array(
+			[
 				'topics' => $topics,
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
@@ -603,11 +603,11 @@ function moveTopics($topics, $toBoard)
 					UPDATE {db_prefix}topics
 					SET id_first_msg = {int:first_msg}, id_last_msg = {int:last_msg}
 					WHERE id_topic = {int:selected_topic}',
-					array(
+					[
 						'first_msg' => $row['first_msg'],
 						'last_msg' => $row['last_msg'],
 						'selected_topic' => $row['id_topic'],
-					)
+					]
 				);
 		}
 		$smcFunc['db_free_result']($request);
@@ -617,20 +617,20 @@ function moveTopics($topics, $toBoard)
 		UPDATE {db_prefix}messages
 		SET id_board = {int:id_board}' . ($isRecycleDest ? ',approved = {int:is_approved}' : '') . '
 		WHERE id_topic IN ({array_int:topics})',
-		array(
+		[
 			'id_board' => $toBoard,
 			'topics' => $topics,
 			'is_approved' => 1,
-		)
+		]
 	);
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}log_reported
 		SET id_board = {int:id_board}
 		WHERE id_topic IN ({array_int:topics})',
-		array(
+		[
 			'id_board' => $toBoard,
 			'topics' => $topics,
-		)
+		]
 	);
 
 	// Mark target board as seen, if it was already marked as seen before.
@@ -639,10 +639,10 @@ function moveTopics($topics, $toBoard)
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
 		WHERE b.id_board = {int:id_board}',
-		array(
+		[
 			'current_member' => $user_info['id'],
 			'id_board' => $toBoard,
-		)
+		]
 	);
 	list ($isSeen) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -651,9 +651,9 @@ function moveTopics($topics, $toBoard)
 	{
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}log_boards',
-			array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-			array($toBoard, $user_info['id'], $modSettings['maxMsgID']),
-			array('id_board', 'id_member')
+			['id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'],
+			[$toBoard, $user_info['id'], $modSettings['maxMsgID']],
+			['id_board', 'id_member']
 		);
 	}
 
@@ -698,14 +698,14 @@ function moveTopicConcurrence()
 				LEFT JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 			WHERE t.id_topic = {int:topic_id}
 			LIMIT 1',
-			array(
+			[
 				'topic_id' => $topic,
-			)
+			]
 		);
 		list($topic_subject, $board_name) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 		$board_link = '<a href="' . $scripturl . '?board=' . $board . '.0">' . $board_name . '</a>';
 		$topic_link = '<a href="' . $scripturl . '?topic=' . $topic . '.0">' . $topic_subject . '</a>';
-		fatal_lang_error('topic_already_moved', false, array($topic_link, $board_link));
+		fatal_lang_error('topic_already_moved', false, [$topic_link, $board_link]);
 	}
 }

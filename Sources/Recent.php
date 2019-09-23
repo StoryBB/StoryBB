@@ -35,10 +35,10 @@ function getLastPost()
 			AND ml.approved = {int:is_approved}
 		ORDER BY b.id_msg_updated DESC
 		LIMIT 1',
-		array(
+		[
 			'recycle_board' => $modSettings['recycle_board'],
 			'is_approved' => 1,
-		)
+		]
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 		return [];
@@ -49,12 +49,12 @@ function getLastPost()
 	censorText($row['subject']);
 	censorText($row['body']);
 
-	$row['body'] = strip_tags(strtr(Parser::parse_bbc($row['body'], $row['smileys_enabled']), array('<br>' => '&#10;')));
+	$row['body'] = strip_tags(strtr(Parser::parse_bbc($row['body'], $row['smileys_enabled']), ['<br>' => '&#10;']));
 	if ($smcFunc['strlen']($row['body']) > 128)
 		$row['body'] = $smcFunc['substr']($row['body'], 0, 128) . '...';
 
 	// Send the data.
-	return array(
+	return [
 		'topic' => $row['id_topic'],
 		'subject' => $row['subject'],
 		'short_subject' => shorten_subject($row['subject'], 24),
@@ -63,7 +63,7 @@ function getLastPost()
 		'timestamp' => forum_time(true, $row['poster_time']),
 		'href' => $scripturl . '?topic=' . $row['id_topic'] . '.new;topicseen#new',
 		'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.new;topicseen#new">' . $row['subject'] . '</a>'
-	);
+	];
 }
 
 /**
@@ -95,9 +95,9 @@ function RecentPosts()
 				FROM {db_prefix}categories
 				WHERE id_cat = {int:id_cat}
 				LIMIT 1',
-				array(
+				[
 					'id_cat' => $_REQUEST['c'][0],
-				)
+				]
 			);
 			list ($name) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -105,10 +105,10 @@ function RecentPosts()
 			if (empty($name))
 				fatal_lang_error('no_access', false);
 
-			$context['linktree'][] = array(
+			$context['linktree'][] = [
 				'url' => $scripturl . '#c' . (int) $_REQUEST['c'],
 				'name' => $name
-			);
+			];
 		}
 
 		$recycling = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']);
@@ -120,11 +120,11 @@ function RecentPosts()
 				AND b.redirect = {string:empty}' . ($recycling ? '
 				AND b.id_board != {int:recycle_board}' : '') . '
 				AND {query_wanna_see_board}',
-			array(
+			[
 				'category_list' => $_REQUEST['c'],
 				'empty' => '',
 				'recycle_board' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
-			)
+			]
 		);
 		$total_cat_posts = 0;
 		$boards = [];
@@ -164,11 +164,11 @@ function RecentPosts()
 				AND b.redirect = {string:empty}
 				AND {query_see_board}
 			LIMIT {int:limit}',
-			array(
+			[
 				'board_list' => $_REQUEST['boards'],
 				'limit' => count($_REQUEST['boards']),
 				'empty' => '',
-			)
+			]
 		);
 		$total_posts = 0;
 		$boards = [];
@@ -202,9 +202,9 @@ function RecentPosts()
 			FROM {db_prefix}boards
 			WHERE id_board = {int:current_board}
 			LIMIT 1',
-			array(
+			[
 				'current_board' => $board,
-			)
+			]
 		);
 		list ($total_posts, $redirect) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -247,7 +247,7 @@ function RecentPosts()
 			FROM {db_prefix}boards AS b
 			WHERE ' . $query_these_boards . '
 				AND b.redirect = {string:empty}',
-			array_merge($query_these_boards_params, array('empty' => ''))
+			array_merge($query_these_boards_params, ['empty' => ''])
 		);
 
 		list($db_num_posts) = $smcFunc['db_fetch_row']($get_num_posts);
@@ -258,16 +258,16 @@ function RecentPosts()
 		$context['page_index'] = constructPageIndex($scripturl . '?action=recent', $_REQUEST['start'], $num_posts, 10, false);
 	}
 
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=recent' . (empty($board) ? (empty($_REQUEST['c']) ? '' : ';c=' . (int) $_REQUEST['c']) : ';board=' . $board . '.0'),
 		'name' => $context['page_title']
-	);
+	];
 
 	// If you selected a redirection board, don't try getting posts for it...
 	if ($context['is_redirect'])
 		$messages = 0;
 
-	$key = 'recent-' . $user_info['id'] . '-' . md5(json_encode(array_diff_key($query_parameters, array('max_id_msg' => 0)))) . '-' . (int) $_REQUEST['start'];
+	$key = 'recent-' . $user_info['id'] . '-' . md5(json_encode(array_diff_key($query_parameters, ['max_id_msg' => 0]))) . '-' . (int) $_REQUEST['start'];
 	if (!$context['is_redirect'] && (empty($modSettings['cache_enable']) || ($messages = cache_get_data($key, 120)) == null))
 	{
 		$done = false;
@@ -283,11 +283,11 @@ function RecentPosts()
 					AND m.approved = {int:is_approved}
 				ORDER BY m.id_msg DESC
 				LIMIT {int:offset}, {int:limit}',
-				array_merge($query_parameters, array(
+				array_merge($query_parameters, [
 					'is_approved' => 1,
 					'offset' => $_REQUEST['start'],
 					'limit' => 10,
-				))
+				])
 			);
 			// If we don't have 10 results, try again with an unoptimized version covering all rows, and cache the result.
 			if (isset($query_parameters['max_id_msg']) && $smcFunc['db_num_rows']($request) < 10)
@@ -336,14 +336,14 @@ function RecentPosts()
 		WHERE m.id_msg IN ({array_int:message_list})
 		ORDER BY m.id_msg DESC
 		LIMIT {int:limit}',
-		array(
+		[
 			'message_list' => $messages,
 			'limit' => count($messages),
-		)
+		]
 	);
 	$counter = $_REQUEST['start'] + 1;
 	$context['posts'] = [];
-	$board_ids = array('own' => [], 'any' => []);
+	$board_ids = ['own' => [], 'any' => []];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Censor everything.
@@ -354,21 +354,21 @@ function RecentPosts()
 		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		// And build the array.
-		$context['posts'][$row['id_msg']] = array(
+		$context['posts'][$row['id_msg']] = [
 			'id' => $row['id_msg'],
 			'counter' => $counter++,
-			'category' => array(
+			'category' => [
 				'id' => $row['id_cat'],
 				'name' => $row['cname'],
 				'href' => $scripturl . '#c' . $row['id_cat'],
 				'link' => '<a href="' . $scripturl . '#c' . $row['id_cat'] . '">' . $row['cname'] . '</a>'
-			),
-			'board' => array(
+			],
+			'board' => [
 				'id' => $row['id_board'],
 				'name' => $row['bname'],
 				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
-			),
+			],
 			'topic' => $row['id_topic'],
 			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '" rel="nofollow" title="' . $row['subject'] . '">' . shorten_subject($row['subject'], 30) . '</a>',
@@ -377,24 +377,24 @@ function RecentPosts()
 			'shorten_subject' => shorten_subject($row['subject'], 30),
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
-			'first_poster' => array(
+			'first_poster' => [
 				'id' => $row['id_first_member'],
 				'name' => $row['first_poster_name'],
 				'href' => empty($row['id_first_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_first_member'] . (!empty($row['first_character_id']) ? ';area=characters;char=' . $row['first_character_id'] : ''),
 				'link' => empty($row['id_first_member']) ? $row['first_poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_first_member'] . (!empty($row['first_character_id']) ? ';area=characters;char=' . $row['first_character_id'] : '') . '">' . $row['first_poster_name'] . '</a>'
-			),
-			'poster' => array(
+			],
+			'poster' => [
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
 				'href' => empty($row['id_member']) ? '' : $scripturl . '?action=profile;u=' . $row['id_member'] . (!empty($row['character_id']) ? ';area=characters;char=' . $row['character_id'] : ''),
 				'link' => empty($row['id_member']) ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . (!empty($row['character_id']) ? ';area=characters;char=' . $row['character_id'] : '') . '">' . $row['poster_name'] . '</a>'
-			),
+			],
 			'message' => $row['body'],
 			'can_reply' => false,
 			'can_delete' => false,
 			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($modSettings['edit_disable_time']) || $row['poster_time'] + $modSettings['edit_disable_time'] * 60 >= time()),
 			'css_class' => 'windowbg',
-		);
+		];
 
 		if ($user_info['id'] == $row['id_first_member'])
 			$board_ids['own'][$row['id_board']][] = $row['id_msg'];
@@ -403,16 +403,16 @@ function RecentPosts()
 	$smcFunc['db_free_result']($request);
 
 	// There might be - and are - different permissions between any and own.
-	$permissions = array(
-		'own' => array(
+	$permissions = [
+		'own' => [
 			'post_reply_own' => 'can_reply',
 			'delete_own' => 'can_delete',
-		),
-		'any' => array(
+		],
+		'any' => [
 			'post_reply_any' => 'can_reply',
 			'delete_any' => 'can_delete',
-		)
-	);
+		]
+	];
 
 	// Now go through all the permissions, looking for boards they can do it on.
 	foreach ($permissions as $type => $list)
@@ -518,10 +518,10 @@ function UnreadTopics()
 				AND b.id_board NOT IN ({array_int:boards})
 			ORDER BY child_level ASC
 			',
-			array(
+			[
 				'no_child' => 0,
 				'boards' => $boards,
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -554,9 +554,9 @@ function UnreadTopics()
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
 				AND b.id_board IN ({array_int:board_list})',
-			array(
+			[
 				'board_list' => $_REQUEST['boards'],
-			)
+			]
 		);
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -582,9 +582,9 @@ function UnreadTopics()
 			FROM {db_prefix}boards AS b
 			WHERE ' . $user_info[$see_board] . '
 				AND b.id_cat IN ({array_int:id_cat})',
-			array(
+			[
 				'id_cat' => $_REQUEST['c'],
-			)
+			]
 		);
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -607,9 +607,9 @@ function UnreadTopics()
 			FROM {db_prefix}boards AS b
 			WHERE ' . $user_info[$see_board] . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 				AND b.id_board != {int:recycle_board}' : ''),
-			array(
+			[
 				'recycle_board' => (int) $modSettings['recycle_board'],
-			)
+			]
 		);
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -625,14 +625,14 @@ function UnreadTopics()
 		$context['no_board_limits'] = true;
 	}
 
-	$sort_methods = array(
+	$sort_methods = [
 		'subject' => 'ms.subject',
 		'starter' => 'COALESCE(mems.real_name, ms.poster_name)',
 		'replies' => 't.num_replies',
 		'views' => 't.num_views',
 		'first_post' => 't.id_topic',
 		'last_post' => 't.id_last_msg'
-	);
+	];
 
 	// The default is the most logical: newest first.
 	if (!isset($_REQUEST['sort']) || !isset($sort_methods[$_REQUEST['sort']]))
@@ -661,31 +661,31 @@ function UnreadTopics()
 			FROM {db_prefix}categories
 			WHERE id_cat = {int:id_cat}
 			LIMIT 1',
-			array(
+			[
 				'id_cat' => (int) $_REQUEST['c'][0],
-			)
+			]
 		);
 		list ($name) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 
-		$context['linktree'][] = array(
+		$context['linktree'][] = [
 			'url' => $scripturl . '#c' . (int) $_REQUEST['c'][0],
 			'name' => $name
-		);
+		];
 	}
 
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
 		'name' => $_REQUEST['action'] == 'unread' ? $txt['unread_topics_visit'] : $txt['unread_replies']
-	);
+	];
 
 	if ($context['showing_all_topics'])
-		$context['linktree'][] = array(
+		$context['linktree'][] = [
 			'url' => $scripturl . '?action=' . $_REQUEST['action'] . ';all' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
 			'name' => $txt['unread_topics_all']
-		);
+		];
 	else
-		$txt['unread_topics_visit_none'] = strtr($txt['unread_topics_visit_none'], array('?action=unread;all' => '?action=unread;all' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits']));
+		$txt['unread_topics_visit_none'] = strtr($txt['unread_topics_visit_none'], ['?action=unread;all' => '?action=unread;all' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits']]);
 
 	$txt['unread_topics_visit_none'] = str_replace('{scripturl}', $scripturl, $txt['unread_topics_visit_none']);
 
@@ -713,10 +713,10 @@ function UnreadTopics()
 				FROM {db_prefix}log_mark_read
 				WHERE id_member = {int:current_member}
 					AND id_board = {int:current_board}',
-				array(
+				[
 					'current_board' => $board,
 					'current_member' => $user_info['id'],
-				)
+				]
 			);
 			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -728,9 +728,9 @@ function UnreadTopics()
 				FROM {db_prefix}boards AS b
 					LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = b.id_board AND lmr.id_member = {int:current_member})
 				WHERE {query_see_board}',
-				array(
+				[
 					'current_member' => $user_info['id'],
-				)
+				]
 			);
 			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -751,9 +751,9 @@ function UnreadTopics()
 					SELECT MIN(id_msg)
 					FROM {db_prefix}log_topics
 					WHERE id_member = {int:current_member}',
-					array(
+					[
 						'current_member' => $user_info['id'],
-					)
+					]
 				);
 				list ($earliest_msg2) = $smcFunc['db_fetch_row']($request);
 				$smcFunc['db_free_result']($request);
@@ -762,7 +762,7 @@ function UnreadTopics()
 				if ($earliest_msg2 == 0)
 					$earliest_msg2 = -1;
 
-				$_SESSION['cached_log_time'] = array(time(), $earliest_msg2);
+				$_SESSION['cached_log_time'] = [time(), $earliest_msg2];
 			}
 
 			$earliest_msg = min($earliest_msg2, $earliest_msg);
@@ -775,8 +775,8 @@ function UnreadTopics()
 	{
 		$smcFunc['db_query']('', '
 			DROP TABLE IF EXISTS {db_prefix}log_topics_unread',
-			array(
-			)
+			[
+			]
 		);
 
 		// Let's copy things out of the log_topics table, to reduce searching.
@@ -792,12 +792,12 @@ function UnreadTopics()
 				AND t.id_last_msg > {int:earliest_msg}') . '
 				AND t.approved = {int:is_approved}
 				AND lt.unwatched != 1',
-			array_merge($query_parameters, array(
+			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'is_approved' => 1,
 				'db_error_skip' => true,
-			))
+			])
 		) !== false;
 	}
 	else
@@ -814,11 +814,11 @@ function UnreadTopics()
 				AND t.id_last_msg > {int:earliest_msg}' : '') . '
 				AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg
 				AND t.approved = {int:is_approved}',
-			array_merge($query_parameters, array(
+			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'is_approved' => 1,
-			))
+			])
 		);
 		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -827,17 +827,17 @@ function UnreadTopics()
 		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
 		$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
-		$context['links'] = array(
+		$context['links'] = [
 			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'] : '',
 			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], floor(($num_topics - 1) / $context['topics_per_page']) * $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'up' => $scripturl,
-		);
-		$context['page_info'] = array(
+		];
+		$context['page_info'] = [
 			'current_page' => $_REQUEST['start'] / $context['topics_per_page'] + 1,
 			'num_pages' => floor(($num_topics - 1) / $context['topics_per_page']) + 1
-		);
+		];
 
 		if ($num_topics == 0)
 		{
@@ -876,14 +876,14 @@ function UnreadTopics()
 				AND ms.approved = {int:is_approved}
 			ORDER BY {raw:sort}
 			LIMIT {int:offset}, {int:limit}',
-			array_merge($query_parameters, array(
+			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'min_message' => $min_message,
 				'is_approved' => 1,
 				'sort' => $_REQUEST['sort'] . ($ascending ? '' : ' DESC'),
 				'offset' => $_REQUEST['start'],
 				'limit' => $context['topics_per_page'],
-			))
+			])
 		);
 	}
 	elseif ($is_topics)
@@ -899,12 +899,12 @@ function UnreadTopics()
 				AND t.id_last_msg > {int:id_msg_last_visit}' : '')) . '
 				AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg
 				AND t.approved = {int:is_approved}',
-			array_merge($query_parameters, array(
+			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'id_msg_last_visit' => $_SESSION['id_msg_last_visit'],
 				'is_approved' => 1,
-			))
+			])
 		);
 		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
@@ -913,17 +913,17 @@ function UnreadTopics()
 		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
 		$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
-		$context['links'] = array(
+		$context['links'] = [
 			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'] : '',
 			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], floor(($num_topics - 1) / $context['topics_per_page']) * $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'up' => $scripturl,
-		);
-		$context['page_info'] = array(
+		];
+		$context['page_info'] = [
 			'current_page' => $_REQUEST['start'] / $context['topics_per_page'] + 1,
 			'num_pages' => floor(($num_topics - 1) / $context['topics_per_page']) + 1
-		);
+		];
 
 		if ($num_topics == 0)
 		{
@@ -967,14 +967,14 @@ function UnreadTopics()
 				AND ms.approved = {int:is_approved}
 			ORDER BY {raw:order}
 			LIMIT {int:offset}, {int:limit}',
-			array_merge($query_parameters, array(
+			array_merge($query_parameters, [
 				'current_member' => $user_info['id'],
 				'min_message' => $min_message,
 				'is_approved' => 1,
 				'order' => $_REQUEST['sort'] . ($ascending ? '' : ' DESC'),
 				'offset' => $_REQUEST['start'],
 				'limit' => $context['topics_per_page'],
-			))
+			])
 		);
 	}
 	else
@@ -983,23 +983,23 @@ function UnreadTopics()
 		{
 			$smcFunc['db_query']('', '
 				DROP TABLE IF EXISTS {db_prefix}topics_posted_in',
-				array(
-				)
+				[
+				]
 			);
 
 			$smcFunc['db_query']('', '
 				DROP TABLE IF EXISTS {db_prefix}log_topics_posted_in',
-				array(
-				)
+				[
+				]
 			);
 
-			$sortKey_joins = array(
+			$sortKey_joins = [
 				'ms.subject' => '
 					INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)',
 				'COALESCE(mems.real_name, ms.poster_name)' => '
 					INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 					LEFT JOIN {db_prefix}members AS mems ON (mems.id_member = ms.id_member)',
-			);
+			];
 
 			// The main benefit of this temporary table is not that it's faster; it's that it avoids locks later.
 			$have_temp_table = $smcFunc['db_query']('', '
@@ -1010,7 +1010,7 @@ function UnreadTopics()
 					id_msg int(10) unsigned NOT NULL default {string:string_zero},
 					PRIMARY KEY (id_topic)
 				)
-				SELECT t.id_topic, t.id_board, t.id_last_msg, COALESCE(lmr.id_msg, 0) AS id_msg' . (!in_array($_REQUEST['sort'], array('t.id_last_msg', 't.id_topic')) ? ', ' . $_REQUEST['sort'] . ' AS sort_key' : '') . '
+				SELECT t.id_topic, t.id_board, t.id_last_msg, COALESCE(lmr.id_msg, 0) AS id_msg' . (!in_array($_REQUEST['sort'], ['t.id_last_msg', 't.id_topic']) ? ', ' . $_REQUEST['sort'] . ' AS sort_key' : '') . '
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 					LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)
@@ -1019,13 +1019,13 @@ function UnreadTopics()
 					AND t.id_board = {int:current_board}' : '') . '
 					AND t.approved = {int:is_approved}
 				GROUP BY m.id_topic',
-				array(
+				[
 					'current_board' => $board,
 					'current_member' => $user_info['id'],
 					'is_approved' => 1,
 					'string_zero' => '0',
 					'db_error_skip' => true,
-				)
+				]
 			) !== false;
 
 			// If that worked, create a sample of the log_topics table too.
@@ -1038,10 +1038,10 @@ function UnreadTopics()
 					FROM {db_prefix}log_topics AS lt
 						INNER JOIN {db_prefix}topics_posted_in AS pi ON (pi.id_topic = lt.id_topic)
 					WHERE lt.id_member = {int:current_member}',
-					array(
+					[
 						'current_member' => $user_info['id'],
 						'db_error_skip' => true,
-					)
+					]
 				) !== false;
 		}
 
@@ -1053,8 +1053,8 @@ function UnreadTopics()
 					LEFT JOIN {db_prefix}log_topics_posted_in AS lt ON (lt.id_topic = pi.id_topic)
 				WHERE pi.' . $query_this_board . '
 					AND COALESCE(lt.id_msg, pi.id_msg) < pi.id_last_msg',
-				array_merge($query_parameters, array(
-				))
+				array_merge($query_parameters, [
+				])
 			);
 			list ($num_topics) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -1072,10 +1072,10 @@ function UnreadTopics()
 					AND COALESCE(lt.id_msg, lmr.id_msg, 0) < t.id_last_msg
 					AND t.approved = {int:is_approved}
 					AND lt.unwatched != 1',
-				array_merge($query_parameters, array(
+				array_merge($query_parameters, [
 					'current_member' => $user_info['id'],
 					'is_approved' => 1,
-				))
+				])
 			);
 			list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
@@ -1085,17 +1085,17 @@ function UnreadTopics()
 		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
 		$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
-		$context['links'] = array(
+		$context['links'] = [
 			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'] : '',
 			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . sprintf($context['querystring_board_limits'], floor(($num_topics - 1) / $context['topics_per_page']) * $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'up' => $scripturl,
-		);
-		$context['page_info'] = array(
+		];
+		$context['page_info'] = [
 			'current_page' => $_REQUEST['start'] / $context['topics_per_page'] + 1,
 			'num_pages' => floor(($num_topics - 1) / $context['topics_per_page']) + 1
-		);
+		];
 
 		if ($num_topics == 0)
 		{
@@ -1117,11 +1117,11 @@ function UnreadTopics()
 					AND COALESCE(lt.id_msg, t.id_msg) < t.id_last_msg
 				ORDER BY {raw:order}
 				LIMIT {int:offset}, {int:limit}',
-				array_merge($query_parameters, array(
-					'order' => (in_array($_REQUEST['sort'], array('t.id_last_msg', 't.id_topic')) ? $_REQUEST['sort'] : 't.sort_key') . ($ascending ? '' : ' DESC'),
+				array_merge($query_parameters, [
+					'order' => (in_array($_REQUEST['sort'], ['t.id_last_msg', 't.id_topic']) ? $_REQUEST['sort'] : 't.sort_key') . ($ascending ? '' : ' DESC'),
 					'offset' => $_REQUEST['start'],
 					'limit' => $context['topics_per_page'],
-				))
+				])
 			);
 		else
 			$request = $smcFunc['db_query']('', '
@@ -1138,7 +1138,7 @@ function UnreadTopics()
 					AND t.approved = {int:is_approved} AND lt.unwatched != 1
 				ORDER BY {raw:order}
 				LIMIT {int:offset}, {int:limit}',
-				array_merge($query_parameters, array(
+				array_merge($query_parameters, [
 					'current_member' => $user_info['id'],
 					'min_message' => (int) $min_message,
 					'is_approved' => 1,
@@ -1146,7 +1146,7 @@ function UnreadTopics()
 					'offset' => $_REQUEST['start'],
 					'limit' => $context['topics_per_page'],
 					'sort' => $_REQUEST['sort'],
-				))
+				])
 			);
 
 		$topics = [];
@@ -1183,12 +1183,12 @@ function UnreadTopics()
 			WHERE t.id_topic IN ({array_int:topic_list})
 			ORDER BY {raw:sort}' . ($ascending ? '' : ' DESC') . '
 			LIMIT {int:limit}',
-			array(
+			[
 				'current_member' => $user_info['id'],
 				'topic_list' => $topics,
 				'sort' => $_REQUEST['sort'],
 				'limit' => count($topics),
-			)
+			]
 		);
 	}
 
@@ -1206,10 +1206,10 @@ function UnreadTopics()
 		if (!empty($modSettings['preview_characters']))
 		{
 			// Limit them to 128 characters - do this FIRST because it's a lot of wasted censoring otherwise.
-			$row['first_body'] = strip_tags(strtr(Parser::parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), array('<br>' => '&#10;')));
+			$row['first_body'] = strip_tags(strtr(Parser::parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), ['<br>' => '&#10;']));
 			if ($smcFunc['strlen']($row['first_body']) > 128)
 				$row['first_body'] = $smcFunc['substr']($row['first_body'], 0, 128) . '...';
-			$row['last_body'] = strip_tags(strtr(Parser::parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), array('<br>' => '&#10;')));
+			$row['last_body'] = strip_tags(strtr(Parser::parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), ['<br>' => '&#10;']));
 			if ($smcFunc['strlen']($row['last_body']) > 128)
 				$row['last_body'] = $smcFunc['substr']($row['last_body'], 0, 128) . '...';
 
@@ -1269,38 +1269,38 @@ function UnreadTopics()
 			$colorClass .= ' locked';
 
 		// And build the array.
-		$context['topics'][$row['id_topic']] = array(
+		$context['topics'][$row['id_topic']] = [
 			'id' => $row['id_topic'],
-			'first_post' => array(
+			'first_post' => [
 				'id' => $row['id_first_msg'],
-				'member' => array(
+				'member' => [
 					'name' => $row['first_poster_name'],
 					'id' => $row['id_first_member'],
 					'href' => $scripturl . '?action=profile;u=' . $row['id_first_member'] . (!empty($row['first_character_id']) ? ';area=characters;char=' . $row['first_character_id'] : ''),
 					'link' => !empty($row['id_first_member']) ? '<a class="preview" href="' . $scripturl . '?action=profile;u=' . $row['id_first_member'] . (!empty($row['first_character_id']) ? ';area=characters;char=' . $row['first_character_id'] : '') . '" title="' . $txt['profile_of'] . ' ' . $row['first_poster_name'] . '">' . $row['first_poster_name'] . '</a>' : $row['first_poster_name']
-				),
+				],
 				'time' => timeformat($row['first_poster_time']),
 				'timestamp' => forum_time(true, $row['first_poster_time']),
 				'subject' => $row['first_subject'],
 				'preview' => $row['first_body'],
 				'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0;topicseen',
 				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;topicseen">' . $row['first_subject'] . '</a>'
-			),
-			'last_post' => array(
+			],
+			'last_post' => [
 				'id' => $row['id_last_msg'],
-				'member' => array(
+				'member' => [
 					'name' => $row['last_poster_name'],
 					'id' => $row['id_last_member'],
 					'href' => $scripturl . '?action=profile;u=' . $row['id_last_member'] . (!empty($row['last_character_id']) ? ';area=characters;char=' . $row['last_character_id'] : ''),
 					'link' => !empty($row['id_last_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_last_member'] . (!empty($row['last_character_id']) ? ';area=characters;char=' . $row['last_character_id'] : '') . '">' . $row['last_poster_name'] . '</a>' : $row['last_poster_name']
-				),
+				],
 				'time' => timeformat($row['last_poster_time']),
 				'timestamp' => forum_time(true, $row['last_poster_time']),
 				'subject' => $row['last_subject'],
 				'preview' => $row['last_body'],
 				'href' => $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';topicseen#msg' . $row['id_last_msg'],
 				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';topicseen#msg' . $row['id_last_msg'] . '" rel="nofollow">' . $row['last_subject'] . '</a>'
-			),
+			],
 			'new_from' => $row['new_from'],
 			'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . ';topicseen#new',
 			'href' => $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['new_from']) . ';topicseen' . ($row['num_replies'] == 0 ? '' : 'new'),
@@ -1314,25 +1314,25 @@ function UnreadTopics()
 			'pages' => $pages,
 			'replies' => comma_format($row['num_replies']),
 			'views' => comma_format($row['num_views']),
-			'board' => array(
+			'board' => [
 				'id' => $row['id_board'],
 				'name' => $row['bname'],
 				'href' => $scripturl . '?board=' . $row['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['bname'] . '</a>'
-			)
-		);
+			]
+		];
 
-		$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data(array(
+		$context['topics'][$row['id_topic']]['last_post']['member']['avatar'] = set_avatar_data([
 			'avatar' => $row['avatar'],
 			'email' => $row['email_address'],
 			'filename' => $row['last_poster_filename'],
-		));
+		]);
 
-		$context['topics'][$row['id_topic']]['first_post']['member']['avatar'] = set_avatar_data(array(
+		$context['topics'][$row['id_topic']]['first_post']['member']['avatar'] = set_avatar_data([
 			'avatar' => $row['first_poster_avatar'],
 			'email' => $row['first_poster_email'],
 			'filename' => $row['first_poster_filename'],
-		));
+		]);
 
 		$context['topics'][$row['id_topic']]['first_post']['started_by'] = sprintf($txt['topic_started_by'], $context['topics'][$row['id_topic']]['first_post']['member']['link'], $context['topics'][$row['id_topic']]['board']['link']);
 	}
@@ -1347,11 +1347,11 @@ function UnreadTopics()
 				AND id_member = {int:current_member}
 			GROUP BY id_topic
 			LIMIT {int:limit}',
-			array(
+			[
 				'current_member' => $user_info['id'],
 				'topic_list' => $topic_ids,
 				'limit' => count($topic_ids),
-			)
+			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 		{
@@ -1367,30 +1367,30 @@ function UnreadTopics()
 	// Build the recent button array.
 	if ($is_topics)
 	{
-		$context['recent_buttons'] = array(
-			'markread' => array('text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'image' => 'markread.png', 'custom' => 'data-confirm="'.  $txt['are_sure_mark_read'] .'"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_var'] . '=' . $context['session_id']),
-		);
+		$context['recent_buttons'] = [
+			'markread' => ['text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'image' => 'markread.png', 'custom' => 'data-confirm="'.  $txt['are_sure_mark_read'] .'"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_var'] . '=' . $context['session_id']],
+		];
 
-		$context['recent_buttons']['markselectread'] = array(
+		$context['recent_buttons']['markselectread'] = [
 			'text' => 'quick_mod_markread',
 			'image' => 'markselectedread.png',
 			'url' => 'javascript:document.quickModForm.submit();',
-		);
+		];
 
 		if (!empty($context['topics']) && !$context['showing_all_topics'])
-			$context['recent_buttons']['readall'] = array('text' => 'unread_topics_all', 'image' => 'markreadall.png', 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'active' => true);
+			$context['recent_buttons']['readall'] = ['text' => 'unread_topics_all', 'image' => 'markreadall.png', 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'active' => true];
 	}
 	elseif (!$is_topics && isset($context['topics_to_mark']))
 	{
-		$context['recent_buttons'] = array(
-			'markread' => array('text' => 'mark_as_read', 'image' => 'markread.png', 'custom' => 'data-confirm="'. $txt['are_sure_mark_read']  .'"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=unreadreplies;topics=' . $context['topics_to_mark'] . ';' . $context['session_var'] . '=' . $context['session_id']),
-		);
+		$context['recent_buttons'] = [
+			'markread' => ['text' => 'mark_as_read', 'image' => 'markread.png', 'custom' => 'data-confirm="'. $txt['are_sure_mark_read']  .'"', 'class' => 'you_sure', 'url' => $scripturl . '?action=markasread;sa=unreadreplies;topics=' . $context['topics_to_mark'] . ';' . $context['session_var'] . '=' . $context['session_id']],
+		];
 
-		$context['recent_buttons']['markselectread'] = array(
+		$context['recent_buttons']['markselectread'] = [
 			'text' => 'quick_mod_markread',
 			'image' => 'markselectedread.png',
 			'url' => 'javascript:document.quickModForm.submit();',
-		);
+		];
 	}
 
 	// Allow mods to add additional buttons here

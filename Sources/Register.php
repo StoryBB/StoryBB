@@ -58,20 +58,20 @@ function Register($reg_errors = [])
 
 	// Kinda need this.
 	if ($context['sub_template'] == 'register_form')
-		loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
+		loadJavaScriptFile('register.js', ['defer' => false], 'sbb_register');
 
 	// Add the register chain to the link tree.
-	$context['linktree'][] = array(
+	$context['linktree'][] = [
 		'url' => $scripturl . '?action=signup',
 		'name' => $txt['register'],
-	);
+	];
 
 	// Prepare the time gate! Do it like so, in case later attempts want to reset the limit for any reason, but make sure the time is the current one.
 	if (!isset($_SESSION['register']))
-		$_SESSION['register'] = array(
+		$_SESSION['register'] = [
 			'timenow' => time(),
 			'limit' => 10, // minimum number of seconds required on this page for registration
-		);
+		];
 	else
 		$_SESSION['register']['timenow'] = time();
 
@@ -109,10 +109,10 @@ function Register($reg_errors = [])
 
 	StoryBB\Template::add_helper([
 		'makeHTTPS' => function($url) { 
-			return strtr($url, array('http://' => 'https://'));
+			return strtr($url, ['http://' => 'https://']);
 		},
 		'field_isText' => function($type) {
-			return in_array($type, array('int', 'float', 'text', 'password', 'url'));
+			return in_array($type, ['int', 'float', 'text', 'password', 'url']);
 		}
 	]);
 
@@ -136,7 +136,7 @@ function Register($reg_errors = [])
 		$context['user']['is_owner'] = true;
 
 		// Here, and here only, emulate the permissions the user would have to do this.
-		$user_info['permissions'] = array_merge($user_info['permissions'], array('profile_account_own', 'profile_extra_own', 'profile_other_own', 'profile_password_own', 'profile_website_own'));
+		$user_info['permissions'] = array_merge($user_info['permissions'], ['profile_account_own', 'profile_extra_own', 'profile_other_own', 'profile_password_own', 'profile_website_own']);
 
 		// We might have had some submissions on this front - go check.
 		foreach ($reg_fields as $field)
@@ -171,13 +171,13 @@ function Register($reg_errors = [])
 		];
 	}
 
-	$context += array(
+	$context += [
 		'username' => isset($_POST['user']) ? $smcFunc['htmlspecialchars']($_POST['user']) : '',
 		'real_name' => isset($_POST['real_name']) ? $smcFunc['htmlspecialchars']($_POST['real_name']) : '',
 		'first_char' => isset($_POST['first_char']) ? $smcFunc['htmlspecialchars']($_POST['first_char']) : '',
 		'email' => isset($_POST['email']) ? $smcFunc['htmlspecialchars']($_POST['email']) : '',
 		'notify_announcements' => !empty($_POST['notify_announcements']) ? 1 : 0,
-	);
+	];
 
 	// Were there any errors?
 	$context['registration_errors'] = [];
@@ -256,27 +256,27 @@ function Register2()
 	foreach ($_POST as $key => $value)
 	{
 		if (!is_array($_POST[$key]))
-			$_POST[$key] = htmltrim__recursive(str_replace(array("\n", "\r"), '', $_POST[$key]));
+			$_POST[$key] = htmltrim__recursive(str_replace(["\n", "\r"], '', $_POST[$key]));
 	}
 
 	// Collect all extra registration fields someone might have filled in.
-	$possible_strings = array(
+	$possible_strings = [
 		'first_char',
 		'buddy_list',
 		'pm_ignore_list',
 		'avatar',
 		'lngfile',
 		'secret_question', 'secret_answer',
-	);
-	$possible_ints = array(
+	];
+	$possible_ints = [
 		'id_theme',
-	);
-	$possible_floats = array(
+	];
+	$possible_floats = [
 		'time_offset',
-	);
-	$possible_bools = array(
+	];
+	$possible_bools = [
 		'show_online',
-	);
+	];
 
 	// We may want to add certain things to these if selected in the admin panel.
 	if (!empty($modSettings['registration_fields']))
@@ -285,7 +285,7 @@ function Register2()
 
 		// Website is a little different
 		if (in_array('website', $reg_fields))
-			$possible_strings = array_merge($possible_strings, array('website_url', 'website_title'));
+			$possible_strings = array_merge($possible_strings, ['website_url', 'website_title']);
 	}
 
 	if (isset($_POST['secret_answer']) && $_POST['secret_answer'] != '')
@@ -369,7 +369,7 @@ function Register2()
 		unset($_POST['lngfile']);
 
 	// Set the options needed for registration.
-	$regOptions = array(
+	$regOptions = [
 		'interface' => 'guest',
 		'username' => !empty($_POST['user']) ? $_POST['user'] : '',
 		'email' => !empty($_POST['email']) ? $_POST['email'] : '',
@@ -384,7 +384,7 @@ function Register2()
 		'theme_vars' => [],
 		'timezone' => !empty($modSettings['default_timezone']) ? $modSettings['default_timezone'] : '',
 		'reg_policies' => array_keys($policies),
-	);
+	];
 
 	// Include the additional options that might have been filled in.
 	foreach ($possible_strings as $var)
@@ -414,9 +414,9 @@ function Register2()
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:is_active}
 		ORDER BY field_order',
-		array(
+		[
 			'is_active' => 1,
-		)
+		]
 	);
 	$custom_field_errors = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -433,27 +433,27 @@ function Register2()
 		$value = isset($_POST['customfield'][$row['col_name']]) ? trim($_POST['customfield'][$row['col_name']]) : '';
 
 		// We only care for text fields as the others are valid to be empty.
-		if (!in_array($row['field_type'], array('check', 'select', 'radio')))
+		if (!in_array($row['field_type'], ['check', 'select', 'radio']))
 		{
 			// Is it too long?
 			if ($row['field_length'] && $row['field_length'] < $smcFunc['strlen']($value))
-				$custom_field_errors[] = array('custom_field_too_long', array($row['field_name'], $row['field_length']));
+				$custom_field_errors[] = ['custom_field_too_long', [$row['field_name'], $row['field_length']]];
 
 			// Any masks to apply?
 			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
 			{
 				if ($row['mask'] == 'email' && (!filter_var($value, FILTER_VALIDATE_EMAIL) || strlen($value) > 255))
-					$custom_field_errors[] = array('custom_field_invalid_email', array($row['field_name']));
+					$custom_field_errors[] = ['custom_field_invalid_email', [$row['field_name']]];
 				elseif ($row['mask'] == 'number' && preg_match('~[^\d]~', $value))
-					$custom_field_errors[] = array('custom_field_not_number', array($row['field_name']));
+					$custom_field_errors[] = ['custom_field_not_number', [$row['field_name']]];
 				elseif (substr($row['mask'], 0, 5) == 'regex' && trim($value) != '' && preg_match(substr($row['mask'], 5), $value) === 0)
-					$custom_field_errors[] = array('custom_field_inproper_format', array($row['field_name']));
+					$custom_field_errors[] = ['custom_field_inproper_format', [$row['field_name']]];
 			}
 		}
 
 		// Is this required but not there?
 		if (trim($value) == '' && $row['show_reg'] > 1)
-			$custom_field_errors[] = array('custom_field_empty', array($row['field_name']));
+			$custom_field_errors[] = ['custom_field_empty', [$row['field_name']]];
 	}
 	$smcFunc['db_free_result']($request);
 
@@ -493,7 +493,7 @@ function Register2()
 	// Don't update if the default is the same.
 	if ($var != $pref)
 	{
-		setNotifyPrefs($memberID, array('announcements' => (int) !empty($_POST['notify_announcements'])));
+		setNotifyPrefs($memberID, ['announcements' => (int) !empty($_POST['notify_announcements'])]);
 	}
 
 	// We'll do custom fields after as then we get to use the helper function!
@@ -507,12 +507,12 @@ function Register2()
 	// Basic template variable setup.
 	if (!empty($modSettings['registration_method']))
 	{
-		$context += array(
+		$context += [
 			'page_title' => $txt['register'],
 			'title' => $txt['registration_successful'],
 			'sub_template' => 'register_success',
 			'description' => $modSettings['registration_method'] == 2 ? $txt['approval_after_registration'] : $txt['activate_after_registration']
-		);
+		];
 	}
 	else
 	{
@@ -560,10 +560,10 @@ function Activate()
 		WHERE member_name = {string:email_address} OR email_address = {string:email_address}' : '
 		WHERE id_member = {int:id_member}') . '
 		LIMIT 1',
-		array(
+		[
 			'id_member' => isset($_REQUEST['u']) ? (int) $_REQUEST['u'] : 0,
 			'email_address' => isset($_POST['user']) ? $_POST['user'] : '',
-		)
+		]
 	);
 
 	// Does this user exist at all?
@@ -597,16 +597,16 @@ function Activate()
 			FROM {db_prefix}members
 			WHERE email_address = {string:email_address}
 			LIMIT 1',
-			array(
+			[
 				'email_address' => $_POST['new_email'],
-			)
+			]
 		);
 
 		if ($smcFunc['db_num_rows']($request) != 0)
-			fatal_lang_error('email_in_use', false, array($smcFunc['htmlspecialchars']($_POST['new_email'])));
+			fatal_lang_error('email_in_use', false, [$smcFunc['htmlspecialchars']($_POST['new_email'])]);
 		$smcFunc['db_free_result']($request);
 
-		updateMemberData($row['id_member'], array('email_address' => $_POST['new_email']));
+		updateMemberData($row['id_member'], ['email_address' => $_POST['new_email']]);
 		$row['email_address'] = $_POST['new_email'];
 
 		$email_change = true;
@@ -617,14 +617,14 @@ function Activate()
 	{
 		require_once($sourcedir . '/Subs-Post.php');
 
-		$replacements = array(
+		$replacements = [
 			'REALNAME' => $row['real_name'],
 			'USERNAME' => $row['member_name'],
 			'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $row['id_member'] . ';code=' . $row['validation_code'],
 			'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $row['id_member'],
 			'ACTIVATIONCODE' => $row['validation_code'],
 			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
-		);
+		];
 
 		$emaildata = loadEmailTemplate('resend_activate_message', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
 
@@ -660,7 +660,7 @@ function Activate()
 	(new Observable\Account\Activated($row['member_name'], $row['id_member']))->execute();
 
 	// Validation complete - update the database!
-	updateMemberData($row['id_member'], array('is_activated' => 1, 'validation_code' => ''));
+	updateMemberData($row['id_member'], ['is_activated' => 1, 'validation_code' => '']);
 
 	// Also do a proper member stat re-evaluation.
 	updateStats('member', false);
@@ -672,14 +672,14 @@ function Activate()
 		adminNotify('activation', $row['id_member'], $row['member_name']);
 	}
 
-	$context += array(
+	$context += [
 		'page_title' => $txt['registration_successful'],
 		'sub_template' => 'login_main',
 		'default_username' => $row['member_name'],
 		'default_password' => '',
 		'never_expire' => false,
 		'description' => $txt['activate_success']
-	);
+	];
 }
 
 /**

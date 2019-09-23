@@ -117,9 +117,9 @@ class Behat extends RawMinkContext implements Context
 		);
 		$smcFunc['db']->select_db($db_name);
 
-		$replaces = array(
+		$replaces = [
 			'{$db_prefix}' => 'behat_' . $db_prefix,
-			'{$attachdir}' => json_encode(array(1 => $smcFunc['db_escape_string']($boarddir . '/attachments'))),
+			'{$attachdir}' => json_encode([1 => $smcFunc['db_escape_string']($boarddir . '/attachments')]),
 			'{$boarddir}' => $smcFunc['db_escape_string']($boarddir),
 			'{$boardurl}' => $boardurl,
 			'{$databaseSession_enable}' => (ini_get('session.auto_start') != 1) ? '1' : '0',
@@ -127,14 +127,14 @@ class Behat extends RawMinkContext implements Context
 			'{$current_time}' => time(),
 			'{$sched_task_offset}' => 82800 + mt_rand(0, 86399),
 			'{$registration_method}' => 0,
-		);
+		];
 
 		foreach ($txt as $key => $value)
 		{
 			if (substr($key, 0, 8) == 'default_')
 				$replaces['{$' . $key . '}'] = $smcFunc['db_escape_string']($value);
 		}
-		$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], array('\\\\n' => '\\n'));
+		$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], ['\\\\n' => '\\n']);
 
 		// MySQL-specific stuff - storage engine and UTF8 handling
 		if (substr($db_type, 0, 5) == 'mysql')
@@ -184,12 +184,12 @@ class Behat extends RawMinkContext implements Context
 		$current_statement = '';
 		$exists = [];
 		$incontext['failures'] = [];
-		$incontext['sql_results'] = array(
+		$incontext['sql_results'] = [
 			'tables' => 0,
 			'inserts' => 0,
 			'table_dups' => 0,
 			'insert_dups' => 0,
-		);
+		];
 		foreach ($sql_lines as $count => $line)
 		{
 			// No comments allowed!
@@ -221,7 +221,7 @@ class Behat extends RawMinkContext implements Context
 				}
 			}
 
-			if ($smcFunc['db_query']('', $current_statement, array('security_override' => true, 'db_error_skip' => true), $db_connection) === false)
+			if ($smcFunc['db_query']('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
 			{
 				// Use the appropriate function based on the DB type
 				if ($db_type == 'mysql' || $db_type == 'mysqli')
@@ -320,9 +320,9 @@ class Behat extends RawMinkContext implements Context
 		{
 			$smcFunc['db_query']('', '
 				DROP TABLE IF EXISTS {raw:table}',
-				array(
+				[
 					'table' => $table,
-				)
+				]
 			);
 		}
 		$smcFunc['db']->transaction('commit');

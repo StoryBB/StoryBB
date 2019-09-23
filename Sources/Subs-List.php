@@ -26,7 +26,7 @@ function createList($listOptions)
 	assert((empty($listOptions['default_sort_col']) || isset($listOptions['columns'][$listOptions['default_sort_col']])));
 	assert((!isset($listOptions['form']) || isset($listOptions['form']['href'])));
 
-	call_integration_hook('integrate_' . $listOptions['id'], array(&$listOptions));
+	call_integration_hook('integrate_' . $listOptions['id'], [&$listOptions]);
 
 	// All the context data will be easily accessible by using a reference.
 	$context[$listOptions['id']] = [];
@@ -43,15 +43,15 @@ function createList($listOptions)
 		$request_var_sort = isset($listOptions['request_vars']['sort']) ? $listOptions['request_vars']['sort'] : 'sort';
 		$request_var_desc = isset($listOptions['request_vars']['desc']) ? $listOptions['request_vars']['desc'] : 'desc';
 		if (isset($_REQUEST[$request_var_sort], $listOptions['columns'][$_REQUEST[$request_var_sort]], $listOptions['columns'][$_REQUEST[$request_var_sort]]['sort']))
-			$list_context['sort'] = array(
+			$list_context['sort'] = [
 				'id' => $_REQUEST[$request_var_sort],
 				'desc' => isset($_REQUEST[$request_var_desc]) && isset($listOptions['columns'][$_REQUEST[$request_var_sort]]['sort']['reverse']),
-			);
+			];
 		else
-			$list_context['sort'] = array(
+			$list_context['sort'] = [
 				'id' => $listOptions['default_sort_col'],
 				'desc' => (!empty($listOptions['default_sort_dir']) && $listOptions['default_sort_dir'] == 'desc') || (!empty($listOptions['columns'][$listOptions['default_sort_col']]['sort']['default']) && substr($listOptions['columns'][$listOptions['default_sort_col']]['sort']['default'], -4, 4) == 'desc') ? true : false,
-			);
+			];
 
 		// Set the database column sort.
 		$sort = $listOptions['columns'][$list_context['sort']['id']]['sort'][$list_context['sort']['desc'] ? 'reverse' : 'default'];
@@ -86,7 +86,7 @@ function createList($listOptions)
 	// Prepare the headers of the table.
 	$list_context['headers'] = [];
 	foreach ($listOptions['columns'] as $column_id => $column)
-		$list_context['headers'][] = array(
+		$list_context['headers'][] = [
 			'id' => $column_id,
 			'label' => isset($column['header']['eval']) ? eval($column['header']['eval']) : (isset($column['header']['value']) ? $column['header']['value'] : ''),
 			'href' => empty($listOptions['default_sort_col']) || empty($column['sort']) ? '' : $listOptions['base_href'] . ';' . $request_var_sort . '=' . $column_id . ($column_id === $list_context['sort']['id'] && !$list_context['sort']['desc'] && isset($column['sort']['reverse']) ? ';' . $request_var_desc : '') . (empty($list_context['start']) ? '' : ';' . $list_context['start_var_name'] . '=' . $list_context['start']),
@@ -94,7 +94,7 @@ function createList($listOptions)
 			'class' => isset($column['header']['class']) ? $column['header']['class'] : '',
 			'style' => isset($column['header']['style']) ? $column['header']['style'] : '',
 			'colspan' => isset($column['header']['colspan']) ? $column['header']['colspan'] : '',
-		);
+		];
 
 	// We know the amount of columns, might be useful for the template.
 	$list_context['num_columns'] = count($listOptions['columns']);
@@ -106,7 +106,7 @@ function createList($listOptions)
 
 	// Call the function and include which items we want and in what order.
 	$call = call_helper($listOptions['get_items']['function'], true);
-	$list_items = call_user_func_array($call, array_merge(array($list_context['start'], $list_context['items_per_page'], $sort), empty($listOptions['get_items']['params']) ? [] : $listOptions['get_items']['params']));
+	$list_items = call_user_func_array($call, array_merge([$list_context['start'], $list_context['items_per_page'], $sort], empty($listOptions['get_items']['params']) ? [] : $listOptions['get_items']['params']));
 	$list_items = empty($list_items) ? [] : $list_items;
 
 	// Loop through the list items to be shown and construct the data values.
@@ -141,7 +141,7 @@ function createList($listOptions)
 
 			// The most flexible way probably is applying a custom function.
 			elseif (isset($column['data']['function']))
-				$cur_data['value'] = call_user_func_array($column['data']['function'], array($list_item));
+				$cur_data['value'] = call_user_func_array($column['data']['function'], [$list_item]);
 
 			// A modified value (inject the database values).
 			elseif (isset($column['data']['eval']))

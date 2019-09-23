@@ -30,22 +30,22 @@ function ManageLanguages()
 
 	$context['page_title'] = $txt['edit_languages'];
 
-	$subActions = array(
+	$subActions = [
 		'edit' => 'ModifyLanguages',
 		'editlang' => 'ModifyLanguage',
-	);
+	];
 
 	// By default we're managing languages.
 	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'edit';
 	$context['sub_action'] = $_REQUEST['sa'];
 
 	// Load up all the tabs...
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['language_configuration'],
 		'description' => $txt['language_description'],
-	);
+	];
 
-	routing_integration_hook('integrate_manage_languages', array(&$subActions));
+	routing_integration_hook('integrate_manage_languages', [&$subActions]);
 
 	// Call the right function for this sub-action.
 	call_helper($subActions[$_REQUEST['sa']]);
@@ -131,18 +131,18 @@ function ModifyLanguages()
 			'function' => 'list_getNumLanguages',
 		],
 		'columns' => [
-			'available' => array(
-				'header' => array(
+			'available' => [
+				'header' => [
 					'value' => $txt['languages_available'],
-				),
-				'data' => array(
+				],
+				'data' => [
 					'function' => function($rowData)
 					{
 						return '<input type="checkbox" name="available[' . $rowData['id'] . ']" value="1"' . (!empty($rowData['available']) ? ' checked' : '') . '>';
 					},
 					'style' => 'text-align: center; width: 8%',
-				),
-			),
+				],
+			],
 			'default' => [
 				'header' => [
 					'value' => $txt['languages_default'],
@@ -231,11 +231,11 @@ function ModifyLanguages()
 
 	// Display a warning if we cannot edit the default setting.
 	if (!is_writable($boarddir . '/Settings.php'))
-		$listOptions['additional_rows'][] = array(
+		$listOptions['additional_rows'][] = [
 				'position' => 'after_title',
 				'value' => $txt['language_settings_writable'],
 				'class' => 'smalltext alert',
-			);
+			];
 
 	require_once($sourcedir . '/Subs-List.php');
 	createList($listOptions);
@@ -294,7 +294,7 @@ function list_getLanguages()
 		// Load the file to get the character set.
 		$general = json_decode(file_get_contents($settings['default_theme_dir'] . '/languages/' . $lang['filename'] . '/' . $lang['filename'] . '.json'), true);
 
-		$languages[$lang['filename']] = array(
+		$languages[$lang['filename']] = [
 			'id' => $lang['filename'],
 			'count' => 0,
 			'available' => $language == $lang['filename'] || in_array($lang['filename'], $available),
@@ -302,7 +302,7 @@ function list_getLanguages()
 			'locale' => $general['locale'],
 			'name' => $general['native_name'] . (!empty($general['english_name']) && $general['english_name'] != $general['native_name'] ? ' (' . $general['english_name'] . ')' : ''),
 			'rtl' => !empty($general['is_rtl']),
-		);
+		];
 	}
 
 	// Work out how many people are using each language.
@@ -346,7 +346,7 @@ function ModifyLanguage()
 	$context['page_title'] = $txt['edit_languages'];
 
 	$context['lang_id'] = isset($_GET['lid']) ? $_GET['lid'] : '';
-	list($theme_id, $file_id) = empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '_') === false ? array(1, '') : explode('_', $_REQUEST['tfid']);
+	list($theme_id, $file_id) = empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '_') === false ? [1, ''] : explode('_', $_REQUEST['tfid']);
 
 	// Clean the ID - just in case.
 	if (preg_match('~([A-Za-z0-9_-]+)~', $context['lang_id'], $matches))
@@ -359,12 +359,12 @@ function ModifyLanguage()
 	}
 
 	// Get all the theme data.
-	$themes = array(
-		1 => array(
+	$themes = [
+		1 => [
 			'name' => $txt['dvc_default'],
 			'theme_dir' => $settings['default_theme_dir'],
-		),
-	);
+		],
+	];
 	foreach (Theme::get_theme_list() as $tid => $theme)
 	{
 		if (isset($themes[$tid]))
@@ -378,7 +378,7 @@ function ModifyLanguage()
 	$lang_dirs = [];
 
 	// Does a hook need to add in some additional places to look for languages?
-	call_integration_hook('integrate_modifylanguages', array(&$themes, &$lang_dirs));
+	call_integration_hook('integrate_modifylanguages', [&$themes, &$lang_dirs]);
 
 	// Check we have themes with a path and a name - just in case - and add the path.
 	foreach ($themes as $id => $data)
@@ -473,11 +473,11 @@ function ModifyLanguage()
 	$language_manifest = @json_decode(file_get_contents($settings['default_theme_dir'] . '/languages/' . $context['lang_id'] . '/' . $context['lang_id'] . '.json'), true);
 	$context['lang_file_not_writable_message'] = '';
 	// Setup the primary settings context.
-	$context['primary_settings'] = array(
+	$context['primary_settings'] = [
 		'name' => $language_manifest['native_name'],
 		'locale' => $language_manifest['locale'],
 		'rtl' => !empty($language_manifest['is_rtl']),
-	);
+	];
 
 	// If we are editing a file work away at that.
 	if ($current_file)
@@ -503,7 +503,7 @@ function ModifyLanguage()
 		if (isset($_GET['eid']) && isset($context['entries'][$_GET['eid']]))
 		{
 			$context['sub_template'] = 'admin_languages_edit_entry';
-			loadJavaScriptFile('manage_languages.js', array('defer' => true, 'minimize' => false), 'manage_languages');
+			loadJavaScriptFile('manage_languages.js', ['defer' => true, 'minimize' => false], 'manage_languages');
 			$context['current_entry'] = $context['entries'][$_GET['eid']];
 			if (empty($context['current_entry']['current']))
 			{

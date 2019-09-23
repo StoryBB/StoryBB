@@ -53,9 +53,9 @@ class RemoveTopicRedirects implements \StoryBB\Task\Schedulable
 			FROM {db_prefix}topics
 			WHERE redirect_expires <= {int:redirect_expires}
 				AND redirect_expires <> 0',
-			array(
+			[
 				'redirect_expires' => time(),
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_row']($request))

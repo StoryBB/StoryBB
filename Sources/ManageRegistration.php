@@ -30,12 +30,12 @@ function RegCenter()
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'browse')
 		redirectexit('action=admin;area=viewmembers;sa=browse' . (isset($_REQUEST['type']) ? ';type=' . $_REQUEST['type'] : ''));
 
-	$subActions = array(
-		'register' => array('AdminRegister', 'moderate_forum'),
-		'reservednames' => array('SetReserved', 'admin_forum'),
-		'settings' => array('ModifyRegistrationSettings', 'admin_forum'),
-		'policies' => array('ManagePolicies', 'admin_forum'),
-	);
+	$subActions = [
+		'register' => ['AdminRegister', 'moderate_forum'],
+		'reservednames' => ['SetReserved', 'admin_forum'],
+		'settings' => ['ModifyRegistrationSettings', 'admin_forum'],
+		'policies' => ['ManagePolicies', 'admin_forum'],
+	];
 
 	// Work out which to call...
 	$context['sub_action'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (allowedTo('moderate_forum') ? 'register' : 'settings');
@@ -47,27 +47,27 @@ function RegCenter()
 	loadLanguage('Login');
 
 	// Next create the tabs for the template.
-	$context[$context['admin_menu_name']]['tab_data'] = array(
+	$context[$context['admin_menu_name']]['tab_data'] = [
 		'title' => $txt['registration_center'],
 		'help' => 'registrations',
 		'description' => $txt['admin_settings_desc'],
-		'tabs' => array(
-			'register' => array(
+		'tabs' => [
+			'register' => [
 				'description' => $txt['admin_register_desc'],
-			),
-			'reservednames' => array(
+			],
+			'reservednames' => [
 				'description' => $txt['admin_reserved_desc'],
-			),
-			'policies' => array(
+			],
+			'policies' => [
 				'description' => $txt['admin_policies_desc'],
-			),
-			'settings' => array(
+			],
+			'settings' => [
 				'description' => $txt['admin_settings_desc'],
-			),
-		)
-	);
+			],
+		]
+	];
 
-	routing_integration_hook('integrate_manage_registrations', array(&$subActions));
+	routing_integration_hook('integrate_manage_registrations', [&$subActions]);
 
 	// Finally, get around to calling the function...
 	call_helper($subActions[$context['sub_action']][0]);
@@ -96,9 +96,9 @@ function AdminRegister()
 
 		foreach ($_POST as $key => $value)
 			if (!is_array($_POST[$key]))
-				$_POST[$key] = htmltrim__recursive(str_replace(array("\n", "\r"), '', $_POST[$key]));
+				$_POST[$key] = htmltrim__recursive(str_replace(["\n", "\r"], '', $_POST[$key]));
 
-		$regOptions = array(
+		$regOptions = [
 			'interface' => 'admin',
 			'username' => $_POST['user'],
 			'email' => $_POST['email'],
@@ -110,7 +110,7 @@ function AdminRegister()
 			'send_welcome_email' => isset($_POST['emailPassword']) || empty($_POST['password']),
 			'require' => isset($_POST['emailActivate']) ? 'activation' : 'nothing',
 			'memberGroup' => empty($_POST['group']) || !allowedTo('manage_membergroups') ? 0 : (int) $_POST['group'],
-		);
+		];
 
 		require_once($sourcedir . '/Subs-Members.php');
 		$memberID = registerMember($regOptions);
@@ -123,12 +123,12 @@ function AdminRegister()
 				makeCustomFieldChanges($memberID, 'register');
 			}
 
-			$context['new_member'] = array(
+			$context['new_member'] = [
 				'id' => $memberID,
 				'name' => $_POST['user'],
 				'href' => $scripturl . '?action=profile;u=' . $memberID,
 				'link' => '<a href="' . $scripturl . '?action=profile;u=' . $memberID . '">' . $_POST['user'] . '</a>',
-			);
+			];
 			$context['registration_done'] = sprintf($txt['admin_register_done'], $context['new_member']['link']);
 		}
 	}
@@ -145,15 +145,15 @@ function AdminRegister()
 				AND group_type != {int:is_protected}') . '
 				AND hidden != {int:hidden_group}
 			ORDER BY group_name',
-			array(
+			[
 				'moderator_group' => 3,
 				'admin_group' => 1,
 				'is_protected' => 1,
 				'hidden_group' => 2,
 				'newbie_group' => 4,
-			)
+			]
 		);
-		$context['member_groups'] = array(0 => $txt['admin_register_group_none']);
+		$context['member_groups'] = [0 => $txt['admin_register_group_none']];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['member_groups'][$row['id_group']] = $row['group_name'];
 		$smcFunc['db_free_result']($request);
@@ -165,7 +165,7 @@ function AdminRegister()
 	$context['sub_template'] = 'register_admin';
 	$context['page_title'] = $txt['registration_center'];
 	createToken('admin-regc');
-	loadJavaScriptFile('register.js', array('defer' => false), 'sbb_register');
+	loadJavaScriptFile('register.js', ['defer' => false], 'sbb_register');
 }
 
 /**
@@ -186,13 +186,13 @@ function SetReserved()
 		validateToken('admin-regr');
 
 		// Set all the options....
-		updateSettings(array(
+		updateSettings([
 			'reserveWord' => (isset($_POST['matchword']) ? '1' : '0'),
 			'reserveCase' => (isset($_POST['matchcase']) ? '1' : '0'),
 			'reserveUser' => (isset($_POST['matchuser']) ? '1' : '0'),
 			'reserveName' => (isset($_POST['matchname']) ? '1' : '0'),
 			'reserveNames' => str_replace("\r", '', $_POST['reserved'])
-		));
+		]);
 		$context['saved_successful'] = true;
 	}
 
@@ -226,24 +226,24 @@ function ModifyRegistrationSettings($return_config = false)
 	// This is really quite wanting.
 	require_once($sourcedir . '/ManageServer.php');
 
-	$config_vars = array(
-			array('select', 'registration_method', array($txt['setting_registration_standard'], $txt['setting_registration_activate'], $txt['setting_registration_approval'], $txt['setting_registration_disabled'])),
-			array('int', 'remove_unapproved_accounts_days', 'min' => 0, 'max' => 30, 'subtext' => $txt['zero_to_disable']),
-			array('check', 'send_welcomeEmail'),
-			array('select', 'registration_character', array(
+	$config_vars = [
+			['select', 'registration_method', [$txt['setting_registration_standard'], $txt['setting_registration_activate'], $txt['setting_registration_approval'], $txt['setting_registration_disabled']]],
+			['int', 'remove_unapproved_accounts_days', 'min' => 0, 'max' => 30, 'subtext' => $txt['zero_to_disable']],
+			['check', 'send_welcomeEmail'],
+			['select', 'registration_character', [
 				'disabled' => $txt['setting_registration_character_disabled'],
 				'optional' => $txt['setting_registration_character_optional'],
 				'required' => $txt['setting_registration_character_required'],
-			)),
+			]],
 		'',
-			array('int', 'minimum_age'),
-			array('check', 'minimum_age_profile'),
-			array('check', 'age_on_registration'),
+			['int', 'minimum_age'],
+			['check', 'minimum_age_profile'],
+			['check', 'age_on_registration'],
 		'',
-			array('check', 'show_cookie_notice'),
-	);
+			['check', 'show_cookie_notice'],
+	];
 
-	settings_integration_hook('integrate_modify_registration_settings', array(&$config_vars));
+	settings_integration_hook('integrate_modify_registration_settings', [&$config_vars]);
 
 	if ($return_config)
 		return $config_vars;

@@ -270,11 +270,11 @@ function ReplyContact()
 
 	// Send the original recipient an email.
 	require_once($sourcedir . '/Subs-Post.php');
-	$replacements = array(
+	$replacements = [
 		'NAME' => $context['contact']['member_name'],
 		'MSGSUBJECT' => $context['contact']['subject'],
 		'MSGRESPONSE' => $message,
-	);
+	];
 
 	$emaildata = loadEmailTemplate('contact_form_response', $replacements, $language);
 	StoryBB\Helper\Mail::send($context['contact']['member_email'], $emaildata['subject'], $emaildata['body'], null, 'contactform' . $context['contact']['id_message'], $emaildata['is_html']);

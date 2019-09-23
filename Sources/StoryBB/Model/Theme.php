@@ -166,11 +166,11 @@ class Theme
 			FROM {db_prefix}themes
 			WHERE id_member = {int:no_member}
 				AND variable IN ({string:name}, {string:theme_dir})',
-			array(
+			[
 				'no_member' => 0,
 				'name' => 'name',
 				'theme_dir' => 'theme_dir',
-			)
+			]
 		);
 		$cache = [];
 

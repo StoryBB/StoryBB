@@ -114,16 +114,16 @@ class Alert
 			UPDATE {db_prefix}user_alerts
 			SET is_read = {int:read}
 			WHERE id_alert IN({array_int:toMark})',
-			array(
+			[
 				'read' => $read == 1 ? time() : 0,
 				'toMark' => $toMark,
-			)
+			]
 		);
 
 		// Gotta know how many unread alerts are left.
 		$count = self::count_for_member($memID, true);
 
-		updateMemberData($memID, array('alerts' => $count));
+		updateMemberData($memID, ['alerts' => $count]);
 
 		// Might want to know this.
 		return $count;
@@ -148,9 +148,9 @@ class Alert
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}user_alerts
 			WHERE id_alert IN({array_int:toDelete})',
-			array(
+			[
 				'toDelete' => $toDelete,
-			)
+			]
 		);
 
 		// Gotta know how many unread alerts are left.
@@ -158,7 +158,7 @@ class Alert
 		{
 			$count = self::count_for_member($memID, true);
 
-			updateMemberData($memID, array('alerts' => $count));
+			updateMemberData($memID, ['alerts' => $count]);
 
 			// Might want to know this.
 			return $count;
@@ -185,9 +185,9 @@ class Alert
 			WHERE id_member = {int:id_member}
 				'.($unread ? '
 				AND is_read = 0' : ''),
-			array(
+			[
 				'id_member' => $memID,
-			)
+			]
 		);
 
 		$count = $smcFunc['db_num_rows']($request);

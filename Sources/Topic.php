@@ -40,9 +40,9 @@ function LockTopic()
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
-		)
+		]
 	);
 	list ($starter, $locked) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -72,15 +72,15 @@ function LockTopic()
 		UPDATE {db_prefix}topics
 		SET locked = {int:locked}
 		WHERE id_topic = {int:current_topic}',
-		array(
+		[
 			'current_topic' => $topic,
 			'locked' => $locked,
-		)
+		]
 	);
 
 	// If they are allowed a "moderator" permission, log it in the moderator log.
 	if (!$user_lock)
-		logAction($locked ? 'lock' : 'unlock', array('topic' => $topic, 'board' => $board));
+		logAction($locked ? 'lock' : 'unlock', ['topic' => $topic, 'board' => $board]);
 	// Notify people that this topic has been locked?
 	sendNotifications($topic, empty($locked) ? 'unlock' : 'lock');
 
@@ -120,9 +120,9 @@ function Sticky()
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
 		LIMIT 1',
-		array(
+		[
 			'current_topic' => $topic,
-		)
+		]
 	);
 	list ($is_sticky) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
@@ -132,14 +132,14 @@ function Sticky()
 		UPDATE {db_prefix}topics
 		SET is_sticky = {int:is_sticky}
 		WHERE id_topic = {int:current_topic}',
-		array(
+		[
 			'current_topic' => $topic,
 			'is_sticky' => empty($is_sticky) ? 1 : 0,
-		)
+		]
 	);
 
 	// Log this sticky action - always a moderator thing.
-	logAction(empty($is_sticky) ? 'sticky' : 'unsticky', array('topic' => $topic, 'board' => $board));
+	logAction(empty($is_sticky) ? 'sticky' : 'unsticky', ['topic' => $topic, 'board' => $board]);
 	// Notify people that this topic has been stickied?
 	if (empty($is_sticky))
 		sendNotifications($topic, 'sticky');
