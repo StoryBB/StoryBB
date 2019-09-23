@@ -48,7 +48,7 @@ class NativeImage extends AbstractVerifiable implements Verifiable
 	{
 		$code = '';
 
-		$captcha_range = array_merge(range('A', 'H'), array('K', 'M', 'N', 'P', 'R'), range('T', 'Y'));
+		$captcha_range = array_merge(range('A', 'H'), ['K', 'M', 'N', 'P', 'R'], range('T', 'Y'));
 		for ($i = 0; $i < 6; $i++)
 		{
 			$code .= $captcha_range[array_rand($captcha_range)];

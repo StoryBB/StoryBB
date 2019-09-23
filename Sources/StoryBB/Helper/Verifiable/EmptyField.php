@@ -26,8 +26,8 @@ class EmptyField extends AbstractVerifiable implements Verifiable
 
 	public function reset()
 	{
-		$terms = array('gadget', 'device', 'uid', 'gid', 'guid', 'uuid', 'unique', 'identifier');
-		$second_terms = array('hash', 'cipher', 'code', 'key', 'unlock', 'bit', 'value');
+		$terms = ['gadget', 'device', 'uid', 'gid', 'guid', 'uuid', 'unique', 'identifier'];
+		$second_terms = ['hash', 'cipher', 'code', 'key', 'unlock', 'bit', 'value'];
 		$start = mt_rand(0, 27);
 		$hash = substr(md5(time()), $start, 4);
 		$_SESSION[$this->id . '_vv']['empty_field'] = $terms[array_rand($terms)] . '-' . $second_terms[array_rand($second_terms)] . '-' . $hash;
