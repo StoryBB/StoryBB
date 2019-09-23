@@ -31,7 +31,7 @@ class BuddyNotify extends \StoryBB\Task\Adhoc
 
 		if ($prefs[$this->_details['receiver_id']]['buddy_request'])
 		{
-			$alert_row = array(
+			$alert_row = [
 				'alert_time' => $this->_details['time'],
 				'id_member' => $this->_details['receiver_id'],
 				'id_member_started' => $this->_details['id_member'],
@@ -41,15 +41,15 @@ class BuddyNotify extends \StoryBB\Task\Adhoc
 				'content_action' => 'buddy_request',
 				'is_read' => 0,
 				'extra' => '',
-			);
+			];
 
 			$smcFunc['db_insert']('insert', '{db_prefix}user_alerts',
-				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
-				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 				$alert_row, []
 			);
 
-			updateMemberData($this->_details['receiver_id'], array('alerts' => '+'));
+			updateMemberData($this->_details['receiver_id'], ['alerts' => '+']);
 		}
 
 		return true;

@@ -36,9 +36,9 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = t.id_member_started)
 			WHERE id_topic = {int:topic}',
-			array(
+			[
 				'topic' => $topicOptions['id'],
-			)
+			]
 		);
 
 		$watched = [];
@@ -62,11 +62,11 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 				require_once($sourcedir . '/ScheduledTasks.php');
 				loadEssentialThemeData();
 
-				$replacements = array(
+				$replacements = [
 					'SUBJECT' => $msgOptions['subject'],
 					'LINK' => $scripturl . '?topic=' . $topicOptions['id'] . '.new#new',
 					'POSTERNAME' => un_htmlspecialchars($posterOptions['name']),
-				);
+				];
 
 				$emaildata = loadEmailTemplate('alert_unapproved_reply', $replacements, empty($data['lngfile']) || empty($modSettings['userLanguage']) ? $language : $data['lngfile']);
 				StoryBB\Helper\Mail::send($data['email_address'], $emaildata['subject'], $emaildata['body'], null, 'm' . $topicOptions['id'], $emaildata['is_html']);
@@ -74,7 +74,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 
 			if ($pref & 0x01)
 			{
-				$alert_rows[] = array(
+				$alert_rows[] = [
 					'alert_time' => time(),
 					'id_member' => $member,
 					'id_member_started' => $posterOptions['id'],
@@ -83,14 +83,14 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 					'content_id' => $topicOptions['id'],
 					'content_action' => 'reply',
 					'is_read' => 0,
-					'extra' => json_encode(array(
+					'extra' => json_encode([
 						'topic' => $topicOptions['id'],
 						'board' => $topicOptions['board'],
 						'content_subject' => $msgOptions['subject'],
 						'content_link' => $scripturl . '?topic=' . $topicOptions['id'] . '.new;topicseen#new',
-					)),
-				);
-				updateMemberData($member, array('alerts' => '+'));
+					]),
+				];
+				updateMemberData($member, ['alerts' => '+']);
 			}
 		}
 
@@ -98,8 +98,8 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 		if (!empty($alert_rows))
 			$smcFunc['db_insert']('',
 				'{db_prefix}user_alerts',
-				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
-					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 				$alert_rows,
 				[]
 			);

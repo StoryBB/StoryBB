@@ -66,16 +66,16 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				LEFT JOIN {db_prefix}boards AS b ON (b.id_board = ln.id_board OR b.id_board = t.id_board)
 			WHERE ln.id_topic = {int:topic}
 				OR ln.id_board = {int:board}',
-			array(
+			[
 				'topic' => $topicOptions['id'],
 				'board' => $topicOptions['board'],
-			)
+			]
 		);
 
 		$watched = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		{
-			$groups = array_merge(array($row['id_group']), (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
+			$groups = array_merge([$row['id_group']], (empty($row['additional_groups']) ? [] : explode(',', $row['additional_groups'])));
 			if (!in_array(1, $groups) && count(array_intersect($groups, explode(',', $row['member_groups']))) == 0)
 				continue;
 
@@ -110,11 +110,11 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 			// Don't send a notification if the watching member ignored the member who made the action.
 			if (!empty($data['pm_ignore_list']) && in_array($data['id_member_updated'], explode(',', $data['pm_ignore_list'])))
 				continue;
-			if (!in_array($type, array('reply', 'topic')) && $notify_types == 2 && $member != $data['id_member_started'])
+			if (!in_array($type, ['reply', 'topic']) && $notify_types == 2 && $member != $data['id_member_started'])
 				continue;
-			elseif (in_array($type, array('reply', 'topic')) && $member == $posterOptions['id'])
+			elseif (in_array($type, ['reply', 'topic']) && $member == $posterOptions['id'])
 				continue;
-			elseif (!in_array($type, array('reply', 'topic')) && $notify_types == 3)
+			elseif (!in_array($type, ['reply', 'topic']) && $notify_types == 3)
 				continue;
 			elseif ($notify_types == 4)
 				continue;
@@ -156,13 +156,13 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 			if ($pref & 0x02)
 			{
-				$replacements = array(
+				$replacements = [
 					'TOPICSUBJECT' => $msgOptions['subject'],
 					'POSTERNAME' => un_htmlspecialchars($posterOptions['name']),
 					'TOPICLINK' => $scripturl . '?topic=' . $topicOptions['id'] . '.new#new',
 					'MESSAGE' => $msgOptions['body'],
 					'UNSUBSCRIBELINK' => $scripturl . '?action=notifyboard;board=' . $topicOptions['board'] . '.0',
-				);
+				];
 
 				$emaildata = loadEmailTemplate($message_type, $replacements, empty($data['lngfile']) || empty($modSettings['userLanguage']) ? $language : $data['lngfile']);
 				StoryBB\Helper\Mail::send($data['email_address'], $emaildata['subject'], $emaildata['body'], null, 'm' . $topicOptions['id'], $emaildata['is_html']);
@@ -174,8 +174,8 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'alert_time' => time(),
 					'id_member' => $member,
 					// Only tell sender's information for new topics and replies
-					'id_member_started' => in_array($type, array('topic', 'reply')) ? $posterOptions['id'] : 0,
-					'member_name' => in_array($type, array('topic', 'reply')) ? $posterOptions['name'] : '',
+					'id_member_started' => in_array($type, ['topic', 'reply']) ? $posterOptions['id'] : 0,
+					'member_name' => in_array($type, ['topic', 'reply']) ? $posterOptions['name'] : '',
 					'chars_src' => !empty($posterOptions['char_id']) ? $posterOptions['char_id'] : 0,
 					'chars_dest' => 0,
 					'content_type' => $content_type,
@@ -198,22 +198,22 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				SET sent = {int:is_sent}
 				WHERE (id_topic = {int:topic} OR id_board = {int:board})
 					AND id_member = {int:member}',
-				array(
+				[
 					'topic' => $topicOptions['id'],
 					'board' => $topicOptions['board'],
 					'member' => $member,
 					'is_sent' => 1,
-				)
+				]
 			);
 		}
 
 		// Insert it into the digest for daily/weekly notifications
 		$smcFunc['db_insert']('',
 			'{db_prefix}log_digest',
-			array(
+			[
 				'id_topic' => 'int', 'id_msg' => 'int', 'note_type' => 'string', 'exclude' => 'int',
-			),
-			array($topicOptions['id'], $msgOptions['id'], $type, $posterOptions['id']),
+			],
+			[$topicOptions['id'], $msgOptions['id'], $type, $posterOptions['id']],
 			[]
 		);
 
@@ -223,8 +223,8 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 			header('X-Debug: ' . json_encode($alert_rows));
 			$smcFunc['db_insert']('',
 				'{db_prefix}user_alerts',
-				array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string', 'chars_src' => 'int', 'chars_dest' => 'int',
-					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+				['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string', 'chars_src' => 'int', 'chars_dest' => 'int',
+					'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 				$alert_rows,
 				[]
 			);
@@ -265,12 +265,12 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 			if ($prefs[$id]['msg_quote'] & 0x02)
 			{
-				$replacements = array(
+				$replacements = [
 					'CONTENTSUBJECT' => $msgOptions['subject'],
 					'QUOTENAME' => $posterOptions['name'],
 					'MEMBERNAME' => $member['real_name'],
 					'CONTENTLINK' => $scripturl . '?msg=' . $msgOptions['id'],
-				);
+				];
 
 				$emaildata = loadEmailTemplate('msg_quote', $replacements, empty($member['lngfile']) || empty($modSettings['userLanguage']) ? $language : $member['lngfile']);
 				StoryBB\Helper\Mail::send($member['email_address'], $emaildata['subject'], $emaildata['body'], null, 'msg_quote_' . $msgOptions['id'], $emaildata['is_html'], 2);
@@ -278,7 +278,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 			if ($prefs[$id]['msg_quote'] & 0x01)
 			{
-				$this_alert = array(
+				$this_alert = [
 					'alert_time' => time(),
 					'id_member' => $member['id_member'],
 					'id_member_started' => $posterOptions['id'],
@@ -289,11 +289,11 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'content_id' => $msgOptions['id'],
 					'content_action' => 'quote',
 					'is_read' => 0,
-					'extra' => array(
+					'extra' => [
 						'content_subject' => $msgOptions['subject'],
 						'content_link' => $scripturl . '?msg=' . $msgOptions['id'],
-					),
-				);
+					],
+				];
 
 				if (!empty($member['msgs']))
 				{
@@ -307,7 +307,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				$this_alert['extra'] = json_encode($this_alert['extra']);
 				$alert_rows[] = $this_alert;
 
-				updateMemberData($member['id_member'], array('alerts' => '+'));
+				updateMemberData($member['id_member'], ['alerts' => '+']);
 			}
 		}
 	}
@@ -367,9 +367,9 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 				INNER JOIN {db_prefix}characters AS chars ON (chars.id_character = m.id_character AND chars.retired = 0)
 			WHERE id_msg IN ({array_int:msgs})',
-			array(
+			[
 				'msgs' => $id_msgs,
-			)
+			]
 		);
 
 		$members = [];
@@ -380,17 +380,17 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 
 			if (!isset($members[$row['id_member']]))
 			{
-				$members[$row['id_member']] = array(
+				$members[$row['id_member']] = [
 					'id_member' => $row['id_member'],
 					'email_address' => $row['email_address'],
 					'lngfile' => $row['lngfile'],
 					'real_name' => $row['real_name'],
-				);
+				];
 			}
-			$members[$row['id_member']]['msgs'][$row['id_msg']] = array(
+			$members[$row['id_member']]['msgs'][$row['id_msg']] = [
 				'id_character' => $row['id_character'],
 				'is_main' => $row['is_main'],
-			);
+			];
 		}
 
 		return $members;
@@ -424,12 +424,12 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 			// Alerts' emails are always instant
 			if ($prefs[$id]['msg_mention'] & 0x02)
 			{
-				$replacements = array(
+				$replacements = [
 					'CONTENTSUBJECT' => $msgOptions['subject'],
 					'MENTIONNAME' => $member['mentioned_by']['name'],
 					'MEMBERNAME' => $member['real_name'],
 					'CONTENTLINK' => $scripturl . '?msg=' . $msgOptions['id'],
-				);
+				];
 
 				$emaildata = loadEmailTemplate('msg_mention', $replacements, empty($member['lngfile']) || empty($modSettings['userLanguage']) ? $language : $member['lngfile']);
 				StoryBB\Helper\Mail::send($member['email_address'], $emaildata['subject'], $emaildata['body'], null, 'msg_mention_' . $msgOptions['id'], $emaildata['is_html'], 2);
@@ -442,7 +442,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'content_link' => $scripturl . '?msg=' . $msgOptions['id'],
 				];
 
-				$alert_rows[] = array(
+				$alert_rows[] = [
 					'alert_time' => time(),
 					'id_member' => $member['id_member'],
 					'id_member_started' => $member['mentioned_by']['id'],
@@ -454,9 +454,9 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 					'content_action' => 'mention',
 					'is_read' => 0,
 					'extra' => json_encode($extra),
-				);
+				];
 
-				updateMemberData($member['id_member'], array('alerts' => '+'));
+				updateMemberData($member['id_member'], ['alerts' => '+']);
 			}
 		}
 	}

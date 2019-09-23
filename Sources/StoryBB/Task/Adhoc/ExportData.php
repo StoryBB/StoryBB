@@ -644,9 +644,9 @@ class ExportData extends \StoryBB\Task\Adhoc
 			'content_id' => $this->_details['id_member'],
 			'content_action' => 'export_complete',
 			'is_read' => 0,
-			'extra' => json_encode(array(
+			'extra' => json_encode([
 				'export_link' => $export_link,
-			)),
+			]),
 		];
 
 		// Issue an alert to the requester if they aren't the owner to indicate they're good to go.
@@ -661,23 +661,23 @@ class ExportData extends \StoryBB\Task\Adhoc
 				'content_id' => $this->_details['id_member'],
 				'content_action' => 'export_complete_admin',
 				'is_read' => 0,
-				'extra' => json_encode(array(
+				'extra' => json_encode([
 					'export_link' => $export_link,
-				)),
+				]),
 			];
 		}
 
 		// Add the alerts.
 		$smcFunc['db_insert']('',
 			'{db_prefix}user_alerts',
-			array('alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
-				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'),
+			['alert_time' => 'int', 'id_member' => 'int', 'id_member_started' => 'int', 'member_name' => 'string',
+				'content_type' => 'string', 'content_id' => 'int', 'content_action' => 'string', 'is_read' => 'int', 'extra' => 'string'],
 			$alert_rows,
 			[]
 		);
 
-		updateMemberData($this->_details['id_member'], array('alerts' => '+'));
+		updateMemberData($this->_details['id_member'], ['alerts' => '+']);
 		if ($this->_details['id_requester'] != $this->_details['id_member'])
-			updateMemberData($this->_details['id_requester'], array('alerts' => '+'));
+			updateMemberData($this->_details['id_requester'], ['alerts' => '+']);
 	}
 }
