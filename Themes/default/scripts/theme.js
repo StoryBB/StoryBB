@@ -1,10 +1,24 @@
 $(function() {
-	// tooltips
+	// Tooltips
 	$('.preview').SBBtooltip();
 
-	// find all nested linked images and turn off the border
+	// Find all nested linked images and turn off the border
 	$('a.bbc_link img.bbc_img').parent().css('border', '0');
 
+	// Simple toggle for general use
+	$('.toggle').click(function() {
+
+		// Does it have a specific target? (A target is a valid css selector)
+		if ($(this).is('[toggle-target]')) {
+
+			var target = $(this).attr('toggle-target');
+			$(target).toggleClass('active');
+		}
+
+		// Otherwise, just toggle itself
+		else
+			$(this).toggleClass('active');
+	});
 });
 
 // Let jump_buttons know where the page is
