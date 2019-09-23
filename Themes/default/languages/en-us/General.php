@@ -820,7 +820,7 @@ $txt['notify_board_3_desc'] = 'You will receive both alerts and e-mails for this
 // Mobile Actions
 $txt['mobile_action'] = 'User actions';
 $txt['mobile_moderation'] = 'Moderation';
-$txt['mobile_user_menu'] = 'Mobile Main Menu';
+$txt['mobile_user_menu'] = 'Menu';
 
 $txt['characters_none'] = 'No characters found.';
 $txt['char_no_group'] = 'Just starting out...';

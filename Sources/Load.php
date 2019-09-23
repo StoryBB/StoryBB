@@ -2257,8 +2257,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 	}
 
-	// Here is my luvly Responsive CSS
-	loadCSSFile('responsive.css', ['force_current' => false, 'validate' => true, 'minimize' => true], 'sbb_responsive');
+	// Load the adaptive css
+	loadCSSFile('adaptive.css', ['force_current' => false, 'validate' => true, 'minimize' => true], 'sbb_adaptive');
 
 	if ($context['right_to_left'])
 		loadCSSFile('rtl.css', [], 'sbb_rtl');

@@ -1,23 +1,44 @@
 $(function() {
-	// tooltips
+	// Tooltips
 	$('.preview').SBBtooltip();
 
-	// find all nested linked images and turn off the border
+	// Find all nested linked images and turn off the border
 	$('a.bbc_link img.bbc_img').parent().css('border', '0');
 
-	// Let jump_buttons know where the page is
-	$(window).scroll(function() {
-		var scroll_percent = $(window).scrollTop() / ($(document).height() - $(window).height()) * 100;
+	// Simple toggle for general use
+	$('.toggle').click(function() {
 
-		if (scroll_percent > 75)
-			$('.jump_buttons').removeClass('top').addClass('bottom');
+		// Does it have a specific target? (A target is a valid css selector)
+		if ($(this).is('[toggle-target]')) {
 
-		else if (scroll_percent < 25)
-			$('.jump_buttons').removeClass('bottom').addClass('top');
+			var target = $(this).attr('toggle-target');
+			$(target).toggleClass('active');
+		}
 
+		// Otherwise, just toggle itself
 		else
-			$('.jump_buttons').removeClass('top bottom');
+			$(this).toggleClass('active');
 	});
+});
+
+// Let jump_buttons know where the page is
+$(window).on('load scroll', function() {
+	var scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
+
+	// Only show the buttons if there is something to scroll
+	if ($(document).height() - $(window).height() > 500)
+		$('.jump_buttons').show();
+
+	// Top of the page
+	if ($(window).scrollTop() < 600)
+		$('.jump_buttons').removeClass('bottom').addClass('top');
+
+	// Bottom of the page
+	else if (scrollBottom < 600)
+		$('.jump_buttons').removeClass('top').addClass('bottom');
+
+	else
+		$('.jump_buttons').removeClass('top bottom');
 });
 
 // The purpose of this code is to fix the height of overflow: auto blocks, because some browsers can't figure it out for themselves.
@@ -72,6 +93,6 @@ addLoadEvent(smc_toggleImageDimensions);
 function sbb_addButton(stripId, image, options)
 {
 	$('#' + stripId).append(
-		'<a href="' + options.sUrl + '" class="button last" ' + ('sCustom' in options ? options.sCustom : '') + ' ' + ('sId' in options ? ' id="' + options.sId + '_text"' : '') + '>' + options.sText + '</a>'
+		'<a href="' + options.sUrl + '" class="button" ' + ('sCustom' in options ? options.sCustom : '') + ' ' + ('sId' in options ? ' id="' + options.sId + '_text"' : '') + '>' + options.sText + '</a>'
 	);
 }

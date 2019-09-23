@@ -150,17 +150,9 @@
 						</div>
 						<hr class="clear">
 					</div>
-					<a class="menu_icon mobile_user_menu"></a>
-					<div id="mobile_user_menu" class="popup_container">
-						<div class="popup_window description">
-							<div class="popup_heading">
-								{{txt.mobile_user_menu}}
-								<a href="javascript:void(0);" class="main_icons hide_popup"></a>
-							</div>
-							{{>menu}}
-						</div>
+					<div id="main_menu">
+						{{>menu}}
 					</div>
-					<div id="main_menu">{{>menu}}</div>
 					{{> linktree}}
 				</div>
 			</div>
@@ -204,7 +196,7 @@
 			<li class="copyright">{{{copyright}}}</li>
 		</ul>
 
-		<div class="jump_buttons">
+		<div class="jump_buttons" style="display: none;">
 			<a href="#top_section" title="{{txt.go_up}}" class="go_up"></a>
 			<a href="#footer" title="{{txt.go_down}}" class="go_down"></a>
 		</div>
