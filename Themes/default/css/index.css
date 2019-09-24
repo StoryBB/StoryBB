@@ -540,7 +540,7 @@ ul li.greeting {
 	margin: -4px 8px 6px 8px;
 	padding: 4px 0 0 0;
 	font-size: 0.9em;
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 }
 
 /* Fix for quote on reply box */
@@ -635,7 +635,7 @@ ul li.greeting {
 	background: #F8F8F8;
 	overflow: auto;
 	padding-bottom: .5em;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 0 0 7px 7px;
 	margin: 0 0 10px 0;
 	padding: 12px 9px 8px 9px;
@@ -824,7 +824,7 @@ input[type="number"][size="6"] {
 fieldset {
 	padding: 18px;
 	margin: 0 0 6px 0;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 3px;
 }
 
@@ -981,14 +981,14 @@ a.button_submit {
 	font-weight: bold;
 	line-height: 1.12px;
 	border-radius: 2px;
-	background: orange;
+	background: #ffa500;
 	padding: 0 3px 1px;
 	font-family: verdana, sans-serif, monospace;
 	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1), 0 -2px 4px rgba(0, 0, 0, 0.1) inset;
 }
 
 .new_posts:hover {
-	background: #eca21b;
+	background: #bd7a00;
 }
 
 .children .new_posts {
@@ -1095,7 +1095,7 @@ a.button_submit {
 
 /* Level 1 active button. */
 .dropmenu li a.active, #top_info li a.active {
-	background: orange;
+	background: #ffa500;
 	color: #fff;
 	font-weight: bold;
 	border: 1px solid #e09100;
@@ -1239,11 +1239,11 @@ a.button_submit {
 
 .pm_unread, .alerts_unread {
 	margin-top: 5px;
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 }
 
 .top_menu.scrollable .unread {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #dcdcdc;
 }
 
 .top_menu.scrollable .no_unread {
@@ -1403,8 +1403,8 @@ h3.catbg .icon {
 
 /* Titlebar & Subbar */
 .title_bar {
-	border-right: 1px solid #ddd;
-	border-left: 1px solid #ddd;
+	border-right: 1px solid #dcdcdc;
+	border-left: 1px solid #dcdcdc;
 	border-top: 2px solid #ff9400;
 	border-bottom: 2px solid #bf6900;
 	background: #fff;
@@ -1414,7 +1414,7 @@ h3.catbg .icon {
 }
 
 .sub_bar {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #dcdcdc;
 	text-shadow: none;
 	background: none;
 	box-shadow: 0 -1px 0 #999 inset;
@@ -1541,7 +1541,7 @@ tr.windowbg {
 
 .progress_bar {
 	height: 15pt;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	background-color: #fff;
 	width: 80%;
 	margin: 20px auto 0 auto;
@@ -1703,7 +1703,7 @@ tr.windowbg {
 	margin: 0;
 	padding: 10px 8px;
 	border: 1px solid #bbb;
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #dcdcdc;
 	border-radius: 6px 6px 2px 2px;
 	box-shadow: 0 -2px 3px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(255, 255, 255, 0.2);
 }
@@ -1791,7 +1791,7 @@ body#help_popup {
 	padding: 5px 10px 6px;
 	font-size: 0.9em;
 	overflow: hidden;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 2px;
 	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.08);
 }
@@ -2311,7 +2311,7 @@ blockquote cite::before {
 }
 
 /* Let's get a bit more flexibility in font sizes for quotes and code.
-	 We just need to stop em compounding when elements are nested. */
+   We just need to stop em compounding when elements are nested. */
 .bbc_standard_quote .bbc_alternate_quote, .bbc_alternate_quote .bbc_standard_quote, .bbc_standard_quote .bbc_code, .bbc_alternate_quote .bbc_code, .bbc_standard_quote .codeheader, .bbc_alternate_quote .codeheader, .bbc_standard_quote .quoteheader, .bbc_alternate_quote .quoteheader {
 	font-size: 1em;
 }
@@ -2456,8 +2456,8 @@ h3 .collapse {
 }
 
 .board_stats p {
-	border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;
+	border-left: 1px solid #dcdcdc;
+	border-right: 1px solid #dcdcdc;
 	text-align: center;
 	margin: 3px 0 0;
 }
@@ -2515,7 +2515,7 @@ h3 .collapse {
 
 .up_contain {
 	overflow: hidden;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	margin-bottom: 2px;
 }
 
@@ -2604,7 +2604,7 @@ span.postby {
 }
 
 #topic_container .windowbg {
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-top: none;
 }
 
@@ -2658,7 +2658,7 @@ input[type="submit"].qaction {
 	background: #f0f4f7;
 	margin: 12px 0 0 0;
 	padding: 12px 16px;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 6px;
 	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
 	overflow: auto;
@@ -3077,7 +3077,7 @@ ul.post_options li {
 }
 
 #postMoreOptions, #postAttachment, #postAttachment2 {
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 	margin: -1px 0 0 0;
 	padding: 10px;
 }
@@ -3470,13 +3470,13 @@ dl.addrules dt.floatleft {
 .activity_stats li div.bar {
 	margin: 0 auto;
 	width: 15px;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-bottom: none;
 	background: #fff;
 }
 
 .activity_stats li div.bar div {
-	background: orange;
+	background: #ffa500;
 	box-shadow: 4px -4px 4px rgba(0, 0, 0, 0.1) inset, 4px 4px 4px rgba(255, 255, 255, 0.3) inset;
 }
 
@@ -3515,7 +3515,7 @@ dl.addrules dt.floatleft {
 }
 
 .list_posts {
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 	box-shadow: 0 1px 0 #fff inset;
 	padding-top: 12px;
 	margin: 0;
@@ -4089,7 +4089,7 @@ dl.register_form dd {
 	display: none;
 	margin-top: 18px;
 	background: white;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 3px;
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 	min-width: 120px;
@@ -4123,7 +4123,7 @@ dl.register_form dd {
 .atwho-view ul li {
 	display: block;
 	padding: 5px;
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #dcdcdc;
 	cursor: pointer;
 }
 
@@ -4177,7 +4177,7 @@ dl.stats dd {
 	line-height: 1.4em;
 	min-height: 1.4em;
 	background: #fff;
-	border: 1px solid #aaa;
+	border: 1px solid #9a9a9a;
 	border-radius: 2px;
 	position: relative;
 }
@@ -4337,7 +4337,7 @@ dl.stats dd span {
 #helpmain {
 	margin: 12px 0 0 0;
 	padding: 8px 20px 12px 20px;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 7px;
 	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
 	overflow: auto;
@@ -4369,7 +4369,7 @@ dl.stats dd span {
 }
 
 #info_center .sub_bar {
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 }
 
 #info_center .sub_bar:first-child {
@@ -4514,7 +4514,7 @@ dl.stats dd span {
 }
 
 .auto_suggest_item {
-	background: #ddd;
+	background: #dcdcdc;
 	padding: 1px 4px;
 }
 
@@ -4688,7 +4688,7 @@ span.member.hidden {
 }
 
 #alerts tr.windowbg td {
-	border-right: 1px solid #ddd;
+	border-right: 1px solid #dcdcdc;
 }
 
 #admin_content .character_group {
@@ -4730,6 +4730,7 @@ span.draggable-handle {
 	color: #cccccc;
 	text-shadow: 1px 0 1px black;
 }
+
 span.draggable-handle::after {
 	content: '.. .. .. ..';
 }
@@ -4742,7 +4743,7 @@ span.draggable-handle::after {
 }
 
 #topic_icons .information, #messageindex .information {
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 }
 
 /* On/Off Icons (User) */
