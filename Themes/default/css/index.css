@@ -70,15 +70,25 @@ body, html {
 	background: #e9eef2;
 	font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 	color: #4d4d4d;
+	min-height: 100vh;
+}
+
+body, #wrapper {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
 }
 
 #wrapper {
+	width: 100%;
+	flex-grow: 5;
+}
+
+#content_wrapper {
 	margin: 0 auto;
 	width: 90%;
-	clear: both;
+	padding: 10px;
+	margin-bottom: 3em;
 	background: #fff;
 	border: 1px solid #b8b8b8;
 	border-radius: 8px;
@@ -310,11 +320,10 @@ h3.largetext {
 
 /* The top bar. */
 #top_section {
-	padding: 5px calc(5% + 7px);
+	padding: 5px calc(5% + 10px);
 	border-bottom: 1px solid #bbb;
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
 	background: #fff;
-	clear: both;
 }
 
 #top_section::after {
@@ -366,22 +375,15 @@ h3.largetext {
 
 /* The logo and slogan. */
 #header {
-	padding: 2px 2px 12px 2px;
 	margin: 0 5%;
-}
-
-#header::after {
-	content: '';
-	display: block;
-	clear: both;
+	padding: 10px;
 }
 
 /* The main title. */
 h1.forumtitle {
 	font-size: 2.8em;
 	font-family: "Tahoma", sans-serif;
-	margin: 10px 0 0 0;
-	padding: 22px 12px 6px 10px;
+	margin-top: 10px;
 	float: left;
 	font-weight: normal;
 }
@@ -393,15 +395,12 @@ h1.forumtitle a {
 
 /* Float these items to the right */
 #siteslogan, img#sbblogo {
-	padding-right: 2px;
 	float: right;
-	line-height: 50px;
 	font-size: 1.8em;
 }
 
 /* Tweak the StoryBB logo */
 img#sbblogo {
-	margin: 5px 0 0 0;
 	max-height: 60px;
 }
 
@@ -411,9 +410,9 @@ img#sbblogo {
 	padding-top: 5px;
 }
 
-/* The user info, news, etc. */
+/* The upper_section */
 #upper_section {
-	padding: 2px 2px 0 2px;
+	margin-bottom: 1em;
 }
 
 #inner_section {
@@ -461,12 +460,7 @@ ul li.greeting {
 
 /* The content section */
 #content_section {
-	margin: 0 auto;
 	clear: both;
-}
-
-#main_content_section {
-	padding: 5px 12px 16px 12px;
 }
 
 #main_content_section::after {
@@ -477,11 +471,10 @@ ul li.greeting {
 
 /* The footer with copyright links etc. */
 #footer {
-	margin: 4em 0 0 0;
-	padding: 10px 5%;
+	margin-top: auto;
+	padding: 10px calc(5% + 10px);
 	background: #3e5a78;
 	border-top: 3px solid #b2b6bd;
-	flex: none;
 	font-size: 0.9em;
 	color: #fff;
 	text-align: right;
