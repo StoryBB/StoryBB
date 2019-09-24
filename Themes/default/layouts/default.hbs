@@ -33,7 +33,7 @@
 	{{{context.html_headers}}}
 </head>
 <body id="{{context.browser_body_id}}" class="action_{{#if context.current_action}}{{context.current_action}}{{else}}{{#if context.current_board}}messageindex{{else}}{{#if context.current_topic}}display{{else}}home{{/if}}{{/if}}{{/if}}{{#if context.current_board}}board_{{context.current_board}}{{/if}}">
-	<div id="footerfix">
+	<div id="wrapper">
 		<div id="top_section">
 
 {{#if context.user.is_logged}}
@@ -137,18 +137,17 @@
 			<img id="sbblogo" src="{{settings.images_url}}/StoryBB.svg" alt="StoryBB" title="StoryBB">
 {{/if}}
 		</div>
-		<div id="wrapper">
+		<div id="content_wrapper">
 			<div id="upper_section">
 				<div id="inner_section">
 					<div id="inner_wrap">
-						<div class="user">
+						<div class="time">
 							{{context.current_time}}
 						</div>
 						<div class="news">
 							<h2>{{txt.news}}:</h2>
 							<p>{{context.random_news_line}}</p>
 						</div>
-						<hr class="clear">
 					</div>
 					<div id="main_menu">
 						{{>menu}}
@@ -175,32 +174,33 @@
 						{{{content}}}
 				</div>
 			</div>
-		</div><!-- #wrapper -->
-	</div><!-- #footerfix -->
+		</div><!-- #content_wrapper -->
 		
-	<div id="footer">
-		<ul>
-			<li class="contact">
-				<a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
-			</li>
-			<li class="help">
-				<a href="{{scripturl}}?action=help">{{txt.help}}</a>
-			</li>
+		<div id="footer">
+			<ul>
+				<li class="contact">
+					<a href="{{scripturl}}?action=contact">{{{txt.contact_us}}}</a>
+				</li>
+				<li class="help">
+					<a href="{{scripturl}}?action=help">{{txt.help}}</a>
+				</li>
 			
 {{#each context.footer_links}}
-			<li>
-				<a href="{{{link}}}">{{{title}}}</a>
-			</li>
+				<li>
+					<a href="{{{link}}}">{{{title}}}</a>
+				</li>
 {{/each}}
 
-			<li class="copyright">{{{copyright}}}</li>
-		</ul>
+				<li class="copyright">{{{copyright}}}</li>
+			</ul>
 
-		<div class="jump_buttons" style="display: none;">
-			<a href="#top_section" title="{{txt.go_up}}" class="go_up"></a>
-			<a href="#footer" title="{{txt.go_down}}" class="go_down"></a>
+			<div class="jump_buttons" style="display: none;">
+				<a href="#top_section" title="{{txt.go_up}}" class="go_up"></a>
+				<a href="#footer" title="{{txt.go_down}}" class="go_down"></a>
+			</div>
 		</div>
-	</div>
+
+	</div><!-- #wrapper -->
 
 	{{{javascript deferred=1}}}
 	{{> cookie_footer}}

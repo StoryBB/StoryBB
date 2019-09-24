@@ -70,15 +70,25 @@ body, html {
 	background: #e9eef2;
 	font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 	color: #4d4d4d;
+	min-height: 100vh;
+}
+
+body, #wrapper {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
 }
 
 #wrapper {
+	width: 100%;
+	flex-grow: 5;
+}
+
+#content_wrapper {
 	margin: 0 auto;
 	width: 90%;
-	clear: both;
+	padding: 10px;
+	margin-bottom: 3em;
 	background: #fff;
 	border: 1px solid #b8b8b8;
 	border-radius: 8px;
@@ -310,11 +320,10 @@ h3.largetext {
 
 /* The top bar. */
 #top_section {
-	padding: 5px calc(5% + 7px);
+	padding: 5px calc(5% + 10px);
 	border-bottom: 1px solid #bbb;
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
 	background: #fff;
-	clear: both;
 }
 
 #top_section::after {
@@ -366,22 +375,15 @@ h3.largetext {
 
 /* The logo and slogan. */
 #header {
-	padding: 2px 2px 12px 2px;
 	margin: 0 5%;
-}
-
-#header::after {
-	content: '';
-	display: block;
-	clear: both;
+	padding: 10px;
 }
 
 /* The main title. */
 h1.forumtitle {
 	font-size: 2.8em;
 	font-family: "Tahoma", sans-serif;
-	margin: 10px 0 0 0;
-	padding: 22px 12px 6px 10px;
+	margin-top: 10px;
 	float: left;
 	font-weight: normal;
 }
@@ -393,15 +395,12 @@ h1.forumtitle a {
 
 /* Float these items to the right */
 #siteslogan, img#sbblogo {
-	padding-right: 2px;
 	float: right;
-	line-height: 50px;
 	font-size: 1.8em;
 }
 
 /* Tweak the StoryBB logo */
 img#sbblogo {
-	margin: 5px 0 0 0;
 	max-height: 60px;
 }
 
@@ -411,62 +410,31 @@ img#sbblogo {
 	padding-top: 5px;
 }
 
-/* The user info, news, etc. */
+/* The upper_section */
 #upper_section {
-	padding: 2px 2px 0 2px;
+	margin-bottom: 1em;
 }
 
-#inner_section {
-	padding: 12px 10px 2px 10px;
-	border-radius: 6px 6px 0 0;
-}
-
-#inner_section::after {
-	content: '';
-	display: block;
-	clear: both;
-}
-
-/* The upper_section, float the two each way */
-.user {
-	width: 50%;
-	float: left;
-	overflow: auto;
-	padding: 0 4px 6px 4px;
+/* News section */
+#inner_wrap {
+	display: flex;
 	font-size: 0.9em;
+	margin-bottom: 10px;
 }
-
-.user ul {
-	padding: 0 0 5px 0;
-	font-size: 0.9em;
-	line-height: 1.8em;
+#inner_wrap .time {
+	margin-right: 10px;
 }
-
-ul li.greeting {
-	font-weight: bold;
-}
-
-/* News section. */
 #inner_wrap .news {
-	max-width: 50%;
-	float: right;
-	padding: 0 0 6px 0;
-	font-size: 0.9em;
+	margin-left: auto;
 }
 
 #inner_wrap .news h2, #inner_wrap .news p {
 	display: inline;
-	padding: 0 0 0 4px;
 }
 
 /* The content section */
 #content_section {
-	margin: 0 auto;
 	clear: both;
-}
-
-#main_content_section {
-	padding: 5px 12px 16px 12px;
 }
 
 #main_content_section::after {
@@ -477,11 +445,10 @@ ul li.greeting {
 
 /* The footer with copyright links etc. */
 #footer {
-	margin: 4em 0 0 0;
-	padding: 10px 5%;
+	margin-top: auto;
+	padding: 10px calc(5% + 10px);
 	background: #3e5a78;
 	border-top: 3px solid #b2b6bd;
-	flex: none;
 	font-size: 0.9em;
 	color: #fff;
 	text-align: right;
@@ -540,7 +507,7 @@ ul li.greeting {
 	margin: -4px 8px 6px 8px;
 	padding: 4px 0 0 0;
 	font-size: 0.9em;
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 }
 
 /* Fix for quote on reply box */
@@ -635,7 +602,7 @@ ul li.greeting {
 	background: #F8F8F8;
 	overflow: auto;
 	padding-bottom: .5em;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 0 0 7px 7px;
 	margin: 0 0 10px 0;
 	padding: 12px 9px 8px 9px;
@@ -751,7 +718,7 @@ img.sort, .sort {
 
 input, button, select, textarea, textarea.editor {
 	color: #222;
-	font: 83.33%/150% "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
+	font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 	background: #fff;
 	outline: none !important;
 	border: 1px solid #bbb;
@@ -824,7 +791,7 @@ input[type="number"][size="6"] {
 fieldset {
 	padding: 18px;
 	margin: 0 0 6px 0;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 3px;
 }
 
@@ -981,14 +948,14 @@ a.button_submit {
 	font-weight: bold;
 	line-height: 1.12px;
 	border-radius: 2px;
-	background: orange;
+	background: #ffa500;
 	padding: 0 3px 1px;
 	font-family: verdana, sans-serif, monospace;
 	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1), 0 -2px 4px rgba(0, 0, 0, 0.1) inset;
 }
 
 .new_posts:hover {
-	background: #eca21b;
+	background: #bd7a00;
 }
 
 .children .new_posts {
@@ -1095,7 +1062,7 @@ a.button_submit {
 
 /* Level 1 active button. */
 .dropmenu li a.active, #top_info li a.active {
-	background: orange;
+	background: #ffa500;
 	color: #fff;
 	font-weight: bold;
 	border: 1px solid #e09100;
@@ -1239,11 +1206,11 @@ a.button_submit {
 
 .pm_unread, .alerts_unread {
 	margin-top: 5px;
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 }
 
 .top_menu.scrollable .unread {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #dcdcdc;
 }
 
 .top_menu.scrollable .no_unread {
@@ -1403,8 +1370,8 @@ h3.catbg .icon {
 
 /* Titlebar & Subbar */
 .title_bar {
-	border-right: 1px solid #ddd;
-	border-left: 1px solid #ddd;
+	border-right: 1px solid #dcdcdc;
+	border-left: 1px solid #dcdcdc;
 	border-top: 2px solid #ff9400;
 	border-bottom: 2px solid #bf6900;
 	background: #fff;
@@ -1414,7 +1381,7 @@ h3.catbg .icon {
 }
 
 .sub_bar {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #dcdcdc;
 	text-shadow: none;
 	background: none;
 	box-shadow: 0 -1px 0 #999 inset;
@@ -1541,7 +1508,7 @@ tr.windowbg {
 
 .progress_bar {
 	height: 15pt;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	background-color: #fff;
 	width: 80%;
 	margin: 20px auto 0 auto;
@@ -1703,7 +1670,7 @@ tr.windowbg {
 	margin: 0;
 	padding: 10px 8px;
 	border: 1px solid #bbb;
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #dcdcdc;
 	border-radius: 6px 6px 2px 2px;
 	box-shadow: 0 -2px 3px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(255, 255, 255, 0.2);
 }
@@ -1791,7 +1758,7 @@ body#help_popup {
 	padding: 5px 10px 6px;
 	font-size: 0.9em;
 	overflow: hidden;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 2px;
 	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.08);
 }
@@ -2311,7 +2278,7 @@ blockquote cite::before {
 }
 
 /* Let's get a bit more flexibility in font sizes for quotes and code.
-	 We just need to stop em compounding when elements are nested. */
+   We just need to stop em compounding when elements are nested. */
 .bbc_standard_quote .bbc_alternate_quote, .bbc_alternate_quote .bbc_standard_quote, .bbc_standard_quote .bbc_code, .bbc_alternate_quote .bbc_code, .bbc_standard_quote .codeheader, .bbc_alternate_quote .codeheader, .bbc_standard_quote .quoteheader, .bbc_alternate_quote .quoteheader {
 	font-size: 1em;
 }
@@ -2456,8 +2423,8 @@ h3 .collapse {
 }
 
 .board_stats p {
-	border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;
+	border-left: 1px solid #dcdcdc;
+	border-right: 1px solid #dcdcdc;
 	text-align: center;
 	margin: 3px 0 0;
 }
@@ -2515,7 +2482,7 @@ h3 .collapse {
 
 .up_contain {
 	overflow: hidden;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	margin-bottom: 2px;
 }
 
@@ -2541,6 +2508,11 @@ h3 .collapse {
 	display: flex;
 	flex-wrap: wrap;
 	line-height: 1.3em;
+}
+.children li {
+	min-width: 144px;
+	flex-grow: 2;
+	margin-right: 8px;
 }
 
 .children.columns_2 li {
@@ -2604,7 +2576,7 @@ span.postby {
 }
 
 #topic_container .windowbg {
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-top: none;
 }
 
@@ -2658,7 +2630,7 @@ input[type="submit"].qaction {
 	background: #f0f4f7;
 	margin: 12px 0 0 0;
 	padding: 12px 16px;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 6px;
 	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
 	overflow: auto;
@@ -3077,7 +3049,7 @@ ul.post_options li {
 }
 
 #postMoreOptions, #postAttachment, #postAttachment2 {
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 	margin: -1px 0 0 0;
 	padding: 10px;
 }
@@ -3116,7 +3088,7 @@ ul.post_options li {
 
 #postDraftOptions .settings dd:first-of-type, #postDraftOptions .settings dt:first-child {
 	border-top: none;
-	/* Some people are OCD, like me. :P */ }
+}
 
 #postDraftOptions .settings strong {
 	color: #555;
@@ -3470,13 +3442,13 @@ dl.addrules dt.floatleft {
 .activity_stats li div.bar {
 	margin: 0 auto;
 	width: 15px;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-bottom: none;
 	background: #fff;
 }
 
 .activity_stats li div.bar div {
-	background: orange;
+	background: #ffa500;
 	box-shadow: 4px -4px 4px rgba(0, 0, 0, 0.1) inset, 4px 4px 4px rgba(255, 255, 255, 0.3) inset;
 }
 
@@ -3515,7 +3487,7 @@ dl.addrules dt.floatleft {
 }
 
 .list_posts {
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 	box-shadow: 0 1px 0 #fff inset;
 	padding-top: 12px;
 	margin: 0;
@@ -4089,7 +4061,7 @@ dl.register_form dd {
 	display: none;
 	margin-top: 18px;
 	background: white;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 3px;
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 	min-width: 120px;
@@ -4123,7 +4095,7 @@ dl.register_form dd {
 .atwho-view ul li {
 	display: block;
 	padding: 5px;
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #dcdcdc;
 	cursor: pointer;
 }
 
@@ -4177,7 +4149,7 @@ dl.stats dd {
 	line-height: 1.4em;
 	min-height: 1.4em;
 	background: #fff;
-	border: 1px solid #aaa;
+	border: 1px solid #9a9a9a;
 	border-radius: 2px;
 	position: relative;
 }
@@ -4337,7 +4309,7 @@ dl.stats dd span {
 #helpmain {
 	margin: 12px 0 0 0;
 	padding: 8px 20px 12px 20px;
-	border: 1px solid #ddd;
+	border: 1px solid #dcdcdc;
 	border-radius: 7px;
 	box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
 	overflow: auto;
@@ -4369,7 +4341,7 @@ dl.stats dd span {
 }
 
 #info_center .sub_bar {
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 }
 
 #info_center .sub_bar:first-child {
@@ -4514,7 +4486,7 @@ dl.stats dd span {
 }
 
 .auto_suggest_item {
-	background: #ddd;
+	background: #dcdcdc;
 	padding: 1px 4px;
 }
 
@@ -4688,7 +4660,7 @@ span.member.hidden {
 }
 
 #alerts tr.windowbg td {
-	border-right: 1px solid #ddd;
+	border-right: 1px solid #dcdcdc;
 }
 
 #admin_content .character_group {
@@ -4730,6 +4702,7 @@ span.draggable-handle {
 	color: #cccccc;
 	text-shadow: 1px 0 1px black;
 }
+
 span.draggable-handle::after {
 	content: '.. .. .. ..';
 }
@@ -4742,7 +4715,7 @@ span.draggable-handle::after {
 }
 
 #topic_icons .information, #messageindex .information {
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #dcdcdc;
 }
 
 /* On/Off Icons (User) */

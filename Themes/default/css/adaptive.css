@@ -10,8 +10,25 @@
 /* Mobile devices, windowed browsers and the like
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
 	
+	#content_wrapper {
+		width: 95%; }
+
+	#header {
+		margin: 0 2.5%; }
+
+	#footer, #top_section {
+		padding-left: calc(2.5% + 10px);
+		padding-right: calc(2.5% + 10px);
+	}
+}
+
+@media screen and (max-width: 1000px) {
+
+	h1.forumtitle {
+		font-size: 2.5em;
+	}
 }
 
 @media screen and (max-width: 800px) {
