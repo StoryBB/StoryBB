@@ -2509,6 +2509,11 @@ h3 .collapse {
 	flex-wrap: wrap;
 	line-height: 1.3em;
 }
+.children li {
+	min-width: 144px;
+	flex-grow: 2;
+	margin-right: 8px;
+}
 
 .children.columns_2 li {
 	width: 50%;
