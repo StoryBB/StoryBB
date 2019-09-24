@@ -751,7 +751,7 @@ img.sort, .sort {
 
 input, button, select, textarea, textarea.editor {
 	color: #222;
-	font: 83.33%/150% "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
+	font: 13px "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
 	background: #fff;
 	outline: none !important;
 	border: 1px solid #bbb;
