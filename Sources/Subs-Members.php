@@ -871,6 +871,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		}
 
 		// All admins are finished here.
+		(new Observable\Account\Created($memberID, $regOptions))->execute();
 		return $memberID;
 	}
 
@@ -930,8 +931,8 @@ function registerMember(&$regOptions, $return_errors = false)
 	// Okay, they're for sure registered... make sure the session is aware of this for security. (Just married :P!)
 	$_SESSION['just_registered'] = 1;
 
-	// If they are for sure registered, let other people to know about it
-	call_integration_hook('integrate_register_after', [$regOptions, $memberID]);
+	// If they are for sure registered, let other people to know about it.
+	(new Observable\Account\Created($memberID, $regOptions))->execute();
 
 	return $memberID;
 }

@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Autocomplete;
+use StoryBB\Hook\Observable;
 
 /**
  * Main dispatcher, the entrance point for all 'Manage Membergroup' actions.
@@ -358,11 +359,7 @@ function AddMembergroup()
 			1
 		);
 
-		call_integration_hook('integrate_add_membergroup', [$id_group, $postCountBasedGroup]);
-
-		// You cannot set permissions for post groups as they are disabled.
-		if ($postCountBasedGroup)
-			$_POST['perm_type'] = '';
+		(new Observable\Group\Created($id_group))->execute();
 
 		if ($_POST['perm_type'] == 'predefined')
 		{
