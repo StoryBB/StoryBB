@@ -199,20 +199,20 @@
 				</div>
 	{{/if}}
 			</div><!-- #topic_container -->
-
+		</div><!-- #messageindex -->
 	{{#if (and context.can_quick_mod context.topics)}}
 		{{session_form}}
-		</form>
+	</form>
 	{{/if}}
 
-		<div class="mobile_buttons floatright">
-			<a class="button mobile_act">{{txt.mobile_action}}</a>
-		</div>
-		<div class="pagesection">
-			{{>button_strip button_strip=context.normal_buttons direction='right'}}
-			{{context.menu_separator}}
-			<div class="pagelinks floatleft">{{{context.page_index}}}</div>
-		</div>
+	<div class="mobile_buttons floatright">
+		<a class="button mobile_act">{{txt.mobile_action}}</a>
+	</div>
+	<div class="pagesection">
+		{{>button_strip button_strip=context.normal_buttons direction='right'}}
+		{{context.menu_separator}}
+		<div class="pagelinks floatleft">{{{context.page_index}}}</div>
+	</div>
 {{/unless}}
 
 {{#if (and context.can_quick_mod context.topics context.can_move)}}
