@@ -181,7 +181,7 @@ class Table
 		global $smcFunc, $db_prefix;
 		if (self::$table_cache === null)
 		{
-			self::$table_cache = $smcFunc['db_list_tables']();
+			self::$table_cache = $smcFunc['db']->list_tables();
 		}
 
 		return in_array($db_prefix . $this->table_name, self::$table_cache);

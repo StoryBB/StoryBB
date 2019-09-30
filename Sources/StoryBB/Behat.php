@@ -313,7 +313,7 @@ class Behat extends RawMinkContext implements Context
 		global $smcFunc, $db_prefix, $reservedTables;
 		$reservedTables = [];
 
-		$tables = $smcFunc['db_list_tables']();
+		$tables = $smcFunc['db']->list_tables();
 		$non_prefixed_tables = preg_grep('/^(?!behat_).*/i', $tables);
 		$smcFunc['db']->transaction('begin');
 		foreach ($non_prefixed_tables as $table)

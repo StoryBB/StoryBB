@@ -206,7 +206,7 @@ function EditSearchMethod()
 		validateToken('admin-msm', 'get');
 
 		db_extend();
-		$tables = $smcFunc['db_list_tables'](false, $db_prefix . 'log_search_words');
+		$tables = $smcFunc['db']->list_tables($db_prefix . 'log_search_words');
 		if (!empty($tables))
 		{
 			$smcFunc['db_search_query']('drop_words_table', '
@@ -409,7 +409,7 @@ function CreateMessageIndex()
 		if ($context['start'] === 0)
 		{
 			db_extend();
-			$tables = $smcFunc['db_list_tables'](false, $db_prefix . 'log_search_words');
+			$tables = $smcFunc['db']->list_tables($db_prefix . 'log_search_words');
 			if (!empty($tables))
 			{
 				$smcFunc['db_search_query']('drop_words_table', '

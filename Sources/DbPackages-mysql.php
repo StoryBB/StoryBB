@@ -106,7 +106,7 @@ function sbb_db_create_table($table_name, $columns, $indexes = [], $parameters =
 	$db_package_log[] = ['remove_table', $table_name];
 
 	// If the table exists, abort - honestly, the schema system should be taking care of this anyway.
-	$tables = $smcFunc['db_list_tables']();
+	$tables = $smcFunc['db']->list_tables();
 	if (in_array($full_table_name, $tables))
 	{
 		return $if_exists == 'ignore';
@@ -192,7 +192,7 @@ function sbb_db_drop_table($table_name, $parameters = [], $error = 'fatal', $byp
 		return false;
 
 	// Does it exist?
-	if ($bypass_checks || in_array($full_table_name, $smcFunc['db_list_tables']()))
+	if ($bypass_checks || in_array($full_table_name, $smcFunc['db']->list_tables()))
 	{
 		$query = 'DROP TABLE ' . $table_name;
 		$smcFunc['db_query']('',

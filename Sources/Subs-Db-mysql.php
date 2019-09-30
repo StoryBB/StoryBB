@@ -53,7 +53,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_fetch_all'              => 'sbb_db_fetch_all',
 			'db_error_insert'			=> 'sbb_db_error_insert',
 			'db_custom_order'			=> 'sbb_db_custom_order',
-			'db_list_tables'            => 'sbb_db_list_tables',
 		];
 	}
 }
@@ -840,37 +839,4 @@ function sbb_db_custom_order($field, $array_values, $desc = false)
 
 	$return .= 'END';
 	return $return;
-}
-
-/**
- * This function lists all tables in the database.
- * The listing could be filtered according to $filter.
- *
- * @param string|boolean $db string The database name or false to use the current DB
- * @param string|boolean $filter String to filter by or false to list all tables
- * @return array An array of table names
- */
-function sbb_db_list_tables($db = false, $filter = false)
-{
-	global $db_name, $smcFunc;
-
-	$db = $db == false ? $db_name : $db;
-	$db = trim($db);
-	$filter = $filter == false ? '' : ' LIKE \'' . $filter . '\'';
-
-	$request = $smcFunc['db_query']('', '
-		SHOW TABLES
-		FROM `{raw:db}`
-		{raw:filter}',
-		[
-			'db' => $db[0] == '`' ? strtr($db, ['`' => '']) : $db,
-			'filter' => $filter,
-		]
-	);
-	$tables = [];
-	while ($row = $smcFunc['db_fetch_row']($request))
-		$tables[] = $row[0];
-	$smcFunc['db_free_result']($request);
-
-	return $tables;
 }

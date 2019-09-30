@@ -225,4 +225,38 @@ class MySQL implements DatabaseAdapter
 	{
 		return false;
 	}
+
+
+	/**
+	 * This function lists all tables in the database.
+	 * The listing could be filtered according to $filter.
+	 *
+	 * @param string $filter String to filter by or null to list all tables
+	 * @param string $db string The database name or null to use the current DB
+	 * @return array An array of table names
+	 */
+	public function list_tables($filter = null, $db = null)
+	{
+		global $smcFunc;
+
+		$db = $db === null ? $this->db_name : $db;
+		$db = trim($db);
+		$filter = $filter === null ? '' : ' LIKE \'' . $filter . '\'';
+
+		$request = $smcFunc['db_query']('', '
+			SHOW TABLES
+			FROM `{raw:db}`
+			{raw:filter}',
+			[
+				'db' => $db[0] == '`' ? strtr($db, ['`' => '']) : $db,
+				'filter' => $filter,
+			]
+		);
+		$tables = [];
+		while ($row = $smcFunc['db_fetch_row']($request))
+			$tables[] = $row[0];
+		$smcFunc['db_free_result']($request);
+
+		return $tables;
+	}
 }
