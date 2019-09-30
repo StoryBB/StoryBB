@@ -151,13 +151,6 @@ function reloadSettings()
 				$string = preg_replace('~(?:' . $ent_list . '|.)$~u', '', $string);
 			return $string;
 		},
-		'ucwords' => function($string) use (&$smcFunc)
-		{
-			$words = preg_split('~([\s\r\n\t]+)~', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
-			for ($i = 0, $n = count($words); $i < $n; $i += 2)
-				$words[$i] = StringLibrary::ucfirst($words[$i]);
-			return implode('', $words);
-		},
 	];
 
 	// Setting the timezone is a requirement for some functions.
@@ -1588,7 +1581,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $profile['id_member'] . '">' . $txt[$profile['is_online'] ? 'online' : 'offline'] . '</a>',
 				'label' => $txt[$profile['is_online'] ? 'online' : 'offline']
 			],
-			'language' => !empty($loadedLanguages[$profile['lngfile']]) && !empty($loadedLanguages[$profile['lngfile']]['name']) ? $loadedLanguages[$profile['lngfile']]['name'] : $smcFunc['ucwords'](strtr($profile['lngfile'], ['_' => ' ', '-utf8' => ''])),
+			'language' => !empty($loadedLanguages[$profile['lngfile']]) && !empty($loadedLanguages[$profile['lngfile']]['name']) ? $loadedLanguages[$profile['lngfile']]['name'] : StringLibrary::ucwords(strtr($profile['lngfile'], ['_' => ' ', '-utf8' => ''])),
 			'is_activated' => isset($profile['is_activated']) ? $profile['is_activated'] : 1,
 			'is_banned' => isset($profile['is_activated']) ? $profile['is_activated'] >= 10 : 0,
 			'options' => $profile['options'],
@@ -2831,8 +2824,8 @@ function getLanguages($use_cache = true)
 	// Either we don't use the cache, or its expired.
 	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) === null)
 	{
-		// If we don't have our ucwords function defined yet, let's load the settings data.
-		if (empty($smcFunc['ucwords']))
+		// If we don't have our settings defined yet, let's load the settings data.
+		if (empty($modSettings))
 			reloadSettings();
 
 		// If we don't have our theme information yet, let's get it.

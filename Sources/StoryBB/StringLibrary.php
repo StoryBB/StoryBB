@@ -68,4 +68,12 @@ class StringLibrary
 	{
 		return self::toUpper(self::substr($string, 0, 1)) . self::substr($string, 1);
 	}
+
+	public static function ucwords($string)
+	{
+		$words = preg_split('~([\s\r\n\t]+)~', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+		for ($i = 0, $n = count($words); $i < $n; $i += 2)
+			$words[$i] = self::ucfirst($words[$i]);
+		return implode('', $words);
+	}
 }
