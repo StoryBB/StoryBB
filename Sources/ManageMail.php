@@ -12,6 +12,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * Main dispatcher. This function checks permissions and passes control through to the relevant section.
  */
@@ -109,7 +111,7 @@ function BrowseMailQueue()
 				'data' => [
 					'function' => function($rowData) use ($smcFunc)
 					{
-						return $smcFunc['strlen']($rowData['subject']) > 50 ? sprintf('%1$s...', $smcFunc['htmlspecialchars']($smcFunc['substr']($rowData['subject'], 0, 47))) : $smcFunc['htmlspecialchars']($rowData['subject']);
+						return $smcFunc['strlen']($rowData['subject']) > 50 ? sprintf('%1$s...', $smcFunc['htmlspecialchars'](StringLibrary::substr($rowData['subject'], 0, 47))) : $smcFunc['htmlspecialchars']($rowData['subject']);
 					},
 					'class' => 'smalltext',
 				],

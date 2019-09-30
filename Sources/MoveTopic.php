@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * This function allows to move a topic, making sure to ask the moderator
  * to give reason for topic move.
@@ -203,7 +205,7 @@ function MoveTopic2()
 		$_POST['custom_subject'] = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['custom_subject'])), ["\r" => '', "\n" => '', "\t" => '']);
 		// Keep checking the length.
 		if ($smcFunc['strlen']($_POST['custom_subject']) > 100)
-			$_POST['custom_subject'] = $smcFunc['substr']($_POST['custom_subject'], 0, 100);
+			$_POST['custom_subject'] = StringLibrary::substr($_POST['custom_subject'], 0, 100);
 
 		// If it's still valid move onwards and upwards.
 		if ($_POST['custom_subject'] != '')

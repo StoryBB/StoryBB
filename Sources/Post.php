@@ -13,6 +13,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\StringLibrary;
 
 /**
  * Handles showing the post screen, loading the post to be modified, and loading any post quoted.
@@ -328,7 +329,7 @@ function Post($post_errors = [])
 
 		// Make sure the subject isn't too long - taking into account special characters.
 		if ($smcFunc['strlen']($form_subject) > 100)
-			$form_subject = $smcFunc['substr']($form_subject, 0, 100);
+			$form_subject = StringLibrary::substr($form_subject, 0, 100);
 
 		if (isset($_REQUEST['poll']))
 		{
@@ -1680,11 +1681,11 @@ function Post2()
 
 	// At this point, we want to make sure the subject isn't too long.
 	if ($smcFunc['strlen']($_POST['subject']) > 100)
-		$_POST['subject'] = $smcFunc['substr']($_POST['subject'], 0, 100);
+		$_POST['subject'] = StringLibrary::substr($_POST['subject'], 0, 100);
 
 	// Same with the "why did you edit this" text.
 	if ($smcFunc['strlen']($_POST['modify_reason']) > 100)
-		$_POST['modify_reason'] = $smcFunc['substr']($_POST['modify_reason'], 0, 100);
+		$_POST['modify_reason'] = StringLibrary::substr($_POST['modify_reason'], 0, 100);
 
 	// Make the poll...
 	if (isset($_REQUEST['poll']))
@@ -2512,7 +2513,7 @@ function JavaScriptModify()
 
 		// Maximum number of characters.
 		if ($smcFunc['strlen']($_POST['subject']) > 100)
-			$_POST['subject'] = $smcFunc['substr']($_POST['subject'], 0, 100);
+			$_POST['subject'] = StringLibrary::substr($_POST['subject'], 0, 100);
 	}
 	elseif (isset($_POST['subject']))
 	{
@@ -2572,7 +2573,7 @@ function JavaScriptModify()
 
 		// Maximum number of characters.
 		if ($smcFunc['strlen']($_POST['modify_reason']) > 100)
-			$_POST['modify_reason'] = $smcFunc['substr']($_POST['modify_reason'], 0, 100);
+			$_POST['modify_reason'] = StringLibrary::substr($_POST['modify_reason'], 0, 100);
 	}
 
 	if (empty($post_errors))

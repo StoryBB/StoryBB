@@ -13,6 +13,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\ClassManager;
+use StoryBB\StringLibrary;
 
 /**
  * This function makes sure the requested subaction does exists, if it doesn't, it sets a default action or.
@@ -502,7 +503,7 @@ function ModifySignatureSettings($return_config = false)
 
 				// Max characters...
 				if (!empty($sig_limits[1]))
-					$sig = $smcFunc['substr']($sig, 0, $sig_limits[1]);
+					$sig = StringLibrary::substr($sig, 0, $sig_limits[1]);
 				// Max lines...
 				if (!empty($sig_limits[2]))
 				{
@@ -1348,7 +1349,7 @@ function EditCustomProfiles()
 		// Come up with the unique name?
 		if (empty($context['fid']))
 		{
-			$col_name = $smcFunc['substr'](strtr($_POST['field_name'], [' ' => '']), 0, 6);
+			$col_name = StringLibrary::substr(strtr($_POST['field_name'], [' ' => '']), 0, 6);
 			preg_match('~([\w\d_-]+)~', $col_name, $matches);
 
 			// If there is nothing to the name, then let's start out own - for foreign languages etc.

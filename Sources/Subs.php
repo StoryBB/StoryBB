@@ -896,7 +896,7 @@ function shorten_subject($subject, $len)
 		return $subject;
 
 	// Shorten it by the length it was too long, and strip off junk from the end.
-	return $smcFunc['substr']($subject, 0, $len) . '...';
+	return StringLibrary::substr($subject, 0, $len) . '...';
 }
 
 /**

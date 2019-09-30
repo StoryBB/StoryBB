@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 // @todo fix this
 loadLanguage('Drafts');
@@ -63,7 +64,7 @@ function SaveDraft(&$post_errors)
 	// message and subject still need a bit more work
 	preparsecode($draft['body']);
 	if ($smcFunc['strlen']($draft['subject']) > 100)
-		$draft['subject'] = $smcFunc['substr']($draft['subject'], 0, 100);
+		$draft['subject'] = StringLibrary::substr($draft['subject'], 0, 100);
 
 	// Modifying an existing draft, like hitting the save draft button or autosave enabled?
 	if (!empty($id_draft) && !empty($draft_info))
@@ -208,7 +209,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 	// message and subject always need a bit more work
 	preparsecode($draft['body']);
 	if ($smcFunc['strlen']($draft['subject']) > 100)
-		$draft['subject'] = $smcFunc['substr']($draft['subject'], 0, 100);
+		$draft['subject'] = StringLibrary::substr($draft['subject'], 0, 100);
 
 	// Modifying an existing PM draft?
 	if (!empty($id_pm_draft) && !empty($draft_info))

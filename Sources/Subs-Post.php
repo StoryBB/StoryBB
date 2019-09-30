@@ -623,7 +623,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	preparsecode($htmlmessage);
 	$htmlsubject = strtr($smcFunc['htmlspecialchars']($subject), ["\r" => '', "\n" => '', "\t" => '']);
 	if ($smcFunc['strlen']($htmlsubject) > 100)
-		$htmlsubject = $smcFunc['substr']($htmlsubject, 0, 100);
+		$htmlsubject = StringLibrary::substr($htmlsubject, 0, 100);
 
 	// Make sure is an array
 	if (!is_array($recipients))

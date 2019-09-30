@@ -52,4 +52,15 @@ class StringLibrary
 	{
 		return mb_strtoupper($string, 'UTF-8');
 	}
+
+	public function entity_check($string)
+	{
+		return preg_replace_callback('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', ['StoryBB\\StringLibrary', 'fix_entities'], $string);
+	}
+
+	public static function substr($string, $start, $length = null)
+	{
+		$ent_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', self::entity_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+		return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
+	}
 }

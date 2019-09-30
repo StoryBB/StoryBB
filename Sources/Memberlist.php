@@ -353,7 +353,7 @@ function MLAll()
 		$last_letter = '';
 		foreach ($context['members'] as $i => $dummy)
 		{
-			$this_letter = StringLibrary::toLower($smcFunc['substr']($context['members'][$i]['name'], 0, 1));
+			$this_letter = StringLibrary::toLower(StringLibrary::substr($context['members'][$i]['name'], 0, 1));
 
 			if ($this_letter != $last_letter && preg_match('~[a-z]~', $this_letter) === 1)
 			{

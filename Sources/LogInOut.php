@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Hook\Observable;
+use StoryBB\StringLibrary;
 
 /**
  * Ask them for their login information. (shows a page for the user to type
@@ -220,7 +221,7 @@ function Login2()
 	// And if it's too long, trim it back.
 	if ($smcFunc['strlen']($_POST['user']) > 80)
 	{
-		$_POST['user'] = $smcFunc['substr']($_POST['user'], 0, 79);
+		$_POST['user'] = StringLibrary::substr($_POST['user'], 0, 79);
 		$context['default_username'] = preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user']));
 	}
 

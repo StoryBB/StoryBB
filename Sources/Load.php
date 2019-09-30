@@ -142,11 +142,6 @@ function reloadSettings()
 				return false;
 			}
 		},
-		'substr' => function($string, $start, $length = null) use ($ent_check, $modSettings)
-		{
-			$ent_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-			return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
-		},
 		'truncate' => function($string, $length) use ($ent_check, $ent_list, &$smcFunc)
 		{
 			$string = $ent_check($string);
@@ -156,9 +151,9 @@ function reloadSettings()
 				$string = preg_replace('~(?:' . $ent_list . '|.)$~u', '', $string);
 			return $string;
 		},
-		'ucfirst' => function($string) use (&$smcFunc)
+		'ucfirst' => function($string)
 		{
-			return StringLibrary::toUpper($smcFunc['substr']($string, 0, 1)) . $smcFunc['substr']($string, 1);
+			return StringLibrary::toUpper(StringLibrary::substr($string, 0, 1)) . StringLibrary::substr($string, 1);
 		},
 		'ucwords' => function($string) use (&$smcFunc)
 		{

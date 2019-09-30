@@ -3128,7 +3128,7 @@ function ManageLabels()
 			$_POST['label'] = strtr($smcFunc['htmlspecialchars'](trim($_POST['label'])), [',' => '&#044;']);
 
 			if ($smcFunc['strlen']($_POST['label']) > 30)
-				$_POST['label'] = $smcFunc['substr']($_POST['label'], 0, 30);
+				$_POST['label'] = StringLibrary::substr($_POST['label'], 0, 30);
 			if ($_POST['label'] != '')
 			{
 				$the_labels[] = $_POST['label'];
@@ -3156,7 +3156,7 @@ function ManageLabels()
 					$_POST['label_name'][$id] = trim(strtr($smcFunc['htmlspecialchars']($_POST['label_name'][$id]), [',' => '&#044;']));
 
 					if ($smcFunc['strlen']($_POST['label_name'][$id]) > 30)
-						$_POST['label_name'][$id] = $smcFunc['substr']($_POST['label_name'][$id], 0, 30);
+						$_POST['label_name'][$id] = StringLibrary::substr($_POST['label_name'][$id], 0, 30);
 					if ($_POST['label_name'][$id] != '')
 					{
 						// Changing the name of this label?

@@ -56,7 +56,7 @@ function getLastPosts($latestPostOptions)
 
 		$row['body'] = strip_tags(strtr(Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), ['<br>' => '&#10;']));
 		if ($smcFunc['strlen']($row['body']) > 128)
-			$row['body'] = $smcFunc['substr']($row['body'], 0, 128) . '...';
+			$row['body'] = StringLibrary::substr($row['body'], 0, 128) . '...';
 
 		// Build the array.
 		$posts[] = [
