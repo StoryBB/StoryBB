@@ -11,6 +11,7 @@
 
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Setup to fetch the HTML for the characters popup (excluding all other forum chrome)
@@ -251,9 +252,9 @@ function char_create()
 	if (isset($_POST['create_char']))
 	{
 		checkSession();
-		$context['character']['character_name'] = !empty($_POST['char_name']) ? $smcFunc['htmlspecialchars'](trim($_POST['char_name']), ENT_QUOTES) : '';
-		$context['character']['age'] = !empty($_POST['age']) ? $smcFunc['htmlspecialchars']($_POST['age'], ENT_QUOTES) : '';
-		$message = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+		$context['character']['character_name'] = !empty($_POST['char_name']) ? StringLibrary::escape(trim($_POST['char_name']), ENT_QUOTES) : '';
+		$context['character']['age'] = !empty($_POST['age']) ? StringLibrary::escape($_POST['age'], ENT_QUOTES) : '';
+		$message = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 		preparsecode($message);
 		$context['character']['sheet'] = $message;
 
@@ -419,7 +420,7 @@ function char_edit()
 			$changes['avatar'] = $profile_vars['avatar'];
 		}
 
-		$new_name = !empty($_POST['char_name']) ? $smcFunc['htmlspecialchars'](trim($_POST['char_name']), ENT_QUOTES) : '';
+		$new_name = !empty($_POST['char_name']) ? StringLibrary::escape(trim($_POST['char_name']), ENT_QUOTES) : '';
 		if ($new_name == '')
 			$context['form_errors'][] = $txt['char_error_character_must_have_name'];
 		elseif ($new_name != $context['character']['character_name'])
@@ -470,11 +471,11 @@ function char_edit()
 			$changes['char_groups'] = $new_char_groups;
 		}
 
-		$new_age = !empty($_POST['age']) ? $smcFunc['htmlspecialchars'](trim($_POST['age']), ENT_QUOTES) : '';
+		$new_age = !empty($_POST['age']) ? StringLibrary::escape(trim($_POST['age']), ENT_QUOTES) : '';
 		if ($new_age != $context['character']['age'])
 			$changes['age'] = $new_age;
 
-		$new_sig = !empty($_POST['char_signature']) ? $smcFunc['htmlspecialchars']($_POST['char_signature'], ENT_QUOTES) : '';
+		$new_sig = !empty($_POST['char_signature']) ? StringLibrary::escape($_POST['char_signature'], ENT_QUOTES) : '';
 		$valid_sig = profileValidateSignature($new_sig);
 		if ($valid_sig === true)
 			$changes['signature'] = $new_sig; // sanitised by profileValidateSignature
@@ -1387,7 +1388,7 @@ function char_sheet()
 			require_once($sourcedir . '/Subs-Post.php');
 			require_once($sourcedir . '/Subs-Editor.php');
 
-			$message = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+			$message = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 			preparsecode($message);
 
 			if (!empty($message))
@@ -1676,7 +1677,7 @@ function char_sheet_edit()
 		// Are we saving? Let's see if session's legit first.
 		checkSession();
 		// Then try to get some content.
-		$message = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+		$message = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 		preparsecode($message);
 
 		if (!empty($message))

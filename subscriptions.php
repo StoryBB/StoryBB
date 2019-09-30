@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 // Start things rolling by getting StoryBB alive...
 define('STORYBB', 'BACKGROUND');
 
@@ -335,7 +337,7 @@ function generateSubscriptionError($text)
 	if (!empty($_POST))
 	{
 		foreach ($_POST as $key => $val)
-			$text .= '<br>' . $smcFunc['htmlspecialchars']($key) . ': ' . $smcFunc['htmlspecialchars']($val);
+			$text .= '<br>' . StringLibrary::escape($key) . ': ' . StringLibrary::escape($val);
 	}
 
 	// Then just log and die.

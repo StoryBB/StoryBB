@@ -12,6 +12,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * The main designating function for modifying profiles. Loads up info, determins what to do, etc.
  *
@@ -1013,7 +1015,7 @@ function loadCustomFields($memID, $area = 'summary')
 		// If this was submitted already then make the value the posted version.
 		if (isset($_POST['customfield']) && isset($_POST['customfield'][$row['col_name']]))
 		{
-			$value = $smcFunc['htmlspecialchars']($_POST['customfield'][$row['col_name']]);
+			$value = StringLibrary::escape($_POST['customfield'][$row['col_name']]);
 			if (in_array($row['field_type'], ['select', 'radio']))
 					$value = ($options = explode(',', $row['field_options'])) && isset($options[$value]) ? $options[$value] : '';
 		}

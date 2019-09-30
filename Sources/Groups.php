@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Autocomplete;
+use StoryBB\StringLibrary;
 
 /**
  * Entry point function, permission checks, admin bars, etc.
@@ -552,7 +553,7 @@ function GroupRequests()
 						'id_member_acted' => $user_info['id'],
 						'member_name_acted' => $user_info['name'],
 						'time_acted' => time(),
-						'act_reason' => $_POST['req_action'] != 'approve' && !empty($_POST['groupreason']) && !empty($_POST['groupreason'][$row['id_request']]) ? $smcFunc['htmlspecialchars']($_POST['groupreason'][$row['id_request']], ENT_QUOTES) : '',
+						'act_reason' => $_POST['req_action'] != 'approve' && !empty($_POST['groupreason']) && !empty($_POST['groupreason'][$row['id_request']]) ? StringLibrary::escape($_POST['groupreason'][$row['id_request']], ENT_QUOTES) : '',
 					];
 				$request_list[] = $row['id_request'];
 			}

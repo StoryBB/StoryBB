@@ -563,7 +563,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	);
 	// @todo Separate the sprintf?
 	if ($smcFunc['db_num_rows']($request) != 0)
-		$reg_errors[] = ['lang', 'email_in_use', false, [$smcFunc['htmlspecialchars']($regOptions['email'])]];
+		$reg_errors[] = ['lang', 'email_in_use', false, [StringLibrary::escape($regOptions['email'])]];
 
 	$smcFunc['db_free_result']($request);
 
@@ -981,7 +981,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 				$reservedCheck = StringLibrary::toLower($reservedCheck);
 
 			// If it's not just entire word, check for it in there somewhere...
-			if ($checkMe == $reservedCheck || ($smcFunc['strpos']($checkMe, $reservedCheck) !== false && empty($modSettings['reserveWord'])))
+			if ($checkMe == $reservedCheck || (StringLibrary::strpos($checkMe, $reservedCheck) !== false && empty($modSettings['reserveWord'])))
 				if ($fatal)
 					fatal_lang_error('username_reserved', 'password', [$reserved]);
 				else

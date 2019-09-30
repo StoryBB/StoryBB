@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Model\Policy;
+use StoryBB\StringLibrary;
 
 /**
  * Entrance point for the registration center, it checks permissions and forwards
@@ -309,7 +310,7 @@ function ManagePolicies()
 				// Policy name is not optional - but if we don't have one, don't overwrite what we already had.
 				if (!empty($_POST['policy_name']))
 				{
-					$policy_details['title'] = $smcFunc['htmlspecialchars']($_POST['policy_name']);
+					$policy_details['title'] = StringLibrary::escape($_POST['policy_name']);
 				}
 				elseif (!empty($policy['versions'][$context['policy_language']]))
 				{
@@ -322,7 +323,7 @@ function ManagePolicies()
 				}
 
 				// Policy description is optional.
-				$policy_details['description'] = isset($_POST['policy_desc']) ? $smcFunc['htmlspecialchars']($_POST['policy_desc'], ENT_QUOTES) : '';
+				$policy_details['description'] = isset($_POST['policy_desc']) ? StringLibrary::escape($_POST['policy_desc'], ENT_QUOTES) : '';
 
 				// Showing on registration is easy.
 				$policy_details['show_reg'] = !empty($_POST['show_reg']);
@@ -335,7 +336,7 @@ function ManagePolicies()
 
 				if (!empty($_POST['message']))
 				{
-					$policy_details['policy_text'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+					$policy_details['policy_text'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 					preparsecode($policy_details['policy_text']);
 					// We need to fix a few of the replacements where we have links as placeholders.
 					$replacements = [
@@ -353,7 +354,7 @@ function ManagePolicies()
 				{
 					// If the policy can be required, let's check if that's a thing.
 					$force_update = !empty($_POST['policy_reagree']);
-					$policy_details['policy_edit'] = !empty($_POST['policy_edit']) ? $smcFunc['htmlspecialchars']($_POST['policy_edit'], ENT_QUOTES) : '';
+					$policy_details['policy_edit'] = !empty($_POST['policy_edit']) ? StringLibrary::escape($_POST['policy_edit'], ENT_QUOTES) : '';
 				}
 
 				// Update the policy with the new details.

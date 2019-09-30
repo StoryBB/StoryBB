@@ -408,7 +408,7 @@ function MessageIndex()
 			{
 				// Limit them to $modSettings['preview_characters'] characters
 				$row['first_body'] = strip_tags(strtr(Parser::parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), ['<br>' => '&#10;']));
-				if ($smcFunc['strlen']($row['first_body']) > $modSettings['preview_characters'])
+				if (StringLibrary::strlen($row['first_body']) > $modSettings['preview_characters'])
 					$row['first_body'] = StringLibrary::substr($row['first_body'], 0, $modSettings['preview_characters']) . '...';
 
 				// Censor the subject and message preview.
@@ -424,7 +424,7 @@ function MessageIndex()
 				else
 				{
 					$row['last_body'] = strip_tags(strtr(Parser::parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), ['<br>' => '&#10;']));
-					if ($smcFunc['strlen']($row['last_body']) > $modSettings['preview_characters'])
+					if (StringLibrary::strlen($row['last_body']) > $modSettings['preview_characters'])
 						$row['last_body'] = StringLibrary::substr($row['last_body'], 0, $modSettings['preview_characters']) . '...';
 
 					censorText($row['last_subject']);
@@ -546,7 +546,7 @@ function MessageIndex()
 
 	$context['jump_to'] = [
 		'label' => addslashes(un_htmlspecialchars($txt['jump_to'])),
-		'board_name' => $smcFunc['htmlspecialchars'](strtr(strip_tags($board_info['name']), ['&amp;' => '&'])),
+		'board_name' => StringLibrary::escape(strtr(strip_tags($board_info['name']), ['&amp;' => '&'])),
 		'child_level' => $board_info['child_level'],
 	];
 

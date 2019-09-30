@@ -51,7 +51,7 @@ function getLastPost()
 	censorText($row['body']);
 
 	$row['body'] = strip_tags(strtr(Parser::parse_bbc($row['body'], $row['smileys_enabled']), ['<br>' => '&#10;']));
-	if ($smcFunc['strlen']($row['body']) > 128)
+	if (StringLibrary::strpos($row['body']) > 128)
 		$row['body'] = StringLibrary::substr($row['body'], 0, 128) . '...';
 
 	// Send the data.
@@ -1208,10 +1208,10 @@ function UnreadTopics()
 		{
 			// Limit them to 128 characters - do this FIRST because it's a lot of wasted censoring otherwise.
 			$row['first_body'] = strip_tags(strtr(Parser::parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), ['<br>' => '&#10;']));
-			if ($smcFunc['strlen']($row['first_body']) > 128)
+			if (StringLibrary::strpos($row['first_body']) > 128)
 				$row['first_body'] = StringLibrary::substr($row['first_body'], 0, 128) . '...';
 			$row['last_body'] = strip_tags(strtr(Parser::parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), ['<br>' => '&#10;']));
-			if ($smcFunc['strlen']($row['last_body']) > 128)
+			if (StringLibrary::strpos($row['last_body']) > 128)
 				$row['last_body'] = StringLibrary::substr($row['last_body'], 0, 128) . '...';
 
 			// Censor the subject and message preview.

@@ -16,6 +16,7 @@ use StoryBB\Model\Policy;
 use StoryBB\Helper\Wave;
 use StoryBB\Helper\Verification;
 use StoryBB\Hook\Observable;
+use StoryBB\StringLibrary;
 
 /**
  * Begin the registration process.
@@ -141,7 +142,7 @@ function Register($reg_errors = [])
 		// We might have had some submissions on this front - go check.
 		foreach ($reg_fields as $field)
 			if (isset($_POST[$field]))
-				$cur_profile[$field] = $smcFunc['htmlspecialchars']($_POST[$field]);
+				$cur_profile[$field] = StringLibrary::escape($_POST[$field]);
 
 		// Load all the fields in question.
 		setupProfileContext($reg_fields);
@@ -172,10 +173,10 @@ function Register($reg_errors = [])
 	}
 
 	$context += [
-		'username' => isset($_POST['user']) ? $smcFunc['htmlspecialchars']($_POST['user']) : '',
-		'real_name' => isset($_POST['real_name']) ? $smcFunc['htmlspecialchars']($_POST['real_name']) : '',
-		'first_char' => isset($_POST['first_char']) ? $smcFunc['htmlspecialchars']($_POST['first_char']) : '',
-		'email' => isset($_POST['email']) ? $smcFunc['htmlspecialchars']($_POST['email']) : '',
+		'username' => isset($_POST['user']) ? StringLibrary::escape($_POST['user']) : '',
+		'real_name' => isset($_POST['real_name']) ? StringLibrary::escape($_POST['real_name']) : '',
+		'first_char' => isset($_POST['first_char']) ? StringLibrary::escape($_POST['first_char']) : '',
+		'email' => isset($_POST['email']) ? StringLibrary::escape($_POST['email']) : '',
 		'notify_announcements' => !empty($_POST['notify_announcements']) ? 1 : 0,
 	];
 
@@ -313,7 +314,7 @@ function Register2()
 			$_POST['real_name'] = trim(preg_replace('~[\t\n\r \x0B\0\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}]+~u', ' ', $_POST['real_name']));
 
 			// Only set it if we are sure it is good
-			if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && $smcFunc['strlen']($_POST['real_name']) < 60)
+			if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && StringLibrary::strlen($_POST['real_name']) < 60)
 				$possible_strings[] = 'real_name';
 		}
 	}
@@ -389,7 +390,7 @@ function Register2()
 	// Include the additional options that might have been filled in.
 	foreach ($possible_strings as $var)
 		if (isset($_POST[$var]))
-			$regOptions['extra_register_vars'][$var] = $smcFunc['htmlspecialchars']($_POST[$var], ENT_QUOTES);
+			$regOptions['extra_register_vars'][$var] = StringLibrary::escape($_POST[$var], ENT_QUOTES);
 	foreach ($possible_ints as $var)
 		if (isset($_POST[$var]))
 			$regOptions['extra_register_vars'][$var] = (int) $_POST[$var];
@@ -436,7 +437,7 @@ function Register2()
 		if (!in_array($row['field_type'], ['check', 'select', 'radio']))
 		{
 			// Is it too long?
-			if ($row['field_length'] && $row['field_length'] < $smcFunc['strlen']($value))
+			if ($row['field_length'] && $row['field_length'] < StringLibrary::strlen($value))
 				$custom_field_errors[] = ['custom_field_too_long', [$row['field_name'], $row['field_length']]];
 
 			// Any masks to apply?
@@ -586,7 +587,7 @@ function Activate()
 			fatal_lang_error('no_access', false);
 
 		if (!filter_var($_POST['new_email'], FILTER_VALIDATE_EMAIL))
-			fatal_error(sprintf($txt['valid_email_needed'], $smcFunc['htmlspecialchars']($_POST['new_email'])), false);
+			fatal_error(sprintf($txt['valid_email_needed'], StringLibrary::escape($_POST['new_email'])), false);
 
 		// Make sure their email isn't banned.
 		isBannedEmail($_POST['new_email'], 'cannot_register', $txt['ban_register_prohibited']);
@@ -603,7 +604,7 @@ function Activate()
 		);
 
 		if ($smcFunc['db_num_rows']($request) != 0)
-			fatal_lang_error('email_in_use', false, [$smcFunc['htmlspecialchars']($_POST['new_email'])]);
+			fatal_lang_error('email_in_use', false, [StringLibrary::escape($_POST['new_email'])]);
 		$smcFunc['db_free_result']($request);
 
 		updateMemberData($row['id_member'], ['email_address' => $_POST['new_email']]);

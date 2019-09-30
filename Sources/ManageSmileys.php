@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * This is the dispatcher of smileys administration.
  */
@@ -254,7 +256,7 @@ function AddSmiley()
 		{
 			if (!in_array($entry, $context['filenames']) && in_array(strrchr($entry, '.'), ['.jpg', '.gif', '.jpeg', '.png']))
 				$context['filenames'][strtolower($entry)] = [
-					'id' => $smcFunc['htmlspecialchars']($entry),
+					'id' => StringLibrary::escape($entry),
 					'selected' => false,
 				];
 		}
@@ -484,7 +486,7 @@ function EditSmileys()
 					'data' => [
 						'function' => function ($rowData) use ($smcFunc)
 						{
-							return $smcFunc['htmlspecialchars']($rowData['description']);
+							return StringLibrary::escape($rowData['description']);
 						},
 					],
 					'sort' => [
@@ -602,7 +604,7 @@ function EditSmileys()
 			{
 				if (!in_array($entry, $context['filenames']) && in_array(strrchr($entry, '.'), ['.jpg', '.gif', '.jpeg', '.png']))
 					$context['filenames'][strtolower($entry)] = [
-						'id' => $smcFunc['htmlspecialchars']($entry),
+						'id' => StringLibrary::escape($entry),
 						'selected' => false,
 					];
 			}
@@ -623,9 +625,9 @@ function EditSmileys()
 		$context['current_smiley'] = $smcFunc['db_fetch_assoc']($request);
 		$smcFunc['db_free_result']($request);
 
-		$context['current_smiley']['code'] = $smcFunc['htmlspecialchars']($context['current_smiley']['code']);
-		$context['current_smiley']['filename'] = $smcFunc['htmlspecialchars']($context['current_smiley']['filename']);
-		$context['current_smiley']['description'] = $smcFunc['htmlspecialchars']($context['current_smiley']['description']);
+		$context['current_smiley']['code'] = StringLibrary::escape($context['current_smiley']['code']);
+		$context['current_smiley']['filename'] = StringLibrary::escape($context['current_smiley']['filename']);
+		$context['current_smiley']['description'] = StringLibrary::escape($context['current_smiley']['description']);
 
 		if (isset($context['filenames'][strtolower($context['current_smiley']['filename'])]))
 			$context['filenames'][strtolower($context['current_smiley']['filename'])]['selected'] = true;
@@ -779,9 +781,9 @@ function EditSmileyOrder()
 		$location = empty($row['hidden']) ? 'postform' : 'popup';
 		$context['smileys'][$location]['rows'][$row['smiley_row']][] = [
 			'id' => $row['id_smiley'],
-			'code' => $smcFunc['htmlspecialchars']($row['code']),
-			'filename' => $smcFunc['htmlspecialchars']($row['filename']),
-			'description' => $smcFunc['htmlspecialchars']($row['description']),
+			'code' => StringLibrary::escape($row['code']),
+			'filename' => StringLibrary::escape($row['filename']),
+			'description' => StringLibrary::escape($row['description']),
 			'row' => $row['smiley_row'],
 			'order' => $row['smiley_order'],
 			'selected' => !empty($_REQUEST['move']) && $_REQUEST['move'] == $row['id_smiley'],

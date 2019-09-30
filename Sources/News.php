@@ -219,7 +219,7 @@ function ShowXmlFeed()
 			cache_put_data('xmlfeed-' . $xml_format . ':' . ($user_info['is_guest'] ? '' : $user_info['id'] . '-') . $cachekey, $xml_data, 240);
 	}
 
-	$feed_meta['title'] = $smcFunc['htmlspecialchars'](strip_tags($context['forum_name'])) . (isset($feed_meta['title']) ? $feed_meta['title'] : '');
+	$feed_meta['title'] = StringLibrary::escape(strip_tags($context['forum_name'])) . (isset($feed_meta['title']) ? $feed_meta['title'] : '');
 
 	// Allow mods to add extra namespaces and tags to the feed/channel
 	$namespaces = [
@@ -393,14 +393,14 @@ function cdata_parse($data, $ns = '', $force = false)
 
 	$cdata = '<![CDATA[';
 
-	for ($pos = 0, $n = $smcFunc['strlen']($data); $pos < $n; null)
+	for ($pos = 0, $n = StringLibrary::strlen($data); $pos < $n; null)
 	{
 		$positions = [
-			$smcFunc['strpos']($data, '&', $pos),
-			$smcFunc['strpos']($data, ']', $pos),
+			StringLibrary::strpos($data, '&', $pos),
+			StringLibrary::strpos($data, ']', $pos),
 		];
 		if ($ns != '')
-			$positions[] = $smcFunc['strpos']($data, '<', $pos);
+			$positions[] = StringLibrary::strpos($data, '<', $pos);
 		foreach ($positions as $k => $dummy)
 		{
 			if ($dummy === false)
@@ -417,7 +417,7 @@ function cdata_parse($data, $ns = '', $force = false)
 
 		if (StringLibrary::substr($data, $pos, 1) == '<')
 		{
-			$pos2 = $smcFunc['strpos']($data, '>', $pos);
+			$pos2 = StringLibrary::strpos($data, '>', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
 			if (StringLibrary::substr($data, $pos + 1, 1) == '/')
@@ -433,7 +433,7 @@ function cdata_parse($data, $ns = '', $force = false)
 		}
 		elseif (StringLibrary::substr($data, $pos, 1) == '&')
 		{
-			$pos2 = $smcFunc['strpos']($data, ';', $pos);
+			$pos2 = StringLibrary::strpos($data, ';', $pos);
 			if ($pos2 === false)
 				$pos2 = $n;
 			$ent = StringLibrary::substr($data, $pos + 1, $pos2 - $pos - 1);
@@ -709,7 +709,7 @@ function getXmlNews($xml_format)
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
+		if (!empty($modSettings['xmlnews_maxlen']) && StringLibrary::strlen(str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
 			$row['body'] = strtr(StringLibrary::substr(str_replace('<br>', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), ["\n" => '<br>']) . '...';
 
 		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
@@ -990,7 +990,7 @@ function getXmlRecent($xml_format)
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && $smcFunc['strlen'](str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
+		if (!empty($modSettings['xmlnews_maxlen']) && StringLibrary::strlen(str_replace('<br>', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
 			$row['body'] = strtr(StringLibrary::substr(str_replace('<br>', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), ["\n" => '<br>']) . '...';
 
 		$row['body'] = Parser::parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);

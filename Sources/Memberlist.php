@@ -357,7 +357,7 @@ function MLAll()
 
 			if ($this_letter != $last_letter && preg_match('~[a-z]~', $this_letter) === 1)
 			{
-				$context['members'][$i]['sort_letter'] = $smcFunc['htmlspecialchars']($this_letter);
+				$context['members'][$i]['sort_letter'] = StringLibrary::escape($this_letter);
 				$last_letter = $this_letter;
 			}
 		}
@@ -443,7 +443,7 @@ function MLSearch()
 			'regular_id_group' => 0,
 			'is_activated' => 1,
 			'blank_string' => '',
-			'search' => '%' . strtr($smcFunc['htmlspecialchars']($_POST['search'], ENT_QUOTES), ['_' => '\\_', '%' => '\\%', '*' => '%']) . '%',
+			'search' => '%' . strtr(StringLibrary::escape($_POST['search'], ENT_QUOTES), ['_' => '\\_', '%' => '\\%', '*' => '%']) . '%',
 			'sort' => $context['columns'][$_REQUEST['sort']]['sort'][$context['sort_direction']],
 		];
 
@@ -564,7 +564,7 @@ function MLSearch()
 			$context['search_fields']['cust_' . $field['colname']] = sprintf($txt['mlist_search_by'], $field['name']);
 
 		$context['sub_template'] = 'memberlist_search';
-		$context['old_search'] = isset($_GET['search']) ? $_GET['search'] : (isset($_POST['search']) ? $smcFunc['htmlspecialchars']($_POST['search']) : '');
+		$context['old_search'] = isset($_GET['search']) ? $_GET['search'] : (isset($_POST['search']) ? StringLibrary::escape($_POST['search']) : '');
 
 		// Since we're nice we also want to default focus on to the search field.
 		addInlineJavaScript('

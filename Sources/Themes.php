@@ -1235,7 +1235,7 @@ function ThemeInstall()
 	// Is there a function to call?
 	if (isset($_GET['do']) && !empty($_GET['do']) && isset($subActions[$_GET['do']]))
 	{
-		$action = $smcFunc['htmlspecialchars'](trim($_GET['do']));
+		$action = StringLibrary::escape(trim($_GET['do']));
 
 		// Got any info from the specific form?
 		if (!isset($_POST['save_' . $action]))

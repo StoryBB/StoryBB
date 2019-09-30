@@ -57,6 +57,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * This is the main dispatcher. Sets up all the available sub-actions, all the tabs and selects
@@ -657,7 +658,7 @@ function prepareServerSettingsContext(&$config_vars)
 				'size' => empty($config_var[4]) ? 0 : $config_var[4],
 				'data' => isset($config_var[4]) && is_array($config_var[4]) && $config_var[3] != 'select' ? $config_var[4] : [],
 				'name' => $config_var[0],
-				'value' => $config_var[2] == 'file' ? $smcFunc['htmlspecialchars']($$varname) : (isset($modSettings[$config_var[0]]) ? $smcFunc['htmlspecialchars']($modSettings[$config_var[0]]) : (in_array($config_var[3], ['int', 'float']) ? 0 : '')),
+				'value' => $config_var[2] == 'file' ? StringLibrary::escape($$varname) : (isset($modSettings[$config_var[0]]) ? StringLibrary::escape($modSettings[$config_var[0]]) : (in_array($config_var[3], ['int', 'float']) ? 0 : '')),
 				'disabled' => !empty($context['settings_not_writable']) || !empty($config_var['disabled']),
 				'invalid' => false,
 				'subtext' => !empty($config_var['subtext']) ? $config_var['subtext'] : $subtext,
@@ -753,13 +754,13 @@ function prepareDBSettingContext(&$config_vars)
 						$value = $modSettings[$config_var[1]];
 						break;
 					case 'json':
-						$value = $smcFunc['htmlspecialchars'](json_encode($modSettings[$config_var[1]]));
+						$value = StringLibrary::escape(json_encode($modSettings[$config_var[1]]));
 						break;
 					case 'boards':
 						$value = explode(',', $modSettings[$config_var[1]]);
 						break;
 					default:
-						$value = $smcFunc['htmlspecialchars']($modSettings[$config_var[1]]);
+						$value = StringLibrary::escape($modSettings[$config_var[1]]);
 				}
 			}
 			else

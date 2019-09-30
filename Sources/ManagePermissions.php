@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * Dispatches to the right function based on the given subaction.
  * Checks the permissions, based on the sub-action.
@@ -1829,7 +1831,7 @@ function EditPermissionProfiles()
 		validateToken('admin-mpp');
 
 		$_POST['copy_from'] = (int) $_POST['copy_from'];
-		$_POST['profile_name'] = $smcFunc['htmlspecialchars']($_POST['profile_name']);
+		$_POST['profile_name'] = StringLibrary::escape($_POST['profile_name']);
 
 		// Insert the profile itself.
 		$profile_id = $smcFunc['db_insert']('',
@@ -1879,7 +1881,7 @@ function EditPermissionProfiles()
 		{
 			foreach ($_POST['rename_profile'] as $id => $value)
 			{
-				$value = $smcFunc['htmlspecialchars']($value);
+				$value = StringLibrary::escape($value);
 
 				if (trim($value) != '' && $id > 4)
 					$smcFunc['db_query']('', '

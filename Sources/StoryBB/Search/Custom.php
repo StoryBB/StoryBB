@@ -12,6 +12,8 @@
 
 namespace StoryBB\Search;
 
+use StoryBB\StringLibrary;
+
 /**
  * Used for the "custom search index" option
  * Class custom_search
@@ -154,7 +156,7 @@ class Custom extends AbstractSearchable implements Searchable
 		{
 			foreach ($subwords as $subword)
 			{
-				if ($smcFunc['strlen']($subword) >= $this->min_word_length && !in_array($subword, $this->bannedWords))
+				if (StringLibrary::strlen($subword) >= $this->min_word_length && !in_array($subword, $this->bannedWords))
 				{
 					$wordsSearch['indexed_words'][] = $subword;
 					if ($isExcluded)

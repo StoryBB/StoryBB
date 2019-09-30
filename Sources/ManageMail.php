@@ -111,7 +111,7 @@ function BrowseMailQueue()
 				'data' => [
 					'function' => function($rowData) use ($smcFunc)
 					{
-						return $smcFunc['strlen']($rowData['subject']) > 50 ? sprintf('%1$s...', $smcFunc['htmlspecialchars'](StringLibrary::substr($rowData['subject'], 0, 47))) : $smcFunc['htmlspecialchars']($rowData['subject']);
+						return StringLibrary::strlen($rowData['subject']) > 50 ? sprintf('%1$s...', StringLibrary::escape(StringLibrary::substr($rowData['subject'], 0, 47))) : StringLibrary::escape($rowData['subject']);
 					},
 					'class' => 'smalltext',
 				],

@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * The main entrance point for the 'Posts and topics' screen.
@@ -207,7 +208,7 @@ function SetCensor()
 	if (isset($_POST['censortest']))
 	{
 		require_once($sourcedir . '/Subs-Post.php');
-		$censorText = $smcFunc['htmlspecialchars']($_POST['censortest'], ENT_QUOTES);
+		$censorText = StringLibrary::escape($_POST['censortest'], ENT_QUOTES);
 		preparsecode($censorText);
 		$context['censor_test'] = strtr(censorText($censorText), ['"' => '&quot;']);
 	}
@@ -226,7 +227,7 @@ function SetCensor()
 		if (trim(strtr($censor_vulgar[$i], '*', ' ')) == '')
 			continue;
 
-		$context['censored_words'][$smcFunc['htmlspecialchars'](trim($censor_vulgar[$i]))] = isset($censor_proper[$i]) ? $smcFunc['htmlspecialchars']($censor_proper[$i]) : '';
+		$context['censored_words'][StringLibrary::escape(trim($censor_vulgar[$i]))] = isset($censor_proper[$i]) ? StringLibrary::escape($censor_proper[$i]) : '';
 	}
 
 	call_integration_hook('integrate_censors');

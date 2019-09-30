@@ -14,6 +14,7 @@ namespace StoryBB\Behat;
 
 use StoryBB\Behat;
 use StoryBB\Behat\Helper;
+use StoryBB\StringLibrary;
 
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
@@ -354,7 +355,7 @@ class General extends RawMinkContext implements Context
 			}
 
 			$boardOptions = [
-				'board_name' => $smcFunc['htmlspecialchars']($board_to_create['board name'], ENT_QUOTES),
+				'board_name' => StringLibrary::escape($board_to_create['board name'], ENT_QUOTES),
 				'access_groups' => [],
 				'deny_groups' => [],
 				'in_character' => 0,

@@ -116,7 +116,7 @@ function EditNews()
 				unset($_POST['news'][$i]);
 			else
 			{
-				$_POST['news'][$i] = $smcFunc['htmlspecialchars']($_POST['news'][$i], ENT_QUOTES);
+				$_POST['news'][$i] = StringLibrary::escape($_POST['news'][$i], ENT_QUOTES);
 				preparsecode($_POST['news'][$i]);
 			}
 		}
@@ -467,8 +467,8 @@ function ComposeMailing()
 	$context['page_title'] = $txt['admin_newsletters'];
 	$context['sub_template'] = 'newsletter_compose';
 
-	$context['subject'] = !empty($_POST['subject']) ? $_POST['subject'] : $smcFunc['htmlspecialchars']($context['forum_name'] . ': ' . $txt['subject']);
-	$context['message'] = !empty($_POST['message']) ? $_POST['message'] : $smcFunc['htmlspecialchars']($txt['message'] . "\n\n" . str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']) . "\n\n" . '{$board_url}');
+	$context['subject'] = !empty($_POST['subject']) ? $_POST['subject'] : StringLibrary::escape($context['forum_name'] . ': ' . $txt['subject']);
+	$context['message'] = !empty($_POST['message']) ? $_POST['message'] : StringLibrary::escape($txt['message'] . "\n\n" . str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']) . "\n\n" . '{$board_url}');
 	$context['email_variables'] = str_replace('{scripturl}', $scripturl, $txt['email_variables']);
 
 	// Needed for the WYSIWYG editor.
@@ -525,7 +525,7 @@ function ComposeMailing()
 
 			foreach ($_POST[$type] as $index => $member)
 				if (strlen(trim($member)) > 0)
-					$_POST[$type][$index] = $smcFunc['htmlspecialchars'](StringLibrary::toLower(trim($member)));
+					$_POST[$type][$index] = StringLibrary::escape(StringLibrary::toLower(trim($member)));
 				else
 					unset($_POST[$type][$index]);
 
@@ -785,8 +785,8 @@ function SendMailing($clean_only = false)
 	$_POST['message'] = !empty($_POST['message']) ? $_POST['message'] : '';
 
 	// Save the message and its subject in $context
-	$context['subject'] = $smcFunc['htmlspecialchars']($_POST['subject'], ENT_QUOTES);
-	$context['message'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+	$context['subject'] = StringLibrary::escape($_POST['subject'], ENT_QUOTES);
+	$context['message'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 
 	// Prepare the message for sending it as HTML
 	if (!$context['send_pm'] && !empty($_POST['send_html']))

@@ -88,7 +88,7 @@ function html_to_bbc($text)
 			);
 			$mappings = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$mappings[$row['filename']] = $smcFunc['htmlspecialchars']($row['code']);
+				$mappings[$row['filename']] = StringLibrary::escape($row['code']);
 			$smcFunc['db_free_result']($request);
 
 			foreach ($matches[1] as $k => $file)
@@ -1636,8 +1636,8 @@ function create_control_richedit($editorOptions)
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 			{
-				$row['filename'] = $smcFunc['htmlspecialchars']($row['filename']);
-				$row['description'] = $smcFunc['htmlspecialchars']($row['description']);
+				$row['filename'] = StringLibrary::escape($row['filename']);
+				$row['description'] = StringLibrary::escape($row['description']);
 
 				$context['smileys'][empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
 			}
@@ -1718,7 +1718,7 @@ function AutoSuggest_Search_Member()
 		WHERE {raw:real_name} LIKE {string:search}' . (!empty($context['search_param']['buddies']) ? '
 			AND id_member IN ({array_int:buddy_list})' : '') . '
 			AND is_activated IN (1, 11)
-		LIMIT ' . ($smcFunc['strlen']($_REQUEST['search']) <= 2 ? '100' : '800'),
+		LIMIT ' . (StringLibrary::strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
 		[
 			'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
 			'buddy_list' => $user_info['buddies'],
@@ -1767,7 +1767,7 @@ function AutoSuggest_Search_MemberChar()
 		WHERE {raw:real_name} LIKE {string:search}' . (!empty($context['search_param']['buddies']) ? '
 			AND id_member IN ({array_int:buddy_list})' : '') . '
 			AND is_activated IN (1, 11)
-		LIMIT ' . ($smcFunc['strlen']($_REQUEST['search']) <= 2 ? '100' : '800'),
+		LIMIT ' . (StringLibrary::strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
 		[
 			'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
 			'buddy_list' => $user_info['buddies'],
@@ -1800,7 +1800,7 @@ function AutoSuggest_Search_MemberChar()
 		INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
 		WHERE {raw:real_name} LIKE {string:search}
 			AND mem.is_activated IN (1, 11)
-		LIMIT ' . ($smcFunc['strlen']($_REQUEST['search']) <= 2 ? '100' : '800'),
+		LIMIT ' . (StringLibrary::strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
 		[
 			'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
 			'search' => $_REQUEST['search'],

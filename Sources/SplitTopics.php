@@ -654,9 +654,9 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		fatal_lang_error('cant_insert_topic');
 
 	// Move the messages over to the other topic.
-	$new_subject = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($new_subject)), ["\r" => '', "\n" => '', "\t" => '']);
+	$new_subject = strtr(StringLibrary::htmltrim(StringLibrary::escape($new_subject)), ["\r" => '', "\n" => '', "\t" => '']);
 	// Check the subject length.
-	if ($smcFunc['strlen']($new_subject) > 100)
+	if (StringLibrary::strlen($new_subject) > 100)
 		$new_subject = StringLibrary::substr($new_subject, 0, 100);
 	// Valid subject?
 	if ($new_subject != '')
@@ -1246,9 +1246,9 @@ function MergeExecute($topics = [])
 	// Determine the subject of the newly merged topic - was a custom subject specified?
 	if (empty($_POST['subject']) && isset($_POST['custom_subject']) && $_POST['custom_subject'] != '')
 	{
-		$target_subject = strtr($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['custom_subject'])), ["\r" => '', "\n" => '', "\t" => '']);
+		$target_subject = strtr(StringLibrary::htmltrim(StringLibrary::escape($_POST['custom_subject'])), ["\r" => '', "\n" => '', "\t" => '']);
 		// Keep checking the length.
-		if ($smcFunc['strlen']($target_subject) > 100)
+		if (StringLibrary::strlen($target_subject) > 100)
 			$target_subject = StringLibrary::substr($target_subject, 0, 100);
 
 		// Nothing left - odd but pick the first topics subject.
@@ -1386,7 +1386,7 @@ function MergeExecute($topics = [])
 	// We only need to do this if we're posting redirection topics...
 	if (isset($_POST['postRedirect']))
 	{
-		$_POST['reason'] = $smcFunc['htmlspecialchars']($_POST['reason'], ENT_QUOTES);
+		$_POST['reason'] = StringLibrary::escape($_POST['reason'], ENT_QUOTES);
 		preparsecode($_POST['reason']);
 
 		// Add a URL onto the message.

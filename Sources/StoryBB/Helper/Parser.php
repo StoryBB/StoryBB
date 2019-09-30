@@ -13,6 +13,7 @@
 namespace StoryBB\Helper;
 
 use StoryBB\Helper\TLD;
+use StoryBB\StringLibrary;
 
 /**
  * Parse content according to its bbc and smiley content.
@@ -1682,7 +1683,7 @@ class Parser
 				while ($row = $smcFunc['db_fetch_assoc']($result))
 				{
 					$smileysfrom[] = $row['code'];
-					$smileysto[] = $smcFunc['htmlspecialchars']($row['filename']);
+					$smileysto[] = StringLibrary::escape($row['filename']);
 					$smileysdescs[] = $row['description'];
 				}
 				$smcFunc['db_free_result']($result);
@@ -1698,12 +1699,12 @@ class Parser
 			// This smiley regex makes sure it doesn't parse smileys within code tags (so [url=mailto:David@bla.com] doesn't parse the :D smiley)
 			$smileyPregReplacements = [];
 			$searchParts = [];
-			$smileys_path = $smcFunc['htmlspecialchars']($modSettings['smileys_url'] . '/');
+			$smileys_path = StringLibrary::escape($modSettings['smileys_url'] . '/');
 
 			for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 			{
-				$specialChars = $smcFunc['htmlspecialchars']($smileysfrom[$i], ENT_QUOTES);
-				$smileyCode = '<img src="' . $smileys_path . $smileysto[$i] . '" alt="' . strtr($specialChars, [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']). '" title="' . strtr($smcFunc['htmlspecialchars']($smileysdescs[$i]), [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']) . '" class="smiley">';
+				$specialChars = StringLibrary::escape($smileysfrom[$i], ENT_QUOTES);
+				$smileyCode = '<img src="' . $smileys_path . $smileysto[$i] . '" alt="' . strtr($specialChars, [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']). '" title="' . strtr(StringLibrary::escape($smileysdescs[$i]), [':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;']) . '" class="smiley">';
 
 				$smileyPregReplacements[$smileysfrom[$i]] = $smileyCode;
 

@@ -13,6 +13,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\StringLibrary;
 
 /**
  * The central part of the board - topic display.
@@ -1028,7 +1029,7 @@ function Display()
 
 	$context['jump_to'] = [
 		'label' => addslashes(un_htmlspecialchars($txt['jump_to'])),
-		'board_name' => $smcFunc['htmlspecialchars'](strtr(strip_tags($board_info['name']), ['&amp;' => '&'])),
+		'board_name' => StringLibrary::escape(strtr(strip_tags($board_info['name']), ['&amp;' => '&'])),
 		'child_level' => $board_info['child_level'],
 	];
 
@@ -1561,8 +1562,8 @@ function prepareDisplayContext($reset = false)
 			$is_online = $message['id_character'] == $output['member']['current_character'];
 			$output['member']['online'] = [
 				'is_online' => $is_online,
-				'text' => $smcFunc['htmlspecialchars']($txt[$is_online ? 'online' : 'offline']),
-				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], $smcFunc['htmlspecialchars']($character['character_name'])),
+				'text' => StringLibrary::escape($txt[$is_online ? 'online' : 'offline']),
+				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], StringLibrary::escape($character['character_name'])),
 				'href' => $scripturl . '?action=pm;sa=send;u=' . $message['id_member'],
 				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $message['id_member'] . '">' . $txt[$is_online ? 'online' : 'offline'] . '</a>',
 				'label' => $txt[$is_online ? 'online' : 'offline']

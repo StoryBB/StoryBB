@@ -11,6 +11,8 @@
 
 namespace StoryBB\Helper;
 
+use StoryBB\StringLibrary;
+
 /**
  * This really is a pseudo class, I couldn't justify having instance of it
  * while mentioning so I just made every method static
@@ -240,7 +242,7 @@ class Mentions
 			$count = count($match);
 			
 			for ($i = 1; $i <= $count; $i++)
-				$names[] = $smcFunc['htmlspecialchars']($smcFunc['htmltrim'](implode('', array_slice($match, 0, $i))));
+				$names[] = StringLibrary::escape(StringLibrary::htmltrim(implode('', array_slice($match, 0, $i))));
 		}
 
 		$names = array_unique($names);

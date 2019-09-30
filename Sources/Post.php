@@ -324,16 +324,16 @@ function Post($post_errors = [])
 		$context['can_announce'] &= $context['becomes_approved'];
 
 		// Set up the inputs for the form.
-		$form_subject = strtr($smcFunc['htmlspecialchars']($_REQUEST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
-		$form_message = $smcFunc['htmlspecialchars']($_REQUEST['message'], ENT_QUOTES);
+		$form_subject = strtr(StringLibrary::escape($_REQUEST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
+		$form_message = StringLibrary::escape($_REQUEST['message'], ENT_QUOTES);
 
 		// Make sure the subject isn't too long - taking into account special characters.
-		if ($smcFunc['strlen']($form_subject) > 100)
+		if (StringLibrary::strpos($form_subject) > 100)
 			$form_subject = StringLibrary::substr($form_subject, 0, 100);
 
 		if (isset($_REQUEST['poll']))
 		{
-			$context['question'] = isset($_REQUEST['question']) ? $smcFunc['htmlspecialchars'](trim($_REQUEST['question'])) : '';
+			$context['question'] = isset($_REQUEST['question']) ? StringLibrary::escape(trim($_REQUEST['question'])) : '';
 
 			$context['choices'] = [];
 			$choice_id = 0;
@@ -379,9 +379,9 @@ function Post($post_errors = [])
 			$_REQUEST['guestname'] = !isset($_REQUEST['guestname']) ? '' : trim($_REQUEST['guestname']);
 			$_REQUEST['email'] = !isset($_REQUEST['email']) ? '' : trim($_REQUEST['email']);
 
-			$_REQUEST['guestname'] = $smcFunc['htmlspecialchars']($_REQUEST['guestname']);
+			$_REQUEST['guestname'] = StringLibrary::escape($_REQUEST['guestname']);
 			$context['name'] = $_REQUEST['guestname'];
-			$_REQUEST['email'] = $smcFunc['htmlspecialchars']($_REQUEST['email']);
+			$_REQUEST['email'] = StringLibrary::escape($_REQUEST['email']);
 			$context['email'] = $_REQUEST['email'];
 
 			$user_info['name'] = $_REQUEST['guestname'];
@@ -496,7 +496,7 @@ function Post($post_errors = [])
 					if ($row['filesize'] <= 0)
 						continue;
 					$context['current_attachments'][$row['id_attach']] = [
-						'name' => $smcFunc['htmlspecialchars']($row['filename']),
+						'name' => StringLibrary::escape($row['filename']),
 						'size' => $row['filesize'],
 						'attachID' => $row['id_attach'],
 						'approved' => $row['approved'],
@@ -526,8 +526,8 @@ function Post($post_errors = [])
 
 				if (empty($row['id_member']))
 				{
-					$context['name'] = $smcFunc['htmlspecialchars']($row['poster_name']);
-					$context['email'] = $smcFunc['htmlspecialchars']($row['poster_email']);
+					$context['name'] = StringLibrary::escape($row['poster_name']);
+					$context['email'] = StringLibrary::escape($row['poster_email']);
 				}
 			}
 		}
@@ -629,7 +629,7 @@ function Post($post_errors = [])
 		foreach ($temp as $attachment)
 		{
 			$context['current_attachments'][$attachment['id_attach']] = [
-				'name' => $smcFunc['htmlspecialchars']($attachment['filename']),
+				'name' => StringLibrary::escape($attachment['filename']),
 				'size' => $attachment['filesize'],
 				'attachID' => $attachment['id_attach'],
 				'approved' => $attachment['attachment_approved'],
@@ -641,8 +641,8 @@ function Post($post_errors = [])
 		// Allow moderators to change names....
 		if (allowedTo('moderate_forum') && empty($row['id_member']))
 		{
-			$context['name'] = $smcFunc['htmlspecialchars']($row['poster_name']);
-			$context['email'] = $smcFunc['htmlspecialchars']($row['poster_email']);
+			$context['name'] = StringLibrary::escape($row['poster_name']);
+			$context['email'] = StringLibrary::escape($row['poster_email']);
 		}
 
 		// Set the destination.
@@ -688,7 +688,7 @@ function Post($post_errors = [])
 			$smcFunc['db_free_result']($request);
 
 			// Add 'Re: ' to the front of the quoted subject.
-			if (trim($context['response_prefix']) != '' && $smcFunc['strpos']($form_subject, trim($context['response_prefix'])) !== 0)
+			if (trim($context['response_prefix']) != '' && StringLibrary::strpos($form_subject, trim($context['response_prefix'])) !== 0)
 				$form_subject = $context['response_prefix'] . $form_subject;
 
 			// Censor the message and subject.
@@ -727,7 +727,7 @@ function Post($post_errors = [])
 			$form_subject = $first_subject;
 
 			// Add 'Re: ' to the front of the subject.
-			if (trim($context['response_prefix']) != '' && $form_subject != '' && $smcFunc['strpos']($form_subject, trim($context['response_prefix'])) !== 0)
+			if (trim($context['response_prefix']) != '' && $form_subject != '' && StringLibrary::strpos($form_subject, trim($context['response_prefix'])) !== 0)
 				$form_subject = $context['response_prefix'] . $form_subject;
 
 			// Censor the subject.
@@ -878,7 +878,7 @@ function Post($post_errors = [])
 					$context['files_in_session_warning'] = $txt['attached_files_in_session'];
 
 				$context['current_attachments'][$attachID] = [
-					'name' => '<u>' . $smcFunc['htmlspecialchars']($attachment['name']) . '</u>',
+					'name' => '<u>' . StringLibrary::escape($attachment['name']) . '</u>',
 					'size' => $attachment['size'],
 					'attachID' => $attachID,
 					'unchecked' => false,
@@ -1066,9 +1066,9 @@ function Post($post_errors = [])
 	// File Upload.
 	if ($context['can_post_attachment'])
 	{
-		$trimfunc = function($val) use ($smcFunc)
+		$trimfunc = function($val)
 		{
-			return '.' . $smcFunc['htmltrim']($val);
+			return '.' . StringLibrary::htmltrim($val);
 		};
 		$acceptedFiles = implode(',', array_map($trimfunc, explode(',', $context['allowed_extensions'])));
 
@@ -1545,7 +1545,7 @@ function Post2()
 
 		if ($_POST['guestname'] == '' || $_POST['guestname'] == '_')
 			$post_errors[] = 'no_name';
-		if ($smcFunc['strlen']($_POST['guestname']) > 25)
+		if (StringLibrary::strpos($_POST['guestname']) > 25)
 			$post_errors[] = 'long_name';
 
 		if (empty($modSettings['guest_post_no_email']))
@@ -1576,16 +1576,16 @@ function Post2()
 		$_POST['message'] = $_POST['quickReply'];
 
 	// Check the subject and message.
-	if (!isset($_POST['subject']) || $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['subject'])) === '')
+	if (!isset($_POST['subject']) || StringLibrary::htmltrim(StringLibrary::escape($_POST['subject'])) === '')
 		$post_errors[] = 'no_subject';
-	if (!isset($_POST['message']) || $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['message']), ENT_QUOTES) === '')
+	if (!isset($_POST['message']) || StringLibrary::htmltrim(StringLibrary::escape($_POST['message']), ENT_QUOTES) === '')
 		$post_errors[] = 'no_message';
-	elseif (!empty($modSettings['max_messageLength']) && $smcFunc['strlen']($_POST['message']) > $modSettings['max_messageLength'])
+	elseif (!empty($modSettings['max_messageLength']) && StringLibrary::strpos($_POST['message']) > $modSettings['max_messageLength'])
 		$post_errors[] = ['long_message', [$modSettings['max_messageLength']]];
 	else
 	{
 		// Prepare the message a bit for some additional testing.
-		$_POST['message'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+		$_POST['message'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 
 		// Preparse code. (Zef)
 		if ($user_info['is_guest'])
@@ -1593,7 +1593,7 @@ function Post2()
 		preparsecode($_POST['message']);
 
 		// Let's see if there's still some content left without the tags.
-		if ($smcFunc['htmltrim'](strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
+		if (StringLibrary::htmltrim(strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
 
@@ -1674,17 +1674,17 @@ function Post2()
 	@set_time_limit(300);
 
 	// Add special html entities to the subject, name, and email.
-	$_POST['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
-	$_POST['guestname'] = $smcFunc['htmlspecialchars']($_POST['guestname']);
-	$_POST['email'] = $smcFunc['htmlspecialchars']($_POST['email']);
-	$_POST['modify_reason'] = empty($_POST['modify_reason']) ? '' : strtr($smcFunc['htmlspecialchars']($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
+	$_POST['subject'] = strtr(StringLibrary::escape($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
+	$_POST['guestname'] = StringLibrary::escape($_POST['guestname']);
+	$_POST['email'] = StringLibrary::escape($_POST['email']);
+	$_POST['modify_reason'] = empty($_POST['modify_reason']) ? '' : strtr(StringLibrary::escape($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
 
 	// At this point, we want to make sure the subject isn't too long.
-	if ($smcFunc['strlen']($_POST['subject']) > 100)
+	if (StringLibrary::strpos($_POST['subject']) > 100)
 		$_POST['subject'] = StringLibrary::substr($_POST['subject'], 0, 100);
 
 	// Same with the "why did you edit this" text.
-	if ($smcFunc['strlen']($_POST['modify_reason']) > 100)
+	if (StringLibrary::strpos($_POST['modify_reason']) > 100)
 		$_POST['modify_reason'] = StringLibrary::substr($_POST['modify_reason'], 0, 100);
 
 	// Make the poll...
@@ -1726,8 +1726,8 @@ function Post2()
 			$_POST['poll_hide'] = 1;
 
 		// Clean up the question and answers.
-		$_POST['question'] = $smcFunc['htmlspecialchars']($_POST['question']);
-		$_POST['question'] = $smcFunc['truncate']($_POST['question'], 255);
+		$_POST['question'] = StringLibrary::escape($_POST['question']);
+		$_POST['question'] = StringLibrary::htmltrim($_POST['question'], 255);
 		$_POST['question'] = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $_POST['question']);
 		$_POST['options'] = htmlspecialchars__recursive($_POST['options']);
 	}
@@ -2414,7 +2414,7 @@ function QuoteFast()
 		$context['quote']['text'] = strtr(un_htmlspecialchars($context['quote']['xml']), ['\'' => '\\\'', '\\' => '\\\\', "\n" => '\\n', '</script>' => '</\' + \'script>']);
 		$context['quote']['xml'] = strtr($context['quote']['xml'], ['&nbsp;' => '&#160;', '<' => '&lt;', '>' => '&gt;']);
 
-		$context['quote']['mozilla'] = strtr($smcFunc['htmlspecialchars']($context['quote']['text']), ['&quot;' => '"']);
+		$context['quote']['mozilla'] = strtr(StringLibrary::escape($context['quote']['text']), ['&quot;' => '"']);
 	}
 	//@todo Needs a nicer interface.
 	// In case our message has been removed in the meantime.
@@ -2507,12 +2507,12 @@ function JavaScriptModify()
 	}
 
 	$post_errors = [];
-	if (isset($_POST['subject']) && $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['subject'])) !== '')
+	if (isset($_POST['subject']) && StringLibrary::htmltrim(StringLibrary::escape($_POST['subject'])) !== '')
 	{
-		$_POST['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
+		$_POST['subject'] = strtr(StringLibrary::escape($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
 
 		// Maximum number of characters.
-		if ($smcFunc['strlen']($_POST['subject']) > 100)
+		if (StringLibrary::strpos($_POST['subject']) > 100)
 			$_POST['subject'] = StringLibrary::substr($_POST['subject'], 0, 100);
 	}
 	elseif (isset($_POST['subject']))
@@ -2523,23 +2523,23 @@ function JavaScriptModify()
 
 	if (isset($_POST['message']))
 	{
-		if ($smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['message'])) === '')
+		if (StringLibrary::htmltrim(StringLibrary::escape($_POST['message'])) === '')
 		{
 			$post_errors[] = 'no_message';
 			unset($_POST['message']);
 		}
-		elseif (!empty($modSettings['max_messageLength']) && $smcFunc['strlen']($_POST['message']) > $modSettings['max_messageLength'])
+		elseif (!empty($modSettings['max_messageLength']) && StringLibrary::strpos($_POST['message']) > $modSettings['max_messageLength'])
 		{
 			$post_errors[] = 'long_message';
 			unset($_POST['message']);
 		}
 		else
 		{
-			$_POST['message'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+			$_POST['message'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 
 			preparsecode($_POST['message']);
 
-			if ($smcFunc['htmltrim'](strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '')
+			if (StringLibrary::htmltrim(strip_tags(Parser::parse_bbc($_POST['message'], false), implode('', $context['allowed_html_tags']))) === '')
 			{
 				$post_errors[] = 'no_message';
 				unset($_POST['message']);
@@ -2569,10 +2569,10 @@ function JavaScriptModify()
 
 	if (isset($_POST['modify_reason']))
 	{
-		$_POST['modify_reason'] = strtr($smcFunc['htmlspecialchars']($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
+		$_POST['modify_reason'] = strtr(StringLibrary::escape($_POST['modify_reason']), ["\r" => '', "\n" => '', "\t" => '']);
 
 		// Maximum number of characters.
-		if ($smcFunc['strlen']($_POST['modify_reason']) > 100)
+		if (StringLibrary::strpos($_POST['modify_reason']) > 100)
 			$_POST['modify_reason'] = StringLibrary::substr($_POST['modify_reason'], 0, 100);
 	}
 

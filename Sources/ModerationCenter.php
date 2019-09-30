@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Entry point for the moderation center.
@@ -334,7 +335,7 @@ function ModBlockNotes()
 		checkSession();
 		validateToken('mod-modnote-add');
 
-		$_POST['new_note'] = $smcFunc['htmlspecialchars'](trim($_POST['new_note']));
+		$_POST['new_note'] = StringLibrary::escape(trim($_POST['new_note']));
 		// Make sure they actually entered something.
 		if (!empty($_POST['new_note']))
 		{
@@ -1549,7 +1550,7 @@ function ViewWarningLog()
 				'position' => 'below_table_data',
 				'value' => '
 					' . $txt['modlog_search'] . ':
-					<input type="text" name="search" size="18" value="' . $smcFunc['htmlspecialchars']($context['search']['string']) . '">
+					<input type="text" name="search" size="18" value="' . StringLibrary::escape($context['search']['string']) . '">
 					<input type="submit" name="is_search" value="' . $txt['modlog_go'] . '">',
 				'class' => 'floatright',
 			],
@@ -1843,7 +1844,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 			'creator' => $row['id_member'] ? ('<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['creator_name'] . '</a>') : $row['creator_name'],
 			'time' => timeformat($row['log_time']),
 			'title' => $row['template_title'],
-			'body' => $smcFunc['htmlspecialchars']($row['body']),
+			'body' => StringLibrary::escape($row['body']),
 		];
 	}
 	$smcFunc['db_free_result']($request);
@@ -1894,7 +1895,7 @@ function ModifyWarningTemplate()
 		{
 			$context['template_data'] = [
 				'title' => $row['template_title'],
-				'body' => $smcFunc['htmlspecialchars']($row['body']),
+				'body' => StringLibrary::escape($row['body']),
 				'personal' => $row['id_recipient'],
 				'can_edit_personal' => $row['id_member'] == $user_info['id'],
 			];
@@ -1919,7 +1920,7 @@ function ModifyWarningTemplate()
 		if (!empty($_POST['template_body']) && !empty($_POST['template_title']))
 		{
 			// Safety first.
-			$_POST['template_title'] = $smcFunc['htmlspecialchars']($_POST['template_title']);
+			$_POST['template_title'] = StringLibrary::escape($_POST['template_title']);
 
 			// Clean up BBC.
 			preparsecode($_POST['template_body']);

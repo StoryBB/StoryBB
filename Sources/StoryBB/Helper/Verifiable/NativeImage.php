@@ -14,6 +14,7 @@ namespace StoryBB\Helper\Verifiable;
 
 use StoryBB\Helper\Verifiable\AbstractVerifiable;
 use StoryBB\Helper\Verifiable\UnverifiableException;
+use StoryBB\StringLibrary;
 
 class NativeImage extends AbstractVerifiable implements Verifiable
 {
@@ -29,7 +30,7 @@ class NativeImage extends AbstractVerifiable implements Verifiable
 
 		$this->use_graphic_library = in_array('gd', get_loaded_extensions());
 		$this->image_href = $scripturl . '?action=verificationcode;vid=' . $this->id . ';rand=' . md5(mt_rand());
-		$this->text_value = !empty($_REQUEST[$this->id . '_vv']['code']) ? $smcFunc['htmlspecialchars']($_REQUEST[$this->id . '_vv']['code']) : '';
+		$this->text_value = !empty($_REQUEST[$this->id . '_vv']['code']) ? StringLibrary::escape($_REQUEST[$this->id . '_vv']['code']) : '';
 	}
 
 	public function is_available(): bool

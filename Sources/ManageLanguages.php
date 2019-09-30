@@ -13,6 +13,7 @@
 use StoryBB\Model\Policy;
 use StoryBB\Model\Language;
 use StoryBB\Model\Theme;
+use StoryBB\StringLibrary;
 
 /**
  * This is the main function for the languages area.
@@ -690,7 +691,7 @@ function cleanLangString($string, $to_display = true)
 		}
 
 		// Unhtml then rehtml the whole thing!
-		$new_string = $smcFunc['htmlspecialchars'](un_htmlspecialchars($new_string));
+		$new_string = StringLibrary::escape(un_htmlspecialchars($new_string));
 	}
 	else
 	{

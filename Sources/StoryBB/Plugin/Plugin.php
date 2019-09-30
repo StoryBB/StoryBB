@@ -13,6 +13,7 @@
 namespace StoryBB\Plugin;
 
 use stdClass;
+use StoryBB\StringLibrary;
 
 class Plugin
 {
@@ -135,25 +136,25 @@ class Plugin
 	public function name(): string
 	{
 		global $smcFunc;
-		return $smcFunc['htmlspecialchars']($this->manifest->name);
+		return StringLibrary::escape($this->manifest->name);
 	}
 
 	public function author(): string
 	{
 		global $smcFunc;
-		return $smcFunc['htmlspecialchars']($this->manifest->author);
+		return StringLibrary::escape($this->manifest->author);
 	}
 
 	public function description(): string
 	{
 		global $smcFunc;
-		return $smcFunc['htmlspecialchars']($this->manifest->description);
+		return StringLibrary::escape($this->manifest->description);
 	}
 
 	public function version(): string
 	{
 		global $smcFunc;
-		return $smcFunc['htmlspecialchars']($this->manifest->version);
+		return StringLibrary::escape($this->manifest->version);
 	}
 
 	public function hooks(): stdClass

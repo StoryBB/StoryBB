@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\IP;
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * View a summary.
@@ -506,14 +507,14 @@ function showAlerts($memID)
 		$toMark = array_map('intval', $_POST['mark']);
 
 		// Which action?
-		$action = !empty($_POST['mark_as']) ? $smcFunc['htmlspecialchars']($smcFunc['htmltrim']($_POST['mark_as'])) : '';
+		$action = !empty($_POST['mark_as']) ? StringLibrary::escape(StringLibrary::htmltrim($_POST['mark_as'])) : '';
 	}
 
 	// A single change.
 	if (!empty($_GET['do']) && !empty($_GET['aid']))
 	{
 		$toMark = (int) $_GET['aid'];
-		$action = $smcFunc['htmlspecialchars']($smcFunc['htmltrim']($_GET['do']));
+		$action = StringLibrary::escape(StringLibrary::htmltrim($_GET['do']));
 	}
 
 	// Save the changes.

@@ -14,6 +14,7 @@
 use StoryBB\ClassManager;
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Task\Scheduler;
+use StoryBB\StringLibrary;
 
 /**
  * The main entrance point for the 'Paid Subscription' screen, calling
@@ -701,7 +702,7 @@ function ModifySubscription()
 				'repeatable' => (int) $row['repeatable'],
 				'allow_partial' => $row['allow_partial'],
 				'duration' => $isFlexible ? 'flexible' : 'fixed',
-				'email_complete' => $smcFunc['htmlspecialchars']($row['email_complete']),
+				'email_complete' => StringLibrary::escape($row['email_complete']),
 				'reminder' => $row['reminder'],
 			];
 		}

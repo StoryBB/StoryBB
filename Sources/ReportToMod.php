@@ -9,6 +9,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * Report a post or profile to the moderator... ask for a comment.
  * Gathers data from the user to report abuse to the moderator(s).
@@ -40,7 +42,7 @@ function ReportToModerator()
 		require_once($sourcedir . '/Subs-Post.php');
 
 		// Set up the preview message.
-		$context['preview_message'] = $smcFunc['htmlspecialchars']($_POST['comment'], ENT_QUOTES);
+		$context['preview_message'] = StringLibrary::escape($_POST['comment'], ENT_QUOTES);
 		preparsecode($context['preview_message']);
 
 		// We censor for your protection...
@@ -114,7 +116,7 @@ function ReportToModerator()
 		$context['submit_url'] = $scripturl . '?action=reporttm;u=' . $_REQUEST['u'];
 	}
 
-	$context['comment_body'] = !isset($_POST['comment']) ? '' : $smcFunc['htmlspecialchars'](trim($_POST['comment'], ENT_QUOTES));
+	$context['comment_body'] = !isset($_POST['comment']) ? '' : StringLibrary::escape(trim($_POST['comment'], ENT_QUOTES));
 
 	$context['page_title'] = $context['report_type'] == 'msg' ? $txt['report_to_mod'] : sprintf($txt['report_profile'], $display_name);
 	$context['notice'] = $context['report_type'] == 'msg' ? $txt['report_to_mod_func'] : $txt['report_profile_func'];
@@ -183,12 +185,12 @@ function ReportToModerator2()
 		$post_errors[] = 'session_timeout';
 
 	// Make sure we have a comment and it's clean.
-	if (!isset($_POST['comment']) || $smcFunc['htmltrim']($_POST['comment']) === '')
+	if (!isset($_POST['comment']) || StringLibrary::htmltrim($_POST['comment']) === '')
 		$post_errors[] = 'no_comment';
 
-	$poster_comment = strtr($smcFunc['htmlspecialchars']($_POST['comment']), ["\r" => '', "\t" => '']);
+	$poster_comment = strtr(StringLibrary::escape($_POST['comment']), ["\r" => '', "\t" => '']);
 
-	if ($smcFunc['strlen']($poster_comment) > 254)
+	if (StringLibrary::strlen($poster_comment) > 254)
 		$post_errors[] = 'post_too_long';
 
 	// Any errors?

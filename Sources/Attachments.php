@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * Attachments handler.
  */
@@ -97,7 +99,7 @@ class Attachments
 		// Need this. For reasons...
 		loadLanguage('Post');
 
-		$this->_sa = !empty($_REQUEST['sa']) ? $smcFunc['htmlspecialchars']($smcFunc['htmltrim']($_REQUEST['sa'])) : false;
+		$this->_sa = !empty($_REQUEST['sa']) ? StringLibrary::escape(StringLibrary::htmltrim($_REQUEST['sa'])) : false;
 
 		if ($this->_canPostAttachment && $this->_sa && in_array($this->_sa, $this->_subActions))
 			$this->{$this->_sa}();
@@ -295,7 +297,7 @@ class Attachments
 					$_FILES['attachment']['type'][$n] = mime_content_type($_FILES['attachment']['tmp_name'][$n]);
 
 				$_SESSION['temp_attachments'][$attachID] = [
-					'name' => $smcFunc['htmlspecialchars'](basename($_FILES['attachment']['name'][$n])),
+					'name' => StringLibrary::escape(basename($_FILES['attachment']['name'][$n])),
 					'tmp_name' => $destName,
 					'size' => $_FILES['attachment']['size'][$n],
 					'type' => $_FILES['attachment']['type'][$n],
@@ -321,7 +323,7 @@ class Attachments
 			else
 			{
 				$_SESSION['temp_attachments'][$attachID] = [
-					'name' => $smcFunc['htmlspecialchars'](basename($_FILES['attachment']['name'][$n])),
+					'name' => StringLibrary::escape(basename($_FILES['attachment']['name'][$n])),
 					'tmp_name' => $destName,
 					'errors' => $errors,
 				];

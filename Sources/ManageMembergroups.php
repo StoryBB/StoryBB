@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Hook\Observable;
+use StoryBB\StringLibrary;
 
 /**
  * Main dispatcher, the entrance point for all 'Manage Membergroup' actions.
@@ -352,7 +353,7 @@ function AddMembergroup()
 				'icons' => 'string', 'online_color' => 'string', 'group_type' => 'int', 'is_character' => 'int',
 			],
 			[
-				'', $smcFunc['htmlspecialchars']($_POST['group_name'], ENT_QUOTES),
+				'', StringLibrary::escape($_POST['group_name'], ENT_QUOTES),
 				'1#icon.png', '', $_POST['group_type'], !empty($_POST['group_level']) ? 1 : 0,
 			],
 			['id_group'],
@@ -528,7 +529,7 @@ function AddMembergroup()
 		]);
 
 		// We did it.
-		logAction('add_group', ['group' => $smcFunc['htmlspecialchars']($_POST['group_name'])], 'admin');
+		logAction('add_group', ['group' => StringLibrary::escape($_POST['group_name'])], 'admin');
 
 		// Go change some more settings.
 		redirectexit('action=admin;area=membergroups;sa=edit;group=' . $id_group);
@@ -791,7 +792,7 @@ function EditMembergroup()
 				'group_hidden' => $_POST['group_hidden'],
 				'group_inherit' => $_POST['group_inherit'],
 				'current_group' => (int) $_REQUEST['group'],
-				'group_name' => $smcFunc['htmlspecialchars']($_POST['group_name']),
+				'group_name' => StringLibrary::escape($_POST['group_name']),
 				'online_color' => $_POST['online_color'],
 				'icons' => $_POST['icons'],
 				'group_desc' => $_POST['group_desc'],
@@ -1003,7 +1004,7 @@ function EditMembergroup()
 		]);
 
 		// Log the edit.
-		logAction('edited_group', ['group' => $smcFunc['htmlspecialchars']($_POST['group_name'])], 'admin');
+		logAction('edited_group', ['group' => StringLibrary::escape($_POST['group_name'])], 'admin');
 
 		redirectexit('action=admin;area=membergroups');
 	}
@@ -1029,7 +1030,7 @@ function EditMembergroup()
 		'id' => $_REQUEST['group'],
 		'name' => $row['group_name'],
 		'is_character' => $row['is_character'],
-		'description' => $smcFunc['htmlspecialchars']($row['description'], ENT_QUOTES),
+		'description' => StringLibrary::escape($row['description'], ENT_QUOTES),
 		'editable_name' => $row['group_name'],
 		'color' => $row['online_color'],
 		'max_messages' => $row['max_messages'],

@@ -11,6 +11,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * Mark a board or multiple boards read.
  *
@@ -683,7 +685,7 @@ function modifyBoard($board_id, &$boardOptions)
 		if (isset($boardOptions['moderator_string']) && trim($boardOptions['moderator_string']) != '')
 		{
 			// Divvy out the usernames, remove extra space.
-			$moderator_string = strtr($smcFunc['htmlspecialchars']($boardOptions['moderator_string'], ENT_QUOTES), ['&quot;' => '"']);
+			$moderator_string = strtr(StringLibrary::escape($boardOptions['moderator_string'], ENT_QUOTES), ['&quot;' => '"']);
 			preg_match_all('~"([^"]+)"~', $moderator_string, $matches);
 			$moderators = array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $moderator_string)));
 			for ($k = 0, $n = count($moderators); $k < $n; $k++)
@@ -743,7 +745,7 @@ function modifyBoard($board_id, &$boardOptions)
 		if (isset($boardOptions['moderator_group_string']) && trim($boardOptions['moderator_group_string']) != '')
 		{
 			// Divvy out the group names, remove extra space.
-			$moderator_group_string = strtr($smcFunc['htmlspecialchars']($boardOptions['moderator_group_string'], ENT_QUOTES), ['&quot;' => '"']);
+			$moderator_group_string = strtr(StringLibrary::escape($boardOptions['moderator_group_string'], ENT_QUOTES), ['&quot;' => '"']);
 			preg_match_all('~"([^"]+)"~', $moderator_group_string, $matches);
 			$moderator_groups = array_merge($matches[1], explode(',', preg_replace('~"[^"]+"~', '', $moderator_group_string)));
 			for ($k = 0, $n = count($moderator_groups); $k < $n; $k++)

@@ -225,7 +225,7 @@ function InMaintenance()
 
 	// Basic template stuff..
 	$context['sub_template'] = 'login_maintenance';
-	$context['title'] = $smcFunc['htmlspecialchars']($mtitle);
+	$context['title'] = StringLibrary::escape($mtitle);
 	$context['description'] = &$mmessage;
 	$context['page_title'] = $txt['maintain_mode'];
 }
@@ -305,7 +305,7 @@ function adminLogin_outputPostVars($k, $v)
 
 	if (!is_array($v))
 		return '
-<input type="hidden" name="' . $smcFunc['htmlspecialchars']($k) . '" value="' . strtr($v, ['"' => '&quot;', '<' => '&lt;', '>' => '&gt;']) . '">';
+<input type="hidden" name="' . StringLibrary::escape($k) . '" value="' . strtr($v, ['"' => '&quot;', '<' => '&lt;', '>' => '&gt;']) . '">';
 	else
 	{
 		$ret = '';
@@ -526,7 +526,7 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
 	$errors = [];
 
 	// Don't use too long a name.
-	if ($smcFunc['strlen']($username) > 25)
+	if (StringLibrary::strlen($username) > 25)
 		$errors[] = ['lang', 'error_long_name'];
 
 	// No name?!  How can you register with no name?
@@ -544,7 +544,7 @@ function validateUsername($memID, $username, $return_error = false, $check_reser
 	{
 		require_once($sourcedir . '/Subs-Members.php');
 		if (isReservedName($username, $memID, false))
-			$errors[] = ['done', '(' . $smcFunc['htmlspecialchars']($username) . ') ' . $txt['name_in_use']];
+			$errors[] = ['done', '(' . StringLibrary::escape($username) . ') ' . $txt['name_in_use']];
 	}
 
 	if ($return_error)
@@ -576,7 +576,7 @@ function validatePassword($password, $username, $restrict_in = [])
 	global $modSettings, $smcFunc;
 
 	// Perform basic requirements first.
-	if ($smcFunc['strlen']($password) < (empty($modSettings['password_strength']) ? 4 : 8))
+	if (StringLibrary::strlen($password) < (empty($modSettings['password_strength']) ? 4 : 8))
 		return 'short';
 
 	// Is this enough?
@@ -586,7 +586,7 @@ function validatePassword($password, $username, $restrict_in = [])
 	// Otherwise, perform the medium strength test - checking if password appears in the restricted string.
 	if (preg_match('~\b' . preg_quote($password, '~') . '\b~', implode(' ', $restrict_in)) != 0)
 		return 'restricted_words';
-	elseif ($smcFunc['strpos']($password, $username) !== false)
+	elseif (StringLibrary::strpos($password, $username) !== false)
 		return 'restricted_words';
 
 	// If just medium, we're done.

@@ -1241,7 +1241,7 @@ function EditCustomProfiles()
 		];
 
 	// Are we moving it?
-	if (isset($_GET['move']) && in_array($smcFunc['htmlspecialchars']($_GET['move']), $move_to))
+	if (isset($_GET['move']) && in_array(StringLibrary::escape($_GET['move']), $move_to))
 	{
 		// Down is the new up.
 		$new_order = ($_GET['move'] == 'up' ? ($context['field']['order'] - 1) : ($context['field']['order'] + 1));
@@ -1292,8 +1292,8 @@ function EditCustomProfiles()
 			redirectexit($scripturl . '?action=admin;area=featuresettings;sa=profileedit;fid=' . $_GET['fid']);
 		}
 
-		$_POST['field_name'] = $smcFunc['htmlspecialchars']($_POST['field_name']);
-		$_POST['field_desc'] = $smcFunc['htmlspecialchars']($_POST['field_desc']);
+		$_POST['field_name'] = StringLibrary::escape($_POST['field_name']);
+		$_POST['field_desc'] = StringLibrary::escape($_POST['field_desc']);
 
 		// Checkboxes...
 		$show_reg = isset($_POST['reg']) ? (int) $_POST['reg'] : 0;
@@ -1323,7 +1323,7 @@ function EditCustomProfiles()
 			foreach ($_POST['select_option'] as $k => $v)
 			{
 				// Clean, clean, clean...
-				$v = $smcFunc['htmlspecialchars']($v);
+				$v = StringLibrary::escape($v);
 				$v = strtr($v, [',' => '']);
 
 				// Nada, zip, etc...

@@ -77,7 +77,7 @@ function PlushSearch1()
 		$context['search_params']['search'] = un_htmlspecialchars($_REQUEST['search']);
 
 	if (isset($context['search_params']['search']))
-		$context['search_params']['search'] = $smcFunc['htmlspecialchars']($context['search_params']['search']);
+		$context['search_params']['search'] = StringLibrary::escape($context['search_params']['search']);
 	if (isset($context['search_params']['userspec']))
 		$context['search_params']['userspec'] = (int) $context['search_params']['userspec'];
 	if (!empty($context['search_params']['searchtype']))
@@ -575,7 +575,7 @@ function PlushSearch2()
 	if (!isset($search_params['search']) || $search_params['search'] == '')
 		$context['search_errors']['invalid_search_string'] = true;
 	// Too long?
-	elseif ($smcFunc['strlen']($search_params['search']) > $context['search_string_limit'])
+	elseif (StringLibrary::strlen($search_params['search']) > $context['search_string_limit'])
 	{
 		$context['search_errors']['string_too_long'] = true;
 	}
@@ -598,7 +598,7 @@ function PlushSearch2()
 
 	// Remove the phrase parts and extract the words.
 	$wordArray = preg_replace('~(?:^|\s)(?:[-]?)"(?:[^"]+)"(?:$|\s)~u', ' ', $search_params['search']);
-	$wordArray = explode(' ', $smcFunc['htmlspecialchars'](un_htmlspecialchars($wordArray), ENT_QUOTES));
+	$wordArray = explode(' ', StringLibrary::escape(un_htmlspecialchars($wordArray), ENT_QUOTES));
 
 	// A minus sign in front of a word excludes the word.... so...
 	$excludedWords = [];
@@ -645,7 +645,7 @@ function PlushSearch2()
 			unset($searchArray[$index]);
 		}
 		// Don't allow very, very short words.
-		elseif ($smcFunc['strlen']($value) < 2)
+		elseif (StringLibrary::strlen($value) < 2)
 		{
 			$context['search_ignored'][] = $value;
 			unset($searchArray[$index]);
@@ -741,7 +741,7 @@ function PlushSearch2()
 	// Let the user adjust the search query, should they wish?
 	$context['search_params'] = $search_params;
 	if (isset($context['search_params']['search']))
-		$context['search_params']['search'] = $smcFunc['htmlspecialchars']($context['search_params']['search']);
+		$context['search_params']['search'] = StringLibrary::escape($context['search_params']['search']);
 
 	// Do we have captcha enabled?
 	if ($user_info['is_guest'] && !empty($modSettings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']) && (empty($_SESSION['last_ss']) || $_SESSION['last_ss'] != $search_params['search']))
@@ -1753,7 +1753,7 @@ function prepareSearchContext($reset = false)
 		$message['body'] = Parser::parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
 		$message['body'] = strip_tags(strtr($message['body'], ['</div>' => '<br>', '</li>' => '<br>']), '<br>');
 
-		if ($smcFunc['strlen']($message['body']) > $charLimit)
+		if (StringLibrary::strlen($message['body']) > $charLimit)
 		{
 			if (empty($context['key_words']))
 				$message['body'] = StringLibrary::substr($message['body'], 0, $charLimit) . '<strong>...</strong>';
@@ -1782,7 +1782,7 @@ function prepareSearchContext($reset = false)
 				$message['body'] = '';
 				foreach ($matches[0] as $index => $match)
 				{
-					$match = strtr($smcFunc['htmlspecialchars']($match, ENT_QUOTES), ["\n" => '&nbsp;']);
+					$match = strtr(StringLibrary::escape($match, ENT_QUOTES), ["\n" => '&nbsp;']);
 					$message['body'] .= '<strong>......</strong>&nbsp;' . $match . '&nbsp;<strong>......</strong>';
 				}
 			}
@@ -1903,7 +1903,7 @@ function prepareSearchContext($reset = false)
 		// Fix the international characters in the keyword too.
 		$query = un_htmlspecialchars($query);
 		$query = trim($query, "\*+");
-		$query = strtr($smcFunc['htmlspecialchars']($query), ['\\\'' => '\'']);
+		$query = strtr(StringLibrary::escape($query), ['\\\'' => '\'']);
 
 		$body_highlighted = preg_replace_callback('/((<[^>]*)|' . preg_quote(strtr($query, ['\'' => '&#039;']), '/') . ')/iu', function ($m)
 		{
@@ -1950,8 +1950,8 @@ function prepareSearchContext($reset = false)
 			$is_online = $message['id_character'] == $output['matches'][$match_id]['member']['current_character'];
 			$output['matches'][$match_id]['member']['online'] = [
 				'is_online' => $is_online,
-				'text' => $smcFunc['htmlspecialchars']($txt[$is_online ? 'online' : 'offline']),
-				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], $smcFunc['htmlspecialchars']($character['character_name'])),
+				'text' => StringLibrary::escape($txt[$is_online ? 'online' : 'offline']),
+				'member_online_text' => sprintf($txt[$is_online ? 'member_is_online' : 'member_is_offline'], StringLibrary::escape($character['character_name'])),
 				'href' => $scripturl . '?action=pm;sa=send;u=' . $message['id_member'],
 				'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $message['id_member'] . '">' . $txt[$is_online ? 'online' : 'offline'] . '</a>',
 				'label' => $txt[$is_online ? 'online' : 'offline']

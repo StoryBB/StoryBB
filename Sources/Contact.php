@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Verification;
+use StoryBB\StringLibrary;
 
 /**
  * Display and process the contact form.
@@ -46,7 +47,7 @@ function Contact()
 		// Did they put something in the fields they needed to put in?
 		foreach (['name', 'email', 'subject', 'message'] as $item)
 		{
-			$context['contact'][$item] = isset($_POST[$item]) ? $smcFunc['htmlspecialchars'](trim($_POST[$item]), ENT_QUOTES) : '';
+			$context['contact'][$item] = isset($_POST[$item]) ? StringLibrary::escape(trim($_POST[$item]), ENT_QUOTES) : '';
 			if (empty($context['contact'][$item]))
 			{
 				loadLanguage('Errors');

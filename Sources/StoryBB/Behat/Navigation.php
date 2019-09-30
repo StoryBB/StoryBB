@@ -13,6 +13,7 @@
 namespace StoryBB\Behat;
 
 use StoryBB\Behat;
+use StoryBB\StringLibrary;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
@@ -54,7 +55,7 @@ class Navigation extends RawMinkContext implements Context
 			FROM {db_prefix}boards
 			WHERE name = {string:board}',
 			[
-				'board' => $smcFunc['htmlspecialchars']($boardname, ENT_QUOTES)
+				'board' => StringLibrary::escape($boardname, ENT_QUOTES)
 			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
@@ -90,7 +91,7 @@ class Navigation extends RawMinkContext implements Context
 			INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
 			WHERE m.subject = {string:topic}',
 			[
-				'topic' => $smcFunc['htmlspecialchars']($topicname, ENT_QUOTES)
+				'topic' => StringLibrary::escape($topicname, ENT_QUOTES)
 			]
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)

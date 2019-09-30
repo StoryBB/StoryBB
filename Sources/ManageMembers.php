@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\IP;
 use StoryBB\Hook\Observable;
+use StoryBB\StringLibrary;
 
 /**
  * The main entrance point for the Manage Members screen.
@@ -379,7 +380,7 @@ function ViewMemberlist()
 			else
 			{
 				// Replace the wildcard characters ('*' and '?') into MySQL ones.
-				$parameter = strtolower(strtr($smcFunc['htmlspecialchars']($search_params[$param_name], ENT_QUOTES), ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_']));
+				$parameter = strtolower(strtr(StringLibrary::escape($search_params[$param_name], ENT_QUOTES), ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_']));
 
 				if ($smcFunc['db_case_sensitive'])
 					$query_parts[] = '(LOWER(' . implode(') LIKE {string:' . $param_name . '_normal} OR LOWER(', $param_info['db_fields']) . ') LIKE {string:' . $param_name . '_normal})';

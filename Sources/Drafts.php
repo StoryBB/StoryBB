@@ -58,12 +58,12 @@ function SaveDraft(&$post_errors)
 	$draft['smileys_enabled'] = isset($_POST['ns']) ? (int) $_POST['ns'] : 0;
 	$draft['locked'] = isset($_POST['lock']) ? (int) $_POST['lock'] : 0;
 	$draft['sticky'] = isset($_POST['sticky']) ? (int) $_POST['sticky'] : 0;
-	$draft['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
-	$draft['body'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+	$draft['subject'] = strtr(StringLibrary::escape($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
+	$draft['body'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 
 	// message and subject still need a bit more work
 	preparsecode($draft['body']);
-	if ($smcFunc['strlen']($draft['subject']) > 100)
+	if (StringLibrary::strlen($draft['subject']) > 100)
 		$draft['subject'] = StringLibrary::substr($draft['subject'], 0, 100);
 
 	// Modifying an existing draft, like hitting the save draft button or autosave enabled?
@@ -203,12 +203,12 @@ function SavePMDraft(&$post_errors, $recipientList)
 
 	// prepare the data we got from the form
 	$reply_id = empty($_POST['replied_to']) ? 0 : (int) $_POST['replied_to'];
-	$draft['body'] = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
-	$draft['subject'] = strtr($smcFunc['htmlspecialchars']($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
+	$draft['body'] = StringLibrary::escape($_POST['message'], ENT_QUOTES);
+	$draft['subject'] = strtr(StringLibrary::escape($_POST['subject']), ["\r" => '', "\n" => '', "\t" => '']);
 
 	// message and subject always need a bit more work
 	preparsecode($draft['body']);
-	if ($smcFunc['strlen']($draft['subject']) > 100)
+	if (StringLibrary::strlen($draft['subject']) > 100)
 		$draft['subject'] = StringLibrary::substr($draft['subject'], 0, 100);
 
 	// Modifying an existing PM draft?
@@ -604,7 +604,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 		if (empty($row['body']))
 			$row['body'] = '';
 
-		$row['subject'] = $smcFunc['htmltrim']($row['subject']);
+		$row['subject'] = StringLibrary::htmltrim($row['subject']);
 		if (empty($row['subject']))
 			$row['subject'] = $txt['no_subject'];
 
@@ -759,7 +759,7 @@ function showPMDrafts($memID = -1)
 		if (empty($row['body']))
 			$row['body'] = '';
 
-		$row['subject'] = $smcFunc['htmltrim']($row['subject']);
+		$row['subject'] = StringLibrary::htmltrim($row['subject']);
 		if (empty($row['subject']))
 			$row['subject'] = $txt['no_subject'];
 

@@ -124,7 +124,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 				'q' => Parser::parse_bbc($row['question']),
 				'is_error' => !empty($incorrectQuestions) && in_array($q, $incorrectQuestions),
 				// Remember a previous submission?
-				'a' => isset($_REQUEST[$this->id . '_vv'], $_REQUEST[$this->id . '_vv']['q'], $_REQUEST[$this->id . '_vv']['q'][$q]) ? $smcFunc['htmlspecialchars']($_REQUEST[$this->id . '_vv']['q'][$q]) : '',
+				'a' => isset($_REQUEST[$this->id . '_vv'], $_REQUEST[$this->id . '_vv']['q'], $_REQUEST[$this->id . '_vv']['q'][$q]) ? StringLibrary::escape($_REQUEST[$this->id . '_vv']['q'][$q]) : '',
 			];
 		}
 	}
@@ -152,7 +152,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 			// Second, is their answer in the list of possible answers?
 			else
 			{
-				$given_answer = trim($smcFunc['htmlspecialchars'](strtolower($_REQUEST[$this->id . '_vv']['q'][$q])));
+				$given_answer = trim(StringLibrary::escape(strtolower($_REQUEST[$this->id . '_vv']['q'][$q])));
 				if (!in_array($given_answer, $this->question_cache['questions'][$q]['answers']))
 				{
 					$incorrectQuestions[] = $q;
@@ -311,7 +311,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 						}
 						continue;
 					}
-					$question = $smcFunc['htmlspecialchars'](trim($question));
+					$question = StringLibrary::escape(trim($question));
 
 					// Get the answers. Firstly check there actually might be some.
 					if (!isset($_POST['answer'][$lang_id][$q_id]) || !is_array($_POST['answer'][$lang_id][$q_id]))
@@ -328,7 +328,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 					{
 						if (!empty($answer) && trim($answer) !== '')
 						{
-							$answers[] = $smcFunc['htmlspecialchars'](trim($answer));
+							$answers[] = StringLibrary::escape(trim($answer));
 						}
 					}
 					if (empty($answers))

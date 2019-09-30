@@ -9,6 +9,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * Front end controller for the character sheet templates section in the admin area.
  */
@@ -166,8 +168,8 @@ function char_template_save()
 	if (empty($_POST['template_name']) || empty($_POST['message']))
 		redirectexit('action=admin;area=templates');
 
-	$template_name = $smcFunc['htmlspecialchars'](trim($_POST['template_name']), ENT_QUOTES);
-	$template = $smcFunc['htmlspecialchars']($_POST['message'], ENT_QUOTES);
+	$template_name = StringLibrary::escape(trim($_POST['template_name']), ENT_QUOTES);
+	$template = StringLibrary::escape($_POST['message'], ENT_QUOTES);
 	preparsecode($template);
 
 	$template_id = isset($_POST['template_id']) ? (int) $_POST['template_id'] : 0;

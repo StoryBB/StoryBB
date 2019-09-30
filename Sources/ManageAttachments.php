@@ -13,6 +13,7 @@
 
 use StoryBB\Model\Attachment;
 use StoryBB\Helper\Environment;
+use StoryBB\StringLibrary;
 
 /**
  * The main 'Attachments and Avatars' management function.
@@ -427,7 +428,7 @@ function BrowseFiles()
 						if (!empty($rowData['width']) && !empty($rowData['height']))
 							$link .= sprintf(' onclick="return reqWin(this.href' . ($rowData['attachment_type'] == 1 ? '' : ' + \';image\'') . ', %1$d, %2$d, true);"', $rowData['width'] + 20, $rowData['height'] + 20);
 
-						$link .= sprintf('>%1$s</a>', preg_replace('~&amp;#(\\\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\\\1;', $smcFunc['htmlspecialchars']($rowData['filename'])));
+						$link .= sprintf('>%1$s</a>', preg_replace('~&amp;#(\\\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\\\1;', StringLibrary::escape($rowData['filename'])));
 
 						// Show the dimensions.
 						if (!empty($rowData['width']) && !empty($rowData['height']))
@@ -465,7 +466,7 @@ function BrowseFiles()
 					{
 						// In case of an attachment, return the poster of the attachment.
 						if (empty($rowData['id_member']))
-							return $smcFunc['htmlspecialchars']($rowData['poster_name']);
+							return StringLibrary::escape($rowData['poster_name']);
 
 						// Otherwise it must be an avatar, return the link to the owner of it.
 						elseif (!empty($rowData['character_name']) && $context['browse_type'] != 'exports')
@@ -1131,7 +1132,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 				'remove_attach',
 				[
 					'message' => $row['id_msg'],
-					'filename' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($row['filename'])),
+					'filename' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($row['filename'])),
 				]
 			);
 		$smcFunc['db_free_result']($request);
@@ -1936,7 +1937,7 @@ function ApproveAttachments($attachments)
 			'approve_attach',
 			[
 				'message' => $row['id_msg'],
-				'filename' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($row['filename'])),
+				'filename' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($row['filename'])),
 			]
 		);
 	$smcFunc['db_free_result']($request);
@@ -2262,7 +2263,7 @@ function ManageAttachmentPaths()
 		if (!empty($_POST['new_base_dir']))
 		{
 			require_once($sourcedir . '/Subs-Attachments.php');
-			$_POST['new_base_dir'] = $smcFunc['htmlspecialchars']($_POST['new_base_dir'], ENT_QUOTES);
+			$_POST['new_base_dir'] = StringLibrary::escape($_POST['new_base_dir'], ENT_QUOTES);
 
 			$current_dir = $modSettings['currentAttachmentUploadDir'];
 
@@ -2300,11 +2301,11 @@ function ManageAttachmentPaths()
 			$errors = [];
 			if (!empty($_SESSION['errors']['dir']))
 				foreach ($_SESSION['errors']['dir'] as $error)
-					$errors['dir'][] = $smcFunc['htmlspecialchars']($error, ENT_QUOTES);
+					$errors['dir'][] = StringLibrary::escape($error, ENT_QUOTES);
 
 			if (!empty($_SESSION['errors']['base']))
 				foreach ($_SESSION['errors']['base'] as $error)
-					$errors['base'][] = $smcFunc['htmlspecialchars']($error, ENT_QUOTES);
+					$errors['base'][] = StringLibrary::escape($error, ENT_QUOTES);
 		}
 		unset($_SESSION['errors']);
 	}

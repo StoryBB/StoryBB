@@ -12,6 +12,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\Hook\Observable;
+use StoryBB\StringLibrary;
 
 /**
  * Set up data exports for users and list exports available.
@@ -362,7 +363,7 @@ function issueWarning($memID)
 		$_POST['warn_reason'] = isset($_POST['warn_reason']) ? trim($_POST['warn_reason']) : '';
 		if ($_POST['warn_reason'] == '' && !$context['user']['is_owner'])
 			$issueErrors[] = 'warning_no_reason';
-		$_POST['warn_reason'] = $smcFunc['htmlspecialchars']($_POST['warn_reason']);
+		$_POST['warn_reason'] = StringLibrary::escape($_POST['warn_reason']);
 
 		$_POST['warning_level'] = (int) $_POST['warning_level'];
 		$_POST['warning_level'] = max(0, min(100, $_POST['warning_level']));
@@ -397,7 +398,7 @@ function issueWarning($memID)
 						'subject' => 'string-255', 'body' => 'string-65534',
 					],
 					[
-						$smcFunc['htmlspecialchars']($_POST['warn_sub']), $smcFunc['htmlspecialchars']($_POST['warn_body']),
+						StringLibrary::escape($_POST['warn_sub']), StringLibrary::escape($_POST['warn_body']),
 					],
 					['id_notice'],
 					1
@@ -453,7 +454,7 @@ function issueWarning($memID)
 	if (isset($_POST['preview']))
 	{
 		$warning_body = !empty($_POST['warn_body']) ? trim(censorText($_POST['warn_body'])) : '';
-		$context['preview_subject'] = !empty($_POST['warn_sub']) ? trim($smcFunc['htmlspecialchars']($_POST['warn_sub'])) : '';
+		$context['preview_subject'] = !empty($_POST['warn_sub']) ? trim(StringLibrary::escape($_POST['warn_sub'])) : '';
 		if (empty($_POST['warn_sub']) || empty($_POST['warn_body']))
 			$issueErrors[] = 'warning_notify_blank';
 

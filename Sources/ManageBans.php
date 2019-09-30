@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\IP;
+use StoryBB\StringLibrary;
 
 /**
  * Ban center. The main entrance point for all ban center functions.
@@ -823,9 +824,9 @@ function banEdit2()
 		];
 		$ban_info['db_expiration'] = $ban_info['expiration']['status'] == 'never' ? 'NULL' : ($ban_info['expiration']['status'] == 'one_day' ? time() + 24 * 60 * 60 * $ban_info['expire_date'] : 0);
 		$ban_info['full_ban'] = empty($_POST['full_ban']) ? 0 : 1;
-		$ban_info['reason'] = !empty($_POST['reason']) ? $smcFunc['htmlspecialchars']($_POST['reason'], ENT_QUOTES) : '';
-		$ban_info['name'] = !empty($_POST['ban_name']) ? $smcFunc['htmlspecialchars']($_POST['ban_name'], ENT_QUOTES) : '';
-		$ban_info['notes'] = isset($_POST['notes']) ? $smcFunc['htmlspecialchars']($_POST['notes'], ENT_QUOTES) : '';
+		$ban_info['reason'] = !empty($_POST['reason']) ? StringLibrary::escape($_POST['reason'], ENT_QUOTES) : '';
+		$ban_info['name'] = !empty($_POST['ban_name']) ? StringLibrary::escape($_POST['ban_name'], ENT_QUOTES) : '';
+		$ban_info['notes'] = isset($_POST['notes']) ? StringLibrary::escape($_POST['notes'], ENT_QUOTES) : '';
 		$ban_info['notes'] = str_replace(["\r", "\n", '  '], ['', '<br>', '&nbsp; '], $ban_info['notes']);
 		$ban_info['cannot']['access'] = empty($ban_info['full_ban']) ? 0 : 1;
 		$ban_info['cannot']['post'] = !empty($ban_info['full_ban']) || empty($_POST['cannot_post']) ? 0 : 1;
@@ -1201,7 +1202,7 @@ function validateTriggers(&$triggers)
 			}
 			elseif ($key == 'user')
 			{
-				$user = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $smcFunc['htmlspecialchars']($value, ENT_QUOTES));
+				$user = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', StringLibrary::escape($value, ENT_QUOTES));
 
 				$request = $smcFunc['db_query']('', '
 					SELECT id_member, (id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0) AS isAdmin
@@ -1819,7 +1820,7 @@ function BanBrowseTriggers()
 		$listOptions['columns']['banned_entity']['data'] = [
 			'function' => function($rowData) use ($smcFunc)
 			{
-				return strtr($smcFunc['htmlspecialchars']($rowData['hostname']), ['%' => '*']);
+				return strtr(StringLibrary::escape($rowData['hostname']), ['%' => '*']);
 			},
 		];
 		$listOptions['columns']['banned_entity']['sort'] = [
@@ -1832,7 +1833,7 @@ function BanBrowseTriggers()
 		$listOptions['columns']['banned_entity']['data'] = [
 			'function' => function($rowData) use ($smcFunc)
 			{
-				return strtr($smcFunc['htmlspecialchars']($rowData['email_address']), ['%' => '*']);
+				return strtr(StringLibrary::escape($rowData['email_address']), ['%' => '*']);
 			},
 		];
 		$listOptions['columns']['banned_entity']['sort'] = [

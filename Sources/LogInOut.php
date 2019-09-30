@@ -186,7 +186,7 @@ function Login2()
 	$context['sub_template'] = 'login_main';
 
 	// Set up the default/fallback stuff.
-	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user'])) : '';
+	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($_POST['user'])) : '';
 	$context['default_password'] = '';
 	$context['login_errors'] = [$txt['error_occured']];
 	$context['page_title'] = $txt['login'];
@@ -219,10 +219,10 @@ function Login2()
 	}
 
 	// And if it's too long, trim it back.
-	if ($smcFunc['strlen']($_POST['user']) > 80)
+	if (StringLibrary::strlen($_POST['user']) > 80)
 	{
 		$_POST['user'] = StringLibrary::substr($_POST['user'], 0, 79);
-		$context['default_username'] = preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user']));
+		$context['default_username'] = preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($_POST['user']));
 	}
 
 

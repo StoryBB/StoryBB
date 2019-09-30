@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\StringLibrary;
+
 /**
  * The main dispatcher.
  */
@@ -222,7 +224,7 @@ function ReplyContact()
 
 	$msg = isset($_POST['msg']) ? (int) $_POST['msg'] : 0;
 
-	$message = !empty($_POST['reply']) ? $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['reply'], ENT_QUOTES)) : '';
+	$message = !empty($_POST['reply']) ? StringLibrary::htmltrim(StringLibrary::escape($_POST['reply'], ENT_QUOTES)) : '';
 
 	$request = $smcFunc['db_query']('', '
 		SELECT cf.id_message, mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,

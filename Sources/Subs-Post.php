@@ -248,7 +248,7 @@ function un_preparsecode($message)
 
 	$message = preg_replace_callback('~\[html\](.+?)\[/html\]~i', function($m) use ($smcFunc)
 	{
-		return "[html]" . strtr($smcFunc['htmlspecialchars']("$m[1]", ENT_QUOTES), ["\\&quot;" => "&quot;", "&amp;#13;" => "<br>", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]"]) . "[/html]";
+		return "[html]" . strtr(StringLibrary::escape("$m[1]", ENT_QUOTES), ["\\&quot;" => "&quot;", "&amp;#13;" => "<br>", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]"]) . "[/html]";
 	}, $message);
 
 	if (!empty($code_tags))
@@ -619,10 +619,10 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		];
 
 	// This is the one that will go in their inbox.
-	$htmlmessage = $smcFunc['htmlspecialchars']($message, ENT_QUOTES);
+	$htmlmessage = StringLibrary::escape($message, ENT_QUOTES);
 	preparsecode($htmlmessage);
-	$htmlsubject = strtr($smcFunc['htmlspecialchars']($subject), ["\r" => '', "\n" => '', "\t" => '']);
-	if ($smcFunc['strlen']($htmlsubject) > 100)
+	$htmlsubject = strtr(StringLibrary::escape($subject), ["\r" => '', "\n" => '', "\t" => '']);
+	if (StringLibrary::strlen($htmlsubject) > 100)
 		$htmlsubject = StringLibrary::substr($htmlsubject, 0, 100);
 
 	// Make sure is an array
@@ -904,7 +904,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	if (empty($modSettings['disallow_sendBody']))
 	{
 		censorText($message);
-		$message = trim(un_htmlspecialchars(strip_tags(strtr(Parser::parse_bbc($smcFunc['htmlspecialchars']($message), false), ['<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']']))));
+		$message = trim(un_htmlspecialchars(strip_tags(strtr(Parser::parse_bbc(StringLibrary::escape($message), false), ['<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']']))));
 	}
 	else
 		$message = '';
