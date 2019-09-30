@@ -27,6 +27,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
+
 /**
  * Subaction handler - manages the action and delegates control to the proper
  * sub-action.
@@ -1270,7 +1272,6 @@ function ThemeInstall()
 function InstallCopy()
 {
 	global $themedir, $themeurl, $settings, $smcFunc, $context;
-	global $forum_version;
 
 	// There's gotta be something to work with.
 	if (!isset($_REQUEST['copy']) || empty($_REQUEST['copy']))
@@ -1290,7 +1291,7 @@ function InstallCopy()
 		'name' => $name,
 		'images_url' => $themeurl . '/' . $name . '/images',
 		'version' => '1.0',
-		'install_for' => '1.0 - 1.0.99, ' . strtr($forum_version, ['StoryBB ' => '']),
+		'install_for' => '1.0 - 1.0.99, ' . App::SOFTWARE_VERSION,
 	];
 
 	// Create the specific dir.

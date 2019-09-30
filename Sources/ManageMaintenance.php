@@ -10,6 +10,7 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
 use StoryBB\Helper\Autocomplete;
 
 /**
@@ -1077,7 +1078,7 @@ function AdminBoardRecount()
  */
 function VersionDetail()
 {
-	global $forum_version, $txt, $sourcedir, $context;
+	global $txt, $sourcedir, $context;
 
 	isAllowedTo('admin_forum');
 
@@ -1100,7 +1101,7 @@ function VersionDetail()
 	];
 
 	// Make it easier to manage for the template.
-	$context['forum_version'] = $forum_version;
+	$context['forum_version'] = App::SOFTWARE_VERSION;
 	$context['master_forum_version'] = '??';
 
 	// Get the forum package version.

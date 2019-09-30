@@ -10,6 +10,8 @@
  * @version 1.0 Alpha 1
  */
 
+use StoryBB\App;
+
 /**
  * Gets a single theme's info.
  *
@@ -156,7 +158,7 @@ function get_all_themes($enable_only = false)
  */
 function get_theme_info($path)
 {
-	global $sourcedir, $forum_version, $txt, $scripturl, $context;
+	global $sourcedir, $txt, $scripturl, $context;
 	global $explicit_images;
 
 	if (empty($path))
@@ -189,17 +191,14 @@ function get_theme_info($path)
 	if (empty($theme_info['storybb_version']))
 	{
 		remove_dir($path);
-		fatal_lang_error('package_get_error_theme_not_compatible', false, $forum_version);
+		fatal_lang_error('package_get_error_theme_not_compatible', false, App::SOFTWARE_VERSION);
 	}
 
-	// So, we have an install tag which is cool and stuff but we also need to check it and match your current StoryBB version...
-	$the_version = strtr($forum_version, ['StoryBB ' => '']);
-
 	// The theme isn't compatible with the current StoryBB version.
-	if (!matchPackageVersion($the_version, $theme_info['storybb_version']))
+	if (!matchPackageVersionApp::SOFTWARE_VERSION, $theme_info['storybb_version']))
 	{
 		remove_dir($path);
-		fatal_lang_error('package_get_error_theme_not_compatible', false, $forum_version);
+		fatal_lang_error('package_get_error_theme_not_compatible', false, App::SOFTWARE_VERSION);
 	}
 
 	// Remove things that definitely shouldn't be exported up here.

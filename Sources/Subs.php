@@ -11,6 +11,7 @@
  */
 
 use LightnCandy\LightnCandy;
+use StoryBB\App;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
@@ -1459,14 +1460,10 @@ function template_header()
  */
 function theme_copyright()
 {
-	global $txt, $software_year, $forum_version;
-
-	// Don't display copyright if we don't have the data..
-	if (!isset($forum_version) || !isset($software_year))
-		return;
+	global $txt;
 
 	// Put in the version...
-	return sprintf($txt['copyright'], $forum_version, $software_year);
+	return sprintf($txt['copyright'], App::SOFTWARE_VERSION, App::SOFTWARE_YEAR);
 }
 
 /**

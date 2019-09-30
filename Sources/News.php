@@ -30,7 +30,7 @@ use StoryBB\Helper\Parser;
 function ShowXmlFeed()
 {
 	global $board, $board_info, $context, $scripturl, $boardurl, $txt, $modSettings, $user_info;
-	global $query_this_board, $smcFunc, $forum_version, $settings;
+	global $query_this_board, $smcFunc, $settings;
 
 	// If it's not enabled, die.
 	if (empty($modSettings['xmlnews_enable']))
@@ -333,7 +333,7 @@ function ShowXmlFeed()
 	<updated>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</updated>
 	<id>', $feed_meta['source'], '</id>
 	<subtitle>', $feed_meta['desc'], '</subtitle>
-	<generator uri="https://storybb.org" version="', strtr($forum_version, ['StoryBB ' => '']), '">StoryBB</generator>',
+	<generator uri="https://storybb.org" version="', App::SOFTWARE_VERSION, '">StoryBB</generator>',
 	!empty($feed_meta['icon']) ? '
 	<icon>' . $feed_meta['icon'] . '</icon>' : '',
 	!empty($feed_meta['author']) ? '

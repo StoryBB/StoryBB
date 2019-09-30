@@ -10,15 +10,6 @@
  * @version 1.0 Alpha 1
  */
 
-// @todo fix this
-// This defines two version types for checking the API's are compatible with this version of StoryBB.
-$GLOBALS['search_versions'] = [
-	// This is the forum version but is repeated due to some people rewriting $forum_version.
-	'forum_version' => 'StoryBB 1.0 Alpha 1',
-	// This is the minimum version of StoryBB that an API could have been written for to work. (strtr to stop accidentally updating version on release)
-	'search_version' => strtr('StoryBB 3+0=Alpha=1', ['+' => '.', '=' => ' ']),
-];
-
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
@@ -1980,7 +1971,7 @@ function prepareSearchContext($reset = false)
  */
 function findSearchAPI()
 {
-	global $sourcedir, $modSettings, $search_versions, $searchAPI, $txt;
+	global $sourcedir, $modSettings, $searchAPI, $txt;
 
 	require_once($sourcedir . '/Subs-Package.php');
 

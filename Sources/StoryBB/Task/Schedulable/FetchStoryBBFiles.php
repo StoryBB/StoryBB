@@ -44,7 +44,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 	 */
 	public function execute(): bool
 	{
-		global $sourcedir, $txt, $language, $forum_version, $modSettings, $smcFunc, $context;
+		global $sourcedir, $txt, $language, $modSettings, $smcFunc, $context;
 
 		// What files do we want to get
 		$request = $smcFunc['db_query']('', '
@@ -61,7 +61,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 			$js_files[$row['id_file']] = [
 				'filename' => $row['filename'],
 				'path' => $row['path'],
-				'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode($forum_version)),
+				'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode(App::SOFTWARE_VRSION),
 			];
 		}
 

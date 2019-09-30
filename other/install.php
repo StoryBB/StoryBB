@@ -1429,7 +1429,7 @@ function DeleteInstall()
 {
 	global $txt, $incontext;
 	global $smcFunc, $context, $cookiename;
-	global $current_sbb_version, $databases, $boarddir, $sourcedir, $forum_version, $modSettings, $user_info, $db_type, $boardurl;
+	global $current_sbb_version, $databases, $boarddir, $sourcedir, $modSettings, $user_info, $db_type, $boardurl;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['sub_template'] = 'delete_install';
@@ -1550,13 +1550,12 @@ function DeleteInstall()
 	// Sanity check that they loaded earlier!
 	if (isset($modSettings['recycle_board']))
 	{
-		$forum_version = $current_sbb_version; // The variable is usually defined in index.php so lets just use our variable to do it for us.
 		(new \StoryBB\Task\Schedulable\FetchStoryBBFiles)->execute();
 
 		// We've just installed!
 		$user_info['ip'] = $_SERVER['REMOTE_ADDR'];
 		$user_info['id'] = isset($incontext['member_id']) ? $incontext['member_id'] : 0;
-		logAction('install', ['version' => $forum_version], 'admin');
+		logAction('install', ['version' => \StoryBB\App::SOFTWARE_VERSION], 'admin');
 	}
 
 	// Some final context for the template.

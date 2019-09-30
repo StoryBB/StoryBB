@@ -30,11 +30,7 @@ function cleanRequest()
 	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc;
 
 	// Makes it easier to refer to things this way.
-	$scripturl = $boardurl . '/index.php';
-
-	// Save some memory.. (since we don't use these anyway.)
-	unset($GLOBALS['HTTP_POST_VARS'], $GLOBALS['HTTP_POST_VARS']);
-	unset($GLOBALS['HTTP_POST_FILES'], $GLOBALS['HTTP_POST_FILES']);
+	$scripturl = $boardurl . '/legacy.php';
 
 	// These keys shouldn't be set...ever.
 	if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']))
