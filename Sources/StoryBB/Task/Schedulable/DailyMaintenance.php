@@ -78,7 +78,7 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 			$members = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$members[$row['id_member']] = $row['warning'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Have some members to check?
 			if (!empty($members))
@@ -105,7 +105,7 @@ class DailyMaintenance implements \StoryBB\Task\Schedulable
 							'warning' => $members[$row['id_recipient']] >= $modSettings['warning_decrement'] ? $members[$row['id_recipient']] - $modSettings['warning_decrement'] : 0,
 						];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Have some members to change?
 				if (!empty($member_changes))

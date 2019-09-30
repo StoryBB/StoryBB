@@ -135,7 +135,7 @@ class General extends RawMinkContext implements Context
 						}
 						$possible_groups[$row['group_name']] = $row['id_group'];
 					}
-					$smcFunc['db_free_result']($request);
+					$smcFunc['db']->free_result($request);
 
 					$group_name = strtolower($user_to_register['primary group']);
 					if (!isset($possible_groups[$group_name]))
@@ -252,7 +252,7 @@ class General extends RawMinkContext implements Context
 		{
 			$userids[$row['member_name']] = $row['id_member'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $userids;
 	}
@@ -288,7 +288,7 @@ class General extends RawMinkContext implements Context
 		{
 			$charids[$row['character_name']] = $row['id_character'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $charids;
 	}
@@ -324,7 +324,7 @@ class General extends RawMinkContext implements Context
 		{
 			$group_ids[$row['group_name']] = $row['id_group'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $group_ids;
 	}
@@ -374,7 +374,7 @@ class General extends RawMinkContext implements Context
 				{
 					list($boardOptions['target_category']) = $smcFunc['db_fetch_row']($request);
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				if (empty($boardOptions['target_category']))
 				{
 					throw new ExpectationException('No category exists to add board "' . $board_to_create['board name'] . '" to.', $this->getSession());
@@ -401,7 +401,7 @@ class General extends RawMinkContext implements Context
 					$boardOptions['move_to'] = 'child';
 					$boardOptions['target_board'] = $row['id_board'];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				if (empty($boardOptions['target_board']))
 				{
 					throw new ExpectationException('Board "' . $board_to_create['board name'] . '" is meant to be a sub-board of "' . $board_to_create['board parent'] . '" but this was not found.', $this->getSession());
@@ -548,7 +548,7 @@ class General extends RawMinkContext implements Context
 				{
 					$inserts[] = [$id_group, $row['permission'], $row['add_deny']];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				if (!empty($inserts))
 				{
@@ -575,7 +575,7 @@ class General extends RawMinkContext implements Context
 			{
 				$inserts[] = [$id_group, $row['id_profile'], $row['permission'], $row['add_deny']];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (!empty($inserts))
 			{

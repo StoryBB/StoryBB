@@ -231,7 +231,7 @@ function MembergroupMembers()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('membergroup_does_not_exist', false);
 	$context['group'] = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Fix the membergroup icons.
 	$context['group']['assignable'] = 1;
@@ -266,7 +266,7 @@ function MembergroupMembers()
 		if ($user_info['id'] == $row['id_member'] && $context['group']['group_type'] != 1)
 			$context['group']['can_moderate'] = true;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['group']['moderators_formatted'] = [];
 	foreach ($context['group']['moderators'] as $moderator)
@@ -391,7 +391,7 @@ function MembergroupMembers()
 		]
 	);
 	list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$context['total_members'] = comma_format($context['total_members']);
 
 	// Create the page index.
@@ -454,7 +454,7 @@ function MembergroupMembers()
 			'is_activated' => $row['is_activated'] % 10 == 1,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Select the template.
 	$context['sub_template'] = 'admin_membergroups_members';
@@ -557,7 +557,7 @@ function GroupRequests()
 					];
 				$request_list[] = $row['id_request'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Add a background task to handle notifying people of this request
 			StoryBB\Task::queue_adhoc('StoryBB\\Task\\Adhoc\\GroupActNotify', [
@@ -735,7 +735,7 @@ function list_getGroupRequestCount($where, $where_parameters)
 		])
 	);
 	list ($totalRequests) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $totalRequests;
 }
@@ -805,7 +805,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_pa
 			'time_submitted' => timeformat($row['time_applied']),
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $group_requests;
 }

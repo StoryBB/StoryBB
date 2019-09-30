@@ -166,7 +166,7 @@ function MaintainMembers()
 			'name' => $row['group_name']
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	Autocomplete::init('member', '#to');
 	Autocomplete::init('character', '#to_char');
@@ -205,7 +205,7 @@ function MaintainTopics()
 			'child_level' => $row['child_level']
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	$context['split_categories'] = array_chunk($context['categories'], ceil(count($context['categories']) / 2), true);
 
@@ -372,7 +372,7 @@ function ConvertMsgBody()
 			[]
 		);
 		list($max_msgs) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Try for as much time as possible.
 		@set_time_limit(600);
@@ -391,7 +391,7 @@ function ConvertMsgBody()
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$id_msg_exceeding[] = $row['id_msg'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -435,7 +435,7 @@ function ConvertMsgBody()
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$context['exceeding_messages'][] = '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '">' . $row['subject'] . '</a>';
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 	}
 }
@@ -577,7 +577,7 @@ function AdminBoardRecount()
 		]
 	);
 	list ($max_topics) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$increment = min(max(50, ceil($max_topics / 4)), 2000);
 	if (empty($_REQUEST['start']))
@@ -618,7 +618,7 @@ function AdminBoardRecount()
 						'id_topic' => $row['id_topic'],
 					]
 				);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Recount unapproved messages
 			$request = $smcFunc['db_query']('', '
@@ -646,7 +646,7 @@ function AdminBoardRecount()
 						'id_topic' => $row['id_topic'],
 					]
 				);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -704,7 +704,7 @@ function AdminBoardRecount()
 						'real_num_posts' => $row['real_num_posts'],
 					]
 				);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -760,7 +760,7 @@ function AdminBoardRecount()
 						'real_num_topics' => $row['real_num_topics'],
 					]
 				);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -816,7 +816,7 @@ function AdminBoardRecount()
 						'unapproved_posts' => $row['real_unapproved_posts'],
 					]
 				);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -872,7 +872,7 @@ function AdminBoardRecount()
 						'real_unapproved_topics' => $row['real_unapproved_topics'],
 					]
 				);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$_REQUEST['start'] += $increment;
 
@@ -907,7 +907,7 @@ function AdminBoardRecount()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			updateMemberData($row['id_member'], ['instant_messages' => $row['real_num']]);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$request = $smcFunc['db_query']('', '
 			SELECT /*!40001 SQL_NO_CACHE */ mem.id_member, COUNT(pmr.id_pm) AS real_num,
@@ -923,7 +923,7 @@ function AdminBoardRecount()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			updateMemberData($row['id_member'], ['unread_messages' => $row['real_num']]);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (microtime(true) - $time_start > 3)
 		{
@@ -956,7 +956,7 @@ function AdminBoardRecount()
 			$boards = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$boards[$row['id_board']][] = $row['id_msg'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			foreach ($boards as $board_id => $messages)
 				$smcFunc['db_query']('', '
@@ -999,7 +999,7 @@ function AdminBoardRecount()
 	$realBoardCounts = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$realBoardCounts[$row['id_board']] = $row['local_last_msg'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT /*!40001 SQL_NO_CACHE */ id_board, id_parent, id_last_msg, child_level, id_msg_updated
@@ -1013,7 +1013,7 @@ function AdminBoardRecount()
 		$row['local_last_msg'] = isset($realBoardCounts[$row['id_board']]) ? $realBoardCounts[$row['id_board']] : 0;
 		$resort_me[$row['child_level']][] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	krsort($resort_me);
 
@@ -1244,7 +1244,7 @@ function MaintainReattributePosts()
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('reattribute_cannot_find_member');
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// The OOC character ID can be looked up inside reattributePosts.
 		$characterID = false;
@@ -1267,7 +1267,7 @@ function MaintainReattributePosts()
 			fatal_lang_error('reattribute_cannot_find_member');
 
 		list ($memID, $characterID) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	$email = $_POST['type'] == 'email' ? $_POST['from_email'] : '';
@@ -1325,7 +1325,7 @@ function MaintainPurgeInactiveMembers()
 				$where_vars['id_group_' . $row['id_group']] = $row['id_group'];
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If we have ungrouped unselected we need to avoid those guys.
 		if (!in_array(0, $groups))
@@ -1348,7 +1348,7 @@ function MaintainPurgeInactiveMembers()
 			if (!$row['is_mod'] || !in_array(3, $groups))
 				$members[] = $row['id_member'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		require_once($sourcedir . '/Subs-Members.php');
 		deleteMembers($members);
@@ -1395,7 +1395,7 @@ function MaintainRemoveOldDrafts()
 
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$drafts[] = (int) $row[0];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we have old drafts, remove them
 	if (count($drafts) > 0)
@@ -1487,7 +1487,7 @@ function MaintainMassMoveTopics()
 			$params
 		);
 		list ($total_topics) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 		$total_topics = (int) $_REQUEST['totaltopics'];
@@ -1613,7 +1613,7 @@ function MaintainRecountPosts()
 
 		// save it so we don't do this again for this task
 		list ($_SESSION['total_members']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 		validateToken('admin-recountposts');
@@ -1650,7 +1650,7 @@ function MaintainRecountPosts()
 			]
 		);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now to fix the post counts for characters.
 	$request = $smcFunc['db_query']('', '
@@ -1684,7 +1684,7 @@ function MaintainRecountPosts()
 			]
 		);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Continue?
 	if ($total_rows == $increment)
@@ -1751,7 +1751,7 @@ function MaintainRecountPosts()
 				]
 			);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// now to redo the deliquents on the post count front for characters
@@ -1803,7 +1803,7 @@ function MaintainRecountPosts()
 				]
 			);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// all done

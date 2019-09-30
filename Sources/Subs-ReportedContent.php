@@ -80,7 +80,7 @@ function updateReport($action, $value, $report_id)
 				'topic' => $row['id_topic'],
 			];
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 	{
@@ -99,7 +99,7 @@ function updateReport($action, $value, $report_id)
 				'member' => $row['id_member'],
 			];
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Back to "ignore".
@@ -164,7 +164,7 @@ function countReports($closed = 0)
 		]
 	);
 	list ($total_reports) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $total_reports;
 }
@@ -275,7 +275,7 @@ function getReports($closed = 0)
 		$reports[$row['id_report']] = array_merge($reports[$row['id_report']], $extraDetails);
 		$i++;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get the names of boards those topics are in. Slightly faster this way.
 	if (!empty($report_boards_ids))
@@ -294,7 +294,7 @@ function getReports($closed = 0)
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$board_names[$row['id_board']] = $row['name'];
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		foreach ($reports as $id_report => $report)
 			if (!empty($board_names[$report['topic']['id_board']]))
@@ -328,7 +328,7 @@ function getReports($closed = 0)
 				],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		foreach ($reports as $id_report => $report)
 		{
@@ -377,7 +377,7 @@ function recountOpenReports($type)
 		]
 	);
 	list ($open_reports) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$arr = ($type == 'members' ? 'member_reports' : 'reports');
 	$_SESSION['rc'] = array_merge(!empty($_SESSION['rc']) ? $_SESSION['rc'] : [],
@@ -444,7 +444,7 @@ function getReportDetails($report_id)
 
 	// Woohoo we found a report and they can see it!
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $row;
 }
@@ -499,7 +499,7 @@ function getReportComments($report_id)
 		}
 		$report['comments'][] = $comment;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Hang about old chap, any comments from moderators on this one?
 	$request = $smcFunc['db_query']('', '
@@ -530,7 +530,7 @@ function getReportComments($report_id)
 		];
 	}
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $report;
 }
@@ -561,7 +561,7 @@ function getCommentModDetails($comment_id)
 
 	$comment = $smcFunc['db_fetch_assoc']($request);
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Add the permission
 	if (!empty($comment))

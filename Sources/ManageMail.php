@@ -85,7 +85,7 @@ function BrowseMailQueue()
 		]
 	);
 	list ($mailQueueSize, $mailOldest) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['oldest_mail'] = empty($mailOldest) ? $txt['mailqueue_oldest_not_available'] : time_since(time() - $mailOldest);
 	$context['mail_queue_size'] = comma_format($mailQueueSize);
@@ -244,7 +244,7 @@ function list_getMailQueue($start, $items_per_page, $sort)
 
 		$mails[] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $mails;
 }
@@ -266,7 +266,7 @@ function list_getMailQueueSize()
 		]
 	);
 	list ($mailQueueSize) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $mailQueueSize;
 }
@@ -391,7 +391,7 @@ function ClearMailQueue()
 			]
 		);
 		list ($_GET['te']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 		$_GET['te'] = (int) $_GET['te'];

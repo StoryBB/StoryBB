@@ -69,7 +69,7 @@ class Post
 				]
 			);
 			list ($topicOptions['is_approved']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// If nothing was filled in as name/e-mail address, try the member table.
@@ -102,7 +102,7 @@ class Post
 				}
 				else
 					list ($posterOptions['name'], $posterOptions['email']) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 			else
 			{
@@ -451,7 +451,7 @@ class Post
 					]
 				);
 				list ($msgOptions['old_body']) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 		}
 		if (!empty($msgOptions['modify_time']))
@@ -599,7 +599,7 @@ class Post
 			);
 			if ($smcFunc['db_num_rows']($request) == 1)
 				updateStats('subject', $topicOptions['id'], $msgOptions['subject']);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Finally, if we are setting the approved state we need to do much more work :(

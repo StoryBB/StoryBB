@@ -226,6 +226,10 @@ class MySQL implements DatabaseAdapter
 		return false;
 	}
 
+	public function free_result($result)
+	{
+		mysqli_free_result($result);
+	}
 
 	/**
 	 * This function lists all tables in the database.
@@ -255,7 +259,7 @@ class MySQL implements DatabaseAdapter
 		$tables = [];
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$tables[] = $row[0];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $tables;
 	}

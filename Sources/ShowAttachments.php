@@ -103,7 +103,7 @@ function showAttachment($force_attach = false)
 		}
 
 		$file = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If theres a message ID stored, we NEED a topic ID.
 		if (!empty($file['id_msg']) && empty($attachTopic) && empty($preview))
@@ -135,7 +135,7 @@ function showAttachment($force_attach = false)
 				die('404 File Not Found');
 			}
 
-			$smcFunc['db_free_result']($request2);
+			$smcFunc['db']->free_result($request2);
 		}
 
 		// set filePath and ETag time
@@ -160,7 +160,7 @@ function showAttachment($force_attach = false)
 			);
 
 			$thumbFile = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Got something! replace the $file var with the thumbnail info.
 			if ($thumbFile)

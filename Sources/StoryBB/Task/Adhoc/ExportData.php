@@ -154,7 +154,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		{
 			list ($char_id) = $smcFunc['db_fetch_row']($request);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$this->_details['id_attach'] = $smcFunc['db_insert']('',
 			'{db_prefix}attachments',
@@ -234,7 +234,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			$row['export_folder'] = $this->_exportable_character_name($row['character_name'], (int) $row['id_character']);
 			$exports[$row['id_character']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Pull the rest of the stuff out of the members table.
 		if (!empty($main_char))
@@ -250,7 +250,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				]
 			);
 			$row = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$row['member_ip'] = inet_dtop($row['member_ip']);
 			$row['member_ip2'] = inet_dtop($row['member_ip2']);
@@ -393,7 +393,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			$character_sheet_filename = date('Y-m-d H-i-s', $row['created_time']) . '.txt';
 			$zip->addFromString($character_sheet_path . $character_sheet_filename, $row['sheet_text']);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$zip->close();
 	}
@@ -433,7 +433,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		if ($smcFunc['db_num_rows']($request) == 0)
 		{
 			// Nothing to do?
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			return true;
 		}
 
@@ -473,7 +473,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			$path .= 'msg_' . $row['id_msg'] . '.txt';
 			$zip->addFromString($path, $content);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// And back to the start.
 		$zip->close();
@@ -520,7 +520,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		if ($smcFunc['db_num_rows']($request) == 0)
 		{
 			// Nothing to do?
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			return true;
 		}
 
@@ -546,7 +546,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 			$zip->addFile($sourcefile, $path);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// And back to the start.
 		$zip->close();
@@ -632,7 +632,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			]
 		);
 		$row = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Issue an alert to the owner to indicate they're good to go.
 		$alert_rows[] = [

@@ -407,7 +407,7 @@ function EditBoard()
 			'deny' => in_array($row['id_group'], $curBoard['deny_groups']),
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Category doesn't exist, man... sorry.
 	if (!isset($boardList[$curBoard['category']]))
@@ -469,7 +469,7 @@ function EditBoard()
 	$context['board']['moderators'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['board']['moderators'][$row['id_member']] = $row['real_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get all the groups assigned as moderators
 	$request = $smcFunc['db_query']('', '
@@ -483,7 +483,7 @@ function EditBoard()
 	$context['board']['moderator_groups'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['board']['moderator_groups'][$row['id_group']] = $row['id_group'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get all the themes...
 	$request = $smcFunc['db_query']('', '
@@ -497,7 +497,7 @@ function EditBoard()
 	$context['themes'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['themes'][] = $row;
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!isset($_REQUEST['delete']))
 	{
@@ -638,7 +638,7 @@ function EditBoard2()
 				]
 			);
 			list ($oldRedirect, $numPosts) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// If we're turning redirection on check the board doesn't have posts in it - if it does don't make it a redirection board.
 			if ($boardOptions['redirect'] && empty($oldRedirect) && $numPosts)
@@ -715,7 +715,7 @@ function EditBoardSettings($return_config = false)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$recycle_boards[$row['id_board']] = $row['cat_name'] . ' - ' . $row['board_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($recycle_boards))
 	{

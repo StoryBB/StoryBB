@@ -162,7 +162,7 @@ function AddSmiley()
 		);
 		if ($smcFunc['db_num_rows']($request) > 0)
 			fatal_lang_error('smiley_not_unique');
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If we are uploading - check the smiley folder is writable!
 		if ($_POST['method'] != 'existing')
@@ -223,7 +223,7 @@ function AddSmiley()
 				]
 			);
 			list ($smiley_order) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (empty($smiley_order))
 				$smiley_order = '0';
@@ -372,7 +372,7 @@ function EditSmileys()
 				);
 				if ($smcFunc['db_num_rows']($request) > 0)
 					fatal_lang_error('smiley_not_unique');
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}smileys
@@ -623,7 +623,7 @@ function EditSmileys()
 		if ($smcFunc['db_num_rows']($request) != 1)
 			fatal_lang_error('smiley_not_found');
 		$context['current_smiley'] = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['current_smiley']['code'] = StringLibrary::escape($context['current_smiley']['code']);
 		$context['current_smiley']['filename'] = StringLibrary::escape($context['current_smiley']['filename']);
@@ -657,7 +657,7 @@ function list_getSmileys($start, $items_per_page, $sort)
 	$smileys = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$smileys[] = $row;
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $smileys;
 }
@@ -676,7 +676,7 @@ function list_getNumSmileys()
 		[]
 	);
 	list($numSmileys) = $smcFunc['db_fetch_row'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $numSmileys;
 }
@@ -718,7 +718,7 @@ function EditSmileyOrder()
 			if ($smcFunc['db_num_rows']($request) != 1)
 				fatal_lang_error('smiley_not_found');
 			list ($smiley_row, $smiley_order, $smileyLocation) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 		{
@@ -789,7 +789,7 @@ function EditSmileyOrder()
 			'selected' => !empty($_REQUEST['move']) && $_REQUEST['move'] == $row['id_smiley'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['move_smiley'] = empty($_REQUEST['move']) ? 0 : (int) $_REQUEST['move'];
 

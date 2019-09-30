@@ -50,7 +50,7 @@ function Vote()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('poll_error', false);
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If this is a guest can they vote?
 	if ($user_info['is_guest'])
@@ -112,7 +112,7 @@ function Vote()
 		);
 		while ($choice = $smcFunc['db_fetch_row']($request))
 			$pollOptions[] = $choice[0];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Just skip it if they had voted for nothing before.
 		if (!empty($pollOptions))
@@ -327,7 +327,7 @@ function EditPoll()
 		fatal_lang_error('no_board');
 	// Get the poll information.
 	$pollinfo = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we are adding a new poll - make sure that there isn't already a poll there.
 	if (!$context['is_edit'] && !empty($pollinfo['id_poll']))
@@ -400,7 +400,7 @@ function EditPoll()
 					'is_last' => false
 				];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Work out how many options we have, so we get the 'is_last' field right...
@@ -518,7 +518,7 @@ function EditPoll()
 					'is_last' => false
 				];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$last_id = max(array_keys($context['choices'])) + 1;
 
@@ -622,7 +622,7 @@ function EditPoll2()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_board');
 	$bcinfo = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Check their adding/editing is valid.
 	if (!$isEdit && !empty($bcinfo['id_poll']))
@@ -777,7 +777,7 @@ function EditPoll2()
 	$choices = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$choices[] = $row['id_choice'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$delete_options = [];
 	foreach ($_POST['options'] as $k => $option)
@@ -939,7 +939,7 @@ function RemovePoll()
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('no_access', false);
 		list ($topicStarter, $pollStarter) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		isAllowedTo('poll_remove_' . ($topicStarter == $user_info['id'] || ($pollStarter != 0 && $user_info['id'] == $pollStarter) ? 'own' : 'any'));
 	}
@@ -955,7 +955,7 @@ function RemovePoll()
 		]
 	);
 	list ($pollID) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Remove all user logs for this poll.
 	$smcFunc['db_query']('', '

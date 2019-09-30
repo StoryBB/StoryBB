@@ -164,7 +164,7 @@ function UnapprovedPosts()
 			$details[$anItem]["member"] = ($context['current_view'] == 'topics') ? $row['id_member_started'] : $row['id_member'];
 			$details[$anItem]["board"] = $row['id_board'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If we have anything left we can actually do the approving (etc).
 		if (!empty($toAction))
@@ -194,7 +194,7 @@ function UnapprovedPosts()
 		]
 	);
 	list ($context['total_unapproved_posts']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// What about topics?  Normally we'd use the table alias t for topics but lets use m so we don't have to redo our approve query.
 	$request = $smcFunc['db_query']('', '
@@ -209,7 +209,7 @@ function UnapprovedPosts()
 		]
 	);
 	list ($context['total_unapproved_topics']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Limit to how many? (obey the user setting)
 	$limit = !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
@@ -301,7 +301,7 @@ function UnapprovedPosts()
 			'can_delete' => $can_delete,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['sub_template'] = 'modcenter_unapproved';
 	StoryBB\Template::add_helper(['create_button' => 'create_button']);
@@ -370,7 +370,7 @@ function UnapprovedAttachments()
 		$attachments = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$attachments[] = $row['id_attach'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Assuming it wasn't all like, proper illegal, we can do the approving.
 		if (!empty($attachments))
@@ -606,7 +606,7 @@ function list_getUnapprovedAttachments($start, $items_per_page, $sort, $approve_
 			],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $unapproved_items;
 }
@@ -638,7 +638,7 @@ function list_getNumUnapprovedAttachments($approve_query)
 		]
 	);
 	list ($total_unapproved_attachments) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $total_unapproved_attachments;
 }
@@ -671,7 +671,7 @@ function ApproveMessage()
 		]
 	);
 	list ($starter, $first_msg, $poster, $subject, $approved) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If it's the first in a topic then the whole topic gets approved!
 	if ($first_msg == $_REQUEST['msg'])
@@ -743,7 +743,7 @@ function approveAllData()
 	$msgs = [];
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$msgs[] = $row[0];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($msgs))
 	{
@@ -763,7 +763,7 @@ function approveAllData()
 	$attaches = [];
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$attaches[] = $row[0];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($attaches))
 	{

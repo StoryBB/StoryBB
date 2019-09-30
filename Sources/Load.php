@@ -45,7 +45,7 @@ function reloadSettings()
 			display_db_error();
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$modSettings[$row[0]] = $row[1];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Do a few things to protect against missing settings or settings with invalid values...
 		if (empty($modSettings['defaultMaxTopics']) || $modSettings['defaultMaxTopics'] <= 0 || $modSettings['defaultMaxTopics'] > 999)
@@ -311,7 +311,7 @@ function loadUserSettings()
 			$user_settings = $smcFunc['db_fetch_assoc']($request);
 			$user_settings['id_theme'] = $user_settings['char_theme'];
 			$user_settings['avatar'] = $user_settings['char_avatar'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (!empty($modSettings['force_ssl']) && $image_proxy_enabled && stripos($user_settings['avatar'], 'http://') !== false)
 				$user_settings['avatar'] = strtr($boardurl, ['http://' => 'https://']) . '/proxy.php?request=' . urlencode($user_settings['avatar']) . '&hash=' . md5($user_settings['avatar'] . $image_proxy_secret);
@@ -408,7 +408,7 @@ function loadUserSettings()
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 			else
 				$row['total'] = 1; //simplifies logics in the next "if"
@@ -443,7 +443,7 @@ function loadUserSettings()
 				]
 			);
 			list ($visitTime) = $smcFunc['db_fetch_row']($result);
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			$_SESSION['id_msg_last_visit'] = $user_settings['id_msg_last_visit'];
 
@@ -704,7 +704,7 @@ function loadBoard()
 			if ($smcFunc['db_num_rows']($request))
 			{
 				list ($topic) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				// Save save save.
 				cache_put_data('msg_topic-' . $_REQUEST['msg'], $topic, 120);
 			}
@@ -833,7 +833,7 @@ function loadBoard()
 			if ($board_info['num_topics'] == 0 && !allowedTo('approve_posts'))
 			{
 				// Free the previous result
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// @todo why is this using id_topic?
 				// @todo Can this get cached?
@@ -872,7 +872,7 @@ function loadBoard()
 			$topic = null;
 			$board = 0;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($topic))
@@ -1010,7 +1010,7 @@ function loadPermissions()
 			else
 				$user_info['permissions'][] = $row['permission'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (isset($cache_groups))
 			cache_put_data('permissions:' . $cache_groups, [$user_info['permissions'], $removals], 240);
@@ -1040,7 +1040,7 @@ function loadPermissions()
 			else
 				$user_info['permissions'][] = $row['permission'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Remove all the permissions they shouldn't have ;).
@@ -1234,7 +1234,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			$row['options'] = [];
 			$user_profile[$row['id_member']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($new_loaded_ids) && $set !== 'minimal')
@@ -1317,7 +1317,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 
 			$user_profile[$row['id_member']]['characters'][$row['id_character']]['avatar'] = $image;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		foreach ($user_profile as $id_member => $member)
 		{
@@ -1340,7 +1340,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$user_profile[$row['id_member']]['options'][$row['variable']] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	$additional_mods = [];
@@ -1385,7 +1385,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 				]
 			);
 			$row = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			cache_put_data('moderator_group_info', $row, 480);
 		}
@@ -1712,7 +1712,7 @@ function loadMemberCustomFields($users, $params)
 		}
 	}
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return !empty($return) ? $return : false;
 }
@@ -1839,7 +1839,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			if (!isset($themeData[$row['id_member']][$row['variable']]) || $row['id_theme'] != '1')
 				$themeData[$row['id_member']][$row['variable']] = substr($row['variable'], 0, 5) == 'show_' ? $row['value'] == '1' : $row['value'];
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		if (!empty($themeData[-1]))
 			foreach ($themeData[-1] as $k => $v)
@@ -2740,7 +2740,7 @@ function getBoardParents($id_parent)
 						];
 					}
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 		}
 
 		cache_put_data('board_parents-' . $original_parent, $boards, 480);
@@ -3236,7 +3236,7 @@ function get_char_membergroup_data()
 			$groups[$row['id_group']] = $row;
 		}
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		cache_put_data('char_membergroups', $groups, 300);
 	}
 

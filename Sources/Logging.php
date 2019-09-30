@@ -467,7 +467,7 @@ function logActions($logs)
 				updateSettings(['last_mod_report_action' => time()]);
 				recountOpenReports('posts');
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		if (isset($log['extra']['member']) && !is_numeric($log['extra']['member']))

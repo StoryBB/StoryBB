@@ -93,7 +93,7 @@ function markBoardsRead($boards, $unread = false)
 		]
 	);
 	list ($lowest_topic) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	if (empty($lowest_topic))
 		return;
@@ -116,7 +116,7 @@ function markBoardsRead($boards, $unread = false)
 	$topics = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$topics[] = $row['id_topic'];
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	if (!empty($topics))
 		$smcFunc['db_query']('', '
@@ -155,7 +155,7 @@ function MarkRead()
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		if (!empty($boards))
 			markBoardsRead($boards, isset($_REQUEST['unread']));
@@ -187,7 +187,7 @@ function MarkRead()
 		$logged_topics = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$logged_topics[$row['id_topic']] = $row['unwatched'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$markRead = [];
 		foreach ($topics as $id_topic)
@@ -221,7 +221,7 @@ function MarkRead()
 			]
 		);
 		$topicinfo = $smcFunc['db_fetch_assoc']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		// Marking read from first page?  That's the whole topic.
 		if ($_REQUEST['start'] == 0)
@@ -243,7 +243,7 @@ function MarkRead()
 				]
 			);
 			list ($earlyMsg) = $smcFunc['db_fetch_row']($result);
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			$earlyMsg--;
 		}
@@ -299,7 +299,7 @@ function MarkRead()
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				if (in_array($row['id_parent'], $boards))
 					$boards[] = $row['id_board'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		$clauses = [];
@@ -329,7 +329,7 @@ function MarkRead()
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			redirectexit();
@@ -367,7 +367,7 @@ function MarkRead()
 					['id_member', 'id_board']
 				);
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			if (empty($board))
 				redirectexit();
@@ -409,7 +409,7 @@ function getMsgMemberID($messageID)
 	// The message doesn't even exist.
 	else
 		$memberID = 0;
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	return (int) $memberID;
 }
@@ -573,7 +573,7 @@ function modifyBoard($board_id, &$boardOptions)
 				]
 			);
 			list ($boardOptions['profile']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 	}
 	if (isset($boardOptions['profile']) && $boardOptions['profile'] == -1)
@@ -713,7 +713,7 @@ function modifyBoard($board_id, &$boardOptions)
 				);
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$boardOptions['moderators'][] = $row['id_member'];
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 		}
 
@@ -780,7 +780,7 @@ function modifyBoard($board_id, &$boardOptions)
 				{
 					$boardOptions['moderator_groups'][] = $row['id_group'];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 		}
 
@@ -941,7 +941,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	$topics = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$topics[] = $row['id_topic'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	require_once($sourcedir . '/RemoveTopic.php');
 	removeTopics($topics, false);
@@ -1068,7 +1068,7 @@ function fixChildren($parent, $newLevel, $newParent)
 	$children = [];
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$children[] = $row['id_board'];
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// ...and set it to a new parent and child_level.
 	$smcFunc['db_query']('', '
@@ -1123,7 +1123,7 @@ function getTreeOrder()
 			$tree_order['cats'][] = $row['id_cat'];
 		$tree_order['boards'][] = $row['id_board'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	cache_put_data('board_order', $tree_order, 86400);
 
@@ -1211,7 +1211,7 @@ function getBoardModerators(array $boards)
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" title="' . $txt['board_moderator'] . '">' . $row['real_name'] . '</a>',
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $moderators;
 }
@@ -1382,7 +1382,7 @@ function getBoardTree()
 		// If mods want to do anything with this board before we move on, now's the time
 		call_integration_hook('integrate_boardtree_board', [$row]);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get a list of all the boards in each category (using recursion).
 	$boardList = [];

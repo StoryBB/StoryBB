@@ -81,7 +81,7 @@ class Group extends AbstractCompletable implements Completable
 			]
 		);
 		list ($count) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return (int) $count;
 	}
@@ -136,7 +136,7 @@ class Group extends AbstractCompletable implements Completable
 				'icons' => $row['icons'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $result;
 	}
@@ -170,7 +170,7 @@ class Group extends AbstractCompletable implements Completable
 		{
 			$this->default[$row['id_group']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	/**

@@ -104,7 +104,7 @@ function ViewErrorLog()
 		]
 	);
 	list ($num_errors) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// If this filter is empty...
 	if ($num_errors == 0 && isset($filter))
@@ -134,7 +134,7 @@ function ViewErrorLog()
 		);
 
 		list($context['num_errors']) = $smcFunc['db_fetch_row']($query);
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 	}
 
 	// Find and sort out the errors.
@@ -200,7 +200,7 @@ function ViewErrorLog()
 		// Make a list of members to load later.
 		$members[$row['id_member']] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Load the member data.
 	if (!empty($members))
@@ -218,7 +218,7 @@ function ViewErrorLog()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[$row['id_member']] = $row;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// This is a guest...
 		$members[0] = [
@@ -297,7 +297,7 @@ function ViewErrorLog()
 			'is_selected' => isset($filter) && $filter['value']['sql'] == $smcFunc['db_escape_wildcard_string']($row['error_type']),
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Update the all errors tab with the total number of errors
 	$context['error_types']['all']['label'] .= ' (' . $sum . ')';

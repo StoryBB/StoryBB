@@ -64,7 +64,7 @@ class RemoveOldDrafts implements \StoryBB\Task\Schedulable
 		{
 			$drafts[] = (int) $row[0];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If we have old one, remove them
 		if (!empty($drafts))

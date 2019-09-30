@@ -80,7 +80,7 @@ class Database
 					$engines[] = $row['Engine'];
 			}
 
-			$smcFunc['db_free_result']($get_engines);
+			$smcFunc['db']->free_result($get_engines);
 		}
 
 		return $engines;

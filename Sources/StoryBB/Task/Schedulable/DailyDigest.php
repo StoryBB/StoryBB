@@ -94,7 +94,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 			else
 				$notify['boards'][$row['id_board']][] = $row['id_member'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			return true;
@@ -111,7 +111,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[$row['id_board']] = $row['name'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			return true;
@@ -176,7 +176,7 @@ class DailyDigest implements \StoryBB\Task\Schedulable
 			if (!empty($notify['boards'][$row['id_board']]))
 				$types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]['members'] = array_merge($types[$row['note_type']][$row['id_board']]['lines'][$row['id_topic']]['members'], $notify['boards'][$row['id_board']]);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($types))
 			return true;

@@ -55,7 +55,7 @@ function modifyCategory($category_id, $catOptions)
 				$cats[] = $category_id;
 			$cat_order[$row['id_cat']] = $row['cat_order'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Set the new order for the categories.
 		foreach ($cats as $index => $cat)
@@ -206,7 +206,7 @@ function deleteCategories($categories, $moveBoardsTo = null)
 		$boards_inside = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_inside[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($boards_inside))
 			deleteBoards($boards_inside, null);

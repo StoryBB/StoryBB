@@ -433,7 +433,7 @@ class PayPal implements PaymentProcessor
 			// Can we identify them by email?
 			if (!empty($_POST['payer_email']))
 			{
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				$request = $smcFunc['db_query']('', '
 					SELECT ls.id_member, ls.id_subscribe
 					FROM {db_prefix}log_subscribed AS ls
@@ -452,6 +452,6 @@ class PayPal implements PaymentProcessor
 		}
 		list ($member_id, $subscription_id) = $smcFunc['db_fetch_row']($request);
 		$_POST['item_number'] = $member_id . '+' . $subscription_id;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 }

@@ -166,7 +166,7 @@ function ViewQuery()
 				<td>', $row) . '</td>
 			</tr>';
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			echo '
 		</table>';

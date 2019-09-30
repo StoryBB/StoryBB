@@ -71,7 +71,7 @@ function char_switch($memID, $char = null, $return = false)
 		]
 	);
 	$found = $smcFunc['db_num_rows']($result) > 0;
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	if (!$found) {
 		if ($return)
@@ -211,7 +211,7 @@ function character_profile($memID)
 		]
 	);
 	list ($context['character']['theme_name']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['character']['days_registered'] = (int) ((time() - $context['character']['date_created']) / (3600 * 24));
 	$context['character']['date_created_format'] = timeformat($context['character']['date_created']);
@@ -272,7 +272,7 @@ function char_create()
 				]
 			);
 			list ($matching_names) = $smcFunc['db_fetch_row']($result);
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			if ($matching_names)
 				$context['form_errors'][] = $txt['char_error_duplicate_character_name'];
@@ -437,7 +437,7 @@ function char_edit()
 				]
 			);
 			list ($matching_names) = $smcFunc['db_fetch_row']($result);
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			if ($matching_names)
 				$context['form_errors'][] = $txt['char_error_duplicate_character_name'];
@@ -627,7 +627,7 @@ function char_delete()
 		]
 	);
 	list ($count) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	if ($count > 0)
 	{
@@ -644,7 +644,7 @@ function char_delete()
 		]
 	);
 	list ($current_character) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 	if ($current_character == $context['character']['id_character'])
 	{
 		fatal_lang_error($context['user']['is_owner'] ? 'this_character_cannot_delete_active_self' : 'this_character_cannot_delete_active', false);
@@ -669,7 +669,7 @@ function char_delete()
 	{
 		$members[] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 	// Having found all of the people whose alert counts need to be fixed, let's now purge all these alerts.
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}user_alerts
@@ -732,7 +732,7 @@ function char_theme()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($context['themes'] as $id_theme => $theme)
 	{
@@ -855,7 +855,7 @@ function char_posts()
 			]
 		);
 	list ($msgCount) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT MIN(id_msg), MAX(id_msg)
@@ -870,7 +870,7 @@ function char_posts()
 		]
 	);
 	list ($min_msg_member, $max_msg_member) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$reverse = false;
 	$range_limit = '';
@@ -1013,7 +1013,7 @@ function char_posts()
 			$board_ids['own'][$row['id_board']][] = $counter;
 		$board_ids['any'][$row['id_board']][] = $counter;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// All posts were retrieved in reverse order, get them right again.
 	if ($reverse)
@@ -1124,7 +1124,7 @@ function profileLoadCharGroups()
 			'can_be_primary' => $row['hidden'] != 2,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['member']['group_id'] = $user_settings['id_group'];
 
@@ -1221,7 +1221,7 @@ function char_stats()
 		]
 	);
 	list ($context['num_topics']) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 	$context['num_topics'] = comma_format($context['num_topics']);
 
 	// Grab the board this character posted in most often.
@@ -1254,7 +1254,7 @@ function char_stats()
 			'total_posts_char' => $context['character']['posts'],
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Now get the 10 boards this user has most often participated in.
 	$result = $smcFunc['db_query']('profile_board_stats', '
@@ -1285,7 +1285,7 @@ function char_stats()
 			'total_posts' => $row['num_posts'],
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Posting activity by time.
 	$result = $smcFunc['db_query']('user_activity_by_time', '
@@ -1320,7 +1320,7 @@ function char_stats()
 			'is_last' => $row['hour'] == 23,
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	if ($maxPosts > 0)
 		for ($hour = 0; $hour < 24; $hour++)
@@ -1378,7 +1378,7 @@ function char_sheet()
 		if ($smcFunc['db_num_rows']($request) > 0)
 		{
 			$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		if (isset($_POST['message']))
@@ -1415,7 +1415,7 @@ function char_sheet()
 			]
 		);
 		$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($context['character']['sheet_details']['sheet_text'])) {
@@ -1505,7 +1505,7 @@ function char_sheet()
 			{
 				$last_approved = (int) $row['last_approved'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Now get any comments for this character since the last approval.
 			$request = $smcFunc['db_query']('', '
@@ -1525,7 +1525,7 @@ function char_sheet()
 				$row['sheet_comment_parsed'] = Parser::parse_bbc($row['sheet_comment'], true, 'sheet-comment-' . $row['id_comment']);
 				$context['sheet_comments'][$row['id_comment']] = $row;
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Make an editor box
@@ -1594,7 +1594,7 @@ function char_sheet_history()
 		}
 		$context['history_items'][$row['created_time'] . 'S' . $row['id_version']] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Then get all the comments.
 	$request = $smcFunc['db_query']('', '
@@ -1614,7 +1614,7 @@ function char_sheet_history()
 		$row['time_posted_format'] = timeformat($row['time_posted_format']);
 		$context['history_items'][$row['time_posted'] . 'c' . $row['id_comment']] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Then stand back and do some magic.
 	// We spliced this array together unordered using timestamp + c/S + id
@@ -1665,7 +1665,7 @@ function char_sheet_edit()
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{
 		$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Make an editor box
@@ -1756,7 +1756,7 @@ function char_sheet_edit()
 				$row['real_name'] = $txt['char_unknown'];
 			$context['sheet_comments'][$row['id_comment']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		krsort($context['sheet_comments']);
 	}
 
@@ -1785,7 +1785,7 @@ function load_char_sheet_templates()
 			'body' => un_preparsecode($row['template']),
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -1822,7 +1822,7 @@ function char_sheet_approval()
 	{
 		$last_approved = (int) $row['last_approved'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now find the highest version after the last approved (or highest ever)
 	// for this character.
@@ -1921,7 +1921,7 @@ function char_sheet_approve()
 	}
 
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Correct character?
 	if ($row['id_character'] != $context['character']['id_character'])
@@ -1943,7 +1943,7 @@ function char_sheet_approve()
 		]
 	);
 	list ($count) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if ($count > 0)
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
@@ -2045,7 +2045,7 @@ function char_sheet_compare()
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 	}
 	$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now we need to go get the currently approved one too.
 	$request = $smcFunc['db_query']('', '
@@ -2057,7 +2057,7 @@ function char_sheet_compare()
 		]
 	);
 	$context['character']['original_sheet'] = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// And parse the bbc.
 	foreach (['original_sheet', 'sheet_details'] as $sheet) {
@@ -2136,7 +2136,7 @@ function char_merge_account($memID)
 			fatal_lang_error('cannot_merge_not_found', false);
 
 		list ($dest) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		loadMemberData($dest);
 
@@ -2295,7 +2295,7 @@ function merge_char_accounts($source, $dest)
 			'is_inbox' => 1,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	if (!empty($rows))
 	{
 		$smcFunc['db_insert']('ignore',
@@ -2361,7 +2361,7 @@ function char_move_account()
 			fatal_lang_error('cannot_move_not_found', false);
 
 		list ($dest) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		loadMemberData($dest);
 
@@ -2402,7 +2402,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	{
 		return 'cannot_move_char_not_found';
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	if ($row['is_main'])
 	{
 		return 'main'; // Can't move your main/OOC character out of your account
@@ -2481,7 +2481,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	{
 		$topics[] = (int) $row['id_topic'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	if (!empty($topics))
 	{
 		$smcFunc['db_query']('', '
@@ -2510,7 +2510,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	{
 		$topics[] = (int) $row['id_topic'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	if (!empty($topics))
 	{
 		$smcFunc['db_query']('', '
@@ -2553,7 +2553,7 @@ function CharacterList()
 			$row = $smcFunc['db_fetch_assoc']($result);
 			$redirect = 'action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'];
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 		redirectexit($redirect);
 	}
 
@@ -2638,7 +2638,7 @@ function CharacterList()
 		$vars
 	);
 	list($context['char_count']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['items_per_page'] = 12;
 	$context['page_index'] = constructPageIndex($scripturl . '?action=characters' . $filter_url . ';start=%1$d', $_REQUEST['start'], $context['char_count'], $context['items_per_page'], true);
@@ -2683,7 +2683,7 @@ function CharacterList()
 			$row['group_badges'] = $details['badges'];
 			$context['char_list'][] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($context['filter_groups']))
@@ -2745,7 +2745,7 @@ function CharacterSheetList()
 		$row['last_active_format'] = timeformat($row['last_active']);
 		$context['characters'][] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -2777,7 +2777,7 @@ function ReattributePost()
 		fatal_lang_error('no_access', false);
 
 	$row = $smcFunc['db_fetch_assoc']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// 2b. Not the topic we thought it was?
 	if ($row['id_topic'] != $topic)

@@ -205,7 +205,7 @@ function MLAll()
 			}
 			$smcFunc['db_data_seek']($request, $memberlist_cache['num_members'] - 1);
 			list ($memberlist_cache['index'][$i]) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Now we've got the cache...store it.
 			updateSettings(['memberlist_cache' => json_encode($memberlist_cache)]);
@@ -226,7 +226,7 @@ function MLAll()
 			]
 		);
 		list ($context['num_members']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Set defaults for sort (real_name) and start. (0)
@@ -251,7 +251,7 @@ function MLAll()
 			]
 		);
 		list ($_REQUEST['start']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	$context['letter_links'] = '';
@@ -345,7 +345,7 @@ function MLAll()
 		])
 	);
 	printMemberListRows($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Add anchors at the start of each letter.
 	if ($_REQUEST['sort'] == 'real_name')
@@ -401,7 +401,7 @@ function MLSearch()
 			'name' => $row['field_name'],
 			'desc' => $row['field_desc'],
 		];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// They're searching..
 	if (isset($_REQUEST['search']) && isset($_REQUEST['fields']))
@@ -515,7 +515,7 @@ function MLSearch()
 			$query_parameters
 		);
 		list ($numResults) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
 
@@ -537,7 +537,7 @@ function MLSearch()
 			])
 		);
 		printMemberListRows($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 	{
@@ -600,7 +600,7 @@ function printMemberListRows($request)
 		]
 	);
 	list ($most_posts) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Avoid division by zero...
 	if ($most_posts == 0)
@@ -702,7 +702,7 @@ function getCustFieldsMList()
 
 		$cpf['join'][$row['col_name']] = 'LEFT JOIN {db_prefix}themes AS t' . $row['col_name'] . ' ON (t' . $row['col_name'] . '.variable = {literal:' . $row['col_name'] . '} AND t' . $row['col_name'] . '.id_theme = 1 AND t' . $row['col_name'] . '.id_member = mem.id_member)';
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $cpf;
 }

@@ -98,7 +98,7 @@ function PermissionIndex()
 		]
 	);
 	list ($num_members) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Fill the context variable with 'Guests' and 'Regular Members'.
 	$context['groups'] = [
@@ -194,7 +194,7 @@ function PermissionIndex()
 			$normalGroups[$row['id_group']] = $row['id_group'];
 		}
 	}
-	$smcFunc['db_free_result']($query);
+	$smcFunc['db']->free_result($query);
 
 	if (!empty($normalGroups))
 	{
@@ -210,7 +210,7 @@ function PermissionIndex()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($query))
 			$context['groups'][$row['id_group']]['num_members'] += $row['num_members'];
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		// This one is slower, but it's okay... careful not to count twice!
 		$query = $smcFunc['db_query']('', '
@@ -228,7 +228,7 @@ function PermissionIndex()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($query))
 			$context['groups'][$row['id_group']]['num_members'] += $row['num_members'];
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 	}
 
 	if (!empty($characterGroups))
@@ -245,7 +245,7 @@ function PermissionIndex()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($query))
 			$context['groups'][$row['main_char_group']]['num_members'] += $row['num_characters'];
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		// This one is slower, but it's okay... careful not to count twice!
 		$query = $smcFunc['db_query']('', '
@@ -263,7 +263,7 @@ function PermissionIndex()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($query))
 			$context['groups'][$row['id_group']]['num_members'] += $row['num_characters'];
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 	}
 
 	foreach ($context['groups'] as $id => $data)
@@ -286,7 +286,7 @@ function PermissionIndex()
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			if (isset($context['groups'][(int) $row['id_group']]) && (!empty($row['add_deny']) || $row['id_group'] != -1))
 				$context['groups'][(int) $row['id_group']]['num_permissions'][empty($row['add_deny']) ? 'denied' : 'allowed'] = $row['num_permissions'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Get the "default" profile permissions too.
 		$request = $smcFunc['db_query']('', '
@@ -305,7 +305,7 @@ function PermissionIndex()
 			if (isset($context['groups'][(int) $row['id_group']]) && (!empty($row['add_deny']) || $row['id_group'] != -1))
 				$context['groups'][(int) $row['id_group']]['num_permissions'][empty($row['add_deny']) ? 'denied' : 'allowed'] += $row['num_permissions'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 	{
@@ -331,7 +331,7 @@ function PermissionIndex()
 			if (isset($context['groups'][(int) $row['id_group']]) && (!empty($row['add_deny']) || $row['id_group'] != -1))
 				$context['groups'][(int) $row['id_group']]['num_permissions'][empty($row['add_deny']) ? 'denied' : 'allowed'] += $row['num_permissions'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['profile'] = [
 			'id' => $_REQUEST['pid'],
@@ -536,7 +536,7 @@ function SetQuickGroups()
 			$target_perm = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$target_perm[$row['permission']] = $row['add_deny'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$inserts = [];
 			foreach ($_POST['group'] as $group_id)
@@ -591,7 +591,7 @@ function SetQuickGroups()
 		$target_perm = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$target_perm[$row['permission']] = $row['add_deny'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$inserts = [];
 		foreach ($_POST['group'] as $group_id)
@@ -742,7 +742,7 @@ function ModifyMembergroup()
 			]
 		);
 		list ($context['group']['name'], $parent) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		// Cannot edit an inherited group!
 		if ($parent != -2)
@@ -799,7 +799,7 @@ function ModifyMembergroup()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 			$permissions['membergroup'][empty($row['add_deny']) ? 'denied' : 'allowed'][] = $row['permission'];
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	// Fetch current board permissions...
@@ -815,7 +815,7 @@ function ModifyMembergroup()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 		$permissions['board'][empty($row['add_deny']) ? 'denied' : 'allowed'][] = $row['permission'];
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Loop through each permission and set whether it's checked.
 	foreach ($context['permissions'] as $permissionType => $tmp)
@@ -937,7 +937,7 @@ function ModifyMembergroup2()
 			]
 		);
 		list ($parent) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	if ($parent != -2)
@@ -1342,7 +1342,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 				['id_profile', 'id_group']
 			);
 		}
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		// Add permissions for ungrouped members.
 		$boardInserts = [];
@@ -1665,7 +1665,7 @@ function init_inline_permissions($permissions, $excluded_groups = [])
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context[$row['permission']][$row['id_group']]['status'] = $row['status'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT mg.id_group, mg.group_name, COALESCE(p.add_deny, -1) AS status, p.permission
@@ -1692,7 +1692,7 @@ function init_inline_permissions($permissions, $excluded_groups = [])
 
 		$context[$row['permission']][$row['id_group']]['status'] = empty($row['status']) ? 'deny' : ($row['status'] == 1 ? 'on' : 'off');
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Make sure we honor the "illegal guest permissions"
 	loadIllegalGuestPermissions();
@@ -1810,7 +1810,7 @@ function loadPermissionProfiles()
 			'unformatted_name' => $row['profile_name'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -1858,7 +1858,7 @@ function EditPermissionProfiles()
 		$inserts = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$inserts[] = [$profile_id, $row['id_group'], $row['permission'], $row['add_deny']];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($inserts))
 			$smcFunc['db_insert']('insert',
@@ -1919,7 +1919,7 @@ function EditPermissionProfiles()
 		);
 		if ($smcFunc['db_num_rows']($request) != 0)
 			fatal_lang_error('no_access', false);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Oh well, delete.
 		$smcFunc['db_query']('', '
@@ -1949,7 +1949,7 @@ function EditPermissionProfiles()
 			$context['profiles'][$row['id_profile']]['boards'] = $row['board_count'];
 			$context['profiles'][$row['id_profile']]['boards_text'] = $row['board_count'] > 1 ? sprintf($txt['permissions_profile_used_by_many'], $row['board_count']) : $txt['permissions_profile_used_by_' . ($row['board_count'] ? 'one' : 'none')];
 		}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// What can we do with these?
 	$context['can_edit_something'] = false;
@@ -2002,7 +2002,7 @@ function updateChildPermissions($parents, $profile = null)
 		$child_groups[] = $row['id_group'];
 		$parents[] = $row['id_parent'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$parents = array_unique($parents);
 
@@ -2026,7 +2026,7 @@ function updateChildPermissions($parents, $profile = null)
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			foreach ($children[$row['id_group']] as $child)
 				$permissions[] = [$child, $row['permission'], $row['add_deny']];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}permissions
@@ -2068,7 +2068,7 @@ function updateChildPermissions($parents, $profile = null)
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			foreach ($children[$row['id_group']] as $child)
 				$permissions[] = [$child, $row['id_profile'], $row['permission'], $row['add_deny']];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}board_permissions

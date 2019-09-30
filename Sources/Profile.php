@@ -83,7 +83,7 @@ function ModifyProfile($post_errors = [])
 
 		$context['subs_available'] = ($num_subs > 0);
 
-		$smcFunc['db_free_result']($get_active_subs);
+		$smcFunc['db']->free_result($get_active_subs);
 	}
 
 	/* Define all the sections within the profile area!
@@ -1095,7 +1095,7 @@ function loadCustomFields($memID, $area = 'summary')
 		];
 		$context['custom_fields_required'] = $context['custom_fields_required'] || $row['show_reg'] == 2;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	call_integration_hook('integrate_load_custom_profile_fields', [$memID, $area]);
 }

@@ -62,7 +62,7 @@ function deleteMembergroups($groups)
 		{
 			$protected_groups[] = $row['id_group'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Make sure they don't delete protected groups!
@@ -93,7 +93,7 @@ function deleteMembergroups($groups)
 			}
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	if (!empty($subscriptions))
 	{
 		// Uh oh. But before we return, we need to update a language string because we want the names of the groups.
@@ -115,7 +115,7 @@ function deleteMembergroups($groups)
 	{
 		logAction('delete_group', ['group' => $row['group_name']], 'admin');
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Notify any plugins that this has happened.
 	(new Observable\Group\Deleted($groups))->execute();
@@ -204,7 +204,7 @@ function deleteMembergroups($groups)
 	{
 		$updates[$row['additional_groups']][] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($updates as $additional_groups => $memberArray)
 	{
@@ -225,7 +225,7 @@ function deleteMembergroups($groups)
 	{
 		$updates[$row['member_groups']][] = $row['id_board'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($updates as $member_groups => $boardArray)
 	{
@@ -363,7 +363,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now get rid of those groups.
 	$groups = array_diff($groups, $implicitGroups);
@@ -384,7 +384,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 		{
 			$protected_groups[] = $row['id_group'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If you're not an admin yourself, you can't touch protected groups!
 		$groups = array_diff($groups, array_unique($protected_groups));
@@ -412,7 +412,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	{
 		$log_inserts[] = ['group' => $group_names[$row['id_group']], 'member' => $row['id_member']];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}members
@@ -453,7 +453,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 
 		$updates[$row['additional_groups']][] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($updates as $additional_groups => $memberArray)
 	{
@@ -531,7 +531,7 @@ function removeCharactersFromGroups($characters, $groups)
 		{
 			$protected[] = $row[0];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$groups = array_diff($groups, $protected);
 	}
@@ -552,7 +552,7 @@ function removeCharactersFromGroups($characters, $groups)
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// First, reset those who have this as their primary group - this is the easy one.
 	$log_inserts = [];
@@ -568,7 +568,7 @@ function removeCharactersFromGroups($characters, $groups)
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$log_inserts[] = ['group' => $group_names[$row['main_char_group']], 'member' => $row['id_member'], 'character' => $row['character_name']];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}characters
@@ -608,7 +608,7 @@ function removeCharactersFromGroups($characters, $groups)
 
 		$updates[$row['char_groups']][] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($updates as $char_groups => $memberArray)
 		$smcFunc['db_query']('', '
@@ -702,7 +702,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Sorry, you can't join an implicit group.
 	if (in_array($group, $implicitGroups) || empty($members))
@@ -729,7 +729,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 			]
 		);
 		list ($is_protected) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Is it protected?
 		if ($is_protected == 1)
@@ -849,7 +849,7 @@ function addCharactersToGroup($characters, $group)
 			]
 		);
 		list ($is_protected) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Is it protected?
 		if ($is_protected == 1)
@@ -887,7 +887,7 @@ function addCharactersToGroup($characters, $group)
 	{
 		$members[$row['id_character']] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_group, group_name
@@ -902,7 +902,7 @@ function addCharactersToGroup($characters, $group)
 	{
 		$group_names[$row['id_group']] = $row['group_name'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Log the data.
 	require_once($sourcedir . '/Logging.php');
@@ -941,7 +941,7 @@ function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 	{
 		$members[$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If there are more than $limit members, add a 'more' link.
 	if ($limit !== null && count($members) > $limit)
@@ -978,7 +978,7 @@ function cache_getMembergroupList()
 	{
 		$groupCache[] = '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return [
 		'data' => $groupCache,
@@ -1045,7 +1045,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 		$context['can_moderate'] |= $row['can_moderate'];
 		$group_ids[] = $row['id_group'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we found any membergroups, get the amount of members in them.
 	if (!empty($group_ids))
@@ -1066,7 +1066,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			}
 		}
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		// And collect all the characters too.
 		$query = $smcFunc['db_query']('', '
@@ -1085,7 +1085,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 				$groups[$row['main_char_group']]['num_members'] += $row['num_members'];
 			}
 		}
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		if ($context['can_moderate'])
 		{
@@ -1105,7 +1105,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			{
 				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			}
-			$smcFunc['db_free_result']($query);
+			$smcFunc['db']->free_result($query);
 		}
 
 		// Only do additional groups if we can moderate...
@@ -1127,7 +1127,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 			{
 				$groups[$row['id_group']]['num_members'] += $row['num_members'];
 			}
-			$smcFunc['db_free_result']($query);
+			$smcFunc['db']->free_result($query);
 		}
 
 		$query = $smcFunc['db_query']('', '
@@ -1143,7 +1143,7 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 		{
 			$groups[$row['id_group']]['moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 		}
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 	}
 
 	// Apply manual sorting if the 'number of members' column is selected.

@@ -175,7 +175,7 @@ class WeeklyMaintenance implements \StoryBB\Task\Schedulable
 			while ($row = $smcFunc['db_fetch_row']($result))
 				$reports[] = $row[0];
 
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			if (!empty($reports))
 			{

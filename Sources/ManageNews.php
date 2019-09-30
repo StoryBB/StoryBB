@@ -341,7 +341,7 @@ function SelectMailingMembers()
 
 		$normalGroups[$row['id_group']] = $row['id_group'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($normalGroups))
 	{
@@ -357,7 +357,7 @@ function SelectMailingMembers()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($query))
 			$context['groups'][$row['id_group']]['member_count'] += $row['member_count'];
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		// Also do those who have it as an additional membergroup - this ones more yucky...
 		$query = $smcFunc['db_query']('', '
@@ -375,7 +375,7 @@ function SelectMailingMembers()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($query))
 			$context['groups'][$row['id_group']]['member_count'] += $row['member_count'];
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 	}
 
 	// Any moderators?
@@ -387,7 +387,7 @@ function SelectMailingMembers()
 		]
 	);
 	list ($context['groups'][3]['member_count']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 
@@ -572,7 +572,7 @@ function ComposeMailing()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['recipients']['exclude_members'][] = $row['id_member'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT DISTINCT bi.email_address
@@ -596,7 +596,7 @@ function ComposeMailing()
 		$condition_array[] = '{string:email_' . $count . '}';
 		$condition_array_params['email_' . $count++] = $row['email_address'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($condition_array))
 	{
@@ -608,7 +608,7 @@ function ComposeMailing()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['recipients']['exclude_members'][] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Did they select moderators - if so add them as specific members...
@@ -630,7 +630,7 @@ function ComposeMailing()
 			else
 				$context['recipients']['members'][] = $row['identifier'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// For progress bar!
@@ -642,7 +642,7 @@ function ComposeMailing()
 		]
 	);
 	list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Clean up the arrays.
 	$context['recipients']['members'] = array_unique($context['recipients']['members']);
@@ -698,7 +698,7 @@ function SendMailing($clean_only = false)
 			]
 		);
 		list ($context['total_members']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 	{
@@ -944,7 +944,7 @@ function SendMailing($clean_only = false)
 		{
 			$rows[$row['id_member']] = $row;
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		// Load their alert preferences
 		require_once($sourcedir . '/Subs-Notify.php');

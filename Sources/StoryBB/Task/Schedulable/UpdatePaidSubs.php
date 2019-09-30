@@ -62,7 +62,7 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 		{
 			removeSubscription($row['id_subscribe'], $row['id_member']);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Get all those about to expire that have not had a reminder sent.
 		$request = $smcFunc['db_query']('', '
@@ -95,7 +95,7 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 			$subs_reminded[] = $row['id_sublog'];
 			$members[$row['id_member']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Load alert preferences
 		require_once($sourcedir . '/Subs-Notify.php');

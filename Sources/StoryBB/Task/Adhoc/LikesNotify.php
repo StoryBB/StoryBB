@@ -53,7 +53,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 				if (in_array(1, $groups) || count(array_intersect($allowed, $groups)) != 0)
 					$author = $row['id_member'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 		{
@@ -110,7 +110,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 
 		if ($smcFunc['db_num_rows']($request) > 0)
 			return true;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Issue, update, move on.
 		$smcFunc['db_insert']('insert',

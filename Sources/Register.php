@@ -456,7 +456,7 @@ function Register2()
 		if (trim($value) == '' && $row['show_reg'] > 1)
 			$custom_field_errors[] = ['custom_field_empty', [$row['field_name']]];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Process any errors.
 	if (!empty($custom_field_errors))
@@ -578,7 +578,7 @@ function Activate()
 	}
 
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Change their email address? (they probably tried a fake one first :P.)
 	if (isset($_POST['new_email'], $_REQUEST['passwd']) && hash_password($row['member_name'], $_REQUEST['passwd']) == $row['passwd'] && ($row['is_activated'] == 0 || $row['is_activated'] == 2))
@@ -605,7 +605,7 @@ function Activate()
 
 		if ($smcFunc['db_num_rows']($request) != 0)
 			fatal_lang_error('email_in_use', false, [StringLibrary::escape($_POST['new_email'])]);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		updateMemberData($row['id_member'], ['email_address' => $_POST['new_email']]);
 		$row['email_address'] = $_POST['new_email'];

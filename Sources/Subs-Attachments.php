@@ -333,7 +333,7 @@ function processAttachments()
 				]
 			);
 			list ($context['attachments']['quantity'], $context['attachments']['total_size']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 			$context['attachments'] = [
@@ -551,7 +551,7 @@ function attachmentChecks($attachID)
 				]
 			);
 			list ($context['dir_files'], $context['dir_size']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		$context['dir_size'] += $_SESSION['temp_attachments'][$attachID]['size'];
 		$context['dir_files']++;
@@ -1014,7 +1014,7 @@ function getRawAttachInfo($attachIDs)
 			'mime_type' => $row['mime_type'],
 			'thumb' => $row['id_thumb'],
 		];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $return;
 }
@@ -1048,7 +1048,7 @@ function getAttachMsgInfo($attachID)
 		return [];
 
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $row;
 }
@@ -1091,7 +1091,7 @@ function getAttachsByMsg($msgID = 0)
 
 			$temp[$row['id_attach']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// This is better than sorting it with the query...
 		ksort($temp);

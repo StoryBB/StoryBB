@@ -247,7 +247,7 @@ function Login2()
 	// Probably mistyped or their email, try it as an email address. (member_name first, though!)
 	if ($smcFunc['db_num_rows']($request) == 0 && strpos($_POST['user'], '@') !== false)
 	{
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$request = $smcFunc['db_query']('', '
 			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
@@ -269,7 +269,7 @@ function Login2()
 	}
 
 	$user_settings = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Bad password!  Thought you could fool the database?!
 	if (!hash_verify_password($user_settings['member_name'], un_htmlspecialchars($_POST['passwrd']), $user_settings['passwd']))
@@ -493,7 +493,7 @@ function DoLogin()
 		$_SESSION['first_login'] = true;
 	else
 		unset($_SESSION['first_login']);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// You've logged in, haven't you?
 	$update = ['member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']];

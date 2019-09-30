@@ -67,7 +67,7 @@ function ShowHelp()
 			$context['manual_sections'][$row['policy_type']]['id_policy'] = $row['id_policy'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// CRUD $subActions as needed.
 	routing_integration_hook('integrate_manage_help', [&$subActions]);
@@ -185,7 +185,7 @@ function HelpSmileys()
 			$context['smileys'][$row['filename']]['code'][] = $row['code'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['page_title'] = $txt['manual_smileys'];
 	$context['sub_template'] = 'help_smileys';

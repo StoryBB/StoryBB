@@ -60,7 +60,7 @@ class RemoveTopicRedirects implements \StoryBB\Task\Schedulable
 
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$topics[] = $row[0];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Zap, your gone
 		if (count($topics) > 0)

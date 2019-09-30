@@ -1686,7 +1686,7 @@ class Parser
 					$smileysto[] = StringLibrary::escape($row['filename']);
 					$smileysdescs[] = $row['description'];
 				}
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				cache_put_data('parsing_smileys', [$smileysfrom, $smileysto, $smileysdescs], 480);
 			}

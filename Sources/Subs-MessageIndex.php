@@ -79,7 +79,7 @@ function getBoardList($boardListOptions = [])
 			];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	sortCategories($return_value);

@@ -47,7 +47,7 @@ class Group
 		{
 			$is_character_group = !empty($row['is_character']);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $is_character_group;
 	}

@@ -44,7 +44,7 @@ function char_template_list()
 	{
 		$context['char_templates'][$row['id_template']] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['page_title'] = $txt['char_templates'];
 	$context['sub_template'] = 'admin_character_template_list';
@@ -238,7 +238,7 @@ function CharacterSheets()
 
 					$rows[$row['id_character']] = $row;
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Having fetched whichever versions are relevant, we now need to fetch the rest of the data.
 				if (!empty($rows))
@@ -256,7 +256,7 @@ function CharacterSheets()
 					{
 						$rows[$row['id_character']] = array_merge($rows[$row['id_character']], $row);
 					}
-					$smcFunc['db_free_result']($request);
+					$smcFunc['db']->free_result($request);
 				}
 
 				// And make sure any stray entries are cleaned.

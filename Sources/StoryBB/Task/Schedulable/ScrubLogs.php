@@ -63,7 +63,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 		{
 			$banned_ips[] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $banned_ips;
 	}
@@ -166,7 +166,7 @@ class ScrubLogs implements \StoryBB\Task\Schedulable
 
 			$erase[] = $row[$id_column];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Now the actual deletion.
 		if (empty($erase))

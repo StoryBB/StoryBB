@@ -514,7 +514,7 @@ function log_error_online($error, $sprintf = [])
 			]
 		);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**

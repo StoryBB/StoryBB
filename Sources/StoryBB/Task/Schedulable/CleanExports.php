@@ -75,7 +75,7 @@ class CleanExports implements \StoryBB\Task\Schedulable
 
 			@unlink($modSettings['attachmentUploadDir'][$row['id_folder']] . '/' . $row['id_attach'] . '_' . $row['file_hash'] . '.dat');
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Clean up dangling entries.
 		if (!empty($exports))

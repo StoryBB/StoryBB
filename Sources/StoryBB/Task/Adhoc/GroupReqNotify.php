@@ -37,7 +37,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 		$moderators = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$moderators[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		require_once($sourcedir . '/Subs-Members.php');
 

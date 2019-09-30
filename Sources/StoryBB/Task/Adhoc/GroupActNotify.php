@@ -72,7 +72,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 				'language' => $row['lngfile'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Ensure everyone who is online gets their changes right away.
 		updateSettings(['settings_updated' => time()]);

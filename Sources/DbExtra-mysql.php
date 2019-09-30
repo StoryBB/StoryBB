@@ -79,7 +79,7 @@ function sbb_db_backup_table($table, $backup_table)
 		]
 	);
 	list (, $create) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	$create = preg_split('/[\n\r]/', $create);
 
@@ -179,7 +179,7 @@ function sbb_db_optimize_table($table)
 			]
 		);
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$data_before = isset($row['Data_free']) ? $row['Data_free'] : 0;
 	$request = $smcFunc['db_query']('', '
@@ -199,7 +199,7 @@ function sbb_db_optimize_table($table)
 			]
 		);
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$total_change = isset($row['Data_free']) && $data_before > $row['Data_free'] ? $data_before / 1024 : 0;
 
@@ -260,7 +260,7 @@ function sbb_db_table_sql($tableName)
 		// And now any extra information. (such as auto_increment.)
 		$schema_create .= ($row['Extra'] != '' ? ' ' . $row['Extra'] : '') . ',' . $crlf;
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Take off the last comma.
 	$schema_create = substr($schema_create, 0, -strlen($crlf) - 1);
@@ -289,7 +289,7 @@ function sbb_db_table_sql($tableName)
 		else
 			$indexes[$row['Key_name']][$row['Seq_in_index']] = '`' . $row['Column_name'] . '`';
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Build the CREATEs for the keys.
 	foreach ($indexes as $keyname => $columns)
@@ -309,7 +309,7 @@ function sbb_db_table_sql($tableName)
 		]
 	);
 	$row = $smcFunc['db_fetch_assoc']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Probably MyISAM.... and it might have a comment.
 	$schema_create .= $crlf . ') ENGINE=' . $row['Engine'] . ($row['Comment'] != '' ? ' COMMENT="' . $row['Comment'] . '"' : '');
@@ -336,7 +336,7 @@ function sbb_db_get_version()
 		]
 	);
 	list ($ver) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $ver;
 }
@@ -356,7 +356,7 @@ function sbb_db_get_engine()
 
 	$request = $smcFunc['db_query']('', 'SELECT @@version_comment');
 	list ($comment) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Skip these if we don't have a comment.
 	if (!empty($comment))

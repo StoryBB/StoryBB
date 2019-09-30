@@ -111,7 +111,7 @@ function ScheduledTasks()
 
 		$temp = $smcFunc['db_fetch_assoc']($get_info);
 		$task_disabled = !empty($temp['disabled']) ? 0 : 1;
-		$smcFunc['db_free_result']($get_info);
+		$smcFunc['db']->free_result($get_info);
 
 		updateSettings(['allow_expire_redirect' => $task_disabled]);
 
@@ -175,7 +175,7 @@ function ScheduledTasks()
 				session_flash('error', sprintf($txt['scheduled_tasks_ran_errors'], $task->get_name(), $e->getMessage()));
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		redirectexit('action=admin;area=scheduledtasks');
 	}
@@ -314,7 +314,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 			'regularity' => $offset . ', ' . $repeating,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $known_tasks;
 }
@@ -422,7 +422,7 @@ function EditTask()
 			'unit' => $row['time_unit'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	createToken('admin-st');
 }
@@ -565,7 +565,7 @@ function list_getTaskLogEntries($start, $items_per_page, $sort)
 			'time_taken' => $row['time_taken'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $log_entries;
 }
@@ -585,7 +585,7 @@ function list_getNumTaskLogEntries()
 		]
 	);
 	list ($num_entries) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $num_entries;
 }

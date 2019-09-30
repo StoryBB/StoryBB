@@ -47,7 +47,7 @@ class ApproveReplyNotify extends \StoryBB\Task\Adhoc
 			$members[] = $row['id_member'];
 			$watched[$row['id_member']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		require_once($sourcedir . '/Subs-Notify.php');
 		$prefs = getNotifyPrefs($members, 'unapproved_reply', true);

@@ -87,7 +87,7 @@ function SplitIndex()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('cant_find_messages');
 	list ($_REQUEST['subname'], $num_replies, $unapproved_posts, $id_first_msg, $approved) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If not approved validate they can see it.
 	if (!$approved)
@@ -160,7 +160,7 @@ function SplitExecute()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$messagesToBeSplit[] = $row['id_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	// Only the selected message has to be split. That should be easy.
 	elseif ($_POST['step2'] == 'onlythis')
@@ -261,7 +261,7 @@ function SplitSelectTopics()
 			$_REQUEST['move'] = '';
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$original_msgs['not_selected'][] = $row['id_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		if (!empty($_SESSION['split_selection'][$topic]))
 		{
 			$request = $smcFunc['db_query']('', '
@@ -282,7 +282,7 @@ function SplitSelectTopics()
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$original_msgs['selected'][] = $row['id_msg'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 	}
 
@@ -317,7 +317,7 @@ function SplitSelectTopics()
 		$_SESSION['split_selection'][$topic] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$_SESSION['split_selection'][$topic][] = $row['id_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Get the number of messages (not) selected to be split.
@@ -335,7 +335,7 @@ function SplitSelectTopics()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context[empty($row['is_selected']) || $row['is_selected'] == 'f' ? 'not_selected' : 'selected']['num_messages'] = $row['num_messages'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Fix an oversized starting page (to make sure both pageindexes are properly set).
 	if ($context['selected']['start'] >= $context['selected']['num_messages'])
@@ -381,7 +381,7 @@ function SplitSelectTopics()
 			'poster' => $row['real_name'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now get the selected messages.
 	if (!empty($_SESSION['split_selection'][$topic]))
@@ -421,7 +421,7 @@ function SplitSelectTopics()
 				'poster' => $row['real_name']
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// The XMLhttp method only needs the stuff that changed, so let's compare.
@@ -519,7 +519,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		]
 	);
 	list ($id_board, $split1_approved) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Find the new first and last not in the list. (old topic)
 	$request = $smcFunc['db_query']('', '
@@ -569,7 +569,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			$split1_unapprovedposts = $row['message_count'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$split1_firstMem = getMsgMemberID($split1_first_msg);
 	$split1_lastMem = getMsgMemberID($split1_last_msg);
 
@@ -617,7 +617,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			$split2_unapprovedposts = $row['message_count'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$split2_firstMem = getMsgMemberID($split2_first_msg);
 	$split2_lastMem = getMsgMemberID($split2_last_msg);
 
@@ -777,7 +777,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		);
 		unset($replaceEntries);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Housekeeping.
 	updateStats('topic');
@@ -878,7 +878,7 @@ function MergeIndex()
 		]
 	);
 	list ($topiccount) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Make the page list.
 	$context['page_index'] = constructPageIndex($scripturl . '?action=mergetopics;from=' . $_GET['from'] . ';targetboard=' . $_REQUEST['targetboard'] . ';board=' . $board . '.%1$d', $_REQUEST['start'], $topiccount, $modSettings['defaultMaxTopics'], true);
@@ -901,7 +901,7 @@ function MergeIndex()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_board');
 	list ($subject) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Tell the template a few things..
 	$context['origin_topic'] = $_GET['from'];
@@ -972,7 +972,7 @@ function MergeIndex()
 			'js_subject' => addcslashes(addslashes($row['subject']), '/')
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (empty($context['topics']) && count($merge_boards) <= 1 && !in_array(0, $merge_boards))
 		fatal_lang_error('merge_need_more_topics');
@@ -1129,7 +1129,7 @@ function MergeExecute($topics = [])
 
 		$is_sticky = max($is_sticky, $row['is_sticky']);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we didn't get any topics then they've been messing with unapproved stuff.
 	if (empty($topic_data))
@@ -1171,7 +1171,7 @@ function MergeExecute($topics = [])
 	// If the number of boards that's in the output isn't exactly the same as we've put in there, you're in trouble.
 	if ($smcFunc['db_num_rows']($request) != count($boards))
 		fatal_lang_error('no_board');
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] == 'options')
 	{
@@ -1199,7 +1199,7 @@ function MergeExecute($topics = [])
 					'question' => $row['question'],
 					'selected' => $row['id_topic'] == $firstTopic
 				];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		if (count($boards) > 1)
 		{
@@ -1220,7 +1220,7 @@ function MergeExecute($topics = [])
 					'name' => $row['name'],
 					'selected' => $row['id_board'] == $topic_data[$firstTopic]['board']
 				];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		$context['topics'] = $topic_data;
@@ -1306,7 +1306,7 @@ function MergeExecute($topics = [])
 			$num_unapproved = $row['message_count'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Ensure we have a board stat for the target board.
 	if (!isset($boardTotals[$target_board]))
@@ -1343,7 +1343,7 @@ function MergeExecute($topics = [])
 	if ($member_updated === null)
 		$member_updated = $member_started;
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Obtain all the message ids we are going to affect.
 	$affected_msgs = [];
@@ -1356,7 +1356,7 @@ function MergeExecute($topics = [])
 	]);
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$affected_msgs[] = $row[0];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Assign the first topic ID to be the merged topic.
 	$id_topic = min($topics);
@@ -1521,7 +1521,7 @@ function MergeExecute($topics = [])
 			]
 		);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Merge topic notifications.
 	$notifications = isset($_POST['notifications']) && is_array($_POST['notifications']) ? array_intersect($topics, $_POST['notifications']) : [];
@@ -1558,7 +1558,7 @@ function MergeExecute($topics = [])
 				]
 			);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Get rid of the redundant polls.
@@ -1619,7 +1619,7 @@ function MergeExecute($topics = [])
 		]
 	);
 	list($id_board) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Again, only do this if we're redirecting - otherwise delete
 	if (isset($_POST['postRedirect']))

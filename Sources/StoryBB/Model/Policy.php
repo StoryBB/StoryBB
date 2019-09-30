@@ -51,7 +51,7 @@ class Policy
 		{
 			$policies[$row['policy_type']][$row['language']] = $row['title'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Sift out which ones we care about for this user.
 		foreach ($policies as $policy_type => $policy_languages)
@@ -90,7 +90,7 @@ class Policy
 			$row['no_language'] = [];
 			$policies[$row['id_policy_type']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Next up, fetch the different versions that we have.
 		$request = $smcFunc['db_query']('', '
@@ -107,7 +107,7 @@ class Policy
 			$row['last_change_format'] = timeformat($row['last_change']);
 			$policies[$row['policy_type']]['versions'][$row['language']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Now identify any ones that don't have a specific language attached.
 		$languages = array_keys(getLanguages());
@@ -145,7 +145,7 @@ class Policy
 			]
 		);
 		$row = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($row))
 		{
@@ -228,7 +228,7 @@ class Policy
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				if (empty($row))
 				{
 					return;
@@ -311,7 +311,7 @@ class Policy
 		{
 			$policies[$row['policy_type']][$row['language']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Having fetched all possible policies for this user, let's figure out whether they have agreed to anything.
 		foreach ($policies as $policy_type => $languages)
@@ -360,7 +360,7 @@ class Policy
 			{
 				$final_policies[$row['policy_type']]['revision_note'] = $row['short_revision_note'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		return $final_policies;
@@ -405,7 +405,7 @@ class Policy
 		{
 			$policies[$row['policy_type']][$row['language']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Sift out which ones we care about for this user.
 		foreach ($policies as $policy_type => $policy_languages)
@@ -487,7 +487,7 @@ class Policy
 					'title' => $row['title'],
 				];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			cache_put_data('footer_links', $footer_links, 300);
 		}

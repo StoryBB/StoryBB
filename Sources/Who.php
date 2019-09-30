@@ -109,7 +109,7 @@ function Who()
 		]
 	);
 	list ($totalMembers) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Prepare some page index variables.
 	$context['page_index'] = constructPageIndex($scripturl . '?action=who;sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';show=' . $context['show_by'], $_REQUEST['start'], $totalMembers, $modSettings['defaultMaxMembers']);
@@ -163,7 +163,7 @@ function Who()
 		$url_data[$row['session']] = [$row['url'], $row['id_member'], $row['robot_name']];
 		$member_ids[] = $row['id_member'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Load the user data for these members.
 	loadMemberData($member_ids);
@@ -392,7 +392,7 @@ function determineActions($urls, $preferred_prefix = false)
 				);
 				list ($id_topic, $subject) = $smcFunc['db_fetch_row']($result);
 				$data[$k] = sprintf($txt['whopost_' . $actions['action']], $id_topic, $subject);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				if (empty($id_topic))
 					$data[$k] = $txt['who_hidden'];
@@ -475,7 +475,7 @@ function determineActions($urls, $preferred_prefix = false)
 			foreach ($topic_ids[$row['id_topic']] as $k => $session_text)
 				$data[$k] = sprintf($session_text, $row['id_topic'], censorText($row['subject']));
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	// Load board names.
@@ -498,7 +498,7 @@ function determineActions($urls, $preferred_prefix = false)
 			foreach ($board_ids[$row['id_board']] as $k => $session_text)
 				$data[$k] = sprintf($session_text, $row['id_board'], $row['name']);
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	// Load member names for the profile. (is_not_guest permission for viewing their own profile)
@@ -525,7 +525,7 @@ function determineActions($urls, $preferred_prefix = false)
 			foreach ($profile_ids[$row['id_member']] as $k => $session_text)
 				$data[$k] = sprintf($session_text, $row['id_member'], $row['real_name']);
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	foreach ($data as $k => $v)

@@ -42,7 +42,7 @@ function MoveTopic()
 		]
 	);
 	list ($id_member_started, $context['subject'], $context['is_approved']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Can they see it - if not approved?
 	if (!$context['is_approved'])
@@ -154,7 +154,7 @@ function MoveTopic2()
 		]
 	);
 	list ($id_member_started, $id_first_msg, $context['is_approved']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Can they see it?
 	if (!$context['is_approved'])
@@ -194,7 +194,7 @@ function MoveTopic2()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_board');
 	list ($pcounter, $board_name, $subject) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Remember this for later.
 	$_SESSION['move_to_topic'] = $_POST['toboard'];
@@ -305,7 +305,7 @@ function MoveTopic2()
 		]
 	);
 	list ($pcounter_from) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if ($pcounter_from != $pcounter)
 	{
@@ -327,7 +327,7 @@ function MoveTopic2()
 
 			$posters[$row['id_member']]++;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		foreach ($posters as $id_member => $posts)
 		{
@@ -428,7 +428,7 @@ function moveTopics($topics, $toBoard)
 		else
 			$fromBoards[$row['id_board']]['unapproved_topics'] += $row['num_topics'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Move over the mark_read data. (because it may be read and now not by some!)
 	$SaveAServer = max(0, $modSettings['maxMsgID'] - 50000);
@@ -463,7 +463,7 @@ function moveTopics($topics, $toBoard)
 			$log_topics = [];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now that we have all the topics that *should* be marked read, and by which members...
 	if (!empty($log_topics))
@@ -554,7 +554,7 @@ function moveTopics($topics, $toBoard)
 		$approval_msgs = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$approval_msgs[] = $row['id_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Empty the approval queue for these, as we're going to approve them next.
 		if (!empty($approval_msgs))
@@ -585,7 +585,7 @@ function moveTopics($topics, $toBoard)
 				'max' => $row['id_last_msg'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Check the MAX and MIN are correct.
 		$request = $smcFunc['db_query']('', '
@@ -612,7 +612,7 @@ function moveTopics($topics, $toBoard)
 					]
 				);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	$smcFunc['db_query']('', '
@@ -647,7 +647,7 @@ function moveTopics($topics, $toBoard)
 		]
 	);
 	list ($isSeen) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($isSeen) && !$user_info['is_guest'])
 	{
@@ -705,7 +705,7 @@ function moveTopicConcurrence()
 			]
 		);
 		list($topic_subject, $board_name) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		$board_link = '<a href="' . $scripturl . '?board=' . $board . '.0">' . $board_name . '</a>';
 		$topic_link = '<a href="' . $scripturl . '?topic=' . $topic . '.0">' . $topic_subject . '</a>';
 		fatal_lang_error('topic_already_moved', false, [$topic_link, $board_link]);

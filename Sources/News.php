@@ -75,7 +75,7 @@ function ShowXmlFeed()
 				]
 			);
 			list ($feed_meta['title']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$feed_meta['title'] = ' - ' . strip_tags($feed_meta['title']);
 		}
@@ -96,7 +96,7 @@ function ShowXmlFeed()
 			$boards[] = $row['id_board'];
 			$total_cat_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($boards))
 			$query_this_board = 'b.id_board IN (' . implode(', ', $boards) . ')';
@@ -138,7 +138,7 @@ function ShowXmlFeed()
 			$boards[] = $row['id_board'];
 			$total_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($boards))
 			$query_this_board = 'b.id_board IN (' . implode(', ', $boards) . ')';
@@ -159,7 +159,7 @@ function ShowXmlFeed()
 			]
 		);
 		list ($total_posts) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$feed_meta['title'] = ' - ' . strip_tags($board_info['name']);
 		$feed_meta['source'] .= '?board=' . $board . '.0';
@@ -636,7 +636,7 @@ function getXmlMembers($xml_format)
 				],
 			];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $data;
 }
@@ -694,7 +694,7 @@ function getXmlNews($xml_format)
 		// If we don't have $_GET['limit'] results, try again with an unoptimized version covering all rows.
 		if ($loops < 2 && $smcFunc['db_num_rows']($request) < $_GET['limit'])
 		{
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			if (empty($_REQUEST['boards']) && empty($board))
 				unset($context['optimize_msg']['lowest']);
 			else
@@ -740,7 +740,7 @@ function getXmlNews($xml_format)
 				if ($attach['approved'])
 					$loaded_attachments['attachment_' . $attach['id_attach']] = $attach;
 			}
-			$smcFunc['db_free_result']($attach_request);
+			$smcFunc['db']->free_result($attach_request);
 
 			// Sort the attachments by size to make things easier below
 			if (!empty($loaded_attachments))
@@ -898,7 +898,7 @@ function getXmlNews($xml_format)
 			];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $data;
 }
@@ -944,7 +944,7 @@ function getXmlRecent($xml_format)
 		// If we don't have $_GET['limit'] results, try again with an unoptimized version covering all rows.
 		if ($loops < 2 && $smcFunc['db_num_rows']($request) < $_GET['limit'])
 		{
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			if (empty($_REQUEST['boards']) && empty($board))
 				unset($context['optimize_msg']['lowest']);
 			else
@@ -957,7 +957,7 @@ function getXmlRecent($xml_format)
 	$messages = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$messages[] = $row['id_msg'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (empty($messages))
 		return [];
@@ -1021,7 +1021,7 @@ function getXmlRecent($xml_format)
 				if ($attach['approved'])
 					$loaded_attachments['attachment_' . $attach['id_attach']] = $attach;
 			}
-			$smcFunc['db_free_result']($attach_request);
+			$smcFunc['db']->free_result($attach_request);
 
 			// Sort the attachments by size to make things easier below
 			if (!empty($loaded_attachments))
@@ -1179,7 +1179,7 @@ function getXmlRecent($xml_format)
 			];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $data;
 }

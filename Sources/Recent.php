@@ -44,7 +44,7 @@ function getLastPost()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		return [];
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Censor the subject and post...
 	censorText($row['subject']);
@@ -101,7 +101,7 @@ function RecentPosts()
 				]
 			);
 			list ($name) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (empty($name))
 				fatal_lang_error('no_access', false);
@@ -134,7 +134,7 @@ function RecentPosts()
 			$boards[] = $row['id_board'];
 			$total_cat_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -178,7 +178,7 @@ function RecentPosts()
 			$boards[] = $row['id_board'];
 			$total_posts += $row['num_posts'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -208,7 +208,7 @@ function RecentPosts()
 			]
 		);
 		list ($total_posts, $redirect) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If this is a redirection board, don't bother counting topics here...
 		if ($redirect != '')
@@ -254,7 +254,7 @@ function RecentPosts()
 		list($db_num_posts) = $smcFunc['db_fetch_row']($get_num_posts);
 		$num_posts = min(100, $db_num_posts);
 
-		$smcFunc['db_free_result']($get_num_posts);
+		$smcFunc['db']->free_result($get_num_posts);
 
 		$context['page_index'] = constructPageIndex($scripturl . '?action=recent', $_REQUEST['start'], $num_posts, 10, false);
 	}
@@ -293,7 +293,7 @@ function RecentPosts()
 			// If we don't have 10 results, try again with an unoptimized version covering all rows, and cache the result.
 			if (isset($query_parameters['max_id_msg']) && $smcFunc['db_num_rows']($request) < 10)
 			{
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				$query_this_board = str_replace('AND m.id_msg >= {int:max_id_msg}', '', $query_this_board);
 				$cache_results = true;
 				unset($query_parameters['max_id_msg']);
@@ -304,7 +304,7 @@ function RecentPosts()
 		$messages = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$messages[] = $row['id_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		if (!empty($cache_results))
 			cache_put_data($key, $messages, 120);
 	}
@@ -401,7 +401,7 @@ function RecentPosts()
 			$board_ids['own'][$row['id_board']][] = $row['id_msg'];
 		$board_ids['any'][$row['id_board']][] = $row['id_msg'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// There might be - and are - different permissions between any and own.
 	$permissions = [
@@ -529,7 +529,7 @@ function UnreadTopics()
 			if (in_array($row['id_parent'], $boards))
 				$boards[] = $row['id_board'];
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -562,7 +562,7 @@ function UnreadTopics()
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -590,7 +590,7 @@ function UnreadTopics()
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_selected');
@@ -615,7 +615,7 @@ function UnreadTopics()
 		$boards = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($boards))
 			fatal_lang_error('error_no_boards_available', false);
@@ -667,7 +667,7 @@ function UnreadTopics()
 			]
 		);
 		list ($name) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['linktree'][] = [
 			'url' => $scripturl . '#c' . (int) $_REQUEST['c'][0],
@@ -720,7 +720,7 @@ function UnreadTopics()
 				]
 			);
 			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 		{
@@ -734,7 +734,7 @@ function UnreadTopics()
 				]
 			);
 			list ($earliest_msg) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// This is needed in case of topics marked unread.
@@ -757,7 +757,7 @@ function UnreadTopics()
 					]
 				);
 				list ($earliest_msg2) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// In theory this could be zero, if the first ever post is unread, so fudge it ;)
 				if ($earliest_msg2 == 0)
@@ -822,7 +822,7 @@ function UnreadTopics()
 			])
 		);
 		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
 		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
@@ -908,7 +908,7 @@ function UnreadTopics()
 			])
 		);
 		list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Make sure the starting place makes sense and construct the page index.
 		$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . ($context['showing_all_topics'] ? ';all' : '') . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
@@ -1058,7 +1058,7 @@ function UnreadTopics()
 				])
 			);
 			list ($num_topics) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 		{
@@ -1079,7 +1079,7 @@ function UnreadTopics()
 				])
 			);
 			list ($num_topics, $min_message) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Make sure the starting place makes sense and construct the page index.
@@ -1153,7 +1153,7 @@ function UnreadTopics()
 		$topics = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topics[] = $row['id_topic'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Sanity... where have you gone?
 		if (empty($topics))
@@ -1337,7 +1337,7 @@ function UnreadTopics()
 
 		$context['topics'][$row['id_topic']]['first_post']['started_by'] = sprintf($txt['topic_started_by'], $context['topics'][$row['id_topic']]['first_post']['member']['link'], $context['topics'][$row['id_topic']]['board']['link']);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if ($is_topics && !empty($topic_ids))
 	{
@@ -1359,7 +1359,7 @@ function UnreadTopics()
 			if (empty($context['topics'][$row['id_topic']]['is_posted_in']))
 				$context['topics'][$row['id_topic']]['is_posted_in'] = true;
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);

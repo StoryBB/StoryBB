@@ -65,7 +65,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 			];
 		}
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Just in case we run into a problem.
 		loadEssentialThemeData();

@@ -73,7 +73,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				list ($changes['totalMembers'], $changes['latestMember']) = $smcFunc['db_fetch_row']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				// Get the latest activated member's display name.
 				$result = $smcFunc['db_query']('', '
@@ -86,7 +86,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				list ($changes['latestRealName']) = $smcFunc['db_fetch_row']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				// Update the amount of members awaiting approval (either new registration or deletion)
 				$result = $smcFunc['db_query']('', '
@@ -98,7 +98,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				list ($changes['unapprovedMembers']) = $smcFunc['db_fetch_row']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 			}
 			updateSettings($changes);
 			break;
@@ -120,7 +120,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				updateSettings([
 					'totalMessages' => $row['total_messages'] === null ? 0 : $row['total_messages'],
@@ -175,7 +175,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($result);
-				$smcFunc['db_free_result']($result);
+				$smcFunc['db']->free_result($result);
 
 				updateSettings(['totalTopics' => $row['total_topics'] === null ? 0 : $row['total_topics']]);
 			}
@@ -270,7 +270,7 @@ function updateMemberData($members, $data)
 				);
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$member_names[] = $row['member_name'];
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			if (!empty($member_names))
@@ -2113,7 +2113,7 @@ function setupMenuContext()
 		);
 
 		list($errors) = $smcFunc['db_fetch_row']($query);
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		if ($errors)
 		{
@@ -2126,7 +2126,7 @@ function setupMenuContext()
 			FROM {db_prefix}contact_form
 			WHERE status = 0');
 		list($contactform) = $smcFunc['db_fetch_row']($query);
-		$smcFunc['db_free_result']($query);
+		$smcFunc['db']->free_result($query);
 
 		if ($contactform)
 		{
@@ -2294,7 +2294,7 @@ function add_integration_function($hook, $function, $permanent = true, $file = '
 			]
 		);
 		list ($current_functions) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($current_functions))
 		{
@@ -2358,7 +2358,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 		]
 	);
 	list ($current_functions) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($current_functions))
 	{
@@ -2909,7 +2909,7 @@ function build_query_board($userid)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Can any of the groups they're in moderate any of the boards?
 		$request = $smcFunc['db_query']('', '
@@ -2922,7 +2922,7 @@ function build_query_board($userid)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Just in case we've got duplicates here...
 		$boards_mod = array_unique($boards_mod);
@@ -2972,7 +2972,7 @@ function get_main_menu_groups()
 		{
 			$groups[$row['id_group']] = $row['group_name'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		cache_put_data('char_main_menu_groups', $groups, 300);
 	}
@@ -3031,7 +3031,7 @@ function get_user_possible_characters($id_member, $board_id = 0)
 			{
 				$boards_ic[$row['id_board']] = $row['in_character'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (isset($boards_ic[$board_id]))
 			{

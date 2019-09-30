@@ -60,16 +60,16 @@ class Navigation extends RawMinkContext implements Context
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
 		{
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			throw new ExpectationException('Board "' . $boardname . '" was not found', $this->getSession());
 		}
 		if ($smcFunc['db_num_rows']($request) > 1)
 		{
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			throw new ExpectationException('Board "' . $boardname . '" matched multiple boards; cannot disambiguate', $this->getSession());
 		}
 		list ($id_board) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$this->visitPath('index.php?board=' . $id_board . '.0');
 	}
@@ -96,16 +96,16 @@ class Navigation extends RawMinkContext implements Context
 		);
 		if ($smcFunc['db_num_rows']($request) == 0)
 		{
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			throw new ExpectationException('Topic "' . $topicname . '" was not found', $this->getSession());
 		}
 		if ($smcFunc['db_num_rows']($request) > 1)
 		{
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			throw new ExpectationException('Topic "' . $topicname . '" matched multiple topics; cannot disambiguate', $this->getSession());
 		}
 		list ($id_topic) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$this->visitPath('index.php?topic=' . $id_topic . '.0');
 	}

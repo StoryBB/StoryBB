@@ -40,7 +40,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 		);
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$possible_members[] = $row[0];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Presumably, there are some people?
 		if (!empty($possible_members))
@@ -138,7 +138,7 @@ class MemberReportReplyNotify extends \StoryBB\Task\Adhoc
 					$row['lngfile'] = $language;
 				$emails[$row['lngfile']][$row['id_member']] = $row['email_address'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Iterate through each language, load the relevant templates and set up sending.
 			foreach ($emails as $this_lang => $recipients)

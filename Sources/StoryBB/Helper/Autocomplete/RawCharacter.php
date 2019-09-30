@@ -48,7 +48,7 @@ class RawCharacter extends AbstractCompletable implements Completable
 			]
 		);
 		list ($count) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return (int) $count;
 	}
@@ -105,7 +105,7 @@ class RawCharacter extends AbstractCompletable implements Completable
 				'avatar' => set_avatar_data($row)['url'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $result;
 	}
@@ -139,7 +139,7 @@ class RawCharacter extends AbstractCompletable implements Completable
 		{
 			$this->default[$row['id_character']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	/**

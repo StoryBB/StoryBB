@@ -273,7 +273,7 @@ function SetThemeOptions()
 				];
 			$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$request = $smcFunc['db_query']('', '
 			SELECT id_theme, COUNT(*) AS value
@@ -286,7 +286,7 @@ function SetThemeOptions()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['themes'][$row['id_theme']]['num_default_options'] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Need to make sure we don't do custom fields.
 		$request = $smcFunc['db_query']('', '
@@ -298,7 +298,7 @@ function SetThemeOptions()
 		$customFields = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$customFields[] = $row['col_name'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		$customFieldsQuery = empty($customFields) ? '' : ('AND variable NOT IN ({array_string:custom_fields})');
 
 		$request = $smcFunc['db_query']('themes_count', '
@@ -314,7 +314,7 @@ function SetThemeOptions()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['themes'][$row['id_theme']]['num_members'] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// There has to be a Settings template!
 		foreach ($context['themes'] as $k => $v)
@@ -517,7 +517,7 @@ function SetThemeOptions()
 			$customFields = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$customFields[] = $row['col_name'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		$customFieldsQuery = empty($customFields) ? '' : ('AND variable NOT IN ({array_string:custom_fields})');
 
@@ -569,7 +569,7 @@ function SetThemeOptions()
 		$context['theme_options'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$context['theme_options'][$row['variable']] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['theme_options_reset'] = false;
 	}
@@ -1030,7 +1030,7 @@ function PickTheme()
 			]
 		);
 		list ($context['current_theme']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Get the theme name and descriptions.
@@ -1067,7 +1067,7 @@ function PickTheme()
 				];
 			$context['available_themes'][$row['id_theme']][$row['variable']] = $row['value'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Okay, this is a complicated problem: the default theme is 1, but they aren't allowed to access 1!
@@ -1102,7 +1102,7 @@ function PickTheme()
 		else
 			$context['available_themes'][$guest_theme]['num_users'] += $row['the_count'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get any member variant preferences.
 	$variant_preferences = [];
@@ -1121,7 +1121,7 @@ function PickTheme()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$variant_preferences[$row['id_theme']] = $row['value'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Save the setting first.

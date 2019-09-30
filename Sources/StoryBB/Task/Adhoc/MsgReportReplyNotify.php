@@ -40,7 +40,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 		);
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$possible_members[] = $row[0];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Presumably, there are some people?
 		if (!empty($possible_members))
@@ -67,7 +67,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Thirdly, anyone assigned to be a moderator of this group as a group->board moderator.
 		$request = $smcFunc['db_query']('', '
@@ -85,7 +85,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// So now we have two lists: the people who replied to a report in the past,
 		// and all the possible people who could see said report.
@@ -172,7 +172,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 					$row['lngfile'] = $language;
 				$emails[$row['lngfile']][$row['id_member']] = $row['email_address'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Second, get some details that might be nice for the report email.
 			// We don't bother cluttering up the tasks data for this, when it's really no bother to fetch it.
@@ -185,7 +185,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 				]
 			);
 			list ($subject, $poster_name, $comment) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Third, iterate through each language, load the relevant templates and set up sending.
 			foreach ($emails as $this_lang => $recipients)

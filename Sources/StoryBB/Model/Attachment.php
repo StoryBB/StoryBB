@@ -69,7 +69,7 @@ class Attachment
 				return false;
 
 			list ($file_hash) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Still no hash? mmm...

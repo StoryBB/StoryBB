@@ -61,7 +61,7 @@ function ViewMembers()
 	$context['awaiting_approval'] = 0;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['activation_numbers'][$row['is_activated']] = $row['total_members'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	foreach ($context['activation_numbers'] as $activation_type => $total_members)
 	{
@@ -203,7 +203,7 @@ function ViewMemberlist()
 					'can_be_additional' => true
 				];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Some data about the form fields and how they are linked to the database.
 		$params = [
@@ -445,7 +445,7 @@ function ViewMemberlist()
 			{
 				$character_owners[$row['id_member']] = true;
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			if (!empty($character_owners))
 			{
@@ -707,7 +707,7 @@ function SearchMembers()
 				'can_be_additional' => true
 			];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['page_title'] = $txt['admin_members'];
 	$context['sub_template'] = 'admin_member_search';
@@ -1142,7 +1142,7 @@ function AdminApprove()
 			'code' => $row['validation_code']
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Are we activating or approving the members?
 	if ($_POST['todo'] == 'ok' || $_POST['todo'] == 'okemail')

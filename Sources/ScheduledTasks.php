@@ -104,7 +104,7 @@ function AutoTask()
 				}
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Get the next timestamp right.
 		$request = $smcFunc['db_query']('', '
@@ -122,7 +122,7 @@ function AutoTask()
 			$nextEvent = time() + 86400;
 		else
 			list ($nextEvent) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		updateSettings(['next_task_time' => $nextEvent]);
 	}
@@ -232,7 +232,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			'private' => $row['private'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Delete, delete, delete!!!
 	if (!empty($ids))
@@ -393,7 +393,7 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 		if ($next_time < $nextTaskTime)
 			$nextTaskTime = $next_time;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now make the changes!
 	foreach ($tasks as $id => $time)
@@ -506,7 +506,7 @@ function loadEssentialThemeData()
 		if (in_array($row['variable'], ['theme_dir', 'theme_url', 'images_url']) && $row['id_theme'] == '1')
 			$settings['default_' . $row['variable']] = $row['value'];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Check we have some directories setup.
 	if (empty($settings['template_dirs']))

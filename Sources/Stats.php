@@ -90,7 +90,7 @@ function DisplayStats()
 		]
 	);
 	$row = $smcFunc['db_fetch_assoc']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// This would be the amount of time the forum has been up... in days...
 	$total_days_up = ceil((time() - strtotime($row['date'])) / (60 * 60 * 24));
@@ -111,7 +111,7 @@ function DisplayStats()
 		]
 	);
 	list ($context['users_online']) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Statistics such as number of boards, categories, etc.
 	$result = $smcFunc['db_query']('', '
@@ -123,7 +123,7 @@ function DisplayStats()
 		]
 	);
 	list ($context['num_boards']) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	$result = $smcFunc['db_query']('', '
 		SELECT COUNT(*)
@@ -132,7 +132,7 @@ function DisplayStats()
 		]
 	);
 	list ($context['num_categories']) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Format the numbers nicely.
 	$context['users_online'] = comma_format($context['users_online']);
@@ -161,7 +161,7 @@ function DisplayStats()
 		]
 	);
 	list ($context['online_today']) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	$context['online_today'] = comma_format((int) $context['online_today']);
 
@@ -197,7 +197,7 @@ function DisplayStats()
 		if ($max_num_posts < $row_members['posts'])
 			$max_num_posts = $row_members['posts'];
 	}
-	$smcFunc['db_free_result']($members_result);
+	$smcFunc['db']->free_result($members_result);
 
 	foreach ($context['stats_blocks']['posters']['data'] as $i => $poster)
 	{
@@ -238,7 +238,7 @@ function DisplayStats()
 		if ($max_num_posts < $row_board['num_posts'])
 			$max_num_posts = $row_board['num_posts'];
 	}
-	$smcFunc['db_free_result']($boards_result);
+	$smcFunc['db']->free_result($boards_result);
 
 	foreach ($context['stats_blocks']['boards']['data'] as $i => $board)
 	{
@@ -264,7 +264,7 @@ function DisplayStats()
 		$topic_ids = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topic_ids[] = $row['id_topic'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 		$topic_ids = [];
@@ -314,7 +314,7 @@ function DisplayStats()
 		if ($max_num_replies < $row_topic_reply['num_replies'])
 			$max_num_replies = $row_topic_reply['num_replies'];
 	}
-	$smcFunc['db_free_result']($topic_reply_result);
+	$smcFunc['db']->free_result($topic_reply_result);
 
 	foreach ($context['stats_blocks']['topics_replies']['data'] as $i => $topic)
 	{
@@ -338,7 +338,7 @@ function DisplayStats()
 		$topic_ids = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topic_ids[] = $row['id_topic'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 		$topic_ids = [];
@@ -388,7 +388,7 @@ function DisplayStats()
 		if ($max_num < $row_topic_views['num_views'])
 			$max_num = $row_topic_views['num_views'];
 	}
-	$smcFunc['db_free_result']($topic_view_result);
+	$smcFunc['db']->free_result($topic_view_result);
 
 	foreach ($context['stats_blocks']['topics_views']['data'] as $i => $topic)
 	{
@@ -413,7 +413,7 @@ function DisplayStats()
 		$members = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$members[$row['id_member_started']] = $row['hits'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		cache_put_data('stats_top_starters', $members, 360);
 	}
@@ -452,7 +452,7 @@ function DisplayStats()
 			$max_num = $members[$row_members['id_member']];
 	}
 	ksort($context['stats_blocks']['starters']);
-	$smcFunc['db_free_result']($members_result);
+	$smcFunc['db']->free_result($members_result);
 
 	foreach ($context['stats_blocks']['starters']['data'] as $i => $topic)
 	{
@@ -509,7 +509,7 @@ function DisplayStats()
 		if ($max_time_online < $row_members['total_time_logged_in'])
 			$max_time_online = $row_members['total_time_logged_in'];
 	}
-	$smcFunc['db_free_result']($members_result);
+	$smcFunc['db']->free_result($members_result);
 
 	foreach ($context['stats_blocks']['time_online']['data'] as $i => $member)
 		$context['stats_blocks']['time_online']['data'][$i]['percent'] = round(($member['seconds_online'] * 100) / $max_time_online);
@@ -559,7 +559,7 @@ function DisplayStats()
 			if ($max_liked_message < $row_liked_message['likes'])
 				$max_liked_message = $row_liked_message['likes'];
 		}
-		$smcFunc['db_free_result']($liked_messages);
+		$smcFunc['db']->free_result($liked_messages);
 
 		foreach ($context['stats_blocks']['liked_messages']['data'] as $i => $liked_messages)
 			$context['stats_blocks']['liked_messages']['data'][$i]['percent'] = round(($liked_messages['num'] * 100) / $max_liked_message);
@@ -601,7 +601,7 @@ function DisplayStats()
 				$max_liked_users = $row_liked_users['count'];
 		}
 
-		$smcFunc['db_free_result']($liked_users);
+		$smcFunc['db']->free_result($liked_users);
 
 		foreach ($context['stats_blocks']['liked_users']['data'] as $i => $liked_users)
 			$context['stats_blocks']['liked_users']['data'][$i]['percent'] = round(($liked_users['num'] * 100) / $max_liked_users);
@@ -741,5 +741,5 @@ function getDailyStats($condition_string, $condition_parameters = [])
 			'most_members_online' => comma_format($row_days['most_on']),
 			'hits' => comma_format($row_days['hits'])
 		];
-	$smcFunc['db_free_result']($days_result);
+	$smcFunc['db']->free_result($days_result);
 }

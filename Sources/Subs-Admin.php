@@ -45,7 +45,7 @@ function getAdminFile(string $filename, string $path = '')
 				break;
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $data;
 }
@@ -515,7 +515,7 @@ function emailAdmins($template, $replacements = [], $additional_recipients = [])
 		// Track who we emailed so we don't do it twice.
 		$emails_sent[] = $row['email_address'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Any additional users we must email this to?
 	if (!empty($additional_recipients))

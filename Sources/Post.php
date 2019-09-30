@@ -80,7 +80,7 @@ function Post($post_errors = [])
 			unset($_REQUEST['msg'], $_POST['msg'], $_GET['msg']);
 		else
 			list ($topic) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Check if it's locked. It isn't locked if no topic is specified.
@@ -103,7 +103,7 @@ function Post($post_errors = [])
 			]
 		);
 		list ($locked, $topic_approved, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $editReason, $lastPostTime) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If this topic already has a poll, they sure can't add another.
 		if (isset($_REQUEST['poll']) && $pollID > 0)
@@ -263,7 +263,7 @@ function Post($post_errors = [])
 				]
 			);
 			list ($context['new_replies']) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (!empty($context['new_replies']))
 			{
@@ -454,7 +454,7 @@ function Post($post_errors = [])
 			$attachment_stuff = [$row];
 			while ($row2 = $smcFunc['db_fetch_assoc']($request))
 				$attachment_stuff[] = $row2;
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 			{
@@ -504,7 +504,7 @@ function Post($post_errors = [])
 						'thumb' => $row['id_thumb'],
 					];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			// Allow moderators to change names....
@@ -522,7 +522,7 @@ function Post($post_errors = [])
 					]
 				);
 				$row = $smcFunc['db_fetch_assoc']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				if (empty($row['id_member']))
 				{
@@ -571,7 +571,7 @@ function Post($post_errors = [])
 		$attachment_stuff = [$row];
 		while ($row2 = $smcFunc['db_fetch_assoc']($request))
 			$attachment_stuff[] = $row2;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 		{
@@ -685,7 +685,7 @@ function Post($post_errors = [])
 			if ($smcFunc['db_num_rows']($request) == 0)
 				fatal_lang_error('quoted_post_deleted', false);
 			list ($form_subject, $mname, $mdate, $form_message) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Add 'Re: ' to the front of the quoted subject.
 			if (trim($context['response_prefix']) != '' && StringLibrary::strpos($form_subject, trim($context['response_prefix'])) !== 0)
@@ -1272,7 +1272,7 @@ function Post2()
 			]
 		);
 		$topic_info = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Though the topic should be there, it might have vanished.
 		if (!is_array($topic_info))
@@ -1439,7 +1439,7 @@ function Post2()
 		if ($smcFunc['db_num_rows']($request) == 0)
 			fatal_lang_error('cant_find_messages', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (!empty($topic_info['locked']) && !allowedTo('moderate_board'))
 			fatal_lang_error('topic_locked', false);
@@ -2081,7 +2081,7 @@ function AnnouncementSelectMembergroup()
 			'member_count' => $row['num_members'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now get the membergroup names.
 	$request = $smcFunc['db_query']('', '
@@ -2094,7 +2094,7 @@ function AnnouncementSelectMembergroup()
 	);
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['groups'][$row['id_group']]['name'] = $row['group_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get the subject of the topic we're about to announce.
 	$request = $smcFunc['db_query']('', '
@@ -2107,7 +2107,7 @@ function AnnouncementSelectMembergroup()
 		]
 	);
 	list ($context['topic_subject']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	censorText($context['announce_topic']['subject']);
 
@@ -2157,7 +2157,7 @@ function AnnouncementSend()
 		]
 	);
 	list ($id_msg, $context['topic_subject'], $message) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	censorText($context['topic_subject']);
 	censorText($message);
@@ -2205,7 +2205,7 @@ function AnnouncementSend()
 	{
 		$rows[$row['id_member']] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Load their alert preferences
 	require_once($sourcedir . '/Subs-Notify.php');
@@ -2319,7 +2319,7 @@ function getTopic()
 		if (!empty($context['new_replies']))
 			$context['new_replies']--;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -2362,7 +2362,7 @@ function QuoteFast()
 	);
 	$context['close_window'] = $smcFunc['db_num_rows']($request) == 0;
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['sub_template'] = 'xml_quotefast';
 	StoryBB\Template::set_layout('xml');
@@ -2479,7 +2479,7 @@ function JavaScriptModify()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_board', false);
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Change either body or subject requires permissions to modify messages.
 	if (isset($_POST['message']) || isset($_POST['subject']))

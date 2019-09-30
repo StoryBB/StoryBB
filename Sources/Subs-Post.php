@@ -658,7 +658,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			if (isset($usernames[StringLibrary::toLower($row['member_name'])]))
 				$usernames[StringLibrary::toLower($row['member_name'])] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Replace the usernames with IDs. Drop usernames that couldn't be found.
 		foreach ($recipients as $rec_type => $rec)
@@ -719,7 +719,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		if ($delete)
 			$deletes[$row['id_member']] = 1;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Load the membergrounp message limits.
 	// @todo Consider caching this?
@@ -734,7 +734,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$message_limit_cache[$row['id_group']] = $row['max_messages'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Load the groups that are allowed to read PMs.
@@ -837,7 +837,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 		$log['sent'][$row['id_member']] = sprintf(isset($txt['pm_successfully_sent']) ? $txt['pm_successfully_sent'] : '', $row['real_name']);
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Only 'send' the message if there are any recipients left.
 	if (empty($all_to))
@@ -922,7 +922,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$to_names[] = un_htmlspecialchars($row['real_name']);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	$replacements = [
 		'SUBJECT' => $subject,
@@ -1024,7 +1024,7 @@ function sendNotifications($topics, $type, $exclude = [], $members_only = [])
 			'members_only' => $members_only,
 		]);
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	StoryBB\Task::commit_batch_queue();
 }
@@ -1181,7 +1181,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 			$char_post_changes[$row['id_character']] = isset($char_post_changes[$row['id_character']]) ? $char_post_changes[$row['id_character']] + 1 : 1;
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (empty($msgs))
 		return;
@@ -1213,7 +1213,7 @@ function approvePosts($msgs, $approve = true, $notify = true)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$topic_changes[$row['id_topic']]['id_last_msg'] = $row['id_last_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// ... next the topics...
@@ -1348,7 +1348,7 @@ function approveTopics($topics, $approve = true)
 	$msgs = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$msgs[] = $row['id_msg'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return approvePosts($msgs, $approve);
 }
@@ -1394,7 +1394,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 		$lastMsg = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$lastMsg[$row['id_board']] = $row['id_msg'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	else
 	{
@@ -1520,7 +1520,7 @@ function adminNotify($type, $memberID, $member_name = null)
 			]
 		);
 		list ($member_name) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// This is really just a wrapper for making a new background task to deal with all the fun.

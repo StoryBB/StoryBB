@@ -86,7 +86,7 @@ function ReportToModerator()
 		if ($smcFunc['db_num_rows']($result) == 0)
 			fatal_lang_error('no_board', false);
 		list ($_REQUEST['msg'], $member, $starter) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 
 		// This is here so that the user could, in theory, be redirected back to the topic.
@@ -244,7 +244,7 @@ function reportPost($msg, $reason)
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_board', false);
 	$message = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_report, ignore_all
@@ -261,7 +261,7 @@ function reportPost($msg, $reason)
 	if ($smcFunc['db_num_rows']($request) != 0)
 		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we're just going to ignore these, then who gives a monkeys...
 	if (!empty($ignore))
@@ -360,7 +360,7 @@ function reportUser($id_member, $reason)
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('no_user', false);
 	$user = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$user_name = un_htmlspecialchars($user['real_name']) . ($user['real_name'] != $user['member_name'] ? ' (' . $user['member_name'] . ')' : '');
 
@@ -381,7 +381,7 @@ function reportUser($id_member, $reason)
 	if ($smcFunc['db_num_rows']($request) != 0)
 		list ($id_report, $ignore) = $smcFunc['db_fetch_row']($request);
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we're just going to ignore these, then who gives a monkeys...
 	if (!empty($ignore))

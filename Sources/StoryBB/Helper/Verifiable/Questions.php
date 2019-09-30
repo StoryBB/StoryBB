@@ -74,7 +74,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 				$this->question_cache['questions'][$id_question] = $row;
 				$this->question_cache['langs'][$row['lngfile']][] = $id_question;
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			cache_put_data('verificationQuestions', $this->question_cache, 300);
 		}
@@ -219,7 +219,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 			];
 			$questions++;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If the user has insisted on questions, but hasn't put anything in for the default forum language, warn them.
 		if (!empty($modSettings['qa_verification_number']) && (empty($context['question_answers'][$language]) || empty($context['question_answers'][$language]['questions'])))

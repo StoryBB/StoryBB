@@ -310,7 +310,7 @@ function getBoardIndex($boardIndexOptions)
 				'ref' => &$this_category[$isChild ? $row_board['id_parent'] : $row_board['id_board']]['last_post'],
 			];
 	}
-	$smcFunc['db_free_result']($result_boards);
+	$smcFunc['db']->free_result($result_boards);
 
 	// Fetch the board's moderators and moderator groups
 	$boards = array_unique($boards);

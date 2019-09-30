@@ -76,7 +76,7 @@ class Mentions
 				],
 				'lngfile' => $row['lngfile'],
 			];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $members;
 	}
@@ -166,7 +166,7 @@ class Mentions
 
 			$members[$row['id_character']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $members;
 	}

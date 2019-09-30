@@ -145,7 +145,7 @@ function PlushSearch1()
 		if (!$context['categories'][$row['id_cat']]['boards'][$row['id_board']]['selected'] && (empty($modSettings['recycle_enable']) || $row['id_board'] != $modSettings['recycle_board']))
 			$context['boards_check_all'] = false;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	sortCategories($context['categories']);
@@ -212,7 +212,7 @@ function PlushSearch1()
 			fatal_lang_error('topic_gone', false);
 
 		list ($context['search_topic']['subject']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['search_topic']['link'] = '<a href="' . $context['search_topic']['href'] . '">' . $context['search_topic']['subject'] . '</a>';
 	}
@@ -389,7 +389,7 @@ function PlushSearch2()
 		list ($minMsgID, $maxMsgID) = $smcFunc['db_fetch_row']($request);
 		if ($minMsgID < 0 || $maxMsgID < 0)
 			$context['search_errors']['no_messages_in_time_frame'] = true;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Default the user name to a wildcard matching every user (*).
@@ -464,7 +464,7 @@ function PlushSearch2()
 
 		$search_params['brd'] = [];
 		list ($search_params['brd'][0]) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	// Select all boards you've selected AND are allowed to see.
 	elseif ($user_info['is_admin'] && (!empty($search_params['advanced']) || !empty($_REQUEST['brd'])))
@@ -489,7 +489,7 @@ function PlushSearch2()
 		$search_params['brd'] = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$search_params['brd'][] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// This error should pro'bly only happen for hackers.
 		if (empty($search_params['brd']))
@@ -511,7 +511,7 @@ function PlushSearch2()
 			]
 		);
 		list ($num_boards) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (count($search_params['brd']) == $num_boards)
 			$boardQuery = '';
@@ -972,7 +972,7 @@ function PlushSearch2()
 							foreach ($row as $key => $value)
 								$inserts[$row[1]][] = (int) $row[$key];
 						}
-						$smcFunc['db_free_result']($ignoreRequest);
+						$smcFunc['db']->free_result($ignoreRequest);
 						$numSubjectResults = count($inserts);
 					}
 					else
@@ -1199,7 +1199,7 @@ function PlushSearch2()
 
 								$inserts[$row[$ind]] = $row;
 							}
-							$smcFunc['db_free_result']($ignoreRequest);
+							$smcFunc['db']->free_result($ignoreRequest);
 							$numSubjectResults = count($inserts);
 						}
 						else
@@ -1297,7 +1297,7 @@ function PlushSearch2()
 
 									$inserts[$row[0]] = $row;
 								}
-								$smcFunc['db_free_result']($ignoreRequest);
+								$smcFunc['db']->free_result($ignoreRequest);
 								$indexedResults = count($inserts);
 							}
 							else
@@ -1431,7 +1431,7 @@ function PlushSearch2()
 							foreach ($row as $key => $value)
 								$inserts[$row[2]][] = (int) $row[$key];
 						}
-						$smcFunc['db_free_result']($ignoreRequest);
+						$smcFunc['db']->free_result($ignoreRequest);
 
 						// Now put them in!
 						if (!empty($inserts))
@@ -1502,7 +1502,7 @@ function PlushSearch2()
 							$usedIDs[$row[1]] = true;
 							$inserts[] = $row;
 						}
-						$smcFunc['db_free_result']($ignoreRequest);
+						$smcFunc['db']->free_result($ignoreRequest);
 
 						// Now put them in!
 						if (!empty($inserts))
@@ -1551,7 +1551,7 @@ function PlushSearch2()
 			// By default they didn't participate in the topic!
 			$participants[$row['id_topic']] = false;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$num_results = $_SESSION['search_cache']['num_results'];
 	}
@@ -1590,7 +1590,7 @@ function PlushSearch2()
 		$posters = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$posters[] = $row['id_member'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		call_integration_hook('integrate_search_message_list', [&$msg_list, &$posters]);
 
@@ -1651,7 +1651,7 @@ function PlushSearch2()
 			);
 			while ($row = $smcFunc['db_fetch_assoc']($result))
 				$participants[$row['id_topic']] = true;
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 		}
 	}
 

@@ -83,7 +83,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 			$watched[$row['id_member']] = $row;
 		}
 
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($members))
 			return true;

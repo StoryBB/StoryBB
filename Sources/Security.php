@@ -237,7 +237,7 @@ function is_not_banned($forceCheck = false)
 							$flag_is_activated = true;
 					}
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Mark the cannot_access and cannot_post bans as being 'hit'.
@@ -279,7 +279,7 @@ function is_not_banned($forceCheck = false)
 			$_SESSION['ban']['cannot_access']['ids'][] = $row['id_ban'];
 			$_SESSION['ban']['cannot_access']['reason'] = $row['reason'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// My mistake. Next time better.
 		if (!isset($_SESSION['ban']['cannot_access']))
@@ -562,7 +562,7 @@ function isBannedEmail($email, $restriction, $error)
 			$ban_reason = $row['reason'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// You're in biiig trouble.  Banned for the rest of this session!
 	if (isset($_SESSION['ban']['cannot_access']))
@@ -945,7 +945,7 @@ function allowedTo($permission, $boards = null)
 	$result = true;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$result &= !empty($row['add_deny']);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If the query returned 1, they can do it... otherwise, they can't.
 	return $result;
@@ -1093,7 +1093,7 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 				$boards[$row['permission']][] = $row['id_board'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if ($simple)
 		$boards = array_unique(array_values(array_diff($boards, $deny_boards)));

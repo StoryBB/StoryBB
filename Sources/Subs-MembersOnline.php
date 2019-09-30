@@ -147,7 +147,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 				'parent' => $row['id_parent'],
 			];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If there are robots only and we're showing the detail, add them to the online list - at the bottom.
 	if (!empty($robot_finds))
@@ -247,7 +247,7 @@ function trackStatsUsersOnline($total_users_online)
 
 			$total_users_online = max($total_users_online, $modSettings['mostOnlineToday']);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$settingsToUpdate['mostOnlineUpdated'] = $date;
 		$settingsToUpdate['mostOnlineToday'] = $total_users_online;

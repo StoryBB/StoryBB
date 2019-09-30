@@ -670,7 +670,7 @@ function sbb_db_table_structure(string $table_name): Table
 		}
 	}
 
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// Now get the indexes.
 	$result = $smcFunc['db_query']('', '
@@ -705,7 +705,7 @@ function sbb_db_table_structure(string $table_name): Table
 			}
 		}
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	foreach ($indexfunc as $index => $func)
 	{
@@ -1151,7 +1151,7 @@ function sbb_db_list_columns($table_name, $detail = false, $parameters = [])
 			}
 		}
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	return $columns;
 }
@@ -1211,7 +1211,7 @@ function sbb_db_list_indexes($table_name, $detail = false, $parameters = [])
 				$indexes[$row['Key_name']]['columns'][] = $row['Column_name'];
 		}
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	return $indexes;
 }

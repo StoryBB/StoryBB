@@ -90,7 +90,7 @@ function Display()
 			// No more left.
 			if ($smcFunc['db_num_rows']($request) == 0)
 			{
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Roll over - if we're going prev, get the last - otherwise the first.
 				$request = $smcFunc['db_query']('', '
@@ -111,7 +111,7 @@ function Display()
 
 			// Now you can be sure $topic is the id_topic to view.
 			list ($topic) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$context['current_topic'] = $topic;
 		}
@@ -173,7 +173,7 @@ function Display()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('not_a_topic', false, 404);
 	$context['topicinfo'] = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Is this a moved or merged topic that we are redirecting to?
 	if (!empty($context['topicinfo']['id_redirect_topic']))
@@ -226,7 +226,7 @@ function Display()
 			]
 		);
 		list ($myUnapprovedPosts) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['total_visible_posts'] = $context['num_replies'] + $myUnapprovedPosts + ($context['topicinfo']['approved'] ? 1 : 0);
 	}
@@ -264,7 +264,7 @@ function Display()
 					]
 				);
 				list ($new_from) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Fall through to the next if statement.
 				$_REQUEST['start'] = 'msg' . $new_from;
@@ -294,7 +294,7 @@ function Display()
 					]
 				);
 				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Handle view_newest_first options, and get the correct start value.
 				$_REQUEST['start'] = empty($options['view_newest_first']) ? $context['start_from'] : $context['total_visible_posts'] - $context['start_from'] - 1;
@@ -327,7 +327,7 @@ function Display()
 					]
 				);
 				list ($context['start_from']) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			// We need to reverse the start as well in this case.
@@ -411,7 +411,7 @@ function Display()
 
 		// The number of guests is equal to the rows minus the ones we actually used ;).
 		$context['view_num_guests'] = $smcFunc['db_num_rows']($request) - count($context['view_members']);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Sort the list.
 		krsort($context['view_members']);
@@ -542,7 +542,7 @@ function Display()
 			]
 		);
 		$pollinfo = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$request = $smcFunc['db_query']('', '
 			SELECT COUNT(DISTINCT id_member) AS total
@@ -555,7 +555,7 @@ function Display()
 			]
 		);
 		list ($pollinfo['total']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Total voters needs to include guest voters
 		$pollinfo['total'] += $pollinfo['num_guest_voters'];
@@ -582,7 +582,7 @@ function Display()
 			$realtotal += $row['votes'];
 			$pollinfo['has_voted'] |= $row['voted_this'] != -1;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		
 		// Got we multi choice?
 		if ($pollinfo['max_votes'] > 1)
@@ -787,7 +787,7 @@ function Display()
 			$all_posters[$row['id_msg']] = $row['id_member'];
 		$messages[] = $row['id_msg'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$posters = array_unique($all_posters);
 	if (!$user_info['is_guest'] && !in_array($context['user']['id'], $posters))
 		$posters[] = $context['user']['id'];
@@ -894,7 +894,7 @@ function Display()
 				]
 			);
 			list ($numNewTopics) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// If there're no real new topics in this board, mark the board as seen.
 			if (empty($numNewTopics))
@@ -971,7 +971,7 @@ function Display()
 				if (!isset($context['loaded_attachments'][$row['id_msg']]))
 					$context['loaded_attachments'][$row['id_msg']] = [];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// This is better than sorting it with the query...
 			ksort($temp);
@@ -1154,7 +1154,7 @@ function Display()
 		);
 
 		list ($lastPostTime) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time();
 	}
@@ -1407,7 +1407,7 @@ function prepareDisplayContext($reset = false)
 	$message = $smcFunc['db_fetch_assoc']($messages_request);
 	if (!$message)
 	{
-		$smcFunc['db_free_result']($messages_request);
+		$smcFunc['db']->free_result($messages_request);
 		return false;
 	}
 
@@ -1681,7 +1681,7 @@ function QuickInTopicModeration()
 			]
 		);
 		list($subname) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		$_SESSION['split_selection'][$topic] = $messages;
 		redirectexit('action=splittopics;sa=selectTopics;topic=' . $topic . '.0;subname_enc=' . urlencode($subname) . ';' . $context['session_var'] . '=' . $context['session_id']);
 	}
@@ -1702,7 +1702,7 @@ function QuickInTopicModeration()
 			]
 		);
 		list ($starter) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$allowed_all = $starter == $user_info['id'];
 	}
@@ -1736,7 +1736,7 @@ function QuickInTopicModeration()
 
 		$messages[$row['id_msg']] = [$row['subject'], $row['id_member']];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Get the first message in the topic - because you can't delete that!
 	$request = $smcFunc['db_query']('', '
@@ -1749,7 +1749,7 @@ function QuickInTopicModeration()
 		]
 	);
 	list ($first_message, $last_message) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Delete all the messages we know they can delete. ($messages)
 	foreach ($messages as $message => $info)

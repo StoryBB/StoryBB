@@ -206,7 +206,7 @@ class Likes
 			if ($smcFunc['db_num_rows']($request) == 1)
 				list ($this->_idTopic, $topicOwner) = $smcFunc['db_fetch_row']($request);
 
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			if (empty($this->_idTopic))
 				return $this->_error = 'cannot_';
 
@@ -352,7 +352,7 @@ class Likes
 			]
 		);
 		list ($this->_numLikes) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// If you want to call this directly, fill out _data property too.
 		if ($this->_sa == __FUNCTION__)
@@ -386,7 +386,7 @@ class Likes
 			]
 		);
 		$this->_alreadyLiked = (bool) $smcFunc['db_num_rows']($request) != 0;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if ($this->_alreadyLiked)
 			$this->delete();

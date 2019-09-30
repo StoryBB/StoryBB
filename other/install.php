@@ -986,7 +986,7 @@ function DatabasePopulation()
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 			$modSettings[$row['variable']] = $row['value'];
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		// Do they match?  If so, this is just a refresh so charge on!
 		if (!isset($modSettings['sbbVersion']) || $modSettings['sbbVersion'] != $GLOBALS['current_sbb_version'])
@@ -1191,7 +1191,7 @@ function DatabasePopulation()
 		if ($row['Privilege'] == 'Alter')
 			$privs[] = $row['Privilege'];
 	}
-	$smcFunc['db_free_result']($get_privs);
+	$smcFunc['db']->free_result($get_privs);
 
 	// Check for the ALTER privilege.
 	if (!empty($databases[$db_type]['alter_support']) && !in_array('Alter', $privs))
@@ -1260,7 +1260,7 @@ function AdminAccount()
 	);
 	if ($smcFunc['db_num_rows']($request) != 0)
 		$incontext['skip'] = 1;
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Trying to create an account?
 	if (isset($_POST['password1']) && !empty($_POST['contbutt']))
@@ -1306,7 +1306,7 @@ function AdminAccount()
 		if ($smcFunc['db_num_rows']($result) != 0)
 		{
 			list ($incontext['member_id'], $incontext['member_salt']) = $smcFunc['db_fetch_row']($result);
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			$incontext['account_existed'] = $txt['error_user_settings_taken'];
 		}
@@ -1469,7 +1469,7 @@ function DeleteInstall()
 	{
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$modSettings[$row[0]] = $row[1];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Automatically log them in ;)
@@ -1487,7 +1487,7 @@ function DeleteInstall()
 	);
 	if ($smcFunc['db_num_rows']($result) != 0)
 		list ($db_sessions) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	if (empty($db_sessions))
 		$_SESSION['admin_time'] = time();
@@ -1523,7 +1523,7 @@ function DeleteInstall()
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 		updateStats('subject', 1, htmlspecialchars($txt['default_topic_subject']));
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now is the perfect time to fetch the SM files.
 	require_once($sourcedir . '/ScheduledTasks.php');

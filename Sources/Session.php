@@ -133,7 +133,7 @@ function sessionRead($session_id)
 		]
 	);
 	list ($sess_data) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	return $sess_data != null ? $sess_data : '';
 }

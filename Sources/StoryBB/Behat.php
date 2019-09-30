@@ -152,7 +152,7 @@ class Behat extends RawMinkContext implements Context
 			}
 
 			// Done with this now
-			$smcFunc['db_free_result']($get_engines);
+			$smcFunc['db']->free_result($get_engines);
 
 			// InnoDB is better, so use it if possible...
 			$has_innodb = in_array('InnoDB', $engines);

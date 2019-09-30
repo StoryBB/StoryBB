@@ -91,7 +91,7 @@ function deleteMembers($users, $check_not_admin = false)
 			$admins[] = $row['id_member'];
 		$user_log_details[$row['id_member']] = [$row['id_member'], $row['member_name']];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (empty($user_log_details))
 		return;
@@ -144,7 +144,7 @@ function deleteMembers($users, $check_not_admin = false)
 	{
 		$characters[$row['id_character']] = $row['character_name'];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// 2. Step through each of these and update them.
 	foreach ($characters as $id_character => $character_name)
@@ -445,7 +445,7 @@ function deleteMembers($users, $check_not_admin = false)
 				'buddy_list' => implode(',', array_diff(explode(',', $row['buddy_list']), $users)),
 			]
 		);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Integration rocks!
 	(new Observable\Account\Deleted($users))->execute();
@@ -565,7 +565,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	if ($smcFunc['db_num_rows']($request) != 0)
 		$reg_errors[] = ['lang', 'email_in_use', false, [StringLibrary::escape($regOptions['email'])]];
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Do we have a character name.
 	if (empty($regOptions['extra_register_vars']['first_char']))
@@ -589,7 +589,7 @@ function registerMember(&$regOptions, $return_errors = false)
 			]
 		);
 		list ($matching_names) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		if ($matching_names)
 			$reg_errors[] = ['lang', 'char_error_duplicate_character_name', false];
@@ -705,7 +705,7 @@ function registerMember(&$regOptions, $return_errors = false)
 			{
 				$unassignableGroups[] = $row['id_group'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		if (in_array($regOptions['register_vars']['id_group'], $unassignableGroups))
@@ -1027,7 +1027,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		return true;
 	}
 
@@ -1044,7 +1044,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 	);
 	if ($smcFunc['db_num_rows']($request) > 0)
 	{
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		return true;
 	}
 
@@ -1086,7 +1086,7 @@ function groupsAllowedTo($permission, $board_id = null)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$member_groups[$row['add_deny'] === '1' ? 'allowed' : 'denied'][] = $row['id_group'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Otherwise it's time to look at the board.
@@ -1109,7 +1109,7 @@ function groupsAllowedTo($permission, $board_id = null)
 			if ($smcFunc['db_num_rows']($request) == 0)
 				fatal_lang_error('no_board');
 			list ($profile_id) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 		else
 			$profile_id = 1;
@@ -1126,7 +1126,7 @@ function groupsAllowedTo($permission, $board_id = null)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$member_groups[$row['add_deny'] === '1' ? 'allowed' : 'denied'][] = $row['id_group'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$moderator_groups = [];
 
@@ -1152,7 +1152,7 @@ function groupsAllowedTo($permission, $board_id = null)
 				$moderator_groups[] = $row['id_group'];
 			}
 
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// "Inherit" any additional permissions from the "Moderators" group
@@ -1222,7 +1222,7 @@ function membersAllowedTo($permission, $board_id = null)
 	$members = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$members[] = $row['id_member'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $members;
 }
@@ -1263,7 +1263,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 			]
 		);
 		list ($email, $membername) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if ($characterID === false)
@@ -1304,7 +1304,7 @@ function reattributePosts($memID, $characterID = false, $email = false, $membern
 			]
 		);
 		list ($messageCount) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		updateMemberData($memID, ['posts' => 'posts + ' . $messageCount]);
 		updateCharacterData($characterID, ['posts' => 'posts + ' . $messageCount]);
@@ -1456,7 +1456,7 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 		$row['member_ip2'] = inet_dtop($row['member_ip2']);
 		$members[] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If we want duplicates pass the members array off.
 	if ($get_duplicates)
@@ -1491,7 +1491,7 @@ function list_getNumMembers($where, $where_params = [])
 			])
 		);
 		list ($num_members) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	return $num_members;
@@ -1558,7 +1558,7 @@ function populateDuplicateMembers(&$members)
 		if ($row['member_ip'] != $row['member_ip2'] && in_array($row['member_ip2'], $ips))
 			$duplicate_members[$row['member_ip2']][] = $member_context;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Also try to get a list of messages using these ips.
 	$request = $smcFunc['db_query']('', '
@@ -1594,7 +1594,7 @@ function populateDuplicateMembers(&$members)
 			'ip2' => $row['poster_ip'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now we have all the duplicate members, stick them with their respective member in the list.
 	if (!empty($duplicate_members))
@@ -1637,7 +1637,7 @@ function generateValidationCode()
 	);
 
 	list ($dbRand) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . $dbRand . $modSettings['rand_seed'])), 0, 10);
 }

@@ -307,7 +307,7 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 			);
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -1123,7 +1123,7 @@ function saveDBSettings(&$config_vars)
 				while ($row = $smcFunc['db_fetch_row']($request))
 					$board_list[$row[0]] = true;
 
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			$lOptions = [];

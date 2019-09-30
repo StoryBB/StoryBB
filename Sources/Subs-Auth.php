@@ -439,7 +439,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Return all the results.
 	return $results;
@@ -474,7 +474,7 @@ function resetPassword($memID, $username = null)
 		]
 	);
 	list ($user, $email, $lngfile) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if ($username !== null)
 	{
@@ -625,7 +625,7 @@ function rebuildModCache()
 		$groups = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$groups[] = $row['id_group'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($groups))
 			$group_query = '0=1';
@@ -660,7 +660,7 @@ function rebuildModCache()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Can any of the groups they're in moderate any of the boards?
 		$request = $smcFunc['db_query']('', '
@@ -673,7 +673,7 @@ function rebuildModCache()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$boards_mod[] = $row['id_board'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Just in case we've got duplicates here...
 		$boards_mod = array_unique($boards_mod);

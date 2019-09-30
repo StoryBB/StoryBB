@@ -88,7 +88,7 @@ class Alert
 		{
 			$alerts[$row['id_member']][] = (int) $row['id_alert'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		return $alerts;
 	}
@@ -191,7 +191,7 @@ class Alert
 		);
 
 		$count = $smcFunc['db_num_rows']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Also update the current member's count if we've just calculated it.
 		if ($memID == $user_info['id'])

@@ -238,7 +238,7 @@ function MessageIndex()
 				$context['view_num_hidden']++;
 		}
 		$context['view_num_guests'] = $smcFunc['db_num_rows']($request) - count($context['view_members']);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Put them in "last clicked" order.
 		krsort($context['view_members_list']);
@@ -537,7 +537,7 @@ function MessageIndex()
 				'filename' => !empty($row['first_member_filename']) ? $row['first_member_filename'] : '',
 			]);
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		// Fix the sequence of topics if they were retrieved in the wrong order. (for speed reasons...)
 		if ($fake_ascending)
@@ -657,7 +657,7 @@ function MessageIndex()
 			if (!empty($row['id_topic']))
 				$context['topics'][$row['id_topic']]['is_watched'] = true;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if ($context['is_marked_notify'] && !empty($board_sent))
 		{
@@ -901,7 +901,7 @@ function QuickModeration()
 					unset($_REQUEST['actions'][$row['id_topic']]);
 			}
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	$stickyCache = [];
@@ -977,7 +977,7 @@ function QuickModeration()
 			$stickyCacheBoards[$row['id_topic']] = $row['id_board'];
 			$stickyCacheStatus[$row['id_topic']] = empty($row['is_sticky']);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Move sucka! (this is, by the by, probably the most complicated part....)
@@ -1018,7 +1018,7 @@ function QuickModeration()
 			// For reporting...
 			$moveCache2[] = [$row['id_topic'], $row['id_board'], $to];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$moveCache = $moveCache2;
 
@@ -1057,7 +1057,7 @@ function QuickModeration()
 				}
 			}
 
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (!empty($topicRecounts))
 			{
@@ -1084,7 +1084,7 @@ function QuickModeration()
 						$members[$row['id_member']] -= 1;
 				}
 
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// And now update them member's post counts
 				foreach ($members as $id_member => $post_adj)
@@ -1118,7 +1118,7 @@ function QuickModeration()
 			$removeCache[] = $row['id_topic'];
 			$removeCacheBoards[$row['id_topic']] = $row['id_board'];
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		// Maybe *none* were their own topics.
 		if (!empty($removeCache))
@@ -1159,7 +1159,7 @@ function QuickModeration()
 			$approveCache[] = $row['id_topic'];
 			$approveCacheMembers[$row['id_topic']] = $row['id_member_started'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Any topics to approve?
 		if (!empty($approveCache))
@@ -1203,7 +1203,7 @@ function QuickModeration()
 				$lockCacheBoards[$row['id_topic']] = $row['id_board'];
 				$lockStatus[$row['id_topic']] = empty($row['locked']);
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 		}
 		else
 		{
@@ -1223,7 +1223,7 @@ function QuickModeration()
 				$lockStatus[$row['id_topic']] = empty($row['locked']);
 				$lockCacheBoards[$row['id_topic']] = $row['id_board'];
 			}
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 		}
 
 		// It could just be that *none* were their own topics...
@@ -1257,7 +1257,7 @@ function QuickModeration()
 		$logged_topics = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$logged_topics[$row['id_topic']] = $row['unwatched'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$markArray = [];
 		foreach ($markCache as $topic)

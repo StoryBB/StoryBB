@@ -274,7 +274,7 @@ function EditSearchMethod()
 			$context['table_info']['data_length'] = $row['Data_length'];
 			$context['table_info']['index_length'] = $row['Index_length'];
 			$context['table_info']['fulltext_length'] = $row['Index_length'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Now check the custom index table, if it exists at all.
@@ -302,7 +302,7 @@ function EditSearchMethod()
 			$row = $smcFunc['db_fetch_assoc']($request);
 			$context['table_info']['index_length'] += $row['Data_length'] + $row['Index_length'];
 			$context['table_info']['custom_index_length'] = $row['Data_length'] + $row['Index_length'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 	}
 	else
@@ -489,7 +489,7 @@ function CreateMessageIndex()
 				}
 				$num_messages['done'] += $number_processed;
 				$num_messages['todo'] -= $number_processed;
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				$context['start'] += $forced_break ? $number_processed : $messages_per_batch;
 
@@ -543,7 +543,7 @@ function CreateMessageIndex()
 				);
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$stop_words[] = $row['id_word'];
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				updateSettings(['search_stopwords' => implode(',', $stop_words)]);
 
@@ -637,7 +637,7 @@ function detectFulltextIndex()
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))
 			$context['fulltext_index'][] = $row['Key_name'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (is_array($context['fulltext_index']))
 			$context['fulltext_index'] = array_unique($context['fulltext_index']);
@@ -667,6 +667,6 @@ function detectFulltextIndex()
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		if (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam' && !(strtolower($row['Engine']) == 'innodb' && version_compare($smcFunc['db_get_version'](), '5.6.4', '>=')))
 			$context['cannot_create_fulltext'] = true;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 }

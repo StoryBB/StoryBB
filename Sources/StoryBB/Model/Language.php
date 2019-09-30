@@ -97,7 +97,7 @@ class Language
 
 			$language_delta[$row['lang_var']][$row['lang_key']] = $row['lang_string'];
 		}
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		return $language_delta;
 	}

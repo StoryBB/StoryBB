@@ -89,7 +89,7 @@ function html_to_bbc($text)
 			$mappings = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$mappings[$row['filename']] = StringLibrary::escape($row['code']);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			foreach ($matches[1] as $k => $file)
 				if (isset($mappings[$file]))
@@ -1641,7 +1641,7 @@ function create_control_richedit($editorOptions)
 
 				$context['smileys'][empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			foreach ($context['smileys'] as $section => $smileyRows)
 			{
@@ -1742,7 +1742,7 @@ function AutoSuggest_Search_Member()
 			'value' => $row['real_name'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $xml_data;
 }
@@ -1791,7 +1791,7 @@ function AutoSuggest_Search_MemberChar()
 			'value' => $row['real_name'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Find their characters
 	$request = $smcFunc['db_query']('', '
@@ -1821,7 +1821,7 @@ function AutoSuggest_Search_MemberChar()
 			'value' => $row['display_name'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $xml_data;
 }

@@ -90,7 +90,7 @@ function exportData($memID)
 		if (!empty($row['id_export']) && empty($row['approved']))
 			$in_process = true;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// User is requesting an export.
 	if (!$in_process && isset($_GET['request']))
@@ -137,7 +137,7 @@ function exportData($memID)
 				{
 					$rows[] = $row;
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 				return $rows;
 			},
 			'params' => [
@@ -156,7 +156,7 @@ function exportData($memID)
 					]
 				);
 				list($count) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				return $count;
 			},
@@ -339,7 +339,7 @@ function issueWarning($memID)
 			]
 		);
 		list ($current_applied) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$context['min_allowed'] = max(0, $cur_profile['warning'] - $current_applied - $context['warning_limit']);
 		$context['max_allowed'] = min(100, $cur_profile['warning'] - $current_applied + $context['warning_limit']);
@@ -613,7 +613,7 @@ function issueWarning($memID)
 			$context['warning_for_message'] = (int) $_REQUEST['msg'];
 			list ($context['warned_message_subject']) = $smcFunc['db_fetch_row']($request);
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 	}
 
@@ -648,7 +648,7 @@ function issueWarning($memID)
 			'body' => $row['body'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Setup the "default" templates.
 	foreach (['spamming', 'offence', 'insulting'] as $type)
@@ -692,7 +692,7 @@ function list_getUserWarningCount($memID)
 		]
 	);
 	list ($total_warnings) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $total_warnings;
 }
@@ -740,7 +740,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 			'id_notice' => $row['id_notice'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $previous_warnings;
 }
@@ -813,7 +813,7 @@ function deleteAccount2($memID)
 			]
 		);
 		list ($another) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($another))
 			fatal_lang_error('at_least_one_admin', 'critical');
@@ -847,7 +847,7 @@ function deleteAccount2($memID)
 				$polls_to_update[] = $row['id_poll'];
 			}
 
-			$smcFunc['db_free_result']($get_voted_polls);
+			$smcFunc['db']->free_result($get_voted_polls);
 
 			// Now we delete the votes and update the polls
 			if (!empty($polls_to_update))
@@ -913,7 +913,7 @@ function deleteAccount2($memID)
 				$topicIDs = [];
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$topicIDs[] = $row['id_topic'];
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 			// And all the IC topics.
 			if (!empty($_POST['deleteTopics_ic']) && $ooc_account)
@@ -936,7 +936,7 @@ function deleteAccount2($memID)
 				{
 					$topicIDs[] = $row['id_topic'];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			// Find all the messages by the OOC character that aren't in the topics we already found.
@@ -962,7 +962,7 @@ function deleteAccount2($memID)
 				{
 					$msgIDs[] = $row['id_msg'];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 			// Find all the IC posts next.
 			if (!empty($_POST['deletePosts_ic']))
@@ -987,7 +987,7 @@ function deleteAccount2($memID)
 				{
 					$msgIDs[] = $row['id_msg'];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			if (!empty($topicIDs))
@@ -1127,7 +1127,7 @@ function subscriptions($memID)
 
 		$context['subscriptions'][$row['id_subscribe']]['sublog'] = $row['id_sublog'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Simple "done"?
 	if (isset($_GET['done']))

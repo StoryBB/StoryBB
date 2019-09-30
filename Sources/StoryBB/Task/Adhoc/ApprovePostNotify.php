@@ -51,7 +51,7 @@ class ApprovePostNotify extends \StoryBB\Task\Adhoc
 			$members[] = $row['id_member'];
 			$watched[$row['id_member']] = $row;
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if (empty($members))
 			return true;

@@ -51,7 +51,7 @@ function ListContact()
 					FROM {db_prefix}contact_form AS cf'
 				);
 				list($count) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				return $count;
 			},
@@ -77,7 +77,7 @@ function ListContact()
 				{
 					$rows[$row['id_message']] = $row;
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				return $rows;
 			},
@@ -175,12 +175,12 @@ function ViewContact()
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 	{
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
 	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
 	$context['contact']['message'] = str_replace("\n", "<br>\n", $context['contact']['message']);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['contact']['time_received_timeformat'] = timeformat($context['contact']['time_received']);
 
@@ -202,7 +202,7 @@ function ViewContact()
 		$row['time_sent_format'] = timeformat($row['time_sent']);
 		$context['contact']['previous'][] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// And set up the template.
 	$context['page_title'] = $txt['contact_us'];
@@ -238,11 +238,11 @@ function ReplyContact()
 	);
 	if ($smcFunc['db_num_rows']($request) == 0)
 	{
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);
 	}
 	$context['contact'] = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Nothing entered?
 	if (empty($message))

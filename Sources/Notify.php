@@ -117,7 +117,7 @@ function TopicNotify()
 				]
 			);
 			$log = $smcFunc['db_fetch_assoc']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 			if (empty($log))
 			{
 				$insert = true;

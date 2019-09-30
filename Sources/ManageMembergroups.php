@@ -387,7 +387,7 @@ function AddMembergroup()
 					]
 				);
 				list ($copy_type) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Protected groups are... well, protected!
 				if ($copy_type == 1)
@@ -415,7 +415,7 @@ function AddMembergroup()
 					if (empty($context['illegal_permissions']) || !in_array($row['permission'], $context['illegal_permissions']))
 						$inserts[] = [$id_group, $row['permission'], $row['add_deny']];
 				}
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				if (!empty($inserts))
 					$smcFunc['db_insert']('insert',
@@ -437,7 +437,7 @@ function AddMembergroup()
 			$inserts = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$inserts[] = [$id_group, $row['id_profile'], $row['permission'], $row['add_deny']];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (!empty($inserts))
 				$smcFunc['db_insert']('insert',
@@ -460,7 +460,7 @@ function AddMembergroup()
 					]
 				);
 				$group_info = $smcFunc['db_fetch_assoc']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// ...and update the new membergroup with it.
 				$smcFunc['db_query']('', '
@@ -570,7 +570,7 @@ function AddMembergroup()
 			'name' => $row['group_name']
 		];
 	}
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT b.id_cat, c.name AS cat_name, b.id_board, b.name, b.child_level
@@ -603,7 +603,7 @@ function AddMembergroup()
 		];
 
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Now, let's sort the list of categories into the boards for templates that like that.
 	$temp_boards = [];
@@ -680,7 +680,7 @@ function EditMembergroup()
 			]
 		);
 		list ($_REQUEST['group']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Now, do we have a valid id?
@@ -705,7 +705,7 @@ function EditMembergroup()
 	// Why don't we have a $smcFunc['db_result'] function?
 	$result = $smcFunc['db_fetch_row']($request);
 	$context['is_moderator_group'] = ($result[0] > 0);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// The delete this membergroup button was pressed.
 	if (isset($_POST['delete']))
@@ -758,7 +758,7 @@ function EditMembergroup()
 				]
 			);
 			list ($inherit_type) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// Set variables to their proper value.
@@ -816,7 +816,7 @@ function EditMembergroup()
 					FROM {db_prefix}boards');
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$accesses[(int) $row['id_board']] = 'allow';
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			$changed_boards['allow'] = [];
@@ -850,7 +850,7 @@ function EditMembergroup()
 							'column' => $board_action == 'allow' ? 'member_groups' : 'deny_member_groups',
 						]
 					);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				// Add the membergroup to all boards that hadn't been set yet.
 				if (!empty($changed_boards[$board_action]))
@@ -888,7 +888,7 @@ function EditMembergroup()
 				$updates = [];
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$updates[$row['additional_groups']][] = $row['id_member'];
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				foreach ($updates as $additional_groups => $memberArray)
 				{
@@ -926,7 +926,7 @@ function EditMembergroup()
 				]
 			);
 			list ($have_joinable) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Do we need to update the setting?
 			if ((empty($modSettings['show_group_membership']) && $have_joinable) || (!empty($modSettings['show_group_membership']) && !$have_joinable))
@@ -976,7 +976,7 @@ function EditMembergroup()
 				);
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$group_moderators[] = $row['id_member'];
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			// Make sure we don't have any duplicates first...
@@ -1022,7 +1022,7 @@ function EditMembergroup()
 	if ($smcFunc['db_num_rows']($request) == 0)
 		fatal_lang_error('membergroup_does_not_exist', false);
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$row['icons'] = explode('#', $row['icons']);
 
@@ -1059,7 +1059,7 @@ function EditMembergroup()
 	$context['group']['moderators'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['group']['moderators'][$row['id_member']] = $row['real_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	Autocomplete::init('member', '#group_moderators', 0, array_keys($context['group']['moderators']));
 
@@ -1097,7 +1097,7 @@ function EditMembergroup()
 				'deny' => !(empty($row['cannot_access']) || $row['cannot_access'] == 'f'),
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Now, let's sort the list of categories into the boards for templates that like that.
 		$temp_boards = [];
@@ -1171,7 +1171,7 @@ function EditMembergroup()
 	$context['inheritable_groups'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$context['inheritable_groups'][$row['id_group']] = $row['group_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	call_integration_hook('integrate_view_membergroup');
 
@@ -1232,7 +1232,7 @@ function MembergroupBadges()
 		}
 		$context['groups'][$row['is_character'] ? 'characters' : 'accounts'][$row['id_group']] = $row;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['page_title'] = $txt['badges'];
 	$context['sub_template'] = 'admin_membergroups_badges';

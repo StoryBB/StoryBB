@@ -88,7 +88,7 @@ function RemindPick()
 	// Maybe email?
 	if ($smcFunc['db_num_rows']($request) == 0 && empty($_REQUEST['uid']))
 	{
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$request = $smcFunc['db_query']('', '
 			SELECT id_member, real_name, member_name, email_address, is_activated, validation_code, lngfile, secret_question
@@ -102,7 +102,7 @@ function RemindPick()
 	}
 
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If the user isn't activated/approved, give them some feedback on what to do next.
 	if ($row['is_activated'] != 1)
@@ -232,7 +232,7 @@ function setPassword2()
 		fatal_lang_error('invalid_userid', false);
 
 	list ($realCode, $username, $email, $flood_value) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Is the password actually valid?
 	require_once($sourcedir . '/Subs-Auth.php');
@@ -303,7 +303,7 @@ function SecretAnswerInput()
 		fatal_lang_error('username_no_exist', false);
 
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If there is NO secret question - then throw an error.
 	if (trim($row['secret_question']) == '')
@@ -349,7 +349,7 @@ function SecretAnswer2()
 		fatal_lang_error('username_no_exist', false);
 
 	$row = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Check if the secret answer is correct.
 	if ($row['secret_question'] == '' || $row['secret_answer'] == '' || md5($_POST['secret_answer']) != $row['secret_answer'])

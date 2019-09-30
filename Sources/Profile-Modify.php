@@ -258,7 +258,7 @@ function loadProfileFields($force_reload = false)
 					]
 				);
 				list ($name) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 
 				$context['member']['theme'] = [
 					'id' => $cur_profile['id_theme'],
@@ -974,7 +974,7 @@ function makeThemeChanges($memID, $id_theme)
 	$custom_fields = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$custom_fields[] = $row['col_name'];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// These are the theme changes...
 	$themeSetArray = [];
@@ -1245,7 +1245,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true, $returnErrors =
 			$user_profile[$memID]['options'][$row['col_name']] = $value;
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$hook_errors = call_integration_hook('integrate_save_custom_profile_fields', [&$changes, &$log_changes, &$errors, $returnErrors, $memID, $area, $sanitize]);
 
@@ -1432,7 +1432,7 @@ function editBuddies($memID)
 				'enclose' => $row['enclose'],
 			];
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (!empty($buddiesArray))
 	{
@@ -1449,7 +1449,7 @@ function editBuddies($memID)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 			$buddies[] = $row['id_member'];
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	$context['buddy_count'] = count($buddies);
@@ -1608,7 +1608,7 @@ function editIgnoreList($memID)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($result))
 			$ignored[] = $row['id_member'];
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 	}
 
 	$context['ignore_count'] = count($ignored);
@@ -2474,7 +2474,7 @@ function list_getTopicNotificationCount($memID)
 		]
 	);
 	list ($totalNotifications) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return (int) $totalNotifications;
 }
@@ -2547,7 +2547,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 			'unwatched' => $row['unwatched'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $notification_topics;
 }
@@ -2593,7 +2593,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 			'new' => $row['board_read'] < $row['id_msg_updated'],
 			'notify_pref' => isset($prefs['board_notify_' . $row['id_board']]) ? $prefs['board_notify_' . $row['id_board']] : (!empty($prefs['board_notify']) ? $prefs['board_notify'] : 0),
 		];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $notification_boards;
 }
@@ -2642,7 +2642,7 @@ function loadThemeOptions($memID)
 				$row['value'] = $_POST['options'][$row['variable']];
 			$context['member']['options'][$row['variable']] = $row['value'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Load up the default theme options for any missing.
 		foreach ($temp as $k => $v)
@@ -2699,7 +2699,7 @@ function ignoreboards($memID)
 			'selected' => (bool) $row['is_ignored'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	require_once($sourcedir . '/Subs-Boards.php');
 	sortCategories($context['categories']);
@@ -2812,7 +2812,7 @@ function profileLoadGroups()
 			'can_be_primary' => $row['hidden'] != 2,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$context['member']['group_id'] = $user_settings['id_group'];
 
@@ -2949,7 +2949,7 @@ function profileSaveGroups(&$value)
 		$protected_groups = [1];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$protected_groups[] = $row['id_group'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		$protected_groups = array_unique($protected_groups);
 	}
@@ -2962,7 +2962,7 @@ function profileSaveGroups(&$value)
 		WHERE is_character = 1');
 	while ($row = $smcFunc['db_fetch_row']($request))
 		$char_groups[] = $row[0];
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// No primary character group for you!
 	if (in_array($value, $char_groups))
@@ -3025,7 +3025,7 @@ function profileSaveGroups(&$value)
 				]
 			);
 			list ($another) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (empty($another))
 				fatal_lang_error('at_least_one_admin', 'critical');
@@ -3524,7 +3524,7 @@ function profileValidateEmail($email, $memID = 0)
 
 	if ($smcFunc['db_num_rows']($request) > 0)
 		return 'email_taken';
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return true;
 }
@@ -3663,7 +3663,7 @@ function groupMembership($memID)
 			'can_leave' => $row['id_group'] != 1 && $row['group_type'] > 1 ? true : false,
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Add registered members on the end.
 	$context['groups']['member'][0] = [
@@ -3739,7 +3739,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			]
 		);
 		list ($is_protected) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if ($is_protected == 1)
 			isAllowedTo('admin_forum');
@@ -3789,7 +3789,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 		if ((!$context['can_manage_protected'] && $row['group_type'] == 1) || (!$context['can_manage_membergroups'] && $row['group_type'] == 0))
 			$canChangePrimary = false;
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Didn't find the target?
 	if (!$foundTarget)
@@ -3811,7 +3811,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			]
 		);
 		list ($disallow) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		if ($disallow)
 			isAllowedTo('admin_forum');
@@ -3834,7 +3834,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 		);
 		if ($smcFunc['db_num_rows']($request) != 0)
 			fatal_lang_error('profile_error_already_requested_group');
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Log the request.
 		$smcFunc['db_insert']('',

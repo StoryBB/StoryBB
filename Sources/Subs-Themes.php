@@ -146,7 +146,7 @@ function get_all_themes($enable_only = false)
 		$context['themes'][$row['id_theme']][$row['variable']] = $row['value'];
 	}
 
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -247,7 +247,7 @@ function theme_install($to_install = [])
 		);
 
 		$to_update = $smcFunc['db_fetch_assoc']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Got something, lets figure it out what to do next.
 		if (!empty($to_update) && !empty($to_update['version']))
@@ -286,7 +286,7 @@ function theme_install($to_install = [])
 		]
 	);
 	list ($id_theme) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	// This will be theme number...
 	$id_theme++;

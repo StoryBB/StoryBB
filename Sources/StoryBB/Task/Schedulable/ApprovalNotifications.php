@@ -81,7 +81,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 			// Store the profile for a bit later.
 			$profiles[$row['id_board']] = $row['id_profile'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Delete it all!
 		$smcFunc['db_query']('', '
@@ -120,7 +120,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 			if ($row['add_deny'])
 				$addGroups[] = $row['id_group'];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Grab the moderators if they have permission!
 		$mods = [];
@@ -139,7 +139,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 				// Make sure they get included in the big loop.
 				$members[] = $row['id_member'];
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 		}
 
 		// @todo People who are in groups who are group moderators of boards?
@@ -169,7 +169,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 				'name' => $row['real_name'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		// Now filter out the people who don't want it.
 		require_once($sourcedir . '/Subs-Notify.php');

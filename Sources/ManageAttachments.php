@@ -664,7 +664,7 @@ function list_getFiles($start, $items_per_page, $sort, $browse_type)
 	$files = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$files[] = $row;
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $files;
 }
@@ -706,7 +706,7 @@ function list_getNumFiles($browse_type)
 		);
 
 	list ($num_files) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $num_files;
 }
@@ -739,7 +739,7 @@ function MaintainFiles()
 		]
 	);
 	list ($context['num_attachments']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$context['num_attachments'] = comma_format($context['num_attachments'], 0);
 
 	// Also get the avatar amount....
@@ -754,7 +754,7 @@ function MaintainFiles()
 		]
 	);
 	list ($context['num_avatars']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$context['num_avatars'] = comma_format($context['num_avatars'], 0);
 
 	$request = $smcFunc['db_query']('', '
@@ -766,7 +766,7 @@ function MaintainFiles()
 		]
 	);
 	list ($context['num_exports']) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$context['num_exports'] = comma_format($context['num_exports'], 0);
 
 	// Check the size of all the directories.
@@ -779,7 +779,7 @@ function MaintainFiles()
 		]
 	);
 	list ($attachmentDirSize) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Divide it into kilobytes.
 	$attachmentDirSize /= 1024;
@@ -796,7 +796,7 @@ function MaintainFiles()
 		]
 	);
 	list ($current_dir_files, $current_dir_size) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 	$current_dir_size /= 1024;
 
 	// If they specified a limit only....
@@ -1097,7 +1097,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 
 		$attach[] = $row['id_attach'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Removed attachments don't have to be updated anymore.
 	$parents = array_diff($parents, $attach);
@@ -1135,7 +1135,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 					'filename' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($row['filename'])),
 				]
 			);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	if (!empty($attach))
@@ -1220,7 +1220,7 @@ function RepairAttachments()
 			]
 		);
 		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
@@ -1256,7 +1256,7 @@ function RepairAttachments()
 			}
 			if ($smcFunc['db_num_rows']($result) != 0)
 				$to_fix[] = 'missing_thumbnail_parent';
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_remove) && in_array('missing_thumbnail_parent', $to_fix))
@@ -1290,7 +1290,7 @@ function RepairAttachments()
 			]
 		);
 		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
@@ -1315,7 +1315,7 @@ function RepairAttachments()
 			}
 			if ($smcFunc['db_num_rows']($result) != 0)
 				$to_fix[] = 'parent_missing_thumbnail';
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_update) && in_array('parent_missing_thumbnail', $to_fix))
@@ -1347,7 +1347,7 @@ function RepairAttachments()
 			]
 		);
 		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 250)
 		{
@@ -1447,7 +1447,7 @@ function RepairAttachments()
 				$to_fix[] = 'file_wrong_size';
 			if (in_array('wrong_folder', $errors_found))
 				$to_fix[] = 'wrong_folder';
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_remove))
@@ -1495,7 +1495,7 @@ function RepairAttachments()
 			]
 		);
 		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
@@ -1534,7 +1534,7 @@ function RepairAttachments()
 			}
 			if ($smcFunc['db_num_rows']($result) != 0)
 				$to_fix[] = 'avatar_no_member';
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_remove) && in_array('avatar_no_member', $to_fix))
@@ -1568,7 +1568,7 @@ function RepairAttachments()
 			]
 		);
 		list ($thumbnails) = $smcFunc['db_fetch_row']($result);
-		$smcFunc['db_free_result']($result);
+		$smcFunc['db']->free_result($result);
 
 		for (; $_GET['substep'] < $thumbnails; $_GET['substep'] += 500)
 		{
@@ -1610,7 +1610,7 @@ function RepairAttachments()
 			}
 			if ($smcFunc['db_num_rows']($result) != 0)
 				$to_fix[] = 'attachment_no_msg';
-			$smcFunc['db_free_result']($result);
+			$smcFunc['db']->free_result($result);
 
 			// Do we need to delete what we have?
 			if ($fix_errors && !empty($to_remove) && in_array('attachment_no_msg', $to_fix))
@@ -1687,7 +1687,7 @@ function RepairAttachments()
 										$to_fix[] = 'files_without_attachment';
 									}
 								}
-								$smcFunc['db_free_result']($request);
+								$smcFunc['db']->free_result($request);
 							}
 						}
 						else
@@ -1813,7 +1813,7 @@ function ApproveAttach()
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$attachments[] = $row['id_attach'];
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 	elseif (!empty($_GET['aid']))
 		$attachments[] = (int) $_GET['aid'];
@@ -1850,7 +1850,7 @@ function ApproveAttach()
 			$redirect = 'topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (empty($attachments))
 		fatal_lang_error('no_access', false);
@@ -1903,7 +1903,7 @@ function ApproveAttachments($attachments)
 
 		$attachments[] = $row['id_attach'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	if (empty($attachments))
 		return 0;
@@ -1940,7 +1940,7 @@ function ApproveAttachments($attachments)
 				'filename' => preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', StringLibrary::escape($row['filename'])),
 			]
 		);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Remove from the approval queue.
 	$smcFunc['db_query']('', '
@@ -2070,7 +2070,7 @@ function ManageAttachmentPaths()
 					);
 
 					list ($num_attach) = $smcFunc['db_fetch_row']($request);
-					$smcFunc['db_free_result']($request);
+					$smcFunc['db']->free_result($request);
 
 					// A check to see if it's a used base dir.
 					if (!empty($modSettings['attachment_basedirectories']))
@@ -2506,7 +2506,7 @@ function list_getAttachDirs()
 		$expected_files[$row['id_folder']] = $row['num_attach'];
 		$expected_size[$row['id_folder']] = $row['size_attach'];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$attachdirs = [];
 	foreach ($modSettings['attachmentUploadDir'] as $id => $dir)
@@ -2695,7 +2695,7 @@ function TransferAttachments()
 			]
 		);
 		list ($total_progress) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 		$total_progress -= $start;
 
 		if ($total_progress < 1)
@@ -2742,7 +2742,7 @@ function TransferAttachments()
 					]
 				);
 				list ($dir_files, $dir_size) = $smcFunc['db_fetch_row']($request);
-				$smcFunc['db_free_result']($request);
+				$smcFunc['db']->free_result($request);
 			}
 
 			// Find some attachments to move
@@ -2821,7 +2821,7 @@ function TransferAttachments()
 				else
 					$total_not_moved++;
 			}
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			if (!empty($moved))
 			{

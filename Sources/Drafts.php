@@ -333,7 +333,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 
 	// load up the data
 	$draft_info = $smcFunc['db_fetch_assoc']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// Load it up for the templates as well
 	if (!empty($load))
@@ -473,7 +473,7 @@ function ShowDrafts($member_id, $topic = false, $draft_type = 0)
 			];
 		}
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 }
 
 /**
@@ -554,7 +554,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 		]
 	);
 	list ($msgCount) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$maxPerPage = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
 	$maxIndex = $maxPerPage;
@@ -634,7 +634,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 			'sticky' => (bool) $row['is_sticky'],
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// If the drafts were retrieved in reverse order, get them right again.
 	if ($reverse)
@@ -713,7 +713,7 @@ function showPMDrafts($memID = -1)
 		]
 	);
 	list ($msgCount) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	$maxPerPage = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
 	$maxIndex = $maxPerPage;
@@ -797,7 +797,7 @@ function showPMDrafts($memID = -1)
 				$recipientType = in_array($result['id_member'], $recipient_ids['bcc']) ? 'bcc' : 'to';
 				$recipients[$recipientType][] = $result['real_name'];
 			}
-			$smcFunc['db_free_result']($request_2);
+			$smcFunc['db']->free_result($request_2);
 		}
 
 		// Add the items to the array for template use
@@ -814,7 +814,7 @@ function showPMDrafts($memID = -1)
 			'days_ago_string' => numeric_context('days_ago', floor((time() - $row['poster_time']) / 86400)),
 		];
 	}
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	// if the drafts were retrieved in reverse order, then put them in the right order again.
 	if ($reverse)

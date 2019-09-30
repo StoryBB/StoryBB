@@ -479,7 +479,7 @@ function ModifySignatureSettings($return_config = false)
 			]
 		);
 		list ($context['max_member']) = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		while (!$done)
 		{
@@ -671,7 +671,7 @@ function ModifySignatureSettings($return_config = false)
 			}
 			if ($smcFunc['db_num_rows']($request) == 0)
 				$done = true;
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			// Do we need to delete what we have?
 			if (!empty($changes))
@@ -1104,7 +1104,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$list[] = $row;
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	return $list;
@@ -1126,7 +1126,7 @@ function list_getProfileFieldSize()
 	);
 
 	list ($numProfileFields) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
+	$smcFunc['db']->free_result($request);
 
 	return $numProfileFields;
 }
@@ -1209,7 +1209,7 @@ function EditCustomProfiles()
 				'placement' => $row['placement'],
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 	}
 
 	// Setup the default values as needed.
@@ -1365,7 +1365,7 @@ function EditCustomProfiles()
 				FROM {db_prefix}custom_fields');
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$current_fields[$row['id_field']] = $row['col_name'];
-			$smcFunc['db_free_result']($request);
+			$smcFunc['db']->free_result($request);
 
 			$unique = false;
 			for ($i = 0; !$unique && $i < 9; $i ++)
@@ -1587,7 +1587,7 @@ function EditCustomProfiles()
 				'options' => (!empty($row['field_options']) ? explode(',', $row['field_options']) : []),
 			];
 		}
-		$smcFunc['db_free_result']($request);
+		$smcFunc['db']->free_result($request);
 
 		updateSettings(['displayFields' => json_encode($fields)]);
 		session_flash('success', $txt['settings_saved']);
@@ -1613,7 +1613,7 @@ function custFieldsMaxOrder()
 		);
 
 	list ($order_count) = $smcFunc['db_fetch_row']($result);
-	$smcFunc['db_free_result']($result);
+	$smcFunc['db']->free_result($result);
 
 	return (int) $order_count;
 }
