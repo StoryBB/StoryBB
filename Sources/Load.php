@@ -151,15 +151,11 @@ function reloadSettings()
 				$string = preg_replace('~(?:' . $ent_list . '|.)$~u', '', $string);
 			return $string;
 		},
-		'ucfirst' => function($string)
-		{
-			return StringLibrary::toUpper(StringLibrary::substr($string, 0, 1)) . StringLibrary::substr($string, 1);
-		},
 		'ucwords' => function($string) use (&$smcFunc)
 		{
 			$words = preg_split('~([\s\r\n\t]+)~', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
 			for ($i = 0, $n = count($words); $i < $n; $i += 2)
-				$words[$i] = $smcFunc['ucfirst']($words[$i]);
+				$words[$i] = StringLibrary::ucfirst($words[$i]);
 			return implode('', $words);
 		},
 	];

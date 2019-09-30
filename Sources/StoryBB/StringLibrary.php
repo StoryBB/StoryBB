@@ -63,4 +63,9 @@ class StringLibrary
 		$ent_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', self::entity_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 		return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
 	}
+
+	public static function ucfirst($string)
+	{
+		return self::toUpper(self::substr($string, 0, 1)) . self::substr($string, 1);
+	}
 }
