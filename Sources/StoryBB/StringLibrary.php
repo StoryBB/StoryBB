@@ -19,4 +19,9 @@ class StringLibrary
 	{
 		return mb_strtolower($string, 'UTF-8');
 	}
+
+	public static function toUpper($string)
+	{
+		return mb_strtoupper($string, 'UTF-8');
+	}
 }

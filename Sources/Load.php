@@ -18,6 +18,7 @@ use StoryBB\Helper\Parser;
 use StoryBB\Helper\BrowserDetect;
 use StoryBB\Hook\Manager as HookManager;
 use StoryBB\Plugin\Manager as PluginManager;
+use StoryBB\StringLibrary;
 
 /**
  * Load the $modSettings array.
@@ -151,10 +152,6 @@ function reloadSettings()
 			$ent_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 			return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
 		},
-		'strtoupper' => function($string)
-		{
-			return mb_strtoupper($string, 'UTF-8');
-		},
 		'truncate' => function($string, $length) use ($ent_check, $ent_list, &$smcFunc)
 		{
 			$string = $ent_check($string);
@@ -166,7 +163,7 @@ function reloadSettings()
 		},
 		'ucfirst' => function($string) use (&$smcFunc)
 		{
-			return $smcFunc['strtoupper']($smcFunc['substr']($string, 0, 1)) . $smcFunc['substr']($string, 1);
+			return StringLibrary::toUpper($smcFunc['substr']($string, 0, 1)) . $smcFunc['substr']($string, 1);
 		},
 		'ucwords' => function($string) use (&$smcFunc)
 		{
