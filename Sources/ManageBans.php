@@ -1097,11 +1097,9 @@ function removeBanLogs($ids = [])
 	global $smcFunc;
 
 	if (empty($ids))
-		$smcFunc['db_query']('truncate_table', '
-			TRUNCATE {db_prefix}log_banned',
-			[
-			]
-		);
+	{
+		$smcFunc['db']->truncate_table('log_banned');
+	}
 	else
 	{
 		if (!is_array($ids))

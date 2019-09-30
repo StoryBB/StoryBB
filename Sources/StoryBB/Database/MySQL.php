@@ -210,4 +210,14 @@ class MySQL implements DatabaseAdapter
 			return false;
 		}
 	}
+
+	public function truncate_table(string $tablename)
+	{
+		global $smcFunc;
+
+		$smcFunc['db_query']('truncate_table', '
+			TRUNCATE {db_prefix}' . $tablename,
+			[]
+		);
+	}
 }

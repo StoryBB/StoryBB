@@ -333,11 +333,9 @@ function deleteErrors()
 
 	// Delete all or just some?
 	if (isset($_POST['delall']) && !isset($filter))
-		$smcFunc['db_query']('truncate_table', '
-			TRUNCATE {db_prefix}log_errors',
-			[
-			]
-		);
+	{
+		$smcFunc['db']->truncate_table('log_errors');
+	}
 	// Deleting all with a filter?
 	elseif (isset($_POST['delall']) && isset($filter))
 		$smcFunc['db_query']('', '

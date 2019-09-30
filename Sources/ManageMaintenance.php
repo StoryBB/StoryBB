@@ -279,22 +279,16 @@ function MaintainEmptyUnimportantLogs()
 		DELETE FROM {db_prefix}log_banned');
 
 	// Start id_error back at 0 and dump the error log.
-	$smcFunc['db_query']('truncate_table', '
-		TRUNCATE {db_prefix}log_errors');
+	$smcFunc['db']->truncate_table('log_errors');
 
 	// Clear out the spam log.
 	$smcFunc['db_query']('', '
 		DELETE FROM {db_prefix}log_floodcontrol');
 
 	// Last but not least, the search logs!
-	$smcFunc['db_query']('truncate_table', '
-		TRUNCATE {db_prefix}log_search_topics');
-
-	$smcFunc['db_query']('truncate_table', '
-		TRUNCATE {db_prefix}log_search_messages');
-
-	$smcFunc['db_query']('truncate_table', '
-		TRUNCATE {db_prefix}log_search_results');
+	$smcFunc['db']->truncate_table('log_search_topics');
+	$smcFunc['db']->truncate_table('log_search_messages');
+	$smcFunc['db']->truncate_table('log_search_results');
 
 	updateSettings(['search_pointer' => 0]);
 
