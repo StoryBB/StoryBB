@@ -2614,29 +2614,6 @@ function fixchar__callback($matches)
 }
 
 /**
- * Strips out invalid html entities, replaces others with html style &#123; codes
- *
- * Callback function used of preg_replace_callback in smcFunc $ent_checks, for example
- * strpos, strlen, substr etc
- *
- * @param array $matches An array of matches (relevant info should be the 3rd item in the array)
- * @return string The fixed string
- */
-function entity_fix__callback($matches)
-{
-	if (!isset($matches[2]))
-		return '';
-
-	$num = $matches[2][0] === 'x' ? hexdec(substr($matches[2], 1)) : (int) $matches[2];
-
-	// we don't allow control characters, characters out of range, byte markers, etc
-	if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num == 0x202D || $num == 0x202E)
-		return '';
-	else
-		return '&#' . $num . ';';
-}
-
-/**
  * Converts a normal notation IP address into packed binary format.
  *
  * @param string $ip_address An IP address in IPv4, IPv6 or decimal notation

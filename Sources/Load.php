@@ -96,7 +96,7 @@ function reloadSettings()
 	$ent_list = '&(?:#\d{1,7}|quot|amp|lt|gt|nbsp);';
 	$ent_check = function($string)
 	{
-		$string = preg_replace_callback('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $string);
+		$string = preg_replace_callback('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', ['StoryBB\\StringLibrary', 'fix_entities'], $string);
 		return $string;
 	};
 
@@ -105,11 +105,6 @@ function reloadSettings()
 
 	// global array of anonymous helper functions, used mostly to properly handle multi byte strings
 	$smcFunc += [
-		'entity_fix' => function($string)
-		{
-			$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
-			return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202E || $num === 0x202D ? '' : '&#' . $num . ';';
-		},
 		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'UTF-8') use ($ent_check)
 		{
 			return $ent_check(htmlspecialchars($string, $quote_style, $charset));

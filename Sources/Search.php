@@ -13,6 +13,7 @@
 use StoryBB\Helper\Autocomplete;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\StringLibrary;
 
 /**
  * Ask the user what they want to search for.
@@ -1763,7 +1764,7 @@ function prepareSearchContext($reset = false)
 				foreach ($context['key_words'] as $keyword)
 				{
 					$keyword = un_htmlspecialchars($keyword);
-					$keyword = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', strtr($keyword, ['\\\'' => '\'', '&' => '&amp;']));
+					$keyword = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', ['StoryBB\\StringLibrary', 'fix_entities'], strtr($keyword, ['\\\'' => '\'', '&' => '&amp;']));
 
 					if (preg_match('~[\'\.,/@%&;:(){}\[\]_\-+\\\\]$~', $keyword) != 0 || preg_match('~^[\'\.,/@%&;:(){}\[\]_\-+\\\\]~', $keyword) != 0)
 						$force_partial_word = true;
@@ -1787,7 +1788,7 @@ function prepareSearchContext($reset = false)
 			}
 
 			// Re-fix the international characters.
-			$message['body'] = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $message['body']);
+			$message['body'] = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', ['StoryBB\\StringLibrary', 'fix_entities'], $message['body']);
 		}
 	}
 	else
