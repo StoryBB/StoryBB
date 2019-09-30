@@ -1018,8 +1018,8 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 			AND ') . '({raw:real_name} {raw:operator} LOWER({string:check_name}) OR {raw:member_name} {raw:operator} LOWER({string:check_name}))
 		LIMIT 1',
 		[
-			'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
-			'member_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(member_name)' : 'member_name',
+			'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
+			'member_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(member_name)' : 'member_name',
 			'current_member' => $current_ID_MEMBER,
 			'check_name' => $checkName,
 			'operator' => $operator,
@@ -1038,7 +1038,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 		WHERE {raw:group_name} LIKE {string:check_name}
 		LIMIT 1',
 		[
-			'group_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(group_name)' : 'group_name',
+			'group_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(group_name)' : 'group_name',
 			'check_name' => $checkName,
 		]
 	);

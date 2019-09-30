@@ -76,7 +76,7 @@ class Group extends AbstractCompletable implements Completable
 			FROM {db_prefix}membergroups AS mg
 			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters(),
 			[
-				'group_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(group_name)' : 'group_name',
+				'group_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(group_name)' : 'group_name',
 				'search' => '%' . $this->escape_term($this->term) . '%',
 			]
 		);
@@ -119,7 +119,7 @@ class Group extends AbstractCompletable implements Completable
 			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters() . '
 			LIMIT {int:start}, {int:limit}',
 			[
-				'group_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(group_name)' : 'group_name',
+				'group_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(group_name)' : 'group_name',
 				'search' => '%' . $this->escape_term($this->term) . '%',
 				'start' => $start,
 				'limit' => $limit,

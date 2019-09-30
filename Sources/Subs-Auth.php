@@ -407,8 +407,8 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 		$email_condition = '';
 
 	// Get the case of the columns right - but only if we need to as things like MySQL will go slow needlessly otherwise.
-	$member_name = $smcFunc['db_case_sensitive'] ? 'LOWER(member_name)' : 'member_name';
-	$real_name = $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name';
+	$member_name = $smcFunc['db']->is_case_sensitive() ? 'LOWER(member_name)' : 'member_name';
+	$real_name = $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name';
 
 	// Searches.
 	$member_name_search = $member_name . ' ' . $comparison . ' ' . implode( ' OR ' . $member_name . ' ' . $comparison . ' ', $names_list);

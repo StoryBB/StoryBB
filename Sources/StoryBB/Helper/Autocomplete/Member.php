@@ -42,7 +42,7 @@ class Member extends AbstractCompletable implements Completable
 			WHERE {raw:real_name} LIKE {string:search}
 				AND is_activated IN (1, 11)',
 			[
-				'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
+				'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
 				'search' => $this->escape_term($this->term),
 			]
 		);
@@ -88,7 +88,7 @@ class Member extends AbstractCompletable implements Completable
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
-				'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
+				'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
 				'search' => $this->escape_term($this->term),
 				'start' => $start,
 				'limit' => $limit,

@@ -382,7 +382,7 @@ function ViewMemberlist()
 				// Replace the wildcard characters ('*' and '?') into MySQL ones.
 				$parameter = strtolower(strtr(StringLibrary::escape($search_params[$param_name], ENT_QUOTES), ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_']));
 
-				if ($smcFunc['db_case_sensitive'])
+				if ($smcFunc['db']->is_case_sensitive())
 					$query_parts[] = '(LOWER(' . implode(') LIKE {string:' . $param_name . '_normal} OR LOWER(', $param_info['db_fields']) . ') LIKE {string:' . $param_name . '_normal})';
 				else
 					$query_parts[] = '(' . implode(' LIKE {string:' . $param_name . '_normal} OR ', $param_info['db_fields']) . ' LIKE {string:' . $param_name . '_normal})';

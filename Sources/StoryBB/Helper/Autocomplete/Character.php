@@ -44,7 +44,7 @@ class Character extends AbstractCompletable implements Completable
 				AND is_main = 0
 				AND is_activated IN (1, 11)',
 			[
-				'character_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
+				'character_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 			]
 		);
@@ -92,7 +92,7 @@ class Character extends AbstractCompletable implements Completable
 				AND is_activated IN (1, 11)
 			LIMIT {int:start}, {int:limit}',
 			[
-				'character_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
+				'character_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 				'search' => $this->escape_term($this->term),
 				'start' => $start,
 				'limit' => $limit,

@@ -220,4 +220,9 @@ class MySQL implements DatabaseAdapter
 			[]
 		);
 	}
+
+	public function is_case_sensitive()
+	{
+		return false;
+	}
 }

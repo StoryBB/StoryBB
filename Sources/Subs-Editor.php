@@ -1720,7 +1720,7 @@ function AutoSuggest_Search_Member()
 			AND is_activated IN (1, 11)
 		LIMIT ' . (StringLibrary::strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
 		[
-			'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
+			'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
 			'buddy_list' => $user_info['buddies'],
 			'search' => $_REQUEST['search'],
 		]
@@ -1769,7 +1769,7 @@ function AutoSuggest_Search_MemberChar()
 			AND is_activated IN (1, 11)
 		LIMIT ' . (StringLibrary::strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
 		[
-			'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name',
+			'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name',
 			'buddy_list' => $user_info['buddies'],
 			'search' => $_REQUEST['search'],
 		]
@@ -1802,7 +1802,7 @@ function AutoSuggest_Search_MemberChar()
 			AND mem.is_activated IN (1, 11)
 		LIMIT ' . (StringLibrary::strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
 		[
-			'real_name' => $smcFunc['db_case_sensitive'] ? 'LOWER(character_name)' : 'character_name',
+			'real_name' => $smcFunc['db']->is_case_sensitive() ? 'LOWER(character_name)' : 'character_name',
 			'search' => $_REQUEST['search'],
 		]
 	);

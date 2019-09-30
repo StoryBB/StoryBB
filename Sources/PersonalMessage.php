@@ -1193,7 +1193,7 @@ function MessageSearch2()
 				$where_params['name_' . $k] = $v;
 				$where_clause[] = '{raw:real_name} LIKE {string:name_' . $k . '}';
 				if (!isset($where_params['real_name']))
-					$where_params['real_name'] = $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name';
+					$where_params['real_name'] = $smcFunc['db']->is_case_sensitive() ? 'LOWER(real_name)' : 'real_name';
 			}
 
 			// Who matches those criteria?
@@ -1211,8 +1211,8 @@ function MessageSearch2()
 			elseif ($smcFunc['db_num_rows']($request) == 0)
 			{
 				$userQuery = 'AND pm.id_member_from = 0 AND ({raw:pm_from_name} LIKE {raw:guest_user_name_implode})';
-				$searchq_parameters['guest_user_name_implode'] = '\'' . implode('\' OR ' . ($smcFunc['db_case_sensitive'] ? 'LOWER(pm.from_name)' : 'pm.from_name') . ' LIKE \'', $possible_users) . '\'';
-				$searchq_parameters['pm_from_name'] = $smcFunc['db_case_sensitive'] ? 'LOWER(pm.from_name)' : 'pm.from_name';
+				$searchq_parameters['guest_user_name_implode'] = '\'' . implode('\' OR ' . ($smcFunc['db']->is_case_sensitive() ? 'LOWER(pm.from_name)' : 'pm.from_name') . ' LIKE \'', $possible_users) . '\'';
+				$searchq_parameters['pm_from_name'] = $smcFunc['db']->is_case_sensitive() ? 'LOWER(pm.from_name)' : 'pm.from_name';
 			}
 			else
 			{
@@ -1220,9 +1220,9 @@ function MessageSearch2()
 				while ($row = $smcFunc['db_fetch_assoc']($request))
 					$memberlist[] = $row['id_member'];
 				$userQuery = 'AND (pm.id_member_from IN ({array_int:member_list}) OR (pm.id_member_from = 0 AND ({raw:pm_from_name} LIKE {raw:guest_user_name_implode})))';
-				$searchq_parameters['guest_user_name_implode'] = '\'' . implode('\' OR ' . ($smcFunc['db_case_sensitive'] ? 'LOWER(pm.from_name)' : 'pm.from_name') . ' LIKE \'', $possible_users) . '\'';
+				$searchq_parameters['guest_user_name_implode'] = '\'' . implode('\' OR ' . ($smcFunc['db']->is_case_sensitive() ? 'LOWER(pm.from_name)' : 'pm.from_name') . ' LIKE \'', $possible_users) . '\'';
 				$searchq_parameters['member_list'] = $memberlist;
-				$searchq_parameters['pm_from_name'] = $smcFunc['db_case_sensitive'] ? 'LOWER(pm.from_name)' : 'pm.from_name';
+				$searchq_parameters['pm_from_name'] = $smcFunc['db']->is_case_sensitive() ? 'LOWER(pm.from_name)' : 'pm.from_name';
 			}
 			$smcFunc['db_free_result']($request);
 		}
