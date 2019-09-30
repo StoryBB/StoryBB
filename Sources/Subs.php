@@ -15,6 +15,7 @@ use StoryBB\App;
 use StoryBB\Model\Policy;
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\IP;
+use StoryBB\StringLibrary;
 use GuzzleHttp\Client;
 
 /**
@@ -1767,7 +1768,7 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 	$words = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', strtr($text, ['<br>' => ' ']));
 
 	// Step 2: Entities we left to letters, where applicable, lowercase.
-	$words = un_htmlspecialchars($smcFunc['strtolower']($words));
+	$words = un_htmlspecialchars(StringLibrary::toLower($words));
 
 	// Step 3: Ready to split apart and index!
 	$words = explode(' ', $words);

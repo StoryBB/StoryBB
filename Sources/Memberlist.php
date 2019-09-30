@@ -12,6 +12,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Shows a listing of registered members.
@@ -234,7 +235,7 @@ function MLAll()
 
 	if (!is_numeric($_REQUEST['start']))
 	{
-		if (preg_match('~^[^\'\\\\/]~u', $smcFunc['strtolower']($_REQUEST['start']), $match) === 0)
+		if (preg_match('~^[^\'\\\\/]~u', StringLibrary::toLower($_REQUEST['start']), $match) === 0)
 			fatal_error('Hacker?', false);
 
 		$_REQUEST['start'] = $match[0];
@@ -352,7 +353,7 @@ function MLAll()
 		$last_letter = '';
 		foreach ($context['members'] as $i => $dummy)
 		{
-			$this_letter = $smcFunc['strtolower']($smcFunc['substr']($context['members'][$i]['name'], 0, 1));
+			$this_letter = StringLibrary::toLower($smcFunc['substr']($context['members'][$i]['name'], 0, 1));
 
 			if ($this_letter != $last_letter && preg_match('~[a-z]~', $this_letter) === 1)
 			{

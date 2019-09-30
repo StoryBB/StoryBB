@@ -28,6 +28,7 @@
  */
 
 use StoryBB\App;
+use StoryBB\StringLibrary;
 
 /**
  * Subaction handler - manages the action and delegates control to the proper
@@ -1323,7 +1324,7 @@ function InstallCopy()
 	// Let's add a theme.json to this theme. Most of this should come from the default theme.
 	$json_loaded = @json_decode(file_get_contents($settings['default_theme_dir'] . '/theme.json'), true);
 	$json = [
-		'id' => 'StoryBB:' . $smcFunc['strtolower']($context['to_install']['name']),
+		'id' => 'StoryBB:' . StringLibrary::toLower($context['to_install']['name']),
 		'name' => $context['to_install']['name'],
 		'theme_version' => '1.0',
 		'storybb_version' => $context['to_install']['install_for'],

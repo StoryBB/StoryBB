@@ -15,6 +15,7 @@ namespace StoryBB\Helper\Verifiable;
 use StoryBB\Helper\Verifiable\AbstractVerifiable;
 use StoryBB\Helper\Verifiable\UnverifiableException;
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 class Questions extends AbstractVerifiable implements Verifiable
 {
@@ -66,12 +67,9 @@ class Questions extends AbstractVerifiable implements Verifiable
 				$id_question = $row['id_question'];
 				unset ($row['id_question']);
 
-				// Make them all lowercase. We can't directly use $smcFunc['strtolower'] with array_walk, so do it manually, eh?
+				// Make them all lowercase.
 				$row['answers'] = sbb_json_decode($row['answers'], true);
-				foreach ($row['answers'] as $k => $v)
-				{
-					$row['answers'][$k] = $smcFunc['strtolower']($v);
-				}
+				array_walk($row['answers'], ['StoryBB\\StringLibrary', 'toLower']);
 
 				$this->question_cache['questions'][$id_question] = $row;
 				$this->question_cache['langs'][$row['lngfile']][] = $id_question;

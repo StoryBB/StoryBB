@@ -1242,11 +1242,6 @@ function AdminAccount()
 
 	require_once($sourcedir . '/Subs.php');
 
-	// We need this to properly hash the password for Admin
-	$smcFunc['strtolower'] = function($string) {
-		return mb_strtolower($string, 'UTF-8');
-	};
-
 	if (!isset($_POST['username']))
 		$_POST['username'] = '';
 	if (!isset($_POST['email']))
@@ -1525,11 +1520,6 @@ function DeleteInstall()
 	updateStats('member');
 	updateStats('message');
 	updateStats('topic');
-
-	// This function is needed to do the updateStats('subject') call.
-	$smcFunc['strtolower'] = function($string){
-		return mb_strtolower($string, 'UTF-8');
-	};
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_msg

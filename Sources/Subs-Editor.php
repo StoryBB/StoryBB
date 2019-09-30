@@ -13,6 +13,7 @@
 
 use LightnCandy\LightnCandy;
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * !!!Compatibility!!!
@@ -1707,7 +1708,7 @@ function AutoSuggest_Search_Member()
 {
 	global $user_info, $smcFunc, $context;
 
-	$_REQUEST['search'] = trim($smcFunc['strtolower']($_REQUEST['search'])) . '*';
+	$_REQUEST['search'] = trim(StringLibrary::toLower($_REQUEST['search'])) . '*';
 	$_REQUEST['search'] = strtr($_REQUEST['search'], ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;']);
 
 	// Find the member.
@@ -1756,7 +1757,7 @@ function AutoSuggest_Search_MemberChar()
 {
 	global $user_info, $smcFunc, $context;
 
-	$_REQUEST['search'] = trim($smcFunc['strtolower']($_REQUEST['search'])) . '*';
+	$_REQUEST['search'] = trim(StringLibrary::toLower($_REQUEST['search'])) . '*';
 	$_REQUEST['search'] = strtr($_REQUEST['search'], ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;']);
 
 	// Find the member.

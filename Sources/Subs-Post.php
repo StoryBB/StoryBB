@@ -13,6 +13,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * Takes a message and parses it, returning nothing.
@@ -639,7 +640,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		{
 			if (!is_numeric($recipients[$rec_type][$id]))
 			{
-				$recipients[$rec_type][$id] = $smcFunc['strtolower'](trim(preg_replace('~[<>&"\'=\\\]~', '', $recipients[$rec_type][$id])));
+				$recipients[$rec_type][$id] = StringLibrary::toLower(trim(preg_replace('~[<>&"\'=\\\]~', '', $recipients[$rec_type][$id])));
 				$usernames[$recipients[$rec_type][$id]] = 0;
 			}
 		}
@@ -655,8 +656,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			]
 		);
 		while ($row = $smcFunc['db_fetch_assoc']($request))
-			if (isset($usernames[$smcFunc['strtolower']($row['member_name'])]))
-				$usernames[$smcFunc['strtolower']($row['member_name'])] = $row['id_member'];
+			if (isset($usernames[StringLibrary::toLower($row['member_name'])]))
+				$usernames[StringLibrary::toLower($row['member_name'])] = $row['id_member'];
 		$smcFunc['db_free_result']($request);
 
 		// Replace the usernames with IDs. Drop usernames that couldn't be found.

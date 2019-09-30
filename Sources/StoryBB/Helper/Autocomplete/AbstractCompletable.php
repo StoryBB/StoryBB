@@ -12,6 +12,8 @@
 
 namespace StoryBB\Helper\Autocomplete;
 
+use StoryBB\StringLibrary;
+
 /**
  * Any autocomplete handlers probably should extend this class.
  */
@@ -42,7 +44,7 @@ abstract class AbstractCompletable
 	protected function escape_term(string $term): string
 	{
 		global $smcFunc;
-		$term = trim($smcFunc['strtolower']($term)) . '*';
+		$term = trim(StringLibrary::toLower($term)) . '*';
 		return strtr($term, [
 			'%' => '\%',
 			'_' => '\_',

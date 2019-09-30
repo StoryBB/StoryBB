@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\IP;
+use StoryBB\StringLibrary;
 
 /**
  * Sets the StoryBB-style login cookie and session based on the id_member and password passed.
@@ -378,7 +379,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 	foreach ($names as $i => $name)
 	{
 		// Trim, and fix wildcards for each name.
-		$names[$i] = trim($smcFunc['strtolower']($name));
+		$names[$i] = trim(StringLibrary::toLower($name));
 
 		$maybe_email |= strpos($name, '@') !== false;
 
@@ -594,7 +595,7 @@ function validatePassword($password, $username, $restrict_in = [])
 
 	// Otherwise, hard test next, check for numbers and letters, uppercase too.
 	$good = preg_match('~(\D\d|\d\D)~', $password) != 0;
-	$good &= $smcFunc['strtolower']($password) != $password;
+	$good &= StringLibrary::toLower($password) != $password;
 
 	return $good ? null : 'chars';
 }
@@ -742,7 +743,7 @@ function hash_password($username, $password, $cost = null)
 
 	$cost = empty($cost) ? (empty($modSettings['bcrypt_hash_cost']) ? 10 : $modSettings['bcrypt_hash_cost']) : $cost;
 
-	return password_hash($smcFunc['strtolower']($username) . $password, PASSWORD_BCRYPT, [
+	return password_hash(StringLibrary::toLower($username) . $password, PASSWORD_BCRYPT, [
 		'cost' => $cost,
 	]);
 }
@@ -771,7 +772,7 @@ function hash_verify_password($username, $password, $hash)
 {
 	global $smcFunc;
 
-	return password_verify($smcFunc['strtolower']($username) . $password, $hash);
+	return password_verify(StringLibrary::toLower($username) . $password, $hash);
 }
 
 /**

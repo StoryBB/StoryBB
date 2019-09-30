@@ -151,10 +151,6 @@ function reloadSettings()
 			$ent_arr = preg_split('~(&#\d{1,7};|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~u', $ent_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 			return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
 		},
-		'strtolower' => function($string) use ($sourcedir)
-		{
-			return mb_strtolower($string, 'UTF-8');
-		},
 		'strtoupper' => function($string)
 		{
 			return mb_strtoupper($string, 'UTF-8');

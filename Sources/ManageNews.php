@@ -11,6 +11,7 @@
  */
 
 use StoryBB\Helper\Parser;
+use StoryBB\StringLibrary;
 
 /**
  * The news dispatcher; doesn't do anything, just delegates.
@@ -524,7 +525,7 @@ function ComposeMailing()
 
 			foreach ($_POST[$type] as $index => $member)
 				if (strlen(trim($member)) > 0)
-					$_POST[$type][$index] = $smcFunc['htmlspecialchars']($smcFunc['strtolower'](trim($member)));
+					$_POST[$type][$index] = $smcFunc['htmlspecialchars'](StringLibrary::toLower(trim($member)));
 				else
 					unset($_POST[$type][$index]);
 

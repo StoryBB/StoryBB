@@ -583,7 +583,7 @@ function PlushSearch2()
 	$stripped_query = preg_replace('~(?:[\x0B\0\x{A0}\t\r\s\n(){}\\[\\]<>!@$%^*.,:+=`\~\?/\\\\]+|&(?:amp|lt|gt|quot);)+~u', ' ', $search_params['search']);
 
 	// Make the query lower case. It's gonna be case insensitive anyway.
-	$stripped_query = un_htmlspecialchars($smcFunc['strtolower']($stripped_query));
+	$stripped_query = un_htmlspecialchars(StringLibrary::toLower($stripped_query));
 
 	// This (hidden) setting will do fulltext searching in the most basic way.
 	if (!empty($modSettings['search_simple_fulltext']))

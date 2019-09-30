@@ -14,6 +14,7 @@
 
 use StoryBB\Helper\Parser;
 use StoryBB\Helper\Verification;
+use StoryBB\StringLibrary;
 
 /**
  * This helps organize things...
@@ -1318,7 +1319,7 @@ function MessageSearch2()
 	foreach ($matches[1] as $index => $word)
 		if ($word == '-')
 		{
-			$word = $smcFunc['strtolower'](trim($searchArray[$index]));
+			$word = StringLibrary::toLower(trim($searchArray[$index]));
 			if (strlen($word) > 0)
 				$excludedWords[] = $word;
 			unset($searchArray[$index]);
@@ -1329,7 +1330,7 @@ function MessageSearch2()
 	{
 		if (strpos(trim($word), '-') === 0)
 		{
-			$word = substr($smcFunc['strtolower']($word), 1);
+			$word = substr(StringLibrary::toLower($word), 1);
 			if (strlen($word) > 0)
 				$excludedWords[] = $word;
 			unset($tempSearch[$index]);
@@ -1341,7 +1342,7 @@ function MessageSearch2()
 	// Trim everything and make sure there are no words that are the same.
 	foreach ($searchArray as $index => $value)
 	{
-		$searchArray[$index] = $smcFunc['strtolower'](trim($value));
+		$searchArray[$index] = StringLibrary::toLower(trim($value));
 		if ($searchArray[$index] == '')
 			unset($searchArray[$index]);
 		else
@@ -2209,7 +2210,7 @@ function MessagePost2()
 			foreach ($namedRecipientList[$recipientType] as $index => $recipient)
 			{
 				if (strlen(trim($recipient)) > 0)
-					$namedRecipientList[$recipientType][$index] = $smcFunc['htmlspecialchars']($smcFunc['strtolower'](trim($recipient)));
+					$namedRecipientList[$recipientType][$index] = $smcFunc['htmlspecialchars'](StringLibrary::toLower(trim($recipient)));
 				else
 					unset($namedRecipientList[$recipientType][$index]);
 			}
@@ -2224,9 +2225,9 @@ function MessagePost2()
 				foreach ($foundMembers as $member)
 				{
 					$testNames = [
-						$smcFunc['strtolower']($member['username']),
-						$smcFunc['strtolower']($member['name']),
-						$smcFunc['strtolower']($member['email']),
+						StringLibrary::toLower($member['username']),
+						StringLibrary::toLower($member['name']),
+						StringLibrary::toLower($member['email']),
 					];
 
 					if (count(array_intersect($testNames, $namedRecipientList[$recipientType])) !== 0)
