@@ -38,8 +38,6 @@ if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/c
 if ($maintenance == 2)
 	die($mmessage);
 
-require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 require_once($boarddir . '/vendor/autoload.php');
 
 require_once($sourcedir . '/Errors.php');

@@ -313,8 +313,6 @@ function load_database()
 
 		if (!$db_connection)
 		{
-			require_once(__DIR__ . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-			require_once(__DIR__ . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 			require_once(__DIR__ . '/vendor/autoload.php');
 
 			$db_connection = sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix, $db_options);
@@ -660,8 +658,6 @@ function DatabaseSettings()
 	global $db_server, $db_name, $db_user, $db_passwd, $db_connection;
 
 	// Load our autoloader stuff.
-	require_once(__DIR__ . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-	require_once(__DIR__ . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 	require_once(__DIR__ . '/vendor/autoload.php');
 
 	$incontext['sub_template'] = 'database_settings';
@@ -864,8 +860,6 @@ function ForumSettings()
 {
 	global $txt, $incontext, $databases, $db_type, $db_connection;
 
-	require_once(__DIR__ . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-	require_once(__DIR__ . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 	require_once(__DIR__ . '/vendor/autoload.php');
 
 	$incontext['sub_template'] = 'forum_settings';
@@ -1234,8 +1228,6 @@ function AdminAccount()
 	require(dirname(__FILE__) . '/Settings.php');
 	load_database();
 
-	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 	require_once($boarddir . '/vendor/autoload.php');
 
 	require_once($sourcedir . '/Subs-Auth.php');
@@ -1435,8 +1427,6 @@ function DeleteInstall()
 
 	chdir(dirname(__FILE__));
 
-	require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-	require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 	require_once($boarddir . '/vendor/autoload.php');
 
 	require_once($sourcedir . '/Errors.php');

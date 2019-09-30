@@ -35,8 +35,6 @@ else
 	}
 }
 
-require_once($boarddir . '/vendor/symfony/polyfill-iconv/bootstrap.php');
-require_once($boarddir . '/vendor/symfony/polyfill-mbstring/bootstrap.php');
 require_once($boarddir . '/vendor/autoload.php');
 
 require_once($sourcedir . '/Errors.php');
