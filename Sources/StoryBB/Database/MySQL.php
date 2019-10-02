@@ -42,6 +42,11 @@ class MySQL implements DatabaseAdapter
 	/** @var int $db_port The port for the server for this connection */
 	protected $db_port = 0;
 
+	public function get_title()
+	{
+		return 'MySQL';
+	}
+
 	/**
 	 * Sets the database table prefix this instance should use.
 	 *
