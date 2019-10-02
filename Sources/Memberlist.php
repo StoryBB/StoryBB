@@ -182,7 +182,7 @@ function MLAll()
 		// Only update the cache if something changed or no cache existed yet.
 		if (empty($memberlist_cache) || empty($modSettings['memberlist_updated']) || $memberlist_cache['last_update'] < $modSettings['memberlist_updated'])
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT real_name
 				FROM {db_prefix}members
 				WHERE is_activated = {int:is_activated}
@@ -217,7 +217,7 @@ function MLAll()
 	// Without cache we need an extra query to get the amount of members.
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}members
 			WHERE is_activated = {int:is_activated}',
@@ -240,7 +240,7 @@ function MLAll()
 
 		$_REQUEST['start'] = $match[0];
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $smcFunc['db']->query('substring', '
 			SELECT COUNT(*)
 			FROM {db_prefix}members
 			WHERE LOWER(SUBSTRING(real_name, 1, 1)) < {string:first_letter}
@@ -328,7 +328,7 @@ function MLAll()
 		$custom_fields_qry = $context['custom_profile_fields']['join'][$_REQUEST['sort']];
 
 	// Select the members from the database.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member
 		FROM {db_prefix}members AS mem' . ($_REQUEST['sort'] === 'is_online' ? '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)' : '') . ($_REQUEST['sort'] === 'id_group' ? '
@@ -378,7 +378,7 @@ function MLSearch()
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 
 	// Can they search custom fields?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT col_name, field_name, field_desc
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:active}
@@ -504,7 +504,7 @@ function MLSearch()
 
 		$query = $_POST['search'] == '' ? '= {string:blank_string}' : ($smcFunc['db']->is_case_sensitive() ? 'LIKE LOWER({string:search})' : 'LIKE {string:search}');
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)' .
@@ -520,7 +520,7 @@ function MLSearch()
 		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
 
 		// Find the members from the database.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
@@ -593,7 +593,7 @@ function printMemberListRows($request)
 	global $scripturl, $settings;
 
 	// Get the most posts.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT MAX(posts)
 		FROM {db_prefix}members',
 		[
@@ -664,7 +664,7 @@ function getCustFieldsMList()
 
 	$cpf = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT col_name, field_name, field_desc, field_type, bbc, enclose
 		FROM {db_prefix}custom_fields
 		WHERE active = {int:active}

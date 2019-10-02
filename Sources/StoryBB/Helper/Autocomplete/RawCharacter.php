@@ -36,7 +36,7 @@ class RawCharacter extends AbstractCompletable implements Completable
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(id_character)
 			FROM {db_prefix}characters AS chars
 			INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
@@ -81,7 +81,7 @@ class RawCharacter extends AbstractCompletable implements Completable
 
 		$result = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.character_name, mem.email_address, a.filename, chars.avatar
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}characters AS chars ON (chars.id_member = mem.id_member)
@@ -127,7 +127,7 @@ class RawCharacter extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_character, character_name
 			FROM {db_prefix}characters
 			WHERE id_character IN ({array_int:default_value})',

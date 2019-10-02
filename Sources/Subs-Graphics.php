@@ -91,7 +91,7 @@ function downloadAvatar($url, $charID, $max_width, $max_height)
 			$mime_type = 'image/' . $ext;
 
 			// Write filesize in the database.
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}attachments
 				SET size = {int:filesize}, width = {int:width}, height = {int:height},
 					mime_type = {string:mime_type}
@@ -111,7 +111,7 @@ function downloadAvatar($url, $charID, $max_width, $max_height)
 	}
 	else
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}attachments
 			WHERE id_attach = {int:current_attachment}',
 			[

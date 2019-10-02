@@ -415,7 +415,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 	$real_name_search = $real_name . ' ' . $comparison . ' ' . implode( ' OR ' . $real_name . ' ' . $comparison . ' ', $names_list);
 
 	// Search by username, display name, and email address.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, member_name, real_name, email_address
 		FROM {db_prefix}members
 		WHERE (' . $member_name_search . '
@@ -465,7 +465,7 @@ function resetPassword($memID, $username = null)
 	require_once($sourcedir . '/Subs-Post.php');
 
 	// Get some important details.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT member_name, email_address, lngfile
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}',
@@ -614,7 +614,7 @@ function rebuildModCache()
 
 	if ($group_query == '0=1' && !$user_info['is_guest'])
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group
 			FROM {db_prefix}group_moderators
 			WHERE id_member = {int:current_member}',
@@ -650,7 +650,7 @@ function rebuildModCache()
 	$boards_mod = [];
 	if (!$user_info['is_guest'])
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}moderators
 			WHERE id_member = {int:current_member}',
@@ -663,7 +663,7 @@ function rebuildModCache()
 		$smcFunc['db']->free_result($request);
 
 		// Can any of the groups they're in moderate any of the boards?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}moderator_groups
 			WHERE id_group IN({array_int:groups})',

@@ -151,7 +151,7 @@ function AddSmiley()
 			fatal_lang_error('smiley_has_no_code');
 
 		// Check whether the new code has duplicates. It should be unique.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_smiley
 			FROM {db_prefix}smileys
 			WHERE code = {raw:mysql_binary_statement} {string:smiley_code}',
@@ -212,7 +212,7 @@ function AddSmiley()
 		$smiley_order = '0';
 		if ($_POST['smiley_location'] != 1)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT MAX(smiley_order) + 1
 				FROM {db_prefix}smileys
 				WHERE hidden = {int:smiley_location}
@@ -300,7 +300,7 @@ function EditSmileys()
 				$_POST['checked_smileys'][$id] = (int) $smiley_id;
 
 			if ($_POST['smiley_action'] == 'delete')
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}smileys
 					WHERE id_smiley IN ({array_int:checked_smileys})',
 					[
@@ -317,7 +317,7 @@ function EditSmileys()
 					'popup' => 2
 				];
 				if (isset($displayTypes[$_POST['smiley_action']]))
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}smileys
 						SET hidden = {int:display_type}
 						WHERE id_smiley IN ({array_int:checked_smileys})',
@@ -334,7 +334,7 @@ function EditSmileys()
 			// Is it a delete?
 			if (!empty($_POST['deletesmiley']))
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}smileys
 					WHERE id_smiley = {int:current_smiley}',
 					[
@@ -359,7 +359,7 @@ function EditSmileys()
 					fatal_lang_error('smiley_has_no_filename');
 
 				// Check whether the new code has duplicates. It should be unique.
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_smiley
 					FROM {db_prefix}smileys
 					WHERE code = {raw:mysql_binary_type} {string:smiley_code}' . (empty($_POST['smiley']) ? '' : '
@@ -374,7 +374,7 @@ function EditSmileys()
 					fatal_lang_error('smiley_not_unique');
 				$smcFunc['db']->free_result($request);
 
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}smileys
 					SET
 						code = {string:smiley_code},
@@ -612,7 +612,7 @@ function EditSmileys()
 			ksort($context['filenames']);
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_smiley AS id, code, filename, description, hidden AS location, 0 AS is_new
 			FROM {db_prefix}smileys
 			WHERE id_smiley = {int:current_smiley}',
@@ -646,7 +646,7 @@ function list_getSmileys($start, $items_per_page, $sort)
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_smiley, code, filename, description, smiley_row, smiley_order, hidden
 		FROM {db_prefix}smileys
 		ORDER BY {raw:sort}',
@@ -670,7 +670,7 @@ function list_getNumSmileys()
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}smileys',
 		[]
@@ -705,7 +705,7 @@ function EditSmileyOrder()
 		{
 			$_GET['after'] = (int) $_GET['after'];
 
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT smiley_row, smiley_order, hidden
 				FROM {db_prefix}smileys
 				WHERE hidden = {int:location}
@@ -727,7 +727,7 @@ function EditSmileyOrder()
 			$smileyLocation = (int) $_GET['location'];
 		}
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}smileys
 			SET smiley_order = smiley_order + 1
 			WHERE hidden = {int:new_location}
@@ -740,7 +740,7 @@ function EditSmileyOrder()
 			]
 		);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}smileys
 			SET
 				smiley_order = {int:smiley_order} + 1,
@@ -759,7 +759,7 @@ function EditSmileyOrder()
 		cache_put_data('posting_smileys', null, 480);
 	}
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_smiley, code, filename, description, smiley_row, smiley_order, hidden
 		FROM {db_prefix}smileys
 		WHERE hidden != {int:popup}
@@ -811,7 +811,7 @@ function EditSmileyOrder()
 			// Fix empty rows if any.
 			if ($id != $smiley_row[0]['row'])
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}smileys
 					SET smiley_row = {int:new_row}
 					WHERE smiley_row = {int:current_row}
@@ -828,7 +828,7 @@ function EditSmileyOrder()
 			// Make sure the smiley order is always sequential.
 			foreach ($smiley_row as $order_id => $smiley)
 				if ($order_id != $smiley['order'])
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}smileys
 						SET smiley_order = {int:new_order}
 						WHERE id_smiley = {int:current_smiley}',

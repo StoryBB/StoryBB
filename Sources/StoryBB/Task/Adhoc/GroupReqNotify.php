@@ -26,7 +26,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 		global $sourcedir, $smcFunc, $language, $modSettings, $scripturl;
 
 		// Do we have any group moderators?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}group_moderators
 			WHERE id_group = {int:selected_group}',
@@ -99,7 +99,7 @@ class GroupReqNotify extends \StoryBB\Task\Adhoc
 				require_once($sourcedir . '/Subs-Post.php');
 				loadEssentialThemeData();
 
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_member, email_address, lngfile, member_name
 					FROM {db_prefix}members
 					WHERE id_member IN ({array_int:moderator_list})

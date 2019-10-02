@@ -32,7 +32,7 @@ class BirthdayNotify extends \StoryBB\Task\Adhoc
 		$day = date('j'); // Day without leading zeros.
 
 		// So who are the lucky ones?  Don't include those who are banned and those who don't want them.
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_member, real_name, lngfile, email_address
 			FROM {db_prefix}members
 			WHERE is_activated < 10

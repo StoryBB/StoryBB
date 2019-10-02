@@ -132,7 +132,7 @@ function ViewQuery()
 		// Explain the query.
 		if ($query_id == $q && $is_select_query)
 		{
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				EXPLAIN ' . $select,
 				[
 				]

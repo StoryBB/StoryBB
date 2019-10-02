@@ -46,7 +46,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 		global $scripturl, $txt, $sourcedir, $smcFunc;
 
 		// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT aq.id_msg, aq.id_attach, m.id_topic, m.id_board, m.subject, t.id_first_msg,
 				b.id_profile
 			FROM {db_prefix}approval_queue AS aq
@@ -84,7 +84,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 		$smcFunc['db']->free_result($request);
 
 		// Delete it all!
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}approval_queue',
 			[
 			]
@@ -97,7 +97,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 		// Now we need to think about finding out *who* can approve - this is hard!
 
 		// First off, get all the groups with this permission and sort by board.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group, id_profile, add_deny
 			FROM {db_prefix}board_permissions
 			WHERE permission = {literal:approve_posts}
@@ -127,7 +127,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 		$members = [];
 		if (in_array(2, $addGroups))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, id_board
 				FROM {db_prefix}moderators',
 				[
@@ -145,7 +145,7 @@ class ApprovalNotifications implements \StoryBB\Task\Schedulable
 		// @todo People who are in groups who are group moderators of boards?
 
 		// Come along one and all... until we reject you ;)
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name, email_address, lngfile, id_group, additional_groups
 			FROM {db_prefix}members
 			WHERE id_group IN ({array_int:additional_group_list})

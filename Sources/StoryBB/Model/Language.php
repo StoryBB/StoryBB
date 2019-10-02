@@ -76,7 +76,7 @@ class Language
 
 		$language_delta = [];
 
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT lang_var, lang_key, lang_string, is_multi
 			FROM {db_prefix}language_delta
 			WHERE id_theme = {int:id_theme}
@@ -218,7 +218,7 @@ class Language
 	{
 		global $smcFunc;
 
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}language_delta
 			WHERE id_theme = {int:id_theme}
 				AND id_lang = {string:lang_id}

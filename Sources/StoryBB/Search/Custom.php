@@ -317,7 +317,7 @@ class Custom extends AbstractSearchable implements Searchable
 			if (!empty($removed_words))
 			{
 				$removed_words = array_merge($removed_words, $inserted_words);
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}log_search_words
 					WHERE id_msg = {int:id_msg}
 						AND id_word IN ({array_int:removed_words})',

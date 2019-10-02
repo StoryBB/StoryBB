@@ -28,7 +28,7 @@ function AutoTask()
 		$task_string = '';
 
 		// Select the next task to do.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_task, next_time, time_offset, time_regularity, time_unit, class
 			FROM {db_prefix}scheduled_tasks
 			WHERE disabled = {int:not_disabled}
@@ -64,7 +64,7 @@ function AutoTask()
 				$next_time += $duration;
 
 			// Update it now, so no others run this!
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}scheduled_tasks
 				SET next_time = {int:next_time}
 				WHERE id_task = {int:id_task}
@@ -107,7 +107,7 @@ function AutoTask()
 		$smcFunc['db']->free_result($request);
 
 		// Get the next timestamp right.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT next_time
 			FROM {db_prefix}scheduled_tasks
 			WHERE disabled = {int:not_disabled}
@@ -167,7 +167,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	{
 		$delay = !empty($modSettings['mail_queue_delay']) ? $modSettings['mail_queue_delay'] : (!empty($modSettings['mail_limit']) && $modSettings['mail_limit'] < 5 ? 10 : 5);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}settings
 			SET value = {string:next_mail_send}
 			WHERE variable = {literal:mail_next_send}
@@ -207,7 +207,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	}
 
 	// Now we know how many we're sending, let's send them.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT /*!40001 SQL_NO_CACHE */ id_mail, recipient, body, subject, headers, send_html, time_sent, private
 		FROM {db_prefix}mail_queue
 		ORDER BY priority ASC, id_mail ASC
@@ -236,7 +236,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 
 	// Delete, delete, delete!!!
 	if (!empty($ids))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}mail_queue
 			WHERE id_mail IN ({array_int:mail_list})',
 			[
@@ -248,7 +248,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	if (count($ids) < $number)
 	{
 		// Only update the setting if no-one else has beaten us to it.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}settings
 			SET value = {string:no_send}
 			WHERE variable = {literal:mail_next_send}
@@ -308,7 +308,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 
 		// If we have failed to many times, tell mail to wait a bit and try again.
 		if ($modSettings['mail_failed_attempts'] > 5)
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}settings
 				SET value = {string:next_mail_send}
 				WHERE variable = {literal:mail_next_send}
@@ -330,7 +330,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	}
 	// We where unable to send the email, clear our failed attempts.
 	elseif (!empty($modSettings['mail_failed_attempts']))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}settings
 			SET value = {string:zero}
 			WHERE variable = {string:mail_failed_attempts}',
@@ -368,7 +368,7 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 	$nextTaskTime = empty($tasks) ? time() + 86400 : $modSettings['next_task_time'];
 
 	// Get the critical info for the tasks.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_task, next_time, time_offset, time_regularity, time_unit
 		FROM {db_prefix}scheduled_tasks
 		WHERE disabled = {int:no_disabled}
@@ -397,7 +397,7 @@ function CalculateNextTrigger($tasks = [], $forceUpdate = false)
 
 	// Now make the changes!
 	foreach ($tasks as $id => $time)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}scheduled_tasks
 			SET next_time = {int:next_time}
 			WHERE id_task = {int:id_task}',
@@ -488,7 +488,7 @@ function loadEssentialThemeData()
 	global $settings, $modSettings, $smcFunc, $mbname, $context, $sourcedir, $txt;
 
 	// Get all the default theme variables.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE id_member = {int:no_member}

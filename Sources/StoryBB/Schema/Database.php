@@ -72,7 +72,7 @@ class Database
 		{
 			// Figure out which engines we have
 			$engines = [];
-			$get_engines = $smcFunc['db_query']('', 'SHOW ENGINES', []);
+			$get_engines = $smcFunc['db']->query('', 'SHOW ENGINES', []);
 
 			while ($row = $smcFunc['db_fetch_assoc']($get_engines))
 			{

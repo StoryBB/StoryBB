@@ -324,7 +324,7 @@ function SelectMailingMembers()
 	$normalGroups[0] = 0;
 
 	// Get all the extra groups as well as Administrator and Global Moderator.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mg.id_group, mg.group_name
 		FROM {db_prefix}membergroups AS mg
 		GROUP BY mg.id_group, mg.group_name
@@ -346,7 +346,7 @@ function SelectMailingMembers()
 	if (!empty($normalGroups))
 	{
 		// Find people who are members of this group...
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT id_group, COUNT(*) AS member_count
 			FROM {db_prefix}members
 			WHERE id_group IN ({array_int:normal_group_list})
@@ -360,7 +360,7 @@ function SelectMailingMembers()
 		$smcFunc['db']->free_result($query);
 
 		// Also do those who have it as an additional membergroup - this ones more yucky...
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT mg.id_group, COUNT(*) AS member_count
 			FROM {db_prefix}membergroups AS mg
 				INNER JOIN {db_prefix}members AS mem ON (mem.additional_groups != {string:blank_string}
@@ -379,7 +379,7 @@ function SelectMailingMembers()
 	}
 
 	// Any moderators?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(DISTINCT id_member) AS num_distinct_mods
 		FROM {db_prefix}moderators
 		LIMIT 1',
@@ -557,7 +557,7 @@ function ComposeMailing()
 	loadLanguage('EmailTemplates');
 
 	// Get a list of all full banned users.  Use their Username and email to find them.  Only get the ones that can't login to turn off notification.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT DISTINCT mem.id_member
 		FROM {db_prefix}ban_groups AS bg
 			INNER JOIN {db_prefix}ban_items AS bi ON (bg.id_ban_group = bi.id_ban_group)
@@ -574,7 +574,7 @@ function ComposeMailing()
 		$context['recipients']['exclude_members'][] = $row['id_member'];
 	$smcFunc['db']->free_result($request);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT DISTINCT bi.email_address
 		FROM {db_prefix}ban_items AS bi
 			INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
@@ -600,7 +600,7 @@ function ComposeMailing()
 
 	if (!empty($condition_array))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}members
 			WHERE email_address IN(' . implode(', ', $condition_array) . ')',
@@ -614,7 +614,7 @@ function ComposeMailing()
 	// Did they select moderators - if so add them as specific members...
 	if ((!empty($context['recipients']['groups']) && in_array(3, $context['recipients']['groups'])) || (!empty($context['recipients']['exclude_groups']) && in_array(3, $context['recipients']['exclude_groups'])))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT DISTINCT mem.id_member AS identifier
 			FROM {db_prefix}members AS mem
 				INNER JOIN {db_prefix}moderators AS mods ON (mods.id_member = mem.id_member)
@@ -635,7 +635,7 @@ function ComposeMailing()
 
 	// For progress bar!
 	$context['total_emails'] = count($context['recipients']['emails']);
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}members',
 		[
@@ -691,7 +691,7 @@ function SendMailing($clean_only = false)
 	//One can't simply nullify things around
 	if (empty($_REQUEST['total_members']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}members',
 			[
@@ -925,7 +925,7 @@ function SendMailing($clean_only = false)
 		}
 
 		// Get the smelly people - note we respect the id_member range as it gives us a quicker query.
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT mem.id_member, mem.email_address, mem.real_name, mem.id_group, mem.additional_groups
 			FROM {db_prefix}members AS mem
 			WHERE ' . $sendQuery . '

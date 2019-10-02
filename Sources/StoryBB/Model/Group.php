@@ -32,7 +32,7 @@ class Group
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT is_character
 			FROM {db_prefix}membergroups
 			WHERE id_group = {int:group}

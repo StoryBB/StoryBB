@@ -112,7 +112,7 @@ function UnapprovedPosts()
 		$any_array = $curAction == 'approve' ? $approve_boards : $delete_any_boards;
 
 		// Now for each message work out whether it's actually a topic, and what board it's on.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.id_msg, m.id_member, m.id_board, m.subject, t.id_topic, t.id_first_msg, t.id_member_started
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
@@ -181,7 +181,7 @@ function UnapprovedPosts()
 	}
 
 	// How many unapproved posts are there?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic AND t.id_first_msg != m.id_msg)
@@ -197,7 +197,7 @@ function UnapprovedPosts()
 	$smcFunc['db']->free_result($request);
 
 	// What about topics?  Normally we'd use the table alias t for topics but lets use m so we don't have to redo our approve query.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(m.id_topic)
 		FROM {db_prefix}topics AS m
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -236,7 +236,7 @@ function UnapprovedPosts()
 	}
 
 	// Get all unapproved posts.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.id_msg, m.id_topic, m.id_board, m.subject, m.body, m.id_member,
 			COALESCE(mem.real_name, m.poster_name) AS poster_name, m.poster_time, m.smileys_enabled,
 			t.id_member_started, t.id_first_msg, b.name AS board_name, c.id_cat, c.name AS cat_name
@@ -351,7 +351,7 @@ function UnapprovedAttachments()
 		require_once($sourcedir . '/ManageAttachments.php');
 
 		// Confirm the attachments are eligible for changing!
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT a.id_attach
 			FROM {db_prefix}attachments AS a
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -546,7 +546,7 @@ function list_getUnapprovedAttachments($start, $items_per_page, $sort, $approve_
 	global $smcFunc, $scripturl;
 
 	// Get all unapproved attachments.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT a.id_attach, a.filename, a.size, m.id_msg, m.id_topic, m.id_board, m.subject, m.body, m.id_member,
 			COALESCE(mem.real_name, m.poster_name) AS poster_name, m.poster_time,
 			t.id_member_started, t.id_first_msg, b.name AS board_name, c.id_cat, c.name AS cat_name
@@ -623,7 +623,7 @@ function list_getNumUnapprovedAttachments($approve_query)
 	global $smcFunc;
 
 	// How many unapproved attachments in total?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}attachments AS a
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -658,7 +658,7 @@ function ApproveMessage()
 
 	isAllowedTo('approve_posts');
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT t.id_member_started, t.id_first_msg, m.id_member, m.subject, m.approved
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
@@ -732,7 +732,7 @@ function approveAllData()
 	global $smcFunc, $sourcedir;
 
 	// Start with messages and topics.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_msg
 		FROM {db_prefix}messages
 		WHERE approved = {int:not_approved}',
@@ -752,7 +752,7 @@ function approveAllData()
 	}
 
 	// Now do attachments
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_attach
 		FROM {db_prefix}attachments
 		WHERE approved = {int:not_approved}',

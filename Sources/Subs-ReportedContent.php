@@ -42,7 +42,7 @@ function updateReport($action, $value, $report_id)
 	}
 
 	// Update the report...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}log_reported
 		SET  {raw:action} = {string:value}
 		'. (is_array($report_id) ? 'WHERE id_report IN ({array_int:id_report})' : 'WHERE id_report = {int:id_report}') .'
@@ -63,7 +63,7 @@ function updateReport($action, $value, $report_id)
 	if ($context['report_type'] == 'posts')
 	{
 		// Get the board, topic and message for this report
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board, id_topic, id_msg, id_report
 			FROM {db_prefix}log_reported
 			WHERE id_report IN ({array_int:id_report})',
@@ -84,7 +84,7 @@ function updateReport($action, $value, $report_id)
 	}
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_report, id_member, membername
 			FROM {db_prefix}log_reported
 			WHERE id_report IN ({array_int:id_report})',
@@ -154,7 +154,7 @@ function countReports($closed = 0)
 	}
 
 	// How many entries are we viewing?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_reported AS lr
 		WHERE lr.closed = {int:view_closed}
@@ -185,7 +185,7 @@ function getReports($closed = 0)
 	// By George, that means we are in a position to get the reports, golly good.
 	if ($context['report_type'] == 'members')
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lr.id_report, lr.id_member,
 				lr.time_started, lr.time_updated, lr.num_reports, lr.closed, lr.ignore_all,
 				COALESCE(mem.real_name, lr.membername) AS user_name, COALESCE(mem.id_member, 0) AS id_user
@@ -204,7 +204,7 @@ function getReports($closed = 0)
 	}
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lr.id_report, lr.id_msg, lr.id_topic, lr.id_board, lr.id_member, lr.subject, lr.body,
 				lr.time_started, lr.time_updated, lr.num_reports, lr.closed, lr.ignore_all,
 				COALESCE(mem.real_name, lr.membername) AS author_name, COALESCE(mem.id_member, 0) AS id_author
@@ -282,7 +282,7 @@ function getReports($closed = 0)
 	{
 		$report_boards_ids = array_unique($report_boards_ids);
 		$board_names = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board, name
 			FROM {db_prefix}boards
 			WHERE id_board IN ({array_int:boards})',
@@ -304,7 +304,7 @@ function getReports($closed = 0)
 	// Now get all the people who reported it.
 	if (!empty($report_ids))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lrc.id_comment, lrc.id_report, lrc.time_sent, lrc.comment,
 				COALESCE(mem.id_member, 0) AS id_member, COALESCE(mem.real_name, lrc.membername) AS reporter
 			FROM {db_prefix}log_reported_comments AS lrc
@@ -363,7 +363,7 @@ function recountOpenReports($type)
 	else
 		$bq = '	AND ' . $user_info['mod_cache']['bq'];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_reported
 		WHERE closed = {int:not_closed}
@@ -406,7 +406,7 @@ function getReportDetails($report_id)
 	// We don't need all this info if we're only getting user info
 	if ($context['report_type'] == 'members')
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lr.id_report, lr.id_member,
 					lr.time_started, lr.time_updated, lr.num_reports, lr.closed, lr.ignore_all,
 					COALESCE(mem.real_name, lr.membername) AS user_name, COALESCE(mem.id_member, 0) AS id_user
@@ -423,7 +423,7 @@ function getReportDetails($report_id)
 	else
 	{
 		// Get the report details, need this so we can limit access to a particular board.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lr.id_report, lr.id_msg, lr.id_topic, lr.id_board, lr.id_member, lr.subject, lr.body,
 				lr.time_started, lr.time_updated, lr.num_reports, lr.closed, lr.ignore_all,
 				COALESCE(mem.real_name, lr.membername) AS author_name, COALESCE(mem.id_member, 0) AS id_author
@@ -468,7 +468,7 @@ function getReportComments($report_id)
 	];
 
 	// So what bad things do the reporters have to say about it?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT lrc.id_comment, lrc.id_report, lrc.time_sent, lrc.comment, lrc.member_ip,
 			COALESCE(mem.id_member, 0) AS id_member, COALESCE(mem.real_name, lrc.membername) AS reporter
 		FROM {db_prefix}log_reported_comments AS lrc
@@ -502,7 +502,7 @@ function getReportComments($report_id)
 	$smcFunc['db']->free_result($request);
 
 	// Hang about old chap, any comments from moderators on this one?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT lc.id_comment, lc.id_notice, lc.log_time, lc.body,
 			COALESCE(mem.id_member, 0) AS id_member, COALESCE(mem.real_name, lc.member_name) AS moderator
 		FROM {db_prefix}log_comments AS lc
@@ -549,7 +549,7 @@ function getCommentModDetails($comment_id)
 	if (empty($comment_id))
 		return false;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_comment, id_notice, log_time, body, id_member
 		FROM {db_prefix}log_comments
 		WHERE id_comment = {int:id_comment}
@@ -648,7 +648,7 @@ function editModComment($comment_id, $edited_comment)
 	if (empty($comment_id) || empty($edited_comment))
 		return false;
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}log_comments
 		SET  body = {string:body}
 		WHERE id_comment = {int:id_comment}',
@@ -673,7 +673,7 @@ function deleteModComment($comment_id)
 	if (empty($comment_id))
 		return false;
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}log_comments
 		WHERE id_comment = {int:comment_id}',
 		[

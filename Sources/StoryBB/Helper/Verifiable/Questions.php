@@ -52,7 +52,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 
 		if (($this->question_cache = cache_get_data('verificationQuestions', 300)) === null)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_question, lngfile, question, answers
 				FROM {db_prefix}qanda',
 				[]
@@ -201,7 +201,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 				'questions' => [],
 			];
 		}
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_question, lngfile, question, answers
 			FROM {db_prefix}qanda'
 		);
@@ -368,7 +368,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 		// OK, so changes?
 		if (!empty($changes['delete']))
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}qanda
 				WHERE id_question IN ({array_int:questions})',
 				[
@@ -381,7 +381,7 @@ class Questions extends AbstractVerifiable implements Verifiable
 		{
 			foreach ($changes['replace'] as $q_id => $question)
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}qanda
 					SET lngfile = {string:lngfile},
 						question = {string:question},

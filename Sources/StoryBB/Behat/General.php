@@ -121,7 +121,7 @@ class General extends RawMinkContext implements Context
 				else
 				{
 					$possible_groups = [];
-					$request = $smcFunc['db_query']('', '
+					$request = $smcFunc['db']->query('', '
                         SELECT id_group, group_name
                         FROM {db_prefix}membergroups',
 						[]
@@ -240,7 +240,7 @@ class General extends RawMinkContext implements Context
 			return [];
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
             SELECT id_member, member_name
             FROM {db_prefix}members
             WHERE member_name IN ({array_string:usernames})',
@@ -276,7 +276,7 @@ class General extends RawMinkContext implements Context
 			return [];
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
             SELECT id_character, character_name
             FROM {db_prefix}characters
             WHERE character_name IN ({array_string:charnames})',
@@ -312,7 +312,7 @@ class General extends RawMinkContext implements Context
 			return [];
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
             SELECT id_group, group_name
             FROM {db_prefix}membergroups
             WHERE group_name IN ({array_string:groupnames})',
@@ -365,7 +365,7 @@ class General extends RawMinkContext implements Context
 			if ($board_to_create['board parent'] == 'none')
 			{
 				// We're adding it to the end of the first category, which we need to identify.
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
                     SELECT id_cat
                     FROM {db_prefix}categories
                     ORDER BY cat_order
@@ -385,7 +385,7 @@ class General extends RawMinkContext implements Context
 			else
 			{
 				// We've asked to find a board and attach to that, let's find its details.
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
                     SELECT id_board, id_cat
                     FROM {db_prefix}boards
                     WHERE name = {string:board_name}
@@ -535,7 +535,7 @@ class General extends RawMinkContext implements Context
 			// Groups added in this way inherit regular member permissions - main+board if account, board if character.
 			if ($group_to_create['group level'] == 'account')
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
                     SELECT permission, add_deny
                     FROM {db_prefix}permissions
                     WHERE id_group = {int:copy_from}',
@@ -562,7 +562,7 @@ class General extends RawMinkContext implements Context
 			}
 
 			// And now board-profile permissions.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
                 SELECT id_profile, permission, add_deny
                 FROM {db_prefix}board_permissions
                 WHERE id_group = {int:copy_from}',

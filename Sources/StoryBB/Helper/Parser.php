@@ -1670,7 +1670,7 @@ class Parser
 			// Load the smileys in reverse order by length so they don't get parsed wrong.
 			if (($temp = cache_get_data('parsing_smileys', 480)) == null)
 			{
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 					SELECT code, filename, description
 					FROM {db_prefix}smileys
 					ORDER BY LENGTH(code) DESC',

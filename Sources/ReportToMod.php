@@ -71,7 +71,7 @@ function ReportToModerator()
 	if (isset($_REQUEST['msg']))
 	{
 		// Check the message's ID - don't want anyone reporting a post they can't even see!
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT m.id_msg, m.id_member, t.id_member_started
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
@@ -99,7 +99,7 @@ function ReportToModerator()
 	else
 	{
 		// Check the user's ID
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_member, real_name, member_name
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_user}',
@@ -229,7 +229,7 @@ function reportPost($msg, $reason)
 	// Get the basic topic information, and make sure they can see it.
 	$_POST['msg'] = (int) $msg;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.id_topic, m.id_board, m.subject, m.body, m.id_member AS id_poster, m.poster_name, mem.real_name
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (m.id_member = mem.id_member)
@@ -246,7 +246,7 @@ function reportPost($msg, $reason)
 	$message = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_report, ignore_all
 		FROM {db_prefix}log_reported
 		WHERE id_msg = {int:id_msg}
@@ -269,7 +269,7 @@ function reportPost($msg, $reason)
 
 	// Already reported? My god, we could be dealing with a real rogue here...
 	if (!empty($id_report))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_reported
 			SET num_reports = num_reports + 1, time_updated = {int:current_time}
 			WHERE id_report = {int:id_report}',
@@ -349,7 +349,7 @@ function reportUser($id_member, $reason)
 	// Get the basic topic information, and make sure they can see it.
 	$_POST['u'] = (int) $id_member;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, member_name
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}',
@@ -364,7 +364,7 @@ function reportUser($id_member, $reason)
 
 	$user_name = un_htmlspecialchars($user['real_name']) . ($user['real_name'] != $user['member_name'] ? ' (' . $user['member_name'] . ')' : '');
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_report, ignore_all
 		FROM {db_prefix}log_reported
 		WHERE id_member = {int:id_member}
@@ -389,7 +389,7 @@ function reportUser($id_member, $reason)
 
 	// Already reported? My god, we could be dealing with a real rogue here...
 	if (!empty($id_report))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_reported
 			SET num_reports = num_reports + 1, time_updated = {int:current_time}
 			WHERE id_report = {int:id_report}',

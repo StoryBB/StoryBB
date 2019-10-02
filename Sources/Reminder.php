@@ -78,7 +78,7 @@ function RemindPick()
 	}
 
 	// Find the user!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, member_name, email_address, is_activated, validation_code, lngfile, secret_question
 		FROM {db_prefix}members
 		WHERE ' . $where . '
@@ -90,7 +90,7 @@ function RemindPick()
 	{
 		$smcFunc['db']->free_result($request);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name, member_name, email_address, is_activated, validation_code, lngfile, secret_question
 			FROM {db_prefix}members
 			WHERE email_address = {string:email_address}
@@ -213,7 +213,7 @@ function setPassword2()
 	loadLanguage('Login');
 
 	// Get the code as it should be from the database.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT validation_code, member_name, email_address, passwd_flood
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
@@ -290,7 +290,7 @@ function SecretAnswerInput()
 		fatal_lang_error('username_no_exist', false);
 
 	// Get the stuff....
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, member_name, secret_question
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
@@ -336,7 +336,7 @@ function SecretAnswer2()
 	loadLanguage('Login');
 
 	// Get the information from the database.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, member_name, secret_answer, secret_question, email_address
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}

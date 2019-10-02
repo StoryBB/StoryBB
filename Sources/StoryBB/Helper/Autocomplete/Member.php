@@ -36,7 +36,7 @@ class Member extends AbstractCompletable implements Completable
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(id_member)
 			FROM {db_prefix}members
 			WHERE {raw:real_name} LIKE {string:search}
@@ -79,7 +79,7 @@ class Member extends AbstractCompletable implements Completable
 
 		$result = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member, real_name, email_address, a.filename, mainchar.avatar
 			FROM {db_prefix}members AS mem
 				LEFT JOIN {db_prefix}characters AS mainchar ON (mainchar.id_member = mem.id_member AND mainchar.is_main = 1)
@@ -124,7 +124,7 @@ class Member extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:default_value})',

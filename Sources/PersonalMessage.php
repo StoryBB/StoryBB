@@ -41,7 +41,7 @@ function MessageMain()
 	elseif (($context['message_limit'] = cache_get_data('msgLimit:' . $user_info['id'], 360)) === null)
 	{
 		// @todo Why do we do this?  It seems like if they have any limit we should use it.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT MAX(max_messages) AS top_limit, MIN(max_messages) AS bottom_limit
 			FROM {db_prefix}membergroups
 			WHERE id_group IN ({array_int:users_groups})
@@ -91,7 +91,7 @@ function MessageMain()
 
 		// First get the inbox counts
 		// The CASE WHEN here is because is_read is set to 3 when you reply to a message
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT COUNT(*) AS total, SUM(is_read & 1) AS num_read
 			FROM {db_prefix}pm_recipients
 			WHERE id_member = {int:current_member}
@@ -113,7 +113,7 @@ function MessageMain()
 		$smcFunc['db']->free_result($result);
 
 		// Now load info about all the other labels
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT l.id_label, l.name, COALESCE(SUM(pr.is_read & 1), 0) AS num_read, COALESCE(COUNT(pr.id_pm), 0) AS total
 			FROM {db_prefix}pm_labels AS l
 				LEFT JOIN {db_prefix}pm_labeled_messages AS pl ON (pl.id_label = l.id_label)
@@ -146,7 +146,7 @@ function MessageMain()
 	{
 		ApplyRules();
 		updateMemberData($user_info['id'], ['new_pm' => 0]);
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}pm_recipients
 			SET is_new = {int:not_new}
 			WHERE id_member = {int:current_member}',
@@ -378,7 +378,7 @@ function MessagePopup()
 	$context['can_draft'] = allowedTo('pm_draft') && !empty($modSettings['drafts_pm_enabled']);
 
 	// So are we loading stuff?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_pm
 		FROM {db_prefix}pm_recipients AS pmr
 		WHERE pmr.id_member = {int:current_member}
@@ -407,7 +407,7 @@ function MessagePopup()
 		// Now, actually fetch me some PMs. Make sure we track the senders, got some work to do for them.
 		$senders = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pm.id_pm, pm.id_pm_head, COALESCE(mem.id_member, pm.id_member_from) AS id_member_from,
 				COALESCE(mem.real_name, pm.from_name) AS member_from, pm.msgtime AS timestamp, pm.subject
 			FROM {db_prefix}personal_messages AS pm
@@ -529,7 +529,7 @@ function MessageFolder()
 
 	// Figure out how many messages there are.
 	if ($context['folder'] == 'sent')
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(DISTINCT pm.id_pm_head)
 			FROM {db_prefix}personal_messages AS pm
 			WHERE pm.id_member_from = {int:current_member}
@@ -540,7 +540,7 @@ function MessageFolder()
 			]
 		);
 	else
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(DISTINCT pm.id_pm_head)
 			FROM {db_prefix}pm_recipients AS pmr
 				INNER JOIN {db_prefix}personal_messages AS pm ON (pm.id_pm = pmr.id_pm)' . $labelJoin . '
@@ -582,7 +582,7 @@ function MessageFolder()
 		elseif (!isset($_GET['kstart']))
 		{
 			if ($context['folder'] == 'sent')
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COUNT(DISTINCT pm.id_pm_head)
 					FROM {db_prefix}personal_messages
 					WHERE id_member_from = {int:current_member}
@@ -595,7 +595,7 @@ function MessageFolder()
 					]
 				);
 			else
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COUNT(DISTINCT pm.id_pm_head)
 					FROM {db_prefix}pm_recipients AS pmr
 						INNER JOIN {db_prefix}personal_messages AS pm ON (pm.id_pm = pmr.id_pm)' . $labelJoin . '
@@ -654,7 +654,7 @@ function MessageFolder()
 			AND pl.id_label = ' . $context['current_label_id'];
 	}
 
-	$request = $smcFunc['db_query']('pm_conversation_list', '
+	$request = $smcFunc['db']->query('pm_conversation_list', '
 			SELECT MAX(pm.id_pm) AS id_pm, pm.id_pm_head
 			FROM {db_prefix}personal_messages AS pm' . ($context['folder'] == 'sent' ? ($context['sort_by'] == 'name' ? '
 			LEFT JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm)' : '') : '
@@ -720,7 +720,7 @@ function MessageFolder()
 		$display_pms = [$context['current_pm']];
 
 		// At this point we know the main id_pm's. But we are looking at conversations so we need the others!
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pm.id_pm, pm.id_member_from, pm.deleted_by_sender, pmr.id_member, pmr.deleted
 			FROM {db_prefix}personal_messages AS pm
 				INNER JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm)
@@ -757,7 +757,7 @@ function MessageFolder()
 		$all_pms = array_unique($all_pms);
 
 		// Get recipients (don't include bcc-recipients for your inbox, you're not supposed to know :P).
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pmr.id_pm, mem_to.id_member AS id_member_to, mem_to.real_name AS to_name, pmr.bcc, pmr.in_inbox, pmr.is_read
 			FROM {db_prefix}pm_recipients AS pmr
 				LEFT JOIN {db_prefix}members AS mem_to ON (mem_to.id_member = pmr.id_member)
@@ -784,7 +784,7 @@ function MessageFolder()
 				$context['message_unread'][$row['id_pm']] = $row['is_read'] == 0;
 
 				// Get the labels for this PM
-				$request2 = $smcFunc['db_query']('', '
+				$request2 = $smcFunc['db']->query('', '
 					SELECT id_label
 					FROM {db_prefix}pm_labeled_messages
 					WHERE id_pm = {int:current_pm}',
@@ -820,7 +820,7 @@ function MessageFolder()
 			$orderBy[] = 'pm.id_pm = ' . $pm;
 
 		// Seperate query for these bits!
-		$subjects_request = $smcFunc['db_query']('', '
+		$subjects_request = $smcFunc['db']->query('', '
 			SELECT pm.id_pm, pm.subject, COALESCE(pm.id_member_from, 0) AS id_member_from, pm.msgtime, COALESCE(mem.real_name, pm.from_name) AS from_name,
 				mem.id_member
 			FROM {db_prefix}personal_messages AS pm
@@ -835,7 +835,7 @@ function MessageFolder()
 		);
 
 		// Execute the query!
-		$messages_request = $smcFunc['db_query']('', '
+		$messages_request = $smcFunc['db']->query('', '
 			SELECT pm.id_pm, pm.subject, pm.id_member_from, pm.body, pm.msgtime, pm.from_name
 			FROM {db_prefix}personal_messages AS pm' . ($context['folder'] == 'sent' ? '
 				LEFT JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm)' : '') . ($context['sort_by'] == 'name' ? '
@@ -1198,7 +1198,7 @@ function MessageSearch2()
 
 			// Who matches those criteria?
 			// @todo This doesn't support sent item searching.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member
 				FROM {db_prefix}members
 				WHERE ' . implode(' OR ', $where_clause),
@@ -1412,7 +1412,7 @@ function MessageSearch2()
 	}
 
 	// Get the amount of results.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}pm_recipients AS pmr
 			INNER JOIN {db_prefix}personal_messages AS pm ON (pm.id_pm = pmr.id_pm)
@@ -1434,7 +1434,7 @@ function MessageSearch2()
 
 	// Get all the matching messages... using standard search only (No caching and the like!)
 	// @todo This doesn't support sent item searching yet.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT pm.id_pm, pm.id_pm_head, pm.id_member_from
 		FROM {db_prefix}pm_recipients AS pmr
 			INNER JOIN {db_prefix}personal_messages AS pm ON (pm.id_pm = pmr.id_pm)
@@ -1471,7 +1471,7 @@ function MessageSearch2()
 	// Find the real head pms!
 	if (!empty($head_pms))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT MAX(pm.id_pm) AS id_pm, pm.id_pm_head
 			FROM {db_prefix}personal_messages AS pm
 				INNER JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm)
@@ -1506,7 +1506,7 @@ function MessageSearch2()
 	if (!empty($foundMessages))
 	{
 		// Now get recipients (but don't include bcc-recipients for your inbox, you're not supposed to know :P!)
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				pmr.id_pm, mem_to.id_member AS id_member_to, mem_to.real_name AS to_name,
 				pmr.bcc, pmr.in_inbox, pmr.is_read
@@ -1529,7 +1529,7 @@ function MessageSearch2()
 				$row['labels'] = '';
 
 				// Get the labels for this PM
-				$request2 = $smcFunc['db_query']('', '
+				$request2 = $smcFunc['db']->query('', '
 					SELECT id_label
 					FROM {db_prefix}pm_labeled_messages
 					WHERE id_pm = {int:current_pm}',
@@ -1562,7 +1562,7 @@ function MessageSearch2()
 		}
 
 		// Prepare the query for the callback!
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pm.id_pm, pm.subject, pm.id_member_from, pm.body, pm.msgtime, pm.from_name
 			FROM {db_prefix}personal_messages AS pm
 			WHERE pm.id_pm IN ({array_int:message_list})
@@ -1663,7 +1663,7 @@ function MessagePost()
 	if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(['admin_forum', 'moderate_forum', 'send_mail']) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
 	{
 		// How many messages have they sent this last hour?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(pr.id_pm) AS post_count
 			FROM {db_prefix}personal_messages AS pm
 				INNER JOIN {db_prefix}pm_recipients AS pr ON (pr.id_pm = pm.id_pm)
@@ -1691,7 +1691,7 @@ function MessagePost()
 			fatal_lang_error('no_access', false);
 
 		// Work out whether this is one you've received?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				id_pm
 			FROM {db_prefix}pm_recipients
@@ -1707,7 +1707,7 @@ function MessagePost()
 		$smcFunc['db']->free_result($request);
 
 		// Get the quoted message (and make sure you're allowed to see this quote!).
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				pm.id_pm, CASE WHEN pm.id_pm_head = {int:id_pm_head_empty} THEN pm.id_pm ELSE pm.id_pm_head END AS pm_head,
 				pm.body, pm.subject, pm.msgtime, mem.member_name, COALESCE(mem.id_member, 0) AS id_member,
@@ -1811,7 +1811,7 @@ function MessagePost()
 				];
 
 			// Now to get the others.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT mem.id_member, mem.real_name
 				FROM {db_prefix}pm_recipients AS pmr
 					INNER JOIN {db_prefix}members AS mem ON (mem.id_member = pmr.id_member)
@@ -1839,7 +1839,7 @@ function MessagePost()
 
 			$_REQUEST['u'] = array_unique($_REQUEST['u']);
 
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, real_name
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:member_list})
@@ -1976,7 +1976,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 	{
 		$allRecipients = array_merge($recipient_ids['to'], $recipient_ids['bcc']);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_member IN ({array_int:member_list})',
@@ -2004,7 +2004,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 	{
 		$_REQUEST['replied_to'] = (int) $_REQUEST['replied_to'];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				pm.id_pm, CASE WHEN pm.id_pm_head = {int:no_id_pm_head} THEN pm.id_pm ELSE pm.id_pm_head END AS pm_head,
 				pm.body, pm.subject, pm.msgtime, mem.member_name, COALESCE(mem.id_member, 0) AS id_member,
@@ -2149,7 +2149,7 @@ function MessagePost2()
 	if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(['admin_forum', 'moderate_forum', 'send_mail']) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
 	{
 		// How many have they sent this last hour?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(pr.id_pm) AS post_count
 			FROM {db_prefix}personal_messages AS pm
 				INNER JOIN {db_prefix}pm_recipients AS pr ON (pr.id_pm = pm.id_pm)
@@ -2378,7 +2378,7 @@ function MessagePost2()
 	// Mark the message as "replied to".
 	if (!empty($context['send_log']['sent']) && !empty($_REQUEST['replied_to']) && isset($_REQUEST['f']) && $_REQUEST['f'] == 'inbox')
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}pm_recipients
 			SET is_read = is_read | 2
 			WHERE id_pm = {int:replied_to}
@@ -2439,7 +2439,7 @@ function MessageActionsApply()
 		foreach ($_REQUEST['pm_actions'] as $pm => $dummy)
 			$id_pms[] = (int) $pm;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_pm_head, id_pm
 			FROM {db_prefix}personal_messages
 			WHERE id_pm IN ({array_int:id_pms})',
@@ -2452,7 +2452,7 @@ function MessageActionsApply()
 			$pm_heads[$row['id_pm_head']] = $row['id_pm'];
 		$smcFunc['db']->free_result($request);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_pm, id_pm_head
 			FROM {db_prefix}personal_messages
 			WHERE id_pm_head IN ({array_int:pm_heads})',
@@ -2508,7 +2508,7 @@ function MessageActionsApply()
 	if (!empty($to_label) && $context['folder'] == 'inbox')
 	{
 		// Get all the messages in each conversation
-		$get_pms = $smcFunc['db_query']('', '
+		$get_pms = $smcFunc['db']->query('', '
 			SELECT pm.id_pm_head, pm.id_pm
 			FROM {db_prefix}personal_messages AS pm
 				INNER JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm)
@@ -2529,7 +2529,7 @@ function MessageActionsApply()
 		$smcFunc['db']->free_result($get_pms);
 
 		// Get information about each message...
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_pm, in_inbox
 			FROM {db_prefix}pm_recipients
 			WHERE id_member = {int:current_member}
@@ -2547,7 +2547,7 @@ function MessageActionsApply()
 			if ($to_label[$row['id_pm']] != '-1')
 			{
 				// The JOIN here ensures we only get labels that this user has applied to this PM
-				$request2 = $smcFunc['db_query']('', '
+				$request2 = $smcFunc['db']->query('', '
 					SELECT l.id_label, pml.id_pm
 					FROM {db_prefix}pm_labels AS l
 						INNER JOIN {db_prefix}pm_labeled_messages AS pml ON (pml.id_label = l.id_label)
@@ -2570,7 +2570,7 @@ function MessageActionsApply()
 			{
 				// If we're removing from the inbox, see if we have at least one other label.
 				// This query is faster than the one above
-				$request2 = $smcFunc['db_query']('', '
+				$request2 = $smcFunc['db']->query('', '
 					SELECT COUNT(l.id_label)
 					FROM {db_prefix}pm_labels AS l
 						INNER JOIN {db_prefix}pm_labeled_messages AS pml ON (pml.id_label = l.id_label)
@@ -2617,7 +2617,7 @@ function MessageActionsApply()
 			// Are we adding it to or removing it from the inbox?
 			if ($in_inbox != $row['in_inbox'])
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}pm_recipients
 					SET in_inbox = {int:in_inbox}
 					WHERE id_pm = {int:id_pm}
@@ -2639,7 +2639,7 @@ function MessageActionsApply()
 			// Remove labels
 			if (!empty($labels_to_remove))
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}pm_labeled_messages
 					WHERE id_pm = {int:current_pm}
 						AND id_label IN ({array_int:labels_to_remove})',
@@ -2728,7 +2728,7 @@ function MessagePrune()
 		$toDelete = [];
 
 		// Select all the messages they have sent older than $deleteTime.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_pm
 			FROM {db_prefix}personal_messages
 			WHERE deleted_by_sender = {int:not_deleted}
@@ -2745,7 +2745,7 @@ function MessagePrune()
 		$smcFunc['db']->free_result($request);
 
 		// Select all messages in their inbox older than $deleteTime.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pmr.id_pm
 			FROM {db_prefix}pm_recipients AS pmr
 				INNER JOIN {db_prefix}personal_messages AS pm ON (pm.id_pm = pmr.id_pm)
@@ -2813,7 +2813,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 
 	if ($folder == 'sent' || $folder === null)
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}personal_messages
 			SET deleted_by_sender = {int:is_deleted}
 			WHERE id_member_from IN ({array_int:member_list})
@@ -2829,7 +2829,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 	if ($folder != 'sent' || $folder === null)
 	{
 		// Calculate the number of messages each member's gonna lose...
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, COUNT(*) AS num_deleted_messages, CASE WHEN is_read & 1 >= 1 THEN 1 ELSE 0 END AS is_read
 			FROM {db_prefix}pm_recipients
 			WHERE id_member IN ({array_int:member_list})
@@ -2860,7 +2860,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 		$smcFunc['db']->free_result($request);
 
 		// Do the actual deletion.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}pm_recipients
 			SET deleted = {int:is_deleted}
 			WHERE id_member IN ({array_int:member_list})
@@ -2877,7 +2877,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 
 		// Get any labels that the owner may have applied to this PM
 		// The join is here to ensure we only get labels applied by the specified member(s)
-		$get_labels = $smcFunc['db_query']('', '
+		$get_labels = $smcFunc['db']->query('', '
 			SELECT pml.id_label
 			FROM {db_prefix}pm_labels AS l
 			INNER JOIN {db_prefix}pm_labeled_messages AS pml ON (pml.id_label = l.id_label)
@@ -2897,7 +2897,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 
 		if (!empty($labels))
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}pm_labeled_messages
 				WHERE id_label IN ({array_int:labels})' . $where,
 				[
@@ -2909,7 +2909,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 	}
 
 	// If sender and recipients all have deleted their message, it can be removed.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT pm.id_pm AS sender, pmr.id_pm
 		FROM {db_prefix}personal_messages AS pm
 			LEFT JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm AND pmr.deleted = {int:not_deleted})
@@ -2928,7 +2928,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 
 	if (!empty($remove_pms))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}personal_messages
 			WHERE id_pm IN ({array_int:pm_list})',
 			[
@@ -2936,7 +2936,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 			]
 		);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}pm_recipients
 			WHERE id_pm IN ({array_int:pm_list})',
 			[
@@ -2944,7 +2944,7 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 			]
 		);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}pm_labeled_messages
 			WHERE id_pm IN ({array_int:pm_list})',
 			[
@@ -2978,7 +2978,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 	if ($personal_messages === null && $label !== null && $label != '-1')
 	{
 		$personal_messages = [];
-		$get_messages = $smcFunc['db_query']('', '
+		$get_messages = $smcFunc['db']->query('', '
 			SELECT id_pm
 			FROM {db_prefix}pm_labeled_messages
 			WHERE id_label = {int:current_label}',
@@ -3001,7 +3001,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 			AND in_inbox = {int:in_inbox}';
 	}
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}pm_recipients
 		SET is_read = is_read | 1
 		WHERE id_member = {int:id_member}
@@ -3023,7 +3023,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 				$context['labels'][(int) $label['id']]['unread_messages'] = 0;
 		}
 
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_pm, in_inbox, COUNT(*) AS num
 			FROM {db_prefix}pm_recipients
 			WHERE id_member = {int:id_member}
@@ -3046,7 +3046,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 			$this_labels = [];
 
 			// Get all the labels
-			$result2 = $smcFunc['db_query']('', '
+			$result2 = $smcFunc['db']->query('', '
 				SELECT pml.id_label
 				FROM {db_prefix}pm_labels AS l
 					INNER JOIN {db_prefix}pm_labeled_messages AS pml ON (pml.id_label = l.id_label)
@@ -3191,7 +3191,7 @@ function ManageLabels()
 		{
 			foreach ($label_updates AS $id => $name)
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}labels
 					SET name = {string:name}
 					WHERE id_label = {int:id_label}',
@@ -3207,7 +3207,7 @@ function ManageLabels()
 		if (!empty($labels_to_remove))
 		{
 			// First delete the labels
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}pm_labels
 				WHERE id_label IN ({array_int:labels_to_delete})',
 				[
@@ -3216,7 +3216,7 @@ function ManageLabels()
 			);
 
 			// Now remove the now-deleted labels from any PMs...
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}pm_labeled_messages
 				WHERE id_label IN ({array_int:labels_to_delete})',
 				[
@@ -3225,7 +3225,7 @@ function ManageLabels()
 			);
 
 			// Get any PMs with no labels which aren't in the inbox
-			$get_stranded_pms = $smcFunc['db_query']('', '
+			$get_stranded_pms = $smcFunc['db']->query('', '
 				SELECT pmr.id_pm
 				FROM {db_prefix}pm_recipients AS pmr
 					LEFT JOIN {db_prefix}pm_labeled_messages AS pml ON (pml.id_pm = pmr.id_pm)
@@ -3253,7 +3253,7 @@ function ManageLabels()
 			{
 				// We now have more messages in the inbox
 				$context['labels'][-1]['messages'] += count($stranded_messages);
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}pm_recipients
 					SET in_inbox = {int:in_inbox}
 					WHERE id_pm IN ({array_int:stranded_messages})
@@ -3290,7 +3290,7 @@ function ManageLabels()
 			foreach ($rule_changes as $k => $id)
 				if (!empty($context['rules'][$id]['actions']))
 				{
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}pm_rules
 						SET actions = {string:actions}
 						WHERE id_rule = {int:id_rule}
@@ -3306,7 +3306,7 @@ function ManageLabels()
 
 			// Anything left here means it's lost all actions...
 			if (!empty($rule_changes))
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}pm_rules
 					WHERE id_rule IN ({array_int:rule_list})
 							AND id_member = {int:current_member}',
@@ -3426,7 +3426,7 @@ function ReportMessage()
 
 		// @todo I don't like being able to pick who to send it to.  Favoritism, etc. sucks.
 		// Now, get all the administrators.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name
 			FROM {db_prefix}members
 			WHERE id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0
@@ -3450,7 +3450,7 @@ function ReportMessage()
 		checkSession();
 
 		// First, pull out the message contents, and verify it actually went to them!
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT pm.subject, pm.body, pm.msgtime, pm.id_member_from, COALESCE(m.real_name, pm.from_name) AS sender_name
 			FROM {db_prefix}personal_messages AS pm
 				INNER JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm)
@@ -3475,7 +3475,7 @@ function ReportMessage()
 		$body = preg_replace('~<br ?/?' . '>~i', "\n", $body);
 
 		// Get any other recipients of the email.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem_to.id_member AS id_member_to, mem_to.real_name AS to_name, pmr.bcc
 			FROM {db_prefix}pm_recipients AS pmr
 				LEFT JOIN {db_prefix}members AS mem_to ON (mem_to.id_member = pmr.id_member)
@@ -3502,7 +3502,7 @@ function ReportMessage()
 			$recipients[] = sprintf($txt['pm_report_pm_hidden'], $hidden_recipients);
 
 		// Now let's get out and loop through the admins.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name, lngfile
 			FROM {db_prefix}members
 			WHERE (id_group = {int:admin_id} OR FIND_IN_SET({int:admin_id}, additional_groups) != 0)
@@ -3588,7 +3588,7 @@ function ManageRules()
 	LoadRules();
 
 	// Likely to need all the groups!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mg.id_group, mg.group_name, COALESCE(gm.id_member, 0) AS can_moderate, mg.hidden
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}group_moderators AS gm ON (gm.id_group = mg.id_group AND gm.id_member = {int:current_member})
@@ -3644,7 +3644,7 @@ function ManageRules()
 
 			if (!empty($members))
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_member, member_name
 					FROM {db_prefix}members
 					WHERE id_member IN ({array_int:member_list})',
@@ -3695,7 +3695,7 @@ function ManageRules()
 			if ($type == 'mid')
 			{
 				$name = trim($_POST['ruledef'][$ind]);
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_member
 					FROM {db_prefix}members
 					WHERE real_name = {string:member_name}
@@ -3760,7 +3760,7 @@ function ManageRules()
 				['id_rule']
 			);
 		else
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}pm_rules
 				SET rule_name = {string:rule_name}, criteria = {string:criteria}, actions = {string:actions},
 					delete_pm = {int:delete_pm}, is_or = {int:is_or}
@@ -3788,7 +3788,7 @@ function ManageRules()
 			$toDelete[] = (int) $k;
 
 		if (!empty($toDelete))
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}pm_rules
 				WHERE id_rule IN ({array_int:delete_list})
 					AND id_member = {int:current_member}',
@@ -3823,7 +3823,7 @@ function ApplyRules($all_messages = false)
 
 	// @todo Apply all should have timeout protection!
 	// Get all the messages that match this.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			pmr.id_pm, pm.id_member_from, pm.subject, pm.body, mem.id_group
 		FROM {db_prefix}pm_recipients AS pmr
@@ -3897,7 +3897,7 @@ function ApplyRules($all_messages = false)
 					// Make sure this stays in the inbox
 					if ($label['id'] == '-1')
 					{
-						$smcFunc['db_query']('', '
+						$smcFunc['db']->query('', '
 							UPDATE {db_prefix}pm_recipients
 							SET in_inbox = {int:in_inbox}
 							WHERE id_pm = {int:id_pm}
@@ -3943,7 +3943,7 @@ function LoadRules($reload = false)
 	if (isset($context['rules']) && !$reload)
 		return;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			id_rule, rule_name, criteria, actions, delete_pm, is_or
 		FROM {db_prefix}pm_rules
@@ -3982,7 +3982,7 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 {
 	global $user_info, $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			pm.id_member_from = {int:id_current_member} AND pm.deleted_by_sender = {int:not_deleted} AS valid_for_outbox,
 			pmr.id_pm IS NOT NULL AS valid_for_inbox

@@ -31,7 +31,7 @@ function MoveTopic()
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT t.id_member_started, ms.subject, t.approved
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
@@ -144,7 +144,7 @@ function MoveTopic2()
 	// Make sure this form hasn't been submitted before.
 	checkSubmitOnce('check');
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member_started, id_first_msg, approved
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
@@ -176,7 +176,7 @@ function MoveTopic2()
 	$_POST['toboard'] = (int) $_POST['toboard'];
 
 	// Make sure they can see the board they are trying to move to (and get whether posts count in the target board).
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT b.count_posts, b.name, m.subject
 		FROM {db_prefix}boards AS b
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
@@ -226,7 +226,7 @@ function MoveTopic2()
 					cache_put_data('response_prefix', $context['response_prefix'], 600);
 				}
 
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}messages
 					SET subject = {string:subject}
 					WHERE id_topic = {int:current_topic}',
@@ -237,7 +237,7 @@ function MoveTopic2()
 				);
 			}
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}messages
 				SET subject = {string:custom_subject}
 				WHERE id_msg = {int:id_first_msg}',
@@ -295,7 +295,7 @@ function MoveTopic2()
 		createPost($msgOptions, $topicOptions, $posterOptions);
 	}
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT count_posts
 		FROM {db_prefix}boards
 		WHERE id_board = {int:current_board}
@@ -309,7 +309,7 @@ function MoveTopic2()
 
 	if ($pcounter_from != $pcounter)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}
@@ -393,7 +393,7 @@ function moveTopics($topics, $toBoard)
 		$searchAPI->topicsMoved($topics, $toBoard);
 
 	// Determine the source boards...
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, approved, COUNT(*) AS num_topics, SUM(unapproved_posts) AS unapproved_posts,
 			SUM(num_replies) AS num_replies
 		FROM {db_prefix}topics
@@ -432,7 +432,7 @@ function moveTopics($topics, $toBoard)
 
 	// Move over the mark_read data. (because it may be read and now not by some!)
 	$SaveAServer = max(0, $modSettings['maxMsgID'] - 50000);
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT lmr.id_member, lmr.id_msg, t.id_topic, COALESCE(lt.unwatched, 0) AS unwatched
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board
@@ -484,7 +484,7 @@ function moveTopics($topics, $toBoard)
 	$totalUnapprovedPosts = 0;
 	foreach ($fromBoards as $stats)
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}boards
 			SET
 				num_posts = CASE WHEN {int:num_posts} > num_posts THEN 0 ELSE num_posts - {int:num_posts} END,
@@ -505,7 +505,7 @@ function moveTopics($topics, $toBoard)
 		$totalUnapprovedTopics += $stats['unapproved_topics'];
 		$totalUnapprovedPosts += $stats['unapproved_posts'];
 	}
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}boards
 		SET
 			num_topics = num_topics + {int:total_topics},
@@ -525,7 +525,7 @@ function moveTopics($topics, $toBoard)
 	);
 
 	// Move the topic.  Done.  :P
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET id_board = {int:id_board}' . ($isRecycleDest ? ',
 			unapproved_posts = {int:no_unapproved}, approved = {int:is_approved}' : '') . '
@@ -541,7 +541,7 @@ function moveTopics($topics, $toBoard)
 	// If this was going to the recycle bin, check what messages are being recycled, and remove them from the queue.
 	if ($isRecycleDest && ($totalUnapprovedTopics || $totalUnapprovedPosts))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_msg
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topics})
@@ -558,7 +558,7 @@ function moveTopics($topics, $toBoard)
 
 		// Empty the approval queue for these, as we're going to approve them next.
 		if (!empty($approval_msgs))
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}approval_queue
 				WHERE id_msg IN ({array_int:message_list})
 					AND id_attach = {int:id_attach}',
@@ -569,7 +569,7 @@ function moveTopics($topics, $toBoard)
 			);
 
 		// Get all the current max and mins.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_topic, id_first_msg, id_last_msg
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:topics})',
@@ -588,7 +588,7 @@ function moveTopics($topics, $toBoard)
 		$smcFunc['db']->free_result($request);
 
 		// Check the MAX and MIN are correct.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_topic, MIN(id_msg) AS first_msg, MAX(id_msg) AS last_msg
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topics})
@@ -601,7 +601,7 @@ function moveTopics($topics, $toBoard)
 		{
 			// If not, update.
 			if ($row['first_msg'] != $topicMaxMin[$row['id_topic']]['min'] || $row['last_msg'] != $topicMaxMin[$row['id_topic']]['max'])
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}topics
 					SET id_first_msg = {int:first_msg}, id_last_msg = {int:last_msg}
 					WHERE id_topic = {int:selected_topic}',
@@ -615,7 +615,7 @@ function moveTopics($topics, $toBoard)
 		$smcFunc['db']->free_result($request);
 	}
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}messages
 		SET id_board = {int:id_board}' . ($isRecycleDest ? ',approved = {int:is_approved}' : '') . '
 		WHERE id_topic IN ({array_int:topics})',
@@ -625,7 +625,7 @@ function moveTopics($topics, $toBoard)
 			'is_approved' => 1,
 		]
 	);
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}log_reported
 		SET id_board = {int:id_board}
 		WHERE id_topic IN ({array_int:topics})',
@@ -636,7 +636,7 @@ function moveTopics($topics, $toBoard)
 	);
 
 	// Mark target board as seen, if it was already marked as seen before.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT (COALESCE(lb.id_msg, 0) >= b.id_msg_updated) AS isSeen
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
@@ -693,7 +693,7 @@ function moveTopicConcurrence()
 		return true;
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.subject, b.name
 			FROM {db_prefix}topics as t
 				LEFT JOIN {db_prefix}boards AS b ON (t.id_board = b.id_board)

@@ -138,7 +138,7 @@ function AdminRegister()
 	// Load the assignable member groups.
 	if (allowedTo('manage_membergroups'))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT group_name, id_group
 			FROM {db_prefix}membergroups
 			WHERE id_group != {int:moderator_group}' . (allowedTo('admin_forum') ? '' : '

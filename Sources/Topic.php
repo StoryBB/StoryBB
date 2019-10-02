@@ -35,7 +35,7 @@ function LockTopic()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	// Find out who started the topic - in case User Topic Locking is enabled.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member_started, locked
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
@@ -68,7 +68,7 @@ function LockTopic()
 		fatal_lang_error('locked_by_admin', 'user');
 
 	// Actually lock the topic in the database with the new value.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET locked = {int:locked}
 		WHERE id_topic = {int:current_topic}',
@@ -115,7 +115,7 @@ function Sticky()
 	require_once($sourcedir . '/Subs-Post.php');
 
 	// Is this topic already stickied, or no?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT is_sticky
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:current_topic}
@@ -128,7 +128,7 @@ function Sticky()
 	$smcFunc['db']->free_result($request);
 
 	// Toggle the sticky value.... pretty simple ;).
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET is_sticky = {int:is_sticky}
 		WHERE id_topic = {int:current_topic}',

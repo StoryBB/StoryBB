@@ -90,7 +90,7 @@ class RegisterNotify extends \StoryBB\Task\Adhoc
 
 			// First, get everyone's language and details.
 			$emails = [];
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, lngfile, email_address
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:members})',

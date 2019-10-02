@@ -234,7 +234,7 @@ function Login2()
 	}
 
 	// Load the data up!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
 			passwd_flood, tfa_secret
 		FROM {db_prefix}members
@@ -249,7 +249,7 @@ function Login2()
 	{
 		$smcFunc['db']->free_result($request);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
 			passwd_flood, tfa_secret
 			FROM {db_prefix}members
@@ -480,7 +480,7 @@ function DoLogin()
 	unset($_SESSION['language'], $_SESSION['id_theme']);
 
 	// First login?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT last_login
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}
@@ -502,7 +502,7 @@ function DoLogin()
 	updateMemberData($user_info['id'], $update);
 
 	// Get rid of the online entry for that old guest....
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}log_online
 		WHERE session = {string:session}',
 		[
@@ -565,7 +565,7 @@ function Logout($internal = false, $redirect = true)
 		(new Observable\Account\LoggedOut($user_settings['member_name'], $user_info['id']))->execute();
 
 		// If you log out, you aren't online anymore :P.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member = {int:current_member}',
 			[

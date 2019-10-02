@@ -217,7 +217,7 @@ function MembergroupMembers()
 		fatal_lang_error('membergroup_does_not_exist', false);
 
 	// Load up the group details.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group AS id, group_name AS name, hidden, online_color,
 			is_character, icons, description, group_type
 		FROM {db_prefix}membergroups
@@ -246,7 +246,7 @@ function MembergroupMembers()
 	$context['can_send_email'] = allowedTo('moderate_forum');
 
 	// Load all the group moderators, for fun.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, mem.real_name
 		FROM {db_prefix}group_moderators AS mods
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
@@ -382,7 +382,7 @@ function MembergroupMembers()
 	}
 
 	// Count members of the group.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM ' . ($context['group']['is_character'] ? '{db_prefix}characters' : '{db_prefix}members') . '
 		WHERE ' . $where,
@@ -402,7 +402,7 @@ function MembergroupMembers()
 	// Load up all members of this group.
 	if ($context['group']['is_character'])
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member, member_name, real_name, email_address, member_ip, date_registered, last_login,
 				chars.posts, is_activated, real_name, id_character, character_name
 			FROM {db_prefix}members AS mem
@@ -417,7 +417,7 @@ function MembergroupMembers()
 			]
 		);
 	} else {
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, member_name, real_name, email_address, member_ip, date_registered, last_login,
 				posts, is_activated, real_name
 			FROM {db_prefix}members
@@ -533,7 +533,7 @@ function GroupRequests()
 		// Otherwise we do something!
 		else
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT lgr.id_request
 				FROM {db_prefix}log_group_requests AS lgr
 				WHERE ' . $where . '
@@ -574,7 +574,7 @@ function GroupRequests()
 			{
 				foreach ($log_changes as $id_request => $details)
 				{
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}log_group_requests
 						SET status = {int:status},
 							id_member_acted = {int:id_member_acted},
@@ -727,7 +727,7 @@ function list_getGroupRequestCount($where, $where_parameters)
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_group_requests AS lgr
 		WHERE ' . $where,
@@ -760,7 +760,7 @@ function list_getGroupRequests($start, $items_per_page, $sort, $where, $where_pa
 {
 	global $smcFunc, $scripturl, $txt;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			lgr.id_request, lgr.id_member, lgr.id_group, lgr.time_applied, lgr.reason,
 			lgr.status, lgr.id_member_acted, lgr.member_name_acted, lgr.time_acted, lgr.act_reason,

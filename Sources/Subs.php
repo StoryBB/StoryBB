@@ -64,7 +64,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			else
 			{
 				// Update the latest activated member (highest id_member) and count.
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT COUNT(*), MAX(id_member)
 				FROM {db_prefix}members
 				WHERE is_activated = {int:is_activated}',
@@ -76,7 +76,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				$smcFunc['db']->free_result($result);
 
 				// Get the latest activated member's display name.
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT real_name
 				FROM {db_prefix}members
 				WHERE id_member = {int:id_member}
@@ -89,7 +89,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				$smcFunc['db']->free_result($result);
 
 				// Update the amount of members awaiting approval (either new registration or deletion)
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT COUNT(*)
 				FROM {db_prefix}members
 				WHERE is_activated IN ({array_int:activation_status})',
@@ -109,7 +109,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			else
 			{
 				// SUM and MAX on a smaller table is better for InnoDB tables.
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT SUM(num_posts + unapproved_posts) AS total_messages, MAX(id_last_msg) AS max_msg_id
 				FROM {db_prefix}boards
 				WHERE redirect = {string:blank_redirect}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -131,7 +131,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 
 		case 'subject':
 			// Remove the previous subject (if any).
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_search_subjects
 			WHERE id_topic = {int:id_topic}',
 				[
@@ -166,7 +166,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			{
 				// Get the number of topics - a SUM is better for InnoDB tables.
 				// We also ignore the recycle bin here because there will probably be a bunch of one-post topics there.
-				$result = $smcFunc['db_query']('', '
+				$result = $smcFunc['db']->query('', '
 				SELECT SUM(num_topics + unapproved_topics) AS total_topics
 				FROM {db_prefix}boards' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 				WHERE id_board != {int:recycle_board}' : ''),
@@ -262,7 +262,7 @@ function updateMemberData($members, $data)
 			else
 			{
 				$member_names = [];
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT member_name
 					FROM {db_prefix}members
 					WHERE ' . $condition,
@@ -333,7 +333,7 @@ function updateMemberData($members, $data)
 		$parameters['p_' . $var] = $val;
 	}
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}members
 		SET' . substr($setString, 0, -1) . '
 		WHERE ' . $condition,
@@ -344,7 +344,7 @@ function updateMemberData($members, $data)
 	// to the main/OOC character.
 	if (isset($data['real_name']))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}characters
 			SET character_name = {string:p_real_name}
 			WHERE is_main = 1
@@ -413,7 +413,7 @@ function updateCharacterData($char_id, $data)
 		$parameters['p_' . $var] = $val;
 	}
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET' . substr($setString, 0, -1) . '
 		WHERE ' . $condition,
@@ -455,7 +455,7 @@ function updateSettings($changeArray, $update = false)
 
 	// Proceed with the deletion.
 	if (!empty($toRemove))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}settings
 			WHERE variable IN ({array_string:remove})',
 			[
@@ -468,7 +468,7 @@ function updateSettings($changeArray, $update = false)
 	{
 		foreach ($changeArray as $variable => $value)
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}settings
 				SET value = {' . ($value === false || $value === true ? 'raw' : 'string') . ':value}
 				WHERE variable = {string:variable}',
@@ -2106,7 +2106,7 @@ function setupMenuContext()
 	// Show how many errors there are
 	if (allowedTo('admin_forum'))
 	{
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT COUNT(id_error)
 			FROM {db_prefix}log_errors',
 			[]
@@ -2121,7 +2121,7 @@ function setupMenuContext()
 			$context['menu_buttons']['admin']['sub_buttons']['errorlog']['badge'] = $errors;
 		}
 
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT COUNT(id_message)
 			FROM {db_prefix}contact_form
 			WHERE status = 0');
@@ -2285,7 +2285,7 @@ function add_integration_function($hook, $function, $permanent = true, $file = '
 	// Is it going to be permanent?
 	if ($permanent)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT value
 			FROM {db_prefix}settings
 			WHERE variable = {string:variable}',
@@ -2349,7 +2349,7 @@ function remove_integration_function($hook, $function, $permanent = true, $file 
 	$integration_call = $function;
 
 	// Get the permanent functions.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT value
 		FROM {db_prefix}settings
 		WHERE variable = {string:variable}',
@@ -2502,7 +2502,7 @@ function prepareLikesContext($topic)
 	if (($temp = cache_get_data($cache_key, $ttl)) === null)
 	{
 		$temp = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT content_id
 			FROM {db_prefix}user_likes AS l
 				INNER JOIN {db_prefix}messages AS m ON (l.content_id = m.id_msg)
@@ -2868,7 +2868,7 @@ function build_query_board($userid)
 	}
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 				SELECT mem.ignore_boards, mem.id_group, mem.additional_groups
 				FROM {db_prefix}members AS mem
 				WHERE mem.id_member = {int:id_member}
@@ -2899,7 +2899,7 @@ function build_query_board($userid)
 		// What boards are they the moderator of?
 		$boards_mod = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}moderators
 			WHERE id_member = {int:current_member}',
@@ -2912,7 +2912,7 @@ function build_query_board($userid)
 		$smcFunc['db']->free_result($request);
 
 		// Can any of the groups they're in moderate any of the boards?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}moderator_groups
 			WHERE id_group IN({array_int:groups})',
@@ -2961,7 +2961,7 @@ function get_main_menu_groups()
 	if (($groups = cache_get_data('char_main_menu_groups', 300)) === null)
 	{
 		$groups = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mg.id_group, mg.group_name
 			FROM {db_prefix}membergroups AS mg
 			INNER JOIN {db_prefix}characters AS chars ON (chars.main_char_group = mg.id_group)
@@ -3024,7 +3024,7 @@ function get_user_possible_characters($id_member, $board_id = 0)
 			$board_in_character = !empty($board_info['in_character']);
 		} else {
 			$board_in_character = false;
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_board, in_character
 				FROM {db_prefix}boards');
 			while ($row = $smcFunc['db_fetch_assoc']($request))

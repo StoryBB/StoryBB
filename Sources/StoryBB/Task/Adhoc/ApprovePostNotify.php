@@ -36,7 +36,7 @@ class ApprovePostNotify extends \StoryBB\Task\Adhoc
 		require_once($sourcedir . '/Subs-Members.php');
 		$modMembers = membersAllowedTo('approve_posts', $topicOptions['board']);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, email_address, lngfile
 			FROM {db_prefix}members
 			WHERE id_member IN({array_int:members})',

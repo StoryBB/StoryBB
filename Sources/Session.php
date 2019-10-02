@@ -123,7 +123,7 @@ function sessionRead($session_id)
 		return '';
 
 	// Look for it in the database.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT data
 		FROM {db_prefix}sessions
 		WHERE session_id = {string:session_id}
@@ -153,7 +153,7 @@ function sessionWrite($session_id, $data)
 		return false;
 
 	// First try to update an existing row...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}sessions
 		SET data = {string:data}, last_update = {int:last_update}
 		WHERE session_id = {string:session_id}',
@@ -190,7 +190,7 @@ function sessionDestroy($session_id)
 		return false;
 
 	// Just delete the row...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}sessions
 		WHERE session_id = {string:session_id}',
 		[
@@ -217,7 +217,7 @@ function sessionGC($max_lifetime)
 		$max_lifetime = max($modSettings['databaseSession_lifetime'], 60);
 
 	// Clean up after yerself ;).
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}sessions
 		WHERE last_update < {int:last_update}',
 		[

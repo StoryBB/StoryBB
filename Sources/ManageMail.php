@@ -68,7 +68,7 @@ function BrowseMailQueue()
 	{
 		checkSession();
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}mail_queue
 			WHERE id_mail IN ({array_int:mail_ids})',
 			[
@@ -78,7 +78,7 @@ function BrowseMailQueue()
 	}
 
 	// How many items do we have?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS queue_size, MIN(time_sent) AS oldest
 		FROM {db_prefix}mail_queue',
 		[
@@ -223,7 +223,7 @@ function list_getMailQueue($start, $items_per_page, $sort)
 {
 	global $smcFunc, $txt;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			id_mail, time_sent, recipient, priority, private, subject
 		FROM {db_prefix}mail_queue
@@ -259,7 +259,7 @@ function list_getMailQueueSize()
 	global $smcFunc;
 
 	// How many items do we have?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*) AS queue_size
 		FROM {db_prefix}mail_queue',
 		[
@@ -384,7 +384,7 @@ function ClearMailQueue()
 	if (!isset($_GET['te']))
 	{
 		// How many items do we have?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*) AS queue_size
 			FROM {db_prefix}mail_queue',
 			[

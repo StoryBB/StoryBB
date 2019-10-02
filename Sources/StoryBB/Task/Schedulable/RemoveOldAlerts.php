@@ -46,7 +46,7 @@ class RemoveOldAlerts implements \StoryBB\Task\Schedulable
 	{
 		global $smcFunc;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}user_alerts
 			WHERE is_read > 0
 			AND is_read < {int:time}',

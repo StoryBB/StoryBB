@@ -36,7 +36,7 @@ class Mentions
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member, mem.real_name, mem.email_address, mem.id_group, mem.additional_groups,
 				mem.lngfile, ment.id_member AS id_mentioned_by, ment.real_name AS mentioned_by_name,
 				m.id_character AS dest_chr, chars.character_name AS dest_chr_name, chars.is_main AS dest_is_main,
@@ -146,7 +146,7 @@ class Mentions
 		if (empty($possible_names) || !allowedTo('mention'))
 			return [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.id_member, chars.character_name,
 				chars.is_main, chars.retired
 			FROM {db_prefix}characters AS chars

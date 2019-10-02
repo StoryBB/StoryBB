@@ -78,7 +78,7 @@ class Alert
 		}
 
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_alert, id_member
 			FROM {db_prefix}user_alerts
 			WHERE ' . implode(' AND ', $clauses),
@@ -110,7 +110,7 @@ class Alert
 
 		$toMark = (array) $toMark;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}user_alerts
 			SET is_read = {int:read}
 			WHERE id_alert IN({array_int:toMark})',
@@ -145,7 +145,7 @@ class Alert
 
 		$toDelete = (array) $toDelete;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}user_alerts
 			WHERE id_alert IN({array_int:toDelete})',
 			[
@@ -179,7 +179,7 @@ class Alert
 		if (empty($memID))
 			return false;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_alert
 			FROM {db_prefix}user_alerts
 			WHERE id_member = {int:id_member}

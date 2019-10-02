@@ -193,7 +193,7 @@ class Likes
 			// So we're doing something off a like. We need to verify that it exists, and that the current user can see it.
 			// Fortunately for messages, this is quite easy to do - and we'll get the topic id while we're at it, because
 			// we need this later for other things.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT m.id_topic, m.id_member
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}boards AS b ON (m.id_board = b.id_board)
@@ -272,7 +272,7 @@ class Likes
 	{
 		global $smcFunc;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}user_likes
 			WHERE content_id = {int:like_content}
 				AND content_type = {string:like_type}
@@ -341,7 +341,7 @@ class Likes
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(id_member)
 			FROM {db_prefix}user_likes
 			WHERE content_id = {int:like_content}
@@ -373,7 +373,7 @@ class Likes
 			return $this->_error = 'cannot_';
 
 		// Do we already like this?
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT content_id, content_type, id_member
 			FROM {db_prefix}user_likes
 			WHERE content_id = {int:like_content}
@@ -444,7 +444,7 @@ class Likes
 		if ($this->_type !== 'msg')
 			return;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}messages
 			SET likes = {int:num_likes}
 			WHERE id_msg = {int:id_msg}',
@@ -472,7 +472,7 @@ class Likes
 
 		// Firstly, load what we need. We already know we can see this, so that's something.
 		$context['likers'] = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, like_time
 			FROM {db_prefix}user_likes
 			WHERE content_id = {int:like_content}

@@ -69,7 +69,7 @@ function SaveDraft(&$post_errors)
 	// Modifying an existing draft, like hitting the save draft button or autosave enabled?
 	if (!empty($id_draft) && !empty($draft_info))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}user_drafts
 			SET
 				id_topic = {int:id_topic},
@@ -214,7 +214,7 @@ function SavePMDraft(&$post_errors, $recipientList)
 	// Modifying an existing PM draft?
 	if (!empty($id_pm_draft) && !empty($draft_info))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}user_drafts
 			SET id_reply = {int:id_reply},
 				type = {int:type},
@@ -310,7 +310,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 		return false;
 
 	// load in this draft from the DB
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT is_sticky, locked, smileys_enabled, body , subject,
 			id_board, id_draft, id_reply, to_list
 		FROM {db_prefix}user_drafts
@@ -392,7 +392,7 @@ function DeleteDraft($id_draft, $check = true)
 	if (empty($id_draft) || ($check && empty($user_info['id'])))
 		return false;
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}user_drafts
 		WHERE id_draft IN ({array_int:id_draft})' . ($check ? '
 			AND  id_member = {int:id_member}' : ''),
@@ -429,7 +429,7 @@ function ShowDrafts($member_id, $topic = false, $draft_type = 0)
 		ReadDraft((int) $_REQUEST['id_draft'], $draft_type, true, true);
 
 	// load the drafts this user has available
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT subject, poster_time, id_board, id_topic, id_draft
 		FROM {db_prefix}user_drafts
 		WHERE id_member = {int:id_member}' . ((!empty($topic) && empty($draft_type)) ? '
@@ -518,7 +518,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 		checkSession('get');
 		$id_delete = (int) $_REQUEST['delete'];
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}user_drafts
 			WHERE id_draft = {int:id_draft}
 				AND id_member = {int:id_member}
@@ -540,7 +540,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 
 	// Get the count of applicable drafts on the boards they can (still) see ...
 	// @todo .. should we just let them see their drafts even if they have lost board access ?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(id_draft)
 		FROM {db_prefix}user_drafts AS ud
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = ud.id_board AND {query_see_board})
@@ -575,7 +575,7 @@ function showProfileDrafts($memID, $draft_type = 0)
 	// Find this user's drafts for the boards they can access
 	// @todo ... do we want to do this?  If they were able to create a draft, do we remove thier access to said draft if they loose
 	//           access to the board or if the topic moves to a board they can not see?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			b.id_board, b.name AS bname,
 			ud.id_member, ud.id_draft, ud.body, ud.smileys_enabled, ud.subject, ud.poster_time, ud.id_topic, ud.locked, ud.is_sticky
@@ -670,7 +670,7 @@ function showPMDrafts($memID = -1)
 		$id_delete = (int) $_REQUEST['delete'];
 		$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}user_drafts
 			WHERE id_draft = {int:id_draft}
 				AND id_member = {int:id_member}
@@ -700,7 +700,7 @@ function showPMDrafts($memID = -1)
 		$_REQUEST['viewscount'] = 10;
 
 	// Get the count of applicable drafts
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(id_draft)
 		FROM {db_prefix}user_drafts
 		WHERE id_member = {int:id_member}
@@ -732,7 +732,7 @@ function showPMDrafts($memID = -1)
 	}
 
 	// Load in this user's PM drafts
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			ud.id_member, ud.id_draft, ud.body, ud.subject, ud.poster_time, ud.id_reply, ud.to_list
 		FROM {db_prefix}user_drafts AS ud
@@ -784,7 +784,7 @@ function showPMDrafts($memID = -1)
 			$recipient_ids['bcc'] = array_map('intval', $recipient_ids['bcc']);
 			$allRecipients = array_merge($recipient_ids['to'], $recipient_ids['bcc']);
 
-			$request_2 = $smcFunc['db_query']('', '
+			$request_2 = $smcFunc['db']->query('', '
 				SELECT id_member, real_name
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:member_list})',

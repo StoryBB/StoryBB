@@ -57,7 +57,7 @@ class Attachment
 		// Left this for legacy.
 		if ($file_hash === '')
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT file_hash
 				FROM {db_prefix}attachments
 				WHERE id_attach = {int:id_attach}',

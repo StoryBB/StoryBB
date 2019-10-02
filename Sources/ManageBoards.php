@@ -384,7 +384,7 @@ function EditBoard()
 	$context['groups_post'] = [];
 
 	// Load membergroups.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT group_name, id_group, is_character
 		FROM {db_prefix}membergroups
 		WHERE id_group NOT IN ({int:admin_group}, {int:moderator_group})
@@ -457,7 +457,7 @@ function EditBoard()
 			'selected' => $catID == $curBoard['category']
 		];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, mem.real_name
 		FROM {db_prefix}moderators AS mods
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)
@@ -472,7 +472,7 @@ function EditBoard()
 	$smcFunc['db']->free_result($request);
 
 	// Get all the groups assigned as moderators
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group
 		FROM {db_prefix}moderator_groups
 		WHERE id_board = {int:current_board}',
@@ -486,7 +486,7 @@ function EditBoard()
 	$smcFunc['db']->free_result($request);
 
 	// Get all the themes...
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_theme AS id, value AS name
 		FROM {db_prefix}themes
 		WHERE variable = {string:name}',
@@ -629,7 +629,7 @@ function EditBoard2()
 		// We need to know what used to be case in terms of redirection.
 		if (!empty($_POST['boardid']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT redirect, num_posts
 				FROM {db_prefix}boards
 				WHERE id_board = {int:current_board}',
@@ -704,7 +704,7 @@ function EditBoardSettings($return_config = false)
 	global $context, $txt, $sourcedir, $scripturl, $smcFunc;
 
 	// Load the boards list - for the recycle bin!
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db']->query('order_by_board_order', '
 		SELECT b.id_board, b.name AS board_name, c.name AS cat_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)

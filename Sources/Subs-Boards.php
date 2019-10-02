@@ -38,7 +38,7 @@ function markBoardsRead($boards, $unread = false)
 	{
 		// Clear out all the places where this lovely info is stored.
 		// @todo Maybe not log_mark_read?
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_mark_read
 			WHERE id_board IN ({array_int:board_list})
 				AND id_member = {int:current_member}',
@@ -47,7 +47,7 @@ function markBoardsRead($boards, $unread = false)
 				'board_list' => $boards,
 			]
 		);
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_boards
 			WHERE id_board IN ({array_int:board_list})
 				AND id_member = {int:current_member}',
@@ -84,7 +84,7 @@ function markBoardsRead($boards, $unread = false)
 	// @todo look at this...
 	// The call to markBoardsRead() in Display() used to be simply
 	// marking log_boards (the previous query only)
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT MIN(id_topic)
 		FROM {db_prefix}log_topics
 		WHERE id_member = {int:current_member}',
@@ -99,7 +99,7 @@ function markBoardsRead($boards, $unread = false)
 		return;
 
 	// @todo SLOW This query seems to eat it sometimes.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT lt.id_topic
 		FROM {db_prefix}log_topics AS lt
 			INNER JOIN {db_prefix}topics AS t /*!40000 USE INDEX (PRIMARY) */ ON (t.id_topic = lt.id_topic
@@ -119,7 +119,7 @@ function markBoardsRead($boards, $unread = false)
 	$smcFunc['db']->free_result($result);
 
 	if (!empty($topics))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_topics
 			WHERE id_member = {int:current_member}
 				AND id_topic IN ({array_int:topic_list})',
@@ -145,7 +145,7 @@ function MarkRead()
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'all')
 	{
 		// Find all the boards this user can see.
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}',
@@ -174,7 +174,7 @@ function MarkRead()
 		// Make sure all the topics are integers!
 		$topics = array_map('intval', explode('-', $_REQUEST['topics']));
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_topic, unwatched
 			FROM {db_prefix}log_topics
 			WHERE id_topic IN ({array_int:selected_topics})
@@ -210,7 +210,7 @@ function MarkRead()
 	elseif (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'topic')
 	{
 		// First, let's figure out what the latest message is.
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT t.id_first_msg, t.id_last_msg, COALESCE(lt.unwatched, 0) as unwatched
 			FROM {db_prefix}topics as t
 			LEFT JOIN {db_prefix}log_topics as lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
@@ -229,7 +229,7 @@ function MarkRead()
 		else
 		{
 			$canSeeUnapproved = allowedTo('approve_posts');
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT id_msg
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic} ' . ($canSeeUnapproved ? '' : '
@@ -283,7 +283,7 @@ function MarkRead()
 			// They want to mark the entire tree starting with the boards specified
 			// The easiest thing is to just get all the boards they can see, but since we've specified the top of tree we ignore some of them
 
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT b.id_board, b.id_parent
 				FROM {db_prefix}boards AS b
 				WHERE {query_see_board}
@@ -318,7 +318,7 @@ function MarkRead()
 		if (empty($clauses))
 			redirectexit();
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
@@ -345,7 +345,7 @@ function MarkRead()
 		if (!isset($_REQUEST['unread']))
 		{
 			// Find all the boards this user can see.
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT b.id_board
 				FROM {db_prefix}boards AS b
 				WHERE b.id_parent IN ({array_int:parent_list})
@@ -394,7 +394,7 @@ function getMsgMemberID($messageID)
 	global $smcFunc;
 
 	// Find the topic and make sure the member still exists.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT COALESCE(mem.id_member, 0)
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -510,7 +510,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 		// Fix the children of this board.
 		if (!empty($childList) && !empty($childUpdates))
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}boards
 				SET ' . implode(',
 					', $childUpdates) . '
@@ -523,7 +523,7 @@ function modifyBoard($board_id, &$boardOptions)
 			);
 
 		// Make some room for this spot.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}boards
 			SET board_order = board_order + {int:new_order}
 			WHERE board_order > {int:insert_after}
@@ -563,7 +563,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 		if (!empty($board_parent))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_profile
 				FROM {db_prefix}boards
 				WHERE id_board = {int:board_parent}
@@ -658,7 +658,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 	// Do the updates (if any).
 	if (!empty($boardUpdates))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}boards
 			SET
 				' . implode(',
@@ -673,7 +673,7 @@ function modifyBoard($board_id, &$boardOptions)
 	if (isset($boardOptions['moderators']) || isset($boardOptions['moderator_string']) || isset($boardOptions['moderator_groups']) || isset($boardOptions['moderator_group_string']))
 	{
 		// Reset current moderators for this board - if there are any!
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}moderators
 			WHERE id_board = {int:board_list}',
 			[
@@ -701,7 +701,7 @@ function modifyBoard($board_id, &$boardOptions)
 				$boardOptions['moderators'] = [];
 			if (!empty($moderators))
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_member
 					FROM {db_prefix}members
 					WHERE member_name IN ({array_string:moderator_list}) OR real_name IN ({array_string:moderator_list})
@@ -733,7 +733,7 @@ function modifyBoard($board_id, &$boardOptions)
 		}
 
 		// Reset current moderator groups for this board - if there are any!
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}moderator_groups
 			WHERE id_board = {int:board_list}',
 			[
@@ -762,7 +762,7 @@ function modifyBoard($board_id, &$boardOptions)
 				$boardOptions['moderator_groups'] = [];
 			if (!empty($moderator_groups))
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_group
 					FROM {db_prefix}membergroups
 					WHERE group_name IN ({array_string:moderator_group_list})
@@ -930,7 +930,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	}
 
 	// Delete ALL topics in the selected boards (done first so topics can't be marooned.)
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_topic
 		FROM {db_prefix}topics
 		WHERE id_board IN ({array_int:boards_to_remove})',
@@ -947,21 +947,21 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	removeTopics($topics, false);
 
 	// Delete the board's logs.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}log_mark_read
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		[
 			'boards_to_remove' => $boards_to_remove,
 		]
 	);
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}log_boards
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		[
 			'boards_to_remove' => $boards_to_remove,
 		]
 	);
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}log_notify
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		[
@@ -970,7 +970,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	);
 
 	// Delete this board's moderators.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}moderators
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		[
@@ -979,7 +979,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	);
 
 	// Delete this board's moderator groups.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}moderator_groups
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		[
@@ -988,7 +988,7 @@ function deleteBoards($boards_to_remove, $moveChildrenTo = null)
 	);
 
 	// Delete the boards.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}boards
 		WHERE id_board IN ({array_int:boards_to_remove})',
 		[
@@ -1029,7 +1029,7 @@ function reorderBoards()
 	{
 		foreach ($boardList[$catID] as $boardID)
 			if ($boards[$boardID]['order'] != ++$board_order)
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}boards
 					SET board_order = {int:new_order}
 					WHERE id_board = {int:selected_board}',
@@ -1057,7 +1057,7 @@ function fixChildren($parent, $newLevel, $newParent)
 	global $smcFunc;
 
 	// Grab all children of $parent...
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT id_board
 		FROM {db_prefix}boards
 		WHERE id_parent = {int:parent_board}',
@@ -1071,7 +1071,7 @@ function fixChildren($parent, $newLevel, $newParent)
 	$smcFunc['db']->free_result($result);
 
 	// ...and set it to a new parent and child_level.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}boards
 		SET id_parent = {int:new_parent}, child_level = {int:new_child_level}
 		WHERE id_parent = {int:parent_board}',
@@ -1111,7 +1111,7 @@ function getTreeOrder()
 		return $cached;
 	}
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT b.id_board, b.id_cat
 		FROM {db_prefix}boards AS b
 		ORDER BY b.board_order',
@@ -1189,7 +1189,7 @@ function getBoardModerators(array $boards)
 	if (empty($boards))
 		return [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, mem.real_name, mo.id_board
 		FROM {db_prefix}moderators AS mo
 		  INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mo.id_member)
@@ -1229,7 +1229,7 @@ function getBoardModeratorGroups(array $boards)
 	if (empty($boards))
 		return [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mg.id_group, mg.group_name, bg.id_board
 		FROM {db_prefix}moderator_groups AS bg
 		  INNER JOIN {db_prefix}membergroups AS mg ON (mg.id_group = bg.id_group)
@@ -1283,7 +1283,7 @@ function getBoardTree()
 	$boardParameters = array_unique($extraBoardParameters);
 
 	// Getting all the board and category information you'd ever wanted.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			' . implode(', ', $boardColumns) . '
 		FROM {db_prefix}categories AS c
@@ -1360,7 +1360,7 @@ function getBoardTree()
 
 				// Wrong childlevel...we can silently fix this...
 				if ($boards[$row['id_parent']]['tree']['node']['level'] != $row['child_level'] - 1)
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}boards
 						SET child_level = {int:new_child_level}
 						WHERE id_board = {int:selected_board}',

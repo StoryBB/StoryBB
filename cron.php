@@ -107,7 +107,7 @@ while ($task_details = fetch_task())
 	$result = perform_task($task_details);
 	if ($result)
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}background_tasks
 			WHERE id_task = {int:task}',
 			[
@@ -134,7 +134,7 @@ function fetch_task()
 	// Try to find a task. Specifically, try to find one that hasn't been claimed previously, or failing that,
 	// a task that was claimed but failed for whatever reason and failed long enough ago. We should not care
 	// what task it is, merely that it is one in the queue, the order is irrelevant.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_task, task_file, task_class, task_data, claimed_time
 		FROM {db_prefix}background_tasks
 		WHERE claimed_time < {int:claim_limit}
@@ -147,7 +147,7 @@ function fetch_task()
 	{
 		// We found one. Let's try and claim it immediately.
 		$smcFunc['db']->free_result($request);
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}background_tasks
 			SET claimed_time = {int:new_claimed}
 			WHERE id_task = {int:task}

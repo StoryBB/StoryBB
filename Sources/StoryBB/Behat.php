@@ -99,7 +99,7 @@ class Behat extends RawMinkContext implements Context
 		db_extend('packages');
 
 		// Make a database.
-		$smcFunc['db_query']('', "
+		$smcFunc['db']->query('', "
 			DROP DATABASE IF EXISTS `$db_name`",
 			[
 				'security_override' => true,
@@ -107,7 +107,7 @@ class Behat extends RawMinkContext implements Context
 			],
 			$db_connection
 		);
-		$smcFunc['db_query']('', "
+		$smcFunc['db']->query('', "
 			CREATE DATABASE `$db_name`",
 			[
 				'security_override' => true,
@@ -143,7 +143,7 @@ class Behat extends RawMinkContext implements Context
 			$engines = [];
 
 			// Figure out storage engines - what do we have, etc.
-			$get_engines = $smcFunc['db_query']('', 'SHOW ENGINES', []);
+			$get_engines = $smcFunc['db']->query('', 'SHOW ENGINES', []);
 
 			while ($row = $smcFunc['db_fetch_assoc']($get_engines))
 			{
@@ -221,7 +221,7 @@ class Behat extends RawMinkContext implements Context
 				}
 			}
 
-			if ($smcFunc['db_query']('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
+			if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
 			{
 				// Use the appropriate function based on the DB type
 				if ($db_type == 'mysql' || $db_type == 'mysqli')
@@ -318,7 +318,7 @@ class Behat extends RawMinkContext implements Context
 		$smcFunc['db']->transaction('begin');
 		foreach ($non_prefixed_tables as $table)
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DROP TABLE IF EXISTS {raw:table}',
 				[
 					'table' => $table,

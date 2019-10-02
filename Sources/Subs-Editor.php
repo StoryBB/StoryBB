@@ -78,7 +78,7 @@ function html_to_bbc($text)
 
 		if (!empty($names))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT code, filename
 				FROM {db_prefix}smileys
 				WHERE filename IN ({array_string:smiley_filenames})',
@@ -1626,7 +1626,7 @@ function create_control_richedit($editorOptions)
 
 		if (($temp = cache_get_data('posting_smileys', 480)) == null)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT code, filename, description, smiley_row, hidden
 				FROM {db_prefix}smileys
 				WHERE hidden IN (0, 2)
@@ -1712,7 +1712,7 @@ function AutoSuggest_Search_Member()
 	$_REQUEST['search'] = strtr($_REQUEST['search'], ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;']);
 
 	// Find the member.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name
 		FROM {db_prefix}members
 		WHERE {raw:real_name} LIKE {string:search}' . (!empty($context['search_param']['buddies']) ? '
@@ -1761,7 +1761,7 @@ function AutoSuggest_Search_MemberChar()
 	$_REQUEST['search'] = strtr($_REQUEST['search'], ['%' => '\%', '_' => '\_', '*' => '%', '?' => '_', '&#038;' => '&amp;']);
 
 	// Find the member.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name
 		FROM {db_prefix}members
 		WHERE {raw:real_name} LIKE {string:search}' . (!empty($context['search_param']['buddies']) ? '
@@ -1794,7 +1794,7 @@ function AutoSuggest_Search_MemberChar()
 	$smcFunc['db']->free_result($request);
 
 	// Find their characters
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT chars.id_member, chars.character_name, mem.real_name
 		FROM {db_prefix}characters AS chars
 		INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)

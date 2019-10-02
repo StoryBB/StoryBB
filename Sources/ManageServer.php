@@ -271,7 +271,7 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 
 	// Now we move onto the themes.
 	// First, get a list of theme URLs...
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_theme, variable, value
 		  FROM {db_prefix}themes
 		 WHERE variable in ({string:themeurl}, {string:imagesurl})
@@ -292,7 +292,7 @@ function AlignURLsWithSSLSetting($new_force_ssl = 0)
 				$newval = strtr($row['value'], ['http://' => 'https://']);
 			else
 				$newval = strtr($row['value'], ['https://' => 'http://']);
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}themes
 				   SET value = {string:theme_val}
 				 WHERE variable = {string:theme_var}
@@ -437,14 +437,14 @@ function ModifyCookieSettings($return_config = false)
 		//If we disabled 2FA, reset all members and membergroups settings.
 		if (isset($_POST['tfa_mode']) && empty($_POST['tfa_mode']))
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}membergroups
 				SET tfa_required = {int:zero}',
 				[
 					'zero' => 0,
 				]
 			);
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}members
 				SET tfa_secret = {string:empty}, tfa_backup = {string:empty}',
 				[
@@ -1117,7 +1117,7 @@ function saveDBSettings(&$config_vars)
 			if ($board_list === null)
 			{
 				$board_list = [];
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_board
 					FROM {db_prefix}boards');
 				while ($row = $smcFunc['db_fetch_row']($request))

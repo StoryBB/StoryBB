@@ -71,7 +71,7 @@ function ModifyProfile($post_errors = [])
 
 	if (!empty($modSettings['paid_enabled']))
 	{
-		$get_active_subs = $smcFunc['db_query']('', '
+		$get_active_subs = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}subscriptions
 			WHERE active = {int:active}', [
@@ -993,7 +993,7 @@ function loadCustomFields($memID, $area = 'summary')
 		$where .= ' AND show_profile = {string:area}';
 
 	// Load all the relevant fields - and data.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			col_name, field_name, field_desc, field_type, field_order, show_reg, field_length, field_options,
 			default_value, bbc, enclose, placement

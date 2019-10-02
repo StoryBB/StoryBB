@@ -26,7 +26,7 @@ class GroupActNotify extends \StoryBB\Task\Adhoc
 		global $sourcedir, $smcFunc, $language, $modSettings;
 
 		// Get the details of all the members concerned...
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lgr.id_request, lgr.id_member, lgr.id_group, mem.email_address,
 				mem.lngfile, mem.member_name,  mg.group_name
 			FROM {db_prefix}log_group_requests AS lgr

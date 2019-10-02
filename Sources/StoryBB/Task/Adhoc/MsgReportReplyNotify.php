@@ -27,7 +27,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 
 		// Let's see. Let us, first of all, establish the list of possible people.
 		$possible_members = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}log_comments
 			WHERE id_notice = {int:report}
@@ -57,7 +57,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 		$members = membersAllowedTo('moderate_board', $this->_details['board_id']);
 
 		// Second, anyone assigned to be a moderator of this board directly.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}moderators
 			WHERE id_board = {int:current_board}',
@@ -70,7 +70,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 		$smcFunc['db']->free_result($request);
 
 		// Thirdly, anyone assigned to be a moderator of this group as a group->board moderator.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member
 			FROM {db_prefix}members AS mem, {db_prefix}moderator_groups AS bm
 			WHERE bm.id_board = {int:current_board}
@@ -158,7 +158,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 
 			// First, get everyone's language and details.
 			$emails = [];
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, lngfile, email_address
 				FROM {db_prefix}members
 				WHERE id_member IN ({array_int:members})',
@@ -176,7 +176,7 @@ class MsgReportReplyNotify extends \StoryBB\Task\Adhoc
 
 			// Second, get some details that might be nice for the report email.
 			// We don't bother cluttering up the tasks data for this, when it's really no bother to fetch it.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT lr.subject, lr.membername, lr.body
 				FROM {db_prefix}log_reported AS lr
 				WHERE id_report = {int:report}',

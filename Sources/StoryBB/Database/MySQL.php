@@ -15,6 +15,8 @@ namespace StoryBB\Database;
 use StoryBB\Database\DatabaseAdapter;
 use StoryBB\Database\Exception\ConnectionFailedException;
 use StoryBB\Database\Exception\CouldNotSelectDatabaseException;
+use StoryBB\Helper\IP;
+use StoryBB\StringLibrary;
 
 /**
  * Database adapter for MySQL.
@@ -201,9 +203,7 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function create_database(string $db_name): bool
 	{
-		global $smcFunc;
-
-		$smcFunc['db_query']('', "
+		$this->query('', "
 			CREATE DATABASE IF NOT EXISTS `$db_name`",
 			[
 				'security_override' => true,
@@ -223,9 +223,7 @@ class MySQL implements DatabaseAdapter
 
 	public function truncate_table(string $tablename)
 	{
-		global $smcFunc;
-
-		$smcFunc['db_query']('truncate_table', '
+		$this->query('truncate_table', '
 			TRUNCATE {db_prefix}' . $tablename,
 			[]
 		);
@@ -257,7 +255,7 @@ class MySQL implements DatabaseAdapter
 		$db = trim($db);
 		$filter = $filter === null ? '' : ' LIKE \'' . $filter . '\'';
 
-		$request = $smcFunc['db_query']('', '
+		$request = $this->query('', '
 			SHOW TABLES
 			FROM `{raw:db}`
 			{raw:filter}',
@@ -269,7 +267,7 @@ class MySQL implements DatabaseAdapter
 		$tables = [];
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$tables[] = $row[0];
-		$smcFunc['db']->free_result($request);
+		$this->free_result($request);
 
 		return $tables;
 	}
@@ -283,7 +281,7 @@ class MySQL implements DatabaseAdapter
 	 */
 	public function error($db_string)
 	{
-		global $txt, $context, $modSettings, $db_show_debug, $smcFunc;
+		global $txt, $context, $modSettings, $db_show_debug;
 
 		// Get the file and line numbers.
 		list ($file, $line) = $this->error_backtrace('', '', 'return', __FILE__, __LINE__);
@@ -330,7 +328,7 @@ class MySQL implements DatabaseAdapter
 				// Try a deadlock more than once more.
 				for ($n = 0; $n < 4; $n++)
 				{
-					$ret = $smcFunc['db_query']('', $db_string, false, false);
+					$ret = $this->query('', $db_string, false, false);
 
 					$new_errno = mysqli_errno($this->connection);
 					if ($ret !== false || in_array($new_errno, [1205, 1213]))
@@ -393,7 +391,7 @@ class MySQL implements DatabaseAdapter
 	 * @param int $line What line of $file the code which generated the error is on
 	 * @return void|array Returns an array with the file and line if $error_type is 'return'
 	 */
-	pulic function error_backtrace($error_message, $log_message = '', $error_type = false, $file = null, $line = null)
+	public function error_backtrace($error_message, $log_message = '', $error_type = false, $file = null, $line = null)
 	{
 		if (empty($log_message))
 		{
@@ -446,5 +444,386 @@ class MySQL implements DatabaseAdapter
 		{
 			trigger_error($error_message . ($line !== null ? '<em>(' . basename($file) . '-' . $line . ')</em>' : ''));
 		}
+	}
+
+	/**
+	 * Do a query.  Takes care of errors too.
+	 *
+	 * @param string $identifier An identifier.
+	 * @param string $db_string The database string
+	 * @param array $db_values = [] The values to be inserted into the string
+	 * @return resource|bool Returns a MySQL result resource (for SELECT queries), true (for UPDATE queries) or false if the query failed
+	 */
+	public function query($identifier, $db_string, $db_values = [])
+		global $db_cache, $db_count, $db_show_debug, $time_start;
+		global $db_unbuffered, $db_callback, $modSettings, $smcFunc;
+
+		// Comments that are allowed in a query are preg_removed.
+		static $allowed_comments_from = [
+			'~\s+~s',
+			'~/\*!40001 SQL_NO_CACHE \*/~',
+			'~/\*!40000 USE INDEX \([A-Za-z\_]+?\) \*/~',
+			'~/\*!40100 ON DUPLICATE KEY UPDATE id_msg = \d+ \*/~',
+		];
+		static $allowed_comments_to = [
+			' ',
+			'',
+			'',
+			'',
+		];
+
+
+		// Get a connection if we are shutting down, sometimes the link is closed before sessions are written
+		if (!$this->connection_active())
+		{
+			try
+			{
+				$this->connect();
+				$this->select_db();
+			}
+			catch (\Exception $e)
+			{
+				// We're not connected, guess we're going nowhere.
+				$this->error_backtrace('No longer connected to database.', $smcFunc['db_error'](), true, __FILE__, __LINE__);
+			}
+		}
+
+		// One more query....
+		$db_count = !isset($db_count) ? 1 : $db_count + 1;
+
+		if (empty($modSettings['disableQueryCheck']) && strpos($db_string, '\'') !== false && empty($db_values['security_override']))
+		{
+			$this->error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true, __FILE__, __LINE__);
+		}
+
+		// Use "ORDER BY null" to prevent MySQL doing filesorts for Group By clauses without an Order By.
+		if (strpos($db_string, 'GROUP BY') !== false && strpos($db_string, 'ORDER BY') === false && preg_match('~^\s+SELECT~i', $db_string))
+		{
+			// Add before LIMIT
+			if ($pos = strpos($db_string, 'LIMIT '))
+			{
+				$db_string = substr($db_string, 0, $pos) . "\t\t\tORDER BY null\n" . substr($db_string, $pos, strlen($db_string));
+			}
+			else
+			{
+				// Append it.
+				$db_string .= "\n\t\t\tORDER BY null";
+			}
+		}
+
+		if (empty($db_values['security_override']) && (!empty($db_values) || strpos($db_string, '{db_prefix}') !== false))
+		{
+			$db_string = $this->quote($db_string, $db_values);
+		}
+
+		// Debugging.
+		if (isset($db_show_debug) && $db_show_debug === true)
+		{
+			// Get the file and line number this function was called.
+			list ($file, $line) = $this->error_backtrace('', '', 'return', __FILE__, __LINE__);
+
+			// Initialize $db_cache if not already initialized.
+			if (!isset($db_cache))
+			{
+				$db_cache = [];
+			}
+
+			if (!empty($_SESSION['debug_redirect']))
+			{
+				$db_cache = array_merge($_SESSION['debug_redirect'], $db_cache);
+				$db_count = count($db_cache) + 1;
+				$_SESSION['debug_redirect'] = [];
+			}
+
+			// Don't overload it.
+			$st = microtime(true);
+			$db_cache[$db_count]['q'] = $db_count < 50 ? $db_string : '...';
+			$db_cache[$db_count]['f'] = $file;
+			$db_cache[$db_count]['l'] = $line;
+			$db_cache[$db_count]['s'] = $st - $time_start;
+		}
+
+		// First, we clean strings out of the query, reduce whitespace, lowercase, and trim - so we can check it over.
+		if (empty($modSettings['disableQueryCheck']))
+		{
+			$clean = '';
+			$old_pos = 0;
+			$pos = -1;
+			while (true)
+			{
+				$pos = strpos($db_string, '\'', $pos + 1);
+				if ($pos === false)
+				{
+					break;
+				}
+				$clean .= substr($db_string, $old_pos, $pos - $old_pos);
+
+				while (true)
+				{
+					$pos1 = strpos($db_string, '\'', $pos + 1);
+					$pos2 = strpos($db_string, '\\', $pos + 1);
+					if ($pos1 === false)
+					{
+						break;
+					}
+					elseif ($pos2 === false || $pos2 > $pos1)
+					{
+						$pos = $pos1;
+						break;
+					}
+
+					$pos = $pos2 + 1;
+				}
+				$clean .= ' %s ';
+
+				$old_pos = $pos + 1;
+			}
+			$clean .= substr($db_string, $old_pos);
+			$clean = trim(strtolower(preg_replace($allowed_comments_from, $allowed_comments_to, $clean)));
+
+			// Comments?  We don't use comments in our queries, we leave 'em outside!
+			if (strpos($clean, '/*') > 2 || strpos($clean, '--') !== false || strpos($clean, ';') !== false)
+			{
+				$fail = true;
+			}
+			// Trying to change passwords, slow us down, or something?
+			elseif (strpos($clean, 'sleep') !== false && preg_match('~(^|[^a-z])sleep($|[^[_a-z])~s', $clean) != 0)
+			{
+				$fail = true;
+			}
+			elseif (strpos($clean, 'benchmark') !== false && preg_match('~(^|[^a-z])benchmark($|[^[a-z])~s', $clean) != 0)
+			{
+				$fail = true;
+			}
+
+			if (!empty($fail) && function_exists('log_error'))
+			{
+				$this->error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR, __FILE__, __LINE__);
+			}
+		}
+
+		if (empty($db_unbuffered))
+		{
+			$ret = @mysqli_query($connection, $db_string);
+		}
+		else
+		{
+			$ret = @mysqli_query($connection, $db_string, MYSQLI_USE_RESULT);
+		}
+
+		if ($ret === false && empty($db_values['db_error_skip']))
+		{
+			$ret = $this->error($db_string, $connection);
+		}
+
+		// Debugging.
+		if (isset($db_show_debug) && $db_show_debug === true)
+		{
+			$db_cache[$db_count]['t'] = microtime(true) - $st;
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Eescape and quote a string, e.g. in preparation for execution.
+	 *
+	 * @param string $db_string The database string
+	 * @param array $db_values An array of values to be injected into the string
+	 * @return string The string with the values inserted
+	 */
+	public function quote($db_string, $db_values)
+	{
+
+		// Do the quoting and escaping
+		return preg_replace_callback('~{([a-z_]+)(?::([a-zA-Z0-9_-]+))?}~', function($matches) use ($db_values)
+		{
+			global $user_info, $db_prefix;
+
+			if (!is_object($this->connection))
+			{
+				display_db_error();
+			}
+
+			if ($matches[1] === 'db_prefix')
+			{
+				return $db_prefix;
+			}
+
+			if (strpos($matches[1], 'query_') !== false && !isset($matches[2]))
+			{
+				return isset($user_info[$matches[1]]) ? $user_info[$matches[1]] : '0=1';
+			}
+
+			if ($matches[1] === 'empty')
+			{
+				return '\'\'';
+			}
+
+			if (!isset($matches[2]))
+			{
+				$this->error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);
+			}
+
+			if ($matches[1] === 'literal')
+			{
+				return '\'' . mysqli_real_escape_string($this->connection, $matches[2]) . '\'';
+			}
+
+			if (!isset($db_values[$matches[2]]))
+			{
+				$this->error_backtrace('The database value you\'re trying to insert does not exist: ' . StringLibrary::escape($matches[2]), '', E_USER_ERROR, __FILE__, __LINE__);
+			}
+
+			$replacement = $db_values[$matches[2]];
+
+			switch ($matches[1])
+			{
+				case 'int':
+					if (!is_numeric($replacement) || (string) $replacement !== (string) (int) $replacement)
+					{
+						$this->error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					}
+					return (string) (int) $replacement;
+				break;
+
+				case 'string':
+				case 'text':
+					return sprintf('\'%1$s\'', mysqli_real_escape_string($this->connection, $replacement));
+				break;
+
+				case 'array_int':
+					if (is_array($replacement))
+					{
+						if (empty($replacement))
+						{
+							$this->error_backtrace('Database error, given array of integer values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+						}
+
+						foreach ($replacement as $key => $value)
+						{
+							if (!is_numeric($value) || (string) $value !== (string) (int) $value)
+							{
+								$this->error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+							}
+
+							$replacement[$key] = (string) (int) $value;
+						}
+
+						return implode(', ', $replacement);
+					}
+				break;
+
+				case 'array_string':
+					if (is_array($replacement))
+					{
+						if (empty($replacement))
+						{
+							$this->error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+						}
+
+						foreach ($replacement as $key => $value)
+						{
+							$replacement[$key] = sprintf('\'%1$s\'', mysqli_real_escape_string($this->connection, $value));
+						}
+
+						return implode(', ', $replacement);
+					}
+				break;
+
+				case 'date':
+					if (preg_match('~^(\d{4})-([0-1]?\d)-([0-3]?\d)$~', $replacement, $date_matches) === 1)
+					{
+						return sprintf('\'%04d-%02d-%02d\'', $date_matches[1], $date_matches[2], $date_matches[3]);
+					}
+				break;
+
+				case 'time':
+					if (preg_match('~^([0-1]?\d|2[0-3]):([0-5]\d):([0-5]\d)$~', $replacement, $time_matches) === 1)
+					{
+						return sprintf('\'%02d:%02d:%02d\'', $time_matches[1], $time_matches[2], $time_matches[3]);
+					}
+				break;
+
+				case 'datetime':
+					if (preg_match('~^(\d{4})-([0-1]?\d)-([0-3]?\d) ([0-1]?\d|2[0-3]):([0-5]\d):([0-5]\d)$~', $replacement, $datetime_matches) === 1)
+					{
+						return 'str_to_date('.
+							sprintf('\'%04d-%02d-%02d %02d:%02d:%02d\'', $datetime_matches[1], $datetime_matches[2], $datetime_matches[3], $datetime_matches[4], $datetime_matches[5], $datetime_matches[6]).
+							',\'%Y-%m-%d %h:%i:%s\')';
+					}
+				break;
+
+				case 'float':
+					if (is_numeric($replacement))
+					{
+						return (string) (float) $replacement;
+					}
+				break;
+
+				case 'identifier':
+					// Backticks inside identifiers are supported as of MySQL 4.1. We don't need them for StoryBB.
+					return '`' . strtr($replacement, ['`' => '', '.' => '`.`']) . '`';
+				break;
+
+				case 'raw':
+					return $replacement;
+				break;
+
+				case 'inet':
+					if ($replacement == 'null' || $replacement == '')
+					{
+						return 'null';
+					}
+					elseif (IP::is_valid($replacement))
+					{
+						// We don't use the native support of mysql > 5.6.2
+						return sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($replacement)), 32, "0", STR_PAD_LEFT));
+					}
+					break;
+
+				case 'array_inet':
+					if (is_array($replacement))
+					{
+						if (empty($replacement))
+						{
+							$this->error_backtrace('Database error, given array of IPv4 or IPv6 values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+						}
+
+						foreach ($replacement as $key => $value)
+						{
+							if ($replacement == 'null' || $replacement == '')
+								$replacement[$key] = 'null';
+							if (!IP::is_valid($value))
+							{
+								$this->error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+							}
+							$replacement[$key] = sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($value)), 32, "0", STR_PAD_LEFT));
+						}
+
+						return implode(', ', $replacement);
+					}
+				break;
+			}
+
+			$types = [
+				'array_int' => 'Array of integers expected.',
+				'array_string' => 'Array of strings expected.',
+				'date' => 'Date expected.',
+				'time' => 'Time expected.',
+				'datetime' => 'Datetime expected.',
+				'float' => 'Floating point number expected.',
+				'inet' => 'IPv4 or IPv6 expected.',
+				'array_inet' => 'Array of IPv4 or IPv6 expected.',
+			];
+			if (isset($types[$matches[1]]))
+			{
+				$this->error_backtrace('Wrong value type sent to the database. ' . $types[$matches[1]] . ' (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+			}
+			else
+			{
+				$this->error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')', '', false, __FILE__, __LINE__);
+			}
+		}, $db_string);
 	}
 }

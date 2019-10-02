@@ -119,7 +119,7 @@ function BoardReport()
 	loadPermissionProfiles();
 
 	// Get every moderator.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mods.id_board, mods.id_member, mem.real_name
 		FROM {db_prefix}moderators AS mods
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = mods.id_member)',
@@ -132,7 +132,7 @@ function BoardReport()
 	$smcFunc['db']->free_result($request);
 
 	// Get every moderator gruop.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT modgs.id_board, modgs.id_group, memg.group_name
 		FROM {db_prefix}moderator_groups AS modgs
 			INNER JOIN {db_prefix}membergroups AS memg ON (memg.id_group = modgs.id_group)',
@@ -145,7 +145,7 @@ function BoardReport()
 	$smcFunc['db']->free_result($request);
 
 	// Get all the possible membergroups!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups',
 		[
@@ -178,7 +178,7 @@ function BoardReport()
 	setKeys('cols');
 
 	// Go through each board!
-	$request = $smcFunc['db_query']('order_by_board_order', '
+	$request = $smcFunc['db']->query('order_by_board_order', '
 		SELECT b.id_board, b.name, b.num_posts, b.num_topics, b.count_posts, b.in_character, b.member_groups, b.override_theme, b.id_profile, b.deny_member_groups,
 			b.redirect, c.name AS cat_name, COALESCE(par.name, {string:text_none}) AS parent_name, COALESCE(th.value, {string:text_none}) AS theme_name
 		FROM {db_prefix}boards AS b
@@ -293,7 +293,7 @@ function BoardPermissionsReport()
 		$group_clause = '1=1';
 
 	// Fetch all the board names.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, name, id_profile
 		FROM {db_prefix}boards
 		WHERE ' . $board_clause . '
@@ -316,7 +316,7 @@ function BoardPermissionsReport()
 
 	// Get the ids of any groups allowed to moderate this board
 	// Limit it to any boards and/or groups we're looking at
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, id_group
 		FROM {db_prefix}moderator_groups
 		WHERE ' . $board_clause . ' AND ' . $group_clause,
@@ -330,7 +330,7 @@ function BoardPermissionsReport()
 	$smcFunc['db']->free_result($request);
 
 	// Get all the possible membergroups, except admin!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $group_clause . '
@@ -360,7 +360,7 @@ function BoardPermissionsReport()
 	// Cache every permission setting, to make sure we don't miss any allows.
 	$permissions = [];
 	$board_permissions = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_profile, id_group, add_deny, permission
 		FROM {db_prefix}board_permissions
 		WHERE id_profile IN ({array_int:profile_list})
@@ -467,7 +467,7 @@ function MemberGroupsReport()
 	global $txt, $settings, $modSettings, $smcFunc;
 
 	// Fetch all the board names.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, name, member_groups, id_profile, deny_member_groups
 		FROM {db_prefix}boards',
 		[
@@ -520,7 +520,7 @@ function MemberGroupsReport()
 	addData($mgSettings);
 
 	// Now start cycling the membergroups!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mg.id_group, mg.group_name, mg.online_color, mg.max_messages, mg.icons, mg.is_character,
 			CASE WHEN bp.permission IS NOT NULL OR mg.id_group = {int:admin_group} THEN 1 ELSE 0 END AS can_moderate
 		FROM {db_prefix}membergroups AS mg
@@ -601,7 +601,7 @@ function GroupPermissionsReport()
 		$clause = 'id_group != {int:moderator_group}';
 
 	// Get all the possible membergroups, except admin!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $clause . '
@@ -642,7 +642,7 @@ function GroupPermissionsReport()
 	call_integration_hook('integrate_reports_groupperm', [&$disabled_permissions]);
 
 	// Now the big permission fetch!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, add_deny, permission
 		FROM {db_prefix}permissions
 		WHERE ' . $clause . '
@@ -699,7 +699,7 @@ function StaffReport()
 	require_once($sourcedir . '/Subs-Members.php');
 
 	// Fetch all the board names.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, name
 		FROM {db_prefix}boards',
 		[
@@ -711,7 +711,7 @@ function StaffReport()
 	$smcFunc['db']->free_result($request);
 
 	// Get every moderator.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mods.id_board, mods.id_member
 		FROM {db_prefix}moderators AS mods',
 		[
@@ -727,7 +727,7 @@ function StaffReport()
 	$smcFunc['db']->free_result($request);
 
 	// Get any additional boards they can moderate through group-based board moderation
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, modgs.id_board
 		FROM {db_prefix}members AS mem
 			INNER JOIN {db_prefix}moderator_groups AS modgs ON (modgs.id_group = mem.id_group OR FIND_IN_SET(modgs.id_group, mem.additional_groups) != 0)',
@@ -761,7 +761,7 @@ function StaffReport()
 		fatal_lang_error('report_error_too_many_staff');
 
 	// Get all the possible membergroups!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups',
 		[
@@ -784,7 +784,7 @@ function StaffReport()
 	setKeys('cols');
 
 	// Get each member!
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, id_group, posts, last_login
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:staff_list})

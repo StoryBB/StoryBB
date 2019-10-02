@@ -53,7 +53,7 @@ class RemoveUnapprovedAccounts implements \StoryBB\Task\Schedulable
 
 		$date_registered = time() - ((int) $modSettings['remove_unapproved_accounts_days'] * 86400);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}members
 			WHERE is_activated IN ({int:unactivated}, {int:unactivatedbanned})
 			AND date_registered <= {int:date_registered}',

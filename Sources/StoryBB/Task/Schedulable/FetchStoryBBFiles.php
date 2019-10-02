@@ -47,7 +47,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 		global $sourcedir, $txt, $language, $modSettings, $smcFunc, $context;
 
 		// What files do we want to get
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_file, filename, path, parameters
 			FROM {db_prefix}admin_info_files',
 			[
@@ -89,7 +89,7 @@ class FetchStoryBBFiles implements \StoryBB\Task\Schedulable
 			}
 
 			// Save the file to the database.
-			$smcFunc['db_query']('substring', '
+			$smcFunc['db']->query('substring', '
 				UPDATE {db_prefix}admin_info_files
 				SET data = SUBSTRING({string:file_data}, 1, 65534)
 				WHERE id_file = {int:id_file}',

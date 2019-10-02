@@ -58,7 +58,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 	$robot = new \StoryBB\Model\Robot;
 	$robot_finds = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			lo.id_member, lo.log_time, lo.robot_name, chars.id_character, IFNULL(chars.character_name, mem.real_name) AS real_name, mem.member_name, mem.show_online,
 			IF(chars.is_main, mg.online_color, cg.online_color) AS online_color, mg.id_group, mg.group_name,
@@ -217,7 +217,7 @@ function trackStatsUsersOnline($total_users_online)
 	// No entry exists for today yet?
 	if (!isset($modSettings['mostOnlineUpdated']) || $modSettings['mostOnlineUpdated'] != $date)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT most_on
 			FROM {db_prefix}log_activity
 			WHERE date = {date:date}

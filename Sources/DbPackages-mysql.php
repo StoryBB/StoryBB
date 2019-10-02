@@ -158,7 +158,7 @@ function sbb_db_create_table($table_name, $columns, $indexes = [], $parameters =
 	}
 
 	// Create the table!
-	$smcFunc['db_query']('', $table_query,
+	$smcFunc['db']->query('', $table_query,
 		[
 			'security_override' => true,
 		]
@@ -195,7 +195,7 @@ function sbb_db_drop_table($table_name, $parameters = [], $error = 'fatal', $byp
 	if ($bypass_checks || in_array($full_table_name, $smcFunc['db']->list_tables()))
 	{
 		$query = 'DROP TABLE ' . $table_name;
-		$smcFunc['db_query']('',
+		$smcFunc['db']->query('',
 			$query,
 			[
 				'security_override' => true,
@@ -247,7 +247,7 @@ function sbb_db_add_column($table_name, $column_info, $parameters = [], $if_exis
 	$query = '
 		ALTER TABLE ' . $table_name . '
 		ADD ' . sbb_db_create_query_column($column_info) . (empty($column_info['auto']) ? '' : ' primary key');
-	$smcFunc['db_query']('', $query,
+	$smcFunc['db']->query('', $query,
 		[
 			'security_override' => true,
 		]
@@ -276,7 +276,7 @@ function sbb_db_remove_column($table_name, $column_name, $parameters = [], $erro
 	foreach ($columns as $column)
 		if ($column['name'] == $column_name)
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				ALTER TABLE ' . $table_name . '
 				DROP COLUMN ' . $column_name,
 				[
@@ -340,7 +340,7 @@ function sbb_db_change_column($table_name, $old_column, $column_info)
 	if ($size !== null)
 		$type = $type . '(' . $size . ')';
 
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		ALTER TABLE ' . $table_name . '
 		CHANGE COLUMN `' . $old_column . '` `' . $column_info['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column_info['null']) ? 'NOT NULL' : '') . ' ' .
 			(!isset($column_info['default']) ? '' : 'default \'' . $smcFunc['db_escape_string']($column_info['default']) . '\'') . ' ' .
@@ -403,7 +403,7 @@ function sbb_db_add_index($table_name, $index_info, $parameters = [], $if_exists
 	// If we're here we know we don't have the index - so just add it.
 	if (!empty($index_info['type']) && $index_info['type'] == 'primary')
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			ALTER TABLE ' . $table_name . '
 			ADD PRIMARY KEY (' . $columns . ')',
 			[
@@ -413,7 +413,7 @@ function sbb_db_add_index($table_name, $index_info, $parameters = [], $if_exists
 	}
 	else
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			ALTER TABLE ' . $table_name . '
 			ADD ' . (isset($index_info['type']) && $index_info['type'] == 'unique' ? 'UNIQUE' : 'INDEX') . ' ' . $index_info['name'] . ' (' . $columns . ')',
 			[
@@ -447,7 +447,7 @@ function sbb_db_remove_index($table_name, $index_name, $parameters = [], $error 
 		if ($index['type'] == 'primary' && $index_name == 'primary')
 		{
 			// Dropping primary key?
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				ALTER TABLE ' . $table_name . '
 				DROP PRIMARY KEY',
 				[
@@ -460,7 +460,7 @@ function sbb_db_remove_index($table_name, $index_name, $parameters = [], $error 
 		if ($index['name'] == $index_name)
 		{
 			// Drop the bugger...
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				ALTER TABLE ' . $table_name . '
 				DROP INDEX ' . $index_name,
 				[
@@ -558,7 +558,7 @@ function sbb_db_table_structure(string $table_name): Table
 	$indexes = [];
 
 	// First, get the columns.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SHOW FIELDS
 		FROM {raw:table_name}',
 		[
@@ -673,7 +673,7 @@ function sbb_db_table_structure(string $table_name): Table
 	$smcFunc['db']->free_result($result);
 
 	// Now get the indexes.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SHOW INDEXES
 		FROM {raw:table_name}',
 		[
@@ -770,7 +770,7 @@ function sbb_db_change_table(string $table_name, array $changes, bool $safe_mode
 		return $query;
 	}
 
-	return $smcFunc['db_query']('', $query,
+	return $smcFunc['db']->query('', $query,
 		[
 			'security_override' => true,
 		]
@@ -1102,7 +1102,7 @@ function sbb_db_list_columns($table_name, $detail = false, $parameters = [])
 
 	$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SHOW FIELDS
 		FROM {raw:table_name}',
 		[
@@ -1170,7 +1170,7 @@ function sbb_db_list_indexes($table_name, $detail = false, $parameters = [])
 
 	$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SHOW KEYS
 		FROM {raw:table_name}',
 		[

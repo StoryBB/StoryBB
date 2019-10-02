@@ -80,7 +80,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			// @todo Clean DB.
 			if (!empty($this->_details['id_attach']))
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}attachments
 					WHERE id_attach = {int:id_attach}
 					LIMIT 1',
@@ -91,7 +91,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 			}
 			if (!empty($this->_details['export_id']))
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}user_exports
 					WHERE id_export = {int:export_id}
 					LIMIT 1',
@@ -141,7 +141,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 		// Create the attachment we're going to store this as.
 		$char_id = 0;
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_character
 			FROM {db_prefix}characters
 			WHERE id_member = {int:member}
@@ -207,7 +207,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		$export = [];
 		$main_char = 0;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.character_name, chars.avatar, chars.signature,
 				chars.posts, chars.age, chars.date_created, chars.last_active, chars.is_main,
 				a.id_attach, a.filename, a.attachment_type
@@ -239,7 +239,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		// Pull the rest of the stuff out of the members table.
 		if (!empty($main_char))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT member_name, date_registered, immersive_mode, lngfile, last_login,
 					email_address, birthdate, website_title, website_url, signature,
 					member_ip, member_ip2, secret_question, total_time_logged_in, timezone
@@ -260,7 +260,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		// Add custom fields to the account entry.
 		if (!empty($main_char))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT cf.field_name, th.value
 				FROM {db_prefix}custom_fields AS cf
 				INNER JOIN {db_prefix}themes AS th ON (th.id_member = {int:member} AND th.variable = cf.col_name)
@@ -372,7 +372,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 
 		// Fetch character sheet versions, and export those too.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_character, created_time, sheet_text
 			FROM {db_prefix}character_sheet_versions
 			WHERE id_member = {int:member}
@@ -414,7 +414,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 
 		// Query for posts.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.id_msg, m.id_character, m.poster_time, m.id_topic, t.id_board, b.name AS board_name, m.subject, m.body,
 				m.modified_time, m.modified_name, m.modified_reason, chars.character_name
 			FROM {db_prefix}messages AS m
@@ -499,7 +499,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		}
 
 		// Query for posts.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.id_msg, m.id_character, m.id_topic, t.id_board, chars.character_name,
 				a.id_attach, a.filename, a.file_hash, a.id_folder
 			FROM {db_prefix}messages AS m
@@ -610,7 +610,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 		$size = @filesize($this->_details['zipfile']);
 
 		// Update the export to indicate it is done.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}attachments
 			SET approved = 1,
 				size = {int:size}
@@ -623,7 +623,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 
 		$export_link = '?action=profile;area=export_data;u=' . $this->_details['id_member'];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT real_name
 			FROM {db_prefix}members
 			WHERE id_member = {int:member}',

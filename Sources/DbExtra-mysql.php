@@ -40,7 +40,7 @@ function sbb_db_backup_table($table, $backup_table)
 	$table = str_replace('{db_prefix}', $db_prefix, $table);
 
 	// First, get rid of the old table.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DROP TABLE IF EXISTS {raw:backup_table}',
 		[
 			'backup_table' => $backup_table,
@@ -48,7 +48,7 @@ function sbb_db_backup_table($table, $backup_table)
 	);
 
 	// Can we do this the quick way?
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		CREATE TABLE {raw:backup_table} LIKE {raw:table}',
 		[
 			'backup_table' => $backup_table,
@@ -57,7 +57,7 @@ function sbb_db_backup_table($table, $backup_table)
 	// If this failed, we go old school.
 	if ($result)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			INSERT INTO {raw:backup_table}
 			SELECT *
 			FROM {raw:table}',
@@ -72,7 +72,7 @@ function sbb_db_backup_table($table, $backup_table)
 	}
 
 	// At this point, the quick method failed.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SHOW CREATE TABLE {raw:table}',
 		[
 			'table' => $table,
@@ -126,7 +126,7 @@ function sbb_db_backup_table($table, $backup_table)
 	else
 		$create = '';
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		CREATE TABLE {raw:backup_table} {raw:create}
 		ENGINE={raw:engine}' . (empty($charset) ? '' : ' CHARACTER SET {raw:charset}' . (empty($collate) ? '' : ' COLLATE {raw:collate}')) . '
 		SELECT *
@@ -146,7 +146,7 @@ function sbb_db_backup_table($table, $backup_table)
 		if (preg_match('~\`(.+?)\`\s~', $auto_inc, $match) != 0 && substr($auto_inc, -1, 1) == ',')
 			$auto_inc = substr($auto_inc, 0, -1);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			ALTER TABLE {raw:backup_table}
 			CHANGE COLUMN {raw:column_detail} {raw:auto_inc}',
 			[
@@ -172,7 +172,7 @@ function sbb_db_optimize_table($table)
 	$table = str_replace('{db_prefix}', $db_prefix, $table);
 
 	// Get how much overhead there is.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 			SHOW TABLE STATUS LIKE {string:table_name}',
 			[
 				'table_name' => str_replace('_', '\_', $table),
@@ -182,7 +182,7 @@ function sbb_db_optimize_table($table)
 	$smcFunc['db']->free_result($request);
 
 	$data_before = isset($row['Data_free']) ? $row['Data_free'] : 0;
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 			OPTIMIZE TABLE `{raw:table}`',
 			[
 				'table' => $table,
@@ -192,7 +192,7 @@ function sbb_db_optimize_table($table)
 		return -1;
 
 	// How much left?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 			SHOW TABLE STATUS LIKE {string:table}',
 			[
 				'table' => str_replace('_', '\_', $table),
@@ -228,7 +228,7 @@ function sbb_db_table_sql($tableName)
 	$schema_create .= 'CREATE TABLE `' . $tableName . '` (' . $crlf;
 
 	// Find all the fields.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SHOW FIELDS
 		FROM `{raw:table}`',
 		[
@@ -266,7 +266,7 @@ function sbb_db_table_sql($tableName)
 	$schema_create = substr($schema_create, 0, -strlen($crlf) - 1);
 
 	// Find the keys.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SHOW KEYS
 		FROM `{raw:table}`',
 		[
@@ -301,7 +301,7 @@ function sbb_db_table_sql($tableName)
 	}
 
 	// Now just get the comment and engine... (MyISAM, etc.)
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SHOW TABLE STATUS
 		LIKE {string:table}',
 		[
@@ -330,7 +330,7 @@ function sbb_db_get_version()
 
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT VERSION()',
 		[
 		]
@@ -354,7 +354,7 @@ function sbb_db_get_engine()
 	if (!empty($db_type))
 		return $db_type;
 
-	$request = $smcFunc['db_query']('', 'SELECT @@version_comment');
+	$request = $smcFunc['db']->query('', 'SELECT @@version_comment');
 	list ($comment) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db']->free_result($request);
 

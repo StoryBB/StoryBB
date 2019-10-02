@@ -289,7 +289,7 @@ function ModBlockWatchedUsers()
 	if (($watched_users = cache_get_data('recent_user_watches', 240)) === null)
 	{
 		$modSettings['warning_watch'] = empty($modSettings['warning_watch']) ? 1 : $modSettings['warning_watch'];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, real_name, last_login
 			FROM {db_prefix}members
 			WHERE warning >= {int:warning_watch}
@@ -374,7 +374,7 @@ function ModBlockNotes()
 		if (!allowedTo('admin_forum'))
 		{
 			// Is this your note?
-			$get_owner = $smcFunc['db_query']('', '
+			$get_owner = $smcFunc['db']->query('', '
 				SELECT id_member
 				FROM {db_prefix}log_comments
 				WHERE id_comment = {int:note}
@@ -394,7 +394,7 @@ function ModBlockNotes()
 		}
 
 		// Lets delete it.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_comments
 			WHERE id_comment = {int:note}
 				AND comment_type = {literal:modnote}',
@@ -416,7 +416,7 @@ function ModBlockNotes()
 	// How many notes in total?
 	if (($moderator_notes_total = cache_get_data('moderator_notes_total', 240)) === null)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}log_comments AS lc
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
@@ -434,7 +434,7 @@ function ModBlockNotes()
 	$offset = isset($_GET['notes']) && isset($_GET['start']) ? $_GET['start'] : 0;
 	if ($offset != 0 || ($moderator_notes = cache_get_data('moderator_notes', 240)) === null)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COALESCE(mem.id_member, 0) AS id_member, COALESCE(mem.real_name, lc.member_name) AS member_name,
 				lc.log_time, lc.body, lc.id_comment AS id_note
 			FROM {db_prefix}log_comments AS lc
@@ -497,7 +497,7 @@ function ModBlockReportedPosts()
 	if (($reported_posts = cache_get_data('reported_posts_' . $cachekey, 90)) === null)
 	{
 		// By George, that means we in a position to get the reports, jolly good.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lr.id_report, lr.id_msg, lr.id_topic, lr.id_board, lr.id_member, lr.subject,
 				lr.num_reports, COALESCE(mem.real_name, lr.membername) AS author_name,
 				COALESCE(mem.id_member, 0) AS id_author
@@ -559,7 +559,7 @@ function ModBlockGroupRequests()
 		return 'group_requests_block';
 
 	// What requests are outstanding?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT lgr.id_request, lgr.id_member, lgr.id_group, lgr.time_applied, mem.member_name, mg.group_name, mem.real_name
 		FROM {db_prefix}log_group_requests AS lgr
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = lgr.id_member)
@@ -611,7 +611,7 @@ function ModBlockReportedMembers()
 	if (($reported_users = cache_get_data('reported_users_' . $cachekey, 90)) === null)
 	{
 		// By George, that means we in a position to get the reports, jolly good.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lr.id_report, lr.id_member,
 				lr.num_reports, COALESCE(mem.real_name, lr.membername) AS user_name,
 				COALESCE(mem.id_member, 0) AS id_user
@@ -693,7 +693,7 @@ function ReportedMembers()
 		$_GET['rid'] = (int) $_GET['rid'];
 
 		// Update the report...
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}log_reported
 			SET ' . (isset($_GET['ignore']) ? 'ignore_all = {int:ignore_all}' : 'closed = {int:closed}') . '
 			WHERE id_report = {int:id_report}',
@@ -705,7 +705,7 @@ function ReportedMembers()
 		);
 
 		// Get the board, topic and message for this report
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, membername
 			FROM {db_prefix}log_reported
 			WHERE id_report = {int:id_report}',
@@ -744,7 +744,7 @@ function ReportedMembers()
 		if (!empty($toClose))
 		{
 			// Get the data for each of these reports
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_report, id_member, membername
 				FROM {db_prefix}log_reported
 				WHERE id_report IN ({array_int:report_list})',
@@ -772,7 +772,7 @@ function ReportedMembers()
 			// Log the closing of all the reports
 			logActions($logs);
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}log_reported
 				SET closed = {int:is_closed}
 				WHERE id_report IN ({array_int:report_list})',
@@ -792,7 +792,7 @@ function ReportedMembers()
 	}
 
 	// How many entries are we viewing?
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_reported AS lr
 		WHERE lr.closed = {int:view_closed}
@@ -810,7 +810,7 @@ function ReportedMembers()
 	$context['start'] = $_GET['start'];
 
 	// By George, that means we in a position to get the reports, golly good.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT lr.id_report, lr.id_member, lr.time_started, lr.time_updated, lr.num_reports, lr.closed, lr.ignore_all,
 			COALESCE(mem.real_name, lr.membername) AS user_name, COALESCE(mem.id_member, 0) AS id_user
 		FROM {db_prefix}log_reported AS lr
@@ -853,7 +853,7 @@ function ReportedMembers()
 	// Now get all the people who reported it.
 	if (!empty($report_ids))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT lrc.id_comment, lrc.id_report, lrc.time_sent, lrc.comment,
 				COALESCE(mem.id_member, 0) AS id_member, COALESCE(mem.real_name, lrc.membername) AS reporter
 			FROM {db_prefix}log_reported_comments AS lrc
@@ -923,7 +923,7 @@ function ShowNotice()
 
 	// @todo Assumes nothing needs permission more than accessing moderation center!
 	$id_notice = (int) $_GET['nid'];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT body, subject
 		FROM {db_prefix}log_member_notices
 		WHERE id_notice = {int:id_notice}',
@@ -1165,7 +1165,7 @@ function list_getWatchedUserCount($approve_query)
 {
 	global $smcFunc, $modSettings;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}members
 		WHERE warning >= {int:warning_watch}',
@@ -1192,7 +1192,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 {
 	global $smcFunc, $txt, $modSettings, $user_info;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, last_login, posts, warning
 		FROM {db_prefix}members
 		WHERE warning >= {int:warning_watch}
@@ -1225,7 +1225,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 	if (!empty($members))
 	{
 		// First get the latest messages from these users.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.id_member, MAX(m.id_msg) AS last_post_id
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
@@ -1244,7 +1244,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 		if (!empty($latest_posts))
 		{
 			// Now get the time those messages were posted.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, poster_time
 				FROM {db_prefix}messages
 				WHERE id_msg IN ({array_int:message_list})',
@@ -1261,7 +1261,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 			$smcFunc['db']->free_result($request);
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT MAX(m.poster_time) AS last_post, MAX(m.id_msg) AS last_post_id, m.id_member
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
@@ -1294,7 +1294,7 @@ function list_getWatchedUserPostsCount($approve_query)
 {
 	global $smcFunc, $modSettings;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -1326,7 +1326,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 {
 	global $smcFunc, $scripturl, $modSettings;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.id_msg, m.id_topic, m.id_board, m.id_member, m.subject, m.body, m.poster_time,
 			m.approved, mem.real_name, m.smileys_enabled
 		FROM {db_prefix}messages AS m
@@ -1572,7 +1572,7 @@ function list_getWarningCount()
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_comments
 		WHERE comment_type = {string:warning}',
@@ -1598,7 +1598,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 {
 	global $smcFunc, $scripturl;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COALESCE(mem.id_member, 0) AS id_member, COALESCE(mem.real_name, lc.member_name) AS member_name_col,
 			COALESCE(mem2.id_member, 0) AS id_recipient, COALESCE(mem2.real_name, lc.recipient_name) AS recipient_name,
 			lc.log_time, lc.body, lc.id_notice, lc.counter
@@ -1648,7 +1648,7 @@ function ViewWarningTemplates()
 		validateToken('mod-wt');
 
 		// Log the actions.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT recipient_name
 			FROM {db_prefix}log_comments
 			WHERE id_comment IN ({array_int:delete_ids})
@@ -1666,7 +1666,7 @@ function ViewWarningTemplates()
 		$smcFunc['db']->free_result($request);
 
 		// Do the deletes.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_comments
 			WHERE id_comment IN ({array_int:delete_ids})
 				AND comment_type = {string:warntpl}
@@ -1791,7 +1791,7 @@ function list_getWarningTemplateCount()
 {
 	global $smcFunc, $user_info;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_comments
 		WHERE comment_type = {string:warntpl}
@@ -1820,7 +1820,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 {
 	global $smcFunc, $scripturl, $user_info;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT lc.id_comment, COALESCE(mem.id_member, 0) AS id_member,
 			COALESCE(mem.real_name, lc.member_name) AS creator_name, recipient_name AS template_title,
 			lc.log_time, lc.body
@@ -1878,7 +1878,7 @@ function ModifyWarningTemplate()
 	// If it's an edit load it.
 	if ($context['is_edit'])
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, id_recipient, recipient_name AS template_title, body
 			FROM {db_prefix}log_comments
 			WHERE id_comment = {int:id}
@@ -1934,7 +1934,7 @@ function ModifyWarningTemplate()
 			if ($context['is_edit'])
 			{
 				// Simple update...
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}log_comments
 					SET id_recipient = {int:personal}, recipient_name = {string:title}, body = {string:body}
 					WHERE id_comment = {int:id}

@@ -33,7 +33,7 @@ class Scheduler
 	{
 		global $smcFunc;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}scheduled_tasks
 			SET disabled = {int:disabled}
 			WHERE class = {string:class}',

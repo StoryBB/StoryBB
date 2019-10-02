@@ -89,7 +89,7 @@ function PermissionIndex()
 	$context['show_advanced_options'] = empty($context['admin_preferences']['app']);
 
 	// Determine the number of ungrouped members.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}members
 		WHERE id_group = {int:regular_group}',
@@ -147,7 +147,7 @@ function PermissionIndex()
 	$characterGroups = [];
 
 	// Query the database defined membergroups.
-	$query = $smcFunc['db_query']('', '
+	$query = $smcFunc['db']->query('', '
 		SELECT id_group, id_parent, group_name, online_color, icons, is_character
 		FROM {db_prefix}membergroups
 		ORDER BY id_parent = {int:not_inherited} DESC, group_name',
@@ -199,7 +199,7 @@ function PermissionIndex()
 	if (!empty($normalGroups))
 	{
 		// First, the easy one!
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT id_group, COUNT(*) AS num_members
 			FROM {db_prefix}members
 			WHERE id_group IN ({array_int:normal_group_list})
@@ -213,7 +213,7 @@ function PermissionIndex()
 		$smcFunc['db']->free_result($query);
 
 		// This one is slower, but it's okay... careful not to count twice!
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT mg.id_group, COUNT(*) AS num_members
 			FROM {db_prefix}membergroups AS mg
 				INNER JOIN {db_prefix}members AS mem ON (mem.additional_groups != {string:blank_string}
@@ -234,7 +234,7 @@ function PermissionIndex()
 	if (!empty($characterGroups))
 	{
 		// First, the easy one!
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT main_char_group, COUNT(*) AS num_characters
 			FROM {db_prefix}characters
 			WHERE main_char_group IN ({array_int:character_group_list})
@@ -248,7 +248,7 @@ function PermissionIndex()
 		$smcFunc['db']->free_result($query);
 
 		// This one is slower, but it's okay... careful not to count twice!
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT mg.id_group, COUNT(*) AS num_characters
 			FROM {db_prefix}membergroups AS mg
 				INNER JOIN {db_prefix}characters AS chars ON (chars.char_groups != {string:blank_string}
@@ -274,7 +274,7 @@ function PermissionIndex()
 
 	if (empty($_REQUEST['pid']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group, COUNT(*) AS num_permissions, add_deny
 			FROM {db_prefix}permissions
 			' . (empty($context['hidden_permissions']) ? '' : ' WHERE permission NOT IN ({array_string:hidden_permissions})') . '
@@ -289,7 +289,7 @@ function PermissionIndex()
 		$smcFunc['db']->free_result($request);
 
 		// Get the "default" profile permissions too.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_profile, id_group, COUNT(*) AS num_permissions, add_deny
 			FROM {db_prefix}board_permissions
 			WHERE id_profile = {int:default_profile}
@@ -317,7 +317,7 @@ function PermissionIndex()
 		// Change the selected tab to better reflect that this really is a board profile.
 		$context[$context['admin_menu_name']]['current_subsection'] = 'profiles';
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_profile, id_group, COUNT(*) AS num_permissions, add_deny
 			FROM {db_prefix}board_permissions
 			WHERE id_profile = {int:current_profile}
@@ -386,7 +386,7 @@ function PermissionByBoard()
 		if (!empty($changes))
 		{
 			foreach ($changes as $profile => $boards)
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}boards
 					SET id_profile = {int:current_profile}
 					WHERE id_board IN ({array_int:board_list})',
@@ -525,7 +525,7 @@ function SetQuickGroups()
 		if (empty($_REQUEST['pid']))
 		{
 			// Retrieve current permissions of group.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT permission, add_deny
 				FROM {db_prefix}permissions
 				WHERE id_group = {int:copy_from}',
@@ -553,7 +553,7 @@ function SetQuickGroups()
 				}
 
 			// Delete the previous permissions...
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}permissions
 				WHERE id_group IN ({array_int:group_list})
 					' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
@@ -578,7 +578,7 @@ function SetQuickGroups()
 		}
 
 		// Now do the same for the board permissions.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT permission, add_deny
 			FROM {db_prefix}board_permissions
 			WHERE id_group = {int:copy_from}
@@ -605,7 +605,7 @@ function SetQuickGroups()
 			}
 
 		// Delete the previous global board permissions...
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}board_permissions
 			WHERE id_group IN ({array_int:current_group_list})
 				AND id_profile = {int:current_profile}',
@@ -643,7 +643,7 @@ function SetQuickGroups()
 		if ($_POST['add_remove'] == 'clear')
 		{
 			if ($permissionType == 'membergroup')
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}permissions
 					WHERE id_group IN ({array_int:current_group_list})
 						AND permission = {string:current_permission}
@@ -655,7 +655,7 @@ function SetQuickGroups()
 					]
 				);
 			else
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}board_permissions
 					WHERE id_group IN ({array_int:current_group_list})
 						AND id_profile = {int:current_profile}
@@ -732,7 +732,7 @@ function ModifyMembergroup()
 
 	if ($context['group']['id'] > 0)
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT group_name, id_parent
 			FROM {db_prefix}membergroups
 			WHERE id_group = {int:current_group}
@@ -759,7 +759,7 @@ function ModifyMembergroup()
 	if ($context['group']['id'] == 3 && empty($context['profile']['id']))
 	{
 		// For sanity just check they have no general permissions.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}permissions
 			WHERE id_group = {int:moderator_group}',
 			[
@@ -789,7 +789,7 @@ function ModifyMembergroup()
 	// General permissions?
 	if ($context['permission_type'] == 'membergroup')
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT permission, add_deny
 			FROM {db_prefix}permissions
 			WHERE id_group = {int:current_group}',
@@ -803,7 +803,7 @@ function ModifyMembergroup()
 	}
 
 	// Fetch current board permissions...
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT permission, add_deny
 		FROM {db_prefix}board_permissions
 		WHERE id_group = {int:current_group}
@@ -927,7 +927,7 @@ function ModifyMembergroup2()
 		$parent = -2;
 	else
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_parent
 			FROM {db_prefix}membergroups
 			WHERE id_group = {int:current_group}
@@ -975,7 +975,7 @@ function ModifyMembergroup2()
 	// Insert the general permissions.
 	if ($_GET['group'] != 3 && empty($_GET['pid']))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}permissions
 			WHERE id_group = {int:current_group}
 			' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
@@ -998,7 +998,7 @@ function ModifyMembergroup2()
 
 	// Insert the boardpermissions.
 	$profileid = max(1, $_GET['pid']);
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}board_permissions
 		WHERE id_group = {int:current_group}
 			AND id_profile = {int:current_profile}',
@@ -1226,7 +1226,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		if (empty($groupLevels['global'][$level]))
 			return;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}permissions
 			WHERE id_group = {int:current_group}
 			' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
@@ -1235,7 +1235,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 				'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : [],
 			]
 		);
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}board_permissions
 			WHERE id_group = {int:current_group}
 				AND id_profile = {int:default_profile}',
@@ -1275,7 +1275,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 
 		if (!empty($groupLevels['global'][$level]))
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}board_permissions
 				WHERE id_group = {int:current_group}
 					AND id_profile = {int:current_profile}',
@@ -1305,7 +1305,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 	{
 		$profile = (int) $profile;
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}board_permissions
 			WHERE id_profile = {int:current_profile}',
 			[
@@ -1317,7 +1317,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 			return;
 
 		// Get all the groups...
-		$query = $smcFunc['db_query']('', '
+		$query = $smcFunc['db']->query('', '
 			SELECT id_group
 			FROM {db_prefix}membergroups
 			WHERE id_group NOT IN ({int:admin_group}, {int:moderator_group})
@@ -1651,7 +1651,7 @@ function init_inline_permissions($permissions, $excluded_groups = [])
 			],
 		];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_group, CASE WHEN add_deny = {int:denied} THEN {string:deny} ELSE {string:on} END AS status, permission
 		FROM {db_prefix}permissions
 		WHERE id_group IN (-1, 0)
@@ -1667,7 +1667,7 @@ function init_inline_permissions($permissions, $excluded_groups = [])
 		$context[$row['permission']][$row['id_group']]['status'] = $row['status'];
 	$smcFunc['db']->free_result($request);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mg.id_group, mg.group_name, COALESCE(p.add_deny, -1) AS status, p.permission
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}permissions AS p ON (p.id_group = mg.id_group AND p.permission IN ({array_string:permissions}))
@@ -1754,7 +1754,7 @@ function save_inline_permissions($permissions)
 	}
 
 	// Remove the old permissions...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}permissions
 		WHERE permission IN ({array_string:permissions})
 		' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
@@ -1787,7 +1787,7 @@ function loadPermissionProfiles()
 {
 	global $context, $txt, $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_profile, profile_name
 		FROM {db_prefix}permission_profiles
 		ORDER BY id_profile',
@@ -1847,7 +1847,7 @@ function EditPermissionProfiles()
 		);
 
 		// Load the permissions from the one it's being copied from.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group, permission, add_deny
 			FROM {db_prefix}board_permissions
 			WHERE id_profile = {int:copy_from}',
@@ -1884,7 +1884,7 @@ function EditPermissionProfiles()
 				$value = StringLibrary::escape($value);
 
 				if (trim($value) != '' && $id > 4)
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}permission_profiles
 						SET profile_name = {string:profile_name}
 						WHERE id_profile = {int:current_profile}',
@@ -1908,7 +1908,7 @@ function EditPermissionProfiles()
 				$profiles[] = (int) $profile;
 
 		// Verify it's not in use...
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}boards
 			WHERE id_profile IN ({array_int:profile_list})
@@ -1922,7 +1922,7 @@ function EditPermissionProfiles()
 		$smcFunc['db']->free_result($request);
 
 		// Oh well, delete.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}permission_profiles
 			WHERE id_profile IN ({array_int:profile_list})',
 			[
@@ -1935,7 +1935,7 @@ function EditPermissionProfiles()
 	loadPermissionProfiles();
 
 	// Work out what ones are in use.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_profile, COUNT(id_board) AS board_count
 		FROM {db_prefix}boards
 		GROUP BY id_profile',
@@ -1983,7 +1983,7 @@ function updateChildPermissions($parents, $profile = null)
 		$parents = [$parents];
 
 	// Find all the children of this group.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_parent, id_group
 		FROM {db_prefix}membergroups
 		WHERE id_parent != {int:not_inherited}
@@ -2014,7 +2014,7 @@ function updateChildPermissions($parents, $profile = null)
 	if ($profile < 1 || $profile === null)
 	{
 		// Fetch all the parent permissions.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group, permission, add_deny
 			FROM {db_prefix}permissions
 			WHERE id_group IN ({array_int:parent_list})',
@@ -2028,7 +2028,7 @@ function updateChildPermissions($parents, $profile = null)
 				$permissions[] = [$child, $row['permission'], $row['add_deny']];
 		$smcFunc['db']->free_result($request);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}permissions
 			WHERE id_group IN ({array_int:child_groups})',
 			[
@@ -2054,7 +2054,7 @@ function updateChildPermissions($parents, $profile = null)
 		$profileQuery = $profile === null ? '' : ' AND id_profile = {int:current_profile}';
 
 		// Again, get all the parent permissions.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_profile, id_group, permission, add_deny
 			FROM {db_prefix}board_permissions
 			WHERE id_group IN ({array_int:parent_groups})
@@ -2070,7 +2070,7 @@ function updateChildPermissions($parents, $profile = null)
 				$permissions[] = [$child, $row['id_profile'], $row['permission'], $row['add_deny']];
 		$smcFunc['db']->free_result($request);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}board_permissions
 			WHERE id_group IN ({array_int:child_groups})
 				' . $profileQuery,

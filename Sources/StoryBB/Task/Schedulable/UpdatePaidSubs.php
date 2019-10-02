@@ -48,7 +48,7 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 		require_once($sourcedir . '/Subs-Post.php');
 
 		// Start off by checking for removed subscriptions.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_subscribe, id_member
 			FROM {db_prefix}log_subscribed
 			WHERE status = {int:is_active}
@@ -65,7 +65,7 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 		$smcFunc['db']->free_result($request);
 
 		// Get all those about to expire that have not had a reminder sent.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT ls.id_sublog, m.id_member, m.member_name, m.email_address, m.lngfile, s.name, ls.end_time
 			FROM {db_prefix}log_subscribed AS ls
 				INNER JOIN {db_prefix}subscriptions AS s ON (s.id_subscribe = ls.id_subscribe)
@@ -148,7 +148,7 @@ class UpdatePaidSubs implements \StoryBB\Task\Schedulable
 
 		// Mark the reminder as sent.
 		if (!empty($subs_reminded))
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}log_subscribed
 				SET reminder_sent = {int:reminder_sent}
 				WHERE id_sublog IN ({array_int:subscription_list})',

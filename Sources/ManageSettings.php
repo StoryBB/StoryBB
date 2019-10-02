@@ -472,7 +472,7 @@ function ModifySignatureSettings($return_config = false)
 		$_GET['step'] = isset($_GET['step']) ? (int) $_GET['step'] : 0;
 		$done = false;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT MAX(id_member)
 			FROM {db_prefix}members',
 			[
@@ -485,7 +485,7 @@ function ModifySignatureSettings($return_config = false)
 		{
 			$changes = [];
 
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_member, signature
 				FROM {db_prefix}members
 				WHERE id_member BETWEEN {int:step} AND {int:step} + 49
@@ -677,7 +677,7 @@ function ModifySignatureSettings($return_config = false)
 			if (!empty($changes))
 			{
 				foreach ($changes as $id => $sig)
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}members
 						SET signature = {string:signature}
 						WHERE id_member = {int:id_member}',
@@ -1091,7 +1091,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 	else
 	{
 		// Load all the fields.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_field, col_name, field_name, field_desc, field_type, field_order, active, placement
 			FROM {db_prefix}custom_fields
 			ORDER BY {raw:sort}
@@ -1118,7 +1118,7 @@ function list_getProfileFieldSize()
 {
 	global $smcFunc;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}custom_fields',
 		[
@@ -1161,7 +1161,7 @@ function EditCustomProfiles()
 
 	if ($context['fid'])
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				id_field, col_name, field_name, field_desc, field_type, field_order, field_length, field_options,
 				show_reg, show_display, show_mlist, show_profile, private, active, default_value, can_search,
@@ -1251,7 +1251,7 @@ function EditCustomProfiles()
 			redirectexit('action=admin;area=featuresettings;sa=profile'); // @todo implement an error handler
 
 		// All good, proceed.
-		$smcFunc['db_query']('','
+		$smcFunc['db']->query('','
 			UPDATE {db_prefix}custom_fields
 			SET field_order = {int:old_order}
 			WHERE field_order = {int:new_order}',
@@ -1260,7 +1260,7 @@ function EditCustomProfiles()
 				'old_order' => $context['field']['order'],
 			]
 		);
-		$smcFunc['db_query']('','
+		$smcFunc['db']->query('','
 			UPDATE {db_prefix}custom_fields
 			SET field_order = {int:new_order}
 			WHERE id_field = {int:id_field}',
@@ -1360,7 +1360,7 @@ function EditCustomProfiles()
 
 			// Make sure this is unique.
 			$current_fields = [];
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_field, col_name
 				FROM {db_prefix}custom_fields');
 			while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1388,7 +1388,7 @@ function EditCustomProfiles()
 				|| (($_POST['field_type'] == 'select' || $_POST['field_type'] == 'radio') && $context['field']['type'] != 'select' && $context['field']['type'] != 'radio')
 				|| ($context['field']['type'] == 'check' && $_POST['field_type'] != 'check'))
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:current_column}
 						AND id_member > {int:no_member}',
@@ -1422,7 +1422,7 @@ function EditCustomProfiles()
 				{
 					// Just been renamed?
 					if (!in_array($k, $takenKeys) && !empty($newOptions[$k]))
-						$smcFunc['db_query']('', '
+						$smcFunc['db']->query('', '
 							UPDATE {db_prefix}themes
 							SET value = {string:new_value}
 							WHERE variable = {string:current_column}
@@ -1443,7 +1443,7 @@ function EditCustomProfiles()
 		// Do the insertion/updates.
 		if ($context['fid'])
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}custom_fields
 				SET
 					field_name = {string:field_name}, field_desc = {string:field_desc},
@@ -1478,7 +1478,7 @@ function EditCustomProfiles()
 
 			// Just clean up any old selects - these are a pain!
 			if (($_POST['field_type'] == 'select' || $_POST['field_type'] == 'radio') && !empty($newOptions))
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					DELETE FROM {db_prefix}themes
 					WHERE variable = {string:current_column}
 						AND value NOT IN ({array_string:new_option_values})
@@ -1522,7 +1522,7 @@ function EditCustomProfiles()
 		validateToken('admin-ecp');
 
 		// Delete the user data first.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}themes
 			WHERE variable = {string:current_column}
 				AND id_member > {int:no_member}',
@@ -1532,7 +1532,7 @@ function EditCustomProfiles()
 			]
 		);
 		// Finally - the field itself is gone!
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}custom_fields
 			WHERE id_field = {int:current_field}',
 			[
@@ -1541,7 +1541,7 @@ function EditCustomProfiles()
 		);
 
 		// Re-arrange the order.
-		$smcFunc['db_query']('','
+		$smcFunc['db']->query('','
 			UPDATE {db_prefix}custom_fields
 			SET field_order = field_order - 1
 			WHERE field_order > {int:current_order}',
@@ -1556,7 +1556,7 @@ function EditCustomProfiles()
 	{
 		checkSession();
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT col_name, field_name, field_type, field_order, bbc, enclose, placement, show_mlist, field_options
 			FROM {db_prefix}custom_fields
 			WHERE show_display = {int:is_displayed}
@@ -1606,7 +1606,7 @@ function custFieldsMaxOrder()
 	global $smcFunc;
 
 	// Gotta know the order limit
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 			SELECT MAX(field_order)
 			FROM {db_prefix}custom_fields',
 			[]

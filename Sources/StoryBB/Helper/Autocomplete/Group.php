@@ -71,7 +71,7 @@ class Group extends AbstractCompletable implements Completable
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(id_group)
 			FROM {db_prefix}membergroups AS mg
 			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters(),
@@ -113,7 +113,7 @@ class Group extends AbstractCompletable implements Completable
 
 		$result = [];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mg.id_group, mg.group_name, mg.icons
 			FROM {db_prefix}membergroups AS mg
 			WHERE {raw:group_name} LIKE {string:search}' . $this->get_filters() . '
@@ -158,7 +158,7 @@ class Group extends AbstractCompletable implements Completable
 			return;
 
 		$this->default = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_group, group_name
 			FROM {db_prefix}membergroups
 			WHERE id_group IN ({array_int:default_value})',

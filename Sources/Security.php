@@ -213,7 +213,7 @@ function is_not_banned($forceCheck = false)
 				'cannot_post',
 				'cannot_register',
 			];
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT bi.id_ban, bi.email_address, bi.id_member, bg.cannot_access, bg.cannot_register,
 					bg.cannot_post, bg.cannot_login, bg.reason, COALESCE(bg.expire_time, 0) AS expire_time
 				FROM {db_prefix}ban_items AS bi
@@ -259,7 +259,7 @@ function is_not_banned($forceCheck = false)
 		$bans = explode(',', $_COOKIE[$cookiename . '_']);
 		foreach ($bans as $key => $value)
 			$bans[$key] = (int) $value;
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT bi.id_ban, bg.reason
 			FROM {db_prefix}ban_items AS bi
 				INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
@@ -295,7 +295,7 @@ function is_not_banned($forceCheck = false)
 	{
 		// We don't wanna see you!
 		if (!$user_info['is_guest'])
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}log_online
 				WHERE id_member = {int:current_member}',
 				[
@@ -346,7 +346,7 @@ function is_not_banned($forceCheck = false)
 	elseif (isset($_SESSION['ban']['cannot_login']) && !$user_info['is_guest'])
 	{
 		// We don't wanna see you!
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member = {int:current_member}',
 			[
@@ -504,7 +504,7 @@ function log_ban($ban_ids = [], $email = null)
 
 	// One extra point for these bans.
 	if (!empty($ban_ids))
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}ban_items
 			SET hits = hits + 1
 			WHERE id_ban IN ({array_int:ban_ids})',
@@ -536,7 +536,7 @@ function isBannedEmail($email, $restriction, $error)
 	$ban_reason = isset($_SESSION['ban'][$restriction]) ? $_SESSION['ban'][$restriction]['reason'] : '';
 
 	// ...and add to that the email address you're trying to register.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT bi.id_ban, bg.' . $restriction . ', bg.cannot_access, bg.reason
 		FROM {db_prefix}ban_items AS bi
 			INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
@@ -918,7 +918,7 @@ function allowedTo($permission, $boards = null)
 	elseif (!is_array($boards))
 		$boards = [$boards];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT MIN(bp.add_deny) AS add_deny
 		FROM {db_prefix}boards AS b
 			INNER JOIN {db_prefix}board_permissions AS bp ON (bp.id_profile = b.id_profile)
@@ -1057,7 +1057,7 @@ function boardsAllowedTo($permissions, $check_access = true, $simple = true)
 	// All groups the user is in except 'moderator'.
 	$groups = array_diff($user_info['groups'], [3]);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT b.id_board, bp.add_deny' . ($simple ? '' : ', bp.permission') . '
 		FROM {db_prefix}board_permissions AS bp
 			INNER JOIN {db_prefix}boards AS b ON (b.id_profile = bp.id_profile)
@@ -1148,7 +1148,7 @@ function spamProtection($error_type, $only_return_result = false)
 	call_integration_hook('integrate_spam_protection', [&$timeOverrides, &$timeLimit]);
 
 	// Delete old entries...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}log_floodcontrol
 		WHERE log_time < {int:log_time}
 			AND log_type = {string:log_type}',

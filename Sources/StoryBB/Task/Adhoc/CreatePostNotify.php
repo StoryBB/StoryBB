@@ -56,7 +56,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 		}
 
 		// Find the people interested in receiving notifications for this topic
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT mem.id_member, ln.id_topic, ln.id_board, ln.sent, mem.email_address, b.member_groups,
 				mem.id_group, mem.additional_groups, t.id_member_started, mem.pm_ignore_list,
 				t.id_member_updated
@@ -193,7 +193,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 				$alert_rows[] = $alert;
 			}
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}log_notify
 				SET sent = {int:is_sent}
 				WHERE (id_topic = {int:topic} OR id_board = {int:board})
@@ -360,7 +360,7 @@ class CreatePostNotify extends \StoryBB\Task\Adhoc
 			return [];
 
 		// Get the messages
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.id_msg, m.id_member, chars.id_character, chars.is_main,
 				mem.email_address, mem.lngfile, mem.real_name
 			FROM {db_prefix}messages AS m

@@ -973,7 +973,7 @@ function DatabasePopulation()
 	load_database();
 
 	// Before running any of the queries, let's make sure another version isn't already installed.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT variable, value
 		FROM {db_prefix}settings',
 		[
@@ -1086,7 +1086,7 @@ function DatabasePopulation()
 			continue;
 		}
 
-		if ($smcFunc['db_query']('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
+		if ($smcFunc['db']->query('', $current_statement, ['security_override' => true, 'db_error_skip' => true], $db_connection) === false)
 		{
 			if (!preg_match('~^\s*CREATE( UNIQUE)? INDEX ([^\n\r]+?)~', $current_statement, $match))
 			{
@@ -1185,7 +1185,7 @@ function DatabasePopulation()
 
 	// Find database user privileges.
 	$privs = [];
-	$get_privs = $smcFunc['db_query']('', 'SHOW PRIVILEGES', []);
+	$get_privs = $smcFunc['db']->query('', 'SHOW PRIVILEGES', []);
 	while ($row = $smcFunc['db_fetch_assoc']($get_privs))
 	{
 		if ($row['Privilege'] == 'Alter')
@@ -1248,7 +1248,7 @@ function AdminAccount()
 	$incontext['require_db_confirm'] = empty($db_type);
 
 	// Only allow skipping if we think they already have an account setup.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member
 		FROM {db_prefix}members
 		WHERE id_group = {int:admin_group} OR FIND_IN_SET({int:admin_group}, additional_groups) != 0
@@ -1292,7 +1292,7 @@ function AdminAccount()
 		$invalid_characters = preg_match('~[<>&"\'=\\\]~', $_POST['username']) != 0;
 		$_POST['username'] = preg_replace('~[<>&"\'=\\\]~', '', $_POST['username']);
 
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_member, password_salt
 			FROM {db_prefix}members
 			WHERE member_name = {string:username} OR email_address = {string:email}
@@ -1391,7 +1391,7 @@ function AdminAccount()
 			);
 
 			// And update the current character.
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}members
 				SET current_character = {int:current_character}
 				WHERE id_member = {int:id_member}',
@@ -1440,7 +1440,7 @@ function DeleteInstall()
 	if (!empty($incontext['account_existed']))
 		$incontext['warning'] = $incontext['account_existed'];
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			SET NAMES {string:db_character_set}',
 			[
 			'db_character_set' => 'UTF-8',
@@ -1457,7 +1457,7 @@ function DeleteInstall()
 	);
 
 	// We're going to want our lovely $modSettings now.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT variable, value
 		FROM {db_prefix}settings',
 		[
@@ -1476,7 +1476,7 @@ function DeleteInstall()
 	if (isset($incontext['member_id']) && isset($incontext['member_salt']))
 		setLoginCookie(3153600 * 60, $incontext['member_id'], hash_salt($_POST['password1'], $incontext['member_salt']));
 
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT value
 		FROM {db_prefix}settings
 		WHERE variable = {string:db_sessions}',
@@ -1511,7 +1511,7 @@ function DeleteInstall()
 	updateStats('message');
 	updateStats('topic');
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_msg
 		FROM {db_prefix}messages
 		WHERE id_msg = 1

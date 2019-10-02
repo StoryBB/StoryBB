@@ -223,7 +223,7 @@ class Attachments
 		if (empty($this->_generalErrors) && $this->_msg)
 		{
 			$context['attachments'] = [];
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT COUNT(*), SUM(size)
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:id_msg}

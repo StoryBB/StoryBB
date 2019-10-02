@@ -322,7 +322,7 @@ function processAttachments()
 		// If this isn't a new post, check the current attachments.
 		if (isset($_REQUEST['msg']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT COUNT(*), SUM(size)
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:id_msg}
@@ -540,7 +540,7 @@ function attachmentChecks($attachID)
 		// Check the folder size and count. If it hasn't been done already.
 		if (empty($context['dir_size']) || empty($context['dir_files']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT COUNT(*), SUM(size)
 				FROM {db_prefix}attachments
 				WHERE id_folder = {int:folder_id}
@@ -810,7 +810,7 @@ function createAttachment(&$attachmentOptions)
 
 			if (!empty($attachmentOptions['thumb']))
 			{
-				$smcFunc['db_query']('', '
+				$smcFunc['db']->query('', '
 					UPDATE {db_prefix}attachments
 					SET id_thumb = {int:id_thumb}
 					WHERE id_attach = {int:id_attach}',
@@ -852,7 +852,7 @@ function assignAttachments($attachIDs = [], $msgID = 0)
 		return false;
 
 	// Perform.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}attachments
 		SET id_msg = {int:id_msg}
 		WHERE id_attach IN ({array_int:attach_ids})',
@@ -989,7 +989,7 @@ function getRawAttachInfo($attachIDs)
 
 	$return = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT a.id_attach, a.id_msg, a.id_character, a.size, a.mime_type, a.id_folder, a.filename' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : ',
 				COALESCE(thumb.id_attach, 0) AS id_thumb, thumb.width AS thumb_width, thumb.height AS thumb_height') . '
 		FROM {db_prefix}attachments AS a' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : '
@@ -1033,7 +1033,7 @@ function getAttachMsgInfo($attachID)
 	if (empty($attachID))
 		return [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT a.id_msg AS msg, m.id_topic AS topic, m.id_board AS board
 		FROM {db_prefix}attachments AS a
 			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -1067,7 +1067,7 @@ function getAttachsByMsg($msgID = 0)
 
 	if (!isset($attached[$msgID]))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				a.id_attach, a.id_folder, a.id_msg, a.filename, a.file_hash, COALESCE(a.size, 0) AS filesize, a.downloads, a.approved, m.id_topic AS topic, m.id_board AS board,
 				a.width, a.height' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : ',
@@ -1205,7 +1205,7 @@ function loadAttachmentContext($id_msg, $attachments)
 						$old_id_thumb = $attachment['id_thumb'];
 						if (!empty($attachment['id_thumb']))
 						{
-							$smcFunc['db_query']('', '
+							$smcFunc['db']->query('', '
 								UPDATE {db_prefix}attachments
 								SET id_thumb = {int:id_thumb}
 								WHERE id_attach = {int:id_attach}',

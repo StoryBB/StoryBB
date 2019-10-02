@@ -50,7 +50,7 @@ function get_single_theme($id)
 	$knownThemes = !empty($modSettings['knownThemes']) ? explode(',', $modSettings['knownThemes']) : [];
 	$enableThemes = !empty($modSettings['enableThemes']) ? explode(',', $modSettings['enableThemes']) : [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE variable IN ({array_string:theme_values})
@@ -115,7 +115,7 @@ function get_all_themes($enable_only = false)
 	$query_where = $enable_only ? $enableThemes : $knownThemes;
 
 	// Perform the query as requested.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE variable IN ({array_string:theme_values})
@@ -231,7 +231,7 @@ function theme_install($to_install = [])
 	// OK, is this a newer version of an already installed theme?
 	if (!empty($context['to_install']['version']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
 			WHERE id_member = {int:no_member}
@@ -254,7 +254,7 @@ function theme_install($to_install = [])
 			switch (version_compare($context['to_install']['version'], $to_update['version']))
 			{
 				case 1: // Got a newer version, update the old entry.
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						UPDATE {db_prefix}themes
 						SET value = {string:new_value}
 						WHERE variable = {string:version}
@@ -279,7 +279,7 @@ function theme_install($to_install = [])
 	}
 
 	// Find the newest id_theme.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT MAX(id_theme)
 		FROM {db_prefix}themes',
 		[
@@ -368,7 +368,7 @@ function remove_theme($themeID)
 	$enable = explode(',', $modSettings['enableThemes']);
 
 	// Remove it from the themes table.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}themes
 		WHERE id_theme = {int:current_theme}',
 		[
@@ -377,7 +377,7 @@ function remove_theme($themeID)
 	);
 
 	// Update users preferences.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}members
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',
@@ -388,7 +388,7 @@ function remove_theme($themeID)
 	);
 
 	// Update characters settings too.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',
@@ -399,7 +399,7 @@ function remove_theme($themeID)
 	);
 
 	// Some boards may have it as preferred theme.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}boards
 		SET id_theme = {int:default_theme}
 		WHERE id_theme = {int:current_theme}',

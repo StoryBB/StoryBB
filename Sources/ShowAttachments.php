@@ -84,7 +84,7 @@ function showAttachment($force_attach = false)
 		else
 		{
 			// Make sure this attachment is on this board and load its info while we are at it.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_folder, filename, file_hash, fileext, id_attach, id_thumb, attachment_type, mime_type, approved, id_msg
 				FROM {db_prefix}attachments
 				WHERE id_attach = {int:attach}
@@ -115,7 +115,7 @@ function showAttachment($force_attach = false)
 		// Previews doesn't have this info.
 		if (empty($preview) && !$force_attach)
 		{
-			$request2 = $smcFunc['db_query']('', '
+			$request2 = $smcFunc['db']->query('', '
 				SELECT a.id_msg
 				FROM {db_prefix}attachments AS a
 					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg AND m.id_topic = {int:current_topic})
@@ -149,7 +149,7 @@ function showAttachment($force_attach = false)
 		$thumbFile = [];
 		if (!empty($file['id_thumb']))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_folder, filename, file_hash, fileext, id_attach, attachment_type, mime_type, approved, id_character
 				FROM {db_prefix}attachments
 				WHERE id_attach = {int:thumb_id}
@@ -231,7 +231,7 @@ function showAttachment($force_attach = false)
 
 	// Update the download counter (unless it's a thumbnail or resuming an incomplete download).
 	if ($file['attachment_type'] != Attachment::ATTACHMENT_THUMBNAIL && empty($showThumb) && $range === 0)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}attachments
 			SET downloads = downloads + 1
 			WHERE id_attach = {int:id_attach}',

@@ -81,7 +81,7 @@ function DisplayStats()
 	$context['show_member_list'] = allowedTo('view_mlist');
 
 	// Get averages...
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT
 			SUM(posts) AS posts, SUM(topics) AS topics, SUM(registers) AS registers,
 			SUM(most_on) AS most_on, MIN(date) AS date, SUM(hits) AS hits
@@ -104,7 +104,7 @@ function DisplayStats()
 	$context['num_hits'] = comma_format($row['hits'], 0);
 
 	// How many users are online now.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_online',
 		[
@@ -114,7 +114,7 @@ function DisplayStats()
 	$smcFunc['db']->free_result($result);
 
 	// Statistics such as number of boards, categories, etc.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}boards AS b
 		WHERE b.redirect = {string:blank_redirect}',
@@ -125,7 +125,7 @@ function DisplayStats()
 	list ($context['num_boards']) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db']->free_result($result);
 
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}categories AS c',
 		[
@@ -151,7 +151,7 @@ function DisplayStats()
 	$date = strftime('%Y-%m-%d', forum_time(false));
 
 	// Members online so far today.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT most_on
 		FROM {db_prefix}log_activity
 		WHERE date = {date:today_date}
@@ -168,7 +168,7 @@ function DisplayStats()
 	$context['stats_blocks'] = [];
 
 	// Poster top 10.
-	$members_result = $smcFunc['db_query']('', '
+	$members_result = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, posts
 		FROM {db_prefix}members
 		WHERE posts > {int:no_posts}
@@ -206,7 +206,7 @@ function DisplayStats()
 	}
 
 	// Board top 10.
-	$boards_result = $smcFunc['db_query']('', '
+	$boards_result = $smcFunc['db']->query('', '
 		SELECT id_board, name, num_posts
 		FROM {db_prefix}boards AS b
 		WHERE {query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -249,7 +249,7 @@ function DisplayStats()
 	// Are you on a larger forum?  If so, let's try to limit the number of topics we search through.
 	if ($modSettings['totalMessages'] > 100000)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_topic
 			FROM {db_prefix}topics
 			WHERE num_replies != {int:no_replies}
@@ -270,7 +270,7 @@ function DisplayStats()
 		$topic_ids = [];
 
 	// Topic replies top 10.
-	$topic_reply_result = $smcFunc['db_query']('', '
+	$topic_reply_result = $smcFunc['db']->query('', '
 		SELECT m.subject, t.num_replies, t.id_board, t.id_topic, b.name
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -325,7 +325,7 @@ function DisplayStats()
 	// Large forums may need a bit more prodding...
 	if ($modSettings['totalMessages'] > 100000)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_topic
 			FROM {db_prefix}topics
 			WHERE num_views != {int:no_views}
@@ -344,7 +344,7 @@ function DisplayStats()
 		$topic_ids = [];
 
 	// Topic views top 10.
-	$topic_view_result = $smcFunc['db_query']('', '
+	$topic_view_result = $smcFunc['db']->query('', '
 		SELECT m.subject, t.num_views, t.id_board, t.id_topic, b.name
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -399,7 +399,7 @@ function DisplayStats()
 	// Try to cache this when possible, because it's a little unavoidably slow.
 	if (($members = cache_get_data('stats_top_starters', 360)) == null)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member_started, COUNT(*) AS hits
 			FROM {db_prefix}topics' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
 			WHERE id_board != {int:recycle_board}' : '') . '
@@ -422,7 +422,7 @@ function DisplayStats()
 		$members = [0 => 0];
 
 	// Topic poster top 10.
-	$members_result = $smcFunc['db_query']('', '
+	$members_result = $smcFunc['db']->query('', '
 		SELECT id_member, real_name
 		FROM {db_prefix}members
 		WHERE id_member IN ({array_int:member_list})
@@ -462,7 +462,7 @@ function DisplayStats()
 
 	// Time online top 10.
 	$temp = cache_get_data('stats_total_time_members', 600);
-	$members_result = $smcFunc['db_query']('', '
+	$members_result = $smcFunc['db']->query('', '
 		SELECT id_member, real_name, total_time_logged_in
 		FROM {db_prefix}members' . (!empty($temp) ? '
 		WHERE id_member IN ({array_int:member_list_cached})' : '') . '
@@ -528,7 +528,7 @@ function DisplayStats()
 			'data' => [],
 		];
 		$max_liked_message = 1;
-		$liked_messages = $smcFunc['db_query']('', '
+		$liked_messages = $smcFunc['db']->query('', '
 			SELECT m.id_msg, m.subject, m.likes, m.id_board, m.id_topic, t.approved
 			FROM {db_prefix}messages as m
 				INNER JOIN {db_prefix}topics AS t ON (m.id_topic = t.id_topic)
@@ -571,7 +571,7 @@ function DisplayStats()
 			'data' => [],
 		];
 		$max_liked_users = 1;
-		$liked_users = $smcFunc['db_query']('', '
+		$liked_users = $smcFunc['db']->query('', '
 			SELECT m.id_member AS liked_user, COUNT(l.content_id) AS count, mem.real_name
 			FROM {db_prefix}user_likes AS l
 				INNER JOIN {db_prefix}messages AS m ON (l.content_id = m.id_msg)
@@ -608,7 +608,7 @@ function DisplayStats()
 	}
 
 	// Activity by month.
-	$months_result = $smcFunc['db_query']('', '
+	$months_result = $smcFunc['db']->query('', '
 		SELECT
 			YEAR(date) AS stats_year, MONTH(date) AS stats_month, SUM(hits) AS hits, SUM(registers) AS registers, SUM(chars) AS chars, SUM(topics) AS topics, SUM(posts) AS posts, MAX(most_on) AS most_on, COUNT(*) AS num_days
 		FROM {db_prefix}log_activity
@@ -722,7 +722,7 @@ function getDailyStats($condition_string, $condition_parameters = [])
 	global $context, $smcFunc;
 
 	// Activity by day.
-	$days_result = $smcFunc['db_query']('', '
+	$days_result = $smcFunc['db']->query('', '
 		SELECT YEAR(date) AS stats_year, MONTH(date) AS stats_month, DAYOFMONTH(date) AS stats_day, topics, posts, chars, registers, most_on, hits
 		FROM {db_prefix}log_activity
 		WHERE ' . $condition_string . '

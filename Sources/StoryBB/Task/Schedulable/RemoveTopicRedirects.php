@@ -48,7 +48,7 @@ class RemoveTopicRedirects implements \StoryBB\Task\Schedulable
 		$topics = [];
 
 		// Find all of the old MOVE topic notices that were set to expire
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_topic
 			FROM {db_prefix}topics
 			WHERE redirect_expires <= {int:redirect_expires}

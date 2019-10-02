@@ -163,7 +163,7 @@ function EditSearchMethod()
 		validateToken('admin-msm', 'get');
 
 		// Make sure it's gone before creating it.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			ALTER TABLE {db_prefix}messages
 			DROP INDEX body',
 			[
@@ -171,7 +171,7 @@ function EditSearchMethod()
 			]
 		);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			ALTER TABLE {db_prefix}messages
 			ADD FULLTEXT body (body)',
 			[
@@ -183,7 +183,7 @@ function EditSearchMethod()
 		checkSession('get');
 		validateToken('admin-msm', 'get');
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			ALTER TABLE {db_prefix}messages
 			DROP INDEX ' . implode(',
 			DROP INDEX ', $context['fulltext_index']),
@@ -250,7 +250,7 @@ function EditSearchMethod()
 	if ($db_type == 'mysql')
 	{
 		if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SHOW TABLE STATUS
 				FROM {string:database_name}
 				LIKE {string:table_name}',
@@ -260,7 +260,7 @@ function EditSearchMethod()
 				]
 			);
 		else
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SHOW TABLE STATUS
 				LIKE {string:table_name}',
 				[
@@ -279,7 +279,7 @@ function EditSearchMethod()
 
 		// Now check the custom index table, if it exists at all.
 		if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SHOW TABLE STATUS
 				FROM {string:database_name}
 				LIKE {string:table_name}',
@@ -289,7 +289,7 @@ function EditSearchMethod()
 				]
 			);
 		else
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SHOW TABLE STATUS
 				LIKE {string:table_name}',
 				[
@@ -435,7 +435,7 @@ function CreateMessageIndex()
 			'todo' => 0,
 		];
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_msg >= {int:starting_id} AS todo, COUNT(*) AS num_messages
 			FROM {db_prefix}messages
 			GROUP BY todo',
@@ -459,7 +459,7 @@ function CreateMessageIndex()
 			while (time() < $stop)
 			{
 				$inserts = [];
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_msg, body
 					FROM {db_prefix}messages
 					WHERE id_msg BETWEEN {int:starting_id} AND {int:ending_id}
@@ -529,7 +529,7 @@ function CreateMessageIndex()
 
 			while (time() < $stop)
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT id_word, COUNT(id_word) AS num_words
 					FROM {db_prefix}log_search_words
 					WHERE id_word BETWEEN {int:starting_id} AND {int:ending_id}
@@ -548,7 +548,7 @@ function CreateMessageIndex()
 				updateSettings(['search_stopwords' => implode(',', $stop_words)]);
 
 				if (!empty($stop_words))
-					$smcFunc['db_query']('', '
+					$smcFunc['db']->query('', '
 						DELETE FROM {db_prefix}log_search_words
 						WHERE id_word in ({array_int:stop_words})',
 						[
@@ -573,7 +573,7 @@ function CreateMessageIndex()
 		$context['sub_template'] = 'search_create_index_done';
 
 		updateSettings(['search_index' => 'custom', 'search_custom_index_config' => json_encode($context['index_settings'])]);
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}settings
 			WHERE variable = {string:search_custom_index_resume}',
 			[
@@ -625,7 +625,7 @@ function detectFulltextIndex()
 	// We need this for db_get_version
 	db_extend();
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SHOW INDEX
 		FROM {db_prefix}messages',
 		[
@@ -644,7 +644,7 @@ function detectFulltextIndex()
 	}
 
 	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 		SHOW TABLE STATUS
 		FROM {string:database_name}
 		LIKE {string:table_name}',
@@ -654,7 +654,7 @@ function detectFulltextIndex()
 		]
 		);
 	else
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 		SHOW TABLE STATUS
 		LIKE {string:table_name}',
 		[

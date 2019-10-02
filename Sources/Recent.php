@@ -26,7 +26,7 @@ function getLastPost()
 	global $scripturl, $modSettings, $smcFunc;
 
 	// Find it by the board - better to order by board than sort the entire messages table.
-	$request = $smcFunc['db_query']('substring', '
+	$request = $smcFunc['db']->query('substring', '
 		SELECT ml.poster_time, ml.subject, ml.id_topic, ml.poster_name, SUBSTRING(ml.body, 1, 385) AS body,
 			ml.smileys_enabled
 		FROM {db_prefix}boards AS b
@@ -91,7 +91,7 @@ function RecentPosts()
 
 		if (count($_REQUEST['c']) == 1)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT name
 				FROM {db_prefix}categories
 				WHERE id_cat = {int:id_cat}
@@ -114,7 +114,7 @@ function RecentPosts()
 
 		$recycling = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']);
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_cat IN ({array_int:category_list})
@@ -158,7 +158,7 @@ function RecentPosts()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_board IN ({array_int:board_list})
@@ -198,7 +198,7 @@ function RecentPosts()
 	}
 	elseif (!empty($board))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT num_posts, redirect
 			FROM {db_prefix}boards
 			WHERE id_board = {int:current_board}
@@ -243,7 +243,7 @@ function RecentPosts()
 		$query_these_boards_params = $query_parameters;
 		unset($query_these_boards_params['max_id_msg']);
 
-		$get_num_posts = $smcFunc['db_query']('', '
+		$get_num_posts = $smcFunc['db']->query('', '
 			SELECT COALESCE(SUM(b.num_posts), 0)
 			FROM {db_prefix}boards AS b
 			WHERE ' . $query_these_boards . '
@@ -276,7 +276,7 @@ function RecentPosts()
 		{
 			// Find the 10 most recent messages they can *view*.
 			// @todo SLOW This query is really slow still, probably?
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT m.id_msg
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -317,7 +317,7 @@ function RecentPosts()
 	}
 
 	// Get all the most recent posts.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			m.id_msg, m.subject, m.smileys_enabled, m.poster_time, m.body, m.id_topic, t.id_board, b.id_cat,
 			b.name AS bname, c.name AS cname, t.num_replies, m.id_member, m2.id_member AS id_first_member,
@@ -511,7 +511,7 @@ function UnreadTopics()
 			$boards[] = (int) $board;
 
 		// The easiest thing is to just get all the boards they can see, but since we've specified the top of tree we ignore some of them
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.id_parent
 			FROM {db_prefix}boards AS b
 			WHERE {query_wanna_see_board}
@@ -550,7 +550,7 @@ function UnreadTopics()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {query_see_board}
@@ -578,7 +578,7 @@ function UnreadTopics()
 			$_REQUEST['c'][$i] = (int) $c;
 
 		$see_board = isset($_REQUEST['action']) && $_REQUEST['action'] == 'unreadreplies' ? 'query_see_board' : 'query_wanna_see_board';
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE ' . $user_info[$see_board] . '
@@ -603,7 +603,7 @@ function UnreadTopics()
 	{
 		$see_board = isset($_REQUEST['action']) && $_REQUEST['action'] == 'unreadreplies' ? 'query_see_board' : 'query_wanna_see_board';
 		// Don't bother to show deleted posts!
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE ' . $user_info[$see_board] . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
@@ -657,7 +657,7 @@ function UnreadTopics()
 
 	if (!empty($_REQUEST['c']) && is_array($_REQUEST['c']) && count($_REQUEST['c']) == 1)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT name
 			FROM {db_prefix}categories
 			WHERE id_cat = {int:id_cat}
@@ -709,7 +709,7 @@ function UnreadTopics()
 	{
 		if (!empty($board))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT MIN(id_msg)
 				FROM {db_prefix}log_mark_read
 				WHERE id_member = {int:current_member}
@@ -724,7 +724,7 @@ function UnreadTopics()
 		}
 		else
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT MIN(lmr.id_msg)
 				FROM {db_prefix}boards AS b
 					LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = b.id_board AND lmr.id_member = {int:current_member})
@@ -748,7 +748,7 @@ function UnreadTopics()
 			else
 			{
 				// This query is pretty slow, but it's needed to ensure nothing crucial is ignored.
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT MIN(id_msg)
 					FROM {db_prefix}log_topics
 					WHERE id_member = {int:current_member}',
@@ -774,14 +774,14 @@ function UnreadTopics()
 
 	if ($modSettings['totalMessages'] > 100000 && $context['showing_all_topics'])
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DROP TABLE IF EXISTS {db_prefix}log_topics_unread',
 			[
 			]
 		);
 
 		// Let's copy things out of the log_topics table, to reduce searching.
-		$have_temp_table = $smcFunc['db_query']('', '
+		$have_temp_table = $smcFunc['db']->query('', '
 			CREATE TEMPORARY TABLE {db_prefix}log_topics_unread (
 				PRIMARY KEY (id_topic)
 			)
@@ -806,7 +806,7 @@ function UnreadTopics()
 
 	if ($context['showing_all_topics'] && $have_temp_table)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*), MIN(t.id_last_msg)
 			FROM {db_prefix}topics AS t
 				LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)
@@ -857,7 +857,7 @@ function UnreadTopics()
 		else
 			$min_message = (int) $min_message;
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $smcFunc['db']->query('substring', '
 			SELECT ' . $select_clause . '
 			FROM {db_prefix}messages AS ms
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ms.id_topic AND t.id_first_msg = ms.id_msg)
@@ -889,7 +889,7 @@ function UnreadTopics()
 	}
 	elseif ($is_topics)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*), MIN(t.id_last_msg)
 			FROM {db_prefix}topics AS t' . (!empty($have_temp_table) ? '
 				LEFT JOIN {db_prefix}log_topics_unread AS lt ON (lt.id_topic = t.id_topic)' : '
@@ -947,7 +947,7 @@ function UnreadTopics()
 		else
 			$min_message = (int) $min_message;
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $smcFunc['db']->query('substring', '
 			SELECT ' . $select_clause . '
 			FROM {db_prefix}messages AS ms
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ms.id_topic AND t.id_first_msg = ms.id_msg)
@@ -982,13 +982,13 @@ function UnreadTopics()
 	{
 		if ($modSettings['totalMessages'] > 100000)
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DROP TABLE IF EXISTS {db_prefix}topics_posted_in',
 				[
 				]
 			);
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DROP TABLE IF EXISTS {db_prefix}log_topics_posted_in',
 				[
 				]
@@ -1003,7 +1003,7 @@ function UnreadTopics()
 			];
 
 			// The main benefit of this temporary table is not that it's faster; it's that it avoids locks later.
-			$have_temp_table = $smcFunc['db_query']('', '
+			$have_temp_table = $smcFunc['db']->query('', '
 				CREATE TEMPORARY TABLE {db_prefix}topics_posted_in (
 					id_topic mediumint(8) unsigned NOT NULL default {string:string_zero},
 					id_board smallint(5) unsigned NOT NULL default {string:string_zero},
@@ -1031,7 +1031,7 @@ function UnreadTopics()
 
 			// If that worked, create a sample of the log_topics table too.
 			if ($have_temp_table)
-				$have_temp_table = $smcFunc['db_query']('', '
+				$have_temp_table = $smcFunc['db']->query('', '
 					CREATE TEMPORARY TABLE {db_prefix}log_topics_posted_in (
 						PRIMARY KEY (id_topic)
 					)
@@ -1048,7 +1048,7 @@ function UnreadTopics()
 
 		if (!empty($have_temp_table))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT COUNT(*)
 				FROM {db_prefix}topics_posted_in AS pi
 					LEFT JOIN {db_prefix}log_topics_posted_in AS lt ON (lt.id_topic = pi.id_topic)
@@ -1062,7 +1062,7 @@ function UnreadTopics()
 		}
 		else
 		{
-			$request = $smcFunc['db_query']('unread_fetch_topic_count', '
+			$request = $smcFunc['db']->query('unread_fetch_topic_count', '
 				SELECT COUNT(DISTINCT t.id_topic), MIN(t.id_last_msg)
 				FROM {db_prefix}topics AS t
 					INNER JOIN {db_prefix}messages AS m ON (m.id_topic = t.id_topic)
@@ -1110,7 +1110,7 @@ function UnreadTopics()
 		}
 
 		if (!empty($have_temp_table))
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT t.id_topic
 				FROM {db_prefix}topics_posted_in AS t
 					LEFT JOIN {db_prefix}log_topics_posted_in AS lt ON (lt.id_topic = t.id_topic)
@@ -1125,7 +1125,7 @@ function UnreadTopics()
 				])
 			);
 		else
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT DISTINCT t.id_topic,'.$_REQUEST['sort'].'
 				FROM {db_prefix}topics AS t
 					INNER JOIN {db_prefix}messages AS m ON (m.id_topic = t.id_topic AND m.id_member = {int:current_member})' . (strpos($_REQUEST['sort'], 'ms.') === false ? '' : '
@@ -1167,7 +1167,7 @@ function UnreadTopics()
 			return;
 		}
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $smcFunc['db']->query('substring', '
 			SELECT ' . $select_clause . '
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS ms ON (ms.id_topic = t.id_topic AND ms.id_msg = t.id_first_msg)
@@ -1341,7 +1341,7 @@ function UnreadTopics()
 
 	if ($is_topics && !empty($topic_ids))
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT id_topic
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topic_list})

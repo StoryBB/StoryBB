@@ -59,7 +59,7 @@ function char_switch($memID, $char = null, $return = false)
 			die;
 	}
 	// Let's check the user actually owns this character
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT id_character, id_member
 		FROM {db_prefix}characters
 		WHERE id_character = {int:id_character}
@@ -81,7 +81,7 @@ function char_switch($memID, $char = null, $return = false)
 	}
 
 	// So it's valid. Update the members table first of all.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}members
 		SET current_character = {int:id_character}
 		WHERE id_member = {int:id_member}',
@@ -91,7 +91,7 @@ function char_switch($memID, $char = null, $return = false)
 		]
 	);
 	// Now the online log too.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}log_online
 		SET id_character = {int:id_character}
 		WHERE id_member = {int:id_member}',
@@ -101,7 +101,7 @@ function char_switch($memID, $char = null, $return = false)
 		]
 	);
 	// And last active
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET last_active = {int:last_active}
 		WHERE id_character = {int:character}',
@@ -200,7 +200,7 @@ function character_profile($memID)
 	}
 
 	$theme_id = !empty($context['character']['id_theme']) ? $context['character']['id_theme'] : $modSettings['theme_guests'];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT value
 		FROM {db_prefix}themes
 		WHERE id_theme = {int:id_theme}
@@ -263,7 +263,7 @@ function char_create()
 		else
 		{
 			// Check if the name already exists.
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT COUNT(*)
 				FROM {db_prefix}characters
 				WHERE character_name LIKE {string:new_name}',
@@ -426,7 +426,7 @@ function char_edit()
 		elseif ($new_name != $context['character']['character_name'])
 		{
 			// Check if the name already exists.
-			$result = $smcFunc['db_query']('', '
+			$result = $smcFunc['db']->query('', '
 				SELECT COUNT(*)
 				FROM {db_prefix}characters
 				WHERE character_name LIKE {string:new_name}
@@ -618,7 +618,7 @@ function char_delete()
 	}
 
 	// Let's see how many posts they have (for really realz, not what their post count says)
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT COUNT(id_msg)
 		FROM {db_prefix}messages
 		WHERE id_character = {int:char}',
@@ -635,7 +635,7 @@ function char_delete()
 	}
 
 	// Is the character currently in action?
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT current_character
 		FROM {db_prefix}members
 		WHERE id_member = {int:member}',
@@ -652,7 +652,7 @@ function char_delete()
 
 	// Delete alerts attached to this character.
 	// But first, find all the members where this is relevant, and where they have unread alerts (so we can fix the alert count).
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT mem.id_member FROM {db_prefix}members AS mem
 		INNER JOIN {db_prefix}user_alerts AS a ON (a.id_member = mem.id_member)
 		WHERE a.is_read = {int:unread}
@@ -671,7 +671,7 @@ function char_delete()
 	}
 	$smcFunc['db']->free_result($result);
 	// Having found all of the people whose alert counts need to be fixed, let's now purge all these alerts.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}user_alerts
 		WHERE (chars_src = {int:chars_src} OR chars_dest = {int:chars_dest})',
 		[
@@ -687,7 +687,7 @@ function char_delete()
 	}
 
 	// So we can delete them.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}characters
 		WHERE id_character = {int:char}',
 		[
@@ -721,7 +721,7 @@ function char_theme()
 		];
 	}
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
 		WHERE id_member = 0
@@ -826,7 +826,7 @@ function char_posts()
 		$_REQUEST['viewscount'] = '10';
 
 	if ($context['is_topics'])
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}topics AS t' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
@@ -841,7 +841,7 @@ function char_posts()
 			]
 		);
 	else
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT COUNT(*)
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
@@ -857,7 +857,7 @@ function char_posts()
 	list ($msgCount) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db']->free_result($request);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT MIN(id_msg), MAX(id_msg)
 		FROM {db_prefix}messages AS m
 		WHERE m.id_character = {int:current_member}' . (!empty($board) ? '
@@ -915,7 +915,7 @@ function char_posts()
 	{
 		if ($context['is_topics'])
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT
 					b.id_board, b.name AS bname, c.id_cat, c.name AS cname, t.id_member_started, t.id_first_msg, t.id_last_msg,
 					t.approved, m.body, m.smileys_enabled, m.subject, m.poster_time, m.id_topic, m.id_msg
@@ -939,7 +939,7 @@ function char_posts()
 		}
 		else
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT
 					b.id_board, b.name AS bname, c.id_cat, c.name AS cname, m.id_topic, m.id_msg,
 					t.id_member_started, t.id_first_msg, t.id_last_msg, m.body, m.smileys_enabled,
@@ -1100,7 +1100,7 @@ function profileLoadCharGroups()
 	$curGroups = explode(',', $context['character']['char_groups']);
 
 	// Load membergroups, but only those groups the user can assign.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT group_name, id_group, hidden
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
@@ -1209,7 +1209,7 @@ function char_stats()
 	];
 
 	// Number of topics started.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}topics AS t
 		INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
@@ -1225,7 +1225,7 @@ function char_stats()
 	$context['num_topics'] = comma_format($context['num_topics']);
 
 	// Grab the board this character posted in most often.
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT
 			b.id_board, MAX(b.name) AS name, MAX(b.num_posts) AS num_posts, COUNT(*) AS message_count
 		FROM {db_prefix}messages AS m
@@ -1257,7 +1257,7 @@ function char_stats()
 	$smcFunc['db']->free_result($result);
 
 	// Now get the 10 boards this user has most often participated in.
-	$result = $smcFunc['db_query']('profile_board_stats', '
+	$result = $smcFunc['db']->query('profile_board_stats', '
 		SELECT
 			b.id_board, MAX(b.name) AS name, b.num_posts, COUNT(*) AS message_count,
 			CASE WHEN COUNT(*) > MAX(b.num_posts) THEN 1 ELSE COUNT(*) / MAX(b.num_posts) END * 100 AS percentage
@@ -1288,7 +1288,7 @@ function char_stats()
 	$smcFunc['db']->free_result($result);
 
 	// Posting activity by time.
-	$result = $smcFunc['db_query']('user_activity_by_time', '
+	$result = $smcFunc['db']->query('user_activity_by_time', '
 		SELECT
 			HOUR(FROM_UNIXTIME(poster_time + {int:time_offset})) AS hour,
 			COUNT(*) AS post_count
@@ -1365,7 +1365,7 @@ function char_sheet()
 	// whatever, for everyone else show them the most recent approved
 	if ($context['user']['is_owner'] || allowedTo('admin_forum'))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
 			FROM {db_prefix}character_sheet_versions
 			WHERE id_character = {int:character}
@@ -1406,7 +1406,7 @@ function char_sheet()
 	}
 	else
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
 			FROM {db_prefix}character_sheet_versions
 			WHERE id_version = {int:version}',
@@ -1492,7 +1492,7 @@ function char_sheet()
 			$context['sheet_comments'] = [];
 			// First, find the time of the last approved case.
 			$last_approved = 0;
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT MAX(approved_time) AS last_approved
 				FROM {db_prefix}character_sheet_versions
 				WHERE id_approver != 0
@@ -1508,7 +1508,7 @@ function char_sheet()
 			$smcFunc['db']->free_result($request);
 
 			// Now get any comments for this character since the last approval.
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT csc.id_comment, csc.id_author, mem.real_name, csc.time_posted, csc.sheet_comment
 				FROM {db_prefix}character_sheet_comments AS csc
 				LEFT JOIN {db_prefix}members AS mem ON (csc.id_author = mem.id_member)
@@ -1567,7 +1567,7 @@ function char_sheet_history()
 	$context['history_items'] = [];
 
 	// First, get all the sheet versions.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_version, sheet_text, created_time, id_approver,
 			mem.real_name AS approver_name, approved_time
 		FROM {db_prefix}character_sheet_versions AS csv
@@ -1597,7 +1597,7 @@ function char_sheet_history()
 	$smcFunc['db']->free_result($request);
 
 	// Then get all the comments.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_comment, id_author, mem.real_name, time_posted, sheet_comment
 		FROM {db_prefix}character_sheet_comments AS csc
 		LEFT JOIN {db_prefix}members AS mem ON (csc.id_author = mem.id_member)
@@ -1652,7 +1652,7 @@ function char_sheet_edit()
 	if (empty($context['character']['char_sheet']) && empty($context['user']['is_owner']) && !allowedTo('admin_forum'))
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_character = {int:character}
@@ -1738,7 +1738,7 @@ function char_sheet_edit()
 	$context['sheet_comments'] = [];
 	if (!empty($context['character']['sheet_details']['created_time']) && empty($context['character']['sheet_details']['id_approver']))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_comment, id_author, mem.real_name, time_posted, sheet_comment
 			FROM {db_prefix}character_sheet_comments AS csc
 				LEFT JOIN {db_prefix}members AS mem ON (csc.id_author = mem.id_member)
@@ -1774,7 +1774,7 @@ function load_char_sheet_templates()
 
 	$context['sheet_templates'] = [];
 	// Go fetch the possible templates.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_template, template_name, template
 		FROM {db_prefix}character_sheet_templates
 		ORDER BY position ASC');
@@ -1809,7 +1809,7 @@ function char_sheet_approval()
 	// So which one are we offering up for approval?
 	// First, find the last approved case.
 	$last_approved = 0;
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT MAX(id_version) AS last_approved
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_approver != 0
@@ -1826,7 +1826,7 @@ function char_sheet_approval()
 
 	// Now find the highest version after the last approved (or highest ever)
 	// for this character.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT MAX(id_version) AS highest_id
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_version > {int:last_approved}
@@ -1844,7 +1844,7 @@ function char_sheet_approval()
 	}
 
 	// OK, time to mark it as ready for approval.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		UPDATE {db_prefix}character_sheet_versions
 		SET approval_state = 1
 		WHERE id_version = {int:version}',
@@ -1906,7 +1906,7 @@ function char_sheet_approve()
 	if (empty($version))
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_character, id_approver, approval_state
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_version = {int:version}',
@@ -1932,7 +1932,7 @@ function char_sheet_approve()
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 
 	// Last test: any other rows for this user
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_version > {int:version}
@@ -1949,7 +1949,7 @@ function char_sheet_approve()
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
 
 	// OK, so this version is good to go for approval. Approve the sheet...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}character_sheet_versions
 		SET id_approver = {int:approver},
 			approved_time = {int:time},
@@ -1963,7 +1963,7 @@ function char_sheet_approve()
 		]
 	);
 	// And the character...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET char_sheet = {int:version}
 		WHERE id_character = {int:character}',
@@ -2028,7 +2028,7 @@ function char_sheet_compare()
 
 	// So, does the user have a current-not-yet-approved one? We need to get
 	// the latest to find this out.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_character = {int:character}
@@ -2048,7 +2048,7 @@ function char_sheet_compare()
 	$smcFunc['db']->free_result($request);
 
 	// Now we need to go get the currently approved one too.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_version, sheet_text, created_time, id_approver, approved_time, approval_state
 		FROM {db_prefix}character_sheet_versions
 		WHERE id_version = {int:current_version}',
@@ -2076,7 +2076,7 @@ function char_sheet_compare()
 function mark_char_sheet_unapproved($char)
 {
 	global $smcFunc;
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}character_sheet_versions
 		SET approval_state = 0
 		WHERE id_character = {int:char}',
@@ -2124,7 +2124,7 @@ function char_merge_account($memID)
 
 		// We picked an account to merge, let's see if we can find and if we can,
 		// get its details so that we can check for sure it's what the user wants.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}',
@@ -2191,7 +2191,7 @@ function merge_char_accounts($source, $dest)
 		return 'no_main';
 
 	// Move characters
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET id_member = {int:dest}
 		WHERE id_member = {int:source}
@@ -2205,7 +2205,7 @@ function merge_char_accounts($source, $dest)
 	);
 
 	// Move posts over - main
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}messages
 		SET id_member = {int:dest},
 			id_character = {int:dest_main}
@@ -2220,7 +2220,7 @@ function merge_char_accounts($source, $dest)
 	);
 
 	// Move posts over - characters (i.e. whatever's left)
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}messages
 		SET id_member = {int:dest}
 		WHERE id_member = {int:source}',
@@ -2242,7 +2242,7 @@ function merge_char_accounts($source, $dest)
 		updateCharacterData($dest_main, ['posts' => 'posts + ' . $user_profile[$source]['characters'][$source_main]['posts']]);
 
 	// Reassign topics
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET id_member_started = {int:dest}
 		WHERE id_member_started = {int:source}',
@@ -2251,7 +2251,7 @@ function merge_char_accounts($source, $dest)
 			'dest' => $dest,
 		]
 	);
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET id_member_updated = {int:dest}
 		WHERE id_member_updated = {int:source}',
@@ -2262,7 +2262,7 @@ function merge_char_accounts($source, $dest)
 	);
 
 	// Move PMs - sent items
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}personal_messages
 		SET id_member_from = {int:dest}
 		WHERE id_member_from = {int:source}',
@@ -2275,7 +2275,7 @@ function merge_char_accounts($source, $dest)
 	// Move PMs - received items
 	// First we have to get all the existing recipient rows
 	$rows = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_pm, bcc, is_read, is_new, deleted
 		FROM {db_prefix}pm_recipients
 		WHERE id_member = {int:source}',
@@ -2349,7 +2349,7 @@ function char_move_account()
 
 		// We picked an account to move to, let's see if we can find and if we can,
 		// get its details so that we can check for sure it's what the user wants.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}',
@@ -2388,7 +2388,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	if (!in_array($dest_acct, $loaded))
 		return 'not_found';
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT chars.id_member, chars.id_character, chars.is_main, chars.posts, mem.current_character
 		FROM {db_prefix}characters AS chars
 			INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
@@ -2414,7 +2414,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	{
 		return 'online';
 	}
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}log_online
 		WHERE log_time >= {int:log_time}
@@ -2434,7 +2434,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	// and we know the destination account, and we know they exist.
 
 	// Move the character
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}characters
 		SET id_member = {int:dest_acct}
 		WHERE id_character = {int:source_chr}',
@@ -2445,7 +2445,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	);
 
 	// Move the character's posts
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}messages
 		SET id_member = {int:dest_acct}
 		WHERE id_character = {int:source_chr}',
@@ -2467,7 +2467,7 @@ function move_char_accounts($source_chr, $dest_acct)
 
 	// Reassign topics - find topics started by this particular character
 	$topics = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT t.id_topic
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)
@@ -2484,7 +2484,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	$smcFunc['db']->free_result($request);
 	if (!empty($topics))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}topics
 			SET id_member_started = {int:dest_acct}
 			WHERE id_topic IN ({array_int:topics})',
@@ -2496,7 +2496,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	}
 	// Reassign topics - last post in a topic
 	$topics = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT t.id_topic
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (t.id_last_msg = m.id_msg)
@@ -2513,7 +2513,7 @@ function move_char_accounts($source_chr, $dest_acct)
 	$smcFunc['db']->free_result($request);
 	if (!empty($topics))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}topics
 			SET id_member_updated = {int:dest_acct}
 			WHERE id_topic IN ({array_int:topics})',
@@ -2538,7 +2538,7 @@ function CharacterList()
 	$_GET['char'] = isset($_GET['char']) ? (int) $_GET['char'] : 0;
 	if ($_GET['char'])
 	{
-		$result = $smcFunc['db_query']('', '
+		$result = $smcFunc['db']->query('', '
 			SELECT chars.id_character, mem.id_member
 			FROM {db_prefix}characters AS chars
 			INNER JOIN {db_prefix}members AS mem ON (chars.id_member = mem.id_member)
@@ -2631,7 +2631,7 @@ function CharacterList()
 		}
 	}
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(id_character)
 		FROM {db_prefix}characters AS chars
 		WHERE ' . implode(' AND ', $clauses),
@@ -2655,7 +2655,7 @@ function CharacterList()
 .char_list_name { max-width: ' . $modSettings['avatar_max_width'] . 'px; }');
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT chars.id_character, chars.id_member, chars.character_name,
 				chars.avatar, chars.posts, chars.date_created,
 				chars.main_char_group, chars.char_groups, chars.char_sheet,
@@ -2724,7 +2724,7 @@ function CharacterSheetList()
 	$context['sort_order'] = isset($_GET['dir']) && !empty($_GET['sort']) && ($_GET['dir'] == 'asc' || $_GET['dir'] == 'desc') ? $_GET['dir'] : 'desc';
 
 	$context['characters'] = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT chars.id_character, chars.id_member, chars.character_name,
 			chars.date_created, chars.last_active, chars.avatar, chars.posts,
 			chars.main_char_group, chars.char_groups, chars.retired
@@ -2760,7 +2760,7 @@ function ReattributePost()
 
 	// 2. Get the message id and verify that it exists inside the topic in question.
 	$msg = isset($_GET['msg']) ? (int) $_GET['msg'] : 0;
-	$result = $smcFunc['db_query']('', '
+	$result = $smcFunc['db']->query('', '
 		SELECT t.id_topic, t.locked, t.id_member_started, m.id_member AS id_member_posted,
 			m.id_character, c.character_name AS old_character
 		FROM {db_prefix}messages AS m
@@ -2801,7 +2801,7 @@ function ReattributePost()
 	// 5. So we've verified the topic matches the message, the user has power
 	// to edit the message, and the message owner's new character exists.
 	// Time to reattribute the message!
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}messages
 		SET id_character = {int:char}
 		WHERE id_msg = {int:msg}',
@@ -2816,7 +2816,7 @@ function ReattributePost()
 	if ($board_info['posts_count'])
 	{
 		// Subtract one from the post count of the current owner.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}characters
 			SET posts = (CASE WHEN posts <= 1 THEN 0 ELSE posts - 1 END)
 			WHERE id_character = {int:char}',
@@ -2826,7 +2826,7 @@ function ReattributePost()
 		);
 
 		// Add one to the new owner.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}characters
 			SET posts = posts + 1
 			WHERE id_character = {int:char}',

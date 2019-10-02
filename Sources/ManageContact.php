@@ -46,7 +46,7 @@ function ListContact()
 		'get_count' => [
 			'function' => function() use ($smcFunc)
 			{
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT COUNT(cf.id_message)
 					FROM {db_prefix}contact_form AS cf'
 				);
@@ -61,7 +61,7 @@ function ListContact()
 			{
 				global $smcFunc;
 				$rows = [];
-				$request = $smcFunc['db_query']('', '
+				$request = $smcFunc['db']->query('', '
 					SELECT cf.id_message, mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,
 						COALESCE(mem.email_address, cf.contact_email) AS member_email, cf.subject, cf.time_received, cf.status
 					FROM {db_prefix}contact_form AS cf
@@ -163,7 +163,7 @@ function ViewContact()
 
 	$msg = isset($_GET['msg']) ? (int) $_GET['msg'] : 0;
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT cf.id_message, mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,
 			COALESCE(mem.email_address, cf.contact_email) AS member_email, cf.subject, cf.message, cf.time_received, cf.status
 		FROM {db_prefix}contact_form AS cf
@@ -187,7 +187,7 @@ function ViewContact()
 	// See if there's any previous messages we should show.
 	$context['contact']['previous'] = [];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT mem.id_member, mem.real_name, cfr.response, cfr.time_sent
 		FROM {db_prefix}contact_form_response AS cfr
 			LEFT JOIN {db_prefix}members AS mem ON (cfr.id_member = mem.id_member)
@@ -226,7 +226,7 @@ function ReplyContact()
 
 	$message = !empty($_POST['reply']) ? StringLibrary::htmltrim(StringLibrary::escape($_POST['reply'], ENT_QUOTES)) : '';
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT cf.id_message, mem.id_member, COALESCE(mem.real_name, cf.contact_name) AS member_name,
 			COALESCE(mem.email_address, cf.contact_email) AS member_email, cf.subject, cf.message, cf.time_received, cf.status
 		FROM {db_prefix}contact_form AS cf
@@ -260,7 +260,7 @@ function ReplyContact()
 	);
 
 	// Update the message to be sent.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}contact_form
 		SET status = 1
 		WHERE status = 0

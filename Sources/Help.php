@@ -37,7 +37,7 @@ function ShowHelp()
 		],
 	];
 
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT p.id_policy, pt.policy_type, p.language, p.title, p.description
 		FROM {db_prefix}policy_types AS pt
 			INNER JOIN {db_prefix}policy AS p ON (p.policy_type = pt.id_policy_type)
@@ -116,7 +116,7 @@ function HelpPolicy()
 	];
 	
 	// We know if we're here the policy exists.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT p.id_policy, pr.last_change, pr.revision_text
 		FROM {db_prefix}policy_revision AS pr
 			INNER JOIN {db_prefix}policy AS p ON (p.last_revision = pr.id_revision)
@@ -162,7 +162,7 @@ function HelpSmileys()
 	];
 
 	$context['smileys'] = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT code, filename, description
 		FROM {db_prefix}smileys
 		ORDER BY smiley_row, smiley_order, hidden');

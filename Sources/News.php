@@ -66,7 +66,7 @@ function ShowXmlFeed()
 
 		if (count($_REQUEST['c']) == 1)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT name
 				FROM {db_prefix}categories
 				WHERE id_cat = {int:current_category}',
@@ -80,7 +80,7 @@ function ShowXmlFeed()
 			$feed_meta['title'] = ' - ' . strip_tags($feed_meta['title']);
 		}
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.num_posts
 			FROM {db_prefix}boards AS b
 			WHERE b.id_cat IN ({array_int:current_category_list})
@@ -111,7 +111,7 @@ function ShowXmlFeed()
 		foreach ($_REQUEST['boards'] as $i => $b)
 			$_REQUEST['boards'][$i] = (int) $b;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT b.id_board, b.num_posts, b.name
 			FROM {db_prefix}boards AS b
 			WHERE b.id_board IN ({array_int:board_list})
@@ -149,7 +149,7 @@ function ShowXmlFeed()
 	}
 	elseif (!empty($board))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT num_posts
 			FROM {db_prefix}boards
 			WHERE id_board = {int:current_board}
@@ -560,7 +560,7 @@ function getXmlMembers($xml_format)
 		return [];
 
 	// Find the most recent members.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, member_name, real_name, date_registered, last_login
 		FROM {db_prefix}members
 		ORDER BY id_member DESC
@@ -666,7 +666,7 @@ function getXmlNews($xml_format)
 	while (!$done)
 	{
 		$optimize_msg = implode(' AND ', $context['optimize_msg']);
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT
 				m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.modified_time,
 				t.id_topic, t.id_board, t.num_replies,
@@ -720,7 +720,7 @@ function getXmlNews($xml_format)
 		// Do we want to include any attachments?
 		if (!empty($modSettings['attachmentEnable']) && !empty($modSettings['xmlnews_attachments']) && allowedTo('view_attachments', $row['id_board']))
 		{
-			$attach_request = $smcFunc['db_query']('', '
+			$attach_request = $smcFunc['db']->query('', '
 				SELECT
 					a.id_attach, a.filename, COALESCE(a.size, 0) AS filesize, a.mime_type, a.downloads, a.approved, m.id_topic AS topic
 				FROM {db_prefix}attachments AS a
@@ -923,7 +923,7 @@ function getXmlRecent($xml_format)
 	while (!$done)
 	{
 		$optimize_msg = implode(' AND ', $context['optimize_msg']);
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.id_msg
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
@@ -963,7 +963,7 @@ function getXmlRecent($xml_format)
 		return [];
 
 	// Find the most recent posts this user can see.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			m.smileys_enabled, m.poster_time, m.id_msg, m.subject, m.body, m.id_topic, t.id_board,
 			b.name AS bname, t.num_replies, m.id_member, mf.id_member AS id_first_member,
@@ -1001,7 +1001,7 @@ function getXmlRecent($xml_format)
 		// Do we want to include any attachments?
 		if (!empty($modSettings['attachmentEnable']) && !empty($modSettings['xmlnews_attachments']) && allowedTo('view_attachments', $row['id_board']))
 		{
-			$attach_request = $smcFunc['db_query']('', '
+			$attach_request = $smcFunc['db']->query('', '
 				SELECT
 					a.id_attach, a.filename, COALESCE(a.size, 0) AS filesize, a.mime_type, a.downloads, a.approved, m.id_topic AS topic
 				FROM {db_prefix}attachments AS a

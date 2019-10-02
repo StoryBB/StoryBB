@@ -29,7 +29,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 		// We need to figure out who the owner of this is.
 		if ($this->_details['content_type'] == 'msg')
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT mem.id_member, mem.id_group, mem.additional_groups, b.member_groups,
 					m.id_character, chars.is_main, mem.pm_ignore_list
 				FROM {db_prefix}messages AS m
@@ -92,7 +92,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 
 		// Don't spam the alerts: if there is an existing unread alert of the
 		// requested type for the target user from the sender, don't make a new one.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_alert
 			FROM {db_prefix}user_alerts
 			WHERE id_member = {int:id_member}

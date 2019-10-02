@@ -50,7 +50,7 @@ class Navigation extends RawMinkContext implements Context
 		global $smcFunc;
 
 		// Find the board id from its name.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_board
 			FROM {db_prefix}boards
 			WHERE name = {string:board}',
@@ -85,7 +85,7 @@ class Navigation extends RawMinkContext implements Context
 		global $smcFunc;
 
 		// Find the board id from its name.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT t.id_topic
 			FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (t.id_first_msg = m.id_msg)

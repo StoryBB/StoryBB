@@ -51,7 +51,7 @@ class RemoveOldDrafts implements \StoryBB\Task\Schedulable
 
 		// Find all of the old drafts.
 		$drafts = [];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_draft
 			FROM {db_prefix}user_drafts
 			WHERE poster_time <= {int:poster_time_old}',

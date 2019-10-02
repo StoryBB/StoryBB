@@ -71,7 +71,7 @@ function SplitIndex()
 	$_GET['at'] = (int) $_GET['at'];
 
 	// Retrieve the subject and stuff of the specific topic/message.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.subject, t.num_replies, t.unapproved_posts, t.id_first_msg, t.approved
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
@@ -148,7 +148,7 @@ function SplitExecute()
 	if ($_POST['step2'] == 'afterthis')
 	{
 		// Fetch the message IDs of the topic that are at or after the message.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_msg
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}
@@ -240,7 +240,7 @@ function SplitSelectTopics()
 			'not_selected' => [],
 			'selected' => [],
 		];
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_msg
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}' . (empty($_SESSION['split_selection'][$topic]) ? '' : '
@@ -264,7 +264,7 @@ function SplitSelectTopics()
 		$smcFunc['db']->free_result($request);
 		if (!empty($_SESSION['split_selection'][$topic]))
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_msg
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic}
@@ -302,7 +302,7 @@ function SplitSelectTopics()
 	// Make sure the selection is still accurate.
 	if (!empty($_SESSION['split_selection'][$topic]))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_msg
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}
@@ -321,7 +321,7 @@ function SplitSelectTopics()
 	}
 
 	// Get the number of messages (not) selected to be split.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT ' . (empty($_SESSION['split_selection'][$topic]) ? '0' : 'm.id_msg IN ({array_int:split_msgs})') . ' AS is_selected, COUNT(*) AS num_messages
 		FROM {db_prefix}messages AS m
 		WHERE m.id_topic = {int:current_topic}' . (allowedTo('approve_posts') ? '' : '
@@ -347,7 +347,7 @@ function SplitSelectTopics()
 	$context['selected']['page_index'] = constructPageIndex($scripturl . '?action=splittopics;sa=selectTopics;subname=' . strtr(urlencode($_REQUEST['subname']), ['%' => '%%']) . ';topic=' . $topic . '.' . $context['not_selected']['start'] . ';start2=%1$d', $context['selected']['start'], $context['selected']['num_messages'], $context['messages_per_page'], true);
 
 	// Get the messages and stick them into an array.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.subject, COALESCE(mem.real_name, m.poster_name) AS real_name, m.poster_time, m.body, m.id_msg, m.smileys_enabled
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -387,7 +387,7 @@ function SplitSelectTopics()
 	if (!empty($_SESSION['split_selection'][$topic]))
 	{
 		// Get the messages and stick them into an array.
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT m.subject, COALESCE(mem.real_name, m.poster_name) AS real_name,  m.poster_time, m.body, m.id_msg, m.smileys_enabled
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -509,7 +509,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		fatal_lang_error('no_posts_selected', false);
 
 	// Get some board info.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board, approved
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:id_topic}
@@ -522,7 +522,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	$smcFunc['db']->free_result($request);
 
 	// Find the new first and last not in the list. (old topic)
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			MIN(m.id_msg) AS myid_first_msg, MAX(m.id_msg) AS myid_last_msg, COUNT(*) AS message_count, m.approved
 		FROM {db_prefix}messages AS m
@@ -574,7 +574,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	$split1_lastMem = getMsgMemberID($split1_last_msg);
 
 	// Find the first and last in the list. (new topic)
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT MIN(id_msg) AS myid_first_msg, MAX(id_msg) AS myid_last_msg, COUNT(*) AS message_count, approved
 		FROM {db_prefix}messages
 		WHERE id_msg IN ({array_int:msg_list})
@@ -661,7 +661,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	// Valid subject?
 	if ($new_subject != '')
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}messages
 			SET
 				id_topic = {int:id_topic},
@@ -681,7 +681,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	}
 
 	// Any associated reported posts better follow...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}log_reported
 		SET id_topic = {int:id_topic}
 		WHERE id_msg IN ({array_int:split_msgs})',
@@ -692,7 +692,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	);
 
 	// Mess with the old topic's first, last, and number of messages.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET
 			num_replies = {int:num_replies},
@@ -714,7 +714,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 	);
 
 	// Now, put the first/last message back to what they should be.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET
 			id_first_msg = {int:id_first_msg},
@@ -729,7 +729,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 
 	// If the new topic isn't approved ensure the first message flags this just in case.
 	if (!$split2_approved)
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}messages
 			SET approved = {int:approved}
 			WHERE id_msg = {int:id_msg}
@@ -742,7 +742,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		);
 
 	// The board has more topics now (Or more unapproved ones!).
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}boards
 		SET ' . ($split2_approved ? '
 			num_topics = num_topics + 1' : '
@@ -755,7 +755,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 
 	// Copy log topic entries.
 	// @todo This should really be chunked.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, id_msg, unwatched
 		FROM {db_prefix}log_topics
 		WHERE id_topic = {int:id_topic}',
@@ -867,7 +867,7 @@ function MergeIndex()
 	$onlyApproved = $can_approve_boards !== [0] && !in_array($_REQUEST['targetboard'], $can_approve_boards);
 
 	// How many topics are on this board?  (used for paging.)
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT COUNT(*)
 		FROM {db_prefix}topics AS t
 		WHERE t.id_board = {int:id_board}' . ($onlyApproved ? '
@@ -884,7 +884,7 @@ function MergeIndex()
 	$context['page_index'] = constructPageIndex($scripturl . '?action=mergetopics;from=' . $_GET['from'] . ';targetboard=' . $_REQUEST['targetboard'] . ';board=' . $board . '.%1$d', $_REQUEST['start'], $topiccount, $modSettings['defaultMaxTopics'], true);
 
 	// Get the topic's subject.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT m.subject
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -934,7 +934,7 @@ function MergeIndex()
 	}
 
 	// Get some topics to merge it with.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT t.id_topic, m.subject, m.id_member, COALESCE(mem.real_name, m.poster_name) AS poster_name
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -1025,7 +1025,7 @@ function MergeExecute($topics = [])
 	$can_approve_boards = boardsAllowedTo('approve_posts');
 
 	// Get info about the topics and polls that will be merged.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT
 			t.id_topic, t.id_board, t.id_poll, t.num_views, t.is_sticky, t.approved, t.num_replies, t.unapproved_posts, t.id_redirect_topic,
 			m1.subject, m1.poster_time AS time_started, COALESCE(mem1.id_member, 0) AS id_member_started, COALESCE(mem1.real_name, m1.poster_name) AS name_started,
@@ -1155,7 +1155,7 @@ function MergeExecute($topics = [])
 		fatal_lang_error('cannot_merge_any', 'user');
 
 	// Make sure they can see all boards....
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT b.id_board
 		FROM {db_prefix}boards AS b
 		WHERE b.id_board IN ({array_int:boards})
@@ -1177,7 +1177,7 @@ function MergeExecute($topics = [])
 	{
 		if (count($polls) > 1)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT t.id_topic, t.id_poll, m.subject, p.question
 				FROM {db_prefix}polls AS p
 					INNER JOIN {db_prefix}topics AS t ON (t.id_poll = p.id_poll)
@@ -1203,7 +1203,7 @@ function MergeExecute($topics = [])
 		}
 		if (count($boards) > 1)
 		{
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db']->query('', '
 				SELECT id_board, name
 				FROM {db_prefix}boards
 				WHERE id_board IN ({array_int:boards})
@@ -1263,7 +1263,7 @@ function MergeExecute($topics = [])
 		$target_subject = $topic_data[$firstTopic]['subject'];
 
 	// Get the first and last message and the number of messages....
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT approved, MIN(id_msg) AS first_msg, MAX(id_msg) AS last_msg, COUNT(*) AS message_count
 		FROM {db_prefix}messages
 		WHERE id_topic IN ({array_int:topics})
@@ -1326,7 +1326,7 @@ function MergeExecute($topics = [])
 	$boardTotals[$target_board]['posts'] -= $topic_approved ? $num_replies + 1 : $num_replies;
 
 	// Get the member ID of the first and last message.
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member
 		FROM {db_prefix}messages
 		WHERE id_msg IN ({int:first_msg}, {int:last_msg})
@@ -1347,7 +1347,7 @@ function MergeExecute($topics = [])
 
 	// Obtain all the message ids we are going to affect.
 	$affected_msgs = [];
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_msg
 		FROM {db_prefix}messages
 		WHERE id_topic IN ({array_int:topic_list})',
@@ -1368,7 +1368,7 @@ function MergeExecute($topics = [])
 	// We don't want the search index data though (For non-redirect merges).
 	if (!isset($_POST['postRedirect']))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 		DELETE FROM {db_prefix}log_search_subjects
 		WHERE id_topic IN ({array_int:deleted_topics})',
 			[
@@ -1445,7 +1445,7 @@ function MergeExecute($topics = [])
 	}
 
 	// Change the topic IDs of all messages that will be merged.  Also adjust subjects if 'enforce subject' was checked.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}messages
 		SET
 			id_topic = {int:id_topic},
@@ -1463,7 +1463,7 @@ function MergeExecute($topics = [])
 	);
 
 	// Any reported posts should reflect the new board.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}log_reported
 		SET
 			id_topic = {int:id_topic},
@@ -1477,7 +1477,7 @@ function MergeExecute($topics = [])
 	);
 
 	// Change the subject of the first message...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}messages
 		SET subject = {string:target_subject}
 		WHERE id_msg = {int:first_msg}',
@@ -1489,7 +1489,7 @@ function MergeExecute($topics = [])
 
 	// Merge log topic entries.
 	// The unwatch setting comes from the oldest topic
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_member, MIN(id_msg) AS new_id_msg, unwatched
 		FROM {db_prefix}log_topics
 		WHERE id_topic IN ({array_int:topics})
@@ -1513,7 +1513,7 @@ function MergeExecute($topics = [])
 		unset($replaceEntries);
 
 		// Get rid of the old log entries.
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_topics
 			WHERE id_topic IN ({array_int:deleted_topics})',
 			[
@@ -1527,7 +1527,7 @@ function MergeExecute($topics = [])
 	$notifications = isset($_POST['notifications']) && is_array($_POST['notifications']) ? array_intersect($topics, $_POST['notifications']) : [];
 	if (!empty($notifications))
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT id_member, MAX(sent) AS sent
 			FROM {db_prefix}log_notify
 			WHERE id_topic IN ({array_int:topics_list})
@@ -1550,7 +1550,7 @@ function MergeExecute($topics = [])
 				);
 			unset($replaceEntries);
 
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				DELETE FROM {db_prefix}log_topics
 				WHERE id_topic IN ({array_int:deleted_topics})',
 				[
@@ -1564,21 +1564,21 @@ function MergeExecute($topics = [])
 	// Get rid of the redundant polls.
 	if (!empty($deleted_polls))
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}polls
 			WHERE id_poll IN ({array_int:deleted_polls})',
 			[
 				'deleted_polls' => $deleted_polls,
 			]
 		);
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}poll_choices
 			WHERE id_poll IN ({array_int:deleted_polls})',
 			[
 				'deleted_polls' => $deleted_polls,
 			]
 		);
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			DELETE FROM {db_prefix}log_polls
 			WHERE id_poll IN ({array_int:deleted_polls})',
 			[
@@ -1590,7 +1590,7 @@ function MergeExecute($topics = [])
 	// Cycle through each board...
 	foreach ($boardTotals as $id_board => $stats)
 	{
-		$smcFunc['db_query']('', '
+		$smcFunc['db']->query('', '
 			UPDATE {db_prefix}boards
 			SET
 				num_topics = CASE WHEN {int:topics} > num_topics THEN 0 ELSE num_topics - {int:topics} END,
@@ -1609,7 +1609,7 @@ function MergeExecute($topics = [])
 	}
 
 	// Determine the board the final topic resides in
-	$request = $smcFunc['db_query']('', '
+	$request = $smcFunc['db']->query('', '
 		SELECT id_board
 		FROM {db_prefix}topics
 		WHERE id_topic = {int:id_topic}
@@ -1629,7 +1629,7 @@ function MergeExecute($topics = [])
 		// and last posts are the same and so on and so forth.
 		foreach ($updated_topics as $old_topic => $id_msg)
 		{
-			$smcFunc['db_query']('', '
+			$smcFunc['db']->query('', '
 				UPDATE {db_prefix}topics
 				SET id_first_msg = id_last_msg,
 					id_member_started = {int:current_user},
@@ -1652,7 +1652,7 @@ function MergeExecute($topics = [])
 	}
 
 	// Ensure we don't accidentally delete the poll we want to keep...
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET id_poll = 0
 		WHERE id_topic IN ({array_int:deleted_topics})',
@@ -1671,7 +1671,7 @@ function MergeExecute($topics = [])
 	}
 
 	// Asssign the properties of the newly merged topic.
-	$smcFunc['db_query']('', '
+	$smcFunc['db']->query('', '
 		UPDATE {db_prefix}topics
 		SET
 			id_board = {int:id_board},

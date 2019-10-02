@@ -168,7 +168,7 @@ function sig_preview()
 	$errors = [];
 	if (!empty($user) && $can_change)
 	{
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db']->query('', '
 			SELECT signature
 			FROM {db_prefix}members
 			WHERE id_member = {int:id_member}
