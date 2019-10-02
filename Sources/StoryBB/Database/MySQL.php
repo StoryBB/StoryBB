@@ -273,4 +273,69 @@ class MySQL implements DatabaseAdapter
 
 		return $tables;
 	}
+
+	/**
+	 * This function tries to work out additional error information from a back trace.
+	 *
+	 * @param string $error_message The error message
+	 * @param string $log_message The message to log
+	 * @param string|bool $error_type What type of error this is
+	 * @param string $file The file the error occurred in
+	 * @param int $line What line of $file the code which generated the error is on
+	 * @return void|array Returns an array with the file and line if $error_type is 'return'
+	 */
+	pulic function error_backtrace($error_message, $log_message = '', $error_type = false, $file = null, $line = null)
+	{
+		if (empty($log_message))
+		{
+			$log_message = $error_message;
+		}
+
+		foreach (debug_backtrace() as $step)
+		{
+			// Did it come from inside this class? If so, don't care.
+			if (isset($step['class']) && $step['class'] == __CLASS__)
+			{
+				continue;
+			}
+			// Is it from something that looks normal? If so, add the place in question 
+			if (strpos($step['function'], 'query') === false && !in_array(substr($step['function'], 0, 7), ['sbb_db_', 'preg_re', 'db_erro', 'call_us']) && strpos($step['function'], '__') !== 0)
+			{
+				$log_message .= '<br>Function: ' . (!empty($step['class']) ? $step['class'] . '::' : '') . $step['function'];
+				break;
+			}
+
+			if (isset($step['line']))
+			{
+				$file = $step['file'];
+				$line = $step['line'];
+			}
+		}
+
+		// A special case - we want the file and line numbers for debugging.
+		if ($error_type == 'return')
+			return [$file, $line];
+
+		// Is always a critical error.
+		if (function_exists('log_error'))
+		{
+			log_error($log_message, 'critical', $file, $line);
+		}
+
+		if (function_exists('fatal_error'))
+		{
+			fatal_error($error_message, false);
+
+			// Cannot continue...
+			exit;
+		}
+		elseif ($error_type)
+		{
+			trigger_error($error_message . ($line !== null ? '<em>(' . basename($file) . '-' . $line . ')</em>' : ''), $error_type);
+		}
+		else
+		{
+			trigger_error($error_message . ($line !== null ? '<em>(' . basename($file) . '-' . $line . ')</em>' : ''));
+		}
+	}
 }

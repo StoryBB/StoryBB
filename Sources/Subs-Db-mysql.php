@@ -108,13 +108,15 @@ function sbb_db_replacement__callback($matches)
 		return '\'\'';
 
 	if (!isset($matches[2]))
-		sbb_db_error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);
+	{
+		$smcFunc['db']->error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);
+	}
 
 	if ($matches[1] === 'literal')
 		return '\'' . mysqli_real_escape_string($connection, $matches[2]) . '\'';
 
 	if (!isset($values[$matches[2]]))
-		sbb_db_error_backtrace('The database value you\'re trying to insert does not exist: ' . StringLibrary::escape($matches[2]), '', E_USER_ERROR, __FILE__, __LINE__);
+		$smcFunc['db']->error_backtrace('The database value you\'re trying to insert does not exist: ' . StringLibrary::escape($matches[2]), '', E_USER_ERROR, __FILE__, __LINE__);
 
 	$replacement = $values[$matches[2]];
 
@@ -122,7 +124,7 @@ function sbb_db_replacement__callback($matches)
 	{
 		case 'int':
 			if (!is_numeric($replacement) || (string) $replacement !== (string) (int) $replacement)
-				sbb_db_error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				$smcFunc['db']->error_backtrace('Wrong value type sent to the database. Integer expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			return (string) (int) $replacement;
 		break;
 
@@ -135,12 +137,12 @@ function sbb_db_replacement__callback($matches)
 			if (is_array($replacement))
 			{
 				if (empty($replacement))
-					sbb_db_error_backtrace('Database error, given array of integer values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					$smcFunc['db']->error_backtrace('Database error, given array of integer values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 				foreach ($replacement as $key => $value)
 				{
 					if (!is_numeric($value) || (string) $value !== (string) (int) $value)
-						sbb_db_error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+						$smcFunc['db']->error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 					$replacement[$key] = (string) (int) $value;
 				}
@@ -148,7 +150,7 @@ function sbb_db_replacement__callback($matches)
 				return implode(', ', $replacement);
 			}
 			else
-				sbb_db_error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				$smcFunc['db']->error_backtrace('Wrong value type sent to the database. Array of integers expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 		break;
 
@@ -156,7 +158,7 @@ function sbb_db_replacement__callback($matches)
 			if (is_array($replacement))
 			{
 				if (empty($replacement))
-					sbb_db_error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					$smcFunc['db']->error_backtrace('Database error, given array of string values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 				foreach ($replacement as $key => $value)
 					$replacement[$key] = sprintf('\'%1$s\'', mysqli_real_escape_string($connection, $value));
@@ -164,21 +166,21 @@ function sbb_db_replacement__callback($matches)
 				return implode(', ', $replacement);
 			}
 			else
-				sbb_db_error_backtrace('Wrong value type sent to the database. Array of strings expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				$smcFunc['db']->error_backtrace('Wrong value type sent to the database. Array of strings expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		case 'date':
 			if (preg_match('~^(\d{4})-([0-1]?\d)-([0-3]?\d)$~', $replacement, $date_matches) === 1)
 				return sprintf('\'%04d-%02d-%02d\'', $date_matches[1], $date_matches[2], $date_matches[3]);
 			else
-				sbb_db_error_backtrace('Wrong value type sent to the database. Date expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				$smcFunc['db']->error_backtrace('Wrong value type sent to the database. Date expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		case 'time':
 			if (preg_match('~^([0-1]?\d|2[0-3]):([0-5]\d):([0-5]\d)$~', $replacement, $time_matches) === 1)
 				return sprintf('\'%02d:%02d:%02d\'', $time_matches[1], $time_matches[2], $time_matches[3]);
 			else
-				sbb_db_error_backtrace('Wrong value type sent to the database. Time expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				$smcFunc['db']->error_backtrace('Wrong value type sent to the database. Time expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		case 'datetime':
@@ -187,12 +189,12 @@ function sbb_db_replacement__callback($matches)
 					sprintf('\'%04d-%02d-%02d %02d:%02d:%02d\'', $datetime_matches[1], $datetime_matches[2], $datetime_matches[3], $datetime_matches[4], $datetime_matches[5], $datetime_matches[6]).
 					',\'%Y-%m-%d %h:%i:%s\')';
 			else
-				sbb_db_error_backtrace('Wrong value type sent to the database. Datetime expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				$smcFunc['db']->error_backtrace('Wrong value type sent to the database. Datetime expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		case 'float':
 			if (!is_numeric($replacement))
-				sbb_db_error_backtrace('Wrong value type sent to the database. Floating point number expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				$smcFunc['db']->error_backtrace('Wrong value type sent to the database. Floating point number expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			return (string) (float) $replacement;
 		break;
 
@@ -209,7 +211,7 @@ function sbb_db_replacement__callback($matches)
 			if ($replacement == 'null' || $replacement == '')
 				return 'null';
 			if (!IP::is_valid($replacement))
-				sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				$smcFunc['db']->error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 			//we don't use the native support of mysql > 5.6.2
 			return sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($replacement)), 32, "0", STR_PAD_LEFT));
 
@@ -217,25 +219,25 @@ function sbb_db_replacement__callback($matches)
 			if (is_array($replacement))
 			{
 				if (empty($replacement))
-					sbb_db_error_backtrace('Database error, given array of IPv4 or IPv6 values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+					$smcFunc['db']->error_backtrace('Database error, given array of IPv4 or IPv6 values is empty. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 
 				foreach ($replacement as $key => $value)
 				{
 					if ($replacement == 'null' || $replacement == '')
 						$replacement[$key] = 'null';
 					if (!IP::is_valid($value))
-						sbb_db_error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+						$smcFunc['db']->error_backtrace('Wrong value type sent to the database. IPv4 or IPv6 expected.(' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 					$replacement[$key] = sprintf('unhex(\'%1$s\')', str_pad(bin2hex(inet_pton($value)), 32, "0", STR_PAD_LEFT));
 				}
 
 				return implode(', ', $replacement);
 			}
 			else
-				sbb_db_error_backtrace('Wrong value type sent to the database. Array of IPv4 or IPv6 expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
+				$smcFunc['db']->error_backtrace('Wrong value type sent to the database. Array of IPv4 or IPv6 expected. (' . $matches[2] . ')', '', E_USER_ERROR, __FILE__, __LINE__);
 		break;
 
 		default:
-			sbb_db_error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')', '', false, __FILE__, __LINE__);
+			$smcFunc['db']->error_backtrace('Undefined type used in the database query. (' . $matches[1] . ':' . $matches[2] . ')', '', false, __FILE__, __LINE__);
 		break;
 	}
 }
@@ -306,7 +308,7 @@ function sbb_db_query($identifier, $db_string, $db_values = [], $connection = nu
 		catch (\Exception $e)
 		{
 			// We're not connected, guess we're going nowhere.
-			sbb_db_error_backtrace('No longer connected to database.', $smcFunc['db_error'], true, __FILE__, __LINE__);
+			$smcFunc['db']->error_backtrace('No longer connected to database.', $smcFunc['db_error'], true, __FILE__, __LINE__);
 		}
 	}
 
@@ -314,7 +316,7 @@ function sbb_db_query($identifier, $db_string, $db_values = [], $connection = nu
 	$db_count = !isset($db_count) ? 1 : $db_count + 1;
 
 	if (empty($modSettings['disableQueryCheck']) && strpos($db_string, '\'') !== false && empty($db_values['security_override']))
-		sbb_db_error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true, __FILE__, __LINE__);
+		$smcFunc['db']->error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true, __FILE__, __LINE__);
 
 	// Use "ORDER BY null" to prevent Mysql doing filesorts for Group By clauses without an Order By
 	if (strpos($db_string, 'GROUP BY') !== false && strpos($db_string, 'ORDER BY') === false && preg_match('~^\s+SELECT~i', $db_string))
@@ -336,7 +338,7 @@ function sbb_db_query($identifier, $db_string, $db_values = [], $connection = nu
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
 		// Get the file and line number this function was called.
-		list ($file, $line) = sbb_db_error_backtrace('', '', 'return', __FILE__, __LINE__);
+		list ($file, $line) = $smcFunc['db']->error_backtrace('', '', 'return', __FILE__, __LINE__);
 
 		// Initialize $db_cache if not already initialized.
 		if (!isset($db_cache))
@@ -401,7 +403,7 @@ function sbb_db_query($identifier, $db_string, $db_values = [], $connection = nu
 			$fail = true;
 
 		if (!empty($fail) && function_exists('log_error'))
-			sbb_db_error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR, __FILE__, __LINE__);
+			$smcFunc['db']->error_backtrace('Hacking attempt...', 'Hacking attempt...' . "\n" . $db_string, E_USER_ERROR, __FILE__, __LINE__);
 	}
 
 	if (empty($db_unbuffered))
@@ -434,7 +436,7 @@ function sbb_db_error($db_string, $connection = null)
 	global $smcFunc;
 
 	// Get the file and line numbers.
-	list ($file, $line) = sbb_db_error_backtrace('', '', 'return', __FILE__, __LINE__);
+	list ($file, $line) = $smcFunc['db']->error_backtrace('', '', 'return', __FILE__, __LINE__);
 
 	// Decide which connection to use
 	$connection = $connection === null ? $db_connection : $connection;
@@ -673,58 +675,6 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 		}
 		return $return_var;
 	}
-}
-
-/**
- * This function tries to work out additional error information from a back trace.
- *
- * @param string $error_message The error message
- * @param string $log_message The message to log
- * @param string|bool $error_type What type of error this is
- * @param string $file The file the error occurred in
- * @param int $line What line of $file the code which generated the error is on
- * @return void|array Returns an array with the file and line if $error_type is 'return'
- */
-function sbb_db_error_backtrace($error_message, $log_message = '', $error_type = false, $file = null, $line = null)
-{
-	if (empty($log_message))
-		$log_message = $error_message;
-
-	foreach (debug_backtrace() as $step)
-	{
-		// Found it?
-		if (strpos($step['function'], 'query') === false && !in_array(substr($step['function'], 0, 7), ['sbb_db_', 'preg_re', 'db_erro', 'call_us']) && strpos($step['function'], '__') !== 0)
-		{
-			$log_message .= '<br>Function: ' . $step['function'];
-			break;
-		}
-
-		if (isset($step['line']))
-		{
-			$file = $step['file'];
-			$line = $step['line'];
-		}
-	}
-
-	// A special case - we want the file and line numbers for debugging.
-	if ($error_type == 'return')
-		return [$file, $line];
-
-	// Is always a critical error.
-	if (function_exists('log_error'))
-		log_error($log_message, 'critical', $file, $line);
-
-	if (function_exists('fatal_error'))
-	{
-		fatal_error($error_message, false);
-
-		// Cannot continue...
-		exit;
-	}
-	elseif ($error_type)
-		trigger_error($error_message . ($line !== null ? '<em>(' . basename($file) . '-' . $line . ')</em>' : ''), $error_type);
-	else
-		trigger_error($error_message . ($line !== null ? '<em>(' . basename($file) . '-' . $line . ')</em>' : ''));
 }
 
 /**
