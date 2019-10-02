@@ -412,119 +412,13 @@ function sbb_db_query($identifier, $db_string, $db_values = [], $connection = nu
 		$ret = @mysqli_query($connection, $db_string, MYSQLI_USE_RESULT);
 
 	if ($ret === false && empty($db_values['db_error_skip']))
-		$ret = sbb_db_error($db_string, $connection);
+		$ret = $smcFunc['db']->error($db_string, $connection);
 
 	// Debugging.
 	if (isset($db_show_debug) && $db_show_debug === true)
 		$db_cache[$db_count]['t'] = microtime(true) - $st;
 
 	return $ret;
-}
-
-/**
- * Database error!
- * Backtrace, log, try to fix.
- *
- * @param string $db_string The DB string
- * @param object $connection The connection to use (if null, $db_connection is used)
- */
-function sbb_db_error($db_string, $connection = null)
-{
-	global $txt, $context, $sourcedir, $webmaster_email, $modSettings;
-	global $db_connection, $db_persist;
-	global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug;
-	global $smcFunc;
-
-	// Get the file and line numbers.
-	list ($file, $line) = $smcFunc['db']->error_backtrace('', '', 'return', __FILE__, __LINE__);
-
-	// Decide which connection to use
-	$connection = $connection === null ? $db_connection : $connection;
-
-	// This is the error message...
-	$query_error = mysqli_error($connection);
-	$query_errno = mysqli_errno($connection);
-
-	// Error numbers:
-	//    1016: Can't open file '....MYI'
-	//    1030: Got error ??? from table handler.
-	//    1034: Incorrect key file for table.
-	//    1035: Old key file for table.
-	//    1205: Lock wait timeout exceeded.
-	//    1213: Deadlock found.
-	//    2006: Server has gone away.
-	//    2013: Lost connection to server during query.
-
-	// Log the error.
-	if ($query_errno != 1213 && $query_errno != 1205 && function_exists('log_error'))
-		log_error($txt['database_error'] . ': ' . $query_error . (!empty($modSettings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
-
-	// Check for the "lost connection" or "deadlock found" errors - and try it just one more time.
-	if (in_array($query_errno, [1205, 1213, 2006, 2013]))
-	{
-		if (in_array($query_errno, [2006, 2013]) && $db_connection == $connection)
-		{
-			try
-			{
-				// The DB object still has all the details, but try to reconnect.
-				$smcFunc['db']->connect();
-				$smcFunc['db']->select_db();
-			}
-			catch (\Exception $e)
-			{
-				$db_connection = false;
-			}
-		}
-
-		if ($db_connection)
-		{
-			// Try a deadlock more than once more.
-			for ($n = 0; $n < 4; $n++)
-			{
-				$ret = $smcFunc['db_query']('', $db_string, false, false);
-
-				$new_errno = mysqli_errno($db_connection);
-				if ($ret !== false || in_array($new_errno, [1205, 1213]))
-					break;
-			}
-
-			// If it failed again, shucks to be you... we're not trying it over and over.
-			if ($ret !== false)
-				return $ret;
-		}
-	}
-	// Are they out of space, perhaps?
-	elseif ($query_errno == 1030 && (strpos($query_error, ' -1 ') !== false || strpos($query_error, ' 28 ') !== false || strpos($query_error, ' 12 ') !== false))
-	{
-		if (!isset($txt))
-			$query_error .= ' - check database storage space.';
-		else
-		{
-			if (!isset($txt['mysql_error_space']))
-				loadLanguage('Errors');
-
-			$query_error .= !isset($txt['mysql_error_space']) ? ' - check database storage space.' : $txt['mysql_error_space'];
-		}
-	}
-
-	// Nothing's defined yet... just die with it.
-	if (empty($context) || empty($txt))
-		die($query_error);
-
-	// Show an error message, if possible.
-	$context['error_title'] = $txt['database_error'];
-	if (allowedTo('admin_forum'))
-		$context['error_message'] = nl2br($query_error) . '<br>' . $txt['file'] . ': ' . $file . '<br>' . $txt['line'] . ': ' . $line;
-	else
-		$context['error_message'] = $txt['try_again'];
-
-	if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
-	{
-		$context['error_message'] .= '<br><br>' . nl2br($db_string);
-	}
-
-	// It's already been logged... don't log it again.
-	fatal_error($context['error_message'], false);
 }
 
 /**

@@ -274,6 +274,115 @@ class MySQL implements DatabaseAdapter
 		return $tables;
 	}
 
+
+	/**
+	 * Database error!
+	 * Backtrace, log, try to fix.
+	 *
+	 * @param string $db_string The DB string
+	 */
+	public function error($db_string)
+	{
+		global $txt, $context, $modSettings, $db_show_debug, $smcFunc;
+
+		// Get the file and line numbers.
+		list ($file, $line) = $this->error_backtrace('', '', 'return', __FILE__, __LINE__);
+
+		// This is the error message...
+		$query_error = mysqli_error($this->connection);
+		$query_errno = mysqli_errno($this->connection);
+
+		// Error numbers:
+		//    1016: Can't open file '....MYI'
+		//    1030: Got error ??? from table handler.
+		//    1034: Incorrect key file for table.
+		//    1035: Old key file for table.
+		//    1205: Lock wait timeout exceeded.
+		//    1213: Deadlock found.
+		//    2006: Server has gone away.
+		//    2013: Lost connection to server during query.
+
+		// Log the error.
+		if ($query_errno != 1213 && $query_errno != 1205 && function_exists('log_error'))
+		{
+			log_error($txt['database_error'] . ': ' . $query_error . (!empty($modSettings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
+		}
+
+		// Check for the "lost connection" or "deadlock found" errors - and try it just one more time.
+		if (in_array($query_errno, [1205, 1213, 2006, 2013]))
+		{
+			if (in_array($query_errno, [2006, 2013]))
+			{
+				try
+				{
+					// The DB object still has all the details, but try to reconnect.
+					$this->connect();
+					$this->select_db();
+				}
+				catch (\Exception $e)
+				{
+					$this->connection = false;
+				}
+			}
+
+			if ($this->connection)
+			{
+				// Try a deadlock more than once more.
+				for ($n = 0; $n < 4; $n++)
+				{
+					$ret = $smcFunc['db_query']('', $db_string, false, false);
+
+					$new_errno = mysqli_errno($this->connection);
+					if ($ret !== false || in_array($new_errno, [1205, 1213]))
+						break;
+				}
+
+				// If it failed again, shucks to be you... we're not trying it over and over.
+				if ($ret !== false)
+				{
+					return $ret;
+				}
+			}
+		}
+		// Are they out of space, perhaps?
+		elseif ($query_errno == 1030 && (strpos($query_error, ' -1 ') !== false || strpos($query_error, ' 28 ') !== false || strpos($query_error, ' 12 ') !== false))
+		{
+			if (!isset($txt))
+			{
+				$query_error .= ' - check database storage space.';
+			}
+			else
+			{
+				if (!isset($txt['mysql_error_space']))
+					loadLanguage('Errors');
+
+				$query_error .= !isset($txt['mysql_error_space']) ? ' - check database storage space.' : $txt['mysql_error_space'];
+			}
+		}
+
+		// Nothing's defined yet... just die with it.
+		if (empty($context) || empty($txt))
+		{
+			die($query_error);
+		}
+
+		// Show an error message, if possible.
+		$context['error_title'] = $txt['database_error'];
+		$context['error_message'] = $txt['try_again'];
+		if (allowedTo('admin_forum'))
+		{
+			$context['error_message'] = nl2br($query_error) . '<br>' . $txt['file'] . ': ' . $file . '<br>' . $txt['line'] . ': ' . $line;
+		}
+
+		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
+		{
+			$context['error_message'] .= '<br><br>' . nl2br($db_string);
+		}
+
+		// It's already been logged... don't log it again.
+		fatal_error($context['error_message'], false);
+	}
+
 	/**
 	 * This function tries to work out additional error information from a back trace.
 	 *
