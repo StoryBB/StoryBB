@@ -439,7 +439,7 @@ function getReportDetails($report_id)
 	}
 
 	// So did we find anything?
-	if (!$smcFunc['db_num_rows']($request))
+	if (!$smcFunc['db']->num_rows($request))
 		return false;
 
 	// Woohoo we found a report and they can see it!

@@ -386,7 +386,7 @@ function ModBlockNotes()
 				]
 			);
 
-			$note_owner = $smcFunc['db_num_rows']($get_owner);
+			$note_owner = $smcFunc['db']->num_rows($get_owner);
 			$smcFunc['db']->free_result($get_owner);
 
 			if (empty($note_owner))
@@ -931,7 +931,7 @@ function ShowNotice()
 			'id_notice' => $id_notice,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
 	list ($context['notice_body'], $context['notice_subject']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db']->free_result($request);

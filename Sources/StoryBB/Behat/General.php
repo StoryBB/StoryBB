@@ -370,7 +370,7 @@ class General extends RawMinkContext implements Context
                     FROM {db_prefix}categories
                     ORDER BY cat_order
                     LIMIT 1');
-				if ($smcFunc['db_num_rows']($request))
+				if ($smcFunc['db']->num_rows($request))
 				{
 					list($boardOptions['target_category']) = $smcFunc['db_fetch_row']($request);
 				}
@@ -394,7 +394,7 @@ class General extends RawMinkContext implements Context
 						'board_name' => $board_to_create['board parent']
 					]
 				);
-				if ($smcFunc['db_num_rows']($request))
+				if ($smcFunc['db']->num_rows($request))
 				{
 					$row = $smcFunc['db_fetch_assoc']($request);
 					$boardOptions['target_category'] = $row['id_cat'];

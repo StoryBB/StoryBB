@@ -1241,7 +1241,7 @@ function MaintainReattributePosts()
 				'memID' => $memID,
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('reattribute_cannot_find_member');
 
 		$smcFunc['db']->free_result($request);
@@ -1263,7 +1263,7 @@ function MaintainReattributePosts()
 				'characterID' => $characterID,
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('reattribute_cannot_find_member');
 
 		list ($memID, $characterID) = $smcFunc['db_fetch_row']($request);
@@ -1635,7 +1635,7 @@ function MaintainRecountPosts()
 			'zero' => 0,
 		]
 	);
-	$total_rows = $smcFunc['db_num_rows']($request);
+	$total_rows = $smcFunc['db']->num_rows($request);
 
 	// Update the post count for this group
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1669,7 +1669,7 @@ function MaintainRecountPosts()
 			'zero' => 0,
 		]
 	);
-	$total_rows = $smcFunc['db_num_rows']($request);
+	$total_rows = $smcFunc['db']->num_rows($request);
 
 	// Update the post count for this group
 	while ($row = $smcFunc['db_fetch_assoc']($request))

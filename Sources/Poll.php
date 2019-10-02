@@ -47,7 +47,7 @@ function Vote()
 			'not_guest' => 0,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('poll_error', false);
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);
@@ -323,7 +323,7 @@ function EditPoll()
 	);
 
 	// Assume the the topic exists, right?
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
 	// Get the poll information.
 	$pollinfo = $smcFunc['db_fetch_assoc']($request);
@@ -619,7 +619,7 @@ function EditPoll2()
 			'current_topic' => $topic,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
 	$bcinfo = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);
@@ -936,7 +936,7 @@ function RemovePoll()
 				'current_topic' => $topic,
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
 		list ($topicStarter, $pollStarter) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db']->free_result($request);

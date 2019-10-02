@@ -76,7 +76,7 @@ function Post($post_errors = [])
 			[
 				'msg' => (int) $_REQUEST['msg'],
 		]);
-		if ($smcFunc['db_num_rows']($request) != 1)
+		if ($smcFunc['db']->num_rows($request) != 1)
 			unset($_REQUEST['msg'], $_POST['msg'], $_GET['msg']);
 		else
 			list ($topic) = $smcFunc['db_fetch_row']($request);
@@ -447,7 +447,7 @@ function Post($post_errors = [])
 			);
 			// The message they were trying to edit was most likely deleted.
 			// @todo Change this error message?
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('no_board', false);
 			$row = $smcFunc['db_fetch_assoc']($request);
 
@@ -564,7 +564,7 @@ function Post($post_errors = [])
 			]
 		);
 		// The message they were trying to edit was most likely deleted.
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_message', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
 
@@ -682,7 +682,7 @@ function Post($post_errors = [])
 					'is_approved' => 1,
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('quoted_post_deleted', false);
 			list ($form_subject, $mname, $mdate, $form_message) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db']->free_result($request);
@@ -1436,7 +1436,7 @@ function Post2()
 				'id_msg' => $_REQUEST['msg'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cant_find_messages', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
 		$smcFunc['db']->free_result($request);
@@ -2187,7 +2187,7 @@ function AnnouncementSend()
 	);
 
 	// All members have received a mail. Go to the next screen.
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		logAction('announce_topic', ['topic' => $topic], 'user');
 		if (!empty($_REQUEST['move']) && allowedTo('move_any'))
@@ -2360,7 +2360,7 @@ function QuoteFast()
 			'not_locked' => 0,
 		]
 	);
-	$context['close_window'] = $smcFunc['db_num_rows']($request) == 0;
+	$context['close_window'] = $smcFunc['db']->num_rows($request) == 0;
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);
 
@@ -2476,7 +2476,7 @@ function JavaScriptModify()
 			'guest_id' => 0,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board', false);
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);

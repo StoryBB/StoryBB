@@ -41,7 +41,7 @@ function getLastPost()
 			'is_approved' => 1,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		return [];
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);
@@ -291,7 +291,7 @@ function RecentPosts()
 				])
 			);
 			// If we don't have 10 results, try again with an unoptimized version covering all rows, and cache the result.
-			if (isset($query_parameters['max_id_msg']) && $smcFunc['db_num_rows']($request) < 10)
+			if (isset($query_parameters['max_id_msg']) && $smcFunc['db']->num_rows($request) < 10)
 			{
 				$smcFunc['db']->free_result($request);
 				$query_this_board = str_replace('AND m.id_msg >= {int:max_id_msg}', '', $query_this_board);

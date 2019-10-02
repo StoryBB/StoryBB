@@ -38,7 +38,6 @@ function sbb_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_fetch_assoc'            => 'mysqli_fetch_assoc',
 			'db_fetch_row'              => 'mysqli_fetch_row',
 			'db_insert'                 => 'sbb_db_insert',
-			'db_num_rows'               => 'mysqli_num_rows',
 			'db_data_seek'              => 'mysqli_data_seek',
 			'db_num_fields'             => 'mysqli_num_fields',
 			'db_escape_string'          => 'addslashes',
@@ -646,7 +645,7 @@ function sbb_db_insert($method = 'replace', $table, $columns, $data, $keys, $ret
 					[]
 				);
 				
-				if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
+				if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 				{
 					$row = $smcFunc['db_fetch_assoc']($request);
 					$ai = $row[$keys[0]];

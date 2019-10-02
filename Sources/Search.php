@@ -120,7 +120,7 @@ function PlushSearch1()
 			'empty_string' => '',
 		]
 	);
-	$context['num_boards'] = $smcFunc['db_num_rows']($request);
+	$context['num_boards'] = $smcFunc['db']->num_rows($request);
 	$context['boards_check_all'] = true;
 	$context['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -208,7 +208,7 @@ function PlushSearch1()
 			]
 		);
 
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('topic_gone', false);
 
 		list ($context['search_topic']['subject']) = $smcFunc['db_fetch_row']($request);
@@ -459,7 +459,7 @@ function PlushSearch2()
 			]
 		);
 
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('topic_gone', false);
 
 		$search_params['brd'] = [];
@@ -1630,7 +1630,7 @@ function PlushSearch2()
 		);
 
 		// If there are no results that means the things in the cache got deleted, so pretend we have no topics anymore.
-		if ($smcFunc['db_num_rows']($messages_request) == 0)
+		if ($smcFunc['db']->num_rows($messages_request) == 0)
 			$context['topics'] = [];
 
 		// If we want to know who participated in what then load this now.

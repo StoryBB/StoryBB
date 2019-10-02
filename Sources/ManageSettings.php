@@ -669,7 +669,7 @@ function ModifySignatureSettings($return_config = false)
 				if ($sig != $row['signature'])
 					$changes[$row['id_member']] = $sig;
 			}
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 				$done = true;
 			$smcFunc['db']->free_result($request);
 

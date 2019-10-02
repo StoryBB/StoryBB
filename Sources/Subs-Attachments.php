@@ -1001,7 +1001,7 @@ function getRawAttachInfo($attachIDs)
 		]
 	);
 
-	if ($smcFunc['db_num_rows']($request) != 1)
+	if ($smcFunc['db']->num_rows($request) != 1)
 		return [];
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1044,7 +1044,7 @@ function getAttachMsgInfo($attachID)
 		]
 	);
 
-	if ($smcFunc['db_num_rows']($request) != 1)
+	if ($smcFunc['db']->num_rows($request) != 1)
 		return [];
 
 	$row = $smcFunc['db_fetch_assoc']($request);

@@ -190,7 +190,7 @@ class Alert
 			]
 		);
 
-		$count = $smcFunc['db_num_rows']($request);
+		$count = $smcFunc['db']->num_rows($request);
 		$smcFunc['db']->free_result($request);
 
 		// Also update the current member's count if we've just calculated it.

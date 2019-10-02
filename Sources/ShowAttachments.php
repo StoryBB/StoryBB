@@ -96,7 +96,7 @@ function showAttachment($force_attach = false)
 		}
 
 		// No attachment has been found.
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 		{
 			header('HTTP/1.0 404 File Not Found');
 			die('404 File Not Found');
@@ -129,7 +129,7 @@ function showAttachment($force_attach = false)
 			);
 
 			// The provided topic must match the one stored in the DB for this particular attachment, also.
-			if ($smcFunc['db_num_rows']($request2) == 0)
+			if ($smcFunc['db']->num_rows($request2) == 0)
 			{
 				header('HTTP/1.0 404 File Not Found');
 				die('404 File Not Found');

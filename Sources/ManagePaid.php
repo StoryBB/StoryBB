@@ -442,7 +442,7 @@ function ModifySubscription()
 			);
 			$id_group = 0;
 			$add_groups = '';
-			if ($smcFunc['db_num_rows']($request))
+			if ($smcFunc['db']->num_rows($request))
 				list ($id_group, $add_groups) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db']->free_result($request);
 
@@ -773,7 +773,7 @@ function ViewSubscribedUsers()
 		]
 	);
 	// Something wrong?
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
 	// Do the subscription context.
 	$row = $smcFunc['db_fetch_assoc']($request);
@@ -1054,7 +1054,7 @@ function ModifyUserSubscription()
 				'current_log_item' => $context['log_id'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
 		list ($context['sub_id']) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db']->free_result($request);
@@ -1094,7 +1094,7 @@ function ModifyUserSubscription()
 					'id_member' => !empty($_POST['new_subscriber']) ? (int) $_POST['new_subscriber'] : 0,
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('error_member_not_found');
 
 			list ($id_member, $id_group) = $smcFunc['db_fetch_row']($request);
@@ -1111,7 +1111,7 @@ function ModifyUserSubscription()
 					'current_member' => $id_member,
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) != 0)
+			if ($smcFunc['db']->num_rows($request) != 0)
 				fatal_lang_error('member_already_subscribed');
 			$smcFunc['db']->free_result($request);
 
@@ -1145,7 +1145,7 @@ function ModifyUserSubscription()
 					'current_log_item' => $context['log_id'],
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('no_access', false);
 
 			list ($id_member, $old_status) = $smcFunc['db_fetch_row']($request);
@@ -1261,7 +1261,7 @@ function ModifyUserSubscription()
 				'blank_string' => '',
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
 		$row = $smcFunc['db_fetch_assoc']($request);
 		$smcFunc['db']->free_result($request);
@@ -1511,7 +1511,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 		]
 	);
 
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if ($smcFunc['db']->num_rows($request) != 0)
 	{
 		list ($id_sublog, $endtime, $starttime) = $smcFunc['db_fetch_row']($request);
 
@@ -1555,7 +1555,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	);
 
 	// Just in case the member doesn't exist.
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		return;
 
 	list ($old_id_group, $additional_groups) = $smcFunc['db_fetch_row']($request);
@@ -1613,7 +1613,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	/**
 	 * @todo Don't really need to do this twice...
 	 */
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if ($smcFunc['db']->num_rows($request) != 0)
 	{
 		list ($id_sublog, $endtime, $starttime) = $smcFunc['db_fetch_row']($request);
 
@@ -1696,7 +1696,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 	);
 
 	// Just in case of errors.
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_subscribed

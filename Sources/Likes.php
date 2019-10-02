@@ -203,7 +203,7 @@ class Likes
 					'msg' => $this->_content,
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) == 1)
+			if ($smcFunc['db']->num_rows($request) == 1)
 				list ($this->_idTopic, $topicOwner) = $smcFunc['db_fetch_row']($request);
 
 			$smcFunc['db']->free_result($request);
@@ -385,7 +385,7 @@ class Likes
 				'id_member' => $this->_user['id'],
 			]
 		);
-		$this->_alreadyLiked = (bool) $smcFunc['db_num_rows']($request) != 0;
+		$this->_alreadyLiked = (bool) $smcFunc['db']->num_rows($request) != 0;
 		$smcFunc['db']->free_result($request);
 
 		if ($this->_alreadyLiked)

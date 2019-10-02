@@ -568,7 +568,7 @@ function Activate()
 	);
 
 	// Does this user exist at all?
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		$context['sub_template'] = 'login_manual_activate';
 		$context['page_title'] = $txt['invalid_userid'];
@@ -603,7 +603,7 @@ function Activate()
 			]
 		);
 
-		if ($smcFunc['db_num_rows']($request) != 0)
+		if ($smcFunc['db']->num_rows($request) != 0)
 			fatal_lang_error('email_in_use', false, [StringLibrary::escape($_POST['new_email'])]);
 		$smcFunc['db']->free_result($request);
 

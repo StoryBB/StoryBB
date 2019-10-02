@@ -86,7 +86,7 @@ function RemindPick()
 		$where_params
 	);
 	// Maybe email?
-	if ($smcFunc['db_num_rows']($request) == 0 && empty($_REQUEST['uid']))
+	if ($smcFunc['db']->num_rows($request) == 0 && empty($_REQUEST['uid']))
 	{
 		$smcFunc['db']->free_result($request);
 
@@ -97,7 +97,7 @@ function RemindPick()
 			LIMIT 1',
 			$where_params
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_user_with_email', false);
 	}
 
@@ -228,7 +228,7 @@ function setPassword2()
 	);
 
 	// Does this user exist at all?
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('invalid_userid', false);
 
 	list ($realCode, $username, $email, $flood_value) = $smcFunc['db_fetch_row']($request);
@@ -299,7 +299,7 @@ function SecretAnswerInput()
 			'id_member' => (int) $_REQUEST['uid'],
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('username_no_exist', false);
 
 	$row = $smcFunc['db_fetch_assoc']($request);
@@ -345,7 +345,7 @@ function SecretAnswer2()
 			'id_member' => $_REQUEST['uid'],
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('username_no_exist', false);
 
 	$row = $smcFunc['db_fetch_assoc']($request);

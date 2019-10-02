@@ -228,7 +228,7 @@ function MembergroupMembers()
 		]
 	);
 	// Doesn't exist?
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('membergroup_does_not_exist', false);
 	$context['group'] = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);

@@ -147,6 +147,11 @@ class MySQL implements DatabaseAdapter
 		return is_object($this->connection);
 	}
 
+	public function num_rows($result)
+	{
+		return mysqli_num_rows($result);
+	}
+
 	/**
 	 * Return the number of rows affected by the last data-changing query on this DB connection.
 	 *

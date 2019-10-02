@@ -2679,7 +2679,7 @@ function ignoreboards($memID)
 			'empty_string' => '',
 		]
 	);
-	$context['num_boards'] = $smcFunc['db_num_rows']($request);
+	$context['num_boards'] = $smcFunc['db']->num_rows($request);
 	$context['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -3522,7 +3522,7 @@ function profileValidateEmail($email, $memID = 0)
 		]
 	);
 
-	if ($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db']->num_rows($request) > 0)
 		return 'email_taken';
 	$smcFunc['db']->free_result($request);
 
@@ -3832,7 +3832,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 				'status_open' => 0,
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) != 0)
+		if ($smcFunc['db']->num_rows($request) != 0)
 			fatal_lang_error('profile_error_already_requested_group');
 		$smcFunc['db']->free_result($request);
 

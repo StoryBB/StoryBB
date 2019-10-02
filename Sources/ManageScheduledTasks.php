@@ -404,7 +404,7 @@ function EditTask()
 	);
 
 	// Should never, ever, happen!
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_access', false);
 
 	while ($row = $smcFunc['db_fetch_assoc']($request))

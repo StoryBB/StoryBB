@@ -173,7 +173,7 @@ function ViewContact()
 			'msg' => $msg,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);
@@ -236,7 +236,7 @@ function ReplyContact()
 			'msg' => $msg,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		$smcFunc['db']->free_result($request);
 		fatal_lang_error('contact_form_message_not_found', false);

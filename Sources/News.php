@@ -124,7 +124,7 @@ function ShowXmlFeed()
 		);
 
 		// Either the board specified doesn't exist or you have no access.
-		$num_boards = $smcFunc['db_num_rows']($request);
+		$num_boards = $smcFunc['db']->num_rows($request);
 		if ($num_boards == 0)
 			fatal_lang_error('no_board');
 
@@ -692,7 +692,7 @@ function getXmlNews($xml_format)
 			]
 		);
 		// If we don't have $_GET['limit'] results, try again with an unoptimized version covering all rows.
-		if ($loops < 2 && $smcFunc['db_num_rows']($request) < $_GET['limit'])
+		if ($loops < 2 && $smcFunc['db']->num_rows($request) < $_GET['limit'])
 		{
 			$smcFunc['db']->free_result($request);
 			if (empty($_REQUEST['boards']) && empty($board))
@@ -942,7 +942,7 @@ function getXmlRecent($xml_format)
 			]
 		);
 		// If we don't have $_GET['limit'] results, try again with an unoptimized version covering all rows.
-		if ($loops < 2 && $smcFunc['db_num_rows']($request) < $_GET['limit'])
+		if ($loops < 2 && $smcFunc['db']->num_rows($request) < $_GET['limit'])
 		{
 			$smcFunc['db']->free_result($request);
 			if (empty($_REQUEST['boards']) && empty($board))

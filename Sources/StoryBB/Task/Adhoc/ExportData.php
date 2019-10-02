@@ -150,7 +150,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				'member' => $this->_details['id_member'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request))
+		if ($smcFunc['db']->num_rows($request))
 		{
 			list ($char_id) = $smcFunc['db_fetch_row']($request);
 		}
@@ -430,7 +430,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				'step_size' => $this->_details['step_size'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 		{
 			// Nothing to do?
 			$smcFunc['db']->free_result($request);
@@ -517,7 +517,7 @@ class ExportData extends \StoryBB\Task\Adhoc
 				'step_size' => $this->_details['step_size'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 		{
 			// Nothing to do?
 			$smcFunc['db']->free_result($request);

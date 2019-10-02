@@ -1121,7 +1121,7 @@ function AdminApprove()
 		]
 	);
 
-	$member_count = $smcFunc['db_num_rows']($request);
+	$member_count = $smcFunc['db']->num_rows($request);
 
 	// If no results then just return!
 	if ($member_count == 0)

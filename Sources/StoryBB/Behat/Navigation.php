@@ -58,12 +58,12 @@ class Navigation extends RawMinkContext implements Context
 				'board' => StringLibrary::escape($boardname, ENT_QUOTES)
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 		{
 			$smcFunc['db']->free_result($request);
 			throw new ExpectationException('Board "' . $boardname . '" was not found', $this->getSession());
 		}
-		if ($smcFunc['db_num_rows']($request) > 1)
+		if ($smcFunc['db']->num_rows($request) > 1)
 		{
 			$smcFunc['db']->free_result($request);
 			throw new ExpectationException('Board "' . $boardname . '" matched multiple boards; cannot disambiguate', $this->getSession());
@@ -94,12 +94,12 @@ class Navigation extends RawMinkContext implements Context
 				'topic' => StringLibrary::escape($topicname, ENT_QUOTES)
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 		{
 			$smcFunc['db']->free_result($request);
 			throw new ExpectationException('Topic "' . $topicname . '" was not found', $this->getSession());
 		}
-		if ($smcFunc['db_num_rows']($request) > 1)
+		if ($smcFunc['db']->num_rows($request) > 1)
 		{
 			$smcFunc['db']->free_result($request);
 			throw new ExpectationException('Topic "' . $topicname . '" matched multiple topics; cannot disambiguate', $this->getSession());

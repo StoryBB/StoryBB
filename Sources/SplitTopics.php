@@ -84,7 +84,7 @@ function SplitIndex()
 			'split_at' => $_GET['at'],
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('cant_find_messages');
 	list ($_REQUEST['subname'], $num_replies, $unapproved_posts, $id_first_msg, $approved) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db']->free_result($request);
@@ -257,7 +257,7 @@ function SplitSelectTopics()
 			]
 		);
 		// You can't split the last message off.
-		if (empty($context['not_selected']['start']) && $smcFunc['db_num_rows']($request) <= 1 && $_REQUEST['move'] == 'down')
+		if (empty($context['not_selected']['start']) && $smcFunc['db']->num_rows($request) <= 1 && $_REQUEST['move'] == 'down')
 			$_REQUEST['move'] = '';
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$original_msgs['not_selected'][] = $row['id_msg'];
@@ -538,7 +538,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 		]
 	);
 	// You can't select ALL the messages!
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('selected_all_posts', false);
 
 	$split1_first_msg = null;
@@ -763,7 +763,7 @@ function splitTopic($split1_ID_TOPIC, $splitMessages, $new_subject)
 			'id_topic' => (int) $split1_ID_TOPIC,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db']->num_rows($request) > 0)
 	{
 		$replaceEntries = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -898,7 +898,7 @@ function MergeIndex()
 			'is_approved' => 1,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
 	list ($subject) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db']->free_result($request);
@@ -1043,7 +1043,7 @@ function MergeExecute($topics = [])
 			'limit' => count($topics),
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) < 2)
+	if ($smcFunc['db']->num_rows($request) < 2)
 		fatal_lang_error('no_topic_id');
 	$num_views = 0;
 	$is_sticky = 0;
@@ -1169,7 +1169,7 @@ function MergeExecute($topics = [])
 		]
 	);
 	// If the number of boards that's in the output isn't exactly the same as we've put in there, you're in trouble.
-	if ($smcFunc['db_num_rows']($request) != count($boards))
+	if ($smcFunc['db']->num_rows($request) != count($boards))
 		fatal_lang_error('no_board');
 	$smcFunc['db']->free_result($request);
 
@@ -1498,7 +1498,7 @@ function MergeExecute($topics = [])
 			'topics' => $topics,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db']->num_rows($request) > 0)
 	{
 		$replaceEntries = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1536,7 +1536,7 @@ function MergeExecute($topics = [])
 				'topics_list' => $notifications,
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) > 0)
+		if ($smcFunc['db']->num_rows($request) > 0)
 		{
 			$replaceEntries = [];
 			while ($row = $smcFunc['db_fetch_assoc']($request))

@@ -562,7 +562,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		]
 	);
 	// @todo Separate the sprintf?
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if ($smcFunc['db']->num_rows($request) != 0)
 		$reg_errors[] = ['lang', 'email_in_use', false, [StringLibrary::escape($regOptions['email'])]];
 
 	$smcFunc['db']->free_result($request);
@@ -1025,7 +1025,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 			'operator' => $operator,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db']->num_rows($request) > 0)
 	{
 		$smcFunc['db']->free_result($request);
 		return true;
@@ -1042,7 +1042,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 			'check_name' => $checkName,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db']->num_rows($request) > 0)
 	{
 		$smcFunc['db']->free_result($request);
 		return true;
@@ -1106,7 +1106,7 @@ function groupsAllowedTo($permission, $board_id = null)
 					'id_board' => $board_id,
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 				fatal_lang_error('no_board');
 			list ($profile_id) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db']->free_result($request);

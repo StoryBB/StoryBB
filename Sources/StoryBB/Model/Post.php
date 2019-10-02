@@ -93,7 +93,7 @@ class Post
 					]
 				);
 				// Couldn't find the current poster?
-				if ($smcFunc['db_num_rows']($request) == 0)
+				if ($smcFunc['db']->num_rows($request) == 0)
 				{
 					trigger_error('StoryBB\\Model\\Post::create(): Invalid member id ' . $posterOptions['id'], E_USER_NOTICE);
 					$posterOptions['id'] = 0;
@@ -597,7 +597,7 @@ class Post
 					'id_first_msg' => $msgOptions['id'],
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) == 1)
+			if ($smcFunc['db']->num_rows($request) == 1)
 				updateStats('subject', $topicOptions['id'], $msgOptions['subject']);
 			$smcFunc['db']->free_result($request);
 		}

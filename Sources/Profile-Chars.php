@@ -70,7 +70,7 @@ function char_switch($memID, $char = null, $return = false)
 			'id_member' => $memID,
 		]
 	);
-	$found = $smcFunc['db_num_rows']($result) > 0;
+	$found = $smcFunc['db']->num_rows($result) > 0;
 	$smcFunc['db']->free_result($result);
 
 	if (!$found) {
@@ -964,7 +964,7 @@ function char_posts()
 		}
 
 		// Make sure we quit this loop.
-		if ($smcFunc['db_num_rows']($request) === $maxIndex || $looped)
+		if ($smcFunc['db']->num_rows($request) === $maxIndex || $looped)
 			break;
 		$looped = true;
 		$range_limit = '';
@@ -1375,7 +1375,7 @@ function char_sheet()
 				'character' => $context['character']['id_character'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) > 0)
+		if ($smcFunc['db']->num_rows($request) > 0)
 		{
 			$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
 			$smcFunc['db']->free_result($request);
@@ -1662,7 +1662,7 @@ function char_sheet_edit()
 			'character' => $context['character']['id_character'],
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db']->num_rows($request) > 0)
 	{
 		$context['character']['sheet_details'] = $smcFunc['db_fetch_assoc']($request);
 		$smcFunc['db']->free_result($request);
@@ -1914,7 +1914,7 @@ function char_sheet_approve()
 			'version' => $version,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		// Doesn't exist, so bail.
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character']);
@@ -2040,7 +2040,7 @@ function char_sheet_compare()
 			'current_version' => $context['character']['char_sheet'],
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		redirectexit('action=profile;u=' . $context['id_member'] . ';area=characters;char=' . $context['character']['id_character'] . ';sa=sheet');
 	}
@@ -2132,7 +2132,7 @@ function char_merge_account($memID)
 				'id_member' => (int) $_POST['merge_acct'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cannot_merge_not_found', false);
 
 		list ($dest) = $smcFunc['db_fetch_row']($request);
@@ -2357,7 +2357,7 @@ function char_move_account()
 				'id_member' => (int) $_POST['move_acct'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('cannot_move_not_found', false);
 
 		list ($dest) = $smcFunc['db_fetch_row']($request);
@@ -2548,7 +2548,7 @@ function CharacterList()
 			]
 		);
 		$redirect = '';
-		if ($smcFunc['db_num_rows']($result))
+		if ($smcFunc['db']->num_rows($result))
 		{
 			$row = $smcFunc['db_fetch_assoc']($result);
 			$redirect = 'action=profile;u=' . $row['id_member'] . ';area=characters;char=' . $row['id_character'];
@@ -2773,7 +2773,7 @@ function ReattributePost()
 	);
 
 	// 2a. Doesn't exist?
-	if ($smcFunc['db_num_rows']($result) == 0)
+	if ($smcFunc['db']->num_rows($result) == 0)
 		fatal_lang_error('no_access', false);
 
 	$row = $smcFunc['db_fetch_assoc']($result);

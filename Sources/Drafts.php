@@ -328,7 +328,7 @@ function ReadDraft($id_draft, $type = 0, $check = true, $load = false)
 	);
 
 	// no results?
-	if (!$smcFunc['db_num_rows']($request))
+	if (!$smcFunc['db']->num_rows($request))
 		return false;
 
 	// load up the data

@@ -1258,7 +1258,7 @@ function AdminAccount()
 			'admin_group' => 1,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if ($smcFunc['db']->num_rows($request) != 0)
 		$incontext['skip'] = 1;
 	$smcFunc['db']->free_result($request);
 
@@ -1303,7 +1303,7 @@ function AdminAccount()
 				'db_error_skip' => true,
 			]
 		);
-		if ($smcFunc['db_num_rows']($result) != 0)
+		if ($smcFunc['db']->num_rows($result) != 0)
 		{
 			list ($incontext['member_id'], $incontext['member_salt']) = $smcFunc['db_fetch_row']($result);
 			$smcFunc['db']->free_result($result);
@@ -1485,7 +1485,7 @@ function DeleteInstall()
 			'db_error_skip' => true,
 		]
 	);
-	if ($smcFunc['db_num_rows']($result) != 0)
+	if ($smcFunc['db']->num_rows($result) != 0)
 		list ($db_sessions) = $smcFunc['db_fetch_row']($result);
 	$smcFunc['db']->free_result($result);
 
@@ -1521,7 +1521,7 @@ function DeleteInstall()
 			'db_error_skip' => true,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) > 0)
+	if ($smcFunc['db']->num_rows($request) > 0)
 		updateStats('subject', 1, htmlspecialchars($txt['default_topic_subject']));
 	$smcFunc['db']->free_result($request);
 

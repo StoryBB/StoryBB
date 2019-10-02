@@ -267,7 +267,7 @@ function EditSearchMethod()
 					'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
 				]
 			);
-		if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
+		if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 		{
 			// Only do this if the user has permission to execute this query.
 			$row = $smcFunc['db_fetch_assoc']($request);
@@ -296,7 +296,7 @@ function EditSearchMethod()
 					'table_name' => str_replace('_', '\_', $db_prefix) . 'log_search_words',
 				]
 			);
-		if ($request !== false && $smcFunc['db_num_rows']($request) == 1)
+		if ($request !== false && $smcFunc['db']->num_rows($request) == 1)
 		{
 			// Only do this if the user has permission to execute this query.
 			$row = $smcFunc['db_fetch_assoc']($request);
@@ -632,7 +632,7 @@ function detectFulltextIndex()
 		]
 	);
 	$context['fulltext_index'] = [];
-	if ($request !== false || $smcFunc['db_num_rows']($request) != 0)
+	if ($request !== false || $smcFunc['db']->num_rows($request) != 0)
 	{
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 		if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))

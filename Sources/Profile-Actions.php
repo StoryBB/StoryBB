@@ -608,7 +608,7 @@ function issueWarning($memID)
 				'message' => (int) $_REQUEST['msg'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) != 0)
+		if ($smcFunc['db']->num_rows($request) != 0)
 		{
 			$context['warning_for_message'] = (int) $_REQUEST['msg'];
 			list ($context['warned_message_subject']) = $smcFunc['db_fetch_row']($request);

@@ -117,7 +117,7 @@ $request = $smcFunc['db_query']('', '
 	]
 );
 // Didn't find them?
-if ($smcFunc['db_num_rows']($request) === 0)
+if ($smcFunc['db']->num_rows($request) === 0)
 	generateSubscriptionError(sprintf($txt['paid_could_not_find_member'], $member_id));
 $member_info = $smcFunc['db_fetch_assoc']($request);
 $smcFunc['db']->free_result($request);
@@ -133,7 +133,7 @@ $request = $smcFunc['db_query']('', '
 );
 
 // Didn't find it?
-if ($smcFunc['db_num_rows']($request) === 0)
+if ($smcFunc['db']->num_rows($request) === 0)
 	generateSubscriptionError(sprintf($txt['paid_count_not_find_subscription'], $member_id, $subscription_id));
 
 $subscription_info = $smcFunc['db_fetch_assoc']($request);
@@ -151,7 +151,7 @@ $request = $smcFunc['db_query']('', '
 		'current_member' => $member_id,
 	]
 );
-if ($smcFunc['db_num_rows']($request) === 0)
+if ($smcFunc['db']->num_rows($request) === 0)
 	generateSubscriptionError(sprintf($txt['paid_count_not_find_subscription_log'], $member_id, $subscription_id));
 $subscription_info += $smcFunc['db_fetch_assoc']($request);
 $smcFunc['db']->free_result($request);

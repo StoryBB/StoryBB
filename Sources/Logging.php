@@ -460,7 +460,7 @@ function logActions($logs)
 			]);
 
 			// Alright, if we get any result back, update open reports.
-			if ($smcFunc['db_num_rows']($request) > 0)
+			if ($smcFunc['db']->num_rows($request) > 0)
 			{
 				require_once($sourcedir . '/ModerationCenter.php');
 				require_once($sourcedir . '/Subs-ReportedContent.php');

@@ -428,7 +428,7 @@ class PayPal implements PaymentProcessor
 			]
 		);
 		// No joy?
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 		{
 			// Can we identify them by email?
 			if (!empty($_POST['payer_email']))
@@ -444,7 +444,7 @@ class PayPal implements PaymentProcessor
 						'payer_email' => $_POST['payer_email'],
 					]
 				);
-				if ($smcFunc['db_num_rows']($request) === 0)
+				if ($smcFunc['db']->num_rows($request) === 0)
 					return false;
 			}
 			else

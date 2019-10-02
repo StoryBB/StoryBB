@@ -237,7 +237,7 @@ function MessageIndex()
 			if (empty($row['show_online']))
 				$context['view_num_hidden']++;
 		}
-		$context['view_num_guests'] = $smcFunc['db_num_rows']($request) - count($context['view_members']);
+		$context['view_num_guests'] = $smcFunc['db']->num_rows($request) - count($context['view_members']);
 		$smcFunc['db']->free_result($request);
 
 		// Put them in "last clicked" order.

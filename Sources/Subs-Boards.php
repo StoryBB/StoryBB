@@ -354,7 +354,7 @@ function MarkRead()
 					'parent_list' => $boards,
 				]
 			);
-			if ($smcFunc['db_num_rows']($result) > 0)
+			if ($smcFunc['db']->num_rows($result) > 0)
 			{
 				$logBoardInserts = [];
 				while ($row = $smcFunc['db_fetch_assoc']($result))
@@ -404,7 +404,7 @@ function getMsgMemberID($messageID)
 			'selected_message' => (int) $messageID,
 		]
 	);
-	if ($smcFunc['db_num_rows']($result) > 0)
+	if ($smcFunc['db']->num_rows($result) > 0)
 		list ($memberID) = $smcFunc['db_fetch_row']($result);
 	// The message doesn't even exist.
 	else

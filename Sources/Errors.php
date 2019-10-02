@@ -76,8 +76,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	$query_string = empty($_SERVER['QUERY_STRING']) ? (empty($_SERVER['REQUEST_URL']) ? '' : str_replace($scripturl, '', $_SERVER['REQUEST_URL'])) : $_SERVER['QUERY_STRING'];
 
 	// Don't log the session hash in the url twice, it's a waste.
-	if (!empty(StringLibrary::escape))
-		$query_string = StringLibrary::escape((STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(['~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'], [';sesc', ''], $query_string));
+	$query_string = StringLibrary::escape((STORYBB == 'BACKGROUND' ? '' : '?') . preg_replace(['~;sesc=[^&;]+~', '~' . session_name() . '=' . session_id() . '[&;]~'], [';sesc', ''], $query_string));
 
 	// Just so we know what board error messages are from.
 	if (isset($_POST['board']) && !isset($_GET['board']))
@@ -485,7 +484,7 @@ function log_error_online($error, $sprintf = [])
 			'session' => $session_id,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) != 0)
+	if ($smcFunc['db']->num_rows($request) != 0)
 	{
 		list ($url) = $smcFunc['db_fetch_row']($request);
 		$url = sbb_json_decode($url, true);

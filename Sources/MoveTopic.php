@@ -191,7 +191,7 @@ function MoveTopic2()
 			'blank_redirect' => '',
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('no_board');
 	list ($pcounter, $board_name, $subject) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db']->free_result($request);
@@ -404,7 +404,7 @@ function moveTopics($topics, $toBoard)
 		]
 	);
 	// Num of rows = 0 -> no topics found. Num of rows > 1 -> topics are on multiple boards.
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		return;
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{

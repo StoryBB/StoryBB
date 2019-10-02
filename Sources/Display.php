@@ -88,7 +88,7 @@ function Display()
 			);
 
 			// No more left.
-			if ($smcFunc['db_num_rows']($request) == 0)
+			if ($smcFunc['db']->num_rows($request) == 0)
 			{
 				$smcFunc['db']->free_result($request);
 
@@ -170,7 +170,7 @@ function Display()
 			$topic_parameters
 	);
 
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('not_a_topic', false, 404);
 	$context['topicinfo'] = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);
@@ -410,7 +410,7 @@ function Display()
 		}
 
 		// The number of guests is equal to the rows minus the ones we actually used ;).
-		$context['view_num_guests'] = $smcFunc['db_num_rows']($request) - count($context['view_members']);
+		$context['view_num_guests'] = $smcFunc['db']->num_rows($request) - count($context['view_members']);
 		$smcFunc['db']->free_result($request);
 
 		// Sort the list.

@@ -270,7 +270,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 				'is_approved' => 1,
 			]
 		);
-		if ($smcFunc['db_num_rows']($requestMembers) > 0)
+		if ($smcFunc['db']->num_rows($requestMembers) > 0)
 		{
 			while ($rowMembers = $smcFunc['db_fetch_assoc']($requestMembers))
 			{
@@ -296,7 +296,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 				'limit' => count($topics),
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) > 0)
+		if ($smcFunc['db']->num_rows($request) > 0)
 		{
 			// Get topics that will be recycled.
 			$recycleTopics = [];
@@ -596,7 +596,7 @@ function removeMessage($message, $decreasePostCount = true)
 			'id_msg' => $message,
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		return false;
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);
@@ -777,7 +777,7 @@ function removeMessage($message, $decreasePostCount = true)
 				'recycle_board' => $modSettings['recycle_board'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('recycle_no_valid_board');
 		list ($isRead, $last_board_msg) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db']->free_result($request);
@@ -1361,7 +1361,7 @@ function mergePosts($msgs, $from_topic, $target_topic)
 
 	// Remove the topic if it doesn't have any messages.
 	$topic_exists = true;
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 	{
 		removeTopics($from_topic, false, true);
 		$topic_exists = false;

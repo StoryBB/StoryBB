@@ -160,7 +160,7 @@ function AddSmiley()
 				'smiley_code' => $_POST['smiley_code'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) > 0)
+		if ($smcFunc['db']->num_rows($request) > 0)
 			fatal_lang_error('smiley_not_unique');
 		$smcFunc['db']->free_result($request);
 
@@ -370,7 +370,7 @@ function EditSmileys()
 						'smiley_code' => $_POST['smiley_code'],
 					]
 				);
-				if ($smcFunc['db_num_rows']($request) > 0)
+				if ($smcFunc['db']->num_rows($request) > 0)
 					fatal_lang_error('smiley_not_unique');
 				$smcFunc['db']->free_result($request);
 
@@ -620,7 +620,7 @@ function EditSmileys()
 				'current_smiley' => (int) $_REQUEST['smiley'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) != 1)
+		if ($smcFunc['db']->num_rows($request) != 1)
 			fatal_lang_error('smiley_not_found');
 		$context['current_smiley'] = $smcFunc['db_fetch_assoc']($request);
 		$smcFunc['db']->free_result($request);
@@ -715,7 +715,7 @@ function EditSmileyOrder()
 					'after_smiley' => $_GET['after'],
 				]
 			);
-			if ($smcFunc['db_num_rows']($request) != 1)
+			if ($smcFunc['db']->num_rows($request) != 1)
 				fatal_lang_error('smiley_not_found');
 			list ($smiley_row, $smiley_order, $smileyLocation) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db']->free_result($request);

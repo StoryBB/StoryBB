@@ -1206,9 +1206,9 @@ function MessageSearch2()
 			);
 
 			// Simply do nothing if there're too many members matching the criteria.
-			if ($smcFunc['db_num_rows']($request) > $maxMembersToSearch)
+			if ($smcFunc['db']->num_rows($request) > $maxMembersToSearch)
 				$userQuery = '';
-			elseif ($smcFunc['db_num_rows']($request) == 0)
+			elseif ($smcFunc['db']->num_rows($request) == 0)
 			{
 				$userQuery = 'AND pm.id_member_from = 0 AND ({raw:pm_from_name} LIKE {raw:guest_user_name_implode})';
 				$searchq_parameters['guest_user_name_implode'] = '\'' . implode('\' OR ' . ($smcFunc['db']->is_case_sensitive() ? 'LOWER(pm.from_name)' : 'pm.from_name') . ' LIKE \'', $possible_users) . '\'';
@@ -1703,7 +1703,7 @@ function MessagePost()
 				'id_pm' => $pmsg,
 			]
 		);
-		$isReceived = $smcFunc['db_num_rows']($request) != 0;
+		$isReceived = $smcFunc['db']->num_rows($request) != 0;
 		$smcFunc['db']->free_result($request);
 
 		// Get the quoted message (and make sure you're allowed to see this quote!).
@@ -1725,7 +1725,7 @@ function MessagePost()
 				'id_pm' => $pmsg,
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('pm_not_yours', false);
 		$row_quoted = $smcFunc['db_fetch_assoc']($request);
 		$smcFunc['db']->free_result($request);
@@ -2022,7 +2022,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = [])
 				'replied_to' => $_REQUEST['replied_to'],
 			]
 		);
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 		{
 			if (!isset($_REQUEST['xml']))
 				fatal_lang_error('pm_not_yours', false);
@@ -3466,7 +3466,7 @@ function ReportMessage()
 			]
 		);
 		// Can only be a hacker here!
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
 		list ($subject, $body, $time, $memberFromID, $memberFromName) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db']->free_result($request);
@@ -3515,7 +3515,7 @@ function ReportMessage()
 		);
 
 		// Maybe we shouldn't advertise this?
-		if ($smcFunc['db_num_rows']($request) == 0)
+		if ($smcFunc['db']->num_rows($request) == 0)
 			fatal_lang_error('no_access', false);
 
 		$memberFromName = un_htmlspecialchars($memberFromName);
@@ -3704,7 +3704,7 @@ function ManageRules()
 						'member_name' => $name,
 					]
 				);
-				if ($smcFunc['db_num_rows']($request) == 0)
+				if ($smcFunc['db']->num_rows($request) == 0)
 				{
 					loadLanguage('Errors');
 					fatal_lang_error('invalid_username', false);
@@ -3997,7 +3997,7 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 		]
 	);
 
-	if ($smcFunc['db_num_rows']($request) === 0)
+	if ($smcFunc['db']->num_rows($request) === 0)
 	{
 		$smcFunc['db']->free_result($request);
 		return false;

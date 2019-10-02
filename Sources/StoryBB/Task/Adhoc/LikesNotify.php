@@ -108,7 +108,7 @@ class LikesNotify extends \StoryBB\Task\Adhoc
 			]
 		);
 
-		if ($smcFunc['db_num_rows']($request) > 0)
+		if ($smcFunc['db']->num_rows($request) > 0)
 			return true;
 		$smcFunc['db']->free_result($request);
 

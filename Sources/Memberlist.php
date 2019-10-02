@@ -194,11 +194,11 @@ function MLAll()
 
 			$memberlist_cache = [
 				'last_update' => time(),
-				'num_members' => $smcFunc['db_num_rows']($request),
+				'num_members' => $smcFunc['db']->num_rows($request),
 				'index' => [],
 			];
 
-			for ($i = 0, $n = $smcFunc['db_num_rows']($request); $i < $n; $i += $cache_step_size)
+			for ($i = 0, $n = $smcFunc['db']->num_rows($request); $i < $n; $i += $cache_step_size)
 			{
 				$smcFunc['db_data_seek']($request, $i);
 				list($memberlist_cache['index'][$i]) = $smcFunc['db_fetch_row']($request);

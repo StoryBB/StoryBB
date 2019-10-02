@@ -580,7 +580,7 @@ function AddMembergroup()
 		[
 		]
 	);
-	$context['num_boards'] = $smcFunc['db_num_rows']($request);
+	$context['num_boards'] = $smcFunc['db']->num_rows($request);
 
 	$context['categories'] = [];
 	while ($row = $smcFunc['db_fetch_assoc']($request))
@@ -1019,7 +1019,7 @@ function EditMembergroup()
 			'current_group' => (int) $_REQUEST['group'],
 		]
 	);
-	if ($smcFunc['db_num_rows']($request) == 0)
+	if ($smcFunc['db']->num_rows($request) == 0)
 		fatal_lang_error('membergroup_does_not_exist', false);
 	$row = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db']->free_result($request);
