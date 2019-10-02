@@ -72,17 +72,6 @@ function db_extend($type = 'extra')
 }
 
 /**
- * Fix up the prefix so it doesn't require the database to be selected.
- *
- * @param string &$db_prefix The table prefix
- * @param string $db_name The database name
- */
-function db_fix_prefix(&$db_prefix, $db_name)
-{
-	$db_prefix = is_numeric(substr($db_prefix, 0, 1)) ? $db_name . '.' . $db_prefix : '`' . $db_name . '`.' . $db_prefix;
-}
-
-/**
  * Wrap mysqli_get_server_info so the connection does not need to be specified
  *
  * @param object $connection The connection to use (if null, $db_connection is used)
