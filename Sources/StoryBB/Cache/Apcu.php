@@ -4,7 +4,7 @@
  * This provides short-term caching functionality using APCu (newer version of APC)
  *
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1

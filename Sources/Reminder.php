@@ -3,7 +3,7 @@
 /**
  * Handle sending out reminders, and checking the secret answer and question.  It uses just a few functions to do this, which are:
  * @package StoryBB (storybb.org) - A roleplayer's forum software
- * @copyright 2018 StoryBB and individual contributors (see contributors.txt)
+ * @copyright 2019 StoryBB and individual contributors (see contributors.txt)
  * @license 3-clause BSD (see accompanying LICENSE file)
  *
  * @version 1.0 Alpha 1
